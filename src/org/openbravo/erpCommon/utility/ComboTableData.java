@@ -36,6 +36,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.model.ad.ui.Field;
 import org.openbravo.reference.Reference;
 import org.openbravo.reference.ui.UIReference;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -70,9 +71,18 @@ public class ComboTableData {
   public ComboTableData() {
   }
 
-  public ComboTableData(String _referenceType, String _name, String _objectReference,
-      String _validation) throws Exception {
-    this(null, null, _referenceType, _name, _objectReference, _validation, null, null, 0);
+  public static ComboTableData getTableComboDataFor(Field field) throws Exception {
+    String ref = field.getColumn().getReference().getId();
+    String objectReference = "";
+    if (field.getColumn().getReferenceSearchKey() != null) {
+      objectReference = field.getColumn().getReferenceSearchKey().getId();
+    }
+    String validation = "";
+    if (field.getColumn().getValidation() != null) {
+      validation = field.getColumn().getValidation().getId();
+    }
+    return new ComboTableData(null, null, ref, field.getColumn().getDBColumnName(),
+        objectReference, validation, null, null, 0);
   }
 
   /**

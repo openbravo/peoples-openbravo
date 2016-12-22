@@ -46,6 +46,7 @@ import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.userinterface.selector.Selector;
 import org.openbravo.userinterface.selector.SelectorField;
 import org.slf4j.Logger;
@@ -325,21 +326,36 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
    */
   public ComboTableData getComboTableData(VariablesSecureApp vars, String ref, String colName,
       String objectReference, String validation, String orgList, String clientList) {
-    return getComboTableData(ref, colName, objectReference, validation);
-  }
-
-  public ComboTableData getComboTableData(String ref, String colName, String objectReference,
-      String validation) {
-    String comboId = ref + colName + objectReference + validation;
+    String comboId = ref + colName + objectReference + validation + orgList + clientList;
     if (useCache() && comboTableDataMap.get(comboId) != null) {
       return comboTableDataMap.get(comboId);
     }
     ComboTableData comboTableData;
     try {
-      comboTableData = new ComboTableData(ref, colName, objectReference, validation);
+      comboTableData = new ComboTableData(vars, new DalConnectionProvider(false), ref, colName,
+          objectReference, validation, orgList, clientList, 0);
     } catch (Exception e) {
       throw new OBException("Error while computing combo table data for column " + colName, e);
     }
+    if (useCache() && comboTableData.canBeCached()) {
+      comboTableDataMap.put(comboId, comboTableData);
+    }
+    return comboTableData;
+  }
+
+  public ComboTableData getComboTableData(Field field) {
+    String comboId = field.getId();
+    if (useCache() && comboTableDataMap.get(comboId) != null) {
+      return comboTableDataMap.get(comboId);
+    }
+
+    ComboTableData comboTableData;
+    try {
+      comboTableData = ComboTableData.getTableComboDataFor(field);
+    } catch (Exception e) {
+      throw new OBException("Error while computing combo table data for field " + field, e);
+    }
+
     log.debug("Combo - cacheable: {} id: {}", comboTableData.canBeCached(), comboId);
     if (useCache() && comboTableData.canBeCached()) {
       comboTableDataMap.put(comboId, comboTableData);

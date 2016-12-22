@@ -108,21 +108,10 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
 
       RequestContext rq = RequestContext.get();
       VariablesSecureApp vars = rq.getVariablesSecureApp();
-      String ref = column.getReference().getId();
-      String objectReference = "";
-
-      if (column.getReferenceSearchKey() != null) {
-        objectReference = column.getReferenceSearchKey().getId();
-      }
-      String validation = "";
-      if (column.getValidation() != null) {
-        validation = column.getValidation().getId();
-      }
 
       ApplicationDictionaryCachedStructures cachedStructures = WeldUtils
           .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
-      ComboTableData comboTableData = cachedStructures.getComboTableData(ref,
-          column.getDBColumnName(), objectReference, validation);
+      ComboTableData comboTableData = cachedStructures.getComboTableData(field);
       Map<String, String> newParameters = null;
 
       newParameters = comboTableData.fillSQLParametersIntoMap(new DalConnectionProvider(false),

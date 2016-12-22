@@ -603,19 +603,9 @@ public abstract class UIDefinition {
       boolean comboreload = rq.getRequestParameter("donotaddcurrentelement") != null
           && rq.getRequestParameter("donotaddcurrentelement").equals("true");
 
-      String objectReference = "";
-      if (field.getColumn().getReferenceSearchKey() != null) {
-        objectReference = field.getColumn().getReferenceSearchKey().getId();
-      }
-      String validation = "";
-      if (field.getColumn().getValidation() != null) {
-        validation = field.getColumn().getValidation().getId();
-      }
-
       ApplicationDictionaryCachedStructures cachedStructures = WeldUtils
           .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
-      ComboTableData comboTableData = cachedStructures.getComboTableData(ref, field.getColumn()
-          .getDBColumnName(), objectReference, validation);
+      ComboTableData comboTableData = cachedStructures.getComboTableData(field);
       FieldProvider tabData = generateTabData(field.getTab().getADFieldList(), field, columnValue);
       Map<String, String> parameters = comboTableData.fillSQLParametersIntoMap(
           new DalConnectionProvider(false), vars, tabData, field.getTab().getWindow().getId(),
