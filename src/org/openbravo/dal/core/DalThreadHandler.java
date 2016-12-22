@@ -63,7 +63,9 @@ public abstract class DalThreadHandler extends ThreadHandler {
       } catch (Exception e) {
         log.error("Error cleaning up dal sessions", e);
       }
-      SessionHandler.deleteSessionHandler();
+      if (SessionHandler.isSessionHandlerPresent()) {
+        SessionHandler.deleteSessionHandler();
+      }
       // note before the code below was enabled, however for longer running transactions
       // openbravo does multiple http requests, so while the long running transaction
       // had set inadministratormode, the subsequence http requests put it to false again
