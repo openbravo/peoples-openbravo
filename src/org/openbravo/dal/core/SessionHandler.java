@@ -133,6 +133,14 @@ public class SessionHandler implements OBNotSingleton {
     return getSession(DEFAULT_POOL);
   }
 
+  /**
+   * Gets a {@code Session} from the connection pool whose name is passed as parameter. If it was
+   * not created previously, this methods returns a newly created session from that pool.
+   * 
+   * @param pool
+   *          the name of the pool used to retrieve the session
+   * @return the session
+   */
   public Session getSession(String pool) {
     Session theSession = sessions.get(pool);
     if (theSession == null) {
@@ -214,6 +222,13 @@ public class SessionHandler implements OBNotSingleton {
     return getNewConnection(DEFAULT_POOL);
   }
 
+  /**
+   * Gets a new {@code Connection} from the connection pool.
+   * 
+   * @param pool
+   *          the name of the pool used to retrieve the connection
+   * @return a {@code Connection} from the specified pool
+   */
   public Connection getNewConnection(String pool) throws SQLException {
     Connection newConnection;
     if (externalConnectionPool != null) {
@@ -243,6 +258,12 @@ public class SessionHandler implements OBNotSingleton {
     return connections.get(pool);
   }
 
+  /**
+   * Sets the connection of the default pool to be used by the handler.
+   * 
+   * @param connection
+   *          the connection of the default pool.
+   */
   public void setConnection(Connection newConnection) {
     setConnection(DEFAULT_POOL, newConnection);
   }
@@ -314,6 +335,14 @@ public class SessionHandler implements OBNotSingleton {
     save(DEFAULT_POOL, obj);
   }
 
+  /**
+   * Saves the object in the session of the pool whose name is passed as parameter.
+   * 
+   * @param pool
+   *          the name of the pool used to retrieve the session where the object will be saved
+   * @param obj
+   *          the object to persist
+   */
   public void save(String pool, Object obj) {
     if (Identifiable.class.isAssignableFrom(obj.getClass())) {
       getSession(pool).saveOrUpdate(((Identifiable) obj).getEntityName(), obj);
@@ -332,6 +361,14 @@ public class SessionHandler implements OBNotSingleton {
     delete(DEFAULT_POOL, obj);
   }
 
+  /**
+   * Delete the object from the db.
+   * 
+   * @param pool
+   *          the name of the pool used to retrieve the session where the object will be deleted
+   * @param obj
+   *          the object to remove
+   */
   public void delete(String pool, Object obj) {
     if (Identifiable.class.isAssignableFrom(obj.getClass())) {
       getSession(pool).delete(((Identifiable) obj).getEntityName(), obj);
@@ -353,6 +390,17 @@ public class SessionHandler implements OBNotSingleton {
     return find(DEFAULT_POOL, clazz, id);
   }
 
+  /**
+   * Queries for a certain object using the class and id. If not found then null is returned.
+   * 
+   * @param pool
+   *          the name of the pool used to obtain the connection to execute the query
+   * @param clazz
+   *          the class to query
+   * @param id
+   *          the id to use for querying
+   * @return the retrieved object, can be null
+   */
   @SuppressWarnings("unchecked")
   public <T extends Object> T find(String pool, Class<T> clazz, Object id) {
     // translates a class to an entityname because the hibernate
@@ -379,6 +427,19 @@ public class SessionHandler implements OBNotSingleton {
     return find(DEFAULT_POOL, entityName, id);
   }
 
+  /**
+   * Queries for a certain object using the entity name and id. If not found then null is returned.
+   * 
+   * @param pool
+   *          the name of the pool used to obtain the connection to execute the query
+   * @param entityName
+   *          the name of the entity to query
+   * @param id
+   *          the id to use for querying
+   * @return the retrieved object, can be null
+   * 
+   * @see Entity
+   */
   public BaseOBObject find(String pool, String entityName, Object id) {
     return (BaseOBObject) getSession(pool).get(entityName, (Serializable) id);
   }
@@ -422,6 +483,13 @@ public class SessionHandler implements OBNotSingleton {
     commitAndClose(DEFAULT_POOL);
   }
 
+  /**
+   * Commits the transaction and closes the session, should normally be called at the end of all the
+   * work.
+   * 
+   * @param pool
+   *          the name of the pool which the transaction belongs.
+   */
   public void commitAndClose(String pool) {
     boolean err = true;
     try {
@@ -532,12 +600,18 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   /**
-   * Rolls back the transaction and closes the getSession().
+   * Rolls back the transaction and closes the session.
    */
   public void rollback() {
     rollback(DEFAULT_POOL);
   }
 
+  /**
+   * Rolls back the transaction and closes the session.
+   * 
+   * @param pool
+   *          the name of the pool which the transaction belongs.
+   */
   public void rollback(String pool) {
     log.debug("Rolling back transaction in pool " + pool);
     Connection con = getConnection(pool);
