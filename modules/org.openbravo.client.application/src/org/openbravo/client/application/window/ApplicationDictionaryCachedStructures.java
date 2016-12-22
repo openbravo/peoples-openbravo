@@ -330,6 +330,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     } catch (Exception e) {
       throw new OBException("Error while computing combo table data for column " + colName, e);
     }
+    log.debug("Combo - cacheable: {} id: {}", comboTableData.canBeCached(), comboId);
     if (useCache() && comboTableData.canBeCached()) {
       comboTableDataMap.put(comboId, comboTableData);
     }
