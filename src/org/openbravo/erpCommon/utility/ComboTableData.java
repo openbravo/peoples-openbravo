@@ -1097,6 +1097,9 @@ public class ComboTableData {
           }
 
         }
+      } catch (Exception e) {
+        log4j.error("Error in query" + strSqlSingleRecord, e);
+        throw e;
       } finally {
         conn.releasePreparedStatement(stSingleRecord);
       }
