@@ -86,7 +86,7 @@ public class ComboTableData {
     if (col.getValidation() != null) {
       validation = col.getValidation().getId();
     }
-    ComboTableData ctd = new ComboTableData(null, null, ref, field.getColumn().getDBColumnName(),
+    ComboTableData ctd = new ComboTableData(null, null, ref, col.getDBColumnName(),
         objectReference, validation, null, null, 0);
 
     ctd.windowId = field.getTab().getWindow().getId();
@@ -785,9 +785,9 @@ public class ComboTableData {
       }
       token = value.substring(0, j);
       if (token.equalsIgnoreCase("#User_Client"))
-        defStr = getClientList();
+        defStr = "__CLIENT_LIST__";
       else if (token.equalsIgnoreCase("#User_Org"))
-        defStr = getOrgList();
+        defStr = "__ORG_LIST__";
       else
         defStr = "?";
 
