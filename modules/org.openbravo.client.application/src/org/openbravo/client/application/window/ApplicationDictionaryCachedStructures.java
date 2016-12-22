@@ -136,14 +136,18 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
       return tabMap.get(tabId);
     }
 
+    // tab is not cached: lock at method level to acquire a lock to initialize it
     synchronized (getTabLock) {
+      // now we can safely check if lock for tab is not set and create it
       if (!tabLocks.containsKey(tabId)) {
         tabLocks.put(tabId, new Object());
       }
     }
 
+    // lock for tab id, so it only gets initialized once
     synchronized (tabLocks.get(tabId)) {
       if (tabMap.containsKey(tabId)) {
+        // another thread already cached this tab
         return tabMap.get(tabId);
       }
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
