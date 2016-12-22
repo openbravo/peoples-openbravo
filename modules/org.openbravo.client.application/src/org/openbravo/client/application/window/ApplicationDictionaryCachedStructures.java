@@ -77,6 +77,9 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
 
   private boolean useCache;
 
+  private Map<String, Object> tabLocks = new ConcurrentHashMap<>();
+  private Object getTabLock = new Object();
+
   @PostConstruct
   private void init() {
     // The cache will only be active when there are no modules in development in the system
@@ -99,21 +102,40 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
    *          , ID of the tab to look for
    * @return Tab for the tabId, from cache if it is enabled
    */
-  public synchronized Tab getTab(String tabId) {
+  public Tab getTab(String tabId) {
     log.debug("get tab {}", tabId);
     if (useCache() && tabMap.containsKey(tabId)) {
       log.debug("got tab {} from cache", tabId);
       return tabMap.get(tabId);
     }
-    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-    if (!useCache()) {
-      // not using cache, initialize just current tab and go
-      return tab;
-    } else {
-      // using cache, do complete initialization
-      initializeWindow(tab.getWindow().getId());
+
+    synchronized (getTabLock) {
+      if (!tabLocks.containsKey(tabId)) {
+        tabLocks.put(tabId, new Object());
+      }
     }
-    return tab;
+
+    synchronized (tabLocks.get(tabId)) {
+      try {
+        System.out.println("Sleeping");
+        // Thread.sleep(20_000L);
+        System.out.println("awaken");
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      if (tabMap.containsKey(tabId)) {
+        return tabMap.get(tabId);
+      }
+      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      if (!useCache()) {
+        // not using cache, initialize just current tab and go
+        return tab;
+      } else {
+        // using cache, do complete initialization
+        initializeWindow(tab.getWindow().getId());
+      }
+      return tab;
+    }
   }
 
   /**
