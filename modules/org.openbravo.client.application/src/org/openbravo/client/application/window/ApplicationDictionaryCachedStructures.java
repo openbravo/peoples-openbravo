@@ -20,7 +20,6 @@ package org.openbravo.client.application.window;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -67,7 +66,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
   private Map<String, Table> tableMap = new ConcurrentHashMap<>();
   private Map<String, List<Field>> fieldMap = new ConcurrentHashMap<>();
   private Map<String, List<Column>> columnMap = new ConcurrentHashMap<>();
-  private Map<String, List<AuxiliaryInput>> auxInputMap = new HashMap<>();
+  private Map<String, List<AuxiliaryInput>> auxInputMap = new ConcurrentHashMap<>();
   private Map<String, ComboTableData> comboTableDataMap = new ConcurrentHashMap<>();
   private Map<String, List<Parameter>> attMethodMetadataMap = new ConcurrentHashMap<>();
   private List<String> initializedWindows = new ArrayList<String>();
