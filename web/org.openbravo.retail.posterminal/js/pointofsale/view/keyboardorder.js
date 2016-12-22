@@ -881,8 +881,18 @@ enyo.kind({
         // If the preference to show that the 'UPC/EAN code has not been found is enabled'
         if (OB.MobileApp.model.hasPermission('OBPOS_showPopupEANNotFound', true)) {
           reproduceErrorSound();
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]), undefined, undefined, {
-            defaultAction: false
+          OB.MobileApp.model.set('reproduceErrorSound', true);
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]), undefined, [{
+            isConfirmButton: true,
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            action: function () {
+              OB.MobileApp.model.set('reproduceErrorSound', false);
+            }
+          }], {
+            defaultAction: false,
+            onHideFunction: function () {
+              OB.MobileApp.model.set('reproduceErrorSound', false);
+            }
           });
         } else {
           reproduceErrorSound();
