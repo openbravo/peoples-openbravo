@@ -63,13 +63,13 @@ import org.slf4j.LoggerFactory;
 public class ApplicationDictionaryCachedStructures implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  private Map<String, Tab> tabMap = new HashMap<String, Tab>();
-  private Map<String, Table> tableMap = new HashMap<String, Table>();
-  private Map<String, List<Field>> fieldMap = new HashMap<String, List<Field>>();
-  private Map<String, List<Column>> columnMap = new HashMap<String, List<Column>>();
-  private Map<String, List<AuxiliaryInput>> auxInputMap = new HashMap<String, List<AuxiliaryInput>>();
-  private Map<String, ComboTableData> comboTableDataMap = new ConcurrentHashMap<String, ComboTableData>();
-  private Map<String, List<Parameter>> attMethodMetadataMap = new ConcurrentHashMap<String, List<Parameter>>();
+  private Map<String, Tab> tabMap = new ConcurrentHashMap<>();
+  private Map<String, Table> tableMap = new ConcurrentHashMap<>();
+  private Map<String, List<Field>> fieldMap = new ConcurrentHashMap<>();
+  private Map<String, List<Column>> columnMap = new ConcurrentHashMap<>();
+  private Map<String, List<AuxiliaryInput>> auxInputMap = new HashMap<>();
+  private Map<String, ComboTableData> comboTableDataMap = new ConcurrentHashMap<>();
+  private Map<String, List<Parameter>> attMethodMetadataMap = new ConcurrentHashMap<>();
   private List<String> initializedWindows = new ArrayList<String>();
 
   private static final Logger log = LoggerFactory
@@ -106,13 +106,13 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
   }
 
   public void reset() {
-    tabMap = new HashMap<String, Tab>();
-    tableMap = new HashMap<String, Table>();
-    fieldMap = new HashMap<String, List<Field>>();
-    columnMap = new HashMap<String, List<Column>>();
-    auxInputMap = new HashMap<String, List<AuxiliaryInput>>();
-    comboTableDataMap = new ConcurrentHashMap<String, ComboTableData>();
-    attMethodMetadataMap = new ConcurrentHashMap<String, List<Parameter>>();
+    tabMap = new ConcurrentHashMap<>();
+    tableMap = new ConcurrentHashMap<>();
+    fieldMap = new ConcurrentHashMap<>();
+    columnMap = new ConcurrentHashMap<>();
+    auxInputMap = new ConcurrentHashMap<>();
+    comboTableDataMap = new ConcurrentHashMap<>();
+    attMethodMetadataMap = new ConcurrentHashMap<>();
     initializedWindows = new ArrayList<String>();
     tabLocks = new ConcurrentHashMap<>();
   }
