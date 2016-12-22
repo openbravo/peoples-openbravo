@@ -87,10 +87,19 @@ public class OBDal implements OBNotSingleton {
     return instance;
   }
 
+  /**
+   * @return the singleton instance of the OBDal read-only service
+   */
   public static OBDal getReadOnlyInstance() {
     return getInstance(ExternalConnectionPool.READONLY_POOL);
   }
 
+  /**
+   * @param pool
+   *          the name of the pool used by the OBDal service that will be returned
+   * 
+   * @return the singleton instance related to the name passed as parameter
+   */
   public static OBDal getInstance(String pool) {
     if (ExternalConnectionPool.DEFAULT_POOL.equals(pool)) {
       return getInstance();
@@ -139,6 +148,11 @@ public class OBDal implements OBNotSingleton {
     SessionHandler.getInstance().getSession(poolName).disableFilter("activeFilter");
   }
 
+  /**
+   * Returns the status of the active filter.
+   * 
+   * @return true if the active filter is enabled, false if it is disabled
+   */
   public boolean isActiveFilterEnabled() {
     return SessionHandler.getInstance().getSession(poolName).getEnabledFilter("activeFilter") != null;
   }
