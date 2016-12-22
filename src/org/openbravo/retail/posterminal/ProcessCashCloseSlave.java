@@ -27,7 +27,6 @@ public class ProcessCashCloseSlave extends JSONProcessSimple {
     OBDal.getInstance().getSession().evict(appCashup);
     appCashup = OBDal.getInstance().get(OBPOSAppCashup.class, jsonsent.getString("cashUpId"));
 
-    OBDal.getInstance().refresh(appCashup);
     JSONObject result = new JSONObject();
     JSONObject data = new JSONObject();
     boolean hasMaster = appCashup != null && appCashup.getObposParentCashup() != null;

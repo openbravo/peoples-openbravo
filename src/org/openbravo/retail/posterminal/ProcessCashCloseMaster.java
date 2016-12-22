@@ -37,7 +37,7 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
     OBDal.getInstance().flush();
 
     OBDal.getInstance().getSession().evict(appCashup);
-    appCashup = OBDal.getInstance().get(OBPOSAppCashup.class, jsonsent.getString("cashUpId"));
+    appCashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
 
     OBCriteria<OBPOSApplications> obCriteria = OBDal.getInstance().createCriteria(
         OBPOSApplications.class);
