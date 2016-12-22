@@ -288,8 +288,10 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     return auxInputs;
   }
 
-  private synchronized void initializeDALObject(Object obj) {
-    Hibernate.initialize(obj);
+  private void initializeDALObject(Object obj) {
+    synchronized (obj) {
+      Hibernate.initialize(obj);
+    }
   }
 
   public ComboTableData getComboTableData(VariablesSecureApp vars, String ref, String colName,
