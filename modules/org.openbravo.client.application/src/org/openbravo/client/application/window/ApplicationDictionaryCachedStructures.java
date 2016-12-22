@@ -328,7 +328,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     }
     ComboTableData comboTableData;
     try {
-      comboTableData = new ComboTableData(vars, new DalConnectionProvider(false), ref, colName,
+      comboTableData = new ComboTableData(new DalConnectionProvider(false), ref, colName,
           objectReference, validation, orgList, clientList, 0);
     } catch (Exception e) {
       throw new OBException("Error while computing combo table data for column " + colName, e);
