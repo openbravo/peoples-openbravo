@@ -40,7 +40,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * JdbcExternalConnectionPool manages all the functionality of the Apache JDBC Connection Pool. This
- * class provides convenience methods to get a connection, close the pool and other actions.
+ * class can handle different pools (data sources) at the same time. All these pools are eventually
+ * making use of the Apache JDBC Connection Pool. This class provides convenience methods to get a
+ * connection from a pool, close the different pools and other actions.
  */
 public class JdbcExternalConnectionPool extends ExternalConnectionPool {
 
@@ -50,7 +52,7 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
   private DataSource defaultDataSource = null;
 
   /**
-   * This method loads all the interceptors of apache jdbc connection pool injected with weld.
+   * This method loads all the interceptors of Apache JDBC Connection Pool injected with weld.
    */
   @Override
   public void loadInterceptors(List<PoolInterceptorProvider> interceptors) {
@@ -62,7 +64,9 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
   }
 
   /**
-   * Gets the data source of apache jdbc connection pool.
+   * Gets the default data source, which was obtained from the Apache JDBC Connection Pool.
+   * 
+   * @return the {@code DataSource} of the default pool
    */
   public DataSource getDataSource() {
     if (defaultDataSource == null) {
@@ -72,8 +76,10 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
   }
 
   /**
-   * This method provided a connection of apache jdbc connection pool. Apache jdbc connection pool
-   * is initialized in the first call to this method.
+   * This method provides a connection from the default pool. The connection pool is initialized in
+   * the first call to this method.
+   * 
+   * a {@code Connection} retrieved from the default pool
    */
   @Override
   public Connection getConnection() {
@@ -83,6 +89,14 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     return getConnectionFromDS(getDataSource());
   }
 
+  /**
+   * This method provides a connection from the pool whose name is specified as parameter. The
+   * connection pool is initialized in the first call to this method.
+   * 
+   * @param poolName
+   *          the name of the pool used to retrieve the connection
+   * @return a {@code Connection} retrieved from the pool passed as parameter
+   */
   @Override
   public Connection getConnection(String poolName) {
     if (availableDataSources == null) {
@@ -299,7 +313,7 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
   }
 
   /**
-   * This method closes apache jdbc connection pool.
+   * This method closes all the data sources retrieved from the Apache JDBC Connection Pool.
    */
   @Override
   public void closePool() {
