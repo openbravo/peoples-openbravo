@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU 
  * All Rights Reserved. 
  ************************************************************************
  */
@@ -53,6 +53,9 @@ public abstract class ExternalConnectionPool {
     return instance;
   }
 
+  /**
+   * @return the singleton instance of the external connection pool
+   */
   public final static ExternalConnectionPool getInstance() {
     return instance;
   }
