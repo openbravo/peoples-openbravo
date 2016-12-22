@@ -143,13 +143,6 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     }
 
     synchronized (tabLocks.get(tabId)) {
-      try {
-        System.out.println("Sleeping");
-        // Thread.sleep(20_000L);
-        System.out.println("awaken");
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
       if (tabMap.containsKey(tabId)) {
         return tabMap.get(tabId);
       }
