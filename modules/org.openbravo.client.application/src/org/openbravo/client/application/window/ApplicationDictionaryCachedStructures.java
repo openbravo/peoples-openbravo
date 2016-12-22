@@ -289,6 +289,9 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
   }
 
   private void initializeDALObject(Object obj) {
+    if (obj == null) {
+      return;
+    }
     synchronized (obj) {
       Hibernate.initialize(obj);
     }
