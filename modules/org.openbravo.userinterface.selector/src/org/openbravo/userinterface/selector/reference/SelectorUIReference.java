@@ -230,17 +230,13 @@ public class SelectorUIReference extends UIReference {
               && !parentFieldName.equals("")) {
             tables += " on " + tableName + "." + parentFieldName + " = td" + myIndex + "." + name
                 + "\n";
-            tables += "AND td" + myIndex + ".AD_Client_ID IN (" + comboTableData.getClientList()
-                + ") \n";
-            tables += "AND td" + myIndex + ".AD_Org_ID IN (" + comboTableData.getOrgList() + ")";
+            tables += "AND td" + myIndex + ".AD_Client_ID IN (__CLIENT_LIST__) \n";
+            tables += "AND td" + myIndex + ".AD_Org_ID IN (__ORG_LIST__)";
           } else {
-            comboTableData.addWhereField(
-                "td" + myIndex + ".AD_Client_ID IN (" + comboTableData.getClientList() + ")",
+            comboTableData.addWhereField("td" + myIndex + ".AD_Client_ID IN (__CLIENT_LIST__)",
                 "CLIENT_LIST");
-            if (comboTableData.getOrgList() != null)
-              comboTableData.addWhereField(
-                  "td" + myIndex + ".AD_Org_ID IN (" + comboTableData.getOrgList() + ")",
-                  "ORG_LIST");
+            comboTableData.addWhereField("td" + myIndex + ".AD_Org_ID IN (__ORG_LIST__)",
+                "ORG_LIST");
           }
           comboTableData.addFromField(tables, "td" + myIndex);
           if (tableName == null || tableName.equals("")) {

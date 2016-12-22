@@ -37,7 +37,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -67,7 +66,6 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     FieldProvider[] fps = null;
     String fieldId = parameters.get("fieldId");
     String windowId = parameters.get("windowId");
-    Entity targetEntity = null;
     String filterString = null;
 
     int startRow = -1, endRow = -1, num = 0;
@@ -76,8 +74,6 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     try {
       field = OBDal.getInstance().get(Field.class, fieldId);
       column = field.getColumn();
-      targetEntity = ModelProvider.getInstance().getEntityByTableId(
-          column.getTable().getId());
 
       if (!StringUtils.isEmpty(parameters.get("criteria"))) {
         String criteria = parameters.get("criteria");
@@ -123,28 +119,10 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         validation = column.getValidation().getId();
       }
 
-      String orgList = Utility.getReferenceableOrg(vars, vars.getStringParameter("inpadOrgId"));
-      String clientList = Utility.getContext(new DalConnectionProvider(false), vars,
-          "#User_Client", windowId);
-      int accessLevel = targetEntity.getAccessLevel().getDbValue();
-      if (column.getDBColumnName().equalsIgnoreCase("AD_CLIENT_ID")) {
-        clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
-            windowId, accessLevel);
-        if (clientList == null) {
-          clientList = vars.getSessionValue("#User_Client");
-        }
-        orgList = null;
-      }
-
-      if (column.getDBColumnName().equalsIgnoreCase("AD_ORG_ID")) {
-        orgList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Org", windowId,
-            accessLevel);
-      }
-
       ApplicationDictionaryCachedStructures cachedStructures = WeldUtils
           .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
-      ComboTableData comboTableData = cachedStructures.getComboTableData(vars, ref,
-          column.getDBColumnName(), objectReference, validation, orgList, clientList);
+      ComboTableData comboTableData = cachedStructures.getComboTableData(ref,
+          column.getDBColumnName(), objectReference, validation);
       Map<String, String> newParameters = null;
 
       newParameters = comboTableData.fillSQLParametersIntoMap(new DalConnectionProvider(false),
@@ -242,8 +220,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       // check access to current entity
       field = OBDal.getInstance().get(Field.class, fieldId);
       column = field.getColumn();
-      targetEntity = ModelProvider.getInstance().getEntityByTableId(
-          column.getTable().getId());
+      targetEntity = ModelProvider.getInstance().getEntityByTableId(column.getTable().getId());
       OBContext.getOBContext().getEntityAccessChecker().checkReadableAccess(targetEntity);
     } finally {
       OBContext.restorePreviousMode();

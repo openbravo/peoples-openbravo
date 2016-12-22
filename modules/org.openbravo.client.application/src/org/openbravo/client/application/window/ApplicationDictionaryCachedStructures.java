@@ -46,7 +46,6 @@ import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
-import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.userinterface.selector.Selector;
 import org.openbravo.userinterface.selector.SelectorField;
 import org.slf4j.Logger;
@@ -105,6 +104,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
   }
 
   public void reset() {
+    log.info("Resetting cache");
     tabMap = new ConcurrentHashMap<>();
     tableMap = new ConcurrentHashMap<>();
     fieldMap = new ConcurrentHashMap<>();
@@ -320,16 +320,23 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     }
   }
 
+  /**
+   * @deprecated
+   */
   public ComboTableData getComboTableData(VariablesSecureApp vars, String ref, String colName,
       String objectReference, String validation, String orgList, String clientList) {
-    String comboId = ref + colName + objectReference + validation + orgList + clientList;
+    return getComboTableData(ref, colName, objectReference, validation);
+  }
+
+  public ComboTableData getComboTableData(String ref, String colName, String objectReference,
+      String validation) {
+    String comboId = ref + colName + objectReference + validation;
     if (useCache() && comboTableDataMap.get(comboId) != null) {
       return comboTableDataMap.get(comboId);
     }
     ComboTableData comboTableData;
     try {
-      comboTableData = new ComboTableData(new DalConnectionProvider(false), ref, colName,
-          objectReference, validation, orgList, clientList, 0);
+      comboTableData = new ComboTableData(ref, colName, objectReference, validation);
     } catch (Exception e) {
       throw new OBException("Error while computing combo table data for column " + colName, e);
     }
@@ -338,7 +345,6 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
       comboTableDataMap.put(comboId, comboTableData);
     }
     return comboTableData;
-
   }
 
   /**

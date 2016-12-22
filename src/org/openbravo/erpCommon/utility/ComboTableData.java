@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
@@ -67,6 +68,11 @@ public class ComboTableData {
    * Constructor
    */
   public ComboTableData() {
+  }
+
+  public ComboTableData(String _referenceType, String _name, String _objectReference,
+      String _validation) throws Exception {
+    this(null, null, _referenceType, _name, _objectReference, _validation, null, null, 0);
   }
 
   /**
@@ -284,7 +290,16 @@ public class ComboTableData {
    * @return String with the granted organizations list.
    */
   public String getOrgList() {
-    return getParameter(internalPrefix + "orgList");
+    String cachedList = getParameter(internalPrefix + "orgList");
+    if (cachedList != null) {
+      return cachedList;
+    } else if ("AD_CLIENT_ID".equalsIgnoreCase(getObjectName())) {
+      return null;
+    } else if ("AD_ORG_ID".equalsIgnoreCase(getObjectName())) {
+      return null; // TODO
+    } else {
+      return Utility.getReferenceableOrg(getVars(), getVars().getStringParameter("inpadOrgId"));
+    }
   }
 
   /**
@@ -304,7 +319,34 @@ public class ComboTableData {
    * @return String with the granted clients list.
    */
   public String getClientList() {
-    return getParameter(internalPrefix + "clientList");
+    String cachedList = getParameter(internalPrefix + "clientList");
+    if (cachedList != null) {
+      return cachedList;
+    } else if ("AD_CLIENT_ID".equalsIgnoreCase(getObjectName())) {
+      return "'" + OBContext.getOBContext().getCurrentClient().getId() + "'"; // TODO
+      // Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client", field.getTab()
+      // .getWindow().getId());
+    } else {
+      return "'" + OBContext.getOBContext().getCurrentClient().getId() + "'";
+    }
+
+    // String orgList = Utility.getReferenceableOrg(vars, vars.getStringParameter("inpadOrgId"));
+    // String clientList = Utility.getContext(new DalConnectionProvider(false), vars,
+    // "#User_Client", windowId);
+    // int accessLevel = targetEntity.getAccessLevel().getDbValue();
+    // if (column.getDBColumnName().equalsIgnoreCase("AD_CLIENT_ID")) {
+    // clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
+    // windowId, accessLevel);
+    // if (clientList == null) {
+    // clientList = vars.getSessionValue("#User_Client");
+    // }
+    // orgList = null;
+    // }
+    //
+    // if (column.getDBColumnName().equalsIgnoreCase("AD_ORG_ID")) {
+    // orgList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Org", windowId,
+    // accessLevel);
+    // }
   }
 
   /**
@@ -861,10 +903,14 @@ public class ComboTableData {
     }
 
     aux = getWhereFields();
+    String orgList = getOrgList();
     if (aux != null) {
       StringBuffer txtAux = new StringBuffer();
       for (int i = 0; i < aux.size(); i++) {
         QueryFieldStructure auxStructure = aux.elementAt(i);
+        if ("ORG_LIST".equals(auxStructure.getType()) && orgList == null) {
+          continue;
+        }
         if (!isInArray(discard, auxStructure.getType())) {
           hasWhere = true;
           if (!txtAux.toString().equals(""))
@@ -912,13 +958,19 @@ public class ComboTableData {
       int numberOfRows = endRow - startRow + 1;
       text.append(" LIMIT " + numberOfRows + " OFFSET " + startRow);
     }
+
+    String query = text.toString().replace("__CLIENT_LIST__", getClientList());
+    if (orgList != null) {
+      query = query.replace("__ORG_LIST__", orgList);
+    }
+
     if (applyLimits && rdbms.equalsIgnoreCase("ORACLE")) {
       // in oracle rows are defined from 1, so incrementing startRow and endRow by 1
-      String oraQuery = "select * from ( select a.*, ROWNUM rnum from ( " + text.toString()
+      String oraQuery = "select * from ( select a.*, ROWNUM rnum from ( " + query
           + ") a where rownum <= " + (endRow + 1) + " ) where rnum >= " + (startRow + 1) + "";
       return oraQuery;
     }
-    return text.toString();
+    return query;
   }
 
   /**
