@@ -553,7 +553,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           me.get('multiOrders').trigger('print', order, {
             offline: true
           }); // to guaranty execution order
-          //SyncReadyToSendFunction();
           auxReceiptList.push(auxReceipt);
           if (auxReceiptList.length === me.get('multiOrders').get('multiOrdersList').length) {
             OB.UTIL.cashUpReport(auxReceiptList, function (cashUp) {
@@ -570,7 +569,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 receiptMulti.set('json', JSON.stringify(receipt.serializeToJSON()));
                 OB.Dal.save(receiptMulti, function () {
                   me.get('multiOrders').trigger('closed', receiptMulti);
-                  //SyncReadyToSendFunction();
                   readyToSendFunction();
                   setMultiOrderCashUpReport(receiptList, cashUp, index + 1, callback);
                 }, function () {});
