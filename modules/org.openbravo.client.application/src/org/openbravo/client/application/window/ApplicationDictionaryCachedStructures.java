@@ -90,6 +90,33 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     log.debug("ADCS initialized, use cache: {}", useCache);
   }
 
+  public void eagerInitialization() {
+    reset();
+    Query query = OBDal.getInstance().getSession()
+        .createQuery("select id from ADWindow where isActive='Y'");
+    @SuppressWarnings("unchecked")
+    List<String> windows = query.list();
+    long t = System.currentTimeMillis();
+    int i = 0;
+    for (String windowId : windows) {
+      log.info("{}/{}", ++i, windows.size());
+      initializeWindow(windowId);
+    }
+    log.info("Intialized all windows in {} ms", System.currentTimeMillis() - t);
+  }
+
+  public void reset() {
+    tabMap = new HashMap<String, Tab>();
+    tableMap = new HashMap<String, Table>();
+    fieldMap = new HashMap<String, List<Field>>();
+    columnMap = new HashMap<String, List<Column>>();
+    auxInputMap = new HashMap<String, List<AuxiliaryInput>>();
+    comboTableDataMap = new ConcurrentHashMap<String, ComboTableData>();
+    attMethodMetadataMap = new ConcurrentHashMap<String, List<Parameter>>();
+    initializedWindows = new ArrayList<String>();
+    tabLocks = new ConcurrentHashMap<>();
+  }
+
   /**
    * In case caching is enabled, Tab for tabId is returned from cache if present. If it is not, this
    * tab and all the ones in the same window are initialized and cached.
