@@ -3233,7 +3233,7 @@
       }
     },
 
-    addPayment: function (payment) {
+    addPayment: function (payment, callback) {
       var payments, total;
       var i, max, p, order;
 
@@ -3262,13 +3262,21 @@
       OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
         paymentToAdd: payment,
         payments: payments,
-        receipt: this
+        receipt: this,
+        callback: callback
       }, function (args) {
+        var executeFinalCallback = function () {
+            if (callback instanceof Function) {
+              callback(order);
+            }
+            };
+
         if (args && args.cancellation) {
           if (payment.get('reverseCallback')) {
             var reverseCallback = payment.get('reverseCallback');
             reverseCallback();
           }
+          executeFinalCallback();
           return;
         }
         if (!payment.get('paymentData') && !payment.get('reversedPaymentId')) {
@@ -3283,6 +3291,7 @@
               }
               order.adjustPayment();
               order.trigger('displayTotal');
+              executeFinalCallback();
               return;
             }
           }
@@ -3297,6 +3306,7 @@
               payment.set('date', new Date());
               order.adjustPayment();
               order.trigger('displayTotal');
+              executeFinalCallback();
               return;
             }
           }
@@ -3318,6 +3328,8 @@
         order.adjustPayment();
         order.trigger('displayTotal');
         order.save();
+        executeFinalCallback();
+        return;
       }); // call with callback, no args
     },
 
@@ -5167,7 +5179,7 @@
         this.set('change', OB.DEC.Zero);
       }
     },
-    addPayment: function (payment) {
+    addPayment: function (payment, callback) {
       var payments, total;
       var i, max, p, order;
 
@@ -5186,8 +5198,15 @@
       OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
         paymentToAdd: payment,
         payments: payments,
-        receipt: this
+        receipt: this,
+        callback: callback
       }, function () {
+        var executeFinalCallback = function () {
+            if (callback instanceof Function) {
+              callback(order);
+            }
+            };
+
         if (!payment.get('paymentData')) {
           // search for an existing payment only if there is not paymentData info.
           // this avoids to merge for example card payments of different cards.
@@ -5201,6 +5220,7 @@
               payment.set('date', new Date());
               order.adjustPayment();
               order.trigger('displayTotal');
+              executeFinalCallback();
               return;
             }
           }
@@ -5215,6 +5235,7 @@
               payment.set('date', new Date());
               order.adjustPayment();
               order.trigger('displayTotal');
+              executeFinalCallback();
               return;
             }
           }
@@ -5227,6 +5248,8 @@
         payments.add(payment);
         order.adjustPayment();
         order.trigger('displayTotal');
+        executeFinalCallback();
+        return;
       });
     },
     removePayment: function (payment) {
