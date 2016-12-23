@@ -196,19 +196,21 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
     position: 70,
-    name: 'canBeDeliveredLine',
-    I18NLabel: 'OBPOS_LineCanBeDelivered',
+    name: 'deliverableLine',
+    I18NLabel: 'OBPOS_LineDeliverable',
     render: function (line) {
-      if (this.owner.owner.hideDeliveryButton) {
+      if (this.owner.owner.hideDeliveryLabel) {
         this.hide();
       } else {
         this.show();
-        if (line && line.get('obposCanbedelivered')) {
+        if (this.owner.owner.hideDeliveryButton) {
+          this.$.propertyValue.setContent(OB.I18N.getLabel('OBPOS_lblMultiSelectValues'));
+        } else if (line && line.get('obposCanbedelivered')) {
           this.$.propertyValue.setContent(OB.I18N.getLabel('OBMOBC_LblYes'));
-          this.owner.owner.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_CannotBeDelivered'));
+          this.owner.owner.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsUndeliverable'));
         } else {
           this.$.propertyValue.setContent(OB.I18N.getLabel('OBMOBC_LblNo'));
-          this.owner.owner.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_CanBeDelivered'));
+          this.owner.owner.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsDeliverable'));
         }
       }
     }
@@ -702,7 +704,7 @@ enyo.kind({
     }
   },
   setMultiSelected: function (inSender, inEvent) {
-    var serviceSelected, isLayaway;
+    var selectedServices, isLayaway;
     if (inEvent.models && inEvent.models.length > 0 && !(inEvent.models[0] instanceof OB.Model.OrderLine)) {
       return;
     }
@@ -715,11 +717,12 @@ enyo.kind({
     }
     this.$.linePropertiesContainer.$.discountedAmountLine.multiSelection = inEvent.models.length > 1;
     this.selectedListener(this.selectedModels.length > 0 ? this.selectedModels[0] : undefined);
-    serviceSelected = _.find(inEvent.models, function (line) {
+    selectedServices = _.filter(inEvent.models, function (line) {
       return line.get('product').get('productType') === 'S';
     });
     isLayaway = this.owner.owner.model.get('order').get('isLayaway') || this.owner.owner.model.get('order').get('orderType') ? true : false;
-    this.hideDeliveryButton = serviceSelected || !isLayaway ? true : false;
+    this.hideDeliveryButton = selectedServices.length || !isLayaway ? true : false;
+    this.hideDeliveryLabel = !isLayaway || selectedServices.length === this.selectedModels.length ? true : false;
     if (inEvent.models.length > 1) {
       var selectedLinesToDeliver;
       selectedLinesToDeliver = _.filter(inEvent.models, function (line) {
@@ -731,9 +734,9 @@ enyo.kind({
       } else {
         this.$.actionButtonsContainer.$.canDeliver.show();
         if (!selectedLinesToDeliver.length) {
-          this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_CanBeDelivered'));
+          this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsDeliverable'));
         } else {
-          this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_CannotBeDelivered'));
+          this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsUndeliverable'));
         }
       }
     } else if (inEvent.models.length === 1) {
@@ -742,9 +745,9 @@ enyo.kind({
       } else {
         this.$.actionButtonsContainer.$.canDeliver.show();
         if (inEvent.models[0].get('obposCanbedelivered')) {
-          this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_CannotBeDelivered'));
+          this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsUndeliverable'));
         } else {
-          this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_CanBeDelivered'));
+          this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsDeliverable'));
         }
       }
     }
@@ -1020,7 +1023,7 @@ enyo.kind({
       }
       this.$.linePropertiesContainer.$.discountedAmountLine.render(orderLine);
       this.$.linePropertiesContainer.$.warehouseLine.render(orderLine);
-      this.$.linePropertiesContainer.$.canBeDeliveredLine.render(orderLine);
+      this.$.linePropertiesContainer.$.deliverableLine.render(orderLine);
       orderLine.get('product').set('standardPrice', priceTotal);
       orderLine.set('price', priceTotal);
       if (!orderLine.get('priceIncludesTax')) {
