@@ -591,8 +591,7 @@ public class ComboTableData {
       log4j.debug("Obtaining parameters");
     List<QueryParameterStructure> vAux = getSelectParameters();
     if (vAux != null) {
-      for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.get(i);
+      for (QueryParameterStructure aux : vAux) {
         String strAux = getParameter(aux.getName());
         if (strAux == null || strAux.equals(""))
           result.add(aux.getName());
@@ -602,8 +601,7 @@ public class ComboTableData {
       log4j.debug("Select parameters obtained");
     vAux = getFromParameters();
     if (vAux != null) {
-      for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.get(i);
+      for (QueryParameterStructure aux : vAux) {
         String strAux = getParameter(aux.getName());
         if (strAux == null || strAux.equals(""))
           result.add(aux.getName());
@@ -613,8 +611,7 @@ public class ComboTableData {
       log4j.debug("From parameters obtained");
     vAux = getWhereParameters();
     if (vAux != null) {
-      for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.get(i);
+      for (QueryParameterStructure aux : vAux) {
         String strAux = getParameter(aux.getName());
         if (strAux == null || strAux.equals(""))
           result.add(aux.getName());
@@ -624,8 +621,7 @@ public class ComboTableData {
       log4j.debug("Where parameters obtained");
     vAux = getOrderByParameters();
     if (vAux != null) {
-      for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.get(i);
+      for (QueryParameterStructure aux : vAux) {
         String strAux = getParameter(aux.getName());
         if (strAux == null || strAux.equals(""))
           result.add(aux.getName());
@@ -672,12 +668,11 @@ public class ComboTableData {
     if (tables == null || tables.size() == 0)
       return;
     if (where != null && where.size() > 0) {
-      for (int i = 0; i < where.size(); i++) {
-        QueryFieldStructure auxStructure = where.get(i);
+      int i = 0;
+      for (QueryFieldStructure auxStructure : where) {
         if (auxStructure.getType().equalsIgnoreCase("FILTER")) {
           String strAux = auxStructure.getField();
-          for (int j = 0; j < tables.size(); j++) {
-            QueryFieldStructure auxTable = tables.get(j);
+          for (QueryFieldStructure auxTable : tables) {
             String strTable = auxTable.getField();
             int p = strTable.indexOf(" ");
             if (p != -1)
@@ -691,14 +686,14 @@ public class ComboTableData {
             where.set(i, auxStructure);
           }
         }
+        i++;
       }
     }
     if (orderBy != null && orderBy.size() > 0) {
-      for (int i = 0; i < orderBy.size(); i++) {
-        QueryFieldStructure auxStructure = orderBy.get(i);
+      int i = 0;
+      for (QueryFieldStructure auxStructure : orderBy) {
         String strAux = auxStructure.getField();
-        for (int j = 0; j < tables.size(); j++) {
-          QueryFieldStructure auxTable = tables.get(j);
+        for (QueryFieldStructure auxTable : tables) {
           String strTable = auxTable.getField();
           int p = strTable.indexOf(" ");
           if (p != -1)
@@ -868,8 +863,7 @@ public class ComboTableData {
       String description = "";
       String id = "";
       text.append("SELECT ");
-      for (int i = 0; i < aux.size(); i++) {
-        QueryFieldStructure auxStructure = aux.get(i);
+      for (QueryFieldStructure auxStructure : aux) {
         if (!isInArray(discard, auxStructure.getType())) {
           if (auxStructure.getData("alias").equalsIgnoreCase("ID")) {
             if (id.equals("")) {
@@ -909,8 +903,7 @@ public class ComboTableData {
     if (aux != null) {
       StringBuffer txtAux = new StringBuffer();
       text.append("FROM ");
-      for (int i = 0; i < aux.size(); i++) {
-        QueryFieldStructure auxStructure = aux.get(i);
+      for (QueryFieldStructure auxStructure : aux) {
         if (!isInArray(discard, auxStructure.getType())) {
           if (!txtAux.toString().equals(""))
             txtAux.append("left join ");
@@ -924,8 +917,7 @@ public class ComboTableData {
     String orgList = getOrgList();
     if (aux != null) {
       StringBuffer txtAux = new StringBuffer();
-      for (int i = 0; i < aux.size(); i++) {
-        QueryFieldStructure auxStructure = aux.get(i);
+      for (QueryFieldStructure auxStructure : aux) {
         if ("ORG_LIST".equals(auxStructure.getType()) && orgList == null) {
           continue;
         }
@@ -954,8 +946,7 @@ public class ComboTableData {
       if (aux != null) {
         StringBuffer txtAux = new StringBuffer();
         text.append("ORDER BY ");
-        for (int i = 0; i < aux.size(); i++) {
-          QueryFieldStructure auxStructure = aux.get(i);
+        for (QueryFieldStructure auxStructure : aux) {
           if (!isInArray(discard, auxStructure.getType())) {
             if (!txtAux.toString().equals(""))
               txtAux.append(", ");
@@ -1003,8 +994,8 @@ public class ComboTableData {
   private boolean isInArray(String[] data, String element) {
     if (data == null || data.length == 0 || element == null || element.equals(""))
       return false;
-    for (int i = 0; i < data.length; i++) {
-      if (data[i].equalsIgnoreCase(element))
+    for (String d : data) {
+      if (d.equalsIgnoreCase(element))
         return true;
     }
     return false;
@@ -1036,8 +1027,7 @@ public class ComboTableData {
     int localIParameter = iParameter;
     List<QueryParameterStructure> vAux = getSelectParameters();
     if (vAux != null) {
-      for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.get(i);
+      for (QueryParameterStructure aux : vAux) {
         if (!isInArray(discard, aux.getType())) {
           String strAux = lparameters != null ? (aux.getName() == null ? null : lparameters.get(aux
               .getName().toUpperCase())) : getParameter(aux.getName());
@@ -1049,8 +1039,7 @@ public class ComboTableData {
     }
     vAux = getFromParameters();
     if (vAux != null) {
-      for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.get(i);
+      for (QueryParameterStructure aux : vAux) {
         if (!isInArray(discard, aux.getType())) {
           String strAux = lparameters != null ? (aux.getName() == null ? null : lparameters.get(aux
               .getName().toUpperCase())) : getParameter(aux.getName());
@@ -1062,8 +1051,7 @@ public class ComboTableData {
     }
     vAux = getWhereParameters();
     if (vAux != null) {
-      for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.get(i);
+      for (QueryParameterStructure aux : vAux) {
         if (!isInArray(discard, aux.getType())) {
           String strAux = lparameters != null ? (aux.getName() == null ? null : lparameters.get(aux
               .getName().toUpperCase())) : getParameter(aux.getName());
@@ -1082,8 +1070,7 @@ public class ComboTableData {
     }
     vAux = getOrderByParameters();
     if (vAux != null) {
-      for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.get(i);
+      for (QueryParameterStructure aux : vAux) {
         if (!isInArray(discard, aux.getType())) {
           String strAux = lparameters != null ? (aux.getName() == null ? null : lparameters.get(aux
               .getName().toUpperCase())) : getParameter(aux.getName());
@@ -1323,8 +1310,7 @@ public class ComboTableData {
     if (vAux != null && vAux.size() > 0) {
       if (log4j.isDebugEnabled())
         log4j.debug("Combo Parameters: " + vAux.size());
-      for (int i = 0; i < vAux.size(); i++) {
-        final String strAux = vAux.get(i);
+      for (String strAux : vAux) {
         try {
           final String value = Utility.parseParameterValue(conn, variables, data, strAux, tab,
               window, actual_value, fromSearch);
@@ -1351,8 +1337,7 @@ public class ComboTableData {
     if (vAux != null && vAux.size() > 0) {
       if (log4j.isDebugEnabled())
         log4j.debug("Combo Parameters: " + vAux.size());
-      for (int i = 0; i < vAux.size(); i++) {
-        final String strAux = vAux.get(i);
+      for (String strAux : vAux) {
         try {
           final String value = Utility.parseParameterValue(conn, variables, data, strAux, "",
               window, actual_value, false);
