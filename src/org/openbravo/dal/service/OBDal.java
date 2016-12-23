@@ -226,6 +226,8 @@ public class OBDal implements OBNotSingleton {
   /**
    * Utility method to log all entities loaded into the current hibernate session. Useful to debug
    * slow flush() calls.
+   * 
+   * @return the hibernate session statistics that are used to log the information
    */
   private SessionStatistics dumpSessionEntities() {
     SessionStatistics sessStat = SessionHandler.getInstance().getSession(poolName).getStatistics();
