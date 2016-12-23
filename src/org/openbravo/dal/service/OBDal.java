@@ -241,7 +241,7 @@ public class OBDal implements OBNotSingleton {
   public void flush() {
     if (SessionHandler.isSessionHandlerPresent()) {
       long s1 = System.currentTimeMillis();
-      SessionHandler.getInstance().getSession().flush();
+      SessionHandler.getInstance().getSession(poolName).flush();
       if (log.isDebugEnabled()) {
         long s2 = System.currentTimeMillis();
         SessionStatistics sessStat = SessionHandler.getInstance().getSession(poolName)
