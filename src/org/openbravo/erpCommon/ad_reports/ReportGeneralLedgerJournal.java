@@ -90,7 +90,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       log4j.debug("Command: " + vars.getStringParameter("Command"));
 
     if (vars.commandIn("DEFAULT")) {
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
+      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org",
+          vars.getOrg());
       String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
       String strDateFrom = vars.getGlobalVariable("inpDateFrom",
           "ReportGeneralLedgerJournal|DateFrom", "");

@@ -64,7 +64,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportTrialBalance|Org", "");
+      String strOrg = vars.getGlobalVariable("inpOrg", "ReportTrialBalance|Org", vars.getOrg());
       String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportTrialBalance|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportTrialBalance|DateTo", "");
