@@ -54,7 +54,6 @@ public class ComboTableData {
   private final String internalPrefix = "@@";
   private static final String FIELD_CONCAT = " || ' - ' || ";
   private static final String INACTIVE_DATA = "**";
-  // private VariablesSecureApp vars;
   private Hashtable<String, String> parameters = new Hashtable<String, String>();
   private Vector<QueryParameterStructure> paramSelect = new Vector<QueryParameterStructure>();
   private Vector<QueryParameterStructure> paramFrom = new Vector<QueryParameterStructure>();
