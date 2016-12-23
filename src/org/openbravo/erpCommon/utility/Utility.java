@@ -58,9 +58,6 @@ import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperReport;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -94,6 +91,9 @@ import org.openbravo.model.common.geography.Location;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.FormatUtilities;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
 
 /**
  * @author Fernando Iriazabal
@@ -2600,15 +2600,20 @@ public class Utility {
    * @param orgid
    *          ID of the organization.
    * 
-   * @return the country of the organization.
+   * @return the country of the organization or null if the organization address is not defined.
    * 
    */
   public static Country getCountryFromOrgId(String orgid) {
     Organization organization = (Organization) OBDal.getInstance().get(Organization.ENTITY_NAME,
         orgid);
     List<OrganizationInformation> orgInfoList = organization.getOrganizationInformationList();
-    OrganizationInformation orginfo = orgInfoList.get(0);
-    Location location = orginfo.getLocationAddress();
+    if (orgInfoList.isEmpty()) {
+      return null;
+    }
+    Location location = orgInfoList.get(0).getLocationAddress();
+    if (location == null) {
+      return null;
+    }
     return location.getCountry();
   }
 
@@ -2627,8 +2632,8 @@ public class Utility {
     try {
       OBContext.setAdminMode(true);
       Country country = getCountryFromOrgId(orgid);
-      String dateFormat = (country.getDateformat() == null) ? "dd-MM-yyyy" : country
-          .getDateformat();
+      String dateFormat = (country == null || country.getDateformat() == null) ? "dd-MM-yyyy"
+          : country.getDateformat();
       SimpleDateFormat df = new SimpleDateFormat(dateFormat);
       return df.format(date);
     } finally {
@@ -2658,7 +2663,8 @@ public class Utility {
    * @param orgid
    *          ID of the organization.
    * @param defaultDecimalFormat
-   *          Default decimal format.
+   *          Default decimal format. It will be returned in case the country of the organization is
+   *          not defined.
    * 
    * @return DecimalFormat for the number representation defined for the country.
    */
@@ -2667,6 +2673,9 @@ public class Utility {
     try {
       OBContext.setAdminMode(true);
       Country country = getCountryFromOrgId(orgid);
+      if (country == null) {
+        return defaultDecimalFormat;
+      }
       DecimalFormatSymbols symbols = new DecimalFormatSymbols();
       if (country.getDecimalseparator() != null)
         symbols.setDecimalSeparator(country.getDecimalseparator().equals("C") ? ',' : '.');

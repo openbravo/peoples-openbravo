@@ -92,7 +92,8 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
   }
 
   private void createInOutLines(JSONObject jsonRequest, List<String> idList) throws JSONException {
-    JSONArray selectedLines = jsonRequest.getJSONArray("_selection");
+    JSONArray selectedLines = jsonRequest.getJSONObject("_params").getJSONObject("grid")
+        .getJSONArray("_selection");
     final String strInOutId = jsonRequest.getString("M_InOut_ID");
     ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strInOutId);
     // if no lines selected don't do anything.

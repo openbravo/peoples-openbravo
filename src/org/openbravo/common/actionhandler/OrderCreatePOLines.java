@@ -90,7 +90,8 @@ public class OrderCreatePOLines extends BaseProcessActionHandler {
   }
 
   private void createOrderLines(JSONObject jsonRequest) throws JSONException, OBException {
-    JSONArray selectedLines = jsonRequest.getJSONArray("_selection");
+    JSONArray selectedLines = jsonRequest.getJSONObject("_params").getJSONObject("grid")
+        .getJSONArray("_selection");
     final String strOrderId = jsonRequest.getString("C_Order_ID");
     Order order = OBDal.getInstance().get(Order.class, strOrderId);
     // if no lines selected don't do anything.

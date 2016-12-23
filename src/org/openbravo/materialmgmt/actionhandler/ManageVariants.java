@@ -59,7 +59,8 @@ public class ManageVariants extends BaseProcessActionHandler {
     OBContext.setAdminMode(true);
     try {
       jsonRequest = new JSONObject(content);
-      JSONArray selection = jsonRequest.getJSONArray("_selection");
+      JSONArray selection = jsonRequest.getJSONObject("_params").getJSONObject("grid")
+          .getJSONArray("_selection");
       String strProductId = jsonRequest.getString("M_Product_ID");
       final Product generic = OBDal.getInstance().get(Product.class, strProductId);
       log.debug("{}", jsonRequest);

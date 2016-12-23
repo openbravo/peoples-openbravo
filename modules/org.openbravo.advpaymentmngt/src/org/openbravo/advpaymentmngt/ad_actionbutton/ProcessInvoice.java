@@ -253,6 +253,28 @@ public class ProcessInvoice extends HttpSecureAppServlet {
               return;
             }
 
+            // If Invoice has a awaiting execution payment related, show an Error
+            List<FIN_PaymentSchedule> psl = invoice.getFINPaymentScheduleList();
+            for (FIN_PaymentSchedule ps : psl) {
+              List<FIN_PaymentScheduleDetail> psdl = ps
+                  .getFINPaymentScheduleDetailInvoicePaymentScheduleList();
+              for (FIN_PaymentScheduleDetail psd : psdl) {
+                FIN_PaymentDetail pd = psd.getPaymentDetails();
+                if (pd != null
+                    && (pd.getFinPayment().getStatus().equals("RPAE") || pd.getFinPayment()
+                        .getStatus().equals("RPAP"))) {
+                  msg = new OBError();
+                  msg.setType("Error");
+                  msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+                  msg.setMessage(OBMessageUtils
+                      .messageBD("APRM_InvoiceAwaitingExcutionPaymentRelated"));
+                  vars.setMessage(strTabId, msg);
+                  printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
+                  return;
+                }
+              }
+            }
+
             // Reversed invoice's date: voidDate in Purchase Invoice, new Date() in Sales Invoice
             Date reversedDate = voidDate != null ? voidDate : new Date();
 

@@ -192,8 +192,8 @@ public class ReportingUtils {
    *          Additional export parameters than can be added to configure the resulting report.
    * @param compileSubreports
    *          A flag to indicate if the sub-reports should be compiled too. If true, the sub-report
-   *          jrxml files should be placed in the same folder as the main report and their name
-   *          should start with SUBREP_
+   *          jrxml files should be placed in the same folder as the main report and their related
+   *          parameter name should start with SUBREP_
    * @throws OBException
    *           In case there is any error generating the report an exception is thrown with the
    *           error message.
@@ -264,8 +264,8 @@ public class ReportingUtils {
    *          Additional export parameters than can be added to configure the resulting report.
    * @param compileSubreports
    *          A flag to indicate if the sub-reports should be compiled too. If true, the sub-report
-   *          jrxml files should be placed in the same folder as the main report and their name
-   *          should start with SUBREP_
+   *          jrxml files should be placed in the same folder as the main report and their related
+   *          parameter name should start with SUBREP_
    * @throws OBException
    *           In case there is any error generating the report an exception is thrown with the
    *           error message.
