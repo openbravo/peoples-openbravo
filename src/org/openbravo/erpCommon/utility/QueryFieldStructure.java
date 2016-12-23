@@ -18,10 +18,12 @@
  */
 package org.openbravo.erpCommon.utility;
 
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
 class QueryFieldStructure {
-  private Hashtable<String, String> data = new Hashtable<String, String>();
+  private Map<String, String> data = new HashMap<>();
 
   public QueryFieldStructure() {
   }
@@ -79,7 +81,7 @@ class QueryFieldStructure {
   }
 
   public String toString(boolean printAlias) {
-    StringBuffer text = new StringBuffer();
+    StringBuilder text = new StringBuilder();
     text.append(getData("field"));
     if (printAlias)
       text.append(getData("aliasJoin")).append(getData("alias"));

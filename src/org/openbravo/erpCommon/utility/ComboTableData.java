@@ -21,9 +21,10 @@ package org.openbravo.erpCommon.utility;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.servlet.ServletException;
 
@@ -54,15 +55,15 @@ public class ComboTableData {
   private final String internalPrefix = "@@";
   private static final String FIELD_CONCAT = " || ' - ' || ";
   private static final String INACTIVE_DATA = "**";
-  private Hashtable<String, String> parameters = new Hashtable<String, String>();
-  private Vector<QueryParameterStructure> paramSelect = new Vector<QueryParameterStructure>();
-  private Vector<QueryParameterStructure> paramFrom = new Vector<QueryParameterStructure>();
-  private Vector<QueryParameterStructure> paramWhere = new Vector<QueryParameterStructure>();
-  private Vector<QueryParameterStructure> paramOrderBy = new Vector<QueryParameterStructure>();
-  private Vector<QueryFieldStructure> select = new Vector<QueryFieldStructure>();
-  private Vector<QueryFieldStructure> from = new Vector<QueryFieldStructure>();
-  private Vector<QueryFieldStructure> where = new Vector<QueryFieldStructure>();
-  private Vector<QueryFieldStructure> orderBy = new Vector<QueryFieldStructure>();
+  private Map<String, String> parameters = new HashMap<>();
+  private List<QueryParameterStructure> paramSelect = new ArrayList<>();
+  private List<QueryParameterStructure> paramFrom = new ArrayList<>();
+  private List<QueryParameterStructure> paramWhere = new ArrayList<>();
+  private List<QueryParameterStructure> paramOrderBy = new ArrayList<>();
+  private List<QueryFieldStructure> select = new ArrayList<>();
+  private List<QueryFieldStructure> from = new ArrayList<>();
+  private List<QueryFieldStructure> where = new ArrayList<>();
+  private List<QueryFieldStructure> orderBy = new ArrayList<>();
   private boolean canBeCached;
   public int index = 0;
   private String windowId;
@@ -369,9 +370,10 @@ public class ComboTableData {
    */
   public void addSelectField(String _field, String _alias) {
     QueryFieldStructure p = new QueryFieldStructure(_field, " AS ", _alias, "SELECT");
-    if (this.select == null)
-      this.select = new Vector<QueryFieldStructure>();
-    select.addElement(p);
+    if (this.select == null) {
+      this.select = new ArrayList<QueryFieldStructure>();
+    }
+    select.add(p);
   }
 
   /**
@@ -379,7 +381,7 @@ public class ComboTableData {
    * 
    * @return Vector with the select's fields.
    */
-  private Vector<QueryFieldStructure> getSelectFields() {
+  private List<QueryFieldStructure> getSelectFields() {
     return this.select;
   }
 
@@ -393,9 +395,10 @@ public class ComboTableData {
    */
   public void addFromField(String _field, String _alias) {
     QueryFieldStructure p = new QueryFieldStructure(_field, " ", _alias, "FROM");
-    if (this.from == null)
-      this.from = new Vector<QueryFieldStructure>();
-    from.addElement(p);
+    if (this.from == null) {
+      this.from = new ArrayList<QueryFieldStructure>();
+    }
+    from.add(p);
   }
 
   /**
@@ -403,7 +406,7 @@ public class ComboTableData {
    * 
    * @return Vector with the from's fields.
    */
-  private Vector<QueryFieldStructure> getFromFields() {
+  private List<QueryFieldStructure> getFromFields() {
     return this.from;
   }
 
@@ -417,9 +420,10 @@ public class ComboTableData {
    */
   public void addWhereField(String _field, String _type) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", _type);
-    if (this.where == null)
-      this.where = new Vector<QueryFieldStructure>();
-    where.addElement(p);
+    if (this.where == null) {
+      this.where = new ArrayList<QueryFieldStructure>();
+    }
+    where.add(p);
   }
 
   /**
@@ -427,7 +431,7 @@ public class ComboTableData {
    * 
    * @return Vector with the where's fields.
    */
-  private Vector<QueryFieldStructure> getWhereFields() {
+  private List<QueryFieldStructure> getWhereFields() {
     return this.where;
   }
 
@@ -439,9 +443,10 @@ public class ComboTableData {
    */
   public void addOrderByField(String _field) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", "ORDERBY");
-    if (this.orderBy == null)
-      this.orderBy = new Vector<QueryFieldStructure>();
-    orderBy.addElement(p);
+    if (this.orderBy == null) {
+      this.orderBy = new ArrayList<QueryFieldStructure>();
+    }
+    orderBy.add(p);
   }
 
   /**
@@ -449,7 +454,7 @@ public class ComboTableData {
    * 
    * @return Vector with the order by's fields.
    */
-  private Vector<QueryFieldStructure> getOrderByFields() {
+  private List<QueryFieldStructure> getOrderByFields() {
     return this.orderBy;
   }
 
@@ -458,7 +463,7 @@ public class ComboTableData {
    * 
    * @return Vector with the parameters.
    */
-  private Vector<QueryParameterStructure> getSelectParameters() {
+  private List<QueryParameterStructure> getSelectParameters() {
     return this.paramSelect;
   }
 
@@ -471,10 +476,11 @@ public class ComboTableData {
    *          String with the name od the field.
    */
   public void addFromParameter(String _parameter, String _fieldName) {
-    if (this.paramFrom == null)
-      this.paramFrom = new Vector<QueryParameterStructure>();
+    if (this.paramFrom == null) {
+      this.paramFrom = new ArrayList<QueryParameterStructure>();
+    }
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "FROM");
-    paramFrom.addElement(aux);
+    paramFrom.add(aux);
   }
 
   /**
@@ -482,7 +488,7 @@ public class ComboTableData {
    * 
    * @return Vector with the parameters.
    */
-  private Vector<QueryParameterStructure> getFromParameters() {
+  private List<QueryParameterStructure> getFromParameters() {
     return this.paramFrom;
   }
 
@@ -497,10 +503,11 @@ public class ComboTableData {
    *          String with a group name.
    */
   public void addWhereParameter(String _parameter, String _fieldName, String _type) {
-    if (this.paramWhere == null)
-      this.paramWhere = new Vector<QueryParameterStructure>();
+    if (this.paramWhere == null) {
+      this.paramWhere = new ArrayList<QueryParameterStructure>();
+    }
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, _type);
-    paramWhere.addElement(aux);
+    paramWhere.add(aux);
   }
 
   /**
@@ -508,7 +515,7 @@ public class ComboTableData {
    * 
    * @return Vector with the parameters.
    */
-  private Vector<QueryParameterStructure> getWhereParameters() {
+  private List<QueryParameterStructure> getWhereParameters() {
     return this.paramWhere;
   }
 
@@ -521,10 +528,11 @@ public class ComboTableData {
    *          String with the name of the field.
    */
   private void addOrderByParameter(String _parameter, String _fieldName) {
-    if (this.paramOrderBy == null)
-      this.paramOrderBy = new Vector<QueryParameterStructure>();
+    if (this.paramOrderBy == null) {
+      this.paramOrderBy = new ArrayList<QueryParameterStructure>();
+    }
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "ORDERBY");
-    paramOrderBy.addElement(aux);
+    paramOrderBy.add(aux);
   }
 
   /**
@@ -532,7 +540,7 @@ public class ComboTableData {
    * 
    * @return Vector with the parameters.
    */
-  private Vector<QueryParameterStructure> getOrderByParameters() {
+  private List<QueryParameterStructure> getOrderByParameters() {
     return this.paramOrderBy;
   }
 
@@ -549,7 +557,7 @@ public class ComboTableData {
     if (name == null || name.equals(""))
       throw new Exception("Invalid parameter name");
     if (this.parameters == null)
-      this.parameters = new Hashtable<String, String>();
+      this.parameters = new HashMap<String, String>();
     if (value == null || value.equals(""))
       this.parameters.remove(name.toUpperCase());
     else
@@ -577,17 +585,17 @@ public class ComboTableData {
    * 
    * @return Vector with the values.
    */
-  Vector<String> getParameters() {
-    Vector<String> result = new Vector<String>();
+  private List<String> getParameters() {
+    List<String> result = new ArrayList<>();
     if (log4j.isDebugEnabled())
       log4j.debug("Obtaining parameters");
-    Vector<QueryParameterStructure> vAux = getSelectParameters();
+    List<QueryParameterStructure> vAux = getSelectParameters();
     if (vAux != null) {
       for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.elementAt(i);
+        QueryParameterStructure aux = vAux.get(i);
         String strAux = getParameter(aux.getName());
         if (strAux == null || strAux.equals(""))
-          result.addElement(aux.getName());
+          result.add(aux.getName());
       }
     }
     if (log4j.isDebugEnabled())
@@ -595,10 +603,10 @@ public class ComboTableData {
     vAux = getFromParameters();
     if (vAux != null) {
       for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.elementAt(i);
+        QueryParameterStructure aux = vAux.get(i);
         String strAux = getParameter(aux.getName());
         if (strAux == null || strAux.equals(""))
-          result.addElement(aux.getName());
+          result.add(aux.getName());
       }
     }
     if (log4j.isDebugEnabled())
@@ -606,10 +614,10 @@ public class ComboTableData {
     vAux = getWhereParameters();
     if (vAux != null) {
       for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.elementAt(i);
+        QueryParameterStructure aux = vAux.get(i);
         String strAux = getParameter(aux.getName());
         if (strAux == null || strAux.equals(""))
-          result.addElement(aux.getName());
+          result.add(aux.getName());
       }
     }
     if (log4j.isDebugEnabled())
@@ -617,15 +625,15 @@ public class ComboTableData {
     vAux = getOrderByParameters();
     if (vAux != null) {
       for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.elementAt(i);
+        QueryParameterStructure aux = vAux.get(i);
         String strAux = getParameter(aux.getName());
         if (strAux == null || strAux.equals(""))
-          result.addElement(aux.getName());
+          result.add(aux.getName());
       }
     }
     if (log4j.isDebugEnabled())
       log4j.debug("Order by parameters obtained");
-    result.addElement("#AD_LANGUAGE");
+    result.add("#AD_LANGUAGE");
     return result;
   }
 
@@ -660,16 +668,16 @@ public class ComboTableData {
    * doesn´t know the alias of the referenced field.
    */
   private void parseNames() {
-    Vector<QueryFieldStructure> tables = getFromFields();
+    List<QueryFieldStructure> tables = getFromFields();
     if (tables == null || tables.size() == 0)
       return;
     if (where != null && where.size() > 0) {
       for (int i = 0; i < where.size(); i++) {
-        QueryFieldStructure auxStructure = where.elementAt(i);
+        QueryFieldStructure auxStructure = where.get(i);
         if (auxStructure.getType().equalsIgnoreCase("FILTER")) {
           String strAux = auxStructure.getField();
           for (int j = 0; j < tables.size(); j++) {
-            QueryFieldStructure auxTable = tables.elementAt(j);
+            QueryFieldStructure auxTable = tables.get(j);
             String strTable = auxTable.getField();
             int p = strTable.indexOf(" ");
             if (p != -1)
@@ -687,10 +695,10 @@ public class ComboTableData {
     }
     if (orderBy != null && orderBy.size() > 0) {
       for (int i = 0; i < orderBy.size(); i++) {
-        QueryFieldStructure auxStructure = orderBy.elementAt(i);
+        QueryFieldStructure auxStructure = orderBy.get(i);
         String strAux = auxStructure.getField();
         for (int j = 0; j < tables.size(); j++) {
-          QueryFieldStructure auxTable = tables.elementAt(j);
+          QueryFieldStructure auxTable = tables.get(j);
           String strTable = auxTable.getField();
           int p = strTable.indexOf(" ");
           if (p != -1)
@@ -849,7 +857,7 @@ public class ComboTableData {
   private String getQuery(boolean onlyId, String[] discard, String recordId, Integer startRow,
       Integer endRow, ConnectionProvider conn, boolean applyFilter) {
     StringBuffer text = new StringBuffer();
-    Vector<QueryFieldStructure> aux = getSelectFields();
+    List<QueryFieldStructure> aux = getSelectFields();
     String idName = "", nameToCompare = null;
     boolean hasWhere = false;
     boolean applyLimits = (startRow != null && startRow != -1) && (endRow != null && endRow != -1)
@@ -861,7 +869,7 @@ public class ComboTableData {
       String id = "";
       text.append("SELECT ");
       for (int i = 0; i < aux.size(); i++) {
-        QueryFieldStructure auxStructure = aux.elementAt(i);
+        QueryFieldStructure auxStructure = aux.get(i);
         if (!isInArray(discard, auxStructure.getType())) {
           if (auxStructure.getData("alias").equalsIgnoreCase("ID")) {
             if (id.equals("")) {
@@ -902,7 +910,7 @@ public class ComboTableData {
       StringBuffer txtAux = new StringBuffer();
       text.append("FROM ");
       for (int i = 0; i < aux.size(); i++) {
-        QueryFieldStructure auxStructure = aux.elementAt(i);
+        QueryFieldStructure auxStructure = aux.get(i);
         if (!isInArray(discard, auxStructure.getType())) {
           if (!txtAux.toString().equals(""))
             txtAux.append("left join ");
@@ -917,7 +925,7 @@ public class ComboTableData {
     if (aux != null) {
       StringBuffer txtAux = new StringBuffer();
       for (int i = 0; i < aux.size(); i++) {
-        QueryFieldStructure auxStructure = aux.elementAt(i);
+        QueryFieldStructure auxStructure = aux.get(i);
         if ("ORG_LIST".equals(auxStructure.getType()) && orgList == null) {
           continue;
         }
@@ -947,7 +955,7 @@ public class ComboTableData {
         StringBuffer txtAux = new StringBuffer();
         text.append("ORDER BY ");
         for (int i = 0; i < aux.size(); i++) {
-          QueryFieldStructure auxStructure = aux.elementAt(i);
+          QueryFieldStructure auxStructure = aux.get(i);
           if (!isInArray(discard, auxStructure.getType())) {
             if (!txtAux.toString().equals(""))
               txtAux.append(", ");
@@ -1026,10 +1034,10 @@ public class ComboTableData {
   private int setSQLParameters(PreparedStatement st, Map<String, String> lparameters,
       int iParameter, String[] discard, String recordId, String filter) {
     int localIParameter = iParameter;
-    Vector<QueryParameterStructure> vAux = getSelectParameters();
+    List<QueryParameterStructure> vAux = getSelectParameters();
     if (vAux != null) {
       for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.elementAt(i);
+        QueryParameterStructure aux = vAux.get(i);
         if (!isInArray(discard, aux.getType())) {
           String strAux = lparameters != null ? (aux.getName() == null ? null : lparameters.get(aux
               .getName().toUpperCase())) : getParameter(aux.getName());
@@ -1042,7 +1050,7 @@ public class ComboTableData {
     vAux = getFromParameters();
     if (vAux != null) {
       for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.elementAt(i);
+        QueryParameterStructure aux = vAux.get(i);
         if (!isInArray(discard, aux.getType())) {
           String strAux = lparameters != null ? (aux.getName() == null ? null : lparameters.get(aux
               .getName().toUpperCase())) : getParameter(aux.getName());
@@ -1055,7 +1063,7 @@ public class ComboTableData {
     vAux = getWhereParameters();
     if (vAux != null) {
       for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.elementAt(i);
+        QueryParameterStructure aux = vAux.get(i);
         if (!isInArray(discard, aux.getType())) {
           String strAux = lparameters != null ? (aux.getName() == null ? null : lparameters.get(aux
               .getName().toUpperCase())) : getParameter(aux.getName());
@@ -1075,7 +1083,7 @@ public class ComboTableData {
     vAux = getOrderByParameters();
     if (vAux != null) {
       for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.elementAt(i);
+        QueryParameterStructure aux = vAux.get(i);
         if (!isInArray(discard, aux.getType())) {
           String strAux = lparameters != null ? (aux.getName() == null ? null : lparameters.get(aux
               .getName().toUpperCase())) : getParameter(aux.getName());
@@ -1129,11 +1137,9 @@ public class ComboTableData {
           sqlReturnObject.setData("ID", UtilSql.getValue(result, "ID"));
           sqlReturnObject.setData("NAME", UtilSql.getValue(result, "NAME"));
           sqlReturnObject.setData("DESCRIPTION", UtilSql.getValue(result, "DESCRIPTION"));
-          Vector<Object> vector = new Vector<Object>(0);
+          List<Object> vector = new ArrayList<>(1);
           vector.add(sqlReturnObject);
-          FieldProvider objectListData[] = new FieldProvider[vector.size()];
-          vector.copyInto(objectListData);
-          return (objectListData);
+          return vector.toArray(new FieldProvider[vector.size()]);
         }
 
         if (includeActual && actual != null && !actual.equals("")) {
@@ -1151,11 +1157,9 @@ public class ComboTableData {
             if (!strName.startsWith(INACTIVE_DATA))
               strName = INACTIVE_DATA + strName;
             sqlReturnObject.setData("NAME", strName);
-            Vector<Object> vector = new Vector<Object>(0);
+            List<Object> vector = new ArrayList<>(1);
             vector.add(sqlReturnObject);
-            FieldProvider objectListData[] = new FieldProvider[vector.size()];
-            vector.copyInto(objectListData);
-            return (objectListData);
+            return vector.toArray(new FieldProvider[vector.size()]);
           }
 
         }
@@ -1173,8 +1177,7 @@ public class ComboTableData {
       log4j.debug("SQL: " + strSql);
     PreparedStatement st = conn.getPreparedStatement(strSql);
     ResultSet result;
-    Vector<Object> vector = new Vector<Object>(0);
-
+    List<Object> vector = new ArrayList<>();
     try {
       int iParameter = 0;
       iParameter = setSQLParameters(st, lparameters, iParameter, null, null, filterValue);
@@ -1188,18 +1191,16 @@ public class ComboTableData {
         if (includeActual && actual != null && !actual.equals("")) {
           if (actual.equals(sqlReturnObject.getData("ID"))) {
             if (!idFound) {
-              vector.addElement(sqlReturnObject);
+              vector.add(sqlReturnObject);
               idFound = true;
             }
           } else {
-            vector.addElement(sqlReturnObject);
+            vector.add(sqlReturnObject);
           }
         } else
-          vector.addElement(sqlReturnObject);
+          vector.add(sqlReturnObject);
         if (lparameters != null && lparameters.containsKey("#ONLY_ONE_RECORD#")) {
-          FieldProvider objectListData[] = new FieldProvider[vector.size()];
-          vector.copyInto(objectListData);
-          return (objectListData);
+          return vector.toArray(new FieldProvider[vector.size()]);
         }
       }
       result.close();
@@ -1243,7 +1244,7 @@ public class ComboTableData {
             if (!strName.startsWith(INACTIVE_DATA))
               strName = INACTIVE_DATA + strName;
             sqlReturnObject.setData("NAME", strName);
-            vector.addElement(sqlReturnObject);
+            vector.add(sqlReturnObject);
             idFound = true;
           }
         }
@@ -1258,7 +1259,7 @@ public class ComboTableData {
                       lparameters != null ? lparameters.get("#AD_LANGUAGE")
                           : getParameter("#AD_LANGUAGE")));
 
-          vector.addElement(sqlReturnObject);
+          vector.add(sqlReturnObject);
         }
       }
     } catch (SQLException e) {
@@ -1267,9 +1268,7 @@ public class ComboTableData {
     } finally {
       conn.releasePreparedStatement(st);
     }
-    FieldProvider objectListData[] = new FieldProvider[vector.size()];
-    vector.copyInto(objectListData);
-    return (objectListData);
+    return vector.toArray(new FieldProvider[vector.size()]);
   }
 
   /**
@@ -1320,12 +1319,12 @@ public class ComboTableData {
    */
   void fillSQLParameters(ConnectionProvider conn, VariablesSecureApp variables, FieldProvider data,
       String tab, String window, String actual_value, boolean fromSearch) throws ServletException {
-    final Vector<String> vAux = getParameters();
+    final List<String> vAux = getParameters();
     if (vAux != null && vAux.size() > 0) {
       if (log4j.isDebugEnabled())
         log4j.debug("Combo Parameters: " + vAux.size());
       for (int i = 0; i < vAux.size(); i++) {
-        final String strAux = vAux.elementAt(i);
+        final String strAux = vAux.get(i);
         try {
           final String value = Utility.parseParameterValue(conn, variables, data, strAux, tab,
               window, actual_value, fromSearch);
@@ -1342,17 +1341,18 @@ public class ComboTableData {
   public Map<String, String> fillSQLParametersIntoMap(ConnectionProvider conn,
       VariablesSecureApp variables, FieldProvider data, String window, String actual_value)
       throws ServletException {
-    final Vector<String> vAux = getParameters();
-    Hashtable<String, String> lparameters = new Hashtable<String, String>();
+    final List<String> vAux = getParameters();
+    Map<String, String> lparameters = new HashMap<>();
     // We first add all current parameters in the combo
     for (String key : parameters.keySet()) {
       lparameters.put(key, parameters.get(key));
     }
+    lparameters.putAll(parameters);
     if (vAux != null && vAux.size() > 0) {
       if (log4j.isDebugEnabled())
         log4j.debug("Combo Parameters: " + vAux.size());
       for (int i = 0; i < vAux.size(); i++) {
-        final String strAux = vAux.elementAt(i);
+        final String strAux = vAux.get(i);
         try {
           final String value = Utility.parseParameterValue(conn, variables, data, strAux, "",
               window, actual_value, false);
@@ -1368,7 +1368,6 @@ public class ComboTableData {
       }
     }
     return lparameters;
-
   }
 
   public boolean canBeCached() {
