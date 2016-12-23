@@ -728,7 +728,7 @@ public class ComboTableData {
     if (log4j.isDebugEnabled())
       log4j.debug("parsing data: " + localData + " - replace: " + replaceWhat + " - with: "
           + replaceWith);
-    StringBuffer text = new StringBuffer();
+    StringBuilder text = new StringBuilder();
     int i = localData.toUpperCase().indexOf(replaceWhat.toUpperCase());
     while (i != -1) {
       text.append(localData.substring(0, i)).append(replaceWith);
@@ -773,7 +773,7 @@ public class ComboTableData {
   public String parseContext(String context, String type) {
     if (context == null || context.equals(""))
       return "";
-    StringBuffer strOut = new StringBuffer();
+    StringBuilder strOut = new StringBuilder();
     String value = new String(context);
     String token, defStr;
     int i = value.indexOf("@");
@@ -851,7 +851,7 @@ public class ComboTableData {
    */
   private String getQuery(boolean onlyId, String[] discard, String recordId, Integer startRow,
       Integer endRow, ConnectionProvider conn, boolean applyFilter) {
-    StringBuffer text = new StringBuffer();
+    StringBuilder text = new StringBuilder();
     List<QueryFieldStructure> aux = getSelectFields();
     String idName = "", nameToCompare = null;
     boolean hasWhere = false;
@@ -859,7 +859,7 @@ public class ComboTableData {
         && StringUtils.isEmpty(recordId);
     String rdbms = conn == null ? "" : conn.getRDBMS();
     if (aux != null) {
-      StringBuffer name = new StringBuffer();
+      StringBuilder name = new StringBuilder();
       String description = "";
       String id = "";
       text.append("SELECT ");
@@ -901,7 +901,7 @@ public class ComboTableData {
 
     aux = getFromFields();
     if (aux != null) {
-      StringBuffer txtAux = new StringBuffer();
+      StringBuilder txtAux = new StringBuilder();
       text.append("FROM ");
       for (QueryFieldStructure auxStructure : aux) {
         if (!isInArray(discard, auxStructure.getType())) {
@@ -916,7 +916,7 @@ public class ComboTableData {
     aux = getWhereFields();
     String orgList = getOrgList();
     if (aux != null) {
-      StringBuffer txtAux = new StringBuffer();
+      StringBuilder txtAux = new StringBuilder();
       for (QueryFieldStructure auxStructure : aux) {
         if ("ORG_LIST".equals(auxStructure.getType()) && orgList == null) {
           continue;
@@ -944,7 +944,7 @@ public class ComboTableData {
     if (!onlyId) {
       aux = getOrderByFields();
       if (aux != null) {
-        StringBuffer txtAux = new StringBuffer();
+        StringBuilder txtAux = new StringBuilder();
         text.append("ORDER BY ");
         for (QueryFieldStructure auxStructure : aux) {
           if (!isInArray(discard, auxStructure.getType())) {
