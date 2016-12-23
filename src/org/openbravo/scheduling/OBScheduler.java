@@ -107,16 +107,9 @@ public class OBScheduler {
   }
 
   /**
-   * @return The dateTimeFormat of the OBScheduler.
-   */
-  public String getDateTimeFormat() {
-    return dateTimeFormat;
-  }
-
-  /**
    * @return The sqlDateTimeFormat of the OBScheduler.
    */
-  public String getSqlDateTimeFormat() {
+  String getSqlDateTimeFormat() {
     return sqlDateTimeFormat;
   }
 
