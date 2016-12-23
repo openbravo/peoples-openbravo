@@ -118,7 +118,7 @@ public class CostAdjustmentUtils {
       Date accountingDate) {
     Long stdPrecission = transaction.getCurrency().getStandardPrecision();
     CostAdjustmentLine costAdjustmentLine = OBProvider.getInstance().get(CostAdjustmentLine.class);
-    costAdjustmentLine.setOrganization(costAdjustmentHeader.getOrganization());
+    costAdjustmentLine.setOrganization(transaction.getOrganization());
     costAdjustmentLine.setCostAdjustment(costAdjustmentHeader);
     if (costAdjusted == null) {
       costAdjustmentLine.setAdjustmentAmount(null);
