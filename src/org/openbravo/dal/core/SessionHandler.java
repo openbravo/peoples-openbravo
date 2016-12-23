@@ -110,11 +110,8 @@ public class SessionHandler implements OBNotSingleton {
     return sh;
   }
 
-  private static boolean checkedSessionHandlerRegistration = false;
-
   private static SessionHandler getCreateSessionHandler() {
-    if (!checkedSessionHandlerRegistration
-        && !OBProvider.getInstance().isRegistered(SessionHandler.class)) {
+    if (!OBProvider.getInstance().isRegistered(SessionHandler.class)) {
       OBProvider.getInstance().register(SessionHandler.class, SessionHandler.class, false);
     }
     return OBProvider.getInstance().get(SessionHandler.class);
