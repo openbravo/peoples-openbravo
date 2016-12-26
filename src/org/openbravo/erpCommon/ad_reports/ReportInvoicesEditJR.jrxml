@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2016-07-12T14:50:17 -->
+<!-- 2016-12-26T16:04:35 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportInvoicesEditJR" pageWidth="930" pageHeight="595" orientation="Landscape" columnWidth="870" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="d47540dd-b79e-4355-811f-a0b9f6886e2b">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -452,7 +452,10 @@
 					<text><![CDATA[Amount]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-21" style="Detail_Header" x="422" y="32" width="30" height="14" uuid="91d797ff-561c-4b79-b38c-ac71309b4082"/>
+					<reportElement key="staticText-21" style="Detail_Header" x="422" y="32" width="31" height="14" uuid="91d797ff-561c-4b79-b38c-ac71309b4082">
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -466,7 +469,10 @@
 					<text><![CDATA[Price]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-22" style="Detail_Header" x="631" y="32" width="45" height="14" uuid="fe181b13-7a5d-49d2-8dcf-520330947475"/>
+					<reportElement key="staticText-22" style="Detail_Header" x="631" y="32" width="46" height="14" uuid="fe181b13-7a5d-49d2-8dcf-520330947475">
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -480,8 +486,11 @@
 					<text><![CDATA[Base]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-23" style="Detail_Header" x="794" y="32" width="32" height="14" uuid="5b5df695-e5cf-4435-a05c-657804a3ad65"/>
-					<box leftPadding="5">
+					<reportElement key="staticText-23" style="Detail_Header" x="794" y="32" width="33" height="14" uuid="5b5df695-e5cf-4435-a05c-657804a3ad65">
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="5" rightPadding="1">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
@@ -498,9 +507,9 @@
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-						<bottomPen lineWidth="0.0" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="8" pdfFontName="Helvetica-Bold"/>
@@ -512,9 +521,9 @@
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-						<bottomPen lineWidth="0.0" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="8" pdfFontName="Helvetica-Bold"/>
@@ -526,9 +535,9 @@
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-						<bottomPen lineWidth="0.0" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="8" pdfFontName="Helvetica-Bold"/>
