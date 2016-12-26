@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -100,8 +100,7 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
 
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoicesEditJR.jrxml";
     String strOutput = "html";
-    if (strOutput.equals("html"))
-      response.setHeader("Content-disposition", "inline; filename=ReportInvoicesEdit.html");
+    response.setHeader("Content-disposition", "inline; filename=ReportInvoicesEdit.html");
 
     // Checks if there is a conversion rate for each of the transactions of
     // the report
