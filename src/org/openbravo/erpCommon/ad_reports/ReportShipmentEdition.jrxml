@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2016-07-13T12:15:51 -->
+<!-- 2016-12-26T15:52:57 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportShipmentEdition" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="03915ee5-7c7b-45a2-9519-6fc1230d6340">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -244,7 +244,7 @@
 						<bottomPen lineWidth="0.0" lineColor="#000000"/>
 						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 					</box>
-					<text><![CDATA[Unit]]></text>
+					<text><![CDATA[UOM]]></text>
 				</staticText>
 				<staticText>
 					<reportElement key="staticText-2" style="GroupHeader_DarkGray" x="277" y="0" width="114" height="22" uuid="87c2d1b9-1d0f-45f3-90a0-810b631ab38d"/>
@@ -288,7 +288,7 @@
 						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 					</box>
 					<textElement textAlignment="Center"/>
-					<text><![CDATA[Quantity in AUM]]></text>
+					<text><![CDATA[Qty in AUM]]></text>
 				</staticText>
 				<staticText>
 					<reportElement key="element-90" style="Detail_Header" x="480" y="26" width="50" height="16" uuid="9353de63-a25b-4f2c-9da2-01c6f3be182a">
@@ -345,7 +345,7 @@
 						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 					</box>
 					<textElement textAlignment="Center"/>
-					<text><![CDATA[Unit]]></text>
+					<text><![CDATA[UOM]]></text>
 				</staticText>
 			</band>
 		</groupHeader>
