@@ -58,7 +58,7 @@ enyo.kind({
         classes: 'standardFlexContainer flexColumn',
         components: [{
           name: 'identifier',
-          style: 'max-height: 70px; overflow: hidden;'
+          classes: 'productIdentifier'
         }, {
           style: 'color: #888888',
           name: 'filterAttr',
@@ -104,6 +104,20 @@ enyo.kind({
     var shouldResizeWork = ((enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 445) || (!enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 874));
     var hideProductImages = (OB.MobileApp.model.hasPermission('OBPOS_HideProductImages', true) || OB.MobileApp.model.hasPermission('OBPOS_HideProductImagesInSearchAndBrowse', true));
     var searchTab = false;
+
+    function getFontSize(price) {
+      var fontSize = '16px;';
+      if (price.length === 9) {
+        fontSize = '15px;';
+      } else if (price.length === 10) {
+        fontSize = '14px;';
+      } else if (price.length === 11) {
+        fontSize = '13px;';
+      } else if (price.length > 11) {
+        fontSize = '12px;';
+      }
+      return fontSize;
+    }
     if (_.isUndefined(this.$.price) || _.isUndefined(this.$.priceList) || _.isUndefined(this.model)) {
       //Probably this event was raised during destroy and we want to ignore it.
       return true;
@@ -115,24 +129,22 @@ enyo.kind({
       this.$.priceList.addStyles('font-size: 16px;');
       if (OB.MobileApp.model.hasPermission('ShowStandardPriceOnSearchAndBrowse', true)) {
         if (OB.I18N.formatCurrency(this.model.get('currentStandardPrice')).length > 11 && !searchTab && !hideProductImages && shouldResizeWork) {
-          this.$.priceList.addStyles('font-size: 12px;');
+          this.$.price.addStyles('font-size: ' + getFontSize(OB.I18N.formatCurrency(this.model.get('currentStandardPrice'))));
         }
         this.$.priceList.setContent(OB.I18N.formatCurrency(this.model.get('currentStandardPrice')));
       }
       if (this.model.get('standardPrice')) {
         this.$.price.addStyles('font-size: 16px;');
-        if (OB.I18N.formatCurrency(this.model.get('standardPrice')).length > 11 && !searchTab && !hideProductImages && shouldResizeWork) {
-          this.$.price.addStyles('font-size: 12px;');
+        if (!searchTab && !hideProductImages && shouldResizeWork) {
+          this.$.price.addStyles('font-size: ' + getFontSize(OB.I18N.formatCurrency(this.model.get('standardPrice'))));
         }
       }
       this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
     } else {
       if (this.model.get('standardPrice')) {
         this.$.price.addStyles('font-size: 16px;');
-        if (OB.I18N.formatCurrency(this.model.get('standardPrice')).length > 11 && !searchTab && !hideProductImages && shouldResizeWork) {
-          if ((enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 445) || (!enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 874)) {
-            this.$.price.addStyles('font-size: 12px;');
-          }
+        if (!searchTab && !hideProductImages && shouldResizeWork) {
+          this.$.price.addStyles('font-size: ' + getFontSize(OB.I18N.formatCurrency(this.model.get('standardPrice'))));
         }
       }
       this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));

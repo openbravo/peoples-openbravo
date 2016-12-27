@@ -348,7 +348,7 @@ button.btnbp:disabled {
 }
 
 .fix-bgposition-y {
-  background-position-y: 0px;	
+  background-position-y: 0px;
 }
 
 .iconRemove {
@@ -399,7 +399,7 @@ button.btnbp:disabled {
 }
 
 .receipt-customer-selector-editor {
-  width: 870px !important;	
+  width: 870px !important;
 }
 
 .addresstext-onlyone {
@@ -739,4 +739,11 @@ button.btnbp:disabled {
 
 .productLine .productImgContainer {
   margin: 0px 8px 0px 0px;
+}
+
+.productLine .productIdentifier {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
 }
