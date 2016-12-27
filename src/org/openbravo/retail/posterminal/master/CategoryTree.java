@@ -28,6 +28,8 @@ import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.retail.config.OBRETCOProductList;
+import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class CategoryTree extends ProcessHQLQuery {
@@ -46,6 +48,7 @@ public class CategoryTree extends ProcessHQLQuery {
       OBContext.setAdminMode(true);
       Map<String, Object> paramValues = new HashMap<String, Object>();
       String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+      final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
       boolean isRemote = false;
       try {
         OBContext.setAdminMode(false);
@@ -59,6 +62,7 @@ public class CategoryTree extends ProcessHQLQuery {
         OBContext.restorePreviousMode();
       }
 
+      paramValues.put("productListId", productList.getId());
       paramValues.put("productCategoryTableId", CategoryTree.productCategoryTableId);
       if (isRemote) {
         paramValues.put("productCategoryTableId", CategoryTree.productCategoryTableId);
@@ -82,6 +86,7 @@ public class CategoryTree extends ProcessHQLQuery {
         .getPropertyExtensions(extensions);
 
     boolean isRemote = false;
+    final String clientId = OBContext.getOBContext().getCurrentClient().getId();
     try {
       OBContext.setAdminMode(true);
       isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true, OBContext
@@ -118,33 +123,40 @@ public class CategoryTree extends ProcessHQLQuery {
               + " and tn.node = pc.id and tn.tree.table.id = :productCategoryTableId "
               + "order by tn.sequenceNumber");
     }
+
+    String whereClause = "p.client.id = '"
+        + clientId
+        + "' "
+        + "and p.startingDate <= :startingDate "
+        + "and (p.endingDate is null or p.endingDate >= :endingDate) "
+        // assortment products
+        + "and ((p.includedProducts = 'N' "
+        + "  and not exists (select 1 from PricingAdjustmentProduct pap"
+        + "    where pap.active = true and pap.priceAdjustment = p and pap.product.sale = true "
+        + "      and pap.product not in (select ppl.product.id from OBRETCO_Prol_Product ppl "
+        + "         where ppl.obretcoProductlist.id = :productListId and ppl.active = true))) "
+        + " or p.includedProducts = 'Y') "
+        // organization
+        + "and ((p.includedOrganizations='Y' " + "  and not exists (select 1 "
+        + "         from PricingAdjustmentOrganization o" + "        where active = true"
+        + "          and o.priceAdjustment = p" + "          and o.organization.id = :orgId )) "
+        + "   or (p.includedOrganizations='N' " + "  and  exists (select 1 "
+        + "         from PricingAdjustmentOrganization o" + "        where active = true"
+        + "          and o.priceAdjustment = p" + "          and o.organization.id = :orgId ))) ";
+
     // Discounts marked as category
     hqlQueries.add("select pt.id as id, pt.id as categoryId, '0' as parentId, 999999999 as seqNo, "//
-        // Discount
-        + " (case when exists (select 1"//
-        + "                from PricingAdjustment p " //
-        + "               where p.discountType.active = true " //
-        + "                 and p.active = true"//
-        + "                 and p.discountType = pt"//
-        + "                 and (p.endingDate is null or p.endingDate >= :endingDate ) " //
-        + "                 and p.startingDate <= :startingDate "
-        // organization
-        + "and ((p.includedOrganizations='Y' "
-        + "  and not exists (select 1 "
-        + "         from PricingAdjustmentOrganization o"
-        + "        where active = true"
-        + "          and o.priceAdjustment = p"
-        + "          and o.organization.id = :orgId )) "
-        + "   or (p.includedOrganizations='N' "
-        + "  and  exists (select 1 "
-        + "         from PricingAdjustmentOrganization o"
-        + "        where active = true"
-        + "          and o.priceAdjustment = p" + "          and o.organization.id = :orgId )) " //
-        + "    ) "//
-        + ")" + " then true else false end) as active " //
-        + "from PromotionType as pt left outer join pt.obposImage img " //
-        + "where pt.obposIsCategory = true "//
-        + "  and pt.$readableSimpleClientCriteria");
+        + "(case when (count(p.name) > 0 and exists (select 1 from PricingAdjustment p "
+        + "where p.discountType = pt and p.active = true and "
+        + whereClause
+        + ")) "
+        + "then true else false end) as active "
+        + "from PromotionType pt inner join pt.pricingAdjustmentList p "
+        + "where pt.active = true and pt.obposIsCategory = true "//
+        + "and pt.$readableSimpleClientCriteria "//
+        + "and (p.$incrementalUpdateCriteria) " //
+        + "and " + whereClause //
+        + "group by pt.id");
 
     return hqlQueries;
   }

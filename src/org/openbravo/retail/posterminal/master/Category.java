@@ -102,6 +102,7 @@ public class Category extends ProcessHQLQuery {
         .getPropertyExtensions(extensions);
 
     boolean isRemote = false;
+    final String clientId = OBContext.getOBContext().getCurrentClient().getId();
     try {
       OBContext.setAdminMode(false);
       isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true, OBContext
@@ -151,24 +152,14 @@ public class Category extends ProcessHQLQuery {
     } else {
       promoNameTrl = "pt.commercialName";
     }
-    // Discounts marked as category
-    hqlQueries.add("select pt.id as id, "
-        + promoNameTrl
-        + " as searchKey, "
-        + promoNameTrl
-        + " as name, img.bindaryData as img, "
-        + promoNameTrl
-        + " as _identifier, "
-        // Discount
-        + " (case when exists (select 1"//
-        + "                from PricingAdjustment p " //
-        + "               where p.discountType.active = true " //
-        + "                 and p.active = true and p.client.id = :clientId "//
-        + "                 and p.discountType = pt"//
-        + "                 and (p.endingDate is null or p.endingDate >=  :endingDate )" //
-        + "                 and p.startingDate <= :startingDate "
+
+    String whereClause = "p.client.id = '"
+        + clientId
+        + "' "
+        + "and p.startingDate <= :startingDate "
+        + "and (p.endingDate is null or p.endingDate >= :endingDate) "
         // assortment products
-        + " and ((p.includedProducts = 'N' "
+        + "and ((p.includedProducts = 'N' "
         + "  and not exists (select 1 from PricingAdjustmentProduct pap"
         + "    where pap.active = true and pap.priceAdjustment = p and pap.product.sale = true "
         + "      and pap.product not in (select ppl.product.id from OBRETCO_Prol_Product ppl "
@@ -180,12 +171,22 @@ public class Category extends ProcessHQLQuery {
         + "          and o.priceAdjustment = p" + "          and o.organization.id = :orgId )) "
         + "   or (p.includedOrganizations='N' " + "  and  exists (select 1 "
         + "         from PricingAdjustmentOrganization o" + "        where active = true"
-        + "          and o.priceAdjustment = p" + "          and o.organization.id = :orgId )) "
-        + "    ) " + ")" + " then true else false end) as active, " //
+        + "          and o.priceAdjustment = p" + "          and o.organization.id = :orgId ))) ";
+
+    // Discounts marked as category
+    hqlQueries.add("select pt.id as id, " + promoNameTrl + " as searchKey, " + promoNameTrl
+        + " as name, " + promoNameTrl + " as _identifier, "
+        + "(select bindaryData from ADImage ai where ai = pt.obposImage) as img, "
+        + "(case when (count(p.name) > 0 and exists (select 1 from PricingAdjustment p "
+        + "where p.discountType = pt and p.active = true and " + whereClause + ")) "
+        + "then true else false end) as active, "
         + "'N' as realCategory " //
-        + " from PromotionType as pt left outer join pt.obposImage img " //
-        + " where pt.obposIsCategory = true "//
-        + "  and pt.$readableSimpleClientCriteria");
+        + "from PromotionType pt inner join pt.pricingAdjustmentList p "
+        + "where pt.active = true and pt.obposIsCategory = true "//
+        + "and pt.$readableSimpleClientCriteria "//
+        + "and (p.$incrementalUpdateCriteria) " //
+        + "and " + whereClause//
+        + "group by pt.id, pt.commercialName, pt.obposImage");
     return hqlQueries;
   }
 
