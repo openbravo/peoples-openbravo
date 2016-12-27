@@ -378,10 +378,6 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         filterQuery.setParameter("org", terminal.getOrganization());
         if (filterQuery.list().size() > 0) {
           final JSONObject serverJson = createServerJSON(server);
-          // a store server which has explicitly listed the org must be the current server
-          if (MobileServerUtils.STORE_SERVER.equals(server.getServerType())) {
-            serverJson.put("currentServer", true);
-          }
           respArray.put(serverJson);
         }
       }
