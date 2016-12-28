@@ -339,7 +339,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           for (int i = 0; i < order.getOrderLineList().size(); i++) {
             JSONObject jsonOrderLine = orderlines.getJSONObject(i);
             OrderLine ol = order.getOrderLineList().get(i);
-            ol.setObposCanbedelivered(jsonOrderLine.getBoolean("obposCanbedelivered"));
+            ol.setObposCanbedelivered(jsonOrderLine.optBoolean("obposCanbedelivered", false));
             BigDecimal qtyToDeliver = jsonOrderLine.has("availableQtyToDeliver") ? new BigDecimal(
                 jsonOrderLine.getDouble("availableQtyToDeliver")) : (jsonOrderLine
                 .has("obposQtytodeliver") ? new BigDecimal(
@@ -366,6 +366,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           for (int i = 0; i < lstResultOL.size(); i++) {
             orderLine = lstResultOL.get(i);
             JSONObject jsonOrderLine = orderlines.getJSONObject(i);
+            orderLine
+                .setObposCanbedelivered(jsonOrderLine.optBoolean("obposCanbedelivered", false));
             BigDecimal qtyToDeliver = jsonOrderLine.has("obposQtytodeliver") ? BigDecimal
                 .valueOf(jsonOrderLine.getDouble("obposQtytodeliver")) : orderLine
                 .getOrderedQuantity();
