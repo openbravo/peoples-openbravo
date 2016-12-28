@@ -101,7 +101,7 @@ enyo.kind({
     name: 'bottonLine'
   }],
   drawPriceBasedOnSize: function () {
-    var shouldResizeWork = ((enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 445) || (!enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 874));
+    var shouldResizeWork = ((enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 466) || (!enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 925));
     var hideProductImages = (OB.MobileApp.model.hasPermission('OBPOS_HideProductImages', true) || OB.MobileApp.model.hasPermission('OBPOS_HideProductImagesInSearchAndBrowse', true));
     var searchTab = false;
 
@@ -109,12 +109,34 @@ enyo.kind({
       var fontSize = '16px;';
       if (price.length === 9) {
         fontSize = '15px;';
+        if (enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 410) {
+          fontSize = '14px;';
+        }
       } else if (price.length === 10) {
         fontSize = '14px;';
+        if (enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 410) {
+          fontSize = '13px;';
+        }
       } else if (price.length === 11) {
         fontSize = '13px;';
+        if (enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 410) {
+          fontSize = '12px;';
+        }
       } else if (price.length > 11) {
         fontSize = '12px;';
+        if (!enyo.Panels.isScreenNarrow()) {
+          if (document.body.clientWidth >= 840 && document.body.clientWidth <= 925) {
+            fontSize = '13px;';
+          } else if (document.body.clientWidth < 840) {
+            fontSize = '11px;';
+          }
+        } else {
+          if (document.body.clientWidth <= 425 && document.body.clientWidth > 400) {
+            fontSize = '11px;';
+          } else if (document.body.clientWidth <= 400) {
+            fontSize = '10px;';
+          }
+        }
       }
       return fontSize;
     }
