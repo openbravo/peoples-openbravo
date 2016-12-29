@@ -55,11 +55,13 @@ enyo.kind({
           OB.I18N.getLabel('OBPOS_ProblemWithPopups'), OB.I18N.getLabel('OBPOS_ProblemWithPopupInfo'), [{
             isConfirmButton: true,
             label: OB.I18N.getLabel('OBMOBC_Reload'),
+            style: 'color: red;',
             action: function () {
               window.location.reload();
             }
           }, {
-            label: OB.I18N.getLabel('OBMOBC_Continue')
+            label: OB.I18N.getLabel('OBMOBC_Continue'),
+            style: 'color: red;'
           }], {
             style: 'background-color: red;'
           });
