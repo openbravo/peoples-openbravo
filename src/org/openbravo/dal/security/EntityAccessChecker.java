@@ -72,6 +72,7 @@ public class EntityAccessChecker implements OBNotSingleton {
 
   private static final String SELECTOR_REFERENCE = "95E2A8B50A254B2AAE6774B8C2F28120";
   private static final String MULTI_SELECTOR_REFERENCE = "87E6CFF8F71548AFA33F181C317970B5";
+  private static final String SEARCH_REFERENCE = "30";
   private static final String WINDOW_REFERENCE = "FF80818132D8F0F30132D9BC395D0038";
 
   // Table Access Level:
@@ -232,6 +233,22 @@ public class EntityAccessChecker implements OBNotSingleton {
         for (String processSelector : processAccessSelectors) {
           if (!processes.contains(processSelector)) {
             processes.add(processSelector);
+          }
+        }
+
+        // and take into account entities of complex defined selectors
+        final String selectorsOfSearchReference = "select distinct(s.table.id) from OBUISEL_Selector s "
+            + "left join s.reference r left join r.aDColumnReferenceSearchKeyList c "
+            + "where r.parentReference='" + SEARCH_REFERENCE + "' and c.table.id in " + inTables;
+        @SuppressWarnings("unchecked")
+        final List<String> targetTablesIds = SessionHandler.getInstance()
+            .createQuery(selectorsOfSearchReference).list();
+        for (String tableId : targetTablesIds) {
+          Entity targetSelectorEntity = ModelProvider.getInstance().getEntityByTableId(tableId);
+          if (!writableEntities.contains(targetSelectorEntity)
+              && !readableEntities.contains(targetSelectorEntity)
+              && !nonReadableEntities.contains(targetSelectorEntity)) {
+            derivedReadableEntities.add(targetSelectorEntity);
           }
         }
       }
