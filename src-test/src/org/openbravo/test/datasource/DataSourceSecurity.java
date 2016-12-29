@@ -67,6 +67,8 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   private static final String ROLE_INTERNATIONAL_ADMIN = "42D0EEB1C66F497A90DD526DC597E6F0";
   private static final String ROLE_NO_ACCESS = "1";
   private static final String ROLE_SYSTEM_ADMIN = "0";
+  private static final String ROLE_EMPLOYEE = "D615084948E046E3A439915008F464A6";
+
   private static final String ESP_ORG = "E443A31992CB4635AFCAEABE7183CE85";
   private static final String CLIENT = "23C59575B9CF467C9620760EB255B389";
 
@@ -85,7 +87,8 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   private enum RoleType {
     ADMIN_ROLE(ROLE_INTERNATIONAL_ADMIN, ESP_ORG), //
     NO_ACCESS_ROLE(ROLE_NO_ACCESS, ESP_ORG), //
-    SYSTEM_ROLE(ROLE_SYSTEM_ADMIN, ASTERISK_ORG_ID);
+    SYSTEM_ROLE(ROLE_SYSTEM_ADMIN, ASTERISK_ORG_ID), //
+    EMPLOYEE_ROLE(ROLE_EMPLOYEE, ESP_ORG);
 
     private String roleId;
     private String orgId;
@@ -304,7 +307,17 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
           }
         }), //
     AccountTreeMovement("D2F94DC86DEC48D69E4BFCE59DC670CF", JSONObjectURL.MOVEMENT_NODE,
-        OPERATION_UPDATE);
+        OPERATION_UPDATE), //
+    ProductStockView("ProductStockView", JSONObjectURL.NO_APPLIED, OPERATION_FETCH,
+        new HashMap<String, String>() {
+          {
+            // Requisition Window > Requisition Lines > Product Complete Selector.
+            put("_selectorDefinitionId", "4C8BC3E8E56441F4B8C98C684A0C9212");
+            put("_inpTableId", "800214");
+            put("targetProperty", "product");
+
+          }
+        });
 
     private String ds;
     private JSONObjectURL urlAndJson;
@@ -341,7 +354,9 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     for (RoleType type : RoleType.values()) {
       int accessForAdminOnly = type == RoleType.ADMIN_ROLE ? JsonConstants.RPCREQUEST_STATUS_SUCCESS
           : JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR;
-      int accessForAdminAndSystemOnly = type == RoleType.NO_ACCESS_ROLE ? JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR
+      int accessForAdminAndSystemOnly = (type == RoleType.NO_ACCESS_ROLE || type == RoleType.EMPLOYEE_ROLE) ? JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR
+          : JsonConstants.RPCREQUEST_STATUS_SUCCESS;
+      int accessForAdminAndSystemAndEmployee = type == RoleType.NO_ACCESS_ROLE ? JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR
           : JsonConstants.RPCREQUEST_STATUS_SUCCESS;
 
       testCases.add(new Object[] { type, DataSource.Order, accessForAdminOnly });
@@ -349,7 +364,7 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
       testCases.add(new Object[] { type, DataSource.ProductCharacteristics, accessForAdminOnly });
       testCases.add(new Object[] { type, DataSource.Combo, accessForAdminOnly });
       testCases.add(new Object[] { type, DataSource.CustomQuerySelectorDatasource,
-          accessForAdminAndSystemOnly });
+          accessForAdminAndSystemAndEmployee });
       testCases.add(new Object[] { type, DataSource.CustomQuerySelectorDatasourceProcess,
           accessForAdminAndSystemOnly });
 
@@ -388,6 +403,11 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
 
       // Moving a tree node : https://issues.openbravo.com/view.php?id=32833
       testCases.add(new Object[] { type, DataSource.AccountTreeMovement, accessForAdminOnly });
+
+      // Testing a problem detected in how permissions for the entities of the complex selectors are
+      // calculated. See regression issue https://issues.openbravo.com/view.php?id=34823
+      testCases.add(new Object[] { type, DataSource.ProductStockView,
+          accessForAdminAndSystemAndEmployee });
     }
     // testing a problem detected in how properties are initialized.
     testCases.add(new Object[] { RoleType.ADMIN_ROLE, DataSource.ProductByPriceAndWarehouse,
