@@ -12,6 +12,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.service.db.DbUtility;
 
@@ -22,8 +23,7 @@ import org.openbravo.service.db.DbUtility;
 public class ExternalOrderLoaderErrorHandler extends POSDataSynchronizationErrorHandler {
 
   @Override
-  public void handleError(Throwable t, String importQualifier, JSONObject result,
-      JSONObject jsonRecord) {
+  public void handleError(Throwable t, Entity entity, JSONObject result, JSONObject jsonRecord) {
     if (ExternalOrderLoader.isSynchronizedRequest()) {
       Throwable localT = t;
       if (localT instanceof OBException && localT.getCause() != null) {
@@ -35,7 +35,7 @@ public class ExternalOrderLoaderErrorHandler extends POSDataSynchronizationError
       }
       throw new OBException(ExternalOrderLoader.getCurrentException());
     }
-    super.handleError(t, importQualifier, result, jsonRecord);
+    super.handleError(t, entity, result, jsonRecord);
   }
 
   public boolean setImportEntryStatusToError() {
