@@ -235,7 +235,7 @@ public class EntityAccessChecker implements OBNotSingleton {
           }
         }
 
-        // and take into account entities of complex defined selectors
+        // and take into account entities of the selectors with Search parent reference
         final String selectorsOfSearchReference = "select distinct(s.table.id) from OBUISEL_Selector s "
             + "left join s.reference r left join r.aDColumnReferenceSearchKeyList c "
             + "where r.parentReference='" + SEARCH_REFERENCE + "' and c.table.id in " + inTables;

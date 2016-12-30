@@ -404,8 +404,8 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
       // Moving a tree node : https://issues.openbravo.com/view.php?id=32833
       testCases.add(new Object[] { type, DataSource.AccountTreeMovement, accessForAdminOnly });
 
-      // Testing a problem detected in how permissions for the entities of the complex selectors are
-      // calculated. See regression issue https://issues.openbravo.com/view.php?id=34823
+      // Testing a problem detected in how permissions for the entities of the selectors with Search
+      // parent reference are calculated. See issue https://issues.openbravo.com/view.php?id=34823
       testCases.add(new Object[] { type, DataSource.ProductStockView,
           accessForAdminAndSystemAndEmployee });
     }
