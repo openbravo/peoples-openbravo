@@ -598,14 +598,14 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
     }
     String strHaving = "";
     if (!strMayor.equals("") && !strMenor.equals("")) {
-      strHaving = " HAVING (SUM(CONVAMOUNT) > " + strMayor + " AND SUM(CONVAMOUNT) < " + strMenor
+      strHaving = " HAVING (SUM(CONVAMOUNT) >= " + strMayor + " AND SUM(CONVAMOUNT) < " + strMenor
           + ")";
     } else if (!strMayor.equals("") && strMenor.equals("")) {
-      strHaving = " HAVING (SUM(CONVAMOUNT) > " + strMayor + ")";
+      strHaving = " HAVING (SUM(CONVAMOUNT) >= " + strMayor + ")";
     } else if (strMayor.equals("") && !strMenor.equals("")) {
-      strHaving = " HAVING (SUM(CONVAMOUNT) < " + strMenor + ")";
+      strHaving = " HAVING (SUM(CONVAMOUNT) <= " + strMenor + ")";
     } else {
-      strHaving = " HAVING (SUM(CONVAMOUNT) <> 0 OR SUM(CONVAMOUNTREF) <> 0)";
+      strHaving = " HAVING ((SUM(CONVAMOUNT) >= 0 OR SUM(CONVAMOUNTREF) >= 0) OR (SUM(CONVAMOUNT) <= 0 OR SUM(CONVAMOUNTREF) <= 0))";
     }
     strOrderby = strHaving + strOrderby;
 
