@@ -328,8 +328,12 @@ enyo.kind({
     //    }, this);
   },
   disabledButton: function (inSender, inEvent) {
+    var isDisabled = inEvent.status;
     this.isEnabled = !inEvent.status;
-    this.setDisabled(inEvent.status);
+    if (OB.MobileApp.model.hasPermission('OBPOS_disableBrowseTab', true)) {
+      isDisabled = true;
+    }
+    this.setDisabled(isDisabled);
     if (!this.isEnabled) {
       this.$.lbl.hide();
     } else {
@@ -379,8 +383,12 @@ enyo.kind({
     //    }, this);
   },
   disabledButton: function (inSender, inEvent) {
+    var isDisabled = inEvent.status;
     this.isEnabled = !inEvent.status;
-    this.setDisabled(inEvent.status);
+    if (OB.MobileApp.model.hasPermission('OBPOS_disableSearchTab', true)) {
+      isDisabled = true;
+    }
+    this.setDisabled(isDisabled);
     if (!this.isEnabled && !OB.MobileApp.model.get('serviceSearchMode')) {
       this.$.lbl.hide();
     } else {
@@ -440,7 +448,11 @@ enyo.kind({
     //    }, this);
   },
   disabledButton: function (inSender, inEvent) {
-    this.setDisabled(inEvent.status);
+    var isDisabled = inEvent.status;
+    if (OB.MobileApp.model.hasPermission('OBPOS_disableEditTab', true)) {
+      isDisabled = true;
+    }
+    this.setDisabled(isDisabled);
   },
   manageServiceProposal: function (inSender, inEvent) {
     OB.MobileApp.model.set('serviceSearchMode', inEvent.proposalType);
