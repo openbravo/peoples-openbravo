@@ -286,7 +286,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String strmProductIdAux = strmProductId;
     String strcProjectIdAux = strcProjectId;
     if (StringUtils.isEmpty(strDateFrom) && StringUtils.isEmpty(strDateTo)) {
-      String discard[] = { "sectionAmount", "sectionPartner" };
+      String discard[] = { "sectionAmount", "sectionGroupBy" };
       xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_reports/ReportGeneralLedger", discard).createXmlDocument();
       toolbar
@@ -296,7 +296,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     } else {
       String[] discard = { "discard" };
       if (StringUtils.isEmpty(strGroupBy)) {
-        discard[0] = "sectionPartner";
+        discard[0] = "sectionGroupBy";
       } else {
         discard[0] = "sectionAmount";
       }
