@@ -746,12 +746,16 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                 OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
                 // prevent synchronized mode for cashups
                 synchronizedPreferenceValue = OB.MobileApp.model.setSynchronizedPreference(false);
-                OB.MobileApp.model.runSyncProcess(function () {
-                  OB.MobileApp.model.setSynchronizedPreference(synchronizedPreferenceValue);
-                  callbackFinishedSuccess();
-                }, function () {
-                  OB.MobileApp.model.setSynchronizedPreference(synchronizedPreferenceValue);
-                  callbackFinishedWrongly();
+                OB.UTIL.HookManager.executeHooks('OBPOS_PrePrintCashupHook', {
+                  cashupModel: me
+                }, function (args) {
+                  OB.MobileApp.model.runSyncProcess(function () {
+                    OB.MobileApp.model.setSynchronizedPreference(synchronizedPreferenceValue);
+                    callbackFinishedSuccess();
+                  }, function () {
+                    OB.MobileApp.model.setSynchronizedPreference(synchronizedPreferenceValue);
+                    callbackFinishedWrongly();
+                  });
                 });
                 };
             callbackFunc();
