@@ -26,23 +26,28 @@ enyo.kind({
     style: 'text-align: center; font-size: 30px; padding: 5px; padding-top: 0px;',
     components: [{
       name: 'headerText',
-      kind: 'OB.UI.Button',
+      kind: 'OB.UI.SmallButton',
       classes: 'span12',
-      style: 'height: 50px; margin: 5px 5px 0px 0px; font-size: 20px; cursor: pointer; font-weight: bold',
+      style: 'height: 50px; margin: 5px 5px 0px 0px; padding: 0px; font-size: 20px; cursor: pointer; font-weight: bold;',
       components: [{
         name: 'headerImg1',
-        kind: 'Image',
-        style: 'float: left; margin-left: 5px;',
-        src: '../org.openbravo.mobile.core/assets/img/Warning.png'
+        style: 'float: left; margin: 8px 10px;',
+        components: [{
+          style: 'height: 32px; width: 35px; background:url(../org.openbravo.mobile.core/assets/img/Warning.png) no-repeat top left;'
+        }]
       }, {
-        tag: 'span',
-        name: 'headerContent',
-        style: 'line-height: normal;'
+        name: 'headerContentContainer',
+        style: 'height: 50px; display: inline-flex; align-items: center;',
+        components: [{
+          name: 'headerContent',
+          style: 'flex: 1;'
+        }]
       }, {
         name: 'headerImg2',
-        kind: 'Image',
-        style: 'float: right; margin-right: 5px;',
-        src: '../org.openbravo.mobile.core/assets/img/Warning.png'
+        style: 'float: right; margin: 8px 10px;',
+        components: [{
+          style: 'height: 32px; width: 35px; background:url(../org.openbravo.mobile.core/assets/img/Warning.png) no-repeat top left;'
+        }]
       }],
       tap: function () {
         if (OB.MobileApp.model.get('errorInPopup')) {
@@ -50,11 +55,13 @@ enyo.kind({
           OB.I18N.getLabel('OBPOS_ProblemWithPopups'), OB.I18N.getLabel('OBPOS_ProblemWithPopupInfo'), [{
             isConfirmButton: true,
             label: OB.I18N.getLabel('OBMOBC_Reload'),
+            style: 'color: red;',
             action: function () {
               window.location.reload();
             }
           }, {
-            label: OB.I18N.getLabel('OBMOBC_Continue')
+            label: OB.I18N.getLabel('OBMOBC_Continue'),
+            style: 'color: red;'
           }], {
             style: 'background-color: red;'
           });
@@ -69,17 +76,19 @@ enyo.kind({
   }],
   showHeaderContent: function () {
     var i18nLabel = 'OBMOBC_Debug';
-    this.$.headerText.removeClass('btnlink-orange btnlink-red');
-    this.$.headerText.addClass(OB.UTIL.Debug.isDebug() && OB.UTIL.Debug.getDebugCauses().isTestEnvironment && !OB.MobileApp.model.get('errorInPopup') ? 'btnlink-orange' : 'btnlink-red');
+    this.$.headerText.removeClass('btnlink-orange');
+    this.$.headerText.removeClass('btnlink-red');
+    this.$.headerText.addClass((OB.UTIL.Debug.isDebug() && OB.UTIL.Debug.getDebugCauses().isTestEnvironment && !OB.MobileApp.model.get('errorInPopup')) ? 'btnlink-orange' : 'btnlink-red');
     if (OB.MobileApp.model.get('errorInPopup')) {
       i18nLabel = 'OBPOS_NotWorkingPopups';
       this.$.headerImg1.show();
       this.$.headerImg2.show();
-      this.$.headerContent.addStyles('width: calc(100% - 90px);');
+      this.show();
+      this.$.headerContentContainer.addStyles('width: calc(100% - 110px);');
     } else {
       this.$.headerImg1.hide();
       this.$.headerImg2.hide();
-      this.$.headerContent.addStyles('width: 100%;');
+      this.$.headerContentContainer.addStyles('width: calc(100% - 40px);');
       if (!OB.UTIL.isHTTPSAvailable()) {
         i18nLabel = 'OBPOS_NonSecureConnection';
       } else if (OB.UTIL.Debug.isDebug()) {

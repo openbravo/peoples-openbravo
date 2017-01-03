@@ -26,8 +26,6 @@ import org.openbravo.model.ad.access.Role;
  */
 public class DefaultPOSLanguageCallout extends SimpleCallout {
 
-  private static final long serialVersionUID = 1L;
-
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
     OBContext.setAdminMode(true);

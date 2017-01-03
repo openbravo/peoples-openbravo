@@ -76,6 +76,8 @@
 
       this.templatetotal = new OB.DS.HWResource(terminal.printDisplayTotalTemplate || OB.OBPOSPointOfSale.Print.DisplayTotal);
       extendHWResource(this.templatetotal, "printDisplayTotalTemplate");
+      this.templatedisplayreceipt = new OB.DS.HWResource(terminal.displayReceiptTemplate || OB.OBPOSPointOfSale.Print.DisplayReceiptTemplate);
+      extendHWResource(this.templatedisplayreceipt, "displayReceiptTemplate");
       this.templateline = new OB.DS.HWResource(terminal.printReceiptLineTemplate || OB.OBPOSPointOfSale.Print.ReceiptLineTemplate);
       extendHWResource(this.templateline, "printReceiptLineTemplate");
 
@@ -114,27 +116,26 @@
         }, function (result) {
           var myreceipt = receipt;
           if (result && result.exception) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
-              label: OB.I18N.getLabel('OBMOBC_LblOk'),
-              action: function () {
+            // callbacks definition
+            var successfunc = function () {
                 me.print(receipt, printargs);
                 if (args.callback) {
                   args.callback();
                 }
                 return true;
-              }
-            }, {
-              label: OB.I18N.getLabel('OBMOBC_LblCancel')
-            }], {
-              onHideFunction: function (dialog) {
+                };
+            var hidefunc = function () {
                 if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
                   OB.Dal.save(new OB.Model.OfflinePrinter({
                     data: result.data,
                     sendfunction: '_sendPDF'
                   }));
                 }
-              }
-            });
+                if (args.callback) {
+                  args.callback();
+                }
+                };
+            OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, null, true, 'OBPOS_MsgPDFPrintAgain');
           } else {
             // Success. Try to print the pending receipts.
             OB.Model.OfflinePrinter.printPendingJobs();
@@ -148,6 +149,109 @@
             });
           }
         });
+      }
+
+      function printFiles(receipt, args) {
+        var filesArray = [],
+            callbackGetFiles, callbackGetBinaryData, recursivePrintFiles, i = 0;
+
+        if (receipt.get('isPaid') || receipt.get('payment') >= receipt.get('gross') || (receipt.isLayaway() && receipt.get('payment') > 0)) {
+
+          recursivePrintFiles = function () {
+            if (filesArray.length > 0) {
+              OB.POS.hwserver._printFile({
+                name: filesArray[i].name,
+                printer: filesArray[i].printer,
+                document: filesArray[i].document
+              }, function (result) {
+                if (result && result.exception) {
+                  // callbacks definition
+                  var successfunc = function () {
+                      me.print(receipt, printargs);
+                      if (args.callback) {
+                        args.callback();
+                      }
+                      return true;
+                      };
+                  var hidefunc = function () {
+                      if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
+                        OB.Dal.save(new OB.Model.OfflinePrinter({
+                          data: result.data,
+                          sendfunction: '_sendFile'
+                        }));
+                      }
+                      if (args.callback) {
+                        args.callback();
+                      }
+                      };
+                  OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, null, true, 'OBPOS_MsgPDFPrintAgain');
+                } else {
+                  i++;
+                  if (i < filesArray.length) {
+                    recursivePrintFiles();
+                  } else {
+                    // Success. Try to print the pending receipts.
+                    OB.Model.OfflinePrinter.printPendingJobs();
+                    if (args.callback) {
+                      args.callback();
+                    }
+                  }
+                }
+              });
+            }
+          };
+
+          callbackGetFiles = _.after(receipt.get('lines').length, function () {
+            recursivePrintFiles();
+          });
+
+          _.each(receipt.get('lines').models, function (line) {
+            var criteria = {},
+                productId = line.get('product').id;
+            if (line.get('qty') > 0) {
+              if (OB.MobileApp.model.hasPermission('OBPOS_remote.obposfiles', true)) {
+                criteria.remoteFilters = [{
+                  columns: ['product'],
+                  operator: 'equals',
+                  value: productId,
+                  isId: true
+                }];
+              } else {
+                criteria.product = productId;
+              }
+              OB.Dal.find(OB.Model.OBPOSProdFiles, criteria, function (productFiles) {
+                if (productFiles.length > 0) {
+                  callbackGetBinaryData = _.after(productFiles.length, function () {
+                    callbackGetFiles();
+                  });
+
+                  _.each(productFiles.models, function (productFile) {
+                    var printer = 1;
+                    OB.Dal.get(OB.Model.OBPOSFiles, productFile.get('posfile'), function (posFile) {
+                      if (productFile.get('printer')) {
+                        printer = productFile.get('printer');
+                      }
+                      filesArray.push({
+                        name: posFile.get('name'),
+                        printer: printer,
+                        document: posFile.get('binaryData')
+                      });
+                      callbackGetBinaryData();
+                    }, function () {
+                      OB.error(arguments);
+                    });
+                  });
+                } else {
+                  callbackGetFiles();
+                }
+              }, function () {
+                OB.error(arguments);
+              });
+            } else {
+              callbackGetFiles();
+            }
+          });
+        }
       }
 
       if (args.cancelOperation && args.cancelOperation === true) {
@@ -236,23 +340,18 @@
           }, function (result, printedReceipt) {
             var myreceipt = receipt;
             if (result && result.exception) {
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
-                label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                isConfirmButton: true,
-                action: function () {
+              // callbacks definition
+              var successfunc = function () {
                   me.print(receipt, printargs);
                   return true;
-                }
-              }, {
-                label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-                action: function () {
+                  };
+              var cancelfunc = function () {
                   if (args.callback) {
                     args.callback();
                   }
                   return true;
-                }
-              }], {
-                onHideFunction: function (dialog) {
+                  };
+              var hidefunc = function () {
                   if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
                     OB.Dal.save(new OB.Model.OfflinePrinter({
                       data: result.data,
@@ -262,8 +361,8 @@
                   if (args.callback) {
                     args.callback();
                   }
-                }
-              });
+                  };
+              OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, cancelfunc, false, 'OBPOS_MsgPrintAgain');
             } else {
               // Success. Try to print the pending receipts.
               OB.Model.OfflinePrinter.printPendingJobs();
@@ -295,16 +394,12 @@
             }, function (result) {
               var myreceipt = receipt;
               if (result && result.exception) {
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
-                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                  action: function () {
+                // callbacks definition
+                var successfunc = function () {
                     me.print(receipt, printargs);
                     return true;
-                  }
-                }, {
-                  label: OB.I18N.getLabel('OBMOBC_LblCancel')
-                }], {
-                  onHideFunction: function (dialog) {
+                    };
+                var hidefunc = function (dialog) {
                     if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
                       OB.Dal.save(new OB.Model.OfflinePrinter({
                         data: result.data,
@@ -314,8 +409,8 @@
                     if (args.callback) {
                       args.callback();
                     }
-                  }
-                });
+                    };
+                OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, null, false, 'OBPOS_MsgPrintAgain');
               } else {
                 // Success. Try to print the pending receipts.
                 OB.Model.OfflinePrinter.printPendingJobs();
@@ -330,6 +425,10 @@
         receipt.get('canceledorder').set('negativeDocNo', negativeDocNo);
         me.print(receipt.get('canceledorder'), args);
       }
+
+      OB.POS.hwserver.print(me.templatedisplayreceipt, {
+        order: receipt
+      }, null, OB.DS.HWServer.DISPLAY);
     });
   };
 
@@ -339,7 +438,7 @@
     OB.UTIL.clone(this.receipt, receipt);
     OB.POS.hwserver.print(this.templatetotal, {
       order: receipt
-    });
+    }, null, OB.DS.HWServer.DISPLAY);
   };
 
   PrintReceipt.prototype.displayTotalMultiorders = function () {
@@ -348,7 +447,7 @@
     multiOrders = this.multiOrders;
     OB.POS.hwserver.print(this.templatetotal, {
       order: multiOrders
-    });
+    }, null, OB.DS.HWServer.DISPLAY);
   };
 
   var PrintReceiptLine = function (receipt) {
@@ -378,8 +477,52 @@
     if (this.line) {
       OB.POS.hwserver.print(this.templateline, {
         line: this.line
+      }, null, OB.DS.HWServer.DISPLAY);
+    }
+  };
+
+  OB.OBPOS = {};
+  OB.OBPOS.showSelectPrinterDialog = function (successfunc, hidefunc, cancelfunc, isPdf, msg) {
+    // Create dialog buttons
+    var dialogbuttons = [];
+    dialogbuttons.push({
+      label: OB.I18N.getLabel('OBPOS_LblRetry'),
+      isConfirmButton: true,
+      action: successfunc
+    });
+    if (OB.POS.modelterminal.hasPermission('OBPOS_retail.selectprinter') && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+      return isPdf ? printer.hasPDFPrinter : printer.hasReceiptPrinter;
+    })) {
+      // Show this button entry only if there are 
+      dialogbuttons.push({
+        name: 'selectAnotherPrinterButton',
+        label: OB.I18N.getLabel('OBPOS_SelectAnotherPrinter'),
+        action: function () {
+          OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+            popup: 'modalSelectPrinters',
+            args: {
+              title: isPdf ? OB.I18N.getLabel('OBPOS_SelectPDFPrintersTitle') : OB.I18N.getLabel('OBPOS_SelectPrintersTitle'),
+              hasPrinterProperty: isPdf ? 'hasPDFPrinter' : 'hasReceiptPrinter',
+              serverURLProperty: isPdf ? 'activepdfurl' : 'activeurl',
+              serverURLSetter: isPdf ? 'setActivePDFURL' : 'setActiveURL',
+              onSuccess: successfunc,
+              onCancel: cancelfunc,
+              onHide: hidefunc
+            }
+          });
+          return true;
+        }
       });
     }
+    dialogbuttons.push({
+      label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+      action: cancelfunc
+    });
+    // Display error message
+    OB.UTIL.showConfirmation.display(
+    OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel(msg, isPdf ? [OB.POS.hwserver.activepdfidentifier] : [OB.POS.hwserver.activeidentifier]), dialogbuttons, {
+      onHideFunction: hidefunc
+    });
   };
 
   // Public object definition
@@ -396,6 +539,7 @@
   OB.OBPOSPointOfSale.Print.ReceiptLineTemplate = '../org.openbravo.retail.posterminal/res/printline.xml';
   OB.OBPOSPointOfSale.Print.ReceiptTemplateLayaway = '../org.openbravo.retail.posterminal/res/printlayaway.xml';
   OB.OBPOSPointOfSale.Print.DisplayTotal = '../org.openbravo.retail.posterminal/res/displaytotal.xml';
+  OB.OBPOSPointOfSale.Print.DisplayReceiptTemplate = '../org.openbravo.retail.posterminal/res/displayreceipt.xml';
   OB.OBPOSPointOfSale.Print.CashUpTemplate = '../org.openbravo.retail.posterminal/res/printcashup.xml';
   OB.OBPOSPointOfSale.Print.CashMgmTemplate = '../org.openbravo.retail.posterminal/res/printcashmgmt.xml';
   OB.OBPOSPointOfSale.Print.GoodByeTemplate = '../org.openbravo.retail.posterminal/res/goodbye.xml';

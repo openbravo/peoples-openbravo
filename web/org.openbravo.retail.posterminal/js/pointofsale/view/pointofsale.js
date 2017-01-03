@@ -99,13 +99,15 @@ enyo.kind({
     onPreSaveCustomer: 'preSaveCustomer',
     onkeydown: 'keyDownHandler',
     onkeyup: 'keyUpHandler',
+    onRearrangeEditButtonBar: 'rearrangeEditButtonBar',
+    onModalSelectPrinters: 'modalSelectPrinters',
+    onModalSelectPDFPrinters: 'modalSelectPDFPrinters',
     onChangeFilterSelector: 'changeFilterSelector',
     onClearAllFilterSelector: 'clearAllFilterSelector',
     onCheckPresetFilterSelector: 'checkPresetFilterSelector',
     onAdvancedFilterSelector: 'advancedFilterSelector',
     onSetSelectorAdvancedSearch: 'setSelectorAdvancedSearch',
-    onCloseSelector: 'closeSelector',
-    onRearrangeEditButtonBar: 'rearrangeEditButtonBar'
+    onCloseSelector: 'closeSelector'
   },
   events: {
     onShowPopup: '',
@@ -231,6 +233,12 @@ enyo.kind({
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalPaymentsSelect',
       name: 'modalPaymentsSelect'
+    }, {
+      kind: 'OB.UI.ModalSelectPrinters',
+      name: 'modalSelectPrinters'
+    }, {
+      kind: 'OB.UI.ModalSelectPDFPrinters',
+      name: 'modalSelectPDFPrinters'
     }, {
       kind: 'OB.UI.ModalModulesInDev',
       name: 'modalModulesInDev'
@@ -918,7 +926,7 @@ enyo.kind({
   },
   removePayment: function (inSender, inEvent) {
     var me = this,
-        voidTransaction, voidConfirmation;
+        voidTransaction, voidConfirmation, paymentProvider;
 
     var removeTransaction = function () {
         //      if (!me.model.get('multiOrders').get('isMultiOrders')) {
@@ -966,18 +974,20 @@ enyo.kind({
           } else {
             removeTransaction();
           }
-        });
+        }, me.model.get('order'), inEvent.payment);
         };
 
     if (inEvent.payment.get('paymentData')) {
-      voidTransaction = inEvent.payment.get('paymentData').voidTransaction;
+      paymentProvider = eval(OB.MobileApp.model.paymentnames[inEvent.payment.get('kind')].paymentMethod.paymentProvider);
+      if (paymentProvider && paymentProvider.prototype.voidTransaction && paymentProvider.prototype.voidTransaction instanceof Function) {
+        voidTransaction = paymentProvider.prototype.voidTransaction;
+      }
+      if (!voidTransaction) {
+        voidTransaction = inEvent.payment.get('paymentData').voidTransaction;
+      }
       voidConfirmation = inEvent.payment.get('paymentData').voidConfirmation;
 
       if (voidConfirmation === false) {
-        var paymentProvider = eval(OB.MobileApp.model.paymentnames[inEvent.payment.get('kind')].paymentMethod.paymentProvider);
-        if (!voidTransaction && paymentProvider && paymentProvider.prototype.voidTransaction && paymentProvider.prototype.voidTransaction instanceof Function) {
-          voidTransaction = paymentProvider.prototype.voidTransaction;
-        }
         if (voidTransaction !== undefined) {
           callVoidTransaction();
         } else {
@@ -1035,6 +1045,18 @@ enyo.kind({
   showModalReceiptProperties: function (inSender, inEvent) {
     this.doShowPopup({
       popup: 'receiptPropertiesDialog'
+    });
+    return true;
+  },
+  modalSelectPrinters: function (inSender, inEvent) {
+    this.doShowPopup({
+      popup: 'modalSelectPrinters'
+    });
+    return true;
+  },
+  modalSelectPDFPrinters: function (inSender, inEvent) {
+    this.doShowPopup({
+      popup: 'modalSelectPDFPrinters'
     });
     return true;
   },

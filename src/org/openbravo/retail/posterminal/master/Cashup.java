@@ -33,9 +33,12 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.retail.posterminal.JSONProcessSimple;
 import org.openbravo.retail.posterminal.OBPOSAppCashup;
+import org.openbravo.retail.posterminal.OBPOSApplications;
+import org.openbravo.retail.posterminal.OBPOSErrors;
 import org.openbravo.retail.posterminal.OBPOSPaymentMethodCashup;
 import org.openbravo.retail.posterminal.OBPOSTaxCashup;
 import org.openbravo.retail.posterminal.ProcessCashClose;
+import org.openbravo.service.importprocess.ImportEntry;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.JsonConstants;
@@ -52,6 +55,12 @@ public class Cashup extends JSONProcessSimple {
 
       JSONArray respArray = new JSONArray();
       String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
+
+      if (cashupErrorsExistInTerminal(posId)) {
+        result.put(JsonConstants.RESPONSE_ERRORMESSAGE, "There are cashup errors in this terminal");
+        result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
+        return result;
+      }
       String isprocessed = jsonsent.getString("isprocessed");
       String isprocessedbo = "";
       if (jsonsent.has("isprocessedbo")) {
@@ -121,6 +130,30 @@ public class Cashup extends JSONProcessSimple {
     } finally {
       OBContext.restorePreviousMode();
     }
+
+  }
+
+  private boolean cashupErrorsExistInTerminal(String posId) {
+    OBPOSApplications terminal = OBDal.getInstance().getProxy(OBPOSApplications.class, posId);
+    OBCriteria<OBPOSErrors> errorsInPOSWindow = OBDal.getInstance().createCriteria(
+        OBPOSErrors.class);
+    errorsInPOSWindow.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, terminal));
+    errorsInPOSWindow.add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "OBPOS_App_Cashup"));
+    errorsInPOSWindow.setMaxResults(1);
+    if (errorsInPOSWindow.list().size() > 0) {
+      return true;
+    }
+    OBCriteria<ImportEntry> errorsInImportEntry = OBDal.getInstance().createCriteria(
+        ImportEntry.class);
+    errorsInImportEntry.add(Restrictions.eq(ImportEntry.PROPERTY_OBPOSPOSTERMINAL, terminal));
+    errorsInImportEntry.add(Restrictions.eq(ImportEntry.PROPERTY_TYPEOFDATA, "OBPOS_App_Cashup"));
+    errorsInImportEntry.add(Restrictions.eq(ImportEntry.PROPERTY_IMPORTSTATUS, "Error"));
+    errorsInImportEntry.setMaxResults(1);
+    if (errorsInImportEntry.list().size() > 0) {
+      return true;
+    }
+
+    return false;
 
   }
 

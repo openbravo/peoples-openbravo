@@ -43,6 +43,8 @@ public class CashManagementImportEntryProcessor extends ImportEntryProcessor {
   }
 
   private static class CashManagementRunnable extends SerializedByTermImportEntryProcessorRunnable {
+    private static final String CASH_MGMT_AUDIT_TYPE = "OBPOS_CashMgmt";
+
     protected Class<? extends DataSynchronizationProcess> getDataSynchronizationClass() {
       return ProcessCashMgmt.class;
     }
@@ -81,6 +83,11 @@ public class CashManagementImportEntryProcessor extends ImportEntryProcessor {
       } finally {
         OBContext.restorePreviousMode();
       }
+    }
+
+    @Override
+    protected String getProcessIdForAudit() {
+      return CASH_MGMT_AUDIT_TYPE;
     }
   }
 

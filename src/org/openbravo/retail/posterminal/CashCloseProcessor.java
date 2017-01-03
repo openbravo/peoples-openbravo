@@ -289,8 +289,8 @@ public class CashCloseProcessor {
     transaction.setStatus("RPPC");
     transaction.setDescription("GL Item: " + glItem.getName());
     transaction.setObposAppCashup(cashUp);
-    transaction.setDateAcct(currentDate);
-    transaction.setTransactionDate(currentDate);
+    transaction.setDateAcct(OBMOBCUtils.stripTime(currentDate));
+    transaction.setTransactionDate(OBMOBCUtils.stripTime(currentDate));
     transaction.setReconciliation(reconciliation);
 
     return transaction;
@@ -321,8 +321,8 @@ public class CashCloseProcessor {
     transaction.setStatus("RPPC");
     transaction.setDescription("GL Item: " + glItem.getName());
     transaction.setObposAppCashup(cashUp);
-    transaction.setDateAcct(currentDate);
-    transaction.setTransactionDate(currentDate);
+    transaction.setDateAcct(OBMOBCUtils.stripTime(currentDate));
+    transaction.setTransactionDate(OBMOBCUtils.stripTime(currentDate));
     transaction.setReconciliation(reconciliation);
 
     account.setCurrentBalance(account.getCurrentBalance().subtract(reconciliationTotal));
@@ -377,8 +377,8 @@ public class CashCloseProcessor {
     transaction.setStatus("RDNC");
     transaction.setDescription("GL Item: " + glItem.getName());
     transaction.setObposAppCashup(cashUp);
-    transaction.setDateAcct(currentDate);
-    transaction.setTransactionDate(currentDate);
+    transaction.setDateAcct(OBMOBCUtils.stripTime(currentDate));
+    transaction.setTransactionDate(OBMOBCUtils.stripTime(currentDate));
 
     accountTo.setCurrentBalance(accountTo.getCurrentBalance().add(reconciliationTotal));
 

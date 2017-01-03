@@ -32,19 +32,30 @@
 
       var setBPLocationProperty = function (location, customer, sucesscallback) {
           if (!OB.UTIL.isNullOrUndefined(location) && !OB.UTIL.isNullOrUndefined(customer)) {
+            var locName = customer.get('locId') === location.get('id') ? 'locName' : 'shipLocName',
+                cityName = customer.get('locId') === location.get('id') ? 'cityName' : 'shipCityName',
+                postalCode = customer.get('locId') === location.get('id') ? 'postalCode' : 'shipPostalCode',
+                countryId = customer.get('locId') === location.get('id') ? 'countryId' : 'shipCountryId',
+                countryName = customer.get('locId') === location.get('id') ? 'countryName' : 'shipCountryName';
             _.each(OB.Model.BPLocation.getPropertiesForUpdate(), function (property) {
               var key = property.name;
               if (!OB.UTIL.isNullOrUndefined(key)) {
                 if (key === '_identifier') {
-                  location.set(key, customer.get('locName'));
+                  location.set(key, customer.get(locName));
                 } else if (key === 'bpartner') {
                   location.set(key, customer.get('id'));
                 } else if (key === 'name') {
-                  location.set(key, customer.get('locName'));
+                  location.set(key, customer.get(locName));
+                } else if (key === 'cityName') {
+                  location.set(key, customer.get(cityName));
+                } else if (key === 'postalCode') {
+                  location.set(key, customer.get(postalCode));
                 } else if (key === 'countryName') {
-                  location.set(key, OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
+                  var countryNameValue = customer.get(countryName) ? customer.get(countryName) : OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name;
+                  location.set(key, countryNameValue);
                 } else if (key === 'countryId') {
-                  location.set(key, OB.MobileApp.model.get('terminal').defaultbp_bpcountry);
+                  var countryIdValue = customer.get(countryId) ? customer.get(countryId) : OB.MobileApp.model.get('terminal').defaultbp_bpcountry;
+                  location.set(key, countryIdValue);
                 } else if (key === 'isBillTo') {
                   location.set(key, customer.get('locId') === location.get('id'));
                 } else if (key === 'isShipTo') {

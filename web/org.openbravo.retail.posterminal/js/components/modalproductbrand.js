@@ -119,6 +119,7 @@ enyo.kind({
       // product name and product category filter
       if (productFilterText !== "" || productCategory !== "__all__" || productCategory !== "'__all__'") {
         params.push("%" + productFilterText + "%");
+        brandValueFilter += " exists (select 1 from m_product mp where mp.brand = b.m_product_id";
         if (productCategory === "OBPOS_bestsellercategory") {
           brandValueFilter += " and p.bestseller = 'true' AND ( Upper(p._filter) LIKE Upper(?)) ";
         } else if ((productCategory === "__all__") || (productCategory === "'__all__'") || (productCategory === "")) {
@@ -126,6 +127,7 @@ enyo.kind({
         } else {
           brandValueFilter += " and  (Upper(p._filter) LIKE Upper(?)) AND(p.m_product_category_id IN (" + productCategory + ")) ";
         }
+        brandValueFilter += " ) ";
       }
       // characteristics filter
       if (me.parent.parent.model.get('filter').length > 0) {
@@ -160,7 +162,9 @@ enyo.kind({
           brandStr += "'" + me.parent.parent.model.get('brandFilter')[i].id + "'";
           num++;
         }
-        BChV_Filter = "and p.brand in (" + brandStr + ")";
+        BChV_Filter = "and (p.brand in (" + brandStr + ") or " + brandValueFilter + ")";
+      } else {
+        BChV_Filter = "and " + brandValueFilter;
       }
       // external modules filters
       productCharacteristic.customFilters.forEach(function (sqlFilter) {
@@ -172,7 +176,7 @@ enyo.kind({
           }
         }
       });
-      sql = sql + brandValueFilter + BFilterByCH_Filter + sqlCriteriaFilter + BChV_Filter + orderby;
+      sql = sql + BChV_Filter + BFilterByCH_Filter + sqlCriteriaFilter + orderby;
       OB.Dal.query(OB.Model.Brand, sql, params, successCallbackBrands, errorCallback, this);
     } else {
       var remoteCriteria = [],
@@ -180,9 +184,14 @@ enyo.kind({
           productbrandfilter = {},
           chFilter = {},
           brandArray = [],
-          brandsfilter = {},
           productText;
       criteria = {};
+      // brand filter
+      if (me.parent.parent.model.get('brandFilter').length > 0) {
+        for (i = 0; i < me.parent.parent.model.get('brandFilter').length; i++) {
+          brandArray.push(me.parent.parent.model.get('brandFilter')[i].id);
+        }
+      }
       // product name and product category filter
       if (products.collection.length > 0) {
         if (productFilterText !== "" || productCategory.value !== "__all__") {
@@ -192,7 +201,7 @@ enyo.kind({
           productbrandfilter.operator = OB.Dal.FILTER;
           productbrandfilter.value = this.brandValueFilterQualifier;
           productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
-          productbrandfilter.params = [productText, productCategory.filter ? productCategory.params[0] : category];
+          productbrandfilter.params = [productText, productCategory.filter ? productCategory.params[0] : category, brandArray.join(',')];
           remoteCriteria.push(productbrandfilter);
         }
       }
@@ -221,18 +230,6 @@ enyo.kind({
             characteristicValue = [];
           }
         }
-      }
-      // brand filter
-      if (me.parent.parent.model.get('brandFilter').length > 0) {
-        for (i = 0; i < me.parent.parent.model.get('brandFilter').length; i++) {
-          brandArray.push(me.parent.parent.model.get('brandFilter')[i].id);
-        }
-        brandsfilter = {
-          columns: ['id'],
-          operator: 'equals',
-          value: brandArray
-        };
-        remoteCriteria.push(brandsfilter);
       }
       // external modules filters
       criteria.hqlCriteria = [];

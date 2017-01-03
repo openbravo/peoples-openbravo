@@ -10,6 +10,7 @@
 package org.openbravo.retail.posterminal;
 
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.CancelAndReplaceOrderHook;
 import org.openbravo.model.common.order.Order;
 
@@ -25,6 +26,11 @@ public class CancelAndReplaceHook extends CancelAndReplaceOrderHook {
       Order inverseOrder, JSONObject jsonorder) throws Exception {
     if (jsonorder != null) {
       inverseOrder.setObposAppCashup(jsonorder.getString("obposAppCashup"));
+      if (newOrder != null) {
+        OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+            jsonorder.getString("posTerminal"));
+        inverseOrder.setObposApplications(posTerminal);
+      }
     }
   }
 }

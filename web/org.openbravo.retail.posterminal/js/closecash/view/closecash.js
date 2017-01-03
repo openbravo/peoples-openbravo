@@ -231,6 +231,9 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
     name: 'modalPendingToProcess'
+  }, {
+    kind: 'OB.UI.ModalSelectPrinters',
+    name: 'modalSelectPrinters'
   }],
   finalAction: function () {
     OB.POS.navigate('retail.pointofsale');
@@ -447,6 +450,10 @@ enyo.kind({
       me.refreshButtons();
     });
 
+    // Disconnect RFID
+    if (OB.UTIL.RfidController.isRfidConfigured()) {
+      OB.UTIL.RfidController.disconnectRFIDDevice();
+    }
   },
 
   rendered: function () {

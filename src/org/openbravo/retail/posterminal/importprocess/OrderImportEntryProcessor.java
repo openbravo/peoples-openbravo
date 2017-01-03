@@ -43,6 +43,8 @@ public class OrderImportEntryProcessor extends ImportEntryProcessor {
   }
 
   private static class OrderLoaderRunnable extends SerializedByTermImportEntryProcessorRunnable {
+    private static final String ORDER_LOADER_AUDIT_TYPE = "OBPOS_OrderLoader";
+
     protected Class<? extends DataSynchronizationProcess> getDataSynchronizationClass() {
       return OrderLoader.class;
     }
@@ -73,6 +75,10 @@ public class OrderImportEntryProcessor extends ImportEntryProcessor {
         OBContext.restorePreviousMode();
       }
     }
-  }
 
+    @Override
+    protected String getProcessIdForAudit() {
+      return ORDER_LOADER_AUDIT_TYPE;
+    }
+  }
 }

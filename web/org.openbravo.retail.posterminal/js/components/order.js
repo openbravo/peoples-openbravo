@@ -244,21 +244,31 @@ enyo.kind({
   style: 'position: relative; padding: 10px; height: 35px',
   components: [{
     name: 'lblTotal',
-    style: 'float: left; width: 40%;'
+    classes: 'order-total-label'
   }, {
-    name: 'totalqty',
-    style: 'float: left; width: 20%; text-align:right; font-weight:bold;'
+    kind: 'OB.UI.FitText',
+    classes: 'order-total-qty fitText',
+    components: [{
+      tag: 'span',
+      name: 'totalqty'
+    }]
   }, {
-    name: 'totalgross',
-    style: 'float: left; width: 40%; text-align:right; font-weight:bold;'
+    kind: 'OB.UI.FitText',
+    classes: 'order-total-gross fitText',
+    components: [{
+      tag: 'span',
+      name: 'totalgross'
+    }]
   }, {
     style: 'clear: both;'
   }],
   renderTotal: function (newTotal) {
-    this.$.totalgross.setContent(OB.I18N.formatCurrency(newTotal));
-    OB.UTIL.HookManager.executeHooks('OBPOS_UpdateTotalReceiptLine', {
-      totalline: this
-    });
+    if (newTotal !== this.$.totalgross.getContent()) {
+      this.$.totalgross.setContent(OB.I18N.formatCurrency(newTotal));
+      OB.UTIL.HookManager.executeHooks('OBPOS_UpdateTotalReceiptLine', {
+        totalline: this
+      });
+    }
   },
   renderQty: function (newQty) {
     this.$.totalqty.setContent(newQty);
@@ -1372,7 +1382,8 @@ enyo.kind({
       }
       this.$.multiOrder_btninvoice.hide();
     }, this);
-    this.model.get('multiOrders').get('multiOrdersList').on('reset add remove change', function () {
+    var orderList = this.model.get('multiOrders').get('multiOrdersList');
+    orderList.on('reset add remove', function () {
       me.total = _.reduce(me.model.get('multiOrders').get('multiOrdersList').models, function (memo, order) {
         return memo + ((!_.isUndefined(order.get('amountToLayaway')) && !_.isNull(order.get('amountToLayaway'))) ? order.get('amountToLayaway') : order.getPending());
       }, 0);

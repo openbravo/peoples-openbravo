@@ -297,7 +297,7 @@
         className: 'org.openbravo.retail.posterminal.CustomerLoader',
         criteria: {},
         getIdentifier: function (model) {
-          return JSON.parse(model.get('json'))._identifier;
+          return model.businessPartnerCategory_name + ' : ' + model._identifier;
         }
       });
 
@@ -308,7 +308,7 @@
         className: 'org.openbravo.retail.posterminal.CustomerAddrLoader',
         criteria: {},
         getIdentifier: function (model) {
-          return JSON.parse(model.get('json'))._identifier;
+          return model.customerName + ' : ' + model.name;
         }
       });
 
@@ -420,9 +420,28 @@
         OB.MobileApp.model.addSyncCheckpointModel(OB.Model.CashUp);
 
         var terminal = this.get('terminal');
-        OB.UTIL.initCashUp(OB.UTIL.calculateCurrentCash);
+        OB.UTIL.initCashUp(OB.UTIL.calculateCurrentCash, function () {
+          //There was an error when retrieving the cashup from the backend.
+          // This means that there is a cashup saved as an error, and we don't have
+          //the necessary information to have a working cashup in the client side.
+          //We therefore need to logout
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashupErrors'), OB.I18N.getLabel('OBPOS_CashupErrorsMsg'), [{
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            isConfirmButton: true,
+            action: function () {
+              OB.UTIL.showLoading(true);
+              me.logout();
+            }
+          }], {
+            onHideFunction: function () {
+              OB.UTIL.showLoading(true);
+              me.logout();
+            }
+          });
+
+        });
         // Set Hardware..
-        OB.POS.hwserver = new OB.DS.HWServer(terminal.hardwareurl, terminal.scaleurl);
+        OB.POS.hwserver = new OB.DS.HWServer(this.get('hardwareURL'), terminal.hardwareurl, terminal.scaleurl);
 
         // If the hardware URL is set and the terminal uses RFID
         if (OB.UTIL.RfidController.isRfidConfigured()) {
@@ -458,7 +477,7 @@
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineLogin'));
         }
 
-        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.WelcomeTemplate), {});
+        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.WelcomeTemplate), {}, null, OB.DS.HWServer.DISPLAY);
       });
 
       OB.Model.Terminal.prototype.initialize.call(me);
@@ -679,23 +698,50 @@
         }, sessionTimeoutMilliseconds);
       }
 
-      if ((minTotalRefresh || minIncRefresh) && (lastTotalRefresh || lastIncRefresh)) {
-        OB.MobileApp.model.set('minIncRefreshSynchronized', false);
-        OB.MobileApp.model.on('synchronized', function () {
-          if (OB.MobileApp.model.get('minIncRefreshSynchronized')) {
-            return;
-          }
-          OB.MobileApp.model.set('minIncRefreshSynchronized', true);
-          if (OB.MobileApp.model.get('FullRefreshWasDone')) {
-            return;
-          }
-          OB.MobileApp.model.loadModels(null, true);
-        });
-      }
-
+      OB.POS.hwserver.showSelected(); // Show the selected printers
       if (minIncRefresh) {
         loadModelsIncFunc = function () {
-          OB.MobileApp.model.loadModels(null, true);
+          OB.MobileApp.model.set('secondsToRefreshMasterdata', 3);
+          var counterIntervalId = null;
+          counterIntervalId = setInterval(function () {
+            OB.MobileApp.model.set('secondsToRefreshMasterdata', OB.MobileApp.model.get('secondsToRefreshMasterdata') - 1);
+            if (OB.MobileApp.model.get('secondsToRefreshMasterdata') === 0) {
+              clearInterval(counterIntervalId);
+
+              OB.UTIL.startLoadingSteps();
+              OB.MobileApp.model.set('isLoggingIn', true);
+              OB.UTIL.showLoading(true);
+              OB.MobileApp.model.on('incrementalModelsLoaded', function () {
+                OB.MobileApp.model.off('incrementalModelsLoaded');
+                OB.UTIL.showLoading(false);
+                OB.MobileApp.model.set('isLoggingIn', false);
+              });
+
+              OB.MobileApp.model.loadModels(null, true);
+            }
+          }, 1000);
+
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshed'), OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshedMessage', [OB.MobileApp.model.get('secondsToRefreshMasterdata')]), [{
+            label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+            action: function () {
+              OB.MobileApp.model.off('change:secondsToRefreshMasterdata');
+              clearInterval(counterIntervalId);
+            }
+          }], {
+            autoDismiss: false,
+            hideCloseButton: true,
+            onShowFunction: function (popup) {
+              var thePopup = popup;
+              OB.MobileApp.model.on('change:secondsToRefreshMasterdata', function () {
+                thePopup.$.bodyContent.$.control.setContent(OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshedMessage', [OB.MobileApp.model.get('secondsToRefreshMasterdata')]));
+                if (OB.MobileApp.model.get('secondsToRefreshMasterdata') === 0) {
+                  thePopup.hide();
+                  OB.MobileApp.model.off('change:secondsToRefreshMasterdata');
+                }
+              });
+            }
+          });
+
         };
         setInterval(loadModelsIncFunc, minIncRefresh);
       }
@@ -778,7 +824,7 @@
 
     postCloseSession: function (session) {
       if (OB.POS.hwserver !== undefined) {
-        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {});
+        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {}, null, OB.DS.HWServer.DISPLAY);
       }
       OB.MobileApp.model.triggerLogout();
 
@@ -1025,9 +1071,11 @@
     },
     linkTerminal: function (terminalData, callback) {
       var params = this.get('loginUtilsParams') || {},
-          me = this;
+          me = this,
+          parsedTerminalData = JSON.parse(terminalData);
       params.command = 'preLoginActions';
       params.params = terminalData;
+      OB.warn('[TermAuth] Request to link terminal "' + parsedTerminalData.terminalKeyIdentifier + '" using user "' + parsedTerminalData.username + '" with cache session id "' + parsedTerminalData.cacheSessionId + '"');
       new OB.OBPOSLogin.UI.LoginRequest({
         url: OB.MobileApp.model.get('loginUtilsUrl')
       }).response(this, function (inSender, inResponse) {
@@ -1067,6 +1115,7 @@
           }
           OB.UTIL.localStorage.setItem('terminalName', inResponse.terminalName);
           OB.UTIL.localStorage.setItem('terminalKeyIdentifier', inResponse.terminalKeyIdentifier);
+          OB.warn('[TermAuth] Terminal "' + parsedTerminalData.terminalKeyIdentifier + '" was successfully linked using user "' + parsedTerminalData.username + '" with cache session id "' + parsedTerminalData.cacheSessionId + '"');
           callback();
         }
 

@@ -12,10 +12,12 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.ConfigParameters;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -56,6 +58,7 @@ public class GenerateProductImages extends DalBaseProcess {
 
       final StringBuilder errors = new StringBuilder();
       int errorCounter = 0;
+      int imageCounter = 0;
 
       OBCriteria<OBRETCOProlProduct> prolProductCrit = OBDal.getInstance().createCriteria(
           OBRETCOProlProduct.class);
@@ -69,6 +72,10 @@ public class GenerateProductImages extends DalBaseProcess {
             try {
               generateImageFile(prolProduct.getProduct().getId(), prolProduct.getProduct()
                   .getImage().getId(), imagesDir);
+              imageCounter++;
+              if (imageCounter % 100 == 0) {
+                log4j.info(imageCounter + " images generated.");
+              }
             } catch (Exception ex) {
               if (errorCounter < 30) {
                 String error = OBMessageUtils.getI18NMessage("OBPOS_ProductCanNotBeResized",
@@ -88,6 +95,7 @@ public class GenerateProductImages extends DalBaseProcess {
       } finally {
         prolProductScroll.close();
       }
+      log4j.info(imageCounter + " images finally generated.");
 
       OBCriteria<PriceAdjustment> packs = OBDal.getInstance().createCriteria(PriceAdjustment.class);
       packs.add(Restrictions.eq(PriceAdjustment.PROPERTY_DISCOUNTTYPE,
@@ -106,6 +114,32 @@ public class GenerateProductImages extends DalBaseProcess {
             errors.append(OBMessageUtils.getI18NMessage("OBPOS_AndMore", null));
           }
           errorCounter++;
+        }
+      }
+
+      // Finally, we copy productImages folder to the sources folder. This way, smartbuild will not
+      // remove the folder deployed in the context
+
+      String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("source.path");
+      if (sourcePath == null || sourcePath.equals("")) {
+        log4j
+            .error("source.path property is not configured. Images will not be copied to sources, so next smartbuild will remove them");
+      } else {
+        File imagesDirInSourceFolder = new File(
+            sourcePath
+                + "/modules/org.openbravo.retail.posterminal/web/org.openbravo.retail.posterminal/productImages/");
+        try {
+          if (imagesDirInSourceFolder.exists()) {
+            imagesDirInSourceFolder.delete();
+          }
+          imagesDirInSourceFolder.mkdir();
+          FileUtils.copyDirectory(imagesDir, imagesDirInSourceFolder);
+        } catch (Exception e) {
+          log4j
+              .error(
+                  "We couldn't create the images folder in the source.path directory, so next smartbuild will remove them",
+                  e);
         }
       }
 

@@ -46,7 +46,7 @@ enyo.kind({
   }, {
     name: 'nameContainner',
     tag: 'div',
-    style: 'float: left;width: 40%; padding: 0px;',
+    classes: 'orderline-productname',
     components: [{
       name: 'serviceIcon',
       kind: 'Image',
@@ -56,20 +56,30 @@ enyo.kind({
       name: 'product'
     }]
   }, {
-    name: 'quantity',
-    attributes: {
-      style: 'float: left; width: 20%; text-align: right;'
-    }
+    kind: 'OB.UI.FitText',
+    classes: 'orderline-quantity fitText',
+    components: [{
+      tag: 'span',
+      name: 'quantity'
+
+    }]
   }, {
-    name: 'price',
-    attributes: {
-      style: 'float: left; width: 20%; text-align: right;'
-    }
+    kind: 'OB.UI.FitText',
+    classes: 'orderline-price fitText',
+    components: [{
+      tag: 'span',
+      name: 'price',
+      style: 'padding-left: 8px;'
+
+    }]
   }, {
-    name: 'gross',
-    attributes: {
-      style: 'float: left; width: 20%; text-align: right;'
-    }
+    kind: 'OB.UI.FitText',
+    classes: 'orderline-gross fitText',
+    components: [{
+      tag: 'span',
+      name: 'gross',
+      style: 'padding-left: 8px;'
+    }]
   }, {
     style: 'clear: both;'
   }],
@@ -98,9 +108,7 @@ enyo.kind({
         components: [{
           name: 'characteristicsDescription',
           content: OB.UTIL.getCharacteristicValues(this.model.get('product').get('characteristicDescription')),
-          attributes: {
-            style: 'width: 60.1%; color:grey; padding-left: 0%; clear: both; '
-          }
+          classes: 'orderline-characteristicsDescription'
         }, {
           style: 'clear: both;'
         }]
@@ -335,19 +343,24 @@ enyo.kind({
   },
   components: [{
     name: 'tax',
-    attributes: {
-      style: 'float: left; width: 60%;'
-    }
+    classes: 'order-tax-label'
   }, {
-    name: 'base',
-    attributes: {
-      style: 'float: left; width: 20%; text-align: right;'
-    }
+    kind: 'OB.UI.FitText',
+    classes: 'order-tax-base fitText',
+    components: [{
+      tag: 'span',
+      name: 'base'
+
+    }]
   }, {
-    name: 'totaltax',
-    attributes: {
-      style: 'float: left; width: 20%; text-align: right;'
-    }
+    kind: 'OB.UI.FitText',
+    classes: 'order-tax-total fitText',
+    components: [{
+      tag: 'span',
+      name: 'totaltax',
+      style: 'padding-left: 8px;'
+
+    }]
   }, {
     style: 'clear: both;'
   }],

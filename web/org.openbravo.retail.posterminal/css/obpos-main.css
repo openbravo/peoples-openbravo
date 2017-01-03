@@ -348,7 +348,7 @@ button.btnbp:disabled {
 }
 
 .fix-bgposition-y {
-  background-position-y: 0px;	
+  background-position-y: 0px;
 }
 
 .iconRemove {
@@ -399,7 +399,7 @@ button.btnbp:disabled {
 }
 
 .receipt-customer-selector-editor {
-  width: 870px !important;	
+  width: 870px !important;
 }
 
 .addresstext-onlyone {
@@ -601,4 +601,149 @@ button.btnbp:disabled {
 
 .blackecolor {
   color: black;
+}
+
+
+.orderline-quantity {
+  float: left;
+  width: 65px;
+  text-align: right;
+}
+
+.orderline-price,
+.orderline-gross {
+  float: left;
+  width: 105px;
+  text-align: right;
+}
+
+.orderline-productname {
+  float: left;
+  width: calc(100% - 275px);  /* The same than calc(100% - 65px - 2 * 105px); */
+  padding: 0px;
+}
+
+.orderline-characteristicsDescription {
+  width: calc(100% - 210px);  /* The same than calc(100% - 2 * 105px); */
+  color:grey;
+  padding-left: 0%;
+  padding-top: 4px;
+  font-size: 14px;
+  clear: both;
+}
+
+.order-total-label {
+  float: left;
+  width: calc(100% - 275px);  /* The same than calc(100% - 65px - 2 * 105px); */
+}
+
+.order-total-qty {
+  float: left;
+  width: 65px;
+  text-align: right;
+  font-weight: bold;
+}
+
+.order-total-gross {
+  float: left;
+  width: 210px;
+  text-align: right;
+  font-weight: bold;
+}
+
+.order-tax-label {
+  float: left;
+  width: calc(100% - 210px);  /* The same than calc(100% - 2 * 105px); */
+}
+
+.order-tax-base,
+.order-tax-total {
+  float: left;
+  width: 105px;
+  text-align: right;
+}
+
+/*
+   Media query for dynamic 'unit price' and 'gross price' widths from 80px to 105px when
+   the viewport aspect ratio goes from 5:4 (1.25) to 3:2 (1.5) respectively in landscape mode and
+   from 10:16 (0.625) to 3:4 (0.75) respectively in portrait mode.
+   The product name is also adapted to fill the remaining space.
+*/
+
+@media all and (min-width: 801px) and (max-aspect-ratio: 150/100), (max-width: 800px) and (max-aspect-ratio: 3/4) {
+  .orderline-price,
+  .orderline-gross {
+    width: calc((25/79 * 100%) - 39px);
+  }
+
+  .orderline-productname {
+    width: calc((29/79 * 100%) + 13px);  /* The same than calc(100% - 65px - 2 * ((25/79 * 100%) - 39px)); */
+  }
+
+  .orderline-characteristicsDescription {
+    width: calc((29/79 * 100%) + 78px);  /* The same than calc(100% - 2 * ((25/79 * 100%) - 39px)); */
+  }
+
+  .order-total-label {
+    width: calc((29/79 * 100%) + 13px);  /* The same than calc(100% - 65px - 2 * ((25/79 * 100%) - 39px)); */
+  }
+
+  .order-total-gross {
+    width: calc((50/79 * 100%) - 78px);  /* The same than calc(2 * ((25/79 * 100%) - 39px)); */
+  }
+
+  .order-tax-label {
+    width: calc((29/79 * 100%) + 78px);  /* The same than calc(100% - 2 * ((25/79 * 100%) - 39px)); */
+  }
+
+  .order-tax-base,
+  .order-tax-total {
+    width: calc((25/79 * 100%) - 39px);
+  }
+}
+
+@media all and (min-width: 801px) and (max-aspect-ratio: 125/100), (max-width: 800px) and (max-aspect-ratio: 10/16) {
+  .orderline-price,
+  .orderline-gross {
+    width: 80px;
+  }
+
+  .orderline-productname {
+    width: calc(100% - 225px);  /* The same than calc(100% - 65px - 2 * 80px); */
+  }
+
+  .orderline-characteristicsDescription {
+    width: calc(100% - 160px);  /* The same than calc(100% - 2 * 80px); */
+  }
+
+  .order-total-label {
+    width: calc(100% - 225px);  /* The same than calc(100% - 65px - 2 * 80px); */
+  }
+
+  .order-total-gross {
+    width: 160px;
+  }
+
+  .order-tax-label {
+    width: calc(100% - 160px);  /* The same than calc(100% - 2 * 80px); */
+  }
+
+  .order-tax-base,
+  .order-tax-total {
+    width: 80px;
+  }
+}
+.productLine {
+  padding: 6px !important;
+}
+
+.productLine .productImgContainer {
+  margin: 0px 8px 0px 0px;
+}
+
+.productLine .productIdentifier {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
 }

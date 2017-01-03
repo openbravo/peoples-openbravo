@@ -194,9 +194,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   deleteMultiOrderList: function () {
     var i;
     for (i = 0; this.get('multiOrders').get('multiOrdersList').length > i; i++) {
-      if (!this.get('multiOrders').get('multiOrdersList').at(i).get('isLayaway')) { //if it is not true, means that iti is a new order (not a loaded layaway)
+      if (!this.get('multiOrders').get('multiOrdersList').at(i).get('isLayaway')) { //if it is not true, it means that this is either a new order or a newly generated layaway (not a loaded layaway)
         this.get('multiOrders').get('multiOrdersList').at(i).unset('amountToLayaway');
-        this.get('multiOrders').get('multiOrdersList').at(i).set('orderType', 0);
         continue;
       }
       this.get('orderList').current = this.get('multiOrders').get('multiOrdersList').at(i);
@@ -312,6 +311,56 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             clonedCollection = new Backbone.Collection(),
             paymentKind, i, totalPrePayment = OB.DEC.Zero,
             totalNotPrePayment = OB.DEC.Zero;
+        var triggerReceiptClose = function (receipt) {
+            // There is only 1 receipt object.
+            receipt.trigger('closed', {
+              callback: function (args) {
+                OB.UTIL.Debug.execute(function () {
+                  if (!args.frozenReceipt) {
+                    throw "A clone of the receipt must be provided because it is possible that some rogue process could have changed it";
+                  }
+                  if (OB.UTIL.isNullOrUndefined(args.isCancelled)) { // allow boolean values
+                    throw "The isCancelled flag must be set";
+                  }
+                });
+
+                // verify that the receipt was not cancelled
+                if (args.isCancelled !== true) {
+                  var orderToPrint = OB.UTIL.clone(args.frozenReceipt);
+                  orderToPrint.get('payments').reset();
+                  clonedCollection.each(function (model) {
+                    orderToPrint.get('payments').add(new Backbone.Model(model.toJSON()), {
+                      silent: true
+                    });
+                  });
+                  orderToPrint.set('hasbeenpaid', 'Y');
+                  receipt.trigger('print', orderToPrint, {
+                    offline: true
+                  });
+
+                  // Verify that the receipt has not been changed while the ticket has being closed
+                  var diff = OB.UTIL.diffJson(receipt.serializeToJSON(), args.frozenReceipt.serializeToJSON());
+                  // hasBeenPaid and cashUpReportInformation are the only difference allowed in the receipt
+                  delete diff.hasbeenpaid;
+                  delete diff.cashUpReportInformation;
+                  // verify if there have been any modification to the receipt
+                  var diffStringified = JSON.stringify(diff, undefined, 2);
+                  if (diffStringified !== '{}') {
+                    OB.error("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
+                  }
+
+                  orderList.deleteCurrent();
+                  receipt.setIsCalculateReceiptLockState(false);
+                  receipt.setIsCalculateGrossLockState(false);
+
+                  orderList.synchronizeCurrentOrder();
+                }
+                enyo.$.scrim.hide();
+                OB.UTIL.SynchronizationHelper.finished(synchId, "receipt.paymentAccepted");
+              }
+            });
+            };
+
         if (receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3) {
           var negativeLines = _.filter(receipt.get('lines').models, function (line) {
             return line.get('qty') < 0;
@@ -328,6 +377,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             });
           }
         }
+
         receipt.get('payments').each(function (model) {
           clonedCollection.add(new Backbone.Model(model.toJSON()));
           if (model.get('isPrePayment')) {
@@ -353,15 +403,17 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               'isCash': payment.paymentMethod.iscash,
               'openDrawer': payment.paymentMethod.openDrawer,
               'printtwice': payment.paymentMethod.printtwice
-            }));
-          }
-          receipt.set('change', oldChange);
-          for (i = 0; i < receipt.get('payments').length; i++) {
-            paymentKind = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
-            if (paymentKind && paymentKind.paymentMethod && paymentKind.paymentMethod.leaveascredit) {
-              receipt.set('payment', OB.DEC.sub(receipt.get('payment'), receipt.get('payments').models[i].get('amount')));
-              receipt.set('paidOnCredit', true);
-            }
+            }), function (receipt) {
+              receipt.set('change', oldChange);
+              for (i = 0; i < receipt.get('payments').length; i++) {
+                paymentKind = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
+                if (paymentKind && paymentKind.paymentMethod && paymentKind.paymentMethod.leaveascredit) {
+                  receipt.set('payment', OB.DEC.sub(receipt.get('payment'), receipt.get('payments').models[i].get('amount')));
+                  receipt.set('paidOnCredit', true);
+                }
+              }
+              triggerReceiptClose(receipt);
+            });
           }
         } else {
           for (i = 0; i < receipt.get('payments').length; i++) {
@@ -371,56 +423,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               receipt.set('paidOnCredit', true);
             }
           }
+          triggerReceiptClose(receipt);
         }
-
-        // There is only 1 receipt object.
-        receipt.trigger('closed', {
-          callback: function (args) {
-            OB.UTIL.Debug.execute(function () {
-              if (!args.frozenReceipt) {
-                throw "A clone of the receipt must be provided because it is possible that some rogue process could have changed it";
-              }
-              if (OB.UTIL.isNullOrUndefined(args.isCancelled)) { // allow boolean values
-                throw "The isCancelled flag must be set";
-              }
-            });
-
-            // verify that the receipt was not cancelled
-            if (args.isCancelled !== true) {
-              var orderToPrint = OB.UTIL.clone(args.frozenReceipt);
-              orderToPrint.get('payments').reset();
-              clonedCollection.each(function (model) {
-                orderToPrint.get('payments').add(new Backbone.Model(model.toJSON()), {
-                  silent: true
-                });
-              });
-              orderToPrint.set('hasbeenpaid', 'Y');
-              receipt.trigger('print', orderToPrint, {
-                offline: true
-              });
-
-              // Verify that the receipt has not been changed while the ticket has being closed
-              var diff = OB.UTIL.diffJson(receipt.serializeToJSON(), args.frozenReceipt.serializeToJSON());
-              // hasBeenPaid and cashUpReportInformation are the only difference allowed in the receipt
-              delete diff.hasbeenpaid;
-              delete diff.cashUpReportInformation;
-              // verify if there have been any modification to the receipt
-              var diffStringified = JSON.stringify(diff, undefined, 2);
-              if (diffStringified !== '{}') {
-                OB.error("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
-              }
-
-              orderList.deleteCurrent();
-              receipt.setIsCalculateReceiptLockState(false);
-              receipt.setIsCalculateGrossLockState(false);
-
-              orderList.synchronizeCurrentOrder();
-            }
-            enyo.$.scrim.hide();
-            OB.UTIL.SynchronizationHelper.finished(synchId, "receipt.paymentAccepted");
-          }
-        });
-
       });
     }, this);
 
@@ -504,7 +508,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     }, this);
 
     this.get('multiOrders').on('paymentAccepted', function () {
+      var me = this;
       var synchIdPaymentAccepted = OB.UTIL.SynchronizationHelper.busyUntilFinishes("multiOrders.paymentAccepted");
+
       OB.UTIL.showLoading(true);
       var ordersLength = this.get('multiOrders').get('multiOrdersList').length;
 
@@ -519,7 +525,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       }
 
       // this var is a function (copy of the above one) which is called by every items, but it is just executed once (when ALL items has called to it)
-      var SyncReadyToSendFunction = _.after(this.get('multiOrders').get('multiOrdersList').length, readyToSendFunction);
+      //var SyncReadyToSendFunction = _.after(this.get('multiOrders').get('multiOrdersList').length, readyToSendFunction);
 
       function prepareToSendCallback(order) {
         var auxReceipt = new OB.Model.Order();
@@ -547,7 +553,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           me.get('multiOrders').trigger('print', order, {
             offline: true
           }); // to guaranty execution order
-          //SyncReadyToSendFunction();
           auxReceiptList.push(auxReceipt);
           if (auxReceiptList.length === me.get('multiOrders').get('multiOrdersList').length) {
             OB.UTIL.cashUpReport(auxReceiptList, function (cashUp) {
@@ -564,7 +569,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 receiptMulti.set('json', JSON.stringify(receipt.serializeToJSON()));
                 OB.Dal.save(receiptMulti, function () {
                   me.get('multiOrders').trigger('closed', receiptMulti);
-                  SyncReadyToSendFunction();
+                  readyToSendFunction();
                   setMultiOrderCashUpReport(receiptList, cashUp, index + 1, callback);
                 }, function () {});
               };
@@ -576,74 +581,87 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           me.get('multiOrders').trigger('closed', order);
         }
       }
-      var i, j;
-      for (j = 0; j < ordersLength; j++) {
-        //Create the negative payment for change
-        var iter = this.get('multiOrders').get('multiOrdersList').at(j);
+
+      var setPaymentsToReceipts;
+
+      setPaymentsToReceipts = function (orderList, paymentList, orderListIndex, paymentListIndex, callback) {
+        if (orderListIndex >= orderList.length) {
+          if (callback instanceof Function) {
+            callback();
+            return;
+          }
+        }
+        var iter = orderList.at(orderListIndex);
         var amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
-        while (((_.isUndefined(iter.get('amountToLayaway')) || iter.get('amountToLayaway') > 0) && iter.get('gross') > iter.get('payment')) || (iter.get('amountToLayaway') > 0)) {
-          for (i = 0; i < this.get('multiOrders').get('payments').length; i++) {
-            var payment = this.get('multiOrders').get('payments').at(i),
-                paymentMethod = OB.MobileApp.model.paymentnames[payment.get('kind')];
-            //FIXME:Change is always given back in store currency
-            if (this.get('multiOrders').get('change') > 0 && paymentMethod.paymentMethod.iscash) {
-              payment.set('origAmount', OB.DEC.sub(payment.get('origAmount'), this.get('multiOrders').get('change')));
-              this.get('multiOrders').set('change', OB.DEC.Zero);
-            }
-            if (payment.get('origAmount') <= amountToPay) {
-              var bigDecAmount = new BigDecimal(String(OB.DEC.mul(payment.get('origAmount'), paymentMethod.mulrate)));
-              iter.addPayment(new OB.Model.PaymentLine({
-                'kind': payment.get('kind'),
-                'name': payment.get('name'),
-                'amount': OB.DEC.toNumber(bigDecAmount),
-                'rate': paymentMethod.rate,
-                'mulrate': paymentMethod.mulrate,
-                'isocode': paymentMethod.isocode,
-                'allowOpenDrawer': payment.get('allowopendrawer'),
-                'isCash': payment.get('iscash'),
-                'openDrawer': payment.get('openDrawer'),
-                'printtwice': payment.get('printtwice')
-              }));
+        if (((_.isUndefined(iter.get('amountToLayaway')) || iter.get('amountToLayaway') > 0) && iter.get('gross') > iter.get('payment')) || (iter.get('amountToLayaway') > 0)) { //TODO this while LOOP
+          var payment = paymentList.at(paymentListIndex),
+              paymentMethod = OB.MobileApp.model.paymentnames[payment.get('kind')];
+          //FIXME:Change is always given back in store currency
+          if (me.get('multiOrders').get('change') > 0 && paymentMethod.paymentMethod.iscash) {
+            payment.set('origAmount', OB.DEC.sub(payment.get('origAmount'), me.get('multiOrders').get('change')));
+            me.get('multiOrders').set('change', OB.DEC.Zero);
+          }
+          if (payment.get('origAmount') <= amountToPay) {
+            var bigDecAmount = new BigDecimal(String(OB.DEC.mul(payment.get('origAmount'), paymentMethod.mulrate)));
+            iter.addPayment(new OB.Model.PaymentLine({
+              'kind': payment.get('kind'),
+              'name': payment.get('name'),
+              'amount': OB.DEC.toNumber(bigDecAmount),
+              'rate': paymentMethod.rate,
+              'mulrate': paymentMethod.mulrate,
+              'isocode': paymentMethod.isocode,
+              'allowOpenDrawer': payment.get('allowopendrawer'),
+              'isCash': payment.get('iscash'),
+              'openDrawer': payment.get('openDrawer'),
+              'printtwice': payment.get('printtwice')
+            }), function (iter) {
               if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
                 iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), payment.get('origAmount')));
               }
-              this.get('multiOrders').get('payments').remove(this.get('multiOrders').get('payments').at(i));
               amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
+              iter.prepareToSend(prepareToSendCallback);
+              setPaymentsToReceipts(orderList, paymentList, orderListIndex, paymentListIndex + 1, callback);
+            });
+          } else {
+            var bigDecAmountAux, amtAux;
+            if (orderListIndex === orderList.length - 1 && !paymentMethod.paymentMethod.iscash) {
+              bigDecAmountAux = new BigDecimal(String(payment.get('origAmount')));
+              amtAux = OB.DEC.toNumber(bigDecAmountAux);
+              paymentList.at(paymentListIndex).set('origAmount', OB.DEC.sub(paymentList.at(paymentListIndex).get('origAmount'), payment.get('origAmount')));
             } else {
-              var bigDecAmountAux, amtAux;
-              if (j === this.get('multiOrders').get('multiOrdersList').length - 1 && !paymentMethod.paymentMethod.iscash) {
-                bigDecAmountAux = new BigDecimal(String(payment.get('origAmount')));
-                amtAux = OB.DEC.toNumber(bigDecAmountAux);
-                this.get('multiOrders').get('payments').at(i).set('origAmount', OB.DEC.sub(this.get('multiOrders').get('payments').at(i).get('origAmount'), payment.get('origAmount')));
-              } else {
-                bigDecAmountAux = new BigDecimal(String(OB.DEC.mul(amountToPay, paymentMethod.mulrate)));
-                amtAux = OB.DEC.toNumber(bigDecAmountAux);
-                this.get('multiOrders').get('payments').at(i).set('origAmount', OB.DEC.sub(this.get('multiOrders').get('payments').at(i).get('origAmount'), amountToPay));
-              }
+              bigDecAmountAux = new BigDecimal(String(OB.DEC.mul(amountToPay, paymentMethod.mulrate)));
+              amtAux = OB.DEC.toNumber(bigDecAmountAux);
+              paymentList.at(paymentListIndex).set('origAmount', OB.DEC.sub(paymentList.at(paymentListIndex).get('origAmount'), amountToPay));
+            }
 
-              iter.addPayment(new OB.Model.PaymentLine({
-                'kind': payment.get('kind'),
-                'name': payment.get('name'),
-                'amount': amtAux,
-                'rate': paymentMethod.rate,
-                'mulrate': paymentMethod.mulrate,
-                'isocode': paymentMethod.isocode,
-                'allowOpenDrawer': payment.get('allowopendrawer'),
-                'isCash': payment.get('iscash'),
-                'openDrawer': payment.get('openDrawer'),
-                'printtwice': payment.get('printtwice')
-              }));
+            iter.addPayment(new OB.Model.PaymentLine({
+              'kind': payment.get('kind'),
+              'name': payment.get('name'),
+              'amount': amtAux,
+              'rate': paymentMethod.rate,
+              'mulrate': paymentMethod.mulrate,
+              'isocode': paymentMethod.isocode,
+              'allowOpenDrawer': payment.get('allowopendrawer'),
+              'isCash': payment.get('iscash'),
+              'openDrawer': payment.get('openDrawer'),
+              'printtwice': payment.get('printtwice')
+            }), function (iter) {
               if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
                 iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), amtAux));
               }
               amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
-              break;
-            }
+              iter.prepareToSend(prepareToSendCallback);
+              setPaymentsToReceipts(orderList, paymentList, orderListIndex + 1, 0, callback);
+            });
           }
+        } else {
+          setPaymentsToReceipts(orderList, paymentList, orderListIndex + 1, 0, callback);
         }
-        iter.prepareToSend(prepareToSendCallback);
-      }
-      OB.UTIL.SynchronizationHelper.finished(synchIdPaymentAccepted, "multiOrders.paymentAccepted");
+      };
+
+      setPaymentsToReceipts(this.get('multiOrders').get('multiOrdersList'), this.get('multiOrders').get('payments'), 0, 0, function () {
+        OB.UTIL.SynchronizationHelper.finished(synchIdPaymentAccepted, "multiOrders.paymentAccepted");
+      });
     }, this);
 
     this.get('multiOrders').on('paymentDone', function (openDrawer) {

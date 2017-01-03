@@ -26,9 +26,88 @@ OB.DS.HWResource.prototype.getData = function (callback) {
   }
 };
 
-OB.DS.HWServer = function (url, scaleurl) {
-  this.url = url;
+OB.DS.HWServer = function (urllist, url, scaleurl) {
+  this.urllist = urllist;
+  this.mainurl = url;
+  this.url = this.mainurl; // keep backward compatibility
   this.scaleurl = scaleurl;
+
+  // Remove suffix if needed
+  if (this.mainurl && this.mainurl.indexOf('/printer', this.mainurl.length - 8) !== -1) { // endswith '/printer'
+    this.mainurl = this.mainurl.substring(0, this.mainurl.length - 8);
+  }
+  // load activeurl from OB.UTIL.localStorage
+  this.setActiveURL(OB.UTIL.localStorage.getItem('hw_activeurl'));
+  //load activepdfurl from OB.UTIL.localStorage
+  this.setActivePDFURL(OB.UTIL.localStorage.getItem('hw_activepdfurl'));
+};
+
+OB.DS.HWServer.PRINTER = 0;
+OB.DS.HWServer.DISPLAY = 1;
+OB.DS.HWServer.DRAWER = 2;
+
+OB.DS.HWServer.prototype.showSelected = function () {
+  OB.UTIL.showAlert.display(OB.I18N.getLabel('OBPOS_SelectedReceiptPrinter', [this.activeidentifier]), OB.I18N.getLabel('OBMOBC_LblSuccess'), 'alert-success', false, 'OBPOS_SelectedReceiptPrinter');
+  OB.UTIL.showAlert.display(OB.I18N.getLabel('OBPOS_SelectedPDFPrinter', [this.activepdfidentifier]), OB.I18N.getLabel('OBMOBC_LblSuccess'), 'alert-success', false, 'OBPOS_SelectedPDFPrinter');
+};
+
+
+OB.DS.HWServer.prototype.setActiveURL = function (url) {
+
+  // validate urls
+  if (this.urllist) { // Check only in the case urllist is a valid to prevent wrong initializations
+    var validprinter = _.find(this.urllist, function (item) {
+      return item.hasReceiptPrinter && item.hardwareURL === url;
+    }, this);
+    if (validprinter) {
+      this.activeurl = validprinter.hardwareURL;
+      this.activeidentifier = validprinter._identifier;
+    } else {
+      this.activeurl = this.mainurl;
+      this.activeidentifier = OB.I18N.getLabel('OBPOS_MainPrinter');
+    }
+  } else {
+    this.activeurl = this.mainurl;
+    this.activeidentifier = OB.I18N.getLabel('OBPOS_MainPrinter');
+  }
+
+  // save
+  if (this.activeurl) {
+    OB.UTIL.localStorage.setItem('hw_activeurl', this.activeurl);
+    OB.UTIL.localStorage.setItem('hw_activeidentifier', this.activeidentifier);
+  } else {
+    OB.UTIL.localStorage.removeItem('hw_activeurl');
+    OB.UTIL.localStorage.removeItem('hw_activeidentifier');
+  }
+};
+
+OB.DS.HWServer.prototype.setActivePDFURL = function (url) {
+
+  // validate urls
+  if (this.urllist) { // Check only in the case urllist is a valid to prevent wrong initializations
+    var validprinter = _.find(this.urllist, function (item) {
+      return item.hasPDFPrinter && item.hardwareURL === url;
+    }, this);
+    if (validprinter) {
+      this.activepdfurl = validprinter.hardwareURL;
+      this.activepdfidentifier = validprinter._identifier;
+    } else {
+      this.activepdfurl = this.mainurl;
+      this.activepdfidentifier = OB.I18N.getLabel('OBPOS_MainPrinter');
+    }
+  } else {
+    this.activepdfurl = this.mainurl;
+    this.activepdfidentifier = OB.I18N.getLabel('OBPOS_MainPrinter');
+  }
+
+  // save
+  if (this.activepdfurl) {
+    OB.UTIL.localStorage.setItem('hw_activepdfurl', this.activepdfurl);
+    OB.UTIL.localStorage.setItem('hw_activepdfidentifier', this.activepdfidentifier);
+  } else {
+    OB.UTIL.localStorage.removeItem('hw_activepdfurl');
+    OB.UTIL.localStorage.removeItem('hw_activepdfidentifier');
+  }
 };
 
 OB.DS.HWServer.prototype.getWeight = function (callback) {
@@ -62,6 +141,19 @@ OB.DS.HWServer.prototype.getWeight = function (callback) {
   }
 };
 
+OB.DS.HWServer.prototype.cleanDisplay = function () {
+
+  if (!this.cleanDisplayTemplate) {
+    this.cleanDisplayTemplate = new OB.DS.HWResource('res/cleandisplay.xml');
+  }
+
+  this.print(this.cleanDisplayTemplate, null, function (args) {
+    if (args && args.exception && args.exception.message) {
+      OB.info('Error cleaning display.');
+    }
+  }, OB.DS.HWServer.DISPLAY);
+};
+
 OB.DS.HWServer.prototype.openDrawerTemplate = 'res/opendrawer.xml';
 OB.DS.HWServer.prototype.openDrawer = function (popup, timeout) {
   var template = new OB.DS.HWResource(this.openDrawerTemplate);
@@ -69,7 +161,7 @@ OB.DS.HWServer.prototype.openDrawer = function (popup, timeout) {
     if (args && args.exception && args.exception.message) {
       OB.info('Error opening the drawer');
     }
-  });
+  }, OB.DS.HWServer.DRAWER);
   if (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
     this.drawerClosed = false;
     OB.POS.hwserver.isDrawerClosed(popup, timeout);
@@ -199,24 +291,24 @@ OB.DS.HWServer.prototype.isDrawerClosed = function (popup, timeout) {
           popupDrawerOpened.hide();
         }
       }
-    });
+    }, OB.DS.HWServer.DRAWER);
   }, 700);
 };
 
-OB.DS.HWServer.prototype.print = function (template, params, callback) {
+OB.DS.HWServer.prototype.print = function (template, params, callback, device) {
   if (template) {
     if (template.getData) {
       var me = this;
       template.getData(function (data) {
-        me.print(data, params, callback);
+        me.print(data, params, callback, device);
       });
     } else {
-      this._print(template, params, callback);
+      this._print(template, params, callback, device);
     }
   }
 };
 
-OB.DS.HWServer.prototype._print = function (templatedata, params, callback) {
+OB.DS.HWServer.prototype._print = function (templatedata, params, callback, device) {
 
   var promisedata = function (template) {
       return new Promise(function (resolve, reject) {
@@ -258,7 +350,7 @@ OB.DS.HWServer.prototype._print = function (templatedata, params, callback) {
       });
     } else {
       // Print the computed receipt as usual
-      this._send(computeddata, callback);
+      this._send(computeddata, callback, device);
     }
   } catch (ex) {
     OB.error('Error computing the template to print.', ex);
@@ -275,11 +367,21 @@ OB.DS.HWServer.prototype._template = function (templatedata, params) {
   return params ? _.template(templatedata, params) : templatedata;
 };
 
-OB.DS.HWServer.prototype._send = function (data, callback) {
-  if (this.url) {
+OB.DS.HWServer.prototype._send = function (data, callback, device) {
+
+  var sendurl;
+  if (OB.DS.HWServer.DRAWER === device || OB.DS.HWServer.DISPLAY === device) {
+    // DRAWER and DISPLAY URL is allways the main url defined in POS terminal
+    sendurl = this.mainurl;
+  } else {
+    // PRINTER and default is the active URL
+    sendurl = this.activeurl;
+  }
+
+  if (sendurl) {
     var me = this;
     var ajaxRequest = new enyo.Ajax({
-      url: me.url,
+      url: sendurl + '/printer',
       cacheBust: false,
       method: 'POST',
       handleAs: 'json',
@@ -317,16 +419,15 @@ OB.DS.HWServer.prototype._send = function (data, callback) {
     }
   }
 };
-
 OB.DS.HWServer.prototype._printPDF = function (params, callback) {
   this._sendPDF(JSON.stringify(params), callback);
 };
 
 OB.DS.HWServer.prototype._sendPDF = function (data, callback) {
-  if (this.url) {
+  if (this.activepdfurl) {
     var me = this;
     var ajaxRequest = new enyo.Ajax({
-      url: me.url + 'pdf',
+      url: me.activepdfurl + '/printerpdf',
       cacheBust: false,
       method: 'POST',
       handleAs: 'json',

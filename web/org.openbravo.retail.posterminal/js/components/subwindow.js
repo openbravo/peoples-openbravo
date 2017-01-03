@@ -68,7 +68,7 @@ enyo.kind({
         break;
       }
     }
-    if (element) {
+    if (element && element.isDefaultAction) {
       element.focus();
     }
     return true;

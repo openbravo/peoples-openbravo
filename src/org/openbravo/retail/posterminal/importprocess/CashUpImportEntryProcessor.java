@@ -45,6 +45,8 @@ public class CashUpImportEntryProcessor extends ImportEntryProcessor {
   }
 
   private static class CashUpRunnable extends SerializedByTermImportEntryProcessorRunnable {
+    private static final String CASH_UP_AUDIT_TYPE = "OBPOS_CashUp";
+
     protected Class<? extends DataSynchronizationProcess> getDataSynchronizationClass() {
       return ProcessCashClose.class;
     }
@@ -88,6 +90,11 @@ public class CashUpImportEntryProcessor extends ImportEntryProcessor {
       } finally {
         OBContext.restorePreviousMode();
       }
+    }
+
+    @Override
+    protected String getProcessIdForAudit() {
+      return CASH_UP_AUDIT_TYPE;
     }
   }
 

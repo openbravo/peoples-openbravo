@@ -27,8 +27,6 @@ import org.openbravo.model.pricing.pricelist.PriceList;
 
 public class OBPOS_APP_PriceList extends SimpleCallout {
 
-  private static final long serialVersionUID = 1L;
-
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
 

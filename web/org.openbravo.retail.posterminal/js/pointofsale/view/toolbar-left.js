@@ -286,7 +286,8 @@ enyo.kind({
         isReceiptHasbeenpaidEqualToN: undefined,
         isToolbarEnabled: undefined,
         isDisabledRequest: undefined,
-        isCreditAndNotPartialCredit: undefined
+        isCreditAndNotPartialCredit: undefined,
+        isLocallyGeneratedPayments: undefined
       };
 
       // If any requirement is not met, return false
@@ -324,7 +325,10 @@ enyo.kind({
       requirements.isReceiptLinesLengthGreaterThanZero = receipt.get('lines').length > 0;
       requirements.isReceiptHasbeenpaidEqualToN = receipt.get('hasbeenpaid') === 'N';
       hasBeenPaid = receipt.get('isPaid') && !receipt.get('isQuotation');
-      if (OB.UTIL.isNullOrUndefined(requirements.receiptBpId) || !requirements.isReceiptDocnoLengthGreaterThanThree || !requirements.isReceiptLinesLengthGreaterThanZero || !requirements.isReceiptHasbeenpaidEqualToN) {
+      requirements.isLocallyGeneratedPayments = !OB.UTIL.isNullOrUndefined(receipt.get('payments').find(function (payment) {
+        return !payment.get('isPrePayment');
+      }));
+      if (OB.UTIL.isNullOrUndefined(requirements.receiptBpId) || !requirements.isReceiptDocnoLengthGreaterThanThree || (!requirements.isReceiptLinesLengthGreaterThanZero && !requirements.isLocallyGeneratedPayments) || !requirements.isReceiptHasbeenpaidEqualToN) {
         return false;
       }
       requirements.isCreditAndNotPartialCredit = receipt.get('paidOnCredit') && !receipt.get('paidPartiallyOnCredit');
@@ -448,7 +452,10 @@ enyo.kind({
       colNum: 1
     });
 
-    OB.MobileApp.view.scanningFocus(false);
+    OB.MobileApp.view.scanningFocus(true);
+    if (OB.UTIL.RfidController.isRfidConfigured()) {
+      OB.UTIL.RfidController.disconnectRFIDDevice();
+    }
 
     OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
   },
@@ -506,9 +513,24 @@ enyo.kind({
     style: 'text-align: center; font-size: 30px;'
   },
   components: [{
-    style: 'font-weight: bold; margin: 0px 5px 0px 0px;',
-    kind: 'OB.UI.Total',
-    name: 'totalPrinter'
+    kind: 'OB.UI.FitText',
+    name: 'totalButtonDiv',
+    minFontSize: 15,
+    maxFontSize: 30,
+    maxHeight: 57,
+    classes: 'buttonText',
+    style: 'font-weight: bold; display: initial;',
+    components: [{
+      tag: 'span',
+      name: 'totalPrinter',
+      renderTotal: function (total) {
+        this.setContent(OB.I18N.formatCurrency(total));
+        //It needs an small asynch to be rendered and then we can adaptFontSize
+        setTimeout(function (me) {
+          me.parent.rendered();
+        }, 0, this);
+      }
+    }]
   }],
   getLabel: function () {
     return this.$.totalPrinter.getContent();
@@ -657,6 +679,14 @@ enyo.kind({
 
     this.menuEntries.push({
       kind: 'OB.UI.MenuBackOffice'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuSelectPrinter'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuSelectPDFPrinter'
     });
 
     //remove duplicates

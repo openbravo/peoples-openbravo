@@ -108,17 +108,24 @@ public class InitialValidations {
       for (int i = 0; i < posTerminal.getOBPOSAppPaymentList().size(); i++) {
         OBPOSAppPayment appPayment = posTerminal.getOBPOSAppPaymentList().get(i);
         if (appPayment.getPaymentMethod().isShared()) {
-          boolean validation = false;
+          boolean validation = false, nameValidation = false;
           for (int j = 0; j < sharedPayments.size(); j++) {
             OBPOSAppPayment sharedPayment = sharedPayments.get(j);
             if (sharedPayment.getPaymentMethod() == appPayment.getPaymentMethod()
                 && appPayment.getFinancialAccount() == sharedPayment.getFinancialAccount()) {
               validation = true;
+              if (sharedPayment.getSearchKey().equals(appPayment.getSearchKey())
+                  && sharedPayment.getCommercialName().equals(appPayment.getCommercialName())) {
+                nameValidation = true;
+              }
               break;
             }
           }
           if (!validation) {
             throw new JSONException("OBPOS_FinAccSharedPayment");
+          }
+          if (!nameValidation) {
+            throw new JSONException("OBPOS_SharedPaymentNameConfiguration");
           }
         }
       }

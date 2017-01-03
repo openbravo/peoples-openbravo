@@ -38,6 +38,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
@@ -761,23 +762,33 @@ public class POSUtils {
    */
   public static void setDefaultPaymentType(JSONObject jsonorder, Order order) {
     try {
-      OBQuery<OBPOSAppPayment> paymentQuery = OBDal.getInstance().createQuery(OBPOSAppPayment.class,
-          "as e where e.obposApplications = :terminal and e.financialAccount.currency = :currency order by e.id");
-      paymentQuery.setNamedParameter("terminal", order.getObposApplications());
+      OBQuery<OBPOSAppPayment> paymentQuery = OBDal
+          .getInstance()
+          .createQuery(
+              OBPOSAppPayment.class,
+              "as e where e.obposApplications.organization = :organization and e.financialAccount.currency = :currency order by e.id");
+      Organization organization = OBDal.getInstance().get(Organization.class,
+          jsonorder.getString("organization"));
+      paymentQuery.setNamedParameter("organization", organization);
       paymentQuery.setNamedParameter("currency", order.getOrganization().getCurrency());
       paymentQuery.setMaxResult(1);
       OBPOSAppPayment defaultPaymentType = (OBPOSAppPayment) paymentQuery.uniqueResult();
 
       if (defaultPaymentType != null) {
         JSONObject paymentTypeValues = new JSONObject();
-        paymentTypeValues.put("paymentMethodId",
-            defaultPaymentType.getPaymentMethod().getPaymentMethod().getId());
-        paymentTypeValues.put("financialAccountId",
-            defaultPaymentType.getFinancialAccount().getId());
+        paymentTypeValues.put("paymentMethodId", defaultPaymentType.getPaymentMethod()
+            .getPaymentMethod().getId());
+        paymentTypeValues.put("financialAccountId", defaultPaymentType.getFinancialAccount()
+            .getId());
         jsonorder.put("defaultPaymentType", paymentTypeValues);
+      } else {
+        throw new OBException(OBMessageUtils.messageBD("OBPOS_NoPaymentMethodInStore"));
       }
     } catch (JSONException e) {
       log.error("Error setting default payment type to order" + order, e);
+    } catch (OBException e) {
+      log.error("Error setting default payment type to order" + order, e);
+      throw new OBException(OBMessageUtils.messageBD(e.getMessage()));
     }
   }
 

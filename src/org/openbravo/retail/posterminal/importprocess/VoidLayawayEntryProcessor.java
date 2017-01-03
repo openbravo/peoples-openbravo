@@ -44,6 +44,8 @@ public class VoidLayawayEntryProcessor extends ImportEntryProcessor {
   }
 
   private static class VoidLayawayRunnable extends SerializedByTermImportEntryProcessorRunnable {
+    private static final String VOID_LAYAWAY_AUDIT_TYPE = "OBPOS_VoidLayaway";
+
     protected Class<? extends DataSynchronizationProcess> getDataSynchronizationClass() {
       return ProcessVoidLayaway.class;
     }
@@ -84,6 +86,11 @@ public class VoidLayawayEntryProcessor extends ImportEntryProcessor {
       } finally {
         OBContext.restorePreviousMode();
       }
+    }
+
+    @Override
+    protected String getProcessIdForAudit() {
+      return VOID_LAYAWAY_AUDIT_TYPE;
     }
   }
 

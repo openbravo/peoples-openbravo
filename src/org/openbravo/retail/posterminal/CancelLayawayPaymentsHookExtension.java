@@ -13,6 +13,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.CancelLayawayPaymentsHook;
 import org.openbravo.model.common.order.Order;
 
@@ -26,6 +27,9 @@ public class CancelLayawayPaymentsHookExtension implements CancelLayawayPayments
    */
   @Override
   public void exec(JSONObject jsonorder, Order inverseOrder) throws Exception {
+    OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+        jsonorder.getString("posTerminal"));
+    inverseOrder.setObposApplications(posTerminal);
     OrderLoader orderLoader = WeldUtils.getInstanceFromStaticBeanManager(OrderLoader.class);
     orderLoader.initializeVariables(jsonorder);
     orderLoader.handlePayments(jsonorder, inverseOrder, null, false, false);

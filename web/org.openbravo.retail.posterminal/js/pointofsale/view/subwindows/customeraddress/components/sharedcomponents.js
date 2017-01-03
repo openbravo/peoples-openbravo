@@ -142,7 +142,8 @@ enyo.kind({
         params.customerAddr.set('onlyOneAddress', me.customerAddr.get('onlyOneAddress'));
       }
       me.bubble('onCancelClose', {
-        customerAddr: params.customerAddr
+        customerAddr: params.customerAddr,
+        makeSearch: true
       });
     }
 

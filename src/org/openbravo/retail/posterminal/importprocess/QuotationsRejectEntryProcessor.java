@@ -45,6 +45,8 @@ public class QuotationsRejectEntryProcessor extends ImportEntryProcessor {
 
   private static class QuotationsRejectRunnable extends
       SerializedByTermImportEntryProcessorRunnable {
+    private static final String REJECT_QUOTATION_AUDIT_TYPE = "OBPOS_RejectQuotation";
+
     protected Class<? extends DataSynchronizationProcess> getDataSynchronizationClass() {
       return QuotationsReject.class;
     }
@@ -85,6 +87,11 @@ public class QuotationsRejectEntryProcessor extends ImportEntryProcessor {
       } finally {
         OBContext.restorePreviousMode();
       }
+    }
+
+    @Override
+    protected String getProcessIdForAudit() {
+      return REJECT_QUOTATION_AUDIT_TYPE;
     }
   }
 

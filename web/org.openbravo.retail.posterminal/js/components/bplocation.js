@@ -358,7 +358,10 @@ enyo.kind({
     bploc.set('ignoreSetBPLoc', true, {
       silent: true
     });
-    var contextMenu = this.owner.owner;
+    var contextMenu = this.owner.owner,
+        returnTo = contextMenu.dialog.kind === 'OB.UI.ListBpsShipLoc' ? 'modalcustomershipaddress' : 'modalcustomeraddress',
+        navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(contextMenu.dialog.owner.owner.args.navigationPath, returnTo);
+
     contextMenu.dialog.menuSelected = true;
     contextMenu.dialog.owner.owner.selectorHide = true;
     contextMenu.dialog.bubble('onShowPopup', {
@@ -366,8 +369,9 @@ enyo.kind({
       args: {
         businessPartner: contextMenu.bPartner,
         bPLocation: bploc,
-        navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(contextMenu.dialog.owner.owner.args.navigationPath, contextMenu.owner.locId === 'locId' ? 'modalcustomeraddress' : 'modalcustomershipaddress'),
-        target: contextMenu.dialog.target
+        target: contextMenu.dialog.target,
+        navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(navigationPath, 'customerAddressView'),
+        cancelNavigationPath: navigationPath
       }
     });
     return true;
@@ -614,8 +618,7 @@ enyo.kind({
   create: function () {
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('name'));
-    var locId = this.owner.owner.owner.owner.bPartner.get(this.locId);
-    if (locId === OB.MobileApp.model.receipt.get('bp').get('locId')) {
+    if (this.model.get('id') === OB.MobileApp.model.receipt.get('bp').get(this.locId)) {
       this.applyStyle('background-color', '#fbf6d1');
     }
     if (this.model.get('isBillTo') && this.model.get('isShipTo')) {
@@ -817,6 +820,8 @@ enyo.kind({
       this.$.body.$.listBpsLoc.setInitialLoad(true);
       this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
       this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.createCustomerLocationButton', true));
+    } else if (this.args.makeSearch) {
+      this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
     }
     return true;
   },

@@ -42,7 +42,6 @@ public class UpdateCashup {
    *          The cashUp identifier
    * @param jsonCashup
    *          The input object with cashup data
-   * @param cashUpDate2
    * @return Cashup object
    * @throws JSONException
    */
@@ -226,7 +225,6 @@ public class UpdateCashup {
    * Create the OBPOSPaymentMethodCashup object from json
    * 
    * @param jsonCashup
-   * @return
    * @throws JSONException
    */
   private static void createPaymentMethodCashUp(OBPOSAppCashup cashup, JSONObject jsonCashup)
@@ -276,7 +274,6 @@ public class UpdateCashup {
    * Create the OBPOSTaxCashup object from json
    * 
    * @param jsonCashup
-   * @return
    * @throws JSONException
    */
   private static void createTaxCashUp(OBPOSAppCashup cashup, JSONObject jsonCashup)
@@ -299,8 +296,7 @@ public class UpdateCashup {
     OBDal.getInstance().save(newTax);
   }
 
-  private synchronized static void associateMasterSlave(OBPOSAppCashup cashUp,
-      OBPOSApplications posTerminal) {
+  public static void associateMasterSlave(OBPOSAppCashup cashUp, OBPOSApplications posTerminal) {
     if (posTerminal.isMaster()) {
       // Find slaves cashup
       String query = OBPOSAppCashup.PROPERTY_POSTERMINAL + "."

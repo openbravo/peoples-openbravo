@@ -20,6 +20,13 @@ public class ProcessCashCloseSlave extends JSONProcessSimple {
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
     OBPOSAppCashup appCashup = OBDal.getInstance().get(OBPOSAppCashup.class,
         jsonsent.getString("cashUpId"));
+
+    UpdateCashup.associateMasterSlave(appCashup, appCashup.getPOSTerminal());
+    OBDal.getInstance().flush();
+
+    OBDal.getInstance().getSession().evict(appCashup);
+    appCashup = OBDal.getInstance().get(OBPOSAppCashup.class, jsonsent.getString("cashUpId"));
+
     JSONObject result = new JSONObject();
     JSONObject data = new JSONObject();
     boolean hasMaster = appCashup != null && appCashup.getObposParentCashup() != null;

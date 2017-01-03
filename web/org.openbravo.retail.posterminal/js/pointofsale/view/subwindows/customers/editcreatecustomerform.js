@@ -17,12 +17,22 @@ enyo.kind({
     onShowPopup: ''
   },
   handlers: {
-    onCancelClose: 'cancelClose'
+    onCancelClose: 'cancelClose',
+    onSetValues: 'setValues',
+    onRetrieveCustomer: 'retrieveCustomers'
   },
   cancelClose: function (inSender, inEvent) {
     this.customer = inEvent.customer;
     this.hide();
     return true;
+  },
+  setValues: function (inSender, inEvent) {
+    this.waterfall('onSetValue', inEvent);
+  },
+  retrieveCustomers: function (inSender, inEvent) {
+    var retrievedValues = inEvent || {};
+    this.waterfall('onRetrieveValues', retrievedValues);
+    return retrievedValues;
   },
   executeOnShow: function () {
     if (OB.MobileApp.model.get('terminal').defaultbp_paymentmethod !== null && OB.MobileApp.model.get('terminal').defaultbp_bpcategory !== null && OB.MobileApp.model.get('terminal').defaultbp_paymentterm !== null && OB.MobileApp.model.get('terminal').defaultbp_invoiceterm !== null && OB.MobileApp.model.get('terminal').defaultbp_bpcountry !== null && OB.MobileApp.model.get('terminal').defaultbp_bporg !== null) {

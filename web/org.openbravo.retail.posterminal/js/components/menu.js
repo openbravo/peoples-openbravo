@@ -1102,6 +1102,69 @@ enyo.kind({
   }
 });
 
+
+enyo.kind({
+  name: 'OB.UI.MenuSelectPrinter',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_retail.selectprinter',
+  events: {
+    onModalSelectPrinters: ''
+  },
+  i18nLabel: 'OBPOS_MenuSelectPrinter',
+  init: function (model) {
+    this.displayLogic();
+  },
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    this.inherited(arguments); // Manual dropdown menu closure
+    if (OB.MobileApp.model.hasPermission(this.permission)) {
+      this.doModalSelectPrinters();
+    }
+  },
+  displayLogic: function () {
+    if (_.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+      return printer.hasReceiptPrinter;
+    })) {
+      this.show();
+    } else {
+      this.hide();
+    }
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.MenuSelectPDFPrinter',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_retail.selectprinter',
+  events: {
+    onModalSelectPDFPrinters: ''
+  },
+  i18nLabel: 'OBPOS_MenuSelectPDFPrinter',
+  init: function (model) {
+    this.displayLogic();
+  },
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    this.inherited(arguments); // Manual dropdown menu closure
+    if (OB.MobileApp.model.hasPermission(this.permission)) {
+      this.doModalSelectPDFPrinters();
+    }
+  },
+  displayLogic: function () {
+    if (_.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+      return printer.hasPDFPrinter;
+    })) {
+      this.show();
+    } else {
+      this.hide();
+    }
+  }
+});
+
 enyo.kind({
   name: 'OB.UI.MenuCancelAndReplace',
   kind: 'OB.UI.MenuAction',

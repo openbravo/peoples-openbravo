@@ -13,6 +13,7 @@ import javax.enterprise.context.ApplicationScoped;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBDal;
@@ -26,8 +27,7 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
   private static final Logger log = Logger.getLogger(DataSynchronizationProcess.class);
 
   @Override
-  public void handleError(Throwable t, String importQualifier, JSONObject result,
-      JSONObject jsonRecord) {
+  public void handleError(Throwable t, Entity entity, JSONObject result, JSONObject jsonRecord) {
 
     // Creation of the order failed. We will now store the order in the import errors table
     String posTerminalId = null;
@@ -57,7 +57,7 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
     errorEntry.setError(getErrorMessage(t));
     errorEntry.setOrderstatus("N");
     errorEntry.setJsoninfo(jsonRecord.toString());
-    errorEntry.setTypeofdata(importQualifier);
+    errorEntry.setTypeofdata(entity.getName());
     errorEntry
         .setObposApplications(OBDal.getInstance().get(OBPOSApplications.class, posTerminalId));
     OBDal.getInstance().save(errorEntry);

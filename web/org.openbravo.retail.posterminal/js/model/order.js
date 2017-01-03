@@ -1552,13 +1552,26 @@
             });
 
           } else {
+            var count;
             //remove line even it is a grouped line
             if (options && options.line && qty === -1) {
               me.addUnit(options.line, qty);
               line = options.line;
               newLine = false;
             } else {
-              line = me.createLine(p, qty, options, attrs);
+              if (p.get('groupProduct')) {
+                line = me.createLine(p, qty, options, attrs);
+              } else {
+                if (qty >= 0) {
+                  for (count = 0; count < qty; count++) {
+                    line = me.createLine(p, 1, options, attrs);
+                  }
+                } else {
+                  for (count = 0; count > qty; count--) {
+                    line = me.createLine(p, -1, options, attrs);
+                  }
+                }
+              }
             }
           }
         }
@@ -1598,6 +1611,8 @@
                   if (!splitline) {
                     args.receipt.trigger('showProductList', args.orderline, 'mandatory');
                     args.orderline.set('hasMandatoryServices', true);
+                    callbackAddProduct();
+                  } else {
                     callbackAddProduct();
                   }
                 } else {
@@ -1773,7 +1788,7 @@
           remoteCriteria.push(pricelistId);
           criteria.remoteFilters = remoteCriteria;
         }
-        OB.Dal.find(OB.Model.ProductPrice, criteria, function (productPrices) {
+        OB.Dal.findUsingCache('productPrice', OB.Model.ProductPrice, criteria, function (productPrices) {
           if (productPrices.length > 0) {
             p = p.clone();
             if (OB.UTIL.isNullOrUndefined(p.get('updatePriceFromPricelist')) || p.get('updatePriceFromPricelist')) {
@@ -2225,8 +2240,10 @@
       } else {
         line.get('product').set('ignorePromotions', false);
       }
+      this.set('skipCalculateReceipt', true);
+
       line.set('qty', -line.get('qty'));
-      if (line.get('qty') > 0 && line.get('product').get('groupProduct')) {
+      if (line.get('qty') > 0 && line.get('product').get('groupProduct') && !line.get('splitline')) {
         this.mergeLines(line);
       }
 
@@ -2267,8 +2284,10 @@
       if (line.get('promotions')) {
         line.unset('promotions');
       }
-      this.save();
-
+      this.set('skipCalculateReceipt', false);
+      this.calculateReceipt(function () {
+        me.save();
+      });
     },
 
     setBPandBPLoc: function (businessPartner, showNotif, saveChange, callback) {
@@ -2387,6 +2406,31 @@
           }, function () {
             OB.error(arguments);
             errorSaveData(callback);
+          }, function () {
+            // Is the result is empty the location is not valid or not exits
+            // Call LoadedCustomer to find the customer and location
+            // if not exist show the information and break the process
+            new OB.DS.Request('org.openbravo.retail.posterminal.master.LoadedCustomer').exec({
+              bpartnerId: businessPartner.id,
+              bpLocationId: businessPartner.get('shipLocId')
+            }, function (data) {
+              var bpLoc = OB.Dal.transform(OB.Model.BPLocation, data[1]);
+              OB.Dal.saveIfNew(bpLoc, function () {
+                businessPartner.set('locationModel', bpLoc);
+                me.set('bp', businessPartner);
+                me.save();
+                // copy the modelOrder again, as the get/save are async
+                OB.MobileApp.model.orderList.saveCurrent();
+                finishSaveData(callback);
+              }, function () {
+                OB.error(arguments);
+              });
+            }, function () {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_NoReceiptLoadedLocation'), [{
+                label: OB.I18N.getLabel('OBPOS_LblOk'),
+                isConfirmButton: true
+              }]);
+            });
           });
 
         } else {
@@ -3189,7 +3233,7 @@
       }
     },
 
-    addPayment: function (payment) {
+    addPayment: function (payment, callback) {
       var payments, total;
       var i, max, p, order;
 
@@ -3218,13 +3262,21 @@
       OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
         paymentToAdd: payment,
         payments: payments,
-        receipt: this
+        receipt: this,
+        callback: callback
       }, function (args) {
+        var executeFinalCallback = function () {
+            if (callback instanceof Function) {
+              callback(order);
+            }
+            };
+
         if (args && args.cancellation) {
           if (payment.get('reverseCallback')) {
             var reverseCallback = payment.get('reverseCallback');
             reverseCallback();
           }
+          executeFinalCallback();
           return;
         }
         if (!payment.get('paymentData') && !payment.get('reversedPaymentId')) {
@@ -3239,6 +3291,7 @@
               }
               order.adjustPayment();
               order.trigger('displayTotal');
+              executeFinalCallback();
               return;
             }
           }
@@ -3253,6 +3306,7 @@
               payment.set('date', new Date());
               order.adjustPayment();
               order.trigger('displayTotal');
+              executeFinalCallback();
               return;
             }
           }
@@ -3274,6 +3328,8 @@
         order.adjustPayment();
         order.trigger('displayTotal');
         order.save();
+        executeFinalCallback();
+        return;
       }); // call with callback, no args
     },
 
@@ -3838,9 +3894,9 @@
                 if (promoQtyoffer > 0) {
                   clonedPromotion.obdiscQtyoffer = (qtyToCheck - promoQtyoffer >= 0) ? promoQtyoffer : qtyToCheck;
                   if (!promotion.hidden) {
-                    clonedPromotion.amt = OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency((promotion.amt * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)))));
-                    clonedPromotion.fullAmt = OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(clonedPromotion.amt)));
-                    clonedPromotion.displayedTotalAmount = OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency((promotion.displayedTotalAmount * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)))));
+                    clonedPromotion.amt = OB.DEC.toNumber(OB.DEC.toBigDecimal(promotion.amt * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)));
+                    clonedPromotion.fullAmt = OB.DEC.toNumber(OB.DEC.toBigDecimal(clonedPromotion.amt));
+                    clonedPromotion.displayedTotalAmount = OB.DEC.toNumber(OB.DEC.toBigDecimal(promotion.displayedTotalAmount * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)));
                   } else {
                     clonedPromotion.amt = 0;
                   }
@@ -3880,12 +3936,12 @@
                     return lp.ruleId === promotion.ruleId && lp.discountType === promotion.discountType && !lp.hidden;
                   });
                   if (linePromo) {
-                    return sum + OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(linePromo.amt)));
+                    return sum + OB.DEC.toNumber(OB.DEC.toBigDecimal(linePromo.amt));
                   }
                   return sum;
                 }, 0);
-                var bdSplittedAmount = OB.DEC.toBigDecimal(OB.I18N.formatCurrency(splittedAmount)),
-                    bdPromoAmount = OB.DEC.toBigDecimal(OB.I18N.formatCurrency(promotion.amt));
+                var bdSplittedAmount = OB.DEC.toBigDecimal(splittedAmount),
+                    bdPromoAmount = OB.DEC.toBigDecimal(promotion.amt);
                 if (bdPromoAmount.compareTo(bdSplittedAmount) !== 0) {
                   var linePromo = _.find(linesToApply.map(function (lta) {
                     return lta.get('promotions').find(function (lp) {
@@ -3895,7 +3951,7 @@
                     return ltapromo;
                   });
                   if (linePromo) {
-                    var amount = OB.DEC.toNumber(bdPromoAmount.subtract(bdSplittedAmount).add(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(linePromo.amt))));
+                    var amount = OB.DEC.toNumber(bdPromoAmount.subtract(bdSplittedAmount).add(OB.DEC.toBigDecimal(linePromo.amt)));
                     linePromo.amt = amount;
                     linePromo.displayedTotalAmount = amount;
                     linePromo.fullAmt = amount;
@@ -5123,7 +5179,7 @@
         this.set('change', OB.DEC.Zero);
       }
     },
-    addPayment: function (payment) {
+    addPayment: function (payment, callback) {
       var payments, total;
       var i, max, p, order;
 
@@ -5142,8 +5198,15 @@
       OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
         paymentToAdd: payment,
         payments: payments,
-        receipt: this
+        receipt: this,
+        callback: callback
       }, function () {
+        var executeFinalCallback = function () {
+            if (callback instanceof Function) {
+              callback(order);
+            }
+            };
+
         if (!payment.get('paymentData')) {
           // search for an existing payment only if there is not paymentData info.
           // this avoids to merge for example card payments of different cards.
@@ -5157,6 +5220,7 @@
               payment.set('date', new Date());
               order.adjustPayment();
               order.trigger('displayTotal');
+              executeFinalCallback();
               return;
             }
           }
@@ -5171,6 +5235,7 @@
               payment.set('date', new Date());
               order.adjustPayment();
               order.trigger('displayTotal');
+              executeFinalCallback();
               return;
             }
           }
@@ -5183,6 +5248,8 @@
         payments.add(payment);
         order.adjustPayment();
         order.trigger('displayTotal');
+        executeFinalCallback();
+        return;
       });
     },
     removePayment: function (payment) {
