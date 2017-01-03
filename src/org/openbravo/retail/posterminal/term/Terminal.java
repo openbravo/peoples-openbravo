@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -41,6 +41,7 @@ import org.openbravo.mobile.core.process.JSONRowConverter;
 import org.openbravo.mobile.core.process.SimpleQueryBuilder;
 import org.openbravo.model.ad.domain.ModelImplementation;
 import org.openbravo.model.ad.domain.ModelImplementationParameter;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.retail.posterminal.InitialValidations;
 import org.openbravo.retail.posterminal.JSONProcessSimple;
@@ -147,7 +148,17 @@ public class Terminal extends JSONProcessSimple {
         sessionTimeout = getSessionTimeoutFromDatabase();
       }
 
+      Object currencyFormat = POSUtils.getPropertyInOrgTree(OBContext.getOBContext()
+          .getCurrentOrganization(), Organization.PROPERTY_OBPOSCURRENCYFORMAT);
+
+      if (currencyFormat == null) {
+        currencyFormat = "";
+      }
+
       String terminalhqlquery = "select " + "'"
+          + currencyFormat
+          + "' as currencyFormat, "
+          + "'"
           + pricesList.getId()
           + "' as priceList, "
           + "'"

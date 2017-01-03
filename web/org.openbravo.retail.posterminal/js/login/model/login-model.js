@@ -412,7 +412,9 @@
 
       this.on('ready', function () {
         OB.debug("next process: 'retail.pointofsale' window");
-
+        if (this.get('terminal').currencyFormat) {
+            OB.Format.formats.priceInform = this.get('terminal').currencyFormat;
+        }
         // register models which are cached during synchronized transactions
         OB.MobileApp.model.addSyncCheckpointModel(OB.Model.Order);
         OB.MobileApp.model.addSyncCheckpointModel(OB.Model.PaymentMethodCashUp);
