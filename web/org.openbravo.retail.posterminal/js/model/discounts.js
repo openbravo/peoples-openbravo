@@ -58,120 +58,126 @@
     },
     applyPromotionsLat: function (receipt, line) {
       var me = this;
-      if (receipt.get('skipApplyPromotions') || receipt.get('cloningReceipt') || this.preventApplyPromotions) {
-        OB.Model.Discounts.finishPromotions(receipt, line);
-        return;
-      }
-
-      var auxReceipt = new OB.Model.Order(),
-          auxLine, hasPromotions, oldLines, oldLines2, actualLines, auxReceipt2, isFirstExecution = true;
-      OB.UTIL.clone(receipt, auxReceipt);
-      auxReceipt.groupLinesByProduct();
-      me.auxReceiptInExecution = auxReceipt;
-      auxReceipt.on('discountsApplied', function () {
-        // to avoid several calls to applyPromotions, only will be applied the changes to original receipt for the last call done to applyPromotion
-        // so if the auxReceipt is distinct of the last auxReceipt created (last call) then nothing is done
-        if (me.auxReceiptInExecution !== auxReceipt) {
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreCheckDiscount', {
+        context: me,
+        receipt: receipt,
+        line: line
+      }, function (args) {
+        if (receipt.get('skipApplyPromotions') || receipt.get('cloningReceipt') || me.preventApplyPromotions || args.cancellation === true) {
+          OB.Model.Discounts.finishPromotions(receipt, line);
           return;
         }
 
-        var continueApplyPromotions = true;
+        var auxReceipt = new OB.Model.Order(),
+            auxLine, hasPromotions, oldLines, oldLines2, actualLines, auxReceipt2, isFirstExecution = true;
+        OB.UTIL.clone(receipt, auxReceipt);
+        auxReceipt.groupLinesByProduct();
+        me.auxReceiptInExecution = auxReceipt;
+        auxReceipt.on('discountsApplied', function () {
+          // to avoid several calls to applyPromotions, only will be applied the changes to original receipt for the last call done to applyPromotion
+          // so if the auxReceipt is distinct of the last auxReceipt created (last call) then nothing is done
+          if (me.auxReceiptInExecution !== auxReceipt) {
+            return;
+          }
 
-        // replace the promotions with applyNext that they were applied previously
-        auxReceipt.removePromotionsCascadeApplied();
+          var continueApplyPromotions = true;
 
-        // check if the order lines have changed in the last execution of applyPromotions
-        // if they didn't changed, then stop
-        if (!OB.UTIL.isNullOrUndefined(oldLines) && oldLines.size() > 0) {
-          isFirstExecution = false;
-          oldLines2 = new Backbone.Collection();
-          oldLines.forEach(function (ol) {
-            oldLines2.push(ol);
-          });
+          // replace the promotions with applyNext that they were applied previously
+          auxReceipt.removePromotionsCascadeApplied();
 
-          oldLines2.forEach(function (ol) {
-            for (i = 0; i < auxReceipt.get('lines').size(); i++) {
-              if (auxReceipt.isSimilarLine(ol, auxReceipt.get('lines').at(i))) {
-                oldLines.remove(ol);
+          // check if the order lines have changed in the last execution of applyPromotions
+          // if they didn't changed, then stop
+          if (!OB.UTIL.isNullOrUndefined(oldLines) && oldLines.size() > 0) {
+            isFirstExecution = false;
+            oldLines2 = new Backbone.Collection();
+            oldLines.forEach(function (ol) {
+              oldLines2.push(ol);
+            });
+
+            oldLines2.forEach(function (ol) {
+              for (i = 0; i < auxReceipt.get('lines').size(); i++) {
+                if (auxReceipt.isSimilarLine(ol, auxReceipt.get('lines').at(i))) {
+                  oldLines.remove(ol);
+                }
               }
-            }
-          });
+            });
 
-          if (oldLines.length === 0) {
+            if (oldLines.length === 0) {
+              continueApplyPromotions = false;
+            }
+          } else if (!OB.UTIL.isNullOrUndefined(oldLines) && oldLines.size() === 0 && !isFirstExecution) {
             continueApplyPromotions = false;
           }
-        } else if (!OB.UTIL.isNullOrUndefined(oldLines) && oldLines.size() === 0 && !isFirstExecution) {
-          continueApplyPromotions = false;
-        }
 
-        if (continueApplyPromotions) {
-          receipt.fillPromotionsWith(auxReceipt, isFirstExecution);
-          if (auxReceipt.hasPromotions()) {
-            auxReceipt.removeQtyOffer();
-            if (auxReceipt.get('lines').length > 0) {
-              oldLines = new Backbone.Collection();
-              auxReceipt.get('lines').forEach(function (l) {
-                var clonedLine = l.clone();
-                clonedLine.set('promotions', _.clone(clonedLine.get('promotions')));
-                oldLines.push(clonedLine);
-              });
-              me.applyPromotionsImp(auxReceipt, undefined, true);
+          if (continueApplyPromotions) {
+            receipt.fillPromotionsWith(auxReceipt, isFirstExecution);
+            if (auxReceipt.hasPromotions()) {
+              auxReceipt.removeQtyOffer();
+              if (auxReceipt.get('lines').length > 0) {
+                oldLines = new Backbone.Collection();
+                auxReceipt.get('lines').forEach(function (l) {
+                  var clonedLine = l.clone();
+                  clonedLine.set('promotions', _.clone(clonedLine.get('promotions')));
+                  oldLines.push(clonedLine);
+                });
+                me.applyPromotionsImp(auxReceipt, undefined, true);
+              } else {
+                OB.Model.Discounts.finishPromotions(receipt, line);
+              }
             } else {
               OB.Model.Discounts.finishPromotions(receipt, line);
             }
           } else {
             OB.Model.Discounts.finishPromotions(receipt, line);
           }
-        } else {
-          OB.Model.Discounts.finishPromotions(receipt, line);
-        }
-      });
-
-      if (line) {
-        auxLine = _.filter(auxReceipt.get('lines').models, function (l) {
-          if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && l.get('qty') === line.get('qty')) {
-            return l;
-          }
         });
-      }
 
-      // if preventApplyPromotions then the promotions will not be deleted, because they will not be recalculated
-      if (!this.preventApplyPromotions) {
-        var manualPromotions;
-        _.each(auxReceipt.get('lines').models, function (line) {
-          manualPromotions = _.filter(line.get('promotions'), function (p) {
-            return p.manual === true;
-          }) || [];
-
-          line.set('promotions', []);
-          line.set('promotionCandidates', []);
-          _.forEach(manualPromotions, function (promo) {
-            promo.qtyOffer = undefined;
-            var promotion = {
-              rule: new Backbone.Model(promo),
-
-              definition: {
-                userAmt: promo.userAmt,
-                applyNext: promo.applyNext,
-                lastApplied: promo.lastApplied
-              },
-              alreadyCalculated: true // to prevent loops
-            };
-            OB.Model.Discounts.addManualPromotion(auxReceipt, [line], promotion);
+        if (line) {
+          auxLine = _.filter(auxReceipt.get('lines').models, function (l) {
+            if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && l.get('qty') === line.get('qty')) {
+              return l;
+            }
           });
+        }
 
-        });
+        // if preventApplyPromotions then the promotions will not be deleted, because they will not be recalculated
+        if (!me.preventApplyPromotions) {
+          var manualPromotions;
+          _.each(auxReceipt.get('lines').models, function (line) {
+            manualPromotions = _.filter(line.get('promotions'), function (p) {
+              return p.manual === true;
+            }) || [];
 
-        _.each(receipt.get('lines').models, function (line) {
-          if (line.get('splitline') || (line.get('gross') > 0 && line.get('priceIncludesTax')) || (line.get('net') > 0 && !line.get('priceIncludesTax'))) {
-            // Clean the promotions only if the line is not a return
             line.set('promotions', []);
             line.set('promotionCandidates', []);
-          }
+            _.forEach(manualPromotions, function (promo) {
+              promo.qtyOffer = undefined;
+              var promotion = {
+                rule: new Backbone.Model(promo),
 
-        });
-      }
-      this.applyPromotionsImp(auxReceipt, null, true);
+                definition: {
+                  userAmt: promo.userAmt,
+                  applyNext: promo.applyNext,
+                  lastApplied: promo.lastApplied
+                },
+                alreadyCalculated: true // to prevent loops
+              };
+              OB.Model.Discounts.addManualPromotion(auxReceipt, [line], promotion);
+            });
+
+          });
+
+          _.each(receipt.get('lines').models, function (line) {
+            if (line.get('splitline') || (line.get('gross') > 0 && line.get('priceIncludesTax')) || (line.get('net') > 0 && !line.get('priceIncludesTax'))) {
+              // Clean the promotions only if the line is not a return
+              line.set('promotions', []);
+              line.set('promotionCandidates', []);
+            }
+
+          });
+        }
+        me.applyPromotionsImp(auxReceipt, null, true);
+      });
     },
 
     applyPromotionsImp: function (receipt, line, skipSave, avoidTrigger) {

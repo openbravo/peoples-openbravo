@@ -390,6 +390,13 @@
           me = this,
           forceInsert = false;
 
+      if (this.get('isBeingClosed')) {
+        var diffReceipt = OB.UTIL.diffJson(this.serializeToJSON(), this.get('json'));
+        var error = new Error();
+        OB.error('The receipt is being save during the closing: ' + diffReceipt);
+        OB.error('The stack trace is: ' + error.stack);
+      }
+
       var now = new Date();
       this.set('timezoneOffset', now.getTimezoneOffset());
 

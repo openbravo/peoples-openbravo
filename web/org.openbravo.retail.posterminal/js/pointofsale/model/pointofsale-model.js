@@ -313,8 +313,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             totalNotPrePayment = OB.DEC.Zero;
         var triggerReceiptClose = function (receipt) {
             // There is only 1 receipt object.
+            receipt.set('isBeingClosed', true);
             receipt.trigger('closed', {
               callback: function (args) {
+                receipt.set('isBeingClosed', false);
                 OB.UTIL.Debug.execute(function () {
                   if (!args.frozenReceipt) {
                     throw "A clone of the receipt must be provided because it is possible that some rogue process could have changed it";
@@ -343,6 +345,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   // hasBeenPaid and cashUpReportInformation are the only difference allowed in the receipt
                   delete diff.hasbeenpaid;
                   delete diff.cashUpReportInformation;
+                  // isBeingClosed is a flag only used to log purposes
+                  delete diff.isBeingClosed;
                   // verify if there have been any modification to the receipt
                   var diffStringified = JSON.stringify(diff, undefined, 2);
                   if (diffStringified !== '{}') {

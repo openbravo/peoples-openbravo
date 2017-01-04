@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -219,15 +219,22 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     };
 
     OB.Dal.findUsingCache('discountsCache', OB.Model.Discount, criteria, function (d) {
-      d.forEach(function (disc) {
-        actionQueue.add({
-          action: me.applyRule,
-          args: disc,
-          promCandidates: d,
-          avoidTrigger: true
-        });
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreApplyAutomaticDiscount', {
+        context: me,
+        discountList: d
+      }, function (args) {
+        if (args.cancelation !== true) {
+          args.discountList.forEach(function (disc) {
+            actionQueue.add({
+              action: me.applyRule,
+              args: disc,
+              promCandidates: args.discountList,
+              avoidTrigger: true
+            });
+          });
+        }
+        evt.trigger('actionsCreated');
       });
-      evt.trigger('actionsCreated');
     }, function () {
       OB.error('Error getting promotions', arguments);
     }, {
