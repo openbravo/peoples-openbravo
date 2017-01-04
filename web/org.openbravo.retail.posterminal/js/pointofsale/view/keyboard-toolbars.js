@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2016 Openbravo S.L.U.
+ * Copyright (C) 2013-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -413,11 +413,15 @@ enyo.kind({
       if (this.keyboard.lastStatus !== '' && status === '') {
         var defaultPayment = this.defaultPayment;
         //check if defaultPayment is returnable
-        if (me.receipt && me.receipt.getTotal() < 0 && !defaultPayment.paymentMethod.refundPayment) {
+        if (me.receipt && me.receipt.getTotal() < 0 && !defaultPayment.paymentMethod.refundable) {
+          //if default payment is not returnable, select cash by default
           for (i = 0; i < OB.MobileApp.model.get('payments').length; i++) {
-            if (OB.MobileApp.model.get('payments')[i].paymentMethod.refundPayment) {
+            if (OB.MobileApp.model.get('payments')[i].paymentMethod.iscash && OB.MobileApp.model.get('payments')[i].paymentMethod.refundable) {
               defaultPayment = OB.MobileApp.model.get('payments')[i];
               break;
+            }
+            if (!defaultPayment.paymentMethod.refundable && OB.MobileApp.model.get('payments')[i].paymentMethod.refundable) {
+              defaultPayment = OB.MobileApp.model.get('payments')[i];
             }
           }
         }
@@ -441,7 +445,7 @@ enyo.kind({
     var me = this,
         i, p, keyboard = this.owner.owner,
         isDisabled;
-    keyboard.status = '';
+    keyboard.showKeypad('Coins-' + OB.MobileApp.model.get('currency').id); // shows the Coins/Notes panel for the terminal currency
     keyboard.showSidepad('sidedisabled');
 
     keyboard.disableCommandKey(this, {
@@ -450,7 +454,7 @@ enyo.kind({
     });
     for (i = 0; i < OB.MobileApp.model.get('payments').length; i++) {
       p = OB.MobileApp.model.get('payments')[i];
-      isDisabled = ((me.receipt && me.receipt.getTotal() < 0) ? !p.paymentMethod.refundPayment : false);
+      isDisabled = ((me.receipt && me.receipt.getTotal() < 0) ? !p.paymentMethod.refundable : false);
       if ((p.paymentMethod.id === OB.MobileApp.model.get('terminal').terminalType.paymentMethod) && !isDisabled) {
         keyboard.defaultcommand = OB.MobileApp.model.get('payments')[i].payment.searchKey;
         keyboard.setStatus(OB.MobileApp.model.get('payments')[i].payment.searchKey);
@@ -458,7 +462,7 @@ enyo.kind({
       }
     }
 
-    if (keyboard && OB.MobileApp.model.get('paymentcash') && keyboard.status === '') {
+    if (keyboard && OB.MobileApp.model.get('paymentcash')) {
       if (me.receipt && me.receipt.getTotal() > 0) {
         keyboard.defaultcommand = OB.MobileApp.model.get('paymentcash');
         keyboard.setStatus(OB.MobileApp.model.get('paymentcash'));
@@ -466,13 +470,13 @@ enyo.kind({
         var refundablePayment = '';
         for (i = 0; i < OB.MobileApp.model.get('payments').length; i++) {
           p = OB.MobileApp.model.get('payments')[i];
-          isDisabled = ((me.receipt && me.receipt.getTotal() < 0) ? !p.paymentMethod.refundPayment : false);
-          //check if payment cash is enabled or disabled for return
+          isDisabled = ((me.receipt && me.receipt.getTotal() < 0) ? !p.paymentMethod.refundable : false);
+          //check if payment cash is returnable
           if (!isDisabled) {
             if (refundablePayment === '') {
               refundablePayment = OB.MobileApp.model.get('payments')[i].payment.searchKey;
             }
-            if (p.payment.searchKey === OB.MobileApp.model.get('paymentcash')) {
+            if (p.paymentMethod.iscash && p.paymentMethod.refundable) {
               refundablePayment = OB.MobileApp.model.get('payments')[i].payment.searchKey;
               break;
             }
@@ -486,7 +490,7 @@ enyo.kind({
     }
     //Handle No Refund Payment Methods
     _.each(OB.MobileApp.model.paymentnames, function (payment) {
-      isDisabled = (me.receipt && me.receipt.getTotal() < 0 ? !payment.paymentMethod.refundPayment : false);
+      isDisabled = (me.receipt && me.receipt.getTotal() < 0 ? !payment.paymentMethod.refundable : false);
       keyboard.disableCommandKey(me, {
         disabled: isDisabled,
         commands: [payment.payment.searchKey]

@@ -185,7 +185,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="REFUNDPAYMENT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="REFUNDABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
