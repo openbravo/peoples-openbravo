@@ -52,6 +52,7 @@ enyo.kind({
     } else {
       var payment, change, pending, isMultiOrders, paymentstatus;
       payment = inEvent.value.payment || OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
+      this.$.noenoughchangelbl.hide();
       if (_.isUndefined(payment)) {
         return true;
       }

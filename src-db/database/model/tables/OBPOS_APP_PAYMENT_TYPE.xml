@@ -185,6 +185,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="REFUNDABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APPPAYTYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
