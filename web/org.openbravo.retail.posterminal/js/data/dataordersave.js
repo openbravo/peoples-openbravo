@@ -189,7 +189,7 @@
           frozenReceipt.set('undo', null);
           frozenReceipt.set('multipleUndo', null);
 
-          if (Math.abs(receipt.get('payment')) === Math.abs(receipt.get('gross')) || receipt.get('paidOnCredit')) {
+          if (Math.abs(receipt.get('payment')) >= Math.abs(receipt.get('gross')) || receipt.get('paidOnCredit')) {
             receipt.get('lines').forEach(function (line) {
               line.set('obposCanbedelivered', true);
             });
@@ -514,7 +514,7 @@
             currentReceipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
             currentReceipt.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
 
-            if (Math.abs(currentReceipt.get('payment')) === Math.abs(currentReceipt.get('gross')) || currentReceipt.get('paidOnCredit')) {
+            if (Math.abs(currentReceipt.get('payment')) >= Math.abs(currentReceipt.get('gross')) || currentReceipt.get('paidOnCredit')) {
               currentReceipt.get('lines').forEach(function (line) {
                 line.set('obposCanbedelivered', true);
               });
