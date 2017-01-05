@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -41,7 +41,7 @@ public class ReturnFromCustomerHQLInserter extends HqlInserter {
     // discounts
     String buttonOwnerViewTabId = requestParameters.get("buttonOwnerViewTabId");
     if (RETURN_FROM_CUSTOMER_TAB_ID.equals(buttonOwnerViewTabId)) {
-      return " exists (select 1 from OrderLine e where e.id = iol.salesOrderLine.id and e.orderDiscount is null) ";
+      return " (select e.orderDiscount from OrderLine e where e.id = iol.salesOrderLine.id) is null ";
     } else {
       return null;
     }
