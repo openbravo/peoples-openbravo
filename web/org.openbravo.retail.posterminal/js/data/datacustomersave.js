@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -23,7 +23,7 @@
     }, this);
 
     OB.DATA.executeCustomerSave = function (customer, callback) {
-      var customersList, customerId = this.customer.get('id'),
+      var customersList, customerId = customer.get('id'),
           isNew = false,
           bpToSave = new OB.Model.ChangedBusinessPartners(),
           bpLocation, bpLocToSave = new OB.Model.BPLocation(),
@@ -83,8 +83,8 @@
         } else {
           customer.set('loaded', OB.I18N.normalizeDate(new Date(customer.get('loaded'))));
         }
-        bpToSave.set('json', JSON.stringify(this.customer.serializeEditedToJSON()));
-        bpToSave.set('c_bpartner_id', this.customer.get('id'));
+        bpToSave.set('json', JSON.stringify(customer.serializeEditedToJSON()));
+        bpToSave.set('c_bpartner_id', customer.get('id'));
       } else {
         isNew = true;
       }
