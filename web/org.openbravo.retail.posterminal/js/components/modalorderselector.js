@@ -131,7 +131,8 @@ enyo.kind({
   },
   events: {
     onShowPopup: '',
-    onChangePaidReceipt: ''
+    onChangePaidReceipt: '',
+    onChangeCurrentOrder: ''
   },
   receiptList: null,
   components: [{
