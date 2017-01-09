@@ -91,17 +91,32 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
 
   public void eagerInitialization() {
     reset();
-    Query query = OBDal.getInstance().getSession()
-        .createQuery("select id from ADWindow where isActive='Y'");
+    Query queryWindow = OBDal.getInstance().getSession()
+        .createQuery("select id from ADWindow where active=true");
     @SuppressWarnings("unchecked")
-    List<String> windows = query.list();
+    List<String> windows = queryWindow.list();
     long t = System.currentTimeMillis();
     int i = 0;
     for (String windowId : windows) {
-      log.info("{}/{}", ++i, windows.size());
+      log.info("window {}/{}", ++i, windows.size());
       initializeWindow(windowId);
     }
     log.info("Intialized all windows in {} ms", System.currentTimeMillis() - t);
+
+    Query queryCombo = OBDal
+        .getInstance()
+        .getSession()
+        .createQuery(
+            "select f.id from ADField f where f.active=true and f.column.reference.id in ('18','17','19')");
+    @SuppressWarnings("unchecked")
+    List<String> combos = queryCombo.list();
+    long t1 = System.currentTimeMillis();
+    int i1 = 0;
+    for (String comboId : combos) {
+      log.info("combo {}, {}/{}", new Object[] { comboId, ++i1, combos.size() });
+      getComboTableData(OBDal.getInstance().getProxy(Field.class, comboId));
+    }
+    log.info("Intialized all combos in {} ms", System.currentTimeMillis() - t1);
   }
 
   public void reset() {
