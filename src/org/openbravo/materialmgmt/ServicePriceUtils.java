@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -370,8 +370,10 @@ public class ServicePriceUtils {
   /**
    * Method that returns a warning message if a service of a Return From Customer is not Returnable
    * of the return period is expired.
+   * 
+   * @deprecated Use
+   *             {@link ProductPriceUtils#productReturnAllowedRFC(ShipmentInOutLine, Product, Date)}
    */
-  @Deprecated
   public static JSONObject serviceReturnAllowedRFC(ShipmentInOutLine shipmentLine,
       Product serviceProduct, Date rfcOrderDate) {
     return ProductPriceUtils.productReturnAllowedRFC(shipmentLine, serviceProduct, rfcOrderDate);

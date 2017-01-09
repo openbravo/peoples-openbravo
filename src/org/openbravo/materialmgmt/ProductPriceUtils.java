@@ -9,7 +9,7 @@
 
 package org.openbravo.materialmgmt;
 
-import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -31,37 +31,34 @@ public class ProductPriceUtils {
   private static final Logger log = LoggerFactory.getLogger(ProductPriceUtils.class);
 
   /**
-   * Method that returns a warning message if a service of a Return From Customer is not Returnable
-   * of the return period is expired.
+   * Returns a warning message when a Return From Customer product is not Returnable or when the
+   * return period is expired.
    */
-
-  public static JSONObject productReturnAllowedRFC(ShipmentInOutLine shipmentLine,
-      Product serviceProduct, Date rfcOrderDate) {
+  public static JSONObject productReturnAllowedRFC(ShipmentInOutLine shipmentLine, Product product,
+      Date rfcOrderDate) {
     JSONObject result = null;
     OBContext.setAdminMode(true);
     try {
-      if (!serviceProduct.isReturnable()) {
-        throw new OBException("@Product@ '" + serviceProduct.getIdentifier()
+      if (!product.isReturnable()) {
+        throw new OBException("@Product@ '" + product.getIdentifier()
             + "' @ServiceIsNotReturnable@");
       } else {
         try {
-          final Date orderDate = shipmentLine != null && shipmentLine.getSalesOrderLine() != null ? OBDateUtils
-              .getDate(OBDateUtils.formatDate(shipmentLine.getSalesOrderLine().getOrderDate()))
+          final Date orderDate = shipmentLine != null && shipmentLine.getSalesOrderLine() != null ? DateUtils
+              .truncate(shipmentLine.getSalesOrderLine().getOrderDate(), Calendar.DAY_OF_MONTH)
               : null;
           Date returnDate = null;
           String message = null;
-          if (orderDate != null && serviceProduct.getOverdueReturnDays() != null) {
-            returnDate = DateUtils.addDays(orderDate, serviceProduct.getOverdueReturnDays()
-                .intValue());
+          if (orderDate != null && product.getOverdueReturnDays() != null) {
+            returnDate = DateUtils.addDays(orderDate, product.getOverdueReturnDays().intValue());
           }
-          if (serviceProduct.getOverdueReturnDays() != null && returnDate != null
+          if (product.getOverdueReturnDays() != null && returnDate != null
               && rfcOrderDate.after(returnDate)) {
-            message = "@Product@ '" + serviceProduct.getIdentifier() + "' @ServiceReturnExpired@: "
+            message = "@Product@ '" + product.getIdentifier() + "' @ServiceReturnExpired@: "
                 + OBDateUtils.formatDate(returnDate);
           }
-          if (serviceProduct.getOverdueReturnDays() != null && returnDate == null) {
-            message = "@Product@ '" + serviceProduct.getIdentifier()
-                + "' @ServiceMissingReturnDate@";
+          if (product.getOverdueReturnDays() != null && returnDate == null) {
+            message = "@Product@ '" + product.getIdentifier() + "' @ServiceMissingReturnDate@";
           }
           if (message != null) {
             message = OBMessageUtils.parseTranslation(new DalConnectionProvider(false),
@@ -72,8 +69,6 @@ public class ProductPriceUtils {
             result.put("title", "Warning");
             result.put("text", message);
           }
-        } catch (ParseException e) {
-          log.error(e.getMessage(), e);
         } catch (JSONException e) {
           log.error(e.getMessage(), e);
         }
