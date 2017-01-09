@@ -107,7 +107,7 @@ public class OBDal implements OBNotSingleton {
     if (!otherPoolInstances.containsKey(pool)) {
       OBDal dal = OBProvider.getInstance().get(OBDal.class);
       dal.poolName = pool;
-      otherPoolInstances.put(pool, dal);
+      otherPoolInstances.putIfAbsent(pool, dal);
     }
 
     return otherPoolInstances.get(pool);
