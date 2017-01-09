@@ -60,7 +60,7 @@ public class AllowedCrossDomainsHandler {
    * @param request
    * @return true if the origin if the request is in the list of allowed domains
    */
-  public boolean fromAllowedOrigin(HttpServletRequest request) {
+  private boolean fromAllowedOrigin(HttpServletRequest request) {
     final String origin = request.getHeader("Origin");
 
     if (origin == null) {
@@ -73,6 +73,31 @@ public class AllowedCrossDomainsHandler {
       }
     }
     return false;
+  }
+
+  /**
+   * Checks if an origin is set on the header, if not then false is returned. If there are no checkers installed then also false
+   * is returned. If there are checkers installed then the origin is checked and the result is returned.
+   * 
+   * Note: will return true if there is indeed an invalid confirmed origin.
+   */
+  public boolean isCheckedInvalidOrigin(HttpServletRequest request) {
+    final String origin = request.getHeader("Origin");
+
+    if (origin == null) {
+      return false;
+    }
+
+    if (getCheckers().isEmpty()) {
+      return false;
+    }
+
+    for (AllowedCrossDomainsChecker checker : getCheckers()) {
+      if (checker.isAllowedOrigin(request, origin)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private Collection<AllowedCrossDomainsChecker> getCheckers() {
