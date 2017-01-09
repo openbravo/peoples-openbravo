@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -301,6 +301,25 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       me.loadCheckedMultiorders();
     });
 
+    this.checkOpenDrawer = function () {
+      if (me.openDrawer) {
+        OB.POS.hwserver.openDrawer({
+          openFirst: true,
+          receipt: me.get('leftColumnViewManager').isMultiOrder() ? me.get('multiOrders') : receipt
+        }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
+      }
+    };
+
+    receipt.on('closed', function () {
+      me.checkOpenDrawer();
+    });
+
+    this.get('multiOrders').on('closed', function (order) {
+      if (order.get('id') === _.last(me.get('multiOrders').get('multiOrdersList').models).get('id')) {
+        me.checkOpenDrawer();
+      }
+    });
+
     receipt.on('paymentAccepted', function () {
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("receipt.paymentAccepted");
       receipt.setIsCalculateReceiptLockState(true);
@@ -359,7 +378,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
                   orderList.synchronizeCurrentOrder();
                 }
-                enyo.$.scrim.hide();
                 OB.UTIL.SynchronizationHelper.finished(synchId, "receipt.paymentAccepted");
               }
             });
@@ -479,12 +497,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           isConfirmButton: true,
           action: function () {
-            if (openDrawer) {
-              OB.POS.hwserver.openDrawer({
-                openFirst: false,
-                receipt: receipt
-              }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
-            }
+            me.openDrawer = openDrawer;
             triggerPaymentAccepted();
           }
         }, {
@@ -501,12 +514,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           label: OB.I18N.getLabel('OBMOBC_LblCancel')
         }]);
       } else {
-        if (openDrawer) {
-          OB.POS.hwserver.openDrawer({
-            openFirst: true,
-            receipt: receipt
-          }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
-        }
+        me.openDrawer = openDrawer;
         triggerPaymentAccepted();
       }
     }, this);
@@ -670,30 +678,24 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     this.get('multiOrders').on('paymentDone', function (openDrawer) {
       var me = this,
-          paymentstatus = this.get('multiOrders');
-      if (OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) > 0) {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody'), [{
+          paymentstatus = this.get('multiOrders'),
+          overpayment = OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'));
+
+      if (overpayment > 0) {
+        var symbol = OB.MobileApp.model.get('terminal').symbol,
+            symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody', [OB.I18N.formatCurrencyWithSymbol(overpayment, symbol, symbolAtRight)]), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           isConfirmButton: true,
           action: function () {
-            if (openDrawer) {
-              OB.POS.hwserver.openDrawer({
-                openFirst: false,
-                receipt: me.get('multiOrders')
-              }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
-            }
+            me.openDrawer = openDrawer;
             me.get('multiOrders').trigger('paymentAccepted');
           }
         }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel')
         }]);
       } else {
-        if (openDrawer) {
-          OB.POS.hwserver.openDrawer({
-            openFirst: true,
-            receipt: me.get('multiOrders')
-          }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
-        }
+        me.openDrawer = openDrawer;
         this.get('multiOrders').trigger('paymentAccepted');
       }
     }, this);
