@@ -774,7 +774,7 @@ public class ComboTableData {
     if (context == null || context.equals(""))
       return "";
     StringBuilder strOut = new StringBuilder();
-    String value = new String(context);
+    String value = context;
     String token, defStr;
     int i = value.indexOf("@");
     while (i != -1) {
