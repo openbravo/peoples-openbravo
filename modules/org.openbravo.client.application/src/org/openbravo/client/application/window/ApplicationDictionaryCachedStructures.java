@@ -150,7 +150,12 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
    */
   public Tab getTab(String tabId) {
     log.debug("get tab {}", tabId);
-    if (useCache() && tabMap.containsKey(tabId)) {
+    if (!useCache()) {
+      // not using cache, initialize just current tab and go
+      return OBDal.getInstance().get(Tab.class, tabId);
+    }
+
+    if (tabMap.containsKey(tabId)) {
       log.debug("got tab {} from cache", tabId);
       return tabMap.get(tabId);
     }
@@ -170,13 +175,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
         return tabMap.get(tabId);
       }
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-      if (!useCache()) {
-        // not using cache, initialize just current tab and go
-        return tab;
-      } else {
-        // using cache, do complete initialization
-        initializeWindow(tab.getWindow().getId());
-      }
+      initializeWindow(tab.getWindow().getId());
       return tab;
     }
   }
