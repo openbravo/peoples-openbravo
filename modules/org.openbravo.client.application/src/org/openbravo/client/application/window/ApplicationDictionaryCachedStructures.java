@@ -79,6 +79,11 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
   private Object getTabLock = new Object();
   private Object initializedWindowsLock = new Object();
 
+  /**
+   * Resets cache and sets whether cache should be used.
+   *
+   * This method is automatically invoked on creation.
+   */
   @PostConstruct
   public void init() {
     log.debug("Resetting cache");
@@ -100,6 +105,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     log.info("ADCS initialized, use cache: {}", useCache);
   }
 
+  /** Initializes cache with all windows in the system */
   public void eagerInitialization() {
     init();
     Query queryWindow = OBDal.getInstance().getSession()
