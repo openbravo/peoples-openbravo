@@ -26,6 +26,11 @@
   cursor: pointer;
 }
 
+.paymentmethoditemsdisabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
+
 @media all and (max-width: 800px) {
   .paymentmethoditems {
     min-width: 33%;

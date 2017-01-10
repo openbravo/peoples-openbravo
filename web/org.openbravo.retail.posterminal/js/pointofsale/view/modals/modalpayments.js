@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2016 Openbravo S.L.U.
+ * Copyright (C) 2015-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -81,19 +81,26 @@ enyo.kind({
               content: '<img class="paymentmethoditemsimage" src="' + (item.image ? item.image : 'img/PMImgNotAvailable.png') + '"/><div class="paymentmethoditemstext">' + item.name + '</div>',
               payment: item.payment,
               tap: function () {
-                var dialog = this.owner.owner.owner;
-                dialog.bubble('onStatusChanged', {
-                  payment: this.payment,
-                  status: this.payment.payment.searchKey,
-                  amount: dialog.args.amount,
-                  options: dialog.args.options
-                });
-                dialog.bubble('onPaymentChanged', {
-                  payment: this.payment,
-                  status: this.payment.payment.searchKey,
-                  amount: dialog.args.amount
-                });
-                dialog.doHideThisPopup();
+                if (!item.disabled) {
+                  var dialog = this.owner.owner.owner;
+                  dialog.bubble('onStatusChanged', {
+                    payment: this.payment,
+                    status: this.payment.payment.searchKey,
+                    amount: dialog.args.amount,
+                    options: dialog.args.options
+                  });
+                  dialog.bubble('onPaymentChanged', {
+                    payment: this.payment,
+                    status: this.payment.payment.searchKey,
+                    amount: dialog.args.amount
+                  });
+                  dialog.doHideThisPopup();
+                }
+              },
+              initComponents: function () {
+                if (item.disabled) {
+                  this.addClass('paymentmethoditemsdisabled');
+                }
               }
             });
           }, this);
@@ -116,10 +123,12 @@ enyo.kind({
     enyo.forEach(payments, function (payment) {
       if (payment.paymentMethod.paymentMethodCategory && payment.paymentMethod.paymentMethodCategory === this.args.idCategory && OB.MobileApp.model.hasPermission(payment.payment.searchKey)) {
         if (filterBy === '' || payment.paymentMethod._identifier.toUpperCase().indexOf(filterBy) >= 0) {
+          var isDisabled = (OB.MobileApp.model.receipt.getTotal() < 0 ? !payment.paymentMethod.refundable : false);
           items.push({
             name: payment.paymentMethod._identifier,
             image: payment.image,
-            payment: payment
+            payment: payment,
+            disabled: isDisabled
           });
         }
       }
