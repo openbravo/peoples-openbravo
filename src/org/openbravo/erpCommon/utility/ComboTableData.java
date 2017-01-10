@@ -52,6 +52,10 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 public class ComboTableData {
   private static Logger log4j = Logger.getLogger(ComboTableData.class);
+
+  public static final String CLIENT_LIST_PARAM_HOLDER = "__CLIENT_LIST__";
+  public static final String ORG_LIST_PARAM_HOLDER = "__ORG_LIST__";
+
   private final String internalPrefix = "@@";
   private static final String FIELD_CONCAT = " || ' - ' || ";
   private static final String INACTIVE_DATA = "**";
@@ -783,9 +787,9 @@ public class ComboTableData {
       }
       token = value.substring(0, j);
       if (token.equalsIgnoreCase("#User_Client"))
-        defStr = "__CLIENT_LIST__";
+        defStr = CLIENT_LIST_PARAM_HOLDER;
       else if (token.equalsIgnoreCase("#User_Org"))
-        defStr = "__ORG_LIST__";
+        defStr = ORG_LIST_PARAM_HOLDER;
       else
         defStr = "?";
 
@@ -964,9 +968,9 @@ public class ComboTableData {
       text.append(" LIMIT " + numberOfRows + " OFFSET " + startRow);
     }
 
-    String query = text.toString().replace("__CLIENT_LIST__", getClientList());
+    String query = text.toString().replace(CLIENT_LIST_PARAM_HOLDER, getClientList());
     if (orgList != null) {
-      query = query.replace("__ORG_LIST__", orgList);
+      query = query.replace(ORG_LIST_PARAM_HOLDER, orgList);
     }
 
     if (applyLimits && rdbms.equalsIgnoreCase("ORACLE")) {

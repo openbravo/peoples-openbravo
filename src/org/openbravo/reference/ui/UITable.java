@@ -18,6 +18,9 @@
  */
 package org.openbravo.reference.ui;
 
+import static org.openbravo.erpCommon.utility.ComboTableData.CLIENT_LIST_PARAM_HOLDER;
+import static org.openbravo.erpCommon.utility.ComboTableData.ORG_LIST_PARAM_HOLDER;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -115,12 +118,13 @@ public class UITable extends UIReference {
     if (tableName != null && !tableName.equals("") && fieldName != null && !fieldName.equals("")) {
       tables += " on " + tableName + "." + fieldName + " = td" + myIndex + "." + trd[0].keyname
           + " \n";
-      tables += "AND td" + myIndex + ".AD_Client_ID IN (__CLIENT_LIST__) \n";
-      tables += "AND td" + myIndex + ".AD_Org_ID IN (__ORG_LIST__)";
+      tables += "AND td" + myIndex + ".AD_Client_ID IN (" + CLIENT_LIST_PARAM_HOLDER + ") \n";
+      tables += "AND td" + myIndex + ".AD_Org_ID IN (" + ORG_LIST_PARAM_HOLDER + ")";
     } else {
-      comboTableData.addWhereField("td" + myIndex + ".AD_Client_ID IN (__CLIENT_LIST__)",
-          "CLIENT_LIST");
-      comboTableData.addWhereField("td" + myIndex + ".AD_Org_ID IN (__ORG_LIST__)", "ORG_LIST");
+      comboTableData.addWhereField("td" + myIndex + ".AD_Client_ID IN (" + CLIENT_LIST_PARAM_HOLDER
+          + ")", "CLIENT_LIST");
+      comboTableData.addWhereField(
+          "td" + myIndex + ".AD_Org_ID IN (" + ORG_LIST_PARAM_HOLDER + ")", "ORG_LIST");
     }
     comboTableData.addFromField(tables, "td" + myIndex);
     String strSQL = trd[0].whereclause;
