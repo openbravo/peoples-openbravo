@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Business Momentum b.v.
- * All portions are Copyright (C) 2007-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2007-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  Business Momentum b.v. (http://www.businessmomentum.eu).
  *************************************************************************
@@ -26,9 +26,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperPrint;
-
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.WeldUtils;
@@ -38,7 +35,11 @@ import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.Replace;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
 
 public class ReportManager {
   private static Logger log4j = Logger.getLogger(ReportManager.class);
@@ -53,6 +54,12 @@ public class ReportManager {
   private String _strBaseWeb; // BASE WEB!!!!!!
   private String _prefix;
   private String _strAttachmentPath;
+
+  public ReportManager(String ftpDirectory, String replaceWithFull, String baseDesignPath,
+      String defaultDesignPath, String prefix, boolean multiReport) {
+    this(DalConnectionProvider.getReadOnlyConnectionProvider(), ftpDirectory, replaceWithFull,
+        baseDesignPath, defaultDesignPath, prefix, multiReport);
+  }
 
   public ReportManager(ConnectionProvider connectionProvider, String ftpDirectory,
       String replaceWithFull, String baseDesignPath, String defaultDesignPath, String prefix,

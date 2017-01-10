@@ -195,7 +195,7 @@ public class PrintController extends HttpSecureAppServlet {
       multiReports = (documentIds.length > 1);
 
       reports = (Map<String, Report>) vars.getSessionObject(sessionValuePrefix + ".Documents");
-      final ReportManager reportManager = new ReportManager(this, globalParameters.strFTPDirectory,
+      final ReportManager reportManager = new ReportManager(globalParameters.strFTPDirectory,
           strReplaceWithFull, globalParameters.strBaseDesignPath,
           globalParameters.strDefaultDesignPath, globalParameters.prefix, multiReports);
 
