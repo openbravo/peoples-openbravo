@@ -35,9 +35,15 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Checks the SQL in Alert Rule to ensure all required columns are included.
+ */
 public class SL_AlertRule_SQL extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+  private static final Logger log = LoggerFactory.getLogger(SL_AlertRule_SQL.class);
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -116,15 +122,13 @@ public class SL_AlertRule_SQL extends HttpSecureAppServlet {
         } finally {
           try {
             this.getConnection().setReadOnly(false);
-          } catch (SQLException e) {
-            e.printStackTrace();
-          } catch (NoConnectionAvailableException e) {
-            e.printStackTrace();
+          } catch (SQLException | NoConnectionAvailableException e) {
+            log.error("Error resetting readonly to connection in Alert Rule query: {}", e);
           }
           try {
             this.releasePreparedStatement(st);
           } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Error releasing statement in Alert Rule query: {}", e);
           }
         }
       } else {
