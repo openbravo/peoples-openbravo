@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
+<!-- 2017-01-10T16:40:49 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportInvoiceCustomerDimensionalAnalysesMultiComparativeJR" pageWidth="1300" pageHeight="595" orientation="Landscape" columnWidth="1272" leftMargin="14" rightMargin="14" topMargin="56" bottomMargin="28" uuid="3f1d7732-64a5-4b19-b4dd-5f06efe61a6b">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="685"/>
 	<property name="ireport.y" value="516"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -169,36 +172,66 @@
 	<parameter name="USER_CLIENT" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["0,1000000"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="DATEFROM" class="java.util.Date" isForPrompting="false">
-		<defaultValueExpression><![CDATA[(new SimpleDateFormat("dd-MM-yyyy")).parse("01-01-2006")]]></defaultValueExpression>
+	<parameter name="aux_client" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{USER_CLIENT}.equals("") ? " " : " AND C_INVOICE.AD_CLIENT_ID IN(" + $P{USER_CLIENT} + ")"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="DATETO" class="java.util.Date" isForPrompting="false">
-		<defaultValueExpression><![CDATA[(new SimpleDateFormat("dd-MM-yyyy")).parse("01-02-2006")]]></defaultValueExpression>
+	<parameter name="ORGANIZATION" class="java.lang.String"/>
+	<parameter name="BPGROUP" class="java.lang.String"/>
+	<parameter name="PRODUCTGROUP" class="java.lang.String"/>
+	<parameter name="C_CURRENCY_ID" class="java.lang.String"/>
+	<parameter name="AD_ORG_ID" class="java.lang.String"/>
+	<parameter name="aux_org" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{AD_ORG_ID}.equals("") ? " " : " AND C_INVOICE.AD_ORG_ID IN(" + $P{AD_ORG_ID} + ")"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="cBpGroupId" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	<parameter name="DateFrom" class="java.lang.String"/>
+	<parameter name="DateTo" class="java.lang.String"/>
+	<parameter name="aux_DateFrom" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[($P{DateFrom} == null || $P{DateFrom}.equals("")) ? "" : "AND C_INVOICE.DATEINVOICED >= TO_DATE('" + $P{DateFrom} + "', 'YYYY-MM-DD')"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="cBpGroupId_Aux" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[$P{cBpGroupId}.equals("") ? " " : (" AND C_BP_Group.C_BP_Group_ID = " + $P{cBpGroupId})]]></defaultValueExpression>
+	<parameter name="aux_DateTo" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[($P{DateTo} == null || $P{DateTo}.equals("")) ? "" : "AND C_INVOICE.DATEINVOICED <= TO_DATE('" + $P{DateTo} + "', 'YYYY-MM-DD')"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="cBpartnerId" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	<parameter name="C_BP_GROUP_ID" class="java.lang.String"/>
+	<parameter name="aux_bpgroup" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{C_BP_GROUP_ID}.equals("") ? " " : " AND C_BPARTNER.C_BP_GROUP_ID = '" + $P{C_BP_GROUP_ID} + "'"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="cBpartnerId_Aux" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[($P{cBpartnerId}.equals(""))?"  ":" AND C_BPartner.C_BPartner_ID IN " + $P{cBpartnerId}]]></defaultValueExpression>
+	<parameter name="C_BPARTNER_ID" class="java.lang.String"/>
+	<parameter name="aux_partner" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{C_BPARTNER_ID}.equals("") ? " " : " AND C_BPARTNER.C_BPARTNER_ID IN" + $P{C_BPARTNER_ID}]]></defaultValueExpression>
 	</parameter>
-	<parameter name="mProductCategoryId" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	<parameter name="M_PRODUCT_CATEGORY_ID" class="java.lang.String"/>
+	<parameter name="aux_productcategory" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{M_PRODUCT_CATEGORY_ID}.equals("") ? " " : " AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = '" + $P{M_PRODUCT_CATEGORY_ID} + "'"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="mProductCategoryId_Aux" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[($P{mProductCategoryId}.equals(""))?"  ":" AND M_Product_Category.M_Product_Category_Id = " + $P{mProductCategoryId}]]></defaultValueExpression>
+	<parameter name="M_PRODUCT_ID" class="java.lang.String"/>
+	<parameter name="aux_product" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{M_PRODUCT_ID}.equals("") ? " " : "  AND M_PRODUCT.M_PRODUCT_ID IN" + $P{M_PRODUCT_ID}]]></defaultValueExpression>
 	</parameter>
-	<parameter name="mProductId" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	<parameter name="SALESREP_ID" class="java.lang.String"/>
+	<parameter name="aux_salesrep" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{SALESREP_ID}.equals("") ? " " : " AND C_INVOICE.SALESREP_ID = '" + $P{SALESREP_ID} + "'"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="mProductId_Aux" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[($P{mProductId}.equals(""))?" ":" AND M_Product.M_Product_ID IN " + $P{mProductId}]]></defaultValueExpression>
+	<parameter name="PARTNER_SALESREP_ID" class="java.lang.String"/>
+	<parameter name="aux_partnersalesrep" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{PARTNER_SALESREP_ID}.equals("") ? " " : " AND CB.C_BPARTNER_ID = '" + $P{PARTNER_SALESREP_ID} + "'"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="C_PROJECT_ID" class="java.lang.String"/>
+	<parameter name="aux_project" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{C_PROJECT_ID}.equals("") ? " " : " AND C_INVOICE.C_PROJECT_ID = '" + $P{C_PROJECT_ID} + "'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PRODUCTTYPE" class="java.lang.String"/>
+	<parameter name="aux_producttype" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{PRODUCTTYPE}.equals("") ? " " : " AND M_PRODUCT.PRODUCTTYPE = '" + $P{PRODUCTTYPE} + "'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="C_DOCTYPE_ID" class="java.lang.String"/>
+	<parameter name="aux_doctype" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{C_DOCTYPE_ID}.equals("") ? " " : " AND C_INVOICE.C_DOCTYPE_ID IN" + $P{C_DOCTYPE_ID}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DOCSTATUS" class="java.lang.String"/>
+	<parameter name="aux_docstatus" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{DOCSTATUS}.equals("") ? " " : " AND C_INVOICE.DOCSTATUS <> '" + $P{DOCSTATUS} + "'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SR_LINES" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
 	<parameter name="orderBy" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[" ORDER BY 1 "]]></defaultValueExpression>
 	</parameter>
@@ -1199,13 +1232,81 @@
 	<variable name="MARGINDIFF2_10" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL10">
 		<variableExpression><![CDATA[($V{MARGIN_10}!=null && $V{MARGINREF2_10}!=null )?$V{MARGIN_10}.subtract( $V{MARGINREF2_10}):BigDecimal.ZERO]]></variableExpression>
 	</variable>
+	<variable name="QTY_TOTAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{QTY}]]></variableExpression>
+	</variable>
+	<variable name="COST_TOTAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CONVCOST}]]></variableExpression>
+	</variable>
+	<variable name="PROFIT_TOTAL" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$V{AMOUNT_TOTAL}.subtract($V{COST_TOTAL})]]></variableExpression>
+	</variable>
+	<variable name="MARGIN_TOTAL" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[($V{AMOUNT_TOTAL}.compareTo( new BigDecimal(0.0) )==0)? new BigDecimal(0.0): $V{PROFIT_TOTAL}.divide($V{AMOUNT_TOTAL}, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100.0)).multiply(new BigDecimal($V{PROFIT_TOTAL}.signum()))]]></variableExpression>
+	</variable>
+	<group name="DocumentType">
+		<groupFooter>
+			<band height="50">
+				<subreport>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="695" height="50" uuid="7614471a-bdd5-4c59-a488-1015898d2283"/>
+					<subreportParameter name="USER_CLIENT">
+						<subreportParameterExpression><![CDATA[$P{aux_client}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="AD_ORG_ID">
+						<subreportParameterExpression><![CDATA[$P{aux_org}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="C_CURRENCY_ID">
+						<subreportParameterExpression><![CDATA[$P{C_CURRENCY_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="DATEFROM">
+						<subreportParameterExpression><![CDATA[$P{DateFrom}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="DATETO">
+						<subreportParameterExpression><![CDATA[$P{DateTo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="C_BP_GROUP_ID">
+						<subreportParameterExpression><![CDATA[$P{aux_bpgroup}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="C_BPARTNER_ID">
+						<subreportParameterExpression><![CDATA[$P{aux_partner}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="M_PRODUCT_CATEGORY_ID">
+						<subreportParameterExpression><![CDATA[$P{aux_productcategory}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="M_PRODUCT_ID">
+						<subreportParameterExpression><![CDATA[$P{aux_product}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SALESREP_ID">
+						<subreportParameterExpression><![CDATA[$P{aux_salesrep}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PARTNER_SALESREP_ID">
+						<subreportParameterExpression><![CDATA[$P{aux_partnersalesrep}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="C_PROJECT_ID">
+						<subreportParameterExpression><![CDATA[$P{aux_project}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRODUCTTYPE">
+						<subreportParameterExpression><![CDATA[$P{aux_producttype}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="C_DOCTYPE_ID">
+						<subreportParameterExpression><![CDATA[$P{aux_doctype}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="DOCSTATUS">
+						<subreportParameterExpression><![CDATA[$P{aux_docstatus}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SR_LINES}]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupFooter>
+	</group>
 	<group name="TOTALIZE">
 		<groupExpression><![CDATA[]]></groupExpression>
 		<groupHeader>
 			<band splitType="Stretch"/>
 		</groupHeader>
 		<groupFooter>
-			<band height="20" splitType="Stretch">
+			<band height="23" splitType="Stretch">
 				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-21" style="Total_Field" x="190" y="1" width="55" height="16" uuid="9fb2a908-910a-4b65-8cb4-164f8d9a345e"/>
 					<box leftPadding="5">
@@ -1337,7 +1438,7 @@
 					<textFieldExpression><![CDATA[($V{WEIGHTREF_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHTREF_TOTAL}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
-					<reportElement key="textField-301" style="Total_Field" x="245" y="1" width="195" height="16" uuid="a9e26228-93f3-46fb-a5cb-41613f6e5a53"/>
+					<reportElement key="textField-301" style="Total_Field" x="385" y="1" width="55" height="16" uuid="a9e26228-93f3-46fb-a5cb-41613f6e5a53"/>
 					<box leftPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1475,6 +1576,58 @@
 						<font size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{AMOUNTREF2_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{AMOUNTREF2_TOTAL}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+					<reportElement key="textField-21" style="Total_Field" x="245" y="1" width="55" height="16" uuid="53b8074b-7fb5-4c37-b36d-ce9901583e61"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{COST_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{COST_TOTAL}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+					<reportElement key="textField-21" style="Total_Field" x="300" y="1" width="55" height="16" uuid="24926af2-d2f8-4f47-84c8-92aa04ee8e84"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PROFIT_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{PROFIT_TOTAL}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+					<reportElement key="textField-21" style="Total_Field" x="355" y="1" width="30" height="16" uuid="84c46484-9aa7-4166-a385-b37a68e2fbf2"/>
+					<box leftPadding="4">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{MARGIN_TOTAL}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+					<reportElement key="textField-204" style="Total_Field" x="985" y="1" width="55" height="16" uuid="0d392591-7182-4974-a1fa-cff8e5bd28d8"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{QTY_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{QTY_TOTAL}):new String(" ")]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -5561,9 +5714,9 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="103" splitType="Stretch">
+		<band height="135" splitType="Stretch">
 			<frame>
-				<reportElement key="frame-1" positionType="Float" mode="Opaque" x="0" y="85" width="1210" height="18" backcolor="#5D5D5D" uuid="c388299b-b60d-44ad-91c1-7d741e5989e0"/>
+				<reportElement key="frame-1" positionType="Float" mode="Opaque" x="0" y="117" width="1210" height="18" backcolor="#5D5D5D" uuid="c388299b-b60d-44ad-91c1-7d741e5989e0"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -6067,7 +6220,7 @@
 				<textFieldExpression><![CDATA[$P{REPORT_SUBTITLE}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText-5" style="Report_Data_Label" x="0" y="56" width="114" height="16" uuid="7f121299-61d7-45c6-8b2e-427b26c4281c"/>
+				<reportElement key="staticText-5" style="Report_Data_Label" x="0" y="52" width="114" height="16" uuid="7f121299-61d7-45c6-8b2e-427b26c4281c"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -6080,7 +6233,7 @@
 				<text><![CDATA[Grouping Levels:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement key="textField-17" style="Report_Data_Field" x="114" y="56" width="1096" height="16" uuid="81eaeb3a-cb34-4abe-a839-2a1b248716c2"/>
+				<reportElement key="textField-17" style="Report_Data_Field" x="114" y="52" width="1096" height="16" uuid="81eaeb3a-cb34-4abe-a839-2a1b248716c2"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -6098,6 +6251,62 @@
 			<line>
 				<reportElement key="line-2" x="0" y="49" width="1210" height="1" uuid="600f8e72-aee6-4bd1-9476-a74c40b14812"/>
 			</line>
+			<staticText>
+				<reportElement key="staticText-5" style="Report_Data_Label" x="0" y="68" width="105" height="16" uuid="0b0485fb-da50-40c2-9074-d9a1aaae1418"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Secondary Filters -]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement key="textField-17" style="Report_Data_Field" x="98" y="68" width="1112" height="16" uuid="8b64ccc4-ae8e-4f9a-ac0a-268878a093c5"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ORGANIZATION}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement key="textField-17" style="Report_Data_Field" x="98" y="84" width="1112" height="16" uuid="d69a5b37-89fd-4b84-af43-8f40c4f74119">
+					<printWhenExpression><![CDATA[!$P{BPGROUP}.equals("")]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Business Partner Group - "+$P{BPGROUP}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement key="textField-17" style="Report_Data_Field" x="98" y="100" width="1112" height="16" printWhenGroupChanges="DocumentType" uuid="bf3c79ec-fa48-4098-af7e-14b0b1fabc78">
+					<printWhenExpression><![CDATA[!$P{PRODUCTGROUP}.equals("")]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Product Group - "+$P{PRODUCTGROUP}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>
@@ -6109,9 +6318,6 @@
 	<detail>
 		<band splitType="Stretch"/>
 	</detail>
-	<columnFooter>
-		<band splitType="Stretch"/>
-	</columnFooter>
 	<pageFooter>
 		<band height="20" splitType="Stretch">
 			<staticText>
