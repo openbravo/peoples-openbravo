@@ -69,12 +69,6 @@ public class ComboTableData {
   private String windowId;
   private int accessLevel;
 
-  /**
-   * Constructor
-   */
-  public ComboTableData() {
-  }
-
   public static ComboTableData getTableComboDataFor(Field field) throws Exception {
     Column col = field.getColumn();
     String ref = col.getReference().getId();
