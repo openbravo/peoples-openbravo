@@ -78,6 +78,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
 
   private Map<String, Object> tabLocks = new ConcurrentHashMap<>();
   private Object getTabLock = new Object();
+  private Object initializedWindowsLock = new Object();
 
   @PostConstruct
   private void init() {
@@ -188,7 +189,9 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     for (Tab tab : window.getADTabList()) {
       initializeTab(tab);
     }
-    initializedWindows.add(windowId);
+    synchronized (initializedWindowsLock) {
+      initializedWindows.add(windowId);
+    }
   }
 
   /**
