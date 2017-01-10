@@ -23,7 +23,6 @@ import java.io.Serializable;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
@@ -73,7 +72,7 @@ public class OBDal implements OBNotSingleton {
 
   private static OBDal instance;
 
-  private static Map<String, OBDal> otherPoolInstances = new ConcurrentHashMap<>();
+  private static ConcurrentHashMap<String, OBDal> otherPoolInstances = new ConcurrentHashMap<>();
   private String poolName;
 
   /**
