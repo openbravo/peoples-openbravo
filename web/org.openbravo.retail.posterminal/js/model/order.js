@@ -1713,6 +1713,8 @@
           }, function (trx, error) {
             OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
             callback(null);
+          }, {
+            modelsAffectedByCache: ['Product']
           });
         }
       } else {
@@ -1811,6 +1813,8 @@
           if (callback) {
             callback(false, null);
           }
+        }, {
+          modelsAffectedByCache: ['ProductPrice']
         });
       } else {
         me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
