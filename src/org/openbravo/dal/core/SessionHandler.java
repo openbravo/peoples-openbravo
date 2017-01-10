@@ -104,7 +104,6 @@ public class SessionHandler implements OBNotSingleton {
     if (sh == null) {
       log.debug("Creating sessionHandler");
       sh = getCreateSessionHandler();
-      sh.begin();
       sessionHandler.set(sh);
     }
     return sh;
@@ -248,6 +247,9 @@ public class SessionHandler implements OBNotSingleton {
 
   /** Gets current session's {@code Connection} if it's set, {@code null} if not. */
   public Connection getConnection() {
+    // use getSession to create the session if it does not exist yet
+    // in that case, the session will be created together with a new connection
+    getSession(DEFAULT_POOL);
     return getConnection(DEFAULT_POOL);
   }
 
@@ -319,7 +321,11 @@ public class SessionHandler implements OBNotSingleton {
       throw new OBException(
           "Not possible to start a new transaction while there is still one active.");
     }
-    setTransaction(pool, getSession(pool).beginTransaction());
+    Session session = getSession(pool);
+    if (!isCurrentTransactionActive(pool)) {
+      // getSession has returned an existing session, so just begin a new transaction
+      setTransaction(pool, session.beginTransaction());
+    }
   }
 
   /**
@@ -551,10 +557,6 @@ public class SessionHandler implements OBNotSingleton {
     closeSession(pool);
     removeTransaction(pool);
     removeConnection(pool);
-
-    if (isSessionHandlerPresent()) {
-      deleteSessionHandler();
-    }
   }
 
   /**
@@ -623,7 +625,6 @@ public class SessionHandler implements OBNotSingleton {
       removeTransaction(pool);
       removeConnection(pool);
 
-      deleteSessionHandler();
       try {
         if (con == null || !con.isClosed()) {
           con.close();
