@@ -56,9 +56,10 @@ public class ComboTableData {
   public static final String CLIENT_LIST_PARAM_HOLDER = "__CLIENT_LIST__";
   public static final String ORG_LIST_PARAM_HOLDER = "__ORG_LIST__";
 
-  private final String internalPrefix = "@@";
+  private static final String INTERNAL_PREFIX = "@@";
   private static final String FIELD_CONCAT = " || ' - ' || ";
   private static final String INACTIVE_DATA = "**";
+
   private Map<String, String> parameters = new HashMap<>();
   private List<QueryParameterStructure> paramSelect = new ArrayList<>();
   private List<QueryParameterStructure> paramFrom = new ArrayList<>();
@@ -194,7 +195,7 @@ public class ComboTableData {
           localReference = ComboTableQueryData.getBaseReferenceID(getPool(), localReference);
       }
     }
-    setParameter(internalPrefix + "reference", localReference);
+    setParameter(INTERNAL_PREFIX + "reference", localReference);
   }
 
   /**
@@ -203,7 +204,7 @@ public class ComboTableData {
    * @return String with the reference type id.
    */
   private String getReferenceType() {
-    return getParameter(internalPrefix + "reference");
+    return getParameter(INTERNAL_PREFIX + "reference");
   }
 
   /**
@@ -214,7 +215,7 @@ public class ComboTableData {
    * @throws Exception
    */
   private void setObjectName(String _name) throws Exception {
-    setParameter(internalPrefix + "name", _name);
+    setParameter(INTERNAL_PREFIX + "name", _name);
   }
 
   /**
@@ -223,7 +224,7 @@ public class ComboTableData {
    * @return String with the object name.
    */
   public String getObjectName() {
-    return getParameter(internalPrefix + "name");
+    return getParameter(INTERNAL_PREFIX + "name");
   }
 
   /**
@@ -251,7 +252,7 @@ public class ComboTableData {
         }
       }
     }
-    setParameter(internalPrefix + "objectReference", localReference);
+    setParameter(INTERNAL_PREFIX + "objectReference", localReference);
   }
 
   /**
@@ -260,7 +261,7 @@ public class ComboTableData {
    * @return String with the object reference id.
    */
   public String getObjectReference() {
-    return getParameter(internalPrefix + "objectReference");
+    return getParameter(INTERNAL_PREFIX + "objectReference");
   }
 
   /**
@@ -280,7 +281,7 @@ public class ComboTableData {
           localReference = ComboTableQueryData.getValidationID(getPool(), localReference);
       }
     }
-    setParameter(internalPrefix + "validation", localReference);
+    setParameter(INTERNAL_PREFIX + "validation", localReference);
   }
 
   /**
@@ -289,7 +290,7 @@ public class ComboTableData {
    * @return String with the validation id.
    */
   private String getValidation() {
-    return getParameter(internalPrefix + "validation");
+    return getParameter(INTERNAL_PREFIX + "validation");
   }
 
   /**
@@ -300,7 +301,7 @@ public class ComboTableData {
    * @throws Exception
    */
   private void setOrgList(String _orgList) throws Exception {
-    setParameter(internalPrefix + "orgList", _orgList);
+    setParameter(INTERNAL_PREFIX + "orgList", _orgList);
   }
 
   /**
@@ -309,7 +310,7 @@ public class ComboTableData {
    * @return String with the granted organizations list.
    */
   public String getOrgList() {
-    String cachedList = getParameter(internalPrefix + "orgList");
+    String cachedList = getParameter(INTERNAL_PREFIX + "orgList");
     if (cachedList != null) {
       return cachedList;
     } else if ("AD_CLIENT_ID".equalsIgnoreCase(getObjectName())) {
@@ -330,7 +331,7 @@ public class ComboTableData {
    * @throws Exception
    */
   private void setClientList(String _clientList) throws Exception {
-    setParameter(internalPrefix + "clientList", _clientList);
+    setParameter(INTERNAL_PREFIX + "clientList", _clientList);
   }
 
   /**
@@ -339,7 +340,7 @@ public class ComboTableData {
    * @return String with the granted clients list.
    */
   public String getClientList() {
-    String clientList = getParameter(internalPrefix + "clientList");
+    String clientList = getParameter(INTERNAL_PREFIX + "clientList");
     if (clientList != null) {
       return clientList;
     }
