@@ -60,38 +60,48 @@ import org.slf4j.LoggerFactory;
  */
 @ApplicationScoped
 public class ApplicationDictionaryCachedStructures implements Serializable {
-  private static final long serialVersionUID = 1L;
-
-  private Map<String, Tab> tabMap = new ConcurrentHashMap<>();
-  private Map<String, Table> tableMap = new ConcurrentHashMap<>();
-  private Map<String, List<Field>> fieldMap = new ConcurrentHashMap<>();
-  private Map<String, List<Column>> columnMap = new ConcurrentHashMap<>();
-  private Map<String, List<AuxiliaryInput>> auxInputMap = new ConcurrentHashMap<>();
-  private Map<String, ComboTableData> comboTableDataMap = new ConcurrentHashMap<>();
-  private Map<String, List<Parameter>> attMethodMetadataMap = new ConcurrentHashMap<>();
-  private List<String> initializedWindows = new ArrayList<String>();
-
   private static final Logger log = LoggerFactory
       .getLogger(ApplicationDictionaryCachedStructures.class);
+  private static final long serialVersionUID = 1L;
+
+  private Map<String, Tab> tabMap;
+  private Map<String, Table> tableMap;
+  private Map<String, List<Field>> fieldMap;
+  private Map<String, List<Column>> columnMap;
+  private Map<String, List<AuxiliaryInput>> auxInputMap;
+  private Map<String, ComboTableData> comboTableDataMap;
+  private Map<String, List<Parameter>> attMethodMetadataMap;
+  private List<String> initializedWindows;
 
   private boolean useCache;
 
-  private Map<String, Object> tabLocks = new ConcurrentHashMap<>();
+  private Map<String, Object> tabLocks;
   private Object getTabLock = new Object();
   private Object initializedWindowsLock = new Object();
 
   @PostConstruct
-  private void init() {
+  public void init() {
+    log.debug("Resetting cache");
+    tabMap = new ConcurrentHashMap<>();
+    tableMap = new ConcurrentHashMap<>();
+    fieldMap = new ConcurrentHashMap<>();
+    columnMap = new ConcurrentHashMap<>();
+    auxInputMap = new ConcurrentHashMap<>();
+    comboTableDataMap = new ConcurrentHashMap<>();
+    attMethodMetadataMap = new ConcurrentHashMap<>();
+    initializedWindows = new ArrayList<String>();
+    tabLocks = new ConcurrentHashMap<>();
+
     // The cache will only be active when there are no modules in development in the system
     final String query = "select 1 from ADModule m where m.inDevelopment=true";
     final Query indevelMods = OBDal.getInstance().getSession().createQuery(query);
     indevelMods.setMaxResults(1);
     useCache = indevelMods.list().size() == 0;
-    log.debug("ADCS initialized, use cache: {}", useCache);
+    log.info("ADCS initialized, use cache: {}", useCache);
   }
 
   public void eagerInitialization() {
-    reset();
+    init();
     Query queryWindow = OBDal.getInstance().getSession()
         .createQuery("select id from ADWindow where active=true");
     @SuppressWarnings("unchecked")
@@ -118,19 +128,6 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
       getComboTableData(OBDal.getInstance().getProxy(Field.class, comboId));
     }
     log.info("Intialized all combos in {} ms", System.currentTimeMillis() - t1);
-  }
-
-  public void reset() {
-    log.info("Resetting cache");
-    tabMap = new ConcurrentHashMap<>();
-    tableMap = new ConcurrentHashMap<>();
-    fieldMap = new ConcurrentHashMap<>();
-    columnMap = new ConcurrentHashMap<>();
-    auxInputMap = new ConcurrentHashMap<>();
-    comboTableDataMap = new ConcurrentHashMap<>();
-    attMethodMetadataMap = new ConcurrentHashMap<>();
-    initializedWindows = new ArrayList<String>();
-    tabLocks = new ConcurrentHashMap<>();
   }
 
   /**
