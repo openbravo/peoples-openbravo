@@ -123,12 +123,12 @@ public class SL_AlertRule_SQL extends HttpSecureAppServlet {
           try {
             this.getConnection().setReadOnly(false);
           } catch (SQLException | NoConnectionAvailableException e) {
-            log.error("Error resetting readonly to connection in Alert Rule query: {}", e);
+            log.error("Error resetting readonly to connection in Alert Rule query: {}", strSQL, e);
           }
           try {
             this.releasePreparedStatement(st);
           } catch (SQLException e) {
-            log.error("Error releasing statement in Alert Rule query: {}", e);
+            log.error("Error releasing statement in Alert Rule query: {}", strSQL, e);
           }
         }
       } else {
