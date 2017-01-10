@@ -128,7 +128,6 @@ enyo.kind({
   name: 'OB.UI.ModalDeleteDiscount',
   kind: 'OB.UI.ModalAction',
   classes: 'modal-dialog',
-  style: 'width: 700px;',
   handlers: {
     onApplyChanges: 'applyChanges',
     onCallbackExecutor: 'callbackExecutor',
