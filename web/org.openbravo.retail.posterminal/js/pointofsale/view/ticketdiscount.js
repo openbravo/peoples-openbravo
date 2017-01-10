@@ -360,7 +360,10 @@ enyo.kind({
   onchange: 'discountChanged',
   classes: 'discount-dialog-profile-combo',
   renderEmpty: enyo.Control,
-  renderLine: 'OB.UI.DiscountList.Options'
+  renderLine: 'OB.UI.DiscountList.Options',
+  initComponents: function () {
+    this.inherited(arguments);
+  }
 });
 
 enyo.kind({
