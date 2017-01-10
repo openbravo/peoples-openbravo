@@ -8,7 +8,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2008-2016 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2008-2017 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 package org.openbravo.erpCommon.utility.reporting.printing;
@@ -50,7 +50,6 @@ import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.database.ConnectionProvider;
 import org.openbravo.email.EmailUtils;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.BasicUtility;
@@ -75,7 +74,6 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.EmailServerConfiguration;
 import org.openbravo.model.common.enterprise.EmailTemplate;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -275,7 +273,7 @@ public class PrintController extends HttpSecureAppServlet {
               log4j.debug("Processing document with id: " + documentId);
 
             try {
-              final Report report = new Report(this, documentType, documentId, vars.getLanguage(),
+              final Report report = new Report(documentType, documentId, vars.getLanguage(),
                   "default", multiReports, OutputTypeEnum.DEFAULT);
               reports.put(documentId, report);
 
@@ -414,7 +412,7 @@ public class PrintController extends HttpSecureAppServlet {
                 + fullDocumentIdentifier);
             final String templateId = vars.getRequestGlobalVariable("templates", "templates");
             final String documentId = pocData[0].documentId;
-            final Report report = new Report(this, documentType, documentId, vars.getLanguage(),
+            final Report report = new Report(documentType, documentId, vars.getLanguage(),
                 templateId, multiReports, OutputTypeEnum.DEFAULT);
             o.put("templateId", templateId);
             o.put("subject", report.getEmailDefinition().getSubject());
@@ -587,8 +585,7 @@ public class PrintController extends HttpSecureAppServlet {
       localStrDocumentId = localStrDocumentId.replaceAll("\\(|\\)|'", "");
     }
     try {
-      ConnectionProvider cp = DalConnectionProvider.getReadOnlyConnectionProvider();
-      report = new Report(cp, documentType, localStrDocumentId, vars.getLanguage(), templateId,
+      report = new Report(documentType, localStrDocumentId, vars.getLanguage(), templateId,
           multiReports, outputType);
     } catch (final ReportingException e) {
       log4j.error(e);
