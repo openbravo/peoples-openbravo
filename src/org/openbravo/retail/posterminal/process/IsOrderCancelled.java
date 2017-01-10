@@ -15,15 +15,15 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.mobile.core.servercontroller.MultiServerJSONProcess;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.Order;
-import org.openbravo.retail.posterminal.JSONProcessSimple;
 import org.openbravo.service.json.JsonConstants;
 
-public class IsOrderCancelled extends JSONProcessSimple {
+public class IsOrderCancelled extends MultiServerJSONProcess {
   @Override
-  public JSONObject exec(JSONObject jsonData) throws OBException, JSONException {
+  public JSONObject execute(JSONObject jsonData) {
     JSONObject result = new JSONObject();
-    JSONObject data = new JSONObject();
 
     OBContext.setAdminMode(true);
     try {
@@ -34,9 +34,9 @@ public class IsOrderCancelled extends JSONProcessSimple {
 
       if (order != null) {
         if (order.isCancelled()) {
-          data.put("orderCancelled", true);
+          result.put("orderCancelled", true);
         } else {
-          data.put("orderCancelled", false);
+          result.put("orderCancelled", false);
           if (cancelOrder) {
             order.setCancelled(true);
             OBDal.getInstance().save(order);
@@ -47,13 +47,33 @@ public class IsOrderCancelled extends JSONProcessSimple {
         throw new OBException(OBMessageUtils.getI18NMessage("OBPOS_OrderNotFound",
             new String[] { documentNo }));
       }
+      result.put("status", JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+    } catch (JSONException e) {
+      throw new OBException("Error while canceling and order", e);
     } finally {
       OBContext.restorePreviousMode();
     }
-
-    result.put("data", data);
-    result.put("status", JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-
     return result;
+  }
+
+  @Override
+  protected String getImportEntryDataType() {
+    return null;
+  }
+
+  @Override
+  protected void createImportEntry(String messageId, JSONObject sentIn, JSONObject processResult,
+      Organization organization) throws JSONException {
+    // We don't want to create any import entry in these transactions.
+  }
+
+  @Override
+  protected void createArchiveEntry(String id, JSONObject json) throws JSONException {
+    // We don't want to create any import entry in these transactions.
+  }
+
+  @Override
+  protected boolean executeInOneServer(JSONObject json) throws JSONException {
+    return true;
   }
 }
