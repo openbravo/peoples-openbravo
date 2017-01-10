@@ -342,7 +342,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
   }
 
   /**
-   * @deprecated
+   * @deprecated use {@link #getComboTableData(Field)}
    */
   public ComboTableData getComboTableData(VariablesSecureApp vars, String ref, String colName,
       String objectReference, String validation, String orgList, String clientList) {
@@ -363,6 +363,10 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     return comboTableData;
   }
 
+  /**
+   * Returns the combo for the given field from cache if present, if not it also gets cached if
+   * applicable.
+   */
   public ComboTableData getComboTableData(Field field) {
     String comboId = field.getId();
     if (useCache() && comboTableDataMap.get(comboId) != null) {
