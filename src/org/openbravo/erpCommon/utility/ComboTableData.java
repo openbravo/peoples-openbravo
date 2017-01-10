@@ -69,6 +69,7 @@ public class ComboTableData {
   private String windowId;
   private int accessLevel;
 
+  /** Creates a new combo for a given field */
   public static ComboTableData getTableComboDataFor(Field field) throws Exception {
     Column col = field.getColumn();
     String ref = col.getReference().getId();
