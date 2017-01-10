@@ -1329,12 +1329,10 @@ public class ComboTableData {
       VariablesSecureApp variables, FieldProvider data, String window, String actual_value)
       throws ServletException {
     final List<String> vAux = getParameters();
-    Map<String, String> lparameters = new HashMap<>();
+
     // We first add all current parameters in the combo
-    for (String key : parameters.keySet()) {
-      lparameters.put(key, parameters.get(key));
-    }
-    lparameters.putAll(parameters);
+    Map<String, String> lparameters = new HashMap<>(parameters);
+
     if (vAux != null && vAux.size() > 0) {
       if (log4j.isDebugEnabled())
         log4j.debug("Combo Parameters: " + vAux.size());
