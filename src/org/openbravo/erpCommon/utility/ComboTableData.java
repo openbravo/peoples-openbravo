@@ -706,6 +706,7 @@ public class ComboTableData {
             log4j.debug("Field replaced: " + strAux);
           orderBy.set(i, auxStructure);
         }
+        i++;
       }
     }
   }
