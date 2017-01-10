@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,7 +21,6 @@ package org.openbravo.erpCommon.ad_callouts;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
@@ -81,13 +80,11 @@ public class SL_AlertRule_SQL extends HttpSecureAppServlet {
 
     if (!strSQL.equals("")) {
       if (strSQL.toUpperCase().trim().startsWith("SELECT ")) {
-        ResultSet result = null;
         PreparedStatement st = null;
         try {
           this.getConnection().setReadOnly(true);
           st = this.getPreparedStatement(strSQL);
-          result = st.executeQuery();
-          ResultSetMetaData rmeta = result.getMetaData();
+          ResultSetMetaData rmeta = st.getMetaData();
           if (!existsColumn(rmeta, "AD_CLIENT_ID"))
             msg = "AD_CLIENT_ID ";
           if (!existsColumn(rmeta, "AD_ORG_ID"))
@@ -119,9 +116,6 @@ public class SL_AlertRule_SQL extends HttpSecureAppServlet {
         } finally {
           try {
             this.getConnection().setReadOnly(false);
-            if (result != null) {
-              result.close();
-            }
           } catch (SQLException e) {
             e.printStackTrace();
           } catch (NoConnectionAvailableException e) {
