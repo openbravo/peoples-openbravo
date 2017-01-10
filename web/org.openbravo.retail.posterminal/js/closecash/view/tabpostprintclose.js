@@ -489,6 +489,9 @@ enyo.kind({
               name: 'user',
               style: 'padding: 5px; text-align:center;'
             }, {
+              name: 'openingtime',
+              style: 'padding: 5px; text-align:center;'
+            }, {
               name: 'time',
               style: 'padding: 5px; text-align:center;'
             }, {
@@ -561,7 +564,7 @@ enyo.kind({
     this.$.store.setContent(OB.I18N.getLabel('OBPOS_LblStore') + ': ' + OB.MobileApp.model.get('terminal').organization$_identifier);
     this.$.terminal.setContent(OB.I18N.getLabel('OBPOS_LblTerminal') + ': ' + OB.MobileApp.model.get('terminal')._identifier);
     this.$.user.setContent(OB.I18N.getLabel('OBPOS_LblUser') + ': ' + OB.MobileApp.model.get('context').user._identifier);
-    this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(new Date()) + ' - ' + OB.I18N.formatHour(new Date()));
+    this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblCloseTime') + ': ' + OB.I18N.formatDate(new Date()) + ' - ' + OB.I18N.formatHour(new Date()));
   },
 
   init: function (model) {
@@ -570,6 +573,7 @@ enyo.kind({
     this.$.reporttitle.setContent(OB.I18N.getLabel(model.reportTitleLabel) + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
 
     this.model.get('cashUpReport').on('add', function (cashUpReport) {
+      this.$.openingtime.setContent(OB.I18N.getLabel('OBPOS_LblOpenTime') + ': ' + OB.I18N.formatDate(new Date(cashUpReport.get('creationDate'))) + ' - ' + OB.I18N.formatHour(new Date(cashUpReport.get('creationDate'))));
       this.$.sales.setValue('netsales', cashUpReport.get('netSales'));
       this.$.sales.setCollection(cashUpReport.get('salesTaxes'));
       this.$.sales.setValue('totalsales', cashUpReport.get('grossSales'));
@@ -586,7 +590,7 @@ enyo.kind({
     }, this);
 
     this.model.on('change:time', function () {
-      this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(this.model.get('time')) + ' - ' + OB.I18N.formatHour(this.model.get('time')));
+      this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblCloseTime') + ': ' + OB.I18N.formatDate(this.model.get('time')) + ' - ' + OB.I18N.formatHour(this.model.get('time')));
     }, this);
   },
 
@@ -645,7 +649,7 @@ enyo.kind({
     this.$.depositsTable.setValue('totaldeposits', this.model.get('totalDeposits'));
 
     this.model.on('change:time', function () {
-      this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(this.model.get('time')) + ' - ' + OB.I18N.formatHour(this.model.get('time')));
+      this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblCloseTime') + ': ' + OB.I18N.formatDate(this.model.get('time')) + ' - ' + OB.I18N.formatHour(this.model.get('time')));
     }, this);
   },
 
@@ -697,7 +701,7 @@ enyo.kind({
       }
     }
     this.setSummary(model.getCountCashSummary());
-    this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(new Date()) + ' - ' + OB.I18N.formatHour(new Date()));
+    this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblCloseTime') + ': ' + OB.I18N.formatDate(new Date()) + ' - ' + OB.I18N.formatHour(new Date()));
     this.render();
   }
 });
