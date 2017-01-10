@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -252,8 +252,8 @@
     },
 
     /**
-     * Gets the list of manual promotions. If asArray param is true, it is returned
-     * as an array, other case, as a comma separated string to be used in sql statements
+     * Gets the list of manual promotions. If asList param is true, it is returned
+     * as an list, other case, as a comma separated string to be used in sql statements
      */
     getManualPromotions: function (asList) {
       var p, promos = [],
@@ -281,9 +281,9 @@
     },
 
     /**
-     * Gets the list of promotions which are calculated automatically when can be added to receipt from Discounts. 
-     * If asArray param is true, it is returned
-     * as an array, other case, as a comma separated string to be used in sql statements
+     * Gets the list of promotions which are calculated automatically every time the ticket changes, but which are added manually through the 'Discounts' window
+     * If asList param is true, it is returned
+     * as a list, other case, as a comma separated string to be used in sql statements
      */
     getAutoCalculatedPromotions: function (asList) {
       var p, promos = [],
