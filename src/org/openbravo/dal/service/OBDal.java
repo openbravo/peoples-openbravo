@@ -208,7 +208,7 @@ public class OBDal implements OBNotSingleton {
    * Commits the transaction and closes session.
    */
   public void commitAndClose() {
-    if (SessionHandler.isSessionHandlerPresent()) {
+    if (SessionHandler.isSessionHandlerPresent(poolName)) {
       SessionHandler.getInstance().commitAndClose(poolName);
     }
   }
@@ -217,7 +217,7 @@ public class OBDal implements OBNotSingleton {
    * Rolls back the transaction and closes the session.
    */
   public void rollbackAndClose() {
-    if (SessionHandler.isSessionHandlerPresent()) {
+    if (SessionHandler.isSessionHandlerPresent(poolName)) {
       SessionHandler.getInstance().rollback(poolName);
     }
   }
@@ -241,7 +241,7 @@ public class OBDal implements OBNotSingleton {
    * Flushes the current state to the database.
    */
   public void flush() {
-    if (SessionHandler.isSessionHandlerPresent()) {
+    if (SessionHandler.isSessionHandlerPresent(poolName)) {
       long s1 = System.currentTimeMillis();
       SessionHandler.getInstance().getSession(poolName).flush();
       if (log.isDebugEnabled()) {

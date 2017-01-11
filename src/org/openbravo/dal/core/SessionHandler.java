@@ -25,7 +25,9 @@ import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.FlushMode;
@@ -80,22 +82,41 @@ public class SessionHandler implements OBNotSingleton {
   private static ThreadLocal<SessionHandler> sessionHandler = new ThreadLocal<SessionHandler>();
 
   /**
-   * Removes the current SessionHandler from the ThreadLocal. A call to getSessionHandler will
-   * create a new SessionHandler, session and transaction.
+   * Removes the current SessionHandler from the ThreadLocal. A call to getInstance will create a
+   * new SessionHandler. A call to getSession will create a session and a transaction.
    */
   public static void deleteSessionHandler() {
     log.debug("Removing sessionhandler");
     sessionHandler.set(null);
   }
 
-  /** @return true if a session handler is present for this thread, false */
+  /**
+   * Checks whether a session handler is present for this thread and also available for the default
+   * pool.
+   * 
+   * @return true if a session handler is present for this thread and available for the default
+   *         pool, false otherwise
+   */
   public static boolean isSessionHandlerPresent() {
-    return sessionHandler.get() != null;
+    return isSessionHandlerPresent(DEFAULT_POOL);
   }
 
   /**
-   * Returns the SessionHandler of this thread. If there is none then a new one is created and a
-   * Hibernate Session is created and a transaction is started.
+   * Checks whether a session handler is present for this thread and also available for the pool
+   * whose name is passed as parameter.
+   * 
+   * @param pool
+   *          the name of the pool
+   * 
+   * @return true if a session handler is present for this thread and available for the specified
+   *         pool, false otherwise
+   */
+  public static boolean isSessionHandlerPresent(String pool) {
+    return sessionHandler.get() != null && !sessionHandler.get().isUnavailablePool(pool);
+  }
+
+  /**
+   * Returns the SessionHandler of this thread. If there is none then a new one is created.
    * 
    * @return the sessionhandler for this thread
    */
@@ -119,6 +140,7 @@ public class SessionHandler implements OBNotSingleton {
   private Map<String, Session> sessions = new HashMap<>();
   private Map<String, Transaction> trxs = new HashMap<>();
   private Map<String, Connection> connections = new HashMap<>();
+  private Set<String> unavailablePools = new HashSet<String>();
 
   // Sets the session handler at rollback so that the controller can rollback
   // at the end
@@ -293,6 +315,20 @@ public class SessionHandler implements OBNotSingleton {
 
   private void clearTransactions() {
     trxs.clear();
+  }
+
+  private void setUnavailablePool(String pool) {
+    unavailablePools.add(pool);
+  }
+
+  private void setAvailablePool(String pool) {
+    if (unavailablePools.contains(pool)) {
+      unavailablePools.remove(pool);
+    }
+  }
+
+  private boolean isUnavailablePool(String pool) {
+    return unavailablePools.contains(pool);
   }
 
   /**
@@ -475,6 +511,7 @@ public class SessionHandler implements OBNotSingleton {
     getSession(pool).setFlushMode(FlushMode.COMMIT);
     Check.isTrue(getTransaction(pool) == null, "tx must be null before begin");
     setTransaction(pool, getSession(pool).beginTransaction());
+    setAvailablePool(pool);
     log.debug("Transaction started");
   }
 
@@ -557,6 +594,7 @@ public class SessionHandler implements OBNotSingleton {
     closeSession(pool);
     removeTransaction(pool);
     removeConnection(pool);
+    setUnavailablePool(pool);
   }
 
   /**
@@ -624,7 +662,7 @@ public class SessionHandler implements OBNotSingleton {
     } finally {
       removeTransaction(pool);
       removeConnection(pool);
-
+      setUnavailablePool(pool);
       try {
         if (con == null || !con.isClosed()) {
           con.close();
