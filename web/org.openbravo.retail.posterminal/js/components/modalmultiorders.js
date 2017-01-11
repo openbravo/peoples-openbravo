@@ -349,6 +349,7 @@ enyo.kind({
     if (checkedMultiOrders.length === 0) {
       return true;
     }
+    OB.UTIL.showLoading(true);
     me.owner.owner.model.deleteMultiOrderList();
     _.each(checkedMultiOrders, function (iter) {
       if (_.indexOf(me.owner.owner.model.get('orderList').models, iter) !== -1) {
@@ -358,7 +359,6 @@ enyo.kind({
         process.exec({
           orderid: iter.id
         }, function (data) {
-          OB.UTIL.showLoading(false);
           if (data) {
             me.owner.owner.model.get('orderList').newPaidReceipt(data[0], function (order) {
               order.set('loadedFromServer', true);
@@ -372,10 +372,12 @@ enyo.kind({
                   me.doSelectMultiOrders({
                     value: selectedMultiOrders
                   });
+                  me.showPaymentView();
                 }
               });
             });
           } else {
+            OB.UTIL.showLoading(false);
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
           }
         });
@@ -384,18 +386,22 @@ enyo.kind({
         me.doSelectMultiOrders({
           value: selectedMultiOrders
         });
+        me.showPaymentView();
       }
     });
 
+    this.doHideThisPopup();
+  },
+  cancelAction: function () {
+    this.doHideThisPopup();
+  },
+  showPaymentView: function () {
+    OB.UTIL.showLoading(false);
     this.doTabChange({
       tabPanel: 'payment',
       keyboard: 'toolbarpayment',
       edit: false
     });
-    this.doHideThisPopup();
-  },
-  cancelAction: function () {
-    this.doHideThisPopup();
   }
 }); /*Modal definiton*/
 enyo.kind({
