@@ -60,7 +60,9 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     for (PoolInterceptorProvider interceptor : interceptors) {
       currentInterceptors += interceptor.getPoolInterceptorsClassNames();
     }
-    this.getDataSource().setJdbcInterceptors(currentInterceptors);
+    for (DataSource ds : availableDataSources.values()) {
+      ds.setJdbcInterceptors(currentInterceptors);
+    }
   }
 
   /**
