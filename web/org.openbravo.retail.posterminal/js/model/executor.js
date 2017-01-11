@@ -200,12 +200,11 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         actionQueue = this.get('actionQueue'),
         me = this,
         criteria, t0 = new Date().getTime(),
-        whereClause = OB.Model.Discounts.computeStandardFilter(receipt) // 
-         + " AND (M_OFFER_TYPE_ID NOT IN (" + OB.Model.Discounts.getManualPromotions() + ")" //
-         + "  OR M_OFFER_TYPE_ID IN (" + OB.Model.Discounts.getAutoCalculatedPromotions() + "))" //
+        whereClause = "WHERE ( " + OB.Model.Discounts.computeStandardFilter(receipt) // 
+         + " AND M_OFFER_TYPE_ID NOT IN (" + OB.Model.Discounts.getManualPromotions() + ")" //
          + " AND ((EM_OBDISC_ROLE_SELECTION = 'Y' AND NOT EXISTS (SELECT 1 FROM OBDISC_OFFER_ROLE WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID " + " AND AD_ROLE_ID = '" + OB.MobileApp.model.get('context').role.id + "')) OR (EM_OBDISC_ROLE_SELECTION = 'N' " //
-         + " AND EXISTS (SELECT 1 FROM OBDISC_OFFER_ROLE WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID " //
-         + " AND AD_ROLE_ID = '" + OB.MobileApp.model.get('context').role.id + "')))";
+         + " AND EXISTS (SELECT 1 FROM OBDISC_OFFER_ROLE WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID " + " AND AD_ROLE_ID = '" + OB.MobileApp.model.get('context').role.id + "')))" //
+         + " ) OR M_OFFER_TYPE_ID IN (" + OB.Model.Discounts.getAutoCalculatedPromotions() + ")";
 
     if (!receipt.shouldApplyPromotions() || line.get('product').get('ignorePromotions')) {
       // Cannot apply promotions, leave actions empty
