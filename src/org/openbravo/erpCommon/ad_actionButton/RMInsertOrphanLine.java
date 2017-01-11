@@ -71,8 +71,8 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
     Order order = OBDal.getInstance().get(Order.class, strOrderId);
     Product product = OBDal.getInstance().get(Product.class, strProductId);
 
-    if (SERVICE.equals(product.getProductType()) && !product.isReturnable()) {
-      throw new OBException("@Service@ '" + product.getIdentifier() + "' @ServiceIsNotReturnable@");
+    if (!product.isReturnable()) {
+      throw new OBException("@Product@ '" + product.getIdentifier() + "' @ServiceIsNotReturnable@");
     }
     AttributeSetInstance attrSetInstance = null;
     if (strAttributeSetInstanceId != null) {
