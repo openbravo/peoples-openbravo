@@ -378,6 +378,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
                   orderList.synchronizeCurrentOrder();
                 }
+                if (OB.MobileApp.view.openedPopup === null) {
+                  enyo.$.scrim.hide();
+                }
                 OB.UTIL.SynchronizationHelper.finished(synchId, "receipt.paymentAccepted");
               }
             });
