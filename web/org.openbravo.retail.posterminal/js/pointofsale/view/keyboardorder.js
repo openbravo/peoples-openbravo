@@ -846,7 +846,9 @@ enyo.kind({
 
     OB.Dal.findUsingCache('productSearch', OB.Model.Product, criteria, function (data) {
       me.searchProductCallback(data, code, callback, attrs);
-    }, me.errorCallback, this);
+    }, me.errorCallback, {
+      modelsAffectedByCache: ['Product']
+    });
   },
 
   searchProductCallback: function (data, code, callback, attrs) {
