@@ -1231,14 +1231,6 @@ public class OBViewFieldHandler {
 
     public String getGridFieldProperties() {
       String props = uiDefinition.getGridFieldProperties(field);
-      if (!props.contains("canFilter") && field.getTab().isObuiappCanDelete()
-          && field.getTab().getWindow().getWindowType().equals("OBUIAPP_PickAndExecute")) {
-        props = props + ", canFilter: false";
-      }
-      if (!props.contains("canSort") && field.getTab().isObuiappCanAdd()
-          && field.getTab().getWindow().getWindowType().equals("OBUIAPP_PickAndExecute")) {
-        props = props + ", canSort: false";
-      }
       return props;
     }
 
