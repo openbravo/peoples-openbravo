@@ -451,8 +451,17 @@ public abstract class UIDefinition {
     // value is properly selected.
     result.append(", selectOnClick: true");
 
-    Boolean canSort = (Boolean) readGridConfigurationSetting("canSort");
-    Boolean canFilter = (Boolean) readGridConfigurationSetting("canFilter");
+    Boolean canSort;
+    Boolean canFilter;
+
+    if ((field.getTab().isObuiappCanAdd() || field.getTab().isObuiappCanDelete())
+        && field.getTab().getWindow().getWindowType().equals("OBUIAPP_PickAndExecute")) {
+      canSort = false;
+      canFilter = false;
+    } else {
+      canSort = (Boolean) readGridConfigurationSetting("canSort");
+      canFilter = (Boolean) readGridConfigurationSetting("canFilter");
+    }
 
     if (canSort != null) {
       result.append(", canSort: " + canSort.toString());
