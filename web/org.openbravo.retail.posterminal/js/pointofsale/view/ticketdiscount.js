@@ -294,8 +294,9 @@ enyo.kind({
       });
 
       OB.Model.Discounts.addManualPromotion(me.order, orderLinesCollection, promotionToAplly);
+
+      me.closingDiscounts();
     });
-    this.closingDiscounts();
   },
   init: function (model) {
     this.order = model.get('order');
