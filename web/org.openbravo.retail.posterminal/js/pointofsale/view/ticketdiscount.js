@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -29,6 +29,7 @@ enyo.kind({
   components: [{
     kind: 'Scroller',
     maxHeight: '130px',
+    style: 'height: 130px',
     thumb: true,
     horizontal: 'hidden',
     components: [{
@@ -73,6 +74,7 @@ enyo.kind({
     }, {
       style: 'clear: both'
     }, {
+      name: 'applyCheckSelectAll',
       components: [{
         style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 35%; height: 40px; float: left;  text-align: left;',
         components: [{
@@ -264,28 +266,37 @@ enyo.kind({
   applyDiscounts: function (inSender, inEvent) {
     var promotionToAplly = {},
         discountsContainer = this.$.discountsContainer,
-        orderLinesCollection = new OB.Collection.OrderLineList();
-    promotionToAplly.rule = discountsContainer.model;
-    promotionToAplly.definition = {};
-    promotionToAplly.definition.userAmt = discountsContainer.amt;
-    promotionToAplly.definition.applyNext = !this.$.checkOverride.checked;
-    promotionToAplly.definition.lastApplied = true;
+        orderLinesCollection = new OB.Collection.OrderLineList(),
+        me = this;
+    //preApplyDiscountsHook
+    OB.UTIL.HookManager.executeHooks('OBPOS_preApplyDiscountsHook', {
+      context: this
+    }, function (args) {
+      if (args && args.cancelOperation) {
+        return;
+      }
+      promotionToAplly.rule = discountsContainer.model;
+      promotionToAplly.definition = {};
+      promotionToAplly.definition.userAmt = discountsContainer.amt;
+      promotionToAplly.definition.applyNext = !me.$.checkOverride.checked;
+      promotionToAplly.definition.lastApplied = true;
 
-    if (discountsContainer.requiresQty && !discountsContainer.amt) {
-      //Show a modal pop up with the error
-      this.doShowPopup({
-        popup: 'modalDiscountNeedQty'
+      if (discountsContainer.requiresQty && !discountsContainer.amt) {
+        //Show a modal pop up with the error
+        me.doShowPopup({
+          popup: 'modalDiscountNeedQty'
+        });
+        return true;
+      }
+
+      _.each(me.checkedLines, function (line) {
+        orderLinesCollection.add(line);
       });
-      return true;
-    }
 
-    _.each(this.checkedLines, function (line) {
-      orderLinesCollection.add(line);
+      OB.Model.Discounts.addManualPromotion(me.order, orderLinesCollection, promotionToAplly);
+
+      me.closingDiscounts();
     });
-
-    OB.Model.Discounts.addManualPromotion(this.order, orderLinesCollection, promotionToAplly);
-
-    this.closingDiscounts();
   },
   init: function (model) {
     this.order = model.get('order');
@@ -350,53 +361,56 @@ enyo.kind({
   onchange: 'discountChanged',
   classes: 'discount-dialog-profile-combo',
   renderEmpty: enyo.Control,
-  renderLine: enyo.kind({
-    kind: 'enyo.Option',
-    initComponents: function () {
-      this.setValue(this.model.get('id'));
-      this.originalText = this.model.get('_identifier');
-      // TODO: this shouldn't be hardcoded but defined in each promotion
-      if (this.model.get('discountType') === 'D1D193305A6443B09B299259493B272A' || this.model.get('discountType') === '20E4EC27397344309A2185097392D964') {
-        //variable
-        this.requiresQty = true;
-        if (this.model.get('discountType') === '20E4EC27397344309A2185097392D964') {
-          //variable porcentaje
-          this.units = '%';
-          if (!_.isUndefined(this.model.get('obdiscPercentage')) && !_.isNull(this.model.get('obdiscPercentage'))) {
-            this.amt = this.model.get('obdiscPercentage');
-          }
-        } else if (this.model.get('discountType') === 'D1D193305A6443B09B299259493B272A') {
-          //variable qty
-          this.units = OB.MobileApp.model.get('terminal').currency$_identifier;
-          if (this.model.get('obdiscAmt')) {
-            this.amt = this.model.get('obdiscAmt');
-          }
-        }
-      } else {
-        //fixed
-        this.requiresQty = false;
-        if (this.model.get('discountType') === '8338556C0FBF45249512DB343FEFD280') {
-          //fixed percentage
-          this.units = '%';
-          if (!_.isUndefined(this.model.get('obdiscPercentage')) && !_.isNull(this.model.get('obdiscPercentage'))) {
-            this.amt = this.model.get('obdiscPercentage');
-          }
-        } else if (this.model.get('discountType') === '7B49D8CC4E084A75B7CB4D85A6A3A578') {
-          //fixed amount
-          this.units = OB.MobileApp.model.get('terminal').currency$_identifier;
-          if (!_.isUndefined(this.model.get('obdiscAmt')) && !_.isNull(this.model.get('obdiscAmt'))) {
-            this.amt = this.model.get('obdiscAmt');
-          }
-        }
-      }
-      if (this.amt) {
-        this.setContent(this.originalText + ' - ' + this.amt + ' ' + this.units);
-      } else {
-        this.setContent(this.originalText);
-      }
-    }
-  }),
+  renderLine: 'OB.UI.DiscountList.Options',
   initComponents: function () {
     this.inherited(arguments);
+  }
+});
+
+enyo.kind({
+  kind: 'enyo.Option',
+  name: 'OB.UI.DiscountList.Options',
+  initComponents: function () {
+    this.setValue(this.model.get('id'));
+    this.originalText = this.model.get('_identifier');
+    // TODO: this shouldn't be hardcoded but defined in each promotion
+    if (this.model.get('discountType') === 'D1D193305A6443B09B299259493B272A' || this.model.get('discountType') === '20E4EC27397344309A2185097392D964') {
+      //variable
+      this.requiresQty = true;
+      if (this.model.get('discountType') === '20E4EC27397344309A2185097392D964') {
+        //variable porcentaje
+        this.units = '%';
+        if (!_.isUndefined(this.model.get('obdiscPercentage')) && !_.isNull(this.model.get('obdiscPercentage'))) {
+          this.amt = this.model.get('obdiscPercentage');
+        }
+      } else if (this.model.get('discountType') === 'D1D193305A6443B09B299259493B272A') {
+        //variable qty
+        this.units = OB.MobileApp.model.get('terminal').currency$_identifier;
+        if (this.model.get('obdiscAmt')) {
+          this.amt = this.model.get('obdiscAmt');
+        }
+      }
+    } else {
+      //fixed
+      this.requiresQty = false;
+      if (this.model.get('discountType') === '8338556C0FBF45249512DB343FEFD280') {
+        //fixed percentage
+        this.units = '%';
+        if (!_.isUndefined(this.model.get('obdiscPercentage')) && !_.isNull(this.model.get('obdiscPercentage'))) {
+          this.amt = this.model.get('obdiscPercentage');
+        }
+      } else if (this.model.get('discountType') === '7B49D8CC4E084A75B7CB4D85A6A3A578') {
+        //fixed amount
+        this.units = OB.MobileApp.model.get('terminal').currency$_identifier;
+        if (!_.isUndefined(this.model.get('obdiscAmt')) && !_.isNull(this.model.get('obdiscAmt'))) {
+          this.amt = this.model.get('obdiscAmt');
+        }
+      }
+    }
+    if (this.amt) {
+      this.setContent(this.originalText + ' - ' + this.amt + ' ' + this.units);
+    } else {
+      this.setContent(this.originalText);
+    }
   }
 });

@@ -201,7 +201,8 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         me = this,
         criteria, t0 = new Date().getTime(),
         whereClause = OB.Model.Discounts.computeStandardFilter(receipt) // 
-         + " AND M_OFFER_TYPE_ID NOT IN (" + OB.Model.Discounts.getManualPromotions() + ")" //
+         + " AND (M_OFFER_TYPE_ID NOT IN (" + OB.Model.Discounts.getManualPromotions() + ")" //
+         + "  OR M_OFFER_TYPE_ID IN (" + OB.Model.Discounts.getAutoCalculatedPromotions() + "))" //
          + " AND ((EM_OBDISC_ROLE_SELECTION = 'Y' AND NOT EXISTS (SELECT 1 FROM OBDISC_OFFER_ROLE WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID " + " AND AD_ROLE_ID = '" + OB.MobileApp.model.get('context').role.id + "')) OR (EM_OBDISC_ROLE_SELECTION = 'N' " //
          + " AND EXISTS (SELECT 1 FROM OBDISC_OFFER_ROLE WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID " //
          + " AND AD_ROLE_ID = '" + OB.MobileApp.model.get('context').role.id + "')))";
@@ -245,8 +246,8 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     var receipt = evt.get('receipt'),
         line = evt.get('line'),
         rule = OB.Model.Discounts.discountRules[disc.get('discountType')],
-        ds, ruleListener;
-    if (line.stopApplyingPromotions()) {
+        ds, ruleListener, autoCalculatedPromotions = OB.Model.Discounts.getAutoCalculatedPromotions();
+    if (line.stopApplyingPromotions() && (autoCalculatedPromotions.indexOf(disc.get('discountType')) === -1)) {
       this.nextAction(evt);
       return;
     }
