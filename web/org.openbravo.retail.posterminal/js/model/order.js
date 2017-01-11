@@ -1487,13 +1487,26 @@
             });
 
           } else {
+            var count;
             //remove line even it is a grouped line
             if (options && options.line && qty === -1) {
               me.addUnit(options.line, qty);
               line = options.line;
               newLine = false;
             } else {
-              line = me.createLine(p, qty, options, attrs);
+              if (p.get('groupProduct')) {
+                line = me.createLine(p, qty, options, attrs);
+              } else {
+                if (qty >= 0) {
+                  for (count = 0; count < qty; count++) {
+                    line = me.createLine(p, 1, options, attrs);
+                  }
+                } else {
+                  for (count = 0; count > qty; count--) {
+                    line = me.createLine(p, -1, options, attrs);
+                  }
+                }
+              }
             }
           }
         }
@@ -1708,7 +1721,7 @@
           remoteCriteria.push(pricelistId);
           criteria.remoteFilters = remoteCriteria;
         }
-        OB.Dal.find(OB.Model.ProductPrice, criteria, function (productPrices) {
+        OB.Dal.findUsingCache('productPrice', OB.Model.ProductPrice, criteria, function (productPrices) {
           if (productPrices.length > 0) {
             p = p.clone();
             if (OB.UTIL.isNullOrUndefined(p.get('updatePriceFromPricelist')) || p.get('updatePriceFromPricelist')) {
