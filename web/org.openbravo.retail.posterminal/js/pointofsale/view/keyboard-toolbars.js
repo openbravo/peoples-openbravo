@@ -54,6 +54,7 @@ enyo.kind({
   toolbarName: 'toolbarpayment',
   events: {
     onShowPopup: '',
+    onHidePopup: '',
     onClearPaymentSelect: ''
   },
   handlers: {
@@ -63,10 +64,7 @@ enyo.kind({
     onButtonStatusChanged: 'buttonStatusChanged',
     onActionPay: 'actionPay'
   },
-  components: [{
-    kind: 'OB.OBPOSPointOfSale.UI.PaymentMethods',
-    name: 'OBPOS_UI_PaymentMethods'
-  }],
+  morePaymentMethodsPopup: 'OBPOS_UI_PaymentMethods',
   init: function (model) {
     this.model = model;
   },
@@ -389,10 +387,17 @@ enyo.kind({
     });
   },
   showAllButtons: function () {
-    this.$.OBPOS_UI_PaymentMethods.show();
+    this.doShowPopup({
+      popup: this.morePaymentMethodsPopup,
+      args: {
+        toolbar: this
+      }
+    });
   },
   closeAllPopups: function () {
-    this.$.OBPOS_UI_PaymentMethods.hide();
+    this.doHidePopup({
+      popup: this.morePaymentMethodsPopup
+    });
   },
   paymentChanged: function (inSender, inEvent) {
     this.currentPayment = inEvent.payment;
@@ -499,47 +504,6 @@ enyo.kind({
         commands: [payment.payment.searchKey]
       });
     });
-  }
-});
-
-enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.PaymentMethods',
-  kind: 'OB.UI.Modal',
-  topPosition: '125px',
-  i18nHeader: 'OBPOS_MorePaymentsHeader',
-  sideButtons: [],
-  body: {
-    classes: 'row-fluid',
-    components: [{
-      classes: 'span12',
-      components: [{
-        style: 'border-bottom: 1px solid #cccccc;',
-        classes: 'row-fluid',
-        components: [{
-          name: 'buttonslist',
-          classes: 'span12'
-        }]
-      }]
-    }]
-  },
-  createPaymentButtons: function () {
-    enyo.forEach(this.sideButtons, function (sidebutton) {
-      sidebutton.btn.definition.includedInPopUp = true;
-      this.$.body.$.buttonslist.createComponent(sidebutton, {
-        owner: this.parent
-      });
-    }, this);
-  },
-  executeOnShow: function () {
-    if (this.$.body.$.buttonslist.children.length !== this.sideButtons.length) {
-      this.$.body.$.buttonslist.destroyComponents();
-      this.createPaymentButtons();
-    }
-    return true;
-  },
-  init: function (model) {
-    this.model = model;
-    this.createPaymentButtons();
   }
 });
 
