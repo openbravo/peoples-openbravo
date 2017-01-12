@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -156,6 +156,7 @@ public class PaidReceipts extends JSONProcessSimple {
             String name = promotion.getPriceAdjustment().getPrintName() != null ? promotion
                 .getPriceAdjustment().getPrintName() : promotion.getPriceAdjustment().getName();
             jsonPromo.put("ruleId", promotion.getPriceAdjustment().getId());
+            jsonPromo.put("discountType", promotion.getPriceAdjustment().getDiscountType().getId());
             jsonPromo.put("name", name);
             jsonPromo.put("amt", displayedAmount);
             jsonPromo.put("actualAmt", promotion.getTotalAmount());
