@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,6 +48,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.ConnectionProviderImpl;
+import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.exception.PoolNotFoundException;
 import org.openbravo.model.ad.access.User;
 
@@ -109,6 +110,13 @@ public class OBBaseTest {
         reportException(e);
         throw new OBException(e);
       } finally {
+        try {
+          if (SessionHandler.isSessionHandlerPresent(ExternalConnectionPool.READONLY_POOL)) {
+            SessionHandler.getInstance().commitAndClose(ExternalConnectionPool.READONLY_POOL);
+          }
+        } catch (Exception ex) {
+          log.error("Error cleaning up read-only session", ex);
+        }
         SessionHandler.deleteSessionHandler();
         OBContext.setOBContext((OBContext) null);
       }

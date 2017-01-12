@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):
  *   Martin Taal <martin.taal@openbravo.com>,
@@ -22,14 +22,18 @@
 
 package org.openbravo.test.dal;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeThat;
 
 import java.util.List;
 
@@ -45,12 +49,14 @@ import org.junit.runners.MethodSorters;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Category;
@@ -473,5 +479,144 @@ public class DalTest extends OBBaseTest {
     }
 
     assertEquals("USD", obc.list().get(0).getISOCode());
+  }
+
+  @Test
+  public void defaultPoolIsClosedAfterCommit() {
+    setTestUserContext();
+    OBDal.getInstance().get(Currency.class, "102");
+    OBDal.getInstance().commitAndClose();
+    assertFalse(SessionHandler.isSessionHandlerPresent());
+  }
+
+  @Test
+  public void defaultPoolIsClosedAfterRollback() {
+    setTestUserContext();
+    OBDal.getInstance().get(Currency.class, "102");
+    OBDal.getInstance().rollbackAndClose();
+    assertFalse(SessionHandler.isSessionHandlerPresent());
+  }
+
+  @Test
+  public void defaultPoolCanBeUsedAfterCommit() {
+    setTestUserContext();
+    Currency currency = OBDal.getInstance().get(Currency.class, "102");
+    OBDal.getInstance().commitAndClose();
+    currency = OBDal.getInstance().get(Currency.class, "100");
+    assertEquals("USD", currency.getISOCode());
+  }
+
+  @Test
+  public void defaultPoolCanBeUsedAfterRollback() {
+    setTestUserContext();
+    Currency currency = OBDal.getInstance().get(Currency.class, "102");
+    OBDal.getInstance().rollbackAndClose();
+    currency = OBDal.getInstance().get(Currency.class, "100");
+    assertEquals("USD", currency.getISOCode());
+  }
+
+  @Test
+  public void readOnlyPoolNotClosedAfterCommitDefaultPool() {
+    setTestUserContext();
+    OBDal.getInstance().get(Currency.class, "102");
+    OBDal.getReadOnlyInstance().get(Currency.class, "102");
+    OBDal.getInstance().commitAndClose();
+    boolean[] expectedAvailability = { false, true };
+    boolean[] currentAvailability = {
+        SessionHandler.isSessionHandlerPresent(ExternalConnectionPool.DEFAULT_POOL),
+        SessionHandler.isSessionHandlerPresent(ExternalConnectionPool.READONLY_POOL) };
+    assertThat("Session Handler is still present for the read-only pool", expectedAvailability,
+        equalTo(currentAvailability));
+  }
+
+  @Test
+  public void defaultPoolNotClosedAfterCommitReadOnlyPool() {
+    setTestUserContext();
+    OBDal.getInstance().get(Currency.class, "102");
+    OBDal.getReadOnlyInstance().get(Currency.class, "102");
+    OBDal.getReadOnlyInstance().commitAndClose();
+    boolean[] expectedAvailability = { true, false };
+    boolean[] currentAvailability = {
+        SessionHandler.isSessionHandlerPresent(ExternalConnectionPool.DEFAULT_POOL),
+        SessionHandler.isSessionHandlerPresent(ExternalConnectionPool.READONLY_POOL) };
+    assertThat("Session Handler is still present for the default pool", expectedAvailability,
+        equalTo(currentAvailability));
+  }
+
+  @Test
+  public void readOnlyPoolCanBeUsedAfterClosingDefaultPool() {
+    setTestUserContext();
+    Currency currency = OBDal.getInstance().get(Currency.class, "102");
+    OBDal.getInstance().commitAndClose();
+    currency = OBDal.getReadOnlyInstance().get(Currency.class, "100");
+    assertEquals("USD", currency.getISOCode());
+  }
+
+  @Test
+  public void defaultPoolCanBeUsedAfterClosingReadOnlyPool() {
+    setTestUserContext();
+    Currency currency = OBDal.getReadOnlyInstance().get(Currency.class, "102");
+    OBDal.getReadOnlyInstance().commitAndClose();
+    currency = OBDal.getInstance().get(Currency.class, "100");
+    assertEquals("USD", currency.getISOCode());
+  }
+
+  @Test
+  public void readOnlyPoolCanNotInsert() {
+    assumeThat("read-only pool is configured", isReadOnlyPoolDefined(), is(true));
+    setTestUserContext();
+    try {
+      final Category category = OBProvider.getInstance().get(Category.class);
+      category.setDefault(true);
+      category.setDescription("ro_testdescription");
+      category.setName("ro_testname");
+      category.setSearchKey("ro_testvalue");
+      category.setActive(true);
+      OBDal.getReadOnlyInstance().save(category);
+      OBDal.getReadOnlyInstance().commitAndClose();
+    } catch (Exception ignored) {
+    }
+    final OBCriteria<Category> obCriteria = OBDal.getReadOnlyInstance().createCriteria(
+        Category.class);
+    obCriteria.add(Restrictions.eq(Category.PROPERTY_NAME, "ro_testname"));
+    final List<Category> categories = obCriteria.list();
+    assertEquals(0, categories.size());
+
+  }
+
+  @Test
+  public void readOnlyPoolCanNotUpdate() {
+    assumeThat("read-only pool is configured", isReadOnlyPoolDefined(), is(true));
+    setTestUserContext();
+    final String supplierCategoryId = "1B7DCAD27AF64D16ADCFB4EBE8600078";
+    final String newDescription = "ro_testdescription";
+    try {
+      Category category = OBDal.getReadOnlyInstance().get(Category.class, supplierCategoryId);
+      category.setDescription(newDescription);
+      OBDal.getReadOnlyInstance().commitAndClose();
+    } catch (Exception ignored) {
+    }
+    Category category = OBDal.getReadOnlyInstance().get(Category.class, supplierCategoryId);
+    assertThat(newDescription, not(equalTo(category.getDescription())));
+  }
+
+  @Test
+  public void readOnlyPoolCanNotDelete() {
+    assumeThat("read-only pool is configured", isReadOnlyPoolDefined(), is(true));
+    setTestUserContext();
+    final String supplierCategoryId = "1B7DCAD27AF64D16ADCFB4EBE8600078";
+    try {
+      Category category = OBDal.getReadOnlyInstance().get(Category.class, supplierCategoryId);
+      OBDal.getReadOnlyInstance().remove(category);
+      OBDal.getReadOnlyInstance().commitAndClose();
+    } catch (Exception ignored) {
+    }
+    Category category = OBDal.getInstance().get(Category.class, supplierCategoryId);
+    assertNotNull(category);
+  }
+
+  private boolean isReadOnlyPoolDefined() {
+    return OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .containsKey("bbdd.readonly.url");
   }
 }
