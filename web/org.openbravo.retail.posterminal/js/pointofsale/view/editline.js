@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -634,8 +634,7 @@ enyo.kind({
           if (lineModel.get('promotions') && lineModel.get('promotions').length > 0) {
             var filtered;
             filtered = _.filter(lineModel.get('promotions'), function (prom) {
-              //discrectionary discounts ids
-              return prom.discountType === '20E4EC27397344309A2185097392D964' || prom.discountType === 'D1D193305A6443B09B299259493B272A' || prom.discountType === '8338556C0FBF45249512DB343FEFD280' || prom.discountType === '7B49D8CC4E084A75B7CB4D85A6A3A578';
+              return OB.Model.Discounts.discountRules[prom.discountType].isManual;
             }, this);
             if (filtered.length === lineModel.get('promotions').length) {
               //lines with just discrectionary discounts can be removed.

@@ -371,39 +371,43 @@ enyo.kind({
   kind: 'enyo.Option',
   name: 'OB.UI.DiscountList.Options',
   initComponents: function () {
+    var rule = OB.Model.Discounts.discountRules[this.model.get('discountType')], propertyToShow = '';
+    if (rule.getAmountProperty && rule.getAmountProperty instanceof Function) {
+      propertyToShow = OB.Model.Discounts.discountRules[this.model.get('discountType')].getAmountProperty();
+    }
     this.setValue(this.model.get('id'));
     this.originalText = this.model.get('_identifier');
     // TODO: this shouldn't be hardcoded but defined in each promotion
-    if (this.model.get('discountType') === 'D1D193305A6443B09B299259493B272A' || this.model.get('discountType') === '20E4EC27397344309A2185097392D964') {
+    if (!OB.Model.Discounts.discountRules[this.model.get('discountType')].isFixed) {
       //variable
       this.requiresQty = true;
-      if (this.model.get('discountType') === '20E4EC27397344309A2185097392D964') {
+      if (!OB.Model.Discounts.discountRules[this.model.get('discountType')].isAmount) {
         //variable porcentaje
         this.units = '%';
-        if (!_.isUndefined(this.model.get('obdiscPercentage')) && !_.isNull(this.model.get('obdiscPercentage'))) {
-          this.amt = this.model.get('obdiscPercentage');
+        if (!_.isUndefined(this.model.get(propertyToShow)) && !_.isNull(this.model.get(propertyToShow))) {
+          this.amt = this.model.get(propertyToShow);
         }
-      } else if (this.model.get('discountType') === 'D1D193305A6443B09B299259493B272A') {
+      } else {
         //variable qty
         this.units = OB.MobileApp.model.get('terminal').currency$_identifier;
-        if (this.model.get('obdiscAmt')) {
-          this.amt = this.model.get('obdiscAmt');
+        if (this.model.get(propertyToShow)) {
+          this.amt = this.model.get(propertyToShow);
         }
       }
     } else {
       //fixed
       this.requiresQty = false;
-      if (this.model.get('discountType') === '8338556C0FBF45249512DB343FEFD280') {
+      if (!OB.Model.Discounts.discountRules[this.model.get('discountType')].isAmount) {
         //fixed percentage
         this.units = '%';
-        if (!_.isUndefined(this.model.get('obdiscPercentage')) && !_.isNull(this.model.get('obdiscPercentage'))) {
-          this.amt = this.model.get('obdiscPercentage');
+        if (!_.isUndefined(this.model.get(propertyToShow)) && !_.isNull(this.model.get(propertyToShow))) {
+          this.amt = this.model.get(propertyToShow);
         }
-      } else if (this.model.get('discountType') === '7B49D8CC4E084A75B7CB4D85A6A3A578') {
+      } else {
         //fixed amount
         this.units = OB.MobileApp.model.get('terminal').currency$_identifier;
-        if (!_.isUndefined(this.model.get('obdiscAmt')) && !_.isNull(this.model.get('obdiscAmt'))) {
-          this.amt = this.model.get('obdiscAmt');
+        if (!_.isUndefined(this.model.get(propertyToShow)) && !_.isNull(this.model.get(propertyToShow))) {
+          this.amt = this.model.get(propertyToShow);
         }
       }
     }
