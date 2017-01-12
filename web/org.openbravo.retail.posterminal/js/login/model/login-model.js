@@ -316,7 +316,7 @@
           'isbeingprocessed': 'N'
         },
         getIdentifier: function (model) {
-          return model.get('type') + ': ' + model.get('user') + ' - ' + model.get('time');
+          return model.type + ': ' + model.user + ' - ' + OB.I18N.formatDateISO(new Date(model.creationDate));
         }
       });
 
