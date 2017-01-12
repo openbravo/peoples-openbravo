@@ -526,6 +526,42 @@ enyo.kind({
         this.$.actionButtonsContainer.$.returnLine.hide();
       }
     }
+    if (this.selectedModels && this.selectedModels.length > 0 && (this.selectedModels[0] instanceof OB.Model.OrderLine)) {
+      var selectedServices = _.filter(this.selectedModels, function (line) {
+        return line.get('product').get('productType') === 'S';
+      }),
+          isLayaway = this.model.get('order').get('isLayaway') || this.model.get('order').get('orderType') === 2 ? true : false;
+      this.hideDeliveryButton = selectedServices.length || !isLayaway ? true : false;
+      this.hideDeliveryLabel = !isLayaway || selectedServices.length === this.selectedModels.length ? true : false;
+      if (this.selectedModels.length > 1) {
+        var selectedLinesToDeliver = _.filter(this.selectedModels, function (line) {
+          return line.get('obposCanbedelivered');
+        });
+        this.hideDeliveryButton = this.hideDeliveryButton ? true : selectedLinesToDeliver.length && selectedLinesToDeliver.length < this.selectedModels.length;
+        if (this.hideDeliveryButton) {
+          this.$.actionButtonsContainer.$.canDeliver.hide();
+        } else {
+          this.$.actionButtonsContainer.$.canDeliver.show();
+          if (!selectedLinesToDeliver.length) {
+            this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsDeliverable'));
+          } else {
+            this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsUndeliverable'));
+          }
+        }
+      } else if (this.selectedModels.length === 1) {
+        if (this.hideDeliveryButton) {
+          this.$.actionButtonsContainer.$.canDeliver.hide();
+        } else {
+          this.$.actionButtonsContainer.$.canDeliver.show();
+          if (this.selectedModels[0].get('obposCanbedelivered')) {
+            this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsUndeliverable'));
+          } else {
+            this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsDeliverable'));
+          }
+        }
+      }
+      this.render();
+    }
     if (line) {
       if (line && !this.isLineInSelection(line)) {
         return;
@@ -704,7 +740,6 @@ enyo.kind({
     }
   },
   setMultiSelected: function (inSender, inEvent) {
-    var selectedServices, isLayaway;
     if (inEvent.models && inEvent.models.length > 0 && !(inEvent.models[0] instanceof OB.Model.OrderLine)) {
       return;
     }
@@ -717,40 +752,7 @@ enyo.kind({
     }
     this.$.linePropertiesContainer.$.discountedAmountLine.multiSelection = inEvent.models.length > 1;
     this.selectedListener(this.selectedModels.length > 0 ? this.selectedModels[0] : undefined);
-    selectedServices = _.filter(inEvent.models, function (line) {
-      return line.get('product').get('productType') === 'S';
-    });
-    isLayaway = this.owner.owner.model.get('order').get('isLayaway') || this.owner.owner.model.get('order').get('orderType') ? true : false;
-    this.hideDeliveryButton = selectedServices.length || !isLayaway ? true : false;
-    this.hideDeliveryLabel = !isLayaway || selectedServices.length === this.selectedModels.length ? true : false;
-    if (inEvent.models.length > 1) {
-      var selectedLinesToDeliver;
-      selectedLinesToDeliver = _.filter(inEvent.models, function (line) {
-        return line.get('obposCanbedelivered');
-      });
-      this.hideDeliveryButton = this.hideDeliveryButton ? true : selectedLinesToDeliver.length && selectedLinesToDeliver.length < inEvent.models.length;
-      if (this.hideDeliveryButton) {
-        this.$.actionButtonsContainer.$.canDeliver.hide();
-      } else {
-        this.$.actionButtonsContainer.$.canDeliver.show();
-        if (!selectedLinesToDeliver.length) {
-          this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsDeliverable'));
-        } else {
-          this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsUndeliverable'));
-        }
-      }
-    } else if (inEvent.models.length === 1) {
-      if (this.hideDeliveryButton) {
-        this.$.actionButtonsContainer.$.canDeliver.hide();
-      } else {
-        this.$.actionButtonsContainer.$.canDeliver.show();
-        if (inEvent.models[0].get('obposCanbedelivered')) {
-          this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsUndeliverable'));
-        } else {
-          this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsDeliverable'));
-        }
-      }
-    }
+
     this.render();
   },
   isLineInSelection: function (line) {

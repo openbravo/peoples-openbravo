@@ -168,7 +168,8 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.receiptLayaway',
   events: {
-    onShowDivText: ''
+    onShowDivText: '',
+    onRearrangeEditButtonBar: ''
   },
   i18nLabel: 'OBPOS_LblReceiptLayaway',
   tap: function () {
@@ -203,6 +204,7 @@ enyo.kind({
         OB.UTIL.showWarning(OB.I18N.getLabel(error));
       });
     }
+    this.doRearrangeEditButtonBar();
   },
   displayLogic: function () {
     if (this.model.get('order').get('orderType') === 2) {
