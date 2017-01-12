@@ -4221,19 +4221,19 @@
     deleteOrder: function (context, callback) {
       var i;
 
-      function removePayments(context, callback) {
-        var payments = context.model.get('order').get('payments');
-        if (context.model.get('order').get('isEditable') && payments && payments.length > 0) {
+      function removePayments(receipt, callback) {
+        var payments = receipt.get('payments');
+        if (receipt.get('isEditable') && payments && payments.length > 0) {
           OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePayment', {
             paymentToRem: payments.at(0),
             payments: payments,
-            receipt: context.model.get('order')
+            receipt: receipt
           }, function (args) {
             if (args.cancellation) {
               callback(false);
             } else {
               payments.remove(payments.at(0));
-              removePayments(context, function (success) {
+              removePayments(receipt, function (success) {
                 callback(success);
               });
             }
@@ -4346,7 +4346,7 @@
         }
 
         if (receipt.get('id') && !isPaidQuotation) {
-          removePayments(context, function (success) {
+          removePayments(receipt, function (success) {
             if (success) {
               finishRemoveOrder();
             }
