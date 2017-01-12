@@ -16,6 +16,7 @@ enyo.kind({
   windowmodel: OB.OBPOSPointOfSale.Model.PointOfSale,
   tag: 'section',
   handlers: {
+    onShowPaymentTab: 'showOrder',
     onAddProduct: 'addProductToOrder',
     onViewProductDetails: 'viewProductDetails',
     onCloseProductDetailsView: 'showOrder',
@@ -580,6 +581,7 @@ enyo.kind({
     }, this);
     if (allHidden) {
       this.$.multiColumn.$.leftPanel.$.receiptview.setShowing(true);
+      return true;
     }
   },
   showLeftSubWindow: function (inSender, inEvent) {
