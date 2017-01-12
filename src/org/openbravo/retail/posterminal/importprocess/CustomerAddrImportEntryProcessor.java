@@ -10,14 +10,13 @@ package org.openbravo.retail.posterminal.importprocess;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess;
-import org.openbravo.mobile.core.process.MobileImportEntryProcessorRunnable;
 import org.openbravo.retail.posterminal.CustomerAddrLoader;
+import org.openbravo.retail.posterminal.process.SerializedByTermImportEntryProcessorRunnable;
 import org.openbravo.service.importprocess.ImportEntry;
 import org.openbravo.service.importprocess.ImportEntryManager.ImportEntryQualifier;
 import org.openbravo.service.importprocess.ImportEntryProcessor;
@@ -31,23 +30,29 @@ import org.openbravo.service.importprocess.ImportEntryProcessor;
 @ApplicationScoped
 public class CustomerAddrImportEntryProcessor extends ImportEntryProcessor {
 
+  @Override
   protected ImportEntryProcessRunnable createImportEntryProcessRunnable() {
     return WeldUtils.getInstanceFromStaticBeanManager(BusinessPartnerLocationRunnable.class);
   }
 
+  @Override
   protected boolean canHandleImportEntry(ImportEntry importEntryInformation) {
     return "BusinessPartnerLocation".equals(importEntryInformation.getTypeofdata());
   }
 
+  @Override
   protected String getProcessSelectionKey(ImportEntry importEntry) {
     return importEntry.getOrganization().getId();
   }
 
-  private static class BusinessPartnerLocationRunnable extends MobileImportEntryProcessorRunnable {
+  private static class BusinessPartnerLocationRunnable
+      extends SerializedByTermImportEntryProcessorRunnable {
+    @Override
     protected Class<? extends DataSynchronizationProcess> getDataSynchronizationClass() {
       return CustomerAddrLoader.class;
     }
 
+    @Override
     protected void processEntry(ImportEntry importEntry) throws Exception {
       // check that there are no earlier customers import entries for the same organization
       if (thereAreCustomersInImportQueue(importEntry)) {
@@ -73,19 +78,6 @@ public class CustomerAddrImportEntryProcessor extends ImportEntryProcessor {
       } finally {
         OBContext.restorePreviousMode();
       }
-    }
-
-    private int countEntries(String importStatus, ImportEntry importEntry) {
-      final String whereClause = ImportEntry.PROPERTY_IMPORTSTATUS + "='" + importStatus + "' and "
-          + ImportEntry.PROPERTY_TYPEOFDATA + "='BusinessPartner' and "
-          + ImportEntry.PROPERTY_CREATIONDATE + "<:creationDate and "
-          + ImportEntry.PROPERTY_OBPOSPOSTERMINAL + "=:terminal";
-      final Query qry = OBDal.getInstance().getSession()
-          .createQuery("select 1 from " + ImportEntry.ENTITY_NAME + " where " + whereClause);
-      qry.setTimestamp("creationDate", importEntry.getCreationDate());
-      qry.setParameter("terminal", importEntry.getOBPOSPOSTerminal());
-      qry.setMaxResults(1);
-      return qry.list().size();
     }
   }
 
