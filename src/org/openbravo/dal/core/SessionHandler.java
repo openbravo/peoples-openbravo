@@ -112,7 +112,7 @@ public class SessionHandler implements OBNotSingleton {
    *         pool, false otherwise
    */
   public static boolean isSessionHandlerPresent(String pool) {
-    return sessionHandler.get() != null && !sessionHandler.get().isUnavailablePool(pool);
+    return sessionHandler.get() != null && sessionHandler.get().isAvailablePool(pool);
   }
 
   /**
@@ -140,7 +140,7 @@ public class SessionHandler implements OBNotSingleton {
   private Map<String, Session> sessions = new HashMap<>();
   private Map<String, Transaction> trxs = new HashMap<>();
   private Map<String, Connection> connections = new HashMap<>();
-  private Set<String> unavailablePools = new HashSet<String>();
+  private Set<String> availablePools = new HashSet<String>();
 
   // Sets the session handler at rollback so that the controller can rollback
   // at the end
@@ -317,18 +317,18 @@ public class SessionHandler implements OBNotSingleton {
     trxs.clear();
   }
 
-  private void setUnavailablePool(String pool) {
-    unavailablePools.add(pool);
+  private void setAvailablePool(String pool) {
+    availablePools.add(pool);
   }
 
-  private void setAvailablePool(String pool) {
-    if (unavailablePools.contains(pool)) {
-      unavailablePools.remove(pool);
+  private void setUnavailablePool(String pool) {
+    if (availablePools.contains(pool)) {
+      availablePools.remove(pool);
     }
   }
 
-  private boolean isUnavailablePool(String pool) {
-    return unavailablePools.contains(pool);
+  private boolean isAvailablePool(String pool) {
+    return availablePools.contains(pool);
   }
 
   /**
