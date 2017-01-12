@@ -273,6 +273,7 @@ enyo.kind({
       context: this
     }, function (args) {
       if (args && args.cancelOperation) {
+        me.closingDiscounts();
         return;
       }
       promotionToAplly.rule = discountsContainer.model;
@@ -371,7 +372,8 @@ enyo.kind({
   kind: 'enyo.Option',
   name: 'OB.UI.DiscountList.Options',
   initComponents: function () {
-    var rule = OB.Model.Discounts.discountRules[this.model.get('discountType')], propertyToShow = '';
+    var rule = OB.Model.Discounts.discountRules[this.model.get('discountType')],
+        propertyToShow = '';
     if (rule.getAmountProperty && rule.getAmountProperty instanceof Function) {
       propertyToShow = OB.Model.Discounts.discountRules[this.model.get('discountType')].getAmountProperty();
     }
