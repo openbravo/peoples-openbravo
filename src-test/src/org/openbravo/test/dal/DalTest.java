@@ -175,7 +175,7 @@ public class DalTest extends OBBaseTest {
   public void testFUpdateCurrencyByUser() {
     setUserContext("E12DC7B3FF8C4F64924A98195223B1F8");
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-    obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "USD"));
+    obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, DOLLAR));
     final List<Currency> cs = obc.list();
     assertEquals(1, cs.size());
     final Currency c = cs.get(0);
@@ -203,7 +203,7 @@ public class DalTest extends OBBaseTest {
     String newDescription = null;
     {
       final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-      obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "USD"));
+      obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, DOLLAR));
       final List<Currency> cs = obc.list();
       assertEquals(1, cs.size());
       c = cs.get(0);
@@ -217,7 +217,7 @@ public class DalTest extends OBBaseTest {
     // roll back the change, while doing some checks
     {
       final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-      obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "USD"));
+      obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, DOLLAR));
       final List<Currency> cs = obc.list();
       assertEquals(1, cs.size());
       final Currency newC = cs.get(0);
@@ -373,7 +373,7 @@ public class DalTest extends OBBaseTest {
       String cashBookId = "";
       {
         final OBCriteria<Currency> cc = OBDal.getInstance().createCriteria(Currency.class);
-        cc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "USD"));
+        cc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, DOLLAR));
         final List<Currency> cs = cc.list();
         final Currency currency = cs.get(0);
         final CashBook c = OBProvider.getInstance().get(CashBook.class);
@@ -444,7 +444,7 @@ public class DalTest extends OBBaseTest {
     setTestLogAppenderLevel(Level.WARN);
 
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-    obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "EUR"));
+    obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, EURO));
     obc.count();
 
     assertThat(getTestLogAppender().getMessages(Level.WARN), hasSize(0));
@@ -456,7 +456,7 @@ public class DalTest extends OBBaseTest {
     setTestLogAppenderLevel(Level.WARN);
 
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-    obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "EUR"));
+    obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, EURO));
     if (obc.count() > 0) {
       obc.addOrderBy(Currency.PROPERTY_ISOCODE, false);
     }
@@ -472,19 +472,19 @@ public class DalTest extends OBBaseTest {
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
     obc.add(Restrictions.or(
         //
-        Restrictions.eq(Currency.PROPERTY_ISOCODE, "EUR"),
-        Restrictions.eq(Currency.PROPERTY_ISOCODE, "USD")));
+        Restrictions.eq(Currency.PROPERTY_ISOCODE, EURO),
+        Restrictions.eq(Currency.PROPERTY_ISOCODE, DOLLAR)));
     if (obc.count() > 0) {
       obc.addOrderBy(Currency.PROPERTY_ISOCODE, false);
     }
 
-    assertEquals("USD", obc.list().get(0).getISOCode());
+    assertEquals(DOLLAR, obc.list().get(0).getISOCode());
   }
 
   @Test
   public void defaultPoolIsClosedAfterCommit() {
     setTestUserContext();
-    OBDal.getInstance().get(Currency.class, "102");
+    OBDal.getInstance().get(Currency.class, EURO_ID);
     OBDal.getInstance().commitAndClose();
     assertFalse(SessionHandler.isSessionHandlerPresent());
   }
@@ -492,7 +492,7 @@ public class DalTest extends OBBaseTest {
   @Test
   public void defaultPoolIsClosedAfterRollback() {
     setTestUserContext();
-    OBDal.getInstance().get(Currency.class, "102");
+    OBDal.getInstance().get(Currency.class, EURO_ID);
     OBDal.getInstance().rollbackAndClose();
     assertFalse(SessionHandler.isSessionHandlerPresent());
   }
@@ -500,26 +500,26 @@ public class DalTest extends OBBaseTest {
   @Test
   public void defaultPoolCanBeUsedAfterCommit() {
     setTestUserContext();
-    Currency currency = OBDal.getInstance().get(Currency.class, "102");
+    Currency currency = OBDal.getInstance().get(Currency.class, EURO_ID);
     OBDal.getInstance().commitAndClose();
-    currency = OBDal.getInstance().get(Currency.class, "100");
-    assertEquals("USD", currency.getISOCode());
+    currency = OBDal.getInstance().get(Currency.class, DOLLAR_ID);
+    assertEquals(DOLLAR, currency.getISOCode());
   }
 
   @Test
   public void defaultPoolCanBeUsedAfterRollback() {
     setTestUserContext();
-    Currency currency = OBDal.getInstance().get(Currency.class, "102");
+    Currency currency = OBDal.getInstance().get(Currency.class, EURO_ID);
     OBDal.getInstance().rollbackAndClose();
-    currency = OBDal.getInstance().get(Currency.class, "100");
-    assertEquals("USD", currency.getISOCode());
+    currency = OBDal.getInstance().get(Currency.class, DOLLAR_ID);
+    assertEquals(DOLLAR, currency.getISOCode());
   }
 
   @Test
   public void readOnlyPoolNotClosedAfterCommitDefaultPool() {
     setTestUserContext();
-    OBDal.getInstance().get(Currency.class, "102");
-    OBDal.getReadOnlyInstance().get(Currency.class, "102");
+    OBDal.getInstance().get(Currency.class, EURO_ID);
+    OBDal.getReadOnlyInstance().get(Currency.class, EURO_ID);
     OBDal.getInstance().commitAndClose();
     boolean[] expectedAvailability = { false, true };
     boolean[] currentAvailability = {
@@ -532,8 +532,8 @@ public class DalTest extends OBBaseTest {
   @Test
   public void defaultPoolNotClosedAfterCommitReadOnlyPool() {
     setTestUserContext();
-    OBDal.getInstance().get(Currency.class, "102");
-    OBDal.getReadOnlyInstance().get(Currency.class, "102");
+    OBDal.getInstance().get(Currency.class, EURO_ID);
+    OBDal.getReadOnlyInstance().get(Currency.class, EURO_ID);
     OBDal.getReadOnlyInstance().commitAndClose();
     boolean[] expectedAvailability = { true, false };
     boolean[] currentAvailability = {
@@ -546,19 +546,19 @@ public class DalTest extends OBBaseTest {
   @Test
   public void readOnlyPoolCanBeUsedAfterClosingDefaultPool() {
     setTestUserContext();
-    Currency currency = OBDal.getInstance().get(Currency.class, "102");
+    Currency currency = OBDal.getInstance().get(Currency.class, EURO_ID);
     OBDal.getInstance().commitAndClose();
-    currency = OBDal.getReadOnlyInstance().get(Currency.class, "100");
-    assertEquals("USD", currency.getISOCode());
+    currency = OBDal.getReadOnlyInstance().get(Currency.class, DOLLAR_ID);
+    assertEquals(DOLLAR, currency.getISOCode());
   }
 
   @Test
   public void defaultPoolCanBeUsedAfterClosingReadOnlyPool() {
     setTestUserContext();
-    Currency currency = OBDal.getReadOnlyInstance().get(Currency.class, "102");
+    Currency currency = OBDal.getReadOnlyInstance().get(Currency.class, EURO_ID);
     OBDal.getReadOnlyInstance().commitAndClose();
-    currency = OBDal.getInstance().get(Currency.class, "100");
-    assertEquals("USD", currency.getISOCode());
+    currency = OBDal.getInstance().get(Currency.class, DOLLAR_ID);
+    assertEquals(DOLLAR, currency.getISOCode());
   }
 
   @Test
@@ -581,22 +581,20 @@ public class DalTest extends OBBaseTest {
     obCriteria.add(Restrictions.eq(Category.PROPERTY_NAME, "ro_testname"));
     final List<Category> categories = obCriteria.list();
     assertEquals(0, categories.size());
-
   }
 
   @Test
   public void readOnlyPoolCanNotUpdate() {
     assumeThat("read-only pool is configured", isReadOnlyPoolDefined(), is(true));
     setTestUserContext();
-    final String supplierCategoryId = "1B7DCAD27AF64D16ADCFB4EBE8600078";
     final String newDescription = "ro_testdescription";
     try {
-      Category category = OBDal.getReadOnlyInstance().get(Category.class, supplierCategoryId);
+      Category category = OBDal.getReadOnlyInstance().get(Category.class, TEST_BP_CATEGORY_ID);
       category.setDescription(newDescription);
       OBDal.getReadOnlyInstance().commitAndClose();
     } catch (Exception ignored) {
     }
-    Category category = OBDal.getReadOnlyInstance().get(Category.class, supplierCategoryId);
+    Category category = OBDal.getReadOnlyInstance().get(Category.class, TEST_BP_CATEGORY_ID);
     assertThat(newDescription, not(equalTo(category.getDescription())));
   }
 
@@ -604,14 +602,13 @@ public class DalTest extends OBBaseTest {
   public void readOnlyPoolCanNotDelete() {
     assumeThat("read-only pool is configured", isReadOnlyPoolDefined(), is(true));
     setTestUserContext();
-    final String supplierCategoryId = "1B7DCAD27AF64D16ADCFB4EBE8600078";
     try {
-      Category category = OBDal.getReadOnlyInstance().get(Category.class, supplierCategoryId);
+      Category category = OBDal.getReadOnlyInstance().get(Category.class, TEST_BP_CATEGORY_ID);
       OBDal.getReadOnlyInstance().remove(category);
       OBDal.getReadOnlyInstance().commitAndClose();
     } catch (Exception ignored) {
     }
-    Category category = OBDal.getInstance().get(Category.class, supplierCategoryId);
+    Category category = OBDal.getInstance().get(Category.class, TEST_BP_CATEGORY_ID);
     assertNotNull(category);
   }
 

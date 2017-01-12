@@ -231,6 +231,26 @@ public class OBBaseTest {
   protected static final String TEST_LOCATION_ID = "A21EF1AB822149BEB65D055CD91F261B";
 
   /**
+   * ISO code of the Euro currency
+   */
+  protected static final String EURO = "EUR";
+
+  /**
+   * Record ID of the Euro currency
+   */
+  protected static final String EURO_ID = "102";
+
+  /**
+   * ISO code of the US Dollar currency
+   */
+  protected static final String DOLLAR = "USD";
+
+  /**
+   * Record ID of the US Dollar currency
+   */
+  protected static final String DOLLAR_ID = "100";
+
+  /**
    * Initializes DAL, it also creates a log appender that can be used to assert on logs. This log
    * appender is disabled by default, to activate it set the level with
    * {@link OBBaseTest#setTestLogAppenderLevel(Level)}
