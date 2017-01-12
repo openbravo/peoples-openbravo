@@ -28,14 +28,17 @@ import org.openbravo.service.importprocess.ImportEntryProcessor;
 @ApplicationScoped
 public class CustomerImportEntryProcessor extends ImportEntryProcessor {
 
+  @Override
   protected ImportEntryProcessRunnable createImportEntryProcessRunnable() {
     return WeldUtils.getInstanceFromStaticBeanManager(BusinessPartnerRunnable.class);
   }
 
+  @Override
   protected boolean canHandleImportEntry(ImportEntry importEntryInformation) {
     return "BusinessPartner".equals(importEntryInformation.getTypeofdata());
   }
 
+  @Override
   protected String getProcessSelectionKey(ImportEntry importEntry) {
     return (String) DalUtil.getId(importEntry.getOrganization());
   }
