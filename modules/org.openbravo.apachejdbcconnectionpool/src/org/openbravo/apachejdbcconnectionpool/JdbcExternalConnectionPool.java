@@ -143,7 +143,7 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     defaultDS.setPoolProperties(getPoolProperties(""));
     availableDataSources.put(DEFAULT_POOL, defaultDS);
 
-    if (isReadonlyPoolDefined()) {
+    if (isReadOnlyPoolDefined()) {
       PoolProperties p = getPoolProperties("readonly");
       p.setDefaultReadOnly(true);
 
@@ -289,7 +289,7 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     return poolProperties;
   }
 
-  private boolean isReadonlyPoolDefined() {
+  private boolean isReadOnlyPoolDefined() {
     // to define readonly pool, its url is enough
     return OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .containsKey("bbdd.readonly.url");
