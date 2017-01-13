@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016 Openbravo S.L.U.
+ * Copyright (C) 2016-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -63,6 +63,7 @@ enyo.kind({
       this.doShowPopup({
         popup: 'modalcustomer',
         args: {
+          presetCustomerId: OB.MobileApp.model.receipt.get('bp').id,
           target: 'order',
           navigationPath: []
         }
@@ -461,6 +462,16 @@ enyo.kind({
   setBusinessPartnerTarget: function (inSender, inEvent) {
     this.target = inEvent.target;
   },
+  loadPresetCustomer: function (bpartnerId) {
+    var me = this;
+    OB.Dal.get(OB.Model.BusinessPartner, bpartnerId, function (bp) {
+      bp.set('bpartnerId', bpartnerId, {
+        silent: true
+      });
+      me.bpsList.reset([bp]);
+      me.$.stBPAssignToReceipt.$.tbody.show();
+    });
+  },
   clearAction: function (inSender, inEvent) {
     this.bpsList.reset();
     return true;
@@ -811,6 +822,9 @@ enyo.kind({
         this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.bPartner = this.args.businessPartner;
       } else {
         this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.bPartner = null;
+      }
+      if (this.args.presetCustomerId) {
+        this.$.body.$.listBpsSelector.loadPresetCustomer(this.args.presetCustomerId);
       }
     } else if (this.args.makeSearch) {
       this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.searchAction();
