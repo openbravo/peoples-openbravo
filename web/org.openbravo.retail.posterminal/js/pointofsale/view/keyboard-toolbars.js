@@ -300,7 +300,8 @@ enyo.kind({
         }
       } else {
         OB.UTIL.HookManager.executeHooks('OBPOS_PreAddPaymentButton', {
-          payment: payment
+          payment: payment,
+          sidebuttons: this.sideButtons
         }, function (args) {
           if (args && args.cancelOperation) {
             return;
