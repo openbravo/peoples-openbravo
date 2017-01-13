@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -135,7 +135,7 @@ public class PaymentTest_08 extends OBBaseTest {
     String bpartnerId = "A6750F0D15334FB890C254369AC750A8"; // Alimentos y Supermercados, S.A.
     String priceListId = "AEE66281A08F42B6BC509B8A80A33C29"; // Tarifa de ventas
     String paymentTermId = "66BA1164A7394344BB9CD1A6ECEED05D"; // 30 days
-    String currencyId = "102"; // EUR
+    String currencyId = EURO_ID;
     String productId = "FDDBB89508D24D2C8D97A2A57BEA8788"; // Vino Tinto 0,75L
     String taxId = "4BF9470755AD4395AABCB77F5014CBE8"; // Ventas Exentas
     String docTypeId = "7FCD49652E104E6BB06C3A0D787412E3"; // AR Invoice
