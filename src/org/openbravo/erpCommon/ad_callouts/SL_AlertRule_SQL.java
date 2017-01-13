@@ -82,7 +82,7 @@ public class SL_AlertRule_SQL extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-    String msg = "";
+    String msg = " ";
 
     if (!strSQL.equals("")) {
       if (strSQL.toUpperCase().trim().startsWith("SELECT ")) {
@@ -92,7 +92,7 @@ public class SL_AlertRule_SQL extends HttpSecureAppServlet {
           st = this.getPreparedStatement(strSQL);
           ResultSetMetaData rmeta = st.getMetaData();
           if (!existsColumn(rmeta, "AD_CLIENT_ID"))
-            msg = "AD_CLIENT_ID ";
+            msg += "AD_CLIENT_ID ";
           if (!existsColumn(rmeta, "AD_ORG_ID"))
             msg += "AD_ORG_ID ";
           if (!existsColumn(rmeta, "CREATED"))
