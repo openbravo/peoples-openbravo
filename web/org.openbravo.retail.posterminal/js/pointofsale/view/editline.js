@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -286,7 +286,7 @@ enyo.kind({
           order = this.owner.owner.receipt;
       for (i = 0; i < this.owner.owner.selectedModels.length; i++) {
         line = this.owner.owner.selectedModels[i];
-        if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
+        if (!line.isReturnable()) {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [line.get('product').get('_identifier')]));
           return;
         } else {
@@ -495,20 +495,29 @@ enyo.kind({
     showing: false,
     classes: 'btnlink-orange',
     tap: function () {
-      _.each(this.owner.owner.selectedModels, function (lineModel) {
+      var linesWithPromotionsLength = 0,
+          manualPromotions = OB.Model.Discounts.getManualPromotions(),
+          i, lineModel, selectedLines = this.owner.owner.selectedModels;
+      var checkFilter = function (prom) {
+          return (manualPromotions.indexOf(prom.discountType) !== -1);
+          };
+
+      for (i = 0; i < selectedLines.length; i++) {
+        lineModel = selectedLines[i];
         if (lineModel.get('promotions') && lineModel.get('promotions').length > 0) {
-          var filtered = _.filter(lineModel.get('promotions'), function (prom) {
-            //discrectionary discounts ids
-            return prom.discountType === '20E4EC27397344309A2185097392D964' || prom.discountType === 'D1D193305A6443B09B299259493B272A' || prom.discountType === '8338556C0FBF45249512DB343FEFD280' || prom.discountType === '7B49D8CC4E084A75B7CB4D85A6A3A578';
-          }, this);
-          if (filtered.length === lineModel.get('promotions').length) {
-            //lines with just discrectionary discounts can be removed.
-            lineModel.unset('promotions');
+          linesWithPromotionsLength = _.filter(lineModel.get('promotions'), checkFilter).length;
+          if (linesWithPromotionsLength > 0) {
+            this.owner.owner.doShowPopup({
+              popup: 'modalDeleteDiscount',
+              args: {
+                receipt: this.owner.owner.receipt,
+                selectedLines: selectedLines
+              }
+            });
+            break;
           }
         }
-      });
-      this.hide();
-      this.model.get('order').calculateReceipt();
+      }
     },
     init: function (model) {
       this.model = model;
@@ -625,8 +634,7 @@ enyo.kind({
           if (lineModel.get('promotions') && lineModel.get('promotions').length > 0) {
             var filtered;
             filtered = _.filter(lineModel.get('promotions'), function (prom) {
-              //discrectionary discounts ids
-              return prom.discountType === '20E4EC27397344309A2185097392D964' || prom.discountType === 'D1D193305A6443B09B299259493B272A' || prom.discountType === '8338556C0FBF45249512DB343FEFD280' || prom.discountType === '7B49D8CC4E084A75B7CB4D85A6A3A578';
+              return OB.Model.Discounts.discountRules[prom.discountType].isManual;
             }, this);
             if (filtered.length === lineModel.get('promotions').length) {
               //lines with just discrectionary discounts can be removed.

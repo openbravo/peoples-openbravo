@@ -531,7 +531,7 @@ enyo.kind({
           if (value < 0) {
             for (i = 0; i < me.selectedModels.length; i++) {
               line = me.selectedModels[i];
-              if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
+              if (!line.isReturnable()) {
                 OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [line.get('product').get('_identifier')]));
                 return;
               } else if (!approvalNeeded) {
@@ -846,7 +846,9 @@ enyo.kind({
 
     OB.Dal.findUsingCache('productSearch', OB.Model.Product, criteria, function (data) {
       me.searchProductCallback(data, code, callback, attrs);
-    }, me.errorCallback, this);
+    }, me.errorCallback, {
+      modelsAffectedByCache: ['Product']
+    });
   },
 
   searchProductCallback: function (data, code, callback, attrs) {

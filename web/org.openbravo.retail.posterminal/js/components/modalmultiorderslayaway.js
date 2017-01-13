@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -62,6 +62,13 @@ enyo.kind({
       currentOrder.setOrderType(null, 0);
       currentOrder.set('amountToLayaway', null);
       this.doHideThisPopup();
+      return;
+    }
+    if (amount === 0) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_amtGreaterThanZero'), [{
+        isConfirmButton: true,
+        label: OB.I18N.getLabel('OBMOBC_LblOk')
+      }]);
       return;
     }
     total = currentOrder.get('gross');

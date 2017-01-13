@@ -1485,7 +1485,7 @@
       } else {
         qty = qty || 1;
       }
-      if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('returnable')) {
+      if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && !p.get('returnable')) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [p.get('_identifier')]));
         if (callback) {
           callback(false, null);
@@ -1720,6 +1720,8 @@
           }, function (trx, error) {
             OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
             callback(null);
+          }, {
+            modelsAffectedByCache: ['Product']
           });
         }
       } else {
@@ -1818,6 +1820,8 @@
           if (callback) {
             callback(false, null);
           }
+        }, {
+          modelsAffectedByCache: ['ProductPrice']
         });
       } else {
         me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
@@ -2577,7 +2581,7 @@
           servicesToApprove = '';
           for (i = 0; i < this.get('lines').models.length; i++) {
             var line = this.get('lines').models[i];
-            if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
+            if (!line.isReturnable()) {
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [line.get('product').get('_identifier')]));
               return;
             } else {
