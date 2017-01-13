@@ -5873,6 +5873,7 @@
         invoice.set('orderId', this.get('id'));
         invoice.set('id', OB.UTIL.get_UUID());
         invoice.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+        invoice.unset('isBeingClosed');
         invoice.get('lines').reset();
 
         this.get('lines').forEach(function (ol) {
