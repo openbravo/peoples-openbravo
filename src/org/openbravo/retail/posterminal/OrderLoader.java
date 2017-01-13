@@ -336,18 +336,20 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
 
-          for (int i = 0; i < order.getOrderLineList().size(); i++) {
-            JSONObject jsonOrderLine = orderlines.getJSONObject(i);
-            OrderLine ol = order.getOrderLineList().get(i);
-            ol.setObposCanbedelivered(jsonOrderLine.optBoolean("obposCanbedelivered", false));
-            BigDecimal qtyToDeliver = jsonOrderLine.has("availableQtyToDeliver") ? new BigDecimal(
-                jsonOrderLine.getDouble("availableQtyToDeliver")) : (jsonOrderLine
-                .has("obposQtytodeliver") ? new BigDecimal(
-                jsonOrderLine.getDouble("obposQtytodeliver")) : ol.getOrderedQuantity());
-            if (ol.isObposCanbedelivered()) {
-              ol.setDeliveredQuantity(qtyToDeliver);
+          if (orderlines.length() > 0) {
+            for (int i = 0; i < order.getOrderLineList().size(); i++) {
+              JSONObject jsonOrderLine = orderlines.getJSONObject(i);
+              OrderLine ol = order.getOrderLineList().get(i);
+              ol.setObposCanbedelivered(jsonOrderLine.optBoolean("obposCanbedelivered", false));
+              BigDecimal qtyToDeliver = jsonOrderLine.has("availableQtyToDeliver") ? new BigDecimal(
+                  jsonOrderLine.getDouble("availableQtyToDeliver")) : (jsonOrderLine
+                  .has("obposQtytodeliver") ? new BigDecimal(
+                  jsonOrderLine.getDouble("obposQtytodeliver")) : ol.getOrderedQuantity());
+              if (ol.isObposCanbedelivered()) {
+                ol.setDeliveredQuantity(qtyToDeliver);
+              }
+              lineReferences.add(ol);
             }
-            lineReferences.add(ol);
           }
         } else if (!newLayaway && (creditpaidLayaway || fullypaidLayaway)) {
 
