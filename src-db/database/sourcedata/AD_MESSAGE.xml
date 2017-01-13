@@ -9377,7 +9377,7 @@
 <!--800191-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800191-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800191-->  <VALUE><![CDATA[notColumnInQuery]]></VALUE>
-<!--800191-->  <MSGTEXT><![CDATA[Needed columns are not in query:]]></MSGTEXT>
+<!--800191-->  <MSGTEXT><![CDATA[Needed columns are not in query: ]]></MSGTEXT>
 <!--800191-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800191-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800191-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
