@@ -290,7 +290,7 @@ isc.OBParameterWindowView.addProperties({
         }
       };
       if (refreshParent) {
-        if (this.button.multiRecord) {
+        if (this.button && this.button.multiRecord) {
           this.buttonOwnerView.refresh(afterRefreshCallback);
         } else {
           if (this.callerField && this.callerField.view && typeof this.callerField.view.onRefreshFunction === 'function') {
