@@ -108,7 +108,7 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
 
     order.setBusinessPartner(OBDal.getInstance().getProxy(BusinessPartner.class, CUST_A));
     order.setPartnerAddress(OBDal.getInstance().getProxy(Location.class, CUST_A_LOCATION));
-    order.setCurrency(OBDal.getInstance().getProxy(Currency.class, EURO));
+    order.setCurrency(OBDal.getInstance().getProxy(Currency.class, EURO_ID));
     order.setPaymentTerms(OBDal.getInstance().getProxy(PaymentTerm.class, PAYMENT_TERM));
     order.setWarehouse(OBDal.getInstance().getProxy(Warehouse.class, SPAIN_WAREHOUSE));
     order.setPriceList(OBDal.getInstance().getProxy(PriceList.class, PRICE_LIST));
@@ -146,7 +146,7 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
     ol.setProduct(OBDal.getInstance().getProxy(Product.class, PRODUCT));
     ol.setUOM(OBDal.getInstance().getProxy(UOM.class, OUM));
     ol.setOrderedQuantity(BigDecimal.TEN);
-    ol.setCurrency(OBDal.getInstance().getProxy(Currency.class, EURO));
+    ol.setCurrency(OBDal.getInstance().getProxy(Currency.class, EURO_ID));
     ol.setTax(OBDal.getInstance().getProxy(TaxRate.class, TAX));
 
     setProperties(propertyValues, ol);
