@@ -16,6 +16,7 @@ enyo.kind({
   windowmodel: OB.OBPOSPointOfSale.Model.PointOfSale,
   tag: 'section',
   handlers: {
+    onShowPaymentTab: 'showOrder',
     onAddProduct: 'addProductToOrder',
     onViewProductDetails: 'viewProductDetails',
     onCloseProductDetailsView: 'showOrder',
@@ -242,6 +243,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalModulesInDev',
       name: 'modalModulesInDev'
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.PaymentMethods',
+      name: 'OBPOS_UI_PaymentMethods'
     }, {
       kind: 'OB.UI.ModalSelectOpenedReceipt',
       name: 'OBPOS_modalSelectOpenedReceipt'
@@ -580,6 +584,7 @@ enyo.kind({
     }, this);
     if (allHidden) {
       this.$.multiColumn.$.leftPanel.$.receiptview.setShowing(true);
+      return true;
     }
   },
   showLeftSubWindow: function (inSender, inEvent) {
