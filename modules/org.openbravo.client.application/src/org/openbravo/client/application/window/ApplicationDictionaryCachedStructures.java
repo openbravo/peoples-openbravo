@@ -106,19 +106,25 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
   }
 
   /** Initializes cache with all windows in the system */
-  public void eagerInitialization() {
-    init();
-    Query queryWindow = OBDal.getInstance().getSession()
-        .createQuery("select id from ADWindow where active=true");
+  public void eagerInitialization(boolean reset) {
+    if (reset) {
+      init();
+    }
+    log.info("Starting eager initialization");
+    Query queryTabs = OBDal.getInstance().getSession()
+        .createQuery("select id from ADTab where active=true");
     @SuppressWarnings("unchecked")
-    List<String> windows = queryWindow.list();
+    List<String> tabs = queryTabs.list();
     long t = System.currentTimeMillis();
     int i = 0;
-    for (String windowId : windows) {
-      log.info("window {}/{}", ++i, windows.size());
-      initializeWindow(windowId);
+    for (String tabId : tabs) {
+      i++;
+      if (i % 10 == 0) {
+        log.info("tab {}/{}", ++i, tabs.size());
+      }
+      getTab(tabId);
     }
-    log.info("Intialized all windows in {} ms", System.currentTimeMillis() - t);
+    log.info("Intialized all tabs in {} ms", System.currentTimeMillis() - t);
 
     Query queryCombo = OBDal
         .getInstance()
