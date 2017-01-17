@@ -33,8 +33,11 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import org.junit.Test;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
+import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.test.base.HiddenObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,6 +89,13 @@ public class ADCSInitialiazation extends WeldBaseTest {
       try {
         Thread.sleep(threadNum * 500);
       } catch (InterruptedException ignored) {
+      }
+
+      VariablesSecureApp fakedVars = new VariablesSecureApp(null, null, null);
+      try {
+        HiddenObjectHelper.set(RequestContext.get(), "variablesSecureApp", fakedVars);
+      } catch (Exception e) {
+        log.error("Errror initializating context", e);
       }
 
       setSystemAdministratorContext();
