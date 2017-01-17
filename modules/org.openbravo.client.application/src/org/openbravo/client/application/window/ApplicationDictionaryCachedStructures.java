@@ -452,7 +452,8 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     }
   }
 
-  private boolean useCache() {
+  /** Can cache be used, AD components are cacheable if there are no modules in development */
+  public boolean useCache() {
     return useCache;
   }
 }
