@@ -299,17 +299,22 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     for (ReferencedTable t : reference.getADReferencedTableList()) {
       initializeDALObject(t);
     }
+
     initializeDALObject(reference.getOBUISELSelectorList());
     for (Selector s : reference.getOBUISELSelectorList()) {
       initializeDALObject(s);
       SelectorField displayField = s.getDisplayfield();
       initializeDALObject(displayField);
     }
+
+    initializeDALObject(reference.getADReferencedTreeList());
     for (ReferencedTree t : reference.getADReferencedTreeList()) {
       initializeDALObject(t);
       ReferencedTreeField displayField = t.getDisplayfield();
       initializeDALObject(displayField);
     }
+
+    initializeDALObject(reference.getADListList());
     for (org.openbravo.model.ad.domain.List list : reference.getADListList()) {
       initializeDALObject(list);
     }
