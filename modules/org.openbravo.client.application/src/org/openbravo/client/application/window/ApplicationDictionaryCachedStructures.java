@@ -32,6 +32,7 @@ import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.Parameter;
+import org.openbravo.client.application.attachment.AttachmentUtils;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -46,6 +47,7 @@ import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
+import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.userinterface.selector.Selector;
 import org.openbravo.userinterface.selector.SelectorField;
@@ -155,6 +157,24 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
       }
     }
     log.info("Intialized all combos in {} ms", System.currentTimeMillis() - t1);
+
+    AttachmentMethod attMethod = AttachmentUtils.getDefaultAttachmentMethod();
+    i = 0;
+    t1 = System.currentTimeMillis();
+    fromCache = 0;
+    for (String tabId : tabs) {
+      i++;
+      if (attMethodMetadataMap.containsKey(attMethod.getId() + "-" + tabId)) {
+        fromCache++;
+      }
+      getMethodMetadataParameters(attMethod.getId(), tabId);
+
+      if (i % 100 == 0) {
+        log.info("att method {}/{} from cache {}", new Object[] { i, tabs.size(), fromCache });
+        fromCache = 0;
+      }
+    }
+    log.info("Intialized all attachemnt methods in {} ms", System.currentTimeMillis() - t1);
 
     log.info("Completed eager initialization in {} ms", System.currentTimeMillis() - t);
   }
