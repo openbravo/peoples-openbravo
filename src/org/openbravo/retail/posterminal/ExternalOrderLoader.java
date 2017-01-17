@@ -239,13 +239,11 @@ public class ExternalOrderLoader extends OrderLoader {
 
       final OBPOSApplications posTerminal = getPOSTerminal(messageOut);
 
-      if (!posTerminal.getOrganization().getId()
-          .equals(OBContext.getOBContext().getCurrentOrganization().getId())) {
-        throw new OBException("Organization ("
-            + OBContext.getOBContext().getCurrentOrganization().getIdentifier() + ") of the user "
-            + OBContext.getOBContext().getUser().getIdentifier()
-            + " is unequal to the organization (" + posTerminal.getOrganization().getIdentifier()
-            + ") of the pos terminal " + posTerminal.getIdentifier());
+      if (!OBContext.getOBContext().getWritableOrganizations()
+          .contains(posTerminal.getOrganization().getId())) {
+        throw new OBException("Actual user " + OBContext.getOBContext().getUser().getIdentifier()
+            + " doesn't have access to the organization "
+            + posTerminal.getOrganization().getIdentifier());
       }
 
       messageOut.put("posTerminal", posTerminal.getId());
