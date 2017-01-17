@@ -60,7 +60,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", "0");
+      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", vars.getOrg());
       String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
       String strDateFrom = vars
           .getGlobalVariable("inpDateFrom", "ReportGeneralLedger|DateFrom", "");

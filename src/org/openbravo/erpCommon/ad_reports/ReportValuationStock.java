@@ -505,17 +505,20 @@ public class ReportValuationStock extends HttpSecureAppServlet {
 
   private String getCostType(CostingAlgorithm ca) throws ServletException {
     Class<?> algorithm;
+    String strCostType = null;
     try {
+      OBContext.setAdminMode(true);
       algorithm = Class.forName(ca.getJavaClassName());
+      if (org.openbravo.costing.AverageAlgorithm.class.isAssignableFrom(algorithm)) {
+        strCostType = "'AVA'";
+      } else if (org.openbravo.costing.StandardAlgorithm.class.isAssignableFrom(algorithm)) {
+        strCostType = "'STA'";
+      }
     } catch (ClassNotFoundException e) {
       // The class name defined in the costing rule is not found.
       return null;
-    }
-    String strCostType = null;
-    if (org.openbravo.costing.AverageAlgorithm.class.isAssignableFrom(algorithm)) {
-      strCostType = "'AVA'";
-    } else if (org.openbravo.costing.StandardAlgorithm.class.isAssignableFrom(algorithm)) {
-      strCostType = "'STA'";
+    } finally {
+      OBContext.restorePreviousMode();
     }
     return strCostType;
   }

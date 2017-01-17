@@ -143,8 +143,8 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       log.debug(selectedLine);
 
       Product product = OBDal.getInstance().get(Product.class, selectedLine.getString("product"));
-      if (SERVICEPRODUCT.equals(product.getProductType()) && !product.isReturnable()) {
-        throw new OBException("@Service@ '" + product.getIdentifier()
+      if (!product.isReturnable()) {
+        throw new OBException("@Product@ '" + product.getIdentifier()
             + "' @ServiceIsNotReturnable@");
       }
 

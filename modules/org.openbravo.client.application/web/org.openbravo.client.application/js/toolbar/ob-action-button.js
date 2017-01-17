@@ -302,7 +302,7 @@ isc.OBToolbarActionButton.addProperties({
       readonly = false;
       this.visible = true;
       for (i = 0; i < selection.length; i++) {
-        currentValues = selection[i];
+        currentValues = isc.shallowClone(selection[i]);
         OB.Utilities.fixNull250(currentValues);
         this.visible = this.visible && (!this.displayIf || (context && this.displayIf(this.contextView.viewForm, currentValues, context)));
         readonly = readonly || (this.readOnlyIf && context && this.readOnlyIf(this.contextView.viewForm, currentValues, context));
