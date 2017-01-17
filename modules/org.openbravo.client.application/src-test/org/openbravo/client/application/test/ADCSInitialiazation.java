@@ -50,10 +50,11 @@ public class ADCSInitialiazation extends WeldBaseTest {
   public void aDCSshouldBeCorrectlyInitialized() {
     assumeTrue("Cache can be used (no modules in development)", adcs.useCache());
 
-    int maxThreads = 8;
+    int maxThreads = Runtime.getRuntime().availableProcessors() * 2;
+    log.info("Starting ADCS initialization with {} threads.", maxThreads);
     ExecutorService executor = Executors.newFixedThreadPool(maxThreads);
     for (int i = 0; i < maxThreads; i++) {
-      executor.execute(new ADCSInitializator());
+      executor.execute(new ADCSInitializator(i));
     }
 
     executor.shutdown();
@@ -74,8 +75,19 @@ public class ADCSInitialiazation extends WeldBaseTest {
   }
 
   private class ADCSInitializator implements Runnable {
+    private int threadNum;
+
+    public ADCSInitializator(int threadNum) {
+      this.threadNum = threadNum;
+    }
+
     @Override
     public void run() {
+      try {
+        Thread.sleep(threadNum * 500);
+      } catch (InterruptedException ignored) {
+      }
+
       setSystemAdministratorContext();
       try {
         adcs.eagerInitialization(false);
