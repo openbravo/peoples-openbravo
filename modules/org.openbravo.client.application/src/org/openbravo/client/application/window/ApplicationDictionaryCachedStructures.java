@@ -119,12 +119,18 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     List<String> tabs = queryTabs.list();
     long t = System.currentTimeMillis();
     int i = 0;
+    int fromCache = 0;
     for (String tabId : tabs) {
       i++;
-      if (i % 10 == 0) {
-        log.info("tab {}/{}", ++i, tabs.size());
+      if (tabMap.containsKey(tabId)) {
+        fromCache++;
       }
       getTab(tabId);
+
+      if (i % 100 == 0) {
+        log.info("tab {}/{} from cache {}", new Object[] { i, tabs.size(), fromCache });
+        fromCache = 0;
+      }
     }
     log.info("Intialized all tabs in {} ms", System.currentTimeMillis() - t);
 
@@ -137,11 +143,20 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     List<String> combos = queryCombo.list();
     long t1 = System.currentTimeMillis();
     int i1 = 0;
+    fromCache = 0;
     for (String comboId : combos) {
-      log.info("combo {}, {}/{}", new Object[] { comboId, ++i1, combos.size() });
+      i1++;
+      if (comboTableDataMap.containsKey(comboId)) {
+        fromCache++;
+      }
       getComboTableData(OBDal.getInstance().getProxy(Field.class, comboId));
+      if (i1 % 100 == 0) {
+        log.info("combo {}/{} from cache", new Object[] { i1, combos.size(), fromCache });
+      }
     }
     log.info("Intialized all combos in {} ms", System.currentTimeMillis() - t1);
+
+    log.info("Completed eager initialization in {} ms", System.currentTimeMillis() - t);
   }
 
   /**
