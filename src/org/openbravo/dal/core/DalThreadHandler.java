@@ -57,8 +57,8 @@ public abstract class DalThreadHandler extends ThreadHandler {
       }
     } finally {
       try {
-        if (sessionHandler != null) {
-          sessionHandler.cleanUpSessions();
+        if (SessionHandler.existsOpenedSessions()) {
+          SessionHandler.getInstance().cleanUpSessions();
         }
       } catch (Exception e) {
         log.error("Error cleaning up dal sessions", e);

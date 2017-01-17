@@ -116,6 +116,15 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   /**
+   * Checks if the handler has available sessions which are not closed yet.
+   * 
+   * @return true if there are sessions not closed, false otherwise
+   */
+  public static boolean existsOpenedSessions() {
+    return sessionHandler.get() != null && sessionHandler.get().hasAvailablePools();
+  }
+
+  /**
    * Returns the SessionHandler of this thread. If there is none then a new one is created.
    * 
    * @return the sessionhandler for this thread
@@ -329,6 +338,10 @@ public class SessionHandler implements OBNotSingleton {
 
   private boolean isAvailablePool(String pool) {
     return availablePools.contains(pool);
+  }
+
+  private boolean hasAvailablePools() {
+    return !availablePools.isEmpty();
   }
 
   /**
