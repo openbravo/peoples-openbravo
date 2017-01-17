@@ -46,6 +46,12 @@ import org.openbravo.test.base.HiddenObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Test cases to ensure correct concurrent initialization of ADCS.
+ * 
+ * @author alostale
+ *
+ */
 public class ADCSInitialiazation extends WeldBaseTest {
   private static final Logger log = LoggerFactory.getLogger(ADCSInitialiazation.class);
 
@@ -62,14 +68,14 @@ public class ADCSInitialiazation extends WeldBaseTest {
     log.info("Starting ADCS initialization with {} threads.", maxThreads);
     ExecutorService executor = Executors.newFixedThreadPool(maxThreads);
     for (int i = 0; i < maxThreads; i++) {
-      executor.execute(new ADCSInitializator(i));
+      executor.execute(new ADCSEagerInitializator(i));
     }
 
     executor.shutdown();
     try {
       executor.awaitTermination(20L, TimeUnit.MINUTES);
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      log.error("Error in execution", e);
     }
     if (!exceptions.isEmpty()) {
       log.error("Executed with " + exceptions.size() + " exceptions");
@@ -82,10 +88,11 @@ public class ADCSInitialiazation extends WeldBaseTest {
     assertThat("Exceptions while initializating ADCS", exceptions, is(empty()));
   }
 
-  private class ADCSInitializator implements Runnable {
+  /** Initializes ADCS eagerly */
+  private class ADCSEagerInitializator implements Runnable {
     private int threadNum;
 
-    public ADCSInitializator(int threadNum) {
+    public ADCSEagerInitializator(int threadNum) {
       this.threadNum = threadNum;
     }
 
