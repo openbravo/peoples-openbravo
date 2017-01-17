@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -73,21 +73,23 @@ public class ReportWarehouseControl extends HttpSecureAppServlet {
 
     ReportWarehouseControlData[] data = null;
     int limit = 0;
-    int countLines = 0;
-    if(!vars.commandIn("DEFAULT")){
+    if (!vars.commandIn("DEFAULT")) {
       limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
-      if(limit > 0){
-        countLines = Integer.valueOf(ReportWarehouseControlData.countLines(this,
-          Utility.getContext(this, vars, "#User_Client", "ReportWarehouseControl"),
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWarehouseControl"),
-            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strReferential));
+
+      String pgLimit = null, oraLimit = null;
+      if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+        oraLimit = String.valueOf(limit + 1);
+      } else {
+        pgLimit = String.valueOf(limit + 1);
       }
+
       data = ReportWarehouseControlData.select(this,
         Utility.getContext(this, vars, "#User_Client", "ReportWarehouseControl"),
         Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWarehouseControl"),
-        strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strReferential, 0, limit);
+          strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strReferential, pgLimit,
+          oraLimit);
     }
-    
+
     if (data == null || data.length == 0 || vars.commandIn("DEFAULT")) {
       String discard[] = { "sectionDescription" };
       xmlDocument = xmlEngine.readXmlTemplate(
@@ -131,13 +133,12 @@ public class ReportWarehouseControl extends HttpSecureAppServlet {
     }
     {
       OBError myMessage = vars.getMessage("ReportWarehouseControl");
-      if (limit > 0 && countLines > limit) {
+      if (limit > 0 && data.length > limit) {
         myMessage = new OBError();
         myMessage.setType("Warning");
         myMessage.setTitle("");
-        String msgbody = Utility.messageBD(this, "ReportsLimitBody", vars.getLanguage());
-        msgbody = msgbody.replace("@limit@", String.valueOf(limit));
-        msgbody = msgbody.replace("@rows@", String.valueOf(countLines));
+        String msgbody = Utility.messageBD(this, "ReportsLimit", vars.getLanguage());
+        msgbody = msgbody.replace("@limit@", String.valueOf(limit + 1));
         myMessage.setMessage(msgbody);
       }
       vars.removeMessage("ReportWarehouseControl");
@@ -161,7 +162,6 @@ public class ReportWarehouseControl extends HttpSecureAppServlet {
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
     out.close();
-    
   }
 
   public String getServletInfo() {

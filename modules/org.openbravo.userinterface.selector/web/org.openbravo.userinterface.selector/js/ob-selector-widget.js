@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2014 Openbravo SLU
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -880,8 +880,8 @@ isc.OBSelectorWidget.addProperties({
 
         filterData: function (criteria, callback, requestProperties) {
           requestProperties = requestProperties || {};
-          requestProperties.params = requestProperties.params | {};
-          requestProperties.params._selectorDefinitionId = this.selectorDefinitionId;
+          requestProperties.params = requestProperties.params || {};
+          requestProperties.params._selectorDefinitionId = this.selector.selectorDefinitionId;
           if (!criteria) {
             criteria = {};
           }
@@ -895,7 +895,7 @@ isc.OBSelectorWidget.addProperties({
 
           criteria[OB.Constants.TEXT_MATCH_PARAMETER_OVERRIDE] = this.selector.popupTextMatchStyle;
 
-          criteria._selectorDefinitionId = this.selectorDefinitionId;
+          criteria._selectorDefinitionId = this.selector.selectorDefinitionId;
           criteria._requestType = 'Window';
 
           // and call the super
@@ -920,8 +920,8 @@ isc.OBSelectorWidget.addProperties({
           criteria._requestType = 'Window';
 
           requestProperties = requestProperties || {};
-          requestProperties.params = requestProperties.params | {};
-          requestProperties.params._selectorDefinitionId = this.selectorDefinitionId;
+          requestProperties.params = requestProperties.params || {};
+          requestProperties.params._selectorDefinitionId = this.selector.selectorDefinitionId;
 
           // and call the super
           return this.Super('fetchData', [criteria, callback, requestProperties]);

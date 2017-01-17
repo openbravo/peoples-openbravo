@@ -290,11 +290,15 @@ isc.OBParameterWindowView.addProperties({
         }
       };
       if (refreshParent) {
-        if (this.callerField && this.callerField.view && typeof this.callerField.view.onRefreshFunction === 'function') {
-          // In this case we are inside a process called from another process, so we want to refresh the caller process instead of the main window.
-          this.callerField.view.onRefreshFunction(this.callerField.view);
+        if (this.button && this.button.multiRecord) {
+          this.buttonOwnerView.refresh(afterRefreshCallback);
         } else {
-          this.buttonOwnerView.refreshCurrentRecord(afterRefreshCallback);
+          if (this.callerField && this.callerField.view && typeof this.callerField.view.onRefreshFunction === 'function') {
+            // In this case we are inside a process called from another process, so we want to refresh the caller process instead of the main window.
+            this.callerField.view.onRefreshFunction(this.callerField.view);
+          } else {
+            this.buttonOwnerView.refreshCurrentRecord(afterRefreshCallback);
+          }
         }
       }
 
@@ -312,9 +316,21 @@ isc.OBParameterWindowView.addProperties({
 
   doProcess: function (btnValue) {
     var i, tmp, view = this,
-        grid, allProperties = this.getUnderLyingRecordContext(false, true, false, true),
-        selection, len, allRows, params, tab, actionHandlerCall, clientSideValidationFail;
-    // activeView = view.parentWindow && view.parentWindow.activeView,  ???.
+        grid, allProperties, selection, len, allRows, params, tab, actionHandlerCall, clientSideValidationFail, selectedRecords, recordIds;
+
+    if (this.button && this.button.multiRecord) {
+      selectedRecords = this.buttonOwnerView.viewGrid.getSelectedRecords();
+      recordIds = [];
+      for (i = 0; i < selectedRecords.length; i++) {
+        recordIds.push(selectedRecords.get(i).id);
+      }
+      allProperties = {
+        recordIds: recordIds
+      };
+    } else {
+      allProperties = this.getUnderLyingRecordContext(false, true, false, true);
+    }
+
     if (this.resultLayout && this.resultLayout.destroy) {
       this.resultLayout.destroy();
       delete this.resultLayout;

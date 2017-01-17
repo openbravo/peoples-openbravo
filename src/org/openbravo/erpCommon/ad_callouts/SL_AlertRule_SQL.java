@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,7 +21,6 @@ package org.openbravo.erpCommon.ad_callouts;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
@@ -36,9 +35,15 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Checks the SQL in Alert Rule to ensure all required columns are included.
+ */
 public class SL_AlertRule_SQL extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+  private static final Logger log = LoggerFactory.getLogger(SL_AlertRule_SQL.class);
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -81,13 +86,11 @@ public class SL_AlertRule_SQL extends HttpSecureAppServlet {
 
     if (!strSQL.equals("")) {
       if (strSQL.toUpperCase().trim().startsWith("SELECT ")) {
-        ResultSet result = null;
         PreparedStatement st = null;
         try {
           this.getConnection().setReadOnly(true);
           st = this.getPreparedStatement(strSQL);
-          result = st.executeQuery();
-          ResultSetMetaData rmeta = result.getMetaData();
+          ResultSetMetaData rmeta = st.getMetaData();
           if (!existsColumn(rmeta, "AD_CLIENT_ID"))
             msg = "AD_CLIENT_ID ";
           if (!existsColumn(rmeta, "AD_ORG_ID"))
@@ -119,18 +122,13 @@ public class SL_AlertRule_SQL extends HttpSecureAppServlet {
         } finally {
           try {
             this.getConnection().setReadOnly(false);
-            if (result != null) {
-              result.close();
-            }
-          } catch (SQLException e) {
-            e.printStackTrace();
-          } catch (NoConnectionAvailableException e) {
-            e.printStackTrace();
+          } catch (SQLException | NoConnectionAvailableException e) {
+            log.error("Error resetting readonly to connection in Alert Rule query: {}", strSQL, e);
           }
           try {
             this.releasePreparedStatement(st);
           } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Error releasing statement in Alert Rule query: {}", strSQL, e);
           }
         }
       } else {
