@@ -32,11 +32,16 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import org.hibernate.Query;
 import org.junit.Test;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.test.WeldBaseTest;
+import org.openbravo.client.application.attachment.AttachmentUtils;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.ui.Field;
+import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.openbravo.test.base.HiddenObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,13 +105,65 @@ public class ADCSInitialiazation extends WeldBaseTest {
 
       setSystemAdministratorContext();
       try {
-        adcs.eagerInitialization(false);
+        eagerADCSInitialization();
       } catch (Exception e) {
         synchronized (exceptions) {
           exceptions.add(e);
         }
         run();
       }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void eagerADCSInitialization() throws Exception {
+      log.info("Starting eager initialization");
+
+      Query queryTabs = OBDal.getInstance().getSession()
+          .createQuery("select id from ADTab where active=true");
+
+      List<String> tabs = queryTabs.list();
+      long t = System.currentTimeMillis();
+      int i = 0;
+      for (String tabId : tabs) {
+        adcs.getTab(tabId);
+
+        if (++i % 100 == 0) {
+          log.info("tab {}/{}", i, tabs.size());
+        }
+      }
+      log.info("Intialized all tabs in {} ms", System.currentTimeMillis() - t);
+
+      Query queryCombo = OBDal
+          .getInstance()
+          .getSession()
+          .createQuery(
+              "select f.id from ADField f where f.active=true and f.column.reference.id in ('18','17','19')");
+
+      List<String> combos = queryCombo.list();
+      long t1 = System.currentTimeMillis();
+      i = 0;
+      for (String comboId : combos) {
+        adcs.getComboTableData(OBDal.getInstance().getProxy(Field.class, comboId));
+
+        if (++i % 100 == 0) {
+          log.info("combo {}/{}", i, combos.size());
+        }
+      }
+      log.info("Intialized all combos in {} ms", System.currentTimeMillis() - t1);
+
+      AttachmentMethod attMethod = AttachmentUtils.getDefaultAttachmentMethod();
+      i = 0;
+      t1 = System.currentTimeMillis();
+      for (String tabId : tabs) {
+        adcs.getMethodMetadataParameters(attMethod.getId(), tabId);
+
+        if (++i % 100 == 0) {
+          log.info("att method {}/{}", i, tabs.size());
+        }
+      }
+      log.info("Intialized all attachemnt methods in {} ms", System.currentTimeMillis() - t1);
+
+      log.info("Completed eager initialization in {} ms", System.currentTimeMillis() - t);
     }
   }
 }

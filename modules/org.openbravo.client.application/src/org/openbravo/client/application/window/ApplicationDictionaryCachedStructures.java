@@ -32,7 +32,6 @@ import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.Parameter;
-import org.openbravo.client.application.attachment.AttachmentUtils;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -47,7 +46,6 @@ import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
-import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.userinterface.selector.Selector;
 import org.openbravo.userinterface.selector.SelectorField;
@@ -107,76 +105,6 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     indevelMods.setMaxResults(1);
     useCache = indevelMods.list().size() == 0;
     log.info("ADCS initialized, use cache: {}", useCache);
-  }
-
-  /** Initializes cache with all windows in the system */
-  public void eagerInitialization(boolean reset) {
-    if (reset) {
-      init();
-    }
-    log.info("Starting eager initialization");
-    Query queryTabs = OBDal.getInstance().getSession()
-        .createQuery("select id from ADTab where active=true");
-    @SuppressWarnings("unchecked")
-    List<String> tabs = queryTabs.list();
-    long t = System.currentTimeMillis();
-    int i = 0;
-    int fromCache = 0;
-    for (String tabId : tabs) {
-      i++;
-      if (tabMap.containsKey(tabId)) {
-        fromCache++;
-      }
-      getTab(tabId);
-
-      if (i % 100 == 0) {
-        log.info("tab {}/{} from cache {}", new Object[] { i, tabs.size(), fromCache });
-        fromCache = 0;
-      }
-    }
-    log.info("Intialized all tabs in {} ms", System.currentTimeMillis() - t);
-
-    Query queryCombo = OBDal
-        .getInstance()
-        .getSession()
-        .createQuery(
-            "select f.id from ADField f where f.active=true and f.column.reference.id in ('18','17','19')");
-    @SuppressWarnings("unchecked")
-    List<String> combos = queryCombo.list();
-    long t1 = System.currentTimeMillis();
-    int i1 = 0;
-    fromCache = 0;
-    for (String comboId : combos) {
-      i1++;
-      if (comboTableDataMap.containsKey(comboId)) {
-        fromCache++;
-      }
-      getComboTableData(OBDal.getInstance().getProxy(Field.class, comboId));
-      if (i1 % 100 == 0) {
-        log.info("combo {}/{} from cache", new Object[] { i1, combos.size(), fromCache });
-      }
-    }
-    log.info("Intialized all combos in {} ms", System.currentTimeMillis() - t1);
-
-    AttachmentMethod attMethod = AttachmentUtils.getDefaultAttachmentMethod();
-    i = 0;
-    t1 = System.currentTimeMillis();
-    fromCache = 0;
-    for (String tabId : tabs) {
-      i++;
-      if (attMethodMetadataMap.containsKey(attMethod.getId() + "-" + tabId)) {
-        fromCache++;
-      }
-      getMethodMetadataParameters(attMethod.getId(), tabId);
-
-      if (i % 100 == 0) {
-        log.info("att method {}/{} from cache {}", new Object[] { i, tabs.size(), fromCache });
-        fromCache = 0;
-      }
-    }
-    log.info("Intialized all attachemnt methods in {} ms", System.currentTimeMillis() - t1);
-
-    log.info("Completed eager initialization in {} ms", System.currentTimeMillis() - t);
   }
 
   /**
