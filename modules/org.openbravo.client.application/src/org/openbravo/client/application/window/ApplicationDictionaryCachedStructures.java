@@ -77,7 +77,8 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
 
   private Map<String, Object> tabLocks;
   private Object getTabLock = new Object();
-  private Object initializedWindowsLock = new Object();
+  private Object initializeWindowLock = new Object();
+  private Map<String, Object> windowLocks;
 
   /**
    * Resets cache and sets whether cache should be used.
@@ -96,6 +97,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     attMethodMetadataMap = new ConcurrentHashMap<>();
     initializedWindows = new ArrayList<String>();
     tabLocks = new ConcurrentHashMap<>();
+    windowLocks = new ConcurrentHashMap<>();
 
     // The cache will only be active when there are no modules in development in the system
     final String query = "select 1 from ADModule m where m.inDevelopment=true";
@@ -193,12 +195,23 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     if (!useCache() || initializedWindows.contains(windowId)) {
       return;
     }
-    Window window = OBDal.getInstance().get(Window.class, windowId);
-    for (Tab tab : window.getADTabList()) {
-      initializeTab(tab);
+    synchronized (initializeWindowLock) {
+      windowLocks.putIfAbsent(windowId, new Object());
     }
-    synchronized (initializedWindowsLock) {
-      initializedWindows.add(windowId);
+
+    synchronized (windowLocks.get(windowId)) {
+      if (initializedWindows.contains(windowId)) {
+        return;
+      }
+
+      Window window = OBDal.getInstance().get(Window.class, windowId);
+      for (Tab tab : window.getADTabList()) {
+        initializeTab(tab);
+      }
+
+      synchronized (initializedWindows) {
+        initializedWindows.add(windowId);
+      }
     }
   }
 
