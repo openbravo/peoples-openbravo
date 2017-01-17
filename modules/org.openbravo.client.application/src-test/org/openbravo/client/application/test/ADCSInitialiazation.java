@@ -91,6 +91,7 @@ public class ADCSInitialiazation extends WeldBaseTest {
   /** Initializes ADCS eagerly */
   private class ADCSEagerInitializator implements Runnable {
     private int threadNum;
+    private boolean initialized = false;
 
     public ADCSEagerInitializator(int threadNum) {
       this.threadNum = threadNum;
@@ -98,19 +99,7 @@ public class ADCSInitialiazation extends WeldBaseTest {
 
     @Override
     public void run() {
-      try {
-        Thread.sleep(threadNum * 500);
-      } catch (InterruptedException ignored) {
-      }
-
-      VariablesSecureApp fakedVars = new VariablesSecureApp(null, null, null);
-      try {
-        HiddenObjectHelper.set(RequestContext.get(), "variablesSecureApp", fakedVars);
-      } catch (Exception e) {
-        log.error("Errror initializating context", e);
-      }
-
-      setSystemAdministratorContext();
+      initialize();
       try {
         eagerADCSInitialization();
       } catch (Exception e) {
@@ -119,6 +108,27 @@ public class ADCSInitialiazation extends WeldBaseTest {
         }
         run();
       }
+    }
+
+    private void initialize() {
+      if (initialized) {
+        return;
+      }
+
+      try {
+        Thread.sleep(threadNum * 500);
+      } catch (InterruptedException ignored) {
+      }
+
+      // We need vars in context to initalize combos
+      VariablesSecureApp fakedVars = new VariablesSecureApp(null, null, null);
+      try {
+        HiddenObjectHelper.set(RequestContext.get(), "variablesSecureApp", fakedVars);
+      } catch (Exception e) {
+        log.error("Errror initializating context", e);
+      }
+
+      setSystemAdministratorContext();
     }
 
     @SuppressWarnings("unchecked")
