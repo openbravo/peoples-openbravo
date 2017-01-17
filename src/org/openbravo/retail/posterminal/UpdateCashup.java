@@ -270,10 +270,8 @@ public class UpdateCashup {
     newPaymentMethodCashUp.setTotalDrops(new BigDecimal(jsonCashup.getString("totalDrops")));
     newPaymentMethodCashUp.setTotalCounted(jsonCashup.has("totalCounted") ? new BigDecimal(
         jsonCashup.getString("totalCounted")) : BigDecimal.ZERO);
-
-    if (jsonCashup.has("amountToKeep")) {
-      newPaymentMethodCashUp.setAmountToKeep(new BigDecimal(jsonCashup.getString("amountToKeep")));
-    }
+    newPaymentMethodCashUp.setAmountToKeep(jsonCashup.has("amountToKeep") ? new BigDecimal(
+        jsonCashup.getString("amountToKeep")) : BigDecimal.ZERO);
     newPaymentMethodCashUp.setRate(new BigDecimal(jsonCashup.getString("rate")));
     newPaymentMethodCashUp.setIsocode((String) jsonCashup.get("isocode"));
 
