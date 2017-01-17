@@ -116,7 +116,7 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   /**
-   * Checks if the handler has available sessions which are not closed yet.
+   * Checks if the session handler has available sessions which are not closed yet.
    * 
    * @return true if there are sessions not closed, false otherwise
    */
