@@ -43,27 +43,10 @@ public abstract class DalThreadHandler extends ThreadHandler {
   /** @see ThreadHandler#doFinal */
   @Override
   public void doFinal(boolean errorOccured) {
-    SessionHandler sessionHandler = null;
     try {
-      sessionHandler = SessionHandler.isSessionHandlerPresent() ? SessionHandler.getInstance()
-          : null;
-      if (sessionHandler != null && sessionHandler.doSessionInViewPatter()) {
-        // application software can force a rollback
-        if (sessionHandler.getDoRollback() || errorOccured) {
-          sessionHandler.rollback();
-        } else if (sessionHandler.getSession().getTransaction().isActive()) {
-          sessionHandler.commitAndClose();
-        }
-      }
+      closeDefaultPool(errorOccured);
     } finally {
-      try {
-        if (SessionHandler.existsOpenedSessions()) {
-          SessionHandler.getInstance().cleanUpSessions();
-        }
-      } catch (Exception e) {
-        log.error("Error cleaning up dal sessions", e);
-      }
-      SessionHandler.deleteSessionHandler();
+      cleanSessionHandler();
       // note before the code below was enabled, however for longer running transactions
       // openbravo does multiple http requests, so while the long running transaction
       // had set inadministratormode, the subsequence http requests put it to false again
@@ -72,5 +55,29 @@ public abstract class DalThreadHandler extends ThreadHandler {
       // }
       OBContext.setOBContext((OBContext) null);
     }
+  }
+
+  private void closeDefaultPool(boolean errorOccured) {
+    SessionHandler sessionHandler = SessionHandler.isSessionHandlerPresent() ? SessionHandler
+        .getInstance() : null;
+    if (sessionHandler != null && sessionHandler.doSessionInViewPatter()) {
+      // application software can force a rollback
+      if (sessionHandler.getDoRollback() || errorOccured) {
+        sessionHandler.rollback();
+      } else if (sessionHandler.getSession().getTransaction().isActive()) {
+        sessionHandler.commitAndClose();
+      }
+    }
+  }
+
+  private void cleanSessionHandler() {
+    try {
+      if (SessionHandler.existsOpenedSessions()) {
+        SessionHandler.getInstance().cleanUpSessions();
+      }
+    } catch (Exception e) {
+      log.error("Error cleaning up dal sessions", e);
+    }
+    SessionHandler.deleteSessionHandler();
   }
 }
