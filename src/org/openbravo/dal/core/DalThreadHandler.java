@@ -19,9 +19,6 @@
 
 package org.openbravo.dal.core;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Encapsulates a thread so that when the thread returns the session/transaction is
  * closed/committed/rolledback. It also ensures that the OBContext is removed from the thread.
@@ -33,7 +30,6 @@ import org.slf4j.LoggerFactory;
  */
 
 public abstract class DalThreadHandler extends ThreadHandler {
-  private static final Logger log = LoggerFactory.getLogger(DalThreadHandler.class);
 
   /** @see ThreadHandler#doBefore */
   @Override
