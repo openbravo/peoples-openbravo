@@ -243,6 +243,9 @@ enyo.kind({
       kind: 'OB.UI.ModalModulesInDev',
       name: 'modalModulesInDev'
     }, {
+      kind: 'OB.OBPOSPointOfSale.UI.PaymentMethods',
+      name: 'OBPOS_UI_PaymentMethods'
+    }, {
       kind: 'OB.UI.ModalSelectOpenedReceipt',
       name: 'OBPOS_modalSelectOpenedReceipt'
     }, {
