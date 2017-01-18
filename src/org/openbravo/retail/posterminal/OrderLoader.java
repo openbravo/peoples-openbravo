@@ -12,11 +12,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.CallableStatement;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -1272,98 +1270,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  private Date getCalculatedDueDateBasedOnPaymentTerms(Date startingDate, PaymentTerm paymentTerm,
-      PaymentTermLine paymentTermLine) {
-    // TODO Take into account the flag "Next business date"
-    // TODO Take into account the flag "Fixed due date"
-    Calendar calculatedDueDate = new GregorianCalendar();
-    calculatedDueDate.setTime(startingDate);
-    calculatedDueDate.set(Calendar.HOUR_OF_DAY, 0);
-    calculatedDueDate.set(Calendar.MINUTE, 0);
-    calculatedDueDate.set(Calendar.SECOND, 0);
-    calculatedDueDate.set(Calendar.MILLISECOND, 0);
-    long daysToAdd, monthOffset, maturityDate1 = 0, maturityDate2 = 0, maturityDate3 = 0;
-    String dayToPay;
-
-    if (paymentTerm != null) {
-      daysToAdd = paymentTerm.getOverduePaymentDaysRule();
-      monthOffset = paymentTerm.getOffsetMonthDue();
-      dayToPay = paymentTerm.getOverduePaymentDayRule();
-      if (paymentTerm.isFixedDueDate()) {
-        maturityDate1 = paymentTerm.getMaturityDate1() == null ? 0 : paymentTerm.getMaturityDate1();
-        maturityDate2 = paymentTerm.getMaturityDate2() == null ? 0 : paymentTerm.getMaturityDate2();
-        maturityDate3 = paymentTerm.getMaturityDate3() == null ? 0 : paymentTerm.getMaturityDate3();
-      }
-    } else if (paymentTermLine != null) {
-      daysToAdd = paymentTermLine.getOverduePaymentDaysRule();
-      monthOffset = paymentTermLine.getOffsetMonthDue() == null ? 0 : paymentTermLine
-          .getOffsetMonthDue();
-      dayToPay = paymentTermLine.getOverduePaymentDayRule();
-      if (paymentTermLine.isFixedDueDate()) {
-        maturityDate1 = paymentTermLine.getMaturityDate1() == null ? 0 : paymentTermLine
-            .getMaturityDate1();
-        maturityDate2 = paymentTermLine.getMaturityDate2() == null ? 0 : paymentTermLine
-            .getMaturityDate2();
-        maturityDate3 = paymentTermLine.getMaturityDate3() == null ? 0 : paymentTermLine
-            .getMaturityDate3();
-      }
-    } else {
-      return calculatedDueDate.getTime();
-    }
-    if (monthOffset > 0) {
-      calculatedDueDate.add(Calendar.MONTH, (int) monthOffset);
-    }
-    if (daysToAdd > 0) {
-      calculatedDueDate.add(Calendar.DATE, (int) daysToAdd);
-    }
-    // Calculating due date based on "Fixed due date"
-    if ((paymentTerm != null && paymentTerm.isFixedDueDate())
-        || (paymentTermLine != null && paymentTermLine.isFixedDueDate())) {
-      long dueDateDay = calculatedDueDate.get(Calendar.DAY_OF_MONTH), finalDueDateDay = 0;
-      if (maturityDate3 > 0 && maturityDate2 > 0 && maturityDate2 < dueDateDay
-          && maturityDate3 >= dueDateDay) {
-        finalDueDateDay = maturityDate3;
-      } else if (maturityDate2 > 0 && maturityDate1 > 0 && maturityDate1 < dueDateDay
-          && maturityDate2 >= dueDateDay) {
-        finalDueDateDay = maturityDate2;
-      } else if (maturityDate1 > 0) {
-        finalDueDateDay = maturityDate1;
-      } else {
-        // Due Date day should be maximum of Month's Last day
-        finalDueDateDay = 1;
-      }
-
-      if ((int) finalDueDateDay > calculatedDueDate.getActualMaximum(Calendar.DAY_OF_MONTH)) {
-        finalDueDateDay = calculatedDueDate.getActualMaximum(Calendar.DAY_OF_MONTH);
-      }
-      calculatedDueDate.set(Calendar.DAY_OF_MONTH, (int) finalDueDateDay);
-      if (finalDueDateDay < dueDateDay) {
-        calculatedDueDate.add(Calendar.MONTH, 1);
-      }
-    }
-    if (!StringUtils.isEmpty(dayToPay)) {
-      // for us: 1 -> Monday
-      // for Calendar: 1 -> Sunday
-      int dayOfTheWeekToPay = Integer.parseInt(dayToPay);
-      dayOfTheWeekToPay += 1;
-      if (dayOfTheWeekToPay == 8) {
-        dayOfTheWeekToPay = 1;
-      }
-      if (calculatedDueDate.get(Calendar.DAY_OF_WEEK) == dayOfTheWeekToPay) {
-        return calculatedDueDate.getTime();
-      } else {
-        Boolean dayFound = false;
-        while (dayFound == false) {
-          calculatedDueDate.add(Calendar.DATE, 1);
-          if (calculatedDueDate.get(Calendar.DAY_OF_WEEK) == dayOfTheWeekToPay) {
-            dayFound = true;
-          }
-        }
-      }
-    }
-    return calculatedDueDate.getTime();
-  }
-
   public JSONObject handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
       Boolean wasPaidOnCredit) throws Exception {
     return handlePayments(jsonorder, order, invoice, wasPaidOnCredit, false);
@@ -1500,8 +1406,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               }
               pendingGrossAmount = pendingGrossAmount.subtract(amount);
 
-              Date dueDate = getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(), null,
-                  paymentTermLine);
+              Date dueDate = POSUtils.getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(),
+                  null, paymentTermLine);
 
               if (i == 0) {
                 paymentScheduleInvoice.setAmount(amount);
@@ -1515,7 +1421,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               }
               if (termLineList.size() == i) {
                 if (pendingGrossAmount.compareTo(BigDecimal.ZERO) != 0) {
-                  dueDate = getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(),
+                  dueDate = POSUtils.getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(),
                       order.getPaymentTerms(), null);
 
                   addPaymentSchedule(order, invoice, pendingGrossAmount, pendingGrossAmount,
@@ -1525,7 +1431,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               }
             }
           } else {
-            Date dueDate = getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(),
+            Date dueDate = POSUtils.getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(),
                 order.getPaymentTerms(), null);
             paymentScheduleInvoice.setDueDate(dueDate);
             paymentScheduleInvoice.setExpectedDate(dueDate);
