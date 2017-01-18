@@ -44,20 +44,24 @@ public abstract class DalThreadHandler extends ThreadHandler {
   @Override
   public void doFinal(boolean errorOccured) {
     try {
-      closeDefaultPool(errorOccured);
+      closeDefaultPoolSession(errorOccured);
     } finally {
-      cleanSessionHandler();
-      // note before the code below was enabled, however for longer running transactions
-      // openbravo does multiple http requests, so while the long running transaction
-      // had set inadministratormode, the subsequence http requests put it to false again
-      // if (OBContext.getOBContext() != null) {
-      // OBContext.getOBContext().setInAdministratorMode(false);
-      // }
-      OBContext.setOBContext((OBContext) null);
+      try {
+        closeOtherSessions();
+      } finally {
+        SessionHandler.deleteSessionHandler();
+        // note before the code below was enabled, however for longer running transactions
+        // openbravo does multiple http requests, so while the long running transaction
+        // had set inadministratormode, the subsequence http requests put it to false again
+        // if (OBContext.getOBContext() != null) {
+        // OBContext.getOBContext().setInAdministratorMode(false);
+        // }
+        OBContext.setOBContext((OBContext) null);
+      }
     }
   }
 
-  private void closeDefaultPool(boolean errorOccured) {
+  private void closeDefaultPoolSession(boolean errorOccured) {
     SessionHandler sessionHandler = SessionHandler.isSessionHandlerPresent() ? SessionHandler
         .getInstance() : null;
     if (sessionHandler != null && sessionHandler.doSessionInViewPatter()) {
@@ -70,14 +74,9 @@ public abstract class DalThreadHandler extends ThreadHandler {
     }
   }
 
-  private void cleanSessionHandler() {
-    try {
-      if (SessionHandler.existsOpenedSessions()) {
-        SessionHandler.getInstance().cleanUpSessions();
-      }
-    } catch (Exception e) {
-      log.error("Error cleaning up dal sessions", e);
+  private void closeOtherSessions() {
+    if (SessionHandler.existsOpenedSessions()) {
+      SessionHandler.getInstance().cleanUpSessions();
     }
-    SessionHandler.deleteSessionHandler();
   }
 }
