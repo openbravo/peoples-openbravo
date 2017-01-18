@@ -129,7 +129,8 @@ public class ADCSInitialiazation extends WeldBaseTest {
       } catch (InterruptedException ignored) {
       }
 
-      // We need vars in context to initalize combos
+      // We need vars in context to initialize combos: this is not an issue because vars is only
+      // used for system settings such as sql formats
       VariablesSecureApp fakedVars = new VariablesSecureApp(null, null, null);
       try {
         HiddenObjectHelper.set(RequestContext.get(), "variablesSecureApp", fakedVars);
