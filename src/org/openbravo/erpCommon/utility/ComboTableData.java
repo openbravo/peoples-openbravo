@@ -160,6 +160,9 @@ public class ComboTableData {
     parseNames();
   }
 
+  public ComboTableData() {
+  }
+
   /**
    * Getter for the session object.
    * 
