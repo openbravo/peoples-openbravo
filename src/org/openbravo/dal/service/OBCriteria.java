@@ -71,8 +71,6 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   private boolean initialized = false;
   private boolean modified = false;
 
-  // package visible
-
   public OBCriteria(String entityOrClassName) {
     super(entityOrClassName, (SessionImplementor) SessionHandler.getInstance().getSession());
   }
