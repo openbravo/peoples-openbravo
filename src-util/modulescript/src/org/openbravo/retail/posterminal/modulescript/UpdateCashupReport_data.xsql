@@ -22,7 +22,7 @@
     <Sql>
       <![CDATA[
       update obpos_paymentmethodcashup set totalcounted = coalesce((
-        select cashup.startingcash + cashup.totalsales + coalesce(cashup.totaldeposits, 0) - cashup.totalreturns - coalesce(cashup.totaldrops, 0) + coalesce((select trans.depositamt - trans.paymentamt
+        select cashup.startingcash + cashup.totalsales + coalesce(cashup.totaldeposits, 0) - cashup.totalreturns - coalesce(cashup.totaldrops, 0) + coalesce((select sum(trans.depositamt - trans.paymentamt)
                                                 from fin_finacc_transaction trans where trans.fin_financial_account_id = payment.fin_financial_account_id
                                                 and  trans.fin_reconciliation_id = recon.fin_reconciliation_id
                                                 and trans.c_glitem_id = paymenttype.c_glitem_diff_id),0)
