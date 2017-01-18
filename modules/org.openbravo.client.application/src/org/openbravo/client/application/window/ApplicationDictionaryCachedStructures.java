@@ -159,7 +159,9 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
       return;
     }
     synchronized (initializeWindowLock) {
-      windowLocks.putIfAbsent(windowId, new Object());
+      if (!windowLocks.containsKey(windowId)) {
+        windowLocks.put(windowId, new Object());
+      }
     }
 
     synchronized (windowLocks.get(windowId)) {
