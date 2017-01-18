@@ -135,8 +135,12 @@ public class ADCSInitialiazation extends WeldBaseTest {
     private void eagerADCSInitialization() throws Exception {
       log.info("Starting eager initialization");
 
-      Query queryTabs = OBDal.getInstance().getSession()
-          .createQuery("select id from ADTab where active=true");
+      Query queryTabs = OBDal
+          .getInstance()
+          .getSession()
+          .createQuery(
+              "select t.id from ADTab t where t.active=true order by t.window.id, t.id "
+                  + (threadNum % 2 == 0 ? "asc" : "desc"));
 
       List<String> tabs = queryTabs.list();
       long t = System.currentTimeMillis();
