@@ -34,6 +34,7 @@ import javax.inject.Inject;
 
 import org.hibernate.Query;
 import org.junit.Test;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.attachment.AttachmentUtils;
@@ -92,6 +93,8 @@ public class ADCSInitialiazation extends WeldBaseTest {
   private class ADCSEagerInitializator implements Runnable {
     private int threadNum;
     private boolean initialized = false;
+    private int retries = 0;
+    private static final int MAX_RETRIES = 5;
 
     public ADCSEagerInitializator(int threadNum) {
       this.threadNum = threadNum;
@@ -106,7 +109,13 @@ public class ADCSInitialiazation extends WeldBaseTest {
         synchronized (exceptions) {
           exceptions.add(e);
         }
-        run();
+        if (retries < MAX_RETRIES) {
+          retries++;
+          run();
+        } else {
+          // give up
+          throw new OBException("Reached max number of retries after exception " + retries);
+        }
       }
     }
 
