@@ -101,8 +101,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       'isprocessed': 'N'
     }, function (cashUp) {
       OB.Dal.find(OB.Model.PaymentMethodCashUp, {
-        'cashup_id': cashUp.at(0).get('id'),
-        '_orderByClause': 'name asc'
+        'cashup_id': cashUp.at(0).get('id')
       }, function (payMthds) { //OB.Dal.find success
         // Get list of active payments
         _.each(OB.MobileApp.model.get('payments'), function (payment) {
@@ -243,8 +242,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       }, this);
 
       OB.Dal.find(OB.Model.PaymentMethodCashUp, {
-        'cashup_id': cashUpReport.get('id'),
-        '_orderByClause': 'name asc'
+        'cashup_id': cashUpReport.get('id')
       }, function (payMthds) { //OB.Dal.find success
         cashUpReport.set('totalStartings', _.reduce(payMthds.models, function (accum, trx) {
           if (OB.MobileApp.model.paymentnames[trx.get('searchKey')]) {
