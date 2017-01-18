@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2016-12-26T15:35:27 -->
+<!-- 2016-07-13T12:32:16 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportSalesOrderInvoicedJasper" pageWidth="920" pageHeight="595" orientation="Landscape" columnWidth="860" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="69316ac0-b6f7-469e-a008-b44e0006499c">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -312,16 +312,13 @@
 					<text><![CDATA[Price]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="element-91" style="Detail_Header" x="581" y="28" width="37" height="16" uuid="9f191819-78c9-4f1b-8bc3-b8dd91535a36">
-						<property name="local_mesure_unitwidth" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					</reportElement>
+					<reportElement key="element-91" style="Detail_Header" x="581" y="28" width="37" height="16" uuid="9f191819-78c9-4f1b-8bc3-b8dd91535a36"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 					</box>
 					<textElement textAlignment="Right">
 						<font size="8" pdfFontName="Helvetica-Bold"/>
@@ -347,9 +344,9 @@
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+						<bottomPen lineWidth="0.0" lineColor="#555555"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 					</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="8" pdfFontName="Helvetica-Bold"/>
@@ -386,7 +383,7 @@
 					<textElement textAlignment="Center">
 						<font size="8" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<text><![CDATA[Qty in AUM]]></text>
+					<text><![CDATA[Quantity in AUM]]></text>
 				</staticText>
 				<textField pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-7" style="Detail_Header" x="810" y="28" width="49" height="16" uuid="eb14fedb-2b5c-4633-9144-fe35fc89c1c6"/>
