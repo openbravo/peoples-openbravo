@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,12 +19,15 @@
 package org.openbravo.apachejdbcconnectionpool;
 
 import java.sql.Connection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.openbravo.base.exception.OBException;
@@ -37,16 +40,19 @@ import org.slf4j.LoggerFactory;
 
 /**
  * JdbcExternalConnectionPool manages all the functionality of the Apache JDBC Connection Pool. This
- * class provides convenience methods to get a connection, close the pool and other actions.
+ * class can handle different pools (data sources) at the same time. All these pools are eventually
+ * making use of the Apache JDBC Connection Pool. This class provides convenience methods to get a
+ * connection from a pool, close the different pools and other actions.
  */
 public class JdbcExternalConnectionPool extends ExternalConnectionPool {
 
   final static private Logger log = LoggerFactory.getLogger(JdbcExternalConnectionPool.class);
 
-  private DataSource dataSource = null;
+  private Map<String, DataSource> availableDataSources = null;
+  private DataSource defaultDataSource = null;
 
   /**
-   * This method loads all the interceptors of apache jdbc connection pool injected with weld.
+   * This method loads all the interceptors of Apache JDBC Connection Pool injected with weld.
    */
   @Override
   public void loadInterceptors(List<PoolInterceptorProvider> interceptors) {
@@ -54,30 +60,75 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     for (PoolInterceptorProvider interceptor : interceptors) {
       currentInterceptors += interceptor.getPoolInterceptorsClassNames();
     }
-    this.getDataSource().setJdbcInterceptors(currentInterceptors);
+    for (DataSource ds : availableDataSources.values()) {
+      ds.setJdbcInterceptors(currentInterceptors);
+    }
   }
 
   /**
-   * Gets the data source of apache jdbc connection pool.
+   * Gets the default data source, which was obtained from the Apache JDBC Connection Pool.
+   * 
+   * @return the {@code DataSource} of the default pool
    */
   public DataSource getDataSource() {
-    return dataSource;
+    if (defaultDataSource == null) {
+      defaultDataSource = availableDataSources.get(DEFAULT_POOL);
+    }
+    return defaultDataSource;
   }
 
   /**
-   * This method provided a connection of apache jdbc connection pool. Apache jdbc connection pool
-   * is initialized in the first call to this method.
+   * This method provides a connection from the default pool. The connection pool is initialized in
+   * the first call to this method.
+   * 
+   * a {@code Connection} retrieved from the default pool
    */
   @Override
   public Connection getConnection() {
-    if (dataSource == null) {
+    if (availableDataSources == null) {
       initPool();
     }
+    return getConnectionFromDS(getDataSource());
+  }
+
+  /**
+   * This method provides a connection from the pool whose name is specified as parameter. The
+   * connection pool is initialized in the first call to this method.
+   * 
+   * @param poolName
+   *          the name of the pool used to retrieve the connection
+   * @return a {@code Connection} retrieved from the pool passed as parameter
+   */
+  @Override
+  public Connection getConnection(String poolName) {
+    if (availableDataSources == null) {
+      initPool();
+    }
+    DataSource ds = getDataSourceByName(poolName);
+    return getConnectionFromDS(ds);
+  }
+
+  private DataSource getDataSourceByName(String poolName) {
+    if (DEFAULT_POOL.equals(poolName)) {
+      return getDataSource();
+    }
+    DataSource dataSource = availableDataSources.get(poolName);
+    if (dataSource == null) {
+      log.debug(
+          "Connection pool with name {} is not available, using default connection pool to retrieve the connection",
+          poolName);
+      dataSource = getDataSource();
+    }
+    return dataSource;
+  }
+
+  private Connection getConnectionFromDS(DataSource datasource) {
     Connection connection = null;
     try {
-      connection = dataSource.getConnection();
+      connection = datasource.getConnection();
+
       // All connections are setting autoCommit to true. DAL is taking into account his logical and
-      // DAL is setting autoCommint to false to maintain transactional way of working.
+      // DAL is setting autoCommit to false to maintain transactional way of working.
       connection.setAutoCommit(true);
     } catch (Exception e) {
       log.error("Error while retrieving connection: ", e);
@@ -87,23 +138,36 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
   }
 
   private void initPool() {
-    dataSource = new DataSource();
-    dataSource.setPoolProperties(getPoolProperties());
+    availableDataSources = new HashMap<>(1);
+    DataSource defaultDS = new DataSource();
+    defaultDS.setPoolProperties(getPoolProperties(""));
+    availableDataSources.put(DEFAULT_POOL, defaultDS);
+
+    if (isReadOnlyPoolDefined()) {
+      PoolProperties p = getPoolProperties("readonly");
+      p.setDefaultReadOnly(true);
+
+      log.info("Read only pool: " + p.getUrl());
+
+      DataSource ro = new DataSource();
+      ro.setPoolProperties(p);
+      availableDataSources.put(READONLY_POOL, ro);
+    }
   }
 
-  private PoolProperties getPoolProperties() {
-    Properties poolPropertiesConfig = OBPropertiesProvider.getInstance().getOpenbravoProperties();
+  private PoolProperties getPoolProperties(String poolName) {
+    Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
 
     PoolProperties poolProperties = new PoolProperties();
 
     poolProperties.setJdbcInterceptors("org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;"
         + "org.openbravo.apachejdbcconnectionpool.ConnectionInitializerInterceptor;");
 
-    if (SessionFactoryController.isJNDIModeOn(poolPropertiesConfig)) {
+    if (SessionFactoryController.isJNDIModeOn(props)) {
       try {
         Context initctx = new InitialContext();
         Context ctx = (Context) initctx.lookup("java:/comp/env");
-        javax.sql.DataSource ds = (javax.sql.DataSource) ctx.lookup(poolPropertiesConfig
+        javax.sql.DataSource ds = (javax.sql.DataSource) ctx.lookup(props
             .getProperty("JNDI.resourceName"));
         poolProperties.setDataSource(ds);
         return poolProperties;
@@ -113,12 +177,12 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
       }
     }
 
-    String obUrl = poolPropertiesConfig.getProperty("bbdd.url");
-    String sid = poolPropertiesConfig.getProperty("bbdd.sid");
-    String driver = poolPropertiesConfig.getProperty("bbdd.driver");
-    String username = poolPropertiesConfig.getProperty("bbdd.user");
-    String password = poolPropertiesConfig.getProperty("bbdd.password");
-    String rbdms = poolPropertiesConfig.getProperty("bbdd.rdbms");
+    String obUrl = getStringProperty(props, "bbdd.url", poolName);
+    String sid = getStringProperty(props, "bbdd.sid", poolName);
+    String driver = getStringProperty(props, "bbdd.driver", poolName);
+    String username = getStringProperty(props, "bbdd.user", poolName);
+    String password = getStringProperty(props, "bbdd.password", poolName);
+    String rbdms = getStringProperty(props, "bbdd.rdbms", poolName);
 
     if ("POSTGRE".equals(rbdms)) {
       poolProperties.setUrl(obUrl + "/" + sid);
@@ -129,124 +193,138 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     poolProperties.setUsername(username);
     poolProperties.setPassword(password);
 
-    if (poolPropertiesConfig.getProperty("db.pool.initialSize") != null) {
-      poolProperties.setInitialSize(getIntProperty(poolPropertiesConfig, "db.pool.initialSize"));
+    if (getStringProperty(props, "db.pool.initialSize", poolName) != null) {
+      poolProperties.setInitialSize(getIntProperty(props, "db.pool.initialSize", poolName));
     }
-    if (poolPropertiesConfig.getProperty("db.pool.maxActive") != null) {
-      poolProperties.setMaxActive(getIntProperty(poolPropertiesConfig, "db.pool.maxActive"));
+    if (getStringProperty(props, "db.pool.maxActive", poolName) != null) {
+      poolProperties.setMaxActive(getIntProperty(props, "db.pool.maxActive", poolName));
     }
-    if (poolPropertiesConfig.getProperty("db.pool.minIdle") != null) {
-      poolProperties.setMinIdle(getIntProperty(poolPropertiesConfig, "db.pool.minIdle"));
+    if (getStringProperty(props, "db.pool.minIdle", poolName) != null) {
+      poolProperties.setMinIdle(getIntProperty(props, "db.pool.minIdle", poolName));
     }
-    if (poolPropertiesConfig.getProperty("db.pool.timeBetweenEvictionRunsMillis") != null) {
-      poolProperties.setTimeBetweenEvictionRunsMillis(getIntProperty(poolPropertiesConfig,
-          "db.pool.timeBetweenEvictionRunsMillis"));
+    if (getStringProperty(props, "db.pool.timeBetweenEvictionRunsMillis", poolName) != null) {
+      poolProperties.setTimeBetweenEvictionRunsMillis(getIntProperty(props,
+          "db.pool.timeBetweenEvictionRunsMillis", poolName));
     }
-    if (poolPropertiesConfig.getProperty("db.pool.minEvictableIdleTimeMillis") != null) {
-      poolProperties.setMinEvictableIdleTimeMillis(getIntProperty(poolPropertiesConfig,
-          "db.pool.minEvictableIdleTimeMillis"));
+    if (getStringProperty(props, "db.pool.minEvictableIdleTimeMillis", poolName) != null) {
+      poolProperties.setMinEvictableIdleTimeMillis(getIntProperty(props,
+          "db.pool.minEvictableIdleTimeMillis", poolName));
     }
-    if (poolPropertiesConfig.getProperty("db.pool.removeAbandoned") != null) {
-      poolProperties.setRemoveAbandoned(getBooleanProperty(poolPropertiesConfig,
-          "db.pool.removeAbandoned"));
+    if (getStringProperty(props, "db.pool.removeAbandoned", poolName) != null) {
+      poolProperties.setRemoveAbandoned(getBooleanProperty(props, "db.pool.removeAbandoned",
+          poolName));
     }
-    if (poolPropertiesConfig.getProperty("db.pool.testWhileIdle") != null) {
-      poolProperties.setTestWhileIdle(getBooleanProperty(poolPropertiesConfig,
-          "db.pool.testWhileIdle"));
+    if (getStringProperty(props, "db.pool.testWhileIdle", poolName) != null) {
+      poolProperties.setTestWhileIdle(getBooleanProperty(props, "db.pool.testWhileIdle", poolName));
     }
-    if (poolPropertiesConfig.getProperty("db.pool.testOnBorrow") != null) {
-      poolProperties.setTestOnBorrow(getBooleanProperty(poolPropertiesConfig,
-          "db.pool.testOnBorrow"));
+    if (getStringProperty(props, "db.pool.testOnBorrow", poolName) != null) {
+      poolProperties.setTestOnBorrow(getBooleanProperty(props, "db.pool.testOnBorrow", poolName));
     }
-    if (poolPropertiesConfig.getProperty("db.pool.testOnReturn") != null) {
-      poolProperties.setTestOnReturn(getBooleanProperty(poolPropertiesConfig,
-          "db.pool.testOnReturn"));
+    if (getStringProperty(props, "db.pool.testOnReturn", poolName) != null) {
+      poolProperties.setTestOnReturn(getBooleanProperty(props, "db.pool.testOnReturn", poolName));
     }
-    if (poolPropertiesConfig.getProperty("db.pool.validationInterval") != null) {
-      poolProperties.setValidationInterval(getIntProperty(poolPropertiesConfig,
-          "db.pool.validationInterval"));
+    if (getStringProperty(props, "db.pool.validationInterval", poolName) != null) {
+      poolProperties.setValidationInterval(getIntProperty(props, "db.pool.validationInterval",
+          poolName));
     }
-    if (poolPropertiesConfig.getProperty("db.pool.validationQuery") != null) {
+    if (getStringProperty(props, "db.pool.validationQuery", poolName) != null) {
+      poolProperties.setValidationQuery(getStringProperty(props, "db.pool.validationQuery",
+          poolName));
+    }
+    if (getStringProperty(props, "db.pool.defaultTransactionIsolation", poolName) != null) {
+      poolProperties.setDefaultTransactionIsolation(getIntProperty(props,
+          "db.pool.defaultTransactionIsolation", poolName));
+    }
+    if (getStringProperty(props, "db.pool.maxIdle", poolName) != null) {
+      poolProperties.setMaxIdle(getIntProperty(props, "db.pool.maxIdle", poolName));
+    }
+    if (getStringProperty(props, "db.pool.maxWait", poolName) != null) {
+      poolProperties.setMaxWait(getIntProperty(props, "db.pool.maxWait", poolName));
+    }
+    if (getStringProperty(props, "db.pool.numTestsPerEvictionRun", poolName) != null) {
+      poolProperties.setNumTestsPerEvictionRun(getIntProperty(props,
+          "db.pool.numTestsPerEvictionRun", poolName));
+    }
+    if (getStringProperty(props, "db.pool.removeAbandonedTimeout", poolName) != null) {
+      poolProperties.setRemoveAbandonedTimeout(getIntProperty(props,
+          "db.pool.removeAbandonedTimeout", poolName));
+    }
+    if (getStringProperty(props, "db.pool.accessToUnderlyingConnectionAllowed", poolName) != null) {
+      poolProperties.setAccessToUnderlyingConnectionAllowed(getBooleanProperty(props,
+          "db.pool.accessToUnderlyingConnectionAllowed", poolName));
+    }
+    if (getStringProperty(props, "db.pool.defaultAutoCommit", poolName) != null) {
+      poolProperties.setDefaultAutoCommit(getBooleanProperty(props, "db.pool.defaultAutoCommit",
+          poolName));
+    }
+    if (getStringProperty(props, "db.pool.defaultReadOnly", poolName) != null) {
+      poolProperties.setDefaultReadOnly(getBooleanProperty(props, "db.pool.defaultReadOnly",
+          poolName));
+    }
+    if (getStringProperty(props, "db.pool.logAbandoned", poolName) != null) {
+      poolProperties.setLogAbandoned(getBooleanProperty(props, "db.pool.logAbandoned", poolName));
+    }
+    if (getStringProperty(props, "db.pool.testOnConnect", poolName) != null) {
+      poolProperties.setTestOnConnect(getBooleanProperty(props, "db.pool.testOnConnect", poolName));
+    }
+    if (getStringProperty(props, "db.pool.connectionProperties", poolName) != null) {
+      poolProperties.setConnectionProperties(getStringProperty(props,
+          "db.pool.connectionProperties", poolName));
+    }
+    if (getStringProperty(props, "db.pool.defaultCatalog", poolName) != null) {
       poolProperties
-          .setValidationQuery(poolPropertiesConfig.getProperty("db.pool.validationQuery"));
+          .setDefaultCatalog(getStringProperty(props, "db.pool.defaultCatalog", poolName));
     }
-    if (poolPropertiesConfig.getProperty("db.pool.defaultTransactionIsolation") != null) {
-      poolProperties.setDefaultTransactionIsolation(getIntProperty(poolPropertiesConfig,
-          "db.pool.defaultTransactionIsolation"));
+    if (getStringProperty(props, "db.pool.validatorClassName", poolName) != null) {
+      poolProperties.setValidatorClassName(getStringProperty(props, "db.pool.validatorClassName",
+          poolName));
     }
-    if (poolPropertiesConfig.getProperty("db.pool.maxIdle") != null) {
-      poolProperties.setMaxIdle(getIntProperty(poolPropertiesConfig, "db.pool.maxIdle"));
+    if (getStringProperty(props, "db.pool.initSQL", poolName) != null) {
+      poolProperties.setInitSQL(getStringProperty(props, "db.pool.initSQL", poolName));
     }
-    if (poolPropertiesConfig.getProperty("db.pool.maxWait") != null) {
-      poolProperties.setMaxWait(getIntProperty(poolPropertiesConfig, "db.pool.maxWait"));
-    }
-    if (poolPropertiesConfig.getProperty("db.pool.numTestsPerEvictionRun") != null) {
-      poolProperties.setNumTestsPerEvictionRun(getIntProperty(poolPropertiesConfig,
-          "db.pool.numTestsPerEvictionRun"));
-    }
-    if (poolPropertiesConfig.getProperty("db.pool.removeAbandonedTimeout") != null) {
-      poolProperties.setRemoveAbandonedTimeout(getIntProperty(poolPropertiesConfig,
-          "db.pool.removeAbandonedTimeout"));
-    }
-    if (poolPropertiesConfig.getProperty("db.pool.accessToUnderlyingConnectionAllowed") != null) {
-      poolProperties.setAccessToUnderlyingConnectionAllowed(getBooleanProperty(
-          poolPropertiesConfig, "db.pool.accessToUnderlyingConnectionAllowed"));
-    }
-    if (poolPropertiesConfig.getProperty("db.pool.defaultAutoCommit") != null) {
-      poolProperties.setDefaultAutoCommit(getBooleanProperty(poolPropertiesConfig,
-          "db.pool.defaultAutoCommit"));
-    }
-    if (poolPropertiesConfig.getProperty("db.pool.defaultReadOnly") != null) {
-      poolProperties.setDefaultReadOnly(getBooleanProperty(poolPropertiesConfig,
-          "db.pool.defaultReadOnly"));
-    }
-    if (poolPropertiesConfig.getProperty("db.pool.logAbandoned") != null) {
-      poolProperties.setLogAbandoned(getBooleanProperty(poolPropertiesConfig,
-          "db.pool.logAbandoned"));
-    }
-    if (poolPropertiesConfig.getProperty("db.pool.testOnConnect") != null) {
-      poolProperties.setTestOnConnect(getBooleanProperty(poolPropertiesConfig,
-          "db.pool.testOnConnect"));
-    }
-    if (poolPropertiesConfig.getProperty("db.pool.connectionProperties") != null) {
-      poolProperties.setConnectionProperties(poolPropertiesConfig
-          .getProperty("db.pool.connectionProperties"));
-    }
-    if (poolPropertiesConfig.getProperty("db.pool.defaultCatalog") != null) {
-      poolProperties.setDefaultCatalog(poolPropertiesConfig.getProperty("db.pool.defaultCatalog"));
-    }
-    if (poolPropertiesConfig.getProperty("db.pool.validatorClassName") != null) {
-      poolProperties.setValidatorClassName(poolPropertiesConfig
-          .getProperty("db.pool.validatorClassName"));
-    }
-    if (poolPropertiesConfig.getProperty("db.pool.initSQL") != null) {
-      poolProperties.setInitSQL(poolPropertiesConfig.getProperty("db.pool.initSQL"));
-    }
-    if (poolPropertiesConfig.getProperty("db.pool.name") != null) {
-      poolProperties.setName(poolPropertiesConfig.getProperty("db.pool.name"));
+    if (getStringProperty(props, "db.pool.name", poolName) != null) {
+      poolProperties.setName(getStringProperty(props, "db.pool.name", poolName));
     }
 
     return poolProperties;
   }
 
-  private boolean getBooleanProperty(Properties properties, String propertyName) {
-    return ("true".equals(properties.getProperty(propertyName)));
+  private boolean isReadOnlyPoolDefined() {
+    // to define readonly pool, its url is enough
+    return OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .containsKey("bbdd.readonly.url");
   }
 
-  private int getIntProperty(Properties properties, String propertyName) {
-    return Integer.parseInt(properties.getProperty(propertyName).trim());
+  private boolean getBooleanProperty(Properties properties, String propertyName, String poolName) {
+    return "true".equals(getStringProperty(properties, propertyName, poolName));
+  }
+
+  private int getIntProperty(Properties properties, String propertyName, String poolName) {
+    return Integer.parseInt(getStringProperty(properties, propertyName, poolName).trim());
+  }
+
+  /** gets specific property for pool if present, default property if not */
+  private String getStringProperty(Properties props, String key, String poolName) {
+    if (StringUtils.isEmpty(poolName)) {
+      // return default property if the pool name is not provided
+      return props.getProperty(key);
+    }
+    String poolSpecificKey = key.replaceFirst("\\.", "." + poolName + ".");
+    return props.containsKey(poolSpecificKey) ? props.getProperty(poolSpecificKey) : props
+        .getProperty(key);
   }
 
   /**
-   * This method closes apache jdbc connection pool.
+   * This method closes all the data sources retrieved from the Apache JDBC Connection Pool.
    */
   @Override
   public void closePool() {
-    DataSource ds = getDataSource();
-    if (ds != null) {
-      // Closes the pool and all idle connections. true parameter is for close the active
-      // connections too.
-      ds.close(true);
+    for (DataSource ds : availableDataSources.values()) {
+      if (ds != null) {
+        // Closes the pool and all idle connections. true parameter is for close the active
+        // connections too.
+        ds.close(true);
+      }
     }
     super.closePool();
   }

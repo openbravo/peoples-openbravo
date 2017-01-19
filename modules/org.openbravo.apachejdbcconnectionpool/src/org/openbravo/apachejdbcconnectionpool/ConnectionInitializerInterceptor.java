@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,6 +38,8 @@ import org.openbravo.database.SessionInfo;
 public class ConnectionInitializerInterceptor extends JdbcInterceptor implements
     PoolInterceptorProvider {
 
+  private static final String INITIALIZED = "OB_INITIALIZED";
+
   String rbdms = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties()
       .get("bbdd.rdbms");
 
@@ -49,9 +51,11 @@ public class ConnectionInitializerInterceptor extends JdbcInterceptor implements
   public void reset(ConnectionPool parent, PooledConnection con) {
     if (con != null) {
       HashMap<Object, Object> attributes = con.getAttributes();
-      Boolean connectionInitialized = (Boolean) attributes.get("OB_INITIALIZED");
+      Boolean connectionInitialized = (Boolean) attributes.get(INITIALIZED);
       if (connectionInitialized == null || connectionInitialized == false) {
-        SessionInfo.initDB(con.getConnection(), rbdms);
+        if (!isReadOnlyPool(parent)) {
+          SessionInfo.initDB(con.getConnection(), rbdms);
+        }
         PreparedStatement pstmt = null;
         try {
           final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
@@ -69,9 +73,16 @@ public class ConnectionInitializerInterceptor extends JdbcInterceptor implements
             throw new OBException(e);
           }
         }
-        attributes.put("OB_INITIALIZED", true);
+        attributes.put(INITIALIZED, true);
       }
     }
+  }
+
+  private boolean isReadOnlyPool(ConnectionPool connectionPool) {
+    if (connectionPool == null || connectionPool.getPoolProperties().isDefaultReadOnly() == null) {
+      return false;
+    }
+    return connectionPool.getPoolProperties().isDefaultReadOnly();
   }
 
   @Override
