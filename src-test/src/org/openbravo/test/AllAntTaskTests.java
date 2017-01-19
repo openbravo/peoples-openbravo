@@ -25,7 +25,7 @@ import org.openbravo.advpaymentmngt.test.DocumentNumberGeneration;
 import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.base.weld.test.testinfrastructure.DalPersistanceEventTest;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
-import org.openbravo.client.application.test.ADCSInitialiazation;
+import org.openbravo.client.application.test.ADCSInitialization;
 import org.openbravo.client.application.test.ApplicationTest;
 import org.openbravo.client.application.test.DisplayLogicAtServerLevelTest;
 import org.openbravo.client.application.test.DynamicExpressionParserTest;
@@ -151,7 +151,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ClassLoaderTest.class, //
     IndexesTest.class, //
     TrlColumnsOraTypeTest.class, //
-    ADCSInitialiazation.class,
+    ADCSInitialization.class,
 
     // modularity
     DatasetServiceTest.class, //
