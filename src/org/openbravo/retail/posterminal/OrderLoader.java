@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -12,6 +12,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.CallableStatement;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -134,6 +136,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean isDeleted = false;
   private boolean doCancelAndReplace = false;
   private boolean paidReceipt = false;
+  private DateFormat dateFormatUTC = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
   @Inject
   @Any
@@ -233,9 +236,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       if (jsonorder.getBoolean("isLayaway")) {
         order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
 
-        final Date loaded = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("loaded"),
-            Long.parseLong(jsonorder.getString("timezoneOffset")));
-        if (!(loaded.compareTo(order.getUpdated()) >= 0)) {
+        final Date loaded = dateFormatUTC.parse(jsonorder.getString("loaded")), updated = OBMOBCUtils
+            .convertToUTC(order.getUpdated());
+        if (!(loaded.compareTo(updated) >= 0)) {
           throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
               "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
         }
