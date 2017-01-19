@@ -186,8 +186,9 @@ public class SessionInfo {
     PreparedStatement psCleanUp = null;
     PreparedStatement psInsert = null;
     try {
-      if (Boolean.FALSE.equals(auditThisThread.get()) || conn.isReadOnly()
-          || (Boolean.FALSE.equals(changedInfo.get()) && conn.equals(sessionConnection.get()))) {
+      boolean infoModified = Boolean.TRUE.equals(changedInfo.get())
+          || !conn.equals(sessionConnection.get());
+      if (!infoModified || Boolean.FALSE.equals(auditThisThread.get()) || conn.isReadOnly()) {
         return;
       }
 
