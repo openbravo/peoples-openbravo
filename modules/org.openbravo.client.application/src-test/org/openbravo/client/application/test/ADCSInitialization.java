@@ -53,8 +53,8 @@ import org.slf4j.LoggerFactory;
  * @author alostale
  *
  */
-public class ADCSInitialiazation extends WeldBaseTest {
-  private static final Logger log = LoggerFactory.getLogger(ADCSInitialiazation.class);
+public class ADCSInitialization extends WeldBaseTest {
+  private static final Logger log = LoggerFactory.getLogger(ADCSInitialization.class);
 
   @Inject
   ApplicationDictionaryCachedStructures adcs;
