@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 import org.hibernate.ObjectNotFoundException;
@@ -243,7 +244,7 @@ public class OBDal implements OBNotSingleton {
   public void flush() {
     if (SessionHandler.isSessionHandlerPresent(poolName)) {
       long s1 = System.currentTimeMillis();
-      if (SessionHandler.getInstance(poolName).getSession().isDirty()) {
+      if (SessionHandler.getInstance().getSession(poolName).isDirty()) {
         SessionInfo.saveContextInfoIntoDB(getConnection(false));
       }
       SessionHandler.getInstance().getSession(poolName).flush();
