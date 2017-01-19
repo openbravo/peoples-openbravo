@@ -379,11 +379,6 @@ public class ComboTableData {
     select.add(p);
   }
 
-  /**
-   * Gets the defined fields for the select section of the query.
-   * 
-   * @return Vector with the select's fields.
-   */
   private List<QueryFieldStructure> getSelectFields() {
     return this.select;
   }
@@ -404,11 +399,6 @@ public class ComboTableData {
     from.add(p);
   }
 
-  /**
-   * Gets the defined fields for the from section of the query.
-   * 
-   * @return Vector with the from's fields.
-   */
   private List<QueryFieldStructure> getFromFields() {
     return this.from;
   }
@@ -429,11 +419,6 @@ public class ComboTableData {
     where.add(p);
   }
 
-  /**
-   * Gets the defined fields for the where section of the query.
-   * 
-   * @return Vector with the where's fields.
-   */
   private List<QueryFieldStructure> getWhereFields() {
     return this.where;
   }
@@ -452,20 +437,10 @@ public class ComboTableData {
     orderBy.add(p);
   }
 
-  /**
-   * Gets the defined fields for the order by section of the query.
-   * 
-   * @return Vector with the order by's fields.
-   */
   private List<QueryFieldStructure> getOrderByFields() {
     return this.orderBy;
   }
 
-  /**
-   * Gets all the defined parameters for the select section.
-   * 
-   * @return Vector with the parameters.
-   */
   private List<QueryParameterStructure> getSelectParameters() {
     return this.paramSelect;
   }
@@ -486,11 +461,6 @@ public class ComboTableData {
     paramFrom.add(aux);
   }
 
-  /**
-   * Gets the defined parameters for the from section.
-   * 
-   * @return Vector with the parameters.
-   */
   private List<QueryParameterStructure> getFromParameters() {
     return this.paramFrom;
   }
@@ -513,11 +483,6 @@ public class ComboTableData {
     paramWhere.add(aux);
   }
 
-  /**
-   * Gets the parameters defined for the where section.
-   * 
-   * @return Vector with the parameters.
-   */
   private List<QueryParameterStructure> getWhereParameters() {
     return this.paramWhere;
   }
@@ -538,11 +503,6 @@ public class ComboTableData {
     paramOrderBy.add(aux);
   }
 
-  /**
-   * Gets the parameters for the order by section.
-   * 
-   * @return Vector with the parameters.
-   */
   private List<QueryParameterStructure> getOrderByParameters() {
     return this.paramOrderBy;
   }
@@ -583,11 +543,7 @@ public class ComboTableData {
       return this.parameters.get(name.toUpperCase());
   }
 
-  /**
-   * Gets the values for all of the defined parameters in the query.
-   * 
-   * @return Vector with the values.
-   */
+  /** Gets the values for all of the defined parameters in the query. */
   private List<String> getParameters() {
     List<String> result = new ArrayList<>();
     if (log4j.isDebugEnabled())
