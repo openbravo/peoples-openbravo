@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,12 +26,6 @@ import org.openbravo.modulescript.OpenbravoVersion;
 
 public class JdkVersionCheck extends BuildValidation {
   private static final int JAVA7_MAJOR_VERSION = 51;
-
-  @Override
-  protected ExecutionLimits getBuildValidationLimits() {
-    ExecutionLimits pr17Q1 = new ExecutionLimits("0", null, new OpenbravoVersion(3, 0, 30600));
-    return pr17Q1;
-  }
 
   @Override
   public List<String> execute() {
