@@ -18,7 +18,6 @@
  */
 package org.openbravo.client.application.window;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -59,10 +58,9 @@ import org.slf4j.LoggerFactory;
  * system needs to be on 'production' mode, that is, all the modules need to be not in development
  */
 @ApplicationScoped
-public class ApplicationDictionaryCachedStructures implements Serializable {
+public class ApplicationDictionaryCachedStructures {
   private static final Logger log = LoggerFactory
       .getLogger(ApplicationDictionaryCachedStructures.class);
-  private static final long serialVersionUID = 1L;
 
   private Map<String, Tab> tabMap;
   private Map<String, Table> tableMap;
