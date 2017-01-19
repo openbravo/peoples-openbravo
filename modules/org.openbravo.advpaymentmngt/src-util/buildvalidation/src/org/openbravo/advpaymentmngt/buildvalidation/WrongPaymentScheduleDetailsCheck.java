@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,8 +21,10 @@ package org.openbravo.advpaymentmngt.buildvalidation;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openbravo.base.ExecutionLimits;
 import org.openbravo.buildvalidation.BuildValidation;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 public class WrongPaymentScheduleDetailsCheck extends BuildValidation {
 
@@ -31,9 +33,8 @@ public class WrongPaymentScheduleDetailsCheck extends BuildValidation {
     ConnectionProvider cp = getConnectionProvider();
     ArrayList<String> errors = new ArrayList<String>();
     try {
-      //Verify if it is necessary execute the buildvalidation
-      if (WrongPaymentScheduleDetailsCheckData.before30MP3(cp))
-      {
+      // Verify if it is necessary execute the buildvalidation
+      if (WrongPaymentScheduleDetailsCheckData.before30MP3(cp)) {
         // Prevent error when upgrading from a pure 2.50 (MP0)
         if (WrongPaymentScheduleDetailsCheckData.existAPRMbasetables(cp)) {
           if (WrongPaymentScheduleDetailsCheckData.existWrongPaymentSchedules(cp)) {
@@ -90,4 +91,11 @@ public class WrongPaymentScheduleDetailsCheck extends BuildValidation {
 
     }
   }
+
+  @Override
+  protected ExecutionLimits getBuildValidationLimits() {
+    return new ExecutionLimits("A918E3331C404B889D69AA9BFAFB23AC", null, new OpenbravoVersion(3, 0,
+        22964));
+  }
 }
+

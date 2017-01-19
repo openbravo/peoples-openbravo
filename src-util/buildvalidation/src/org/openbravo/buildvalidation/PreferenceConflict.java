@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,8 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.ExecutionLimits;
 import org.openbravo.buildvalidation.BuildValidation;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 /**
  * Validates there are not more than one preference for the same attribute in different
@@ -52,5 +54,10 @@ public class PreferenceConflict extends BuildValidation {
       return handleError(e);
     }
     return errors;
+  }
+
+  @Override
+  protected ExecutionLimits getBuildValidationLimits() {
+    return new ExecutionLimits("0", null, new OpenbravoVersion(2, 50, 19085));
   }
 }

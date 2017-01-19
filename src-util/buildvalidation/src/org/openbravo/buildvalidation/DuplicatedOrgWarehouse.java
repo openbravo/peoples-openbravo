@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,7 +21,9 @@ package org.openbravo.buildvalidation;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openbravo.base.ExecutionLimits;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 /**
  * This validation is related to Issue 27056: It is possible to assign more than once the same
@@ -52,5 +54,10 @@ public class DuplicatedOrgWarehouse extends BuildValidation {
       return handleError(e);
     }
     return errors;
+  }
+  
+  @Override
+  protected ExecutionLimits getBuildValidationLimits() {
+    return new ExecutionLimits("0", null, new OpenbravoVersion(3, 0, 24212));
   }
 }

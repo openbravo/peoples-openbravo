@@ -1,7 +1,7 @@
 /*
  ************************************************************************************
 
- * Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Copyright (C) 2001-2017 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -106,6 +106,7 @@ public class LoginHandler extends HttpBaseServlet {
       Client systemClient = OBDal.getInstance().get(Client.class, "0");
 
       String language = systemClient.getLanguage().getLanguage();
+      vars.setSessionValue("#AD_Language", language);
 
       if (user.equals("") && !OBVersion.getInstance().is30()) {
         res.sendRedirect(res.encodeRedirectURL(strDireccion + "/security/Login_F1.html"));

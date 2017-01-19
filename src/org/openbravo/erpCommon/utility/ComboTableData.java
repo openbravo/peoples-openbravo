@@ -50,7 +50,6 @@ public class ComboTableData {
   private static final String FIELD_CONCAT = " || ' - ' || ";
   private static final String INACTIVE_DATA = "**";
   private VariablesSecureApp vars;
-  private ConnectionProvider pool;
   private Hashtable<String, String> parameters = new Hashtable<String, String>();
   private Vector<QueryParameterStructure> paramSelect = new Vector<QueryParameterStructure>();
   private Vector<QueryParameterStructure> paramFrom = new Vector<QueryParameterStructure>();
@@ -125,7 +124,6 @@ public class ComboTableData {
       String _clientList, int _index) throws Exception {
     if (_vars != null)
       setVars(_vars);
-    setPool(_conn);
     setReferenceType(_referenceType);
     setObjectName(_name);
     setObjectReference(_objectReference);
@@ -135,7 +133,6 @@ public class ComboTableData {
     setIndex(_index);
     generateSQL();
     parseNames();
-    pool = null;
   }
 
   /**
@@ -161,28 +158,11 @@ public class ComboTableData {
   }
 
   /**
-   * Setter for the database handler object.
-   * 
-   * @param _conn
-   *          New database handler object.
-   * @throws Exception
-   */
-  private void setPool(ConnectionProvider _conn) throws Exception {
-    if (_conn == null)
-      throw new Exception("The pool is null");
-    this.pool = _conn;
-  }
-
-  /**
    * Getter for the database handler object.
    * 
    * @return Database handler object.
    */
   public ConnectionProvider getPool() {
-    if (pool != null) {
-      return pool;
-    }
-
     return new DalConnectionProvider(false);
   }
 
@@ -254,7 +234,8 @@ public class ComboTableData {
           localReference = ComboTableQueryData.getReferenceID(getPool(), localReference,
               getReferenceType());
           if (localReference == null || localReference.equals("")) {
-            throw new OBException(Utility.messageBD(pool, "ReferenceNotFound", vars.getLanguage())
+            throw new OBException(Utility.messageBD(getPool(), "ReferenceNotFound",
+                vars.getLanguage())
                 + " " + localReference);
           }
         }
@@ -1249,7 +1230,7 @@ public class ComboTableData {
    * values from the request and does not use the preferences for fields to preset a search filter
    */
   public void fillParametersFromSearch(String tab, String window) throws ServletException {
-    fillSQLParameters(pool, vars, null, tab, window, "", true);
+    fillSQLParameters(getPool(), vars, null, tab, window, "", true);
   }
 
   /**
@@ -1268,7 +1249,7 @@ public class ComboTableData {
    */
   public void fillParameters(FieldProvider data, String window, String actual_value)
       throws ServletException {
-    fillSQLParameters(pool, vars, data, "", window, actual_value, false);
+    fillSQLParameters(getPool(), vars, data, "", window, actual_value, false);
   }
 
   /**

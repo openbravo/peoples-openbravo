@@ -29,7 +29,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.materialmgmt.ServicePriceUtils;
+import org.openbravo.materialmgmt.ProductPriceUtils;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -56,7 +56,7 @@ public class RFCServiceReturnableActionHandler extends BaseActionHandler {
           jsonRequest.getString("goodsShipmentId"));
       final Product serviceProduct = OBDal.getInstance().get(Product.class,
           jsonRequest.getString("productId"));
-      JSONObject returnAllowedRFC = ServicePriceUtils.serviceReturnAllowedRFC(shipmentLine,
+      JSONObject returnAllowedRFC = ProductPriceUtils.productReturnAllowedRFC(shipmentLine,
           serviceProduct, rfcOrderDate);
       result.put("message", returnAllowedRFC);
     } catch (Exception e) {

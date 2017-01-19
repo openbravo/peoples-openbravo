@@ -1184,6 +1184,7 @@ CREATE OR REPLACE FUNCTION uuid_generate_v4()
 RETURNS uuid
 AS '$libdir/uuid-ossp', 'uuid_generate_v4'
 VOLATILE STRICT LANGUAGE C;
+/-- END
 
 CREATE OR REPLACE FUNCTION get_uuid()
   RETURNS varchar AS
@@ -1530,4 +1531,8 @@ BEGIN
   RETURN p_date + p_hours * interval '1 hour' + p_minutes * interval '1 minute' + p_seconds * interval '1 second';
 END ; $BODY$
   LANGUAGE plpgsql IMMUTABLE
+/-- END
+
+-- INSTALL PG_TRGM EXTENSION
+CREATE EXTENSION IF NOT EXISTS "pg_trgm"
 /-- END
