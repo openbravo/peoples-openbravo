@@ -145,7 +145,13 @@ public class SessionInfo {
   }
 
   /**
-   * @deprecated In most of the cases this method is no longer required to be invoked
+   * @deprecated In most of the cases, this method is no longer required to be invoked: it was used
+   *             to manually set in database audit info. Now, this is in an smarter manner only if
+   *             needed from DAL/SQLC. When this method is still in use, it should be reviewed
+   *             whether it is no longer needed because of this automatic mechanism or if it is
+   *             required because new mechanism doesn't detect it (ie. DB modifications directly
+   *             with jdbc), in which case saveContextInfoIntoDB method is recommended to make
+   *             splicit in the code this need
    * @see #saveContextInfoIntoDB(Connection)
    */
   static void setDBSessionInfo(Connection conn, boolean onlyIfChanged) {
