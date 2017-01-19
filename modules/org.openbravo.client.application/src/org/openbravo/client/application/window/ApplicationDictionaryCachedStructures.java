@@ -188,14 +188,16 @@ public class ApplicationDictionaryCachedStructures {
   private void initializeTab(Tab tab) {
     String tabId = tab.getId();
     initializeDALObject(tab);
+
+    // initialize other elements related with the tab
+    getAuxiliarInputList(tab);
+    getFieldsOfTab(tab);
+    initializeDALObject(tab.getTable());
+    getColumnsOfTable(tab.getTable().getId());
+
     if (useCache()) {
       tabMap.put(tabId, tab);
     }
-    // initialize other elements related with the tab
-    getAuxiliarInputList(tabId);
-    getFieldsOfTab(tabId);
-    initializeDALObject(tab.getTable());
-    getColumnsOfTable(tab.getTable().getId());
   }
 
   public Table getTable(String tableId) {
@@ -216,6 +218,10 @@ public class ApplicationDictionaryCachedStructures {
       return fieldMap.get(tabId);
     }
     Tab tab = getTab(tabId);
+    return getFieldsOfTab(tab);
+  }
+
+  public List<Field> getFieldsOfTab(Tab tab) {
     String tableId = tab.getTable().getId();
     List<Field> fields = tab.getADFieldList();
     for (Field f : fields) {
@@ -232,7 +238,7 @@ public class ApplicationDictionaryCachedStructures {
       }
     }
     if (useCache()) {
-      fieldMap.put(tabId, fields);
+      fieldMap.put(tab.getId(), fields);
     }
     return fields;
   }
@@ -253,7 +259,6 @@ public class ApplicationDictionaryCachedStructures {
   }
 
   private void initializeColumn(Column c) {
-
     initializeDALObject(c.getValidation());
     if (c.getValidation() != null) {
       initializeDALObject(c.getValidation().getValidationCode());
@@ -273,7 +278,6 @@ public class ApplicationDictionaryCachedStructures {
     if (c.getReferenceSearchKey() != null) {
       initializeReference(c.getReferenceSearchKey());
     }
-
   }
 
   private void initializeReference(Reference reference) {
@@ -308,13 +312,17 @@ public class ApplicationDictionaryCachedStructures {
       return auxInputMap.get(tabId);
     }
     Tab tab = getTab(tabId);
+    return getAuxiliarInputList(tab);
+  }
+
+  private List<AuxiliaryInput> getAuxiliarInputList(Tab tab) {
     initializeDALObject(tab.getADAuxiliaryInputList());
     List<AuxiliaryInput> auxInputs = new ArrayList<AuxiliaryInput>(tab.getADAuxiliaryInputList());
     for (AuxiliaryInput auxIn : auxInputs) {
       initializeDALObject(auxIn);
     }
     if (useCache()) {
-      auxInputMap.put(tabId, auxInputs);
+      auxInputMap.put(tab.getId(), auxInputs);
     }
     return auxInputs;
   }
