@@ -19,7 +19,6 @@
 package org.openbravo.erpCommon.utility;
 
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 
 class QueryFieldStructure {
@@ -45,7 +44,7 @@ class QueryFieldStructure {
     if (name == null)
       return;
     if (this.data == null)
-      this.data = new Hashtable<String, String>();
+      this.data = new HashMap<String, String>();
     if (value == null || value.equals(""))
       this.data.remove(name);
     else
