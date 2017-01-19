@@ -318,11 +318,14 @@ public class ComboTableData {
       return cachedList;
     } else if ("AD_CLIENT_ID".equalsIgnoreCase(getObjectName())) {
       return null;
-    } else if ("AD_ORG_ID".equalsIgnoreCase(getObjectName())) {
-      return Utility.getContext(new DalConnectionProvider(false), getVars(), "#User_Org", windowId,
+    }
+
+    VariablesSecureApp vars = getVars();
+    if ("AD_ORG_ID".equalsIgnoreCase(getObjectName())) {
+      return Utility.getContext(new DalConnectionProvider(false), vars, "#User_Org", windowId,
           accessLevel);
     } else {
-      return Utility.getReferenceableOrg(getVars(), getVars().getStringParameter("inpadOrgId"));
+      return Utility.getReferenceableOrg(vars, vars.getStringParameter("inpadOrgId"));
     }
   }
 
@@ -353,7 +356,7 @@ public class ComboTableData {
       clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
           windowId, accessLevel);
       if (clientList == null) {
-        clientList = getVars().getSessionValue("#User_Client");
+        clientList = vars.getSessionValue("#User_Client");
       }
     } else {
       clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
