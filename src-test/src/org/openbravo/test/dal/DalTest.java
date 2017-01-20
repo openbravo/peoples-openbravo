@@ -23,6 +23,7 @@
 package org.openbravo.test.dal;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -32,6 +33,7 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.criterion.Restrictions;
@@ -428,5 +430,48 @@ public class DalTest extends OBBaseTest {
     thrown.expect(ObjectNotFoundException.class);
     // getting any property causes proxy population from db
     bpProxy.getName();
+  }
+
+  @Test
+  public void countInOBCriteriaInitializesOnce() {
+    setTestUserContext();
+    setTestLogAppenderLevel(Level.WARN);
+
+    final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
+    obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "EUR"));
+    obc.count();
+
+    assertThat(getTestLogAppender().getMessages(Level.WARN), hasSize(0));
+  }
+
+  @Test
+  public void multipleInitializeCallsInOBCriteriaShouldThrowAWarning() {
+    setTestUserContext();
+    setTestLogAppenderLevel(Level.WARN);
+
+    final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
+    obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "EUR"));
+    if (obc.count() > 0) {
+      obc.addOrderBy(Currency.PROPERTY_ISOCODE, false);
+    }
+    obc.list();
+
+    assertThat(getTestLogAppender().getMessages(Level.WARN), hasSize(1));
+  }
+
+  @Test
+  public void orderByShouldBeAppliedAfterCount() {
+    setTestUserContext();
+
+    final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
+    obc.add(Restrictions.or(
+        //
+        Restrictions.eq(Currency.PROPERTY_ISOCODE, "EUR"),
+        Restrictions.eq(Currency.PROPERTY_ISOCODE, "USD")));
+    if (obc.count() > 0) {
+      obc.addOrderBy(Currency.PROPERTY_ISOCODE, false);
+    }
+
+    assertEquals("USD", obc.list().get(0).getISOCode());
   }
 }

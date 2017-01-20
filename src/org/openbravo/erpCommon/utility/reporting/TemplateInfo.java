@@ -9,7 +9,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2001-2014 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2001-2017 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  * ***********************************************************************
  */
@@ -49,7 +49,7 @@ public class TemplateInfo {
       _Body = emailDefinitionData.getField("body");
       _Language = emailDefinitionData.getField("ad_language");
       if (emailDefinitionData.getField("isdefault") != null) {
-        _IsDefault = emailDefinitionData.getField("isdefault") == "Y" ? true : false;
+        _IsDefault = "Y".equals(emailDefinitionData.getField("isdefault"));
       }
       _Id = emailDefinitionData.getField("id");
     }
@@ -94,10 +94,13 @@ public class TemplateInfo {
       if (emailDefinitionsData.length > 0) {
         for (final EmailDefinitionData emailDefinitionData : emailDefinitionsData) {
           final EmailDefinition emailDefinition = new EmailDefinition(emailDefinitionData);
-          _EmailDefinitions.put(emailDefinition.getLanguage(), emailDefinition);
-
-          if (emailDefinition.isDefault())
+          String language = emailDefinition.getLanguage();
+          if (emailDefinition.isDefault()) {
             _DefaultEmailDefinition = emailDefinition;
+            _EmailDefinitions.put(language, emailDefinition);
+          } else if (!_EmailDefinitions.containsKey(language)) {
+            _EmailDefinitions.put(language, emailDefinition);
+          }
         }
         if (_DefaultEmailDefinition == null && !_EmailDefinitions.isEmpty()) {
           _DefaultEmailDefinition = _EmailDefinitions.values().iterator().next();

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2016 Openbravo SLU
+ * All portions are Copyright (C) 2015-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  
  *************************************************************************
@@ -25,8 +25,10 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.openbravo.base.ExecutionLimits;
 import org.openbravo.buildvalidation.BuildValidation;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 /**
  * This validation prevents system to be built in unsupported database versions.

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,7 +34,6 @@ import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
-import org.openbravo.service.OBServiceException;
 
 /**
  * This servlet has two main responsibilities: 1) authenticate, 2) set the correct {@link OBContext}
@@ -63,17 +62,20 @@ public class BaseWebServiceServlet extends HttpServlet {
 
     // if a stateless webservice then set the stateless flag
     try {
-      final WebService webservice = getWebService(request);
-      if (AuthenticationManager.isStatelessService(webservice.getClass())
-          || AuthenticationManager.isStatelessRequest(request)) {
+      if (AuthenticationManager.isStatelessRequest(request)) {
         request.setAttribute(AuthenticationManager.STATELESS_REQUEST_PARAMETER, "true");
+      } else {
+        final WebService webservice = getWebService(request);
+        if (webservice != null && AuthenticationManager.isStatelessService(webservice.getClass())) {
+          request.setAttribute(AuthenticationManager.STATELESS_REQUEST_PARAMETER, "true");
+        }
       }
     } catch (Throwable ignore) {
       // ignore on purpose as subclasses may manage the resolving of webservices in a different
       // way
       // ignore also for backward compatibility
     }
-    
+
     String userId = null;
     try {
       userId = authManager.webServiceAuthenticate(request);
@@ -109,7 +111,7 @@ public class BaseWebServiceServlet extends HttpServlet {
     if (o instanceof WebService) {
       return (WebService) o;
     }
-    throw new OBServiceException("No WebService found using the name " + segment);
+    return null;
   }
 
   protected void callServiceInSuper(HttpServletRequest request, HttpServletResponse response)

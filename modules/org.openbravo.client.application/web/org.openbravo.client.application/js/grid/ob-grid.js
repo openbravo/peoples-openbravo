@@ -900,6 +900,12 @@ isc.OBGrid.addProperties({
   // creates (or updates) and returns the summaryRow autoChild
   // not called directly -- call 'setShowGridSummary' instead
   getSummaryRow: function () {
+    if (this.summaryRow && (this.isBeingCancelled || this.summaryRowProperties.isBeingReordered)) {
+      if (this.summaryRowProperties.isBeingReordered) {
+        this.summaryRow.reorderField(this.summaryRowProperties.oldPosition, this.summaryRowProperties.newPosition);
+      }
+      return this.summaryRow;
+    }
     if (this.lazyFiltering && this.summaryRow) {
       if (this.getSummaryRowDataSource && this.completeFields) {
         this.summaryRow.setDataSource(this.getSummaryRowDataSource(), this.completeFields.duplicate());

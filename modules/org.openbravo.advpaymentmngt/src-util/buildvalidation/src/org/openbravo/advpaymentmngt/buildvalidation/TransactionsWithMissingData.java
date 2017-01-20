@@ -21,8 +21,10 @@ package org.openbravo.advpaymentmngt.buildvalidation;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openbravo.base.ExecutionLimits;
 import org.openbravo.buildvalidation.BuildValidation;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 public class TransactionsWithMissingData extends BuildValidation {
 
@@ -50,5 +52,11 @@ public class TransactionsWithMissingData extends BuildValidation {
       return handleError(e);
     }
     return errors;
+  }
+
+  @Override
+  protected ExecutionLimits getBuildValidationLimits() {
+    return new ExecutionLimits("A918E3331C404B889D69AA9BFAFB23AC", null, new OpenbravoVersion(3, 0,
+        24742));
   }
 }

@@ -158,6 +158,8 @@
         AND AD_ISORGINCLUDED(O.AD_ORG_ID, ORG.AD_ORG_ID, S.AD_CLIENT_ID) <> -1
         AND ORG.AD_ORG_ID <> '0'
         AND ORG.AD_ORG_ID IN ('1')
+        AND R.C_ACCTSCHEMA_ID = ?
+        AND R.C_ACCT_RPT_ID = ?
       UNION
       SELECT S.C_ACCTSCHEMA_ID||R.C_ACCT_RPT_ID AS PADRE, O.AD_ORG_ID AS ID, O.NAME AS NAME
       FROM C_ACCT_RPT R, AD_ORG_ACCTSCHEMA S, (
@@ -175,12 +177,18 @@
         AND S.AD_CLIENT_ID = ?
         AND R.ISORGBALANCED = 'N' 
         AND O.AD_ORG_ID IN ('1')
+        AND R.C_ACCTSCHEMA_ID = ?
+        AND R.C_ACCT_RPT_ID = ?
       ORDER BY NAME,PADRE
         ]]></Sql>
         <Parameter name="adClient"/>
         <Parameter name="adOrg" optional="false" type="replace" after="AND ORG.AD_ORG_ID IN (" text="'1'"/>
+        <Parameter name="cAcctschema"/>
+        <Parameter name="cAcctRpt"/>
         <Parameter name="adClient"/>
         <Parameter name="adOrg" optional="false" type="replace" after="AND O.AD_ORG_ID IN (" text="'1'"/>
+        <Parameter name="cAcctschema"/>
+        <Parameter name="cAcctRpt"/>
    </SqlMethod>
    <SqlMethod name="selectYearsDouble" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -194,9 +202,11 @@
                         WHERE AD_ORG_ISINNATURALTREE(O.AD_ORG_ID, ORG.AD_ORG_ID, '1') = 'Y'
                         AND C.C_CALENDAR_ID = ORG.C_CALENDAR_ID
                       )
+          AND O.AD_ORG_ID = ?
         ORDER BY O.NAME, Y.YEAR
         ]]></Sql>
     <Parameter name="Client" type="replace" optional="false"  after="AND C.AD_CLIENT_ID = " text="'1'"></Parameter>
     <Parameter name="Client" type="replace" optional="false"  after="WHERE AD_ORG_ISINNATURALTREE(O.AD_ORG_ID, ORG.AD_ORG_ID, " text="'1'"></Parameter>
+    <Parameter name="adOrg"></Parameter>
    </SqlMethod>
 </SqlClass>

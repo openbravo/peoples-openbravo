@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2016 Openbravo SLU
+ * All portions are Copyright (C) 2015-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openbravo.base.ExecutionLimits;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 /**
  * This validation is related to this issue: https://issues.openbravo.com/view.php?id=30069 It
@@ -47,10 +49,11 @@ public class DatabaseDecimalNumberCheck extends BuildValidation {
         returnedNumber = DatabaseDecimalNumberCheckData.checkToNumberORA(cp, numberString);
       }
       if (!ORIGINAL_NUMBER.equals(returnedNumber)) {
-        errors.add("The decimal numbers are not being retrieved properly from the database. "
-            + "This could be caused because the current database locale uses a decimal separator different from a period(.). "
-            + "For more information, please visit the following url: "
-            + "http://wiki.openbravo.com/wiki/Installation/Custom/PostgreSQL_Database");
+        errors
+            .add("The decimal numbers are not being retrieved properly from the database. "
+                + "This could be caused because the current database locale uses a decimal separator different from a period(.). "
+                + "For more information, please visit the following url: "
+                + "http://wiki.openbravo.com/wiki/Installation/Custom/PostgreSQL_Database");
       }
     } catch (Exception e) {
       return handleError(e);

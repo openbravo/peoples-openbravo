@@ -133,7 +133,8 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
 
   private void manageReservedStockLines(JSONObject jsonRequest, Reservation reservation,
       List<String> idList) throws JSONException {
-    JSONArray selectedLines = jsonRequest.getJSONArray("_selection");
+    JSONArray selectedLines = jsonRequest.getJSONObject("_params").getJSONObject("grid")
+        .getJSONArray("_selection");
     // if no lines selected don't do anything.
     if (selectedLines.length() == 0) {
       removeNonSelectedLines(idList, reservation);

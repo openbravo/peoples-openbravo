@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -132,10 +132,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     String discard[] = { "sectionDetail" };
     XmlDocument xmlDocument = null;
 
-    // String strMessage =
-    // vars.getSessionValue("MaterialReceiptPending|message");
-    // vars.removeSessionValue("MaterialReceiptPending|message");
-
+    int limit = 0;
     MaterialReceiptPendingData[] data = null;
     String strTreeOrg = MaterialReceiptPendingData.treeOrg(this, vars.getClient());
     if (strC_BPartner_ID.equals("") && strAD_Org_ID.equals("")) {
@@ -145,11 +142,20 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     } else {
       xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_forms/MaterialReceiptPending").createXmlDocument();
+
+      limit = Integer.parseInt(Utility.getPreference(vars, "FormsLimit", ""));
+      String pgLimit = null, oraLimit = null;
+      if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+        oraLimit = String.valueOf(limit + 1);
+      } else {
+        pgLimit = String.valueOf(limit + 1);
+      }
       String strDateFormat = vars.getSessionValue("#AD_SqlDateFormat");
       data = MaterialReceiptPendingData.selectLines(this, strDateFormat, vars.getLanguage(),
           Utility.getContext(this, vars, "#User_Client", "MaterialReceiptPending"),
           Tree.getMembers(this, strTreeOrg, strAD_Org_ID), strDateFrom,
-          DateTimeData.nDaysAfter(this, strDateTo, "1"), strC_BPartner_ID, strDocumentNo);
+          DateTimeData.nDaysAfter(this, strDateTo, "1"), strC_BPartner_ID, strDocumentNo, pgLimit,
+          oraLimit);
     }
 
     boolean preference = UOMUtil.isUomManagementEnabled();
@@ -201,6 +207,14 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     }
     {
       myMessage = vars.getMessage("MaterialReceiptPending");
+      if (limit > 0 && data.length > limit) {
+        myMessage = new OBError();
+        myMessage.setType("Warning");
+        myMessage.setTitle("");
+        String msgbody = Utility.messageBD(this, "OldFormsLimit", vars.getLanguage());
+        msgbody = msgbody.replace("@limit@", Integer.toString(limit + 1));
+        myMessage.setMessage(msgbody);
+      }
       vars.removeMessage("MaterialReceiptPending");
       if (myMessage != null) {
         xmlDocument.setParameter("messageType", myMessage.getType());

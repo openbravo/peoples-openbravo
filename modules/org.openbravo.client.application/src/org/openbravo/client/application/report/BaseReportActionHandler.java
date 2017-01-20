@@ -80,6 +80,7 @@ import net.sf.jasperreports.engine.JRDataSource;
 public class BaseReportActionHandler extends BaseProcessActionHandler {
   private static final Logger log = LoggerFactory.getLogger(BaseReportActionHandler.class);
   private static final String JASPER_PARAM_PROCESS = "jasper_process";
+  protected static final String JASPER_REPORT_PARAMETERS = "JASPER_REPORT_PARAMETERS";
 
   /**
    * execute() method overridden to add the logic to download or display the report file stored in
@@ -324,15 +325,19 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       strJRPath = "/" + strJRPath;
     }
     final String jrTemplatePath = DalContextListener.getServletContext().getRealPath(strJRPath);
-    HashMap<String, Object> jrParams = new HashMap<String, Object>();
+
+    Map<String, Object> allParametersMap = new HashMap<>();
+    Map<String, Object> jrParams = new HashMap<>();
     loadFilterParams(jrParams, report, params);
     loadReportParams(jrParams, report, jrTemplatePath, jsonContent);
     // Include the HTTP session into the parameters that are sent to the report
     jrParams.put("HTTP_SESSION", parameters.get(KernelConstants.HTTP_SESSION));
+    allParametersMap.putAll(parameters);
+    allParametersMap.put(JASPER_REPORT_PARAMETERS, jrParams);
+
     log.debug("Report: {}. Start export JR process.", report.getId());
     long t1 = System.currentTimeMillis();
-    doJRExport(jrTemplatePath, expType, jrParams, strTmpFileName, getReportConnectionProvider(),
-        getReportData(parameters));
+    doJRExport(jrTemplatePath, expType, strTmpFileName, allParametersMap);
     log.debug("Report: {}. Finish export JR process. Elapsed time: {}", report.getId(),
         System.currentTimeMillis() - t1);
 
@@ -382,7 +387,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
    * @param params
    *          JSONObject with the values set in the filter parameters.
    */
-  private void loadFilterParams(HashMap<String, Object> jrParams, ReportDefinition report,
+  private void loadFilterParams(Map<String, Object> jrParams, ReportDefinition report,
       JSONObject params) throws JSONException {
     for (Parameter param : report.getProcessDefintion().getOBUIAPPParameterList()) {
       String paramName = param.getDBColumnName();
@@ -487,7 +492,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
    * @param jsonContent
    *          JSONObject with the values set in the filter parameters.
    */
-  private void loadReportParams(HashMap<String, Object> jrParams, ReportDefinition report,
+  private void loadReportParams(Map<String, Object> jrParams, ReportDefinition report,
       String jrTemplatePath, JSONObject jsonContent) {
 
     final int lastSegmentIndex = jrTemplatePath.lastIndexOf("/");
@@ -539,11 +544,14 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
 
   /**
    * Get the data to pass to the report generation method. Override this method to put logic for
-   * getting the data
+   * getting the data. The map received as argument contains parameters that can be used to create
+   * some logic to build the report data
    * 
    * @param parameters
-   *          map with the parameters of the call that can be used to generate the report data
+   *          map that contains the parameters of the HTTP request and the parameters that will be
+   *          sent to the jasper report
    *
+   * @return a JRDataSource object containing the report data
    */
   protected JRDataSource getReportData(Map<String, Object> parameters) {
     return null;
@@ -553,15 +561,29 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
    * Get the connection provider to use in report generation. Override this method to put logic for
    * getting the connection provider
    *
+   * @return the ConnectionProvider to use during the report generation
    */
   protected ConnectionProvider getReportConnectionProvider() {
     return null;
   }
 
-  private static void doJRExport(String jrTemplatePath, ExportType expType,
-      Map<String, Object> parameters, String strFileName, ConnectionProvider connection,
-      JRDataSource data) {
+  /**
+   * Override this method to define if the sub-reports generated with the handler must be compiled.
+   * If true, it will compile all sub-report jrxml files placed in the same folder as the main
+   * report and whose related parameter name starts with SUBREP_
+   *
+   * @return true if the handler must compile the sub-reports. Otherwise, it returns false.
+   */
+  protected boolean isCompilingSubreports() {
+    return false;
+  }
+
+  private void doJRExport(String jrTemplatePath, ExportType expType, String strFileName,
+      Map<String, Object> parameters) {
     ReportSemaphoreHandling.getInstance().acquire();
+    @SuppressWarnings("unchecked")
+    Map<String, Object> jrParameters = (Map<String, Object>) parameters
+        .get(JASPER_REPORT_PARAMETERS);
     Map<Object, Object> localExportParameters = null;
     try {
       if (ExportType.HTML.equals(expType)) {
@@ -572,8 +594,10 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
         localExportParameters.put(ReportingUtils.IMAGES_URI, localAddress
             + "/servlets/image?image={0}");
       }
-      ReportingUtils.exportJR(jrTemplatePath, expType, parameters, strFileName, true, connection,
-          data, localExportParameters);
+      ReportingUtils.exportJR(jrTemplatePath, expType, jrParameters,
+          new File(ReportingUtils.getTempFolder(), strFileName), true,
+          getReportConnectionProvider(), getReportData(parameters), localExportParameters,
+          isCompilingSubreports());
     } finally {
       ReportSemaphoreHandling.getInstance().release();
     }

@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ export.database.structure: Exports the database structure in the xml's files.
   <property environment="env" />
   <property name="forcedRecreation" value=""/>
   <property name="execute.modulescripts" value="true"/>
+  <property name="max.threads" value="-1"/>
   <condition property="bbdd.owner.url" value="${bbdd.url}/${bbdd.sid}" else="${bbdd.url}">
     <and>
       <equals arg1="${bbdd.rdbms}" arg2="POSTGRE" />
@@ -72,7 +73,7 @@ export.database.structure: Exports the database structure in the xml's files.
   </target>
 
   <target name="update.database">
-    <alterdatabasedataall driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="sourcedata" object="${bbdd.object}" failonerror="false" verbosity="${bbdd.verbosity}" basedir="${base.modules}/" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" onlyIfModified="${onlyIfModified}" forcedRecreation="${forcedRecreation}" executeModuleScripts="${execute.modulescripts}"/>
+    <alterdatabasedataall driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="sourcedata" object="${bbdd.object}" failonerror="false" verbosity="${bbdd.verbosity}" basedir="${base.modules}/" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" onlyIfModified="${onlyIfModified}" forcedRecreation="${forcedRecreation}" executeModuleScripts="${execute.modulescripts}" threads="${max.threads}"/>
     <antcall target="database.postupdate.${bbdd.rdbms}" />
     <antcall target="update.dbupdate.timestamp" />
   </target>
@@ -99,6 +100,7 @@ export.database.structure: Exports the database structure in the xml's files.
       <arg value="${strict.template.application}"/>
       <arg value="${forcedRecreation}"/>
       <arg value="${execute.modulescripts}"/>
+      <arg value="${max.threads}"/>
       <classpath refid="runtime-classpath" />
       <syspropertyset>
          <propertyref name="java.security.egd" />
@@ -156,7 +158,7 @@ export.database.structure: Exports the database structure in the xml's files.
       <taskdef name="exportdatabase" classname="org.openbravo.ddlutils.task.ExportDatabase">
         <classpath refid="runtime-classpath" />
       </taskdef>
-      <exportdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" moduledir="${base.modules}" verbosity="${bbdd.verbosity}" output="sourcedata" codeRevision="${code.revision}" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" validateModel="${validate.model}" testAPI="${isMinorVersion}" datasetList="AD,ADRD" rd="${rd}" checkTranslationConsistency="${checkTranslationConsistency}"/>
+      <exportdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" moduledir="${base.modules}" verbosity="${bbdd.verbosity}" output="sourcedata" codeRevision="${code.revision}" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" validateModel="${validate.model}" testAPI="${isMinorVersion}" datasetList="AD,ADRD" rd="${rd}" checkTranslationConsistency="${checkTranslationConsistency}" threads="${max.threads}"/>
       <antcall target="update.dbupdate.timestamp" />
   </target>
 

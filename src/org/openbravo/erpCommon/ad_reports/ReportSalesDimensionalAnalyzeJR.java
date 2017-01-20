@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -597,16 +597,19 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
       strOrderby = " ORDER BY 1";
     }
     String strHaving = "";
-    if (!strMayor.equals("") && !strMenor.equals("")) {
+    if (!strMayor.isEmpty() && !strMenor.isEmpty()) {
+      // "Greater than" and "Less than" filters are defined
       strHaving = " HAVING (SUM(CONVAMOUNT) > " + strMayor + " AND SUM(CONVAMOUNT) < " + strMenor
           + ")";
-    } else if (!strMayor.equals("") && strMenor.equals("")) {
+    } else if (!strMayor.isEmpty() && strMenor.isEmpty()) {
+      // Only "Greater than" filter is defined
       strHaving = " HAVING (SUM(CONVAMOUNT) > " + strMayor + ")";
-    } else if (strMayor.equals("") && !strMenor.equals("")) {
+    } else if (strMayor.isEmpty() && !strMenor.isEmpty()) {
+      // Only "Less than" filter is defined
       strHaving = " HAVING (SUM(CONVAMOUNT) < " + strMenor + ")";
-    } else {
-      strHaving = " HAVING (SUM(CONVAMOUNT) <> 0 OR SUM(CONVAMOUNTREF) <> 0)";
-    }
+    } 
+    // If "Greater than" and "Less than" filters are not defined it is not necessary to add the
+    // Having clause
     strOrderby = strHaving + strOrderby;
 
     int limit = 0;

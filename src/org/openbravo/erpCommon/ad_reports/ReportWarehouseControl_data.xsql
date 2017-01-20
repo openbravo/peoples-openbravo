@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
+      SELECT B.* FROM ( 
       SELECT A.DESCRIPTION, M_PRODUCT.NAME AS PRODUCTNAME, 
       SUBSTR(M_ATTRIBUTESETINSTANCE.DESCRIPTION, 2, (LENGTH(M_ATTRIBUTESETINSTANCE.DESCRIPTION)-1)) AS REFERENTIAL, M_TRANSACTION.MOVEMENTDATE, SUM(M_TRANSACTION.MOVEMENTQTY) AS MOVEMENTQTY, A.UBICATION, A.ID, A.INP, C_UOM.NAME AS UOM, M_LOCATOR.VALUE AS LOCATOR
       FROM (SELECT (M_INOUT.DOCUMENTNO||' '||M_INOUT.MOVEMENTDATE||' '||COALESCE(TO_CHAR(C_PROJECT.VALUE), '')) AS DESCRIPTION, M_TRANSACTION.M_TRANSACTION_ID, M_INOUT.M_INOUT_ID AS ID, (CASE M_INOUT.ISSOTRX WHEN 'Y' THEN '257' ELSE '296' END) AS UBICATION, 'inpmInoutId' AS INP
@@ -61,13 +62,15 @@
       GROUP BY A.DESCRIPTION, M_PRODUCT.NAME, M_LOCATOR.M_LOCATOR_ID, M_LOCATOR.VALUE, M_ATTRIBUTESETINSTANCE.DESCRIPTION, M_TRANSACTION.MOVEMENTDATE, A.ID, A.UBICATION, A.INP, C_UOM.NAME
       HAVING SUM(M_TRANSACTION.MOVEMENTQTY) <> 0
       ORDER BY A.ID, M_PRODUCT.NAME
+      ) B
      ]]></Sql>
-    <Field name="rownum" value="count"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND M_TRANSACTION.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adOrgClient" type="replace" optional="true" after="AND M_TRANSACTION.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND M_TRANSACTION.MOVEMENTDATE >= to_date(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND M_TRANSACTION.MOVEMENTDATE < to_date(?)]]></Parameter>
     <Parameter name="reference" optional="true" after="AND 1=1"><![CDATA[ AND UPPER(M_ATTRIBUTESETINSTANCE.DESCRIPTION) LIKE '%'||UPPER(?)||'%']]></Parameter>
+    <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
+    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="set" type="constant" return="multiple">

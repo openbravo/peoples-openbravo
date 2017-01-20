@@ -86,9 +86,12 @@ public class CostAdjustmentUtils {
 
     final DocumentType docType = FIN_Utility.getDocumentType(org, strCategoryCostAdj);
     final String docNo = FIN_Utility.getDocumentNo(docType, strTableCostAdj);
+    final Organization orgLegal = OBContext.getOBContext()
+        .getOrganizationStructureProvider(OBContext.getOBContext().getCurrentClient().getId())
+        .getLegalEntity(org);
 
     CostAdjustment costAdjustment = OBProvider.getInstance().get(CostAdjustment.class);
-    costAdjustment.setOrganization(org);
+    costAdjustment.setOrganization(orgLegal != null ? orgLegal : org);
     costAdjustment.setDocumentType(docType);
     costAdjustment.setDocumentNo(docNo);
     costAdjustment.setReferenceDate(new Date());
@@ -118,7 +121,7 @@ public class CostAdjustmentUtils {
       Date accountingDate) {
     Long stdPrecission = transaction.getCurrency().getStandardPrecision();
     CostAdjustmentLine costAdjustmentLine = OBProvider.getInstance().get(CostAdjustmentLine.class);
-    costAdjustmentLine.setOrganization(costAdjustmentHeader.getOrganization());
+    costAdjustmentLine.setOrganization(transaction.getOrganization());
     costAdjustmentLine.setCostAdjustment(costAdjustmentHeader);
     if (costAdjusted == null) {
       costAdjustmentLine.setAdjustmentAmount(null);

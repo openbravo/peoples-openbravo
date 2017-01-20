@@ -977,8 +977,28 @@ isc.OBViewGrid.addProperties({
   },
 
   reorderField: function (fieldNum, moveToPosition) {
-    var res = this.Super('reorderField', arguments);
+    var res;
+    if (this.showGridSummary) {
+      res = this.handleSummaryFunctionGrid(fieldNum, moveToPosition);
+    } else {
+      res = this.Super('reorderField', arguments);
+    }
     this.view.standardWindow.storeViewState();
+    return res;
+  },
+
+  handleSummaryFunctionGrid: function (oldPosition, newPosition) {
+    var res;
+    this.summaryRowProperties = {};
+    this.summaryRowProperties.isBeingReordered = true;
+    this.summaryRowProperties.oldPosition = oldPosition;
+    this.summaryRowProperties.newPosition = newPosition;
+    this.showGridSummary = false;
+    res = this.Super('reorderField', arguments);
+    this.setShowGridSummary(true);
+    delete this.summaryRowProperties.isBeingReordered;
+    delete this.summaryRowProperties.oldPosition;
+    delete this.summaryRowProperties.newPosition;
     return res;
   },
 
@@ -3367,9 +3387,19 @@ isc.OBViewGrid.addProperties({
           me.selection.deselect(selectedRecord);
         }
         totalRows = me.data.totalRows;
-        me.data.handleUpdate('remove', [{
-          id: record.id
-        }]);
+        if (this.showGridSummary) {
+          this.showGridSummary = false;
+          this.isBeingCancelled = true;
+          me.data.handleUpdate('remove', [{
+            id: record.id
+          }]);
+          this.setShowGridSummary(true);
+          delete this.isBeingCancelled;
+        } else {
+          me.data.handleUpdate('remove', [{
+            id: record.id
+          }]);
+        }
         // the total rows should be decreased
         if (me.data.totalRows === totalRows) {
           me.data.totalRows = me.data.totalRows - 1;

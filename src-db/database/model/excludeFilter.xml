@@ -65,4 +65,25 @@
     <excludedFunction name="TEMP_FINDINARRAY"/>
     <excludedFunction name="AD_EXECUTE_FUNCTION"/>
     <excludedFunction name="ADD_HMS"/>
+    <excludedFunction name="PG\_%"/> <!-- PostgreSQL extension functions -->
+    <excludedTrigger name="AU\_%"/> <!-- Audit trail triggers -->
+    <excludedFunction name="GIN_EXTRACT_QUERY_TRGM"/>
+    <excludedFunction name="GIN_EXTRACT_VALUE_TRGM"/>
+    <excludedFunction name="GIN_TRGM_CONSISTENT"/>
+    <excludedFunction name="GTRGM_COMPRESS"/>
+    <excludedFunction name="GTRGM_CONSISTENT"/>
+    <excludedFunction name="GTRGM_DECOMPRESS"/>
+    <excludedFunction name="GTRGM_DISTANCE"/>
+    <excludedFunction name="GTRGM_IN"/>
+    <excludedFunction name="GTRGM_OUT"/>
+    <excludedFunction name="GTRGM_PENALTY"/>
+    <excludedFunction name="GTRGM_PICKSPLIT"/>
+    <excludedFunction name="GTRGM_SAME"/>
+    <excludedFunction name="GTRGM_UNION"/>
+    <excludedFunction name="SET_LIMIT"/>
+    <excludedFunction name="SHOW_LIMIT"/>
+    <excludedFunction name="SHOW_TRGM"/>
+    <excludedFunction name="SIMILARITY"/>
+    <excludedFunction name="SIMILARITY_DIST"/>
+    <excludedFunction name="SIMILARITY_OP"/>
   </vector>

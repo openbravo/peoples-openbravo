@@ -64,9 +64,9 @@ public class OBScheduler {
 
   private SchedulerContext ctx;
 
-  public static String dateTimeFormat;
+  private String dateTimeFormat;
 
-  public static String sqlDateTimeFormat;
+  private String sqlDateTimeFormat;
 
   private static final String BACKGROUND_POLICY = "background.policy";
   private static final String NO_EXECUTE_POLICY = "no-execute";
@@ -104,6 +104,13 @@ public class OBScheduler {
    */
   public ConfigParameters getConfigParameters() {
     return (ConfigParameters) ctx.get(ConfigParameters.CONFIG_ATTRIBUTE);
+  }
+
+  /**
+   * @return The sqlDateTimeFormat of the OBScheduler.
+   */
+  String getSqlDateTimeFormat() {
+    return sqlDateTimeFormat;
   }
 
   /**
@@ -235,7 +242,7 @@ public class OBScheduler {
     try {
       sched.unscheduleJob(requestId, OB_GROUP);
       sched.deleteJob(requestId, OB_GROUP);
-      ProcessRequestData.update(getConnection(), UNSCHEDULED, null, OBScheduler.sqlDateTimeFormat,
+      ProcessRequestData.update(getConnection(), UNSCHEDULED, null, sqlDateTimeFormat,
           format(new Date()), requestId);
     } catch (final Exception e) {
       log.error("An error occurred unscheduling process " + requestId, e);
@@ -247,7 +254,7 @@ public class OBScheduler {
    * @return the date as a formatted string
    */
   public static final String format(Date date) {
-    return date == null ? null : new SimpleDateFormat(dateTimeFormat).format(date);
+    return date == null ? null : new SimpleDateFormat(getInstance().dateTimeFormat).format(date);
   }
 
   /**
