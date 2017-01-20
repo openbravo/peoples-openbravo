@@ -286,7 +286,11 @@ enyo.kind({
         productFilter.columns = [];
         productFilter.operator = OB.Dal.FILTER;
         productFilter.value = this.productCharacteristicValueFilterQualifier;
-        productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+          productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
+        } else {
+          productText = '%' + productFilterText + '%';
+        }
         productFilter.params = [productText, productCategory.filter ? productCategory.params[0] : category, characteristicParams, brandparams.join(',')];
         remoteCriteria.push(productFilter);
       }
