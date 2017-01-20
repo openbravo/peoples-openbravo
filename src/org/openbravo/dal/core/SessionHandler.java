@@ -169,11 +169,15 @@ public class SessionHandler implements OBNotSingleton {
    * @return the session
    */
   public Session getSession(String pool) {
-    Session theSession = sessions.get(pool);
-    if (theSession == null) {
-      begin(pool);
+    String thePool = pool;
+    if (thePool == null) {
+      thePool = DEFAULT_POOL;
     }
-    return sessions.get(pool);
+    Session theSession = sessions.get(thePool);
+    if (theSession == null) {
+      begin(thePool);
+    }
+    return sessions.get(thePool);
   }
 
   protected void setSession(Session thisSession) {
