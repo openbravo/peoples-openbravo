@@ -420,7 +420,19 @@
         OB.MobileApp.model.addSyncCheckpointModel(OB.Model.CashUp);
 
         var terminal = this.get('terminal');
-        OB.UTIL.initCashUp(OB.UTIL.calculateCurrentCash, function () {
+        OB.UTIL.initCashUp(function () {
+          OB.UTIL.calculateCurrentCash(function () {
+            OB.UTIL.HookManager.executeHooks('OBPOS_LoadPOSWindow', {}, function () {
+              var defaultWindow = OB.MobileApp.model.get('defaultWindow');
+              if (defaultWindow) {
+                OB.POS.navigate(defaultWindow);
+                OB.MobileApp.model.unset('defaultWindow');
+              } else {
+                OB.POS.navigate('retail.pointofsale');
+              }
+            });
+          }, null);
+        }, function () {
           //There was an error when retrieving the cashup from the backend.
           // This means that there is a cashup saved as an error, and we don't have
           //the necessary information to have a working cashup in the client side.
@@ -462,16 +474,6 @@
 
         // Set Arithmetic properties:
         OB.DEC.setContext(OB.UTIL.getFirstValidValue([me.get('currency').obposPosprecision, me.get('currency').pricePrecision]), BigDecimal.prototype.ROUND_HALF_UP);
-
-        OB.UTIL.HookManager.executeHooks('OBPOS_LoadPOSWindow', {}, function () {
-          var defaultWindow = OB.MobileApp.model.get('defaultWindow');
-          if (defaultWindow) {
-            OB.POS.navigate(defaultWindow);
-            OB.MobileApp.model.unset('defaultWindow');
-          } else {
-            OB.POS.navigate('retail.pointofsale');
-          }
-        });
 
         if (me.get('loggedOffline') === true) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineLogin'));

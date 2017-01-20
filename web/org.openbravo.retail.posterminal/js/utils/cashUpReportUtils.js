@@ -467,7 +467,7 @@
               cashUp.set(data[0]);
               var cashUpCollection = new Backbone.Collection();
               cashUpCollection.push(cashUp);
-              OB.UTIL.createNewCashupFromServer(cashUp, function (callback) {
+              OB.UTIL.createNewCashupFromServer(cashUp, function () {
                 OB.UTIL.composeCashupInfo(cashUpCollection, null, null);
                 OB.UTIL.calculateCurrentCash(callback);
               });
