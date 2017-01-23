@@ -11,17 +11,18 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.utility;
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 class QueryFieldStructure {
-  private Hashtable<String, String> data = new Hashtable<String, String>();
+  private Map<String, String> data = new HashMap<>();
 
   public QueryFieldStructure() {
   }
@@ -43,7 +44,7 @@ class QueryFieldStructure {
     if (name == null)
       return;
     if (this.data == null)
-      this.data = new Hashtable<String, String>();
+      this.data = new HashMap<String, String>();
     if (value == null || value.equals(""))
       this.data.remove(name);
     else
@@ -79,7 +80,7 @@ class QueryFieldStructure {
   }
 
   public String toString(boolean printAlias) {
-    StringBuffer text = new StringBuffer();
+    StringBuilder text = new StringBuilder();
     text.append(getData("field"));
     if (printAlias)
       text.append(getData("aliasJoin")).append(getData("alias"));

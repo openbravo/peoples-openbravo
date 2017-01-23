@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -612,33 +612,9 @@ public abstract class UIDefinition {
       boolean comboreload = rq.getRequestParameter("donotaddcurrentelement") != null
           && rq.getRequestParameter("donotaddcurrentelement").equals("true");
 
-      String objectReference = "";
-      if (field.getColumn().getReferenceSearchKey() != null) {
-        objectReference = field.getColumn().getReferenceSearchKey().getId();
-      }
-      String validation = "";
-      if (field.getColumn().getValidation() != null) {
-        validation = field.getColumn().getValidation().getId();
-      }
-      String orgList = Utility.getReferenceableOrg(vars, vars.getStringParameter("inpadOrgId"));
-      String clientList = Utility.getContext(new DalConnectionProvider(false), vars,
-          "#User_Client", field.getTab().getWindow().getId());
-      if (field.getColumn().getDBColumnName().equalsIgnoreCase("AD_CLIENT_ID")) {
-        clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
-            field.getTab().getWindow().getId(),
-            Integer.parseInt(field.getTab().getTable().getDataAccessLevel()));
-        clientList = vars.getSessionValue("#User_Client");
-        orgList = null;
-      }
-      if (field.getColumn().getDBColumnName().equalsIgnoreCase("AD_ORG_ID")) {
-        orgList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Org", field
-            .getTab().getWindow().getId(),
-            Integer.parseInt(field.getTab().getTable().getDataAccessLevel()));
-      }
       ApplicationDictionaryCachedStructures cachedStructures = WeldUtils
           .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
-      ComboTableData comboTableData = cachedStructures.getComboTableData(vars, ref, field
-          .getColumn().getDBColumnName(), objectReference, validation, orgList, clientList);
+      ComboTableData comboTableData = cachedStructures.getComboTableData(field);
       FieldProvider tabData = generateTabData(field.getTab().getADFieldList(), field, columnValue);
       Map<String, String> parameters = comboTableData.fillSQLParametersIntoMap(
           new DalConnectionProvider(false), vars, tabData, field.getTab().getWindow().getId(),
