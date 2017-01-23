@@ -422,7 +422,19 @@
         OB.MobileApp.model.addSyncCheckpointModel(OB.Model.CashUp);
 
         var terminal = this.get('terminal');
-        OB.UTIL.initCashUp(OB.UTIL.calculateCurrentCash, function () {
+        OB.UTIL.initCashUp(function () {
+          OB.UTIL.calculateCurrentCash(function () {
+            OB.UTIL.HookManager.executeHooks('OBPOS_LoadPOSWindow', {}, function () {
+              var defaultWindow = OB.MobileApp.model.get('defaultWindow');
+              if (defaultWindow) {
+                OB.POS.navigate(defaultWindow);
+                OB.MobileApp.model.unset('defaultWindow');
+              } else {
+                OB.POS.navigate('retail.pointofsale');
+              }
+            });
+          }, null);
+        }, function () {
           //There was an error when retrieving the cashup from the backend.
           // This means that there is a cashup saved as an error, and we don't have
           //the necessary information to have a working cashup in the client side.
@@ -464,16 +476,6 @@
 
         // Set Arithmetic properties:
         OB.DEC.setContext(OB.UTIL.getFirstValidValue([me.get('currency').obposPosprecision, me.get('currency').pricePrecision]), BigDecimal.prototype.ROUND_HALF_UP);
-
-        OB.UTIL.HookManager.executeHooks('OBPOS_LoadPOSWindow', {}, function () {
-          var defaultWindow = OB.MobileApp.model.get('defaultWindow');
-          if (defaultWindow) {
-            OB.POS.navigate(defaultWindow);
-            OB.MobileApp.model.unset('defaultWindow');
-          } else {
-            OB.POS.navigate('retail.pointofsale');
-          }
-        });
 
         if (me.get('loggedOffline') === true) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineLogin'));
@@ -519,7 +521,24 @@
         }, function (data) {
           if (data && data.exception) {
             //ERROR or no connection
-            OB.error("runSyncProcess", OB.I18N.getLabel('OBPOS_TerminalAuthError'));
+            if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('cacheSessionId'))) {
+              OB.error("runSyncProcess", OB.I18N.getLabel('OBPOS_TerminalAuthError'));
+              run();
+            } else {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TerminalAuthChange'), OB.I18N.getLabel('OBPOS_TerminalAuthChangeMsg'), [{
+                label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                isConfirmButton: true,
+                action: function () {
+                  OB.UTIL.showLoading(true);
+                  me.logout();
+                }
+              }], {
+                onHideFunction: function () {
+                  OB.UTIL.showLoading(true);
+                  me.logout();
+                }
+              });
+            }
           } else if (data && (data.isLinked === false || data.terminalAuthentication)) {
             if (data.isLinked === false) {
               OB.UTIL.localStorage.removeItem('terminalName');
