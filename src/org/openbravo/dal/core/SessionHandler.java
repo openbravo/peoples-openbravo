@@ -295,7 +295,7 @@ public class SessionHandler implements OBNotSingleton {
   /**
    * Sets the connection of the default pool to be used by the handler.
    * 
-   * @param connection
+   * @param newConnection
    *          the connection of the default pool.
    */
   public void setConnection(Connection newConnection) {

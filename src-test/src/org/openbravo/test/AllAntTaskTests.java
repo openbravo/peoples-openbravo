@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import org.openbravo.advpaymentmngt.test.DocumentNumberGeneration;
 import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.base.weld.test.testinfrastructure.DalPersistanceEventTest;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
+import org.openbravo.client.application.test.ADCSInitialization;
 import org.openbravo.client.application.test.ApplicationTest;
 import org.openbravo.client.application.test.DisplayLogicAtServerLevelTest;
 import org.openbravo.client.application.test.DynamicExpressionParserTest;
@@ -149,7 +150,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     UniqueConstraintTest.class, //
     ClassLoaderTest.class, //
     IndexesTest.class, //
-    TrlColumnsOraTypeTest.class,
+    TrlColumnsOraTypeTest.class, //
+    ADCSInitialization.class,
 
     // modularity
     DatasetServiceTest.class, //
