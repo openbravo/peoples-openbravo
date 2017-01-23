@@ -1356,7 +1356,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           promotion.setLineNo((long) ((p + 1) * 10));
           promotion.setSalesOrderLine(orderline);
           if (jsonPromotion.has("identifier") && !jsonPromotion.isNull("identifier")) {
-            promotion.setObdiscIdentifier(jsonPromotion.getString("identifier"));
+            String identifier = jsonPromotion.getString("identifier");
+            if (identifier.length() > 100) {
+              identifier = identifier.substring(identifier.length() - 100);
+            }
+            promotion.setObdiscIdentifier(identifier);
           }
           promotion.setId(OBMOBCUtils.getUUIDbyString(orderline.getId() + p));
           promotion.setNewOBObject(true);
