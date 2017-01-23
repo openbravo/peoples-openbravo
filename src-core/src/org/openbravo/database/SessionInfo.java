@@ -180,8 +180,8 @@ public class SessionInfo {
    * this method must be manually invoked.
    * 
    * @param conn
-   *          The connection where the session information will be stored in, note it must the same
-   *          one performing DB modifications so audit trail triggers can retrieve the session
+   *          The connection where the session information will be stored in, note it must be the
+   *          same one performing DB modifications so audit trail triggers can retrieve the session
    *          information.
    */
   public static void saveContextInfoIntoDB(Connection conn) {
