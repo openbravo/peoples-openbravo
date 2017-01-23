@@ -214,6 +214,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
 
     criteria = {
       '_whereClause': whereClause,
+      '_orderByClause': 'priority is null, priority, _idx',
       params: this.convertParams(evt, line, receipt, this.paramsTranslation)
     };
 
