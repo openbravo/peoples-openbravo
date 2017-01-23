@@ -943,8 +943,9 @@ public class ReportingUtils {
 
       if (jasperFilePath.endsWith("jrxml")) {
         String strBaseDesign = getBaseDesignPath();
-        JasperReport jReport = getTranslatedJasperReport(new DalConnectionProvider(false),
-            jasperFilePath, language, strBaseDesign);
+        JasperReport jReport = getTranslatedJasperReport(
+            DalConnectionProvider.getReadOnlyConnectionProvider(), jasperFilePath, language,
+            strBaseDesign);
         if (connectionProvider != null) {
           if (compileSubreports) {
             processSubReports(jasperFilePath, parameters, strBaseDesign, connectionProvider,
@@ -975,8 +976,8 @@ public class ReportingUtils {
             }
           }
         } else {
-          jasperPrint = JasperFillManager.fillReport(jReport, parameters, OBDal.getInstance()
-              .getConnection());
+          jasperPrint = JasperFillManager.fillReport(jReport, parameters, OBDal
+              .getReadOnlyInstance().getConnection());
         }
       } else {
         jasperPrint = JasperFillManager.fillReport(jasperFilePath, parameters);
@@ -1218,7 +1219,7 @@ public class ReportingUtils {
    *          Map of parameters where the standard process definition parameters are added.
    */
   private static void addProcessDefinitionParameters(Map<String, Object> parameters) {
-    parameters.put(JASPER_PARAM_HBSESSION, OBDal.getInstance().getSession());
+    parameters.put(JASPER_PARAM_HBSESSION, OBDal.getReadOnlyInstance().getSession());
     parameters.put(JASPER_PARAM_OBCONTEXT, OBContext.getOBContext());
 
     {
@@ -1371,7 +1372,7 @@ public class ReportingUtils {
       this.extension = extension;
       OBContext.setAdminMode(true);
       try {
-        FileType type = OBDal.getInstance().get(FileType.class, strFileTypeId);
+        FileType type = OBDal.getReadOnlyInstance().get(FileType.class, strFileTypeId);
         if (type != null) {
           fileType = type.getFormat();
         } else {

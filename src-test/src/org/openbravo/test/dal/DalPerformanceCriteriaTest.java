@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -148,7 +148,7 @@ public class DalPerformanceCriteriaTest extends OBBaseTest {
 
     public int doCriteriaQry() {
       final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-      obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "USD"));
+      obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, DOLLAR));
       if (doScroll) {
         final ScrollableResults r = obc.scroll(ScrollMode.FORWARD_ONLY);
         int cnt = 0;

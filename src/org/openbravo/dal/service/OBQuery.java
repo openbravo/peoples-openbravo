@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -75,6 +75,8 @@ public class OBQuery<E extends BaseOBObject> {
   private String queryType = null;
 
   private String selectClause;
+
+  private String poolName;
 
   // package visible
   OBQuery() {
@@ -199,6 +201,13 @@ public class OBQuery<E extends BaseOBObject> {
     return qryStr;
   }
 
+  /**
+   * Creates a Hibernate Query object intended to delete records of the Entity associated to the
+   * OBQuery instance. To generate the criteria of the deletion, it makes use of the whereclause and
+   * extra filters (for readable organizations etc.).
+   * 
+   * @return a new Hibernate Query object
+   */
   public Query deleteQuery() {
     final String qryStr = createQueryString();
     String whereClause;
@@ -530,7 +539,7 @@ public class OBQuery<E extends BaseOBObject> {
   }
 
   private Session getSession() {
-    return SessionHandler.getInstance().getSession();
+    return SessionHandler.getInstance().getSession(poolName);
   }
 
   /**
@@ -611,43 +620,102 @@ public class OBQuery<E extends BaseOBObject> {
     this.namedParameters.put(paramName, value);
   }
 
+  /**
+   * Returns the position of the first row to be retrieved by the underlying query.
+   * 
+   * @return the position of the first row to be retrieved
+   */
   public int getFirstResult() {
     return firstResult;
   }
 
+  /**
+   * Sets the position of the first row to retrieve.
+   * 
+   * @param firstResult
+   *          the position of the first row to retrieve
+   */
   public void setFirstResult(int firstResult) {
     this.firstResult = firstResult;
   }
 
+  /**
+   * Returns the maximum number of rows to be retrieved by the underlying query.
+   * 
+   * @return the maximum number of rows to be retrieved
+   */
   public int getMaxResult() {
     return maxResult;
   }
 
+  /**
+   * Sets the maximum number of rows to retrieve.
+   * 
+   * @param maxResult
+   *          the maximum number of rows to retrieve
+   */
   public void setMaxResult(int maxResult) {
     this.maxResult = maxResult;
   }
 
+  /**
+   * Returns the fetch size of the underlying query.
+   * 
+   * @return the fetch size of the underlying query
+   */
   public int getFetchSize() {
     return fetchSize;
   }
 
+  /**
+   * Sets a fetch size for the underlying query.
+   * 
+   * @param fetchSize
+   *          the fetch size for the underlying query
+   */
   public void setFetchSize(int fetchSize) {
     this.fetchSize = fetchSize;
   }
 
+  /**
+   * Returns the select clause defined for the underlying query.
+   * 
+   * @return the select clause defined for the underlying query
+   */
   public String getSelectClause() {
     return selectClause;
   }
 
+  /**
+   * Defines a select clause for the underlying query.
+   * 
+   * @param selectClause
+   *          the select clause to be used by the underlying query.
+   */
   public void setSelectClause(String selectClause) {
     this.selectClause = selectClause;
   }
 
+  /**
+   * Sets the type of the underlying query.
+   * 
+   * @param queryType
+   *          the type of the underlying query
+   */
   public void setQueryType(String queryType) {
     this.queryType = queryType;
   }
 
+  /**
+   * Returns the type of the underlying query.
+   * 
+   * @return a String with the type of the underlying query
+   */
   public String getQueryType() {
     return this.queryType;
+  }
+
+  void setPoolName(String poolName) {
+    this.poolName = poolName;
   }
 }
