@@ -213,9 +213,8 @@ public class DalSessionFactory implements SessionFactory {
    */
   @Override
   public Session openSession(Connection connection) {
-    final Session session = delegateSessionFactory.openSession(connection);
-    initializeDBSessionInfo((SessionImplementor) session);
-    return session;
+    // no need to initialize audit info for current connection: it's already done
+    return delegateSessionFactory.openSession(connection);
   }
 
   /**
