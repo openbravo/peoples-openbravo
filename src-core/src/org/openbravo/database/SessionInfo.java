@@ -192,6 +192,9 @@ public class SessionInfo {
     PreparedStatement psCleanUp = null;
     PreparedStatement psInsert = null;
     try {
+      // When working with DAL sessionConnection is not set. This allows to have in the same thread
+      // a connection for DAL within its session with autocommit false and another one for sqlc with
+      // autocommit true.
       boolean infoModified = Boolean.TRUE.equals(changedInfo.get())
           || !conn.equals(sessionConnection.get());
       if (!infoModified || Boolean.FALSE.equals(auditThisThread.get()) || conn.isReadOnly()) {
