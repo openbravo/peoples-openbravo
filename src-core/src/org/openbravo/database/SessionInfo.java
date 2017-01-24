@@ -151,7 +151,7 @@ public class SessionInfo {
    *             whether it is no longer needed because of this automatic mechanism or if it is
    *             required because new mechanism doesn't detect it (ie. DB modifications directly
    *             with jdbc), in which case saveContextInfoIntoDB method is recommended to make
-   *             splicit in the code this need
+   *             explicit in the code this need
    * @see #saveContextInfoIntoDB(Connection)
    */
   static void setDBSessionInfo(Connection conn, boolean onlyIfChanged) {
