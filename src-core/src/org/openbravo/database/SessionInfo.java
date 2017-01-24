@@ -218,7 +218,11 @@ public class SessionInfo {
       psInsert.setString(3, SessionInfo.getProcessType());
       psInsert.setString(4, SessionInfo.getProcessId());
       psInsert.executeUpdate();
-      changedInfo.set(false);
+      if (conn.equals(sessionConnection.get())) {
+        // Handling only for the sqlc connection, as DAL should be automatically handled so that
+        // this method is invoked only once.
+        changedInfo.set(false);
+      }
     } catch (Exception e) {
       log4j.error("Error setting audit info", e);
     } finally {
