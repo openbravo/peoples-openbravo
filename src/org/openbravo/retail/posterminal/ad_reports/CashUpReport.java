@@ -42,7 +42,6 @@ import net.sf.jasperreports.engine.data.ListOfArrayDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.hibernate.Query;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -63,7 +62,6 @@ public class CashUpReport extends HttpSecureAppServlet {
   private Instance<CashupReportHook> cashupReportHooks;
 
   private static final long serialVersionUID = 1L;
-  private static final Logger log = Logger.getLogger(CashUpReport.class);
 
   @Override
   @SuppressWarnings("unchecked")
@@ -72,7 +70,6 @@ public class CashUpReport extends HttpSecureAppServlet {
     FieldProvider[] data;
     VariablesSecureApp vars;
     HashMap<String, String> psData;
-    String reconIds;
     String cashupId;
     String processId;
     String outputType;
@@ -111,7 +108,6 @@ public class CashUpReport extends HttpSecureAppServlet {
     hashMapCashToKeepList = new ArrayList<HashMap<String, String>>();
     hashMapCashToDepositList = new ArrayList<HashMap<String, String>>();
 
-    reconIds = new String();
     vars = new VariablesSecureApp(request);
     cashupId = vars.getStringParameter("inpobposAppCashupId");
     processId = vars.getStringParameter("inpProcessId");
