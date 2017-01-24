@@ -227,7 +227,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       Order order = null;
       OrderLine orderLine = null;
       ShipmentInOut shipment = null;
-      FIN_PaymentSchedule paymentSchedule = null;
       Invoice invoice = null;
       boolean createInvoice = false;
       boolean wasPaidOnCredit = false;
