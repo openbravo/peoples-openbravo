@@ -650,15 +650,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     return false;
   }
 
-  private String getPaymentDescription() {
-    if (paymentDescription == null) {
-      String language = RequestContext.get().getVariablesSecureApp().getLanguage();
-      paymentDescription = Utility.messageBD(new DalConnectionProvider(false), "OrderDocumentno",
-          language);
-    }
-    return paymentDescription;
-  }
-
   private DocumentType getPaymentDocumentType(Organization org) {
     if (paymentDocTypes.get(org.getId()) != null) {
       return paymentDocTypes.get(org.getId());
