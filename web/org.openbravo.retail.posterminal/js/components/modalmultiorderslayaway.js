@@ -72,6 +72,7 @@ enyo.kind({
     }
     currentOrder.set('amountToLayaway', amount);
     currentOrder.setOrderType(null, 2);
+    currentOrder.trigger('amountToLayaway');
     this.doHideThisPopup();
   },
   init: function (model) {
