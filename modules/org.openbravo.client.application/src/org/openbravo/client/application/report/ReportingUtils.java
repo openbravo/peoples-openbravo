@@ -36,6 +36,7 @@ import java.util.Map.Entry;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -1344,15 +1345,15 @@ public class ReportingUtils {
       try {
         preferenceValue = Preferences.getPreferenceValue("ExcelExportFormat", true,
             context.getCurrentClient(), context.getCurrentOrganization(), context.getUser(),
-            context.getRole(), null).toLowerCase();
+            context.getRole(), null);
       } catch (Exception e) {
         // preference not found: return default excel format
       }
     } finally {
       OBContext.restorePreviousMode();
     }
-    if (ExportType.XLS.getExtension().equals(preferenceValue)
-        || ExportType.XLSX.getExtension().equals(preferenceValue)) {
+    if (ExportType.XLS.hasExtension(preferenceValue)
+        || ExportType.XLSX.hasExtension(preferenceValue)) {
       return preferenceValue;
     }
     return ExportType.XLSX.getExtension();
@@ -1515,6 +1516,22 @@ public class ReportingUtils {
         throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_UnsupportedAction",
             new String[] { action }));
       }
+    }
+
+    /**
+     * Checks if the extension of the the ExportType is the same as the one passed as parameter.
+     * This method is case-insensitive.
+     * 
+     * @param fileExtension
+     *          a String containing a file extension name.
+     * @return true if the extension of the ExportType is the same as the one passed as parameter,
+     *         false otherwise.
+     */
+    public boolean hasExtension(String fileExtension) {
+      if (StringUtils.isEmpty(fileExtension)) {
+        return false;
+      }
+      return extension.equals(fileExtension.toLowerCase());
     }
 
     /**
