@@ -689,10 +689,10 @@ enyo.kind({
           cashUpId: OB.POS.modelterminal.get('terminal').cashUpId,
           terminalSlave: OB.POS.modelterminal.get('terminal').isslave
         }, function (data) {
+          OB.UTIL.SynchronizationHelper.finished(synchId, "tabpostprintclose");
           if (data && !data.exception) {
             me.owner.$.cashMaster.updateCashUpModel(model, data, function () {
               me.cashUpReportChanged(model.get('cashUpReport').at(0));
-              OB.UTIL.SynchronizationHelper.finished(synchId, "tabpostprintclose");
             });
           }
         });
