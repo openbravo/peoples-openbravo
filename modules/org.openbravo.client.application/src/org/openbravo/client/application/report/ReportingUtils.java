@@ -1433,29 +1433,33 @@ public class ReportingUtils {
       }
     });
     private final String extension;
-    private final String fileType;
+    private final String contentType;
     private final Map<String, Object> params;
 
     ExportType(String extension, String strFileTypeId, Map<String, Object> params) {
       this.extension = extension;
+      this.contentType = getContentType(strFileTypeId);
+      this.params = params;
+    }
+
+    private String getContentType(String fileTypeId) {
       OBContext.setAdminMode(true);
       try {
-        FileType type = OBDal.getReadOnlyInstance().get(FileType.class, strFileTypeId);
+        FileType type = OBDal.getReadOnlyInstance().get(FileType.class, fileTypeId);
         if (type != null) {
-          fileType = type.getFormat();
+          return type.getFormat();
         } else {
           if ("html".equals(extension) || "csv".equals(extension)) {
-            fileType = "text/" + extension;
+            return "text/" + extension;
           } else if ("xlsx".equals(extension)) {
-            fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
           } else {
-            fileType = "application/" + extension;
+            return "application/" + extension;
           }
         }
       } finally {
         OBContext.restorePreviousMode();
       }
-      this.params = params;
     }
 
     /**
@@ -1469,7 +1473,7 @@ public class ReportingUtils {
      * @return a String with the content type.
      */
     public String getContentType() {
-      return fileType;
+      return contentType;
     }
 
     /**
