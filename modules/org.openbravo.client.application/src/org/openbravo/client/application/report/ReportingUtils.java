@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -45,6 +45,7 @@ import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.utility.FileType;
@@ -68,7 +69,9 @@ import net.sf.jasperreports.engine.export.HtmlExporter;
 import net.sf.jasperreports.engine.export.JRCsvExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRTextExporter;
+import net.sf.jasperreports.engine.export.JRXlsAbstractExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRSwapFile;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
@@ -82,6 +85,7 @@ import net.sf.jasperreports.export.SimpleTextExporterConfiguration;
 import net.sf.jasperreports.export.SimpleTextReportConfiguration;
 import net.sf.jasperreports.export.SimpleWriterExporterOutput;
 import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
+import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
 import net.sf.jasperreports.export.type.HtmlSizeUnitEnum;
 import net.sf.jasperreports.j2ee.servlets.ImageServlet;
 import net.sf.jasperreports.web.util.WebHtmlResourceHandler;
@@ -348,7 +352,10 @@ public class ReportingUtils {
       saveTxtReportToFile(jasperPrint, target);
       break;
     case XLS:
-      saveExcelReportToFile(jasperPrint, exportParameters, target);
+      saveExcelReportToFile(new JRXlsExporter(), jasperPrint, exportParameters, target);
+      break;
+    case XLSX:
+      saveExcelReportToFile(new JRXlsxExporter(), jasperPrint, exportParameters, target);
       break;
     case XML:
       JasperExportManager.exportReportToXmlFile(jasperPrint, target.getAbsolutePath(), true);
@@ -389,7 +396,12 @@ public class ReportingUtils {
       saveTxtReportToOutputStream(jasperPrint, outputStream);
       break;
     case XLS:
-      saveExcelReportToOutputStream(jasperPrint, exportParameters, outputStream);
+      saveExcelReportToOutputStream(new JRXlsExporter(), jasperPrint, exportParameters,
+          outputStream);
+      break;
+    case XLSX:
+      saveExcelReportToOutputStream(new JRXlsxExporter(), jasperPrint, exportParameters,
+          outputStream);
       break;
     case XML:
       JasperExportManager.exportReportToXmlStream(jasperPrint, outputStream);
@@ -533,7 +545,7 @@ public class ReportingUtils {
   }
 
   /**
-   * Generates an XLS report from a pre-compiled report and returns it into a file.
+   * Generates an Excel report from a pre-compiled report and returns it into a file.
    * 
    * @param jasperPrint
    *          JasperPrint object which contains a compiled report.
@@ -545,9 +557,9 @@ public class ReportingUtils {
    *           In case there is any error generating the report an exception is thrown with the
    *           error message.
    */
-  private static void saveExcelReportToFile(JasperPrint jasperPrint,
-      Map<Object, Object> exportParameters, File file) throws JRException {
-    final JRXlsExporter excelExporter = new JRXlsExporter();
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+  private static void saveExcelReportToFile(JRXlsAbstractExporter excelExporter,
+      JasperPrint jasperPrint, Map<Object, Object> exportParameters, File file) throws JRException {
     SimpleExporterInput exporterInput = new SimpleExporterInput(jasperPrint);
     SimpleOutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(file);
 
@@ -566,7 +578,7 @@ public class ReportingUtils {
   }
 
   /**
-   * Generates an XLS report from a pre-compiled report and returns it into an output stream.
+   * Generates an Excel report from a pre-compiled report and returns it into an output stream.
    * 
    * @param jasperPrint
    *          JasperPrint object which contains a compiled report.
@@ -578,9 +590,10 @@ public class ReportingUtils {
    *           In case there is any error generating the report an exception is thrown with the
    *           error message.
    */
-  private static void saveExcelReportToOutputStream(JasperPrint jasperPrint,
-      Map<Object, Object> exportParameters, OutputStream outputStream) throws JRException {
-    final JRXlsExporter excelExporter = new JRXlsExporter();
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+  private static void saveExcelReportToOutputStream(JRXlsAbstractExporter excelExporter,
+      JasperPrint jasperPrint, Map<Object, Object> exportParameters, OutputStream outputStream)
+      throws JRException {
     SimpleExporterInput exporterInput = new SimpleExporterInput(jasperPrint);
     SimpleOutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
         outputStream);
@@ -617,6 +630,30 @@ public class ReportingUtils {
       SimpleOutputStreamExporterOutput exporterOutput,
       SimpleXlsReportConfiguration exportConfiguration) throws JRException {
     final JRXlsExporter excelExporter = new JRXlsExporter();
+    excelExporter.setExporterInput(exporterInput);
+    excelExporter.setExporterOutput(exporterOutput);
+    excelExporter.setConfiguration(exportConfiguration);
+    excelExporter.exportReport();
+  }
+
+  /**
+   * Generates an XLSX report using the SimpleExporterInput, SimpleOutputStreamExporterOutput and
+   * SimpleXlsxReportConfiguration received as parameters.
+   * 
+   * @param exporterInput
+   *          SimpleExporterInput object with the input data.
+   * @param exporterOutput
+   *          SimpleOutputStreamExporterOutput object with the output data.
+   * @param exportConfiguration
+   *          SimpleXlsxReportConfiguration with the configuration data.
+   * @throws JRException
+   *           In case there is any error generating the report an exception is thrown with the
+   *           error message.
+   */
+  public static void saveExcelReport(SimpleExporterInput exporterInput,
+      SimpleOutputStreamExporterOutput exporterOutput,
+      SimpleXlsxReportConfiguration exportConfiguration) throws JRException {
+    final JRXlsxExporter excelExporter = new JRXlsxExporter();
     excelExporter.setExporterInput(exporterInput);
     excelExporter.setExporterOutput(exporterOutput);
     excelExporter.setConfiguration(exportConfiguration);
@@ -1299,6 +1336,28 @@ public class ReportingUtils {
     return localMask.replace(strTmpDecSymbol, ".");
   }
 
+  public static String getExcelExportFormat() {
+    OBContext context = OBContext.getOBContext();
+    String preferenceValue = "";
+    try {
+      OBContext.setAdminMode(true);
+      try {
+        preferenceValue = Preferences.getPreferenceValue("ExcelExportFormat", true,
+            context.getCurrentClient(), context.getCurrentOrganization(), context.getUser(),
+            context.getRole(), null).toLowerCase();
+      } catch (Exception e) {
+        // preference not found: return default excel format
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    if (ExportType.XLS.getExtension().equals(preferenceValue)
+        || ExportType.XLSX.getExtension().equals(preferenceValue)) {
+      return preferenceValue;
+    }
+    return ExportType.XLSX.getExtension();
+  }
+
   /**
    * enum with the supported Export Outputs. Includes custom properties to be used when the report
    * is generated.
@@ -1307,7 +1366,7 @@ public class ReportingUtils {
     // When IS_IGNORE_PAGINATION is set to true, the report-filling engine will generate the
     // document on a single, very long page. Running the generated report to any output format, a
     // single page document will be visualized. This is the desired behavior for some document
-    // types, such as HTML, XML or XLS.
+    // types, such as HTML, XML, XLS or XLSX.
     // This flag should be false for documents with page-oriented layout, like PDF, to allow the
     // possibility to navigate between pages.
     /**
@@ -1356,6 +1415,15 @@ public class ReportingUtils {
       }
     }), //
     /**
+     * XLSX export type
+     */
+    @SuppressWarnings("serial")
+    XLSX("xlsx", "", new HashMap<String, Object>() {
+      {
+        put("IS_IGNORE_PAGINATION", true);
+      }
+    }), //
+    /**
      * XML export type
      */
     @SuppressWarnings("serial")
@@ -1378,6 +1446,8 @@ public class ReportingUtils {
         } else {
           if ("html".equals(extension) || "csv".equals(extension)) {
             fileType = "text/" + extension;
+          } else if ("xlsx".equals(extension)) {
+            fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
           } else {
             fileType = "application/" + extension;
           }
@@ -1433,6 +1503,8 @@ public class ReportingUtils {
         return ExportType.TXT;
       } else if ("XLS".equals(action)) {
         return ExportType.XLS;
+      } else if ("XLSX".equals(action)) {
+        return ExportType.XLSX;
       } else if ("XML".equals(action)) {
         return ExportType.XML;
       } else {
