@@ -1488,7 +1488,8 @@ public class ReportingUtils {
     }
 
     /**
-     * Returns the corresponding ExportType item based on the action.
+     * Returns the corresponding ExportType item based on the action. This method is
+     * case-insensitive.
      * 
      * @param action
      *          a String that defines the export type.
@@ -1498,19 +1499,19 @@ public class ReportingUtils {
      *           an exception is thrown with the error message.
      */
     public static ExportType getExportType(String action) throws OBException {
-      if ("CSV".equals(action)) {
+      if (ExportType.CSV.hasExtension(action)) {
         return ExportType.CSV;
-      } else if ("HTML".equals(action)) {
+      } else if (ExportType.HTML.hasExtension(action)) {
         return ExportType.HTML;
-      } else if ("PDF".equals(action)) {
+      } else if (ExportType.PDF.hasExtension(action)) {
         return ExportType.PDF;
-      } else if ("TXT".equals(action)) {
+      } else if (ExportType.TXT.hasExtension(action)) {
         return ExportType.TXT;
-      } else if ("XLS".equals(action)) {
+      } else if (ExportType.XLS.hasExtension(action)) {
         return ExportType.XLS;
-      } else if ("XLSX".equals(action)) {
+      } else if (ExportType.XLSX.hasExtension(action)) {
         return ExportType.XLSX;
-      } else if ("XML".equals(action)) {
+      } else if (ExportType.XML.hasExtension(action)) {
         return ExportType.XML;
       } else {
         throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_UnsupportedAction",

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2015 Openbravo SLU
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -107,7 +107,7 @@ public class JasperProcess implements Process {
         exportParameters = new HashMap<Object, Object>();
       if (strOutputType == null || strOutputType.equals(""))
         strOutputType = "html";
-      final ExportType expType = ExportType.getExportType(strOutputType.toUpperCase());
+      final ExportType expType = ExportType.getExportType(strOutputType);
       ReportingUtils.exportJR(strReportName, expType, designParameters, os, false, connection,
           new JRFieldProviderDataSource(data, vars.getJavaDateFormat()), exportParameters);
     } catch (Exception e) {

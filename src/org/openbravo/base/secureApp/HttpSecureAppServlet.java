@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Copyright (C) 2001-2017 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -1244,7 +1244,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         localExportParameters = new HashMap<Object, Object>();
       if (localStrOutputType == null || localStrOutputType.equals(""))
         localStrOutputType = "html";
-      final ExportType expType = ExportType.getExportType(localStrOutputType.toUpperCase());
+      final ExportType expType = ExportType.getExportType(localStrOutputType);
 
       if (localStrOutputType.equals("html")) {
         if (log4j.isDebugEnabled())
