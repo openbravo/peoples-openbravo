@@ -1354,7 +1354,7 @@ public class ReportingUtils {
     }
     if (ExportType.XLS.hasExtension(preferenceValue)
         || ExportType.XLSX.hasExtension(preferenceValue)) {
-      return preferenceValue;
+      return preferenceValue.toLowerCase();
     }
     return ExportType.XLSX.getExtension();
   }

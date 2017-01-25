@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -183,6 +183,8 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       expType = ExportType.PDF;
     } else if (strFileName.endsWith("." + ExportType.XLS.getExtension())) {
       expType = ExportType.XLS;
+    } else if (strFileName.endsWith("." + ExportType.XLSX.getExtension())) {
+      expType = ExportType.XLSX;
     } else {
       throw new IllegalArgumentException("Trying to download report file with unsupported type "
           + strFileName);
@@ -263,6 +265,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     String strJRPath = "";
     switch (expType) {
     case XLS:
+    case XLSX:
       if (report.isUsePDFAsXLSTemplate()) {
         strJRPath = report.getPDFTemplate();
       } else {
@@ -314,7 +317,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
         parameters.get("reportId"));
 
     doValidations(report, parameters, jsonContent);
-    final ExportType expType = ExportType.getExportType(action);
+    final ExportType expType = getExportType(action);
 
     String strFileName = getReportFileName(report, parameters, expType);
     String strTmpFileName = UUID.randomUUID().toString() + "." + expType.getExtension();
@@ -360,6 +363,13 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     final JSONArray actions = new JSONArray();
     actions.put(0, reportAction);
     result.put("responseActions", actions);
+  }
+
+  private ExportType getExportType(String action) {
+    if (ExportType.XLS.hasExtension(action)) {
+      return ExportType.getExportType(ReportingUtils.getExcelExportFormat());
+    }
+    return ExportType.getExportType(action);
   }
 
   /**

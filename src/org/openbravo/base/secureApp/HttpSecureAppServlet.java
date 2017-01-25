@@ -1195,7 +1195,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       HashMap<String, Object> designParameters, JRDataSource data,
       Map<Object, Object> exportParameters, boolean forceRefresh) throws ServletException {
     String localStrReportName = strReportName;
-    String localStrOutputType = strOutputType;
+    String localStrOutputType = getExportFormat(strOutputType);
     String localStrFileName = strFileName;
     Map<Object, Object> localExportParameters = exportParameters;
     HashMap<String, Object> localDesignParameters = designParameters;
@@ -1242,8 +1242,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       os = response.getOutputStream();
       if (localExportParameters == null)
         localExportParameters = new HashMap<Object, Object>();
-      if (localStrOutputType == null || localStrOutputType.equals(""))
-        localStrOutputType = "html";
+
       final ExportType expType = ExportType.getExportType(localStrOutputType);
 
       if (localStrOutputType.equals("html")) {
@@ -1259,6 +1258,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         ReportingUtils.exportJR(localStrReportName, expType, localDesignParameters, os, false,
             readOnlyCP, data, localExportParameters);
       } else if (localStrOutputType.equals("pdf") || localStrOutputType.equalsIgnoreCase("xls")
+          || localStrOutputType.equalsIgnoreCase("xlsx")
           || localStrOutputType.equalsIgnoreCase("txt")
           || localStrOutputType.equalsIgnoreCase("csv")) {
         reportId = UUID.randomUUID();
@@ -1297,6 +1297,16 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       } catch (final Exception e) {
       }
     }
+  }
+
+  private String getExportFormat(String outputType) {
+    if (outputType == null || outputType.equals("")) {
+      return ExportType.HTML.getExtension();
+    }
+    if (ExportType.XLS.hasExtension(outputType)) {
+      return ReportingUtils.getExcelExportFormat();
+    }
+    return outputType;
   }
 
   /**
