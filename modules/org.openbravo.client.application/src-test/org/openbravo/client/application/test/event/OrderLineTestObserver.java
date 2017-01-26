@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,8 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.Note;
+import org.openbravo.client.kernel.event.EntityDeleteEvent;
+import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBDal;
@@ -41,13 +43,14 @@ import org.openbravo.model.common.order.OrderLine;
 public class OrderLineTestObserver extends EntityPersistenceEventObserver {
   static final String FORCED_DESCRIPTION = "test description";
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(OrderLine.ENTITY_NAME) };
+  private static int executionCount = 0;
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
 
-    switch (DatasourceEventObserver.observerExecutionType) {
+    switch (ObserverBaseTest.observerExecutionType) {
     case OFF:
       return;
     case UPDATE_DESCRIPTION:
@@ -73,11 +76,53 @@ public class OrderLineTestObserver extends EntityPersistenceEventObserver {
       Order order = ((OrderLine) event.getTargetInstance()).getSalesOrder();
       order.setDescription(FORCED_DESCRIPTION);
       break;
+    case ON_NOOP:
+      break;
     }
+
+    executionCount++;
+  }
+
+  public void onNew(@Observes EntityNewEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+
+    switch (ObserverBaseTest.observerExecutionType) {
+    case ON_NOOP:
+      break;
+    default:
+      return;
+    }
+
+    executionCount++;
+  }
+
+  public void onDelete(@Observes EntityDeleteEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+
+    switch (ObserverBaseTest.observerExecutionType) {
+    case ON_NOOP:
+      break;
+    default:
+      return;
+    }
+
+    executionCount++;
   }
 
   @Override
   protected Entity[] getObservedEntities() {
     return entities;
+  }
+
+  static void resetExecutionCount() {
+    executionCount = 0;
+  }
+
+  static int getNumberOfExecutions() {
+    return executionCount;
   }
 }
