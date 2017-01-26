@@ -138,6 +138,21 @@ public class PaidReceipts extends JSONProcessSimple {
           paidReceiptLine.put("shipmentlines",
               hqlPropertiesShipLines.getJSONArray(paidReceiptsShipLinesQuery));
 
+          if (paidReceiptLine.has("goodsShipmentLine")
+              && !paidReceiptLine.getString("goodsShipmentLine").equals("null")) {
+            String hqlShipLines = "select ordLine.goodsShipmentLine.salesOrderLine.salesOrder.documentNo, ordLine.goodsShipmentLine.salesOrderLine.id "
+                + " from OrderLine as ordLine where ordLine.id = ? ";
+            OBDal.getInstance().getSession().createQuery(hqlShipLines);
+            Query shipLines = OBDal.getInstance().getSession().createQuery(hqlShipLines);
+            shipLines.setString(0, paidReceiptLine.getString("lineId"));
+
+            for (Object obj : shipLines.list()) {
+              Object[] line = (Object[]) obj;
+              paidReceiptLine.put("originalDocumentNo", line[0]);
+              paidReceiptLine.put("originalOrderLineId", line[1]);
+            }
+          }
+
           // promotions per line
           OBCriteria<OrderLineOffer> qPromotions = OBDal.getInstance().createCriteria(
               OrderLineOffer.class);
