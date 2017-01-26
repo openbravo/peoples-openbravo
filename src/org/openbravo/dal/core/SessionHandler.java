@@ -681,7 +681,7 @@ public class SessionHandler implements OBNotSingleton {
       removeConnection(pool);
       setUnavailablePool(pool);
       try {
-        if (con == null || !con.isClosed()) {
+        if (con != null && !con.isClosed()) {
           con.close();
         }
         log.debug("Closing session");
