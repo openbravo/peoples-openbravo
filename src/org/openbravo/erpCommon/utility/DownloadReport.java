@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -61,6 +61,8 @@ public class DownloadReport extends HttpSecureAppServlet {
       response.setContentType("text/plain");
     } else if (extension.equalsIgnoreCase(".xls")) {
       response.setContentType("application/vnd.ms-excel");
+    } else if (extension.equalsIgnoreCase(".xlsx")) {
+      response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
     } else {
       response.setContentType("application/x-download");
     }
