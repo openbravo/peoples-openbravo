@@ -119,12 +119,9 @@ public class CostAdjustmentUtils {
   public static CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction transaction,
       CostAdjustment costAdjustmentHeader, BigDecimal costAdjusted, boolean isSource,
       Date accountingDate) {
-    final Organization orgLegal = OBContext.getOBContext()
-        .getOrganizationStructureProvider(transaction.getClient().getId())
-        .getLegalEntity(transaction.getOrganization());
     Long stdPrecission = transaction.getCurrency().getStandardPrecision();
     CostAdjustmentLine costAdjustmentLine = OBProvider.getInstance().get(CostAdjustmentLine.class);
-    costAdjustmentLine.setOrganization(orgLegal != null ? orgLegal : transaction.getOrganization());
+    costAdjustmentLine.setOrganization(costAdjustmentHeader.getOrganization());
     costAdjustmentLine.setCostAdjustment(costAdjustmentHeader);
     if (costAdjusted == null) {
       costAdjustmentLine.setAdjustmentAmount(null);
