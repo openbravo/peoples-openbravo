@@ -670,9 +670,9 @@ public class SessionHandler implements OBNotSingleton {
     log.debug("Rolling back transaction in pool " + pool);
     Connection con = getConnection(pool);
     try {
-      checkInvariant(pool);
-      if (con == null || !con.isClosed()) {
-        getTransaction(pool).rollback();
+      Transaction trx = getTransaction(pool);
+      if ((con == null || !con.isClosed()) && trx != null) {
+        trx.rollback();
       }
     } catch (SQLException e) {
       log.error("Error while closing the connection in pool " + pool, e);
