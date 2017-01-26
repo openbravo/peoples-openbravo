@@ -364,30 +364,6 @@
           creationDate = new Date(normalizedCreationDate);
         }
 
-        currentReceipt.set('creationDate', normalizedCreationDate);
-        currentReceipt.set('movementDate', OB.I18N.normalizeDate(new Date()));
-        currentReceipt.set('accountingDate', OB.I18N.normalizeDate(new Date()));
-        currentReceipt.set('hasbeenpaid', 'Y');
-        me.context.get('multiOrders').trigger('integrityOk', currentReceipt);
-
-        if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-          OB.UTIL.calculateCurrentCash();
-          me.context.get('multiOrders').trigger('integrityOk', currentReceipt);
-          OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(currentReceipt.get('documentnoSuffix'), currentReceipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'));
-        }
-
-        delete currentReceipt.attributes.json;
-        currentReceipt.set('timezoneOffset', creationDate.getTimezoneOffset());
-        currentReceipt.set('created', creationDate.getTime());
-        currentReceipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
-        // multiterminal support
-        // be sure that the active terminal is the one set as the order proprietary
-        receipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
-        receipt.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
-
-        currentReceipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
-        currentReceipt.set('json', JSON.stringify(currentReceipt.serializeToJSON()));
-
         OB.trace('Executing pre order save hook.');
 
         OB.UTIL.HookManager.executeHooks('OBPOS_PreOrderSave', {
@@ -402,6 +378,30 @@
             OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
             return true;
           }
+
+          currentReceipt.set('creationDate', normalizedCreationDate);
+          currentReceipt.set('movementDate', OB.I18N.normalizeDate(new Date()));
+          currentReceipt.set('accountingDate', OB.I18N.normalizeDate(new Date()));
+          currentReceipt.set('hasbeenpaid', 'Y');
+          me.context.get('multiOrders').trigger('integrityOk', currentReceipt);
+
+          if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+            OB.UTIL.calculateCurrentCash();
+            me.context.get('multiOrders').trigger('integrityOk', currentReceipt);
+            OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(currentReceipt.get('documentnoSuffix'), currentReceipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'));
+          }
+
+          delete currentReceipt.attributes.json;
+          currentReceipt.set('timezoneOffset', creationDate.getTimezoneOffset());
+          currentReceipt.set('created', creationDate.getTime());
+          currentReceipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
+          // multiterminal support
+          // be sure that the active terminal is the one set as the order proprietary
+          receipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+          receipt.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
+
+          currentReceipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
+          currentReceipt.set('json', JSON.stringify(currentReceipt.serializeToJSON()));
 
           OB.trace('Saving receipt.');
 
