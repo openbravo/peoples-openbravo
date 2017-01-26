@@ -626,7 +626,7 @@ public class SessionHandler implements OBNotSingleton {
         "Triggers disabled, commit is not allowed when in triggers-disabled mode, "
             + "call TriggerHandler.enable() before committing");
 
-    checkInvariant();
+    checkInvariant(pool);
     flushRemainingChanges(pool);
     Transaction trx = getTransaction(pool);
     if (trx != null) {
@@ -695,10 +695,6 @@ public class SessionHandler implements OBNotSingleton {
   /**
    * The invariant is that for begin, rollback and commit the session etc. are alive
    */
-  private void checkInvariant() {
-    checkInvariant(DEFAULT_POOL);
-  }
-
   private void checkInvariant(String pool) {
     Check.isNotNull(sessions.get(pool), "Session is null");
     Transaction theTx = getTransaction(pool);
