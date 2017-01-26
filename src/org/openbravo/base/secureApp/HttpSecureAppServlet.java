@@ -1244,8 +1244,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         localExportParameters = new HashMap<Object, Object>();
 
       final ExportType expType = ExportType.getExportType(localStrOutputType);
+      ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
 
-      if (localStrOutputType.equals("html")) {
+      if (expType == ExportType.HTML) {
         if (log4j.isDebugEnabled())
           log4j.debug("JR: Print HTML");
         response.setHeader("Content-disposition", "inline" + "; filename=" + localStrFileName + "."
@@ -1254,17 +1255,12 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         String localAddress = HttpBaseUtils.getLocalAddress(request);
         localExportParameters.put(ReportingUtils.IMAGES_URI, localAddress
             + "/servlets/image?image={0}");
-        ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
         ReportingUtils.exportJR(localStrReportName, expType, localDesignParameters, os, false,
             readOnlyCP, data, localExportParameters);
-      } else if (localStrOutputType.equals("pdf") || localStrOutputType.equalsIgnoreCase("xls")
-          || localStrOutputType.equalsIgnoreCase("xlsx")
-          || localStrOutputType.equalsIgnoreCase("txt")
-          || localStrOutputType.equalsIgnoreCase("csv")) {
+      } else if (expType != ExportType.XML) {
         reportId = UUID.randomUUID();
         File outputFile = new File(globalParameters.strFTPDirectory + "/" + localStrFileName + "-"
             + (reportId) + "." + localStrOutputType);
-        ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
         ReportingUtils.exportJR(localStrReportName, expType, localDesignParameters, outputFile,
             false, readOnlyCP, data, localExportParameters);
         response.setContentType("text/html;charset=UTF-8");
