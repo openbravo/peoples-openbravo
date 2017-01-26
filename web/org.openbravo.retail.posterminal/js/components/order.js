@@ -1383,7 +1383,7 @@ enyo.kind({
       this.$.multiOrder_btninvoice.hide();
     }, this);
     var orderList = this.model.get('multiOrders').get('multiOrdersList');
-    orderList.on('reset add remove', function () {
+    orderList.on('reset add remove amountToLayaway', function () {
       me.total = _.reduce(me.model.get('multiOrders').get('multiOrdersList').models, function (memo, order) {
         return memo + ((!_.isUndefined(order.get('amountToLayaway')) && !_.isNull(order.get('amountToLayaway'))) ? order.get('amountToLayaway') : order.getPending());
       }, 0);
