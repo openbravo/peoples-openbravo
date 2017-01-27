@@ -80,6 +80,7 @@ public class SessionHandler implements OBNotSingleton {
 
   // The threadlocal which handles the session
   private static ThreadLocal<SessionHandler> sessionHandler = new ThreadLocal<SessionHandler>();
+  private static ThreadLocal<Boolean> checkingSessionDirty = new ThreadLocal<Boolean>();
 
   /**
    * Removes the current SessionHandler from the ThreadLocal. A call to getInstance will create a
@@ -178,6 +179,35 @@ public class SessionHandler implements OBNotSingleton {
       begin(thePool);
     }
     return sessions.get(thePool);
+  }
+
+  /**
+   * Checks whether current session is dirty (there are remaining changes to be sent to DB). Note
+   * {@link Session#isDirty()} should not be directly invoked because it triggers Entity Persistence
+   * Observers to be executed for modified entities. This method handles it so that they are not
+   * called.
+   */
+  public boolean isSessionDirty(String pool) {
+    try {
+      checkingSessionDirty.set(true);
+      return getSession(pool).isDirty();
+    } finally {
+      checkingSessionDirty.set(false);
+    }
+  }
+
+  /**
+   * Checks dirtiness for default session.
+   * 
+   * @see SessionHandler#isSessionDirty()
+   */
+  public boolean isSessionDirty() {
+    return isSessionDirty(DEFAULT_POOL);
+  }
+
+  /** Returns true when the session is in process of checking for dirtiness. */
+  static boolean isCheckingDirtySession() {
+    return Boolean.TRUE.equals(checkingSessionDirty.get());
   }
 
   protected void setSession(Session thisSession) {
@@ -642,7 +672,7 @@ public class SessionHandler implements OBNotSingleton {
     // during flush, flush several times until
     // the session is really cleaned up
     int countFlushes = 0;
-    while (OBDal.getInstance(pool).getSession().isDirty()) {
+    while (isSessionDirty(pool)) {
       OBDal.getInstance(pool).flush();
       countFlushes++;
       // arbitrary point to give up...

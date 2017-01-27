@@ -163,6 +163,11 @@ public class OBInterceptor extends EmptyInterceptor {
   @Override
   public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState,
       Object[] previousState, String[] propertyNames, Type[] types) {
+    if (SessionHandler.isCheckingDirtySession()) {
+      // onFlushDirty gets invoked on actual flushes but also when checking session dirty, in later
+      // case nothing should be done here.
+      return false;
+    }
 
     // this can happen when someone has set the id of an object but has not set the
     // new object to true
