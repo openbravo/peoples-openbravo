@@ -5299,12 +5299,19 @@
       });
     },
     removePayment: function (payment) {
-      var payments = this.get('payments');
-      payments.remove(payment);
-      if (payment.get('openDrawer')) {
-        this.set('openDrawer', false);
-      }
-      this.adjustPayment();
+      var me = this,
+          payments = this.get('payments');
+      OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePaymentMultiOrder', {
+        paymentToRem: payment,
+        payments: payments,
+        multiOrdersList: this.get('multiOrdersList')
+      }, function (args) {
+        args.payments.remove(args.paymentToRem);
+        if (args.paymentToRem.get('openDrawer')) {
+          me.set('openDrawer', false);
+        }
+        me.adjustPayment();
+      });
     },
     printGross: function () {
       return OB.I18N.formatCurrency(this.getTotal());

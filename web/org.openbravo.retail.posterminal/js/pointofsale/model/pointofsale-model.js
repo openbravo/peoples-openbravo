@@ -616,26 +616,28 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             payment.set('origAmount', OB.DEC.sub(payment.get('origAmount'), me.get('multiOrders').get('change')));
             me.get('multiOrders').set('change', OB.DEC.Zero);
           }
+          var paymentLine = new OB.Model.PaymentLine();
+          OB.UTIL.clone(payment, paymentLine);
           if (payment.get('origAmount') <= amountToPay) {
             var bigDecAmount = new BigDecimal(String(OB.DEC.mul(payment.get('origAmount'), paymentMethod.mulrate)));
-            iter.addPayment(new OB.Model.PaymentLine({
-              'kind': payment.get('kind'),
-              'name': payment.get('name'),
-              'amount': OB.DEC.toNumber(bigDecAmount),
-              'rate': paymentMethod.rate,
-              'mulrate': paymentMethod.mulrate,
-              'isocode': paymentMethod.isocode,
-              'allowOpenDrawer': payment.get('allowopendrawer'),
-              'isCash': payment.get('iscash'),
-              'openDrawer': payment.get('openDrawer'),
-              'printtwice': payment.get('printtwice')
-            }), function (iter) {
-              if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
-                iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), payment.get('origAmount')));
-              }
-              amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
-              iter.prepareToSend(prepareToSendCallback);
-              setPaymentsToReceipts(orderList, paymentList, orderListIndex, paymentListIndex + 1, callback);
+            paymentLine.set('amount', OB.DEC.toNumber(bigDecAmount));
+            paymentLine.set('rate', paymentMethod.rate);
+            paymentLine.set('mulrate', paymentMethod.mulrate);
+            paymentLine.set('isocode', paymentMethod.isocode);
+            paymentLine.set('allowOpenDrawer', payment.get('allowopendrawer'));
+            paymentLine.set('isCash', payment.get('iscash'));
+            OB.UTIL.HookManager.executeHooks('OBPOS_MultiOrderAddPaymentLine', {
+              paymentLine: paymentLine,
+              origPayment: payment
+            }, function (args) {
+              iter.addPayment(args.paymentLine, function (iter) {
+                if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
+                  iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), args.payment.get('origAmount')));
+                }
+                amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
+                iter.prepareToSend(prepareToSendCallback);
+                setPaymentsToReceipts(orderList, paymentList, orderListIndex, paymentListIndex + 1, callback);
+              });
             });
           } else {
             var bigDecAmountAux, amtAux;
@@ -648,25 +650,24 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               amtAux = OB.DEC.toNumber(bigDecAmountAux);
               paymentList.at(paymentListIndex).set('origAmount', OB.DEC.sub(paymentList.at(paymentListIndex).get('origAmount'), amountToPay));
             }
-
-            iter.addPayment(new OB.Model.PaymentLine({
-              'kind': payment.get('kind'),
-              'name': payment.get('name'),
-              'amount': amtAux,
-              'rate': paymentMethod.rate,
-              'mulrate': paymentMethod.mulrate,
-              'isocode': paymentMethod.isocode,
-              'allowOpenDrawer': payment.get('allowopendrawer'),
-              'isCash': payment.get('iscash'),
-              'openDrawer': payment.get('openDrawer'),
-              'printtwice': payment.get('printtwice')
-            }), function (iter) {
-              if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
-                iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), amtAux));
-              }
-              amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
-              iter.prepareToSend(prepareToSendCallback);
-              setPaymentsToReceipts(orderList, paymentList, orderListIndex + 1, 0, callback);
+            paymentLine.set('amount', amtAux);
+            paymentLine.set('rate', paymentMethod.rate);
+            paymentLine.set('mulrate', paymentMethod.mulrate);
+            paymentLine.set('isocode', paymentMethod.isocode);
+            paymentLine.set('allowOpenDrawer', payment.get('allowopendrawer'));
+            paymentLine.set('isCash', payment.get('iscash'));
+            OB.UTIL.HookManager.executeHooks('OBPOS_MultiOrderAddPaymentLine', {
+              paymentLine: paymentLine,
+              origPayment: payment
+            }, function (args) {
+              iter.addPayment(args.paymentLine, function (iter) {
+                if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
+                  iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), amtAux));
+                }
+                amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
+                iter.prepareToSend(prepareToSendCallback);
+                setPaymentsToReceipts(orderList, paymentList, orderListIndex + 1, 0, callback);
+              });
             });
           }
         } else {
