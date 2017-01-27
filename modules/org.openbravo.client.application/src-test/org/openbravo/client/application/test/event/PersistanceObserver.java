@@ -38,7 +38,7 @@ public class PersistanceObserver extends ObserverBaseTest {
     observerExecutionType = ObserverExecutionType.CREATE_NOTE;
     OrderLine ol = pickARandomOrderLine();
     updateLineDescription(ol);
-    OBDal.getInstance().getSession().isDirty();
+    OBDal.getInstance().isSessionDirty();
     OBContext.restorePreviousMode();
     OBDal.getInstance().rollbackAndClose();
     assertThat("Observer executions", OrderLineTestObserver.getNumberOfExecutions(), is(0));
@@ -52,7 +52,7 @@ public class PersistanceObserver extends ObserverBaseTest {
     OBDal.getInstance().save(ol);
     assertThat("Observer executions", OrderLineTestObserver.getNumberOfExecutions(), is(1));
 
-    OBDal.getInstance().getSession().isDirty();
+    OBDal.getInstance().isSessionDirty();
     OBContext.restorePreviousMode();
     OBDal.getInstance().rollbackAndClose();
     assertThat("Observer executions", OrderLineTestObserver.getNumberOfExecutions(), is(1));
@@ -67,7 +67,7 @@ public class PersistanceObserver extends ObserverBaseTest {
 
     assertThat("Observer executions", OrderLineTestObserver.getNumberOfExecutions(), is(1));
 
-    OBDal.getInstance().getSession().isDirty();
+    OBDal.getInstance().isSessionDirty();
     OBContext.restorePreviousMode();
     OBDal.getInstance().rollbackAndClose();
     assertThat("Observer executions", OrderLineTestObserver.getNumberOfExecutions(), is(1));
