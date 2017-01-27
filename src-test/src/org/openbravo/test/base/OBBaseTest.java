@@ -106,7 +106,6 @@ public class OBBaseTest {
           }
         }
       } catch (final Exception e) {
-        SessionHandler.getInstance().rollback();
         reportException(e);
         throw new OBException(e);
       } finally {

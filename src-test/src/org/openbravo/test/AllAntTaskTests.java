@@ -33,6 +33,7 @@ import org.openbravo.client.application.test.GenerateTypesJSTest;
 import org.openbravo.client.application.test.MenuTemplateTest;
 import org.openbravo.client.application.test.MenuTest;
 import org.openbravo.client.application.test.event.DatasourceEventObserver;
+import org.openbravo.client.application.test.event.PersistanceObserver;
 import org.openbravo.client.kernel.freemarker.test.FreemarkerTemplateProcessorTest;
 import org.openbravo.client.kernel.freemarker.test.GenerateComponentTest;
 import org.openbravo.client.kernel.freemarker.test.LabelTest;
@@ -139,7 +140,9 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ReadByNameTest.class, //
     AdminContextTest.class, //
     ViewTest.class, //
-    ComputedColumnsTest.class,
+    ComputedColumnsTest.class, //
+    DatasourceEventObserver.class, //
+    PersistanceObserver.class, //
 
     // expression
     EvaluationTest.class,
@@ -213,7 +216,6 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     GenerateTypesJSTest.class, //
     MenuTest.class, //
     MenuTemplateTest.class, //
-    DatasourceEventObserver.class, //
     DisplayLogicAtServerLevelTest.class, //
 
     // client kernel

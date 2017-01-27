@@ -206,6 +206,16 @@ public class OBDal implements OBNotSingleton {
   }
 
   /**
+   * Checks if the session associated with this DAL instance is dirty. Note isDirty method should
+   * not be directly invoked on the Session instance.
+   *
+   * @see SessionHandler#isSessionDirty(String)
+   */
+  public boolean isSessionDirty() {
+    return SessionHandler.getInstance().isSessionDirty(poolName);
+  }
+
+  /**
    * Commits the transaction and closes session.
    */
   public void commitAndClose() {
