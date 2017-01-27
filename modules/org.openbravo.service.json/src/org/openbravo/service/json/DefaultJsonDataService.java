@@ -941,7 +941,7 @@ public class DefaultJsonDataService implements JsonDataService {
         // flush again before refreshing, refreshing can
         // potentially remove any in-memory changes
         int countFlushes = 0;
-        while (OBDal.getInstance().getSession().isDirty()) {
+        while (OBDal.getInstance().isSessionDirty()) {
           OBDal.getInstance().flush();
           countFlushes++;
           // arbitrary point to give up...
