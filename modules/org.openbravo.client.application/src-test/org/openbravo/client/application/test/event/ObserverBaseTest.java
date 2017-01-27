@@ -45,8 +45,10 @@ public class ObserverBaseTest extends WeldBaseTest {
   }
 
   @Before
-  public void resetObserverCount() {
+  @Override
+  public void setUp() throws Exception {
     OrderLineTestObserver.resetExecutionCount();
+    super.setUp();
   }
 
   protected OrderLine pickARandomOrderLine() {
