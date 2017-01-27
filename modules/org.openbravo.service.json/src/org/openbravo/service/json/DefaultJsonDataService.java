@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -762,11 +762,27 @@ public class DefaultJsonDataService implements JsonDataService {
             break;
           }
         }
+        if (isOrganizationEntity(jsonObject)) {
+          for (String orgId : OBContext.getOBContext().getDeactivatedOrganizations()) {
+            if (orgId.equals(rowOrganization)) {
+              writable = true;
+              break;
+            }
+          }
+        }
         if (!writable) {
           jsonObject.put("_readOnly", true);
         }
       }
     }
+  }
+
+  private boolean isOrganizationEntity(JSONObject json) throws JSONException {
+    if (json.has(JsonConstants.ENTITYNAME)
+        && (Organization.ENTITY_NAME.equals(json.get(JsonConstants.ENTITYNAME)))) {
+      return true;
+    }
+    return false;
   }
 
   /**
