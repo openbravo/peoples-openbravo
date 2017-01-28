@@ -111,7 +111,6 @@ BEGIN
       PREQTYONHAND=PREQTYONHAND + COALESCE(p_preqty, 0),
       PREQTYORDERONHAND=PREQTYORDERONHAND + v_preqtyorder,
       AD_CLIENT_ID=p_client,
-      AD_ORG_ID=p_org,
       UPDATED=now(),
       UPDATEDBY=p_user
     WHERE M_PRODUCT_ID=p_product
