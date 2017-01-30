@@ -1476,22 +1476,7 @@ public class Wad extends DefaultHandler {
       xmlDocument.setParameter("keyParentT",
           Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
 
-      String keyTabName;
-      if ("Y".equals(parentsFieldsData[0].issecondarykey)) {
-        keyTabName = parentsFieldsData[0].tablename + "_ID";
-      } else {
-        keyTabName = parentsFieldsData[0].name;
-      }
-
-      xmlDocument.setParameter("keyParentTabINP", Sqlc.TransformaNombreColumna(WadUtility
-          .columnName(keyTabName, parentsFieldsData[0].tablemodule,
-              parentsFieldsData[0].columnmodule)));
-      xmlDocument.setParameter("keyParentINP", Sqlc.TransformaNombreColumna(WadUtility.columnName(
-          parentsFieldsData[0].name, parentsFieldsData[0].tablemodule,
-          parentsFieldsData[0].columnmodule)));
-
       xmlDocument.setParameter("parentTab", parentsFieldsData[0].adTabId);
-      xmlDocument.setParameter("parentTabName", parentsFieldsData[0].parentTabName);
       xmlDocument.setParameter("parentFieldID", parentsFieldsData[0].adFieldId);
     }
     xmlDocument.setParameter("keyData", Sqlc.TransformaNombreColumna(keyColumnName));

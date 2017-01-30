@@ -39,9 +39,6 @@
   <PARAMETER id="keyParentT" name = "keyParentT" default=" "/>
   <PARAMETER id="keyParentSimple" name = "keyParentSimple" default=" "/>
   <PARAMETER id="parentTab" name = "parentTab" default=" "/>
-  <PARAMETER id="parentTabName" name = "parentTabName" default=" "/>
-  <PARAMETER id="keyParentINP" name = "keyParentINP" default=" "/>
-  <PARAMETER id="keyParentTabINP" name = "keyParentTabINP" default=" "/>
   <PARAMETER id="defaultView" name = "defaultView" default=" "/>
   <PARAMETER id="keyData" name = "keyData" default=" "/>
   <PARAMETER id="grandfatherName" name = "grandfatherName" default=" "/>
@@ -58,9 +55,6 @@
   <PARAMETER id="orgId" name = "orgId" default=" "/>
   <PARAMETER id="clientId" name = "clientId" default=" "/>
   <PARAMETER id="parentClass" name = "parentClass" default=" "/>
-  
-
-  
   <PARAMETER id="paramCreateFromProcessId" name="createFromProcessId" default=""/>
   <PARAMETER id="paramPostedProcessId" name="postedProcessId" default=""/>
   <PARAMETER id="language" name="parentLanguage" default=""/>
