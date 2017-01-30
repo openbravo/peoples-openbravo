@@ -264,13 +264,6 @@
   <SECTION id="sectionDetailParamsPrevious"/>
 </structure>
 
-<structure name="structure36">
-  <FIELD id="fieldButtonText">realname</FIELD>
-  <FIELD id="fieldButtonListID">id</FIELD>
-  <FIELD id="fieldButtonID">columnname</FIELD>
-  <SECTION id="sectionButtonText"/>
-</structure>
-
 <structure name="structure38">
   <FIELD id="explicitAccess">id</FIELD>
   <SECTION id="sectionExplicitAccessProcess"/>

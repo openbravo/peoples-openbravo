@@ -1905,17 +1905,6 @@ public class Wad extends DefaultHandler {
     xmlDocument.setData("structure25", selCol);
     xmlDocument.setData("structure26", selCol);
 
-    // Button Fields
-    {
-      final FieldsData[] buttonData = FieldsData.selectButton(pool, strTab);
-      if (buttonData != null && buttonData.length > 0) {
-        for (int g = 0; g < buttonData.length; g++) {
-          buttonData[g].realname = Sqlc.TransformaNombreColumna(buttonData[g].realname);
-        }
-      }
-      xmlDocument.setData("structure36", buttonData);
-    }
-
     final StringBuffer controlsJavaSource = new StringBuffer();
     boolean needsComboTableData = false;
     for (int i = 0; i < allfields.length; i++) {
