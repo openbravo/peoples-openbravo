@@ -493,7 +493,8 @@ public class Wad extends DefaultHandler {
 
     if ((actBtns == null || actBtns.length == 0)
         && (actBtnsJava == null || actBtnsJava.length == 0)
-        && FieldsData.hasPostedButton(conn, tabId).equals("0")) {
+        && FieldsData.hasPostedButton(conn, tabId).equals("0")
+        && FieldsData.hasCreateFromButton(conn, tabId).equals("0")) {
       // No action buttons
       return false;
     }
