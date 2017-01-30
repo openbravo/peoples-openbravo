@@ -361,7 +361,7 @@ public class Wad extends DefaultHandler {
       if (generateWebXml) {
 
         if (!quick || WadData.genereteWebXml(wad.pool))
-          wad.processWebXml(fileWebXml, attachPath, webPath, generateWindowMap, generateTabMap);
+          wad.processWebXml(fileWebXml, attachPath, webPath, generateTabMap);
         else
           log4j.info("No changes in web.xml");
       }
@@ -766,8 +766,7 @@ public class Wad extends DefaultHandler {
    * @throws IOException
    */
   private void processWebXml(File fileWebXml, String attachPath, String webPath,
-      Map<String, Boolean> calculatedWindowMap, Map<String, Boolean> calculatedTabMap)
-      throws ServletException, IOException {
+      Map<String, Boolean> calculatedTabMap) throws ServletException, IOException {
     try {
       log4j.info("Processing web.xml");
       final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/webConf")
@@ -796,16 +795,9 @@ public class Wad extends DefaultHandler {
       xmlDocument.setData("structureContextParams", contextParams);
 
       WadData[] allTabs = WadData.selectAllTabs(pool);
-      Map<String, Boolean> generateTabMap = new HashMap<String, Boolean>();
 
-      // TODO: Rename to 'check'
-      // TODO: why do we call both 2nd time here (after main) ???
-      calculateWindowsToGenerate(pool, allTabs, calculatedWindowMap);
-      // calculate which tabs are needed
-      generateTabMap = calculateTabsToGenerate(pool, allTabs, calculatedTabMap);
-
-      xmlDocument.setData("structureServletTab", getTabServlets(allTabs, generateTabMap));
-      xmlDocument.setData("structureMappingTab", getTabMappings(allTabs, generateTabMap));
+      xmlDocument.setData("structureServletTab", getTabServlets(allTabs, calculatedTabMap));
+      xmlDocument.setData("structureMappingTab", getTabMappings(allTabs, calculatedTabMap));
 
       final WadData[] servlets = WadData.select(pool);
       WadData[][] servletParams = null;
