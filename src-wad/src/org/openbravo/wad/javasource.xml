@@ -42,9 +42,6 @@
   <PARAMETER id="table" name = "table" default=" "/>
   <PARAMETER id="paramTableId" name = "tableId" default=" "/>
   <PARAMETER id="from" name = "from" default=" "/>
-  <PARAMETER id="order" name = "order" default=" "/>
-  <PARAMETER id="where" name = "where" default=" "/>
-  <PARAMETER id="filter" name = "filter" default=" "/>
   <PARAMETER id="windowId" name = "windowId" default=" "/>
   <PARAMETER id="accessLevel" name = "accessLevel" default=" "/>
   <PARAMETER id="moduleId" name = "moduleId" default=" "/>
@@ -55,8 +52,6 @@
   <PARAMETER id="paramCreateFromProcessId" name="createFromProcessId" default=""/>
   <PARAMETER id="paramPostedProcessId" name="postedProcessId" default=""/>
   <PARAMETER id="language" name="parentLanguage" default=""/>
-  <PARAMETER id="whereClauseParams" name="whereClauseParams" default=""/>
-  <PARAMETER id="parentwhereclause" name="parentwhereclause" default=""/>
   <PARAMETER id="paramEditReference" name="editReference" default=""/>
   <PARAMETER id="paramReportPDF" name="reportPDF" default=""/>
   <PARAMETER id="paramReportDirectPrint" name="reportDirectPrint" default=""/>

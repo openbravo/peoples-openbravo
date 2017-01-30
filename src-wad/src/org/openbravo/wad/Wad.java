@@ -966,49 +966,6 @@ public class Wad extends DefaultHandler {
             + tableElement);
       }
       log4j.debug("Tables of select: " + strTables.toString());
-      final StringBuffer strWhere = new StringBuffer();
-      for (final Enumeration<Object> e = vecWhere.elements(); e.hasMoreElements();) {
-        final String whereElement = (String) e.nextElement();
-        strWhere.append((!whereElement.startsWith(" AND") ? " AND " : "") + whereElement);
-      }
-      String whereClauseParams = "";
-      if (!tabsData.whereclause.equals("")) {
-        final int totalParameters = vecTotalParameters.size();
-        strWhere.append(" AND " + WadUtility.buildSQL(tabsData.whereclause, vecTotalParameters));
-        if (totalParameters < vecTotalParameters.size()) {
-          ArrayList<String> usedParameters = new ArrayList<String>();
-          for (int h = totalParameters; h < vecTotalParameters.size(); h++) {
-            String strParam = WadUtility.getWhereParameter(vecTotalParameters.elementAt(h), false);
-            vecParameters.addElement(WadUtility.getWhereParameter(vecTotalParameters.elementAt(h),
-                true));
-            if (!usedParameters.contains(strParam)) {
-              usedParameters.add(strParam);
-              whereClauseParams += ", Utility.getContext(this, vars, \"" + strParam
-                  + "\", windowId)";
-            }
-          }
-        }
-      }
-      log4j.debug("Where of select: " + strWhere.toString());
-      final StringBuffer strOrder = new StringBuffer();
-      log4j.debug("Order Vector's Size: " + vecOrder.size());
-      if (tabsData.orderbyclause.equals("")) {
-        if (vecOrder.size() > 0)
-          strOrder.append(" ORDER BY ");
-        boolean first = true;
-        for (final Enumeration<Object> e = vecOrder.elements(); e.hasMoreElements();) {
-          final String orderElement = (String) e.nextElement();
-          log4j.debug("Order element: " + orderElement);
-          strOrder.append(((!first) ? ", " : "") + orderElement);
-          if (first)
-            first = false;
-        }
-      } else {
-        strOrder.append(" ORDER BY " + tabsData.orderbyclause);
-      }
-      log4j.debug("Order of select: " + strOrder.toString());
-      if (strOrder.toString().equals(""))
-        strOrder.append(" ORDER BY 1");
 
       EditionFieldsData[] selCol = EditionFieldsData.selectSerchFieldsSelection(pool, "",
           tabsData.tabid);
@@ -1024,13 +981,9 @@ public class Wad extends DefaultHandler {
       final File fileDir = new File(fileFin, javaPackage);
 
       int grandfatherTabIndex = -1;
-      String parentwhereclause = "";
       FieldsData auxFieldsData[] = null;
       if (parentTabIndex != -1 && allTabs != null && allTabs.length > 0) {
-        parentwhereclause = FieldsData.selectParentWhereClause(pool, allTabs[parentTabIndex].tabid);
         final Vector<Object> vecParametersParent = new Vector<Object>();
-        WadUtility.buildSQL(parentwhereclause, vecParametersParent);
-        parentwhereclause = "";
         if (vecParametersParent.size() > 0) {
           ArrayList<String> usedParameters = new ArrayList<String>();
           for (int h = 0; h < vecParametersParent.size(); h++) {
@@ -1038,8 +991,6 @@ public class Wad extends DefaultHandler {
 
             if (!usedParameters.contains(strParam)) {
               usedParameters.add(strParam);
-              parentwhereclause += ", Utility.getContext(this, vars, \"" + strParam
-                  + "\", windowId)";
             }
           }
         }
@@ -1093,11 +1044,10 @@ public class Wad extends DefaultHandler {
        * JAVA
        *************************************************/
       processTabJava(efd, efdauxiliar, parentsFieldsData, fileDir, tabsData.tabid, tabName,
-          tableName, windowName, keyColumnName, strTables.toString(), strOrder.toString(),
-          strWhere.toString(), tabsData.filterclause, vecFields, vecParameters, isSOTrx, allTabs,
-          tabsData.key, tabsData.accesslevel, selCol, isSecondaryKey, grandfatherField,
-          tabsData.tablevel, tabsData.tableId, tabsData.windowtype, tabsData.uipattern,
-          whereClauseParams, parentwhereclause, tabsData.editreference, strProcess, strDirectPrint,
+          tableName, windowName, keyColumnName, strTables.toString(), vecFields, vecParameters,
+          isSOTrx, allTabs, tabsData.key, tabsData.accesslevel, selCol, isSecondaryKey,
+          grandfatherField, tabsData.tablevel, tabsData.tableId, tabsData.windowtype,
+          tabsData.uipattern, tabsData.editreference, strProcess, strDirectPrint,
           vecTableParameters, fieldsData, gridControl, tabsData.javapackage,
           "Y".equals(tabsData.isdeleteable), tabsData.tabmodule);
 
@@ -1105,9 +1055,8 @@ public class Wad extends DefaultHandler {
        * XSQL
        *************************************************/
       processTabXSQL(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName, windowName,
-          keyColumnName, strFields.toString(), strTables.toString(), strOrder.toString(),
-          strWhere.toString(), vecParameters, tabsData.filterclause, selCol, tabsData.tablevel,
-          tabsData.windowtype, vecTableParameters, fieldsData, isSecondaryKey,
+          keyColumnName, strFields.toString(), strTables.toString(), vecParameters, selCol,
+          tabsData.tablevel, tabsData.windowtype, vecTableParameters, fieldsData, isSecondaryKey,
           tabsData.javapackage, vecFieldParameters);
 
     } catch (final ServletException e) {
@@ -1276,12 +1225,6 @@ public class Wad extends DefaultHandler {
    *          The name of the key column.
    * @param strTables
    *          String with the from clause.
-   * @param strOrder
-   *          String with the order clause.
-   * @param strWhere
-   *          String with the where clause.
-   * @param strFilter
-   *          String with the filter clause.
    * @param vecFields
    *          Vector with the fields of the tab.
    * @param vecParametersTop
@@ -1308,10 +1251,6 @@ public class Wad extends DefaultHandler {
    *          The tab's window type.
    * @param uiPattern
    *          The patter for the tab.
-   * @param whereClauseParams
-   *          Array of where clause's parameters.
-   * @param parentwhereclause
-   *          The where clause for the parent tab.
    * @param editReference
    *          The id of the manual tab for the edition mode.
    * @param strProcess
@@ -1330,15 +1269,14 @@ public class Wad extends DefaultHandler {
    */
   private void processTabJava(EditionFieldsData[] allfields, EditionFieldsData[] auxiliarsData,
       FieldsData[] parentsFieldsData, File fileDir, String strTab, String tabName,
-      String tableName, String windowName, String keyColumnName, String strTables, String strOrder,
-      String strWhere, String strFilter, Vector<Object> vecFields, Vector<Object> vecParametersTop,
-      String isSOTrx, TabsData[] allTabs, String strWindow, String accesslevel,
-      EditionFieldsData[] selCol, boolean isSecondaryKey, String grandfatherField, String tablevel,
-      String tableId, String windowType, String uiPattern, String whereClauseParams,
-      String parentwhereclause, String editReference, String strProcess, String strDirectPrint,
-      Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux,
-      WADControl relationControl, String javaPackage, boolean deleteable, String tabmodule)
-      throws ServletException, IOException {
+      String tableName, String windowName, String keyColumnName, String strTables,
+      Vector<Object> vecFields, Vector<Object> vecParametersTop, String isSOTrx,
+      TabsData[] allTabs, String strWindow, String accesslevel, EditionFieldsData[] selCol,
+      boolean isSecondaryKey, String grandfatherField, String tablevel, String tableId,
+      String windowType, String uiPattern, String editReference, String strProcess,
+      String strDirectPrint, Vector<Object> vecTableParametersTop,
+      FieldsData[] fieldsDataSelectAux, WADControl relationControl, String javaPackage,
+      boolean deleteable, String tabmodule) throws ServletException, IOException {
     log4j.debug("Processing java: " + strTab + ", " + tabName);
     XmlDocument xmlDocument;
     final boolean isHighVolumen = (FieldsData.isHighVolume(pool, strTab).equals("Y"));
@@ -1384,8 +1322,7 @@ public class Wad extends DefaultHandler {
       discard[19] = "sectionPosted";
     if (!(windowType.equalsIgnoreCase("T") && tablevel.equals("0")))
       discard[15] = "isTransactional";
-    if (strFilter.trim().equals(""))
-      discard[16] = "sectionFilter";
+
     if (uiPattern.equals("STD"))
       discard[17] = "sectionReadOnly";
     if (!editReference.equals(""))
@@ -1442,8 +1379,6 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("path", (!javaPackage.equals("") ? javaPackage.replace(".", "/") + "/"
         : "") + windowName);
     xmlDocument.setParameter("key", keyColumnName);
-    xmlDocument.setParameter("from", generateStaticWhere(strTables, vecTableParametersTop));
-    xmlDocument.setParameter("order", (!strOrder.equals("") ? strOrder.substring(9) : strOrder));
     final Vector<Object> vecTotalParameters = new Vector<Object>();
     for (int i = 0; i < vecTableParametersTop.size(); i++) {
       vecTotalParameters.addElement(vecTableParametersTop.elementAt(i));
@@ -1451,10 +1386,6 @@ public class Wad extends DefaultHandler {
     for (int i = 0; i < vecParametersTop.size(); i++) {
       vecTotalParameters.addElement(vecParametersTop.elementAt(i));
     }
-    xmlDocument.setParameter("where", generateStaticWhere(strWhere, vecParametersTop));
-    xmlDocument.setParameter("filter", strFilter);
-    xmlDocument.setParameter("whereClauseParams", whereClauseParams);
-    xmlDocument.setParameter("parentwhereclause", parentwhereclause);
     xmlDocument.setParameter("reportPDF", strProcess);
     xmlDocument.setParameter("reportDirectPrint", strDirectPrint);
     xmlDocument.setParameter("relationControl", relationControl.toJava());
@@ -1650,40 +1581,6 @@ public class Wad extends DefaultHandler {
   }
 
   /**
-   * Generates the where with the params as java vars, to put it in the java file to be used in all
-   * the internal searchs, like gotoFirstRow...
-   * 
-   * @param _strWhere
-   *          The tab's where clause
-   * @param vecParameters
-   *          Vector with the parameters for the where clause.
-   * @return String with the new static where clause.
-   */
-  private String generateStaticWhere(String _strWhere, Vector<Object> vecParameters) {
-    String strWhere = _strWhere;
-    final StringBuffer result = new StringBuffer();
-    if (strWhere == null || strWhere.equals(""))
-      return strWhere;
-    int pos = strWhere.indexOf("?");
-    int questNumber = 0;
-    while (pos != -1) {
-      result.append(strWhere.substring(0, pos));
-      strWhere = strWhere.substring(pos + 1);
-      String strParam = WadUtility.getWhereParameter(vecParameters.elementAt(questNumber), false);
-      questNumber++;
-      if (strParam.equalsIgnoreCase("paramLanguage"))
-        result.append(" '\" + vars.getLanguage() + \"' ");
-      else
-        result.append(" '\" + Utility.getContext(this, vars, \"" + strParam
-            + "\", windowId) + \"' ");
-      pos = strWhere.indexOf("?");
-    }
-    ;
-    result.append(strWhere);
-    return result.toString();
-  }
-
-  /**
    * Generates the xsql file for the tab
    * 
    * @param parentsFieldsData
@@ -1704,14 +1601,8 @@ public class Wad extends DefaultHandler {
    *          Select clause for the tab.
    * @param strTables
    *          From clause for the tab.
-   * @param strOrder
-   *          Order clause for the tab.
-   * @param strWhere
-   *          Where clause for the tab.
    * @param vecParametersTop
    *          Vector of where clause parameters.
-   * @param strFilter
-   *          Filter clause for the tab.
    * @param selCol
    *          Array with the selection columns.
    * @param tablevel
@@ -1727,11 +1618,10 @@ public class Wad extends DefaultHandler {
    */
   private void processTabXSQL(FieldsData[] parentsFieldsData, File fileDir, String strTab,
       String tabName, String tableName, String windowName, String keyColumnName, String strFields,
-      String strTables, String strOrder, String strWhere, Vector<Object> vecParametersTop,
-      String strFilter, EditionFieldsData[] selCol, String tablevel, String windowType,
-      Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux,
-      boolean isSecondaryKey, String javaPackage, Vector<String> vecFieldParameters)
-      throws ServletException, IOException {
+      String strTables, Vector<Object> vecParametersTop, EditionFieldsData[] selCol,
+      String tablevel, String windowType, Vector<Object> vecTableParametersTop,
+      FieldsData[] fieldsDataSelectAux, boolean isSecondaryKey, String javaPackage,
+      Vector<String> vecFieldParameters) throws ServletException, IOException {
     log4j.debug("Procesig xsql: " + strTab + ", " + tabName);
     XmlDocument xmlDocumentXsql;
     final String[] discard = { "", "", "", "", "", "", "", "", "", "", "" };
@@ -1761,8 +1651,6 @@ public class Wad extends DefaultHandler {
     }
     if (!(windowType.equalsIgnoreCase("T") && tablevel.equals("0")))
       discard[4] = "sectionTransactional";
-    if (strFilter.trim().equals(""))
-      discard[5] = "sectionFilter";
     if ((!(isSecondaryKey && !EditionFieldsData.isOrgKey(pool, strTab).equals("0")))
         || strTab.equals("170"))
       discard[7] = "hasOrgKey";
@@ -1797,9 +1685,7 @@ public class Wad extends DefaultHandler {
 
     // Relation select
     xmlDocumentXsql.setParameter("tables", strTables);
-    xmlDocumentXsql.setParameter("where", strWhere);
-    xmlDocumentXsql.setParameter("filter", strFilter);
-    xmlDocumentXsql.setParameter("order", strOrder);
+
     final StringBuffer strParameters = new StringBuffer();
     final StringBuffer strParametersFields = new StringBuffer();
 

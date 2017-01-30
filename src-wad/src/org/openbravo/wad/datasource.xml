@@ -31,11 +31,8 @@
   
   <PARAMETER id="fields" name = "fields" default=" "/>
   <PARAMETER id="tables" name = "tables" default=" "/>
-  <PARAMETER id="where" name = "where" default=" "/>
-  <PARAMETER id="filter" name = "filter" default=" "/>
   <PARAMETER id="parameters" name = "parameters" default=" "/>
   <PARAMETER id="parameterFields" name = "parameterFields" default=" "/>
-  <PARAMETER id="order" name = "order" default=" "/>
 
 <structure name="structure3">
   <FIELD id="fieldName3">Name</FIELD>
