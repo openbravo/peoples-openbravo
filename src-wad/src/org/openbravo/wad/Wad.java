@@ -1442,15 +1442,7 @@ public class Wad extends DefaultHandler {
     if (!isHighVolumen || !tablevel.equals("0")) {
       discard[3] = "sectionIsHighVolume";
     }
-    if (selCol == null || selCol.length == 0) {
-      discard[4] = "sectionIsHighVolume2";
-      discard[5] = "sectionIsHighVolume3";
-      discard[6] = "sectionIsHighVolume5";
-      discard[7] = "sectionIsHighVolumeEdit";
-      discard[8] = "sectionIsHighVolume2Edit";
-      discard[9] = "sectionIsHighVolume3Edit";
-      discard[14] = "sectionIsHighVolume4";
-    }
+
     if (isHighVolumen)
       discard[10] = "sectionNotIsHighVolume";
     if (isSecondaryKey)
@@ -1594,35 +1586,6 @@ public class Wad extends DefaultHandler {
 
     // UI Patter for edition toolbar
     xmlDocument.setParameter("uiPattern", uiPattern);
-
-    String strParamHighVolume = "", strHighVolumeComp = "";
-
-    String internalFilter = "(tableSQL.hasInternalFilter()";
-    String filter1 = "";
-    String filter2 = "";
-
-    if (selCol != null) {
-      for (int i = 0; i < selCol.length; i++) {
-        if (filter1.isEmpty()) {
-          internalFilter += " && ";
-        } else {
-          filter1 += " && ";
-        }
-        filter1 += "(\"\").equals(strParam" + selCol[i].columnname + ")";
-        filter2 += " || !((\"\").equals(strParam" + selCol[i].columnname
-            + ") || (\"%\").equals(strParam" + selCol[i].columnname + ")) ";
-
-        strParamHighVolume += "String strParam" + selCol[i].columnname
-
-        + " = vars.getSessionValue(tabId + \"|param" + selCol[i].columnname + "\");\n";
-        strHighVolumeComp += selCol[i].xmltext;
-      }
-    }
-
-    xmlDocument.setParameter("searchName", internalFilter + filter1 + ")" + filter2);
-    xmlDocument.setParameter("searchNameHighVolume", filter1);
-    xmlDocument.setParameter("searchVariables", strParamHighVolume);
-    xmlDocument.setParameter("searchComparations", strHighVolumeComp);
 
     if (WadUtility.findField(vecFields, "adClientId"))
       xmlDocument.setParameter("clientId", "data.adClientId");
@@ -1877,13 +1840,6 @@ public class Wad extends DefaultHandler {
     xmlDocument.setData("structure16java", actBtnsJava);
     xmlDocument.setData("structureActionBtnServiceJava", actBtnsJava);
     xmlDocument.setData("structureActionBtnServiceJavaSecuredProcess", actBtnsJava);
-
-    xmlDocument.setData("structure18", selCol);
-    xmlDocument.setData("structure20", selCol);
-    xmlDocument.setData("structure22", selCol);
-    xmlDocument.setData("structure24", selCol);
-    xmlDocument.setData("structure25", selCol);
-    xmlDocument.setData("structure26", selCol);
 
     final StringBuffer controlsJavaSource = new StringBuffer();
     boolean needsComboTableData = false;

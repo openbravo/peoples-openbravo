@@ -22,10 +22,6 @@
 
 <REPORT>
 <template file="javasource.javaxml" />
-<PARAMETER id="paramSearchName" name="searchName" default=""/>
-<PARAMETER id="paramSearchNameHighVolume" name="searchNameHighVolume" default=""/>
-<PARAMETER id="paramSearchVariables" name="searchVariables" default=""/>
-<PARAMETER id="paramSearchComparations" name="searchComparations" default=""/>
 <PARAMETER id="relationControl" name="relationControl" default=""/>
 <PARAMETER id="fieldControlsJavaCode" name="controlsJavaCode"/>
 
@@ -216,37 +212,6 @@
   <FIELD id="FieldsLoadParams3j">processParams</FIELD>
   <FIELD id="ProcessCode3j">processCode</FIELD>
   <SECTION id="sectionActionButtons3java"/>
-</structure>
-
-
-<structure name="structure18">
-  <FIELD id="searchName2">columnname</FIELD>
-  <SECTION id="sectionIsHighVolume2"/>
-</structure>
-
-<structure name="structure20">
-  <FIELD id="searchName5">columnnameinp</FIELD>
-  <SECTION id="sectionIsHighVolume5"/>
-</structure>
-
-<structure name="structure24">
-  <FIELD id="searchName10">columnname</FIELD>
-  <SECTION id="sectionIsHighVolume10"/>
-</structure>
-
-<structure name="structure25">
-  <FIELD id="searchName11">columnname</FIELD>
-  <SECTION id="sectionIsHighVolume11"/>
-</structure>
-
-<structure name="structure26">
-  <FIELD id="searchName12">columnname</FIELD>
-  <SECTION id="sectionIsHighVolume12"/>
-</structure>
-
-<structure name="structure22">
-  <FIELD id="searchName2Edit">columnname</FIELD>
-  <SECTION id="sectionIsHighVolume2Edit"/>
 </structure>
 
 <structure name="structure38">
