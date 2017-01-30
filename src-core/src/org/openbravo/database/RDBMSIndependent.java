@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2015 Openbravo S.L.U.
+ * Copyright (C) 2001-2017 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -60,10 +60,13 @@ public class RDBMSIndependent {
       strSql.append(sql);
 
     PreparedStatement st = null;
-    if (conn == null)
+    if (conn == null) {
+      SessionInfo.saveContextInfoIntoDB(connectionProvider.getConnection());
       st = connectionProvider.getPreparedStatement(strSql.toString());
-    else
+    } else {
+      SessionInfo.saveContextInfoIntoDB(conn);
       st = connectionProvider.getPreparedStatement(conn, strSql.toString());
+    }
     ResultSet result;
     Vector<String> total = new Vector<String>();
 

@@ -51,6 +51,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.database.ExternalConnectionPool;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 
@@ -253,6 +254,9 @@ public class OBDal implements OBNotSingleton {
   public void flush() {
     if (SessionHandler.isSessionHandlerPresent(poolName)) {
       long s1 = System.currentTimeMillis();
+      if (isSessionDirty()) {
+        SessionInfo.saveContextInfoIntoDB(getConnection(false));
+      }
       SessionHandler.getInstance().getSession(poolName).flush();
       if (log.isDebugEnabled()) {
         long s2 = System.currentTimeMillis();

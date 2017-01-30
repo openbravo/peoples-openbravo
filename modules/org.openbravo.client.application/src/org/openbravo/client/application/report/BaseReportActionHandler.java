@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -64,6 +64,7 @@ import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.userinterface.selector.reference.FKMultiSelectorUIDefinition;
 import org.openbravo.utils.FileUtility;
@@ -109,6 +110,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       }
       return;
     }
+    SessionInfo.auditThisThread(false);
     super.execute();
   }
 
