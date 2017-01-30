@@ -52,10 +52,6 @@
     <Field name="catchtext" value="void" />
     <Parameter name="tab"/>
   </SqlMethod>
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment>Create a registry</SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
   
   <SqlMethod name="tableKeyColumnName" type="preparedStatement" return="multiple">
       <SqlMethodComment>Name of the column key of the tab</SqlMethodComment>
@@ -286,18 +282,6 @@
     </Sql>
   </SqlMethod>
   
-  <SqlMethod name="isHighVolume" type="preparedStatement" return="String">
-    <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT ishighvolume FROM AD_TAB, AD_TABLE 
-      WHERE AD_TAB.ad_table_id = AD_TABLE.ad_table_id
-      AND AD_TAB.ad_tab_id=?
-      ]]>
-    </Sql>
-    <Parameter name="tab"/>
-  </SqlMethod>
-  
   <SqlMethod name="hasCreateFromButton" type="preparedStatement" return="String" default="0">
     <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
     <Sql>
@@ -427,24 +411,6 @@
     <Parameter name="tab"/>
   </SqlMethod>
 
-  <SqlMethod name="hasButtonFixed" type="preparedStatement" return="String" default="0">
-    <SqlMethodComment>Checks if the tab has action buttons</SqlMethodComment>
-    <Sql>
-      <![CDATA[
-          select count(*) as total
-        from ad_field f,
-             ad_column c
-       where f.ad_tab_id = ?
-         and f.ad_column_id = c.ad_column_id
-         and ad_reference_id = '28'
-         and f.ignoreinwad='N'
-         and f.isdisplayed = 'Y'
-         and f.isactive='Y'
-      ]]>
-    </Sql>
-    <Parameter name="tab"/>
-  </SqlMethod>
-  
    <SqlMethod name="explicitAccessProcess" type="preparedStatement" return="multiple">
     <Sql>
       <![CDATA[
@@ -458,6 +424,4 @@
     </Sql>
     <Parameter name="tab"/>
   </SqlMethod>
-  
-  
   </SqlClass>

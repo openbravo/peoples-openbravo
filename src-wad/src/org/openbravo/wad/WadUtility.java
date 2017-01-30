@@ -484,12 +484,6 @@ public class WadUtility {
         + Sqlc.TransformaNombreColumna(token) + "\""));
   }
 
-  public static boolean isSearchValueColumn(String name) {
-    if (name == null || name.equals(""))
-      return false;
-    return (name.equalsIgnoreCase("Value") || name.equalsIgnoreCase("DocumentNo"));
-  }
-
   private static void setPropertyValue(Properties _prop, FieldProvider _field, String _name,
       String _fieldName, String _defaultValue) throws Exception {
     String aux = "";
