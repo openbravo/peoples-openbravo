@@ -465,18 +465,6 @@ public class Wad extends DefaultHandler {
         log4j.info("Need to generate tab: " + tab.getField("tabname") + ",id: "
             + tab.getField("tabid") + ", level: " + tab.getField("tablevel"));
         res.put(tab.getField("tabid"), Boolean.TRUE);
-
-        if (!tab.getField("tablevel").equals("0")) {
-          // check path along parentTabs up to root and generate all those also
-          String parentTab = TabsData.selectParentTab(conn, tab.getField("tabid"));
-          while (parentTab != null && !parentTab.equals("")) {
-            TabsData theTab = TabsData.selectTabDebugData(conn, parentTab);
-            log4j.debug("Also generating parentTab: " + theTab.tabname + ", id: " + parentTab + " "
-                + theTab.tabname + ", level: " + theTab.tablevel);
-            res.put(parentTab, Boolean.TRUE);
-            parentTab = TabsData.selectParentTab(conn, parentTab);
-          }
-        }
       } else {
         // mark as not needed to compile
         res.put(tab.getField("tabid"), Boolean.FALSE);
