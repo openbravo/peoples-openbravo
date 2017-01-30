@@ -39,7 +39,6 @@ import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.wad.controls.WADControl;
-import org.openbravo.wad.controls.WADGrid;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.xmlEngine.XmlEngine;
 import org.xml.sax.helpers.DefaultHandler;
@@ -1015,24 +1014,6 @@ public class Wad extends DefaultHandler {
           strProcess = "/" + FormatUtilities.replace(strProcess);
         strDirectPrint = TabsData.directPrint(pool, tabsData.adProcessId);
       }
-      WADGrid gridControl = null;
-      {
-        final Properties gridProps = new Properties();
-        gridProps.setProperty("id", "grid");
-        gridProps.setProperty("NumRows", "20");
-        gridProps.setProperty("width", "99%");
-        gridProps.setProperty("ShowLineNumbers", "true");
-        gridProps.setProperty("editable", "false");
-        gridProps.setProperty("sortable", "true");
-        gridProps.setProperty("deleteable", (tabsData.uipattern.equals("STD") ? "true" : "false"));
-        gridProps.setProperty("onScrollFunction", "updateHeader");
-        gridProps.setProperty("onLoadFunction", "onGridLoadDo");
-        gridProps.setProperty("AD_Window_ID", tabsData.key);
-        gridProps.setProperty("AD_Tab_ID", tabsData.tabid);
-        gridProps.setProperty("ColumnName", keyColumnName);
-        gridProps.setProperty("inpKeyName", "inp" + Sqlc.TransformaNombreColumna(keyColumnName));
-        gridControl = new WADGrid(gridProps);
-      }
 
       /************************************************
        * JAVA
@@ -1042,8 +1023,8 @@ public class Wad extends DefaultHandler {
           isSOTrx, allTabs, tabsData.key, tabsData.accesslevel, selCol, isSecondaryKey,
           grandfatherField, tabsData.tablevel, tabsData.tableId, tabsData.windowtype,
           tabsData.uipattern, tabsData.editreference, strProcess, strDirectPrint,
-          vecTableParameters, fieldsData, gridControl, tabsData.javapackage,
-          "Y".equals(tabsData.isdeleteable), tabsData.tabmodule);
+          vecTableParameters, fieldsData, tabsData.javapackage, "Y".equals(tabsData.isdeleteable),
+          tabsData.tabmodule);
 
       /************************************************
        * XSQL
@@ -1255,8 +1236,6 @@ public class Wad extends DefaultHandler {
    *          Vector with parameters for the from clause of the query.
    * @param fieldsDataSelectAux
    *          Array with the auxiliar inputs info
-   * @param relationControl
-   *          Object with the WADGrid control
    * @param tabmodule
    * @throws ServletException
    * @throws IOException
@@ -1269,8 +1248,8 @@ public class Wad extends DefaultHandler {
       boolean isSecondaryKey, String grandfatherField, String tablevel, String tableId,
       String windowType, String uiPattern, String editReference, String strProcess,
       String strDirectPrint, Vector<Object> vecTableParametersTop,
-      FieldsData[] fieldsDataSelectAux, WADControl relationControl, String javaPackage,
-      boolean deleteable, String tabmodule) throws ServletException, IOException {
+      FieldsData[] fieldsDataSelectAux, String javaPackage, boolean deleteable, String tabmodule)
+      throws ServletException, IOException {
     log4j.debug("Processing java: " + strTab + ", " + tabName);
     XmlDocument xmlDocument;
     final boolean isHighVolumen = (FieldsData.isHighVolume(pool, strTab).equals("Y"));
@@ -1382,7 +1361,6 @@ public class Wad extends DefaultHandler {
     }
     xmlDocument.setParameter("reportPDF", strProcess);
     xmlDocument.setParameter("reportDirectPrint", strDirectPrint);
-    xmlDocument.setParameter("relationControl", relationControl.toJava());
 
     xmlDocument.setParameter("deleteable", deleteable ? "true" : "false");
 
