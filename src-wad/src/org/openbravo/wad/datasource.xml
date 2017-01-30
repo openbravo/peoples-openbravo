@@ -52,11 +52,6 @@
   <SECTION id="sectionActionSearchs"/>
 </structure>
 
-<structure name="structure13">
-  <FIELD id="searchName">columnname</FIELD>
-  <FIELD id="xmlfield">xsqltext</FIELD>
-  <SECTION id="sectionHighVolume"/>
-</structure>
 
 <structure name="structure16">
   <FIELD id="Reference16">reference</FIELD>

@@ -1627,20 +1627,8 @@ public class Wad extends DefaultHandler {
     if (tableName.toUpperCase().endsWith("_ACCESS")) {
       discard[6] = "client";
       discard[1] = "org";
-    } // else if (tableName.toUpperCase().startsWith("M_PRODUCT") ||
-    // tableName.toUpperCase().startsWith("C_BP") ||
-    // tableName.toUpperCase().startsWith("AD_ORG")) discard[1] = "org";
-
-    boolean isHighVolumen = (FieldsData.isHighVolume(pool, strTab).equals("Y"));
-    if (!isHighVolumen || !tablevel.equals("0")) {
-      discard[8] = "sectionIsHighVolume";
     }
 
-    if (selCol == null || selCol.length == 0) {
-      discard[2] = "sectionHighVolume";
-      discard[3] = "sectionHighVolume1";
-      discard[9] = "sectionIsHighVolume4";
-    }
     if (!(windowType.equalsIgnoreCase("T") && tablevel.equals("0")))
       discard[4] = "sectionTransactional";
     if ((!(isSecondaryKey && !EditionFieldsData.isOrgKey(pool, strTab).equals("0")))
