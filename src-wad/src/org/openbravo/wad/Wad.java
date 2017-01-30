@@ -410,7 +410,6 @@ public class Wad extends DefaultHandler {
         // new window -> check all tabs in that window
         boolean res = TabsData.selectShowWindowIn250ClassicMode(conn, tab.getField("key"));
         if (res) {
-          // TODO: final test
           log4j
               .error("Window: "
                   + tab.getField("windowname")
@@ -418,7 +417,6 @@ public class Wad extends DefaultHandler {
         } else {
           res = TabsData.selectShowWindowIn250ClassicModePreference(conn, tab.getField("key"));
           if (res) {
-            // TODO: what about those pref users? build validation?
             log4j
                 .error("Window: "
                     + tab.getField("windowname")
