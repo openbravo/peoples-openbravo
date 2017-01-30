@@ -81,42 +81,6 @@
   <SECTION id="sectionDetailgetEditVariables"/>
 </structure>
 
-<structure name="structure7">
-  <FIELD id="fieldNameParam">realname</FIELD>
-  <FIELD id="fieldInputNameParam">columnname</FIELD>
-  <FIELD id="paramName">name</FIELD>
-  <FIELD id="paramCode">defaultvalue</FIELD>
-  <SECTION id="sectionDetailParams"/>
-</structure>
-
-<structure name="structure8">
-
-  <FIELD id="fieldRealName8">realname</FIELD>
-  <FIELD id="fieldName8">Name</FIELD>
-  <FIELD id="fieldDefault8">xmltext</FIELD>
-  <SECTION id="sectionDetailParentSession"/>
-</structure>
-
-<structure name="structure9">
-
-  <FIELD id="fieldRealName9">realname</FIELD>
-  <FIELD id="fieldName9">name</FIELD>
-  <FIELD id="fieldDefault9">xmltext</FIELD>
-  <SECTION id="sectionDetailSession"/>
-</structure>
-
-<structure name="structure10">
-  <FIELD id="fieldNameParam2">realname</FIELD>
-  <FIELD id="fieldInputNameParam2">columnname</FIELD>
-  <SECTION id="sectionDetailParams2"/>
-</structure>
-
-<structure name="structure11">
-  <FIELD id="fieldParentNameParam">realname</FIELD>
-  <FIELD id="paramParentCode">defaultvalue</FIELD>
-  <SECTION id="sectionDetailParentParams"/>
-</structure>
-
 <structure name="structureActionBtnService">
   <FIELD id="ProcessIDsrv">adProcessId</FIELD>
   <FIELD id="ProcessModulesrv">adModuleId</FIELD>

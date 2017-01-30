@@ -1354,39 +1354,12 @@ public class Wad extends DefaultHandler {
     final boolean noActionButton = FieldsData.hasActionButton(pool, strTab).equals("0");
     final StringBuffer dl = new StringBuffer();
     final StringBuffer readOnlyLogic = new StringBuffer();
-    // Auxiliary fields of the window
-    final Vector<Object> vecAuxiliarFields = new Vector<Object>();
-    final FieldsData[] auxiliarFields = FieldsData.selectAuxiliar(pool, "", strTab);
-    if (auxiliarFields != null) {
-      for (int i = 0; i < auxiliarFields.length; i++) {
-        auxiliarFields[i].columnname = Sqlc.TransformaNombreColumna(auxiliarFields[i].columnname);
-        if (auxiliarFields[i].defaultvalue.toUpperCase().startsWith("@SQL=")) {
-          auxiliarFields[i].defaultvalue = tabName
-              + "Data.selectAux"
-              + auxiliarFields[i].reference
-              + "(this"
-              + WadUtility.getWadContext(auxiliarFields[i].defaultvalue, vecFields,
-                  vecAuxiliarFields, parentsFieldsData, false, isSOTrx, strWindow) + ")";
-        } else if (auxiliarFields[i].defaultvalue.indexOf("@") != -1) {
-          auxiliarFields[i].defaultvalue = WadUtility.getTextWadContext(
-              auxiliarFields[i].defaultvalue, vecFields, vecAuxiliarFields, parentsFieldsData,
-              false, isSOTrx, strWindow);
-        } else {
-          auxiliarFields[i].defaultvalue = "\"" + auxiliarFields[i].defaultvalue + "\"";
-        }
-        vecAuxiliarFields.addElement(auxiliarFields[i].name);
-      }
-    }
 
     {
       final Vector<Object> vecContext = new Vector<Object>();
       final Vector<Object> vecDL = new Vector<Object>();
       final EditionFieldsData[] efd = EditionFieldsData.selectDisplayLogic(pool, strTab);
-      if (efd != null) {
-        for (int i = 0; i < efd.length; i++)
-          WadUtility.displayLogic(efd[i].displaylogic, vecDL, parentsFieldsData, vecAuxiliarFields,
-              vecFields, strWindow, vecContext);
-      }
+
       for (int i = 0; i < vecContext.size(); i++) {
         dl.append("var str");
         dl.append(FormatUtilities.replace(vecContext.elementAt(i).toString()));
@@ -1407,11 +1380,7 @@ public class Wad extends DefaultHandler {
       final Vector<Object> vecContext = new Vector<Object>();
       final Vector<Object> vecDL = new Vector<Object>();
       final EditionFieldsData[] efd = EditionFieldsData.selectReadOnlyLogic(pool, strTab);
-      if (efd != null) {
-        for (int i = 0; i < efd.length; i++)
-          WadUtility.displayLogic(efd[i].readonlylogic, vecDL, parentsFieldsData,
-              vecAuxiliarFields, vecFields, strWindow, vecContext);
-      }
+
       for (int i = 0; i < vecContext.size(); i++) {
         readOnlyLogic.append("var str");
         readOnlyLogic.append(FormatUtilities.replace(vecContext.elementAt(i).toString()));
@@ -1701,86 +1670,7 @@ public class Wad extends DefaultHandler {
       vecFieldsSelect.copyInto(fieldsData);
     }
 
-    // Campos del Session actual
-    // Fields of the current Session
-    final FieldsData[] fieldsSession = FieldsData.selectSession(pool, strTab);
-    if (fieldsSession != null) {
-      for (int i = 0; i < fieldsSession.length; i++) {
-        fieldsSession[i].name = Sqlc.TransformaNombreColumna(fieldsSession[i].name);
-        if (fieldsSession[i].reference.equals("20")) {
-          fieldsSession[i].xmltext = ", \"N\"";
-        } else {
-          fieldsSession[i].xmltext = "";
-        }
-      }
-    }
-
-    // Fields of the parent Session
-    FieldsData[] fieldsParentSession = null;
-    FieldsData[] auxiliarPFields = null;
-    if (parentTab != -1) {
-      xmlDocument.setParameter("parentClass", FormatUtilities.replace(allTabs[parentTab].tabname)
-          + (allTabs[parentTab].tabmodule.equals("0") ? "" : allTabs[parentTab].tabid));
-      fieldsParentSession = FieldsData.selectSession(pool, allTabs[parentTab].tabid);
-      for (int i = 0; i < fieldsParentSession.length; i++) {
-        fieldsParentSession[i].name = Sqlc.TransformaNombreColumna(fieldsParentSession[i].name);
-        if (fieldsParentSession[i].reference.equals("20")) {
-          fieldsParentSession[i].xmltext = ", \"N\"";
-        } else {
-          fieldsParentSession[i].xmltext = "";
-        }
-      }
-      // Auxiliary fields of the parent
-      final Vector<Object> vecAuxiliarPFields = new Vector<Object>();
-      auxiliarPFields = FieldsData.selectAuxiliar(pool, "", allTabs[parentTab].tabid);
-      if (auxiliarPFields != null) {
-        for (int i = 0; i < auxiliarPFields.length; i++) {
-          auxiliarPFields[i].columnname = Sqlc
-              .TransformaNombreColumna(auxiliarPFields[i].columnname);
-          if (auxiliarPFields[i].defaultvalue.toUpperCase().startsWith("@SQL=")) {
-            auxiliarPFields[i].defaultvalue = FormatUtilities.replace(allTabs[parentTab].tabname)
-                + (allTabs[parentTab].tabmodule.equals("0") ? "" : allTabs[parentTab].tabid)
-                + "Data.selectAux"
-                + auxiliarPFields[i].reference
-                + "(this"
-                + WadUtility.getWadContext(auxiliarPFields[i].defaultvalue, vecFields,
-                    vecAuxiliarPFields, parentsFieldsData, false, isSOTrx, strWindow) + ")";
-          } else if (auxiliarPFields[i].defaultvalue.indexOf("@") != -1) {
-            auxiliarPFields[i].defaultvalue = WadUtility.getTextWadContext(
-                auxiliarPFields[i].defaultvalue, vecFields, vecAuxiliarPFields, parentsFieldsData,
-                false, isSOTrx, strWindow);
-          } else {
-            auxiliarPFields[i].defaultvalue = "\"" + auxiliarPFields[i].defaultvalue + "\"";
-          }
-          vecAuxiliarPFields.addElement(auxiliarPFields[i].name);
-        }
-      }
-    } else {
-      fieldsParentSession = FieldsData.set();
-      auxiliarPFields = FieldsData.set();
-    }
-
-    if (fieldsSession != null) {
-      for (int i = 0; i < fieldsSession.length; i++) {
-        if (!fieldsSession[i].columnname.equals("")) {
-          fieldsSession[i].referencevalue += "_" + fieldsSession[i].columnname;
-          fieldsSession[i].tablename = "TableDirValData";
-          fieldsSession[i].whereclause = ", Utility.getContext(this, vars, \"#User_Org\", windowId), Utility.getContext(this, vars, \"#User_Client\", windowId)";
-          fieldsSession[i].whereclause += WadUtility.getWadContext(fieldsSession[i].defaultvalue,
-              vecFields, vecAuxiliarFields, parentsFieldsData, false, isSOTrx, strWindow);
-          fieldsSession[i].whereclause += ", data[0]."
-              + Sqlc.TransformaNombreColumna(fieldsSession[i].name);
-        }
-      }
-    }
-
     xmlDocument.setData("structure1", fieldsData);
-
-    xmlDocument.setData("structure7", auxiliarFields);
-    xmlDocument.setData("structure8", fieldsParentSession);
-    xmlDocument.setData("structure9", fieldsSession);
-    xmlDocument.setData("structure10", auxiliarFields);
-    xmlDocument.setData("structure11", auxiliarPFields);
 
     // process action buttons
     xmlDocument.setData("structure14", actBtns);
