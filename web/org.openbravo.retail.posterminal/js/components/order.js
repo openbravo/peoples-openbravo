@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2016 Openbravo S.L.U.
+ * Copyright (C) 2013-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -384,7 +384,6 @@ enyo.kind({
     kind: 'OB.UI.ScrollableTable',
     name: 'listOrderLines',
     columns: ['product', 'quantity', 'price', 'gross'],
-    scrollAreaMaxHeight: '250px',
     renderLine: 'OB.UI.RenderOrderLine',
     renderEmpty: 'OB.UI.RenderOrderLineEmpty',
     //defined on redenderorderline.js
@@ -427,6 +426,7 @@ enyo.kind({
     }, {
       tag: 'li',
       components: [{
+        name: 'taxBreakdownDiv',
         style: 'padding: 10px; border-top: 1px solid #cccccc; height: 40px;',
         components: [{
           kind: 'OB.UI.TaxBreakdown',
@@ -478,6 +478,11 @@ enyo.kind({
   }],
   initComponents: function () {
     this.inherited(arguments);
+    var scrollMax = 250;
+    if (!OB.MobileApp.model.get('terminal').terminalType.showtaxbreakdown) {
+      scrollMax = scrollMax + 143;
+    }
+    this.$.listOrderLines.scrollAreaMaxHeight = scrollMax + 'px';
     this.$.lblTotalPayment.setContent(OB.I18N.getLabel('OBPOS_LblPaymentBreakdown'));
   },
   checkBoxBehavior: function (inSender, inEvent) {
@@ -495,28 +500,32 @@ enyo.kind({
     }
   },
   setTaxes: function () {
-    var taxList = new Backbone.Collection();
-    var taxes = this.order.get('taxes');
-    var empty = true,
-        prop;
+    if (OB.MobileApp.model.get('terminal').terminalType.showtaxbreakdown) {
+      var taxList = new Backbone.Collection();
+      var taxes = this.order.get('taxes');
+      var empty = true,
+          prop;
 
-    for (prop in taxes) {
-      if (taxes.hasOwnProperty(prop)) {
-        taxList.add(new OB.Model.TaxLine(taxes[prop]));
-        empty = false;
+      for (prop in taxes) {
+        if (taxes.hasOwnProperty(prop)) {
+          taxList.add(new OB.Model.TaxLine(taxes[prop]));
+          empty = false;
+        }
       }
-    }
-    if (empty) {
-      this.$.taxBreakdown.hide();
+      if (empty) {
+        this.$.taxBreakdown.hide();
+      } else {
+        this.$.taxBreakdown.show();
+      }
+
+      taxList.models = _.sortBy(taxList.models, function (taxLine) {
+        return taxLine.get('name');
+      });
+
+      this.$.listTaxLines.setCollection(taxList);
     } else {
-      this.$.taxBreakdown.show();
+      this.$.taxBreakdownDiv.hide();
     }
-
-    taxList.models = _.sortBy(taxList.models, function (taxLine) {
-      return taxLine.get('name');
-    });
-
-    this.$.listTaxLines.setCollection(taxList);
   },
   toggleSelectionTable: function (inSender, inEvent) {
     this.$.listOrderLines.setSelectionMode(inEvent.multiselection ? 'multiple' : 'single');
