@@ -72,7 +72,6 @@
   <PARAMETER id="paramEditReference" name="editReference" default=""/>
   <PARAMETER id="paramReportPDF" name="reportPDF" default=""/>
   <PARAMETER id="paramReportDirectPrint" name="reportDirectPrint" default=""/>
-  <PARAMETER id="paramHasTree" name="hasTree" default=""/>
   <PARAMETER id="paramIsReadOnly" name="isReadOnly" default=""/>
   <PARAMETER id="paramUIPattern" name="uiPattern" default=""/>
   <FIELD id="fieldName">Name</FIELD>
