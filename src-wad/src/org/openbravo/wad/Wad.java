@@ -462,7 +462,7 @@ public class Wad extends DefaultHandler {
       }
 
       if (needToCompile) {
-        log4j.info("Need to generate tab: " + tab.getField("tabname") + ",id: "
+        log4j.debug("Need to generate tab: " + tab.getField("tabname") + ",id: "
             + tab.getField("tabid") + ", level: " + tab.getField("tablevel"));
         res.put(tab.getField("tabid"), Boolean.TRUE);
       } else {
