@@ -35,7 +35,7 @@ import org.openbravo.model.common.order.OrderLine;
 /** Base class to test Dal observer execution. Handles state of {@link OrderLineTestObserver}. */
 public class ObserverBaseTest extends WeldBaseTest {
   protected enum ObserverExecutionType {
-    OFF, UPDATE_DESCRIPTION, CREATE_NOTE, COUNT_LINES, UPDATE_PARENT, ON_NOOP
+    OFF, UPDATE_DESCRIPTION, CREATE_NOTE, COUNT_LINES, UPDATE_PARENT, UPDATE_PARENT_RANDOM, ON_NOOP
   }
 
   protected static ObserverExecutionType observerExecutionType = ObserverExecutionType.OFF;
@@ -48,6 +48,7 @@ public class ObserverBaseTest extends WeldBaseTest {
   @Before
   @Override
   public void setUp() throws Exception {
+    OrderTestObserver.resetExecutionCount();
     OrderLineTestObserver.resetExecutionCount();
     super.setUp();
   }

@@ -75,8 +75,12 @@ public class OrderLineTestObserver extends EntityPersistenceEventObserver {
           FORCED_DESCRIPTION + numOfLines);
       break;
     case UPDATE_PARENT:
-      Order order = ((OrderLine) event.getTargetInstance()).getSalesOrder();
-      order.setDescription(FORCED_DESCRIPTION);
+      Order orderWithForcedDescription = ((OrderLine) event.getTargetInstance()).getSalesOrder();
+      orderWithForcedDescription.setDescription(FORCED_DESCRIPTION);
+      break;
+    case UPDATE_PARENT_RANDOM:
+      Order orderWithRandomDescription = ((OrderLine) event.getTargetInstance()).getSalesOrder();
+      orderWithRandomDescription.setDescription(Long.toString(System.currentTimeMillis()));
       break;
     case ON_NOOP:
       break;

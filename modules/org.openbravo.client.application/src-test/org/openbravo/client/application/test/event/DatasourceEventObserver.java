@@ -19,6 +19,7 @@
 
 package org.openbravo.client.application.test.event;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -125,13 +126,61 @@ public class DatasourceEventObserver extends ObserverBaseTest {
         is(OrderLineTestObserver.FORCED_DESCRIPTION));
   }
 
-  private JSONObject datasourceUpdate(OrderLine ol, String randomDescription) throws JSONException {
-    final DataSourceService dataSource = dataSourceServiceProvider
-        .getDataSource(OrderLine.ENTITY_NAME);
+  /**
+   * The OrderLine observer updates an order line's header. This action should fire the Order
+   * observer and just once.
+   */
+  @Test
+  public void observerFiredByChildObjectObserverShouldBeExecuteOnce() throws JSONException {
+    observerExecutionType = ObserverExecutionType.UPDATE_PARENT_RANDOM;
 
+    OrderLine ol = pickARandomOrderLine();
+
+    String randomDescription = Long.toString(System.currentTimeMillis());
+    datasourceUpdate(ol, randomDescription);
+
+    int[] executions = { OrderTestObserver.getNumberOfExecutions(),
+        OrderLineTestObserver.getNumberOfExecutions() };
+    assertThat("Observers executions", new int[] { 1, 1 }, equalTo(executions));
+  }
+
+  /**
+   * The Order observer updates an order line. This action should fire the OrderLine observer and
+   * just once.
+   */
+  @Test
+  public void observerFiredByParentObjectObserverShouldBeExecuteOnce() throws JSONException {
+    // Use ON_NOOP execution type to avoid subsequent actions from the OrderLine observer
+    observerExecutionType = ObserverExecutionType.ON_NOOP;
+
+    Order order = pickARandomOrderLine().getSalesOrder();
+
+    String randomDescription = Long.toString(System.currentTimeMillis());
+    datasourceUpdate(order, randomDescription);
+
+    int[] executions = { OrderTestObserver.getNumberOfExecutions(),
+        OrderLineTestObserver.getNumberOfExecutions() };
+    assertThat("Observers executions", new int[] { 1, 1 }, equalTo(executions));
+  }
+
+  private JSONObject datasourceUpdate(OrderLine ol, String randomDescription) throws JSONException {
     JSONObject data = new JSONObject();
     data.put(JsonConstants.ID, ol.getId());
     data.put(OrderLine.PROPERTY_DESCRIPTION, randomDescription);
+
+    return datasourceUpdate(OrderLine.ENTITY_NAME, data);
+  }
+
+  private JSONObject datasourceUpdate(Order order, String randomDescription) throws JSONException {
+    JSONObject data = new JSONObject();
+    data.put(JsonConstants.ID, order.getId());
+    data.put(Order.PROPERTY_DESCRIPTION, randomDescription);
+
+    return datasourceUpdate(Order.ENTITY_NAME, data);
+  }
+
+  private JSONObject datasourceUpdate(String entityName, JSONObject data) throws JSONException {
+    final DataSourceService dataSource = dataSourceServiceProvider.getDataSource(entityName);
 
     JSONObject content = new JSONObject();
     content.put(JsonConstants.DATA, data);
