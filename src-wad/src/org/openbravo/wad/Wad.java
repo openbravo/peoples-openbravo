@@ -952,20 +952,6 @@ public class Wad extends DefaultHandler {
         vecTotalParameters.addElement(vecParameters.elementAt(i));
       }
 
-      final StringBuffer strTables = new StringBuffer();
-      for (final Enumeration<Object> e = vecTables.elements(); e.hasMoreElements();) {
-        final String tableElement = (String) e.nextElement();
-        strTables.append((tableElement.trim().toLowerCase().startsWith("left join") ? " " : ", ")
-            + tableElement);
-      }
-      log4j.debug("Tables of select: " + strTables.toString());
-
-      EditionFieldsData[] selCol = EditionFieldsData.selectSerchFieldsSelection(pool, "",
-          tabsData.tabid);
-      if (selCol == null || selCol.length == 0)
-        selCol = EditionFieldsData.selectSerchFields(pool, "", tabsData.tabid);
-      selCol = processSelCol(selCol, tableName);
-
       final String javaPackage = (!tabsData.javapackage.equals("") ? tabsData.javapackage.replace(
           ".", "/") + "/" : "")
           + windowName; // Take into account
@@ -1019,20 +1005,18 @@ public class Wad extends DefaultHandler {
        * JAVA
        *************************************************/
       processTabJava(efd, efdauxiliar, parentsFieldsData, fileDir, tabsData.tabid, tabName,
-          tableName, windowName, keyColumnName, strTables.toString(), vecFields, vecParameters,
-          isSOTrx, allTabs, tabsData.key, tabsData.accesslevel, selCol, isSecondaryKey,
-          grandfatherField, tabsData.tablevel, tabsData.tableId, tabsData.windowtype,
-          tabsData.uipattern, tabsData.editreference, strProcess, strDirectPrint,
-          vecTableParameters, fieldsData, tabsData.javapackage, "Y".equals(tabsData.isdeleteable),
-          tabsData.tabmodule);
+          tableName, windowName, keyColumnName, vecFields, vecParameters, isSOTrx, allTabs,
+          tabsData.key, tabsData.accesslevel, isSecondaryKey, grandfatherField, tabsData.tablevel,
+          tabsData.tableId, tabsData.windowtype, tabsData.uipattern, tabsData.editreference,
+          strProcess, strDirectPrint, vecTableParameters, fieldsData, tabsData.javapackage,
+          "Y".equals(tabsData.isdeleteable), tabsData.tabmodule);
 
       /************************************************
        * XSQL
        *************************************************/
       processTabXSQL(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName, windowName,
-          keyColumnName, strTables.toString(), vecParameters, selCol, tabsData.tablevel,
-          tabsData.windowtype, vecTableParameters, fieldsData, isSecondaryKey,
-          tabsData.javapackage, vecFieldParameters);
+          keyColumnName, vecParameters, tabsData.tablevel, tabsData.windowtype, vecTableParameters,
+          fieldsData, isSecondaryKey, tabsData.javapackage, vecFieldParameters);
 
     } catch (final ServletException e) {
       e.printStackTrace();
@@ -1044,36 +1028,6 @@ public class Wad extends DefaultHandler {
       e.printStackTrace();
       log4j.error("Problem at close of the file: " + tabsData.tabid);
     }
-  }
-
-  /**
-   * Generates all the info to build the selection columns structure.
-   * 
-   * @param selCol
-   *          The array with the info of the selection columns.
-   * @param tableName
-   *          The name of the selection column's table.
-   * @return Array with the selection columns info.
-   */
-  private EditionFieldsData[] processSelCol(EditionFieldsData[] selCol, String tableName) {
-    final Vector<Object> vecAuxSelCol = new Vector<Object>(0);
-    final Vector<Object> vecSelCol = new Vector<Object>(0);
-    if (selCol != null) {
-      for (int i = 0; i < selCol.length; i++) {
-
-        selCol[i].htmltext = "strParam" + selCol[i].columnname + ".equals(\"\")";
-        selCol[i].columnnameinp = FormatUtilities.replace(selCol[i].columnname);
-        WADControl control = WadUtility.getWadControlClass(pool, selCol[i].reference,
-            selCol[i].referencevalue);
-        control.processSelCol(tableName, selCol[i], vecAuxSelCol);
-
-        vecSelCol.addElement(selCol[i]);
-      }
-      for (int i = 0; i < vecAuxSelCol.size(); i++)
-        vecSelCol.addElement(vecAuxSelCol.elementAt(i));
-      return vecSelCol.toArray(new EditionFieldsData[0]);
-    }
-    return selCol;
   }
 
   /**
@@ -1212,8 +1166,6 @@ public class Wad extends DefaultHandler {
    *          The id of the window.
    * @param accesslevel
    *          The access level.
-   * @param selCol
-   *          Array with the selection columns.
    * @param isSecondaryKey
    *          Boolean that identifies if the key column is a secondary key.
    * @param grandfatherField
@@ -1242,17 +1194,15 @@ public class Wad extends DefaultHandler {
    */
   private void processTabJava(EditionFieldsData[] allfields, EditionFieldsData[] auxiliarsData,
       FieldsData[] parentsFieldsData, File fileDir, String strTab, String tabName,
-      String tableName, String windowName, String keyColumnName, String strTables,
-      Vector<Object> vecFields, Vector<Object> vecParametersTop, String isSOTrx,
-      TabsData[] allTabs, String strWindow, String accesslevel, EditionFieldsData[] selCol,
-      boolean isSecondaryKey, String grandfatherField, String tablevel, String tableId,
-      String windowType, String uiPattern, String editReference, String strProcess,
+      String tableName, String windowName, String keyColumnName, Vector<Object> vecFields,
+      Vector<Object> vecParametersTop, String isSOTrx, TabsData[] allTabs, String strWindow,
+      String accesslevel, boolean isSecondaryKey, String grandfatherField, String tablevel,
+      String tableId, String windowType, String uiPattern, String editReference, String strProcess,
       String strDirectPrint, Vector<Object> vecTableParametersTop,
       FieldsData[] fieldsDataSelectAux, String javaPackage, boolean deleteable, String tabmodule)
       throws ServletException, IOException {
     log4j.debug("Processing java: " + strTab + ", " + tabName);
     XmlDocument xmlDocument;
-    boolean hasParentsFields = true;
     final String createFromProcess = FieldsData.hasCreateFromButton(pool, strTab);
     final boolean hasCreateFrom = !createFromProcess.equals("0");
     final String postedProcess = FieldsData.hasPostedButton(pool, strTab);
@@ -1263,10 +1213,6 @@ public class Wad extends DefaultHandler {
 
     final String[] discard = { "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
         "", "", "", "", "hasReference", "", "", "", "", "", "", "", "hasOrgKey", "", "", "", "" };
-
-    if (parentsFieldsData == null || parentsFieldsData.length == 0) {
-      hasParentsFields = false;
-    }
 
     if (!hasCreateFrom)
       discard[13] = "sectionCreateFrom";
@@ -1468,8 +1414,6 @@ public class Wad extends DefaultHandler {
    *          Path where the file is gonna be created.
    * @param strTab
    *          Id of the tab.
-   * @param tabName
-   *          Name of the tab.
    * @param tableName
    *          Tab's table name.
    * @param windowName
@@ -1494,9 +1438,9 @@ public class Wad extends DefaultHandler {
    * @throws IOException
    */
   private void processTabXSQL(FieldsData[] parentsFieldsData, File fileDir, String strTab,
-      String tabName, String tableName, String windowName, String keyColumnName, String strTables,
-      Vector<Object> vecParametersTop, EditionFieldsData[] selCol, String tablevel,
-      String windowType, Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux,
+      String tabName, String tableName, String windowName, String keyColumnName,
+      Vector<Object> vecParametersTop, String tablevel, String windowType,
+      Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux,
       boolean isSecondaryKey, String javaPackage, Vector<String> vecFieldParameters)
       throws ServletException, IOException {
     log4j.debug("Procesig xsql: " + strTab + ", " + tabName);
@@ -1523,9 +1467,6 @@ public class Wad extends DefaultHandler {
       parentsFieldsData[0].name = WadUtility.columnName(parentsFieldsData[0].name,
           parentsFieldsData[0].tablemodule, parentsFieldsData[0].columnmodule);
     }
-
-    // Relation select
-    xmlDocumentXsql.setParameter("tables", strTables);
 
     final StringBuffer strParameters = new StringBuffer();
     final StringBuffer strParametersFields = new StringBuffer();
