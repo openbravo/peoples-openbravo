@@ -484,31 +484,6 @@ public class WadUtility {
         + Sqlc.TransformaNombreColumna(token) + "\""));
   }
 
-  private static String getDisplayLogicTextTranslate(String token, Vector<Object> vecFields,
-      FieldsData[] parentsFieldsData, Vector<Object> vecAuxiliar, Vector<Object> vecDisplayLogic,
-      String windowId, Vector<Object> vecContext, boolean save) {
-    if (token == null || token.trim().equals(""))
-      return "";
-    String aux = Sqlc.TransformaNombreColumna(token);
-    if (save)
-      saveVectorField(vecDisplayLogic, token);
-    if (parentsFieldsData != null) {
-      for (int i = 0; i < parentsFieldsData.length; i++) {
-        if (parentsFieldsData[i].name.equalsIgnoreCase(token))
-          return "inputValue(document.frmMain.inp"
-              + Sqlc.TransformaNombreColumna(parentsFieldsData[i].name) + ")";
-      }
-    }
-    if (vecAuxiliar != null && findField(vecAuxiliar, token)) {
-      return ("inputValue(document.frmMain.inp" + aux + ")");
-    }
-    if (vecFields != null && findField(vecFields, token)) {
-      return ("inputValue(document.frmMain.inp" + aux + ")");
-    }
-    saveVectorField(vecContext, token);
-    return "str" + FormatUtilities.replace(token);
-  }
-
   public static boolean isSearchValueColumn(String name) {
     if (name == null || name.equals(""))
       return false;
