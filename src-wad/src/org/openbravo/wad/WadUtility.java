@@ -64,10 +64,11 @@ public class WadUtility {
       return "TO_CHAR(COALESCE(TO_CHAR(" + text + "), ''))";
   }
 
-  public static String columnIdentifier(ConnectionProvider conn, String tableName, boolean required,
-      FieldsData fields, Vector<Object> vecCounters, boolean translated, Vector<Object> vecFields,
-      Vector<Object> vecTable, Vector<Object> vecWhere, Vector<Object> vecParameters,
-      Vector<Object> vecTableParameters, String sqlDateFormat) throws ServletException {
+  public static String columnIdentifier(ConnectionProvider conn, String tableName,
+      boolean required, FieldsData fields, Vector<Object> vecCounters, boolean translated,
+      Vector<Object> vecFields, Vector<Object> vecTable, Vector<Object> vecWhere,
+      Vector<Object> vecParameters, Vector<Object> vecTableParameters, String sqlDateFormat)
+      throws ServletException {
     if (fields == null)
       return "";
 
@@ -140,9 +141,9 @@ public class WadUtility {
           texto.append(" || ' - ' || ");
         vecCounters.set(0, Integer.toString(itable));
         vecCounters.set(1, Integer.toString(ilist));
-        texto.append(
-            columnIdentifier(conn, "table" + tableId, required, fdi[i], vecCounters, translated,
-                vecFields, vecTable, vecWhere, vecParameters, vecTableParameters, sqlDateFormat));
+        texto.append(columnIdentifier(conn, "table" + tableId, required, fdi[i], vecCounters,
+            translated, vecFields, vecTable, vecWhere, vecParameters, vecTableParameters,
+            sqlDateFormat));
         ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
         itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
       }
@@ -196,8 +197,7 @@ public class WadUtility {
     int i = strValue.indexOf("@");
     String strAux, strAux1;
     while (i != -1) {
-      if (strValue.length() > (i + 5)
-          && strValue.substring(i + 1, i + 5).equalsIgnoreCase("SQL=")) {
+      if (strValue.length() > (i + 5) && strValue.substring(i + 1, i + 5).equalsIgnoreCase("SQL=")) {
         strValue = strValue.substring(i + 5, strValue.length());
       } else {
         // Delete the chain symbol
@@ -260,8 +260,7 @@ public class WadUtility {
     int i = strValue.indexOf("@");
     String strAux;
     while (i != -1) {
-      if (strValue.length() > (i + 5)
-          && strValue.substring(i + 1, i + 5).equalsIgnoreCase("SQL=")) {
+      if (strValue.length() > (i + 5) && strValue.substring(i + 1, i + 5).equalsIgnoreCase("SQL=")) {
         strValue = strValue.substring(i + 5, strValue.length());
       } else {
         strValue = strValue.substring(i + 1, strValue.length());
@@ -293,8 +292,7 @@ public class WadUtility {
     int i = strValue.indexOf("@");
     String strAux;
     while (i != -1) {
-      if (strValue.length() > (i + 5)
-          && strValue.substring(i + 1, i + 5).equalsIgnoreCase("SQL=")) {
+      if (strValue.length() > (i + 5) && strValue.substring(i + 1, i + 5).equalsIgnoreCase("SQL=")) {
         strValue = strValue.substring(i + 5, strValue.length());
       } else {
         strValue = strValue.substring(i + 1, strValue.length());
@@ -435,10 +433,9 @@ public class WadUtility {
       }
       if (!isDefaultValue) {
         if (vecFields != null && findField(vecFields, token)) {
-          return (dataMultiple
-              ? "((dataField!=null)?dataField.getField(\"" + aux
-                  + "\"):((data==null || data.length==0)?\"\":data[0]."
-              : "((data==null)?\"\":data.") + "getField(\"" + aux + "\")))";
+          return (dataMultiple ? "((dataField!=null)?dataField.getField(\"" + aux
+              + "\"):((data==null || data.length==0)?\"\":data[0]." : "((data==null)?\"\":data.")
+              + "getField(\"" + aux + "\")))";
         } else if (vecAuxiliarFields != null && findField(vecAuxiliarFields, token)) {
           return "str" + token;
         }
@@ -566,16 +563,16 @@ public class WadUtility {
     if (parentsFieldsData != null) {
       for (int i = 0; i < parentsFieldsData.length; i++) {
         if (parentsFieldsData[i].name.equalsIgnoreCase(token))
-          return ((prefix.equals("")) ? ("\"" + parentsFieldsData[i].name + "\"")
-              : ("\"" + prefix + Sqlc.TransformaNombreColumna(parentsFieldsData[i].name) + "\""));
+          return ((prefix.equals("")) ? ("\"" + parentsFieldsData[i].name + "\"") : ("\"" + prefix
+              + Sqlc.TransformaNombreColumna(parentsFieldsData[i].name) + "\""));
       }
     }
     if (vecFields != null && findField(vecFields, token)) {
-      return ((prefix.equals("")) ? ("\"" + token + "\"")
-          : ("\"" + prefix + Sqlc.TransformaNombreColumna(token) + "\""));
+      return ((prefix.equals("")) ? ("\"" + token + "\"") : ("\"" + prefix
+          + Sqlc.TransformaNombreColumna(token) + "\""));
     }
-    return ((prefix.equals("")) ? ("\"" + FormatUtilities.replace(token) + "\"")
-        : ("\"" + prefix + Sqlc.TransformaNombreColumna(token) + "\""));
+    return ((prefix.equals("")) ? ("\"" + FormatUtilities.replace(token) + "\"") : ("\"" + prefix
+        + Sqlc.TransformaNombreColumna(token) + "\""));
   }
 
   private static String getDisplayLogicText(String _token, Vector<Object> vecFields,
@@ -631,8 +628,7 @@ public class WadUtility {
     return (name.equalsIgnoreCase("Value") || name.equalsIgnoreCase("DocumentNo"));
   }
 
-  public static String sqlCasting(ConnectionProvider conn, String reference,
-      String referencevalue) {
+  public static String sqlCasting(ConnectionProvider conn, String reference, String referencevalue) {
     if (reference == null || reference.equals(""))
       return "";
     WADControl control = WadUtility.getWadControlClass(conn, reference, referencevalue);
