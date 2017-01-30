@@ -33,30 +33,11 @@
   <PARAMETER id="parameters" name = "parameters" default=" "/>
   <PARAMETER id="parameterFields" name = "parameterFields" default=" "/>
 
-<structure name="structure3">
-  <FIELD id="fieldName3">Name</FIELD>
-  <FIELD id="fieldFormat3">xmlFormat</FIELD>
-  <SECTION id="sectionDetailColumns3"/>
-</structure>
+
 <PARAMETER id="paramKey" name = "paramKey" default=" " attribute="name"/>
 <PARAMETER id="paramKeyParent" name = "paramKeyParent" default=" " attribute="name"/>
 <PARAMETER id="paramKeyParentOrg" name = "paramKeyParentOrg" default=" " attribute="name"/>
-<structure name="structure4">
-  <FIELD id="fieldName4" attribute="name">Name</FIELD>
-  <SECTION id="sectionDetailColumns4"/>
-</structure>
-<structure name="structure5">
-  <FIELD id="fieldName5">Name</FIELD>
-  <SECTION id="sectionDetailColumns5"/>
-</structure>
-<structure name="structure6">
-  <FIELD id="fieldName6">Name</FIELD>
-  <SECTION id="sectionDetailColumns6"/>
-</structure>
-<structure name="structure7">
-  <FIELD id="fieldName7" attribute="name">Name</FIELD>
-  <SECTION id="sectionDetailColumns7"/>
-</structure>
+
 
 <structure name="structure9">
   <FIELD id="Reference">reference</FIELD>
