@@ -373,10 +373,6 @@ public class Wad extends DefaultHandler {
         for (int i = 0; i < tabsData.length; i++) {
           // don't compile if it is in an unactive branch
           if (wad.allTabParentsActive(tabsData[i].tabid)) {
-
-            // TODO: -> check that old TODO
-            // TODO: check if smartbuild does detect change in that property, as now it needs to
-            // trigger a recompile in that case, same for check of the windowsInClassicModeInput
             boolean tabJavaNeeded = generateAllClassic250Windows
                 || generateTabMap.get(tabsData[i].tabid);
 
