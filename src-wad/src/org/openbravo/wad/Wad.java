@@ -1361,23 +1361,6 @@ public class Wad extends DefaultHandler {
     else
       xmlDocument.setParameter("orgId", "Utility.getContext(this, vars, \"#AD_Org_ID\", windowId)");
 
-    // Parent field language
-    if (parentsFieldsData != null && parentsFieldsData.length > 0) {
-      final Vector<Object> vecCounters2 = new Vector<Object>();
-      final Vector<Object> vecFields2 = new Vector<Object>();
-      final Vector<Object> vecTable2 = new Vector<Object>();
-      final Vector<Object> vecWhere2 = new Vector<Object>();
-      final Vector<Object> vecParameters2 = new Vector<Object>();
-      final Vector<Object> vecTableParameters2 = new Vector<Object>();
-      vecCounters2.addElement("0");
-      vecCounters2.addElement("0");
-      WadUtility.columnIdentifier(pool, parentsFieldsData[0].tablename, true, parentsFieldsData[0],
-          vecCounters2, true, vecFields2, vecTable2, vecWhere2, vecParameters2,
-          vecTableParameters2, sqlDateFormat);
-
-      xmlDocument.setParameter("parentLanguage", (vecParameters2.size() > 0 || vecTableParameters2
-          .size() > 0) ? ", vars.getLanguage()" : "");
-    }
     FieldsData[] fieldsData = null;
     boolean defaultValue;
     {
