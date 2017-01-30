@@ -240,41 +240,7 @@
     </Sql>
     <Parameter name="tab"/>
   </SqlMethod>
-  <SqlMethod name="selectDefaultValue" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Default values of the columns</SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT ad_column.AD_COLUMN_ID as adColumnId, ad_column.ISMANDATORY as required, 
-      REPLACE(replace(REPLACE(REPLACE(columnname, 'Substitute_ID', 'M_Product_ID'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM_ID', '_ID'), 'M_LocatorTo_ID', 'M_Locator_ID') as Name, 
-      REPLACE(ad_column.defaultvalue, CHR(10), '') as defaultValue, '' as WHERECLAUSE, 
-      ad_reference_id as reference,
-      isdisplayed, ad_column.columnname as columnname, ad_table.ACCESSLEVEL, 
-      ad_table.TABLENAME as NameRef, ad_reference_value_id as referencevalue, ad_column.name as realname
-      FROM ad_field, ad_column, ad_table
-      WHERE ad_field.ad_column_id = ad_column.ad_column_id
-        AND ad_column.AD_TABLE_ID = ad_table.AD_TABLE_ID 
-        AND ad_tab_id = ? 
-        AND ad_field.ignoreinwad='N'
-        AND upper(ad_column.columnname) <> 'BINARYDATA'
-      union
-      SELECT ad_column.AD_COLUMN_ID as reference, ad_column.ISMANDATORY as required, 
-      columnname as Name, 
-      REPLACE(ad_column.defaultvalue, CHR(10), '') as defaultValue, '' as WHERECLAUSE, 
-      ad_reference_id as referencevalue,
-      'Y', ad_column.columnname as columnname, ad_table.ACCESSLEVEL, 
-      ad_table.TABLENAME as NameRef, ad_reference_value_id as type, ad_column.name as realname
-      FROM ad_column, ad_table, ad_tab t
-      WHERE lower(columnname) in ('createdby', 'updatedby')
-      AND ad_column.AD_TABLE_ID = ad_table.AD_TABLE_ID 
-        AND t.ad_tab_id = ?
-        and ad_table.ad_table_id = t.ad_table_id
-      ORDER BY adcolumnid
-      ]]>
-    </Sql>
-    <Parameter name="sql" optional="true" after="WHERE " text="ad_column.defaultvalue LIKE ? || '%' AND "/>
-    <Parameter name="tab"/>
-    <Parameter name="tab"/>
-  </SqlMethod>
+ 
   <SqlMethod name="selectSession" type="preparedStatement" return="multiple">
     <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
     <Sql>

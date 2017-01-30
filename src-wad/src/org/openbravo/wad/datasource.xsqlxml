@@ -40,16 +40,6 @@ package="org.openbravo.wad.Window">
   &#60;/SqlMethod&#62;
 </FIELDS_TMP>
 
-<FIELDS_TMP id="sectionDefaultValues">
-   &#60;SqlMethod name="selectDef<PARAMETER_TMP id="Reference10">table</PARAMETER_TMP>" type="preparedStatement" return="String" default=""&#62;
-    &#60;SqlMethodComment&#62;Select for auxiliar field&#60;/SqlMethodComment&#62;
-    &#60;Sql&#62;&#60;&#33;[CDATA[
-        <PARAMETER_TMP id="Select10">select</PARAMETER_TMP> 
-    ]]&#62;&#60;/Sql&#62;
-<PARAMETER_TMP id="paramsAuxiliar10">  f</PARAMETER_TMP>
-  &#60;/SqlMethod&#62;
-</FIELDS_TMP>
-
 <FIELDS_TMP id="sectionActionButton">
   <SqlMethod id="fieldRealNameActionButton" name="updatexx" type="preparedStatement" return="rowCount">
     <Sql>&#60;&#33;[CDATA[

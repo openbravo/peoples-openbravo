@@ -1948,45 +1948,6 @@ public class Wad extends DefaultHandler {
       xmlDocument.setData("structure36", buttonData);
     }
 
-    final StringBuffer strDefaultValues = new StringBuffer();
-    final FieldsData sfd[] = FieldsData.selectDefaultValue(pool, "", strTab);
-    int isSelect = 0;
-    for (int i = 0; i < sfd.length; i++) {
-      if (!hasParentsFields || !parentsFieldsData[0].name.equalsIgnoreCase(sfd[i].columnname)) {
-        if (sfd[i].defaultvalue.toUpperCase().startsWith("@SQL=")) {
-          sfd[i].defaultvalue = tabName
-              + "Data.selectDef"
-              + sfd[i].adcolumnid
-              + "(this"
-              + WadUtility.getWadContext(sfd[i].defaultvalue, vecFields, vecAuxiliarFields,
-                  parentsFieldsData, true, isSOTrx, strWindow) + ")";
-        } else if (sfd[i].columnname.equalsIgnoreCase("isActive")) {
-          sfd[i].defaultvalue = "\"Y\"";
-        } else if (sfd[i].accesslevel.equals("4")
-            && (sfd[i].columnname.equalsIgnoreCase("AD_CLIENT_ID") || sfd[i].columnname
-                .equalsIgnoreCase("AD_ORG_ID"))) {
-          sfd[i].defaultvalue = "\"0\"";
-        } else if (sfd[i].accesslevel.equals("6")
-            && sfd[i].columnname.equalsIgnoreCase("AD_ORG_ID")) {
-          sfd[i].defaultvalue = "\"0\"";
-        } else if (!sfd[i].reference.equals("13")) { // ID
-          sfd[i].defaultvalue = "Utility.getDefault(this, vars, \"" + sfd[i].columnname + "\", \""
-              + WadUtility.toJavaString(sfd[i].defaultvalue) + "\", \"" + strWindow + "\", \""
-              + WadUtility.getWadDefaultValue(pool, sfd[i]) + "\", dataField)";
-        } else {
-          sfd[i].defaultvalue = "\"\"";
-        }
-        if (!strDefaultValues.toString().equals("") || hasParentsFields)
-          strDefaultValues.append(", ");
-        strDefaultValues.append(sfd[i].defaultvalue);
-      } else {
-        sfd[i].defaultvalue = "strP" + sfd[i].columnname;
-      }
-      WADControl control = WadUtility.getWadControlClass(pool, sfd[i].reference,
-          sfd[i].referencevalue);
-      isSelect = control.addAdditionDefaulJavaFields(strDefaultValues, sfd[i], tabName, isSelect);
-    }
-
     final StringBuffer controlsJavaSource = new StringBuffer();
     boolean needsComboTableData = false;
     for (int i = 0; i < allfields.length; i++) {
@@ -2025,7 +1986,6 @@ public class Wad extends DefaultHandler {
       controlsJavaSource
           .append("    } catch (Exception ex) {\n      ex.printStackTrace();\n      throw new ServletException(ex);\n    }\n");
     xmlDocument.setParameter("controlsJavaCode", controlsJavaSource.toString());
-    xmlDocument.setParameter("defaultValues", strDefaultValues.toString());
     WadUtility.writeFile(fileDir, tabName + ".java", xmlDocument.print());
   }
 
@@ -2212,34 +2172,7 @@ public class Wad extends DefaultHandler {
       }
       xmlDocumentXsql.setData("structure9", fieldsAux);
     }
-    // Default Fields
-    {
-      final FieldsData fieldsDef[] = FieldsData.selectDefaultValue(pool, "", strTab);
-      final Vector<Object> v = new Vector<Object>();
-      int itable = 0;
-      for (int i = 0; i < fieldsDef.length; i++) {
-        final Vector<Object> vecParametros = new Vector<Object>();
-        if (fieldsDef[i].defaultvalue.startsWith("@SQL=")) {
-          fieldsDef[i].defaultvalue = WadUtility.getSQLWadContext(fieldsDef[i].defaultvalue,
-              vecParametros);
-          final StringBuffer parametros = new StringBuffer();
-          for (final Enumeration<Object> e = vecParametros.elements(); e.hasMoreElements();) {
-            String paramsElement = WadUtility.getWhereParameter(e.nextElement(), true);
-            parametros.append("\n" + paramsElement);
-          }
-          fieldsDef[i].whereclause = parametros.toString();
-          v.addElement(fieldsDef[i]);
-        }
 
-        // Calculate additional defaults
-        WADControl control = WadUtility.getWadControlClass(pool, fieldsDef[i].reference,
-            fieldsDef[i].referencevalue);
-        itable = control.addAdditionDefaulSQLFields(v, fieldsDef[i], itable);
-      }
-      final FieldsData[] fd = new FieldsData[v.size()];
-      v.copyInto(fd);
-      xmlDocumentXsql.setData("structure10", fd);
-    }
     {
       // default values for search references in parameter windows for action buttons
       // keep it hardcoded by now
@@ -2394,50 +2327,6 @@ public class Wad extends DefaultHandler {
         vecAux.copyInto(fieldsDataParameterInsert1);
       }
       xmlDocumentXsql.setData("structure7", fieldsDataParameterInsert1);
-    }
-    {
-      // generate set() method
-      final FieldsData fieldsDataDefaults[] = FieldsData.selectDefaultValue(pool, "", strTab);
-      final Vector<Object> vecDDef = new Vector<Object>();
-      for (int i = 0; i < fieldsDataDefaults.length; i++) {
-        boolean modified = false;
-        if (parentsFieldsData == null || parentsFieldsData.length == 0
-            || !parentsFieldsData[0].name.equalsIgnoreCase(fieldsDataDefaults[i].columnname)) {
-          fieldsDataDefaults[i].name = Sqlc.TransformaNombreColumna(fieldsDataDefaults[i].name);
-          fieldsDataDefaults[i].columnname = Sqlc
-              .TransformaNombreColumna(fieldsDataDefaults[i].columnname);
-          vecDDef.addElement(fieldsDataDefaults[i]);
-          modified = true;
-        }
-
-        // add another field for default special cases with more than 1 field
-        WADControl control = WadUtility.getWadControlClass(pool, fieldsDataDefaults[i].reference,
-            fieldsDataDefaults[i].referencevalue);
-        if (fieldsDataDefaults[i].isdisplayed.equals("Y")
-            && control.addAdditionDefaulJavaFields(new StringBuffer(), fieldsDataDefaults[i],
-                tabName, 0) != 0) {
-
-          final FieldsData f = new FieldsData();
-          f.name = (modified ? fieldsDataDefaults[i].name : Sqlc
-              .TransformaNombreColumna(fieldsDataDefaults[i].name)) + "r";
-          f.columnname = (modified ? fieldsDataDefaults[i].columnname : Sqlc
-              .TransformaNombreColumna(fieldsDataDefaults[i].columnname)) + "r";
-          vecDDef.addElement(f);
-        } else if (fieldsDataDefaults[i].reference.equals("28")
-            && fieldsDataDefaults[i].isdisplayed.equals("Y")
-            && !fieldsDataDefaults[i].referencevalue.equals("")) {
-          // Button special case
-          final FieldsData f = new FieldsData();
-          f.name = (modified ? fieldsDataDefaults[i].name : Sqlc
-              .TransformaNombreColumna(fieldsDataDefaults[i].name)) + "Btn";
-          f.columnname = (modified ? fieldsDataDefaults[i].columnname : Sqlc
-              .TransformaNombreColumna(fieldsDataDefaults[i].columnname)) + "Btn";
-          vecDDef.addElement(f);
-        }
-      }
-      final FieldsData[] f1 = new FieldsData[vecDDef.size()];
-      vecDDef.copyInto(f1);
-      xmlDocumentXsql.setData("structure8", f1);
     }
 
     {

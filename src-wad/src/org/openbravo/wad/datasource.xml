@@ -61,21 +61,12 @@
   <FIELD id="fieldName7" attribute="name">Name</FIELD>
   <SECTION id="sectionDetailColumns7"/>
 </structure>
-<structure name="structure8">
-  <FIELD id="fieldName8" attribute="name">columnname</FIELD>
-  <SECTION id="sectionDetailColumns8"/>
-</structure>
+
 <structure name="structure9">
   <FIELD id="Reference">reference</FIELD>
   <FIELD id="Select">defaultvalue</FIELD>
   <FIELD id="paramsAuxiliar">whereclause</FIELD>
   <SECTION id="sectionAuxiliar"/>
-</structure>
-<structure name="structure10">
-  <FIELD id="Reference10">adcolumnid</FIELD>
-  <FIELD id="Select10">defaultvalue</FIELD>
-  <FIELD id="paramsAuxiliar10">whereclause</FIELD>
-  <SECTION id="sectionDefaultValues"/>
 </structure>
 
 <structure name="structure11">

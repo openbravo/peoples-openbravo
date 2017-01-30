@@ -86,7 +86,6 @@
   <SECTION id="sectionDetailgetEditVariables"/>
 </structure>
 
-  <PARAMETER id="defaultValues" name = "defaultValues" default=" "/>
 <!-- structure name="structure4">
   <FIELD id="fieldName4">Name</FIELD>
   <FIELD id="fieldReference">ReferenceValue</FIELD>
