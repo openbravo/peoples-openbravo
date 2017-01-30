@@ -271,11 +271,6 @@
   <SECTION id="sectionButtonText"/>
 </structure>
 
-<structure name="structure37">
-  <FIELD id="fieldButtonSCName">name</FIELD>
-  <SECTION id="sectionButtonShorcuts"/>
-</structure>
-
 <structure name="structure38">
   <FIELD id="explicitAccess">id</FIELD>
   <SECTION id="sectionExplicitAccessProcess"/>

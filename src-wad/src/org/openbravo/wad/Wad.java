@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -39,7 +38,6 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.utils.FormatUtilities;
-import org.openbravo.wad.controls.WADButton;
 import org.openbravo.wad.controls.WADControl;
 import org.openbravo.wad.controls.WADGrid;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -1354,7 +1352,6 @@ public class Wad extends DefaultHandler {
 
     final boolean noPInstance = (ActionButtonRelationData.select(pool, strTab).length == 0);
     final boolean noActionButton = FieldsData.hasActionButton(pool, strTab).equals("0");
-    final HashMap<String, String> shortcuts = new HashMap<String, String>();
     final StringBuffer dl = new StringBuffer();
     final StringBuffer readOnlyLogic = new StringBuffer();
     // Auxiliary fields of the window
@@ -1935,21 +1932,7 @@ public class Wad extends DefaultHandler {
       }
       controlsJavaSource.append(auxControl.toJava()).append(
           (auxControl.toJava().equals("") ? "" : "\n"));
-
-      if ((auxControl instanceof WADButton) && (auxControl.getData("IsDisplayed").equals("Y"))) {
-        ((WADButton) auxControl).setShortcuts(shortcuts);
-      }
     }
-
-    // Shorcuts for buttons
-    final FieldsData[] shortcutsAux = new FieldsData[shortcuts.size()];
-    final Iterator<String> ik = shortcuts.keySet().iterator();
-    for (int i = 0; i < shortcuts.size(); i++) {
-      shortcutsAux[i] = new FieldsData();
-      if (ik.hasNext())
-        shortcutsAux[i].name = ik.next();
-    }
-    xmlDocument.setData("structure37", shortcutsAux);
 
     xmlDocument.setData("structure38", FieldsData.explicitAccessProcess(pool, strTab));
 
