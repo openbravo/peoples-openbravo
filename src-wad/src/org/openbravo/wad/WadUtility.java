@@ -25,7 +25,6 @@ import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
@@ -41,9 +40,6 @@ import org.openbravo.xmlEngine.XmlEngine;
 
 public class WadUtility {
   private static final Logger log4j = Logger.getLogger(WadUtility.class);
-  private static String[][] comparations = { { "==", " == " }, { "=", " == " }, { "!", " != " },
-      { "^", " != " }, { "-", " != " } };
-  private static String[][] unions = { { "|", " || " }, { "&", " && " } };
 
   // small cache to store mapping of <subRef + "-" + parentRef,classname>
   private static Map<String, String> referenceClassnameCache = new HashMap<String, String>();
@@ -158,33 +154,6 @@ public class WadUtility {
     }
     return retValue;
 
-  }
-
-  public static String buildSQL(String clause, Vector<Object> vecParameters) {
-    StringBuffer where = new StringBuffer();
-    if (!clause.equals("")) {
-      if (clause.indexOf('@') > -1) {
-        where.append(getSQLWadContext(clause, vecParameters));
-      } else {
-        where.append(clause);
-      }
-    }
-    return where.toString();
-  }
-
-  public static String findField(ConnectionProvider conn, EditionFieldsData[] fields,
-      EditionFieldsData[] auxiliars, String fieldName) {
-    if (fields == null)
-      return "";
-    for (int i = 0; i < fields.length; i++)
-      if (fields[i].columnname.equalsIgnoreCase(fieldName))
-        return fields[i].columnnameinp;
-    if (auxiliars == null)
-      return "";
-    for (int i = 0; i < auxiliars.length; i++)
-      if (auxiliars[i].columnname.equalsIgnoreCase(fieldName))
-        return auxiliars[i].columnnameinp;
-    return "";
   }
 
   public static String getSQLWadContext(String code, Vector<Object> vecParameters) {
@@ -444,57 +413,6 @@ public class WadUtility {
     }
   }
 
-  public static String displayLogic(String code, Vector<Object> vecDL,
-      FieldsData[] parentsFieldsData, Vector<Object> vecAuxiliar, Vector<Object> vecFields,
-      String windowId, Vector<Object> vecContext) {
-    if (code == null || code.trim().equals(""))
-      return "";
-    String token, token2;
-    String strValue = code;
-    StringBuffer strOut = new StringBuffer();
-
-    String strAux;
-    StringTokenizer st = new StringTokenizer(strValue, "|&", true);
-    while (st.hasMoreTokens()) {
-      strAux = st.nextToken().trim();
-      int i[] = getFirstElement(unions, strAux);
-      if (i[0] != -1) {
-        strAux = strAux.substring(0, i[0]) + unions[i[1]][1]
-            + strAux.substring(i[0] + unions[i[1]][0].length());
-      }
-
-      int pos[] = getFirstElement(comparations, strAux);
-      token = strAux;
-      token2 = "";
-      if (pos[0] >= 0) {
-        token = strAux.substring(0, pos[0]);
-        token2 = strAux.substring(pos[0] + comparations[pos[1]][0].length(), strAux.length());
-        strAux = strAux.substring(0, pos[0]) + comparations[pos[1]][1]
-            + strAux.substring(pos[0] + comparations[pos[1]][0].length(), strAux.length());
-      }
-
-      strOut.append(getDisplayLogicText(token, vecFields, parentsFieldsData, vecAuxiliar, vecDL,
-          windowId, vecContext, true));
-      if (pos[0] >= 0)
-        strOut.append(comparations[pos[1]][1]);
-      strOut.append(getDisplayLogicText(token2, vecFields, parentsFieldsData, vecAuxiliar, vecDL,
-          windowId, vecContext, false));
-    }
-    return strOut.toString();
-  }
-
-  private static int[] getFirstElement(String[][] array, String token) {
-    int min[] = { -1, -1 }, aux;
-    for (int i = 0; i < array.length; i++) {
-      aux = token.indexOf(array[i][0]);
-      if (aux != -1 && (aux < min[0] || min[0] == -1)) {
-        min[0] = aux;
-        min[1] = i;
-      }
-    }
-    return min;
-  }
-
   public static boolean isInVector(Vector<Object> vec, String field) {
     if (field == null || field.trim().equals(""))
       return false;
@@ -566,28 +484,6 @@ public class WadUtility {
         + Sqlc.TransformaNombreColumna(token) + "\""));
   }
 
-  private static String getDisplayLogicText(String _token, Vector<Object> vecFields,
-      FieldsData[] parentsFieldsData, Vector<Object> vecAuxiliar, Vector<Object> vecDisplayLogic,
-      String windowId, Vector<Object> vecContext, boolean save) {
-    String token = _token;
-    StringBuffer strOut = new StringBuffer();
-    int i = token.indexOf("@");
-    while (i != -1) {
-      strOut.append(token.substring(0, i));
-      token = token.substring(i + 1);
-      i = token.indexOf("@");
-      if (i != -1) {
-        String strAux = token.substring(0, i);
-        token = token.substring(i + 1);
-        strOut.append(getDisplayLogicTextTranslate(strAux, vecFields, parentsFieldsData,
-            vecAuxiliar, vecDisplayLogic, windowId, vecContext, save));
-      }
-      i = token.indexOf("@");
-    }
-    strOut.append(token);
-    return strOut.toString();
-  }
-
   private static String getDisplayLogicTextTranslate(String token, Vector<Object> vecFields,
       FieldsData[] parentsFieldsData, Vector<Object> vecAuxiliar, Vector<Object> vecDisplayLogic,
       String windowId, Vector<Object> vecContext, boolean save) {
@@ -617,13 +513,6 @@ public class WadUtility {
     if (name == null || name.equals(""))
       return false;
     return (name.equalsIgnoreCase("Value") || name.equalsIgnoreCase("DocumentNo"));
-  }
-
-  public static String sqlCasting(ConnectionProvider conn, String reference, String referencevalue) {
-    if (reference == null || reference.equals(""))
-      return "";
-    WADControl control = WadUtility.getWadControlClass(conn, reference, referencevalue);
-    return control.getSQLCasting();
   }
 
   private static void setPropertyValue(Properties _prop, FieldProvider _field, String _name,
