@@ -1879,7 +1879,6 @@ public class Wad extends DefaultHandler {
     xmlDocument.setData("structure1", fieldsData);
 
     xmlDocument.setData("structure7", auxiliarFields);
-    xmlDocument.setData("structure27", auxiliarFields);
     xmlDocument.setData("structure8", fieldsParentSession);
     xmlDocument.setData("structure9", fieldsSession);
     xmlDocument.setData("structure10", auxiliarFields);

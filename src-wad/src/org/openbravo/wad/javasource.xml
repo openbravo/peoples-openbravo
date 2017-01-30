@@ -256,14 +256,6 @@
   <section id="sectionIdentifyValues"/>
 </structure>
 
-<structure name="structure27">
-  <FIELD id="fieldNameParamPrevious">realname</FIELD>
-  <FIELD id="fieldInputNameParamPrevious">columnname</FIELD>
-  <FIELD id="paramNamePrevious">name</FIELD>
-  <FIELD id="paramCodePrevious">defaultvalue</FIELD>
-  <SECTION id="sectionDetailParamsPrevious"/>
-</structure>
-
 <structure name="structure38">
   <FIELD id="explicitAccess">id</FIELD>
   <SECTION id="sectionExplicitAccessProcess"/>
