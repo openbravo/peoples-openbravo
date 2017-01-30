@@ -24,8 +24,6 @@
 <template file="javasource.javaxml" />
 <PARAMETER id="fieldControlsJavaCode" name="controlsJavaCode"/>
 
-<PARAMETER id="deleteable" name = "deleteable" default="true"/>
-
 <structure name="structure1">
   <PARAMETER id="class" name = "class" default=" "/>
   <PARAMETER id="package" name = "package" default=" "/>
@@ -40,7 +38,6 @@
   <PARAMETER id="keyData" name = "keyData" default=" "/>
   <PARAMETER id="table" name = "table" default=" "/>
   <PARAMETER id="paramTableId" name = "tableId" default=" "/>
-  <PARAMETER id="from" name = "from" default=" "/>
   <PARAMETER id="windowId" name = "windowId" default=" "/>
   <PARAMETER id="accessLevel" name = "accessLevel" default=" "/>
   <PARAMETER id="moduleId" name = "moduleId" default=" "/>
@@ -50,11 +47,8 @@
   <PARAMETER id="parentClass" name = "parentClass" default=" "/>
   <PARAMETER id="paramCreateFromProcessId" name="createFromProcessId" default=""/>
   <PARAMETER id="paramPostedProcessId" name="postedProcessId" default=""/>
-  <PARAMETER id="paramEditReference" name="editReference" default=""/>
   <PARAMETER id="paramReportPDF" name="reportPDF" default=""/>
   <PARAMETER id="paramReportDirectPrint" name="reportDirectPrint" default=""/>
-  <PARAMETER id="paramIsReadOnly" name="isReadOnly" default=""/>
-  <PARAMETER id="paramUIPattern" name="uiPattern" default=""/>
   <FIELD id="fieldName">Name</FIELD>
   <FIELD id="fieldType">type</FIELD>
   <FIELD id="fieldDefault">xmltext</FIELD>

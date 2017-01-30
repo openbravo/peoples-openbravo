@@ -1316,8 +1316,6 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("reportPDF", strProcess);
     xmlDocument.setParameter("reportDirectPrint", strDirectPrint);
 
-    xmlDocument.setParameter("deleteable", deleteable ? "true" : "false");
-
     if (parentsFieldsData.length > 0) {
 
       xmlDocument.setParameter("keyParent", parentsFieldsData[0].name);
@@ -1343,12 +1341,6 @@ public class Wad extends DefaultHandler {
         ((Integer.valueOf(createFromProcess).intValue() > 0) ? createFromProcess : ""));
     xmlDocument.setParameter("postedProcessId",
         ((Integer.valueOf(postedProcess).intValue() > 0) ? postedProcess : ""));
-    xmlDocument.setParameter("editReference", TabsData.formClassName(pool, editReference));
-    // read only for relation toolbar: it is the same for Single Record and Read Only
-    xmlDocument.setParameter("isReadOnly", uiPattern.equals("STD") ? "false" : "true");
-
-    // UI Patter for edition toolbar
-    xmlDocument.setParameter("uiPattern", uiPattern);
 
     if (WadUtility.findField(vecFields, "adClientId"))
       xmlDocument.setParameter("clientId", "data.adClientId");
