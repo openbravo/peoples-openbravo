@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -23,9 +23,12 @@ import java.sql.PreparedStatement;
 
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
+import org.openbravo.modulescript.OpenbravoVersion;
+import org.openbravo.modulescript.ModuleScriptExecutionLimits;
 
 public class ModuleScriptPosterminal extends ModuleScript {
-
+  private static final String RETAIL_PACK_MODULE_ID = "03FAB282A7BF47D3B1B242AC67F7845B";
+  
   public void execute() {
     try {
       String qry = "UPDATE OBPOS_Applications SET obpos_c_bpartner_loc_id = (SELECT MAX(cbl.C_BPartner_Location_id) "
@@ -37,5 +40,19 @@ public class ModuleScriptPosterminal extends ModuleScript {
     } catch (Exception e) {
       handleError(e);
     }
+  }
+  
+  
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    // The module script needs to be executed only when updating from a version
+    // lower than 3.0RR14Q2 (Retail pack)(1.8.330)
+    return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
+        new OpenbravoVersion(1, 8, 330));
+  }
+  
+  @Override
+  protected boolean executeOnInstall() {
+    return false;
   }
 }

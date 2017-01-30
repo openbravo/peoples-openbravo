@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.modulescript.ModuleScript;
 import org.openbravo.modulescript.OpenbravoVersion;
+import org.openbravo.modulescript.ModuleScriptExecutionLimits;
 
 /**
  * 
@@ -32,31 +33,39 @@ import org.openbravo.modulescript.OpenbravoVersion;
 public class InsertDiscountPreference extends ModuleScript {
 
   private static final Logger log4j = Logger.getLogger(InsertDiscountPreference.class);
-
+  private static final String RETAIL_PACK_MODULE_ID = "03FAB282A7BF47D3B1B242AC67F7845B";
   @Override
   public void execute() {
 
     try {
       ConnectionProvider cp = getConnectionProvider();
 
-      String exists1 = InsertDiscountPreferenceData.selectExistsControlPreference(cp);
       String exists2 = InsertDiscountPreferenceData.selectIsNewInstance(cp);
       // if preference not exists and it is not a new instance then preference "discount to button" is inserted
-      if (exists1.equals("0") && !exists2.equals("0")) {
+      if (!exists2.equals("0")) {
     	int prefs = InsertDiscountPreferenceData.insert(cp);
         log4j.debug("Inserted " + prefs + " preference -open discount button-");  
       } else {
         log4j.debug("No need to insert preference -open discount button-");
       }
-      // insert control preferente to avoid that the preference "discount to button"  is inserted in the future
-      if (exists1.equals("0"))
-      {
-        InsertDiscountPreferenceData.insertControlPreference(cp);
-      }
 
     } catch (Exception e) {
       handleError(e);
     }
+  }
+  
+  
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    // The module script needs to be executed only when updating from a version
+    // lower than RMP27 (Retail pack)(1.7.1110)
+    return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
+        new OpenbravoVersion(1, 7, 1110));
+  }
+  
+  @Override
+  protected boolean executeOnInstall() {
+    return false;
   }
 
   public static void main(String[] args) {
