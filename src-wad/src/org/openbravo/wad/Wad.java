@@ -1717,8 +1717,6 @@ public class Wad extends DefaultHandler {
       xmlDocumentXsql.setData("structure11", abrd);
     }
 
-    xmlDocumentXsql.setData("structure13", selCol);
-
     WadUtility.writeFile(fileDir, tabName + "_data.xsql",
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocumentXsql.print());
   }
