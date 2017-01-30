@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -163,6 +163,11 @@ public class OBInterceptor extends EmptyInterceptor {
   @Override
   public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState,
       Object[] previousState, String[] propertyNames, Type[] types) {
+    if (SessionHandler.isCheckingDirtySession()) {
+      // onFlushDirty gets invoked on actual flushes but also when checking session dirty, in later
+      // case nothing should be done here.
+      return false;
+    }
 
     // this can happen when someone has set the id of an object but has not set the
     // new object to true
@@ -299,8 +304,8 @@ public class OBInterceptor extends EmptyInterceptor {
             && bob.getEntity().getProperty(propertyNames[i]).isAllowedCrossOrgReference();
 
         if (!skipCrossOrgCheck
-            && !obContext.getOrganizationStructureProvider(o1.getClient().getId())
-                .isInNaturalTree(o1, o2)) {
+            && !obContext.getOrganizationStructureProvider(o1.getClient().getId()).isInNaturalTree(
+                o1, o2)) {
           throw new OBSecurityException("Entity " + bob.getIdentifier() + " ("
               + bob.getEntityName() + ") with organization " + o1.getIdentifier()
               + " references an entity " + ((BaseOBObject) currentState[i]).getIdentifier()

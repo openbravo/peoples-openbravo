@@ -9,7 +9,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2001-2014 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2001-2017 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  * ***********************************************************************
  */
@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class Report {
   public String getOrgId() {
@@ -78,6 +79,13 @@ public class Report {
   }
 
   private TemplateInfo templateInfo;
+
+  public Report(DocumentType documentType, String documentId, String strLanguage,
+      String templateId, boolean multiReport, OutputTypeEnum outputTypeString)
+      throws ReportingException, ServletException {
+    this(DalConnectionProvider.getReadOnlyConnectionProvider(), documentType, documentId,
+        strLanguage, templateId, multiReport, outputTypeString);
+  }
 
   public Report(ConnectionProvider connectionProvider, DocumentType documentType,
       String documentId, String strLanguage, String templateId, boolean multiReport,

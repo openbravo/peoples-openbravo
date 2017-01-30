@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -188,7 +188,7 @@ public class PaymentTest_06 extends OBBaseTest {
     String bpartnerId = "2C4C71BC828B47A0AF2A79855FD3BA7A"; // Sleep Well Hotels, Co.
     String priceListId = "8366EAF1EDF442A98377D74A199084A8"; // General Sales
     String paymentTermId = "66BA1164A7394344BB9CD1A6ECEED05D"; // 30 days
-    String currencyId = "102"; // EUR
+    String currencyId = EURO_ID;
     String productId = "34560A057833457D962F7A573F76F5BB"; // Ale Beer
     String taxId = "3CCDACCCF02C4D209174159A8AF43127"; // NY Sales Tax
     String docTypeId = "61D7AC2360F0417C80237B5D2131BACD"; // AR Invoice

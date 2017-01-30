@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU 
  * All Rights Reserved. 
  ************************************************************************
  */
@@ -29,6 +29,8 @@ import org.apache.log4j.Logger;
 public abstract class ExternalConnectionPool {
 
   static Logger log = Logger.getLogger(ExternalConnectionPool.class);
+  public static final String DEFAULT_POOL = "DEFAULT";
+  public static final String READONLY_POOL = "RO";
 
   private static ExternalConnectionPool instance;
 
@@ -52,6 +54,13 @@ public abstract class ExternalConnectionPool {
   }
 
   /**
+   * @return the singleton instance of the external connection pool
+   */
+  public final static ExternalConnectionPool getInstance() {
+    return instance;
+  }
+
+  /**
    * If the external connection pool should be closed this method should be overwritten
    */
   public void closePool() {
@@ -71,5 +80,20 @@ public abstract class ExternalConnectionPool {
    * @return A Connection from the external connection pool
    */
   public abstract Connection getConnection();
+
+  /**
+   * This method is intended to be overridden by external connection multi-pools. This kind of pools
+   * can handle several datasources and this method allows to select from which of them the
+   * connection should be taken.
+   * 
+   * @param poolName
+   *          The name of the external connection pool
+   * 
+   * @return A Connection from the external connection pool whose name is passed as parameter
+   * 
+   */
+  public Connection getConnection(String poolName) {
+    return getConnection();
+  }
 
 }

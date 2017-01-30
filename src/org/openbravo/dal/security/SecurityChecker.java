@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -122,10 +122,12 @@ public class SecurityChecker implements OBSingleton {
     }
 
     String orgId = "";
+    boolean isOrganization = false;
     if (obj instanceof OrganizationEnabled && ((OrganizationEnabled) obj).getOrganization() != null) {
       orgId = ((OrganizationEnabled) obj).getOrganization().getId();
     } else if (obj instanceof Organization) {
       orgId = ((Organization) obj).getId();
+      isOrganization = true;
     }
 
     final Entity entity = ((BaseOBObject) obj).getEntity();
@@ -154,8 +156,11 @@ public class SecurityChecker implements OBSingleton {
         boolean checkOrgAccess = !(entity.getTableName().equals("AD_Role_OrgAccess")
             && OBContext.getOBContext().getRole().isClientAdmin() && OBContext.getOBContext()
             .getRole().getClient().getId().equals(clientId));
+        boolean notWritableOrganization = !obContext.getWritableOrganizations().contains(orgId);
+        boolean isDisabledOrganization = isOrganization
+            && obContext.getDeactivatedOrganizations().contains(orgId);
 
-        if (checkOrgAccess && !obContext.getWritableOrganizations().contains(orgId)) {
+        if (checkOrgAccess && notWritableOrganization && !isDisabledOrganization) {
           // TODO: maybe move rollback to exception throwing
           SessionHandler.getInstance().setDoRollback(true);
           throw new OBSecurityException("Organization " + orgId + " of object (" + obj

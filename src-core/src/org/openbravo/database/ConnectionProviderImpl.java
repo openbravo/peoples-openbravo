@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2015 Openbravo S.L.U.
+ * Copyright (C) 2001-2017 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -235,9 +235,6 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     if (conn == null) {
       conn = getNewConnection(poolName);
       SessionInfo.setSessionConnection(conn);
-    } else {
-      // Update session info if needed
-      SessionInfo.setDBSessionInfo(conn, true);
     }
     return conn;
   }
@@ -278,10 +275,6 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     try {
       conn = DriverManager
           .getConnection("jdbc:apache:commons:dbcp:" + contextName + "_" + poolName);
-      // Set session info for the connection, but do not attach the connection to
-      // the session since
-      // it shouldn't be reused
-      SessionInfo.setDBSessionInfo(conn);
     } catch (SQLException ex) {
       log4j.error("Error getting connection", ex);
       throw new NoConnectionAvailableException(
@@ -340,7 +333,6 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     if (conn == null)
       throw new NoConnectionAvailableException("Couldn´t get an available connection");
     conn.setAutoCommit(false);
-    SessionInfo.setDBSessionInfo(conn);
     return conn;
   }
 

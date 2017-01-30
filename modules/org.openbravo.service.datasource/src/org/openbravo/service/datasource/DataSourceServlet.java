@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -835,8 +835,6 @@ public class DataSourceServlet extends BaseKernelServlet {
       ServletException {
     final Map<String, String> parameters = getParameterMap(request);
 
-    setSessionInfo();
-
     try {
       if (DataSourceConstants.FETCH_OPERATION.equals(parameters
           .get(DataSourceConstants.OPERATION_TYPE_PARAM))) {
@@ -865,7 +863,6 @@ public class DataSourceServlet extends BaseKernelServlet {
   public void doDelete(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
     final Map<String, String> parameters = getParameterMap(request);
-    setSessionInfo();
     try {
       // checks and set parameters, if not valid then go away
       if (!checkSetParameters(request, response, parameters)) {
@@ -908,7 +905,6 @@ public class DataSourceServlet extends BaseKernelServlet {
   public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     final Map<String, String> parameters = getParameterMap(request);
-    setSessionInfo();
     try {
       if (!hasAccess(request, parameters.get(JsonConstants.TAB_PARAMETER))) {
         throw new OBUserException("AccessTableNoView");
@@ -924,14 +920,6 @@ public class DataSourceServlet extends BaseKernelServlet {
     } catch (Exception e) {
       handleException(e, response);
     }
-  }
-
-  private void setSessionInfo() {
-    // FIXME: Because of issue #15331 connection is initialized with temporary audit table before
-    // setting session info
-    // Reset Session Info in DB manually as it was set in the service but actual information is not
-    // available till now.
-    SessionInfo.setDBSessionInfo(OBDal.getInstance().getConnection());
   }
 
   private boolean checkSetParameters(HttpServletRequest request, HttpServletResponse response,

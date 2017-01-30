@@ -11,13 +11,16 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.userinterface.selector.reference;
+
+import static org.openbravo.erpCommon.utility.ComboTableData.CLIENT_LIST_PARAM_HOLDER;
+import static org.openbravo.erpCommon.utility.ComboTableData.ORG_LIST_PARAM_HOLDER;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -230,17 +233,13 @@ public class SelectorUIReference extends UIReference {
               && !parentFieldName.equals("")) {
             tables += " on " + tableName + "." + parentFieldName + " = td" + myIndex + "." + name
                 + "\n";
-            tables += "AND td" + myIndex + ".AD_Client_ID IN (" + comboTableData.getClientList()
-                + ") \n";
-            tables += "AND td" + myIndex + ".AD_Org_ID IN (" + comboTableData.getOrgList() + ")";
+            tables += "AND td" + myIndex + ".AD_Client_ID IN (" + CLIENT_LIST_PARAM_HOLDER + ") \n";
+            tables += "AND td" + myIndex + ".AD_Org_ID IN (" + ORG_LIST_PARAM_HOLDER + ")";
           } else {
-            comboTableData.addWhereField(
-                "td" + myIndex + ".AD_Client_ID IN (" + comboTableData.getClientList() + ")",
-                "CLIENT_LIST");
-            if (comboTableData.getOrgList() != null)
-              comboTableData.addWhereField(
-                  "td" + myIndex + ".AD_Org_ID IN (" + comboTableData.getOrgList() + ")",
-                  "ORG_LIST");
+            comboTableData.addWhereField("td" + myIndex + ".AD_Client_ID IN ("
+                + CLIENT_LIST_PARAM_HOLDER + ")", "CLIENT_LIST");
+            comboTableData.addWhereField("td" + myIndex + ".AD_Org_ID IN (" + ORG_LIST_PARAM_HOLDER
+                + ")", "ORG_LIST");
           }
           comboTableData.addFromField(tables, "td" + myIndex);
           if (tableName == null || tableName.equals("")) {

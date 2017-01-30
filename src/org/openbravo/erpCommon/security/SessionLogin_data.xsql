@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,7 +74,7 @@
     ]]></Sql>
   </SqlMethod>
 
-  <SqlMethod name="insertUsageAudit" type="preparedStatement" return="rowCount" connection="true" >
+  <SqlMethod name="insertUsageAudit" type="preparedStatement" return="rowCount" connection="true" saveContextInfo="false">
     <Sql><![CDATA[
         INSERT INTO ad_session_usage_audit
         (ad_session_usage_audit_id, ad_client_id, ad_org_id, createdby, updatedby, ad_session_id, object_id, ad_module_id, command, classname, object_type, process_time)

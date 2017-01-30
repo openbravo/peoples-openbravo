@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,7 +31,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.database.SessionInfo;
+import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.exception.NoConnectionAvailableException;
 
 /**
@@ -57,13 +57,23 @@ public class DalConnectionProvider implements ConnectionProvider {
   // This parameter can be used to define whether the OBDal needs to be flushed when the connection
   // is retrieved or not
   private boolean flush = true;
+  private String pool;
 
   public void destroy() throws Exception {
     // never close
   }
 
   public DalConnectionProvider() {
+    pool = ExternalConnectionPool.DEFAULT_POOL;
+  }
 
+  private DalConnectionProvider(String poolName) {
+    pool = poolName;
+    flush = false;
+  }
+
+  public static DalConnectionProvider getReadOnlyConnectionProvider() {
+    return new DalConnectionProvider(ExternalConnectionPool.READONLY_POOL);
   }
 
   /**
@@ -72,17 +82,18 @@ public class DalConnectionProvider implements ConnectionProvider {
    *          if set to true, the getConnection method will flush the OBDal instance.
    */
   public DalConnectionProvider(boolean flush) {
+    pool = ExternalConnectionPool.DEFAULT_POOL;
     this.flush = flush;
   }
 
   public Connection getConnection() throws NoConnectionAvailableException {
     if (connection == null) {
-      connection = OBDal.getInstance().getConnection(flush);
+      connection = OBDal.getInstance(pool).getConnection(flush);
     }
 
     // always flush all remaining actions
     if (flush) {
-      OBDal.getInstance().flush();
+      OBDal.getInstance(pool).flush();
     }
     return connection;
   }
@@ -108,13 +119,12 @@ public class DalConnectionProvider implements ConnectionProvider {
   }
 
   public Connection getTransactionConnection() throws NoConnectionAvailableException, SQLException {
-    Connection conn = SessionHandler.getInstance().getNewConnection();
+    Connection conn = SessionHandler.getInstance().getNewConnection(pool);
 
     if (conn == null) {
       throw new NoConnectionAvailableException("Couldn't get an available connection");
     }
     conn.setAutoCommit(false);
-    SessionInfo.setDBSessionInfo(conn);
     return conn;
   }
 

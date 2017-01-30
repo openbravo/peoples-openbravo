@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2211,51 +2211,57 @@ public class Utility {
     try {
 
       if ("yourcompanylogin".equals(logo)) {
-        img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyLoginImage();
+        img = OBDal.getReadOnlyInstance().get(SystemInformation.class, "0")
+            .getYourCompanyLoginImage();
       } else if ("youritservicelogin".equals(logo)) {
-        img = OBDal.getInstance().get(SystemInformation.class, "0").getYourItServiceLoginImage();
+        img = OBDal.getReadOnlyInstance().get(SystemInformation.class, "0")
+            .getYourItServiceLoginImage();
       } else if ("yourcompanymenu".equals(logo)) {
-        img = OBDal.getInstance()
+        img = OBDal.getReadOnlyInstance()
             .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId())
             .getYourCompanyMenuImage();
         if (img == null) {
-          img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyMenuImage();
+          img = OBDal.getReadOnlyInstance().get(SystemInformation.class, "0")
+              .getYourCompanyMenuImage();
         }
       } else if ("yourcompanybig".equals(logo)) {
-        img = OBDal.getInstance()
+        img = OBDal.getReadOnlyInstance()
             .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId())
             .getYourCompanyBigImage();
         if (img == null) {
-          img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyBigImage();
+          img = OBDal.getReadOnlyInstance().get(SystemInformation.class, "0")
+              .getYourCompanyBigImage();
         }
       } else if ("yourcompanydoc".equals(logo)) {
         if (org != null && !org.equals("")) {
-          Organization organization = OBDal.getInstance().get(Organization.class, org);
+          Organization organization = OBDal.getReadOnlyInstance().get(Organization.class, org);
           img = organization.getOrganizationInformationList().get(0).getYourCompanyDocumentImage();
         }
         if (img == null) {
-          img = OBDal.getInstance()
+          img = OBDal.getReadOnlyInstance()
               .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId())
               .getYourCompanyDocumentImage();
         }
         if (img == null) {
-          img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyDocumentImage();
+          img = OBDal.getReadOnlyInstance().get(SystemInformation.class, "0")
+              .getYourCompanyDocumentImage();
         }
       } else if ("banner-production".equals(logo)) {
-        img = OBDal.getInstance().get(SystemInformation.class, "0").getProductionBannerImage();
+        img = OBDal.getReadOnlyInstance().get(SystemInformation.class, "0")
+            .getProductionBannerImage();
       } else if ("yourcompanylegal".equals(logo)) {
         if (org != null && !org.equals("")) {
-          Organization organization = OBDal.getInstance().get(Organization.class, org);
+          Organization organization = OBDal.getReadOnlyInstance().get(Organization.class, org);
           img = organization.getOrganizationInformationList().get(0).getYourCompanyDocumentImage();
         }
         if (img == null) {
 
-          img = OBDal.getInstance()
+          img = OBDal.getReadOnlyInstance()
               .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId())
               .getYourCompanyDocumentImage();
 
           if (img == null) {
-            img = OBDal.getInstance().get(SystemInformation.class, "0")
+            img = OBDal.getReadOnlyInstance().get(SystemInformation.class, "0")
                 .getYourCompanyDocumentImage();
           }
         }
@@ -2604,8 +2610,8 @@ public class Utility {
    * 
    */
   public static Country getCountryFromOrgId(String orgid) {
-    Organization organization = (Organization) OBDal.getInstance().get(Organization.ENTITY_NAME,
-        orgid);
+    Organization organization = (Organization) OBDal.getReadOnlyInstance().get(
+        Organization.ENTITY_NAME, orgid);
     List<OrganizationInformation> orgInfoList = organization.getOrganizationInformationList();
     if (orgInfoList.isEmpty()) {
       return null;
@@ -2638,7 +2644,7 @@ public class Utility {
       return df.format(date);
     } finally {
       OBContext.restorePreviousMode();
-      OBDal.getInstance().commitAndClose();
+      OBDal.getReadOnlyInstance().commitAndClose();
     }
   }
 
@@ -2693,7 +2699,7 @@ public class Utility {
       }
     } finally {
       OBContext.restorePreviousMode();
-      OBDal.getInstance().commitAndClose();
+      OBDal.getReadOnlyInstance().commitAndClose();
     }
   }
 

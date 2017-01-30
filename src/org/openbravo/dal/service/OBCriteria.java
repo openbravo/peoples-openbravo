@@ -71,14 +71,20 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   private boolean initialized = false;
   private boolean modified = false;
 
-  // package visible
-
   public OBCriteria(String entityOrClassName) {
     super(entityOrClassName, (SessionImplementor) SessionHandler.getInstance().getSession());
   }
 
+  public OBCriteria(String entityOrClassName, SessionImplementor session) {
+    super(entityOrClassName, session);
+  }
+
   public OBCriteria(String entityOrClassName, String alias) {
     super(entityOrClassName, alias, (SessionImplementor) SessionHandler.getInstance().getSession());
+  }
+
+  public OBCriteria(String entityOrClassName, String alias, SessionImplementor session) {
+    super(entityOrClassName, alias, session);
   }
 
   /**

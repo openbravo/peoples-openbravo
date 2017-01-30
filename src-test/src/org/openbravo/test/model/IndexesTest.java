@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -55,7 +55,7 @@ public class IndexesTest extends OBBaseTest {
     int otherIndexes = 6;
 
     String sql = "select *" //
-        + "from (" //
+        + " from (" //
         + "    select w.name as window_name," //
         + "           t1.name as parentTab," //
         + "           ptb.tablename as parentTable," //
@@ -97,7 +97,7 @@ public class IndexesTest extends OBBaseTest {
         + "             where tablevel > 0" //
         + "               and ct.ad_table_id = t.ad_table_id" //
         + "               and t.dataorigintype = 'Table' " //
-        + "               and t.isview ='N') as rel" //
+        + "               and t.isview ='N') rel" //
         + "     where rel.child = t2.ad_tab_id" //
         + "       and t2.ad_table_id = ctb.ad_table_id" //
         + "       and rel.parent = t1.ad_tab_id" //
