@@ -115,6 +115,14 @@ public class ResponseActionsBuilder {
   }
 
   /**
+   * @see ResponseActionsBuilder#openDirectTab(String, String, boolean)
+   */
+  public ResponseActionsBuilder openDirectTab(String tabId, boolean wait) throws JSONException {
+    openDirectTab(tabId, null, wait);
+    return this;
+  }
+
+  /**
    * @see ResponseActionsBuilder#openDirectTab(String, String, String, boolean)
    */
   public ResponseActionsBuilder openDirectTab(String tabId, String recordId, boolean wait)
