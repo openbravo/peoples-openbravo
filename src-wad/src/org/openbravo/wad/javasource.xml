@@ -58,8 +58,9 @@
   <PARAMETER id="orgId" name = "orgId" default=" "/>
   <PARAMETER id="clientId" name = "clientId" default=" "/>
   <PARAMETER id="parentClass" name = "parentClass" default=" "/>
-  <PARAMETER id="paramDisplayLogic" name="displayLogic" default=""/>
-  <PARAMETER id="paramReadOnlyLogic" name="readOnlyLogic" default=""/>
+  
+
+  
   <PARAMETER id="paramCreateFromProcessId" name="createFromProcessId" default=""/>
   <PARAMETER id="paramPostedProcessId" name="postedProcessId" default=""/>
   <PARAMETER id="language" name="parentLanguage" default=""/>

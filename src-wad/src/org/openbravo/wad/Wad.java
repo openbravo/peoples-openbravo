@@ -1352,43 +1352,6 @@ public class Wad extends DefaultHandler {
 
     final boolean noPInstance = (ActionButtonRelationData.select(pool, strTab).length == 0);
     final boolean noActionButton = FieldsData.hasActionButton(pool, strTab).equals("0");
-    final StringBuffer dl = new StringBuffer();
-    final StringBuffer readOnlyLogic = new StringBuffer();
-
-    {
-      final Vector<Object> vecContext = new Vector<Object>();
-      final Vector<Object> vecDL = new Vector<Object>();
-      final EditionFieldsData[] efd = EditionFieldsData.selectDisplayLogic(pool, strTab);
-
-      for (int i = 0; i < vecContext.size(); i++) {
-        dl.append("var str");
-        dl.append(FormatUtilities.replace(vecContext.elementAt(i).toString()));
-
-        dl.append("=\\\"\" +");
-        if (vecContext.elementAt(i).toString().equals("ShowAudit"))
-          dl.append("(isNew?\"N\":");
-        dl.append("Utility.getContext(this, vars, \"").append(vecContext.elementAt(i).toString())
-            .append("\", windowId)");
-        if (vecContext.elementAt(i).toString().equals("ShowAudit"))
-          dl.append(")");
-
-        dl.append(" + \"\\\";\\n");
-      }
-    }
-
-    {
-      final Vector<Object> vecContext = new Vector<Object>();
-      final Vector<Object> vecDL = new Vector<Object>();
-      final EditionFieldsData[] efd = EditionFieldsData.selectReadOnlyLogic(pool, strTab);
-
-      for (int i = 0; i < vecContext.size(); i++) {
-        readOnlyLogic.append("var str");
-        readOnlyLogic.append(FormatUtilities.replace(vecContext.elementAt(i).toString()));
-        readOnlyLogic.append("=\\\"\" + Utility.getContext(this, vars, \"");
-        readOnlyLogic.append(vecContext.elementAt(i).toString());
-        readOnlyLogic.append("\", windowId) + \"\\\";\\n");
-      }
-    }
 
     final String[] discard = { "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
         "", "", "", "", "hasReference", "", "", "", "", "", "", "", "hasOrgKey", "", "", "", "" };
@@ -1403,11 +1366,8 @@ public class Wad extends DefaultHandler {
     if (tableName.toUpperCase().endsWith("_ACCESS")) {
       discard[18] = "client";
       discard[1] = "org";
-    } // else if (tableName.toUpperCase().startsWith("M_PRODUCT") ||
-    // tableName.toUpperCase().startsWith("C_BP") ||
-    // tableName.toUpperCase().startsWith("AD_ORG")) discard[1] = "org";
-    if (dl.toString().equals(""))
-      discard[2] = "selDisplayLogic";
+    }
+
     if (!isHighVolumen || !tablevel.equals("0")) {
       discard[3] = "sectionIsHighVolume";
     }
@@ -1496,8 +1456,6 @@ public class Wad extends DefaultHandler {
     }
     xmlDocument.setParameter("where", generateStaticWhere(strWhere, vecParametersTop));
     xmlDocument.setParameter("filter", strFilter);
-    xmlDocument.setParameter("displayLogic", dl.toString());
-    xmlDocument.setParameter("readOnlyLogic", readOnlyLogic.toString());
     xmlDocument.setParameter("grandfatherName", grandfatherField);
     xmlDocument.setParameter("defaultView",
         (FieldsData.isSingleRow(pool, strTab).equals("Y") ? "EDIT" : "RELATION"));
