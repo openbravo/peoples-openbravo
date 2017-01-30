@@ -12092,7 +12092,7 @@ public class TestCosting extends WeldBaseTest {
         assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
             .getOrderQuantity(), null);
         assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getUOM()
-            .getName(), "Unit");
+            .getId(), UOM_ID);
         assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
             .getQuantityOrderBook(), null);
 
