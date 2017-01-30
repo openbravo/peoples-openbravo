@@ -1454,30 +1454,8 @@ public class Wad extends DefaultHandler {
     xmlDocument.setData("structureActionBtnServiceJava", actBtnsJava);
     xmlDocument.setData("structureActionBtnServiceJavaSecuredProcess", actBtnsJava);
 
-    final StringBuffer controlsJavaSource = new StringBuffer();
-    boolean needsComboTableData = false;
-    for (int i = 0; i < allfields.length; i++) {
-      WADControl auxControl = null;
-      try {
-        auxControl = WadUtility.getControl(pool, allfields[i], uiPattern.equals("RO"), tabName, "",
-            xmlEngine, false, false, false, hasParentsFields);
-      } catch (final Exception ex) {
-        throw new ServletException(ex);
-      }
-      if ((!auxControl.toJava().equals("")) && (!needsComboTableData)) {
-        needsComboTableData = true;
-        controlsJavaSource.append("    try {\n      ComboTableData comboTableData = null;\n");
-      }
-      controlsJavaSource.append(auxControl.toJava()).append(
-          (auxControl.toJava().equals("") ? "" : "\n"));
-    }
-
     xmlDocument.setData("structure38", FieldsData.explicitAccessProcess(pool, strTab));
 
-    if (needsComboTableData)
-      controlsJavaSource
-          .append("    } catch (Exception ex) {\n      ex.printStackTrace();\n      throw new ServletException(ex);\n    }\n");
-    xmlDocument.setParameter("controlsJavaCode", controlsJavaSource.toString());
     WadUtility.writeFile(fileDir, tabName + ".java", xmlDocument.print());
   }
 

@@ -22,7 +22,6 @@
 
 <REPORT>
 <template file="javasource.javaxml" />
-<PARAMETER id="fieldControlsJavaCode" name="controlsJavaCode"/>
 
 <structure name="structure1">
   <PARAMETER id="class" name = "class" default=" "/>
