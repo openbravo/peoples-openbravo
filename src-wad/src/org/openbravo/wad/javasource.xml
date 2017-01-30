@@ -249,13 +249,6 @@
   <SECTION id="sectionIsHighVolume2Edit"/>
 </structure>
 
-<structure name="structure23">
-  <FIELD id="fieldIdentifyColumn">columnname</FIELD>
-  <FIELD id="fieldIdentifyValue">realname</FIELD>
-
-  <section id="sectionIdentifyValues"/>
-</structure>
-
 <structure name="structure38">
   <FIELD id="explicitAccess">id</FIELD>
   <SECTION id="sectionExplicitAccessProcess"/>

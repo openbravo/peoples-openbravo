@@ -1855,25 +1855,6 @@ public class Wad extends DefaultHandler {
       }
 
       xmlDocument.setData("structure12", docNoNoConnFileds);
-      {
-        final FieldsData[] docsIdentify = FieldsData.selectIdentify(pool, strTab);
-        if (docsIdentify != null) {
-          for (int i = 0; i < docsIdentify.length; i++) {
-            if (docsNoFields == null || docsNoFields.length == 0) {
-              docsIdentify[i].realname = "Utility.getDocumentNoConnection(con, this, vars.getClient(), \""
-                  + docsIdentify[i].nameref + "\", true)";
-              if (docsIdentify[i].issessionattr.equals("Y"))
-                docsIdentify[i].realname += ";\nvars.setSessionValue(windowId + \"|"
-                    + docsIdentify[i].columnname + "\", data."
-                    + Sqlc.TransformaNombreColumna(docsIdentify[i].columnname) + ")";
-            } else {
-              docsIdentify[i].realname = "data." + docsNoFields[0].columnname;
-            }
-            docsIdentify[i].columnname = Sqlc.TransformaNombreColumna(docsIdentify[i].columnname);
-          }
-        }
-        xmlDocument.setData("structure23", docsIdentify);
-      }
     }
 
     xmlDocument.setData("structure1", fieldsData);
