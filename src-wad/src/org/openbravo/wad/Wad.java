@@ -1616,30 +1616,7 @@ public class Wad extends DefaultHandler {
       throws ServletException, IOException {
     log4j.debug("Procesig xsql: " + strTab + ", " + tabName);
     XmlDocument xmlDocumentXsql;
-    final String[] discard = { "", "", "", "", "", "", "", "", "", "", "" };
-
-    if (parentsFieldsData == null || parentsFieldsData.length == 0) {
-      discard[0] = "parent"; // remove the parent tags
-    } else if (!"Y".equals(parentsFieldsData[0].issecondarykey)) {
-      discard[10] = "parentSecondaryKey";
-    }
-
-    if (tableName.toUpperCase().endsWith("_ACCESS")) {
-      discard[6] = "client";
-      discard[1] = "org";
-    }
-
-    if (!(windowType.equalsIgnoreCase("T") && tablevel.equals("0")))
-      discard[4] = "sectionTransactional";
-    if ((!(isSecondaryKey && !EditionFieldsData.isOrgKey(pool, strTab).equals("0")))
-        || strTab.equals("170"))
-      discard[7] = "hasOrgKey";
-    else {
-      discard[7] = "hasNoOrgKey";
-    }
-
-    xmlDocumentXsql = xmlEngine.readXmlTemplate("org/openbravo/wad/datasource", discard)
-        .createXmlDocument();
+    xmlDocumentXsql = xmlEngine.readXmlTemplate("org/openbravo/wad/datasource").createXmlDocument();
 
     xmlDocumentXsql.ignoreTranslation = true;
     xmlDocumentXsql.setParameter("class", tabName + "Data");
