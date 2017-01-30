@@ -216,5 +216,9 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
     return fixRequestMap(parameters, null);
   }
 
+  protected static ResponseActionsBuilder getResponseBuilder() {
+    return new ResponseActionsBuilder();
+  }
+
   protected abstract JSONObject doExecute(Map<String, Object> parameters, String content);
 }
