@@ -1377,8 +1377,7 @@ public class Wad extends DefaultHandler {
     final boolean hasCreateFrom = !createFromProcess.equals("0");
     final String postedProcess = FieldsData.hasPostedButton(pool, strTab);
     final boolean hasPosted = !postedProcess.equals("0");
-    final String strhasEncryption = FieldsData.hasEncryptionFields(pool, strTab);
-    final boolean hasEncryption = (strhasEncryption != null && !strhasEncryption.equals("0"));
+
     final int parentTab = parentTabId(allTabs, strTab);
     final String hasTree = TableLinkData.hasTree(pool, strTab);
     final boolean noPInstance = (ActionButtonRelationData.select(pool, strTab).length == 0);
@@ -1501,8 +1500,6 @@ public class Wad extends DefaultHandler {
       discard[16] = "sectionFilter";
     if (uiPattern.equals("STD"))
       discard[17] = "sectionReadOnly";
-    if (!hasEncryption)
-      discard[20] = "encryptionsFields";
     if (!editReference.equals(""))
       discard[21] = "NothasReference";
     if ((noPInstance) && (noActionButton))
@@ -1757,15 +1754,6 @@ public class Wad extends DefaultHandler {
             fieldsData1[i].catchtext = "";
           }
 
-          if (fieldsData1[i].iscolumnencrypted.equals("Y")
-              && fieldsData1[i].isdesencryptable.equals("Y")) {
-            fieldsData1[i].htmltext = "FormatUtilities.encryptDecrypt(";
-            fieldsData1[i].htmltexttrl = ", true)";
-          } else if (fieldsData1[i].iscolumnencrypted.equals("Y")
-              && fieldsData1[i].isdesencryptable.equals("N")) {
-            fieldsData1[i].htmltext = "FormatUtilities.sha1Base64(";
-            fieldsData1[i].htmltexttrl = ")";
-          }
           vecFieldsSelect.addElement(fieldsData1[i]);
           if (control.has2UIFields() && fieldsData1[i].isdisplayed.equals("Y")) {
             FieldsData fieldsData2 = null;
@@ -1948,28 +1936,6 @@ public class Wad extends DefaultHandler {
     xmlDocument.setData("structure24", selCol);
     xmlDocument.setData("structure25", selCol);
     xmlDocument.setData("structure26", selCol);
-
-    // Encrypted Fields
-    {
-      final FieldsData[] encryptedData = FieldsData.selectEncrypted(pool, strTab);
-      if (encryptedData != null && encryptedData.length > 0) {
-        for (int g = 0; g < encryptedData.length; g++) {
-          encryptedData[g].realname = Sqlc.TransformaNombreColumna(encryptedData[g].realname);
-          encryptedData[g].name = FormatUtilities.replace(encryptedData[g].name);
-          if (encryptedData[g].isdesencryptable.equals("Y")) {
-            encryptedData[g].xmlFormat = "encryptDecrypt";
-            encryptedData[g].htmltext = ", true";
-          } else {
-            encryptedData[g].xmlFormat = "sha1Base64";
-            encryptedData[g].htmltext = "";
-          }
-        }
-      }
-      xmlDocument.setData("structure32", encryptedData);
-      xmlDocument.setData("structure33", encryptedData);
-      xmlDocument.setData("structure34", encryptedData);
-      xmlDocument.setData("structure35", encryptedData);
-    }
 
     // Button Fields
     {
@@ -2477,17 +2443,6 @@ public class Wad extends DefaultHandler {
     {
       final ActionButtonRelationData[] abrd = WadActionButton.buildActionButtonSQL(pool, strTab);
       xmlDocumentXsql.setData("structure11", abrd);
-    }
-
-    {
-      final FieldsData[] encryptedData = FieldsData.selectEncrypted(pool, strTab);
-      if (encryptedData != null && encryptedData.length > 0) {
-        for (int g = 0; g < encryptedData.length; g++) {
-          encryptedData[g].realname = Sqlc.TransformaNombreColumna(encryptedData[g].realname);
-          encryptedData[g].name = FormatUtilities.replace(encryptedData[g].name);
-        }
-      }
-      xmlDocumentXsql.setData("structure17", encryptedData);
     }
 
     xmlDocumentXsql.setData("structure13", selCol);

@@ -293,36 +293,6 @@
   <SECTION id="sectionDetailParamsPrevious"/>
 </structure>
 
-<structure name="structure32">
-  <FIELD id="fieldEncryptionName">realname</FIELD>
-  <SECTION id="sectionEncryption"/>
-</structure>
-
-<structure name="structure33">
-  <FIELD id="EncryptedFieldID1">id</FIELD>
-  <FIELD id="EncryptedName1">columnname</FIELD>
-  <FIELD id="EncryptedRealName1">name</FIELD>
-  <SECTION id="sectionEncrypted1"/>
-</structure>
-
-<structure name="structure34">
-  <FIELD id="EncryptedFieldID2">id</FIELD>
-  <FIELD id="EncryptedName2">columnname</FIELD>
-  <FIELD id="EncryptedRealName2">name</FIELD>
-  <FIELD id="EncryptedUpdateName2">realname</FIELD>
-  <SECTION id="sectionEncrypted2"/>
-</structure>
-
-<structure name="structure35">
-  <FIELD id="EncryptedFieldID3">id</FIELD>
-  <FIELD id="EncryptedName3">columnname</FIELD>
-  <FIELD id="EncryptedRealName3">name</FIELD>
-  <FIELD id="EncryptedUpdateName3">realname</FIELD>
-  <FIELD id="EncryptedMethod3">xmlFormat</FIELD>
-  <FIELD id="EncryptedPostMethod3">htmltext</FIELD>
-  <SECTION id="sectionEncrypted3"/>
-</structure>
-
 <structure name="structure36">
   <FIELD id="fieldButtonText">realname</FIELD>
   <FIELD id="fieldButtonListID">id</FIELD>

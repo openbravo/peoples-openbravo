@@ -62,30 +62,6 @@ package="org.openbravo.wad.Window">
   </SqlMethod>
 </FIELDS_TMP>
 
-<FIELDS_TMP id="sectionEncryption">
-  <SqlMethod id="fieldRealNameEncrypted" name="updatexx" type="preparedStatement" return="rowCount">
-    <Sql>&#60;&#33;[CDATA[
-        UPDATE <PARAMETER_TMP id="table">table</PARAMETER_TMP>
-        SET <FIELD_TMP id="fieldNameEncrypted">column_a</FIELD_TMP> = ? 
-        WHERE <PARAMETER_TMP id="key">table</PARAMETER_TMP> = ? 
-        <PARAMETER_TMP id="parent">AND <PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = ? </PARAMETER_TMP>
-    ]]&#62;</Sql>
-    <Parameter id="fieldNameEncrypted" name="param1"/>
-    <Parameter id="paramKey" name="param1"/>
-    <PARAMETER_TMP id="parent"><Parameter id="paramParent" name="param2"/></PARAMETER_TMP>
-  </SqlMethod>
-  
-  <SqlMethod id="fieldRealNameEncrypted" name="checkxx" type="preparedStatement" return="string">
-    <Sql>&#60;&#33;[CDATA[
-        SELECT COUNT(*) as total_count
-          FROM <PARAMETER_TMP id="table">table</PARAMETER_TMP>
-         WHERE <PARAMETER_TMP id="key">table</PARAMETER_TMP> = ? 
-    ]]&#62;</Sql>
-    <Parameter id="paramKey" name="param1"/>
-  </SqlMethod>
-  
-</FIELDS_TMP>
-
 <FIELDS_TMP id="sectionActionSearchs">
    &#60;SqlMethod name="selectActDef<PARAMETER_TMP id="params12">table</PARAMETER_TMP>" type="preparedStatement" return="String" default=""&#62;
     &#60;SqlMethodComment&#62;Select for action search&#60;/SqlMethodComment&#62;

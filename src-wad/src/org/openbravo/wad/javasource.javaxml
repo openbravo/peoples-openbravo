@@ -310,44 +310,6 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
           response.sendRedirect(strDireccion + "/ad_actionButton/Posted.html");
         }
 </FIELDS_TMP>
-<FIELDS_TMP id="sectionEncrypted1">    } else if (vars.commandIn("BUTTON<FIELD_TMP id="EncryptedRealName1">button</FIELD_TMP>")) {
-        String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getGlobalVariable("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", "");
-        <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
-</PARAMETER_TMP>
-        printPageButton<FIELD_TMP id="EncryptedRealName1">name</FIELD_TMP>(request, response, vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
-</FIELDS_TMP>
-<FIELDS_TMP id="sectionEncrypted3">    } else if (vars.commandIn("SAVE_BUTTON<FIELD_TMP id="EncryptedRealName3">button</FIELD_TMP>")) {
-        String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getGlobalVariable("inpKey", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", "");
-        String str<FIELD_TMP id="EncryptedName3">name</FIELD_TMP> = FormatUtilities.<FIELD_TMP id="EncryptedMethod3">encryptDecrypt</FIELD_TMP>(vars.getStringParameter("inpValue")<FIELD_TMP id="EncryptedPostMethod3">, true</FIELD_TMP>);
-
-<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
-</PARAMETER_TMP>
-
-        OBError myError = null;
-        int count = 0;
-        try {
-          count = <PARENT_TMP id="class">Almacen</PARENT_TMP>Data.update<FIELD_TMP id="EncryptedUpdateName3">button</FIELD_TMP>(this, str<FIELD_TMP id="EncryptedName3">name</FIELD_TMP>, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
-        } catch(ServletException ex) {
-          myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-          if (!myError.isConnectionAvailable()) {
-            bdErrorConnection(response);
-            return;
-          } else vars.setMessage(tabId, myError);
-        }
-        if (myError==null) {
-          myError = new OBError();
-          if (count==0) {
-            myError.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-            myError.setType("Error");            
-          } else {
-            myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-            myError.setType("Success");
-          }
-          vars.setMessage(tabId, myError);
-        }
-        if (log4j.isDebugEnabled() &amp;&amp; myError!=null) log4j.debug(myError.getMessage());
-        printPageClosePopUp(response, vars);
-</FIELDS_TMP>
     } else if (vars.getCommand().toUpperCase().startsWith("BUTTON") || vars.getCommand().toUpperCase().startsWith("SAVE_BUTTON")) {
       pageErrorPopUp(response);
     } else pageError(response);
@@ -433,38 +395,6 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       <FIELD_TMP id="JavaCode2j">javaCode</FIELD_TMP>
       
       out.println(xmlDocument.print());
-      out.close();
-    }
-</FIELDS_TMP>
-
-<FIELDS_TMP id="sectionEncrypted2">    void printPageButton<FIELD_TMP id="EncryptedRealName2">name</FIELD_TMP>(HttpServletRequest request, HttpServletResponse response, VariablesSecureApp vars, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>)
-    throws IOException, ServletException {
-      log4j.debug("Output: Button Encrypted <FIELD_TMP id="EncryptedRealName2">xx</FIELD_TMP>");
-      response.setContentType("text/html; charset=UTF-8");
-      PrintWriter out = response.getWriter();
-      XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/EncryptedButtons").createXmlDocument();
-
-      if (<PARENT_TMP id="class">Almacen</PARENT_TMP>Data.check<FIELD_TMP id="EncryptedUpdateName2">button</FIELD_TMP>(this, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>).equals("0")) {
-        bdErrorGeneralPopUp(request, response,Utility.messageBD(this,"Error", vars.getLanguage()),Utility.messageBD(this,"SaveAndTry", vars.getLanguage()));
-      } else {
-        xmlDocument.setParameter("theme", vars.getTheme());
-        xmlDocument.setParameter("realName", "<FIELD_TMP id="EncryptedName2">name</FIELD_TMP>");
-        xmlDocument.setParameter("key", str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
-        xmlDocument.setParameter("keyName", "<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>");
-        xmlDocument.setParameter("form", "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Edition.html");
-        xmlDocument.setParameter("fieldId", "<FIELD_TMP id="EncryptedFieldID2">Almacen</FIELD_TMP>");
-        xmlDocument.setParameter("fieldLabel", Utility.messageBD(this, "<FIELD_TMP id="EncryptedName2">Almacen</FIELD_TMP>", vars.getLanguage()));
-        xmlDocument.setParameter("fieldColumnName", "<FIELD_TMP id="EncryptedName2">Almacen</FIELD_TMP>");
-        <PARAMETER_TMP id="parent">      xmlDocument.setParameter("parentKey", strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);
-        xmlDocument.setParameter("parentKeyName", "<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
-        </PARAMETER_TMP>
-        xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-        xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-        xmlDocument.setParameter("cancel", Utility.messageBD(this, "Cancel", vars.getLanguage()));
-        xmlDocument.setParameter("ok", Utility.messageBD(this, "OK", vars.getLanguage()));
-  
-        out.println(xmlDocument.print());
-      }
       out.close();
     }
 </FIELDS_TMP>

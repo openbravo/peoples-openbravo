@@ -554,21 +554,7 @@
     </Sql>
     <Parameter name="tab"/>
   </SqlMethod>
-  <SqlMethod name="hasEncryptionFields" type="preparedStatement" return="String" default="0">
-    <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT count(*) AS total 
-        FROM AD_FIELD, AD_COLUMN
-        WHERE AD_FIELD.ad_tab_id = ? 
-        AND ad_field.ignoreinwad='N'
-        AND ad_field.ad_column_id = ad_column.ad_column_id 
-        AND ad_column.isEncrypted = 'Y' 
-        AND ad_field.ISDISPLAYED = 'Y'
-      ]]>
-    </Sql>
-    <Parameter name="tab"/>
-  </SqlMethod>
+  
   <SqlMethod name="selectEncrypted" type="preparedStatement" return="multiple">
     <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
     <Sql>

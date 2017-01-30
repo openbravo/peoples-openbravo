@@ -103,11 +103,4 @@
   <FIELD id="paramsAuxiliar16">whereclause</FIELD>
   <SECTION id="sectionActionProcess"/>
 </structure>
-
-<structure name="structure17">
-  <FIELD id="fieldRealNameEncrypted" attribute="name" replace="xx">realname</FIELD>
-  <FIELD id="fieldNameEncrypted">columnname</FIELD>
-  <FIELD id="fieldNameEncrypted" attribute="name">columnname</FIELD>
-  <SECTION id="sectionEncryption"/>
-</structure>
 </REPORT>
