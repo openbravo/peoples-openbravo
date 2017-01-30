@@ -90,6 +90,7 @@ public class OBBaseTest {
       if (!OBContext.getOBContext().getUser().getId().equals("0")
           && !OBContext.getOBContext().getRole().getId().equals("0")
           && OBContext.getOBContext().isInAdministratorMode()) {
+        OBContext.restorePreviousMode();
         throw new IllegalStateException(
             "Test case should take care of reseting admin mode correctly in a finally block, use OBContext.restorePreviousMode");
       }
