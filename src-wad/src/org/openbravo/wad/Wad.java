@@ -1774,52 +1774,6 @@ public class Wad extends DefaultHandler {
       }
     }
 
-    {
-      final FieldsData[] docsNoFields = FieldsData.selectDocumentsNo(pool, strTab);
-      if (docsNoFields != null) {
-        String field = "";
-        for (int i = 0; i < docsNoFields.length; i++) {
-          docsNoFields[i].columnname = Sqlc.TransformaNombreColumna(docsNoFields[i].columnname);
-          docsNoFields[i].defaultvalue = "Utility.getDocumentNo(con, this, vars, windowId, \""
-              + docsNoFields[i].nameref + "\", ";
-          docsNoFields[i].realname = "Utility.getDocumentNo(con, this, vars, windowId, \""
-              + docsNoFields[i].nameref + "\", ";
-          field = WadUtility.findField(pool, allfields, auxiliarsData, "C_DocTypeTarget_ID");
-          if (!field.equals("")) {
-            docsNoFields[i].defaultvalue += "data[0]." + Sqlc.TransformaNombreColumna(field);
-            docsNoFields[i].realname += "data." + Sqlc.TransformaNombreColumna(field);
-          } else {
-            docsNoFields[i].defaultvalue += "\"\"";
-            docsNoFields[i].realname += "\"\"";
-          }
-          docsNoFields[i].defaultvalue += ", ";
-          docsNoFields[i].realname += ", ";
-          field = WadUtility.findField(pool, allfields, auxiliarsData, "C_DocType_ID");
-          if (!field.equals("")) {
-            docsNoFields[i].defaultvalue += "data[0]." + Sqlc.TransformaNombreColumna(field);
-            docsNoFields[i].realname += "data." + Sqlc.TransformaNombreColumna(field);
-          } else {
-            docsNoFields[i].defaultvalue += "\"\"";
-            docsNoFields[i].realname += "\"\"";
-          }
-          docsNoFields[i].defaultvalue += ", false, false)";
-          docsNoFields[i].realname += ", false, true)";
-        }
-      }
-      xmlDocument.setData("structure13", docsNoFields);
-
-      final FieldsData[] docNoNoConnFileds = new FieldsData[docsNoFields.length];
-      for (int i = 0; i < docsNoFields.length; i++) {
-        docNoNoConnFileds[i] = new FieldsData();
-        docNoNoConnFileds[i].columnname = docsNoFields[i].columnname;
-        docNoNoConnFileds[i].realname = docsNoFields[i].realname;
-
-        docNoNoConnFileds[i].defaultvalue = docsNoFields[i].defaultvalue.replace("(con,", "(");
-      }
-
-      xmlDocument.setData("structure12", docNoNoConnFileds);
-    }
-
     xmlDocument.setData("structure1", fieldsData);
 
     xmlDocument.setData("structure7", auxiliarFields);

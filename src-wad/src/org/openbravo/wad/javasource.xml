@@ -117,18 +117,6 @@
   <SECTION id="sectionDetailParentParams"/>
 </structure>
 
-<structure name="structure12">
-  <FIELD id="fieldNameDoc">columnname</FIELD>
-  <FIELD id="fieldValueDoc">defaultvalue</FIELD>
-  <SECTION id="sectionDetailDocuments"/>
-</structure>
-
-<structure name="structure13">
-  <FIELD id="fieldNameDocNew">columnname</FIELD>
-  <FIELD id="fieldValueDocNew">realname</FIELD>
-  <SECTION id="sectionDetailDocumentsNew"/>
-</structure>
-
 <structure name="structureActionBtnService">
   <FIELD id="ProcessIDsrv">adProcessId</FIELD>
   <FIELD id="ProcessModulesrv">adModuleId</FIELD>
