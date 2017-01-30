@@ -444,15 +444,6 @@ public class WadUtility {
     }
   }
 
-  public static String getWadDefaultValue(ConnectionProvider pool, FieldsData fd) {
-    if (fd == null)
-      return "";
-    WADControl control = getWadControlClass(pool, fd.reference, fd.referencevalue);
-    control.setData("name", fd.name.toUpperCase());
-    control.setData("required", fd.required);
-    return control.getDefaultValue();
-  }
-
   public static String displayLogic(String code, Vector<Object> vecDL,
       FieldsData[] parentsFieldsData, Vector<Object> vecAuxiliar, Vector<Object> vecFields,
       String windowId, Vector<Object> vecContext) {
@@ -775,16 +766,6 @@ public class WadUtility {
     printWriterData.write(text);
     printWriterData.flush();
     fileWriterData.close();
-  }
-
-  /**
-   * Replaces special characters in str to make it a valid java string
-   * 
-   * @param str
-   * @return String with special characters replaced
-   */
-  public static String toJavaString(String str) {
-    return (str.replace("\n", "\\n").replace("\"", "\\\""));
   }
 
   /**
