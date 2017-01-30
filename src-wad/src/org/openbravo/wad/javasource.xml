@@ -31,7 +31,6 @@
   <PARAMETER id="class" name = "class" default=" "/>
   <PARAMETER id="package" name = "package" default=" "/>
   <PARAMETER id="path" name = "path" default=" "/>
-  <PARAMETER id="windowName" name = "windowName" default=" "/>
   <PARAMETER id="key" name = "key" default=" "/>
   <PARAMETER id="keyParent" name = "keyParent" default=" "/>
   <PARAMETER id="keyParentColName" name = "keyParentColName" default=""/>
@@ -39,9 +38,7 @@
   <PARAMETER id="keyParentT" name = "keyParentT" default=" "/>
   <PARAMETER id="keyParentSimple" name = "keyParentSimple" default=" "/>
   <PARAMETER id="parentTab" name = "parentTab" default=" "/>
-  <PARAMETER id="defaultView" name = "defaultView" default=" "/>
   <PARAMETER id="keyData" name = "keyData" default=" "/>
-  <PARAMETER id="grandfatherName" name = "grandfatherName" default=" "/>
   <PARAMETER id="table" name = "table" default=" "/>
   <PARAMETER id="paramTableId" name = "tableId" default=" "/>
   <PARAMETER id="from" name = "from" default=" "/>

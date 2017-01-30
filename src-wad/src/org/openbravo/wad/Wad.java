@@ -1441,7 +1441,6 @@ public class Wad extends DefaultHandler {
         + windowName);
     xmlDocument.setParameter("path", (!javaPackage.equals("") ? javaPackage.replace(".", "/") + "/"
         : "") + windowName);
-    xmlDocument.setParameter("windowName", windowName);
     xmlDocument.setParameter("key", keyColumnName);
     xmlDocument.setParameter("from", generateStaticWhere(strTables, vecTableParametersTop));
     xmlDocument.setParameter("order", (!strOrder.equals("") ? strOrder.substring(9) : strOrder));
@@ -1454,9 +1453,6 @@ public class Wad extends DefaultHandler {
     }
     xmlDocument.setParameter("where", generateStaticWhere(strWhere, vecParametersTop));
     xmlDocument.setParameter("filter", strFilter);
-    xmlDocument.setParameter("grandfatherName", grandfatherField);
-    xmlDocument.setParameter("defaultView",
-        (FieldsData.isSingleRow(pool, strTab).equals("Y") ? "EDIT" : "RELATION"));
     xmlDocument.setParameter("whereClauseParams", whereClauseParams);
     xmlDocument.setParameter("parentwhereclause", parentwhereclause);
     xmlDocument.setParameter("reportPDF", strProcess);
