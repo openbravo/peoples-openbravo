@@ -29,7 +29,6 @@
   <PARAMETER id="key" name = "key" default=" "/>
   <PARAMETER id="keyParent" name = "keyParent" default=" "/>
   
-  <PARAMETER id="fields" name = "fields" default=" "/>
   <PARAMETER id="tables" name = "tables" default=" "/>
   <PARAMETER id="parameters" name = "parameters" default=" "/>
   <PARAMETER id="parameterFields" name = "parameterFields" default=" "/>

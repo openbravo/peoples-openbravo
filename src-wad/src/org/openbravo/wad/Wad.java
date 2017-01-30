@@ -946,19 +946,13 @@ public class Wad extends DefaultHandler {
       processTable(parentsFieldsData, tabsData.tabid, vecFields, vecTables, vecWhere, vecOrder,
           vecParameters, tableName, tabsData.windowtype, tabsData.tablevel, vecTableParameters,
           fieldsData, vecFieldParameters);
-      final StringBuffer strFields = new StringBuffer();
-      log4j.debug("Executing de select conformation");
       for (int i = 0; i < vecTableParameters.size(); i++) {
         vecTotalParameters.addElement(vecTableParameters.elementAt(i));
       }
       for (int i = 0; i < vecParameters.size(); i++) {
         vecTotalParameters.addElement(vecParameters.elementAt(i));
       }
-      for (final Enumeration<Object> e = vecFields.elements(); e.hasMoreElements();) {
-        final String fieldElement = (String) e.nextElement();
-        strFields.append(fieldElement + ", \n");
-      }
-      log4j.debug("Fields of select: " + strFields.toString());
+
       final StringBuffer strTables = new StringBuffer();
       for (final Enumeration<Object> e = vecTables.elements(); e.hasMoreElements();) {
         final String tableElement = (String) e.nextElement();
@@ -1055,8 +1049,8 @@ public class Wad extends DefaultHandler {
        * XSQL
        *************************************************/
       processTabXSQL(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName, windowName,
-          keyColumnName, strFields.toString(), strTables.toString(), vecParameters, selCol,
-          tabsData.tablevel, tabsData.windowtype, vecTableParameters, fieldsData, isSecondaryKey,
+          keyColumnName, strTables.toString(), vecParameters, selCol, tabsData.tablevel,
+          tabsData.windowtype, vecTableParameters, fieldsData, isSecondaryKey,
           tabsData.javapackage, vecFieldParameters);
 
     } catch (final ServletException e) {
@@ -1597,8 +1591,6 @@ public class Wad extends DefaultHandler {
    *          Window name.
    * @param keyColumnName
    *          Name of the key column.
-   * @param strFields
-   *          Select clause for the tab.
    * @param strTables
    *          From clause for the tab.
    * @param vecParametersTop
@@ -1617,11 +1609,11 @@ public class Wad extends DefaultHandler {
    * @throws IOException
    */
   private void processTabXSQL(FieldsData[] parentsFieldsData, File fileDir, String strTab,
-      String tabName, String tableName, String windowName, String keyColumnName, String strFields,
-      String strTables, Vector<Object> vecParametersTop, EditionFieldsData[] selCol,
-      String tablevel, String windowType, Vector<Object> vecTableParametersTop,
-      FieldsData[] fieldsDataSelectAux, boolean isSecondaryKey, String javaPackage,
-      Vector<String> vecFieldParameters) throws ServletException, IOException {
+      String tabName, String tableName, String windowName, String keyColumnName, String strTables,
+      Vector<Object> vecParametersTop, EditionFieldsData[] selCol, String tablevel,
+      String windowType, Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux,
+      boolean isSecondaryKey, String javaPackage, Vector<String> vecFieldParameters)
+      throws ServletException, IOException {
     log4j.debug("Procesig xsql: " + strTab + ", " + tabName);
     XmlDocument xmlDocumentXsql;
     final String[] discard = { "", "", "", "", "", "", "", "", "", "", "" };
@@ -1681,7 +1673,6 @@ public class Wad extends DefaultHandler {
       parentsFieldsData[0].name = WadUtility.columnName(parentsFieldsData[0].name,
           parentsFieldsData[0].tablemodule, parentsFieldsData[0].columnmodule);
     }
-    xmlDocumentXsql.setParameter("fields", strFields);
 
     // Relation select
     xmlDocumentXsql.setParameter("tables", strTables);
