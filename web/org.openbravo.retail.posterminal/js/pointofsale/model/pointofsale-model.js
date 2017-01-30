@@ -666,11 +666,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               }
               amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
               iter.prepareToSend(prepareToSendCallback);
-              setPaymentsToReceipts(orderList, paymentList, orderListIndex + 1, 0, callback);
+              setPaymentsToReceipts(orderList, paymentList, orderListIndex + 1, paymentListIndex, callback);
             });
           }
         } else {
-          setPaymentsToReceipts(orderList, paymentList, orderListIndex + 1, 0, callback);
+          setPaymentsToReceipts(orderList, paymentList, orderListIndex + 1, paymentListIndex, callback);
         }
       };
 
