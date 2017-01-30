@@ -1252,7 +1252,6 @@ public class Wad extends DefaultHandler {
       throws ServletException, IOException {
     log4j.debug("Processing java: " + strTab + ", " + tabName);
     XmlDocument xmlDocument;
-    final boolean isHighVolumen = (FieldsData.isHighVolume(pool, strTab).equals("Y"));
     boolean hasParentsFields = true;
     final String createFromProcess = FieldsData.hasCreateFromButton(pool, strTab);
     final boolean hasCreateFrom = !createFromProcess.equals("0");
@@ -1266,62 +1265,24 @@ public class Wad extends DefaultHandler {
         "", "", "", "", "hasReference", "", "", "", "", "", "", "", "hasOrgKey", "", "", "", "" };
 
     if (parentsFieldsData == null || parentsFieldsData.length == 0) {
-      discard[0] = "parent"; // remove the parent tags
       hasParentsFields = false;
-    } else if (!"Y".equals(parentsFieldsData[0].issecondarykey)) {
-      discard[32] = "parentSecondaryKey";
     }
 
-    if (tableName.toUpperCase().endsWith("_ACCESS")) {
-      discard[18] = "client";
-      discard[1] = "org";
-    }
-
-    if (!isHighVolumen || !tablevel.equals("0")) {
-      discard[3] = "sectionIsHighVolume";
-    }
-
-    if (isHighVolumen)
-      discard[10] = "sectionNotIsHighVolume";
-    if (isSecondaryKey)
-      discard[11] = "keySequence";
-    else
-      discard[24] = "withSecondaryKey";
-    if (grandfatherField.equals(""))
-      discard[12] = "grandfather";
     if (!hasCreateFrom)
       discard[13] = "sectionCreateFrom";
     if (!hasPosted)
       discard[19] = "sectionPosted";
-    if (!(windowType.equalsIgnoreCase("T") && tablevel.equals("0")))
-      discard[15] = "isTransactional";
-
-    if (uiPattern.equals("STD"))
-      discard[17] = "sectionReadOnly";
-    if (!editReference.equals(""))
-      discard[21] = "NothasReference";
     if ((noPInstance) && (noActionButton))
       discard[22] = "hasAdPInstance";
     if (noActionButton)
       discard[23] = "hasAdActionButton";
 
-    if (FieldsData.hasButtonFixed(pool, strTab).equals("0"))
-      discard[26] = "buttonFixed";
-    if (strWindow.equals("110"))
-      discard[27] = "sectionOrganizationCheck";
-    discard[28] = "sameParent";
     if (!(parentsFieldsData == null || parentsFieldsData.length == 0)
         && (keyColumnName.equals(parentsFieldsData[0].name)))
       discard[28] = "";
     if (isSecondaryKey && !EditionFieldsData.isOrgKey(pool, strTab).equals("0")
         && !strTab.equals("170"))
       discard[29] = "";
-
-    if (strWindow.equals("250"))
-      discard[30] = "refreshTabParentSession"; // TODO: This fixes
-    // [1879633] and shoudn't
-    // be necessary in r2.5x
-    // because of new PKs
 
     // Obtain action buttons processes to be called from tab trough buttons
     final ActionButtonRelationData[] actBtns = WadActionButton.buildActionButtonCall(pool, strTab,
@@ -1333,13 +1294,6 @@ public class Wad extends DefaultHandler {
         && (actBtnsJava == null || actBtnsJava.length == 0)) {
       // No action buttons, service method is not neccessary
       discard[31] = "discardService";
-    }
-
-    if (parentsFieldsData.length > 0) {
-      String parentTableName = WadData.tabTableName(pool, parentsFieldsData[0].adTabId);
-      if (parentTableName != null && parentTableName.toUpperCase().endsWith("_ACCESS")) {
-        discard[33] = "parentAccess";
-      }
     }
 
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/javasource", discard)
