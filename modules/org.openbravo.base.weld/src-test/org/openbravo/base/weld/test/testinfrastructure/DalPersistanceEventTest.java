@@ -73,7 +73,7 @@ public class DalPersistanceEventTest extends ObserverBaseTest {
 
   @Test
   @InSequence(4)
-  public void persisntaceObserversShouldBeExecuted() {
+  public void persistanceObserversShouldBeExecuted() {
     try {
       setSystemAdministratorContext();
       Country newCountry = OBProvider.getInstance().get(Country.class);
