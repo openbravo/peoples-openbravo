@@ -57,18 +57,6 @@
       <Sql></Sql>
   </SqlMethod>
   
-  <SqlMethod name="selectAuxiliar" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
-    <Sql>
-      SELECT AD_AUXILIARINPUT_ID as reference, name as realname, name as columnname, name as name, 
-      code as defaultValue, 'x' as xmltext, '' as WHERECLAUSE
-      FROM ad_auxiliarinput 
-      WHERE ad_tab_id = ?
-    </Sql>
-    <Parameter name="sql" optional="true" after="WHERE " text="code LIKE ? || '%' AND "/>
-    <Parameter name="tab"/>
-  </SqlMethod>
-  
   <SqlMethod name="tableKeyColumnName" type="preparedStatement" return="multiple">
       <SqlMethodComment>Name of the column key of the tab</SqlMethodComment>
       <Sql><![CDATA[
@@ -165,23 +153,6 @@
       <Parameter name="tab"/>
   </SqlMethod>
 
-  <SqlMethod name="selectUpdatables" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Names of the columns of the fields of a tab that are updatables</SqlMethodComment>
-    <Sql><![CDATA[
-      SELECT ColumnName As Name, '?' AS Xml_Format, ad_column.ad_reference_id as reference, 
-      ad_column.ad_reference_value_id as referencevalue FROM ad_field, ad_column 
-      WHERE ad_field.ad_column_id = ad_column.ad_column_id 
-      and UPPER(ad_column.columnname) not in ('CREATED', 'UPDATED', 'CREATEDBY', 'UPDATEDBY') 
-      and ad_tab_id = ? 
-      AND upper(ad_column.columnname) <> 'BINARYDATA' 
-      AND ad_field.ignoreinwad='N'
-      AND ad_column.isEncrypted <> 'Y'
-      AND ad_column.isactive = 'Y'
-      ORDER BY ad_field.SEQNO
-    ]]></Sql>
-    <Parameter name="tab"/>
-  </SqlMethod>
-  
   <SqlMethod name="columnIdentifier" type="preparedStatement" return="string">
       <SqlMethodComment>Name of the table of the tab</SqlMethodComment>
       <Sql>
@@ -236,29 +207,6 @@
       SELECT isSOTrx FROM AD_WINDOW, AD_TAB 
       WHERE AD_TAB.AD_WINDOW_ID = AD_WINDOW.AD_WINDOW_ID 
       AND AD_TAB.AD_TAB_ID = ?
-      ]]>
-    </Sql>
-    <Parameter name="tab"/>
-  </SqlMethod>
- 
-  <SqlMethod name="selectSession" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT REPLACE(replace(REPLACE(REPLACE(AD_ELEMENT.columnname, 'Substitute_ID', 'M_Product_ID'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM_ID', '_ID'), 'M_LocatorTo_ID', 'M_Locator_ID') as realName, REPLACE(replace(REPLACE(REPLACE(AD_ELEMENT.columnname, 'Substitute_ID', 'M_Product_ID'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM_ID', '_ID'), 'M_LocatorTo_ID', 'M_Locator_ID') As Name, 
-        ad_reference_id as reference, ad_reference_value_id as referencevalue, 'x' as xmltext,
-        ismandatory as required, isDisplayed as isdisplayed, isupdateable as isupdateable,
-        ad_column.defaultvalue As defaultValue, ad_column.fieldlength As fieldLength,
-        ad_field.displaylength, REPLACE(replace(REPLACE(REPLACE(AD_ELEMENT.columnname, 'Substitute_ID', 'M_Product_ID'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM_ID', '_ID'), 'M_LocatorTo_ID', 'M_Locator_ID') as columnname
-      FROM ad_field, ad_column left join ad_element on ad_column.ad_element_id = ad_element.ad_element_id
-      WHERE ad_field.ad_column_id = ad_column.ad_column_id 
-        AND ad_tab_id = ?
-        AND (ad_column.ISSESSIONATTR = 'Y' 
-        OR ad_column.iskey = 'Y') 
-        AND ad_field.ignoreinwad='N'
-        AND upper(ad_column.columnname) <> 'BINARYDATA' 
-        AND ad_column.ColumnName <> 'Created'
-      ORDER BY ad_field.SEQNO
       ]]>
     </Sql>
     <Parameter name="tab"/>
@@ -349,16 +297,7 @@
     </Sql>
     <Parameter name="tab"/>
   </SqlMethod>
-  <SqlMethod name="isSingleRow" type="preparedStatement" return="String">
-    <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT issinglerow FROM AD_TAB 
-      WHERE ad_tab_id=?
-      ]]>
-    </Sql>
-    <Parameter name="tab"/>
-  </SqlMethod>
+  
   <SqlMethod name="hasCreateFromButton" type="preparedStatement" return="String" default="0">
     <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
     <Sql>
@@ -469,57 +408,6 @@
     <Parameter name="processParaId"/>
   </SqlMethod>
   
-  <SqlMethod name="selectIdentify" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT ad_column.AD_COLUMN_ID as reference, REPLACE(replace(REPLACE(REPLACE(columnname, 'Substitute_ID', 'M_Product_ID'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM_ID', '_ID'), 'M_LocatorTo_ID', 'M_Locator_ID') as Name, 
-      ad_column.defaultvalue as defaultValue, '' as WHERECLAUSE, ad_reference_id as referencevalue,
-      isdisplayed, ad_column.columnname as columnname, ad_table.ACCESSLEVEL, 
-      ad_table.TABLENAME as NameRef, '' as realname, ad_column.ISSESSIONATTR, ad_column.istranslated 
-      FROM ad_field, ad_column, ad_table
-      WHERE ad_field.ad_column_id = ad_column.ad_column_id
-        AND ad_column.AD_TABLE_ID = ad_table.AD_TABLE_ID 
-        AND ad_tab_id = ? 
-        and ismandatory='Y' 
-        AND ad_field.ignoreinwad='N'
-        AND upper(ad_column.columnname) = 'VALUE'
-      ORDER BY ad_field.SEQNO
-      ]]>
-    </Sql>
-    <Parameter name="tab"/>
-  </SqlMethod>
-  <SqlMethod name="selectParentWhereClause" type="preparedStatement" return="String" default="">
-    <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT whereclause
-      FROM ad_tab
-      WHERE ad_tab_id = ? 
-      ]]>
-    </Sql>
-    <Parameter name="tab"/>
-  </SqlMethod>
-  
-  <SqlMethod name="selectButton" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      select ad_reference_value_id as id, columnname, columnname || '_BTN' as realName 
-      from ad_field f, ad_column c
-      where f.ad_column_id = c.ad_column_id 
-      and f.ad_tab_id = ?
-      and f.isactive = 'Y'
-      and f.ignoreinwad='N'
-      and f.isdisplayed = 'Y'
-      and c.isactive = 'Y'
-      and ad_reference_value_id is not null
-      and c.ad_reference_id = '28' 
-      and c.columnname <> 'ChangeProjectStatus'
-      ]]>
-    </Sql>
-    <Parameter name="tab"/>
-  </SqlMethod>
   <SqlMethod name="hasActionButton" type="preparedStatement" return="String" default="0">
     <SqlMethodComment>Checks if the tab has action buttons</SqlMethodComment>
     <Sql>
