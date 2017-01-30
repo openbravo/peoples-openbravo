@@ -896,9 +896,6 @@ public class Wad extends DefaultHandler {
       final TabsData[] allTabs = getPrimaryTabs(tabsData.key, tabsData.tabid,
           Integer.valueOf(tabsData.tablevel).intValue(), HEIGHT_TABS, INCR_TABS);
       final FieldsData[] fieldsData = FieldsData.select(pool, tabsData.tabid);
-      final EditionFieldsData efd[] = EditionFieldsData.select(pool, tabsData.tabid);
-      final EditionFieldsData efdauxiliar[] = EditionFieldsData
-          .selectAuxiliar(pool, tabsData.tabid);
 
       /************************************************
        * The 2 tab lines generation
@@ -1004,11 +1001,11 @@ public class Wad extends DefaultHandler {
       /************************************************
        * JAVA
        *************************************************/
-      processTabJava(efd, efdauxiliar, parentsFieldsData, fileDir, tabsData.tabid, tabName,
-          tableName, windowName, keyColumnName, vecFields, vecParameters, isSOTrx, allTabs,
-          tabsData.key, tabsData.accesslevel, isSecondaryKey, grandfatherField, tabsData.tablevel,
-          tabsData.tableId, tabsData.windowtype, tabsData.uipattern, tabsData.editreference,
-          strProcess, strDirectPrint, vecTableParameters, fieldsData, tabsData.javapackage,
+      processTabJava(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName, windowName,
+          keyColumnName, vecFields, vecParameters, isSOTrx, tabsData.key, tabsData.accesslevel,
+          isSecondaryKey, grandfatherField, tabsData.tablevel, tabsData.tableId,
+          tabsData.windowtype, tabsData.uipattern, tabsData.editreference, strProcess,
+          strDirectPrint, vecTableParameters, fieldsData, tabsData.javapackage,
           "Y".equals(tabsData.isdeleteable), tabsData.tabmodule);
 
       /************************************************
@@ -1136,8 +1133,6 @@ public class Wad extends DefaultHandler {
    * 
    * @param allfields
    *          Array with the fields of the tab.
-   * @param auxiliarsData
-   *          Array with the auxiliar inputs for this tab.
    * @param parentsFieldsData
    *          Array with the parents fields for the tab.
    * @param fileDir
@@ -1160,8 +1155,6 @@ public class Wad extends DefaultHandler {
    *          Vector with parameters for the query.
    * @param isSOTrx
    *          String that indicates if is a Sales Order tab or not (Y | N).
-   * @param allTabs
-   *          Array with all the tabs.
    * @param strWindow
    *          The id of the window.
    * @param accesslevel
@@ -1192,10 +1185,9 @@ public class Wad extends DefaultHandler {
    * @throws ServletException
    * @throws IOException
    */
-  private void processTabJava(EditionFieldsData[] allfields, EditionFieldsData[] auxiliarsData,
-      FieldsData[] parentsFieldsData, File fileDir, String strTab, String tabName,
-      String tableName, String windowName, String keyColumnName, Vector<Object> vecFields,
-      Vector<Object> vecParametersTop, String isSOTrx, TabsData[] allTabs, String strWindow,
+  private void processTabJava(FieldsData[] parentsFieldsData, File fileDir, String strTab,
+      String tabName, String tableName, String windowName, String keyColumnName,
+      Vector<Object> vecFields, Vector<Object> vecParametersTop, String isSOTrx, String strWindow,
       String accesslevel, boolean isSecondaryKey, String grandfatherField, String tablevel,
       String tableId, String windowType, String uiPattern, String editReference, String strProcess,
       String strDirectPrint, Vector<Object> vecTableParametersTop,
