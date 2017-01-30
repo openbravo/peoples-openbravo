@@ -337,13 +337,11 @@ public class Wad extends DefaultHandler {
 
       }
 
-      Map<String, Boolean> generateWindowMap = new HashMap<String, Boolean>();
       Map<String, Boolean> generateTabMap = new HashMap<String, Boolean>();
 
       // calculate which windows/tabs are needed/requested
       // no-op now, as no longer supported
-      generateWindowMap = calculateWindowsToGenerate(wad.pool, tabsData,
-          new HashMap<String, Boolean>());
+      calculateWindowsToGenerate(wad.pool, tabsData, new HashMap<String, Boolean>());
       generateTabMap = calculateTabsToGenerate(wad.pool, tabsData, new HashMap<String, Boolean>());
       int skip = 0;
       int generate = 0;
