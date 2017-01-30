@@ -91,7 +91,7 @@ public class CostAdjustmentUtils {
         .getLegalEntity(org);
 
     CostAdjustment costAdjustment = OBProvider.getInstance().get(CostAdjustment.class);
-    costAdjustment.setOrganization(orgLegal != null ? orgLegal : org);
+    costAdjustment.setOrganization(orgLegal);
     costAdjustment.setDocumentType(docType);
     costAdjustment.setDocumentNo(docNo);
     costAdjustment.setReferenceDate(new Date());
