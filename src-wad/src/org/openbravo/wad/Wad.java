@@ -1348,8 +1348,6 @@ public class Wad extends DefaultHandler {
     final String postedProcess = FieldsData.hasPostedButton(pool, strTab);
     final boolean hasPosted = !postedProcess.equals("0");
 
-    final int parentTab = parentTabId(allTabs, strTab);
-
     final boolean noPInstance = (ActionButtonRelationData.select(pool, strTab).length == 0);
     final boolean noActionButton = FieldsData.hasActionButton(pool, strTab).equals("0");
 
