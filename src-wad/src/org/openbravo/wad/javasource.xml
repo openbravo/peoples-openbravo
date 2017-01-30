@@ -85,33 +85,6 @@
   <SECTION id="sectionDetailgetEditVariables"/>
 </structure>
 
-<!-- structure name="structure4">
-  <FIELD id="fieldName4">Name</FIELD>
-  <FIELD id="fieldReference">ReferenceValue</FIELD>
-  <FIELD id="fieldListValue">nameref</FIELD>
-  <SECTION id="sectionDetailLists"/>
-</structure-->
-<!-- structure name="structure5">
-  <FIELD id="fieldName5">Name</FIELD>
-  <FIELD id="fieldTableName5">tablename</FIELD>
-  <FIELD id="fieldReference5">ReferenceValue</FIELD>
-  <FIELD id="fieldWhere5">whereclause</FIELD>
-  <FIELD id="fieldWhereTrl5">xmltext</FIELD>
-  <FIELD id="fieldValidation5">columnname</FIELD>
-  <FIELD id="fieldTableValue5">nameref</FIELD>
-  <SECTION id="sectionDetailTables"/>
-</structure-->
-<!-- structure name="structure6">
-  <FIELD id="fieldName6">Name</FIELD>
-  <FIELD id="fieldTableName6">tablename</FIELD>
-  <FIELD id="fieldReference6">ReferenceValue</FIELD>
-  <FIELD id="fieldWhere6">whereclause</FIELD>
-  <FIELD id="fieldWhereTrl6">xmltext</FIELD>
-  <FIELD id="fieldTableValue6">nameref</FIELD>
-  <FIELD id="fieldValidation6">columnname</FIELD>
-  <SECTION id="sectionDetailTableDirs"/>
-</structure-->
-
 <structure name="structure7">
   <FIELD id="fieldNameParam">realname</FIELD>
   <FIELD id="fieldInputNameParam">columnname</FIELD>
