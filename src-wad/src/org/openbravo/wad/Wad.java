@@ -1351,7 +1351,7 @@ public class Wad extends DefaultHandler {
     final boolean hasPosted = !postedProcess.equals("0");
 
     final int parentTab = parentTabId(allTabs, strTab);
-    final String hasTree = TableLinkData.hasTree(pool, strTab);
+
     final boolean noPInstance = (ActionButtonRelationData.select(pool, strTab).length == 0);
     final boolean noActionButton = FieldsData.hasActionButton(pool, strTab).equals("0");
     final HashMap<String, String> shortcuts = new HashMap<String, String>();
@@ -1592,7 +1592,6 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("postedProcessId",
         ((Integer.valueOf(postedProcess).intValue() > 0) ? postedProcess : ""));
     xmlDocument.setParameter("editReference", TabsData.formClassName(pool, editReference));
-    xmlDocument.setParameter("hasTree", hasTree);
     // read only for relation toolbar: it is the same for Single Record and Read Only
     xmlDocument.setParameter("isReadOnly", uiPattern.equals("STD") ? "false" : "true");
 
