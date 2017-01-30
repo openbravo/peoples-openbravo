@@ -918,18 +918,6 @@ public class Wad extends DefaultHandler {
       String grandfatherField = "";
       if (allTabs != null && allTabs.length > 0)
         parentTabIndex = parentTabId(allTabs, tabsData.tabid);
-      FieldsData[] parentsFieldsData = null;
-
-      parentsFieldsData = FieldsData.parentsColumnName(pool,
-          (parentTabIndex != -1 ? allTabs[parentTabIndex].tabid : ""), tabsData.tabid);
-
-      if (parentTabIndex != -1 && (parentsFieldsData == null || parentsFieldsData.length == 0)) {
-        parentsFieldsData = FieldsData.parentsColumnReal(pool, allTabs[parentTabIndex].tabid,
-            tabsData.tabid);
-        if (parentsFieldsData == null || parentsFieldsData.length == 0) {
-          log4j.info("No key found in parent tab: " + allTabs[parentTabIndex].tabname);
-        }
-      }
 
       final Vector<Object> vecFields = new Vector<Object>();
       final Vector<Object> vecTables = new Vector<Object>();
@@ -939,9 +927,9 @@ public class Wad extends DefaultHandler {
       final Vector<Object> vecTableParameters = new Vector<Object>();
       final Vector<Object> vecTotalParameters = new Vector<Object>();
       final Vector<String> vecFieldParameters = new Vector<String>();
-      processTable(parentsFieldsData, tabsData.tabid, vecFields, vecTables, vecWhere, vecOrder,
-          vecParameters, tableName, tabsData.windowtype, tabsData.tablevel, vecTableParameters,
-          fieldsData, vecFieldParameters);
+      processTable(tabsData.tabid, vecFields, vecTables, vecWhere, vecOrder, vecParameters,
+          tableName, tabsData.windowtype, tabsData.tablevel, vecTableParameters, fieldsData,
+          vecFieldParameters);
       for (int i = 0; i < vecTableParameters.size(); i++) {
         vecTotalParameters.addElement(vecTableParameters.elementAt(i));
       }
@@ -1001,19 +989,19 @@ public class Wad extends DefaultHandler {
       /************************************************
        * JAVA
        *************************************************/
-      processTabJava(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName, windowName,
-          keyColumnName, vecFields, vecParameters, isSOTrx, tabsData.key, tabsData.accesslevel,
-          isSecondaryKey, grandfatherField, tabsData.tablevel, tabsData.tableId,
-          tabsData.windowtype, tabsData.uipattern, tabsData.editreference, strProcess,
-          strDirectPrint, vecTableParameters, fieldsData, tabsData.javapackage,
-          "Y".equals(tabsData.isdeleteable), tabsData.tabmodule);
+      processTabJava(fileDir, tabsData.tabid, tabName, tableName, windowName, keyColumnName,
+          vecFields, vecParameters, isSOTrx, tabsData.key, tabsData.accesslevel, isSecondaryKey,
+          grandfatherField, tabsData.tablevel, tabsData.tableId, tabsData.windowtype,
+          tabsData.uipattern, tabsData.editreference, strProcess, strDirectPrint,
+          vecTableParameters, fieldsData, tabsData.javapackage, "Y".equals(tabsData.isdeleteable),
+          tabsData.tabmodule);
 
       /************************************************
        * XSQL
        *************************************************/
-      processTabXSQL(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName, windowName,
-          keyColumnName, vecParameters, tabsData.tablevel, tabsData.windowtype, vecTableParameters,
-          fieldsData, isSecondaryKey, tabsData.javapackage, vecFieldParameters);
+      processTabXSQL(fileDir, tabsData.tabid, tabName, tableName, windowName, keyColumnName,
+          vecParameters, tabsData.tablevel, tabsData.windowtype, vecTableParameters, fieldsData,
+          isSecondaryKey, tabsData.javapackage, vecFieldParameters);
 
     } catch (final ServletException e) {
       e.printStackTrace();
@@ -1030,8 +1018,6 @@ public class Wad extends DefaultHandler {
   /**
    * Generates the structure for the query fields.
    * 
-   * @param parentsFieldsData
-   *          Array with the parents fields.
    * @param strTab
    *          The id of the tab.
    * @param vecFields
@@ -1058,11 +1044,11 @@ public class Wad extends DefaultHandler {
    * @throws ServletException
    * @throws IOException
    */
-  private void processTable(FieldsData[] parentsFieldsData, String strTab,
-      Vector<Object> vecFields, Vector<Object> vecTables, Vector<Object> vecWhere,
-      Vector<Object> vecOrder, Vector<Object> vecParameters, String tableName, String windowType,
-      String tablevel, Vector<Object> vecTableParameters, FieldsData[] fieldsDataSelectAux,
-      Vector<String> vecFieldParameters) throws ServletException, IOException {
+  private void processTable(String strTab, Vector<Object> vecFields, Vector<Object> vecTables,
+      Vector<Object> vecWhere, Vector<Object> vecOrder, Vector<Object> vecParameters,
+      String tableName, String windowType, String tablevel, Vector<Object> vecTableParameters,
+      FieldsData[] fieldsDataSelectAux, Vector<String> vecFieldParameters) throws ServletException,
+      IOException {
     int ilist = 0;
     final int itable = 0;
     final Vector<Object> vecCounters = new Vector<Object>();
@@ -1133,8 +1119,6 @@ public class Wad extends DefaultHandler {
    * 
    * @param allfields
    *          Array with the fields of the tab.
-   * @param parentsFieldsData
-   *          Array with the parents fields for the tab.
    * @param fileDir
    *          Path where to build the file.
    * @param strTab
@@ -1185,11 +1169,11 @@ public class Wad extends DefaultHandler {
    * @throws ServletException
    * @throws IOException
    */
-  private void processTabJava(FieldsData[] parentsFieldsData, File fileDir, String strTab,
-      String tabName, String tableName, String windowName, String keyColumnName,
-      Vector<Object> vecFields, Vector<Object> vecParametersTop, String isSOTrx, String strWindow,
-      String accesslevel, boolean isSecondaryKey, String grandfatherField, String tablevel,
-      String tableId, String windowType, String uiPattern, String editReference, String strProcess,
+  private void processTabJava(File fileDir, String strTab, String tabName, String tableName,
+      String windowName, String keyColumnName, Vector<Object> vecFields,
+      Vector<Object> vecParametersTop, String isSOTrx, String strWindow, String accesslevel,
+      boolean isSecondaryKey, String grandfatherField, String tablevel, String tableId,
+      String windowType, String uiPattern, String editReference, String strProcess,
       String strDirectPrint, Vector<Object> vecTableParametersTop,
       FieldsData[] fieldsDataSelectAux, String javaPackage, boolean deleteable, String tabmodule)
       throws ServletException, IOException {
@@ -1204,7 +1188,7 @@ public class Wad extends DefaultHandler {
     final boolean noActionButton = FieldsData.hasActionButton(pool, strTab).equals("0");
 
     final String[] discard = { "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-        "", "", "", "", "hasReference", "", "", "", "", "", "", "", "hasOrgKey", "", "", "", "" };
+        "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "" };
 
     if (!hasCreateFrom)
       discard[13] = "sectionCreateFrom";
@@ -1214,13 +1198,6 @@ public class Wad extends DefaultHandler {
       discard[22] = "hasAdPInstance";
     if (noActionButton)
       discard[23] = "hasAdActionButton";
-
-    if (!(parentsFieldsData == null || parentsFieldsData.length == 0)
-        && (keyColumnName.equals(parentsFieldsData[0].name)))
-      discard[28] = "";
-    if (isSecondaryKey && !EditionFieldsData.isOrgKey(pool, strTab).equals("0")
-        && !strTab.equals("170"))
-      discard[29] = "";
 
     // Obtain action buttons processes to be called from tab trough buttons
     final ActionButtonRelationData[] actBtns = WadActionButton.buildActionButtonCall(pool, strTab,
@@ -1254,20 +1231,6 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("reportPDF", strProcess);
     xmlDocument.setParameter("reportDirectPrint", strDirectPrint);
 
-    if (parentsFieldsData.length > 0) {
-
-      xmlDocument.setParameter("keyParent", parentsFieldsData[0].name);
-      xmlDocument.setParameter("keyParentColName",
-          "Y".equals(parentsFieldsData[0].issecondarykey) ? "arentId" : parentsFieldsData[0].name);
-
-      xmlDocument.setParameter("keyParentSimple", WadUtility.columnName(parentsFieldsData[0].name,
-          parentsFieldsData[0].tablemodule, parentsFieldsData[0].columnmodule));
-      xmlDocument.setParameter("keyParentT",
-          Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
-
-      xmlDocument.setParameter("parentTab", parentsFieldsData[0].adTabId);
-      xmlDocument.setParameter("parentFieldID", parentsFieldsData[0].adFieldId);
-    }
     xmlDocument.setParameter("keyData", Sqlc.TransformaNombreColumna(keyColumnName));
     xmlDocument.setParameter("table", tableName);
     xmlDocument.setParameter("windowId", strWindow);
@@ -1400,8 +1363,6 @@ public class Wad extends DefaultHandler {
   /**
    * Generates the xsql file for the tab
    * 
-   * @param parentsFieldsData
-   *          Array with the parent fields of the tab
    * @param fileDir
    *          Path where the file is gonna be created.
    * @param strTab
@@ -1429,10 +1390,9 @@ public class Wad extends DefaultHandler {
    * @throws ServletException
    * @throws IOException
    */
-  private void processTabXSQL(FieldsData[] parentsFieldsData, File fileDir, String strTab,
-      String tabName, String tableName, String windowName, String keyColumnName,
-      Vector<Object> vecParametersTop, String tablevel, String windowType,
-      Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux,
+  private void processTabXSQL(File fileDir, String strTab, String tabName, String tableName,
+      String windowName, String keyColumnName, Vector<Object> vecParametersTop, String tablevel,
+      String windowType, Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux,
       boolean isSecondaryKey, String javaPackage, Vector<String> vecFieldParameters)
       throws ServletException, IOException {
     log4j.debug("Procesig xsql: " + strTab + ", " + tabName);
@@ -1445,20 +1405,8 @@ public class Wad extends DefaultHandler {
         + (!javaPackage.equals("") ? javaPackage + "." : "") + windowName);
     xmlDocumentXsql.setParameter("table", tableName);
     xmlDocumentXsql.setParameter("key", tableName + "." + keyColumnName);
-    if (parentsFieldsData != null && parentsFieldsData.length > 0) {
 
-      xmlDocumentXsql.setParameter("keyParent", tableName + "." + parentsFieldsData[0].name);
-    }
     xmlDocumentXsql.setParameter("paramKey", Sqlc.TransformaNombreColumna(keyColumnName));
-    if (parentsFieldsData != null && parentsFieldsData.length > 0) {
-      xmlDocumentXsql.setParameter("paramKeyParent",
-          Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
-      if (isSecondaryKey && (!EditionFieldsData.isOrgKey(pool, strTab).equals("0"))) {
-        xmlDocumentXsql.setParameter("paramKeyParentOrg", "currentAdOrgId");
-      }
-      parentsFieldsData[0].name = WadUtility.columnName(parentsFieldsData[0].name,
-          parentsFieldsData[0].tablemodule, parentsFieldsData[0].columnmodule);
-    }
 
     final StringBuffer strParameters = new StringBuffer();
     final StringBuffer strParametersFields = new StringBuffer();

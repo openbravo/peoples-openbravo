@@ -27,16 +27,12 @@
   <PARAMETER id="class" name = "package" default=" " attribute="package"/>
   <PARAMETER id="table" name = "table" default=" "/>
   <PARAMETER id="key" name = "key" default=" "/>
-  <PARAMETER id="keyParent" name = "keyParent" default=" "/>
-  
   <PARAMETER id="parameters" name = "parameters" default=" "/>
   <PARAMETER id="parameterFields" name = "parameterFields" default=" "/>
 
 
 <PARAMETER id="paramKey" name = "paramKey" default=" " attribute="name"/>
 <PARAMETER id="paramKeyParent" name = "paramKeyParent" default=" " attribute="name"/>
-<PARAMETER id="paramKeyParentOrg" name = "paramKeyParentOrg" default=" " attribute="name"/>
-
 
 <structure name="structure11">
   <FIELD id="fieldRealNameActionButton" attribute="name" replace="xx">realname</FIELD>
