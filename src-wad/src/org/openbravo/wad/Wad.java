@@ -245,7 +245,6 @@ public class Wad extends DefaultHandler {
       log4j.info("Attach path: " + attachPath);
       log4j.info("Web path: " + webPath);
       log4j.info("Quick mode: " + quick);
-      // TODO: make 'new' boolean -> scope: test all button windows only
       log4j.info("Generate all 2.50 windows: " + generateAllClassic250Windows);
       log4j.info("Exclude CDI: " + excludeCDI);
 
