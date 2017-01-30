@@ -1693,23 +1693,6 @@ public class Wad extends DefaultHandler {
     xmlDocumentXsql.setParameter("parameterFields", strParametersFields.toString());
     xmlDocumentXsql.setParameter("parameters", strParameters.toString());
 
-    // Auxiliar Fields
-    {
-      final FieldsData fieldsAux[] = FieldsData.selectAuxiliar(pool, "@SQL=", strTab);
-      for (int i = 0; i < fieldsAux.length; i++) {
-        final Vector<Object> vecParametros = new Vector<Object>();
-        fieldsAux[i].defaultvalue = WadUtility.getSQLWadContext(fieldsAux[i].defaultvalue,
-            vecParametros);
-        final StringBuffer parametros = new StringBuffer();
-        for (final Enumeration<Object> e = vecParametros.elements(); e.hasMoreElements();) {
-          String paramsElement = WadUtility.getWhereParameter(e.nextElement(), true);
-          parametros.append("\n" + paramsElement);
-        }
-        fieldsAux[i].whereclause = parametros.toString();
-      }
-      xmlDocumentXsql.setData("structure9", fieldsAux);
-    }
-
     {
       // default values for search references in parameter windows for action buttons
       // keep it hardcoded by now

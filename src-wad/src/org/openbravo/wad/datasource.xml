@@ -39,13 +39,6 @@
 <PARAMETER id="paramKeyParentOrg" name = "paramKeyParentOrg" default=" " attribute="name"/>
 
 
-<structure name="structure9">
-  <FIELD id="Reference">reference</FIELD>
-  <FIELD id="Select">defaultvalue</FIELD>
-  <FIELD id="paramsAuxiliar">whereclause</FIELD>
-  <SECTION id="sectionAuxiliar"/>
-</structure>
-
 <structure name="structure11">
   <FIELD id="fieldRealNameActionButton" attribute="name" replace="xx">realname</FIELD>
   <FIELD id="fieldNameActionButton1">columnname</FIELD>
