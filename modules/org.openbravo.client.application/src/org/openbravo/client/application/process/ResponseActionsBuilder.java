@@ -81,7 +81,7 @@ public class ResponseActionsBuilder {
   }
 
   /**
-   * @see ResponseActionsBuilder#showMsgInProcessView(String, String, String, boolean)
+   * @see ResponseActionsBuilder#showMsgInProcessView(MessageType, String, String, boolean)
    */
   public ResponseActionsBuilder showMsgInProcessView(MessageType msgType, String msgTitle,
       String msgText) throws JSONException {
@@ -123,7 +123,7 @@ public class ResponseActionsBuilder {
   }
 
   /**
-   * @see ResponseActionsBuilder#openDirectTab(String, String, String, boolean)
+   * @see ResponseActionsBuilder#openDirectTab(String, String, Command, boolean)
    */
   public ResponseActionsBuilder openDirectTab(String tabId, String recordId, boolean wait)
       throws JSONException {
@@ -132,7 +132,7 @@ public class ResponseActionsBuilder {
   }
 
   /**
-   * @see ResponseActionsBuilder#openDirectTab(String, String, String, JSONObject, boolean)
+   * @see ResponseActionsBuilder#openDirectTab(String, String, Command, String, boolean)
    */
   public ResponseActionsBuilder openDirectTab(String tabId, String recordId, Command command,
       boolean wait) throws JSONException {
