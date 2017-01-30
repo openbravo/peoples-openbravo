@@ -49,6 +49,7 @@ public class PersistanceObserver extends ObserverBaseTest {
     observerExecutionType = ObserverExecutionType.ON_NOOP;
     OBContext.setAdminMode(false);
     OrderLine ol = OBProvider.getInstance().get(OrderLine.class);
+    ol.setSalesOrder(pickARandomOrder());
     OBDal.getInstance().save(ol);
     assertThat("Observer executions", OrderLineTestObserver.getNumberOfExecutions(), is(1));
 
@@ -114,6 +115,7 @@ public class PersistanceObserver extends ObserverBaseTest {
     observerExecutionType = ObserverExecutionType.ON_NOOP;
     OBContext.setAdminMode(false);
     OrderLine ol = OBProvider.getInstance().get(OrderLine.class);
+    ol.setSalesOrder(pickARandomOrder());
     OBDal.getInstance().save(ol);
 
     try {

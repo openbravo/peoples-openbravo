@@ -29,6 +29,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Table;
+import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 
 /** Base class to test Dal observer execution. Handles state of {@link OrderLineTestObserver}. */
@@ -54,6 +55,10 @@ public class ObserverBaseTest extends WeldBaseTest {
   protected OrderLine pickARandomOrderLine() {
     return (OrderLine) OBDal.getInstance().createCriteria(OrderLine.class).setMaxResults(1)
         .uniqueResult();
+  }
+
+  protected Order pickARandomOrder() {
+    return (Order) OBDal.getInstance().createCriteria(Order.class).setMaxResults(1).uniqueResult();
   }
 
   protected int countNotes(BaseOBObject obj) {
