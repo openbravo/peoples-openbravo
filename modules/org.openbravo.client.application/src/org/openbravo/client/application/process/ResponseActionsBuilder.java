@@ -73,8 +73,6 @@ public class ResponseActionsBuilder {
    * @param msgText
    *          The text of the message.
    * @return a ResponseActionsBuilder that contains a 'show message in view' response action.
-   * 
-   * @throws JSONException
    */
   public ResponseActionsBuilder showMsgInView(MessageType msgType, String msgTitle, String msgText)
       throws JSONException {
@@ -105,8 +103,6 @@ public class ResponseActionsBuilder {
    *          cases together with the retryExecution action.
    * @return a ResponseActionsBuilder that contains a 'show message in process view' response
    *         action.
-   * 
-   * @throws JSONException
    */
   public ResponseActionsBuilder showMsgInProcessView(MessageType msgType, String msgTitle,
       String msgText, boolean force) throws JSONException {
@@ -151,8 +147,6 @@ public class ResponseActionsBuilder {
    * @param wait
    *          If true, the next response action will not be started until this one finishes.
    * @return a ResponseActionsBuilder that contains a 'open direct tab' response action.
-   * 
-   * @throws JSONException
    */
   public ResponseActionsBuilder openDirectTab(String tabId, String recordId, Command command,
       String criteria, boolean wait) throws JSONException {
@@ -176,8 +170,6 @@ public class ResponseActionsBuilder {
    * @param recordIdentifier
    *          The identifier of the record to be set in the selector.
    * @return a ResponseActionsBuilder that contains a 'set selector value' response action.
-   * 
-   * @throws JSONException
    */
   public ResponseActionsBuilder setSelectorValueFromRecord(String recordId, String recordIdentifier)
       throws JSONException {
@@ -195,8 +187,6 @@ public class ResponseActionsBuilder {
    * process adds or deletes records from that grid.
    * 
    * @return a ResponseActionsBuilder that contains a 'refresh grid' response action.
-   * 
-   * @throws JSONException
    */
   public ResponseActionsBuilder refreshGrid() throws JSONException {
     addResponseAction("refreshGrid", new JSONObject());
@@ -211,8 +201,6 @@ public class ResponseActionsBuilder {
    * @param gridName
    *          The name of the grid parameter.
    * @return a ResponseActionsBuilder that contains a 'refresh grid parameter' response action.
-   * 
-   * @throws JSONException
    */
   public ResponseActionsBuilder refreshGridParameter(String gridName) throws JSONException {
     final JSONObject refreshGrid = new JSONObject();
@@ -243,8 +231,6 @@ public class ResponseActionsBuilder {
    * @param msgText
    *          The text of the message.
    * @return a ResponseActionsBuilder configured to retry the process execution.
-   * 
-   * @throws JSONException
    */
   public ResponseActionsBuilder retryExecution(MessageType msgType, String msgText)
       throws JSONException {
@@ -259,8 +245,6 @@ public class ResponseActionsBuilder {
    * Generates the JSON with the response actions to be executed once the process has finished.
    * 
    * @return a JSONObject with the response actions.
-   * 
-   * @throws JSONException
    */
   public JSONObject build() throws JSONException {
     final JSONObject result = new JSONObject();
