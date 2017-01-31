@@ -1205,13 +1205,6 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("path", (!javaPackage.equals("") ? javaPackage.replace(".", "/") + "/"
         : "") + windowName);
     xmlDocument.setParameter("key", keyColumnName);
-    final Vector<Object> vecTotalParameters = new Vector<Object>();
-    for (int i = 0; i < vecTableParametersTop.size(); i++) {
-      vecTotalParameters.addElement(vecTableParametersTop.elementAt(i));
-    }
-    for (int i = 0; i < vecParametersTop.size(); i++) {
-      vecTotalParameters.addElement(vecParametersTop.elementAt(i));
-    }
 
     xmlDocument.setParameter("keyData", Sqlc.TransformaNombreColumna(keyColumnName));
     xmlDocument.setParameter("table", tableName);
