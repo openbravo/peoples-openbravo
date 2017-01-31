@@ -24,7 +24,8 @@
     <Sql><![CDATA[
       SELECT R.NAME, T.TABLENAME AS REFERENCE, C.COLUMNNAME AS COLUMNNAME, RSC.NAME AS COLUMNNAMEINP, 
       RSC.COLUMNNAME AS REFERENCEVALUE, MO.CLASSNAME, MOM.MAPPINGNAME, RSC.COLUMN_SUFFIX AS COLUMNNAME_END,
-      c.ad_column_id
+      c.ad_column_id, '' as xmltext, '' as realcolumnname, '' as xsqltext, '' as ad_Val_Rule_Id, '' as fieldlength, 
+      '' as displaylength, '' as value, '' as ad_Window_Id, '' as htmltext
       FROM AD_REFERENCE R left join AD_REF_SEARCH RS  on R.AD_REFERENCE_ID = RS.AD_REFERENCE_ID 
                           left join AD_REF_SEARCH_COLUMN RSC on RS.AD_REF_SEARCH_ID = RSC.AD_REF_SEARCH_ID
                                 AND RSC.COLUMNTYPE = ?, 
