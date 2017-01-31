@@ -977,13 +977,6 @@ public class Wad extends DefaultHandler {
         isSecondaryKey = dataKey[0].issecondarykey.equals("Y");
       }
       log4j.debug("KeyColumnName: " + keyColumnName);
-      String strProcess = "", strDirectPrint = "";
-      if (!tabsData.adProcessId.equals("")) {
-        strProcess = TabsData.processName(pool, tabsData.adProcessId);
-        if (strProcess.indexOf("/") == -1)
-          strProcess = "/" + FormatUtilities.replace(strProcess);
-        strDirectPrint = TabsData.directPrint(pool, tabsData.adProcessId);
-      }
 
       /************************************************
        * JAVA
@@ -991,9 +984,8 @@ public class Wad extends DefaultHandler {
       processTabJava(fileDir, tabsData.tabid, tabName, tableName, windowName, keyColumnName,
           vecFields, vecParameters, isSOTrx, tabsData.key, tabsData.accesslevel, isSecondaryKey,
           grandfatherField, tabsData.tablevel, tabsData.tableId, tabsData.windowtype,
-          tabsData.uipattern, tabsData.editreference, strProcess, strDirectPrint,
-          vecTableParameters, fieldsData, tabsData.javapackage, "Y".equals(tabsData.isdeleteable),
-          tabsData.tabmodule);
+          tabsData.uipattern, tabsData.editreference, vecTableParameters, fieldsData,
+          tabsData.javapackage, "Y".equals(tabsData.isdeleteable), tabsData.tabmodule);
 
       /************************************************
        * XSQL
@@ -1156,10 +1148,6 @@ public class Wad extends DefaultHandler {
    *          The patter for the tab.
    * @param editReference
    *          The id of the manual tab for the edition mode.
-   * @param strProcess
-   *          The id of the tab's process.
-   * @param strDirectPrint
-   *          If is a direct printing type process (Y | N).
    * @param vecTableParametersTop
    *          Vector with parameters for the from clause of the query.
    * @param fieldsDataSelectAux
@@ -1172,10 +1160,9 @@ public class Wad extends DefaultHandler {
       String windowName, String keyColumnName, Vector<Object> vecFields,
       Vector<Object> vecParametersTop, String isSOTrx, String strWindow, String accesslevel,
       boolean isSecondaryKey, String grandfatherField, String tablevel, String tableId,
-      String windowType, String uiPattern, String editReference, String strProcess,
-      String strDirectPrint, Vector<Object> vecTableParametersTop,
-      FieldsData[] fieldsDataSelectAux, String javaPackage, boolean deleteable, String tabmodule)
-      throws ServletException, IOException {
+      String windowType, String uiPattern, String editReference,
+      Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux, String javaPackage,
+      boolean deleteable, String tabmodule) throws ServletException, IOException {
     log4j.debug("Processing java: " + strTab + ", " + tabName);
     XmlDocument xmlDocument;
     final String createFromProcess = FieldsData.hasCreateFromButton(pool, strTab);
@@ -1225,8 +1212,6 @@ public class Wad extends DefaultHandler {
     for (int i = 0; i < vecParametersTop.size(); i++) {
       vecTotalParameters.addElement(vecParametersTop.elementAt(i));
     }
-    xmlDocument.setParameter("reportPDF", strProcess);
-    xmlDocument.setParameter("reportDirectPrint", strDirectPrint);
 
     xmlDocument.setParameter("keyData", Sqlc.TransformaNombreColumna(keyColumnName));
     xmlDocument.setParameter("table", tableName);

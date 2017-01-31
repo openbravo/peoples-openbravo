@@ -39,8 +39,6 @@
   <PARAMETER id="parentClass" name = "parentClass" default=" "/>
   <PARAMETER id="paramCreateFromProcessId" name="createFromProcessId" default=""/>
   <PARAMETER id="paramPostedProcessId" name="postedProcessId" default=""/>
-  <PARAMETER id="paramReportPDF" name="reportPDF" default=""/>
-  <PARAMETER id="paramReportDirectPrint" name="reportDirectPrint" default=""/>
   
 <structure name="structure1">
   <FIELD id="fieldName">Name</FIELD>
