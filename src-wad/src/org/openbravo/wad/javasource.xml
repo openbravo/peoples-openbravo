@@ -34,8 +34,6 @@
   <PARAMETER id="accessLevel" name = "accessLevel" default=" "/>
   <PARAMETER id="moduleId" name = "moduleId" default=" "/>
   <PARAMETER id="tabId" name = "tabId" default=" "/>
-  <PARAMETER id="orgId" name = "orgId" default=" "/>
-  <PARAMETER id="clientId" name = "clientId" default=" "/>
   <PARAMETER id="parentClass" name = "parentClass" default=" "/>
   <PARAMETER id="paramCreateFromProcessId" name="createFromProcessId" default=""/>
   <PARAMETER id="paramPostedProcessId" name="postedProcessId" default=""/>

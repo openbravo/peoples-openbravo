@@ -1225,17 +1225,6 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("postedProcessId",
         ((Integer.valueOf(postedProcess).intValue() > 0) ? postedProcess : ""));
 
-    if (WadUtility.findField(vecFields, "adClientId"))
-      xmlDocument.setParameter("clientId", "data.adClientId");
-    else
-      xmlDocument.setParameter("clientId",
-          "Utility.getContext(this, vars, \"#AD_Client_ID\", windowId)");
-
-    if (WadUtility.findField(vecFields, "adOrgId"))
-      xmlDocument.setParameter("orgId", "data.adOrgId");
-    else
-      xmlDocument.setParameter("orgId", "Utility.getContext(this, vars, \"#AD_Org_ID\", windowId)");
-
     // process action buttons
     xmlDocument.setData("structure14", actBtns);
     xmlDocument.setData("structure15", actBtns);
