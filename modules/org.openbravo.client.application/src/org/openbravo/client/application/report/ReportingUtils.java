@@ -1366,8 +1366,8 @@ public class ReportingUtils {
 
   /**
    * Returns the maximum number of rows that can be exported to an Excel report. This value can be
-   * configured for each Client/Organization by using the preference. If that preference is not
-   * configured then this limit is 65532 by default.
+   * configured for each Client/Organization by using the 'ExcelMaxRowNumber' preference. If that
+   * preference is not configured then this limit is 65532 by default.
    * 
    * @return an integer with the maximum number of rows that can be exported to an Excel report.
    */
