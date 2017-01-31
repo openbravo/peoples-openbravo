@@ -1335,12 +1335,14 @@ public class Wad extends DefaultHandler {
     xmlDocumentXsql.setParameter("parameterFields", strParametersFields.toString());
     xmlDocumentXsql.setParameter("parameters", strParameters.toString());
 
+    boolean hasCode = false;
     {
       // default values for search references in parameter windows for action buttons
       // keep it hardcoded by now
       final ProcessRelationData[] data = ProcessRelationData.selectXSQL(pool, strTab);
       if (data != null) {
         for (int i = 0; i < data.length; i++) {
+          hasCode = true;
           String tableN = "";
           if (data[i].adReferenceId.equals("28"))
             tableN = "C_ValidCombination";
@@ -1373,6 +1375,7 @@ public class Wad extends DefaultHandler {
       final ProcessRelationData fieldsAux[] = ProcessRelationData.selectXSQLParams(pool, strTab);
       if (fieldsAux != null && fieldsAux.length > 0) {
         for (int i = 0; i < fieldsAux.length; i++) {
+          hasCode = true;
           final Vector<Object> vecParametros = new Vector<Object>();
           fieldsAux[i].reference = fieldsAux[i].adProcessId + "_"
               + FormatUtilities.replace(fieldsAux[i].columnname);
@@ -1391,11 +1394,14 @@ public class Wad extends DefaultHandler {
 
     {
       final ActionButtonRelationData[] abrd = WadActionButton.buildActionButtonSQL(pool, strTab);
+      hasCode = hasCode || abrd.length > 0;
       xmlDocumentXsql.setData("structure11", abrd);
     }
 
-    WadUtility.writeFile(fileDir, tabName + "_data.xsql",
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocumentXsql.print());
+    if (hasCode) {
+      WadUtility.writeFile(fileDir, tabName + "_data.xsql",
+          "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocumentXsql.print());
+    }
   }
 
   /**

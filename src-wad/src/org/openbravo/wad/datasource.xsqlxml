@@ -18,8 +18,7 @@
  ************************************************************************
 -->
 
-<SqlClass id="class" name="Almacen" 
-package="org.openbravo.wad.Window">
+<SqlClass id="class" name="Almacen" package="org.openbravo.wad.Window">
   <SqlClassComment>WAD Generated class</SqlClassComment>
 
 <FIELDS_TMP id="sectionActionProcess">
