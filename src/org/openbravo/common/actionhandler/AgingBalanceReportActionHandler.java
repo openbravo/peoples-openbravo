@@ -11,40 +11,33 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.common.actionhandler;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import net.sf.jasperreports.engine.JRDataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.ConfigParameters;
-import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.ReportDefinition;
 import org.openbravo.client.application.report.BaseReportActionHandler;
+import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
@@ -61,12 +54,10 @@ import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonUtils;
 
-import net.sf.jasperreports.engine.JRDataSource;
-
 /**
  * 
  * @author Nono Carballo
- *
+ * 
  */
 public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
 
@@ -102,20 +93,7 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
   private static final String FALSE = "false";
   private static final String BLANK = "";
   private static final SimpleDateFormat jsDateFormat = JsonUtils.createDateFormat();
-  private static String BASE_DESIGN;
-
-  static {
-    ServletContext servletContext = DalContextListener.getServletContext();
-    ConfigParameters configParameters = ConfigParameters.retrieveFrom(servletContext);
-
-    String base = configParameters.strBaseDesignPath;
-    String design = configParameters.strDefaultDesignPath;
-
-    if (!base.startsWith("/")) {
-      base = "/" + base;
-    }
-    BASE_DESIGN = base + "/" + design;
-  }
+  private static String BASE_DESIGN = ReportingUtils.getBaseDesign();
 
   private static final String AGING_SCHEDULE_HTML = BASE_DESIGN
       + "/org/openbravo/erpCommon/ad_reports/AgingScheduleHTML.jrxml";
@@ -147,7 +125,7 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
         result = printPageSchedule(parameters);
       }
     } catch (JSONException e) {
-      e.printStackTrace();
+      throw new OBException(e);
     }
     return result;
   }
@@ -162,7 +140,6 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
   @Override
   protected ConnectionProvider getReportConnectionProvider() {
     return new DalConnectionProvider(false);
-
   }
 
   private String getParameter(String parameter, JSONObject jsonContent) {
@@ -172,7 +149,7 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
         return jsonContent.getString(ApplicationConstants.BUTTON_VALUE);
       } else if (PARAM_BP.equalsIgnoreCase(parameter)) {
         String strcBpartnerId = params.getString(PARAM_BP);
-        if (strcBpartnerId.equals("[]")) {
+        if (strcBpartnerId.equals("[]") || strcBpartnerId.equals("[\"\"]")) {
           strcBpartnerId = BLANK;
         }
         if (!strcBpartnerId.isEmpty()) {
@@ -263,23 +240,6 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
         parameters.put(KEY_REPORT_DATA, data);
         result = super.doExecute(parameters, content);
       }
-    } catch (OBException ex) {
-      JSONObject msg = new JSONObject();
-      try {
-        if (ex.getMessage().equals("No Conversion Rate")) {
-          msg.put(MESSAGE_SEVERITY_PROPERTY, MESSAGE_SEVERITY_ERROR);
-          msg.put(MESSAGE_TEXT_PROPERTY,
-              OBMessageUtils.messageBD(OBMessageUtils.translateError(ex.getMessage()).getMessage()));
-        } else {
-          msg.put(MESSAGE_SEVERITY_PROPERTY, MESSAGE_SEVERITY_ERROR);
-          msg.put(MESSAGE_TEXT_PROPERTY,
-              OBMessageUtils.messageBD(OBMessageUtils.translateError(ex.getMessage()).getMessage()));
-        }
-        result.put(MESSAGE_RETRY_EXECUTION_PROPERTY, true);
-        result.put(MESSAGE_SHOW_RESULTS_IN_PROCESS_VIEW_PROPERTY, true);
-        result.put(MESSAGE_MESSAGE_PROPERTY, msg);
-      } catch (JSONException jse) {
-      }
     } catch (Exception ex) {
       JSONObject msg = new JSONObject();
       try {
@@ -289,7 +249,7 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
         result.put(MESSAGE_RETRY_EXECUTION_PROPERTY, true);
         result.put(MESSAGE_SHOW_RESULTS_IN_PROCESS_VIEW_PROPERTY, true);
         result.put(MESSAGE_MESSAGE_PROPERTY, msg);
-      } catch (JSONException jse) {
+      } catch (JSONException ignore) {
       }
     }
     return result;
@@ -330,18 +290,17 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
         parameters.put(KEY_REPORT_DATA, data);
         result = super.doExecute(parameters, content);
       }
-    } catch (OBException ex) {
+    } catch (Exception ex) {
       JSONObject msg = new JSONObject();
       try {
         msg.put(MESSAGE_SEVERITY_PROPERTY, MESSAGE_SEVERITY_ERROR);
-        msg.put(MESSAGE_TEXT_PROPERTY, ex.getMessage());
+        msg.put(MESSAGE_TEXT_PROPERTY,
+            OBMessageUtils.messageBD(OBMessageUtils.translateError(ex.getMessage()).getMessage()));
         result.put(MESSAGE_RETRY_EXECUTION_PROPERTY, true);
         result.put(MESSAGE_SHOW_RESULTS_IN_PROCESS_VIEW_PROPERTY, true);
         result.put(MESSAGE_MESSAGE_PROPERTY, msg);
-      } catch (JSONException e) {
+      } catch (JSONException ignore) {
       }
-    } catch (Exception ex) {
-      ex.printStackTrace();
     }
     return result;
   }
@@ -428,8 +387,6 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
           .getProperty(PROPERTY_DATEFORMAT);
       SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormatString);
       final Date currentDate = jsDateFormat.parse(strCurrentDate);
-      ConfigParameters globalParameters = ConfigParameters.retrieveFrom(RequestContext
-          .getServletContext());
       parameters.put("USER_CLIENT", Utility.getContext(conn, vars, "#User_Client", BLANK));
       parameters.put("processId", report.getProcessDefintion().getId());
       parameters.put("reportId", report.getId());
@@ -530,28 +487,9 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
         }
       }
       parameters.put("USER_ORG", Utility.getContext(conn, vars, "#User_Org", BLANK));
-      parameters.put("LANGUAGE", vars.getLanguage());
-      parameters.put("LOCALE", new Locale(vars.getLanguage().substring(0, 2), vars.getLanguage()
-          .substring(3, 5)));
-      final DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-      dfs.setDecimalSeparator(vars.getSessionValue("#AD_ReportDecimalSeparator").charAt(0));
-      dfs.setGroupingSeparator(vars.getSessionValue("#AD_ReportGroupingSeparator").charAt(0));
-      final DecimalFormat numberFormat = new DecimalFormat(
-          vars.getSessionValue("#AD_ReportNumberFormat"), dfs);
-      parameters.put("NUMBERFORMAT", numberFormat);
-      parameters.put(
-          "BASE_WEB",
-          globalParameters.strLocalReplaceWith.replace("@actual_url@",
-              HttpBaseUtils.getLocalHostAddress(RequestContext.get().getRequest())).replace(
-              "@actual_url_context@",
-              HttpBaseUtils.getLocalAddress(RequestContext.get().getRequest())));
-      parameters.put("BASE_DESIGN",
-          DalContextListener.getServletContext().getRealPath("/src-loc/design"));
       parameters.put("REPORT_TITLE", parameters.get("title"));
-    } catch (ServletException e) {
-      e.printStackTrace();
-    } catch (ParseException e) {
-      e.printStackTrace();
+    } catch (Exception e) {
+      throw new OBException(e);
     }
   }
 }

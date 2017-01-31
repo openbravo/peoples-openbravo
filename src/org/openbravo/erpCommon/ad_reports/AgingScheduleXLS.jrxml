@@ -61,7 +61,7 @@
 	<parameter name="REPORT_TITLE" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["REPORT TITLE"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false">
+	<parameter name="AMOUNTFORMAT" class="java.text.DecimalFormat" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new DecimalFormat()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="LOCALE" class="java.util.Locale" isForPrompting="false">
@@ -540,7 +540,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[(($F{percentage}!=null)? $P{NUMBERFORMAT}.format($F{percentage}) : $P{NUMBERFORMAT}.format(BigDecimal.ZERO)) + " %"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($F{percentage}!=null)? $P{AMOUNTFORMAT}.format($F{percentage}) : $P{AMOUNTFORMAT}.format(BigDecimal.ZERO)) + " %"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -721,7 +721,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[(($V{VAR_PERCENT}!=null)? $P{NUMBERFORMAT}.format($V{VAR_PERCENT}) : $P{NUMBERFORMAT}.format(BigDecimal.ZERO)) + " %"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($V{VAR_PERCENT}!=null)? $P{AMOUNTFORMAT}.format($V{VAR_PERCENT}) : $P{AMOUNTFORMAT}.format(BigDecimal.ZERO)) + " %"]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-33" style="Report_Footer" x="0" y="17" width="779" height="1">

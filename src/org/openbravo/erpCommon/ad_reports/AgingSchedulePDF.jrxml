@@ -61,7 +61,7 @@
 	<parameter name="REPORT_TITLE" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["REPORT TITLE"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false">
+	<parameter name="AMOUNTFORMAT" class="java.text.DecimalFormat" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new DecimalFormat()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="LOCALE" class="java.util.Locale" isForPrompting="false">
@@ -159,7 +159,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="6" isUnderline="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUM_FIVE_1}!=null)?$P{NUMBERFORMAT}.format($V{SUM_FIVE_1}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUM_FIVE_1}!=null)?$P{AMOUNTFORMAT}.format($V{SUM_FIVE_1}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<line>
 					<reportElement key="line-33" style="Report_Footer" positionType="FixRelativeToBottom" x="210" y="17" width="48" height="1"/>
@@ -211,7 +211,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="6" isUnderline="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUM_TWO_1}!=null)?$P{NUMBERFORMAT}.format($V{SUM_TWO_1}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUM_TWO_1}!=null)?$P{AMOUNTFORMAT}.format($V{SUM_TWO_1}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<line>
 					<reportElement key="line-33" style="Report_Footer" x="210" y="0" width="48" height="1"/>
@@ -270,7 +270,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="6" isUnderline="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUM_ONE_1}!=null)?$P{NUMBERFORMAT}.format($V{SUM_ONE_1}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUM_ONE_1}!=null)?$P{AMOUNTFORMAT}.format($V{SUM_ONE_1}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
 					<reportElement key="textField" mode="Opaque" x="305" y="2" width="50" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -283,7 +283,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="6" isUnderline="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUM_THREE_1}!=null)?$P{NUMBERFORMAT}.format($V{SUM_THREE_1}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUM_THREE_1}!=null)?$P{AMOUNTFORMAT}.format($V{SUM_THREE_1}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<line>
 					<reportElement key="line-33" style="Report_Footer" x="1" y="0" width="207" height="1"/>
@@ -305,7 +305,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="6" isUnderline="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUM_FOUR_1}!=null)?$P{NUMBERFORMAT}.format($V{SUM_FOUR_1}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUM_FOUR_1}!=null)?$P{AMOUNTFORMAT}.format($V{SUM_FOUR_1}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<line>
 					<reportElement key="line-33" style="Report_Footer" positionType="FixRelativeToBottom" x="512" y="17" width="48" height="1"/>
@@ -324,7 +324,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="6"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUM_TOTAL_1}!=null)?$P{NUMBERFORMAT}.format($V{SUM_TOTAL_1}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUM_TOTAL_1}!=null)?$P{AMOUNTFORMAT}.format($V{SUM_TOTAL_1}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
 					<reportElement key="textField-2" mode="Opaque" x="155" y="2" width="50" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -337,7 +337,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="6" isUnderline="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUM_ZERO_1}!=null)?$P{NUMBERFORMAT}.format($V{SUM_ZERO_1}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUM_ZERO_1}!=null)?$P{AMOUNTFORMAT}.format($V{SUM_ZERO_1}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00" isBlankWhenNull="false" hyperlinkType="Reference">
 					<reportElement key="textField" mode="Opaque" x="555" y="2" width="53" height="14" isPrintWhenDetailOverflows="true" forecolor="#060D0A" backcolor="#FFFFFF"/>
@@ -350,7 +350,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="6" isStrikeThrough="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUM_NET}!=null)? "   "+$P{NUMBERFORMAT}.format($V{SUM_NET})+"   ":new String(" ")]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUM_NET}!=null)? "   "+$P{AMOUNTFORMAT}.format($V{SUM_NET})+"   ":new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField pattern="###0.00;-###0.00" isBlankWhenNull="false" hyperlinkType="Reference">
 					<reportElement key="textField" positionType="Float" mode="Opaque" x="505" y="2" width="50" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -363,7 +363,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="6" isUnderline="false" isStrikeThrough="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUM_CREDIT}!=null)? "(" + $P{NUMBERFORMAT}.format($V{SUM_CREDIT}) + ")" : "(" + $P{NUMBERFORMAT}.format(BigDecimal.ZERO) + ")"]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[($V{SUM_CREDIT}!=null)? "(" + $P{AMOUNTFORMAT}.format($V{SUM_CREDIT}) + ")" : "(" + $P{AMOUNTFORMAT}.format(BigDecimal.ZERO) + ")"]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -574,7 +574,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="6" isUnderline="false" isStrikeThrough="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{credit}!=null)? "(" + $P{NUMBERFORMAT}.format($F{credit}) + ")" : "(" + $P{NUMBERFORMAT}.format(BigDecimal.ZERO) + ")"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{credit}!=null)? "(" + $P{AMOUNTFORMAT}.format($F{credit}) + ")" : "(" + $P{AMOUNTFORMAT}.format(BigDecimal.ZERO) + ")"]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-17" stretchType="RelativeToBandHeight" x="1" y="0" width="1" height="19"/>
@@ -611,7 +611,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="6" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{amount1}!=null)?$P{NUMBERFORMAT}.format($F{amount1}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{amount1}!=null)?$P{AMOUNTFORMAT}.format($F{amount1}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
 				<reportElement key="textField" stretchType="RelativeToTallestObject" x="255" y="0" width="50" height="16" forecolor="#000000"/>
@@ -624,7 +624,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="6" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{amount2}!=null)?$P{NUMBERFORMAT}.format($F{amount2}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{amount2}!=null)?$P{AMOUNTFORMAT}.format($F{amount2}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
 				<reportElement key="textField" stretchType="RelativeToTallestObject" x="305" y="0" width="50" height="16" forecolor="#000000"/>
@@ -637,7 +637,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="6" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{amount3}!=null)?$P{NUMBERFORMAT}.format($F{amount3}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{amount3}!=null)?$P{AMOUNTFORMAT}.format($F{amount3}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
 				<reportElement key="textField" stretchType="RelativeToTallestObject" x="355" y="0" width="50" height="16" forecolor="#000000"/>
@@ -650,7 +650,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="6" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{amount4}!=null)?$P{NUMBERFORMAT}.format($F{amount4}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{amount4}!=null)?$P{AMOUNTFORMAT}.format($F{amount4}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
 				<reportElement key="textField" stretchType="RelativeToTallestObject" x="405" y="0" width="50" height="16" forecolor="#000000"/>
@@ -663,7 +663,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="html">
 					<font size="6" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{amount5}!=null)?$P{NUMBERFORMAT}.format($F{amount5}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{amount5}!=null)?$P{AMOUNTFORMAT}.format($F{amount5}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
 				<reportElement key="textField" stretchType="RelativeToTallestObject" x="455" y="0" width="50" height="16"/>
@@ -676,7 +676,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="6"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{Total}!=null)?$P{NUMBERFORMAT}.format($F{Total}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{Total}!=null)?$P{AMOUNTFORMAT}.format($F{Total}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
 				<reportElement key="textField" stretchType="RelativeToTallestObject" x="155" y="0" width="50" height="16" forecolor="#000000"/>
@@ -689,7 +689,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="6" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{amount0}!=null)?$P{NUMBERFORMAT}.format($F{amount0}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{amount0}!=null)?$P{AMOUNTFORMAT}.format($F{amount0}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-17" stretchType="RelativeToBandHeight" x="609" y="0" width="1" height="19"/>
@@ -703,7 +703,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="6" isStrikeThrough="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($F{net}!=null)? "   "+$P{NUMBERFORMAT}.format($F{net})+"   ":new String(" ")]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[($F{net}!=null)? "   "+$P{AMOUNTFORMAT}.format($F{net})+"   ":new String(" ")]]></textFieldExpression>
 				</textField>
 			</elementGroup>
 		</band>

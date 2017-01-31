@@ -29,7 +29,7 @@
 	<style name="Detail_Data_Field" mode="Opaque" backcolor="#CCCCCC" fontName="Bitstream Vera Sans" fontSize="10"/>
 	<style name="Group_Footer" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
 	<style name="Report_Footer" isDefault="true" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11"/>
-	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat"/>
+	<parameter name="AMOUNTFORMAT" class="java.text.DecimalFormat"/>
 	<parameter name="DATEFORMATTER" class="java.text.DateFormat">
 		<defaultValueExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat("", $P{REPORT_LOCALE}, $P{REPORT_TIME_ZONE})]]></defaultValueExpression>
 	</parameter>

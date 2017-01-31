@@ -29,7 +29,7 @@
 	<style name="Detail_Data_Field" mode="Opaque" backcolor="#CCCCCC" fontName="Bitstream Vera Sans" fontSize="10"/>
 	<style name="Group_Footer" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
 	<style name="Report_Footer" isDefault="true" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11"/>
-	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat"/>
+	<parameter name="AMOUNTFORMAT" class="java.text.DecimalFormat"/>
 	<parameter name="DATEFORMATTER" class="java.text.DateFormat">
 		<defaultValueExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat("", $P{REPORT_LOCALE}, $P{REPORT_TIME_ZONE})]]></defaultValueExpression>
 	</parameter>
@@ -500,7 +500,7 @@ FROM DUAL]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{PERCENTAGE} != null ?  $P{NUMBERFORMAT}.format($F{PERCENTAGE}) + " %" : null]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{PERCENTAGE} != null ?  $P{AMOUNTFORMAT}.format($F{PERCENTAGE}) + " %" : null]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -611,7 +611,7 @@ FROM DUAL]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="false" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{PERCENTAGETOTAL} != null ? $P{NUMBERFORMAT}.format($V{PERCENTAGETOTAL}) : $P{NUMBERFORMAT}.format(new BigDecimal("0"))) + " %"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($V{PERCENTAGETOTAL} != null ? $P{AMOUNTFORMAT}.format($V{PERCENTAGETOTAL}) : $P{AMOUNTFORMAT}.format(new BigDecimal("0"))) + " %"]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnFooter>
