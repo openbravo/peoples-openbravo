@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,6 +39,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.Tree;
@@ -580,7 +581,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         advisePopUp(request, response, "WARNING",
             Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
             Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
-      } else if (data.length > 65532) {
+      } else if (data.length > ReportingUtils.getExcelMaxRowNumber()) {
         advisePopUp(request, response, "ERROR",
             Utility.messageBD(this, "ProcessStatus-E", vars.getLanguage()),
             Utility.messageBD(this, "numberOfRowsExceeded", vars.getLanguage()));

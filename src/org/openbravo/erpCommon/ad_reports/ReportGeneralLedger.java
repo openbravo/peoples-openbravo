@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2016 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.ScrollableFieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -676,7 +677,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         return;
       }
 
-      ScrollableFieldProvider limitedData = new LimitRowsScrollableFieldProviderFilter(data, 65532);
+      ScrollableFieldProvider limitedData = new LimitRowsScrollableFieldProviderFilter(data,
+          ReportingUtils.getExcelMaxRowNumber());
 
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerExcel.jrxml";
 
