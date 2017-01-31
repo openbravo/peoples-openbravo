@@ -1284,22 +1284,6 @@ public class Wad extends DefaultHandler {
 
     xmlDocumentXsql.setParameter("paramKey", Sqlc.TransformaNombreColumna(keyColumnName));
 
-    final StringBuffer strParameters = new StringBuffer();
-    final StringBuffer strParametersFields = new StringBuffer();
-
-    for (String param : vecFieldParameters) {
-      strParametersFields.append(param);
-    }
-
-    for (int i = 0; i < vecTableParametersTop.size(); i++) {
-      strParameters.append(vecTableParametersTop.elementAt(i).toString()).append("\n");
-    }
-    for (int i = 0; i < vecParametersTop.size(); i++) {
-      strParameters.append(vecParametersTop.elementAt(i).toString()).append("\n");
-    }
-    xmlDocumentXsql.setParameter("parameterFields", strParametersFields.toString());
-    xmlDocumentXsql.setParameter("parameters", strParameters.toString());
-
     boolean hasCode = false;
     {
       // default values for search references in parameter windows for action buttons
