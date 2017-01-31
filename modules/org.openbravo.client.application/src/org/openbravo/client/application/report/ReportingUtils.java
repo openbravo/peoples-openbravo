@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1473,7 +1473,13 @@ public class ReportingUtils {
     return tmpFolder;
   }
 
-  private static String getBaseDesignPath() {
+  /**
+   * Returns the relative path to the default design sub-folder within the context's base design
+   * folder.
+   * 
+   * @return a String with the relative path to the default design sub-folder.
+   */
+  public static String getBaseDesign() {
     ServletContext servletContext = DalContextListener.getServletContext();
     ConfigParameters configParameters = ConfigParameters.retrieveFrom(servletContext);
 
@@ -1483,6 +1489,11 @@ public class ReportingUtils {
     if (!base.startsWith("/")) {
       base = "/" + base;
     }
-    return servletContext.getRealPath(base + "/" + design);
+    return base + "/" + design;
+  }
+
+  private static String getBaseDesignPath() {
+    ServletContext servletContext = DalContextListener.getServletContext();
+    return servletContext.getRealPath(getBaseDesign());
   }
 }
