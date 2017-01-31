@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -170,7 +170,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
 
       OBError myMessage = null;
       if (StringUtils.isEmpty(lotNo) && StringUtils.isEmpty(serialNo)
-          && StringUtils.isEmpty(expiryDate)) {
+          && StringUtils.isEmpty(expiryDate) && attValues.isEmpty()) {
         myMessage = new OBError();
         myMessage.setTitle("");
         myMessage.setType("Success");
