@@ -23,7 +23,6 @@
 <REPORT>
 <template file="javasource.javaxml" />
 
-<structure name="structure1">
   <PARAMETER id="class" name = "class" default=" "/>
   <PARAMETER id="package" name = "package" default=" "/>
   <PARAMETER id="path" name = "path" default=" "/>
@@ -42,6 +41,8 @@
   <PARAMETER id="paramPostedProcessId" name="postedProcessId" default=""/>
   <PARAMETER id="paramReportPDF" name="reportPDF" default=""/>
   <PARAMETER id="paramReportDirectPrint" name="reportDirectPrint" default=""/>
+  
+<structure name="structure1">
   <FIELD id="fieldName">Name</FIELD>
   <FIELD id="fieldType">type</FIELD>
   <FIELD id="fieldDefault">xmltext</FIELD>
