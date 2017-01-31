@@ -18,17 +18,9 @@
  ************************************************************************
 -->
 
-
-
 <SqlClass id="class" name="Almacen" 
 package="org.openbravo.wad.Window">
   <SqlClassComment>WAD Generated class</SqlClassComment>
-
-  <SqlMethod name="dummy" type="preparedStatement" return="multiple">
-    <Sql>
-      SELECT '' AS dummy from DUAL
-    </Sql>
-  </SqlMethod>
 
 <FIELDS_TMP id="sectionActionProcess">
    &#60;SqlMethod name="selectActP<PARAMETER_TMP id="Reference16">table</PARAMETER_TMP>" type="preparedStatement" return="String" default=""&#62;
