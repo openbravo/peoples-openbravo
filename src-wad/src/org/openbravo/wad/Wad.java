@@ -1186,28 +1186,26 @@ public class Wad extends DefaultHandler {
     final boolean noPInstance = (ActionButtonRelationData.select(pool, strTab).length == 0);
     final boolean noActionButton = FieldsData.hasActionButton(pool, strTab).equals("0");
 
-    final String[] discard = { "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-        "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "" };
-
-    if (!hasCreateFrom)
-      discard[13] = "sectionCreateFrom";
-    if (!hasPosted)
-      discard[19] = "sectionPosted";
-    if ((noPInstance) && (noActionButton))
-      discard[22] = "hasAdPInstance";
-    if (noActionButton)
-      discard[23] = "hasAdActionButton";
-
     // Obtain action buttons processes to be called from tab trough buttons
     final ActionButtonRelationData[] actBtns = WadActionButton.buildActionButtonCall(pool, strTab,
         tabName, keyColumnName, isSOTrx, strWindow);
     final ActionButtonRelationData[] actBtnsJava = WadActionButton.buildActionButtonCallJava(pool,
         strTab, tabName, keyColumnName, isSOTrx, strWindow);
 
+    final String[] discard = { "", "", "", "", "", };
+
+    if (!hasCreateFrom)
+      discard[0] = "sectionCreateFrom";
+    if (!hasPosted)
+      discard[1] = "sectionPosted";
+    if ((noPInstance) && (noActionButton))
+      discard[2] = "hasAdPInstance";
+    if (noActionButton)
+      discard[3] = "hasAdActionButton";
     if ((actBtns == null || actBtns.length == 0)
         && (actBtnsJava == null || actBtnsJava.length == 0)) {
       // No action buttons, service method is not neccessary
-      discard[31] = "discardService";
+      discard[4] = "discardService";
     }
 
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/javasource", discard)
