@@ -1582,7 +1582,6 @@ public class Wad extends DefaultHandler {
       int heightTabs, int incrTabs) throws IOException, ServletException {
     TabsData[] aux = null;
     TabsData[] aux1 = null;
-    int mayor = 0;
     final Vector<Object> vec = new Vector<Object>();
     aux1 = TabsData.selectTabParent(pool, strWindowId);
     if (aux1 == null || aux1.length == 0)
@@ -1593,53 +1592,8 @@ public class Wad extends DefaultHandler {
     }
     aux = new TabsData[vec.size()];
     vec.copyInto(aux);
-    for (int i = 0; i < aux.length; i++)
-      if (mayor < Integer.valueOf(aux[i].tablevel).intValue())
-        mayor = Integer.valueOf(aux[i].tablevel).intValue();
-    for (int i = 0; i < aux.length; i++)
-      debugTab(aux[i], strTabSelected, level, heightTabs, incrTabs, mayor);
+
     return aux;
-  }
-
-  /**
-   * Assigns the correct command to the given tab.
-   * 
-   * @param tab
-   *          Tab to manipulate.
-   * @param strTab
-   *          The id of the actual tab.
-   * @param level
-   *          The level of the actual tab.
-   * @param heightTabs
-   *          The height of the tab.
-   * @param incrTabs
-   *          The increment for the height.
-   * @param mayor
-   *          operand to calculate the height.
-   * @throws ServletException
-   */
-  private void debugTab(TabsData tab, String strTab, int level, int heightTabs, int incrTabs,
-      int mayor) throws ServletException {
-    final String tabName = FormatUtilities.replace(tab.tabname)
-        + (tab.tabmodule.equals("0") ? "" : tab.tabid);
-    if (strTab.equals(tab.tabid)) {
-      tab.tdClass = "";
-      tab.href = "return false;";
-    } else {
-      tab.tdClass = "";
-      tab.href = "submitCommandForm('DEFAULT', false, null, '" + tabName
-          + "_Relation.html', 'appFrame');return false;";
-      if ((level + 1) >= Integer.valueOf(tab.tablevel).intValue())
-        tab.href = "submitCommandForm('"
-            + ((level > Integer.valueOf(tab.tablevel).intValue()) ? "DEFAULT" : "TAB") + "', "
-            + ((level >= Integer.valueOf(tab.tablevel).intValue()) ? "false" : "true")
-            + ", null, '" + tabName + "_Relation.html', 'appFrame');return false;";
-      else
-        tab.href = "return false;";
-    }
-
-    final int height = ((mayor - Integer.valueOf(tab.tablevel).intValue()) * incrTabs + heightTabs);
-    tab.tdHeight = Integer.toString(height);
   }
 
   /**
