@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -338,7 +339,7 @@ public class Wad extends DefaultHandler {
       // calculate which windows/tabs are needed/requested
       // no-op now, as no longer supported
       calculateWindowsToGenerate(wad.pool, tabsData, new HashMap<String, Boolean>());
-      generateTabMap = calculateTabsToGenerate(wad.pool, tabsData, new HashMap<String, Boolean>());
+      generateTabMap = calculateTabsToGenerate(wad.pool, tabsData);
       int skip = 0;
       int generate = 0;
       for (Boolean b : generateTabMap.values()) {
@@ -355,7 +356,7 @@ public class Wad extends DefaultHandler {
       if (generateWebXml) {
 
         if (!quick || WadData.genereteWebXml(wad.pool))
-          wad.processWebXml(fileWebXml, attachPath, webPath, generateTabMap);
+          wad.processWebXml(fileWebXml, attachPath, webPath);
         else
           log4j.info("No changes in web.xml");
       }
@@ -426,17 +427,12 @@ public class Wad extends DefaultHandler {
   }
 
   private static Map<String, Boolean> calculateTabsToGenerate(ConnectionProvider conn,
-      FieldProvider[] tabsData, Map<String, Boolean> calculatedTabs) throws ServletException {
+      FieldProvider[] tabsData) throws ServletException {
     Map<String, Boolean> res = new HashMap<String, Boolean>();
 
     for (FieldProvider tab : tabsData) {
       // if already calculated before skip
       if (res.get(tab.getField("tabid")) != null) {
-        continue;
-      }
-
-      if (calculatedTabs.get(tab.getField("tabid")) != null) {
-        res.put(tab.getField("tabid"), calculatedTabs.get(tab.getField("tabid")));
         continue;
       }
 
@@ -749,12 +745,9 @@ public class Wad extends DefaultHandler {
    *          The path where are the attached files.
    * @param webPath
    *          The url where are the static web content.
-   * @param calculatedTabMap
-   * @throws ServletException
-   * @throws IOException
    */
-  private void processWebXml(File fileWebXml, String attachPath, String webPath,
-      Map<String, Boolean> calculatedTabMap) throws ServletException, IOException {
+  private void processWebXml(File fileWebXml, String attachPath, String webPath)
+      throws ServletException, IOException {
     try {
       log4j.info("Processing web.xml");
       final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/webConf")
@@ -782,10 +775,17 @@ public class Wad extends DefaultHandler {
       WadData[] contextParams = WadData.selectContextParams(pool);
       xmlDocument.setData("structureContextParams", contextParams);
 
+      // obtaining again all the tabs, as previously calculated ones could be partial
       WadData[] allTabs = WadData.selectAllTabs(pool);
+      Map<String, Boolean> tabsWithJava;
+      if (!generateAllClassic250Windows) {
+        tabsWithJava = calculateTabsToGenerate(pool, allTabs);
+      } else {
+        tabsWithJava = Collections.emptyMap();
+      }
 
-      xmlDocument.setData("structureServletTab", getTabServlets(allTabs, calculatedTabMap));
-      xmlDocument.setData("structureMappingTab", getTabMappings(allTabs, calculatedTabMap));
+      xmlDocument.setData("structureServletTab", getTabServlets(allTabs, tabsWithJava));
+      xmlDocument.setData("structureMappingTab", getTabMappings(allTabs, tabsWithJava));
 
       final WadData[] servlets = WadData.select(pool);
       WadData[][] servletParams = null;
