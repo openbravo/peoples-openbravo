@@ -967,11 +967,9 @@ public class Wad extends DefaultHandler {
       }
       auxFieldsData = null;
       String keyColumnName = "";
-      boolean isSecondaryKey = false;
       final FieldsData[] dataKey = FieldsData.keyColumnName(pool, tabsData.tabid);
       if (dataKey != null && dataKey.length > 0) {
         keyColumnName = dataKey[0].name;
-        isSecondaryKey = dataKey[0].issecondarykey.equals("Y");
       }
       log4j.debug("KeyColumnName: " + keyColumnName);
 
@@ -986,8 +984,7 @@ public class Wad extends DefaultHandler {
        * XSQL
        *************************************************/
       processTabXSQL(fileDir, tabsData.tabid, tabName, tableName, windowName, keyColumnName,
-          vecParameters, tabsData.tablevel, tabsData.windowtype, vecTableParameters, fieldsData,
-          isSecondaryKey, tabsData.javapackage, vecFieldParameters);
+          tabsData.javapackage);
 
     } catch (final ServletException e) {
       e.printStackTrace();
@@ -1221,26 +1218,14 @@ public class Wad extends DefaultHandler {
    *          Name of the key column.
    * @param strTables
    *          From clause for the tab.
-   * @param vecParametersTop
-   *          Vector of where clause parameters.
    * @param selCol
    *          Array with the selection columns.
-   * @param tablevel
-   *          Tab level.
-   * @param windowType
-   *          Type of window.
-   * @param vecTableParametersTop
-   *          Array of from clause parameters.
-   * @param fieldsDataSelectAux
-   *          Array with the tab's fields.
    * @throws ServletException
    * @throws IOException
    */
   private void processTabXSQL(File fileDir, String strTab, String tabName, String tableName,
-      String windowName, String keyColumnName, Vector<Object> vecParametersTop, String tablevel,
-      String windowType, Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux,
-      boolean isSecondaryKey, String javaPackage, Vector<String> vecFieldParameters)
-      throws ServletException, IOException {
+      String windowName, String keyColumnName, String javaPackage) throws ServletException,
+      IOException {
     log4j.debug("Procesig xsql: " + strTab + ", " + tabName);
     XmlDocument xmlDocumentXsql;
     xmlDocumentXsql = xmlEngine.readXmlTemplate("org/openbravo/wad/datasource").createXmlDocument();
