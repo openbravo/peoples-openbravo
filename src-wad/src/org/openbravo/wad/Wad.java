@@ -1179,7 +1179,7 @@ public class Wad extends DefaultHandler {
     final ActionButtonRelationData[] actBtnsJava = WadActionButton.buildActionButtonCallJava(pool,
         strTab, tabName, keyColumnName, isSOTrx, strWindow);
 
-    final String[] discard = { "", "", "", "", "", };
+    final String[] discard = { "", "", "", "", "" };
 
     if (!hasCreateFrom)
       discard[0] = "sectionCreateFrom";
