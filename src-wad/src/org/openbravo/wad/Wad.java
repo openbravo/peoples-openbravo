@@ -334,12 +334,8 @@ public class Wad extends DefaultHandler {
 
       }
 
-      Map<String, Boolean> generateTabMap = new HashMap<String, Boolean>();
-
-      // calculate which windows/tabs are needed/requested
-      // no-op now, as no longer supported
-      calculateWindowsToGenerate(wad.pool, tabsData, new HashMap<String, Boolean>());
-      generateTabMap = calculateTabsToGenerate(wad.pool, tabsData);
+      checkInvalidWindowDefs(wad.pool, tabsData);
+      Map<String, Boolean> generateTabMap = calculateTabsToGenerate(wad.pool, tabsData);
       int skip = 0;
       int generate = 0;
       for (Boolean b : generateTabMap.values()) {
@@ -387,18 +383,11 @@ public class Wad extends DefaultHandler {
     }
   }
 
-  private static Map<String, Boolean> calculateWindowsToGenerate(ConnectionProvider conn,
-      FieldProvider[] tabsData, Map<String, Boolean> calculatedWindowMap) throws ServletException {
-
-    // check if some tabs/windows need to be shown in classic mode
-    Map<String, Boolean> generateWindowMap = new HashMap<String, Boolean>();
+  /** Checks and warns about windows defined in 2.50 style */
+  private static void checkInvalidWindowDefs(ConnectionProvider conn, FieldProvider[] tabsData)
+      throws ServletException {
     String oldWindowId = null;
     for (FieldProvider tab : tabsData) {
-      if (calculatedWindowMap.get(tab.getField("key")) != null) {
-        // if already calculated before set if
-        generateWindowMap.put(tab.getField("key"), calculatedWindowMap.get(tab.getField("key")));
-        continue;
-      }
       if (oldWindowId == null || !tab.getField("key").equals(oldWindowId)) {
         // new window -> check all tabs in that window
         boolean res = TabsData.selectShowWindowIn250ClassicMode(conn, tab.getField("key"));
@@ -419,7 +408,6 @@ public class Wad extends DefaultHandler {
         oldWindowId = tab.getField("key");
       }
     }
-    return generateWindowMap;
   }
 
   private static Map<String, Boolean> calculateTabsToGenerate(ConnectionProvider conn,
