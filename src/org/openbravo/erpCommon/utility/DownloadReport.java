@@ -26,8 +26,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.utils.FileUtility;
 
 public class DownloadReport extends HttpSecureAppServlet {
@@ -53,17 +55,11 @@ public class DownloadReport extends HttpSecureAppServlet {
     String filename = report.substring(0, pos);
     pos = report.lastIndexOf(".");
     String extension = report.substring(pos);
-    if (extension.equalsIgnoreCase(".pdf")) {
-      response.setContentType("application/pdf");
-    } else if (extension.equalsIgnoreCase(".csv")) {
-      response.setContentType("text/csv");
-    } else if (extension.equalsIgnoreCase(".txt")) {
-      response.setContentType("text/plain");
-    } else if (extension.equalsIgnoreCase(".xls")) {
-      response.setContentType("application/vnd.ms-excel");
-    } else if (extension.equalsIgnoreCase(".xlsx")) {
-      response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-    } else {
+    try {
+      ExportType exportType = ExportType.getExportType(extension.substring(1));
+      response.setContentType(exportType.getContentType());
+    } catch (OBException ignore) {
+      // unsupported export type, use application/x-download content type
       response.setContentType("application/x-download");
     }
     response.setHeader("Content-Disposition", "attachment; filename=" + filename + extension);
