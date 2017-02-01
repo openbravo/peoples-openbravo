@@ -651,11 +651,7 @@ public class OBContext implements OBNotSingleton {
       return new ArrayList<String>(orgList);
     }
 
-    String propertyActive = "N";
-    if (isActiveOrganization) {
-      propertyActive = "Y";
-    }
-
+    String propertyActive = isActiveOrganization ? "Y" : "N";
     final Query qry = SessionHandler.getInstance().createQuery(
         "select o.id from " + Organization.class.getName() + " o, "
             + RoleOrganization.class.getName() + " roa where o." + Organization.PROPERTY_ID

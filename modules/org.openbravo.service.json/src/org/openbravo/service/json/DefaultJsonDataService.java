@@ -756,20 +756,11 @@ public class DefaultJsonDataService implements JsonDataService {
       if (!rowClient.equals(currentClientId)) {
         jsonObject.put("_readOnly", true);
       } else {
-        boolean writable = false;
-        for (String orgId : OBContext.getOBContext().getWritableOrganizations()) {
-          if (orgId.equals(rowOrganization)) {
-            writable = true;
-            break;
-          }
-        }
-        if (isOrganizationEntity(jsonObject)) {
-          for (String orgId : OBContext.getOBContext().getDeactivatedOrganizations()) {
-            if (orgId.equals(rowOrganization)) {
-              writable = true;
-              break;
-            }
-          }
+        boolean writable = OBContext.getOBContext().getWritableOrganizations()
+            .contains(rowOrganization);
+        if (!writable && isOrganizationEntity(jsonObject)) {
+          writable = OBContext.getOBContext().getDeactivatedOrganizations()
+              .contains(rowOrganization);
         }
         if (!writable) {
           jsonObject.put("_readOnly", true);
@@ -779,11 +770,8 @@ public class DefaultJsonDataService implements JsonDataService {
   }
 
   private boolean isOrganizationEntity(JSONObject json) throws JSONException {
-    if (json.has(JsonConstants.ENTITYNAME)
-        && (Organization.ENTITY_NAME.equals(json.get(JsonConstants.ENTITYNAME)))) {
-      return true;
-    }
-    return false;
+    return json.has(JsonConstants.ENTITYNAME)
+        && Organization.ENTITY_NAME.equals(json.get(JsonConstants.ENTITYNAME));
   }
 
   /**
