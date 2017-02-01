@@ -422,21 +422,15 @@ public class Wad extends DefaultHandler {
 
       boolean needToCompile = tabJavaNeededforActionButtons(conn, tab.getField("tabid"));
 
-      if (needToCompile && "Y".equals(tab.getField("issorttab"))) {
+      if ("Y".equals(tab.getField("issorttab"))) {
         log4j.warn("2.50 Sort Tab no longer supported (it will be skipped): "
             + tab.getField("tabname") + ",id: " + tab.getField("tabid"));
-        res.put(tab.getField("tabid"), Boolean.FALSE);
-        continue;
-      }
-
-      if (needToCompile) {
+        needToCompile = false;
+      } else if (needToCompile) {
         log4j.debug("Need to generate tab: " + tab.getField("tabname") + ",id: "
             + tab.getField("tabid") + ", level: " + tab.getField("tablevel"));
-        res.put(tab.getField("tabid"), Boolean.TRUE);
-      } else {
-        // mark as not needed to compile
-        res.put(tab.getField("tabid"), Boolean.FALSE);
       }
+      res.put(tab.getField("tabid"), needToCompile);
     }
 
     return res;
