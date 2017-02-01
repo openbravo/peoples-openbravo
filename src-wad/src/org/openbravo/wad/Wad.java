@@ -382,10 +382,6 @@ public class Wad extends DefaultHandler {
           }
         }
       }
-
-    } catch (final Exception e) {
-
-      throw new Exception(e);
     } finally {
       wad.pool.destroy();
     }
@@ -506,11 +502,9 @@ public class Wad extends DefaultHandler {
       WadUtility.writeFile(fileReference, "ActionButton_data.xsql",
           "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + xmlDocumentData.print());
     } catch (final ServletException e) {
-      e.printStackTrace();
-      log4j.error("Problem of ServletExceptio in process of ActionButtonData");
+      log4j.error("Problem of ServletExceptio in process of ActionButtonData", e);
     } catch (final IOException e) {
-      e.printStackTrace();
-      log4j.error("Problem of IOExceptio in process of ActionButtonData");
+      log4j.error("Problem of IOExceptio in process of ActionButtonData", e);
     }
   }
 
@@ -531,12 +525,8 @@ public class Wad extends DefaultHandler {
               MAX_TEXTBOX_LENGTH);
         }
       }
-    } catch (final ServletException e) {
-      e.printStackTrace();
-      log4j.error("Problem of ServletExceptio in process of ActionButtonXml");
-    } catch (final IOException e) {
-      e.printStackTrace();
-      log4j.error("Problem of IOExceptio in process of ActionButtonXml");
+    } catch (final ServletException | IOException e) {
+      log4j.error("Problem in process of ActionButtonXml", e);
     }
   }
 
@@ -576,12 +566,8 @@ public class Wad extends DefaultHandler {
               MAX_TEXTBOX_LENGTH, MAX_SIZE_EDITION_1_COLUMNS, "", false, jsDateFormat, vecReloads);
         }
       }
-    } catch (final ServletException e) {
-      e.printStackTrace();
-      log4j.error("Problem of ServletExceptio in process of ActionButtonHtml");
-    } catch (final IOException e) {
-      e.printStackTrace();
-      log4j.error("Problem of IOExceptio in process of ActionButtonHtml");
+    } catch (final ServletException | IOException e) {
+      log4j.error("Problem in process of ActionButtonHtml", e);
     }
   }
 
@@ -622,8 +608,7 @@ public class Wad extends DefaultHandler {
           xmlDocumentData.print());
 
     } catch (final IOException e) {
-      e.printStackTrace();
-      log4j.error("Problem of IOExceptio in process of ActionButton_Responser");
+      log4j.error("Problem of IOExceptio in process of ActionButton_Responser", e);
     }
   }
 
@@ -661,7 +646,7 @@ public class Wad extends DefaultHandler {
             xmlDocumentData.print());
       }
     } catch (final Exception e) {
-      log4j.error(e);
+      log4j.error("Error processing sql defaults", e);
     }
   }
 
@@ -682,12 +667,8 @@ public class Wad extends DefaultHandler {
               MAX_TEXTBOX_LENGTH);
         }
       }
-    } catch (final ServletException e) {
-      e.printStackTrace();
-      log4j.error("Problem of ServletExceptio in process of ActionButtonXml Generics");
-    } catch (final IOException e) {
-      e.printStackTrace();
-      log4j.error("Problem of IOExceptio in process of ActionButtonXml Generics");
+    } catch (final ServletException | IOException e) {
+      log4j.error("Problem in process of ActionButtonXml Generics", e);
     }
   }
 
@@ -727,12 +708,8 @@ public class Wad extends DefaultHandler {
               MAX_TEXTBOX_LENGTH, MAX_SIZE_EDITION_1_COLUMNS, "", true, jsDateFormat, vecReloads);
         }
       }
-    } catch (final ServletException e) {
-      e.printStackTrace();
-      log4j.error("Problem of ServletExceptio in process of ActionButtonHtml Generics");
-    } catch (final IOException e) {
-      e.printStackTrace();
-      log4j.error("Problem of IOExceptio in process of ActionButtonHtml Generics");
+    } catch (final ServletException | IOException e) {
+      log4j.error("Problem in process of ActionButtonHtml Generics", e);
     }
   }
 
@@ -821,8 +798,7 @@ public class Wad extends DefaultHandler {
 
       WadUtility.writeFile(fileWebXml, "web.xml", webXml);
     } catch (final IOException e) {
-      e.printStackTrace();
-      log4j.error("Problem of IOException in process of Web.xml");
+      log4j.error("Problem of IOException in process of Web.xml", e);
     }
   }
 
@@ -986,15 +962,8 @@ public class Wad extends DefaultHandler {
       processTabXSQL(fileDir, tabsData.tabid, tabName, tableName, windowName, keyColumnName,
           tabsData.javapackage);
 
-    } catch (final ServletException e) {
-      e.printStackTrace();
-      log4j.error("Problem of ServletException in the file: " + tabsData.tabid);
-    } catch (final IOException e) {
-      e.printStackTrace();
-      log4j.error("Problem at close of the file: " + tabsData.tabid);
     } catch (final Exception e) {
-      e.printStackTrace();
-      log4j.error("Problem at close of the file: " + tabsData.tabid);
+      log4j.error("Problem in file: " + tabsData.tabid, e);
     }
   }
 
@@ -1701,8 +1670,7 @@ public class Wad extends DefaultHandler {
       WADControl.setDateFormat(sqlDateFormat);
       log4j.info("sqlDateFormat: " + sqlDateFormat);
     } catch (final IOException e) {
-      // catch possible io errors from readLine()
-      e.printStackTrace();
+      log4j.error("Couldn't read properties", e);
     }
   }
 }
