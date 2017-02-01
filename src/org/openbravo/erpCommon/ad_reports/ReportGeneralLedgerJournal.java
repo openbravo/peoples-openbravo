@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2017 Openbravo SLU
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -43,7 +43,6 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesHistory;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -752,7 +751,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
     }
 
-    else if (vars.commandIn("XLS") && data.length > ReportingUtils.getExcelMaxRowNumber()) {
+    else if (vars.commandIn("XLS") && data.length > 65532) {
       advisePopUp(request, response, "ERROR",
           Utility.messageBD(this, "ProcessStatus-E", vars.getLanguage()),
           Utility.messageBD(this, "numberOfRowsExceeded", vars.getLanguage()));

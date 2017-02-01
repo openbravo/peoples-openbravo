@@ -114,7 +114,6 @@ public class ReportingUtils {
 
   private static final double TEXT_CHAR_HEIGHT = 10;
   private static final double TEXT_CHAR_WIDTH = 10;
-  private static final int XLS_MAX_ROW_NUMBER = 65532;
   private static final Logger log = LoggerFactory.getLogger(ReportingUtils.class);
 
   /**
@@ -1338,12 +1337,7 @@ public class ReportingUtils {
     return localMask.replace(strTmpDecSymbol, ".");
   }
 
-  /**
-   * Returns the format to be used when exporting Excel reports.
-   * 
-   * @return a ExportType with the default Excel format (XLS or XLSX).
-   */
-  public static ExportType getExcelExportType() {
+  public static String getExcelExportFormat() {
     OBContext context = OBContext.getOBContext();
     String preferenceValue = "";
     try {
@@ -1358,38 +1352,11 @@ public class ReportingUtils {
     } finally {
       OBContext.restorePreviousMode();
     }
-    if (ExportType.XLS.hasExtension(preferenceValue)) {
-      return ExportType.XLS;
+    if (ExportType.XLS.hasExtension(preferenceValue)
+        || ExportType.XLSX.hasExtension(preferenceValue)) {
+      return preferenceValue.toLowerCase();
     }
-    return ExportType.XLSX;
-  }
-
-  /**
-   * Returns the maximum number of rows that can be exported to an Excel report. This value can be
-   * configured for each Client/Organization by using the 'ExcelMaxRowNumber' preference. If that
-   * preference is not configured then this limit is 65532 by default.
-   * 
-   * @return an integer with the maximum number of rows that can be exported to an Excel report.
-   */
-  public static int getExcelMaxRowNumber() {
-    if (ExportType.XLS == getExcelExportType()) {
-      return XLS_MAX_ROW_NUMBER;
-    }
-    try {
-      OBContext.setAdminMode(true);
-      try {
-        OBContext context = OBContext.getOBContext();
-        String preferenceValue = Preferences.getPreferenceValue("ExcelMaxRowNumber", true,
-            context.getCurrentClient(), context.getCurrentOrganization(), context.getUser(),
-            context.getRole(), null);
-        return Integer.parseInt(preferenceValue);
-      } catch (Exception e) {
-        // preference not found: return default limit
-      }
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-    return XLS_MAX_ROW_NUMBER;
+    return ExportType.XLSX.getExtension();
   }
 
   /**

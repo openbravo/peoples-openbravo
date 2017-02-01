@@ -367,7 +367,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
 
   private ExportType getExportType(String action) {
     if (ExportType.XLS.hasExtension(action)) {
-      return ReportingUtils.getExcelExportType();
+      return ExportType.getExportType(ReportingUtils.getExcelExportFormat());
     }
     return ExportType.getExportType(action);
   }
