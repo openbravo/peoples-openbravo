@@ -914,7 +914,6 @@ public class Wad extends DefaultHandler {
       }
 
       int parentTabIndex = -1;
-      String grandfatherField = "";
       if (allTabs != null && allTabs.length > 0)
         parentTabIndex = parentTabId(allTabs, tabsData.tabid);
 
@@ -966,8 +965,6 @@ public class Wad extends DefaultHandler {
               allTabs[parentTabIndex].tabid);
         }
       }
-      if (auxFieldsData != null && auxFieldsData.length > 0)
-        grandfatherField = auxFieldsData[0].name;
       auxFieldsData = null;
       String keyColumnName = "";
       boolean isSecondaryKey = false;
@@ -982,10 +979,8 @@ public class Wad extends DefaultHandler {
        * JAVA
        *************************************************/
       processTabJava(fileDir, tabsData.tabid, tabName, tableName, windowName, keyColumnName,
-          vecFields, vecParameters, isSOTrx, tabsData.key, tabsData.accesslevel, isSecondaryKey,
-          grandfatherField, tabsData.tablevel, tabsData.tableId, tabsData.windowtype,
-          tabsData.uipattern, tabsData.editreference, vecTableParameters, fieldsData,
-          tabsData.javapackage, "Y".equals(tabsData.isdeleteable), tabsData.tabmodule);
+          isSOTrx, tabsData.key, tabsData.accesslevel, tabsData.tableId, tabsData.javapackage,
+          tabsData.tabmodule);
 
       /************************************************
        * XSQL
@@ -1124,45 +1119,20 @@ public class Wad extends DefaultHandler {
    *          The name of the key column.
    * @param strTables
    *          String with the from clause.
-   * @param vecFields
-   *          Vector with the fields of the tab.
-   * @param vecParametersTop
-   *          Vector with parameters for the query.
    * @param isSOTrx
    *          String that indicates if is a Sales Order tab or not (Y | N).
    * @param strWindow
    *          The id of the window.
    * @param accesslevel
    *          The access level.
-   * @param isSecondaryKey
-   *          Boolean that identifies if the key column is a secondary key.
-   * @param grandfatherField
-   *          The grandfather column of the tab.
-   * @param tablevel
-   *          The tab level.
    * @param tableId
    *          The id of the tab's table.
-   * @param windowType
-   *          The tab's window type.
-   * @param uiPattern
-   *          The patter for the tab.
-   * @param editReference
-   *          The id of the manual tab for the edition mode.
-   * @param vecTableParametersTop
-   *          Vector with parameters for the from clause of the query.
-   * @param fieldsDataSelectAux
-   *          Array with the auxiliar inputs info
    * @param tabmodule
-   * @throws ServletException
-   * @throws IOException
    */
   private void processTabJava(File fileDir, String strTab, String tabName, String tableName,
-      String windowName, String keyColumnName, Vector<Object> vecFields,
-      Vector<Object> vecParametersTop, String isSOTrx, String strWindow, String accesslevel,
-      boolean isSecondaryKey, String grandfatherField, String tablevel, String tableId,
-      String windowType, String uiPattern, String editReference,
-      Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux, String javaPackage,
-      boolean deleteable, String tabmodule) throws ServletException, IOException {
+      String windowName, String keyColumnName, String isSOTrx, String strWindow,
+      String accesslevel, String tableId, String javaPackage, String tabmodule)
+      throws ServletException, IOException {
     log4j.debug("Processing java: " + strTab + ", " + tabName);
     XmlDocument xmlDocument;
     final String createFromProcess = FieldsData.hasCreateFromButton(pool, strTab);
