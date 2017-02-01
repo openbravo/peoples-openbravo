@@ -1453,14 +1453,12 @@ public class ReportingUtils {
         FileType type = OBDal.getReadOnlyInstance().get(FileType.class, fileTypeId);
         if (type != null) {
           return type.getFormat();
+        } else if ("html".equals(extension) || "csv".equals(extension)) {
+          return "text/" + extension;
+        } else if ("xlsx".equals(extension)) {
+          return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
         } else {
-          if ("html".equals(extension) || "csv".equals(extension)) {
-            return "text/" + extension;
-          } else if ("xlsx".equals(extension)) {
-            return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-          } else {
-            return "application/" + extension;
-          }
+          return "application/" + extension;
         }
       } finally {
         OBContext.restorePreviousMode();
