@@ -1343,15 +1343,17 @@ public class ReportingUtils {
    * @return a ExportType with the default Excel format (XLS or XLSX).
    */
   public static ExportType getExcelExportType() {
-    OBContext context = OBContext.getOBContext();
-    String preferenceValue = "";
     try {
       OBContext.setAdminMode(true);
       try {
-        preferenceValue = Preferences.getPreferenceValue("ExcelExportFormat", true,
+        OBContext context = OBContext.getOBContext();
+        String preferenceValue = Preferences.getPreferenceValue("ExcelExportFormat", true,
             context.getCurrentClient(), context.getCurrentOrganization(), context.getUser(),
             context.getRole(), null);
-        return ExportType.getExportType(preferenceValue);
+        ExportType exportType = ExportType.getExportType(preferenceValue);
+        if (ExportType.XLS == exportType || ExportType.XLSX == exportType) {
+          return exportType;
+        }
       } catch (Exception ignore) {
         // preference not found: return default excel format
       }
