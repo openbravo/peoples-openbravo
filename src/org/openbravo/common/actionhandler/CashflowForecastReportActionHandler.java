@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,11 +27,15 @@ import java.util.Vector;
 
 import javax.servlet.ServletException;
 
+import net.sf.jasperreports.engine.JRDataSource;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.ReportDefinition;
 import org.openbravo.client.application.report.BaseReportActionHandler;
 import org.openbravo.client.kernel.RequestContext;
@@ -41,11 +45,8 @@ import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.service.db.DalConnectionProvider;
 
-import net.sf.jasperreports.engine.JRDataSource;
-
 /**
- * Action Handler used as base for jasper reports generated from process definition. This handler can
- * be extended to customize its behavior.
+ * Cashflow Forecast Action Handler for the Process Definition
  */
 public class CashflowForecastReportActionHandler extends BaseReportActionHandler {
 
@@ -53,12 +54,13 @@ public class CashflowForecastReportActionHandler extends BaseReportActionHandler
   private static final String _PARAMS = "_params";
   private static final String DATE_FORMAT_JAVA = "dateFormat.java";
   private static final String DATE_PLANNED2 = "datePlanned";
-  private static final String REPORT_TITLE = "REPORT_TITLE";
   private static final String BREAK_BY_DATE = "BreakByDate";
   private static final String DATE_PLANNED = "DatePlanned";
-  private static final String FINANCIAL_ACCOUNT_ID = "FinancialAccountId";
-  private static final String FIELD_PROVIDER_SUB_REPORT = "fieldProviderSubReport";
-  private static final String FIELD_PROVIDER_SUMMARY = "fieldProviderSummary";
+  private static final String FINANCIAL_ACCOUNT_ID = "Fin_Financial_Account_ID";
+  private static final String PARAM_PROVIDER_SUB_REPORT = "fieldProviderSubReport";
+  private static final String PARAM_PROVIDER_SUMMARY = "fieldProviderSummary";
+  private static final String PARAM_FORMAT = "OUTPUT_FORMAT";
+  private static final String XLS_FORMAT = "XLS";
 
   @Override
   protected ConnectionProvider getReportConnectionProvider() {
@@ -94,14 +96,14 @@ public class CashflowForecastReportActionHandler extends BaseReportActionHandler
       data = (CashflowForecastData[][]) dataResult.get("data");
 
       parameters.clear();
-      parameters.put(REPORT_TITLE, "Cashflow Forecast Report");
       parameters.put(BREAK_BY_DATE, breakByDate);
       parameters.put(DATE_PLANNED, datePlanned);
       parameters.put(FINANCIAL_ACCOUNT_ID, strFinancialAccountId);
-      parameters.put(FIELD_PROVIDER_SUB_REPORT,
+      parameters.put(PARAM_PROVIDER_SUB_REPORT,
           new JRFieldProviderDataSource(unifyData(data), vars.getJavaDateFormat()));
-      parameters.put(FIELD_PROVIDER_SUMMARY,
+      parameters.put(PARAM_PROVIDER_SUMMARY,
           new JRFieldProviderDataSource(dataSummary, vars.getJavaDateFormat()));
+      parameters.put(PARAM_FORMAT, jsonContent.getString(ApplicationConstants.BUTTON_VALUE));
     } catch (Exception e) {
     }
   }
@@ -111,9 +113,15 @@ public class CashflowForecastReportActionHandler extends BaseReportActionHandler
     @SuppressWarnings("unchecked")
     HashMap<String, Object> jrParams = (HashMap<String, Object>) parameters
         .get(JASPER_REPORT_PARAMETERS);
-    return (JRFieldProviderDataSource) jrParams.get(FIELD_PROVIDER_SUB_REPORT);
+    if (StringUtils.equals((String) jrParams.get(PARAM_FORMAT), XLS_FORMAT)) {
+      // Pass data only for XLS
+      return (JRFieldProviderDataSource) jrParams.get(PARAM_PROVIDER_SUB_REPORT);
+    } else {
+      // PDF and HTML don't require data, as it's passed as parameter to the subreports
+      return null;
+    }
   }
-  
+
   @Override
   protected boolean isCompilingSubreports() {
     return true;

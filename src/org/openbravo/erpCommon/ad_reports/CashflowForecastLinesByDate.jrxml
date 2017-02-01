@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2016-12-15T11:17:29 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CashFlowForecastLines" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="1300d746-b52d-41b8-b049-6e6f683f2fec">
-	<property name="ireport.zoom" value="1.4641000000000106"/>
-	<property name="ireport.x" value="71"/>
+	<property name="ireport.zoom" value="1.3310000000000106"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="default" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="6">
 		<box leftPadding="5" rightPadding="5"/>
@@ -39,7 +37,7 @@
 	<parameter name="FIN_FINANCIAL_ACCOUNT_ID" class="java.lang.String">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
-	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false">
+	<parameter name="AMOUNTFORMAT" class="java.text.DecimalFormat" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new DecimalFormat()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="USER_ORG" class="java.lang.String" isForPrompting="false">
@@ -51,34 +49,9 @@
 	<parameter name="CURRENT_BALANCE" class="java.math.BigDecimal"/>
 	<parameter name="DatePlanned" class="java.util.Date"/>
 	<parameter name="fieldProviderSubReport" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<parameter name="OUTPUT_FORMAT" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[select fa.fin_financial_account_id, fa.name as FINANCIALACCOUNT, fa.currentbalance, fa.accountno,
-    coalesce(p.isreceipt, i.issotrx) as isreceipt,
-    COALESCE(psinv.duedate, p.paymentdate) as duedate,
-    i.dateinvoiced, i.documentno as invoiceno, i.c_invoice_id,
-    p.fin_payment_id, p.description as payment_desc, p.documentno as paymentno,
-    bp.name as bpname,
-    case coalesce(p.isreceipt, i.issotrx) when 'Y' then psd.amount else -1 * psd.amount end as amount,
-    c_currency_convert(case coalesce(p.isreceipt, i.issotrx) when 'Y' then psd.amount else -1 * psd.amount end,
-                       coalesce(p.c_currency_id, i.c_currency_id), fa.c_currency_id,
-                       COALESCE(psinv.duedate, p.paymentdate), null,
-                       psd.ad_client_id, psd.ad_org_id) as convertedAmount,
-    trxcur.iso_code as trxcur,
-    facur.iso_code as facur
-from fin_payment_scheduledetail psd
-    left join fin_payment_detail pd on psd.fin_payment_detail_id = pd.fin_payment_detail_id
-    left join fin_payment p on pd.fin_payment_id = p.fin_payment_id
-    left join fin_payment_schedule psinv on psd.fin_payment_schedule_invoice = psinv.fin_payment_schedule_id
-    left join c_invoice i on psinv.c_invoice_id = i.c_invoice_id
-    left join c_bpartner bp on coalesce(p.c_bpartner_id, i.c_bpartner_id) = bp.c_bpartner_id
-    left join fin_financial_account fa on fa.fin_financial_account_id = coalesce(p.fin_financial_account_id, case i.issotrx when 'Y' then bp.fin_financial_account_id when 'N' then bp.po_financial_account_id else null end)
-    left join c_currency trxcur on trxcur.c_currency_id = coalesce(p.c_currency_id, i.c_currency_id)
-    left join c_currency facur on facur.c_currency_id = fa.c_currency_id
-where aprm_ispaymentconfirmed(p.status, psd.fin_payment_scheduledetail_id) = 'N'
-  and COALESCE(psd.fin_payment_detail_id, psd.fin_payment_schedule_invoice) is not null
-  and fa.fin_financial_account_id = $P{FIN_FINANCIAL_ACCOUNT_ID}
-  and (COALESCE(psinv.duedate, p.paymentdate)-1) < $P{DatePlanned}
-order by fa.name, fa.fin_financial_account_id, coalesce(p.isreceipt, i.issotrx) desc, COALESCE(psinv.duedate, p.paymentdate)]]>
+		<![CDATA[]]>
 	</queryString>
 	<field name="FIN_FINANCIAL_ACCOUNT_ID" class="java.lang.String"/>
 	<field name="FINANCIALACCOUNT" class="java.lang.String"/>
@@ -121,12 +94,10 @@ order by fa.name, fa.fin_financial_account_id, coalesce(p.isreceipt, i.issotrx) 
 		<variableExpression><![CDATA[$F{ISRECEIPT}.equals("Y")?"C4B6506838E14A349D6717D6856F1B56":"F7A52FDAAA0346EFA07D53C125B40404"]]></variableExpression>
 	</variable>
 	<variable name="OPEN_SUITABLE_TAB" class="java.lang.String">
-		<variableExpression><![CDATA[$F{ISRECEIPT}.equals("Y")?($F{TABTOOPEN}.equals("InvoicePlan")?"60825C9E68644DBC9C530DDCABE05A6E":($F{TABTOOPEN}.equals("PaymentLine")?"34DA12C2E9E3424E9A853563BEFDE81F":"23691259D1BD4496BCC5F32645BCA4B9")):($F{TABTOOPEN}.equals("InvoicePlan")?"7A8D43541F8C49F1BD8A431A0041BF89":($F{TABTOOPEN}.equals("PaymentLine")?"809C66481863428C8D714F2018644CC6":"23691259D1BD4496BCC5F32645BCA4B9"))
-]]></variableExpression>
+		<variableExpression><![CDATA[$F{ISRECEIPT}.equals("Y")?($F{TABTOOPEN}.equals("InvoicePlan")?"60825C9E68644DBC9C530DDCABE05A6E":($F{TABTOOPEN}.equals("PaymentLine")?"34DA12C2E9E3424E9A853563BEFDE81F":"23691259D1BD4496BCC5F32645BCA4B9")):($F{TABTOOPEN}.equals("InvoicePlan")?"7A8D43541F8C49F1BD8A431A0041BF89":($F{TABTOOPEN}.equals("PaymentLine")?"809C66481863428C8D714F2018644CC6":"23691259D1BD4496BCC5F32645BCA4B9"))]]></variableExpression>
 	</variable>
 	<variable name="TRANS_DESCRIP_V" class="java.lang.String">
-		<variableExpression><![CDATA[($F{TRANS_DESCRIP}!=null)?"23691259D1BD4496BCC5F32645BCA4B9":$V{OPEN_PAYMENT_TAB}
-]]></variableExpression>
+		<variableExpression><![CDATA[($F{TRANS_DESCRIP}!=null)?"23691259D1BD4496BCC5F32645BCA4B9":$V{OPEN_PAYMENT_TAB}]]></variableExpression>
 	</variable>
 	<group name="FinancialAccount">
 		<groupExpression><![CDATA[$F{FINANCIALACCOUNT}]]></groupExpression>
@@ -229,7 +200,7 @@ order by fa.name, fa.fin_financial_account_id, coalesce(p.isreceipt, i.issotrx) 
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="6">
+			<band height="13">
 				<line>
 					<reportElement x="0" y="5" width="555" height="1" uuid="368906bc-aef7-4de4-a006-2542e322830f"/>
 					<graphicElement>
@@ -261,19 +232,19 @@ order by fa.name, fa.fin_financial_account_id, coalesce(p.isreceipt, i.issotrx) 
 						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#959595"/>
 						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#959595"/>
 					</box>
-					<textElement>
+					<textElement verticalAlignment="Bottom">
 						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{DUEDATE}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement style="Detail_Header" stretchType="RelativeToBandHeight" x="10" y="1" width="89" height="14" forecolor="#010101" backcolor="#CBCBCB" uuid="36a7dae6-590d-4327-b81c-0afa6f300d43"/>
+					<reportElement style="Detail_Header" stretchType="RelativeToBandHeight" x="10" y="0" width="90" height="15" forecolor="#010101" backcolor="#CBCBCB" uuid="36a7dae6-590d-4327-b81c-0afa6f300d43"/>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="1.0" lineColor="#959595"/>
 						<leftPen lineColor="#959595"/>
 						<rightPen lineColor="#959595"/>
 					</box>
-					<textElement>
+					<textElement verticalAlignment="Bottom">
 						<font size="6"/>
 					</textElement>
 					<text><![CDATA[Date Planned]]></text>
@@ -308,7 +279,7 @@ order by fa.name, fa.fin_financial_account_id, coalesce(p.isreceipt, i.issotrx) 
 			<band height="15">
 				<textField evaluationTime="Group" evaluationGroup="isReceipt" pattern="##0.00" isBlankWhenNull="true">
 					<reportElement key="textField-14" mode="Opaque" x="10" y="0" width="490" height="15" backcolor="#CBCBCB" uuid="c1a536f1-f34f-49df-a469-bf7e89f80717"/>
-					<box leftPadding="5" rightPadding="5">
+					<box leftPadding="5" rightPadding="10">
 						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#959595"/>
 						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#959595"/>
 						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#959595"/>
@@ -328,7 +299,7 @@ order by fa.name, fa.fin_financial_account_id, coalesce(p.isreceipt, i.issotrx) 
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="6"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{Accum}!=null)?$P{NUMBERFORMAT}.format($V{Accum}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{Accum}!=null)?$P{AMOUNTFORMAT}.format($V{Accum}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<line>
 					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="15" uuid="92b550ad-a0de-4e54-a101-927e0397b2ae"/>
@@ -349,19 +320,6 @@ order by fa.name, fa.fin_financial_account_id, coalesce(p.isreceipt, i.issotrx) 
 		<groupExpression><![CDATA[$F{ISRECEIPT}]]></groupExpression>
 		<groupHeader>
 			<band height="13">
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-					<reportElement key="textField-9" style="GroupHeader_Gray" x="10" y="0" width="544" height="13" backcolor="#FEFEFE" uuid="9e1d5778-c98e-4000-8b65-3da3a983e286"/>
-					<box leftPadding="5" rightPadding="5">
-						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#959595"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#959595"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#959595"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#959595"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Bitstream Vera Sans" size="6" isBold="false" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($F{ISRECEIPT}.equals("Y"))?new String("INCOME"):new String("PAYMENT")]]></textFieldExpression>
-				</textField>
 				<line>
 					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="13" uuid="68ad6411-e1f6-4b86-86a5-b0f3204f9097"/>
 					<graphicElement>
@@ -374,6 +332,38 @@ order by fa.name, fa.fin_financial_account_id, coalesce(p.isreceipt, i.issotrx) 
 						<pen lineColor="#959595"/>
 					</graphicElement>
 				</line>
+				<staticText>
+					<reportElement style="GroupHeader_Gray" x="10" y="0" width="544" height="13" backcolor="#FFFFFF" uuid="e436a934-349d-4465-aebf-371b0f0d1cf4">
+						<printWhenExpression><![CDATA[!$F{ISRECEIPT}.equals("Y")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="5" rightPadding="5">
+						<pen lineWidth="1.0" lineColor="#959595"/>
+						<topPen lineWidth="1.0" lineColor="#959595"/>
+						<leftPen lineWidth="1.0" lineColor="#959595"/>
+						<bottomPen lineWidth="1.0" lineColor="#959595"/>
+						<rightPen lineWidth="1.0" lineColor="#959595"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[PAYMENT]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="GroupHeader_Gray" x="11" y="0" width="544" height="13" backcolor="#FFFFFF" uuid="fb16b0ab-961c-4938-935f-8d90e99e9300">
+						<printWhenExpression><![CDATA[$F{ISRECEIPT}.equals("Y")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="5" rightPadding="5">
+						<pen lineWidth="1.0" lineColor="#959595"/>
+						<topPen lineWidth="1.0" lineColor="#959595"/>
+						<leftPen lineWidth="1.0" lineColor="#959595"/>
+						<bottomPen lineWidth="1.0" lineColor="#959595"/>
+						<rightPen lineWidth="1.0" lineColor="#959595"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[INCOME]]></text>
+				</staticText>
 			</band>
 		</groupHeader>
 	</group>
@@ -399,10 +389,12 @@ order by fa.name, fa.fin_financial_account_id, coalesce(p.isreceipt, i.issotrx) 
 				<textElement textAlignment="Right">
 					<font size="6"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{NUMBERFORMAT}.format($F{ORIGINALAMOUNT}) + " ("+$F{TRXCUR}+")"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($F{ORIGINALAMOUNT}) + " ("+$F{TRXCUR}+")"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
-				<reportElement style="default" positionType="Float" stretchType="RelativeToTallestObject" x="65" y="0" width="75" height="13" forecolor="#0000FF" uuid="39798b79-0b1e-44da-9e44-71e069e0c6ad"/>
+				<reportElement style="default" positionType="Float" stretchType="RelativeToTallestObject" x="65" y="0" width="75" height="13" forecolor="#0000FF" uuid="39798b79-0b1e-44da-9e44-71e069e0c6ad">
+					<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[$P{OUTPUT_FORMAT}.equals("HTML")?"#0000FF":"#000000"]]></propertyExpression>
+				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#959595"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#959595"/>
@@ -412,10 +404,13 @@ order by fa.name, fa.fin_financial_account_id, coalesce(p.isreceipt, i.issotrx) 
 				</textElement>
 				<textFieldExpression><![CDATA[$F{INVOICENO}]]></textFieldExpression>
 				<hyperlinkReferenceExpression><![CDATA["javascript:top.OB.Utilities.openDirectTab('" + $V{OPEN_INVOICE_TAB} + "', '" + $F{C_INVOICE_ID} + "');"]]></hyperlinkReferenceExpression>
+				<hyperlinkWhenExpression><![CDATA[$P{OUTPUT_FORMAT}.equalsIgnoreCase("HTML")? Boolean.TRUE: Boolean.FALSE]]></hyperlinkWhenExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
-				<reportElement style="default" positionType="Float" stretchType="RelativeToTallestObject" x="295" y="0" width="125" height="13" forecolor="#0000FF" uuid="7599d262-3cf4-4dd5-a079-7dee46897720"/>
-				<box leftPadding="5" rightPadding="5">
+				<reportElement style="default" positionType="Float" stretchType="RelativeToTallestObject" x="295" y="0" width="125" height="13" forecolor="#0000FF" uuid="7599d262-3cf4-4dd5-a079-7dee46897720">
+					<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[$P{OUTPUT_FORMAT}.equals("HTML")?"#0000FF":"#000000"]]></propertyExpression>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" rightPadding="5">
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#959595"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#959595"/>
 				</box>
@@ -424,6 +419,7 @@ order by fa.name, fa.fin_financial_account_id, coalesce(p.isreceipt, i.issotrx) 
 				</textElement>
 				<textFieldExpression><![CDATA[($F{TRANS_DESCRIP}!=null)?$F{TRANS_DESCRIP}:$F{PAYMENT_DESC}]]></textFieldExpression>
 				<hyperlinkReferenceExpression><![CDATA["javascript:top.OB.Utilities.openDirectTab('" + $V{TRANS_DESCRIP_V} + "', '" + $F{FIN_PAYMENT_ID} + "');"]]></hyperlinkReferenceExpression>
+				<hyperlinkWhenExpression><![CDATA[$P{OUTPUT_FORMAT}.equalsIgnoreCase("HTML")? Boolean.TRUE: Boolean.FALSE]]></hyperlinkWhenExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="default" positionType="Float" stretchType="RelativeToTallestObject" x="140" y="0" width="155" height="13" uuid="8d490ac9-7dd7-4e36-8308-b0d0ed352897"/>
@@ -448,7 +444,9 @@ order by fa.name, fa.fin_financial_account_id, coalesce(p.isreceipt, i.issotrx) 
 				<textFieldExpression><![CDATA[$F{DATEINVOICED}]]></textFieldExpression>
 			</textField>
 			<textField hyperlinkType="Reference">
-				<reportElement style="default" positionType="Float" stretchType="RelativeToTallestObject" x="495" y="0" width="59" height="13" forecolor="#0000FF" uuid="99334768-711c-4e4f-8aff-7ed8447d7dd3"/>
+				<reportElement style="default" positionType="Float" stretchType="RelativeToTallestObject" x="495" y="0" width="59" height="13" forecolor="#0000FF" uuid="99334768-711c-4e4f-8aff-7ed8447d7dd3">
+					<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[$P{OUTPUT_FORMAT}.equals("HTML") && !$F{TABTOOPEN}.equals("PaymentLine")?"#0000FF":"#000000"]]></propertyExpression>
+				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#959595"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#959595"/>
@@ -456,8 +454,9 @@ order by fa.name, fa.fin_financial_account_id, coalesce(p.isreceipt, i.issotrx) 
 				<textElement textAlignment="Right">
 					<font size="6"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format($F{CONVERTEDAMOUNT})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($F{CONVERTEDAMOUNT})]]></textFieldExpression>
 				<hyperlinkReferenceExpression><![CDATA["javascript:top.OB.Utilities.openDirectTab('" + $V{OPEN_SUITABLE_TAB} + "', '" + $F{RECORDID} + "');"]]></hyperlinkReferenceExpression>
+				<hyperlinkWhenExpression><![CDATA[$P{OUTPUT_FORMAT}.equalsIgnoreCase("HTML") && !$F{TABTOOPEN}.equals("PaymentLine")? Boolean.TRUE: Boolean.FALSE]]></hyperlinkWhenExpression>
 			</textField>
 			<line>
 				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="13" uuid="33b8d819-be22-4944-9d0b-b5b51977711b"/>

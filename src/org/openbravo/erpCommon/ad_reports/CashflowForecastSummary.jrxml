@@ -34,7 +34,7 @@
 	<style name="Detail_Data_Label" mode="Opaque" backcolor="#CCCCCC" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
 	<style name="Detail_Data_Field" mode="Opaque" backcolor="#CCCCCC" fontName="Bitstream Vera Sans" fontSize="11"/>
 	<style name="Group_Footer" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
-	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false">
+	<parameter name="AMOUNTFORMAT" class="java.text.DecimalFormat" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new DecimalFormat()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="USER_ORG" class="java.lang.String" isForPrompting="false">
@@ -83,7 +83,7 @@ order by fa.name, fa.fin_financial_account_id]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="6"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format($F{INCOME}==null?BigDecimal.ZERO:$F{INCOME})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{AMOUNTFORMAT}.format($F{INCOME}==null?BigDecimal.ZERO:$F{INCOME})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="Total_Gray" x="187" y="0" width="123" height="15" backcolor="#FEFEFE"/>
@@ -96,7 +96,7 @@ order by fa.name, fa.fin_financial_account_id]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="6"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format($F{INITIALBALANCE})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{AMOUNTFORMAT}.format($F{INITIALBALANCE})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="Total_Gray" x="450" y="0" width="104" height="15" backcolor="#FEFEFE"/>
@@ -109,7 +109,7 @@ order by fa.name, fa.fin_financial_account_id]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="6"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format($F{FINALSUMMARY})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{AMOUNTFORMAT}.format($F{FINALSUMMARY})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="Total_Gray" x="380" y="0" width="70" height="15" backcolor="#FEFEFE"/>
@@ -122,7 +122,7 @@ order by fa.name, fa.fin_financial_account_id]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="6"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format($F{PAYMENT}==null?BigDecimal.ZERO:$F{PAYMENT})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{AMOUNTFORMAT}.format($F{PAYMENT}==null?BigDecimal.ZERO:$F{PAYMENT})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="Total_Gray" x="0" y="0" width="187" height="15" backcolor="#FEFEFE"/>

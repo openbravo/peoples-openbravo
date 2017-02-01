@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CashflowForecast" pageWidth="1200" pageHeight="802" columnWidth="1200" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
-	<property name="ireport.zoom" value="1.3310000000000013"/>
-	<property name="ireport.x" value="794"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CashflowForecast" pageWidth="1200" pageHeight="802" columnWidth="1200" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="8cf57cc3-56dc-49f4-9907-573fa59e1111">
+	<property name="ireport.zoom" value="2.593742460100007"/>
+	<property name="ireport.x" value="2300"/>
 	<property name="ireport.y" value="0"/>
 	<style name="default" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="6">
 		<box leftPadding="5" rightPadding="5"/>
@@ -43,7 +43,7 @@
 	<parameter name="REPORT_TITLE" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["REPORT TITLE"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false">
+	<parameter name="AMOUNTFORMAT" class="java.text.DecimalFormat" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new DecimalFormat()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
@@ -67,7 +67,7 @@
 "COALESCE(p.isreceipt, i.issotrx), COALESCE(p.paymentdate, psinv.duedate)"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select 1 from dual]]>
+		<![CDATA[]]>
 	</queryString>
 	<field name="FIN_FINANCIAL_ACCOUNT_ID" class="java.lang.String"/>
 	<field name="FINANCIALACCOUNT" class="java.lang.String"/>
@@ -97,21 +97,22 @@
 		<groupHeader>
 			<band height="12">
 				<textField isStretchWithOverflow="true">
-					<reportElement style="default" stretchType="RelativeToBandHeight" x="0" y="0" width="350" height="12"/>
+					<reportElement style="default" stretchType="RelativeToBandHeight" x="0" y="0" width="350" height="12" uuid="86d8523d-7dcd-48f9-83e3-6c24e08a13ea"/>
 					<textElement>
 						<font size="7" isBold="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{FINANCIALACCOUNT} + " - " + $F{FACUR}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{FINANCIALACCOUNT} + " - " + $F{FACUR}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement style="default" stretchType="RelativeToBandHeight" x="1123" y="0" width="70" height="12"/>
+					<reportElement style="default" stretchType="RelativeToBandHeight" x="1123" y="0" width="70" height="12" uuid="d6804f6c-fedb-48bc-b4d1-16b1e92faf70"/>
 					<textElement textAlignment="Right">
 						<font size="7" isBold="true"/>
 					</textElement>
-					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{CURRENTBALANCE}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{CURRENTBALANCE}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<staticText>
-					<reportElement style="default" stretchType="RelativeToBandHeight" x="840" y="0" width="283" height="12"/>
+					<reportElement style="default" stretchType="RelativeToBandHeight" x="840" y="0" width="283" height="12" uuid="bccd514c-82d2-490a-b6a1-c01d0faa2e60"/>
 					<textElement markup="none">
 						<font size="7" isBold="true"/>
 					</textElement>
@@ -122,52 +123,47 @@
 		<groupFooter>
 			<band height="24">
 				<textField isStretchWithOverflow="true">
-					<reportElement style="default" stretchType="RelativeToBandHeight" x="0" y="0" width="350" height="12"/>
+					<reportElement style="default" stretchType="RelativeToBandHeight" x="0" y="0" width="350" height="12" uuid="a3327cc9-a93f-4890-801b-a5f122c522a4"/>
 					<textElement>
 						<font size="7" isBold="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{FINANCIALACCOUNT} + " - " + $F{FACUR}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{FINANCIALACCOUNT} + " - " + $F{FACUR}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement style="default" stretchType="RelativeToBandHeight" x="1123" y="0" width="70" height="12"/>
+					<reportElement style="default" stretchType="RelativeToBandHeight" x="1123" y="0" width="70" height="12" uuid="02988dad-6cb7-4165-8b67-2856e5a39699"/>
 					<textElement textAlignment="Right">
 						<font size="7" isBold="true"/>
 					</textElement>
-					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{acum}.add($F{CURRENTBALANCE})]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{acum}.add($F{CURRENTBALANCE})]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<staticText>
-					<reportElement style="default" stretchType="RelativeToBandHeight" x="840" y="0" width="283" height="12"/>
+					<reportElement style="default" stretchType="RelativeToBandHeight" x="840" y="0" width="283" height="12" uuid="09214c70-434f-4b16-81f1-94233e4bbe40"/>
 					<textElement markup="none">
 						<font size="7" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Final Balance]]></text>
 				</staticText>
 				<line>
-					<reportElement x="0" y="22" width="1193" height="1"/>
+					<reportElement x="0" y="22" width="1193" height="1" uuid="f385961e-cd2d-4a1a-b253-c9be34751e34"/>
 				</line>
 			</band>
 		</groupFooter>
 	</group>
 	<title>
 		<band height="87" splitType="Stretch">
-			<textField>
-				<reportElement style="Report_Title" x="0" y="0" width="1010" height="25"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_TITLE}]]></textFieldExpression>
-			</textField>
 			<staticText>
-				<reportElement style="Report_Subtitle" x="0" y="40" width="200" height="20"/>
+				<reportElement style="Report_Subtitle" x="0" y="40" width="200" height="20" uuid="af6f403d-ed5d-4b40-b969-c8d3f86e8135"/>
 				<box rightPadding="5"/>
 				<textElement textAlignment="Right"/>
 				<text><![CDATA[Date Planned:]]></text>
 			</staticText>
 			<textField>
-				<reportElement style="Report_Subtitle" x="200" y="40" width="150" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.util.Date"><![CDATA[$P{DatePlanned}]]></textFieldExpression>
+				<reportElement style="Report_Subtitle" x="200" y="40" width="150" height="20" uuid="82fb6491-748d-4089-b59f-5a1ef3d84d79"/>
+				<textFieldExpression><![CDATA[$P{DatePlanned}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText-18" style="Detail_Header" x="0" y="72" width="200" height="15"/>
+				<reportElement key="staticText-18" style="Detail_Header" x="0" y="72" width="200" height="15" uuid="61e1acd7-72c2-4d07-93ab-d9491e87d216"/>
 				<box leftPadding="5">
 					<leftPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
@@ -178,7 +174,7 @@
 				<text><![CDATA[Financial Account]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Detail_Header" x="350" y="72" width="90" height="15"/>
+				<reportElement style="Detail_Header" x="350" y="72" width="90" height="15" uuid="a695cf92-6ced-4004-b884-31d2b18ac09d"/>
 				<box leftPadding="5">
 					<leftPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
@@ -189,7 +185,7 @@
 				<text><![CDATA[Invoice No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Detail_Header" x="200" y="72" width="77" height="15"/>
+				<reportElement style="Detail_Header" x="200" y="72" width="77" height="15" uuid="4ec6d7f6-006a-4312-b0ac-b99fd8d0e0e6"/>
 				<box leftPadding="5">
 					<leftPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
@@ -200,7 +196,7 @@
 				<text><![CDATA[Date Planned]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Detail_Header" x="277" y="72" width="73" height="15"/>
+				<reportElement style="Detail_Header" x="277" y="72" width="73" height="15" uuid="a4e3cdff-ba0b-41d1-a003-f2daedc9c07d"/>
 				<box leftPadding="5">
 					<leftPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
@@ -211,7 +207,7 @@
 				<text><![CDATA[Date Invoiced]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Detail_Header" x="440" y="72" width="200" height="15"/>
+				<reportElement style="Detail_Header" x="440" y="72" width="200" height="15" uuid="bd6929f6-980c-4573-b440-e5f3494e67c4"/>
 				<box leftPadding="5">
 					<leftPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
@@ -222,7 +218,7 @@
 				<text><![CDATA[Business Partner]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Detail_Header" x="1023" y="72" width="70" height="15"/>
+				<reportElement style="Detail_Header" x="1023" y="72" width="70" height="15" uuid="59b1eb23-8df3-4337-b1e5-fd2fc2fbfac8"/>
 				<box leftPadding="5">
 					<leftPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
@@ -233,7 +229,7 @@
 				<text><![CDATA[Orig. Amount]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Detail_Header" x="640" y="72" width="200" height="15"/>
+				<reportElement style="Detail_Header" x="640" y="72" width="200" height="15" uuid="e16655a7-b67c-4119-8c06-8af35551a1f2"/>
 				<box leftPadding="5">
 					<leftPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
@@ -244,7 +240,7 @@
 				<text><![CDATA[Payment]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Detail_Header" x="1123" y="72" width="70" height="15"/>
+				<reportElement style="Detail_Header" x="1123" y="72" width="70" height="15" uuid="e5351b55-3f00-47e5-a8f1-dccee05fb278"/>
 				<box leftPadding="5">
 					<leftPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
@@ -255,7 +251,7 @@
 				<text><![CDATA[Amount]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Detail_Header" x="1093" y="72" width="30" height="15"/>
+				<reportElement style="Detail_Header" x="1093" y="72" width="30" height="15" uuid="4c702fe2-44c3-4976-85cb-6d0d0f64eaea"/>
 				<box leftPadding="5">
 					<leftPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
@@ -266,7 +262,7 @@
 				<text><![CDATA[Cur.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Detail_Header" x="840" y="72" width="183" height="15"/>
+				<reportElement style="Detail_Header" x="840" y="72" width="183" height="15" uuid="1e466eac-6ca8-4e2e-a024-c292fd13d8cd"/>
 				<box leftPadding="5">
 					<leftPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
@@ -276,83 +272,90 @@
 				</textElement>
 				<text><![CDATA[Transaction]]></text>
 			</staticText>
+			<staticText>
+				<reportElement style="Report_Title" x="0" y="0" width="1010" height="25" uuid="3342b854-a100-4950-903a-c3af2e85a957"/>
+				<text><![CDATA[Cashflow Forecast Report]]></text>
+			</staticText>
 		</band>
 	</title>
 	<detail>
 		<band height="12" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement style="default" stretchType="RelativeToBandHeight" x="0" y="0" width="200" height="12"/>
+				<reportElement style="default" stretchType="RelativeToBandHeight" x="0" y="0" width="200" height="12" uuid="6d0c8836-0bf7-4708-8bce-7317990a886f"/>
 				<textElement>
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{FINANCIALACCOUNT} + " - " + $F{FACUR}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{FINANCIALACCOUNT} + " - " + $F{FACUR}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="default" stretchType="RelativeToBandHeight" x="200" y="0" width="77" height="12"/>
+				<reportElement style="default" stretchType="RelativeToBandHeight" x="200" y="0" width="77" height="12" uuid="4e771277-5cc2-47ab-8e6a-68891c9d92f4"/>
 				<textElement>
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{DUEDATE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{DUEDATE}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="default" stretchType="RelativeToBandHeight" x="277" y="0" width="73" height="12"/>
+				<reportElement style="default" stretchType="RelativeToBandHeight" x="277" y="0" width="73" height="12" uuid="53a867db-240d-461d-9260-44134d8f2d39"/>
 				<textElement>
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{DATEINVOICED}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{DATEINVOICED}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="default" stretchType="RelativeToBandHeight" x="350" y="0" width="90" height="12"/>
+				<reportElement style="default" stretchType="RelativeToBandHeight" x="350" y="0" width="90" height="12" uuid="9580d1eb-b2a1-48c2-adfd-3a2d38508e2c"/>
 				<textElement>
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{INVOICENO}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{INVOICENO}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="default" stretchType="RelativeToBandHeight" x="440" y="0" width="200" height="12"/>
+				<reportElement style="default" stretchType="RelativeToBandHeight" x="440" y="0" width="200" height="12" uuid="9e27c66a-4e88-46b2-bdef-95aaa989e5fd"/>
 				<textElement>
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{BPNAME}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{BPNAME}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="default" stretchType="RelativeToBandHeight" x="640" y="0" width="200" height="12"/>
+				<reportElement style="default" stretchType="RelativeToBandHeight" x="640" y="0" width="200" height="12" uuid="9ad4339b-f3fe-47bd-a098-2110179091eb"/>
 				<textElement>
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{PAYMENT_DESC}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{PAYMENT_DESC}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="default" stretchType="RelativeToBandHeight" x="1023" y="0" width="70" height="12">
+				<reportElement style="default" stretchType="RelativeToBandHeight" x="1023" y="0" width="70" height="12" uuid="9d04660d-e497-401c-a03c-39cc60f7eb52">
 					<printWhenExpression><![CDATA[$F{ORIGINALAMOUNT}!=null]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{ORIGINALAMOUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ORIGINALAMOUNT}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="default" stretchType="RelativeToBandHeight" x="1123" y="0" width="70" height="12"/>
+				<reportElement style="default" stretchType="RelativeToBandHeight" x="1123" y="0" width="70" height="12" uuid="bee74432-6238-4256-a128-37ffdc106211"/>
 				<textElement textAlignment="Right">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{CONVERTEDAMOUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{CONVERTEDAMOUNT}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="default" stretchType="RelativeToBandHeight" x="1093" y="0" width="30" height="12">
+				<reportElement style="default" stretchType="RelativeToBandHeight" x="1093" y="0" width="30" height="12" uuid="4a4b8349-c4d9-4811-af3e-89fcfa425923">
 					<printWhenExpression><![CDATA[$F{TRXCUR}!=null]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{TRXCUR}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{TRXCUR}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="default" stretchType="RelativeToBandHeight" x="840" y="0" width="182" height="12"/>
+				<reportElement style="default" stretchType="RelativeToBandHeight" x="840" y="0" width="182" height="12" uuid="9a3e44c6-a6dd-4db8-b532-752510cd0538"/>
 				<textElement>
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{TRANS_DESCRIP}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{TRANS_DESCRIP}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
