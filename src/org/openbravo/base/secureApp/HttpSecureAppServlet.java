@@ -1300,7 +1300,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       return ExportType.HTML.getExtension();
     }
     if (ExportType.XLS.hasExtension(outputType)) {
-      return ReportingUtils.getExcelExportFormat();
+      return ReportingUtils.getExcelExportType().getExtension();
     }
     return outputType;
   }

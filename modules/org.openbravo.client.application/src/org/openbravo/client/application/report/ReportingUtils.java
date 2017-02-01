@@ -1337,7 +1337,12 @@ public class ReportingUtils {
     return localMask.replace(strTmpDecSymbol, ".");
   }
 
-  public static String getExcelExportFormat() {
+  /**
+   * Returns the format to be used when exporting Excel reports.
+   * 
+   * @return a ExportType with the default Excel format (XLS or XLSX).
+   */
+  public static ExportType getExcelExportType() {
     OBContext context = OBContext.getOBContext();
     String preferenceValue = "";
     try {
@@ -1346,17 +1351,14 @@ public class ReportingUtils {
         preferenceValue = Preferences.getPreferenceValue("ExcelExportFormat", true,
             context.getCurrentClient(), context.getCurrentOrganization(), context.getUser(),
             context.getRole(), null);
-      } catch (Exception e) {
+        return ExportType.getExportType(preferenceValue);
+      } catch (Exception ignore) {
         // preference not found: return default excel format
       }
     } finally {
       OBContext.restorePreviousMode();
     }
-    if (ExportType.XLS.hasExtension(preferenceValue)
-        || ExportType.XLSX.hasExtension(preferenceValue)) {
-      return preferenceValue.toLowerCase();
-    }
-    return ExportType.XLSX.getExtension();
+    return ExportType.XLSX;
   }
 
   /**
