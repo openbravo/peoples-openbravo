@@ -1012,4 +1012,8 @@
       });
     };
   };
+
+  OB.DATA.OrderFindTaxes = function (receipt, line, taxCategory) {
+    return findTaxesCollection(receipt, line, taxCategory);
+  };
 }());
