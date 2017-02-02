@@ -344,7 +344,7 @@
       }
     }, this);
 
-    var multiOrdersFunction = function (receipt, me) {
+    var multiOrdersFunction = function (receipt, me, callback) {
         var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("multiOrdersClosed");
 
         OB.info('Multiorders ticket closed', receipt, "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
@@ -472,6 +472,10 @@
               }
 
             }, null);
+
+            if (callback instanceof Function) {
+              callback();
+            }
           }, function () {
             // We do nothing:
             //      we don't need to alert the user, as the order is still present in the database, so it will be resent as soon as the user logs in again
@@ -481,15 +485,23 @@
 
         };
 
-    this.context.get('multiOrders').on('closed', function (receipt) {
+    this.context.get('multiOrders').on('closed', function (receipt, callback) {
       var me = this;
 
       if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true) && me.ordersToSend === 0) {
         OB.MobileApp.model.setSynchronizedCheckpoint(function () {
-          multiOrdersFunction(receipt, me);
+          multiOrdersFunction(receipt, me, function () {
+            if (callback instanceof Function) {
+              callback();
+            }
+          });
         });
       } else {
-        multiOrdersFunction(receipt, me);
+        multiOrdersFunction(receipt, me, function () {
+          if (callback instanceof Function) {
+            callback();
+          }
+        });
       }
 
     }, this);

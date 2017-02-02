@@ -584,8 +584,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 receiptMulti.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
                 receiptMulti.set('json', JSON.stringify(receipt.serializeToJSON()));
                 OB.Dal.save(receiptMulti, function () {
-                  me.get('multiOrders').trigger('closed', receiptMulti);
-                  readyToSendFunction();
+                  me.get('multiOrders').trigger('closed', receiptMulti, function () {
+                    if (index === 0) {
+                      readyToSendFunction();
+                    }
+                  });
                   setMultiOrderCashUpReport(receiptList, cashUp, index + 1, callback);
                 }, function () {});
               };
