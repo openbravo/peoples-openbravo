@@ -137,6 +137,8 @@ public class GrantPortalAccessProcess extends BaseProcessActionHandler {
           MessageType.ERROR,
           OBMessageUtils.getI18NMessage("Portal_ErrorGrantingPortalAccess",
               new String[] { e.getMessage() })).build();
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 }
