@@ -34,6 +34,7 @@ public class ResponseActionsBuilder {
   private JSONArray responseActions;
   private JSONObject retryExecutionMsg;
   private boolean retryExecution;
+  private boolean showResultsInProcessView;
 
   public enum MessageType {
     SUCCESS("success"), ERROR("error"), INFO("info"), WARNING("warning");
@@ -80,6 +81,14 @@ public class ResponseActionsBuilder {
    */
   public ResponseActionsBuilder showMsgInView(MessageType msgType, String msgTitle, String msgText) {
     addResponseAction("showMsgInView", buildResponseMessage(msgType, msgTitle, msgText));
+    return this;
+  }
+
+  /**
+   * @see ResponseActionsBuilder#showMsgInProcessView(MessageType, String, String)
+   */
+  public ResponseActionsBuilder showMsgInProcessView(MessageType msgType, String msgText) {
+    showMsgInProcessView(msgType, "", msgText);
     return this;
   }
 
@@ -265,6 +274,17 @@ public class ResponseActionsBuilder {
   }
 
   /**
+   * Allows to configure the response to show the result of a process directly in the process window
+   * itself.
+   * 
+   * @return a ResponseActionsBuilder configured to show the result in the process window itself.
+   */
+  public ResponseActionsBuilder showResultsInProcessView() {
+    showResultsInProcessView = true;
+    return this;
+  }
+
+  /**
    * Generates the JSON with the response actions to be executed once the process has finished.
    * 
    * @return a JSONObject with the response actions.
@@ -280,6 +300,9 @@ public class ResponseActionsBuilder {
         if (retryExecutionMsg != null) {
           result.put("message", retryExecutionMsg);
         }
+      }
+      if (showResultsInProcessView) {
+        result.put("showResultsInProcessView", true);
       }
       return result;
     } catch (JSONException jsonex) {
