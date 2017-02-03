@@ -65,8 +65,15 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="M_INVENTORYSTATUS_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default><![CDATA[0]]></default>
+        <onCreateDefault><![CDATA['0']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_LOCATOR_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_INVENTORYSTATUS" name="M_LOCATOR_INVSTATUS">
+        <reference local="M_INVENTORYSTATUS_ID" foreign="M_INVENTORYSTATUS_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="M_LOCATOR_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
