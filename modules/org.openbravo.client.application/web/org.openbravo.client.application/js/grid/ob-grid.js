@@ -372,12 +372,16 @@ isc.OBGrid.addProperties({
     requiredWithNoValue = false;
     for (i = 0; i < fields.length; i++) {
       field = fields[i];
-      if (field.required && this.getEditRecord() && this.getEditRecord()[field.name] === undefined) {
+      if (field.required && this.getEditRecord() && this.isEmptyFieldValue(field)) {
         requiredWithNoValue = true;
         break;
       }
     }
     return requiredWithNoValue;
+  },
+
+  isEmptyFieldValue: function (field) {
+    return this.getEditRecord()[field.name] === undefined || this.getEditRecord()[field.name] === null;
   },
 
   formatLinkValue: function (record, field, colNum, rowNum, value) {
