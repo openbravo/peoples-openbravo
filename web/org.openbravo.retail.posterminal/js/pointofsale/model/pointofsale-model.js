@@ -101,6 +101,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         ordersNotPaid: ordersNotPaid,
         model: model
       }, function (args) {
+        OB.MobileApp.model.trigger('window:ready');
         if (!args.ordersNotPaid || args.ordersNotPaid.length === 0) {
           // If there are no pending orders,
           //  add an initial empty order
@@ -120,6 +121,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     }, function () { //OB.Dal.find error
       // If there is an error fetching the pending orders,
       // add an initial empty order
+      OB.MobileApp.model.trigger('window:ready');
       orderlist.addFirstOrder();
     });
   },
