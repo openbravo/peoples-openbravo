@@ -21,12 +21,16 @@ package org.openbravo.client.application.process;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is a helper that can be used to build the standard response actions of a
  * {@link BaseProcessActionHandler} in an easy way.
  */
 public class ResponseActionsBuilder {
+  private static final Logger log = LoggerFactory.getLogger(ResponseActionsBuilder.class);
+
   private JSONArray responseActions;
   private JSONObject retryExecutionMsg;
   private boolean retryExecution;
@@ -74,8 +78,7 @@ public class ResponseActionsBuilder {
    *          The text of the message.
    * @return a ResponseActionsBuilder that contains a 'show message in view' response action.
    */
-  public ResponseActionsBuilder showMsgInView(MessageType msgType, String msgTitle, String msgText)
-      throws JSONException {
+  public ResponseActionsBuilder showMsgInView(MessageType msgType, String msgTitle, String msgText) {
     addResponseAction("showMsgInView", buildResponseMessage(msgType, msgTitle, msgText));
     return this;
   }
@@ -84,7 +87,7 @@ public class ResponseActionsBuilder {
    * @see ResponseActionsBuilder#showMsgInProcessView(MessageType, String, String, boolean)
    */
   public ResponseActionsBuilder showMsgInProcessView(MessageType msgType, String msgTitle,
-      String msgText) throws JSONException {
+      String msgText) {
     showMsgInProcessView(msgType, msgTitle, msgText, false);
     return this;
   }
@@ -105,19 +108,22 @@ public class ResponseActionsBuilder {
    *         action.
    */
   public ResponseActionsBuilder showMsgInProcessView(MessageType msgType, String msgTitle,
-      String msgText, boolean force) throws JSONException {
-    final JSONObject messageInfo = buildResponseMessage(msgType, msgTitle, msgText);
-    if (force) {
-      messageInfo.put("force", force);
+      String msgText, boolean force) {
+    try {
+      final JSONObject messageInfo = buildResponseMessage(msgType, msgTitle, msgText);
+      if (force) {
+        messageInfo.put("force", force);
+      }
+      addResponseAction("showMsgInProcessView", messageInfo);
+    } catch (JSONException ignore) {
     }
-    addResponseAction("showMsgInProcessView", messageInfo);
     return this;
   }
 
   /**
    * @see ResponseActionsBuilder#openDirectTab(String, String, boolean)
    */
-  public ResponseActionsBuilder openDirectTab(String tabId, boolean wait) throws JSONException {
+  public ResponseActionsBuilder openDirectTab(String tabId, boolean wait) {
     openDirectTab(tabId, null, wait);
     return this;
   }
@@ -125,8 +131,7 @@ public class ResponseActionsBuilder {
   /**
    * @see ResponseActionsBuilder#openDirectTab(String, String, Command, boolean)
    */
-  public ResponseActionsBuilder openDirectTab(String tabId, String recordId, boolean wait)
-      throws JSONException {
+  public ResponseActionsBuilder openDirectTab(String tabId, String recordId, boolean wait) {
     openDirectTab(tabId, recordId, Command.DEFAULT, wait);
     return this;
   }
@@ -135,7 +140,7 @@ public class ResponseActionsBuilder {
    * @see ResponseActionsBuilder#openDirectTab(String, String, Command, String, boolean)
    */
   public ResponseActionsBuilder openDirectTab(String tabId, String recordId, Command command,
-      boolean wait) throws JSONException {
+      boolean wait) {
     openDirectTab(tabId, recordId, command, null, wait);
     return this;
   }
@@ -157,16 +162,19 @@ public class ResponseActionsBuilder {
    * @return a ResponseActionsBuilder that contains a 'open direct tab' response action.
    */
   public ResponseActionsBuilder openDirectTab(String tabId, String recordId, Command command,
-      String criteria, boolean wait) throws JSONException {
-    final JSONObject openDirectTab = new JSONObject();
-    openDirectTab.put("tabId", tabId);
-    openDirectTab.put("recordId", recordId);
-    openDirectTab.put("command", command.getCommandName());
-    if (criteria != null) {
-      openDirectTab.put("criteria", criteria);
+      String criteria, boolean wait) {
+    try {
+      final JSONObject openDirectTab = new JSONObject();
+      openDirectTab.put("tabId", tabId);
+      openDirectTab.put("recordId", recordId);
+      openDirectTab.put("command", command.getCommandName());
+      if (criteria != null) {
+        openDirectTab.put("criteria", criteria);
+      }
+      openDirectTab.put("wait", wait);
+      addResponseAction("openDirectTab", openDirectTab);
+    } catch (JSONException ignore) {
     }
-    openDirectTab.put("wait", wait);
-    addResponseAction("openDirectTab", openDirectTab);
     return this;
   }
 
@@ -179,14 +187,16 @@ public class ResponseActionsBuilder {
    *          The identifier of the record to be set in the selector.
    * @return a ResponseActionsBuilder that contains a 'set selector value' response action.
    */
-  public ResponseActionsBuilder setSelectorValueFromRecord(String recordId, String recordIdentifier)
-      throws JSONException {
-    final JSONObject setSelectorValueFromRecord = new JSONObject();
-    final JSONObject record = new JSONObject();
-    record.put("value", recordId);
-    record.put("map", recordIdentifier);
-    setSelectorValueFromRecord.put("record", record);
-    addResponseAction("setSelectorValueFromRecord", setSelectorValueFromRecord);
+  public ResponseActionsBuilder setSelectorValueFromRecord(String recordId, String recordIdentifier) {
+    try {
+      final JSONObject setSelectorValueFromRecord = new JSONObject();
+      final JSONObject record = new JSONObject();
+      record.put("value", recordId);
+      record.put("map", recordIdentifier);
+      setSelectorValueFromRecord.put("record", record);
+      addResponseAction("setSelectorValueFromRecord", setSelectorValueFromRecord);
+    } catch (JSONException ignore) {
+    }
     return this;
   }
 
@@ -196,7 +206,7 @@ public class ResponseActionsBuilder {
    * 
    * @return a ResponseActionsBuilder that contains a 'refresh grid' response action.
    */
-  public ResponseActionsBuilder refreshGrid() throws JSONException {
+  public ResponseActionsBuilder refreshGrid() {
     addResponseAction("refreshGrid", new JSONObject());
     return this;
   }
@@ -210,10 +220,13 @@ public class ResponseActionsBuilder {
    *          The name of the grid parameter.
    * @return a ResponseActionsBuilder that contains a 'refresh grid parameter' response action.
    */
-  public ResponseActionsBuilder refreshGridParameter(String gridName) throws JSONException {
-    final JSONObject refreshGrid = new JSONObject();
-    refreshGrid.put("gridName", gridName);
-    addResponseAction("refreshGridParameter", refreshGrid);
+  public ResponseActionsBuilder refreshGridParameter(String gridName) {
+    try {
+      final JSONObject refreshGrid = new JSONObject();
+      refreshGrid.put("gridName", gridName);
+      addResponseAction("refreshGridParameter", refreshGrid);
+    } catch (JSONException ignore) {
+    }
     return this;
   }
 
@@ -240,12 +253,14 @@ public class ResponseActionsBuilder {
    *          The text of the message.
    * @return a ResponseActionsBuilder configured to retry the process execution.
    */
-  public ResponseActionsBuilder retryExecution(MessageType msgType, String msgText)
-      throws JSONException {
-    retryExecution = true;
-    retryExecutionMsg = new JSONObject();
-    retryExecutionMsg.put("msgType", msgType.getType());
-    retryExecutionMsg.put("text", msgText);
+  public ResponseActionsBuilder retryExecution(MessageType msgType, String msgText) {
+    try {
+      retryExecution = true;
+      retryExecutionMsg = new JSONObject();
+      retryExecutionMsg.put("msgType", msgType.getType());
+      retryExecutionMsg.put("text", msgText);
+    } catch (JSONException ignore) {
+    }
     return this;
   }
 
@@ -254,32 +269,43 @@ public class ResponseActionsBuilder {
    * 
    * @return a JSONObject with the response actions.
    */
-  public JSONObject build() throws JSONException {
-    final JSONObject result = new JSONObject();
-    if (responseActions.length() > 0) {
-      result.put("responseActions", responseActions);
-    }
-    if (retryExecution) {
-      result.put("retryExecution", true);
-      if (retryExecutionMsg != null) {
-        result.put("message", retryExecutionMsg);
+  public JSONObject build() {
+    try {
+      final JSONObject result = new JSONObject();
+      if (responseActions.length() > 0) {
+        result.put("responseActions", responseActions);
       }
+      if (retryExecution) {
+        result.put("retryExecution", true);
+        if (retryExecutionMsg != null) {
+          result.put("message", retryExecutionMsg);
+        }
+      }
+      return result;
+    } catch (JSONException jsonex) {
+      log.error("Error building process response actions", jsonex);
+      return new JSONObject();
     }
-    return result;
   }
 
-  private void addResponseAction(String actionName, JSONObject actionData) throws JSONException {
-    final JSONObject responseAction = new JSONObject();
-    responseAction.put(actionName, actionData);
-    responseActions.put(responseAction);
+  private void addResponseAction(String actionName, JSONObject actionData) {
+    try {
+      final JSONObject responseAction = new JSONObject();
+      responseAction.put(actionName, actionData);
+      responseActions.put(responseAction);
+    } catch (JSONException jsonex) {
+      log.error("Error adding response action {}", actionName, jsonex);
+    }
   }
 
-  private JSONObject buildResponseMessage(MessageType msgType, String msgTitle, String msgText)
-      throws JSONException {
+  private JSONObject buildResponseMessage(MessageType msgType, String msgTitle, String msgText) {
     JSONObject message = new JSONObject();
-    message.put("msgType", msgType.getType());
-    message.put("msgTitle", msgTitle);
-    message.put("msgText", msgText);
+    try {
+      message.put("msgType", msgType.getType());
+      message.put("msgTitle", msgTitle);
+      message.put("msgText", msgText);
+    } catch (JSONException ignore) {
+    }
     return message;
   }
 
