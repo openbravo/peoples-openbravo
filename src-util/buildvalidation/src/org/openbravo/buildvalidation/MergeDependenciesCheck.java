@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
 import org.openbravo.base.ExecutionLimits;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.OpenbravoVersion;
@@ -37,6 +39,9 @@ import org.openbravo.modulescript.OpenbravoVersion;
  * modules, like translation modules for example.
  */
 public class MergeDependenciesCheck extends BuildValidation {
+
+  private static final Logger log4j = Logger.getLogger(MergeDependenciesCheck.class);
+
   private static final String ID_CORE = "0";
 
   // Paths
@@ -53,6 +58,11 @@ public class MergeDependenciesCheck extends BuildValidation {
   private static final String ID_CASHFLOWFORECAST = "FF80808131D1689F0131D170F19A0006";
   private static final String JAVAPACKAGE_CASHFLOWFORECAST = "org.openbravo.financial.cashflowforecast";
   private static final String NAME_CASHFLOWFORECAST = "Report: Cash Flow Forecast";
+
+  // Multi Business Partner Selector
+  private static final String ID_MULTIPLEBP = "334C2A06294447FAA7D1AF5D98E8F857";
+  private static final String JAVAPACKAGE_MULTIPLEBP = "org.openbravo.utility.multiplebpselector";
+  private static final String NAME_MULTIPLEBP = "Openbravo Multi Business Partner Selector";
 
   // List of modules included in Openbravo 3 in 17Q1
   // It is used to filter out these modules during the check so it's faster. Note there is no
@@ -89,6 +99,7 @@ public class MergeDependenciesCheck extends BuildValidation {
     try {
       errors.addAll(checkMergedModulesAreNotInModulesDir());
       errors.addAll(checkPossibleDependencies());
+      checkRemovableModule(new MergedModule(ID_MULTIPLEBP, JAVAPACKAGE_MULTIPLEBP, NAME_MULTIPLEBP));
     } catch (Exception e) {
       return handleError(e);
     }
@@ -150,6 +161,33 @@ public class MergeDependenciesCheck extends BuildValidation {
   }
 
   /**
+   * Checks the given module is not referenced as a dependency for other modules installed in the
+   * instance. If so, shows a message in the log to recommend an uninstallation of that module.
+   */
+  private void checkRemovableModule(final MergedModule removableModule) {
+    final File modulesDir = getModulesDir();
+    boolean detectedDependency = false;
+    for (final String module : getInstalledModules()) {
+      if (!module.equals(removableModule.getJavaPackage())) {
+        final File moduleDir = new File(modulesDir, module);
+        final File adModuleDependencyFile = new File(moduleDir, AD_MODULE_DEPENDENCY_PATH);
+        if (adModuleDependencyFile != null && adModuleDependencyFile.exists()
+            && adModuleDependencyFile.isFile()) {
+          if (containsString(adModuleDependencyFile, removableModule.getAdModuleId())) {
+            detectedDependency = true;
+            break;
+          }
+        }
+      }
+    }
+
+    if (!detectedDependency) {
+      log4j.warn(String.format("Orphan module detected: %s (%s). You can safely uninstall it.",
+          removableModule.getName(), removableModule.getJavaPackage()));
+    }
+  }
+
+  /**
    * Returns true if any of the searchStrings is found inside the file
    */
   private boolean containsString(final File file, final String searchString) {
@@ -168,7 +206,7 @@ public class MergeDependenciesCheck extends BuildValidation {
 
   /**
    * Return the javapackage of the modules installed by the user (excluding Openbravo 3 distribution
-   * modules)
+   * modules). It looks at the modules folder (not into the database)
    */
   private String[] getInstalledModules() {
     final File modulesDir = getModulesDir();
