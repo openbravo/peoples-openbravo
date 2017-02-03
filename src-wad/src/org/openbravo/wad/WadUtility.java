@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,10 +23,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
@@ -42,9 +40,6 @@ import org.openbravo.xmlEngine.XmlEngine;
 
 public class WadUtility {
   private static final Logger log4j = Logger.getLogger(WadUtility.class);
-  private static String[][] comparations = { { "==", " == " }, { "=", " == " }, { "!", " != " },
-      { "^", " != " }, { "-", " != " } };
-  private static String[][] unions = { { "|", " || " }, { "&", " && " } };
 
   // small cache to store mapping of <subRef + "-" + parentRef,classname>
   private static Map<String, String> referenceClassnameCache = new HashMap<String, String>();
@@ -159,79 +154,6 @@ public class WadUtility {
     }
     return retValue;
 
-  }
-
-  public static String buildSQL(String clause, Vector<Object> vecParameters) {
-    StringBuffer where = new StringBuffer();
-    if (!clause.equals("")) {
-      if (clause.indexOf('@') > -1) {
-        where.append(getSQLWadContext(clause, vecParameters));
-      } else {
-        where.append(clause);
-      }
-    }
-    return where.toString();
-  }
-
-  public static void setLabel(ConnectionProvider conn, WADControl auxControl, boolean isSOTrx,
-      String keyName) throws ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("processing WadUtility.setLabel() - field name: " + auxControl.getData("Name"));
-    String strTableID = "", strColumnName = "", strTableName = "";
-
-    boolean linkable = auxControl.isLink();
-    if (!linkable) {
-      auxControl.setData("IsLinkable", "N");
-      return;
-    }
-
-    String columnId = auxControl.getLinkColumnId();
-
-    strTableID = TableLinkData.tableId(conn, columnId);
-    strColumnName = TableLinkData.columnName(conn, columnId);
-
-    if ((strTableID.equals("") || strColumnName.equals(""))
-        && !(auxControl.getData("ColumnName").equalsIgnoreCase("updatedBy") || auxControl.getData(
-            "ColumnName").equalsIgnoreCase("createdBy"))) {
-      log4j.warn("There're no table name or column name for: " + auxControl.getData("ColumnName")
-          + " - TABLE_NAME: " + strTableName + " - COLUMN_NAME: " + strColumnName);
-    }
-
-    TableLinkData[] data1 = TableLinkData.selectWindow(conn, strTableID);
-    if (data1 == null || data1.length == 0) {
-      auxControl.setData("IsLinkable", "N");
-      return;
-    }
-
-    String strWindowId = data1[0].adWindowId;
-    if (!isSOTrx && !data1[0].poWindowId.equals(""))
-      strWindowId = data1[0].poWindowId;
-    TableLinkData[] data = TableLinkData.select(conn, strWindowId, strTableID);
-    if (data == null || data.length == 0) {
-      auxControl.setData("IsLinkable", "N");
-      return;
-    }
-
-    auxControl.setData("IsLinkable", "Y");
-    auxControl.setData("ColumnNameLabel", strColumnName);
-    auxControl.setData("KeyColumnName", keyName);
-    auxControl.setData("AD_Table_ID", strTableID);
-    auxControl.setData("ColumnLabelText", strColumnName);
-  }
-
-  public static String findField(ConnectionProvider conn, EditionFieldsData[] fields,
-      EditionFieldsData[] auxiliars, String fieldName) {
-    if (fields == null)
-      return "";
-    for (int i = 0; i < fields.length; i++)
-      if (fields[i].columnname.equalsIgnoreCase(fieldName))
-        return fields[i].columnnameinp;
-    if (auxiliars == null)
-      return "";
-    for (int i = 0; i < auxiliars.length; i++)
-      if (auxiliars[i].columnname.equalsIgnoreCase(fieldName))
-        return auxiliars[i].columnnameinp;
-    return "";
   }
 
   public static String getSQLWadContext(String code, Vector<Object> vecParameters) {
@@ -360,7 +282,7 @@ public class WadUtility {
     return strOut.toString();
   }
 
-  public static String getWadComboReloadContextTranslate(String token, String isSOTrx) {
+  private static String getWadComboReloadContextTranslate(String token, String isSOTrx) {
     String result = "";
     if (token.substring(0, 1).indexOf("#") > -1 || token.substring(0, 1).indexOf("$") > -1) {
       if (token.equalsIgnoreCase("#DATE"))
@@ -436,7 +358,7 @@ public class WadUtility {
     return strOut.toString();
   }
 
-  public static String transformFieldName(String field) {
+  private static String transformFieldName(String field) {
     if (field == null || field.trim().equals(""))
       return "";
     int aux = field.toUpperCase().indexOf(" AS ");
@@ -459,7 +381,7 @@ public class WadUtility {
     return false;
   }
 
-  public static String getWadContextTranslate(String token, Vector<Object> vecFields,
+  private static String getWadContextTranslate(String token, Vector<Object> vecFields,
       Vector<Object> vecAuxiliarFields, FieldsData[] parentsFieldsData, boolean isDefaultValue,
       String isSOTrx, String windowId, boolean dataMultiple) {
     if (token.substring(0, 1).indexOf("#") > -1 || token.substring(0, 1).indexOf("$") > -1) {
@@ -491,66 +413,6 @@ public class WadUtility {
     }
   }
 
-  public static String getWadDefaultValue(ConnectionProvider pool, FieldsData fd) {
-    if (fd == null)
-      return "";
-    WADControl control = getWadControlClass(pool, fd.reference, fd.referencevalue);
-    control.setData("name", fd.name.toUpperCase());
-    control.setData("required", fd.required);
-    return control.getDefaultValue();
-  }
-
-  public static String displayLogic(String code, Vector<Object> vecDL,
-      FieldsData[] parentsFieldsData, Vector<Object> vecAuxiliar, Vector<Object> vecFields,
-      String windowId, Vector<Object> vecContext) {
-    if (code == null || code.trim().equals(""))
-      return "";
-    String token, token2;
-    String strValue = code;
-    StringBuffer strOut = new StringBuffer();
-
-    String strAux;
-    StringTokenizer st = new StringTokenizer(strValue, "|&", true);
-    while (st.hasMoreTokens()) {
-      strAux = st.nextToken().trim();
-      int i[] = getFirstElement(unions, strAux);
-      if (i[0] != -1) {
-        strAux = strAux.substring(0, i[0]) + unions[i[1]][1]
-            + strAux.substring(i[0] + unions[i[1]][0].length());
-      }
-
-      int pos[] = getFirstElement(comparations, strAux);
-      token = strAux;
-      token2 = "";
-      if (pos[0] >= 0) {
-        token = strAux.substring(0, pos[0]);
-        token2 = strAux.substring(pos[0] + comparations[pos[1]][0].length(), strAux.length());
-        strAux = strAux.substring(0, pos[0]) + comparations[pos[1]][1]
-            + strAux.substring(pos[0] + comparations[pos[1]][0].length(), strAux.length());
-      }
-
-      strOut.append(getDisplayLogicText(token, vecFields, parentsFieldsData, vecAuxiliar, vecDL,
-          windowId, vecContext, true));
-      if (pos[0] >= 0)
-        strOut.append(comparations[pos[1]][1]);
-      strOut.append(getDisplayLogicText(token2, vecFields, parentsFieldsData, vecAuxiliar, vecDL,
-          windowId, vecContext, false));
-    }
-    return strOut.toString();
-  }
-
-  public static int[] getFirstElement(String[][] array, String token) {
-    int min[] = { -1, -1 }, aux;
-    for (int i = 0; i < array.length; i++) {
-      aux = token.indexOf(array[i][0]);
-      if (aux != -1 && (aux < min[0] || min[0] == -1)) {
-        min[0] = aux;
-        min[1] = i;
-      }
-    }
-    return min;
-  }
-
   public static boolean isInVector(Vector<Object> vec, String field) {
     if (field == null || field.trim().equals(""))
       return false;
@@ -562,7 +424,7 @@ public class WadUtility {
     return false;
   }
 
-  public static void saveVectorField(Vector<Object> vec, String field) {
+  private static void saveVectorField(Vector<Object> vec, String field) {
     if (field == null || field.trim().equals(""))
       return;
     if (!isInVector(vec, field))
@@ -600,7 +462,7 @@ public class WadUtility {
     return strOut.toString();
   }
 
-  public static String getComboReloadTextTranslate(String token, Vector<Object> vecFields,
+  private static String getComboReloadTextTranslate(String token, Vector<Object> vecFields,
       FieldsData[] parentsFieldsData, Vector<Object> vecComboReload, String prefix,
       String columnname) {
     if (token == null || token.trim().equals(""))
@@ -622,86 +484,13 @@ public class WadUtility {
         + Sqlc.TransformaNombreColumna(token) + "\""));
   }
 
-  public static String getDisplayLogicText(String _token, Vector<Object> vecFields,
-      FieldsData[] parentsFieldsData, Vector<Object> vecAuxiliar, Vector<Object> vecDisplayLogic,
-      String windowId, Vector<Object> vecContext, boolean save) {
-    String token = _token;
-    StringBuffer strOut = new StringBuffer();
-    int i = token.indexOf("@");
-    while (i != -1) {
-      strOut.append(token.substring(0, i));
-      token = token.substring(i + 1);
-      i = token.indexOf("@");
-      if (i != -1) {
-        String strAux = token.substring(0, i);
-        token = token.substring(i + 1);
-        strOut.append(getDisplayLogicTextTranslate(strAux, vecFields, parentsFieldsData,
-            vecAuxiliar, vecDisplayLogic, windowId, vecContext, save));
-      }
-      i = token.indexOf("@");
-    }
-    strOut.append(token);
-    return strOut.toString();
-  }
-
-  public static String getDisplayLogicTextTranslate(String token, Vector<Object> vecFields,
-      FieldsData[] parentsFieldsData, Vector<Object> vecAuxiliar, Vector<Object> vecDisplayLogic,
-      String windowId, Vector<Object> vecContext, boolean save) {
-    if (token == null || token.trim().equals(""))
-      return "";
-    String aux = Sqlc.TransformaNombreColumna(token);
-    if (save)
-      saveVectorField(vecDisplayLogic, token);
-    if (parentsFieldsData != null) {
-      for (int i = 0; i < parentsFieldsData.length; i++) {
-        if (parentsFieldsData[i].name.equalsIgnoreCase(token))
-          return "inputValue(document.frmMain.inp"
-              + Sqlc.TransformaNombreColumna(parentsFieldsData[i].name) + ")";
-      }
-    }
-    if (vecAuxiliar != null && findField(vecAuxiliar, token)) {
-      return ("inputValue(document.frmMain.inp" + aux + ")");
-    }
-    if (vecFields != null && findField(vecFields, token)) {
-      return ("inputValue(document.frmMain.inp" + aux + ")");
-    }
-    saveVectorField(vecContext, token);
-    return "str" + FormatUtilities.replace(token);
-  }
-
-  public static String getDisplayLogicComparation(String token) {
-    String aux = token.trim();
-    for (int i = 0; i < comparations.length; i++) {
-      if (comparations[i][0].equals(aux))
-        return comparations[i][1];
-    }
-    return aux;
-  }
-
-  public static boolean isInFieldList(FieldsData[] fields, String columnName) {
-    if (fields == null || fields.length == 0)
-      return false;
-    for (int i = 0; i < fields.length; i++) {
-      if (fields[i].name.equalsIgnoreCase(columnName))
-        return true;
-    }
-    return false;
-  }
-
   public static boolean isSearchValueColumn(String name) {
     if (name == null || name.equals(""))
       return false;
     return (name.equalsIgnoreCase("Value") || name.equalsIgnoreCase("DocumentNo"));
   }
 
-  public static String sqlCasting(ConnectionProvider conn, String reference, String referencevalue) {
-    if (reference == null || reference.equals(""))
-      return "";
-    WADControl control = WadUtility.getWadControlClass(conn, reference, referencevalue);
-    return control.getSQLCasting();
-  }
-
-  public static void setPropertyValue(Properties _prop, FieldProvider _field, String _name,
+  private static void setPropertyValue(Properties _prop, FieldProvider _field, String _name,
       String _fieldName, String _defaultValue) throws Exception {
     String aux = "";
     try {
@@ -726,7 +515,7 @@ public class WadUtility {
         isReloadObject, isReadOnlyLogic, hasParentsFields, false);
   }
 
-  public static WADControl getControl(ConnectionProvider conn, FieldProvider field,
+  private static WADControl getControl(ConnectionProvider conn, FieldProvider field,
       boolean isreadonly, String tabName, String adLanguage, XmlEngine xmlEngine,
       boolean isDisplayLogic, boolean isReloadObject, boolean isReadOnlyLogic,
       boolean hasParentsFields, boolean isReadOnlyDefinedTab) throws Exception {
@@ -834,97 +623,6 @@ public class WadUtility {
     return control;
   }
 
-  public static boolean isNewGroup(WADControl control, String strFieldGroup) {
-    if (control == null)
-      return false;
-    String fieldgroup = control.getData("AD_FieldGroup_ID");
-    return (control.getData("IsDisplayed").equals("Y") && fieldgroup != null
-        && !fieldgroup.equals("") && !fieldgroup.equals(strFieldGroup));
-  }
-
-  public static String getReadOnlyLogic(WADControl auxControl, Vector<Object> vecDL,
-      FieldsData[] parentsFieldsData, Vector<Object> vecAuxiliar, Vector<Object> vecFields,
-      String windowId, Vector<Object> vecContext, boolean isreadonly) {
-    String code = auxControl.getData("ReadOnlyLogic");
-    if (code == null || code.equals("") || auxControl.getData("IsUpdateable").equals("N")
-        || auxControl.getData("IsReadOnly").equals("Y")) {
-      return "";
-    }
-    StringBuffer _displayLogic = new StringBuffer();
-    String element = auxControl.getReadOnlyLogicColumn();
-
-    _displayLogic
-        .append("  readOnlyLogicElement('")
-        .append(element)
-        .append("', (")
-        .append(
-            displayLogic(code, vecDL, parentsFieldsData, vecAuxiliar, vecFields, windowId,
-                vecContext)).append("));\n");
-
-    return _displayLogic.toString();
-  }
-
-  public static String getbuttonShortcuts(HashMap<String, String> sc) {
-    StringBuffer shortcuts = new StringBuffer();
-    Iterator<String> ik = sc.keySet().iterator();
-    Iterator<String> iv = sc.values().iterator();
-    while (ik.hasNext() && iv.hasNext()) {
-      // shortcuts.append("keyArray[keyArray.length] = new keyArrayItem(\"").append(ik.next()).append("\", \"").append(iv.next()).append("\", null, \"altKey\", false, \"onkeydown\");\n");
-      shortcuts.append("keyArray[keyArray.length] = new keyArrayItem(\"").append(ik.next())
-          .append("\", \"").append(iv.next())
-          .append("\", null, \"altKey\", false, \"onkeydown\");\n");
-    }
-    return shortcuts.toString();
-  }
-
-  public static String getDisplayLogicForGroups(String strFieldGroup, StringBuffer code) {
-    if ((code == null) || (code.length() == 0))
-      return "";
-    StringBuffer _displayLogic = new StringBuffer();
-    _displayLogic.append("if ").append(code).append("{\n");
-    _displayLogic.append("  displayLogicElement('fldgrp").append(strFieldGroup)
-        .append("', true);\n");
-    _displayLogic.append("} else {\n");
-    _displayLogic.append("  displayLogicElement('fldgrp").append(strFieldGroup)
-        .append("', false);\n");
-    _displayLogic.append("}\n");
-    return _displayLogic.toString();
-  }
-
-  public static String getDisplayLogic(WADControl auxControl, Vector<Object> vecDL,
-      FieldsData[] parentsFieldsData, Vector<Object> vecAuxiliar, Vector<Object> vecFields,
-      String windowId, Vector<Object> vecContext, boolean isreadonly) {
-    String code = auxControl.getData("DisplayLogic");
-    if (code == null || code.equals(""))
-      return "";
-    StringBuffer _displayLogic = new StringBuffer();
-    _displayLogic.append("if (");
-    _displayLogic.append(displayLogic(code, vecDL, parentsFieldsData, vecAuxiliar, vecFields,
-        windowId, vecContext));
-    _displayLogic.append(") {\n");
-    _displayLogic.append("displayLogicElement('");
-    _displayLogic.append(auxControl.getData("ColumnName"));
-    _displayLogic.append("_inp_td', true);\n");
-    _displayLogic.append("displayLogicElement('");
-    _displayLogic.append(auxControl.getData("ColumnName"));
-    _displayLogic.append("_inp', true);\n");
-
-    _displayLogic.append(auxControl.getDisplayLogic(true, isreadonly));
-
-    _displayLogic.append("} else {\n");
-    _displayLogic.append("displayLogicElement('");
-    _displayLogic.append(auxControl.getData("ColumnName"));
-    _displayLogic.append("_inp_td', false);\n");
-    _displayLogic.append("displayLogicElement('");
-    _displayLogic.append(auxControl.getData("ColumnName"));
-    _displayLogic.append("_inp', false);\n");
-
-    _displayLogic.append(auxControl.getDisplayLogic(false, isreadonly));
-
-    _displayLogic.append("}\n");
-    return _displayLogic.toString();
-  }
-
   public static void writeFile(File path, String filename, String text) throws IOException {
     File fileData = new File(path, filename);
     FileOutputStream fileWriterData = new FileOutputStream(fileData);
@@ -932,16 +630,6 @@ public class WadUtility {
     printWriterData.write(text);
     printWriterData.flush();
     fileWriterData.close();
-  }
-
-  /**
-   * Replaces special characters in str to make it a valid java string
-   * 
-   * @param str
-   * @return String with special characters replaced
-   */
-  public static String toJavaString(String str) {
-    return (str.replace("\n", "\\n").replace("\"", "\\\""));
   }
 
   /**
@@ -976,17 +664,5 @@ public class WadUtility {
       }
     }
     return strParam;
-  }
-
-  public static String columnName(String name, String tableModule, String columnModule) {
-    // If the column is in a different module than the table it will start with EM_
-    String columnName;
-    if (tableModule != null && columnModule != null && !tableModule.equals(columnModule)
-        && name.toLowerCase().startsWith("em_")) {
-      columnName = name.substring(3);
-    } else {
-      columnName = name;
-    }
-    return columnName;
   }
 }

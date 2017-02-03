@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Copyright (C) 2001-2017 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -10,6 +10,8 @@
  ************************************************************************************
  */
 package org.openbravo.base.secureApp;
+
+import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -321,105 +323,16 @@ public class VariablesSecureApp extends VariablesBase {
   }
 
   /**
-   * Returns true if the Command parameter of the HTTP POST/GET request to the servlet equals the
-   * value specified, false if not.
+   * Returns true if the Command parameter of the HTTP POST/GET request to the servlet is one of the
+   * specified values, false if not.
    * 
-   * @param inKey1
-   *          The string to compare Command parameter to.
-   * @return Boolean indicating the equality of the Command and the inKey1 parameter.
+   * @param commands
+   *          The list of strings to compare Command parameter to.
+   * @return {@code true} in case current command is any of the ones passed as parameter
    * @see #getCommand()
    */
-  public boolean commandIn(String inKey1) {
-    if (command.equals(inKey1))
-      return true;
-    else
-      return false;
-  }
-
-  /**
-   * Returns true if the Command parameter of the HTTP POST/GET request to the servlet equals either
-   * of the values specified, false if not.
-   * 
-   * @param inKey1
-   *          The string to compare the Command parameter to.
-   * @param inKey2
-   *          The second string to compare the Command parameter to.
-   * @return Boolean indicating the equality of the Command and either of the inKeyX parameters.
-   * @see #getCommand()
-   */
-  public boolean commandIn(String inKey1, String inKey2) {
-    if (command.equals(inKey1) || command.equals(inKey2))
-      return true;
-    else
-      return false;
-  }
-
-  /**
-   * Returns true if the Command parameter of the HTTP POST/GET request to the servlet equals either
-   * of the values specified, false if not.
-   * 
-   * @param inKey1
-   *          The string to compare the Command parameter to.
-   * @param inKey2
-   *          The second string to compare the Command parameter to.
-   * @param inKey3
-   *          The third string to compare the Command parameter to .
-   * @return Boolean indicating the equality of the Command and either of the inKeyX parameters.
-   * @see #getCommand()
-   */
-  public boolean commandIn(String inKey1, String inKey2, String inKey3) {
-    if (command.equals(inKey1) || command.equals(inKey2) || command.equals(inKey3))
-      return true;
-    else
-      return false;
-  }
-
-  /**
-   * Returns true if the Command parameter of the HTTP POST/GET request to the servlet equals either
-   * of the values specified, false if not.
-   * 
-   * @param inKey1
-   *          The string to compare the Command parameter to.
-   * @param inKey2
-   *          The second string to compare the Command parameter to.
-   * @param inKey3
-   *          The third string to compare the Command parameter to.
-   * @param inKey4
-   *          The fourth string to compare the Command parameter to.
-   * @return Boolean indicating the equality of the Command and either of the inKeyX parameters.
-   * @see #getCommand()
-   */
-  public boolean commandIn(String inKey1, String inKey2, String inKey3, String inKey4) {
-    if (command.equals(inKey1) || command.equals(inKey2) || command.equals(inKey3)
-        || command.equals(inKey4))
-      return true;
-    else
-      return false;
-  }
-
-  /**
-   * Returns true if the Command parameter of the HTTP POST/GET request to the servlet equals either
-   * of the values specified, false if not.
-   * 
-   * @param inKey1
-   *          The string to compare the Command parameter to.
-   * @param inKey2
-   *          The second string to compare the Command parameter to.
-   * @param inKey3
-   *          The third string to compare the Command parameter to.
-   * @param inKey4
-   *          The fourth string to compare the Command parameter to.
-   * @param inKey5
-   *          The fifth string to compare the Command parameter to.
-   * @return Boolean indicating the equality of the Command and either of the inKeyX parameters.
-   * @see #getCommand()
-   */
-  public boolean commandIn(String inKey1, String inKey2, String inKey3, String inKey4, String inKey5) {
-    if (command.equals(inKey1) || command.equals(inKey2) || command.equals(inKey3)
-        || command.equals(inKey4) || command.equals(inKey5))
-      return true;
-    else
-      return false;
+  public boolean commandIn(String... commands) {
+    return command != null && Arrays.asList(commands).contains(command);
   }
 
   /**

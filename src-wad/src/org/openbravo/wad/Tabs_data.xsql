@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,7 +40,7 @@
         AND AD_TABLE.DataOriginType = 'Table'
         AND AD_WINDOW.IsActive = 'Y'
         AND AD_WINDOW.WindowType IN ('M', 'Q', 'T')
-        AND UPPER(AD_WINDOW.NAME) LIKE '%' || UPPER(?) || '%' 
+        AND UPPER(AD_WINDOW.NAME) LIKE '%' || UPPER(?) || '%'
         AND AD_TAB.ad_table_id IN
         (SELECT AD_TABLE.ad_table_id FROM AD_COLUMN, AD_TABLE 
          WHERE AD_COLUMN.ad_table_id = AD_TABLE.ad_table_id
@@ -58,14 +58,6 @@
           ]]>
       </Sql>
       <Parameter name="name"/>
-  </SqlMethod>
-
-  <SqlMethod name="selectTabDebugData" type="preparedStatement" return="single">
-      <Sql>
-      SELECT AD_TAB.name as tabname, ad_tab.tablevel as tablevel 
-      FROM ad_tab WHERE ad_tab_id = ?
-      </Sql>
-      <Parameter name="tabid"/> 
   </SqlMethod>
 
   <SqlMethod name="selectShowWindowIn250ClassicMode" type="preparedStatement" return="boolean">
@@ -354,20 +346,6 @@
         ]]>
       </Sql>
       <Parameter name="adProcessId"/>
-  </SqlMethod>
-  <SqlMethod name="formClassName" type="preparedStatement" return="string" default="">
-    <SqlMethodComment>Subtabs of the tab of the parameter</SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT mappingname as name FROM ad_model_object mo, ad_model_object_mapping mom
-        WHERE mo.ad_form_id = ? 
-        AND mo.isactive = 'Y' 
-        AND mo.isdefault = 'Y' 
-        AND mo.ad_model_object_id = mom.ad_model_object_id 
-        AND mom.isactive = 'Y' 
-        AND mom.isdefault = 'Y' 
-        ]]>
-      </Sql>
-      <Parameter name="adFormId"/>
   </SqlMethod>
   
   <SqlMethod name="isTabActive" type="preparedStatement" return="boolean">
