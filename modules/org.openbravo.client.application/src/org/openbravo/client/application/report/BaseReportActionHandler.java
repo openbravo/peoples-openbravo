@@ -56,6 +56,7 @@ import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ReportDefinition;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
+import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.RequestContext;
@@ -117,36 +118,21 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
 
-    JSONObject result = new JSONObject();
     try {
-      result.put("retryExecution", true);
-      result.put("showResultsInProcessView", true);
+      JSONObject result = getResponseBuilder().retryExecution().showResultsInProcessView().build();
 
       final JSONObject jsonContent = new JSONObject(content);
       final String action = jsonContent.getString(ApplicationConstants.BUTTON_VALUE);
       doGenerateReport(result, parameters, jsonContent, action);
 
       return result;
-    } catch (OBException e) {
-      log.error("Error generating report id: {}", parameters.get("reportId"), e);
-      JSONObject msg = new JSONObject();
-      try {
-        msg.put("severity", "error");
-        msg.put("text", OBMessageUtils.translateError(e.getMessage()).getMessage());
-        result.put("message", msg);
-      } catch (JSONException ignore) {
-      }
-      return result;
     } catch (Exception e) {
       log.error("Error generating report id: {}", parameters.get("reportId"), e);
-      JSONObject msg = new JSONObject();
-      try {
-        msg.put("severity", "error");
-        msg.put("text", OBMessageUtils.translateError(e.getMessage()).getMessage());
-        result.put("message", msg);
-      } catch (JSONException ignore) {
-      }
-      return result;
+      return getResponseBuilder()
+          .retryExecution()
+          .showResultsInProcessView()
+          .showMsgInProcessView(MessageType.ERROR,
+              OBMessageUtils.translateError(e.getMessage()).getMessage()).build();
     }
   }
 

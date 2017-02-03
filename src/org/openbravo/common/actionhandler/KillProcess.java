@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,9 +21,9 @@ package org.openbravo.common.actionhandler;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
+import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.scheduling.DefaultJob;
 import org.openbravo.scheduling.KillableProcess;
@@ -49,7 +49,8 @@ public class KillProcess extends BaseProcessActionHandler {
     JSONObject result = new JSONObject();
     try {
       if (OBScheduler.isNoExecuteBackgroundPolicy()) {
-        return buildResult("error", "Error", "BackgroundPolicyNoExecuteMsg");
+        return getResponseBuilder().showMsgInProcessView(MessageType.ERROR,
+            OBMessageUtils.getI18NMessage("BackgroundPolicyNoExecuteMsg", null)).build();
       }
 
       JSONObject request = new JSONObject(content);
@@ -74,10 +75,12 @@ public class KillProcess extends BaseProcessActionHandler {
             // Kill Process
             ((KillableProcess) process).kill(jobInstance.getBundle());
             jobInstance.setKilled(true);
-            return buildResult("info", "Info", "ProcessKilled");
+            return getResponseBuilder().showMsgInProcessView(MessageType.INFO,
+                OBMessageUtils.getI18NMessage("ProcessKilled", null)).build();
           } else {
             // KillableProcess not implemented
-            return buildResult("warning", "Info", "KillableProcessNotImplemented");
+            return getResponseBuilder().showMsgInProcessView(MessageType.WARNING,
+                OBMessageUtils.getI18NMessage("KillableProcessNotImplemented", null)).build();
           }
 
         }
@@ -89,7 +92,8 @@ public class KillProcess extends BaseProcessActionHandler {
       Throwable e = DbUtility.getUnderlyingSQLException(ex);
       log.error("Error in Kill Process", e);
       try {
-        result = buildResult("error", "Error", e.getMessage());
+        return getResponseBuilder().showMsgInProcessView(MessageType.ERROR,
+            getTranslatedExceptionMessage(e)).build();
       } catch (Exception ignoreException) {
         // do nothing
       }
@@ -99,21 +103,12 @@ public class KillProcess extends BaseProcessActionHandler {
 
   }
 
-  private JSONObject buildResult(String type, String title, String messagetext) throws Exception {
-    JSONObject result = new JSONObject();
-    JSONObject message = new JSONObject();
-    JSONObject msgTotalAction = new JSONObject();
-    JSONArray actions = new JSONArray();
-
-    message.put("msgType", type);
-    message.put("msgTitle", OBMessageUtils.getI18NMessage(title, null));
-    String msgText = OBMessageUtils.getI18NMessage(messagetext, null);
-    message.put("msgText", msgText == null ? messagetext : msgText);
-
-    msgTotalAction.put("showMsgInProcessView", message);
-    actions.put(msgTotalAction);
-    result.put("responseActions", actions);
-
-    return result;
+  private String getTranslatedExceptionMessage(Throwable throwable) {
+    String message = throwable.getMessage();
+    String translatedMessage = OBMessageUtils.getI18NMessage(message, null);
+    if (translatedMessage != null) {
+      return translatedMessage;
+    }
+    return message;
   }
 }
