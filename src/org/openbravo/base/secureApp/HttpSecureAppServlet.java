@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Copyright (C) 2001-2017 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -1195,7 +1195,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       HashMap<String, Object> designParameters, JRDataSource data,
       Map<Object, Object> exportParameters, boolean forceRefresh) throws ServletException {
     String localStrReportName = strReportName;
-    String localStrOutputType = strOutputType;
+    String localStrOutputType = getExportFormat(strOutputType);
     String localStrFileName = strFileName;
     Map<Object, Object> localExportParameters = exportParameters;
     HashMap<String, Object> localDesignParameters = designParameters;
@@ -1242,11 +1242,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       os = response.getOutputStream();
       if (localExportParameters == null)
         localExportParameters = new HashMap<Object, Object>();
-      if (localStrOutputType == null || localStrOutputType.equals(""))
-        localStrOutputType = "html";
-      final ExportType expType = ExportType.getExportType(localStrOutputType.toUpperCase());
 
-      if (localStrOutputType.equals("html")) {
+      final ExportType expType = ExportType.getExportType(localStrOutputType);
+      ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+
+      if (expType == ExportType.HTML) {
         if (log4j.isDebugEnabled())
           log4j.debug("JR: Print HTML");
         response.setHeader("Content-disposition", "inline" + "; filename=" + localStrFileName + "."
@@ -1255,16 +1255,12 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         String localAddress = HttpBaseUtils.getLocalAddress(request);
         localExportParameters.put(ReportingUtils.IMAGES_URI, localAddress
             + "/servlets/image?image={0}");
-        ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
         ReportingUtils.exportJR(localStrReportName, expType, localDesignParameters, os, false,
             readOnlyCP, data, localExportParameters);
-      } else if (localStrOutputType.equals("pdf") || localStrOutputType.equalsIgnoreCase("xls")
-          || localStrOutputType.equalsIgnoreCase("txt")
-          || localStrOutputType.equalsIgnoreCase("csv")) {
+      } else if (expType != ExportType.XML) {
         reportId = UUID.randomUUID();
         File outputFile = new File(globalParameters.strFTPDirectory + "/" + localStrFileName + "-"
             + (reportId) + "." + localStrOutputType);
-        ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
         ReportingUtils.exportJR(localStrReportName, expType, localDesignParameters, outputFile,
             false, readOnlyCP, data, localExportParameters);
         response.setContentType("text/html;charset=UTF-8");
@@ -1297,6 +1293,16 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       } catch (final Exception e) {
       }
     }
+  }
+
+  private String getExportFormat(String outputType) {
+    if (outputType == null || outputType.equals("")) {
+      return ExportType.HTML.getExtension();
+    }
+    if (ExportType.XLS.hasExtension(outputType)) {
+      return ReportingUtils.getExcelExportType().getExtension();
+    }
+    return outputType;
   }
 
   /**
