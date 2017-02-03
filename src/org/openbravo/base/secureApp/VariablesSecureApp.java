@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Copyright (C) 2001-2017 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -323,12 +323,12 @@ public class VariablesSecureApp extends VariablesBase {
   }
 
   /**
-   * Returns true if the Command parameter of the HTTP POST/GET request to the servlet equals the
-   * value specified, false if not.
+   * Returns true if the Command parameter of the HTTP POST/GET request to the servlet is one of the
+   * specified values, false if not.
    * 
    * @param commands
    *          The list of strings to compare Command parameter to.
-   * @return Boolean indicating the equality of the Command and the inKey1 parameter.
+   * @return {@code true} in case current command is any of the ones passed as parameter
    * @see #getCommand()
    */
   public boolean commandIn(String... commands) {
