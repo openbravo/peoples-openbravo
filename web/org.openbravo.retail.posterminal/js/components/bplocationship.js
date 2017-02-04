@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -169,6 +169,7 @@ enyo.kind({
   executeOnShow: function () {
     if (!this.initialized) {
       this.inherited(arguments);
+      this.args.navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(null, 'modalcustomershipaddress');
       if (_.isUndefined(this.args.visibilityButtons)) {
         this.args.visibilityButtons = true;
       }
@@ -182,6 +183,8 @@ enyo.kind({
       this.$.body.$.listBpsShipLoc.setTarget(this.args.target);
       this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
       this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.createCustomerLocationButton', true));
+    } else if (this.args.makeSearch) {
+      this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
     }
     return true;
   },

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -205,7 +205,7 @@ enyo.kind({
 
     function successCallbackBPs(dataBps) {
       var modalDlg = me.owner.owner.owner.owner.owner.owner,
-          navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(modalDlg.args.navigationPath, 'modalcustomeraddress');
+          navigationPath = modalDlg.args.navigationPath.length > 0 ? modalDlg.args.navigationPath : OB.UTIL.BusinessPartnerSelector.cloneAndPush(null, 'modalcustomeraddress');
       me.doShowPopup({
         popup: 'customerAddrCreateAndEdit',
         args: {
