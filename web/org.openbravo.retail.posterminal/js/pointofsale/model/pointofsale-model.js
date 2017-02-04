@@ -563,6 +563,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }
         }
         //me.get('multiOrders').trigger('closed', order);
+        order.set('orderDate', new Date());
         if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
           enyo.$.scrim.hide();
           me.get('multiOrders').trigger('print', order, {
