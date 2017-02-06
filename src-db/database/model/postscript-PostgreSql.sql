@@ -375,7 +375,7 @@ $BODY1$ DECLARE
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009-2016 Openbravo SLU
+* All portions are Copyright (C) 2009-2017 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -383,7 +383,7 @@ $BODY1$ DECLARE
   cur_triggers RECORD;
   cur_tables RECORD;
   cur_cols RECORD;
-  triggerName VARCHAR(30); 
+  targetTriggerName VARCHAR(30);
   recordIdName VARCHAR(30);
   datatype VARCHAR(30); 
   clientinfo NUMERIC;
@@ -391,6 +391,9 @@ $BODY1$ DECLARE
   created NUMERIC :=0;
   v_message VARCHAR(500);
   v_isObps NUMERIC;
+  isavailablename NUMERIC :=0;
+  suffixNumber NUMERIC :=0;
+  numberCharsToRemove NUMERIC;
 BEGIN 
   select count(*) 
     into v_isObps
@@ -418,8 +421,21 @@ BEGIN
                       and dataOriginType = 'Table'
                       order by tablename) loop
     
-    triggerName := 'AU_'||SUBSTR(cur_tables.tablename,1,23)||'_TRG';
-    raise notice '%', triggerName;
+    targetTriggerName := 'AU_'||SUBSTR(cur_tables.tablename,1,23)||'_TRG';
+    LOOP
+        select count(*)
+         into isavailablename
+        from user_triggers u
+        where upper(trigger_name) = upper(targetTriggerName);
+
+        EXIT WHEN isavailablename = 0;
+
+	 suffixNumber := suffixNumber + 1;
+	 raise notice '%', targetTriggerName || ' is already exists. Renaming...';
+	 numberCharsToRemove :=LENGTH(CAST(suffixNumber AS VARCHAR));
+	 targetTriggerName := 'AU_'||SUBSTR(cur_tables.tablename,1,23-numberCharsToRemove)||''||suffixNumber||'_TRG';
+    END LOOP;
+    raise notice '%', targetTriggerName;
     
     select count(*) into clientinfo
       from dual
@@ -437,7 +453,7 @@ BEGIN
      where ad_table_id = cur_tables.ad_table_id
        and iskey='Y';
     
-      code := 'create or replace FUNCTION '||triggerName||'() 
+      code := 'create or replace FUNCTION '||targetTriggerName||'()
 RETURNS trigger AS
 $BODY$
 DECLARE
@@ -611,15 +627,15 @@ END
 EXECUTE(code);
 
  code := 
-    'CREATE TRIGGER '||triggerName||'
+    'CREATE TRIGGER '||targetTriggerName||'
       BEFORE INSERT OR UPDATE OR DELETE
       ON '||cur_cols.table_name||'
       FOR EACH ROW
-      EXECUTE PROCEDURE '||triggerName||'()';
+      EXECUTE PROCEDURE '||targetTriggerName||'()';
       execute(code);
       
     created := created + 1;
-
+    suffixNumber :=0;
   end loop;
   
   v_Message := '@Deleted@: '||deleted||' @Created@: '||created;

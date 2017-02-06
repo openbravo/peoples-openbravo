@@ -580,7 +580,7 @@ AS
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009-2016 Openbravo SLU
+* All portions are Copyright (C) 2009-2017 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -595,7 +595,7 @@ AS
   cur_triggers RECORD;
   cur_tables RECORD;
   cur_cols RECORD;
-  triggerName varchar2(30);
+  targetTriggerName varchar2(30);
   recordIdName varchar2(30);
   datatype varchar2(30);
   clientinfo number;
@@ -603,6 +603,9 @@ AS
   created number :=0;
   v_message varchar2(500);
   v_isObps number;
+  isavailablename number :=0;
+  suffixNumber number :=0;
+  numberCharsToRemove number;
   
   
   FUNCTION splitClob(code clob, splitcode out dbms_sql.varchar2s ) RETURN number AS 
@@ -644,7 +647,19 @@ BEGIN
                       and dataOriginType = 'Table'
                       order by tablename) loop
     dbms_output.put_line('Creating trigger for table '||cur_tables.tablename);
-    triggerName := 'AU_'||SUBSTR(cur_tables.tablename,1,23)||'_TRG';
+    targetTriggerName := 'AU_'||SUBSTR(cur_tables.tablename,1,23)||'_TRG';
+    LOOP
+        select count(*)
+          into isavailablename
+        from user_triggers
+        where upper(trigger_name) = upper(targetTriggerName);
+
+        EXIT WHEN isavailablename = 0;
+
+        suffixNumber := suffixNumber + 1;
+        numberCharsToRemove :=LENGTH(suffixNumber);
+        targetTriggerName := 'AU_'||SUBSTR(cur_tables.tablename,1,23-numberCharsToRemove)||''||suffixNumber||'_TRG';
+    END LOOP;
     
     select count(*) into clientinfo
       from dual
@@ -662,7 +677,7 @@ BEGIN
      where ad_table_id = cur_tables.ad_table_id
        and iskey='Y';
     
-      code := 'create or replace TRIGGER '||triggerName||' 
+      code := 'create or replace TRIGGER '||targetTriggerName||' 
 AFTER INSERT OR UPDATE OR DELETE
 ON '|| cur_tables.tablename||' FOR EACH ROW
 DECLARE
@@ -824,6 +839,7 @@ ret_val := dbms_sql.execute(cursor_id);
 DBMS_SQL.close_cursor(cursor_id);
 
     created := created + 1;
+    suffixNumber :=0;
   end loop;
   
   v_Message := '@Deleted@: '||deleted||' @Created@: '||created;
