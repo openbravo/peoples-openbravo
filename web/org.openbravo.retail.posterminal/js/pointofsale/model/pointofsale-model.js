@@ -632,7 +632,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             }, function (args) {
               iter.addPayment(args.paymentLine, function (iter) {
                 if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
-                  iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), args.payment.get('origAmount')));
+                  iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), args.origPayment.get('origAmount')));
                 }
                 amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
                 iter.prepareToSend(prepareToSendCallback);
