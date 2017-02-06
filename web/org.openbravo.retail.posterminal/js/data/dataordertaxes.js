@@ -587,7 +587,6 @@
         });
 
         // Finally, taxes will be computed for each group. 
-        receipt.set('taxes', {});
         _.forEach(taxGroups, function (taxGroup) {
           var totalGross = taxGroup.totalGross;
           var totalNet = taxGroup.totalNet;
