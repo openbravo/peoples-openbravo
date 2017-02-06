@@ -3,6 +3,7 @@
 	<property name="ireport.zoom" value="2.593742460100007"/>
 	<property name="ireport.x" value="2300"/>
 	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
 	<style name="default" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="6">
 		<box leftPadding="5" rightPadding="5"/>
 	</style>
