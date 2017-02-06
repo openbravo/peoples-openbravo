@@ -23,6 +23,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assume.assumeThat;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -359,7 +360,7 @@ public class OBBaseTest {
       return;
     }
     try {
-      disabledTestCases = Files.readAllLines(disabledTestsConfig);
+      disabledTestCases = Files.readAllLines(disabledTestsConfig, StandardCharsets.UTF_8);
     } catch (IOException e) {
       log.error("Error reading disabled test configuration", e);
       disabledTestCases = new ArrayList<>();
