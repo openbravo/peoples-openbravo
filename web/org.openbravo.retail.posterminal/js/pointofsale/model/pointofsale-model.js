@@ -532,11 +532,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       var ordersLength = this.get('multiOrders').get('multiOrdersList').length;
 
       function readyToSendFunction() {
-        //this function is executed when all orders are ready to be sent
+        // this function is executed when all orders are processed
         me.get('leftColumnViewManager').setOrderMode();
-        if (me.get('orderList').length === _.filter(me.get('multiOrders').get('multiOrdersList').models, function (order) {
-          return !order.get('isLayaway');
-        }).length) {
+        if (me.get('orderList').length === 0) {
           me.get('orderList').addNewOrder();
         }
       }
@@ -586,15 +584,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 receiptMulti.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
                 receiptMulti.set('json', JSON.stringify(receipt.serializeToJSON()));
                 OB.Dal.save(receiptMulti, function () {
-                  me.get('multiOrders').trigger('closed', receiptMulti, function () {
-                    if (index === 0) {
-                      readyToSendFunction();
-                    }
-                  });
+                  me.get('multiOrders').trigger('closed', receiptMulti, function () {});
                   setMultiOrderCashUpReport(receiptList, cashUp, index + 1, callback);
                 }, function () {});
               };
-              setMultiOrderCashUpReport(me.get('multiOrders').get('multiOrdersList').models, cashUp, 0, function () {});
+              setMultiOrderCashUpReport(me.get('multiOrders').get('multiOrdersList').models, cashUp, 0, function () {
+                // Called readyToSendFunction when all pending ticket have been processed
+                readyToSendFunction();
+              });
             });
             auxReceiptList = [];
           }
