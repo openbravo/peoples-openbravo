@@ -19,6 +19,13 @@
 
 package org.openbravo.test.base;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assume.assumeThat;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,6 +68,9 @@ import org.openbravo.model.ad.access.User;
  */
 
 public class OBBaseTest {
+  private static final Logger log = Logger.getLogger(OBBaseTest.class);
+  private static List<String> disabledTestCases;
+  private boolean disabledTestCase = false;
 
   /**
    * Add a TestWatcher rule to be able to catch test failures allowing them to fail.
@@ -73,8 +83,25 @@ public class OBBaseTest {
   public TestWatcher watchFailures = new TestWatcher() {
     @Override
     protected void starting(Description description) {
-      log.info("*** Starting test case: " + getTestName(description));
+      disabledTestCase = isDisabled(description);
+      if (!disabledTestCase) {
+        log.info("*** Starting test case: " + getTestName(description));
+      }
     };
+
+    private boolean isDisabled(Description description) {
+      boolean fullClassDisabled = disabledTestCases.contains(description.getClassName());
+      if (fullClassDisabled) {
+        return true;
+      }
+      String methodName = description.getMethodName();
+      if (methodName.endsWith("]")) {
+        // parameterized tests cases suffix [desc] to method name, let's remove it
+        methodName = methodName.substring(0, methodName.indexOf("["));
+
+      }
+      return disabledTestCases.contains(description.getClassName() + "." + methodName);
+    }
 
     @Override
     protected void failed(Throwable e, Description description) {
@@ -83,8 +110,8 @@ public class OBBaseTest {
 
     @Override
     protected void finished(Description description) {
-      log.info("*** Finished test case: " + getTestName(description)
-          + (errorOccured ? " - with errors" : ""));
+      log.info("*** " + (disabledTestCase ? "Skipped" : "Finished") + " test case: "
+          + getTestName(description) + (errorOccured ? " - with errors" : ""));
 
       // if not an administrator but still admin mode set throw an exception
       if (!OBContext.getOBContext().getUser().getId().equals("0")
@@ -129,8 +156,6 @@ public class OBBaseTest {
     }
 
   };
-
-  private static final Logger log = Logger.getLogger(OBBaseTest.class);
 
   private boolean errorOccured = false;
 
@@ -267,6 +292,7 @@ public class OBBaseTest {
       Logger.getRootLogger().addAppender(testLogAppender);
     }
     staticInitializeDalLayer();
+    initializeDisabledTestCases();
   }
 
   /**
@@ -277,6 +303,7 @@ public class OBBaseTest {
     // clear the session otherwise it keeps the old model
     setTestUserContext();
     errorOccured = false;
+    assumeThat("Disabled test case by configuration ", disabledTestCase, is(false));
   }
 
   /** Test log appender is reset and switched off */
@@ -316,6 +343,26 @@ public class OBBaseTest {
   private static void staticInitializeDalLayer() throws Exception {
     if (!DalLayerInitializer.getInstance().isInitialized()) {
       DalLayerInitializer.getInstance().initialize(true);
+    }
+  }
+
+  private static void initializeDisabledTestCases() {
+    boolean alreadyInitialized = disabledTestCases != null;
+    if (alreadyInitialized) {
+      return;
+    }
+
+    Path disabledTestsConfig = Paths.get(OBConfigFileProvider.getInstance().getFileLocation(),
+        "disabled-tests");
+    if (!Files.exists(disabledTestsConfig)) {
+      disabledTestCases = new ArrayList<>();
+      return;
+    }
+    try {
+      disabledTestCases = Files.readAllLines(disabledTestsConfig);
+    } catch (IOException e) {
+      log.error("Error reading disabled test configuration", e);
+      disabledTestCases = new ArrayList<>();
     }
   }
 
