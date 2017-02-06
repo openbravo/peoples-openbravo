@@ -122,31 +122,38 @@ enyo.kind({
   buttonShowing: function (bp) {
     var criteria = {},
         me = this;
+
+    function successLocations(dataBps) {
+      if (dataBps && dataBps.length > 1) {
+        me.changeStyle(true);
+      } else if (dataBps && dataBps.models && _.isArray(dataBps.models) && dataBps.models[0] && ((dataBps.models[0].get('isBillTo') && !dataBps.models[0].get('isShipTo')) || (!dataBps.models[0].get('isBillTo') && dataBps.models[0].get('isShipTo')))) {
+        me.changeStyle(true);
+      } else {
+        me.changeStyle(false);
+      }
+    }
+
     if (!bp.get('shipLocId') && !bp.get('locId')) {
       me.changeStyle(false);
     } else {
-      criteria.bpartner = bp.get('id');
-      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-        var bPartnerId = {
-          columns: ['bpartner'],
-          operator: 'equals',
-          value: bp.get('id'),
-          isId: true
-        };
-        var remoteCriteria = [bPartnerId];
-        criteria.remoteFilters = remoteCriteria;
-      }
-      OB.Dal.find(OB.Model.BPLocation, criteria, function (dataBps) {
-        if (dataBps && dataBps.length > 1) {
-          me.changeStyle(true);
-        } else if (dataBps && dataBps.models && _.isArray(dataBps.models) && dataBps.models[0] && ((dataBps.models[0].get('isBillTo') && !dataBps.models[0].get('isShipTo')) || (!dataBps.models[0].get('isBillTo') && dataBps.models[0].get('isShipTo')))) {
-          me.changeStyle(true);
-        } else {
-          me.changeStyle(false);
+      if (bp.get('id') === OB.MobileApp.model.get('businesspartner')) {
+        successLocations(OB.MobileApp.model.get('businessPartner').locations);
+      } else {
+        criteria.bpartner = bp.get('id');
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+          var bPartnerId = {
+            columns: ['bpartner'],
+            operator: 'equals',
+            value: bp.get('id'),
+            isId: true
+          };
+          var remoteCriteria = [bPartnerId];
+          criteria.remoteFilters = remoteCriteria;
         }
-      }, function (tx, error) {
-        OB.UTIL.showError("OBDAL error: " + error);
-      });
+        OB.Dal.find(OB.Model.BPLocation, criteria, successLocations, function (tx, error) {
+          OB.UTIL.showError("OBDAL error: " + error);
+        });
+      }
     }
   },
   tap: function () {
