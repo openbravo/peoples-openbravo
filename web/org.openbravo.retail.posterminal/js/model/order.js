@@ -3363,7 +3363,7 @@
     reversePayment: function (payment, sender, reverseCallback) {
       var payments = this.get('payments'),
           me = this,
-          provider, usedPayment;
+          provider, usedPayment, reversalPayment;
 
       function reversePaymentConfirmed() {
         OB.UTIL.HookManager.executeHooks('OBPOS_preReversePayment', {
@@ -3378,57 +3378,56 @@
             return true;
           }
 
-          provider = me.getTotal() > 0 ? OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod.paymentProvider : OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod.refundProvider;
+          reversalPayment = new Backbone.Model();
+          OB.UTIL.clone(payment, reversalPayment);
 
-          if (provider) {
-            OB.MobileApp.view.waterfall('onShowPopup', {
-              popup: 'modalpayment',
-              args: {
-                'receipt': me,
-                'provider': provider,
-                'key': payment.get('key'),
-                'name': payment.get('name'),
-                'paymentMethod': OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod,
-                'amount': OB.DEC.sub(0, payment.get('amount')),
-                'rate': payment.get('rate'),
-                'mulrate': payment.get('mulrate'),
-                'isocode': payment.get('isocode'),
-                'allowOpenDrawer': payment.get('allowOpenDrawer'),
-                'isCash': payment.get('isCash'),
-                'openDrawer': payment.get('openDrawer'),
-                'printtwice': payment.get('printtwice'),
-                'origAmount': OB.DEC.sub(0, payment.get('origAmount')),
-                'paid': OB.DEC.sub(0, payment.get('paid')),
-                'reversedPaymentId': payment.get('paymentId'),
-                'reversedPayment': payment,
-                'index': OB.DEC.add(1, payments.indexOf(payment)),
-                'paymentData': payment.get('paymentData') ? payment.get('paymentData') : null,
-                'reverseCallback': reverseCallback,
-                'isReversePayment': true
+          // Remove the cloned properties that must not be in the payment
+          reversalPayment.unset('date');
+          reversalPayment.unset('isPaid');
+          reversalPayment.unset('isPrePayment');
+          reversalPayment.unset('paymentAmount');
+          reversalPayment.unset('paymentDate');
+          reversalPayment.unset('paymentId');
+
+          // Modify other properties for the reverse payment
+          reversalPayment.set('amount', OB.DEC.sub(0, payment.get('amount')));
+          reversalPayment.set('origAmount', OB.DEC.sub(0, payment.get('origAmount')));
+          reversalPayment.set('paid', OB.DEC.sub(0, payment.get('paid')));
+          reversalPayment.set('reversedPaymentId', payment.get('paymentId'));
+          reversalPayment.set('reversedPayment', payment);
+          reversalPayment.set('index', OB.DEC.add(1, payments.indexOf(payment)));
+          reversalPayment.set('reverseCallback', reverseCallback);
+          reversalPayment.set('isReversePayment', true);
+          reversalPayment.set('paymentData', payment.get('paymentData') ? payment.get('paymentData') : null);
+
+          provider = me.getTotal() > 0 ? OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod.paymentProvider : OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod.refundProvider;
+          OB.UTIL.HookManager.executeHooks('OBPOS_PreAddReversalPayment', {
+            paymentToReverse: payment,
+            reversalPayment: reversalPayment,
+            receipt: me
+          }, function (args) {
+            if (args.cancelOperation) {
+              if (reverseCallback) {
+                reverseCallback();
               }
-            });
-          } else {
-            me.addPayment(new OB.Model.PaymentLine({
-              'kind': payment.get('kind'),
-              'amount': OB.DEC.sub(0, payment.get('amount')),
-              'name': payment.get('name'),
-              'rate': payment.get('rate'),
-              'mulrate': payment.get('mulrate'),
-              'isocode': payment.get('isocode'),
-              'allowOpenDrawer': payment.get('allowOpenDrawer'),
-              'isCash': payment.get('isCash'),
-              'openDrawer': payment.get('openDrawer'),
-              'printtwice': payment.get('printtwice'),
-              'origAmount': OB.DEC.sub(0, payment.get('origAmount')),
-              'paid': OB.DEC.sub(0, payment.get('paid')),
-              'reversedPaymentId': payment.get('paymentId'),
-              'reversedPayment': payment,
-              'index': OB.DEC.add(1, payments.indexOf(payment)),
-              'paymentData': payment.get('paymentData') ? payment.get('paymentData') : null,
-              'reverseCallback': reverseCallback,
-              'isReversePayment': true
-            }));
-          }
+              return true;
+            }
+            if (provider) {
+              // Remove properties from the payment that ar not needed for a payment provider
+              reversalPayment.unset('kind');
+              // Add new properties for the payment provider
+              reversalPayment.set('receipt', me);
+              reversalPayment.set('provider', provider);
+              reversalPayment.set('paymentMethod', OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod);
+
+              OB.MobileApp.view.waterfall('onShowPopup', {
+                popup: 'modalpayment',
+                args: reversalPayment.attibutes
+              });
+            } else {
+              me.addPayment(new OB.Model.PaymentLine(reversalPayment.attributes));
+            }
+          });
         });
       }
 
