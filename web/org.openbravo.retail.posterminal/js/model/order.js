@@ -2384,7 +2384,14 @@
           return;
         }
         OB.Dal.get(OB.Model.Product, lines[index].get('product').id, function (product) {
-          me.addProduct(product, lines[index].get('qty'), undefined, undefined, function (isInPriceList) {
+          var attrs;
+          if (!OB.UTIL.isNullOrUndefined(lines[index].get('splitline'))) {
+            attrs = {
+              splitline: lines[index].get('splitline'),
+              originalLine: lines[index]
+            };
+          }
+          me.addProduct(product, lines[index].get('qty'), undefined, attrs, function (isInPriceList) {
             if (isInPriceList) {
               me.get('lines').at(index).set('promotions', promotionLines[index]);
               me.get('lines').at(index).calculateGross();
