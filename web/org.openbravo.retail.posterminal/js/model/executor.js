@@ -224,6 +224,10 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         discountList: d
       }, function (args) {
         if (args.cancelation !== true) {
+          line.set('promotionCandidates', []);
+          args.discountList.forEach(function (disc) {
+            line.get('promotionCandidates').push(disc.id);
+          });
           args.discountList.forEach(function (disc) {
             actionQueue.add({
               action: me.applyRule,
@@ -267,7 +271,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
           this.nextAction(evt);
         }, this);
       }
-      ds = rule.implementation(disc, receipt, line, ruleListener, promCandidates);
+      ds = rule.implementation(disc, receipt, line, ruleListener, line.get('promotionCandidates'));
       if (ds && ds.alerts) {
         // in the new flow discount, the messages are stored in array, so only will be displayed the first time
         var localArrayMessages = line.get('promotionMessages') || [];
@@ -334,8 +338,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     if (!line.get('originalOrderLineId')) {
       line.set({
         promotions: null,
-        discountedLinePrice: null,
-        promotionCandidates: null
+        discountedLinePrice: null
       });
     }
 
