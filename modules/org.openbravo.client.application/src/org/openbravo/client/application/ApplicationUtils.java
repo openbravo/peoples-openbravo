@@ -48,6 +48,7 @@ import org.openbravo.model.ad.ui.Window;
 public class ApplicationUtils {
 
   private static Logger log = Logger.getLogger(ApplicationUtils.class);
+  private static final String BUTTON_REFERENCE = "28";
 
   static boolean showWindowInClassicMode(Window window) {
     List<String> reasonsToBeShownInClassic = new ArrayList<String>();
@@ -228,6 +229,6 @@ public class ApplicationUtils {
     if (field.getColumn() == null) {
       return false;
     }
-    return "28".equals(field.getColumn().getReference().getId());
+    return BUTTON_REFERENCE.equals(field.getColumn().getReference().getId());
   }
 }
