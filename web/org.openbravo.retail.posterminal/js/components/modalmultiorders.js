@@ -37,6 +37,7 @@ enyo.kind({
         style: 'display: table-cell;',
         components: [{
           kind: 'OB.UI.SmallButton',
+          name: 'clearButton',
           classes: 'btnlink-gray btn-icon-small btn-icon-clear',
           style: 'width: 100px; margin: 0px 5px 8px 19px;',
           ontap: 'clearAction'
@@ -45,6 +46,7 @@ enyo.kind({
         style: 'display: table-cell;',
         components: [{
           kind: 'OB.UI.SmallButton',
+          name: 'searchButton',
           classes: 'btnlink-yellow btn-icon-small btn-icon-search',
           style: 'width: 100px; margin: 0px 0px 8px 5px;',
           ontap: 'searchAction'
@@ -111,6 +113,11 @@ enyo.kind({
       }]
     }]
   }],
+
+  disableFilterButtons: function (value) {
+    this.$.searchButton.setDisabled(value);
+    this.$.clearButton.setDisabled(value);
+  },
 
   searchAction: function () {
     this.filters = {
@@ -218,6 +225,9 @@ enyo.kind({
     this.multiOrdersList.reset();
     return true;
   },
+  disableFilters: function (value) {
+    this.$.multiorderslistitemprinter.$.theader.$.modalMultiOrdersHeader.disableFilterButtons(value);
+  },
   searchAction: function (inSender, inEvent) {
     var me = this,
         toMatch = 0,
@@ -233,6 +243,8 @@ enyo.kind({
       limit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true));
     }
     this.clearAction();
+    // Disable the filters button
+    me.disableFilters(true);
     processHeader.exec({
       filters: me.filters,
       _limit: limit
@@ -267,7 +279,9 @@ enyo.kind({
           me.multiOrdersList.add(iter);
         });
 
+        me.disableFilters(false);
       } else {
+        me.disableFilters(false);
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
       }
     });

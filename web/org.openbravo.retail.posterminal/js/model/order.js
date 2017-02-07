@@ -3876,6 +3876,7 @@
                     indx = line.get('promotions').indexOf(actProm);
                     if (indx > -1) {
                       line.get('promotions').splice(indx, 1);
+                      line.trigger('change');
                     }
                   }
                 }
@@ -3911,6 +3912,7 @@
                   } else {
                     line.get('promotions').push(clonedPromotion);
                   }
+                  line.trigger('change');
                   promoQtyoffer -= clonedPromotion.obdiscQtyoffer;
                   promoAmt += clonedPromotion.amt;
                 } else if (promoQtyoffer < 0) {
@@ -3957,6 +3959,7 @@
                       return promo.discountType === promotion.discountType;
                     }) === undefined) {
                       l.get('promotions').push(promotion);
+                      l.trigger('change');
                       appliedPromotion = true;
                     }
                   }

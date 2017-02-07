@@ -61,7 +61,14 @@ public class ProductProperties extends ModelExtension {
         } catch (PropertyException e) {
           add(new HQLProperty("img.bindaryData", "img"));
         }
-        add(new HQLProperty("pli.bestseller", "bestseller"));
+        add(new HQLProperty("case when product.isGeneric is false then "
+            + "(case when pli.bestseller = 'Y' then true else false end) "
+            + "when (product.isGeneric is true and exists(select 1 "
+            + "from Product p3 left join p3.oBRETCOProlProductList as pli3, "
+            + "PricingProductPrice ppp3 where p3.genericProduct.id = product.id and "
+            + "p3 = ppp3.product and ppp3.priceListVersion.id = :priceListVersionId "
+            + "and pli3.obretcoProductlist.id = :productListId and pli3.bestseller = true)) "
+            + "then true else false end", "bestseller"));
         add(new HQLProperty("'false'", "ispack"));
         add(new HQLProperty("ppp.listPrice", "listPrice"));
         add(new HQLProperty("ppp.standardPrice", "standardPrice"));
