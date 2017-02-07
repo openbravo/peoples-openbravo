@@ -374,11 +374,10 @@ enyo.kind({
         style: 'clear: both;'
       }]
     }, {
-      style: 'float: right;  width: 50px',
+      style: 'float: right; width: 30px; margin-right: 13px;',
       components: [{
         kind: 'OB.UI.BusinessPartnerContextMenu',
-        name: 'btnContextMenu',
-        style: 'padding-right: 5px;'
+        name: 'btnContextMenu'
       }]
     }]
   }],
