@@ -14,11 +14,10 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2015 Openbravo SLU
+* All portions are Copyright (C) 2001-2017 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-
 
 
 
@@ -57,6 +56,10 @@
   v_CalcLine NUMBER;
   v_maxline NUMBER;    
           
+  v_orderlineCount NUMBER;
+  v_prepayment fin_payment_schedule.paidamt%type;
+  v_invoice_qty c_invoiceline.qtyinvoiced%type;
+
   TYPE RECORD IS REF CURSOR;
   Cur_BOM RECORD;          
 BEGIN
@@ -105,6 +108,22 @@ END IF;
    END IF;  
   IF(UPDATING OR DELETING) THEN
   v_oldLine:= COALESCE(:old.LineNetAmt,0);
+if(:old.c_orderline_id is not null or :old.c_orderline_id != '') then
+select count(c_invoiceline.c_invoice_id), coalesce(sum(c_invoiceline.qtyinvoiced),0)
+into v_orderlineCount, v_invoice_qty
+from c_invoiceline where c_invoice_id = :old.c_invoice_id and c_orderline_id in
+(select c_orderline_id from c_orderline where c_order_id=(select c_order_id from c_orderline
+where c_orderline_id=:old.c_orderline_id));
+
+if ((v_orderlineCount=0 and v_invoice_qty=0) or (v_orderlineCount>0 and v_invoice_qty=0)) then
+select coalesce(sum(fps.paidamt),0) into v_prepayment from fin_payment_schedule fps
+join c_order ord on ord.c_order_id=fps.c_order_id
+join c_orderline ordline on ordline.c_order_id = ord.c_order_id
+where ordline.c_orderline_id =:old.c_orderline_id;
+
+update c_invoice set prepaymentamt=(prepaymentamt-v_prepayment) where c_invoice_id=:old.c_invoice_id;
+    END IF;
+    END IF;
   END IF;  
   IF (INSERTING OR UPDATING) THEN
    v_newLineNetAmt := COALESCE(:new.LineNetAmt,0);
