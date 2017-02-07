@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2016 Openbravo S.L.U.
+ * Copyright (C) 2013-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -3589,6 +3589,7 @@
                     indx = line.get('promotions').indexOf(actProm);
                     if (indx > -1) {
                       line.get('promotions').splice(indx, 1);
+                      line.trigger('change');
                     }
                   }
                 }
@@ -3624,6 +3625,7 @@
                   } else {
                     line.get('promotions').push(clonedPromotion);
                   }
+                  line.trigger('change');
                   promoQtyoffer -= clonedPromotion.obdiscQtyoffer;
                   promoAmt += clonedPromotion.amt;
                 } else if (promoQtyoffer < 0) {
@@ -3670,6 +3672,7 @@
                       return promo.discountType === promotion.discountType;
                     }) === undefined) {
                       l.get('promotions').push(promotion);
+                      l.trigger('change');
                       appliedPromotion = true;
                     }
                   }
