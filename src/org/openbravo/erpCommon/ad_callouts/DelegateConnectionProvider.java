@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,6 +49,9 @@ public class DelegateConnectionProvider implements ConnectionProvider {
 
   public void init(CalloutServletConfig config) {
     context = config.getServletContext();
+    if (myPool == null) {
+      myPool = ConnectionProviderContextListener.getPool(context);
+    }
   }
 
   private ConnectionProvider getPool() {
