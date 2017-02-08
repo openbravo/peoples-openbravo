@@ -140,6 +140,16 @@ enyo.kind({
       }
     }
   },
+  executeOnShow: function () {
+    var bp = this.model.get('bp');
+    if (bp.get('locId') === bp.get('shipLocId')) {
+      this.$.bodyContent.$.attributes.$.line_addressshipbutton.hide();
+      this.$.bodyContent.$.attributes.$.line_addressbillbutton.$.labelLine.setContent(OB.I18N.getLabel('OBPOS_LblAddress'));
+    } else {
+      this.$.bodyContent.$.attributes.$.line_addressshipbutton.show();
+      this.$.bodyContent.$.attributes.$.line_addressbillbutton.$.labelLine.setContent(OB.I18N.getLabel('OBPOS_LblBillAddr'));
+    }
+  },
   init: function (model) {
     var me = this,
         criteria = {};
@@ -148,35 +158,11 @@ enyo.kind({
     this.model = model.get('order');
     this.model.on('change', function () {
       var diff = this.model.changedAttributes(),
-          att, bp = this.model.get('bp');
+          att;
       for (att in diff) {
         if (diff.hasOwnProperty(att)) {
           this.loadValue(att);
         }
-      }
-      if (!_.isNull(bp) && diff.bp) {
-        criteria.bpartner = bp.get('id');
-        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-          var bPartnerId = {
-            columns: ['bpartner'],
-            operator: 'equals',
-            value: bp.get('id'),
-            isId: true
-          };
-          var remoteCriteria = [bPartnerId];
-          criteria.remoteFilters = remoteCriteria;
-        }
-        OB.Dal.find(OB.Model.BPLocation, criteria, function (dataBps) {
-          if (dataBps && dataBps.length === 1 && !_.isUndefined(me.$.bodyContent) && (dataBps.models[0].get('isBillTo') && dataBps.models[0].get('isShipTo'))) {
-            me.$.bodyContent.$.attributes.$.line_addressshipbutton.hide();
-            me.$.bodyContent.$.attributes.$.line_addressbillbutton.$.labelLine.setContent(OB.I18N.getLabel('OBPOS_LblAddress'));
-          } else if (!_.isUndefined(me.$.bodyContent)) {
-            me.$.bodyContent.$.attributes.$.line_addressshipbutton.show();
-            me.$.bodyContent.$.attributes.$.line_addressbillbutton.$.labelLine.setContent(OB.I18N.getLabel('OBPOS_LblBillAddr'));
-          }
-        }, function (tx, error) {
-          OB.UTIL.showError("OBDAL error: " + error);
-        });
       }
     }, this);
 

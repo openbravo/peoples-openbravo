@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -22,9 +22,11 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
+import org.openbravo.modulescript.ModuleScriptExecutionLimits;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 public class FixWrongPaymentScheduled extends ModuleScript {
-
+  private static final String RETAIL_PACK_MODULE_ID = "03FAB282A7BF47D3B1B242AC67F7845B";
   @Override
   // Inserting m_inoutline_id for invoicelines which have this field as null
   public void execute() {
@@ -37,5 +39,19 @@ public class FixWrongPaymentScheduled extends ModuleScript {
       System.out.println("error");
       handleError(e);
     }
+  }
+  
+  
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    // The module script needs to be executed only when updating from a version
+    // lower than RMP27.4 (Retail pack)(1.7.1150)
+    return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
+        new OpenbravoVersion(1, 7, 1150));
+  }
+  
+  @Override
+  protected boolean executeOnInstall() {
+    return false;
   }
 }

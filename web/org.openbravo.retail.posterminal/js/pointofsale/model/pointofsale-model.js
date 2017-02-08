@@ -101,6 +101,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         ordersNotPaid: ordersNotPaid,
         model: model
       }, function (args) {
+        OB.MobileApp.model.trigger('window:ready');
         if (!args.ordersNotPaid || args.ordersNotPaid.length === 0) {
           // If there are no pending orders,
           //  add an initial empty order
@@ -120,6 +121,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     }, function () { //OB.Dal.find error
       // If there is an error fetching the pending orders,
       // add an initial empty order
+      OB.MobileApp.model.trigger('window:ready');
       orderlist.addFirstOrder();
     });
   },
@@ -530,11 +532,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       var ordersLength = this.get('multiOrders').get('multiOrdersList').length;
 
       function readyToSendFunction() {
-        //this function is executed when all orders are ready to be sent
+        // this function is executed when all orders are processed
         me.get('leftColumnViewManager').setOrderMode();
-        if (me.get('orderList').length === _.filter(me.get('multiOrders').get('multiOrdersList').models, function (order) {
-          return !order.get('isLayaway');
-        }).length) {
+        if (me.get('orderList').length === 0) {
           me.get('orderList').addNewOrder();
         }
       }
@@ -563,6 +563,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }
         }
         //me.get('multiOrders').trigger('closed', order);
+        order.set('orderDate', new Date());
         if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
           enyo.$.scrim.hide();
           me.get('multiOrders').trigger('print', order, {
@@ -583,12 +584,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 receiptMulti.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
                 receiptMulti.set('json', JSON.stringify(receipt.serializeToJSON()));
                 OB.Dal.save(receiptMulti, function () {
-                  me.get('multiOrders').trigger('closed', receiptMulti);
-                  readyToSendFunction();
+                  me.get('multiOrders').trigger('closed', receiptMulti, function () {});
                   setMultiOrderCashUpReport(receiptList, cashUp, index + 1, callback);
                 }, function () {});
               };
-              setMultiOrderCashUpReport(me.get('multiOrders').get('multiOrdersList').models, cashUp, 0, function () {});
+              setMultiOrderCashUpReport(me.get('multiOrders').get('multiOrdersList').models, cashUp, 0, function () {
+                // Called readyToSendFunction when all pending ticket have been processed
+                readyToSendFunction();
+              });
             });
             auxReceiptList = [];
           }
@@ -936,36 +939,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             successCallbackBPLoc;
 
         if (dataBps) {
-          successCallbackBPLoc = function (bpLoc) {
-            if (bpLoc.get('isBillTo')) {
-              dataBps.set('locId', bpLoc.get('id'));
-              dataBps.set('locName', bpLoc.get('name'));
-            } else {
-              dataBps.set('locId', null);
-              dataBps.set('locName', null);
-            }
-            if (bpLoc.get('isShipTo')) {
-              dataBps.set('shipLocId', bpLoc.get('id'));
-              dataBps.set('shipLocName', bpLoc.get('name'));
-              dataBps.set('shipRegionId', bpLoc.get('regionId'));
-              dataBps.set('shipCountryId', bpLoc.get('countryId'));
-            } else {
-              dataBps.set('shipLocId', null);
-              dataBps.set('shipLocName', null);
-              dataBps.set('shipRegionId', null);
-              dataBps.set('shipCountryId', null);
-            }
-            dataBps.set('cityName', bpLoc.get('cityName'));
-            dataBps.set('countryName', bpLoc.get('countryName'));
-            dataBps.set('postalCode', bpLoc.get('postalCode'));
-            dataBps.set('locationModel', bpLoc);
+          dataBps.loadBPLocations(null, null, function (shipping, billing, locations) {
+            dataBps.setBPLocations(shipping, billing, true);
+            dataBps.set('locations', locations);
             OB.MobileApp.model.set('businessPartner', dataBps);
             OB.Dal.save(dataBps, function () {}, function () {
               OB.error(arguments);
             });
             me.loadUnpaidOrders(callback);
-          };
-          OB.Dal.get(OB.Model.BPLocation, partnerAddressId, successCallbackBPLoc, errorCallback, errorCallback);
+          });
         }
       }
       OB.Dal.get(OB.Model.BusinessPartner, OB.MobileApp.model.get('businesspartner'), successCallbackBPs, errorCallback, errorCallback);

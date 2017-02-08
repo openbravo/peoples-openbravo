@@ -587,7 +587,6 @@
         });
 
         // Finally, taxes will be computed for each group. 
-        receipt.set('taxes', {});
         _.forEach(taxGroups, function (taxGroup) {
           var totalGross = taxGroup.totalGross;
           var totalNet = taxGroup.totalNet;
@@ -1011,5 +1010,9 @@
         OB.UTIL.SynchronizationHelper.finished(synchId, 'taxescalculation');
       });
     };
+  };
+
+  OB.DATA.OrderFindTaxes = function (receipt, line, taxCategory) {
+    return findTaxesCollection(receipt, line, taxCategory);
   };
 }());

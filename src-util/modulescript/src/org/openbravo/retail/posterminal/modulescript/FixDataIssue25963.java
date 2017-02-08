@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.apache.log4j.Logger;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.modulescript.ModuleScript;
+import org.openbravo.modulescript.ModuleScriptExecutionLimits;
 import org.openbravo.modulescript.OpenbravoVersion;
 
 /**
@@ -32,25 +33,31 @@ import org.openbravo.modulescript.OpenbravoVersion;
 public class FixDataIssue25963 extends ModuleScript {
 
   private static final Logger log4j = Logger.getLogger(FixDataIssue25963.class);
-
+  private static final String RETAIL_PACK_MODULE_ID = "03FAB282A7BF47D3B1B242AC67F7845B";
+  
   @Override
   public void execute() {
 
     try {
       ConnectionProvider cp = getConnectionProvider();
-
-      String exists = FixDataIssue25963Data.selectExistsPreference(cp);
-      // if preference not exists then preference "Fix 25963 executed" is inserted
-      if (exists.equals("0")) {
-        int count = FixDataIssue25963Data.fix(cp);
-        log4j.debug("Updated " + count + " OBPOS_retail.opendrawerfrommenu preferences");  
-        FixDataIssue25963Data.insertPreference(cp);
-      } else {
-        log4j.debug("Fix 25963 no needed.");
-      }
+      int count = FixDataIssue25963Data.fix(cp);
+      log4j.debug("Updated " + count + " OBPOS_retail.opendrawerfrommenu preferences");  
     } catch (Exception e) {
       handleError(e);
     }
+  }
+  
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    // The module script needs to be executed only when updating from a version
+    // lower than 3.0RR14Q3 (Retail pack)(1.8.601)
+    return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
+        new OpenbravoVersion(1, 8, 601));
+  }
+  
+  @Override
+  protected boolean executeOnInstall() {
+    return false;
   }
 
   public static void main(String[] args) {
