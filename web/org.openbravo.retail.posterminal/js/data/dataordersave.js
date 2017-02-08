@@ -400,6 +400,9 @@
           if (args && args.cancellation && args.cancellation === true) {
             args.context.receipt.set('isbeingprocessed', 'N');
             OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
+            if (callback instanceof Function) {
+              callback();
+            }
             return true;
           }
 
@@ -471,11 +474,10 @@
                 OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
               }
 
+              if (callback instanceof Function) {
+                callback();
+              }
             }, null);
-
-            if (callback instanceof Function) {
-              callback();
-            }
           }, function () {
             // We do nothing:
             //      we don't need to alert the user, as the order is still present in the database, so it will be resent as soon as the user logs in again
