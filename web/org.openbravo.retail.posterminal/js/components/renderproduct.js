@@ -33,7 +33,7 @@ enyo.kind({
         style: 'max-width: 100%;',
         classes: 'standardFlexContainer',
         components: [{
-          style: 'vertical-align: top;  width: 50px; ',
+          style: 'vertical-align: top; width: 50px; ',
           components: [{
             tag: 'div',
             classes: 'flex-image-wrap',
@@ -52,20 +52,31 @@ enyo.kind({
         cssClass: 'flex-image-wrap'
       }]
     }, {
-      classes: 'standardFlexContainer flexColumn flexAllWidth',
+      classes: 'flexAllWidth',
       components: [{
-        name: 'identifierContainer',
-        classes: 'standardFlexContainer flexColumn',
+        classes: 'standardFlexContainer',
         components: [{
-          name: 'identifier',
-          classes: 'productIdentifier'
+          name: 'identifierContainer',
+          classes: 'standardFlexContainer flexColumn',
+          components: [{
+            name: 'identifier',
+            classes: 'productIdentifier'
+          }, {
+            style: 'color: #888888',
+            name: 'filterAttr',
+            allowHtml: true
+          }]
         }, {
-          style: 'color: #888888',
-          name: 'filterAttr',
-          allowHtml: true
+          classes: 'standardFlexContainer flexColumn',
+          style: 'width: 38px;',
+          components: [{
+            kind: 'OB.UI.ProductContextMenu',
+            name: 'btnProductContextMenu'
+          }]
         }]
       }, {
         classes: 'standardFlexContainer flexwrap flexend',
+        style: 'padding-right: 6px',
         components: [{
           name: 'icons',
           minWidth: 0,
@@ -87,26 +98,18 @@ enyo.kind({
             }, {
               name: 'priceList',
               style: 'text-align: right; font-weight: bold; color: grey;'
-            }, {
-              style: 'width: 100%;',
-              components: [{
-                kind: 'OB.UI.ProductContextMenu',
-                name: 'btnProductContextMenu'
-              }]
             }]
           }]
         }, {
           style: 'clear:both;'
         }, {
           name: 'generic',
-          // style: 'text-align: right; font-style: italic; color: grey; font-weight: bold;',
           style: 'float: right; width: 20%; text-align: right; font-style: italic; color: grey; padding: 15px; font-weight: bold;',
           showing: false
         }, {
           style: 'clear:both;'
         }, {
-          //style: 'color: #888888; text-align: left; font-style: italic; color: grey; font-size: 13px; padding-top: 10px;',
-          style: 'color: #888888; float: left; width: 100%; text-align: left; font-style: italic; color: grey; font-size: 13px; padding-top: 10px;',
+          style: 'color: #888888; text-align: left; font-style: italic; color: grey; font-size: 13px; padding-top: 10px; padding-right: 6px',
           name: 'bottonLine'
         }]
       }]
@@ -186,8 +189,10 @@ enyo.kind({
     // Context menu
     if (this.model.get('productType') !== 'I' || this.$.btnProductContextMenu.$.menu.itemsCount === 0) {
       this.$.btnProductContextMenu.hide();
+      this.$.identifierContainer.setStyle("");
     } else {
       this.$.btnProductContextMenu.setProduct(this.model);
+      this.$.identifierContainer.setStyle("width: calc(100% - 38px)");
       if (this.model.get('showchdesc') && !this.model.get('characteristicDescription')) {
         this.setStyle('padding: 8px 10px 0px 10px');
       }

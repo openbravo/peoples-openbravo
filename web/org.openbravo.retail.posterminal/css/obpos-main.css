@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2016 Openbravo S.L.U.
+ * Copyright (C) 2013-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -662,15 +662,17 @@ button.btnbp:disabled {
   }
 }
 .productLine {
-  padding: 6px !important;
+  padding: 0px 0px 6px 6px !important;
 }
 
 .productLine .productImgContainer {
   margin: 0px 8px 0px 0px;
+  padding-top: 6px;
 }
 
 .productLine .productIdentifier {
   overflow: hidden;
+  padding-top: 6px;
   display: -webkit-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
