@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -38,11 +38,13 @@ enyo.kind({
     if (OB.MobileApp.model.get('terminal').defaultbp_paymentmethod !== null && OB.MobileApp.model.get('terminal').defaultbp_bpcategory !== null && OB.MobileApp.model.get('terminal').defaultbp_paymentterm !== null && OB.MobileApp.model.get('terminal').defaultbp_invoiceterm !== null && OB.MobileApp.model.get('terminal').defaultbp_bpcountry !== null && OB.MobileApp.model.get('terminal').defaultbp_bporg !== null) {
       // Hide components depending on its displayLogic function
       _.each(this.$.body.$.edit_createcustomers_impl.$.customerAttributes.$, function (attribute) {
-        _.each(attribute.$.newAttribute.$, function (attrObject) {
-          if (attrObject.displayLogic && !attrObject.displayLogic()) {
-            this.hide();
-          }
-        }, attribute);
+        if (attribute.name !== 'strategy') {
+          _.each(attribute.$.newAttribute.$, function (attrObject) {
+            if (attrObject.displayLogic && !attrObject.displayLogic()) {
+              this.hide();
+            }
+          }, attribute);
+        }
       });
 
       //hide address fields while editing customers
