@@ -99,7 +99,7 @@ public class CategoryTree extends ProcessHQLQuery {
               + "from ADTreeNode tn, OBRETCO_Productcategory pc "
               + "where tn.$incrementalUpdateCriteria and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
               + " and tn.node = pc.productCategory.id and tn.tree.table.id = :productCategoryTableId  "
-              + " order by tn.sequenceNumber");
+              + " order by tn.sequenceNumber, tn.id");
       hqlQueries
           .add("select"
               + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
@@ -108,7 +108,7 @@ public class CategoryTree extends ProcessHQLQuery {
               + " and tn.node = pc.id and tn.tree.table.id = :productCategoryTableId "
               + " and pc.summaryLevel = 'Y'"
               + " and not exists (select obpc.id from OBRETCO_Productcategory obpc where tn.node = obpc.productCategory.id)"
-              + " order by tn.sequenceNumber");
+              + " order by tn.sequenceNumber, tn.id");
     } else {
       hqlQueries
           .add("select"
@@ -116,7 +116,7 @@ public class CategoryTree extends ProcessHQLQuery {
               + "from ADTreeNode tn, ProductCategory pc "
               + "where tn.$incrementalUpdateCriteria and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
               + " and tn.node = pc.id and tn.tree.table.id = :productCategoryTableId "
-              + "order by tn.sequenceNumber");
+              + "order by tn.sequenceNumber, tn.id");
     }
     // Discounts marked as category
     hqlQueries.add("select pt.id as id, pt.id as categoryId, '0' as parentId, 999999999 as seqNo "

@@ -138,7 +138,7 @@ public class Brand extends ProcessHQLQuery {
               + " and p.id= assort.product.id "
               + " and assort.obretcoProductlist.id= :productListId)"
               + " AND $filtersCriteria AND $hqlCriteria and  $naturalOrgCriteria and $incrementalUpdateCriteria and brand.active = true "
-              + "order by brand.name");
+              + "order by brand.name, brand.id");
     } else {
       hqlQueries
           .add("select"
@@ -147,7 +147,7 @@ public class Brand extends ProcessHQLQuery {
               + "where exists (select 1 from OBRETCO_Prol_Product assort where obretcoProductlist.id= :productListId "
               + "and assort.product = product) "
               + "and $naturalOrgCriteria and $incrementalUpdateCriteria and product.active = true "
-              + "order by product.brand.name");
+              + "order by product.brand.name, product.brand.id");
     }
 
     return hqlQueries;

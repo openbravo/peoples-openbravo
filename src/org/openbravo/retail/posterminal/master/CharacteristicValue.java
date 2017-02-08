@@ -88,7 +88,7 @@ public class CharacteristicValue extends ProcessHQLQuery {
             + "and cv.characteristic.obposUseonwebpos = true  and "
             + assortmentFilter
             + " cv.$naturalOrgCriteria and cv.$readableSimpleClientCriteria and (cv.$incrementalUpdateCriteria) "
-            + "order by cv.name");
+            + "order by cv.name, cv.id");
     return hqlQueries;
   }
 }
