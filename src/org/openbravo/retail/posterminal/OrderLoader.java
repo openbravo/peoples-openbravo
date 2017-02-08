@@ -366,7 +366,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           if (jsonorder.has("oBPOSNotInvoiceOnCashUp")) {
             order.setOBPOSNotInvoiceOnCashUp(jsonorder.getBoolean("oBPOSNotInvoiceOnCashUp"));
           }
-          String olsHqlWhereClause = " ol where ol.salesOrder.id = :orderId order by lineNo";
+          String olsHqlWhereClause = " ol where ol.salesOrder.id = :orderId and ol.obposIsDeleted = false order by lineNo";
           OBQuery<OrderLine> queryOls = OBDal.getInstance().createQuery(OrderLine.class,
               olsHqlWhereClause);
           queryOls.setNamedParameter("orderId", order.getId());
