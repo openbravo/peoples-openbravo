@@ -33,6 +33,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.exception.NoConnectionAvailableException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A connection provider which is created on the basis of the current connection of the DAL (see
@@ -51,7 +53,7 @@ import org.openbravo.exception.NoConnectionAvailableException;
  * @author mtaal
  */
 public class DalConnectionProvider implements ConnectionProvider {
-
+  private static final Logger log = LoggerFactory.getLogger(DalConnectionProvider.class);
   private Connection connection;
   private Properties properties;
   // This parameter can be used to define whether the OBDal needs to be flushed when the connection
@@ -87,8 +89,12 @@ public class DalConnectionProvider implements ConnectionProvider {
   }
 
   public Connection getConnection() throws NoConnectionAvailableException {
-    if (connection == null) {
-      connection = OBDal.getInstance(pool).getConnection(flush);
+    try {
+      if (connection == null || connection.isClosed()) {
+        connection = OBDal.getInstance(pool).getConnection(flush);
+      }
+    } catch (SQLException sqlex) {
+      log.error("Error checking connection of {} pool", pool, sqlex);
     }
 
     // always flush all remaining actions
