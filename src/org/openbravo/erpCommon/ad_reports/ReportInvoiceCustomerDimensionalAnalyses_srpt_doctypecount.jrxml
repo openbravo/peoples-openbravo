@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
+<!-- 2016-09-29T20:08:23 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportInvoiceCustomerDimensionalAnalyses_srpt_doctypecount" pageWidth="400" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="400" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Error" uuid="dcc54a6a-4fa7-4363-918c-1e721f63d8f0">
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="si" />
+    <style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#5D5D5D" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="9" isBold="true" />
+    <style name="Detail_Line" fontName="Bitstream Vera Sans" fontSize="8" isBold="true">
+        <conditionalStyle>
+            <conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==1)]]></conditionExpression>
+            <style mode="Opaque" backcolor="#CCCCCC" />
+        </conditionalStyle>
+    </style>
+    <parameter name="USER_CLIENT" class="java.lang.String" />
+    <parameter name="C_CURRENCY_ID" class="java.lang.String" />
+    <parameter name="AD_ORG_ID" class="java.lang.String" />
+    <parameter name="DATEFROM" class="java.lang.String" />
+    <parameter name="DATETO" class="java.lang.String" />
+    <parameter name="C_BP_GROUP_ID" class="java.lang.String" />
+    <parameter name="C_BPARTNER_ID" class="java.lang.String" />
+    <parameter name="M_PRODUCT_CATEGORY_ID" class="java.lang.String" />
+    <parameter name="M_PRODUCT_ID" class="java.lang.String" />
+    <parameter name="SALESREP_ID" class="java.lang.String" />
+    <parameter name="PARTNER_SALESREP_ID" class="java.lang.String" />
+    <parameter name="C_PROJECT_ID" class="java.lang.String" />
+    <parameter name="PRODUCTTYPE" class="java.lang.String" />
+    <parameter name="C_DOCTYPE_ID" class="java.lang.String" />
+    <parameter name="DOCSTATUS" class="java.lang.String" />
+    <queryString language="SQL"><![CDATA[SELECT DOCTYPE, COUNT(*) AS DOCTYPECOUNT 
+        FROM (
+          SELECT DISTINCT DAO.NAME||'-'||C_DOCTYPE.NAME AS DOCTYPE,
+          C_INVOICE.DOCUMENTNO AS DOCUMENTNO
+            FROM C_INVOICELINE 
+                join C_INVOICE on C_INVOICE.C_INVOICE_ID = C_INVOICELINE.C_INVOICE_ID
+                join C_BPARTNER on C_INVOICE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+                join C_BP_GROUP on C_BPARTNER.C_BP_GROUP_ID = C_BP_GROUP.C_BP_GROUP_ID
+                join AD_ORG on C_INVOICE.AD_ORG_ID = AD_ORG.AD_ORG_ID
+                left join C_BPARTNER CB on C_BPARTNER.SALESREP_ID = CB.C_BPARTNER_ID
+                left join AD_USER on C_INVOICE.SALESREP_ID = AD_USER.AD_USER_ID
+                left join C_PROJECT on C_INVOICE.C_PROJECT_ID = C_PROJECT.C_PROJECT_ID
+                left join C_DOCTYPE on C_INVOICE.C_DOCTYPE_ID=C_DOCTYPE.C_DOCTYPE_ID
+                join AD_ORG DAO ON C_DOCTYPE.AD_ORG_ID = DAO.AD_ORG_ID
+                left join M_PRODUCT on C_INVOICELINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
+                left join C_UOM on C_INVOICELINE.C_UOM_ID = C_UOM.C_UOM_ID
+                left join M_PRODUCT_CATEGORY on M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID
+          WHERE C_INVOICE.ISSOTRX = 'Y'
+            AND C_INVOICE.PROCESSED = 'Y' 
+            AND 1=1 
+            AND C_INVOICE.DATEINVOICED >= (CASE WHEN ($P{DATEFROM} IS NULL OR $P{DATEFROM}='') THEN TO_DATE('01-01-0001')
+                                                ELSE TO_DATE($P{DATEFROM}) END) 
+            AND C_INVOICE.DATEINVOICED < (CASE WHEN ($P{DATETO} IS NULL OR $P{DATETO}='') THEN TO_DATE('09-09-9999')
+                                           ELSE TO_DATE($P{DATETO}) END) 
+          $P!{USER_CLIENT} 
+          $P!{AD_ORG_ID}  
+        $P!{C_BP_GROUP_ID} 
+        $P!{C_BPARTNER_ID} 
+        $P!{M_PRODUCT_CATEGORY_ID} 
+        $P!{M_PRODUCT_ID} 
+        $P!{SALESREP_ID} 
+        $P!{PARTNER_SALESREP_ID} 
+        $P!{C_PROJECT_ID} 
+        $P!{PRODUCTTYPE} 
+        $P!{C_DOCTYPE_ID} 
+        $P!{DOCSTATUS}
+     AND 1=1) AA 
+          GROUP BY DOCTYPE
+          ORDER BY DOCTYPE]]></queryString>
+    <field name="doctypecount" class="java.lang.String" />
+    <field name="doctype" class="java.lang.String" />
+    <background>
+        <band splitType="Stretch" />
+    </background>
+    <columnHeader>
+        <band height="13">
+            <property name="local_mesure_unitheight" value="pixel" />
+            <property name="com.jaspersoft.studio.unit.height" value="px" />
+            <staticText>
+                <reportElement style="Detail_Header" x="0" y="0" width="350" height="13" uuid="27582591-131e-420e-863d-caee79d44078">
+                    <property name="local_mesure_unitheight" value="pixel" />
+                    <property name="com.jaspersoft.studio.unit.height" value="px" />
+                </reportElement>
+                <box leftPadding="2">
+                    <topPen lineWidth="1.0" />
+                    <leftPen lineWidth="1.0" />
+                    <bottomPen lineWidth="1.0" />
+                    <rightPen lineWidth="1.0" />
+                </box>
+                <textElement>
+                    <font size="8" />
+                </textElement>
+                <text><![CDATA[Document Type]]></text>
+            </staticText>
+            <staticText>
+                <reportElement style="Detail_Header" x="350" y="0" width="50" height="13" uuid="ab814f9f-ece4-4e62-b5a4-5d9bfda937a9">
+                    <property name="local_mesure_unitheight" value="pixel" />
+                    <property name="com.jaspersoft.studio.unit.height" value="px" />
+                </reportElement>
+                <box leftPadding="2">
+                    <topPen lineWidth="1.0" />
+                    <leftPen lineWidth="0.0" />
+                    <bottomPen lineWidth="1.0" />
+                    <rightPen lineWidth="1.0" />
+                </box>
+                <textElement>
+                    <font size="8" />
+                </textElement>
+                <text><![CDATA[Count]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="15">
+            <property name="local_mesure_unitheight" value="pixel" />
+            <property name="com.jaspersoft.studio.unit.height" value="px" />
+            <textField>
+                <reportElement style="Detail_Line" x="350" y="1" width="50" height="13" uuid="5ce07a41-f1e9-4199-99b0-de0cf018e31c">
+                    <property name="local_mesure_unitheight" value="pixel" />
+                    <property name="com.jaspersoft.studio.unit.height" value="px" />
+                </reportElement>
+                <box leftPadding="2">
+                    <bottomPen lineWidth="0.0" />
+                    <rightPen lineWidth="0.0" />
+                </box>
+                <textElement textAlignment="Left">
+                    <font size="8" />
+                </textElement>
+                <textFieldExpression><![CDATA[$F{doctypecount}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement style="Detail_Line" x="0" y="0" width="350" height="14" uuid="d4593cb6-8fa6-4f11-a6e1-d62b345662af">
+                    <property name="local_mesure_unitheight" value="pixel" />
+                    <property name="com.jaspersoft.studio.unit.height" value="px" />
+                    <property name="local_mesure_unitx" value="pixel" />
+                    <property name="com.jaspersoft.studio.unit.x" value="px" />
+                </reportElement>
+                <box leftPadding="2">
+                    <leftPen lineWidth="0.0" />
+                    <bottomPen lineWidth="0.0" />
+                    <rightPen lineWidth="0.0" />
+                </box>
+                <textElement textAlignment="Left">
+                    <font size="8" />
+                </textElement>
+                <textFieldExpression><![CDATA[$F{doctype}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+</jasperReport>

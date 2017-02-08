@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,6 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.IsPositiveIntFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.costing.CostingBackground;
@@ -60,6 +61,8 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+
+  final int ORGNAMEMAXLENGTH = 200;
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -921,8 +924,11 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
         }
       }
       // Passing secondary filters Organization tree and businees partner group and product group
-      String strOrgName = getOrgName(vars,
-          Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
+      final OrgTree tree = (OrgTree) vars.getSessionObject("#CompleteOrgTree");
+      String strOrgName = tree.toStringNames();
+      if (strOrgName.length() > ORGNAMEMAXLENGTH) {
+        strOrgName = strOrgName.substring(0, ORGNAMEMAXLENGTH) + "...";
+      }
       String strPartnerGroupName = ReportInvoiceCustomerDimensionalAnalysesJRData.selectBpgroup(
           this, strPartnerGroup);
       String strProductGroupName = ReportInvoiceCustomerDimensionalAnalysesJRData
@@ -958,9 +964,9 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
               try {
                 jasperReportLines = ReportingUtils
                     .compileReport(strBaseDesign
-                        + "/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalyses_srpt.jrxml");
+                        + "/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalyses_srpt_doctypecount.jrxml");
               } catch (JRException e) {
-                e.printStackTrace();
+                log4j.error("Error compiling report ", e);
                 throw new ServletException(e.getMessage());
               }
 
@@ -1022,9 +1028,9 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
             try {
               jasperReportLines = ReportingUtils
                   .compileReport(strBaseDesign
-                      + "/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalyses_srpt.jrxml");
+                      + "/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalyses_srpt_doctypecount.jrxml");
             } catch (JRException e) {
-              e.printStackTrace();
+              log4j.error("Error compiling report ", e);
               throw new ServletException(e.getMessage());
             }
 
@@ -1085,26 +1091,6 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       transactionCostDateacctInitialized = false;
     }
     return transactionCostDateacctInitialized;
-  }
-
-  private String getOrgName(VariablesSecureApp vars, String strTreeId) throws IOException,
-      ServletException {
-
-    ReportInvoiceCustomerDimensionalAnalysesJRData[] data = ReportInvoiceCustomerDimensionalAnalysesJRData
-        .selectTreeOrgs(this, strTreeId);
-
-    boolean bolFirstLine = true;
-    String strText = "";
-    for (int i = 0; i < data.length; i++) {
-      data[i].name = data[i].name;
-      if (bolFirstLine) {
-        bolFirstLine = false;
-        strText = data[i].name;
-      } else {
-        strText = data[i].name + "," + strText;
-      }
-    }
-    return strText;
   }
 
   public String getServletInfo() {

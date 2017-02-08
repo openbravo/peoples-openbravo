@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2008-2011 Openbravo S.L.U.
+ * Copyright (C) 2008-2017 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -207,6 +207,20 @@ public class OrgTree implements Serializable {
     for (int i = 0; i < nodes.size(); i++) {
       if (nodes.get(i) != null)
         s += "'" + nodes.get(i).getId() + "'" + ((i < nodes.size() - 1) ? "," : "");
+    }
+    return s;
+  }
+
+  /**
+   * Converts the tree into a String of names. Names comma separated.
+   */
+  public String toStringNames() {
+    String s = "";
+    if (nodes == null)
+      return "";
+    for (int i = 0; i < nodes.size(); i++) {
+      if (nodes.get(i) != null)
+        s += "'" + nodes.get(i).getValue() + "'" + ((i < nodes.size() - 1) ? "," : "");
     }
     return s;
   }
