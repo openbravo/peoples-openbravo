@@ -439,15 +439,17 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           BigDecimal pendingQtyToDeliver = BigDecimal.ZERO;
           for (int i = 0; i < order.getOrderLineList().size(); i++) {
             OrderLine ol = order.getOrderLineList().get(i);
-            BigDecimal pendingLineQty = ol.getDeliveredQuantity();
-            if (pendingLineQty != null) {
-              pendingLineQty = pendingLineQty.abs();
-              if (orderlines.getJSONObject(i).has("deliveredQuantity")
-                  && orderlines.getJSONObject(i).get("deliveredQuantity") != JSONObject.NULL) {
-                pendingLineQty = pendingLineQty.subtract(new BigDecimal(orderlines.getJSONObject(i)
-                    .getLong("deliveredQuantity")));
+            if (!ol.isObposIsDeleted()) {
+              BigDecimal pendingLineQty = ol.getDeliveredQuantity();
+              if (pendingLineQty != null) {
+                pendingLineQty = pendingLineQty.abs();
+                if (orderlines.getJSONObject(i).has("deliveredQuantity")
+                    && orderlines.getJSONObject(i).get("deliveredQuantity") != JSONObject.NULL) {
+                  pendingLineQty = pendingLineQty.subtract(new BigDecimal(orderlines.getJSONObject(
+                      i).getLong("deliveredQuantity")));
+                }
+                pendingQtyToDeliver = pendingQtyToDeliver.add(pendingLineQty);
               }
-              pendingQtyToDeliver = pendingQtyToDeliver.add(pendingLineQty);
             }
           }
 
