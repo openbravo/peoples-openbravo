@@ -69,6 +69,7 @@ import org.openbravo.model.ad.ui.ProcessTrl;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.WindowTrl;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.web.UserContextCache;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -221,6 +222,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       if (AuthenticationManager.isStatelessRequest(request)) {
         if (areThereLicenseRestrictions(null)) {
           throw new AuthenticationException("No valid license");
+        }
+        // make sure that there is an OBContext for the logged in user also in case of stateless requests
+        if (OBContext.getOBContext() == null
+            || !strUserAuth.equals(OBContext.getOBContext().getUser().getId())) {
+          OBContext.setOBContext(UserContextCache.getInstance().getCreateOBContext(strUserAuth));
         }
         super.serviceInitialized(request, response);
         return;

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,8 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import org.apache.log4j.Logger;
+import org.openbravo.authentication.AuthenticationManager;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.SessionInfo;
 
@@ -150,6 +152,11 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
   public void sessionCreated(HttpSessionEvent event) {
     synchronized (activeHttpSessions) {
       activeHttpSessions.add(event.getSession());
+    }
+
+    if (RequestContext.get().getRequest() != null
+        && AuthenticationManager.isStatelessRequest(RequestContext.get().getRequest())) {
+      log.error("Request is stateless, still a session is created ", new Exception());
     }
 
     log.debug("Session created. Active sessions count: " + activeHttpSessions.size());
