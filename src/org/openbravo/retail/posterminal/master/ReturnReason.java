@@ -44,7 +44,7 @@ public class ReturnReason extends ProcessHQLQuery {
             + "from ReturnReason reason "
             + "where "
             + " reason.isrfc = true "
-            + "and (reason.$incrementalUpdateCriteria) AND ($naturalOrgCriteria) and $readableSimpleClientCriteria order by reason.name asc");
+            + "and (reason.$incrementalUpdateCriteria) AND ($naturalOrgCriteria) and $readableSimpleClientCriteria order by reason.name asc, reason.id");
 
     return hqlQueries;
   }

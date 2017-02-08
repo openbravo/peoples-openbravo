@@ -54,7 +54,7 @@ public class ServiceProductCategory extends ProcessHQLQuery {
             + regularServiceProductCategoriesHQLProperties.getHqlSelect() //
             + "from ServiceProductCategory spc " //
             + "where $filtersCriteria and $naturalOrgCriteria and $incrementalUpdateCriteria and spc.active = true "
-            + "order by spc.productCategory.name");
+            + "order by spc.productCategory.name, spc.id");
 
     return hqlQueries;
   }

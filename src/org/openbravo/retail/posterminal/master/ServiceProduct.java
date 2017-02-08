@@ -53,7 +53,7 @@ public class ServiceProduct extends ProcessHQLQuery {
         + regularServiceProductsHQLProperties.getHqlSelect() //
         + "from ServiceProduct sp " //
         + "where $filtersCriteria and $naturalOrgCriteria and $incrementalUpdateCriteria "
-        + "order by sp.product.name");
+        + "order by sp.product.name, sp.product.id");
 
     return hqlQueries;
   }
