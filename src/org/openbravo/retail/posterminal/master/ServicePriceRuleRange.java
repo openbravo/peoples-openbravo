@@ -54,7 +54,7 @@ public class ServicePriceRuleRange extends ProcessHQLQuery {
             + regularPriceRuleRangeHQLProperties.getHqlSelect()
             + "from ServicePriceRuleRange sprr "
             + "where $filtersCriteria and $hqlCriteria and sprr.$naturalOrgCriteria and sprr.$incrementalUpdateCriteria "
-            + "order by amountUpTo ");
+            + "order by amountUpTo, sprr.id ");
 
     return hqlQueries;
   }

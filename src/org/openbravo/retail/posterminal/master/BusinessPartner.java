@@ -73,7 +73,7 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.active=true and bpls.invoiceToAddress = true and bpls.businessPartner.id=bp.id and bpls.$readableSimpleClientCriteria AND "
         + "bpls.$naturalOrgCriteria) AND "
         + "(not exists (select 1 from ADUser usr where usr.businessPartner = bp)) "
-        + "ORDER BY bp.name";
+        + "ORDER BY bp.name, bp.id";
     String hql2 = "SELECT"
         + regularBusinessPartnerHQLProperties.getHqlSelect() //
         + "FROM BusinessPartnerLocation AS bpl " //
@@ -93,7 +93,7 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.active=true and bpls.invoiceToAddress = true and bpls.businessPartner.id=bp.id and bpls.$readableSimpleClientCriteria AND "
         + "bpls.$naturalOrgCriteria) AND "
         + "(ulist.id = (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner=bp)) "
-        + "ORDER BY bp.name";
+        + "ORDER BY bp.name, bp.id";
     return Arrays.asList(new String[] { hql, hql2 });
   }
 

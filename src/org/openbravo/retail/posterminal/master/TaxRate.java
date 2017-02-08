@@ -101,7 +101,7 @@ public class TaxRate extends ProcessHQLQuery {
     } else {
       hql = hql + "and financialMgmtTaxRate.region is null ";
     }
-    hql = hql + "and $readableSimpleCriteria order by validFromDate desc ";
+    hql = hql + "and $readableSimpleCriteria order by validFromDate desc, financialMgmtTaxRate.id";
 
     return Arrays.asList(new String[] { hql });
   }

@@ -42,7 +42,7 @@ public class BPCategory extends ProcessHQLQuery {
     hqlQueries.add("select " + regularBPCategoryHQLProperties.getHqlSelect()
         + "from BusinessPartnerCategory bpcat " + "where "
         + "bpcat.$readableSimpleClientCriteria AND " + "bpcat.$naturalOrgCriteria AND "
-        + "(bpcat.$incrementalUpdateCriteria) " + " order by bpcat.name");
+        + "(bpcat.$incrementalUpdateCriteria) " + " order by bpcat.name, bpcat.id");
 
     return hqlQueries;
   }
