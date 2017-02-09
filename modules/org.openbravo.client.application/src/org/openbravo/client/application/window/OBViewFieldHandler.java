@@ -722,6 +722,7 @@ public class OBViewFieldHandler {
           result.append(", canFilter: " + canFilter.toString());
         }
       }
+      result.append(", showHover: true");
       return result.toString();
     }
 

@@ -469,6 +469,7 @@ public abstract class UIDefinition {
     if (canFilter != null) {
       result.append(", canFilter: " + canFilter.toString());
     }
+    result.append(getShowHoverGridFieldSettings(field));
     return result.toString();
   }
 
