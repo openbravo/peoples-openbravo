@@ -568,7 +568,14 @@ public abstract class UIDefinition {
   // but then the value should be converted to the translated
   // value of the enum
   protected String getShowHoverGridFieldSettings(Field field) {
-    return ", showHover: true";
+    if (showHover()) {
+      return ", showHover: true";
+    }
+    return "";
+  }
+
+  public boolean showHover() {
+    return true;
   }
 
   protected String getGridFieldName(Field fld) {
