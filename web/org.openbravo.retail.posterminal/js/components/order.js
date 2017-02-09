@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2016 Openbravo S.L.U.
+ * Copyright (C) 2013-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -688,7 +688,7 @@ enyo.kind({
         var negativeLinesLength = _.filter(this.order.get('lines').models, function (line) {
           return line.get('qty') < 0;
         }).length;
-        if (negativeLinesLength === this.order.get('lines').models.length) {
+        if (negativeLinesLength === this.order.get('lines').models.length && negativeLinesLength > 0) {
           //isReturn
           OB.MobileApp.model.receipt.setDocumentNo(true, false);
         } else {
