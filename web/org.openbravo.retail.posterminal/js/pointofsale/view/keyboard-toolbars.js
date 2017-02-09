@@ -72,7 +72,7 @@ enyo.kind({
     this.bubble('onClearPaymentSelect');
     this.pay(inEvent.amount, inEvent.key, inEvent.name, inEvent.paymentMethod, inEvent.rate, inEvent.mulrate, inEvent.isocode, inEvent.options);
   },
-  pay: function (amount, key, name, paymentMethod, rate, mulrate, isocode, options) {
+  pay: function (amount, key, name, paymentMethod, rate, mulrate, isocode, options, callback) {
     if (this.receipt.stopAddingPayments) {
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
       return;
@@ -154,7 +154,7 @@ enyo.kind({
             'isCash': paymentMethod.iscash,
             'openDrawer': paymentMethod.openDrawer,
             'printtwice': paymentMethod.printtwice
-          }));
+          }), callback);
         }
       }
     }
@@ -274,7 +274,7 @@ enyo.kind({
               }
               var buttonClass = keyboard.buttons['paymentMethodCategory.showitems.' + payment.paymentMethod.paymentMethodCategory].attributes['class'];
               if (me.currentPayment && buttonClass.indexOf('btnactive-green') > 0) {
-                me.pay(amount, me.currentPayment.payment.searchKey, me.currentPayment.payment._identifier, me.currentPayment.paymentMethod, me.currentPayment.rate, me.currentPayment.mulrate, me.currentPayment.isocode, options);
+                me.pay(amount, me.currentPayment.payment.searchKey, me.currentPayment.payment._identifier, me.currentPayment.paymentMethod, me.currentPayment.rate, me.currentPayment.mulrate, me.currentPayment.isocode, options, undefined);
               } else {
                 me.doShowPopup({
                   popup: 'modalPaymentsSelect',
@@ -305,7 +305,16 @@ enyo.kind({
               OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
               return;
             }
-            me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options);
+            me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options, function () {
+              me.waterfall('onButtonStatusChanged', {
+                value: {
+                  originator: me,
+                  payment: undefined,
+                  status: ''
+                }
+              });
+            });
+            // null);
           }
         });
       }
@@ -438,7 +447,10 @@ enyo.kind({
           if (searchKey === this.keyboard.lastStatus) {
             this.keyboard.setStatus(searchKey);
           } else {
+            var oldStatus = this.keyboard.status;
             setPaymentMethodInfo(defaultPayment);
+            this.keyboard.status = oldStatus;
+            this.keyboard.setStatus(defaultPayment.payment.searchKey);
           }
         } else {
           this.keyboard.setStatus(defaultPayment.payment.searchKey);

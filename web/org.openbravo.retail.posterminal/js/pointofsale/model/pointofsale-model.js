@@ -182,7 +182,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       return this.get('multiOrders').getPayment();
     }
   },
-  addPayment: function (payment) {
+  addPayment: function (payment, callback) {
     var modelToIncludePayment;
 
     if (this.get('leftColumnViewManager').isOrder()) {
@@ -191,7 +191,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       modelToIncludePayment = this.get('multiOrders');
     }
 
-    modelToIncludePayment.addPayment(payment);
+    modelToIncludePayment.addPayment(payment, callback);
   },
   deleteMultiOrderList: function () {
     var i;
