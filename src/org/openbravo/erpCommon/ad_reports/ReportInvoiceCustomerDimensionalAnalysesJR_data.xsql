@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
@@ -17,11 +17,14 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
+
 <SqlClass name="ReportInvoiceCustomerDimensionalAnalysesJRData" package="org.openbravo.erpCommon.ad_reports">
-   <SqlClassComment />
-   <SqlMethod name="select" type="preparedStatement" return="multiple">
-      <SqlMethodComment />
-      <Sql><![CDATA[SELECT NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 
       SUM(AMOUNT) AS AMOUNT, SUM(QTY) AS QTY, SUM(WEIGHT) AS WEIGHT, SUM(COST) AS COST,
       SUM(AMOUNTREF) AS AMOUNTREF, SUM(QTYREF) AS QTYREF, SUM(WEIGHTREF) AS WEIGHTREF, SUM(COSTREF) AS COSTREF,
       SUM(CONVAMOUNT) AS CONVAMOUNT,                          
@@ -136,68 +139,72 @@
       AND 2=2
       ORDER BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10) AA
       GROUP BY  NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID) ZZ
-      GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 1]]></Sql>
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="nivel1" type="replace" optional="true" after="FROM (SELECT to_char(" text="'1'" />
-      <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1, to_char(" text="'2'" />
-      <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2, to_char(" text="'3'" />
-      <Parameter name="nivel4" type="replace" optional="true" after="AS NIVEL3, to_char(" text="'4'" />
-      <Parameter name="nivel5" type="replace" optional="true" after="AS NIVEL4, to_char(" text="'5'" />
-      <Parameter name="nivel6" type="replace" optional="true" after="AS NIVEL5, to_char(" text="'6'" />
-      <Parameter name="nivel7" type="replace" optional="true" after="AS NIVEL6, to_char(" text="'7'" />
-      <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7, to_char(" text="'16'" />
-      <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8, to_char(" text="'18'" />
-      <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9, to_char(" text="'20'" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND C_INVOICE.AD_ORG_ID IN (" text="'1'" />
-      <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'7'" />
-      <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-      <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-      <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
-      <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-      <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
-      <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-      <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
-      <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-      <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
-      <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
-      <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
-      <Parameter name="strvoid" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
-      <Parameter name="nivel1" type="replace" optional="true" after="UNION ALL SELECT to_char(" text="'8'" />
-      <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1 , to_char(" text="'9'" />
-      <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2 , to_char(" text="'10'" />
-      <Parameter name="nivel4" type="replace" optional="true" after="AS NIVEL3 , to_char(" text="'11'" />
-      <Parameter name="nivel5" type="replace" optional="true" after="AS NIVEL4 , to_char(" text="'12'" />
-      <Parameter name="nivel6" type="replace" optional="true" after="AS NIVEL5 , to_char(" text="'13'" />
-      <Parameter name="nivel7" type="replace" optional="true" after="AS NIVEL6 , to_char(" text="'14'" />
-      <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7 , to_char(" text="'17'" />
-      <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8 , to_char(" text="'19'" />
-      <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9 , to_char(" text="'21'" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="adOrgId" optional="true" type="replace" after="AND 3=3 AND C_INVOICE.AD_ORG_ID IN (" text="'1'" />
-      <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN(" text="'14'" />
-      <Parameter name="dateFromRef" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-      <Parameter name="dateToRef" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-      <Parameter name="cBpartnerGroupId" optional="true" after="AND 2=2"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
-      <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-      <Parameter name="mProductCategoryId" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
-      <Parameter name="mProductId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-      <Parameter name="salesrepId" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
-      <Parameter name="partnerSalesrepId" optional="true" after="AND 2=2"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-      <Parameter name="cProjectId" optional="true" after="AND 2=2"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
-      <Parameter name="producttype" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
-      <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
-      <Parameter name="strvoid" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
-      <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10" text=", 1" />
-   </SqlMethod>
-   <SqlMethod name="select2" type="preparedStatement" return="multiple">
-      <SqlMethodComment />
-      <Sql><![CDATA[SELECT NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 
+      GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 1
+     ]]></Sql>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>    
+    <Parameter name="nivel1" type="replace" optional="true" after="FROM (SELECT to_char(" text="'1'"/>
+    <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1, to_char(" text="'2'"/>
+    <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2, to_char(" text="'3'"/>
+    <Parameter name="nivel4" type="replace" optional="true" after="AS NIVEL3, to_char(" text="'4'"/>
+    <Parameter name="nivel5" type="replace" optional="true" after="AS NIVEL4, to_char(" text="'5'"/>
+    <Parameter name="nivel6" type="replace" optional="true" after="AS NIVEL5, to_char(" text="'6'"/>
+    <Parameter name="nivel7" type="replace" optional="true" after="AS NIVEL6, to_char(" text="'7'"/>
+    <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7, to_char(" text="'16'"/>
+    <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8, to_char(" text="'18'"/>
+    <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9, to_char(" text="'20'"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'7'"/>
+    <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
+    <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
+    <Parameter name="strvoid" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
+    <Parameter name="nivel1" type="replace" optional="true" after="UNION ALL SELECT to_char(" text="'8'"/>
+    <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1 , to_char(" text="'9'"/>
+    <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2 , to_char(" text="'10'"/>
+    <Parameter name="nivel4" type="replace" optional="true" after="AS NIVEL3 , to_char(" text="'11'"/>
+    <Parameter name="nivel5" type="replace" optional="true" after="AS NIVEL4 , to_char(" text="'12'"/>
+    <Parameter name="nivel6" type="replace" optional="true" after="AS NIVEL5 , to_char(" text="'13'"/>
+    <Parameter name="nivel7" type="replace" optional="true" after="AS NIVEL6 , to_char(" text="'14'"/>
+    <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7 , to_char(" text="'17'"/>
+    <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8 , to_char(" text="'19'"/>
+    <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9 , to_char(" text="'21'"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="adOrgId" optional="true" type="replace" after="AND 3=3 AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN(" text="'14'"/>
+    <Parameter name="dateFromRef" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
+    <Parameter name="dateToRef" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 2=2"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 2=2"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 2=2"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="producttype" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
+    <Parameter name="strvoid" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
+    <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10" text=", 1"/>
+  </SqlMethod>
+  
+  <SqlMethod name="select2" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 
       SUM(AMOUNT) AS AMOUNT, SUM(QTY) AS QTY, SUM(WEIGHT) AS WEIGHT, SUM(COST) AS COST,
       SUM(AMOUNTREF) AS AMOUNTREF, SUM(QTYREF) AS QTYREF, SUM(WEIGHTREF) AS WEIGHTREF, SUM(COSTREF) AS COSTREF,
       SUM(AMOUNTREF2) AS AMOUNTREF2, SUM(QTYREF2) AS QTYREF2, SUM(WEIGHTREF2) AS WEIGHTREF2, SUM(COSTREF2) AS COSTREF2,
@@ -370,95 +377,99 @@
       AND 4=4
       ORDER BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10) AA
       GROUP BY  NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID) ZZ
-      GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 1]]></Sql>
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="nivel1" type="replace" optional="true" after="FROM (SELECT to_char(" text="'1'" />
-      <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1, to_char(" text="'2'" />
-      <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2, to_char(" text="'3'" />
-      <Parameter name="nivel4" type="replace" optional="true" after="AS NIVEL3, to_char(" text="'4'" />
-      <Parameter name="nivel5" type="replace" optional="true" after="AS NIVEL4, to_char(" text="'5'" />
-      <Parameter name="nivel6" type="replace" optional="true" after="AS NIVEL5, to_char(" text="'6'" />
-      <Parameter name="nivel7" type="replace" optional="true" after="AS NIVEL6, to_char(" text="'7'" />
-      <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7, to_char(" text="'16'" />
-      <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8, to_char(" text="'18'" />
-      <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9, to_char(" text="'20'" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND C_INVOICE.AD_ORG_ID IN (" text="'1'" />
-      <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'7'" />
-      <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-      <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-      <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
-      <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-      <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
-      <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-      <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
-      <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-      <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
-      <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
-      <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
-      <Parameter name="strvoid" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
-      <Parameter name="nivel1" type="replace" optional="true" after="UNION ALL SELECT to_char(" text="'8'" />
-      <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1 , to_char(" text="'9'" />
-      <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2 , to_char(" text="'10'" />
-      <Parameter name="nivel4" type="replace" optional="true" after="AS NIVEL3 , to_char(" text="'11'" />
-      <Parameter name="nivel5" type="replace" optional="true" after="AS NIVEL4 , to_char(" text="'12'" />
-      <Parameter name="nivel6" type="replace" optional="true" after="AS NIVEL5 , to_char(" text="'13'" />
-      <Parameter name="nivel7" type="replace" optional="true" after="AS NIVEL6 , to_char(" text="'14'" />
-      <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7 , to_char(" text="'17'" />
-      <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8 , to_char(" text="'19'" />
-      <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9 , to_char(" text="'21'" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="adOrgId" optional="true" type="replace" after="AND 3=3 AND C_INVOICE.AD_ORG_ID IN (" text="'1'" />
-      <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN(" text="'14'" />
-      <Parameter name="dateFromRef" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-      <Parameter name="dateToRef" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-      <Parameter name="cBpartnerGroupId" optional="true" after="AND 2=2"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
-      <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-      <Parameter name="mProductCategoryId" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
-      <Parameter name="mProductId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-      <Parameter name="salesrepId" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
-      <Parameter name="partnerSalesrepId" optional="true" after="AND 2=2"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-      <Parameter name="cProjectId" optional="true" after="AND 2=2"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
-      <Parameter name="producttype" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
-      <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
-      <Parameter name="strvoid" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
-      <Parameter name="nivel1" type="replace" optional="true" after="UNION ALL SELECT  to_char(" text="'28'" />
-      <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1 ,to_char(" text="'29'" />
-      <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2 ,to_char(" text="'30'" />
-      <Parameter name="nivel4" type="replace" optional="true" after="AS NIVEL3 ,to_char(" text="'31'" />
-      <Parameter name="nivel5" type="replace" optional="true" after="AS NIVEL4 ,to_char(" text="'32'" />
-      <Parameter name="nivel6" type="replace" optional="true" after="AS NIVEL5 ,to_char(" text="'33'" />
-      <Parameter name="nivel7" type="replace" optional="true" after="AS NIVEL6 ,to_char(" text="'34'" />
-      <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7 ,to_char(" text="'35'" />
-      <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8 ,to_char(" text="'36'" />
-      <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9 ,to_char(" text="'37'" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="adOrgId" optional="true" type="replace" after="AND 5=5 AND C_INVOICE.AD_ORG_ID IN (" text="'1'" />
-      <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID  IN(" text="'38'" />
-      <Parameter name="dateFromRef2" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-      <Parameter name="dateToRef2" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-      <Parameter name="cBpartnerGroupId" optional="true" after="AND 4=4"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
-      <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 4=4"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-      <Parameter name="mProductCategoryId" optional="true" after="AND 4=4"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
-      <Parameter name="mProductId" optional="true" type="argument" after="AND 4=4"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-      <Parameter name="salesrepId" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
-      <Parameter name="partnerSalesrepId" optional="true" after="AND 4=4"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-      <Parameter name="cProjectId" optional="true" after="AND 4=4"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
-      <Parameter name="producttype" optional="true" after="AND 4=4"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
-      <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 4=4"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
-      <Parameter name="strvoid" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
-      <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10" text=", 1" />
-   </SqlMethod>
-   <SqlMethod name="select3" type="preparedStatement" return="multiple">
-      <SqlMethodComment />
-      <Sql><![CDATA[SELECT NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 
+      GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 1
+     ]]></Sql>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>       
+    <Parameter name="nivel1" type="replace" optional="true" after="FROM (SELECT to_char(" text="'1'"/>
+    <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1, to_char(" text="'2'"/>
+    <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2, to_char(" text="'3'"/>
+    <Parameter name="nivel4" type="replace" optional="true" after="AS NIVEL3, to_char(" text="'4'"/>
+    <Parameter name="nivel5" type="replace" optional="true" after="AS NIVEL4, to_char(" text="'5'"/>
+    <Parameter name="nivel6" type="replace" optional="true" after="AS NIVEL5, to_char(" text="'6'"/>
+    <Parameter name="nivel7" type="replace" optional="true" after="AS NIVEL6, to_char(" text="'7'"/>
+    <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7, to_char(" text="'16'"/>
+    <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8, to_char(" text="'18'"/>
+    <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9, to_char(" text="'20'"/>
+    <Parameter name="cCurrencyConv"/> 
+    <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'7'"/>
+    <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
+    <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
+    <Parameter name="strvoid" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
+    <Parameter name="nivel1" type="replace" optional="true" after="UNION ALL SELECT to_char(" text="'8'"/>
+    <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1 , to_char(" text="'9'"/>
+    <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2 , to_char(" text="'10'"/>
+    <Parameter name="nivel4" type="replace" optional="true" after="AS NIVEL3 , to_char(" text="'11'"/>
+    <Parameter name="nivel5" type="replace" optional="true" after="AS NIVEL4 , to_char(" text="'12'"/>
+    <Parameter name="nivel6" type="replace" optional="true" after="AS NIVEL5 , to_char(" text="'13'"/>
+    <Parameter name="nivel7" type="replace" optional="true" after="AS NIVEL6 , to_char(" text="'14'"/>
+    <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7 , to_char(" text="'17'"/>
+    <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8 , to_char(" text="'19'"/>
+    <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9 , to_char(" text="'21'"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="adOrgId" optional="true" type="replace" after="AND 3=3 AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN(" text="'14'"/>
+    <Parameter name="dateFromRef" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
+    <Parameter name="dateToRef" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 2=2"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 2=2"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 2=2"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="producttype" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
+    <Parameter name="strvoid" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
+    <Parameter name="nivel1" type="replace" optional="true" after="UNION ALL SELECT  to_char(" text="'28'"/>
+    <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1 ,to_char(" text="'29'"/>
+    <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2 ,to_char(" text="'30'"/>
+    <Parameter name="nivel4" type="replace" optional="true" after="AS NIVEL3 ,to_char(" text="'31'"/>
+    <Parameter name="nivel5" type="replace" optional="true" after="AS NIVEL4 ,to_char(" text="'32'"/>
+    <Parameter name="nivel6" type="replace" optional="true" after="AS NIVEL5 ,to_char(" text="'33'"/>
+    <Parameter name="nivel7" type="replace" optional="true" after="AS NIVEL6 ,to_char(" text="'34'"/>
+    <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7 ,to_char(" text="'35'"/>
+    <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8 ,to_char(" text="'36'"/>
+    <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9 ,to_char(" text="'37'"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="adOrgId" optional="true" type="replace" after="AND 5=5 AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID  IN(" text="'38'"/>
+    <Parameter name="dateFromRef2" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
+    <Parameter name="dateToRef2" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 4=4"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 4=4"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 4=4"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" type="argument" after="AND 4=4"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 4=4"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 4=4"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="producttype" optional="true" after="AND 4=4"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 4=4"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
+    <Parameter name="strvoid" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
+    <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10" text=", 1"/>
+  </SqlMethod>
+  
+  <SqlMethod name="select3" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 
       SUM(AMOUNT) AS AMOUNT, SUM(QTY) AS QTY, SUM(WEIGHT) AS WEIGHT, SUM(COST) AS COST,
       SUM(AMOUNTREF) AS AMOUNTREF, SUM(QTYREF) AS QTYREF, SUM(WEIGHTREF) AS WEIGHTREF, SUM(COSTREF) AS COSTREF,
       SUM(AMOUNTREF2) AS AMOUNTREF2, SUM(QTYREF2) AS QTYREF2, SUM(WEIGHTREF2) AS WEIGHTREF2, SUM(COSTREF2) AS COSTREF2,
@@ -697,122 +708,126 @@
       AND 6=6
       ORDER BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10) AA
       GROUP BY  NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID) ZZ
-      GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 1]]></Sql>
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="nivel1" type="replace" optional="true" after="FROM (SELECT to_char(" text="'1'" />
-      <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1, to_char(" text="'2'" />
-      <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2, to_char(" text="'3'" />
-      <Parameter name="nivel4" type="replace" optional="true" after="AS NIVEL3, to_char(" text="'4'" />
-      <Parameter name="nivel5" type="replace" optional="true" after="AS NIVEL4, to_char(" text="'5'" />
-      <Parameter name="nivel6" type="replace" optional="true" after="AS NIVEL5, to_char(" text="'6'" />
-      <Parameter name="nivel7" type="replace" optional="true" after="AS NIVEL6, to_char(" text="'7'" />
-      <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7, to_char(" text="'16'" />
-      <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8, to_char(" text="'18'" />
-      <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9, to_char(" text="'20'" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND C_INVOICE.AD_ORG_ID IN (" text="'1'" />
-      <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'7'" />
-      <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-      <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-      <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
-      <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-      <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
-      <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-      <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
-      <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-      <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
-      <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
-      <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
-      <Parameter name="strvoid" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
-      <Parameter name="nivel1" type="replace" optional="true" after="UNION ALL SELECT to_char(" text="'8'" />
-      <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1 , to_char(" text="'9'" />
-      <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2 , to_char(" text="'10'" />
-      <Parameter name="nivel4" type="replace" optional="true" after="AS NIVEL3 , to_char(" text="'11'" />
-      <Parameter name="nivel5" type="replace" optional="true" after="AS NIVEL4 , to_char(" text="'12'" />
-      <Parameter name="nivel6" type="replace" optional="true" after="AS NIVEL5 , to_char(" text="'13'" />
-      <Parameter name="nivel7" type="replace" optional="true" after="AS NIVEL6 , to_char(" text="'14'" />
-      <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7 , to_char(" text="'17'" />
-      <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8 , to_char(" text="'19'" />
-      <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9 , to_char(" text="'21'" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="adOrgId" optional="true" type="replace" after="AND 3=3 AND C_INVOICE.AD_ORG_ID IN (" text="'1'" />
-      <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN(" text="'14'" />
-      <Parameter name="dateFromRef" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-      <Parameter name="dateToRef" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-      <Parameter name="cBpartnerGroupId" optional="true" after="AND 2=2"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
-      <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-      <Parameter name="mProductCategoryId" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
-      <Parameter name="mProductId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-      <Parameter name="salesrepId" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
-      <Parameter name="partnerSalesrepId" optional="true" after="AND 2=2"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-      <Parameter name="cProjectId" optional="true" after="AND 2=2"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
-      <Parameter name="producttype" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
-      <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
-      <Parameter name="strvoid" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
-      <Parameter name="nivel1" type="replace" optional="true" after="UNION ALL SELECT  to_char(" text="'28'" />
-      <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1 ,to_char(" text="'29'" />
-      <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2 ,to_char(" text="'30'" />
-      <Parameter name="nivel4" type="replace" optional="true" after="AS NIVEL3 ,to_char(" text="'31'" />
-      <Parameter name="nivel5" type="replace" optional="true" after="AS NIVEL4 ,to_char(" text="'32'" />
-      <Parameter name="nivel6" type="replace" optional="true" after="AS NIVEL5 ,to_char(" text="'33'" />
-      <Parameter name="nivel7" type="replace" optional="true" after="AS NIVEL6 ,to_char(" text="'34'" />
-      <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7 ,to_char(" text="'35'" />
-      <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8 ,to_char(" text="'36'" />
-      <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9 ,to_char(" text="'37'" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="adOrgId" optional="true" type="replace" after="AND 5=5 AND C_INVOICE.AD_ORG_ID IN (" text="'1'" />
-      <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID  IN(" text="'38'" />
-      <Parameter name="dateFromRef2" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-      <Parameter name="dateToRef2" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-      <Parameter name="cBpartnerGroupId" optional="true" after="AND 4=4"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
-      <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 4=4"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-      <Parameter name="mProductCategoryId" optional="true" after="AND 4=4"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
-      <Parameter name="mProductId" optional="true" type="argument" after="AND 4=4"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-      <Parameter name="salesrepId" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
-      <Parameter name="partnerSalesrepId" optional="true" after="AND 4=4"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-      <Parameter name="cProjectId" optional="true" after="AND 4=4"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
-      <Parameter name="producttype" optional="true" after="AND 4=4"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
-      <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 4=4"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
-      <Parameter name="strvoid" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
-      <Parameter name="nivel1" type="replace" optional="true" after="UNION ALL  SELECT  to_char(" text="'39'" />
-      <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1  ,to_char(" text="'40'" />
-      <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2  ,to_char(" text="'41'" />
-      <Parameter name="nivel4" type="replace" optional="true" after="AS NIVEL3  ,to_char(" text="'42'" />
-      <Parameter name="nivel5" type="replace" optional="true" after="AS NIVEL4  ,to_char(" text="'43'" />
-      <Parameter name="nivel6" type="replace" optional="true" after="AS NIVEL5  ,to_char(" text="'44'" />
-      <Parameter name="nivel7" type="replace" optional="true" after="AS NIVEL6  ,to_char(" text="'45'" />
-      <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7  ,to_char(" text="'46'" />
-      <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8  ,to_char(" text="'47'" />
-      <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9  ,to_char(" text="'48'" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="adOrgId" optional="true" type="replace" after="AND 7=7 AND C_INVOICE.AD_ORG_ID IN (" text="'1'" />
-      <Parameter name="adUserClient" type="replace" optional="true" after="AND  C_INVOICE.AD_CLIENT_ID  IN(" text="'49'" />
-      <Parameter name="dateFromRef3" optional="true" after="AND 6=6"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-      <Parameter name="dateToRef3" optional="true" after="AND 6=6"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-      <Parameter name="cBpartnerGroupId" optional="true" after="AND 6=6"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
-      <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 6=6"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-      <Parameter name="mProductCategoryId" optional="true" after="AND 6=6"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
-      <Parameter name="mProductId" optional="true" type="argument" after="AND 6=6"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-      <Parameter name="salesrepId" optional="true" after="AND 6=6"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
-      <Parameter name="partnerSalesrepId" optional="true" after="AND 6=6"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-      <Parameter name="cProjectId" optional="true" after="AND 6=6"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
-      <Parameter name="producttype" optional="true" after="AND 6=6"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
-      <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 6=6"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
-      <Parameter name="strvoid" optional="true" after="AND 6=6"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
-      <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10" text=", 1" />
-   </SqlMethod>
-   <SqlMethod name="selectCount" type="preparedStatement" return="string" default="0">
-      <SqlMethodComment />
-      <Sql><![CDATA[SELECT COUNT( DISTINCT 1 ) AS COUNT
+      GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 1
+     ]]></Sql>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/> 
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>      
+    <Parameter name="nivel1" type="replace" optional="true" after="FROM (SELECT to_char(" text="'1'"/>
+    <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1, to_char(" text="'2'"/>
+    <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2, to_char(" text="'3'"/>
+    <Parameter name="nivel4" type="replace" optional="true" after="AS NIVEL3, to_char(" text="'4'"/>
+    <Parameter name="nivel5" type="replace" optional="true" after="AS NIVEL4, to_char(" text="'5'"/>
+    <Parameter name="nivel6" type="replace" optional="true" after="AS NIVEL5, to_char(" text="'6'"/>
+    <Parameter name="nivel7" type="replace" optional="true" after="AS NIVEL6, to_char(" text="'7'"/>
+    <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7, to_char(" text="'16'"/>
+    <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8, to_char(" text="'18'"/>
+    <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9, to_char(" text="'20'"/>
+    <Parameter name="cCurrencyConv"/> 
+    <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'7'"/>
+    <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
+    <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
+    <Parameter name="strvoid" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
+    <Parameter name="nivel1" type="replace" optional="true" after="UNION ALL SELECT to_char(" text="'8'"/>
+    <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1 , to_char(" text="'9'"/>
+    <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2 , to_char(" text="'10'"/>
+    <Parameter name="nivel4" type="replace" optional="true" after="AS NIVEL3 , to_char(" text="'11'"/>
+    <Parameter name="nivel5" type="replace" optional="true" after="AS NIVEL4 , to_char(" text="'12'"/>
+    <Parameter name="nivel6" type="replace" optional="true" after="AS NIVEL5 , to_char(" text="'13'"/>
+    <Parameter name="nivel7" type="replace" optional="true" after="AS NIVEL6 , to_char(" text="'14'"/>
+    <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7 , to_char(" text="'17'"/>
+    <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8 , to_char(" text="'19'"/>
+    <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9 , to_char(" text="'21'"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="adOrgId" optional="true" type="replace" after="AND 3=3 AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN(" text="'14'"/>
+    <Parameter name="dateFromRef" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
+    <Parameter name="dateToRef" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 2=2"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 2=2"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 2=2"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="producttype" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
+    <Parameter name="strvoid" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
+    <Parameter name="nivel1" type="replace" optional="true" after="UNION ALL SELECT  to_char(" text="'28'"/>
+    <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1 ,to_char(" text="'29'"/>
+    <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2 ,to_char(" text="'30'"/>
+    <Parameter name="nivel4" type="replace" optional="true" after="AS NIVEL3 ,to_char(" text="'31'"/>
+    <Parameter name="nivel5" type="replace" optional="true" after="AS NIVEL4 ,to_char(" text="'32'"/>
+    <Parameter name="nivel6" type="replace" optional="true" after="AS NIVEL5 ,to_char(" text="'33'"/>
+    <Parameter name="nivel7" type="replace" optional="true" after="AS NIVEL6 ,to_char(" text="'34'"/>
+    <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7 ,to_char(" text="'35'"/>
+    <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8 ,to_char(" text="'36'"/>
+    <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9 ,to_char(" text="'37'"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="adOrgId" optional="true" type="replace" after="AND 5=5 AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID  IN(" text="'38'"/>
+    <Parameter name="dateFromRef2" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
+    <Parameter name="dateToRef2" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 4=4"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 4=4"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 4=4"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" type="argument" after="AND 4=4"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 4=4"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 4=4"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="producttype" optional="true" after="AND 4=4"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 4=4"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
+    <Parameter name="strvoid" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
+    <Parameter name="nivel1" type="replace" optional="true" after="UNION ALL  SELECT  to_char(" text="'39'"/>
+    <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1  ,to_char(" text="'40'"/>
+    <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2  ,to_char(" text="'41'"/>
+    <Parameter name="nivel4" type="replace" optional="true" after="AS NIVEL3  ,to_char(" text="'42'"/>
+    <Parameter name="nivel5" type="replace" optional="true" after="AS NIVEL4  ,to_char(" text="'43'"/>
+    <Parameter name="nivel6" type="replace" optional="true" after="AS NIVEL5  ,to_char(" text="'44'"/>
+    <Parameter name="nivel7" type="replace" optional="true" after="AS NIVEL6  ,to_char(" text="'45'"/>
+    <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7  ,to_char(" text="'46'"/>
+    <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8  ,to_char(" text="'47'"/>
+    <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9  ,to_char(" text="'48'"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="adOrgId" optional="true" type="replace" after="AND 7=7 AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND  C_INVOICE.AD_CLIENT_ID  IN(" text="'49'"/>
+    <Parameter name="dateFromRef3" optional="true" after="AND 6=6"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
+    <Parameter name="dateToRef3" optional="true" after="AND 6=6"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 6=6"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 6=6"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 6=6"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" type="argument" after="AND 6=6"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 6=6"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 6=6"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 6=6"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="producttype" optional="true" after="AND 6=6"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 6=6"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
+    <Parameter name="strvoid" optional="true" after="AND 6=6"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
+    <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10" text=", 1"/>
+  </SqlMethod>
+
+  <SqlMethod name="selectCount" type="preparedStatement" return="string" default="0">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT COUNT( DISTINCT 1 ) AS COUNT
       FROM C_INVOICE left join AD_USER on C_INVOICE.SALESREP_ID = AD_USER.AD_USER_ID
                      left join C_PROJECT on C_INVOICE.C_PROJECT_ID = C_PROJECT.C_PROJECT_ID
                      left join C_DOCTYPE on C_INVOICE.C_DOCTYPE_ID=C_DOCTYPE.C_DOCTYPE_ID,
@@ -831,32 +846,36 @@
       AND C_INVOICE.PROCESSED = 'Y'
       AND 0=0 AND C_INVOICE.AD_ORG_ID IN ('1')
       AND C_INVOICE.AD_CLIENT_ID IN ('8')
-      AND 1=1 AND ((2=2)OR (3=3)OR (4=4)OR (5=5))]]></Sql>
-      <Parameter name="levels" type="replace" optional="true" after="SELECT COUNT( DISTINCT " text="1" />
-      <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND C_INVOICE.AD_ORG_ID IN (" text="'1'" />
-      <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'8'" />
-      <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
-      <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-      <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
-      <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-      <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
-      <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-      <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
-      <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
-      <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
-      <Parameter name="strvoid" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
-      <Parameter name="dateFrom" optional="true" after="2=2"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-      <Parameter name="dateTo" optional="true" after="2=2"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-      <Parameter name="dateFromRef" optional="true" after="3=3"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-      <Parameter name="dateToRef" optional="true" after="3=3"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-      <Parameter name="dateFromRef2" optional="true" after="4=4"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-      <Parameter name="dateToRef2" optional="true" after="4=4"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-      <Parameter name="dateFromRef3" optional="true" after="5=5"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-      <Parameter name="dateToRef3" optional="true" after="5=5"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-   </SqlMethod>
-   <SqlMethod name="selectNoComparative" type="preparedStatement" return="multiple">
-      <SqlMethodComment />
-      <Sql><![CDATA[SELECT NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10,
+      AND 1=1 AND ((2=2)OR (3=3)OR (4=4)OR (5=5))
+    ]]></Sql>
+    <Parameter name="levels" type="replace" optional="true" after="SELECT COUNT( DISTINCT " text="1"/>
+    <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'8'"/>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
+    <Parameter name="strvoid" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
+    <Parameter name="dateFrom" optional="true" after="2=2"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
+    <Parameter name="dateTo" optional="true" after="2=2"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+    <Parameter name="dateFromRef" optional="true" after="3=3"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
+    <Parameter name="dateToRef" optional="true" after="3=3"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+    <Parameter name="dateFromRef2" optional="true" after="4=4"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
+    <Parameter name="dateToRef2" optional="true" after="4=4"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+    <Parameter name="dateFromRef3" optional="true" after="5=5"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
+    <Parameter name="dateToRef3" optional="true" after="5=5"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+  </SqlMethod>
+
+  <SqlMethod name="selectNoComparative" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+    SELECT NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10,
         SUM(AMOUNT) AS AMOUNT, SUM(QTY) AS QTY, SUM(WEIGHT) AS WEIGHT, SUM(COST) AS COST, 
         SUM(AMOUNTREF) AS AMOUNTREF, SUM(QTYREF) AS QTYREF, SUM(WEIGHTREF) AS WEIGHTREF,
         SUM(CONVAMOUNT) AS CONVAMOUNT,  
@@ -918,41 +937,45 @@
         AND 1=1
       ORDER BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10) AA
       GROUP BY  NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID) ZZ
-      GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 1]]></Sql>
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="nivel1" type="replace" optional="true" after="FROM (SELECT to_char(" text="'1'" />
-      <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1, to_char(" text="'2'" />
-      <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2, to_char(" text="'3'" />
-      <Parameter name="nivel4" type="replace" optional="true" after="AS NIVEL3, to_char(" text="'4'" />
-      <Parameter name="nivel5" type="replace" optional="true" after="AS NIVEL4, to_char(" text="'5'" />
-      <Parameter name="nivel6" type="replace" optional="true" after="AS NIVEL5, to_char(" text="'6'" />
-      <Parameter name="nivel7" type="replace" optional="true" after="AS NIVEL6, to_char(" text="'7'" />
-      <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7, to_char(" text="'9'" />
-      <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8, to_char(" text="'10'" />
-      <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9, to_char(" text="'11'" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="adOrgId" optional="true" type="replace" after="AND C_INVOICE.AD_ORG_ID IN (" text="'1'" />
-      <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'7'" />
-      <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-      <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-      <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
-      <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-      <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
-      <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-      <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
-      <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-      <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
-      <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
-      <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
-      <Parameter name="strvoid" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
-      <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10" text=", 1" />
-   </SqlMethod>
-   <SqlMethod name="selectNoComparativeCount" type="preparedStatement" return="string" default="0">
-      <SqlMethodComment />
-      <Sql><![CDATA[SELECT COUNT( DISTINCT 1 ) AS COUNT
+      GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 1
+     ]]></Sql>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>    
+    <Parameter name="nivel1" type="replace" optional="true" after="FROM (SELECT to_char(" text="'1'"/>
+    <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1, to_char(" text="'2'"/>
+    <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2, to_char(" text="'3'"/>
+    <Parameter name="nivel4" type="replace" optional="true" after="AS NIVEL3, to_char(" text="'4'"/>
+    <Parameter name="nivel5" type="replace" optional="true" after="AS NIVEL4, to_char(" text="'5'"/>
+    <Parameter name="nivel6" type="replace" optional="true" after="AS NIVEL5, to_char(" text="'6'"/>
+    <Parameter name="nivel7" type="replace" optional="true" after="AS NIVEL6, to_char(" text="'7'"/>
+    <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7, to_char(" text="'9'"/>
+    <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8, to_char(" text="'10'"/>
+    <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9, to_char(" text="'11'"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="adOrgId" optional="true" type="replace" after="AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'7'"/>
+    <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
+    <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
+    <Parameter name="strvoid" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
+    <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10" text=", 1"/>
+  </SqlMethod>
+
+    <SqlMethod name="selectNoComparativeCount" type="preparedStatement" return="string" default="0">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT COUNT( DISTINCT 1 ) AS COUNT
       FROM C_INVOICE left join AD_USER on C_INVOICE.SALESREP_ID = AD_USER.AD_USER_ID
                      left join C_PROJECT on C_INVOICE.C_PROJECT_ID = C_PROJECT.C_PROJECT_ID
                      left join C_DOCTYPE on C_INVOICE.C_DOCTYPE_ID=C_DOCTYPE.C_DOCTYPE_ID,
@@ -971,87 +994,118 @@
       AND C_INVOICE.PROCESSED = 'Y'
       AND 0=0 AND C_INVOICE.AD_ORG_ID IN ('1')
       AND C_INVOICE.AD_CLIENT_ID IN ('8')
-      AND 1=1 AND 2=2]]></Sql>
-      <Parameter name="levels" type="replace" optional="true" after="SELECT COUNT( DISTINCT " text="1" />
-      <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND C_INVOICE.AD_ORG_ID IN (" text="'1'" />
-      <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'8'" />
-      <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
-      <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-      <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
-      <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-      <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
-      <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-      <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
-      <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
-      <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
-      <Parameter name="strvoid" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
-      <Parameter name="dateFrom" optional="true" after="2=2"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-      <Parameter name="dateTo" optional="true" after="2=2"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-   </SqlMethod>
-   <SqlMethod name="selectProject" type="preparedStatement" return="String" default="">
-      <SqlMethodComment />
-      <Sql><![CDATA[SELECT C_PROJECT.NAME
+      AND 1=1 AND 2=2
+     ]]></Sql>
+    <Parameter name="levels" type="replace" optional="true" after="SELECT COUNT( DISTINCT " text="1"/>
+    <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'8'"/>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
+    <Parameter name="strvoid" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
+    <Parameter name="dateFrom" optional="true" after="2=2"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
+    <Parameter name="dateTo" optional="true" after="2=2"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+  </SqlMethod>
+
+  <SqlMethod name="selectProject" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT C_PROJECT.NAME
       FROM C_PROJECT
-      WHERE C_PROJECT_ID = ?]]></Sql>
-      <Parameter name="cProjectId" />
-   </SqlMethod>
-   <SqlMethod name="selectBpgroup" type="preparedStatement" return="String" default="">
-      <SqlMethodComment />
-      <Sql><![CDATA[SELECT C_BP_GROUP.NAME
+      WHERE C_PROJECT_ID = ?
+     ]]></Sql>
+     <Parameter name="cProjectId"/>
+  </SqlMethod>
+
+  <SqlMethod name="selectBpgroup" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT C_BP_GROUP.NAME
       FROM C_BP_GROUP
-      WHERE C_BP_GROUP.C_BP_GROUP_ID = ?]]></Sql>
-      <Parameter name="cBpGroupId" />
-   </SqlMethod>
-   <SqlMethod name="selectProductCategory" type="preparedStatement" return="String" default="">
-      <SqlMethodComment />
-      <Sql><![CDATA[SELECT M_PRODUCT_CATEGORY.NAME
+      WHERE C_BP_GROUP.C_BP_GROUP_ID = ?
+     ]]></Sql>
+    <Parameter name="cBpGroupId"/>
+  </SqlMethod>
+
+  <SqlMethod name="selectProductCategory" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT M_PRODUCT_CATEGORY.NAME
       FROM M_PRODUCT_CATEGORY
-      WHERE M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Sql>
-      <Parameter name="mProductCategoryId" />
-   </SqlMethod>
-   <SqlMethod name="selectSalesrep" type="preparedStatement" return="String" default="">
-      <SqlMethodComment />
-      <Sql><![CDATA[SELECT AD_USER.FIRSTNAME||' '||AD_USER.LASTNAME
+      WHERE M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?
+     ]]></Sql>
+    <Parameter name="mProductCategoryId"/>
+  </SqlMethod>
+
+  <SqlMethod name="selectSalesrep" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT AD_USER.FIRSTNAME||' '||AD_USER.LASTNAME
       FROM AD_USER
-      WHERE AD_USER.AD_USER_ID = ?]]></Sql>
-      <Parameter name="mWarehouseId" />
-   </SqlMethod>
-   <SqlMethod name="selectProducttype" type="preparedStatement" return="String" default="">
-      <SqlMethodComment />
-      <Sql><![CDATA[SELECT ad_ref_list_trl.NAME FROM ad_ref_list, ad_ref_list_trl 
+      WHERE AD_USER.AD_USER_ID = ?
+     ]]></Sql>
+    <Parameter name="mWarehouseId"/>
+  </SqlMethod>
+
+  <SqlMethod name="selectProducttype" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT ad_ref_list_trl.NAME FROM ad_ref_list, ad_ref_list_trl 
       WHERE ad_ref_list.AD_REF_LIST_ID = ad_ref_list_trl.AD_REF_LIST_ID
       AND ad_ref_list.ad_reference_id = ?
       AND ad_ref_list_trl.ad_language = ?
-      AND ad_ref_list.VALUE = ?]]></Sql>
-      <Parameter name="adReferenceId" />
-      <Parameter name="adLanguage" />
-      <Parameter name="value" />
-   </SqlMethod>
-   <SqlMethod name="selectNotShown" type="preparedStatement" return="multiple">
-      <SqlMethodComment />
-      <Sql><![CDATA[SELECT ID, NAME
+      AND ad_ref_list.VALUE = ?
+     ]]></Sql>
+    <Parameter name="adReferenceId"/>
+    <Parameter name="adLanguage"/>
+    <Parameter name="value"/>
+  </SqlMethod>
+
+  <SqlMethod name="selectNotShown" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT ID, NAME
       FROM (SELECT VALUE AS ID, NAME 
               FROM AD_REF_LIST 
              WHERE AD_REFERENCE_ID = '800087'
              AND AD_REF_LIST.VALUE IN ('1', '2', '3', '4', '5', '6', '8', '9', '10', '11')
              ORDER BY TO_NUMBER(VALUE)) AA
-      WHERE 1=1]]></Sql>
-      <Parameter name="notShown" optional="true" type="argument" after="WHERE 1=1 "><![CDATA[AND ID NOT IN]]></Parameter>
-   </SqlMethod>
-   <SqlMethod name="selectShown" type="preparedStatement" return="multiple">
-      <SqlMethodComment />
-      <Sql><![CDATA[SELECT ID, NAME
+      WHERE 1=1 
+     ]]></Sql>
+     <Parameter name="notShown" optional="true" type="argument" after="WHERE 1=1 "><![CDATA[AND ID NOT IN]]></Parameter>
+  </SqlMethod>
+  <SqlMethod name="selectShown" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT ID, NAME
       FROM (SELECT VALUE AS ID, NAME 
               FROM AD_REF_LIST 
              WHERE AD_REFERENCE_ID = '800087' 
              AND AD_REF_LIST.VALUE IN ('1', '2', '3', '4', '5', '6', '8', '9', '10', '11')
              ORDER BY TO_NUMBER(VALUE)) AA
-      WHERE 1=1]]></Sql>
-      <Parameter name="shown" optional="true" type="argument" after="WHERE 1=1 "><![CDATA[AND ID IN]]></Parameter>
-   </SqlMethod>
-   <SqlMethod name="selectNotShownTrl" type="preparedStatement" return="multiple">
-      <SqlMethodComment />
-      <Sql><![CDATA[SELECT ID, NAME
+      WHERE 1=1 
+     ]]></Sql>
+     <Parameter name="shown" optional="true" type="argument" after="WHERE 1=1 "><![CDATA[AND ID IN]]></Parameter>
+  </SqlMethod>
+
+  <SqlMethod name="selectNotShownTrl" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT ID, NAME
       FROM (SELECT VALUE AS ID, T.NAME 
               FROM AD_REF_LIST_trl T,
                    AD_REF_LIST     L
@@ -1060,13 +1114,16 @@
                AND l.AD_REF_LIST_ID  = t.AD_REF_LIST_ID
                AND t.AD_LANGUAGE = ?
              ORDER BY TO_NUMBER(VALUE)) AA
-      WHERE 1=1]]></Sql>
-      <Parameter name="lang" />
-      <Parameter name="notShown" optional="true" type="argument" after="WHERE 1=1 "><![CDATA[AND ID NOT IN]]></Parameter>
-   </SqlMethod>
-   <SqlMethod name="selectShownTrl" type="preparedStatement" return="multiple">
-      <SqlMethodComment />
-      <Sql><![CDATA[SELECT ID, NAME
+      WHERE 1=1 
+     ]]></Sql>
+     <Parameter name="lang"/> 
+     <Parameter name="notShown" optional="true" type="argument" after="WHERE 1=1 "><![CDATA[AND ID NOT IN]]></Parameter>
+  </SqlMethod>
+  <SqlMethod name="selectShownTrl" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT ID, NAME
       FROM (SELECT VALUE AS ID, T.NAME 
               FROM AD_REF_LIST_trl T,
                    AD_REF_LIST     L
@@ -1075,20 +1132,24 @@
                AND L.VALUE IN ('1', '2', '3', '4', '5', '6', '8', '9', '10', '11')
                AND t.AD_LANGUAGE = ?
              ORDER BY TO_NUMBER(VALUE)) AA
-      WHERE 1=1]]></Sql>
-      <Parameter name="lang" />
-      <Parameter name="shown" optional="true" type="argument" after="WHERE 1=1 "><![CDATA[AND ID IN]]></Parameter>
-   </SqlMethod>
-   <SqlMethod name="selectXLS" type="preparedStatement" return="scrollable">
-      <SqlMethodComment />
-      <Sql><![CDATA[SELECT ORG, DOCTYPENAME, PARTNERGROUP, PARTNER, DOCUMENTNO, INVOICEDATE, PRODCATEGORY, PRODUCT, SEARCHKEY, UNITPRICE, 
+      WHERE 1=1 
+     ]]></Sql>
+     <Parameter name="lang"/> 
+     <Parameter name="shown" optional="true" type="argument" after="WHERE 1=1 "><![CDATA[AND ID IN]]></Parameter>
+  </SqlMethod>
+  
+  <SqlMethod name="selectXLS" type="preparedStatement" return="scrollable">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT ORG, DOCTYPENAME, PARTNERGROUP, PARTNER, DOCUMENTNO, INVOICEDATE, PRODCATEGORY, PRODUCT, SEARCHKEY, UNITPRICE, 
         AMOUNT, COST, (AMOUNT - COST) AS PROFIT, CASE WHEN AMOUNT <> 0 THEN ROUND((100 * (AMOUNT - COST) / AMOUNT), 2) * SIGN(AMOUNT - COST) ELSE 0 END AS MARGIN, 
         WEIGHT, QTY, CONTACT, SALESREP, PROJECT, ADDRESS
         FROM (
-          SELECT AD_ORG.NAME AS ORG,
-            C_DOCTYPE.NAME AS DOCTYPENAME,
-            C_BP_GROUP.NAME AS PARTNERGROUP,
-            C_BPARTNER.NAME AS PARTNER,
+          SELECT AD_ORG.NAME AS ORG, 
+            COALESCE(C_DOCTYPE_TRL.NAME, C_DOCTYPE.NAME) AS DOCTYPENAME,
+            C_BP_GROUP.NAME AS PARTNERGROUP, 
+            C_BPARTNER.NAME AS PARTNER, 
             C_INVOICE.DOCUMENTNO AS DOCUMENTNO, 
             TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())) AS INVOICEDATE, 
             M_PRODUCT_CATEGORY.NAME AS PRODCATEGORY, 
@@ -1130,24 +1191,25 @@
             AND C_INVOICE.AD_CLIENT_ID IN ('7')
             AND 1=1
           AND 1=1) AA  
-          ORDER BY ORG, DOCUMENTNO, INVOICEDATE]]></Sql>
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="cCurrencyConv" />
-      <Parameter name="adOrgId" optional="true" type="replace" after="AND C_INVOICE.AD_ORG_ID IN (" text="'1'" />
-      <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'7'" />
-      <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-      <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-      <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
-      <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-      <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
-      <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-      <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
-      <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-      <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
-      <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
-      <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
-      <Parameter name="strvoid" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
-   </SqlMethod>
+          ORDER BY ORG, DOCUMENTNO, INVOICEDATE
+     ]]></Sql>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="adOrgId" optional="true" type="replace" after="AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'7'"/>
+    <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
+    <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
+    <Parameter name="strvoid" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
+  </SqlMethod>
 </SqlClass>

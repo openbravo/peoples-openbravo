@@ -34,7 +34,6 @@ import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.IsPositiveIntFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.costing.CostingBackground;
@@ -61,8 +60,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-
-  final int ORGNAMEMAXLENGTH = 200;
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -924,11 +921,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
         }
       }
       // Passing secondary filters Organization tree and businees partner group and product group
-      final OrgTree tree = (OrgTree) vars.getSessionObject("#CompleteOrgTree");
-      String strOrgName = tree.toStringNames();
-      if (strOrgName.length() > ORGNAMEMAXLENGTH) {
-        strOrgName = strOrgName.substring(0, ORGNAMEMAXLENGTH) + "...";
-      }
+      Organization organization = OBDal.getInstance().get(Organization.class, strOrg);
+      String strOrgName = organization.getName();
       String strPartnerGroupName = ReportInvoiceCustomerDimensionalAnalysesJRData.selectBpgroup(
           this, strPartnerGroup);
       String strProductGroupName = ReportInvoiceCustomerDimensionalAnalysesJRData

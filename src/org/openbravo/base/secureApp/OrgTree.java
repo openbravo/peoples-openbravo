@@ -212,20 +212,6 @@ public class OrgTree implements Serializable {
   }
 
   /**
-   * Converts the tree into a String of names. Names comma separated.
-   */
-  public String toStringNames() {
-    String s = "";
-    if (nodes == null)
-      return "";
-    for (int i = 0; i < nodes.size(); i++) {
-      if (nodes.get(i) != null)
-        s += "'" + nodes.get(i).getValue() + "'" + ((i < nodes.size() - 1) ? "," : "");
-    }
-    return s;
-  }
-
-  /**
    * Converts the tree into String. Displaying the name in order to make it more understandable
    */
   public String toDebugString() {

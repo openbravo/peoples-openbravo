@@ -25,32 +25,46 @@
     <parameter name="PRODUCTTYPE" class="java.lang.String" />
     <parameter name="C_DOCTYPE_ID" class="java.lang.String" />
     <parameter name="DOCSTATUS" class="java.lang.String" />
-    <queryString language="SQL"><![CDATA[SELECT DOCTYPE, COUNT(*) AS DOCTYPECOUNT 
-        FROM (
-          SELECT DISTINCT DAO.NAME||'-'||C_DOCTYPE.NAME AS DOCTYPE,
-          C_INVOICE.DOCUMENTNO AS DOCUMENTNO
-            FROM C_INVOICELINE 
-                join C_INVOICE on C_INVOICE.C_INVOICE_ID = C_INVOICELINE.C_INVOICE_ID
-                join C_BPARTNER on C_INVOICE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
-                join C_BP_GROUP on C_BPARTNER.C_BP_GROUP_ID = C_BP_GROUP.C_BP_GROUP_ID
-                join AD_ORG on C_INVOICE.AD_ORG_ID = AD_ORG.AD_ORG_ID
-                left join C_BPARTNER CB on C_BPARTNER.SALESREP_ID = CB.C_BPARTNER_ID
-                left join AD_USER on C_INVOICE.SALESREP_ID = AD_USER.AD_USER_ID
-                left join C_PROJECT on C_INVOICE.C_PROJECT_ID = C_PROJECT.C_PROJECT_ID
-                left join C_DOCTYPE on C_INVOICE.C_DOCTYPE_ID=C_DOCTYPE.C_DOCTYPE_ID
-                join AD_ORG DAO ON C_DOCTYPE.AD_ORG_ID = DAO.AD_ORG_ID
-                left join M_PRODUCT on C_INVOICELINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
-                left join C_UOM on C_INVOICELINE.C_UOM_ID = C_UOM.C_UOM_ID
-                left join M_PRODUCT_CATEGORY on M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID
-          WHERE C_INVOICE.ISSOTRX = 'Y'
-            AND C_INVOICE.PROCESSED = 'Y' 
-            AND 1=1 
-            AND C_INVOICE.DATEINVOICED >= (CASE WHEN ($P{DATEFROM} IS NULL OR $P{DATEFROM}='') THEN TO_DATE('01-01-0001')
+    <queryString language="SQL"><![CDATA[
+SELECT DISTINCT DAO.name 
+       || '-' 
+       || COALESCE(DTTRL.Name, DT.name) AS DOCTYPE, 
+       COUNT(*) AS DOCTYPECOUNT 
+FROM   (SELECT c_invoice.ad_org_id, 
+               c_invoice.c_doctype_id, 
+               c_invoice.c_invoice_id AS INVOICEID 
+        FROM   c_invoiceline 
+               JOIN c_invoice 
+                 ON c_invoice.c_invoice_id = c_invoiceline.c_invoice_id 
+               JOIN c_bpartner 
+                 ON c_invoice.c_bpartner_id = c_bpartner.c_bpartner_id 
+               JOIN c_bp_group 
+                 ON c_bpartner.c_bp_group_id = c_bp_group.c_bp_group_id 
+               JOIN ad_org 
+                 ON c_invoice.ad_org_id = ad_org.ad_org_id 
+               LEFT JOIN c_bpartner CB 
+                      ON c_bpartner.salesrep_id = CB.c_bpartner_id 
+               LEFT JOIN ad_user 
+                      ON c_invoice.salesrep_id = ad_user.ad_user_id 
+               LEFT JOIN c_project 
+                      ON c_invoice.c_project_id = c_project.c_project_id 
+               LEFT JOIN c_doctype 
+                      ON c_invoice.c_doctype_id = c_doctype.c_doctype_id 
+               LEFT JOIN m_product 
+                      ON c_invoiceline.m_product_id = m_product.m_product_id 
+               LEFT JOIN c_uom 
+                      ON c_invoiceline.c_uom_id = c_uom.c_uom_id 
+               LEFT JOIN m_product_category 
+                      ON m_product.m_product_category_id = 
+                         m_product_category.m_product_category_id 
+        WHERE  c_invoice.issotrx = 'Y' 
+        AND c_invoice.processed = 'Y' 
+        AND C_INVOICE.DATEINVOICED >= (CASE WHEN ($P{DATEFROM} IS NULL OR $P{DATEFROM}='') THEN TO_DATE('01-01-0001') 
                                                 ELSE TO_DATE($P{DATEFROM}) END) 
-            AND C_INVOICE.DATEINVOICED < (CASE WHEN ($P{DATETO} IS NULL OR $P{DATETO}='') THEN TO_DATE('09-09-9999')
+        AND C_INVOICE.DATEINVOICED < (CASE WHEN ($P{DATETO} IS NULL OR $P{DATETO}='') THEN TO_DATE('09-09-9999') 
                                            ELSE TO_DATE($P{DATETO}) END) 
-          $P!{USER_CLIENT} 
-          $P!{AD_ORG_ID}  
+        $P!{USER_CLIENT} 
+        $P!{AD_ORG_ID} 
         $P!{C_BP_GROUP_ID} 
         $P!{C_BPARTNER_ID} 
         $P!{M_PRODUCT_CATEGORY_ID} 
@@ -60,10 +74,18 @@
         $P!{C_PROJECT_ID} 
         $P!{PRODUCTTYPE} 
         $P!{C_DOCTYPE_ID} 
-        $P!{DOCSTATUS}
-     AND 1=1) AA 
-          GROUP BY DOCTYPE
-          ORDER BY DOCTYPE]]></queryString>
+        $P!{DOCSTATUS} 
+        GROUP  BY c_invoice.ad_org_id, 
+                  c_invoice.c_doctype_id, 
+                  c_invoice.c_invoice_id) AA 
+       JOIN ad_org DAO 
+         ON AA.ad_org_id = DAO.ad_org_id 
+       JOIN c_doctype DT 
+         ON ( DT.c_doctype_id = AA.c_doctype_id ) 
+       LEFT JOIN C_DOCTYPE_TRL DTTRL 
+         ON (DTTRL.C_DOCTYPE_ID = AA.C_DOCTYPE_ID and DTTRL.AD_LANGUAGE = '$PARAM_LANGUAGE') 
+       GROUP BY DOCTYPE
+                   ]]></queryString>
     <field name="doctypecount" class="java.lang.String" />
     <field name="doctype" class="java.lang.String" />
     <background>

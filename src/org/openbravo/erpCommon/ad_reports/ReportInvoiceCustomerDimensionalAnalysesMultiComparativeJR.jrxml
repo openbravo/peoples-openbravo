@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2017-02-07T12:30:17 -->
+<!-- 2017-02-09T13:29:27 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportInvoiceCustomerDimensionalAnalysesMultiComparativeJR" pageWidth="1300" pageHeight="595" orientation="Landscape" columnWidth="1272" leftMargin="14" rightMargin="14" topMargin="56" bottomMargin="28" uuid="3f1d7732-64a5-4b19-b4dd-5f06efe61a6b">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -6275,7 +6275,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ORGANIZATION}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ORGANIZATION} + "﹡"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="230" y="84" width="980" height="16" uuid="d69a5b37-89fd-4b84-af43-8f40c4f74119">
@@ -6419,6 +6419,17 @@
 			</line>
 		</band>
 	</pageFooter>
+	<lastPageFooter>
+		<band height="58">
+			<staticText>
+				<reportElement x="1051" y="40" width="158" height="18" uuid="aca5a24d-76b0-4eca-9194-7efec55c090b"/>
+				<textElement textAlignment="Right">
+					<paragraph tabStopWidth="0"/>
+				</textElement>
+				<text><![CDATA[﹡and any child organization]]></text>
+			</staticText>
+		</band>
+	</lastPageFooter>
 	<summary>
 		<band splitType="Stretch"/>
 	</summary>
