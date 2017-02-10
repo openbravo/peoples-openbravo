@@ -456,7 +456,6 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     toolbar.setEmail(false);
     int totalAcctEntries = 0;
     int lastRecordNumber = 0;
-    int limit = 0;
     String rowNum = "0";
     String oraLimit1 = null;
     String oraLimit2 = null;
@@ -701,15 +700,6 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     }
     {
       OBError myMessage = vars.getMessage("ReportGeneralLedgerJournal");
-      if (limit > 0 && data.length > limit) {
-        myMessage = new OBError();
-        myMessage.setType("Warning");
-        myMessage.setTitle("");
-        String msgbody = Utility.messageBD(this, "ReportsLimit", vars.getLanguage());
-        msgbody = msgbody.replace("@limit@", String.valueOf(limit + 1));
-        myMessage.setMessage(msgbody);
-      }
-
       vars.removeMessage("ReportGeneralLedgerJournal");
       if (myMessage != null) {
         xmlDocument.setParameter("messageType", myMessage.getType());
