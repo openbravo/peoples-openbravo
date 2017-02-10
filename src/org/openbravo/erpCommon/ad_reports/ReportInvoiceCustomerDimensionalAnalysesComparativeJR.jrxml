@@ -231,6 +231,7 @@
 	<parameter name="aux_docstatus" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{DOCSTATUS}.equals("") ? " " : " AND C_INVOICE.DOCSTATUS <> '" + $P{DOCSTATUS} + "'"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="LANGUAGE" class="java.lang.String"/>
 	<parameter name="SR_LINES" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
 	<parameter name="orderBy" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[" ORDER BY 1 "]]></defaultValueExpression>
@@ -913,6 +914,9 @@
 					<subreportParameter name="DOCSTATUS">
 						<subreportParameterExpression><![CDATA[$P{aux_docstatus}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter name="LANGUAGE">
+                        <subreportParameterExpression><![CDATA[$P{LANGUAGE}]]></subreportParameterExpression>
+                    </subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					<subreportExpression><![CDATA[$P{SR_LINES}]]></subreportExpression>
 				</subreport>

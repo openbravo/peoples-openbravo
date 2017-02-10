@@ -973,6 +973,9 @@
 				<subreportParameter name="DOCSTATUS">
 					<subreportParameterExpression><![CDATA[$P{aux_docstatus}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="LANGUAGE">
+                    <subreportParameterExpression><![CDATA[$P{LANGUAGE}]]></subreportParameterExpression>
+                </subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[$P{SR_LINES}]]></subreportExpression>
 			</subreport>

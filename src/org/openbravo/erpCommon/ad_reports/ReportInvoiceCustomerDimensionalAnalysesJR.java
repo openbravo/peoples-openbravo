@@ -841,12 +841,13 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       if ("xls".equals(strOutput)) {
         try {
           dataXLS = ReportInvoiceCustomerDimensionalAnalysesJRData.selectXLS(this, strCurrencyId,
-              Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), localStrOrg),
-              Utility.getContext(this, vars, "#User_Client",
-                  "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
-                  .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
-              strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,
-              strcProjectId, strProducttype, strcDocTypeId, strVoid.equals("Y") ? "" : "VO");
+              vars.getLanguage(), Tree.getMembers(this,
+                  TreeData.getTreeOrg(this, vars.getClient()), localStrOrg), Utility.getContext(
+                  this, vars, "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"),
+              strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
+              strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
+              strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, strVoid
+                  .equals("Y") ? "" : "VO");
 
         } catch (ServletException ex) {
           myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
@@ -988,6 +989,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
               parameters.put("PRODUCTTYPE", strProducttype);
               parameters.put("C_DOCTYPE_ID", strcDocTypeId);
               parameters.put("DOCSTATUS", strVoid.equals("Y") ? "" : "VO");
+              parameters.put("LANGUAGE", vars.getLanguage());
               parameters.put("SR_LINES", jasperReportLines);
 
               renderJR(vars, response, strReportName, null, "xls", parameters, dataXLS, null);
@@ -1051,6 +1053,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
             parameters.put("PRODUCTTYPE", strProducttype);
             parameters.put("C_DOCTYPE_ID", strcDocTypeId);
             parameters.put("DOCSTATUS", strVoid.equals("Y") ? "" : "VO");
+            parameters.put("LANGUAGE", vars.getLanguage());
             parameters.put("SR_LINES", jasperReportLines);
 
             parameters.put("LEVEL1_LABEL", strLevelLabel[0]);

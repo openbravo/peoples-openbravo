@@ -1173,7 +1173,7 @@
                 left join AD_USER on C_INVOICE.SALESREP_ID = AD_USER.AD_USER_ID
                 left join C_PROJECT on C_INVOICE.C_PROJECT_ID = C_PROJECT.C_PROJECT_ID
                 left join C_DOCTYPE on C_INVOICE.C_DOCTYPE_ID=C_DOCTYPE.C_DOCTYPE_ID
-                left join C_DOCTYPE_TRL on C_DOCTYPE.C_DOCTYPE_ID = C_DOCTYPE_TRL.C_DOCTYPE_ID
+                left join C_DOCTYPE_TRL on C_DOCTYPE.C_DOCTYPE_ID = C_DOCTYPE_TRL.C_DOCTYPE_ID AND C_DOCTYPE_TRL.AD_LANGUAGE=?
                 join AD_ORG DOCO on C_DOCTYPE.AD_ORG_ID = DOCO.AD_ORG_ID
                 left join M_PRODUCT on C_INVOICELINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
                 left join C_UOM on C_INVOICELINE.C_UOM_ID = C_UOM.C_UOM_ID
@@ -1197,6 +1197,7 @@
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
+    <Parameter name="language"/>
     <Parameter name="adOrgId" optional="true" type="replace" after="AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'7'"/>
     <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
