@@ -88,7 +88,7 @@ public class Characteristic extends ProcessHQLQuery {
             + "ch.obposFilteronwebpos=true AND "
             + assortmentFilter
             + " ch.$naturalOrgCriteria and ch.$readableSimpleClientCriteria and (ch.$incrementalUpdateCriteria) "
-            + " order by ch.name");
+            + " order by ch.name, ch.id");
 
     return hqlQueries;
   }

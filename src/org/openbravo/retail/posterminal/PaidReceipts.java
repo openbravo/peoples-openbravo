@@ -111,6 +111,7 @@ public class PaidReceipts extends JSONProcessSimple {
             .getPropertyExtensions(extensionsLines);
         String hqlPaidReceiptsLines = "select " + hqlPropertiesLines.getHqlSelect() + //
             "  from OrderLine as ordLine " + //
+            "  left join ordLine.returnReason as returnReason " + //
             " where ordLine.salesOrder.id=? and ordLine.obposIsDeleted = false"; //
         hqlPaidReceiptsLines += " order by ordLine.lineNo";
         Query paidReceiptsLinesQuery = OBDal.getInstance().getSession()

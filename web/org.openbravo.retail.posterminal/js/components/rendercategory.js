@@ -89,6 +89,9 @@ enyo.kind({
       expand: this.$.expand.getShowing()
     });
   },
+  isExpanded: function () {
+    return !(this.$.expand && this.$.expand.getShowing() === true);
+  },
   components: [{
     style: 'float:left; width: calc(100% - 40px);',
     components: [{

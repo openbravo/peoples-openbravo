@@ -118,7 +118,7 @@ public class Category extends ProcessHQLQuery {
           .add("select"
               + regularProductsCategoriesHQLProperties.getHqlSelect() //
               + "from OBRETCO_Productcategory aCat left outer join aCat.productCategory as pCat left outer join pCat.image as img"
-              + " where ( aCat.obretcoProductlist.id = :productListId ) " + " order by pCat.name");
+              + " where ( aCat.obretcoProductlist.id = :productListId ) " + " order by pCat.name, pCat.id");
       hqlQueries
           .add("select"
               + regularProductsCategoriesHQLProperties.getHqlSelect() //
@@ -127,7 +127,7 @@ public class Category extends ProcessHQLQuery {
               + " and tn.node = pCat.id and tn.tree.table.id = :productCategoryTableId "
               + " and pCat.summaryLevel = 'Y'"
               + " and not exists (select pc.id from OBRETCO_Productcategory pc where tn.node = pc.productCategory.id) "
-              + "order by tn.sequenceNumber");
+              + "order by tn.sequenceNumber, tn.id");
 
     } else {
       hqlQueries
@@ -144,7 +144,7 @@ public class Category extends ProcessHQLQuery {
               + "pli.product.active = true)) "
               + "OR (pCat.summaryLevel = 'Y' AND pCat.$naturalOrgCriteria AND "
               + "pCat.$readableSimpleClientCriteria)) AND pCat.$incrementalUpdateCriteria "
-              + "order by pCat.name");
+              + "order by pCat.name, pCat.id");
     }
     String promoNameTrl;
     if (OBContext.hasTranslationInstalled()) {

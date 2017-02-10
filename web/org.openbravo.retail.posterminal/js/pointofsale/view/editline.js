@@ -84,6 +84,19 @@ enyo.kind({
     }
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+    position: 15,
+    name: 'returnReasonLine',
+    I18NLabel: 'OBPOS_ReturnReason',
+    render: function (line) {
+      if (line && line.get('returnReason')) {
+        this.$.propertyValue.setContent(line.get('returnReasonName'));
+        this.show();
+      } else {
+        this.hide();
+      }
+    }
+  }, {
+    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
     position: 20,
     name: 'qtyLine',
     I18NLabel: 'OBPOS_LineQuantity',
@@ -899,7 +912,7 @@ enyo.kind({
         }
         this.$.icon.parent.hide();
       }
-      if (this.line.get('qty') < OB.DEC.Zero && !this.receipt.get('iscancelled')) {
+      if (this.line.get('qty') < OB.DEC.Zero && !this.receipt.get('iscancelled') && !this.receipt.get('isPaid')) {
         if (!_.isUndefined(this.line.get('returnReason'))) {
           selectedReason = _.filter(this.$.returnreason.children, function (reason) {
             return reason.getValue() === me.line.get('returnReason');
@@ -910,7 +923,11 @@ enyo.kind({
         this.$.linePropertiesContainer.setMaxHeight("110px");
       } else {
         this.$.returnreason.hide();
-        this.$.linePropertiesContainer.setMaxHeight("134px");
+        if (this.receipt.get('isPaid')) {
+          this.$.linePropertiesContainer.setMaxHeight("187px");
+        } else {
+          this.$.linePropertiesContainer.setMaxHeight("134px");
+        }
       }
     } else {
       this.$.txtaction.setContent(OB.I18N.getLabel('OBPOS_NoLineSelected'));
@@ -980,6 +997,7 @@ enyo.kind({
         orderLine.unset('warehouse');
       }
       this.$.linePropertiesContainer.$.descLine.render(orderLine);
+      this.$.linePropertiesContainer.$.returnReasonLine.render(orderLine);
       if (this.$.linePropertiesContainer.$.qtyLine) {
         this.$.linePropertiesContainer.$.qtyLine.render(orderLine);
       }
