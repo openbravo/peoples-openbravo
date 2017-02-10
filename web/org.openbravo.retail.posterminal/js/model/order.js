@@ -5230,12 +5230,17 @@
         payments: payments,
         receipt: this,
         callback: callback
-      }, function () {
+      }, function (args) {
         var executeFinalCallback = function () {
             if (callback instanceof Function) {
               callback(order);
             }
             };
+
+        if (args && args.cancellation) {
+          executeFinalCallback();
+          return;
+        }
 
         if (!payment.get('paymentData')) {
           // search for an existing payment only if there is not paymentData info.
