@@ -575,6 +575,13 @@ public abstract class UIDefinition {
     return "";
   }
 
+  /**
+   * This method determines if the UI definition should include the showHover property as part of
+   * the grid field properties. Returns {@code true} by default.
+   * 
+   * @return {@code true} if fields using this UI definition should display their text on a hover
+   *         box, otherwise return {@code false}
+   */
   public boolean showHover() {
     return true;
   }
