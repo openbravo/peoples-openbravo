@@ -99,7 +99,7 @@ enyo.kind({
 
     this.receipt.get('lines').on('selected', function (line) {
       this.line = line;
-      this.clearInput();
+      this.clearEditBox();
     }, this);
   },
   validateQuantity: function (keyboard, value) {
