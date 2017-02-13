@@ -581,8 +581,12 @@ public class ReportValuationStock extends HttpSecureAppServlet {
   private List<String> getWarehouses(String clientId, String orgId) {
     final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(clientId);
-    final String sqlString = "select m_warehouse_id from m_warehouse where ad_org_id in (:orgList) and ad_client_id=:clientId ";
-    Query qry = OBDal.getInstance().getSession().createSQLQuery(sqlString);
+    final StringBuilder hqlString = new StringBuilder();
+    hqlString.append("select e.id ");
+    hqlString.append(" from Warehouse as e");
+    hqlString.append(" where e.organization.id in (:orgList)");
+    hqlString.append(" and e.client.id = :clientId");
+    Query qry = OBDal.getInstance().getSession().createQuery(hqlString.toString());
     qry.setParameterList("orgList", osp.getNaturalTree(orgId));
     qry.setParameter("clientId", clientId);
     return (List<String>) qry.list();
