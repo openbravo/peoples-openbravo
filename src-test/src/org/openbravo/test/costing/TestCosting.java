@@ -4524,8 +4524,14 @@ public class TestCosting extends WeldBaseTest {
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt1 = createGoodsReceipt(purchaseOrder, price1, quantity2, day1);
 
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
+
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt2 = createGoodsReceipt(purchaseOrder, price1, quantity3, day2);
+
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt3 = createGoodsReceipt(purchaseOrder, price1, quantity4, day3);
@@ -4753,11 +4759,17 @@ public class TestCosting extends WeldBaseTest {
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt21 = createGoodsReceipt(product2, price2, quantity2, day1);
 
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
+
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt12 = createGoodsReceipt(product1, price1, quantity3, day2);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt22 = createGoodsReceipt(product2, price2, quantity4, day2);
+
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt13 = createGoodsReceipt(product1, price1, quantity5, day3);
