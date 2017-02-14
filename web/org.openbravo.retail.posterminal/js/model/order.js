@@ -4531,6 +4531,10 @@
               OB.Dal.get(OB.Model.BPLocation, bpBillLocId, function (bpLoc) {
                 bp.set('locName', bpLoc.get('name'));
                 bp.set('locId', bpLoc.get('id'));
+                bp.set('postalCode', bpLoc.get('postalCode'));
+                bp.set('cityName', bpLoc.get('cityName'));
+                bp.set('countryName', bpLoc.get('countryName'));
+                bp.set('locationModel', bpLoc);
                 order.trigger('change:bp', order);
               }, function () {
                 OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_NoReceiptLoadedLocation'), [{
