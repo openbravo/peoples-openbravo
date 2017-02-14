@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -72,13 +72,12 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
   private Instance<ExtraWindowSettingsInjector> extraSettings;
 
   protected JSONObject execute(Map<String, Object> parameters, String data) {
-
     try {
       OBContext.setAdminMode();
       final String windowId = (String) parameters.get("windowId");
       final Window window = OBDal.getInstance().get(Window.class, windowId);
       final String roleId = OBContext.getOBContext().getRole().getId();
-      final DalConnectionProvider dalConnectionProvider = new DalConnectionProvider();
+      final DalConnectionProvider dalConnectionProvider = new DalConnectionProvider(false);
       final JSONObject jsonUIPattern = new JSONObject();
       final String windowType = window.getWindowType();
       for (Tab tab : window.getADTabList()) {
@@ -257,6 +256,8 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
       throw new OBException(e);
     } finally {
       OBContext.restorePreviousMode();
+      // clear anything we have in session as there's no change to make faster flush
+      OBDal.getInstance().getSession().clear();
     }
   }
 }
