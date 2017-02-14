@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
+<!-- 2017-02-14T16:34:45 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CashUpReport" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d48670b9-e50a-4c6e-a8ce-076369e29634">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -228,22 +230,22 @@
 				<textFieldExpression><![CDATA[$P{NUMBERFORMAT}.format(new BigDecimal($P{TOTAL_RETAIL_TRANS_VALUE}))]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="185" y="80" width="150" height="20" uuid="925d97e2-1586-4c95-a4d0-7a4a0e9e7638"/>
+				<reportElement x="80" y="80" width="400" height="20" uuid="925d97e2-1586-4c95-a4d0-7a4a0e9e7638"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$P{STORE}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="185" y="100" width="150" height="20" uuid="40295ce0-8f7d-4424-bf4e-43dd0f8e5586"/>
+				<reportElement x="80" y="100" width="400" height="20" uuid="40295ce0-8f7d-4424-bf4e-43dd0f8e5586"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$P{TERMINAL}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="185" y="120" width="150" height="20" uuid="9e1e8b4e-3dc7-425a-9794-b38c44ba82df"/>
+				<reportElement x="80" y="120" width="400" height="20" uuid="9e1e8b4e-3dc7-425a-9794-b38c44ba82df"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$P{USER}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="164" y="140" width="200" height="20" uuid="afc1a198-a299-497a-9dbd-2a603c426db4"/>
+				<reportElement x="80" y="140" width="400" height="20" uuid="afc1a198-a299-497a-9dbd-2a603c426db4"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$P{TIME}]]></textFieldExpression>
 			</textField>
