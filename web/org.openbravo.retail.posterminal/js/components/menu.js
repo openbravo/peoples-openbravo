@@ -112,11 +112,23 @@ enyo.kind({
     });
   },
   displayLogic: function () {
-    var haspayments;
+    var me = this,
+        i, haspayments;
+    this.hideVoidLayaway = [];
 
+    this.show();
+    this.adjustVisibilityBasedOnPermissions();
     if (this.model.get('order').get('isLayaway') && this.model.get('order').get('orderType') !== 3 && this.model.get('order').get('payments').length === 0 && ((OB.MobileApp.model.hasPermission('OBPOS_payments.voidLayaway', true) && this.model.get('orderList').current.get('payment') === 0) || !OB.MobileApp.model.hasPermission('OBPOS_payments.voidLayaway', true))) {
-      this.show();
-      this.adjustVisibilityBasedOnPermissions();
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreDisplayVoidLayaway', {
+        context: this
+      }, function (args) {
+        for (i = 0; i < me.hideVoidLayaway.length; i++) {
+          if (me.hideVoidLayaway[i]) {
+            me.hide();
+            break;
+          }
+        }
+      });
     } else {
       this.hide();
     }
