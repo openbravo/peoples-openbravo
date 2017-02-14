@@ -1807,6 +1807,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   }
 
   public HandlePaymentResult handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
+      boolean wasPaidOnCredit) throws Exception {
+    return handlePayments(jsonorder, order, invoice, wasPaidOnCredit, false);
+  }
+
+  public HandlePaymentResult handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
       boolean wasPaidOnCredit, boolean createInvoice) throws Exception {
     String posTerminalId = jsonorder.getString("posTerminal");
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class, posTerminalId);
