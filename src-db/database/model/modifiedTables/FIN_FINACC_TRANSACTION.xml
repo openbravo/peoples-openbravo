@@ -10,6 +10,7 @@
       </foreign-key>
       <index name="EM_OBPOS_APP_CASHUP" unique="false">
         <index-column name="EM_OBPOS_APP_CASHUP_ID"/>
+        <whereClause><![CDATA[EM_OBPOS_APP_CASHUP_ID IS NOT NULL]]></whereClause>
       </index>
     </table>
   </database>

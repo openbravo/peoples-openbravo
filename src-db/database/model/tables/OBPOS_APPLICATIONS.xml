@@ -140,6 +140,7 @@
       </index>
       <index name="OBPOS_APPLICATIONS_MASTER_IDX" unique="false">
         <index-column name="MASTERTERMINAL_ID"/>
+        <whereClause><![CDATA[MASTERTERMINAL_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="OBPOS_APPLICATIONS_NAME" unique="false">
         <index-column name="NAME"/>
