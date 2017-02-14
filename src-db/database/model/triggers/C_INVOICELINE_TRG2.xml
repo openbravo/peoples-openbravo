@@ -23,7 +23,7 @@
 
   v_Processed C_ORDER.PROCESSED%TYPE;
   v_ID VARCHAR2(32);
-  v_oldLine NUMBER;
+  v_oldLine NUMBER:=0;
   v_newLineNetAmt NUMBER;
   v_newLineAlternate NUMBER;
   v_taxAmt NUMBER;
@@ -56,9 +56,7 @@
   v_CalcLine NUMBER;
   v_maxline NUMBER;    
           
-  v_orderlineCount NUMBER;
   v_prepayment fin_payment_schedule.paidamt%type;
-  v_invoice_qty c_invoiceline.qtyinvoiced%type;
 
   TYPE RECORD IS REF CURSOR;
   Cur_BOM RECORD;          
@@ -94,7 +92,6 @@ END IF;
  WHERE C_Invoice.C_Currency_ID = C_Currency.C_Currency_ID
  AND C_Invoice.m_pricelist_id = pl.m_pricelist_id
  AND C_Invoice_ID=v_ID;
- v_oldLine:=0;
  v_newLineNetAmt:=0;
  IF(v_Processed='N') THEN
   -- Calculate taxes
@@ -107,22 +104,18 @@ END IF;
      END IF;
    END IF;  
   IF(UPDATING OR DELETING) THEN
-  v_oldLine:= COALESCE(:old.LineNetAmt,0);
-if(:old.c_orderline_id is not null or :old.c_orderline_id != '') then
-select count(c_invoiceline.c_invoice_id), coalesce(sum(c_invoiceline.qtyinvoiced),0)
-into v_orderlineCount, v_invoice_qty
-from c_invoiceline where c_invoice_id = :old.c_invoice_id and c_orderline_id in
-(select c_orderline_id from c_orderline where c_order_id=(select c_order_id from c_orderline
-where c_orderline_id=:old.c_orderline_id));
+    v_oldLine:= COALESCE(:OLD.LineNetAmt,0);
+    IF(DELETING AND (:old.c_orderline_id IS NOT NULL OR :old.c_orderline_id <> '')) THEN
+      SELECT COALESCE(sum(fps.paidamt),0)
+        INTO v_prepayment
+      FROM fin_payment_schedule fps
+        JOIN c_order ord ON ord.c_order_id=fps.c_order_id
+        JOIN c_orderline ordline ON ordline.c_order_id = ord.c_order_id
+      WHERE ordline.c_orderline_id = :old.c_orderline_id;
 
-if ((v_orderlineCount=0 and v_invoice_qty=0) or (v_orderlineCount>0 and v_invoice_qty=0)) then
-select coalesce(sum(fps.paidamt),0) into v_prepayment from fin_payment_schedule fps
-join c_order ord on ord.c_order_id=fps.c_order_id
-join c_orderline ordline on ordline.c_order_id = ord.c_order_id
-where ordline.c_orderline_id =:old.c_orderline_id;
-
-update c_invoice set prepaymentamt=(prepaymentamt-v_prepayment) where c_invoice_id=:old.c_invoice_id;
-    END IF;
+      UPDATE c_invoice
+      SET prepaymentamt = prepaymentamt - v_prepayment
+      WHERE c_invoice_id = :old.c_invoice_id;
     END IF;
   END IF;  
   IF (INSERTING OR UPDATING) THEN
