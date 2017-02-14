@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2016 Openbravo SLU
+ * All portions are Copyright (C) 2013-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -397,17 +397,14 @@ public class CashVATUtil {
       final StringBuffer hql = new StringBuffer();
       hql.append(" select coalesce(sum(" + InvoiceTaxCashVAT_V.PROPERTY_PERCENTAGE + "), 0) ");
       hql.append(" from " + InvoiceTaxCashVAT_V.ENTITY_NAME);
-      hql.append(" where " + InvoiceTaxCashVAT_V.PROPERTY_INVOICETAX + "."
-          + InvoiceTax.PROPERTY_TAX + "." + TaxRate.PROPERTY_ID + " = :taxId ");
-      hql.append(" and " + InvoiceTaxCashVAT_V.PROPERTY_INVOICETAX + "."
-          + InvoiceTax.PROPERTY_INVOICE + "." + Invoice.PROPERTY_ID + " = :invoiceId ");
+      hql.append(" where " + InvoiceTaxCashVAT_V.PROPERTY_TAX + "." + TaxRate.PROPERTY_ID
+          + " = :taxId ");
+      hql.append(" and " + InvoiceTaxCashVAT_V.PROPERTY_INVOICE + "." + Invoice.PROPERTY_ID
+          + " = :invoiceId ");
       hql.append(" and " + InvoiceTaxCashVAT_V.PROPERTY_CANCELED + " = false ");
-      hql.append(" and " + InvoiceTaxCashVAT_V.PROPERTY_PAYMENTDETAILS + "."
-          + FIN_PaymentDetail.PROPERTY_ISPREPAYMENT + " = true ");
-      hql.append(" group by " + InvoiceTaxCashVAT_V.PROPERTY_INVOICETAX + "."
-          + InvoiceTax.PROPERTY_TAX + "." + TaxRate.PROPERTY_ID + ", "
-          + InvoiceTaxCashVAT_V.PROPERTY_INVOICETAX + "." + InvoiceTax.PROPERTY_INVOICE + "."
-          + Invoice.PROPERTY_ID);
+      hql.append(" and " + InvoiceTaxCashVAT_V.PROPERTY_ISPREPAYMENT + " = true ");
+      hql.append(" group by " + InvoiceTaxCashVAT_V.PROPERTY_TAX + "." + TaxRate.PROPERTY_ID + ", "
+          + InvoiceTaxCashVAT_V.PROPERTY_INVOICE + "." + Invoice.PROPERTY_ID);
 
       final Session session = OBDal.getInstance().getSession();
       final Query query = session.createQuery(hql.toString());
