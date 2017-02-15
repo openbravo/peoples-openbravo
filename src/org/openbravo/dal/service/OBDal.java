@@ -497,7 +497,7 @@ public class OBDal implements OBNotSingleton {
   public <T extends BaseOBObject> OBCriteria<T> createCriteria(Class<T> clz) {
     checkReadAccess(clz);
     final Entity entity = ModelProvider.getInstance().getEntity(clz);
-    final OBCriteria<T> obCriteria = new OBCriteria<T>(entity.getName(),
+    final OBCriteria<T> obCriteria = new OBCriteria<T>(clz.getName(),
         (SessionImplementor) SessionHandler.getInstance().getSession(poolName));
     obCriteria.setEntity(entity);
     return obCriteria;
@@ -515,7 +515,7 @@ public class OBDal implements OBNotSingleton {
   public <T extends BaseOBObject> OBCriteria<T> createCriteria(Class<T> clz, String alias) {
     checkReadAccess(clz);
     final Entity entity = ModelProvider.getInstance().getEntity(clz);
-    final OBCriteria<T> obCriteria = new OBCriteria<T>(entity.getName(), alias,
+    final OBCriteria<T> obCriteria = new OBCriteria<T>(clz.getName(), alias,
         (SessionImplementor) SessionHandler.getInstance().getSession(poolName));
     obCriteria.setEntity(entity);
     return obCriteria;
@@ -530,9 +530,10 @@ public class OBDal implements OBNotSingleton {
    */
   public <T extends BaseOBObject> OBCriteria<T> createCriteria(String entityName) {
     checkReadAccess(entityName);
-    final OBCriteria<T> obCriteria = new OBCriteria<T>(entityName,
+    Entity entity = ModelProvider.getInstance().getEntity(entityName);
+    final OBCriteria<T> obCriteria = new OBCriteria<T>(entity.getMappingClass().getName(),
         (SessionImplementor) SessionHandler.getInstance().getSession(poolName));
-    obCriteria.setEntity(ModelProvider.getInstance().getEntity(entityName));
+    obCriteria.setEntity(entity);
     return obCriteria;
   }
 
