@@ -256,6 +256,7 @@
       </index>
       <index name="AD_COLUMN_PROCESS" unique="false">
         <index-column name="AD_PROCESS_ID"/>
+        <whereClause><![CDATA[AD_PROCESS_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="AD_COLUMN_TABLE" unique="false">
         <index-column name="AD_TABLE_ID"/>

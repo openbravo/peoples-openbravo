@@ -111,15 +111,19 @@
       </foreign-key>
       <index name="AD_MODELOBJECT_CALLOUT_IDX" unique="false">
         <index-column name="AD_CALLOUT_ID"/>
+        <whereClause><![CDATA[AD_CALLOUT_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="AD_MODELOBJECT_FORM_IDX" unique="false">
         <index-column name="AD_FORM_ID"/>
+        <whereClause><![CDATA[AD_FORM_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="AD_MODELOBJECT_PROCESS_IDX" unique="false">
         <index-column name="AD_PROCESS_ID"/>
+        <whereClause><![CDATA[AD_PROCESS_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="AD_MODELOBJECT_REFERENCE_IDX" unique="false">
         <index-column name="AD_REFERENCE_ID"/>
+        <whereClause><![CDATA[AD_REFERENCE_ID IS NOT NULL]]></whereClause>
       </index>
       <check name="AD_MODEL_OBJECT_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_MODEL_OBJECT_ISDEFAULT_CHK"><![CDATA[ISDEFAULT IN ('Y', 'N')]]></check>

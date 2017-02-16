@@ -192,12 +192,15 @@
       </foreign-key>
       <index name="OBUIAPP_PARAMETER_ATTMET_IDX" unique="false">
         <index-column name="C_ATTACHMENT_METHOD_ID"/>
+        <whereClause><![CDATA[C_ATTACHMENT_METHOD_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="OBUIAPP_PARAMETER_PROCESS" unique="false">
         <index-column name="OBUIAPP_PROCESS_ID"/>
+        <whereClause><![CDATA[OBUIAPP_PROCESS_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="OBUIAPP_PARAMETER_TAB_IDX" unique="false">
         <index-column name="AD_TAB_ID"/>
+        <whereClause><![CDATA[AD_TAB_ID IS NOT NULL]]></whereClause>
       </index>
       <check name="OBUIAPP_PARAM_SHOWTITLE_CHK"><![CDATA[DISPLAYTITLE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_CENTR_CHK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>

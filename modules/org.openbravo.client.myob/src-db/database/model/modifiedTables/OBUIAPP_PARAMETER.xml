@@ -10,6 +10,7 @@
       </foreign-key>
       <index name="EM_OBKMO_PARAM_WIDGET" unique="false">
         <index-column name="EM_OBKMO_WIDGET_CLASS_ID"/>
+        <whereClause><![CDATA[EM_OBKMO_WIDGET_CLASS_ID IS NOT NULL]]></whereClause>
       </index>
     </table>
   </database>
