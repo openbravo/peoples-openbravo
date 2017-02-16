@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -28,8 +28,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 public class StockUtils {
   /*
-   * Calls M_GET_STOCK_PARAM and retrieves result in a CSResponseGetStockParam object. Records will
-   * be created in M_STOCK_PROPOSAL with AD_PINSTASNCE_ID = uuid (parameter).
+   * Calls getStock with Available, Nettable and OverIssue = null
    */
   public static CSResponseGetStockParam getStock(String uuid, String recordId, BigDecimal quantity,
       String mProductId, String mLocatorId, String mWarehouseId, String priorityWarehouseId,
@@ -37,11 +36,27 @@ public class StockUtils {
       String warehouseRuleId, String cUomId, String productUomId, String adTableId, String auxId,
       Long lineNo, String processId, String mReservationId, String calledFromApp)
       throws ServletException, NoConnectionAvailableException {
-    return StockUtilsData.getStock(OBDal.getInstance().getConnection(true),
+    return getStock(uuid, recordId, quantity, mProductId, mLocatorId, mWarehouseId,
+        priorityWarehouseId, adOrgId, mAttributeSetInstanceId, adUserId, adClientId,
+        warehouseRuleId, cUomId, productUomId, adTableId, auxId, lineNo, processId, mReservationId,
+        calledFromApp, null, null, null);
+  }
+
+  /*
+   * Calls M_GET_STOCK_PARAM1 and retrieves result in a CSResponseGetStockParam object. Records will
+   * be created in M_STOCK_PROPOSAL with AD_PINSTASNCE_ID = uuid (parameter).
+   */
+  public static CSResponseGetStockParam getStock(String uuid, String recordId, BigDecimal quantity,
+      String mProductId, String mLocatorId, String mWarehouseId, String priorityWarehouseId,
+      String adOrgId, String mAttributeSetInstanceId, String adUserId, String adClientId,
+      String warehouseRuleId, String cUomId, String productUomId, String adTableId, String auxId,
+      Long lineNo, String processId, String mReservationId, String calledFromApp, String available,
+      String nettable, String overIssue) throws ServletException, NoConnectionAvailableException {
+    return StockUtilsData.getStock1(OBDal.getInstance().getConnection(true),
         new DalConnectionProvider(true), uuid, recordId, quantity != null ? quantity.toString()
             : null, mProductId, mLocatorId, mWarehouseId, priorityWarehouseId, adOrgId,
         mAttributeSetInstanceId, adUserId, adClientId, warehouseRuleId, cUomId, productUomId,
         adTableId, auxId, lineNo != null ? lineNo.toString() : null, processId, mReservationId,
-        calledFromApp);
+        calledFromApp, available, nettable, overIssue);
   }
 }

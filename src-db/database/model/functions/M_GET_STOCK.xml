@@ -51,6 +51,9 @@
   v_LineNo NUMBER;
   v_ProcessID VARCHAR2(32) ;
   v_Reservation_ID VARCHAR2(32);
+  v_avail CHAR;
+  v_nett CHAR;
+  v_overissue CHAR;
   
 BEGIN
   --  Update AD_PInstance
@@ -119,13 +122,22 @@ BEGIN --BODY
     ELSIF (Cur_Parameter.ParameterName = 'M_Reservation_ID') THEN
       v_reservation_id:=Cur_Parameter.P_String;
       DBMS_OUTPUT.PUT_LINE(' M_Reservation_ID=' || v_reservation_id);
+    ELSIF (Cur_Parameter.ParameterName = 'Available') THEN
+      v_avail:=Cur_Parameter.P_String;
+      DBMS_OUTPUT.PUT_LINE(' v_avail=' || v_avail);
+    ELSIF (Cur_Parameter.ParameterName = 'Nettable') THEN
+      v_nett:=Cur_Parameter.P_String;
+      DBMS_OUTPUT.PUT_LINE(' v_nett=' || v_nett);
+    ELSIF (Cur_Parameter.ParameterName = 'OverIssue') THEN
+      v_overissue:=Cur_Parameter.P_String;
+      DBMS_OUTPUT.PUT_LINE(' v_overissue=' || v_overissue);
     ELSE
       DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
     END IF;
   END LOOP; -- Get Parameter
   DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
 
-  M_GET_STOCK_PARAM(PInstance_ID, v_Record_ID, v_Quantity, v_ProductID, v_LocatorID, v_WarehouseID, v_PriorityWarehouseID, v_OrgID, v_AttributesetinstanceID, v_AD_User_ID, v_ClientID, v_warehouse_rule_id, v_UomID, v_ProductUomID, v_TableID, v_AuxID, v_LineNo, v_ProcessID, v_reservation_id, p_calledfromapp, v_result, v_Message);
+  M_GET_STOCK_PARAM1(PInstance_ID, v_Record_ID, v_Quantity, v_ProductID, v_LocatorID, v_WarehouseID, v_PriorityWarehouseID, v_OrgID, v_AttributesetinstanceID, v_AD_User_ID, v_ClientID, v_warehouse_rule_id, v_UomID, v_ProductUomID, v_TableID, v_AuxID, v_LineNo, v_ProcessID, v_reservation_id, p_calledfromapp, v_result, v_Message, v_avail, v_nett, v_overissue);
  
 
   --  Update AD_PInstance

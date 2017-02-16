@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012 Openbravo SLU 
+ * All portions are Copyright (C) 2012 - 2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -66,6 +66,52 @@
 
       <Parameter name="p_result" type="out"/>
       <Parameter name="p_message" type="out"/>
+   </SqlMethod>
+   <SqlMethod name="getStock1" type="callableStatement" connection="true" return="object" object="CSResponseGetStockParam">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        CALL M_GET_STOCK_PARAM1(?, ?, to_number(?), 
+        ?, ?, ?, 
+        ?, ?, ?, 
+        ?, ?, ?, 
+        ?, ?, ?, ?,
+        to_number(?), ?, ?, 
+        ?, ?, ?,
+        ?, ?, ?)
+      ]]></Sql>
+      <Parameter name="p_uuid"/>
+      <Parameter name="p_recordid"/>
+      <Parameter name="p_quantity"/>
+      
+      <Parameter name="p_productid"/>
+      <Parameter name="p_locatorid"/>
+      <Parameter name="p_warehouseid"/>
+      
+      <Parameter name="p_prioritywarehouseid"/>
+      <Parameter name="p_orgid"/>
+      <Parameter name="p_attributesetinstanceid"/>
+      
+      <Parameter name="p_ad_user_id"/>
+      <Parameter name="p_clientid"/>
+      <Parameter name="p_warehouse_rule_id"/>
+      
+      <Parameter name="p_uomid"/>
+      <Parameter name="p_productuomid"/>
+      <Parameter name="p_table"/>
+      <Parameter name="p_auxid"/>
+
+      <Parameter name="p_lineno"/>
+      <Parameter name="p_processid"/>
+      <Parameter name="p_reservation_id"/>
+      
+      <Parameter name="p_calledfromapp"/>
+
+      <Parameter name="p_result" type="out"/>
+      <Parameter name="p_message" type="out"/>
+      
+      <Parameter name="p_avail" type="in"/>
+      <Parameter name="p_nett" type="in"/>
+      <Parameter name="p_overissue" type="in"/>
    </SqlMethod>
    
 </SqlClass>
