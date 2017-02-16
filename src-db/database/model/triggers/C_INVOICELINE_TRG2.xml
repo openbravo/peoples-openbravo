@@ -14,16 +14,17 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2017 Openbravo SLU
+* All portions are Copyright (C) 2001-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 
 
 
+
   v_Processed C_ORDER.PROCESSED%TYPE;
   v_ID VARCHAR2(32);
-  v_oldLine NUMBER:=0;
+  v_oldLine NUMBER;
   v_newLineNetAmt NUMBER;
   v_newLineAlternate NUMBER;
   v_taxAmt NUMBER;
@@ -56,8 +57,6 @@
   v_CalcLine NUMBER;
   v_maxline NUMBER;    
           
-  v_prepayment fin_payment_schedule.paidamt%type;
-
   TYPE RECORD IS REF CURSOR;
   Cur_BOM RECORD;          
 BEGIN
@@ -92,6 +91,7 @@ END IF;
  WHERE C_Invoice.C_Currency_ID = C_Currency.C_Currency_ID
  AND C_Invoice.m_pricelist_id = pl.m_pricelist_id
  AND C_Invoice_ID=v_ID;
+ v_oldLine:=0;
  v_newLineNetAmt:=0;
  IF(v_Processed='N') THEN
   -- Calculate taxes
@@ -104,29 +104,7 @@ END IF;
      END IF;
    END IF;  
   IF(UPDATING OR DELETING) THEN
-    v_oldLine:= COALESCE(:OLD.LineNetAmt,0);
-    IF(UPDATING) THEN
-      v_newLineNetAmt := COALESCE(:new.LineNetAmt,0);
-    END IF;
-    
-    IF(:old.c_orderline_id IS NOT NULL AND (v_oldLine <> 0 OR v_newLineNetAmt <> 0)) THEN
-      SELECT COALESCE(sum(fps.paidamt),0)
-        INTO v_prepayment
-      FROM fin_payment_schedule fps
-        JOIN c_order ord ON ord.c_order_id=fps.c_order_id
-        JOIN c_orderline ordline ON ordline.c_order_id = ord.c_order_id
-      WHERE ordline.c_orderline_id = :old.c_orderline_id;
-        
-      IF (DELETING OR (UPDATING AND v_newLineNetAmt = 0 AND v_oldLine <> 0)) THEN
-        UPDATE c_invoice
-        SET prepaymentamt = prepaymentamt - v_prepayment
-        WHERE c_invoice_id = :old.c_invoice_id;
-      ELSEIF (UPDATING AND v_newLineNetAmt <> 0 AND v_oldLine = 0) THEN
-        UPDATE c_invoice
-        SET prepaymentamt = prepaymentamt + v_prepayment
-        WHERE c_invoice_id = :old.c_invoice_id;      
-      END IF;     
-    END IF;
+  v_oldLine:= COALESCE(:old.LineNetAmt,0);
   END IF;  
   IF (INSERTING OR UPDATING) THEN
    v_newLineNetAmt := COALESCE(:new.LineNetAmt,0);
