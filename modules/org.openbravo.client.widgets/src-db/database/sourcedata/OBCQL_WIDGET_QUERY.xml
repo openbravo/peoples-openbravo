@@ -51,6 +51,7 @@ and ol.salesOrder.salesTransaction = 'Y'
 and @optional_filters@
 and ol.client.id = :client
 and ol.product.name like :pname
+and ol.organization.id in (:organizationList)
 group by product.name, product.uOM.name, product.id, product.uOM.id 
 order by sum(orderedQuantity) desc]]></HQL>
 <!--CFDF8EE593F04CFE9709F5AD19A3A573-->  <TYPE><![CDATA[HQL]]></TYPE>
