@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2016 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -92,7 +92,10 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org",
           vars.getOrg());
-      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+      String strcAcctSchemaId = vars.getSessionValue("ReportGeneralLedgerJournal|cAcctSchemaId");
+      if (StringUtils.equals(strcAcctSchemaId, "")) {
+        strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+      }
       String strDateFrom = vars.getGlobalVariable("inpDateFrom",
           "ReportGeneralLedgerJournal|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportGeneralLedgerJournal|DateTo",
@@ -192,6 +195,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     } else if (vars.commandIn("FIND")) {
       String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
           "ReportGeneralLedger|cAcctSchemaId");
+      vars.setSessionValue("ReportGeneralLedgerJournal|cAcctSchemaId", strcAcctSchemaId);
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportGeneralLedgerJournal|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
