@@ -66,6 +66,7 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty("returnReason.id", "returnReason"));
         add(new HQLProperty("returnReason.name", "returnReasonName"));
         add(new HQLProperty("ordLine.obposCanbedelivered", "obposCanbedelivered"));
+        add(new HQLProperty("ordLine.obposIspaid", "obposIspaid"));
         add(new HQLProperty("ordLine.goodsShipmentLine.id", "goodsShipmentLine"));
         add(new HQLProperty(
             "(select case when line.attributeSetValue is not null then (m_getjsondescription(line.attributeSetValue.id, 'Y', '"
