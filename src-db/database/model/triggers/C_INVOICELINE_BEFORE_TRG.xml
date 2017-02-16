@@ -14,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2015-2016 Openbravo SLU
+* All portions are Copyright (C) 2015-2017 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -113,17 +113,14 @@ BEGIN
           ELSE -- The last willaccummulate rounding
             v_Line := v_BaseLine - v_LineAcum;
           END IF;
-
-          v_PriceLine := C_GET_NET_PRICE_FROM_GROSS(Cur_BOM.TAX, v_Line, v_Line, v_price_prec, :new.qtyinvoiced);
-          v_CalcLine := ROUND(:new.qtyinvoiced * v_PriceLine, v_std_Prec); -- In price including taxes the net and net alternate are equals.
-
+          v_CalcLine := C_GET_NET_AMOUNT_FROM_GROSS(Cur_BOM.TAX, v_Line, v_Line, v_std_Prec);
           v_NetActual := v_NetActual + v_CalcLine; -- Acum the net
         END LOOP;    
         v_PriceActual := v_NetActual / :new.qtyinvoiced;     
       ELSE
         -- Regular taxes
-        v_PriceActual := C_GET_NET_PRICE_FROM_GROSS(:new.c_tax_id, :new.gross_unit_price * :new.qtyinvoiced, :new.taxbaseamt, v_price_prec, :new.qtyinvoiced);
-        v_NetActual := ROUND(:new.Qtyinvoiced * v_PriceActual, v_std_Prec);
+        v_NetActual := C_GET_NET_AMOUNT_FROM_GROSS(:new.c_tax_id, :new.line_gross_amount, :new.taxbaseamt, v_std_Prec);
+        v_PriceActual := ROUND(v_NetActual / :new.qtyinvoiced, v_price_prec);
       END IF;      
       
       :NEW.pricestd := v_priceactual;

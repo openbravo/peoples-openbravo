@@ -19,7 +19,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2015 Openbravo SLU
+    * All portions are Copyright (C) 2001-2017 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -179,8 +179,7 @@ IF (UPDATING) THEN
           v_LineAlternate := v_BaseLineAlternate - v_LineAlternateAcum;
         END IF;
         IF (v_istaxincluded = 'Y') THEN
-          v_PriceLine := C_GET_NET_PRICE_FROM_GROSS(Cur_BOM.TAX, v_Line, v_LineAlternate, v_PricePrec, :new.qtyordered);
-          v_CalcLine := ROUND(:new.qtyordered * v_PriceLine, v_Prec); -- In price including taxes the net and net alternate are equals.
+          v_CalcLine := C_GET_NET_AMOUNT_FROM_GROSS(Cur_BOM.TAX, v_Line, v_LineAlternate, v_Prec);
           select coalesce(max(line), 0) into v_maxline from c_orderlinetax where c_orderline_id = :new.C_OrderLine_ID;
           C_ORDERLINETAX_INSERT(:new.AD_Org_ID, :new.C_Order_ID, :new.C_OrderLine_ID, :new.UpdatedBy, Cur_BOM.TAX, Cur_BOM.TAX, v_CalcLine, v_CalcLine, v_Prec);
         ELSE
