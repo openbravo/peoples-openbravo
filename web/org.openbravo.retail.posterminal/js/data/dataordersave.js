@@ -237,6 +237,8 @@
                           frozenReceipt: frozenReceipt,
                           isCancelled: true
                         });
+                        receipt.setIsCalculateReceiptLockState(false);
+                        receipt.setIsCalculateGrossLockState(false);
                         receipt.trigger('paymentCancel');
                       }
                     }, null, false);
