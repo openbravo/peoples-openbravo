@@ -326,7 +326,7 @@
               END;
 
               --Review no warehouse as parameter
-              M_GET_STOCK_PARAM1(v_AD_Pinstance_ID, v_Record_ID, v_DoneQuantity*Cur_WRPUsed.MovementQty, v_Product_old, null, null, null, v_PlanOrg_ID, null, v_User_ID, v_Client_ID, v_warehouse_rule_id, v_UOM_old, v_Product_UOM_old, '325', v_Production_ID, v_PlanLine, '800105', null, 'N', v_pinstance_result, v_pinstance_msg, 'Y', null, null);
+              M_GET_STOCK_PARAM1(v_pinstance_result, v_pinstance_msg, v_AD_Pinstance_ID, v_Record_ID, v_DoneQuantity*Cur_WRPUsed.MovementQty, v_Product_old, null, null, null, v_PlanOrg_ID, null, v_User_ID, v_Client_ID, v_warehouse_rule_id, v_UOM_old, v_Product_UOM_old, '325', v_Production_ID, v_PlanLine, '800105', null, 'N', 'Y', null, null);
 
               -- Check result
               BEGIN

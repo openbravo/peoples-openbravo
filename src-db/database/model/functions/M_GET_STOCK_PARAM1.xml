@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_GET_STOCK_PARAM1">
     <function name="M_GET_STOCK_PARAM1" type="NULL">
+      <parameter name="p_result" type="NUMERIC" mode="out">
+        <default/>
+      </parameter>
+      <parameter name="p_message" type="VARCHAR" mode="out">
+        <default/>
+      </parameter>
       <parameter name="p_uuid" type="VARCHAR" mode="in">
         <default/>
       </parameter>
@@ -59,12 +65,6 @@
         <default/>
       </parameter>
       <parameter name="p_calledfromapp" type="VARCHAR" mode="in">
-        <default/>
-      </parameter>
-      <parameter name="p_result" type="NUMERIC" mode="out">
-        <default/>
-      </parameter>
-      <parameter name="p_message" type="VARCHAR" mode="out">
         <default/>
       </parameter>
       <parameter name="p_avail" type="CHAR" mode="in">
@@ -193,7 +193,7 @@ BEGIN
           AND rs.quantity <> COALESCE(rs.releasedqty, 0)
           AND rs.m_locator_id IS NOT NULL
           AND COALESCE(invs.available, 'Y') = COALESCE(v_avail, 'Y')
-          AND COALESCE(invs.nett, 'Y') = COALESCE(v_nett, 'Y')
+          AND COALESCE(invs.nettable, 'Y') = COALESCE(v_nett, 'Y')
     ) LOOP
       INSERT INTO m_stock_proposed (
           m_stock_proposed_id, ad_client_id, ad_org_id, isactive, 
@@ -234,7 +234,7 @@ BEGIN
         AND ow.ad_org_id = v_orgid
         AND COALESCE(ms.quantity, 0)>0
         AND COALESCE(invs.available, 'Y') = COALESCE(v_avail, 'Y')
-          AND COALESCE(invs.nett, 'Y') = COALESCE(v_nett, 'Y')
+        AND COALESCE(invs.nettable, 'Y') = COALESCE(v_nett, 'Y')
       ORDER BY CASE w.m_warehouse_id WHEN COALESCE(v_PriorityWarehouseID, '-1') THEN 0 ELSE 1 END, ow.priority, l.priorityno, asi.created, t.created
   ) LOOP
     INSERT INTO m_stock_proposed (
@@ -279,7 +279,7 @@ BEGIN
         AND l.m_locator_id = COALESCE(r.m_locator_id, l.m_locator_id)
         AND asi.m_attributesetinstance_id = COALESCE(r.m_attributesetinstance_id, asi.m_attributesetinstance_id)
         AND COALESCE(invs.available, 'Y') = COALESCE(v_avail, 'Y')
-        AND COALESCE(invs.nett, 'Y') = COALESCE(v_nett, 'Y')
+        AND COALESCE(invs.nettable, 'Y') = COALESCE(v_nett, 'Y')
       GROUP BY w.m_warehouse_id, ow.priority, l.priorityno, asi.created, t.created, t.m_storage_detail_id, t.qtyonhand, t.allocatedqty, t.reservedqty, t.qtyorderonhand, t.updated
       ORDER BY CASE w.m_warehouse_id WHEN COALESCE(v_PriorityWarehouseID, '-1') THEN 0 ELSE 1 END, ow.priority, l.priorityno, asi.created, t.created
   ) LOOP
@@ -632,6 +632,7 @@ WHEN OTHERS THEN
   END IF;
   p_message:= v_message;
   DBMS_OUTPUT.PUT_LINE(p_message) ;
+  raise NOTICE '%', SQLERRM;
   p_result:=0;
   IF (p_calledfromapp = 'Y') THEN
     RETURN;

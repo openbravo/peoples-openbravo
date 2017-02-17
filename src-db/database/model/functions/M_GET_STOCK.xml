@@ -137,7 +137,7 @@ BEGIN --BODY
   END LOOP; -- Get Parameter
   DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
 
-  M_GET_STOCK_PARAM1(PInstance_ID, v_Record_ID, v_Quantity, v_ProductID, v_LocatorID, v_WarehouseID, v_PriorityWarehouseID, v_OrgID, v_AttributesetinstanceID, v_AD_User_ID, v_ClientID, v_warehouse_rule_id, v_UomID, v_ProductUomID, v_TableID, v_AuxID, v_LineNo, v_ProcessID, v_reservation_id, p_calledfromapp, v_result, v_Message, v_avail, v_nett, v_overissue);
+  M_GET_STOCK_PARAM1(v_result, v_Message, PInstance_ID, v_Record_ID, v_Quantity, v_ProductID, v_LocatorID, v_WarehouseID, v_PriorityWarehouseID, v_OrgID, v_AttributesetinstanceID, v_AD_User_ID, v_ClientID, v_warehouse_rule_id, v_UomID, v_ProductUomID, v_TableID, v_AuxID, v_LineNo, v_ProcessID, v_reservation_id, p_calledfromapp, v_avail, v_nett, v_overissue);
  
 
   --  Update AD_PInstance
