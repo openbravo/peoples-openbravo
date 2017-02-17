@@ -15,9 +15,9 @@
 
     if (args.meObject.customer && args.validations) {
 
-      //Validate customer edit allowed
-      if (OB.MobileApp.model.hasPermission('OBPOS_NotAllowEditCustomer', true)) {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotEditCustomer'));
+      //Validate anonumous customer edit allowed
+      if (OB.MobileApp.model.get('terminal').businessPartner === args.meObject.customer.id && OB.MobileApp.model.hasPermission('OBPOS_NotAllowEditAnonymousCustomer', true)) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotEditAnonymousCustomer'));
         args.cancellation = true;
         return;
       }
