@@ -34,7 +34,7 @@ enyo.kind({
         auxCatStr = '(',
         appendProdComma = false,
         appendCatComma = false,
-        existingServices, lineIdList;
+        existingServices, lineIdList, untSelected = 0, totalAmountSelected = 0, totalAmountPerUnitSelected = 0;
 
     if (this.productList && this.productList.length > 0) {
       //product multiselection
@@ -73,8 +73,12 @@ enyo.kind({
 
           auxCatFilters.push(l.get('product').get('productCategory'));
         }
+        if (l.get('qty') > 0) {
+          totalAmountSelected += l.get('gross');
+          totalAmountPerUnitSelected += l.get('price');
+        }
       });
-
+      
       auxProdStr += ')';
       auxCatStr += ')';
 
@@ -88,6 +92,7 @@ enyo.kind({
       where += "((product.includeProducts = 'Y' and not exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id in " + auxProdStr + " )) ";
       where += "or (product.includeProducts = 'N' and " + auxProdFilters.length + " = (select count(*) from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id in " + auxProdStr + " )) ";
       where += "or product.includeProducts is null) ";
+      where += "and (product.isPriceRuleBased = 'false' or (product.quantityRule = 'UQ' and exists (select 1 from m_product_service sp, m_servicepricerule_version sprv where product.m_product_id = sp.m_product_id and sprv.product = product.m_product_id and sprv.validFromDate = (select max(sprv2.validFromDate) from m_servicepricerule_version sprv2 where sprv2.product = product.m_product_id and sprv2.validFromDate <= strftime('%Y-%m-%d', 'now') and sprv2.active = 'true') and (sprv.minimum is null and sprv.maximum is null or sprv.minimum is null and sprv.maximum >= ? or sprv.minimum <= ? and sprv.maximum is null or sprv.minimum <= ? and sprv.maximum >= ?) and sprv.active = 'true')) or (product.quantityRule = 'PP' and exists (select 1 from m_product_service sp, m_servicepricerule_version sprv where product.m_product_id = sp.m_product_id and sprv.product = product.m_product_id and sprv.validFromDate = (select max(sprv2.validFromDate) from m_servicepricerule_version sprv2 where sprv2.product = product.m_product_id and sprv2.validFromDate <= strftime('%Y-%m-%d', 'now') and sprv2.active = 'true') and (sprv.minimum is null and sprv.maximum is null or sprv.minimum is null and sprv.maximum >= ? or sprv.minimum <= ? and sprv.maximum is null or sprv.minimum <= ? and sprv.maximum >= ?) and sprv.active = 'true')))";
 
       //including/excluding product categories
       where += "and ((product.includeProductCategories = 'Y' and not exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id in " + auxCatStr + " )) ";
@@ -97,6 +102,14 @@ enyo.kind({
 
       filters = filters.concat(auxProdFilters);
       filters = filters.concat(auxProdFilters);
+      filters.push(totalAmountSelected);
+      filters.push(totalAmountSelected);
+      filters.push(totalAmountSelected);
+      filters.push(totalAmountSelected);
+      filters.push(totalAmountPerUnitSelected);
+      filters.push(totalAmountPerUnitSelected);
+      filters.push(totalAmountPerUnitSelected);
+      filters.push(totalAmountPerUnitSelected);
       filters = filters.concat(auxCatFilters);
       filters = filters.concat(auxCatFilters);
 
@@ -111,6 +124,10 @@ enyo.kind({
         var product = line.get('product');
         return product.get('forceFilterId') || product.get('id');
       });
+      if (this.orderline.get('qty') > 0) {
+        totalAmountSelected = this.orderline.get('gross');
+        totalAmountPerUnitSelected = this.orderline.get('price');
+      }
 
       where = " and product.productType = 'S' and (product.isLinkedToProduct = 'true' and ";
 
@@ -118,6 +135,7 @@ enyo.kind({
       where += "((product.includeProducts = 'Y' and not exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? )) ";
       where += "or (product.includeProducts = 'N' and exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? )) ";
       where += "or product.includeProducts is null) ";
+      where += "and (product.isPriceRuleBased = 'false' or (product.quantityRule = 'UQ' and exists (select 1 from m_product_service sp, m_servicepricerule_version sprv where product.m_product_id = sp.m_product_id and sprv.product = product.m_product_id and sprv.validFromDate = (select max(sprv2.validFromDate) from m_servicepricerule_version sprv2 where sprv2.product = product.m_product_id and sprv2.validFromDate <= strftime('%Y-%m-%d', 'now') and sprv2.active = 'true') and (sprv.minimum is null and sprv.maximum is null or sprv.minimum is null and sprv.maximum >= ? or sprv.minimum <= ? and sprv.maximum is null or sprv.minimum <= ? and sprv.maximum >= ?) and sprv.active = 'true')) or (product.quantityRule = 'PP' and exists (select 1 from m_product_service sp, m_servicepricerule_version sprv where product.m_product_id = sp.m_product_id and sprv.product = product.m_product_id and sprv.validFromDate = (select max(sprv2.validFromDate) from m_servicepricerule_version sprv2 where sprv2.product = product.m_product_id and sprv2.validFromDate <= strftime('%Y-%m-%d', 'now') and sprv2.active = 'true') and (sprv.minimum is null and sprv.maximum is null or sprv.minimum is null and sprv.maximum >= ? or sprv.minimum <= ? and sprv.maximum is null or sprv.minimum <= ? and sprv.maximum >= ?) and sprv.active = 'true')))";
 
       //including/excluding product categories
       where += "and ((product.includeProductCategories = 'Y' and not exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id =  ? )) ";
@@ -129,6 +147,14 @@ enyo.kind({
           productId = product.get('forceFilterId') || product.get('id');
       filters.push(productId);
       filters.push(productId);
+      filters.push(totalAmountSelected);
+      filters.push(totalAmountSelected);
+      filters.push(totalAmountSelected);
+      filters.push(totalAmountSelected);
+      filters.push(totalAmountPerUnitSelected);
+      filters.push(totalAmountPerUnitSelected);
+      filters.push(totalAmountPerUnitSelected);
+      filters.push(totalAmountPerUnitSelected);
       filters.push(this.orderline.get('product').get('productCategory'));
       filters.push(this.orderline.get('product').get('productCategory'));
     }
@@ -140,7 +166,7 @@ enyo.kind({
   },
   hqlCriteria: function () {
     var me = this,
-        prodList, catList, lineIdList, existingServices;
+        prodList, catList, lineIdList, existingServices, totalAmountSelected = 0, totalAmountPerUnitSelected = 0;
     if (this.orderlineList && this.orderlineList.length > 0) {
       prodList = this.orderlineList.map(function (line) {
         var product = line.get('product');
@@ -164,11 +190,17 @@ enyo.kind({
         var product = line.get('product');
         return product.get('forceFilterId') || product.get('id');
       });
+      this.orderlineList.forEach(function (line) {
+        if (line.get('qty') > 0) {
+          totalAmountSelected += line.get('gross');
+          totalAmountPerUnitSelected += line.get('price');
+        }
+      });
       return [{
         columns: [],
         operator: OB.Dal.FILTER,
         value: (this.orderlineList.length > 1 ? 'Services_Filter_Multi' : 'Services_Filter'),
-        params: [prodList, catList, prodList.length, catList.length, (existingServices.length > 0 ? existingServices : '-')],
+        params: [prodList, catList, prodList.length, catList.length, (existingServices.length > 0 ? existingServices : '-'), totalAmountSelected, totalAmountPerUnitSelected],
         fieldType: 'Long'
       }, {
         columns: ['ispack'],
@@ -187,11 +219,15 @@ enyo.kind({
       return product.get('forceFilterId') || product.get('id');
     });
     var product = this.orderline.get('product');
+    if (this.orderline.get('qty') > 0) {
+      totalAmountSelected = this.orderline.get('gross');
+      totalAmountPerUnitSelected = this.orderline.get('price');
+    }
     return [{
       columns: [],
       operator: OB.Dal.FILTER,
       value: 'Services_Filter',
-      params: [product.get('isNew') ? null : (product.get('forceFilterId') ? product.get('forceFilterId') : product.get('id')), product.get('productCategory'), '', '', (existingServices.length > 0 ? existingServices.join("','") : "'-'")]
+      params: [product.get('forceFilterId') || product.get('id'), product.get('productCategory'), '', '', (existingServices.length > 0 ? existingServices.join("','") : '-'), totalAmountSelected, totalAmountPerUnitSelected]
     }, {
       columns: ['ispack'],
       operator: 'equals',

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+  <database name="MODIFIED TABLE M_SERVICEPRICERULE_VERSION">
+    <table name="M_SERVICEPRICERULE_VERSION" primaryKey="M_SERVICEPRICERULE_VERSION_KEY">
+      <column name="EM_OBPOS_MAXIMUM" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBPOS_MINIMUM" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+    </table>
+  </database>

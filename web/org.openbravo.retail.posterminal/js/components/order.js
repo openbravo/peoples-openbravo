@@ -1215,6 +1215,9 @@ enyo.kind({
             var priceruleVersion;
             if (sprvs && sprvs.length > 0) {
               priceruleVersion = sprvs.at(0);
+              if (line) {
+                line.set('priceruleVersion', priceruleVersion);
+              }
               OB.Dal.get(OB.Model.ServicePriceRule, priceruleVersion.get('servicePriceRule'), function (spr) {
                 if (spr.get('ruletype') === 'P') {
                   var amount, newprice, oldprice = line.get('priceList');
@@ -1328,6 +1331,35 @@ enyo.kind({
         paymentSelected: OB.MobileApp.model.paymentnames[model.get('selectedPayment')]
       });
     }, this);
+    this.order.on('change:gross', function (model) {
+      var removedServices = [],
+          servicesToBeDeleted = [];
+      _.each(model.attributes.lines.models, function (line) {
+        var totalAmountSelected = 0,
+            totalAmountPerProductSelected = 0;
+        if (line.has('relatedLines') && line.get('relatedLines').length > 0) {
+          _.each(line.get('relatedLines'), function (relatedLine) {
+            _.each(model.attributes.lines.models, function (line2) {
+              if ((line2.id === relatedLine.orderlineId) && line2.get('qty') > 0) {
+                totalAmountSelected += line2.get('gross');
+                totalAmountPerProductSelected += line2.get('price');
+              }
+            }, this);
+          }, this);
+        }
+        if (((!line.has('deliveredQuantity') || line.get('deliveredQuantity') <= 0) && line.has('priceruleVersion') && !line.get('priceruleVersion').maximum && ((line.get('product').get('quantityRule') === 'UQ' && (totalAmountSelected > line.get('priceruleVersion').get('maximum') || totalAmountSelected < line.get('priceruleVersion').get('minimum'))) || (line.get('product').get('quantityRule') === 'PP' && (totalAmountPerProductSelected > line.get('priceruleVersion').get('maximum') || totalAmountPerProductSelected < line.get('priceruleVersion').get('minimum')))))) {
+          servicesToBeDeleted.push(line);
+        }
+      }, this);
+      removedServices.push(OB.I18N.getLabel('OBPOS_ServiceRemoved'));
+      _.each(servicesToBeDeleted, function (line) {
+        this.deleteLine(line);
+        removedServices.push(line.get('product').get('_identifier'));
+      }, this);
+      if (removedServices.length > 1) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ServiceRemovedHeader'), removedServices);
+      }
+    });
   }
 });
 enyo.kind({
