@@ -432,6 +432,10 @@ enyo.kind({
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors]));
           return false;
         }
+        if (customer.get('firstName').length + customer.get('lastName').length >= 60) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_TooLongName'));
+          return false;
+        }
       }
       return true;
     }
