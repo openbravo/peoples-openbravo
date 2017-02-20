@@ -390,7 +390,6 @@
         receipt.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
 
         currentReceipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
-        currentReceipt.set('json', JSON.stringify(currentReceipt.serializeToJSON()));
 
         OB.trace('Executing pre order save hook.');
 
@@ -409,6 +408,8 @@
             }
             return true;
           }
+
+          currentReceipt.set('json', JSON.stringify(currentReceipt.serializeToJSON()));
 
           OB.trace('Saving receipt.');
 
