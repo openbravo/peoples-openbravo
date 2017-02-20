@@ -278,12 +278,16 @@ public class Product extends ProcessHQLQuery {
         + "   and p.startingDate <= :startingDate "
         + "   and (p.$incrementalUpdateCriteria) "//
         // assortment products
-        + " and ((p.includedProducts = 'N' "
-        + "  and not exists (select 1 from PricingAdjustmentProduct pap"
-        + "    where pap.active = true and pap.priceAdjustment = p and pap.product.sale = true "
+        + "and ((p.includedProducts = 'N' and not exists (select 1 "
+        + "      from PricingAdjustmentProduct pap where pap.active = true and "
+        + "      pap.priceAdjustment = p and pap.product.sale = true "
         + "      and pap.product not in (select ppl.product.id from OBRETCO_Prol_Product ppl "
-        + "         where ppl.obretcoProductlist.id = :productListId  and ppl.active = true))) "
-        + " or p.includedProducts = 'Y') "
+        + "      where ppl.obretcoProductlist.id = :productListId and ppl.active = true))) "
+        + " or (p.includedProducts = 'Y' and not exists (select 1 "
+        + "      from PricingAdjustmentProduct pap, OBRETCO_Prol_Product ppl "
+        + "      where pap.active = true and pap.priceAdjustment = p "
+        + "      and pap.product.id = ppl.product.id "
+        + "      and ppl.obretcoProductlist.id = :productListId))) "
         // organization
         + "and p.$naturalOrgCriteria and ((p.includedOrganizations='Y' "
         + "  and not exists (select 1 " + "         from PricingAdjustmentOrganization o"
