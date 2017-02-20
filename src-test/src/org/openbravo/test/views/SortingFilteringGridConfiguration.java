@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,14 +19,21 @@
 
 package org.openbravo.test.views;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
+import static org.hibernate.criterion.Restrictions.in;
+import static org.hibernate.criterion.Restrictions.not;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeThat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.codehaus.jettison.json.JSONObject;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -37,6 +44,7 @@ import org.openbravo.client.application.GCSystem;
 import org.openbravo.client.application.GCTab;
 import org.openbravo.client.application.window.OBViewUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Field;
@@ -51,6 +59,27 @@ import org.openbravo.test.base.OBBaseTest;
  */
 @RunWith(Parameterized.class)
 public class SortingFilteringGridConfiguration extends OBBaseTest {
+  private static final List<String> CORE_DEFAULT_GRID_CONFIGS = Arrays.asList(
+      "4701BC23719C41FAA422305FCDBBAF85", "FDA9AFD8D7504E18A220EFC01F5D28D3");
+
+  /**
+   * Execute these test cases only if there is no custom grid config as it could make unstable
+   * results
+   */
+  @BeforeClass
+  public static void shouldExecuteOnlyIfThereIsNoGridConfig() {
+    OBContext.setAdminMode(false);
+    try {
+      OBCriteria<GCSystem> systemGridConfig = OBDal.getInstance().createCriteria(GCSystem.class);
+      OBCriteria<GCTab> tabGridConfig = OBDal.getInstance().createCriteria(GCTab.class);
+      tabGridConfig.add(not(in(GCTab.PROPERTY_ID, CORE_DEFAULT_GRID_CONFIGS)));
+      assumeThat("Number of custom grid configs", systemGridConfig.count() + tabGridConfig.count(),
+          is(0));
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
   private enum ColumnLevel {
     SORTt_FILTERt(true, true), //
     SORTt_FILTERf(true, false), //
