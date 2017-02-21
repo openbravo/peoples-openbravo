@@ -2368,6 +2368,8 @@
           me.getStoreStock(p, qty, options, attrs, function (hasStock) {
             if (hasStock) {
               continueSaving(p);
+            } else if (callback) {
+              callback(false, null);
             }
           });
         } else {
