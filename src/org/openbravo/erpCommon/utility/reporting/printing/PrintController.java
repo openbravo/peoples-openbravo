@@ -621,10 +621,17 @@ public class PrintController extends HttpSecureAppServlet {
             + tableId);
       // Save the report as a attachment because it is being
       // transferred to the user
+      File attachedFile = null;
       try {
-        reportManager.createAttachmentForReport(this, report, tableId, vars);
+        attachedFile = reportManager.createAttachmentForReport(this, report, tableId, vars);
       } catch (final ReportingException exception) {
         throw new ServletException(exception);
+      } finally {
+        // Delete the original file generated for the attachment because the upload process has
+        // already copied it on the proper location
+        if (attachedFile != null && attachedFile.exists()) {
+          attachedFile.delete();
+        }
       }
     } else {
       if (log4j.isDebugEnabled())
