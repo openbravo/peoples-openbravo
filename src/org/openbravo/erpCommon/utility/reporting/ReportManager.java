@@ -29,11 +29,11 @@ import java.util.Map;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.attachment.AttachImplementationManager;
-import org.openbravo.client.application.attachment.CoreAttachImplementation;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.database.ConnectionProvider;
@@ -166,20 +166,21 @@ public class ReportManager {
       throw new ReportingException(Utility.messageBD(connectionProvider, "AttachmentExists",
           vars.getLanguage()));
 
-    final String destination = CoreAttachImplementation.getAttachmentDirectoryForNewAttachments(
-        tableId, report.getDocumentId());
-
-    // First move the file to the correct destination
-    final File destinationFolder = new File(_strAttachmentPath + "/" + destination);
-    if (!destinationFolder.exists()) {
-      destinationFolder.mkdirs();
-    }
-    report.setTargetDirectory(destinationFolder);
-
     final JasperPrint jasperPrint = processReport(report, vars);
     saveReport(report, jasperPrint);
 
     final File sourceFile = new File(report.getTargetLocation());
+
+    // We create a copy of the original file which will be the one used by the upload process. This
+    // is because the default attach implementation handler is deleting the file after completing
+    // the upload process and this way we prevent the deletion of the original file.
+    final File temporaryAttachFolder = new File(ReportingUtils.getTempFolder());
+    if (!temporaryAttachFolder.exists()) {
+      temporaryAttachFolder.mkdirs();
+    }
+    FileUtils.copyFileToDirectory(sourceFile, temporaryAttachFolder, true);
+    final File attachFile = new File(temporaryAttachFolder.getAbsolutePath() + File.separator
+        + sourceFile.getName());
 
     AttachImplementationManager aim = WeldUtils
         .getInstanceFromStaticBeanManager(AttachImplementationManager.class);
@@ -189,7 +190,7 @@ public class ReportManager {
     requestParams.put("E22E8E3B737D4A47A691A073951BBF16", textForAttachment);
 
     aim.upload(requestParams, vars.getSessionValue("inpTabId"), report.getDocumentId(),
-        vars.getOrg(), sourceFile);
+        vars.getOrg(), attachFile);
 
     report.setAttached(true);
 
