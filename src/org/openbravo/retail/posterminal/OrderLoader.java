@@ -1807,7 +1807,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   }
 
   public HandlePaymentResult handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
-      boolean wasPaidOnCredit) throws Exception {
+      Boolean wasPaidOnCredit) throws Exception {
     return handlePayments(jsonorder, order, invoice, wasPaidOnCredit, false);
   }
 

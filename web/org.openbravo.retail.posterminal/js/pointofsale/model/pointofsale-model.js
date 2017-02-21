@@ -1045,8 +1045,25 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   approvedRequest: function (approved, supervisor, approvalType, callback) {
     var order = this.get('order'),
         newApprovals = [],
-        approvals, approval, i, date;
+        approvals, approval, i, date, callbackFunc, hasPermission = false;
 
+    callbackFunc = function () {
+      if (enyo.isFunction(callback)) {
+        callback(approved, supervisor, approvalType);
+      }
+    };
+
+    if (_.isArray(approvalType)) {
+      hasPermission = _.every(approvalType, function (a) {
+        return OB.MobileApp.model.hasPermission(a, true);
+      });
+    } else {
+      hasPermission = OB.MobileApp.model.hasPermission(approvalType, true);
+    }
+    if (hasPermission) {
+      callbackFunc();
+      return;
+    }
 
     approvals = order.get('approvals') || [];
     if (!Array.isArray(approvalType)) {
@@ -1083,8 +1100,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.trigger('approvalChecked', {
       approved: approved
     });
-    if (enyo.isFunction(callback)) {
-      callback(approved, supervisor, approvalType);
-    }
+    callbackFunc();
   }
 });
