@@ -144,7 +144,10 @@ public class HasServices extends JSONProcessSimple {
         .append("and ((s.includedProducts = 'Y' and not exists (select 1 from ServiceProduct sp where s = sp.product and sp.$activeCriteria))  or s.includedProducts is null)");
     hqlString
         .append("and ((s.includedProductCategories = 'N' and exists (select 1 from ServiceProductCategory spc where s = spc.product and spc.$activeCriteria and spc.productCategory.id = '"
-            + productCategoryId + "'))) ");
+            + productCategoryId + "')) ");
+    hqlString
+        .append("or (s.includedProductCategories = 'Y' and not exists (select 1 from ServiceProductCategory spc where s = spc.product and spc.$activeCriteria and spc.productCategory.id = '"
+            + productCategoryId + "')) or s.includedProductCategories is null) ");
     hqlString.append("group by s.obposProposalType ");
     return hqlString.toString();
   }
