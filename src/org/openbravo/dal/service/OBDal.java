@@ -548,9 +548,10 @@ public class OBDal implements OBNotSingleton {
    */
   public <T extends BaseOBObject> OBCriteria<T> createCriteria(String entityName, String alias) {
     checkReadAccess(entityName);
-    final OBCriteria<T> obCriteria = new OBCriteria<T>(entityName, alias,
+    Entity entity = ModelProvider.getInstance().getEntity(entityName);
+    final OBCriteria<T> obCriteria = new OBCriteria<T>(entity.getMappingClass().getName(), alias,
         (SessionImplementor) SessionHandler.getInstance().getSession(poolName));
-    obCriteria.setEntity(ModelProvider.getInstance().getEntity(entityName));
+    obCriteria.setEntity(entity);
     return obCriteria;
   }
 
