@@ -104,6 +104,9 @@
         <index-column name="GL_JOURNAL_ID"/>
         <whereClause><![CDATA[GL_JOURNAL_ID IS NOT NULL]]></whereClause>
       </index>
+      <index name="C_CONVRATEDOC_INVOICE_IDX" unique="false">
+        <index-column name="C_INVOICE_ID"/>
+      </index>
       <index name="C_CONVRATEDOC_PAYMENT_IDX" unique="false">
         <index-column name="FIN_PAYMENT_ID"/>
       </index>
