@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2016 Openbravo SLU
+ * All portions are Copyright (C) 2012-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -70,6 +70,7 @@ public class CostingServer {
   private BigDecimal trxCost;
   protected static Logger log4j = Logger.getLogger(CostingServer.class);
   private CostingRule costingRule;
+  private CostingAlgorithm costingAlgorithm;
   private Currency currency;
   private Organization organization;
   final static String strCategoryLandedCost = "LDC";
@@ -85,6 +86,7 @@ public class CostingServer {
     costingRule = getCostDimensionRule();
     currency = getCostCurrency();
     trxCost = transaction.getTransactionCost();
+    costingAlgorithm = getCostingAlgorithm();
   }
 
   /**
@@ -101,10 +103,6 @@ public class CostingServer {
       log4j.debug("Process cost");
       try {
         OBContext.setAdminMode(false);
-        // Get needed algorithm. And set it in the M_Transaction.
-        CostingAlgorithm costingAlgorithm = getCostingAlgorithm();
-        costingAlgorithm.init(this);
-        log4j.debug("  *** Algorithm initializated: " + costingAlgorithm.getClass());
 
         trxCost = costingAlgorithm.getTransactionCost();
         if (trxCost == null && !transaction.getCostingStatus().equals("P")) {
@@ -325,15 +323,14 @@ public class CostingServer {
         && AverageAlgorithm.modifiesAverage(TrxType.getTrxType(transaction))
         && !adjustmentAlreadyCreated) {
       BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(getOrganization(),
-          transaction, getCostingAlgorithm().costDimensions, transaction.getProduct()
-              .isProduction(), costingRule.isBackdatedTransactionsFixed(), transaction
-              .getCurrency());
+          transaction, costingAlgorithm.costDimensions, transaction.getProduct().isProduction(),
+          costingRule.isBackdatedTransactionsFixed(), transaction.getCurrency());
       if (currentStock.compareTo(transaction.getMovementQuantity()) < 0
           || (trxType != TrxType.InventoryOpening
               && currentStock.compareTo(transaction.getMovementQuantity()) == 0 && CostingUtils
                 .existsProcessedTransactions(transaction.getProduct(),
-                    getCostingAlgorithm().costDimensions, getOrganization(), transaction,
-                    transaction.getProduct().isProduction()))) {
+                    costingAlgorithm.costDimensions, getOrganization(), transaction, transaction
+                        .getProduct().isProduction()))) {
 
         // NSC = Negative Stock Correction
         createAdjustment("NSC", null);
@@ -343,13 +340,12 @@ public class CostingServer {
     // check if closing inventory needs to be adjusted due to a remainder value
     if (trxType == TrxType.InventoryClosing) {
       BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(getOrganization(),
-          transaction, getCostingAlgorithm().costDimensions, transaction.getProduct()
-              .isProduction(), costingRule.isBackdatedTransactionsFixed(), transaction
-              .getCurrency());
+          transaction, costingAlgorithm.costDimensions, transaction.getProduct().isProduction(),
+          costingRule.isBackdatedTransactionsFixed(), transaction.getCurrency());
 
       if (BigDecimal.ZERO.compareTo(currentStock) == 0) {
         BigDecimal currentValuedStock = CostAdjustmentUtils.getValuedStockOnTransactionDate(
-            getOrganization(), transaction, getCostingAlgorithm().costDimensions, transaction
+            getOrganization(), transaction, costingAlgorithm.costDimensions, transaction
                 .getProduct().isProduction(), costingRule.isBackdatedTransactionsFixed(),
             transaction.getCurrency());
 
@@ -495,7 +491,9 @@ public class CostingServer {
 
     try {
       final Class<?> clz = OBClassLoader.getInstance().loadClass(costAlgorithm.getJavaClassName());
-      return (CostingAlgorithm) clz.newInstance();
+      CostingAlgorithm algorithm = (CostingAlgorithm) clz.newInstance();
+      algorithm.init(this);
+      return algorithm;
     } catch (Exception e) {
       log4j.error("Exception loading Algorithm class: " + costAlgorithm.getJavaClassName()
           + " algorithm: " + costAlgorithm.getIdentifier());
