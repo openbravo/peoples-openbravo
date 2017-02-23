@@ -242,7 +242,7 @@ public class MergeDependenciesCheck extends BuildValidation {
 
   @Override
   protected ExecutionLimits getBuildValidationLimits() {
-    return new ExecutionLimits(ID_CORE, null, new OpenbravoVersion(3, 0, 31514));
+    return new ExecutionLimits(ID_CORE, null, new OpenbravoVersion(3, 0, 31553));
   }
 
   /**
