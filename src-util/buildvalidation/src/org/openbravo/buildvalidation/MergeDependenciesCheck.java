@@ -45,7 +45,6 @@ public class MergeDependenciesCheck extends BuildValidation {
   private static final String ID_CORE = "0";
 
   // Paths
-  private static final String AD_MODULE_PATH = "src-db/database/sourcedata/AD_MODULE.xml";
   private static final String AD_MODULE_DEPENDENCY_PATH = "src-db/database/sourcedata/AD_MODULE_DEPENDENCY.xml";
   private static final String MODULES_DIRNAME = "modules";
 
@@ -167,8 +166,11 @@ public class MergeDependenciesCheck extends BuildValidation {
   private void checkRemovableModule(final MergedModule removableModule) {
     final File modulesDir = getModulesDir();
     boolean detectedDependency = false;
+    boolean isRemovableModuleInstalled = false;
     for (final String module : getInstalledModules()) {
-      if (!module.equals(removableModule.getJavaPackage())) {
+      if (module.equals(removableModule.getJavaPackage())) {
+        isRemovableModuleInstalled = true;
+      } else {
         final File moduleDir = new File(modulesDir, module);
         final File adModuleDependencyFile = new File(moduleDir, AD_MODULE_DEPENDENCY_PATH);
         if (adModuleDependencyFile != null && adModuleDependencyFile.exists()
@@ -181,7 +183,7 @@ public class MergeDependenciesCheck extends BuildValidation {
       }
     }
 
-    if (!detectedDependency) {
+    if (isRemovableModuleInstalled && !detectedDependency) {
       log4j.warn(String.format("Orphan module detected: %s (%s). You can safely uninstall it.",
           removableModule.getName(), removableModule.getJavaPackage()));
     }
