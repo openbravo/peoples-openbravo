@@ -34,7 +34,9 @@ enyo.kind({
         auxCatStr = '(',
         appendProdComma = false,
         appendCatComma = false,
-        existingServices, lineIdList, untSelected = 0, totalAmountSelected = 0, totalAmountPerUnitSelected = 0;
+        existingServices, lineIdList, untSelected = 0,
+        totalAmountSelected = 0,
+        totalAmountPerUnitSelected = 0;
 
     if (this.productList && this.productList.length > 0) {
       //product multiselection
@@ -78,7 +80,7 @@ enyo.kind({
           totalAmountPerUnitSelected += l.get('price');
         }
       });
-      
+
       auxProdStr += ')';
       auxCatStr += ')';
 
@@ -166,7 +168,8 @@ enyo.kind({
   },
   hqlCriteria: function () {
     var me = this,
-        prodList, catList, lineIdList, existingServices, totalAmountSelected = 0, totalAmountPerUnitSelected = 0;
+        prodList, catList, lineIdList, existingServices, totalAmountSelected = 0,
+        totalAmountPerUnitSelected = 0;
     if (this.orderlineList && this.orderlineList.length > 0) {
       prodList = this.orderlineList.map(function (line) {
         var product = line.get('product');
