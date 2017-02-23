@@ -76,6 +76,7 @@
       </foreign-key>
       <index name="C_TAXZONE_TAX_IDX" unique="false">
         <index-column name="C_TAX_ID"/>
+        <whereClause><![CDATA[C_TAX_ID IS NOT NULL]]></whereClause>
       </index>
     </table>
   </database>

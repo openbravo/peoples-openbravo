@@ -78,6 +78,7 @@
       </foreign-key>
       <index name="OBUISEL_SELECTOR_TRL_LANGUAGE" unique="false">
         <index-column name="AD_LANGUAGE"/>
+        <whereClause><![CDATA[AD_LANGUAGE IS NOT NULL]]></whereClause>
       </index>
       <unique name="OBUISEL_SEL_TRL_ADLANG_UN">
         <unique-column name="OBUISEL_SELECTOR_ID"/>

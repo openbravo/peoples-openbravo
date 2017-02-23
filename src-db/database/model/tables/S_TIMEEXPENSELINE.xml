@@ -207,6 +207,7 @@
       </foreign-key>
       <index name="S_TIMEEXPENSELINE_BPARTNER_IDX" unique="false">
         <index-column name="C_BPARTNER_ID"/>
+        <whereClause><![CDATA[C_BPARTNER_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="S_TIMEEXPENSELN_TIMEEXPESE_IDX" unique="false">
         <index-column name="S_TIMEEXPENSE_ID"/>

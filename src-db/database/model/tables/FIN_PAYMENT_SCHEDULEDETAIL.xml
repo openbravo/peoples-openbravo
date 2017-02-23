@@ -145,6 +145,7 @@
       </foreign-key>
       <index name="FIN_PAY_SCHEDULEDETAIL_BP" unique="false">
         <index-column name="C_BPARTNER_ID"/>
+        <whereClause><![CDATA[C_BPARTNER_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="FIN_PAY_SCHEDULEDETAIL_IN" unique="false">
         <index-column name="FIN_PAYMENT_SCHEDULE_INVOICE"/>

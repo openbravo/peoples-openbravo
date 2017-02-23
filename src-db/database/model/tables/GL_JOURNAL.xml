@@ -215,6 +215,7 @@
       </foreign-key>
       <index name="GL_JOURNAL_JOURNALBATCH_IDX" unique="false">
         <index-column name="GL_JOURNALBATCH_ID"/>
+        <whereClause><![CDATA[GL_JOURNALBATCH_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="GL_JOURNAL_POSTED" unique="false">
         <index-column name="POSTED"/>

@@ -75,6 +75,7 @@
       </foreign-key>
       <index name="C_CITY_REGION_IDX" unique="false">
         <index-column name="C_REGION_ID"/>
+        <whereClause><![CDATA[C_REGION_ID IS NOT NULL]]></whereClause>
       </index>
       <check name="C_CITY_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

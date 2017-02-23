@@ -62,6 +62,7 @@
       </foreign-key>
       <index name="C_TAXREGTYPELIN_TAXREGTYPE_IDX" unique="false">
         <index-column name="C_TAXREGISTER_TYPE_ID"/>
+        <whereClause><![CDATA[C_TAXREGISTER_TYPE_ID IS NOT NULL]]></whereClause>
       </index>
     </table>
   </database>

@@ -67,6 +67,7 @@
       </foreign-key>
       <index name="MA_PROCESS_WORKSTATION_IDX" unique="false">
         <index-column name="MA_WORKSTATION_ID"/>
+        <whereClause><![CDATA[MA_WORKSTATION_ID IS NOT NULL]]></whereClause>
       </index>
       <check name="MA_PROCESS_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

@@ -73,6 +73,7 @@
       </index>
       <index name="M_STOCK_VALUATION_WH_IDX" unique="false">
         <index-column name="M_WAREHOUSE_ID"/>
+        <whereClause><![CDATA[M_WAREHOUSE_ID IS NOT NULL]]></whereClause>
       </index>
       <check name="M_STOCK_VALUATION_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

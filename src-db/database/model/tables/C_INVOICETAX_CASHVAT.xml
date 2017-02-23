@@ -71,6 +71,7 @@
       </foreign-key>
       <index name="C_INVOICETAX_CASHVAT_FPD" unique="false">
         <index-column name="FIN_PAYMENT_DETAIL_ID"/>
+        <whereClause><![CDATA[FIN_PAYMENT_DETAIL_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="C_INVOICETAX_CASHVAT_INVTAX" unique="false">
         <index-column name="C_INVOICETAX_ID"/>

@@ -59,6 +59,7 @@
       </foreign-key>
       <index name="MA_MEASUREGRP_MEASURESHIFT_IDX" unique="false">
         <index-column name="MA_MEASURE_SHIFT_ID"/>
+        <whereClause><![CDATA[MA_MEASURE_SHIFT_ID IS NOT NULL]]></whereClause>
       </index>
       <check name="MA_MEASURE_GROU_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

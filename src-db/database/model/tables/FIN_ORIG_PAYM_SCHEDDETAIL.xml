@@ -67,6 +67,7 @@
       </foreign-key>
       <index name="FIN_ORIG_PAYM_SCHDET_IND" unique="false">
         <index-column name="FIN_ORIG_PAYMENT_SCHEDULE_ID"/>
+        <whereClause><![CDATA[FIN_ORIG_PAYMENT_SCHEDULE_ID IS NOT NULL]]></whereClause>
       </index>
       <check name="FIN_ORIG_PAY_SCHDET_ISCANC_CHK"><![CDATA[ISCANCELED IN ('Y', 'N')]]></check>
       <check name="FIN_ORIG_PAYM_SCHDET_ACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

@@ -71,6 +71,7 @@
       </foreign-key>
       <index name="M_STOCK_AUX_AUX_ID" unique="false">
         <index-column name="AUX_ID"/>
+        <whereClause><![CDATA[AUX_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="M_STOCK_AUX_STORAGE_DETAIL_ID" unique="false">
         <index-column name="M_STORAGE_DETAIL_ID"/>

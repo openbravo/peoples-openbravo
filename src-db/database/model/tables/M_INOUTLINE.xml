@@ -202,6 +202,7 @@
       </index>
       <index name="M_INOUTLINE_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
+        <whereClause><![CDATA[M_PRODUCT_ID IS NOT NULL]]></whereClause>
       </index>
       <check name="M_INOUTLINE"><![CDATA[QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL OR QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL]]></check>
       <check name="M_INOUTLINE_EXPLODE_CHECK"><![CDATA[EXPLODE IN ('Y', 'N')]]></check>

@@ -98,6 +98,7 @@
       </foreign-key>
       <index name="C_TAXREGISTERLINE_TAXREGIS_IDX" unique="false">
         <index-column name="C_TAXREGISTER_ID"/>
+        <whereClause><![CDATA[C_TAXREGISTER_ID IS NOT NULL]]></whereClause>
       </index>
     </table>
   </database>

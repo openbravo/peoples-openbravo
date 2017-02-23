@@ -108,9 +108,11 @@
       </foreign-key>
       <index name="FIN_PAYM_SCH_INV_IDX" unique="false">
         <index-column name="C_INVOICE_ID"/>
+        <whereClause><![CDATA[C_INVOICE_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="FIN_PAYM_SCH_ORD_IDX" unique="false">
         <index-column name="C_ORDER_ID"/>
+        <whereClause><![CDATA[C_ORDER_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="FIN_PAYMENT_SCHEDULE_OUTAMT" unique="false">
         <index-column name="OUTSTANDINGAMT"/>

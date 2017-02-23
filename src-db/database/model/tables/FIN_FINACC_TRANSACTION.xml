@@ -211,6 +211,7 @@
       </index>
       <index name="FIN_FINACC_TRANSACTION_POSTED" unique="false">
         <index-column name="POSTED"/>
+        <whereClause><![CDATA[POSTED IS NOT NULL]]></whereClause>
       </index>
       <index name="FIN_FINACC_TRX_RECONCILIATION" unique="false">
         <index-column name="FIN_RECONCILIATION_ID"/>
