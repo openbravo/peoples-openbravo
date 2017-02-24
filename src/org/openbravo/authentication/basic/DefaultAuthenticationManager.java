@@ -99,8 +99,8 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
             // user and password come after BASIC
             final String userpassEncoded = auth.substring(6);
             // Decode it, using any base 64 decoder
-            final String decodedUserPass = new String(
-                Base64.decodeBase64(userpassEncoded.getBytes()));
+            final String decodedUserPass = new String(Base64.decodeBase64(userpassEncoded
+                .getBytes()));
             final int index = decodedUserPass.indexOf(":");
             if (index != -1) {
               user = decodedUserPass.substring(0, index);
@@ -198,15 +198,16 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
   }
 
   /**
-   * Checks the expiration password date from userId, throws AuthenticationExpirationPasswordException in case that expiration
-   * date is reached
+   * Checks the expiration password date from userId, throws
+   * AuthenticationExpirationPasswordException in case that expiration date is reached
    * 
    * @param userId
    *          The userId of the user to check expiration password date
    * @param language
    *          Default language for the user
    * @throws AuthenticationExpirationPasswordException
-   *           AuthenticationExpirationPasswordException is thrown in case that expiration date is reached
+   *           AuthenticationExpirationPasswordException is thrown in case that expiration date is
+   *           reached
    * 
    */
   private void checkIfPasswordExpired(String userId, String language)
