@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -699,7 +699,7 @@ isc.OBSelectorItem.addProperties({
     // Dropdown selector that shows more than one column.
     if (this.pickListFields.length > 1) {
       // calculate width of checkBox and first fields before selector field in viewGrid
-      if (this.form.view && !this.form.view.isShowingForm) {
+      if (this.form.view && !this.form.view.isShowingForm && this.grid) {
         while (i < this.grid.fields.size() && nameField.localeCompare(this.grid.fields.get(i).valueField) !== 0) {
           leftFieldsWidth = leftFieldsWidth + this.grid.fields.get(i).width;
           i++;
