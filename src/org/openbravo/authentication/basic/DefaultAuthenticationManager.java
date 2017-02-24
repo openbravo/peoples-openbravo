@@ -144,7 +144,7 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
         errorMsg.setMessage("LOCKED_USER_MSG");
       }
 
-      throw new AuthenticationException("IDENTIFICATION_FAILURE_TITLE", errorMsg);
+      throw new AuthenticationException("IDENTIFICATION_FAILURE_TITLE", errorMsg, false);
     }
 
     vars.setSessionValue("#AD_User_ID", userId);
