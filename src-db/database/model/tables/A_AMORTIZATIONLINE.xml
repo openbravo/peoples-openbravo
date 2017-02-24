@@ -106,7 +106,6 @@
       </foreign-key>
       <index name="A_AMORTIZATIONLINE_AMORTIZ_IDX" unique="false">
         <index-column name="A_AMORTIZATION_ID"/>
-        <whereClause><![CDATA[A_AMORTIZATION_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="A_AMORTIZATIONLINE_ASSET_IDX" unique="false">
         <index-column name="A_ASSET_ID"/>

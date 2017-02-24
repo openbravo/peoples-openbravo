@@ -317,7 +317,6 @@
       </index>
       <index name="C_INVOICELINE_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
-        <whereClause><![CDATA[M_PRODUCT_ID IS NOT NULL]]></whereClause>
       </index>
       <check name="C_INVLINE_ISDEFERRED_CHK"><![CDATA[ISDEFERRED IN ('Y', 'N')]]></check>
       <check name="C_INVLINE_PERIODNUMBER_CHK"><![CDATA[ISDEFERRED = 'Y' AND PERIODNUMBER > 0 OR ISDEFERRED = 'N']]></check>

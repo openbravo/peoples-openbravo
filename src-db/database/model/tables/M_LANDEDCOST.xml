@@ -95,7 +95,6 @@
       </index>
       <index name="M_LANDEDCOST_POSTED" unique="false">
         <index-column name="POSTED"/>
-        <whereClause><![CDATA[POSTED IS NOT NULL]]></whereClause>
       </index>
       <check name="M_LANDEDCOST_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
