@@ -200,6 +200,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       return this.get('multiOrders').getTotal();
     }
   },
+  getPrepaymentAmount: function () {
+    if (this.get('leftColumnViewManager').isOrder()) {
+      return this.get('order').get('prepaymentAmt');
+    } else {
+      return this.get('multiOrders').get('prepaymentAmt');
+    }
+  },
   getPayment: function () {
     if (this.get('leftColumnViewManager').isOrder()) {
       return this.get('order').getPayment();

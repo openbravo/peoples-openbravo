@@ -7,6 +7,18 @@
  ************************************************************************************
  */
 
+.paymentline-w-prepayment {
+	padding: 0px 0px 0px 10px;
+	height: 16px;
+	color: #999999;
+}
+
+.paymentline-wo-prepayment {
+    padding: 10px 0px 0px 10px;
+    height: 28px;
+    color: white;
+}
+
 .stockinstorelines:hover {
   opacity: 0.75;
   cursor: pointer;

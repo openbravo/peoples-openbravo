@@ -534,10 +534,15 @@ enyo.kind({
               me.payAmountWithProviderGroup(amount, providerGroups[exactpayment.providerGroup.id]);
             } else {
               // It is a regular payment
-              var altexactamount = me.receipt.get('exactpayment'); // NOT FOUND
+              var altexactamount = me.receipt.get('exactpayment'),
+                  pendingPrepayment = me.model.getPending() + me.model.getPrepaymentAmount() - me.model.getTotal();
               // check if alternate exact amount must be applied based on the payment method selected.
               if (altexactamount && altexactamount[exactpayment.payment.searchKey]) {
                 amount = altexactamount[exactpayment.payment.searchKey];
+              }
+
+              if (pendingPrepayment > 0 && pendingPrepayment < amount) {
+                amount = pendingPrepayment;
               }
               if (exactpayment.rate && exactpayment.rate !== '1') {
                 amount = OB.DEC.div(amount, exactpayment.rate);

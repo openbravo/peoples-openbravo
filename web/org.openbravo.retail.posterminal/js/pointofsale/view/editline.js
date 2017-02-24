@@ -459,7 +459,9 @@ enyo.kind({
               }
             });
             me.owner.owner.render();
-            me.owner.owner.model.get('order').save();
+            me.owner.owner.model.get('order').getPrepaymentAmount(function () {
+              me.owner.owner.model.get('order').save();
+            });
           }
         });
       } else {
@@ -529,10 +531,9 @@ enyo.kind({
     if (this.selectedModels && this.selectedModels.length > 0 && (this.selectedModels[0] instanceof OB.Model.OrderLine)) {
       var selectedServices = _.filter(this.selectedModels, function (line) {
         return line.get('product').get('productType') === 'S';
-      }),
-          isLayaway = this.model.get('order').get('isLayaway') || this.model.get('order').get('orderType') === 2 ? true : false;
-      this.hideDeliveryButton = selectedServices.length || !isLayaway ? true : false;
-      this.hideDeliveryLabel = !isLayaway || selectedServices.length === this.selectedModels.length ? true : false;
+      });
+      this.hideDeliveryButton = selectedServices.length ? true : false;
+      this.hideDeliveryLabel = selectedServices.length === this.selectedModels.length ? true : false;
       if (this.selectedModels.length > 1) {
         var selectedLinesToDeliver = _.filter(this.selectedModels, function (line) {
           return line.get('obposCanbedelivered');

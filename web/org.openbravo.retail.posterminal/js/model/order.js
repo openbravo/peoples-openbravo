@@ -408,6 +408,7 @@
         this.set('calculateReceiptCallbacks', []);
         this.set('loaded', attributes.loaded);
         this.set('isModified', attributes.isModified);
+        this.set('prepaymentAmt', attributes.prepaymentAmt || attributes.gross);
         _.each(_.keys(attributes), function (key) {
           if (!this.has(key)) {
             this.set(key, attributes[key]);
@@ -653,37 +654,38 @@
             }
           }, OB.DEC.Zero);
 
-          // all attributes are set at once, preventing the change event of each attribute to be fired until all values are set
-          me.set({
-            'gross': gross,
-            'qty': qty
-          });
-
-          me.adjustPayment();
-          if (save) {
-            me.save(function () {
-              // Reset the flag that protects reentrant invocations to calculateGross().
-              // And if there is pending any execution of calculateGross(), do it and do not continue.
+          me.getPrepaymentAmount(function () {
+            // all attributes are set at once, preventing the change event of each attribute to be fired until all values are set
+            me.set({
+              'gross': gross,
+              'qty': qty
+            });
+            me.adjustPayment();
+            if (save) {
+              me.save(function () {
+                // Reset the flag that protects reentrant invocations to calculateGross().
+                // And if there is pending any execution of calculateGross(), do it and do not continue.
+                me.calculatingGross = false;
+                me.calculatingReceipt = false;
+                if (me.pendingCalculateGross) {
+                  me.pendingCalculateGross = false;
+                  me.calculateGross(callback);
+                  return;
+                }
+                me.trigger('calculategross');
+                me.trigger('saveCurrent');
+                if (callback) {
+                  callback();
+                }
+              });
+            } else {
               me.calculatingGross = false;
               me.calculatingReceipt = false;
-              if (me.pendingCalculateGross) {
-                me.pendingCalculateGross = false;
-                me.calculateGross(callback);
-                return;
-              }
-              me.trigger('calculategross');
-              me.trigger('saveCurrent');
               if (callback) {
                 callback();
               }
-            });
-          } else {
-            me.calculatingGross = false;
-            me.calculatingReceipt = false;
-            if (callback) {
-              callback();
             }
-          }
+          });
           };
 
       this.get('lines').forEach(function (line) {
@@ -901,6 +903,32 @@
       return OB.I18N.formatCurrency(this.getPending());
     },
 
+    getPrepaymentAmount: function (callback) {
+      var me = this,
+          total = OB.DEC.abs(this.getTotal());
+
+      function executeCallback(prepaymentAmt) {
+        me.set('prepaymentAmt', prepaymentAmt);
+        me.trigger('saveCurrent');
+        if (callback instanceof Function) {
+          callback(prepaymentAmt);
+        }
+      }
+      //Execute the Prepayments Algorithm only if the receipt is a normal ticket or a layaway
+      //Otherwise return the total of the receipt so the prepayments logic is not taken into account
+      if (this.get('orderType') !== 1 && this.get('orderType') !== 3) {
+        if (OB.MobileApp.model.get('terminal').prepaymentAlgorithm) {
+          OB.UTIL.prepaymentRules[OB.MobileApp.model.get('terminal').prepaymentAlgorithm].execute(this, function (amount) {
+            executeCallback(amount);
+          });
+        } else {
+          executeCallback(total);
+        }
+      } else {
+        executeCallback(total);
+      }
+    },
+
     getPaymentStatus: function () {
       var total = OB.DEC.abs(this.getTotal()),
           pay = this.getPayment(),
@@ -962,6 +990,7 @@
         'isReturn': isReturn,
         'isNegative': isNegative,
         'changeAmt': this.getChange(),
+        'totalAmt': total,
         'pendingAmt': OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, payAndCredit),
         'payments': this.get('payments'),
         'isReversal': isReversal
@@ -1057,6 +1086,7 @@
       this.set('approvals', []);
       this.set('isPartiallyDelivered', false);
       this.set('isModified', false);
+      this.set('prepaymentAmt', 0);
     },
 
     clearWith: function (_order) {
@@ -6999,7 +7029,8 @@
       pending: OB.DEC.Zero,
       change: OB.DEC.Zero,
       openDrawer: false,
-      additionalInfo: null
+      additionalInfo: null,
+      prepaymentAmt: OB.DEC.Zero
     },
     initialize: function () {
       this.set('multiOrdersList', new Backbone.Collection());

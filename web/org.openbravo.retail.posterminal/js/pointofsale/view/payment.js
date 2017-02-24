@@ -36,6 +36,9 @@ enyo.kind({
   setTotalPending: function (pending, mulrate, symbol, currencySymbolAtTheRight, inSender, inEvent) {
     this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(pending, mulrate), symbol, currencySymbolAtTheRight));
   },
+  setPrepaymentTotalPending: function (pending, mulrate, symbol, currencySymbolAtTheRight) {
+    this.$.prepaymenttotalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(pending, mulrate), symbol, currencySymbolAtTheRight));
+  },
   clearPaymentMethodSelect: function (inSender, inEvent) {
     this.$.paymentMethodSelect.setContent('');
     this.$.paymentMethodSelect.hide();
@@ -86,6 +89,7 @@ enyo.kind({
         OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
       } else if (!_.isNull(pending) && pending) {
         this.setTotalPending(pending, payment.mulrate, payment.symbol, payment.currencySymbolAtTheRight, inSender, inEvent);
+        this.setPrepaymentTotalPending(this.model.getPrepaymentAmount() + pending - this.model.getTotal(), payment.mulrate, payment.symbol, payment.currencySymbolAtTheRight, inSender, inEvent);
       }
       if (paymentstatus && inEvent.value.status !== "" && !this.receipt.isCalculateReceiptLocked && !this.receipt.isCalculateGrossLocked) {
         this.checkValidPayments(paymentstatus, payment);
@@ -133,11 +137,25 @@ enyo.kind({
       components: [{
         classes: 'span9',
         components: [{
-          style: 'padding: 10px 0px 0px 10px; height: 28px;',
+          style: 'padding: 5px 0px 0px 10px; height: 17px;',
+          name: 'prepaymentLine',
+          components: [{
+            tag: 'span',
+            name: 'prepaymenttotalpending',
+            style: 'font-size: 20px; font-weight: bold;'
+          }, {
+            tag: 'span',
+            name: 'prepaymenttotalpendinglbl'
+          }, {
+            tag: 'span',
+            name: 'prepaymentexactlbl'
+          }]
+        }, {
+          name: 'paymentLine',
           components: [{
             tag: 'span',
             name: 'totalpending',
-            style: 'font-size: 24px; font-weight: bold;'
+            style: 'font-weight: bold;'
           }, {
             tag: 'span',
             name: 'totalpendinglbl'
@@ -235,11 +253,11 @@ enyo.kind({
       }, {
         classes: 'span3',
         components: [{
-          name: 'donebutton',
-          kind: 'OB.OBPOSPointOfSale.UI.DoneButton'
-        }, {
           name: 'exactbutton',
           kind: 'OB.OBPOSPointOfSale.UI.ExactButton'
+        }, {
+          name: 'donebutton',
+          kind: 'OB.OBPOSPointOfSale.UI.DoneButton'
         }, {
           name: 'creditsalesaction',
           kind: 'OB.OBPOSPointOfSale.UI.CreditButton'
@@ -255,7 +273,7 @@ enyo.kind({
     var me = this;
     this.$.payments.setCollection(this.receipt.get('payments'));
     this.$.multiPayments.setCollection(this.model.get('multiOrders').get('payments'));
-    this.receipt.on('change:payment change:change calculategross change:bp change:gross', function () {
+    this.receipt.on('change:payment change:change calculategross change:bp change:gross change:prepaymentAmt', function () {
       if (this.receipt.isCalculateReceiptLocked || this.receipt.isCalculateGrossLocked) {
         //We are processing the receipt, we cannot update pending yet
         return;
@@ -372,11 +390,14 @@ enyo.kind({
       OB.UTIL.ProcessController.finish('updatePending', execution);
       return true;
     }
-    var paymentstatus = this.receipt.getPaymentStatus();
-    var symbol = '',
+    var paymentstatus = this.receipt.getPaymentStatus(),
+        prepaymentAmount = this.receipt.get('prepaymentAmt'),
+        symbol = '',
         rate = OB.DEC.One,
         symbolAtRight = true,
-        isCashType = true;
+        isCashType = true,
+        receiptHasPrepaymentAmount = prepaymentAmount !== 0 && prepaymentAmount !== paymentstatus.totalAmt,
+        pendingPrepayment = prepaymentAmount + paymentstatus.pendingAmt - paymentstatus.totalAmt;
 
     if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
       symbol = OB.MobileApp.model.get('terminal').symbol;
@@ -389,6 +410,30 @@ enyo.kind({
       isCashType = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].paymentMethod.iscash;
     }
     this.checkValidPayments(paymentstatus, OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')]);
+
+    //Update styles based on the prepayment amount
+    if (receiptHasPrepaymentAmount && !paymentstatus.done) {
+      this.$.prepaymentLine.show();
+      this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', true);
+      this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', false);
+      this.$.totalpending.applyStyle('font-size', '19px');
+    } else {
+      this.$.prepaymentLine.hide();
+      this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', false);
+      this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', true);
+      this.$.totalpending.applyStyle('font-size', '24px');
+    }
+    if (pendingPrepayment <= 0) {
+      this.$.prepaymenttotalpending.hide();
+      this.$.prepaymenttotalpendinglbl.hide();
+      this.$.prepaymentexactlbl.show();
+    } else {
+      this.setPrepaymentTotalPending(pendingPrepayment, rate, symbol, symbolAtRight);
+      this.$.prepaymenttotalpending.show();
+      this.$.prepaymenttotalpendinglbl.show();
+      this.$.prepaymentexactlbl.hide();
+    }
+
     if (paymentstatus.change) {
       this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), rate), symbol, symbolAtRight));
       OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), rate), symbol, symbolAtRight));
@@ -424,7 +469,12 @@ enyo.kind({
         this.$.totalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsRemaining'));
       }
       this.$.totalpendinglbl.show();
-      this.$.donebutton.hide();
+
+      if (receiptHasPrepaymentAmount && pendingPrepayment <= 0) {
+        this.$.donebutton.show();
+      } else {
+        this.$.donebutton.hide();
+      }
       if (this.$.donebutton.drawerpreference) {
         this.$.donebutton.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
         this.$.donebutton.drawerOpened = false;
@@ -463,13 +513,18 @@ enyo.kind({
     OB.UTIL.ProcessController.finish('updatePending', execution);
   },
   updatePendingMultiOrders: function () {
+    var paymentstatus = this.model.get('multiOrders');
     var execution = OB.UTIL.ProcessController.start('updatePendingMultiOrders'),
         multiOrders = this.model.get('multiOrders'),
         symbol = '',
         symbolAtRight = true,
         rate = OB.DEC.One,
         isCashType = true,
-        selectedPayment, paymentStatus = multiOrders.getPaymentStatus();
+        selectedPayment, paymentStatus = multiOrders.getPaymentStatus(),
+        prepaymentAmount = paymentstatus.get('prepaymentAmt'),
+        receiptHasPrepaymentAmount = prepaymentAmount !== 0 && prepaymentAmount !== paymentstatus.get('total'),
+        pendingPrepayment = prepaymentAmount - paymentstatus.get('payment');
+
     this.updateExtraInfo('');
     this.$.layawayaction.hide();
     if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
@@ -487,6 +542,30 @@ enyo.kind({
       symbolAtRight = selectedPayment.currencySymbolAtTheRight;
       isCashType = selectedPayment.paymentMethod.iscash;
     }
+
+    //Update styles based on the prepayment amount
+    if (receiptHasPrepaymentAmount && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) < 0) {
+      this.$.prepaymentLine.show();
+      this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', true);
+      this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', false);
+      this.$.totalpending.applyStyle('font-size', '19px');
+    } else {
+      this.$.prepaymentLine.hide();
+      this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', false);
+      this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', true);
+      this.$.totalpending.applyStyle('font-size', '24px');
+    }
+    if (pendingPrepayment <= 0) {
+      this.$.prepaymenttotalpending.hide();
+      this.$.prepaymenttotalpendinglbl.hide();
+      this.$.prepaymentexactlbl.show();
+    } else {
+      this.setPrepaymentTotalPending(pendingPrepayment, rate, symbol, symbolAtRight);
+      this.$.prepaymenttotalpending.show();
+      this.$.prepaymenttotalpendinglbl.show();
+      this.$.prepaymentexactlbl.hide();
+    }
+
     this.checkValidPayments(paymentStatus, selectedPayment);
     if (multiOrders.get('change')) {
       this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(multiOrders.get('change'), rate), symbol, symbolAtRight));
@@ -1034,6 +1113,8 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.$.errorLabelArea.render();
+    this.$.prepaymenttotalpendinglbl.setContent(" remaining to pay for delivery.");
+    this.$.prepaymentexactlbl.setContent("Exact amount paid for delivery. ");
     this.$.totalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsRemaining'));
     this.$.changelbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsChange'));
     this.$.overpaymentlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsOverpayment'));
@@ -1059,7 +1140,7 @@ enyo.kind({
       }
     }, this);
 
-    this.model.get('multiOrders').on('change:payment change:total change:change paymentCancel', function () {
+    this.model.get('multiOrders').on('change:payment change:total change:change change:prepaymentAmt paymentCancel', function () {
       this.updatePendingMultiOrders();
     }, this);
     this.model.get('multiOrders').on('disableDoneButton', function () {
