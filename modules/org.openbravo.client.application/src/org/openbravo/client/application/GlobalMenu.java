@@ -65,7 +65,7 @@ public class GlobalMenu {
    * ones. If it is not present there, it is generated and cached.
    * 
    */
-  synchronized List<MenuOption> getMenuOptions(String roleId, String language) {
+  List<MenuOption> getMenuOptions(String roleId, String language) {
     long t = System.currentTimeMillis();
 
     if (menuOptionsByLangAndTree == null) {
@@ -249,6 +249,7 @@ public class GlobalMenu {
                 foundOption.setId(tab.getId());
                 foundOption.setObjectId(menu.getWindow().getId());
                 foundOption.setTab(tab);
+
                 break;
               }
             }
