@@ -483,10 +483,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       if (!isQuotation && !isDeleted) {
         // Payment
-        HandlePaymentResult paymentResult = handlePayments(jsonorder, order, invoice,
-            wasPaidOnCredit, createInvoice);
-        if (paymentResult.getError() != null) {
-          return paymentResult.getError();
+        JSONObject paymentResponse = handlePayments(jsonorder, order, invoice, wasPaidOnCredit,
+            createInvoice);
+        if (paymentResponse.getInt(JsonConstants.RESPONSE_STATUS) == JsonConstants.RPCREQUEST_STATUS_FAILURE) {
+          return paymentResponse;
         }
 
         if (doCancelAndReplace && order.getReplacedorder() != null) {
@@ -507,9 +507,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
         for (OrderLoaderHook hook : orderProcesses) {
           if (hook instanceof OrderLoaderPaymentHook) {
-            ((OrderLoaderPaymentHook) hook).setPaymentSchedule(paymentResult.getPaymentSchedule());
-            ((OrderLoaderPaymentHook) hook).setPaymentScheduleInvoice(paymentResult
-                .getPaymentScheduleInvoice());
+            ((OrderLoaderPaymentHook) hook)
+                .setPaymentSchedule((FIN_PaymentSchedule) paymentResponse.get("paymentResponse"));
+            ((OrderLoaderPaymentHook) hook)
+                .setPaymentScheduleInvoice((FIN_PaymentSchedule) paymentResponse
+                    .get("paymentScheduleInvoice"));
           }
         }
 
@@ -1806,23 +1808,21 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     return calculatedDueDate.getTime();
   }
 
-  public HandlePaymentResult handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
+  public JSONObject handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
       Boolean wasPaidOnCredit) throws Exception {
     return handlePayments(jsonorder, order, invoice, wasPaidOnCredit, false);
   }
 
-  public HandlePaymentResult handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
+  public JSONObject handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
       boolean wasPaidOnCredit, boolean createInvoice) throws Exception {
+    final JSONObject jsonResponse = new JSONObject();
     String posTerminalId = jsonorder.getString("posTerminal");
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class, posTerminalId);
     if (posTerminal == null) {
-      final JSONObject jsonResponse = new JSONObject();
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
       jsonResponse.put(JsonConstants.RESPONSE_ERRORMESSAGE, "The POS terminal with id "
           + posTerminalId + " couldn't be found");
-      HandlePaymentResult paymentResult = new HandlePaymentResult();
-      paymentResult.setError(jsonResponse);
-      return paymentResult;
+      return jsonResponse;
     }
 
     JSONArray payments = jsonorder.getJSONArray("payments");
@@ -2023,7 +2023,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       setRemainingPayment(order, paymentSchedule, paymentScheduleInvoice, diffPaid, false);
     }
 
-    return new HandlePaymentResult(paymentSchedule, paymentScheduleInvoice);
+    jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+    jsonResponse.put("paymentSchedule", paymentSchedule);
+    jsonResponse.put("paymentScheduleInvoice", paymentScheduleInvoice);
+
+    return jsonResponse;
 
   }
 
@@ -2417,38 +2421,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     } finally {
       OBContext.restorePreviousMode();
     }
-  }
-
-  private class HandlePaymentResult {
-    FIN_PaymentSchedule paymentSchedule;
-    FIN_PaymentSchedule paymentScheduleInvoice;
-    JSONObject error;
-
-    public HandlePaymentResult() {
-    }
-
-    public HandlePaymentResult(FIN_PaymentSchedule paymentSchedule,
-        FIN_PaymentSchedule paymentScheduleInvoice) {
-      this.paymentSchedule = paymentSchedule;
-      this.paymentScheduleInvoice = paymentScheduleInvoice;
-    }
-
-    public FIN_PaymentSchedule getPaymentSchedule() {
-      return paymentSchedule;
-    }
-
-    public FIN_PaymentSchedule getPaymentScheduleInvoice() {
-      return paymentScheduleInvoice;
-    }
-
-    public JSONObject getError() {
-      return error;
-    }
-
-    public void setError(JSONObject error) {
-      this.error = error;
-    }
-
   }
 
 }
