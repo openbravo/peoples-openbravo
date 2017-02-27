@@ -12,7 +12,7 @@
 (function () {
 
   OB.UTIL.prepaymentRules = {};
-  OB.UTIL.prepaymentRules['default'] = {
+  OB.UTIL.prepaymentRules.OBPOS_Default = {
     execute: function (receipt, callback) {
       var prepaymentAmount = receipt.get('lines').reduce(function (memo, line) {
         if (line.get('obposCanbedelivered')) {

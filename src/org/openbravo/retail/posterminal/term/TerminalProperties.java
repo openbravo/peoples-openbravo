@@ -82,7 +82,7 @@ public class TerminalProperties extends ModelExtension {
         "language_string"));
     list.add(new HQLProperty("pos.organization.obposReturnAnonymousbp", "returns_anonymouscustomer"));
 
-    list.add(new HQLProperty("'default'", "prepaymentAlgorithm"));
+    list.add(new HQLProperty("pos.organization.obposPrepaymentAlgorithm", "prepaymentAlgorithm"));
 
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHUPTEMPLATE, "printCashUpTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHMGMTEMPLATE, "printCashMgmTemplate", list);
