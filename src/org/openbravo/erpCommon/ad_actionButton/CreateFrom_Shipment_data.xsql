@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -807,11 +807,17 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       UPDATE M_InOut SET C_Order_id = ?, DATEORDERED = (SELECT DATEORDERED FROM C_ORDER WHERE C_ORDER_ID=?)
-      WHERE M_InOut_ID=?
+      WHERE M_InOut_ID=? AND NOT EXISTS (
+        SELECT ol.c_order_id FROM M_InOutLine iol
+         JOIN C_OrderLine ol on iol.C_OrderLine_Id = ol.C_OrderLine_Id
+        WHERE iol.M_InOut_Id = ? 
+         AND ol.c_order_id != ?)
     </Sql>
     <Parameter name="cOrderId"/>
     <Parameter name="cOrderId"/>
     <Parameter name="mInoutId"/>
+    <Parameter name="mInoutId"/>
+    <Parameter name="cOrderId"/>
   </SqlMethod>
   <SqlMethod name="updateC_Invoice_ID" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
