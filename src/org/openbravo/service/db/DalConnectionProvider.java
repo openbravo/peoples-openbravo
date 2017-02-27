@@ -27,6 +27,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
+import org.hibernate.HibernateException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
@@ -95,6 +96,11 @@ public class DalConnectionProvider implements ConnectionProvider {
       }
     } catch (SQLException sqlex) {
       log.error("Error checking connection of {} pool", pool, sqlex);
+    } catch (HibernateException hex) {
+      // Handle the case of a connection retrieved from Hibernate pool which has been already
+      // closed. In this case the connection is marked as not usable and when we try to check its
+      // status a HibernateException is thrown.
+      connection = OBDal.getInstance(pool).getConnection(flush);
     }
 
     // always flush all remaining actions
