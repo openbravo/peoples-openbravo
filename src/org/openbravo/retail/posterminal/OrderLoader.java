@@ -507,11 +507,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
         for (OrderLoaderHook hook : orderProcesses) {
           if (hook instanceof OrderLoaderPaymentHook) {
-            ((OrderLoaderPaymentHook) hook)
-                .setPaymentSchedule((FIN_PaymentSchedule) paymentResponse.get("paymentResponse"));
-            ((OrderLoaderPaymentHook) hook)
-                .setPaymentScheduleInvoice((FIN_PaymentSchedule) paymentResponse
-                    .get("paymentScheduleInvoice"));
+            ((OrderLoaderPaymentHook) hook).setPaymentSchedule(paymentResponse
+                .has("paymentResponse") ? (FIN_PaymentSchedule) paymentResponse
+                .get("paymentResponse") : null);
+            ((OrderLoaderPaymentHook) hook).setPaymentScheduleInvoice(paymentResponse
+                .has("paymentScheduleInvoice") ? (FIN_PaymentSchedule) paymentResponse
+                .get("paymentScheduleInvoice") : null);
           }
         }
 
