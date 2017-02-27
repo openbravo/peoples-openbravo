@@ -25,22 +25,17 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.access.Role;
-import org.openbravo.model.ad.access.TabAccess;
-import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.Menu;
 import org.openbravo.model.ad.ui.MenuTrl;
@@ -55,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author mtaal
  */
-@SessionScoped
+@RequestScoped
 public class MenuManager implements Serializable {
   private static final Logger log = LoggerFactory.getLogger(MenuManager.class);
   private static final long serialVersionUID = 1L;
@@ -77,7 +72,7 @@ public class MenuManager implements Serializable {
 
   private long cacheTimeStamp = 0;
 
-  public synchronized MenuOption getMenu() {
+  public MenuOption getMenu() {
     long t = System.currentTimeMillis();
     if (cachedMenu == null || roleId == null
         || !roleId.equals(OBContext.getOBContext().getRole().getId())
@@ -203,21 +198,35 @@ public class MenuManager implements Serializable {
     }
   }
 
-  @SuppressWarnings("unchecked")
   private void linkWindows() {
-    final String windowsHql = "select wa.window.id " + //
+    final String windowsHql = "select wa.window.id, t.id, ta.editableField, wa.editableField" + //
         " from ADWindowAccess wa " + //
-        "where wa.role = :role" + //
-        "  and wa.active = true ";
+        " left join wa.aDTabAccessList as ta " + //
+        " left join ta.tab as t with t.tabLevel = 0 " + //
+        " where wa.role = :role" + //
+        " and wa.active = true " + //
+        " and (ta.active = true or ta.active is null) " + //
+        " order by wa.id, t.sequenceNumber DESC ";
     final Query windowsQry = OBDal.getInstance().getSession().createQuery(windowsHql);
     windowsQry.setParameter("role", OBContext.getOBContext().getRole());
 
-    for (String windowId : (List<String>) windowsQry.list()) {
+    for (Object obj : windowsQry.list()) {
+      final Object[] row = (Object[]) obj;
+      final String windowId = (String) row[0];
+      final String tabId = (String) row[1];
+      final Boolean isEditableTab = (Boolean) row[2];
+      final Boolean isEditableWindow = (Boolean) row[3];
       MenuOption option = getMenuOptionByType(MenuEntryType.Window, windowId);
       if (option != null) {
         boolean hasAccess = !SessionFactoryController.isRunningInWebContainer()
             || ActivationKey.getInstance().hasLicenseAccess("MW", windowId) == FeatureRestriction.NO_RESTRICTION;
         option.setAccessGranted(hasAccess);
+
+        if (tabId == null) {
+          option.setIsReadOnlyForRole(!isEditableWindow);
+        } else {
+          option.setIsReadOnlyForRole(!isEditableTab);
+        }
       }
     }
   }
@@ -287,6 +296,7 @@ public class MenuManager implements Serializable {
     private String objectId;
 
     private boolean accessGranted = false;
+    private Boolean isReadOnlyForRole = false;
 
     public MenuOption() {
       // Default constructor, just sets all the defaults
@@ -322,7 +332,7 @@ public class MenuManager implements Serializable {
      */
     public boolean isReadOnly() {
       boolean tabIsReadOnlyForAll = getTab() != null && getTab().getUIPattern().equals("RO");
-      boolean tabIsReadOnlyForRole = isTabReadOnlyforRole();
+      boolean tabIsReadOnlyForRole = tabIsReadOnlyForAll || isTabReadOnlyforRole();
       return tabIsReadOnlyForAll || tabIsReadOnlyForRole;
     }
 
@@ -331,45 +341,21 @@ public class MenuManager implements Serializable {
      * TabAccess entities
      */
     public boolean isTabReadOnlyforRole() {
-      boolean isReadOnly = false;
+
       // If there is no tab there is nothing to check
       if (getTab() == null) {
         return false;
-      }
-      // Obtains the Window Access for the current role
-      Role role = OBContext.getOBContext().getRole();
-      OBCriteria<WindowAccess> windowAccessCriteria = OBDal.getInstance().createCriteria(
-          WindowAccess.class);
-      windowAccessCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_ROLE, role));
-      windowAccessCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_WINDOW, getTab().getWindow()));
-      WindowAccess windowAccess = (WindowAccess) windowAccessCriteria.uniqueResult();
-      if (windowAccess != null) {
-        // there is a window access defined for this window and this role
-        OBCriteria<TabAccess> tabAccessCriteria = OBDal.getInstance().createCriteria(
-            TabAccess.class);
-        tabAccessCriteria.add(Restrictions.eq(TabAccess.PROPERTY_TAB, tab));
-        tabAccessCriteria.add(Restrictions.eq(TabAccess.PROPERTY_WINDOWACCESS, windowAccess));
-        TabAccess tabAccess = (TabAccess) tabAccessCriteria.uniqueResult();
-        if (tabAccess != null) {
-          // there is a window access defined and a tab access defined too
-          // The menu entry will be read only if the tab is not editable by this role
-          isReadOnly = !tabAccess.isEditableField();
-          //
-        } else {
-          // There is a window access defined but there is not a tab access defined
-          // The menu entry will be read only if the window is not editable by this role
-          isReadOnly = !windowAccess.isEditableField();
-        }
       } else {
-        // there is not a window access defined. the user should not even be capable of opening the
-        // window
-        isReadOnly = true;
+        return this.getIsReadOnlyForRole();
       }
-      return isReadOnly;
     }
 
     public String getReadOnlyStringValue() {
       return Boolean.toString(isReadOnly());
+    }
+
+    private Boolean getIsReadOnlyForRole() {
+      return isReadOnlyForRole;
     }
 
     public boolean isEditOrDeleteOnly() {
@@ -418,11 +404,10 @@ public class MenuManager implements Serializable {
 
     public boolean isAccessible() {
       // In order to be accessible, all its menu entry parents must be active;
-      Menu menuEntry = OBDal.getInstance().get(Menu.class, treeNode.getNode());
       if (parentMenuOption == null) {
-        return menuEntry.isActive();
+        return treeNode.isActive();
       } else {
-        return menuEntry.isActive() && parentMenuOption.isAccessible();
+        return treeNode.isActive() && parentMenuOption.isAccessible();
       }
     }
 
@@ -605,6 +590,10 @@ public class MenuManager implements Serializable {
 
     public void setObjectId(String objectId) {
       this.objectId = objectId;
+    }
+
+    public void setIsReadOnlyForRole(Boolean isReadOnlyForRole) {
+      this.isReadOnlyForRole = isReadOnlyForRole;
     }
   }
 
