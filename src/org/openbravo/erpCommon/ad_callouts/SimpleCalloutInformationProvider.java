@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -62,10 +62,10 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
   @Override
   public Object getCurrentElementValue(Object element) {
     JSONObject json = (JSONObject) element;
-    String value = null;
+    Object value = null;
     try {
       if (json.has(CalloutConstants.CLASSIC_VALUE)) {
-        value = json.getString(CalloutConstants.CLASSIC_VALUE);
+        value = json.get(CalloutConstants.CLASSIC_VALUE);
       }
     } catch (JSONException e) {
       log.error("Error retrieving value from json {}", json);
