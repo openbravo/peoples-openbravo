@@ -480,8 +480,10 @@ enyo.kind({
       OB.UTIL.StockUtils.checkOrderLinesStock([me.model.get('order')], function (hasStock) {
         if (hasStock) {
           me.model.on('showPaymentTab', function (event) {
-            me.model.off('showPaymentTab');
-            me.showPaymentTab();
+            me.model.get('order').getPrepaymentAmount(function () {
+              me.model.off('showPaymentTab');
+              me.showPaymentTab();
+            });
           });
 
           if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {

@@ -917,7 +917,7 @@
       //Execute the Prepayments Algorithm only if the receipt is a normal ticket or a layaway
       //Otherwise return the total of the receipt so the prepayments logic is not taken into account
       if (this.get('orderType') !== 1 && this.get('orderType') !== 3) {
-        if (OB.MobileApp.model.get('terminal').prepaymentAlgorithm) {
+        if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && OB.MobileApp.model.get('terminal').prepaymentAlgorithm) {
           OB.UTIL.prepaymentRules[OB.MobileApp.model.get('terminal').prepaymentAlgorithm].execute(this, function (amount) {
             executeCallback(amount);
           });
