@@ -61,12 +61,6 @@ public class PriceAdjustment {
       BigDecimal qty, BigDecimal priceStd) {
     BigDecimal priceActual = priceStd;
     try {
-
-      // Discounts and Promotions only work for Sales flow
-      if (!(Boolean) orderOrInvoice.get(Invoice.PROPERTY_SALESTRANSACTION)) {
-        return priceStd;
-      }
-
       int precision = ((Currency) orderOrInvoice.get(Invoice.PROPERTY_CURRENCY))
           .getPricePrecision().intValue();
       for (org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo : getApplicablePriceAdjustments(
@@ -110,12 +104,6 @@ public class PriceAdjustment {
       BigDecimal qty, BigDecimal priceActual) {
     BigDecimal priceStd = priceActual;
     try {
-
-      // Discounts and Promotions only work for Sales flow
-      if (!(Boolean) orderOrInvoice.get(Invoice.PROPERTY_SALESTRANSACTION)) {
-        return priceActual;
-      }
-
       int precision = ((Currency) orderOrInvoice.get(Invoice.PROPERTY_CURRENCY))
           .getPricePrecision().intValue();
       for (org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo : getApplicablePriceAdjustments(
