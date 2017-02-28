@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2016 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2017 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -174,6 +174,7 @@
   v_invoiceline_qtysum NUMBER;
   v_PriceList_ID varchar2(32);
   v_prepaymentamt NUMBER;
+  v_prepayment_inorders NUMBER;
   v_hasTaxes NUMBER;
    
 BEGIN
@@ -1796,11 +1797,21 @@ IF (NOT FINISH_PROCESS) THEN
     END IF;
   END IF;--FINISH_PROCESS
   IF (NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
+    --Update the prepayment amount from orders related to the invoice lines.
+    SELECT COALESCE(SUM(fps.paidamt),0)
+      INTO v_prepayment_inorders
+    FROM fin_payment_schedule fps
+      JOIN c_order o ON o.c_order_id=fps.c_order_id
+      JOIN c_orderline ol ON ol.c_order_id = o.c_order_id
+      JOIN c_invoiceline il ON il.c_orderline_id = ol.c_orderline_id
+    WHERE il.c_invoice_id = v_Record_ID;
+
     -- Finish up -------------------------------------------------------------
     UPDATE C_INVOICE
     SET DocStatus='CO',
         Processed='Y',
         DocAction='RE',
+        PrepaymentAmt=v_prepayment_inorders,
         Updated=now(),
         UpdatedBy=v_UpdatedBy
     WHERE C_Invoice_ID=v_Record_ID;

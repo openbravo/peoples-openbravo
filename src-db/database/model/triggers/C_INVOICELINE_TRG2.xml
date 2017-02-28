@@ -56,8 +56,6 @@
   v_CalcLine NUMBER;
   v_maxline NUMBER;    
           
-  v_prepayment NUMBER;
-
   TYPE RECORD IS REF CURSOR;
   Cur_BOM RECORD;          
 BEGIN
@@ -94,8 +92,6 @@ END IF;
  AND C_Invoice_ID=v_ID;
  v_oldLine:=0;
  v_newLineNetAmt:=0;
- v_prepayment:=0;
- 
  IF(v_Processed='N') THEN
   -- Calculate taxes
   IF (v_istaxincluded = 'Y') THEN
@@ -106,30 +102,8 @@ END IF;
         v_newgrossamt := :new.line_gross_amount;
      END IF;
    END IF;  
-  IF (UPDATING OR DELETING) THEN
-    v_oldLine:= COALESCE(:old.LineNetAmt,0);
-    IF UPDATING THEN
-      v_newLineNetAmt:= COALESCE(:new.LineNetAmt,0);
-    END IF;
-    
-    IF (:old.c_orderline_id IS NOT NULL AND (v_oldLine <> 0 OR v_newLineNetAmt <> 0)) THEN
-      SELECT COALESCE(SUM(fps.paidamt),0)
-        INTO v_prepayment
-      FROM fin_payment_schedule fps
-        JOIN c_order ord ON ord.c_order_id=fps.c_order_id
-        JOIN c_orderline ordline ON ordline.c_order_id = ord.c_order_id
-      WHERE ordline.c_orderline_id = :old.c_orderline_id;
-      IF UPDATING THEN
-        IF v_newLineNetAmt <> 0 AND v_oldLine = 0 THEN
-          v_prepayment:= -1 * v_prepayment;
-        ELSIF v_newLineNetAmt <> 0 AND v_oldLine <> 0 THEN
-          v_prepayment:= 0;
-        END IF;
-      END IF;
-      UPDATE c_invoice
-      SET prepaymentamt = prepaymentamt - v_prepayment
-      WHERE c_invoice_id = v_ID;
-    END IF;
+  IF(UPDATING OR DELETING) THEN
+  v_oldLine:= COALESCE(:old.LineNetAmt,0);
   END IF;  
   IF (INSERTING OR UPDATING) THEN
    v_newLineNetAmt := COALESCE(:new.LineNetAmt,0);
