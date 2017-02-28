@@ -61,32 +61,38 @@
   v_multiple NUMBER;
   v_issotrx CHAR(1);
 BEGIN
+  select fixed, coalesce(addamt, 0), coalesce(discount, 0),
+         qty_From, qty_To, apply_next, ismultiple, multiple
+    into v_fixed, v_add, v_discount,
+         v_qty_From, v_qty_To, v_apply_next, v_ismultiple, v_multiple
+    from m_offer
+   where m_offer_id = p_rule_id;
 
-  IF (p_type ='O') THEN
-    SELECT ol.gross_unit_price, ol.c_tax_id, ol.qtyordered, ol.priceactual, ol.line_gross_amount, ol.linenetamt, o.issotrx
-    INTO v_unitprice, v_tax, v_qty, v_priceactual, v_origGrossAmt, v_origLineNetAmt, v_issotrx
-    FROM c_order o
-    JOIN c_orderline ol
-    ON o.c_order_id = ol.c_order_id
-    WHERE ol.c_orderline_id = p_line_id;
-  ELSE
-    SELECT il.gross_unit_price, il.c_tax_id, il.qtyinvoiced, il.priceactual, il.line_gross_amount, il.linenetamt, i.issotrx
-    INTO v_unitprice, v_tax, v_qty, v_priceactual, v_origGrossAmt, v_origLineNetAmt, v_issotrx
-    FROM c_invoice i
-    JOIN c_invoiceline il
-    ON i.c_invoice_id = il.c_invoice_id
-    WHERE c_invoiceline_id = p_line_id;
-  END IF;
+  if (p_type ='O') then
+		select gross_unit_price, c_tax_id, qtyordered, priceactual,
+		       line_gross_amount, linenetamt
+			into v_unitprice, v_tax, v_qty, v_priceactual,
+			     v_origGrossAmt, v_origLineNetAmt
+			from c_orderline
+		 where c_orderline_id = p_line_id;
 
-  -- Discounts and Promotions only work for Sales flow
-  IF (v_issotrx = 'N') THEN
-    RETURN v_apply_next;
-  END IF;
+		select issotrx  into v_issotrx
+				from c_order 
+				where c_order_id in (select c_order_id from c_orderline
+				where c_orderline_id = p_line_id);
+  else 
+	 select gross_unit_price, c_tax_id, qtyinvoiced, priceactual,
+	        line_gross_amount, linenetamt
+		 into v_unitprice, v_tax, v_qty, v_priceactual,
+		      v_origGrossAmt, v_origLineNetAmt
+		 from c_invoiceline
+		where c_invoiceline_id = p_line_id;
 
-  SELECT fixed, coalesce(addamt, 0), coalesce(discount, 0), qty_From, qty_To, apply_next, ismultiple, multiple
-  INTO v_fixed, v_add, v_discount, v_qty_From, v_qty_To, v_apply_next, v_ismultiple, v_multiple
-  FROM m_offer
-  WHERE m_offer_id = p_rule_id;
+		select issotrx  into v_issotrx
+				from c_invoice 
+				where c_invoice_id in (select c_invoice_id from c_invoiceline
+				where c_invoiceline_id = p_line_id);
+  end if;
 
   if (v_qty_From is not null and v_qty < v_qty_From) or (v_qty_To is not null and v_qty > v_qty_To) or (v_ismultiple = 'Y' and ((v_multiple is null) or (MOD(v_qty, v_multiple) <> 0))) then
     return 'Y'; -- rule not applied, apply next one if present
@@ -116,9 +122,10 @@ BEGIN
     v_totalPromotion := v_origLineNetAmt - v_newNetAmt;
     v_basePrice := v_priceactual;
   end if;
-
+  --verify the sales flow
+  if(v_issotrx='Y') then
   M_PROMOTION_ADD(p_type, p_line_id, p_rule_id, p_taxIncluded, v_newUnitPrice, v_newGrossAmt, v_newNetPrice, v_newNetAmt, v_totalPromotion, v_totalPromotion, v_basePrice, p_user_id);
-
+  end if;
   return v_apply_next;
 END M_PROMOTION_ADJUSTMENT
 ]]></body>
