@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,9 +51,8 @@ import org.slf4j.LoggerFactory;
  * @author mtaal
  */
 @RequestScoped
-public class MenuManager implements Serializable {
+public class MenuManager {
   private static final Logger log = LoggerFactory.getLogger(MenuManager.class);
-  private static final long serialVersionUID = 1L;
 
   public static enum MenuEntryType {
     Window, Process, ProcessManual, Report, Form, External, Summary, View, ProcessDefinition
