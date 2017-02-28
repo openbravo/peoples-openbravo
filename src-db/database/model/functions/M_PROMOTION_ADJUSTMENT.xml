@@ -34,7 +34,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2016 Openbravo SLU
+* All portions are Copyright (C) 2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -59,7 +59,6 @@
   v_totalPromotion NUMBER;
   v_ismultiple CHAR(1);
   v_multiple NUMBER;
-  v_issotrx CHAR(1);
 BEGIN
   select fixed, coalesce(addamt, 0), coalesce(discount, 0),
          qty_From, qty_To, apply_next, ismultiple, multiple
@@ -75,11 +74,6 @@ BEGIN
 			     v_origGrossAmt, v_origLineNetAmt
 			from c_orderline
 		 where c_orderline_id = p_line_id;
-
-		select issotrx  into v_issotrx
-				from c_order 
-				where c_order_id in (select c_order_id from c_orderline
-				where c_orderline_id = p_line_id);
   else 
 	 select gross_unit_price, c_tax_id, qtyinvoiced, priceactual,
 	        line_gross_amount, linenetamt
@@ -87,11 +81,6 @@ BEGIN
 		      v_origGrossAmt, v_origLineNetAmt
 		 from c_invoiceline
 		where c_invoiceline_id = p_line_id;
-
-		select issotrx  into v_issotrx
-				from c_invoice 
-				where c_invoice_id in (select c_invoice_id from c_invoiceline
-				where c_invoiceline_id = p_line_id);
   end if;
 
   if (v_qty_From is not null and v_qty < v_qty_From) or (v_qty_To is not null and v_qty > v_qty_To) or (v_ismultiple = 'Y' and ((v_multiple is null) or (MOD(v_qty, v_multiple) <> 0))) then
@@ -122,10 +111,9 @@ BEGIN
     v_totalPromotion := v_origLineNetAmt - v_newNetAmt;
     v_basePrice := v_priceactual;
   end if;
-  --verify the sales flow
-  if(v_issotrx='Y') then
+
   M_PROMOTION_ADD(p_type, p_line_id, p_rule_id, p_taxIncluded, v_newUnitPrice, v_newGrossAmt, v_newNetPrice, v_newNetAmt, v_totalPromotion, v_totalPromotion, v_basePrice, p_user_id);
-  end if;
+
   return v_apply_next;
 END M_PROMOTION_ADJUSTMENT
 ]]></body>
