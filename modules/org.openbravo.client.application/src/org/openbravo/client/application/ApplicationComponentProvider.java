@@ -24,7 +24,6 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.openbravo.client.application.window.WindowDefinitionComponent;
 import org.openbravo.client.kernel.BaseComponentProvider;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
@@ -48,12 +47,7 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
    */
   @Override
   public Component getComponent(String componentId, Map<String, Object> parameters) {
-    if (componentId.equals(WindowDefinitionComponent.WINDOW_DEF_COMPONENT)) {
-      final WindowDefinitionComponent component = getComponent(WindowDefinitionComponent.class);
-      component.setId(WindowDefinitionComponent.WINDOW_DEF_COMPONENT);
-      component.setParameters(parameters);
-      return component;
-    } else if (componentId.equals(ApplicationConstants.MAIN_LAYOUT_ID)) {
+    if (componentId.equals(ApplicationConstants.MAIN_LAYOUT_ID)) {
       final MainLayoutComponent component = getComponent(MainLayoutComponent.class);
       component.setId(ApplicationConstants.MAIN_LAYOUT_ID);
       component.setParameters(parameters);
@@ -197,9 +191,6 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         .add(createDynamicResource("org.openbravo.client.kernel/"
             + ApplicationConstants.COMPONENT_TYPE + "/"
             + ApplicationConstants.PROPERTIES_COMPONENT_ID));
-    globalResources.add(createDynamicResource("org.openbravo.client.kernel/"
-        + ApplicationConstants.COMPONENT_TYPE + "/"
-        + WindowDefinitionComponent.WINDOW_DEF_COMPONENT));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/classic/ob-classic-window.js", false));
     globalResources.add(createStaticResource(

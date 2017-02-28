@@ -291,7 +291,6 @@ public class MenuManager {
     private MenuOption parentMenuOption;
     private List<MenuOption> children = new ArrayList<MenuOption>();
     private Boolean visible = null;
-    private boolean showInClassicMode = false;
     private String objectId;
 
     private boolean accessGranted = false;
@@ -312,7 +311,6 @@ public class MenuManager {
       this.tab = option.tab;
       this.form = option.form;
       this.isReport = option.isReport;
-      this.showInClassicMode = option.showInClassicMode;
       this.objectId = option.objectId;
     }
 
@@ -558,7 +556,6 @@ public class MenuManager {
 
     public void setTab(Tab tab) {
       this.tab = tab;
-      showInClassicMode = ApplicationUtils.showWindowInClassicMode(tab.getWindow());
     }
 
     public List<MenuParameter> getParameters() {
@@ -569,10 +566,6 @@ public class MenuManager {
         }
       }
       return parameters;
-    }
-
-    public boolean isShowInClassicMode() {
-      return showInClassicMode;
     }
 
     public String getDbId() {

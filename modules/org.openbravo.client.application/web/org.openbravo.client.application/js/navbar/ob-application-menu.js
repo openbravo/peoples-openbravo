@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -119,7 +119,6 @@ isc.OBApplicationMenuTree.addProperties({
   },
 
   itemClick: function (item, colNum) {
-    var isClassicEnvironment = OB.Utilities.useClassicMode(item.windowId);
     var selectedView = isc.addProperties({}, item);
     if (item.tabId) {
       selectedView = OB.Utilities.openView(item.windowId, item.tabId, item.title, null, null, item.icon, item.readOnly, item.singleRecord, null, item.editOrDeleteOnly);
