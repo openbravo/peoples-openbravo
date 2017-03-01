@@ -312,7 +312,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       }
     };
 
-    receipt.on('closed', function () {
+    receipt.on('checkOpenDrawer', function () {
       me.checkOpenDrawer();
     });
 

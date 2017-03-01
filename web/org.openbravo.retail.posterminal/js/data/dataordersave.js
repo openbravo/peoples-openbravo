@@ -115,6 +115,8 @@
             return true;
           }
 
+          receipt.trigger('checkOpenDrawer');
+
           if (OB.UTIL.RfidController.isRfidConfigured()) {
             OB.UTIL.RfidController.processRemainingCodes(receipt);
             OB.UTIL.RfidController.updateEpcBuffers();
