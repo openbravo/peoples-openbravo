@@ -606,13 +606,12 @@ public class EntityXMLConverter implements OBNotSingleton {
   }
 
   private boolean objectBelongsToReadableClient(BaseOBObject bob) {
-    if (bob instanceof ClientEnabled) {
+    if (client != null && bob instanceof ClientEnabled) {
       String bobClientId = ((ClientEnabled) bob).getClient().getId();
       if (readableClients != null) {
         return ArrayUtils.contains(readableClients, bobClientId);
-      } else if (client != null) {
-        return bobClientId.equals(client.getId());
       }
+      return bobClientId.equals(client.getId());
     }
     return true;
   }
