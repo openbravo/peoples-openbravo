@@ -186,6 +186,18 @@ enyo.kind({
       });
     }
 
+    if (this.model.get('obposCanbedelivered') === false) {
+      this.createComponent({
+        style: 'display: block;',
+        components: [{
+          content: '-- ' + OB.I18N.getLabel('OBPOS_NotDeliverLine'),
+          classes: 'orderline-canbedelivered'
+        }, {
+          style: 'clear: both;'
+        }]
+      });
+    }
+
     if (this.model.get('promotions')) {
       enyo.forEach(this.model.get('promotions'), function (d) {
         if (d.hidden) {

@@ -453,7 +453,7 @@ enyo.kind({
           if (approved) {
             _.each(me.owner.owner.selectedModels, function (line) {
               if (line.get('obposCanbedelivered')) {
-                line.unset('obposCanbedelivered');
+                line.set('obposCanbedelivered', false);
               } else {
                 line.set('obposCanbedelivered', true);
               }

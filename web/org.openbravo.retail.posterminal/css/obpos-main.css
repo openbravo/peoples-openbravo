@@ -576,6 +576,21 @@ button.btnbp:disabled {
   clear: both;
 }
 
+.orderline-canbedelivered {
+  color: #f8941d;
+  float: left;
+  width: 100%; 
+  clear: left;
+}
+
+li.selected > button > div > div.orderline-canbedelivered {
+  color: #ffffff;
+}
+
+li.selected > button.btnselect-orderline.btnselect-orderline-edit > div > div.orderline-canbedelivered {
+  color: red;
+}
+
 .order-total-label {
   float: left;
   width: calc(100% - 275px);  /* The same than calc(100% - 65px - 2 * 105px); */
