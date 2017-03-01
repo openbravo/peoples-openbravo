@@ -89,7 +89,7 @@ public class Login extends HttpBaseServlet {
             .getLanguage().getLanguage());
         final String errorDifferentPasswordInFields = Utility.messageBD(this,
             "CPDifferentPasswordInFields", systemClient.getLanguage().getLanguage());
-        printPageLogin30(vars, response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg,
+        printPageLogin(vars, response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg,
             recBrowserMsgTitle, recBrowserMsgText, identificationFailureTitle,
             emptyUsernameOrPasswordText, errorSamePassword, errorDifferentPasswordInFields);
       } finally {
@@ -193,10 +193,7 @@ public class Login extends HttpBaseServlet {
     out.close();
   }
 
-  /**
-   * Shows 3.0 login page
-   */
-  private void printPageLogin30(VariablesSecureApp vars, HttpServletResponse response,
+  private void printPageLogin(VariablesSecureApp vars, HttpServletResponse response,
       String strTheme, String cacheMsg, String validBrowserMsg, String orHigherMsg,
       String recBrowserMsgTitle, String recBrowserMsgText, String identificationFailureTitle,
       String emptyUsernameOrPasswordText, String errorSamePassword,
