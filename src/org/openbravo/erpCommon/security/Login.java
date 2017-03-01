@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,7 +38,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.OBVersion;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
@@ -90,13 +89,9 @@ public class Login extends HttpBaseServlet {
             .getLanguage().getLanguage());
         final String errorDifferentPasswordInFields = Utility.messageBD(this,
             "CPDifferentPasswordInFields", systemClient.getLanguage().getLanguage());
-        if (OBVersion.getInstance().is30()) {
-          printPageLogin30(vars, response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg,
-              recBrowserMsgTitle, recBrowserMsgText, identificationFailureTitle,
-              emptyUsernameOrPasswordText, errorSamePassword, errorDifferentPasswordInFields);
-        } else {
-          printPageLogin250(response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg);
-        }
+        printPageLogin30(vars, response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg,
+            recBrowserMsgTitle, recBrowserMsgText, identificationFailureTitle,
+            emptyUsernameOrPasswordText, errorSamePassword, errorDifferentPasswordInFields);
       } finally {
         vars.clearSession(false);
         OBContext.restorePreviousMode();
@@ -113,12 +108,7 @@ public class Login extends HttpBaseServlet {
       out.close();
     } else if (vars.commandIn("WELCOME")) {
       log4j.debug("Command: Welcome");
-      if (OBVersion.getInstance().is30()) {
-        printPageBlank(response, vars);
-      } else {
-        String strTheme = vars.getTheme();
-        printPageWelcome(response, strTheme);
-      }
+      printPageBlank(response, vars);
     } else if (vars.commandIn("LOGO")) {
       printPageLogo(response, vars);
     } else {
@@ -188,20 +178,6 @@ public class Login extends HttpBaseServlet {
     out.close();
   }
 
-  private void printPageWelcome(HttpServletResponse response, String strTheme) throws IOException,
-      ServletException {
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/security/Login_Welcome").createXmlDocument();
-
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("theme", strTheme);
-
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
   private void printPageLogo(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -210,32 +186,6 @@ public class Login extends HttpBaseServlet {
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
-
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  /**
-   * Shows 2.50 login page
-   */
-  private void printPageLogin250(HttpServletResponse response, String strTheme, String cacheMsg,
-      String validBrowserMsg, String orHigherMsg) throws IOException, ServletException {
-    XmlDocument xmlDocument = xmlEngine
-        .readXmlTemplate("org/openbravo/erpCommon/security/Login_F1").createXmlDocument();
-
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("theme", strTheme);
-    xmlDocument.setParameter("itService", SessionLoginData.selectSupportContact(this));
-
-    String cacheMsgFinal = "var cacheMsg = \"" + cacheMsg + "\"";
-    xmlDocument.setParameter("cacheMsg", cacheMsgFinal.replaceAll("\\n", "\n"));
-
-    String validBrowserMsgFinal = validBrowserMsg + "\\n * Mozilla Firefox 3.0 " + orHigherMsg
-        + "\\n * Microsoft Internet Explorer 7.0 " + orHigherMsg;
-    validBrowserMsgFinal = "var validBrowserMsg = \"" + validBrowserMsg + "\"";
-    xmlDocument.setParameter("validBrowserMsg", validBrowserMsgFinal.replaceAll("\\n", "\n"));
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
