@@ -340,6 +340,9 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           }
         }
 
+        boolean voidingPrepaidInvoice = "RC".equals(strdocaction)
+            && invoice.getPrepaymentamt().compareTo(BigDecimal.ZERO) > 0;
+
         final ProcessInstance pinstance = CallProcess.getInstance().call(process, strC_Invoice_ID,
             parameters);
 
@@ -358,7 +361,107 @@ public class ProcessInvoice extends HttpSecureAppServlet {
             revInvoiceCriteria.setMaxResults(1);
             ReversedInvoice revInvoice = (ReversedInvoice) revInvoiceCriteria.uniqueResult();
 
-            if (revInvoice != null && dummyPayment != null) {
+            boolean processPayment = false;
+
+            if (voidingPrepaidInvoice) {
+              processPayment = true;
+
+              FIN_Payment orderPayment = null;
+
+              List<FIN_PaymentSchedule> fpsList = invoice.getFINPaymentScheduleList();
+
+              // Searching for invoice payment
+              for (FIN_PaymentSchedule fps : fpsList) {
+                List<FIN_PaymentScheduleDetail> fpsdList = fps
+                    .getFINPaymentScheduleDetailInvoicePaymentScheduleList();
+                for (FIN_PaymentScheduleDetail fpsd : fpsdList) {
+                  FIN_PaymentDetail pd = fpsd.getPaymentDetails();
+                  orderPayment = pd.getFinPayment();
+                  break;
+                }
+                if (orderPayment != null) {
+                  break;
+                }
+              }
+
+              fpsList.addAll(revInvoice.getInvoice().getFINPaymentScheduleList());
+
+              List<FIN_PaymentScheduleDetail> fpsdList = new ArrayList<>();
+
+              for (FIN_PaymentSchedule fps : fpsList) {
+                fpsdList.addAll(fps.getFINPaymentScheduleDetailInvoicePaymentScheduleList());
+              }
+
+              final DocumentType docType = FIN_Utility.getDocumentType(invoice.getOrganization(),
+                  orderPayment.isReceipt() ? AcctServer.DOCTYPE_ARReceipt
+                      : AcctServer.DOCTYPE_APPayment);
+              final String strPaymentDocumentNo = FIN_Utility.getDocumentNo(docType,
+                  docType.getTable() != null ? docType.getTable().getDBTableName() : "");
+
+              // Creating a dummy payment
+              dummyPayment = dao.getNewPayment(orderPayment.isReceipt(), invoice.getOrganization(),
+                  orderPayment.getDocumentType(), strPaymentDocumentNo,
+                  invoice.getBusinessPartner(), invoice.getPaymentMethod(),
+                  orderPayment.getAccount(), "0", voidDate != null ? voidDate : new Date(),
+                  invoice.getDocumentNo(), invoice.getCurrency(),
+                  orderPayment.getFinancialTransactionConvertRate(), null);
+              OBDal.getInstance().save(dummyPayment);
+
+              invoice.setOutstandingAmount(BigDecimal.ZERO);
+
+              // Updating dummy payment lines with invoice and reverse invoice
+              for (FIN_PaymentScheduleDetail fpsd : fpsdList) {
+                FIN_PaymentDetail psdOldPaymentDetail = fpsd.getPaymentDetails();
+
+                // Create a payment detail
+                FIN_PaymentDetail pd = OBProvider.getInstance().get(FIN_PaymentDetail.class);
+                pd.setOrganization(dummyPayment.getOrganization());
+                pd.setFinPayment(dummyPayment);
+                pd.setAmount(fpsd.getAmount());
+                pd.setRefund(false);
+                OBDal.getInstance().save(pd);
+
+                // Remove the reference to the order payment schedule
+                fpsd.setOrderPaymentSchedule(null);
+                fpsd.setPaymentDetails(pd);
+
+                pd.getFINPaymentScheduleDetailList().add(fpsd);
+                OBDal.getInstance().save(fpsd);
+
+                dummyPayment.getFINPaymentDetailList().add(pd);
+
+                if (psdOldPaymentDetail != null) {
+                  for (FIN_PaymentScheduleDetail orderPSD : psdOldPaymentDetail
+                      .getFINPaymentScheduleDetailList()) {
+                    if (!StringUtils.equals(orderPSD.getId(), fpsd.getId())) {
+                      // Update order received amount
+                      orderPSD.setAmount(orderPSD.getAmount().add(fpsd.getAmount()));
+                      OBDal.getInstance().save(orderPSD);
+                    }
+                  }
+                  FIN_PaymentSchedule ps = fpsd.getInvoicePaymentSchedule();
+                  ps.setPaidAmount(BigDecimal.ZERO);
+                  ps.setOutstandingAmount(fpsd.getAmount());
+                  OBDal.getInstance().save(ps);
+
+                  // Update invoice outstanding amount
+                  if (StringUtils.equals(ps.getInvoice().getId(), invoice.getId())) {
+                    invoice.setOutstandingAmount(invoice.getOutstandingAmount().add(
+                        fpsd.getAmount()));
+                  }
+                }
+              }
+              OBDal.getInstance().save(dummyPayment);
+
+              revInvoice.getInvoice().setPrepaymentamt(BigDecimal.ZERO);
+
+              invoice.setTotalPaid(BigDecimal.ZERO);
+              invoice.setPrepaymentamt(BigDecimal.ZERO);
+
+              OBDal.getInstance().save(invoice);
+              OBDal.getInstance().save(revInvoice.getInvoice());
+            } else if (revInvoice != null && dummyPayment != null) {
+              processPayment = true;
 
               List<FIN_PaymentDetail> paymentDetails = new ArrayList<FIN_PaymentDetail>();
               List<FIN_PaymentScheduleDetail> paymentScheduleDetails = dao
@@ -378,7 +481,9 @@ public class ProcessInvoice extends HttpSecureAppServlet {
               }
               dummyPayment.getFINPaymentDetailList().addAll(paymentDetails);
               OBDal.getInstance().save(dummyPayment);
+            }
 
+            if (processPayment) {
               // Process dummy payment related with both actual invoice and reversed invoice
               OBError message = FIN_AddPayment.processPayment(vars, this, "P", dummyPayment);
               if ("Error".equals(message.getType())) {
