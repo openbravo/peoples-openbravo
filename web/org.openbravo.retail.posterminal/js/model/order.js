@@ -42,7 +42,7 @@
       net: OB.DEC.Zero,
       description: '',
       attributeValue: '',
-      obposCanbedelivered: false
+      obposCanbedelivered: true
     },
 
     // When copying a line coming from servers these properties are copied
@@ -654,38 +654,36 @@
             }
           }, OB.DEC.Zero);
 
-          me.getPrepaymentAmount(function () {
-            // all attributes are set at once, preventing the change event of each attribute to be fired until all values are set
-            me.set({
-              'gross': gross,
-              'qty': qty
-            });
-            me.adjustPayment();
-            if (save) {
-              me.save(function () {
-                // Reset the flag that protects reentrant invocations to calculateGross().
-                // And if there is pending any execution of calculateGross(), do it and do not continue.
-                me.calculatingGross = false;
-                me.calculatingReceipt = false;
-                if (me.pendingCalculateGross) {
-                  me.pendingCalculateGross = false;
-                  me.calculateGross(callback);
-                  return;
-                }
-                me.trigger('calculategross');
-                me.trigger('saveCurrent');
-                if (callback) {
-                  callback();
-                }
-              });
-            } else {
+          // all attributes are set at once, preventing the change event of each attribute to be fired until all values are set
+          me.set({
+            'gross': gross,
+            'qty': qty
+          });
+          me.adjustPayment();
+          if (save) {
+            me.save(function () {
+              // Reset the flag that protects reentrant invocations to calculateGross().
+              // And if there is pending any execution of calculateGross(), do it and do not continue.
               me.calculatingGross = false;
               me.calculatingReceipt = false;
+              if (me.pendingCalculateGross) {
+                me.pendingCalculateGross = false;
+                me.calculateGross(callback);
+                return;
+              }
+              me.trigger('calculategross');
+              me.trigger('saveCurrent');
               if (callback) {
                 callback();
               }
+            });
+          } else {
+            me.calculatingGross = false;
+            me.calculatingReceipt = false;
+            if (callback) {
+              callback();
             }
-          });
+          }
           };
 
       this.get('lines').forEach(function (line) {
@@ -6438,7 +6436,11 @@
               });
               order.set('taxes', taxes);
 
-              if (!model.isLayaway && !model.isQuotation) {
+              var notPaidLines = _.find(model.receiptLines, function (line) {
+                return !line.obposIspaid;
+              });
+
+              if (!model.isLayaway && !model.isQuotation && !notPaidLines) {
                 if (model.totalamount > 0 && order.get('payment') < model.totalamount) {
                   order.set('paidOnCredit', true);
                 } else if (model.totalamount < 0 && (order.get('payment') === 0 || (OB.DEC.abs(model.totalamount)) > order.get('payment'))) {

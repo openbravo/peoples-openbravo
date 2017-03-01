@@ -189,11 +189,16 @@
           frozenReceipt.set('undo', null);
           frozenReceipt.set('multipleUndo', null);
 
-          if (Math.abs(receipt.get('payment')) >= Math.abs(receipt.get('gross')) || receipt.get('paidOnCredit')) {
-            receipt.get('lines').forEach(function (line) {
+          receipt.get('lines').forEach(function (line) {
+            if (Math.abs(receipt.get('payment')) >= Math.abs(receipt.get('gross')) || receipt.get('paidOnCredit')) {
               line.set('obposCanbedelivered', true);
-            });
-          }
+              line.set('obposIspaid', true);
+            } else if (Math.abs(receipt.get('payment')) >= Math.abs(receipt.get('prepaymentAmt'))) {
+              if (line.get('obposCanbedelivered')) {
+                line.set('obposIspaid', true);
+              }
+            }
+          });
 
           receipt.get('lines').forEach(function (line) {
             if (line.get('product').get('productType') === 'S' && line.get('product').get('isLinkedToProduct') && !line.has('obposQtytodeliver') && line.get('qty') > 0) {
@@ -514,11 +519,16 @@
             currentReceipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
             currentReceipt.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
 
-            if (Math.abs(currentReceipt.get('payment')) >= Math.abs(currentReceipt.get('gross')) || currentReceipt.get('paidOnCredit')) {
-              currentReceipt.get('lines').forEach(function (line) {
+            currentReceipt.get('lines').forEach(function (line) {
+              if (Math.abs(currentReceipt.get('payment')) >= Math.abs(currentReceipt.get('gross')) || currentReceipt.get('paidOnCredit')) {
                 line.set('obposCanbedelivered', true);
-              });
-            }
+                line.set('obposIspaid', true);
+              } else if (Math.abs(currentReceipt.get('payment')) >= Math.abs(currentReceipt.get('prepaymentAmt'))) {
+                if (line.get('obposCanbedelivered')) {
+                  line.set('obposIspaid', true);
+                }
+              }
+            });
 
             me.context.get('multiOrders').trigger('integrityOk', currentReceipt);
 

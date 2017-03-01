@@ -597,7 +597,11 @@ enyo.kind({
       this.setTotalPending(OB.DEC.sub(multiOrders.get('total'), multiOrders.get('payment')), rate, symbol, symbolAtRight);
       this.$.totalpending.show();
       this.$.totalpendinglbl.show();
-      this.$.donebutton.hide();
+      if (receiptHasPrepaymentAmount && pendingPrepayment <= 0) {
+        this.$.donebutton.show();
+      } else {
+        this.$.donebutton.hide();
+      }
       if (this.$.donebutton.drawerpreference) {
         this.$.donebutton.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
         this.$.donebutton.drawerOpened = false;

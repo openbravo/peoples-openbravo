@@ -117,6 +117,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean paidReceipt = false;
   private boolean deliver = false;
 
+  private boolean hasPrepayment = false;
+
   @Inject
   @Any
   private Instance<OrderLoaderHook> orderProcesses;
@@ -177,10 +179,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     paidReceipt = (jsonorder.getLong("orderType") == 0 || jsonorder.getLong("orderType") == 1)
         && jsonorder.has("isPaid") && jsonorder.getBoolean("isPaid");
 
+    hasPrepayment = jsonorder.has("prepaymentAmt")
+        && Math.abs(jsonorder.getDouble("prepaymentAmt")) < Math.abs(jsonorder.getDouble("gross"));
+
     newLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2;
     notpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
         && jsonorder.getDouble("payment") < Math.abs(jsonorder.getDouble("gross"))
-        && !jsonorder.optBoolean("paidOnCredit") && !jsonorder.has("paidInNegativeStatusAmt");
+        && !jsonorder.optBoolean("paidOnCredit") && !jsonorder.has("paidInNegativeStatusAmt")
+        && !hasPrepayment;
     creditpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
         && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
         && jsonorder.optBoolean("paidOnCredit");
@@ -1798,8 +1804,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               .setScale(pricePrecision, RoundingMode.HALF_UP);
         }
       } else if (writeoffAmt.signum() == -1
-          && ((!notpaidLayaway && !creditpaidLayaway && !fullypaidLayaway && !checkPaidOnCreditChecked) || jsonorder
-              .has("paidInNegativeStatusAmt"))) {
+          && ((!notpaidLayaway && !creditpaidLayaway && !fullypaidLayaway
+              && !checkPaidOnCreditChecked && !hasPrepayment) || jsonorder
+                .has("paidInNegativeStatusAmt"))) {
         // If the overpayment is negative and the order is not a fully or not paid layaway, a
         // quotation nor an order paid on credit, or the overpayment is negative and having a
         // positive tickets in which the created payments are negative (this may occur in C&R flow)
