@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -329,37 +330,27 @@ public class AdvancedQueryBuilder {
 
   private String addWhereOrgParameters(String where) {
     String localWhereClause = where;
+
     // add the organization parameter
+    StringBuilder orgPart = new StringBuilder();
+    Set<String> orgs = new HashSet<String>();
     if (filterParameters.containsKey(JsonConstants.ORG_PARAMETER)) {
       final String value = filterParameters.get(JsonConstants.ORG_PARAMETER);
-      final StringBuilder orgPart = new StringBuilder();
       if (entity.isOrganizationEnabled() && value != null && value.length() > 0) {
-        final Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
-            .getNaturalTree(value);
-        if (orgs.size() > 0) {
-          if (getMainAlias() != null) {
-            orgPart.append(" " + getMainAlias() + ".organization in (");
-          } else {
-            orgPart.append(" organization in (");
-          }
-          boolean addComma = false;
-          for (String org : orgs) {
-            if (addComma) {
-              orgPart.append(",");
-            }
-            orgPart.append("'" + org + "'");
-            addComma = true;
-          }
-          orgPart.append(") ");
-        }
+        orgs = OBContext.getOBContext().getOrganizationStructureProvider().getNaturalTree(value);
+        orgPart = buildOrgPartWhereClause(orgs);
       }
-      if (localWhereClause == null || localWhereClause.length() == 0) {
-        localWhereClause = orgPart.length() > 0 ? orgPart.toString() : "";
-      } else {
-        localWhereClause = "(" + localWhereClause + ")"
-            + (orgPart.length() > 0 ? " and " + orgPart.toString() : "");
+      localWhereClause = buildLocalWhereClause(localWhereClause, orgPart);
+    } else if (filterParameters.containsKey(JsonConstants.CALCULATE_ORGS)) {
+      // add natural tree of writable organizations
+      final Set<String> orgsWritables = OBContext.getOBContext().getWritableOrganizations();
+      for (final String o : orgsWritables) {
+        orgs.addAll(OBContext.getOBContext().getOrganizationStructureProvider().getNaturalTree(o));
       }
+      orgPart = buildOrgPartWhereClause(orgs);
+      localWhereClause = buildLocalWhereClause(localWhereClause, orgPart);
     }
+
     // add the special whereParameter
     final String whereParameter = filterParameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE);
     if (whereParameter != null && !whereParameter.equals("null") && whereParameter.length() > 0) {
@@ -370,6 +361,37 @@ public class AdvancedQueryBuilder {
       }
     }
     return localWhereClause;
+  }
+
+  private String buildLocalWhereClause(String localWhere, StringBuilder orgPart) {
+    if (localWhere == null || localWhere.length() == 0) {
+      return (orgPart.length() > 0 ? orgPart.toString() : "");
+    } else {
+      return ("(" + localWhere + ")" + (orgPart.length() > 0 ? " and " + orgPart.toString() : ""));
+    }
+  }
+
+  private StringBuilder buildOrgPartWhereClause(Set<String> organizations) {
+    StringBuilder buildOrgPart = new StringBuilder();
+    if (organizations.size() > 0) {
+      if (getMainAlias() != null) {
+        String organizationEntity = Organization.ENTITY_NAME.equals(entity.toString()) ? ".id"
+            : ".organization";
+        buildOrgPart.append(" " + getMainAlias() + organizationEntity + " in (");
+      } else {
+        buildOrgPart.append(" organization in (");
+      }
+      boolean addComma = false;
+      for (String org : organizations) {
+        if (addComma) {
+          buildOrgPart.append(",");
+        }
+        buildOrgPart.append("'" + org + "'");
+        addComma = true;
+      }
+      buildOrgPart.append(") ");
+    }
+    return buildOrgPart;
   }
 
   private String substituteParameters(String where) {
