@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,6 +37,7 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.model.Entity;
@@ -118,6 +119,10 @@ public class EntityXMLConverter implements OBNotSingleton {
 
   // only export references which belong to this client
   private Client client;
+
+  // child properties are exported if they are defined for a client whose ID is included in
+  // readableClients (if it has been set)
+  private String[] readableClients;
 
   // if the system attributes (version, timestamp, etc.) are added to
   // to the root element, for testcases it makes sense to not have this
@@ -474,7 +479,7 @@ public class EntityXMLConverter implements OBNotSingleton {
         for (final Object o : childObjects) {
           // embed in the parent
           if (isOptionEmbedChildren()) {
-            if (objectBelongsToCurrentClient((BaseOBObject) o)) {
+            if (objectBelongsToReadableClient((BaseOBObject) o)) {
               final DataSetTable dst = (getDataSet() != null && obObject.getEntity() != null) ? dataSetTablesByEntity
                   .get(obObject.getEntity()) : null;
               if ((excludeAuditInfo != null && excludeAuditInfo)
@@ -588,7 +593,7 @@ public class EntityXMLConverter implements OBNotSingleton {
 
   protected void addToExportList(BaseOBObject bob) {
     // only export references if belonging to the current client
-    if (!objectBelongsToCurrentClient(bob)) {
+    if (!objectBelongsToReadableClient(bob)) {
       return;
     }
 
@@ -600,12 +605,14 @@ public class EntityXMLConverter implements OBNotSingleton {
     allToProcessObjects.add(bob);
   }
 
-  private boolean objectBelongsToCurrentClient(BaseOBObject bob) {
-    Client currentClient = getClient();
-    if (currentClient != null && bob instanceof ClientEnabled) {
-      String currentClientId = currentClient.getId();
+  private boolean objectBelongsToReadableClient(BaseOBObject bob) {
+    if (bob instanceof ClientEnabled) {
       String bobClientId = ((ClientEnabled) bob).getClient().getId();
-      return currentClientId.equals(bobClientId);
+      if (readableClients != null) {
+        return ArrayUtils.contains(readableClients, bobClientId);
+      } else if (client != null) {
+        return bobClientId.equals(client.getId());
+      }
     }
     return true;
   }
@@ -792,6 +799,10 @@ public class EntityXMLConverter implements OBNotSingleton {
 
   public void setClient(Client client) {
     this.client = client;
+  }
+
+  public void setReadableClients(String[] readableClients) {
+    this.readableClients = readableClients;
   }
 
   public boolean isOptionExportAuditInfo() {
