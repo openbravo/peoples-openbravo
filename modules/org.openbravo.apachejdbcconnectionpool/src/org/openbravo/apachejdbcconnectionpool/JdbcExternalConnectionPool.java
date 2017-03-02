@@ -18,12 +18,16 @@
  */
 package org.openbravo.apachejdbcconnectionpool;
 
+import java.lang.management.ManagementFactory;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
@@ -33,6 +37,7 @@ import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
+import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.PoolInterceptorProvider;
 import org.slf4j.Logger;
@@ -142,7 +147,6 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     DataSource defaultDS = new DataSource();
     defaultDS.setPoolProperties(getPoolProperties(""));
     availableDataSources.put(DEFAULT_POOL, defaultDS);
-
     if (isReadOnlyPoolDefined()) {
       PoolProperties p = getPoolProperties("readonly");
       p.setDefaultReadOnly(true);
@@ -152,6 +156,32 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
       DataSource ro = new DataSource();
       ro.setPoolProperties(p);
       availableDataSources.put(READONLY_POOL, ro);
+    }
+
+    for (Entry<String, DataSource> dse : availableDataSources.entrySet()) {
+      DataSource ds = dse.getValue();
+      try {
+        if (ds.isJmxEnabled()) {
+          String context = "";
+          if (DalContextListener.getServletContext() != null) {
+            context = "context="
+                + DalContextListener.getServletContext().getContextPath().replace("/", "") + ",";
+          }
+
+          // pool needs to be created before it's registered
+          ds.createPool();
+          MBeanServer mbs = null;
+          mbs = ManagementFactory.getPlatformMBeanServer();
+          try {
+            ObjectName name = new ObjectName("Openbravo:" + context + "name=Pool-" + dse.getKey());
+            mbs.registerMBean(ds.getPool().getJmxPool(), name);
+          } catch (Exception ignored) {
+            log.error("Could not register {} pool as jmx bean", dse.getKey(), ignored);
+          }
+        }
+      } catch (Exception e) {
+        log.error("Error creating pool {}", dse.getKey(), e);
+      }
     }
   }
 
@@ -285,7 +315,15 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     if (getStringProperty(props, "db.pool.name", poolName) != null) {
       poolProperties.setName(getStringProperty(props, "db.pool.name", poolName));
     }
-
+    if (getStringProperty(props, "db.pool.jmxEnabled", poolName) != null) {
+      poolProperties.setJmxEnabled(getBooleanProperty(props, "db.pool.jmxEnabled", poolName));
+    }
+    if (getStringProperty(props, "db.pool.logAbandoned", poolName) != null) {
+      poolProperties.setLogAbandoned(getBooleanProperty(props, "db.pool.logAbandoned", poolName));
+    }
+    if (getStringProperty(props, "db.pool.suspectTimeout", poolName) != null) {
+      poolProperties.setSuspectTimeout(getIntProperty(props, "db.pool.suspectTimeout", poolName));
+    }
     return poolProperties;
   }
 
