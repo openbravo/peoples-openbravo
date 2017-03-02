@@ -584,11 +584,11 @@ button.btnbp:disabled {
 }
 
 li.selected > button > div > div.orderline-canbedelivered {
-  color: #ffffff;
+  color: #c46200;
 }
 
 li.selected > button.btnselect-orderline.btnselect-orderline-edit > div > div.orderline-canbedelivered {
-  color: red;
+  color: #ffe7ce;
 }
 
 .order-total-label {
