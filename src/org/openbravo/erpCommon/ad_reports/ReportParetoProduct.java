@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingStatus;
@@ -43,6 +44,7 @@ import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
+import org.openbravo.erpCommon.utility.OBCurrencyUtils;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -68,8 +70,11 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       String strClient = vars.getClient();
       String strAD_Org_ID = vars.getGlobalVariable("inpadOrgId", "ReportParetoProduct|AD_Org_ID",
           "");
-      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
-          "ReportParetoProduct|currency", strUserCurrencyId);
+      String strCurrencyId = OBCurrencyUtils.getOrgCurrency(strAD_Org_ID);
+      if (StringUtils.isEmpty(strCurrencyId)) {
+        strCurrencyId = strUserCurrencyId;
+      }
+
       printPageDataSheet(request, response, vars, strWarehouse, strAD_Org_ID, strClient,
           strCurrencyId);
     } else if (vars.commandIn("FIND")) {
@@ -78,8 +83,10 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       String strClient = vars.getClient();
       String strAD_Org_ID = vars.getRequestGlobalVariable("inpadOrgId",
           "ReportParetoProduct|AD_Org_ID");
-      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
-          "ReportParetoProduct|currency", strUserCurrencyId);
+      String strCurrencyId = OBCurrencyUtils.getOrgCurrency(strAD_Org_ID);
+      if (StringUtils.isEmpty(strCurrencyId)) {
+        strCurrencyId = strUserCurrencyId;
+      }
       printPageDataSheet(request, response, vars, strWarehouse, strAD_Org_ID, strClient,
           strCurrencyId);
     } else if (vars.commandIn("GENERATE")) {
@@ -93,10 +100,23 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       myMessage.setType("Success");
       myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
       vars.setMessage("ReportParetoProduct", myMessage);
-      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
-          "ReportParetoProduct|currency", strUserCurrencyId);
+      String strCurrencyId = OBCurrencyUtils.getOrgCurrency(strAD_Org_ID);
+      if (StringUtils.isEmpty(strCurrencyId)) {
+        strCurrencyId = strUserCurrencyId;
+      }
       printPageDataSheet(request, response, vars, strWarehouse, strAD_Org_ID, strClient,
           strCurrencyId);
+    } else if (vars.commandIn("CURRENCY")) {
+      String strOrg = vars.getRequestGlobalVariable("inpadOrgId", "ReportParetoProduct|AD_Org_ID",
+          IsIDFilter.instance);
+      if (StringUtils.isEmpty(strOrg)) {
+        strOrg = vars.getOrg();
+      }
+      String strCurrencyId = OBCurrencyUtils.getOrgCurrency(strOrg);
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.print(strCurrencyId);
+      out.close();
     } else
       pageError(response);
   }

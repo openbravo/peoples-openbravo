@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2011 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -69,6 +69,30 @@ function refreshWarehouses() {
   var cmbWarehouse = document.frmMain.inpmWarehouseId;  
   changeComboData(cmbWarehouse, arrWarehouse, cmbOrganization.options[cmbOrganization.selectedIndex].value, true);  
   return true;
+}
+function callbackCurrency(paramXMLParticular, XMLHttpRequestObj) {
+    var strText = "";
+    if (getReadyStateHandler(XMLHttpRequestObj)) {
+        try {
+            if (XMLHttpRequestObj.responseText) {
+                strText = XMLHttpRequestObj.responseText;
+                if (strText && document.getElementById('inpCurrencyId').value != strText) {
+                    document.getElementById('inpCurrencyId').value = strText;
+                    refreshWarehouses();
+                }
+            }
+       } catch (e) {
+       }
+    }
+    return true;
+}
+function setDefaultCurrency() {
+    try {
+        var paramXMLReq = null;
+        return submitXmlHttpRequest(callbackCurrency, document.frmMain, "CURRENCY", "ReportParetoProduct.html", false, null, paramXMLReq);
+    } catch (e) {
+        alert(e);
+    }
 }
 </script>
 
@@ -260,7 +284,7 @@ var arrWarehouse=null;
             <tr>
             <td class="TitleCell"><span class="LabelText">Organization</span></td>      
               <td class="Combo_ContentCell" colspan="2"> 
-                <select name="inpadOrgId"  id="inpadOrgId" class="ComboKey Combo_TwoCells_width" onchange="refreshWarehouses();logChanges(this);return true;" required="true">
+                <select name="inpadOrgId"  id="inpadOrgId" class="ComboKey Combo_TwoCells_width" onchange="refreshWarehouses();setDefaultCurrency();logChanges(this);return true;" required="true">
                   <option value=""> <div id="reportAD_Org_ID"></div></option>
                 </select>
               </td>
