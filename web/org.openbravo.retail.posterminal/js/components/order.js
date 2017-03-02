@@ -1392,7 +1392,7 @@ enyo.kind({
         return memo + ((!_.isUndefined(order.get('amountToLayaway')) && !_.isNull(order.get('amountToLayaway'))) ? order.get('amountToLayaway') : order.getPending());
       }, 0);
       this.prepayment = _.reduce(this.model.get('multiOrders').get('multiOrdersList').models, function (memo, order) {
-        return memo + order.get('prepaymentAmt');
+        return memo + !OB.UTIL.isNullOrUndefined(order.get('amountToLayaway')) ? order.get('amountToLayaway') : order.get('prepaymentAmt');
       }, 0);
       this.multiOrders.set('total', this.total);
       this.model.get('multiOrders').set('prepaymentAmt', this.prepayment);

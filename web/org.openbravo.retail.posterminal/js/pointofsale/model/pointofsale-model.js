@@ -519,15 +519,18 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
       var setPaymentsToReceipts;
 
-      setPaymentsToReceipts = function (orderList, paymentList, orderListIndex, paymentListIndex, callback) {
-        if (orderListIndex >= orderList.length) {
-          if (callback instanceof Function) {
+      setPaymentsToReceipts = function (orderList, paymentList, orderListIndex, paymentListIndex, considerPrepaymentAmount, callback) {
+        if (orderListIndex >= orderList.length || paymentListIndex >= paymentList.length) {
+          if (paymentListIndex < paymentList.length) {
+            setPaymentsToReceipts(orderList, paymentList, 0, paymentListIndex, false, callback);
+          } else if (callback instanceof Function) {
             callback();
           }
           return;
         }
-        var iter = orderList.at(orderListIndex);
-        var amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
+        var iter = orderList.at(orderListIndex),
+            auxAmountToPay = (iter.get('prepaymentAmt') && iter.get('prepaymentAmt') !== 0 && iter.get('prepaymentAmt') !== iter.get('gross') && considerPrepaymentAmount ? iter.get('prepaymentAmt') : iter.get('gross')),
+            amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(auxAmountToPay, iter.get('payment'));
         if (((_.isUndefined(iter.get('amountToLayaway')) || iter.get('amountToLayaway') > 0) && iter.get('gross') > iter.get('payment')) || (iter.get('amountToLayaway') > 0)) { //TODO this while LOOP
           var payment = paymentList.at(paymentListIndex),
               paymentMethod = OB.MobileApp.model.paymentnames[payment.get('kind')];
@@ -555,7 +558,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), args.origPayment.get('origAmount')));
                 }
                 amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
-                setPaymentsToReceipts(orderList, paymentList, orderListIndex, paymentListIndex + 1, callback);
+                setPaymentsToReceipts(orderList, paymentList, orderListIndex, paymentListIndex + 1, considerPrepaymentAmount, callback);
               });
             });
           } else {
@@ -585,17 +588,17 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 }
                 amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
                 iter.prepareToSend(prepareToSendCallback);
-                setPaymentsToReceipts(orderList, paymentList, orderListIndex + 1, paymentListIndex, callback);
+                setPaymentsToReceipts(orderList, paymentList, orderListIndex + 1, paymentListIndex, considerPrepaymentAmount, callback);
               });
             });
           }
         } else {
           iter.prepareToSend(prepareToSendCallback);
-          setPaymentsToReceipts(orderList, paymentList, orderListIndex + 1, paymentListIndex, callback);
+          setPaymentsToReceipts(orderList, paymentList, orderListIndex + 1, paymentListIndex, considerPrepaymentAmount, callback);
         }
       };
 
-      setPaymentsToReceipts(this.get('multiOrders').get('multiOrdersList'), this.get('multiOrders').get('payments'), 0, 0);
+      setPaymentsToReceipts(this.get('multiOrders').get('multiOrdersList'), this.get('multiOrders').get('payments'), 0, 0, true);
     }, this);
 
     this.get('multiOrders').on('paymentDone', function (openDrawer) {

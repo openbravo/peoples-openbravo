@@ -180,6 +180,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         && jsonorder.has("isPaid") && jsonorder.getBoolean("isPaid");
 
     hasPrepayment = jsonorder.has("prepaymentAmt")
+        && Math.abs(jsonorder.getDouble("prepaymentAmt")) <= Math.abs(jsonorder
+            .getDouble("payment"))
         && Math.abs(jsonorder.getDouble("prepaymentAmt")) < Math.abs(jsonorder.getDouble("gross"));
 
     newLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2;
