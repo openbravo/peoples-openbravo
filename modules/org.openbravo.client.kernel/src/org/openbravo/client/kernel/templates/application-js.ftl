@@ -34,6 +34,7 @@ var OB = {
         contextUrl: '${data.contextUrl}',
         communityBrandingStaticUrl: '${data.communityBrandingStaticUrl?js_string}',
         butlerUtilsUrl: '${data.butlerUtilsUrl?js_string}',
+        communityBrandingUrl: '${data.communityBrandingUrl?js_string}',
         purpose: '${data.instancePurpose?js_string}',
         licenseType: '${data.licenseType?js_string}',
         isTrial: ${data.trialStringValue},

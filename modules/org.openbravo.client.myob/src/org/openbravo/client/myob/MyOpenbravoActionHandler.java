@@ -60,7 +60,6 @@ public class MyOpenbravoActionHandler extends BaseActionHandler implements Porta
   private static final String WIDGET_REMOVED = "WIDGET_REMOVED";
   private static final String PUBLISH_CHANGES = "PUBLISH_CHANGES";
   private static final String RELOAD_WIDGETS = "RELOAD_WIDGETS";
-  private static final String GET_COMMUNITY_BRANDING_URL = "GET_COMMUNITY_BRANDING_URL";
   private static final String GET_AVAILABLE_WIDGET_CLASSES = "GET_AVAILABLE_WIDGET_CLASSES";
 
   @Inject
@@ -119,8 +118,6 @@ public class MyOpenbravoActionHandler extends BaseActionHandler implements Porta
             roleId = availableAtLevelValue[0];
           }
           addAvailableWidgetClasses(o, roleId, isAdminMode);
-        } else if (strEventType.equals(GET_COMMUNITY_BRANDING_URL)) {
-          o.put("url", Utility.getCommunityBrandingUrl("MyOB"));
         } else {
           message.setType("Error");
           message.setMessage("@OBKMO_UnknownEventType@");

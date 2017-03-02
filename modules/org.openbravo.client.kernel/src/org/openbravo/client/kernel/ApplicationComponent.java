@@ -151,10 +151,6 @@ public class ApplicationComponent extends BaseTemplateComponent {
     return result;
   }
 
-  /**
-   * @deprecated the value is retrieved asynchronously via the MyOpenbravoActionHandler instead
-   */
-  @Deprecated
   public String getCommunityBrandingUrl() {
     return Utility.getCommunityBrandingUrl(MYOB_UIMODE);
   }
