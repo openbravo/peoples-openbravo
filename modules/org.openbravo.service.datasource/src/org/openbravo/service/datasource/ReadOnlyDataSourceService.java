@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -186,9 +186,16 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
     if (data.size() == 0) {
       return false;
     }
+    Boolean isLastRecordSelected = Boolean.FALSE;
     Map<String, Object> lastRecord = data.get(data.size() - 1);
     Object obSelected = lastRecord.get("obSelected");
-    Boolean isLastRecordSelected = obSelected == null ? Boolean.FALSE : (Boolean) obSelected;
+    if (obSelected != null) {
+      if (obSelected.getClass().equals(Boolean.class)) {
+        isLastRecordSelected = (Boolean) obSelected;
+      } else if (obSelected.getClass().equals(String.class)) {
+        isLastRecordSelected = ((String) obSelected).equalsIgnoreCase("Y");
+      }
+    }
     return isLastRecordSelected.booleanValue();
   }
 
