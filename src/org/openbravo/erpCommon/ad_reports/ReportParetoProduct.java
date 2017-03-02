@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,24 +21,36 @@ package org.openbravo.erpCommon.ad_reports;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingStatus;
+import org.openbravo.costing.CostingUtils;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportParetoProduct extends HttpSecureAppServlet {
@@ -116,10 +128,43 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       OBError myMessage = null;
       myMessage = new OBError();
       try {
-        data = ReportParetoProductData.select(this, strWarehouse, strClient, vars.getLanguage(),
-            strCurrencyId, strAD_Org_ID);
+        OBContext.setAdminMode(true);
+
+        // Get legal entity (for aggregated table and currency conversion. The latter is only
+        // possible because the report can be launched only for one legal entity at the same time)
+        final Organization legalEntity = OBContext.getOBContext()
+            .getOrganizationStructureProvider(strClient)
+            .getLegalEntity(OBDal.getInstance().get(Organization.class, strAD_Org_ID));
+        if (legalEntity == null) {
+          throw new OBException(OBMessageUtils.messageBD("WarehouseNotInLE"));
+        }
+
+        // Calculate max aggregated date or set a default value if not aggregated data
+        String strMaxAggDate = ReportParetoProductData.selectMaxAggregatedDate(this,
+            legalEntity.getId());
+        if (StringUtils.isBlank(strMaxAggDate)) {
+          final DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+          final Date maxAggDate = formatter.parse("01-01-0000");
+          strMaxAggDate = OBDateUtils.formatDate(maxAggDate);
+        }
+
+        // Process Time (useful to avoid taking into account transactions for legacy costing rules)
+        String processTime = "01-01-1970 00:00:00";
+        final CostingRule costRule = ReportValuationStock.getLEsCostingAlgortithm(legalEntity);
+        if (costRule != null) {
+          processTime = OBDateUtils.formatDate(CostingUtils.getCostingRuleStartingDate(costRule),
+              "dd-MM-yyyy HH:mm:ss");
+        }
+        final String processTimeDateFormat = "DD-MM-YYYY HH24:MI:SS";
+
+        data = ReportParetoProductData.select(this, strCurrencyId, strClient, legalEntity.getId(),
+            processTime, processTimeDateFormat, strMaxAggDate, strWarehouse, strAD_Org_ID,
+            vars.getLanguage());
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+      } catch (ParseException ignore) {
+      } finally {
+        OBContext.restorePreviousMode();
       }
       strConvRateErrorMsg = myMessage.getMessage();
       // If a conversion rate is missing for a certain transaction, an
@@ -287,4 +332,5 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
   public String getServletInfo() {
     return "Servlet ReportParetoProduct info. Insert here any relevant information";
   } // end of getServletInfo() method
+
 }
