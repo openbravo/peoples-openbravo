@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -104,13 +104,15 @@ public class WeldBaseTest extends OBBaseTest {
    * within same class, let's initialize it once per class but we cannot use @BeforeClass at this
    * point because we require of beanManager to be injected.
    */
+  @Override
   @Before
-  public void setManager() {
+  public void setUp() throws Exception {
     if (!initialized) {
       WeldUtils.setStaticInstanceBeanManager(beanManager);
       kernelInitializer.setInterceptor();
       initialized = true;
     }
+    super.setUp();
   }
 
   /**

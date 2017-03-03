@@ -470,12 +470,15 @@
       </index>
       <index name="M_PRODUCT_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
+        <whereClause><![CDATA[C_BPARTNER_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="M_PRODUCT_BRAND_ID" unique="false">
         <index-column name="M_BRAND_ID"/>
+        <whereClause><![CDATA[M_BRAND_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="M_PRODUCT_GEN_PROD" unique="false">
         <index-column name="GENERIC_PRODUCT_ID"/>
+        <whereClause><![CDATA[GENERIC_PRODUCT_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="M_PRODUCT_NAME_ID" unique="false">
         <index-column name="NAME"/>
@@ -487,6 +490,7 @@
       <index name="M_PRODUCT_UPC_ID" unique="false">
         <index-column name="UPC"/>
         <index-column name="M_PRODUCT_ID"/>
+        <whereClause><![CDATA[UPC IS NOT NULL]]></whereClause>
       </index>
       <index name="M_PRODUCT_VALUE_ID" unique="false">
         <index-column name="VALUE"/>

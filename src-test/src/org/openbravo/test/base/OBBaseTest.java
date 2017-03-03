@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,14 @@
 
 package org.openbravo.test.base;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assume.assumeThat;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,6 +56,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.ConnectionProviderImpl;
+import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.exception.PoolNotFoundException;
 import org.openbravo.model.ad.access.User;
 
@@ -60,6 +69,9 @@ import org.openbravo.model.ad.access.User;
  */
 
 public class OBBaseTest {
+  private static final Logger log = Logger.getLogger(OBBaseTest.class);
+  private static List<String> disabledTestCases;
+  private boolean disabledTestCase = false;
 
   /**
    * Add a TestWatcher rule to be able to catch test failures allowing them to fail.
@@ -72,8 +84,25 @@ public class OBBaseTest {
   public TestWatcher watchFailures = new TestWatcher() {
     @Override
     protected void starting(Description description) {
-      log.info("*** Starting test case: " + getTestName(description));
+      disabledTestCase = isDisabled(description);
+      if (!disabledTestCase) {
+        log.info("*** Starting test case: " + getTestName(description));
+      }
     };
+
+    private boolean isDisabled(Description description) {
+      boolean fullClassDisabled = disabledTestCases.contains(description.getClassName());
+      if (fullClassDisabled) {
+        return true;
+      }
+      String methodName = description.getMethodName();
+      if (methodName.endsWith("]")) {
+        // parameterized tests cases suffix [desc] to method name, let's remove it
+        methodName = methodName.substring(0, methodName.indexOf("["));
+
+      }
+      return disabledTestCases.contains(description.getClassName() + "." + methodName);
+    }
 
     @Override
     protected void failed(Throwable e, Description description) {
@@ -82,13 +111,14 @@ public class OBBaseTest {
 
     @Override
     protected void finished(Description description) {
-      log.info("*** Finished test case: " + getTestName(description)
-          + (errorOccured ? " - with errors" : ""));
+      log.info("*** " + (disabledTestCase ? "Skipped" : "Finished") + " test case: "
+          + getTestName(description) + (errorOccured ? " - with errors" : ""));
 
       // if not an administrator but still admin mode set throw an exception
       if (!OBContext.getOBContext().getUser().getId().equals("0")
           && !OBContext.getOBContext().getRole().getId().equals("0")
           && OBContext.getOBContext().isInAdministratorMode()) {
+        OBContext.restorePreviousMode();
         throw new IllegalStateException(
             "Test case should take care of reseting admin mode correctly in a finally block, use OBContext.restorePreviousMode");
       }
@@ -105,10 +135,16 @@ public class OBBaseTest {
           }
         }
       } catch (final Exception e) {
-        SessionHandler.getInstance().rollback();
         reportException(e);
         throw new OBException(e);
       } finally {
+        try {
+          if (SessionHandler.isSessionHandlerPresent(ExternalConnectionPool.READONLY_POOL)) {
+            SessionHandler.getInstance().commitAndClose(ExternalConnectionPool.READONLY_POOL);
+          }
+        } catch (Exception ex) {
+          log.error("Error cleaning up read-only session", ex);
+        }
         SessionHandler.deleteSessionHandler();
         OBContext.setOBContext((OBContext) null);
       }
@@ -121,8 +157,6 @@ public class OBBaseTest {
     }
 
   };
-
-  private static final Logger log = Logger.getLogger(OBBaseTest.class);
 
   private boolean errorOccured = false;
 
@@ -223,6 +257,26 @@ public class OBBaseTest {
   protected static final String TEST_LOCATION_ID = "A21EF1AB822149BEB65D055CD91F261B";
 
   /**
+   * ISO code of the Euro currency
+   */
+  protected static final String EURO = "EUR";
+
+  /**
+   * Record ID of the Euro currency
+   */
+  protected static final String EURO_ID = "102";
+
+  /**
+   * ISO code of the US Dollar currency
+   */
+  protected static final String DOLLAR = "USD";
+
+  /**
+   * Record ID of the US Dollar currency
+   */
+  protected static final String DOLLAR_ID = "100";
+
+  /**
    * Initializes DAL, it also creates a log appender that can be used to assert on logs. This log
    * appender is disabled by default, to activate it set the level with
    * {@link OBBaseTest#setTestLogAppenderLevel(Level)}
@@ -239,6 +293,7 @@ public class OBBaseTest {
       Logger.getRootLogger().addAppender(testLogAppender);
     }
     staticInitializeDalLayer();
+    initializeDisabledTestCases();
   }
 
   /**
@@ -249,6 +304,7 @@ public class OBBaseTest {
     // clear the session otherwise it keeps the old model
     setTestUserContext();
     errorOccured = false;
+    assumeThat("Disabled test case by configuration ", disabledTestCase, is(false));
   }
 
   /** Test log appender is reset and switched off */
@@ -288,6 +344,26 @@ public class OBBaseTest {
   private static void staticInitializeDalLayer() throws Exception {
     if (!DalLayerInitializer.getInstance().isInitialized()) {
       DalLayerInitializer.getInstance().initialize(true);
+    }
+  }
+
+  private static void initializeDisabledTestCases() {
+    boolean alreadyInitialized = disabledTestCases != null;
+    if (alreadyInitialized) {
+      return;
+    }
+
+    Path disabledTestsConfig = Paths.get(OBConfigFileProvider.getInstance().getFileLocation(),
+        "disabled-tests");
+    if (!Files.exists(disabledTestsConfig)) {
+      disabledTestCases = new ArrayList<>();
+      return;
+    }
+    try {
+      disabledTestCases = Files.readAllLines(disabledTestsConfig, StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      log.error("Error reading disabled test configuration", e);
+      disabledTestCases = new ArrayList<>();
     }
   }
 

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,8 +23,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -122,7 +124,7 @@ public class OBViewFieldHandler {
     final List<Field> adFields = new ArrayList<Field>(tab.getADFieldList());
     Collections.sort(adFields, new FormFieldComparator());
 
-    final List<Field> fieldsInDynamicExpression = new ArrayList<Field>();
+    final Set<String> fieldsInDynamicExpression = new HashSet<>();
     final Map<Field, String> displayLogicMap = new HashMap<Field, String>();
     final Map<Field, String> displayLogicGridMap = new HashMap<Field, String>();
     final Map<Field, String> readOnlyLogicMap = new HashMap<Field, String>();
@@ -146,9 +148,7 @@ public class OBViewFieldHandler {
       log.debug(f.getTab().getId() + " - " + f.getName() + " >>> " + parser.getJSExpression());
 
       for (Field fieldExpression : parser.getFields()) {
-        if (!fieldsInDynamicExpression.contains(fieldExpression)) {
-          fieldsInDynamicExpression.add(fieldExpression);
-        }
+        fieldsInDynamicExpression.add(fieldExpression.getId());
         // All the properties that are used in the display logic of the buttons must be included in
         // the list of grid mandatory columns
         if ("Button".equals(f.getColumn().getReference().getName())) {
@@ -183,9 +183,7 @@ public class OBViewFieldHandler {
       log.debug(f.getTab().getId() + " - " + f.getName() + " >>> " + parser.getJSExpression());
 
       for (Field fieldExpression : parser.getFields()) {
-        if (!fieldsInDynamicExpression.contains(fieldExpression)) {
-          fieldsInDynamicExpression.add(fieldExpression);
-        }
+        fieldsInDynamicExpression.add(fieldExpression.getId());
       }
     }
 
@@ -204,9 +202,7 @@ public class OBViewFieldHandler {
       log.debug(f.getTab().getId() + " - " + f.getName() + " >>> " + parser.getJSExpression());
 
       for (Field fieldExpression : parser.getFields()) {
-        if (!fieldsInDynamicExpression.contains(fieldExpression)) {
-          fieldsInDynamicExpression.add(fieldExpression);
-        }
+        fieldsInDynamicExpression.add(fieldExpression.getId());
       }
     }
 
@@ -288,7 +284,7 @@ public class OBViewFieldHandler {
         final OBClientClassField viewField = new OBClientClassField();
 
         viewField.setField(field);
-        viewField.setRedrawOnChange(fieldsInDynamicExpression.contains(field));
+        viewField.setRedrawOnChange(fieldsInDynamicExpression.contains(field.getId()));
         viewField.setShowIf(displayLogicMap.get(field) != null ? displayLogicMap.get(field) : "");
         viewField.setDisplayLogicGrid(displayLogicGridMap.get(field) != null ? displayLogicGridMap
             .get(field) : "");
@@ -338,7 +334,7 @@ public class OBViewFieldHandler {
 
         viewField.setField(field);
         viewField.setId(field);
-        viewField.setRedrawOnChange(fieldsInDynamicExpression.contains(field));
+        viewField.setRedrawOnChange(fieldsInDynamicExpression.contains(field.getId()));
         viewField.setShowIf(displayLogicMap.get(field) != null ? displayLogicMap.get(field) : "");
         viewField.setDisplayLogicGrid(displayLogicGridMap.get(field) != null ? displayLogicGridMap
             .get(field) : "");
@@ -726,6 +722,7 @@ public class OBViewFieldHandler {
           result.append(", canFilter: " + canFilter.toString());
         }
       }
+      result.append(", showHover: true");
       return result.toString();
     }
 

@@ -187,9 +187,11 @@
       </index>
       <index name="M_TRANSACTION_INOUTLINE" unique="false">
         <index-column name="M_INOUTLINE_ID"/>
+        <whereClause><![CDATA[M_INOUTLINE_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="M_TRANSACTION_INVENTORYLINE" unique="false">
         <index-column name="M_INVENTORYLINE_ID"/>
+        <whereClause><![CDATA[M_INVENTORYLINE_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="M_TRANSACTION_LOCATOR_IDX" unique="false">
         <index-column name="M_LOCATOR_ID"/>
@@ -199,12 +201,14 @@
       </index>
       <index name="M_TRANSACTION_MOVEMENTLINE" unique="false">
         <index-column name="M_MOVEMENTLINE_ID"/>
+        <whereClause><![CDATA[M_MOVEMENTLINE_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="M_TRANSACTION_PROCESSED" unique="false">
         <index-column name="ISPROCESSED"/>
       </index>
       <index name="M_TRANSACTION_PRODUCTIONLINE" unique="false">
         <index-column name="M_PRODUCTIONLINE_ID"/>
+        <whereClause><![CDATA[M_PRODUCTIONLINE_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="M_TRANSACTION_TRXPROCDATE" unique="false">
         <index-column name="TRXPROCESSDATE"/>

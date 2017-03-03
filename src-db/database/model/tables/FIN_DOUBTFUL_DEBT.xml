@@ -161,6 +161,10 @@
       <index name="FIN_DOUBTDBT_DOUBTDBTRUN_IDX" unique="false">
         <index-column name="FIN_DOUBTFUL_DEBT_RUN_ID"/>
       </index>
+      <index name="FIN_DOUBTDBT_PAYSCHED_IDX" unique="false">
+        <index-column name="FIN_PAYMENT_SCHEDULE_ID"/>
+        <whereClause><![CDATA[FIN_PAYMENT_SCHEDULE_ID IS NOT NULL]]></whereClause>
+      </index>
       <index name="FIN_DOUBTFUL_DEBT_POSTED" unique="false">
         <index-column name="POSTED"/>
       </index>

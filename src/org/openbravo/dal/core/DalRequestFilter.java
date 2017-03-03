@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -84,19 +84,19 @@ public class DalRequestFilter implements Filter {
       // note OBContext is set to null in DalThreadHandler
       @Override
       public void doFinal(boolean errorOccured) {
-        if (OBContext.getOBContext() != null) {
-          // set the obcontext in the session
-          OBContext.setOBContextInSession((HttpServletRequest) request, OBContext.getOBContext());
+        try {
+          if (OBContext.getOBContext() != null) {
+            // set the obcontext in the session
+            OBContext.setOBContextInSession((HttpServletRequest) request, OBContext.getOBContext());
+          }
+
+          OBContext.clearAdminModeStack();
+          OBInterceptor.setPreventUpdateInfoChange(false);
+          super.doFinal(errorOccured);
+        } finally {
+          // set to null all the session info
+          SessionInfo.init();
         }
-
-        // set to null all the session info
-        SessionInfo.init();
-
-        OBContext.clearAdminModeStack();
-
-        OBInterceptor.setPreventUpdateInfoChange(false);
-
-        super.doFinal(errorOccured);
       }
     };
 

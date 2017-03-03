@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -67,7 +67,6 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
   protected static final String USA_ORG = "5EFF95EB540740A3B10510D9814EFAD5";
   protected static final String USA_WAREHOUSE = "4028E6C72959682B01295ECFE2E20270";
   protected static final String USA_BP = "4028E6C72959682B01295F40D4D20333";
-  protected static final String EUR = "102";
 
   private static final String CREDIT_ORDER_DOC_TYPE = "FF8080812C2ABFC6012C2B3BDF4C0056";
   private static final String CUST_A = "4028E6C72959682B01295F40C3CB02EC";
@@ -109,7 +108,7 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
 
     order.setBusinessPartner(OBDal.getInstance().getProxy(BusinessPartner.class, CUST_A));
     order.setPartnerAddress(OBDal.getInstance().getProxy(Location.class, CUST_A_LOCATION));
-    order.setCurrency(OBDal.getInstance().getProxy(Currency.class, EUR));
+    order.setCurrency(OBDal.getInstance().getProxy(Currency.class, EURO_ID));
     order.setPaymentTerms(OBDal.getInstance().getProxy(PaymentTerm.class, PAYMENT_TERM));
     order.setWarehouse(OBDal.getInstance().getProxy(Warehouse.class, SPAIN_WAREHOUSE));
     order.setPriceList(OBDal.getInstance().getProxy(PriceList.class, PRICE_LIST));
@@ -147,7 +146,7 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
     ol.setProduct(OBDal.getInstance().getProxy(Product.class, PRODUCT));
     ol.setUOM(OBDal.getInstance().getProxy(UOM.class, OUM));
     ol.setOrderedQuantity(BigDecimal.TEN);
-    ol.setCurrency(OBDal.getInstance().getProxy(Currency.class, EUR));
+    ol.setCurrency(OBDal.getInstance().getProxy(Currency.class, EURO_ID));
     ol.setTax(OBDal.getInstance().getProxy(TaxRate.class, TAX));
 
     setProperties(propertyValues, ol);

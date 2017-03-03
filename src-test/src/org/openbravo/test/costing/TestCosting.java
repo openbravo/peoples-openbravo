@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -158,10 +158,6 @@ public class TestCosting extends WeldBaseTest {
   private static String INVOICEIN_SEQUENCE_ID = "766DC632FDCE485B88F7535CF2A3422E";
   // Document Sequence with name: DocumentNo_M_Movement
   private static String MOVEMENT_SEQUENCE_ID = "07FD646511E14BADB5C1BB5CF2FCAC57";
-  // Currency with name: EUR
-  private static String CURRENCY1_ID = "102";
-  // Currency with name: USD
-  private static String CURRENCY2_ID = "100";
   // Storage Bin with name: L01
   private static String LOCATOR1_ID = "193476BDD14E4A11B651B4E3E8D767C8";
   // Storage Bin with name: L02
@@ -243,12 +239,12 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Set EUR currency costing precision
-      Currency currrencyEur = OBDal.getInstance().get(Currency.class, CURRENCY1_ID);
+      Currency currrencyEur = OBDal.getInstance().get(Currency.class, EURO_ID);
       currrencyEur.setCostingPrecision(4L);
       OBDal.getInstance().save(currrencyEur);
 
       // Set USD currency costing precision
-      Currency currrencyUsd = OBDal.getInstance().get(Currency.class, CURRENCY2_ID);
+      Currency currrencyUsd = OBDal.getInstance().get(Currency.class, DOLLAR_ID);
       currrencyUsd.setCostingPrecision(4L);
       OBDal.getInstance().save(currrencyUsd);
 
@@ -259,7 +255,7 @@ public class TestCosting extends WeldBaseTest {
 
       // Set Spain organization currency
       Organization organization = OBDal.getInstance().get(Organization.class, ORGANIZATION_ID);
-      organization.setCurrency(OBDal.getInstance().get(Currency.class, CURRENCY1_ID));
+      organization.setCurrency(OBDal.getInstance().get(Currency.class, EURO_ID));
       OBDal.getInstance().save(organization);
 
       // Set allow negatives in General Ledger
@@ -325,12 +321,12 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Set EUR currency costing precision
-      Currency currrencyEur = OBDal.getInstance().get(Currency.class, CURRENCY1_ID);
+      Currency currrencyEur = OBDal.getInstance().get(Currency.class, EURO_ID);
       currrencyEur.setCostingPrecision(2L);
       OBDal.getInstance().save(currrencyEur);
 
       // Set USD currency costing precision
-      Currency currrencyUsd = OBDal.getInstance().get(Currency.class, CURRENCY2_ID);
+      Currency currrencyUsd = OBDal.getInstance().get(Currency.class, DOLLAR_ID);
       currrencyUsd.setCostingPrecision(2L);
       OBDal.getInstance().save(currrencyUsd);
 
@@ -4528,8 +4524,14 @@ public class TestCosting extends WeldBaseTest {
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt1 = createGoodsReceipt(purchaseOrder, price1, quantity2, day1);
 
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
+
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt2 = createGoodsReceipt(purchaseOrder, price1, quantity3, day2);
+
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt3 = createGoodsReceipt(purchaseOrder, price1, quantity4, day3);
@@ -4757,11 +4759,17 @@ public class TestCosting extends WeldBaseTest {
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt21 = createGoodsReceipt(product2, price2, quantity2, day1);
 
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
+
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt12 = createGoodsReceipt(product1, price1, quantity3, day2);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt22 = createGoodsReceipt(product2, price2, quantity4, day2);
+
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt13 = createGoodsReceipt(product1, price1, quantity5, day3);
@@ -5147,17 +5155,17 @@ public class TestCosting extends WeldBaseTest {
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList1 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList11 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0),
-          CURRENCY2_ID, "LC", quantity1.multiply(price1).add(quantity1.multiply(price8).negate()),
+          DOLLAR_ID, "LC", quantity1.multiply(price1).add(quantity1.multiply(price8).negate()),
           day0, true, false));
-      costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0),
-          CURRENCY1_ID, "LC", quantity1.multiply(price1).add(quantity1.multiply(price10).negate()),
-          day0, true, false));
+      costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0), EURO_ID,
+          "LC", quantity1.multiply(price1).add(quantity1.multiply(price10).negate()), day0, true,
+          false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(0),
-          CURRENCY2_ID, "LC", quantity2.multiply(price2).add(quantity2.multiply(price9).negate()),
+          DOLLAR_ID, "LC", quantity2.multiply(price2).add(quantity2.multiply(price9).negate()),
           day0, true, false));
-      costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(0),
-          CURRENCY1_ID, "LC", quantity2.multiply(price2).add(quantity2.multiply(price11).negate()),
-          day0, true, false));
+      costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(0), EURO_ID,
+          "LC", quantity2.multiply(price2).add(quantity2.multiply(price11).negate()), day0, true,
+          false));
       costAdjustmentAssertList1.add(costAdjustmentAssertLineList11);
       assertCostAdjustment(costAdjustmentList1, costAdjustmentAssertList1);
 
@@ -5166,17 +5174,17 @@ public class TestCosting extends WeldBaseTest {
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList2 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList21 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(0),
-          CURRENCY2_ID, "LC", quantity1.multiply(price1).add(quantity1.multiply(price8).negate()),
+          DOLLAR_ID, "LC", quantity1.multiply(price1).add(quantity1.multiply(price8).negate()),
           day0, true, false));
-      costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(0),
-          CURRENCY1_ID, "LC", quantity1.multiply(price1).add(quantity1.multiply(price10).negate()),
-          day0, true, false));
+      costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(0), EURO_ID,
+          "LC", quantity1.multiply(price1).add(quantity1.multiply(price10).negate()), day0, true,
+          false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(0),
-          CURRENCY2_ID, "LC", quantity2.multiply(price2).add(quantity2.multiply(price9).negate()),
+          DOLLAR_ID, "LC", quantity2.multiply(price2).add(quantity2.multiply(price9).negate()),
           day0, true, false));
-      costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(0),
-          CURRENCY1_ID, "LC", quantity2.multiply(price2).add(quantity2.multiply(price11).negate()),
-          day0, true, false));
+      costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(0), EURO_ID,
+          "LC", quantity2.multiply(price2).add(quantity2.multiply(price11).negate()), day0, true,
+          false));
       costAdjustmentAssertList2.add(costAdjustmentAssertLineList21);
       assertCostAdjustment(costAdjustmentList2, costAdjustmentAssertList2);
 
@@ -5232,10 +5240,10 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product1 = createProduct("testCostingLC400A", price1, CURRENCY1_ID);
+      Product product1 = createProduct("testCostingLC400A", price1, EURO_ID);
 
       // Create a new product for the test
-      Product product2 = createProduct("testCostingLC400B", price2, CURRENCY2_ID);
+      Product product2 = createProduct("testCostingLC400B", price2, DOLLAR_ID);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product2, price2, quantity1, day0);
@@ -5330,31 +5338,31 @@ public class TestCosting extends WeldBaseTest {
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList1 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList11 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(0),
-          CURRENCY2_ID, "LC", amount1, day3, true, false));
-      costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(0),
-          CURRENCY1_ID, "LC", amount2, day3, true, false));
+          DOLLAR_ID, "LC", amount1, day3, true, false));
+      costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(0), EURO_ID,
+          "LC", amount2, day3, true, false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0),
-          CURRENCY2_ID, "LC", amount3, day3, true, false));
-      costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0),
-          CURRENCY1_ID, "LC", amount4, day3, true, false));
+          DOLLAR_ID, "LC", amount3, day3, true, false));
+      costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0), EURO_ID,
+          "LC", amount4, day3, true, false));
       costAdjustmentAssertList1.add(costAdjustmentAssertLineList11);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList12 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList2.get(0),
-          CURRENCY1_ID, "LC", amount5, day3, true, false));
-      costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList1.get(0),
-          CURRENCY1_ID, "LC", amount6, day3, true, false));
+      costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList2.get(0), EURO_ID,
+          "LC", amount5, day3, true, false));
+      costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList1.get(0), EURO_ID,
+          "LC", amount6, day3, true, false));
       costAdjustmentAssertList1.add(costAdjustmentAssertLineList12);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList13 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList13.add(new CostAdjustmentAssert(transactionList2.get(0),
-          CURRENCY1_ID, "LC", amount7, day3, true, false));
-      costAdjustmentAssertLineList13.add(new CostAdjustmentAssert(transactionList1.get(0),
-          CURRENCY1_ID, "LC", amount8, day3, true, false));
+      costAdjustmentAssertLineList13.add(new CostAdjustmentAssert(transactionList2.get(0), EURO_ID,
+          "LC", amount7, day3, true, false));
+      costAdjustmentAssertLineList13.add(new CostAdjustmentAssert(transactionList1.get(0), EURO_ID,
+          "LC", amount8, day3, true, false));
       costAdjustmentAssertList1.add(costAdjustmentAssertLineList13);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList14 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList14.add(new CostAdjustmentAssert(transactionList2.get(0),
-          CURRENCY2_ID, "LC", amount9, day3, true, false));
+          DOLLAR_ID, "LC", amount9, day3, true, false));
       costAdjustmentAssertLineList14.add(new CostAdjustmentAssert(transactionList1.get(0),
-          CURRENCY2_ID, "LC", amount10, day3, true, false));
+          DOLLAR_ID, "LC", amount10, day3, true, false));
       costAdjustmentAssertList1.add(costAdjustmentAssertLineList14);
       assertCostAdjustment(costAdjustmentList1, costAdjustmentAssertList1);
 
@@ -5363,31 +5371,31 @@ public class TestCosting extends WeldBaseTest {
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList2 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList21 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(0),
-          CURRENCY2_ID, "LC", amount1, day3, true, false));
-      costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(0),
-          CURRENCY1_ID, "LC", amount2, day3, true, false));
+          DOLLAR_ID, "LC", amount1, day3, true, false));
+      costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(0), EURO_ID,
+          "LC", amount2, day3, true, false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(0),
-          CURRENCY2_ID, "LC", amount3, day3, true, false));
-      costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(0),
-          CURRENCY1_ID, "LC", amount4, day3, true, false));
+          DOLLAR_ID, "LC", amount3, day3, true, false));
+      costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(0), EURO_ID,
+          "LC", amount4, day3, true, false));
       costAdjustmentAssertList2.add(costAdjustmentAssertLineList21);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList22 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList22.add(new CostAdjustmentAssert(transactionList2.get(0),
-          CURRENCY1_ID, "LC", amount5, day3, true, false));
-      costAdjustmentAssertLineList22.add(new CostAdjustmentAssert(transactionList1.get(0),
-          CURRENCY1_ID, "LC", amount6, day3, true, false));
+      costAdjustmentAssertLineList22.add(new CostAdjustmentAssert(transactionList2.get(0), EURO_ID,
+          "LC", amount5, day3, true, false));
+      costAdjustmentAssertLineList22.add(new CostAdjustmentAssert(transactionList1.get(0), EURO_ID,
+          "LC", amount6, day3, true, false));
       costAdjustmentAssertList2.add(costAdjustmentAssertLineList22);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList23 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList23.add(new CostAdjustmentAssert(transactionList2.get(0),
-          CURRENCY1_ID, "LC", amount7, day3, true, false));
-      costAdjustmentAssertLineList23.add(new CostAdjustmentAssert(transactionList1.get(0),
-          CURRENCY1_ID, "LC", amount8, day3, true, false));
+      costAdjustmentAssertLineList23.add(new CostAdjustmentAssert(transactionList2.get(0), EURO_ID,
+          "LC", amount7, day3, true, false));
+      costAdjustmentAssertLineList23.add(new CostAdjustmentAssert(transactionList1.get(0), EURO_ID,
+          "LC", amount8, day3, true, false));
       costAdjustmentAssertList2.add(costAdjustmentAssertLineList23);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList24 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList24.add(new CostAdjustmentAssert(transactionList2.get(0),
-          CURRENCY2_ID, "LC", amount9, day3, true, false));
+          DOLLAR_ID, "LC", amount9, day3, true, false));
       costAdjustmentAssertLineList24.add(new CostAdjustmentAssert(transactionList1.get(0),
-          CURRENCY2_ID, "LC", amount10, day3, true, false));
+          DOLLAR_ID, "LC", amount10, day3, true, false));
       costAdjustmentAssertList2.add(costAdjustmentAssertLineList24);
       assertCostAdjustment(costAdjustmentList2, costAdjustmentAssertList2);
 
@@ -7636,12 +7644,12 @@ public class TestCosting extends WeldBaseTest {
       List<CostAdjustment> costAdjustmentList = getCostAdjustment(product.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList1 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(0),
-          CURRENCY2_ID, "LC", quantity1.multiply(price2), day1, true, false));
+      costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(0), DOLLAR_ID,
+          "LC", quantity1.multiply(price2), day1, true, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList1);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList2 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList2.add(new CostAdjustmentAssert(transactionList.get(0),
-          CURRENCY2_ID, "LC", quantity1.multiply(price4), day1, true, false));
+      costAdjustmentAssertLineList2.add(new CostAdjustmentAssert(transactionList.get(0), DOLLAR_ID,
+          "LC", quantity1.multiply(price4), day1, true, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList2);
       assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
 
@@ -7710,12 +7718,12 @@ public class TestCosting extends WeldBaseTest {
       List<CostAdjustment> costAdjustmentList = getCostAdjustment(product.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList1 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(0),
-          CURRENCY2_ID, "LC", quantity1.multiply(price4), day2, true, false));
+      costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(0), DOLLAR_ID,
+          "LC", quantity1.multiply(price4), day2, true, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList1);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList2 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList2.add(new CostAdjustmentAssert(transactionList.get(0),
-          CURRENCY2_ID, "LC", quantity1.multiply(price2), day2, true, false));
+      costAdjustmentAssertLineList2.add(new CostAdjustmentAssert(transactionList.get(0), DOLLAR_ID,
+          "LC", quantity1.multiply(price2), day2, true, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList2);
       assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
 
@@ -7795,12 +7803,12 @@ public class TestCosting extends WeldBaseTest {
       List<CostAdjustment> costAdjustmentList = getCostAdjustment(product.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList1 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(0),
-          CURRENCY2_ID, "LC", quantity1.multiply(price2), day1, true, false));
+      costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(0), DOLLAR_ID,
+          "LC", quantity1.multiply(price2), day1, true, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList1);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList2 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList2.add(new CostAdjustmentAssert(transactionList.get(0),
-          CURRENCY2_ID, "LC", quantity1.multiply(price4), day1, true, false));
+      costAdjustmentAssertLineList2.add(new CostAdjustmentAssert(transactionList.get(0), DOLLAR_ID,
+          "LC", quantity1.multiply(price4), day1, true, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList2);
       assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
 
@@ -7869,12 +7877,12 @@ public class TestCosting extends WeldBaseTest {
       List<CostAdjustment> costAdjustmentList = getCostAdjustment(product.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList1 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(0),
-          CURRENCY2_ID, "LC", quantity1.multiply(price4), day2, true, false));
+      costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(0), DOLLAR_ID,
+          "LC", quantity1.multiply(price4), day2, true, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList1);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList2 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList2.add(new CostAdjustmentAssert(transactionList.get(0),
-          CURRENCY2_ID, "LC", quantity1.multiply(price2), day2, true, false));
+      costAdjustmentAssertLineList2.add(new CostAdjustmentAssert(transactionList.get(0), DOLLAR_ID,
+          "LC", quantity1.multiply(price2), day2, true, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList2);
       assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
 
@@ -8078,7 +8086,7 @@ public class TestCosting extends WeldBaseTest {
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
-      Product product = createProduct("testCostingMC444", price1, CURRENCY2_ID);
+      Product product = createProduct("testCostingMC444", price1, DOLLAR_ID);
 
       // Create purchase order and book it
       Order purchaseOrder = createPurchaseOrder(product, price1, quantity1, day0);
@@ -8173,7 +8181,7 @@ public class TestCosting extends WeldBaseTest {
       createPurchaseInvoice(goodsReceipt1, price1, quantity1, day2);
 
       // Change organization currency
-      changeOrganizationCurrency(ORGANIZATION_ID, CURRENCY2_ID);
+      changeOrganizationCurrency(ORGANIZATION_ID, DOLLAR_ID);
 
       // Create purchase order and book it
       Order purchaseOrder2 = createPurchaseOrder(product, price2, quantity1, day3);
@@ -8191,10 +8199,10 @@ public class TestCosting extends WeldBaseTest {
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
           .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
-          .get(0), CURRENCY1_ID, price1, price1));
+          .get(0), EURO_ID, price1, price1));
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
           .get(ShipmentInOut.class, goodsReceipt2.getId()).getMaterialMgmtShipmentInOutLineList()
-          .get(0), CURRENCY2_ID, price4, price5));
+          .get(0), DOLLAR_ID, price4, price5));
       assertProductTransaction(product.getId(), productTransactionAssertList1);
 
       // Assert product costing
@@ -8210,9 +8218,8 @@ public class TestCosting extends WeldBaseTest {
       List<CostAdjustment> costAdjustmentList = getCostAdjustment(product.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList1 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(1),
-          CURRENCY2_ID, "PDC", quantity1.multiply(price5).add(quantity1.multiply(price4).negate()),
-          day5, true));
+      costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(1), DOLLAR_ID,
+          "PDC", quantity1.multiply(price5).add(quantity1.multiply(price4).negate()), day5, true));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList1);
       assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
 
@@ -8236,7 +8243,7 @@ public class TestCosting extends WeldBaseTest {
 
     finally {
       // Change organization currency
-      changeOrganizationCurrency(ORGANIZATION_ID, CURRENCY1_ID);
+      changeOrganizationCurrency(ORGANIZATION_ID, EURO_ID);
 
       OBContext.restorePreviousMode();
     }
@@ -8521,8 +8528,7 @@ public class TestCosting extends WeldBaseTest {
 
   // Create a Product cloning a created one
   private Product createProduct(String name, BigDecimal purchasePrice, BigDecimal salesPrice) {
-    return createProduct(name, "I", purchasePrice, salesPrice, null, null, 0, CURRENCY1_ID, null,
-        null);
+    return createProduct(name, "I", purchasePrice, salesPrice, null, null, 0, EURO_ID, null, null);
   }
 
   // Create a Product cloning a created one
@@ -8534,22 +8540,21 @@ public class TestCosting extends WeldBaseTest {
   // Create a Product cloning a created one
   private Product createProduct(String name, BigDecimal purchasePrice, BigDecimal cost,
       String costType, int year) {
-    return createProduct(name, "I", purchasePrice, purchasePrice, cost, costType, year,
-        CURRENCY1_ID, null, null);
+    return createProduct(name, "I", purchasePrice, purchasePrice, cost, costType, year, EURO_ID,
+        null, null);
   }
 
   // Create a Product cloning a created one
   private Product createProduct(String name, String productType, BigDecimal purchasePrice,
       BigDecimal cost, String costType, int year) {
     return createProduct(name, productType, purchasePrice, purchasePrice, cost, costType, year,
-        CURRENCY1_ID, null, null);
+        EURO_ID, null, null);
   }
 
   // Create a Product cloning a created one
   private Product createProduct(String name, List<Product> productList,
       List<BigDecimal> quantityList) {
-    return createProduct(name, null, null, null, null, null, 0, CURRENCY1_ID, productList,
-        quantityList);
+    return createProduct(name, null, null, null, null, null, 0, EURO_ID, productList, quantityList);
   }
 
   // Create a Product cloning a created one
@@ -10161,7 +10166,7 @@ public class TestCosting extends WeldBaseTest {
           ProductPrice productPriceClone = (ProductPrice) DalUtil.copy(productPrice, false);
           setGeneralData(productPriceClone);
           if (i % 2 == 0) {
-            if (currencyId.equals(CURRENCY2_ID))
+            if (currencyId.equals(DOLLAR_ID))
               productPriceClone.setPriceListVersion(OBDal.getInstance()
                   .get(Product.class, LANDEDCOSTTYPE3_ID).getPricingProductPriceList().get(0)
                   .getPriceListVersion());
@@ -10191,7 +10196,7 @@ public class TestCosting extends WeldBaseTest {
           productCosting.setManual(true);
           productCosting.setCostType(costType);
           productCosting.setCost(cost);
-          productCosting.setCurrency(OBDal.getInstance().get(Currency.class, CURRENCY1_ID));
+          productCosting.setCurrency(OBDal.getInstance().get(Currency.class, EURO_ID));
           productCosting.setWarehouse(OBDal.getInstance().get(Warehouse.class, WAREHOUSE1_ID));
           productCosting.setProduct(productClone);
           productClone.getMaterialMgmtCostingList().add(productCosting);
@@ -10295,7 +10300,7 @@ public class TestCosting extends WeldBaseTest {
           .equals(
               OBDal.getInstance().get(Product.class, LANDEDCOSTTYPE3_ID)
                   .getPricingProductPriceList().get(0).getPriceListVersion())) {
-        orderClone.setCurrency(OBDal.getInstance().get(Currency.class, CURRENCY2_ID));
+        orderClone.setCurrency(OBDal.getInstance().get(Currency.class, DOLLAR_ID));
         orderClone.setPriceList(product.getPricingProductPriceList().get(0).getPriceListVersion()
             .getPriceList());
         orderClone.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
@@ -10303,7 +10308,7 @@ public class TestCosting extends WeldBaseTest {
         orderClone
             .setPartnerAddress(OBDal.getInstance().get(BusinessPartner.class, BUSINESSPARTNER_ID)
                 .getBusinessPartnerLocationList().get(0));
-        orderCloneLine.setCurrency(OBDal.getInstance().get(Currency.class, CURRENCY2_ID));
+        orderCloneLine.setCurrency(OBDal.getInstance().get(Currency.class, DOLLAR_ID));
         orderCloneLine.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
             BUSINESSPARTNER_ID));
         orderCloneLine
@@ -11220,7 +11225,7 @@ public class TestCosting extends WeldBaseTest {
       }
 
       else {
-        invoice.setCurrency(OBDal.getInstance().get(Currency.class, CURRENCY2_ID));
+        invoice.setCurrency(OBDal.getInstance().get(Currency.class, DOLLAR_ID));
         invoiceLine.setProduct(OBDal.getInstance().get(Product.class, landedCostTypeId));
       }
 
@@ -11265,9 +11270,9 @@ public class TestCosting extends WeldBaseTest {
           landedCostCost.setAmount(amountList.get(i));
 
           if (landedCostTypeId.equals(LANDEDCOSTTYPE3_ID))
-            landedCostCost.setCurrency(OBDal.getInstance().get(Currency.class, CURRENCY2_ID));
+            landedCostCost.setCurrency(OBDal.getInstance().get(Currency.class, DOLLAR_ID));
           else
-            landedCostCost.setCurrency(OBDal.getInstance().get(Currency.class, CURRENCY1_ID));
+            landedCostCost.setCurrency(OBDal.getInstance().get(Currency.class, EURO_ID));
         }
 
         else {
@@ -11374,9 +11379,9 @@ public class TestCosting extends WeldBaseTest {
       ConversionRateDoc conversion = OBProvider.getInstance().get(ConversionRateDoc.class);
       setGeneralData(conversion);
       conversion.setCurrency(purchaseInvoice.getCurrency());
-      conversion.setToCurrency(purchaseInvoice.getCurrency().getId().equals(CURRENCY1_ID) ? OBDal
-          .getInstance().get(Currency.class, CURRENCY2_ID) : OBDal.getInstance().get(
-          Currency.class, CURRENCY1_ID));
+      conversion.setToCurrency(purchaseInvoice.getCurrency().getId().equals(EURO_ID) ? OBDal
+          .getInstance().get(Currency.class, DOLLAR_ID) : OBDal.getInstance().get(Currency.class,
+          EURO_ID));
       conversion.setInvoice(purchaseInvoice);
       conversion.setRate(rate);
       conversion.setForeignAmount(purchaseInvoice.getInvoiceLineList().get(0).getLineNetAmount()
@@ -12099,7 +12104,7 @@ public class TestCosting extends WeldBaseTest {
         assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
             .getOrderQuantity(), null);
         assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getUOM()
-            .getName(), "Unit");
+            .getId(), UOM_ID);
         assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
             .getQuantityOrderBook(), null);
 
@@ -12162,9 +12167,9 @@ public class TestCosting extends WeldBaseTest {
           criteria2.add(Restrictions.eq(ConversionRate.PROPERTY_CLIENT,
               OBDal.getInstance().get(Client.class, CLIENT_ID)));
           criteria2.add(Restrictions.eq(ConversionRate.PROPERTY_CURRENCY,
-              OBDal.getInstance().get(Currency.class, CURRENCY2_ID)));
+              OBDal.getInstance().get(Currency.class, DOLLAR_ID)));
           criteria2.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY, OBDal.getInstance()
-              .get(Currency.class, CURRENCY1_ID)));
+              .get(Currency.class, EURO_ID)));
           criteria2.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, calendar.getTime()));
           BigDecimal rate = criteria2.list().get(0).getMultipleRateBy();
 
@@ -12644,14 +12649,14 @@ public class TestCosting extends WeldBaseTest {
             criteria2.add(Restrictions.eq(ConversionRate.PROPERTY_CLIENT,
                 OBDal.getInstance().get(Client.class, CLIENT_ID)));
             criteria2.add(Restrictions.eq(ConversionRate.PROPERTY_CURRENCY, OBDal.getInstance()
-                .get(Currency.class, CURRENCY2_ID)));
+                .get(Currency.class, DOLLAR_ID)));
             criteria2.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY, OBDal.getInstance()
-                .get(Currency.class, CURRENCY1_ID)));
+                .get(Currency.class, EURO_ID)));
             criteria2.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, calendar.getTime()));
             BigDecimal rate = criteria2.list().get(0).getMultipleRateBy();
 
-            if (productTransactionAssert.getCurrency().getId().equals(CURRENCY1_ID)
-                && costAdjustmentLineList.get(k - 1).getCurrency().getId().equals(CURRENCY2_ID))
+            if (productTransactionAssert.getCurrency().getId().equals(EURO_ID)
+                && costAdjustmentLineList.get(k - 1).getCurrency().getId().equals(DOLLAR_ID))
               assertEquals(
                   materialTransactionCost.getCost().setScale(4, BigDecimal.ROUND_HALF_UP),
                   costAdjustmentLineList.get(k - 1).getAdjustmentAmount().multiply(rate)
@@ -12747,7 +12752,7 @@ public class TestCosting extends WeldBaseTest {
             productCostingAssert.getTransaction());
         assertEquals(productCosting.getCurrency(),
             productCostingAssert.getTransaction() != null ? productCostingAssert.getTransaction()
-                .getCurrency() : OBDal.getInstance().get(Currency.class, CURRENCY1_ID));
+                .getCurrency() : OBDal.getInstance().get(Currency.class, EURO_ID));
         assertEquals(productCosting.getCostType(), productCostingAssert.getType());
 
         if (productCostingAssert.getYear() != 0)
@@ -13070,7 +13075,7 @@ public class TestCosting extends WeldBaseTest {
         BigDecimal rate;
         if ((productId != null && productId.equals(LANDEDCOSTTYPE3_ID))
             || (document.getEntityName().equals(Invoice.ENTITY_NAME) && ((Invoice) document)
-                .getCurrency().getId().equals(CURRENCY2_ID))
+                .getCurrency().getId().equals(DOLLAR_ID))
             || (document.getEntityName().equals(LandedCost.ENTITY_NAME) && ((LCReceiptLineAmt) line)
                 .getLandedCostCost()
                 .getLandedCostType()
@@ -13105,9 +13110,9 @@ public class TestCosting extends WeldBaseTest {
             criteria.add(Restrictions.eq(ConversionRate.PROPERTY_CLIENT,
                 OBDal.getInstance().get(Client.class, CLIENT_ID)));
             criteria.add(Restrictions.eq(ConversionRate.PROPERTY_CURRENCY,
-                OBDal.getInstance().get(Currency.class, CURRENCY2_ID)));
+                OBDal.getInstance().get(Currency.class, DOLLAR_ID)));
             criteria.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY, OBDal.getInstance()
-                .get(Currency.class, CURRENCY1_ID)));
+                .get(Currency.class, EURO_ID)));
             criteria.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, calendar.getTime()));
             rate = criteria.list().get(0).getMultipleRateBy();
           }
@@ -13138,7 +13143,7 @@ public class TestCosting extends WeldBaseTest {
 
         if ((productId != null && productId.equals(LANDEDCOSTTYPE3_ID))
             || (document.getEntityName().equals(Invoice.ENTITY_NAME) && ((Invoice) document)
-                .getCurrency().getId().equals(CURRENCY2_ID))
+                .getCurrency().getId().equals(DOLLAR_ID))
             || (document.getEntityName().equals(LandedCost.ENTITY_NAME) && ((LCReceiptLineAmt) line)
                 .getLandedCostCost()
                 .getLandedCostType()
@@ -13156,10 +13161,10 @@ public class TestCosting extends WeldBaseTest {
             .getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME) && (line.getEntityName()
             .equals(ShipmentInOutLine.ENTITY_NAME) || (line.getEntityName().equals(
             InvoiceLine.ENTITY_NAME) && ((InvoiceLine) line).getInvoice().getCurrency()
-            .equals(CURRENCY2_ID)))))
+            .equals(DOLLAR_ID)))))
             && OBDal.getInstance().get(Organization.class, ORGANIZATION_ID).getCurrency() != null
             && OBDal.getInstance().get(Organization.class, ORGANIZATION_ID).getCurrency().getId()
-                .equals(CURRENCY2_ID)
+                .equals(DOLLAR_ID)
             && !accountingFact.getCurrency().getId()
                 .equals(accountingFact.getAccountingSchema().getCurrency().getId())) {
           Calendar calendar = Calendar.getInstance();
@@ -13169,9 +13174,9 @@ public class TestCosting extends WeldBaseTest {
           criteria.add(Restrictions.eq(ConversionRate.PROPERTY_CLIENT,
               OBDal.getInstance().get(Client.class, CLIENT_ID)));
           criteria.add(Restrictions.eq(ConversionRate.PROPERTY_CURRENCY,
-              OBDal.getInstance().get(Currency.class, CURRENCY1_ID)));
+              OBDal.getInstance().get(Currency.class, EURO_ID)));
           criteria.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY,
-              OBDal.getInstance().get(Currency.class, CURRENCY2_ID)));
+              OBDal.getInstance().get(Currency.class, DOLLAR_ID)));
           criteria.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, calendar.getTime()));
           rate = criteria.list().get(0).getMultipleRateBy();
         }
@@ -13314,10 +13319,10 @@ public class TestCosting extends WeldBaseTest {
 
         if ((productId != null && productId.equals(LANDEDCOSTTYPE3_ID))
             || (document.getEntityName().equals(Invoice.ENTITY_NAME) && ((Invoice) document)
-                .getCurrency().getId().equals(CURRENCY2_ID))
+                .getCurrency().getId().equals(DOLLAR_ID))
             || (document.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)
                 && line.getEntityName().equals(InvoiceLine.ENTITY_NAME) && ((InvoiceLine) line)
-                .getInvoice().getCurrency().getId().equals(CURRENCY2_ID))
+                .getInvoice().getCurrency().getId().equals(DOLLAR_ID))
             || (document.getEntityName().equals(LandedCost.ENTITY_NAME) && ((LCReceiptLineAmt) line)
                 .getLandedCostCost()
                 .getLandedCostType()
@@ -13332,13 +13337,13 @@ public class TestCosting extends WeldBaseTest {
                     .getEntityName().equals(InvoiceLine.ENTITY_NAME))
                 && OBDal.getInstance().get(Organization.class, ORGANIZATION_ID).getCurrency() != null
                 && OBDal.getInstance().get(Organization.class, ORGANIZATION_ID).getCurrency()
-                    .getId().equals(CURRENCY2_ID) && !accountingFact.getCurrency().getId()
+                    .getId().equals(DOLLAR_ID) && !accountingFact.getCurrency().getId()
                 .equals(accountingFact.getAccountingSchema().getCurrency().getId()))) {
           assertEquals(accountingFact.getCurrency(),
-              OBDal.getInstance().get(Currency.class, CURRENCY2_ID));
+              OBDal.getInstance().get(Currency.class, DOLLAR_ID));
         } else {
           assertEquals(accountingFact.getCurrency(),
-              OBDal.getInstance().get(Currency.class, CURRENCY1_ID));
+              OBDal.getInstance().get(Currency.class, EURO_ID));
         }
 
         if (productId != null && productId.equals(LANDEDCOSTTYPE2_ID)) {
@@ -13597,7 +13602,7 @@ public class TestCosting extends WeldBaseTest {
 
     public ProductTransactionAssert(ShipmentInOutLine shipmentReceiptLine,
         BigDecimal originalPrice, BigDecimal finalPrice) {
-      this(shipmentReceiptLine, null, null, null, null, CURRENCY1_ID, originalPrice, finalPrice,
+      this(shipmentReceiptLine, null, null, null, null, EURO_ID, originalPrice, finalPrice,
           finalPrice, false, false);
     }
 
@@ -13609,74 +13614,74 @@ public class TestCosting extends WeldBaseTest {
 
     public ProductTransactionAssert(ShipmentInOutLine shipmentReceiptLine,
         BigDecimal originalPrice, BigDecimal finalPrice, boolean permanent) {
-      this(shipmentReceiptLine, null, null, null, null, CURRENCY1_ID, originalPrice, finalPrice,
+      this(shipmentReceiptLine, null, null, null, null, EURO_ID, originalPrice, finalPrice,
           finalPrice, false, permanent);
     }
 
     public ProductTransactionAssert(ShipmentInOutLine shipmentReceiptLine,
         BigDecimal originalPrice, BigDecimal finalPrice, boolean priceDifference, boolean permanent) {
-      this(shipmentReceiptLine, null, null, null, null, CURRENCY1_ID, originalPrice, finalPrice,
+      this(shipmentReceiptLine, null, null, null, null, EURO_ID, originalPrice, finalPrice,
           finalPrice, priceDifference, permanent);
     }
 
     public ProductTransactionAssert(ShipmentInOutLine shipmentReceiptLine,
         BigDecimal originalPrice, BigDecimal totalPrice, BigDecimal unitPrice) {
-      this(shipmentReceiptLine, null, null, null, null, CURRENCY1_ID, originalPrice, totalPrice,
+      this(shipmentReceiptLine, null, null, null, null, EURO_ID, originalPrice, totalPrice,
           unitPrice, false, false);
     }
 
     public ProductTransactionAssert(InventoryAmountUpdateLine inventoryLine,
         BigDecimal originalPrice, BigDecimal finalPrice) {
-      this(null, inventoryLine, null, null, null, CURRENCY1_ID, originalPrice, finalPrice,
-          finalPrice, false, false);
+      this(null, inventoryLine, null, null, null, EURO_ID, originalPrice, finalPrice, finalPrice,
+          false, false);
     }
 
     public ProductTransactionAssert(InventoryAmountUpdateLine inventoryLine,
         BigDecimal originalPrice, BigDecimal totalPrice, BigDecimal unitPrice) {
-      this(null, inventoryLine, null, null, null, CURRENCY1_ID, originalPrice, totalPrice,
-          unitPrice, false, false);
+      this(null, inventoryLine, null, null, null, EURO_ID, originalPrice, totalPrice, unitPrice,
+          false, false);
     }
 
     public ProductTransactionAssert(InventoryAmountUpdateLine inventoryLine,
         BigDecimal originalPrice, BigDecimal finalPrice, boolean permanent) {
-      this(null, inventoryLine, null, null, null, CURRENCY1_ID, originalPrice, finalPrice,
-          finalPrice, false, permanent);
+      this(null, inventoryLine, null, null, null, EURO_ID, originalPrice, finalPrice, finalPrice,
+          false, permanent);
     }
 
     public ProductTransactionAssert(InternalMovementLine movementLine, BigDecimal originalPrice,
         BigDecimal finalPrice) {
-      this(null, null, movementLine, null, null, CURRENCY1_ID, originalPrice, finalPrice,
-          finalPrice, false, false);
+      this(null, null, movementLine, null, null, EURO_ID, originalPrice, finalPrice, finalPrice,
+          false, false);
     }
 
     public ProductTransactionAssert(InternalMovementLine movementLine, BigDecimal originalPrice,
         BigDecimal totalPrice, BigDecimal unitPrice) {
-      this(null, null, movementLine, null, null, CURRENCY1_ID, originalPrice, totalPrice,
-          unitPrice, false, false);
+      this(null, null, movementLine, null, null, EURO_ID, originalPrice, totalPrice, unitPrice,
+          false, false);
     }
 
     public ProductTransactionAssert(InternalMovementLine movementLine, BigDecimal originalPrice,
         BigDecimal finalPrice, boolean permanent) {
-      this(null, null, movementLine, null, null, CURRENCY1_ID, originalPrice, finalPrice,
-          finalPrice, false, permanent);
+      this(null, null, movementLine, null, null, EURO_ID, originalPrice, finalPrice, finalPrice,
+          false, permanent);
     }
 
     public ProductTransactionAssert(InternalConsumptionLine consumptionLine,
         BigDecimal originalPrice, BigDecimal finalPrice) {
-      this(null, null, null, consumptionLine, null, CURRENCY1_ID, originalPrice, finalPrice,
-          finalPrice, false, false);
+      this(null, null, null, consumptionLine, null, EURO_ID, originalPrice, finalPrice, finalPrice,
+          false, false);
     }
 
     public ProductTransactionAssert(InternalConsumptionLine consumptionLine,
         BigDecimal originalPrice, BigDecimal finalPrice, boolean permanent) {
-      this(null, null, null, consumptionLine, null, CURRENCY1_ID, originalPrice, finalPrice,
-          finalPrice, false, permanent);
+      this(null, null, null, consumptionLine, null, EURO_ID, originalPrice, finalPrice, finalPrice,
+          false, permanent);
     }
 
     public ProductTransactionAssert(ProductionLine productionLine, BigDecimal originalPrice,
         BigDecimal finalPrice) {
-      this(null, null, null, null, productionLine, CURRENCY1_ID, originalPrice, finalPrice,
-          finalPrice, false, false);
+      this(null, null, null, null, productionLine, EURO_ID, originalPrice, finalPrice, finalPrice,
+          false, false);
     }
 
     public ProductTransactionAssert(ShipmentInOutLine shipmentReceiptLine,
@@ -13850,7 +13855,7 @@ public class TestCosting extends WeldBaseTest {
 
     public CostAdjustmentAssert(MaterialTransaction materialTransaction, String type,
         BigDecimal amount, int day, boolean source, boolean unit) {
-      this(materialTransaction, CURRENCY1_ID, type, amount, day, source, unit);
+      this(materialTransaction, EURO_ID, type, amount, day, source, unit);
     }
 
     public CostAdjustmentAssert(MaterialTransaction materialTransaction, String currencyId,
@@ -13865,7 +13870,7 @@ public class TestCosting extends WeldBaseTest {
 
     public CostAdjustmentAssert(MaterialTransaction materialTransaction, String type,
         BigDecimal amount, int day, boolean source, boolean unit, String status) {
-      this(materialTransaction, CURRENCY1_ID, type, amount, day, source, unit, status);
+      this(materialTransaction, EURO_ID, type, amount, day, source, unit, status);
     }
 
     public CostAdjustmentAssert(MaterialTransaction materialTransaction, String currencyId,

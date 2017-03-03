@@ -76,6 +76,7 @@
       </foreign-key>
       <index name="M_LOCATOR_BARCODE_IDX" unique="false">
         <index-column name="BARCODE"/>
+        <whereClause><![CDATA[BARCODE IS NOT NULL]]></whereClause>
       </index>
       <unique name="M_LOCATION_WHERE">
         <unique-column name="M_WAREHOUSE_ID"/>

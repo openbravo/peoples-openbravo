@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,8 +23,14 @@ isc.OBSelectorFilterSelectItem.addProperties({
   filterDataBoundPickList: function (requestProperties, dropCache) {
     requestProperties = requestProperties || {};
     requestProperties.params = requestProperties.params || {};
-    // on purpose not passing the third boolean param
-    var contextInfo = this.selectorWindow.selector.form.view.getContextInfo(false, true);
+    // selector can be placed on a standard window view or on a process definition view.
+    var contextInfo;
+    if (this.selectorWindow.selector && this.selectorWindow.selector.form && this.selectorWindow.selector.form.view) {
+      // on purpose not passing the third boolean param
+      contextInfo = this.selectorWindow.selector.form.view.getContextInfo(false, true);
+    } else if (this.selectorWindow.selector && this.selectorWindow.selector.form && this.selectorWindow.selector.form.paramWindow) {
+      contextInfo = this.selectorWindow.selector.form.paramWindow.getContextInfo(false, true);
+    }
 
     // also add the special ORG parameter
     if (this.selectorWindow.selector.form.getField('organization')) {

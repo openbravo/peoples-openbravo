@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.StaticResourceComponent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
@@ -84,6 +85,7 @@ public class StorePropertyActionHandler extends BaseActionHandler implements Por
 
       Preferences.setPreferenceValue(propertyName, cleanedData, true, client, org, user, role,
           window, null);
+      SessionInfo.auditThisThread(false);
       OBDal.getInstance().flush();
       return new JSONObject("{msg: 'Property Stored'}");
     } catch (Exception e) {

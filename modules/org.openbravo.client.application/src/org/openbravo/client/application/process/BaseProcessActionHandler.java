@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -96,7 +96,7 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
       // Set information for audit trail
       SessionInfo.setProcessType("PD");
       SessionInfo.setProcessId(processId);
-      SessionInfo.setDBSessionInfo(OBDal.getInstance().getConnection(false));
+      SessionInfo.saveContextInfoIntoDB(OBDal.getInstance().getConnection(false));
 
       // Adds compatibility with legacy process definitions
       // If the handler of the process definition has not been updated, then it expects the
@@ -214,6 +214,10 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
    */
   protected Map<String, String> fixRequestMap(Map<String, Object> parameters) {
     return fixRequestMap(parameters, null);
+  }
+
+  protected static ResponseActionsBuilder getResponseBuilder() {
+    return new ResponseActionsBuilder();
   }
 
   protected abstract JSONObject doExecute(Map<String, Object> parameters, String content);

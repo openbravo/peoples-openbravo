@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -58,8 +58,8 @@ public class EnumUIDefinition extends UIDefinition {
     if (field.getColumn().getDBColumnName().compareToIgnoreCase("documentno") == 0) {
       length = new Long(20);
     }
-    return getShowHoverGridFieldSettings(field) + ", length:" + length + ", displaylength:"
-        + displaylength + super.getGridFieldProperties(field);
+    return ", length:" + length + ", displaylength:" + displaylength
+        + super.getGridFieldProperties(field);
   }
 
   @Override
@@ -67,8 +67,7 @@ public class EnumUIDefinition extends UIDefinition {
     JSONObject value;
     try {
       value = new JSONObject(super.getFieldProperties(field, getValueFromSession));
-      if (!getValueFromSession
-          && (field.getColumn().getReference().getId()).equals("28")
+      if (!getValueFromSession && (field.getColumn().getReference().getId()).equals("28")
           && !value.has("value")) {
         // When reference is button, set 'N' as default if there is default
         value.put("value", "N");
@@ -85,8 +84,7 @@ public class EnumUIDefinition extends UIDefinition {
   public String getFieldPropertiesWithoutCombo(Field field, boolean getValueFromSession) {
     try {
       JSONObject value = new JSONObject(super.getFieldProperties(field, getValueFromSession));
-      if (!getValueFromSession
-          && (field.getColumn().getReference().getId()).equals("28")
+      if (!getValueFromSession && (field.getColumn().getReference().getId()).equals("28")
           && !value.has("value")) {
         // When reference is button, set 'N' as default if there is default
         value.put("value", "N");

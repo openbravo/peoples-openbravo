@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,6 +37,11 @@ public class BinaryUIDefinition extends UIDefinition {
     superFieldProps = removeAttributeFromString(superFieldProps, "canSort");
 
     return superFieldProps + ", canSort: false, canEdit: false";
+  }
+
+  @Override
+  public boolean showHover() {
+    return false;
   }
 
   @Override

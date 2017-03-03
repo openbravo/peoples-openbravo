@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,7 @@
 
 package org.openbravo.client.application.test.event;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -29,15 +30,9 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
-import org.junit.AfterClass;
 import org.junit.Test;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.base.weld.test.WeldBaseTest;
-import org.openbravo.client.application.Note;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.service.datasource.DataSourceService;
@@ -52,16 +47,10 @@ import org.openbravo.service.json.JsonConstants;
  * @author alostale
  *
  */
-public class DatasourceEventObserver extends WeldBaseTest {
+public class DatasourceEventObserver extends ObserverBaseTest {
 
   @Inject
   private DataSourceServiceProvider dataSourceServiceProvider;
-
-  enum ObserverExecutionType {
-    OFF, UPDATE_DESCRIPTION, CREATE_NOTE, COUNT_LINES, UPDATE_PARENT
-  };
-
-  static ObserverExecutionType observerExecutionType = ObserverExecutionType.OFF;
 
   /** Updating order line without observer */
   @Test
@@ -137,18 +126,61 @@ public class DatasourceEventObserver extends WeldBaseTest {
         is(OrderLineTestObserver.FORCED_DESCRIPTION));
   }
 
-  private OrderLine pickARandomOrderLine() {
-    return (OrderLine) OBDal.getInstance().createCriteria(OrderLine.class).setMaxResults(1)
-        .uniqueResult();
+  /**
+   * The OrderLine observer updates an order line's header. This action should fire the Order
+   * observer and just once.
+   */
+  @Test
+  public void observerFiredByChildObjectObserverShouldBeExecuteOnce() throws JSONException {
+    observerExecutionType = ObserverExecutionType.UPDATE_PARENT_RANDOM;
+
+    OrderLine ol = pickARandomOrderLine();
+
+    String randomDescription = Long.toString(System.currentTimeMillis());
+    datasourceUpdate(ol, randomDescription);
+
+    int[] executions = { OrderTestObserver.getNumberOfExecutions(),
+        OrderLineTestObserver.getNumberOfExecutions() };
+    assertThat("Observers executions", new int[] { 1, 1 }, equalTo(executions));
+  }
+
+  /**
+   * The Order observer updates an order line. This action should fire the OrderLine observer and
+   * just once.
+   */
+  @Test
+  public void observerFiredByParentObjectObserverShouldBeExecuteOnce() throws JSONException {
+    // Use ON_NOOP execution type to avoid subsequent actions from the OrderLine observer
+    observerExecutionType = ObserverExecutionType.ON_NOOP;
+
+    Order order = pickARandomOrderLine().getSalesOrder();
+
+    String randomDescription = Long.toString(System.currentTimeMillis());
+    datasourceUpdate(order, randomDescription);
+
+    int[] executions = { OrderTestObserver.getNumberOfExecutions(),
+        OrderLineTestObserver.getNumberOfExecutions() };
+    assertThat("Observers executions", new int[] { 1, 1 }, equalTo(executions));
   }
 
   private JSONObject datasourceUpdate(OrderLine ol, String randomDescription) throws JSONException {
-    final DataSourceService dataSource = dataSourceServiceProvider
-        .getDataSource(OrderLine.ENTITY_NAME);
-
     JSONObject data = new JSONObject();
     data.put(JsonConstants.ID, ol.getId());
     data.put(OrderLine.PROPERTY_DESCRIPTION, randomDescription);
+
+    return datasourceUpdate(OrderLine.ENTITY_NAME, data);
+  }
+
+  private JSONObject datasourceUpdate(Order order, String randomDescription) throws JSONException {
+    JSONObject data = new JSONObject();
+    data.put(JsonConstants.ID, order.getId());
+    data.put(Order.PROPERTY_DESCRIPTION, randomDescription);
+
+    return datasourceUpdate(Order.ENTITY_NAME, data);
+  }
+
+  private JSONObject datasourceUpdate(String entityName, JSONObject data) throws JSONException {
+    final DataSourceService dataSource = dataSourceServiceProvider.getDataSource(entityName);
 
     JSONObject content = new JSONObject();
     content.put(JsonConstants.DATA, data);
@@ -169,23 +201,5 @@ public class DatasourceEventObserver extends WeldBaseTest {
         updatedOrder.getString("description"), is(expectedDescription));
     assertThat(obj.getEntityName() + " - " + obj.getId() + " actual description",
         (String) refreshedBob.get(OrderLine.PROPERTY_DESCRIPTION), is(expectedDescription));
-  }
-
-  private int countNotes(BaseOBObject obj) {
-    OBContext.setAdminMode(true);
-    try {
-      OBCriteria<Note> q = OBDal.getInstance().createCriteria(Note.class);
-      q.add(Restrictions.eq(Note.PROPERTY_RECORD, obj.getId()));
-      q.add(Restrictions.eq(Note.PROPERTY_TABLE,
-          OBDal.getInstance().getProxy(Table.class, obj.getEntity().getTableId())));
-      return q.count();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  @AfterClass
-  public static void reset() {
-    observerExecutionType = ObserverExecutionType.OFF;
   }
 }

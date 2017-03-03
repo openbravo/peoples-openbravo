@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,19 +21,25 @@ package org.openbravo.erpCommon.utility;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.model.ad.datamodel.Column;
+import org.openbravo.model.ad.ui.Field;
 import org.openbravo.reference.Reference;
 import org.openbravo.reference.ui.UIReference;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -46,26 +52,47 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 public class ComboTableData {
   private static Logger log4j = Logger.getLogger(ComboTableData.class);
-  private final String internalPrefix = "@@";
+
+  public static final String CLIENT_LIST_PARAM_HOLDER = "__CLIENT_LIST__";
+  public static final String ORG_LIST_PARAM_HOLDER = "__ORG_LIST__";
+
+  private static final String INTERNAL_PREFIX = "@@";
   private static final String FIELD_CONCAT = " || ' - ' || ";
   private static final String INACTIVE_DATA = "**";
-  private VariablesSecureApp vars;
-  private Hashtable<String, String> parameters = new Hashtable<String, String>();
-  private Vector<QueryParameterStructure> paramSelect = new Vector<QueryParameterStructure>();
-  private Vector<QueryParameterStructure> paramFrom = new Vector<QueryParameterStructure>();
-  private Vector<QueryParameterStructure> paramWhere = new Vector<QueryParameterStructure>();
-  private Vector<QueryParameterStructure> paramOrderBy = new Vector<QueryParameterStructure>();
-  private Vector<QueryFieldStructure> select = new Vector<QueryFieldStructure>();
-  private Vector<QueryFieldStructure> from = new Vector<QueryFieldStructure>();
-  private Vector<QueryFieldStructure> where = new Vector<QueryFieldStructure>();
-  private Vector<QueryFieldStructure> orderBy = new Vector<QueryFieldStructure>();
+
+  private Map<String, String> parameters = new HashMap<>();
+  private List<QueryParameterStructure> paramSelect = new ArrayList<>();
+  private List<QueryParameterStructure> paramFrom = new ArrayList<>();
+  private List<QueryParameterStructure> paramWhere = new ArrayList<>();
+  private List<QueryParameterStructure> paramOrderBy = new ArrayList<>();
+  private List<QueryFieldStructure> select = new ArrayList<>();
+  private List<QueryFieldStructure> from = new ArrayList<>();
+  private List<QueryFieldStructure> where = new ArrayList<>();
+  private List<QueryFieldStructure> orderBy = new ArrayList<>();
   private boolean canBeCached;
   public int index = 0;
+  private String windowId;
+  private int accessLevel;
 
-  /**
-   * Constructor
-   */
-  public ComboTableData() {
+  /** Creates a new combo for a given field */
+  public static ComboTableData getTableComboDataFor(Field field) throws Exception {
+    Column col = field.getColumn();
+    String ref = col.getReference().getId();
+    String objectReference = "";
+    if (col.getReferenceSearchKey() != null) {
+      objectReference = col.getReferenceSearchKey().getId();
+    }
+    String validation = "";
+    if (col.getValidation() != null) {
+      validation = col.getValidation().getId();
+    }
+    ComboTableData ctd = new ComboTableData(null, null, ref, col.getDBColumnName(),
+        objectReference, validation, null, null, 0);
+
+    ctd.windowId = field.getTab().getWindow().getId();
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(col.getTable().getId());
+    ctd.accessLevel = entity.getAccessLevel().getDbValue();
+    return ctd;
   }
 
   /**
@@ -122,8 +149,6 @@ public class ComboTableData {
   public ComboTableData(VariablesSecureApp _vars, ConnectionProvider _conn, String _referenceType,
       String _name, String _objectReference, String _validation, String _orgList,
       String _clientList, int _index) throws Exception {
-    if (_vars != null)
-      setVars(_vars);
     setReferenceType(_referenceType);
     setObjectName(_name);
     setObjectReference(_objectReference);
@@ -135,17 +160,7 @@ public class ComboTableData {
     parseNames();
   }
 
-  /**
-   * Setter for the session object.
-   * 
-   * @param _vars
-   *          New session object.
-   * @throws Exception
-   */
-  private void setVars(VariablesSecureApp _vars) throws Exception {
-    if (_vars == null)
-      throw new Exception("The session vars is null");
-    this.vars = _vars;
+  public ComboTableData() {
   }
 
   /**
@@ -154,7 +169,7 @@ public class ComboTableData {
    * @return Session object.
    */
   public VariablesSecureApp getVars() {
-    return this.vars;
+    return RequestContext.get().getVariablesSecureApp();
   }
 
   /**
@@ -183,7 +198,7 @@ public class ComboTableData {
           localReference = ComboTableQueryData.getBaseReferenceID(getPool(), localReference);
       }
     }
-    setParameter(internalPrefix + "reference", localReference);
+    setParameter(INTERNAL_PREFIX + "reference", localReference);
   }
 
   /**
@@ -192,7 +207,7 @@ public class ComboTableData {
    * @return String with the reference type id.
    */
   private String getReferenceType() {
-    return getParameter(internalPrefix + "reference");
+    return getParameter(INTERNAL_PREFIX + "reference");
   }
 
   /**
@@ -203,7 +218,7 @@ public class ComboTableData {
    * @throws Exception
    */
   private void setObjectName(String _name) throws Exception {
-    setParameter(internalPrefix + "name", _name);
+    setParameter(INTERNAL_PREFIX + "name", _name);
   }
 
   /**
@@ -212,7 +227,7 @@ public class ComboTableData {
    * @return String with the object name.
    */
   public String getObjectName() {
-    return getParameter(internalPrefix + "name");
+    return getParameter(INTERNAL_PREFIX + "name");
   }
 
   /**
@@ -234,14 +249,13 @@ public class ComboTableData {
           localReference = ComboTableQueryData.getReferenceID(getPool(), localReference,
               getReferenceType());
           if (localReference == null || localReference.equals("")) {
-            throw new OBException(Utility.messageBD(getPool(), "ReferenceNotFound",
-                vars.getLanguage())
-                + " " + localReference);
+            throw new OBException(OBMessageUtils.messageBD("ReferenceNotFound") + " "
+                + localReference);
           }
         }
       }
     }
-    setParameter(internalPrefix + "objectReference", localReference);
+    setParameter(INTERNAL_PREFIX + "objectReference", localReference);
   }
 
   /**
@@ -250,7 +264,7 @@ public class ComboTableData {
    * @return String with the object reference id.
    */
   public String getObjectReference() {
-    return getParameter(internalPrefix + "objectReference");
+    return getParameter(INTERNAL_PREFIX + "objectReference");
   }
 
   /**
@@ -270,7 +284,7 @@ public class ComboTableData {
           localReference = ComboTableQueryData.getValidationID(getPool(), localReference);
       }
     }
-    setParameter(internalPrefix + "validation", localReference);
+    setParameter(INTERNAL_PREFIX + "validation", localReference);
   }
 
   /**
@@ -279,7 +293,7 @@ public class ComboTableData {
    * @return String with the validation id.
    */
   private String getValidation() {
-    return getParameter(internalPrefix + "validation");
+    return getParameter(INTERNAL_PREFIX + "validation");
   }
 
   /**
@@ -290,7 +304,7 @@ public class ComboTableData {
    * @throws Exception
    */
   private void setOrgList(String _orgList) throws Exception {
-    setParameter(internalPrefix + "orgList", _orgList);
+    setParameter(INTERNAL_PREFIX + "orgList", _orgList);
   }
 
   /**
@@ -299,7 +313,20 @@ public class ComboTableData {
    * @return String with the granted organizations list.
    */
   public String getOrgList() {
-    return getParameter(internalPrefix + "orgList");
+    String cachedList = getParameter(INTERNAL_PREFIX + "orgList");
+    if (cachedList != null) {
+      return cachedList;
+    } else if ("AD_CLIENT_ID".equalsIgnoreCase(getObjectName())) {
+      return null;
+    }
+
+    VariablesSecureApp vars = getVars();
+    if ("AD_ORG_ID".equalsIgnoreCase(getObjectName())) {
+      return Utility.getContext(new DalConnectionProvider(false), vars, "#User_Org", windowId,
+          accessLevel);
+    } else {
+      return Utility.getReferenceableOrg(vars, vars.getStringParameter("inpadOrgId"));
+    }
   }
 
   /**
@@ -310,7 +337,7 @@ public class ComboTableData {
    * @throws Exception
    */
   private void setClientList(String _clientList) throws Exception {
-    setParameter(internalPrefix + "clientList", _clientList);
+    setParameter(INTERNAL_PREFIX + "clientList", _clientList);
   }
 
   /**
@@ -319,7 +346,24 @@ public class ComboTableData {
    * @return String with the granted clients list.
    */
   public String getClientList() {
-    return getParameter(internalPrefix + "clientList");
+    String clientList = getParameter(INTERNAL_PREFIX + "clientList");
+    if (clientList != null) {
+      return clientList;
+    }
+
+    VariablesSecureApp vars = getVars();
+    if ("AD_CLIENT_ID".equalsIgnoreCase(getObjectName())) {
+      clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
+          windowId, accessLevel);
+      if (clientList == null) {
+        clientList = vars.getSessionValue("#User_Client");
+      }
+    } else {
+      clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
+          windowId);
+    }
+
+    return clientList;
   }
 
   /**
@@ -332,17 +376,13 @@ public class ComboTableData {
    */
   public void addSelectField(String _field, String _alias) {
     QueryFieldStructure p = new QueryFieldStructure(_field, " AS ", _alias, "SELECT");
-    if (this.select == null)
-      this.select = new Vector<QueryFieldStructure>();
-    select.addElement(p);
+    if (this.select == null) {
+      this.select = new ArrayList<QueryFieldStructure>();
+    }
+    select.add(p);
   }
 
-  /**
-   * Gets the defined fields for the select section of the query.
-   * 
-   * @return Vector with the select's fields.
-   */
-  private Vector<QueryFieldStructure> getSelectFields() {
+  private List<QueryFieldStructure> getSelectFields() {
     return this.select;
   }
 
@@ -356,17 +396,13 @@ public class ComboTableData {
    */
   public void addFromField(String _field, String _alias) {
     QueryFieldStructure p = new QueryFieldStructure(_field, " ", _alias, "FROM");
-    if (this.from == null)
-      this.from = new Vector<QueryFieldStructure>();
-    from.addElement(p);
+    if (this.from == null) {
+      this.from = new ArrayList<QueryFieldStructure>();
+    }
+    from.add(p);
   }
 
-  /**
-   * Gets the defined fields for the from section of the query.
-   * 
-   * @return Vector with the from's fields.
-   */
-  private Vector<QueryFieldStructure> getFromFields() {
+  private List<QueryFieldStructure> getFromFields() {
     return this.from;
   }
 
@@ -380,17 +416,13 @@ public class ComboTableData {
    */
   public void addWhereField(String _field, String _type) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", _type);
-    if (this.where == null)
-      this.where = new Vector<QueryFieldStructure>();
-    where.addElement(p);
+    if (this.where == null) {
+      this.where = new ArrayList<QueryFieldStructure>();
+    }
+    where.add(p);
   }
 
-  /**
-   * Gets the defined fields for the where section of the query.
-   * 
-   * @return Vector with the where's fields.
-   */
-  private Vector<QueryFieldStructure> getWhereFields() {
+  private List<QueryFieldStructure> getWhereFields() {
     return this.where;
   }
 
@@ -402,26 +434,17 @@ public class ComboTableData {
    */
   public void addOrderByField(String _field) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", "ORDERBY");
-    if (this.orderBy == null)
-      this.orderBy = new Vector<QueryFieldStructure>();
-    orderBy.addElement(p);
+    if (this.orderBy == null) {
+      this.orderBy = new ArrayList<QueryFieldStructure>();
+    }
+    orderBy.add(p);
   }
 
-  /**
-   * Gets the defined fields for the order by section of the query.
-   * 
-   * @return Vector with the order by's fields.
-   */
-  private Vector<QueryFieldStructure> getOrderByFields() {
+  private List<QueryFieldStructure> getOrderByFields() {
     return this.orderBy;
   }
 
-  /**
-   * Gets all the defined parameters for the select section.
-   * 
-   * @return Vector with the parameters.
-   */
-  private Vector<QueryParameterStructure> getSelectParameters() {
+  private List<QueryParameterStructure> getSelectParameters() {
     return this.paramSelect;
   }
 
@@ -434,18 +457,14 @@ public class ComboTableData {
    *          String with the name od the field.
    */
   public void addFromParameter(String _parameter, String _fieldName) {
-    if (this.paramFrom == null)
-      this.paramFrom = new Vector<QueryParameterStructure>();
+    if (this.paramFrom == null) {
+      this.paramFrom = new ArrayList<QueryParameterStructure>();
+    }
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "FROM");
-    paramFrom.addElement(aux);
+    paramFrom.add(aux);
   }
 
-  /**
-   * Gets the defined parameters for the from section.
-   * 
-   * @return Vector with the parameters.
-   */
-  private Vector<QueryParameterStructure> getFromParameters() {
+  private List<QueryParameterStructure> getFromParameters() {
     return this.paramFrom;
   }
 
@@ -460,18 +479,14 @@ public class ComboTableData {
    *          String with a group name.
    */
   public void addWhereParameter(String _parameter, String _fieldName, String _type) {
-    if (this.paramWhere == null)
-      this.paramWhere = new Vector<QueryParameterStructure>();
+    if (this.paramWhere == null) {
+      this.paramWhere = new ArrayList<QueryParameterStructure>();
+    }
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, _type);
-    paramWhere.addElement(aux);
+    paramWhere.add(aux);
   }
 
-  /**
-   * Gets the parameters defined for the where section.
-   * 
-   * @return Vector with the parameters.
-   */
-  private Vector<QueryParameterStructure> getWhereParameters() {
+  private List<QueryParameterStructure> getWhereParameters() {
     return this.paramWhere;
   }
 
@@ -484,18 +499,14 @@ public class ComboTableData {
    *          String with the name of the field.
    */
   private void addOrderByParameter(String _parameter, String _fieldName) {
-    if (this.paramOrderBy == null)
-      this.paramOrderBy = new Vector<QueryParameterStructure>();
+    if (this.paramOrderBy == null) {
+      this.paramOrderBy = new ArrayList<QueryParameterStructure>();
+    }
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "ORDERBY");
-    paramOrderBy.addElement(aux);
+    paramOrderBy.add(aux);
   }
 
-  /**
-   * Gets the parameters for the order by section.
-   * 
-   * @return Vector with the parameters.
-   */
-  private Vector<QueryParameterStructure> getOrderByParameters() {
+  private List<QueryParameterStructure> getOrderByParameters() {
     return this.paramOrderBy;
   }
 
@@ -512,7 +523,7 @@ public class ComboTableData {
     if (name == null || name.equals(""))
       throw new Exception("Invalid parameter name");
     if (this.parameters == null)
-      this.parameters = new Hashtable<String, String>();
+      this.parameters = new HashMap<String, String>();
     if (value == null || value.equals(""))
       this.parameters.remove(name.toUpperCase());
     else
@@ -535,60 +546,52 @@ public class ComboTableData {
       return this.parameters.get(name.toUpperCase());
   }
 
-  /**
-   * Gets the values for all of the defined parameters in the query.
-   * 
-   * @return Vector with the values.
-   */
-  Vector<String> getParameters() {
-    Vector<String> result = new Vector<String>();
+  /** Gets the values for all of the defined parameters in the query. */
+  private List<String> getParameters() {
+    List<String> result = new ArrayList<>();
     if (log4j.isDebugEnabled())
       log4j.debug("Obtaining parameters");
-    Vector<QueryParameterStructure> vAux = getSelectParameters();
+    List<QueryParameterStructure> vAux = getSelectParameters();
     if (vAux != null) {
-      for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.elementAt(i);
+      for (QueryParameterStructure aux : vAux) {
         String strAux = getParameter(aux.getName());
         if (strAux == null || strAux.equals(""))
-          result.addElement(aux.getName());
+          result.add(aux.getName());
       }
     }
     if (log4j.isDebugEnabled())
       log4j.debug("Select parameters obtained");
     vAux = getFromParameters();
     if (vAux != null) {
-      for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.elementAt(i);
+      for (QueryParameterStructure aux : vAux) {
         String strAux = getParameter(aux.getName());
         if (strAux == null || strAux.equals(""))
-          result.addElement(aux.getName());
+          result.add(aux.getName());
       }
     }
     if (log4j.isDebugEnabled())
       log4j.debug("From parameters obtained");
     vAux = getWhereParameters();
     if (vAux != null) {
-      for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.elementAt(i);
+      for (QueryParameterStructure aux : vAux) {
         String strAux = getParameter(aux.getName());
         if (strAux == null || strAux.equals(""))
-          result.addElement(aux.getName());
+          result.add(aux.getName());
       }
     }
     if (log4j.isDebugEnabled())
       log4j.debug("Where parameters obtained");
     vAux = getOrderByParameters();
     if (vAux != null) {
-      for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.elementAt(i);
+      for (QueryParameterStructure aux : vAux) {
         String strAux = getParameter(aux.getName());
         if (strAux == null || strAux.equals(""))
-          result.addElement(aux.getName());
+          result.add(aux.getName());
       }
     }
     if (log4j.isDebugEnabled())
       log4j.debug("Order by parameters obtained");
-    result.addElement("#AD_LANGUAGE");
+    result.add("#AD_LANGUAGE");
     return result;
   }
 
@@ -623,16 +626,15 @@ public class ComboTableData {
    * doesn´t know the alias of the referenced field.
    */
   private void parseNames() {
-    Vector<QueryFieldStructure> tables = getFromFields();
+    List<QueryFieldStructure> tables = getFromFields();
     if (tables == null || tables.size() == 0)
       return;
     if (where != null && where.size() > 0) {
-      for (int i = 0; i < where.size(); i++) {
-        QueryFieldStructure auxStructure = where.elementAt(i);
+      int i = 0;
+      for (QueryFieldStructure auxStructure : where) {
         if (auxStructure.getType().equalsIgnoreCase("FILTER")) {
           String strAux = auxStructure.getField();
-          for (int j = 0; j < tables.size(); j++) {
-            QueryFieldStructure auxTable = tables.elementAt(j);
+          for (QueryFieldStructure auxTable : tables) {
             String strTable = auxTable.getField();
             int p = strTable.indexOf(" ");
             if (p != -1)
@@ -646,14 +648,14 @@ public class ComboTableData {
             where.set(i, auxStructure);
           }
         }
+        i++;
       }
     }
     if (orderBy != null && orderBy.size() > 0) {
-      for (int i = 0; i < orderBy.size(); i++) {
-        QueryFieldStructure auxStructure = orderBy.elementAt(i);
+      int i = 0;
+      for (QueryFieldStructure auxStructure : orderBy) {
         String strAux = auxStructure.getField();
-        for (int j = 0; j < tables.size(); j++) {
-          QueryFieldStructure auxTable = tables.elementAt(j);
+        for (QueryFieldStructure auxTable : tables) {
           String strTable = auxTable.getField();
           int p = strTable.indexOf(" ");
           if (p != -1)
@@ -666,6 +668,7 @@ public class ComboTableData {
             log4j.debug("Field replaced: " + strAux);
           orderBy.set(i, auxStructure);
         }
+        i++;
       }
     }
   }
@@ -688,7 +691,7 @@ public class ComboTableData {
     if (log4j.isDebugEnabled())
       log4j.debug("parsing data: " + localData + " - replace: " + replaceWhat + " - with: "
           + replaceWith);
-    StringBuffer text = new StringBuffer();
+    StringBuilder text = new StringBuilder();
     int i = localData.toUpperCase().indexOf(replaceWhat.toUpperCase());
     while (i != -1) {
       text.append(localData.substring(0, i)).append(replaceWith);
@@ -733,8 +736,8 @@ public class ComboTableData {
   public String parseContext(String context, String type) {
     if (context == null || context.equals(""))
       return "";
-    StringBuffer strOut = new StringBuffer();
-    String value = new String(context);
+    StringBuilder strOut = new StringBuilder();
+    String value = context;
     String token, defStr;
     int i = value.indexOf("@");
     while (i != -1) {
@@ -747,9 +750,9 @@ public class ComboTableData {
       }
       token = value.substring(0, j);
       if (token.equalsIgnoreCase("#User_Client"))
-        defStr = getClientList();
+        defStr = CLIENT_LIST_PARAM_HOLDER;
       else if (token.equalsIgnoreCase("#User_Org"))
-        defStr = getOrgList();
+        defStr = ORG_LIST_PARAM_HOLDER;
       else
         defStr = "?";
 
@@ -811,20 +814,19 @@ public class ComboTableData {
    */
   private String getQuery(boolean onlyId, String[] discard, String recordId, Integer startRow,
       Integer endRow, ConnectionProvider conn, boolean applyFilter) {
-    StringBuffer text = new StringBuffer();
-    Vector<QueryFieldStructure> aux = getSelectFields();
+    StringBuilder text = new StringBuilder();
+    List<QueryFieldStructure> aux = getSelectFields();
     String idName = "", nameToCompare = null;
     boolean hasWhere = false;
     boolean applyLimits = (startRow != null && startRow != -1) && (endRow != null && endRow != -1)
         && StringUtils.isEmpty(recordId);
     String rdbms = conn == null ? "" : conn.getRDBMS();
     if (aux != null) {
-      StringBuffer name = new StringBuffer();
+      StringBuilder name = new StringBuilder();
       String description = "";
       String id = "";
       text.append("SELECT ");
-      for (int i = 0; i < aux.size(); i++) {
-        QueryFieldStructure auxStructure = aux.elementAt(i);
+      for (QueryFieldStructure auxStructure : aux) {
         if (!isInArray(discard, auxStructure.getType())) {
           if (auxStructure.getData("alias").equalsIgnoreCase("ID")) {
             if (id.equals("")) {
@@ -862,10 +864,9 @@ public class ComboTableData {
 
     aux = getFromFields();
     if (aux != null) {
-      StringBuffer txtAux = new StringBuffer();
+      StringBuilder txtAux = new StringBuilder();
       text.append("FROM ");
-      for (int i = 0; i < aux.size(); i++) {
-        QueryFieldStructure auxStructure = aux.elementAt(i);
+      for (QueryFieldStructure auxStructure : aux) {
         if (!isInArray(discard, auxStructure.getType())) {
           if (!txtAux.toString().equals(""))
             txtAux.append("left join ");
@@ -876,10 +877,13 @@ public class ComboTableData {
     }
 
     aux = getWhereFields();
+    String orgList = getOrgList();
     if (aux != null) {
-      StringBuffer txtAux = new StringBuffer();
-      for (int i = 0; i < aux.size(); i++) {
-        QueryFieldStructure auxStructure = aux.elementAt(i);
+      StringBuilder txtAux = new StringBuilder();
+      for (QueryFieldStructure auxStructure : aux) {
+        if ("ORG_LIST".equals(auxStructure.getType()) && orgList == null) {
+          continue;
+        }
         if (!isInArray(discard, auxStructure.getType())) {
           hasWhere = true;
           if (!txtAux.toString().equals(""))
@@ -903,10 +907,9 @@ public class ComboTableData {
     if (!onlyId) {
       aux = getOrderByFields();
       if (aux != null) {
-        StringBuffer txtAux = new StringBuffer();
+        StringBuilder txtAux = new StringBuilder();
         text.append("ORDER BY ");
-        for (int i = 0; i < aux.size(); i++) {
-          QueryFieldStructure auxStructure = aux.elementAt(i);
+        for (QueryFieldStructure auxStructure : aux) {
           if (!isInArray(discard, auxStructure.getType())) {
             if (!txtAux.toString().equals(""))
               txtAux.append(", ");
@@ -927,13 +930,19 @@ public class ComboTableData {
       int numberOfRows = endRow - startRow + 1;
       text.append(" LIMIT " + numberOfRows + " OFFSET " + startRow);
     }
+
+    String query = text.toString().replace(CLIENT_LIST_PARAM_HOLDER, getClientList());
+    if (orgList != null) {
+      query = query.replace(ORG_LIST_PARAM_HOLDER, orgList);
+    }
+
     if (applyLimits && rdbms.equalsIgnoreCase("ORACLE")) {
       // in oracle rows are defined from 1, so incrementing startRow and endRow by 1
-      String oraQuery = "select * from ( select a.*, ROWNUM rnum from ( " + text.toString()
+      String oraQuery = "select * from ( select a.*, ROWNUM rnum from ( " + query
           + ") a where rownum <= " + (endRow + 1) + " ) where rnum >= " + (startRow + 1) + "";
       return oraQuery;
     }
-    return text.toString();
+    return query;
   }
 
   /**
@@ -948,8 +957,8 @@ public class ComboTableData {
   private boolean isInArray(String[] data, String element) {
     if (data == null || data.length == 0 || element == null || element.equals(""))
       return false;
-    for (int i = 0; i < data.length; i++) {
-      if (data[i].equalsIgnoreCase(element))
+    for (String d : data) {
+      if (d.equalsIgnoreCase(element))
         return true;
     }
     return false;
@@ -979,10 +988,9 @@ public class ComboTableData {
   private int setSQLParameters(PreparedStatement st, Map<String, String> lparameters,
       int iParameter, String[] discard, String recordId, String filter) {
     int localIParameter = iParameter;
-    Vector<QueryParameterStructure> vAux = getSelectParameters();
+    List<QueryParameterStructure> vAux = getSelectParameters();
     if (vAux != null) {
-      for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.elementAt(i);
+      for (QueryParameterStructure aux : vAux) {
         if (!isInArray(discard, aux.getType())) {
           String strAux = lparameters != null ? (aux.getName() == null ? null : lparameters.get(aux
               .getName().toUpperCase())) : getParameter(aux.getName());
@@ -994,8 +1002,7 @@ public class ComboTableData {
     }
     vAux = getFromParameters();
     if (vAux != null) {
-      for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.elementAt(i);
+      for (QueryParameterStructure aux : vAux) {
         if (!isInArray(discard, aux.getType())) {
           String strAux = lparameters != null ? (aux.getName() == null ? null : lparameters.get(aux
               .getName().toUpperCase())) : getParameter(aux.getName());
@@ -1007,8 +1014,7 @@ public class ComboTableData {
     }
     vAux = getWhereParameters();
     if (vAux != null) {
-      for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.elementAt(i);
+      for (QueryParameterStructure aux : vAux) {
         if (!isInArray(discard, aux.getType())) {
           String strAux = lparameters != null ? (aux.getName() == null ? null : lparameters.get(aux
               .getName().toUpperCase())) : getParameter(aux.getName());
@@ -1027,8 +1033,7 @@ public class ComboTableData {
     }
     vAux = getOrderByParameters();
     if (vAux != null) {
-      for (int i = 0; i < vAux.size(); i++) {
-        QueryParameterStructure aux = vAux.elementAt(i);
+      for (QueryParameterStructure aux : vAux) {
         if (!isInArray(discard, aux.getType())) {
           String strAux = lparameters != null ? (aux.getName() == null ? null : lparameters.get(aux
               .getName().toUpperCase())) : getParameter(aux.getName());
@@ -1082,11 +1087,9 @@ public class ComboTableData {
           sqlReturnObject.setData("ID", UtilSql.getValue(result, "ID"));
           sqlReturnObject.setData("NAME", UtilSql.getValue(result, "NAME"));
           sqlReturnObject.setData("DESCRIPTION", UtilSql.getValue(result, "DESCRIPTION"));
-          Vector<Object> vector = new Vector<Object>(0);
+          List<Object> vector = new ArrayList<>(1);
           vector.add(sqlReturnObject);
-          FieldProvider objectListData[] = new FieldProvider[vector.size()];
-          vector.copyInto(objectListData);
-          return (objectListData);
+          return vector.toArray(new FieldProvider[vector.size()]);
         }
 
         if (includeActual && actual != null && !actual.equals("")) {
@@ -1104,14 +1107,15 @@ public class ComboTableData {
             if (!strName.startsWith(INACTIVE_DATA))
               strName = INACTIVE_DATA + strName;
             sqlReturnObject.setData("NAME", strName);
-            Vector<Object> vector = new Vector<Object>(0);
+            List<Object> vector = new ArrayList<>(1);
             vector.add(sqlReturnObject);
-            FieldProvider objectListData[] = new FieldProvider[vector.size()];
-            vector.copyInto(objectListData);
-            return (objectListData);
+            return vector.toArray(new FieldProvider[vector.size()]);
           }
 
         }
+      } catch (Exception e) {
+        log4j.error("Error in query" + strSqlSingleRecord, e);
+        throw e;
       } finally {
         conn.releasePreparedStatement(stSingleRecord);
       }
@@ -1123,8 +1127,7 @@ public class ComboTableData {
       log4j.debug("SQL: " + strSql);
     PreparedStatement st = conn.getPreparedStatement(strSql);
     ResultSet result;
-    Vector<Object> vector = new Vector<Object>(0);
-
+    List<Object> vector = new ArrayList<>();
     try {
       int iParameter = 0;
       iParameter = setSQLParameters(st, lparameters, iParameter, null, null, filterValue);
@@ -1138,18 +1141,16 @@ public class ComboTableData {
         if (includeActual && actual != null && !actual.equals("")) {
           if (actual.equals(sqlReturnObject.getData("ID"))) {
             if (!idFound) {
-              vector.addElement(sqlReturnObject);
+              vector.add(sqlReturnObject);
               idFound = true;
             }
           } else {
-            vector.addElement(sqlReturnObject);
+            vector.add(sqlReturnObject);
           }
         } else
-          vector.addElement(sqlReturnObject);
+          vector.add(sqlReturnObject);
         if (lparameters != null && lparameters.containsKey("#ONLY_ONE_RECORD#")) {
-          FieldProvider objectListData[] = new FieldProvider[vector.size()];
-          vector.copyInto(objectListData);
-          return (objectListData);
+          return vector.toArray(new FieldProvider[vector.size()]);
         }
       }
       result.close();
@@ -1193,7 +1194,7 @@ public class ComboTableData {
             if (!strName.startsWith(INACTIVE_DATA))
               strName = INACTIVE_DATA + strName;
             sqlReturnObject.setData("NAME", strName);
-            vector.addElement(sqlReturnObject);
+            vector.add(sqlReturnObject);
             idFound = true;
           }
         }
@@ -1208,7 +1209,7 @@ public class ComboTableData {
                       lparameters != null ? lparameters.get("#AD_LANGUAGE")
                           : getParameter("#AD_LANGUAGE")));
 
-          vector.addElement(sqlReturnObject);
+          vector.add(sqlReturnObject);
         }
       }
     } catch (SQLException e) {
@@ -1217,9 +1218,7 @@ public class ComboTableData {
     } finally {
       conn.releasePreparedStatement(st);
     }
-    FieldProvider objectListData[] = new FieldProvider[vector.size()];
-    vector.copyInto(objectListData);
-    return (objectListData);
+    return vector.toArray(new FieldProvider[vector.size()]);
   }
 
   /**
@@ -1230,7 +1229,7 @@ public class ComboTableData {
    * values from the request and does not use the preferences for fields to preset a search filter
    */
   public void fillParametersFromSearch(String tab, String window) throws ServletException {
-    fillSQLParameters(getPool(), vars, null, tab, window, "", true);
+    fillSQLParameters(getPool(), getVars(), null, tab, window, "", true);
   }
 
   /**
@@ -1249,7 +1248,7 @@ public class ComboTableData {
    */
   public void fillParameters(FieldProvider data, String window, String actual_value)
       throws ServletException {
-    fillSQLParameters(getPool(), vars, data, "", window, actual_value, false);
+    fillSQLParameters(getPool(), getVars(), data, "", window, actual_value, false);
   }
 
   /**
@@ -1270,12 +1269,11 @@ public class ComboTableData {
    */
   void fillSQLParameters(ConnectionProvider conn, VariablesSecureApp variables, FieldProvider data,
       String tab, String window, String actual_value, boolean fromSearch) throws ServletException {
-    final Vector<String> vAux = getParameters();
+    final List<String> vAux = getParameters();
     if (vAux != null && vAux.size() > 0) {
       if (log4j.isDebugEnabled())
         log4j.debug("Combo Parameters: " + vAux.size());
-      for (int i = 0; i < vAux.size(); i++) {
-        final String strAux = vAux.elementAt(i);
+      for (String strAux : vAux) {
         try {
           final String value = Utility.parseParameterValue(conn, variables, data, strAux, tab,
               window, actual_value, fromSearch);
@@ -1292,17 +1290,15 @@ public class ComboTableData {
   public Map<String, String> fillSQLParametersIntoMap(ConnectionProvider conn,
       VariablesSecureApp variables, FieldProvider data, String window, String actual_value)
       throws ServletException {
-    final Vector<String> vAux = getParameters();
-    Hashtable<String, String> lparameters = new Hashtable<String, String>();
+    final List<String> vAux = getParameters();
+
     // We first add all current parameters in the combo
-    for (String key : parameters.keySet()) {
-      lparameters.put(key, parameters.get(key));
-    }
+    Map<String, String> lparameters = new HashMap<>(parameters);
+
     if (vAux != null && vAux.size() > 0) {
       if (log4j.isDebugEnabled())
         log4j.debug("Combo Parameters: " + vAux.size());
-      for (int i = 0; i < vAux.size(); i++) {
-        final String strAux = vAux.elementAt(i);
+      for (String strAux : vAux) {
         try {
           final String value = Utility.parseParameterValue(conn, variables, data, strAux, "",
               window, actual_value, false);
@@ -1318,7 +1314,6 @@ public class ComboTableData {
       }
     }
     return lparameters;
-
   }
 
   public boolean canBeCached() {

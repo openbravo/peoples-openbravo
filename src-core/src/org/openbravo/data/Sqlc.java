@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Copyright (C) 2001-2017 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -92,6 +92,7 @@ public class Sqlc extends DefaultHandler {
 
   static Logger log4j = Logger.getLogger(Sqlc.class); // log4j
   private static boolean includeQueryTimeOut;
+  private boolean sessionInfoImported;
 
   private List<String> scrollableFunctionNames = new ArrayList<String>();
   private boolean hasCountField;
@@ -109,6 +110,7 @@ public class Sqlc extends DefaultHandler {
     sqlcAccessModifier = "";
     scrollableFunctionNames = new ArrayList<String>();
     hasCountField = false;
+    sessionInfoImported = false;
   }
 
   public static void main(String argv[]) throws Exception {
@@ -466,6 +468,8 @@ public class Sqlc extends DefaultHandler {
           sql.sqlImport = amap.getValue(i);
         } else if (amap.getQName(i).equals("useQueryProfile")) {
           sql.useQueryProfile = "true".equalsIgnoreCase(amap.getValue(i));
+        } else if (amap.getQName(i).equals("saveContextInfo")) {
+          sql.saveContextInfo = "true".equalsIgnoreCase(amap.getValue(i));
         }
       }
       if (sqlPackage != null)
@@ -775,7 +779,10 @@ public class Sqlc extends DefaultHandler {
     out1.append("import org.openbravo.data.UtilSql;\n");
     if (includeQueryTimeOut) {
       out1.append("import org.openbravo.service.db.QueryTimeOutUtil;\n");
-      out1.append("import org.openbravo.database.SessionInfo;\n");
+      if (!sessionInfoImported) {
+        out1.append("import org.openbravo.database.SessionInfo;\n");
+        sessionInfoImported = true;
+      }
     }
 
     if (sql.sqlImport != null) {
@@ -1394,6 +1401,20 @@ public class Sqlc extends DefaultHandler {
 
     printSQLBody();
     printSQLParameters();
+
+    if (sql.saveContextInfo && !"executeQuery".equals(sql.executeType)) {
+      if (!sessionInfoImported) {
+        out1.append("import org.openbravo.database.SessionInfo;\n");
+        sessionInfoImported = true;
+      }
+      out2.append("      SessionInfo.saveContextInfoIntoDB(");
+      if (sql.sqlConnection.equals("true")) {
+        out2.append("conn");
+      } else {
+        out2.append("connectionProvider.getConnection()");
+      }
+      out2.append(");\n");
+    }
 
     if (sql.executeType.equals("executeQuery")) {
       out2.append("      result = st." + sql.executeType + "(");

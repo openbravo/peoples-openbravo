@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2010-2014 Openbravo SL 
+ * All portions are Copyright (C) 2010-2017 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,9 +19,6 @@
 
 package org.openbravo.base.secureApp;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.Date;
 import java.util.Properties;
 
@@ -40,33 +37,20 @@ import org.openbravo.model.ad.access.User;
  */
 public class UserLock {
   private static Logger log4j = Logger.getLogger(UserLock.class);
+
+  private static int delayInc;
+  private static int delayMax;
+  private static int lockAfterTrials;
+  private static boolean lockingConfigured;
+
   private int delay;
-  private int lockAfterTrials;
 
   private String userName;
   private int numberOfFails;
   private User user;
 
-  public UserLock(String userName) {
-    // Read Openbravo.properties for locking configuration. If it's properly configured, it tries
-    // to read from the properties file in the source directory not to force to deploy the file to
-    // change configuration.
-    String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .getProperty("source.path", null);
-    Properties obProp;
-    if (sourcePath != null && new File(sourcePath + "/config/Openbravo.properties").exists()) {
-      try {
-        InputStream obPropFile = new FileInputStream(new File(sourcePath
-            + "/config/Openbravo.properties"));
-        obProp = new Properties();
-        obProp.load(obPropFile);
-      } catch (Exception e) {
-        log4j.error("Error reading properties", e);
-        obProp = OBPropertiesProvider.getInstance().getOpenbravoProperties();
-      }
-    } else {
-      obProp = OBPropertiesProvider.getInstance().getOpenbravoProperties();
-    }
+  static {
+    Properties obProp = OBPropertiesProvider.getInstance().getOpenbravoProperties();
     String propInc = obProp.getProperty("login.trial.delay.increment", "0");
     String propMax = obProp.getProperty("login.trial.delay.max", "0");
     String propLock = obProp.getProperty("login.trial.user.lock", "0");
@@ -79,8 +63,7 @@ public class UserLock {
     if (propLock.equals("")) {
       propLock = "0";
     }
-    int delayInc;
-    int delayMax;
+
     try {
       delayInc = Integer.parseInt(propInc);
     } catch (NumberFormatException e) {
@@ -99,16 +82,16 @@ public class UserLock {
       log4j.error("Could not set login.trial.user.lock property" + propMax, e);
       lockAfterTrials = 0;
     }
+    lockingConfigured = delayInc != 0 || lockAfterTrials != 0;
+  }
+
+  public UserLock(String userName) {
+    if (!isLockingConfigured()) {
+      return;
+    }
 
     this.userName = userName;
     setUser();
-
-    if (delayInc == 0 && lockAfterTrials == 0) {
-      // No need to check number of fails as login security is not enabled
-      delay = 0;
-      numberOfFails = 0;
-      return;
-    }
 
     // Count how many times this user has attempted to login without success
     long t = System.currentTimeMillis();
@@ -176,6 +159,9 @@ public class UserLock {
    * A new failed login attempt, increments the count of fails and blocks the user if needed
    */
   public void addFail() {
+    if (!isLockingConfigured()) {
+      return;
+    }
     numberOfFails++;
     boolean lockUser = (lockAfterTrials != 0) && (numberOfFails >= lockAfterTrials);
     log4j.debug("lock: " + lockUser + " -lock after:" + lockAfterTrials + "- fails:"
@@ -199,6 +185,10 @@ public class UserLock {
   }
 
   public boolean isLockedUser() {
+    if (!isLockingConfigured()) {
+      return false;
+    }
+
     // User does not need to check org and client access
     OBContext.setAdminMode(false);
     try {
@@ -222,5 +212,10 @@ public class UserLock {
         log4j.error("Error delaying login response", e);
       }
     }
+  }
+
+  /** Returns whether configuration is set to lock users */
+  private boolean isLockingConfigured() {
+    return lockingConfigured;
   }
 }

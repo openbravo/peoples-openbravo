@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,12 +19,17 @@
 
 package org.openbravo.base.weld.test.testinfrastructure;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
+import org.jboss.arquillian.junit.InSequence;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.base.weld.test.WeldBaseTest;
+import org.openbravo.client.application.test.event.ObserverBaseTest;
+import org.openbravo.client.application.test.event.OrderLineTestObserver;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.geography.Country;
@@ -36,12 +41,39 @@ import org.openbravo.model.common.geography.Country;
  * @author alostale
  *
  */
-public class DalPersistanceEventTest extends WeldBaseTest {
+public class DalPersistanceEventTest extends ObserverBaseTest {
   @Rule
   public ExpectedException exception = ExpectedException.none();
 
   @Test
-  public void persisntaceObserversShouldBeExecuted() {
+  @InSequence(1)
+  public void beginTrxObserversShouldBeExecutedOnFirstTest() {
+    assertThat("begin transaction observer executions",
+        OrderLineTestObserver.getNumberOfStartedTrxs(), is(1));
+  }
+
+  @Test
+  @InSequence(2)
+  public void beginTrxObserversShouldBeExecutedOnSubsequentTests() {
+    assertThat("begin transaction observer executions",
+        OrderLineTestObserver.getNumberOfStartedTrxs(), is(1));
+  }
+
+  @Test
+  @InSequence(3)
+  public void endTrxObserversShouldBeExecuted() {
+    int initiallyClosedTrxs = OrderLineTestObserver.getNumberOfClosedTrxs();
+
+    OBDal.getInstance().commitAndClose();
+
+    assertThat("initial end transaction observer executions", initiallyClosedTrxs, is(0));
+    assertThat("end transaction observer executions",
+        OrderLineTestObserver.getNumberOfClosedTrxs(), is(1));
+  }
+
+  @Test
+  @InSequence(4)
+  public void persistanceObserversShouldBeExecuted() {
     try {
       setSystemAdministratorContext();
       Country newCountry = OBProvider.getInstance().get(Country.class);

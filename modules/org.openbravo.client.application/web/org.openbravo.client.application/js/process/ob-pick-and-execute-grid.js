@@ -1007,9 +1007,14 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   hideInlineEditor: function (focusInBody, suppressCMHide) {
-    var ret = this.Super('hideInlineEditor', arguments);
-    this.validateRows();
-    return ret;
+    var ret;
+    if (this.isRequiredFieldWithNoValue()) {
+      return;
+    } else {
+      ret = this.Super('hideInlineEditor', arguments);
+      this.validateRows();
+      return ret;
+    }
   },
 
   validateRows: function () {

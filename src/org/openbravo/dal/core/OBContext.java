@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -548,9 +548,11 @@ public class OBContext implements OBNotSingleton {
   private boolean translationInstalled;
   private Warehouse warehouse;
   private List<String> organizationList;
+  private List<String> deactivatedOrganizationList;
   private String[] readableOrganizations;
   private String[] readableClients;
   private Set<String> writableOrganizations;
+  private Set<String> deactivatedOrganizations;
   private String userLevel;
   private Map<String, OrganizationStructureProvider> organizationStructureProviderByClient;
   private Map<String, AcctSchemaStructureProvider> acctSchemaStructureProviderByClient;
@@ -615,7 +617,7 @@ public class OBContext implements OBNotSingleton {
       writableOrganizations.add("0");
     }
 
-    final List<String> os = getOrganizationList(role);
+    final List<String> os = getActiveOrganizationList(role);
     for (final String o : os) {
       writableOrganizations.add(o);
     }
@@ -626,25 +628,48 @@ public class OBContext implements OBNotSingleton {
     writableOrganizations.addAll(additionalWritableOrganizations);
   }
 
-  @SuppressWarnings("unchecked")
-  private List<String> getOrganizationList(Role thisRole) {
-    if (organizationList != null) {
-      return new ArrayList<String>(organizationList);
+  private List<String> getActiveOrganizationList(Role thisRole) {
+    return getOrganizationList(thisRole, organizationList, additionalWritableOrganizations, true);
+  }
+
+  private void setDeactivatedOrganizations(Role role) {
+    deactivatedOrganizations = new HashSet<String>();
+    final List<String> os = getDeactivatedOrganizationList(role);
+    for (final String o : os) {
+      deactivatedOrganizations.add(o);
     }
+  }
+
+  private List<String> getDeactivatedOrganizationList(Role thisRole) {
+    return getOrganizationList(thisRole, deactivatedOrganizationList, null, false);
+  }
+
+  private List<String> getOrganizationList(Role targetRole, List<String> orgList,
+      Set<String> additionalOrgs, boolean isActiveOrganization) {
+
+    if (orgList != null) {
+      return new ArrayList<String>(orgList);
+    }
+
+    String propertyActive = isActiveOrganization ? "Y" : "N";
     final Query qry = SessionHandler.getInstance().createQuery(
         "select o.id from " + Organization.class.getName() + " o, "
             + RoleOrganization.class.getName() + " roa where o." + Organization.PROPERTY_ID
             + "=roa." + RoleOrganization.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID
             + " and roa." + RoleOrganization.PROPERTY_ROLE + "." + Organization.PROPERTY_ID + "='"
-            + thisRole.getId() + "' and roa." + RoleOrganization.PROPERTY_ACTIVE + "='Y' and o."
-            + Organization.PROPERTY_ACTIVE + "='Y'");
-    organizationList = qry.list();
-    for (final String orgId : additionalWritableOrganizations) {
-      if (!organizationList.contains(orgId)) {
-        organizationList.add(orgId);
+            + targetRole.getId() + "' and roa." + RoleOrganization.PROPERTY_ACTIVE + "='Y' and o."
+            + Organization.PROPERTY_ACTIVE + "='" + propertyActive + "'");
+    @SuppressWarnings("unchecked")
+    List<String> currentOrgList = qry.list();
+
+    if (additionalOrgs != null) {
+      for (final String orgId : additionalOrgs) {
+        if (!currentOrgList.contains(orgId)) {
+          currentOrgList.add(orgId);
+        }
       }
     }
-    return new ArrayList<String>(organizationList);
+    return new ArrayList<String>(currentOrgList);
   }
 
   @SuppressWarnings("unchecked")
@@ -658,7 +683,7 @@ public class OBContext implements OBNotSingleton {
   }
 
   private void setReadableOrganizations(Role role) {
-    final List<String> os = getOrganizationList(role);
+    final List<String> os = getActiveOrganizationList(role);
     final Set<String> readableOrgs = new HashSet<String>();
     for (final String o : os) {
       readableOrgs.addAll(getOrganizationStructureProvider().getNaturalTree(o));
@@ -720,8 +745,10 @@ public class OBContext implements OBNotSingleton {
     additionalWritableOrganizations.add(orgId);
     // nullify will be recomputed at first occasion
     organizationList = null;
+    deactivatedOrganizationList = null;
     readableOrganizations = null;
     writableOrganizations = null;
+    deactivatedOrganizations = null;
   }
 
   /**
@@ -775,9 +802,11 @@ public class OBContext implements OBNotSingleton {
     language = null;
     warehouse = null;
     organizationList = null;
+    deactivatedOrganizationList = null;
     readableOrganizations = null;
     readableClients = null;
     writableOrganizations = null;
+    deactivatedOrganizations = null;
     userLevel = null;
     organizationStructureProviderByClient = null;
     acctSchemaStructureProviderByClient = null;
@@ -1041,6 +1070,7 @@ public class OBContext implements OBNotSingleton {
     setUserLevel(role.getUserLevel());
     entityAccessChecker = null;
     writableOrganizations = null;
+    deactivatedOrganizations = null;
     readableClients = null;
     readableOrganizations = null;
     this.role = role;
@@ -1091,6 +1121,13 @@ public class OBContext implements OBNotSingleton {
       setWritableOrganizations(getRole());
     }
     return new HashSet<String>(writableOrganizations);
+  }
+
+  public Set<String> getDeactivatedOrganizations() {
+    if (deactivatedOrganizations == null) {
+      setDeactivatedOrganizations(getRole());
+    }
+    return new HashSet<String>(deactivatedOrganizations);
   }
 
   public String[] getReadableClients() {

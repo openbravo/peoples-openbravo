@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Copyright (C) 2001-2017 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
@@ -28,6 +29,7 @@ import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationExpirationPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.HttpBaseUtils;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.base.secureApp.VariablesHistory;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -78,7 +80,7 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
 
     VariablesHistory variables = new VariablesHistory(request);
     String user;
-    String pass;
+    String pass = null;
     // Begins code related to login process
     if (resetPassword) {
       User userOB = OBDal.getInstance().get(User.class, sUserId);
@@ -88,11 +90,35 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
       if (StringUtils.isEmpty(user)) {
         user = vars.getStringParameter(BaseWebServiceServlet.LOGIN_PARAM);
       }
+
+      if (StringUtils.isEmpty(user)) {
+        // try basic authentication
+        try {
+          final String auth = request.getHeader("Authorization");
+          if (auth != null && auth.toUpperCase().startsWith("BASIC ")) {
+            // user and password come after BASIC
+            final String userpassEncoded = auth.substring(6);
+            // Decode it, using any base 64 decoder
+            final String decodedUserPass = new String(Base64.decodeBase64(userpassEncoded
+                .getBytes()));
+            final int index = decodedUserPass.indexOf(":");
+            if (index != -1) {
+              user = decodedUserPass.substring(0, index);
+              pass = decodedUserPass.substring(index + 1);
+            }
+          }
+        } catch (final Exception e) {
+          throw new OBException(e);
+        }
+      }
     }
-    pass = vars.getStringParameter(PASSWORD_PARAM);
     if (StringUtils.isEmpty(pass)) {
-      pass = vars.getStringParameter(BaseWebServiceServlet.PASSWORD_PARAM);
+      pass = vars.getStringParameter(PASSWORD_PARAM);
+      if (StringUtils.isEmpty(pass)) {
+        pass = vars.getStringParameter(BaseWebServiceServlet.PASSWORD_PARAM);
+      }
     }
+
     username = user;
     if (StringUtils.isEmpty(user)) {
       // redirects to the menu or the menu with the target
@@ -118,7 +144,7 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
         errorMsg.setMessage("LOCKED_USER_MSG");
       }
 
-      throw new AuthenticationException("IDENTIFICATION_FAILURE_TITLE", errorMsg);
+      throw new AuthenticationException("IDENTIFICATION_FAILURE_TITLE", errorMsg, false);
     }
 
     vars.setSessionValue("#AD_User_ID", userId);

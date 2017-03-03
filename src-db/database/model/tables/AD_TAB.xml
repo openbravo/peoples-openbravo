@@ -237,6 +237,7 @@
       </index>
       <index name="AD_TAB_TABLETREE_FK" unique="false">
         <index-column name="AD_TABLE_TREE_ID"/>
+        <whereClause><![CDATA[AD_TABLE_TREE_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="AD_TAB_WINDOW" unique="false">
         <index-column name="AD_WINDOW_ID"/>

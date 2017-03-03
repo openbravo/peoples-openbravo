@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,9 +19,15 @@
 
 package org.openbravo.dal.core;
 
+import static org.openbravo.database.ExternalConnectionPool.DEFAULT_POOL;
+
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.FlushMode;
@@ -74,24 +80,53 @@ public class SessionHandler implements OBNotSingleton {
 
   // The threadlocal which handles the session
   private static ThreadLocal<SessionHandler> sessionHandler = new ThreadLocal<SessionHandler>();
+  private static ThreadLocal<Boolean> checkingSessionDirty = new ThreadLocal<Boolean>();
 
   /**
-   * Removes the current SessionHandler from the ThreadLocal. A call to getSessionHandler will
-   * create a new SessionHandler, session and transaction.
+   * Removes the current SessionHandler from the ThreadLocal. A call to getInstance will create a
+   * new SessionHandler. A call to getSession will create a session and a transaction.
    */
   public static void deleteSessionHandler() {
     log.debug("Removing sessionhandler");
     sessionHandler.set(null);
   }
 
-  /** @return true if a session handler is present for this thread, false */
+  /**
+   * Checks whether a session handler is present for this thread and also available for the default
+   * pool.
+   * 
+   * @return true if a session handler is present for this thread and available for the default
+   *         pool, false otherwise
+   */
   public static boolean isSessionHandlerPresent() {
-    return sessionHandler.get() != null;
+    return isSessionHandlerPresent(DEFAULT_POOL);
   }
 
   /**
-   * Returns the SessionHandler of this thread. If there is none then a new one is created and a
-   * Hibernate Session is created and a transaction is started.
+   * Checks whether a session handler is present for this thread and also available for the pool
+   * whose name is passed as parameter.
+   * 
+   * @param pool
+   *          the name of the pool
+   * 
+   * @return true if a session handler is present for this thread and available for the specified
+   *         pool, false otherwise
+   */
+  public static boolean isSessionHandlerPresent(String pool) {
+    return sessionHandler.get() != null && sessionHandler.get().isAvailablePool(pool);
+  }
+
+  /**
+   * Checks if the session handler has available sessions which are not closed yet.
+   * 
+   * @return true if there are sessions not closed, false otherwise
+   */
+  public static boolean existsOpenedSessions() {
+    return sessionHandler.get() != null && sessionHandler.get().hasAvailablePools();
+  }
+
+  /**
+   * Returns the SessionHandler of this thread. If there is none then a new one is created.
    * 
    * @return the sessionhandler for this thread
    */
@@ -100,25 +135,22 @@ public class SessionHandler implements OBNotSingleton {
     if (sh == null) {
       log.debug("Creating sessionHandler");
       sh = getCreateSessionHandler();
-      sh.begin();
       sessionHandler.set(sh);
     }
     return sh;
   }
 
-  private static boolean checkedSessionHandlerRegistration = false;
-
   private static SessionHandler getCreateSessionHandler() {
-    if (!checkedSessionHandlerRegistration
-        && !OBProvider.getInstance().isRegistered(SessionHandler.class)) {
+    if (!OBProvider.getInstance().isRegistered(SessionHandler.class)) {
       OBProvider.getInstance().register(SessionHandler.class, SessionHandler.class, false);
     }
     return OBProvider.getInstance().get(SessionHandler.class);
   }
 
-  private Session session;
-  private Transaction tx;
-  private Connection connection;
+  private Map<String, Session> sessions = new HashMap<>();
+  private Map<String, Transaction> trxs = new HashMap<>();
+  private Map<String, Connection> connections = new HashMap<>();
+  private Set<String> availablePools = new HashSet<String>();
 
   // Sets the session handler at rollback so that the controller can rollback
   // at the end
@@ -126,35 +158,84 @@ public class SessionHandler implements OBNotSingleton {
 
   /** @return the session */
   public Session getSession() {
-    return session;
+    return getSession(DEFAULT_POOL);
+  }
+
+  /**
+   * Gets a {@code Session} from the connection pool whose name is passed as parameter. If it was
+   * not created previously, this methods returns a newly created session from that pool.
+   * 
+   * @param pool
+   *          the name of the pool used to retrieve the session
+   * @return the session
+   */
+  public Session getSession(String pool) {
+    String thePool = pool;
+    if (thePool == null) {
+      thePool = DEFAULT_POOL;
+    }
+    Session theSession = sessions.get(thePool);
+    if (theSession == null) {
+      begin(thePool);
+    }
+    return sessions.get(thePool);
+  }
+
+  /**
+   * Checks whether current session is dirty (there are remaining changes to be sent to DB). Note
+   * {@link Session#isDirty()} should not be directly invoked because it triggers Entity Persistence
+   * Observers to be executed for modified entities. This method handles it so that they are not
+   * called.
+   */
+  public boolean isSessionDirty(String pool) {
+    try {
+      checkingSessionDirty.set(true);
+      return getSession(pool).isDirty();
+    } finally {
+      checkingSessionDirty.set(false);
+    }
+  }
+
+  /**
+   * Checks dirtiness for default session.
+   * 
+   * @see SessionHandler#isSessionDirty()
+   */
+  public boolean isSessionDirty() {
+    return isSessionDirty(DEFAULT_POOL);
+  }
+
+  /** Returns true when the session is in process of checking for dirtiness. */
+  static boolean isCheckingDirtySession() {
+    return Boolean.TRUE.equals(checkingSessionDirty.get());
   }
 
   protected void setSession(Session thisSession) {
-    session = thisSession;
+    setSession(DEFAULT_POOL, thisSession);
   }
 
-  public void setConnection(Connection connection) {
-    this.connection = connection;
-  }
-
-  /** Gets current session's {@code Connection} if it's set, {@code null} if not. */
-  public Connection getConnection() {
-    return this.connection;
+  private void setSession(String pool, Session thisSession) {
+    sessions.put(pool, thisSession);
   }
 
   protected Session createSession() {
+    return createSession(DEFAULT_POOL);
+  }
+
+  private Session createSession(String pool) {
     SessionFactory sf = SessionFactoryController.getInstance().getSessionFactory();
     // Checks if the session connection has to be obtained using an external connection pool
-    if (externalConnectionPool != null && connection == null) {
+    if (externalConnectionPool != null && getConnection(pool) == null) {
       Connection externalConnection;
       try {
-        externalConnection = getNewConnection();
-        setConnection(externalConnection);
+        externalConnection = getNewConnection(pool);
+        setConnection(pool, externalConnection);
       } catch (SQLException e) {
         throw new OBException("Could not get connection to create DAL session", e);
       }
     }
 
+    Connection connection = getConnection(pool);
     if (connection != null) {
       // If the connection has been obtained using an external connection pool it is passed to
       // openSession, to prevent a new connection to be created using the Hibernate default
@@ -165,35 +246,57 @@ public class SessionHandler implements OBNotSingleton {
     }
   }
 
-  /**
-   * Returns true when the current SessionHandler has a transaction and it is active.
-   */
-  public boolean isCurrentTransactionActive() {
-    return tx != null && tx.isActive();
+  protected void closeSession() {
+    closeSession(DEFAULT_POOL);
   }
 
-  /**
-   * Begins a new Transaction on the current HibernateSession and assigns it to the SessionHandler.
-   * 
-   * @throws OBException
-   *           if there is already an available active transaction.
-   */
-  public void beginNewTransaction() throws OBException {
-    if (isCurrentTransactionActive()) {
-      throw new OBException(
-          "Not possible to start a new transaction while there is still one active.");
+  void closeSession(String pool) {
+    Session session = sessions.get(pool);
+    if (session != null) {
+      if (session.isOpen()) {
+        session.close();
+      }
+      removeSession(pool);
     }
-    tx = getSession().beginTransaction();
+  }
+
+  /** Commits all remaining sessions and closes them */
+  void cleanUpSessions() {
+    for (String pool : sessions.keySet()) {
+      commitAndCloseNoCheck(pool);
+    }
+    clearSessions();
+    clearTransactions();
+    clearConnections();
+  }
+
+  private void removeSession(String pool) {
+    sessions.remove(pool);
+  }
+
+  private void clearSessions() {
+    sessions.clear();
   }
 
   /** Gets a new {@code Connection} from the connection pool. */
   public Connection getNewConnection() throws SQLException {
+    return getNewConnection(DEFAULT_POOL);
+  }
+
+  /**
+   * Gets a new {@code Connection} from the connection pool.
+   * 
+   * @param pool
+   *          the name of the pool used to retrieve the connection
+   * @return a {@code Connection} from the specified pool
+   */
+  public Connection getNewConnection(String pool) throws SQLException {
     Connection newConnection;
     if (externalConnectionPool != null) {
-      newConnection = externalConnectionPool.getConnection();
+      newConnection = externalConnectionPool.getConnection(pool);
       try {
         // Autocommit is disabled because DAL is taking into account his logical and DAL is setting
-        // autoCommint to false to maintain transactional way of working.
+        // autoCommit to false to maintain transactional way of working.
         newConnection.setAutoCommit(false);
       } catch (SQLException e) {
         log.error("Error setting connection to auto-commit mode", e);
@@ -207,9 +310,104 @@ public class SessionHandler implements OBNotSingleton {
     return newConnection;
   }
 
-  protected void closeSession() {
-    if (session != null && session.isOpen()) {
-      session.close();
+  /** Gets current session's {@code Connection} if it's set, {@code null} if not. */
+  public Connection getConnection() {
+    // use getSession to create the session if it does not exist yet
+    // in that case, the session will be created together with a new connection
+    getSession(DEFAULT_POOL);
+    return getConnection(DEFAULT_POOL);
+  }
+
+  private Connection getConnection(String pool) {
+    return connections.get(pool);
+  }
+
+  /**
+   * Sets the connection of the default pool to be used by the handler.
+   * 
+   * @param newConnection
+   *          the connection of the default pool.
+   */
+  public void setConnection(Connection newConnection) {
+    setConnection(DEFAULT_POOL, newConnection);
+  }
+
+  private void setConnection(String pool, Connection newConnection) {
+    connections.put(pool, newConnection);
+  }
+
+  private void removeConnection(String pool) {
+    connections.remove(pool);
+  }
+
+  private void clearConnections() {
+    connections.clear();
+  }
+
+  private Transaction getTransaction(String pool) {
+    return trxs.get(pool);
+  }
+
+  private void setTransaction(String pool, Transaction newTransaction) {
+    trxs.put(pool, newTransaction);
+  }
+
+  private void removeTransaction(String pool) {
+    trxs.remove(pool);
+  }
+
+  private void clearTransactions() {
+    trxs.clear();
+  }
+
+  private void setAvailablePool(String pool) {
+    availablePools.add(pool);
+  }
+
+  private void setUnavailablePool(String pool) {
+    if (availablePools.contains(pool)) {
+      availablePools.remove(pool);
+    }
+  }
+
+  private boolean isAvailablePool(String pool) {
+    return availablePools.contains(pool);
+  }
+
+  private boolean hasAvailablePools() {
+    return !availablePools.isEmpty();
+  }
+
+  /**
+   * Returns true when the current SessionHandler has a transaction and it is active.
+   */
+  public boolean isCurrentTransactionActive() {
+    return isCurrentTransactionActive(DEFAULT_POOL);
+  }
+
+  private boolean isCurrentTransactionActive(String pool) {
+    return trxs.containsKey(pool) && trxs.get(pool).isActive();
+  }
+
+  /**
+   * Begins a new Transaction on the current HibernateSession and assigns it to the SessionHandler.
+   * 
+   * @throws OBException
+   *           if there is already an available active transaction.
+   */
+  public void beginNewTransaction() throws OBException {
+    beginNewTransaction(DEFAULT_POOL);
+  }
+
+  private void beginNewTransaction(String pool) throws OBException {
+    if (isCurrentTransactionActive(pool)) {
+      throw new OBException(
+          "Not possible to start a new transaction while there is still one active.");
+    }
+    Session session = getSession(pool);
+    if (!isCurrentTransactionActive(pool)) {
+      // getSession has returned an existing session, so just begin a new transaction
+      setTransaction(pool, session.beginTransaction());
     }
   }
 
@@ -220,10 +418,22 @@ public class SessionHandler implements OBNotSingleton {
    *          the object to persist
    */
   public void save(Object obj) {
+    save(DEFAULT_POOL, obj);
+  }
+
+  /**
+   * Saves the object in the session of the pool whose name is passed as parameter.
+   * 
+   * @param pool
+   *          the name of the pool used to retrieve the session where the object will be saved
+   * @param obj
+   *          the object to persist
+   */
+  public void save(String pool, Object obj) {
     if (Identifiable.class.isAssignableFrom(obj.getClass())) {
-      getSession().saveOrUpdate(((Identifiable) obj).getEntityName(), obj);
+      getSession(pool).saveOrUpdate(((Identifiable) obj).getEntityName(), obj);
     } else {
-      getSession().saveOrUpdate(obj);
+      getSession(pool).saveOrUpdate(obj);
     }
   }
 
@@ -234,10 +444,22 @@ public class SessionHandler implements OBNotSingleton {
    *          the object to remove
    */
   public void delete(Object obj) {
+    delete(DEFAULT_POOL, obj);
+  }
+
+  /**
+   * Delete the object from the db.
+   * 
+   * @param pool
+   *          the name of the pool used to retrieve the session where the object will be deleted
+   * @param obj
+   *          the object to remove
+   */
+  public void delete(String pool, Object obj) {
     if (Identifiable.class.isAssignableFrom(obj.getClass())) {
-      getSession().delete(((Identifiable) obj).getEntityName(), obj);
+      getSession(pool).delete(((Identifiable) obj).getEntityName(), obj);
     } else {
-      getSession().delete(obj);
+      getSession(pool).delete(obj);
     }
   }
 
@@ -250,15 +472,30 @@ public class SessionHandler implements OBNotSingleton {
    *          the id to use for querying
    * @return the retrieved object, can be null
    */
-  @SuppressWarnings("unchecked")
   public <T extends Object> T find(Class<T> clazz, Object id) {
+    return find(DEFAULT_POOL, clazz, id);
+  }
+
+  /**
+   * Queries for a certain object using the class and id. If not found then null is returned.
+   * 
+   * @param pool
+   *          the name of the pool used to obtain the connection to execute the query
+   * @param clazz
+   *          the class to query
+   * @param id
+   *          the id to use for querying
+   * @return the retrieved object, can be null
+   */
+  @SuppressWarnings("unchecked")
+  public <T extends Object> T find(String pool, Class<T> clazz, Object id) {
     // translates a class to an entityname because the hibernate
     // getSession().get method can not handle class names if the entity was
     // mapped with entitynames.
     if (Identifiable.class.isAssignableFrom(clazz)) {
-      return (T) find(DalUtil.getEntityName(clazz), id);
+      return (T) find(pool, DalUtil.getEntityName(clazz), id);
     }
-    return (T) getSession().get(clazz, (Serializable) id);
+    return (T) getSession(pool).get(clazz, (Serializable) id);
   }
 
   /**
@@ -273,7 +510,24 @@ public class SessionHandler implements OBNotSingleton {
    * @see Entity
    */
   public BaseOBObject find(String entityName, Object id) {
-    return (BaseOBObject) getSession().get(entityName, (Serializable) id);
+    return find(DEFAULT_POOL, entityName, id);
+  }
+
+  /**
+   * Queries for a certain object using the entity name and id. If not found then null is returned.
+   * 
+   * @param pool
+   *          the name of the pool used to obtain the connection to execute the query
+   * @param entityName
+   *          the name of the entity to query
+   * @param id
+   *          the id to use for querying
+   * @return the retrieved object, can be null
+   * 
+   * @see Entity
+   */
+  public BaseOBObject find(String pool, String entityName, Object id) {
+    return (BaseOBObject) getSession(pool).get(entityName, (Serializable) id);
   }
 
   /**
@@ -284,18 +538,27 @@ public class SessionHandler implements OBNotSingleton {
    * @return a new Query object
    */
   public Query createQuery(String qryStr) {
-    return getSession().createQuery(qryStr);
+    return createQuery(DEFAULT_POOL, qryStr);
+  }
+
+  private Query createQuery(String pool, String qryStr) {
+    return getSession(pool).createQuery(qryStr);
   }
 
   /**
    * Starts a transaction.
    */
   protected void begin() {
-    Check.isTrue(getSession() == null, "Session must be null before begin");
-    setSession(createSession());
-    getSession().setFlushMode(FlushMode.COMMIT);
-    Check.isTrue(tx == null, "tx must be null before begin");
-    tx = getSession().beginTransaction();
+    begin(DEFAULT_POOL);
+  }
+
+  private void begin(String pool) {
+    Check.isTrue(sessions.get(pool) == null, "Session must be null before begin");
+    setSession(pool, createSession(pool));
+    getSession(pool).setFlushMode(FlushMode.COMMIT);
+    Check.isTrue(getTransaction(pool) == null, "tx must be null before begin");
+    setTransaction(pool, getSession(pool).beginTransaction());
+    setAvailablePool(pool);
     log.debug("Transaction started");
   }
 
@@ -304,71 +567,113 @@ public class SessionHandler implements OBNotSingleton {
    * work.
    */
   public void commitAndClose() {
+    commitAndClose(DEFAULT_POOL);
+  }
+
+  /**
+   * Commits the transaction and closes the session, should normally be called at the end of all the
+   * work.
+   * 
+   * @param pool
+   *          the name of the pool which the transaction belongs.
+   */
+  public void commitAndClose(String pool) {
     boolean err = true;
     try {
       Check.isFalse(TriggerHandler.getInstance().isDisabled(),
           "Triggers disabled, commit is not allowed when in triggers-disabled mode, "
               + "call TriggerHandler.enable() before committing");
 
-      checkInvariant();
-      flushRemainingChanges();
-      if (connection == null || (connection != null && !connection.isClosed())) {
-        if (connection != null) {
-          connection.setAutoCommit(false);
-        }
-        tx.commit();
-      }
-      tx = null;
+      checkInvariant(pool);
+      flushRemainingChanges(pool);
       err = false;
-    } catch (SQLException e) {
-      log.error("Error while closing the connection", DbUtility.getUnderlyingSQLException(e));
     } finally {
       if (err) {
-        try {
-          tx.rollback();
-          tx = null;
-        } catch (Throwable t) {
-          // ignore these exception not to hide others
-        }
+        // close transaction in case checks or flush failed, other case transaction is closed in
+        // commit
+        closeTransaction(pool, err);
       }
-      try {
-        if (connection != null && !connection.isClosed()) {
-          connection.close();
-        }
-      } catch (SQLException e) {
-        log.error("Error while closing the connection", e);
-      }
-      deleteSessionHandler();
-      closeSession();
     }
-    setSession(null);
-    log.debug("Transaction closed, session closed");
+
+    commitAndCloseNoCheck(pool);
+  }
+
+  private void commitAndCloseNoCheck(String pool) {
+    boolean err = true;
+    Connection con = getConnection(pool);
+    Transaction trx = getTransaction(pool);
+    try {
+      if (con == null || !con.isClosed()) {
+        if (con != null) {
+          con.setAutoCommit(false);
+        }
+        if (trx != null && trx.isActive()) {
+          trx.commit();
+        }
+      }
+      err = false;
+    } catch (SQLException e) {
+      log.error("Error while closing the connection in pool " + pool,
+          DbUtility.getUnderlyingSQLException(e));
+    } finally {
+      closeTransaction(pool, err);
+    }
+    log.debug("Transaction closed, session closed in pool " + pool);
+  }
+
+  private void closeTransaction(String pool, boolean err) {
+    Connection con = getConnection(pool);
+    Transaction trx = getTransaction(pool);
+    if (err && trx != null) {
+      try {
+        trx.rollback();
+      } catch (Throwable t) {
+        // ignore these exception not to hide others
+      }
+    }
+    try {
+      if (con != null && !con.isClosed()) {
+        con.close();
+      }
+    } catch (SQLException e) {
+      log.error("Error while closing the connection in pool " + pool, e);
+    }
+    closeSession(pool);
+    removeTransaction(pool);
+    removeConnection(pool);
+    setUnavailablePool(pool);
   }
 
   /**
    * Commits the transaction and starts a new transaction.
    */
   public void commitAndStart() {
+    commitAndStart(DEFAULT_POOL);
+  }
+
+  private void commitAndStart(String pool) {
     Check.isFalse(TriggerHandler.getInstance().isDisabled(),
         "Triggers disabled, commit is not allowed when in triggers-disabled mode, "
             + "call TriggerHandler.enable() before committing");
 
-    checkInvariant();
-    flushRemainingChanges();
-    tx.commit();
-    tx = null;
-    tx = getSession().beginTransaction();
+    checkInvariant(pool);
+    flushRemainingChanges(pool);
+    Transaction trx = getTransaction(pool);
+    if (trx != null) {
+      trx.commit();
+    }
+    setTransaction(pool, getSession(pool).beginTransaction());
     log.debug("Committed and started new transaction");
   }
 
-  private void flushRemainingChanges() {
+  private void flushRemainingChanges(String pool) {
 
     // business event handlers can change the data
     // during flush, flush several times until
     // the session is really cleaned up
     int countFlushes = 0;
-    while (OBDal.getInstance().getSession().isDirty()) {
-      OBDal.getInstance().flush();
+    while (isSessionDirty(pool)) {
+      OBDal.getInstance(pool).flush();
       countFlushes++;
       // arbitrary point to give up...
       if (countFlushes > 100) {
@@ -379,40 +684,52 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   /**
-   * Rolls back the transaction and closes the getSession().
+   * Rolls back the transaction and closes the session.
    */
   public void rollback() {
-    log.debug("Rolling back transaction");
+    rollback(DEFAULT_POOL);
+  }
+
+  /**
+   * Rolls back the transaction and closes the session.
+   * 
+   * @param pool
+   *          the name of the pool which the transaction belongs.
+   */
+  public void rollback(String pool) {
+    log.debug("Rolling back transaction in pool " + pool);
+    Connection con = getConnection(pool);
     try {
-      checkInvariant();
-      if (connection == null || (connection != null && !connection.isClosed())) {
-        tx.rollback();
+      checkInvariant(pool);
+      if (con == null || !con.isClosed()) {
+        getTransaction(pool).rollback();
       }
-      tx = null;
     } catch (SQLException e) {
-      log.error("Error while closing the connection", e);
+      log.error("Error while closing the connection in pool " + pool, e);
     } finally {
-      deleteSessionHandler();
+      removeTransaction(pool);
+      removeConnection(pool);
+      setUnavailablePool(pool);
       try {
-        if (connection != null && !connection.isClosed()) {
-          connection.close();
+        if (con != null && !con.isClosed()) {
+          con.close();
         }
         log.debug("Closing session");
-        closeSession();
+        closeSession(pool);
       } catch (SQLException e) {
-        log.error("Error while closing the connection", e);
+        log.error("Error while closing the connection in pool " + pool, e);
       }
     }
-    setSession(null);
   }
 
   /**
    * The invariant is that for begin, rollback and commit the session etc. are alive
    */
-  private void checkInvariant() {
-    Check.isNotNull(getSession(), "Session is null");
-    Check.isNotNull(tx, "Tx is null");
-    Check.isTrue(tx.isActive(), "Tx is not active");
+  private void checkInvariant(String pool) {
+    Check.isNotNull(sessions.get(pool), "Session is null");
+    Transaction theTx = getTransaction(pool);
+    Check.isNotNull(theTx, "Tx is null");
+    Check.isTrue(theTx.isActive(), "Tx is not active");
   }
 
   /**
@@ -442,4 +759,5 @@ public class SessionHandler implements OBNotSingleton {
   public boolean doSessionInViewPatter() {
     return true;
   }
+
 }

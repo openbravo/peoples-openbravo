@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2015 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,10 +24,12 @@
 
 <SqlClass name="ReportGeneralLedgerJournalData" package="org.openbravo.erpCommon.ad_reports">
   <SqlClassComment></SqlClassComment>
-  <SqlMethod name="select" type="preparedStatement" return="multiple">
+  <SqlMethod name="select" type="preparedStatement" return="scrollable">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
+      SELECT *
+      FROM ( SELECT '0' AS RN1, B.* FROM (
       SELECT SCHEMA_ID, SCHEMA_NAME, IDENTIFIER, DATEACCT, AA.VALUE, AA.NAME, ID, AD_TABLE_ID, DOCBASETYPE,AR.NAME as DOCNAME, SEQNO, '' AS TOTAL, DESCRIPTION,
       (CASE FACTACCTTYPE WHEN 'O' THEN 1 WHEN 'N' THEN 2 WHEN 'R' THEN 3 WHEN 'D' THEN 4 ELSE 5 END) AS FACTACCTTYPE2,
       (CASE AMTACCTDR WHEN 0 THEN NULL ELSE AMTACCTDR END) AS AMTACCTDR, (CASE AMTACCTCR WHEN 0 THEN NULL ELSE AMTACCTCR END) AS AMTACCTCR, 
@@ -62,8 +64,11 @@
       HAVING (sum(F.AMTACCTDR) <> 0 OR sum(F.AMTACCTCR) <> 0)) AA
       LEFT JOIN (select * from AD_REF_LIST_V WHERE AD_REFERENCE_ID = '183'  AND AD_LANGUAGE=?) AR  ON AR.VALUE=AA.DOCBASETYPE 
       ORDER BY SCHEMA_NAME, DATEACCT, FACTACCTTYPE2, IDENTIFIER, AA.AMTACCTDR DESC, AA.AMTACCTCR DESC, SEQNO
+      ) B
+      ) C WHERE 1=1
       ]]></Sql>
     <Field name="rownum" value="count"/>
+    <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
     <Parameter name="descriptionGrouping" type="replace" optional="true" after="AS NAME, CASE WHEN " text="'Y'"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="WHERE F.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND F.AD_ORG_ID IN(" text="'1'"/>
@@ -90,11 +95,16 @@
     <!--Parameter name="closing" optional="true" type="none" after="2=2" text=" AND F.FactAcctType = 'C'"/>
     <Parameter name="regularization" optional="true" type="none" after="2=2" text=" AND F.FactAcctType = 'R'"/>
     <Parameter name="opening" optional="true" type="none" after="2=2" text=" AND F.FactAcctType = 'O'"/-->
+    <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
+    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
+    <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[ AND RN1 BETWEEN ]]></Parameter>
   </SqlMethod>
-  <SqlMethod name="selectCountGroupedLines" type="preparedStatement" return="multiple">
+  <SqlMethod name="selectCountGroupedLines" type="preparedStatement" return="scrollable">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
+      SELECT *
+      FROM ( SELECT '0' AS RN1, G.* FROM (
       SELECT COUNT(*) AS GROUPEDLINES, IDENTIFIER, SCHEMA_NAME, DATEACCT
       FROM
       (
@@ -131,8 +141,11 @@
       ) BB
       GROUP BY IDENTIFIER, SCHEMA_NAME, DATEACCT
       ORDER BY SCHEMA_NAME, DATEACCT, IDENTIFIER
+      ) G
+      ) H WHERE 1=1
       ]]></Sql>
     <Field name="rownum" value="count"/>
+    <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
     <Parameter name="adUserClient" type="replace" optional="true" after="WHERE F.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND F.AD_ORG_ID IN(" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND f.dateacct >= TO_DATE(?)]]></Parameter>
@@ -153,6 +166,9 @@
     <Parameter name="acctschema" optional="true" after="AND 3=3"><![CDATA[ AND C_ACCTSCHEMA_ID = ?]]></Parameter>
     <Parameter name="orgFamily" type="replace" optional="true" after="AND AD_ORG_ID IN(" text="'4'"/>
     <Parameter name="checks" type="replace" optional="true" after="AND FactAcctType IN (" text="'C','N','O','R','D'"/>
+    <Parameter name="pgLimit" type="argument" optional="true" after=") G"><![CDATA[LIMIT ]]></Parameter>
+    <Parameter name="oraLimit1" type="argument" optional="true" after=") G"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
+    <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[ AND RN1 BETWEEN ]]></Parameter>
   </SqlMethod>
   <SqlMethod name="selectCount" type="preparedStatement" return="string" default="0">
     <SqlMethodComment></SqlMethodComment>
@@ -222,10 +238,12 @@
       <Sql></Sql>
     <Parameter name="rownum"/>      
   </SqlMethod>
-  <SqlMethod name="selectDirect" type="preparedStatement" return="multiple">
+  <SqlMethod name="selectDirect" type="preparedStatement" return="scrollable">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
+      SELECT *
+      FROM ( SELECT '0' AS RN1, B.* FROM (
       SELECT SCHEMA_ID, SCHEMA_NAME, IDENTIFIER, DATEACCT, AA.VALUE, AA.NAME, ID, AD_TABLE_ID, DOCBASETYPE,AR.NAME as DOCNAME, SEQNO, '' AS TOTAL, DESCRIPTION,
       (CASE FACTACCTTYPE WHEN 'O' THEN 1 WHEN 'N' THEN 2 WHEN 'R' THEN 3 WHEN 'D' THEN 4 ELSE 5 END) AS FACTACCTTYPE2,
       (CASE AMTACCTDR WHEN 0 THEN NULL ELSE AMTACCTDR END) AS AMTACCTDR, (CASE AMTACCTCR WHEN 0 THEN NULL ELSE AMTACCTCR END) AS AMTACCTCR,
@@ -246,8 +264,11 @@
       HAVING (sum(F.AMTACCTDR) <> 0 OR sum(F.AMTACCTCR) <> 0)) AA
       LEFT JOIN (select * from AD_REF_LIST_V WHERE AD_REFERENCE_ID = '183'  AND AD_LANGUAGE=?) AR  ON AR.VALUE=AA.DOCBASETYPE 
       ORDER BY SCHEMA_NAME, DATEACCT, FACTACCTTYPE2, IDENTIFIER, AA.AMTACCTDR DESC, AA.AMTACCTCR DESC, SEQNO
+      ) B
+      ) C WHERE 1=1
       ]]></Sql>
     <Field name="rownum" value="count"/>
+    <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
     <Parameter name="descriptionGrouping" type="replace" optional="true" after="AS NAME, CASE WHEN " text="'Y'"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="WHERE F.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND F.AD_ORG_ID IN(" text="'1'"/>
@@ -258,6 +279,9 @@
     <Parameter name="cAcctshemaId"></Parameter>
     <Parameter name="descriptionGrouping" type="replace" optional="true" after="F.ACCTDESCRIPTION, CASE WHEN " text="'Y'"/>
     <Parameter name="paramLanguage"></Parameter>
+    <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
+    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
+    <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[ AND RN1 BETWEEN ]]></Parameter>
   </SqlMethod>
   <SqlMethod name="selectCountDirect" type="preparedStatement" return="string" default="0">
     <SqlMethodComment></SqlMethodComment>
@@ -289,7 +313,7 @@
     <Parameter name="dateAcct"/>
     <Parameter name="factAcctGroupId"/>
   </SqlMethod>
-  <SqlMethod name="selectDirect2" type="preparedStatement" return="multiple">
+  <SqlMethod name="selectDirect2" type="preparedStatement" return="scrollable">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[

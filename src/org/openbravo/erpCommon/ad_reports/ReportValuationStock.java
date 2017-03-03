@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +39,7 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReport;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -147,6 +149,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     String processTime = null;
     String strCostType = null;
     Set<String> orgs = null;
+    Set<String> warehouseIds = null;
+    String strWarehouseIncluded = null;
     try {
       Organization filterOrg = OBDal.getInstance().get(Organization.class, strOrganization);
       OrganizationStructureProvider osp = OBContext.getOBContext()
@@ -190,22 +194,32 @@ public class ReportValuationStock extends HttpSecureAppServlet {
         strMaxAggDate = OBDateUtils.formatDate(maxAggDate);
       }
       String dateFormat = "DD-MM-YYYY HH24:MI:SS";
+      warehouseIds = new HashSet<String>();
+      if (StringUtils.isEmpty(strWarehouse)) {
+        warehouseIds.addAll(getWarehouses(vars.getClient(), strOrganization));
+      } else {
+        warehouseIds.add(strWarehouse);
+      }
+      if (!warehouseIds.isEmpty()) {
+        strWarehouseIncluded = "(" + Utility.getInStrSet(warehouseIds) + ")";
+      }
       if (strCostType != null && !isWarehouseConsolidation) {
         data = ReportValuationStockData.select(this, vars.getLanguage(), strCurrencyId,
             strLegalEntity, strDateNext, strMaxAggDate, processTime, dateFormat, orgIds,
-            strWarehouse, strCostOrg, strCostClientId, strCostType, strCategoryProduct);
+            strWarehouseIncluded, strCostOrg, strCostClientId, strCostType, strCategoryProduct);
       } else if (strCostType == null && !isWarehouseConsolidation) {
         data = ReportValuationStockData.selectWithoutCost(this, vars.getLanguage(), strCurrencyId,
             strLegalEntity, strDateNext, strMaxAggDate, processTime, dateFormat, orgIds,
-            strWarehouse, strCategoryProduct);
+            strWarehouseIncluded, strCategoryProduct);
       } else if (strCostType != null && isWarehouseConsolidation) {
         data = ReportValuationStockData.selectClusteredByWarehouse(this, vars.getLanguage(),
             strDateNext, strLegalEntity, strCurrencyId, strMaxAggDate, processTime, dateFormat,
-            orgIds, strWarehouse, strCategoryProduct, strCostOrg, strCostClientId, strCostType);
+            orgIds, strWarehouseIncluded, strCategoryProduct, strCostOrg, strCostClientId,
+            strCostType);
       } else {
         data = ReportValuationStockData.selectClusteredByWarehouseWithoutCost(this,
             vars.getLanguage(), strCurrencyId, strLegalEntity, strDateNext, strMaxAggDate,
-            processTime, dateFormat, orgIds, strWarehouse, strCategoryProduct);
+            processTime, dateFormat, orgIds, strWarehouseIncluded, strCategoryProduct);
       }
 
     } catch (Exception ex) {
@@ -486,7 +500,7 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     renderJR(vars, response, strReportName, "pdf", parameters, data, null);
   }
 
-  private CostingRule getLEsCostingAlgortithm(Organization legalEntity) {
+  public static CostingRule getLEsCostingAlgortithm(Organization legalEntity) {
     StringBuffer where = new StringBuffer();
     where.append(" as cosrule");
     where.append(" where cosrule." + CostingRule.PROPERTY_ORGANIZATION + ".id = :org");
@@ -561,6 +575,21 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     }
     whereQry.setMaxResult(1);
     return whereQry.uniqueResult() != null;
+  }
+
+  @SuppressWarnings("unchecked")
+  private List<String> getWarehouses(String clientId, String orgId) {
+    final OrganizationStructureProvider osp = OBContext.getOBContext()
+        .getOrganizationStructureProvider(clientId);
+    final StringBuilder hqlString = new StringBuilder();
+    hqlString.append("select e.id ");
+    hqlString.append(" from Warehouse as e");
+    hqlString.append(" where e.organization.id in (:orgList)");
+    hqlString.append(" and e.client.id = :clientId");
+    Query qry = OBDal.getInstance().getSession().createQuery(hqlString.toString());
+    qry.setParameterList("orgList", osp.getNaturalTree(orgId));
+    qry.setParameter("clientId", clientId);
+    return (List<String>) qry.list();
   }
 
   public String getServletInfo() {

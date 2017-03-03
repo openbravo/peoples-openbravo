@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -53,8 +53,8 @@ public class LinkUIDefinition extends UIDefinition {
     if (field.getColumn().getDBColumnName().compareToIgnoreCase("documentno") == 0) {
       length = new Long(20);
     }
-    return getShowHoverGridFieldSettings(field) + ", length: " + length + ", displaylength:"
-        + displaylength + super.getGridFieldProperties(field);
+    return ", length: " + length + ", displaylength:" + displaylength
+        + super.getGridFieldProperties(field);
   }
 
   @Override

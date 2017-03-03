@@ -62,6 +62,7 @@
       </foreign-key>
       <index name="M_LC_RECEIPT_INOUT" unique="false">
         <index-column name="M_INOUT_ID"/>
+        <whereClause><![CDATA[M_INOUT_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="M_LC_RECEIPT_INOUTLINE" unique="false">
         <index-column name="M_INOUTLINE_ID"/>

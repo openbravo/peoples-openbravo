@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import org.openbravo.advpaymentmngt.test.DocumentNumberGeneration;
 import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.base.weld.test.testinfrastructure.DalPersistanceEventTest;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
+import org.openbravo.client.application.test.ADCSInitialization;
 import org.openbravo.client.application.test.ApplicationTest;
 import org.openbravo.client.application.test.DisplayLogicAtServerLevelTest;
 import org.openbravo.client.application.test.DynamicExpressionParserTest;
@@ -32,6 +33,7 @@ import org.openbravo.client.application.test.GenerateTypesJSTest;
 import org.openbravo.client.application.test.MenuTemplateTest;
 import org.openbravo.client.application.test.MenuTest;
 import org.openbravo.client.application.test.event.DatasourceEventObserver;
+import org.openbravo.client.application.test.event.PersistanceObserver;
 import org.openbravo.client.kernel.freemarker.test.FreemarkerTemplateProcessorTest;
 import org.openbravo.client.kernel.freemarker.test.GenerateComponentTest;
 import org.openbravo.client.kernel.freemarker.test.LabelTest;
@@ -138,7 +140,9 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ReadByNameTest.class, //
     AdminContextTest.class, //
     ViewTest.class, //
-    ComputedColumnsTest.class,
+    ComputedColumnsTest.class, //
+    DatasourceEventObserver.class, //
+    PersistanceObserver.class, //
 
     // expression
     EvaluationTest.class,
@@ -149,7 +153,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     UniqueConstraintTest.class, //
     ClassLoaderTest.class, //
     IndexesTest.class, //
-    TrlColumnsOraTypeTest.class,
+    TrlColumnsOraTypeTest.class, //
+    ADCSInitialization.class,
 
     // modularity
     DatasetServiceTest.class, //
@@ -211,7 +216,6 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     GenerateTypesJSTest.class, //
     MenuTest.class, //
     MenuTemplateTest.class, //
-    DatasourceEventObserver.class, //
     DisplayLogicAtServerLevelTest.class, //
 
     // client kernel

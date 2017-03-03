@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,7 +63,7 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
   @Test
   public void testACreateCountryTrl() {
     setSystemAdministratorContext();
-    final Country country = getCountry("Norway");
+    final Country country = getCountryByCode("NO");
     final OBCriteria<CountryTrl> obc = OBDal.getInstance().createCriteria(CountryTrl.class);
     obc.add(Restrictions.eq("country", country));
     final List<CountryTrl> countryTrls = obc.list();
@@ -104,7 +104,7 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
     setTestAdminContext();
 
     // read countrytrl
-    String xml = exportClass(CountryTrl.class, "country", getCountry("Norway"));
+    String xml = exportClass(CountryTrl.class, "country", getCountryByCode("NO"));
 
     // change the id
     xml = xml.replaceAll("<CountryTrl id=\"..", "<CountryTrl id=\"1k");
@@ -129,10 +129,11 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
     }
   }
 
-  private Country getCountry(String name) {
+  private Country getCountryByCode(String name) {
     final OBCriteria<Country> obc = OBDal.getInstance().createCriteria(Country.class);
-    obc.add(Restrictions.eq("name", name));
-    return obc.list().get(0);
+    // has unique constraint
+    obc.add(Restrictions.eq("iSOCountryCode", name));
+    return (Country) obc.uniqueResult();
   }
 
   private <T extends BaseOBObject> String exportClass(Class<T> clz, String field, Object value) {

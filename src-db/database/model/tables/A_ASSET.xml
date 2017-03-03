@@ -291,6 +291,7 @@
       </foreign-key>
       <index name="A_ASSET_BPARTNER_IDX" unique="false">
         <index-column name="C_BPARTNER_ID"/>
+        <whereClause><![CDATA[C_BPARTNER_ID IS NOT NULL]]></whereClause>
       </index>
       <check name="A_ASSET_IS30DAYMONTH_CHK"><![CDATA[IS30DAYMONTH IN ('Y', 'N')]]></check>
       <check name="A_ASSET_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

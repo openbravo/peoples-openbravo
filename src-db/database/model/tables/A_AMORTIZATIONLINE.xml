@@ -109,6 +109,7 @@
       </index>
       <index name="A_AMORTIZATIONLINE_ASSET_IDX" unique="false">
         <index-column name="A_ASSET_ID"/>
+        <whereClause><![CDATA[A_ASSET_ID IS NOT NULL]]></whereClause>
       </index>
       <check name="A_AMORTIZATIONL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

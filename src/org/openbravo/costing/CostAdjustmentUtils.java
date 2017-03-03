@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -91,7 +91,7 @@ public class CostAdjustmentUtils {
         .getLegalEntity(org);
 
     CostAdjustment costAdjustment = OBProvider.getInstance().get(CostAdjustment.class);
-    costAdjustment.setOrganization(orgLegal != null ? orgLegal : org);
+    costAdjustment.setOrganization(orgLegal);
     costAdjustment.setDocumentType(docType);
     costAdjustment.setDocumentNo(docNo);
     costAdjustment.setReferenceDate(new Date());
@@ -121,7 +121,7 @@ public class CostAdjustmentUtils {
       Date accountingDate) {
     Long stdPrecission = transaction.getCurrency().getStandardPrecision();
     CostAdjustmentLine costAdjustmentLine = OBProvider.getInstance().get(CostAdjustmentLine.class);
-    costAdjustmentLine.setOrganization(transaction.getOrganization());
+    costAdjustmentLine.setOrganization(costAdjustmentHeader.getOrganization());
     costAdjustmentLine.setCostAdjustment(costAdjustmentHeader);
     if (costAdjusted == null) {
       costAdjustmentLine.setAdjustmentAmount(null);

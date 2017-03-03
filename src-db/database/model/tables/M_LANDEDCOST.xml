@@ -91,6 +91,7 @@
       </foreign-key>
       <index name="M_LANDEDCOST_COSTADJ" unique="false">
         <index-column name="M_COSTADJUSTMENT_ID"/>
+        <whereClause><![CDATA[M_COSTADJUSTMENT_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="M_LANDEDCOST_POSTED" unique="false">
         <index-column name="POSTED"/>

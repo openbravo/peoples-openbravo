@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C)2016 Openbravo SLU 
+ * All portions are Copyright (C)2016-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,15 +33,17 @@ import org.junit.Test;
  * 
  */
 public class JSONWebServicesWhereParameter extends BaseWSTest {
+  private static final String SPAIN_ID = "106";
 
   @Test
   public void WebserviceWithWhereParameter() throws Exception {
     JSONWebServices jws = new JSONWebServices();
-    JSONObject resp = new JSONObject(jws.request("Country", null, "_where=name='Spain'", "GET"))
-        .getJSONObject("response");
+    JSONObject resp = new JSONObject(
+        jws.request("Country", null, "_where=iSOCountryCode='ES'", "GET"))
+            .getJSONObject("response");
     assertThat("Total Rows", resp.getInt("totalRows"), is(1));
     JSONObject firstRecord = resp.getJSONArray("data").getJSONObject(0);
-    assertThat("Spanish Country", firstRecord.getString("_identifier"), is(equalTo("Spain")));
+    assertThat("Spanish Country", firstRecord.getString("id"), is(equalTo(SPAIN_ID)));
     assertThat("Sucess status", resp.getInt("status"), is(0));
   }
 }

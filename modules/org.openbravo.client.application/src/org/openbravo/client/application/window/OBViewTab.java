@@ -757,7 +757,6 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public class ButtonField {
-    private static final String AD_DEF_ERROR = "AD definition error: process parameter (%s) is using %s reference without %s";
     private String id;
     private String label;
     private String url;
@@ -803,9 +802,6 @@ public class OBViewTab extends BaseTemplateComponent {
         if ("OBUIAPP_PickAndExecute".equals(uiPattern)) {
           // TODO: modal should be a parameter in the process definition?
           modal = false;
-          for (org.openbravo.client.application.Parameter p : newProcess.getOBUIAPPParameterList()) {
-            processParameter(p);
-          }
         }
       } else if (column.getProcess() != null) {
         process = column.getProcess();
@@ -845,6 +841,7 @@ public class OBViewTab extends BaseTemplateComponent {
 
       if (labelValues == null) {
         labelValues = new ArrayList<Value>();
+
         if (column.getReferenceSearchKey() != null) {
           for (org.openbravo.model.ad.domain.List valueList : column.getReferenceSearchKey()
               .getADListList()) {
@@ -871,20 +868,6 @@ public class OBViewTab extends BaseTemplateComponent {
         if (parser.getSessionAttributes().size() > 0) {
           sessionLogic = true;
         }
-      }
-    }
-
-    private void processParameter(org.openbravo.client.application.Parameter p) {
-      if (p.getReference().getId().equals(ApplicationConstants.BUTTON_LIST_REFERENCE_ID)) {
-        labelValues = new ArrayList<Value>();
-        for (org.openbravo.model.ad.domain.List valueList : p.getReferenceSearchKey()
-            .getADListList()) {
-          labelValues.add(new Value(valueList));
-        }
-        if (labelValues.size() == 0) {
-          log.error(String.format(AD_DEF_ERROR, p.getId(), "Button List", "a list associated"));
-        }
-        return;
       }
     }
 

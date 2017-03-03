@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,19 +19,16 @@
 
 package org.openbravo.test.dal;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.engine.SessionImplementor;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -148,7 +145,7 @@ public class DalPerformanceCriteriaTest extends OBBaseTest {
 
     public int doCriteriaQry() {
       final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-      obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "USD"));
+      obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, DOLLAR));
       if (doScroll) {
         final ScrollableResults r = obc.scroll(ScrollMode.FORWARD_ONLY);
         int cnt = 0;
@@ -382,7 +379,7 @@ public class DalPerformanceCriteriaTest extends OBBaseTest {
         bp.setName(name.toString());
         bp.setSearchKey(key.toString());
 
-        final Category category = (Category) getProxy(Category.ENTITY_NAME, TEST_BP_CATEGORY_ID);
+        final Category category = OBDal.getInstance().getProxy(Category.class, TEST_BP_CATEGORY_ID);
         bp.setBusinessPartnerCategory(category);
 
         OBDal.getInstance().save(bp);
@@ -401,26 +398,6 @@ public class DalPerformanceCriteriaTest extends OBBaseTest {
     } catch (Exception e) {
       throw new OBException(e);
     }
-  }
-
-  /**
-   * Will return a non-loaded hibernate proxy if the object was not already loaded by hibernate.
-   * 
-   * NOTE/BEWARE: this method will not check if the object actually exists in the database. This
-   * will detected when persisting a referencing object or when this proxy gets initialized!
-   * 
-   * This method differs from other get methods in this class, these methods will always eagerly
-   * load the object and thereby also immediately check the existence of these referenced objects.
-   * 
-   * @param entityName
-   *          the type of object to search for
-   * @param id
-   *          the id of the object
-   * @return the object, or null if none found
-   */
-  private BaseOBObject getProxy(String entityName, Object id) {
-    return (BaseOBObject) ((SessionImplementor) OBDal.getInstance().getSession()).internalLoad(
-        entityName, (Serializable) id, false, false);
   }
 
   /*

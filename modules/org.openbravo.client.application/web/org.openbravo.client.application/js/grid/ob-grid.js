@@ -357,9 +357,31 @@ isc.OBGrid.addProperties({
   },
 
   startEditingNew: function (rowNum) {
-    var ret = this.Super('startEditingNew', arguments);
+    var ret;
+    if (this.getEditRecord() && this.isRequiredFieldWithNoValue()) {
+      return;
+    }
+    ret = this.Super('startEditingNew', arguments);
     this.recomputeCanvasComponents(rowNum + 1);
     return ret;
+  },
+
+  isRequiredFieldWithNoValue: function () {
+    var fields, i, field, requiredWithNoValue;
+    fields = this.fields;
+    requiredWithNoValue = false;
+    for (i = 0; i < fields.length; i++) {
+      field = fields[i];
+      if (field.required && this.getEditRecord() && this.isEmptyFieldValue(field)) {
+        requiredWithNoValue = true;
+        break;
+      }
+    }
+    return requiredWithNoValue;
+  },
+
+  isEmptyFieldValue: function (field) {
+    return this.getEditRecord()[field.name] === undefined || this.getEditRecord()[field.name] === null;
   },
 
   formatLinkValue: function (record, field, colNum, rowNum, value) {

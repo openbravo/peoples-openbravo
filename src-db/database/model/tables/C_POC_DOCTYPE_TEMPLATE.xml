@@ -80,6 +80,7 @@
       </foreign-key>
       <index name="C_POC_DOCTYPE_TEMP_DOCTYPE_IDX" unique="false">
         <index-column name="C_DOCTYPE_ID"/>
+        <whereClause><![CDATA[C_DOCTYPE_ID IS NOT NULL]]></whereClause>
       </index>
       <check name="C_POC_DOCTYPETEMP_SHOWCOMP_CHK"><![CDATA[SHOWCOMPANYDATA IN ('Y', 'N')]]></check>
       <check name="C_POC_DOCTYPETEMP_SHOWLOGO_CHK"><![CDATA[SHOWLOGO IN ('Y', 'N')]]></check>

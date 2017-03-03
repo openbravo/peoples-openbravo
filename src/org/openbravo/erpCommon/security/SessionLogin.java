@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,6 +31,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.access.User;
@@ -142,6 +143,7 @@ public class SessionLogin {
       session.setLoginStatus(status);
       session.setUsername(username);
       OBDal.getInstance().save(session);
+      SessionInfo.auditThisThread(false);
       OBDal.getInstance().commitAndClose();
       setSessionID(session.getId());
       return 1;

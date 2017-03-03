@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2014 Openbravo SLU
+ * All portions are Copyright (C) 2012-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -137,6 +137,20 @@ isc.OBMultiSelectorItem.addProperties({
       };
 
       this.selectorWindow.selectorGrid.recordDoubleClick = function (viewer, record, recordnum, field, fieldnum) {};
+
+      // overridden to support hover on the header for the checkbox field
+      this.selectorWindow.selectorGrid.setFieldProperties = function (field, properties) {
+        var localField = field;
+        if (isc.isA.Number(localField)) {
+          localField = this.fields[localField];
+        }
+        if (this.isCheckboxField(localField) && properties) {
+          properties.showHover = true;
+          properties.prompt = OB.I18N.getLabel('OBUIAPP_GridSelectAllColumnPrompt');
+        }
+
+        return this.Super('setFieldProperties', arguments);
+      };
     }
 
     this.optionCriteria = {

@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -108,11 +108,11 @@
       <Parameter name="processTime"/>
       <Parameter name="dateTimeFormat"/>
       <Parameter name="organization" type="replace" optional="true" after="AND trx.ad_org_id IN (" text="'1'"/>
-      <Parameter name="warehouse" optional="true" after="AND 0=0"><![CDATA[ AND l.M_WAREHOUSE_ID = ? ]]></Parameter>
+      <Parameter name="warehouse" type="argument" optional="true" after="AND 0=0"><![CDATA[ AND l.M_WAREHOUSE_ID IN ]]></Parameter>
       <Parameter name="datePlus"/>
       <Parameter name="organization" type="replace" optional="true" after="AND agg2.ad_org_id IN (" text="'1'"/>
       <Parameter name="organization" type="replace" optional="true" after="AND agg.ad_org_id IN (" text="'1'"/>
-      <Parameter name="warehouse" optional="true" after="AND 3=3"><![CDATA[ AND l.M_WAREHOUSE_ID = ? ]]></Parameter>
+      <Parameter name="warehouse" type="argument" optional="true" after="AND 3=3"><![CDATA[ AND l.M_WAREHOUSE_ID IN ]]></Parameter>
       <Parameter name="datePlus"/>
       <Parameter name="costOrg" optional="true" after="AND 2 = 2"><![CDATA[ AND mc2.AD_ORG_ID IN (?,'0') ]]></Parameter>
       <Parameter name="costClient" optional="true" after="AND 2 = 2"><![CDATA[ AND mc2.ad_client_id = ? ]]></Parameter>
@@ -235,12 +235,12 @@
       <Parameter name="processTime"/>
       <Parameter name="dateTimeFormat"/>
       <Parameter name="organization" type="replace" optional="true" after="AND trx.ad_org_id IN (" text="'1'"/>
-      <Parameter name="warehouse" optional="true" after="AND 0 = 0"><![CDATA[ AND l.M_WAREHOUSE_ID = ? ]]></Parameter>
+      <Parameter name="warehouse" type="argument" optional="true" after="AND 0 = 0"><![CDATA[ AND l.M_WAREHOUSE_ID IN ]]></Parameter>
       <Parameter name="categoryProduct" optional="true" after="AND 0 = 0"><![CDATA[ AND p.M_PRODUCT_CATEGORY_ID= ? ]]></Parameter>
       <Parameter name="datePlus"/>
       <Parameter name="organization" type="replace" optional="true" after="AND agg2.ad_org_id IN (" text="'1'"/>
       <Parameter name="organization" type="replace" optional="true" after="AND agg.ad_org_id IN (" text="'1'"/>
-      <Parameter name="warehouse" optional="true" after="AND 8=8"><![CDATA[ AND l.M_WAREHOUSE_ID = ? ]]></Parameter>
+      <Parameter name="warehouse" type="argument" optional="true" after="AND 8=8"><![CDATA[ AND l.M_WAREHOUSE_ID IN ]]></Parameter>
       <Parameter name="categoryProduct" optional="true" after="AND 8=8"><![CDATA[ AND p.M_PRODUCT_CATEGORY_ID= ? ]]></Parameter>
       <Parameter name="categoryProduct" optional="true" after="WHERE 1 = 1"><![CDATA[ AND pc.M_PRODUCT_CATEGORY_ID= ? ]]></Parameter>
       <Parameter name="datePlus"/>
@@ -261,7 +261,7 @@
       <Parameter name="processTime"/>
       <Parameter name="dateTimeFormat"/>
       <Parameter name="organization" type="replace" optional="true" after="AND  trx.ad_org_id IN (" text="'2'"/>
-      <Parameter name="warehouse" optional="true" after="AND 2 = 2"><![CDATA[ AND l.M_WAREHOUSE_ID = ? ]]></Parameter>
+      <Parameter name="warehouse" type="argument" optional="true" after="AND 2 = 2"><![CDATA[ AND l.M_WAREHOUSE_ID IN ]]></Parameter>
       <Parameter name="categoryProduct" optional="true" after="AND 2 = 2"><![CDATA[ AND p.M_PRODUCT_CATEGORY_ID= ? ]]></Parameter>
       <Parameter name="cCurrencyConv"/>
       <Parameter name="datePlus"/>
@@ -341,11 +341,11 @@
       <Parameter name="processTime"/>
       <Parameter name="dateTimeFormat"/>
       <Parameter name="organization" type="replace" optional="true" after="AND trx.ad_org_id IN (" text="'1'"/>
-      <Parameter name="warehouse" optional="true" after="AND 0=0"><![CDATA[ AND l.M_WAREHOUSE_ID = ? ]]></Parameter>
+      <Parameter name="warehouse" type="argument" optional="true" after="AND 0=0"><![CDATA[ AND l.M_WAREHOUSE_ID IN ]]></Parameter>
       <Parameter name="datePlus"/>
       <Parameter name="organization" type="replace" optional="true" after="AND agg2.ad_org_id IN (" text="'1'"/>
       <Parameter name="organization" type="replace" optional="true" after="AND agg.ad_org_id IN (" text="'1'"/>
-      <Parameter name="warehouse" optional="true" after="AND 2=2"><![CDATA[ AND l.M_WAREHOUSE_ID = ? ]]></Parameter>
+      <Parameter name="warehouse" type="argument" optional="true" after="AND 2=2"><![CDATA[ AND l.M_WAREHOUSE_ID IN ]]></Parameter>
       <Parameter name="categoryProduct" optional="true" after="AND   1 = 1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_CATEGORY_ID= ? ]]></Parameter>
   </SqlMethod>
   
@@ -443,12 +443,12 @@
       <Parameter name="processTime"/>
       <Parameter name="dateTimeFormat"/>
       <Parameter name="organization" type="replace" optional="true" after="AND trx.ad_org_id IN (" text="'1'"/>
-      <Parameter name="warehouse" optional="true" after="AND 0 = 0"><![CDATA[ AND l.M_WAREHOUSE_ID = ? ]]></Parameter>
+      <Parameter name="warehouse" type="argument" optional="true" after="AND 0 = 0"><![CDATA[ AND l.M_WAREHOUSE_ID IN ]]></Parameter>
       <Parameter name="categoryProduct" optional="true" after="AND 0 = 0"><![CDATA[ AND p.M_PRODUCT_CATEGORY_ID= ? ]]></Parameter>
       <Parameter name="datePlus"/>
       <Parameter name="organization" type="replace" optional="true" after="AND agg2.ad_org_id IN (" text="'1'"/>
       <Parameter name="organization" type="replace" optional="true" after="AND agg.ad_org_id IN (" text="'1'"/>
-      <Parameter name="warehouse" optional="true" after="AND 4=4"><![CDATA[ AND l.M_WAREHOUSE_ID = ? ]]></Parameter>
+      <Parameter name="warehouse" type="argument" optional="true" after="AND 4=4"><![CDATA[ AND l.M_WAREHOUSE_ID IN ]]></Parameter>
       <Parameter name="categoryProduct" optional="true" after="AND 4=4"><![CDATA[ AND p.M_PRODUCT_CATEGORY_ID= ? ]]></Parameter>
       <Parameter name="categoryProduct" optional="true" after="WHERE 1 = 1"><![CDATA[ AND pc.M_PRODUCT_CATEGORY_ID= ? ]]></Parameter>
       <Parameter name="cCurrencyConv"/>
@@ -458,7 +458,7 @@
       <Parameter name="processTime"/>
       <Parameter name="dateTimeFormat"/>
       <Parameter name="organization" type="replace" optional="true" after="AND  trx.ad_org_id IN (" text="'2'"/>
-      <Parameter name="warehouse" optional="true" after="AND 2 = 2"><![CDATA[ AND l.M_WAREHOUSE_ID = ? ]]></Parameter>
+      <Parameter name="warehouse" type="argument" optional="true" after="AND 2 = 2"><![CDATA[ AND l.M_WAREHOUSE_ID IN ]]></Parameter>
       <Parameter name="categoryProduct" optional="true" after="AND 2 = 2"><![CDATA[ AND p.M_PRODUCT_CATEGORY_ID= ? ]]></Parameter>
       <Parameter name="cCurrencyConv"/>
       <Parameter name="categoryProduct" optional="true" after="WHERE 3 = 3"><![CDATA[ AND pc.M_PRODUCT_CATEGORY_ID= ? ]]></Parameter>

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -64,6 +64,11 @@ public class WidgetInFormUIDefinition extends UIDefinition {
       widgetLog.error(e.getMessage(), e);
       return fieldProperties;
     }
+  }
+
+  @Override
+  public boolean showHover() {
+    return false;
   }
 
 }

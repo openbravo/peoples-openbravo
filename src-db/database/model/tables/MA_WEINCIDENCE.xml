@@ -74,6 +74,7 @@
       </foreign-key>
       <index name="MA_WEINCIDENCE_PRODPLAN_IDX" unique="false">
         <index-column name="M_PRODUCTIONPLAN_ID"/>
+        <whereClause><![CDATA[M_PRODUCTIONPLAN_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="MA_WEINCIDENCE_PRODUCTION_IDX" unique="false">
         <index-column name="M_PRODUCTION_ID"/>

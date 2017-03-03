@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,8 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import org.apache.log4j.Logger;
+import org.openbravo.authentication.AuthenticationManager;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.SessionInfo;
 
@@ -113,36 +115,40 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
     SessionListener.context = event.getServletContext();
 
     ConnectionProvider cp = (ConnectionProvider) context.getAttribute("openbravoPool");
-
     try {
-      // Mark as inactive those sessions that were active and didn't send any ping during last
-      // 120secs. And those ones that didn't send any ping and were created at least 1 day ago.
-      // This is similar to what is done in ActivationKey.deactivateTimeOutSessions but for all
-      // types of sessions.
-      Calendar cal = Calendar.getInstance();
-      cal.add(Calendar.SECOND, (-1) * PING_TIMEOUT_SECS);
+      try {
+        // Mark as inactive those sessions that were active and didn't send any ping during last
+        // 120secs. And those ones that didn't send any ping and were created at least 1 day ago.
+        // This is similar to what is done in ActivationKey.deactivateTimeOutSessions but for all
+        // types of sessions.
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.SECOND, (-1) * PING_TIMEOUT_SECS);
 
-      String strDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(cal.getTime());
-      long t = System.currentTimeMillis();
-      int deactivatedSessions = SessionLoginData.deactivateExpiredSessions(cp, strDate);
-      log.debug("Deactivated " + deactivatedSessions
-          + " old session(s) while starting server. Took: " + (System.currentTimeMillis() - t)
-          + "ms.");
-    } catch (Exception e) {
-      log.error("Error deactivating expired sessions", e);
-    }
+        String strDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(cal.getTime());
+        long t = System.currentTimeMillis();
+        int deactivatedSessions = SessionLoginData.deactivateExpiredSessions(cp, strDate);
+        log.debug("Deactivated " + deactivatedSessions
+            + " old session(s) while starting server. Took: " + (System.currentTimeMillis() - t)
+            + "ms.");
+      } catch (Exception e) {
+        log.error("Error deactivating expired sessions", e);
+      }
 
-    // Decide whether audit trail is active
-    try {
-      SessionInfo.setAuditActive(SessionLoginData.isAudited(cp));
-    } catch (Exception e) {
-      log.error("Error activating audit trail", e);
-    }
+      // Decide whether audit trail is active
+      try {
+        SessionInfo.setAuditActive(SessionLoginData.isAudited(cp));
+      } catch (Exception e) {
+        log.error("Error activating audit trail", e);
+      }
 
-    try {
-      SessionInfo.setUsageAuditActive(SessionLoginData.isUsageAuditEnabled(cp));
-    } catch (Exception e) {
-      log.error("Error activating usage audit", e);
+      try {
+        SessionInfo.setUsageAuditActive(SessionLoginData.isUsageAuditEnabled(cp));
+      } catch (Exception e) {
+        log.error("Error activating usage audit", e);
+      }
+    } finally {
+      // detaching db connection from thread so can it be returned to pool
+      SessionInfo.init();
     }
   }
 
@@ -150,6 +156,11 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
   public void sessionCreated(HttpSessionEvent event) {
     synchronized (activeHttpSessions) {
       activeHttpSessions.add(event.getSession());
+    }
+
+    if (RequestContext.get().getRequest() != null
+        && AuthenticationManager.isStatelessRequest(RequestContext.get().getRequest())) {
+      log.error("Request is stateless, still a session is created ", new Exception());
     }
 
     log.debug("Session created. Active sessions count: " + activeHttpSessions.size());

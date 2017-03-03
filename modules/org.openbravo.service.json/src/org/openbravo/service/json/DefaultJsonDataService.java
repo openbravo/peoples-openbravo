@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -605,6 +605,7 @@ public class DefaultJsonDataService implements JsonDataService {
             || key.equals(JsonConstants.WHERE_PARAMETER)
             || key.equals(JsonConstants.WHERE_AND_FILTER_CLAUSE)
             || key.equals(JsonConstants.ORG_PARAMETER)
+            || key.equals(JsonConstants.CALCULATE_ORGS)
             || key.equals(JsonConstants.TARGETRECORDID_PARAMETER)
             || (key.startsWith(DataEntityQueryService.PARAM_DELIMITER) && key
                 .endsWith(DataEntityQueryService.PARAM_DELIMITER))
@@ -756,18 +757,22 @@ public class DefaultJsonDataService implements JsonDataService {
       if (!rowClient.equals(currentClientId)) {
         jsonObject.put("_readOnly", true);
       } else {
-        boolean writable = false;
-        for (String orgId : OBContext.getOBContext().getWritableOrganizations()) {
-          if (orgId.equals(rowOrganization)) {
-            writable = true;
-            break;
-          }
+        boolean writable = OBContext.getOBContext().getWritableOrganizations()
+            .contains(rowOrganization);
+        if (!writable && isOrganizationEntity(jsonObject)) {
+          writable = OBContext.getOBContext().getDeactivatedOrganizations()
+              .contains(rowOrganization);
         }
         if (!writable) {
           jsonObject.put("_readOnly", true);
         }
       }
     }
+  }
+
+  private boolean isOrganizationEntity(JSONObject json) throws JSONException {
+    return json.has(JsonConstants.ENTITYNAME)
+        && Organization.ENTITY_NAME.equals(json.get(JsonConstants.ENTITYNAME));
   }
 
   /**
@@ -925,7 +930,7 @@ public class DefaultJsonDataService implements JsonDataService {
         // flush again before refreshing, refreshing can
         // potentially remove any in-memory changes
         int countFlushes = 0;
-        while (OBDal.getInstance().getSession().isDirty()) {
+        while (OBDal.getInstance().isSessionDirty()) {
           OBDal.getInstance().flush();
           countFlushes++;
           // arbitrary point to give up...

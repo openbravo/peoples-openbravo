@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -68,6 +68,8 @@ public class SessionInfo {
    */
   private static ThreadLocal<String> moduleId = new ThreadLocal<String>();
 
+  private static ThreadLocal<Boolean> auditThisThread = new ThreadLocal<Boolean>();
+
   /**
    * Sets all session information to null. Called at the end of http-request handling, to reset the
    * audit information for that thread.
@@ -81,6 +83,7 @@ public class SessionInfo {
     moduleId.set(null);
     command.set(null);
     queryProfile.set(null);
+    auditThisThread.set(true);
     // if there is an open connection associated to get current request, close it
     Connection conn = sessionConnection.get();
     try {
@@ -113,6 +116,10 @@ public class SessionInfo {
       PreparedStatement psQuery = null;
       PreparedStatement psCreate = null;
       try {
+        if (conn.isReadOnly()) {
+          return;
+        }
+
         psQuery = getPreparedStatement(
             conn,
             "select count(*) from information_schema.tables where table_name='ad_context_info' and table_type = 'LOCAL TEMPORARY'");
@@ -138,15 +145,14 @@ public class SessionInfo {
   }
 
   /**
-   * Inserts in the session table the information about the Openbravo session.
-   * 
-   * This methods optimizes the ad_context_info update away, if the 'user'-info associated with a
-   * connection didn't change
-   * 
-   * @param conn
-   *          Connection where the session information will be stored in
-   * @param onlyIfChanged
-   *          Updates database info only in case there are changes since the last time it was set
+   * @deprecated In most of the cases, this method is no longer required to be invoked: it was used
+   *             to manually set in database audit info. Now, this is in an smarter manner only if
+   *             needed from DAL/SQLC. When this method is still in use, it should be reviewed
+   *             whether it is no longer needed because of this automatic mechanism or if it is
+   *             required because new mechanism doesn't detect it (ie. DB modifications directly
+   *             with jdbc), in which case saveContextInfoIntoDB method is recommended to make
+   *             explicit in the code this need
+   * @see #saveContextInfoIntoDB(Connection)
    */
   static void setDBSessionInfo(Connection conn, boolean onlyIfChanged) {
     if (!isAuditActive || (onlyIfChanged && (changedInfo.get() == null || !changedInfo.get()))) {
@@ -156,24 +162,51 @@ public class SessionInfo {
       }
       return;
     }
-    setDBSessionInfo(conn);
+    saveContextInfoIntoDB(conn);
   }
 
   /**
-   * Inserts in the session table the information about the Openbravo session.
-   * 
-   * @param conn
-   *          Connection where the session information will be stored in
+   * @deprecated In most of the cases this method is no longer required to be invoked
+   * @see #saveContextInfoIntoDB(Connection)
    */
   public static void setDBSessionInfo(Connection conn) {
+    saveContextInfoIntoDB(conn);
+  }
+
+  /**
+   * Saves currently stored context information into DB. Generally, this method shouldn't be
+   * directly invoked, as the Platform already does it when flushing changes to DB. Only in case
+   * Openbravo platform is bypassed (ie. DB operations performed on a manually obtained connection),
+   * this method must be manually invoked.
+   * 
+   * @param conn
+   *          The connection where the session information will be stored in, note it must be the
+   *          same one performing DB modifications so audit trail triggers can retrieve the session
+   *          information.
+   */
+  public static void saveContextInfoIntoDB(Connection conn) {
     if (!isAuditActive) {
       return;
     }
-    log4j.debug("set session info");
-    // Clean up temporary table
+
     PreparedStatement psCleanUp = null;
     PreparedStatement psInsert = null;
     try {
+      // When working with DAL sessionConnection is not set. This allows to have in the same thread
+      // a connection for DAL within its session with autocommit false and another one for sqlc with
+      // autocommit true.
+      boolean infoModified = Boolean.TRUE.equals(changedInfo.get())
+          || sessionConnection.get() == null || !conn.equals(sessionConnection.get());
+      if (!infoModified || Boolean.FALSE.equals(auditThisThread.get()) || conn.isReadOnly()) {
+        return;
+      }
+
+      if (log4j.isDebugEnabled()) {
+        log4j.debug("saving DB context info " + SessionInfo.getUserId() + " - "
+            + SessionInfo.getSessionId() + " - " + SessionInfo.getProcessType() + " - "
+            + SessionInfo.getProcessId());
+      }
+
       psCleanUp = getPreparedStatement(conn, "delete from ad_context_info");
       psCleanUp.executeUpdate();
 
@@ -185,7 +218,11 @@ public class SessionInfo {
       psInsert.setString(3, SessionInfo.getProcessType());
       psInsert.setString(4, SessionInfo.getProcessId());
       psInsert.executeUpdate();
-      changedInfo.set(false);
+      if (conn.equals(sessionConnection.get())) {
+        // Handling only for the sqlc connection, as DAL should be automatically handled so that
+        // this method is invoked only once.
+        changedInfo.set(false);
+      }
     } catch (Exception e) {
       log4j.error("Error setting audit info", e);
     } finally {
@@ -355,5 +392,10 @@ public class SessionInfo {
 
   public static void setUsageAuditActive(boolean usageAuditActive) {
     SessionInfo.usageAuditActive = usageAuditActive;
+  }
+
+  /** Set this value to {@code false} to prevent context info to be set in DB */
+  public static void auditThisThread(boolean shouldAudit) {
+    auditThisThread.set(shouldAudit);
   }
 }

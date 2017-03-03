@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2016 Openbravo SLU
+ * All portions are Copyright (C) 2015-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -116,7 +116,6 @@ public class AttachImplementationManager {
     }
 
     Organization org = OBDal.getInstance().get(Organization.class, strDocumentOrganization);
-    Tab tab = adcs.getTab(strTab);
 
     String strName = file.getName();
 
@@ -124,12 +123,13 @@ public class AttachImplementationManager {
     Attachment attachment = null;
     try {
       OBContext.setAdminMode(true);
-      attachment = getAttachment(tab.getTable(), strKey, strName);
+      Table table = adcs.getTab(strTab).getTable();
+      attachment = getAttachment(table, strKey, strName);
       if (attachment == null) {
         attachment = OBProvider.getInstance().get(Attachment.class);
-        attachment.setSequenceNumber(getSequenceNumber(tab.getTable(), strKey));
+        attachment.setSequenceNumber(getSequenceNumber(table, strKey));
         attachment.setName(strName);
-        attachment.setTable(tab.getTable());
+        attachment.setTable(table);
         attachment.setRecord(strKey);
 
         AttachmentConfig attachConf = AttachmentUtils.getAttachmentConfig();

@@ -306,12 +306,14 @@
       </foreign-key>
       <index name="C_INVOICELINE_INOUTLINE" unique="false">
         <index-column name="M_INOUTLINE_ID"/>
+        <whereClause><![CDATA[M_INOUTLINE_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="C_INVOICELINE_INVOICE" unique="false">
         <index-column name="C_INVOICE_ID"/>
       </index>
       <index name="C_INVOICELINE_ORDERLINE" unique="false">
         <index-column name="C_ORDERLINE_ID"/>
+        <whereClause><![CDATA[C_ORDERLINE_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="C_INVOICELINE_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -71,14 +71,22 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   private boolean initialized = false;
   private boolean modified = false;
 
-  // package visible
+  private boolean scrolling = false;
 
   public OBCriteria(String entityOrClassName) {
     super(entityOrClassName, (SessionImplementor) SessionHandler.getInstance().getSession());
   }
 
+  public OBCriteria(String entityOrClassName, SessionImplementor session) {
+    super(entityOrClassName, session);
+  }
+
   public OBCriteria(String entityOrClassName, String alias) {
     super(entityOrClassName, alias, (SessionImplementor) SessionHandler.getInstance().getSession());
+  }
+
+  public OBCriteria(String entityOrClassName, String alias, SessionImplementor session) {
+    super(entityOrClassName, alias, session);
   }
 
   /**
@@ -117,16 +125,37 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
    * See the scroll method on the Hibernate Criteria class.
    */
   public ScrollableResults scroll() throws HibernateException {
-    initialize();
-    return super.scroll();
+    scrolling = true;
+    try {
+      initialize();
+      return super.scroll();
+    } finally {
+      scrolling = false;
+    }
   }
 
   /**
    * See the scroll method on the Hibernate Criteria class.
    */
   public ScrollableResults scroll(ScrollMode scrollMode) throws HibernateException {
-    initialize();
-    return super.scroll(scrollMode);
+    scrolling = true;
+    try {
+      initialize();
+      return super.scroll(scrollMode);
+    } finally {
+      scrolling = false;
+    }
+  }
+
+  @Override
+  public String getEntityOrClassName() {
+    if (scrolling && entity != null) {
+      // When criteria is used for scrolling, Hibernate expects this method to return the entity
+      // name. For listing instead it can accept either entity or implementing class name, if entity
+      // name is returned, it performs worse. So return always class name but when scrolling.
+      return entity.getName();
+    }
+    return super.getEntityOrClassName();
   }
 
   /**

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2016 Openbravo SLU
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -920,6 +920,10 @@ public class SelectorComponent extends BaseTemplateComponent {
           log.warn("Cannot set value map for selector enum " + name);
         }
 
+      }
+
+      if (uiDefinition != null && uiDefinition.showHover()) {
+        result.add(createLocalSelectorFieldProperty("showHover", true));
       }
       return result;
     }

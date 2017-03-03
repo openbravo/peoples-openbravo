@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -114,7 +114,7 @@ public class EntityAccessTest extends OBBaseTest {
   @Test
   public void testCCheckDerivedReadableCurrency() {
     setUserContext(TEST2_USER_ID);
-    final Currency c = OBDal.getInstance().get(Currency.class, "100");
+    final Currency c = OBDal.getInstance().get(Currency.class, DOLLAR_ID);
     log.debug(c.getIdentifier());
     log.debug(c.getId());
     try {
@@ -159,7 +159,7 @@ public class EntityAccessTest extends OBBaseTest {
   @Test
   public void testDUpdateCurrencyDerivedRead() {
     setUserContext(TEST2_USER_ID);
-    final Currency c = OBDal.getInstance().get(Currency.class, "100");
+    final Currency c = OBDal.getInstance().get(Currency.class, DOLLAR_ID);
     try {
       c.setCostingPrecision((long) 5);
       fail("Derived readable not checked on set");

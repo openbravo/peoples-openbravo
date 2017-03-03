@@ -11,12 +11,15 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.reference.ui;
+
+import static org.openbravo.erpCommon.utility.ComboTableData.CLIENT_LIST_PARAM_HOLDER;
+import static org.openbravo.erpCommon.utility.ComboTableData.ORG_LIST_PARAM_HOLDER;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -115,15 +118,13 @@ public class UITable extends UIReference {
     if (tableName != null && !tableName.equals("") && fieldName != null && !fieldName.equals("")) {
       tables += " on " + tableName + "." + fieldName + " = td" + myIndex + "." + trd[0].keyname
           + " \n";
-      tables += "AND td" + myIndex + ".AD_Client_ID IN (" + comboTableData.getClientList() + ") \n";
-      tables += "AND td" + myIndex + ".AD_Org_ID IN (" + comboTableData.getOrgList() + ")";
+      tables += "AND td" + myIndex + ".AD_Client_ID IN (" + CLIENT_LIST_PARAM_HOLDER + ") \n";
+      tables += "AND td" + myIndex + ".AD_Org_ID IN (" + ORG_LIST_PARAM_HOLDER + ")";
     } else {
+      comboTableData.addWhereField("td" + myIndex + ".AD_Client_ID IN (" + CLIENT_LIST_PARAM_HOLDER
+          + ")", "CLIENT_LIST");
       comboTableData.addWhereField(
-          "td" + myIndex + ".AD_Client_ID IN (" + comboTableData.getClientList() + ")",
-          "CLIENT_LIST");
-      if (comboTableData.getOrgList() != null)
-        comboTableData.addWhereField(
-            "td" + myIndex + ".AD_Org_ID IN (" + comboTableData.getOrgList() + ")", "ORG_LIST");
+          "td" + myIndex + ".AD_Org_ID IN (" + ORG_LIST_PARAM_HOLDER + ")", "ORG_LIST");
     }
     comboTableData.addFromField(tables, "td" + myIndex);
     String strSQL = trd[0].whereclause;

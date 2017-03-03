@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,12 +46,12 @@ public class WindowsInClassicModeTask extends DalInitializingTask {
       }
       if (classicWindowMessages.size() > 0) {
         log.info("Module: " + module.getName());
-        log.info("The following windows will be shown in classic mode:");
+        log.info("The following windows are not correctly defined for Openbravo 3, they might be incorrectly visualized:");
         for (String message : classicWindowMessages) {
           log.info("  " + message);
         }
       }
     }
-    log.info("The rest of the windows will be shown in new mode.");
+    log.info("The rest of the windows are correctly defined.");
   }
 }

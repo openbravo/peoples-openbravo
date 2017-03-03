@@ -8,7 +8,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2008-2016 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2008-2017 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 package org.openbravo.erpCommon.utility.reporting.printing;
@@ -37,10 +37,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
 
 import org.apache.commons.fileupload.FileItem;
 import org.codehaus.jettison.json.JSONException;
@@ -80,6 +76,10 @@ import org.openbravo.model.common.enterprise.EmailTemplate;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
 
 @SuppressWarnings("serial")
 public class PrintController extends HttpSecureAppServlet {
@@ -195,7 +195,7 @@ public class PrintController extends HttpSecureAppServlet {
       multiReports = (documentIds.length > 1);
 
       reports = (Map<String, Report>) vars.getSessionObject(sessionValuePrefix + ".Documents");
-      final ReportManager reportManager = new ReportManager(this, globalParameters.strFTPDirectory,
+      final ReportManager reportManager = new ReportManager(globalParameters.strFTPDirectory,
           strReplaceWithFull, globalParameters.strBaseDesignPath,
           globalParameters.strDefaultDesignPath, globalParameters.prefix, multiReports);
 
@@ -273,7 +273,7 @@ public class PrintController extends HttpSecureAppServlet {
               log4j.debug("Processing document with id: " + documentId);
 
             try {
-              final Report report = new Report(this, documentType, documentId, vars.getLanguage(),
+              final Report report = new Report(documentType, documentId, vars.getLanguage(),
                   "default", multiReports, OutputTypeEnum.DEFAULT);
               reports.put(documentId, report);
 
@@ -412,7 +412,7 @@ public class PrintController extends HttpSecureAppServlet {
                 + fullDocumentIdentifier);
             final String templateId = vars.getRequestGlobalVariable("templates", "templates");
             final String documentId = pocData[0].documentId;
-            final Report report = new Report(this, documentType, documentId, vars.getLanguage(),
+            final Report report = new Report(documentType, documentId, vars.getLanguage(),
                 templateId, multiReports, OutputTypeEnum.DEFAULT);
             o.put("templateId", templateId);
             o.put("subject", report.getEmailDefinition().getSubject());
@@ -585,7 +585,7 @@ public class PrintController extends HttpSecureAppServlet {
       localStrDocumentId = localStrDocumentId.replaceAll("\\(|\\)|'", "");
     }
     try {
-      report = new Report(this, documentType, localStrDocumentId, vars.getLanguage(), templateId,
+      report = new Report(documentType, localStrDocumentId, vars.getLanguage(), templateId,
           multiReports, outputType);
     } catch (final ReportingException e) {
       log4j.error(e);
@@ -621,10 +621,17 @@ public class PrintController extends HttpSecureAppServlet {
             + tableId);
       // Save the report as a attachment because it is being
       // transferred to the user
+      File attachedFile = null;
       try {
-        reportManager.createAttachmentForReport(this, report, tableId, vars);
+        attachedFile = reportManager.createAttachmentForReport(this, report, tableId, vars);
       } catch (final ReportingException exception) {
         throw new ServletException(exception);
+      } finally {
+        // Delete the original file generated for the attachment because the upload process has
+        // already copied it on the proper location
+        if (attachedFile != null && attachedFile.exists()) {
+          attachedFile.delete();
+        }
       }
     } else {
       if (log4j.isDebugEnabled())

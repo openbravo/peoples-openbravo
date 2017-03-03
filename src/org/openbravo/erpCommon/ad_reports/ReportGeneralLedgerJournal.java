@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2016 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Vector;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -92,7 +93,10 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org",
           vars.getOrg());
-      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+      String strcAcctSchemaId = vars.getSessionValue("ReportGeneralLedgerJournal|cAcctSchemaId");
+      if (StringUtils.equals(strcAcctSchemaId, "")) {
+        strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+      }
       String strDateFrom = vars.getGlobalVariable("inpDateFrom",
           "ReportGeneralLedgerJournal|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportGeneralLedgerJournal|DateTo",
@@ -192,6 +196,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     } else if (vars.commandIn("FIND")) {
       String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
           "ReportGeneralLedger|cAcctSchemaId");
+      vars.setSessionValue("ReportGeneralLedgerJournal|cAcctSchemaId", strcAcctSchemaId);
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportGeneralLedgerJournal|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
@@ -445,159 +450,227 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
+    ReportGeneralLedgerJournalData scrollData = null;
     ReportGeneralLedgerJournalData[] data = null;
     ReportGeneralLedgerJournalData[] dataCountLines = null;
+    ReportGeneralLedgerJournalData scrollCountLines = null;
     String strPosition = "0";
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportGeneralLedgerJournal", false,
         "", "", "imprimir();return false;", false, "ad_reports", strReplaceWith, false, true);
     toolbar.setEmail(false);
     int totalAcctEntries = 0;
     int lastRecordNumber = 0;
-    if (vars.commandIn("FIND")
-        || vars.commandIn("DEFAULT")
-        && (!vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber").equals("0") || "0"
-            .equals(vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumberOld", "")))) {
-      String strCheck = buildCheck(strShowClosing, strShowReg, strShowOpening, strShowRegular,
-          strShowDivideUp);
-      String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
-      String strOrgFamily = getFamily(strTreeOrg, strOrg);
-      if (strRecord.equals("")) {
-        // Stores the number of lines per accounting entry
-        dataCountLines = ReportGeneralLedgerJournalData.selectCountGroupedLines(this,
-            Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument,
-            getDocumentNo(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
-            strOrgFamily, strCheck, strAllaccounts, strcelementvaluefrom, strcelementvalueto);
-        String strInitAcctEntries = vars.getSessionValue(PREVIOUS_ACCTENTRIES);
-        int acctEntries = (strInitAcctEntries.equals("") ? 0 : Integer.parseInt(strInitAcctEntries
-            .split(",")[0]));
-
-        for (ReportGeneralLedgerJournalData i : dataCountLines)
-          totalAcctEntries += Integer.parseInt(i.groupedlines);
-
-        int groupedLines[] = new int[intRecordRangePredefined + 1];
-        int i = 1;
-        while (groupedLines[i - 1] <= intRecordRangePredefined
-            && dataCountLines.length >= acctEntries) {
-          if (dataCountLines.length > acctEntries) {
-            groupedLines[i] = groupedLines[i - 1]
-                + Integer.parseInt(dataCountLines[acctEntries].groupedlines);
-            i++;
+    String rowNum = "0";
+    String oraLimit1 = null;
+    String oraLimit2 = null;
+    String pgLimit = null;
+    try {
+      if (vars.commandIn("FIND")
+          || vars.commandIn("DEFAULT")
+          && (!vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber").equals("0") || "0"
+              .equals(vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumberOld", "")))) {
+        String strCheck = buildCheck(strShowClosing, strShowReg, strShowOpening, strShowRegular,
+            strShowDivideUp);
+        String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
+        String strOrgFamily = getFamily(strTreeOrg, strOrg);
+        if (strRecord.equals("")) {
+          // Stores the number of lines per accounting entry
+          try {
+            scrollCountLines = ReportGeneralLedgerJournalData.selectCountGroupedLines(this, rowNum,
+                Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+                Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+                strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument,
+                getDocumentNo(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
+                strOrgFamily, strCheck, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
+                null, null, null);
+            Vector<ReportGeneralLedgerJournalData> res = new Vector<ReportGeneralLedgerJournalData>();
+            while (scrollCountLines.next()) {
+              res.add(scrollCountLines.get());
+              totalAcctEntries += Integer.parseInt(scrollCountLines.get().groupedlines);
+            }
+            dataCountLines = new ReportGeneralLedgerJournalData[res.size()];
+            res.copyInto(dataCountLines);
+          } finally {
+            if (scrollCountLines != null) {
+              scrollCountLines.close();
+            }
           }
-          acctEntries++;
-        }
+          String strInitAcctEntries = vars.getSessionValue(PREVIOUS_ACCTENTRIES);
+          int acctEntries = (strInitAcctEntries.equals("") ? 0 : Integer
+              .parseInt(strInitAcctEntries.split(",")[0]));
 
-        int intRecordRangeUsed = 0;
-        if (dataCountLines.length != acctEntries - 1) {
-          if (i == 2) {
-            // The first entry is bigger than the predefined range
-            intRecordRangeUsed = groupedLines[i - 1];
+          int groupedLines[] = new int[intRecordRangePredefined + 1];
+          int i = 1;
+          while (groupedLines[i - 1] <= intRecordRangePredefined
+              && dataCountLines.length >= acctEntries) {
+            if (dataCountLines.length > acctEntries) {
+              groupedLines[i] = groupedLines[i - 1]
+                  + Integer.parseInt(dataCountLines[acctEntries].groupedlines);
+              i++;
+            }
             acctEntries++;
-          } else if (i - 2 >= 0) {
-            intRecordRangeUsed = groupedLines[i - 2];
           }
-        } else {
-          // Include also the last entry
-          intRecordRangeUsed = groupedLines[i - 1];
-        }
 
-        // Hack for sqlC first record
-        if (initRecordNumber == 0) {
-          lastRecordNumber = initRecordNumber + intRecordRangeUsed + 1;
-        } else {
-          lastRecordNumber = initRecordNumber + intRecordRangeUsed;
-        }
-        vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber",
-            String.valueOf(lastRecordNumber));
-        vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumberOld", strInitRecord);
+          int intRecordRangeUsed = 0;
+          if (dataCountLines.length != acctEntries - 1) {
+            if (i == 2) {
+              // The first entry is bigger than the predefined range
+              intRecordRangeUsed = groupedLines[i - 1];
+              acctEntries++;
+            } else if (i - 2 >= 0) {
+              intRecordRangeUsed = groupedLines[i - 2];
+            }
+          } else {
+            // Include also the last entry
+            intRecordRangeUsed = groupedLines[i - 1];
+          }
 
-        // Stores historical for navigation purposes
-        vars.setSessionValue(PREVIOUS_ACCTENTRIES_OLD, vars.getSessionValue(PREVIOUS_ACCTENTRIES));
-        vars.setSessionValue(PREVIOUS_ACCTENTRIES,
-            String.valueOf(acctEntries - 1) + "," + vars.getSessionValue(PREVIOUS_ACCTENTRIES));
-        vars.setSessionValue(PREVIOUS_RANGE_OLD, vars.getSessionValue(PREVIOUS_RANGE));
-        vars.setSessionValue(PREVIOUS_RANGE,
-            String.valueOf(intRecordRangeUsed) + "," + vars.getSessionValue(PREVIOUS_RANGE));
-        data = ReportGeneralLedgerJournalData.select(this, "'N'",
-            Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument,
-            getDocumentNo(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
-            strOrgFamily, strCheck, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
-            vars.getLanguage(), initRecordNumber, intRecordRangeUsed);
-        if (data != null && data.length > 0)
-          strPosition = ReportGeneralLedgerJournalData.selectCount(this,
+          // Hack for sqlC first record
+          if (initRecordNumber == 0) {
+            lastRecordNumber = initRecordNumber + intRecordRangeUsed + 1;
+          } else {
+            lastRecordNumber = initRecordNumber + intRecordRangeUsed;
+          }
+          vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber",
+              String.valueOf(lastRecordNumber));
+          vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumberOld", strInitRecord);
+
+          // Stores historical for navigation purposes
+          vars.setSessionValue(PREVIOUS_ACCTENTRIES_OLD, vars.getSessionValue(PREVIOUS_ACCTENTRIES));
+          vars.setSessionValue(PREVIOUS_ACCTENTRIES,
+              String.valueOf(acctEntries - 1) + "," + vars.getSessionValue(PREVIOUS_ACCTENTRIES));
+          vars.setSessionValue(PREVIOUS_RANGE_OLD, vars.getSessionValue(PREVIOUS_RANGE));
+          vars.setSessionValue(PREVIOUS_RANGE,
+              String.valueOf(intRecordRangeUsed) + "," + vars.getSessionValue(PREVIOUS_RANGE));
+          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+            rowNum = "ROWNUM";
+            oraLimit1 = String.valueOf((initRecordNumber == 0 ? initRecordNumber
+                : initRecordNumber - 1) + intRecordRangeUsed);
+            oraLimit2 = ((initRecordNumber == 0 ? initRecordNumber : initRecordNumber - 1) + 1)
+                + " AND " + oraLimit1;
+          } else {
+            rowNum = "0";
+            pgLimit = intRecordRangeUsed + " OFFSET "
+                + (initRecordNumber == 0 ? initRecordNumber : initRecordNumber - 1);
+          }
+          scrollData = ReportGeneralLedgerJournalData.select(this, rowNum, "'N'",
               Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
               Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
               strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument,
               getDocumentNo(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
               strOrgFamily, strCheck, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
-              data[0].dateacct, data[0].identifier);
-      } else {
-        data = ReportGeneralLedgerJournalData.selectDirect(this,
+              vars.getLanguage(), pgLimit, oraLimit1, oraLimit2);
+          Vector<ReportGeneralLedgerJournalData> res = new Vector<ReportGeneralLedgerJournalData>();
+          while (scrollData.next()) {
+            res.add(scrollData.get());
+          }
+          data = new ReportGeneralLedgerJournalData[res.size()];
+          res.copyInto(data);
+          if (data != null && data.length > 0) {
+            strPosition = ReportGeneralLedgerJournalData.selectCount(this,
+                Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+                Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+                strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument,
+                getDocumentNo(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
+                strOrgFamily, strCheck, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
+                data[0].dateacct, data[0].identifier);
+          }
+        } else {
+          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+            rowNum = "ROWNUM";
+            oraLimit1 = String.valueOf((initRecordNumber == 0 ? initRecordNumber
+                : initRecordNumber - 1) + intRecordRangePredefined);
+            oraLimit2 = ((initRecordNumber == 0 ? initRecordNumber : initRecordNumber - 1) + 1)
+                + " AND " + oraLimit1;
+          } else {
+            rowNum = "0";
+            pgLimit = intRecordRangePredefined + " OFFSET "
+                + (initRecordNumber == 0 ? initRecordNumber : initRecordNumber - 1);
+          }
+          scrollData = ReportGeneralLedgerJournalData.selectDirect(this, rowNum,
+              "Y".equals(strShowDescription) ? "'Y'" : "'N'",
+              Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+              strTable, strRecord, strcAcctSchemaId, vars.getLanguage(), pgLimit, oraLimit1,
+              oraLimit2);
+          Vector<ReportGeneralLedgerJournalData> res = new Vector<ReportGeneralLedgerJournalData>();
+          while (scrollData.next()) {
+            res.add(scrollData.get());
+          }
+          data = new ReportGeneralLedgerJournalData[res.size()];
+          res.copyInto(data);
+          if (data != null && data.length > 0)
+            strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this,
+                Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+                Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+                strTable, strRecord, strFactAcctGroupId, data[0].dateacct, data[0].identifier);
+        }
+      } else if (vars.commandIn("DIRECT")) {
+        scrollData = ReportGeneralLedgerJournalData.selectDirect(this, rowNum,
             "Y".equals(strShowDescription) ? "'Y'" : "'N'",
             Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
-            strRecord, strcAcctSchemaId, vars.getLanguage(), initRecordNumber,
-            intRecordRangePredefined);
-
+            strRecord, strcAcctSchemaId, vars.getLanguage(), null, null, null);
+        Vector<ReportGeneralLedgerJournalData> res = new Vector<ReportGeneralLedgerJournalData>();
+        while (scrollData.next()) {
+          res.add(scrollData.get());
+        }
+        data = new ReportGeneralLedgerJournalData[res.size()];
+        res.copyInto(data);
         if (data != null && data.length > 0)
           strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this,
               Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
               Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
               strTable, strRecord, strFactAcctGroupId, data[0].dateacct, data[0].identifier);
-      }
-    } else if (vars.commandIn("DIRECT")) {
-      data = ReportGeneralLedgerJournalData.selectDirect(this,
-          "Y".equals(strShowDescription) ? "'Y'" : "'N'",
-          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
-          strRecord, strcAcctSchemaId, vars.getLanguage());
-      if (data != null && data.length > 0)
-        strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this,
-            Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
-            strRecord, strFactAcctGroupId, data[0].dateacct, data[0].identifier);
-    } else if (vars.commandIn("DIRECT2")) {
-      data = ReportGeneralLedgerJournalData.selectDirect2(this,
-          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-          strFactAcctGroupId, vars.getLanguage());
-      if (data != null && data.length > 0)
-        strPosition = ReportGeneralLedgerJournalData.selectCountDirect2(this,
+      } else if (vars.commandIn("DIRECT2")) {
+        scrollData = ReportGeneralLedgerJournalData.selectDirect2(this,
             Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-            strFactAcctGroupId, data[0].dateacct, data[0].identifier);
-    }
-    if (data == null || data.length == 0) {
-      String discard[] = { "secTable" };
-      toolbar
-          .prepareRelationBarTemplate(false, false,
-              "submitCommandForm('XLS', false, null, 'ReportGeneralLedgerJournal.xls', 'EXCEL');return false;");
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerJournal", discard)
-          .createXmlDocument();
-      data = ReportGeneralLedgerJournalData.set("0");
-      data[0].rownum = "0";
-    } else {
+            strFactAcctGroupId, vars.getLanguage());
+        Vector<ReportGeneralLedgerJournalData> res = new Vector<ReportGeneralLedgerJournalData>();
+        while (scrollData.next()) {
+          res.add(scrollData.get());
+        }
+        data = new ReportGeneralLedgerJournalData[res.size()];
+        res.copyInto(data);
+        if (data != null && data.length > 0)
+          strPosition = ReportGeneralLedgerJournalData.selectCountDirect2(this,
+              Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+              strFactAcctGroupId, data[0].dateacct, data[0].identifier);
+      }
+      if (data == null || data.length == 0) {
+        String discard[] = { "secTable" };
+        toolbar
+            .prepareRelationBarTemplate(false, false,
+                "submitCommandForm('XLS', false, null, 'ReportGeneralLedgerJournal.xls', 'EXCEL');return false;");
+        xmlDocument = xmlEngine.readXmlTemplate(
+            "org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerJournal", discard)
+            .createXmlDocument();
+        data = ReportGeneralLedgerJournalData.set("0");
+        // data[0].rownum = "0";
+      } else {
+        data = notshow(data, vars);
+        boolean hasPrevious = !(data == null || data.length == 0 || initRecordNumber <= 1);
+        boolean hasNext = !(data == null || data.length == 0 || lastRecordNumber >= totalAcctEntries);
+        toolbar
+            .prepareRelationBarTemplate(true, true,
+                "submitCommandForm('XLS', false, null, 'ReportGeneralLedgerJournal.xls', 'EXCEL');return false;");
+        xmlDocument = xmlEngine.readXmlTemplate(
+            "org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerJournal").createXmlDocument();
 
-      data = notshow(data, vars);
-      boolean hasPrevious = !(data == null || data.length == 0 || initRecordNumber <= 1);
-      boolean hasNext = !(data == null || data.length == 0 || lastRecordNumber >= totalAcctEntries);
-      toolbar
-          .prepareRelationBarTemplate(true, true,
-              "submitCommandForm('XLS', false, null, 'ReportGeneralLedgerJournal.xls', 'EXCEL');return false;");
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerJournal").createXmlDocument();
-
-      String jsDisablePreviousNext = "function checkPreviousNextButtons(){";
-      if (!hasPrevious)
-        jsDisablePreviousNext += "disableToolBarButton('linkButtonPrevious');";
-      if (!hasNext)
-        jsDisablePreviousNext += "disableToolBarButton('linkButtonNext');";
-      jsDisablePreviousNext += "}";
-      xmlDocument.setParameter("jsDisablePreviousNext", jsDisablePreviousNext);
+        String jsDisablePreviousNext = "function checkPreviousNextButtons(){";
+        if (!hasPrevious)
+          jsDisablePreviousNext += "disableToolBarButton('linkButtonPrevious');";
+        if (!hasNext)
+          jsDisablePreviousNext += "disableToolBarButton('linkButtonNext');";
+        jsDisablePreviousNext += "}";
+        xmlDocument.setParameter("jsDisablePreviousNext", jsDisablePreviousNext);
+      }
+    } finally {
+      if (scrollData != null) {
+        scrollData.close();
+      }
     }
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
@@ -715,6 +788,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       String strShowRegular, String strShowDivideUp, String strcelementvaluefrom,
       String strcelementvalueto) throws IOException, ServletException {
 
+    ReportGeneralLedgerJournalData scrollData = null;
     ReportGeneralLedgerJournalData[] data = null;
 
     String strAllaccounts = "Y";
@@ -722,91 +796,100 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       strAllaccounts = "N";
     String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
-    if (!strFactAcctGroupId.equals("")) {
-      data = ReportGeneralLedgerJournalData.selectDirect2(this,
-          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-          strFactAcctGroupId, vars.getLanguage());
+    try {
+      if (!strFactAcctGroupId.equals("")) {
+        scrollData = ReportGeneralLedgerJournalData.selectDirect2(this,
+            Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+            strFactAcctGroupId, vars.getLanguage());
 
-    } else if (strRecord.equals("")) {
-      String strCheck = buildCheck(strShowClosing, strShowReg, strShowOpening, strShowRegular,
-          strShowDivideUp);
-      data = ReportGeneralLedgerJournalData.select(this, "Y".equals(strShowDescription) ? "'Y'"
-          : "'N'", Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility
-          .getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strDateFrom,
-          DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument,
-          getDocumentNo(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
-          strOrgFamily, strCheck, strAllaccounts, strcelementvaluefrom, strcelementvalueto, vars
-              .getLanguage());
-    } else
-      data = ReportGeneralLedgerJournalData.selectDirect(this,
-          "Y".equals(strShowDescription) ? "'Y'" : "'N'",
-          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
-          strRecord, strcAcctSchemaId, vars.getLanguage());
+      } else if (strRecord.equals("")) {
+        String strCheck = buildCheck(strShowClosing, strShowReg, strShowOpening, strShowRegular,
+            strShowDivideUp);
+        scrollData = ReportGeneralLedgerJournalData.select(this, "0",
+            "Y".equals(strShowDescription) ? "'Y'" : "'N'",
+            Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument,
+            getDocumentNo(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
+            strOrgFamily, strCheck, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
+            vars.getLanguage(), null, null, null);
+      } else {
+        scrollData = ReportGeneralLedgerJournalData.selectDirect(this, "0",
+            "Y".equals(strShowDescription) ? "'Y'" : "'N'",
+            Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
+            strRecord, strcAcctSchemaId, vars.getLanguage(), null, null, null);
+      }
+      Vector<ReportGeneralLedgerJournalData> res = new Vector<ReportGeneralLedgerJournalData>();
+      while (scrollData.next()) {
+        res.add(scrollData.get());
+      }
+      data = new ReportGeneralLedgerJournalData[res.size()];
+      res.copyInto(data);
 
-    if (data == null || data.length == 0) {
-      advisePopUp(request, response, "WARNING",
-          Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
-          Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
-    }
+      if (data == null || data.length == 0) {
+        advisePopUp(request, response, "WARNING",
+            Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
+            Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+      } else if (vars.commandIn("XLS") && data.length > 65532) {
+        advisePopUp(request, response, "ERROR",
+            Utility.messageBD(this, "ProcessStatus-E", vars.getLanguage()),
+            Utility.messageBD(this, "numberOfRowsExceeded", vars.getLanguage()));
+      } else {
+        String strSubtitle = (Utility.messageBD(this, "LegalEntity", vars.getLanguage()) + ": ")
+            + ReportGeneralLedgerJournalData.selectCompany(this, vars.getClient()) + "\n";
+        ;
 
-    else if (vars.commandIn("XLS") && data.length > 65532) {
-      advisePopUp(request, response, "ERROR",
-          Utility.messageBD(this, "ProcessStatus-E", vars.getLanguage()),
-          Utility.messageBD(this, "numberOfRowsExceeded", vars.getLanguage()));
-    }
+        SimpleDateFormat javaSDF = new SimpleDateFormat(vars.getJavaDateFormat());
+        SimpleDateFormat sqlSDF = new SimpleDateFormat(vars.getSqlDateFormat().replace('Y', 'y')
+            .replace('D', 'd'));
 
-    else {
+        if (!("0".equals(strOrg)))
+          strSubtitle += (Utility.messageBD(this, "OBUIAPP_Organization", vars.getLanguage()) + ": ")
+              + ReportGeneralLedgerJournalData.selectOrg(this, strOrg) + "\n";
 
-      String strSubtitle = (Utility.messageBD(this, "LegalEntity", vars.getLanguage()) + ": ")
-          + ReportGeneralLedgerJournalData.selectCompany(this, vars.getClient()) + "\n";
-      ;
+        if (!"".equals(strDateFrom) || !"".equals(strDateTo))
+          try {
+            strSubtitle += (Utility.messageBD(this, "From", vars.getLanguage()) + ": ")
+                + ((!"".equals(strDateFrom)) ? javaSDF.format(sqlSDF.parse(strDateFrom)) : "")
+                + "  " + (Utility.messageBD(this, "OBUIAPP_To", vars.getLanguage()) + ": ")
+                + ((!"".equals(strDateTo)) ? javaSDF.format(sqlSDF.parse(strDateTo)) : "") + "\n";
+          } catch (ParseException e) {
+            log4j.error("Error when parsing dates", e);
+          }
 
-      SimpleDateFormat javaSDF = new SimpleDateFormat(vars.getJavaDateFormat());
-      SimpleDateFormat sqlSDF = new SimpleDateFormat(vars.getSqlDateFormat().replace('Y', 'y')
-          .replace('D', 'd'));
-
-      if (!("0".equals(strOrg)))
-        strSubtitle += (Utility.messageBD(this, "OBUIAPP_Organization", vars.getLanguage()) + ": ")
-            + ReportGeneralLedgerJournalData.selectOrg(this, strOrg) + "\n";
-
-      if (!"".equals(strDateFrom) || !"".equals(strDateTo))
-        try {
-          strSubtitle += (Utility.messageBD(this, "From", vars.getLanguage()) + ": ")
-              + ((!"".equals(strDateFrom)) ? javaSDF.format(sqlSDF.parse(strDateFrom)) : "") + "  "
-              + (Utility.messageBD(this, "OBUIAPP_To", vars.getLanguage()) + ": ")
-              + ((!"".equals(strDateTo)) ? javaSDF.format(sqlSDF.parse(strDateTo)) : "") + "\n";
-        } catch (ParseException e) {
-          log4j.error("Error when parsing dates", e);
+        if (!"".equals(strcAcctSchemaId)) {
+          AcctSchema financialMgmtAcctSchema = OBDal.getInstance().get(AcctSchema.class,
+              strcAcctSchemaId);
+          strSubtitle += Utility.messageBD(this, "generalLedger", vars.getLanguage()) + ": "
+              + financialMgmtAcctSchema.getName();
         }
 
-      if (!"".equals(strcAcctSchemaId)) {
-        AcctSchema financialMgmtAcctSchema = OBDal.getInstance().get(AcctSchema.class,
-            strcAcctSchemaId);
-        strSubtitle += Utility.messageBD(this, "generalLedger", vars.getLanguage()) + ": "
-            + financialMgmtAcctSchema.getName();
-      }
+        String strOutput;
+        String strReportName;
+        if (vars.commandIn("PDF")) {
+          strOutput = "pdf";
+          strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerJournal.jrxml";
+        } else {
+          strOutput = "xls";
+          strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerJournalExcel.jrxml";
+        }
 
-      String strOutput;
-      String strReportName;
-      if (vars.commandIn("PDF")) {
-        strOutput = "pdf";
-        strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerJournal.jrxml";
-      } else {
-        strOutput = "xls";
-        strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerJournalExcel.jrxml";
+        HashMap<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("ShowDescription", strShowDescription);
+        parameters.put("Subtitle", strSubtitle);
+        parameters.put("PageNo", strPageNo);
+        parameters.put("InitialEntryNumber", strEntryNo);
+        parameters.put("TaxID", ReportGeneralLedgerJournalData.selectOrgTaxID(this, strOrg));
+        parameters.put("strDateFormat", vars.getJavaDateFormat());
+        renderJR(vars, response, strReportName, "JournalEntriesReport", strOutput, parameters,
+            data, null);
       }
-
-      HashMap<String, Object> parameters = new HashMap<String, Object>();
-      parameters.put("ShowDescription", strShowDescription);
-      parameters.put("Subtitle", strSubtitle);
-      parameters.put("PageNo", strPageNo);
-      parameters.put("InitialEntryNumber", strEntryNo);
-      parameters.put("TaxID", ReportGeneralLedgerJournalData.selectOrgTaxID(this, strOrg));
-      parameters.put("strDateFormat", vars.getJavaDateFormat());
-      renderJR(vars, response, strReportName, "JournalEntriesReport", strOutput, parameters, data,
-          null);
+    } finally {
+      if (scrollData != null) {
+        scrollData.close();
+      }
     }
   }
 

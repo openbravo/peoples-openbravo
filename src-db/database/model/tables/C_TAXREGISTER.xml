@@ -71,6 +71,7 @@
       </foreign-key>
       <index name="C_TAXREGISTER_TAXPAYMENT_IDX" unique="false">
         <index-column name="C_TAXPAYMENT_ID"/>
+        <whereClause><![CDATA[C_TAXPAYMENT_ID IS NOT NULL]]></whereClause>
       </index>
     </table>
   </database>

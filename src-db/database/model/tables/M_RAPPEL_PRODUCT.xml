@@ -55,6 +55,7 @@
       </foreign-key>
       <index name="M_RAPPELPRODUCT_RAPPEL_IDX" unique="false">
         <index-column name="M_RAPPEL_ID"/>
+        <whereClause><![CDATA[M_RAPPEL_ID IS NOT NULL]]></whereClause>
       </index>
     </table>
   </database>

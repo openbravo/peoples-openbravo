@@ -65,7 +65,7 @@ isc.OBToolbarActionButton.addProperties({
         me = this,
         standardWindow = this.view.standardWindow,
         autosaveButton = this.autosave,
-        param, allProperties, sessionProperties, callbackFunction, popupParams, errorCallback;
+        param, allProperties, sessionProperties, callbackFunction, popupParams, errorCallback, parameters;
     //Modified check from 'rowNum to 'rowNum ! = null' to handle case where rowNum is 0.
     if (rowNum !== null && !theView.viewGrid.getSelectedRecord()) {
       // Current selection was lost, restore it
@@ -91,17 +91,20 @@ isc.OBToolbarActionButton.addProperties({
 
     // obuiapp_process definition
     if (this.newDefinition) {
+      parameters = {
+        paramWindow: true,
+        processId: me.processId,
+        windowId: me.windowId,
+        windowTitle: me.windowTitle || me.realTitle,
+        actionHandler: me.command,
+        button: me,
+        uiPattern: me.uiPattern
+      };
+      if (me.uiPattern === 'M') {
+        parameters.buttons = me.labelValue;
+      }
       callbackFunction = function () {
-        standardWindow.openProcess({
-          paramWindow: true,
-          processId: me.processId,
-          windowId: me.windowId,
-          windowTitle: me.windowTitle || me.realTitle,
-          actionHandler: me.command,
-          button: me,
-          buttons: me.labelValue,
-          uiPattern: me.uiPattern
-        });
+        standardWindow.openProcess(parameters);
         me.opening = false; // Activate again the button
       };
 

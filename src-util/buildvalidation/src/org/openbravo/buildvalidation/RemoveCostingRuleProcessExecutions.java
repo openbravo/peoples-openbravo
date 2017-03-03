@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2016 Openbravo SLU
+ * All portions are Copyright (C) 2015-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -69,6 +69,6 @@ public class RemoveCostingRuleProcessExecutions extends BuildValidation {
 
   @Override
   protected ExecutionLimits getBuildValidationLimits() {
-    return new ExecutionLimits("0", null, new OpenbravoVersion(3, 0, 26130));
+    return new ExecutionLimits("0", null, new OpenbravoVersion(3, 0, 25161));
   }
 }

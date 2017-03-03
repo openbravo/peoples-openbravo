@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -77,7 +77,6 @@ import org.openbravo.erpCommon.ad_callouts.SimpleCallout;
 import org.openbravo.erpCommon.ad_callouts.SimpleCalloutInformationProvider;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
-import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.domain.ReferencedTable;
 import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
@@ -1599,19 +1598,10 @@ public class FormInitializationComponent extends BaseActionHandler {
                     .getLanguage()));
             message.put("severity", "TYPE_ERROR");
             messages.add(message);
-            // Create preference to activate classic window only for HttpServlet callouts and in
-            // other cases error is shown.
-            if (calloutInformationProvider instanceof HttpServletCalloutInformationProvider) {
-              createNewPreferenceForWindow(tab.getWindow());
-              log.warn("An EXECUTE element has been found in the response of the callout "
-                  + calloutClassName
-                  + ". A preference has been created for the window "
-                  + tab.getWindow().getName()
-                  + " so that it's shown in classic mode until this problem is fixed. This requires to build the system to generate this classic window.");
-            } else {
-              log.error("An EXECUTE element has been found in the response of the SimpleCallout "
-                  + calloutClassName + ".");
-            }
+            log.warn("Callout "
+                + calloutClassName
+                + " returned EXECUTE command which is no longer supported, it should be fixed. Window-tab: "
+                + tab.getWindow().getName() + " - " + tab.getName());
           }
         }
       } else {
@@ -1726,29 +1716,6 @@ public class FormInitializationComponent extends BaseActionHandler {
   private boolean isShouldBeFired(String calloutClassName, Column col) {
     return !calloutClassName.equals(col.getCallout().getADModelImplementationList().get(0)
         .getJavaClassName());
-  }
-
-  /**
-   * This method will create a new preference to show the given window in classic mode, if there is
-   * a preference doesn't already exist
-   * 
-   * @param window
-   */
-  private void createNewPreferenceForWindow(Window window) {
-    OBCriteria<Preference> prefCriteria = OBDao.getFilteredCriteria(Preference.class,
-        Restrictions.eq(Preference.PROPERTY_PROPERTY, "OBUIAPP_UseClassicMode"),
-        Restrictions.eq(Preference.PROPERTY_WINDOW, window));
-    if (prefCriteria.count() > 0) {
-      // Preference already exists. We don't create a new one.
-      return;
-    }
-    Preference newPref = OBProvider.getInstance().get(Preference.class);
-    newPref.setWindow(window);
-    newPref.setProperty("OBUIAPP_UseClassicMode");
-    newPref.setSearchKey("Y");
-    newPref.setPropertyList(true);
-    OBDal.getInstance().save(newPref);
-    OBDal.getInstance().flush();
   }
 
   private void addCalloutToList(Column col, List<String> listOfCallouts,

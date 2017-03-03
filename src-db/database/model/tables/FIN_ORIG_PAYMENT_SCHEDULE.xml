@@ -88,6 +88,7 @@
       </foreign-key>
       <index name="FIN_ORIG_PAYM_SCHED_IND" unique="false">
         <index-column name="C_INVOICE_ID"/>
+        <whereClause><![CDATA[C_INVOICE_ID IS NOT NULL]]></whereClause>
       </index>
       <check name="FIN_PAYORIGSCHED_ISAC_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="FIN_PAYORIGSCHED_UPP_CHK"><![CDATA[UPDATE_PAYMENT_PLAN IN ('Y', 'N')]]></check>

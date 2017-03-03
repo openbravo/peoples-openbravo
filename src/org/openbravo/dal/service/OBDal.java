@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 import org.hibernate.ObjectNotFoundException;
@@ -38,8 +39,8 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.UniqueConstraint;
+import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
@@ -49,6 +50,8 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.security.SecurityChecker;
+import org.openbravo.database.ExternalConnectionPool;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 
@@ -65,10 +68,13 @@ import org.openbravo.model.common.enterprise.Organization;
 // object
 // TODO: re-check singleton pattern when a new factory/dependency injection
 // approach is implemented.
-public class OBDal implements OBSingleton {
+public class OBDal implements OBNotSingleton {
   private static final Logger log = Logger.getLogger(OBDal.class);
 
   private static OBDal instance;
+
+  private static ConcurrentHashMap<String, OBDal> otherPoolInstances = new ConcurrentHashMap<>();
+  private String poolName;
 
   /**
    * @return the singleton instance of the OBDal service
@@ -76,8 +82,35 @@ public class OBDal implements OBSingleton {
   public static OBDal getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(OBDal.class);
+      instance.poolName = ExternalConnectionPool.DEFAULT_POOL;
     }
     return instance;
+  }
+
+  /**
+   * @return the singleton instance of the OBDal read-only service
+   */
+  public static OBDal getReadOnlyInstance() {
+    return getInstance(ExternalConnectionPool.READONLY_POOL);
+  }
+
+  /**
+   * @param pool
+   *          the name of the pool used by the OBDal service that will be returned
+   * 
+   * @return the singleton instance related to the name passed as parameter
+   */
+  public static OBDal getInstance(String pool) {
+    if (ExternalConnectionPool.DEFAULT_POOL.equals(pool)) {
+      return getInstance();
+    }
+    if (!otherPoolInstances.containsKey(pool)) {
+      OBDal dal = OBProvider.getInstance().get(OBDal.class);
+      dal.poolName = pool;
+      otherPoolInstances.putIfAbsent(pool, dal);
+    }
+
+    return otherPoolInstances.get(pool);
   }
 
   /**
@@ -88,7 +121,7 @@ public class OBDal implements OBSingleton {
    * @see #disableActiveFilter()
    */
   public void enableActiveFilter() {
-    SessionHandler.getInstance().getSession().enableFilter("activeFilter")
+    SessionHandler.getInstance().getSession(poolName).enableFilter("activeFilter")
         .setParameter("activeParam", "Y");
   }
 
@@ -112,11 +145,16 @@ public class OBDal implements OBSingleton {
    * @see #enableActiveFilter()
    */
   public void disableActiveFilter() {
-    SessionHandler.getInstance().getSession().disableFilter("activeFilter");
+    SessionHandler.getInstance().getSession(poolName).disableFilter("activeFilter");
   }
 
+  /**
+   * Returns the status of the active filter.
+   * 
+   * @return true if the active filter is enabled, false if it is disabled
+   */
   public boolean isActiveFilterEnabled() {
-    return SessionHandler.getInstance().getSession().getEnabledFilter("activeFilter") != null;
+    return SessionHandler.getInstance().getSession(poolName).getEnabledFilter("activeFilter") != null;
   }
 
   /**
@@ -152,8 +190,8 @@ public class OBDal implements OBSingleton {
     final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      final Connection connection = ((SessionImplementor) SessionHandler.getInstance().getSession())
-          .connection();
+      final Connection connection = ((SessionImplementor) SessionHandler.getInstance().getSession(
+          poolName)).connection();
       return connection;
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);
@@ -164,15 +202,25 @@ public class OBDal implements OBSingleton {
    * @return the current hibernate session
    */
   public Session getSession() {
-    return SessionHandler.getInstance().getSession();
+    return SessionHandler.getInstance().getSession(poolName);
+  }
+
+  /**
+   * Checks if the session associated with this DAL instance is dirty. Note isDirty method should
+   * not be directly invoked on the Session instance.
+   *
+   * @see SessionHandler#isSessionDirty(String)
+   */
+  public boolean isSessionDirty() {
+    return SessionHandler.getInstance().isSessionDirty(poolName);
   }
 
   /**
    * Commits the transaction and closes session.
    */
   public void commitAndClose() {
-    if (SessionHandler.isSessionHandlerPresent()) {
-      SessionHandler.getInstance().commitAndClose();
+    if (SessionHandler.isSessionHandlerPresent(poolName)) {
+      SessionHandler.getInstance().commitAndClose(poolName);
     }
   }
 
@@ -180,34 +228,39 @@ public class OBDal implements OBSingleton {
    * Rolls back the transaction and closes the session.
    */
   public void rollbackAndClose() {
-    if (SessionHandler.isSessionHandlerPresent()) {
-      SessionHandler.getInstance().rollback();
+    if (SessionHandler.isSessionHandlerPresent(poolName)) {
+      SessionHandler.getInstance().rollback(poolName);
     }
   }
 
   /**
    * Utility method to log all entities loaded into the current hibernate session. Useful to debug
    * slow flush() calls.
+   * 
+   * @return the hibernate session statistics that are used to log the information
    */
-  private void dumpSessionEntities() {
-    SessionStatistics sessStat = SessionHandler.getInstance().getSession().getStatistics();
+  private SessionStatistics dumpSessionEntities() {
+    SessionStatistics sessStat = SessionHandler.getInstance().getSession(poolName).getStatistics();
     log.debug("Dumping all entities in session");
     for (Object o : sessStat.getEntityKeys()) {
       log.debug(o);
     }
+    return sessStat;
   }
 
   /**
    * Flushes the current state to the database.
    */
   public void flush() {
-    if (SessionHandler.isSessionHandlerPresent()) {
+    if (SessionHandler.isSessionHandlerPresent(poolName)) {
       long s1 = System.currentTimeMillis();
-      SessionHandler.getInstance().getSession().flush();
+      if (isSessionDirty()) {
+        SessionInfo.saveContextInfoIntoDB(getConnection(false));
+      }
+      SessionHandler.getInstance().getSession(poolName).flush();
       if (log.isDebugEnabled()) {
         long s2 = System.currentTimeMillis();
-        SessionStatistics sessStat = SessionHandler.getInstance().getSession().getStatistics();
-        dumpSessionEntities();
+        SessionStatistics sessStat = dumpSessionEntities();
         log.debug(
             "Flush of " + sessStat.getEntityCount() + " entities and "
                 + sessStat.getCollectionCount() + " collections took: " + (s2 - s1),
@@ -247,7 +300,7 @@ public class OBDal implements OBSingleton {
       }
       SecurityChecker.getInstance().checkWriteAccess(obj);
     }
-    SessionHandler.getInstance().save(obj);
+    SessionHandler.getInstance().save(poolName, obj);
   }
 
   /**
@@ -270,7 +323,7 @@ public class OBDal implements OBSingleton {
     // TODO: log using entityName
     log.debug("Removing object " + obj.getClass().getName());
     SecurityChecker.getInstance().checkDeleteAllowed(obj);
-    SessionHandler.getInstance().delete(obj);
+    SessionHandler.getInstance().delete(poolName, obj);
   }
 
   /**
@@ -282,7 +335,7 @@ public class OBDal implements OBSingleton {
    * @see Session#refresh(Object)
    */
   public void refresh(Object obj) {
-    SessionHandler.getInstance().getSession().refresh(obj);
+    SessionHandler.getInstance().getSession(poolName).refresh(obj);
   }
 
   /**
@@ -297,7 +350,7 @@ public class OBDal implements OBSingleton {
   public <T extends Object> T get(Class<T> clazz, Object id) {
     checkReadAccess(clazz);
     try {
-      return SessionHandler.getInstance().find(clazz, id);
+      return SessionHandler.getInstance().find(poolName, clazz, id);
     } catch (ObjectNotFoundException ignore) {
       // ObjectNotFoundException is thrown when there was a proxy in cache for this id but the
       // record does not exist in DB. As if there was no proxy, the same invokation would return
@@ -316,7 +369,7 @@ public class OBDal implements OBSingleton {
    * @return true if exists, false otherwise
    */
   public boolean exists(String entityName, Object id) {
-    return null != SessionHandler.getInstance().find(entityName, id);
+    return null != SessionHandler.getInstance().find(poolName, entityName, id);
   }
 
   /**
@@ -330,7 +383,7 @@ public class OBDal implements OBSingleton {
    */
   public BaseOBObject get(String entityName, Object id) {
     checkReadAccess(entityName);
-    return SessionHandler.getInstance().find(entityName, id);
+    return SessionHandler.getInstance().find(poolName, entityName, id);
   }
 
   /**
@@ -394,6 +447,7 @@ public class OBDal implements OBSingleton {
     obQuery.setWhereAndOrderBy(whereOrderByClause);
     obQuery.setEntity(ModelProvider.getInstance().getEntity(fromClz));
     obQuery.setParameters(parameters);
+    obQuery.setPoolName(poolName);
     return obQuery;
   }
 
@@ -429,6 +483,7 @@ public class OBDal implements OBSingleton {
     obQuery.setWhereAndOrderBy(whereOrderByClause);
     obQuery.setEntity(ModelProvider.getInstance().getEntity(entityName));
     obQuery.setParameters(parameters);
+    obQuery.setPoolName(poolName);
     return obQuery;
   }
 
@@ -442,7 +497,8 @@ public class OBDal implements OBSingleton {
   public <T extends BaseOBObject> OBCriteria<T> createCriteria(Class<T> clz) {
     checkReadAccess(clz);
     final Entity entity = ModelProvider.getInstance().getEntity(clz);
-    final OBCriteria<T> obCriteria = new OBCriteria<T>(entity.getName());
+    final OBCriteria<T> obCriteria = new OBCriteria<T>(clz.getName(),
+        (SessionImplementor) SessionHandler.getInstance().getSession(poolName));
     obCriteria.setEntity(entity);
     return obCriteria;
   }
@@ -459,7 +515,8 @@ public class OBDal implements OBSingleton {
   public <T extends BaseOBObject> OBCriteria<T> createCriteria(Class<T> clz, String alias) {
     checkReadAccess(clz);
     final Entity entity = ModelProvider.getInstance().getEntity(clz);
-    final OBCriteria<T> obCriteria = new OBCriteria<T>(entity.getName(), alias);
+    final OBCriteria<T> obCriteria = new OBCriteria<T>(clz.getName(), alias,
+        (SessionImplementor) SessionHandler.getInstance().getSession(poolName));
     obCriteria.setEntity(entity);
     return obCriteria;
   }
@@ -473,8 +530,10 @@ public class OBDal implements OBSingleton {
    */
   public <T extends BaseOBObject> OBCriteria<T> createCriteria(String entityName) {
     checkReadAccess(entityName);
-    final OBCriteria<T> obCriteria = new OBCriteria<T>(entityName);
-    obCriteria.setEntity(ModelProvider.getInstance().getEntity(entityName));
+    Entity entity = ModelProvider.getInstance().getEntity(entityName);
+    final OBCriteria<T> obCriteria = new OBCriteria<T>(entity.getMappingClass().getName(),
+        (SessionImplementor) SessionHandler.getInstance().getSession(poolName));
+    obCriteria.setEntity(entity);
     return obCriteria;
   }
 
@@ -489,8 +548,10 @@ public class OBDal implements OBSingleton {
    */
   public <T extends BaseOBObject> OBCriteria<T> createCriteria(String entityName, String alias) {
     checkReadAccess(entityName);
-    final OBCriteria<T> obCriteria = new OBCriteria<T>(entityName, alias);
-    obCriteria.setEntity(ModelProvider.getInstance().getEntity(entityName));
+    Entity entity = ModelProvider.getInstance().getEntity(entityName);
+    final OBCriteria<T> obCriteria = new OBCriteria<T>(entity.getMappingClass().getName(), alias,
+        (SessionImplementor) SessionHandler.getInstance().getSession(poolName));
+    obCriteria.setEntity(entity);
     return obCriteria;
   }
 

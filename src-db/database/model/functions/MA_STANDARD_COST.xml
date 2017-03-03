@@ -16,13 +16,14 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2013 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************/
   v_ResultStr             VARCHAR2(2000) := '';
   v_Message               VARCHAR2(2000) := '';
   v_Result NUMBER:= 1;
+  v_Client_ID VARCHAR2(32);
 
   p_User VARCHAR2(32);
   p_Currency VARCHAR2(32);
@@ -42,7 +43,29 @@ BEGIN
 BEGIN --BODY
 		v_Count:=0;
 		v_Message:='-';
-			FOR Cur_Sequences IN
+			
+
+  FOR Cur_Parameter IN (SELECT i.ad_client_id, i.Record_ID, i.AD_User_ID, p.ParameterName, 
+                               p.P_String, p.P_Number, p.P_Date, i.UpdatedBy, ad_client.c_currency_id
+                        FROM AD_PINSTANCE i LEFT JOIN AD_PINSTANCE_PARA p ON i.AD_PInstance_ID=p.AD_PInstance_ID,
+                             AD_CLIENT
+                        WHERE i.AD_PInstance_ID=p_PInstance_ID
+                          AND i.ad_client_ID = ad_client.ad_client_id
+                        ORDER BY p.SeqNo) LOOP
+    p_User := Cur_Parameter.AD_User_ID;
+    p_CalcDate := now();
+    p_Currency := cur_parameter.C_Currency_ID;
+    v_Client_ID := cur_parameter.ad_client_id;
+    IF (Cur_Parameter.ParameterName = 'C_Budget_ID') THEN
+      p_Budget_ID := Cur_Parameter.P_String;
+    ELSIF (Cur_Parameter.ParameterName = 'MA_Processplan_ID') THEN
+      p_ProcessPlan := Cur_Parameter.P_String;
+    ELSIF (Cur_Parameter.ParameterName = 'CalcDate') THEN
+      p_CalcDate := COALESCE(Cur_Parameter.P_Date, TRUNC(now()));
+    END IF;
+  END LOOP;
+
+  FOR Cur_Sequences IN
 			(
 			SELECT pp.name||'-'||ppv.documentno AS ProcessPlan
 			FROM MA_SEQUENCEPRODUCT sp, MA_SEQUENCE s
@@ -50,6 +73,7 @@ BEGIN --BODY
 			LEFT JOIN MA_ProcessPlan pp ON pp.MA_ProcessPlan_ID = ppv.MA_ProcessPlan_ID
 			WHERE sp.PRODUCTIONTYPE='+'
 			AND sp.MA_SEQUENCE_ID = s.MA_SEQUENCE_ID
+                        AND s.AD_CLIENT_ID = v_Client_ID
 			AND EXISTS
 			(SELECT 1
 			FROM MA_SEQUENCEPRODUCT
@@ -65,25 +89,6 @@ BEGIN --BODY
 				RAISE_APPLICATION_ERROR(-20000,'@P+AndP-InSamePlan@'||' Check Process Plan'||v_Message);
 			END IF;
 
-  FOR Cur_Parameter IN (SELECT i.ad_client_id, i.Record_ID, i.AD_User_ID, p.ParameterName, 
-                               p.P_String, p.P_Number, p.P_Date, i.UpdatedBy, ad_client.c_currency_id
-                        FROM AD_PINSTANCE i LEFT JOIN AD_PINSTANCE_PARA p ON i.AD_PInstance_ID=p.AD_PInstance_ID,
-                             AD_CLIENT
-                        WHERE i.AD_PInstance_ID=p_PInstance_ID
-                          AND i.ad_client_ID = ad_client.ad_client_id
-                        ORDER BY p.SeqNo) LOOP
-    p_User := Cur_Parameter.AD_User_ID;
-    p_CalcDate := now();
-    p_Currency := cur_parameter.C_Currency_ID;
-    IF (Cur_Parameter.ParameterName = 'C_Budget_ID') THEN
-      p_Budget_ID := Cur_Parameter.P_String;
-    ELSIF (Cur_Parameter.ParameterName = 'MA_Processplan_ID') THEN
-      p_ProcessPlan := Cur_Parameter.P_String;
-    ELSIF (Cur_Parameter.ParameterName = 'CalcDate') THEN
-      p_CalcDate := COALESCE(Cur_Parameter.P_Date, TRUNC(now()));
-    END IF;
-  END LOOP;
-
   --Initialize, set sequences as calculated = 'N'
   UPDATE MA_SEquence
   SET calculated = 'N'
@@ -92,6 +97,7 @@ BEGIN --BODY
                            WHERE s.MA_ProcessPlan_Version_ID = ppv.MA_ProcessPlan_Version_ID
                              AND ppv.DateFrom <= p_CalcDate
                              AND ppv.DateTo > p_CalcDate
+                             AND s.AD_CLIENT_ID = v_Client_ID
                              AND (p_ProcessPlan IS NULL OR ppv.MA_ProcessPlan_ID = p_ProcessPlan)
                              AND EXISTS (SELECT 1 FROM MA_SEQUENCEPRODUCT
                                          WHERE PRODUCTIONTYPE = '+'
@@ -104,6 +110,7 @@ BEGIN --BODY
       AND ppv.DateFrom <= p_CalcDate
       AND ppv.DateTo > p_CalcDate
       AND s.calculated = 'N'
+      AND s.AD_CLIENT_ID = v_Client_ID
       AND (p_ProcessPlan IS NULL OR ppv.MA_ProcessPlan_ID = p_ProcessPlan)
       AND EXISTS (SELECT 1 FROM MA_SEQUENCEPRODUCT
                   WHERE PRODUCTIONTYPE = '+'

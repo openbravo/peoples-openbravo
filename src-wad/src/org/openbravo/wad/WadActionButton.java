@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -223,8 +223,8 @@ class WadActionButton {
         fab[i].realname = FormatUtilities.replace(fab[i].realname);
         fab[i].columnname = Sqlc.TransformaNombreColumna(fab[i].columnname);
         fab[i].htmltext = getFieldsLoad(fab[i], vecFields, vecTotalFields);
-        fab[i].javacode = getPrintPageJavaCode(conn, fab[i], vecFields, vecParams, "", "", "",
-            true, "");
+        fab[i].javacode = getPrintPageJavaCode(conn, fab[i], vecFields, vecParams, "", "", "", true,
+            "");
         final StringBuffer fields = new StringBuffer();
         final StringBuffer fieldsHeader = new StringBuffer();
         for (int j = 0; j < vecFields.size(); j++) {
@@ -254,7 +254,8 @@ class WadActionButton {
     return fab;
   }
 
-  public static ActionButtonRelationData[] buildActionButtonCallGenericsJava(ConnectionProvider conn) {
+  public static ActionButtonRelationData[] buildActionButtonCallGenericsJava(
+      ConnectionProvider conn) {
     ActionButtonRelationData[] fab = null;
     try {
       fab = ActionButtonRelationData.selectGenericsJava(conn);
@@ -270,8 +271,8 @@ class WadActionButton {
         fab[i].realname = FormatUtilities.replace(fab[i].realname);
         fab[i].columnname = Sqlc.TransformaNombreColumna(fab[i].columnname);
         fab[i].htmltext = getFieldsLoad(fab[i], vecFields, vecTotalFields);
-        fab[i].javacode = getPrintPageJavaCode(conn, fab[i], vecFields, vecParams, "", "", "",
-            true, "");
+        fab[i].javacode = getPrintPageJavaCode(conn, fab[i], vecFields, vecParams, "", "", "", true,
+            "");
         final StringBuffer fields = new StringBuffer();
         final StringBuffer fieldsHeader = new StringBuffer();
         for (int j = 0; j < vecFields.size(); j++) {
@@ -299,28 +300,6 @@ class WadActionButton {
   /**
    * Adds some fields to the vector of tab's fields, depending on the column that it is processing.
    * 
-   * @param columnname
-   *          The name of the column.
-   * @param vecFields
-   *          Vector with the fields.
-   */
-  public static void getFieldsLoad(String columnname, Vector<Object> vecFields) {
-    if (columnname.equalsIgnoreCase("DocAction")) {
-      vecFields.addElement("DocStatus");
-      vecFields.addElement("AD_Table_ID");
-    } else if (columnname.equalsIgnoreCase("CreateFrom")) {
-      vecFields.addElement("AD_Table_ID");
-    } else if (columnname.equalsIgnoreCase("Posted")) {
-      vecFields.addElement("AD_Table_ID");
-      vecFields.addElement("Posted");
-    } else if (columnname.equalsIgnoreCase("ChangeProjectStatus")) {
-      vecFields.addElement("ProjectStatus");
-    }
-  }
-
-  /**
-   * Adds some fields to the vector of tab's fields, depending on the column that it is processing.
-   * 
    * @param fd
    *          Object with the column info.
    * @param vecFields
@@ -329,7 +308,7 @@ class WadActionButton {
    *          Vector of fields.
    * @return String with the java call.
    */
-  public static String getFieldsLoad(ActionButtonRelationData fd, Vector<Object> vecFields,
+  private static String getFieldsLoad(ActionButtonRelationData fd, Vector<Object> vecFields,
       Vector<Object> vecTotalFields) {
     if (fd == null)
       return "";
@@ -398,7 +377,7 @@ class WadActionButton {
    *          Id for the current process
    * @return String with the java code.
    */
-  public static String getPrintPageJavaCode(ConnectionProvider conn, ActionButtonRelationData fd,
+  private static String getPrintPageJavaCode(ConnectionProvider conn, ActionButtonRelationData fd,
       Vector<Object> vecFields, Vector<Object> vecParams, String isSOTrx, String window,
       String tabName, boolean genericActionButton, String processId) {
     if (fd == null)
@@ -437,9 +416,8 @@ class WadActionButton {
             strDefault = (tabName.equals("") ? "ActionButtonSQLDefault" : tabName)
                 + "Data.selectActP" + data[i].id + "_"
                 + FormatUtilities.replace(data[i].columnname);
-            strDefault += "(this"
-                + WadUtility.getWadContext(data[i].defaultvalue, vecFields, vecParams, null, false,
-                    isSOTrx, window);
+            strDefault += "(this" + WadUtility.getWadContext(data[i].defaultvalue, vecFields,
+                vecParams, null, false, isSOTrx, window);
             strDefault += ")";
           } else {
             strDefault = WadUtility.getTextWadContext(data[i].defaultvalue, vecFields, vecParams,
@@ -459,10 +437,10 @@ class WadActionButton {
             html.append("Utility.getContext(this, vars, \"#User_Client\", \"\"), 0");
             html.append(");\n");
             html.append("    Utility.fillSQLParameters(this, vars, ")
-                .append(
-                    genericActionButton ? "null" : "(FieldProvider) vars.getSessionObject(\"button"
-                        + processId + ".originalParams\")").append(", comboTableData, windowId, ")
-                .append(strDefault).append(");\n");
+                .append(genericActionButton ? "null"
+                    : "(FieldProvider) vars.getSessionObject(\"button" + processId
+                        + ".originalParams\")")
+                .append(", comboTableData, windowId, ").append(strDefault).append(");\n");
             html.append("    xmlDocument.setData(\"report");
             // html.append(Sqlc.TransformaNombreColumna(data[i].columnname));
             html.append(data[i].columnname);
@@ -489,16 +467,16 @@ class WadActionButton {
                 String strDefaultSQL = (tabName.equals("") ? "ActionButtonSQLDefault" : tabName)
                     + "Data.selectActP" + data[i].id + "_"
                     + FormatUtilities.replace(data[i].columnname);
-                strDefaultSQL += "(this"
-                    + WadUtility.getWadContext(data[i].defaultvalue, vecFields, vecParams, null,
-                        false, isSOTrx, window);
+                strDefaultSQL += "(this" + WadUtility.getWadContext(data[i].defaultvalue, vecFields,
+                    vecParams, null, false, isSOTrx, window);
                 strDefaultSQL += ")";
                 html.append(", " + strDefaultSQL);
               } else {
-                html.append(((data[i].defaultvalue.equals("") || data[i].defaultvalue.indexOf("@") == -1) ? ", \""
-                    + data[i].defaultvalue + "\""
-                    : WadUtility.getWadContext(data[i].defaultvalue, vecFields, vecParams, null,
-                        false, isSOTrx, window)));
+                html.append(
+                    ((data[i].defaultvalue.equals("") || data[i].defaultvalue.indexOf("@") == -1)
+                        ? ", \"" + data[i].defaultvalue + "\""
+                        : WadUtility.getWadContext(data[i].defaultvalue, vecFields, vecParams, null,
+                            false, isSOTrx, window)));
               }
               html.append(")");
             } else {
@@ -522,15 +500,18 @@ class WadActionButton {
       } catch (final ServletException e) {
       }
       html.append("xmlDocument.setParameter(\"processDescription\", \"" + strAux + "\");\n");
-      html.append("xmlDocument.setParameter(\"docaction\", (strdocaction.equals(\"--\")?\"CL\":strdocaction));\n");
-      html.append("FieldProvider[] dataDocAction = ActionButtonUtility.docAction(this, vars, strdocaction, \""
-          + fd.adReferenceValueId + "\", strdocstatus, strProcessing, stradTableId, tabId);\n");
+      html.append(
+          "xmlDocument.setParameter(\"docaction\", (strdocaction.equals(\"--\")?\"CL\":strdocaction));\n");
+      html.append(
+          "FieldProvider[] dataDocAction = ActionButtonUtility.docAction(this, vars, strdocaction, \""
+              + fd.adReferenceValueId + "\", strdocstatus, strProcessing, stradTableId, tabId);\n");
       html.append("xmlDocument.setData(\"reportdocaction\", \"liststructure\", dataDocAction);\n");
       html.append("StringBuffer dact = new StringBuffer();\n");
       html.append("if (dataDocAction!=null) {\n");
       html.append("  dact.append(\"var arrDocAction = new Array(\\n\");\n");
       html.append("  for (int i=0;i<dataDocAction.length;i++) {\n");
-      html.append("    dact.append(\"new Array(\\\"\" + dataDocAction[i].getField(\"id\") + \"\\\", \\\"\" + dataDocAction[i].getField(\"name\") + \"\\\", \\\"\" + dataDocAction[i].getField(\"description\") + \"\\\")\\n\");\n");
+      html.append(
+          "    dact.append(\"new Array(\\\"\" + dataDocAction[i].getField(\"id\") + \"\\\", \\\"\" + dataDocAction[i].getField(\"name\") + \"\\\", \\\"\" + dataDocAction[i].getField(\"description\") + \"\\\")\\n\");\n");
       html.append("    if (i<dataDocAction.length-1) dact.append(\",\\n\");\n");
       html.append("  }\n");
       html.append("  dact.append(\");\");\n");
@@ -545,14 +526,17 @@ class WadActionButton {
       }
       html.append("xmlDocument.setParameter(\"processDescription\", \"" + strAux + "\");\n");
       html.append("xmlDocument.setParameter(\"projectaction\", strchangeprojectstatus);\n");
-      html.append("FieldProvider[] dataProjectAction = ActionButtonUtility.projectAction(this, vars, strchangeprojectstatus, \""
-          + fd.adReferenceValueId + "\", strprojectstatus);\n");
-      html.append("xmlDocument.setData(\"reportprojectaction\", \"liststructure\", dataProjectAction);\n");
+      html.append(
+          "FieldProvider[] dataProjectAction = ActionButtonUtility.projectAction(this, vars, strchangeprojectstatus, \""
+              + fd.adReferenceValueId + "\", strprojectstatus);\n");
+      html.append(
+          "xmlDocument.setData(\"reportprojectaction\", \"liststructure\", dataProjectAction);\n");
       html.append("StringBuffer dact = new StringBuffer();\n");
       html.append("if (dataProjectAction!=null) {\n");
       html.append("  dact.append(\"var arrProjectAction = new Array(\\n\");\n");
       html.append("  for (int i=0;i<dataProjectAction.length;i++) {\n");
-      html.append("    dact.append(\"new Array(\\\"\" + dataProjectAction[i].getField(\"id\") + \"\\\", \\\"\" + dataProjectAction[i].getField(\"name\") + \"\\\", \\\"\" + dataProjectAction[i].getField(\"description\") + \"\\\")\\n\");\n");
+      html.append(
+          "    dact.append(\"new Array(\\\"\" + dataProjectAction[i].getField(\"id\") + \"\\\", \\\"\" + dataProjectAction[i].getField(\"name\") + \"\\\", \\\"\" + dataProjectAction[i].getField(\"description\") + \"\\\")\\n\");\n");
       html.append("    if (i<dataProjectAction.length-1) dact.append(\",\\n\");\n");
       html.append("  }\n");
       html.append("  dact.append(\");\");\n");
@@ -574,7 +558,7 @@ class WadActionButton {
    *          Vector of parameters.
    * @return String with all the calls.
    */
-  public static String getProcessParamsJava(ConnectionProvider conn, ProcessRelationData[] data,
+  private static String getProcessParamsJava(ConnectionProvider conn, ProcessRelationData[] data,
       ActionButtonRelationData fd, Vector<Object> vecParams, boolean isGenericJava) {
     if (fd == null)
       return "";
@@ -602,9 +586,10 @@ class WadActionButton {
               .append(");\n");
         } else {
           html.append("PInstanceProcessData.insertPInstanceParam"
-              + (control.isNumericType() ? "Number" : (control.isDate() ? "Date" : (control
-                  .isTime() ? "Time" : ""))) + "(this, pinstance, \"" + data[i].seqno + "\", \""
-              + data[i].columnname + "\", str" + Sqlc.TransformaNombreColumna(data[i].columnname)
+              + (control.isNumericType() ? "Number"
+                  : (control.isDate() ? "Date" : (control.isTime() ? "Time" : "")))
+              + "(this, pinstance, \"" + data[i].seqno + "\", \"" + data[i].columnname + "\", str"
+              + Sqlc.TransformaNombreColumna(data[i].columnname)
               + ", vars.getClient(), vars.getOrg(), vars.getUser());\n");
         }
         vecParams.addElement(Sqlc.TransformaNombreColumna(data[i].columnname));
@@ -624,7 +609,8 @@ class WadActionButton {
    *          Name of the key.
    * @return String with the specific code.
    */
-  public static String getAdditionalCode(ActionButtonRelationData fd, String tabName, String keyName) {
+  private static String getAdditionalCode(ActionButtonRelationData fd, String tabName,
+      String keyName) {
     if (fd == null)
       return "";
     final StringBuffer html = new StringBuffer();
@@ -684,10 +670,10 @@ class WadActionButton {
    * @throws IOException
    */
   public static void buildXml(ConnectionProvider conn, XmlEngine xmlEngine, File fileDir,
-      FieldsData fd, Vector<Object> vecFields, int max_textbox_length) throws ServletException,
-      IOException {
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/wad/Configuration_ActionButton").createXmlDocument();
+      FieldsData fd, Vector<Object> vecFields, int max_textbox_length)
+      throws ServletException, IOException {
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/wad/Configuration_ActionButton").createXmlDocument();
     xmlDocument.setParameter("class", (fd.columnname + fd.reference) + ".html");
     final ProcessRelationData[] data = ProcessRelationData.selectParameters(conn, "", fd.reference);
 
@@ -771,8 +757,8 @@ class WadActionButton {
       discard[3] = "reloadOpener";
     }
 
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/wad/Template_ActionButton", discard).createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/wad/Template_ActionButton", discard).createXmlDocument();
     final ProcessRelationData[] efd = ProcessRelationData.selectParameters(conn, strLanguage,
         fd.reference);
     xmlDocument.setParameter("tab", fd.realname);
@@ -811,7 +797,8 @@ class WadActionButton {
         html.append("<tr><td class=\"TitleCell\">").append(auxControl.toLabel().replace("\n", ""))
             .append("</td>\n");
         html.append("<td class=\"").append(auxControl.getType()).append("_ContentCell\"");
-        if (Integer.valueOf(auxControl.getData("DisplayLength")).intValue() > (max_size_edition_1_columns / 2)) {
+        if (Integer.valueOf(auxControl.getData("DisplayLength"))
+            .intValue() > (max_size_edition_1_columns / 2)) {
           html.append(" colspan=\"2\"");
           auxControl.setData("CssSize", "TwoCells");
         } else {
@@ -911,34 +898,14 @@ class WadActionButton {
 
       script.append("\nfunction reloadComboReloads").append(fd.reference)
           .append("(changedField) {\n");
-      script
-          .append("  submitCommandForm(changedField, false, null, '../ad_callouts/ComboReloadsProcessHelper.html', 'hiddenFrame', null, null, true);\n");
+      script.append(
+          "  submitCommandForm(changedField, false, null, '../ad_callouts/ComboReloadsProcessHelper.html', 'hiddenFrame', null, null, true);\n");
       script.append("  return true;\n");
       script.append("}\n");
 
       xmlDocument.setParameter("script", script.toString());
     }
     WadUtility.writeFile(fileDir, (fd.columnname + fd.reference) + ".html", xmlDocument.print());
-  }
-
-  /**
-   * Searchs a field in a vector.
-   * 
-   * @param vecFields
-   *          Vector with the fields.
-   * @param token
-   *          The field to search.
-   * @return String with the name of the field.
-   */
-  public static String findField(Vector<Object> vecFields, String token) {
-    if (vecFields == null)
-      return "";
-    for (int i = 0; i < vecFields.size(); i++) {
-      final String field = vecFields.elementAt(i).toString();
-      if (field.equalsIgnoreCase(token))
-        return field;
-    }
-    return "";
   }
 
 }

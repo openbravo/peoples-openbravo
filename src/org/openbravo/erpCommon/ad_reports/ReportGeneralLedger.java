@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2016 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -61,7 +62,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", vars.getOrg());
-      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+      String strcAcctSchemaId = vars.getSessionValue("ReportGeneralLedger|cAcctSchemaId");
+      if (StringUtils.equals(strcAcctSchemaId, "")) {
+        strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+      }
       String strDateFrom = vars
           .getGlobalVariable("inpDateFrom", "ReportGeneralLedger|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportGeneralLedger|DateTo", "");
@@ -103,6 +107,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           "ReportGeneralLedger|cAcctSchemaId");
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportGeneralLedger|DateFrom");
+      vars.setSessionValue("ReportGeneralLedger|cAcctSchemaId", strcAcctSchemaId);
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportGeneralLedger|DateTo");
       String strPageNo = vars.getRequestGlobalVariable("inpPageNo", "ReportGeneralLedger|PageNo");
       String strAmtFrom = vars.getNumericParameter("inpAmtFrom");

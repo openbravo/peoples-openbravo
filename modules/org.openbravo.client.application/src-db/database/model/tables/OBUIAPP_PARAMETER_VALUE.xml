@@ -71,6 +71,7 @@
       </foreign-key>
       <index name="OBUIAPP_PARAMVAL_FILE_IDX" unique="false">
         <index-column name="C_FILE_ID"/>
+        <whereClause><![CDATA[C_FILE_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="OBUIAPP_PARAMVAL_PARAM_IDX" unique="false">
         <index-column name="OBUIAPP_PARAMETER_ID"/>

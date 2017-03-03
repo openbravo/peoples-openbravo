@@ -98,9 +98,14 @@
       </foreign-key>
       <index name="C_CONVRATEDOC_FINACCTRX_IDX" unique="false">
         <index-column name="FIN_FINACC_TRANSACTION_ID"/>
+        <whereClause><![CDATA[FIN_FINACC_TRANSACTION_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="C_CONVRATEDOC_GLJOURNAL_IDX" unique="false">
         <index-column name="GL_JOURNAL_ID"/>
+        <whereClause><![CDATA[GL_JOURNAL_ID IS NOT NULL]]></whereClause>
+      </index>
+      <index name="C_CONVRATEDOC_INVOICE_IDX" unique="false">
+        <index-column name="C_INVOICE_ID"/>
       </index>
       <index name="C_CONVRATEDOC_PAYMENT_IDX" unique="false">
         <index-column name="FIN_PAYMENT_ID"/>

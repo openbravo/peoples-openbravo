@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,8 +24,12 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.Note;
+import org.openbravo.client.kernel.event.EntityDeleteEvent;
+import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.client.kernel.event.TransactionBeginEvent;
+import org.openbravo.client.kernel.event.TransactionCompletedEvent;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.common.order.Order;
@@ -41,15 +45,16 @@ import org.openbravo.model.common.order.OrderLine;
 public class OrderLineTestObserver extends EntityPersistenceEventObserver {
   static final String FORCED_DESCRIPTION = "test description";
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(OrderLine.ENTITY_NAME) };
+  private static int executionCount = 0;
+  private static int beginTrx = 0;
+  private static int endTrx = 0;
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
 
-    switch (DatasourceEventObserver.observerExecutionType) {
-    case OFF:
-      return;
+    switch (ObserverBaseTest.observerExecutionType) {
     case UPDATE_DESCRIPTION:
       event.setCurrentState(entities[0].getProperty(OrderLine.PROPERTY_DESCRIPTION),
           FORCED_DESCRIPTION);
@@ -70,14 +75,80 @@ public class OrderLineTestObserver extends EntityPersistenceEventObserver {
           FORCED_DESCRIPTION + numOfLines);
       break;
     case UPDATE_PARENT:
-      Order order = ((OrderLine) event.getTargetInstance()).getSalesOrder();
-      order.setDescription(FORCED_DESCRIPTION);
+      Order orderWithForcedDescription = ((OrderLine) event.getTargetInstance()).getSalesOrder();
+      orderWithForcedDescription.setDescription(FORCED_DESCRIPTION);
       break;
+    case UPDATE_PARENT_RANDOM:
+      Order orderWithRandomDescription = ((OrderLine) event.getTargetInstance()).getSalesOrder();
+      orderWithRandomDescription.setDescription(Long.toString(System.currentTimeMillis()));
+      break;
+    case ON_NOOP:
+      break;
+    default:
+      return;
     }
+
+    executionCount++;
+  }
+
+  public void onNew(@Observes EntityNewEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+
+    switch (ObserverBaseTest.observerExecutionType) {
+    case ON_NOOP:
+      break;
+    default:
+      return;
+    }
+
+    executionCount++;
+  }
+
+  public void onDelete(@Observes EntityDeleteEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+
+    switch (ObserverBaseTest.observerExecutionType) {
+    case ON_NOOP:
+      break;
+    default:
+      return;
+    }
+
+    executionCount++;
+  }
+
+  public void onTransactionBegin(@Observes TransactionBeginEvent event) {
+    beginTrx++;
+  }
+
+  public void onTransactionCompleted(@Observes TransactionCompletedEvent event) {
+    endTrx++;
   }
 
   @Override
   protected Entity[] getObservedEntities() {
     return entities;
+  }
+
+  static void resetExecutionCount() {
+    executionCount = 0;
+    beginTrx = 0;
+    endTrx = 0;
+  }
+
+  static int getNumberOfExecutions() {
+    return executionCount;
+  }
+
+  public static int getNumberOfStartedTrxs() {
+    return beginTrx;
+  }
+
+  public static int getNumberOfClosedTrxs() {
+    return endTrx;
   }
 }

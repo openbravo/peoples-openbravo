@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Copyright (C) 2001-2017 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -49,6 +49,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.ScrollableFieldProvider;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
@@ -67,6 +68,8 @@ import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.ProcessTrl;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.WindowTrl;
+import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.web.UserContextCache;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -219,6 +222,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       if (AuthenticationManager.isStatelessRequest(request)) {
         if (areThereLicenseRestrictions(null)) {
           throw new AuthenticationException("No valid license");
+        }
+        // make sure that there is an OBContext for the logged in user also in case of stateless requests
+        if (OBContext.getOBContext() == null
+            || !strUserAuth.equals(OBContext.getOBContext().getUser().getId())) {
+          OBContext.setOBContext(UserContextCache.getInstance().getCreateOBContext(strUserAuth));
         }
         super.serviceInitialized(request, response);
         return;
@@ -1193,7 +1201,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       HashMap<String, Object> designParameters, JRDataSource data,
       Map<Object, Object> exportParameters, boolean forceRefresh) throws ServletException {
     String localStrReportName = strReportName;
-    String localStrOutputType = strOutputType;
+    String localStrOutputType = getExportFormat(strOutputType);
     String localStrFileName = strFileName;
     Map<Object, Object> localExportParameters = exportParameters;
     HashMap<String, Object> localDesignParameters = designParameters;
@@ -1240,11 +1248,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       os = response.getOutputStream();
       if (localExportParameters == null)
         localExportParameters = new HashMap<Object, Object>();
-      if (localStrOutputType == null || localStrOutputType.equals(""))
-        localStrOutputType = "html";
-      final ExportType expType = ExportType.getExportType(localStrOutputType.toUpperCase());
 
-      if (localStrOutputType.equals("html")) {
+      final ExportType expType = ExportType.getExportType(localStrOutputType);
+      ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+
+      if (expType == ExportType.HTML) {
         if (log4j.isDebugEnabled())
           log4j.debug("JR: Print HTML");
         response.setHeader("Content-disposition", "inline" + "; filename=" + localStrFileName + "."
@@ -1254,15 +1262,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         localExportParameters.put(ReportingUtils.IMAGES_URI, localAddress
             + "/servlets/image?image={0}");
         ReportingUtils.exportJR(localStrReportName, expType, localDesignParameters, os, false,
-            this, data, localExportParameters);
-      } else if (localStrOutputType.equals("pdf") || localStrOutputType.equalsIgnoreCase("xls")
-          || localStrOutputType.equalsIgnoreCase("txt")
-          || localStrOutputType.equalsIgnoreCase("csv")) {
+            readOnlyCP, data, localExportParameters);
+      } else if (expType != ExportType.XML) {
         reportId = UUID.randomUUID();
         File outputFile = new File(globalParameters.strFTPDirectory + "/" + localStrFileName + "-"
             + (reportId) + "." + localStrOutputType);
         ReportingUtils.exportJR(localStrReportName, expType, localDesignParameters, outputFile,
-            false, this, data, localExportParameters);
+            false, readOnlyCP, data, localExportParameters);
         response.setContentType("text/html;charset=UTF-8");
         response.setHeader("Content-disposition", "inline" + "; filename=" + localStrFileName + "-"
             + (reportId) + ".html");
@@ -1293,6 +1299,16 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       } catch (final Exception e) {
       }
     }
+  }
+
+  private String getExportFormat(String outputType) {
+    if (outputType == null || outputType.equals("")) {
+      return ExportType.HTML.getExtension();
+    }
+    if (ExportType.XLS.hasExtension(outputType)) {
+      return ReportingUtils.getExcelExportType().getExtension();
+    }
+    return outputType;
   }
 
   /**

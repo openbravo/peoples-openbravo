@@ -145,15 +145,19 @@
       </foreign-key>
       <index name="M_LC_COST_INOUT" unique="false">
         <index-column name="M_INOUT_ID"/>
+        <whereClause><![CDATA[M_INOUT_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="M_LC_COST_INVOICELINE" unique="false">
         <index-column name="C_INVOICELINE_ID"/>
+        <whereClause><![CDATA[C_INVOICELINE_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="M_LC_COST_LANDEDCOST" unique="false">
         <index-column name="M_LANDEDCOST_ID"/>
+        <whereClause><![CDATA[M_LANDEDCOST_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="M_LC_COST_POSTED" unique="false">
         <index-column name="POSTED"/>
+        <whereClause><![CDATA[POSTED IS NOT NULL]]></whereClause>
       </index>
       <check name="M_LC_COST_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_LC_COST_MATCHADJ"><![CDATA[ISMATCHINGADJUSTED IN ('Y', 'N')]]></check>

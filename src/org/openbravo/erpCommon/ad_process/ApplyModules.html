@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -226,25 +226,26 @@
     function insertWarnsAndErrors(response){
       if(start===true && !stopAddingWarns){
         if(response.statusofstate=="Warning"){
-          var warns=response.warnings.string;
-          if(warns){
-            if(!(warns instanceof Array)){
-              warns=[warns];
+          var warns=response.warnings;
+          if (warns) {
+            if (warns instanceof Array) {
+              warns = warns[0];
             }
+            warns = [warns.string];
             for(i=0;i<warns.length;i++){
-              var old=document.getElementById("warning_"+correspondingNode(response.state)).title;
-              var l=old.length;
-              if(l>300){
-                //add nothing else to the tooltip, already too long
-              }else{
-                if(old===""){
-                  old="Warnings: ";
+              if (warns[i] !== undefined) {
+                var old=document.getElementById("warning_"+correspondingNode(response.state)).title;
+                var l=old.length;
+                if(l>300){
+                  //add nothing else to the tooltip, already too long
                 }else{
-                  old+=",";
+                  if(old===""){
+                    old="Warnings: ";
+                  }else{
+                    old+=",";
+                  }
+                  document.getElementById("warning_"+correspondingNode(response.state)).title=old+warns[i];
                 }
-                document.getElementById("warning_"+correspondingNode(response.state)).title=old+warns[i];
-              }
-              if(warns[i]!==undefined){
                 progList_addTextToTextArea('<b><i>Warning: </b></i>'+warns[i]);
               }
             }

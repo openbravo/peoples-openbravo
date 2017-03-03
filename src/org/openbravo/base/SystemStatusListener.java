@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,7 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.database.SessionInfo;
 
 public class SystemStatusListener implements ServletContextListener {
   private static final Logger logger = Logger.getLogger(SystemStatusListener.class);
@@ -46,7 +47,9 @@ public class SystemStatusListener implements ServletContextListener {
         SystemStatusListenerData.setSystemStatus(cp, "RB70");
     } catch (ServletException e) {
       logger.error("Error while updating system status", e);
+    } finally {
+      // detaching db connection from thread so can it be returned to pool
+      SessionInfo.init();
     }
-
   }
 }

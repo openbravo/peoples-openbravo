@@ -206,6 +206,7 @@
       </foreign-key>
       <index name="AD_USER_EMAIL" unique="false">
         <index-column name="EMAIL"/>
+        <whereClause><![CDATA[EMAIL IS NOT NULL]]></whereClause>
       </index>
       <index name="AD_USER_NAME" unique="false">
         <index-column name="AD_CLIENT_ID"/>

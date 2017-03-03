@@ -11,21 +11,20 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application.window;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.enterprise.context.SessionScoped;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -58,29 +57,52 @@ import org.slf4j.LoggerFactory;
  * caching occurs to obtain better performance in FIC computations. For this cache to be used, the
  * system needs to be on 'production' mode, that is, all the modules need to be not in development
  */
-@SessionScoped
-public class ApplicationDictionaryCachedStructures implements Serializable {
-  private static final long serialVersionUID = 1L;
-
-  private Map<String, Tab> tabMap = new HashMap<String, Tab>();
-  private Map<String, Table> tableMap = new HashMap<String, Table>();
-  private Map<String, List<Field>> fieldMap = new HashMap<String, List<Field>>();
-  private Map<String, List<Column>> columnMap = new HashMap<String, List<Column>>();
-  private Map<String, List<AuxiliaryInput>> auxInputMap = new HashMap<String, List<AuxiliaryInput>>();
-  private Map<String, ComboTableData> comboTableDataMap = new ConcurrentHashMap<String, ComboTableData>();
-  private Map<String, List<Parameter>> attMethodMetadataMap = new ConcurrentHashMap<String, List<Parameter>>();
-  private List<String> initializedWindows = new ArrayList<String>();
-
+@ApplicationScoped
+public class ApplicationDictionaryCachedStructures {
   private static final Logger log = LoggerFactory
       .getLogger(ApplicationDictionaryCachedStructures.class);
 
+  private Map<String, Tab> tabMap;
+  private Map<String, Table> tableMap;
+  private Map<String, List<Field>> fieldMap;
+  private Map<String, List<Column>> columnMap;
+  private Map<String, List<AuxiliaryInput>> auxInputMap;
+  private Map<String, ComboTableData> comboTableDataMap;
+  private Map<String, List<Parameter>> attMethodMetadataMap;
+  private List<String> initializedWindows;
+
   private boolean useCache;
 
-  public ApplicationDictionaryCachedStructures() {
+  private Map<String, Object> tabLocks;
+  private Object getTabLock = new Object();
+  private Object initializeWindowLock = new Object();
+  private Map<String, Object> windowLocks;
+
+  /**
+   * Resets cache and sets whether cache should be used.
+   *
+   * This method is automatically invoked on creation.
+   */
+  @PostConstruct
+  public void init() {
+    log.debug("Resetting cache");
+    tabMap = new ConcurrentHashMap<>();
+    tableMap = new ConcurrentHashMap<>();
+    fieldMap = new ConcurrentHashMap<>();
+    columnMap = new ConcurrentHashMap<>();
+    auxInputMap = new ConcurrentHashMap<>();
+    comboTableDataMap = new ConcurrentHashMap<>();
+    attMethodMetadataMap = new ConcurrentHashMap<>();
+    initializedWindows = new ArrayList<String>();
+    tabLocks = new ConcurrentHashMap<>();
+    windowLocks = new ConcurrentHashMap<>();
+
     // The cache will only be active when there are no modules in development in the system
-    final String query = "select m from ADModule m where m.inDevelopment=true";
+    final String query = "select 1 from ADModule m where m.inDevelopment=true";
     final Query indevelMods = OBDal.getInstance().getSession().createQuery(query);
+    indevelMods.setMaxResults(1);
     useCache = indevelMods.list().size() == 0;
+    log.info("ADCS initialized, use cache: {}", useCache);
   }
 
   /**
@@ -95,21 +117,36 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
    *          , ID of the tab to look for
    * @return Tab for the tabId, from cache if it is enabled
    */
-  public synchronized Tab getTab(String tabId) {
+  public Tab getTab(String tabId) {
     log.debug("get tab {}", tabId);
-    if (useCache() && tabMap.containsKey(tabId)) {
+    if (!useCache()) {
+      // not using cache, initialize just current tab and go
+      return OBDal.getInstance().get(Tab.class, tabId);
+    }
+
+    if (tabMap.containsKey(tabId)) {
       log.debug("got tab {} from cache", tabId);
       return tabMap.get(tabId);
     }
-    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-    if (!useCache()) {
-      // not using cache, initialize just current tab and go
-      return tab;
-    } else {
-      // using cache, do complete initialization
-      initializeWindow(tab.getWindow().getId());
+
+    // tab is not cached: lock at method level to acquire a lock to initialize it
+    synchronized (getTabLock) {
+      // now we can safely check if lock for tab is not set and create it
+      if (!tabLocks.containsKey(tabId)) {
+        tabLocks.put(tabId, new Object());
+      }
     }
-    return tab;
+
+    // lock for tab id, so it only gets initialized once
+    synchronized (tabLocks.get(tabId)) {
+      if (tabMap.containsKey(tabId)) {
+        // another thread already cached this tab
+        return tabMap.get(tabId);
+      }
+      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      initializeWindow(tab.getWindow().getId());
+      return tab;
+    }
   }
 
   /**
@@ -119,11 +156,26 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     if (!useCache() || initializedWindows.contains(windowId)) {
       return;
     }
-    Window window = OBDal.getInstance().get(Window.class, windowId);
-    for (Tab tab : window.getADTabList()) {
-      initializeTab(tab);
+    synchronized (initializeWindowLock) {
+      if (!windowLocks.containsKey(windowId)) {
+        windowLocks.put(windowId, new Object());
+      }
     }
-    initializedWindows.add(windowId);
+
+    synchronized (windowLocks.get(windowId)) {
+      if (initializedWindows.contains(windowId)) {
+        return;
+      }
+
+      Window window = OBDal.getInstance().get(Window.class, windowId);
+      for (Tab tab : window.getADTabList()) {
+        initializeTab(tab);
+      }
+
+      synchronized (initializedWindows) {
+        initializedWindows.add(windowId);
+      }
+    }
   }
 
   /**
@@ -136,14 +188,16 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
   private void initializeTab(Tab tab) {
     String tabId = tab.getId();
     initializeDALObject(tab);
+
+    // initialize other elements related with the tab
+    getAuxiliarInputList(tab);
+    getFieldsOfTab(tab);
+    initializeDALObject(tab.getTable());
+    getColumnsOfTable(tab.getTable().getId());
+
     if (useCache()) {
       tabMap.put(tabId, tab);
     }
-    // initialize other elements related with the tab
-    getAuxiliarInputList(tabId);
-    getFieldsOfTab(tabId);
-    initializeDALObject(tab.getTable());
-    getColumnsOfTable(tab.getTable().getId());
   }
 
   public Table getTable(String tableId) {
@@ -164,6 +218,10 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
       return fieldMap.get(tabId);
     }
     Tab tab = getTab(tabId);
+    return getFieldsOfTab(tab);
+  }
+
+  public List<Field> getFieldsOfTab(Tab tab) {
     String tableId = tab.getTable().getId();
     List<Field> fields = tab.getADFieldList();
     for (Field f : fields) {
@@ -180,7 +238,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
       }
     }
     if (useCache()) {
-      fieldMap.put(tabId, fields);
+      fieldMap.put(tab.getId(), fields);
     }
     return fields;
   }
@@ -201,7 +259,6 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
   }
 
   private void initializeColumn(Column c) {
-
     initializeDALObject(c.getValidation());
     if (c.getValidation() != null) {
       initializeDALObject(c.getValidation().getValidationCode());
@@ -221,7 +278,6 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     if (c.getReferenceSearchKey() != null) {
       initializeReference(c.getReferenceSearchKey());
     }
-
   }
 
   private void initializeReference(Reference reference) {
@@ -229,17 +285,22 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     for (ReferencedTable t : reference.getADReferencedTableList()) {
       initializeDALObject(t);
     }
+
     initializeDALObject(reference.getOBUISELSelectorList());
     for (Selector s : reference.getOBUISELSelectorList()) {
       initializeDALObject(s);
       SelectorField displayField = s.getDisplayfield();
       initializeDALObject(displayField);
     }
+
+    initializeDALObject(reference.getADReferencedTreeList());
     for (ReferencedTree t : reference.getADReferencedTreeList()) {
       initializeDALObject(t);
       ReferencedTreeField displayField = t.getDisplayfield();
       initializeDALObject(displayField);
     }
+
+    initializeDALObject(reference.getADListList());
     for (org.openbravo.model.ad.domain.List list : reference.getADListList()) {
       initializeDALObject(list);
     }
@@ -251,21 +312,33 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
       return auxInputMap.get(tabId);
     }
     Tab tab = getTab(tabId);
+    return getAuxiliarInputList(tab);
+  }
+
+  private List<AuxiliaryInput> getAuxiliarInputList(Tab tab) {
     initializeDALObject(tab.getADAuxiliaryInputList());
     List<AuxiliaryInput> auxInputs = new ArrayList<AuxiliaryInput>(tab.getADAuxiliaryInputList());
     for (AuxiliaryInput auxIn : auxInputs) {
       initializeDALObject(auxIn);
     }
     if (useCache()) {
-      auxInputMap.put(tabId, auxInputs);
+      auxInputMap.put(tab.getId(), auxInputs);
     }
     return auxInputs;
   }
 
-  private synchronized void initializeDALObject(Object obj) {
-    Hibernate.initialize(obj);
+  private void initializeDALObject(Object obj) {
+    if (obj == null) {
+      return;
+    }
+    synchronized (obj) {
+      Hibernate.initialize(obj);
+    }
   }
 
+  /**
+   * @deprecated use {@link #getComboTableData(Field)}
+   */
   public ComboTableData getComboTableData(VariablesSecureApp vars, String ref, String colName,
       String objectReference, String validation, String orgList, String clientList) {
     String comboId = ref + colName + objectReference + validation + orgList + clientList;
@@ -283,7 +356,30 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
       comboTableDataMap.put(comboId, comboTableData);
     }
     return comboTableData;
+  }
 
+  /**
+   * Returns the combo for the given field from cache if present, if not it also gets cached if
+   * applicable.
+   */
+  public ComboTableData getComboTableData(Field field) {
+    String comboId = field.getId();
+    if (useCache() && comboTableDataMap.get(comboId) != null) {
+      return comboTableDataMap.get(comboId);
+    }
+
+    ComboTableData comboTableData;
+    try {
+      comboTableData = ComboTableData.getTableComboDataFor(field);
+    } catch (Exception e) {
+      throw new OBException("Error while computing combo table data for field " + field, e);
+    }
+
+    log.debug("Combo - cacheable: {} id: {}", comboTableData.canBeCached(), comboId);
+    if (useCache() && comboTableData.canBeCached()) {
+      comboTableDataMap.put(comboId, comboTableData);
+    }
+    return comboTableData;
   }
 
   /**
@@ -340,7 +436,8 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     }
   }
 
-  private boolean useCache() {
+  /** Can cache be used, AD components are cacheable if there are no modules in development */
+  public boolean useCache() {
     return useCache;
   }
 }

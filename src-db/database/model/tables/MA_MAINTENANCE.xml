@@ -82,9 +82,11 @@
       </foreign-key>
       <index name="MA_MAINTENANCE_MACHINE_IDX" unique="false">
         <index-column name="MA_MACHINE_ID"/>
+        <whereClause><![CDATA[MA_MACHINE_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="MA_MAINTENANCE_MACHINETYPE_IDX" unique="false">
         <index-column name="MA_MACHINE_TYPE_ID"/>
+        <whereClause><![CDATA[MA_MACHINE_TYPE_ID IS NOT NULL]]></whereClause>
       </index>
       <check name="MA_MAINTENANCE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

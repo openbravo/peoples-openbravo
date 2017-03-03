@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,6 +56,7 @@ import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ReportDefinition;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
+import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.RequestContext;
@@ -64,6 +65,7 @@ import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.userinterface.selector.reference.FKMultiSelectorUIDefinition;
 import org.openbravo.utils.FileUtility;
@@ -109,42 +111,28 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       }
       return;
     }
+    SessionInfo.auditThisThread(false);
     super.execute();
   }
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
 
-    JSONObject result = new JSONObject();
     try {
-      result.put("retryExecution", true);
-      result.put("showResultsInProcessView", true);
+      JSONObject result = getResponseBuilder().retryExecution().showResultsInProcessView().build();
 
       final JSONObject jsonContent = new JSONObject(content);
       final String action = jsonContent.getString(ApplicationConstants.BUTTON_VALUE);
       doGenerateReport(result, parameters, jsonContent, action);
 
       return result;
-    } catch (OBException e) {
-      log.error("Error generating report id: {}", parameters.get("reportId"), e);
-      JSONObject msg = new JSONObject();
-      try {
-        msg.put("severity", "error");
-        msg.put("text", OBMessageUtils.translateError(e.getMessage()).getMessage());
-        result.put("message", msg);
-      } catch (JSONException ignore) {
-      }
-      return result;
     } catch (Exception e) {
       log.error("Error generating report id: {}", parameters.get("reportId"), e);
-      JSONObject msg = new JSONObject();
-      try {
-        msg.put("severity", "error");
-        msg.put("text", OBMessageUtils.translateError(e.getMessage()).getMessage());
-        result.put("message", msg);
-      } catch (JSONException ignore) {
-      }
-      return result;
+      return getResponseBuilder()
+          .retryExecution()
+          .showResultsInProcessView()
+          .showMsgInProcessView(MessageType.ERROR,
+              OBMessageUtils.translateError(e.getMessage()).getMessage()).build();
     }
   }
 
@@ -183,6 +171,8 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       expType = ExportType.PDF;
     } else if (strFileName.endsWith("." + ExportType.XLS.getExtension())) {
       expType = ExportType.XLS;
+    } else if (strFileName.endsWith("." + ExportType.XLSX.getExtension())) {
+      expType = ExportType.XLSX;
     } else {
       throw new IllegalArgumentException("Trying to download report file with unsupported type "
           + strFileName);
@@ -263,6 +253,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     String strJRPath = "";
     switch (expType) {
     case XLS:
+    case XLSX:
       if (report.isUsePDFAsXLSTemplate()) {
         strJRPath = report.getPDFTemplate();
       } else {
@@ -314,7 +305,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
         parameters.get("reportId"));
 
     doValidations(report, parameters, jsonContent);
-    final ExportType expType = ExportType.getExportType(action);
+    final ExportType expType = getExportType(action);
 
     String strFileName = getReportFileName(report, parameters, expType);
     String strTmpFileName = UUID.randomUUID().toString() + "." + expType.getExtension();
@@ -360,6 +351,13 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     final JSONArray actions = new JSONArray();
     actions.put(0, reportAction);
     result.put("responseActions", actions);
+  }
+
+  private ExportType getExportType(String action) {
+    if (ExportType.XLS.hasExtension(action)) {
+      return ReportingUtils.getExcelExportType();
+    }
+    return ExportType.getExportType(action);
   }
 
   /**
