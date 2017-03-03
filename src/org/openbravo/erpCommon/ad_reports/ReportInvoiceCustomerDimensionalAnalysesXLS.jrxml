@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2017-02-09T13:47:18 -->
+<!-- 2017-03-02T13:16:17 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportInvoiceCustomerDimensionalAnalysesXLS" pageWidth="1900" pageHeight="842" orientation="Landscape" columnWidth="1900" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="59be190b-97b3-4951-842b-79d4e9d2d71b">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -169,7 +169,6 @@
                 left join AD_USER on C_INVOICE.SALESREP_ID = AD_USER.AD_USER_ID
                 left join C_PROJECT on C_INVOICE.C_PROJECT_ID = C_PROJECT.C_PROJECT_ID
                 left join C_DOCTYPE on C_INVOICE.C_DOCTYPE_ID=C_DOCTYPE.C_DOCTYPE_ID
-                join AD_ORG DOCO on C_DOCTYPE.AD_ORG_ID = DOCO.AD_ORG_ID 
                 left join M_PRODUCT on C_INVOICELINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
                 left join C_UOM on C_INVOICELINE.C_UOM_ID = C_UOM.C_UOM_ID
                 left join M_PRODUCT_CATEGORY on M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID
@@ -309,7 +308,7 @@
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ORGANIZATION} + "﹡"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ORGANIZATION} + " and any child organization"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="910" y="0" width="390" height="15" uuid="ed92f5e1-fec8-401c-97e9-b9980a2edd3a">
@@ -908,16 +907,7 @@
 		<band splitType="Stretch"/>
 	</pageFooter>
 	<lastPageFooter>
-		<band height="58">
-			<staticText>
-				<reportElement x="1740" y="40" width="158" height="18" uuid="11a39173-30ba-4fde-bd18-fa0a1462d525"/>
-				<textElement textAlignment="Right">
-					<font fontName="Bitstream Vera Sans" size="8"/>
-					<paragraph tabStopWidth="0"/>
-				</textElement>
-				<text><![CDATA[﹡and any child organization]]></text>
-			</staticText>
-		</band>
+		<band height="58"/>
 	</lastPageFooter>
 	<summary>
 		<band height="60" splitType="Stretch">
@@ -974,8 +964,8 @@
 					<subreportParameterExpression><![CDATA[$P{aux_docstatus}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="LANGUAGE">
-                    <subreportParameterExpression><![CDATA[$P{LANGUAGE}]]></subreportParameterExpression>
-                </subreportParameter>
+					<subreportParameterExpression><![CDATA[$P{LANGUAGE}]]></subreportParameterExpression>
+				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[$P{SR_LINES}]]></subreportExpression>
 			</subreport>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2017-02-09T14:02:49 -->
+<!-- 2017-03-02T13:17:04 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportInvoiceCustomerDimensionalAnalysesMultiComparativeJR" pageWidth="1300" pageHeight="595" orientation="Landscape" columnWidth="1272" leftMargin="14" rightMargin="14" topMargin="56" bottomMargin="28" uuid="3f1d7732-64a5-4b19-b4dd-5f06efe61a6b">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -1245,65 +1245,31 @@
 	<variable name="MARGIN_TOTAL" class="java.math.BigDecimal">
 		<variableExpression><![CDATA[($V{AMOUNT_TOTAL}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_TOTAL}.divide($V{AMOUNT_TOTAL}, 10, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_TOTAL}.signum()))]]></variableExpression>
 	</variable>
-	<group name="DocumentType">
-		<groupFooter>
-			<band height="50">
-				<subreport>
-					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="695" height="50" uuid="7614471a-bdd5-4c59-a488-1015898d2283"/>
-					<subreportParameter name="USER_CLIENT">
-						<subreportParameterExpression><![CDATA[$P{aux_client}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="AD_ORG_ID">
-						<subreportParameterExpression><![CDATA[$P{aux_org}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="C_CURRENCY_ID">
-						<subreportParameterExpression><![CDATA[$P{C_CURRENCY_ID}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="DATEFROM">
-						<subreportParameterExpression><![CDATA[$P{DateFrom}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="DATETO">
-						<subreportParameterExpression><![CDATA[$P{DateTo}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="C_BP_GROUP_ID">
-						<subreportParameterExpression><![CDATA[$P{aux_bpgroup}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="C_BPARTNER_ID">
-						<subreportParameterExpression><![CDATA[$P{aux_partner}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="M_PRODUCT_CATEGORY_ID">
-						<subreportParameterExpression><![CDATA[$P{aux_productcategory}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="M_PRODUCT_ID">
-						<subreportParameterExpression><![CDATA[$P{aux_product}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="SALESREP_ID">
-						<subreportParameterExpression><![CDATA[$P{aux_salesrep}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="PARTNER_SALESREP_ID">
-						<subreportParameterExpression><![CDATA[$P{aux_partnersalesrep}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="C_PROJECT_ID">
-						<subreportParameterExpression><![CDATA[$P{aux_project}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="PRODUCTTYPE">
-						<subreportParameterExpression><![CDATA[$P{aux_producttype}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="C_DOCTYPE_ID">
-						<subreportParameterExpression><![CDATA[$P{aux_doctype}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="DOCSTATUS">
-						<subreportParameterExpression><![CDATA[$P{aux_docstatus}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="LANGUAGE">
-                        <subreportParameterExpression><![CDATA[$P{LANGUAGE}]]></subreportParameterExpression>
-                    </subreportParameter>
-					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					<subreportExpression><![CDATA[$P{SR_LINES}]]></subreportExpression>
-				</subreport>
-			</band>
-		</groupFooter>
-	</group>
+	<variable name="COSTREF_TOTAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CONVCOSTREF}]]></variableExpression>
+	</variable>
+	<variable name="PROREF_TOTAL" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$V{AMOUNTREF_TOTAL}.subtract($V{COSTREF_TOTAL})]]></variableExpression>
+	</variable>
+	<variable name="MARGINREF_TOTAL" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[($V{AMOUNTREF_TOTAL}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROREF_TOTAL}.divide($V{AMOUNTREF_TOTAL}, 10, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROREF_TOTAL}.signum()))]]></variableExpression>
+	</variable>
+	<variable name="MARGINDIFF_TOTAL" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$V{MARGIN_TOTAL}.subtract($V{MARGINREF_TOTAL})]]></variableExpression>
+	</variable>
+	<variable name="COSTREF2_TOTAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CONVCOSTREF2}]]></variableExpression>
+	</variable>
+	<variable name="PROREF2_TOTAL" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$V{AMOUNTREF2_TOTAL}.subtract($V{COSTREF2_TOTAL})]]></variableExpression>
+	</variable>
+	<variable name="MARGINREF2_TOTAL" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[($V{AMOUNTREF2_TOTAL}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROREF2_TOTAL}.divide($V{AMOUNTREF2_TOTAL}, 10, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROREF2_TOTAL}.signum()))]]></variableExpression>
+	</variable>
+	<variable name="MARGINDIFF2_TOTAL" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$V{MARGIN_TOTAL}.subtract($V{MARGINREF2_TOTAL})]]></variableExpression>
+	</variable>
+	<group name="DocumentType"/>
 	<group name="TOTALIZE">
 		<groupExpression><![CDATA[]]></groupExpression>
 		<groupHeader>
@@ -1313,7 +1279,7 @@
 			<band height="23" splitType="Stretch">
 				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-21" style="Total_Field" x="190" y="1" width="55" height="16" uuid="9fb2a908-910a-4b65-8cb4-164f8d9a345e"/>
-					<box leftPadding="5">
+					<box leftPadding="0">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1416,8 +1382,8 @@
 					<textFieldExpression><![CDATA[(($P{DIMENSIONS}.compareTo(new Integer(5))>=0)?"5":" ")]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
-					<reportElement key="textField-204" style="Total_Field" x="865" y="1" width="60" height="16" uuid="45a9e7d3-bd3e-4670-8a8d-5a1982a03b19"/>
-					<box leftPadding="5">
+					<reportElement key="textField-204" style="Total_Field" x="895" y="1" width="30" height="16" uuid="45a9e7d3-bd3e-4670-8a8d-5a1982a03b19"/>
+					<box leftPadding="0">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1430,7 +1396,7 @@
 				</textField>
 				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-300" style="Total_Field" x="925" y="1" width="30" height="16" uuid="bd676a01-044c-409e-8717-a2da2d89c518"/>
-					<box leftPadding="5">
+					<box leftPadding="0">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1443,7 +1409,7 @@
 				</textField>
 				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-301" style="Total_Field" x="385" y="1" width="55" height="16" uuid="a9e26228-93f3-46fb-a5cb-41613f6e5a53"/>
-					<box leftPadding="5">
+					<box leftPadding="0">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1455,8 +1421,8 @@
 					<textFieldExpression><![CDATA[($V{AMOUNTREF_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{AMOUNTREF_TOTAL}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
-					<reportElement key="textField-302" style="Total_Field" x="440" y="1" width="170" height="16" uuid="5ee3aeae-91c9-4533-a398-c7326057c92d"/>
-					<box leftPadding="5">
+					<reportElement key="textField-302" style="Total_Field" x="580" y="1" width="30" height="16" uuid="5ee3aeae-91c9-4533-a398-c7326057c92d"/>
+					<box leftPadding="0">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1544,7 +1510,7 @@
 				</textField>
 				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-308" style="Total_Field" x="955" y="1" width="30" height="16" uuid="f0cc2218-66f6-4d1d-abba-7d958041a2cf"/>
-					<box leftPadding="5">
+					<box leftPadding="0">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1556,8 +1522,8 @@
 					<textFieldExpression><![CDATA[($V{WEIGHTREF2_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHTREF2_TOTAL}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
-					<reportElement key="textField-310" style="Total_Field" x="695" y="1" width="170" height="16" uuid="7d5229c6-f334-4599-bdd0-31c24131e24c"/>
-					<box leftPadding="5">
+					<reportElement key="textField-310" style="Total_Field" x="835" y="1" width="30" height="16" uuid="7d5229c6-f334-4599-bdd0-31c24131e24c"/>
+					<box leftPadding="0">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1569,8 +1535,8 @@
 					<textFieldExpression><![CDATA[($V{AMOUNT2_PERTOTAL}!=null)?$P{NUMBERFORMAT}.format($V{AMOUNT2_PERTOTAL}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
-					<reportElement key="textField-311" style="Total_Field" x="610" y="1" width="85" height="16" uuid="d2272432-890f-4993-be7b-d8ae56aef621"/>
-					<box leftPadding="5">
+					<reportElement key="textField-311" style="Total_Field" x="640" y="1" width="55" height="16" uuid="d2272432-890f-4993-be7b-d8ae56aef621"/>
+					<box leftPadding="0">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1583,7 +1549,7 @@
 				</textField>
 				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-21" style="Total_Field" x="245" y="1" width="55" height="16" uuid="53b8074b-7fb5-4c37-b36d-ce9901583e61"/>
-					<box leftPadding="5">
+					<box leftPadding="0">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1596,7 +1562,7 @@
 				</textField>
 				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-21" style="Total_Field" x="300" y="1" width="55" height="16" uuid="24926af2-d2f8-4f47-84c8-92aa04ee8e84"/>
-					<box leftPadding="5">
+					<box leftPadding="0">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1609,7 +1575,7 @@
 				</textField>
 				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-21" style="Total_Field" x="355" y="1" width="30" height="16" uuid="84c46484-9aa7-4166-a385-b37a68e2fbf2"/>
-					<box leftPadding="4">
+					<box leftPadding="0">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1621,8 +1587,10 @@
 					<textFieldExpression><![CDATA[($V{MARGIN_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{MARGIN_TOTAL}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
-					<reportElement key="textField-204" style="Total_Field" x="985" y="1" width="55" height="16" uuid="0d392591-7182-4974-a1fa-cff8e5bd28d8"/>
-					<box leftPadding="5">
+					<reportElement key="textField-204" style="Total_Field" x="985" y="1" width="55" height="16" uuid="0d392591-7182-4974-a1fa-cff8e5bd28d8">
+						<printWhenExpression><![CDATA[$P{LEVEL1_LABEL}.equals("Product") || $P{LEVEL2_LABEL}.equals("Product") || $P{LEVEL3_LABEL}.equals("Product") || $P{LEVEL4_LABEL}.equals("Product") || $P{LEVEL5_LABEL}.equals("Product") || $P{LEVEL6_LABEL}.equals("Product") || $P{LEVEL7_LABEL}.equals("Product") || $P{LEVEL8_LABEL}.equals("Product") || $P{LEVEL9_LABEL}.equals("Product") || $P{LEVEL10_LABEL}.equals("Product")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="0">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1632,6 +1600,110 @@
 						<font isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{QTY_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{QTY_TOTAL}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+					<reportElement key="textField-301" style="Total_Field" x="440" y="1" width="55" height="16" uuid="2272fc63-700b-40d0-8a4c-cc55133e6a6c"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{COSTREF_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{COSTREF_TOTAL}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+					<reportElement key="textField-301" style="Total_Field" x="495" y="1" width="55" height="16" uuid="cdc41b26-840e-4c81-91ab-2275e6bdafe6"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PROREF_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{PROREF_TOTAL}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+					<reportElement key="textField-301" style="Total_Field" x="695" y="1" width="55" height="16" uuid="2df96f7a-c1a5-4cf1-83e9-27d368db16bd"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{COSTREF2_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{COSTREF2_TOTAL}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+					<reportElement key="textField-301" style="Total_Field" x="750" y="1" width="55" height="16" uuid="d68573a3-7cf0-4f20-96c9-7650b4d40e81"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{PROREF2_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{PROREF2_TOTAL}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+					<reportElement key="textField-302" style="Total_Field" x="550" y="1" width="30" height="16" uuid="93ccc7e4-31d6-49f6-a2b9-d1f385168b5c"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{MARGINREF_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{MARGINREF_TOTAL}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+					<reportElement key="textField-302" style="Total_Field" x="610" y="1" width="30" height="16" uuid="eaed9c3a-bb2c-43a9-b715-130dc6829f95"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{MARGINDIFF_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{MARGINDIFF_TOTAL}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+					<reportElement key="textField-302" style="Total_Field" x="805" y="1" width="30" height="16" uuid="e1951452-d0b9-4ada-94c6-942e8436ae28"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{MARGINREF2_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{MARGINREF2_TOTAL}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+					<reportElement key="textField-302" style="Total_Field" x="865" y="1" width="30" height="16" uuid="3d09de74-e0eb-4d28-b6f3-f55e36762726"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{MARGINDIFF2_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{MARGINDIFF2_TOTAL}):new String(" ")]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -6279,7 +6351,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ORGANIZATION} + "﹡"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ORGANIZATION} + " and any child organization"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="230" y="84" width="980" height="16" uuid="d69a5b37-89fd-4b84-af43-8f40c4f74119">
@@ -6424,15 +6496,7 @@
 		</band>
 	</pageFooter>
 	<lastPageFooter>
-		<band height="58">
-			<staticText>
-				<reportElement x="1051" y="40" width="158" height="18" uuid="aca5a24d-76b0-4eca-9194-7efec55c090b"/>
-				<textElement textAlignment="Right">
-					<paragraph tabStopWidth="0"/>
-				</textElement>
-				<text><![CDATA[﹡and any child organization]]></text>
-			</staticText>
-		</band>
+		<band height="58"/>
 	</lastPageFooter>
 	<summary>
 		<band splitType="Stretch"/>
