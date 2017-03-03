@@ -139,6 +139,7 @@ public class Cashup extends JSONProcessSimple {
         OBPOSErrors.class);
     errorsInPOSWindow.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, terminal));
     errorsInPOSWindow.add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "OBPOS_App_Cashup"));
+    errorsInPOSWindow.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
     errorsInPOSWindow.setMaxResults(1);
     if (errorsInPOSWindow.list().size() > 0) {
       return true;
