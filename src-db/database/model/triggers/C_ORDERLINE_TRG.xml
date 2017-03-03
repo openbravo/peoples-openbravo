@@ -47,7 +47,8 @@
   v_NetActual NUMBER;
   v_PriceLine NUMBER;
   v_CalcLine NUMBER;
-          
+  v_DocTaxAmount C_TAX.DocTaxAmount%TYPE;
+
   TYPE RECORD IS REF CURSOR;
   Cur_BOM RECORD;
 
@@ -229,16 +230,26 @@ IF (UPDATING) THEN
       v_PriceActual := ROUND(v_NetActual / :new.qtyordered, v_price_prec);     
     ELSE
       -- Regular taxes
-      v_NetActual := C_GET_NET_AMOUNT_FROM_GROSS(:new.c_tax_id, :new.line_gross_amount, :new.taxbaseamt, v_Prec);
-      v_PriceActual := ROUND(v_NetActual / :NEW.qtyordered, v_price_prec);
+      SELECT COALESCE(MIN(DocTaxAmount), 'L') INTO v_DocTaxAmount FROM C_Tax WHERE (C_Tax_ID = :new.C_Tax_ID OR Parent_Tax_ID = :new.C_Tax_ID) AND IsSummary = 'N';
+      IF (v_DocTaxAmount = 'D') THEN
+        v_NetActual := C_GET_NET_AMOUNT_FROM_GROSS(:new.c_tax_id, :new.line_gross_amount, :new.taxbaseamt);
+      ELSE
+        v_NetActual := C_GET_NET_AMOUNT_FROM_GROSS(:new.c_tax_id, :new.line_gross_amount, :new.taxbaseamt, v_Prec);
+      END IF;
+      IF (:new.qtyordered <> 0) THEN
+        v_PriceActual := ROUND(ROUND(v_NetActual, v_Prec) / :new.qtyordered, v_price_prec);
+      ELSE
+        v_PriceActual := 0;
+      END IF;
     END IF;      
     
     :NEW.pricestd := v_priceactual;
     :NEW.pricelist := v_priceactual;
     :NEW.pricelimit := v_priceactual;
     :NEW.priceactual := v_priceactual;
-    :new.taxbaseamt := v_NetActual;
+    :new.taxbaseamt := ROUND(v_NetActual, v_Prec);
     :new.LineNetAmt := v_NetActual;
+
   ELSE
     -- Price including taxes = 'N'
     -- Modified by I.Ciordia. Sometimes js fails calculting lineNet

@@ -40,6 +40,7 @@
   v_PriceLine NUMBER;
   v_CalcLine NUMBER;
   v_execute CHAR(1):='N';
+  v_DocTaxAmount C_TAX.DocTaxAmount%TYPE;
           
   TYPE RECORD IS REF CURSOR;
   Cur_BOM RECORD;  
@@ -68,6 +69,7 @@ BEGIN
           v_execute:='Y';
     ELSIF(UPDATING) THEN
         IF(:old.LineNetAmt <> :new.LineNetAmt
+          OR :old.Line_Gross_Amount <> :new.Line_Gross_Amount
           OR :old.gross_unit_price <> :new.gross_unit_price
           OR :old.c_tax_id <> :new.c_tax_id
           OR :old.qtyinvoiced <> :new.qtyinvoiced) THEN
@@ -119,16 +121,26 @@ BEGIN
         v_PriceActual := v_NetActual / :new.qtyinvoiced;     
       ELSE
         -- Regular taxes
-        v_NetActual := C_GET_NET_AMOUNT_FROM_GROSS(:new.c_tax_id, :new.line_gross_amount, :new.taxbaseamt, v_std_Prec);
-        v_PriceActual := ROUND(v_NetActual / :new.qtyinvoiced, v_price_prec);
+        SELECT COALESCE(MIN(DocTaxAmount), 'L') INTO v_DocTaxAmount FROM C_Tax WHERE (C_Tax_ID = :new.C_Tax_ID OR Parent_Tax_ID = :new.C_Tax_ID) AND IsSummary = 'N';
+        IF (v_DocTaxAmount = 'D') THEN
+          v_NetActual := C_GET_NET_AMOUNT_FROM_GROSS(:new.c_tax_id, :new.line_gross_amount, :new.taxbaseamt);
+        ELSE
+          v_NetActual := C_GET_NET_AMOUNT_FROM_GROSS(:new.c_tax_id, :new.line_gross_amount, :new.taxbaseamt, v_std_Prec);
+        END IF;
+        IF (:new.qtyinvoiced <> 0) THEN
+          v_PriceActual := ROUND(ROUND(v_NetActual, v_std_Prec) / :new.qtyinvoiced, v_price_prec);
+        ELSE
+          v_PriceActual := 0;
+        END IF;
       END IF;      
       
       :NEW.pricestd := v_priceactual;
       :NEW.pricelist := v_priceactual;
       :NEW.pricelimit := v_priceactual;
       :NEW.priceactual := v_priceactual;
-      :new.taxbaseamt := v_NetActual;
+      :new.taxbaseamt := ROUND(v_NetActual, v_std_Prec);
       :new.LineNetAmt := v_NetActual;
+
     END IF;
   END IF;
 

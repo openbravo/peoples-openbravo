@@ -11,7 +11,7 @@
         <default/>
       </parameter>
       <parameter name="p_stdprecision" type="NUMERIC" mode="in">
-        <default/>
+        <default><![CDATA[NULL]]></default>
       </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
@@ -31,10 +31,9 @@
 ************************************************************************/
 
 v_ResultStr VARCHAR(2000) := '';
-v_message VARCHAR2(2000) := '';
-v_NetAmount NUMBER;
-v_TaxAmount NUMBER;
 v_calcPrecision NUMBER:= 50;
+v_TaxAmount NUMBER;
+v_NetAmount NUMBER;
 
 BEGIN --BODY
 
@@ -42,18 +41,11 @@ BEGIN --BODY
     RETURN 0;
   END IF;
 
-  IF (p_stdprecision > v_calcPrecision) THEN
-    v_calcPrecision := p_stdprecision;
-  END IF;
-
   v_TaxAmount := C_GET_TAX_AMT_FROM_NET(p_tax_id, p_grossamt, p_alternatetaxbaseamt, v_calcPrecision, 0);
-  DBMS_OUTPUT.PUT_LINE('Unit tax ' || v_TaxAmount);
-  v_NetAmount := ROUND(p_grossamt * (p_grossamt  / (p_grossamt + v_TaxAmount)), p_stdprecision);
-
-  --TODO: Call function to recalculate alternate taxbase amount.
-
-  --TODO: If alternate taxbase amount is different recalculate line net amount c_tax_from_net_amt function.
-
+  v_NetAmount := ROUND(p_grossamt * (p_grossamt  / (p_grossamt + v_TaxAmount)), v_calcPrecision);
+  IF (p_stdprecision IS NOT NULL) THEN
+    v_NetAmount := ROUND(v_NetAmount, p_stdprecision);
+  END IF;
   RETURN v_NetAmount;
 
 EXCEPTION

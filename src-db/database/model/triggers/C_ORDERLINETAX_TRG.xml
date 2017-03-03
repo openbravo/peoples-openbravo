@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2010-2014 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2010-2017 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -27,11 +27,17 @@ v_Count NUMBER;
 v_LineNo  NUMBER;
 v_C_Order_ID C_ORDERLINETAX.C_ORDER_ID%TYPE;
 v_C_Tax_ID C_ORDERLINETAX.C_TAX_ID%TYPE;
+v_C_OrderTax_ID C_ORDERTAX.C_ORDERTAX_ID%TYPE;
 v_Prec C_CURRENCY.STDPRECISION%TYPE;
 v_DocTaxAmount C_TAX.DOCTAXAMOUNT%TYPE;
 v_Rate  C_TAX.RATE%TYPE;
+v_Cascade C_TAX.CASCADE%TYPE;
+v_BaseAmount C_TAX.BASEAMOUNT%TYPE;
+v_TaxBase_ID C_TAX.C_TAXBASE_ID%TYPE;
+v_Line C_TAX.LINE%TYPE;
 v_Increment_Amount C_ORDERTAX.TAXAMT%TYPE ;
 v_Increment_Base C_ORDERTAX.TAXBASEAMT%TYPE ;
+v_IsTaxIncluded M_PRICELIST.IsTaxIncluded%TYPE;
 v_Processed VARCHAR(60) ;
 v_DocAction VARCHAR(60);
 BEGIN
@@ -47,14 +53,15 @@ BEGIN
       v_C_Order_ID:=:OLD.C_ORDER_ID;
     END IF;
 
-    SELECT C_CURRENCY.STDPRECISION
-    INTO v_Prec
-    FROM C_ORDER, C_CURRENCY
+    SELECT C_CURRENCY.STDPRECISION, M_PRICELIST.ISTAXINCLUDED
+    INTO v_Prec, v_IsTaxIncluded
+    FROM C_ORDER, C_CURRENCY, M_PRICELIST
     WHERE C_ORDER.C_CURRENCY_ID = C_CURRENCY.C_CURRENCY_ID
+    AND C_ORDER.M_PRICELIST_ID = M_PRICELIST.M_PRICELIST_ID
     AND C_ORDER_ID = v_C_Order_ID;
     
-    SELECT DOCTAXAMOUNT, RATE
-    INTO v_DocTaxAmount, v_Rate
+    SELECT DocTaxAmount, Rate, Cascade, BaseAmount, C_TaxBase_ID, Line
+    INTO v_DocTaxAmount, v_Rate, v_Cascade, v_BaseAmount, v_TaxBase_ID, v_Line
     FROM C_TAX
     WHERE C_TAX_ID = v_C_Tax_ID;
 
@@ -70,17 +77,35 @@ BEGIN
   END IF;
     
   IF (INSERTING OR UPDATING) THEN
-    SELECT COUNT(1) INTO v_Count
+    SELECT COUNT(C_TAX_ID), MAX(c_ordertax_id) INTO v_Count, v_C_OrderTax_ID
     FROM C_ORDERTAX
-    WHERE C_ORDER_ID = :NEW.C_Order_ID
-    AND C_TAX_ID = :NEW.C_TAX_ID;
+    WHERE C_Order_ID = :new.C_Order_ID
+    AND C_Tax_ID = :new.C_Tax_ID;
     IF(v_Count>0) THEN
-      UPDATE C_ORDERTAX
-      SET TAXAMT = (CASE WHEN v_DocTaxAmount='D' THEN ROUND((TAXBASEAMT + v_Increment_Base) * v_Rate/100, v_Prec) ELSE (TAXAMT + v_Increment_Amount) END),
-          TAXBASEAMT=TAXBASEAMT + v_Increment_Base
-      WHERE C_ORDER_ID = :NEW.C_Order_ID
-        AND C_TAX_ID = :NEW.C_TAX_ID;
+      IF (v_DocTaxAmount = 'D' AND (v_Cascade = 'Y' OR v_BaseAmount IN ('TAX', 'LNATAX', 'TBATAX'))) THEN
+        SELECT COALESCE(CASE WHEN MAX(ot.TaxBaseAmt) > 0 THEN MAX(ROUND(ot.TaxBaseAmt, v_Prec)) ELSE MIN(ROUND(ot.TaxBaseAmt, v_Prec)) END + SUM(ot.TaxAmt), 0)
+        INTO v_Increment_Base
+        FROM C_OrderTax ot
+        JOIN C_Tax t
+        ON ot.C_Tax_ID = t.C_Tax_ID
+        WHERE ot.C_Order_ID = :new.C_Order_ID
+        AND c_tax_get_root(ot.C_Tax_ID) = c_tax_get_root(:new.C_Tax_ID)
+        AND ((v_Cascade = 'Y'
+        AND t.Line < v_Line)
+        OR (v_BaseAmount IN ('TAX', 'LNATAX', 'TBATAX')
+        AND C_TAX_ISMEMBER(v_TaxBase_ID, t.C_Tax_ID) = 1
+        AND t.IsSummary = 'N'));
 
+        UPDATE C_ORDERTAX
+        SET TAXAMT = ROUND(v_Increment_Base * v_Rate/100, v_Prec),
+        TAXBASEAMT = v_Increment_Base
+        WHERE C_OrderTax_ID = v_C_OrderTax_ID;
+      ELSE
+        UPDATE C_ORDERTAX
+        SET TAXAMT = CASE WHEN v_DocTaxAmount='D' THEN ROUND(ROUND(TAXBASEAMT + v_Increment_Base, v_Prec) * v_Rate/100, v_Prec) ELSE (TAXAMT + v_Increment_Amount) END,
+        TAXBASEAMT = TAXBASEAMT + v_Increment_Base
+        WHERE C_OrderTax_ID = v_C_OrderTax_ID;
+      END IF;
     ELSE
       SELECT COALESCE(MAX(LINE),0) + 10
       INTO v_LineNo
@@ -106,14 +131,37 @@ BEGIN
     IF (v_Processed='Y' AND v_DocAction <> 'CL') THEN
 	RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     END IF;
-    UPDATE C_ORDERTAX SET TAXAMT = (CASE WHEN v_DocTaxAmount='D' THEN ROUND((TAXBASEAMT - :OLD.TAXBASEAMT) * v_Rate/100, v_Prec) ELSE (TAXAMT - :OLD.TAXAMT) END), TAXBASEAMT=TAXBASEAMT - :OLD.TAXBASEAMT
-    WHERE C_ORDER_ID = :OLD.C_Order_ID
-    AND C_TAX_ID = :OLD.C_TAX_ID;
-    
+    IF (v_DocTaxAmount = 'D' AND (v_Cascade = 'Y' OR v_BaseAmount IN ('TAX', 'LNATAX', 'TBATAX'))) THEN
+      SELECT COALESCE(CASE WHEN MAX(ot.TaxBaseAmt) > 0 THEN MAX(ROUND(ot.TaxBaseAmt, v_Prec)) ELSE MIN(ROUND(ot.TaxBaseAmt, v_Prec)) END + SUM(ot.TaxAmt), 0)
+      INTO v_Increment_Base
+      FROM C_OrderTax ot
+      JOIN C_Tax t
+      ON ot.C_Tax_ID = t.C_Tax_ID
+      WHERE ot.C_Order_ID = :old.C_Order_ID
+      AND c_tax_get_root(ot.C_Tax_ID) = c_tax_get_root(:old.C_Tax_ID)
+      AND ((v_Cascade = 'Y'
+      AND t.Line < v_Line)
+      OR (v_BaseAmount IN ('TAX', 'LNATAX', 'TBATAX')
+      AND C_TAX_ISMEMBER(v_TaxBase_ID, t.C_Tax_ID) = 1
+      AND t.IsSummary = 'N'));
+
+      UPDATE C_ORDERTAX
+      SET TAXAMT = ROUND(v_Increment_Base * v_Rate/100, v_Prec),
+      TAXBASEAMT = v_Increment_Base
+      WHERE C_Order_ID = :old.C_Order_ID
+      AND C_Tax_ID = :old.C_Tax_ID;
+    ELSE
+      UPDATE C_ORDERTAX
+      SET TAXAMT = CASE WHEN v_DocTaxAmount = 'D' THEN ROUND(ROUND(TAXBASEAMT - :OLD.TAXBASEAMT, v_Prec) * v_Rate/100, v_Prec) ELSE (TAXAMT - :OLD.TAXAMT) END,
+      TAXBASEAMT = TAXBASEAMT - :OLD.TAXBASEAMT
+      WHERE C_Order_ID = :OLD.C_Order_ID
+      AND C_Tax_ID = :OLD.C_Tax_ID;
+    END IF;
     DELETE FROM C_ORDERTAX 
     WHERE C_ORDER_ID = :OLD.C_Order_ID
     AND C_TAX_ID = :OLD.C_TAX_ID
-    AND TAXAMT=0 AND TAXBASEAMT=0;
+    AND ROUND(TAXBASEAMT, v_Prec) = 0
+    AND TAXAMT = 0;
   END IF;
 END C_ORDERLINETAX_TRG
 ]]></body>
