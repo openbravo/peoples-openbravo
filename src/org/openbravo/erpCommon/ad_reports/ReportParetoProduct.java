@@ -83,10 +83,8 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       String strClient = vars.getClient();
       String strAD_Org_ID = vars.getRequestGlobalVariable("inpadOrgId",
           "ReportParetoProduct|AD_Org_ID");
-      String strCurrencyId = OBCurrencyUtils.getOrgCurrency(strAD_Org_ID);
-      if (StringUtils.isEmpty(strCurrencyId)) {
-        strCurrencyId = strUserCurrencyId;
-      }
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
+          "ReportParetoProduct|currency", strUserCurrencyId);
       printPageDataSheet(request, response, vars, strWarehouse, strAD_Org_ID, strClient,
           strCurrencyId);
     } else if (vars.commandIn("GENERATE")) {
@@ -100,10 +98,8 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       myMessage.setType("Success");
       myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
       vars.setMessage("ReportParetoProduct", myMessage);
-      String strCurrencyId = OBCurrencyUtils.getOrgCurrency(strAD_Org_ID);
-      if (StringUtils.isEmpty(strCurrencyId)) {
-        strCurrencyId = strUserCurrencyId;
-      }
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
+          "ReportParetoProduct|currency", strUserCurrencyId);
       printPageDataSheet(request, response, vars, strWarehouse, strAD_Org_ID, strClient,
           strCurrencyId);
     } else if (vars.commandIn("CURRENCY")) {
