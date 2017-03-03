@@ -91,6 +91,12 @@ public class Menu extends HttpSecureAppServlet {
       }
     }
 
+    if ("".equals(targetmenu)) {
+      response.sendRedirect("../");
+      vars.removeSessionValue("target");
+      return;
+    }
+
     String hideMenu = vars.getStringParameter("hideMenu", menuFilter);
     String vScroll = vars.getStringParameter("vScroll", scrollingFilter);
 
@@ -107,8 +113,8 @@ public class Menu extends HttpSecureAppServlet {
       vars.removeSessionValue("#Hide_BackButton");
     }
 
-    printPageFrameIdentificacion(response, menuURL, (targetmenu.equals("") ? "../utility/Home.html"
-        : targetmenu), menuLoadingURL, textDirection, hideMenu, vScroll);
+    printPageFrameIdentificacion(response, menuURL, targetmenu, menuLoadingURL, textDirection,
+        hideMenu, vScroll);
   }
 
   private void printPageFrameIdentificacion(HttpServletResponse response, String strMenu,
