@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2016 Openbravo S.L.U.
+ * Copyright (C) 2013-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -258,6 +258,9 @@ enyo.kind({
     this.receipt.on('updatePending', function () {
       this.updatePending();
     }, this);
+    this.receipt.on('paymentCancel', function () {
+      this.$.layawayaction.setDisabled(false);
+    }, this);
     this.model.get('leftColumnViewManager').on('change:currentView', function () {
       if (!this.model.get('leftColumnViewManager').isMultiOrder()) {
         this.updatePending();
@@ -278,6 +281,7 @@ enyo.kind({
       var payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
       if ((model.get('orderType') === 2 || (model.get('isLayaway'))) && model.get('orderType') !== 3 && !model.getPaymentStatus().done && _.isUndefined(model.get('paidInNegativeStatusAmt'))) {
         this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
+        this.$.layawayaction.setDisabled(false);
         this.$.layawayaction.show();
       } else {
         this.$.layawayaction.hide();
@@ -1543,9 +1547,6 @@ enyo.kind({
     }
     this.setDisabled(true);
     enyo.$.scrim.show();
-    receipt.on('paymentCancel', function () {
-      this.setDisabled(false);
-    }, this);
     receipt.trigger('paymentDone', me.allowOpenDrawer);
   }
 });
