@@ -3422,7 +3422,7 @@
 
               OB.MobileApp.view.waterfall('onShowPopup', {
                 popup: 'modalpayment',
-                args: reversalPayment.attibutes
+                args: reversalPayment.attributes
               });
             } else {
               me.addPayment(new OB.Model.PaymentLine(reversalPayment.attributes));
