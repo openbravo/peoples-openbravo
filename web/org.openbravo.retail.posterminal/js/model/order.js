@@ -1401,7 +1401,7 @@
         var text, lines, indexes, relations, rl, rls, i;
 
         me.get('lines').remove(line);
-        text = me.get('undo').text;
+        text = OB.I18N.getLabel('OBPOS_DeleteLine') + ': ' + line.getQty() + ' x ' + line.get('product').get('_identifier');
         lines = me.get('undo').lines;
         relations = me.get('undo').relations;
 
