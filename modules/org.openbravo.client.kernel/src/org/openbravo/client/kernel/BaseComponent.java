@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -57,6 +57,8 @@ public abstract class BaseComponent implements Component {
   // data object can be a grid object or a selector etc.
   private Map<String, Object> parameters = new HashMap<String, Object>();
   private String id;
+  private String identifier;
+
   private Module module = null;
 
   private List<Component> dependencies = new ArrayList<Component>();
@@ -123,6 +125,15 @@ public abstract class BaseComponent implements Component {
 
   public void setId(String id) {
     this.id = id;
+  }
+
+  protected void setIdentifier(String identifier) {
+    this.identifier = identifier;
+  }
+
+  /** returns a human readable identifier to be used in logging */
+  String getIdentifier() {
+    return identifier == null ? id : identifier;
   }
 
   public abstract Object getData();

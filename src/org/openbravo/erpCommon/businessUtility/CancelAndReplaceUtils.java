@@ -979,7 +979,7 @@ public class CancelAndReplaceUtils {
           TriggerHandler.getInstance().enable();
         }
         if (nettingPayment != null) {
-          FIN_PaymentProcess.doProcessPayment(nettingPayment, "P", true, null, null);
+          FIN_PaymentProcess.doProcessPayment(nettingPayment, "P", null, null);
         }
         if (triggersDisabled && replaceOrder) {
           TriggerHandler.getInstance().disable();

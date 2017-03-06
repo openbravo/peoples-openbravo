@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2016 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2017 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -47,7 +47,8 @@
   v_NetActual NUMBER;
   v_PriceLine NUMBER;
   v_CalcLine NUMBER;
-          
+  v_DocTaxAmount C_TAX.DocTaxAmount%TYPE;
+
   TYPE RECORD IS REF CURSOR;
   Cur_BOM RECORD;
 
@@ -223,24 +224,32 @@ IF (UPDATING) THEN
         ELSE -- The last willaccummulate rounding
           v_Line := v_BaseLine - v_LineAcum;
         END IF;
-
-        v_PriceLine := C_GET_NET_PRICE_FROM_GROSS(Cur_BOM.TAX, v_Line, v_Line, v_price_prec, :new.qtyordered);     
-        v_CalcLine := ROUND(:new.qtyordered * v_PriceLine, v_Prec); -- In price including taxes the net and net alternate are equals.
+        v_CalcLine := C_GET_NET_AMOUNT_FROM_GROSS(Cur_BOM.TAX, v_Line, v_Line, v_Prec);
         v_NetActual := v_NetActual + v_CalcLine; -- Acum the net
       END LOOP;    
       v_PriceActual := ROUND(v_NetActual / :new.qtyordered, v_price_prec);     
     ELSE
       -- Regular taxes
-      v_PriceActual := C_GET_NET_PRICE_FROM_GROSS(:new.c_tax_id, :new.gross_unit_price * :new.qtyordered, :new.taxbaseamt, v_price_prec, :new.qtyordered);
-      v_NetActual := ROUND(:new.QtyOrdered * v_PriceActual, v_Prec);
+      SELECT COALESCE(MIN(DocTaxAmount), 'L') INTO v_DocTaxAmount FROM C_Tax WHERE (C_Tax_ID = :new.C_Tax_ID OR Parent_Tax_ID = :new.C_Tax_ID) AND IsSummary = 'N';
+      IF (v_DocTaxAmount = 'D') THEN
+        v_NetActual := C_GET_NET_AMOUNT_FROM_GROSS(:new.c_tax_id, :new.line_gross_amount, :new.taxbaseamt);
+      ELSE
+        v_NetActual := C_GET_NET_AMOUNT_FROM_GROSS(:new.c_tax_id, :new.line_gross_amount, :new.taxbaseamt, v_Prec);
+      END IF;
+      IF (:new.qtyordered <> 0) THEN
+        v_PriceActual := ROUND(ROUND(v_NetActual, v_Prec) / :new.qtyordered, v_price_prec);
+      ELSE
+        v_PriceActual := 0;
+      END IF;
     END IF;      
     
     :NEW.pricestd := v_priceactual;
     :NEW.pricelist := v_priceactual;
     :NEW.pricelimit := v_priceactual;
     :NEW.priceactual := v_priceactual;
-    :new.taxbaseamt := v_NetActual;
+    :new.taxbaseamt := ROUND(v_NetActual, v_Prec);
     :new.LineNetAmt := v_NetActual;
+
   ELSE
     -- Price including taxes = 'N'
     -- Modified by I.Ciordia. Sometimes js fails calculting lineNet

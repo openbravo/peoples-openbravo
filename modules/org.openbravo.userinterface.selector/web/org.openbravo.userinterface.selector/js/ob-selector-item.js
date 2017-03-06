@@ -1187,8 +1187,8 @@ isc.OBSelectorItem.addClassMethods({
   prepareDSRequest: function (params, selector, requestType) {
     function setOrgIdParam(params) {
       if (!params.inpadOrgId) {
-        // look for an ad_org_id parameter. If there is no such parameter or its value is empty, use the current user organization
-        params.inpadOrgId = params.ad_org_id || params.AD_Org_ID || OB.User.organizationId;
+        // look for an ad_org_id parameter. If there is no such parameter or its value is empty, selector will be filter by natural tree of writable organizations
+        params.inpadOrgId = params.ad_org_id || params.AD_Org_ID;
       }
     }
 
@@ -1232,6 +1232,8 @@ isc.OBSelectorItem.addClassMethods({
     // also add the special ORG parameter
     if (params.inpadOrgId) {
       params[OB.Constants.ORG_PARAMETER] = params.inpadOrgId;
+    } else {
+      params[OB.Constants.CALCULATE_ORGS] = true;
     }
 
     // adds the selector id to filter used to get filter information

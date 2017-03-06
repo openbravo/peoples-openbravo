@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -117,6 +117,7 @@ public class ViewComponent extends BaseComponent {
   }
 
   protected String generateWindow(Window window) {
+    setIdentifier("Window: " + window.getName() + " - " + window.getId());
     standardWindowComponent.setWindow(window);
     standardWindowComponent.setParameters(getParameters());
     final String jsCode = standardWindowComponent.generate();
@@ -143,6 +144,7 @@ public class ViewComponent extends BaseComponent {
       }
     }
     component.setId(viewImpDef.getId());
+    setIdentifier("View " + viewName + " - " + viewImpDef.getId());
     component.setComponentTemplate(viewImpDef.getTemplate());
     component.setParameters(getParameters());
 
@@ -151,6 +153,7 @@ public class ViewComponent extends BaseComponent {
   }
 
   protected String generateProcess(Process process) {
+    setIdentifier("Process: " + process.getName() + " - " + process.getId());
     parameterWindowComponent.setProcess(process);
     parameterWindowComponent.setParameters(getParameters());
     parameterWindowComponent.setPoup(false);

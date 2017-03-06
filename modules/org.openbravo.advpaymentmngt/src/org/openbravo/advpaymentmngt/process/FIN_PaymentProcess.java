@@ -87,17 +87,10 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       // retrieve standard params
       final String recordID = (String) bundle.getParams().get("Fin_Payment_ID");
       final FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, recordID);
-      final Boolean isPosOrder;
-      if (bundle.getParams().get("isPOSOrder") == null) {
-        isPosOrder = false;
-      } else {
-        isPosOrder = bundle.getParams().get("isPOSOrder").equals("Y");
-      }
       final String paymentDate = (String) bundle.getParams().get("paymentdate");
       final boolean doFlush = bundle.getParams().get("doFlush") != null ? (Boolean) bundle
           .getParams().get("doFlush") : true;
-      processPayment(payment, strAction, isPosOrder, paymentDate, comingFrom,
-          selectedCreditLineIds, doFlush);
+      processPayment(payment, strAction, paymentDate, comingFrom, selectedCreditLineIds, doFlush);
       bundle.setResult(msg);
     } catch (Exception e) {
       log4j.error(e.getMessage());
@@ -110,15 +103,20 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
   }
 
   // ProcessPayment without a return type
-  public static void doProcessPayment(FIN_Payment payment, String strAction, Boolean isPosOrder,
-      String paymentDate, String comingFrom) throws OBException {
+  public static void doProcessPayment(FIN_Payment payment, String strAction, String paymentDate,
+      String comingFrom) throws OBException {
     FIN_PaymentProcess fpp = WeldUtils.getInstanceFromStaticBeanManager(FIN_PaymentProcess.class);
-    fpp.processPayment(payment, strAction, isPosOrder, paymentDate, comingFrom, null, true);
+    fpp.processPayment(payment, strAction, paymentDate, comingFrom, null, true);
   }
 
-  private void processPayment(FIN_Payment payment, String strAction, Boolean isPosOrder,
-      String paymentDate, String comingFrom, String selectedCreditLineIds, boolean doFlush)
-      throws OBException {
+  @Deprecated
+  public static void doProcessPayment(FIN_Payment payment, String strAction, Boolean isPosOrder,
+      String paymentDate, String comingFrom) throws OBException {
+    doProcessPayment(payment, strAction, paymentDate, comingFrom);
+  }
+
+  private void processPayment(FIN_Payment payment, String strAction, String paymentDate,
+      String comingFrom, String selectedCreditLineIds, boolean doFlush) throws OBException {
     dao = new AdvPaymentMngtDao();
     String msg = "";
     try {
@@ -258,36 +256,34 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               glitems.add(paymentDetail.getGLItem().getName());
           }
           // Set description
-          if (!isPosOrder) {
-            StringBuffer description = new StringBuffer();
+          StringBuffer description = new StringBuffer();
 
-            if (payment.getDescription() != null && !payment.getDescription().equals(""))
-              description.append(payment.getDescription()).append("\n");
-            if (!invoiceDocNos.isEmpty()) {
-              description.append(OBMessageUtils.messageBD("InvoiceDocumentno"));
-              description.append(": ").append(
-                  invoiceDocNos.toString().substring(1, invoiceDocNos.toString().length() - 1));
-              description.append("\n");
-            }
-            if (!orderDocNos.isEmpty()) {
-              description.append(OBMessageUtils.messageBD("OrderDocumentno"));
-              description.append(": ").append(
-                  orderDocNos.toString().substring(1, orderDocNos.toString().length() - 1));
-              description.append("\n");
-            }
-            if (!glitems.isEmpty()) {
-              description.append(OBMessageUtils.messageBD("APRM_GLItem"));
-              description.append(": ").append(
-                  glitems.toString().substring(1, glitems.toString().length() - 1));
-              description.append("\n");
-            }
-            if (!"".equals(strRefundCredit))
-              description.append(strRefundCredit).append("\n");
-
-            String truncateDescription = (description.length() > 255) ? description
-                .substring(0, 251).concat("...").toString() : description.toString();
-            payment.setDescription(truncateDescription);
+          if (payment.getDescription() != null && !payment.getDescription().equals(""))
+            description.append(payment.getDescription()).append("\n");
+          if (!invoiceDocNos.isEmpty()) {
+            description.append(OBMessageUtils.messageBD("InvoiceDocumentno"));
+            description.append(": ").append(
+                invoiceDocNos.toString().substring(1, invoiceDocNos.toString().length() - 1));
+            description.append("\n");
           }
+          if (!orderDocNos.isEmpty()) {
+            description.append(OBMessageUtils.messageBD("OrderDocumentno"));
+            description.append(": ").append(
+                orderDocNos.toString().substring(1, orderDocNos.toString().length() - 1));
+            description.append("\n");
+          }
+          if (!glitems.isEmpty()) {
+            description.append(OBMessageUtils.messageBD("APRM_GLItem"));
+            description.append(": ").append(
+                glitems.toString().substring(1, glitems.toString().length() - 1));
+            description.append("\n");
+          }
+          if (!"".equals(strRefundCredit))
+            description.append(strRefundCredit).append("\n");
+
+          String truncateDescription = (description.length() > 255) ? description.substring(0, 251)
+              .concat("...").toString() : description.toString();
+          payment.setDescription(truncateDescription);
 
           if (paymentAmount.compareTo(payment.getAmount()) != 0) {
             payment.setUsedCredit(paymentAmount.subtract(payment.getAmount()));
@@ -323,9 +319,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             }
           }
           // Execution Process
-          if (!isPosOrder
-              && dao.isAutomatedExecutionPayment(payment.getAccount(), payment.getPaymentMethod(),
-                  payment.isReceipt()) && payment.getAmount().compareTo(BigDecimal.ZERO) != 0) {
+          if (dao.isAutomatedExecutionPayment(payment.getAccount(), payment.getPaymentMethod(),
+              payment.isReceipt()) && payment.getAmount().compareTo(BigDecimal.ZERO) != 0) {
             try {
               payment.setStatus("RPAE");
 
@@ -659,7 +654,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         String newStrAction = "P";
         FIN_PaymentProcess fpp = WeldUtils
             .getInstanceFromStaticBeanManager(FIN_PaymentProcess.class);
-        fpp.processPayment(reversedPayment, newStrAction, isPosOrder, paymentDate, comingFrom,
+        fpp.processPayment(reversedPayment, newStrAction, paymentDate, comingFrom,
             selectedCreditLineIds, true);
 
         return;

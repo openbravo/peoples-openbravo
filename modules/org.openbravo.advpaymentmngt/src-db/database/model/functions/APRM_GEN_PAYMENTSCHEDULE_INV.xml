@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010-2016 Openbravo SLU
+* All portions are Copyright (C) 2010-2017 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -1155,6 +1155,7 @@ BEGIN
   ELSIF (p_docaction = 'RC') THEN
     DECLARE
       v_count NUMBER;
+      v_prepaymentamt NUMBER;
     BEGIN
       v_delete_paymentplan := TRUE;
       SELECT c_invoice_id INTO v_reversalinvoice_id
@@ -1178,6 +1179,12 @@ BEGIN
         AND pd.fin_payment_proposal_id = p.fin_payment_proposal_id
         AND psd.fin_payment_detail_id is null;
       IF (v_count <> 0) THEN
+        v_delete_paymentplan := FALSE;
+      END IF;
+      SELECT prepaymentamt INTO v_prepaymentamt
+      FROM c_invoice
+      WHERE c_invoice_id = p_record_id;
+      IF (v_prepaymentamt <> 0) THEN
         v_delete_paymentplan := FALSE;
       END IF;
     END;

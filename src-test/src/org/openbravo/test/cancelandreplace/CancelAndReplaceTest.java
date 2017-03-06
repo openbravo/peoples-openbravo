@@ -466,7 +466,7 @@ public class CancelAndReplaceTest extends WeldBaseTest {
         BigDecimal.ZERO);
 
     // Process the payment
-    FIN_PaymentProcess.doProcessPayment(newPayment, "P", true, null, null);
+    FIN_PaymentProcess.doProcessPayment(newPayment, "P", null, null);
   }
 
 }
