@@ -81,7 +81,7 @@ var recBrowserSafari = '9.0.0.0';
         LayoutMDI = getFrame('LayoutMDI');
       }
       if (LayoutMDI && typeof parent.document.getElementById('framesetMenu') === 'object') {
-        LayoutMDI.location.href = parent.window.location.href;
+        LayoutMDI.location.href = location.href || parent.window.location.href;
       }
     }
   }

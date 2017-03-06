@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Copyright (C) 2001-2017 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -147,8 +147,7 @@ public abstract class AuthenticationManager {
     } else {
       conn = new DalConnectionProvider();
     }
-    defaultServletUrl = s.getServletConfig().getServletContext()
-        .getInitParameter("ServletSinIdentificar");
+    defaultServletUrl = s.getServletConfig().getServletContext().getInitParameter("LoginServlet");
   }
 
   /**

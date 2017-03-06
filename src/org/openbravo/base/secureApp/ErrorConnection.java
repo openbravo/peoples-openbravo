@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,7 +49,7 @@ public class ErrorConnection extends HttpSecureAppServlet {
         printPage(response, vars);
         return;
       }
-      response.sendRedirect(strDireccion + globalParameters.strServletSinIdentificar);
+      response.sendRedirect(strDireccion + globalParameters.loginServlet);
     } else
       printPage(response, vars);
   }
