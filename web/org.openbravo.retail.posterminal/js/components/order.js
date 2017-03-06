@@ -1347,7 +1347,7 @@ enyo.kind({
             }, this);
           }, this);
         }
-        if (((!line.has('deliveredQuantity') || line.get('deliveredQuantity') <= 0) && line.has('priceruleVersion') && !line.get('priceruleVersion').maximum && ((line.get('product').get('quantityRule') === 'UQ' && (totalAmountSelected > line.get('priceruleVersion').get('maximum') || totalAmountSelected < line.get('priceruleVersion').get('minimum'))) || (line.get('product').get('quantityRule') === 'PP' && (totalAmountPerProductSelected > line.get('priceruleVersion').get('maximum') || totalAmountPerProductSelected < line.get('priceruleVersion').get('minimum')))))) {
+        if (((!line.has('deliveredQuantity') || line.get('deliveredQuantity') <= 0) && line.has('priceruleVersion') && line.get('priceruleVersion').maximum === undefined && line.get('priceruleVersion').minimum === undefined && ((line.get('product').get('quantityRule') === 'UQ' && ((line.get('priceruleVersion').has('maximum') && totalAmountSelected > line.get('priceruleVersion').get('maximum')) || (line.get('priceruleVersion').has('minimum') && totalAmountSelected < line.get('priceruleVersion').get('minimum')))) || (line.get('product').get('quantityRule') === 'PP' && ((line.get('priceruleVersion').has('maximum') && totalAmountPerProductSelected > line.get('priceruleVersion').get('maximum')) || (line.get('priceruleVersion').has('minimum') && totalAmountPerProductSelected < line.get('priceruleVersion').get('minimum'))))))) {
           servicesToBeDeleted.push(line);
         }
       }, this);
