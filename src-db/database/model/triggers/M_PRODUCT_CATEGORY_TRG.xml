@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SLU
-    * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
+    * Contributions are Copyright (C) 2001-2017 Openbravo, S.L.U.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -108,6 +108,17 @@ BEGIN
   ELSIF (UPDATING) THEN
     UPDATE M_PRODUCT_CATEGORY_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
     WHERE M_PRODUCT_CATEGORY_ID = :new.M_PRODUCT_CATEGORY_ID;
+
+    SELECT c.AD_Tree_Product_Category_ID
+    INTO v_xTree_ID
+    FROM AD_ClientInfo c
+    WHERE c.AD_Client_ID=:new.AD_Client_ID;
+	
+    UPDATE AD_TREENODE
+    SET AD_ORG_ID = :new.AD_ORG_ID
+    WHERE AD_CLIENT_ID=:new.AD_Client_ID
+      AND AD_Tree_ID=v_xTree_ID
+      AND Node_ID=:new.M_Product_Category_ID;
   ELSIF (DELETING) THEN
     --  Delete TreeNode --
     --  get AD_Tree_ID
