@@ -18,6 +18,7 @@ import org.openbravo.modulescript.OpenbravoVersion;
 public class UpdateCashupReport extends ModuleScript {
 
   private static final Logger log4j = Logger.getLogger(UpdateCashupReport.class);
+  private static final String RETAIL_PACK_MODULE_ID = "03FAB282A7BF47D3B1B242AC67F7845B";
 
   @Override
   public void execute() {
@@ -31,10 +32,10 @@ public class UpdateCashupReport extends ModuleScript {
     }
   }
 
-//  @Override
-//  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
-//    return new ModuleScriptExecutionLimits("FF808181326CC34901326D53DBCF0018", null, 
-//        new OpenbravoVersion(1,2,3110));
-//  }
-  
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
+        new OpenbravoVersion(1, 8, 2700));
+  }
+
 }
