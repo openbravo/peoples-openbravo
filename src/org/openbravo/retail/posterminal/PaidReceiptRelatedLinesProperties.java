@@ -45,6 +45,7 @@ public class PaidReceiptRelatedLinesProperties extends ModelExtension {
             "(case when olsr.salesOrderLine.salesOrder.id != olsr.orderlineRelated.salesOrder.id "
                 + "then true else false end)", "deferred"));
         add(new HQLProperty("olsr.orderlineRelated.obposCanbedelivered", "obposCanbedelivered"));
+        add(new HQLProperty("olsr.orderlineRelated.obposIspaid", "obposIspaid"));
       }
     };
 

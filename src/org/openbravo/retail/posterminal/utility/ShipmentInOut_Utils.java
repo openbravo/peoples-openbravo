@@ -139,7 +139,7 @@ public class ShipmentInOut_Utils {
 
       OrderLine orderLine = lineReferences.get(i);
 
-      if (!orderLine.isObposCanbedelivered()) {
+      if (!orderLine.isObposIspaid()) {
         continue;
       }
 

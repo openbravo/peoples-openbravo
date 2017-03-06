@@ -340,6 +340,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               lineReferences.add(line);
             }
           }
+          if (orderlines.length() > 0) {
+            for (int i = 0; i < order.getOrderLineList().size(); i++) {
+              JSONObject jsonOrderLine = orderlines.getJSONObject(i);
+              OrderLine ol = order.getOrderLineList().get(i);
+              ol.setObposCanbedelivered(jsonOrderLine.optBoolean("obposCanbedelivered", false));
+              ol.setObposIspaid(jsonOrderLine.optBoolean("obposIspaid", false));
+            }
+          }
         } else if ((!newLayaway && notpaidLayaway)) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
@@ -349,13 +357,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               JSONObject jsonOrderLine = orderlines.getJSONObject(i);
               OrderLine ol = order.getOrderLineList().get(i);
               ol.setObposCanbedelivered(jsonOrderLine.optBoolean("obposCanbedelivered", false));
-              BigDecimal qtyToDeliver = jsonOrderLine.has("availableQtyToDeliver") ? new BigDecimal(
-                  jsonOrderLine.getDouble("availableQtyToDeliver")) : (jsonOrderLine
-                  .has("obposQtytodeliver") ? new BigDecimal(
-                  jsonOrderLine.getDouble("obposQtytodeliver")) : ol.getOrderedQuantity());
-              if (ol.isObposCanbedelivered()) {
-                ol.setDeliveredQuantity(qtyToDeliver);
-              }
               lineReferences.add(ol);
             }
           }
@@ -881,7 +882,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
           pricePrecision, RoundingMode.HALF_UP));
 
-      if ((createShipment && orderline.isObposCanbedelivered())
+      if ((createShipment && orderline.isObposIspaid())
           || (doCancelAndReplace && !newLayaway && !notpaidLayaway && !partialpaidLayaway)) {
         // shipment is created or is a C&R and is not a layaway, so all is delivered
         orderline
@@ -2066,8 +2067,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   protected boolean goodsToDeliver(Order order) {
     for (OrderLine line : order.getOrderLineList()) {
-      if (line.getObposQtytodeliver().compareTo(BigDecimal.ZERO) == 0
-          || !line.isObposCanbedelivered()) {
+      if (line.getObposQtytodeliver().compareTo(BigDecimal.ZERO) == 0 || !line.isObposIspaid()) {
         continue;
       } else {
         return true;
