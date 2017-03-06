@@ -102,6 +102,8 @@ END IF;
         v_newgrossamt := :new.line_gross_amount;
      ELSIF (INSERTING) THEN
         v_newgrossamt := :new.line_gross_amount;
+     ELSIF (DELETING) THEN
+        v_oldgrossamt := :old.line_gross_amount;
      END IF;
    END IF;  
   IF(UPDATING OR DELETING) THEN
@@ -190,14 +192,19 @@ END IF;
               
    END IF;
    -- Get Total Tax Base Amt and Tax Amt
-   SELECT COALESCE(SUM(it.TaxBaseAmt), 0), COALESCE(SUM(it.TaxAmt), 0)
-   INTO v_taxBaseAmt, v_taxAmt
+   SELECT COALESCE(SUM(it.TaxBaseAmt), 0)
+   INTO v_taxBaseAmt
    FROM (
-     SELECT CASE WHEN MIN(it.TaxBaseAmt) > 0 THEN MIN(ROUND(it.TaxBaseAmt, v_Prec)) ELSE MAX(ROUND(it.TaxBaseAmt, v_Prec)) END as TaxBaseAmt, SUM(it.TaxAmt) as TaxAmt
+     SELECT CASE WHEN MIN(it.TaxBaseAmt) > 0 THEN MIN(ROUND(it.TaxBaseAmt, v_Prec)) ELSE MAX(ROUND(it.TaxBaseAmt, v_Prec)) END as TaxBaseAmt
      FROM C_InvoiceTax it
      WHERE it.C_Invoice_ID = :new.C_Invoice_ID
+     AND it.Recalculate = 'Y'
      GROUP BY c_tax_get_root(it.c_tax_id)
    ) it;
+   SELECT COALESCE(SUM(it.TaxAmt), 0)
+   INTO v_taxAmt
+   FROM C_InvoiceTax it
+   WHERE it.C_Invoice_ID = :new.C_Invoice_ID;
   -- DBMS_OUTPUT.PUT_LINE('TaxAmt = ' || v_taxAmt);
    -- Update Header
    UPDATE C_Invoice
@@ -206,18 +213,20 @@ END IF;
    WHERE C_Invoice_ID = :new.C_Invoice_ID;
    END IF;
   ELSE -- DELETING
-   IF (v_istaxincluded = 'Y') THEN
-     v_oldgrossamt := :old.line_gross_amount;
-   END IF;
    -- Get Total Tax Base Amt and Tax Amt
-   SELECT COALESCE(SUM(it.TaxBaseAmt), 0), COALESCE(SUM(it.TaxAmt), 0)
-   INTO v_taxBaseAmt, v_taxAmt
+   SELECT COALESCE(SUM(it.TaxBaseAmt), 0)
+   INTO v_taxBaseAmt
    FROM (
-     SELECT CASE WHEN MIN(it.TaxBaseAmt) > 0 THEN MIN(ROUND(it.TaxBaseAmt, v_Prec)) ELSE MAX(ROUND(it.TaxBaseAmt, v_Prec)) END as TaxBaseAmt, SUM(it.TaxAmt) as TaxAmt
+     SELECT CASE WHEN MIN(it.TaxBaseAmt) > 0 THEN MIN(ROUND(it.TaxBaseAmt, v_Prec)) ELSE MAX(ROUND(it.TaxBaseAmt, v_Prec)) END as TaxBaseAmt
      FROM C_InvoiceTax it
      WHERE it.C_Invoice_ID = :old.C_Invoice_ID
+     AND it.Recalculate = 'Y'
      GROUP BY c_tax_get_root(it.c_tax_id)
    ) it;
+   SELECT COALESCE(SUM(it.TaxAmt), 0)
+   INTO v_taxAmt
+   FROM C_InvoiceTax it
+   WHERE it.C_Invoice_ID = :old.C_Invoice_ID;
   -- DBMS_OUTPUT.PUT_LINE('TaxAmt = ' || v_taxAmt);
    -- Update Header
    UPDATE C_Invoice

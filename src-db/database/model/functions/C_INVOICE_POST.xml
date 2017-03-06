@@ -157,6 +157,7 @@
   v_stdPrecision C_Currency.StdPrecision%TYPE;
   v_gross_unit_price NUMBER;
   v_line_gross_amount NUMBER;
+  v_taxAmt NUMBER;
   v_Isquantityvariable CHAR(1);
   
   v_isdeferred_inv C_InvoiceLine.IsDeferred%TYPE;
@@ -1198,8 +1199,9 @@ IF (NOT FINISH_PROCESS) THEN
       IF (v_isTaxIncluded = 'Y') THEN
 
         -- Remove header amounts and taxes
-        DELETE FROM C_INVOICETAX WHERE C_Invoice_ID = v_Record_ID;
-        UPDATE C_INVOICE SET TotalLines = 0, GrandTotal = 0 WHERE C_Invoice_ID = v_Record_ID;
+        DELETE FROM C_INVOICETAX WHERE C_Invoice_ID = v_Record_ID AND Recalculate = 'Y';
+        SELECT COALESCE(SUM(TaxAmt), 0) INTO v_taxAmt FROM C_INVOICETAX WHERE C_Invoice_ID = v_Record_ID AND Recalculate = 'N';
+        UPDATE C_INVOICE SET TotalLines = 0, GrandTotal = v_taxAmt WHERE C_Invoice_ID = v_Record_ID;
 
         FOR Cur_line IN (
           SELECT C_InvoiceLine_ID
