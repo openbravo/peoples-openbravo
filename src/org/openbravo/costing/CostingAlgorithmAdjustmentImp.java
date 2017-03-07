@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -281,8 +281,11 @@ public abstract class CostingAlgorithmAdjustmentImp {
     BigDecimal pendingAmt = costAdjLine.getAdjustmentAmount();
     CostAdjustmentLine lastAdjLine = null;
     for (ProductionLine pline : critPL.list()) {
-      BigDecimal adjAmt = costAdjLine.getAdjustmentAmount().multiply(pline.getComponentCost());
-      pendingAmt = pendingAmt.subtract(adjAmt);
+      BigDecimal adjAmt = costAdjLine.getAdjustmentAmount();
+      if (pline.getComponentCost() != null) {
+        adjAmt = costAdjLine.getAdjustmentAmount().multiply(pline.getComponentCost());
+        pendingAmt = pendingAmt.subtract(adjAmt);
+      }
       if (!pline.getProduct().isStocked() || !"I".equals(pline.getProduct().getProductType())) {
         continue;
       }
