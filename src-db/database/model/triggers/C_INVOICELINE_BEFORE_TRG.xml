@@ -64,7 +64,7 @@ BEGIN
     JOIN m_pricelist ON i.m_pricelist_id = m_pricelist.m_pricelist_id
   WHERE i.c_invoice_id = v_invoice_id;
 
-  IF (v_istaxincluded = 'Y') THEN
+  IF (v_istaxincluded = 'Y' AND :new.c_tax_id IS NOT NULL) THEN
     IF (INSERTING) THEN
           v_execute:='Y';
     ELSIF(UPDATING) THEN
