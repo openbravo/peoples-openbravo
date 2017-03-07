@@ -38,6 +38,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.InvoiceLineTax;
@@ -83,15 +84,18 @@ public class OrderGroupingProcessor {
     final String strUserId = OBContext.getOBContext().getUser().getId();
     final String strCurrentDate = dateFormatter.format(currentDate);
     final String strLang = RequestContext.get().getVariablesSecureApp().getLanguage();
+    final OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
+    final String strInvDescription = String.format(
+        OBMessageUtils.messageBD("OBPOS_InvoiceCashupDescription"), cashUp.getIdentifier());
 
     // random string is created as random numeric between 0 and 1000000
     Random rnd = new Random();
-    String strExecutionId = "WebPOS_CashUp_" + String.valueOf(rnd.nextInt(1000000));
+    final String strExecutionId = "WebPOS_CashUp_" + String.valueOf(rnd.nextInt(1000000));
 
     if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
       // insert invoice headers
       OrderGroupingProcessorData.insertHeaderGrouping(conn, strUserId, strExecutionId,
-          strCurrentDate, cashUpId);
+          strInvDescription, strCurrentDate, cashUpId);
       t1 = System.currentTimeMillis();
       // insert invoice lines
       OrderGroupingProcessorData.insertLinesGrouping(conn, cashUpId, strExecutionId);
@@ -107,8 +111,8 @@ public class OrderGroupingProcessor {
       OrderGroupingProcessorData.insertInvoiceTaxGrouping(conn, strExecutionId);
     } else {
       // insert invoice headers
-      OrderGroupingProcessorData.insertHeaderNoGrouping(conn, strUserId, strExecutionId, strLang,
-          strCurrentDate, cashUpId);
+      OrderGroupingProcessorData.insertHeaderNoGrouping(conn, strUserId, strExecutionId,
+          strInvDescription, strLang, strCurrentDate, cashUpId);
       t1 = System.currentTimeMillis();
       // insert invoice lines
       OrderGroupingProcessorData.insertLinesNoGrouping(conn, cashUpId, strExecutionId);
@@ -128,7 +132,7 @@ public class OrderGroupingProcessor {
 
     // check if there are orderlines splitted by inoutlines
     OrderGroupingProcessorData[] orderLinesToSplit = OrderGroupingProcessorData
-        .selectSplitOrderLines(conn, cashUpId);
+        .selectSplitOrderLines(conn, cashUpId, strInvDescription);
 
     for (OrderGroupingProcessorData orderLineToSplit : orderLinesToSplit) {
       OrderLine orderLine = OBDal.getInstance().get(OrderLine.class, orderLineToSplit.cOrderlineId);
@@ -214,12 +218,10 @@ public class OrderGroupingProcessor {
         strExecutionId);
 
     Invoice invoice = null;
-    OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
     for (OrderGroupingProcessorData invoiceId : arrayInvoicesId) {
       invoice = OBDal.getInstance().get(Invoice.class, invoiceId.cInvoiceId);
       invoice.setDocumentNo(getInvoiceDocumentNo(invoice.getTransactionDocument(),
           invoice.getDocumentType()));
-      invoice.setDescription("Created by cash up " + cashUp.getIdentifier());
       finishInvoice(invoice, currentDate);
       executeHooks(invoice, cashUpId);
     }
