@@ -266,7 +266,8 @@
       return '(' + OB.I18N.formatCurrency(this.get('amount')) + ' ' + this.get('isocode') + ')';
     },
     printAmountWithSignum: function () {
-      var paidReturn = this.get('isPaid') && (this.get('orderGross') < 0);
+      var receipt = OB.MobileApp.model.receipt;
+      var paidReturn = (this.get('isPaid') && (this.get('orderGross') < 0)) || (receipt.get('doCancelAndReplace') === true && receipt.get('replacedorder') && receipt.getPaymentStatus().isNegative);
       // if the ticket is a paid return, new payments must be displayed in negative
       if (this.get('rate')) {
         return OB.I18N.formatCurrency(paidReturn ? OB.DEC.mul(OB.DEC.abs(this.get('origAmount') || OB.DEC.mul(this.get('amount'), this.get('rate'))), -1) : this.printAmount());
