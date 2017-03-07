@@ -610,9 +610,18 @@ enyo.kind({
     }
   },
   viewProductDetails: function (inSender, inEvent) {
-    this.$.multiColumn.$.leftPanel.$.receiptview.applyStyle('display', 'none');
-    this.$.productdetailsview.updateProduct(inEvent.product);
-    this.$.productdetailsview.applyStyle('display', 'inline');
+    this.$.multiColumn.$.leftPanel.$.receiptview.setShowing(false);
+    this.$.multiColumn.$.leftPanel.$.productdetailsview.updateProduct(inEvent.product);
+    this.$.multiColumn.$.leftPanel.$.productdetailsview.setShowing(true);
+    return true;
+  },
+  hideProductDetails: function (inSender, inEvent) {
+    if (this.$.multiColumn.$.leftPanel.$.productdetailsview.showing) {
+      this.$.multiColumn.$.leftPanel.$.productdetailsview.setShowing(false);
+    }
+    if (!this.model.get('leftColumnViewManager').isMultiOrder() && !this.$.multiColumn.$.leftPanel.$.receiptview.showing) {
+      this.$.multiColumn.$.leftPanel.$.receiptview.setShowing(true);
+    }
     return true;
   },
   changeBusinessPartner: function (inSender, inEvent) {
@@ -845,6 +854,7 @@ enyo.kind({
       this.$.multiColumn.$.rightPanel.$.keyboard.lastStatus = '';
       this.$.multiColumn.$.rightPanel.$.keyboard.setStatus(inEvent.status);
     }
+    this.hideProductDetails();
   },
   discountsModeFinished: function (inSender, inEvent) {
     this.leftToolbarDisabled(inSender, {
