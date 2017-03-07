@@ -60,7 +60,8 @@ enyo.kind({
     }
     if (_.isNaN(amount)) {
       currentOrder.setOrderType(null, 0);
-      currentOrder.set('amountToLayaway', null);
+      currentOrder.unset('amountToLayaway');
+      currentOrder.trigger('amountToLayaway');
       this.doHideThisPopup();
       return;
     }
