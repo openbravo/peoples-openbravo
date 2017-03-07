@@ -108,8 +108,10 @@ public class LoginHandler extends HttpBaseServlet {
       String language = systemClient.getLanguage().getLanguage();
       vars.setSessionValue("#AD_Language", language);
 
-      if (user.equals("") && !OBVersion.getInstance().is30()) {
-        res.sendRedirect(res.encodeRedirectURL(strDireccion + "/security/Login_F1.html"));
+      if ("".equals(user)) {
+        goToRetry(res, vars, Utility.messageBD(this, "IDENTIFICATION_FAILURE_TITLE", language),
+            Utility.messageBD(this, "IDENTIFICATION_FAILURE_MSG", language), "Error",
+            "../security/Login", doRedirect);
       } else {
         try {
           if (isPasswordResetFlow && StringUtils.isNotBlank(vars.getSessionValue("#AD_User_ID"))) {
