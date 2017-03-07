@@ -196,6 +196,7 @@ public class LoginHandler extends HttpBaseServlet {
         msgType = "Error";
         action = "../security/Login_FS.html";
       }
+      // retrieve if multiple sessions for same user should be prevented
       boolean forceNamedUserLogin = "FORCE_NAMED_USER".equals(vars.getCommand());
 
       LicenseRestriction limitation = ak.checkOPSLimitations(sessionId, username,
@@ -387,6 +388,11 @@ public class LoginHandler extends HttpBaseServlet {
         return;
       }
 
+      if (forceNamedUserLogin) {
+        // do redirect as login response has already been handled in the client
+        res.sendRedirect(action);
+        return;
+      }
       // All checks passed successfully, continue logging in
       goToTarget(res, vars);
     } finally {
