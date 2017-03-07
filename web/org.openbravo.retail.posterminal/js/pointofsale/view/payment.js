@@ -272,7 +272,7 @@ enyo.kind({
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
       this.updatePendingMultiOrders();
     }
-    this.receipt.on('change:orderType change:isLayaway change:payment', function (model) {
+    this.receipt.on('change:orderType change:isLayaway change:payment change:documentNo', function (model) {
       if (this.model.get('leftColumnViewManager').isMultiOrder()) {
         this.updateCreditSalesAction();
         this.$.layawayaction.hide();
