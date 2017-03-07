@@ -481,9 +481,10 @@ public class ExternalOrderLoader extends OrderLoader {
         lineJson.getDouble("grossAmount") / lineJson.getDouble("qty"));
     writePropertyValue(lineJson, "netPrice",
         lineJson.getDouble("netAmount") / lineJson.getDouble("qty"));
-    writePropertyValue(lineJson, "grossPrice",
+    writePropertyValue(lineJson, "grossUnitPrice",
         lineJson.getDouble("grossAmount") / lineJson.getDouble("qty"));
-
+    writePropertyValue(lineJson, "baseGrossUnitPrice",
+        lineJson.getDouble("grossAmount") / lineJson.getDouble("qty"));
     copyPropertyValue(lineJson, "netAmount", "discountedNet");
     copyPropertyValue(lineJson, "netPrice", "discountedLinePrice");
     writePropertyValue(lineJson, "discountPercentage", 0);
