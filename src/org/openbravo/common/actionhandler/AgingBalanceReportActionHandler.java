@@ -314,6 +314,7 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
     if (includeDetails) {
       switch (expType) {
       case XLS:
+      case XLSX:
         if (includeDoubtful) {
           if (report.isUsePDFAsXLSTemplate()) {
             jRPath = AGING_SCHEDULE_DETAIL_PDF_DOUBTFUL_DEBT;
@@ -344,6 +345,7 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
     } else {
       switch (expType) {
       case XLS:
+      case XLSX:
         jRPath = AGING_SCHEDULE_XLS;
         break;
       case PDF:

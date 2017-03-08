@@ -115,36 +115,40 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
     SessionListener.context = event.getServletContext();
 
     ConnectionProvider cp = (ConnectionProvider) context.getAttribute("openbravoPool");
-
     try {
-      // Mark as inactive those sessions that were active and didn't send any ping during last
-      // 120secs. And those ones that didn't send any ping and were created at least 1 day ago.
-      // This is similar to what is done in ActivationKey.deactivateTimeOutSessions but for all
-      // types of sessions.
-      Calendar cal = Calendar.getInstance();
-      cal.add(Calendar.SECOND, (-1) * PING_TIMEOUT_SECS);
+      try {
+        // Mark as inactive those sessions that were active and didn't send any ping during last
+        // 120secs. And those ones that didn't send any ping and were created at least 1 day ago.
+        // This is similar to what is done in ActivationKey.deactivateTimeOutSessions but for all
+        // types of sessions.
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.SECOND, (-1) * PING_TIMEOUT_SECS);
 
-      String strDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(cal.getTime());
-      long t = System.currentTimeMillis();
-      int deactivatedSessions = SessionLoginData.deactivateExpiredSessions(cp, strDate);
-      log.debug("Deactivated " + deactivatedSessions
-          + " old session(s) while starting server. Took: " + (System.currentTimeMillis() - t)
-          + "ms.");
-    } catch (Exception e) {
-      log.error("Error deactivating expired sessions", e);
-    }
+        String strDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(cal.getTime());
+        long t = System.currentTimeMillis();
+        int deactivatedSessions = SessionLoginData.deactivateExpiredSessions(cp, strDate);
+        log.debug("Deactivated " + deactivatedSessions
+            + " old session(s) while starting server. Took: " + (System.currentTimeMillis() - t)
+            + "ms.");
+      } catch (Exception e) {
+        log.error("Error deactivating expired sessions", e);
+      }
 
-    // Decide whether audit trail is active
-    try {
-      SessionInfo.setAuditActive(SessionLoginData.isAudited(cp));
-    } catch (Exception e) {
-      log.error("Error activating audit trail", e);
-    }
+      // Decide whether audit trail is active
+      try {
+        SessionInfo.setAuditActive(SessionLoginData.isAudited(cp));
+      } catch (Exception e) {
+        log.error("Error activating audit trail", e);
+      }
 
-    try {
-      SessionInfo.setUsageAuditActive(SessionLoginData.isUsageAuditEnabled(cp));
-    } catch (Exception e) {
-      log.error("Error activating usage audit", e);
+      try {
+        SessionInfo.setUsageAuditActive(SessionLoginData.isUsageAuditEnabled(cp));
+      } catch (Exception e) {
+        log.error("Error activating usage audit", e);
+      }
+    } finally {
+      // detaching db connection from thread so can it be returned to pool
+      SessionInfo.init();
     }
   }
 

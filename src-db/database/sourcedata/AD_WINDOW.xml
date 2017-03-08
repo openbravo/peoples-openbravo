@@ -1472,10 +1472,11 @@
 <!--283-->  <AD_WINDOW_ID><![CDATA[283]]></AD_WINDOW_ID>
 <!--283-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--283-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--283-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--283-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--283-->  <NAME><![CDATA[Accounting Dimension]]></NAME>
 <!--283-->  <DESCRIPTION><![CDATA[Create and edit accounting dimensions to be used in dimensional reports.]]></DESCRIPTION>
-<!--283-->  <HELP><![CDATA[Create and edit accounting dimensions to be used in dimensional reports.]]></HELP>
+<!--283-->  <HELP><![CDATA[Create and edit accounting dimensions to be used in dimensional reports.
+THIS WINDOW IS DEPRECATED. TO BE DELETED IN NEXT MAJOR VERSION]]></HELP>
 <!--283-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--283-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--283-->  <PROCESSING><![CDATA[N]]></PROCESSING>

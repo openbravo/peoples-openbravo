@@ -500,7 +500,7 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     renderJR(vars, response, strReportName, "pdf", parameters, data, null);
   }
 
-  private CostingRule getLEsCostingAlgortithm(Organization legalEntity) {
+  public static CostingRule getLEsCostingAlgortithm(Organization legalEntity) {
     StringBuffer where = new StringBuffer();
     where.append(" as cosrule");
     where.append(" where cosrule." + CostingRule.PROPERTY_ORGANIZATION + ".id = :org");

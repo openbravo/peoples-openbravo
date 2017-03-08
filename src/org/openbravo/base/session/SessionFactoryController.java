@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,7 +25,10 @@ import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
+import org.hibernate.connection.ConnectionProvider;
+import org.hibernate.connection.DriverManagerConnectionProvider;
 import org.hibernate.dialect.PostgreSQLDialect;
+import org.hibernate.impl.SessionFactoryImpl;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalSessionFactory;
@@ -161,7 +164,19 @@ public abstract class SessionFactoryController {
 
       final DalSessionFactory dalSessionFactory = OBProvider.getInstance().get(
           DalSessionFactory.class);
-      dalSessionFactory.setDelegateSessionFactory(configuration.buildSessionFactory());
+
+      SessionFactory delegateSessionFactory = configuration.buildSessionFactory();
+      dalSessionFactory.setDelegateSessionFactory(delegateSessionFactory);
+
+      // when session factory is created, a basic Hibernate pool is also created, let's reset it to
+      // prevent leaked connections
+      if (delegateSessionFactory instanceof SessionFactoryImpl) {
+        ConnectionProvider hibernatePool = ((SessionFactoryImpl) delegateSessionFactory)
+            .getSettings().getConnectionProvider();
+        if (hibernatePool instanceof DriverManagerConnectionProvider) {
+          hibernatePool.close();
+        }
+      }
       sessionFactory = dalSessionFactory;
 
       log.debug("Session Factory initialized");

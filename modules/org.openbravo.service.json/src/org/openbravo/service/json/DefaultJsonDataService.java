@@ -605,6 +605,7 @@ public class DefaultJsonDataService implements JsonDataService {
             || key.equals(JsonConstants.WHERE_PARAMETER)
             || key.equals(JsonConstants.WHERE_AND_FILTER_CLAUSE)
             || key.equals(JsonConstants.ORG_PARAMETER)
+            || key.equals(JsonConstants.CALCULATE_ORGS)
             || key.equals(JsonConstants.TARGETRECORDID_PARAMETER)
             || (key.startsWith(DataEntityQueryService.PARAM_DELIMITER) && key
                 .endsWith(DataEntityQueryService.PARAM_DELIMITER))

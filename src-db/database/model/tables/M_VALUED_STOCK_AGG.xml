@@ -106,11 +106,12 @@
       <index name="M_VALUED_STOCK_AGG_DATEFROM" unique="false">
         <index-column name="DATEFROM"/>
       </index>
-      <index name="M_VALUED_STOCK_AGG_DATETO" unique="false">
-        <index-column name="DATETO"/>
-      </index>
       <index name="M_VALUED_STOCK_AGG_LOCATOR" unique="false">
         <index-column name="M_LOCATOR_ID"/>
+      </index>
+      <index name="M_VALUED_STOCK_AGG_ORG_DATETO" unique="false">
+        <index-column name="AD_ORG_ID"/>
+        <index-column name="DATETO"/>
       </index>
       <index name="M_VALUED_STOCK_AGG_PERIOD" unique="false">
         <index-column name="C_PERIOD_ID"/>

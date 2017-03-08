@@ -11,20 +11,34 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application.test;
 
+import static org.hamcrest.Matchers.isEmptyString;
+import static org.junit.Assert.assertThat;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Level;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.window.StandardWindowComponent;
+import org.openbravo.client.kernel.ComponentGenerator;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
+import org.openbravo.test.base.HiddenObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests generation of the javascript for standard windows
@@ -32,6 +46,8 @@ import org.openbravo.model.ad.ui.Window;
  * @author iperdomo
  */
 public class StandardWindowTest extends WeldBaseTest {
+  private static final Logger log = LoggerFactory.getLogger(StandardWindowTest.class);
+  private static final String USER_INTERFACE_APP_MOD = "9BA0836A3CD74EE4AB48753A47211BCC";
 
   /**
    * Tests generating the javascript for all windows, printing one of them.
@@ -40,17 +56,59 @@ public class StandardWindowTest extends WeldBaseTest {
   public void testStandardViewGeneration() throws Exception {
     setSystemAdministratorContext();
 
-    for (Window window : OBDal.getInstance().createQuery(Window.class, "").list()) {
-      if (hasAtLeastOneActiveTab(window)) {
-        System.err.println(window.getName());
-        try {
-          generateForWindow(window);
-        } catch (Throwable t) {
-          System.err.println("ERROR for window " + window.getName() + " " + window.getId());
-          throw new Error(t);
+    // set user interface application module in dev to enable jslint
+    Module uiapp = OBDal.getInstance().get(Module.class, USER_INTERFACE_APP_MOD);
+    boolean wasInDev = uiapp.isInDevelopment();
+    if (!wasInDev) {
+      uiapp.setInDevelopment(true);
+    }
+
+    String errorMsg = "";
+    try {
+      VariablesSecureApp fakedVars = new VariablesSecureApp(null, null, null);
+      try {
+        HiddenObjectHelper.set(RequestContext.get(), "variablesSecureApp", fakedVars);
+      } catch (Exception e) {
+        log.error("Errror initializating context", e);
+      }
+
+      List<Window> allWindows = OBDal.getInstance().createQuery(Window.class, "").list();
+      int i = 0;
+      setTestLogAppenderLevel(Level.WARN);
+      List<String> errors = new ArrayList<>();
+      for (Window window : allWindows) {
+        if (hasAtLeastOneActiveTab(window)) {
+          log.info("window {} of {}: {}", new Object[] { ++i, allWindows.size(), window.getName() });
+          try {
+            generateForWindow(window);
+          } catch (Throwable t) {
+            log.error(t.getMessage(), t);
+          }
+        }
+        for (String error : getTestLogAppender().getMessages(Level.ERROR)) {
+          errors.add("ERROR - Window " + window.getName() + " - " + window.getId() + ": " + error);
+        }
+
+        for (String warn : getTestLogAppender().getMessages(Level.WARN)) {
+          errors.add("WARN - Window " + window.getName() + " - " + window.getId() + ": " + warn);
+        }
+        getTestLogAppender().reset();
+      }
+      log.info("Generated {} windows", allWindows.size());
+      if (!errors.isEmpty()) {
+        log.error("{} errors detected:", errors.size());
+        for (String error : errors) {
+          log.error(error);
+          errorMsg += error + "\n";
         }
       }
+    } finally {
+      if (!wasInDev) {
+        uiapp.setInDevelopment(false);
+      }
     }
+
+    assertThat("Errors generating windows", errorMsg, isEmptyString());
   }
 
   /**
@@ -66,10 +124,7 @@ public class StandardWindowTest extends WeldBaseTest {
   private void generateForWindow(Window window) {
     final StandardWindowComponent component = super.getWeldComponent(StandardWindowComponent.class);
     component.setWindow(window);
-    final String jsCode = component.generate();
-    if (window.getId().equals("102")) {
-      System.err.println(jsCode);
-    }
+    ComponentGenerator.getInstance().generate(component);
   }
 
   private boolean hasAtLeastOneActiveTab(Window window) {
