@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -594,6 +594,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               // Amounts
               reversedPaymentSchedDetail.setWriteoffAmount(psd.getWriteoffAmount().negate());
               reversedPaymentSchedDetail.setAmount(psd.getAmount().negate());
+              reversedPaymentSchedDetail
+                  .setDoubtfulDebtAmount(psd.getDoubtfulDebtAmount().negate());
               OBDal.getInstance().save(reversedPaymentSchedDetail);
               reversedSchedDetails.add(reversedPaymentSchedDetail);
 
