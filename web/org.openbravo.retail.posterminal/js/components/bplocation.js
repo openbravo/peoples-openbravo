@@ -61,7 +61,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.SmallBPButton',
   name: 'OB.UI.BPLocation',
-  classes: 'btnlink-gray receipt-header-location-button',
+  classes: 'btnlink-gray flex-customer-buttons-item flex-customer-buttons-addresses',
   locName: 'locName',
   events: {
     onShowPopup: ''
@@ -72,7 +72,7 @@ enyo.kind({
     showing: false
   }, {
     name: 'identifier',
-    classes: 'addresstext'
+    classes: 'flex-customer-buttons-item-text'
   }, {
     style: 'clear: both;'
   }],
@@ -92,7 +92,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.SmallBPButton',
   name: 'OB.UI.BPLocationShip',
-  classes: 'btnlink-gray receipt-header-location-button',
+  classes: 'btnlink-gray flex-customer-buttons-item flex-customer-buttons-addresses',
   showing: false,
   locName: 'shipLocName',
   events: {
@@ -103,7 +103,7 @@ enyo.kind({
     classes: 'addressshipbutton'
   }, {
     name: 'identifier',
-    classes: 'addresstext'
+    classes: 'flex-customer-buttons-item-text'
   }, {
     style: 'clear: both;'
   }],
@@ -112,11 +112,17 @@ enyo.kind({
     if (!status) {
       me.setShowing(status);
       me.parent.$.bplocbutton.$.bottomAddrIcon.applyStyle('display', 'none');
-      me.parent.$.bplocbutton.$.identifier.addClass('addresstext-onlyone');
+      me.parent.$.bplocbutton.$.identifier.addClass('flex-customer-buttons-item-text-fullwidht');
+      me.parent.$.bplocbutton.$.identifier.removeClass('flex-customer-buttons-item-text-partialwidht');
+      me.parent.$.bplocshipbutton.$.identifier.addClass('flex-customer-buttons-item-text-fullwidht');
+      me.parent.$.bplocshipbutton.$.identifier.removeClass('flex-customer-buttons-item-text-partialwidht');
     } else {
       me.setShowing(status);
       me.parent.$.bplocbutton.$.bottomAddrIcon.applyStyle('display', '');
-      me.parent.$.bplocbutton.$.identifier.removeClass('addresstext-onlyone');
+      me.parent.$.bplocbutton.$.identifier.removeClass('flex-customer-buttons-item-text-fullwidht');
+      me.parent.$.bplocbutton.$.identifier.addClass('flex-customer-buttons-item-text-partialwidht');
+      me.parent.$.bplocshipbutton.$.identifier.removeClass('flex-customer-buttons-item-text-fullwidht');
+      me.parent.$.bplocshipbutton.$.identifier.addClass('flex-customer-buttons-item-text-partialwidht');
     }
   },
   buttonShowing: function (bp) {

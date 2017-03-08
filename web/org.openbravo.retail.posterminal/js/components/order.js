@@ -104,6 +104,9 @@ enyo.kind({
     kind: 'OB.UI.BusinessPartnerSelector',
     name: 'bpbutton'
   }, {
+    name: 'separator',
+    classes: 'customer-buttons-separator'
+  }, {
     kind: 'OB.UI.BPLocation',
     name: 'bplocbutton'
   }, {
@@ -115,7 +118,8 @@ enyo.kind({
     name: 'receiptLabels'
   }, {
     name: 'receiptButtons',
-    style: 'clear: both; '
+    style: 'clear: both; ',
+    classes: 'standardFlexContainer'
   }],
   resizeHandler: function () {
     this.inherited(arguments);
