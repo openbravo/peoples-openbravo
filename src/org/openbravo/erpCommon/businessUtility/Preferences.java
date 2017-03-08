@@ -304,7 +304,8 @@ public class Preferences {
   }
 
   /**
-   * Utility method which returns a list of preferences with the settings passed as parameters
+   * Utility method which returns a list of preferences with the settings passed as parameters. The
+   * resulting list includes the preferences which are not active (if any).
    * 
    * @param property
    *          Name of the property or attribute for the preference.
