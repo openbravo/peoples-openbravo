@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -207,8 +207,13 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
             grossBaseUnitPrice);
         BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(stdPrecision,
             RoundingMode.HALF_UP);
-        priceActual = FinancialUtils.calculateNetFromGross(strTaxId, grossAmount, pricePrecision,
-            taxBaseAmt, qtyOrdered);
+        BigDecimal netAmount = FinancialUtils.calculateNetAmtFromGross(strTaxId, grossAmount,
+            stdPrecision, taxBaseAmt);
+        priceActual = BigDecimal.ZERO;
+        if (qtyOrdered.compareTo(BigDecimal.ZERO) != 0) {
+          priceActual = netAmount.divide(qtyOrdered, pricePrecision, RoundingMode.HALF_UP);
+        }
+
         resultado.append("new Array(\"inpgrossUnitPrice\", " + grossUnitPrice.toString() + "),");
       } else {
         priceActual = PriceAdjustment.calculatePriceActual(order, product, qtyOrdered, priceStd);
@@ -244,8 +249,12 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(stdPrecision,
           RoundingMode.HALF_UP);
 
-      final BigDecimal netUnitPrice = FinancialUtils.calculateNetFromGross(strTaxId, grossAmount,
-          pricePrecision, taxBaseAmt, qtyOrdered);
+      BigDecimal netAmount = FinancialUtils.calculateNetAmtFromGross(strTaxId, grossAmount,
+          stdPrecision, taxBaseAmt);
+      BigDecimal netUnitPrice = BigDecimal.ZERO;
+      if (qtyOrdered.compareTo(BigDecimal.ZERO) != 0) {
+        netUnitPrice = netAmount.divide(qtyOrdered, pricePrecision, RoundingMode.HALF_UP);
+      }
 
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;
@@ -262,8 +271,12 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(stdPrecision,
           RoundingMode.HALF_UP);
 
-      final BigDecimal netUnitPrice = FinancialUtils.calculateNetFromGross(strTaxId, grossAmount,
-          pricePrecision, taxBaseAmt, qtyOrdered);
+      BigDecimal netAmount = FinancialUtils.calculateNetAmtFromGross(strTaxId, grossAmount,
+          stdPrecision, taxBaseAmt);
+      BigDecimal netUnitPrice = BigDecimal.ZERO;
+      if (qtyOrdered.compareTo(BigDecimal.ZERO) != 0) {
+        netUnitPrice = netAmount.divide(qtyOrdered, pricePrecision, RoundingMode.HALF_UP);
+      }
 
       priceActual = netUnitPrice;
       if (cancelPriceAd) {
@@ -274,8 +287,12 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
             grossUnitPrice);
         BigDecimal baseGrossAmount = grossBaseUnitPrice.multiply(qtyOrdered).setScale(stdPrecision,
             RoundingMode.HALF_UP);
-        priceStd = FinancialUtils.calculateNetFromGross(strTaxId, baseGrossAmount, pricePrecision,
-            taxBaseAmt, qtyOrdered);
+        BigDecimal baseAmount = FinancialUtils.calculateNetAmtFromGross(strTaxId, baseGrossAmount,
+            stdPrecision, taxBaseAmt);
+        priceStd = BigDecimal.ZERO;
+        if (qtyOrdered.compareTo(BigDecimal.ZERO) != 0) {
+          priceStd = baseAmount.divide(qtyOrdered, pricePrecision, RoundingMode.HALF_UP);
+        }
         if (!grossBaseUnitPrice.equals(grossUnitPrice) && grossBaseUnitPrice.compareTo(ZERO) == 0) {
           // Check whether price adjustment sets grossBaseUnitPrice as Zero
           calcDiscount = false;
@@ -356,8 +373,12 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
           BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(stdPrecision,
               RoundingMode.HALF_UP);
 
-          final BigDecimal netUnitPrice = FinancialUtils.calculateNetFromGross(strTaxId,
-              grossAmount, pricePrecision, taxBaseAmt, qtyOrdered);
+          BigDecimal netAmount = FinancialUtils.calculateNetAmtFromGross(strTaxId, grossAmount,
+              stdPrecision, taxBaseAmt);
+          BigDecimal netUnitPrice = BigDecimal.ZERO;
+          if (qtyOrdered.compareTo(BigDecimal.ZERO) != 0) {
+            netUnitPrice = netAmount.divide(qtyOrdered, pricePrecision, RoundingMode.HALF_UP);
+          }
 
           priceStd = netUnitPrice;
         } else {
@@ -421,7 +442,14 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       lineNetAmt = qtyOrdered.multiply(priceStd);
     } else {
       if (!strChanged.equals("inplinenetamt")) {
-        lineNetAmt = qtyOrdered.multiply(priceActual);
+        if (isTaxIncludedPriceList) {
+          BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(stdPrecision,
+              RoundingMode.HALF_UP);
+          lineNetAmt = FinancialUtils.calculateNetAmtFromGross(strTaxId, grossAmount, stdPrecision,
+              taxBaseAmt);
+        } else {
+          lineNetAmt = qtyOrdered.multiply(priceActual);
+        }
         if (lineNetAmt.scale() > stdPrecision)
           lineNetAmt = lineNetAmt.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
       }

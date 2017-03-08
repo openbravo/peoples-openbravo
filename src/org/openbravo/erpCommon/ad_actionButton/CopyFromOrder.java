@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -181,10 +181,9 @@ public class CopyFromOrder extends HttpSecureAppServlet {
           BigDecimal qty = new BigDecimal(strQty);
           priceGross = (strLastpriceso.equals("") ? ZERO : new BigDecimal(strLastpriceso));
           amtGross = priceGross.multiply(qty).setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
-          priceActual = FinancialUtils.calculateNetFromGross(strcTaxId, amtGross, pricePrecision,
-              amtGross, qty);
-          priceLimit = priceActual;
-          netPriceList = priceActual;
+          priceActual = BigDecimal.ZERO;
+          priceLimit = BigDecimal.ZERO;
+          netPriceList = BigDecimal.ZERO;
           grossPriceList = priceList;
         } else {
           priceActual = (strLastpriceso.equals("") ? ZERO : new BigDecimal(strLastpriceso));

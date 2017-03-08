@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,7 +36,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
@@ -165,7 +164,6 @@ public class OrderCreatePOLines extends BaseProcessActionHandler {
       // Price
       BigDecimal unitPrice, netPrice, grossPrice, stdPrice, limitPrice, grossAmt, netListPrice, grossListPrice, grossStdPrice;
       stdPrice = BigDecimal.ZERO;
-      final int pricePrecision = order.getCurrency().getPricePrecision().intValue();
       final int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
 
       unitPrice = new BigDecimal(selectedLine.getString("standardPrice"));
@@ -174,12 +172,9 @@ public class OrderCreatePOLines extends BaseProcessActionHandler {
       if (order.getPriceList().isPriceIncludesTax()) {
         grossPrice = unitPrice;
         grossAmt = grossPrice.multiply(qtyOrdered).setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
-        netPrice = FinancialUtils.calculateNetFromGross(tax.getId(), grossAmt, pricePrecision,
-            grossAmt, qtyOrdered);
-        limitPrice = netPrice;
+        netPrice = limitPrice = netListPrice = BigDecimal.ZERO;
         // selected line standard price is Gross Std Price in this case
         grossStdPrice = unitPrice;
-        netListPrice = netPrice;
       } else {
         netPrice = unitPrice;
         grossListPrice = grossAmt = grossPrice = grossStdPrice = BigDecimal.ZERO;

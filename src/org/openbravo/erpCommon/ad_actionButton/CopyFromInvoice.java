@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -176,8 +176,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                   priceGross = priceStd;
                   lineGrossAmt = priceGross.multiply(invLine.getInvoicedQuantity()).setScale(
                       stdPrecision, BigDecimal.ROUND_HALF_UP);
-                  priceActual = FinancialUtils.calculateNetFromGross(strCTaxID, lineGrossAmt,
-                      pricePrecision, lineGrossAmt, invLine.getInvoicedQuantity());
+                  priceActual = BigDecimal.ZERO;
                   ProductPrice prices = FinancialUtils.getProductPrice(
                       OBDal.getInstance().get(Product.class, strmProductId),
                       invoice.getInvoiceDate(), invoice.isSalesTransaction(),

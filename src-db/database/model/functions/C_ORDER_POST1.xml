@@ -1120,7 +1120,7 @@
               ELSE
                 v_line_gross_amount:=(-1) * Cur_TaxDiscount.LINEGROSSAMT * Cur_COrderDiscount.Discount/100;
               END IF;
-              v_Discount:= C_GET_NET_PRICE_FROM_GROSS(Cur_TaxDiscount.C_TAX_ID, v_line_gross_amount, 0, v_pricePrecision, 1);
+              v_Discount:= C_GET_NET_AMOUNT_FROM_GROSS(Cur_TaxDiscount.C_TAX_ID, v_line_gross_amount, 0, v_stdPrecision);
               v_gross_unit_price:= v_line_gross_amount;
             ELSE
               IF (Cur_COrderDiscount.CASCADE='Y') THEN

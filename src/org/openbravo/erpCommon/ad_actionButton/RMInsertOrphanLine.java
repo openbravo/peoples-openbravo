@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,8 +33,6 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.financial.FinancialUtils;
-import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.ReturnReason;
@@ -107,14 +105,10 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
         newOrderLine.setPriceLimit(productPrice.getPriceLimit());
         newOrderLine.setStandardPrice(productPrice.getStandardPrice());
         if (order.getPriceList().isPriceIncludesTax()) {
-          Currency currency = OBDal.getInstance().get(Currency.class, order.getCurrency().getId());
           newOrderLine.setGrossUnitPrice(productPrice.getStandardPrice());
           newOrderLine.setLineGrossAmount(productPrice.getStandardPrice().multiply(returnedQty)
               .negate());
-          BigDecimal newUnitPrice = FinancialUtils.calculateNetFromGross(strTaxId,
-              productPrice.getStandardPrice(), currency.getPricePrecision().intValue(),
-              newOrderLine.getTaxableAmount(), returnedQty).multiply(returnedQty);
-          newOrderLine.setUnitPrice(newUnitPrice);
+          newOrderLine.setUnitPrice(BigDecimal.ZERO);
         }
       } else {
         BigDecimal unitPrice = new BigDecimal(strUnitPrice);
@@ -123,13 +117,9 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
         newOrderLine.setPriceLimit(unitPrice);
         newOrderLine.setStandardPrice(unitPrice);
         if (order.getPriceList().isPriceIncludesTax()) {
-          Currency currency = OBDal.getInstance().get(Currency.class, order.getCurrency().getId());
           newOrderLine.setGrossUnitPrice(unitPrice);
           newOrderLine.setLineGrossAmount(unitPrice.multiply(returnedQty).negate());
-          BigDecimal newUnitPrice = FinancialUtils
-              .calculateNetFromGross(strTaxId, unitPrice, currency.getPricePrecision().intValue(),
-                  newOrderLine.getTaxableAmount(), returnedQty).multiply(returnedQty);
-          newOrderLine.setUnitPrice(newUnitPrice);
+          newOrderLine.setUnitPrice(BigDecimal.ZERO);
         }
       }
       // tax

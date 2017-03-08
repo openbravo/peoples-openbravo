@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2016 Openbravo SLU
+ * All portions are Copyright (C) 2012-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -337,6 +337,8 @@ public class FinancialUtils {
    * @param quantity
    *          number of units to divide the amount to get the price.
    * @return the net unit price
+   * 
+   * @deprecated Use {@link #calculateNetAmtFromGross} instead
    */
   public static BigDecimal calculateNetFromGross(String strTaxId, BigDecimal grossAmount,
       int pricePrecision, BigDecimal alternateAmount, BigDecimal quantity) {
@@ -352,6 +354,37 @@ public class FinancialUtils {
     parameters.add(quantity);
 
     final String procedureName = "C_GET_NET_PRICE_FROM_GROSS";
+    final BigDecimal lineNetAmount = (BigDecimal) CallStoredProcedure.getInstance().call(
+        procedureName, parameters, null);
+    return lineNetAmount;
+  }
+
+  /**
+   * Calculates the net unit price using the C_GET_NET_AMOUNT_FROM_GROSS stored procedure.
+   * 
+   * @param strTaxId
+   *          Tax that applies to the price.
+   * @param grossAmount
+   *          Gross Amount to calculate the net unit price from.
+   * @param stdPrecision
+   *          Standard to round the result to.
+   * @param alternateAmount
+   *          alternate amount in case the tax uses it.
+   * @return the net unit price
+   */
+  public static BigDecimal calculateNetAmtFromGross(String strTaxId, BigDecimal grossAmount,
+      int stdPrecision, BigDecimal alternateAmount) {
+    if (grossAmount.compareTo(BigDecimal.ZERO) == 0) {
+      return BigDecimal.ZERO;
+    }
+
+    final List<Object> parameters = new ArrayList<Object>();
+    parameters.add(strTaxId);
+    parameters.add(grossAmount);
+    parameters.add(alternateAmount);
+    parameters.add(stdPrecision);
+
+    final String procedureName = "C_GET_NET_AMOUNT_FROM_GROSS";
     final BigDecimal lineNetAmount = (BigDecimal) CallStoredProcedure.getInstance().call(
         procedureName, parameters, null);
     return lineNetAmount;

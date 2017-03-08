@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_callouts;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 import javax.servlet.ServletConfig;
@@ -185,8 +186,12 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
         BigDecimal grossUnitPrice = PriceAdjustment.calculatePriceActual(invoice, product,
             qtyInvoice, baseGrossUnitPrice);
         BigDecimal grossAmount = grossUnitPrice.multiply(new BigDecimal(strQtyInvoice.trim()));
-        priceActual = FinancialUtils.calculateNetFromGross(strTaxId, grossAmount, invoice
-            .getCurrency().getPricePrecision().intValue(), taxBaseAmt, qtyInvoice);
+        BigDecimal netAmount = FinancialUtils.calculateNetAmtFromGross(strTaxId, grossAmount,
+            StdPrecision, taxBaseAmt);
+        priceActual = BigDecimal.ZERO;
+        if (qtyInvoice.compareTo(BigDecimal.ZERO) != 0) {
+          priceActual = netAmount.divide(qtyInvoice, PricePrecision, RoundingMode.HALF_UP);
+        }
         resultado.append("new Array(\"inpgrossUnitPrice\", " + grossUnitPrice.toString() + "),");
         resultado.append("new Array(\"inplineGrossAmount\", " + grossAmount.toString() + "),");
       } else {
@@ -200,8 +205,12 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       BigDecimal baseGrossUnitPrice = PriceAdjustment.calculatePriceStd(invoice, product,
           qtyInvoice, grossUnitPrice);
       BigDecimal grossAmount = grossUnitPrice.multiply(qtyInvoice);
-      BigDecimal netUnitPrice = FinancialUtils.calculateNetFromGross(strTaxId, grossAmount,
-          PricePrecision, taxBaseAmt, qtyInvoice);
+      BigDecimal netAmount = FinancialUtils.calculateNetAmtFromGross(strTaxId, grossAmount,
+          StdPrecision, taxBaseAmt);
+      BigDecimal netUnitPrice = BigDecimal.ZERO;
+      if (qtyInvoice.compareTo(BigDecimal.ZERO) != 0) {
+        netUnitPrice = netAmount.divide(qtyInvoice, PricePrecision, RoundingMode.HALF_UP);
+      }
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;
 
@@ -218,8 +227,18 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     }
 
     if (!strChanged.equals("inplinenetamt")) {
-      // Net amount of a line equals quantity x unit price (actual price)
-      lineNetAmt = qtyInvoice.multiply(priceActual);
+      if (priceIncludeTaxes) {
+        // In price including taxes we get the net amount from the gross amount
+        BigDecimal baseGrossUnitPrice = new BigDecimal(strBaseGrossUnitPrice.trim());
+        BigDecimal grossUnitPrice = PriceAdjustment.calculatePriceActual(invoice, product,
+            qtyInvoice, baseGrossUnitPrice);
+        BigDecimal grossAmount = grossUnitPrice.multiply(new BigDecimal(strQtyInvoice.trim()));
+        lineNetAmt = FinancialUtils.calculateNetAmtFromGross(strTaxId, grossAmount, StdPrecision,
+            taxBaseAmt);
+      } else {
+        // Net amount of a line equals quantity x unit price (actual price)
+        lineNetAmt = qtyInvoice.multiply(priceActual);
+      }
     }
 
     if (strChanged.equals("inplinenetamt")) {
