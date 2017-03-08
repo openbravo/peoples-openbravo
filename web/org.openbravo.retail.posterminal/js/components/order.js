@@ -755,16 +755,14 @@ enyo.kind({
 
           // Split/Remove services lines
           var siblingServicesLines = getSiblingServicesLines(line.get('product').id, line.get('relatedLines')[0].orderlineId);
-          if (!me.order.get('deleting')) {
-            if (siblingServicesLines.length < qtyService) {
-              var i, p, newLine;
-              for (i = 0; i < qtyService - siblingServicesLines.length; i++) {
-                p = line.get('product').clone();
-                p.set('groupProduct', false);
-                newLine = me.order.createLine(p, qtyLineServ);
-                newLine.set('relatedLines', siblingServicesLines[0].get('relatedLines'));
-                newLine.set('groupService', false);
-              }
+          if (!me.order.get('deleting') && siblingServicesLines.length < qtyService) {
+            var i, p, newLine;
+            for (i = 0; i < qtyService - siblingServicesLines.length; i++) {
+              p = line.get('product').clone();
+              p.set('groupProduct', false);
+              newLine = me.order.createLine(p, qtyLineServ);
+              newLine.set('relatedLines', siblingServicesLines[0].get('relatedLines'));
+              newLine.set('groupService', false);
             }
           } else if (siblingServicesLines.length > qtyService) {
             linesToRemove = OB.UTIL.mergeArrays(linesToRemove, _.initial(siblingServicesLines, qtyService));

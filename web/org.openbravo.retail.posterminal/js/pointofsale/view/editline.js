@@ -201,7 +201,8 @@ enyo.kind({
     classes: 'btnlink-orange',
     tap: function () {
       var me = this,
-          order = this.model.get('order');
+          order = this.model.get('order'),
+          unGroupedServiceLines;
 
       function callback() {
         OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteLine', {
@@ -226,6 +227,41 @@ enyo.kind({
           });
           return;
         }
+
+        unGroupedServiceLines = _.filter(me.owner.owner.selectedModels, function (line) {
+          return line.get('product').get('productType') === 'S' && line.get('product').get('quantityRule') === 'PP' && !line.get('groupService') && line.has('relatedLines') && line.get('relatedLines').length > 0 && !line.get('originalOrderLineId');
+        });
+
+        if (unGroupedServiceLines && unGroupedServiceLines.length > 0) {
+          var i, j, serviceQty, productQty, uniqueServices, getServiceQty, getProductQty;
+          uniqueServices = _.uniq(unGroupedServiceLines, false, function (line) {
+            return line.get('product').get('id') + line.get('relatedLines')[0].orderlineId;
+          });
+
+          getServiceQty = function (service) {
+            return _.filter(unGroupedServiceLines, function (line) {
+              return line.get('product').get('id') === service.get('product').get('id') && line.get('relatedLines')[0].orderlineId === service.get('relatedLines')[0].orderlineId;
+            }).length;
+          };
+
+          getProductQty = function (service) {
+            return _.find(order.get('lines').models, function (line) {
+              return _.indexOf(_.pluck(service.get('relatedLines'), 'orderlineId'), line.get('id')) !== -1;
+            }).get('qty');
+          };
+
+          for (i = 0; i < uniqueServices.length; i++) {
+            serviceQty = getServiceQty(uniqueServices[i]);
+            productQty = getProductQty(uniqueServices[i]);
+            if (productQty && productQty !== serviceQty) {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LineCanNotBeDeleted'), OB.I18N.getLabel('OBPOS_AllServiceLineMustSelectToDelete'), [{
+                label: OB.I18N.getLabel('OBMOBC_LblOk')
+              }]);
+              return;
+            }
+          }
+        }
+
         OB.UTIL.Approval.requestApproval(
         me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
           if (approved) {
