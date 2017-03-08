@@ -86,4 +86,5 @@
     <excludedFunction name="SIMILARITY"/>
     <excludedFunction name="SIMILARITY_DIST"/>
     <excludedFunction name="SIMILARITY_OP"/>
+    <excludedFunction name="OBEQUALS"/>
   </vector>
