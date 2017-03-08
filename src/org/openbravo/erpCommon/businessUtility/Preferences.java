@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,7 +20,9 @@
 package org.openbravo.erpCommon.businessUtility;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
@@ -50,6 +52,10 @@ public class Preferences {
   public static final String YES = "Y";
   public static final String NO = "N";
 
+  public enum QueryFilter {
+    ACTIVE, CLIENT, ORGANIZATION
+  }
+
   /**
    * Obtains a list of all preferences that are applicable at the given visibility level (client,
    * org, user, role).
@@ -66,7 +72,7 @@ public class Preferences {
 
       ArrayList<Preference> preferences = new ArrayList<Preference>();
       for (Preference pref : getPreferences(null, false, client, org, user, role, null, false,
-          false)) {
+          false, null)) {
         Preference existentPreference = getPreferenceFromList(pref, preferences);
         if (existentPreference == null) {
           // There is not a preference for the current property, add it to the list
@@ -126,7 +132,7 @@ public class Preferences {
       String windowId = window == null ? null : window.getId();
 
       List<Preference> prefs = getPreferences(property, isListProperty, clientId, orgId, userId,
-          roleId, windowId, true, true);
+          roleId, windowId, true, true, null);
       if (prefs.size() == 0) {
         // New preference
         preference = OBProvider.getInstance().get(Preference.class);
@@ -195,10 +201,20 @@ public class Preferences {
    */
   public static String getPreferenceValue(String property, boolean isListProperty, String clientId,
       String orgId, String userId, String roleId, String windowId) throws PropertyException {
+    return getPreferenceValue(property, isListProperty, clientId, orgId, userId, roleId, windowId,
+        null);
+  }
+
+  /**
+   * @see Preferences#getPreferenceValue(String, boolean, Client, Organization, User, Role, Window)
+   */
+  public static String getPreferenceValue(String property, boolean isListProperty, String clientId,
+      String orgId, String userId, String roleId, String windowId,
+      Map<QueryFilter, Boolean> queryFilters) throws PropertyException {
     OBContext.setAdminMode();
     try {
       List<Preference> prefs = getPreferences(property, isListProperty, clientId, orgId, userId,
-          roleId, windowId, false, true);
+          roleId, windowId, false, true, queryFilters);
       Preference selectedPreference = null;
       List<String> parentTree = OBContext.getOBContext().getOrganizationStructureProvider(clientId)
           .getParentList(orgId, true);
@@ -258,7 +274,7 @@ public class Preferences {
   public static boolean existsPreference(String property, boolean isListProperty, String clientId,
       String orgId, String userId, String roleId, String windowId) {
     List<Preference> prefs = getPreferences(property, isListProperty, clientId, orgId, userId,
-        roleId, windowId, true, true);
+        roleId, windowId, true, true, null);
     return (prefs.size() > 0);
   }
 
@@ -308,8 +324,12 @@ public class Preferences {
    */
   public static List<Preference> getPreferences(String property, boolean isListProperty,
       String clientId, String orgId, String userId, String roleId, String windowId) {
+    Map<QueryFilter, Boolean> queryFilters = new HashMap<>();
+    queryFilters.put(QueryFilter.ACTIVE, false);
+    queryFilters.put(QueryFilter.CLIENT, true);
+    queryFilters.put(QueryFilter.ORGANIZATION, true);
     return getPreferences(property, isListProperty, clientId, orgId, userId, roleId, windowId,
-        true, true, false);
+        true, true, queryFilters);
   }
 
   /**
@@ -329,17 +349,6 @@ public class Preferences {
   }
 
   /**
-   * @see Preferences#getPreferences(String, boolean, String, String, String , String , String ,
-   *      boolean , boolean , boolean)
-   */
-  private static List<Preference> getPreferences(String property, boolean isListProperty,
-      String client, String org, String user, String role, String window, boolean exactMatch,
-      boolean checkWindow) {
-    return getPreferences(property, isListProperty, client, org, user, role, window, exactMatch,
-        checkWindow, true);
-  }
-
-  /**
    * Obtains a list of preferences. All the parameters can be null; when a parameter is null, it
    * will not be used in the filtering for the preference.
    * <p>
@@ -351,7 +360,7 @@ public class Preferences {
    */
   private static List<Preference> getPreferences(String property, boolean isListProperty,
       String client, String org, String user, String role, String window, boolean exactMatch,
-      boolean checkWindow, boolean activeFilterEnabled) {
+      boolean checkWindow, Map<QueryFilter, Boolean> queryFilters) {
 
     List<Object> parameters = new ArrayList<Object>();
     StringBuilder hql = new StringBuilder();
@@ -444,7 +453,11 @@ public class Preferences {
 
     OBQuery<Preference> qPref = OBDal.getInstance().createQuery(Preference.class, hql.toString());
     qPref.setParameters(parameters);
-    qPref.setFilterOnActive(activeFilterEnabled);
+    if (queryFilters != null && queryFilters.size() > 0) {
+      qPref.setFilterOnActive(queryFilters.get(QueryFilter.ACTIVE));
+      qPref.setFilterOnReadableClients(queryFilters.get(QueryFilter.CLIENT));
+      qPref.setFilterOnReadableOrganization(queryFilters.get(QueryFilter.ORGANIZATION));
+    }
     List<Preference> preferences = qPref.list();
 
     if (org != null) {

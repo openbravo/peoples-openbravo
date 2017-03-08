@@ -14,6 +14,8 @@ package org.openbravo.base.secureApp;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -28,15 +30,19 @@ import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationExpirationPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
+import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
 import org.openbravo.client.application.CachedPreference;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.businessUtility.Preferences.QueryFilter;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.security.Login;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.PropertyConflictException;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.access.User;
@@ -376,8 +382,9 @@ public class LoginHandler extends HttpBaseServlet {
         return;
       }
 
+      RoleDefaults userLoginDefaults;
       try {
-        LoginUtils.getLoginDefaults(strUserAuth, "", myPool);
+        userLoginDefaults = LoginUtils.getLoginDefaults(strUserAuth, "", myPool);
       } catch (DefaultValidationException e) {
         updateDBSession(sessionId, false, "F");
         String title = Utility.messageBD(myPool, "InvalidDefaultLoginTitle", vars.getLanguage())
@@ -388,17 +395,51 @@ public class LoginHandler extends HttpBaseServlet {
         return;
       }
 
+      String target = getUserStartPage(strUserAuth, userLoginDefaults,
+          vars.getSessionValue("target"), vars.getSessionValue("targetQueryString"));
+      vars.removeSessionValue("target");
       if (forceNamedUserLogin) {
         // do redirect as login response has already been handled in the client
-        res.sendRedirect(action);
+        res.sendRedirect(target);
         return;
       }
       // All checks passed successfully, continue logging in
-      goToTarget(res, vars);
+      goToTarget(res, target);
     } finally {
       OBContext.restorePreviousMode();
     }
 
+  }
+
+  private String getUserStartPage(String userId, RoleDefaults rd, String target,
+      String targetQueryString) {
+    String startPage = null;
+    try {
+      Map<QueryFilter, Boolean> queryFilters = new HashMap<>();
+      queryFilters.put(QueryFilter.ACTIVE, true);
+      queryFilters.put(QueryFilter.CLIENT, false);
+      queryFilters.put(QueryFilter.ORGANIZATION, false);
+      startPage = Preferences.getPreferenceValue("StartPage", true, rd.client, rd.org, userId,
+          rd.role, null, queryFilters);
+    } catch (PropertyConflictException e) {
+      // ignore show normal page
+      log4j.warn("Conflict getting StartPage preference. Showing normal page.");
+    } catch (PropertyException e) {
+      log4j.debug("Could not retrieve StartPage preference. Showing normal page.");
+    }
+    // redirect if the start page is there and if it is not the same as the standard
+    if (startPage != null && !startPage.equals("/")) {
+      if (targetQueryString != null && targetQueryString.length() > 0) {
+        final String separator = startPage.contains("?") ? "&" : "?";
+        return strDireccion + startPage + separator + targetQueryString;
+      } else {
+        return strDireccion + startPage;
+      }
+    } else if ("".equals(target)) {
+      return strDireccion + "/";
+    } else {
+      return target;
+    }
   }
 
   /** Returns how the successful session will be marked in ad_session. It can be app specific. */
@@ -440,14 +481,8 @@ public class LoginHandler extends HttpBaseServlet {
 
   }
 
-  private void goToTarget(HttpServletResponse response, VariablesSecureApp vars)
-      throws IOException, ServletException {
-
-    String target = vars.getSessionValue("target");
-
-    if (target.equals("")) {
-      target = strDireccion + "/security/Menu.html";
-    }
+  private void goToTarget(HttpServletResponse response, String target) throws IOException,
+      ServletException {
 
     // Return a JSON object with the target to redirect to
     try {
