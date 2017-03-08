@@ -315,7 +315,7 @@ enyo.kind({
   }, {
     name: 'customerAttributes',
     kind: 'Scroller',
-    maxHeight: '550px',
+    maxHeight: '500px',
     horizontal: 'hidden',
     components: [{
       name: 'customerOnlyFields'
