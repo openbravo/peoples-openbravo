@@ -11,23 +11,26 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
 
 /* jslint */
-isc.OBApplicationMenuButton.create({
-    title: OB.I18N.getLabel('${data.label}'),
 
-    // put something in the array, otherwise there 
-    // are small styling issues
-    baseData: [        
+isc.OBApplicationMenuButton.create({
+  title: OB.I18N.getLabel('${data.label}'),
+  initWidget: function () {
+    this.Super('initWidget', arguments);
+
+    OB.Application.menu = [
     <#list data.rootMenuOptions as menuOption>
         <@createMenuItem menuOption=menuOption /><#if menuOption_has_next>,</#if>
     </#list>
-    ]
+    ];
+    this.baseData = OB.Application.menu;
+  }
 })
 
 <#macro createMenuItem menuOption>
