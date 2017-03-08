@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,34 +26,54 @@ public class TaxesTestData9 extends TaxesTestData {
 
   @Override
   public void initialize() {
-    setTestNumber("9");
-    setTestDescription("Regular pricelist 9: Sales 10% Positive");
-    setSalesTest(true);
+
+    // Header info
+    setTaxDocumentLevel(true);
     setPriceIncludingTaxes(false);
-    // This info will be set in header
-    setBpartnerId(BPartnerDataConstants.CUSTOMER_A);
-    // This info will be used in line
-    setProductId(ProductDataConstants.FINAL_GOOD_A);
-    setTaxid(TaxDataConstants.TAX_VAT_10);
-    // This info is used for inserting the line
-    setQuantity(BigDecimal.ONE);
-    setPrice(new BigDecimal("3"));
-    setLineNet(new BigDecimal("3"));
-    // This info is used to update the line
-    setQuantityUpdated(new BigDecimal("2"));
-    setPriceUpdated(new BigDecimal("3"));
-    setLineNetUpdated(new BigDecimal("6"));
 
-    // These are the expected results
-    // Each line contains the taxID - {taxableAmtAfterInsert, taxAmtAfterInsert,
-    // taxableAmtAfterUpdate, taxAmtAfterUpdate}
-    // Exempt tax positive amount
+    // Line info
+    TaxesLineTestData line = new TaxesLineTestData();
+    line.setProductId(ProductDataConstants.FINAL_GOOD_A);
+    line.setQuantity(BigDecimal.ONE);
+    line.setPrice(new BigDecimal("3"));
+    line.setQuantityUpdated(new BigDecimal("2"));
+    line.setPriceUpdated(new BigDecimal("3"));
+    line.setTaxid(TaxDataConstants.TAX_VAT_10);
+
+    // Taxes for line level are provided
+    // taxID - {taxableAmtDraftAfterInsert, taxAmtDraftAfterInsert, taxableAmtCompletedAfterInsert,
+    // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
+    // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes = new HashMap<String, String[]>();
-    lineTaxes.put(TaxDataConstants.TAX_VAT_10, new String[] { "3", "0.3", "6", "0.6" });
-    // Both taxes for line level and for document level are provided
-    setLinetaxes(lineTaxes);
-    setDoctaxes(lineTaxes);
+    lineTaxes.put(TaxDataConstants.TAX_VAT_10, new String[] { "3", "0.3", "3", "0.3", "6", "0.6",
+        "6", "0.6" });
+    line.setLinetaxes(lineTaxes);
 
+    // Amounts for line level are provided
+    // {totalGrossDraftAfterInsert, totalNetDraftAfterInsert, totalGrossCompletedAfterInsert,
+    // totalNetCompletedAfterInsert, totalGrossDraftAfterUpdate, totalNetDraftAfterUpdate,
+    // totalGrossCompletedAfterUpdate, totalNetCompletedAfterUpdate}
+    String[] lineAmounts = new String[] { "3", "3", "3", "3", "6", "6", "6", "6" };
+    line.setLineAmounts(lineAmounts);
+
+    // Add lines
+    setLinesData(new TaxesLineTestData[] { line });
+
+    // Taxes for document level are provided
+    // taxID - {taxableAmtDraftAfterInsert, taxAmtDraftAfterInsert, taxableAmtCompletedAfterInsert,
+    // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
+    // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
+    HashMap<String, String[]> taxes = new HashMap<String, String[]>();
+    taxes.put(TaxDataConstants.TAX_VAT_10, new String[] { "3", "0.3", "3", "0.3", "6", "0.6", "6",
+        "0.6" });
+    setDoctaxes(taxes);
+
+    // Amounts for document level are provided
+    // {totalGrossDraftAfterInsert, totalNetDraftAfterInsert, totalGrossCompletedAfterInsert,
+    // totalNetCompletedAfterInsert, totalGrossDraftAfterUpdate, totalNetDraftAfterUpdate,
+    // totalGrossCompletedAfterUpdate, totalNetCompletedAfterUpdate}
+    String[] amounts = new String[] { "3.3", "3", "3.3", "3", "6.6", "6", "6.6", "6" };
+    setDocAmounts(amounts);
   }
 
 }

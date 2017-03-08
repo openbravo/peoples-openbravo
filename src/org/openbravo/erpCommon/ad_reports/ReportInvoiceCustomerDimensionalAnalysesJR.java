@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,11 +27,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
+
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.IsPositiveIntFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.costing.CostingBackground;
 import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.service.OBDal;
@@ -604,6 +608,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     String strTitle = "";
     strTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " " + strDateFrom + " "
         + Utility.messageBD(this, "to", vars.getLanguage()) + " " + strDateTo;
+    String strSubTitle = strTitle;
     if (!strPartnerGroup.equals(""))
       strTitle = strTitle + ", " + Utility.messageBD(this, "ForBPartnerGroup", vars.getLanguage())
           + " "
@@ -836,12 +841,14 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       if ("xls".equals(strOutput)) {
         try {
           dataXLS = ReportInvoiceCustomerDimensionalAnalysesJRData.selectXLS(this, strCurrencyId,
-              Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), localStrOrg),
-              Utility.getContext(this, vars, "#User_Client",
-                  "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
-                  .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
-              strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,
-              strcProjectId, strProducttype, strcDocTypeId, strVoid.equals("Y") ? "" : "VO");
+              vars.getLanguage(), Tree.getMembers(this,
+                  TreeData.getTreeOrg(this, vars.getClient()), localStrOrg), Utility.getContext(
+                  this, vars, "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"),
+              strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
+              strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
+              strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, strVoid
+                  .equals("Y") ? "" : "VO");
+
         } catch (ServletException ex) {
           myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
         }
@@ -914,6 +921,14 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           }
         }
       }
+      // Passing secondary filters Organization tree and businees partner group and product group
+      Organization organization = OBDal.getInstance().get(Organization.class, strOrg);
+      String strOrgName = organization.getName();
+      String strPartnerGroupName = ReportInvoiceCustomerDimensionalAnalysesJRData.selectBpgroup(
+          this, strPartnerGroup);
+      String strProductGroupName = ReportInvoiceCustomerDimensionalAnalysesJRData
+          .selectProductCategory(this, strProductCategory);
+
       strConvRateErrorMsg = myMessage.getMessage();
       // If a conversion rate is missing for a certain transaction, an error message window pops-up.
       if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
@@ -937,9 +952,45 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
 
               HashMap<String, Object> parameters = new HashMap<String, Object>();
 
+              String strLanguage = vars.getLanguage();
+              String strBaseDesign = getBaseDesignPath(strLanguage);
+
+              JasperReport jasperReportLines;
+              try {
+                jasperReportLines = ReportingUtils
+                    .compileReport(strBaseDesign
+                        + "/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalyses_srpt_doctypecount.jrxml");
+              } catch (JRException e) {
+                log4j.error("Error compiling report ", e);
+                throw new ServletException(e.getMessage());
+              }
+
+              parameters.put("USER_CLIENT", Utility.getContext(this, vars, "#User_Client",
+                  "ReportInvoiceCustomerDimensionalAnalysesJR"));
               String strDateFormat;
               strDateFormat = vars.getJavaDateFormat();
               parameters.put("strDateFormat", strDateFormat);
+              parameters.put("BASE_DESIGN", strBaseDesign);
+              parameters.put("ORGANIZATION", strOrgName);
+              parameters.put("BPGROUP", strPartnerGroupName);
+              parameters.put("PRODUCTGROUP", strProductGroupName);
+              parameters.put("C_CURRENCY_ID", strCurrencyId);
+              parameters.put("AD_ORG_ID",
+                  Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
+              parameters.put("DateFrom", strDateFrom);
+              parameters.put("DateTo", DateTimeData.nDaysAfter(this, strDateTo, "1"));
+              parameters.put("C_BP_GROUP_ID", strPartnerGroup);
+              parameters.put("C_BPARTNER_ID", strcBpartnerId);
+              parameters.put("M_PRODUCT_CATEGORY_ID", strProductCategory);
+              parameters.put("M_PRODUCT_ID", strmProductId);
+              parameters.put("SALESREP_ID", strsalesrepId);
+              parameters.put("PARTNER_SALESREP_ID", strPartnerSalesrepId);
+              parameters.put("C_PROJECT_ID", strcProjectId);
+              parameters.put("PRODUCTTYPE", strProducttype);
+              parameters.put("C_DOCTYPE_ID", strcDocTypeId);
+              parameters.put("DOCSTATUS", strVoid.equals("Y") ? "" : "VO");
+              parameters.put("LANGUAGE", vars.getLanguage());
+              parameters.put("SR_LINES", jasperReportLines);
 
               renderJR(vars, response, strReportName, null, "xls", parameters, dataXLS, null);
             }
@@ -966,7 +1017,45 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                 Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
                 Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
           } else {
+            String strLanguage = vars.getLanguage();
+            String strBaseDesign = getBaseDesignPath(strLanguage);
+
+            JasperReport jasperReportLines;
+            try {
+              jasperReportLines = ReportingUtils
+                  .compileReport(strBaseDesign
+                      + "/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalyses_srpt_doctypecount.jrxml");
+            } catch (JRException e) {
+              log4j.error("Error compiling report ", e);
+              throw new ServletException(e.getMessage());
+            }
+
             HashMap<String, Object> parameters = new HashMap<String, Object>();
+
+            parameters.put("BASE_DESIGN", strBaseDesign);
+            parameters.put("USER_CLIENT", Utility.getContext(this, vars, "#User_Client",
+                "ReportInvoiceCustomerDimensionalAnalysesJR"));
+            parameters.put("ORGANIZATION", strOrgName);
+            parameters.put("BPGROUP", strPartnerGroupName);
+            parameters.put("PRODUCTGROUP", strProductGroupName);
+            parameters.put("C_CURRENCY_ID", strCurrencyId);
+            parameters.put("AD_ORG_ID",
+                Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
+            parameters.put("DateFrom", strDateFrom);
+            parameters.put("DateTo", DateTimeData.nDaysAfter(this, strDateTo, "1"));
+            parameters.put("C_BP_GROUP_ID", strPartnerGroup);
+            parameters.put("C_BPARTNER_ID", strcBpartnerId);
+            parameters.put("M_PRODUCT_CATEGORY_ID", strProductCategory);
+            parameters.put("M_PRODUCT_ID", strmProductId);
+            parameters.put("SALESREP_ID", strsalesrepId);
+            parameters.put("PARTNER_SALESREP_ID", strPartnerSalesrepId);
+            parameters.put("C_PROJECT_ID", strcProjectId);
+            parameters.put("PRODUCTTYPE", strProducttype);
+            parameters.put("C_DOCTYPE_ID", strcDocTypeId);
+            parameters.put("DOCSTATUS", strVoid.equals("Y") ? "" : "VO");
+            parameters.put("LANGUAGE", vars.getLanguage());
+            parameters.put("SR_LINES", jasperReportLines);
+
             parameters.put("LEVEL1_LABEL", strLevelLabel[0]);
             parameters.put("LEVEL2_LABEL", strLevelLabel[1]);
             parameters.put("LEVEL3_LABEL", strLevelLabel[2]);
@@ -978,7 +1067,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
             parameters.put("LEVEL9_LABEL", strLevelLabel[8]);
             parameters.put("LEVEL10_LABEL", strLevelLabel[9]);
             parameters.put("DIMENSIONS", new Integer(intOrder));
-            parameters.put("REPORT_SUBTITLE", strTitle);
+            parameters.put("REPORT_SUBTITLE", strSubTitle);
             parameters.put("PRODUCT_LEVEL", new Integer(intProductLevel));
             renderJR(vars, response, strReportPath, strOutput, parameters, data, null);
           }

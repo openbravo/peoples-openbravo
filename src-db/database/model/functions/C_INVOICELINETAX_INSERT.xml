@@ -40,7 +40,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010-2016 Openbravo SLU
+* All portions are Copyright (C) 2010-2017 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -78,7 +78,7 @@
       v_TaxBaseAmount:=0;
     END IF;
     IF (v_BaseAmount='TAX' OR v_BaseAmount='LNATAX' OR v_BaseAmount='TBATAX') THEN
-      SELECT COALESCE(SUM(TAXAMT),0) + v_TaxBaseAmount
+      SELECT COALESCE(SUM(TAXAMT), 0) + v_TaxBaseAmount
       INTO v_TaxBaseAmount
       FROM C_INVOICELINETAX, C_TAX
       WHERE C_INVOICELINETAX.C_TAX_ID = C_TAX.C_TAX_ID
@@ -103,12 +103,12 @@
       INSERT
       INTO C_INVOICELINETAX (
       C_InvoiceLineTax_ID, C_InvoiceLine_ID, C_Invoice_ID, C_Tax_ID, AD_Client_ID, AD_Org_ID,
-      IsActive, Created, CreatedBy, Updated,
-      UpdatedBy, TaxBaseAmt, TaxAmt, Line)
+      IsActive, Created, CreatedBy, Updated, UpdatedBy,
+      TaxBaseAmt, TaxAmt, Line)
       VALUES (
       GET_UUID(), p_invoiceline_id, p_invoice_id, p_tax_id, v_Client_ID, p_org_id,
-      'Y', now(), p_user_id, now(),
-      p_user_id, v_TaxBaseAmount, ROUND(v_TaxBaseAmount*v_Rate / 100, p_StdPrecision), v_LineNo);
+      'Y', now(), p_user_id, now(), p_user_id,
+      v_TaxBaseAmount, ROUND(ROUND(v_TaxBaseAmount, p_StdPrecision) * v_Rate/100, p_StdPrecision), v_LineNo);
     ELSE
       FOR Cur_Taxes IN
         (SELECT C_Tax_ID, RATE
