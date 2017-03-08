@@ -137,7 +137,7 @@ enyo.kind({
       me.changeStyle(false);
     } else {
       if (bp.get('id') === OB.MobileApp.model.get('businesspartner')) {
-        successLocations(OB.MobileApp.model.get('businessPartner').locations);
+        successLocations(OB.MobileApp.model.get('businessPartner').get('locations'));
       } else {
         criteria.bpartner = bp.get('id');
         if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
