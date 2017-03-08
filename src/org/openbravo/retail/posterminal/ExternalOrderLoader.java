@@ -120,6 +120,7 @@ public class ExternalOrderLoader extends OrderLoader {
       message = transformMessage(jsonObject);
       if (messageAlreadyReceived(jsonObject.getString("messageId"))) {
         log.debug("Message already received, ignoring it " + jsonObject);
+        OBDal.getInstance().rollbackAndClose();
 
         JSONObject jsonResponse = new JSONObject();
         jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
