@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016 Openbravo S.L.U.
+ * Copyright (C) 2016-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -59,7 +59,8 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
     return " exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli "
         + "where ch.id = pchv.characteristic.id "
         + "and pchv.product.id= pli.product.id  and   pli.obretcoProductlist.id='"
-        + productList.getId() + "' and upper(pchv.product.name) like upper('$1')  ";
+        + productList.getId()
+        + "' and (upper(pchv.product.name) like upper('$1') or upper(pchv.product.uPCEAN) like upper('$1'))  ";
   }
 
   public String getProdCategoryQuery() {
@@ -69,7 +70,7 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
         + "where ch.id = pchv.characteristic.id "
         + "and pchv.product.id= pli.product.id  and   pli.obretcoProductlist.id='"
         + productList.getId()
-        + "' and upper(pchv.product.name) like upper('$1') and pchv.product.productCategory.id in ( '$2')  ";
+        + "' and (upper(pchv.product.name) like upper('$1') or upper(pchv.product.uPCEAN) like upper('$1')) and pchv.product.productCategory.id in ( '$2')  ";
   }
 
   public String getBestsellers() {
