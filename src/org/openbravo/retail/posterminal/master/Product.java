@@ -308,7 +308,7 @@ public class Product extends ProcessHQLQuery {
               + " from Product product left outer join product.image img left join product.oBRETCOProlProductList as pli left outer join product.pricingProductPriceList ppp "
               + " where $filtersCriteria AND ppp.priceListVersion.id = :priceListVersionId AND (product.$incrementalUpdateCriteria) and exists (select 1 from Product product2 left join product2.oBRETCOProlProductList as pli2, "
               + " PricingProductPrice ppp2 where product.id = product2.genericProduct.id and product2 = ppp2.product and ppp2.priceListVersion.id = :priceListVersionId "
-              + " and pli2.obretcoProductlist.id = :productListId ) order by product.name asc, product.id");
+              + " and pli2.obretcoProductlist.id = :productListId)");
     }
 
     return products;
