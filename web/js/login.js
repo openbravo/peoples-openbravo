@@ -333,3 +333,62 @@ function getEditionShortcuts(type) {
     this.keyArray.splice(keyArray.length - 1, 0, new keyArrayItem("UPARROW", "windowUpKey();", null, null, true, 'onkeydown'), new keyArrayItem("RIGHTARROW", "windowRightKey();", null, null, true, 'onkeydown'), new keyArrayItem("DOWNARROW", "windowDownKey();", null, null, true, 'onkeydown'), new keyArrayItem("LEFTARROW", "windowLeftKey();", null, null, true, 'onkeydown'), new keyArrayItem("SPACE", "windowSpaceKey();", null, null, true, 'onkeydown'));
   }
 }
+
+function disableButton(id) {
+  var link = null;
+  try {
+    link = document.getElementById(id);
+    if (link.className.indexOf('ButtonLink') != -1 && link.className.indexOf('ButtonLink_disabled') == -1) {
+      link.className = link.className.replace('ButtonLink_default', 'ButtonLink');
+      link.className = link.className.replace('ButtonLink_focus', 'ButtonLink');
+      link.className = link.className.replace('ButtonLink', 'ButtonLink_disabled');
+      link.setAttribute('id', link.getAttribute('id') + '_disabled');
+      link.disabled = true;
+      disableAttributeWithFunction(link, 'obj', 'onclick');
+    }
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
+function enableButton(id) {
+  var link = null;
+  try {
+    link = document.getElementById(id + "_disabled");
+    if (link.className.indexOf('ButtonLink_disabled') != -1) {
+      link.className = link.className.replace('ButtonLink_disabled', 'ButtonLink');
+      link.setAttribute('id', link.getAttribute('id').replace('_disabled', ''));
+      link.disabled = false;
+      enableAttributeWithFunction(link, 'obj', 'onclick');
+    }
+  } catch (e) {
+    return false;
+  }
+  activateDefaultAction();
+  return true;
+}
+
+function disableAttributeWithFunction(element, type, attribute) {
+  if (type == 'obj') {
+    var obj = element;
+  }
+  if (type == 'id') {
+    var obj = document.getElementById(element);
+  }
+  var attribute_text = getObjAttribute(obj, attribute);
+  attribute_text = 'return true; tmp_water_mark; ' + attribute_text;
+  setObjAttribute(obj, attribute, attribute_text);
+}
+
+function enableAttributeWithFunction(element, type, attribute) {
+  if (type == 'obj') {
+    var obj = element;
+  }
+  if (type == 'id') {
+    var obj = document.getElementById(element);
+  }
+  var attribute_text = getObjAttribute(obj, attribute);
+  attribute_text = attribute_text.replace('return true; tmp_water_mark; ', '')
+  setObjAttribute(obj, attribute, attribute_text);
+}
