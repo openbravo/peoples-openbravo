@@ -21,19 +21,6 @@
  * @fileoverview Contains Javascript functions used by the Login window.
  */
 
-function redirectWhenPopup() {
-  var permission = false;
-  try {
-    if (top.opener.parent.frames['appFrame']) {
-      permission = true;
-    }
-  } catch (e) {}
-  if (permission && top.opener) {
-    top.opener.parent.location.href = top.document.location.href;
-    top.window.close();
-  }
-}
-
 function redirectWhenInsideMDI() {
   if (typeof isWindowInMDIPage !== 'undefined' && isWindowInMDIPage) {
     var LayoutMDI = null;
@@ -44,18 +31,6 @@ function redirectWhenInsideMDI() {
     }
     if (LayoutMDI && typeof parent.document.getElementById('framesetMenu') === 'object') {
       LayoutMDI.location.href = location.href || parent.window.location.href;
-    }
-  }
-}
-
-function hideMenuFrame() {
-  if (parent.document.getElementById('framesetMenu')) {
-    parent.document.getElementById('framesetMenu').cols = parent.document.getElementById('framesetMenu').cols.replace(parent.menuWidth, '0%');
-    if (navigator.userAgent.indexOf('Trident/6.0') !== -1) {
-      // There is an issue with IE10 while resizing frameset columns or rows:
-      // https://connect.microsoft.com/IE/feedback/details/776054/cannot-resize-frameset-columns-or-rows-with-javascript
-      // The solution is do a dummy style change to force window re-rendering
-      parent.document.getElementById('framesetMenu').style.backgroundColor = 'white';
     }
   }
 }
