@@ -117,7 +117,7 @@ function loginResult(paramXMLParticular, XMLHttpRequestObj) {
 }
 
 function processResult(result) {
-  var target, command, shouldContinue = true;
+  var target = '_self', command, shouldContinue = true;
   if (result.showMessage) {
     shouldContinue = setLoginMessage(result.messageType, result.messageTitle, result.messageText);
     if (!shouldContinue) {
@@ -134,15 +134,6 @@ function processResult(result) {
     document.getElementById('confirmpasswordlabel').style.display = '';
   }
   if (shouldContinue) {
-    try {
-      if (parent.frameMenu) {
-        target = '_parent';
-      } else {
-        target = '_self';
-      }
-    } catch (e) {
-      target = '_self';
-    }
     command = result.command || 'DEFAULT';
     submitCommandForm(command, false, null, result.target, target, true);
   } else if (result.resetPassword) {
