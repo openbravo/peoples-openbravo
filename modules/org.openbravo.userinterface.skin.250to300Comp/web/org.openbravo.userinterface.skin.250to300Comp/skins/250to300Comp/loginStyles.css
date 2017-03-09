@@ -73,6 +73,14 @@ button.ButtonLink_hover, button.ButtonLink_hover:active, button.ButtonLink_hover
   outline: none;
 }
 
+button.ButtonLink_active, button.ButtonLink_active:active, button.ButtonLink_active:hover, button.ButtonLink_active:visited, button.ButtonLink_active:link, button.ButtonLink_active:focus {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-decoration: none;
+  outline: none;
+}
+
 button.ButtonLink_focus, button.ButtonLink_focus:active, button.ButtonLink_focus:hover, button.ButtonLink_focus:visited, button.ButtonLink_focus:link, button.ButtonLink_focus:focus {
   background: none;
   border: 0;
@@ -168,6 +176,30 @@ button.ButtonLink_hover table.Button .Button_right, table.Button_hover .Button_r
   background-image: url(Common/Button/buttonRight.rollover.png);  
   width: 15px;
   height: 30px;
+}
+
+button.ButtonLink_active table.Button, .Button_active {
+  color: #000000;
+}
+
+button.ButtonLink_active table.Button .Button_left, .Button_active .Button_left {
+  width: 15px;
+  height: 30px;
+  background-image: url(Common/Button/buttonLeft.pressed.png);
+}
+
+button.ButtonLink_active table.Button .Button_text, table.Button_active .Button_text {
+  background-image: url(Common/Button/buttonBody.pressed.png);
+  height: 30px;
+  font-family: 'lucida sans',sans-serif;
+  font-size: 1.2em;
+  font-weight: normal;
+}
+
+button.ButtonLink_active table.Button .Button_right, table.Button_active .Button_right {
+  width: 15px;
+  height: 30px;
+  background-image: url(Common/Button/buttonRight.pressed.png);
 }
 
 button.ButtonLink_focus table.Button .Button_left, .Button_focus .Button_left {
