@@ -21,19 +21,10 @@
  * @fileoverview Contains Javascript functions used by the Login window.
  */
 
-function redirectWhenInsideMDI() {
-  if (typeof isWindowInMDIPage !== 'undefined' && isWindowInMDIPage) {
-    var LayoutMDI = null;
-    if (isWindowInMDIPopup && parent.opener) {
-      LayoutMDI = parent.opener.getFrame('LayoutMDI'); // Since getFrame('LayoutMDI') function frameset checks equals the current opened Login_FS.html modal popup
-    } else {
-      LayoutMDI = getFrame('LayoutMDI');
-    }
-    if (LayoutMDI && typeof parent.document.getElementById('framesetMenu') === 'object') {
-      LayoutMDI.location.href = location.href || parent.window.location.href;
-    }
-  }
-}
+
+/**
+ * Functions to perform the login operation and handle its result.
+ */
 
 function setLoginMessage(type, title, text) {
   if (type === 'Error') {
@@ -147,6 +138,25 @@ function processResult(result) {
   }
 }
 
+/**
+ * Functions invoked on login page load.
+ */
+
+function redirectWhenInsideMDI() {
+  if (typeof isWindowInMDIPage !== 'undefined' && isWindowInMDIPage) {
+    var LayoutMDI = null;
+    if (isWindowInMDIPopup && parent.opener) {
+      LayoutMDI = parent.opener.getFrame('LayoutMDI'); // Since getFrame('LayoutMDI') function frameset checks equals the current opened Login_FS.html modal popup
+    } else {
+      LayoutMDI = getFrame('LayoutMDI');
+    }
+    if (LayoutMDI && typeof parent.document.getElementById('framesetMenu') === 'object') {
+      LayoutMDI.location.href = location.href || parent.window.location.href;
+    }
+  }
+}
+
+
 function manageVisualPreferences() {
   var topLogos = document.getElementById('TopLogos_Container');
   var bottomLogos = document.getElementById('BottomLogos_Container');
@@ -202,10 +212,6 @@ function browserVersionTrim(versionNum) {
   return versionNum;
 }
 
-/**
- * Checks if the browser is a supported one.
- */
-
 function checkBrowserCompatibility() {
   var browserName = getBrowserInfo('name');
   var browserVersion = getBrowserInfo('version');
@@ -234,10 +240,6 @@ function checkBrowserCompatibility() {
   }
   return isValid;
 }
-
-/**
- * Checks if the browser is a recommended one.
- */
 
 function checkRecommendedBrowser() {
   var browserName = getBrowserInfo('name');
@@ -289,7 +291,7 @@ function addInputChangeCheck(input) {
 }
 
 /**
- * Used to activate the key-press handling. Must be called after set the keys global array <em>keyArray</em>.
+ * Functions used to define keyboard operation shortcuts.
  */
 
 function enableEditionShortcuts() {
@@ -304,10 +306,6 @@ function enableEditionShortcuts() {
   keyDownManagement();
   keyUpManagement();
 }
-
-/**
- * Defines the keys array for all the application.
- */
 
 function getEditionShortcuts(type) {
   if (type == null || type == "" || type == "null") {
@@ -333,6 +331,10 @@ function getEditionShortcuts(type) {
     this.keyArray.splice(keyArray.length - 1, 0, new keyArrayItem("UPARROW", "windowUpKey();", null, null, true, 'onkeydown'), new keyArrayItem("RIGHTARROW", "windowRightKey();", null, null, true, 'onkeydown'), new keyArrayItem("DOWNARROW", "windowDownKey();", null, null, true, 'onkeydown'), new keyArrayItem("LEFTARROW", "windowLeftKey();", null, null, true, 'onkeydown'), new keyArrayItem("SPACE", "windowSpaceKey();", null, null, true, 'onkeydown'));
   }
 }
+
+/**
+ * Functions used to handle the state of UI elements, like the login button.
+ */
 
 function disableButton(id) {
   var link = null;
@@ -392,6 +394,10 @@ function enableAttributeWithFunction(element, type, attribute) {
   attribute_text = attribute_text.replace('return true; tmp_water_mark; ', '')
   setObjAttribute(obj, attribute, attribute_text);
 }
+
+/**
+ * Functions for asynchronous ajax calls. Used to submit the login request.
+ */
 
 function submitXmlHttpRequest(callbackFunction, formObject, Command, Action, debug, extraParams, paramXMLReq) {
   submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, Action, debug, null, paramXMLReq);
