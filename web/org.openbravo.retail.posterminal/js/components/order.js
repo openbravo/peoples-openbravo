@@ -651,7 +651,7 @@ enyo.kind({
         this.$.divText.addStyles('width: 50%; color: #f8941d;');
         if (model.get('paidOnCredit')) {
           if (model.get('paidPartiallyOnCredit')) {
-            this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [model.get('creditAmount')]));
+            this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [OB.I18N.formatCurrency(model.get('creditAmount'))]));
           } else {
             this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paidOnCredit'));
           }
@@ -664,7 +664,7 @@ enyo.kind({
         this.$.listPaymentLines.show();
         this.$.paymentBreakdown.show();
         //We have to ensure that there is not another handler showing this div
-      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_paid') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidReturn') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidOnCredit') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [model.get('creditAmount')]) || (this.$.divText.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1 && !model.get('replacedorder'))) {
+      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_paid') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidReturn') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidOnCredit') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [OB.I18N.formatCurrency(model.get('creditAmount'))]) || (this.$.divText.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1 && !model.get('replacedorder'))) {
         this.$.divText.hide();
         this.$.listPaymentLines.hide();
         this.$.paymentBreakdown.hide();

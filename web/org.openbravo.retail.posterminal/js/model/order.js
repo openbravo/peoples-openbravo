@@ -4542,8 +4542,10 @@
         _.each(model.receiptPayments, function (receiptPayment) {
           paidByPayments += receiptPayment.amount;
         });
-        if (model.totalamount > 0 && model.totalamount > paidByPayments && !model.isQuotation) {
-          order.set('creditAmount', model.totalamount - paidByPayments);
+
+        var creditAmount = OB.DEC.sub(model.totalamount, paidByPayments);
+        if (OB.DEC.compare(model.totalamount) > 0 && OB.DEC.compare(creditAmount) > 0 && !model.isQuotation) {
+          order.set('creditAmount', creditAmount);
           if (paidByPayments) {
             order.set('paidPartiallyOnCredit', true);
           }
