@@ -665,24 +665,29 @@ enyo.kind({
     resultOK = !selectedPayment.paymentMethod.iscash || paymentstatus.changeAmt > 0 ? this.checkValidCashOverpayment(paymentstatus, selectedPayment) : undefined;
     if (resultOK || _.isUndefined(resultOK)) {
       if (!_.isNull(paymentstatus.change) || ((paymentstatus.isNegative || paymentstatus.isReversal) && !_.isNull(paymentstatus.pending))) {
-        resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Done', function (success) {
-          var lsuccess = success;
-          if (lsuccess) {
-            lsuccess = this.checkValidPaymentMethod(paymentstatus, selectedPayment);
-          } else {
-            this.$.noenoughchangelbl.show();
-            this.$.donebutton.setLocalDisabled(true);
-            this.$.exactbutton.setLocalDisabled(true);
-          }
-          me.receipt.stopAddingPayments = !_.isEmpty(me.getShowingErrorMessages());
-          this.setStatusButtons(lsuccess, 'Done');
-          this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Layaway', function (success) {
-            this.setStatusButtons(success, 'Layaway');
+        // avoid checking for shared paymentMethod
+        if (paymentstatus.change && selectedPayment.paymentMethod.isshared) {
+          resultOK = true;
+        } else {
+          resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Done', function (success) {
+            var lsuccess = success;
+            if (lsuccess) {
+              lsuccess = this.checkValidPaymentMethod(paymentstatus, selectedPayment);
+            } else {
+              this.$.noenoughchangelbl.show();
+              this.$.donebutton.setLocalDisabled(true);
+              this.$.exactbutton.setLocalDisabled(true);
+            }
+            me.receipt.stopAddingPayments = !_.isEmpty(me.getShowingErrorMessages());
+            this.setStatusButtons(lsuccess, 'Done');
+            this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Layaway', function (success) {
+              this.setStatusButtons(success, 'Layaway');
+            });
+            this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Credit', function (success) {
+              this.setStatusButtons(success, 'Credit');
+            });
           });
-          this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Credit', function (success) {
-            this.setStatusButtons(success, 'Credit');
-          });
-        });
+        }
       } else if (!this.receipt.stopAddingPayments) {
         this.$.donebutton.setLocalDisabled(false);
         this.$.exactbutton.setLocalDisabled(false);
