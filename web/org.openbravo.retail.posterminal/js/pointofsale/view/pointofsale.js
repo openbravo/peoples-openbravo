@@ -920,7 +920,10 @@ enyo.kind({
       OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteLine', {
         order: receipt,
         selectedLines: selectedModels
-      }, function () {
+      }, function (args) {
+        if (args && args.cancelOperation && args.cancelOperation === true) {
+          return;
+        }
         enyo.$.scrim.show();
         receipt.get('lines').forEach(function (line, idx) {
           line.set('undoPosition', idx);
