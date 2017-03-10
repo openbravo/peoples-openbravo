@@ -140,9 +140,9 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
       OBError errorMsg = new OBError();
       errorMsg.setType("Error");
 
-      // LoginUtils.getValidUserId() should have thrown an AuthenticationException instead of
-      // returning null when the user is locked. LoginUtils.checkUserPassword() is called to check
-      // the real cause of null user id.
+      // LoginUtils.getValidUserId() called by default implementation of checkUserPassword() returns
+      // null when the user is locked and when the user password is wrong.
+      // LoginUtils.checkUserPassword() is called to check the real cause of null user id.
       if (LoginUtils.checkUserPassword(conn, user, pass) == null) {
         log4j.debug("Failed user/password. Username: " + user + " - Session ID:" + sessionId);
         errorMsg.setTitle("IDENTIFICATION_FAILURE_TITLE");
