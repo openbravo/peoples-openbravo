@@ -1093,9 +1093,15 @@
     linkTerminal: function (terminalData, callback) {
       var params = this.get('loginUtilsParams') || {},
           me = this,
-          parsedTerminalData = JSON.parse(terminalData);
+          key, parsedTerminalData = JSON.parse(terminalData);
       params.command = 'preLoginActions';
       params.params = terminalData;
+      var terminalDataObject = JSON.parse(terminalData);
+      for (key in terminalDataObject) {
+        if (terminalDataObject.hasOwnProperty(key)) {
+          params[key] = terminalDataObject[key];
+        }
+      }
       OB.warn('[TermAuth] Request to link terminal "' + parsedTerminalData.terminalKeyIdentifier + '" using user "' + parsedTerminalData.username + '" with cache session id "' + parsedTerminalData.cacheSessionId + '"');
       new OB.OBPOSLogin.UI.LoginRequest({
         url: OB.MobileApp.model.get('loginUtilsUrl')

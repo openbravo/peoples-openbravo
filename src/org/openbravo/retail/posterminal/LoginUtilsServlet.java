@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -20,7 +22,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.base.secureApp.LoginUtils;
+import org.openbravo.authentication.AuthenticationException;
+import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
@@ -37,7 +40,6 @@ import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 import org.openbravo.model.ad.access.FormAccess;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
-import org.openbravo.service.db.DalConnectionProvider;
 
 public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
   public static final Logger log = Logger.getLogger(LoginUtilsServlet.class);
@@ -234,8 +236,6 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     Object params = request.getParameter("params");
     JSONObject obj = new JSONObject((String) params);
     String terminalKeyIdentifier = obj.getString("terminalKeyIdentifier");
-    String username = obj.getString("username");
-    String password = obj.getString("password");
     String cacheSessionId = obj.getString("cacheSessionId");
 
     OBCriteria<OBPOSApplications> qApp = OBDal.getInstance()
@@ -250,8 +250,17 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         result.put("exception", "OBPOS_TerminalAlreadyLinked");
         return result;
       }
-      userId = LoginUtils.checkUserPassword(new DalConnectionProvider(false), username, password);
-      if (userId != null) {
+
+      try {
+        AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
+        HttpServletResponse response = RequestContext.get().getResponse();
+        userId = authManager.authenticate(request, response);
+        terminal = OBDal.getInstance().get(OBPOSApplications.class, terminal.getId());
+      } catch (Exception e) {
+        throw new AuthenticationException(e.getMessage());
+      }
+
+      if (userId != null && !userId.isEmpty()) {
         // Terminal access will be checked to ensure that the user has access to the terminal
         OBQuery<TerminalAccess> accessCrit = OBDal.getInstance().createQuery(TerminalAccess.class,
             "where userContact.id='" + userId + "'");
@@ -317,6 +326,12 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     } else {
       result.put("exception", "OBPOS_WrongTerminalKeyIdentifier");
       return result;
+    }
+
+    HttpSession session = request.getSession(false);
+    if (session != null) {
+      // finally invalidate the session (this event will be caught by the session listener
+      session.invalidate();
     }
 
     return result;

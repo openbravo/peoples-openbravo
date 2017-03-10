@@ -65,6 +65,7 @@ enyo.kind({
     var terminalData = {
       terminalKeyIdentifier: this.owner.$.terminalKeyIdentifier.getValue(),
       username: this.owner.$.username.getValue(),
+      user: this.owner.$.username.getValue(),
       password: this.owner.$.password.getValue(),
       cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId')
     };
