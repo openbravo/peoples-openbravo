@@ -95,6 +95,7 @@ public class TerminalProperties extends ModelExtension {
         list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCANCRPTTEMPLATE, "printCanceledReceiptTemplate",
         list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSWELCOMETEMPLATE, "printWelcomeTemplate", list);
 
     return list;
   }
