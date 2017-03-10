@@ -574,13 +574,13 @@ isc.OBFKFilterTextItem.addProperties({
     }
   },
 
-  // for Table reference the displayProperty is used in the filtering criteria instead of OB.Constants.IDENTIFIER
-  // see issue https://issues.openbravo.com/view.php?id=30800
+  // for Table references the property name used in the criteria depends on the type of filtering
+  // when the filtering is done in the server, the displayProperty is used
+  // on adaptive filtering (client side), OB.Constants.IDENTIFIER is used
   getDisplayProperty: function () {
     var theGrid = this.grid,
         name = this.name;
-    // it is used willFetchData to identified when adaptive filtering is not occurred.
-    // see issue https://issues.openbravo.com/view.php?id=35426
+    // Use willFetchData() to identify whether we are performing adaptive filtering
     if (theGrid && name && theGrid.getField(name) && theGrid.getField(name).displayProperty && this.form.grid.sourceWidget.willFetchData()) {
       return name + OB.Constants.FIELDSEPARATOR + theGrid.getField(name).displayProperty;
     }
