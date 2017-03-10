@@ -563,6 +563,15 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
   border-color: #AFBE95;
 }
 
+.Login_Home_Logo_Icon {
+  height: 217;
+  width: 608;
+  margin: 0 auto;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(../../../../../utility/ShowImageLogo?logo=yourcompanybig);
+}
+
 /*
  *************************************************************************
  * Logos
