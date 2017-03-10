@@ -316,10 +316,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       me.checkOpenDrawer();
     });
 
-    this.get('multiOrders').on('closed', function (order) {
-      if (order.get('id') === _.last(me.get('multiOrders').get('multiOrdersList').models).get('id')) {
-        me.checkOpenDrawer();
-      }
+    this.get('multiOrders').on('checkOpenDrawer', function () {
+      me.checkOpenDrawer();
     });
 
     receipt.on('paymentAccepted', function () {

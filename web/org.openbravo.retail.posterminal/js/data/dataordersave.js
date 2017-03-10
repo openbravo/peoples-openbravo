@@ -448,6 +448,7 @@
                   }
                   OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
                   OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
+                  model.get('multiOrders').trigger('checkOpenDrawer');
                   };
 
               var errorCallback = function () {
