@@ -132,6 +132,8 @@ BEGIN --BODY
           SET LineNetAmt = LineNetAmt + CUR_Tax.LineAdjustment
           WHERE C_OrderLine_ID = CUR_Line.C_OrderLine_ID;
 
+          -- TODO: Adjust C_OrderLineTax accordingly
+
           EXIT;
         END LOOP;
       END IF;

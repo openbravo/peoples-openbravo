@@ -37,7 +37,6 @@ v_TaxBase_ID C_TAX.C_TAXBASE_ID%TYPE;
 v_Line C_TAX.LINE%TYPE;
 v_Increment_Amount C_ORDERTAX.TAXAMT%TYPE;
 v_Increment_Base C_ORDERTAX.TAXBASEAMT%TYPE;
-v_IsTaxIncluded M_PRICELIST.IsTaxIncluded%TYPE;
 v_Processed VARCHAR(60) ;
 v_DocAction VARCHAR(60);
 BEGIN
@@ -53,11 +52,10 @@ BEGIN
       v_C_Order_ID:=:OLD.C_ORDER_ID;
     END IF;
 
-    SELECT C_CURRENCY.STDPRECISION, M_PRICELIST.ISTAXINCLUDED
-    INTO v_Prec, v_IsTaxIncluded
-    FROM C_ORDER, C_CURRENCY, M_PRICELIST
+    SELECT C_CURRENCY.STDPRECISION
+    INTO v_Prec
+    FROM C_ORDER, C_CURRENCY
     WHERE C_ORDER.C_CURRENCY_ID = C_CURRENCY.C_CURRENCY_ID
-    AND C_ORDER.M_PRICELIST_ID = M_PRICELIST.M_PRICELIST_ID
     AND C_ORDER_ID = v_C_Order_ID;
     
     SELECT DocTaxAmount, Rate, Cascade, BaseAmount, C_TaxBase_ID, Line
@@ -83,7 +81,7 @@ BEGIN
     AND C_Tax_ID = :new.C_Tax_ID;
     IF(v_Count>0) THEN
       IF (v_DocTaxAmount = 'D' AND (v_Cascade = 'Y' OR v_BaseAmount IN ('TAX', 'LNATAX', 'TBATAX'))) THEN
-        SELECT COALESCE(CASE WHEN MAX(ot.TaxBaseAmt) > 0 THEN MAX(ROUND(ot.TaxBaseAmt, v_Prec)) ELSE MIN(ROUND(ot.TaxBaseAmt, v_Prec)) END + SUM(ot.TaxAmt), 0)
+        SELECT COALESCE(CASE WHEN MAX(ot.TaxBaseAmt) > 0 THEN MAX(ROUND(ot.TaxBaseAmt, v_Prec)) + MAX(ot.TaxAmt) ELSE MIN(ROUND(ot.TaxBaseAmt, v_Prec)) + MIN(ot.TaxAmt) END, 0)
         INTO v_Increment_Base
         FROM C_OrderTax ot
         JOIN C_Tax t
@@ -132,7 +130,7 @@ BEGIN
 	RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     END IF;
     IF (v_DocTaxAmount = 'D' AND (v_Cascade = 'Y' OR v_BaseAmount IN ('TAX', 'LNATAX', 'TBATAX'))) THEN
-      SELECT COALESCE(CASE WHEN MAX(ot.TaxBaseAmt) > 0 THEN MAX(ROUND(ot.TaxBaseAmt, v_Prec)) ELSE MIN(ROUND(ot.TaxBaseAmt, v_Prec)) END + SUM(ot.TaxAmt), 0)
+      SELECT COALESCE(CASE WHEN MAX(ot.TaxBaseAmt) > 0 THEN MAX(ROUND(ot.TaxBaseAmt, v_Prec)) + MAX(ot.TaxAmt) ELSE MIN(ROUND(ot.TaxBaseAmt, v_Prec)) + MIN(ot.TaxAmt) END, 0)
       INTO v_Increment_Base
       FROM C_OrderTax ot
       JOIN C_Tax t
