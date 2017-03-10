@@ -87,7 +87,7 @@
                      AND t2.ad_org_id IN ('1')
                      GROUP BY t2.m_transaction_id, tc2.c_currency_id, COALESCE(dateacct, costdate)
                 ) tc LEFT JOIN m_transaction t ON (t.m_transaction_id = tc.m_transaction_id)
-            ) AS a
+            ) a
             GROUP BY a.ad_client_id, a.m_product_id, a.c_uom_id, a.m_locator_id
             UNION ALL
             SELECT ad_client_id, MAX(createdby) AS createdby, MAX(updatedby) AS updatedby, m_product_id, m_locator_id, c_uom_id, 
@@ -99,7 +99,7 @@
                             WHERE agg2.dateto <= TO_DATE(?)
                             AND agg2.ad_org_id IN ('1')
                             AND m_costing_rule_id = ?)
-            GROUP BY ad_client_id, ad_org_id, m_product_id, m_locator_id, c_uom_id) AS B
+            GROUP BY ad_client_id, ad_org_id, m_product_id, m_locator_id, c_uom_id) B
         GROUP BY ad_client_id, m_product_id, m_locator_id, c_uom_id
       ]]>
     </Sql>
