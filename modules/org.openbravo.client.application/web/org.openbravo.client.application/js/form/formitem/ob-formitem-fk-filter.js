@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -579,7 +579,9 @@ isc.OBFKFilterTextItem.addProperties({
   getDisplayProperty: function () {
     var theGrid = this.grid,
         name = this.name;
-    if (theGrid && name && theGrid.getField(name) && theGrid.getField(name).displayProperty) {
+    // it is used willFetchData to identified when adaptive filtering is not occurred.
+    // see issue https://issues.openbravo.com/view.php?id=35426
+    if (theGrid && name && theGrid.getField(name) && theGrid.getField(name).displayProperty && this.form.grid.sourceWidget.willFetchData()) {
       return name + OB.Constants.FIELDSEPARATOR + theGrid.getField(name).displayProperty;
     }
     return null;
