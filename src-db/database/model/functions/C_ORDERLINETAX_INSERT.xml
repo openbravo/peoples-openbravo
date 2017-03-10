@@ -51,7 +51,7 @@
   v_TaxBaseAmount NUMBER;
   v_BaseAmount C_TAX.BASEAMOUNT%TYPE;
   v_C_TaxBase_ID C_TAX.C_TAXBASE_ID%TYPE;
-  v_LineNo C_INVOICETAX.LINE%TYPE;
+  v_LineNo C_ORDERTAX.LINE%TYPE;
   v_Rate C_TAX.RATE%TYPE;
   v_Client_ID VARCHAR2(32) ;
   v_istaxincluded CHAR(1);

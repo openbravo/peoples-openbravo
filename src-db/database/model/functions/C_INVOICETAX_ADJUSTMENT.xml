@@ -28,7 +28,7 @@
 ************************************************************************/
 -- Variables
 v_taxAmt C_INVOICETAX.TaxAmt%TYPE;
-v_amount C_ORDERLINE.Line_Gross_Amount%TYPE;
+v_amount C_INVOICELINE.Line_Gross_Amount%TYPE;
 TYPE RECORD IS REF CURSOR;
 CUR_Tax RECORD;
 CUR_Line RECORD;

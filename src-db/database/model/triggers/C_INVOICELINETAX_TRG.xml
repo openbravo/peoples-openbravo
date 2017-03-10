@@ -36,8 +36,8 @@ v_BaseAmount C_TAX.BASEAMOUNT%TYPE;
 v_TaxBase_ID C_TAX.C_TAXBASE_ID%TYPE;
 v_Line C_TAX.LINE%TYPE;
 v_Processed   VARCHAR(60);
-v_Increment_Amount C_ORDERTAX.TAXAMT%TYPE ;
-v_Increment_Base C_ORDERTAX.TAXBASEAMT%TYPE ;
+v_Increment_Amount C_INVOICETAX.TAXAMT%TYPE;
+v_Increment_Base C_INVOICETAX.TAXBASEAMT%TYPE;
 v_IsTaxIncluded M_PRICELIST.IsTaxIncluded%TYPE;
     
 BEGIN
