@@ -107,7 +107,8 @@
     isList: true,
     termProperty: 'orderType',
     propertyId: 'id',
-    propertyName: 'name'
+    propertyName: 'name',
+    operator: '='
   }]);
 
 }());

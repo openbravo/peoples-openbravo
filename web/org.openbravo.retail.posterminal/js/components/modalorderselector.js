@@ -219,7 +219,8 @@ enyo.kind({
         criteria.remoteFilters.push({
           value: flt.value,
           columns: [flt.column],
-          operator: OB.Dal.STARTSWITH
+          operator: flt.operator || OB.Dal.STARTSWITH,
+          isId: flt.column === 'orderType'
         });
       }
     });

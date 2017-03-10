@@ -53,6 +53,9 @@
       <index name="EM_OBPOS_DOCTYPE_IDX" unique="false">
         <index-column name="C_DOCTYPE_ID"/>
       </index>
+      <index name="EM_OBPOS_ORDER_ISLAYAWAY" unique="false">
+        <index-column name="EM_OBPOS_ISLAYAWAY"/>
+      </index>
       <index name="EM_OBPOS_ORDERDATE" unique="false">
         <index-column name="DATEORDERED"/>
       </index>

@@ -17,6 +17,7 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
@@ -48,16 +49,59 @@ public class PaidReceiptsFilter extends ProcessHQLQuery {
 
     HQLPropertyList receiptsHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
 
+    String orderTypeFilter = getOrderTypeFilter(jsonsent);
+    String orderTypeHql;
+
+    switch (orderTypeFilter) {
+    case "RET":
+      orderTypeHql = "and ord.documentType.return = true";
+      break;
+    case "QT":
+      orderTypeHql = "and ord.documentType.sOSubType = 'OB'";
+      break;
+    case "LAY":
+      orderTypeHql = "and ord.obposIslayaway = true";
+      break;
+    case "ORD":
+      orderTypeHql = "and ord.documentType.return = false and ord.documentType.sOSubType <> 'OB' and ord.obposIslayaway = false";
+      break;
+    default:
+      orderTypeHql = "";
+    }
+
     String hqlPaidReceipts = "select"
         + receiptsHQLProperties.getHqlSelect()
         + "from Order as ord "
-        + "where $filtersCriteria and $hqlCriteria and ord.$orgId"
+        + "where $filtersCriteria and $hqlCriteria "
+        + orderTypeHql
+        + " and ord.$orgId"
         + " and ord.obposIsDeleted = false and ord.obposApplications is not null and ord.documentStatus <> 'CJ' "
         + " and ord.documentStatus <> 'CA'  "
         + " and exists(select 1 from ord.orderLineList where orderedQuantity != 0) "
         + " $orderByCriteria";
 
     return Arrays.asList(new String[] { hqlPaidReceipts });
+  }
+
+  private String getOrderTypeFilter(JSONObject jsonsent) throws JSONException {
+    String orderType = "NONE";
+
+    if (jsonsent.has("remoteFilters")) {
+      JSONArray remoteFilters = jsonsent.getJSONArray("remoteFilters");
+      for (int i = 0; i < remoteFilters.length(); i++) {
+        JSONObject filter = remoteFilters.getJSONObject(i);
+        JSONArray columns = filter.getJSONArray("columns");
+        for (int j = 0; j < columns.length(); j++) {
+          String column = columns.getString(j);
+          if ("orderType".equals(column)) {
+            orderType = filter.getString("value");
+            break;
+          }
+        }
+      }
+    }
+
+    return orderType;
   }
 
   @Override
