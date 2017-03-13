@@ -102,7 +102,7 @@ function loginResult(paramXMLParticular, XMLHttpRequestObj) {
       strText = XMLHttpRequestObj.responseText;
     }
     strText = strText.toString();
-    var result = eval('(' + strText + ')');
+    var result = JSON.parse(strText);
     processResult(result);
   }
 }
