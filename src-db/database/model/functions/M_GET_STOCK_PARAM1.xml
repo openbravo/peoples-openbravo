@@ -185,7 +185,8 @@ BEGIN
                                         AND sd.m_product_uom_id IS NULL
                                         AND sd.m_locator_id = rs.m_locator_id
                                         AND sd.m_attributesetinstance_id = rs.m_attributesetinstance_id
-            LEFT JOIN m_inventorystatus invs ON (invs.m_inventorystatus_id = sd.m_inventorystatus_id)
+            JOIN m_locator l ON l.m_locator_id = sd.m_locator_id
+            JOIN m_inventorystatus invs ON (invs.m_inventorystatus_id = l.m_inventorystatus_id)
         WHERE r.m_reservation_id = v_reservation_id
           AND rs.isallocated = 'Y'
           AND rs.quantity > 0
@@ -220,7 +221,7 @@ BEGIN
           LEFT JOIN m_attributesetinstance asi ON t.m_attributesetinstance_id = asi.m_attributesetinstance_id
           LEFT JOIN m_product_uom pu ON t.m_product_uom_id = pu.m_product_uom_id
           LEFT JOIN c_uom u ON pu.c_uom_id = u.c_uom_id
-          LEFT JOIN m_inventorystatus invs ON (invs.m_inventorystatus_id = t.m_inventorystatus_id)
+          JOIN m_inventorystatus invs ON (invs.m_inventorystatus_id = l.m_inventorystatus_id)
       WHERE t.m_product_id = v_productid
         AND ms.aux_id = v_auxid
         AND ms.ad_table_id = v_tableid
@@ -264,7 +265,7 @@ BEGIN
           LEFT JOIN c_uom u ON pu.c_uom_id = u.c_uom_id
           LEFT JOIN m_reservation r ON r.m_reservation_id = v_reservation_id AND r.m_product_id = t.m_product_id AND r.c_uom_id = t.c_uom_id
           LEFT JOIN m_reservation_stock rs ON rs.m_reservation_id = v_reservation_id AND rs.m_attributesetinstance_id = t.m_attributesetinstance_id AND rs.m_locator_id = t.m_locator_id
-          LEFT JOIN m_inventorystatus invs ON (invs.m_inventorystatus_id = t.m_inventorystatus_id)
+          JOIN m_inventorystatus invs ON (l.m_inventorystatus_id = t.m_inventorystatus_id)
       WHERE t.m_product_id=v_productid
         AND t.c_uom_id = COALESCE(v_uomid, t.c_uom_id)
         AND COALESCE(t.m_product_uom_id, '-1') = COALESCE(v_productuomid, t.m_product_uom_id, '-1')
