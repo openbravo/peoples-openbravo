@@ -25,7 +25,7 @@ import org.openbravo.utils.FormatUtilities;
 
 public class InitializeInventoryStatus extends ModuleScript {
   
-  final static String INVENTORY_STATUS_NEGATIVE_STOCK = "7B3DC15A20234C418D26EECDC5D59003";
+  final static String INVENTORY_STATUS_NO_NEGATIVE_STOCK = "7B3DC15A20234C418D26EECDC5D59003";
 
   @Override
   // Initialize the Inventory Status for Clients with allowNegativeStock = 'Y'
@@ -36,8 +36,8 @@ public class InitializeInventoryStatus extends ModuleScript {
       if (!isExecuted){
         InitializeInventoryStatusData [] clients = InitializeInventoryStatusData.getClientIds(cp);
         for(int i =0; i< clients.length;i++){
-          if (InitializeInventoryStatusData.isNegativeStockAllowed(cp, clients[i].adClientId)){
-            InitializeInventoryStatusData.initializeInventoryStatus(cp, INVENTORY_STATUS_NEGATIVE_STOCK, clients[i].adClientId);
+          if (!InitializeInventoryStatusData.isNegativeStockAllowed(cp, clients[i].adClientId)){
+            InitializeInventoryStatusData.initializeInventoryStatus(cp, INVENTORY_STATUS_NO_NEGATIVE_STOCK, clients[i].adClientId);
           }
         }
         InitializeInventoryStatusData.createPreference(cp);
