@@ -250,7 +250,6 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       // Price
       BigDecimal unitPrice, netPrice, grossPrice, stdPrice, limitPrice, grossAmt, netListPrice, grossListPrice;
       stdPrice = BigDecimal.ZERO;
-      final int pricePrecision = order.getCurrency().getPricePrecision().intValue();
       final int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
 
       if (selectedLine.get("unitPrice").equals(null) || "".equals(selectedLine.get("unitPrice"))) {
@@ -282,11 +281,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
         grossPrice = unitPrice;
         grossAmt = grossPrice.multiply(qtyReturned)
             .setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
-        netPrice = FinancialUtils.calculateNetFromGross(tax.getId(), grossAmt, pricePrecision,
-            grossAmt, qtyReturned);
-        limitPrice = netPrice;
-        stdPrice = netPrice;
-        netListPrice = netPrice;
+        netPrice = limitPrice = stdPrice = netListPrice = BigDecimal.ZERO;
       } else {
         netPrice = unitPrice;
         grossListPrice = grossAmt = grossPrice = BigDecimal.ZERO;

@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.naming.Context;
@@ -175,6 +176,9 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
           try {
             ObjectName name = new ObjectName("Openbravo:" + context + "name=Pool-" + dse.getKey());
             mbs.registerMBean(ds.getPool().getJmxPool(), name);
+          } catch (InstanceAlreadyExistsException alreadyRegistered) {
+            log.debug("JMX instance already registred for pool {}, bean name: {}", dse.getKey(),
+                alreadyRegistered.getMessage());
           } catch (Exception ignored) {
             log.error("Could not register {} pool as jmx bean", dse.getKey(), ignored);
           }

@@ -407,7 +407,7 @@ public abstract class AuthenticationManager {
     String userId = null;
     if (login != null && password != null) {
       username = login;
-      userId = LoginUtils.getValidUserId(new DalConnectionProvider(false), login, password);
+      userId = checkUserPassword(login, password);
     } else { // use basic authentication
       userId = doBasicAuthentication(request);
     }
@@ -416,7 +416,27 @@ public abstract class AuthenticationManager {
   }
 
   protected String doWebServiceAuthenticate(String user, String password) {
-    return LoginUtils.getValidUserId(new DalConnectionProvider(false), user, password);
+    return checkUserPassword(user, password);
+  }
+
+  /**
+   * Method that checks the validity of the user and password. By default it checks against the
+   * AD_User table. It can be overridden by custom authentications in case the passwords are not
+   * stored in the same table.
+   * 
+   * @param userName
+   *          the username used to login.
+   * @param password
+   *          the unhashed password as it is entered by the user.
+   * @return the User ID of the AD_User table related to the username or <b>null</b> in case of
+   *         invalid user/password.
+   * @throws AuthenticationException
+   *           in case there is any error checking the user and password
+   */
+  protected String checkUserPassword(String userName, String password)
+      throws AuthenticationException {
+
+    return LoginUtils.getValidUserId(new DalConnectionProvider(false), userName, password);
   }
 
   /**
@@ -496,7 +516,7 @@ public abstract class AuthenticationManager {
       }
       final String login = decodedUserPass.substring(0, index);
       final String password = decodedUserPass.substring(index + 1);
-      String userId = LoginUtils.getValidUserId(new DalConnectionProvider(), login, password);
+      String userId = checkUserPassword(login, password);
       username = login;
       return userId;
     } catch (final Exception e) {

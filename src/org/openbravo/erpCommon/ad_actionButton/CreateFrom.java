@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2016 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  Cheli Pineda__________________________.
  ************************************************************************
@@ -47,7 +47,6 @@ import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.financial.FinancialUtils;
 import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
@@ -1710,10 +1709,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                   priceGross = price[0].pricestd;
                   priceListGross = priceList;
                   priceStdGross = priceGross;
-                  BigDecimal grossAmount = new BigDecimal(priceGross).multiply(qty);
-                  final BigDecimal netUnitPrice = FinancialUtils.calculateNetFromGross(C_Tax_ID,
-                      grossAmount, curPrecision, grossAmount, qty);
-                  priceActual = netUnitPrice.toString();
+                  priceActual = BigDecimal.ZERO.toString();
                 }
               }
               price = null;

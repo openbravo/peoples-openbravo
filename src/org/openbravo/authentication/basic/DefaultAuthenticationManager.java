@@ -125,15 +125,24 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
       setTargetInfoInVariables(request, variables);
       return null; // just give up, return null
     }
-
-    final String userId = LoginUtils.getValidUserId(conn, user, pass);
+    final String userId;
+    try {
+      userId = checkUserPassword(user, pass);
+    } catch (AuthenticationException e) {
+      // Create a failed session and throw the exception.
+      String sessionId = createDBSession(request, user, null);
+      log4j.debug("Failed Session ID:" + sessionId);
+      throw e;
+    }
     final String sessionId = createDBSession(request, user, userId);
 
     if (userId == null) {
-
       OBError errorMsg = new OBError();
       errorMsg.setType("Error");
 
+      // LoginUtils.getValidUserId() called by default implementation of checkUserPassword() returns
+      // null when the user is locked and when the user password is wrong.
+      // LoginUtils.checkUserPassword() is called to check the real cause of null user id.
       if (LoginUtils.checkUserPassword(conn, user, pass) == null) {
         log4j.debug("Failed user/password. Username: " + user + " - Session ID:" + sessionId);
         errorMsg.setTitle("IDENTIFICATION_FAILURE_TITLE");
@@ -210,7 +219,7 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
    *           reached
    * 
    */
-  private void checkIfPasswordExpired(String userId, String language)
+  protected void checkIfPasswordExpired(String userId, String language)
       throws AuthenticationExpirationPasswordException {
 
     Date total = null;
