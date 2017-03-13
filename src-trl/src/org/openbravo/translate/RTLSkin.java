@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -184,33 +184,35 @@ public class RTLSkin {
    *          File to be modified
    */
   public static void modifySkin(File file) {
-    if (file.toString().toLowerCase().endsWith("png")
-        || file.toString().toLowerCase().endsWith("gif")) {
+    String filePathName = file.toString();
+    String filePathNameLowerCase = filePathName.toLowerCase();
+    if (filePathNameLowerCase.endsWith("png") || filePathNameLowerCase.endsWith("gif")) {
       // Actions to be taken when a png or gif file is found
       // check if image must be flipped or not
       for (String fileName : vImagesToFlip) {
-        if (file.toString().toLowerCase().indexOf(fileName) != -1) {
+        if (filePathNameLowerCase.indexOf(fileName) != -1) {
           try {
             FlipImage.proceed(file.toString());
           } catch (Exception e) {
-            log4j.error("RTLSkin.modifySkin error in file " + file.toString() + ": " + e);
+            log4j.error("RTLSkin.modifySkin error in file " + filePathName + ": " + e);
           }
         }
       }
     }
-    if (file.toString().toLowerCase().endsWith("css")) {
+    if (filePathNameLowerCase.endsWith("css")) {
       // Actions with css files
-      if (file.toString().indexOf("Openbravo_ERP_") != -1) {
+      if (filePathName.indexOf("Openbravo_ERP_") != -1
+          || filePathName.indexOf("loginStyles") != -1) {
         try {
           addLine(file, "html {direction:rtl;}");
         } catch (Exception e) {
-          log4j.error("RTLSkin.modifySkin error in file " + file.toString() + ": " + e);
+          log4j.error("RTLSkin.modifySkin error in file " + filePathName + ": " + e);
         }
       }
       try {
         processCSS(file);
       } catch (Exception e) {
-        log4j.error("RTLSkin.modifySkin error in file " + file.toString() + ": " + e);
+        log4j.error("RTLSkin.modifySkin error in file " + filePathName + ": " + e);
       }
     }
   }
