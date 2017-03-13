@@ -201,8 +201,7 @@ public class RTLSkin {
     }
     if (filePathNameLowerCase.endsWith("css")) {
       // Actions with css files
-      if (filePathName.indexOf("Openbravo_ERP_") != -1
-          || filePathName.indexOf("loginStyles") != -1) {
+      if (filePathName.indexOf("Openbravo_ERP_") != -1 || filePathName.indexOf("loginStyles") != -1) {
         try {
           addLine(file, "html {direction:rtl;}");
         } catch (Exception e) {
