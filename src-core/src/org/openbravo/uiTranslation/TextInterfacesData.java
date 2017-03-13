@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2008-2010 Openbravo S.L.U.
+ * Copyright (C) 2008-2017 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -67,7 +67,7 @@ class TextInterfacesData implements FieldProvider {
     strSql = strSql
         + "      select "
         + "		  text.filename as filename, text.text as text, text.isused as isUsed, text.ad_module_id as moduleId,"
-        + "		  texttrl.ad_language as trlLang, texttrl.text as trlText, texttrl.istranslated as isTranslated, 3 as orderSeq"
+        + "		  texttrl.ad_language as trlLang, texttrl.text as trlText, texttrl.istranslated as isTranslated, 1 as orderSeq"
         + "		from " + "		  ad_textinterfaces text," + "		  ad_textinterfaces_trl texttrl"
         + "		where" + "		  text.ad_textinterfaces_id = texttrl.ad_textinterfaces_id "
         + "		  and text.filename = '";
@@ -79,7 +79,7 @@ class TextInterfacesData implements FieldProvider {
         + "		UNION"
         + "		select "
         + "		  text.filename as filename, text.text as text, text.isused as isUsed, text.ad_module_id as moduleId,"
-        + "		  texttrl.ad_language as trlLang, texttrl.text as trlText, texttrl.istranslated as isTranslated, 2 as orderSeq"
+        + "		  texttrl.ad_language as trlLang, texttrl.text as trlText, texttrl.istranslated as isTranslated, 3 as orderSeq"
         + "		from " + "		  ad_textinterfaces text," + "		  ad_textinterfaces_trl texttrl"
         + "		where" + "		  text.ad_textinterfaces_id = texttrl.ad_textinterfaces_id "
         + "		  and text.filename is null" + "		  and text.isused = 'Y' and texttrl.ad_language = '";
@@ -89,7 +89,7 @@ class TextInterfacesData implements FieldProvider {
         + "		  text.ad_module_id as moduleId, '";
     strSql = strSql + ((language == null || language.equals("")) ? "" : language);
     strSql = strSql + "' as trlLang, "
-        + "		  text.text as trlText, 'N' as isTranslated, 1 as orderSeq" + "		from "
+        + "		  text.text as trlText, 'N' as isTranslated, 2 as orderSeq" + "		from "
         + "		  ad_textinterfaces text" + "		where" + "		  text.ad_textinterfaces_id NOT IN "
         + "			(SELECT t.ad_textinterfaces_id" + "			  FROM ad_textInterfaces t,"
         + "				  ad_textinterfaces_trl trl" + "			  WHERE "
@@ -105,19 +105,6 @@ class TextInterfacesData implements FieldProvider {
 
     try {
       st = connectionProvider.getPreparedStatement(strSql);
-      if (htmlFile != null && !(htmlFile.equals(""))) {
-      }
-      if (language != null && !(language.equals(""))) {
-      }
-      if (language != null && !(language.equals(""))) {
-      }
-      if (language != null && !(language.equals(""))) {
-      }
-      if (language != null && !(language.equals(""))) {
-      }
-      if (htmlFile != null && !(htmlFile.equals(""))) {
-      }
-
       result = st.executeQuery();
       while (result.next()) {
         TextInterfacesData objectTextInterfacesData = new TextInterfacesData();
