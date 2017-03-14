@@ -52,9 +52,9 @@ public class ProductProperties extends ModelExtension {
       {
         try {
           if ("Y".equals(Preferences.getPreferenceValue("OBPOS_retail.productImages", true,
-              OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                  .getOBContext().getRole(), null))) {
+              OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+              OBContext.getOBContext().getRole(), null))) {
           } else {
             add(new HQLProperty("img.bindaryData", "img"));
           }
@@ -81,6 +81,26 @@ public class ProductProperties extends ModelExtension {
         add(new HQLProperty(
             "case when product.active = 'Y' and pli.active is not null then pli.active else product.active end",
             "active"));
+
+        try {
+          if ("Y".equals(Preferences.getPreferenceValue("OBPOS_EnableAttrSetSearch", true,
+              OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+              OBContext.getOBContext().getRole(), null))) {
+            add(new HQLProperty(
+                "(select case when atri.id is not null then true else false end from Product as prod left join prod.attributeSet as atri where prod.id = product.id)",
+                "hasAttributes"));
+            add(new HQLProperty(
+                "(select case when atri.serialNo = 'Y' then true else false end from Product as prod left join prod.attributeSet as atri where prod.id = product.id)",
+                "isSerialNo"));
+          } else {
+            add(new HQLProperty("'false'", "hasAttributes"));
+            add(new HQLProperty("'false'", "isSerialNo"));
+          }
+        } catch (PropertyException e) {
+          add(new HQLProperty("'false'", "hasAttributes"));
+          add(new HQLProperty("'false'", "isSerialNo"));
+        }
       }
     });
 
@@ -112,8 +132,8 @@ public class ProductProperties extends ModelExtension {
           new StandardSQLFunction("c_get_product_taxcategory", new StringType()));
     }
     OBPOSApplications posDetail;
-    posDetail = POSUtils.getTerminalById(RequestContext.get().getSessionAttribute("POSTerminal")
-        .toString());
+    posDetail = POSUtils
+        .getTerminalById(RequestContext.get().getSessionAttribute("POSTerminal").toString());
     if (posDetail == null) {
       throw new OBException("terminal id is not present in session ");
     }
@@ -132,9 +152,9 @@ public class ProductProperties extends ModelExtension {
           String trlName;
           try {
             boolean isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product",
-                true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                    .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                    .getOBContext().getRole(), null));
+                true, OBContext.getOBContext().getCurrentClient(),
+                OBContext.getOBContext().getCurrentOrganization(),
+                OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
 
             if (OBContext.hasTranslationInstalled() && !isRemote) {
               trlName = "coalesce((select pt.name from ProductTrl AS pt where pt.language='"
