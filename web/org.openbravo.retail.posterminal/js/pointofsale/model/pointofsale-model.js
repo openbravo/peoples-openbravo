@@ -637,7 +637,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), args.origPayment.get('origAmount')));
                 }
                 amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
-                iter.prepareToSend(prepareToSendCallback);
                 setPaymentsToReceipts(orderList, paymentList, orderListIndex, paymentListIndex + 1, callback);
               });
             });
@@ -673,6 +672,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             });
           }
         } else {
+          iter.prepareToSend(prepareToSendCallback);
           setPaymentsToReceipts(orderList, paymentList, orderListIndex + 1, paymentListIndex, callback);
         }
       };
