@@ -27,7 +27,8 @@ enyo.kind({
     this.model.trigger('click', this.model);
   },
   events: {
-    onLineChecked: ''
+    onLineChecked: '',
+    onShowPopup: '',
   },
   components: [{
     name: 'checkBoxColumn',
@@ -85,6 +86,7 @@ enyo.kind({
   }],
   initComponents: function () {
     var me = this;
+        
     this.inherited(arguments);
     if (this.model.get('product').get('productType') === 'S') {
       this.$.serviceIcon.show();
@@ -101,6 +103,19 @@ enyo.kind({
       this.$.gross.setContent(this.model.printGross());
     } else {
       this.$.gross.setContent(this.model.printNet());
+    }
+    if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && this.model.get('product').get('hasAttributes')) {
+      this.createComponent({
+        style: 'display: block;',
+        components: [{
+          content: OB.I18N.getLabel('OBPOS_AttributeValue') + this.model.get('attributeValue'),
+          attributes: {
+            style: 'float: left; width: 100%; clear: left;'
+          }
+        }, {
+          style: 'clear: both;'
+        }]
+       });
     }
     if (this.model.get('product').get('characteristicDescription')) {
       this.createComponent({
