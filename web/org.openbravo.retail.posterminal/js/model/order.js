@@ -266,8 +266,7 @@
       return '(' + OB.I18N.formatCurrency(this.get('amount')) + ' ' + this.get('isocode') + ')';
     },
     printAmountWithSignum: function () {
-      var receipt = OB.MobileApp.model.receipt;
-      var paidReturn = (this.get('isPaid') && (this.get('orderGross') < 0)) || (receipt.get('doCancelAndReplace') === true && receipt.get('replacedorder') && receipt.getPaymentStatus().isNegative);
+      var paidReturn = (this.get('isPaid') && (this.get('orderGross') < 0)) || (this.get('cancelAndReplace') === true && this.get('isNegative') === true);
       // if the ticket is a paid return, new payments must be displayed in negative
       if (this.get('rate')) {
         return OB.I18N.formatCurrency(paidReturn ? OB.DEC.mul(OB.DEC.abs(this.get('origAmount') || OB.DEC.mul(this.get('amount'), this.get('rate'))), -1) : this.printAmount());
@@ -3309,6 +3308,12 @@
         payment.set('id', OB.UTIL.get_UUID());
         payment.set('orderGross', order.getGross());
         payment.set('isPaid', order.get('isPaid'));
+        if (order.get('doCancelAndReplace') && order.get('replacedorder')) {
+          // Added properties to payment related with cancel an replace order
+          payment.set('cancelAndReplace', order.get('doCancelAndReplace'));
+          payment.set('isNegative', order.getPaymentStatus().isNegative);
+        }
+
         payments.add(payment, {
           at: payment.get('index')
         });
