@@ -23,7 +23,8 @@
       priceList: OB.DEC.Zero,
       gross: OB.DEC.Zero,
       net: OB.DEC.Zero,
-      description: ''
+      description: '',
+      attributeValue: ''
     },
 
     // When copying a line coming from servers these properties are copied manually
@@ -51,7 +52,8 @@
       relatedLines: true,
       hasRelatedServices: true,
       warehouse: true,
-      warehousename: true
+      warehousename: true,
+      attributeValue: true,
     },
 
     initialize: function (attributes) {
@@ -67,6 +69,7 @@
         this.set('promotions', attributes.promotions);
         this.set('priceIncludesTax', attributes.priceIncludesTax);
         this.set('description', attributes.description);
+        this.set('attributeValue', attributes.attributeValue);
         if (!attributes.grossListPrice && attributes.product && _.isNumber(attributes.priceList)) {
           this.set('grossListPrice', attributes.priceList);
         }
@@ -78,6 +81,10 @@
         }
       }
 
+    },
+    
+    getAttributeValue : function() {
+      return this.get('attributeValue');
     },
 
     getQty: function () {
@@ -364,6 +371,7 @@
         this.set('hasbeenpaid', attributes.hasbeenpaid);
         this.set('isbeingprocessed', attributes.isbeingprocessed);
         this.set('description', attributes.description);
+        this.set('attributeValue', attributes.attributeValue);
         this.set('print', attributes.print);
         this.set('sendEmail', attributes.sendEmail);
         this.set('isPaid', attributes.isPaid);
@@ -788,7 +796,11 @@
         }
       }
     },
-
+    
+    getAttributeValue: function () {
+      return this.get('attributeValue');
+    },
+    
     getQty: function () {
       return this.get('qty');
     },
@@ -1097,6 +1109,10 @@
           return true;
         } else {
           // sets the new quantity
+          if(OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && line.get('product').get('hasAttributes') && line.get('product').get('isSerialNo')){
+        	  OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ProductHasSerialNo'));  
+        	qty = 1;
+          }
           line.set('qty', qty);
           // sets the undo action
           if (this.get('multipleUndo')) {
@@ -1821,6 +1837,12 @@
           modelsAffectedByCache: ['ProductPrice']
         });
       } else {
+    	  if(p.get('hasAttributes')===true) {
+         	 OB.MobileApp.view.waterfall('onShowPopup', {
+                  popup: 'modalProductAttribute',
+                });
+  		 }
+    	  
         me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
           if (callback) {
             callback(success, orderline);
@@ -2131,6 +2153,7 @@
           price: OB.DEC.number(p.get('standardPrice')),
           priceList: OB.DEC.number(p.get('listPrice')),
           priceIncludesTax: me.get('priceIncludesTax'),
+          
           warehouse: {
             id: OB.UTIL.isNullOrUndefined(attrs) || (!OB.UTIL.isNullOrUndefined(attrs) && OB.UTIL.isNullOrUndefined(attrs.splitline)) ? OB.MobileApp.model.get('warehouses')[0].warehouseid : attrs.originalLine.get('warehouse').id,
             warehousename: OB.UTIL.isNullOrUndefined(attrs) || (!OB.UTIL.isNullOrUndefined(attrs) && OB.UTIL.isNullOrUndefined(attrs.splitline)) ? OB.MobileApp.model.get('warehouses')[0].warehousename : attrs.originalLine.get('warehouse').warehousename
@@ -4605,6 +4628,7 @@
                         description: iter.description,
                         priceIncludesTax: order.get('priceIncludesTax'),
                         hasRelatedServices: hasservices,
+                        attributeValue: iter.attributeValue,
                         warehouse: {
                           id: iter.warehouse,
                           warehousename: iter.warehousename
