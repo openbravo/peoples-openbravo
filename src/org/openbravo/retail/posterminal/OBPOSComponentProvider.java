@@ -259,7 +259,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/discounts",
 
         // Hook
-        "components/menuhook", "components/hookPreDeleteLine",
+        "components/menuhook",
 
         // Websockets
         "utils/rfidWebsocket",

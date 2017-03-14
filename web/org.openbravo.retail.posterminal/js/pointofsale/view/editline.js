@@ -200,84 +200,9 @@ enyo.kind({
     i18nContent: 'OBPOS_ButtonDelete',
     classes: 'btnlink-orange',
     tap: function () {
-      var me = this,
-          order = this.model.get('order'),
-          unGroupedServiceLines;
-
-      function callback() {
-        OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteLine', {
-          order: order,
-          selectedLines: me.owner.owner.selectedModels
-        }, function () {
-          order.unset('preventServicesUpdate');
-          order.unset('deleting');
-          order.get('lines').trigger('updateRelations');
-          order.calculateReceipt();
-          enyo.$.scrim.hide();
-        });
-      }
-      OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteLine', {
-        order: me.owner.owner.receipt,
-        selectedLines: me.owner.owner.selectedModels
-      }, function () {
-        me.owner.owner.receipt.set('undo', null);
-        if (order && order.get('isQuotation') && order.get('hasbeenpaid') === 'Y') {
-          me.owner.owner.doShowPopup({
-            popup: 'modalNotEditableOrder'
-          });
-          return;
-        }
-
-        unGroupedServiceLines = _.filter(me.owner.owner.selectedModels, function (line) {
-          return line.get('product').get('productType') === 'S' && line.get('product').get('quantityRule') === 'PP' && !line.get('groupService') && line.has('relatedLines') && line.get('relatedLines').length > 0 && !line.get('originalOrderLineId');
-        });
-
-        if (unGroupedServiceLines && unGroupedServiceLines.length > 0) {
-          var i, j, serviceQty, productQty, uniqueServices, getServiceQty, getProductQty;
-          uniqueServices = _.uniq(unGroupedServiceLines, false, function (line) {
-            return line.get('product').get('id') + line.get('relatedLines')[0].orderlineId;
-          });
-
-          getServiceQty = function (service) {
-            return _.filter(unGroupedServiceLines, function (line) {
-              return line.get('product').get('id') === service.get('product').get('id') && line.get('relatedLines')[0].orderlineId === service.get('relatedLines')[0].orderlineId;
-            }).length;
-          };
-
-          getProductQty = function (service) {
-            return _.find(order.get('lines').models, function (line) {
-              return _.indexOf(_.pluck(service.get('relatedLines'), 'orderlineId'), line.get('id')) !== -1;
-            }).get('qty');
-          };
-
-          for (i = 0; i < uniqueServices.length; i++) {
-            serviceQty = getServiceQty(uniqueServices[i]);
-            productQty = getProductQty(uniqueServices[i]);
-            if (productQty && productQty !== serviceQty) {
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LineCanNotBeDeleted'), OB.I18N.getLabel('OBPOS_AllServiceLineMustSelectToDelete'), [{
-                label: OB.I18N.getLabel('OBMOBC_LblOk')
-              }]);
-              return;
-            }
-          }
-        }
-
-        OB.UTIL.Approval.requestApproval(
-        me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
-          if (approved) {
-            order.set('preventServicesUpdate', true);
-            order.set('deleting', true);
-            if (me.owner.owner.selectedModels && me.owner.owner.selectedModels.length > 1) {
-              order.deleteLines(me.owner.owner.selectedModels, 0, me.owner.owner.selectedModels.length, callback);
-              order.trigger('scan');
-            } else {
-              me.owner.owner.doDeleteLine({
-                line: me.owner.owner.line,
-                callback: callback
-              });
-            }
-          }
-        });
+      this.owner.owner.doDeleteLine({
+        line: this.owner.owner.line,
+        selectedModels: this.owner.owner.selectedModels
       });
     },
     init: function (model) {
