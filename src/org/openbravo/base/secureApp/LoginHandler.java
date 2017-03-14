@@ -427,8 +427,7 @@ public class LoginHandler extends HttpBaseServlet {
     } catch (PropertyException e) {
       log4j.debug("Could not retrieve StartPage preference. Showing normal page.");
     }
-    // redirect if the start page is there and if it is not the same as the standard
-    if (startPage != null && !startPage.equals("/")) {
+    if (startPage != null) {
       if (targetQueryString != null && targetQueryString.length() > 0) {
         final String separator = startPage.contains("?") ? "&" : "?";
         return strDireccion + startPage + separator + targetQueryString;
