@@ -3230,6 +3230,9 @@ public class TestCosting extends WeldBaseTest {
       ShipmentInOut goodsReceipt2 = createGoodsReceipt(purchaseOrder2, price2, quantity1,
           LOCATOR4_ID, day2);
 
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
+
       // Create goods shipment, run costing background, post it and assert it
       ShipmentInOut goodsShipment1 = createGoodsShipment(product, price1, quantity2, LOCATOR1_ID,
           day3);
@@ -3253,6 +3256,9 @@ public class TestCosting extends WeldBaseTest {
       // Run price correction background
       runPriceBackground();
 
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
+
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt3 = createGoodsReceipt(product, price3, quantity4, LOCATOR1_ID,
           day6);
@@ -3262,6 +3268,9 @@ public class TestCosting extends WeldBaseTest {
 
       // Run price correction background
       runPriceBackground();
+
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
 
       // Create goods movement, run costing background, post it and assert it
       InternalMovement goodsMovement = createGoodsMovement(product, price3, quantity5, LOCATOR4_ID,
