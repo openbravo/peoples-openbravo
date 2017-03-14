@@ -72,7 +72,11 @@ public class SessionHandler implements OBNotSingleton {
         externalConnectionPool = ExternalConnectionPool.getInstance(poolClassName);
       } catch (Throwable e) {
         externalConnectionPool = null;
-        log.warn("External connection pool class not found: " + poolClassName, e);
+        if (!log.isDebugEnabled()) {
+          log.info("Could not load external DB pool [" + poolClassName + "]. Using old pool.");
+        } else {
+          log.warn("External connection pool class not found: " + poolClassName, e);
+        }
       }
     }
     rbdms = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties().get("bbdd.rdbms");
