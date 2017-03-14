@@ -81,10 +81,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="EM_OBPOS_WELCOME_TEMPLATE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_ORG_CANCRCPTEMP">
         <reference local="EM_OBPOS_CANC_RPT_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
       </foreign-key>
@@ -117,9 +113,6 @@
       </foreign-key>
       <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_ORG_TICKETTEMP">
         <reference local="EM_OBPOS_TICKET_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_ORG_WELCOMETEMP">
-        <reference local="EM_OBPOS_WELCOME_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
       </foreign-key>
       <check name="EM_OBPOS_ORG_FORMAT"><![CDATA[EM_OBPOS_FORMAT_DECIMAL IS NULL AND EM_OBPOS_FORMAT_GROUP IS NULL OR EM_OBPOS_FORMAT_DECIMAL IS NOT NULL AND EM_OBPOS_FORMAT_GROUP IS NOT NULL]]></check>
     </table>
