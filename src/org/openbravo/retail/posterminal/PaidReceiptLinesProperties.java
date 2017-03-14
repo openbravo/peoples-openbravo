@@ -58,6 +58,7 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty("returnReason.id", "returnReason"));
         add(new HQLProperty("returnReason.name", "returnReasonName"));
         add(new HQLProperty("ordLine.goodsShipmentLine.id", "goodsShipmentLine"));
+        add(new HQLProperty("ordLine.attributeSetValue.id", "attributeSetValueId"));
       }
     };
 
