@@ -191,7 +191,13 @@ IF (UPDATING) THEN
       END LOOP;         
     ELSE
       -- Regular taxes
-      C_ORDERLINETAX_INSERT(:new.AD_Org_ID, :new.C_Order_ID, :new.C_OrderLine_ID, :new.UpdatedBy, :new.C_Tax_ID, :new.C_Tax_ID, v_newLineNetAmt, v_newLineAlternate, v_Prec);    
+      SELECT COALESCE(MIN(DocTaxAmount), 'L') INTO v_DocTaxAmount FROM C_Tax WHERE (C_Tax_ID = :new.C_Tax_ID OR Parent_Tax_ID = :new.C_Tax_ID) AND IsSummary = 'N';
+      IF (v_istaxincluded = 'Y' AND v_DocTaxAmount = 'D') THEN
+        v_newLineNetAmt := C_GET_NET_AMOUNT_FROM_GROSS(:new.c_tax_id, :new.line_gross_amount, :new.taxbaseamt);
+        C_ORDERLINETAX_INSERT(:new.AD_Org_ID, :new.C_Order_ID, :new.C_OrderLine_ID, :new.UpdatedBy, :new.C_Tax_ID, :new.C_Tax_ID, v_newLineNetAmt, v_newLineNetAmt, v_Prec);
+      ELSE
+        C_ORDERLINETAX_INSERT(:new.AD_Org_ID, :new.C_Order_ID, :new.C_OrderLine_ID, :new.UpdatedBy, :new.C_Tax_ID, :new.C_Tax_ID, v_newLineNetAmt, v_newLineAlternate, v_Prec);
+      END IF;
     END IF;
     IF (v_istaxincluded = 'Y') THEN
       C_ORDERLINETAX_ROUNDING(:new.C_OrderLine_ID, :new.line_gross_amount, ROUND(v_newLineNetAmt, v_Prec));

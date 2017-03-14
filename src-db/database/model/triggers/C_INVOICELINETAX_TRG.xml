@@ -36,9 +36,8 @@ v_BaseAmount C_TAX.BASEAMOUNT%TYPE;
 v_TaxBase_ID C_TAX.C_TAXBASE_ID%TYPE;
 v_Line C_TAX.LINE%TYPE;
 v_Processed   VARCHAR(60);
-v_Increment_Amount C_ORDERTAX.TAXAMT%TYPE ;
-v_Increment_Base C_ORDERTAX.TAXBASEAMT%TYPE ;
-v_IsTaxIncluded M_PRICELIST.IsTaxIncluded%TYPE;
+v_Increment_Amount C_INVOICETAX.TAXAMT%TYPE;
+v_Increment_Base C_INVOICETAX.TAXBASEAMT%TYPE;
     
 BEGIN
     
@@ -53,11 +52,11 @@ BEGIN
       v_C_Invoice_ID:=:OLD.C_INVOICE_ID;
     END IF;
 
-    SELECT C_CURRENCY.STDPRECISION, PROCESSED, M_PRICELIST.ISTAXINCLUDED
-    INTO v_Prec, v_Processed, v_IsTaxIncluded
-    FROM C_INVOICE, C_CURRENCY, M_PRICELIST
+    SELECT C_CURRENCY.STDPRECISION, PROCESSED
+    INTO v_Prec, v_Processed
+    FROM C_INVOICE, C_CURRENCY
     WHERE C_INVOICE.C_CURRENCY_ID = C_CURRENCY.C_CURRENCY_ID
-    AND C_INVOICE.M_PRICELIST_ID = M_PRICELIST.M_PRICELIST_ID
+
     AND C_INVOICE_ID = v_C_Invoice_ID;
     
     SELECT DocTaxAmount, Rate, Cascade, BaseAmount, C_TaxBase_ID, Line
@@ -84,7 +83,7 @@ BEGIN
     AND Recalculate = 'Y';
     IF(v_Count>0) THEN
       IF (v_DocTaxAmount = 'D' AND (v_Cascade = 'Y' OR v_BaseAmount IN ('TAX', 'LNATAX', 'TBATAX'))) THEN
-        SELECT COALESCE(CASE WHEN MAX(it.TaxBaseAmt) > 0 THEN MAX(ROUND(it.TaxBaseAmt, v_Prec)) ELSE MIN(ROUND(it.TaxBaseAmt, v_Prec)) END + SUM(it.TaxAmt), 0)
+        SELECT COALESCE(CASE WHEN MAX(it.TaxBaseAmt) > 0 THEN MAX(ROUND(it.TaxBaseAmt, v_Prec)) + MAX(it.TaxAmt) ELSE MIN(ROUND(it.TaxBaseAmt, v_Prec)) + MIN(it.TaxAmt) END, 0)
         INTO v_Increment_Base
         FROM C_InvoiceTax it
         JOIN C_Tax t
@@ -128,7 +127,7 @@ BEGIN
     RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
   ELSE
     IF (v_DocTaxAmount = 'D' AND (v_Cascade = 'Y' OR v_BaseAmount IN ('TAX', 'LNATAX', 'TBATAX'))) THEN
-      SELECT COALESCE(CASE WHEN MAX(it.TaxBaseAmt) > 0 THEN MAX(ROUND(it.TaxBaseAmt, v_Prec)) ELSE MIN(ROUND(it.TaxBaseAmt, v_Prec)) END + SUM(it.TaxAmt), 0)
+      SELECT COALESCE(CASE WHEN MAX(it.TaxBaseAmt) > 0 THEN MAX(ROUND(it.TaxBaseAmt, v_Prec)) + MAX(it.TaxAmt) ELSE MIN(ROUND(it.TaxBaseAmt, v_Prec)) + MIN(it.TaxAmt) END, 0)
       INTO v_Increment_Base
       FROM C_InvoiceTax it
       JOIN C_Tax t

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -663,16 +663,11 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
         return myMessage;
       }
 
-      RequisitionToOrderData[] lines = RequisitionToOrderData.linesToOrder(
-          this,
-          strOrderDate,
-          strOrg,
-          strWarehouse,
-          RequisitionToOrderData.billto(this, strVendor).equals("") ? RequisitionToOrderData
-              .cBPartnerLocationId(this, strVendor) : RequisitionToOrderData
-              .billto(this, strVendor),
-          RequisitionToOrderData.cBPartnerLocationId(this, strVendor), cCurrencyId,
-          strPriceListVersionId, strSelected);
+      RequisitionToOrderData[] lines = RequisitionToOrderData.linesToOrder(this, cCurrencyId,
+          strOrderDate, strOrg, strWarehouse, RequisitionToOrderData.billto(this, strVendor)
+              .equals("") ? RequisitionToOrderData.cBPartnerLocationId(this, strVendor)
+              : RequisitionToOrderData.billto(this, strVendor), RequisitionToOrderData
+              .cBPartnerLocationId(this, strVendor), strPriceListVersionId, strSelected);
 
       boolean uomManagementPreference = UOMUtil.isUomManagementEnabled();
       HashMap<String, String[]> hashLines = new HashMap<String, String[]>();

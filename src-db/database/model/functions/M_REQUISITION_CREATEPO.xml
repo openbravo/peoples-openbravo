@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008-2016 Openbravo SLU
+* All portions are Copyright (C) 2008-2017 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -264,8 +264,8 @@ BEGIN
       IF (Cur_Lines.istaxincluded = 'Y') THEN
         v_gross_unit_price:= v_Gross;
         v_line_gross_amount:= ROUND(v_gross_unit_price * (Cur_Lines.QTY - Cur_Lines.ORDEREDQTY), v_stdPre);
-        v_PriceActual:= C_GET_NET_PRICE_FROM_GROSS(v_Tax_ID, v_line_gross_amount, v_line_gross_amount, v_priPre, (Cur_Lines.QTY - Cur_Lines.ORDEREDQTY));
-        v_LineNetAmt:= ROUND(v_PriceActual * (Cur_Lines.QTY - Cur_Lines.ORDEREDQTY), v_stdPre);
+        v_PriceActual:= 0;
+        v_LineNetAmt:= 0;
         IF (v_PriceList = 0) THEN
           v_Discount := 0 ;
         ELSE

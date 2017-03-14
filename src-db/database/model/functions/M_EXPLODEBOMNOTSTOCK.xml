@@ -19,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2013-2016 Openbravo SLU
+* All portions are Copyright (C) 2013-2017 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -159,8 +159,8 @@
 					v_gross_unit_price:=M_Get_Offers_Price(CUR_BOM_Line.DateOrdered, v_CBPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID), CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID);
 					v_gross_price_list:=M_Get_Offers_Price(CUR_BOM_Line.DateOrdered, v_CBPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceList(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID), CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID);
 					v_line_gross_amount:=ROUND(CUR_BOM_Line.QtyOrdered*CUR_BOM.BOMQty*v_gross_unit_price, v_Precision);
-					v_price_actual:=ROUND(C_GET_NET_PRICE_FROM_GROSS(V_C_Tax_Id,  M_Get_Offers_Price(CUR_BOM_Line.DateOrdered, v_CBPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID), CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID), 0, v_Precision, 1),v_Precision);
-					v_line_net_amt:=ROUND(CUR_BOM_Line.QtyOrdered*CUR_BOM.BOMQty*v_price_actual, v_Precision);
+					v_price_actual:=0;
+					v_line_net_amt:=0;
 				ELSE
 					v_gross_unit_price:=0;
 					v_line_gross_amount:=0;

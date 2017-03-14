@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,7 +41,6 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.financial.FinancialUtils;
 import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.common.order.Order;
@@ -200,8 +199,7 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
             qtyOrdered = (data[i].qtyordered.equals("") ? ZERO : new BigDecimal(data[i].qtyordered));
             grossAmount = qtyOrdered.multiply(grossUnitPrice).setScale(stdPrecision,
                 BigDecimal.ROUND_HALF_UP);
-            priceActual = FinancialUtils.calculateNetFromGross(strCTaxID, grossAmount,
-                pricePrecision, grossAmount, qtyOrdered);
+            priceActual = BigDecimal.ZERO;
 
             strGrossPriceList = strPriceList;
             strPriceActual = priceActual.toString();

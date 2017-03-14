@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -285,10 +285,9 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
         && !bdPriceList.equals(BigDecimal.ZERO.setScale(bdPriceList.scale()))) {
       // List Price
       if (objOrder.getPriceList().isPriceIncludesTax()) {
-        // If is Price Including Taxes, change gross and then Net
+        // If is Price Including Taxes, change only gross
         objCloneOrdLine.setGrossListPrice(bdPriceList);
-        objCloneOrdLine.setListPrice(getNetFromGross(bdPriceList, lineTax, objCloneOrder
-            .getCurrency().getPricePrecision(), objCloneOrdLine.getOrderedQuantity()));
+        objCloneOrdLine.setListPrice(BigDecimal.ZERO);
       } else {
         // If is not Price Including Taxes, change only net
         objCloneOrdLine.setListPrice(bdPriceList);
@@ -299,10 +298,9 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
         && !bdPriceStd.equals(BigDecimal.ZERO.setScale(bdPriceStd.scale()))) {
       // Unit Price
       if (objOrder.getPriceList().isPriceIncludesTax()) {
-        // If is Price Including Taxes, change gross and then Net
+        // If is Price Including Taxes, change only gross
         objCloneOrdLine.setGrossUnitPrice(bdPriceStd);
-        objCloneOrdLine.setUnitPrice(getNetFromGross(bdPriceStd, lineTax, objCloneOrder
-            .getCurrency().getPricePrecision(), BigDecimal.ONE));
+        objCloneOrdLine.setUnitPrice(BigDecimal.ZERO);
       } else {
         // If is not Price Including Taxes, change only net
         objCloneOrdLine.setUnitPrice(bdPriceStd);
@@ -431,12 +429,9 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       olDiscount.setGrossUnitPrice(discountedAmount.negate());
       olDiscount.setLineGrossAmount(discountedAmount.negate());
       olDiscount.setGrossListPrice(discountedAmount.negate());
-      BigDecimal net = getNetFromGross(discountedAmount,
-          OBDal.getInstance().get(TaxRate.class, e.getKey()), objCloneOrder.getCurrency()
-              .getPricePrecision(), BigDecimal.ONE);
-      olDiscount.setUnitPrice(net.negate());
-      olDiscount.setLineNetAmount(net.negate());
-      olDiscount.setListPrice(net.negate());
+      olDiscount.setUnitPrice(BigDecimal.ZERO);
+      olDiscount.setLineNetAmount(BigDecimal.ZERO);
+      olDiscount.setListPrice(BigDecimal.ZERO);
     } else {
       olDiscount.setUnitPrice(discountedAmount.negate());
       olDiscount.setLineNetAmount(discountedAmount.negate());
@@ -456,28 +451,6 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
     olDiscount.setProduct(objCloneDiscount.getDiscount().getProduct());
     olDiscount.setDescription(objCloneDiscount.getDiscount().getProduct().getName());
     return olDiscount;
-  }
-
-  /**
-   * Call Database Procedure to calculate net price based on gross price
-   */
-  private BigDecimal getNetFromGross(BigDecimal amount, TaxRate tax, Long pricePrecision,
-      BigDecimal quantity) {
-    BigDecimal netPrice = null;
-    try {
-      final List<Object> parameters = new ArrayList<Object>();
-      parameters.add(tax.getId());
-      parameters.add(amount);
-      parameters.add(amount);
-      parameters.add(pricePrecision);
-      parameters.add(quantity);
-      final String procedureName = "c_get_net_price_from_gross";
-      netPrice = (BigDecimal) CallStoredProcedure.getInstance().call(procedureName, parameters,
-          null);
-    } catch (Exception e) {
-      throw new OBException(e);
-    }
-    return netPrice;
   }
 
 }

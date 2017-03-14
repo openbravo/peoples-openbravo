@@ -60,7 +60,6 @@
   Cur_lineqty RECORD;
   Cur_InvoiceTax RECORD;
   Cur_Offer RECORD;
-  Cur_Tax RECORD;
 
   -- Record Info
   v_Client_ID VARCHAR2(32);
@@ -157,7 +156,6 @@
   v_stdPrecision C_Currency.StdPrecision%TYPE;
   v_gross_unit_price NUMBER;
   v_line_gross_amount NUMBER;
-  v_taxAmt NUMBER;
   v_Isquantityvariable CHAR(1);
   
   v_isdeferred_inv C_InvoiceLine.IsDeferred%TYPE;
@@ -225,132 +223,11 @@ BEGIN --BODY
   ON i.M_PRICELIST_ID = p.M_PRICELIST_ID
   WHERE i.C_INVOICE_ID = v_Record_ID;
 
-  /**************************************************************************
-   * Round amounts and taxes
-   *************************************************************************/
-  IF (v_DocAction = 'CO' AND v_isTaxIncluded = 'Y') THEN
-
-    -- Disable triggers
-    INSERT INTO AD_Session_Status (ad_session_status_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, isimporting)
-    VALUES (get_uuid(), '0', '0', 'Y', now(), '0', now(), '0', 'Y');
-
-    -- Round
-    UPDATE C_INVOICELINE
-    SET LineNetAmt = round(LineNetAmt, v_stdPrecision)
-    WHERE C_Invoice_ID = v_Record_ID;
-
-    UPDATE C_INVOICELINETAX
-    SET TaxBaseAmt = round(TaxBaseAmt, v_stdPrecision)
-    WHERE C_Invoice_ID = v_Record_ID;
-
-    UPDATE C_INVOICETAX
-    SET TaxBaseAmt = round(TaxBaseAmt, v_stdPrecision)
-    WHERE C_Invoice_ID = v_Record_ID
-    AND Recalculate = 'Y';
-
-    -- Adjust
-    FOR CUR_Tax IN (
-      SELECT it.C_Tax_ID, COALESCE((MIN(it.DocTaxBaseAmt) + MIN(it.DocTaxAmt)) - (SUM(ilt.LineTaxBaseAmt) + SUM(ilt.LineTaxAmt)), 0) as TaxAdjustment, COALESCE(MIN(it.DocTaxBaseAmt) - SUM(ilt.LineTaxBaseAmt), 0) as LineAdjustment
-      FROM (
-        SELECT c_tax_get_root(it.c_tax_id) as C_Tax_ID, CASE WHEN MIN(it.TaxBaseAmt) > 0 THEN MIN(it.TaxBaseAmt) ELSE MAX(it.TaxBaseAmt) END as DocTaxBaseAmt, SUM(it.TaxAmt) as DocTaxAmt, MIN(it.Line) as Line
-        FROM C_InvoiceTax it
-        JOIN C_Tax t
-        ON it.C_Tax_ID = t.C_Tax_ID
-        WHERE it.C_Invoice_ID = v_Record_ID
-        AND it.Recalculate = 'Y'
-        AND t.DocTaxAmount = 'D'
-        GROUP BY c_tax_get_root(it.c_tax_id)
-      ) it
-      JOIN (
-        SELECT c_tax_get_root(ilt.c_tax_id) as C_Tax_ID, CASE WHEN MIN(ilt.TaxBaseAmt) > 0 THEN MIN(ilt.TaxBaseAmt) ELSE MAX(ilt.TaxBaseAmt) END as LineTaxBaseAmt, SUM(ilt.TaxAmt) as LineTaxAmt
-        FROM C_InvoiceLineTax ilt
-        JOIN C_Tax t
-        ON ilt.C_Tax_ID = t.C_Tax_ID
-        WHERE ilt.C_Invoice_ID = v_Record_ID
-        AND t.DocTaxAmount = 'D'
-        GROUP BY ilt.C_InvoiceLine_ID, c_tax_get_root(ilt.c_tax_id)
-      ) ilt
-      ON ilt.C_Tax_ID = it.C_Tax_ID
-      GROUP BY it.C_Tax_ID, it.Line
-      HAVING COALESCE(MIN(it.DocTaxBaseAmt), 0) <> COALESCE(SUM(ilt.LineTaxBaseAmt), 0)
-      OR COALESCE(MIN(it.DocTaxBaseAmt) + MIN(it.DocTaxAmt), 0) <> COALESCE(SUM(ilt.LineTaxBaseAmt) + SUM(ilt.LineTaxAmt), 0)
-      ORDER BY it.Line
-    )
-    LOOP
-      -- Adjust TaxAmt
-      IF (CUR_Tax.TaxAdjustment <> 0) THEN
-        FOR CUR_Line IN (
-          SELECT it.C_InvoiceTax_ID, it.C_Tax_ID, t.Line
-          FROM C_InvoiceTax it
-          JOIN C_Tax t
-          ON it.C_Tax_ID = t.C_Tax_ID
-          WHERE it.C_Invoice_ID = v_Record_ID
-          AND it.Recalculate = 'Y'
-          AND c_tax_get_root(it.C_Tax_ID) = CUR_Tax.C_Tax_ID
-          ORDER BY ABS(it.TaxAmt) DESC, t.Line DESC
-        )
-        LOOP
-          UPDATE C_INVOICETAX
-          SET TaxAmt = TaxAmt - CUR_Tax.TaxAdjustment
-          WHERE C_InvoiceTax_ID = CUR_Line.C_InvoiceTax_ID;
-
-          UPDATE C_INVOICETAX it
-          SET TaxBaseAmt = TaxBaseAmt - CUR_Tax.TaxAdjustment
-          WHERE it.C_Invoice_ID = v_Record_ID
-          AND it.Recalculate = 'Y'
-          AND c_tax_get_root(it.C_Tax_ID) = CUR_Tax.C_Tax_ID
-          AND EXISTS (
-            SELECT 1
-            FROM C_Tax t
-            WHERE t.C_Tax_ID = it.C_Tax_ID
-            AND ((t.Cascade = 'Y'
-            AND t.Line > CUR_Line.Line)
-            OR (t.BaseAmount IN ('TAX', 'LNATAX', 'TBATAX')
-            AND C_TAX_ISMEMBER(t.C_TaxBase_ID, CUR_Line.C_Tax_ID) = 1
-            AND t.IsSummary = 'N'))
-          );
-
-          EXIT;
-        END LOOP;
-      END IF;
-
-      -- Adjust LineNetAmt
-      IF (CUR_Tax.LineAdjustment <> 0) THEN
-        FOR CUR_Line IN (
-          SELECT il.C_InvoiceLine_ID
-          FROM C_InvoiceLine il
-          WHERE il.C_Invoice_ID = v_Record_ID
-          AND EXISTS (
-            SELECT 1
-            FROM C_InvoiceLineTax ilt
-            WHERE il.C_InvoiceLine_ID = ilt.C_InvoiceLine_ID
-            AND c_tax_get_root(ilt.C_Tax_ID) = CUR_Tax.c_Tax_ID
-          )
-          ORDER BY ABS(il.LineNetAmt) DESC, il.Line DESC
-        )
-        LOOP
-          UPDATE C_INVOICELINE
-          SET LineNetAmt = LineNetAmt + CUR_Tax.LineAdjustment
-          WHERE C_InvoiceLine_ID = CUR_Line.C_InvoiceLine_ID;
-
-          EXIT;
-        END LOOP;
-      END IF;
-    END LOOP;
-
-    -- Enable triggers
-    DELETE FROM AD_Session_Status
-    WHERE isimporting = 'Y';
-
-  END IF;
-
-  SELECT CASE WHEN (m.ISSOTRX='Y') THEN customer_blocking  ELSE vendor_blocking END ,  
-  CASE WHEN (m.ISSOTRX='Y') THEN so_invoice_blocking ELSE po_invoice_blocking  END, name, DocAction
-  INTO v_bpartner_blocked, v_invoiceBlocking, v_bpartner_name, v_DocAction
-  FROM C_INVOICE m, C_BPartner bp
-  WHERE m.c_bpartner_id=bp.c_bpartner_id
-  AND m.C_INVOICE_ID=v_Record_ID
-  AND m.C_BPARTNER_ID=v_BPartner_ID;
+  SELECT CASE WHEN (v_IsSOTrx = 'Y') THEN customer_blocking ELSE vendor_blocking END,
+  CASE WHEN (v_IsSOTrx = 'Y') THEN so_invoice_blocking ELSE po_invoice_blocking END, name
+  INTO v_bpartner_blocked, v_invoiceBlocking, v_bpartner_name
+  FROM C_BPartner bp
+  WHERE bp.c_bpartner_id = v_BPartner_ID;
   IF (v_DocAction = 'CO' AND v_bpartner_blocked = 'Y' AND v_invoiceBlocking = 'Y') THEN
     RAISE_APPLICATION_ERROR(-20000,'@ThebusinessPartner@'||' '|| v_bpartner_name ||' '||'@BusinessPartnerBlocked@');
   END IF;
@@ -1193,42 +1070,6 @@ IF (NOT FINISH_PROCESS) THEN
       WHERE C_INVOICE_DISCOUNT_ID IS NOT NULL
         AND C_INVOICE_ID=v_Record_ID;
 
-      /**************************************************************************
-       * Recalculate amounts and taxes
-       *************************************************************************/
-      IF (v_isTaxIncluded = 'Y') THEN
-
-        -- Remove header amounts and taxes
-        DELETE FROM C_INVOICETAX WHERE C_Invoice_ID = v_Record_ID AND Recalculate = 'Y';
-        SELECT COALESCE(SUM(TaxAmt), 0) INTO v_taxAmt FROM C_INVOICETAX WHERE C_Invoice_ID = v_Record_ID AND Recalculate = 'N';
-        UPDATE C_INVOICE SET TotalLines = 0, GrandTotal = v_taxAmt WHERE C_Invoice_ID = v_Record_ID;
-
-        FOR Cur_line IN (
-          SELECT C_InvoiceLine_ID
-          FROM C_INVOICELINE
-          WHERE C_Invoice_ID = v_Record_ID
-        ) LOOP
-
-          -- Disable triggers
-          INSERT INTO AD_Session_Status (ad_session_status_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, isimporting)
-          VALUES (get_uuid(), '0', '0', 'Y', now(), '0', now(), '0', 'Y');
-
-          -- Remove line amounts and taxes
-          DELETE FROM C_INVOICELINETAX WHERE C_InvoiceLine_ID = Cur_line.C_InvoiceLine_ID;
-          SELECT Line_Gross_Amount INTO v_line_gross_amount FROM C_INVOICELINE WHERE C_InvoiceLine_ID = Cur_line.C_InvoiceLine_ID;
-          UPDATE C_INVOICELINE SET Line_Gross_Amount = 0 WHERE C_InvoiceLine_ID = Cur_line.C_InvoiceLine_ID;
-
-          -- Enable triggers
-          DELETE FROM AD_Session_Status
-          WHERE isimporting = 'Y';
-
-          -- Recalculate amounts and taxes
-          UPDATE C_INVOICELINE SET Line_Gross_Amount = v_line_gross_amount WHERE C_InvoiceLine_ID = Cur_line.C_InvoiceLine_ID;
-
-        END LOOP;
-
-      END IF;
-
       END_PROCESSING:=TRUE;
     END IF;
   END IF;--END_PROCESSING
@@ -1388,7 +1229,7 @@ IF (NOT FINISH_PROCESS) THEN
           ELSE
             v_line_gross_amount:=(-1) * Cur_TaxDiscount.LINEGROSSAMT * Cur_CInvoiceDiscount.Discount/100;
           END IF;
-          v_Discount:= C_GET_NET_PRICE_FROM_GROSS(Cur_TaxDiscount.C_TAX_ID, v_line_gross_amount, 0, v_pricePrecision, 1);
+          v_Discount:= C_GET_NET_AMOUNT_FROM_GROSS(Cur_TaxDiscount.C_TAX_ID, v_line_gross_amount, 0, v_stdPrecision);
           v_gross_unit_price:= v_line_gross_amount;
         ELSE
           IF (Cur_CInvoiceDiscount.CASCADE='Y') THEN
@@ -1983,6 +1824,11 @@ IF (NOT FINISH_PROCESS) THEN
     -- Commented by cromero 19102006   COMMIT;
     -- Commented by cromero 19102006 END IF;
   END IF;--FINISH_PROCESS
+
+  -- Round and Adjust taxes when 'CO' and Recalculate amounts and taxes when 'RE'
+  IF (v_isTaxIncluded = 'Y' AND v_DocAction IN ('CO', 'RE')) THEN
+    C_INVOICETAX_ADJUSTMENT(v_Record_ID, v_stdPrecision, v_DocAction);
+  END IF;
 
   --C_Invoice_Post - Finish_Process Extension Point
   SELECT count(*) INTO v_count FROM DUAL

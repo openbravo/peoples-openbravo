@@ -868,8 +868,7 @@ public class TaxesTest extends OBBaseTest {
               : linesData[i].getLineAmounts()[1]));
       assertThat("Wrong Order line Gross Amount", testOrderLine.getLineGrossAmount(),
           comparesEqualTo(expectedGrossAmount));
-      assertThat("Wrong Order line Net Amount",
-          round(testOrderLine.getLineNetAmount(), round, stdPrecision),
+      assertThat("Wrong Order line Net Amount", testOrderLine.getLineNetAmount(),
           comparesEqualTo(expectedNetAmount));
 
       i++;
@@ -933,7 +932,7 @@ public class TaxesTest extends OBBaseTest {
     BigDecimal grossSum = BigDecimal.ZERO;
 
     for (OrderLine testOrderLine : obc1.list()) {
-      BigDecimal netAmount = round(testOrderLine.getLineNetAmount(), round, stdPrecision);
+      BigDecimal netAmount = testOrderLine.getLineNetAmount();
       BigDecimal grossAmount = testOrderLine.getLineGrossAmount();
 
       if (isPriceIncludingTaxes) {
@@ -1039,8 +1038,7 @@ public class TaxesTest extends OBBaseTest {
               : linesData[i].getLineAmounts()[1]));
       assertThat("Wrong Invoice line Gross Amount", testInvoiceLine.getGrossAmount(),
           comparesEqualTo(expectedGrossAmount));
-      assertThat("Wrong Invoice line Net Amount",
-          round(testInvoiceLine.getLineNetAmount(), round, stdPrecision),
+      assertThat("Wrong Invoice line Net Amount", testInvoiceLine.getLineNetAmount(),
           comparesEqualTo(expectedNetAmount));
 
       i++;
@@ -1104,7 +1102,7 @@ public class TaxesTest extends OBBaseTest {
     BigDecimal grossSum = BigDecimal.ZERO;
 
     for (InvoiceLine testInvoiceLine : obc1.list()) {
-      BigDecimal netAmount = round(testInvoiceLine.getLineNetAmount(), round, stdPrecision);
+      BigDecimal netAmount = testInvoiceLine.getLineNetAmount();
       BigDecimal grossAmount = testInvoiceLine.getGrossAmount();
 
       if (isPriceIncludingTaxes) {

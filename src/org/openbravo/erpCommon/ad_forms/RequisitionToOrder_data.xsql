@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -158,17 +158,12 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT M_REQUISITIONLINE.M_PRODUCT_ID, M_ATTRIBUTESETINSTANCE_ID, LOCKQTY, LOCKAUMQTY, M_REQUISITIONLINE.DESCRIPTION, C_UOM_ID, C_AUM, COALESCE(QUANTITYORDER, 0) AS QUANTITYORDER, AUMQTY, M_PRODUCT_UOM_ID,
+        SELECT M_REQUISITIONLINE.M_PRODUCT_ID, M_ATTRIBUTESETINSTANCE_ID, LOCKQTY, LOCKAUMQTY, M_REQUISITIONLINE.DESCRIPTION, C_UOM_ID, C_AUM, QUANTITYORDER, AUMQTY, M_PRODUCT_UOM_ID,
           M_REQUISITIONLINE_ID, '' AS C_ORDERLINE_ID,
           COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE) AS PRICELIST,
           COALESCE(M_PRODUCTPRICE.PRICELIMIT, LOCKPRICE) AS PRICELIMIT,
           COALESCE(M_PRODUCTPRICE.PRICESTD, LOCKPRICE) AS PRICESTD,
-          CASE WHEN M_Pricelist.istaxincluded = 'Y' then C_GET_NET_PRICE_FROM_GROSS(C_GetTax(M_REQUISITIONLINE.M_PRODUCT_ID, to_date(?), ?, ?, ?, ?, null, 'N'), 
-                                                                                    ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD) * LOCKQTY,
-                                                                                         (SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) , 
-                                                                                    ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD) * LOCKQTY,
-                                                                                         (SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)), 
-                                                                                    (SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?), LOCKQTY) 
+          CASE WHEN M_Pricelist.istaxincluded = 'Y' THEN 0
                                                 ELSE ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD),(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) END AS PRICEACTUAL,
           CASE WHEN COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE) = 0 THEN 0 ELSE
                     ROUND((COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE) - COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD))/
@@ -193,15 +188,6 @@
                  ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD),(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?))
         ]]></Sql>
     <Field name="rownum" value="count"/>
-    <Parameter name="orderdate"/>
-    <Parameter name="org"/>
-    <Parameter name="warehouse"/>
-    <Parameter name="billto"/>
-    <Parameter name="shipto"/>
-    <Parameter name="currency"/>
-    <Parameter name="currency"/>
-    <Parameter name="currency"/>
-    
     <Parameter name="currency"/>
     <Parameter name="currency"/>
     <Parameter name="orderdate"/>
