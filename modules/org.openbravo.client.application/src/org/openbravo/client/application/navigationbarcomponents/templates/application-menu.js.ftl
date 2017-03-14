@@ -39,39 +39,72 @@ isc.OBApplicationMenuButton.create({
         , type: 'window'
         , tabId: '${menuOption.id?js_string}'
         , windowId: '${menuOption.menu.window.id?js_string}'
+        , optionType: 'tab'
+        , icon: 'Window'
+        , id:'${menuOption.dbId}'
+        , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.process>
         , type: 'process'
+        , optionType: 'process'
         , manualUrl: '${menuOption.id?js_string}'
         , processId: '${menuOption.menu.process.id}'
-        , modal: ${menuOption.modal?string}
+        , icon: 'Process'
+        , id:'${menuOption.dbId}'
+        , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.processManual>
         , type: 'processManual'
+        , optionType: 'processManual'
         , manualUrl: '${menuOption.id?js_string}'
         , manualProcessId: '${menuOption.menu.process.id}'
+        , icon: 'Process'
+        , id:'${menuOption.dbId}'
+        , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.report && !menuOption.processDefinition>
         , type: 'report'
+        , optionType: 'url'
         , manualUrl: '${menuOption.id?js_string}'
         , manualProcessId: '${menuOption.menu.process.id}'
+        , icon: 'Report'
+        , id:'${menuOption.dbId}'
+        , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.form>
         , type: 'form'
+        , optionType: 'url'
         , manualUrl: '${menuOption.id?js_string}'
         , formId: '${menuOption.formId?js_string}'
+        , icon: 'Form'
+        , id:'${menuOption.dbId}'
+        , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.external>
         , type: 'external'
+        , optionType: 'external'
         , externalUrl: '${menuOption.id?js_string}'
         , openLinkInBrowser: ${menuOption.menu.openlinkinbrowser?string}
+        , icon: 'ExternalLink'
+        , id:'${menuOption.dbId}'
+        , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.view>
         , type: 'view'
+        , optionType: 'url'
         , viewId: '${menuOption.id?js_string}'
         , tabTitle: '${menuOption.label?js_string}'
+        , icon: 'Window'
+        , id:'${menuOption.dbId}'
+        , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.processDefinition>
         , type: 'processDefinition'
+        , optionType: 'processDefinition'
         , viewId: 'processDefinition_${menuOption.menu.oBUIAPPProcessDefinition.id}'
         , uiPattern: '${menuOption.menu.oBUIAPPProcessDefinition.uIPattern?js_string}'
+        , icon: 'Process'
+        , id:'${menuOption.dbId}'
+        , viewValue: 'processDefinition_${menuOption.menu.oBUIAPPProcessDefinition.id}'
     </#if>
     , singleRecord: ${menuOption.singleRecordStringValue}
     , readOnly: ${menuOption.readOnlyStringValue}
     , editOrDeleteOnly: ${menuOption.editOrDeleteOnlyStringValue}
+    , modal: '${menuOption.modal?string}'
+    , _identifier: '${menuOption.label?js_string}'
     
     <#list menuOption.parameters as parameter>
         , '${parameter.name?js_string}': '${parameter.parameterValue?js_string}'        

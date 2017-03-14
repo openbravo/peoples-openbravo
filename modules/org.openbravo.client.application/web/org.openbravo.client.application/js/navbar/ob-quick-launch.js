@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -84,7 +84,6 @@ isc.OBQuickLaunch.addProperties({
   beforeShow: function () {
     var valueField = this.members[2].getField('value'),
         recent = OB.RecentUtilities.getRecentValue(this.recentPropertyName);
-
     if (recent && recent.length > 0) {
       var newFields = [];
       var index = 0,
@@ -153,7 +152,7 @@ isc.OBQuickLaunch.addProperties({
   },
 
   initWidget: function () {
-    var dummyFirstField, dummyLastField;
+    var dummyFirstField, dummyLastField, me;
     dummyFirstField = isc.OBFocusButton.create({
       getFocusTarget: function () {
         return this.parentElement.members[this.parentElement.members.length - 2];
@@ -172,6 +171,7 @@ isc.OBQuickLaunch.addProperties({
       }
     });
 
+    me = this;
     this.members = [dummyFirstField, isc.VLayout.create({
       // To allow height grow with its contents
       height: 1,
@@ -180,6 +180,7 @@ isc.OBQuickLaunch.addProperties({
       autoFocus: true,
       width: '100%',
       titleSuffix: '',
+      quickLaunchWidget: me,
       fields: [{
         name: 'value',
         cellStyle: OB.Styles.OBFormField.DefaultComboBox.cellStyle,
@@ -196,11 +197,33 @@ isc.OBQuickLaunch.addProperties({
         // fixes issue https://issues.openbravo.com/view.php?id=15105
         pickListCellHeight: OB.Styles.OBFormField.DefaultComboBox.quickRunPickListCellHeight,
         recentPropertyName: this.recentPropertyName,
+        displayField: OB.Constants.IDENTIFIER,
 
         getControlTableCSS: function () {
           // prevent extra width settings, super class
           // sets width to 0 on purpose
           return 'cursor:default;';
+        },
+
+        makePickList: function () {
+          var menu = OB.Application.menu,
+              quickLaunchMenu = [],
+              quickCreateMenu = [],
+              me = this,
+              i;
+          this.Super('makePickList', arguments);
+          this.containerWidget.quickLaunchWidget.getComponentMenu(menu, quickLaunchMenu, quickCreateMenu, me);
+          quickLaunchMenu = this.containerWidget.quickLaunchWidget.sortComponent(quickLaunchMenu);
+          quickCreateMenu = this.containerWidget.quickLaunchWidget.sortComponent(quickCreateMenu);
+          if (this.title === 'Quick Launch') {
+            this.containerWidget.quickLaunchWidget.setQuickComponentMap(quickLaunchMenu, me);
+          } else if (this.title === 'Create New') {
+            this.containerWidget.quickLaunchWidget.setQuickComponentMap(quickCreateMenu, me);
+          }
+        },
+
+        getClientPickListData: function () {
+          return this.pickList.data;
         },
 
         selectOnFocus: true,
@@ -250,18 +273,16 @@ isc.OBQuickLaunch.addProperties({
         filterLocally: true,
         fetchDelay: 50,
 
-        optionDataSource: OB.Datasource.get(this.dataSourceId),
         valueField: OB.Constants.ID,
-
         emptyPickListMessage: OB.I18N.getLabel('OBUISC_ListGrid.emptyMessage'),
 
         command: this.command,
 
         pickValue: function (theValue) {
+          var record;
           this.Super('pickValue', arguments);
-
-          if (this.getSelectedRecord()) {
-            var record = this.getSelectedRecord();
+          record = this.getPickListRecordForValue(theValue);
+          if (record) {
             var viewValue = record.viewValue;
             isc.OBQuickRun.currentQuickRun.doHide();
             var openObject = isc.addProperties({}, record);
@@ -372,6 +393,68 @@ isc.OBQuickLaunch.addProperties({
     OB.TestRegistry.register(this.recentPropertyName + '_FIELD', suggestionField);
 
     return ret;
-  }
+  },
 
+  getComponentMenu: function (menu, quickLaunch, quickCreate, type) {
+    var i;
+    for (i = 0; i < menu.length; i++) {
+      if (menu[i].submenu) {
+        this.getComponentMenu(menu[i].submenu, quickLaunch, quickCreate, type);
+      } else {
+        if (type.title === 'Quick Launch' && !this.isFolder(menu[i])) {
+          quickLaunch.add(menu[i]);
+        } else if (type.title === 'Create New' && this.isWindowAndCanCreateNewRecord(menu[i])) {
+          quickCreate.add(menu[i]);
+        }
+      }
+    }
+  },
+
+  sortComponent: function (component) {
+    component.sort(function (a, b) {
+      return (a._identifier > b._identifier) - (a._identifier < b._identifier);
+    });
+    return component;
+  },
+
+  isFolder: function (menuItem) {
+    return menuItem.type === 'folder';
+  },
+
+  isWindowAndCanCreateNewRecord: function (menuItem) {
+    return (menuItem.type === 'window' && !menuItem.readOnly && !menuItem.singleRecord && !menuItem.editOrDeleteOnly);
+  },
+
+  setQuickComponentMap: function (component, me) {
+    var length = component.length,
+        i, id, identifier, valueMap = {},
+        valueMapElement, valueField = me.getValueFieldName(),
+        valueFieldContent, valueMapData = [];
+
+    if (!me.setValueMap) {
+      return;
+    }
+
+    for (i = 0; i < length; i++) {
+      id = component[i].id;
+      //identifier = component[i]._identifier;
+      valueMapElement = component[i];
+      valueMap[id] = valueMapElement;
+      valueMapData.push(valueMapElement);
+    }
+
+    me.preventPickListRequest = true; // preventing 1st request triggered by setValueMap
+    me.setValueMap(valueMap);
+
+    if (me.pickList) {
+      me.pickList.data = valueMapData;
+      me.pickList.data.initialData = valueMapData;
+      me.pickList.data.allRows = valueMapData;
+      me.pickList.data.fetchMode = "local";
+      me.pickList.data.useClientFiltering = true;
+      me.pickList.data.useClientSorting = true;
+      me.pickList.data.disableCacheSync = true;
+      me.pickList.data.neverDropCache = true;
+    }
+  }
 });
