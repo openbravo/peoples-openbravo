@@ -36,7 +36,8 @@ enyo.kind({
         appendCatComma = false,
         existingServices, lineIdList, untSelected = 0,
         totalAmountSelected = 0,
-        totalAmountPerUnitSelected = 0;
+        minimumSelected = Infinity,
+        maximumSelected = 0;
 
     if (this.productList && this.productList.length > 0) {
       //product multiselection
@@ -77,7 +78,12 @@ enyo.kind({
         }
         if (l.get('qty') > 0) {
           totalAmountSelected += l.get('gross');
-          totalAmountPerUnitSelected += l.get('price');
+          if (l.get('price') < minimumSelected) {
+            minimumSelected = l.get('price');
+          }
+          if (l.get('price') > maximumSelected) {
+            maximumSelected = l.get('price');
+          }
         }
       });
 
@@ -108,10 +114,10 @@ enyo.kind({
       filters.push(totalAmountSelected);
       filters.push(totalAmountSelected);
       filters.push(totalAmountSelected);
-      filters.push(totalAmountPerUnitSelected);
-      filters.push(totalAmountPerUnitSelected);
-      filters.push(totalAmountPerUnitSelected);
-      filters.push(totalAmountPerUnitSelected);
+      filters.push(maximumSelected);
+      filters.push(minimumSelected);
+      filters.push(minimumSelected);
+      filters.push(maximumSelected);
       filters = filters.concat(auxCatFilters);
       filters = filters.concat(auxCatFilters);
 
@@ -128,7 +134,12 @@ enyo.kind({
       });
       if (this.orderline.get('qty') > 0) {
         totalAmountSelected = this.orderline.get('gross');
-        totalAmountPerUnitSelected = this.orderline.get('price');
+        if (this.orderline.get('price') < minimumSelected) {
+          minimumSelected = this.orderline.get('price');
+        }
+        if (this.orderline.get('price') > maximumSelected) {
+          maximumSelected = this.orderline.get('price');
+        }
       }
 
       where = " and product.productType = 'S' and (product.isLinkedToProduct = 'true' and ";
@@ -153,10 +164,10 @@ enyo.kind({
       filters.push(totalAmountSelected);
       filters.push(totalAmountSelected);
       filters.push(totalAmountSelected);
-      filters.push(totalAmountPerUnitSelected);
-      filters.push(totalAmountPerUnitSelected);
-      filters.push(totalAmountPerUnitSelected);
-      filters.push(totalAmountPerUnitSelected);
+      filters.push(maximumSelected);
+      filters.push(minimumSelected);
+      filters.push(minimumSelected);
+      filters.push(maximumSelected);
       filters.push(this.orderline.get('product').get('productCategory'));
       filters.push(this.orderline.get('product').get('productCategory'));
     }
@@ -169,7 +180,8 @@ enyo.kind({
   hqlCriteria: function () {
     var me = this,
         prodList, catList, lineIdList, existingServices, totalAmountSelected = 0,
-        totalAmountPerUnitSelected = 0;
+        minimumSelected = Infinity,
+        maximumSelected = 0;
     if (this.orderlineList && this.orderlineList.length > 0) {
       prodList = this.orderlineList.map(function (line) {
         var product = line.get('product');
@@ -196,14 +208,19 @@ enyo.kind({
       this.orderlineList.forEach(function (line) {
         if (line.get('qty') > 0) {
           totalAmountSelected += line.get('gross');
-          totalAmountPerUnitSelected += line.get('price');
+          if (line.get('price') < minimumSelected) {
+            minimumSelected = line.get('price');
+          }
+          if (line.get('price') > maximumSelected) {
+            maximumSelected = line.get('price');
+          }
         }
       });
       return [{
         columns: [],
         operator: OB.Dal.FILTER,
         value: (this.orderlineList.length > 1 ? 'Services_Filter_Multi' : 'Services_Filter'),
-        params: [prodList, catList, prodList.length, catList.length, (existingServices.length > 0 ? existingServices : '-'), totalAmountSelected, totalAmountPerUnitSelected],
+        params: [prodList, catList, prodList.length, catList.length, (existingServices.length > 0 ? existingServices : '-'), totalAmountSelected, minimumSelected, maximumSelected],
         fieldType: 'Long'
       }, {
         columns: ['ispack'],
@@ -224,13 +241,18 @@ enyo.kind({
     var product = this.orderline.get('product');
     if (this.orderline.get('qty') > 0) {
       totalAmountSelected = this.orderline.get('gross');
-      totalAmountPerUnitSelected = this.orderline.get('price');
+      if (this.orderline.get('price') < minimumSelected) {
+        minimumSelected = this.orderline.get('price');
+      }
+      if (this.orderline.get('price') > maximumSelected) {
+        maximumSelected = this.orderline.get('price');
+      }
     }
     return [{
       columns: [],
       operator: OB.Dal.FILTER,
       value: 'Services_Filter',
-      params: [product.get('forceFilterId') || product.get('id'), product.get('productCategory'), '', '', (existingServices.length > 0 ? existingServices.join("','") : '-'), totalAmountSelected, totalAmountPerUnitSelected]
+      params: [product.get('forceFilterId') || product.get('id'), product.get('productCategory'), '', '', (existingServices.length > 0 ? existingServices.join("','") : '-'), totalAmountSelected, minimumSelected, maximumSelected]
     }, {
       columns: ['ispack'],
       operator: 'equals',

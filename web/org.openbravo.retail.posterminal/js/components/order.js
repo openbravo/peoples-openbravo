@@ -1336,18 +1336,24 @@ enyo.kind({
           servicesToBeDeleted = [];
       _.each(model.attributes.lines.models, function (line) {
         var totalAmountSelected = 0,
-            totalAmountPerProductSelected = 0;
+            minimumSelected = Infinity,
+            maximumSelected = 0;
         if (line.has('relatedLines') && line.get('relatedLines').length > 0) {
           _.each(line.get('relatedLines'), function (relatedLine) {
             _.each(model.attributes.lines.models, function (line2) {
               if ((line2.id === relatedLine.orderlineId) && line2.get('qty') > 0) {
                 totalAmountSelected += line2.get('gross');
-                totalAmountPerProductSelected += line2.get('price');
+                if (line2.get('price') < minimumSelected) {
+                  minimumSelected = line2.get('price');
+                }
+                if (line2.get('price') > maximumSelected) {
+                  maximumSelected = line2.get('price');
+                }
               }
             }, this);
           }, this);
         }
-        if (((!line.has('deliveredQuantity') || line.get('deliveredQuantity') <= 0) && line.has('priceruleVersion') && line.get('priceruleVersion').maximum === undefined && line.get('priceruleVersion').minimum === undefined && ((line.get('product').get('quantityRule') === 'UQ' && ((line.get('priceruleVersion').has('maximum') && totalAmountSelected > line.get('priceruleVersion').get('maximum')) || (line.get('priceruleVersion').has('minimum') && totalAmountSelected < line.get('priceruleVersion').get('minimum')))) || (line.get('product').get('quantityRule') === 'PP' && ((line.get('priceruleVersion').has('maximum') && totalAmountPerProductSelected > line.get('priceruleVersion').get('maximum')) || (line.get('priceruleVersion').has('minimum') && totalAmountPerProductSelected < line.get('priceruleVersion').get('minimum'))))))) {
+        if (((!line.has('deliveredQuantity') || line.get('deliveredQuantity') <= 0) && line.has('priceruleVersion') && line.get('priceruleVersion').maximum === undefined && line.get('priceruleVersion').minimum === undefined && ((line.get('product').get('quantityRule') === 'UQ' && ((line.get('priceruleVersion').has('maximum') && totalAmountSelected > line.get('priceruleVersion').get('maximum')) || (line.get('priceruleVersion').has('minimum') && totalAmountSelected < line.get('priceruleVersion').get('minimum')))) || (line.get('product').get('quantityRule') === 'PP' && ((line.get('priceruleVersion').has('maximum') && maximumSelected > line.get('priceruleVersion').get('maximum')) || (line.get('priceruleVersion').has('minimum') && minimumSelected < line.get('priceruleVersion').get('minimum'))))))) {
           servicesToBeDeleted.push(line);
         }
       }, this);
