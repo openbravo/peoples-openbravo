@@ -990,7 +990,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         me.on('approvalChecked', function (event) {
           me.off('approvalChecked');
           if (event.approved) {
-            OB.MobileApp.view.waterfall('onShowPaymentTab');
             me.trigger('showPaymentTab');
           }
         }, this);

@@ -16,7 +16,6 @@ enyo.kind({
   windowmodel: OB.OBPOSPointOfSale.Model.PointOfSale,
   tag: 'section',
   handlers: {
-    onShowPaymentTab: 'showOrder',
     onAddProduct: 'addProductToOrder',
     onViewProductDetails: 'viewProductDetails',
     onCloseProductDetailsView: 'showOrder',
@@ -570,6 +569,9 @@ enyo.kind({
   },
   showOrder: function (inSender, inEvent) {
     var allHidden = true;
+    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+      return false;
+    }
     enyo.forEach(this.$.multiColumn.$.leftPanel.$.leftSubWindowsContainer.getControls(), function (component) {
       if (component.showing === true) {
         if (component.mainBeforeSetHidden) {
