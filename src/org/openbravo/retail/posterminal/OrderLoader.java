@@ -1575,7 +1575,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     order.setProcessed(true);
     order.setProcessNow(false);
     order.setObposSendemail((jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail")));
-    if (!newLayaway && !isQuotation) {
+    if (!newLayaway && !isQuotation && !isDeleted) {
       order.setDelivered(true);
     }
 
