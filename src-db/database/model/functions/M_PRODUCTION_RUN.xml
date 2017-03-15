@@ -255,7 +255,7 @@ BEGIN --BODY
               v_pinstance_msg AD_PInstance.errormsg%TYPE;
             BEGIN
               v_pinstance_id := get_uuid();
-             M_GET_STOCK_PARAM1(v_pinstance_result, v_pinstance_msg, v_pinstance_id, v_record_id, null, v_Product_old, null, null, v_Warehouse_old, cur_bom.org_id, null, p_user, v_client_id, null, v_UOM_old, null, null, null, 10, '137', null, 'N', 'Y', null, null);
+             M_GET_STOCK_PARAM(v_pinstance_id, v_record_id, null, v_Product_old, null, null, v_Warehouse_old, cur_bom.org_id, null, p_user, v_client_id, null, v_UOM_old, null, null, null, 10, '137', null, 'N', v_pinstance_result, v_pinstance_msg, 'Y', null, null);
               -- Check result
               IF (v_pinstance_result = 0) THEN
                 -- Error on m_get_stock
@@ -273,8 +273,8 @@ BEGIN --BODY
           END IF;
           IF (NOT NEXT_PRODUCT) THEN
             LOOP           
-              IF (Cur_Stock.OVERISSUE = 'Y' AND v_NegStockLocator IS NULL) THEN
-                v_NegStockLocator:= Cur_Stock.m_locator_id;
+              IF (v_storage.OVERISSUE = 'Y' AND v_NegStockLocator IS NULL) THEN
+                v_NegStockLocator:= v_storage.m_locator_id;
               END IF;
 
               v_Qty := LEAST(v_QtyStorage, CUR_BOM.ProductionQty * CUR_BOM.BOMQty - v_QtyAcumulated) ;
@@ -344,7 +344,9 @@ BEGIN --BODY
               SELECT m_warehouse_id
               INTO v_NegStockWarehosue
               FROM m_locator
-              WHERE m_locator_id = Cur_WRPUsed.m_locator_id;
+             WHERE m_locator_id = (SELECT m_locator_id
+                                   FROM M_PRODUCTIONPLAN
+                                   WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID);
         
               SELECT MIN(l.m_locator_id)
               INTO v_NegStockLocator

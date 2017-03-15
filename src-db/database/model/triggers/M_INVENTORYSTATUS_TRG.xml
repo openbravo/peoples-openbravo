@@ -21,9 +21,11 @@
 /**
 * Manage Inventory Status translations
 */
+v_existLocatorWithInvStatus VARCHAR2(32);
 BEGIN
 
-IF AD_isTriggerEnabled()='N' THEN RETURN NEW; END IF; 
+IF AD_isTriggerEnabled()='N' THEN RETURN;
+END IF;
 
 IF INSERTING THEN
 
@@ -39,11 +41,11 @@ IF INSERTING THEN
   AND EXISTS (SELECT * FROM AD_Client
    WHERE AD_Client_ID=:new.AD_Client_ID AND IsMultiLingualDocument='Y');
 
-ELSEIF UPDATING THEN
+ELSIF UPDATING THEN
 
  IF (:new.available <> :old.available or :new.nettable <> :old.nettable or :new.overissue <> :old.overissue) THEN
-  IF (exists (select 1 from m_locator l where l.m_inventorystatus_id = :new.m_inventorystatus_id) or 
-      exists (select 1 from m_storage_detail sd where sd.m_inventorystatus_id = :new.m_inventorystatus_id)) THEN
+  select 1 into v_existLocatorWithInvStatus from m_locator l where l.m_inventorystatus_id = :new.m_inventorystatus_id;
+  IF (v_existLocatorWithInvStatus IS NOT NULL) THEN
         RAISE_APPLICATION_ERROR(-20000, '@InventoryStatusUsed@');
   END IF;
  END IF;
