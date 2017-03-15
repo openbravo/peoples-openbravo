@@ -42,7 +42,8 @@ BEGIN --BODY
   END IF;
 
   v_TaxAmount := C_GET_TAX_AMT_FROM_NET(p_tax_id, p_grossamt, p_alternatetaxbaseamt, v_calcPrecision, 0);
-  v_NetAmount := ROUND(p_grossamt * (p_grossamt  / (p_grossamt + v_TaxAmount)), v_calcPrecision);
+  -- Do multiplication before division to avoid wrong calculation in PostgreSQL. See Issue 35486.
+  v_NetAmount := ROUND((p_grossamt * p_grossamt) / (p_grossamt + v_TaxAmount), v_calcPrecision);
   IF (p_stdprecision IS NOT NULL) THEN
     v_NetAmount := ROUND(v_NetAmount, p_stdprecision);
   END IF;

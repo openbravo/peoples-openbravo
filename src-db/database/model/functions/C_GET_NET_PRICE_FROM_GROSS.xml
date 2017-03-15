@@ -28,7 +28,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2016 Openbravo SLU
+* All portions are Copyright (C) 2012-2017 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -46,7 +46,8 @@ BEGIN --BODY
   END IF;
   v_TaxAmount := C_GET_TAX_AMT_FROM_NET(p_tax_id, p_grossamt, p_alternatetaxbaseamt, v_calcPrecision, 0);
   DBMS_OUTPUT.PUT_LINE('Unit tax ' || v_TaxAmount);
-  v_NetPrice:= ROUND(p_grossamt * (p_grossamt  / (p_grossamt + v_TaxAmount)) / p_qty, p_priceprecision);
+  -- Do multiplication before division to avoid wrong calculation in PostgreSQL. See Issue 35486.
+  v_NetPrice:= ROUND(((p_grossamt * p_grossamt) / (p_grossamt + v_TaxAmount)) / p_qty, p_priceprecision);
 
   --TODO:Call function to recalculate alternate taxbase amount.
 
