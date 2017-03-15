@@ -627,14 +627,16 @@ enyo.kind({
     return true;
   },
   changeBusinessPartner: function (inSender, inEvent) {
+    var bp = this.model.get('order').get('bp'),
+        eventBP = inEvent.businessPartner;
     if (inEvent.target === 'order' || inEvent.target === undefined) {
-      if (this.model.get('order').get('isEditable') === false) {
+      if (this.model.get('order').get('isEditable') === false && (bp.get('id') !== eventBP.get('id') || bp.get('locId') !== eventBP.get('locId') || bp.get('shipLocId') !== eventBP.get('shipLocId'))) {
         this.doShowPopup({
           popup: 'modalNotEditableOrder'
         });
         return true;
       }
-      this.model.get('order').setBPandBPLoc(inEvent.businessPartner, false, true);
+      this.model.get('order').setBPandBPLoc(eventBP, false, true);
       this.model.get('orderList').saveCurrent();
     } else {
       this.waterfall('onChangeBPartner', inEvent);
