@@ -481,8 +481,9 @@ enyo.kind({
   },
   shown: function () {
     var me = this,
-        i, p, keyboard = this.owner.owner,
-        isDisabled;
+        refundablePayment, keyboard = this.owner.owner,
+        isReturnReceipt = (me.receipt && me.receipt.getTotal() < 0) ? true : false;
+
     keyboard.showKeypad('Coins-' + OB.MobileApp.model.get('currency').id); // shows the Coins/Notes panel for the terminal currency
     keyboard.showSidepad('sidedisabled');
 
@@ -490,50 +491,25 @@ enyo.kind({
       commands: ['%'],
       disabled: false
     });
-    for (i = 0; i < OB.MobileApp.model.get('payments').length; i++) {
-      p = OB.MobileApp.model.get('payments')[i];
-      isDisabled = ((me.receipt && me.receipt.getTotal() < 0) ? !p.paymentMethod.refundable : false);
-      if ((p.paymentMethod.id === OB.MobileApp.model.get('terminal').terminalType.paymentMethod) && !isDisabled) {
-        keyboard.defaultcommand = OB.MobileApp.model.get('payments')[i].payment.searchKey;
-        keyboard.setStatus(OB.MobileApp.model.get('payments')[i].payment.searchKey);
-        break;
-      }
-    }
 
-    if (keyboard && OB.MobileApp.model.get('paymentcash')) {
-      if (me.receipt && me.receipt.getTotal() > 0) {
-        keyboard.defaultcommand = OB.MobileApp.model.get('paymentcash');
-        keyboard.setStatus(OB.MobileApp.model.get('paymentcash'));
-      } else {
-        var refundablePayment = '';
-        for (i = 0; i < OB.MobileApp.model.get('payments').length; i++) {
-          p = OB.MobileApp.model.get('payments')[i];
-          isDisabled = ((me.receipt && me.receipt.getTotal() < 0) ? !p.paymentMethod.refundable : false);
-          //check if payment cash is returnable
-          if (!isDisabled) {
-            if (refundablePayment === '') {
-              refundablePayment = OB.MobileApp.model.get('payments')[i].payment.searchKey;
-            }
-            if (p.paymentMethod.iscash && p.paymentMethod.refundable) {
-              refundablePayment = OB.MobileApp.model.get('payments')[i].payment.searchKey;
-              break;
-            }
-          }
-        }
-        if (refundablePayment !== '') {
-          keyboard.defaultcommand = refundablePayment;
-          keyboard.setStatus(refundablePayment);
-        }
-      }
-    }
-    //Handle No Refund Payment Methods
+    // Enable/Disable Payment method based on refundable flag
     _.each(OB.MobileApp.model.paymentnames, function (payment) {
-      isDisabled = (me.receipt && me.receipt.getTotal() < 0 ? !payment.paymentMethod.refundable : false);
       keyboard.disableCommandKey(me, {
-        disabled: isDisabled,
+        disabled: (isReturnReceipt ? !payment.paymentMethod.refundable : false),
         commands: [payment.payment.searchKey]
       });
     });
+
+    if (!isReturnReceipt || (isReturnReceipt && me.defaultPayment.paymentMethod.refundable)) {
+      keyboard.defaultcommand = me.defaultPayment.payment.searchKey;
+      keyboard.setStatus(me.defaultPayment.payment.searchKey);
+    } else {
+      refundablePayment = _.find(OB.MobileApp.model.get('payments'), function (payment) {
+        return payment.paymentMethod.refundable;
+      });
+      keyboard.defaultcommand = refundablePayment.payment.searchKey;
+      keyboard.setStatus(refundablePayment.payment.searchKey);
+    }
   }
 });
 
