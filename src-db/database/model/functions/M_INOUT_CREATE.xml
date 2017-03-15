@@ -92,7 +92,7 @@
       SELECT sd.m_product_id, sd.m_locator_id, sd.m_attributesetinstance_id,
           sd.c_uom_id, sd.m_product_uom_id, u.stdprecision,
           ms.quantity - COALESCE(SUM(iol.movementqty), 0) AS qtyonhand, ms.qtyorder AS qtyorder,
-          ms.priority
+          ms.priority, invs.overissue
       FROM m_stock_proposed ms 
             LEFT JOIN m_storage_detail sd ON ms.m_storage_detail_id = sd.m_storage_detail_id
             LEFT JOIN m_product_uom pu ON sd.m_product_uom_id = pu.m_product_uom_id
@@ -103,6 +103,7 @@
                                          AND COALESCE(iol.m_product_uom_id, '-1') = COALESCE(sd.m_product_uom_id, '-1')
                                          AND COALESCE(iol.m_attributesetinstance_id, '0') = COALESCE(sd.m_attributesetinstance_id, '0')
                                          AND iol.m_inout_id = v_inout_id
+            JOIN m_inventorystatus invs ON invs.m_inventorystatus_id = l.m_inventorystatus_id
       WHERE ms.ad_pinstance_id = v_ad_pinstance_id
       GROUP BY sd.m_product_id, sd.m_locator_id, sd.m_attributesetinstance_id, sd.c_uom_id,
           sd.m_product_uom_id, u.stdprecision, ms.quantity, ms.qtyorder, ms.priority, iol.c_aum, iol.aumqty
@@ -114,7 +115,7 @@
   -- Record Info
   v_AD_Org_ID VARCHAR2(32);
   v_AD_Client_ID VARCHAR2(32);
-  v_allownegativestock CHAR(1);
+  v_NegStockLocator VARCHAR2(32);
   v_order_count NUMBER:=0;
   v_order_delivered_count NUMBER:=0;
   v_order_partial_count NUMBER:= 0;
@@ -173,7 +174,7 @@ BEGIN
     v_ResultStr:='ReadingParameters';
     FOR Cur_Parameter IN (
         SELECT i.Record_ID, p.ParameterName, p.P_String, p.P_Number, p.P_Date,
-            p.AD_CLIENT_ID, ci.allownegativestock, i.AD_User_ID
+            p.AD_CLIENT_ID, i.AD_User_ID
         FROM AD_ClientInfo ci, AD_PInstance i LEFT JOIN AD_PInstance_Para p ON i.AD_PInstance_ID=p.AD_PInstance_ID
         WHERE i.AD_PInstance_ID=p_PInstance_ID
           AND p.ad_client_id = ci.ad_client_id
@@ -189,23 +190,22 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
       END IF;
       v_AD_Client_ID:=Cur_Parameter.AD_CLIENT_ID;
-      v_allownegativestock := cur_parameter.allownegativestock;
       v_Record_ID:=Cur_Parameter.Record_ID;
       v_User_ID:=Cur_Parameter.AD_User_ID;
     END LOOP; -- Get Parameter
     DBMS_OUTPUT.PUT_LINE('  v_Record_ID=' || v_Record_ID) ;
   ELSIF(p_Invoice_ID IS NOT NULL) THEN
     CREATE_FROM_INVOICE:=true;
-    SELECT c_invoice.ad_client_id, ad_clientinfo.allownegativestock, c_invoice.updatedby
-      INTO v_ad_client_id, v_allownegativestock, v_user_id
+    SELECT c_invoice.ad_client_id, c_invoice.updatedby
+      INTO v_ad_client_id, v_user_id
     FROM ad_clientinfo, c_invoice
     WHERE ad_clientinfo.ad_client_id = c_invoice.ad_client_id
       AND c_invoice_id = p_invoice_id;
   ELSE
     v_Record_ID:=p_Order_ID;
     DBMS_OUTPUT.PUT_LINE('--<<M_InOut_Create>> Order_ID=' || v_Record_ID);
-    SELECT c_order.ad_client_id, ad_clientinfo.allownegativestock,c_order.updatedby
-    INTO v_ad_client_id, v_allownegativestock, v_user_id
+    SELECT c_order.ad_client_id, c_order.updatedby
+    INTO v_ad_client_id, v_user_id
      FROM ad_clientinfo, c_order
     WHERE ad_clientinfo.ad_client_id = c_order.ad_client_id
     AND c_order_id = v_record_id;
@@ -538,6 +538,11 @@ BEGIN --BODY
                 END IF;
 
                 IF (NOT NEXT_PRODUCT) THEN
+                
+                IF (Cur_Storage.OVERISSUE = 'Y' AND v_NegStockLocator IS NULL) THEN
+                  v_NegStockLocator:= Cur_Storage.m_locator_id;
+                END IF;
+
                   v_QtyStorage:=v_storage.QtyOnHand;
                   LOOP
                     -- How much do we deliver from here?
@@ -616,7 +621,25 @@ BEGIN --BODY
                 END IF;--NEXT_PRODUCT
                 --<<NEXT_PRODUCT>>
                 NEXT_PRODUCT:=false;
-                IF (v_Qty<>0 AND (v_ForceDelivery='Y' OR v_allownegativestock = 'Y')) THEN
+                
+                IF (v_NegStockLocator IS NULL) THEN
+                -- Get Locator with negative Stock that belongs to the same Warehosue      
+                  SELECT MIN(l.m_locator_id)
+                  INTO v_NegStockLocator
+                  FROM m_locator l
+                  JOIN m_inventorystatus invs ON l.m_inventorystatus_id = invs.m_inventorystatus_id
+                  WHERE l.m_warehouse_id = ol.M_Warehouse_ID
+                  AND invs.overissue = 'Y'
+                  AND l.isactive= 'Y'
+                  AND priorityno = (SELECT MIN(priorityno)
+                                    FROM m_locator l
+                                    JOIN m_inventorystatus invs ON l.m_inventorystatus_id = invs.m_inventorystatus_id
+                                    WHERE l.m_warehouse_id = ol.M_Warehouse_ID
+                                    AND invs.overissue = 'Y'
+                                    AND l.isactive='Y');
+                END IF;
+
+                IF (v_Qty<>0 AND (v_ForceDelivery='Y' OR v_NegStockLocator IS NOT NULL)) THEN
                   -- Create InOut Line
                   Ad_Sequence_Next('M_InOutLine', Cur_Order.C_Order_ID, v_NextNo) ;
                   IF (v_ProductUOM IS NOT NULL) THEN
@@ -624,16 +647,6 @@ BEGIN --BODY
                   ELSE
                     v_ActualQty:=NULL;
                   END IF;
-
-		  SELECT MIN(M_LOCATOR_ID)
-		  INTO v_Locator_ID
-                  FROM M_LOCATOR
-                  WHERE M_WAREHOUSE_ID=ol.M_Warehouse_ID
-                  AND M_LOCATOR.ISACTIVE = 'Y'
-                  AND priorityno = (SELECT min(priorityno) 
-					FROM M_LOCATOR  
-					WHERE M_WAREHOUSE_ID=ol.M_Warehouse_ID
-					AND M_LOCATOR.ISACTIVE = 'Y');
 
                   DBMS_OUTPUT.PUT_LINE('    Line ' || ol.Line || '  Qty=' || v_LocatorQty) ;
                   v_ResultStr:='CreateInOutLine';
@@ -664,7 +677,7 @@ BEGIN --BODY
                     (v_NextNo, v_lines, p_InOut_ID, ol.C_OrderLine_ID,
                     ol.AD_Client_ID, ol.AD_Org_ID, 'Y', now(),
                     v_User_ID, now(), v_User_ID, ol.M_Product_ID,
-                    ol.C_UOM_ID, v_Locator_ID, v_Qty, ol.Description,
+                    ol.C_UOM_ID, v_NegStockLocator, v_Qty, ol.Description,
                     'N',
                     --MODIFIED BY F.IRIAZABAL
                     v_ActualQty, ol.M_PRODUCT_UOM_ID, ol.M_AttributeSetInstance_ID,

@@ -64,9 +64,12 @@ import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.cost.InvAmtUpdLnInventories;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
+import org.openbravo.model.materialmgmt.onhandquantity.InventoryStatus;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -841,12 +844,49 @@ public class CostingUtils {
     return StringUtils.equals(trx.getId(), (String) qry.uniqueResult());
   }
 
+  @Deprecated
   public static boolean isAllowNegativeStock(Client client) {
     try {
       OBContext.setAdminMode(true);
-      return client.getClientInformationList().get(0).isAllowNegativeStock();
+      return isNegativeStockEnabledForAnyStorageBin(client);
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  public static boolean isNegativeStockEnabledForAnyStorageBin(Client client) {
+    StringBuilder where = new StringBuilder();
+    where.append(" select c");
+    where.append(" from " + Client.ENTITY_NAME + " as c");
+    where.append(" where exists (select 1");
+    where.append("               from " + Locator.ENTITY_NAME + " as l");
+    where.append("               join l." + Locator.PROPERTY_INVENTORYSTATUS + " invs");
+    where.append("               where invs." + InventoryStatus.PROPERTY_OVERISSUE + " = true");
+    where.append("               and l." + Locator.PROPERTY_CLIENT + " = c)");
+    where.append(" and c = :client");
+
+    Query qry = OBDal.getInstance().getSession().createQuery(where.toString());
+    qry.setParameter("client", client);
+    qry.setMaxResults(1);
+    return !qry.list().isEmpty();
+  }
+
+  public static boolean isNegativeStockAllowedForShipmentInout(String shipmentInOutId) {
+    StringBuilder where = new StringBuilder();
+    where.append(" select c");
+    where.append(" from " + Client.ENTITY_NAME + " as c");
+    where.append(" where exists (select 1");
+    where.append("               from " + ShipmentInOutLine.ENTITY_NAME + " as iol");
+    where
+        .append("               join iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as io");
+    where.append("               join iol." + ShipmentInOutLine.PROPERTY_STORAGEBIN + " as l");
+    where.append("               left join l." + Locator.PROPERTY_INVENTORYSTATUS + " invs");
+    where.append("               where invs." + InventoryStatus.PROPERTY_OVERISSUE + " = true");
+    where.append("               and io." + ShipmentInOut.PROPERTY_ID + " = :shipmentInOutID)");
+
+    Query qry = OBDal.getInstance().getSession().createQuery(where.toString());
+    qry.setParameter("shipmentInOutID", shipmentInOutId);
+    qry.setMaxResults(1);
+    return !qry.list().isEmpty();
   }
 }

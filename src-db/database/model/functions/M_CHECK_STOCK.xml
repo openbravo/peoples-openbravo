@@ -34,31 +34,27 @@
 ************************************************************************/
   v_ResultStr VARCHAR2(2000):='';
   v_ExistsNegativeStock NUMBER;
-  v_AllowsNegativeStock CHAR:='N';
 BEGIN
   v_ResultStr:='Checking stock';
   p_Result:=1;
-  SELECT ALLOWNEGATIVESTOCK
-  INTO v_AllowsNegativeStock
-  FROM AD_CLIENTINFO
-  WHERE AD_CLIENT_ID=p_AD_Client_ID;
-  IF v_AllowsNegativeStock='N' THEN
-    SELECT count(1)
-    INTO v_ExistsNegativeStock
-    FROM DUAL
-    WHERE EXISTS
-      ( SELECT 1
-      FROM M_STORAGE_DETAIL
+  SELECT count(1)
+  INTO v_ExistsNegativeStock
+  FROM DUAL
+  WHERE EXISTS
+    ( SELECT 1
+      FROM M_STORAGE_DETAIL SD
+      JOIN M_LOCATOR L ON (L.M_LOCATOR_ID = SD.M_LOCATOR_ID)
+      JOIN M_INVENTORYSTATUS INVS ON (INVS.M_INVENTORYSTATUS_ID = L.M_INVENTORYSTATUS_ID)
       WHERE M_PRODUCT_ID=p_M_Product_ID
-        AND AD_CLIENT_ID=p_AD_Client_ID
-        AND AD_ORG_ID=p_AD_Org_ID
-      AND (QTYONHAND<0 OR COALESCE(QTYORDERONHAND,0)<0));    
-    IF(v_ExistsNegativeStock <> 0) THEN
-      p_Result:=0;
-      p_Message:='@NotEnoughStocked@';
-    END IF;
+      AND SD.AD_CLIENT_ID=p_AD_Client_ID
+      AND SD.AD_ORG_ID=p_AD_Org_ID
+      AND (QTYONHAND<0 OR COALESCE(QTYORDERONHAND,0)<0)
+      AND INVS.OVERISSUE='N');    
+  IF(v_ExistsNegativeStock <> 0) THEN
+    p_Result:=0;
+    p_Message:='@NotEnoughStocked@';
   END IF;
-  RETURN;
+RETURN;
 EXCEPTION
 WHEN OTHERS THEN
   v_ResultStr:= '@ERROR=' || SQLERRM;

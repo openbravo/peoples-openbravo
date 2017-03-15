@@ -49,7 +49,6 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.InventoryCountProcess;
 import org.openbravo.model.ad.process.ProcessInstance;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
@@ -111,10 +110,10 @@ public class ProcessGoods extends HttpSecureAppServlet {
       final String strdocaction = vars.getStringParameter("inpdocaction");
       final String strVoidMinoutDate = vars.getStringParameter("inpVoidedDocumentDate");
       final String strVoidMinoutAcctDate = vars.getStringParameter("inpVoidedDocumentAcctDate");
-      Client client = OBDal.getInstance().get(Client.class, vars.getClient());
 
       if (StringUtils.equals(strWindowId, Goods_Receipt_Window)
-          && StringUtils.equals(strdocaction, "RC") && !CostingUtils.isAllowNegativeStock(client)) {
+          && StringUtils.equals(strdocaction, "RC")
+          && !CostingUtils.isNegativeStockAllowedForShipmentInout(receiptId)) {
         List<String> receiptLineIdList = getReceiptLinesWithoutStock(receiptId);
         if (!receiptLineIdList.isEmpty()) {
           ShipmentInOut receipt = OBDal.getInstance().get(ShipmentInOut.class, receiptId);

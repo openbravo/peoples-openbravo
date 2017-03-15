@@ -1571,7 +1571,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--178-->  <HELP><![CDATA[Create storage bins for a selected warehouse.]]></HELP>
 <!--178-->  <AD_TABLE_ID><![CDATA[207]]></AD_TABLE_ID>
 <!--178-->  <AD_WINDOW_ID><![CDATA[139]]></AD_WINDOW_ID>
-<!--178-->  <SEQNO><![CDATA[20]]></SEQNO>
+<!--178-->  <SEQNO><![CDATA[40]]></SEQNO>
 <!--178-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
 <!--178-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--178-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
@@ -1601,7 +1601,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--179-->  <HELP><![CDATA[View the stored products of a selected storage bin.]]></HELP>
 <!--179-->  <AD_TABLE_ID><![CDATA[800036]]></AD_TABLE_ID>
 <!--179-->  <AD_WINDOW_ID><![CDATA[139]]></AD_WINDOW_ID>
-<!--179-->  <SEQNO><![CDATA[30]]></SEQNO>
+<!--179-->  <SEQNO><![CDATA[60]]></SEQNO>
 <!--179-->  <TABLEVEL><![CDATA[2]]></TABLEVEL>
 <!--179-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--179-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
@@ -2277,7 +2277,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--209-->  <HELP><![CDATA[Create and edit G/L accounts to be used in transactions including a selected warehouse.]]></HELP>
 <!--209-->  <AD_TABLE_ID><![CDATA[191]]></AD_TABLE_ID>
 <!--209-->  <AD_WINDOW_ID><![CDATA[139]]></AD_WINDOW_ID>
-<!--209-->  <SEQNO><![CDATA[40]]></SEQNO>
+<!--209-->  <SEQNO><![CDATA[110]]></SEQNO>
 <!--209-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
 <!--209-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--209-->  <ISINFOTAB><![CDATA[Y]]></ISINFOTAB>
@@ -3439,7 +3439,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--262-->  <HELP><![CDATA[View all products transactions related to the selected warehouse.]]></HELP>
 <!--262-->  <AD_TABLE_ID><![CDATA[329]]></AD_TABLE_ID>
 <!--262-->  <AD_WINDOW_ID><![CDATA[139]]></AD_WINDOW_ID>
-<!--262-->  <SEQNO><![CDATA[25]]></SEQNO>
+<!--262-->  <SEQNO><![CDATA[50]]></SEQNO>
 <!--262-->  <TABLEVEL><![CDATA[2]]></TABLEVEL>
 <!--262-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--262-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>

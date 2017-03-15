@@ -45,7 +45,6 @@ import org.hibernate.type.DateType;
 import org.hibernate.type.StringType;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.costing.CostingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.security.OrganizationStructureProvider;
@@ -57,12 +56,14 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.hook.InventoryCountCheckHook;
 import org.openbravo.materialmgmt.hook.InventoryCountProcessHook;
 import org.openbravo.model.ad.access.User;
+import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.calendar.Period;
 import org.openbravo.model.financialmgmt.calendar.PeriodControl;
+import org.openbravo.model.materialmgmt.onhandquantity.InventoryStatus;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
@@ -280,8 +281,7 @@ public class InventoryCountProcess implements Process {
     // queryInsert.setBoolean("checkReservation", checkReservationQty);
     queryInsert.executeUpdate();
 
-    if (!CostingUtils.isAllowNegativeStock(inventory.getClient())
-        && !"C".equals(inventory.getInventoryType()) && !"O".equals(inventory.getInventoryType())) {
+    if (!"C".equals(inventory.getInventoryType()) && !"O".equals(inventory.getInventoryType())) {
       checkStock(inventory);
     }
 
@@ -420,6 +420,8 @@ public class InventoryCountProcess implements Process {
     hqlString.append("select sd.id ");
     hqlString.append(" from MaterialMgmtInventoryCountLine as icl");
     hqlString.append(" , " + StorageDetail.ENTITY_NAME + " as sd");
+    hqlString.append(" , " + Locator.ENTITY_NAME + " as l");
+    hqlString.append(" , " + InventoryStatus.ENTITY_NAME + " as invs");
     hqlString.append(" where icl." + InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = ?");
     hqlString.append("   and sd." + StorageDetail.PROPERTY_PRODUCT + " = icl."
         + InventoryCountLine.PROPERTY_PRODUCT);
@@ -428,6 +430,9 @@ public class InventoryCountProcess implements Process {
     hqlString.append("   and (sd." + StorageDetail.PROPERTY_QUANTITYONHAND + " < 0");
     hqlString.append("     or sd." + StorageDetail.PROPERTY_ONHANDORDERQUANITY + " < 0");
     hqlString.append("     )");
+    hqlString.append("   and sd." + StorageDetail.PROPERTY_STORAGEBIN + ".id = l.id");
+    hqlString.append("   and l." + Locator.PROPERTY_INVENTORYSTATUS + ".id = invs.id");
+    hqlString.append("   and invs." + InventoryStatus.PROPERTY_OVERISSUE + " = false");
     hqlString.append(" order by icl." + InventoryCountLine.PROPERTY_LINENO);
 
     final Session session = OBDal.getInstance().getSession();
