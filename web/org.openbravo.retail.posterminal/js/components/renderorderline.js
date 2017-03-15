@@ -186,7 +186,7 @@ enyo.kind({
       });
     }
 
-    if (this.model.get('obposCanbedelivered') === false) {
+    if (this.model.get('obposCanbedelivered') === false && (!this.model.get('deliveredQuantity') || this.model.get('deliveredQuantity') !== this.model.get('qty'))) {
       this.createComponent({
         style: 'display: block;',
         components: [{
