@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016-2017 Openbravo S.L.U.
+ * Copyright (C) 2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -25,15 +25,25 @@ public class FixDataIssue35364 extends ModuleScript {
   @Override
   public void execute() {
     try {
-      final StringBuilder sql = new StringBuilder();
-      sql.append("update obpos_paymentmethodcashup set amounttokeep = 0 where amounttokeep is null; ");
-      sql.append("update obpos_paymentmethodcashup set startingcash = 0 where startingcash is null; ");
-      sql.append("update obpos_paymentmethodcashup set totalsales = 0 where totalsales is null; ");
-      sql.append("update obpos_paymentmethodcashup set totalreturns = 0 where totalreturns is null; ");
+      final StringBuilder sql1 = new StringBuilder();
+      final StringBuilder sql2 = new StringBuilder();
+      final StringBuilder sql3 = new StringBuilder();
+      final StringBuilder sql4 = new StringBuilder();
+      sql1.append("update obpos_paymentmethodcashup set amounttokeep = 0 where amounttokeep is null ");
+      sql2.append("update obpos_paymentmethodcashup set startingcash = 0 where startingcash is null ");
+      sql3.append("update obpos_paymentmethodcashup set totalsales = 0 where totalsales is null ");
+      sql4.append("update obpos_paymentmethodcashup set totalreturns = 0 where totalreturns is null ");
 
       ConnectionProvider cp = getConnectionProvider();
-      PreparedStatement ps = cp.getPreparedStatement(sql.toString());
-      ps.executeUpdate();
+      PreparedStatement ps1 = cp.getPreparedStatement(sql1.toString());
+      PreparedStatement ps2 = cp.getPreparedStatement(sql2.toString());
+      PreparedStatement ps3 = cp.getPreparedStatement(sql3.toString());
+      PreparedStatement ps4 = cp.getPreparedStatement(sql4.toString());
+      
+      ps1.executeUpdate();
+      ps2.executeUpdate();
+      ps3.executeUpdate();
+      ps4.executeUpdate();
     } catch (Exception e) {
       handleError(e);
     }
@@ -48,7 +58,6 @@ public class FixDataIssue35364 extends ModuleScript {
   }
 
   public static void main(String[] args) {
-
     // This method is provided for testing purposes.
     FixDataIssue35364 t = new FixDataIssue35364();
     t.execute();
