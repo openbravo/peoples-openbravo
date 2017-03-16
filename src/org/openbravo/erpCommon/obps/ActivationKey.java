@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1256,8 +1256,10 @@ public class ActivationKey {
 
   public String getLicenseExplanation(ConnectionProvider conn, String lang) {
     if (licenseType == LicenseType.CONCURRENT_USERS) {
-      return getProperty("limitusers") + " " + Utility.messageBD(conn, "OPSConcurrentUsers", lang);
-
+      String userLimit = getProperty("limitusers");
+      String userMsg = "0".equals(userLimit) ? Utility.messageBD(conn, "OPSUnlimitedUsers", lang)
+          : userLimit;
+      return userMsg + " " + Utility.messageBD(conn, "OPSConcurrentUsers", lang);
     } else {
       return Utility.getListValueName("OPSLicenseType", getProperty("lincensetype"), lang);
     }
