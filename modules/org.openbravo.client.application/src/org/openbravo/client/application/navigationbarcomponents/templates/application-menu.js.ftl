@@ -97,7 +97,7 @@ isc.OBApplicationMenuButton.create({
         , viewId: 'processDefinition_${menuOption.menu.oBUIAPPProcessDefinition.id}'
         , uiPattern: '${menuOption.menu.oBUIAPPProcessDefinition.uIPattern?js_string}'
         , processId: '${menuOption.menu.oBUIAPPProcessDefinition.id}'
-        , icon: 'Process'
+        , icon: <#if menuOption.report>'Report'<#else>'Process'</#if>
         , id:'${menuOption.dbId}'
         , viewValue: 'processDefinition_${menuOption.menu.oBUIAPPProcessDefinition.id}'
     </#if>
