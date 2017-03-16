@@ -60,15 +60,20 @@ enyo.kind({
   saveAttribute: function(inSender, inEvent) {
     var me = this;
     var attributeValue = this.$.bodyContent.$.valueAttribute.getValue();
+    var orderLine = me.args.line;
+    var p = orderLine.get('product');
+    var qty = orderLine.get('qty');
+    var newLine= true;
     
     if (attributeValue) {
       if (this.validateAttribute(attributeValue)){
-    	me.owner.model.get('order').get('lines').at(0).set('attributeValue',attributeValue);
+    	orderLine.set('attributeValue',attributeValue);
     	me.owner.model.get('order').save();
       } else {
     	OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NotValidAttribute'));
       }
     }
+    this.args.callbackPostAddProductToOrder(me.owner.model.get('order'),p, orderLine, qty, null, newLine, this.args.callbackPostAddProductToOrder);
     return true;
   },
   clearAction: function () {

@@ -27,8 +27,10 @@
       attributeValue: ''
     },
 
-    // When copying a line coming from servers these properties are copied manually
-    // the rest are considered extra information coming from modules and are copied verbatim.
+    // When copying a line coming from servers these properties are copied
+	// manually
+    // the rest are considered extra information coming from modules and are
+	// copied verbatim.
     ownProperties: {
       id: true,
       lineId: true,
@@ -130,7 +132,8 @@
 
     calculateGross: function () {
       // calculate the total amount depending on the tax plan
-      // setting the oposite variable to null, ensures that other logic is not using them in a wrong way
+      // setting the oposite variable to null, ensures that other logic is not
+		// using them in a wrong way
       if (this.get('priceIncludesTax')) {
         this.set('net', null, {
           silent: true
@@ -274,7 +277,8 @@
     },
     printAmountWithSignum: function () {
       var paidReturn = this.get('isPaid') && (this.get('orderGross') < 0);
-      // if the ticket is a paid return, new payments must be displayed in negative
+      // if the ticket is a paid return, new payments must be displayed in
+		// negative
       if (this.get('rate')) {
         return OB.I18N.formatCurrency(paidReturn ? OB.DEC.mul(OB.DEC.abs(this.get('origAmount') || OB.DEC.mul(this.get('amount'), this.get('rate'))), -1) : this.printAmount());
       } else {
@@ -333,7 +337,8 @@
         this.set('documentType', attributes.documentType);
         this.set('createdBy', attributes.createdBy);
         this.set('updatedBy', attributes.updatedBy);
-        this.set('orderType', attributes.orderType); // 0: Sales order, 1: Return order
+        this.set('orderType', attributes.orderType); // 0: Sales order, 1:
+														// Return order
         this.set('generateInvoice', attributes.generateInvoice);
         this.set('isQuotation', attributes.isQuotation);
         this.set('oldId', attributes.oldId);
@@ -554,7 +559,8 @@
     },
 
     calculateGross: function () {
-      // check if it's all ok and calculateGross is being called from where it's supposed to
+      // check if it's all ok and calculateGross is being called from where
+		// it's supposed to
       var stack = OB.UTIL.getStackTrace('Backbone.Model.extend.calculateGross', false);
       if (stack.indexOf('Backbone.Model.extend.calculateGross') > -1 && stack.indexOf('Backbone.Model.extend.calculateReceipt') > -1) {
         OB.error("It's forbidden to use calculateGross from outside of calculateReceipt");
@@ -574,7 +580,8 @@
         return;
       }
 
-      // verify that the ui receipt is the only one in which calculateGross is executed
+      // verify that the ui receipt is the only one in which calculateGross is
+		// executed
       var isTheUIReceipt = this === OB.MobileApp.model.receipt || this.get('belongsToMultiOrder') || this.get('ignoreCheckIfIsActiveOrder');
       if (!isTheUIReceipt) {
         OB.error("calculateGross should only be called by the UI receipt");
@@ -586,7 +593,8 @@
     calculateGrossAndSave: function (save) {
       this.calculatingGross = true;
       var me = this;
-      // reset some vital receipt values because, at this point, they are obsolete. do not fire the change event
+      // reset some vital receipt values because, at this point, they are
+		// obsolete. do not fire the change event
       me.set({
         'net': OB.DEC.Zero,
         'gross': OB.DEC.Zero,
@@ -607,7 +615,7 @@
               return memo;
             }
           }, OB.DEC.Zero);
-          //total qty
+          // total qty
           var qty = me.get('lines').reduce(function (memo, e) {
             var qtyLine = e.getQty();
             if (qtyLine > 0) {
@@ -617,7 +625,8 @@
             }
           }, OB.DEC.Zero);
 
-          // all attributes are set at once, preventing the change event of each attribute to be fired until all values are set
+          // all attributes are set at once, preventing the change event of
+			// each attribute to be fired until all values are set
           me.set({
             'gross': gross,
             'qty': qty
@@ -626,8 +635,10 @@
           me.adjustPayment();
           if (save) {
             me.save(function () {
-              // Reset the flag that protects reentrant invocations to calculateGross().
-              // And if there is pending any execution of calculateGross(), do it and do not continue.
+              // Reset the flag that protects reentrant invocations to
+				// calculateGross().
+              // And if there is pending any execution of calculateGross(), do
+				// it and do not continue.
               me.calculatingGross = false;
               me.calculatingReceipt = false;
               if (me.pendingCalculateGross) {
@@ -663,7 +674,8 @@
         });
       } else {
         this.calculateTaxes(function () {
-          //If the price doesn't include tax, the discounted gross has already been calculated
+          // If the price doesn't include tax, the discounted gross has
+			// already been calculated
           var gross = me.get('lines').reduce(function (memo, e) {
             if (_.isUndefined(e.get('discountedGross'))) {
               return memo;
@@ -690,7 +702,8 @@
       }
     },
 
-    // This function calculate the promotions, taxes and gross of all the receipt
+    // This function calculate the promotions, taxes and gross of all the
+	// receipt
     calculateReceipt: function (callback, line) {
       // verify if we are cloning the receipt
       if (this.get('cloningReceipt')) {
@@ -711,7 +724,8 @@
       } else if (this.isCalculateReceiptLocked !== false && !this.get('belongsToMultiOrder')) {
         OB.error("setting the isCalculateReceiptLocked state is mandatory before executing it the first time");
       }
-      // verify that the ui receipt is the only one in which calculateReceipt is executed
+      // verify that the ui receipt is the only one in which calculateReceipt
+		// is executed
       var isTheUIReceipt = this === OB.MobileApp.model.receipt || this.get('belongsToMultiOrder') || this.get('ignoreCheckIfIsActiveOrder');
       if (!isTheUIReceipt) {
         OB.error("calculateReceipt should only be called by the UI receipt");
@@ -761,7 +775,8 @@
         });
         me.calculateGross();
       });
-      // If line is null or undefined, we calculate the Promotions of the receipt
+      // If line is null or undefined, we calculate the Promotions of the
+		// receipt
       if (OB.UTIL.isNullOrUndefined(line) || line.get('splitline')) {
         OB.Model.Discounts.applyPromotions(this);
       } else {
@@ -993,7 +1008,8 @@
     },
 
     clearWith: function (_order) {
-      // verify that the clearWith is not used for any other purpose than to update and fire the events of the UI receipt
+      // verify that the clearWith is not used for any other purpose than to
+		// update and fire the events of the UI receipt
       OB.UTIL.Debug.execute(function () {
         var isTheUIReceipt = this.cid === OB.MobileApp.model.receipt.cid;
         if (!isTheUIReceipt) {
@@ -1003,12 +1019,14 @@
 
       var idExecution;
 
-      // we set first this property to avoid that the apply promotions is triggered
+      // we set first this property to avoid that the apply promotions is
+		// triggered
       this.set('isNewReceipt', _order.get('isNewReceipt'));
-      //we need this data when IsPaid, IsLayaway changes are triggered
+      // we need this data when IsPaid, IsLayaway changes are triggered
       this.set('documentType', _order.get('documentType'));
 
-      //Prevent recalculating service relations during executions of clearWith
+      // Prevent recalculating service relations during executions of
+		// clearWith
       this.set('preventServicesUpdate', true);
 
       this.set('isPaid', _order.get('isPaid'));
@@ -1041,7 +1059,8 @@
         this.set('replacedorder', _order.get('replacedorder'));
       }
 
-      // the idExecution is saved so only this execution of clearWith will check cloningReceipt to false
+      // the idExecution is saved so only this execution of clearWith will
+		// check cloningReceipt to false
       if (OB.UTIL.isNullOrUndefined(this.get('idExecution')) && OB.UTIL.isNullOrUndefined(_order.get('idExecution'))) {
         idExecution = new Date().getTime();
         _order.set('idExecution', idExecution);
@@ -1059,7 +1078,7 @@
         this.unset('idExecution');
       }
 
-      //Enable recalculating service relations after cloning
+      // Enable recalculating service relations after cloning
       this.unset('preventServicesUpdate');
 
       this.set('isEditable', _order.get('isEditable'));
@@ -1108,11 +1127,6 @@
           this.addProduct(line.get('product'));
           return true;
         } else {
-          // sets the new quantity
-          if(OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && line.get('product').get('hasAttributes') && line.get('product').get('isSerialNo')){
-        	  OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ProductHasSerialNo'));  
-        	qty = 1;
-          }
           line.set('qty', qty);
           // sets the undo action
           if (this.get('multipleUndo')) {
@@ -1135,7 +1149,8 @@
               undo: function () {
                 var i, thisUndo = me.get('undo');
                 for (i = 0; i < thisUndo.lines.length; i++) {
-                  //Changing the qty of a line modifies the undo attribute, so we need a copy
+                  // Changing the qty of a line modifies the undo attribute,
+					// so we need a copy
                   thisUndo.lines[i].set('qty', thisUndo.oldqtys[i]);
                 }
                 me.calculateReceipt();
@@ -1304,9 +1319,13 @@
           this.deleteLine(line, false, callback, true);
         }
       } else {
-        // If there is a line and other related service line selected to delete, the service is deleted when the product is deleted
-        // This causes that when this recursive line tries to delete the service line, the service line is not in the array which stores the lines to delete
-        // The 'else' clause catches this situation and continues with the next line
+        // If there is a line and other related service line selected to delete,
+		// the service is deleted when the product is deleted
+        // This causes that when this recursive line tries to delete the service
+		// line, the service line is not in the array which stores the lines to
+		// delete
+        // The 'else' clause catches this situation and continues with the next
+		// line
         if (idx === length) {
           if (callback) {
             callback();
@@ -1338,7 +1357,7 @@
           pack = line.isAffectedByPack(),
           productId = line.get('product').id;
 
-      //Defensive code: Do not remove non existing line
+      // Defensive code: Do not remove non existing line
       if (!this.get('lines').get(line)) {
         if (callback) {
           callback();
@@ -1354,12 +1373,13 @@
       }
 
       if (pack) {
-        // When deleting a line, check lines with other product that are affected by
+        // When deleting a line, check lines with other product that are
+		// affected by
         // same pack than deleted one and merge splitted lines created for those
         this.get('lines').forEach(function (l) {
           var affected;
           if (productId === l.get('product').id) {
-            return; //continue
+            return; // continue
           }
           affected = l.isAffectedByPack();
           if (affected && affected.ruleId === pack.ruleId) {
@@ -1447,7 +1467,8 @@
         }
       }
 
-      // If the OBPOS_remove_ticket preference is active then mark the line as deleted
+      // If the OBPOS_remove_ticket preference is active then mark the line as
+		// deleted
       if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
         if (!this.get('deletedLines')) {
           this.set('deletedLines', []);
@@ -1478,7 +1499,7 @@
       }
     },
 
-    //Attrs is an object of attributes that will be set in order
+    // Attrs is an object of attributes that will be set in order
     _addProduct: function (p, qty, options, attrs, callback) {
       var newLine = true,
           line = null,
@@ -1573,7 +1594,7 @@
 
           } else {
             var count;
-            //remove line even it is a grouped line
+            // remove line even it is a grouped line
             if (options && options.line && qty === -1) {
               me.addUnit(options.line, qty);
               line = options.line;
@@ -1596,6 +1617,43 @@
           }
         }
         me.save();
+        if(p.get('hasAttributes')===true) {
+        	 OB.MobileApp.view.waterfall('onShowPopup', {
+                 popup: 'modalProductAttribute',
+                 args: {
+                	 line: line,
+                	 callbackPostAddProductToOrder: me.postAddProductToOrder
+                 }
+               });
+ 		 }else{
+ 			me.postAddProductToOrder(me, p, line, qty, options, newLine);
+ 		 }
+        
+      } // End addProductToOrder
+      if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('ignoreReturnApproval')) {
+        if (options && options.isVerifiedReturn) {
+          OB.UTIL.showLoading(false);
+        }
+        OB.UTIL.Approval.requestApproval(
+        OB.MobileApp.view.$.containerWindow.getRoot().model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
+          if (options && options.isVerifiedReturn) {
+            OB.UTIL.showLoading(true);
+          }
+          if (approved) {
+            addProductToOrder();
+          } else {
+            if (callback) {
+              callback(true);
+            }
+          }
+        });
+      } else {
+        addProductToOrder();
+      }
+    },
+    
+    postAddProductToOrder: function(me, p,line,qty,options,newLine, callback){
+
         OB.UTIL.HookManager.executeHooks('OBPOS_PostAddProductToOrder', {
           receipt: me,
           productToAdd: p,
@@ -1608,14 +1666,16 @@
               if (callback) {
                 callback(true, args.orderline);
               }
-              };
+          };
           if (args.orderline) {
             args.orderline.set('hasMandatoryServices', false);
           }
           if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
             var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
-            // Display related services after calculate gross, if it is new line and if the line has not been deleted.
-            // The line might has been deleted during calculate gross for examples if there was an error in taxes.
+            // Display related services after calculate gross, if it is new line
+			// and if the line has not been deleted.
+            // The line might has been deleted during calculate gross for
+			// examples if there was an error in taxes.
             var productId = args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id;
             args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
               if (data) {
@@ -1647,29 +1707,8 @@
             callbackAddProduct();
           }
         });
-      } // End addProductToOrder
-      if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('ignoreReturnApproval')) {
-        if (options && options.isVerifiedReturn) {
-          OB.UTIL.showLoading(false);
-        }
-        OB.UTIL.Approval.requestApproval(
-        OB.MobileApp.view.$.containerWindow.getRoot().model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
-          if (options && options.isVerifiedReturn) {
-            OB.UTIL.showLoading(true);
-          }
-          if (approved) {
-            addProductToOrder();
-          } else {
-            if (callback) {
-              callback(true);
-            }
-          }
-        });
-      } else {
-        addProductToOrder();
-      }
     },
-
+    
     _loadRelatedServices: function (productType, productId, productCategory, callback, line) {
       if (productType !== 'S' && (!line || !line.get('originalOrderLineId'))) {
         if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
@@ -1685,7 +1724,7 @@
             parameters: params
           }, function (data, message) {
             if (data && data.exception) {
-              //ERROR or no connection
+              // ERROR or no connection
               OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
               callback(null);
             } else if (data) {
@@ -1698,7 +1737,7 @@
             callback(null);
           });
         } else {
-          //non-high volumes: websql
+          // non-high volumes: websql
           var criteria = {};
 
           criteria._whereClause = '';
@@ -1706,12 +1745,12 @@
 
           criteria._whereClause = " as product where product.productType = 'S' and (product.isLinkedToProduct = 'true' and ";
 
-          //including/excluding products
+          // including/excluding products
           criteria._whereClause += "((product.includeProducts = 'Y' and not exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
           criteria._whereClause += "or (product.includeProducts = 'N' and exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
           criteria._whereClause += "or product.includeProducts is null) ";
 
-          //including/excluding product categories
+          // including/excluding product categories
           criteria._whereClause += "and ((product.includeProductCategories = 'Y' and not exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id =  ? )) ";
           criteria._whereClause += "or (product.includeProductCategories = 'N' and exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id  = ? )) ";
           criteria._whereClause += "or product.includeProductCategories is null)) ";
@@ -1781,7 +1820,7 @@
       }
     },
 
-    //Attrs is an object of attributes that will be set in order
+    // Attrs is an object of attributes that will be set in order
     addProduct: function (p, qty, options, attrs, callback) {
       OB.debug('_addProduct');
       var me = this;
@@ -1837,12 +1876,6 @@
           modelsAffectedByCache: ['ProductPrice']
         });
       } else {
-    	  if(p.get('hasAttributes')===true) {
-         	 OB.MobileApp.view.waterfall('onShowPopup', {
-                  popup: 'modalProductAttribute',
-                });
-  		 }
-    	  
         me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
           if (callback) {
             callback(success, orderline);
@@ -1909,10 +1942,11 @@
     },
 
     /**
-     * Splits a line from the ticket keeping in the line the qtyToKeep quantity,
-     * the rest is moved to another line with the same product and no packs, or
-     * to a new one if there's no other line. In case a new is created it is returned.
-     */
+	 * Splits a line from the ticket keeping in the line the qtyToKeep quantity,
+	 * the rest is moved to another line with the same product and no packs, or
+	 * to a new one if there's no other line. In case a new is created it is
+	 * returned.
+	 */
     splitLine: function (line, qtyToKeep) {
       var originalQty = line.get('qty'),
           newLine, p, qtyToMove;
@@ -1946,8 +1980,8 @@
     },
 
     /**
-     * Checks other lines with the same product to be merged in a single one
-     */
+	 * Checks other lines with the same product to be merged in a single one
+	 */
     mergeLines: function (line) {
       var p = line.get('product'),
           lines = this.get('lines'),
@@ -1970,9 +2004,9 @@
     },
 
     /**
-     *  It looks for different lines for same product with exactly the same promotions
-     *  to merge them in a single line
-     */
+	 * It looks for different lines for same product with exactly the same
+	 * promotions to merge them in a single line
+	 */
     mergeLinesWithSamePromotions: function () {
       var lines = this.get('lines'),
           line, i, j, k, otherLine, toRemove = [],
@@ -2086,7 +2120,8 @@
 
       for (i = 0; i < promotions.length; i++) {
         if (disc._idx !== -1 && disc._idx < promotions[i]._idx) {
-          // Trying to apply promotions in incorrect order: recalculate whole line again
+          // Trying to apply promotions in incorrect order: recalculate whole
+			// line again
           OB.Model.Discounts.applyPromotionsImp(this, line, true);
           return;
         }
@@ -2136,7 +2171,7 @@
       }
     },
 
-    //Attrs is an object of attributes that will be set in order line
+    // Attrs is an object of attributes that will be set in order line
     createLine: function (p, units, options, attrs) {
       var newline, me = this;
 
@@ -2144,7 +2179,7 @@
         if (me.validateAllowSalesWithReturn(units, false)) {
           return;
         }
-        // Get prices from BP pricelist 
+        // Get prices from BP pricelist
         var newline = new OrderLine({
           id: OB.UTIL.get_UUID(),
           product: p,
@@ -2170,7 +2205,8 @@
           newline.set('groupService', newline.get('product').get('groupProduct'));
         }
 
-        //issue 25448: Show stock screen is just shown when a new line is created.
+        // issue 25448: Show stock screen is just shown when a new line is
+		// created.
         if (newline.get('product').get("showstock") === true) {
           newline.get('product').set("showstock", false);
           newline.get('product').set("_showstock", true);
@@ -2184,7 +2220,9 @@
           text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('_identifier')]),
           line: newline,
           undo: function (modelObj) {
-            // Instead of using 'me' as order, is necessary to use 'OB.MobileApp.model.receipt' to avoid references to not active orders
+            // Instead of using 'me' as order, is necessary to use
+			// 'OB.MobileApp.model.receipt' to avoid references to not active
+			// orders
             // This happens while adding a deferred sale to a paid receipt
             var order = OB.MobileApp.model.receipt;
             OB.UTIL.Approval.requestApproval((modelObj ? modelObj : this.model), 'OBPOS_approval.deleteLine', function (approved) {
@@ -2192,7 +2230,8 @@
                 if (OB.UTIL.RfidController.isRfidConfigured() && newline.get('obposEpccode')) {
                   OB.UTIL.RfidController.removeEpcLine(newline);
                 }
-                // If the OBPOS_remove_ticket preference is active then mark the line as deleted
+                // If the OBPOS_remove_ticket preference is active then mark the
+				// line as deleted
                 if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
                   if (!order.get('deletedLines')) {
                     order.set('deletedLines', []);
@@ -2262,7 +2301,7 @@
 
     returnLine: function (line, options, skipValidaton) {
       var me = this;
-      //The value of qty need to be negate because we want to change it
+      // The value of qty need to be negate because we want to change it
       if (this.validateAllowSalesWithReturn(-line.get('qty'), skipValidaton)) {
         return;
       }
@@ -2396,7 +2435,7 @@
         businessPartner.set('paymentTerms', OB.MobileApp.model.get('terminal').defaultbp_paymentterm);
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-        if (oldbp.id !== businessPartner.id) { //Business Partner have changed
+        if (oldbp.id !== businessPartner.id) { // Business Partner have changed
           OB.Dal.saveIfNew(businessPartner, function () {}, function () {
             OB.error(arguments);
           });
@@ -2465,7 +2504,9 @@
           });
 
         } else {
-          if (businessPartner.get('locationModel')) { //Location has changed or we are assigning current bp
+          if (businessPartner.get('locationModel')) { // Location has changed
+														// or we are assigning
+														// current bp
             OB.Dal.saveIfNew(businessPartner.get('locationModel'), function () {
               me.set('bp', businessPartner);
               me.save();
@@ -2574,8 +2615,9 @@
           i, approvalNeeded, servicesToApprove;
 
       function finishSetOrderType() {
-        me.set('orderType', orderType); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
-        if (orderType !== 3) { //Void this Layaway, do not need to save
+        me.set('orderType', orderType); // 0: Sales order, 1: Return order, 2:
+										// Layaway, 3: Void Layaway
+        if (orderType !== 3) { // Void this Layaway, do not need to save
           if (!(options && !OB.UTIL.isNullOrUndefined(options.saveOrder) && options.saveOrder === false)) {
             me.save();
           }
@@ -2641,7 +2683,8 @@
       }
     },
 
-    // returns the ordertype: 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
+    // returns the ordertype: 0: Sales order, 1: Return order, 2: Layaway, 3:
+	// Void Layaway
     getOrderType: function () {
       return this.get('orderType');
     },
@@ -2676,7 +2719,7 @@
 
       this.get('lines').each(function (line) {
 
-        //remove promotions
+        // remove promotions
         line.unset('promotions');
 
         var successCallbackPrices, criteria = {};
@@ -2757,7 +2800,7 @@
           newDocNo = '',
           nextNumber;
 
-      //Cloning order to be canceled
+      // Cloning order to be canceled
       var clonedreceipt = new OB.Model.Order();
       OB.UTIL.clone(me, clonedreceipt);
       me.set('canceledorder', clonedreceipt);
@@ -2881,7 +2924,8 @@
             permission: context.permission,
             orderType: 3
           });
-          // If the canceling layaway is partially delivered, the payment and gross must be updated to don't create payments
+          // If the canceling layaway is partially delivered, the payment and
+			// gross must be updated to don't create payments
           // to return the delivered quantity
           if (me.get('isPartiallyDelivered')) {
             me.set('gross', OB.DEC.sub(me.get('deliveredQuantityAmount'), me.get('gross')));
@@ -2912,23 +2956,26 @@
       this.get('lines').each(function (line) {
         oldId = line.get('id');
         line.set('id', OB.UTIL.get_UUID());
-        //issue 25055 -> If we don't do the following prices and taxes are calculated
-        //wrongly because the calculation starts with discountedNet instead of
-        //the real net.
-        //It only happens if the order is created from quotation just after save the quotation
-        //(without load the quotation from quotations window)
+        // issue 25055 -> If we don't do the following prices and taxes are
+		// calculated
+        // wrongly because the calculation starts with discountedNet instead of
+        // the real net.
+        // It only happens if the order is created from quotation just after
+		// save the quotation
+        // (without load the quotation from quotations window)
         if (!this.get('priceIncludesTax')) {
           line.set('net', line.get('nondiscountednet'));
         }
 
-        //issues 24994 & 24993
-        //if the order is created from quotation just after save the quotation
-        //(without load the quotation from quotations window). The order has the fields added
-        //by adjust prices. We need to work without these values
-        //price not including taxes
+        // issues 24994 & 24993
+        // if the order is created from quotation just after save the quotation
+        // (without load the quotation from quotations window). The order has
+		// the fields added
+        // by adjust prices. We need to work without these values
+        // price not including taxes
         line.unset('nondiscountedprice');
         line.unset('nondiscountednet');
-        //price including taxes
+        // price including taxes
         line.unset('netFull');
         line.unset('grossListPrice');
         line.unset('grossUnitPrice');
@@ -3030,7 +3077,7 @@
       this.set('session', OB.MobileApp.model.get('session'));
       this.set('orderDate', OB.I18N.normalizeDate(new Date()));
       this.set('skipApplyPromotions', false);
-      //Sometimes the Id of Quotation is null.
+      // Sometimes the Id of Quotation is null.
       if (this.get('id') && !_.isNull(this.get('id'))) {
         this.set('oldId', this.get('id'));
         nextQuotationno = OB.MobileApp.model.getNextQuotationno();
@@ -3038,7 +3085,7 @@
         this.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
         this.set('documentNo', nextQuotationno.documentNo);
       } else {
-        //this shouldn't happen.
+        // this shouldn't happen.
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_QuotationCannotBeReactivated_title'), OB.I18N.getLabel('OBPOS_QuotationCannotBeReactivated_body'));
         return;
       }
@@ -3095,8 +3142,10 @@
       }
     },
     getSumOfOrigAmounts: function (paymentToIgnore) {
-      //returns a result with the sum up of every payments based on origAmount field
-      //if paymentToIignore parameter is provided the result will exclude that payment
+      // returns a result with the sum up of every payments based on
+		// origAmount field
+      // if paymentToIignore parameter is provided the result will exclude
+		// that payment
       var payments = this.get('payments');
       var sumOfPayments = OB.DEC.Zero;
       if (payments && payments.length > 0) {
@@ -3113,13 +3162,15 @@
       }
     },
     getDifferenceBetweenPaymentsAndTotal: function (paymentToIgnore) {
-      //Returns the difference (abs) between total to pay and payments.
-      //if paymentToIignore parameter is provided the result will exclude that payment.
+      // Returns the difference (abs) between total to pay and payments.
+      // if paymentToIignore parameter is provided the result will exclude
+		// that payment.
       return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getSumOfOrigAmounts(paymentToIgnore)));
     },
     getDifferenceRemovingSpecificPayment: function (currentPayment) {
-      //Returns the difference (abs) between total to pay and payments without take into account currentPayment
-      //Result is returned in the currency used by current payment
+      // Returns the difference (abs) between total to pay and payments
+		// without take into account currentPayment
+      // Result is returned in the currency used by current payment
       var differenceInDefaultCurrency;
       var differenceInForeingCurrency;
       differenceInDefaultCurrency = this.getDifferenceBetweenPaymentsAndTotal(currentPayment);
@@ -3168,12 +3219,16 @@
         precision = this.getPrecision(p);
         if (p.get('rate') && p.get('rate') !== '1') {
           p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
-          //Here we are trying to know if the current payment is making the pending to pay 0.
-          //to know that we are suming up every payments except the current one (getSumOfOrigAmounts)
-          //then we substract this amount from the total (getDifferenceBetweenPaymentsAndTotal)
-          //and finally we transform this difference to the foreign amount
-          //if the payment in the foreign amount makes pending to pay zero, then we will ensure that the payment
-          //in the default currency is satisfied
+          // Here we are trying to know if the current payment is making the
+			// pending to pay 0.
+          // to know that we are suming up every payments except the current
+			// one (getSumOfOrigAmounts)
+          // then we substract this amount from the total
+			// (getDifferenceBetweenPaymentsAndTotal)
+          // and finally we transform this difference to the foreign amount
+          // if the payment in the foreign amount makes pending to pay zero,
+			// then we will ensure that the payment
+          // in the default currency is satisfied
           if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount')))) === OB.DEC.Zero) {
             multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(p);
             if (p.get('origAmount') !== multiCurrencyDifference) {
@@ -3184,9 +3239,12 @@
           p.set('origAmount', p.get('amount'));
         }
         p.set('paid', p.get('origAmount'));
-        // When doing a reverse payment in a negative ticket, the payments introduced to pay again the same quantity
-        // must be set to negative (Web POS creates payments in positive by default).
-        // This doesn't affect to reversal payments but to the payments introduced to add the quantity reversed
+        // When doing a reverse payment in a negative ticket, the payments
+		// introduced to pay again the same quantity
+        // must be set to negative (Web POS creates payments in positive by
+		// default).
+        // This doesn't affect to reversal payments but to the payments
+		// introduced to add the quantity reversed
         if (!p.get('isPrePayment') && this.getGross() < 0 && this.get('isPaid') && !p.get('reversedPaymentId') && !p.get('signChanged')) {
           p.set('signChanged', true);
           p.set('amount', -p.get('amount'));
@@ -3212,7 +3270,7 @@
       }
 
       // Calculation of the change....
-      //FIXME
+      // FIXME
       if (pcash) {
         if (pcash.get('kind') !== OB.MobileApp.model.get('paymentcash')) {
           auxCash = origCash;
@@ -3228,8 +3286,9 @@
         } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total)) > 0) {
           pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, OB.DEC.sub(paidCash, pcash.get('origAmount')))));
           this.set('payment', OB.DEC.abs(total));
-          //The change value will be computed through a rounded total value, to ensure that the total plus change
-          //add up to the paid amount without any kind of precission loss
+          // The change value will be computed through a rounded total value,
+			// to ensure that the total plus change
+          // add up to the paid amount without any kind of precission loss
           this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash, precision), origCash, precision), OB.Utilities.Number.roundJSNumber(total, 2), precision));
         } else {
           pcash.set('paid', auxCash);
@@ -3293,8 +3352,10 @@
           return;
         }
         if (!payment.get('paymentData') && !payment.get('reversedPaymentId')) {
-          // search for an existing payment only if there is not paymentData info.
-          // this avoids to merge for example card payments of different cards.
+          // search for an existing payment only if there is not paymentData
+			// info.
+          // this avoids to merge for example card payments of different
+			// cards.
           for (i = 0, max = payments.length; i < max; i++) {
             p = payments.at(i);
             if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment') && !p.get('reversedPaymentId')) {
@@ -3498,7 +3559,8 @@
     },
 
     serializeToJSON: function () {
-      // this.toJSON() generates a collection instance for members like "lines"
+      // this.toJSON() generates a collection instance for members like
+		// "lines"
       // We need a plain array object
       var jsonorder = JSON.parse(JSON.stringify(this.toJSON()));
 
@@ -3519,19 +3581,19 @@
       this.set('gross', OB.DEC.mul(this.get('gross'), -1));
       this.set('net', OB.DEC.mul(this.get('net'), -1));
       this.set('qty', OB.DEC.mul(this.get('qty'), -1));
-      //lines
+      // lines
       _.each(this.get('lines').models, function (line) {
         line.set('gross', OB.DEC.mul(line.get('gross'), -1));
         line.set('qty', OB.DEC.mul(line.get('qty'), -1));
       }, this);
 
-      //payments
+      // payments
       _.each(this.get('payments').models, function (payment) {
         payment.set('amount', OB.DEC.mul(payment.get('amount'), -1));
         payment.set('origAmount', OB.DEC.mul(payment.get('origAmount'), -1));
       }, this);
 
-      //taxes
+      // taxes
       _.each(this.get('taxes'), function (tax) {
         tax.amount = OB.DEC.mul(tax.amount, -1);
         tax.gross = OB.DEC.mul(tax.gross, -1);
@@ -3564,7 +3626,8 @@
             return line;
           }
         });
-        //When it Comes To Technically , Consider The Product As Non-Grouped When scaled and groupproduct Are Checked 
+        // When it Comes To Technically , Consider The Product As Non-Grouped
+		// When scaled and groupproduct Are Checked
         if (lineToMerge && lineToMerge.get('product').get('groupProduct') && !(lineToMerge.get('product').get('groupProduct') && lineToMerge.get('product').get('obposScale'))) {
           lineToMerge.set({
             qty: lineToMerge.get('qty') + l.get('qty')
@@ -3585,7 +3648,7 @@
           copiedPromo, linesToMerge, auxPromo, idx, actProm, linesToCreate = [],
           qtyToReduce, lineToEdit, lineProm, linesToReduce, linesCreated = false;
 
-      //reset pendingQtyOffer value of each promotion
+      // reset pendingQtyOffer value of each promotion
       groupedOrder.get('lines').forEach(function (l) {
         _.each(l.get('promotions'), function (promo) {
           promo.pendingQtyOffer = promo.qtyOffer;
@@ -3596,11 +3659,12 @@
             promo.doNotMerge = true;
           }
         });
-        //copy lines from virtual ticket to original ticket when they have promotions which avoid us to merge lines
+        // copy lines from virtual ticket to original ticket when they have
+		// promotions which avoid us to merge lines
         if (_.find(l.get('promotions'), function (promo) {
           return promo.doNotMerge;
         })) {
-          //First, try to find lines with the same qty
+          // First, try to find lines with the same qty
           lineToEdit = _.find(me.get('lines').models, function (line) {
             if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') === l.get('qty') && !_.find(line.get('promotions'), function (promo) {
               return promo.doNotMerge;
@@ -3608,7 +3672,7 @@
               return line;
             }
           });
-          //if we cannot find lines with same qty, find lines with qty > 0
+          // if we cannot find lines with same qty, find lines with qty > 0
           if (!lineToEdit) {
             lineToEdit = _.find(me.get('lines').models, function (line) {
               if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') > 0) {
@@ -3623,7 +3687,8 @@
             silent: true
           });
 
-          //if promotion affects only to few quantities of the line, create a new line with quantities not affected by the promotion
+          // if promotion affects only to few quantities of the line, create a
+			// new line with quantities not affected by the promotion
           if (lineToEdit.get('qty') > l.get('qty')) {
             linesToCreate.push({
               product: lineToEdit.get('product'),
@@ -3639,7 +3704,8 @@
               silent: true
             });
             me.mergeLines(lineToEdit);
-            //if promotion affects to several lines, edit first line with the promotion info and then remove the affected lines
+            // if promotion affects to several lines, edit first line with the
+			// promotion info and then remove the affected lines
           } else if (lineToEdit.get('qty') < l.get('qty')) {
             qtyToReduce = OB.DEC.sub(l.get('qty'), lineToEdit.get('qty'));
             linesToReduce = _.filter(me.get('lines').models, function (line) {
@@ -3671,7 +3737,8 @@
                 me.get('lines').remove(line);
               }
             });
-            //when qty of the promotion is equal to the line qty, we copy line info.
+            // when qty of the promotion is equal to the line qty, we copy line
+			// info.
           } else {
             lineToEdit.set('qty', l.get('qty'));
             lineToEdit.set('promotions', l.get('promotions'));
@@ -3680,7 +3747,7 @@
             lineToEdit.trigger('change');
           }
         } else {
-          //Filter lines which can be merged
+          // Filter lines which can be merged
           linesToMerge = _.filter(me.get('lines').models, function (line) {
             var qtyReserved = 0;
             var promotions = line.get('promotions') || [];
@@ -3701,8 +3768,10 @@
             }
           });
           // sort by qty asc to fix issue 28120
-          // firstly the discount is applied to the lines with minus quantity, so the discount is applied to all quantity of the line
-          // and if it is needed (promotion.qty > line.qty) the rest of promotion will be applied to the other line
+          // firstly the discount is applied to the lines with minus quantity,
+			// so the discount is applied to all quantity of the line
+          // and if it is needed (promotion.qty > line.qty) the rest of
+			// promotion will be applied to the other line
           linesToMerge = _.sortBy(linesToMerge, function (lsb) {
             lsb.getQty();
           });
@@ -3718,12 +3787,15 @@
               });
               _.each(l.get('promotions'), function (promo) {
                 copiedPromo = JSON.parse(JSON.stringify(promo));
-                //when ditributing the promotion between different lines, we save accumulated amount
+                // when ditributing the promotion between different lines, we
+				// save accumulated amount
                 promo.distributedAmt = promo.distributedAmt ? promo.distributedAmt : OB.DEC.Zero;
-                //pendingQtyOffer is the qty of the promotion which need to be apply (we decrease this qty in each loop)
+                // pendingQtyOffer is the qty of the promotion which need to be
+				// apply (we decrease this qty in each loop)
                 promo.pendingQtyOffer = !_.isUndefined(promo.pendingQtyOffer) ? promo.pendingQtyOffer : promo.qtyOffer;
                 if (promo.pendingQtyOffer && promo.pendingQtyOffer >= line.get('qty')) {
-                  //if _.isUndefined(promo.actualAmt) is true we do not distribute the discount
+                  // if _.isUndefined(promo.actualAmt) is true we do not
+					// distribute the discount
                   if (_.isUndefined(promo.actualAmt)) {
                     if (promo.pendingQtyOffer !== promo.qtyOffer) {
                       copiedPromo.hidden = true;
@@ -3749,7 +3821,8 @@
                   if (line.get('promotions')) {
                     auxPromo = _.find(line.get('promotions'), function (promo) {
                       return promo.ruleId === copiedPromo.ruleId;
-                      // return promo.ruleId === copiedPromo.ruleId && promo.hidden !== true && promo.actualAmt > 0;
+                      // return promo.ruleId === copiedPromo.ruleId &&
+						// promo.hidden !== true && promo.actualAmt > 0;
                     });
                     if (auxPromo) {
                       idx = line.get('promotions').indexOf(auxPromo);
@@ -3792,7 +3865,8 @@
                     line.set('promotions', [copiedPromo]);
                   }
                   promo.pendingQtyOffer = null;
-                  //if it is the first we enter in this method, promotions which are not in the virtual ticket are deleted.
+                  // if it is the first we enter in this method, promotions
+					// which are not in the virtual ticket are deleted.
                 } else if (isFirstTime) {
                   actProm = _.find(line.get('promotions'), function (prom) {
                     return prom.ruleId === promo.ruleId;
@@ -3889,7 +3963,9 @@
                   }
                 }
 
-                // If it's not the first execution, there could be some promotions already applied and are set in the groupedorder lines too.
+                // If it's not the first execution, there could be some
+				// promotions already applied and are set in the groupedorder
+				// lines too.
                 if (!isFirstTime) {
                   var actProm, indx;
                   actProm = _.find(line.get('promotions'), function (prom) {
@@ -4017,7 +4093,8 @@
       this.trigger('promotionsUpdated');
     },
 
-    // for each line, decrease the qtyOffer of promotions and remove the lines with qty 0
+    // for each line, decrease the qtyOffer of promotions and remove the lines
+	// with qty 0
     removeQtyOffer: function () {
       var linesPending = new Backbone.Collection();
       this.get('lines').forEach(function (l) {
@@ -4032,8 +4109,10 @@
             if (p.qtyOfferReserved > 0) {
               qtyReserved = OB.DEC.add(qtyReserved, p.qtyOfferReserved);
             }
-            // if it is a promotions with applyNext, the line is related to the promotion, so, when applyPromotions is called again,
-            // if the promotion is similar to this promotion, then no changes have been done, then stop
+            // if it is a promotions with applyNext, the line is related to the
+			// promotion, so, when applyPromotions is called again,
+            // if the promotion is similar to this promotion, then no changes
+			// have been done, then stop
             if (p.applyNext) {
               promotionsApplyNext.push(p);
               promotionsCascadeApplied.push(p);
@@ -4094,10 +4173,13 @@
         return false;
       }
     },
-    // if there is a promtion of type "applyNext" that it has been applied previously in the line, then It is replaced
+    // if there is a promtion of type "applyNext" that it has been applied
+	// previously in the line, then It is replaced
     // by the first promotion applied. Ex:
-    // Ex: prod1 - qty 5 - disc3x2 & discPriceAdj -> priceAdj is applied first to 5 units
-    //     it is called to applyPromotions, with the 2 units frees, and priceAdj is applied again to this 2 units
+    // Ex: prod1 - qty 5 - disc3x2 & discPriceAdj -> priceAdj is applied first
+	// to 5 units
+    // it is called to applyPromotions, with the 2 units frees, and priceAdj is
+	// applied again to this 2 units
     // it is wrong, only to 5 units should be applied priceAdj, no 5 + 2 units
     removePromotionsCascadeApplied: function () {
       this.get('lines').forEach(function (l) {
@@ -4280,9 +4362,13 @@
                 line.set('qty', 0);
               });
               receipt.set('skipCalculateReceipt', false);
-              // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
-              // may be called out of the pointofsale window, and in order to call the calculateReceipt function, the
-              // isCalculateReceiptLockState and isCalculateGrossLockState properties must be initialized
+              // These setIsCalculateReceiptLockState and
+				// setIsCalculateGrossLockState calls must be done because this
+				// function
+              // may be called out of the pointofsale window, and in order to
+				// call the calculateReceipt function, the
+              // isCalculateReceiptLockState and isCalculateGrossLockState
+				// properties must be initialized
               receipt.setIsCalculateReceiptLockState(false);
               receipt.setIsCalculateGrossLockState(false);
               receipt.calculateReceipt(function () {
@@ -4350,7 +4436,7 @@
 
     constructor: function (modelOrder) {
       if (modelOrder) {
-        //this._id = 'modelorderlist';
+        // this._id = 'modelorderlist';
         this.modelorder = modelOrder;
       }
       Backbone.Collection.prototype.constructor.call(this);
@@ -4391,7 +4477,17 @@
       order.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       order.set('updatedBy', OB.MobileApp.model.get('orgUserId'));
       order.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
-      order.set('orderType', OB.MobileApp.model.get('terminal').terminalType.layawayorder ? 2 : 0); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
+      order.set('orderType', OB.MobileApp.model.get('terminal').terminalType.layawayorder ? 2 : 0); // 0:
+																									// Sales
+																									// order,
+																									// 1:
+																									// Return
+																									// order,
+																									// 2:
+																									// Layaway,
+																									// 3:
+																									// Void
+																									// Layaway
       order.set('generateInvoice', false);
       order.set('isQuotation', false);
       order.set('oldId', null);
@@ -4468,8 +4564,10 @@
           NoFoundCustomer = true,
           isLoadedPartiallyFromBackend = false;
 
-      // Each payment that has been reverted stores the id of the reversal payment
-      // Web POS, instead of that, need to have the information of the payment reverted on the reversal payment
+      // Each payment that has been reverted stores the id of the reversal
+		// payment
+      // Web POS, instead of that, need to have the information of the payment
+		// reverted on the reversal payment
       // This loop switches the information between them
       _.each(_.filter(model.receiptPayments, function (payment) {
         return payment.isReversed;
@@ -4482,13 +4580,14 @@
       });
 
       // Call orderLoader plugings to adjust remote model to local model first
-      // ej: sales on credit: Add a new payment if total payment < total receipt
+      // ej: sales on credit: Add a new payment if total payment < total
+		// receipt
       // ej: gift cards: Add a new payment for each gift card discount
       _.each(OB.Model.modelLoaders, function (f) {
         f(model);
       });
 
-      //model.set('id', null);
+      // model.set('id', null);
       lines = new Backbone.Collection();
 
       // set all properties coming from the model
@@ -4498,7 +4597,8 @@
       order.set('isbeingprocessed', 'N');
       order.set('hasbeenpaid', 'N');
       order.set('isEditable', false);
-      order.set('checked', model.checked); //TODO: what is this for, where it comes from?
+      order.set('checked', model.checked); // TODO: what is this for, where it
+											// comes from?
       order.set('orderDate', OB.I18N.normalizeDate(model.orderDate));
       order.set('creationDate', OB.I18N.normalizeDate(model.creationDate));
       order.set('paidPartiallyOnCredit', false);
@@ -4511,10 +4611,14 @@
         order.set('id', null);
         order.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations);
         order.set('hasbeenpaid', 'Y');
-        // TODO: this commented lines are kept just in case this issue happens again
-        // Set creationDate milliseconds to 0, if the date is with milisecond, the date with miliseconds is rounded to seconds:
-        // so, the second can change, and the creationDate in quotation should not be changed when quotation is reactivated
-        // order.set('creationDate', moment(model.creationDate.toString(), "YYYY-MM-DD hh:m:ss").toDate());
+        // TODO: this commented lines are kept just in case this issue happens
+		// again
+        // Set creationDate milliseconds to 0, if the date is with milisecond,
+		// the date with miliseconds is rounded to seconds:
+        // so, the second can change, and the creationDate in quotation should
+		// not be changed when quotation is reactivated
+        // order.set('creationDate', moment(model.creationDate.toString(),
+		// "YYYY-MM-DD hh:m:ss").toDate());
       }
       if (model.isLayaway) {
         order.set('isLayaway', true);
@@ -4536,7 +4640,7 @@
         }
         order.set('id', model.orderid);
         if (order.get('documentType') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns) {
-          //It's a return
+          // It's a return
           order.set('orderType', 1);
         }
       }
@@ -4636,7 +4740,8 @@
                         relatedLines: iter.relatedLines
                       });
 
-                      // copy verbatim not owned properties -> modular properties.
+                      // copy verbatim not owned properties -> modular
+						// properties.
                       _.each(iter, function (value, key) {
                         if (!newline.ownProperties[key]) {
                           newline.set(key, value);
@@ -4678,7 +4783,7 @@
                 OB.Dal.get(OB.Model.Product, iter.id, function (product) {
                   addLineForProduct(product);
                 }, null, function () {
-                  //Empty
+                  // Empty
                   new OB.DS.Request('org.openbravo.retail.posterminal.master.LoadedProduct').exec({
                     productId: iter.id
                   }, function (data) {
@@ -4720,7 +4825,8 @@
                 })[0];
               }
               i = 0;
-              // Sort payments array, puting reverser payments inmediatly after their reversed payment
+              // Sort payments array, puting reverser payments inmediatly
+				// after their reversed payment
               while (i < model.receiptPayments.length) {
                 var payment = model.receiptPayments[i];
                 if (payment.reversedPaymentId && !payment.isSorted) {
@@ -4746,7 +4852,7 @@
                   }
                 });
               }
-              //order.set('payments', model.receiptPayments);
+              // order.set('payments', model.receiptPayments);
               payments = new PaymentLineList();
               _.each(model.receiptPayments, function (iter) {
                 var paymentProp;
@@ -4805,7 +4911,7 @@
       OB.Dal.get(OB.Model.BusinessPartner, bpId, function (bp) {
         bpartnerForProduct(bp);
       }, null, function () {
-        //Empty
+        // Empty
         new OB.DS.Request('org.openbravo.retail.posterminal.master.LoadedCustomer').exec({
           bpartnerId: bpId,
           bpLocationId: bpLocId
@@ -4877,7 +4983,8 @@
 
       if (!model.get('isQuotation')) {
         synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('addPaidReceipt');
-        // OB.Dal.save is done here because we want to force to save with the original id, only this time.
+        // OB.Dal.save is done here because we want to force to save with the
+		// original id, only this time.
         OB.Dal.save(model, function () {
           enyo.$.scrim.hide();
           OB.UTIL.SynchronizationHelper.finished(synchId, 'addPaidReceipt');
@@ -4991,7 +5098,8 @@
     },
 
     load: function (model) {
-      // Workaround to prevent the pending receipts moder window from remaining open
+      // Workaround to prevent the pending receipts moder window from
+		// remaining open
       // when the current receipt is selected from the list
       if (model && this.current && model.get('documentNo') === this.current.get('documentNo')) {
         return;
@@ -5009,9 +5117,9 @@
     loadCurrent: function (isNew) {
       if (this.current) {
         if (isNew) {
-          //set values of new attrs in current,
-          //this values will be copied to modelOrder
-          //in the next instruction
+          // set values of new attrs in current,
+          // this values will be copied to modelOrder
+          // in the next instruction
           this.modelorder.trigger('beforeChangeOrderForNewOne', this.current);
           this.current.set('isNewReceipt', true);
         }
@@ -5025,7 +5133,8 @@
     },
     synchronizeCurrentOrder: function () {
       // NOTE: No need to execute any business logic here
-      // The new functionality of loading document no, makes this function obsolete.
+      // The new functionality of loading document no, makes this function
+		// obsolete.
       // The function is not removed to avoid api changes
     }
   });
@@ -5043,7 +5152,8 @@
     initialize: function () {
       this.set('multiOrdersList', new Backbone.Collection());
       this.set('payments', new Backbone.Collection());
-      // ISSUE 24487: Callbacks of this collection still exists if you come back from other page.
+      // ISSUE 24487: Callbacks of this collection still exists if you come
+		// back from other page.
       // Force to remove callbacks
       this.get('multiOrdersList').off();
     },
@@ -5074,8 +5184,10 @@
       }
     },
     getSumOfOrigAmounts: function (paymentToIgnore) {
-      //returns a result with the sum up of every payments based on origAmount field
-      //if paymentToIignore parameter is provided the result will exclude that payment
+      // returns a result with the sum up of every payments based on
+		// origAmount field
+      // if paymentToIignore parameter is provided the result will exclude
+		// that payment
       var payments = this.get('payments');
       var sumOfPayments = OB.DEC.Zero;
       if (payments && payments.length > 0) {
@@ -5092,13 +5204,15 @@
       }
     },
     getDifferenceBetweenPaymentsAndTotal: function (paymentToIgnore) {
-      //Returns the difference (abs) between total to pay and payments.
-      //if paymentToIignore parameter is provided the result will exclude that payment.
+      // Returns the difference (abs) between total to pay and payments.
+      // if paymentToIignore parameter is provided the result will exclude
+		// that payment.
       return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getSumOfOrigAmounts(paymentToIgnore)));
     },
     getDifferenceRemovingSpecificPayment: function (currentPayment) {
-      //Returns the difference (abs) between total to pay and payments without take into account currentPayment
-      //Result is returned in the currency used by current payment
+      // Returns the difference (abs) between total to pay and payments
+		// without take into account currentPayment
+      // Result is returned in the currency used by current payment
       var differenceInDefaultCurrency;
       var differenceInForeingCurrency;
       differenceInDefaultCurrency = this.getDifferenceBetweenPaymentsAndTotal(currentPayment);
@@ -5129,12 +5243,16 @@
         precision = this.getPrecision(p);
         if (p.get('rate') && p.get('rate') !== '1') {
           p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
-          //Here we are trying to know if the current payment is making the pending to pay 0.
-          //to know that we are suming up every payments except the current one (getSumOfOrigAmounts)
-          //then we substract this amount from the total (getDifferenceBetweenPaymentsAndTotal)
-          //and finally we transform this difference to the foreign amount
-          //if the payment in the foreign amount makes pending to pay zero, then we will ensure that the payment
-          //in the default currency is satisfied
+          // Here we are trying to know if the current payment is making the
+			// pending to pay 0.
+          // to know that we are suming up every payments except the current
+			// one (getSumOfOrigAmounts)
+          // then we substract this amount from the total
+			// (getDifferenceBetweenPaymentsAndTotal)
+          // and finally we transform this difference to the foreign amount
+          // if the payment in the foreign amount makes pending to pay zero,
+			// then we will ensure that the payment
+          // in the default currency is satisfied
           if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount')))) === OB.DEC.Zero) {
             multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(p);
             if (p.get('origAmount') !== multiCurrencyDifference) {
@@ -5161,7 +5279,7 @@
       }
 
       // Calculation of the change....
-      //FIXME
+      // FIXME
       if (pcash) {
         if (pcash.get('kind') !== OB.MobileApp.model.get('paymentcash')) {
           auxCash = origCash;
@@ -5177,8 +5295,9 @@
         } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total)) > 0) {
           pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, OB.DEC.sub(paidCash, pcash.get('origAmount')))));
           this.set('payment', total);
-          //The change value will be computed through a rounded total value, to ensure that the total plus change
-          //add up to the paid amount without any kind of precission loss
+          // The change value will be computed through a rounded total value,
+			// to ensure that the total plus change
+          // add up to the paid amount without any kind of precission loss
           this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash, precision), origCash, precision), OB.Utilities.Number.roundJSNumber(total, 2), precision));
         } else {
           pcash.set('paid', auxCash);
@@ -5225,8 +5344,10 @@
             };
 
         if (!payment.get('paymentData')) {
-          // search for an existing payment only if there is not paymentData info.
-          // this avoids to merge for example card payments of different cards.
+          // search for an existing payment only if there is not paymentData
+			// info.
+          // this avoids to merge for example card payments of different
+			// cards.
           for (i = 0, max = payments.length; i < max; i++) {
             p = payments.at(i);
             if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment')) {
@@ -5306,7 +5427,7 @@
       }, this);
     },
     resetValues: function () {
-      //this.set('isMultiOrders', false);
+      // this.set('isMultiOrders', false);
       this.get('multiOrdersList').reset();
       this.set('total', OB.DEC.Zero);
       this.set('payment', OB.DEC.Zero);
@@ -5346,7 +5467,8 @@
       }
     }
   });
-  // order model is not registered using standard Registry method because list is
+  // order model is not registered using standard Registry method because list
+	// is
   // because collection is specific
   window.OB.Model.Order = Order;
   window.OB.Collection.OrderList = OrderList;
