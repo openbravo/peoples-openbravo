@@ -198,6 +198,7 @@ isc.OBQuickLaunch.addProperties({
         pickListCellHeight: OB.Styles.OBFormField.DefaultComboBox.quickRunPickListCellHeight,
         recentPropertyName: this.recentPropertyName,
         displayField: OB.Constants.IDENTIFIER,
+        entries: [],
 
         getControlTableCSS: function () {
           // prevent extra width settings, super class
@@ -217,13 +218,15 @@ isc.OBQuickLaunch.addProperties({
           quickCreateMenu = this.containerWidget.quickLaunchWidget.sortComponent(quickCreateMenu);
           if (this.title === 'Quick Launch') {
             this.containerWidget.quickLaunchWidget.setQuickComponentMap(quickLaunchMenu, me);
+            this.entries = quickLaunchMenu;
           } else if (this.title === 'Create New') {
             this.containerWidget.quickLaunchWidget.setQuickComponentMap(quickCreateMenu, me);
+            this.entries = quickCreateMenu;
           }
         },
 
         getClientPickListData: function () {
-          return this.pickList.data;
+          return this.entries;
         },
 
         selectOnFocus: true,
