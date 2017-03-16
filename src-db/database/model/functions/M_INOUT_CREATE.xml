@@ -106,7 +106,7 @@
             JOIN m_inventorystatus invs ON invs.m_inventorystatus_id = l.m_inventorystatus_id
       WHERE ms.ad_pinstance_id = v_ad_pinstance_id
       GROUP BY sd.m_product_id, sd.m_locator_id, sd.m_attributesetinstance_id, sd.c_uom_id,
-          sd.m_product_uom_id, u.stdprecision, ms.quantity, ms.qtyorder, ms.priority, iol.c_aum, iol.aumqty
+          sd.m_product_uom_id, u.stdprecision, ms.quantity, ms.qtyorder, ms.priority, iol.c_aum, iol.aumqty, invs.overissue
       HAVING ms.quantity - COALESCE(SUM(iol.movementqty), 0) > 0
       ORDER BY ms.priority;
 

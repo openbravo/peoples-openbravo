@@ -65,6 +65,9 @@
       <foreign-key foreignTable="AD_ORG" name="M_INVSTATUS_TRL_ORG_FK">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="M_INVENTORYSTATUS_TRL_INVS" unique="false">
+        <index-column name="M_INVENTORYSTATUS_ID"/>
+      </index>
       <check name="M_INVSTATUS_ACTIVE_TRL_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

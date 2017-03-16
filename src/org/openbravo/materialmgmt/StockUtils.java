@@ -52,7 +52,7 @@ public class StockUtils {
       String warehouseRuleId, String cUomId, String productUomId, String adTableId, String auxId,
       Long lineNo, String processId, String mReservationId, String calledFromApp, String available,
       String nettable, String overIssue) throws ServletException, NoConnectionAvailableException {
-    return StockUtilsData.getStock1(OBDal.getInstance().getConnection(true),
+    return StockUtilsData.getStock(OBDal.getInstance().getConnection(true),
         new DalConnectionProvider(true), uuid, recordId, quantity != null ? quantity.toString()
             : null, mProductId, mLocatorId, mWarehouseId, priorityWarehouseId, adOrgId,
         mAttributeSetInstanceId, adUserId, adClientId, warehouseRuleId, cUomId, productUomId,
