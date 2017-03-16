@@ -682,6 +682,7 @@
       }
 
       var sessionTimeoutMinutes = this.get('terminal').sessionTimeout;
+      var serverPingMinutes = this.get('serverTimeout');
       if (!this.sessionPing && sessionTimeoutMinutes) {
         var sessionTimeoutMilliseconds = sessionTimeoutMinutes * 60 * 1000;
         this.sessionPing = setInterval(function () {
@@ -700,6 +701,34 @@
           enyo.dispatch(e);
           this.downEvent = e;
         };
+      } else if (!this.sessionPing && !OB.MobileApp.model.get('permissions').OBPOS_SessionExpiration) {
+        var serverPingMilliseconds = serverPingMinutes * 60 * 1000;
+        if (serverPingMinutes === 0) {
+          return;
+        } else if (serverPingMinutes === 1) {
+          serverPingMilliseconds -= 30 * 1000;
+        } else {
+          serverPingMilliseconds -= 60 * 1000;
+        }
+        this.sessionPing = setInterval(function () {
+          var rr, ajaxRequest2 = new enyo.Ajax({
+            url: '../../org.openbravo.mobile.core.context',
+            cacheBust: false,
+            method: 'GET',
+            handleAs: 'json',
+            timeout: 20000,
+            data: {
+              ignoreForConnectionStatus: true
+            },
+            contentType: 'application/json;charset=utf-8',
+            success: function (inSender, inResponse) {},
+            fail: function (inSender, inResponse) {}
+          });
+          rr = new OB.RR.Request({
+            ajaxRequest: ajaxRequest2
+          });
+          rr.exec(ajaxRequest2.url);
+        }, serverPingMilliseconds);
       }
     },
 

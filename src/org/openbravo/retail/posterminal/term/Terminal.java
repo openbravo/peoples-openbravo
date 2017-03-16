@@ -132,6 +132,7 @@ public class Terminal extends JSONProcessSimple {
       }
 
       int sessionTimeout;
+      int serverTimeout;
       try {
         String sessionShouldExpire = Preferences.getPreferenceValue("OBPOS_SessionTimeout", true,
             OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
@@ -143,8 +144,10 @@ public class Terminal extends JSONProcessSimple {
           sessionTimeout = 0;
         }
       } catch (PropertyException e) {
-        sessionTimeout = getSessionTimeoutFromDatabase();
+        sessionTimeout = 0;
       }
+
+      serverTimeout = getSessionTimeoutFromDatabase();
 
       String terminalhqlquery = "select " + "'"
           + pricesList.getId()
@@ -235,6 +238,11 @@ public class Terminal extends JSONProcessSimple {
 
         arrayresult.put(jsonaux);
       }
+      // Set server timeout in response
+      JSONObject serverTimeoutObject = new JSONObject();
+      serverTimeoutObject.put("serverTimeout", serverTimeout);
+      arrayresult.put(serverTimeoutObject);
+
       JSONObject result = new JSONObject();
       result.put("data", arrayresult);
       result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
@@ -265,7 +273,7 @@ public class Terminal extends JSONProcessSimple {
         .uniqueResult();
     for (ModelImplementationParameter param : timeoutModelObj.getModelImplementationParameterList()) {
       if (param.getName().equalsIgnoreCase("Timeout")) {
-        return Integer.parseInt(param.getSearchKey()) - 1;
+        return Integer.parseInt(param.getSearchKey());
       }
     }
     return 59;
