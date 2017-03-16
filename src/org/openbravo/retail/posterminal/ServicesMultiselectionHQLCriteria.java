@@ -75,8 +75,8 @@ public class ServicesMultiselectionHQLCriteria extends HQLCriteriaProcess {
           + "             and sprv.obposMaximum >= " + maximumSelected //
           + "             or sprv.obposMinimum <= " + minimumSelected //
           + "             and sprv.obposMaximum is null" //
-          + "             or sprv.obposMinimum <= " + maximumSelected //
-          + "             and sprv.obposMaximum >= " + minimumSelected //
+          + "             or sprv.obposMinimum <= " + minimumSelected //
+          + "             and sprv.obposMaximum >= " + maximumSelected //
           + "      and sprv.active = true)))" //
           + "))"; //
     } catch (JSONException e) {
