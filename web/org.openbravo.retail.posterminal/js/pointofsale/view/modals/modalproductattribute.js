@@ -64,14 +64,34 @@ enyo.kind({
     var p = orderLine.get('product');
     var qty = orderLine.get('qty');
     var newLine= true;
+    var repeteadAttribute = false;
     
     if (attributeValue) {
-      if (this.validateAttribute(attributeValue)){
-    	orderLine.set('attributeValue',attributeValue);
-    	me.owner.model.get('order').save();
-      } else {
-    	OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NotValidAttribute'));
-      }
+    	  for (var i=0; i<me.owner.model.get('order').get('lines').length; i++) {
+    		  if(me.owner.model.get('order').get('lines').models[i].getAttributeValue() === attributeValue) {
+    			  repeteadAttribute = true;
+    			  var repeteadLine = me.owner.model.get('order').get('lines').models[i];
+    		  }
+    	  	}
+		if (this.validateAttribute(attributeValue)) {
+			if (repeteadAttribute) {
+				me.owner.model.get('order').get('lines').remove(orderLine);
+				 if(OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && p.get('hasAttributes') && p.get('isSerialNo')) {
+           		  OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ProductHasSerialNo'));  
+           	  	}
+				 else {
+					 me.owner.model.get('order').addUnit(repeteadLine, 1);
+				 }
+				me.owner.model.get('order').save();
+			}
+			else {
+				orderLine.set('attributeValue',attributeValue);
+				me.owner.model.get('order').save();
+			}
+		} 
+		else {
+			OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NotValidAttribute'));
+	    }
     }
     this.args.callbackPostAddProductToOrder(me.owner.model.get('order'),p, orderLine, qty, null, newLine, this.args.callbackPostAddProductToOrder);
     return true;

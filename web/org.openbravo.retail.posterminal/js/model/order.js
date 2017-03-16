@@ -1570,7 +1570,12 @@
               }
               var splitline = !(options && options.line) && !OB.UTIL.isNullOrUndefined(args.line) && !OB.UTIL.isNullOrUndefined(args.line.get('splitline')) && args.line.get('splitline');
               if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')))) {
-                args.receipt.addUnit(args.line, args.qty);
+            	    if(args.p.get('hasAttributes')) {
+            	    		line = args.receipt.createLine(args.p, args.qty, args.options, args.attrs);
+            	    }
+            	    else {
+            	    		args.receipt.addUnit(args.line, args.qty);
+            	    }
                 if (!_.isUndefined(args.attrs)) {
                   _.each(_.keys(args.attrs), function (key) {
                     if (args.p.get('productType') === 'S' && key === 'relatedLines' && args.line.get('relatedLines')) {
@@ -1580,9 +1585,11 @@
                     }
                   });
                 }
-                args.line.trigger('selected', args.line);
-                line = args.line;
-                newLine = false;
+                if(!args.p.get('hasAttributes')) {
+                		args.line.trigger('selected', args.line);
+                		line = args.line;
+                		newLine = false;
+                }
               } else {
                 if (args.attrs && args.attrs.relatedLines && args.attrs.relatedLines[0].deferred && args.p.get('quantityRule') === 'PP') {
                   line = args.receipt.createLine(args.p, args.attrs.relatedLines[0].qty, args.options, args.attrs);
@@ -1617,18 +1624,19 @@
           }
         }
         me.save();
-        if(p.get('hasAttributes')===true) {
-        	 OB.MobileApp.view.waterfall('onShowPopup', {
-                 popup: 'modalProductAttribute',
-                 args: {
-                	 line: line,
-                	 callbackPostAddProductToOrder: me.postAddProductToOrder
-                 }
-               });
- 		 }else{
- 			me.postAddProductToOrder(me, p, line, qty, options, newLine);
- 		 }
-        
+        if(!options) {
+        		if(p.get('hasAttributes')===true) {
+        			OB.MobileApp.view.waterfall('onShowPopup', {
+        				popup: 'modalProductAttribute',
+                     args: {
+                    	 line: line,
+                   	 callbackPostAddProductToOrder: me.postAddProductToOrder
+                    }
+                  });
+        		}else{
+        			me.postAddProductToOrder(me, p, line, qty, options, newLine);
+    		 }
+        }   
       } // End addProductToOrder
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('ignoreReturnApproval')) {
         if (options && options.isVerifiedReturn) {

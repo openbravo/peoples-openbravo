@@ -303,7 +303,16 @@ enyo.kind({
                   }
                 });
               } else {
-                actionAddProduct(keyboard, toadd);
+            	  if(OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && me.line.get('product').get('hasAttributes') && me.line.get('product').get('isSerialNo')) {
+            		  OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ProductHasSerialNo'));  
+            	  }
+            	  else if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && me.line.get('product').get('hasAttributes') && me.line.get('product').get('isSerialNo') === false) {
+            		  me.line.set('qty', value);
+            		  me.line.save();
+            	  }
+            	  else {
+            		  actionAddProduct(keyboard, toadd);
+            	  }
               }
             }
           });
