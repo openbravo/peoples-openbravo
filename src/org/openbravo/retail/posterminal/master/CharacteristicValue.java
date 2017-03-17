@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015 Openbravo S.L.U.
+ * Copyright (C) 2015-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -60,7 +60,6 @@ public class CharacteristicValue extends ProcessHQLQuery {
     List<String> hqlQueries = new ArrayList<String>();
     HQLPropertyList regularProductsChValueHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
-    String assortmentFilter = "";
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
     boolean isRemote = false;
@@ -75,20 +74,25 @@ public class CharacteristicValue extends ProcessHQLQuery {
       OBContext.restorePreviousMode();
     }
     if (!isRemote) {
-      assortmentFilter = "exists (select 1 from  ProductCharacteristicValue pcv, OBRETCO_Prol_Product assort  "
-          + " where pcv.characteristicValue.id=cv.id "
-          + " and pcv.product.id= assort.product.id "
-          + " and assort.obretcoProductlist.id= '" + productList.getId() + "' ) and ";
+      hqlQueries.add("select" + regularProductsChValueHQLProperties.getHqlSelect()
+          + "from CharacteristicValue cv, ADTreeNode node "
+          + "where cv.characteristic.tree = node.tree and cv.id = node.node "
+          + "and cv.characteristic.obposUseonwebpos = true and "
+          + "((cv.summaryLevel = false and exists (select 1 from  ProductCharacteristicValue pcv, "
+          + "OBRETCO_Prol_Product assort where pcv.characteristicValue.id = cv.id "
+          + "and pcv.product.id= assort.product.id " + "and assort.obretcoProductlist.id = '"
+          + productList.getId() + "')) or cv.summaryLevel = true) "
+          + "and $filtersCriteria and $hqlCriteria and cv.$naturalOrgCriteria "
+          + "and cv.$readableSimpleClientCriteria and (cv.$incrementalUpdateCriteria) "
+          + "order by cv.name, cv.id");
+    } else {
+      hqlQueries.add("select" + regularProductsChValueHQLProperties.getHqlSelect()
+          + "from CharacteristicValue cv where cv.characteristic.obposUseonwebpos = true "
+          + "and $filtersCriteria and $hqlCriteria and cv.$naturalOrgCriteria "
+          + "and cv.$readableSimpleClientCriteria and (cv.$incrementalUpdateCriteria) "
+          + "order by cv.name, cv.id");
     }
-    hqlQueries
-        .add("select"
-            + regularProductsChValueHQLProperties.getHqlSelect()
-            + "from CharacteristicValue cv, ADTreeNode node "
-            + "where cv.characteristic.tree =  node.tree and cv.id = node.node and  $filtersCriteria AND $hqlCriteria "
-            + "and cv.characteristic.obposUseonwebpos = true  and "
-            + assortmentFilter
-            + " cv.$naturalOrgCriteria and cv.$readableSimpleClientCriteria and (cv.$incrementalUpdateCriteria) "
-            + "order by cv.name, cv.id");
+
     return hqlQueries;
   }
 }
