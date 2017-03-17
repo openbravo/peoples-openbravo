@@ -180,7 +180,7 @@ isc.OBQuickLaunch.addProperties({
       autoFocus: true,
       width: '100%',
       titleSuffix: '',
-      quickLaunchWidget: me,
+      quickMenuWidget: me,
       fields: [{
         name: 'value',
         cellStyle: OB.Styles.OBFormField.DefaultComboBox.cellStyle,
@@ -207,22 +207,12 @@ isc.OBQuickLaunch.addProperties({
         },
 
         makePickList: function () {
-          var menu = OB.Application.menu,
-              quickLaunchMenu = [],
-              quickCreateMenu = [],
-              me = this,
-              i;
+          var quickMenu = this.containerWidget.quickMenuWidget;
+
+          quickMenu.getQuickMenuItems(OB.Application.menu, this.entries);
+          quickMenu.sortQuickMenuItems(this.entries);
+          quickMenu.setQuickMenuValueMap(this);
           this.Super('makePickList', arguments);
-          this.containerWidget.quickLaunchWidget.getComponentMenu(menu, quickLaunchMenu, quickCreateMenu, me);
-          quickLaunchMenu = this.containerWidget.quickLaunchWidget.sortComponent(quickLaunchMenu);
-          quickCreateMenu = this.containerWidget.quickLaunchWidget.sortComponent(quickCreateMenu);
-          if (this.title === 'Quick Launch') {
-            this.containerWidget.quickLaunchWidget.setQuickComponentMap(quickLaunchMenu, me);
-            this.entries = quickLaunchMenu;
-          } else if (this.title === 'Create New') {
-            this.containerWidget.quickLaunchWidget.setQuickComponentMap(quickCreateMenu, me);
-            this.entries = quickCreateMenu;
-          }
         },
 
         getClientPickListData: function () {
@@ -398,26 +388,25 @@ isc.OBQuickLaunch.addProperties({
     return ret;
   },
 
-  getComponentMenu: function (menu, quickLaunch, quickCreate, type) {
+  getQuickMenuItems: function (menu, quickMenu) {
     var i;
     for (i = 0; i < menu.length; i++) {
       if (menu[i].submenu) {
-        this.getComponentMenu(menu[i].submenu, quickLaunch, quickCreate, type);
-      } else {
-        if (type.title === 'Quick Launch' && !this.isFolder(menu[i])) {
-          quickLaunch.add(menu[i]);
-        } else if (type.title === 'Create New' && this.isWindowAndCanCreateNewRecord(menu[i])) {
-          quickCreate.add(menu[i]);
-        }
+        this.getQuickMenuItems(menu[i].submenu, quickMenu);
+      } else if (this.isValidMenuItem(menu[i])) {
+        quickMenu.add(menu[i]);
       }
     }
   },
 
-  sortComponent: function (component) {
-    component.sort(function (a, b) {
+  isValidMenuItem: function (menuItem) {
+    return false;
+  },
+
+  sortQuickMenuItems: function (menuItems) {
+    menuItems.sort(function (a, b) {
       return (a._identifier > b._identifier) - (a._identifier < b._identifier);
     });
-    return component;
   },
 
   isFolder: function (menuItem) {
@@ -428,36 +417,30 @@ isc.OBQuickLaunch.addProperties({
     return (menuItem.type === 'window' && !menuItem.readOnly && !menuItem.singleRecord && !menuItem.editOrDeleteOnly);
   },
 
-  setQuickComponentMap: function (component, me) {
-    var length = component.length,
-        i, id, identifier, valueMap = {},
-        valueMapElement, valueField = me.getValueFieldName(),
-        valueFieldContent, valueMapData = [];
+  setQuickMenuValueMap: function (quickMenuCombo) {
+    var i, menuEntry, menuEntries = isc.clone(quickMenuCombo.entries),
+        valueMap = {};
 
-    if (!me.setValueMap) {
+    if (!quickMenuCombo.setValueMap) {
       return;
     }
 
-    for (i = 0; i < length; i++) {
-      id = component[i].id;
-      //identifier = component[i]._identifier;
-      valueMapElement = component[i];
-      valueMap[id] = valueMapElement;
-      valueMapData.push(valueMapElement);
+    for (i = 0; i < menuEntries.length; i++) {
+      menuEntry = menuEntries[i];
+      valueMap[menuEntry.id] = menuEntry;
     }
+    quickMenuCombo.preventPickListRequest = true; // preventing 1st request triggered by setValueMap
+    quickMenuCombo.setValueMap(valueMap);
 
-    me.preventPickListRequest = true; // preventing 1st request triggered by setValueMap
-    me.setValueMap(valueMap);
-
-    if (me.pickList) {
-      me.pickList.data = valueMapData;
-      me.pickList.data.initialData = valueMapData;
-      me.pickList.data.allRows = valueMapData;
-      me.pickList.data.fetchMode = "local";
-      me.pickList.data.useClientFiltering = true;
-      me.pickList.data.useClientSorting = true;
-      me.pickList.data.disableCacheSync = true;
-      me.pickList.data.neverDropCache = true;
+    if (quickMenuCombo.pickList) {
+      quickMenuCombo.pickList.data = menuEntries;
+      quickMenuCombo.pickList.data.initialData = menuEntries;
+      quickMenuCombo.pickList.data.allRows = menuEntries;
+      quickMenuCombo.pickList.data.fetchMode = "local";
+      quickMenuCombo.pickList.data.useClientFiltering = true;
+      quickMenuCombo.pickList.data.useClientSorting = true;
+      quickMenuCombo.pickList.data.disableCacheSync = true;
+      quickMenuCombo.pickList.data.neverDropCache = true;
     }
   }
 });

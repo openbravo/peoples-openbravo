@@ -29,14 +29,25 @@ isc.OBQuickLaunch.create({
   recentPropertyName: '${data.recentPropertyName}',
   titleLabel: '${data.label}',
   command: '${data.command}',
-  initWidget: function(){
-   if (this.buttonType) {
-     if (this.buttonType === 'createNew' && this.createNew_src) {
-       this.setSrc(this.createNew_src);
-     } else if (this.buttonType === 'quickLaunch' && this.quickLaunch_src) {
-       this.setSrc(this.quickLaunch_src);
-     }
-   }
-   this.Super('initWidget', arguments);
-  }
+  initWidget: function() {
+  <#if data.buttonType == "createNew">
+    if (this.createNew_src) {
+      this.setSrc(this.createNew_src);
+    }
+  <#elseif data.buttonType == "quickLaunch">
+    if (this.quickLaunch_src) {
+      this.setSrc(this.quickLaunch_src);
+    }
+  </#if>
+    this.Super('initWidget', arguments);
+  },
+  isValidMenuItem: function (menuItem) {
+  <#if data.buttonType == "createNew">
+    return this.isWindowAndCanCreateNewRecord(menuItem);
+  <#elseif data.buttonType == "quickLaunch">
+    return !this.isFolder(menuItem);
+  <#else>
+    return this.Super('isValidMenuItem', arguments);
+  </#if>
+  },
 })
