@@ -74,7 +74,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
             .getInstance().get(Calendar.DST_OFFSET)) / (60 * 1000));
         log.error("Error processing cash close (1): error retrieving the timezoneOffset. Using the current timezoneOffset");
       }
-      cashUpDate = OBMOBCUtils.calculateClientDatetime(strCashUpDate, timezoneOffset);
+      cashUpDate = OBMOBCUtils.calculateServerDatetime(strCashUpDate, timezoneOffset);
     } else {
       log.debug("Error processing cash close (2): error retrieving cashUp date. Using current server date");
     }
