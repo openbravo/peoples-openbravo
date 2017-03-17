@@ -25,25 +25,11 @@ public class FixDataIssue35364 extends ModuleScript {
   @Override
   public void execute() {
     try {
-      final StringBuilder sql1 = new StringBuilder();
-      final StringBuilder sql2 = new StringBuilder();
-      final StringBuilder sql3 = new StringBuilder();
-      final StringBuilder sql4 = new StringBuilder();
-      sql1.append("update obpos_paymentmethodcashup set amounttokeep = 0 where amounttokeep is null ");
-      sql2.append("update obpos_paymentmethodcashup set startingcash = 0 where startingcash is null ");
-      sql3.append("update obpos_paymentmethodcashup set totalsales = 0 where totalsales is null ");
-      sql4.append("update obpos_paymentmethodcashup set totalreturns = 0 where totalreturns is null ");
-
       ConnectionProvider cp = getConnectionProvider();
-      PreparedStatement ps1 = cp.getPreparedStatement(sql1.toString());
-      PreparedStatement ps2 = cp.getPreparedStatement(sql2.toString());
-      PreparedStatement ps3 = cp.getPreparedStatement(sql3.toString());
-      PreparedStatement ps4 = cp.getPreparedStatement(sql4.toString());
-      
-      ps1.executeUpdate();
-      ps2.executeUpdate();
-      ps3.executeUpdate();
-      ps4.executeUpdate();
+      FixDataIssue35364Data.fixPOSAmounttokeep(cp);
+      FixDataIssue35364Data.fixPOSStartingcash(cp);
+      FixDataIssue35364Data.fixPOSTotalsales(cp);
+      FixDataIssue35364Data.fixPOSTotalreturns(cp);
     } catch (Exception e) {
       handleError(e);
     }
