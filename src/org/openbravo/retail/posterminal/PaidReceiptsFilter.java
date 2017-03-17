@@ -76,8 +76,7 @@ public class PaidReceiptsFilter extends ProcessHQLQuery {
         + orderTypeHql
         + " and ord.$orgId"
         + " and ord.obposIsDeleted = false and ord.obposApplications is not null and ord.documentStatus <> 'CJ' "
-        + " and ord.documentStatus <> 'CA'  "
-        + " and exists(select 1 from ord.orderLineList where orderedQuantity != 0) "
+        + " and ord.documentStatus <> 'CA' and ord.documentStatus <> 'CL' "//
         + " $orderByCriteria";
 
     return Arrays.asList(new String[] { hqlPaidReceipts });
