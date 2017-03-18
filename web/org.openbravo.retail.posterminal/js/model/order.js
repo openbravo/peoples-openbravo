@@ -1624,19 +1624,20 @@
           }
         }
         me.save();
-        if(!options) {
-        		if(p.get('hasAttributes')===true) {
-        			OB.MobileApp.view.waterfall('onShowPopup', {
-        				popup: 'modalProductAttribute',
-                     args: {
-                    	 line: line,
-                   	 callbackPostAddProductToOrder: me.postAddProductToOrder
-                    }
-                  });
-        		}else{
-        			me.postAddProductToOrder(me, p, line, qty, options, newLine);
-    		 }
-        }   
+        if(p.get('hasAttributes') && !options) {
+        	OB.MobileApp.view.waterfall('onShowPopup', {
+        		popup: 'modalProductAttribute',
+        		args: {
+        			line: line,
+        			callbackPostAddProductToOrder: me.postAddProductToOrder
+        		}
+        	});
+        }else{
+        	me.postAddProductToOrder(me, p, line, qty, options, newLine);
+        }
+        if (callback) {
+        	callback(true, line);
+        }
       } // End addProductToOrder
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('ignoreReturnApproval')) {
         if (options && options.isVerifiedReturn) {
@@ -3295,7 +3296,7 @@
           pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, OB.DEC.sub(paidCash, pcash.get('origAmount')))));
           this.set('payment', OB.DEC.abs(total));
           // The change value will be computed through a rounded total value,
-			// to ensure that the total plus change
+		  // to ensure that the total plus change
           // add up to the paid amount without any kind of precission loss
           this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash, precision), origCash, precision), OB.Utilities.Number.roundJSNumber(total, 2), precision));
         } else {
@@ -3361,9 +3362,9 @@
         }
         if (!payment.get('paymentData') && !payment.get('reversedPaymentId')) {
           // search for an existing payment only if there is not paymentData
-			// info.
+		  // info.
           // this avoids to merge for example card payments of different
-			// cards.
+		  // cards.
           for (i = 0, max = payments.length; i < max; i++) {
             p = payments.at(i);
             if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment') && !p.get('reversedPaymentId')) {
@@ -4486,16 +4487,16 @@
       order.set('updatedBy', OB.MobileApp.model.get('orgUserId'));
       order.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
       order.set('orderType', OB.MobileApp.model.get('terminal').terminalType.layawayorder ? 2 : 0); // 0:
-																									// Sales
-																									// order,
-																									// 1:
-																									// Return
-																									// order,
-																									// 2:
-																									// Layaway,
-																									// 3:
-																									// Void
-																									// Layaway
+// Sales
+// order,
+// 1:
+// Return
+// order,
+// 2:
+// Layaway,
+// 3:
+// Void
+// Layaway
       order.set('generateInvoice', false);
       order.set('isQuotation', false);
       order.set('oldId', null);
@@ -5107,7 +5108,7 @@
 
     load: function (model) {
       // Workaround to prevent the pending receipts moder window from
-		// remaining open
+	  // remaining open
       // when the current receipt is selected from the list
       if (model && this.current && model.get('documentNo') === this.current.get('documentNo')) {
         return;
@@ -5142,7 +5143,7 @@
     synchronizeCurrentOrder: function () {
       // NOTE: No need to execute any business logic here
       // The new functionality of loading document no, makes this function
-		// obsolete.
+	  // obsolete.
       // The function is not removed to avoid api changes
     }
   });
@@ -5161,7 +5162,7 @@
       this.set('multiOrdersList', new Backbone.Collection());
       this.set('payments', new Backbone.Collection());
       // ISSUE 24487: Callbacks of this collection still exists if you come
-		// back from other page.
+	  // back from other page.
       // Force to remove callbacks
       this.get('multiOrdersList').off();
     },
@@ -5193,9 +5194,9 @@
     },
     getSumOfOrigAmounts: function (paymentToIgnore) {
       // returns a result with the sum up of every payments based on
-		// origAmount field
+	  // origAmount field
       // if paymentToIignore parameter is provided the result will exclude
-		// that payment
+	  // that payment
       var payments = this.get('payments');
       var sumOfPayments = OB.DEC.Zero;
       if (payments && payments.length > 0) {
@@ -5214,12 +5215,12 @@
     getDifferenceBetweenPaymentsAndTotal: function (paymentToIgnore) {
       // Returns the difference (abs) between total to pay and payments.
       // if paymentToIignore parameter is provided the result will exclude
-		// that payment.
+	  // that payment.
       return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getSumOfOrigAmounts(paymentToIgnore)));
     },
     getDifferenceRemovingSpecificPayment: function (currentPayment) {
       // Returns the difference (abs) between total to pay and payments
-		// without take into account currentPayment
+	  // without take into account currentPayment
       // Result is returned in the currency used by current payment
       var differenceInDefaultCurrency;
       var differenceInForeingCurrency;
@@ -5252,14 +5253,14 @@
         if (p.get('rate') && p.get('rate') !== '1') {
           p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
           // Here we are trying to know if the current payment is making the
-			// pending to pay 0.
+		  // pending to pay 0.
           // to know that we are suming up every payments except the current
-			// one (getSumOfOrigAmounts)
+		  // one (getSumOfOrigAmounts)
           // then we substract this amount from the total
-			// (getDifferenceBetweenPaymentsAndTotal)
+		  // (getDifferenceBetweenPaymentsAndTotal)
           // and finally we transform this difference to the foreign amount
           // if the payment in the foreign amount makes pending to pay zero,
-			// then we will ensure that the payment
+		  // then we will ensure that the payment
           // in the default currency is satisfied
           if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount')))) === OB.DEC.Zero) {
             multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(p);
@@ -5304,7 +5305,7 @@
           pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, OB.DEC.sub(paidCash, pcash.get('origAmount')))));
           this.set('payment', total);
           // The change value will be computed through a rounded total value,
-			// to ensure that the total plus change
+		  // to ensure that the total plus change
           // add up to the paid amount without any kind of precission loss
           this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash, precision), origCash, precision), OB.Utilities.Number.roundJSNumber(total, 2), precision));
         } else {
@@ -5353,7 +5354,7 @@
 
         if (!payment.get('paymentData')) {
           // search for an existing payment only if there is not paymentData
-			// info.
+		  // info.
           // this avoids to merge for example card payments of different
 			// cards.
           for (i = 0, max = payments.length; i < max; i++) {
@@ -5476,7 +5477,7 @@
     }
   });
   // order model is not registered using standard Registry method because list
-	// is
+  // is
   // because collection is specific
   window.OB.Model.Order = Order;
   window.OB.Collection.OrderList = OrderList;
