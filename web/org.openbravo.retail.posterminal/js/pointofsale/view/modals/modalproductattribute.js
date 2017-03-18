@@ -98,7 +98,7 @@ enyo.kind({
   },
 
   cancel: function () {
-    var currentLine = this.owner.model.get('order').get('lines').at(0);
+    var currentLine = this.args.line
     if (currentLine) {
       this.owner.model.get('order').deleteLine(currentLine);
       this.owner.model.get('order').save();
