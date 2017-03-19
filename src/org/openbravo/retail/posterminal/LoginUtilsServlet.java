@@ -373,7 +373,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
   protected JSONArray getServers(OBPOSApplications terminal) throws JSONException {
     JSONArray respArray = new JSONArray();
 
-    if (!MobileServerUtils.isMultiServerEnabled(terminal.getClient(), terminal.getOrganization())) {
+    if (!MobileServerUtils.isMultiServerEnabled()) {
       return respArray;
     }
 
