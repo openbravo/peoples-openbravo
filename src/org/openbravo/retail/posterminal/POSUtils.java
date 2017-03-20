@@ -792,4 +792,28 @@ public class POSUtils {
     }
   }
 
+  /**
+   * Method to calculate the number of characteristics marked as "Filter on Web POS"
+   */
+  public static long getNumberOfCharacteristicsToFilterInWebPos() {
+    long result = -1;
+    try {
+      Query queryNumberOfChToFilterInWebPos = OBDal.getInstance().getSession()
+          .createQuery("select count(ch.id) " //
+              + "from Characteristic as ch " //
+              + "where ch.obposFilteronwebpos ='Y' and ch.client.id = :client ");
+
+      queryNumberOfChToFilterInWebPos.setParameter("client", OBContext.getOBContext()
+          .getCurrentClient().getId());
+
+      result = (long) queryNumberOfChToFilterInWebPos.uniqueResult();
+    } catch (Exception e) {
+      String errorMsg = "Error getting the number of characteristic which are used to filter in Web POS: "
+          + e.getMessage();
+      log.error(errorMsg, e);
+      throw new OBException(errorMsg);
+    }
+    return result;
+  }
+
 }

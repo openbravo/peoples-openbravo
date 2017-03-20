@@ -13,4 +13,5 @@ public class POSConstants {
   public static final String MODULE_ID = "FF808181326CC34901326D53DBCF0018";
   public static final String APP_NAME = "WebPOS";
   public static final String CROSS_CHANNEL = "cross_channel";
+  public static final long MAX_CHARACTERISTICS_TO_BE_FILTERED_IN_WEB_POS = 50;
 }

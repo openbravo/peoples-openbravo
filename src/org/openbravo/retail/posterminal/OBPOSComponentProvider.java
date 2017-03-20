@@ -269,6 +269,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     // Unlink onLoad in the ERP
     globalResources.add(createComponentResource(ComponentResourceType.Static, prefix
         + "utils/unlinkDeviceOnLoad.js", ComponentResource.APP_OB3));
+    globalResources.add(createComponentResource(ComponentResourceType.Static, prefix
+        + "/utils/checkChToFilterInWebPos.js", ComponentResource.APP_OB3));
 
     final String[] cssDependency = { "pos-login", "obpos-main" };
 
