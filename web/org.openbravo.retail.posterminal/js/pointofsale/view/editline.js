@@ -353,6 +353,11 @@ enyo.kind({
         order.set('undo', null);
         order.set('multipleUndo', true);
         order.set('preventServicesUpdate', true);
+        //The value of qty need to be negate because we want to change it
+        if (order.validateAllowSalesWithReturn(-1, false, me.owner.owner.selectedModels)) {
+          me.owner.owner.rearrangeEditButtonBar();
+          return;
+        }
         _.each(me.owner.owner.selectedModels, function (line) {
           if (!line.get('notReturnThisLine')) {
             me.owner.owner.doReturnLine({

@@ -438,7 +438,7 @@ enyo.kind({
           var approvalNeeded = false,
               servicesToApprove = '',
               servicesList = [];
-          if (keyboard.receipt.validateAllowSalesWithReturn(value, false)) {
+          if (keyboard.receipt.validateAllowSalesWithReturn(value, false, me.selectedModels)) {
             return;
           }
           if (value < 0) {

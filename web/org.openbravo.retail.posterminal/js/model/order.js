@@ -2239,10 +2239,6 @@
 
     returnLine: function (line, options, skipValidaton) {
       var me = this;
-      //The value of qty need to be negate because we want to change it
-      if (this.validateAllowSalesWithReturn(-line.get('qty'), skipValidaton)) {
-        return;
-      }
       if (line.get('qty') > 0) {
         line.get('product').set('ignorePromotions', true);
       } else {
@@ -2472,19 +2468,26 @@
       }
     },
 
-    validateAllowSalesWithReturn: function (qty, skipValidaton) {
+    validateAllowSalesWithReturn: function (qty, skipValidaton, selectedModels) {
       if (OB.MobileApp.model.hasPermission('OBPOS_NotAllowSalesWithReturn', true) && !skipValidaton) {
-        var negativeLines = _.filter(this.get('lines').models, function (line) {
+        var negativeLines, receiptLines = this.get('lines').length,
+            selectedLines = selectedModels ? selectedModels.length : 0;
+        negativeLines = _.filter(this.get('lines').models, function (line) {
           return line.get('qty') < 0;
         }).length;
-        if (this.get('lines').length > 0) {
-          if (qty > 0 && negativeLines > 0) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
-            return true;
-          } else if (qty < 0 && negativeLines !== this.get('lines').length) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
-            return true;
-          }
+        if (qty < 0 && negativeLines === 0 && selectedLines > 0 && receiptLines === selectedLines) {
+          this.setOrderType('OBPOS_receipt.return', OB.DEC.One, {
+            applyPromotions: false,
+            saveOrder: true
+          });
+          return true;
+        }
+        if (qty > 0 && negativeLines > 0) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
+          return true;
+        } else if (qty < 0 && negativeLines !== receiptLines) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
+          return true;
         }
       }
       if (this.isLayaway() && qty < 0) {
