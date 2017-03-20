@@ -379,6 +379,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             JSONObject jsonOrderLine = orderlines.getJSONObject(i);
             orderLine
                 .setObposCanbedelivered(jsonOrderLine.optBoolean("obposCanbedelivered", false));
+            orderLine.setObposIspaid(jsonOrderLine.optBoolean("obposIspaid", false));
             BigDecimal qtyToDeliver = jsonOrderLine.has("obposQtytodeliver") ? BigDecimal
                 .valueOf(jsonOrderLine.getDouble("obposQtytodeliver")) : orderLine
                 .getOrderedQuantity();
