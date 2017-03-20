@@ -49,5 +49,5 @@ isc.OBQuickLaunch.create({
   <#else>
     return this.Super('isValidMenuItem', arguments);
   </#if>
-  },
+  }
 })
