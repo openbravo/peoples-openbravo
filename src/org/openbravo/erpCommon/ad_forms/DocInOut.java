@@ -319,6 +319,8 @@ public class DocInOut extends AcctServer {
           costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
         } else if (line.transaction != null && line.transaction.getCurrency() != null) {
           costCurrency = line.transaction.getCurrency();
+        } else if (line.m_C_Currency_ID != null) {
+          costCurrency = OBDal.getInstance().get(Currency.class, line.m_C_Currency_ID);
         }
         C_Currency_ID = costCurrency.getId();
         int standardPrecision = 2;
