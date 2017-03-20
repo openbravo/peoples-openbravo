@@ -4568,24 +4568,16 @@
           var locationForBpartner = function (bpLoc) {
               bp.set('shipLocName', bpLoc.get('name'));
               bp.set('shipLocId', bpLoc.get('id'));
+              bp.set('locName', bpLoc.get('name'));
+              bp.set('locId', bpLoc.get('id'));
+              bp.set('postalCode', bpLoc.get('postalCode'));
+              bp.set('cityName', bpLoc.get('cityName'));
+              bp.set('countryName', bpLoc.get('countryName'));
               bp.set('locationModel', bpLoc);
               order.set('bp', bp);
               order.set('gross', model.totalamount);
               order.set('net', model.totalNetAmount);
-              OB.Dal.get(OB.Model.BPLocation, bpBillLocId, function (bpLoc) {
-                bp.set('locName', bpLoc.get('name'));
-                bp.set('locId', bpLoc.get('id'));
-                bp.set('postalCode', bpLoc.get('postalCode'));
-                bp.set('cityName', bpLoc.get('cityName'));
-                bp.set('countryName', bpLoc.get('countryName'));
-                bp.set('locationModel', bpLoc);
-                order.trigger('change:bp', order);
-              }, function () {
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_NoReceiptLoadedLocation'), [{
-                  label: OB.I18N.getLabel('OBPOS_LblOk'),
-                  isConfirmButton: true
-                }]);
-              });
+              order.trigger('change:bp', order);
 
               var linepos = 0,
                   hasDeliveredProducts = false,
