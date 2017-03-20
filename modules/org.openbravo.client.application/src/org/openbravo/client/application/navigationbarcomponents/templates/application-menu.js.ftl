@@ -40,7 +40,6 @@ isc.OBApplicationMenuButton.create({
         , tabId: '${menuOption.id?js_string}'
         , windowId: '${menuOption.menu.window.id?js_string}'
         , optionType: 'tab'
-        , icon: 'Window'
         , id:'${menuOption.dbId}'
         , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.process>
@@ -48,7 +47,6 @@ isc.OBApplicationMenuButton.create({
         , optionType: 'process'
         , manualUrl: '${menuOption.id?js_string}'
         , processId: '${menuOption.menu.process.id}'
-        , icon: 'Process'
         , id:'${menuOption.dbId}'
         , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.processManual>
@@ -56,7 +54,6 @@ isc.OBApplicationMenuButton.create({
         , optionType: 'processManual'
         , manualUrl: '${menuOption.id?js_string}'
         , manualProcessId: '${menuOption.menu.process.id}'
-        , icon: 'Process'
         , id:'${menuOption.dbId}'
         , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.report && !menuOption.processDefinition>
@@ -64,7 +61,6 @@ isc.OBApplicationMenuButton.create({
         , optionType: 'url'
         , manualUrl: '${menuOption.id?js_string}'
         , manualProcessId: '${menuOption.menu.process.id}'
-        , icon: 'Report'
         , id:'${menuOption.dbId}'
         , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.form>
@@ -72,7 +68,6 @@ isc.OBApplicationMenuButton.create({
         , optionType: 'url'
         , manualUrl: '${menuOption.id?js_string}'
         , formId: '${menuOption.formId?js_string}'
-        , icon: 'Form'
         , id:'${menuOption.dbId}'
         , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.external>
@@ -80,7 +75,6 @@ isc.OBApplicationMenuButton.create({
         , optionType: 'external'
         , externalUrl: '${menuOption.id?js_string}'
         , openLinkInBrowser: ${menuOption.menu.openlinkinbrowser?string}
-        , icon: 'ExternalLink'
         , id:'${menuOption.dbId}'
         , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.view>
@@ -88,7 +82,6 @@ isc.OBApplicationMenuButton.create({
         , optionType: 'url'
         , viewId: '${menuOption.id?js_string}'
         , tabTitle: '${menuOption.label?js_string}'
-        , icon: 'Window'
         , id:'${menuOption.dbId}'
         , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.processDefinition>
@@ -97,7 +90,6 @@ isc.OBApplicationMenuButton.create({
         , viewId: 'processDefinition_${menuOption.menu.oBUIAPPProcessDefinition.id}'
         , uiPattern: '${menuOption.menu.oBUIAPPProcessDefinition.uIPattern?js_string}'
         , processId: '${menuOption.menu.oBUIAPPProcessDefinition.id}'
-        , icon: <#if menuOption.report>'Report'<#else>'Process'</#if>
         , id:'${menuOption.dbId}'
         , viewValue: 'processDefinition_${menuOption.menu.oBUIAPPProcessDefinition.id}'
     </#if>

@@ -341,7 +341,6 @@ isc.OBQuickLaunch.addProperties({
             openObject.readOnly = record.readOnly;
 
             openObject.icon = record.icon;
-
             openObject = isc.addProperties({}, record, openObject);
 
             if (openObject.openLinkInBrowser && openObject.viewId === 'OBExternalPage') {
@@ -389,14 +388,36 @@ isc.OBQuickLaunch.addProperties({
   },
 
   getQuickMenuItems: function (menu, quickMenu) {
-    var i;
+    var i, menuItem, validMenuItem;
     for (i = 0; i < menu.length; i++) {
-      if (menu[i].submenu) {
-        this.getQuickMenuItems(menu[i].submenu, quickMenu);
-      } else if (this.isValidMenuItem(menu[i])) {
-        quickMenu.add(menu[i]);
+      menuItem = menu[i];
+      if (menuItem.submenu) {
+        this.getQuickMenuItems(menuItem.submenu, quickMenu);
+      } else if (this.isValidMenuItem(menuItem)) {
+        validMenuItem = isc.clone(menuItem);
+        validMenuItem.icon = this.getMenuItemIcon(validMenuItem);
+        quickMenu.add(validMenuItem);
       }
     }
+  },
+
+  getMenuItemIcon: function (menuItem) {
+    if (menuItem.type === 'process' || menuItem.type === 'processManual') {
+      return 'Process';
+    } else if (menuItem.type === 'processDefinition') {
+      if (menuItem.uiPattern === 'OBUIAPP_Report') {
+        return 'Report';
+      } else {
+        return 'Process';
+      }
+    } else if (menuItem.type === 'report') {
+      return 'Report';
+    } else if (menuItem.type === 'form') {
+      return 'Form';
+    } else if (menuItem.type === 'external') {
+      return 'ExternalLink';
+    }
+    return 'Window';
   },
 
   isValidMenuItem: function (menuItem) {
