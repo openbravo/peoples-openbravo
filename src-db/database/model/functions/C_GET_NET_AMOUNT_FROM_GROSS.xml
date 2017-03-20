@@ -30,6 +30,12 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 
+/*
+* It returns the Net Amount calculated from the Gross Amount after applying the Tax.
+* Net Amount will be rounded to p_stdprecision if not NULL,
+* otherwise it will be rounded to a big precision (50) to avoid rounding issues.
+*/
+
 v_ResultStr VARCHAR(2000) := '';
 v_calcPrecision NUMBER:= 50;
 v_TaxAmount NUMBER;

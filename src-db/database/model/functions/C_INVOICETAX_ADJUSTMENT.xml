@@ -26,6 +26,14 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
+
+/*
+* It rounds C_InvoiceLineTax and C_InvoiceTax TaxBaseAmt and adjusts C_InvoiceTax TaxAmt and C_InvoiceLine LineNetAmt
+* when completing the p_invoice_id invoice.
+* It removes C_InvoiceLineTax and C_InvoiceTax taxes and C_InvoiceLine and C_Invoice amounts and recalculates them again
+* when reactivating the p_invoice_id invoice.
+*/
+
 -- Variables
 v_taxAmt C_INVOICETAX.TaxAmt%TYPE;
 v_amount C_INVOICELINE.Line_Gross_Amount%TYPE;
