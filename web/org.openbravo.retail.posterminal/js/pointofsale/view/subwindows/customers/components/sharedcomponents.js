@@ -445,7 +445,8 @@ enyo.kind({
       OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerSave', {
         customer: customer,
         isNew: isNew,
-        validations: inEvent.validations
+        validations: inEvent.validations,
+        windowComponent: me
       }, function (args) {
         if (args && args.cancellation && args.cancellation === true) {
           return true;
