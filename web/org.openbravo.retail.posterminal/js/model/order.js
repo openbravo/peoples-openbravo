@@ -2745,7 +2745,7 @@
 
       OB.Dal.remove(this, function () {
         me.get('lines').each(function (line) {
-          idMap[line.get('id')] = OB.Dal.get_uuid();
+          idMap[line.get('id')] = OB.UTIL.get_UUID();
           line.set('replacedorderline', line.get('id'));
           line.set('id', idMap[line.get('id')]);
         }, me);
@@ -2913,7 +2913,7 @@
         line.unset('grossListPrice');
         line.unset('grossUnitPrice');
         line.unset('lineGrossAmount');
-        idMap[line.get('id')] = OB.Dal.get_uuid();
+        idMap[line.get('id')] = OB.UTIL.get_UUID();
         line.set('id', idMap[line.get('id')]);
         if (line.get('hasRelatedServices')) {
           oldIdMap[oldId] = line.get('id');
@@ -2997,7 +2997,7 @@
         line.unset('grossListPrice');
         line.unset('grossUnitPrice');
         line.unset('lineGrossAmount');
-        idMap[line.get('id')] = OB.Dal.get_uuid();
+        idMap[line.get('id')] = OB.UTIL.get_UUID();
         line.set('id', idMap[line.get('id')]);
         if (line.get('hasRelatedServices')) {
           oldIdMap[oldId] = line.get('id');
