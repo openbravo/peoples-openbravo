@@ -305,7 +305,14 @@ enyo.kind({
               } else {
                 if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true)) {
                   if (me.line.get('product').get('isSerialNo')) {
-                    OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ProductHasSerialNo'));
+                    OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductHasSerialNo', null), [{
+                      label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                      action: function () {
+                        return true;
+                      }
+                    }, {
+                      label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                    }])
                   } else {
                     actionAddProduct(keyboard, toadd);
                   }
