@@ -370,7 +370,8 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
   }
 
   private static FIN_FinancialAccount lockFinAccount(FIN_FinancialAccount account) {
-    StringBuilder queryStr = new StringBuilder("select a from FIN_Financial_Account a where id = :id");
+    StringBuilder queryStr = new StringBuilder(
+        "select a from FIN_Financial_Account a where id = :id");
     final Session session = OBDal.getInstance().getSession();
     final Query query = session.createQuery(queryStr.toString());
     query.setParameter("id", account.getId());
