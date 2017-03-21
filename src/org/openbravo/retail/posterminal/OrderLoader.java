@@ -348,11 +348,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         } else if ((!newLayaway && notpaidLayaway)) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
-
           if (orderlines.length() > 0) {
-            for (int i = 0; i < order.getOrderLineList().size(); i++) {
+            List<OrderLine> lstResultOL = getOrderLineList(order);
+            for (int i = 0; i < lstResultOL.size(); i++) {
+              OrderLine ol = lstResultOL.get(i);
               JSONObject jsonOrderLine = orderlines.getJSONObject(i);
-              OrderLine ol = order.getOrderLineList().get(i);
               ol.setObposCanbedelivered(jsonOrderLine.optBoolean("obposCanbedelivered", false));
               lineReferences.add(ol);
             }
@@ -365,11 +365,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           if (jsonorder.has("oBPOSNotInvoiceOnCashUp")) {
             order.setOBPOSNotInvoiceOnCashUp(jsonorder.getBoolean("oBPOSNotInvoiceOnCashUp"));
           }
-          String olsHqlWhereClause = " ol where ol.salesOrder.id = :orderId and ol.obposIsDeleted = false order by lineNo";
-          OBQuery<OrderLine> queryOls = OBDal.getInstance().createQuery(OrderLine.class,
-              olsHqlWhereClause);
-          queryOls.setNamedParameter("orderId", order.getId());
-          List<OrderLine> lstResultOL = queryOls.list();
+          List<OrderLine> lstResultOL = getOrderLineList(order);
 
           for (int i = 0; i < lstResultOL.size(); i++) {
             orderLine = lstResultOL.get(i);
@@ -655,6 +651,15 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           .getJSONObject("product").get("id").toString(), order.getOrganization().getId()));
 
     }
+  }
+
+  private List<OrderLine> getOrderLineList(Order order) {
+    String olsHqlWhereClause = " ol where ol.salesOrder.id = :orderId and ol.obposIsDeleted = false order by lineNo";
+    OBQuery<OrderLine> queryOls = OBDal.getInstance().createQuery(OrderLine.class,
+        olsHqlWhereClause);
+    queryOls.setNamedParameter("orderId", order.getId());
+    List<OrderLine> lstResultOL = queryOls.list();
+    return lstResultOL;
   }
 
   private void mergeDeletedLines(JSONObject jsonorder) {
