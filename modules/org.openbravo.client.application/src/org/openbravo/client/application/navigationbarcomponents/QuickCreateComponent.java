@@ -11,18 +11,14 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application.navigationbarcomponents;
 
-import javax.enterprise.inject.Any;
-import javax.inject.Inject;
-
 import org.openbravo.client.kernel.BaseTemplateComponent;
-import org.openbravo.service.datasource.DataSourceComponentProvider;
 
 /**
  * Provides a widget to open a classic view from the database in create mode.
@@ -30,20 +26,6 @@ import org.openbravo.service.datasource.DataSourceComponentProvider;
  * @author mtaal
  */
 public class QuickCreateComponent extends BaseTemplateComponent {
-
-  public static final String DATASOURCE_ID = "C17951F970E942FD9F3771B7BE91D049";
-
-  @Inject
-  @Any
-  private DataSourceComponentProvider dataSourceomponentProvider;
-
-  public String getDataSourceJavascript() {
-    return dataSourceomponentProvider.getDataSourceJavascript(DATASOURCE_ID, getParameters());
-  }
-
-  public String getDataSourceId() {
-    return DATASOURCE_ID;
-  }
 
   public String getPrefixRecent() {
     return "UINAVBA_NEW";
@@ -67,10 +49,6 @@ public class QuickCreateComponent extends BaseTemplateComponent {
 
   public String getKeyboardShortcutId() {
     return "NavBar_OBQuickCreate";
-  }
-
-  public boolean isQuickLaunch() {
-    return false;
   }
 
 }

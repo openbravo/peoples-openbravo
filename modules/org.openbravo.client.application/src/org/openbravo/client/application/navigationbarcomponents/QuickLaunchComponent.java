@@ -11,18 +11,14 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application.navigationbarcomponents;
 
-import javax.enterprise.inject.Any;
-import javax.inject.Inject;
-
 import org.openbravo.client.kernel.BaseTemplateComponent;
-import org.openbravo.service.datasource.DataSourceComponentProvider;
 
 /**
  * Provides a widget to open a classic view from the database.
@@ -31,26 +27,12 @@ import org.openbravo.service.datasource.DataSourceComponentProvider;
  */
 public class QuickLaunchComponent extends BaseTemplateComponent {
 
-  private static final String DATASOURCE_ID = "99B9CC42FDEA4CA7A4EE35BC49D61E0E";
-
-  @Inject
-  @Any
-  private DataSourceComponentProvider dataSourceComponentProvider;
-
-  public String getDataSourceJavascript() {
-    return dataSourceComponentProvider.getDataSourceJavascript(DATASOURCE_ID, getParameters());
-  }
-
   public String getPrefixRecent() {
     return "";
   }
 
   public String getCommand() {
     return "DEFAULT";
-  }
-
-  public String getDataSourceId() {
-    return DATASOURCE_ID;
   }
 
   public String getLabel() {
@@ -69,7 +51,4 @@ public class QuickLaunchComponent extends BaseTemplateComponent {
     return "NavBar_OBQuickLaunch";
   }
 
-  public boolean isQuickLaunch() {
-    return true;
-  }
 }
