@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -574,15 +574,17 @@
     },
 
     postSyncProcessActions: function () {
-      OB.Dal.get(OB.Model.SalesRepresentative, OB.MobileApp.model.usermodel.get('id'), function (salesrepresentative) {
-        if (!salesrepresentative) {
+      if (OB.MobileApp.model.get('context').user && _.isUndefined(OB.MobileApp.model.get('context').user.isSalesRepresentative)) {
+        OB.Dal.get(OB.Model.SalesRepresentative, OB.MobileApp.model.usermodel.get('id'), function (salesrepresentative) {
+          if (!salesrepresentative) {
+            OB.MobileApp.model.get('context').user.isSalesRepresentative = false;
+          } else {
+            OB.MobileApp.model.get('context').user.isSalesRepresentative = true;
+          }
+        }, function () {}, function () {
           OB.MobileApp.model.get('context').user.isSalesRepresentative = false;
-        } else {
-          OB.MobileApp.model.get('context').user.isSalesRepresentative = true;
-        }
-      }, function () {}, function () {
-        OB.MobileApp.model.get('context').user.isSalesRepresentative = false;
-      });
+        });
+      }
     },
 
     returnToOnline: function () {
