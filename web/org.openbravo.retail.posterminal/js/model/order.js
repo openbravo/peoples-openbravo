@@ -2364,7 +2364,7 @@
           }
           execPostAddProductToOrderHook();
         }
-        if ((p.get('isdiscontinued') || p.get('issalediscontinued')) && !OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
+        if ((p.get('isdiscontinued') || p.get('issalediscontinued')) && attrs.kindOriginator !== 'OB.OBPOSPointOfSale.UI.KeyboardOrder' && !OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
           me.getStoreStock(p, qty, options, attrs, function (hasStock) {
             if (hasStock) {
               continueSaving(p);
