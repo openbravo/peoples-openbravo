@@ -532,7 +532,7 @@ public class DocInOut extends AcctServer {
                   setMessageResult(conn, STATUS_NoRelatedPO, "error", parameters);
                   throw new IllegalStateException();
                 }
-                trxCost = ol.getUnitPrice();
+                trxCost = inOutLine.getMovementQuantity().multiply(ol.getUnitPrice());
               } else {
                 // Not stocked item type product. Check standard cost existence.
                 // If the Product is not checked as book using PO Price, the Cost of the
