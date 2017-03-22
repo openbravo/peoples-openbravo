@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2017 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -885,9 +885,8 @@ public class DocInvoice extends AcctServer {
             String strtaxAmount = null;
 
             try {
-
               DocInvoiceData[] dataEx = DocInvoiceData.selectProductAcct(conn,
-                  as.getC_AcctSchema_ID(), m_taxes[i].m_C_Tax_ID, Record_ID);
+                  as.getC_AcctSchema_ID(), m_taxes[i].m_C_Tax_ID, Record_ID, data[j].mProductId);
               if (dataEx.length == 0) {
                 dataEx = DocInvoiceData.selectGLItemAcctForTaxLine(conn, as.getC_AcctSchema_ID(),
                     m_taxes[i].m_C_Tax_ID, Record_ID);

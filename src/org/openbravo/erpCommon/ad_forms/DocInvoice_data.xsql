@@ -141,6 +141,26 @@
      <Parameter name="taxId"/>
      <Parameter name="invoiceId"/>
     </SqlMethod>
+    <SqlMethod name="selectProductAcct" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT a.P_Revenue_Acct, a.P_Expense_Acct, t.TaxAmt
+        FROM M_Product_Acct a, C_InvoiceLineTax t, C_InvoiceLine l, M_Product p
+        WHERE t.C_InvoiceLine_Id = l.C_InvoiceLine_Id
+        AND l.M_Product_Id = p.M_Product_Id
+        AND p.M_Product_Id = a.M_Product_Id
+        AND a.C_AcctSchema_Id = ?
+        AND t.C_Tax_Id= ?
+        AND t.C_Invoice_Id= ?
+        AND p.M_Product_Id= ?
+     ]]>
+     </Sql>
+     <Parameter name="acctSchemaId"/>
+     <Parameter name="taxId"/>
+     <Parameter name="invoiceId"/>
+     <Parameter name="productId"/>
+    </SqlMethod>
   <SqlMethod name="updateProductPO" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
