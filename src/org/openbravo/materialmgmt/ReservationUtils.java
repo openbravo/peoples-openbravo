@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
@@ -213,6 +214,35 @@ public class ReservationUtils {
       result.setMessage(OBMessageUtils.parseTranslation(cs.returnValueMsg));
     }
     return result;
+  }
+
+  /**
+   * Returns true if there are any reservations created against the given Storage Detail
+   * 
+   * @param storageDetail
+   *          A StorageDetail object that contains the information about the Stock
+   * @return true if there are Reservations created against this Stock, false otherwise
+   */
+  public static boolean existsReservationForStock(StorageDetail storageDetail) {
+    StringBuilder hql = new StringBuilder();
+    hql.append("select 1 ");
+    hql.append("from MaterialMgmtReservationStock ");
+    hql.append("where exists (select 1");
+    hql.append("              from MaterialMgmtReservationStock rs");
+    hql.append("              join rs.reservation r");
+    hql.append("              where r.product = :product");
+    hql.append("              and coalesce(rs.storageBin, r.storageBin) = :storageBin");
+    hql.append("              and coalesce(rs.attributeSetValue, r.attributeSetValue) = :attributeSetValue");
+    hql.append("              and r.uOM = :uom");
+    hql.append("              and rs.quantity > rs.released)");
+
+    Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    query.setParameter("product", storageDetail.getProduct());
+    query.setParameter("storageBin", storageDetail.getStorageBin());
+    query.setParameter("attributeSetValue", storageDetail.getAttributeSetValue());
+    query.setParameter("uom", storageDetail.getUOM());
+
+    return !query.list().isEmpty();
   }
 
 }

@@ -51,6 +51,10 @@ public class ChangeInventoryStatusActionHandler extends BaseProcessActionHandler
 
     } catch (Exception e) {
       log4j.error(e.getMessage(), e);
+      if (StringUtils.startsWith(e.getMessage(), "WARNING")) {
+        return getResponseBuilder().showMsgInView(MessageType.WARNING, "Error",
+            StringUtils.replaceOnce(e.getMessage(), "WARNING", "")).build();
+      }
       return getResponseBuilder().showMsgInView(MessageType.ERROR, "Error", e.getMessage()).build();
     }
   }
@@ -67,6 +71,12 @@ public class ChangeInventoryStatusActionHandler extends BaseProcessActionHandler
           .executeValidationHooks(locator,
               OBDal.getInstance().get(InventoryStatus.class, inventoryStatusID));
     } catch (Exception e) {
+      if (StringUtils.startsWith(e.getMessage(), "WARNING")) {
+        locator.setInventoryStatus(OBDal.getInstance()
+            .get(InventoryStatus.class, inventoryStatusID));
+        OBDal.getInstance().flush();
+        throw new OBException(e.getMessage());
+      }
       log4j.error(e.getMessage(), e);
       throw new OBException(e.getMessage());
     }
