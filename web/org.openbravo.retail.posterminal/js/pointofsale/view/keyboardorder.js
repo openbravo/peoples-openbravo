@@ -144,14 +144,25 @@ enyo.kind({
             if (_.isNaN(value)) {
               return true;
             } else {
-              me.doAddProduct({
-                product: keyboard.line.get('product'),
-                qty: value,
-                options: {
-                  line: keyboard.line
-                }
-              });
-              keyboard.receipt.trigger('scan');
+              if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && me.line.get('product').get('isSerialNo') && value >= 1) {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductHasSerialNo', null), [{
+                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                  action: function () {
+                    return true;
+                  }
+                }, {
+                  label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                }])
+              } else {
+                me.doAddProduct({
+                  product: keyboard.line.get('product'),
+                  qty: value,
+                  options: {
+                    line: keyboard.line
+                  }
+                });
+                keyboard.receipt.trigger('scan');
+              }
             }
           }
         } else {
@@ -303,20 +314,7 @@ enyo.kind({
                   }
                 });
               } else {
-                if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true)) {
-                  if (me.line.get('product').get('isSerialNo')) {
-                    OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductHasSerialNo', null), [{
-                      label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                      action: function () {
-                        return true;
-                      }
-                    }, {
-                      label: OB.I18N.getLabel('OBMOBC_LblCancel')
-                    }])
-                  } else {
-                    actionAddProduct(keyboard, toadd);
-                  }
-                }
+                actionAddProduct(keyboard, toadd);
               }
             }
           });

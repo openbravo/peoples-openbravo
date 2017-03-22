@@ -85,7 +85,6 @@ enyo.kind({
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductHasSerialNo', null), [{
               label: OB.I18N.getLabel('OBMOBC_LblOk'),
               action: function () {
-                me.args.finalCallback(false);
                 return true;
               }
             }, {
@@ -103,16 +102,13 @@ enyo.kind({
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NotValidAttribute'));
       }
       if (!showErrorSerialNumber) {
-        this.args.callbackPostAddProductToOrder(receipt, p, orderline, qty, null, newline, this.args.finalCallback);
+        this.args.callbackPostAddProductToOrder(receipt, p, orderline, qty, null, newline);
       }
     }
     return true;
   },
   clearAction: function () {
     this.$.bodyContent.$.valueAttribute.setValue(null);
-    if (this.args.finalCallback) {
-      this.args.finalCallback(false);
-    }
     return true;
   },
 
@@ -121,9 +117,6 @@ enyo.kind({
     if (currentLine) {
       this.owner.model.get('order').deleteLine(currentLine);
       this.owner.model.get('order').save();
-      if (this.args.finalCallback) {
-        this.args.finalCallback(false);
-      }
     }
     this.hide();
     return true;
@@ -146,9 +139,6 @@ enyo.kind({
     if (!attributeValue) {
       this.owner.model.get('order').deleteLine(this.args.line);
       this.owner.model.get('order').save();
-      if (this.args.finalCallback) {
-        this.args.finalCallback(false);
-      }
     }
     this.$.bodyContent.$.valueAttribute.setValue(null);
   }

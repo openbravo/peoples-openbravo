@@ -1627,21 +1627,22 @@
           }
         }
         me.save();
-        if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true)) {
-          if (p.get('hasAttributes') && !options) {
-            OB.MobileApp.view.waterfall('onShowPopup', {
-              popup: 'modalProductAttribute',
-              args: {
-                line: line,
-                callbackPostAddProductToOrder: me.postAddProductToOrder,
-                finalCallback: callback
-              }
-            });
-          } else {
-            me.postAddProductToOrder(me, p, line, qty, options, newLine, callback);
+        if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && p.get('hasAttributes') && !options) {
+          OB.MobileApp.view.waterfall('onShowPopup', {
+            popup: 'modalProductAttribute',
+            args: {
+              line: line,
+              callbackPostAddProductToOrder: me.postAddProductToOrder
+            }
+          });
+          if (callback) {
+            callback(true, line);
           }
         } else {
-          me.postAddProductToOrder(me, p, line, qty, options, newLine, callback);
+          me.postAddProductToOrder(me, p, line, qty, options, newLine);
+          if (callback) {
+            callback(true, line);
+          }
         }
       } // End addProductToOrder
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('ignoreReturnApproval')) {
