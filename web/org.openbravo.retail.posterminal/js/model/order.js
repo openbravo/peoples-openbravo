@@ -1627,12 +1627,13 @@
           }
         }
         me.save();
-        if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && p.get('hasAttributes') && !options) {
+        if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && p.get('hasAttributes')) {
           OB.MobileApp.view.waterfall('onShowPopup', {
             popup: 'modalProductAttribute',
             args: {
               line: line,
-              callbackPostAddProductToOrder: me.postAddProductToOrder
+              callbackPostAddProductToOrder: me.postAddProductToOrder,
+              options: options
             }
           });
           if (callback) {
