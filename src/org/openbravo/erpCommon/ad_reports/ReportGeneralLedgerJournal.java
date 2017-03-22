@@ -94,7 +94,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org",
           vars.getOrg());
       String strcAcctSchemaId = vars.getSessionValue("ReportGeneralLedgerJournal|cAcctSchemaId");
-      if (StringUtils.equals(strcAcctSchemaId, "")) {
+      if (StringUtils.isEmpty(strcAcctSchemaId)) {
         strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
       }
       String strDateFrom = vars.getGlobalVariable("inpDateFrom",
