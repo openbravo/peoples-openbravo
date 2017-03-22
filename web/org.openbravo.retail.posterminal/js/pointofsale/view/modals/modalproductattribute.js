@@ -65,6 +65,7 @@ enyo.kind({
         orderline = me.args.line,
         p = orderline.get('product'),
         qty = orderline.get('qty'),
+        options = me.args.options,
         newline = true,
         repeteadAttribute = false,
         showErrorSerialNumber = false,
@@ -78,11 +79,30 @@ enyo.kind({
         }
       }
       if (this.validateAttribute(attributeValue)) {
-        if (repeteadAttribute) {
-          me.owner.model.get('order').get('lines').remove(orderline);
-          if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && p.get('hasAttributes') && p.get('isSerialNo')) {
-            showErrorSerialNumber = true;
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductHasSerialNo', null), [{
+        if (!options) {
+          if (repeteadAttribute) {
+            me.owner.model.get('order').get('lines').remove(orderline);
+            if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && p.get('hasAttributes') && p.get('isSerialNo')) {
+              showErrorSerialNumber = true;
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductHasSerialNo', null), [{
+                label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                action: function () {
+                  return true;
+                }
+              }, {
+                label: OB.I18N.getLabel('OBMOBC_LblCancel')
+              }])
+            } else {
+              receipt.addUnit(repeteadLine, 1);
+            }
+            receipt.save();
+          } else {
+            orderline.set('attributeValue', attributeValue);
+            me.owner.model.get('order').save();
+          }
+        } else {
+          if (attributeValue != orderline.getAttributeValue()) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotValidateAttribute'), OB.I18N.getLabel('OBPOS_NotSameAttribute', null), [{
               label: OB.I18N.getLabel('OBMOBC_LblOk'),
               action: function () {
                 return true;
@@ -90,13 +110,8 @@ enyo.kind({
             }, {
               label: OB.I18N.getLabel('OBMOBC_LblCancel')
             }])
-          } else {
-            receipt.addUnit(repeteadLine, 1);
+            me.owner.model.get('order').get('lines').remove(orderline);
           }
-          receipt.save();
-        } else {
-          orderline.set('attributeValue', attributeValue);
-          me.owner.model.get('order').save();
         }
       } else {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NotValidAttribute'));
@@ -114,7 +129,8 @@ enyo.kind({
 
   cancel: function () {
     var currentLine = this.args.line
-    if (currentLine) {
+    var options = this.args.options
+    if (currentLine && !options) {
       this.owner.model.get('order').deleteLine(currentLine);
       this.owner.model.get('order').save();
     }
@@ -136,7 +152,8 @@ enyo.kind({
   },
   executeOnHide: function () {
     var attributeValue = this.$.bodyContent.$.valueAttribute.getValue()
-    if (!attributeValue) {
+    var options = this.args.options
+    if (!attributeValue && !options) {
       this.owner.model.get('order').deleteLine(this.args.line);
       this.owner.model.get('order').save();
     }
