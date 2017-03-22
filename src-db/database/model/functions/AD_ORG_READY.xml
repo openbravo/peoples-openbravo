@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008-2012 Openbravo SLU
+* All portions are Copyright (C) 2008-2017 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -64,7 +64,7 @@ BEGIN
     IF (v_IsRecursive='Y') THEN
       UPDATE AD_ORG
       SET ISREADY='Y'
-      WHERE AD_ISORGINCLUDED(ad_org.ad_org_id, v_Record_ID, ad_org.ad_client_id)<>-1
+      WHERE AD_ISORGINCLUDED_TREENODE(ad_org.ad_org_id, v_Record_ID, ad_org.ad_client_id)<>-1
       AND IsReady='N';      
     ELSE
       UPDATE AD_ORG
@@ -122,6 +122,51 @@ BEGIN
       ROLLBACK;
       v_Result:=0;
       RAISE_APPLICATION_ERROR(-20000, '@20539@');
+    END IF;
+
+    
+    -- Populate AD_Org_Tree
+    IF (v_IsRecursive='Y') THEN
+       FOR Cur_Org IN
+        (SELECT AD_Org_ID
+        FROM AD_Org
+        WHERE AD_ISORGINCLUDED_TREENODE(AD_Org_ID, v_Record_ID, AD_Client_ID)<>-1
+        )
+      LOOP
+        INSERT INTO ad_org_tree
+        (
+        ad_org_tree_id, ad_client_id, 
+        ad_org_id, ad_parent_org_id, 
+        levelno,  isactive,
+        created, createdby, updated, updatedby
+        )
+        select get_uuid(), oc.ad_client_id, 
+        oc.ad_org_id, op.ad_org_id, 
+        ad_isorgincluded_treenode(oc.ad_org_id, op.ad_org_id, oc.ad_client_id), 'Y', 
+        now(), '100', now(), '100'
+        from ad_org op
+        cross join ad_org oc
+        where (oc.ad_client_id = op.ad_client_id or op.ad_org_id = '0')
+        and oc.ad_org_id = Cur_Org.AD_Org_ID
+        and ad_isorgincluded_treenode(oc.ad_org_id, op.ad_org_id, oc.ad_client_id) > 0;
+      END LOOP;
+    ELSE 
+      INSERT INTO ad_org_tree
+      (
+      ad_org_tree_id, ad_client_id, 
+      ad_org_id, ad_parent_org_id, 
+      levelno,  isactive,
+      created, createdby, updated, updatedby
+      )
+      select get_uuid(), oc.ad_client_id, 
+      oc.ad_org_id, op.ad_org_id, 
+      ad_isorgincluded_treenode(oc.ad_org_id, op.ad_org_id, oc.ad_client_id), 'Y', 
+      now(), '100', now(), '100'
+      from ad_org op
+      cross join ad_org oc
+      where (oc.ad_client_id = op.ad_client_id or op.ad_org_id = '0')
+      and oc.ad_org_id = v_Record_ID
+      and ad_isorgincluded_treenode(oc.ad_org_id, op.ad_org_id, oc.ad_client_id) > 0;
     END IF;
     
     -- Create PeriodControl for the organization
