@@ -81,26 +81,12 @@ public class ProductProperties extends ModelExtension {
         add(new HQLProperty(
             "case when product.active = 'Y' and pli.active is not null then pli.active else product.active end",
             "active"));
-
-        try {
-          if ("Y".equals(Preferences.getPreferenceValue("OBPOS_EnableAttrSetSearch", true,
-              OBContext.getOBContext().getCurrentClient(),
-              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-              OBContext.getOBContext().getRole(), null))) {
-            add(new HQLProperty(
-                "(select case when atri.id is not null then true else false end from Product as prod left join prod.attributeSet as atri where prod.id = product.id)",
-                "hasAttributes"));
-            add(new HQLProperty(
-                "(select case when atri.serialNo = 'Y' then true else false end from Product as prod left join prod.attributeSet as atri where prod.id = product.id)",
-                "isSerialNo"));
-          } else {
-            add(new HQLProperty("'false'", "hasAttributes"));
-            add(new HQLProperty("'false'", "isSerialNo"));
-          }
-        } catch (PropertyException e) {
-          add(new HQLProperty("'false'", "hasAttributes"));
-          add(new HQLProperty("'false'", "isSerialNo"));
-        }
+        add(new HQLProperty(
+            "(select case when atri.id is not null then true else false end from Product as prod left join prod.attributeSet as atri where prod.id = product.id)",
+            "hasAttributes"));
+        add(new HQLProperty(
+            "(select case when atri.serialNo = 'Y' then true else false end from Product as prod left join prod.attributeSet as atri where prod.id = product.id)",
+            "isSerialNo"));
       }
     });
 
