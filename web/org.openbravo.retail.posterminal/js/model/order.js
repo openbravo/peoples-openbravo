@@ -11,6 +11,23 @@
 
 (function () {
 
+  var cachedData = null;
+
+  var findDiscountFilterBusinessPartner = function (criteria, success, fail) {
+      if (criteria.remoteFilters[0].value === OB.MobileApp.model.get('businessPartner').id) {
+        if (cachedData) {
+          success(cachedData);
+        } else {
+          OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
+            cachedData = discountsBP;
+            success(cachedData);
+          }, fail);
+        }
+      } else {
+        OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, success, fail);
+      }
+      };
+
   // Sales.OrderLine Model
   var OrderLine = Backbone.Model.extend({
     modelName: 'OrderLine',
@@ -4929,7 +4946,8 @@
         var remoteCriteria = [bp];
         var criteria = {};
         criteria.remoteFilters = remoteCriteria;
-        OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
+
+        findDiscountFilterBusinessPartner(criteria, function (discountsBP) {
           _.each(discountsBP.models, function (dsc) {
             OB.Dal.saveIfNew(dsc, function () {}, function () {
               OB.error(arguments);
