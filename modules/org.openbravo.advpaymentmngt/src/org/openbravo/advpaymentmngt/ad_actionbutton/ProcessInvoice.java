@@ -52,6 +52,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonUtility;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
@@ -254,25 +255,23 @@ public class ProcessInvoice extends HttpSecureAppServlet {
             }
 
             // If Invoice has a awaiting execution payment related, show an Error
-            List<FIN_PaymentSchedule> psl = invoice.getFINPaymentScheduleList();
-            for (FIN_PaymentSchedule ps : psl) {
-              List<FIN_PaymentScheduleDetail> psdl = ps
-                  .getFINPaymentScheduleDetailInvoicePaymentScheduleList();
-              for (FIN_PaymentScheduleDetail psd : psdl) {
-                FIN_PaymentDetail pd = psd.getPaymentDetails();
-                if (pd != null
-                    && (pd.getFinPayment().getStatus().equals("RPAE") || pd.getFinPayment()
-                        .getStatus().equals("RPAP"))) {
-                  msg = new OBError();
-                  msg.setType("Error");
-                  msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-                  msg.setMessage(OBMessageUtils
-                      .messageBD("APRM_InvoiceAwaitingExcutionPaymentRelated"));
-                  vars.setMessage(strTabId, msg);
-                  printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
-                  return;
-                }
-              }
+            StringBuilder fpHQLQuery = new StringBuilder(" as fp ");
+            fpHQLQuery.append("JOIN fp.fINPaymentDetailList fpd ");
+            fpHQLQuery.append("JOIN fpd.fINPaymentScheduleDetailList fpsd ");
+            fpHQLQuery.append("JOIN fpsd.invoicePaymentSchedule fps ");
+            fpHQLQuery.append("WHERE fps.invoice = :invoice AND fp.status IN ('RPAE', 'RPAP')");
+            OBQuery<FIN_Payment> paymentQuery = OBDal.getInstance().createQuery(FIN_Payment.class,
+                fpHQLQuery.toString());
+            paymentQuery.setNamedParameter("invoice", invoice);
+            paymentQuery.setMaxResult(1);
+            if (paymentQuery.uniqueResult() != null) {
+              msg = new OBError();
+              msg.setType("Error");
+              msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+              msg.setMessage(OBMessageUtils.messageBD("APRM_InvoiceAwaitingExcutionPaymentRelated"));
+              vars.setMessage(strTabId, msg);
+              printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
+              return;
             }
 
             // Reversed invoice's date: voidDate in Purchase Invoice, new Date() in Sales Invoice
@@ -341,7 +340,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
         }
 
         boolean voidingPrepaidInvoice = "RC".equals(strdocaction)
-            && invoice.getPrepaymentamt().compareTo(BigDecimal.ZERO) > 0;
+            && invoice.getPrepaymentamt().compareTo(BigDecimal.ZERO) != 0;
 
         final ProcessInstance pinstance = CallProcess.getInstance().call(process, strC_Invoice_ID,
             parameters);
@@ -366,31 +365,16 @@ public class ProcessInvoice extends HttpSecureAppServlet {
             if (voidingPrepaidInvoice) {
               processPayment = true;
 
-              FIN_Payment orderPayment = null;
-
-              List<FIN_PaymentSchedule> fpsList = invoice.getFINPaymentScheduleList();
-
-              // Searching for invoice payment
-              for (FIN_PaymentSchedule fps : fpsList) {
-                List<FIN_PaymentScheduleDetail> fpsdList = fps
-                    .getFINPaymentScheduleDetailInvoicePaymentScheduleList();
-                for (FIN_PaymentScheduleDetail fpsd : fpsdList) {
-                  FIN_PaymentDetail pd = fpsd.getPaymentDetails();
-                  orderPayment = pd.getFinPayment();
-                  break;
-                }
-                if (orderPayment != null) {
-                  break;
-                }
-              }
-
-              fpsList.addAll(revInvoice.getInvoice().getFINPaymentScheduleList());
-
-              List<FIN_PaymentScheduleDetail> fpsdList = new ArrayList<>();
-
-              for (FIN_PaymentSchedule fps : fpsList) {
-                fpsdList.addAll(fps.getFINPaymentScheduleDetailInvoicePaymentScheduleList());
-              }
+              StringBuilder orderPaymentHQLQuery = new StringBuilder(" as fp ");
+              orderPaymentHQLQuery.append("JOIN fp.fINPaymentDetailList fpd ");
+              orderPaymentHQLQuery.append("JOIN fpd.fINPaymentScheduleDetailList fpsd ");
+              orderPaymentHQLQuery.append("JOIN fpsd.invoicePaymentSchedule fps ");
+              orderPaymentHQLQuery.append("WHERE fps.invoice = :invoice");
+              OBQuery<FIN_Payment> paymentQuery = OBDal.getInstance().createQuery(
+                  FIN_Payment.class, orderPaymentHQLQuery.toString());
+              paymentQuery.setNamedParameter("invoice", invoice);
+              paymentQuery.setMaxResult(1);
+              FIN_Payment orderPayment = (FIN_Payment) paymentQuery.uniqueResult();
 
               final DocumentType docType = FIN_Utility.getDocumentType(invoice.getOrganization(),
                   orderPayment.isReceipt() ? AcctServer.DOCTYPE_ARReceipt
@@ -409,9 +393,21 @@ public class ProcessInvoice extends HttpSecureAppServlet {
 
               invoice.setOutstandingAmount(BigDecimal.ZERO);
 
+              StringBuilder psdHQLQuery = new StringBuilder(" as fpsd ");
+              psdHQLQuery.append("WHERE fpsd.invoicePaymentSchedule IN ");
+              psdHQLQuery.append("(SELECT fps.id FROM FIN_Payment_Schedule fps ");
+              psdHQLQuery.append(" WHERE fps.invoice = :invoice ");
+              psdHQLQuery.append(" OR fps.invoice = :revInvoice))");
+              OBQuery<FIN_PaymentScheduleDetail> psdQuery = OBDal.getInstance().createQuery(
+                  FIN_PaymentScheduleDetail.class, psdHQLQuery.toString());
+              psdQuery.setNamedParameter("invoice", invoice);
+              psdQuery.setNamedParameter("revInvoice", revInvoice.getInvoice());
+
               // Updating dummy payment lines with invoice and reverse invoice
+              List<FIN_PaymentScheduleDetail> fpsdList = psdQuery.list();
               for (FIN_PaymentScheduleDetail fpsd : fpsdList) {
-                FIN_PaymentDetail psdOldPaymentDetail = fpsd.getPaymentDetails();
+                // invoice payment detail asociated to the order
+                boolean invoiceFPDOrder = fpsd.getPaymentDetails() != null;
 
                 // Create a payment detail
                 FIN_PaymentDetail pd = OBProvider.getInstance().get(FIN_PaymentDetail.class);
@@ -430,14 +426,22 @@ public class ProcessInvoice extends HttpSecureAppServlet {
 
                 dummyPayment.getFINPaymentDetailList().add(pd);
 
-                if (psdOldPaymentDetail != null) {
-                  for (FIN_PaymentScheduleDetail orderPSD : psdOldPaymentDetail
-                      .getFINPaymentScheduleDetailList()) {
-                    if (!StringUtils.equals(orderPSD.getId(), fpsd.getId())) {
-                      // Update order received amount
-                      orderPSD.setAmount(orderPSD.getAmount().add(fpsd.getAmount()));
-                      OBDal.getInstance().save(orderPSD);
-                    }
+                if (invoiceFPDOrder) {
+                  StringBuilder orderPSDHQLQuery = new StringBuilder();
+                  orderPSDHQLQuery.append(" as fpsd ");
+                  orderPSDHQLQuery.append("JOIN fpsd.paymentDetails fpd ");
+                  orderPSDHQLQuery.append("WHERE fpd.finPayment = :payment ");
+                  orderPSDHQLQuery.append("AND fpsd <> :invoicePSD");
+                  OBQuery<FIN_PaymentScheduleDetail> orderPSDQuery = OBDal.getInstance()
+                      .createQuery(FIN_PaymentScheduleDetail.class, orderPSDHQLQuery.toString());
+                  orderPSDQuery.setNamedParameter("payment", orderPayment);
+                  orderPSDQuery.setNamedParameter("invoicePSD", fpsd);
+                  List<FIN_PaymentScheduleDetail> orderPSDList = orderPSDQuery.list();
+
+                  for (FIN_PaymentScheduleDetail orderPSD : orderPSDList) {
+                    // Update order received amount
+                    orderPSD.setAmount(orderPSD.getAmount().add(fpsd.getAmount()));
+                    OBDal.getInstance().save(orderPSD);
                   }
                   FIN_PaymentSchedule ps = fpsd.getInvoicePaymentSchedule();
                   ps.setPaidAmount(BigDecimal.ZERO);
@@ -445,10 +449,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
                   OBDal.getInstance().save(ps);
 
                   // Update invoice outstanding amount
-                  if (StringUtils.equals(ps.getInvoice().getId(), invoice.getId())) {
-                    invoice.setOutstandingAmount(invoice.getOutstandingAmount().add(
-                        fpsd.getAmount()));
-                  }
+                  invoice
+                      .setOutstandingAmount(invoice.getOutstandingAmount().add(fpsd.getAmount()));
                 }
               }
               OBDal.getInstance().save(dummyPayment);
