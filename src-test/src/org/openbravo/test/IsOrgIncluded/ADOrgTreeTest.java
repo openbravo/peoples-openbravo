@@ -21,6 +21,7 @@ package org.openbravo.test.IsOrgIncluded;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,7 +34,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.Test;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -194,6 +194,37 @@ public class ADOrgTreeTest extends Ad_isorgincludedTest {
       orgTreeRecords = getOrganizationTreeRecords(secondOrgId, ORG_0);
       assertEquals("Records found at OrgTree at this point", 1, orgTreeRecords.size());
       assertEquals("Level found", 3, orgTreeRecords.get(0).getLevelno().longValue());
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Creates parent and child organization and tries to set as ready the child organization (cascade
+   * and not cascade). Verify it fails because parent org is not set as ready yet
+   */
+  @Test
+  public void testChildOrgValidation() {
+    try {
+      OBContext.setAdminMode(true);
+      long number = System.currentTimeMillis();
+      final String firstOrgId = createOrganization("Test_" + number, ORGTYPE_ORGANIZATION, ORG_0);
+      number = System.currentTimeMillis();
+      final String secondOrgId = createOrganization("Test_" + number, ORGTYPE_ORGANIZATION,
+          firstOrgId);
+
+      try {
+        setAsReady(secondOrgId, "N");
+        fail("Expected exception when setting second organization was not occured.");
+      } catch (Exception expectedException) {
+      }
+
+      try {
+        setAsReady(secondOrgId, "Y");
+        fail("Expected exception when setting second organization was not occured.");
+      } catch (Exception expectedException) {
+      }
+
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -395,10 +426,8 @@ public class ADOrgTreeTest extends Ad_isorgincludedTest {
     final ProcessInstance pinstance = CallProcess.getInstance().call("AD_Org_Ready", orgId,
         parameters);
     if (pinstance.getResult() == 0L) {
-      throw new OBException(pinstance.getErrorMsg());
+      throw new RuntimeException(pinstance.getErrorMsg());
     }
-
-    OBDal.getInstance().flush();
   }
 
   private int isOrgIncludedLegacy(String orgId, String parentOrgId, String clientId) {
