@@ -243,6 +243,8 @@ public class UpdateCashup {
         newPaymentMethodCashUp, jsonCashup);
     newPaymentMethodCashUp.setCashUp(cashup);
 
+    cashup.getOBPOSPaymentmethodcashupList().add(newPaymentMethodCashUp);
+
     newPaymentMethodCashUp.setOrganization(cashup.getOrganization());
 
     newPaymentMethodCashUp.setClient(cashup.getClient());

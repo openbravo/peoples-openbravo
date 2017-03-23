@@ -110,7 +110,6 @@
             OB.Dal.transaction(function (tx) {
               OB.Dal.saveInTransaction(tx, paymentMethod, function () {
                 var now = new Date();
-                cashUp.set('objToSend', JSON.stringify(cashUp));
                 cashManagementTransactionToAdd = new OB.Model.CashManagement({
                   id: OB.Dal.get_uuid(),
                   description: newCashManagementTransaction.get('paymentMethod').payment._identifier + ' - ' + newCashManagementTransaction.get('cashManagementEvent').name,
@@ -128,8 +127,9 @@
                   cashup_id: cashUp.get('id'),
                   posTerminal: OB.MobileApp.model.get('terminal').id,
                   isbeingprocessed: 'N',
-                  cashUpReportInformation: JSON.parse(cashUp.get('objToSend'))
+                  cashUpReportInformation: null
                 });
+
 
                 OB.UTIL.HookManager.executeHooks('OBPOS_cashManagementTransactionHook', {
                   newCashManagementTransaction: newCashManagementTransaction,
@@ -138,78 +138,85 @@
                   if (args && args.cancelOperation) {
                     errorCallback(args.errorMessage);
                   }
-                  cashManagementTransactionToAdd.set('json', JSON.stringify(cashManagementTransactionToAdd));
-                  OB.Dal.saveInTransaction(tx, cashManagementTransactionToAdd, function () {
-                    if (optionsObj.executeSync) {
-                      OB.MobileApp.model.runSyncProcess(function () {
-                        if (optionsObj.printTicket) {
-                          if (OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')) {
-                            var toPrint = new Backbone.Collection();
-                            toPrint.add(cashManagementTransactionToAdd);
-                            printCashManagementModel = optionsObj.ticketTemplate;
-                            printCashManagementModel.print(toPrint.toJSON());
-                            successCallback();
+                  OB.UTIL.composeCashupInfo(cashUpResults, null, function (cashUpReport) {
+                    var parseCashUp = JSON.parse(cashUpReport.at(0).get('objToSend'));
+                    parseCashUp.objToSend = JSON.stringify(parseCashUp);
+                    cashManagementTransactionToAdd.set('cashUpReportInformation', parseCashUp);
+                    cashManagementTransactionToAdd.set('json', JSON.stringify(cashManagementTransactionToAdd));
+                    OB.Dal.saveInTransaction(tx, cashManagementTransactionToAdd, function () {
+                      if (optionsObj.executeSync) {
+                        OB.MobileApp.model.runSyncProcess(function () {
+                          if (optionsObj.printTicket) {
+                            if (OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')) {
+                              var toPrint = new Backbone.Collection();
+                              toPrint.add(cashManagementTransactionToAdd);
+                              printCashManagementModel = optionsObj.ticketTemplate;
+                              printCashManagementModel.print(toPrint.toJSON());
+                              successCallback();
+                            } else {
+                              warns.push({
+                                msg: OB.I18N.getLabel('OBPOS_NoPermissionToPrintCashManagment'),
+                                errObj: {}
+                              });
+                              successCallback({
+                                warnings: warns
+                              });
+                            }
                           } else {
-                            warns.push({
-                              msg: OB.I18N.getLabel('OBPOS_NoPermissionToPrintCashManagment'),
-                              errObj: {}
-                            });
-                            successCallback({
-                              warnings: warns
-                            });
-                          }
-                        } else {
-                          successCallback();
-                        }
-                      }, function (error) {
-                        warns.push({
-                          msg: OB.I18N.getLabel('OBPOS_CashManagmentNoSync'),
-                          errObj: error
-                        });
-                        if (optionsObj.printTicket) {
-                          if (OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')) {
-                            var toPrint = new Backbone.Collection();
-                            toPrint.add(cashManagementTransactionToAdd);
-                            printCashManagementModel = optionsObj.ticketTemplate;
-                            printCashManagementModel.print(toPrint.toJSON());
                             successCallback();
-                          } else {
-                            warns.push({
-                              msg: OB.I18N.getLabel('OBPOS_NoPermissionToPrintCashManagment'),
-                              errObj: {}
-                            });
-                            successCallback({
-                              warnings: warns
-                            });
                           }
-                        } else {
-                          successCallback();
-                        }
-                      });
-                    } else {
-                      if (optionsObj.printTicket) {
-                        if (OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')) {
-                          var toPrint = new Backbone.Collection();
-                          toPrint.add(cashManagementTransactionToAdd);
-                          printCashManagementModel = optionsObj.ticketTemplate;
-                          printCashManagementModel.print(toPrint.toJSON());
-                          successCallback();
-                        } else {
+                        }, function (error) {
                           warns.push({
-                            msg: OB.I18N.getLabel('OBPOS_NoPermissionToPrintCashManagment'),
-                            errObj: {}
+                            msg: OB.I18N.getLabel('OBPOS_CashManagmentNoSync'),
+                            errObj: error
                           });
-                          successCallback({
-                            warnings: warns
-                          });
-                        }
+                          if (optionsObj.printTicket) {
+                            if (OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')) {
+                              var toPrint = new Backbone.Collection();
+                              toPrint.add(cashManagementTransactionToAdd);
+                              printCashManagementModel = optionsObj.ticketTemplate;
+                              printCashManagementModel.print(toPrint.toJSON());
+                              successCallback();
+                            } else {
+                              warns.push({
+                                msg: OB.I18N.getLabel('OBPOS_NoPermissionToPrintCashManagment'),
+                                errObj: {}
+                              });
+                              successCallback({
+                                warnings: warns
+                              });
+                            }
+                          } else {
+                            successCallback();
+                          }
+                        });
                       } else {
-                        successCallback();
+                        if (optionsObj.printTicket) {
+                          if (OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')) {
+                            var toPrint = new Backbone.Collection();
+                            toPrint.add(cashManagementTransactionToAdd);
+                            printCashManagementModel = optionsObj.ticketTemplate;
+                            printCashManagementModel.print(toPrint.toJSON());
+                            successCallback();
+                          } else {
+                            warns.push({
+                              msg: OB.I18N.getLabel('OBPOS_NoPermissionToPrintCashManagment'),
+                              errObj: {}
+                            });
+                            successCallback({
+                              warnings: warns
+                            });
+                          }
+                        } else {
+                          successCallback();
+                        }
                       }
-                    }
-                  }, function (error) {
-                    errorCallback('Error while saving cash management transaction');
-                  }, true);
+
+
+                    }, function (error) {
+                      errorCallback('Error while saving cash management transaction');
+                    }, true);
+                  }, tx);
                 });
               }, function () {
                 errorCallback('Error while saving payment method cashup information');
