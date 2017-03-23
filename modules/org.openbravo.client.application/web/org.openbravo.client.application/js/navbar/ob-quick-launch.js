@@ -241,6 +241,7 @@ isc.OBQuickLaunch.addProperties({
           criteria[OB.Constants.IDENTIFIER] = this.getDisplayValue();
           return criteria;
         },
+
         pickListFields: [{
           showValueIconOnly: true,
           name: 'icon',
@@ -448,7 +449,7 @@ isc.OBQuickLaunch.addProperties({
 
     for (i = 0; i < menuEntries.length; i++) {
       menuEntry = menuEntries[i];
-      valueMap[menuEntry.id] = menuEntry;
+      valueMap[menuEntry.id] = menuEntry._identifier;
     }
     quickMenuCombo.preventPickListRequest = true; // preventing 1st request triggered by setValueMap
     quickMenuCombo.setValueMap(valueMap);
