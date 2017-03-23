@@ -42,7 +42,7 @@ public class PopulateADOrgTree extends ModuleScript {
   
   @Override
   protected boolean executeOnInstall() {
-    return false;
+    return true;
   }
 
   // FIXME set version to
