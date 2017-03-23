@@ -187,6 +187,10 @@
       <foreign-key foreignTable="USER2" name="FIN_PAYMENT_USER2">
         <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
+      <index name="FIN_PAYMENT_BPARTNER_CREDIT" unique="false">
+        <index-column name="C_BPARTNER_ID"/>
+        <index-column name="functionBasedColumn" functionExpression="OBEQUALS(GENERATED_CREDIT,USED_CREDIT)"/>
+      </index>
       <index name="FIN_PAYMENT_POSTED" unique="false">
         <index-column name="POSTED"/>
       </index>

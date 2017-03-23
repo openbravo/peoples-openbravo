@@ -1793,11 +1793,12 @@
 <!--801168-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--801168-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--801168-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--801168-->  <ACTION><![CDATA[C]]></ACTION>
+<!--801168-->  <ACTION><![CDATA[M]]></ACTION>
 <!--801168-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_callouts.SL_MInOutTraceReports]]></CLASSNAME>
 <!--801168-->  <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
-<!--801168-->  <AD_CALLOUT_ID><![CDATA[800007]]></AD_CALLOUT_ID>
+<!--801168-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--801168-->  <OBJECT_TYPE><![CDATA[S]]></OBJECT_TYPE>
+<!--801168-->  <NAME><![CDATA[Manual callout for Traceability Report]]></NAME>
 <!--801168--></AD_MODEL_OBJECT>
 
 <!--801237--><AD_MODEL_OBJECT>

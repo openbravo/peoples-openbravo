@@ -28,7 +28,6 @@ public class TaxesLineTestData {
   private BigDecimal price;
   private BigDecimal quantityUpdated;
   private BigDecimal priceUpdated;
-  private BigDecimal lineNetUpdated;
   private String taxid;
   private HashMap<String, String[]> lineTaxes;
   private String[] lineAmounts;

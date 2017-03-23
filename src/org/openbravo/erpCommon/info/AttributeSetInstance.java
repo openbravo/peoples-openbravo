@@ -140,9 +140,9 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
 
       // Get attribute related variable values
-      String lotNo = vars.getStringParameter("inplot");
-      String serialNo = vars.getStringParameter("inpserno");
-      String expiryDate = vars.getStringParameter("inpDateFrom");
+      String lotNo = vars.getStringParameter("inplotxxxinternalOB");
+      String serialNo = vars.getStringParameter("inpsernoxxxinternalOB");
+      String expiryDate = vars.getStringParameter("inpDateFromxxxinternalOB");
 
       // Set Attributes
       AttributeSetInstanceValue attSetValue = new AttributeSetInstanceValue(lotNo, serialNo,
@@ -344,7 +344,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
         strHtml.append("Key");
       }
       strHtml.append("TextBox_ContentCell\"><input type=\"text\" ");
-      strHtml.append("name=\"inplot\" ");
+      strHtml.append("name=\"inplotxxxinternalOB\" ");
       strHtml.append("maxlength=\"20\" ");
       strHtml.append("class=\"dojoValidateValid TextBox_OneCell_width");
       if (fields[0].isoneattrsetvalrequired.equals("Y")) {
@@ -377,7 +377,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
         strHtml.append("Key");
       }
       strHtml.append("TextBox_ContentCell\"><input type=\"text\" ");
-      strHtml.append("name=\"inpserno\" ");
+      strHtml.append("name=\"inpsernoxxxinternalOB\" ");
       strHtml.append("maxlength=\"20\" ");
       strHtml.append("class=\"dojoValidateValid TextBox_OneCell_width");
       if (fields[0].isoneattrsetvalrequired.equals("Y")) {
@@ -432,9 +432,9 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
         strHtml.append(" required\"  required=\"true\"");
       }
       strHtml
-          .append(" type=\"text\" name=\"inpDateFrom\" id=\"paramDateFrom\" size=\"10\" maxlength=\"10\" value=\""
+          .append(" type=\"text\" name=\"inpDateFromxxxinternalOB\" id=\"paramDateFromxxxinternalOB\" size=\"10\" maxlength=\"10\" value=\""
               + strGuaranteeDate
-              + "\" onkeyup=\"autoCompleteDate(this.textbox, this.displayFormat);return true;\"></input><script>djConfig.searchIds.push(\"paramDateFrom\");</script>");
+              + "\" onkeyup=\"autoCompleteDate(this.textbox, this.displayFormat);return true;\"></input><script>djConfig.searchIds.push(\"paramDateFromxxxinternalOB\");</script>");
       strHtml.append("</td>");
       strHtml.append("<td class=\"FieldButton_ContentCell\">");
       strHtml.append("<a class=\"FieldButtonLink\" href=\"#\"");
@@ -444,8 +444,8 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       strHtml.append("onkeypress=\"this.className='FieldButtonLink_active'; return true;\"");
       strHtml.append("onkeyup=\"this.className='FieldButtonLink_hover'; return true;\"");
       strHtml.append("onClick=\"showCalendar('frmMain.");
-      strHtml.append("inpDateFrom', ");
-      strHtml.append("document.frmMain.inpDateFrom.value, false);return false;\">");
+      strHtml.append("inpDateFromxxxinternalOB', ");
+      strHtml.append("document.frmMain.inpDateFromxxxinternalOB.value, false);return false;\">");
       strHtml.append("<table class=\"FieldButton\"");
       strHtml.append("onmousedown=\"this.className='FieldButton_active'; return true;\"");
       strHtml.append("onmouseup=\"this.className='FieldButton'; return true;\"");

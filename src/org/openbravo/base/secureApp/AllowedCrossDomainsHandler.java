@@ -134,6 +134,12 @@ public class AllowedCrossDomainsHandler {
 
       if (origin != null && !origin.equals("")) {
 
+        if (request.getRequestURL().indexOf(origin) == 0) {
+          // if the request url starts with the origin then no need to set
+          // headers either
+          return;
+        }
+
         if (!fromAllowedOrigin(request)) {
           return;
         }
