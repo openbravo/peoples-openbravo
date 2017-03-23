@@ -239,11 +239,7 @@ public class DocMatchInv extends AcctServer {
         setMessageResult(conn, STATUS_NoRelatedPO, "error", null);
         throw new IllegalStateException();
       }
-
       costCurrency = ol.getCurrency();
-      if (!CostingStatus.getInstance().isMigrated()) {
-        costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
-      }
       Long scale = costCurrency.getStandardPrecision();
       BigDecimal bdQty = new BigDecimal(data[0].getField("Qty"));
       bdCost = ol.getUnitPrice().multiply(bdQty).setScale(scale.intValue(), RoundingMode.HALF_UP);
