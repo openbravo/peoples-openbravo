@@ -93,7 +93,7 @@ enyo.kind({
                 label: OB.I18N.getLabel('OBMOBC_LblCancel')
               }])
             } else {
-              receipt.addUnit(repeteadLine, 1);
+              receipt.addUnit(repeteadLine, qty);
             }
             receipt.save();
           } else {

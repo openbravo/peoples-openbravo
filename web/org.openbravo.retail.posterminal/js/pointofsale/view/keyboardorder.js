@@ -144,25 +144,14 @@ enyo.kind({
             if (_.isNaN(value)) {
               return true;
             } else {
-              if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && me.line.get('product').get('isSerialNo') && value >= 1) {
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductHasSerialNo', null), [{
-                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                  action: function () {
-                    return true;
-                  }
-                }, {
-                  label: OB.I18N.getLabel('OBMOBC_LblCancel')
-                }])
-              } else {
-                me.doAddProduct({
-                  product: keyboard.line.get('product'),
-                  qty: value,
-                  options: {
-                    line: keyboard.line
-                  }
-                });
-                keyboard.receipt.trigger('scan');
-              }
+              me.doAddProduct({
+                product: keyboard.line.get('product'),
+                qty: value,
+                options: {
+                  line: keyboard.line
+                }
+              });
+              keyboard.receipt.trigger('scan');
             }
           }
         } else {
@@ -314,7 +303,23 @@ enyo.kind({
                   }
                 });
               } else {
-                actionAddProduct(keyboard, toadd);
+                if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && me.line.get('product').get('isSerialNo')) {
+                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductHasSerialNo', null), [{
+                    label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                    action: function () {
+                      return true;
+                    }
+                  }, {
+                    label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                  }])
+                } else {
+                  if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && me.line.get('product').get('hasAttributes')) {
+                    me.line.set('qty', value);
+                    me.line.save();
+                  } else {
+                    actionAddProduct(keyboard, toadd);
+                  }
+                }
               }
             }
           });
@@ -457,11 +462,31 @@ enyo.kind({
             return true;
           }
         }
-        if (me.selectedModels.length > 1) {
-          actionAddMultiProduct(keyboard, qty);
+        if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && me.line.get('product').get('isSerialNo')) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductHasSerialNo', null), [{
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            action: function () {
+              return true;
+            }
+          }, {
+            label: OB.I18N.getLabel('OBMOBC_LblCancel')
+          }])
         } else {
-          keyboard.receipt.set('multipleUndo', null);
-          actionAddProduct(keyboard, qty);
+          if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && me.line.get('product').get('hasAttributes')) {
+            if (me.line.getQty() > 0) {
+              me.receipt.addUnit(me.line, qty);
+            } else {
+              me.receipt.addUnit(me.line, -qty);
+            }
+            me.line.save();
+          } else {
+            if (me.selectedModels.length > 1) {
+              actionAddMultiProduct(keyboard, qty);
+            } else {
+              keyboard.receipt.set('multipleUndo', null);
+              actionAddProduct(keyboard, qty);
+            }
+          }
         }
       }
     });
@@ -637,7 +662,16 @@ enyo.kind({
               }
             });
           } else {
-            actionAddProducts();
+            if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && me.line.get('product').get('hasAttributes')) {
+              if (me.line.getQty() > 0) {
+                me.receipt.removeUnit(me.line, qty);
+              } else {
+                me.receipt.removeUnit(me.line, -qty);
+              }
+              me.line.save();
+            } else {
+              actionAddProducts();
+            }
           }
         }
       }
