@@ -138,7 +138,7 @@ public class EntityAccessChecker implements OBNotSingleton {
         + "c.oBUIAPPProcess p";
     processAccessButtons = SessionHandler.getInstance().createQuery(processButStr).list();
 
-    String hql = "select t.table.id, t.id, p.obuiappProcess.id from OBUIAPP_Parameter p inner join p.referenceSearchKey r inner join r.oBUIAPPRefWindowList rw inner join rw.window w inner join w.aDTabList t where p.reference.id in ('"
+    String hql = "select t.table.id, p.obuiappProcess.id, t.id from OBUIAPP_Parameter p inner join p.referenceSearchKey r inner join r.oBUIAPPRefWindowList rw inner join rw.window w inner join w.aDTabList t where p.reference.id in ('"
         + WINDOW_REFERENCE + "')";
     parameterOfWindowProcessReference = SessionHandler.getInstance().createQuery(hql).list();
 
@@ -679,36 +679,29 @@ public class EntityAccessChecker implements OBNotSingleton {
   }
 
   private List<Object[]> getProcessWindowReference(Set<String> processTables) {
-    List<Object[]> refProcesses = new ArrayList<Object[]>();
-    for (Object[] par : parameterOfWindowProcessReference) {
-      // 0: tab.table.id | 1:tab.id | 2:process.id
-      if (processTables.contains(par[2])) {
-        refProcesses.add(par);
-      }
-    }
-    return refProcesses;
+    // 0: tab.table.id | 1:process.id | 2:tab.id |
+    return getReferences(processTables, parameterOfWindowProcessReference);
   }
 
   private List<Object[]> getProcessSelectorReference(Set<String> processTables) {
-    List<Object[]> refProcesses = new ArrayList<Object[]>();
-    for (Object[] par : parameterOfSelectorProcessReference) {
-      // 0: sel.table.id | 1: process.id
-      if (processTables.contains(par[1])) {
-        refProcesses.add(par);
-      }
-    }
-    return refProcesses;
+    // 0: sel.table.id | 1: process.id
+    return getReferences(processTables, parameterOfSelectorProcessReference);
   }
 
   private List<Object[]> getSelectorReferencesFromTabs(Set<String> tabs) {
-    List<Object[]> selReferences = new ArrayList<Object[]>();
-    for (Object[] ref : selectorsFromWindowReferences) {
-      // 0: table.id | 1: tab.id
-      if (tabs.contains(ref[1])) {
-        selReferences.add(ref);
+    // 0: table.id | 1: tab.id
+    return getReferences(tabs, selectorsFromWindowReferences);
+  }
+
+  private List<Object[]> getReferences(Set<String> filterElements, List<Object[]> references) {
+    List<Object[]> selectedReferences = new ArrayList<Object[]>();
+    for (Object[] ref : references) {
+      if (filterElements.contains(ref[1])) {
+        selectedReferences.add(ref);
       }
     }
-    return selReferences;
+
+    return selectedReferences;
   }
 
   private void addEntitiesFromProcessWindowReference(ModelProvider mp, Object[] ref) {
