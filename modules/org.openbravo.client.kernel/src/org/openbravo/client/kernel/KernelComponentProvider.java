@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -58,8 +58,11 @@ public class KernelComponentProvider extends BaseComponentProvider {
       return getComponent(StaticResourceComponent.class);
     } else if (componentId.equals(KernelConstants.APPLICATION_COMPONENT_ID)) {
       return getComponent(ApplicationComponent.class);
-    } else if (componentId.equals(KernelConstants.APPLICATION_DYNAMIC_COMPONENT_ID)) {
-      return getComponent(ApplicationDynamicComponent.class);
+    } else if (componentId.equals(KernelConstants.SESSION_DYNAMIC_COMPONENT_ID)) {
+      // generate the session dynamic resources
+      final SessionDynamicResourceComponent sessionDynamicComponent = getComponent(SessionDynamicResourceComponent.class);
+      sessionDynamicComponent.setParameters(parameters);
+      return sessionDynamicComponent;
     } else if (componentId.equals(KernelConstants.TEST_COMPONENT_ID)) {
       return getComponent(TestComponent.class);
     } else if (componentId.equals(KernelConstants.DOCUMENT_COMPONENT_ID)) {
@@ -75,7 +78,7 @@ public class KernelComponentProvider extends BaseComponentProvider {
   public String getVersionParameters(String resource) {
     final String versionParam = super.getVersionParameters(resource);
     if (resource.contains(KernelConstants.APPLICATION_COMPONENT_ID)
-        || resource.contains(KernelConstants.APPLICATION_DYNAMIC_COMPONENT_ID)) {
+        || resource.contains(KernelConstants.SESSION_DYNAMIC_COMPONENT_ID)) {
       return versionParam + "&_role=" + OBContext.getOBContext().getRole().getId() + "&_org="
           + OBContext.getOBContext().getCurrentOrganization().getId();
     }
@@ -92,9 +95,11 @@ public class KernelComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource("org.openbravo.client.kernel/"
         + KernelConstants.KERNEL_COMPONENT_TYPE + "/" + KernelConstants.APPLICATION_COMPONENT_ID,
         true));
+
     globalResources.add(createDynamicResource("org.openbravo.client.kernel/"
         + KernelConstants.KERNEL_COMPONENT_TYPE + "/"
-        + KernelConstants.APPLICATION_DYNAMIC_COMPONENT_ID));
+        + KernelConstants.SESSION_DYNAMIC_COMPONENT_ID));
+
     globalResources.add(createStaticResource("org.openbravo.client.kernel/"
         + KernelConstants.KERNEL_COMPONENT_TYPE + "/" + KernelConstants.LABELS_COMPONENT_ID, true));
     globalResources.add(createStaticResource(

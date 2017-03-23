@@ -40,8 +40,12 @@ public class ApplicationConstants {
   public static final JSONObject ACTION_RESULT_SUCCESS;
   public static final String COMPONENT_TYPE = "OBUIAPP_MainLayout";
   public static final String MAIN_LAYOUT_ID = "Application";
+  public static final String NAVIGATION_BAR_ID = "NavigationBar";
+  public static final String APPLICATION_MENU_ID = "ApplicationMenu";
   public static final String MAIN_LAYOUT_VIEW_COMPONENT_ID = "View";
   public static final String MAIN_LAYOUT_TEMPLATE_ID = "9E97FF309FE44C61A761F50801F79349";
+  public static final String NAVIGATION_BAR_TEMPLATE_ID = "0A9FD7B8976645A380920FF6411AB4A6";
+  public static final String APPLICATION_MENU_TEMPLATE_ID = "4C6825EEBF2C440CA6F97C8A042CCB5F";
   public static final String HQL_TABLE_DATASOURCE_ID = "3C1148C0AB604DE1B51B7EA4112C325F";
 
   public static final String PROPERTIES_TEMPLATE_ID = "DA488BBACB294198AA36A93F03F9561B";

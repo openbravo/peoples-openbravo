@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,11 +34,22 @@ import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.enterprise.Organization;
 
 /**
- * The component responsible for generating the dynamic part of the application js file.
+ * The component responsible for generating some dynamic elements of the application js file which
+ * are related to the user of the current context.
  * 
  * @author mtaal
  */
-public class ApplicationDynamicComponent extends BaseTemplateComponent {
+public class ApplicationDynamicComponent extends SessionDynamicTemplateComponent {
+
+  @Override
+  public String getId() {
+    return KernelConstants.APPLICATION_DYNAMIC_COMPONENT_ID;
+  }
+
+  @Override
+  protected String getTemplateId() {
+    return KernelConstants.APPLICATION_DYNAMIC_TEMPLATE_ID;
+  }
 
   public Set<Entity> getAccessibleEntities() {
     final Set<Entity> entities = OBContext.getOBContext().getEntityAccessChecker()
@@ -86,11 +97,6 @@ public class ApplicationDynamicComponent extends BaseTemplateComponent {
     return false;
   }
 
-  @Override
-  protected Template getComponentTemplate() {
-    return OBDal.getInstance().get(Template.class, KernelConstants.APPLICATION_DYNAMIC_TEMPLATE_ID);
-  }
-
   public User getUser() {
     return OBContext.getOBContext().getUser();
   }
@@ -105,12 +111,5 @@ public class ApplicationDynamicComponent extends BaseTemplateComponent {
 
   public Role getRole() {
     return OBContext.getOBContext().getRole();
-  }
-
-  @Override
-  public String getETag() {
-    OBContext c = OBContext.getOBContext();
-    return super.getETag() + "_" + c.getRole().getId() + "_" + c.getUser().getId() + "_"
-        + c.getCurrentClient().getId() + "_" + c.getCurrentOrganization().getId();
   }
 }

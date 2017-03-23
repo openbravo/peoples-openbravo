@@ -82,6 +82,8 @@ public class KernelConstants {
 
   public static final String SERVLET_CONTEXT = "_servletContext";
 
+  public static final String SESSION_DYNAMIC_COMPONENT_ID = "SessionDynamic";
+
   public static final String APPLICATION_COMPONENT_ID = "Application";
 
   public static final String APPLICATION_DYNAMIC_COMPONENT_ID = "ApplicationDynamic";

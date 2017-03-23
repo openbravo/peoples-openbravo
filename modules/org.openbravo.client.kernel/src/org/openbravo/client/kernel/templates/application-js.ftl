@@ -39,7 +39,10 @@ var OB = {
         licenseType: '${data.licenseType?js_string}',
         isTrial: ${data.trialStringValue},
         isGolden: ${data.goldenStringValue},
-        versionDescription: '${data.versionDescription?js_string}'
+        isActiveInstance: ${data.activeInstanceStringValue},
+        versionDescription: '${data.versionDescription?js_string}',
+        companyImageWidth: '${data.companyImageLogoWidth}',
+        companyImageHeight: '${data.companyImageLogoHeight}'
     },
 
     Format : {

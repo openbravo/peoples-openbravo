@@ -17,8 +17,6 @@
  ************************************************************************
  */
 
-
-
 isc.ClassFactory.defineClass('OBLayout', isc.Layout);
 
 // make sure that the layout is loaded in the parent window if we accidentally end up
@@ -44,6 +42,7 @@ if (OB.PropertyStore.get('EnableScreenReader') === 'Y') {
 }
 
 // needed for backward compatibility... to open the registration form
+
 function openRegistration() {
   OB.Utilities.openProcessPopup(OB.Application.contextUrl + 'ad_forms/Registration.html', true);
 }
@@ -92,6 +91,40 @@ OB.Layout.initialize = function () {
       // is considered to the argument list
       this.Super('addMembers', [newMembers]);
     },
+
+    createMembers: function (allMembers, dynamicMembers) {
+      var members = [],
+          i, j = 0;
+      if (!allMembers) {
+        return;
+      }
+      for (i = 0; i < allMembers.length; i++) {
+        if (!allMembers[i].className) {
+          continue;
+        }
+        if (allMembers[i].className !== '_OBDynamicComponent') {
+          this.translateLabels(allMembers[i]);
+          members.push(isc.ClassFactory.newInstance(allMembers[i].className, allMembers[i].properties));
+        } else if (dynamicMembers && dynamicMembers[j]) {
+          members.push(dynamicMembers[j]);
+          j++;
+        }
+      }
+      this.addMembers(members);
+    },
+
+    translateLabels: function (member) {
+      if (!member.properties) {
+        return;
+      }
+      if (member.properties.title) {
+        member.properties.title = OB.I18N.getLabel(member.properties.title);
+      }
+      if (member.properties.itemPrompt) {
+        member.properties.itemPrompt = OB.I18N.getLabel(member.properties.itemPrompt);
+      }
+    },
+
     isFirstDraw: true,
 
     draw: function () {
@@ -108,8 +141,8 @@ OB.Layout.initialize = function () {
 
   //create the navbar on the left and the logo on the right
   OB.TopLayout.CompanyImageLogo = isc.Img.create({
-    width: OB.Application.imageWidth,
-    height: OB.Application.imageHeight,
+    width: OB.Application.companyImageWidth,
+    height: OB.Application.companyImageHeight,
     src: OB.Application.contextUrl + 'utility/ShowImageLogo?logo=yourcompanymenu',
     imageType: 'normal'
   });
@@ -125,7 +158,7 @@ OB.Layout.initialize = function () {
 
     getInnerHTML: function () {
       var html = this.Super('getInnerHTML', arguments);
-      if (OB.Application.professionalLink === 'true') {
+      if (!OB.Application.isActiveInstance) {
         return '<a href="http://www.openbravo.com/product/erp/professional/" target="_new">' + html + '</a>';
       } else {
         return html;
@@ -162,7 +195,10 @@ OB.Layout.initialize = function () {
   OB.TestRegistry.register('org.openbravo.client.application.mainview.tabset', OB.MainView.TabSet);
   OB.TestRegistry.register('org.openbravo.client.application.layout', OB.Layout);
 
-  OB.NavBar.addMembers(OB.Application.navigationBarComponents);
+
+  OB.NavBar.createMembers(OB.Application.navigationBarComponents, OB.Application.dynamicNavigationBarComponents);
+
+
   // test to see if we can show the heartbeat or registration popups (or not)
   (function _OB_checkHeartBeatRegistration() {
     var handleReturn = function (response, data, request) {

@@ -22,22 +22,29 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.MenuManager;
 import org.openbravo.client.application.MenuManager.MenuOption;
-import org.openbravo.client.kernel.BaseTemplateComponent;
+import org.openbravo.client.kernel.SessionDynamicTemplateComponent;
 
 /**
- * Provides a widget to open a classic view from the database.
+ * Provides the set of menu entries which are accessible for the user of the current context.
  * 
  * @author mtaal
  */
-public class ApplicationMenuComponent extends BaseTemplateComponent {
+public class ApplicationMenuComponent extends SessionDynamicTemplateComponent {
 
   @Inject
   private MenuManager menuManager;
 
-  public String getLabel() {
-    return "UINAVBA_APPLICATION_MENU";
+  @Override
+  public String getId() {
+    return ApplicationConstants.APPLICATION_MENU_ID;
+  }
+
+  @Override
+  protected String getTemplateId() {
+    return ApplicationConstants.APPLICATION_MENU_TEMPLATE_ID;
   }
 
   // creates the menu items on the basis of the hierarchical tree

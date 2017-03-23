@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.client.kernel.reference.UIDefinitionController.FormatDefinition;
 import org.openbravo.dal.core.OBContext;
@@ -37,6 +38,7 @@ import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DalConnectionProvider;
 
@@ -184,6 +186,13 @@ public class ApplicationComponent extends BaseTemplateComponent {
     return Boolean.toString(ActivationKey.getInstance().isGolden());
   }
 
+  public String getActiveInstanceStringValue() {
+    if (SessionFactoryController.isRunningInWebContainer()) {
+      return Boolean.toString(ActivationKey.isActiveInstance());
+    }
+    return Boolean.FALSE.toString();
+  }
+
   public String getVersionDescription() {
     ActivationKey ak = ActivationKey.getInstance();
     String strVersion = OBVersion.getInstance().getMajorVersion();
@@ -200,6 +209,34 @@ public class ApplicationComponent extends BaseTemplateComponent {
     strVersion += " - ";
     strVersion += OBVersion.getInstance().getMP();
     return strVersion;
+  }
+
+  public String getCompanyImageLogoWidth() {
+    Image img = null;
+    img = Utility.getImageLogoObject("yourcompanymenu", "");
+    Long imageWidthLong = null;
+    if (img != null) {
+      imageWidthLong = img.getWidth();
+    }
+    String imageWidthString = "122";
+    if (imageWidthLong != null) {
+      imageWidthString = String.valueOf(imageWidthLong.intValue());
+    }
+    return imageWidthString;
+  }
+
+  public String getCompanyImageLogoHeight() {
+    Image img = null;
+    img = Utility.getImageLogoObject("yourcompanymenu", "");
+    Long imageHeightLong = null;
+    if (img != null) {
+      imageHeightLong = img.getHeight();
+    }
+    String imageHeightString = "34";
+    if (imageHeightLong != null) {
+      imageHeightString = String.valueOf(imageHeightLong.intValue());
+    }
+    return imageHeightString;
   }
 
   public static class ModuleVersionParameter {

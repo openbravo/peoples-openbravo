@@ -19,19 +19,11 @@
 
 /* jslint */
 
-isc.OBApplicationMenuButton.create({
-  title: OB.I18N.getLabel('${data.label}'),
-  initWidget: function () {
-    this.Super('initWidget', arguments);
-
-    OB.Application.menu = [
-    <#list data.rootMenuOptions as menuOption>
-        <@createMenuItem menuOption=menuOption /><#if menuOption_has_next>,</#if>
-    </#list>
-    ];
-    this.baseData = OB.Application.menu;
-  }
-})
+OB.Application.menu = [
+  <#list data.rootMenuOptions as menuOption>
+    <@createMenuItem menuOption=menuOption /><#if menuOption_has_next>,</#if>
+  </#list>
+];
 
 <#macro createMenuItem menuOption>
     {title: '${menuOption.label?js_string}'
@@ -47,6 +39,7 @@ isc.OBApplicationMenuButton.create({
         , optionType: 'process'
         , manualUrl: '${menuOption.id?js_string}'
         , processId: '${menuOption.menu.process.id}'
+        , modal: '${menuOption.modal?string}'
         , id:'${menuOption.dbId}'
         , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.processManual>
@@ -96,7 +89,6 @@ isc.OBApplicationMenuButton.create({
     , singleRecord: ${menuOption.singleRecordStringValue}
     , readOnly: ${menuOption.readOnlyStringValue}
     , editOrDeleteOnly: ${menuOption.editOrDeleteOnlyStringValue}
-    , modal: '${menuOption.modal?string}'
     , _identifier: '${menuOption.label?js_string}'
     
     <#list menuOption.parameters as parameter>

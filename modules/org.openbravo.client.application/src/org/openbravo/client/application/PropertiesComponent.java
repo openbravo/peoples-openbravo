@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,10 +25,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.client.kernel.BaseTemplateComponent;
-import org.openbravo.client.kernel.Template;
+import org.openbravo.client.kernel.SessionDynamicTemplateComponent;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.model.ad.domain.Preference;
 
@@ -37,37 +35,17 @@ import org.openbravo.model.ad.domain.Preference;
  * 
  * @author mtaal
  */
-public class PropertiesComponent extends BaseTemplateComponent {
+public class PropertiesComponent extends SessionDynamicTemplateComponent {
   private static final Logger log = Logger.getLogger(PropertiesComponent.class);
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.client.kernel.BaseTemplateComponent#getComponentTemplate()
-   */
   @Override
-  protected Template getComponentTemplate() {
-    return OBDal.getInstance().get(Template.class, ApplicationConstants.PROPERTIES_TEMPLATE_ID);
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.client.kernel.BaseComponent#getId()
-   */
   public String getId() {
     return ApplicationConstants.PROPERTIES_COMPONENT_ID;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.client.kernel.Component#getETag()
-   */
-  public String getETag() {
-    // is never cached
-    return OBContext.getOBContext().getUser().getId() + "_"
-        + OBContext.getOBContext().getLanguage().getId() + "_" + System.currentTimeMillis();
+  @Override
+  protected String getTemplateId() {
+    return ApplicationConstants.PROPERTIES_TEMPLATE_ID;
   }
 
   public Collection<LocalProperty> getProperties() {

@@ -17,20 +17,8 @@
  ************************************************************************
 */
 
-// should be moved to client.kernel component
-// placed here to prevent dependencies of client.kernel on Preferences
-OB.Application.startPage = '${data.startPage}';
-
-OB.Application.imageWidth = '${data.companyImageLogoWidth}';
-OB.Application.imageHeight = '${data.companyImageLogoHeight}';
-
-    
-
-OB.Application.navigationBarComponents = [<#list data.navigationBarComponents as nbc>
+OB.Application.dynamicNavigationBarComponents = [<#list data.navigationBarComponents as nbc>
                                           ${nbc.jscode}<#if nbc_has_next>,</#if>
                                           </#list>];
-OB.Application.professionalLink = '${data.addProfessionalLink?string}';
-
-${data.notesDataSource}
 
 
