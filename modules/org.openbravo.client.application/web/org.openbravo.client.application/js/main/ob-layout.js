@@ -102,7 +102,7 @@ OB.Layout.initialize = function () {
         if (!allMembers[i].className) {
           continue;
         }
-        if (allMembers[i].className !== '_OBDynamicComponent') {
+        if (allMembers[i].className !== '_OBNavBarDynamicComponent') {
           this.translateLabels(allMembers[i]);
           members.push(isc.ClassFactory.newInstance(allMembers[i].className, allMembers[i].properties));
         } else if (dynamicMembers && dynamicMembers[j]) {

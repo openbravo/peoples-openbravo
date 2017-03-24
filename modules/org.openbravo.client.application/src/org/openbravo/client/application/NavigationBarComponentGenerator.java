@@ -91,7 +91,7 @@ public class NavigationBarComponentGenerator implements OBSingleton {
       if (nbc.isStaticcomponent() || generateDynamicComponents) {
         jsCode = generateComponent(nbc, parameters);
       } else {
-        jsCode = "{className: '_OBDynamicComponent'}";
+        jsCode = "{className: '_OBNavBarDynamicComponent'}";
       }
       nbComponent.setJscode(jsCode);
       nbComponents.add(nbComponent);
