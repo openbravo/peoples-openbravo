@@ -53,109 +53,15 @@ var recBrowserChrome = '57.0.0.0';
 var recBrowserExplorer = '11.0.0.0';
 var recBrowserEdge = '13.0.0.0'; // EdgeHTML version
 var recBrowserSafari = '9.0.0.0';
+
+// currentRevision must be the same value as the one returned by getCurrentRevision() (see utils.js)
+var currentRevision = '29468';
 </script>
 
-<script type="text/javascript">
-  var isRecBrowserMsgShown = false;
-  function setRecommendedBrowserMessage(title, text) {
-    var msgContainer = document.getElementById('errorMsg');
-    var msgContainerTitle = document.getElementById('errorMsgTitle');
-    var msgContainerContent = document.getElementById('errorMsgContent');
-    msgContainerTitle.innerHTML = '';
-    if (typeof title !== 'undefined' && title !== '' && title !== null) {
-      msgContainerContent.innerHTML = '<span class="Login_RecBrowserMsg_Title">' + title.replace(/\n/g, '<br>').replace(/\\n/g, '<br>') + ': ' + '</span>';
-    } else {
-      msgContainerContent.innerHTML = '';
-    }
-    if (typeof text !== 'undefined' && text !== '' && text !== null) {
-      msgContainerContent.innerHTML = msgContainerContent.innerHTML + '<span class="Login_RecBrowserMsg_Content">' + text.replace(/\n/g, '<br>').replace(/\\n/g, '<br>') + '</span>';
-    }
-    msgContainer.style.display = '';
-    isRecBrowserMsgShown = true;
-  }
-
-  function resetLoginMessage() {
-    var msgContainer = document.getElementById('errorMsg');
-    var msgContainerTitle = document.getElementById('errorMsgTitle');
-    var msgContainerTitleContainer = document.getElementById('errorMsgTitle_Container');
-    var msgContainerContent = document.getElementById('errorMsgContent');
-    msgContainerTitle.innerHTML = '';
-    msgContainerTitleContainer.style.display = '';
-    msgContainerContent.innerHTML = '';
-    msgContainer.style.display = 'none';
-    isRecBrowserMsgShown = false;
-  }
-
-  function checkInputKeyDown(input, valueLength) {
-    var msgContainer = document.getElementById('errorMsg');
-    if (msgContainer.style.display !== 'none' && typeof input === 'object') {
-      if (typeof valueLength === 'undefined' || valueLength === null) {
-        valueLength = input.value.length;
-        setTimeout(function() { checkInputKeyDown(input, valueLength); }, 100);
-      } else {
-        if (valueLength !== input.value.length && !isRecBrowserMsgShown) {
-          resetLoginMessage();
-        }
-      }
-    }
-    return true;
-  }
-</script>
-
-<script type="text/javascript">
-  function beforeLoadDo() {
-    redirectWhenInsideMDI();
-  }
-
-  function onLoadDo() {
-    var msgContainer = document.getElementById('errorMsg');
-    var msgContainerTitle = document.getElementById('errorMsgTitle');
-    var msgContainerTitleContainer = document.getElementById('errorMsgTitle_Container');
-    var msgContainerContent = document.getElementById('errorMsgContent');
-
-    if (msgContainerTitle.innerHTML.length === 0) {
-      msgContainerTitleContainer.style.display = 'none';
-    }
-    try { // To avoid in a release upgrade, that a change in code depending on these functions cause revisionControl message not being displayed
-      manageVisualPreferences();
-      addInputChangeCheck(document.getElementById('user'));
-      addInputChangeCheck(document.getElementById('password'));
-      this.windowTables = new Array(
-        new windowTableId('client', 'buttonOK')
-      );
-      setWindowTableParentElement();
-      enableEditionShortcuts();
-      setWindowElementFocus('user', 'id');
-    }
-    catch (e) { }
-
-    if ((!revisionControl('29468')) || (isOpsInstance() != isOpsInstanceCached())) {
-      maskLoginWindow(cacheMsg);
-      setLoginMessage('Warning', '', cacheMsg);
-    }
-
-    if (!checkBrowserCompatibility()) {
-      var displayValidBrowserMsg = buildValidBrowserMsg();
-      setLoginMessage('Warning', '', displayValidBrowserMsg);
-    }
-    if (!checkRecommendedBrowser() && msgContainerTitle.innerHTML.length === 0 && msgContainerContent.innerHTML.length === 0) {
-      var displayRecBrowserMsgText = buildRecBrowserMsgText();
-      setRecommendedBrowserMessage(recBrowserMsgTitle, displayRecBrowserMsgText);
-    }
-    
-    if (expirationMessage){
-      setLoginMessage(expirationMessage.type, expirationMessage.title, expirationMessage.text);
-      if (expirationMessage.disableLogin) {
-          disableButton('buttonOK');
-          document.frmIdentificacion.user.disabled = true;
-          document.frmIdentificacion.password.disabled = true;
-      }
-    }
-  }
-</script>
 <script type="text/javascript">
   beforeLoadDo();
 </script>
+
 </head>
 <body onload="onLoadDo();">
   <div style="display: none; width: 100%; height: 100%; position: absolute; vertical-align: middle; padding: 0px; text-align: center;" id="blocker"></div>

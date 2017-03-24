@@ -21,6 +21,11 @@
  * @fileoverview Contains Javascript functions used by the Login window.
  */
 
+/**
+ * Global variables.
+ */
+
+var isRecBrowserMsgShown = false;
 
 /**
  * Functions to perform the login operation and handle its result.
@@ -288,6 +293,100 @@ function addInputChangeCheck(input) {
   setObjAttribute(input, 'oncut', 'checkInputKeyDown(this); return true;');
   setObjAttribute(input, 'oncopy', 'checkInputKeyDown(this); return true;');
   setObjAttribute(input, 'onpaste', 'checkInputKeyDown(this); return true;');
+}
+
+function setRecommendedBrowserMessage(title, text) {
+  var msgContainer = document.getElementById('errorMsg');
+  var msgContainerTitle = document.getElementById('errorMsgTitle');
+  var msgContainerContent = document.getElementById('errorMsgContent');
+  msgContainerTitle.innerHTML = '';
+  if (typeof title !== 'undefined' && title !== '' && title !== null) {
+    msgContainerContent.innerHTML = '<span class="Login_RecBrowserMsg_Title">' + title.replace(/\n/g, '<br>').replace(/\\n/g, '<br>') + ': ' + '</span>';
+  } else {
+    msgContainerContent.innerHTML = '';
+  }
+  if (typeof text !== 'undefined' && text !== '' && text !== null) {
+    msgContainerContent.innerHTML = msgContainerContent.innerHTML + '<span class="Login_RecBrowserMsg_Content">' + text.replace(/\n/g, '<br>').replace(/\\n/g, '<br>') + '</span>';
+  }
+  msgContainer.style.display = '';
+  isRecBrowserMsgShown = true;
+}
+
+function resetLoginMessage() {
+  var msgContainer = document.getElementById('errorMsg');
+  var msgContainerTitle = document.getElementById('errorMsgTitle');
+  var msgContainerTitleContainer = document.getElementById('errorMsgTitle_Container');
+  var msgContainerContent = document.getElementById('errorMsgContent');
+  msgContainerTitle.innerHTML = '';
+  msgContainerTitleContainer.style.display = '';
+  msgContainerContent.innerHTML = '';
+  msgContainer.style.display = 'none';
+  isRecBrowserMsgShown = false;
+}
+
+function checkInputKeyDown(input, valueLength) {
+  var msgContainer = document.getElementById('errorMsg');
+  if (msgContainer.style.display !== 'none' && typeof input === 'object') {
+    if (typeof valueLength === 'undefined' || valueLength === null) {
+      valueLength = input.value.length;
+      setTimeout(function () {
+        checkInputKeyDown(input, valueLength);
+      }, 100);
+    } else {
+      if (valueLength !== input.value.length && !isRecBrowserMsgShown) {
+        resetLoginMessage();
+      }
+    }
+  }
+  return true;
+}
+
+function beforeLoadDo() {
+  redirectWhenInsideMDI();
+}
+
+function onLoadDo() {
+  var msgContainer = document.getElementById('errorMsg');
+  var msgContainerTitle = document.getElementById('errorMsgTitle');
+  var msgContainerTitleContainer = document.getElementById('errorMsgTitle_Container');
+  var msgContainerContent = document.getElementById('errorMsgContent');
+
+  if (msgContainerTitle.innerHTML.length === 0) {
+    msgContainerTitleContainer.style.display = 'none';
+  }
+  try { // To avoid in a release upgrade, that a change in code depending on these functions cause revisionControl message not being displayed
+    manageVisualPreferences();
+    addInputChangeCheck(document.getElementById('user'));
+    addInputChangeCheck(document.getElementById('password'));
+    this.windowTables = new Array(
+    new windowTableId('client', 'buttonOK'));
+    setWindowTableParentElement();
+    enableEditionShortcuts();
+    setWindowElementFocus('user', 'id');
+  } catch (e) {}
+
+  if ((!revisionControl(currentRevision)) || (isOpsInstance() != isOpsInstanceCached())) {
+    maskLoginWindow(cacheMsg);
+    setLoginMessage('Warning', '', cacheMsg);
+  }
+
+  if (!checkBrowserCompatibility()) {
+    var displayValidBrowserMsg = buildValidBrowserMsg();
+    setLoginMessage('Warning', '', displayValidBrowserMsg);
+  }
+  if (!checkRecommendedBrowser() && msgContainerTitle.innerHTML.length === 0 && msgContainerContent.innerHTML.length === 0) {
+    var displayRecBrowserMsgText = buildRecBrowserMsgText();
+    setRecommendedBrowserMessage(recBrowserMsgTitle, displayRecBrowserMsgText);
+  }
+
+  if (expirationMessage) {
+    setLoginMessage(expirationMessage.type, expirationMessage.title, expirationMessage.text);
+    if (expirationMessage.disableLogin) {
+      disableButton('buttonOK');
+      document.frmIdentificacion.user.disabled = true;
+      document.frmIdentificacion.password.disabled = true;
+    }
+  }
 }
 
 /**
