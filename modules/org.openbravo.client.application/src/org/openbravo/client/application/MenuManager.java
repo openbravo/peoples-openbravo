@@ -68,56 +68,48 @@ public class MenuManager {
   private String roleId;
   private List<MenuOption> menuOptions;
 
-  private long cacheTimeStamp = 0;
-
   public MenuOption getMenu() {
     long t = System.currentTimeMillis();
-    if (cachedMenu == null || roleId == null
-        || !roleId.equals(OBContext.getOBContext().getRole().getId())
-        || cacheTimeStamp != globalMenuOptions.getCacheTimeStamp()) {
 
-      // set the current RoleId
-      roleId = OBContext.getOBContext().getRole().getId();
+    // set the current RoleId
+    roleId = OBContext.getOBContext().getRole().getId();
 
-      OBContext.setAdminMode();
-      try {
-        // take from global menus the one for current role and language
-        menuOptions = globalMenuOptions.getMenuOptions(roleId, OBContext.getOBContext()
-            .getLanguage().getId());
-        cacheTimeStamp = globalMenuOptions.getCacheTimeStamp();
+    OBContext.setAdminMode();
+    try {
+      // take from global menus the one for current role and language
+      menuOptions = globalMenuOptions.getMenuOptions(roleId, OBContext.getOBContext().getLanguage()
+          .getId());
 
-        // configure global menu with role permissions
-        linkWindows();
-        linkProcesses();
-        linkForms();
-        linkProcessDefinition();
-        linkViewDefinition();
+      // configure global menu with role permissions
+      linkWindows();
+      linkProcesses();
+      linkForms();
+      linkProcessDefinition();
+      linkViewDefinition();
 
-        removeInvisibleNodes();
-        removeInaccessibleNodes();
+      removeInvisibleNodes();
+      removeInaccessibleNodes();
 
-        // set the globals
-        final MenuOption localCachedRoot = new MenuOption();
-        localCachedRoot.setDbId("-1"); // just use any value
-        selectableMenuOptions = new ArrayList<MenuOption>();
-        for (MenuOption menuOption : menuOptions) {
-          if (menuOption.getParentMenuOption() == null) {
-            localCachedRoot.getChildren().add(menuOption);
-          }
-          if (menuOption.getType() != MenuEntryType.Summary) {
-            selectableMenuOptions.add(menuOption);
-          }
+      // set the globals
+      final MenuOption localCachedRoot = new MenuOption();
+      localCachedRoot.setDbId("-1"); // just use any value
+      selectableMenuOptions = new ArrayList<MenuOption>();
+      for (MenuOption menuOption : menuOptions) {
+        if (menuOption.getParentMenuOption() == null) {
+          localCachedRoot.getChildren().add(menuOption);
         }
-
-        Collections.sort(selectableMenuOptions, new MenuComparator());
-
-        cachedMenu = localCachedRoot;
-      } finally {
-        OBContext.restorePreviousMode();
+        if (menuOption.getType() != MenuEntryType.Summary) {
+          selectableMenuOptions.add(menuOption);
+        }
       }
-    } else {
-      log.debug("Cached menu");
+
+      Collections.sort(selectableMenuOptions, new MenuComparator());
+
+      cachedMenu = localCachedRoot;
+    } finally {
+      OBContext.restorePreviousMode();
     }
+
     log.debug("getMenu took {} ms", System.currentTimeMillis() - t);
     return cachedMenu;
   }
