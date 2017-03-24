@@ -41,8 +41,11 @@ var OB = {
         isGolden: ${data.goldenStringValue},
         isActiveInstance: ${data.activeInstanceStringValue},
         versionDescription: '${data.versionDescription?js_string}',
-        companyImageWidth: '${data.companyImageLogoWidth}',
-        companyImageHeight: '${data.companyImageLogoHeight}'
+        companyImage: {
+        <#list data.companyImageLogoData?keys as key>
+          '${key}': '${data.companyImageLogoData[key]}'<#if key_has_next>,</#if>
+        </#list>
+        }
     },
 
     Format : {

@@ -211,32 +211,22 @@ public class ApplicationComponent extends BaseTemplateComponent {
     return strVersion;
   }
 
-  public String getCompanyImageLogoWidth() {
-    Image img = null;
-    img = Utility.getImageLogoObject("yourcompanymenu", "");
-    Long imageWidthLong = null;
+  public Map<String, String> getCompanyImageLogoData() {
+    Map<String, String> imageProperties = new HashMap<>();
+    Image img = Utility.getImageLogoObject("yourcompanymenu", "");
+    String imageWidth = "122";
+    String imageHeight = "34";
     if (img != null) {
-      imageWidthLong = img.getWidth();
+      if (img.getWidth() != null) {
+        imageWidth = String.valueOf(img.getWidth().intValue());
+      }
+      if (img.getHeight() != null) {
+        imageHeight = String.valueOf(img.getHeight().intValue());
+      }
     }
-    String imageWidthString = "122";
-    if (imageWidthLong != null) {
-      imageWidthString = String.valueOf(imageWidthLong.intValue());
-    }
-    return imageWidthString;
-  }
-
-  public String getCompanyImageLogoHeight() {
-    Image img = null;
-    img = Utility.getImageLogoObject("yourcompanymenu", "");
-    Long imageHeightLong = null;
-    if (img != null) {
-      imageHeightLong = img.getHeight();
-    }
-    String imageHeightString = "34";
-    if (imageHeightLong != null) {
-      imageHeightString = String.valueOf(imageHeightLong.intValue());
-    }
-    return imageHeightString;
+    imageProperties.put("width", imageWidth);
+    imageProperties.put("height", imageHeight);
+    return imageProperties;
   }
 
   public static class ModuleVersionParameter {
