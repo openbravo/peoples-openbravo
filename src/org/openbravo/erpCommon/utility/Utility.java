@@ -270,26 +270,6 @@ public class Utility {
   }
 
   /**
-   * Checks if the record has attachments associated.
-   * 
-   * @param conn
-   *          Handler for the database connection.
-   * @param vars
-   *          Handler for the session info.
-   * @param strTab
-   *          String with the tab id.
-   * @param recordId
-   *          String with the record id.
-   * @return True if the record has attachments or false if not.
-   * @throws ServletException
-   */
-  public static boolean hasTabAttachments(ConnectionProvider conn, VariablesSecureApp vars,
-      String strTab, String recordId) throws ServletException {
-    return UtilityData.hasTabAttachments(conn, Utility.getContext(conn, vars, "#User_Client", ""),
-        Utility.getContext(conn, vars, "#AccessibleOrgTree", ""), strTab, recordId);
-  }
-
-  /**
    * @see OBMessageUtils#messageBD(ConnectionProvider, String, String, boolean)
    */
   public static String messageBD(ConnectionProvider conn, String strCode, String strLanguage) {
