@@ -110,7 +110,7 @@ public class UpdateCashup {
 
     // If the cashup is new or the incoming cashup report is newer, update the cashUp info
     if (cashUp.getLastcashupreportdate() == null
-        || lastCashUpReportDate.getTime() > cashUp.getLastcashupreportdate().getTime()) {
+        || lastCashUpReportDate.getTime() >= cashUp.getLastcashupreportdate().getTime()) {
       if (jsonCashup.has("objToSend")) {
         JSONObject jsonInfoCashUp = new JSONObject(jsonCashup.getString("objToSend"));
         // JSONObject jsonInfoCashUp = (JSONObject) jsonCashup.get("objToSend");

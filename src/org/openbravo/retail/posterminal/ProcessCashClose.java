@@ -30,10 +30,12 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
+import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.json.JsonConstants;
+import org.openbravo.service.json.JsonToDataConverter;
 
 @DataSynchronization(entity = "OBPOS_App_Cashup")
 public class ProcessCashClose extends POSDataSynchronizationProcess implements
@@ -293,6 +295,13 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
       if (cashUp != null
           && (record.has("isprocessed") && record.getString("isprocessed").equals("Y"))) {
         cashUp.setProcessed(Boolean.TRUE);
+        if (record.has("lastcashupeportdate")) {
+          String lastCashUpReportString = record.getString("lastcashupeportdate");
+          Date lastCashUpReportDate = (Date) JsonToDataConverter.convertJsonToPropertyValue(
+              PropertyByType.DATETIME,
+              (lastCashUpReportString).subSequence(0, (lastCashUpReportString).lastIndexOf(".")));
+          cashUp.setLastcashupreportdate(lastCashUpReportDate);
+        }
         OBDal.getInstance().save(cashUp);
       }
     } catch (Exception e) {
