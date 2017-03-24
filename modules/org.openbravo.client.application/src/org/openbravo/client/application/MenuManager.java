@@ -35,7 +35,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.Menu;
 import org.openbravo.model.ad.ui.MenuTrl;
@@ -46,7 +45,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Configures cached global menu (@see {@link GlobalMenu}) to adapt it to the current session's
- * permissions and caches it in memory for easy consumption by components. Reads the menu from the
+ * permissions and caches it in memory for easy consumption by components.
  * 
  * @author mtaal
  */
@@ -292,6 +291,7 @@ public class MenuManager {
     private List<MenuOption> children = new ArrayList<MenuOption>();
     private Boolean visible = null;
     private String objectId;
+    private boolean isModal;
 
     private boolean accessGranted = false;
     private Boolean isReadOnlyForRole = false;
@@ -312,6 +312,7 @@ public class MenuManager {
       this.form = option.form;
       this.isReport = option.isReport;
       this.objectId = option.objectId;
+      this.isModal = option.isModal;
     }
 
     public boolean isSingleRecord() {
@@ -521,13 +522,11 @@ public class MenuManager {
     }
 
     public boolean isModal() {
-      if (isProcess()) {
-        // done via isModelProcess(String) as is called from different request and getProcess() is
-        // not initialized
-        String processId = getMenu().getProcess().getId();
-        return Utility.isModalProcess(processId);
-      }
-      return true;
+      return isModal;
+    }
+
+    public void setModal(boolean isModal) {
+      this.isModal = isModal;
     }
 
     public boolean isProcessManual() {
