@@ -66,7 +66,7 @@ public class EntityAccessChecker implements OBNotSingleton {
   private static final Logger log = Logger.getLogger(EntityAccessChecker.class);
 
   private static List<Object[]> processAccessSelectors;
-  private static List<String> targetTablesIds;
+  private static List<Object[]> targetTablesIds;
   private static List<Object[]> processAccessButtons;
   private static List<Object[]> parameterOfWindowProcessReference;
   private static List<Object[]> parameterOfSelectorProcessReference;
@@ -122,7 +122,7 @@ public class EntityAccessChecker implements OBNotSingleton {
   @SuppressWarnings("unchecked")
   public static void calculateCachedElements() {
     // take into account entities of the selectors with Search parent reference
-    final String selectorsOfSearchReference = "select distinct(s.table.id) from OBUISEL_Selector s "
+    final String selectorsOfSearchReference = "select distinct(s.table.id), c.table.id from OBUISEL_Selector s "
         + "left join s.reference r left join r.aDColumnReferenceSearchKeyList c "
         + "where r.parentReference='" + SEARCH_REFERENCE + "'";
     targetTablesIds = SessionHandler.getInstance().createQuery(selectorsOfSearchReference).list();
@@ -308,6 +308,10 @@ public class EntityAccessChecker implements OBNotSingleton {
     return getProcessAccess(processTables, processAccessButtons);
   }
 
+  private List<String> getTargetTablesIds(Set<String> processTables) {
+    return getProcessAccess(processTables, targetTablesIds);
+  }
+
   private List<String> getProcessAccess(Set<String> processTables,
       List<Object[]> targetProcessAccess) {
     List<String> targetProcesses = new ArrayList<>();
@@ -317,16 +321,6 @@ public class EntityAccessChecker implements OBNotSingleton {
       }
     }
     return targetProcesses;
-  }
-
-  private List<String> getTargetTablesIds(Set<String> processTables) {
-    List<String> targeTables = new ArrayList<>();
-    for (String tt : targetTablesIds) {
-      if (processTables.contains(tt)) {
-        targeTables.add(tt);
-      }
-    }
-    return targeTables;
   }
 
   /**
