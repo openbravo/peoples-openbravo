@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2011 Openbravo SLU
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -8432,18 +8432,6 @@ a.Menu_ToolBar_Button:active {
   background-repeat: no-repeat;
   background-position: center center;
   background-image: url(Menu/ToolBar/iconAlertActive.png);  
-}
-
-.Menu_ToolBar_Button_Icon_expand_disabled {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconExpand.disabled.png);  
-}
-
-.Menu_ToolBar_Button_Icon_contract_disabled {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconContract.disabled.png);  
 }
 
 .Menu_ToolBar_Button_Icon_user_disabled {
