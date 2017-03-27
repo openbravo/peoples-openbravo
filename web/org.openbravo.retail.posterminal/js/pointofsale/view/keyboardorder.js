@@ -263,8 +263,6 @@ enyo.kind({
                     action: function () {
                       return true;
                     }
-                  }, {
-                    label: OB.I18N.getLabel('OBMOBC_LblCancel')
                   }])
                 } else {
                   if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && me.line.get('product').get('hasAttributes')) {
@@ -409,8 +407,6 @@ enyo.kind({
             action: function () {
               return true;
             }
-          }, {
-            label: OB.I18N.getLabel('OBMOBC_LblCancel')
           }])
         } else {
           if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && me.line.get('product').get('hasAttributes')) {

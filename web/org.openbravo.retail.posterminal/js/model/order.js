@@ -1621,7 +1621,7 @@
           if (callback) {
             callback(true, line);
           }
-        });
+        };
       } // End addProductToOrder
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('ignoreReturnApproval')) {
         if (options && options.isVerifiedReturn) {

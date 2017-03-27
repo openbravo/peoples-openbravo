@@ -73,9 +73,12 @@ enyo.kind({
 
     if (attributeValue) {
       for (i = 0; i < me.owner.model.get('order').get('lines').length; i++) {
-        if (me.owner.model.get('order').get('lines').models[i].getAttributeValue() === attributeValue) {
+        var productId = me.owner.model.get('order').get('lines').models[i].attributes.product.id;
+        var attributeId = me.owner.model.get('order').get('lines').models[i].getAttributeValue();
+        if ((attributeId === attributeValue) && (productId === p.id)) {
           repeteadAttribute = true;
           repeteadLine = me.owner.model.get('order').get('lines').models[i];
+          break;
         }
       }
       if (this.validateAttribute(attributeValue)) {
@@ -89,8 +92,6 @@ enyo.kind({
                 action: function () {
                   return true;
                 }
-              }, {
-                label: OB.I18N.getLabel('OBMOBC_LblCancel')
               }])
             } else {
               receipt.addUnit(repeteadLine, qty);
@@ -107,8 +108,6 @@ enyo.kind({
               action: function () {
                 return true;
               }
-            }, {
-              label: OB.I18N.getLabel('OBMOBC_LblCancel')
             }])
             me.owner.model.get('order').get('lines').remove(orderline);
           }
@@ -129,8 +128,7 @@ enyo.kind({
 
   cancel: function () {
     var currentLine = this.args.line
-    var options = this.args.options
-    if (currentLine && !options) {
+    if (currentLine) {
       this.owner.model.get('order').deleteLine(currentLine);
       this.owner.model.get('order').save();
     }
@@ -152,8 +150,7 @@ enyo.kind({
   },
   executeOnHide: function () {
     var attributeValue = this.$.bodyContent.$.valueAttribute.getValue()
-    var options = this.args.options
-    if (!attributeValue && !options) {
+    if (!attributeValue) {
       this.owner.model.get('order').deleteLine(this.args.line);
       this.owner.model.get('order').save();
     }
