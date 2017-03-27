@@ -451,6 +451,21 @@ enyo.kind({
           this.owner.$.listOrderLines.getScrollArea().scrollToBottom();
         }
         this.owner.$.listOrderLines.scrollToBottom = false;
+        //Fix TOTAL row width, when scroll is shown 
+        if (this.owner.$.listOrderLines.collection.length > 0) {
+          var listOrderLines = document.getElementById(this.owner.$.listOrderLines.id);
+          var orderLinesProduct = this.owner.$.listOrderLines.$.scrollArea.getClientControls().length > 0 ? document.getElementById(this.owner.$.listOrderLines.$.scrollArea.getClientControls()[0].id) : null;
+          var totalReceiptLine = document.getElementById(this.owner.$.totalReceiptLine.id);
+          var listTaxLines = document.getElementById(this.owner.$.listTaxLines.id);
+
+          if (orderLinesProduct !== null && listOrderLines.clientWidth > orderLinesProduct.clientWidth) {
+            totalReceiptLine.style.width = '91%';
+            listTaxLines.style.width = '95%';
+          } else {
+            totalReceiptLine.style.width = '';
+            listTaxLines.style.width = '';
+          }
+        }
       }
     }, {
       tag: 'li',
