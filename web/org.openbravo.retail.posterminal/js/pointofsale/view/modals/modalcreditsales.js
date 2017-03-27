@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo */
+/*global OB, enyo, _ */
 
 enyo.kind({
   kind: 'OB.UI.ModalAction',
@@ -74,6 +74,10 @@ enyo.kind({
     this.owner.owner.actionCancel = false;
     this.doHideThisPopup();
     this.model.get('order').set('paidOnCredit', true);
+    this.model.get('order').set('isLayaway', false);
+    _.each(this.model.get('order').get('lines').models, function (line) {
+      line.set('obposCanbedelivered', true);
+    }, this);
     this.allowOpenDrawer = false;
     var payments = this.model.get('order').get('payments');
     var me = this;

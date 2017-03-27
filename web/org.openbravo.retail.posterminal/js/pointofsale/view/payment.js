@@ -470,7 +470,7 @@ enyo.kind({
       }
       this.$.totalpendinglbl.show();
 
-      if (receiptHasPrepaymentAmount && pendingPrepayment <= 0) {
+      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
         this.$.donebutton.show();
       } else {
         this.$.donebutton.hide();
@@ -597,7 +597,7 @@ enyo.kind({
       this.setTotalPending(OB.DEC.sub(multiOrders.get('total'), multiOrders.get('payment')), rate, symbol, symbolAtRight);
       this.$.totalpending.show();
       this.$.totalpendinglbl.show();
-      if (receiptHasPrepaymentAmount && pendingPrepayment <= 0) {
+      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
         this.$.donebutton.show();
       } else {
         this.$.donebutton.hide();
@@ -1330,6 +1330,15 @@ enyo.kind({
           return;
         }
       });
+    }
+
+    if (!myModel.get('leftColumnViewManager').isOrder()) {
+      var receipts2 = this.owner.model.get('multiOrders').get('multiOrdersList').models;
+      receipts2.forEach(function (receipt) {
+        receipt.set('isLayaway', false);
+      });
+    } else {
+      this.owner.receipt.set('isLayaway', false);
     }
 
     if (!avoidPayment) {

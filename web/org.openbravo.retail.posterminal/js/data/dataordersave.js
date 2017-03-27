@@ -192,11 +192,9 @@
           receipt.get('lines').forEach(function (line) {
             if (Math.abs(receipt.get('payment')) >= Math.abs(receipt.get('gross')) || receipt.get('paidOnCredit')) {
               line.set('obposCanbedelivered', true);
+            }
+            if (line.get('obposCanbedelivered')) {
               line.set('obposIspaid', true);
-            } else if (Math.abs(receipt.get('payment')) >= Math.abs(receipt.get('prepaymentAmt'))) {
-              if (line.get('obposCanbedelivered')) {
-                line.set('obposIspaid', true);
-              }
             }
           });
 
@@ -522,11 +520,9 @@
             currentReceipt.get('lines').forEach(function (line) {
               if (Math.abs(currentReceipt.get('payment')) >= Math.abs(currentReceipt.get('gross')) || currentReceipt.get('paidOnCredit')) {
                 line.set('obposCanbedelivered', true);
+              }
+              if (line.get('obposCanbedelivered')) {
                 line.set('obposIspaid', true);
-              } else if (Math.abs(currentReceipt.get('payment')) >= Math.abs(currentReceipt.get('prepaymentAmt'))) {
-                if (line.get('obposCanbedelivered')) {
-                  line.set('obposIspaid', true);
-                }
               }
             });
 
