@@ -160,7 +160,7 @@
         }, function (payMthds) { //OB.Dal.find success
           _.each(order.get('payments').models, function (payment) {
             auxPay = payMthds.filter(function (payMthd) {
-              return payMthd.get('searchKey') === payment.get('kind') && !payment.get('isPrePayment');
+              return (payMthd.get('searchKey') === payment.get('kind')) && !payment.get('isPrePayment');
             })[0];
             if (!auxPay) { //We cannot find this payment in local database, it must be a new payment method, we skip it.
               return;

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2016 Openbravo S.L.U.
+ * Copyright (C) 2013-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -330,7 +330,7 @@
         } else {
           printPDF(receipt, args);
         }
-        if ((receipt.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_print.once')) || OB.MobileApp.model.get('terminal').terminalType.printTwice) {
+        if (((receipt.get('orderType') === 1 || hasNegativeLines) && !OB.MobileApp.model.hasPermission('OBPOS_print.once', true)) || OB.MobileApp.model.get('terminal').terminalType.printTwice) {
           printPDF(receipt, args);
         }
       } else {
@@ -384,7 +384,7 @@
         } // order property.
         //Print again when it is a return and the preference is 'Y' or when one of the payments method has the print twice checked
         if (receipt.get('print')) { //Print option of order property
-          if ((receipt.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_print.once')) || _.filter(receipt.get('payments').models, function (iter) {
+          if (((receipt.get('orderType') === 1 || hasNegativeLines) && !OB.MobileApp.model.hasPermission('OBPOS_print.once', true)) || _.filter(receipt.get('payments').models, function (iter) {
             if (iter.get('printtwice')) {
               return iter;
             }
@@ -420,7 +420,7 @@
         } // order property.
       }
       if (receipt.get('canceledorder')) {
-        var negativeDocNo = receipt.get('negativeDocNo').documentNo;
+        var negativeDocNo = receipt.get('negativeDocNo');
         receipt.get('canceledorder').set('ordercanceled', true);
         receipt.get('canceledorder').set('negativeDocNo', negativeDocNo);
         me.print(receipt.get('canceledorder'), args);

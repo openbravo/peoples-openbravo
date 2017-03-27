@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -74,6 +74,10 @@ enyo.kind({
   events: {
     onShowPopup: ''
   },
+  handlers: {
+    onAdvancedFilterSelector: 'advancedFilterSelector',
+    onChangeFilterSelector: 'changeFilterSelector'
+  },
   components: [{
     kind: 'OB.UI.MultiColumn',
     name: 'cashupMultiColumn',
@@ -132,7 +136,24 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalSelectPrinters'
     }]
+  }, {
+    name: 'otherSubWindowsContainer',
+    components: [{
+      kind: 'OB.UI.ModalSelectorBusinessPartners',
+      name: 'modalcustomer'
+    }, {
+      kind: 'OB.UI.ModalAdvancedFilterBP',
+      name: 'modalAdvancedFilterBP'
+    }]
   }],
+
+  advancedFilterSelector: function (inSender, inEvent) {
+    this.waterfall('onGetAdvancedFilterSelector', inEvent);
+  },
+
+  changeFilterSelector: function (inSender, inEvent) {
+    this.waterfall('onUpdateFilterSelector', inEvent);
+  },
 
   init: function () {
     this.inherited(arguments);

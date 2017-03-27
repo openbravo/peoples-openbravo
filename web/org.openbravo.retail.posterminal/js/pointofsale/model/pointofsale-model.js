@@ -312,14 +312,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       }
     };
 
-    receipt.on('closed', function () {
+    receipt.on('checkOpenDrawer', function () {
       me.checkOpenDrawer();
     });
 
-    this.get('multiOrders').on('closed', function (order) {
-      if (order.get('id') === _.last(me.get('multiOrders').get('multiOrdersList').models).get('id')) {
-        me.checkOpenDrawer();
-      }
+    this.get('multiOrders').on('checkOpenDrawer', function () {
+      me.checkOpenDrawer();
     });
 
     receipt.on('paymentAccepted', function () {
@@ -620,26 +618,27 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             payment.set('origAmount', OB.DEC.sub(payment.get('origAmount'), me.get('multiOrders').get('change')));
             me.get('multiOrders').set('change', OB.DEC.Zero);
           }
+          var paymentLine = new OB.Model.PaymentLine();
+          OB.UTIL.clone(payment, paymentLine);
           if (payment.get('origAmount') <= amountToPay) {
             var bigDecAmount = new BigDecimal(String(OB.DEC.mul(payment.get('origAmount'), paymentMethod.mulrate)));
-            iter.addPayment(new OB.Model.PaymentLine({
-              'kind': payment.get('kind'),
-              'name': payment.get('name'),
-              'amount': OB.DEC.toNumber(bigDecAmount),
-              'rate': paymentMethod.rate,
-              'mulrate': paymentMethod.mulrate,
-              'isocode': paymentMethod.isocode,
-              'allowOpenDrawer': payment.get('allowopendrawer'),
-              'isCash': payment.get('iscash'),
-              'openDrawer': payment.get('openDrawer'),
-              'printtwice': payment.get('printtwice')
-            }), function (iter) {
-              if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
-                iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), payment.get('origAmount')));
-              }
-              amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
-              iter.prepareToSend(prepareToSendCallback);
-              setPaymentsToReceipts(orderList, paymentList, orderListIndex, paymentListIndex + 1, callback);
+            paymentLine.set('amount', OB.DEC.toNumber(bigDecAmount));
+            paymentLine.set('rate', paymentMethod.rate);
+            paymentLine.set('mulrate', paymentMethod.mulrate);
+            paymentLine.set('isocode', paymentMethod.isocode);
+            paymentLine.set('allowOpenDrawer', payment.get('allowopendrawer'));
+            paymentLine.set('isCash', payment.get('iscash'));
+            OB.UTIL.HookManager.executeHooks('OBPOS_MultiOrderAddPaymentLine', {
+              paymentLine: paymentLine,
+              origPayment: payment
+            }, function (args) {
+              iter.addPayment(args.paymentLine, function (iter) {
+                if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
+                  iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), args.origPayment.get('origAmount')));
+                }
+                amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
+                setPaymentsToReceipts(orderList, paymentList, orderListIndex, paymentListIndex + 1, callback);
+              });
             });
           } else {
             var bigDecAmountAux, amtAux;
@@ -652,28 +651,28 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               amtAux = OB.DEC.toNumber(bigDecAmountAux);
               paymentList.at(paymentListIndex).set('origAmount', OB.DEC.sub(paymentList.at(paymentListIndex).get('origAmount'), amountToPay));
             }
-
-            iter.addPayment(new OB.Model.PaymentLine({
-              'kind': payment.get('kind'),
-              'name': payment.get('name'),
-              'amount': amtAux,
-              'rate': paymentMethod.rate,
-              'mulrate': paymentMethod.mulrate,
-              'isocode': paymentMethod.isocode,
-              'allowOpenDrawer': payment.get('allowopendrawer'),
-              'isCash': payment.get('iscash'),
-              'openDrawer': payment.get('openDrawer'),
-              'printtwice': payment.get('printtwice')
-            }), function (iter) {
-              if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
-                iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), amtAux));
-              }
-              amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
-              iter.prepareToSend(prepareToSendCallback);
-              setPaymentsToReceipts(orderList, paymentList, orderListIndex + 1, paymentListIndex, callback);
+            paymentLine.set('amount', amtAux);
+            paymentLine.set('rate', paymentMethod.rate);
+            paymentLine.set('mulrate', paymentMethod.mulrate);
+            paymentLine.set('isocode', paymentMethod.isocode);
+            paymentLine.set('allowOpenDrawer', payment.get('allowopendrawer'));
+            paymentLine.set('isCash', payment.get('iscash'));
+            OB.UTIL.HookManager.executeHooks('OBPOS_MultiOrderAddPaymentLine', {
+              paymentLine: paymentLine,
+              origPayment: payment
+            }, function (args) {
+              iter.addPayment(args.paymentLine, function (iter) {
+                if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
+                  iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), amtAux));
+                }
+                amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
+                iter.prepareToSend(prepareToSendCallback);
+                setPaymentsToReceipts(orderList, paymentList, orderListIndex + 1, paymentListIndex, callback);
+              });
             });
           }
         } else {
+          iter.prepareToSend(prepareToSendCallback);
           setPaymentsToReceipts(orderList, paymentList, orderListIndex + 1, paymentListIndex, callback);
         }
       };
@@ -836,49 +835,61 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_LayawayCancelledError'));
               return;
             } else {
-              var cancelLayawayObj = receipt.serializeToJSON();
+              receipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+              receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
+              receipt.set('timezoneOffset', new Date().getTimezoneOffset());
 
-              cancelLayawayObj.posTerminal = OB.MobileApp.model.get('terminal').id;
+              receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
+              var auxReceipt = new OB.Model.Order();
+              OB.UTIL.clone(receipt, auxReceipt);
+              auxReceipt.prepareToSend(function () {
+                OB.UTIL.cashUpReport(auxReceipt, function (cashUp) {
+                  receipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
+                  var cancelLayawayObj = receipt.serializeToJSON();
 
-              if (receipt.getPaymentStatus().isNegative) {
-                cancelLayawayObj.gross = OB.DEC.mul(cancelLayawayObj.gross, -1);
-              }
-              cancelLayawayObj.orderType = 2;
-              cancelLayawayObj.obposAppCashup = OB.MobileApp.model.get('terminal').cashUpId;
-              if (cancelLayawayObj.deliveredQuantityAmount) {
-                cancelLayawayObj.deliveredQuantityAmount = OB.I18N.formatCurrency(receipt.getDeliveredQuantityAmount());
-              }
+                  cancelLayawayObj.posTerminal = OB.MobileApp.model.get('terminal').id;
 
-              cancelLayawayObj.payments.forEach(function (payment) {
-                payment.origAmount = receipt.getPaymentStatus().isNegative ? OB.DEC.mul(payment.origAmount, -1) : payment.origAmount;
-                payment.paid = receipt.getPaymentStatus().isNegative ? OB.DEC.mul(payment.paid, -1) : payment.paid;
-              });
-
-              cancelLayawayModel.set('json', JSON.stringify(cancelLayawayObj));
-
-              OB.Dal.save(cancelLayawayModel, function () {
-                var orderId = receipt.id;
-
-                OB.MobileApp.model.runSyncProcess();
-                orderList.deleteCurrent();
-                OB.Dal.get(OB.Model.Order, orderId, function (model) {
-                  function cancelAndNew() {
-                    OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
+                  if (receipt.getPaymentStatus().isNegative) {
+                    cancelLayawayObj.gross = OB.DEC.mul(cancelLayawayObj.gross, -1);
                   }
-                  if (model) {
-                    OB.Dal.remove(model, function (tx) {
-                      cancelAndNew();
+                  cancelLayawayObj.orderType = 2;
+                  cancelLayawayObj.obposAppCashup = OB.MobileApp.model.get('terminal').cashUpId;
+                  if (cancelLayawayObj.deliveredQuantityAmount) {
+                    cancelLayawayObj.deliveredQuantityAmount = OB.I18N.formatCurrency(receipt.getDeliveredQuantityAmount());
+                  }
+
+                  cancelLayawayObj.payments.forEach(function (payment) {
+                    payment.origAmount = receipt.getPaymentStatus().isNegative ? OB.DEC.mul(payment.origAmount, -1) : payment.origAmount;
+                    payment.paid = receipt.getPaymentStatus().isNegative ? OB.DEC.mul(payment.paid, -1) : payment.paid;
+                  });
+
+                  cancelLayawayModel.set('json', JSON.stringify(cancelLayawayObj));
+
+                  OB.Dal.save(cancelLayawayModel, function () {
+                    var orderId = receipt.id;
+
+                    OB.MobileApp.model.runSyncProcess();
+                    orderList.deleteCurrent();
+                    OB.Dal.get(OB.Model.Order, orderId, function (model) {
+                      function cancelAndNew() {
+                        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
+                      }
+                      if (model) {
+                        OB.Dal.remove(model, function (tx) {
+                          cancelAndNew();
+                        }, function (tx, err) {
+                          OB.UTIL.showError(err);
+                        });
+                      } else {
+                        cancelAndNew();
+                      }
                     }, function (tx, err) {
                       OB.UTIL.showError(err);
                     });
-                  } else {
-                    cancelAndNew();
-                  }
-                }, function (tx, err) {
-                  OB.UTIL.showError(err);
+                  }, function () {
+                    OB.error(arguments);
+                  });
                 });
-              }, function () {
-                OB.error(arguments);
               });
               receipt.set('negativeDocNo', documentNo + '*R*');
               receipt.trigger('print');
@@ -979,7 +990,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         me.on('approvalChecked', function (event) {
           me.off('approvalChecked');
           if (event.approved) {
-            OB.MobileApp.view.waterfall('onShowPaymentTab');
             me.trigger('showPaymentTab');
           }
         }, this);
@@ -1032,8 +1042,25 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   approvedRequest: function (approved, supervisor, approvalType, callback) {
     var order = this.get('order'),
         newApprovals = [],
-        approvals, approval, i, date;
+        approvals, approval, i, date, callbackFunc, hasPermission = false;
 
+    callbackFunc = function () {
+      if (enyo.isFunction(callback)) {
+        callback(approved, supervisor, approvalType);
+      }
+    };
+
+    if (_.isArray(approvalType)) {
+      hasPermission = _.every(approvalType, function (a) {
+        return OB.MobileApp.model.hasPermission(a, true);
+      });
+    } else {
+      hasPermission = OB.MobileApp.model.hasPermission(approvalType, true);
+    }
+    if (hasPermission) {
+      callbackFunc();
+      return;
+    }
 
     approvals = order.get('approvals') || [];
     if (!Array.isArray(approvalType)) {
@@ -1070,8 +1097,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.trigger('approvalChecked', {
       approved: approved
     });
-    if (enyo.isFunction(callback)) {
-      callback(approved, supervisor, approvalType);
-    }
+    callbackFunc();
   }
 });

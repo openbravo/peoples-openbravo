@@ -405,8 +405,14 @@
     async: false,
     implementation: function (discountRule, receipt, line) {
       var linePrice, discountedLinePrice, qty = line.get('qty'),
+          promotionCandidates = line.get('promotionCandidates'),
           minQty = discountRule.get('minQuantity'),
           maxQty = discountRule.get('maxQuantity');
+
+      if (OB.UTIL.isNullOrUndefined(promotionCandidates) || promotionCandidates.indexOf(discountRule.id) === -1) {
+        // The line is not valid for this discountRule
+        return;
+      }
 
       if ((minQty && qty < minQty) || (maxQty && qty > maxQty)) {
         return;

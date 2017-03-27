@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2016 Openbravo S.L.U.
+ * Copyright (C) 2013-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -258,6 +258,9 @@ enyo.kind({
     this.receipt.on('updatePending', function () {
       this.updatePending();
     }, this);
+    this.receipt.on('paymentCancel', function () {
+      this.$.layawayaction.setDisabled(false);
+    }, this);
     this.model.get('leftColumnViewManager').on('change:currentView', function () {
       if (!this.model.get('leftColumnViewManager').isMultiOrder()) {
         this.updatePending();
@@ -269,7 +272,7 @@ enyo.kind({
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
       this.updatePendingMultiOrders();
     }
-    this.receipt.on('change:orderType change:isLayaway change:payment', function (model) {
+    this.receipt.on('change:orderType change:isLayaway change:payment change:documentNo', function (model) {
       if (this.model.get('leftColumnViewManager').isMultiOrder()) {
         this.updateCreditSalesAction();
         this.$.layawayaction.hide();
@@ -278,6 +281,7 @@ enyo.kind({
       var payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
       if ((model.get('orderType') === 2 || (model.get('isLayaway'))) && model.get('orderType') !== 3 && !model.getPaymentStatus().done && _.isUndefined(model.get('paidInNegativeStatusAmt'))) {
         this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
+        this.$.layawayaction.setDisabled(false);
         this.$.layawayaction.show();
       } else {
         this.$.layawayaction.hide();
@@ -661,24 +665,29 @@ enyo.kind({
     resultOK = !selectedPayment.paymentMethod.iscash || paymentstatus.changeAmt > 0 ? this.checkValidCashOverpayment(paymentstatus, selectedPayment) : undefined;
     if (resultOK || _.isUndefined(resultOK)) {
       if (!_.isNull(paymentstatus.change) || ((paymentstatus.isNegative || paymentstatus.isReversal) && !_.isNull(paymentstatus.pending))) {
-        resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Done', function (success) {
-          var lsuccess = success;
-          if (lsuccess) {
-            lsuccess = this.checkValidPaymentMethod(paymentstatus, selectedPayment);
-          } else {
-            this.$.noenoughchangelbl.show();
-            this.$.donebutton.setLocalDisabled(true);
-            this.$.exactbutton.setLocalDisabled(true);
-          }
-          me.receipt.stopAddingPayments = !_.isEmpty(me.getShowingErrorMessages());
-          this.setStatusButtons(lsuccess, 'Done');
-          this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Layaway', function (success) {
-            this.setStatusButtons(success, 'Layaway');
+        // avoid checking for shared paymentMethod
+        if (paymentstatus.change && selectedPayment.paymentMethod.isshared) {
+          resultOK = true;
+        } else {
+          resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Done', function (success) {
+            var lsuccess = success;
+            if (lsuccess) {
+              lsuccess = this.checkValidPaymentMethod(paymentstatus, selectedPayment);
+            } else {
+              this.$.noenoughchangelbl.show();
+              this.$.donebutton.setLocalDisabled(true);
+              this.$.exactbutton.setLocalDisabled(true);
+            }
+            me.receipt.stopAddingPayments = !_.isEmpty(me.getShowingErrorMessages());
+            this.setStatusButtons(lsuccess, 'Done');
+            this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Layaway', function (success) {
+              this.setStatusButtons(success, 'Layaway');
+            });
+            this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Credit', function (success) {
+              this.setStatusButtons(success, 'Credit');
+            });
           });
-          this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Credit', function (success) {
-            this.setStatusButtons(success, 'Credit');
-          });
-        });
+        }
       } else if (!this.receipt.stopAddingPayments) {
         this.$.donebutton.setLocalDisabled(false);
         this.$.exactbutton.setLocalDisabled(false);
@@ -1250,7 +1259,8 @@ enyo.kind({
       } else {
         this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
       }
-      this.$.amount.setContent(this.model.printAmountWithSignum());
+      var receipt = this.owner.owner.owner.owner.model.get('order');
+      this.$.amount.setContent(this.model.printAmountWithSignum(receipt));
     }
     if (this.model.get('rate') && this.model.get('rate') !== '1') {
       this.$.foreignAmount.setContent(this.model.printForeignAmount());
@@ -1543,9 +1553,6 @@ enyo.kind({
     }
     this.setDisabled(true);
     enyo.$.scrim.show();
-    receipt.on('paymentCancel', function () {
-      this.setDisabled(false);
-    }, this);
     receipt.trigger('paymentDone', me.allowOpenDrawer);
   }
 });

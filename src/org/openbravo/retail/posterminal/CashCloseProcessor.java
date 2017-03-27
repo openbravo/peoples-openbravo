@@ -373,7 +373,7 @@ public class CashCloseProcessor {
     transaction.setDepositAmount(reconciliationTotal.multiply(conversionRate).setScale(2,
         BigDecimal.ROUND_HALF_EVEN));
     transaction.setProcessed(true);
-    transaction.setTransactionType("BPW");
+    transaction.setTransactionType("BPD");
     transaction.setStatus("RDNC");
     transaction.setDescription("GL Item: " + glItem.getName());
     transaction.setObposAppCashup(cashUp);

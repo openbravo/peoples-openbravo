@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ ************************************************************************************
+ * Copyright (C) 2017 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+-->
+<SqlClass name="UpdateCashupReportData" package="org.openbravo.retail.posterminal.modulescript">
+   <SqlClassComment></SqlClassComment>
+   <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select 1 as totalcounted from dual
+      ]]>
+    </Sql>
+  </SqlMethod>
+   <SqlMethod name="updateCashupStartingCash" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      update obpos_paymentmethodcashup set totalcounted = coalesce((
+        select cashup.startingcash + cashup.totalsales + coalesce(cashup.totaldeposits, 0) - cashup.totalreturns - coalesce(cashup.totaldrops, 0) + coalesce((select sum(trans.depositamt - trans.paymentamt)
+                                                from fin_finacc_transaction trans where trans.fin_financial_account_id = payment.fin_financial_account_id
+                                                and  trans.fin_reconciliation_id = recon.fin_reconciliation_id
+                                                and trans.c_glitem_id = paymenttype.c_glitem_diff_id),0)
+        from  obpos_app_payment payment, 
+                 obpos_app_payment_type paymenttype,  
+                 obpos_app_cash_reconcil recon,
+                 obpos_paymentmethodcashup cashup
+        where payment.obpos_app_payment_type_id = paymenttype.obpos_app_payment_type_id
+        and payment.obpos_app_payment_id = recon.obpos_app_payment_id
+        and cashup.obpos_app_payment_id = payment.obpos_app_payment_id
+        and cashup.obpos_app_cashup_id = recon.obpos_app_cashup_id
+        and (paymenttype.isshared = 'N' or payment.obretco_cmevents_id is null)
+        and obpos_paymentmethodcashup.obpos_paymentmethodcashup_id = cashup.obpos_paymentmethodcashup_id),0)
+      ]]>
+    </Sql>
+  </SqlMethod>
+   <SqlMethod name="insertCashManagementEvents" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      INSERT INTO obpos_paymentcashup_events
+        (
+          obpos_paymentcashup_events_id,
+          ad_client_id,
+          ad_org_id,
+          created,
+          createdby,
+          updated,
+          updatedby,
+          isactive,
+          obpos_paymentmethodcashup_id,
+          name,
+          rate,
+          isocode,
+          amount,
+          TYPE,
+          fin_finacc_transaction_id
+        )
+        select get_uuid(),
+        payment.ad_client_id,
+        payment.ad_org_id,
+        now(),
+        '100',
+        now(),
+        '100',
+        'Y',
+        cashup.obpos_paymentmethodcashup_id,
+        trans.description,
+        cashup.rate,
+        cashup.isocode,
+        abs(coalesce(trans.depositamt - trans.paymentamt,0)),
+        case when trans.paymentamt = 0 then 'deposit' else 'drop' end,
+        trans.fin_finacc_transaction_id
+        from   fin_finacc_transaction trans, 
+                 obpos_app_payment payment, 
+                 obpos_app_payment_type paymenttype,  
+                 obpos_app_cash_reconcil recon,
+                 obpos_paymentmethodcashup cashup
+        where trans.fin_financial_account_id = payment.fin_financial_account_id
+        and payment.obpos_app_payment_type_id = paymenttype.obpos_app_payment_type_id
+        and payment.obpos_app_payment_id = recon.obpos_app_payment_id
+        and cashup.obpos_app_payment_id = payment.obpos_app_payment_id
+        and  trans.fin_reconciliation_id = recon.fin_reconciliation_id
+        and (trans.c_glitem_id = paymenttype.c_glitem_drops_id or trans.c_glitem_id = paymenttype.c_glitem_deposits_id)
+        and cashup.obpos_app_cashup_id = recon.obpos_app_cashup_id
+        and (paymenttype.isshared = 'N' or payment.obretco_cmevents_id is null)
+      ]]>
+    </Sql>
+  </SqlMethod>
+</SqlClass>

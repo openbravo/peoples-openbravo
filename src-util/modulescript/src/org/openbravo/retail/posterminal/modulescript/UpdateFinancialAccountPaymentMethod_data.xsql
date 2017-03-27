@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ ************************************************************************************
+ * Copyright (C) 2017 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+-->
+<SqlClass name="UpdateFinancialAccountPaymentMethodData" package="org.openbravo.retail.posterminal.modulescript">
+   <SqlClassComment></SqlClassComment>
+   <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT '' as dummy FROM dual
+       ]]>
+    </Sql>
+  </SqlMethod>
+   <SqlMethod name="updateFinancialAccountPaymentMethodAutomaticDeposit" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      update fin_finacc_paymentmethod set automatic_deposit = 'Y'
+      where fin_finacc_paymentmethod_id in (
+        select ffp.fin_finacc_paymentmethod_id
+        from fin_finacc_paymentmethod ffp
+        inner join fin_financial_account ffa
+                on ffp.fin_financial_account_id = ffa.fin_financial_account_id
+        where exists (select 1 from OBPOS_App_Payment obap 
+                         where obap.fin_financial_account_id = ffa.fin_financial_account_id)
+        and ffp.automatic_deposit <> 'Y')
+      ]]>
+    </Sql>
+  </SqlMethod>
+</SqlClass>

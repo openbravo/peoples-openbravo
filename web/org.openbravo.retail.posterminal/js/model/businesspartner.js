@@ -164,7 +164,8 @@
     },
     adjustNames: function () {
       var firstName = this.get('firstName'),
-          lastName = this.get('lastName');
+          lastName = this.get('lastName'),
+          fullName;
       if (firstName) {
         firstName = firstName.trim();
       }
@@ -173,7 +174,12 @@
       }
       this.set('firstName', firstName);
       this.set('lastName', lastName);
-      this.set('name', firstName + (lastName ? ' ' + lastName : ''));
+
+      fullName = firstName + (lastName ? ' ' + lastName : '');
+      if (fullName.length > 60) {
+        fullName = fullName.substring(0, 60);
+      }
+      this.set('name', fullName);
     },
     serializeEditedToJSON: function () {
       var me = this,

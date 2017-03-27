@@ -110,7 +110,7 @@ public class UpdateCashup {
 
     // If the cashup is new or the incoming cashup report is newer, update the cashUp info
     if (cashUp.getLastcashupreportdate() == null
-        || lastCashUpReportDate.getTime() > cashUp.getLastcashupreportdate().getTime()) {
+        || lastCashUpReportDate.getTime() >= cashUp.getLastcashupreportdate().getTime()) {
       if (jsonCashup.has("objToSend")) {
         JSONObject jsonInfoCashUp = new JSONObject(jsonCashup.getString("objToSend"));
         // JSONObject jsonInfoCashUp = (JSONObject) jsonCashup.get("objToSend");
@@ -213,6 +213,20 @@ public class UpdateCashup {
                 payment.getString("paymentMethodId"))) {
               payment.put("amountToKeep",
                   paymentMethod.getJSONObject("paymentMethod").getString("amountToKeep"));
+              BigDecimal expected = BigDecimal.ZERO;
+              BigDecimal difference = BigDecimal.ZERO;
+              BigDecimal rate = new BigDecimal(payment.getString("rate"));
+              if (rate.compareTo(BigDecimal.ONE) == 0) {
+                expected = new BigDecimal(paymentMethod.getString("expected"));
+                difference = new BigDecimal(paymentMethod.getString("difference"));
+              } else if (paymentMethod.has("foreignExpected")) {
+                expected = new BigDecimal(paymentMethod.getString("foreignExpected"));
+                difference = new BigDecimal(
+                    paymentMethod.has("foreignDifference") ? paymentMethod
+                        .getString("foreignDifference") : paymentMethod.getString("difference"));
+              }
+              payment.put("totalCounted",
+                  expected.add(difference).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
             }
           }
         }
@@ -254,10 +268,10 @@ public class UpdateCashup {
     newPaymentMethodCashUp.setTotalreturns(new BigDecimal(jsonCashup.getString("totalReturns")));
     newPaymentMethodCashUp.setTotalDeposits(new BigDecimal(jsonCashup.getString("totalDeposits")));
     newPaymentMethodCashUp.setTotalDrops(new BigDecimal(jsonCashup.getString("totalDrops")));
-
-    if (jsonCashup.has("amountToKeep")) {
-      newPaymentMethodCashUp.setAmountToKeep(new BigDecimal(jsonCashup.getString("amountToKeep")));
-    }
+    newPaymentMethodCashUp.setTotalCounted(jsonCashup.has("totalCounted") ? new BigDecimal(
+        jsonCashup.getString("totalCounted")) : BigDecimal.ZERO);
+    newPaymentMethodCashUp.setAmountToKeep(jsonCashup.has("amountToKeep") ? new BigDecimal(
+        jsonCashup.getString("amountToKeep")) : BigDecimal.ZERO);
     newPaymentMethodCashUp.setRate(new BigDecimal(jsonCashup.getString("rate")));
     newPaymentMethodCashUp.setIsocode((String) jsonCashup.get("isocode"));
 

@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+  <database name="TABLE OBPOS_PAYMENTCASHUP_EVENTS">
+    <table name="OBPOS_PAYMENTCASHUP_EVENTS" primaryKey="OBPOS_PAYMENTCASHUP_EVENTS_ID">
+      <column name="OBPOS_PAYMENTCASHUP_EVENTS_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="OBPOS_PAYMENTMETHODCASHUP_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="NAME" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="RATE" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISOCODE" primaryKey="false" required="true" type="VARCHAR" size="3" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AMOUNT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="TYPE" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="FIN_FINACC_TRANSACTION_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="RELATED_TRANSACTION_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="AD_CLIENT" name="OBPOS_CASHUP_EVENTS_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="FIN_FINACC_TRANSACTION" name="OBPOS_CASHUP_EVENTS_FIN_TRANS">
+        <reference local="FIN_FINACC_TRANSACTION_ID" foreign="FIN_FINACC_TRANSACTION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="OBPOS_CASHUP_EVENTS_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBPOS_PAYMENTMETHODCASHUP" name="OBPOS_CASHUP_EVENTS_PM_CASHUP">
+        <reference local="OBPOS_PAYMENTMETHODCASHUP_ID" foreign="OBPOS_PAYMENTMETHODCASHUP_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="FIN_FINACC_TRANSACTION" name="OBPOS_CASHUP_EVENTS_RLT_TRANS">
+        <reference local="RELATED_TRANSACTION_ID" foreign="FIN_FINACC_TRANSACTION_ID"/>
+      </foreign-key>
+      <index name="OBPOS_PCEV_PMCASHUP_IDX" unique="false">
+        <index-column name="OBPOS_PAYMENTMETHODCASHUP_ID"/>
+      </index>
+      <check name="OBPOS_CASHUP_EVENTS_ISACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+    </table>
+  </database>

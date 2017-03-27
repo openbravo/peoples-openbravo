@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*
+ ************************************************************************************
+ * Copyright (C) 2017 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+-->
+<SqlClass name="FixDataIssue35364Data" package="org.openbravo.retail.posterminal.modulescript">
+  <SqlClassComment></SqlClassComment>
+   <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+      SELECT '' AS counter
+      FROM DUAL
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="fixPOSAmounttokeep" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update obpos_paymentmethodcashup 
+        set amounttokeep = 0 
+        where amounttokeep is null
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="fixPOSStartingcash" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update obpos_paymentmethodcashup 
+        set startingcash = 0 
+        where startingcash is null
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="fixPOSTotalsales" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update obpos_paymentmethodcashup 
+        set totalsales = 0 
+        where totalsales is null
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="fixPOSTotalreturns" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update obpos_paymentmethodcashup 
+        set totalreturns = 0 
+        where totalreturns is null
+      ]]>
+    </Sql>
+  </SqlMethod>
+</SqlClass>

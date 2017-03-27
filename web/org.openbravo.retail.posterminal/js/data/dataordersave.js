@@ -115,6 +115,8 @@
             return true;
           }
 
+          receipt.trigger('checkOpenDrawer');
+
           if (OB.UTIL.RfidController.isRfidConfigured()) {
             OB.UTIL.RfidController.processRemainingCodes(receipt);
             OB.UTIL.RfidController.updateEpcBuffers();
@@ -237,6 +239,8 @@
                           frozenReceipt: frozenReceipt,
                           isCancelled: true
                         });
+                        receipt.setIsCalculateReceiptLockState(false);
+                        receipt.setIsCalculateGrossLockState(false);
                         receipt.trigger('paymentCancel');
                       }
                     }, null, false);
@@ -386,7 +390,6 @@
         receipt.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
 
         currentReceipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
-        currentReceipt.set('json', JSON.stringify(currentReceipt.serializeToJSON()));
 
         OB.trace('Executing pre order save hook.');
 
@@ -405,6 +408,8 @@
             }
             return true;
           }
+
+          currentReceipt.set('json', JSON.stringify(currentReceipt.serializeToJSON()));
 
           OB.trace('Saving receipt.');
 
@@ -443,6 +448,7 @@
                   }
                   OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
                   OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
+                  model.get('multiOrders').trigger('checkOpenDrawer');
                   };
 
               var errorCallback = function () {

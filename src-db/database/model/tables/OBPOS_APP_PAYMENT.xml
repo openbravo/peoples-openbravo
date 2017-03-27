@@ -133,6 +133,7 @@
       </index>
       <index name="OBPOS_CMEVENTS_FK" unique="false">
         <index-column name="OBRETCO_CMEVENTS_ID"/>
+        <whereClause><![CDATA[OBRETCO_CMEVENTS_ID IS NOT NULL]]></whereClause>
       </index>
       <unique name="OBPOS_APP_PAYMENT_VALUE">
         <unique-column name="AD_CLIENT_ID"/>

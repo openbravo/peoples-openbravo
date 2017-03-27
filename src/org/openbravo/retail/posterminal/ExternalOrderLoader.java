@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2016 Openbravo S.L.U.
+ * Copyright (C) 2015-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -119,6 +120,7 @@ public class ExternalOrderLoader extends OrderLoader {
       message = transformMessage(jsonObject);
       if (messageAlreadyReceived(jsonObject.getString("messageId"))) {
         log.debug("Message already received, ignoring it " + jsonObject);
+        OBDal.getInstance().rollbackAndClose();
 
         JSONObject jsonResponse = new JSONObject();
         jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
@@ -480,9 +482,10 @@ public class ExternalOrderLoader extends OrderLoader {
         lineJson.getDouble("grossAmount") / lineJson.getDouble("qty"));
     writePropertyValue(lineJson, "netPrice",
         lineJson.getDouble("netAmount") / lineJson.getDouble("qty"));
-    writePropertyValue(lineJson, "grossPrice",
+    writePropertyValue(lineJson, "grossUnitPrice",
         lineJson.getDouble("grossAmount") / lineJson.getDouble("qty"));
-
+    writePropertyValue(lineJson, "baseGrossUnitPrice",
+        lineJson.getDouble("grossAmount") / lineJson.getDouble("qty"));
     copyPropertyValue(lineJson, "netAmount", "discountedNet");
     copyPropertyValue(lineJson, "netPrice", "discountedLinePrice");
     writePropertyValue(lineJson, "discountPercentage", 0);
@@ -758,10 +761,29 @@ public class ExternalOrderLoader extends OrderLoader {
 
   protected void setDocumentNo(JSONObject orderJson) throws JSONException {
     if (!orderJson.has("documentNo")) {
-      final String documentNo = getDocumentNo(
-          ModelProvider.getInstance().getEntity(Order.ENTITY_NAME), null,
-          OBDal.getInstance().get(DocumentType.class, orderJson.getString("documentType")));
-      orderJson.put("documentNo", documentNo);
+      OBPOSApplications posTerminal = getPOSTerminal(orderJson);
+      if (posTerminal != null) {
+        Long currentNo = (long) 0;
+        // The record will be locked to this process until it ends.
+        Query terminalQuery = OBDal.getInstance().getSession()
+            .createQuery("from OBPOS_Applications where id=?");
+        terminalQuery.setString(0, posTerminal.getId());
+        terminalQuery.setLockOptions(LockOptions.UPGRADE);
+        OBPOSApplications lockedTerminal = (OBPOSApplications) terminalQuery.uniqueResult();
+        if (lockedTerminal.getLastassignednum() != null) {
+          currentNo = lockedTerminal.getLastassignednum() + 1;
+        } else {
+          currentNo++;
+        }
+        lockedTerminal.setLastassignednum(currentNo);
+        orderJson.put("documentNo",
+            lockedTerminal.getOrderdocnoPrefix() + "/" + String.format("%07d", currentNo));
+      } else {
+        final String documentNo = getDocumentNo(
+            ModelProvider.getInstance().getEntity(Order.ENTITY_NAME), null, OBDal.getInstance()
+                .get(DocumentType.class, orderJson.getString("documentType")));
+        orderJson.put("documentNo", documentNo);
+      }
     }
   }
 

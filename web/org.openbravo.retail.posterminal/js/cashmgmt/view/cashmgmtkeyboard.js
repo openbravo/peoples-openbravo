@@ -38,7 +38,9 @@ enyo.kind({
           iscash: iscash,
           allowopendrawer: allowopendrawer,
           glItem: glItem,
-          paymentMethod: paymentMethod
+          paymentMethod: paymentMethod,
+          defaultProcess: 'Y',
+          extendedType: ''
         };
         // Restore CashMgmtDropDepositEvents
         me.owner.owner.owner.model.attributes.cashMgmtDropEvents.reset(OB.MobileApp.model.attributes.cashMgmtDropEvents);
@@ -125,10 +127,19 @@ enyo.kind({
       }
     }, this);
 
-    this.addToolbar({
-      name: 'cashMgmtToolbar',
-      buttons: buttons
+    OB.UTIL.HookManager.executeHooks('OBPOS_AddButtonToCashManagement', {
+      context: this,
+      buttons: []
+    }, function (args) {
+      _.each(args.buttons, function (btn) {
+        buttons.push(btn);
+      });
+      args.context.addToolbar({
+        name: 'cashMgmtToolbar',
+        buttons: buttons
+      });
+      args.context.showToolbar('cashMgmtToolbar');
     });
-    this.showToolbar('cashMgmtToolbar');
+
   }
 });

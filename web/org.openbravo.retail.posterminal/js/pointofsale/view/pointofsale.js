@@ -16,7 +16,6 @@ enyo.kind({
   windowmodel: OB.OBPOSPointOfSale.Model.PointOfSale,
   tag: 'section',
   handlers: {
-    onShowPaymentTab: 'showOrder',
     onAddProduct: 'addProductToOrder',
     onViewProductDetails: 'viewProductDetails',
     onCloseProductDetailsView: 'showOrder',
@@ -573,6 +572,9 @@ enyo.kind({
   },
   showOrder: function (inSender, inEvent) {
     var allHidden = true;
+    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+      return false;
+    }
     enyo.forEach(this.$.multiColumn.$.leftPanel.$.leftSubWindowsContainer.getControls(), function (component) {
       if (component.showing === true) {
         if (component.mainBeforeSetHidden) {
@@ -613,20 +615,31 @@ enyo.kind({
     }
   },
   viewProductDetails: function (inSender, inEvent) {
-    this.$.multiColumn.$.leftPanel.$.receiptview.applyStyle('display', 'none');
-    this.$.productdetailsview.updateProduct(inEvent.product);
-    this.$.productdetailsview.applyStyle('display', 'inline');
+    this.$.multiColumn.$.leftPanel.$.receiptview.setShowing(false);
+    this.$.multiColumn.$.leftPanel.$.productdetailsview.updateProduct(inEvent.product);
+    this.$.multiColumn.$.leftPanel.$.productdetailsview.setShowing(true);
+    return true;
+  },
+  hideProductDetails: function (inSender, inEvent) {
+    if (this.$.multiColumn.$.leftPanel.$.productdetailsview.showing) {
+      this.$.multiColumn.$.leftPanel.$.productdetailsview.setShowing(false);
+    }
+    if (!this.model.get('leftColumnViewManager').isMultiOrder() && !this.$.multiColumn.$.leftPanel.$.receiptview.showing) {
+      this.$.multiColumn.$.leftPanel.$.receiptview.setShowing(true);
+    }
     return true;
   },
   changeBusinessPartner: function (inSender, inEvent) {
+    var bp = this.model.get('order').get('bp'),
+        eventBP = inEvent.businessPartner;
     if (inEvent.target === 'order' || inEvent.target === undefined) {
-      if (this.model.get('order').get('isEditable') === false) {
+      if (this.model.get('order').get('isEditable') === false && (bp.get('id') !== eventBP.get('id') || bp.get('locId') !== eventBP.get('locId') || bp.get('shipLocId') !== eventBP.get('shipLocId'))) {
         this.doShowPopup({
           popup: 'modalNotEditableOrder'
         });
         return true;
       }
-      this.model.get('order').setBPandBPLoc(inEvent.businessPartner, false, true);
+      this.model.get('order').setBPandBPLoc(eventBP, false, true);
       this.model.get('orderList').saveCurrent();
     } else {
       this.waterfall('onChangeBPartner', inEvent);
@@ -848,6 +861,7 @@ enyo.kind({
       this.$.multiColumn.$.rightPanel.$.keyboard.lastStatus = '';
       this.$.multiColumn.$.rightPanel.$.keyboard.setStatus(inEvent.status);
     }
+    this.hideProductDetails();
   },
   discountsModeFinished: function (inSender, inEvent) {
     this.leftToolbarDisabled(inSender, {
@@ -887,18 +901,98 @@ enyo.kind({
     this.tabChange(inSender, inEvent);
   },
   deleteLine: function (inSender, inEvent) {
+    var me = this,
+        ln = inEvent.line,
+        selectedModels = inEvent.selectedModels,
+        receipt = this.model.get('order');
+
+    function postDeleteLine() {
+      OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteLine', {
+        order: receipt,
+        selectedLines: selectedModels
+      }, function () {
+        receipt.unset('preventServicesUpdate');
+        receipt.unset('deleting');
+        receipt.get('lines').trigger('updateRelations');
+        receipt.calculateReceipt();
+        enyo.$.scrim.hide();
+      });
+    }
+
+    function preDeleteLine() {
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteLine', {
+        order: receipt,
+        selectedLines: selectedModels
+      }, function (args) {
+        if (args && args.cancelOperation && args.cancelOperation === true) {
+          return;
+        }
+        enyo.$.scrim.show();
+        receipt.get('lines').forEach(function (line, idx) {
+          line.set('undoPosition', idx);
+        });
+        receipt.set('undo', null);
+        receipt.set('preventServicesUpdate', true);
+        receipt.set('deleting', true);
+        if (selectedModels.length > 1) {
+          receipt.deleteLines(selectedModels, 0, selectedModels.length, postDeleteLine);
+        } else {
+          receipt.deleteLine(ln, false, postDeleteLine);
+        }
+        receipt.trigger('scan');
+      });
+    }
+
+
+    //Editable Validation
     if (this.model.get('order').get('isEditable') === false) {
       this.doShowPopup({
         popup: 'modalNotEditableOrder'
       });
       return true;
     }
-    var line = inEvent.line,
-        receipt = this.model.get('order');
-    if (line && receipt) {
-      receipt.deleteLine(line, false, inEvent.callback);
-      receipt.trigger('scan');
+
+    //Services validation
+    var unGroupedServiceLines = _.filter(selectedModels, function (line) {
+      return line.get('product').get('productType') === 'S' && line.get('product').get('quantityRule') === 'PP' && !line.get('groupService') && line.has('relatedLines') && line.get('relatedLines').length > 0 && !line.get('originalOrderLineId');
+    });
+    if (unGroupedServiceLines && unGroupedServiceLines.length > 0) {
+      var i, j, serviceQty, productQty, uniqueServices, getServiceQty, getProductQty;
+      uniqueServices = _.uniq(unGroupedServiceLines, false, function (line) {
+        return line.get('product').get('id') + line.get('relatedLines')[0].orderlineId;
+      });
+      getServiceQty = function (service) {
+        return _.filter(unGroupedServiceLines, function (line) {
+          return line.get('product').get('id') === service.get('product').get('id') && line.get('relatedLines')[0].orderlineId === service.get('relatedLines')[0].orderlineId;
+        }).length;
+      };
+      getProductQty = function (service) {
+        return _.find(receipt.get('lines').models, function (line) {
+          return _.indexOf(_.pluck(service.get('relatedLines'), 'orderlineId'), line.get('id')) !== -1;
+        }).get('qty');
+      };
+
+      for (i = 0; i < uniqueServices.length; i++) {
+        serviceQty = getServiceQty(uniqueServices[i]);
+        productQty = getProductQty(uniqueServices[i]);
+        if (productQty && productQty !== serviceQty) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LineCanNotBeDeleted'), OB.I18N.getLabel('OBPOS_AllServiceLineMustSelectToDelete'), [{
+            label: OB.I18N.getLabel('OBMOBC_LblOk')
+          }]);
+          return;
+        }
+      }
     }
+
+    OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+      if (approved) {
+        ln.set('deleteApproved', true);
+        selectedModels.forEach(function (line, idx) {
+          line.set('deleteApproved', true);
+        });
+        preDeleteLine();
+      }
+    });
   },
   editLine: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
@@ -943,12 +1037,12 @@ enyo.kind({
         //        me.model.get('multiOrders').removePayment(inEvent.payment);
         //      }
         if (me.model.get('leftColumnViewManager').isOrder()) {
-          me.model.get('order').removePayment(inEvent.payment);
+          me.model.get('order').removePayment(inEvent.payment, inEvent.removeCallback);
           me.model.get('order').trigger('displayTotal');
           return;
         }
         if (me.model.get('leftColumnViewManager').isMultiOrder()) {
-          me.model.get('multiOrders').removePayment(inEvent.payment);
+          me.model.get('multiOrders').removePayment(inEvent.payment, inEvent.removeCallback);
           me.model.get('multiOrders').trigger('displayTotal');
           return;
         }

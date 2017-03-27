@@ -34,17 +34,13 @@ public class VoidLayaway {
   @Any
   private Instance<VoidLayawayHook> layawayhooks;
 
+  @Inject
+  @Any
+  private Instance<VoidLayawayPostHook> layawayPosthooks;
+
   public void voidLayaway(JSONObject jsonorder, Order order) throws Exception {
 
-    try {
-      for (Iterator<VoidLayawayHook> layawayhookiter = layawayhooks.iterator(); layawayhookiter
-          .hasNext();) {
-        VoidLayawayHook layawayhook = layawayhookiter.next();
-        layawayhook.exec(jsonorder, order);
-      }
-    } catch (Exception e) {
-      throw new OBException("There was an error voiding the Layaway: ", e);
-    }
+    executeHooks(layawayhooks, jsonorder, order);
 
     TriggerHandler.getInstance().disable();
     OBContext.setAdminMode(true);
@@ -99,5 +95,23 @@ public class VoidLayaway {
       OBContext.restorePreviousMode();
     }
 
+    executeHooks(layawayPosthooks, jsonorder, order);
+
   }
+
+  private void executeHooks(Instance<? extends Object> hooks, JSONObject jsonorder, Order order) {
+    try {
+      for (Iterator<? extends Object> layawayhookiter = hooks.iterator(); layawayhookiter.hasNext();) {
+        Object layawayhook = layawayhookiter.next();
+        if (layawayhook instanceof VoidLayawayHook) {
+          ((VoidLayawayHook) layawayhook).exec(jsonorder, order);
+        } else if (layawayhook instanceof VoidLayawayPostHook) {
+          ((VoidLayawayPostHook) layawayhook).exec(jsonorder, order);
+        }
+      }
+    } catch (Exception e) {
+      throw new OBException("There was an error voiding the Layaway: ", e);
+    }
+  }
+
 }

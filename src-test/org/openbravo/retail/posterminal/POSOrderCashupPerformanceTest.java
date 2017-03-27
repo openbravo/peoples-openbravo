@@ -192,6 +192,7 @@ public class POSOrderCashupPerformanceTest extends OBBaseRetailTest {
     }
   }
 
+  @SuppressWarnings("unused")
   private ProcessCashClose getProcessCashClose() {
     return new ProcessCashClose() {
       protected CashCloseProcessor getCashCloseProcessor() {
@@ -217,6 +218,7 @@ public class POSOrderCashupPerformanceTest extends OBBaseRetailTest {
     }
   }
 
+  @SuppressWarnings("unused")
   protected OrderLoader getOrderLoader() {
     // override execute hooks as we Weld test environment needs to be updated to support
     // dependency injected hooks

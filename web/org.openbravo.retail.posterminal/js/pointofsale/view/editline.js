@@ -200,48 +200,9 @@ enyo.kind({
     i18nContent: 'OBPOS_ButtonDelete',
     classes: 'btnlink-orange',
     tap: function () {
-      var me = this,
-          order = this.model.get('order');
-
-      function callback() {
-        OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteLine', {
-          order: order,
-          selectedLines: me.owner.owner.selectedModels
-        }, function () {
-          order.unset('preventServicesUpdate');
-          order.unset('deleting');
-          order.get('lines').trigger('updateRelations');
-          order.calculateReceipt();
-          enyo.$.scrim.hide();
-        });
-      }
-      OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteLine', {
-        order: me.owner.owner.receipt,
-        selectedLines: me.owner.owner.selectedModels
-      }, function () {
-        me.owner.owner.receipt.set('undo', null);
-        if (order && order.get('isQuotation') && order.get('hasbeenpaid') === 'Y') {
-          me.owner.owner.doShowPopup({
-            popup: 'modalNotEditableOrder'
-          });
-          return;
-        }
-        OB.UTIL.Approval.requestApproval(
-        me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
-          if (approved) {
-            order.set('preventServicesUpdate', true);
-            order.set('deleting', true);
-            if (me.owner.owner.selectedModels && me.owner.owner.selectedModels.length > 1) {
-              order.deleteLines(me.owner.owner.selectedModels, 0, me.owner.owner.selectedModels.length, callback);
-              order.trigger('scan');
-            } else {
-              me.owner.owner.doDeleteLine({
-                line: me.owner.owner.line,
-                callback: callback
-              });
-            }
-          }
-        });
+      this.owner.owner.doDeleteLine({
+        line: this.owner.owner.line,
+        selectedModels: this.owner.owner.selectedModels
       });
     },
     init: function (model) {
@@ -392,6 +353,11 @@ enyo.kind({
         order.set('undo', null);
         order.set('multipleUndo', true);
         order.set('preventServicesUpdate', true);
+        //The value of qty need to be negate because we want to change it
+        if (order.validateAllowSalesWithReturn(-1, false, me.owner.owner.selectedModels)) {
+          me.owner.owner.rearrangeEditButtonBar();
+          return;
+        }
         _.each(me.owner.owner.selectedModels, function (line) {
           if (!line.get('notReturnThisLine')) {
             me.owner.owner.doReturnLine({

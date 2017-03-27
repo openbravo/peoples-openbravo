@@ -111,7 +111,7 @@
               OB.Dal.saveInTransaction(tx, paymentMethod, function () {
                 var now = new Date();
                 cashManagementTransactionToAdd = new OB.Model.CashManagement({
-                  id: OB.Dal.get_uuid(),
+                  id: OB.UTIL.get_UUID(),
                   description: newCashManagementTransaction.get('paymentMethod').payment._identifier + ' - ' + newCashManagementTransaction.get('cashManagementEvent').name,
                   amount: newCashManagementTransaction.get('amount'),
                   origAmount: OB.DEC.mul(newCashManagementTransaction.get('amount'), newCashManagementTransaction.get('paymentMethod').rate),

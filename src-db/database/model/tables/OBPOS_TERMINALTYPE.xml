@@ -132,6 +132,7 @@
       </foreign-key>
       <index name="OBPOS_DOCTYPE_QUOT_ID" unique="false">
         <index-column name="C_DOCTYPEQUOT_ID"/>
+        <whereClause><![CDATA[C_DOCTYPEQUOT_ID IS NOT NULL]]></whereClause>
       </index>
       <check name="OBPOS_SHOWTAXBREAKDOWN_CHK"><![CDATA[SHOWTAXBREAKDOWN IN ('Y', 'N')]]></check>
       <check name="OBPOS_TERTYPE_GENINVOICE_CHK"><![CDATA[GENERATEINVOICE IN ('Y', 'N')]]></check>

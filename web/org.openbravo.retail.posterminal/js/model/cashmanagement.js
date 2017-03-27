@@ -92,6 +92,14 @@
     name: 'posTerminal',
     column: 'posTerminal',
     type: 'TEXT'
+  }, {
+    name: 'defaultProcess',
+    column: 'defaultProcess',
+    type: 'TEXT'
+  }, {
+    name: 'extendedType',
+    column: 'extendedType',
+    type: 'TEXT'
   }]);
 
   CashManagement.addIndex([{

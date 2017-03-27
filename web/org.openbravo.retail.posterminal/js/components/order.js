@@ -104,6 +104,9 @@ enyo.kind({
     kind: 'OB.UI.BusinessPartnerSelector',
     name: 'bpbutton'
   }, {
+    name: 'separator',
+    classes: 'customer-buttons-separator'
+  }, {
     kind: 'OB.UI.BPLocation',
     name: 'bplocbutton'
   }, {
@@ -115,7 +118,8 @@ enyo.kind({
     name: 'receiptLabels'
   }, {
     name: 'receiptButtons',
-    style: 'clear: both; '
+    style: 'clear: both; ',
+    classes: 'standardFlexContainer'
   }],
   resizeHandler: function () {
     this.inherited(arguments);
@@ -647,7 +651,7 @@ enyo.kind({
         this.$.divText.addStyles('width: 50%; color: #f8941d;');
         if (model.get('paidOnCredit')) {
           if (model.get('paidPartiallyOnCredit')) {
-            this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [model.get('creditAmount')]));
+            this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [OB.I18N.formatCurrency(model.get('creditAmount'))]));
           } else {
             this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paidOnCredit'));
           }
@@ -660,7 +664,7 @@ enyo.kind({
         this.$.listPaymentLines.show();
         this.$.paymentBreakdown.show();
         //We have to ensure that there is not another handler showing this div
-      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_paid') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidReturn') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidOnCredit') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [model.get('creditAmount')]) || (this.$.divText.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1 && !model.get('replacedorder'))) {
+      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_paid') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidReturn') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidOnCredit') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [OB.I18N.formatCurrency(model.get('creditAmount'))]) || (this.$.divText.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1 && !model.get('replacedorder'))) {
         this.$.divText.hide();
         this.$.listPaymentLines.hide();
         this.$.paymentBreakdown.hide();
@@ -755,16 +759,14 @@ enyo.kind({
 
           // Split/Remove services lines
           var siblingServicesLines = getSiblingServicesLines(line.get('product').id, line.get('relatedLines')[0].orderlineId);
-          if (!me.order.get('deleting')) {
-            if (siblingServicesLines.length < qtyService) {
-              var i, p, newLine;
-              for (i = 0; i < qtyService - siblingServicesLines.length; i++) {
-                p = line.get('product').clone();
-                p.set('groupProduct', false);
-                newLine = me.order.createLine(p, qtyLineServ);
-                newLine.set('relatedLines', siblingServicesLines[0].get('relatedLines'));
-                newLine.set('groupService', false);
-              }
+          if (!me.order.get('deleting') && siblingServicesLines.length < qtyService) {
+            var i, p, newLine;
+            for (i = 0; i < qtyService - siblingServicesLines.length; i++) {
+              p = line.get('product').clone();
+              p.set('groupProduct', false);
+              newLine = me.order.createLine(p, qtyLineServ);
+              newLine.set('relatedLines', siblingServicesLines[0].get('relatedLines'));
+              newLine.set('groupService', false);
             }
           } else if (siblingServicesLines.length > qtyService) {
             linesToRemove = OB.UTIL.mergeArrays(linesToRemove, _.initial(siblingServicesLines, qtyService));

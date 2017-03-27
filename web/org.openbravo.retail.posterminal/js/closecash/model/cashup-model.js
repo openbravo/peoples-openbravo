@@ -105,7 +105,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       }, function (payMthds) { //OB.Dal.find success
         // Get list of active payments
         _.each(OB.MobileApp.model.get('payments'), function (payment) {
-          if (payment.payment.active === true) {
+          if (payment.payment.active === true && payment.paymentMethod.countpaymentincashup) {
             activePaymentsList.push(payment);
           }
         });

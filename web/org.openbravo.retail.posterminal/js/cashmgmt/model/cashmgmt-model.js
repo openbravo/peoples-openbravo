@@ -14,7 +14,7 @@ OB.OBPOSCashMgmt.Model = OB.OBPOSCashMgmt.Model || {};
 OB.OBPOSCashMgmt.UI = OB.OBPOSCashMgmt.UI || {};
 
 // Window model
-OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
+OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
   models: [OB.Model.CashManagement],
   payments: null,
   init: function () {
@@ -73,8 +73,15 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
             glItem: p.glItem,
             cashup_id: cashUp.at(0).get('id'),
             posTerminal: OB.MobileApp.model.get('terminal').id,
-            isbeingprocessed: 'N'
+            isbeingprocessed: 'N',
+            defaultProcess: p.defaultProcess,
+            extendedType: p.extendedType
           });
+          if (p.extendedProp || _.isObject(p.extendedProp)) {
+            _.each(_.keys(p.extendedProp), function (key) {
+              addedCashMgmt.set(key, p.extendedProp[key]);
+            });
+          }
           me.depsdropstosave.add(addedCashMgmt);
 
           var selectedPayment = me.payments.filter(function (payment) {
@@ -232,10 +239,18 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
       var me = this;
       if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
         OB.MobileApp.model.setSynchronizedCheckpoint(function () {
-          makeDepositsFunction(me);
+          OB.UTIL.HookManager.executeHooks('OBPOS_PreSaveCashManagements', {
+            dropsdeps: me.depsdropstosave
+          }, function (args) {
+            makeDepositsFunction(me);
+          });
         });
       } else {
-        makeDepositsFunction(me);
+        OB.UTIL.HookManager.executeHooks('OBPOS_PreSaveCashManagements', {
+          dropsdeps: me.depsdropstosave
+        }, function (args) {
+          makeDepositsFunction(me);
+        });
       }
     }, this);
 

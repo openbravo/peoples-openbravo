@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -574,15 +574,17 @@
     },
 
     postSyncProcessActions: function () {
-      OB.Dal.get(OB.Model.SalesRepresentative, OB.MobileApp.model.usermodel.get('id'), function (salesrepresentative) {
-        if (!salesrepresentative) {
+      if (OB.MobileApp.model.get('context').user && _.isUndefined(OB.MobileApp.model.get('context').user.isSalesRepresentative)) {
+        OB.Dal.get(OB.Model.SalesRepresentative, OB.MobileApp.model.usermodel.get('id'), function (salesrepresentative) {
+          if (!salesrepresentative) {
+            OB.MobileApp.model.get('context').user.isSalesRepresentative = false;
+          } else {
+            OB.MobileApp.model.get('context').user.isSalesRepresentative = true;
+          }
+        }, function () {}, function () {
           OB.MobileApp.model.get('context').user.isSalesRepresentative = false;
-        } else {
-          OB.MobileApp.model.get('context').user.isSalesRepresentative = true;
-        }
-      }, function () {}, function () {
-        OB.MobileApp.model.get('context').user.isSalesRepresentative = false;
-      });
+        });
+      }
     },
 
     returnToOnline: function () {
@@ -768,6 +770,7 @@
       }
 
       var sessionTimeoutMinutes = this.get('terminal').sessionTimeout;
+      var serverPingMinutes = this.get('serverTimeout');
       if (!this.sessionPing && sessionTimeoutMinutes) {
         var sessionTimeoutMilliseconds = sessionTimeoutMinutes * 60 * 1000;
         this.sessionPing = setInterval(function () {
@@ -786,6 +789,34 @@
           enyo.dispatch(e);
           this.downEvent = e;
         };
+      } else if (!this.sessionPing && !OB.MobileApp.model.get('permissions').OBPOS_SessionExpiration) {
+        var serverPingMilliseconds = serverPingMinutes * 60 * 1000;
+        if (serverPingMinutes === 0) {
+          return;
+        } else if (serverPingMinutes === 1) {
+          serverPingMilliseconds -= 30 * 1000;
+        } else {
+          serverPingMilliseconds -= 60 * 1000;
+        }
+        this.sessionPing = setInterval(function () {
+          var rr, ajaxRequest2 = new enyo.Ajax({
+            url: '../../org.openbravo.mobile.core.context',
+            cacheBust: false,
+            method: 'GET',
+            handleAs: 'json',
+            timeout: 20000,
+            data: {
+              ignoreForConnectionStatus: true
+            },
+            contentType: 'application/json;charset=utf-8',
+            success: function (inSender, inResponse) {},
+            fail: function (inSender, inResponse) {}
+          });
+          rr = new OB.RR.Request({
+            ajaxRequest: ajaxRequest2
+          });
+          rr.exec(ajaxRequest2.url);
+        }, serverPingMilliseconds);
       }
     },
 
@@ -1093,9 +1124,15 @@
     linkTerminal: function (terminalData, callback) {
       var params = this.get('loginUtilsParams') || {},
           me = this,
-          parsedTerminalData = JSON.parse(terminalData);
+          key, parsedTerminalData = JSON.parse(terminalData);
       params.command = 'preLoginActions';
       params.params = terminalData;
+      var terminalDataObject = JSON.parse(terminalData);
+      for (key in terminalDataObject) {
+        if (terminalDataObject.hasOwnProperty(key)) {
+          params[key] = terminalDataObject[key];
+        }
+      }
       OB.warn('[TermAuth] Request to link terminal "' + parsedTerminalData.terminalKeyIdentifier + '" using user "' + parsedTerminalData.username + '" with cache session id "' + parsedTerminalData.cacheSessionId + '"');
       new OB.OBPOSLogin.UI.LoginRequest({
         url: OB.MobileApp.model.get('loginUtilsUrl')

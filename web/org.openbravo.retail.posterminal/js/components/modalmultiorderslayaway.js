@@ -52,7 +52,16 @@ enyo.kind({
       }
     } else {
       try {
-        amount = OB.I18N.parseNumber(this.owner.$.btnModalMultiSearchInput.getValue());
+        if (!OB.I18N.isValidNumber(this.owner.$.btnModalMultiSearchInput.getValue())) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_notValidQty'));
+          return;
+        } else {
+          var tmpAmount = this.owner.$.btnModalMultiSearchInput.getValue();
+          while (tmpAmount.indexOf(OB.Format.defaultGroupingSymbol) !== -1) {
+            tmpAmount = tmpAmount.replace(OB.Format.defaultGroupingSymbol, '');
+          }
+          amount = OB.I18N.parseNumber(tmpAmount);
+        }
       } catch (exc) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_notValidQty'));
         return;
@@ -60,7 +69,8 @@ enyo.kind({
     }
     if (_.isNaN(amount)) {
       currentOrder.setOrderType(null, 0);
-      currentOrder.set('amountToLayaway', null);
+      currentOrder.unset('amountToLayaway');
+      currentOrder.trigger('amountToLayaway');
       this.doHideThisPopup();
       return;
     }
