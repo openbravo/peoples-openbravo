@@ -47,11 +47,11 @@ public class SessionDynamicResourceComponent extends BaseComponent {
   public String generate() {
     StringBuilder result = new StringBuilder();
     for (SessionDynamicTemplateComponent component : getSortedComponentList()) {
-      log.info("Generating session dynamic resource {}", component.getId());
+      log.debug("Generating session dynamic resource {}", component.getId());
       component.setParameters(getParameters());
       long t = System.currentTimeMillis();
       result.append(component.generate());
-      log.info("Resource generation took {} ms", System.currentTimeMillis() - t);
+      log.debug("Resource generation took {} ms", System.currentTimeMillis() - t);
     }
     return result.toString();
   }
