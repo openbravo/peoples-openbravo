@@ -114,7 +114,7 @@ public class EntityAccessChecker implements OBNotSingleton {
   }
 
   /**
-   * This method calculate all the information that could be cached in order to improve performance
+   * This method calculates all the information that could be cached in order to improve performance
    * in entityAccessChecker process.
    * 
    * The static block only gets called once, when the class itself is initialized.
@@ -166,6 +166,7 @@ public class EntityAccessChecker implements OBNotSingleton {
     try {
       final ModelProvider mp = ModelProvider.getInstance();
       final String userLevel = obContext.getUserLevel();
+
       // Don't use dal because otherwise we can end up in infinite loops
       // there is always only one windowaccess per role due to unique constraints
       final String qryStr = "select t.table.id, wa.editableField from " + Tab.class.getName()
@@ -286,7 +287,6 @@ public class EntityAccessChecker implements OBNotSingleton {
       @SuppressWarnings("unchecked")
       final List<String> processAccessQuery = SessionHandler.getInstance()
           .createQuery(processAccessQryStr).list();
-
       for (final String processAccess : processAccessQuery) {
         if (!processes.contains(processAccess)) {
           processes.add(processAccess);
