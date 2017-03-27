@@ -255,7 +255,7 @@
           triggerPaymentAccepted(false);
         }
       });
-    } else if (OB.DEC.abs(receipt.getPayment()) !== OB.DEC.abs(receipt.getGross()) && _.isUndefined(receipt.get('paidInNegativeStatusAmt')) && !receipt.isLayaway() && !receipt.get('paidOnCredit') && OB.DEC.abs(receipt.get('prepaymentAmt')) === OB.DEC.abs(receipt.getGross())) {
+    } else if (OB.DEC.abs(receipt.getPayment()) !== OB.DEC.abs(receipt.getGross()) && _.isUndefined(receipt.get('paidInNegativeStatusAmt')) && !receipt.isLayaway() && !receipt.get('paidOnCredit') && OB.DEC.abs(receipt.get('prepaymentAmt')) === OB.DEC.abs(receipt.getGross()) && !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
       callbackPaymentAmountDistinctThanReceipt(function (result) {
         if (result === true) {
           triggerPaymentAccepted(false);
