@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2012 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2017 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -28,6 +28,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -37,6 +38,7 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
+import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
 public class DocMovement extends AcctServer {
   private static final long serialVersionUID = 1L;
@@ -263,6 +265,22 @@ public class DocMovement extends AcctServer {
    * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
+    if (CostingStatus.getInstance().isMigrated()) {
+      StringBuilder where = new StringBuilder();
+      where.append(" as trx");
+      where.append(" join trx." + MaterialTransaction.PROPERTY_MOVEMENTLINE + " as ml");
+      where.append(" where ml." + InternalMovementLine.PROPERTY_MOVEMENT + ".id = :recordId");
+      where.append(" and (trx." + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " is null");
+      where.append(" or trx." + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " <> 0)");
+      OBQuery<MaterialTransaction> qry = OBDal.getInstance().createQuery(MaterialTransaction.class,
+          where.toString());
+      qry.setNamedParameter("recordId", strRecordId);
+      qry.setMaxResult(1);
+      if (qry.uniqueResult() == null) {
+        setStatus(STATUS_DocumentDisabled);
+        return false;
+      }
+    }
     return true;
   }
 

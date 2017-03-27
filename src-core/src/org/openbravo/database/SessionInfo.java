@@ -218,7 +218,8 @@ public class SessionInfo {
       psInsert.setString(3, SessionInfo.getProcessType());
       psInsert.setString(4, SessionInfo.getProcessId());
       psInsert.executeUpdate();
-      if (conn.equals(sessionConnection.get())) {
+
+      if (conn == sessionConnection.get()) {
         // Handling only for the sqlc connection, as DAL should be automatically handled so that
         // this method is invoked only once.
         changedInfo.set(false);

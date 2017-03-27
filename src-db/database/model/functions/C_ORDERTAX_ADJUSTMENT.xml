@@ -26,6 +26,14 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
+
+/*
+* It rounds C_OrderLineTax and C_OrderTax TaxBaseAmt and adjusts C_OrderTax TaxAmt and C_OrderLine LineNetAmt
+* when completing the p_order_id order.
+* It removes C_OrderLineTax and C_OrderTax taxes and C_OrderLine and C_Order amounts and recalculates them again
+* when reactivating the p_order_id order.
+*/
+
 -- Variables
 v_amount C_ORDERLINE.Line_Gross_Amount%TYPE;
 TYPE RECORD IS REF CURSOR;

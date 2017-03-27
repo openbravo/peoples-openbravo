@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -71,26 +71,26 @@ function validateSelector(action) {
 }
 function validate() {
     var frm=document.frmMain;
-    if (document.getElementsByName("inplot").length!=0) {
-        if (frm.inplot.required) {
-            if (inputValue(frm.inplot)==null || inputValue(frm.inplot)=="") {
-                setWindowElementFocus(frm.inplot);
+    if (document.getElementsByName("inplotxxxinternalOB").length!=0) {
+        if (frm.inplotxxxinternalOB.required) {
+            if (inputValue(frm.inplotxxxinternalOB)==null || inputValue(frm.inplotxxxinternalOB)=="") {
+                setWindowElementFocus(frm.inplotxxxinternalOB);
                 return false;
             }
         }
     }
-    if (document.getElementsByName("inpDateFrom").length!=0) {
-        if (frm.inpDateFrom.required) {
-            if (inputValue(frm.inpDateFrom)==null || inputValue(frm.inpDateFrom)=="") {
-                setWindowElementFocus(frm.inpDateFrom);
+    if (document.getElementsByName("inpDateFromxxxinternalOB").length!=0) {
+        if (frm.inpDateFromxxxinternalOB.required) {
+            if (inputValue(frm.inpDateFromxxxinternalOB)==null || inputValue(frm.inpDateFromxxxinternalOB)=="") {
+                setWindowElementFocus(frm.inpDateFromxxxinternalOB);
                 return false;
             } 
         }
     }
-    if (document.getElementsByName("inpserno").length!=0) {
-        if (frm.inpserno.required) {
-            if (inputValue(frm.inpserno)==null || inputValue(frm.inpserno)=="") {
-                setWindowElementFocus(frm.inpserno);
+    if (document.getElementsByName("inpsernoxxxinternalOB").length!=0) {
+        if (frm.inpsernoxxxinternalOB.required) {
+            if (inputValue(frm.inpsernoxxxinternalOB)==null || inputValue(frm.inpsernoxxxinternalOB)=="") {
+                setWindowElementFocus(frm.inpsernoxxxinternalOB);
                 return false;
             } 
         }

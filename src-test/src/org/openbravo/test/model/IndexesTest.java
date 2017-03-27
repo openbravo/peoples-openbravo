@@ -19,7 +19,8 @@
 
 package org.openbravo.test.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertThat;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -111,7 +112,17 @@ public class IndexesTest extends OBBaseTest {
         + " where indexes_to_parent_first_col = 0" //
         + " order by parenttable";
 
-    List<String> errors = new ArrayList<String>();
+    @SuppressWarnings("serial")
+    List<String> errors = new ArrayList<String>() {
+      @Override
+      public String toString() {
+        StringBuilder s = new StringBuilder();
+        for (String e : this) {
+          s.append("\n   ").append(e);
+        }
+        return s.toString();
+      }
+    };
     PreparedStatement sqlQuery = null;
     ResultSet rs = null;
     try {
@@ -134,11 +145,7 @@ public class IndexesTest extends OBBaseTest {
         errors.add(msg);
       }
 
-      for (String error : errors) {
-        log.error(error);
-      }
-
-      assertEquals("There are missing indexes!", 0, errors.size());
+      assertThat("No subtabs without index to parent tab:" + errors, errors, hasSize(0));
     } catch (Exception e) {
       log.error("Error when executing query", e);
     } finally {
