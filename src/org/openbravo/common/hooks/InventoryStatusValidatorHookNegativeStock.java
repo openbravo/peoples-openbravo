@@ -25,7 +25,6 @@ import javax.enterprise.context.ApplicationScoped;
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.materialmgmt.onhandquantity.InventoryStatus;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 
@@ -33,26 +32,18 @@ import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 public class InventoryStatusValidatorHookNegativeStock implements InventoryStatusValidationHook {
 
   @Override
-  public void exec(Locator locator, InventoryStatus newStatus) throws OBException {
+  public void exec(StorageDetail storageDetail, InventoryStatus newStatus) throws OBException {
     if (newStatus.isOverissue()) {
       return;
     }
-    String errorMessage = "";
-    for (StorageDetail storageDetail : locator.getMaterialMgmtStorageDetailList()) {
-      if (storageDetail.getQuantityOnHand().compareTo(BigDecimal.ZERO) < 0
-          || (storageDetail.getOnHandOrderQuanity() != null && storageDetail
-              .getOnHandOrderQuanity().compareTo(BigDecimal.ZERO) < 0)) {
-        errorMessage = errorMessage.concat(
-            String.format(OBMessageUtils.messageBD("InventoryStatusChangeNegStock"), storageDetail
-                .getProduct().getIdentifier(), (StringUtils.equals("0", storageDetail
-                .getAttributeSetValue().getId()) ? OBMessageUtils.messageBD("Empty")
-                : storageDetail.getAttributeSetValue().getIdentifier()), storageDetail.getUOM()
-                .getIdentifier())).concat("<br/>");
-      }
-    }
-    if (!StringUtils.isEmpty(errorMessage)) {
-      throw new OBException(errorMessage);
+    if (storageDetail.getQuantityOnHand().compareTo(BigDecimal.ZERO) < 0
+        || (storageDetail.getOnHandOrderQuanity() != null && storageDetail.getOnHandOrderQuanity()
+            .compareTo(BigDecimal.ZERO) < 0)) {
+      throw new OBException(String.format(
+          OBMessageUtils.messageBD("InventoryStatusChangeNegStock"), storageDetail.getProduct()
+              .getIdentifier(), (StringUtils.equals("0", storageDetail.getAttributeSetValue()
+              .getId()) ? OBMessageUtils.messageBD("Empty") : storageDetail.getAttributeSetValue()
+              .getIdentifier()), storageDetail.getUOM().getIdentifier()));
     }
   }
-
 }

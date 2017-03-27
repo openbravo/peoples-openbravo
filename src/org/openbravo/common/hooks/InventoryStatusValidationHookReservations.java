@@ -24,7 +24,6 @@ import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.ReservationUtils;
-import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.materialmgmt.onhandquantity.InventoryStatus;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 
@@ -32,21 +31,14 @@ import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 public class InventoryStatusValidationHookReservations implements InventoryStatusValidationHook {
 
   @Override
-  public void exec(Locator locator, InventoryStatus newStatus) throws OBException {
-    String errorMessage = "";
-    for (StorageDetail storageDetail : locator.getMaterialMgmtStorageDetailList()) {
-      if (!newStatus.isAvailable() && ReservationUtils.existsReservationForStock(storageDetail)) {
-        errorMessage = errorMessage.concat(
-            String.format(OBMessageUtils.messageBD("InventoryStatusChangeReservation"),
-                storageDetail.getProduct().getIdentifier(), (StringUtils.equals("0", storageDetail
-                    .getAttributeSetValue().getId()) ? OBMessageUtils.messageBD("Empty")
-                    : storageDetail.getAttributeSetValue().getIdentifier()), storageDetail.getUOM()
-                    .getIdentifier())).concat("<br/>");
-      }
-    }
-    if (!StringUtils.isEmpty(errorMessage)) {
-      throw new OBException("WARNING".concat(errorMessage));
+  public void exec(StorageDetail storageDetail, InventoryStatus newStatus) throws OBException {
+    if (!newStatus.isAvailable() && ReservationUtils.existsReservationForStock(storageDetail)) {
+      throw new OBException("WARNING".concat(String.format(
+          OBMessageUtils.messageBD("InventoryStatusChangeReservation"),
+          storageDetail.getProduct().getIdentifier(),
+          (StringUtils.equals("0", storageDetail.getAttributeSetValue().getId()) ? OBMessageUtils
+              .messageBD("Empty") : storageDetail.getAttributeSetValue().getIdentifier()),
+          storageDetail.getUOM().getIdentifier())));
     }
   }
-
 }

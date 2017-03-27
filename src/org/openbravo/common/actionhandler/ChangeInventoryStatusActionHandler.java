@@ -30,8 +30,10 @@ import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
 import org.openbravo.common.hooks.InventoryStatusHookManager;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.materialmgmt.onhandquantity.InventoryStatus;
+import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 
 public class ChangeInventoryStatusActionHandler extends BaseProcessActionHandler {
 
@@ -47,15 +49,18 @@ public class ChangeInventoryStatusActionHandler extends BaseProcessActionHandler
       String inventoryStatusID = params.getString("M_InventoryStatus_ID");
 
       changeStatusOfStorageBin(mLocatorID, inventoryStatusID);
-      return getResponseBuilder().showMsgInView(MessageType.SUCCESS, "Success", "Success").build();
+      return getResponseBuilder().showMsgInView(MessageType.SUCCESS,
+          OBMessageUtils.messageBD("Success"), OBMessageUtils.messageBD("Success")).build();
 
     } catch (Exception e) {
       log4j.error(e.getMessage(), e);
       if (StringUtils.startsWith(e.getMessage(), "WARNING")) {
-        return getResponseBuilder().showMsgInView(MessageType.WARNING, "Error",
+        return getResponseBuilder().showMsgInView(MessageType.WARNING,
+            OBMessageUtils.messageBD("Warning"),
             StringUtils.replaceOnce(e.getMessage(), "WARNING", "")).build();
       }
-      return getResponseBuilder().showMsgInView(MessageType.ERROR, "Error", e.getMessage()).build();
+      return getResponseBuilder().showMsgInView(MessageType.ERROR,
+          OBMessageUtils.messageBD("Error"), e.getMessage()).build();
     }
   }
 
@@ -65,22 +70,30 @@ public class ChangeInventoryStatusActionHandler extends BaseProcessActionHandler
     if (StringUtils.equals(locator.getInventoryStatus().getId(), inventoryStatusID)) {
       return;
     }
-    try {
-      // Hook to perform validations over the Storage Detail
-      WeldUtils.getInstanceFromStaticBeanManager(InventoryStatusHookManager.class)
-          .executeValidationHooks(locator,
-              OBDal.getInstance().get(InventoryStatus.class, inventoryStatusID));
-    } catch (Exception e) {
-      if (StringUtils.startsWith(e.getMessage(), "WARNING")) {
+    String errorMessage = "";
+    for (StorageDetail storageDetail : locator.getMaterialMgmtStorageDetailList()) {
+      try {
+        // Hook to perform validations over the Storage Detail
+        WeldUtils.getInstanceFromStaticBeanManager(InventoryStatusHookManager.class)
+            .executeValidationHooks(storageDetail,
+                OBDal.getInstance().get(InventoryStatus.class, inventoryStatusID));
+      } catch (Exception e) {
+        errorMessage = errorMessage.concat(e.getMessage()).concat("<br/>");
+      }
+    }
+    if (!StringUtils.isEmpty(errorMessage)) {
+      if (StringUtils.startsWith(errorMessage, "WARNING")) {
         locator.setInventoryStatus(OBDal.getInstance()
             .get(InventoryStatus.class, inventoryStatusID));
         OBDal.getInstance().flush();
-        throw new OBException(e.getMessage());
+        throw new OBException(errorMessage);
+      } else {
+        log4j.error(errorMessage);
+        throw new OBException(errorMessage);
       }
-      log4j.error(e.getMessage(), e);
-      throw new OBException(e.getMessage());
+    } else {
+      locator.setInventoryStatus(OBDal.getInstance().get(InventoryStatus.class, inventoryStatusID));
+      OBDal.getInstance().flush();
     }
-    locator.setInventoryStatus(OBDal.getInstance().get(InventoryStatus.class, inventoryStatusID));
-    OBDal.getInstance().flush();
   }
 }

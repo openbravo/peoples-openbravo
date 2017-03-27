@@ -113,6 +113,7 @@
         <unique-column name="X"/>
         <unique-column name="Y"/>
         <unique-column name="Z"/>
+        <unique-column name="M_INVENTORYSTATUS_ID"/>
         <unique-column name="PARENT_LOCATOR_ID"/>
       </unique>
       <check name="M_LOCATOR_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

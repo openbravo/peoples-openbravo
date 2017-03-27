@@ -24,8 +24,8 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.materialmgmt.onhandquantity.InventoryStatus;
+import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 
 @ApplicationScoped
 public class InventoryStatusHookManager {
@@ -39,9 +39,10 @@ public class InventoryStatusHookManager {
    * @param storageDetail
    * @throws Exception
    */
-  public void executeValidationHooks(Locator locator, InventoryStatus newStatus) throws Exception {
+  public void executeValidationHooks(StorageDetail storageDetail, InventoryStatus newStatus)
+      throws Exception {
     for (InventoryStatusValidationHook hook : inventoryStatusValidationHooks) {
-      hook.exec(locator, newStatus);
+      hook.exec(storageDetail, newStatus);
     }
   }
 }

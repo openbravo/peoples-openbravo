@@ -20,12 +20,12 @@
 package org.openbravo.common.hooks;
 
 import org.openbravo.base.exception.OBException;
-import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.materialmgmt.onhandquantity.InventoryStatus;
+import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 
 public interface InventoryStatusValidationHook {
 
-  public void exec(Locator locator, InventoryStatus newStatus) throws OBException;
+  public void exec(StorageDetail storageDetail, InventoryStatus newStatus) throws OBException;
 
 }
 
