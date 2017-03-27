@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2016 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2561,58 +2561,6 @@ function menuHide(id, updateIcon) {
     }
     return true;
   }
-}
-
-/**
-* Function Description
-* Expands the whole content of the menu
-* @returns True if the operation was made correctly, false if not.
-* @see #changeClass
-*/
-function menuExpand() {
-  var appUrl = getAppUrl();
-  putFocusOnMenu();
-  submitCommandForm('ALL', false, null, appUrl + '/utility/VerticalMenu.html', 'frameMenu');
-  return false;
-}
-
-/**
-* Function Description
-* Collapse the whole content of the menu
-* @returns True if the operation was made correctly, false if not.
-* @see #changeClass
-*/
-function menuCollapse() {
-  var appUrl = getAppUrl();
-  putFocusOnMenu();
-  submitCommandForm('DEFAULT', false, null, appUrl + '/utility/VerticalMenu.html', 'frameMenu');
-  return false;
-}
-
-/**
-* Function Description
-* Collapse the whole content of the menu if the menu is expanded
-* Expand the whole content of the menu if the menu is collapsed 
-* @param {String} id The ID of the element
-* @returns True if the operation was made correctly, false if not.
-* @see #changeClass
-*/
-function menuExpandCollapse() {
-  var menuExpandCollapse_status = getMenuExpandCollapse_status();
-  if (menuExpandCollapse_status == 'expanded') {
-    menuCollapse();
-  } else if (menuExpandCollapse_status == 'collapsed') {
-    menuExpand();
-  }
-  return false;
-}
-
-function getMenuExpandCollapse_status() {
-//  alert(getFrame('frameMenu').getElementById('paramfieldDesplegar').getAttribute('id'));
-  var menuExpandCollapse_status;
-  if (getFrame('frameMenu').document.getElementById('paramfieldDesplegar')) menuExpandCollapse_status = 'collapsed';
-  if (getFrame('frameMenu').document.getElementById('paramfieldContraer')) menuExpandCollapse_status = 'expanded';
-  return menuExpandCollapse_status;
 }
 
 function menuUserOptions() {

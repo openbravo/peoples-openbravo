@@ -8410,18 +8410,6 @@ a.Menu_ToolBar_Button:active {
   vertical-align: middle;
 }
 
-.Menu_ToolBar_Button_Icon_expand {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconExpand.png);  
-}
-
-.Menu_ToolBar_Button_Icon_contract {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconContract.png);  
-}
-
 .Menu_ToolBar_Button_Icon_user {
   background-repeat: no-repeat;
   background-position: center center;
@@ -8445,8 +8433,6 @@ a.Menu_ToolBar_Button:active {
   background-position: center center;
   background-image: url(Menu/ToolBar/iconAlertActive.png);  
 }
-
-
 
 .Menu_ToolBar_Button_Icon_expand_disabled {
   background-repeat: no-repeat;

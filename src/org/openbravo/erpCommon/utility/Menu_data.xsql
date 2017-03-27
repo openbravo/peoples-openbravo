@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -155,19 +155,6 @@
       <Parameter name="adWindowId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_Window_ID = ? "/>
       <Parameter name="adProcessId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_Process_ID = ? "/>
       <Parameter name="adFormId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_FORM_ID = ? "/>
-   </SqlMethod>
-
-   <SqlMethod name="selectIdentificacion" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        SELECT t.AD_Tree_ID AS PARENT_ID, tn.Node_ID
-        FROM AD_Tree t, AD_ClientInfo c, AD_TreeNode tn 
-        WHERE t.AD_Tree_ID=tn.AD_Tree_ID
-        AND tn.Parent_ID IS NULL
-        AND t.AD_Tree_ID=c.AD_Tree_Menu_ID
-        AND c.AD_Client_ID=?
-      </Sql>
-        <Parameter name="strCliente"/>
    </SqlMethod>
 
    <SqlMethod name="selectSearchs" type="preparedStatement" return="multiple">
