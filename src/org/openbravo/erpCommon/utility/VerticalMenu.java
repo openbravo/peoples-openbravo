@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -149,7 +149,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
     menu.append(generateMenuSearchs(vars, open));
 
     xmlDocument.setParameter("menu", menu.toString());
-    xmlDocument.setParameter("userName", MenuData.getUserName(this, vars.getUser()));
+    xmlDocument.setParameter("userName", OBContext.getOBContext().getUser().getUsername());
 
     decidePopups(xmlDocument, vars);
 
@@ -175,7 +175,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
             || vars.getSessionValue("#Autosave").equalsIgnoreCase("N") ? "false" : "true") + ";");
 
     xmlDocument.setParameter("menu", "");
-    xmlDocument.setParameter("userName", MenuData.getUserName(this, vars.getUser()));
+    xmlDocument.setParameter("userName", OBContext.getOBContext().getUser().getUsername());
     xmlDocument.setParameter("popup", "");
 
     response.setContentType("text/html; charset=UTF-8");

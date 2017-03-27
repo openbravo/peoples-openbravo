@@ -192,15 +192,6 @@
       </Sql>
         <Parameter name="adLanguage"/>        
    </SqlMethod>
-   <SqlMethod name="getUserName" type="preparedStatement" return="String" default="">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        SELECT USERNAME
-        FROM AD_USER 
-        WHERE AD_User_ID = ?
-      </Sql>
-        <Parameter name="adUserId"/>
-   </SqlMethod>
    
    <SqlMethod name="isGenericJavaProcess" type="preparedStatement" return="boolean">
       <SqlMethodComment></SqlMethodComment>
