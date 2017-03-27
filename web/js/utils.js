@@ -2563,28 +2563,6 @@ function menuHide(id, updateIcon) {
   }
 }
 
-function menuUserOptions() {
-  var appUrl = getAppUrl();
-  openServletNewWindow('DEFAULT', false, appUrl + '/ad_forms/Role.html', 'ROLE', null, true, '460', '800');
-  return true;
-}
-
-function menuQuit() {  
-  var appUrl = getAppUrl();
-  var target;
-  try {
-    if (parent.frameMenu) {
-      target = "_parent";
-    } else {
-      target = "_self";
-    }
-  } catch (e) {
-    target = "_self";
-  }
-  submitCommandForm('DEFAULT', false, null, appUrl + '/security/Logout.html', target);
-  return false;
-}
-
 function isVisibleElement(obj, appWindow) {
   if (appWindow == null || appWindow == 'null' || appWindow == '') {
     appWindow = getFrame('main');

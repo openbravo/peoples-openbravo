@@ -31,6 +31,11 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.xmlEngine.XmlDocument;
 
+/**
+ * This class was designed to render the 2.50 vertical menu. This menu is not displayed anymore, but
+ * it is still being referenced and used in old manual windows, i.e., manual reports and process
+ * using old 2.50 styling.
+ */
 public class VerticalMenu extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
@@ -90,9 +95,4 @@ public class VerticalMenu extends HttpSecureAppServlet {
     out.println(xmlDocument.print());
     out.close();
   }
-
-  @Override
-  public String getServletInfo() {
-    return "Servlet that presents application's vertical menu";
-  } // end of getServletInfo() method
 }

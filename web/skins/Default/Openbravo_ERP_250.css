@@ -8312,33 +8312,6 @@ td.ToolBar_ExpansibleMenu_bg_active {
   background-image: url(Menu/ToolBar/labelRight.png);  
 }
 
-
-a.Menu_ToolBar_text_username {
-  font-family: tahoma, arial, helvetica, sans-serif;
-  font-size: 8pt;
-  font-weight: bold;
-  margin: 0px 5px 0px 5px;
-  text-indent: 5px;
-  color: #B4B4B4;
-  text-decoration: none;
-}
-
-a.Menu_ToolBar_text_username:hover {
-  font-family: tahoma, arial, helvetica, sans-serif;
-  font-size: 8pt;
-  font-weight: bold;
-  color: #C8C8C8;
-  text-decoration: underline;
-}
-
-a.Menu_ToolBar_text_username:active {
-  font-family: tahoma, arial, helvetica, sans-serif;
-  font-size: 8pt;
-  font-weight: bold;
-  color: #C8C8C8;
-  text-decoration: underline;
-}
-
 /* Buttons definition for Menu_ToolBar */
 
 a.Menu_ToolBar_Button:link {
@@ -8376,30 +8349,6 @@ a.Menu_ToolBar_Button:active {
   height: 26px;
   margin: 0px;
   vertical-align: middle;
-}
-
-.Menu_ToolBar_Button_Icon_user {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconUser.png);  
-}
-
-.Menu_ToolBar_Button_Icon_logout {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconLogout.png);  
-}
-
-.Menu_ToolBar_Button_Icon_user_disabled {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconUser.disabled.png);  
-}
-
-.Menu_ToolBar_Button_Icon_logout_disabled {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconLogout.disabled.png);  
 }
 
 .Menu_ToolBar_Space {
