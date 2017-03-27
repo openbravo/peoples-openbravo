@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,8 +36,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.ApplicationUtils;
-import org.openbravo.client.kernel.BaseTemplateComponent;
-import org.openbravo.client.kernel.Template;
+import org.openbravo.client.kernel.SessionDynamicTemplateComponent;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -50,11 +49,11 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 
 /**
- * Creates the properties list which is initially loaded in the client.
+ * Creates the Workspace properties list which is initially loaded in the client.
  * 
  * @author mtaal
  */
-public class MyOpenbravoComponent extends BaseTemplateComponent {
+public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
 
   static final String COMPONENT_ID = "MyOpenbravo";
   private static final String TEMPLATEID = "CA8047B522B44F61831A8CAA3AE2A7CD";
@@ -72,8 +71,8 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
    * @see org.openbravo.client.kernel.BaseTemplateComponent#getComponentTemplate()
    */
   @Override
-  protected Template getComponentTemplate() {
-    return OBDal.getInstance().get(Template.class, TEMPLATEID);
+  protected String getTemplateId() {
+    return TEMPLATEID;
   }
 
   /*

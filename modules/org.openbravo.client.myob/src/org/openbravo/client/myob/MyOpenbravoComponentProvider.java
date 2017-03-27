@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,11 +41,6 @@ public class MyOpenbravoComponentProvider extends BaseComponentProvider {
 
   @Override
   public Component getComponent(String componentId, Map<String, Object> parameters) {
-    if (componentId.equals(MyOpenbravoComponent.COMPONENT_ID)) {
-      final MyOpenbravoComponent component = getComponent(MyOpenbravoComponent.class);
-      component.setParameters(parameters);
-      return component;
-    }
     if (componentId.equals(MyOpenbravoWidgetComponent.COMPONENT_ID)) {
       final MyOpenbravoWidgetComponent component = getComponent(MyOpenbravoWidgetComponent.class);
       component.setParameters(parameters);
@@ -61,8 +56,6 @@ public class MyOpenbravoComponentProvider extends BaseComponentProvider {
         false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.myob/js/ob-getting-started-view.js", false));
-    globalResources.add(createDynamicResource("org.openbravo.client.kernel/" + COMPONENT_TYPE + "/"
-        + MyOpenbravoComponent.COMPONENT_ID));
     globalResources
         .add(createStaticResource("web/org.openbravo.client.myob/js/ob-widget.js", false));
     globalResources.add(createStaticResource("web/org.openbravo.client.myob/js/ob-url-widget.js",
