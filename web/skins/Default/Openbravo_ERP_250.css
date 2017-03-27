@@ -8339,38 +8339,6 @@ a.Menu_ToolBar_text_username:active {
   text-decoration: underline;
 }
 
-
-.Menu_ToolBar_text_alert_no {
-  font-weight: bold;
-}
-
-a.Menu_ToolBar_text_alert {
-  font-family: tahoma, arial, helvetica, sans-serif;
-  font-size: 8pt;
-  font-weight: normal;
-  margin: 0px 5px 0px 5px;
-  text-indent: 5px;
-  color: #B4B4B4;
-  text-decoration: none;
-}
-
-a.Menu_ToolBar_text_alert:hover {
-  font-family: tahoma, arial, helvetica, sans-serif;
-  font-size: 8pt;
-  font-weight: normal;
-  color: #C8C8C8;
-  text-decoration: underline;
-}
-
-a.Menu_ToolBar_text_alert:active {
-  font-family: tahoma, arial, helvetica, sans-serif;
-  font-size: 8pt;
-  font-weight: normal;
-  color: #C8C8C8;
-  text-decoration: underline;
-}
-
-
 /* Buttons definition for Menu_ToolBar */
 
 a.Menu_ToolBar_Button:link {
@@ -8422,18 +8390,6 @@ a.Menu_ToolBar_Button:active {
   background-image: url(Menu/ToolBar/iconLogout.png);  
 }
 
-.Menu_ToolBar_Button_Icon_alert {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconAlert.png);  
-}
-
-.Menu_ToolBar_Button_Icon_alertActive {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconAlertActive.png);  
-}
-
 .Menu_ToolBar_Button_Icon_user_disabled {
   background-repeat: no-repeat;
   background-position: center center;
@@ -8444,18 +8400,6 @@ a.Menu_ToolBar_Button:active {
   background-repeat: no-repeat;
   background-position: center center;
   background-image: url(Menu/ToolBar/iconLogout.disabled.png);  
-}
-
-.Menu_ToolBar_Button_Icon_alert_disabled {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconAlert.disabled.png);  
-}
-
-.Menu_ToolBar_Button_Icon_alertActive_disabled {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconAlertActive.disabled.png);  
 }
 
 .Menu_ToolBar_Space {

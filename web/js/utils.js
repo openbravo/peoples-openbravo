@@ -2585,12 +2585,6 @@ function menuQuit() {
   return false;
 }
 
-function menuAlerts() {
-  var appUrl = getAppUrl();
-  submitCommandForm('DEFAULT', true, getForm(), appUrl + '/ad_forms/AlertManagement.html', 'appFrame', false, true);
-  return true;
-}
-
 function isVisibleElement(obj, appWindow) {
   if (appWindow == null || appWindow == 'null' || appWindow == '') {
     appWindow = getFrame('main');
