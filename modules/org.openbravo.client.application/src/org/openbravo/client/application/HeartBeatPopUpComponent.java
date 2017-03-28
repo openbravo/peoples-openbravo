@@ -43,8 +43,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The component responsible for generating the properties used to determine if the HeartBeat or any
- * kind of registration pop-up should be displayed.
+ * The component responsible for generating the content of the function used to determine if the
+ * HeartBeat or any kind of registration pop-up should be displayed once the user has logged in into
+ * the application.
  */
 public class HeartBeatPopUpComponent extends SessionDynamicTemplateComponent {
 
