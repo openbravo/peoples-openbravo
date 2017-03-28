@@ -38,13 +38,14 @@
 	  )
  	  select get_uuid(), oc.ad_client_id, 
  	  oc.ad_org_id, op.ad_org_id, 
- 	  ad_isorgincluded_treenode(oc.ad_org_id, op.ad_org_id, oc.ad_client_id), 'Y', 
+ 	  ad_isorgincluded_treenode(oc.ad_org_id, op.ad_org_id, oc.ad_client_id), 'Y',
  	  now(), '100', now(), '100' 
  	  from ad_org op 
  	  cross join ad_org oc
  	  where (oc.ad_client_id = op.ad_client_id or op.ad_org_id = '0')
  	  and oc.isready = 'Y'
  	  and ad_isorgincluded_treenode(oc.ad_org_id, op.ad_org_id, oc.ad_client_id) > 0
+ 	  and not exists (select 1 from ad_org_tree ot where ot.ad_org_id = oc.ad_org_id and ot.ad_parent_org_id = op.ad_org_id and ot.ad_client_id = oc.ad_client_id)
     ]]></Sql>
     <Field name="dummy" value="void"/>
   </SqlMethod>

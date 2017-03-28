@@ -42,6 +42,7 @@ public class PopulateADOrgTree extends ModuleScript {
   
   @Override
   protected boolean executeOnInstall() {
+	// To control scenario where a sampledata module is available
     return true;
   }
 
