@@ -198,38 +198,6 @@ OB.Layout.initialize = function () {
 
   OB.NavBar.createMembers(OB.Application.navigationBarComponents, OB.Application.dynamicNavigationBarComponents);
 
-
-  // test to see if we can show the heartbeat or registration popups (or not)
-  (function _OB_checkHeartBeatRegistration() {
-    var handleReturn = function (response, data, request) {
-        if (data.upgradingNoAdmin) {
-          OB.Layout.ClassicOBCompatibility.Popup.standardUpgrading();
-        } else if (data.showAPRM) {
-          OB.Layout.ClassicOBCompatibility.Popup.openAPRMPopup();
-        } else if (data.showExportScripts) {
-          OB.Layout.ClassicOBCompatibility.Popup.openConfigScriptPopup(data.oldConfigScripts);
-        } else if (data.showSuccessUpgrade) {
-          OB.Layout.ClassicOBCompatibility.Popup.openSuccessUpgradePopup();
-        } else if (data.showOnDemandOffPlatform) {
-          OB.Layout.ViewManager.openView('OBClassicWindow', {
-            command: "DEFAULT",
-            formId: "8D6282279F464B1696B0EE3E23023B65",
-            icon: "Form",
-            id: "/ad_forms/InstanceManagement.html",
-            obManualURL: "/ad_forms/InstanceManagement.html",
-            tabTitle: OB.I18N.getLabel('OBUIAPP_InstanceActivation'),
-            viewId: "OBClassicWindow"
-          });
-
-        } else if (data.showInstancePurpose) {
-          OB.Layout.ClassicOBCompatibility.Popup.openInstancePurpose();
-        } else if (data.showHeartbeat) {
-          OB.Layout.ClassicOBCompatibility.Popup.openHeartbeat();
-        } else if (data.showRegistration) {
-          OB.Layout.ClassicOBCompatibility.Popup.openRegistration();
-        }
-        };
-
-    OB.RemoteCallManager.call('org.openbravo.client.application.HeartBeatPopupActionHandler', {}, {}, handleReturn);
-  }());
+  // show the heartbeat or registration popups (if it applies)
+  OB.Application.showHeartBeatOrRegistration();
 };

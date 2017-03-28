@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -685,13 +685,21 @@ public class HeartbeatProcess implements Process {
   }
 
   /**
+   * @see HeartbeatProcess#isLoginPopupRequired(String, String, ConnectionProvider)
+   */
+  public static HeartBeatOrRegistration isLoginPopupRequired(VariablesSecureApp vars,
+      ConnectionProvider connectionProvider) throws ServletException {
+    return isLoginPopupRequired(vars.getRole(), vars.getJavaDateFormat(), connectionProvider);
+  }
+
+  /**
    * Check if a popup is needed to be shown when a user logins.
    * 
    * @return the type of popup that is needed.
    */
-  public static HeartBeatOrRegistration isLoginPopupRequired(VariablesSecureApp vars,
+  public static HeartBeatOrRegistration isLoginPopupRequired(String roleId, String javaDateFormat,
       ConnectionProvider connectionProvider) throws ServletException {
-    if (vars.getRole() != null && vars.getRole().equals("0")) {
+    if (roleId != null && "0".equals(roleId)) {
       if (ActivationKey.getInstance().checkOPSLimitations(null) == LicenseRestriction.ON_DEMAND_OFF_PLATFORM) {
         return HeartBeatOrRegistration.OutOfDemandPlatform;
       }
@@ -702,10 +710,10 @@ public class HeartbeatProcess implements Process {
       if (isClonedInstance()) {
         return HeartBeatOrRegistration.InstancePurpose;
       }
-      if (isShowHeartbeatRequired(vars, connectionProvider)) {
+      if (isShowHeartbeatRequired(javaDateFormat, connectionProvider)) {
         return HeartBeatOrRegistration.HeartBeat;
       }
-      if (isShowRegistrationRequired(vars, connectionProvider)) {
+      if (isShowRegistrationRequired(javaDateFormat, connectionProvider)) {
         return HeartBeatOrRegistration.Registration;
       }
     }
@@ -764,7 +772,20 @@ public class HeartbeatProcess implements Process {
     return hbLogs.get(0);
   }
 
+  /**
+   * @see HeartbeatProcess#isShowHeartbeatRequired(String, ConnectionProvider)
+   */
   public static boolean isShowHeartbeatRequired(VariablesSecureApp vars,
+      ConnectionProvider connectionProvider) throws ServletException {
+    return isShowHeartbeatRequired(vars.getJavaDateFormat(), connectionProvider);
+  }
+
+  /**
+   * Check if the Heartbeat popup must be displayed.
+   * 
+   * @return {@code true} if the Heartbeat popup must be displayed, {@code false} otherwise.
+   */
+  public static boolean isShowHeartbeatRequired(String javaDateFormat,
       ConnectionProvider connectionProvider) throws ServletException {
     final HeartbeatData[] hbData = HeartbeatData.selectSystemProperties(connectionProvider);
     if (hbData.length > 0) {
@@ -776,7 +797,7 @@ public class HeartbeatProcess implements Process {
         } else {
           Date date = null;
           try {
-            date = new SimpleDateFormat(vars.getJavaDateFormat()).parse(postponeDate);
+            date = new SimpleDateFormat(javaDateFormat).parse(postponeDate);
             if (date.before(new Date())) {
               return true;
             }
@@ -789,7 +810,20 @@ public class HeartbeatProcess implements Process {
     return false;
   }
 
+  /**
+   * @see HeartbeatProcess#isShowRegistrationRequired(String, ConnectionProvider)
+   */
   public static boolean isShowRegistrationRequired(VariablesSecureApp vars,
+      ConnectionProvider connectionProvider) throws ServletException {
+    return isShowRegistrationRequired(vars.getJavaDateFormat(), connectionProvider);
+  }
+
+  /**
+   * Check if the Registration popup must be displayed.
+   * 
+   * @return {@code true} if the Registration popup must be displayed, {@code false} otherwise.
+   */
+  public static boolean isShowRegistrationRequired(String javaDateFormat,
       ConnectionProvider connectionProvider) throws ServletException {
     final RegistrationData[] rData = RegistrationData.select(connectionProvider);
     if (rData.length > 0) {
@@ -801,7 +835,7 @@ public class HeartbeatProcess implements Process {
         } else {
           Date date = null;
           try {
-            date = new SimpleDateFormat(vars.getJavaDateFormat()).parse(rPostponeDate);
+            date = new SimpleDateFormat(javaDateFormat).parse(rPostponeDate);
             if (date.before(new Date())) {
               return true;
             }
