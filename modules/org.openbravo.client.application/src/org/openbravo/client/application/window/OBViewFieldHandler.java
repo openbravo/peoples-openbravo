@@ -631,6 +631,8 @@ public class OBViewFieldHandler {
     public boolean getHasDefaultValue();
 
     public String getDisplayLogicGrid();
+
+    public boolean getIsComputedColumn();
   }
 
   public class OBViewFieldAudit implements OBViewFieldDefinition {
@@ -905,6 +907,9 @@ public class OBViewFieldHandler {
       return null;
     }
 
+    public boolean getIsComputedColumn() {
+      return false;
+    }
   }
 
   public class OBClientClassField implements OBViewFieldDefinition {
@@ -1170,6 +1175,10 @@ public class OBViewFieldHandler {
     public String getId() {
       return null;
     }
+
+    public boolean getIsComputedColumn() {
+      return false;
+    }
   }
 
   public class OBViewField implements OBViewFieldDefinition {
@@ -1184,6 +1193,10 @@ public class OBViewFieldHandler {
     private String displayLogicGrid = "";
     private int gridSort = 0;
     private String id;
+
+    public boolean getIsComputedColumn() {
+      return property.isComputedColumn();
+    }
 
     public String getClientClass() {
       return field.getClientclass() == null ? "" : field.getClientclass();
@@ -1798,6 +1811,10 @@ public class OBViewFieldHandler {
     public String getId() {
       return null;
     }
+
+    public boolean getIsComputedColumn() {
+      return false;
+    }
   }
 
   public class OBViewFieldGroup extends DefaultVirtualField {
@@ -2237,6 +2254,9 @@ public class OBViewFieldHandler {
       return null;
     }
 
+    public boolean getIsComputedColumn() {
+      return false;
+    }
   }
 
   public static class FormFieldComparator implements Comparator<Field> {
