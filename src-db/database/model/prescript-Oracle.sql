@@ -123,7 +123,7 @@ AS
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009 Openbravo SLU
+* All portions are Copyright (C) 2009-2017 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -139,7 +139,7 @@ v_md5:='';
 for c1 in (select text from user_source where not (type = 'TRIGGER' and name like 'AU\_%' escape '\') order by name,line) loop
      v_md5 := dbms_obfuscation_toolkit.md5(input_string => v_md5||c1.text);
 end loop;
-for c1 in (select * from user_tab_cols order by table_name, column_id) loop
+for c1 in (select * from user_tab_cols where hidden_column = 'NO' order by table_name, column_id) loop
      v_md5 := dbms_obfuscation_toolkit.md5(input_string => v_md5||c1.column_name||c1.data_type||c1.data_length||c1.nullable);
 end loop;
 for c1 in (select * from user_views order by view_name) loop
