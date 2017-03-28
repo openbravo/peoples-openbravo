@@ -409,6 +409,7 @@
         this.set('loaded', attributes.loaded);
         this.set('isModified', attributes.isModified);
         this.set('prepaymentAmt', attributes.prepaymentAmt || attributes.gross);
+        this.set('prepaymentLimitAmt', attributes.prepaymentLimitAmt || attributes.gross);
         _.each(_.keys(attributes), function (key) {
           if (!this.has(key)) {
             this.set(key, attributes[key]);
@@ -1086,6 +1087,7 @@
       this.set('isPartiallyDelivered', false);
       this.set('isModified', false);
       this.set('prepaymentAmt', 0);
+      this.set('prepaymentLimitAmt', 0);
     },
 
     clearWith: function (_order) {

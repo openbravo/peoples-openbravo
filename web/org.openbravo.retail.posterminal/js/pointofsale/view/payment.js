@@ -1332,123 +1332,140 @@ enyo.kind({
       });
     }
 
-    if (!myModel.get('leftColumnViewManager').isOrder()) {
-      var receipts2 = this.owner.model.get('multiOrders').get('multiOrdersList').models;
-      receipts2.forEach(function (receipt) {
-        receipt.set('isLayaway', false);
+    var continueExecution = function () {
+        if (!myModel.get('leftColumnViewManager').isOrder()) {
+          var receipts2 = me.owner.model.get('multiOrders').get('multiOrdersList').models;
+          receipts2.forEach(function (receipt) {
+            receipt.set('isLayaway', false);
+          });
+        } else {
+          me.owner.receipt.set('isLayaway', false);
+        }
+
+        if (!avoidPayment) {
+          if (isMultiOrder) {
+            payments = me.owner.model.get('multiOrders').get('payments');
+          } else {
+            payments = me.owner.receipt.get('payments');
+          }
+
+          var errorMsgLbl, totalPaid = 0,
+              totalToPaid = OB.DEC.abs(isMultiOrder ? me.owner.model.get('multiOrders').getTotal() : me.owner.receipt.getTotal()),
+              isReturnOrder = isMultiOrder ? false : me.owner.receipt.getPaymentStatus().isNegative;
+
+          if (_.filter(payments.models, function (payment) {
+            return (OB.UTIL.isNullOrUndefined(payment.get('isReturnOrder')) ? isReturnOrder : payment.get('isReturnOrder')) !== isReturnOrder;
+          }).length > 0) {
+            me.avoidCompleteReceipt = true;
+            if (isReturnOrder) {
+              errorMsgLbl = 'OBPOS_PaymentOnReturnReceipt';
+            } else {
+              errorMsgLbl = 'OBPOS_NegativePaymentOnReceipt';
+            }
+          }
+
+          payments.each(function (payment) {
+            if (me.alreadyPaid) {
+              me.avoidCompleteReceipt = true;
+              errorMsgLbl = 'OBPOS_UnnecessaryPaymentAdded';
+              return false;
+            }
+            if (!payment.get('isReversePayment') && !payment.get('isReversed') && !payment.get('isPrePayment')) {
+              totalPaid = OB.DEC.add(totalPaid, payment.get('origAmount'));
+              if (totalPaid >= totalToPaid) {
+                me.alreadyPaid = true;
+              }
+            }
+          });
+          if (me.avoidCompleteReceipt) {
+            enyo.$.scrim.hide();
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel(errorMsgLbl));
+            return;
+          }
+
+          payments.each(function (payment) {
+            if (payment.get('allowOpenDrawer') || payment.get('isCash')) {
+              me.allowOpenDrawer = true;
+            }
+          });
+
+          if (!isMultiOrder) {
+            if (me.drawerpreference && me.allowOpenDrawer) {
+              if (me.drawerOpened) {
+                if (me.owner.receipt.get('orderType') === 3 && !me.owner.receipt.get('cancelLayaway')) {
+                  //Void Layaway
+                  me.owner.receipt.trigger('voidLayaway');
+                } else if (me.owner.receipt.get('orderType') === 3) {
+                  //Cancel Layaway
+                  me.owner.receipt.trigger('cancelLayaway');
+                } else {
+                  me.setDisabled(true);
+                  me.owner.model.get('order').trigger('paymentDone', false);
+                  OB.UTIL.setScanningFocus(false);
+                }
+                me.drawerOpened = false;
+                me.setDisabled(true);
+              } else {
+                OB.POS.hwserver.openDrawer({
+                  openFirst: true,
+                  receipt: me.owner.receipt
+                }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
+                me.drawerOpened = true;
+                me.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
+                enyo.$.scrim.hide();
+              }
+            } else {
+              if (me.owner.receipt.get('orderType') === 3 && !me.owner.receipt.get('cancelLayaway')) {
+                //Void Layaway
+                me.owner.receipt.trigger('voidLayaway');
+              } else if (me.owner.receipt.get('orderType') === 3) {
+                //Cancel Layaway
+                me.owner.receipt.trigger('cancelLayaway');
+              } else {
+                me.setDisabled(true);
+                me.owner.receipt.trigger('paymentDone', me.allowOpenDrawer);
+                OB.UTIL.setScanningFocus(false);
+              }
+            }
+          } else {
+            if (me.drawerpreference && me.allowOpenDrawer) {
+              if (me.drawerOpened) {
+                me.owner.model.get('multiOrders').trigger('paymentDone', false);
+                OB.UTIL.setScanningFocus(false);
+                me.owner.model.get('multiOrders').set('openDrawer', false);
+                me.drawerOpened = false;
+                me.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
+              } else {
+                OB.POS.hwserver.openDrawer({
+                  openFirst: true,
+                  receipt: me.owner.model.get('multiOrders')
+                }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
+                me.drawerOpened = true;
+                me.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
+                enyo.$.scrim.hide();
+              }
+            } else {
+              me.owner.model.get('multiOrders').trigger('paymentDone', me.allowOpenDrawer);
+              OB.UTIL.setScanningFocus(false);
+              me.owner.model.get('multiOrders').set('openDrawer', false);
+            }
+          }
+        }
+        },
+        paymentstatus = this.owner.receipt.getPaymentStatus(),
+        prepaymentLimitAmount = this.owner.receipt.get('prepaymentLimitAmt'),
+        receiptHasPrepaymentAmount = prepaymentLimitAmount !== 0 && prepaymentLimitAmount !== paymentstatus.totalAmt,
+        pendingPrepayment = prepaymentLimitAmount + paymentstatus.pendingAmt - paymentstatus.totalAmt;
+
+    if (receiptHasPrepaymentAmount && pendingPrepayment > 0) {
+      OB.UTIL.Approval.requestApproval(
+      me.model, 'OBPOS_approval.prepaymentUnderLimit', function (approved, supervisor, approvalType) {
+        if (approved) {
+          continueExecution();
+        }
       });
     } else {
-      this.owner.receipt.set('isLayaway', false);
-    }
-
-    if (!avoidPayment) {
-      if (isMultiOrder) {
-        payments = this.owner.model.get('multiOrders').get('payments');
-      } else {
-        payments = this.owner.receipt.get('payments');
-      }
-
-      var errorMsgLbl, totalPaid = 0,
-          totalToPaid = OB.DEC.abs(isMultiOrder ? this.owner.model.get('multiOrders').getTotal() : this.owner.receipt.getTotal()),
-          isReturnOrder = isMultiOrder ? false : this.owner.receipt.getPaymentStatus().isNegative;
-
-      if (_.filter(payments.models, function (payment) {
-        return (OB.UTIL.isNullOrUndefined(payment.get('isReturnOrder')) ? isReturnOrder : payment.get('isReturnOrder')) !== isReturnOrder;
-      }).length > 0) {
-        me.avoidCompleteReceipt = true;
-        if (isReturnOrder) {
-          errorMsgLbl = 'OBPOS_PaymentOnReturnReceipt';
-        } else {
-          errorMsgLbl = 'OBPOS_NegativePaymentOnReceipt';
-        }
-      }
-
-      payments.each(function (payment) {
-        if (me.alreadyPaid) {
-          me.avoidCompleteReceipt = true;
-          errorMsgLbl = 'OBPOS_UnnecessaryPaymentAdded';
-          return false;
-        }
-        if (!payment.get('isReversePayment') && !payment.get('isReversed') && !payment.get('isPrePayment')) {
-          totalPaid = OB.DEC.add(totalPaid, payment.get('origAmount'));
-          if (totalPaid >= totalToPaid) {
-            me.alreadyPaid = true;
-          }
-        }
-      });
-      if (this.avoidCompleteReceipt) {
-        enyo.$.scrim.hide();
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel(errorMsgLbl));
-        return;
-      }
-
-      payments.each(function (payment) {
-        if (payment.get('allowOpenDrawer') || payment.get('isCash')) {
-          me.allowOpenDrawer = true;
-        }
-      });
-
-      if (!isMultiOrder) {
-        if (this.drawerpreference && this.allowOpenDrawer) {
-          if (this.drawerOpened) {
-            if (this.owner.receipt.get('orderType') === 3 && !this.owner.receipt.get('cancelLayaway')) {
-              //Void Layaway
-              this.owner.receipt.trigger('voidLayaway');
-            } else if (this.owner.receipt.get('orderType') === 3) {
-              //Cancel Layaway
-              this.owner.receipt.trigger('cancelLayaway');
-            } else {
-              this.setDisabled(true);
-              me.owner.model.get('order').trigger('paymentDone', false);
-              OB.UTIL.setScanningFocus(false);
-            }
-            this.drawerOpened = false;
-            this.setDisabled(true);
-          } else {
-            OB.POS.hwserver.openDrawer({
-              openFirst: true,
-              receipt: me.owner.receipt
-            }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
-            this.drawerOpened = true;
-            this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
-            enyo.$.scrim.hide();
-          }
-        } else {
-          if (this.owner.receipt.get('orderType') === 3 && !this.owner.receipt.get('cancelLayaway')) {
-            //Void Layaway
-            this.owner.receipt.trigger('voidLayaway');
-          } else if (this.owner.receipt.get('orderType') === 3) {
-            //Cancel Layaway
-            this.owner.receipt.trigger('cancelLayaway');
-          } else {
-            this.setDisabled(true);
-            me.owner.receipt.trigger('paymentDone', this.allowOpenDrawer);
-            OB.UTIL.setScanningFocus(false);
-          }
-        }
-      } else {
-        if (this.drawerpreference && this.allowOpenDrawer) {
-          if (this.drawerOpened) {
-            this.owner.model.get('multiOrders').trigger('paymentDone', false);
-            OB.UTIL.setScanningFocus(false);
-            this.owner.model.get('multiOrders').set('openDrawer', false);
-            this.drawerOpened = false;
-            this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
-          } else {
-            OB.POS.hwserver.openDrawer({
-              openFirst: true,
-              receipt: me.owner.model.get('multiOrders')
-            }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
-            this.drawerOpened = true;
-            this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
-            enyo.$.scrim.hide();
-          }
-        } else {
-          this.owner.model.get('multiOrders').trigger('paymentDone', this.allowOpenDrawer);
-          OB.UTIL.setScanningFocus(false);
-          this.owner.model.get('multiOrders').set('openDrawer', false);
-        }
-      }
+      continueExecution();
     }
   }
 });
