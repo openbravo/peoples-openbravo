@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,13 +37,7 @@ public class SE_Payment_Transaction extends SimpleCallout {
     try {
       OBContext.setAdminMode(true);
       final String strPaymentId = info.getStringParameter("inpfinPaymentId", IsIDFilter.instance);
-      final String strcGlitemId = info.getStringParameter("inpcGlitemId", IsIDFilter.instance);
       String description = info.getStringParameter("inpdescription", null);
-
-      if ("".equals(strPaymentId) && "".equals(strcGlitemId)) {
-        info.addResult("inpdepositamt", BigDecimal.ZERO);
-        info.addResult("inppaymentamt", BigDecimal.ZERO);
-      }
 
       // Delete only previous Payment description. This can only work when the transaction has
       // been already saved and we are changing the payment afterwards

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2017 Openbravo SLU
+ * All portions are Copyright (C) 2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,28 +22,21 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
-public class SE_Trxtype_Transaction extends SimpleCallout {
+import org.apache.commons.lang.StringUtils;
+
+public class SE_Amount_Transaction extends SimpleCallout {
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
     try {
-      final String strTrxType = info.getStringParameter("inptrxtype", null);
-      String strWindowId = info.getStringParameter("inpwindowId", null);
-      if ("BF".equals(strTrxType)) {
-        info.addResult("inpfinPaymentId", null);
-        info.addResult("inpcGlitemId", null);
-        info.addResult("inpissotrx", "Y");
-        info.vars.setSessionValue(strWindowId + "|IsSOTrx", "Y");
-      } else if ("BPW".equals(strTrxType)) {
-        info.addResult("inpfinPaymentId", null);
-        info.addResult("inpdepositamt", BigDecimal.ZERO);
-        info.addResult("inpissotrx", "N");
-        info.vars.setSessionValue(strWindowId + "|IsSOTrx", "N");
-      } else if ("BPD".equals(strTrxType)) {
-        info.addResult("inpfinPaymentId", null);
-        info.addResult("inppaymentamt", BigDecimal.ZERO);
-        info.addResult("inpissotrx", "Y");
-        info.vars.setSessionValue(strWindowId + "|IsSOTrx", "Y");
+      final String trxType = info.getStringParameter("inptrxtype");
+      if (StringUtils.equals(trxType, "BF")) {
+        final String lastFieldChanged = info.getLastFieldChanged();
+        if (StringUtils.equals(lastFieldChanged, "inpdepositamt")) {
+          info.addResult("inppaymentamt", BigDecimal.ZERO);
+        } else if (StringUtils.equals(lastFieldChanged, "inppaymentamt")) {
+          info.addResult("inpdepositamt", BigDecimal.ZERO);
+        }
       }
     } catch (Exception e) {
       return;
