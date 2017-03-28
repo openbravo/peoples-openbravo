@@ -1291,7 +1291,7 @@
                   IF (cur_orderline.qtyordered < v_releasedqty) THEN
                     RAISE_APPLICATION_ERROR(-20000, '@CannotOrderLessThanReleasedQty@');
                   END IF;
-                  IF (cur_orderline.qtyordered < v_reservedqty) THEN
+                  IF (cur_orderline.qtyordered < v_reservedqty) OR (v_releasedqty = 0 AND cur_orderline.qtyordered > 0) THEN
                     --Reservation quantity to decrease with more reserved quantity than new quantity, unreserve stock
                     v_pendingtounreserve := v_reservedqty - cur_orderline.qtyordered;
                     FOR cur_res_stock IN (
@@ -1315,18 +1315,32 @@
                     IF (v_pendingtounreserve > 0) THEN
                       RAISE_APPLICATION_ERROR(-20000, '@CouldNotUnreserveNeededQty@');
                     END IF;
-                    -- Delete reservation lines with quantity zero.
+                    -- Delete reservation lines with zero releasedqty
                     DELETE FROM m_reservation_stock
-                    WHERE quantity = 0
-                      AND COALESCE(releasedqty, 0) = 0
+                    WHERE COALESCE(releasedqty, 0) = 0
                       AND m_reservation_id = v_reservation_id;
                   END IF;
-                  UPDATE m_reservation
-                  SET quantity = cur_orderline.qtyordered,
-                      res_status = 'CL',
-                      updated = now(),
-                      updatedby = v_user
-                  WHERE m_reservation_id = v_reservation_id;
+                  -- Order line orderedqty greater than reservation releasedqty
+                  IF (cur_orderline.qtyordered > v_releasedqty) THEN
+                    UPDATE m_reservation_stock
+                    SET quantity = releasedqty,
+                        updated = now(),
+                        updatedby = v_user
+                    WHERE m_reservation_id = v_reservation_id;
+
+                    UPDATE m_reservation
+                    SET res_status = 'CL',
+                        updated = now(),
+                        updatedby = v_user
+                    WHERE m_reservation_id = v_reservation_id;
+                  ELSE
+                    UPDATE m_reservation
+                    SET quantity = cur_orderline.qtyordered,
+                        res_status = 'CL',
+                        updated = now(),
+                        updatedby = v_user
+                    WHERE m_reservation_id = v_reservation_id;
+                  END IF;
                   IF (v_quantity < cur_orderline.qtyordered AND v_res_status = 'CO') THEN
                     --Reservation processed with higher quantity. Try to reserve the new quantity.
                     M_RESERVE_STOCK_AUTO(v_reservation_id, v_user, v_reservedqty);
