@@ -905,25 +905,26 @@
       var me = this,
           total = OB.DEC.abs(this.getTotal());
 
-      function executeCallback(prepaymentAmt) {
-        me.set('prepaymentAmt', prepaymentAmt);
+      function executeCallback(prepaymentAmount, prepaymentLimitAmount) {
+        me.set('prepaymentAmt', prepaymentAmount);
+        me.set('prepaymentLimitAmt', prepaymentLimitAmount);
         me.trigger('saveCurrent');
         if (callback instanceof Function) {
-          callback(prepaymentAmt);
+          callback(prepaymentAmount, prepaymentLimitAmount);
         }
       }
       //Execute the Prepayments Algorithm only if the receipt is a normal ticket or a layaway
       //Otherwise return the total of the receipt so the prepayments logic is not taken into account
       if (this.get('orderType') !== 1 && this.get('orderType') !== 3) {
         if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && OB.MobileApp.model.get('terminal').prepaymentAlgorithm) {
-          OB.UTIL.prepaymentRules[OB.MobileApp.model.get('terminal').prepaymentAlgorithm].execute(this, function (amount) {
-            executeCallback(amount);
+          OB.UTIL.prepaymentRules[OB.MobileApp.model.get('terminal').prepaymentAlgorithm].execute(this, function (prepaymentAmount, prepaymentLimitAmount) {
+            executeCallback(prepaymentAmount, prepaymentLimitAmount);
           });
         } else {
-          executeCallback(total);
+          executeCallback(total, total);
         }
       } else {
-        executeCallback(total);
+        executeCallback(total, total);
       }
     },
 

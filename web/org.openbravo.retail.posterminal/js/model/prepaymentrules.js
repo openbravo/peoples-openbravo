@@ -20,8 +20,9 @@
         } else {
           return memo;
         }
-      }, 0);
-      callback(prepaymentAmount);
+      }, 0),
+          prepaymentLimitAmount = prepaymentAmount;
+      callback(prepaymentAmount, prepaymentLimitAmount);
     }
   };
 
