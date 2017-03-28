@@ -886,7 +886,8 @@ public class DocInvoice extends AcctServer {
 
             try {
               DocInvoiceData[] dataEx = DocInvoiceData.selectProductAcct(conn,
-                  as.getC_AcctSchema_ID(), m_taxes[i].m_C_Tax_ID, Record_ID, data[j].mProductId);
+                  as.getC_AcctSchema_ID(), m_taxes[i].m_C_Tax_ID, Record_ID,
+                  docLine1.m_M_Product_ID);
               if (dataEx.length == 0) {
                 dataEx = DocInvoiceData.selectGLItemAcctForTaxLine(conn, as.getC_AcctSchema_ID(),
                     m_taxes[i].m_C_Tax_ID, Record_ID);
@@ -1538,7 +1539,8 @@ public class DocInvoice extends AcctServer {
     try {
 
       // We can have some lines from product or some lines from general ledger
-      data = DocInvoiceData.selectProductAcct(conn, as.getC_AcctSchema_ID(), taxId, Record_ID);
+      data = DocInvoiceData
+          .selectProductAcct(conn, as.getC_AcctSchema_ID(), taxId, Record_ID, null);
       cumulativeTaxLineAmount = createLineForTaxUndeductable(invoiceLineTaxCount,
           totalInvoiceLineTax, cumulativeTaxLineAmount, taxAmount, data, conn, fact, docLine,
           Fact_Acct_Group_ID);
