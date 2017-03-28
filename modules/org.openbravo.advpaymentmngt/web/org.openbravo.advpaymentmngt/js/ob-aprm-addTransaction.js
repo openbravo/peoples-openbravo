@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -86,8 +86,6 @@ OB.APRM.AddTransaction.trxTypeOnChangeFunction = function (item, view, form, gri
     form.getItem('depositamt').setDisabled(false);
     form.getItem('withdrawalamt').setDisabled(false);
     form.getItem('description').setValue('');
-    form.getItem('depositamt').setValue(Number('0'));
-    form.getItem('withdrawalamt').setValue(Number('0'));
   }
 };
 
@@ -128,4 +126,15 @@ OB.APRM.AddTransaction.trxDateOnChangeFunction = function (item, view, form, gri
 
 OB.APRM.AddTransaction.organizationOnChangeFunction = function (item, view, form, grid) {
   form.getItem('ad_org_id_process').setValue(form.getItem('ad_org_id').getValue());
+};
+
+OB.APRM.AddTransaction.amtOnChangeFunction = function (item, view, form, grid) {
+  var trxType = form.getItem('trxtype').getValue();
+  if (trxType === 'BF') {
+    if (item.name === 'depositamt') {
+      form.getItem('withdrawalamt').setValue(Number('0'));
+    } else if (item.name === 'withdrawalamt') {
+      form.getItem('depositamt').setValue(Number('0'));
+    }
+  }
 };
