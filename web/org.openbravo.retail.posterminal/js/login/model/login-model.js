@@ -1197,6 +1197,11 @@
         if (inResponse && inResponse.errorReadingTerminalAuthentication) {
           OB.UTIL.showWarning(inResponse.errorReadingTerminalAuthentication);
         }
+        if (OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' && inResponse.terminalAuthentication === 'N') {
+          if (OB.UTIL.localStorage.getItem('terminalKeyIdentifier')) {
+            OB.UTIL.localStorage.removeItem('terminalKeyIdentifier');
+          }
+        }
         OB.UTIL.localStorage.setItem('terminalAuthentication', inResponse.terminalAuthentication);
         if (!(OB.UTIL.localStorage.getItem('cacheSessionId') && OB.UTIL.localStorage.getItem('cacheSessionId').length === 32)) {
           OB.UTIL.localStorage.setItem('cacheSessionId', inResponse.cacheSessionId);
