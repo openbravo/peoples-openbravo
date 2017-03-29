@@ -1016,6 +1016,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       if (negativeLines > 0 && !OB.MobileApp.model.get('permissions')['OBPOS_approval.returns']) {
         args.approvals.push('OBPOS_approval.returns');
       }
+      _.each(me.get('order').get('approvedList'), function (l) {
+        args.approvals.splice(args.approvals.indexOf(l.approvalType), 1);
+      });
       if (args.approvals.length > 0) {
         OB.UTIL.Approval.requestApproval(
         me, args.approvals, function (approved) {
