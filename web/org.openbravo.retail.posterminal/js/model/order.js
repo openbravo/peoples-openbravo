@@ -7055,6 +7055,7 @@
         'isReturn': this.get('gross') < 0 ? true : false,
         'isNegative': this.get('gross') < 0 ? true : false,
         'changeAmt': this.getChange(),
+        'totalAmt': total,
         'pendingAmt': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, pay),
         'payments': this.get('payments')
       };
