@@ -25,7 +25,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2016 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2017 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -68,8 +68,6 @@
     v_Qty NUMBER;
     --MODIFIED BY F.IRIAZABAL
     v_QtyOrder NUMBER;
-    v_Reference VARCHAR2(2000):='';
-    v_ReferenceOrder CHAR(1) ;
     v_DocSubTypeSO VARCHAR2(60) ;
     --
     v_LineNo NUMBER:=0;
@@ -364,34 +362,6 @@
                 DBMS_OUTPUT.PUT_LINE('- No Lines -') ;
                 Next_Order:=TRUE;
               END IF;
-              IF(NOT Next_Order) THEN
-                -- Shipment Reference (optional)
-                DECLARE
-                  Cur_DocTypeCOrder RECORD;
-                BEGIN
-                  FOR Cur_DocTypeCOrder IN
-                    (SELECT dt.PrintName || ' ' || ox.DocumentNo||' '||(
-                      CASE
-                        WHEN ox.PoReference IS NULL
-                        THEN NULL
-                        ELSE '('||ox.PoReference||')'
-                      END
-                      ) AS Reference
-                    FROM C_DOCTYPE dt,
-                      C_ORDER ox
-                    WHERE dt.C_DocType_ID=ox.C_Order_ID
-                      AND ox.C_Order_ID=Cur_Order.C_Order_ID
-                    ORDER BY ox.DocumentNo DESC
-                    )
-                  LOOP -- last shipment
-                    v_Reference:=Cur_DocTypeCOrder.Reference;
-                    EXIT;
-                  END LOOP;
-                EXCEPTION
-                WHEN OTHERS THEN
-                  DBMS_OUTPUT.PUT_LINE('- No ShipReference -') ;
-                END;
-              END IF;--Next_Order
               -- After (D)elivery   -- Check M_InOut for invoice quantity
               -- After (O)rder completely delivered
             ELSIF((Cur_Order.InvoiceRule IN('D', 'O'))) THEN
@@ -414,51 +384,6 @@
                 IF(Cur_InOutLine%NOTFOUND) THEN
                   DBMS_OUTPUT.PUT_LINE('- No Lines -') ;
                   Next_Order:=TRUE;
-                END IF;
-              END IF;--Next_Order
-              IF(NOT Next_Order) THEN
-                -- Shipment Reference
-                v_ResultStr:='Ship Reference Order_ID=' || Cur_Order.C_Order_ID;
-                SELECT REFERENCE_ORDER
-                INTO v_ReferenceOrder
-                FROM AD_ORGINFO
-                WHERE AD_Org_ID=ptr_sl.AD_Org_ID;
-                IF(v_ReferenceOrder='Y') THEN
-                  DECLARE
-                    Cur_CDoctypeCOrder RECORD;
-                  BEGIN
-                    -- last shipment
-                    FOR Cur_CDoctypeCOrder IN
-                      (SELECT dt.PrintName || ' ' || ox.DocumentNo||' '||(
-                        CASE
-                          WHEN ox.PoReference IS NULL
-                          THEN NULL
-                          ELSE '('||ox.PoReference||')'
-                        END
-                        ) AS Reference
-                      FROM C_DOCTYPE dt,
-                        C_ORDER ox
-                      WHERE dt.C_DocType_ID=ox.C_Order_ID
-                        AND ox.C_Order_ID=Cur_Order.C_Order_ID
-                      ORDER BY ox.DocumentNo DESC
-                      )
-                    LOOP
-                      v_Reference:=Cur_CDoctypeCOrder.Reference;
-                      EXIT;
-                    END LOOP;
-                  END;
-                ELSE  SELECT dt.PrintName || ' ' || m.DocumentNo||' '||(
-                    CASE
-                      WHEN m.PoReference IS NULL
-                      THEN NULL
-                      ELSE '('||m.PoReference||')'
-                    END
-                    )
-                  INTO v_Reference
-                  FROM M_INOUT m,
-                    C_DOCTYPE dt
-                  WHERE m.C_DocType_ID=dt.C_DocType_ID
-                    AND m.M_InOut_ID=ptr_sl.M_InOut_ID;
                 END IF;
               END IF;--Next_Order
               -- Do not invoice
@@ -540,47 +465,6 @@
               --
               v_NoRecords:=v_NoRecords + 1;
               v_LineNo:=0;
-              -- Insert Reference/Comment to Shipment for Warehouse Order/Pickup
-
-		IF(v_Reference IS NOT NULL AND TRIM(v_Reference)!=''
-                /*AND v_DocSubTypeSO = 'WP'*/
-                ) THEN
-                v_ResultStr:='InsertShipmentReference';
-                Ad_Sequence_Next('C_InvoiceLine', Cur_Order.C_Order_ID, v_NextNo) ;
-               INSERT
-                INTO C_INVOICELINE
-                  (
-                    C_InvoiceLine_ID, AD_Client_ID, AD_Org_ID, IsActive,
-                    Created, CreatedBy, Updated, UpdatedBy,
-                    C_Invoice_ID, C_OrderLine_ID, M_InOutLine_ID, Line,
-                    Description, M_Product_ID, QtyInvoiced, PriceList,
-                    PriceActual, PriceLimit, LineNetAmt, C_Charge_ID,
-                    ChargeAmt, C_UOM_ID, C_Tax_ID, PriceStd, 
-                    AUMQTY, C_AUM,
-                    explode, bom_parent_id,
-                    C_Project_ID, C_Bpartner_ID, A_Asset_ID,
-                    C_Costcenter_ID, User1_ID, User2_ID
-                  )
-                  VALUES
-                  (
-                    v_NextNo, Cur_Order.AD_Client_ID, Cur_Order.AD_Org_ID, 'Y',
-                    now(), v_ADUserId, now(), v_ADUserId,
-                    p_Invoice_ID, NULL, NULL, v_LineNo,
-                    v_Reference, NULL, 0, 0,
-                    0, 0, 0, NULL,
-                    0, NULL, NULL, 0, 
-                    NULL, NULL,
-                    ptr_sl.explode, (SELECT c_invoiceline_id 
-                                            FROM c_invoiceline 
-                                            WHERE c_invoice_id=p_Invoice_ID 
-                                               and c_orderline_id = (SELECT BOM_parent_id 
-                                                                     FROM c_orderline 
-                                                                     WHERE c_orderline_id = ptr_sl.c_orderline_id)),
-                    ptr_sl.C_Project_ID, ptr_sl.C_Bpartner_ID, ptr_sl.A_Asset_ID,
-                    ptr_sl.C_Costcenter_ID, ptr_sl.User1_ID, ptr_sl.User2_ID
-                  )
-                  ;
-              END IF;
             END IF;--Next_Order
             IF(NOT Next_Order) THEN
               /**
