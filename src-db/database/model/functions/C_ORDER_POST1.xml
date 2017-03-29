@@ -1327,20 +1327,13 @@
                         updated = now(),
                         updatedby = v_user
                     WHERE m_reservation_id = v_reservation_id;
-
-                    UPDATE m_reservation
-                    SET res_status = 'CL',
-                        updated = now(),
-                        updatedby = v_user
-                    WHERE m_reservation_id = v_reservation_id;
-                  ELSE
-                    UPDATE m_reservation
-                    SET quantity = cur_orderline.qtyordered,
-                        res_status = 'CL',
-                        updated = now(),
-                        updatedby = v_user
-                    WHERE m_reservation_id = v_reservation_id;
                   END IF;
+                  UPDATE m_reservation
+                  SET quantity = cur_orderline.qtyordered,
+                      res_status = 'CL',
+                      updated = now(),
+                      updatedby = v_user
+                  WHERE m_reservation_id = v_reservation_id;
                   IF (v_quantity < cur_orderline.qtyordered AND v_res_status = 'CO') THEN
                     --Reservation processed with higher quantity. Try to reserve the new quantity.
                     M_RESERVE_STOCK_AUTO(v_reservation_id, v_user, v_reservedqty);
