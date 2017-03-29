@@ -55,7 +55,7 @@
       hasRelatedServices: true,
       warehouse: true,
       warehousename: true,
-      attributeValue: true,
+      attributeValue: true
     },
 
     initialize: function (attributes) {
@@ -1610,18 +1610,13 @@
             args: {
               line: line,
               callbackPostAddProductToOrder: me.postAddProductToOrder,
-              options: options
+              options: options,
+              finalCallback: callback
             }
           });
-          if (callback) {
-            callback(true, line);
-          }
         } else {
-          me.postAddProductToOrder(me, p, line, qty, options, newLine);
-          if (callback) {
-            callback(true, line);
-          }
-        };
+          me.postAddProductToOrder(me, p, line, qty, options, newLine, callback(true, line));
+        }
       } // End addProductToOrder
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('ignoreReturnApproval')) {
         if (options && options.isVerifiedReturn) {

@@ -71,7 +71,7 @@ enyo.kind({
         showErrorSerialNumber = false,
         i, repeteadLine;
 
-    if (attributeValue) {
+    if (this.validateAttribute(attributeValue) && attributeValue) {
       for (i = 0; i < me.owner.model.get('order').get('lines').length; i++) {
         var productId = me.owner.model.get('order').get('lines').models[i].attributes.product.id;
         var attributeId = me.owner.model.get('order').get('lines').models[i].getAttributeValue();
@@ -81,43 +81,47 @@ enyo.kind({
           break;
         }
       }
-      if (this.validateAttribute(attributeValue)) {
-        if (!options) {
-          if (repeteadAttribute) {
-            me.owner.model.get('order').get('lines').remove(orderline);
-            if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && p.get('hasAttributes') && p.get('isSerialNo')) {
-              showErrorSerialNumber = true;
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductHasSerialNo', null), [{
-                label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                action: function () {
-                  return true;
-                }
-              }])
-            } else {
-              receipt.addUnit(repeteadLine, qty);
-            }
-            receipt.save();
-          } else {
-            orderline.set('attributeValue', attributeValue);
-            me.owner.model.get('order').save();
-          }
-        } else {
-          if (attributeValue != orderline.getAttributeValue()) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotValidateAttribute'), OB.I18N.getLabel('OBPOS_NotSameAttribute', null), [{
+      if (!options) {
+        if (repeteadAttribute) {
+          me.owner.model.get('order').get('lines').remove(orderline);
+          if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && p.get('isSerialNo')) {
+            showErrorSerialNumber = true;
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductHasSerialNo', null), [{
               label: OB.I18N.getLabel('OBMOBC_LblOk'),
               action: function () {
+                if (me.args.finalCallback) {
+                  me.args.finalCallback(false, null);
+                }
                 return true;
               }
-            }])
-            me.owner.model.get('order').get('lines').remove(orderline);
+            }]);
+          } else {
+            receipt.addUnit(repeteadLine, qty);
           }
+          receipt.save();
+        } else {
+          orderline.set('attributeValue', attributeValue);
+          me.owner.model.get('order').save();
         }
       } else {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NotValidAttribute'));
+        if (attributeValue !== orderline.getAttributeValue()) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotValidateAttribute'), OB.I18N.getLabel('OBPOS_NotSameAttribute', null), [{
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            action: function () {
+              if (me.args.finalCallback) {
+                me.args.finalCallback(false, null);
+              }
+              return true;
+            }
+          }]);
+          me.owner.model.get('order').get('lines').remove(orderline);
+        }
       }
-      if (!showErrorSerialNumber) {
-        this.args.callbackPostAddProductToOrder(receipt, p, orderline, qty, null, newline);
-      }
+    } else {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NotValidAttribute'));
+    }
+    if (!showErrorSerialNumber && attributeValue) {
+      this.args.callbackPostAddProductToOrder(receipt, p, orderline, qty, null, newline, me.args.finalCallback(true, orderline));
     }
     return true;
   },
@@ -127,10 +131,9 @@ enyo.kind({
   },
 
   cancel: function () {
-    var currentLine = this.args.line
+    var currentLine = this.args.line;
     if (currentLine) {
-      this.owner.model.get('order').deleteLine(currentLine);
-      this.owner.model.get('order').save();
+      this.deleteLine();
     }
     this.hide();
     return true;
@@ -149,12 +152,27 @@ enyo.kind({
     };
   },
   executeOnHide: function () {
-    var attributeValue = this.$.bodyContent.$.valueAttribute.getValue()
-    if (!attributeValue) {
-      this.owner.model.get('order').deleteLine(this.args.line);
-      this.owner.model.get('order').save();
+    var saveAttribute = this.$.bodyButtons.saveAttribute.caller;
+    var callback = this.args.finalCallback;
+    if (!saveAttribute) {
+      if (callback) {
+        callback(false, null);
+      }
+      this.deleteLine();
+    } else if (saveAttribute) {
+      var attributeValue = this.$.bodyContent.$.valueAttribute.getValue();
+      if (!attributeValue) {
+        if (callback) {
+          callback(false, null);
+        }
+        this.deleteLine();
+      }
     }
     this.$.bodyContent.$.valueAttribute.setValue(null);
+  },
+  deleteLine: function () {
+    this.owner.model.get('order').deleteLine(this.args.line);
+    this.owner.model.get('order').save();
   }
 });
 OB.UI.WindowView.registerPopup('OB.OBPOSPointOfSale.UI.PointOfSale', {
