@@ -30,7 +30,7 @@ enyo.kind({
     onSetMultiSelected: 'setMultiSelected',
     onKeyboardOnDiscountsMode: 'keyboardOnDiscountsMode'
   },
-  setMultiSelected: function (inSender, inEvent) {
+  setMultiSelected: function(inSender, inEvent) {
     if (inEvent.models && inEvent.models.length > 0 && !(inEvent.models[0] instanceof OB.Model.OrderLine)) {
       return;
     }
@@ -46,7 +46,7 @@ enyo.kind({
       }
     }
   },
-  keyboardOnDiscountsMode: function (inSender, inEvent) {
+  keyboardOnDiscountsMode: function(inSender, inEvent) {
     if (inEvent.status) {
       this.showSidepad('ticketDiscountsToolbar');
     } else {
@@ -93,17 +93,17 @@ enyo.kind({
   },
   sideBarEnabled: true,
 
-  receiptChanged: function () {
+  receiptChanged: function() {
     this.$.toolbarcontainer.$.toolbarPayment.setReceipt(this.receipt);
 
     this.line = null;
 
-    this.receipt.get('lines').on('selected', function (line) {
+    this.receipt.get('lines').on('selected', function(line) {
       this.line = line;
       this.clearEditBox();
     }, this);
   },
-  validateQuantity: function (keyboard, value) {
+  validateQuantity: function(keyboard, value) {
     if (!isFinite(value)) {
       return true;
     }
@@ -114,7 +114,7 @@ enyo.kind({
     }
     return true;
   },
-  validateReceipt: function (keyboard, validateLine) {
+  validateReceipt: function(keyboard, validateLine) {
     if (keyboard.receipt.get('isEditable') === false) {
       this.doShowPopup({
         popup: 'modalNotEditableOrder'
@@ -133,10 +133,10 @@ enyo.kind({
     }
     return true;
   },
-  initComponents: function () {
+  initComponents: function() {
     var me = this;
 
-    var actionAddProduct = function (keyboard, value) {
+    var actionAddProduct = function(keyboard, value) {
         if (!keyboard.line.get('notReturnThisLine')) {
           if (!me.validateReceipt(keyboard, true)) {
             return true;
@@ -160,7 +160,7 @@ enyo.kind({
         }
         };
 
-    var actionAddMultiProduct = function (keyboard, qty) {
+    var actionAddMultiProduct = function(keyboard, qty) {
         var cancelQtyChange = false,
             cancelQtyChangeReturn = false;
         if (me.selectedModelsSameQty) {
@@ -168,7 +168,7 @@ enyo.kind({
           // Check if is trying to remove delivered units or to modify negative lines in a cancel and replace ticket.
           // In that case stop the flow and show an error popup.
           if (keyboard.receipt.get('replacedorder')) {
-            _.each(me.selectedModels, function (l) {
+            _.each(me.selectedModels, function(l) {
               var oldqty = l.get('qty'),
                   newqty = oldqty + qty;
 
@@ -190,7 +190,7 @@ enyo.kind({
           keyboard.receipt.set('undo', null);
           keyboard.receipt.set('multipleUndo', true);
           var selection = [];
-          _.each(me.selectedModels, function (model) {
+          _.each(me.selectedModels, function(model) {
             selection.push(model);
             keyboard.line = model;
             actionAddProduct(keyboard, qty);
@@ -202,7 +202,7 @@ enyo.kind({
         }
         };
 
-    var actionRemoveProduct = function (keyboard, value) {
+    var actionRemoveProduct = function(keyboard, value) {
         if (!me.validateReceipt(keyboard, true)) {
           return true;
         }
@@ -213,7 +213,7 @@ enyo.kind({
         };
 
     // action bindable to a command that completely deletes a product from the order list
-    var actionDeleteLine = function (keyboard) {
+    var actionDeleteLine = function(keyboard) {
         if (!me.validateReceipt(keyboard, true)) {
           return true;
         }
@@ -226,7 +226,7 @@ enyo.kind({
         };
 
     this.addCommand('line:qty', {
-      action: function (keyboard, txt) {
+      action: function(keyboard, txt) {
         var value = OB.I18N.parseNumber(txt),
             toadd;
 
@@ -242,7 +242,7 @@ enyo.kind({
           if (me.selectedModels && me.selectedModels.length > 1) {
             keyboard.receipt.set('multipleUndo', true);
           }
-          _.each(me.selectedModels, function (model) {
+          _.each(me.selectedModels, function(model) {
             selection.push(model);
             keyboard.line = model;
             if (keyboard.receipt.get('orderType') === 1) {
@@ -257,21 +257,19 @@ enyo.kind({
                   selectedModels: keyboard.selectedModels
                 });
               } else {
-                if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && me.line.get('product').get('isSerialNo')) {
-                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductHasSerialNo', null), [{
-                    label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                    action: function () {
-                      return true;
-                    }
-                  }])
-                } else {
-                  if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && me.line.get('product').get('hasAttributes')) {
-                    me.line.set('qty', value);
-                    me.line.save();
+                if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true)) {
+                  if (me.line.get('product').get('isSerialNo')) {
+                    OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductHasSerialNo', null), [{
+                      label: OB.I18N.getLabel('OBMOBC_LblOk')
+                    }])
                   } else {
-                    actionAddProduct(keyboard, toadd);
+                    me.line.set('qty', value);
                   }
+                } else {
+                  actionAddProduct(keyboard, toadd);
                 }
+
+
               }
             }
           });
@@ -285,7 +283,7 @@ enyo.kind({
 
     this.addCommand('line:price', {
       permission: 'OBPOS_order.changePrice',
-      action: function (keyboard, txt) {
+      action: function(keyboard, txt) {
         if (!me.validateReceipt(keyboard, false)) {
           return true;
         }
@@ -300,7 +298,7 @@ enyo.kind({
         }
         if (keyboard.line) {
           OB.UTIL.Approval.requestApproval(
-          me.model, 'OBPOS_approval.setPrice', function (approved, supervisor, approvalType) {
+          me.model, 'OBPOS_approval.setPrice', function(approved, supervisor, approvalType) {
             if (approved) {
               var price = OB.I18N.parseNumber(txt),
                   cancelChange = false;
@@ -308,7 +306,7 @@ enyo.kind({
                 keyboard.receipt.set('undo', null);
                 keyboard.receipt.set('multipleUndo', true);
 
-                _.each(me.selectedModels, function (model) {
+                _.each(me.selectedModels, function(model) {
                   if (model.get('replacedorderline') && model.get('qty') < 0) {
                     cancelChange = true;
                   }
@@ -319,7 +317,7 @@ enyo.kind({
                   return;
                 }
 
-                _.each(me.selectedModels, function (model) {
+                _.each(me.selectedModels, function(model) {
                   keyboard.receipt.setPrice(model, price);
                 });
                 keyboard.receipt.set('multipleUndo', null);
@@ -336,7 +334,7 @@ enyo.kind({
 
     this.addCommand('line:dto', {
       permission: 'OBPOS_order.discount',
-      action: function (keyboard, txt) {
+      action: function(keyboard, txt) {
         if (!me.validateReceipt(keyboard, true)) {
           return true;
         }
@@ -347,7 +345,7 @@ enyo.kind({
         keyboard.receipt.set('undo', null);
         keyboard.receipt.set('multipleUndo', true);
         var discount = OB.I18N.parseNumber(txt);
-        _.each(me.selectedModels, function (model) {
+        _.each(me.selectedModels, function(model) {
           keyboard.receipt.trigger('discount', model, discount);
         });
         keyboard.receipt.set('multipleUndo', null);
@@ -357,7 +355,7 @@ enyo.kind({
     this.addCommand('screen:dto', {
       stateless: true,
       permission: 'OBPOS_order.discount',
-      action: function (keyboard, txt) {
+      action: function(keyboard, txt) {
         if (!me.validateReceipt(keyboard, true)) {
           return true;
         }
@@ -375,7 +373,7 @@ enyo.kind({
     //To be used in the discounts side bar
     this.addCommand('ticket:discount', {
       permission: 'OBPOS_retail.advDiscounts',
-      action: function (keyboard, txt) {
+      action: function(keyboard, txt) {
         if (keyboard.discountsMode) {
           me.doSetDiscountQty({
             qty: OB.I18N.parseNumber(txt)
@@ -389,7 +387,7 @@ enyo.kind({
 
     this.addCommand('+', {
       stateless: true,
-      action: function (keyboard, txt) {
+      action: function(keyboard, txt) {
         var qty = 1;
         if (!me.selectedModels || !keyboard.line) {
           return;
@@ -401,28 +399,20 @@ enyo.kind({
             return true;
           }
         }
-        if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && me.line.get('product').get('isSerialNo')) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductHasSerialNo', null), [{
-            label: OB.I18N.getLabel('OBMOBC_LblOk'),
-            action: function () {
-              return true;
-            }
-          }])
-        } else {
-          if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && me.line.get('product').get('hasAttributes')) {
-            if (me.line.getQty() > 0) {
-              me.receipt.addUnit(me.line, qty);
-            } else {
-              me.receipt.addUnit(me.line, -qty);
-            }
-            me.line.save();
+        if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true)) {
+          if (me.line.get('product').get('isSerialNo')) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductHasSerialNo', null), [{
+              label: OB.I18N.getLabel('OBMOBC_LblOk')
+            }])
           } else {
-            if (me.selectedModels.length > 1) {
-              actionAddMultiProduct(keyboard, qty);
-            } else {
-              keyboard.receipt.set('multipleUndo', null);
-              actionAddProduct(keyboard, qty);
-            }
+            me.receipt.addUnit(me.line, qty);
+          }
+        } else {
+          if (me.selectedModels.length > 1) {
+            actionAddMultiProduct(keyboard, qty);
+          } else {
+            keyboard.receipt.set('multipleUndo', null);
+            actionAddProduct(keyboard, qty);
           }
         }
       }
@@ -430,7 +420,7 @@ enyo.kind({
 
     this.addCommand('-', {
       stateless: true,
-      action: function (keyboard, txt) {
+      action: function(keyboard, txt) {
         var qty = 1,
             value, i, j, k, h, line, relatedLine, lineFromSelected;
         if (!me.selectedModels || !keyboard.line) {
@@ -557,13 +547,13 @@ enyo.kind({
               approval: 'OBPOS_approval.returnService',
               message: 'OBPOS_approval.returnService',
               params: [servicesToApprove]
-            }], function (approved, supervisor, approvalType) {
+            }], function(approved, supervisor, approvalType) {
               if (approved) {
                 me.getReceipt().set('notApprove', true);
                 actionAddProducts();
                 me.getReceipt().unset('notApprove');
               } else {
-                _.each(me.selectedModels, function (line) {
+                _.each(me.selectedModels, function(line) {
                   if (line.get('notReturnThisLine')) {
                     line.unset('notReturnThisLine');
                   }
@@ -572,12 +562,7 @@ enyo.kind({
             });
           } else {
             if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && me.line.get('product').get('hasAttributes')) {
-              if (me.line.getQty() > 0) {
-                me.receipt.removeUnit(me.line, qty);
-              } else {
-                me.receipt.removeUnit(me.line, -qty);
-              }
-              me.line.save();
+              me.receipt.removeUnit(me.line, qty);
             } else {
               actionAddProducts();
             }
@@ -589,7 +574,7 @@ enyo.kind({
     // add a command that will handle the DELETE keyboard key
     this.addCommand('line:delete', {
       stateless: true,
-      action: function (keyboard) {
+      action: function(keyboard) {
         if (keyboard.line) {
           actionDeleteLine(keyboard);
         }
@@ -605,20 +590,20 @@ enyo.kind({
   },
 
 
-  init: function (model) {
+  init: function(model) {
     this.model = model;
     // Add the keypads for each payment method
     this.initCurrencyKeypads();
 
-    _.each(this.keypads, function (keypadname) {
+    _.each(this.keypads, function(keypadname) {
       this.addKeypad(keypadname);
     }, this);
   },
-  initCurrencyKeypads: function () {
+  initCurrencyKeypads: function() {
     var me = this;
     var currenciesManaged = {};
 
-    _.each(OB.MobileApp.model.get('payments'), function (payment) {
+    _.each(OB.MobileApp.model.get('payments'), function(payment) {
       // Is cash method if is checked as iscash or is the legacy hardcoded cash method for euros.
       if ((payment.paymentMethod.iscash && payment.paymentMethod.showkeypad) && !currenciesManaged[payment.paymentMethod.currency]) {
         // register that is already built
@@ -628,21 +613,21 @@ enyo.kind({
         OB.Dal.find(OB.Model.CurrencyPanel, {
           'currency': payment.paymentMethod.currency,
           _orderByClause: 'line'
-        }, function (datacurrency) {
+        }, function(datacurrency) {
           if (datacurrency.length > 0) {
             me.buildCoinsAndNotesPanel(payment, payment.symbol, datacurrency);
           } else if (payment.payment.searchKey === 'OBPOS_payment.cash' && payment.paymentMethod.currency === '102') {
             // Add the legacy keypad if is the legacy hardcoded cash method for euros.
             me.addKeypad('OB.UI.KeypadCoinsLegacy');
           }
-        }, function (tx, error) {
+        }, function(tx, error) {
           OB.UTIL.showError("OBDAL error: " + error);
         });
       }
     }, this);
   },
 
-  buildCoinsAndNotesButton: function (paymentkey, coin) {
+  buildCoinsAndNotesButton: function(paymentkey, coin) {
     if (coin) {
       return {
         kind: 'OB.UI.PaymentButton',
@@ -661,7 +646,7 @@ enyo.kind({
     }
   },
 
-  buildCoinsAndNotesPanel: function (payment, symbol, datacurrency) {
+  buildCoinsAndNotesPanel: function(payment, symbol, datacurrency) {
 
     enyo.kind({
       name: 'OB.UI.Keypad' + payment.payment.searchKey,
@@ -756,11 +741,11 @@ enyo.kind({
   name: 'OB.UI.BarcodeActionHandler',
   kind: 'OB.UI.AbstractBarcodeActionHandler',
 
-  errorCallback: function (tx, error) {
+  errorCallback: function(tx, error) {
     OB.UTIL.showError("OBDAL error: " + error);
   },
 
-  findProductByBarcode: function (code, callback, keyboard, attrs) {
+  findProductByBarcode: function(code, callback, keyboard, attrs) {
     var me = this;
     OB.debug('BarcodeActionHandler - id: ' + code);
     if (code.length > 0) {
@@ -769,7 +754,7 @@ enyo.kind({
         code: code,
         callback: callback,
         attrs: attrs
-      }, function (args) {
+      }, function(args) {
         if (args.cancellation) {
           return;
         }
@@ -778,7 +763,7 @@ enyo.kind({
     }
   },
 
-  searchProduct: function (code, callback, attrs) {
+  searchProduct: function(code, callback, attrs) {
     var me = this,
         criteria = {
         uPCEAN: code
@@ -793,28 +778,28 @@ enyo.kind({
       criteria.remoteFilters = remoteCriteria;
     }
 
-    OB.Dal.findUsingCache('productSearch', OB.Model.Product, criteria, function (data) {
+    OB.Dal.findUsingCache('productSearch', OB.Model.Product, criteria, function(data) {
       me.searchProductCallback(data, code, callback, attrs);
     }, me.errorCallback, {
       modelsAffectedByCache: ['Product']
     });
   },
 
-  searchProductCallback: function (data, code, callback, attrs) {
+  searchProductCallback: function(data, code, callback, attrs) {
     this.successCallbackProducts(data, code, callback, attrs);
   },
 
-  successCallbackProducts: function (dataProducts, code, callback, attrs) {
+  successCallbackProducts: function(dataProducts, code, callback, attrs) {
     OB.UTIL.HookManager.executeHooks('OBPOS_BarcodeSearch', {
       dataProducts: dataProducts,
       code: code,
       callback: callback,
       attrs: attrs
-    }, function (args) {
+    }, function(args) {
       if (args.cancellation) {
         return;
       }
-      var reproduceErrorSound = function () {
+      var reproduceErrorSound = function() {
           //scanMode is disable, raise an error sound only if the preference allows it.
           if (OB.MobileApp.model.hasPermission('OBMOBC_ReproduceErrorSoundOnFailedScan', true)) {
             var error_sound = new Audio('../org.openbravo.mobile.core/sounds/Computer_Error.mp3');
@@ -836,12 +821,12 @@ enyo.kind({
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]), undefined, [{
             isConfirmButton: true,
             label: OB.I18N.getLabel('OBMOBC_LblOk'),
-            action: function () {
+            action: function() {
               OB.MobileApp.model.set('reproduceErrorSound', false);
             }
           }], {
             defaultAction: false,
-            onHideFunction: function () {
+            onHideFunction: function() {
               OB.MobileApp.model.set('reproduceErrorSound', false);
             }
           });
@@ -853,7 +838,7 @@ enyo.kind({
     });
   },
 
-  addProductToReceipt: function (keyboard, product, attrs) {
+  addProductToReceipt: function(keyboard, product, attrs) {
     keyboard.doAddProduct({
       product: product,
       qty: attrs.unitsToAdd,
