@@ -535,7 +535,11 @@ enyo.kind({
             } else {
               // It is a regular payment
               var altexactamount = me.receipt.get('exactpayment'),
-                  pendingPrepayment = me.model.getPending() + me.model.getPrepaymentAmount() - me.model.getTotal();
+                  pendingPrepayment, total = me.model.getTotal();
+              if (me.model.get('leftColumnViewManager').isMultiOrder()) {
+                total = OB.DEC.add(total, me.model.get('multiOrders').get('existingPayment') ? me.model.get('multiOrders').get('existingPayment') : OB.DEC.Zero);
+              }
+              pendingPrepayment = OB.DEC.sub(OB.DEC.add(me.model.getPending(), me.model.getPrepaymentAmount()), total);
               // check if alternate exact amount must be applied based on the payment method selected.
               if (altexactamount && altexactamount[exactpayment.payment.searchKey]) {
                 amount = altexactamount[exactpayment.payment.searchKey];
