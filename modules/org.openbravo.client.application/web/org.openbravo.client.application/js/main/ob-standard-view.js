@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1269,6 +1269,10 @@ isc.OBStandardView.addProperties({
     }
 
     if (this.treeGrid && this.isShowingTree) {
+      if (this.treeGrid.data) {
+        // Force to do a datasource call keeping the current criteria
+        this.treeGrid.data.invalidateCache();
+      }
       this.treeGrid.fetchData(this.treeGrid.getCriteria());
     }
     this.viewGrid.refreshContents(callback);
