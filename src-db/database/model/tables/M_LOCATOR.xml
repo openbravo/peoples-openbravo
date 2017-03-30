@@ -96,6 +96,14 @@
       <foreign-key foreignTable="M_WAREHOUSE" name="M_WAREHOUSE_LOCATOR" onDelete="cascade">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
+      <index name="M_LOCATION_WHERE" unique="true">
+        <index-column name="M_WAREHOUSE_ID"/>
+        <index-column name="X"/>
+        <index-column name="Y"/>
+        <index-column name="Z"/>
+        <index-column name="M_INVENTORYSTATUS_ID"/>
+        <index-column name="functionBasedColumn" functionExpression="COALESCE(PARENT_LOCATOR_ID,&apos;0&apos; varying)"/>
+      </index>
       <index name="M_LOCATOR_BARCODE_IDX" unique="false">
         <index-column name="BARCODE"/>
         <whereClause><![CDATA[BARCODE IS NOT NULL]]></whereClause>
@@ -108,14 +116,6 @@
         <index-column name="PARENT_LOCATOR_ID"/>
         <whereClause><![CDATA[PARENT_LOCATOR_ID IS NOT NULL]]></whereClause>
       </index>
-      <unique name="M_LOCATION_WHERE">
-        <unique-column name="M_WAREHOUSE_ID"/>
-        <unique-column name="X"/>
-        <unique-column name="Y"/>
-        <unique-column name="Z"/>
-        <unique-column name="M_INVENTORYSTATUS_ID"/>
-        <unique-column name="PARENT_LOCATOR_ID"/>
-      </unique>
       <check name="M_LOCATOR_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_LOCATOR_ISVIRTUAL_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_LOCATOR_VIRTUAL_EMPTY_CHECK"><![CDATA[ISVIRTUAL = 'Y' AND PARENT_LOCATOR_ID IS NOT NULL OR ISVIRTUAL = 'N' AND PARENT_LOCATOR_ID IS NULL]]></check>
