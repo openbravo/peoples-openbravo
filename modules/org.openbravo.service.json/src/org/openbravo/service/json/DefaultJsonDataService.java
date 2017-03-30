@@ -604,7 +604,7 @@ public class DefaultJsonDataService implements JsonDataService {
         if (key.equals(JsonConstants.IDENTIFIER)
             || key.equals(JsonConstants.WHERE_PARAMETER)
             || key.equals(JsonConstants.WHERE_AND_FILTER_CLAUSE)
-            || key.equals(JsonConstants.ORG_PARAMETER)
+            || (key.equals(JsonConstants.ORG_PARAMETER) && includeOrgFilter(parameters))
             || key.equals(JsonConstants.CALCULATE_ORGS)
             || key.equals(JsonConstants.TARGETRECORDID_PARAMETER)
             || (key.startsWith(DataEntityQueryService.PARAM_DELIMITER) && key
@@ -612,7 +612,6 @@ public class DefaultJsonDataService implements JsonDataService {
             || (key.equals(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER))) {
           queryService.addFilterParameter(key, parameters.get(key));
         }
-
       }
     }
     queryService.setCriteria(criteria);
@@ -700,6 +699,19 @@ public class DefaultJsonDataService implements JsonDataService {
       // queryService.setJoinAssociatedEntities(true);
     }
     return queryService;
+  }
+
+  private boolean includeOrgFilter(Map<String, String> parameters) {
+    boolean isSelector = "true".equals(parameters.get("IsSelectorItem"))
+        && parameters.containsKey("inpTableId") && parameters.containsKey("targetProperty");
+    if (isSelector) {
+      Entity entity = ModelProvider.getInstance().getEntityByTableId(parameters.get("inpTableId"));
+      if (entity != null) {
+        Property property = entity.getProperty(parameters.get("targetProperty"));
+        return property != null && !property.isAllowedCrossOrgReference();
+      }
+    }
+    return true;
   }
 
   private void removeWhereParameter(Map<String, String> parameters) {
