@@ -59,12 +59,6 @@ public class VariablesSecureAppMock extends VariablesSecureApp {
     OrgTree tree = new OrgTree(con, ctx.getCurrentClient().getId());
     setSessionObject("#CompleteOrgTree", tree);
     setSessionValue("#User_Client", "'" + ctx.getCurrentClient().getId() + "'");
-
-    try {
-      HiddenObjectHelper.set(RequestContext.get(), "variablesSecureApp", this);
-    } catch (Exception e) {
-      log.error("Error setting mock vars in context", e);
-    }
   }
 
   @Override
