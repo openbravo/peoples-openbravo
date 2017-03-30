@@ -17,7 +17,7 @@
  ************************************************************************
 */
 
-OB.User.UserInfo = {
+OB.User.userInfo = {
   language: {
     value: '${data.contextLanguageId}',
     valueMap: [

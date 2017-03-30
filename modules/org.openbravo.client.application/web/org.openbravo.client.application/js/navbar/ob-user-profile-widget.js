@@ -70,7 +70,7 @@ isc.OBUserProfile.addProperties({
 
   initWidget: function () {
     var me = this;
-    me.formData = OB.User.UserInfo;
+    me.formData = isc.clone(OB.User.userInfo);
     // ** {{{ setPrompt }}} **
     // Shown on hover, shows some user information.
     if (!OB.User.isPortal) {
