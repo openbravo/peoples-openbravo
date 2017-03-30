@@ -396,6 +396,7 @@ isc.OBQuickLaunch.addProperties({
         this.getQuickMenuItems(menuItem.submenu, quickMenu);
       } else if (this.isValidMenuItem(menuItem)) {
         validMenuItem = isc.clone(menuItem);
+        validMenuItem._identifier = validMenuItem.title;
         validMenuItem.icon = this.getMenuItemIcon(validMenuItem);
         quickMenu.add(validMenuItem);
       }

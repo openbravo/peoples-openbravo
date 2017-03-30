@@ -89,7 +89,6 @@ OB.Application.menu = [
     , singleRecord: ${menuOption.singleRecordStringValue}
     , readOnly: ${menuOption.readOnlyStringValue}
     , editOrDeleteOnly: ${menuOption.editOrDeleteOnlyStringValue}
-    , _identifier: '${menuOption.label?js_string}'
     
     <#list menuOption.parameters as parameter>
         , '${parameter.name?js_string}': '${parameter.parameterValue?js_string}'        
