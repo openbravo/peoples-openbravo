@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,11 +70,7 @@ isc.OBUserProfile.addProperties({
 
   initWidget: function () {
     var me = this;
-    OB.RemoteCallManager.call(this.formActionHandler, {}, {
-      'command': 'data'
-    }, function (req, data, resp) {
-      me.formData = data;
-    });
+    me.formData = OB.User.UserInfo;
     // ** {{{ setPrompt }}} **
     // Shown on hover, shows some user information.
     if (!OB.User.isPortal) {
@@ -301,6 +297,7 @@ isc.OBUserProfile.addProperties({
           if (role.id === roleId) {
             this.getItem('organization').setEntries(role.organizationValueMap);
             this.setValue('client', role.client);
+            break;
           }
         }
       },
@@ -319,6 +316,7 @@ isc.OBUserProfile.addProperties({
               warehouseOrg = role.warehouseOrgMap[j];
               if (warehouseOrg.orgId === orgId) {
                 this.getItem('warehouse').setEntries(warehouseOrg.warehouseMap);
+                return;
               }
             }
           }
