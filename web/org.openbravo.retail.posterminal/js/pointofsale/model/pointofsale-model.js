@@ -587,18 +587,20 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), amtAux));
                 }
                 amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
-                iter.prepareToSend(prepareToSendCallback);
                 setPaymentsToReceipts(orderList, paymentList, orderListIndex + 1, paymentListIndex, considerPrepaymentAmount, callback);
               });
             });
           }
         } else {
-          iter.prepareToSend(prepareToSendCallback);
           setPaymentsToReceipts(orderList, paymentList, orderListIndex + 1, paymentListIndex, considerPrepaymentAmount, callback);
         }
       };
 
-      setPaymentsToReceipts(this.get('multiOrders').get('multiOrdersList'), this.get('multiOrders').get('payments'), 0, 0, true);
+      setPaymentsToReceipts(this.get('multiOrders').get('multiOrdersList'), this.get('multiOrders').get('payments'), 0, 0, true, function () {
+        me.get('multiOrders').get('multiOrdersList').forEach(function (iter) {
+          iter.prepareToSend(prepareToSendCallback);
+        });
+      });
     }, this);
 
     this.get('multiOrders').on('paymentDone', function (openDrawer) {
