@@ -42,8 +42,9 @@ var OB = {
         isActiveInstance: ${data.activeInstanceStringValue},
         versionDescription: '${data.versionDescription?js_string}',
         companyImage: {
-        <#list data.companyImageLogoData?keys as key>
-          '${key}': '${data.companyImageLogoData[key]}'<#if key_has_next>,</#if>
+        <#assign map = data.companyImageLogoData>
+        <#list map?keys as key>
+          '${key}': '${map[key]}'<#if key_has_next>,</#if>
         </#list>
         }
     },
