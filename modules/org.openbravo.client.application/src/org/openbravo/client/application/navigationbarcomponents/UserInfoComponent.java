@@ -100,7 +100,15 @@ public class UserInfoComponent extends SessionDynamicTemplateComponent {
     return sortedRoles;
   }
 
-  public List<Role> getUserRoles() {
+  public List<RoleInfo> getUserRolesInfo() {
+    List<RoleInfo> list = new ArrayList<>();
+    for (Role role : getUserRoles()) {
+      list.add(new RoleInfo(role));
+    }
+    return list;
+  }
+
+  private List<Role> getUserRoles() {
     if (userRoles != null) {
       return userRoles;
     }
@@ -150,13 +158,5 @@ public class UserInfoComponent extends SessionDynamicTemplateComponent {
       }
     }
     return userRoles;
-  }
-
-  public List<RoleInfo> getUserRolesInfo() {
-    List<RoleInfo> list = new ArrayList<>();
-    for (Role role : getUserRoles()) {
-      list.add(new RoleInfo(role));
-    }
-    return list;
   }
 }
