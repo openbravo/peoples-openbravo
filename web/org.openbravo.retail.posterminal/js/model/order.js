@@ -1614,6 +1614,7 @@
               finalCallback: callback
             }
           });
+          OB.UTIL.showLoading(false);
         } else {
           me.postAddProductToOrder(me, p, line, qty, options, newLine, callback(true, line));
         }
