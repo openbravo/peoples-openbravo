@@ -879,6 +879,7 @@ public class DefaultJsonDataService implements JsonDataService {
    * @see org.openbravo.service.json.JsonDataService#update(java.util.Map, java.lang.String)
    */
   public String update(Map<String, String> parameters, String content) {
+    OBContext.setCrossOrgReferenceAdminMode();
     try {
       final boolean sendOriginalIdBack = "true".equals(parameters
           .get(JsonConstants.SEND_ORIGINAL_ID_BACK));
@@ -933,10 +934,15 @@ public class DefaultJsonDataService implements JsonDataService {
         jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
         return jsonResult.toString();
       } else {
-        for (BaseOBObject bob : bobs) {
-          OBDal.getInstance().save(bob);
+        OBContext.setCrossOrgReferenceAdminMode();
+        try {
+          for (BaseOBObject bob : bobs) {
+            OBDal.getInstance().save(bob);
+          }
+          OBDal.getInstance().flush();
+        } finally {
+          OBContext.restorePreviousCrossOrgReferenceMode();
         }
-        OBDal.getInstance().flush();
 
         // business event handlers can change the data
         // flush again before refreshing, refreshing can
@@ -1024,8 +1030,9 @@ public class DefaultJsonDataService implements JsonDataService {
         }
       }
       return JsonUtils.convertExceptionToJson(localThrowable);
+    } finally {
+      OBContext.restorePreviousCrossOrgReferenceMode();
     }
-
   }
 
   private Object getContentAsJSON(String content) throws JSONException {
