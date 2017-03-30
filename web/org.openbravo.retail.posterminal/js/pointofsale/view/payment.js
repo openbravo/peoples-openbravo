@@ -523,7 +523,7 @@ enyo.kind({
         selectedPayment, paymentStatus = multiOrders.getPaymentStatus(),
         prepaymentAmount = paymentstatus.get('prepaymentAmt'),
         receiptHasPrepaymentAmount = prepaymentAmount !== 0 && prepaymentAmount !== paymentstatus.get('total'),
-        pendingPrepayment = prepaymentAmount - paymentstatus.get('payment');
+        pendingPrepayment = prepaymentAmount - (paymentstatus.get('existingPayment') ? paymentstatus.get('existingPayment') : 0) - paymentstatus.get('payment');
 
     this.updateExtraInfo('');
     this.$.layawayaction.hide();
