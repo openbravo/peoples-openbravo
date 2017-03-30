@@ -61,6 +61,7 @@ public class PaidReceiptProperties extends ModelExtension {
         add(new HQLProperty("replacedOrder.documentNo", "replacedorder_documentNo"));
         add(new HQLProperty("replacedOrder.id", "replacedorder"));
         add(new HQLProperty("ord.iscancelled", "iscancelled"));
+        add(new HQLProperty("'false'", "isModified"));
       }
     };
 
