@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  Cheli Pineda__________________________.
  ************************************************************************
@@ -307,6 +307,7 @@
         WHERE il.C_OrderLine_ID IS NOT NULL
         AND io.M_InOut_ID = il.M_InOut_ID
         AND io.Processed = 'Y'
+        AND io.docstatus <> 'VO'
         GROUP BY il.M_InOutLine_ID, il.C_OrderLine_ID, il.MovementQty, il.quantityOrder, il.M_Product_UOM_ID, io.C_DOCTYPE_ID, il.C_AUM, il.AUMQTY
         HAVING (il.MovementQty-SUM(COALESCE(mi.Qty,0))) <> 0) B on A.C_OrderLine_ID=B.C_OrderLine_ID
       WHERE A.C_UOM_ID=uom.C_UOM_ID
