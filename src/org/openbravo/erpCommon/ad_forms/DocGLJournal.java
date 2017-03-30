@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2015 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2017 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -73,6 +74,7 @@ public class DocGLJournal extends AcctServer {
     loadDocumentType(); // lines require doc type
     m_PostingType = data[0].getField("PostingType");
     m_IsOpening = data[0].getField("isopening");
+    C_Period_ID = isperiodOpen(conn, data[0].getField("period"));
     C_Currency_ID = data[0].getField("c_currency_id");
     try {
       C_AcctSchema_ID = DocGLJournalData.selectAcctSchema(conn, AD_Client_ID, Record_ID);
@@ -302,6 +304,23 @@ public class DocGLJournal extends AcctServer {
       log4jDocGLJournal.error("Exception in getDocumentConfirmation method.", e);
     }
     return true;
+  }
+
+  private String isperiodOpen(ConnectionProvider conn, String periodId) {
+    if ("".equals(periodId)) {
+      return "";
+    }
+    try {
+      DocGLJournalData[] data = DocGLJournalData.periodOpen(conn, periodId);
+      if (data != null && data.length > 0 && StringUtils.isNotEmpty(data[0].period)) {
+        return periodId;
+      } else {
+        return "";
+      }
+    } catch (ServletException e) {
+      e.printStackTrace();
+      return "";
+    }
   }
 
   public String getServletInfo() {
