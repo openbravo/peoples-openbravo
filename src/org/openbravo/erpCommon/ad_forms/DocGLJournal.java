@@ -307,7 +307,7 @@ public class DocGLJournal extends AcctServer {
   }
 
   private String isperiodOpen(ConnectionProvider conn, String periodId) {
-    if ("".equals(periodId)) {
+    if (StringUtils.isEmpty(periodId)) {
       return "";
     }
     try {
