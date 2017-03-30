@@ -55,7 +55,13 @@ import org.openbravo.test.base.mock.VariablesSecureAppMock;
 public class CrossOrgranizationUI extends OBBaseTest {
   private static final String CORE = "0";
   private static final String ORDER_PRICELIST_FIELD = "1077";
+
   private static final String ORDER_PRICELIST_COLUMN = "2204";
+  private static final String ORDER_DOCTYPE_COLUMN = "2173";
+
+  private static final List<String> COLUMNS_TO_ALLOW_CROSS_ORG = Arrays.asList(
+      ORDER_PRICELIST_COLUMN, ORDER_DOCTYPE_COLUMN);
+
   private static boolean wasCoreInDev;
   private boolean useCrossOrgColumns;
   private static Boolean setUpForCrossOrg = null;
@@ -131,8 +137,10 @@ public class CrossOrgranizationUI extends OBBaseTest {
     if (setUpForCrossOrg == null || !setUpForCrossOrg.equals(useCrossOrgColumns)) {
       OBContext.setOBContext("0");
 
-      Column orderPriceList = OBDal.getInstance().get(Column.class, ORDER_PRICELIST_COLUMN);
-      orderPriceList.setAllowedCrossOrganizationReference(useCrossOrgColumns);
+      for (String colId : COLUMNS_TO_ALLOW_CROSS_ORG) {
+        Column col = OBDal.getInstance().get(Column.class, colId);
+        col.setAllowedCrossOrganizationReference(useCrossOrgColumns);
+      }
 
       OBDal.getInstance().commitAndClose();
 
@@ -148,8 +156,10 @@ public class CrossOrgranizationUI extends OBBaseTest {
   public static void resetAD() {
     OBContext.setOBContext("0");
 
-    Column orderPriceList = OBDal.getInstance().get(Column.class, ORDER_PRICELIST_COLUMN);
-    orderPriceList.setAllowedCrossOrganizationReference(false);
+    for (String colId : COLUMNS_TO_ALLOW_CROSS_ORG) {
+      Column col = OBDal.getInstance().get(Column.class, colId);
+      col.setAllowedCrossOrganizationReference(false);
+    }
 
     OBDal.getInstance().flush();
 
