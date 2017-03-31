@@ -4679,6 +4679,9 @@
                       numberOfLines--;
                       orderQty = OB.DEC.add(iter.quantity, orderQty);
                       if (numberOfLines === 0) {
+                        lines.reset(lines.sortBy(function (line) {
+                          return line.get('linepos');
+                        }));
                         order.set('lines', lines);
                         order.set('qty', orderQty);
                         order.set('json', JSON.stringify(order.toJSON()));
