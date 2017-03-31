@@ -391,6 +391,7 @@
         this.set('reApplyDiscounts', false);
         this.set('calculateReceiptCallbacks', []);
         this.set('loaded', attributes.loaded);
+        this.set('isModified', attributes.isModified);
         _.each(_.keys(attributes), function (key) {
           if (!this.has(key)) {
             this.set(key, attributes[key]);
@@ -995,6 +996,7 @@
       this.set('totalamount', null);
       this.set('approvals', []);
       this.set('isPartiallyDelivered', false);
+      this.set('isModified', false);
     },
 
     clearWith: function (_order) {
@@ -4374,6 +4376,20 @@
       }
 
       return true;
+    },
+
+    turnEditable: function () {
+      if (this.get('payment') > 0 || this.get('isPartiallyDelivered') || this.get('isFullyDelivered')) {
+        return;
+      }
+
+      this.set('isModified', true);
+      this.set('isEditable', true);
+      if (this.get('isLayaway')) {
+        this.set('isLayaway', false);
+        this.set('orderType', 2);
+      }
+      this.set('skipApplyPromotions', undefined);
     }
   });
 
