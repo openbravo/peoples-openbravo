@@ -1280,30 +1280,25 @@ enyo.kind({
     this.waterfall('onModifyWarehouse', inEvent);
   },
   selectMultiOrders: function (inSender, inEvent) {
-    var me = this,
-        continueExecution = _.after(inEvent.value.length, function () {
-        me.model.get('multiOrders').get('multiOrdersList').reset();
-        _.each(inEvent.value, function (iter) {
-          iter.set('belongsToMultiOrder', true);
-          me.model.get('multiOrders').get('multiOrdersList').add(iter);
-        });
-        me.model.get('leftColumnViewManager').setMultiOrderMode();
-        OB.UTIL.HookManager.executeHooks('OBPOS_hookPostMultiOrder', {
-          context: me,
-          multiOrdersList: me.model.get('multiOrders').get('multiOrdersList')
-        }, function (args) {
-          if (args.cancellation) {
-            args.context.model.get('leftColumnViewManager').set('currentView', {
-              name: 'order'
-            });
-          }
-          if (inEvent.callback()) {
-            inEvent.callback();
-          }
-        });
-      });
+    var me = this;
+    me.model.get('multiOrders').get('multiOrdersList').reset();
     _.each(inEvent.value, function (iter) {
-      iter.getPrepaymentAmount(continueExecution);
+      iter.set('belongsToMultiOrder', true);
+      me.model.get('multiOrders').get('multiOrdersList').add(iter);
+    });
+    me.model.get('leftColumnViewManager').setMultiOrderMode();
+    OB.UTIL.HookManager.executeHooks('OBPOS_hookPostMultiOrder', {
+      context: me,
+      multiOrdersList: me.model.get('multiOrders').get('multiOrdersList')
+    }, function (args) {
+      if (args.cancellation) {
+        args.context.model.get('leftColumnViewManager').set('currentView', {
+          name: 'order'
+        });
+      }
+      if (inEvent.callback()) {
+        inEvent.callback();
+      }
     });
   },
   removeOrderAndExitMultiOrder: function (model) {
