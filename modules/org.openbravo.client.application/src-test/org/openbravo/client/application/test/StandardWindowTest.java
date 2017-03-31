@@ -34,7 +34,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
-import org.openbravo.test.base.mock.VariablesSecureAppMock;
+import org.openbravo.test.base.mock.HttpServletRequestMock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +63,7 @@ public class StandardWindowTest extends WeldBaseTest {
 
     String errorMsg = "";
     try {
-      VariablesSecureAppMock.setVariablesInRequestContext();
+      HttpServletRequestMock.setRequestMockInRequestContext();
 
       List<Window> allWindows = OBDal.getInstance().createQuery(Window.class, "").list();
       int i = 0;

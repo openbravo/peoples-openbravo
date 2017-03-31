@@ -23,12 +23,8 @@ import java.util.Map;
 
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.test.base.HiddenObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A mocked VariablesSecureApp to be used to create test requests.
@@ -37,7 +33,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class VariablesSecureAppMock extends VariablesSecureApp {
-  private static final Logger log = LoggerFactory.getLogger(VariablesSecureAppMock.class);
   private Map<String, String> mockedParams;
 
   /** Creates a mock based on current session settings. */
@@ -67,19 +62,5 @@ public class VariablesSecureAppMock extends VariablesSecureApp {
       return mockedParams.get(parameter);
     }
     return super.getStringParameter(parameter);
-  }
-
-  /** Sets an instance of VariablesSecureApp in request context so it can be used as a mock. */
-  public static void setVariablesInRequestContext(VariablesSecureApp vars) {
-    try {
-      HiddenObjectHelper.set(RequestContext.get(), "variablesSecureApp", vars);
-    } catch (Exception e) {
-      log.error("Error setting mock vars in context", e);
-    }
-  }
-
-  /** Creates a new instance of VariablesSecureApp and sets it in request context. */
-  public static void setVariablesInRequestContext() {
-    setVariablesInRequestContext(new VariablesSecureAppMock());
   }
 }

@@ -41,7 +41,7 @@ import org.openbravo.client.application.window.ApplicationDictionaryCachedStruct
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.utility.AttachmentMethod;
-import org.openbravo.test.base.mock.VariablesSecureAppMock;
+import org.openbravo.test.base.mock.HttpServletRequestMock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,7 +129,7 @@ public class ADCSInitialization extends WeldBaseTest {
 
       // We need vars in context to initialize combos: this is not an issue because vars is only
       // used for system settings such as sql formats
-      VariablesSecureAppMock.setVariablesInRequestContext();
+      HttpServletRequestMock.setRequestMockInRequestContext();
 
       setSystemAdministratorContext();
     }
