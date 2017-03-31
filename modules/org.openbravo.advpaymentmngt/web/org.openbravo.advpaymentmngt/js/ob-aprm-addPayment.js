@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2017 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -312,7 +312,6 @@ OB.APRM.AddPayment.orderInvoiceOnLoadGrid = function (grid) {
     OB.APRM.AddPayment.updateInvOrderTotal(this.view.theForm, grid);
   }
   OB.APRM.AddPayment.tryToUpdateActualExpected(this.view.theForm);
-  OB.APRM.AddPayment.allowCreditToUse(this.view.theForm);
 };
 
 OB.APRM.AddPayment.glitemsOnLoadGrid = function (grid) {
@@ -622,27 +621,6 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
     OB.APRM.AddPayment.updateDifference(view.theForm);
     if (orderInvoice.obaprmAllRecordsSelectedByUser) {
       delete orderInvoice.obaprmAllRecordsSelectedByUser;
-    }
-  }
-  OB.APRM.AddPayment.allowCreditToUse(view.theForm);
-};
-
-OB.APRM.AddPayment.allowCreditToUse = function (form) {
-  var expectedPayment = new BigDecimal(String(form.getItem('expected_payment').getValue() || 0)),
-      creditToUseGrid, creditToUseSection, creditToUse = form.getItem('credit_to_use');
-  creditToUseGrid = creditToUse.canvas.viewGrid;
-  creditToUseSection = creditToUse.section;
-  creditToUse.showIf = function () {
-    return expectedPayment.signum() >= 0;
-  };
-  if (expectedPayment.signum() < 0) {
-    if (creditToUseGrid.getSelectedRecords() && creditToUseGrid.getSelectedRecords().size() > 0) {
-      creditToUseGrid.deselectAllRecords();
-    }
-    creditToUseSection.collapseSection();
-  } else {
-    if (creditToUseGrid && creditToUseGrid.data) {
-      creditToUseSection.expandSection();
     }
   }
 };

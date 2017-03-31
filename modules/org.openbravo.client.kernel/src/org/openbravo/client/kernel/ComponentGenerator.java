@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -68,14 +68,8 @@ public class ComponentGenerator {
           final String errors = JSLintChecker.getInstance().check(
               component.getModule().getName() + "." + component.getId(), originalResult);
           if (errors != null) {
-            String identifier;
-            if (component instanceof BaseComponent) {
-              identifier = ((BaseComponent) component).getIdentifier();
-            } else {
-              identifier = component.getId();
-            }
-            log.error("Error parsing component " + (identifier != null ? identifier : "") + "\n"
-                + errors);
+            log.error("Error parsing component "
+                + (component.getId() != null ? component.getId() : "") + "\n" + errors);
           }
         }
       }
