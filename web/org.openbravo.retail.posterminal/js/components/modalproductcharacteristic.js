@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2016 Openbravo S.L.U.
+ * Copyright (C) 2013-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -55,14 +55,10 @@ enyo.kind({
   },
   create: function () {
     this.inherited(arguments);
-    OB.Dal.query(OB.Model.CharacteristicValue, "select distinct(id), name, characteristic_id from m_ch_value where parent = '" + this.parent.model.get('id') + "' order by UPPER(name) asc", [], function (dataValues, me) {
-      if (dataValues && dataValues.length > 0) {
-        me.childrenArray = dataValues.models;
-        me.show();
-      }
-    }, function (tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
-    }, this);
+    if (this.parent.model.get('childrenList') && this.parent.model.get('childrenList').length > 0 && this.parent.model.get('showChildren')) {
+      this.childrenArray = this.parent.model.get('childrenList');
+      this.show();
+    }
   },
   tap: function () {
     this.doSetCollection({
@@ -109,6 +105,7 @@ enyo.kind({
   productCharacteristicValueFilterQualifier: 'ProductCH_Filter',
   clearAction: function (inSender, inEvent) {
     this.valuesList.reset();
+    this.initialValuesList = null;
     return true;
   },
   searchAction: function (inSender, inEvent) {
@@ -118,7 +115,7 @@ enyo.kind({
         products = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.products,
         productCharacteristic = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent,
         forceRemote = false;
-    var productFilterText, productCategory, productCharacteristicModel, characteristic = [];
+    var productFilterText, productCategory, productCharacteristicModel, resetValueList, characteristic = [];
 
     productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productFilterText.getValue();
     productCharacteristicModel = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent.model;
@@ -135,12 +132,45 @@ enyo.kind({
         }
       }
     });
+
+    resetValueList = function (dataValues) {
+      if (dataValues && dataValues.length > 0) {
+        var modelsList, initialModelsList = dataValues.models;
+        // Remove Characteristic Parent with No Child
+        me.validateChildrenTree(initialModelsList, '0');
+        initialModelsList = _.filter(initialModelsList, function (model) {
+          return model.get('summaryLevel') ? model.get('hasChildren') : true;
+        });
+        // Set Children List
+        _.each(initialModelsList, function (model) {
+          if (model.get('summaryLevel')) {
+            model.set('childrenList', _.filter(initialModelsList, function (childModel) {
+              return childModel.get('parent') === model.get('id');
+            }));
+            model.set('showChildren', true);
+          }
+          model.unset('hasChildren');
+        }, this);
+        me.initialValuesList = initialModelsList;
+        me.updateListSelection(initialModelsList);
+
+        // Get First Parent
+        modelsList = _.filter(initialModelsList, function (model) {
+          return model.get('parent') === '0';
+        });
+        me.hasSelectedChildrenTree(modelsList);
+        me.valuesList.reset(modelsList);
+      } else {
+        me.valuesList.reset();
+      }
+    };
+
     productCategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.getProductCategoryFilter(forceRemote);
     if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) && !forceRemote) {
       var sql, productsIdsList, chFilterQuery = "",
           num, brandStr;
-      sql = "select distinct(id), name, characteristic_id, parent from m_ch_value chv where  chv.characteristic_id = ?";
-      sql += " and (exists (select 1 from M_Product_Ch_Value mpchv, M_Product p where mpchv.M_Product_ID = p.M_Product_ID and chv.id = mpchv.m_ch_value_id";
+      sql = "select distinct(id), name, characteristic_id, parent, summaryLevel from m_ch_value chv where  chv.characteristic_id = ?";
+      sql += " and ((chv.summaryLevel = 'false' and (exists (select 1 from M_Product_Ch_Value mpchv, M_Product p where mpchv.M_Product_ID = p.M_Product_ID and chv.id = mpchv.m_ch_value_id";
       params.push(this.parent.parent.characteristic.get('id'));
       // brand filter
       if (productCharacteristicModel.get('brandFilter').length > 0) {
@@ -191,7 +221,7 @@ enyo.kind({
           sql += " and (exists (select 1 from M_Product_Ch_Value mpcharv where mpcharv.M_Product_ID = mpchv.M_Product_ID and mpcharv.m_ch_value_id in (" + characteristicsValuesStr + "))) ";
         }
       }
-      sql += "))";
+      sql += "))) or chv.summaryLevel = 'true')";
       //external modules filter
       var sqlCriteriaFilter = "";
       productCharacteristic.customFilters.forEach(function (sqlFilter) {
@@ -205,24 +235,7 @@ enyo.kind({
       });
       sql = sql + sqlCriteriaFilter;
       OB.Dal.query(OB.Model.CharacteristicValue, sql, params, function (dataValues, me) {
-        if (dataValues && dataValues.length > 0) {
-          for (i = 0; i < dataValues.length; i++) {
-            for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
-              if (dataValues.models[i].get('id') === me.parent.parent.model.get('filter')[j].id) {
-                dataValues.models[i].set('checked', true);
-                dataValues.models[i].set('selected', me.parent.parent.model.get('filter')[j].selected);
-                break;
-              } else {
-                dataValues.models[i].set('checked', false);
-              }
-              dataValues.models[i].set('childrenSelected', null);
-              me.hasSelectedChildrenTree([dataValues.models[i]], dataValues.models[i]);
-            }
-          }
-          me.parent.parent.$.body.$.listValues.valuesList.reset(dataValues.models);
-        } else {
-          me.parent.parent.$.body.$.listValues.valuesList.reset();
-        }
+        resetValueList(dataValues);
       }, function (tx, error) {
         OB.UTIL.showError("OBDAL error: " + error);
       }, this);
@@ -286,7 +299,11 @@ enyo.kind({
         productFilter.columns = [];
         productFilter.operator = OB.Dal.FILTER;
         productFilter.value = this.productCharacteristicValueFilterQualifier;
-        productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+          productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
+        } else {
+          productText = '%' + productFilterText + '%';
+        }
         productFilter.params = [productText, productCategory.filter ? productCategory.params[0] : category, characteristicParams, brandparams.join(',')];
         remoteCriteria.push(productFilter);
       }
@@ -308,91 +325,88 @@ enyo.kind({
       criteria.remoteFilters = remoteCriteria;
       criteria.forceRemote = forceRemote;
       OB.Dal.find(OB.Model.CharacteristicValue, criteria, function (dataValues) {
-        if (dataValues && dataValues.length > 0) {
-          for (i = 0; i < dataValues.length; i++) {
-            for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
-              if (dataValues.models[i].get('id') === me.parent.parent.model.get('filter')[j].id) {
-                dataValues.models[i].set('checked', true);
-                dataValues.models[i].set('selected', me.parent.parent.model.get('filter')[j].selected);
-                break;
-              } else {
-                dataValues.models[i].set('checked', false);
-              }
-              dataValues.models[i].set('childrenSelected', null);
-              me.hasSelectedChildrenTree([dataValues.models[i]], dataValues.models[i]);
-            }
-          }
-          me.parent.parent.$.body.$.listValues.valuesList.reset(dataValues.models);
-        } else {
-          me.parent.parent.$.body.$.listValues.valuesList.reset();
-        }
+        resetValueList(dataValues);
       }, function (tx, error) {
         OB.UTIL.showError("OBDAL error: " + error);
       }, this);
       return true;
     }
   },
-  parentValue: 0,
+  parentValue: '0',
   setCollection: function (inSender, inEvent) {
-    var i, j, k;
-    if (inEvent.parentValue !== 0) {
+    if (inEvent.parentValue !== '0') {
       this.parent.parent.$.header.$.modalProductChTopHeader.$.backChButton.addStyles('visibility: visible');
     }
-
     this.parentValue = inEvent.parentValue;
-    for (i = 0; i < inEvent.value.length; i++) {
-      for (j = 0; j < this.parent.parent.model.get('filter').length; j++) {
-        if (inEvent.value[i].get('id') === this.parent.parent.model.get('filter')[j].id) {
-          inEvent.value[i].set('checked', this.parent.parent.model.get('filter')[j].selected);
-          inEvent.value[i].set('selected', this.parent.parent.model.get('filter')[j].selected);
-        }
-      }
-      for (k = 0; k < this.parent.parent.selected.length; k++) {
-        if (inEvent.value[i].get('id') === this.parent.parent.selected[k].id) {
-          inEvent.value[i].set('checked', this.parent.parent.selected[k].get('checked'));
-          inEvent.value[i].set('selected', this.parent.parent.selected[k].get('selected'));
-        }
-      }
-      inEvent.value[i].set('childrenSelected', null);
-      this.hasSelectedChildrenTree([inEvent.value[i]], inEvent.value[i]);
-    }
+    this.updateListSelection(inEvent.value);
+    this.hasSelectedChildrenTree(inEvent.value);
     this.valuesList.reset(inEvent.value);
   },
-  hasSelectedChildrenTree: function (selected, rootObject) {
-    var aux;
-    for (aux = 0; aux < selected.length; aux++) {
-      this.hasSelectedChildren(selected, aux, rootObject, this);
+  updateListSelection: function (modelsList) {
+    var i, j, filterList = this.parent.parent.model.get('filter'),
+        selectedList = this.parent.parent.selected;
+    for (i = 0; i < modelsList.length; i++) {
+      for (j = 0; j < filterList.length; j++) {
+        if (modelsList[i].get('id') === filterList[j].id) {
+          modelsList[i].set('checked', true);
+          modelsList[i].set('selected', filterList[j].selected);
+          if (modelsList[i].get('summaryLevel')) {
+            modelsList[i].set('showChildren', false);
+          }
+          break;
+        } else {
+          modelsList[i].set('checked', false);
+        }
+      }
+      for (j = 0; j < selectedList.length; j++) {
+        if (modelsList[i].get('id') === selectedList[j].id) {
+          modelsList[i].set('checked', selectedList[j].get('checked'));
+          modelsList[i].set('selected', selectedList[j].get('selected'));
+        }
+      }
+      modelsList[i].set('childrenSelected', null);
     }
   },
-  hasSelectedChildren: function (selected, aux, rootObject, me) {
-    var j, k;
-    me.exist = null;
-    me.selected = selected;
-    me.aux = aux;
-    me.rootObject = rootObject;
-    OB.Dal.query(OB.Model.CharacteristicValue, "select distinct(id), name, characteristic_id, parent " + "from m_ch_value where parent = '" + selected[aux].get('id') + "' order by UPPER(name) asc", [], function (dataValues, me) {
-      for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
-        if (selected[aux].id === me.parent.parent.model.get('filter')[j].id && selected[aux].id !== rootObject.id && me.parent.parent.model.get('filter')[j].selected) {
-          me.exist = true;
-          break;
+  hasSelectedChildrenTree: function (modelsList) {
+    var i;
+    if (!modelsList || modelsList.length === 0) {
+      return false;
+    }
+    for (i = 0; i < modelsList.length; i++) {
+      if (modelsList[i].get('summaryLevel')) {
+        if (modelsList[i].get('selected') && modelsList[i].get('parent') !== this.parentValue) {
+          return true;
         }
-      }
-      for (k = 0; k < me.parent.parent.selected.length; k++) {
-        if (selected[aux].id === me.parent.parent.selected[k].id && selected[aux].id !== rootObject.id) {
-          me.exist = me.parent.parent.selected[k].get('selected');
-          break;
+        if (this.hasSelectedChildrenTree(modelsList[i].get('childrenList'))) {
+          modelsList[i].set('childrenSelected', true);
+          return true;
         }
+      } else if (modelsList[i].get('selected') && modelsList[i].get('parent') !== this.parentValue) {
+        return true;
       }
-      if (_.isNull(rootObject.get('childrenSelected')) || !rootObject.get('childrenSelected')) {
-        rootObject.set('childrenSelected', me.exist);
+    }
+    return false;
+  },
+  validateChildrenTree: function (initialModelsList, parentValue) {
+    var i, modelsList, exists = false;
+
+    modelsList = _.filter(initialModelsList, function (model) {
+      return model.get('parent') === parentValue;
+    });
+    if (!modelsList || modelsList.length === 0) {
+      return false;
+    }
+    for (i = 0; i < modelsList.length; i++) {
+      if (modelsList[i].get('summaryLevel')) {
+        if (this.validateChildrenTree(initialModelsList, modelsList[i].get('id'))) {
+          modelsList[i].set('hasChildren', true);
+          exists = true;
+        }
+      } else {
+        exists = true;
       }
-      me.exist = null;
-      if (dataValues && dataValues.length > 0) {
-        me.hasSelectedChildrenTree(dataValues.models, rootObject);
-      }
-    }, function (tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
-    }, this);
+    }
+    return exists;
   },
   valuesList: null,
   init: function (model) {
@@ -459,8 +473,8 @@ enyo.kind({
     var me = this;
     this.countingValues = this.countingValues + me.parent.parent.parent.selected.length;
     if (me.parent.parent.parent.selected.length > 0) {
-      this.inspectTree(me.parent.parent.parent.selected);
       OB.UTIL.showLoading(true);
+      this.inspectTree(me.parent.parent.parent.selected);
     } else {
       this.doHideThisPopup();
     }
@@ -480,8 +494,8 @@ enyo.kind({
       this.selectedToSend = [];
       this.parent.parent.parent.countedValues = 0;
       this.countingValues = 0;
-      OB.UTIL.showLoading(false);
       this.doHideThisPopup();
+      OB.UTIL.showLoading(false);
     }
   },
   countingValues: 0,
@@ -492,45 +506,40 @@ enyo.kind({
     }
   },
   getChildren: function (selected, aux, checkedParent, me) {
-    OB.Dal.query(OB.Model.CharacteristicValue, "select distinct(id), name, characteristic_id, parent " + "from m_ch_value where parent = '" + selected[aux].get('id') + "' order by UPPER(name) asc", [], function (dataValues, me) {
-      var index;
-      if (dataValues && dataValues.length > 0) {
-        if (!_.isUndefined(checkedParent)) {
-          selected[aux].set('checked', checkedParent);
-        }
-        index = me.selectedToSend.map(function (e) {
-          return e.id;
-        }).indexOf(selected[aux].id);
-        if (index === -1) {
-          me.selectedToSend.push(selected[aux]);
-        } else if (!_.isNull(selected[aux].get('selected')) && !_.isUndefined(selected[aux].get('selected'))) {
-          me.selectedToSend[index] = selected[aux];
-        }
-        if (!_.isUndefined(checkedParent)) {
-          me.inspectTree(dataValues.models, checkedParent);
-        } else {
-          me.inspectTree(dataValues.models, selected[aux].get('checked'));
-        }
-      } else {
-        if (!_.isUndefined(checkedParent)) {
-          selected[aux].set('checked', checkedParent);
-        }
-        index = me.selectedToSend.map(function (e) {
-          return e.id;
-        }).indexOf(selected[aux].id);
-        if (index === -1) {
-          me.selectedToSend.push(selected[aux]);
-        } else if (!_.isNull(selected[aux].get('selected')) && !_.isUndefined(selected[aux].get('selected'))) {
-          me.selectedToSend[index] = selected[aux];
-        }
-        me.countingValues++;
-        me.checkFinished();
+    var index, dataValues = selected[aux].get('childrenList');
+    if (dataValues && dataValues.length > 0) {
+      if (!_.isUndefined(checkedParent)) {
+        selected[aux].set('checked', checkedParent);
       }
-    }, function (tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
-    }, this);
+      index = me.selectedToSend.map(function (e) {
+        return e.id;
+      }).indexOf(selected[aux].id);
+      if (index === -1) {
+        me.selectedToSend.push(selected[aux]);
+      } else if (!_.isNull(selected[aux].get('selected')) && !_.isUndefined(selected[aux].get('selected'))) {
+        me.selectedToSend[index] = selected[aux];
+      }
+      if (!_.isUndefined(checkedParent)) {
+        me.inspectTree(dataValues, checkedParent);
+      } else {
+        me.inspectTree(dataValues, selected[aux].get('checked'));
+      }
+    } else {
+      if (!_.isUndefined(checkedParent)) {
+        selected[aux].set('checked', checkedParent);
+      }
+      index = me.selectedToSend.map(function (e) {
+        return e.id;
+      }).indexOf(selected[aux].id);
+      if (index === -1) {
+        me.selectedToSend.push(selected[aux]);
+      } else if (!_.isNull(selected[aux].get('selected')) && !_.isUndefined(selected[aux].get('selected'))) {
+        me.selectedToSend[index] = selected[aux];
+      }
+      me.countingValues++;
+      me.checkFinished();
+    }
   }
-
 });
 
 /*Modal definiton*/
@@ -550,7 +559,7 @@ enyo.kind({
     onGetPrevCollection: 'getPrevCollection'
   },
   executeOnShow: function () {
-    this.$.body.$.listValues.parentValue = 0;
+    this.$.body.$.listValues.parentValue = '0';
     this.$.header.parent.addStyles('padding: 0px; border-bottom: 1px solid #cccccc');
     this.$.header.$.modalProductChTopHeader.$.backChButton.addStyles('visibility: hidden');
     this.characteristic = this.args.model;
@@ -592,35 +601,27 @@ enyo.kind({
 
   },
   getPrevCollection: function (inSender, inEvent) {
-    var i, j, k;
-    OB.Dal.query(OB.Model.CharacteristicValue, "select distinct(id) , name , characteristic_id, parent as parent from m_ch_value " + "where parent = (select parent from m_ch_value where id = '" + this.$.body.$.listValues.parentValue + "') and " + "characteristic_id = (select characteristic_id from m_ch_value where id = '" + this.$.body.$.listValues.parentValue + "') order by UPPER(name) asc", [], function (dataValues, me) {
-      if (dataValues && dataValues.length > 0) {
-        for (i = 0; i < dataValues.length; i++) {
-          for (j = 0; j < me.model.get('filter').length; j++) {
-            if (dataValues.models[i].get('id') === me.model.get('filter')[j].id) {
-              dataValues.models[i].set('checked', me.model.get('filter')[j].checked);
-              dataValues.models[i].set('selected', me.model.get('filter')[j].selected);
-            }
-          }
-          for (k = 0; k < me.selected.length; k++) {
-            if (dataValues.models[i].get('id') === me.selected[k].id) {
-              dataValues.models[i].set('checked', me.selected[k].get('checked'));
-              dataValues.models[i].set('selected', me.selected[k].get('selected'));
-            }
-          }
-          dataValues.models[i].set('childrenSelected', null);
-          me.$.body.$.listValues.hasSelectedChildrenTree([dataValues.models[i]], dataValues.models[i]);
-        }
-        me.$.body.$.listValues.valuesList.reset(dataValues.models);
-        //We take the first to know the parent
-        me.$.body.$.listValues.parentValue = dataValues.models[0].get('parent');
-        if (me.$.body.$.listValues.parentValue === '0') { //root
-          me.$.header.$.modalProductChTopHeader.$.backChButton.addStyles('visibility: hidden');
-        }
-      }
-    }, function (tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
+    var me = this,
+        dataValues;
+    dataValues = _.filter(this.$.body.$.listValues.initialValuesList, function (model) {
+      return model.get('parent') === _.find(me.$.body.$.listValues.initialValuesList, function (l) {
+        return l.get('id') === me.$.body.$.listValues.parentValue;
+      }).get('parent');
     }, this);
+
+    if (dataValues && dataValues.length > 0) {
+      //We take the first to know the parent
+      this.$.body.$.listValues.parentValue = dataValues[0].get('parent');
+      this.$.body.$.listValues.updateListSelection(dataValues);
+      this.$.body.$.listValues.hasSelectedChildrenTree(dataValues);
+      this.$.body.$.listValues.valuesList.reset(dataValues);
+    } else {
+      this.$.body.$.listValues.parentValue = '0';
+      this.$.body.$.listValues.valuesList.reset();
+    }
+    if (this.$.body.$.listValues.parentValue === '0') { //root
+      this.$.header.$.modalProductChTopHeader.$.backChButton.addStyles('visibility: hidden');
+    }
   },
   countedValues: 0,
   inspectCountTree: function (selected) {
@@ -630,15 +631,12 @@ enyo.kind({
     }
   },
   countChildren: function (selected, aux, me) {
-    OB.Dal.query(OB.Model.CharacteristicValue, "select distinct(id), name, characteristic_id, parent " + "from m_ch_value where parent = '" + selected[aux].get('id') + "'  order by UPPER(name) asc", [], function (dataValues, me) {
-      if (dataValues && dataValues.length > 0) {
-        me.inspectCountTree(dataValues.models);
-      } else {
-        me.countedValues++;
-      }
-    }, function (tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
-    }, this);
+    var dataValues = selected[aux].get('childrenList');
+    if (dataValues && dataValues.length > 0) {
+      me.inspectCountTree(dataValues);
+    } else {
+      me.countedValues++;
+    }
   },
   inspectDeselectTree: function (selected, rootObject) {
     var aux;
@@ -647,28 +645,25 @@ enyo.kind({
     }
   },
   deselectChildren: function (selected, aux, rootObject, me) {
-    OB.Dal.query(OB.Model.CharacteristicValue, "select distinct(id), name, characteristic_id, parent " + "from m_ch_value where parent = '" + selected[aux].get('id') + "' order by UPPER(name) asc", [], function (dataValues, me) {
-      var index = me.selected.map(function (e) {
-        return e.id;
-      }).indexOf(selected[aux].id);
-      if (!rootObject.get('selected') && rootObject.get('id') !== selected[aux].get('id')) {
-        selected[aux].set('selected', rootObject.get('selected'));
-        if (index === -1) {
-          me.doAddToSelected({
-            value: selected[aux],
-            checked: selected[aux].get('checked'),
-            selected: selected[aux].get('selected')
-          });
-        } else {
-          me.selected[index] = selected[aux];
-        }
+    var index, dataValues = selected[aux].get('childrenList');
+    index = me.selected.map(function (e) {
+      return e.id;
+    }).indexOf(selected[aux].id);
+    if (!rootObject.get('selected') && rootObject.get('id') !== selected[aux].get('id')) {
+      selected[aux].set('selected', rootObject.get('selected'));
+      if (index === -1) {
+        me.doAddToSelected({
+          value: selected[aux],
+          checked: selected[aux].get('checked'),
+          selected: selected[aux].get('selected')
+        });
+      } else {
+        me.selected[index] = selected[aux];
       }
-      if (dataValues && dataValues.length > 0) {
-        me.inspectDeselectTree(dataValues.models, rootObject);
-      }
-    }, function (tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
-    }, this);
+    }
+    if (dataValues && dataValues.length > 0) {
+      me.inspectDeselectTree(dataValues, rootObject);
+    }
   },
   init: function (model) {
     this.model = model;
