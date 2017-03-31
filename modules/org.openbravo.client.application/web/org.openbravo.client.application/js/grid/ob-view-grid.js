@@ -1106,7 +1106,8 @@ isc.OBViewGrid.addProperties({
         hasSummaryFunction = false;
         for (i = 0; i < this.getAllFields().length; i++) {
           fld = this.getAllFields()[i];
-          if (localState.summaryFunctions[fld.name]) {
+          // summary functions are not allowed in computed columns
+          if (localState.summaryFunctions[fld.name] && !fld.isComputedColumn) {
             hasSummaryFunction = true;
             fld.summaryFunction = localState.summaryFunctions[fld.name];
           } else {
