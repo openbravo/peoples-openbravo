@@ -55,12 +55,13 @@ import org.openbravo.test.base.mock.VariablesSecureAppMock;
 public class CrossOrgranizationUI extends OBBaseTest {
   private static final String CORE = "0";
   private static final String ORDER_PRICELIST_FIELD = "1077";
+  private static final String ORDER_SALESREP_FIELD = "1098";
 
   private static final String ORDER_PRICELIST_COLUMN = "2204";
-  private static final String ORDER_DOCTYPE_COLUMN = "2173";
+  private static final String ORDER_SALESREP_COLUMN = "2186";
 
   private static final List<String> COLUMNS_TO_ALLOW_CROSS_ORG = Arrays.asList(
-      ORDER_PRICELIST_COLUMN, ORDER_DOCTYPE_COLUMN);
+      ORDER_PRICELIST_COLUMN, ORDER_SALESREP_COLUMN);
 
   private static boolean wasCoreInDev;
   private boolean useCrossOrgColumns;
@@ -78,13 +79,13 @@ public class CrossOrgranizationUI extends OBBaseTest {
 
   @Test
   public void tableDirShouldAlwaysShowReferenceableOrgs() throws Exception {
-    List<String> rows = getComboValues();
+    List<String> rows = getComboValues(OBDal.getInstance().get(Field.class, ORDER_PRICELIST_FIELD));
     assertThat(rows, hasItem("Tarifa de ventas"));
   }
 
   @Test
   public void tableDirShouldShowNonReferenceableOrgsIfAllowed() throws Exception {
-    List<String> rows = getComboValues();
+    List<String> rows = getComboValues(OBDal.getInstance().get(Field.class, ORDER_PRICELIST_FIELD));
     if (useCrossOrgColumns) {
       assertThat(rows, hasItem("General Sales"));
     } else {
@@ -92,8 +93,24 @@ public class CrossOrgranizationUI extends OBBaseTest {
     }
   }
 
+  @Test
+  public void tableShouldAlwaysShowReferenceableOrgs() throws Exception {
+    List<String> rows = getComboValues(OBDal.getInstance().get(Field.class, ORDER_SALESREP_FIELD));
+    assertThat(rows, hasItem("Juan López"));
+  }
+
+  @Test
+  public void tableShouldShowNonReferenceableOrgsIfAllowed() throws Exception {
+    List<String> rows = getComboValues(OBDal.getInstance().get(Field.class, ORDER_SALESREP_FIELD));
+    if (useCrossOrgColumns) {
+      assertThat(rows, hasItem("John Smith"));
+    } else {
+      assertThat(rows, not(hasItem("John Smith")));
+    }
+  }
+
   @SuppressWarnings("serial")
-  private List<String> getComboValues() throws Exception {
+  private List<String> getComboValues(Field field) throws Exception {
     DalConnectionProvider con = new DalConnectionProvider(false);
     VariablesSecureAppMock.setVariablesInRequestContext(new VariablesSecureAppMock(
         new HashMap<String, String>() {
@@ -103,8 +120,7 @@ public class CrossOrgranizationUI extends OBBaseTest {
           }
         }));
 
-    ComboTableData tableDirCombo = ComboTableData.getTableComboDataFor(OBDal.getInstance().get(
-        Field.class, ORDER_PRICELIST_FIELD));
+    ComboTableData tableDirCombo = ComboTableData.getTableComboDataFor(field);
     List<String> rows = getRowsFromCombo(tableDirCombo.select(con, new HashMap<String, String>() {
       {
         put("ISSOTRX", "Y");
