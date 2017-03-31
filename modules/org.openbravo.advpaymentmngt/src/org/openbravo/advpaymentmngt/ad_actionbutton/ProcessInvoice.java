@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -255,14 +255,15 @@ public class ProcessInvoice extends HttpSecureAppServlet {
             }
 
             // If Invoice has a awaiting execution payment related, show an Error
-            StringBuilder fpHQLQuery = new StringBuilder(" as fp ");
-            fpHQLQuery.append("JOIN fp.fINPaymentDetailList fpd ");
-            fpHQLQuery.append("JOIN fpd.fINPaymentScheduleDetailList fpsd ");
-            fpHQLQuery.append("JOIN fpsd.invoicePaymentSchedule fps ");
-            fpHQLQuery.append("WHERE fps.invoice = :invoice AND fp.status IN ('RPAE', 'RPAP')");
+            StringBuilder fpHQLQuery = new StringBuilder(" as fp");
+            fpHQLQuery.append(" join fp.fINPaymentDetailList fpd");
+            fpHQLQuery.append(" join fpd.fINPaymentScheduleDetailList fpsd");
+            fpHQLQuery.append(" join fpsd.invoicePaymentSchedule fps");
+            fpHQLQuery.append(" where fps.invoice.id = :invoiceId");
+            fpHQLQuery.append(" and fp.status in ('RPAE', 'RPAP')");
             OBQuery<FIN_Payment> paymentQuery = OBDal.getInstance().createQuery(FIN_Payment.class,
                 fpHQLQuery.toString());
-            paymentQuery.setNamedParameter("invoice", invoice);
+            paymentQuery.setNamedParameter("invoiceId", invoice.getId());
             paymentQuery.setMaxResult(1);
             if (paymentQuery.uniqueResult() != null) {
               msg = new OBError();
@@ -365,14 +366,14 @@ public class ProcessInvoice extends HttpSecureAppServlet {
             if (voidingPrepaidInvoice) {
               processPayment = true;
 
-              StringBuilder orderPaymentHQLQuery = new StringBuilder(" as fp ");
-              orderPaymentHQLQuery.append("JOIN fp.fINPaymentDetailList fpd ");
-              orderPaymentHQLQuery.append("JOIN fpd.fINPaymentScheduleDetailList fpsd ");
-              orderPaymentHQLQuery.append("JOIN fpsd.invoicePaymentSchedule fps ");
-              orderPaymentHQLQuery.append("WHERE fps.invoice = :invoice");
+              StringBuilder orderPaymentHQLQuery = new StringBuilder(" as fp");
+              orderPaymentHQLQuery.append(" join fp.fINPaymentDetailList fpd");
+              orderPaymentHQLQuery.append(" join fpd.fINPaymentScheduleDetailList fpsd");
+              orderPaymentHQLQuery.append(" join fpsd.invoicePaymentSchedule fps");
+              orderPaymentHQLQuery.append(" where fps.invoice.id = :invoiceId");
               OBQuery<FIN_Payment> paymentQuery = OBDal.getInstance().createQuery(
                   FIN_Payment.class, orderPaymentHQLQuery.toString());
-              paymentQuery.setNamedParameter("invoice", invoice);
+              paymentQuery.setNamedParameter("invoiceId", invoice.getId());
               paymentQuery.setMaxResult(1);
               FIN_Payment orderPayment = (FIN_Payment) paymentQuery.uniqueResult();
 
@@ -393,19 +394,17 @@ public class ProcessInvoice extends HttpSecureAppServlet {
 
               invoice.setOutstandingAmount(BigDecimal.ZERO);
 
-              StringBuilder psdHQLQuery = new StringBuilder(" as fpsd ");
-              psdHQLQuery.append("WHERE fpsd.invoicePaymentSchedule IN ");
-              psdHQLQuery.append("(SELECT fps.id FROM FIN_Payment_Schedule fps ");
-              psdHQLQuery.append(" WHERE fps.invoice = :invoice ");
-              psdHQLQuery.append(" OR fps.invoice = :revInvoice))");
+              StringBuilder psdHQLQuery = new StringBuilder(" as fpsd");
+              psdHQLQuery.append(" join fpsd.invoicePaymentSchedule fps");
+              psdHQLQuery.append(" where fps.invoice.id = :invoiceId");
+              psdHQLQuery.append(" or fps.invoice.id = :revInvoiceId");
               OBQuery<FIN_PaymentScheduleDetail> psdQuery = OBDal.getInstance().createQuery(
                   FIN_PaymentScheduleDetail.class, psdHQLQuery.toString());
-              psdQuery.setNamedParameter("invoice", invoice);
-              psdQuery.setNamedParameter("revInvoice", revInvoice.getInvoice());
+              psdQuery.setNamedParameter("invoiceId", invoice.getId());
+              psdQuery.setNamedParameter("revInvoiceId", revInvoice.getInvoice().getId());
 
               // Updating dummy payment lines with invoice and reverse invoice
-              List<FIN_PaymentScheduleDetail> fpsdList = psdQuery.list();
-              for (FIN_PaymentScheduleDetail fpsd : fpsdList) {
+              for (FIN_PaymentScheduleDetail fpsd : psdQuery.list()) {
                 // invoice payment detail asociated to the order
                 boolean invoiceFPDOrder = fpsd.getPaymentDetails() != null;
 
@@ -428,17 +427,16 @@ public class ProcessInvoice extends HttpSecureAppServlet {
 
                 if (invoiceFPDOrder) {
                   StringBuilder orderPSDHQLQuery = new StringBuilder();
-                  orderPSDHQLQuery.append(" as fpsd ");
-                  orderPSDHQLQuery.append("JOIN fpsd.paymentDetails fpd ");
-                  orderPSDHQLQuery.append("WHERE fpd.finPayment = :payment ");
-                  orderPSDHQLQuery.append("AND fpsd <> :invoicePSD");
+                  orderPSDHQLQuery.append(" as fpsd");
+                  orderPSDHQLQuery.append(" join fpsd.paymentDetails fpd");
+                  orderPSDHQLQuery.append(" where fpd.finPayment.id = :paymentId");
+                  orderPSDHQLQuery.append(" and fpsd.id <> :invoicePSDId");
                   OBQuery<FIN_PaymentScheduleDetail> orderPSDQuery = OBDal.getInstance()
                       .createQuery(FIN_PaymentScheduleDetail.class, orderPSDHQLQuery.toString());
-                  orderPSDQuery.setNamedParameter("payment", orderPayment);
-                  orderPSDQuery.setNamedParameter("invoicePSD", fpsd);
-                  List<FIN_PaymentScheduleDetail> orderPSDList = orderPSDQuery.list();
+                  orderPSDQuery.setNamedParameter("paymentId", orderPayment.getId());
+                  orderPSDQuery.setNamedParameter("invoicePSDId", fpsd.getId());
 
-                  for (FIN_PaymentScheduleDetail orderPSD : orderPSDList) {
+                  for (FIN_PaymentScheduleDetail orderPSD : orderPSDQuery.list()) {
                     // Update order received amount
                     orderPSD.setAmount(orderPSD.getAmount().add(fpsd.getAmount()));
                     OBDal.getInstance().save(orderPSD);
