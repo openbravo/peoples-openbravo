@@ -28,6 +28,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -43,9 +46,14 @@ import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Field;
+import org.openbravo.service.datasource.BaseDataSourceService;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.json.JsonConstants;
 import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.test.base.mock.HttpServletRequestMock;
 import org.openbravo.test.base.mock.VariablesSecureAppMock;
+import org.openbravo.userinterface.selector.CustomQuerySelectorDatasource;
+import org.openbravo.userinterface.selector.SelectorConstants;
 
 /**
  * Tests to ensure different references don't apply organization filter when applied in a field that
@@ -59,9 +67,10 @@ public class CrossOrgranizationUI extends OBBaseTest {
 
   private static final String ORDER_PRICELIST_COLUMN = "2204";
   private static final String ORDER_SALESREP_COLUMN = "2186";
+  private static final String ORDER_BP_COLUMN = "2762";
 
   private static final List<String> COLUMNS_TO_ALLOW_CROSS_ORG = Arrays.asList(
-      ORDER_PRICELIST_COLUMN, ORDER_SALESREP_COLUMN);
+      ORDER_PRICELIST_COLUMN, ORDER_SALESREP_COLUMN, ORDER_BP_COLUMN);
 
   private static boolean wasCoreInDev;
   private boolean useCrossOrgColumns;
@@ -109,10 +118,26 @@ public class CrossOrgranizationUI extends OBBaseTest {
     }
   }
 
+  @Test
+  public void customQuerySelectorAlwaysShowReferenceableOrgs() throws Exception {
+    List<String> rows = getSelectorValues();
+    assertThat(rows, hasItem("Bebidas Alegres, S.L."));
+  }
+
+  @Test
+  public void customQuerySelectorShouldShowNonReferenceableOrgsIfAllowed() throws Exception {
+    List<String> rows = getSelectorValues();
+    if (useCrossOrgColumns) {
+      assertThat(rows, hasItem("Be Soft Drinker, Inc."));
+    } else {
+      assertThat(rows, not(hasItem("Be Soft Drinker, Inc.")));
+    }
+  }
+
   @SuppressWarnings("serial")
   private List<String> getComboValues(Field field) throws Exception {
     DalConnectionProvider con = new DalConnectionProvider(false);
-    VariablesSecureAppMock.setVariablesInRequestContext(new VariablesSecureAppMock(
+    HttpServletRequestMock.setRequestMockInRequestContext(new VariablesSecureAppMock(
         new HashMap<String, String>() {
           {
             // represents the organization of current record
@@ -135,6 +160,32 @@ public class CrossOrgranizationUI extends OBBaseTest {
       rows.add(row.getField("NAME"));
     }
     return rows;
+  }
+
+  private List<String> getSelectorValues() throws JSONException {
+    HttpServletRequestMock.setRequestMockInRequestContext();
+    BaseDataSourceService selectorDatasorce = new CustomQuerySelectorDatasource();
+    String r = selectorDatasorce.fetch(new HashMap<String, String>() {
+      {
+        put(JsonConstants.STARTROW_PARAMETER, "0");
+        put(JsonConstants.ENDROW_PARAMETER, "75");
+        put(JsonConstants.NOCOUNT_PARAMETER, "true");
+        put(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER, "862F54CB1B074513BD791C6789F4AA42");
+        put(JsonConstants.ORG_PARAMETER, TEST_ORG_ID);
+        put("IsSelectorItem", "true");
+        put("inpTableId", "259");
+        put("targetProperty", "businessPartner");
+      }
+    });
+
+    List<String> values = new ArrayList<>();
+    JSONObject o = new JSONObject(r);
+    JSONArray data = o.getJSONObject("response").getJSONArray("data");
+    for (int i = 0; i < data.length(); i++) {
+      JSONObject row = data.getJSONObject(i);
+      values.add(row.getString("name"));
+    }
+    return values;
   }
 
   @BeforeClass
