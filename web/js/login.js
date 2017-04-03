@@ -131,8 +131,7 @@ function processResult(result) {
     document.getElementById('confirmpasswordlabel').style.display = '';
   }
   if (shouldContinue) {
-    command = result.command || 'DEFAULT';
-    submitCommandForm(command, false, null, result.target, target, true);
+    window.location = result.target;
   } else if (result.resetPassword) {
     enableButton('buttonOK');
     document.getElementById('user').value = '';
