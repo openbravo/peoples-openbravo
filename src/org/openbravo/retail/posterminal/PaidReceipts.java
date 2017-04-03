@@ -177,6 +177,7 @@ public class PaidReceipts extends JSONProcessSimple {
             jsonPromo.put("amt", displayedAmount);
             jsonPromo.put("actualAmt", promotion.getTotalAmount());
             jsonPromo.put("hidden", BigDecimal.ZERO.equals(displayedAmount));
+            jsonPromo.put("displayedTotalAmount", promotion.getDisplayedTotalAmount());
             if (promotion.getObdiscIdentifier() != null) {
               jsonPromo.put("identifier", promotion.getObdiscIdentifier());
             }
@@ -422,8 +423,24 @@ public class PaidReceipts extends JSONProcessSimple {
               .add(new BigDecimal((String) objTaxInfo[3].toString())));
           jsonListTaxes.put(jsonObjTaxes);
         }
-
         paidReceipt.put("receiptTaxes", jsonListTaxes);
+
+        // Approvals
+        if (paidReceipt.getBoolean("isLayaway")) {
+          final String hqlApproval = "select a.approvalType, a.userContact.id "
+              + "from OBPOS_Order_Approval a where a.salesOrder.id = ?";
+          Query queryApprovals = OBDal.getInstance().getSession().createQuery(hqlApproval);
+          queryApprovals.setString(0, orderid);
+          JSONArray jsonListApproval = new JSONArray();
+          for (Object objApproval : queryApprovals.list()) {
+            Object[] objApprovalInfo = (Object[]) objApproval;
+            JSONObject jsonObjApproval = new JSONObject();
+            jsonObjApproval.put("approvalType", objApprovalInfo[0]);
+            jsonObjApproval.put("userContact", objApprovalInfo[1]);
+            jsonListApproval.put(jsonObjApproval);
+          }
+          paidReceipt.put("approvedList", jsonListApproval);
+        }
 
         respArray.put(paidReceipt);
 

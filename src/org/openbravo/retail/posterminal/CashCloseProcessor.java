@@ -280,12 +280,13 @@ public class CashCloseProcessor {
     if (difference.compareTo(BigDecimal.ZERO) < 0) {
       transaction.setPaymentAmount(difference.abs());
       account.setCurrentBalance(account.getCurrentBalance().subtract(difference.abs()));
+      transaction.setTransactionType("BPW");
     } else {
       transaction.setDepositAmount(difference);
       account.setCurrentBalance(account.getCurrentBalance().add(difference));
+      transaction.setTransactionType("BPD");
     }
     transaction.setProcessed(true);
-    transaction.setTransactionType("BPW");
     transaction.setStatus("RPPC");
     transaction.setDescription("GL Item: " + glItem.getName());
     transaction.setObposAppCashup(cashUp);

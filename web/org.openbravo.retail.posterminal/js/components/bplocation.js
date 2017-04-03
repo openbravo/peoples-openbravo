@@ -218,7 +218,7 @@ enyo.kind({
 
     function successCallbackBPs(dataBps) {
       var modalDlg = me.owner.owner.owner.owner.owner.owner,
-          navigationPath = modalDlg.args.navigationPath.length > 0 ? modalDlg.args.navigationPath : OB.UTIL.BusinessPartnerSelector.cloneAndPush(null, 'modalcustomeraddress');
+          navigationPath = (modalDlg.args.navigationPath && modalDlg.args.navigationPath.length > 0) ? modalDlg.args.navigationPath : OB.UTIL.BusinessPartnerSelector.cloneAndPush(null, 'modalcustomeraddress');
       me.doShowPopup({
         popup: 'customerAddrCreateAndEdit',
         args: {

@@ -11,6 +11,23 @@
 
 (function () {
 
+  var cachedData = null;
+
+  var findDiscountFilterBusinessPartner = function (criteria, success, fail) {
+      if (criteria.remoteFilters[0].value === OB.MobileApp.model.get('businessPartner').id) {
+        if (cachedData) {
+          success(cachedData);
+        } else {
+          OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
+            cachedData = discountsBP;
+            success(cachedData);
+          }, fail);
+        }
+      } else {
+        OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, success, fail);
+      }
+      };
+
   // Sales.OrderLine Model
   var OrderLine = Backbone.Model.extend({
     modelName: 'OrderLine',
@@ -2778,7 +2795,7 @@
       var documentseq, documentseqstr, idMap = {},
           me = this,
           i, splittedDocNo = [],
-          newDocNo = '',
+          terminalDocNoPrefix, newDocNo = '',
           nextNumber;
 
       //Cloning order to be canceled
@@ -2825,18 +2842,11 @@
 
         me.set('negativeDocNo', me.get('documentNo') + '*R*');
         newDocNo = '';
-        splittedDocNo = me.get('documentNo').split('-');
+        terminalDocNoPrefix = OB.MobileApp.model.attributes.terminal.docNoPrefix;
+        splittedDocNo = me.get('documentNo').substring(terminalDocNoPrefix.length, me.get('documentNo').length).split('-');
         if (splittedDocNo.length > 1) {
           nextNumber = parseInt(splittedDocNo[splittedDocNo.length - 1], 10) + 1;
-          for (i = 0; i < splittedDocNo.length; i++) {
-            if (i === 0) {
-              newDocNo = splittedDocNo[i] + '-';
-            } else if (i < splittedDocNo.length - 1) {
-              newDocNo += splittedDocNo[i] + '-';
-            } else {
-              newDocNo += nextNumber;
-            }
-          }
+          newDocNo = terminalDocNoPrefix + splittedDocNo[0] + '-' + nextNumber;
         } else {
           newDocNo = me.get('documentNo') + '-1';
         }
@@ -4717,6 +4727,9 @@
                       numberOfLines--;
                       orderQty = OB.DEC.add(iter.quantity, orderQty);
                       if (numberOfLines === 0) {
+                        lines.reset(lines.sortBy(function (line) {
+                          return line.get('linepos');
+                        }));
                         order.set('lines', lines);
                         order.set('qty', orderQty);
                         order.set('json', JSON.stringify(order.toJSON()));
@@ -4977,7 +4990,8 @@
         var remoteCriteria = [bp];
         var criteria = {};
         criteria.remoteFilters = remoteCriteria;
-        OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
+
+        findDiscountFilterBusinessPartner(criteria, function (discountsBP) {
           _.each(discountsBP.models, function (dsc) {
             OB.Dal.saveIfNew(dsc, function () {}, function () {
               OB.error(arguments);

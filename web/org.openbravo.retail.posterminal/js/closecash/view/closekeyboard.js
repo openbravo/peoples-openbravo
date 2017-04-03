@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -24,6 +24,13 @@ enyo.kind({
     this.disableCommandKey(this, {
       disabled: true,
       commands: ['%']
+    });
+    this.addCommand('-', {
+      stateless: true,
+      action: function (keyboard, txt) {
+        var t = keyboard.$.editbox.getContent();
+        keyboard.$.editbox.setContent(t + '-');
+      }
     });
     this.addToolbar({
       name: 'toolbarempty',
@@ -136,6 +143,10 @@ enyo.kind({
                 var convAmt = OB.I18N.parseNumber(amt);
                 if (_.isNaN(convAmt)) {
                   OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [amt]));
+                  return;
+                }
+                if (payment.get('paymentMethod').iscash && convAmt < 0) {
+                  OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CashUpNegativeAmtForCashPayment', [amt]));
                   return;
                 }
                 payment.set('foreignCounted', OB.DEC.add(0, convAmt));

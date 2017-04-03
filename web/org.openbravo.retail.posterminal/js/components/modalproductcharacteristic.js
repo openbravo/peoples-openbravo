@@ -55,7 +55,7 @@ enyo.kind({
   },
   create: function () {
     this.inherited(arguments);
-    if (this.parent.model.get('childrenList') && this.parent.model.get('childrenList').length > 0) {
+    if (this.parent.model.get('childrenList') && this.parent.model.get('childrenList').length > 0 && this.parent.model.get('showChildren')) {
       this.childrenArray = this.parent.model.get('childrenList');
       this.show();
     }
@@ -135,7 +135,7 @@ enyo.kind({
 
     resetValueList = function (dataValues) {
       if (dataValues && dataValues.length > 0) {
-        var initialModelsList = dataValues.models;
+        var modelsList, initialModelsList = dataValues.models;
         // Remove Characteristic Parent with No Child
         me.validateChildrenTree(initialModelsList, '0');
         initialModelsList = _.filter(initialModelsList, function (model) {
@@ -147,6 +147,7 @@ enyo.kind({
             model.set('childrenList', _.filter(initialModelsList, function (childModel) {
               return childModel.get('parent') === model.get('id');
             }));
+            model.set('showChildren', true);
           }
           model.unset('hasChildren');
         }, this);
@@ -154,7 +155,7 @@ enyo.kind({
         me.updateListSelection(initialModelsList);
 
         // Get First Parent
-        var modelsList = _.filter(initialModelsList, function (model) {
+        modelsList = _.filter(initialModelsList, function (model) {
           return model.get('parent') === '0';
         });
         me.hasSelectedChildrenTree(modelsList);
@@ -349,6 +350,9 @@ enyo.kind({
         if (modelsList[i].get('id') === filterList[j].id) {
           modelsList[i].set('checked', true);
           modelsList[i].set('selected', filterList[j].selected);
+          if (modelsList[i].get('summaryLevel')) {
+            modelsList[i].set('showChildren', false);
+          }
           break;
         } else {
           modelsList[i].set('checked', false);
@@ -370,6 +374,9 @@ enyo.kind({
     }
     for (i = 0; i < modelsList.length; i++) {
       if (modelsList[i].get('summaryLevel')) {
+        if (modelsList[i].get('selected') && modelsList[i].get('parent') !== this.parentValue) {
+          return true;
+        }
         if (this.hasSelectedChildrenTree(modelsList[i].get('childrenList'))) {
           modelsList[i].set('childrenSelected', true);
           return true;

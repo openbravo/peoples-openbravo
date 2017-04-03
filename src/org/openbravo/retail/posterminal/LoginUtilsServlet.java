@@ -246,7 +246,9 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     List<OBPOSApplications> apps = qApp.list();
     if (apps.size() == 1) {
       OBPOSApplications terminal = ((OBPOSApplications) apps.get(0));
-      if (terminal.isLinked()) {
+      if (terminal.isLinked()
+          && (!(terminal.getCurrentCacheSession().equals(cacheSessionId) && terminal
+              .getTerminalKey().equals(terminalKeyIdentifier)))) {
         result.put("exception", "OBPOS_TerminalAlreadyLinked");
         return result;
       }

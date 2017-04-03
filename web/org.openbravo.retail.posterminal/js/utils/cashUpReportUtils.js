@@ -408,6 +408,7 @@
     var service = 'org.openbravo.retail.posterminal.master.Cashup';
     if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
       service = 'org.openbravo.retail.posterminal.master.CashupSynchronized';
+      OB.UTIL.showLoading(true);
     }
     new OB.DS.Process(service).exec({
       isprocessed: 'N',
