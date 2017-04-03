@@ -33,6 +33,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
@@ -283,6 +284,7 @@ public class ADOrgTreeTest extends Ad_isorgincludedTest {
    * Test performance of new function is better than legacy one when used as a filter criteria in
    * the where clause. Verify we get the same results.
    */
+  @Ignore("This test is ignored because it might create false positive in CI machines due to different server load.")
   @Test
   public void testPerformanceI() {
     try {
@@ -325,6 +327,7 @@ public class ADOrgTreeTest extends Ad_isorgincludedTest {
    * 
    * Verify we get the same results
    */
+  @Ignore("This test is ignored because it might create false positive in CI machines due to different server load.")
   @Test
   public void testPerformanceII() {
     final int numberOfCalls = 300;

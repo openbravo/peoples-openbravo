@@ -18,12 +18,9 @@
  */
 package org.openbravo.modulescript;
 
-import org.apache.log4j.Logger;
-
 import org.openbravo.database.ConnectionProvider;
 
 public class PopulateADOrgTree extends ModuleScript {
-  private static final Logger log4j = Logger.getLogger(PopulateADOrgTree.class);
   
   @Override
   public void execute() {
@@ -31,7 +28,6 @@ public class PopulateADOrgTree extends ModuleScript {
       ConnectionProvider cp = getConnectionProvider();
       boolean isADOrgTreeDataCreated = PopulateADOrgTreeData.isADOrgTreeDataCreated(cp);
       if(!isADOrgTreeDataCreated) {
-		  log4j.info("This moduleScript can take long to finish. Please be patient...");
     	  PopulateADOrgTreeData.populateADOrgTree(cp);
     	  PopulateADOrgTreeData.createPreferenceADOrgTree(cp);
       }
