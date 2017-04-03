@@ -2584,25 +2584,28 @@ function isVisibleElement(obj, appWindow) {
 }
 
 function executeWindowButton(id,focus) {
+  var appWindow = parent, theDocument;
   if (focus==null) focus=false;
-  var appWindow = parent;
-  if(parent.frames['appFrame'] || parent.frames['frameMenu']) {
-    appWindow = parent.frames['appFrame'];
-  } else if (parent.frames['superior']) {
-    appWindow = parent.frames['superior'];
-  } else if (parent.frames['frameSuperior']) {
-    appWindow = parent.frames['frameSuperior'];
-  } else if (parent.frames['frameButton']) {
-    appWindow = parent.frames['frameButton'];
-  } else if (parent.frames['mainframe']) {
-    appWindow = parent.frames['mainframe'];
+  try {
+    if(parent.frames['appFrame'] || parent.frames['frameMenu']) {
+      appWindow = parent.frames['appFrame'];
+    } else if (parent.frames['superior']) {
+      appWindow = parent.frames['superior'];
+    } else if (parent.frames['frameSuperior']) {
+      appWindow = parent.frames['frameSuperior'];
+    } else if (parent.frames['frameButton']) {
+      appWindow = parent.frames['frameButton'];
+    } else if (parent.frames['mainframe']) {
+      appWindow = parent.frames['mainframe'];
+    }
+    theDocument = appWindow.document;
+  } catch (e) {
+    appWindow = window;
+    theDocument = window.document;
   }
-  if (window.location.href.indexOf('ad_forms/Role.html') != -1) { //Exception for "Role" window
-    appWindow = parent;
-  }
-  if (appWindow.document.getElementById(id) && isVisibleElement(appWindow.document.getElementById(id), appWindow)) {
-    if (focus==true) appWindow.document.getElementById(id).focus();
-    appWindow.document.getElementById(id).onclick();
+  if (theDocument.getElementById(id) && isVisibleElement(theDocument.getElementById(id), appWindow)) {
+    if (focus==true) theDocument.getElementById(id).focus();
+    theDocument.getElementById(id).onclick();
     if (focus==true) putWindowElementFocus(focusedWindowElement);
   }
 }
@@ -5492,12 +5495,16 @@ function popupResizeTo(width, height) {
 
 function LayoutMDICheck(target) {
   if (target !== null) {
-    if (typeof target.OB !== "undefined") {
-      if (typeof target.OB.Layout !== "undefined") {
-        if (typeof target.OB.Layout.ViewManager === "object") {
-          return true;
+    try {
+      if (typeof target.OB !== "undefined") {
+        if (typeof target.OB.Layout !== "undefined") {
+          if (typeof target.OB.Layout.ViewManager === "object") {
+            return true;
+          }
         }
       }
+    } catch (e) {
+      return false;
     }
   }
   return false;
