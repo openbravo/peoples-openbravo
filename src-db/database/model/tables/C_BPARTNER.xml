@@ -468,6 +468,9 @@
         <index-column name="NAME"/>
         <index-column name="C_BPARTNER_ID"/>
       </index>
+      <index name="C_BPARTNER_NAME_TRGM" unique="false" containsSearch="true">
+        <index-column name="functionBasedColumn" functionExpression="UPPER(NAME)"/>
+      </index>
       <index name="C_BPARTNER_REFNO_ID" unique="false">
         <index-column name="REFERENCENO"/>
         <index-column name="C_BPARTNER_ID"/>
@@ -476,6 +479,9 @@
       <index name="C_BPARTNER_VALUE_ID" unique="false">
         <index-column name="VALUE"/>
         <index-column name="C_BPARTNER_ID"/>
+      </index>
+      <index name="C_BPARTNER_VALUE_TRGM" unique="false" containsSearch="true">
+        <index-column name="functionBasedColumn" functionExpression="UPPER(VALUE)"/>
       </index>
       <unique name="C_BPARTNER_VALUE">
         <unique-column name="AD_CLIENT_ID"/>
