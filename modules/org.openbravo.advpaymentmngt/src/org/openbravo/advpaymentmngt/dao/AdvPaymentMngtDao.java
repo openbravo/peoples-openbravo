@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
@@ -23,11 +23,15 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
@@ -1970,24 +1974,41 @@ public class AdvPaymentMngtDao {
 
     try {
       OBContext.setAdminMode(true);
-      OBCriteria<FIN_Payment> obcPayment = OBDal.getInstance().createCriteria(FIN_Payment.class);
-      obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_BUSINESSPARTNER, bp));
-      obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_RECEIPT, isReceipt));
-      obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_GENERATEDCREDIT, BigDecimal.ZERO));
-      obcPayment.add(Restrictions.neProperty(FIN_Payment.PROPERTY_GENERATEDCREDIT,
-          FIN_Payment.PROPERTY_USEDCREDIT));
+
       final Organization legalEntity = FIN_Utility.getLegalEntityOrg(org);
       Set<String> orgIds = OBContext.getOBContext().getOrganizationStructureProvider()
           .getChildTree(legalEntity.getId(), true);
-      obcPayment.add(Restrictions.in("organization.id", orgIds));
-      if (currency != null) {
-        obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_CURRENCY, currency));
-      }
-      obcPayment.addOrderBy(FIN_Payment.PROPERTY_PAYMENTDATE, true);
-      obcPayment.addOrderBy(FIN_Payment.PROPERTY_DOCUMENTNO, true);
 
-      List<FIN_Payment> paymentList = new ArrayList<FIN_Payment>();
-      for (FIN_Payment fp : obcPayment.list()) {
+      final Map<String, Object> params = new HashMap<String, Object>();
+
+      final StringBuffer hql = new StringBuffer("select p ");
+      hql.append(" from " + FIN_Payment.ENTITY_NAME + " as p ");
+      hql.append(" where p." + FIN_Payment.PROPERTY_BUSINESSPARTNER + ".id = :bpartnerId ");
+      hql.append("  and p." + FIN_Payment.PROPERTY_RECEIPT + " = :isReceipt ");
+      hql.append("  and p." + FIN_Payment.PROPERTY_ORGANIZATION + ".id in (:orgIds) ");
+      hql.append("  and obequals(p." + FIN_Payment.PROPERTY_GENERATEDCREDIT + ", p."
+          + FIN_Payment.PROPERTY_USEDCREDIT + ") = 'N' ");
+      hql.append("  and p." + FIN_Payment.PROPERTY_GENERATEDCREDIT + " <> 0 ");
+      if (currency != null) {
+        hql.append(" and p." + FIN_Payment.PROPERTY_CURRENCY + ".id = :currencyId");
+        params.put("currencyId", currency.getId());
+      }
+
+      hql.append(" order by p." + FIN_Payment.PROPERTY_PAYMENTDATE + " asc, ");
+      hql.append(" p." + FIN_Payment.PROPERTY_DOCUMENTNO + " asc ");
+
+      params.put("bpartnerId", bp.getId());
+      params.put("isReceipt", isReceipt);
+      params.put("orgIds", orgIds);
+
+      final Session session = OBDal.getInstance().getSession();
+      final Query query = session.createQuery(hql.toString());
+      query.setProperties(params);
+
+      @SuppressWarnings("unchecked")
+      final List<FIN_Payment> queryList = query.list();
+      final List<FIN_Payment> paymentList = new ArrayList<FIN_Payment>();
+      for (FIN_Payment fp : queryList) {
         if ((FIN_Utility.seqnumberpaymentstatus(fp.getStatus())) >= (FIN_Utility
             .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(fp)))) {
           paymentList.add(fp);

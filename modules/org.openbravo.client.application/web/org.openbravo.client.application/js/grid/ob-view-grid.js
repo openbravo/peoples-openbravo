@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -701,7 +701,7 @@ isc.OBViewGrid.addProperties({
       }
     }
 
-    if (field && this.allowSummaryFunctions) {
+    if (field && this.allowSummaryFunctions && !field.isComputedColumn) {
       type = isc.SimpleType.getType(field.type);
       isDate = isc.SimpleType.inheritsFrom(type, 'date');
       isNumber = isc.SimpleType.inheritsFrom(type, 'integer') || isc.SimpleType.inheritsFrom(type, 'float');
@@ -1106,7 +1106,8 @@ isc.OBViewGrid.addProperties({
         hasSummaryFunction = false;
         for (i = 0; i < this.getAllFields().length; i++) {
           fld = this.getAllFields()[i];
-          if (localState.summaryFunctions[fld.name]) {
+          // summary functions are not allowed in computed columns
+          if (localState.summaryFunctions[fld.name] && !fld.isComputedColumn) {
             hasSummaryFunction = true;
             fld.summaryFunction = localState.summaryFunctions[fld.name];
           } else {

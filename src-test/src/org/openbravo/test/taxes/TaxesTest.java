@@ -280,6 +280,30 @@ public class TaxesTest extends OBBaseTest {
         { "158", "PriceIncludingTaxes 158: Doc Cascade+Dependant 3 -", new TaxesTestData158() }, //
         { "159", "PriceIncludingTaxes 159: Line Cascade+Dependant 3 +", new TaxesTestData159() }, //
         { "160", "PriceIncludingTaxes 160: Line Cascade+Dependant 3 -", new TaxesTestData160() }, //
+        { "161", "PriceExcludingTaxes 161: Doc 20% positive", new TaxesTestData161() }, //
+        { "162", "PriceExcludingTaxes 162: Doc 20% negative", new TaxesTestData162() }, //
+        { "163", "PriceExcludingTaxes 163: Line 20% positive", new TaxesTestData163() }, //
+        { "164", "PriceExcludingTaxes 164: Line 20% negative", new TaxesTestData164() }, //
+        { "165", "PriceIncludingTaxes 165: Doc 20% positive", new TaxesTestData165() }, //
+        { "166", "PriceIncludingTaxes 166: Doc 20% negative", new TaxesTestData166() }, //
+        { "167", "PriceIncludingTaxes 167: Line 20% positive", new TaxesTestData167() }, //
+        { "168", "PriceIncludingTaxes 168: Line 20% negative", new TaxesTestData168() }, //
+        { "169", "PriceExcludingTaxes 169: Doc Small 10% positive", new TaxesTestData169() }, //
+        { "170", "PriceExcludingTaxes 170: Doc Small 10% negative", new TaxesTestData170() }, //
+        { "171", "PriceExcludingTaxes 171: Line Small 10% positive", new TaxesTestData171() }, //
+        { "172", "PriceExcludingTaxes 172: Line Small 10% negative", new TaxesTestData172() }, //
+        { "173", "PriceIncludingTaxes 173: Doc Small 10% positive", new TaxesTestData173() }, //
+        { "174", "PriceIncludingTaxes 174: Doc Small 10% negative", new TaxesTestData174() }, //
+        { "175", "PriceIncludingTaxes 175: Line Small 10% positive", new TaxesTestData175() }, //
+        { "176", "PriceIncludingTaxes 176: Line Small 10% negative", new TaxesTestData176() }, //
+        { "177", "PriceExcludingTaxes 177: Doc Big 10% positive", new TaxesTestData177() }, //
+        { "178", "PriceExcludingTaxes 178: Doc Big 10% negative", new TaxesTestData178() }, //
+        { "179", "PriceExcludingTaxes 179: Line Big 10% positive", new TaxesTestData179() }, //
+        { "180", "PriceExcludingTaxes 180: Line Big 10% negative", new TaxesTestData180() }, //
+        { "181", "PriceIncludingTaxes 181: Doc Big 10% positive", new TaxesTestData181() }, //
+        { "182", "PriceIncludingTaxes 182: Doc Big 10% negative", new TaxesTestData182() }, //
+        { "183", "PriceIncludingTaxes 183: Line Big 10% positive", new TaxesTestData183() }, //
+        { "184", "PriceIncludingTaxes 184: Line Big 10% negative", new TaxesTestData184() }, //
     });
   }
 

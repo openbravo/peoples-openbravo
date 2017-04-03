@@ -56,6 +56,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -615,5 +616,47 @@ public class DalTest extends OBBaseTest {
   private boolean isReadOnlyPoolDefined() {
     return OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .containsKey("bbdd.readonly.url");
+  }
+
+  /**
+   * Test to check that an OBQuery with a select clause can be executed properly without setting an
+   * alias for the main entity of the query.
+   */
+  @Test
+  public void testOBQueryWithoutAlias() {
+    setTestUserContext();
+    String isoCode = getISOCodeFromCurrencyId(EURO_ID, false);
+    assertEquals(isoCode, EURO);
+  }
+
+  /**
+   * Test to check that an OBQuery with a select clause can be executed properly by defining an
+   * alias for the main entity of the query.
+   */
+  @Test
+  public void testOBQueryWithAlias() {
+    setTestUserContext();
+    String isoCode = getISOCodeFromCurrencyId(EURO_ID, true);
+    assertEquals(isoCode, EURO);
+  }
+
+  private String getISOCodeFromCurrencyId(String currencyId, boolean includeAlias) {
+    String isoCode = null;
+    try {
+      StringBuilder hql = new StringBuilder();
+      if (includeAlias) {
+        hql.append(" as c");
+        hql.append(" where c." + Currency.PROPERTY_ID);
+      } else {
+        hql.append(" where " + Currency.PROPERTY_ID);
+      }
+      hql.append(" = :currencyId");
+      OBQuery<Currency> query = OBDal.getInstance().createQuery(Currency.class, hql.toString());
+      query.setNamedParameter("currencyId", currencyId);
+      query.setSelectClause(Currency.PROPERTY_ISOCODE);
+      isoCode = (String) query.uniqueResultObject();
+    } catch (Exception ignored) {
+    }
+    return isoCode;
   }
 }

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -1439,7 +1439,10 @@ public class FIN_Utility {
   public static String invoicePaymentStatus(FIN_PaymentMethod paymentMethod,
       FIN_FinancialAccount financialAccount, boolean isReceipt) {
     String status = null;
-    for (FinAccPaymentMethod finaccpaymentmethod : financialAccount
+    // Reload financial account to avoid lazy initialization when no session
+    FIN_FinancialAccount finAcct = OBDal.getInstance().get(FIN_FinancialAccount.class,
+        financialAccount.getId());
+    for (FinAccPaymentMethod finaccpaymentmethod : finAcct
         .getFinancialMgmtFinAccPaymentMethodList()) {
       if (finaccpaymentmethod.getPaymentMethod().getId().equals(paymentMethod.getId())) {
         if (isReceipt) {

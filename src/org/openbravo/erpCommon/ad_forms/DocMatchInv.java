@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2017 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -234,14 +234,12 @@ public class DocMatchInv extends AcctServer {
     if (inOutLine.getProduct().isBookUsingPurchaseOrderPrice()) {
       // If the Product is checked as book using PO Price, the Price of the Purchase Order will
       // be used to create the FactAcct Line
-      if (!CostingStatus.getInstance().isMigrated()) {
-        costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
-      }
       OrderLine ol = inOutLine.getSalesOrderLine();
       if (ol == null) {
         setMessageResult(conn, STATUS_NoRelatedPO, "error", null);
         throw new IllegalStateException();
       }
+      costCurrency = ol.getCurrency();
       Long scale = costCurrency.getStandardPrecision();
       BigDecimal bdQty = new BigDecimal(data[0].getField("Qty"));
       bdCost = ol.getUnitPrice().multiply(bdQty).setScale(scale.intValue(), RoundingMode.HALF_UP);

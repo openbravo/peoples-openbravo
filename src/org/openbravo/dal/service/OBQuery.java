@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -378,7 +378,7 @@ public class OBQuery<E extends BaseOBObject> {
       result = "select " + (selectClause == null ? alias : selectClause) + " from "
           + getEntity().getName() + " " + aliasJoinClause + " " + whereClause + orderByClause;
     } else {
-      result = (selectClause == null ? "" : "select " + selectClause) + "from "
+      result = (selectClause == null ? "" : "select " + selectClause + " ") + "from "
           + getEntity().getName() + " " + aliasJoinClause + " " + whereClause + orderByClause;
     }
     log.debug("Created query string " + result);

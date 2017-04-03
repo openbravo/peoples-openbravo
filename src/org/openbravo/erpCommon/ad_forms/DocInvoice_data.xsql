@@ -12,7 +12,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2017 Openbravo S.L.U.
  ******************************************************************************
 -->
 
@@ -133,13 +133,15 @@
         AND l.M_Product_Id = p.M_Product_Id
         AND p.M_Product_Id = a.M_Product_Id
         AND a.C_AcctSchema_Id = ?
-        AND t.C_Tax_Id= ?
-        AND t.C_Invoice_Id= ?
+        AND t.C_Tax_Id = ?
+        AND t.C_Invoice_Id = ?
+        AND 1=1
      ]]>
      </Sql>
      <Parameter name="acctSchemaId"/>
      <Parameter name="taxId"/>
      <Parameter name="invoiceId"/>
+     <Parameter name="productId" optional="true" after="AND 1=1"><![CDATA[ AND p.M_Product_Id = ?]]></Parameter>
     </SqlMethod>
   <SqlMethod name="updateProductPO" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>

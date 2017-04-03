@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2013 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2017 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -321,19 +321,9 @@ public class DocInOut extends AcctServer {
           costCurrency = line.transaction.getCurrency();
         }
         C_Currency_ID = costCurrency.getId();
-        int standardPrecision = 2;
-        OBContext.setAdminMode(false);
-        try {
-          standardPrecision = costCurrency.getStandardPrecision().intValue();
-        } finally {
-          OBContext.restorePreviousMode();
-        }
+
         String costs = "0";
         String strCosts = "0";
-        if (!isConvertible(as, conn)) {
-          setMessageResult(conn, STATUS_NotConvertible, "error", null);
-          throw new IllegalStateException();
-        }
         if (product.isBookUsingPurchaseOrderPrice()) {
           // If the Product is checked as book using PO Price, the Price of the Purchase Order will
           // be used to create the FactAcct Line
@@ -347,9 +337,11 @@ public class DocInOut extends AcctServer {
             setMessageResult(conn, STATUS_NoRelatedPO, "error", parameters);
             throw new IllegalStateException();
           }
+          costCurrency = ol.getCurrency();
+          C_Currency_ID = costCurrency.getId();
           costs = ol.getUnitPrice().multiply(new BigDecimal(line.getBreakdownQty())).toString();
-          BigDecimal b_Costs = new BigDecimal(costs).setScale(standardPrecision,
-              RoundingMode.HALF_UP);
+          BigDecimal b_Costs = new BigDecimal(costs).setScale(costCurrency.getStandardPrecision()
+              .intValue(), RoundingMode.HALF_UP);
           strCosts = b_Costs.toString();
         } else {
           // If the Product is not checked as book using PO Price, the Cost of the
@@ -374,7 +366,7 @@ public class DocInOut extends AcctServer {
           costs = line.getProductCosts(DateAcct, as, conn, con);
           BigDecimal b_Costs = new BigDecimal(costs).multiply(
               new BigDecimal(line.getBreakdownQty())).divide(new BigDecimal(line.m_qty),
-              standardPrecision, RoundingMode.HALF_UP);
+              costCurrency.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
           strCosts = b_Costs.toString();
           if (b_Costs.compareTo(BigDecimal.ZERO) == 0 && !CostingStatus.getInstance().isMigrated()
               && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
@@ -384,6 +376,11 @@ public class DocInOut extends AcctServer {
             throw new IllegalStateException();
           }
         }
+        if (!isConvertible(as, conn)) {
+          setMessageResult(conn, STATUS_NotConvertible, "error", null);
+          throw new IllegalStateException();
+        }
+
         Account notInvoicedReceiptsAccount = getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts,
             as, conn);
         if (notInvoicedReceiptsAccount == null) {
@@ -532,7 +529,7 @@ public class DocInOut extends AcctServer {
                   setMessageResult(conn, STATUS_NoRelatedPO, "error", parameters);
                   throw new IllegalStateException();
                 }
-                trxCost = ol.getLineNetAmount();
+                trxCost = inOutLine.getMovementQuantity().multiply(ol.getUnitPrice());
               } else {
                 // Not stocked item type product. Check standard cost existence.
                 // If the Product is not checked as book using PO Price, the Cost of the

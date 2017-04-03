@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,8 +32,6 @@ public class SE_Trxtype_Transaction extends SimpleCallout {
       if ("BF".equals(strTrxType)) {
         info.addResult("inpfinPaymentId", null);
         info.addResult("inpcGlitemId", null);
-        info.addResult("inpdepositamt", BigDecimal.ZERO);
-        info.addResult("inppaymentamt", BigDecimal.ZERO);
         info.addResult("inpissotrx", "Y");
         info.vars.setSessionValue(strWindowId + "|IsSOTrx", "Y");
       } else if ("BPW".equals(strTrxType)) {

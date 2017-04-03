@@ -16,7 +16,7 @@
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
   * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2015 Openbravo S.L.U.
+  * Contributions are Copyright (C) 2001-2017 Openbravo S.L.U.
   ******************************************************************************/
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
@@ -249,7 +249,7 @@
           IF(v_ListDetails='Y' OR v_IsCascade='Y') THEN
             IF(v_BasisAmt='N') THEN
               IF(v_BasisStatus='F') THEN
-                v_Cmd:='SELECT h.C_Currency_ID, CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.LineNetAmt * (psv.expected / h.grandtotal),'
+                v_Cmd:='SELECT h.C_Currency_ID, l.LineNetAmt * (psv.expected / h.grandtotal),'
                 || 'CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.QtyInvoiced, '
                 || 'NULL, l.C_InvoiceLine_ID, h.DocumentNo, substr(COALESCE(prd.Name,l.Description),1,60), ''Y'' '
                 || 'FROM C_Invoice h JOIN C_InvoiceLine l ON h.C_Invoice_ID = l.C_Invoice_ID'
@@ -286,7 +286,7 @@
           ELSE
             --v_BasisAmt = 'N'
             IF(v_BasisStatus='F') THEN
-              v_Cmd:='SELECT h.C_Currency_ID, SUM(CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.LineNetAmt * (psv.expected / h.grandtotal)) AS Amt,'
+              v_Cmd:='SELECT h.C_Currency_ID, SUM(l.LineNetAmt * (psv.expected / h.grandtotal)) AS Amt,'
               || ' SUM(CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.QtyInvoiced) AS Qty, '
               || 'NULL, NULL, NULL, NULL, ''Y'' '
               || 'FROM C_Invoice h JOIN C_InvoiceLine l ON h.C_Invoice_ID = l.C_Invoice_ID'
