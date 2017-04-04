@@ -159,7 +159,7 @@ public class ComboTableData {
         _index, false);
   }
 
-  public ComboTableData(VariablesSecureApp _vars, ConnectionProvider _conn, String _referenceType,
+  private ComboTableData(VariablesSecureApp _vars, ConnectionProvider _conn, String _referenceType,
       String _name, String _objectReference, String _validation, String _orgList,
       String _clientList, int _index, boolean allowedCrossOrgReference) throws Exception {
     this.allowedCrossOrgReference = allowedCrossOrgReference;
