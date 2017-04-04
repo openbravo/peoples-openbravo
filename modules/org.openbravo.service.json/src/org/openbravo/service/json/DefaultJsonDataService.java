@@ -18,6 +18,8 @@
  */
 package org.openbravo.service.json;
 
+import static org.openbravo.userinterface.selector.SelectorConstants.includeOrgFilter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -699,24 +701,6 @@ public class DefaultJsonDataService implements JsonDataService {
       // queryService.setJoinAssociatedEntities(true);
     }
     return queryService;
-  }
-
-  /**
-   * Returns whether Organization filter should be included for selectors. It should always be
-   * included except when the data source is for a selector and the property the selector is for
-   * allows cross organization references.
-   */
-  public static boolean includeOrgFilter(Map<String, String> parameters) {
-    boolean isSelector = "true".equals(parameters.get("IsSelectorItem"))
-        && parameters.containsKey("inpTableId") && parameters.containsKey("targetProperty");
-    if (isSelector) {
-      Entity entity = ModelProvider.getInstance().getEntityByTableId(parameters.get("inpTableId"));
-      if (entity != null) {
-        Property property = entity.getProperty(parameters.get("targetProperty"));
-        return property != null && !property.isAllowedCrossOrgReference();
-      }
-    }
-    return true;
   }
 
   private void removeWhereParameter(Map<String, String> parameters) {

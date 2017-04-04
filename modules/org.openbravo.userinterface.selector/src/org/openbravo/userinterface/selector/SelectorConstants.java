@@ -11,12 +11,18 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.userinterface.selector;
+
+import java.util.Map;
+
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 
 /**
  * Defines constants for this module.
@@ -51,4 +57,22 @@ public class SelectorConstants {
   public static final String DS_REQUEST_PROCESS_DEFINITION_ID = "_processDefinitionId";
   public static final String DS_REQUEST_SELECTOR_FIELD_ID = "_selectorFieldId";
   public static final String DS_REQUEST_IS_FILTER_BY_ID_SUPPORTED = "_isFilterByIdSupported";
+
+  /**
+   * Returns whether Organization filter should be included for selectors. It should always be
+   * included except when the data source is for a selector and the property the selector is for
+   * allows cross organization references.
+   */
+  public static boolean includeOrgFilter(Map<String, String> parameters) {
+    boolean isSelector = "true".equals(parameters.get("IsSelectorItem"))
+        && parameters.containsKey("inpTableId") && parameters.containsKey("targetProperty");
+    if (isSelector) {
+      Entity entity = ModelProvider.getInstance().getEntityByTableId(parameters.get("inpTableId"));
+      if (entity != null) {
+        Property property = entity.getProperty(parameters.get("targetProperty"));
+        return property != null && !property.isAllowedCrossOrgReference();
+      }
+    }
+    return true;
+  }
 }

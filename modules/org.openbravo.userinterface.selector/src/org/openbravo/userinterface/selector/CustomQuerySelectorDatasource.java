@@ -18,7 +18,7 @@
  */
 package org.openbravo.userinterface.selector;
 
-import static org.openbravo.service.json.DefaultJsonDataService.includeOrgFilter;
+import static org.openbravo.userinterface.selector.SelectorConstants.includeOrgFilter;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
