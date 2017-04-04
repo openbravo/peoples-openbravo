@@ -132,7 +132,7 @@ enyo.kind({
     function successLocations(dataBps) {
       if (dataBps && dataBps.length > 1) {
         me.changeStyle(true);
-      } else if (dataBps && dataBps.models && _.isArray(dataBps.models) && dataBps.models[0] && ((dataBps.models[0].get('isBillTo') && !dataBps.models[0].get('isShipTo')) || (!dataBps.models[0].get('isBillTo') && dataBps.models[0].get('isShipTo')))) {
+      } else if (dataBps && _.isArray(dataBps) && dataBps[0] && ((dataBps[0].get('isBillTo') && !dataBps[0].get('isShipTo')) || (!dataBps[0].get('isBillTo') && dataBps[0].get('isShipTo')))) {
         me.changeStyle(true);
       } else {
         me.changeStyle(false);
@@ -142,8 +142,8 @@ enyo.kind({
     if (!bp.get('shipLocId') && !bp.get('locId')) {
       me.changeStyle(false);
     } else {
-      if (bp.get('id') === OB.MobileApp.model.get('businesspartner')) {
-        successLocations(OB.MobileApp.model.get('businessPartner').get('locations'));
+      if (bp.get('locations') && bp.get('locations').length > 0 && bp.get('locations')[0].attributes) {
+        successLocations(bp.get('locations'));
       } else {
         criteria.bpartner = bp.get('id');
         if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
@@ -156,7 +156,9 @@ enyo.kind({
           var remoteCriteria = [bPartnerId];
           criteria.remoteFilters = remoteCriteria;
         }
-        OB.Dal.find(OB.Model.BPLocation, criteria, successLocations, function (tx, error) {
+        OB.Dal.find(OB.Model.BPLocation, criteria, function (locations) {
+          successLocations(locations.models);
+        }, function (tx, error) {
           OB.UTIL.showError("OBDAL error: " + error);
         });
       }
@@ -208,7 +210,9 @@ enyo.kind({
     if (this.disabled) {
       return true;
     }
-    this.doHideSelector();
+    this.doHideSelector({
+      selectorHide: false
+    });
     var me = this;
 
     function errorCallback(tx, error) {
@@ -866,7 +870,7 @@ enyo.kind({
     function successCallbackBPsLoc(dataBps) {
       if (dataBps && dataBps.length > 1) {
         me.$.header.setContent(OB.I18N.getLabel('OBPOS_LblAssignCustomerBillAddress'));
-      } else if (dataBps.models[0] && dataBps.models[0].get('isBillTo') && dataBps.models[0].get('isShipTo')) {
+      } else if (dataBps && dataBps[0] && dataBps[0].get('isBillTo') && dataBps[0].get('isShipTo')) {
         me.$.header.setContent(OB.I18N.getLabel('OBPOS_LblAssignCustomerAddress'));
       } else {
         me.$.header.setContent(OB.I18N.getLabel('OBPOS_LblAssignCustomerBillAddress'));
@@ -876,18 +880,25 @@ enyo.kind({
     function errorCallback(tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
     }
-    criteria.bpartner = bp.get('id');
-    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-      var bPartnerId = {
-        columns: ['bpartner'],
-        operator: 'equals',
-        value: bp.get('id'),
-        isId: true
-      };
-      var remoteCriteria = [bPartnerId];
-      criteria.remoteFilters = remoteCriteria;
+
+    if (bp.get('locations') && bp.get('locations').length > 0 && bp.get('locations')[0].attributes) {
+      successCallbackBPsLoc(bp.get('locations'));
+    } else {
+      criteria.bpartner = bp.get('id');
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        var bPartnerId = {
+          columns: ['bpartner'],
+          operator: 'equals',
+          value: bp.get('id'),
+          isId: true
+        };
+        var remoteCriteria = [bPartnerId];
+        criteria.remoteFilters = remoteCriteria;
+      }
+      OB.Dal.find(OB.Model.BPLocation, criteria, function (locations) {
+        successCallbackBPsLoc(locations.models);
+      }, errorCallback);
     }
-    OB.Dal.find(OB.Model.BPLocation, criteria, successCallbackBPsLoc, errorCallback);
   },
   i18nHeader: '',
   body: {

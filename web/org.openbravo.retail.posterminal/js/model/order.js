@@ -2410,73 +2410,31 @@
               OB.error(arguments);
             });
           }
+        }
 
+        var saveBP = function () {
+            me.set('bp', businessPartner);
+            me.save();
+            // copy the modelOrder again, as saveIfNew is possibly async
+            OB.MobileApp.model.orderList.saveCurrent();
+            finishSaveData(callback);
+            };
+
+        if (businessPartner.get('locationModel')) {
+          OB.Dal.saveIfNew(businessPartner.get('locationModel'), function () {}, function (tx, error) {
+            OB.UTIL.showError("OBDAL error: " + error);
+          });
+          saveBP();
+        } else {
           OB.Dal.get(OB.Model.BPLocation, businessPartner.get('shipLocId'), function (location) {
-
-            OB.Dal.saveIfNew(location, function () {
-              businessPartner.set('locationModel', location);
-              me.set('bp', businessPartner);
-              me.save();
-              // copy the modelOrder again, as the get/save are async
-              OB.MobileApp.model.orderList.saveCurrent();
-              finishSaveData(callback);
-            }, function () {
-              OB.error(arguments);
+            OB.Dal.saveIfNew(location, function () {}, function (tx, error) {
+              OB.UTIL.showError("OBDAL error: " + error);
             });
-
+            businessPartner.set('locationModel', location);
+            saveBP();
           }, function () {
             OB.error(arguments);
-            errorSaveData(callback);
-          }, function () {
-            // Is the result is empty the location is not valid or not exits
-            // Call LoadedCustomer to find the customer and location
-            // if not exist show the information and break the process
-            new OB.DS.Request('org.openbravo.retail.posterminal.master.LoadedCustomer').exec({
-              bpartnerId: businessPartner.id,
-              bpLocationId: businessPartner.get('shipLocId')
-            }, function (data) {
-              var bpLoc = OB.Dal.transform(OB.Model.BPLocation, data[1]);
-              OB.Dal.saveIfNew(bpLoc, function () {
-                businessPartner.set('locationModel', bpLoc);
-                me.set('bp', businessPartner);
-                me.save();
-                // copy the modelOrder again, as the get/save are async
-                OB.MobileApp.model.orderList.saveCurrent();
-                finishSaveData(callback);
-              }, function () {
-                OB.error(arguments);
-              });
-            }, function () {
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_NoReceiptLoadedLocation'), [{
-                label: OB.I18N.getLabel('OBPOS_LblOk'),
-                isConfirmButton: true
-              }]);
-            });
           });
-
-        } else {
-          if (businessPartner.get('locationModel')) { //Location has changed or we are assigning current bp
-            OB.Dal.saveIfNew(businessPartner.get('locationModel'), function () {
-              me.set('bp', businessPartner);
-              me.save();
-              // copy the modelOrder again, as saveIfNew is possibly async
-              OB.MobileApp.model.orderList.saveCurrent();
-              finishSaveData(callback);
-            }, function () {
-              OB.UTIL.showError('Error removing');
-            });
-          } else {
-            OB.Dal.get(OB.Model.BPLocation, businessPartner.get('shipLocId'), function (location) {
-              OB.Dal.saveIfNew(location, function () {}, function () {
-                OB.error(arguments);
-              });
-              businessPartner.set('locationModel', location);
-              me.set('bp', businessPartner);
-              me.save();
-            }, function () {
-              OB.error(arguments);
-            });
-          }
         }
       } else {
         this.set('bp', businessPartner);
