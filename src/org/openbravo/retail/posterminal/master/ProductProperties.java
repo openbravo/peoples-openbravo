@@ -52,9 +52,9 @@ public class ProductProperties extends ModelExtension {
       {
         try {
           if ("Y".equals(Preferences.getPreferenceValue("OBPOS_retail.productImages", true,
-              OBContext.getOBContext().getCurrentClient(),
-              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-              OBContext.getOBContext().getRole(), null))) {
+              OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                  .getOBContext().getRole(), null))) {
           } else {
             add(new HQLProperty("img.bindaryData", "img"));
           }
@@ -118,8 +118,8 @@ public class ProductProperties extends ModelExtension {
           new StandardSQLFunction("c_get_product_taxcategory", new StringType()));
     }
     OBPOSApplications posDetail;
-    posDetail = POSUtils
-        .getTerminalById(RequestContext.get().getSessionAttribute("POSTerminal").toString());
+    posDetail = POSUtils.getTerminalById(RequestContext.get().getSessionAttribute("POSTerminal")
+        .toString());
     if (posDetail == null) {
       throw new OBException("terminal id is not present in session ");
     }
@@ -138,9 +138,9 @@ public class ProductProperties extends ModelExtension {
           String trlName;
           try {
             boolean isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product",
-                true, OBContext.getOBContext().getCurrentClient(),
-                OBContext.getOBContext().getCurrentOrganization(),
-                OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+                true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                    .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                    .getOBContext().getRole(), null));
 
             if (OBContext.hasTranslationInstalled() && !isRemote) {
               trlName = "coalesce((select pt.name from ProductTrl AS pt where pt.language='"

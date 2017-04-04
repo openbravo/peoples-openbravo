@@ -554,19 +554,19 @@ enyo.kind({
       args.receipt.addProcess.hasProduct = false;
       args.receipt.addProcess.products = [];
       args.receipt.addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs, function (success, orderline) {
-		 args.receipt.addProcess.pending = false;
-		 if (success && orderline) {
-		   if (orderline.get('hasMandatoryServices') === false && args.receipt.addProcess.hasProduct === true) {
-			   args.receipt.addProcess.products.forEach(function (product) {
-				   me.addProductToOrder(product.inSender, product.inEvent);
-			   });
-            }
+        args.receipt.addProcess.pending = false;
+        if (success && orderline) {
+          if (orderline.get('hasMandatoryServices') === false && args.receipt.addProcess.hasProduct === true) {
+            args.receipt.addProcess.products.forEach(function (product) {
+              me.addProductToOrder(product.inSender, product.inEvent);
+            });
           }
-          args.context.model.get('orderList').saveCurrent();
-          if (inEvent.callback) {
-            inEvent.callback.call(inEvent.context, success, orderline);
-          }
-        });
+        }
+        args.context.model.get('orderList').saveCurrent();
+        if (inEvent.callback) {
+          inEvent.callback.call(inEvent.context, success, orderline);
+        }
+      });
     });
     return true;
   },
