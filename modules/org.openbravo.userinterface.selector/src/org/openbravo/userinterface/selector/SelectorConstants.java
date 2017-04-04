@@ -46,6 +46,7 @@ public class SelectorConstants {
   public static final String PARAM_TARGET_PROPERTY_NAME = "targetProperty";
   public static final String PARAM_ID_FILTERS = "idFilters";
   public static final String PARAM_FILTER_EXPRESSION = "filterExpression";
+  private static final String PARAM_TABLE_ID = "inpTableId";
 
   // Reference definition IDs
   public static final String SELECTOR_REFERENCE_ID = "95E2A8B50A254B2AAE6774B8C2F28120";
@@ -65,11 +66,13 @@ public class SelectorConstants {
    */
   public static boolean includeOrgFilter(Map<String, String> parameters) {
     boolean isSelector = parameters.containsKey(DS_REQUEST_SELECTOR_ID_PARAMETER)
-        && parameters.containsKey("inpTableId") && parameters.containsKey("targetProperty");
+        && parameters.containsKey(PARAM_TABLE_ID)
+        && parameters.containsKey(PARAM_TARGET_PROPERTY_NAME);
     if (isSelector) {
-      Entity entity = ModelProvider.getInstance().getEntityByTableId(parameters.get("inpTableId"));
+      Entity entity = ModelProvider.getInstance()
+          .getEntityByTableId(parameters.get(PARAM_TABLE_ID));
       if (entity != null) {
-        Property property = entity.getProperty(parameters.get("targetProperty"));
+        Property property = entity.getProperty(parameters.get(PARAM_TARGET_PROPERTY_NAME));
         return property != null && !property.isAllowedCrossOrgReference();
       }
     }
