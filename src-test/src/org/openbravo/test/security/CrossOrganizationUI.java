@@ -38,13 +38,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.openbravo.dal.core.DalLayerInitializer;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
-import org.openbravo.model.ad.datamodel.Column;
-import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.service.datasource.BaseDataSourceService;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -61,7 +57,6 @@ import org.openbravo.userinterface.selector.SelectorConstants;
  */
 @RunWith(Parameterized.class)
 public class CrossOrganizationUI extends OBBaseTest {
-  private static final String CORE = "0";
   private static final String ORDER_PRICELIST_FIELD = "1077";
   private static final String ORDER_SALESREP_FIELD = "1098";
 
@@ -191,51 +186,24 @@ public class CrossOrganizationUI extends OBBaseTest {
 
   @BeforeClass
   public static void setCoreInDev() {
-    OBContext.setOBContext("0");
-    Module core = OBDal.getInstance().get(Module.class, CORE);
-    wasCoreInDev = core.isInDevelopment();
-    if (!wasCoreInDev) {
-      core.setInDevelopment(true);
-    }
+    wasCoreInDev = CrossOrganizationReference.setCoreInDevelopment(true);
     OBDal.getInstance().commitAndClose();
   }
 
   @Before
   public void setUpAllowedCrossOrg() throws Exception {
     if (setUpForCrossOrg == null || !setUpForCrossOrg.equals(useCrossOrgColumns)) {
-      OBContext.setOBContext("0");
-
-      for (String colId : COLUMNS_TO_ALLOW_CROSS_ORG) {
-        Column col = OBDal.getInstance().get(Column.class, colId);
-        col.setAllowedCrossOrganizationReference(useCrossOrgColumns);
-      }
-
-      OBDal.getInstance().commitAndClose();
-
-      // reload in memory model with these new settings
-      DalLayerInitializer.getInstance().setInitialized(false);
-      setDalUp();
+      CrossOrganizationReference.setUpAllowedCrossOrg(COLUMNS_TO_ALLOW_CROSS_ORG,
+          useCrossOrgColumns);
       setUpForCrossOrg = useCrossOrgColumns;
     }
     setTestUserContext();
   }
 
   @AfterClass
-  public static void resetAD() {
-    OBContext.setOBContext("0");
-
-    for (String colId : COLUMNS_TO_ALLOW_CROSS_ORG) {
-      Column col = OBDal.getInstance().get(Column.class, colId);
-      col.setAllowedCrossOrganizationReference(false);
-    }
-
-    OBDal.getInstance().flush();
-
-    if (!wasCoreInDev) {
-      Module core = OBDal.getInstance().get(Module.class, CORE);
-      core.setInDevelopment(false);
-    }
-
+  public static void resetAD() throws Exception {
+    CrossOrganizationReference.setUpAllowedCrossOrg(COLUMNS_TO_ALLOW_CROSS_ORG, false);
+    CrossOrganizationReference.setCoreInDevelopment(wasCoreInDev);
     OBDal.getInstance().commitAndClose();
   }
 }
