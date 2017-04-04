@@ -72,7 +72,7 @@ public class SelectorConstants {
       Entity entity = ModelProvider.getInstance()
           .getEntityByTableId(parameters.get(PARAM_TABLE_ID));
       if (entity != null) {
-        Property property = entity.getProperty(parameters.get(PARAM_TARGET_PROPERTY_NAME));
+        Property property = entity.getProperty(parameters.get(PARAM_TARGET_PROPERTY_NAME), false);
         return property != null && !property.isAllowedCrossOrgReference();
       }
     }
