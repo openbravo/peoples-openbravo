@@ -4536,20 +4536,7 @@
       bpBillLocId = model.bpBillLocId;
       bpId = model.bp;
       var bpartnerForProduct = function (bp) {
-          var locationForBpartner = function (bpLoc) {
-              bp.set('shipLocName', bpLoc.get('name'));
-              bp.set('shipLocId', bpLoc.get('id'));
-              bp.set('locName', bpLoc.get('name'));
-              bp.set('locId', bpLoc.get('id'));
-              bp.set('postalCode', bpLoc.get('postalCode'));
-              bp.set('cityName', bpLoc.get('cityName'));
-              bp.set('countryName', bpLoc.get('countryName'));
-              bp.set('locationModel', bpLoc);
-              order.set('bp', bp);
-              order.set('gross', model.totalamount);
-              order.set('net', model.totalNetAmount);
-              order.trigger('change:bp', order);
-
+          var loadProducts = function () {
               var linepos = 0,
                   hasDeliveredProducts = false,
                   hasNotDeliveredProducts = false,
@@ -4782,15 +4769,65 @@
               }
               };
 
-          if (isLoadedPartiallyFromBackend) {
-            locationForBpartner(bpLoc);
+          var locationForBpartner = function (loc, billLoc) {
+              bp.set('shipLocName', loc.get('name'));
+              bp.set('shipLocId', loc.get('id'));
+              if (billLoc) {
+                bp.set('locName', billLoc.get('name'));
+                bp.set('locId', billLoc.get('id'));
+                bp.set('postalCode', billLoc.get('postalCode'));
+                bp.set('cityName', billLoc.get('cityName'));
+                bp.set('countryName', billLoc.get('countryName'));
+                bp.set('locationModel', billLoc);
+              } else {
+                bp.set('locationModel', loc);
+              }
+
+              order.set('bp', bp);
+              order.set('gross', model.totalamount);
+              order.set('net', model.totalNetAmount);
+              order.trigger('change:bp', order);
+              loadProducts();
+              };
+
+          if (bpLocId === bpBillLocId) {
+            if (isLoadedPartiallyFromBackend) {
+              locationForBpartner(bpLoc, bpLoc);
+            } else {
+              OB.Dal.get(OB.Model.BPLocation, bpLocId, function (bpLoc) {
+                locationForBpartner(bpLoc, bpLoc);
+              }, function (tx, error) {
+                OB.UTIL.showError("OBDAL error: " + error);
+              });
+            }
           } else {
-            OB.Dal.get(OB.Model.BPLocation, bpLocId, function (bpLoc) {
-              locationForBpartner(bpLoc);
-            }, function () {
-              // TODO: Report errors properly
+            var criteria = {};
+            if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+              var remoteCriteria = [{
+                columns: ['id'],
+                operator: 'equals',
+                value: [bpLocId, bpBillLocId]
+              }];
+              criteria.remoteFilters = remoteCriteria;
+            } else {
+              criteria._whereClause = "where c_bpartner_location_id in (?, ?)";
+              criteria.params = [bpLocId, bpBillLocId];
+            }
+            OB.Dal.find(OB.Model.BPLocation, criteria, function (locations) {
+              var loc, billLoc;
+              _.each(locations.models, function (l) {
+                if (l.id === bpLocId) {
+                  loc = l;
+                } else if (l.id === bpBillLocId) {
+                  billLoc = l;
+                }
+              });
+              locationForBpartner(loc, billLoc);
+            }, function (tx, error) {
+              OB.UTIL.showError("OBDAL error: " + error);
             });
           }
+
           };
       OB.Dal.get(OB.Model.BusinessPartner, bpId, function (bp) {
         bpartnerForProduct(bp);
