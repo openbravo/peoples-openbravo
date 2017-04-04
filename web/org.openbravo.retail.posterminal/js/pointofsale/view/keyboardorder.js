@@ -257,19 +257,7 @@ enyo.kind({
                   selectedModels: keyboard.selectedModels
                 });
               } else {
-                if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true)) {
-                  if (me.line.get('product').get('isSerialNo')) {
-                    OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductHasSerialNo', null), [{
-                      label: OB.I18N.getLabel('OBMOBC_LblOk')
-                    }])
-                  } else {
-                    me.line.set('qty', value);
-                  }
-                } else {
-                  actionAddProduct(keyboard, toadd);
-                }
-
-
+                actionAddProduct(keyboard, toadd);
               }
             }
           });
@@ -399,21 +387,11 @@ enyo.kind({
             return true;
           }
         }
-        if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true)) {
-          if (me.line.get('product').get('isSerialNo')) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductHasSerialNo', null), [{
-              label: OB.I18N.getLabel('OBMOBC_LblOk')
-            }])
-          } else {
-            me.receipt.addUnit(me.line, qty);
-          }
+        if (me.selectedModels.length > 1) {
+          actionAddMultiProduct(keyboard, qty);
         } else {
-          if (me.selectedModels.length > 1) {
-            actionAddMultiProduct(keyboard, qty);
-          } else {
-            keyboard.receipt.set('multipleUndo', null);
-            actionAddProduct(keyboard, qty);
-          }
+          keyboard.receipt.set('multipleUndo', null);
+          actionAddProduct(keyboard, qty);
         }
       }
     });
@@ -561,11 +539,7 @@ enyo.kind({
               }
             });
           } else {
-            if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && me.line.get('product').get('hasAttributes')) {
-              me.receipt.removeUnit(me.line, qty);
-            } else {
-              actionAddProducts();
-            }
+            actionAddProducts();
           }
         }
       }
