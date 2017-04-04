@@ -298,6 +298,9 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     if (getStringProperty(props, "db.pool.logAbandoned", poolName) != null) {
       poolProperties.setLogAbandoned(getBooleanProperty(props, "db.pool.logAbandoned", poolName));
     }
+    if (getStringProperty(props, "db.pool.suspectTimeout", poolName) != null) {
+      poolProperties.setSuspectTimeout(getIntProperty(props, "db.pool.suspectTimeout", poolName));
+    }
     if (getStringProperty(props, "db.pool.testOnConnect", poolName) != null) {
       poolProperties.setTestOnConnect(getBooleanProperty(props, "db.pool.testOnConnect", poolName));
     }
@@ -321,12 +324,6 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     }
     if (getStringProperty(props, "db.pool.jmxEnabled", poolName) != null) {
       poolProperties.setJmxEnabled(getBooleanProperty(props, "db.pool.jmxEnabled", poolName));
-    }
-    if (getStringProperty(props, "db.pool.logAbandoned", poolName) != null) {
-      poolProperties.setLogAbandoned(getBooleanProperty(props, "db.pool.logAbandoned", poolName));
-    }
-    if (getStringProperty(props, "db.pool.suspectTimeout", poolName) != null) {
-      poolProperties.setSuspectTimeout(getIntProperty(props, "db.pool.suspectTimeout", poolName));
     }
     return poolProperties;
   }
