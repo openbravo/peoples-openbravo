@@ -78,6 +78,7 @@ public class HttpServletRequestMock implements HttpServletRequest {
     setRequestMockInRequestContext(new VariablesSecureAppMock());
   }
 
+  /** Create a mock for HttpServletRequest setting some basic configuration parameters in session. */
   public HttpServletRequestMock() {
     session = new HttpSessionWrapper();
     Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
