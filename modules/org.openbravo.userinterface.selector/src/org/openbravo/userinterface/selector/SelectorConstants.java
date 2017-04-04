@@ -64,7 +64,7 @@ public class SelectorConstants {
    * allows cross organization references.
    */
   public static boolean includeOrgFilter(Map<String, String> parameters) {
-    boolean isSelector = "true".equals(parameters.get("IsSelectorItem"))
+    boolean isSelector = parameters.containsKey(DS_REQUEST_SELECTOR_ID_PARAMETER)
         && parameters.containsKey("inpTableId") && parameters.containsKey("targetProperty");
     if (isSelector) {
       Entity entity = ModelProvider.getInstance().getEntityByTableId(parameters.get("inpTableId"));
