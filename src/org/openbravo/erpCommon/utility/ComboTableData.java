@@ -946,7 +946,7 @@ public class ComboTableData {
     }
 
     String query = text.toString().replace(CLIENT_LIST_PARAM_HOLDER, getClientList());
-    if (orgList != null) {
+    if (orgList != null && !isAllowedCrossOrgReference()) {
       query = query.replace(ORG_LIST_PARAM_HOLDER, orgList);
     }
 
