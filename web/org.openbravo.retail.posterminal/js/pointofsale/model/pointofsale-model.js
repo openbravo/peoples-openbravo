@@ -252,6 +252,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(this);
     this.printLine = new OB.OBPOSPointOfSale.Print.ReceiptLine(receipt);
 
+    // Now that templates has been initialized, print welcome message
+    OB.POS.hwserver.print(this.printReceipt.templatewelcome, {}, null, OB.DS.HWServer.DISPLAY);
+
     var ViewManager = Backbone.Model.extend({
       defaults: {
         currentWindow: {
