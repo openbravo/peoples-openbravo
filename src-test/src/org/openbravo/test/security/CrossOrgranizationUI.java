@@ -165,6 +165,7 @@ public class CrossOrgranizationUI extends OBBaseTest {
   private List<String> getSelectorValues() throws JSONException {
     HttpServletRequestMock.setRequestMockInRequestContext();
     BaseDataSourceService selectorDatasorce = new CustomQuerySelectorDatasource();
+    @SuppressWarnings("serial")
     String r = selectorDatasorce.fetch(new HashMap<String, String>() {
       {
         put(JsonConstants.STARTROW_PARAMETER, "0");

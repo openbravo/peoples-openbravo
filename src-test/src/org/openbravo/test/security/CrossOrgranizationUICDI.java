@@ -41,11 +41,7 @@ import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
 import org.openbravo.base.weld.test.WeldBaseTest;
-import org.openbravo.dal.core.DalLayerInitializer;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.datamodel.Column;
-import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.financialmgmt.assetmgmt.Asset;
 import org.openbravo.service.datasource.DataSourceService;
 import org.openbravo.service.datasource.DataSourceServiceProvider;
@@ -59,7 +55,7 @@ import org.openbravo.userinterface.selector.SelectorConstants;
  * does not allow it.
  */
 public class CrossOrgranizationUICDI extends WeldBaseTest {
-  private static final String CORE = "0";
+
   private static final String ORDER_ASSET_COLUMN = "1E2CDC6A59BF4277B0E0A5EA45332EE9";
 
   private static final List<String> COLUMNS_TO_ALLOW_CROSS_ORG = Arrays.asList(ORDER_ASSET_COLUMN);
@@ -114,49 +110,20 @@ public class CrossOrgranizationUICDI extends WeldBaseTest {
 
   @BeforeClass
   public static void setCoreInDev() {
-    OBContext.setOBContext("0");
-    Module core = OBDal.getInstance().get(Module.class, CORE);
-    wasCoreInDev = core.isInDevelopment();
-    if (!wasCoreInDev) {
-      core.setInDevelopment(true);
-    }
+    wasCoreInDev = CrossOrganizationReference.setCoreInDevelopment(true);
     OBDal.getInstance().commitAndClose();
   }
 
   @Before
   public void setUpAllowedCrossOrg() throws Exception {
-    System.out.println("BEFORE!!");
-    OBContext.setOBContext("0");
-
-    for (String colId : COLUMNS_TO_ALLOW_CROSS_ORG) {
-      Column col = OBDal.getInstance().get(Column.class, colId);
-      col.setAllowedCrossOrganizationReference(useCrossOrgColumns);
-    }
-
-    OBDal.getInstance().commitAndClose();
-
-    // reload in memory model with these new settings
-    DalLayerInitializer.getInstance().setInitialized(false);
-    setDalUp();
+    CrossOrganizationReference.setUpAllowedCrossOrg(COLUMNS_TO_ALLOW_CROSS_ORG, useCrossOrgColumns);
     setTestUserContext();
   }
 
   @AfterClass
-  public static void resetAD() {
-    OBContext.setOBContext("0");
-
-    for (String colId : COLUMNS_TO_ALLOW_CROSS_ORG) {
-      Column col = OBDal.getInstance().get(Column.class, colId);
-      col.setAllowedCrossOrganizationReference(false);
-    }
-
-    OBDal.getInstance().flush();
-
-    if (!wasCoreInDev) {
-      Module core = OBDal.getInstance().get(Module.class, CORE);
-      core.setInDevelopment(false);
-    }
-
+  public static void resetAD() throws Exception {
+    CrossOrganizationReference.setUpAllowedCrossOrg(COLUMNS_TO_ALLOW_CROSS_ORG, false);
+    CrossOrganizationReference.setCoreInDevelopment(wasCoreInDev);
     OBDal.getInstance().commitAndClose();
   }
 }
