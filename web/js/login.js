@@ -146,6 +146,19 @@ function processResult(result) {
  * Functions invoked on login page load.
  */
 
+function redirectWhenPopup() {
+  var permission = false;
+  try {
+    if (top.opener.parent.frames['appFrame']) {
+      permission = true;
+    }
+  } catch (e) {}
+  if (permission && top.opener) {
+    top.opener.parent.location.href = top.document.location.href;
+    top.window.close();
+  }
+}
+
 function redirectWhenInsideMDI() {
   if (typeof isWindowInMDIPage !== 'undefined' && isWindowInMDIPage) {
     var LayoutMDI = null;
@@ -341,6 +354,7 @@ function checkInputKeyDown(input, valueLength) {
 }
 
 function beforeLoadDo() {
+  redirectWhenPopup();
   redirectWhenInsideMDI();
 }
 
