@@ -923,15 +923,10 @@ public class DefaultJsonDataService implements JsonDataService {
         jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
         return jsonResult.toString();
       } else {
-        OBContext.setCrossOrgReferenceAdminMode();
-        try {
-          for (BaseOBObject bob : bobs) {
-            OBDal.getInstance().save(bob);
-          }
-          OBDal.getInstance().flush();
-        } finally {
-          OBContext.restorePreviousCrossOrgReferenceMode();
+        for (BaseOBObject bob : bobs) {
+          OBDal.getInstance().save(bob);
         }
+        OBDal.getInstance().flush();
 
         // business event handlers can change the data
         // flush again before refreshing, refreshing can
