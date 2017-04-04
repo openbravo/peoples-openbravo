@@ -442,6 +442,7 @@ public class DefaultJsonDataService implements JsonDataService {
     final DataEntityQueryService queryService = OBProvider.getInstance().get(
         DataEntityQueryService.class);
 
+    boolean includeOrgFilter = includeOrgFilter(parameters);
     if (!forSubEntity && parameters.get(JsonConstants.DISTINCT_PARAMETER) != null) {
       // this is the main entity of a 'contains' (used in FK drop down lists), it will create also
       // info for subentity
@@ -558,7 +559,8 @@ public class DefaultJsonDataService implements JsonDataService {
       }
     } else {
       queryService.setEntityName(entityName);
-      queryService.setFilterOnReadableOrganizations(filterOnReadableOrganizations);
+      queryService.setFilterOnReadableOrganizations(filterOnReadableOrganizations
+          && includeOrgFilter);
       if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
         queryService.setUseAlias();
       }
@@ -606,7 +608,7 @@ public class DefaultJsonDataService implements JsonDataService {
         if (key.equals(JsonConstants.IDENTIFIER)
             || key.equals(JsonConstants.WHERE_PARAMETER)
             || key.equals(JsonConstants.WHERE_AND_FILTER_CLAUSE)
-            || (key.equals(JsonConstants.ORG_PARAMETER) && includeOrgFilter(parameters))
+            || (key.equals(JsonConstants.ORG_PARAMETER) && includeOrgFilter)
             || key.equals(JsonConstants.CALCULATE_ORGS)
             || key.equals(JsonConstants.TARGETRECORDID_PARAMETER)
             || (key.startsWith(DataEntityQueryService.PARAM_DELIMITER) && key
