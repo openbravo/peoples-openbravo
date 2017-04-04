@@ -701,7 +701,12 @@ public class DefaultJsonDataService implements JsonDataService {
     return queryService;
   }
 
-  private boolean includeOrgFilter(Map<String, String> parameters) {
+  /**
+   * Returns whether Organization filter should be included for selectors. It should always be
+   * included except when the data source is for a selector and the property the selector is for
+   * allows cross organization references.
+   */
+  public static boolean includeOrgFilter(Map<String, String> parameters) {
     boolean isSelector = "true".equals(parameters.get("IsSelectorItem"))
         && parameters.containsKey("inpTableId") && parameters.containsKey("targetProperty");
     if (isSelector) {

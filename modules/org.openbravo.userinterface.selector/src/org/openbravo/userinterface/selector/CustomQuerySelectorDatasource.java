@@ -18,6 +18,8 @@
  */
 package org.openbravo.userinterface.selector;
 
+import static org.openbravo.service.json.DefaultJsonDataService.includeOrgFilter;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -38,9 +40,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BooleanDomainType;
 import org.openbravo.base.model.domaintype.DateDomainType;
@@ -279,19 +279,6 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     }
     HQL = HQL.replace(ADDITIONAL_FILTERS, additionalFilter.toString());
     return HQL;
-  }
-
-  private boolean includeOrgFilter(Map<String, String> parameters) {
-    boolean isSelector = "true".equals(parameters.get("IsSelectorItem"))
-        && parameters.containsKey("inpTableId") && parameters.containsKey("targetProperty");
-    if (isSelector) {
-      Entity entity = ModelProvider.getInstance().getEntityByTableId(parameters.get("inpTableId"));
-      if (entity != null) {
-        Property property = entity.getProperty(parameters.get("targetProperty"));
-        return property != null && !property.isAllowedCrossOrgReference();
-      }
-    }
-    return true;
   }
 
   /**
