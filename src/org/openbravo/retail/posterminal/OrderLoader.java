@@ -1238,7 +1238,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     line.setMovementQuantity(qty);
     line.setStorageBin(bin);
-    if (jsonOrderLine.has("attributeValue")) {
+    if (jsonOrderLine.has("attributeValue") && jsonOrderLine.get("attributeValue") != null) {
       line.setAttributeSetValue(fetchAttributeSetValue(jsonOrderLine.get("attributeValue")
           .toString(), jsonOrderLine.getJSONObject("product").get("id").toString()));
     } else {
@@ -1323,7 +1323,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         // shipment is created or is a C&R and is not a layaway, so all is delivered
         orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
       }
-      if (jsonOrderLine.has("attributeValue")) {
+      if (jsonOrderLine.has("attributeValue") && jsonOrderLine.get("attributeValue") != null) {
         orderline.setAttributeSetValue(fetchAttributeSetValue(jsonOrderLine.get("attributeValue")
             .toString(), jsonOrderLine.getJSONObject("product").get("id").toString()));
       }
@@ -1435,7 +1435,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private AttributeSetInstance createAttributeSetValue(String string, AttributeSet attributeSet) {
     AttributeSetInstance newAttrSetInst = OBProvider.getInstance().get(AttributeSetInstance.class);
     try {
-      newAttrSetInst.setNewOBObject(true);
       newAttrSetInst.setAttributeSet(attributeSet);
       newAttrSetInst.setDescription(string);
       OBDal.getInstance().save(newAttrSetInst);
