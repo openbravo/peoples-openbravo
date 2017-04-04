@@ -60,7 +60,7 @@ import org.openbravo.userinterface.selector.SelectorConstants;
  * allows cross organization references and apply them if it does not allow it.
  */
 @RunWith(Parameterized.class)
-public class CrossOrgranizationUI extends OBBaseTest {
+public class CrossOrganizationUI extends OBBaseTest {
   private static final String CORE = "0";
   private static final String ORDER_PRICELIST_FIELD = "1077";
   private static final String ORDER_SALESREP_FIELD = "1098";
@@ -76,7 +76,7 @@ public class CrossOrgranizationUI extends OBBaseTest {
   private boolean useCrossOrgColumns;
   private static Boolean setUpForCrossOrg = null;
 
-  public CrossOrgranizationUI(boolean useCrossOrgColumns) {
+  public CrossOrganizationUI(boolean useCrossOrgColumns) {
     this.useCrossOrgColumns = useCrossOrgColumns;
   }
 

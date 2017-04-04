@@ -83,8 +83,8 @@ import org.openbravo.test.scheduling.ProcessSchedulingTest;
 import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
 import org.openbravo.test.security.BypassAccessLevelCheck;
-import org.openbravo.test.security.CrossOrgranizationUI;
-import org.openbravo.test.security.CrossOrgranizationUICDI;
+import org.openbravo.test.security.CrossOrganizationUI;
+import org.openbravo.test.security.CrossOrganizationUICDI;
 import org.openbravo.test.security.EntityAccessTest;
 import org.openbravo.test.security.StandardCrossOrganizationReference;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
@@ -171,8 +171,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     WritableReadableOrganizationClientTest.class, //
     StandardCrossOrganizationReference.class, //
     BypassAccessLevelCheck.class, //
-    CrossOrgranizationUI.class, //
-    CrossOrgranizationUICDI.class,
+    CrossOrganizationUI.class, //
+    CrossOrganizationUICDI.class,
 
     // system
     SystemServiceTest.class, //

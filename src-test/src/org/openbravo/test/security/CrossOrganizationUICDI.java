@@ -54,7 +54,7 @@ import org.openbravo.userinterface.selector.SelectorConstants;
  * filter when applied in a field that allows cross organization references and apply them if it
  * does not allow it.
  */
-public class CrossOrgranizationUICDI extends WeldBaseTest {
+public class CrossOrganizationUICDI extends WeldBaseTest {
 
   private static final String ORDER_ASSET_COLUMN = "1E2CDC6A59BF4277B0E0A5EA45332EE9";
 
