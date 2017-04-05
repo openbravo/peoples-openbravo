@@ -1054,8 +1054,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       hasPermission = _.every(approvalType, function (a) {
         return OB.MobileApp.model.hasPermission(a, true);
       });
-    } else {
+    } else if (!OB.UTIL.isNullOrUndefined(approvalType)) {
       hasPermission = OB.MobileApp.model.hasPermission(approvalType, true);
+    } else {
+      callbackFunc();
+      return;
     }
     if (hasPermission) {
       callbackFunc();
