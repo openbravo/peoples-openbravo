@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2016 Openbravo S.L.U.
+ * Copyright (C) 2014-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -101,7 +101,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       'isprocessed': 'N'
     }, function (cashUp) {
       OB.Dal.find(OB.Model.PaymentMethodCashUp, {
-        'cashup_id': cashUp.at(0).get('id')
+        'cashup_id': cashUp.at(0).get('id'),
+        '_orderByClause': 'lineNo asc'
       }, function (payMthds) { //OB.Dal.find success
         // Get list of active payments
         _.each(OB.MobileApp.model.get('payments'), function (payment) {
@@ -242,7 +243,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       }, this);
 
       OB.Dal.find(OB.Model.PaymentMethodCashUp, {
-        'cashup_id': cashUpReport.get('id')
+        'cashup_id': cashUpReport.get('id'),
+        '_orderByClause': 'lineNo asc'
       }, function (payMthds) { //OB.Dal.find success
         cashUpReport.set('totalStartings', _.reduce(payMthds.models, function (accum, trx) {
           if (OB.MobileApp.model.paymentnames[trx.get('searchKey')]) {

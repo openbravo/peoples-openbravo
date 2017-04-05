@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -395,7 +395,8 @@
           totalDrops: drops,
           rate: payment.rate,
           isocode: payment.isocode,
-          cashup_id: cashupId
+          cashup_id: cashupId,
+          lineNo: payment.lineNo
         }), null, null, true);
       }
     }, this);
@@ -507,7 +508,8 @@
                   totalDrops: OB.DEC.Zero,
                   rate: payment.rate,
                   isocode: payment.isocode,
-                  cashup_id: cashUp.at(0).get('id')
+                  cashup_id: cashUp.at(0).get('id'),
+                  lineNo: payment.lineNo
                 }), null, null, true);
               } else if (!OB.UTIL.isNullOrUndefined(pAux)) {
                 if (pAux.get("name") !== payment.payment._identifier) {
