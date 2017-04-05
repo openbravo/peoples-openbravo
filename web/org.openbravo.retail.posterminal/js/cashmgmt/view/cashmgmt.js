@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo */
+/*global OB, enyo, _ */
 
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.LeftToolbarImpl',
@@ -216,6 +216,8 @@ OB.POS.registerWindow({
   permission: 'OBPOS_retail.cashmanagement',
   approvalType: 'OBPOS_approval.cashmgmt',
   menuItemDisplayLogic: function () {
-    return OB.MobileApp.model.get('payments').length > 0;
+    return !OB.UTIL.isNullOrUndefined(_.find(OB.MobileApp.model.get('payments'), function (payment) {
+      return payment.paymentMethod.countpaymentincashup;
+    }));
   }
 });

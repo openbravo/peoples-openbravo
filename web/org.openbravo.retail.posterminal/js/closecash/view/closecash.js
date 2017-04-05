@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -604,7 +604,9 @@ OB.POS.registerWindow({
     }
   },
   menuItemDisplayLogic: function () {
-    return OB.MobileApp.model.get('payments').length > 0;
+    return !OB.UTIL.isNullOrUndefined(_.find(OB.MobileApp.model.get('payments'), function (payment) {
+      return payment.paymentMethod.countpaymentincashup;
+    }));
   }
 });
 
@@ -629,6 +631,8 @@ OB.POS.registerWindow({
   permission: 'OBPOS_retail.cashuppartial',
   approvalType: 'OBPOS_approval.cashuppartial',
   menuItemDisplayLogic: function () {
-    return OB.MobileApp.model.get('payments').length > 0;
+    return !OB.UTIL.isNullOrUndefined(_.find(OB.MobileApp.model.get('payments'), function (payment) {
+      return payment.paymentMethod.countpaymentincashup;
+    }));
   }
 });
