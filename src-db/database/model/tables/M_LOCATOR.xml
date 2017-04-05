@@ -102,7 +102,7 @@
         <index-column name="Y"/>
         <index-column name="Z"/>
         <index-column name="M_INVENTORYSTATUS_ID"/>
-        <index-column name="functionBasedColumn" functionExpression="COALESCE(PARENT_LOCATOR_ID,'0')"/>
+        <index-column name="functionBasedColumn" functionExpression="COALESCE(PARENT_LOCATOR_ID,TO_CHAR(0))"/>
       </index>
       <index name="M_LOCATOR_BARCODE_IDX" unique="false">
         <index-column name="BARCODE"/>
