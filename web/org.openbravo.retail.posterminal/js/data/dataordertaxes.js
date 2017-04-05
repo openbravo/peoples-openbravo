@@ -255,7 +255,7 @@
           roundedLinePriceNet = 0;
         } else {
           linenet = new BigDecimal(String(discountedGross)).multiply(new BigDecimal(String(discountedGross))).divide(new BigDecimal(String(taxamt)), 20, BigDecimal.prototype.ROUND_HALF_UP);
-          linepricenet = line.get('qty') === 0 ? new BigDecimal('0') : linenet.divide(new BigDecimal(String(line.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP);
+          linepricenet = linenet.divide(new BigDecimal(String(line.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP);
           //round and continue with rounded values
           linenet = OB.DEC.toNumber(linenet);
           roundedLinePriceNet = OB.DEC.toNumber(linepricenet);
@@ -277,7 +277,7 @@
         if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
           if (taxamtdc && OB.DEC.toNumber(taxamtdc) !== 0) {
             discountedNet = new BigDecimal(String(discountedGross)).multiply(new BigDecimal(String(discountedGross))).divide(new BigDecimal(String(taxamtdc)), 20, BigDecimal.prototype.ROUND_HALF_UP);
-            discountedLinePriceNet = line.get('qty') === 0 ? new BigDecimal('0') : discountedNet.divide(new BigDecimal(String(line.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP);
+            discountedLinePriceNet = discountedNet.divide(new BigDecimal(String(line.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP);
             roundedDiscountedLinePriceNet = OB.DEC.toNumber(discountedLinePriceNet);
             //In advance we will work with rounded prices
             discountedNet = OB.DEC.toNumber(discountedNet);
@@ -853,7 +853,7 @@
           discAmt = line.get('promotions').reduce(function (memo, element) {
             return memo.subtract(new BigDecimal(String(element.actualAmt || element.amt || 0)));
           }, discAmt);
-          discountedprice = line.get('qty') === 0 ? new BigDecimal('0') : discAmt.divide(new BigDecimal(String(line.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP);
+          discountedprice = discAmt.divide(new BigDecimal(String(line.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP);
           discountedNet = OB.DEC.toNumber(discAmt);
         } else {
           discountedprice = new BigDecimal(String(line.get('price')));
@@ -887,7 +887,7 @@
                 distributeBOM(data, 'bomlinepricenet', linepricenet);
 
                 return Promise.all(_.map(data, function (productbom) {
-                  return calcProductTaxesExcPrice(receipt, line, productbom.bomtaxcategory, productbom.bomlinepricenet, productbom.bomnet, line.get('qty') === 0 ? new BigDecimal('0') : new BigDecimal(String(productbom.bomdiscountednet)).divide(new BigDecimal(String(line.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP), productbom.bomdiscountednet);
+                  return calcProductTaxesExcPrice(receipt, line, productbom.bomtaxcategory, productbom.bomlinepricenet, productbom.bomnet, new BigDecimal(String(productbom.bomdiscountednet)).divide(new BigDecimal(String(line.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP), productbom.bomdiscountednet);
                 }));
               });
             });
