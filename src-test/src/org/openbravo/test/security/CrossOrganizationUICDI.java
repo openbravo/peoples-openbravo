@@ -35,7 +35,6 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
@@ -59,8 +58,6 @@ public class CrossOrganizationUICDI extends WeldBaseTest {
   private static final String ORDER_ASSET_COLUMN = "1E2CDC6A59BF4277B0E0A5EA45332EE9";
 
   private static final List<String> COLUMNS_TO_ALLOW_CROSS_ORG = Arrays.asList(ORDER_ASSET_COLUMN);
-
-  private static boolean wasCoreInDev;
 
   @Inject
   private DataSourceServiceProvider dataSourceServiceProvider;
@@ -107,12 +104,6 @@ public class CrossOrganizationUICDI extends WeldBaseTest {
     }
   }
 
-  @BeforeClass
-  public static void setCoreInDev() {
-    wasCoreInDev = CrossOrganizationReference.setCoreInDevelopment(true);
-    OBDal.getInstance().commitAndClose();
-  }
-
   @Before
   public void setUpAllowedCrossOrg() throws Exception {
     CrossOrganizationReference.setUpAllowedCrossOrg(COLUMNS_TO_ALLOW_CROSS_ORG, useCrossOrgColumns);
@@ -120,9 +111,8 @@ public class CrossOrganizationUICDI extends WeldBaseTest {
   }
 
   @AfterClass
-  public static void resetAD() throws Exception {
+  public static void resetAllowedCrossOrg() throws Exception {
     CrossOrganizationReference.setUpAllowedCrossOrg(COLUMNS_TO_ALLOW_CROSS_ORG, false);
-    CrossOrganizationReference.setCoreInDevelopment(wasCoreInDev);
     OBDal.getInstance().commitAndClose();
   }
 }

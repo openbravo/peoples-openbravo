@@ -75,8 +75,6 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   private static final List<String> COLUMNS_TO_ALLOW_CROSS_ORG = Arrays.asList(
       ORDER_WAREHOUSE_COLUMN, ORDERLINE_ORDER_COLUMN);
 
-  private static boolean wasCoreInDev;
-
   /**
    * References from org Spain to USA should not be allowed on insertion even in a column allowing
    * it if not in admin mode
@@ -423,8 +421,7 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
       exception.expect(Exception.class);
       OBDal.getInstance().commitAndClose();
     } finally {
-      core.setInDevelopment(true); // was set in @BeforeClass
-      OBDal.getInstance().commitAndClose();
+      OBDal.getInstance().rollbackAndClose();
       OBContext.setOBContext(prevCtxt);
     }
   }
@@ -474,7 +471,6 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
 
   @BeforeClass
   public static void setUpAllowedCrossOrg() throws Exception {
-    wasCoreInDev = CrossOrganizationReference.setCoreInDevelopment(true);
     CrossOrganizationReference.setUpAllowedCrossOrg(COLUMNS_TO_ALLOW_CROSS_ORG, true);
 
     Role qaRole = createOrgUserLevelRole();
@@ -528,7 +524,6 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   @AfterClass
   public static void resetAD() throws Exception {
     CrossOrganizationReference.setUpAllowedCrossOrg(COLUMNS_TO_ALLOW_CROSS_ORG, false);
-    CrossOrganizationReference.setCoreInDevelopment(wasCoreInDev);
 
     OBDal.getInstance().commitAndClose();
   }

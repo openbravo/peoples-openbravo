@@ -31,13 +31,13 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.dal.core.DalLayerInitializer;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
-import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.currency.Currency;
@@ -62,7 +62,6 @@ import com.google.common.collect.Lists;
  *
  */
 public class CrossOrganizationReference extends BaseDataSourceTestDal {
-  private static final String CORE = "0";
   protected static final String QA_ADMIN_ROLE = "4028E6C72959682B01295A071429011E";
 
   protected static final String SPAIN_ORG = "357947E87C284935AD1D783CF6F099A1";
@@ -193,24 +192,6 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
   }
 
   /**
-   * Changes is in development setting in Core module
-   * 
-   * @param setInDev
-   *          value to set
-   * 
-   * @return previous is in development value
-   */
-  static boolean setCoreInDevelopment(boolean setInDev) {
-    OBContext.setOBContext("0");
-    Module core = OBDal.getInstance().get(Module.class, CORE);
-    Boolean wasCoreInDev = core.isInDevelopment();
-    if (!wasCoreInDev.equals(setInDev)) {
-      core.setInDevelopment(setInDev);
-    }
-    return wasCoreInDev;
-  }
-
-  /**
    * Changes allowed cross org reference setting
    * 
    * @param colIds
@@ -221,23 +202,11 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
   static void setUpAllowedCrossOrg(List<String> colIds, boolean allowCrossOrgColumns)
       throws Exception {
     OBContext.setOBContext("0");
-    Module core = OBDal.getInstance().get(Module.class, CORE);
-    Boolean wasCoreInDev = core.isInDevelopment();
-    if (!wasCoreInDev) {
-      core.setInDevelopment(true);
-    }
-
     for (String colId : colIds) {
       Column col = OBDal.getInstance().get(Column.class, colId);
-      col.setAllowedCrossOrganizationReference(allowCrossOrgColumns);
+      Property p = ModelProvider.getInstance().getEntityByTableId(col.getTable().getId())
+          .getPropertyByColumnName(col.getDBColumnName());
+      p.setAllowedCrossOrgReference(allowCrossOrgColumns);
     }
-
-    OBDal.getInstance().commitAndClose();
-
-    // reload in memory model with these new settings
-    DalLayerInitializer.getInstance().setInitialized(false);
-    setDalUp();
-
-    OBDal.getInstance().commitAndClose();
   }
 }

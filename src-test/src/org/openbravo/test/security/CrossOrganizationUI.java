@@ -33,7 +33,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -67,9 +66,7 @@ public class CrossOrganizationUI extends OBBaseTest {
   private static final List<String> COLUMNS_TO_ALLOW_CROSS_ORG = Arrays.asList(
       ORDER_PRICELIST_COLUMN, ORDER_SALESREP_COLUMN, ORDER_BP_COLUMN);
 
-  private static boolean wasCoreInDev;
   private boolean useCrossOrgColumns;
-  private static Boolean setUpForCrossOrg = null;
 
   public CrossOrganizationUI(boolean useCrossOrgColumns) {
     this.useCrossOrgColumns = useCrossOrgColumns;
@@ -183,26 +180,15 @@ public class CrossOrganizationUI extends OBBaseTest {
     return values;
   }
 
-  @BeforeClass
-  public static void setCoreInDev() {
-    wasCoreInDev = CrossOrganizationReference.setCoreInDevelopment(true);
-    OBDal.getInstance().commitAndClose();
-  }
-
   @Before
   public void setUpAllowedCrossOrg() throws Exception {
-    if (setUpForCrossOrg == null || !setUpForCrossOrg.equals(useCrossOrgColumns)) {
-      CrossOrganizationReference.setUpAllowedCrossOrg(COLUMNS_TO_ALLOW_CROSS_ORG,
-          useCrossOrgColumns);
-      setUpForCrossOrg = useCrossOrgColumns;
-    }
+    CrossOrganizationReference.setUpAllowedCrossOrg(COLUMNS_TO_ALLOW_CROSS_ORG, useCrossOrgColumns);
     setTestUserContext();
   }
 
   @AfterClass
   public static void resetAD() throws Exception {
     CrossOrganizationReference.setUpAllowedCrossOrg(COLUMNS_TO_ALLOW_CROSS_ORG, false);
-    CrossOrganizationReference.setCoreInDevelopment(wasCoreInDev);
     OBDal.getInstance().commitAndClose();
   }
 }
