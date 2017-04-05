@@ -45,7 +45,7 @@
         var approved = false;
         if (response.exception) {
           OB.UTIL.showError(response.exception.message);
-          this.approvedRequest(false, null, null, callback);
+          return;
         } else {
           approved = response.canApprove;
           if (!approved) {
