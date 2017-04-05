@@ -404,34 +404,48 @@
   OB.Model.Discounts.registerRule('5D4BAF6BB86D4D2C9ED3D5A6FC051579', {
     async: false,
     implementation: function (discountRule, receipt, line) {
-      var linePrice, discountedLinePrice, qty = line.get('qty'),
+      var linePrice, discountedLinePrice, discountAmt, chunks, qty = line.get('qty'),
           promotionCandidates = line.get('promotionCandidates'),
           minQty = discountRule.get('minQuantity'),
-          maxQty = discountRule.get('maxQuantity');
+          maxQty = discountRule.get('maxQuantity'),
+          isMultiple = discountRule.get('ismultiple'),
+          multipleQty = discountRule.get('multiple');
 
       if (OB.UTIL.isNullOrUndefined(promotionCandidates) || promotionCandidates.indexOf(discountRule.id) === -1) {
         // The line is not valid for this discountRule
         return;
       }
 
-      if ((minQty && qty < minQty) || (maxQty && qty > maxQty)) {
+      if (isMultiple) {
+        if (qty < multipleQty) {
+          return;
+        }
+      } else if ((minQty && qty < minQty) || (maxQty && qty > maxQty)) {
         return;
       }
 
       linePrice = line.get('discountedLinePrice') || line.get('price');
-      if (discountRule.get('fixedPrice') || discountRule.get('fixedPrice') === 0) {
-        discountedLinePrice = discountRule.get('fixedPrice');
+      chunks = 1;
+      if (isMultiple) {
+        chunks = parseInt((qty / multipleQty), 10);
+        discountedLinePrice = OB.DEC.toNumber(discountRule.get('discountAmount') * chunks);
+        discountAmt = discountedLinePrice;
       } else {
-        discountedLinePrice = (linePrice - discountRule.get('discountAmount')) * (1 - discountRule.get('discount') / 100);
+        if (!OB.UTIL.isNullOrUndefined(discountRule.get('fixedPrice')) && discountRule.get('fixedPrice') >= 0) {
+          discountedLinePrice = discountRule.get('fixedPrice');
+        } else {
+          discountedLinePrice = (linePrice - discountRule.get('discountAmount')) * (1 - discountRule.get('discount') / 100);
+        }
+        discountAmt = OB.DEC.toNumber((linePrice - (new BigDecimal(String(discountedLinePrice)))) * qty);
       }
       discountRule.set('qtyOffer', qty);
       receipt.addPromotion(line, discountRule, {
-        amt: OB.DEC.toNumber((linePrice - (new BigDecimal(String(discountedLinePrice)))) * qty)
+        amt: discountAmt,
+        chunks: chunks
       });
       line.set('discountedLinePrice', discountedLinePrice);
     }
   });
-
 
   // Because of dependency models cannot be directly registered in promotions module
   if (OB && OB.Model && OB.Model.Discounts && OB.Model.Discounts.extraModels) {
