@@ -935,7 +935,7 @@ enyo.kind({
       }
     }, this);
 
-    this.model.get('multiOrders').on('change:payment change:total change:change', function () {
+    this.model.get('multiOrders').on('change:payment change:total change:change paymentCancel', function () {
       this.updatePendingMultiOrders();
     }, this);
     this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {

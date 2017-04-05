@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, enyo */
+/*global OB, _, enyo, Promise */
 
 (function () {
 
@@ -230,7 +230,6 @@
                     // rollback other changes
                     receipt.set('hasbeenpaid', 'N');
                     frozenReceipt.set('hasbeenpaid', 'N');
-
                     OB.Dal.save(receipt, function () {
                       OB.UTIL.calculateCurrentCash();
 
@@ -412,14 +411,15 @@
           currentReceipt.set('json', JSON.stringify(currentReceipt.serializeToJSON()));
 
           OB.trace('Saving receipt.');
+          OB.UTIL.cashUpReport(currentReceipt, function (cashUp) {
+            currentReceipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
+            currentReceipt.set('json', JSON.stringify(currentReceipt.serializeToJSON()));
+            OB.Dal.save(currentReceipt, function () {
+              OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
 
-          OB.Dal.save(currentReceipt, function () {
-            OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
+                var successCallback = function () {
+                    OB.trace('Sync process success.');
 
-              var successCallback = function () {
-                  OB.trace('Sync process success.');
-
-                  if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
 
                     OB.UTIL.calculateCurrentCash();
                     _.each(model.get('multiOrders').get('multiOrdersList').models, function (theReceipt) {
@@ -433,85 +433,127 @@
                       me.context.get('orderList').deleteCurrent();
                     });
 
-                    OB.UTIL.cashUpReport(model.get('multiOrders').get('multiOrdersList').models);
-
                     //this logic executed when all orders are ready to be sent
                     me.context.get('leftColumnViewManager').setOrderMode();
-                  }
+                    if (callback instanceof Function) {
+                      callback();
+                    }
 
-                  model.get('multiOrders').resetValues();
+                    model.get('multiOrders').resetValues();
 
-                  OB.UTIL.showLoading(false);
-                  if (me.hasInvLayaways) {
-                    OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
-                    me.hasInvLayaways = false;
-                  }
-                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
+                    OB.UTIL.showLoading(false);
+                    enyo.$.scrim.hide();
+                    if (me.hasInvLayaways) {
+                      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
+                      me.hasInvLayaways = false;
+                    }
+                    OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
+                    OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
+                    model.get('multiOrders').trigger('checkOpenDrawer');
+                    };
+
+                var errorCallback = function () {
+                    OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
+                    OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
+
+                    // recalculate after an error also
+                    if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+
+                      model.get('multiOrders').get('payments').forEach(function (p) {
+                        var itemP = _.find(model.get('multiOrders').get('frozenPayments').models, function (fp) {
+                          return p.get('id') === fp.get('id');
+                        }, this);
+                        p.set('origAmount', itemP.get('origAmount'));
+                      });
+                      model.get('multiOrders').trigger('paymentCancel');
+                      model.get('multiOrders').get('multiOrdersList').reset(model.get('multiOrders').get('frozenMultiOrdersList').models);
+                      var promises = [];
+                      _.each(model.get('multiOrders').get('multiOrdersList').models, function (rcpt) {
+                        promises.push(new Promise(function (resolve, reject) {
+                          rcpt.set('isbeingprocessed', 'N');
+                          rcpt.set('hasbeenpaid', 'N');
+                          _.each(model.get('orderList').models, function (mdl) {
+                            if (mdl.get('id') === rcpt.get('id')) {
+                              mdl.set('isbeingprocessed', 'N');
+                              mdl.set('hasbeenpaid', 'N');
+                              _.each(mdl.get('payments').models, function (p) {
+                                mdl.removePayment(p);
+                              }, this);
+                              return true;
+                            }
+                          }, this);
+                          OB.Dal.save(rcpt, function () {
+                            resolve();
+                          }, function () {
+                            reject();
+                          }, false);
+                        }));
+                      });
+
+                      Promise.all(promises).then(function () {
+                        OB.UTIL.calculateCurrentCash();
+                        if (callback instanceof Function) {
+                          callback();
+                        }
+                      });
+                    }
+                    };
+
+                if (!_.isUndefined(receipt.get('amountToLayaway')) && !_.isNull(receipt.get('amountToLayaway')) && receipt.get('generateInvoice')) {
+                  me.hasInvLayaways = true;
+                }
+                if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+                  model.get('orderList').current = receipt;
+                  model.get('orderList').deleteCurrent();
+                }
+                me.ordersToSend += 1;
+                if (model.get('multiOrders').get('multiOrdersList').length === me.ordersToSend) {
+                  OB.trace('Execution Sync process.');
+
+                  OB.MobileApp.model.runSyncProcess(successCallback, errorCallback);
+                  me.ordersToSend = OB.DEC.Zero;
+                } else {
                   OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
-                  model.get('multiOrders').trigger('checkOpenDrawer');
-                  };
-
-              var errorCallback = function () {
-                  OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
-                  OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
-
-
-                  // recalculate after an error also
-                  if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-                    OB.UTIL.calculateCurrentCash();
+                  if (callback instanceof Function) {
+                    callback();
                   }
-                  model.get('multiOrders').resetValues();
-                  };
+                }
 
-              if (!_.isUndefined(receipt.get('amountToLayaway')) && !_.isNull(receipt.get('amountToLayaway')) && receipt.get('generateInvoice')) {
-                me.hasInvLayaways = true;
-              }
-              if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-                model.get('orderList').current = receipt;
-                model.get('orderList').deleteCurrent();
-              }
-              me.ordersToSend += 1;
-              if (model.get('multiOrders').get('multiOrdersList').length === me.ordersToSend) {
-                OB.trace('Execution Sync process.');
 
-                OB.MobileApp.model.runSyncProcess(successCallback, errorCallback);
-                me.ordersToSend = OB.DEC.Zero;
-              } else {
-                OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
-              }
-
-              if (callback instanceof Function) {
-                callback();
-              }
-            }, null);
-          }, function () {
-            // We do nothing:
-            //      we don't need to alert the user, as the order is still present in the database, so it will be resent as soon as the user logs in again
-            OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
+              }, null);
+            }, function () {
+              // We do nothing:
+              //      we don't need to alert the user, as the order is still present in the database, so it will be resent as soon as the user logs in again
+              OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
+            });
           });
+
         });
 
         };
 
     this.context.get('multiOrders').on('closed', function (receipt, callback) {
       var me = this;
-
-      if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true) && me.ordersToSend === 0) {
-        OB.MobileApp.model.setSynchronizedCheckpoint(function () {
-          multiOrdersFunction(receipt, me, function () {
-            if (callback instanceof Function) {
-              callback();
-            }
+      var closedReceipts = this.context.get('multiOrders').get('multiOrdersList').models;
+      var recursiveFunction;
+      recursiveFunction = function (index, me, callback) {
+        if (index < closedReceipts.length) {
+          multiOrdersFunction(closedReceipts[index], me, function () {
+            recursiveFunction(index + 1, me, callback);
           });
-        });
-      } else {
-        multiOrdersFunction(receipt, me, function () {
+        } else {
           if (callback instanceof Function) {
             callback();
           }
+        }
+      };
+      if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true) && me.ordersToSend === 0) {
+        OB.MobileApp.model.setSynchronizedCheckpoint(function () {
+          recursiveFunction(0, me, callback);
         });
+      } else {
+        recursiveFunction(0, me, callback);
       }
-
     }, this);
   };
 }());

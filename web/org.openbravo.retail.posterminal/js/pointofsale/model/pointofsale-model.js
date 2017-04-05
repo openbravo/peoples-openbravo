@@ -141,6 +141,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }
         }));
         //The order object is stored in the json property of the row fetched from the database
+        _.each(checkedMultiOrders, function (iter) {
+          _.each(iter.get('payments').models, function (p) {
+            iter.removePayment(p);
+          }, this);
+          iter.save();
+        });
+
         multiOrderList.reset(checkedMultiOrders);
       }
     }, function () {
@@ -336,52 +343,63 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             receipt.trigger('closed', {
               callback: function (args) {
                 receipt.set('isBeingClosed', false);
-                OB.UTIL.Debug.execute(function () {
-                  if (!args.frozenReceipt) {
-                    throw "A clone of the receipt must be provided because it is possible that some rogue process could have changed it";
-                  }
-                  if (OB.UTIL.isNullOrUndefined(args.isCancelled)) { // allow boolean values
-                    throw "The isCancelled flag must be set";
-                  }
-                });
 
-                // verify that the receipt was not cancelled
-                if (args.isCancelled !== true) {
-                  var orderToPrint = OB.UTIL.clone(args.frozenReceipt);
-                  orderToPrint.get('payments').reset();
-                  clonedCollection.each(function (model) {
-                    orderToPrint.get('payments').add(new Backbone.Model(model.toJSON()), {
-                      silent: true
+                _.each(orderList.models, function (ol) {
+                  if (ol.get('id') === receipt.get('id')) {
+                    ol.set('isBeingClosed', false);
+                    return true;
+                  }
+                }, this);
+                receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
+                OB.Dal.save(receipt, function () {
+                  OB.UTIL.Debug.execute(function () {
+                    if (!args.frozenReceipt) {
+                      throw "A clone of the receipt must be provided because it is possible that some rogue process could have changed it";
+                    }
+                    if (OB.UTIL.isNullOrUndefined(args.isCancelled)) { // allow boolean values
+                      throw "The isCancelled flag must be set";
+                    }
+                  });
+
+                  // verify that the receipt was not cancelled
+                  if (args.isCancelled !== true) {
+                    var orderToPrint = OB.UTIL.clone(args.frozenReceipt);
+                    orderToPrint.get('payments').reset();
+                    clonedCollection.each(function (model) {
+                      orderToPrint.get('payments').add(new Backbone.Model(model.toJSON()), {
+                        silent: true
+                      });
                     });
-                  });
-                  orderToPrint.set('hasbeenpaid', 'Y');
-                  receipt.trigger('print', orderToPrint, {
-                    offline: true
-                  });
+                    orderToPrint.set('hasbeenpaid', 'Y');
+                    receipt.trigger('print', orderToPrint, {
+                      offline: true
+                    });
 
-                  // Verify that the receipt has not been changed while the ticket has being closed
-                  var diff = OB.UTIL.diffJson(receipt.serializeToJSON(), args.frozenReceipt.serializeToJSON());
-                  // hasBeenPaid and cashUpReportInformation are the only difference allowed in the receipt
-                  delete diff.hasbeenpaid;
-                  delete diff.cashUpReportInformation;
-                  // isBeingClosed is a flag only used to log purposes
-                  delete diff.isBeingClosed;
-                  // verify if there have been any modification to the receipt
-                  var diffStringified = JSON.stringify(diff, undefined, 2);
-                  if (diffStringified !== '{}') {
-                    OB.error("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
+                    // Verify that the receipt has not been changed while the ticket has being closed
+                    var diff = OB.UTIL.diffJson(receipt.serializeToJSON(), args.frozenReceipt.serializeToJSON());
+                    // hasBeenPaid and cashUpReportInformation are the only difference allowed in the receipt
+                    delete diff.hasbeenpaid;
+                    delete diff.cashUpReportInformation;
+                    // isBeingClosed is a flag only used to log purposes
+                    delete diff.isBeingClosed;
+                    // verify if there have been any modification to the receipt
+                    var diffStringified = JSON.stringify(diff, undefined, 2);
+                    if (diffStringified !== '{}') {
+                      OB.error("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
+                    }
+
+                    orderList.deleteCurrent();
+                    receipt.setIsCalculateReceiptLockState(false);
+                    receipt.setIsCalculateGrossLockState(false);
+
+                    orderList.synchronizeCurrentOrder();
                   }
+                  if (OB.MobileApp.view.openedPopup === null) {
+                    enyo.$.scrim.hide();
+                  }
+                  OB.UTIL.SynchronizationHelper.finished(synchId, "receipt.paymentAccepted");
+                }, null, false);
 
-                  orderList.deleteCurrent();
-                  receipt.setIsCalculateReceiptLockState(false);
-                  receipt.setIsCalculateGrossLockState(false);
-
-                  orderList.synchronizeCurrentOrder();
-                }
-                if (OB.MobileApp.view.openedPopup === null) {
-                  enyo.$.scrim.hide();
-                }
-                OB.UTIL.SynchronizationHelper.finished(synchId, "receipt.paymentAccepted");
               }
             });
             };
@@ -525,20 +543,27 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.get('multiOrders').on('paymentAccepted', function () {
       var me = this;
       var synchIdPaymentAccepted = OB.UTIL.SynchronizationHelper.busyUntilFinishes("multiOrders.paymentAccepted");
+      var ordersLength = this.get('multiOrders').get('multiOrdersList').length;
+      var auxRcpt, auxP;
+      var closedReceipts = 0;
 
       OB.UTIL.showLoading(true);
-      var ordersLength = this.get('multiOrders').get('multiOrdersList').length;
 
-      function readyToSendFunction() {
-        // this function is executed when all orders are processed
-        me.get('leftColumnViewManager').setOrderMode();
-        if (me.get('orderList').length === 0) {
-          me.get('orderList').addNewOrder();
-        }
-      }
+      //clone multiorders
+      this.get('multiOrders').set('frozenMultiOrdersList', new Backbone.Collection());
+      this.get('multiOrders').get('multiOrdersList').forEach(function (rcpt) {
+        auxRcpt = new OB.Model.Order();
+        OB.UTIL.clone(rcpt, auxRcpt);
+        me.get('multiOrders').get('frozenMultiOrdersList').add(auxRcpt);
+      });
 
-      // this var is a function (copy of the above one) which is called by every items, but it is just executed once (when ALL items has called to it)
-      //var SyncReadyToSendFunction = _.after(this.get('multiOrders').get('multiOrdersList').length, readyToSendFunction);
+      //clone multiorders
+      this.get('multiOrders').set('frozenPayments', new Backbone.Collection());
+      this.get('multiOrders').get('payments').forEach(function (p) {
+        auxP = new OB.Model.PaymentLine();
+        OB.UTIL.clone(p, auxP);
+        me.get('multiOrders').get('frozenPayments').add(auxP);
+      });
 
       function prepareToSendCallback(order) {
         var auxReceipt = new OB.Model.Order();
@@ -560,42 +585,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             });
           }
         }
-        //me.get('multiOrders').trigger('closed', order);
         order.set('orderDate', new Date());
-        if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-          enyo.$.scrim.hide();
-          me.get('multiOrders').trigger('print', order, {
-            offline: true
-          }); // to guaranty execution order
-          auxReceiptList.push(auxReceipt);
-          if (auxReceiptList.length === me.get('multiOrders').get('multiOrdersList').length) {
-            OB.UTIL.cashUpReport(auxReceiptList, function (cashUp) {
-              var setMultiOrderCashUpReport;
-              setMultiOrderCashUpReport = function (receiptList, cashUp, index, callback) {
-                if (index >= receiptList.length) {
-                  if (callback) {
-                    callback();
-                    return;
-                  }
-                }
-                var receiptMulti = receiptList[index];
-                receiptMulti.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
-                receiptMulti.set('json', JSON.stringify(receipt.serializeToJSON()));
-                OB.Dal.save(receiptMulti, function () {
-                  me.get('multiOrders').trigger('closed', receiptMulti, function () {
-                    setMultiOrderCashUpReport(receiptList, cashUp, index + 1, callback);
-                  });
-                }, function () {});
-              };
-              setMultiOrderCashUpReport(me.get('multiOrders').get('multiOrdersList').models, cashUp, 0, function () {
-                // Called readyToSendFunction when all pending ticket have been processed
-                readyToSendFunction();
-              });
-            });
-            auxReceiptList = [];
-          }
-        } else {
-          me.get('multiOrders').trigger('closed', order);
+        closedReceipts++;
+        if (closedReceipts === me.get('multiOrders').get('multiOrdersList').length) {
+          //no need to send order
+          me.get('multiOrders').trigger('closed');
         }
       }
 
