@@ -71,6 +71,10 @@ public class ChangeInventoryStatusActionHandler extends BaseProcessActionHandler
       return;
     }
     String errorMessage = "";
+    if (locator.isVirtual()) {
+      throw new OBException(OBMessageUtils.messageBD("M_VirtualBinCanNotChangeInvStatus").concat(
+          "<br/>"));
+    }
     for (StorageDetail storageDetail : locator.getMaterialMgmtStorageDetailList()) {
       try {
         // Hook to perform validations over the Storage Detail
