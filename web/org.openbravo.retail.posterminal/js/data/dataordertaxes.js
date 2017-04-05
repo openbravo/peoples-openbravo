@@ -261,11 +261,12 @@
           roundedLinePriceNet = OB.DEC.toNumber(linepricenet);
         }
 
-        if (!line.get('tax')) {
+        if (!line.get('tax') || line.get('taxnull')) {
           line.set('tax', linetaxid, {
             silent: true
           });
         }
+        line.unset('taxnull');
         line.set({
           'taxAmount': OB.DEC.add(line.get('taxAmount'), OB.DEC.sub(discountedGross, linenet)),
           'net': OB.DEC.add(line.get('net'), linenet),
@@ -429,7 +430,7 @@
       // Initialize line properties
       line.set({
         'taxLines': {},
-        'tax': null,
+        'taxnull': true,
         'taxAmount': OB.DEC.Zero,
         'net': OB.DEC.Zero,
         'pricenet': OB.DEC.Zero,
@@ -452,6 +453,7 @@
             line.set('tax', coll.at(0).get('id'), {
               silent: true
             });
+            line.unset('taxnull');
 
             // BOM, calculate taxes based on the products list
             return getProductBOM(product.get('id')).then(function (data) {
@@ -793,11 +795,12 @@
         });
 
         // Accumulate gross and discounted gross with the taxes calculated in this invocation.
-        if (!line.get('tax')) {
+        if (!line.get('tax') || line.get('taxnull')) {
           line.set('tax', linetaxid, {
             silent: true
           });
         }
+        line.unset('taxnull');
         line.set({
           'gross': OB.DEC.add(line.get('gross'), OB.DEC.sub(OB.DEC.toNumber(linegross), linenet)),
           'discountedGross': OB.DEC.add(line.get('discountedGross'), OB.DEC.sub(OB.DEC.toNumber(discountedGross), discountedNet))
@@ -813,7 +816,7 @@
         'pricenet': line.get('price'),
         'net': OB.DEC.mul(line.get('price'), line.get('qty')),
         'linerate': OB.DEC.One,
-        'tax': null,
+        'taxnull': true,
         'taxAmount': OB.DEC.Zero,
         'taxLines': {}
       }, {
@@ -840,6 +843,7 @@
         }, {
           silent: true
         });
+        line.unset('taxnull');
 
         resultpromise = Promise.resolve();
       } else {
@@ -878,6 +882,7 @@
               line.set('tax', coll.at(0).get('id'), {
                 silent: true
               });
+              line.unset('taxnull');
 
               // BOM, calculate taxes based on the products list
               return getProductBOM(product.get('id')).then(function (data) {

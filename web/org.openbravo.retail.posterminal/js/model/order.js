@@ -1454,24 +1454,17 @@
           this.set('deletedLines', []);
         }
         if (!line.get('hasTaxError')) {
-          if (OB.UTIL.isNullOrUndefined(isLastLine) || isLastLine) {
-            this.set('skipCalculateReceipt', true);
-            line.set('obposIsDeleted', true);
-            line.set('obposQtyDeleted', line.get('qty'));
-            line.set('qty', 0);
-            this.set('skipCalculateReceipt', false);
-            me.get('deletedLines').push(new OrderLine(line.attributes));
-            // remove the line
-            finishDelete();
-          } else {
-            this.set('skipCalculateReceipt', true);
-            line.set('obposIsDeleted', true);
-            line.set('obposQtyDeleted', line.get('qty'));
-            line.set('qty', 0);
-            this.get('deletedLines').push(new OrderLine(line.attributes));
-            // remove the line
-            finishDelete();
-          }
+          // Clone the line to be moved as deleted.
+          var deletedline = new OrderLine(line.attributes);
+          // Set the line as deleted
+          deletedline.set('obposIsDeleted', true);
+          deletedline.set('obposQtyDeleted', line.get('qty'));
+          // set quantity as 0
+          deletedline.set('qty', 0);
+          // Move to deleted lines
+          this.get('deletedLines').push(deletedline);
+          // remove the receipt line
+          finishDelete();
         }
       } else {
         // remove the line
