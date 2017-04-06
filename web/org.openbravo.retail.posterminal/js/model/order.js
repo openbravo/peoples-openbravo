@@ -1459,6 +1459,8 @@
           // Set the line as deleted
           deletedline.set('obposIsDeleted', true);
           deletedline.set('obposQtyDeleted', line.get('qty'));
+          // Sets the tax if it has been deleted
+          deletedline.set('tax', deletedline.get('tax') ? deletedline.get('tax') : deletedline.get('taxUndo'));
           // set quantity as 0
           deletedline.set('qty', 0);
           // Move to deleted lines
