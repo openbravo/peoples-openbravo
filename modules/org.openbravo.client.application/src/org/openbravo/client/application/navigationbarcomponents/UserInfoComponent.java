@@ -19,25 +19,23 @@
 package org.openbravo.client.application.navigationbarcomponents;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.hibernate.Query;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.KernelServlet;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.SessionDynamicTemplateComponent;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.model.ad.access.Role;
-import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.system.SystemInformation;
 
@@ -45,11 +43,10 @@ import org.openbravo.model.ad.system.SystemInformation;
  * Component that provides the context information of the current user within the 'Profile' widget.
  */
 public class UserInfoComponent extends SessionDynamicTemplateComponent {
-  // private static final Logger log = Logger.getLogger(UserInfoComponent.class);
   private static final String COMPONENT_ID = "UserInfo";
   private static final String TEMPLATE_ID = "CB89E38CF75545499BF0B91FA6B233E5";
 
-  private List<Role> userRoles;
+  private List<RoleInfo> userRoles;
 
   @Override
   public String getId() {
@@ -94,31 +91,19 @@ public class UserInfoComponent extends SessionDynamicTemplateComponent {
     return languages.list();
   }
 
-  public List<Role> getUserRolesSorted() {
-    final List<Role> sortedRoles = new ArrayList<Role>(getUserRoles());
-    DalUtil.sortByIdentifier(sortedRoles);
-    return sortedRoles;
-  }
-
   public List<RoleInfo> getUserRolesInfo() {
-    List<RoleInfo> list = new ArrayList<>();
-    for (Role role : getUserRoles()) {
-      list.add(new RoleInfo(role));
-    }
-    return list;
-  }
-
-  private List<Role> getUserRoles() {
     if (userRoles != null) {
       return userRoles;
     }
+    userRoles = new ArrayList<>();
     ActivationKey ak = ActivationKey.getInstance();
     SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
     boolean correctSystemStatus = sysInfo.getSystemStatus() == null
         || KernelServlet.getGlobalParameters().getOBProperty("safe.mode", "false")
             .equalsIgnoreCase("false") || sysInfo.getSystemStatus().equals("RB70");
     if (!correctSystemStatus) {
-      return Collections.singletonList(OBDal.getInstance().get(Role.class, "0"));
+      userRoles.add(new RoleInfo(OBDal.getInstance().get(Role.class, "0")));
+      return userRoles;
     }
 
     if (getParameters().get(KernelConstants.HTTP_SESSION) != null) {
@@ -132,7 +117,8 @@ public class UserInfoComponent extends SessionDynamicTemplateComponent {
           || limitation == LicenseRestriction.HB_NOT_ACTIVE
           || limitation == LicenseRestriction.ON_DEMAND_OFF_PLATFORM
           || limitation == LicenseRestriction.POS_TERMINALS_EXCEEDED) {
-        return Collections.singletonList(OBDal.getInstance().get(Role.class, "0"));
+        userRoles.add(new RoleInfo(OBDal.getInstance().get(Role.class, "0")));
+        return userRoles;
       }
     }
 
@@ -141,21 +127,19 @@ public class UserInfoComponent extends SessionDynamicTemplateComponent {
     boolean onlySystemAdminAccess = "Y".equals(vars
         .getSessionValue("onlySystemAdminRoleShouldBeAvailableInErp"));
     if (onlySystemAdminAccess) {
-      return Collections.singletonList(OBDal.getInstance().get(Role.class, "0"));
+      userRoles.add(new RoleInfo(OBDal.getInstance().get(Role.class, "0")));
+      return userRoles;
     }
 
     // return the complete role list for the current user
-    final OBQuery<UserRoles> rolesQuery = OBDal.getInstance().createQuery(UserRoles.class,
-        " userContact.id=? and role.active=true and role.isrestrictbackend=false");
-    rolesQuery.setFilterOnReadableClients(false);
-    rolesQuery.setFilterOnReadableOrganization(false);
-    rolesQuery.setParameters(Collections.singletonList((Object) OBContext.getOBContext().getUser()
-        .getId()));
-    userRoles = new ArrayList<Role>();
-    for (UserRoles userRole : rolesQuery.list()) {
-      if (!userRoles.contains(userRole.getRole())) {
-        userRoles.add(userRole.getRole());
-      }
+    final StringBuilder hql = new StringBuilder();
+    hql.append("select ur.role.id, ur.role.name, ur.client.id, ur.client.name from ADUserRoles ur ");
+    hql.append("where ur.userContact.id=:userId and ur.role.active=true and ur.role.isrestrictbackend=false ");
+    hql.append("order by ur.role.name");
+    Query rolesQry = OBDal.getInstance().getSession().createQuery(hql.toString());
+    rolesQry.setString("userId", OBContext.getOBContext().getUser().getId());
+    for (Object entry : rolesQry.list()) {
+      userRoles.add(new RoleInfo((Object[]) entry));
     }
     return userRoles;
   }

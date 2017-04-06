@@ -40,24 +40,24 @@ OB.User.userInfo = {
   role: {
     value: '${data.contextRoleId}',
     valueMap: [
-      <#list data.userRolesSorted as role>
+      <#list data.userRolesInfo as roleInfo>
         {
-          id: '${role.id}',
-          _identifier: '${role.identifier} - ${role.client.identifier}'
-        } <#if role_has_next>,</#if>
+          id: '${roleInfo.roleId}',
+          _identifier: '${roleInfo.roleName} - ${roleInfo.clientName}'
+        } <#if roleInfo_has_next>,</#if>
       </#list>
     ],
     roles: [
       <#list data.userRolesInfo as roleInfo>
       {
         id: '${roleInfo.roleId}',
-        client: '${roleInfo.client}',
+        client: '${roleInfo.clientName}',
         organizationValueMap: [
-        <#list roleInfo.organizations as organization>
+        <#list roleInfo.organizations?keys as organizationId>
           {
-            id: '${organization.id}',
-            _identifier: '${organization.identifier}'
-          } <#if organization_has_next>,</#if>
+            id: '${organizationId}',
+            _identifier: '${roleInfo.organizations[organizationId]}'
+          } <#if organizationId_has_next>,</#if>
           </#list>
         ],
         warehouseOrgMap: [
@@ -67,8 +67,8 @@ OB.User.userInfo = {
             warehouseMap: [
             <#list roleInfo.organizationWarehouses[key] as warehouse>
               {
-                id: '${warehouse.id}',
-                _identifier: '${warehouse.identifier}'
+                id: '${warehouse.warehouseId}',
+                _identifier: '${warehouse.warehouseName}'
               } <#if warehouse_has_next>,</#if>
               </#list>
             ]

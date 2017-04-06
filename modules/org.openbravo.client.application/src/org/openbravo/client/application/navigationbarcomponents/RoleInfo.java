@@ -23,16 +23,13 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.openbravo.dal.core.DalUtil;
+import org.hibernate.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.access.Role;
-import org.openbravo.model.ad.access.RoleOrganization;
-import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.common.enterprise.Warehouse;
 
 /**
  * This class provides the organizations and warehouses that can be accessed for a particular role.
@@ -40,59 +37,115 @@ import org.openbravo.model.common.enterprise.Warehouse;
  * to the current user.
  */
 public class RoleInfo {
-  private Role role;
-  private List<Organization> roleOrganizations;
-  private Map<String, List<Warehouse>> organizationWarehouses;
+  private String roleId;
+  private String roleName;
+  private String clientId;
+  private String clientName;
+  private Map<String, String> roleOrganizations;
+  private Map<String, List<RoleWarehouseInfo>> organizationWarehouses;
+
+  public RoleInfo(Object[] roleInfo) {
+    this.roleId = (String) roleInfo[0];
+    this.roleName = (String) roleInfo[1];
+    this.clientId = (String) roleInfo[2];
+    this.clientName = (String) roleInfo[3];
+  }
 
   public RoleInfo(Role role) {
-    this.role = role;
+    this.roleId = role.getId();
+    this.roleName = role.getIdentifier();
+    this.clientId = role.getClient().getId();
+    this.clientName = role.getClient().getIdentifier();
   }
 
   public String getRoleId() {
-    return role.getId();
+    return roleId;
   }
 
-  public String getClient() {
-    return role.getClient().getIdentifier();
+  public String getRoleName() {
+    return roleName;
   }
 
-  public List<Organization> getOrganizations() {
+  public String getClientId() {
+    return clientId;
+  }
+
+  public String getClientName() {
+    return clientName;
+  }
+
+  private OrganizationStructureProvider getOrganizationStructureProvider() {
+    return OBContext.getOBContext().getOrganizationStructureProvider(clientId);
+  }
+
+  public Map<String, String> getOrganizations() {
     if (roleOrganizations != null) {
       return roleOrganizations;
     }
-    roleOrganizations = new ArrayList<Organization>();
-    final OBQuery<RoleOrganization> roleOrgs = OBDal.getInstance().createQuery(
-        RoleOrganization.class, "role.id=:roleId and organization.active=true");
-    roleOrgs.setFilterOnReadableClients(false);
-    roleOrgs.setFilterOnReadableOrganization(false);
-    roleOrgs.setNamedParameter("roleId", role.getId());
-    for (RoleOrganization roleOrg : roleOrgs.list()) {
-      if (!roleOrganizations.contains(roleOrg.getOrganization())) {
-        roleOrganizations.add(roleOrg.getOrganization());
-      }
+    roleOrganizations = new LinkedHashMap<>();
+
+    final StringBuilder hql = new StringBuilder();
+    hql.append("select ro.organization.id, ro.organization.name from ADRoleOrganization ro ");
+    hql.append("where ro.role.id=:roleId and ro.organization.active=true ");
+    hql.append("order by ro.organization.name");
+    Query roleOrgs = OBDal.getInstance().getSession().createQuery(hql.toString());
+    roleOrgs.setString("roleId", roleId);
+    for (Object entry : roleOrgs.list()) {
+      final Object[] orgInfo = (Object[]) entry;
+      roleOrganizations.put((String) orgInfo[0], (String) orgInfo[1]);
     }
-    DalUtil.sortByIdentifier(roleOrganizations);
     return roleOrganizations;
   }
 
-  public Map<String, List<Warehouse>> getOrganizationWarehouses() {
+  public Map<String, List<RoleWarehouseInfo>> getOrganizationWarehouses() {
     if (organizationWarehouses != null) {
       return organizationWarehouses;
     }
     organizationWarehouses = new LinkedHashMap<>();
-    for (Organization org : getOrganizations()) {
-      final OrganizationStructureProvider osp = OBContext.getOBContext()
-          .getOrganizationStructureProvider(role.getClient().getId());
-      final OBQuery<Warehouse> warehouses = OBDal
-          .getInstance()
-          .createQuery(Warehouse.class,
-              "organization.id in (:orgList) and client.id=:clientId and organization.active=true order by name");
-      warehouses.setNamedParameter("orgList", osp.getNaturalTree(org.getId()));
-      warehouses.setNamedParameter("clientId", role.getClient().getId());
-      warehouses.setFilterOnReadableClients(false);
-      warehouses.setFilterOnReadableOrganization(false);
-      organizationWarehouses.put(org.getId(), warehouses.list());
+    for (String orgId : getOrganizations().keySet()) {
+      organizationWarehouses.put(orgId, new ArrayList<RoleWarehouseInfo>());
+    }
+
+    final StringBuilder hql = new StringBuilder();
+    hql.append("select w.id, w.name, w.organization.id from Warehouse w ");
+    hql.append("where w.organization.id in (:orgList) and w.client.id=:clientId and w.organization.active=true ");
+    hql.append("order by w.name");
+    Query orgWarehouses = OBDal.getInstance().getSession().createQuery(hql.toString());
+    orgWarehouses.setParameterList("orgList", getOrganizations().keySet());
+    orgWarehouses.setString("clientId", clientId);
+    for (Object entry : orgWarehouses.list()) {
+      RoleWarehouseInfo warehouseInfo = new RoleWarehouseInfo((Object[]) entry);
+      for (String orgId : organizationWarehouses.keySet()) {
+        Set<String> naturalTree = getOrganizationStructureProvider().getNaturalTree(orgId);
+        if (naturalTree.contains(warehouseInfo.getWarehouseOrganizationId())) {
+          organizationWarehouses.get(orgId).add(warehouseInfo);
+        }
+      }
     }
     return organizationWarehouses;
+  }
+
+  public class RoleWarehouseInfo {
+    private String warehouseId;
+    private String warehouseName;
+    private String warehouseOrganizationId;
+
+    public RoleWarehouseInfo(Object[] warehouseInfo) {
+      this.warehouseId = (String) warehouseInfo[0];
+      this.warehouseName = (String) warehouseInfo[1];
+      this.warehouseOrganizationId = (String) warehouseInfo[2];
+    }
+
+    public String getWarehouseId() {
+      return warehouseId;
+    }
+
+    public String getWarehouseName() {
+      return warehouseName;
+    }
+
+    public String getWarehouseOrganizationId() {
+      return warehouseOrganizationId;
+    }
   }
 }
