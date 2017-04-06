@@ -65,11 +65,41 @@ import org.openbravo.model.ad.ui.Tab;
 public class EntityAccessChecker implements OBNotSingleton {
   private static final Logger log = Logger.getLogger(EntityAccessChecker.class);
 
+  /**
+   * This list is used to take into account processes linked with OBUISEL_Selector references. Every
+   * array contain the following data:<li>
+   * [sel.processDefinition.ID | col.table.ID].
+   */
   private static List<Object[]> processAccessSelectors;
+  /**
+   * This list is used to take into account entities of the selectors with Search parent reference.
+   * Every array contain the following data:<li>
+   * [sel.table.ID | col.table.ID].
+   */
   private static List<Object[]> targetTablesIds;
+  /**
+   * This list is used to take into account processes. Every array contain the following data:<li>
+   * [process.ID | col.table.ID].
+   */
   private static List<Object[]> processAccessButtons;
+  /**
+   * This list is used to take into account entities of the processes defined in Window references.
+   * Every array contain the following data:<li>
+   * [tab.table.ID | parameter.process.ID | tab.ID].
+   */
   private static List<Object[]> parameterOfWindowProcessReference;
+  /**
+   * This list is used to take into account entities of the processes defined in OBUISEL_Selector
+   * and OBUISEL_Multi Selector references. Every array contain the following data:<li>
+   * [sel.table.ID | parameter.process.ID].
+   */
   private static List<Object[]> parameterOfSelectorProcessReference;
+  /**
+   * This list is used to take into account entities of all the selector references. These selector
+   * references should be filter later by all the tabs of the window references. Every array contain
+   * the following data: <li>
+   * [field.tab.table.ID | field.tab.ID].
+   */
   private static List<Object[]> selectorsFromWindowReferences;
 
   private static final String SELECTOR_REFERENCE = "95E2A8B50A254B2AAE6774B8C2F28120";
@@ -121,19 +151,16 @@ public class EntityAccessChecker implements OBNotSingleton {
    */
   @SuppressWarnings("unchecked")
   public static void calculateCachedElements() {
-    // take into account entities of the selectors with Search parent reference
     String hqlQry = "select distinct(s.table.id), c.table.id from OBUISEL_Selector s "
         + "left join s.reference r left join r.aDColumnReferenceSearchKeyList c "
         + "where r.parentReference='" + SEARCH_REFERENCE + "'";
     targetTablesIds = SessionHandler.getInstance().createQuery(hqlQry).list();
 
-    // take into account processes linked with selectors
     hqlQry = "select p.id, c.table.id from ADColumn c inner join c.table t inner join "
         + "c.referenceSearchKey r inner join r.oBUISELSelectorList s inner join s.processDefintion "
         + "p  where r.parentReference='" + SELECTOR_REFERENCE + "'";
     processAccessSelectors = SessionHandler.getInstance().createQuery(hqlQry).list();
 
-    // take into account processes
     hqlQry = "select p.id, c.table.id from ADColumn c inner join c.table t inner join "
         + "c.oBUIAPPProcess p";
     processAccessButtons = SessionHandler.getInstance().createQuery(hqlQry).list();
@@ -146,8 +173,6 @@ public class EntityAccessChecker implements OBNotSingleton {
         + SELECTOR_REFERENCE + "','" + MULTI_SELECTOR_REFERENCE + "')";
     parameterOfSelectorProcessReference = SessionHandler.getInstance().createQuery(hqlQry).list();
 
-    // Calculate all the selector references. These selector references should be filter later by
-    // all the tabs of the window references.
     hqlQry = "select f.tab.table.id, f.tab.id from ADField f inner join f.column c inner join c.referenceSearchKey r  where r.parentReference='"
         + SELECTOR_REFERENCE + "'";
     selectorsFromWindowReferences = SessionHandler.getInstance().createQuery(hqlQry).list();
@@ -686,7 +711,6 @@ public class EntityAccessChecker implements OBNotSingleton {
         selectedReferences.add(ref);
       }
     }
-
     return selectedReferences;
   }
 
