@@ -20,6 +20,7 @@ package org.openbravo.materialmgmt;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -243,6 +244,35 @@ public class ReservationUtils {
     query.setParameter("uom", storageDetail.getUOM());
 
     return !query.list().isEmpty();
+  }
+
+  /**
+   * Returns a list of related Reservations Stock for a given Storage Detail
+   * 
+   * @param storageDetail
+   *          A StorageDetail object that contains the information about the Stock
+   * @return a list of related Reservations Stock
+   */
+  @SuppressWarnings("unchecked")
+  public static List<ReservationStock> getReservationStockFromStorageDetail(
+      StorageDetail storageDetail) {
+    StringBuilder hql = new StringBuilder();
+    hql.append("select rs");
+    hql.append(" from MaterialMgmtReservationStock rs");
+    hql.append(" join rs.reservation r");
+    hql.append(" where r.product = :product");
+    hql.append(" and coalesce(rs.storageBin, r.storageBin) = :storageBin");
+    hql.append(" and coalesce(rs.attributeSetValue, r.attributeSetValue) = :attributeSetValue");
+    hql.append(" and r.uOM = :uom");
+    hql.append(" and rs.quantity > rs.released)");
+
+    Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    query.setParameter("product", storageDetail.getProduct());
+    query.setParameter("storageBin", storageDetail.getStorageBin());
+    query.setParameter("attributeSetValue", storageDetail.getAttributeSetValue());
+    query.setParameter("uom", storageDetail.getUOM());
+
+    return query.list();
   }
 
 }
