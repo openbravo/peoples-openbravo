@@ -135,7 +135,6 @@ public class UserInfoComponent extends SessionDynamicTemplateComponent {
     final StringBuilder hql = new StringBuilder();
     hql.append("select ur.role.id, ur.role.name, ur.client.id, ur.client.name from ADUserRoles ur ");
     hql.append("where ur.userContact.id=:userId and ur.role.active=true and ur.role.isrestrictbackend=false ");
-    hql.append("order by ur.role.name");
     Query rolesQry = OBDal.getInstance().getSession().createQuery(hql.toString());
     rolesQry.setString("userId", OBContext.getOBContext().getUser().getId());
     for (Object entry : rolesQry.list()) {

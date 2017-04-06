@@ -158,22 +158,26 @@ isc.OBUserProfile.addProperties({
 
     roleField = isc.addProperties({
       name: 'role',
-      title: OB.I18N.getLabel('UINAVBA_Role')
+      title: OB.I18N.getLabel('UINAVBA_Role'),
+      sortField: 'role',
     }, comboBoxFieldProperties);
 
     orgField = isc.addProperties({
       name: 'organization',
-      title: OB.I18N.getLabel('UINAVBA_Organization')
+      title: OB.I18N.getLabel('UINAVBA_Organization'),
+      sortField: 'organization',
     }, comboBoxFieldProperties);
 
     warehouseField = isc.addProperties({
       name: 'warehouse',
-      title: OB.I18N.getLabel('UINAVBA_Warehouse')
+      title: OB.I18N.getLabel('UINAVBA_Warehouse'),
+      sortField: 'warehouse',
     }, comboBoxFieldProperties);
 
     languageField = isc.addProperties({
       name: 'language',
-      title: OB.I18N.getLabel('UINAVBA_Language')
+      title: OB.I18N.getLabel('UINAVBA_Language'),
+      sortField: 'language',
     }, comboBoxFieldProperties);
 
     checkboxFieldProperties = {
