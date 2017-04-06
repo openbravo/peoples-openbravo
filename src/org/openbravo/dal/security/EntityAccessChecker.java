@@ -257,17 +257,12 @@ public class EntityAccessChecker implements OBNotSingleton {
 
         // take into account processes
         for (String processButton : getProcessAccessButtons(processTables)) {
-          if (!processes.contains(processButton)) {
-            processes.add(processButton);
-            // addEntitiesFromProcess(processButton);
-          }
+          processes.add(processButton);
         }
 
         // take into account processes linked with selectors
         for (String processSelector : getProcessAccessSelectors(processTables)) {
-          if (!processes.contains(processSelector)) {
-            processes.add(processSelector);
-          }
+          processes.add(processSelector);
         }
 
         // and take into account entities of the selectors with Search parent reference
@@ -288,9 +283,7 @@ public class EntityAccessChecker implements OBNotSingleton {
       final List<String> processAccessQuery = SessionHandler.getInstance()
           .createQuery(processAccessQryStr).list();
       for (final String processAccess : processAccessQuery) {
-        if (!processes.contains(processAccess)) {
-          processes.add(processAccess);
-        }
+        processes.add(processAccess);
       }
 
       addEntitiesFromProcesses();
