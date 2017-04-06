@@ -55,6 +55,8 @@
     v_org_bule_id AD_Org.AD_Org_ID%TYPE;
     END_PROCESS BOOLEAN:=false;
     v_productname m_product.name%TYPE;
+    v_overIssueFrom m_inventorystatus.overissue%TYPE;
+    v_overIssueTo m_inventorystatus.overissue%TYPE;
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || PInstance_ID) ;
@@ -189,8 +191,21 @@
           (SELECT *  FROM M_MovementLine  WHERE M_Movement_ID=v_Record_ID  ORDER BY Line)
         LOOP
           v_ResultStr:='Transaction for line' || Cur_MoveLine.Line;
+          
+          SELECT overissue
+          INTO v_overIssueFrom
+          FROM M_InventoryStatus
+          WHERE M_InventoryStatus_ID = (SELECT M_InventoryStatus_ID
+                                        FROM M_Locator
+                                        WHERE M_Locator_ID = Cur_MoveLine.M_Locator_ID);                               
+          SELECT overissue
+          INTO v_overIssueTo
+          FROM M_InventoryStatus
+          WHERE M_InventoryStatus_ID = (SELECT M_InventoryStatus_ID
+                                        FROM M_Locator
+                                        WHERE M_Locator_ID = Cur_MoveLine.M_LocatorTo_ID);
 
-          IF (Cur_MoveLine.MovementQty <= 0) THEN
+          IF (Cur_MoveLine.MovementQty <= 0 AND (v_overIssueFrom = 'N' OR v_overIssueTo = 'N')) THEN
             RAISE_APPLICATION_ERROR(-20000,'@GoodsMovementsWithNegativeQty@' || ' @Inline@ ' || Cur_MoveLine.line) ;
           END IF;
           
