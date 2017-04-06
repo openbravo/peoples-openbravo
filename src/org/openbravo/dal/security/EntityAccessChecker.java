@@ -300,21 +300,20 @@ public class EntityAccessChecker implements OBNotSingleton {
     }
   }
 
-  private List<String> getProcessAccessSelectors(Set<String> processTables) {
+  private Set<String> getProcessAccessSelectors(Set<String> processTables) {
     return getProcessAccess(processTables, processAccessSelectors);
   }
 
-  private List<String> getProcessAccessButtons(Set<String> processTables) {
+  private Set<String> getProcessAccessButtons(Set<String> processTables) {
     return getProcessAccess(processTables, processAccessButtons);
   }
 
-  private List<String> getTargetTablesIds(Set<String> processTables) {
+  private Set<String> getTargetTablesIds(Set<String> processTables) {
     return getProcessAccess(processTables, targetTablesIds);
   }
 
-  private List<String> getProcessAccess(Set<String> processTables,
-      List<Object[]> targetProcessAccess) {
-    List<String> targetProcesses = new ArrayList<>();
+  private Set<String> getProcessAccess(Set<String> processTables, List<Object[]> targetProcessAccess) {
+    Set<String> targetProcesses = new HashSet<>();
     for (Object[] pa : targetProcessAccess) {
       if (processTables.contains(pa[1])) {
         targetProcesses.add((String) pa[0]);
