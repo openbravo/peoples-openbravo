@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -138,7 +138,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
       // not more filters
     } else if (json.getBoolean("isLayaway")) {
       // (It is Layaway)
-      hqlPaidReceipts += " and ord.obposApplications is not null and ord.obposIslayaway = true";
+      hqlPaidReceipts += " and ord.obposApplications is not null and ord.obposIslayaway = true and ord.cancelledorder is null";
 
     } else if (json.getBoolean("isReturn")) {
       // (It is a Return)
