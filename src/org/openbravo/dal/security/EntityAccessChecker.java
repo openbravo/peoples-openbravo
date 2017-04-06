@@ -107,6 +107,12 @@ public class EntityAccessChecker implements OBNotSingleton {
   private static final String SEARCH_REFERENCE = "30";
   private static final String WINDOW_REFERENCE = "FF80818132D8F0F30132D9BC395D0038";
 
+  private static final int TABLE_ID = 1;
+  private static final int SELECTED_TABLE_ID = 0;
+  private static final int SELECTED_ID = 0;
+  private static final int TAB_ID = 2;
+  private static final int FILTER_ELEMENT_ID = 1;
+
   // Table Access Level:
   // "6";"System/Client"
   // "1";"Organization"
@@ -333,8 +339,8 @@ public class EntityAccessChecker implements OBNotSingleton {
   private Set<String> getProcessAccess(Set<String> processTables, List<Object[]> targetProcessAccess) {
     Set<String> targetProcesses = new HashSet<>();
     for (Object[] pa : targetProcessAccess) {
-      if (processTables.contains(pa[1])) {
-        targetProcesses.add((String) pa[0]);
+      if (processTables.contains(pa[TABLE_ID])) {
+        targetProcesses.add((String) pa[SELECTED_ID]);
       }
     }
     return targetProcesses;
@@ -690,24 +696,21 @@ public class EntityAccessChecker implements OBNotSingleton {
   }
 
   private List<Object[]> getProcessWindowReference(Set<String> processTables) {
-    // 0: tab.table.id | 1:process.id | 2:tab.id |
     return getReferences(processTables, parameterOfWindowProcessReference);
   }
 
   private List<Object[]> getProcessSelectorReference(Set<String> processTables) {
-    // 0: sel.table.id | 1: process.id
     return getReferences(processTables, parameterOfSelectorProcessReference);
   }
 
   private List<Object[]> getSelectorReferencesFromTabs(Set<String> tabs) {
-    // 0: table.id | 1: tab.id
     return getReferences(tabs, selectorsFromWindowReferences);
   }
 
   private List<Object[]> getReferences(Set<String> filterElements, List<Object[]> references) {
     List<Object[]> selectedReferences = new ArrayList<Object[]>();
     for (Object[] ref : references) {
-      if (filterElements.contains(ref[1])) {
+      if (filterElements.contains(ref[FILTER_ELEMENT_ID])) {
         selectedReferences.add(ref);
       }
     }
@@ -727,7 +730,7 @@ public class EntityAccessChecker implements OBNotSingleton {
    * derived entity.
    */
   private void addEntitiesOfSelectorReference(ModelProvider mp, Object[] ref) {
-    final Entity derivedEntity = mp.getEntityByTableId((String) ref[0]);
+    final Entity derivedEntity = mp.getEntityByTableId((String) ref[SELECTED_TABLE_ID]);
     if (!writableEntities.contains(derivedEntity) && !readableEntities.contains(derivedEntity)
         && !derivedReadableEntities.contains(derivedEntity)
         && !nonReadableEntities.contains(derivedEntity)) {
@@ -739,10 +742,9 @@ public class EntityAccessChecker implements OBNotSingleton {
    * Obtain entities from window and added to readable and writable entities.
    */
   private void addEntitiesOfWindowReference(ModelProvider mp, Object[] ref) {
-    // 0: tab.table.id | 1:tab.id | 2:process.id
-    tabsWithSelectors.add((String) ref[1]);
+    tabsWithSelectors.add((String) ref[TAB_ID]);
 
-    final Entity derivedEntity = mp.getEntityByTableId((String) ref[0]);
+    final Entity derivedEntity = mp.getEntityByTableId((String) ref[SELECTED_TABLE_ID]);
     if (!writableEntities.contains(derivedEntity) && !readableEntities.contains(derivedEntity)
         && !nonReadableEntities.contains(derivedEntity)) {
       readableEntities.add(derivedEntity);
