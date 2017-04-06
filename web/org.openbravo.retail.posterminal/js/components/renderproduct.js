@@ -191,7 +191,7 @@ enyo.kind({
       this.$.btnProductContextMenu.hide();
       this.$.identifierContainer.setStyle("");
     } else {
-      this.$.btnProductContextMenu.setProduct(this.model);
+      this.$.btnProductContextMenu.setModel(this.model);
       this.$.identifierContainer.setStyle("width: calc(100% - 38px)");
       if (this.model.get('showchdesc') && !this.model.get('characteristicDescription')) {
         this.setStyle('padding: 8px 10px 0px 10px');
