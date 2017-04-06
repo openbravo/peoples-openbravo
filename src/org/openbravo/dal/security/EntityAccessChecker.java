@@ -66,39 +66,38 @@ public class EntityAccessChecker implements OBNotSingleton {
   private static final Logger log = Logger.getLogger(EntityAccessChecker.class);
 
   /**
-   * This list is used to take into account processes linked with OBUISEL_Selector references. Every
-   * array contain the following data:<li>
-   * [sel.processDefinition.ID | col.table.ID].
-   */
-  private static List<Object[]> processAccessSelectors;
-  /**
-   * This list is used to take into account entities of the selectors with Search parent reference.
-   * Every array contain the following data:<li>
-   * [sel.table.ID | col.table.ID].
+   * Caches entities of the selectors with Search parent reference. Elements store
+   * {@code [sel.table.ID | col.table.ID]}.
    */
   private static List<Object[]> targetTablesIds;
+
   /**
-   * This list is used to take into account processes. Every array contain the following data:<li>
-   * [process.ID | col.table.ID].
+   * Caches processes linked with OBUISEL_Selector references. Elements store
+   * {@code [sel.processDefinition.ID | col.table.ID]}.
+   */
+  private static List<Object[]> processAccessSelectors;
+
+  /**
+   * Caches processes. Every array contain the following data: {@code [process.ID | col.table.ID]}.
    */
   private static List<Object[]> processAccessButtons;
+
   /**
-   * This list is used to take into account entities of the processes defined in Window references.
-   * Every array contain the following data:<li>
-   * [tab.table.ID | parameter.process.ID | tab.ID].
+   * Caches entities of the processes defined in Window references. Elements store
+   * {@code [tab.table.ID | parameter.process.ID | tab.ID]}.
    */
   private static List<Object[]> parameterOfWindowProcessReference;
+
   /**
-   * This list is used to take into account entities of the processes defined in OBUISEL_Selector
-   * and OBUISEL_Multi Selector references. Every array contain the following data:<li>
-   * [sel.table.ID | parameter.process.ID].
+   * Caches entities of the processes defined in OBUISEL_Selector and OBUISEL_Multi Selector
+   * references. Elements store {@code [sel.table.ID | parameter.process.ID]}.
    */
   private static List<Object[]> parameterOfSelectorProcessReference;
+
   /**
-   * This list is used to take into account entities of all the selector references. These selector
-   * references should be filter later by all the tabs of the window references. Every array contain
-   * the following data: <li>
-   * [field.tab.table.ID | field.tab.ID].
+   * Caches entities of all the selector references. These selector references should be filter
+   * later by all the tabs of the window references. Elements store
+   * {@code [field.tab.table.ID | field.tab.ID]}.
    */
   private static List<Object[]> selectorsFromWindowReferences;
 
