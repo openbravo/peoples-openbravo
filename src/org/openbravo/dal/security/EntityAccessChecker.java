@@ -286,14 +286,10 @@ public class EntityAccessChecker implements OBNotSingleton {
         }
 
         // take into account processes
-        for (String processButton : getProcessAccessButtons(processTables)) {
-          processes.add(processButton);
-        }
+        processes.addAll(getProcessAccessButtons(processTables));
 
         // take into account processes linked with selectors
-        for (String processSelector : getProcessAccessSelectors(processTables)) {
-          processes.add(processSelector);
-        }
+        processes.addAll(getProcessAccessSelectors(processTables));
 
         // and take into account entities of the selectors with Search parent reference
         for (String tableId : getTargetTablesIds(processTables)) {
