@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,15 +35,11 @@ import org.openbravo.base.model.Table;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.application.ProcessAccess;
-import org.openbravo.client.application.RefWindow;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.TableAccess;
-import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.model.ad.ui.Window;
-import org.openbravo.userinterface.selector.Selector;
 
 /**
  * This class is responsible for determining the allowed read/write access for a combination of user
@@ -69,6 +65,13 @@ import org.openbravo.userinterface.selector.Selector;
 public class EntityAccessChecker implements OBNotSingleton {
   private static final Logger log = Logger.getLogger(EntityAccessChecker.class);
 
+  private static List<Object[]> processAccessSelectors;
+  private static List<Object[]> targetTablesIds;
+  private static List<Object[]> processAccessButtons;
+  private static List<Object[]> parameterOfWindowProcessReference;
+  private static List<Object[]> parameterOfSelectorProcessReference;
+  private static List<Object[]> selectorsFromWindowReferences;
+
   private static final String SELECTOR_REFERENCE = "95E2A8B50A254B2AAE6774B8C2F28120";
   private static final String MULTI_SELECTOR_REFERENCE = "87E6CFF8F71548AFA33F181C317970B5";
   private static final String SEARCH_REFERENCE = "30";
@@ -88,7 +91,7 @@ public class EntityAccessChecker implements OBNotSingleton {
   // " CO";"Client+Organization"
 
   private String roleId;
-
+  private Set<String> tabsWithSelectors;
   private Set<Entity> writableEntities = new HashSet<Entity>();
 
   private Set<Entity> readableEntities = new HashSet<Entity>();
@@ -105,6 +108,50 @@ public class EntityAccessChecker implements OBNotSingleton {
   private boolean isInitialized = false;
 
   private OBContext obContext;
+
+  static {
+    calculateCachedElements();
+  }
+
+  /**
+   * This method calculates all the information that could be cached in order to improve performance
+   * in entityAccessChecker process.
+   * 
+   * The static block only gets called once, when the class itself is initialized.
+   */
+  @SuppressWarnings("unchecked")
+  public static void calculateCachedElements() {
+    // take into account entities of the selectors with Search parent reference
+    final String selectorsOfSearchReference = "select distinct(s.table.id), c.table.id from OBUISEL_Selector s "
+        + "left join s.reference r left join r.aDColumnReferenceSearchKeyList c "
+        + "where r.parentReference='" + SEARCH_REFERENCE + "'";
+    targetTablesIds = SessionHandler.getInstance().createQuery(selectorsOfSearchReference).list();
+
+    // take into account processes linked with selectors
+    final String processSelStr = "select p.id, c.table.id from ADColumn c inner join c.table t inner join "
+        + "c.referenceSearchKey r inner join r.oBUISELSelectorList s inner join s.processDefintion "
+        + "p  where r.parentReference='" + SELECTOR_REFERENCE + "'";
+    processAccessSelectors = SessionHandler.getInstance().createQuery(processSelStr).list();
+
+    // take into account processes
+    final String processButStr = "select p.id, c.table.id from ADColumn c inner join c.table t inner join "
+        + "c.oBUIAPPProcess p";
+    processAccessButtons = SessionHandler.getInstance().createQuery(processButStr).list();
+
+    String hql = "select t.table.id, p.obuiappProcess.id, t.id from OBUIAPP_Parameter p inner join p.referenceSearchKey r inner join r.oBUIAPPRefWindowList rw inner join rw.window w inner join w.aDTabList t where p.reference.id in ('"
+        + WINDOW_REFERENCE + "')";
+    parameterOfWindowProcessReference = SessionHandler.getInstance().createQuery(hql).list();
+
+    hql = "select s.table.id, p.obuiappProcess.id from OBUIAPP_Parameter p inner join p.referenceSearchKey r inner join r.oBUISELSelectorList s where p.reference.id in('"
+        + SELECTOR_REFERENCE + "','" + MULTI_SELECTOR_REFERENCE + "')";
+    parameterOfSelectorProcessReference = SessionHandler.getInstance().createQuery(hql).list();
+
+    // Calculate all the selector references. These selector references should be filter later by
+    // all the tabs of the window references.
+    hql = "select f.tab.table.id, f.tab.id from ADField f inner join f.column c inner join c.referenceSearchKey r  where r.parentReference='"
+        + SELECTOR_REFERENCE + "'";
+    selectorsFromWindowReferences = SessionHandler.getInstance().createQuery(hql).list();
+  }
 
   /**
    * Reads the windows from the database using the current role of the user. Then it iterates
@@ -199,23 +246,17 @@ public class EntityAccessChecker implements OBNotSingleton {
         }
       }
       if (processEntities.size() > 0) {
-        String inTables = "(";
+        Set<String> processTables = new HashSet<>();
         for (final Entity entity : processEntities) {
           Table table = mp.getTableWithoutCheck(entity.getTableName());
           if (table == null) {
             continue;
           }
-          inTables = inTables + "'" + table.getId() + "',";
+          processTables.add(table.getId());
         }
-        inTables = inTables.substring(0, inTables.length() - 1) + ")";
 
         // take into account processes
-        final String processButStr = "select p.id from ADColumn c inner join c.table t inner join "
-            + "c.oBUIAPPProcess p where t.id in " + inTables;
-        @SuppressWarnings("unchecked")
-        final List<String> processAccessButtons = SessionHandler.getInstance()
-            .createQuery(processButStr).list();
-        for (String processButton : processAccessButtons) {
+        for (String processButton : getProcessAccessButtons(processTables)) {
           if (!processes.contains(processButton)) {
             processes.add(processButton);
             // addEntitiesFromProcess(processButton);
@@ -223,26 +264,14 @@ public class EntityAccessChecker implements OBNotSingleton {
         }
 
         // take into account processes linked with selectors
-        final String processSelStr = "select p.id from ADColumn c inner join c.table t inner join "
-            + "c.referenceSearchKey r inner join r.oBUISELSelectorList s inner join s.processDefintion "
-            + "p  where r.parentReference='" + SELECTOR_REFERENCE + "' and t.id in " + inTables;
-        @SuppressWarnings("unchecked")
-        final List<String> processAccessSelectors = SessionHandler.getInstance()
-            .createQuery(processSelStr).list();
-        for (String processSelector : processAccessSelectors) {
+        for (String processSelector : getProcessAccessSelectors(processTables)) {
           if (!processes.contains(processSelector)) {
             processes.add(processSelector);
           }
         }
 
         // and take into account entities of the selectors with Search parent reference
-        final String selectorsOfSearchReference = "select distinct(s.table.id) from OBUISEL_Selector s "
-            + "left join s.reference r left join r.aDColumnReferenceSearchKeyList c "
-            + "where r.parentReference='" + SEARCH_REFERENCE + "' and c.table.id in " + inTables;
-        @SuppressWarnings("unchecked")
-        final List<String> targetTablesIds = SessionHandler.getInstance()
-            .createQuery(selectorsOfSearchReference).list();
-        for (String tableId : targetTablesIds) {
+        for (String tableId : getTargetTablesIds(processTables)) {
           Entity targetSelectorEntity = ModelProvider.getInstance().getEntityByTableId(tableId);
           if (!writableEntities.contains(targetSelectorEntity)
               && !readableEntities.contains(targetSelectorEntity)
@@ -269,6 +298,29 @@ public class EntityAccessChecker implements OBNotSingleton {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private List<String> getProcessAccessSelectors(Set<String> processTables) {
+    return getProcessAccess(processTables, processAccessSelectors);
+  }
+
+  private List<String> getProcessAccessButtons(Set<String> processTables) {
+    return getProcessAccess(processTables, processAccessButtons);
+  }
+
+  private List<String> getTargetTablesIds(Set<String> processTables) {
+    return getProcessAccess(processTables, targetTablesIds);
+  }
+
+  private List<String> getProcessAccess(Set<String> processTables,
+      List<Object[]> targetProcessAccess) {
+    List<String> targetProcesses = new ArrayList<>();
+    for (Object[] pa : targetProcessAccess) {
+      if (processTables.contains(pa[1])) {
+        targetProcesses.add((String) pa[0]);
+      }
+    }
+    return targetProcesses;
   }
 
   /**
@@ -344,6 +396,10 @@ public class EntityAccessChecker implements OBNotSingleton {
     dumpSortedProcess(processes);
     log.info("");
     log.info("");
+    log.info(">>> Entities granted: "
+        + (processes.size() + readableNotWritable.size() + writableEntities.size()
+            + derivedEntitiesFromProcess.size() + derivedReadableEntities.size() + readableEntities
+              .size()));
 
   }
 
@@ -599,108 +655,86 @@ public class EntityAccessChecker implements OBNotSingleton {
     if (processes.isEmpty()) {
       return;
     }
-    String processesInList = createWhereInCondition(processes);
 
-    String hql = "select p.referenceSearchKey from OBUIAPP_Parameter p where p.reference.id in('"
-        + WINDOW_REFERENCE + "','" + SELECTOR_REFERENCE + "','" + MULTI_SELECTOR_REFERENCE
-        + "') and p.obuiappProcess.id in (" + processesInList + ")";
-    @SuppressWarnings("unchecked")
-    final List<Reference> references = SessionHandler.getInstance().createQuery(hql).list();
+    final ModelProvider mp = ModelProvider.getInstance();
+    tabsWithSelectors = new HashSet<String>();
 
-    for (Reference ref : references) {
-      addEntitiesFromProcessReference(ref);
+    for (Object[] ref : getProcessWindowReference(processes)) {
+      addEntitiesFromProcessWindowReference(mp, ref);
+    }
+
+    for (Object[] selTabs : getSelectorReferencesFromTabs(tabsWithSelectors)) {
+      addEntitiesOfSelectorReference(mp, selTabs);
+    }
+
+    for (Object[] ref : getProcessSelectorReference(processes)) {
+      addEntitiesFromProcessSelectorReference(mp, ref);
     }
   }
 
-  private void addEntitiesFromProcessReference(Reference ref) {
-    final ModelProvider mp = ModelProvider.getInstance();
+  private List<Object[]> getProcessWindowReference(Set<String> processTables) {
+    // 0: tab.table.id | 1:process.id | 2:tab.id |
+    return getReferences(processTables, parameterOfWindowProcessReference);
+  }
 
-    // RefWindows reference is checked and added to readable and writable entities
-    if (WINDOW_REFERENCE.equals(ref.getParentReference().getId())) {
-      RefWindow refWindow = !ref.getOBUIAPPRefWindowList().isEmpty() ? ref
-          .getOBUIAPPRefWindowList().get(0) : null;
-      if (refWindow == null) {
-        return;
+  private List<Object[]> getProcessSelectorReference(Set<String> processTables) {
+    // 0: sel.table.id | 1: process.id
+    return getReferences(processTables, parameterOfSelectorProcessReference);
+  }
+
+  private List<Object[]> getSelectorReferencesFromTabs(Set<String> tabs) {
+    // 0: table.id | 1: tab.id
+    return getReferences(tabs, selectorsFromWindowReferences);
+  }
+
+  private List<Object[]> getReferences(Set<String> filterElements, List<Object[]> references) {
+    List<Object[]> selectedReferences = new ArrayList<Object[]>();
+    for (Object[] ref : references) {
+      if (filterElements.contains(ref[1])) {
+        selectedReferences.add(ref);
       }
-      final Window window = refWindow.getWindow();
-      addEntitiesOfWindowReference(mp, window);
-
-      // Selector reference is checked and added to derivedReadableEntities entities
-    } else if (SELECTOR_REFERENCE.equals(ref.getParentReference().getId())
-        || MULTI_SELECTOR_REFERENCE.equals(ref.getParentReference().getId())) {
-      addEntitiesOfSelectorReference(mp, ref);
     }
+
+    return selectedReferences;
+  }
+
+  private void addEntitiesFromProcessWindowReference(ModelProvider mp, Object[] ref) {
+    addEntitiesOfWindowReference(mp, ref);
+  }
+
+  private void addEntitiesFromProcessSelectorReference(ModelProvider mp, Object[] ref) {
+    addEntitiesOfSelectorReference(mp, ref);
   }
 
   /**
    * Obtain entity from selector and added to derivedReadableEntities to take into account as a
    * derived entity.
    */
-  private void addEntitiesOfSelectorReference(ModelProvider mp, Reference ref) {
-    for (Selector sel : ref.getOBUISELSelectorList()) {
-      org.openbravo.model.ad.datamodel.Table table = sel.getTable();
-      // Table is not mandatory property of selector
-      if (table == null) {
-        continue;
-      }
-      final Entity derivedEntity = mp.getEntityByTableId(table.getId());
-      if (!writableEntities.contains(derivedEntity) && !readableEntities.contains(derivedEntity)
-          && !derivedReadableEntities.contains(derivedEntity)
-          && !nonReadableEntities.contains(derivedEntity)) {
-        derivedEntitiesFromProcess.add(derivedEntity);
-      }
+  private void addEntitiesOfSelectorReference(ModelProvider mp, Object[] ref) {
+    final Entity derivedEntity = mp.getEntityByTableId((String) ref[0]);
+    if (!writableEntities.contains(derivedEntity) && !readableEntities.contains(derivedEntity)
+        && !derivedReadableEntities.contains(derivedEntity)
+        && !nonReadableEntities.contains(derivedEntity)) {
+      derivedEntitiesFromProcess.add(derivedEntity);
     }
   }
 
   /**
    * Obtain entities from window and added to readable and writable entities.
    */
-  private void addEntitiesOfWindowReference(ModelProvider mp, Window window) {
-    Set<String> tabs = new HashSet<String>();
-    for (Tab tab : window.getADTabList()) {
-      tabs.add(tab.getId());
-      final Entity derivedEntity = mp.getEntityByTableId(tab.getTable().getId());
-      if (!writableEntities.contains(derivedEntity) && !readableEntities.contains(derivedEntity)
-          && !nonReadableEntities.contains(derivedEntity)) {
-        readableEntities.add(derivedEntity);
-        writableEntities.add(derivedEntity);
-        // Removed from derived entities
-        if (derivedReadableEntities.contains(derivedEntity)) {
-          derivedReadableEntities.remove(derivedEntity);
-        }
+  private void addEntitiesOfWindowReference(ModelProvider mp, Object[] ref) {
+    // 0: tab.table.id | 1:tab.id | 2:process.id
+    tabsWithSelectors.add((String) ref[1]);
+
+    final Entity derivedEntity = mp.getEntityByTableId((String) ref[0]);
+    if (!writableEntities.contains(derivedEntity) && !readableEntities.contains(derivedEntity)
+        && !nonReadableEntities.contains(derivedEntity)) {
+      readableEntities.add(derivedEntity);
+      writableEntities.add(derivedEntity);
+      // Removed from derived entities
+      if (derivedReadableEntities.contains(derivedEntity)) {
+        derivedReadableEntities.remove(derivedEntity);
       }
     }
-    if (tabs.isEmpty()) {
-      return;
-    }
-    String tabInList = createWhereInCondition(tabs);
-    addEntitiesSelectorsFromTabs(mp, tabInList);
-  }
-
-  /**
-   * Obtain selector references in tabs and added to derivedReadableEntities to take into account as
-   * a derived entity.
-   */
-  private void addEntitiesSelectorsFromTabs(ModelProvider mp, String tabs) {
-    String hql = "select r from ADField f inner join f.column c inner join c.referenceSearchKey r  where r.parentReference='"
-        + SELECTOR_REFERENCE + "' and f.tab.id in(" + tabs + ")";
-    @SuppressWarnings("unchecked")
-    final List<Reference> references = SessionHandler.getInstance().createQuery(hql).list();
-    for (Reference ref : references) {
-      addEntitiesOfSelectorReference(mp, ref);
-    }
-  }
-
-  private String createWhereInCondition(Set<String> list) {
-    StringBuilder processesInList = new StringBuilder();
-    boolean first = true;
-    for (String p : list) {
-      if (!first) {
-        processesInList.append(", ");
-      }
-      first = false;
-      processesInList.append("'").append(p).append("'");
-    }
-    return processesInList.toString();
   }
 }
