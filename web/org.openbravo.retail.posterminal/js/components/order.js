@@ -1000,6 +1000,9 @@ enyo.kind({
             me.negativeLineUpdated = false;
 
             notDeferredRelatedLines = line.get('relatedLines').filter(function getNotDeferredLines(rl) {
+              if (OB.UTIL.isNullOrUndefined(rl.deferred)) {
+                return false;
+              }
               return !rl.deferred;
             });
             if (!line.get('groupService') && notDeferredRelatedLines.length > 1) {
