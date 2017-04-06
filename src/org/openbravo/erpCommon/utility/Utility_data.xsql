@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -75,22 +75,6 @@
       <Parameter name="recordId"/>
    </SqlMethod>
    
-   <SqlMethod name="hasTabAttachments" type="preparedStatement" return="boolean" default="false">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        select Count(*) AS TOTAL 
-        FROM C_File F LEFT JOIN AD_TAB T ON F.AD_Table_ID = T.AD_Table_ID
-        WHERE F.AD_CLIENT_ID IN ('1') 
-        AND F.AD_ORG_ID IN ('1') 
-        AND T.AD_Tab_ID = ? 
-        AND F.AD_Record_ID = ? 
-        AND F.IsActive = 'Y' 
-      </Sql>
-      <Parameter name="adClientId" optional="true" type="replace" after="WHERE F.AD_CLIENT_ID IN (" text="'1'"/>
-      <Parameter name="adOrgId" optional="true" type="replace" after="AND F.AD_ORG_ID IN (" text="'1'"/>
-      <Parameter name="adTabId"/>
-      <Parameter name="recordId"/>
-   </SqlMethod>
    <SqlMethod name="getWindowID" type="preparedStatement" return="String" default="">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
@@ -100,6 +84,7 @@
       </Sql>
       <Parameter name="adTabId"/>
    </SqlMethod>
+   
    <SqlMethod name="isTreeTab" type="preparedStatement" return="boolean" default="false">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
@@ -109,6 +94,7 @@
       </Sql>
       <Parameter name="adTabId"/>
    </SqlMethod>
+   
    <SqlMethod name="getBaseCurrencyId" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -119,6 +105,7 @@
      ]]></Sql>
     <Parameter name="adClientId"/>
    </SqlMethod>
+   
    <SqlMethod name="getISOSymbol" type="preparedStatement" return="String" default="false">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
@@ -127,6 +114,7 @@
       </Sql>
       <Parameter name="cCurrencyId"/>
    </SqlMethod>
+   
    <SqlMethod name="getReferenceId" type="preparedStatement" return="String" default="">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -87,8 +87,8 @@ public class KernelServlet extends BaseKernelServlet {
   private static synchronized void incBypassAuthenticationCount(HttpServletRequest request) {
     HttpSession session = request.getSession(true);
     OBContext context = OBContext.getOBContext();
-    boolean sessionForThisRequest = context == null
-        || session.getAttribute("#Authenticated_user") == null;
+    boolean sessionForThisRequest = (context == null || session.getAttribute("#Authenticated_user") == null)
+        && !"Y".equals(session.getAttribute("#LOGGINGIN"));
 
     if (sessionForThisRequest) {
       session.setAttribute("forceLogin", "Y");
