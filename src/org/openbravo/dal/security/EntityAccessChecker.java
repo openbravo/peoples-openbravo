@@ -122,35 +122,35 @@ public class EntityAccessChecker implements OBNotSingleton {
   @SuppressWarnings("unchecked")
   public static void calculateCachedElements() {
     // take into account entities of the selectors with Search parent reference
-    final String selectorsOfSearchReference = "select distinct(s.table.id), c.table.id from OBUISEL_Selector s "
+    String hqlQry = "select distinct(s.table.id), c.table.id from OBUISEL_Selector s "
         + "left join s.reference r left join r.aDColumnReferenceSearchKeyList c "
         + "where r.parentReference='" + SEARCH_REFERENCE + "'";
-    targetTablesIds = SessionHandler.getInstance().createQuery(selectorsOfSearchReference).list();
+    targetTablesIds = SessionHandler.getInstance().createQuery(hqlQry).list();
 
     // take into account processes linked with selectors
-    final String processSelStr = "select p.id, c.table.id from ADColumn c inner join c.table t inner join "
+    hqlQry = "select p.id, c.table.id from ADColumn c inner join c.table t inner join "
         + "c.referenceSearchKey r inner join r.oBUISELSelectorList s inner join s.processDefintion "
         + "p  where r.parentReference='" + SELECTOR_REFERENCE + "'";
-    processAccessSelectors = SessionHandler.getInstance().createQuery(processSelStr).list();
+    processAccessSelectors = SessionHandler.getInstance().createQuery(hqlQry).list();
 
     // take into account processes
-    final String processButStr = "select p.id, c.table.id from ADColumn c inner join c.table t inner join "
+    hqlQry = "select p.id, c.table.id from ADColumn c inner join c.table t inner join "
         + "c.oBUIAPPProcess p";
-    processAccessButtons = SessionHandler.getInstance().createQuery(processButStr).list();
+    processAccessButtons = SessionHandler.getInstance().createQuery(hqlQry).list();
 
-    String hql = "select t.table.id, p.obuiappProcess.id, t.id from OBUIAPP_Parameter p inner join p.referenceSearchKey r inner join r.oBUIAPPRefWindowList rw inner join rw.window w inner join w.aDTabList t where p.reference.id in ('"
+    hqlQry = "select t.table.id, p.obuiappProcess.id, t.id from OBUIAPP_Parameter p inner join p.referenceSearchKey r inner join r.oBUIAPPRefWindowList rw inner join rw.window w inner join w.aDTabList t where p.reference.id in ('"
         + WINDOW_REFERENCE + "')";
-    parameterOfWindowProcessReference = SessionHandler.getInstance().createQuery(hql).list();
+    parameterOfWindowProcessReference = SessionHandler.getInstance().createQuery(hqlQry).list();
 
-    hql = "select s.table.id, p.obuiappProcess.id from OBUIAPP_Parameter p inner join p.referenceSearchKey r inner join r.oBUISELSelectorList s where p.reference.id in('"
+    hqlQry = "select s.table.id, p.obuiappProcess.id from OBUIAPP_Parameter p inner join p.referenceSearchKey r inner join r.oBUISELSelectorList s where p.reference.id in('"
         + SELECTOR_REFERENCE + "','" + MULTI_SELECTOR_REFERENCE + "')";
-    parameterOfSelectorProcessReference = SessionHandler.getInstance().createQuery(hql).list();
+    parameterOfSelectorProcessReference = SessionHandler.getInstance().createQuery(hqlQry).list();
 
     // Calculate all the selector references. These selector references should be filter later by
     // all the tabs of the window references.
-    hql = "select f.tab.table.id, f.tab.id from ADField f inner join f.column c inner join c.referenceSearchKey r  where r.parentReference='"
+    hqlQry = "select f.tab.table.id, f.tab.id from ADField f inner join f.column c inner join c.referenceSearchKey r  where r.parentReference='"
         + SELECTOR_REFERENCE + "'";
-    selectorsFromWindowReferences = SessionHandler.getInstance().createQuery(hql).list();
+    selectorsFromWindowReferences = SessionHandler.getInstance().createQuery(hqlQry).list();
   }
 
   /**
