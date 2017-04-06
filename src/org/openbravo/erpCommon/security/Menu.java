@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,6 +46,10 @@ import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.xmlEngine.XmlDocument;
 
+/**
+ * This class is used when rendering old 2.50 servlets, i.e, old manual report and process using
+ * 2.50 styling.
+ */
 public class Menu extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static String[] hideMenuValues = { "", "true", "false" };
@@ -91,6 +95,12 @@ public class Menu extends HttpSecureAppServlet {
       }
     }
 
+    if ("".equals(targetmenu)) {
+      response.sendRedirect("../");
+      vars.removeSessionValue("target");
+      return;
+    }
+
     String hideMenu = vars.getStringParameter("hideMenu", menuFilter);
     String vScroll = vars.getStringParameter("vScroll", scrollingFilter);
 
@@ -107,13 +117,12 @@ public class Menu extends HttpSecureAppServlet {
       vars.removeSessionValue("#Hide_BackButton");
     }
 
-    printPageFrameIdentificacion(response, menuURL, (targetmenu.equals("") ? "../utility/Home.html"
-        : targetmenu), menuLoadingURL, textDirection, hideMenu, vScroll);
+    printPage(response, menuURL, targetmenu, menuLoadingURL, textDirection, hideMenu, vScroll);
   }
 
-  private void printPageFrameIdentificacion(HttpServletResponse response, String strMenu,
-      String strDetalle, String strMenuLoading, String textDirection, String hideMenu,
-      String vScroll) throws IOException, ServletException {
+  private void printPage(HttpServletResponse response, String strMenu, String strDetalle,
+      String strMenuLoading, String textDirection, String hideMenu, String vScroll)
+      throws IOException, ServletException {
     XmlDocument xmlDocument;
     if (textDirection.equals("RTL")) {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_FS_RTL")

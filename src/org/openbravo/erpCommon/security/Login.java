@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,13 +32,11 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.OBVersion;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
@@ -57,18 +55,38 @@ public class Login extends HttpBaseServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
 
-    if (Utility.isMobileBrowser(request)
-        && KernelUtils.getInstance().isModulePresent(Utility.OB_MOBILE_JAVAPACKAGE)) {
-      response.sendRedirect("../web/org.openbravo.client.mobile/");
-      return;
-    }
-
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (vars.commandIn("LOGIN")) {
-      log4j.debug("Command: Login");
-      String strTheme = vars.getTheme();
+    if (vars.commandIn("CHECK")) {
+      // Context reload check
+      String checkString = "success";
+      response.setContentType("text/plain; charset=UTF-8");
+      response.setHeader("Cache-Control", "no-cache");
+      PrintWriter out = response.getWriter();
+      out.print(checkString);
+      out.close();
+    } else {
+      // Look for forced login URL property and redirect in case it is set and the login is accessed
+      // through a different URL
+      try {
+        String forcedLoginUrl = Preferences.getPreferenceValue("ForcedLoginURL", true,
+            (Client) null, null, null, null, null);
+        log4j.debug("Forced URL: " + forcedLoginUrl);
+        if (forcedLoginUrl != null && !forcedLoginUrl.isEmpty()
+            && !request.getRequestURL().toString().startsWith(forcedLoginUrl)) {
+          log4j.info("Redirecting login from " + request.getRequestURL().toString()
+              + " to forced login URL " + forcedLoginUrl);
+          response.sendRedirect(forcedLoginUrl);
+          return;
+        }
+      } catch (PropertyException e) {
+        // Ignore and continue with the standard login. PropertyException is raised in case property
+        // is not defined (standard case) or in case of conflict.
+        log4j.debug("Exception getting ForcedLoginURL", e);
+      }
 
+      // Standard login
+      String strTheme = vars.getTheme();
       OBContext.setAdminMode();
       try {
         Client systemClient = OBDal.getInstance().get(Client.class, "0");
@@ -90,163 +108,17 @@ public class Login extends HttpBaseServlet {
             .getLanguage().getLanguage());
         final String errorDifferentPasswordInFields = Utility.messageBD(this,
             "CPDifferentPasswordInFields", systemClient.getLanguage().getLanguage());
-        if (OBVersion.getInstance().is30()) {
-          printPageLogin30(vars, response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg,
-              recBrowserMsgTitle, recBrowserMsgText, identificationFailureTitle,
-              emptyUsernameOrPasswordText, errorSamePassword, errorDifferentPasswordInFields);
-        } else {
-          printPageLogin250(response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg);
-        }
+        printPageLogin(vars, response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg,
+            recBrowserMsgTitle, recBrowserMsgText, identificationFailureTitle,
+            emptyUsernameOrPasswordText, errorSamePassword, errorDifferentPasswordInFields);
       } finally {
         vars.clearSession(false);
         OBContext.restorePreviousMode();
       }
-
-    } else if (vars.commandIn("BLANK")) {
-      printPageBlank(response, vars);
-    } else if (vars.commandIn("CHECK")) {
-      String checkString = "success";
-      response.setContentType("text/plain; charset=UTF-8");
-      response.setHeader("Cache-Control", "no-cache");
-      PrintWriter out = response.getWriter();
-      out.print(checkString);
-      out.close();
-    } else if (vars.commandIn("WELCOME")) {
-      log4j.debug("Command: Welcome");
-      if (OBVersion.getInstance().is30()) {
-        printPageBlank(response, vars);
-      } else {
-        String strTheme = vars.getTheme();
-        printPageWelcome(response, strTheme);
-      }
-    } else if (vars.commandIn("LOGO")) {
-      printPageLogo(response, vars);
-    } else {
-      // Look for forced login URL property and redirect in case it is set and the login is accessed
-      // through a different URL
-      try {
-        String forcedLoginUrl = Preferences.getPreferenceValue("ForcedLoginURL", true,
-            (Client) null, null, null, null, null);
-        log4j.debug("Forced URL: " + forcedLoginUrl);
-        if (forcedLoginUrl != null && !forcedLoginUrl.isEmpty()
-            && !request.getRequestURL().toString().startsWith(forcedLoginUrl)) {
-          log4j.info("Redireting login from " + request.getRequestURL().toString()
-              + " to forced login URL " + forcedLoginUrl);
-          response.sendRedirect(forcedLoginUrl);
-          return;
-        }
-      } catch (PropertyException e) {
-        // Ignore and continue with the standard login. PropertyException is raised in case property
-        // is not defined (standard case) or in case of conflict.
-        log4j.debug("Exception getting ForcedLoginURL", e);
-      }
-
-      // Standard login
-      String textDirection = vars.getSessionValue("#TextDirection", "LTR");
-      printPageFrameIdentificacion(response, "Login_Welcome.html?Command=WELCOME",
-          "Login_F1.html?Command=LOGIN", textDirection);
     }
   }
 
-  private void printPageFrameIdentificacion(HttpServletResponse response, String strMenu,
-      String strDetalle, String textDirection) throws IOException, ServletException {
-
-    XmlDocument xmlDocument;
-    if (textDirection.equals("RTL")) {
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_FS_RTL")
-          .createXmlDocument();
-      xmlDocument.setParameter("frameMenu", strMenu);
-      xmlDocument.setParameter("frameMenuLoading", strDetalle);
-      xmlDocument.setParameter("frame1", strMenu);
-    } else {
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_FS")
-          .createXmlDocument();
-      xmlDocument.setParameter("frameMenu", strMenu);
-      xmlDocument.setParameter("frameMenuLoading", strMenu);
-      xmlDocument.setParameter("frame1", strDetalle);
-    }
-
-    String jsConstants = "\nvar isMenuHide = false; \n var isRTL = " + "RTL".equals(textDirection)
-        + "; \n var menuWidth = '25%';\n var isMenuBlock = false;\n";
-
-    xmlDocument.setParameter("jsConstants", jsConstants);
-    xmlDocument.setParameter("framesetMenu", "25");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  private void printPageBlank(HttpServletResponse response, VariablesSecureApp vars)
-      throws IOException, ServletException {
-    XmlDocument xmlDocument = xmlEngine
-        .readXmlTemplate("org/openbravo/erpCommon/security/Login_F0").createXmlDocument();
-
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  private void printPageWelcome(HttpServletResponse response, String strTheme) throws IOException,
-      ServletException {
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/security/Login_Welcome").createXmlDocument();
-
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("theme", strTheme);
-
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  private void printPageLogo(HttpServletResponse response, VariablesSecureApp vars)
-      throws IOException, ServletException {
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/security/Login_Logo").createXmlDocument();
-
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  /**
-   * Shows 2.50 login page
-   */
-  private void printPageLogin250(HttpServletResponse response, String strTheme, String cacheMsg,
-      String validBrowserMsg, String orHigherMsg) throws IOException, ServletException {
-    XmlDocument xmlDocument = xmlEngine
-        .readXmlTemplate("org/openbravo/erpCommon/security/Login_F1").createXmlDocument();
-
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("theme", strTheme);
-    xmlDocument.setParameter("itService", SessionLoginData.selectSupportContact(this));
-
-    String cacheMsgFinal = "var cacheMsg = \"" + cacheMsg + "\"";
-    xmlDocument.setParameter("cacheMsg", cacheMsgFinal.replaceAll("\\n", "\n"));
-
-    String validBrowserMsgFinal = validBrowserMsg + "\\n * Mozilla Firefox 3.0 " + orHigherMsg
-        + "\\n * Microsoft Internet Explorer 7.0 " + orHigherMsg;
-    validBrowserMsgFinal = "var validBrowserMsg = \"" + validBrowserMsg + "\"";
-    xmlDocument.setParameter("validBrowserMsg", validBrowserMsgFinal.replaceAll("\\n", "\n"));
-
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  /**
-   * Shows 3.0 login page
-   */
-  private void printPageLogin30(VariablesSecureApp vars, HttpServletResponse response,
+  private void printPageLogin(VariablesSecureApp vars, HttpServletResponse response,
       String strTheme, String cacheMsg, String validBrowserMsg, String orHigherMsg,
       String recBrowserMsgTitle, String recBrowserMsgText, String identificationFailureTitle,
       String emptyUsernameOrPasswordText, String errorSamePassword,

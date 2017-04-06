@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2011 Openbravo SLU
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -5372,123 +5372,6 @@ table.Login_Home_TableEdition {
   height: 100%;
 }
 
-td.Login_Home_Logo {
-  vertical-align: middle;
-  text-align: center;
-  border: 0px none;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-.Login_Home_Logo_Icon {
-  height: 217;
-  width: 608;
-  margin: 0 auto;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(../../../../utility/ShowImageLogo?logo=yourcompanybig);
-}
-
-.Login_Home_Community_Branding {
-  width: 608;
-  margin: 0 auto;
-}
-
-.Login_Home_Community_Branding_top {
-  height: 30;
-  width: 608;
-  margin: 0 auto;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Login/communityBrandingTop.png);
-}
-
-.Login_Home_Community_Branding_title {
-  height: 30;
-  width: 608;
-  margin: 0 auto;
-  background-repeat: repeat-y;
-  background-position: center center;
-  background-image: url(Login/communityBrandingBackground.png);
-}
-
-.Login_Home_Community_Branding_unknown {
-  float: left;
-  height: 30;
-  width: 180;
-  margin: 0 0 0 25px;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Login/banner-unknown.png);
-}
-
-.Login_Home_Community_Branding_development {
-  float: left;
-  height: 30;
-  width: 180;
-  margin: 0 0 0 25px;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Login/banner-development.png);
-}
-
-.Login_Home_Community_Branding_evaluation {
-  float: left;
-  height: 30;
-  width: 180;
-  margin: 0 0 0 20px;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Login/banner-evaluation.png);
-}
-
-.Login_Home_Community_Branding_testing {
-  float: left;
-  height: 30;
-  width: 180;
-  margin: 0 0 0 20px;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Login/banner-testing.png);
-}
-
-.Login_Home_Community_Branding_production {
-  float: left;
-  height: 30;
-  width: 180;
-  margin: 0 0 0 20px;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(../../../../utility/ShowImageLogo?logo=banner-production);
-}
-
-.Login_Home_Community_Branding_version {
-  font-weight: bold;
-  float: left;
-  height: 30;
-  width: 403;
-  line-height: 2em;
-  margin: 0 auto;
-}
-
-.Login_Home_Community_Branding_iframe {
-  height: 310;
-  width: 608;
-  margin: 0 auto;
-  background-repeat: repeat-y;
-  background-position: center center;
-  background-image: url(Login/communityBrandingBackground.png);
-}
-
-.Login_Home_Community_Branding_bottom {
-  height: 30;
-  width: 608;
-  margin: 0 auto;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Login/communityBrandingBottom.png);
-}
-
 table.Login_ToolBar_bg {
   background-repeat: repeat-x;
   background-position: top center;
@@ -8429,65 +8312,6 @@ td.ToolBar_ExpansibleMenu_bg_active {
   background-image: url(Menu/ToolBar/labelRight.png);  
 }
 
-
-a.Menu_ToolBar_text_username {
-  font-family: tahoma, arial, helvetica, sans-serif;
-  font-size: 8pt;
-  font-weight: bold;
-  margin: 0px 5px 0px 5px;
-  text-indent: 5px;
-  color: #B4B4B4;
-  text-decoration: none;
-}
-
-a.Menu_ToolBar_text_username:hover {
-  font-family: tahoma, arial, helvetica, sans-serif;
-  font-size: 8pt;
-  font-weight: bold;
-  color: #C8C8C8;
-  text-decoration: underline;
-}
-
-a.Menu_ToolBar_text_username:active {
-  font-family: tahoma, arial, helvetica, sans-serif;
-  font-size: 8pt;
-  font-weight: bold;
-  color: #C8C8C8;
-  text-decoration: underline;
-}
-
-
-.Menu_ToolBar_text_alert_no {
-  font-weight: bold;
-}
-
-a.Menu_ToolBar_text_alert {
-  font-family: tahoma, arial, helvetica, sans-serif;
-  font-size: 8pt;
-  font-weight: normal;
-  margin: 0px 5px 0px 5px;
-  text-indent: 5px;
-  color: #B4B4B4;
-  text-decoration: none;
-}
-
-a.Menu_ToolBar_text_alert:hover {
-  font-family: tahoma, arial, helvetica, sans-serif;
-  font-size: 8pt;
-  font-weight: normal;
-  color: #C8C8C8;
-  text-decoration: underline;
-}
-
-a.Menu_ToolBar_text_alert:active {
-  font-family: tahoma, arial, helvetica, sans-serif;
-  font-size: 8pt;
-  font-weight: normal;
-  color: #C8C8C8;
-  text-decoration: underline;
-}
-
-
 /* Buttons definition for Menu_ToolBar */
 
 a.Menu_ToolBar_Button:link {
@@ -8525,80 +8349,6 @@ a.Menu_ToolBar_Button:active {
   height: 26px;
   margin: 0px;
   vertical-align: middle;
-}
-
-.Menu_ToolBar_Button_Icon_expand {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconExpand.png);  
-}
-
-.Menu_ToolBar_Button_Icon_contract {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconContract.png);  
-}
-
-.Menu_ToolBar_Button_Icon_user {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconUser.png);  
-}
-
-.Menu_ToolBar_Button_Icon_logout {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconLogout.png);  
-}
-
-.Menu_ToolBar_Button_Icon_alert {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconAlert.png);  
-}
-
-.Menu_ToolBar_Button_Icon_alertActive {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconAlertActive.png);  
-}
-
-
-
-.Menu_ToolBar_Button_Icon_expand_disabled {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconExpand.disabled.png);  
-}
-
-.Menu_ToolBar_Button_Icon_contract_disabled {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconContract.disabled.png);  
-}
-
-.Menu_ToolBar_Button_Icon_user_disabled {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconUser.disabled.png);  
-}
-
-.Menu_ToolBar_Button_Icon_logout_disabled {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconLogout.disabled.png);  
-}
-
-.Menu_ToolBar_Button_Icon_alert_disabled {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconAlert.disabled.png);  
-}
-
-.Menu_ToolBar_Button_Icon_alertActive_disabled {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(Menu/ToolBar/iconAlertActive.disabled.png);  
 }
 
 .Menu_ToolBar_Space {

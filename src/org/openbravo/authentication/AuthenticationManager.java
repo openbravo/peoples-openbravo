@@ -147,8 +147,7 @@ public abstract class AuthenticationManager {
     } else {
       conn = new DalConnectionProvider();
     }
-    defaultServletUrl = s.getServletConfig().getServletContext()
-        .getInitParameter("ServletSinIdentificar");
+    defaultServletUrl = s.getServletConfig().getServletContext().getInitParameter("LoginServlet");
   }
 
   /**

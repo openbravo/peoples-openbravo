@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2016 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,7 +21,6 @@ package org.openbravo.erpCommon.businessUtility;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.URLEncoder;
 import java.util.Map;
@@ -50,7 +49,6 @@ import org.openbravo.client.application.window.ApplicationDictionaryCachedStruct
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.model.ad.utility.AttachmentMethod;
@@ -221,11 +219,6 @@ public class TabAttachments extends HttpSecureAppServlet {
         }
       }
 
-      // This command is only for 2.50
-    } else if (vars.commandIn("CHECK")) {
-      final String tabId = vars.getStringParameter("inpTabId");
-      final String inpKey = vars.getStringParameter("inpKey");
-      printPageCheck(response, vars, tabId, inpKey);
     } else
       pageError(response);
   }
@@ -248,14 +241,6 @@ public class TabAttachments extends HttpSecureAppServlet {
     }
     writer.write("</SCRIPT></BODY></HTML>");
 
-  }
-
-  private void printPageCheck(HttpServletResponse response, VariablesSecureApp vars, String strTab,
-      String recordId) throws IOException, ServletException {
-    response.setContentType("text/plain; charset=UTF-8");
-    final PrintWriter out = response.getWriter();
-    out.print(Utility.hasTabAttachments(this, vars, strTab, recordId));
-    out.close();
   }
 
   /**

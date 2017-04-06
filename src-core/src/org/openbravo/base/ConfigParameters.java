@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Copyright (C) 2001-2017 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -57,6 +57,7 @@ public class ConfigParameters {
 
   private static final Logger log4j = Logger.getLogger(ConfigParameters.class);
 
+  public final String loginServlet;
   public final String strServletSinIdentificar;
   private final String strServletGoBack;
   public final String strFTPDirectory;
@@ -117,7 +118,8 @@ public class ConfigParameters {
 
     poolFileName = getResolvedParameter(context, "PoolFile");
 
-    strServletSinIdentificar = getResolvedParameter(context, "ServletSinIdentificar");
+    loginServlet = getResolvedParameter(context, "LoginServlet");
+    strServletSinIdentificar = getResolvedParameter(context, "LoginServlet");
     strServletGoBack = getResolvedParameter(context, "ServletGoBack");
     log4j.debug("strServletGoBack: " + strServletGoBack);
     periodicBackgroundTime = asLong(getResolvedParameter(context, "PeriodicBackgroundTime"));

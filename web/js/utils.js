@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2016 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -105,7 +105,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '29468';
+  var number = '31853';
   return number;
 }
 
@@ -2563,86 +2563,6 @@ function menuHide(id, updateIcon) {
   }
 }
 
-/**
-* Function Description
-* Expands the whole content of the menu
-* @returns True if the operation was made correctly, false if not.
-* @see #changeClass
-*/
-function menuExpand() {
-  var appUrl = getAppUrl();
-  putFocusOnMenu();
-  submitCommandForm('ALL', false, null, appUrl + '/utility/VerticalMenu.html', 'frameMenu');
-  return false;
-}
-
-/**
-* Function Description
-* Collapse the whole content of the menu
-* @returns True if the operation was made correctly, false if not.
-* @see #changeClass
-*/
-function menuCollapse() {
-  var appUrl = getAppUrl();
-  putFocusOnMenu();
-  submitCommandForm('DEFAULT', false, null, appUrl + '/utility/VerticalMenu.html', 'frameMenu');
-  return false;
-}
-
-/**
-* Function Description
-* Collapse the whole content of the menu if the menu is expanded
-* Expand the whole content of the menu if the menu is collapsed 
-* @param {String} id The ID of the element
-* @returns True if the operation was made correctly, false if not.
-* @see #changeClass
-*/
-function menuExpandCollapse() {
-  var menuExpandCollapse_status = getMenuExpandCollapse_status();
-  if (menuExpandCollapse_status == 'expanded') {
-    menuCollapse();
-  } else if (menuExpandCollapse_status == 'collapsed') {
-    menuExpand();
-  }
-  return false;
-}
-
-function getMenuExpandCollapse_status() {
-//  alert(getFrame('frameMenu').getElementById('paramfieldDesplegar').getAttribute('id'));
-  var menuExpandCollapse_status;
-  if (getFrame('frameMenu').document.getElementById('paramfieldDesplegar')) menuExpandCollapse_status = 'collapsed';
-  if (getFrame('frameMenu').document.getElementById('paramfieldContraer')) menuExpandCollapse_status = 'expanded';
-  return menuExpandCollapse_status;
-}
-
-function menuUserOptions() {
-  var appUrl = getAppUrl();
-  openServletNewWindow('DEFAULT', false, appUrl + '/ad_forms/Role.html', 'ROLE', null, true, '460', '800');
-  return true;
-}
-
-function menuQuit() {  
-  var appUrl = getAppUrl();
-  var target;
-  try {
-    if (parent.frameMenu) {
-      target = "_parent";
-    } else {
-      target = "_self";
-    }
-  } catch (e) {
-    target = "_self";
-  }
-  submitCommandForm('DEFAULT', false, null, appUrl + '/security/Logout.html', target);
-  return false;
-}
-
-function menuAlerts() {
-  var appUrl = getAppUrl();
-  submitCommandForm('DEFAULT', true, getForm(), appUrl + '/ad_forms/AlertManagement.html', 'appFrame', false, true);
-  return true;
-}
-
 function isVisibleElement(obj, appWindow) {
   if (appWindow == null || appWindow == 'null' || appWindow == '') {
     appWindow = getFrame('main');
@@ -2664,25 +2584,28 @@ function isVisibleElement(obj, appWindow) {
 }
 
 function executeWindowButton(id,focus) {
+  var appWindow = parent, theDocument;
   if (focus==null) focus=false;
-  var appWindow = parent;
-  if(parent.frames['appFrame'] || parent.frames['frameMenu']) {
-    appWindow = parent.frames['appFrame'];
-  } else if (parent.frames['superior']) {
-    appWindow = parent.frames['superior'];
-  } else if (parent.frames['frameSuperior']) {
-    appWindow = parent.frames['frameSuperior'];
-  } else if (parent.frames['frameButton']) {
-    appWindow = parent.frames['frameButton'];
-  } else if (parent.frames['mainframe']) {
-    appWindow = parent.frames['mainframe'];
+  try {
+    if(parent.frames['appFrame'] || parent.frames['frameMenu']) {
+      appWindow = parent.frames['appFrame'];
+    } else if (parent.frames['superior']) {
+      appWindow = parent.frames['superior'];
+    } else if (parent.frames['frameSuperior']) {
+      appWindow = parent.frames['frameSuperior'];
+    } else if (parent.frames['frameButton']) {
+      appWindow = parent.frames['frameButton'];
+    } else if (parent.frames['mainframe']) {
+      appWindow = parent.frames['mainframe'];
+    }
+    theDocument = appWindow.document;
+  } catch (e) {
+    appWindow = window;
+    theDocument = window.document;
   }
-  if (window.location.href.indexOf('ad_forms/Role.html') != -1) { //Exception for "Role" window
-    appWindow = parent;
-  }
-  if (appWindow.document.getElementById(id) && isVisibleElement(appWindow.document.getElementById(id), appWindow)) {
-    if (focus==true) appWindow.document.getElementById(id).focus();
-    appWindow.document.getElementById(id).onclick();
+  if (theDocument.getElementById(id) && isVisibleElement(theDocument.getElementById(id), appWindow)) {
+    if (focus==true) theDocument.getElementById(id).focus();
+    theDocument.getElementById(id).onclick();
     if (focus==true) putWindowElementFocus(focusedWindowElement);
   }
 }
@@ -5572,12 +5495,16 @@ function popupResizeTo(width, height) {
 
 function LayoutMDICheck(target) {
   if (target !== null) {
-    if (typeof target.OB !== "undefined") {
-      if (typeof target.OB.Layout !== "undefined") {
-        if (typeof target.OB.Layout.ViewManager === "object") {
-          return true;
+    try {
+      if (typeof target.OB !== "undefined") {
+        if (typeof target.OB.Layout !== "undefined") {
+          if (typeof target.OB.Layout.ViewManager === "object") {
+            return true;
+          }
         }
       }
+    } catch (e) {
+      return false;
     }
   }
   return false;
