@@ -958,14 +958,18 @@ public class CancelAndReplaceUtils {
             WeldUtils.getInstanceFromStaticBeanManager(CancelLayawayPaymentsHookCaller.class)
                 .executeHook(jsonorder, inverseOrder);
 
-            // In a cancel layaway the gross value of the jsonorder was the amount to
-            // return to the customer, not the amount of the ticket. In this case the amount and
-            // outstanding needs to be fixed as are created in a wrong way.
-            FIN_PaymentSchedule newPaymentSchedule = getPaymentScheduleOfOrder(inverseOrder);
-            newPaymentSchedule.setAmount(paymentSchedule.getAmount().negate());
-            newPaymentSchedule.setOutstandingAmount(newPaymentSchedule.getAmount().subtract(
-                newPaymentSchedule.getPaidAmount()));
-            OBDal.getInstance().save(newPaymentSchedule);
+            if (!jsonorder.has("isPartiallyDelivered")
+                || (jsonorder.has("isPartiallyDelivered") && !jsonorder
+                    .getBoolean("isPartiallyDelivered"))) {
+              // In a cancel layaway the gross value of the jsonorder was the amount to
+              // return to the customer, not the amount of the ticket. In this case the amount and
+              // outstanding needs to be fixed as are created in a wrong way.
+              FIN_PaymentSchedule newPaymentSchedule = getPaymentScheduleOfOrder(inverseOrder);
+              newPaymentSchedule.setAmount(paymentSchedule.getAmount().negate());
+              newPaymentSchedule.setOutstandingAmount(newPaymentSchedule.getAmount().subtract(
+                  newPaymentSchedule.getPaidAmount()));
+              OBDal.getInstance().save(newPaymentSchedule);
+            }
           }
 
           negativeAmount = outstandingAmount.negate();
