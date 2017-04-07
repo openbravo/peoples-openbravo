@@ -21858,7 +21858,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--7C2688A18FC14DAEA6ED5EBDE685528C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7C2688A18FC14DAEA6ED5EBDE685528C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7C2688A18FC14DAEA6ED5EBDE685528C-->  <VALUE><![CDATA[InventoryStatusChangeReservation]]></VALUE>
-<!--7C2688A18FC14DAEA6ED5EBDE685528C-->  <MSGTEXT><![CDATA[There are Reservations created for Product: %s Attribute: %s UOM: %s]]></MSGTEXT>
+<!--7C2688A18FC14DAEA6ED5EBDE685528C-->  <MSGTEXT><![CDATA[There are Reservations created for Product: %s Attribute: %s UOM: %s The Inventory Status was  not changed, please remove the reservations first.]]></MSGTEXT>
 <!--7C2688A18FC14DAEA6ED5EBDE685528C-->  <MSGTYPE><![CDATA[W]]></MSGTYPE>
 <!--7C2688A18FC14DAEA6ED5EBDE685528C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7C2688A18FC14DAEA6ED5EBDE685528C-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
