@@ -222,13 +222,20 @@ enyo.kind({
     this.$.discountsList.setCollection(this.discounts);
   },
   ticketLineChecked: function (inSender, inEvent) {
+    var activateButton = false;
     if (inEvent.allChecked) {
       this.$.checkSelectAll.check();
     } else {
       this.$.checkSelectAll.unCheck();
     }
     this.checkedLines = inEvent.checkedLines;
-    if (this.checkedLines.length > 0 && this.discounts.length !== 0) {
+
+    _.forEach(this.checkedLines, function (checkedLine) {
+      if (!checkedLine.get('noDiscountAllow')) {
+        activateButton = true;
+      }
+    });
+    if (this.checkedLines.length > 0 && this.discounts.length !== 0 && activateButton) {
       this.$.btnApply.setDisabled(false);
       this.$.btnApply.addStyles('color: orange;');
     } else {

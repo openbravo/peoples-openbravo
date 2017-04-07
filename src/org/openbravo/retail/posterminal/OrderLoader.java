@@ -1391,6 +1391,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             }
             promotion.setObdiscIdentifier(identifier);
           }
+          if (jsonPromotion.has("discountinstance") && !jsonPromotion.isNull("discountinstance")) {
+            String discountinstance = jsonPromotion.getString("discountinstance");
+            if (discountinstance.length() > 32) {
+              discountinstance = discountinstance.substring(discountinstance.length() - 32);
+            }
+            promotion.setObposDiscountinstance(discountinstance);
+          }
           promotion.setId(OBMOBCUtils.getUUIDbyString(orderline.getId() + p));
           promotion.setNewOBObject(true);
           orderline.getOrderLineOfferList().add(promotion);

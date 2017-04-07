@@ -149,10 +149,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="ISSHARED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault><![CDATA['N']]></onCreateDefault>
-      </column>
       <column name="LEAVEASCREDIT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
@@ -172,6 +168,10 @@
       <column name="OVERPAYMENT_LIMIT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>
+      </column>
+      <column name="ISSHARED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <column name="COUNT_DIFF_LIMIT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>

@@ -72,6 +72,7 @@
             auxLine, hasPromotions, oldLines, oldLines2, actualLines, auxReceipt2, isFirstExecution = true;
         OB.UTIL.clone(receipt, auxReceipt);
         auxReceipt.groupLinesByProduct();
+        auxReceipt.removeNoDiscountAllowLines();
         me.auxReceiptInExecution = auxReceipt;
         auxReceipt.on('discountsApplied', function () {
           // to avoid several calls to applyPromotions, only will be applied the changes to original receipt for the last call done to applyPromotion
@@ -200,9 +201,8 @@
           avoidTrigger: avoidTrigger
         }), true);
       } else {
-        lines = _.sortBy(receipt.get('lines').models, function (lo) {
-          return -lo.getQty();
-        });
+        lines = receipt.get('lines').models;
+
         if (lines.length === 0) {
           receipt.trigger('discountsApplied');
         }
