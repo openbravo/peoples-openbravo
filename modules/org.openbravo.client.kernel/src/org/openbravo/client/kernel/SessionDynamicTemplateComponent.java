@@ -33,4 +33,10 @@ public abstract class SessionDynamicTemplateComponent extends BaseTemplateCompon
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, getTemplateId());
   }
+
+  @Override
+  public final String getETag() {
+    // session dynamic resources are never cached
+    return "" + System.currentTimeMillis();
+  }
 }

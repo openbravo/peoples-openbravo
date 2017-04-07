@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -223,11 +222,6 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
       log.error("Error building 'Admin Mode' value map: " + e.getMessage(), e);
     }
     return "{}";
-  }
-
-  @Override
-  public String getETag() {
-    return UUID.randomUUID().toString();
   }
 
   private List<WidgetInstance> getContextWidgetInstances() {
