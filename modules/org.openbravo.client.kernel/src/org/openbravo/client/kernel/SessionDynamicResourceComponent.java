@@ -25,7 +25,6 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.model.ad.module.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,8 +63,7 @@ public class SessionDynamicResourceComponent extends BaseComponent {
   @Override
   public String getETag() {
     // session dynamic resources are never cached
-    return OBContext.getOBContext().getUser().getId() + "_"
-        + OBContext.getOBContext().getLanguage().getId() + "_" + System.currentTimeMillis();
+    return "" + System.currentTimeMillis();
   }
 
   public List<SessionDynamicTemplateComponent> getSortedComponentList() {
