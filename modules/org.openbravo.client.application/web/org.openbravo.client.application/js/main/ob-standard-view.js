@@ -2182,7 +2182,7 @@ isc.OBStandardView.addProperties({
     } else {
       currentGrid = this.viewGrid;
     }
-    eventHandlerParams.recordsToDelete = isc.clone(currentGrid.getSelection());
+    eventHandlerParams.recordsToDelete = isc.shallowClone(currentGrid.getSelection());
     this.callClientEventHandlerActions(OB.EventHandlerRegistry.PREDELETE, eventHandlerParams, deleteRowCallback, true);
   },
 
