@@ -88,13 +88,13 @@
     //
     openInstanceManagementForm: function () {
       L.ViewManager.openView('OBClassicWindow', {
-        command: "DEFAULT",
-        formId: "8D6282279F464B1696B0EE3E23023B65",
-        icon: "Form",
-        id: "/ad_forms/InstanceManagement.html",
-        obManualURL: "/ad_forms/InstanceManagement.html",
+        command: 'DEFAULT',
+        formId: '8D6282279F464B1696B0EE3E23023B65',
+        icon: 'Form',
+        id: '/ad_forms/InstanceManagement.html',
+        obManualURL: '/ad_forms/InstanceManagement.html',
         tabTitle: OB.I18N.getLabel('OBUIAPP_InstanceActivation'),
-        viewId: "OBClassicWindow"
+        viewId: 'OBClassicWindow'
       });
     },
 
@@ -367,12 +367,12 @@
       // * {{{url}}} type: String - the url to be opened in the popup
       // * {{{title}}} type: String - the title to be displayed in the popup
       // * {{{theOpener}}} type: Window Object - the window object of the opener of the popup. Used in window.open to allow IE know which is the opener
-      // * {{{showMinimizeControl}}} type: Boolean - to specify if the popup should show the minimize control or not. The default value is "true" if it is not specified
-      // * {{{showMaximizeControl}}} type: Boolean - to specify if the popup should show the maximize control or not. The default value is "true" if it is not specified
-      // * {{{showCloseControl}}} type: Boolean - to specify if the popup should show the close control or not. The default value is "true" if it is not specified
+      // * {{{showMinimizeControl}}} type: Boolean - to specify if the popup should show the minimize control or not. The default value is 'true' if it is not specified
+      // * {{{showMaximizeControl}}} type: Boolean - to specify if the popup should show the maximize control or not. The default value is 'true' if it is not specified
+      // * {{{showCloseControl}}} type: Boolean - to specify if the popup should show the close control or not. The default value is 'true' if it is not specified
       // * {{{postParams}}} type: Object - parameters to be sent to the url using POST instead of GET
-      // * {{{isModal}}} type: Boolean - to specify if the popup should be modal or not. The default value is "true" if it is not specified
-      // * {{{show}}} type: Boolean - to specify if the popup should be shown or not. The default value is "true" if it is not specified
+      // * {{{isModal}}} type: Boolean - to specify if the popup should be modal or not. The default value is 'true' if it is not specified
+      // * {{{show}}} type: Boolean - to specify if the popup should be shown or not. The default value is 'true' if it is not specified
       // 
       // returns the created OBClassicPopupWindow
       open: function (name, width, height, url, title, theOpener, showMinimizeControl, showMaximizeControl, showCloseControl, postParams, isModal, show) {
@@ -394,7 +394,7 @@
           show = true;
         }
         var _htmlCode, _navUserAgent = navigator.userAgent.toUpperCase();
-        if (OB.Utilities.isIE9Strict || _navUserAgent.indexOf("MSIE") === -1) { // IE >= 9 (Strict) or any other browser
+        if (OB.Utilities.isIE9Strict || _navUserAgent.indexOf('MSIE') === -1) { // IE >= 9 (Strict) or any other browser
           _htmlCode = '<html><head></head><body style="margin: 0; padding: 0; border: none;">' + '<iframe id="MDIPopupContainer" name="MDIPopupContainer" style="margin: 0; padding: 0; border: none; width: 100%; height: 100%;"></iframe>' + '<iframe name="frameMenu" scrolling="no" src="' + OB.Application.contextUrl + 'utility/VerticalMenu.html?Command=HIDE" id="paramFrameMenuLoading" style="margin: 0px; padding: 0px; border: 0px; height: 0px; width: 0px;"></iframe>' + '</body></html>';
         } else { // IE <= 8
           _htmlCode = '<html><head></head><frameset cols="*, 0%" rows="*" frameborder="no" border="0" framespacing="0">' + '<frame id="MDIPopupContainer" name="MDIPopupContainer"></frame>' + '<frame name="frameMenu" scrolling="no" src="' + OB.Application.contextUrl + 'utility/VerticalMenu.html?Command=HIDE" id="paramFrameMenuLoading"></frame>' + '</frameset><body></body></html>';
@@ -610,13 +610,13 @@
           click: function () {
             this.topElement.cancelClick();
             OB.Layout.ViewManager.openView('OBClassicWindow', {
-              command: "DEFAULT",
-              formId: "E4F4AAC7DD6D4FBDA3AF973B7767F374",
-              icon: "Form",
-              id: "/org.openbravo.erputil.aprmigrationtool.ad_forms/MigrationTool.html",
-              obManualURL: "/org.openbravo.erputil.aprmigrationtool.ad_forms/MigrationTool.html",
+              command: 'DEFAULT',
+              formId: 'E4F4AAC7DD6D4FBDA3AF973B7767F374',
+              icon: 'Form',
+              id: '/org.openbravo.erputil.aprmigrationtool.ad_forms/MigrationTool.html',
+              obManualURL: '/org.openbravo.erputil.aprmigrationtool.ad_forms/MigrationTool.html',
               tabTitle: OB.I18N.getLabel('APRMT_MigrationToolTitle'),
-              viewId: "OBClassicWindow"
+              viewId: 'OBClassicWindow'
             });
           }
         });

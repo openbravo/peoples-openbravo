@@ -23,17 +23,17 @@ isc.ClassFactory.defineClass('OBLayout', isc.Layout);
 // in a child frame
 try {
   if (window.parent && window.parent.OB && window.parent.OB.Layout) {
-    isc.Log.logDebug("Reloading in parent frame", "OB");
+    isc.Log.logDebug('Reloading in parent frame', 'OB');
     window.parent.location.href = window.location.href;
   } else if (window.parent.parent && window.parent.parent.OB && window.parent.parent.OB.Layout) {
-    isc.Log.logDebug("Reloading in parent.parent frame", "OB");
+    isc.Log.logDebug('Reloading in parent.parent frame', 'OB');
     window.parent.parent.location.href = window.location.href;
   } else {
-    isc.Log.logDebug("loading in own frame", "OB");
+    isc.Log.logDebug('loading in own frame', 'OB');
   }
 } catch (e) {
   // ignoring on purpose
-  isc.Log.logDebug("Error when checking parent frame: " + e.message, "OB");
+  isc.Log.logDebug('Error when checking parent frame: ' + e.message, 'OB');
 }
 
 // This preference is the one which enables the accessibility for the people with reduced visual capabilities.
@@ -128,7 +128,7 @@ OB.Layout.initialize = function () {
     isFirstDraw: true,
 
     draw: function () {
-      this.Super("draw", arguments);
+      this.Super('draw', arguments);
       if (isc.Browser.isIE && this.isFirstDraw) {
         this.isFirstDraw = false;
         this.markForRedraw(); //To solve issue https://issues.openbravo.com/view.php?id=18192 in IE
