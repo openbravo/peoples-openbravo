@@ -228,6 +228,25 @@
              RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_Message_Qty||' '||'@ProductNotNullAndMovementQtyZero@') ;
           END IF;
 	     End ;
+	     Declare
+       v_Message_NotAvail VARCHAR(2000) :='';
+	     BEGIN
+					FOR Cur_Lines IN (
+                             SELECT M.line
+                             FROM M_InOut I
+                             JOIN M_InOutLine M ON (M.M_InOut_ID = I.M_InOut_ID)
+                             JOIN M_Locator L ON (M.M_Locator_ID = L.M_Locator_ID)
+                             JOIN M_InventoryStatus INVS ON (INVS.M_InventoryStatus_ID = L.M_InventoryStatus_ID)
+                             WHERE I.M_INOUT_ID=v_Record_ID
+                               AND INVS.Available = 'N'
+                               ORDER BY M.line
+                            ) LOOP
+          v_Message_NotAvail:=v_Message_NotAvail||Cur_Lines.line||', ';
+          END LOOP;
+          IF v_Message_NotAvail != '' THEN
+             RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_Message_NotAvail||' '||'@LocatorWithNotAvailableStatus@') ;
+          END IF;
+	     End ;
       DECLARE
       v_Message_Inactive_Products VARCHAR(2000) :='';
       BEGIN
