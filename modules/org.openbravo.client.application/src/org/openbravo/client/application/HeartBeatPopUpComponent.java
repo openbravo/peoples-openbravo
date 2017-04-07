@@ -152,7 +152,7 @@ public class HeartBeatPopUpComponent extends SessionDynamicTemplateComponent {
     HttpSession session = (HttpSession) sessionObject;
     String roleId = (String) session.getAttribute("#AD_ROLE_ID");
     String javaDateFormat = (String) session.getAttribute("#AD_JAVADATEFORMAT");
-    return HeartbeatProcess.isLoginPopupRequired(roleId, javaDateFormat,
-        new DalConnectionProvider());
+    return HeartbeatProcess.isLoginPopupRequired(roleId, javaDateFormat, new DalConnectionProvider(
+        false));
   }
 }
