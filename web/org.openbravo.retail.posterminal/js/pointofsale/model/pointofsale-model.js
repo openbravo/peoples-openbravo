@@ -842,23 +842,25 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               auxReceipt.prepareToSend(function () {
                 OB.UTIL.cashUpReport(auxReceipt, function (cashUp) {
                   receipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
-                  var cancelLayawayObj = receipt.serializeToJSON();
+                  var cancelLayawayObj = receipt.serializeToJSON(),
+                      paymentStatus = receipt.getPaymentStatus();
 
                   cancelLayawayObj.posTerminal = OB.MobileApp.model.get('terminal').id;
 
-                  if (receipt.getPaymentStatus().isNegative) {
+                  if (paymentStatus.isNegative) {
                     cancelLayawayObj.gross = OB.DEC.mul(cancelLayawayObj.gross, -1);
+                    cancelLayawayObj.payments.forEach(function (payment) {
+                      payment.origAmount = OB.DEC.mul(payment.origAmount, -1);
+                      payment.paid = OB.DEC.mul(payment.paid, -1);
+                    });
+                  } else if (receipt.get('isDeliveredGreaterThanGross')) {
+                    cancelLayawayObj.gross = OB.DEC.mul(OB.DEC.sub(receipt.get('layawayGross'), receipt.get('deliveredQuantityAmount')), -1);
+                    cancelLayawayObj.payment = cancelLayawayObj.gross;
                   }
-                  cancelLayawayObj.orderType = 2;
                   cancelLayawayObj.obposAppCashup = OB.MobileApp.model.get('terminal').cashUpId;
                   if (cancelLayawayObj.deliveredQuantityAmount) {
                     cancelLayawayObj.deliveredQuantityAmount = OB.I18N.formatCurrency(receipt.getDeliveredQuantityAmount());
                   }
-
-                  cancelLayawayObj.payments.forEach(function (payment) {
-                    payment.origAmount = receipt.getPaymentStatus().isNegative ? OB.DEC.mul(payment.origAmount, -1) : payment.origAmount;
-                    payment.paid = receipt.getPaymentStatus().isNegative ? OB.DEC.mul(payment.paid, -1) : payment.paid;
-                  });
 
                   cancelLayawayModel.set('json', JSON.stringify(cancelLayawayObj));
 
