@@ -38,7 +38,6 @@ import org.openbravo.client.kernel.freemarker.test.FreemarkerTemplateProcessorTe
 import org.openbravo.client.kernel.freemarker.test.GenerateComponentTest;
 import org.openbravo.client.kernel.freemarker.test.LabelTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
-import org.openbravo.test.IsOrgIncluded.ADOrgTreeTest;
 import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
 import org.openbravo.test.cancelandreplace.CancelAndReplaceTest;
@@ -64,6 +63,7 @@ import org.openbravo.test.dal.OBContextTest;
 import org.openbravo.test.dal.ReadByNameTest;
 import org.openbravo.test.dal.ValidationTest;
 import org.openbravo.test.dal.ViewTest;
+import org.openbravo.test.db.model.functions.ADOrgTreeTest;
 import org.openbravo.test.db.model.functions.Ad_isorgincludedTest;
 import org.openbravo.test.db.model.functions.SqlCallableStatement;
 import org.openbravo.test.expression.EvaluationTest;
@@ -258,7 +258,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     CancelAndReplaceTest.class,
 
     // AD_IsOrgIncluded
-    Ad_isorgincludedTest.class, ADOrgTreeTest.class
+    Ad_isorgincludedTest.class, //
+    ADOrgTreeTest.class
 
 })
 public class AllAntTaskTests {

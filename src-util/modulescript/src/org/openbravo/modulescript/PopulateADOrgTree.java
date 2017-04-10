@@ -21,31 +21,29 @@ package org.openbravo.modulescript;
 import org.openbravo.database.ConnectionProvider;
 
 public class PopulateADOrgTree extends ModuleScript {
-  
+
   @Override
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
       boolean isADOrgTreeDataCreated = PopulateADOrgTreeData.isADOrgTreeDataCreated(cp);
-      if(!isADOrgTreeDataCreated) {
-    	  PopulateADOrgTreeData.populateADOrgTree(cp);
-    	  PopulateADOrgTreeData.createPreferenceADOrgTree(cp);
+      if (!isADOrgTreeDataCreated) {
+        PopulateADOrgTreeData.populateADOrgTree(cp);
+        PopulateADOrgTreeData.createPreferenceADOrgTree(cp);
       }
     } catch (Exception e) {
       handleError(e);
     }
   }
-  
+
   @Override
   protected boolean executeOnInstall() {
-	// To control scenario where a sampledata module is available
+    // To control scenario where a sampledata module is available
     return true;
   }
 
-  // FIXME set version to
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
-    return new ModuleScriptExecutionLimits("0", null, 
-        new OpenbravoVersion(3,0,31999));
+    return new ModuleScriptExecutionLimits("0", null, new OpenbravoVersion(3, 0, 31887));
   }
 }

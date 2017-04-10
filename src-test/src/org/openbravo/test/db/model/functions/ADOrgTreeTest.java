@@ -17,7 +17,7 @@
  *************************************************************************
  */
 
-package org.openbravo.test.IsOrgIncluded;
+package org.openbravo.test.db.model.functions;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -44,7 +44,6 @@ import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationTree;
 import org.openbravo.service.db.CallProcess;
-import org.openbravo.test.db.model.functions.Ad_isorgincludedTest;
 
 /**
  * Tests related to AD_Org_Tree table
