@@ -647,6 +647,15 @@
       // sets the default payment method
       this.set('paymentcash', defaultpaymentcashcurrency || defaultpaymentcash || paymentcashcurrency || paymentcash || paymentlegacy);
 
+      // set if there's or not any payment method that is counted in cashup
+      if (_.find(this.get('payments'), function (payment) {
+        return payment.paymentMethod.countpaymentincashup;
+      })) {
+        this.set('hasPaymentsForCashup', true);
+      } else {
+        this.set('hasPaymentsForCashup', false);
+      }
+
       // add the currency converters
       _.each(OB.MobileApp.model.get('payments'), function (paymentMethod) {
         var fromCurrencyId = parseInt(OB.MobileApp.model.get('currency').id, 10);
