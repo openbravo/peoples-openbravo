@@ -11,6 +11,7 @@ enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalProductAttributes',
   i18nHeader: 'OBPOS_ProductAttributeValueDialogTitle',
+  autoDismiss: false,
   bodyContent: {
     components: [{
       initComponents: function () {
@@ -34,145 +35,132 @@ enyo.kind({
       kind: 'OB.UI.ModalDialogButton',
       i18nContent: 'OBMOBC_LblOk',
       isDefaultAction: true,
-      ontap: 'saveAttribute'
+      tap: function () {
+        this.owner.owner.saveAction();
+      }
     }, {
       kind: 'OB.UI.ModalDialogButton',
       i18nContent: 'OBPOS_LblClear',
-      ontap: 'clearAction'
+      tap: function () {
+        this.owner.owner.clearAction();
+      }
     }, {
       kind: 'OB.UI.ModalDialogButton',
       i18nContent: 'OBMOBC_LblCancel',
-      ontap: 'cancelAction'
+      tap: function () {
+        this.owner.owner.cancelAction();
+      }
     }]
   },
-
   /*
    * - LOT: expression starts with L followed by alphanumeric lot name
    * - SERIAL and LOT: expression starts with L followed by alphanumeric lot name and serial number
    * - EXPIRATION DATE: expression should contain a date format (dd-MM-yyyy)
    * - LOT and SERIAL and EXPIRATION DATE - LJAN17_#6969_28-02-2018
    */
-  validateAttribute: function (attribute) {
+  validAttribute: function (attribute) {
     var valueAttribute = attribute,
         pattern = "/^L|[0-9a-zA-Z]*#*[0-9_a-zA-Z]*";
     return (valueAttribute.match(pattern)) ? true : false;
   },
-
   saveAttribute: function (inSender, inEvent) {
     var me = this,
-        attributeValue = this.$.bodyContent.$.valueAttribute.getValue(),
+        inpattributeValue = this.$.bodyContent.$.valueAttribute.getValue(),
         receipt = me.owner.model.get('order'),
-        orderline = me.args.line,
-        p = orderline.get('product'),
-        qty = orderline.get('qty'),
+        orderline = me.owner.model.get('order').get('lines'),
+        currentline = me.args.line,
+        currentlineProduct = currentline.get('product'),
+        currentlineqty = currentline.get('qty'),
         options = me.args.options,
         newline = true,
-        repeteadAttribute = false,
-        showErrorSerialNumber = false,
-        i, repeteadLine;
-
-    if (this.validateAttribute(attributeValue) && attributeValue) {
-      for (i = 0; i < me.owner.model.get('order').get('lines').length; i++) {
-        var productId = me.owner.model.get('order').get('lines').models[i].attributes.product.id;
-        var attributeId = me.owner.model.get('order').get('lines').models[i].getAttributeValue();
-        if ((attributeId === attributeValue) && (productId === p.id)) {
-          repeteadAttribute = true;
-          repeteadLine = me.owner.model.get('order').get('lines').models[i];
-          break;
-        }
-      }
-      if (!options) {
-        if (repeteadAttribute) {
-          me.owner.model.get('order').get('lines').remove(orderline);
-          if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && p.get('isSerialNo')) {
-            showErrorSerialNumber = true;
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductHasSerialNo', null), [{
-              label: OB.I18N.getLabel('OBMOBC_LblOk'),
-              action: function () {
-                if (me.args.finalCallback) {
-                  me.args.finalCallback(false, null);
-                }
-                return true;
-              }
-            }]);
-          } else {
-            receipt.addUnit(repeteadLine, qty);
-          }
-          receipt.save();
-        } else {
-          orderline.set('attributeValue', attributeValue);
-          me.owner.model.get('order').save();
-        }
-      } else {
-        if (attributeValue !== orderline.getAttributeValue()) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotValidateAttribute'), OB.I18N.getLabel('OBPOS_NotSameAttribute', null), [{
-            label: OB.I18N.getLabel('OBMOBC_LblOk'),
-            action: function () {
-              if (me.args.finalCallback) {
-                me.args.finalCallback(false, null);
-              }
-              return true;
+        existingAttribute = false,
+        finalCallbackStatus = false;
+    if (this.validAttribute(inpattributeValue) && inpattributeValue) {
+      if (typeof options === 'undefined' || !options) {
+        //NORMAL or BLIND RETURN
+        if (this.validateAttributeWithOrderlines(currentlineProduct, orderline, inpattributeValue)) {
+          this.deleteOrderline(currentline);
+          if (currentlineProduct.get('isSerialNo')) {
+            this.showConfirm(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductHasSerialNo'));
+            if (me.args.finalCallback) {
+              finalCallbackStatus = false;
             }
-          }]);
-          me.owner.model.get('order').get('lines').remove(orderline);
+          }
+          receipt.addUnit(currentline, currentlineqty);
+          receipt.save();
+          finalCallbackStatus = false;
+        } else {
+          currentline.set('attributeValue', inpattributeValue);
+          receipt.save();
+          finalCallbackStatus = true;
+        }
+        this.args.initialCallback(receipt, currentlineProduct, currentline, currentlineqty, null, newline, me.args.finalCallback(finalCallbackStatus, currentline));
+      } else {
+        //VERIFIED RETURN
+        if (inpattributeValue !== currentline.getAttributeValue() && options.isVerifiedReturn) {
+          this.showConfirm(OB.I18N.getLabel('OBPOS_NotValidateAttribute'), OB.I18N.getLabel('OBPOS_NotSameAttribute'));
+          this.deleteOrderline(currentline);
+          finalCallbackStatus = false;
+          this.args.initialCallback(receipt, currentlineProduct, currentline, currentlineqty, null, newline, me.args.finalCallback(finalCallbackStatus, currentline));
         }
       }
     } else {
-      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NotValidAttribute'));
+      this.deleteOrderline(currentline);
+      finalCallbackStatus = false;
+      this.args.initialCallback(receipt, currentlineProduct, currentline, currentlineqty, null, newline, me.args.finalCallback(finalCallbackStatus, currentline));
     }
-    if (!showErrorSerialNumber && attributeValue) {
-      this.args.callbackPostAddProductToOrder(receipt, p, orderline, qty, null, newline, me.args.finalCallback(true, orderline));
-    }
-    return true;
   },
   clearAction: function () {
     this.$.bodyContent.$.valueAttribute.setValue(null);
     return true;
   },
-
-  cancel: function () {
-    var currentLine = this.args.line;
-    if (currentLine) {
-      this.deleteLine();
-    }
+  cancelAction: function () {
+    this.deleteOrderline(this.args.line);
     this.hide();
     return true;
   },
-  executeOnShow: function () {
-    var me = this;
-    this.$.bodyButtons.saveAttribute = function (inSender, inEvent) {
-      me.saveAttribute(inSender, inEvent);
-      me.hide();
-    };
-    this.$.bodyButtons.clearAction = function () {
-      me.clearAction();
-    };
-    this.$.bodyButtons.cancelAction = function () {
-      me.cancel();
-    };
+  saveAction: function () {
+    this.saveAttribute();
+    this.hide();
+    return true;
   },
-  executeOnHide: function () {
-    var saveAttribute = this.$.bodyButtons.saveAttribute.caller;
-    var callback = this.args.finalCallback;
-    if (!saveAttribute) {
-      if (callback) {
-        callback(false, null);
+  validateAttributeWithOrderlines: function (currentlineProduct, orderline, inpAttributeValue) {
+    var me = this,
+        i, orderlineProduct, ordrerlineAttribute, existingAttribute = false;
+    for (i = 0; i < orderline.length; i++) {
+      orderlineProduct = orderline.models[i].attributes.product.id;
+      ordrerlineAttribute = orderline.models[i].getAttributeValue();
+      if ((ordrerlineAttribute === inpAttributeValue) && (orderlineProduct === currentlineProduct.id)) {
+        existingAttribute = true;
+        break;
       }
-      this.deleteLine();
-    } else if (saveAttribute) {
-      var attributeValue = this.$.bodyContent.$.valueAttribute.getValue();
-      if (!attributeValue) {
-        if (callback) {
-          callback(false, null);
-        }
-        this.deleteLine();
+    }
+    return existingAttribute;
+  },
+  executeOnShow: function () {},
+  executeOnHide: function () {
+    var me = this;
+    var inpattributeValue = this.$.bodyContent.$.valueAttribute.getValue();
+    if (!inpattributeValue) {
+      this.deleteOrderline(this.args.line);
+      if (me.args.finalCallback) {
+        me.args.finalCallback(false, null);
       }
     }
     this.$.bodyContent.$.valueAttribute.setValue(null);
   },
-  deleteLine: function () {
-    this.owner.model.get('order').deleteLine(this.args.line);
+  deleteOrderline: function (currentLine) {
+    this.owner.model.get('order').deleteLine(currentLine);
     this.owner.model.get('order').save();
+  },
+  showConfirm: function (label1, label2) {
+    var me = this;
+    OB.UTIL.showConfirmation.display(label1, label2, [{
+      label: OB.I18N.getLabel('OBMOBC_LblOk'),
+      action: function () {
+        return false;
+      }
+    }]);
   }
 });
 OB.UI.WindowView.registerPopup('OB.OBPOSPointOfSale.UI.PointOfSale', {
