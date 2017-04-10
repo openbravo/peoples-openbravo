@@ -36,7 +36,9 @@ function reloadWidgetsBeforeTest(callback) {
     'widgets': []
   });
   OB.RemoteCallManager.call('org.openbravo.client.myob.MyOpenbravoActionHandler', post, {}, function (rpcResponse, data, rpcRequest) {
+
     OB.MyOB.widgets = data && data.widgets;
+
     callback(data);
   });
 }
@@ -143,8 +145,11 @@ QUnit.asyncTest('Remove widget', function () {
 QUnit.asyncTest('Get user widgets', function () {
   QUnit.expect(2);
   reloadWidgetsBeforeTest(function (data) {
+
     QUnit.strictEqual(data.message.type, 'Success', 'Widgets reloaded');
+
     QUnit.ok(!checkMissingDbInstanceId(), 'All widgets have a dbInstanceId');
+
     QUnit.start(); // restart the flow
   });
 });
