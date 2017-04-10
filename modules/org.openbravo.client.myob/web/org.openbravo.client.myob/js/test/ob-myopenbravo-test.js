@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,17 @@ var d = {
 };
 
 OB.MyOB = OB.MyOB || {};
-OB.MyOB.widgets = OB.MyOB.widgets || {};
+
+function reloadWidgetsBeforeTest(callback) {
+  var post = isc.addProperties({}, d, {
+    'eventType': 'RELOAD_WIDGETS',
+    'widgets': []
+  });
+  OB.RemoteCallManager.call('org.openbravo.client.myob.MyOpenbravoActionHandler', post, {}, function (rpcResponse, data, rpcRequest) {
+    OB.MyOB.widgets = data && data.widgets;
+    callback(data);
+  });
+}
 
 function checkMissingDbInstanceId(w) {
   var i, widgets = w || OB.MyOB.widgets;
@@ -42,28 +52,27 @@ function checkMissingDbInstanceId(w) {
 }
 
 QUnit.asyncTest('Add widget', function () {
-
-  var post = isc.addProperties({}, d, {
-    'eventType': 'WIDGET_ADDED',
-    'widgets': OB.MyOB.widgets
-  }),
-      widget = isc.addProperties({}, OB.MyOB.widgets[0]);
-
   QUnit.expect(2);
+  reloadWidgetsBeforeTest(function (data) {
+    var post = isc.addProperties({}, d, {
+      'eventType': 'WIDGET_ADDED',
+      'widgets': OB.MyOB.widgets
+    }),
+        widget = isc.addProperties({}, OB.MyOB.widgets[0]);
 
-  widget.rowNum += 1;
-  widget.dbInstanceId = '';
+    widget.rowNum += 1;
+    widget.dbInstanceId = '';
 
-  OB.MyOB.widgets.push(widget);
+    OB.MyOB.widgets.push(widget);
+    OB.RemoteCallManager.call('org.openbravo.client.myob.MyOpenbravoActionHandler', post, {}, function (rpcResponse, data, rpcRequest) {
 
-  OB.RemoteCallManager.call('org.openbravo.client.myob.MyOpenbravoActionHandler', post, {}, function (rpcResponse, data, rpcRequest) {
+      QUnit.strictEqual(data.message.type, 'Success', 'Widget added');
 
-    QUnit.strictEqual(data.message.type, 'Success', 'Widget added');
+      OB.MyOB.widgets = data && data.widgets ? eval(data.widgets) : OB.MyOB.widgets; // refreshing widgets
+      QUnit.ok(!checkMissingDbInstanceId(), 'All widgets have a dbInstanceId');
 
-    OB.MyOB.widgets = data && data.widgets ? eval(data.widgets) : OB.MyOB.widgets; // refreshing widgets
-    QUnit.ok(!checkMissingDbInstanceId(), 'All widgets have a dbInstanceId');
-
-    QUnit.start(); // restart the flow
+      QUnit.start(); // restart the flow
+    });
   });
 });
 
@@ -112,43 +121,30 @@ QUnit.skip('Move widget', function () {
 });
 
 QUnit.asyncTest('Remove widget', function () {
-
-  var post = isc.addProperties({}, d, {
-    'eventType': 'WIDGET_REMOVED',
-    'widgets': OB.MyOB.widgets
-  }),
-      removed = OB.MyOB.widgets.splice(-1, 1);
-
   QUnit.expect(2);
+  reloadWidgetsBeforeTest(function (data) {
+    var post = isc.addProperties({}, d, {
+      'eventType': 'WIDGET_REMOVED',
+      'widgets': OB.MyOB.widgets
+    }),
+        removed = OB.MyOB.widgets.splice(-1, 1);
+    OB.RemoteCallManager.call('org.openbravo.client.myob.MyOpenbravoActionHandler', post, {}, function (rpcResponse, data, rpcRequest) {
 
-  OB.RemoteCallManager.call('org.openbravo.client.myob.MyOpenbravoActionHandler', post, {}, function (rpcResponse, data, rpcRequest) {
+      QUnit.strictEqual(data.message.type, 'Success', 'Widget removed');
 
-    QUnit.strictEqual(data.message.type, 'Success', 'Widget removed');
+      OB.MyOB.widgets = data && data.widgets ? eval(data.widgets) : OB.MyOB.widgets; // refreshing widgets
+      QUnit.ok(!checkMissingDbInstanceId(), 'All widgets have a dbInstanceId');
 
-    OB.MyOB.widgets = data && data.widgets ? eval(data.widgets) : OB.MyOB.widgets; // refreshing widgets
-    QUnit.ok(!checkMissingDbInstanceId(), 'All widgets have a dbInstanceId');
-
-    QUnit.start(); // restart the flow
+      QUnit.start(); // restart the flow
+    });
   });
 });
 
 QUnit.asyncTest('Get user widgets', function () {
-
-  var post = isc.addProperties({}, d, {
-    'eventType': 'RELOAD_WIDGETS',
-    'widgets': []
-  });
-
   QUnit.expect(2);
-
-  OB.RemoteCallManager.call('org.openbravo.client.myob.MyOpenbravoActionHandler', post, {}, function (rpcResponse, data, rpcRequest) {
-
+  reloadWidgetsBeforeTest(function (data) {
     QUnit.strictEqual(data.message.type, 'Success', 'Widgets reloaded');
-
-    OB.MyOB = OB.MyOB || {};
-    OB.MyOB.widgets = data && data.widgets; // refreshing widgets
     QUnit.ok(!checkMissingDbInstanceId(), 'All widgets have a dbInstanceId');
-
     QUnit.start(); // restart the flow
   });
 });
