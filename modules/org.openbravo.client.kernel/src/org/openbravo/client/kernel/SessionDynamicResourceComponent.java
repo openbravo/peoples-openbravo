@@ -30,9 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class generates the session dynamic resources. This kind of resources are loaded before the
- * javascript content used in the application and they are provided by those classes extending the
- * {@link SessionDynamicTemplateComponent} class.
+ * This class generates other components called session dynamic resources. This kind of resources
+ * are loaded before the javascript content used in the application and they are provided by those
+ * classes extending the {@link SessionDynamicTemplateComponent} class.
  */
 public class SessionDynamicResourceComponent extends BaseComponent {
 
