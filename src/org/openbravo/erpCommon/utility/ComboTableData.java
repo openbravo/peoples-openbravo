@@ -33,6 +33,7 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.data.FieldProvider;
@@ -73,6 +74,7 @@ public class ComboTableData {
   public int index = 0;
   private String windowId;
   private int accessLevel;
+  private boolean allowedCrossOrgReference = false;
 
   /** Creates a new combo for a given field */
   public static ComboTableData getTableComboDataFor(Field field) throws Exception {
@@ -86,12 +88,16 @@ public class ComboTableData {
     if (col.getValidation() != null) {
       validation = col.getValidation().getId();
     }
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(col.getTable().getId());
+    Property property = entity.getPropertyByColumnName(col.getDBColumnName(), false);
+    boolean allowedCrossOrgReference = property != null && property.isAllowedCrossOrgReference();
+
     ComboTableData ctd = new ComboTableData(null, null, ref, col.getDBColumnName(),
-        objectReference, validation, null, null, 0);
+        objectReference, validation, null, null, 0, allowedCrossOrgReference);
 
     ctd.windowId = field.getTab().getWindow().getId();
-    Entity entity = ModelProvider.getInstance().getEntityByTableId(col.getTable().getId());
     ctd.accessLevel = entity.getAccessLevel().getDbValue();
+
     return ctd;
   }
 
@@ -149,6 +155,14 @@ public class ComboTableData {
   public ComboTableData(VariablesSecureApp _vars, ConnectionProvider _conn, String _referenceType,
       String _name, String _objectReference, String _validation, String _orgList,
       String _clientList, int _index) throws Exception {
+    this(_vars, _conn, _referenceType, _name, _objectReference, _validation, _orgList, _clientList,
+        _index, false);
+  }
+
+  private ComboTableData(VariablesSecureApp _vars, ConnectionProvider _conn, String _referenceType,
+      String _name, String _objectReference, String _validation, String _orgList,
+      String _clientList, int _index, boolean allowedCrossOrgReference) throws Exception {
+    this.allowedCrossOrgReference = allowedCrossOrgReference;
     setReferenceType(_referenceType);
     setObjectName(_name);
     setObjectReference(_objectReference);
@@ -932,7 +946,7 @@ public class ComboTableData {
     }
 
     String query = text.toString().replace(CLIENT_LIST_PARAM_HOLDER, getClientList());
-    if (orgList != null) {
+    if (orgList != null && !isAllowedCrossOrgReference()) {
       query = query.replace(ORG_LIST_PARAM_HOLDER, orgList);
     }
 
@@ -1318,5 +1332,10 @@ public class ComboTableData {
 
   public boolean canBeCached() {
     return canBeCached;
+  }
+
+  /** Returns whether the columns this combo is for allows cross organization references */
+  public boolean isAllowedCrossOrgReference() {
+    return allowedCrossOrgReference;
   }
 }

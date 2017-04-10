@@ -11,12 +11,18 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.userinterface.selector;
+
+import java.util.Map;
+
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 
 /**
  * Defines constants for this module.
@@ -40,6 +46,7 @@ public class SelectorConstants {
   public static final String PARAM_TARGET_PROPERTY_NAME = "targetProperty";
   public static final String PARAM_ID_FILTERS = "idFilters";
   public static final String PARAM_FILTER_EXPRESSION = "filterExpression";
+  private static final String PARAM_TABLE_ID = "inpTableId";
 
   // Reference definition IDs
   public static final String SELECTOR_REFERENCE_ID = "95E2A8B50A254B2AAE6774B8C2F28120";
@@ -51,4 +58,24 @@ public class SelectorConstants {
   public static final String DS_REQUEST_PROCESS_DEFINITION_ID = "_processDefinitionId";
   public static final String DS_REQUEST_SELECTOR_FIELD_ID = "_selectorFieldId";
   public static final String DS_REQUEST_IS_FILTER_BY_ID_SUPPORTED = "_isFilterByIdSupported";
+
+  /**
+   * Returns whether Organization filter should be included for selectors. It should always be
+   * included except when the data source is for a selector and the property the selector is for
+   * allows cross organization references.
+   */
+  public static boolean includeOrgFilter(Map<String, String> parameters) {
+    boolean isSelector = parameters.containsKey(DS_REQUEST_SELECTOR_ID_PARAMETER)
+        && parameters.containsKey(PARAM_TABLE_ID)
+        && parameters.containsKey(PARAM_TARGET_PROPERTY_NAME);
+    if (isSelector) {
+      Entity entity = ModelProvider.getInstance()
+          .getEntityByTableId(parameters.get(PARAM_TABLE_ID));
+      if (entity != null) {
+        Property property = entity.getProperty(parameters.get(PARAM_TARGET_PROPERTY_NAME), false);
+        return property != null && !property.isAllowedCrossOrgReference();
+      }
+    }
+    return true;
+  }
 }

@@ -27,16 +27,14 @@ import java.util.List;
 import org.apache.log4j.Level;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.window.StandardWindowComponent;
 import org.openbravo.client.kernel.ComponentGenerator;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
-import org.openbravo.test.base.HiddenObjectHelper;
+import org.openbravo.test.base.mock.HttpServletRequestMock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,12 +63,7 @@ public class StandardWindowTest extends WeldBaseTest {
 
     String errorMsg = "";
     try {
-      VariablesSecureApp fakedVars = new VariablesSecureApp(null, null, null);
-      try {
-        HiddenObjectHelper.set(RequestContext.get(), "variablesSecureApp", fakedVars);
-      } catch (Exception e) {
-        log.error("Errror initializating context", e);
-      }
+      HttpServletRequestMock.setRequestMockInRequestContext();
 
       List<Window> allWindows = OBDal.getInstance().createQuery(Window.class, "").list();
       int i = 0;

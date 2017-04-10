@@ -35,15 +35,13 @@ import javax.inject.Inject;
 import org.hibernate.Query;
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.attachment.AttachmentUtils;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.utility.AttachmentMethod;
-import org.openbravo.test.base.HiddenObjectHelper;
+import org.openbravo.test.base.mock.HttpServletRequestMock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,12 +129,7 @@ public class ADCSInitialization extends WeldBaseTest {
 
       // We need vars in context to initialize combos: this is not an issue because vars is only
       // used for system settings such as sql formats
-      VariablesSecureApp fakedVars = new VariablesSecureApp(null, null, null);
-      try {
-        HiddenObjectHelper.set(RequestContext.get(), "variablesSecureApp", fakedVars);
-      } catch (Exception e) {
-        log.error("Errror initializating context", e);
-      }
+      HttpServletRequestMock.setRequestMockInRequestContext();
 
       setSystemAdministratorContext();
     }

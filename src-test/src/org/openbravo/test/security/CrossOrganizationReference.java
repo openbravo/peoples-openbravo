@@ -31,10 +31,13 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.currency.Currency;
@@ -185,6 +188,25 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
     } catch (Exception ignore) {
     } finally {
       OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Changes allowed cross org reference setting
+   * 
+   * @param colIds
+   *          list of columns ids to change
+   * @param allowCrossOrgColumns
+   *          value to set
+   */
+  static void setUpAllowedCrossOrg(List<String> colIds, boolean allowCrossOrgColumns)
+      throws Exception {
+    OBContext.setOBContext("0");
+    for (String colId : colIds) {
+      Column col = OBDal.getInstance().get(Column.class, colId);
+      Property p = ModelProvider.getInstance().getEntityByTableId(col.getTable().getId())
+          .getPropertyByColumnName(col.getDBColumnName());
+      p.setAllowedCrossOrgReference(allowCrossOrgColumns);
     }
   }
 }

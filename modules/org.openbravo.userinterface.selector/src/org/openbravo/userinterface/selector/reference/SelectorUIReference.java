@@ -234,12 +234,16 @@ public class SelectorUIReference extends UIReference {
             tables += " on " + tableName + "." + parentFieldName + " = td" + myIndex + "." + name
                 + "\n";
             tables += "AND td" + myIndex + ".AD_Client_ID IN (" + CLIENT_LIST_PARAM_HOLDER + ") \n";
-            tables += "AND td" + myIndex + ".AD_Org_ID IN (" + ORG_LIST_PARAM_HOLDER + ")";
+            if (!comboTableData.isAllowedCrossOrgReference()) {
+              tables += "AND td" + myIndex + ".AD_Org_ID IN (" + ORG_LIST_PARAM_HOLDER + ")";
+            }
           } else {
             comboTableData.addWhereField("td" + myIndex + ".AD_Client_ID IN ("
                 + CLIENT_LIST_PARAM_HOLDER + ")", "CLIENT_LIST");
-            comboTableData.addWhereField("td" + myIndex + ".AD_Org_ID IN (" + ORG_LIST_PARAM_HOLDER
-                + ")", "ORG_LIST");
+            if (!comboTableData.isAllowedCrossOrgReference()) {
+              comboTableData.addWhereField("td" + myIndex + ".AD_Org_ID IN ("
+                  + ORG_LIST_PARAM_HOLDER + ")", "ORG_LIST");
+            }
           }
           comboTableData.addFromField(tables, "td" + myIndex);
           if (tableName == null || tableName.equals("")) {

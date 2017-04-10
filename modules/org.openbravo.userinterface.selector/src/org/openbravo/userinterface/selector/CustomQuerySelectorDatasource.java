@@ -11,12 +11,14 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.userinterface.selector;
+
+import static org.openbravo.userinterface.selector.SelectorConstants.includeOrgFilter;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -198,13 +200,15 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     additionalFilter.append(entityAlias + ".client.id in ('0', '")
         .append(OBContext.getOBContext().getCurrentClient().getId()).append("')");
 
-    // Organization filter
-    final String orgs = DataSourceUtils.getOrgs(parameters.get(JsonConstants.ORG_PARAMETER));
-    if (StringUtils.isNotEmpty(orgs)) {
-      additionalFilter.append(NEW_FILTER_CLAUSE);
-      additionalFilter.append(entityAlias
-          + (sel.getTable().getName().equals("Organization") ? ".id in (" + orgs + ")"
-              : ".organization in (" + orgs + ")"));
+    if (includeOrgFilter(parameters)) {
+      // Organization filter
+      final String orgs = DataSourceUtils.getOrgs(parameters.get(JsonConstants.ORG_PARAMETER));
+      if (StringUtils.isNotEmpty(orgs)) {
+        additionalFilter.append(NEW_FILTER_CLAUSE);
+        additionalFilter.append(entityAlias
+            + (sel.getTable().getName().equals("Organization") ? ".id in (" + orgs + ")"
+                : ".organization in (" + orgs + ")"));
+      }
     }
     additionalFilter.append(getDefaultFilterExpression(sel, parameters));
 

@@ -18,6 +18,8 @@
  */
 package org.openbravo.service.json;
 
+import static org.openbravo.userinterface.selector.SelectorConstants.includeOrgFilter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -440,6 +442,7 @@ public class DefaultJsonDataService implements JsonDataService {
     final DataEntityQueryService queryService = OBProvider.getInstance().get(
         DataEntityQueryService.class);
 
+    boolean includeOrgFilter = includeOrgFilter(parameters);
     if (!forSubEntity && parameters.get(JsonConstants.DISTINCT_PARAMETER) != null) {
       // this is the main entity of a 'contains' (used in FK drop down lists), it will create also
       // info for subentity
@@ -556,7 +559,8 @@ public class DefaultJsonDataService implements JsonDataService {
       }
     } else {
       queryService.setEntityName(entityName);
-      queryService.setFilterOnReadableOrganizations(filterOnReadableOrganizations);
+      queryService.setFilterOnReadableOrganizations(filterOnReadableOrganizations
+          && includeOrgFilter);
       if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
         queryService.setUseAlias();
       }
@@ -604,7 +608,7 @@ public class DefaultJsonDataService implements JsonDataService {
         if (key.equals(JsonConstants.IDENTIFIER)
             || key.equals(JsonConstants.WHERE_PARAMETER)
             || key.equals(JsonConstants.WHERE_AND_FILTER_CLAUSE)
-            || key.equals(JsonConstants.ORG_PARAMETER)
+            || (key.equals(JsonConstants.ORG_PARAMETER) && includeOrgFilter)
             || key.equals(JsonConstants.CALCULATE_ORGS)
             || key.equals(JsonConstants.TARGETRECORDID_PARAMETER)
             || (key.startsWith(DataEntityQueryService.PARAM_DELIMITER) && key
@@ -612,7 +616,6 @@ public class DefaultJsonDataService implements JsonDataService {
             || (key.equals(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER))) {
           queryService.addFilterParameter(key, parameters.get(key));
         }
-
       }
     }
     queryService.setCriteria(criteria);
@@ -867,6 +870,7 @@ public class DefaultJsonDataService implements JsonDataService {
    * @see org.openbravo.service.json.JsonDataService#update(java.util.Map, java.lang.String)
    */
   public String update(Map<String, String> parameters, String content) {
+    OBContext.setCrossOrgReferenceAdminMode();
     try {
       final boolean sendOriginalIdBack = "true".equals(parameters
           .get(JsonConstants.SEND_ORIGINAL_ID_BACK));
@@ -1012,8 +1016,9 @@ public class DefaultJsonDataService implements JsonDataService {
         }
       }
       return JsonUtils.convertExceptionToJson(localThrowable);
+    } finally {
+      OBContext.restorePreviousCrossOrgReferenceMode();
     }
-
   }
 
   private Object getContentAsJSON(String content) throws JSONException {

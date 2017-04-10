@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,9 @@ import static org.junit.Assert.assertThat;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Level;
@@ -38,7 +40,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.dal.core.DalLayerInitializer;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -71,7 +72,8 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   private static final String ORDER_BP_COLUMN = "2762";
   private static final String ORDERLINE_ORDER_COLUMN = "2213";
 
-  private static boolean wasCoreInDev;
+  private static final List<String> COLUMNS_TO_ALLOW_CROSS_ORG = Arrays.asList(
+      ORDER_WAREHOUSE_COLUMN, ORDERLINE_ORDER_COLUMN);
 
   /**
    * References from org Spain to USA should not be allowed on insertion even in a column allowing
@@ -419,8 +421,7 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
       exception.expect(Exception.class);
       OBDal.getInstance().commitAndClose();
     } finally {
-      core.setInDevelopment(true); // was set in @BeforeClass
-      OBDal.getInstance().commitAndClose();
+      OBDal.getInstance().rollbackAndClose();
       OBContext.setOBContext(prevCtxt);
     }
   }
@@ -470,25 +471,7 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
 
   @BeforeClass
   public static void setUpAllowedCrossOrg() throws Exception {
-    // allow cross org references in order.warehouse and in orderline.order
-    OBContext.setOBContext("0");
-    Module core = OBDal.getInstance().get(Module.class, CORE);
-    wasCoreInDev = core.isInDevelopment();
-    if (!wasCoreInDev) {
-      core.setInDevelopment(true);
-    }
-
-    Column orderWarehouse = OBDal.getInstance().get(Column.class, ORDER_WAREHOUSE_COLUMN);
-    orderWarehouse.setAllowedCrossOrganizationReference(true);
-
-    Column orderLineOrder = OBDal.getInstance().get(Column.class, ORDERLINE_ORDER_COLUMN);
-    orderLineOrder.setAllowedCrossOrganizationReference(true);
-
-    OBDal.getInstance().commitAndClose();
-
-    // reload in memory model with these new settings
-    DalLayerInitializer.getInstance().setInitialized(false);
-    setDalUp();
+    CrossOrganizationReference.setUpAllowedCrossOrg(COLUMNS_TO_ALLOW_CROSS_ORG, true);
 
     Role qaRole = createOrgUserLevelRole();
     QA_ONLY_SPAIN_ROLE = qaRole.getId();
@@ -539,20 +522,8 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   }
 
   @AfterClass
-  public static void resetAD() {
-    OBContext.setOBContext("0");
-
-    Column orderWarehouse = OBDal.getInstance().get(Column.class, ORDER_WAREHOUSE_COLUMN);
-    orderWarehouse.setAllowedCrossOrganizationReference(false);
-
-    Column orderLineOrder = OBDal.getInstance().get(Column.class, ORDERLINE_ORDER_COLUMN);
-    orderLineOrder.setAllowedCrossOrganizationReference(false);
-    OBDal.getInstance().flush();
-
-    if (!wasCoreInDev) {
-      Module core = OBDal.getInstance().get(Module.class, CORE);
-      core.setInDevelopment(false);
-    }
+  public static void resetAD() throws Exception {
+    CrossOrganizationReference.setUpAllowedCrossOrg(COLUMNS_TO_ALLOW_CROSS_ORG, false);
 
     OBDal.getInstance().commitAndClose();
   }
