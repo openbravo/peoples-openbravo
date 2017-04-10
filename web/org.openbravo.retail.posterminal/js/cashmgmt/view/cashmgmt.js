@@ -216,8 +216,6 @@ OB.POS.registerWindow({
   permission: 'OBPOS_retail.cashmanagement',
   approvalType: 'OBPOS_approval.cashmgmt',
   menuItemDisplayLogic: function () {
-    return !OB.UTIL.isNullOrUndefined(_.find(OB.MobileApp.model.get('payments'), function (payment) {
-      return payment.paymentMethod.countpaymentincashup;
-    }));
+    return OB.MobileApp.model.get('hasPaymentsForCashup');
   }
 });

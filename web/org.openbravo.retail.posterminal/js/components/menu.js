@@ -536,7 +536,7 @@ enyo.kind({
   permission: 'OBPOS_retail.opendrawerfrommenu',
   i18nLabel: 'OBPOS_LblOpenDrawer',
   updateVisibility: function () {
-    if (OB.MobileApp.model.get('payments').length <= 0) {
+    if (!OB.MobileApp.model.get('hasPaymentsForCashup')) {
       this.hide();
     }
   },

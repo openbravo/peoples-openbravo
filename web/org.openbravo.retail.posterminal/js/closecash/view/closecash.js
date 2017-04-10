@@ -604,9 +604,7 @@ OB.POS.registerWindow({
     }
   },
   menuItemDisplayLogic: function () {
-    return !OB.UTIL.isNullOrUndefined(_.find(OB.MobileApp.model.get('payments'), function (payment) {
-      return payment.paymentMethod.countpaymentincashup;
-    }));
+    return OB.MobileApp.model.get('hasPaymentsForCashup');
   }
 });
 
@@ -631,8 +629,6 @@ OB.POS.registerWindow({
   permission: 'OBPOS_retail.cashuppartial',
   approvalType: 'OBPOS_approval.cashuppartial',
   menuItemDisplayLogic: function () {
-    return !OB.UTIL.isNullOrUndefined(_.find(OB.MobileApp.model.get('payments'), function (payment) {
-      return payment.paymentMethod.countpaymentincashup;
-    }));
+    return OB.MobileApp.model.get('hasPaymentsForCashup');
   }
 });
