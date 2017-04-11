@@ -1078,11 +1078,15 @@ enyo.kind({
       if (window.location.protocol === protocol) {
         if (OB.UTIL.RfidController.get('connectionLost')) {
           this.addClass('btn-icon-switchoffline');
+        } else {
+          this.removeClass('btn-icon-switchoffline');
         }
         if (!OB.UTIL.RfidController.get('isRFIDEnabled') || !OB.UTIL.RfidController.get('reconnectOnScanningFocus')) {
           this.addClass('btn-icon-switchoff');
+          this.removeClass('btn-icon-switchon');
         } else {
           this.addClass('btn-icon-switchon');
+          this.removeClass('btn-icon-switchoffline');
         }
       } else {
         this.hide();
