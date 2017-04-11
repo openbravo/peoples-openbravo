@@ -37,7 +37,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2016 Openbravo SLU
+* All portions are Copyright (C) 2001-2017 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -87,7 +87,8 @@ BEGIN
                M_PRODUCT.MA_PROCESSPLAN_ID, MRP_RUN_PRODUCTIONLINE.PLANNEDDATE,
                MRP_RUN_PRODUCTIONLINE.PLANNEDORDERDATE,
                COALESCE(M_PRODUCT_ORG.CAPACITY, M_PRODUCT.CAPACITY) AS CAPACITY,
-               COALESCE(M_PRODUCT_ORG.DELAYMIN, M_PRODUCT.DELAYMIN, 0) AS DELAYMIN
+               COALESCE(M_PRODUCT_ORG.DELAYMIN, M_PRODUCT.DELAYMIN, 0) AS DELAYMIN,
+               M_PRODUCT_ORG.Qtytype, M_PRODUCT_ORG.Qtystd, M_PRODUCT_ORG.Qtymin
         FROM MRP_RUN_PRODUCTIONLINE,
              M_PRODUCT LEFT JOIN M_PRODUCT_ORG ON M_PRODUCT.M_PRODUCT_ID = M_PRODUCT_ORG.M_PRODUCT_ID
                                               AND M_PRODUCT_ORG.AD_ORG_ID = p_Org_ID
@@ -106,7 +107,13 @@ BEGIN
 	      v_planneddate:= p_planningdate;
 	    END IF;
 	  END IF;
-	  Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID, Cur_Run_Lines.M_Product_ID, -1*Cur_Run_Lines.Qty, -1*Cur_Run_Lines.Qty, Cur_Run_Lines.MRP_RUN_Line_ID, (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN 'MP' ELSE 'WP' END), 'N', NULL, NULL, NULL, NULL, Cur_Run_Lines.MA_Processplan_ID, v_planneddate, (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN (v_planneddate) ELSE v_planneddate - (CASE Cur_Run_Lines.DELAYMIN > (CASE WHEN Cur_Run_Lines.CAPACITY IS NULL THEN 0 ELSE CEIL(Cur_Run_Lines.Qty/Cur_Run_Lines.CAPACITY) END) WHEN true THEN Cur_Run_Lines.DELAYMIN ELSE (CASE WHEN Cur_Run_Lines.CAPACITY IS NULL THEN 0 ELSE CEIL(Cur_Run_Lines.Qty/Cur_Run_Lines.CAPACITY) END) END) END), 'Y', (CASE WHEN Cur_Run_Lines.ispurchased = 'Y' THEN 'Y' ELSE 'N' END), NULL, v_Aux_ID);
+	  IF (Cur_Run_Lines.Qtytype = 'E' AND COALESCE(Cur_Run_Lines.Qtystd, 0) > 0 AND CEIL(GREATEST(-1*Cur_Run_Lines.Qty, COALESCE(Cur_Run_Lines.Qtymin, 0))/Cur_Run_Lines.Qtystd) > 0) THEN
+           FOR i IN 1..CEIL(GREATEST(-1*Cur_Run_Lines.Qty, COALESCE(Cur_Run_Lines.Qtymin, 0))/Cur_Run_Lines.Qtystd) LOOP
+	      Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID, Cur_Run_Lines.M_Product_ID, Cur_Run_Lines.Qtystd, -1*Cur_Run_Lines.Qty, Cur_Run_Lines.MRP_RUN_Line_ID, (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN 'MP' ELSE 'WP' END), 'N', NULL, NULL, NULL, NULL, Cur_Run_Lines.MA_Processplan_ID, v_planneddate, (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN (v_planneddate) ELSE v_planneddate - (CASE Cur_Run_Lines.DELAYMIN > (CASE WHEN Cur_Run_Lines.CAPACITY IS NULL THEN 0 ELSE CEIL(Cur_Run_Lines.Qty/Cur_Run_Lines.CAPACITY) END) WHEN true THEN Cur_Run_Lines.DELAYMIN ELSE (CASE WHEN Cur_Run_Lines.CAPACITY IS NULL THEN 0 ELSE CEIL(Cur_Run_Lines.Qty/Cur_Run_Lines.CAPACITY) END) END) END), 'Y', (CASE WHEN Cur_Run_Lines.ispurchased = 'Y' THEN 'Y' ELSE 'N' END), NULL, v_Aux_ID);
+	    END LOOP;
+	  ELSE
+	    Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID, Cur_Run_Lines.M_Product_ID, -1*Cur_Run_Lines.Qty, -1*Cur_Run_Lines.Qty, Cur_Run_Lines.MRP_RUN_Line_ID, (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN 'MP' ELSE 'WP' END), 'N', NULL, NULL, NULL, NULL, Cur_Run_Lines.MA_Processplan_ID, v_planneddate, (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN (v_planneddate) ELSE v_planneddate - (CASE Cur_Run_Lines.DELAYMIN > (CASE WHEN Cur_Run_Lines.CAPACITY IS NULL THEN 0 ELSE CEIL(Cur_Run_Lines.Qty/Cur_Run_Lines.CAPACITY) END) WHEN true THEN Cur_Run_Lines.DELAYMIN ELSE (CASE WHEN Cur_Run_Lines.CAPACITY IS NULL THEN 0 ELSE CEIL(Cur_Run_Lines.Qty/Cur_Run_Lines.CAPACITY) END) END) END), 'Y', (CASE WHEN Cur_Run_Lines.ispurchased = 'Y' THEN 'Y' ELSE 'N' END), NULL, v_Aux_ID);
+	  END IF;
         ELSE
           v_ResultStr := 'Explode dependant products';
           FOR Cur_ProcessPlanVersion IN (
