@@ -54,8 +54,10 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("bpsl.locationAddress.cityName", "shipCityName"));
         add(new HQLProperty("bpl.locationAddress.postalCode", "postalCode"));
         add(new HQLProperty("bpsl.locationAddress.postalCode", "shipPostalCode"));
+        add(new HQLProperty("bpl.locationAddress.region.id", "regionId"));
         add(new HQLProperty("bpsl.locationAddress.region.id", "shipRegionId"));
-        add(new HQLProperty("bpl.locationAddress.country.id", "shipCountryId"));
+        add(new HQLProperty("bpl.locationAddress.country.id", "countryId"));
+        add(new HQLProperty("bpsl.locationAddress.country.id", "shipCountryId"));
         add(new HQLProperty("bpl.locationAddress.country.name", "countryName"));
         add(new HQLProperty("bp.businessPartnerCategory.id", "businessPartnerCategory"));
         add(new HQLProperty("bp.businessPartnerCategory.name", "businessPartnerCategory_name"));

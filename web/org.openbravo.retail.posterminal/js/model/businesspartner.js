@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -281,6 +281,14 @@
     name: 'cityName',
     column: 'cityName',
     filter: true,
+    type: 'TEXT'
+  }, {
+    name: 'regionId',
+    column: 'regionId',
+    type: 'TEXT'
+  }, {
+    name: 'countryId',
+    column: 'countryId',
     type: 'TEXT'
   }, {
     name: 'countryName',
