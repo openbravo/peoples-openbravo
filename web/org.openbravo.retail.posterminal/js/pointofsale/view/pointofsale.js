@@ -257,6 +257,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalProductAttributes',
       name: 'modalProductAttribute'
+    }, {
+      kind: 'OB.UI.ModalProductAttributeVerifiedReturns',
+      name: 'modalProductAttributeVerifiedReturns'
     }]
   }, {
     name: 'mainSubWindow',
