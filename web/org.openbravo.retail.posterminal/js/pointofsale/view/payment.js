@@ -1333,13 +1333,15 @@ enyo.kind({
     }
 
     var continueExecution = function () {
-        if (!myModel.get('leftColumnViewManager').isOrder()) {
-          var receipts2 = me.owner.model.get('multiOrders').get('multiOrdersList').models;
-          receipts2.forEach(function (receipt) {
-            receipt.set('isLayaway', false);
+        if (myModel.get('leftColumnViewManager').isOrder()) {
+          me.owner.receipt.get('lines').forEach(function (line) {
+            if (line.get('obposCanbedelivered')) {
+              line.set('obposIspaid', true);
+            }
           });
-        } else {
-          me.owner.receipt.set('isLayaway', false);
+          if (Math.abs(me.owner.receipt.get('payment')) < Math.abs(me.owner.receipt.get('gross')) && !me.owner.receipt.get('paidOnCredit')) {
+            me.owner.receipt.set('hasPrepayment', true);
+          }
         }
 
         if (!avoidPayment) {

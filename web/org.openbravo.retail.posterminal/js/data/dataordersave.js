@@ -189,14 +189,12 @@
           frozenReceipt.set('undo', null);
           frozenReceipt.set('multipleUndo', null);
 
-          receipt.get('lines').forEach(function (line) {
-            if (Math.abs(receipt.get('payment')) >= Math.abs(receipt.get('gross')) || receipt.get('paidOnCredit')) {
+          if (Math.abs(receipt.get('payment')) >= Math.abs(receipt.get('gross')) || receipt.get('paidOnCredit')) {
+            receipt.get('lines').forEach(function (line) {
               line.set('obposCanbedelivered', true);
-            }
-            if (line.get('obposCanbedelivered')) {
               line.set('obposIspaid', true);
-            }
-          });
+            });
+          }
 
           receipt.get('lines').forEach(function (line) {
             if (line.get('product').get('productType') === 'S' && line.get('product').get('isLinkedToProduct') && !line.has('obposQtytodeliver') && line.get('qty') > 0) {
@@ -520,9 +518,13 @@
             currentReceipt.get('lines').forEach(function (line) {
               if (Math.abs(currentReceipt.get('payment')) >= Math.abs(currentReceipt.get('gross')) || currentReceipt.get('paidOnCredit')) {
                 line.set('obposCanbedelivered', true);
-              }
-              if (line.get('obposCanbedelivered')) {
                 line.set('obposIspaid', true);
+              }
+              if (Math.abs(currentReceipt.get('payment')) < Math.abs(currentReceipt.get('gross')) && OB.UTIL.isNullOrUndefined(currentReceipt.get('amountToLayaway'))) {
+                if (line.get('obposCanbedelivered')) {
+                  line.set('obposIspaid', true);
+                }
+                currentReceipt.set('hasPrepayment', true);
               }
             });
 
