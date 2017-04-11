@@ -6,15 +6,19 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+
 /*global OB, _, moment, Backbone, enyo, BigDecimal, localStorage */
-(function() {
+
+(function () {
+
   var cachedData = null;
-  var findDiscountFilterBusinessPartner = function(criteria, success, fail) {
+
+  var findDiscountFilterBusinessPartner = function (criteria, success, fail) {
       if (criteria.remoteFilters[0].value === OB.MobileApp.model.get('businessPartner').id) {
         if (cachedData) {
           success(cachedData);
         } else {
-          OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function(discountsBP) {
+          OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
             cachedData = discountsBP;
             success(cachedData);
           }, fail);
@@ -23,6 +27,7 @@
         OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, success, fail);
       }
       };
+
   // Sales.OrderLine Model
   var OrderLine = Backbone.Model.extend({
     modelName: 'OrderLine',
@@ -38,6 +43,7 @@
       description: '',
       attributeValue: ''
     },
+
     // When copying a line coming from servers these properties are copied
     // manually
     // the rest are considered extra information coming from modules and are
@@ -68,7 +74,8 @@
       warehousename: true,
       attributeValue: true
     },
-    initialize: function(attributes) {
+
+    initialize: function (attributes) {
       if (attributes && attributes.product) {
         this.set('product', new OB.Model.Product(attributes.product));
         this.set('productidentifier', attributes.productidentifier);
@@ -92,34 +99,44 @@
           this.set('hasRelatedServices', attributes.hasRelatedServices);
         }
       }
+
     },
-    getAttributeValue: function() {
+
+    getAttributeValue: function () {
       return this.get('attributeValue');
     },
-    getQty: function() {
+
+    getQty: function () {
       return this.get('qty');
     },
-    printQty: function() {
+
+    printQty: function () {
       return this.get('qty').toString();
     },
-    printPrice: function() {
+
+    printPrice: function () {
       return OB.I18N.formatCurrency(this.get('_price') || this.get('nondiscountedprice') || this.get('price'));
     },
-    isPrintableService: function() {
+
+    isPrintableService: function () {
       var product = this.get('product');
       if (product.get('productType') === 'S' && !product.get('isPrintServices')) {
         return false;
       }
+
       return true;
     },
-    getDiscount: function() {
+
+    getDiscount: function () {
       return this.getTotalAmountOfPromotions();
     },
-    printDiscount: function() {
+
+    printDiscount: function () {
       return OB.I18N.formatCurrency(this.getDiscount());
     },
+
     // returns the discount to substract in total
-    discountInTotal: function() {
+    discountInTotal: function () {
       var disc = OB.DEC.mul(OB.DEC.sub(this.get('product').get('standardPrice'), this.get('price')), this.get('qty'));
       // if there is a discount no promotion then total is price*qty
       // otherwise total is price*qty - discount
@@ -129,7 +146,8 @@
         return 0;
       }
     },
-    calculateGross: function() {
+
+    calculateGross: function () {
       // calculate the total amount depending on the tax plan
       // setting the oposite variable to null, ensures that other logic is not using them in a wrong way
       if (this.get('priceIncludesTax')) {
@@ -144,30 +162,37 @@
         this.set('net', OB.DEC.mul(this.get('qty'), this.get('price')));
       }
     },
-    getGross: function() {
+
+    getGross: function () {
       return this.get('gross');
     },
-    getTotalLine: function() {
+
+    getTotalLine: function () {
       if (!OB.UTIL.isNullOrUndefined(this.get('price'))) {
         return (OB.DEC.mul(this.get('price'), this.get('qty'))) - this.getDiscount();
       }
     },
-    getNet: function() {
+
+    getNet: function () {
       return this.get('net');
     },
-    printGross: function() {
+
+    printGross: function () {
       return OB.I18N.formatCurrency(this.get('_gross') || this.getGross());
     },
-    printNet: function() {
+
+    printNet: function () {
       return OB.I18N.formatCurrency(this.get('nondiscountednet') || this.getNet());
     },
-    printTotalLine: function() {
+
+    printTotalLine: function () {
       return OB.I18N.formatCurrency(this.getTotalLine());
     },
-    getTotalAmountOfPromotions: function() {
+
+    getTotalAmountOfPromotions: function () {
       var memo = 0;
       if (this.get('promotions') && this.get('promotions').length > 0) {
-        return _.reduce(this.get('promotions'), function(memo, prom) {
+        return _.reduce(this.get('promotions'), function (memo, prom) {
           if (OB.UTIL.isNullOrUndefined(prom.amt)) {
             return memo;
           }
@@ -177,14 +202,15 @@
         return 0;
       }
     },
-    isAffectedByPack: function() {
-      return _.find(this.get('promotions'), function(promotion) {
+    isAffectedByPack: function () {
+      return _.find(this.get('promotions'), function (promotion) {
         if (promotion.pack) {
           return true;
         }
       }, this);
     },
-    stopApplyingPromotions: function() {
+
+    stopApplyingPromotions: function () {
       var promotions = this.get('promotions'),
           i;
       if (promotions) {
@@ -200,7 +226,8 @@
       }
       return false;
     },
-    lastAppliedPromotion: function() {
+
+    lastAppliedPromotion: function () {
       var promotions = this.get('promotions'),
           i;
       if (this.get('promotions')) {
@@ -212,7 +239,8 @@
       }
       return null;
     },
-    isReturnable: function() {
+
+    isReturnable: function () {
       if (this.get('product').get('returnable')) {
         return true;
       } else {
@@ -220,13 +248,14 @@
       }
     }
   });
+
   // Sales.OrderLineCol Model.
   var OrderLineList = Backbone.Collection.extend({
     model: OrderLine,
-    isProductPresent: function(product) {
+    isProductPresent: function (product) {
       var result = null;
       if (this.length > 0) {
-        result = _.find(this.models, function(line) {
+        result = _.find(this.models, function (line) {
           if (line.get('product').get('id') === product.get('id')) {
             return true;
           }
@@ -241,6 +270,7 @@
       }
     }
   });
+
   // Sales.Payment Model
   var PaymentLine = Backbone.Model.extend({
     modelName: 'PaymentLine',
@@ -251,17 +281,17 @@
       // amount - change...
       'date': null
     },
-    printAmount: function() {
+    printAmount: function () {
       if (this.get('rate')) {
         return OB.I18N.formatCurrency(this.get('origAmount') || OB.DEC.mul(this.get('amount'), this.get('rate')));
       } else {
         return OB.I18N.formatCurrency(this.get('amount'));
       }
     },
-    printForeignAmount: function() {
+    printForeignAmount: function () {
       return '(' + OB.I18N.formatCurrency(this.get('amount')) + ' ' + this.get('isocode') + ')';
     },
-    printAmountWithSignum: function(order) {
+    printAmountWithSignum: function (order) {
       var paidReturn = (this.get('isPaid') && (this.get('orderGross') < 0)) || (order && order.get('paidInNegativeStatusAmt') && this.get('cancelAndReplace') === true);
       // if the ticket is a paid return, new payments must be displayed in negative
       if (this.get('rate')) {
@@ -271,10 +301,12 @@
       }
     }
   });
+
   // Sales.OrderLineCol Model.
   var PaymentLineList = Backbone.Collection.extend({
     model: PaymentLine
   });
+
   // Sales.Order Model.
   var Order = Backbone.Model.extend({
     includeDocNoSeperator: true,
@@ -292,16 +324,18 @@
       'hasbeenpaid': 'hasbeenpaid',
       'isbeingprocessed': 'isbeingprocessed'
     },
+
     defaults: {
       hasbeenpaid: 'N',
       isbeingprocessed: 'N'
     },
+
     createStatement: 'CREATE TABLE IF NOT EXISTS c_order (c_order_id TEXT PRIMARY KEY, json CLOB, ad_session_id TEXT, hasbeenpaid TEXT, isbeingprocessed TEXT)',
     dropStatement: 'DROP TABLE IF EXISTS c_order',
     insertStatement: 'INSERT INTO c_order(c_order_id, json, ad_session_id, hasbeenpaid, isbeingprocessed) VALUES (?,?,?,?,?)',
     local: true,
     _id: 'modelorder',
-    initialize: function(attributes) {
+    initialize: function (attributes) {
       var orderId;
       if (attributes && attributes.id && attributes.json) {
         // The attributes of the order are stored in attributes.json
@@ -367,43 +401,49 @@
         this.set('reApplyDiscounts', false);
         this.set('calculateReceiptCallbacks', []);
         this.set('loaded', attributes.loaded);
-        _.each(_.keys(attributes), function(key) {
+        _.each(_.keys(attributes), function (key) {
           if (!this.has(key)) {
             this.set(key, attributes[key]);
           }
         }, this);
+
       } else {
         this.clearOrderAttributes();
       }
     },
-    save: function(callback) {
+
+    save: function (callback) {
       var undoCopy = this.get('undo'),
           me = this,
           forceInsert = false;
+
       if (this.get('isBeingClosed')) {
         var diffReceipt = OB.UTIL.diffJson(this.serializeToJSON(), this.get('json'));
         var error = new Error();
         OB.error('The receipt is being save during the closing: ' + diffReceipt);
         OB.error('The stack trace is: ' + error.stack);
       }
+
       var now = new Date();
       this.set('timezoneOffset', now.getTimezoneOffset());
+
       if (!this.get('id') || !this.id) {
         var uuid = OB.UTIL.get_UUID();
         this.set('id', uuid);
         this.id = uuid;
         forceInsert = true;
       }
+
       this.set('json', JSON.stringify(this.serializeToJSON()));
       if (callback === undefined || !callback instanceof Function) {
-        callback = function() {};
+        callback = function () {};
       }
       if (!OB.MobileApp.model.get('preventOrderSave')) {
-        OB.Dal.save(this, function() {
+        OB.Dal.save(this, function () {
           if (callback) {
             callback();
           }
-        }, function() {
+        }, function () {
           OB.error(arguments);
         }, forceInsert);
       } else {
@@ -413,26 +453,29 @@
       }
       this.setUndo('SaveOrder', undoCopy);
     },
-    calculateTaxes: function(callback) {
+
+    calculateTaxes: function (callback) {
       var me = this;
       OB.DATA.OrderTaxes(me);
       me.calculateTaxes(callback);
     },
-    prepareToSend: function(callback) {
+    prepareToSend: function (callback) {
       this.adjustPrices();
       if (!OB.UTIL.isNullOrUndefined(callback)) {
         callback(this);
       }
     },
-    adjustPrices: function() {
+
+    adjustPrices: function () {
       // Apply calculated discounts and promotions to price and gross prices
       // so ERP saves them in the proper place
-      this.get('lines').each(function(line) {
+      this.get('lines').each(function (line) {
         var price = line.get('price'),
             gross = line.get('gross'),
             totalDiscount = 0,
             grossListPrice = line.get('priceList'),
             grossUnitPrice, discountPercentage, base;
+
         // Calculate inline discount: discount applied before promotions
         if ((line.get('product').get('standardPrice') && line.get('product').get('standardPrice') !== price) || (_.isNumber(line.get('discountedLinePrice')) && line.get('discountedLinePrice') !== line.get('product').get('standardPrice'))) {
           grossUnitPrice = new BigDecimal(price.toString());
@@ -450,20 +493,24 @@
         }, {
           silent: true
         });
+
         // Calculate prices after promotions
         base = line.get('price');
-        _.forEach(line.get('promotions') || [], function(discount) {
+        _.forEach(line.get('promotions') || [], function (discount) {
           var discountAmt = discount.actualAmt || discount.amt || 0;
           discount.basePrice = base;
           discount.unitDiscount = OB.DEC.div(discountAmt, line.get('qtyToApplyDisc') || line.get('qty'));
           totalDiscount = OB.DEC.add(totalDiscount, discountAmt);
           base = OB.DEC.sub(base, totalDiscount);
         }, this);
+
         gross = OB.DEC.sub(gross, totalDiscount);
         price = line.get('qty') !== 0 ? OB.DEC.div(gross, line.get('qty')) : 0;
+
         if (grossListPrice === undefined) {
           grossListPrice = price;
         }
+
         if (this.get('priceIncludesTax')) {
           line.set({
             net: OB.UTIL.getFirstValidValue([OB.DEC.toNumber(line.get('discountedNet')), line.get('net'), OB.DEC.div(gross, line.get('linerate'))]),
@@ -492,38 +539,46 @@
         }
       }, this);
     },
-    getTotal: function() {
+    getTotal: function () {
       return this.getGross();
     },
-    getNet: function() {
+    getNet: function () {
       return this.get('net');
     },
-    printTotal: function() {
+
+    printTotal: function () {
       return OB.I18N.formatCurrency(this.getTotal());
     },
-    getLinesByProduct: function(productId) {
+
+    getLinesByProduct: function (productId) {
       var affectedLines;
       if (this.get('lines') && this.get('lines').length > 0) {
-        affectedLines = _.filter(this.get('lines').models, function(line) {
+        affectedLines = _.filter(this.get('lines').models, function (line) {
           return line.get('product').id === productId;
         });
       }
       return affectedLines ? affectedLines : null;
     },
+
     isCalculateGrossLocked: null,
+
     isCalculateReceiptLocked: null,
-    setIsCalculateGrossLockState: function(state) {
+
+    setIsCalculateGrossLockState: function (state) {
       this.isCalculateGrossLocked = state;
     },
-    setIsCalculateReceiptLockState: function(state) {
+
+    setIsCalculateReceiptLockState: function (state) {
       this.isCalculateReceiptLocked = state;
     },
-    calculateGross: function() {
+
+    calculateGross: function () {
       // check if it's all ok and calculateGross is being called from where it's supposed to
       var stack = OB.UTIL.getStackTrace('Backbone.Model.extend.calculateGross', false);
       if (stack.indexOf('Backbone.Model.extend.calculateGross') > -1 && stack.indexOf('Backbone.Model.extend.calculateReceipt') > -1) {
         OB.error("It's forbidden to use calculateGross from outside of calculateReceipt");
       }
+
       // verify that the calculateGross is not locked
       if (this.isCalculateGrossLocked === true) {
         OB.error("calculateGross execution is forbidden right now");
@@ -531,19 +586,23 @@
       } else if (this.isCalculateGrossLocked !== false && !this.get('belongsToMultiOrder')) {
         OB.error("setting the isCalculateGrossLocked state is mandatory before executing it the first time");
       }
+
       // verify that there is no other calculatingGross running
       if (this.calculatingGross) {
         this.pendingCalculateGross = true;
         return;
       }
+
       // verify that the ui receipt is the only one in which calculateGross is executed
       var isTheUIReceipt = this === OB.MobileApp.model.receipt || this.get('belongsToMultiOrder') || this.get('ignoreCheckIfIsActiveOrder');
       if (!isTheUIReceipt) {
         OB.error("calculateGross should only be called by the UI receipt");
       }
+
       this.calculateGrossAndSave(true);
     },
-    calculateGrossAndSave: function(save) {
+
+    calculateGrossAndSave: function (save) {
       this.calculatingGross = true;
       var me = this;
       // reset some vital receipt values because, at this point, they are obsolete. do not fire the change event
@@ -555,11 +614,11 @@
       }, {
         silent: true
       });
-      var saveAndTriggerEvents = function(gross, save) {
+      var saveAndTriggerEvents = function (gross, save) {
           var now = new Date();
           me.set('loaded', OB.I18N.normalizeDate(now));
           me.set('timezoneOffset', now.getTimezoneOffset());
-          var net = me.get('lines').reduce(function(memo, e) {
+          var net = me.get('lines').reduce(function (memo, e) {
             var netLine = e.get('discountedNet');
             if (netLine) {
               return OB.DEC.add(memo, netLine);
@@ -568,7 +627,7 @@
             }
           }, OB.DEC.Zero);
           //total qty
-          var qty = me.get('lines').reduce(function(memo, e) {
+          var qty = me.get('lines').reduce(function (memo, e) {
             var qtyLine = e.getQty();
             if (qtyLine > 0) {
               return OB.DEC.add(memo, qtyLine, OB.I18N.qtyScale());
@@ -576,14 +635,16 @@
               return memo;
             }
           }, OB.DEC.Zero);
+
           // all attributes are set at once, preventing the change event of each attribute to be fired until all values are set
           me.set({
             'gross': gross,
             'qty': qty
           });
+
           me.adjustPayment();
           if (save) {
-            me.save(function() {
+            me.save(function () {
               // Reset the flag that protects reentrant invocations to calculateGross().
               // And if there is pending any execution of calculateGross(), do it and do not continue.
               me.calculatingGross = false;
@@ -601,15 +662,17 @@
             me.calculatingReceipt = false;
           }
           };
-      this.get('lines').forEach(function(line) {
+
+      this.get('lines').forEach(function (line) {
         line.calculateGross();
       });
+
       if (this.get('priceIncludesTax')) {
-        this.calculateTaxes(function() {
-          var gross = me.get('lines').reduce(function(memo, e) {
+        this.calculateTaxes(function () {
+          var gross = me.get('lines').reduce(function (memo, e) {
             var grossLine = e.getGross();
             if (e.get('qty') !== 0 && e.get('promotions')) {
-              grossLine = e.get('promotions').reduce(function(memo, e) {
+              grossLine = e.get('promotions').reduce(function (memo, e) {
                 return OB.DEC.sub(memo, e.actualAmt || OB.DEC.toNumber(OB.DEC.toBigDecimal(e.amt), OB.DEC.getScale()) || 0);
               }, grossLine);
             }
@@ -618,9 +681,9 @@
           saveAndTriggerEvents(gross, save);
         });
       } else {
-        this.calculateTaxes(function() {
+        this.calculateTaxes(function () {
           //If the price doesn't include tax, the discounted gross has already been calculated
-          var gross = me.get('lines').reduce(function(memo, e) {
+          var gross = me.get('lines').reduce(function (memo, e) {
             if (_.isUndefined(e.get('discountedGross'))) {
               return memo;
             }
@@ -635,7 +698,8 @@
         });
       }
     },
-    addToListOfCallbacks: function(callback) {
+
+    addToListOfCallbacks: function (callback) {
       if (OB.UTIL.isNullOrUndefined(this.get('calculateReceiptCallbacks'))) {
         this.set('calculateReceiptCallbacks', []);
       }
@@ -644,13 +708,15 @@
         list.push(callback);
       }
     },
+
     // This function calculate the promotions, taxes and gross of all the receipt
-    calculateReceipt: function(callback, line) {
+    calculateReceipt: function (callback, line) {
       // verify if we are cloning the receipt
       if (this.get('cloningReceipt')) {
         this.addToListOfCallbacks(callback);
         return;
       }
+
       // verify that calculateReceipt it's not been executed
       if (this.calculatingReceipt) {
         this.pendingCalculateReceipt = true;
@@ -676,9 +742,10 @@
       }
       OB.MobileApp.view.waterfall('calculatingReceipt');
       this.calculatingReceipt = true;
+
       this.addToListOfCallbacks(callback);
       var executeCallback;
-      executeCallback = function(listOfCallbacks, callback) {
+      executeCallback = function (listOfCallbacks, callback) {
         if (listOfCallbacks.length === 0) {
           callback();
           listOfCallbacks = null;
@@ -689,9 +756,9 @@
         executeCallback(listOfCallbacks, callback);
       };
       var me = this;
-      this.on('applyPromotionsFinished', function() {
+      this.on('applyPromotionsFinished', function () {
         me.off('applyPromotionsFinished');
-        me.on('calculategross', function() {
+        me.on('calculategross', function () {
           me.off('calculategross');
           if (me.pendingCalculateReceipt) {
             OB.MobileApp.view.waterfall('calculatedReceipt');
@@ -701,7 +768,7 @@
             return;
           } else {
             if (me.get('calculateReceiptCallbacks') && me.get('calculateReceiptCallbacks').length > 0) {
-              executeCallback(me.get('calculateReceiptCallbacks'), function() {
+              executeCallback(me.get('calculateReceiptCallbacks'), function () {
                 me.calculatingReceipt = false;
                 OB.MobileApp.view.waterfall('calculatedReceipt');
               });
@@ -720,7 +787,8 @@
         OB.Model.Discounts.applyPromotions(this, line);
       }
     },
-    setDocumentNo: function(isReturn, isOrder) {
+
+    setDocumentNo: function (isReturn, isOrder) {
       var order = this,
           nextDocumentNo;
       if (isOrder && (order.get('documentnoPrefix') !== OB.MobileApp.model.get('terminal').docNoPrefix)) {
@@ -747,41 +815,52 @@
         }
       }
     },
-    getAttributeValue: function() {
+
+    getAttributeValue: function () {
       return this.get('attributeValue');
     },
-    getQty: function() {
+
+    getQty: function () {
       return this.get('qty');
     },
-    getGross: function() {
+
+    getGross: function () {
       return this.get('gross');
     },
-    printGross: function() {
+
+    printGross: function () {
       return OB.I18N.formatCurrency(this.getGross());
     },
-    getPayment: function() {
+
+    getPayment: function () {
       return this.get('payment');
     },
-    getCredit: function() {
+
+    getCredit: function () {
       return this.get('creditAmount');
     },
-    getChange: function() {
+
+    getChange: function () {
       return this.get('change');
     },
-    getPending: function() {
+
+    getPending: function () {
       if (_.isUndefined(this.get('paidInNegativeStatusAmt'))) {
         return OB.DEC.sub(OB.DEC.abs(OB.DEC.sub(this.getTotal(), this.getCredit())), this.getPayment());
       } else {
         return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(OB.DEC.sub(this.getTotal(), this.getCredit())), this.get('paidInNegativeStatusAmt')));
       }
     },
-    getDeliveredQuantityAmount: function() {
+
+    getDeliveredQuantityAmount: function () {
       return this.get('deliveredQuantityAmount') ? this.get('deliveredQuantityAmount') : 0;
     },
-    printPending: function() {
+
+    printPending: function () {
       return OB.I18N.formatCurrency(this.getPending());
     },
-    getPaymentStatus: function() {
+
+    getPaymentStatus: function () {
       var total = OB.DEC.abs(this.getTotal()),
           pay = this.getPayment(),
           credit = this.getCredit(),
@@ -791,12 +870,14 @@
           processedPaymentsAmount = OB.DEC.Zero,
           paymentsAmount = OB.DEC.Zero,
           isNegative, paidInNegativeStatus, done, pending, overpayment, totalToReturn, pendingAmt;
-      _.each(this.get('lines').models, function(line) {
+
+      _.each(this.get('lines').models, function (line) {
         if (line.get('qty') > 0) {
           isReturn = false;
         }
       }, this);
-      _.each(this.get('payments').models, function(payment) {
+
+      _.each(this.get('payments').models, function (payment) {
         if (payment.get('isPrePayment')) {
           processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, payment.get('origAmount'));
         } else {
@@ -808,6 +889,7 @@
       });
       payAndCredit = (this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3)) ? OB.DEC.abs(payAndCredit) : payAndCredit;
       processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, credit);
+
       isNegative = this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3 && (!this.get('isPartiallyDelivered') || (this.get('isPartiallyDelivered') && this.get('isDeliveredGreaterThanGross'))));
       // Check if the total amount is lower than the already paid (processed)
       if (!isNegative && this.get('gross') >= 0 && OB.DEC.compare(OB.DEC.sub(processedPaymentsAmount, total)) === 1) {
@@ -815,6 +897,7 @@
         paidInNegativeStatus = OB.DEC.sub(processedPaymentsAmount, paymentsAmount);
         totalToReturn = OB.DEC.sub(processedPaymentsAmount, total);
       }
+
       if (_.isUndefined(paidInNegativeStatus)) {
         this.unset('paidInNegativeStatusAmt');
         done = this.get('lines').length > 0 && OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0;
@@ -828,6 +911,7 @@
         overpayment = OB.DEC.compare(OB.DEC.sub(OB.DEC.sub(paymentsAmount, totalToReturn), this.getChange())) === 1 ? OB.I18N.formatCurrency(OB.DEC.sub(OB.DEC.sub(paymentsAmount, totalToReturn), this.getChange())) : null;
         pendingAmt = OB.DEC.compare(OB.DEC.sub(totalToReturn, paymentsAmount)) === 1 ? OB.DEC.sub(totalToReturn, paymentsAmount) : OB.DEC.Zero;
       }
+
       return {
         'done': done,
         'total': OB.I18N.formatCurrency(total),
@@ -842,30 +926,35 @@
         'isReversal': isReversal
       };
     },
+
     // returns the quantity amount of the synchronized payments
-    getPrePaymentQty: function() {
-      return _.reduce(_.filter(this.get('payments').models, function(payment) {
+    getPrePaymentQty: function () {
+      return _.reduce(_.filter(this.get('payments').models, function (payment) {
         return payment.get('isPrePayment');
-      }), function(memo, pymnt) {
+      }), function (memo, pymnt) {
         return OB.DEC.add(memo, pymnt.get('origAmount'));
       }, OB.DEC.Zero);
     },
+
     // returns true if there is any reversal payment that is not synchronized
-    isNewReversed: function() {
-      return _.filter(this.get('payments').models, function(payment) {
+    isNewReversed: function () {
+      return _.filter(this.get('payments').models, function (payment) {
         return !payment.get('isPrePayment') && payment.get('isReversePayment');
       }).length > 0;
     },
+
     // returns true if the order is a Layaway, otherwise false
-    isLayaway: function() {
+    isLayaway: function () {
       return this.getOrderType() === 2 || this.getOrderType() === 3 || this.get('isLayaway');
     },
-    clear: function() {
+
+    clear: function () {
       this.clearOrderAttributes();
       this.trigger('change');
       this.trigger('clear');
     },
-    clearOrderAttributes: function() {
+
+    clearOrderAttributes: function () {
       this.set('id', null);
       this.set('client', null);
       this.set('organization', null);
@@ -921,21 +1010,26 @@
       this.set('approvals', []);
       this.set('isPartiallyDelivered', false);
     },
-    clearWith: function(_order) {
+
+    clearWith: function (_order) {
       // verify that the clearWith is not used for any other purpose than to update and fire the events of the UI receipt
-      OB.UTIL.Debug.execute(function() {
+      OB.UTIL.Debug.execute(function () {
         var isTheUIReceipt = this.cid === OB.MobileApp.model.receipt.cid;
         if (!isTheUIReceipt) {
           OB.error("The target of the clearWith should only be the UI receipt. Use OB.UTIL.clone instead");
         }
       }, this);
+
       var idExecution;
+
       // we set first this property to avoid that the apply promotions is triggered
       this.set('isNewReceipt', _order.get('isNewReceipt'));
       //we need this data when IsPaid, IsLayaway changes are triggered
       this.set('documentType', _order.get('documentType'));
+
       //Prevent recalculating service relations during executions of clearWith
       this.set('preventServicesUpdate', true);
+
       this.set('isPaid', _order.get('isPaid'));
       this.set('creditAmount', _order.get('creditAmount'));
       this.set('paidPartiallyOnCredit', _order.get('paidPartiallyOnCredit'));
@@ -947,6 +1041,7 @@
         // modifications to trigger editable events incorrectly
         this.set('isEditable', _order.get('isEditable'));
       }
+
       if (_order.get('isLayaway')) {
         if (OB.MobileApp.model.get('terminal').terminalType.generateInvoice && OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice', true)) {
           if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice', true) && !_order.get('bp').get('taxID')) {
@@ -956,12 +1051,15 @@
           }
         }
       }
+
       if (_order.get('replacedorder_documentNo')) {
         this.set('replacedorder_documentNo', _order.get('replacedorder_documentNo'));
       }
+
       if (_order.get('replacedorder')) {
         this.set('replacedorder', _order.get('replacedorder'));
       }
+
       // the idExecution is saved so only this execution of clearWith will check cloningReceipt to false
       if (OB.UTIL.isNullOrUndefined(this.get('idExecution')) && OB.UTIL.isNullOrUndefined(_order.get('idExecution'))) {
         idExecution = new Date().getTime();
@@ -970,33 +1068,41 @@
         this.set('cloningReceipt', true);
         this.set('idExecution', idExecution);
       }
+
       OB.UTIL.clone(_order, this);
+
       if (!OB.UTIL.isNullOrUndefined(this.get('idExecution')) && this.get('idExecution') === idExecution) {
         _order.set('cloningReceipt', false);
         this.set('cloningReceipt', false);
         _order.unset('idExecution');
         this.unset('idExecution');
       }
+
       //Enable recalculating service relations after cloning
       this.unset('preventServicesUpdate');
+
       this.set('isEditable', _order.get('isEditable'));
       this.trigger('change');
       this.trigger('clear');
     },
-    removeUnit: function(line, qty) {
+
+    removeUnit: function (line, qty) {
       if (!OB.DEC.isNumber(qty)) {
         qty = OB.DEC.One;
       }
       this.setUnit(line, OB.DEC.sub(line.get('qty'), qty, OB.I18N.qtyScale()), OB.I18N.getLabel('OBPOS_RemoveUnits', [qty, line.get('product').get('_identifier')]));
     },
-    addUnit: function(line, qty) {
+
+    addUnit: function (line, qty) {
       if (!OB.DEC.isNumber(qty)) {
         qty = OB.DEC.One;
       }
       this.setUnit(line, OB.DEC.add(line.get('qty'), qty, OB.I18N.qtyScale()), OB.I18N.getLabel('OBPOS_AddUnits', [OB.DEC.toNumber(new BigDecimal((String)(qty.toString()))), line.get('product').get('_identifier')]));
     },
-    setUnit: function(line, qty, text, doNotSave) {
+
+    setUnit: function (line, qty, text, doNotSave) {
       var permission, me = this;
+
       if (OB.DEC.isNumber(qty) && qty !== 0) {
         var oldqty = line.get('qty');
         permission = 'OBPOS_ReturnLine';
@@ -1041,7 +1147,7 @@
               text: undoText,
               oldqtys: oldqtys,
               lines: lines,
-              undo: function() {
+              undo: function () {
                 var i, thisUndo = me.get('undo');
                 for (i = 0; i < thisUndo.lines.length; i++) {
                   //Changing the qty of a line modifies the undo attribute, so we need a copy
@@ -1056,7 +1162,7 @@
               text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
               oldqty: oldqty,
               line: line,
-              undo: function() {
+              undo: function () {
                 line.set('qty', oldqty);
                 me.calculateReceipt();
                 me.set('undo', null);
@@ -1080,7 +1186,7 @@
           this.get('lines').trigger('updateRelations');
         } else {
           // We don't have the approval to delete the line yet; request it
-          OB.UTIL.Approval.requestApproval(OB.MobileApp.view.$.containerWindow.getRoot().model, 'OBPOS_approval.deleteLine', function(approved) {
+          OB.UTIL.Approval.requestApproval(OB.MobileApp.view.$.containerWindow.getRoot().model, 'OBPOS_approval.deleteLine', function (approved) {
             if (approved) {
               me.set('preventServicesUpdate', true);
               me.set('deleting', true);
@@ -1093,7 +1199,8 @@
         }
       }
     },
-    setPrice: function(line, price, options) {
+
+    setPrice: function (line, price, options) {
       if (this.get('isQuotation') && this.get('hasbeenpaid') === 'Y') {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         return;
@@ -1103,13 +1210,15 @@
         line: line,
         price: price,
         options: options
-      }, function(args) {
+      }, function (args) {
         var me = args.context;
         if (args.cancellation && args.cancellation === true) {
           return;
         }
+
         options = args.options || {};
         options.setUndo = (_.isUndefined(options.setUndo) || _.isNull(options.setUndo) || options.setUndo !== false) ? true : options.setUndo;
+
         if (!OB.UTIL.isNullOrUndefined(args.line.get('originalOrderLineId'))) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotChangePrice'));
         } else if (args.line.get('replacedorderline') && args.line.get('qty') < 0) {
@@ -1139,7 +1248,7 @@
                   text: text,
                   oldprices: oldprices,
                   lines: lines,
-                  undo: function() {
+                  undo: function () {
                     var i;
                     for (i = 0; i < me.get('undo').lines.length; i++) {
                       me.get('undo').lines[i].set('price', me.get('undo').oldprices[i]);
@@ -1153,7 +1262,7 @@
                   text: OB.I18N.getLabel('OBPOS_SetPrice', [args.line.printPrice(), args.line.get('product').get('_identifier')]),
                   oldprice: oldprice,
                   line: args.line,
-                  undo: function() {
+                  undo: function () {
                     args.line.set('price', oldprice);
                     me.calculateReceipt();
                     me.set('undo', null);
@@ -1167,22 +1276,25 @@
         me.save();
       });
     },
-    setLineProperty: function(line, property, value) {
+
+    setLineProperty: function (line, property, value) {
       var index = this.get('lines').indexOf(line);
       this.get('lines').at(index).set(property, value);
     },
-    setUndo: function(action, data) {
+
+    setUndo: function (action, data) {
       var me = this;
       if (data) {
         data.action = action;
       }
       OB.UTIL.HookManager.executeHooks('OBPOS_PreSetUndo_' + action, {
         data: data
-      }, function(args) {
+      }, function (args) {
         me.set('undo', args.data);
       });
     },
-    deleteLines: function(lines, idx, length, callback) {
+
+    deleteLines: function (lines, idx, length, callback) {
       var me = this,
           line = lines[idx],
           i;
@@ -1219,9 +1331,10 @@
         }
       }
     },
-    removeDeleteLine: function(line) {
+
+    removeDeleteLine: function (line) {
       var deleteIndex = -1;
-      _.each(this.get('deletedLines'), function(d, index) {
+      _.each(this.get('deletedLines'), function (d, index) {
         if (d.id === line.id) {
           deleteIndex = index;
         }
@@ -1234,10 +1347,12 @@
       }
       line.unset('obposIsDeleted');
     },
-    deleteLine: function(line, doNotSave, callback, isLastLine) {
+
+    deleteLine: function (line, doNotSave, callback, isLastLine) {
       var me = this,
           pack = line.isAffectedByPack(),
           productId = line.get('product').id;
+
       //Defensive code: Do not remove non existing line
       if (!this.get('lines').get(line)) {
         if (callback) {
@@ -1252,10 +1367,11 @@
         }
         return;
       }
+
       if (pack) {
         // When deleting a line, check lines with other product that are affected by
         // same pack than deleted one and merge splitted lines created for those
-        this.get('lines').forEach(function(l) {
+        this.get('lines').forEach(function (l) {
           var affected;
           if (productId === l.get('product').id) {
             return; //continue
@@ -1266,6 +1382,7 @@
           }
         }, this);
       }
+
       // trigger
       line.trigger('removed', line);
 
@@ -1274,15 +1391,17 @@
           OB.UTIL.RfidController.removeEpcLine(line);
         }
         var text, lines, indexes, relations, rl, rls, i;
+
         me.get('lines').remove(line);
         text = me.get('undo').text;
         lines = me.get('undo').lines;
         relations = me.get('undo').relations;
+
         me.setUndo('DeleteLine', {
           text: text,
           lines: lines,
           relations: relations,
-          undo: function() {
+          undo: function () {
             if (OB.UTIL.RfidController.isRfidConfigured() && line.get('obposEpccode')) {
               OB.UTIL.RfidController.addEpcLine(line);
             }
@@ -1297,7 +1416,7 @@
                 }
               }
             }
-            me.get('undo').lines.sort(function(a, b) {
+            me.get('undo').lines.sort(function (a, b) {
               if (a.get('undoPosition') > b.get('undoPosition')) {
                 return 1;
               }
@@ -1307,7 +1426,8 @@
               // a must be equal to b
               return 0;
             });
-            lines.forEach(function(line) {
+
+            lines.forEach(function (line) {
               if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.get('obposQtyDeleted') !== 0) {
                 line.set('qty', line.get('obposQtyDeleted'));
                 line.set('obposQtyDeleted', 0);
@@ -1317,9 +1437,9 @@
                 at: line.get('undoPosition')
               });
             });
-            relations.forEach(function(rel) {
+            relations.forEach(function (rel) {
               var rls = rel[0].get('relatedLines').slice(),
-                  lineToAddRelated = _.filter(me.get('lines').models, function(line) {
+                  lineToAddRelated = _.filter(me.get('lines').models, function (line) {
                   return line.id === rel[0].id;
                 });
               rls.push(rel[1]);
@@ -1333,6 +1453,7 @@
             enyo.$.scrim.hide();
           }
         });
+
         me.adjustPayment();
         if (!doNotSave) {
           me.save(callback);
@@ -1340,6 +1461,7 @@
           callback();
         }
       }
+
       // If the OBPOS_remove_ticket preference is active then mark the line as deleted
       if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
         if (!this.get('deletedLines')) {
@@ -1370,8 +1492,9 @@
         finishDelete();
       }
     },
+
     //Attrs is an object of attributes that will be set in order
-    _addProduct: function(p, qty, options, attrs, callback) {
+    _addProduct: function (p, qty, options, attrs, callback) {
       var newLine = true,
           line = null,
           me = this;
@@ -1407,7 +1530,7 @@
           return false;
         }
         if (p.get('obposScale')) {
-          OB.POS.hwserver.getWeight(function(data) {
+          OB.POS.hwserver.getWeight(function (data) {
             if (data.exception) {
               OB.UTIL.showConfirmation.display('', data.exception.message);
             } else if (data.result === 0) {
@@ -1421,7 +1544,7 @@
             if (options && options.line) {
               line = options.line;
             } else {
-              line = me.get('lines').find(function(l) {
+              line = me.get('lines').find(function (l) {
                 if (l.get('product').id === p.id && ((l.get('qty') > 0 && qty > 0) || (l.get('qty') < 0 && qty < 0))) {
                   return true;
                 }
@@ -1435,14 +1558,14 @@
               qty: qty,
               options: options,
               attrs: attrs
-            }, function(args) {
+            }, function (args) {
               if (args && args.cancelOperation) {
                 return;
               }
               var splitline = !(options && options.line) && !OB.UTIL.isNullOrUndefined(args.line) && !OB.UTIL.isNullOrUndefined(args.line.get('splitline')) && args.line.get('splitline');
               if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')))) {
                 if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true)) {
-                  if (args.p.get('hasAttributes') && (qty == 1 || qty > 1)) {
+                  if (args.p.get('hasAttributes') && (qty === 1 || qty > 1)) {
                     line = args.receipt.createLine(args.p, args.qty, args.options, args.attrs);
                   } else {
                     args.receipt.addUnit(args.line, args.qty);
@@ -1451,7 +1574,7 @@
                   args.receipt.addUnit(args.line, args.qty);
                 }
                 if (!_.isUndefined(args.attrs)) {
-                  _.each(_.keys(args.attrs), function(key) {
+                  _.each(_.keys(args.attrs), function (key) {
                     if (args.p.get('productType') === 'S' && key === 'relatedLines' && args.line.get('relatedLines')) {
                       args.line.set('relatedLines', OB.UTIL.mergeArrays(args.line.get('relatedLines'), attrs[key]));
                     } else {
@@ -1472,6 +1595,7 @@
                 }
               }
             });
+
           } else {
             var count;
             //remove line even it is a grouped line
@@ -1497,16 +1621,17 @@
           }
         }
         me.save();
-        if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && p.get('hasAttributes') && (qty == 1 || qty > 1)) {
+        if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && p.get('hasAttributes') && (qty === 1 || qty > 1)) {
           OB.MobileApp.view.waterfall('onShowPopup', {
             popup: 'modalProductAttribute',
             args: {
               line: line,
               initialCallback: me.postAddProductToOrder,
               options: options,
-              finalCallback: callback,
+              finalCallback: callback
             }
           });
+          OB.UTIL.showLoading(false);
         } else {
           me.postAddProductToOrder(me, p, line, qty, options, newLine, callback(true, line));
         }
@@ -1516,7 +1641,7 @@
           OB.UTIL.showLoading(false);
         }
         OB.UTIL.Approval.requestApproval(
-        OB.MobileApp.view.$.containerWindow.getRoot().model, 'OBPOS_approval.returnService', function(approved, supervisor, approvalType) {
+        OB.MobileApp.view.$.containerWindow.getRoot().model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
           if (options && options.isVerifiedReturn) {
             OB.UTIL.showLoading(true);
           }
@@ -1532,7 +1657,9 @@
         addProductToOrder();
       }
     },
-    postAddProductToOrder: function(me, p, line, qty, options, newLine, callback) {
+
+    postAddProductToOrder: function (me, p, line, qty, options, newLine, callback) {
+
       OB.UTIL.HookManager.executeHooks('OBPOS_PostAddProductToOrder', {
         receipt: me,
         productToAdd: p,
@@ -1540,8 +1667,8 @@
         qtyToAdd: qty,
         options: options,
         newLine: newLine
-      }, function(args) {
-        var callbackAddProduct = function() {
+      }, function (args) {
+        var callbackAddProduct = function () {
             if (callback) {
               callback(true, args.orderline);
             }
@@ -1556,7 +1683,7 @@
           // The line might has been deleted during calculate gross for
           // examples if there was an error in taxes.
           var productId = args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id;
-          args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function(data) {
+          args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
             if (data) {
               if (data.hasservices) {
                 args.orderline.set('hasRelatedServices', true);
@@ -1587,7 +1714,8 @@
         }
       });
     },
-    _loadRelatedServices: function(productType, productId, productCategory, callback, line) {
+
+    _loadRelatedServices: function (productType, productId, productCategory, callback, line) {
       if (productType !== 'S' && (!line || !line.get('originalOrderLineId'))) {
         if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
           var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.HasServices');
@@ -1600,7 +1728,7 @@
             product: productId,
             productCategory: productCategory,
             parameters: params
-          }, function(data, message) {
+          }, function (data, message) {
             if (data && data.exception) {
               //ERROR or no connection
               OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
@@ -1610,39 +1738,44 @@
             } else {
               callback(null);
             }
-          }, function(error) {
+          }, function (error) {
             OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
             callback(null);
           });
         } else {
           //non-high volumes: websql
           var criteria = {};
+
           criteria._whereClause = '';
           criteria.params = [];
+
           criteria._whereClause = " as product where product.productType = 'S' and (product.isLinkedToProduct = 'true' and ";
+
           //including/excluding products
           criteria._whereClause += "((product.includeProducts = 'Y' and not exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
           criteria._whereClause += "or (product.includeProducts = 'N' and exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
           criteria._whereClause += "or product.includeProducts is null) ";
+
           //including/excluding product categories
           criteria._whereClause += "and ((product.includeProductCategories = 'Y' and not exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id =  ? )) ";
           criteria._whereClause += "or (product.includeProductCategories = 'N' and exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id  = ? )) ";
           criteria._whereClause += "or product.includeProductCategories is null)) ";
+
           criteria.params.push(productId);
           criteria.params.push(productId);
           criteria.params.push(productCategory);
           criteria.params.push(productCategory);
-          OB.Dal.findUsingCache('productServiceCache', OB.Model.Product, criteria, function(data) {
+          OB.Dal.findUsingCache('productServiceCache', OB.Model.Product, criteria, function (data) {
             if (data) {
               data.hasservices = data.length > 0;
-              data.hasmandatoryservices = _.find(data.models, function(model) {
+              data.hasmandatoryservices = _.find(data.models, function (model) {
                 return model.get('proposalType') === 'MP';
               });
               callback(data);
             } else {
               callback(null);
             }
-          }, function(trx, error) {
+          }, function (trx, error) {
             OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
             callback(null);
           }, {
@@ -1653,9 +1786,10 @@
         callback(null);
       }
     },
-    _drawLinesDistribution: function(data) {
+
+    _drawLinesDistribution: function (data) {
       if (data && data.linesToModify && data.linesToModify.length > 0) {
-        _.each(data.linesToModify, function(lineToChange) {
+        _.each(data.linesToModify, function (lineToChange) {
           var line = this.get('lines').getByCid(lineToChange.lineCid);
           var unitsToAdd = lineToChange.newQty - line.get('qty');
           if (unitsToAdd > 0) {
@@ -1666,16 +1800,16 @@
           this.setPrice(line, lineToChange.newPrice, {
             setUndo: false
           });
-          _.each(lineToChange.productProperties, function(propToSet) {
+          _.each(lineToChange.productProperties, function (propToSet) {
             line.get('product').set(propToSet.name, propToSet.value);
           });
-          _.each(lineToChange.lineProperties, function(propToSet) {
+          _.each(lineToChange.lineProperties, function (propToSet) {
             line.set(propToSet.name, propToSet.value);
           });
         }, this);
       }
       if (data && data.linesToRemove && data.linesToRemove.length > 0) {
-        _.each(data.linesToRemove, function(lineCidToRemove) {
+        _.each(data.linesToRemove, function (lineCidToRemove) {
           var line = this.get('lines').getByCid(lineCidToRemove);
           this.set('preventServicesUpdate', true);
           this.set('deleting', true);
@@ -1686,13 +1820,14 @@
         }, this);
       }
       if (data && data.linesToAdd && data.linesToAdd.length > 0) {
-        _.each(data.linesToAdd, function(lineToAdd) {
+        _.each(data.linesToAdd, function (lineToAdd) {
           this.createLine(lineToAdd.product, lineToAdd.qtyToAdd);
         }, this);
       }
     },
+
     //Attrs is an object of attributes that will be set in order
-    addProduct: function(p, qty, options, attrs, callback) {
+    addProduct: function (p, qty, options, attrs, callback) {
       OB.debug('_addProduct');
       var me = this;
       if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && this.get('priceList') !== OB.MobileApp.model.get('terminal').priceList) {
@@ -1720,14 +1855,14 @@
           remoteCriteria.push(pricelistId);
           criteria.remoteFilters = remoteCriteria;
         }
-        OB.Dal.findUsingCache('productPrice', OB.Model.ProductPrice, criteria, function(productPrices) {
+        OB.Dal.findUsingCache('productPrice', OB.Model.ProductPrice, criteria, function (productPrices) {
           if (productPrices.length > 0) {
             p = p.clone();
             if (OB.UTIL.isNullOrUndefined(p.get('updatePriceFromPricelist')) || p.get('updatePriceFromPricelist')) {
               p.set('standardPrice', productPrices.at(0).get('pricestd'));
               p.set('listPrice', productPrices.at(0).get('pricelist'));
             }
-            me.addProductToOrder(p, qty, options, attrs, function(success, orderline) {
+            me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
               if (callback) {
                 callback(success, orderline);
               }
@@ -1738,7 +1873,7 @@
               callback(false, null);
             }
           }
-        }, function() {
+        }, function () {
           OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
           if (callback) {
             callback(false, null);
@@ -1747,21 +1882,22 @@
           modelsAffectedByCache: ['ProductPrice']
         });
       } else {
-        me.addProductToOrder(p, qty, options, attrs, function(success, orderline) {
+        me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
           if (callback) {
             callback(success, orderline);
           }
         });
       }
     },
-    addProductToOrder: function(p, qty, options, attrs, callback) {
+
+    addProductToOrder: function (p, qty, options, attrs, callback) {
       var me = this;
       OB.UTIL.HookManager.executeHooks('OBPOS_AddProductToOrder', {
         receipt: this,
         productToAdd: p,
         qtyToAdd: qty,
         options: options
-      }, function(args) {
+      }, function (args) {
         // do not allow generic products to be added to the receipt
         if (args && args.productToAdd && args.productToAdd.get('isGeneric')) {
           OB.UTIL.showI18NWarning('OBPOS_GenericNotAllowed');
@@ -1803,30 +1939,37 @@
           }
           return;
         }
-        me._addProduct(p, qty, options, attrs, function(success, orderline) {
+        me._addProduct(p, qty, options, attrs, function (success, orderline) {
           if (callback) {
             callback(success, orderline);
           }
         });
       });
     },
+
     /**
      * Splits a line from the ticket keeping in the line the qtyToKeep quantity,
      * the rest is moved to another line with the same product and no packs, or
      * to a new one if there's no other line. In case a new is created it is returned.
      */
-    splitLine: function(line, qtyToKeep) {
+    splitLine: function (line, qtyToKeep) {
       var originalQty = line.get('qty'),
           newLine, p, qtyToMove;
+
       if (originalQty === qtyToKeep) {
         return;
       }
+
       qtyToMove = originalQty - qtyToKeep;
+
       this.setUnit(line, qtyToKeep, null, true);
+
       p = line.get('product');
-      newLine = this.get('lines').find(function(l) {
+
+      newLine = this.get('lines').find(function (l) {
         return l !== line && l.get('product').id === p.id && !l.isAffectedByPack();
       });
+
       if (!newLine) {
         newLine = line.clone();
         newLine.set({
@@ -1840,18 +1983,20 @@
         this.setUnit(newLine, newLine.get('qty') + qtyToMove, null, true);
       }
     },
+
     /**
      * Checks other lines with the same product to be merged in a single one
      */
-    mergeLines: function(line) {
+    mergeLines: function (line) {
       var p = line.get('product'),
           lines = this.get('lines'),
           merged = false;
       line.set('promotions', null);
-      lines.forEach(function(l) {
+      lines.forEach(function (l) {
         if (l === line) {
           return;
         }
+
         if (l.get('product').id === p.id && l.get('price') === line.get('price')) {
           line.set({
             qty: line.get('qty') + l.get('qty'),
@@ -1862,18 +2007,21 @@
         }
       }, this);
     },
+
     /**
      *  It looks for different lines for same product with exactly the same promotions
      *  to merge them in a single line
      */
-    mergeLinesWithSamePromotions: function() {
+    mergeLinesWithSamePromotions: function () {
       var lines = this.get('lines'),
           line, i, j, k, otherLine, toRemove = [],
           matches, otherPromos, found, compareRule;
-      compareRule = function(p) {
+
+      compareRule = function (p) {
         var basep = line.get('promotions')[k];
         return p.ruleId === basep.ruleId && ((!p.family && !basep.family) || (p.family && basep.family && p.family === basep.family));
       };
+
       for (i = 0; i < lines.length; i++) {
         line = lines.at(i);
         for (j = i + 1; j < lines.length; j++) {
@@ -1881,6 +2029,7 @@
           if (otherLine.get('product').id !== line.get('product').id) {
             continue;
           }
+
           if ((!line.get('promotions') || line.get('promotions').length === 0) && (!otherLine.get('promotions') || otherLine.get('promotions').length === 0)) {
             line.set('qty', line.get('qty') + otherLine.get('qty'));
             toRemove.push(otherLine);
@@ -1906,11 +2055,13 @@
           }
         }
       }
-      _.forEach(toRemove, function(l) {
+
+      _.forEach(toRemove, function (l) {
         lines.remove(l);
       });
     },
-    addPromotion: function(line, rule, discount) {
+
+    addPromotion: function (line, rule, discount) {
       var promotions = line.get('promotions') || [],
           disc = {},
           i, replaced = false,
@@ -1937,22 +2088,29 @@
       } else {
         disc.chunks = undefined;
       }
+
+
       disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
       disc.preserve = discount.preserve === true;
+
       if (OB.UTIL.isNullOrUndefined(discount.actualAmt) && !disc.amt && disc.pack) {
         disc.hidden = true;
       }
+
       if (disc.hidden) {
         disc.displayedTotalAmount = 0;
       } else {
         disc.displayedTotalAmount = disc.amt || discount.actualAmt;
       }
+
       if (discount.percentage) {
         disc.percentage = discount.percentage;
       }
+
       if (discount.family) {
         disc.family = discount.family;
       }
+
       if (typeof discount.applyNext !== 'undefined') {
         disc.applyNext = discount.applyNext;
       } else {
@@ -1964,6 +2122,7 @@
         disc.qtyOfferReserved = 0;
       }
       disc._idx = discount._idx || rule.get('_idx');
+
       for (i = 0; i < promotions.length; i++) {
         if (disc._idx !== -1 && disc._idx < promotions[i]._idx) {
           // Trying to apply promotions in incorrect order: recalculate whole line again
@@ -1971,6 +2130,7 @@
           return;
         }
       }
+
       for (i = 0; i < promotions.length; i++) {
         if (promotions[i].ruleId === rule.id) {
           if (promotions[i].hidden !== true) {
@@ -1980,13 +2140,16 @@
           }
         }
       }
+
       if (!replaced) {
         promotions.push(disc);
       }
+
       line.set('promotions', promotions);
       line.trigger('change');
     },
-    removePromotion: function(line, rule) {
+
+    removePromotion: function (line, rule) {
       var promotions = line.get('promotions'),
           ruleId = rule.id,
           removed = false,
@@ -1995,6 +2158,7 @@
       if (!promotions) {
         return;
       }
+
       for (i = 0; i < promotions.length; i++) {
         if (promotions[i].ruleId === rule.id) {
           removed = true;
@@ -2002,14 +2166,17 @@
           res.push(promotions[i]);
         }
       }
+
       if (removed) {
         line.set('promotions', res);
         line.trigger('change');
         this.save();
+
       }
     },
+
     //Attrs is an object of attributes that will be set in order line
-    createLine: function(p, units, options, attrs) {
+    createLine: function (p, units, options, attrs) {
       var newline, me = this;
 
       function createLineAux(p, units, options, attrs, me) {
@@ -2030,19 +2197,23 @@
             warehousename: OB.UTIL.isNullOrUndefined(attrs) || (!OB.UTIL.isNullOrUndefined(attrs) && OB.UTIL.isNullOrUndefined(attrs.splitline)) ? OB.MobileApp.model.get('warehouses')[0].warehousename : attrs.originalLine.get('warehouse').warehousename
           }
         });
+
         if (!_.isUndefined(attrs)) {
-          _.each(_.keys(attrs), function(key) {
+          _.each(_.keys(attrs), function (key) {
             newline.set(key, attrs[key]);
           });
         }
+
         if (newline.get('relatedLines')) {
           newline.set('groupService', newline.get('product').get('groupProduct'));
         }
+
         //issue 25448: Show stock screen is just shown when a new line is created.
         if (newline.get('product').get("showstock") === true) {
           newline.get('product').set("showstock", false);
           newline.get('product').set("_showstock", true);
         }
+
         // add the created line
         me.get('lines').add(newline, options);
         newline.trigger('created', newline);
@@ -2050,11 +2221,11 @@
         me.setUndo('CreateLine', {
           text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('_identifier')]),
           line: newline,
-          undo: function(modelObj) {
+          undo: function (modelObj) {
             // Instead of using 'me' as order, is necessary to use 'OB.MobileApp.model.receipt' to avoid references to not active orders
             // This happens while adding a deferred sale to a paid receipt
             var order = OB.MobileApp.model.receipt;
-            OB.UTIL.Approval.requestApproval((modelObj ? modelObj : this.model), 'OBPOS_approval.deleteLine', function(approved) {
+            OB.UTIL.Approval.requestApproval((modelObj ? modelObj : this.model), 'OBPOS_approval.deleteLine', function (approved) {
               if (approved) {
                 if (OB.UTIL.RfidController.isRfidConfigured() && newline.get('obposEpccode')) {
                   OB.UTIL.RfidController.removeEpcLine(newline);
@@ -2069,9 +2240,9 @@
                   newline.set('obposQtyDeleted', newline.get('qty'));
                   newline.set('qty', 0);
                   order.set('skipCalculateReceipt', false);
-                  order.calculateReceipt(function() {
+                  order.calculateReceipt(function () {
                     order.get('deletedLines').push(new OrderLine(newline.attributes));
-                    order.save(function() {
+                    order.save(function () {
                       order.get('lines').remove(newline);
                       order.set('undo', null);
                     });
@@ -2088,10 +2259,13 @@
         me.adjustPayment();
         return newline;
       }
+
+
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-        OB.Dal.saveIfNew(p, function() {}, function() {
+        OB.Dal.saveIfNew(p, function () {}, function () {
           OB.error(arguments);
         });
+
         var productcriteria = {
           columns: ['product'],
           operator: 'equals',
@@ -2101,14 +2275,14 @@
         var remoteCriteria = [productcriteria];
         var criteriaFilter = {};
         criteriaFilter.remoteFilters = remoteCriteria;
-        OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function(productcharacteristic) {
+        OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
           function saveCharacteristics(characteristics, i) {
             if (i === characteristics.length) {
               me.calculateReceipt();
             } else {
-              OB.Dal.saveIfNew(characteristics[i], function() {
+              OB.Dal.saveIfNew(characteristics[i], function () {
                 saveCharacteristics(characteristics, i + 1);
-              }, function() {
+              }, function () {
                 OB.error(arguments);
               });
             }
@@ -2116,13 +2290,15 @@
           if (productcharacteristic.models.length !== 0) {
             saveCharacteristics(productcharacteristic.models, 0);
           }
-        }, function() {
+
+        }, function () {
           OB.error(arguments);
         });
       }
       return createLineAux(p, units, options, attrs, me);
     },
-    returnLine: function(line, options, skipValidaton) {
+
+    returnLine: function (line, options, skipValidaton) {
       var me = this;
       if (line.get('qty') > 0) {
         line.get('product').set('ignorePromotions', true);
@@ -2130,10 +2306,13 @@
         line.get('product').set('ignorePromotions', false);
       }
       this.set('skipCalculateReceipt', true);
+
       line.set('qty', -line.get('qty'));
       if (line.get('qty') > 0 && line.get('product').get('groupProduct') && !line.get('splitline')) {
         this.mergeLines(line);
       }
+
+
       // set the undo action
       if (me.get('multipleUndo')) {
         var text = '',
@@ -2148,8 +2327,8 @@
         me.setUndo('ReturnLine', {
           text: text,
           lines: lines,
-          undo: function() {
-            _.each(lines, function(line) {
+          undo: function () {
+            _.each(lines, function (line) {
               line.set('qty', -line.get('qty'));
             });
             me.calculateReceipt();
@@ -2160,7 +2339,7 @@
         this.setUndo('ReturnLine', {
           text: OB.I18N.getLabel('OBPOS_ReturnLine', [line.get('product').get('_identifier')]),
           line: line,
-          undo: function() {
+          undo: function () {
             line.set('qty', -line.get('qty'));
             me.set('undo', null);
           }
@@ -2171,26 +2350,29 @@
         line.unset('promotions');
       }
       this.set('skipCalculateReceipt', false);
-      this.calculateReceipt(function() {
+      this.calculateReceipt(function () {
         me.save();
       });
     },
-    setBPandBPLoc: function(businessPartner, showNotif, saveChange, callback) {
+
+    setBPandBPLoc: function (businessPartner, showNotif, saveChange, callback) {
       var me = this,
           undef;
       var i, oldbp = this.get('bp');
-      var errorSaveData = function(callback) {
+
+      var errorSaveData = function (callback) {
           if (callback) {
             callback();
           }
           };
-      var finishSaveData = function(callback) {
+
+      var finishSaveData = function (callback) {
           // set the undo action
           if (showNotif === undef || showNotif === true) {
             this.setUndo('SetBPartner', {
               text: businessPartner ? OB.I18N.getLabel('OBPOS_SetBP', [businessPartner.get('_identifier')]) : OB.I18N.getLabel('OBPOS_ResetBP'),
               bp: businessPartner,
-              undo: function() {
+              undo: function () {
                 me.set('bp', oldbp);
                 me.save();
                 me.set('undo', null);
@@ -2205,8 +2387,8 @@
                 priceIncludesTax = OB.MobileApp.model.get('pricelist').priceIncludesTax;
               }
               me.set('priceIncludesTax', priceIncludesTax);
-              me.removeAndInsertLines(function() {
-                me.calculateReceipt(function() {
+              me.removeAndInsertLines(function () {
+                me.calculateReceipt(function () {
                   if (saveChange) {
                     me.save();
                   }
@@ -2216,7 +2398,7 @@
                 });
               });
             } else {
-              me.calculateReceipt(function() {
+              me.calculateReceipt(function () {
                 if (saveChange) {
                   me.save();
                 }
@@ -2234,6 +2416,7 @@
             }
           }
           };
+
       if (OB.MobileApp.model.get('terminal').businessPartner === businessPartner.id) {
         for (i = 0; i < me.get('lines').models.length; i++) {
           if (!me.get('lines').models[i].get('product').get('oBPOSAllowAnonymousSale')) {
@@ -2248,7 +2431,7 @@
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         if (oldbp.id !== businessPartner.id) { //Business Partner have changed
-          OB.Dal.saveIfNew(businessPartner, function() {}, function() {
+          OB.Dal.saveIfNew(businessPartner, function () {}, function () {
             OB.error(arguments);
           });
           if (OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)) {
@@ -2261,76 +2444,80 @@
             var remoteCriteria = [bp];
             var criteriaFilter = {};
             criteriaFilter.remoteFilters = remoteCriteria;
-            OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteriaFilter, function(discountsBP) {
-              _.each(discountsBP.models, function(dsc) {
-                OB.Dal.saveIfNew(dsc, function() {}, function() {
+            OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteriaFilter, function (discountsBP) {
+              _.each(discountsBP.models, function (dsc) {
+                OB.Dal.saveIfNew(dsc, function () {}, function () {
                   OB.error(arguments);
                 });
               });
-            }, function() {
+            }, function () {
               OB.error(arguments);
             });
           }
-          OB.Dal.get(OB.Model.BPLocation, businessPartner.get('shipLocId'), function(location) {
-            OB.Dal.saveIfNew(location, function() {
+
+          OB.Dal.get(OB.Model.BPLocation, businessPartner.get('shipLocId'), function (location) {
+
+            OB.Dal.saveIfNew(location, function () {
               businessPartner.set('locationModel', location);
               me.set('bp', businessPartner);
               me.save();
               // copy the modelOrder again, as the get/save are async
               OB.MobileApp.model.orderList.saveCurrent();
               finishSaveData(callback);
-            }, function() {
+            }, function () {
               OB.error(arguments);
             });
-          }, function() {
+
+          }, function () {
             OB.error(arguments);
             errorSaveData(callback);
-          }, function() {
+          }, function () {
             // Is the result is empty the location is not valid or not exits
             // Call LoadedCustomer to find the customer and location
             // if not exist show the information and break the process
             new OB.DS.Request('org.openbravo.retail.posterminal.master.LoadedCustomer').exec({
               bpartnerId: businessPartner.id,
               bpLocationId: businessPartner.get('shipLocId')
-            }, function(data) {
+            }, function (data) {
               var bpLoc = OB.Dal.transform(OB.Model.BPLocation, data[1]);
-              OB.Dal.saveIfNew(bpLoc, function() {
+              OB.Dal.saveIfNew(bpLoc, function () {
                 businessPartner.set('locationModel', bpLoc);
                 me.set('bp', businessPartner);
                 me.save();
                 // copy the modelOrder again, as the get/save are async
                 OB.MobileApp.model.orderList.saveCurrent();
                 finishSaveData(callback);
-              }, function() {
+              }, function () {
                 OB.error(arguments);
               });
-            }, function() {
+            }, function () {
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_NoReceiptLoadedLocation'), [{
                 label: OB.I18N.getLabel('OBPOS_LblOk'),
                 isConfirmButton: true
               }]);
             });
           });
+
         } else {
           if (businessPartner.get('locationModel')) { //Location has changed or we are assigning current bp
-            OB.Dal.saveIfNew(businessPartner.get('locationModel'), function() {
+            OB.Dal.saveIfNew(businessPartner.get('locationModel'), function () {
               me.set('bp', businessPartner);
               me.save();
               // copy the modelOrder again, as saveIfNew is possibly async
               OB.MobileApp.model.orderList.saveCurrent();
               finishSaveData(callback);
-            }, function() {
+            }, function () {
               OB.UTIL.showError('Error removing');
             });
           } else {
-            OB.Dal.get(OB.Model.BPLocation, businessPartner.get('shipLocId'), function(location) {
-              OB.Dal.saveIfNew(location, function() {}, function() {
+            OB.Dal.get(OB.Model.BPLocation, businessPartner.get('shipLocId'), function (location) {
+              OB.Dal.saveIfNew(location, function () {}, function () {
                 OB.error(arguments);
               });
               businessPartner.set('locationModel', location);
               me.set('bp', businessPartner);
               me.save();
-            }, function() {
+            }, function () {
               OB.error(arguments);
             });
           }
@@ -2341,11 +2528,12 @@
         finishSaveData(callback);
       }
     },
-    validateAllowSalesWithReturn: function(qty, skipValidaton, selectedModels) {
+
+    validateAllowSalesWithReturn: function (qty, skipValidaton, selectedModels) {
       if (OB.MobileApp.model.hasPermission('OBPOS_NotAllowSalesWithReturn', true) && !skipValidaton) {
         var negativeLines, receiptLines = this.get('lines').length,
             selectedLines = selectedModels ? selectedModels.length : 0;
-        negativeLines = _.filter(this.get('lines').models, function(line) {
+        negativeLines = _.filter(this.get('lines').models, function (line) {
           return line.get('qty') < 0;
         }).length;
         if (qty < 0 && negativeLines === 0 && selectedLines > 0 && receiptLines === selectedLines) {
@@ -2369,14 +2557,16 @@
       }
       return false;
     },
-    removeAndInsertLines: function(callback) {
+
+    removeAndInsertLines: function (callback) {
       this.set('skipCalculateReceipt', true);
       var me = this;
       // Remove all lines and insert again with new prices
       var orderlines = [];
       var promotionlines = [];
       var addProductsOfLines = null;
-      addProductsOfLines = function(receipt, lines, index, callback, promotionLines) {
+
+      addProductsOfLines = function (receipt, lines, index, callback, promotionLines) {
         if (index === lines.length) {
           me.set('skipCalculateReceipt', false);
           if (callback) {
@@ -2384,7 +2574,7 @@
           }
           return;
         }
-        OB.Dal.get(OB.Model.Product, lines[index].get('product').id, function(product) {
+        OB.Dal.get(OB.Model.Product, lines[index].get('product').id, function (product) {
           var attrs;
           if (!OB.UTIL.isNullOrUndefined(lines[index].get('splitline'))) {
             attrs = {
@@ -2392,7 +2582,7 @@
               originalLine: lines[index]
             };
           }
-          me.addProduct(product, lines[index].get('qty'), undefined, attrs, function(isInPriceList) {
+          me.addProduct(product, lines[index].get('qty'), undefined, attrs, function (isInPriceList) {
             if (isInPriceList) {
               me.get('lines').at(index).set('promotions', promotionLines[index]);
               me.get('lines').at(index).calculateGross();
@@ -2405,13 +2595,13 @@
           });
         });
       };
-      _.each(me.get('lines').models, function(line) {
+      _.each(me.get('lines').models, function (line) {
         orderlines.push(line);
         promotionlines.push(line.get('promotions'));
       });
       this.set('preventServicesUpdate', true);
       this.set('deleting', true);
-      _.each(orderlines, function(line) {
+      _.each(orderlines, function (line) {
         me.deleteLine(line, true);
       });
       this.unset('preventServicesUpdate');
@@ -2419,7 +2609,8 @@
       this.get('lines').trigger('updateRelations');
       addProductsOfLines(this, orderlines, 0, callback, promotionlines);
     },
-    setOrderType: function(permission, orderType, options) {
+
+    setOrderType: function (permission, orderType, options) {
       var me = this,
           i, approvalNeeded, servicesToApprove;
 
@@ -2443,7 +2634,7 @@
 
       function returnLines() {
         me.set('preventServicesUpdate', true);
-        _.each(me.get('lines').models, function(line) {
+        _.each(me.get('lines').models, function (line) {
           if (line.get('qty') > 0) {
             me.returnLine(line, null, true);
           }
@@ -2476,7 +2667,7 @@
               approval: 'OBPOS_approval.returnService',
               message: 'OBPOS_approval.returnService',
               params: [servicesToApprove]
-            }], function(approved, supervisor, approvalType) {
+            }], function (approved, supervisor, approvalType) {
               if (approved) {
                 returnLines();
               }
@@ -2490,37 +2681,47 @@
         finishSetOrderType();
       }
     },
+
     // returns the ordertype: 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
-    getOrderType: function() {
+    getOrderType: function () {
       return this.get('orderType');
     },
-    shouldApplyPromotions: function() {
+
+    shouldApplyPromotions: function () {
       // Do not apply promotions in return tickets
       return this.get('orderType') !== 1;
     },
-    hasOneLineToIgnoreDiscounts: function() {
-      return _.some(this.get('lines').models, function(line) {
+
+    hasOneLineToIgnoreDiscounts: function () {
+      return _.some(this.get('lines').models, function (line) {
         return line.get('product').get('ignorePromotions');
       });
     },
-    setOrderInvoice: function() {
+
+    setOrderInvoice: function () {
       if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
         this.set('generateInvoice', true);
         this.save();
       }
     },
-    updatePrices: function(callback) {
+
+    updatePrices: function (callback) {
       var order = this,
           newAllLinesCalculated;
 
       function allLinesCalculated() {
         callback(order);
       }
+
       newAllLinesCalculated = _.after(this.get('lines').length, allLinesCalculated);
-      this.get('lines').each(function(line) {
+
+      this.get('lines').each(function (line) {
+
         //remove promotions
         line.unset('promotions');
+
         var successCallbackPrices, criteria = {};
+
         if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
           criteria = {
             'id': line.get('product').get('id')
@@ -2537,27 +2738,31 @@
           remoteCriteria.push(productId);
           criteria.remoteFilters = remoteCriteria;
         }
-        successCallbackPrices = function(dataPrices) {
-          dataPrices.each(function(price) {
+
+        successCallbackPrices = function (dataPrices) {
+          dataPrices.each(function (price) {
             order.setPrice(line, price.get('standardPrice', {
               setUndo: false
             }));
           });
           newAllLinesCalculated();
         };
-        OB.Dal.find(OB.Model.Product, criteria, successCallbackPrices, function() {
+
+        OB.Dal.find(OB.Model.Product, criteria, successCallbackPrices, function () {
           // TODO: Report error properly.
         }, line);
       });
     },
-    verifyCancelAndReplace: function(context) {
+
+    verifyCancelAndReplace: function (context) {
       var me = this,
           process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled');
+
       process.exec({
         orderId: this.get('id'),
         documentNo: this.get('documentNo'),
         setCancelled: false
-      }, function(data) {
+      }, function (data) {
         if (data && data.exception) {
           if (data.exception.message) {
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message);
@@ -2571,46 +2776,54 @@
         } else {
           OB.UTIL.HookManager.executeHooks('OBPOS_PreCancelAndReplace', {
             context: context
-          }, function(args) {
+          }, function (args) {
             if (args && args.cancelOperation) {
               return;
             }
-            me.checkNotProcessedPayments(function() {
+
+            me.checkNotProcessedPayments(function () {
               me.cancelAndReplaceOrder(context);
             });
           });
         }
-      }, function() {
+      }, function () {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
       });
     },
-    cancelAndReplaceOrder: function(context) {
+
+    cancelAndReplaceOrder: function (context) {
       var documentseq, documentseqstr, idMap = {},
           me = this,
           i, splittedDocNo = [],
           terminalDocNoPrefix, newDocNo = '',
           nextNumber;
+
       //Cloning order to be canceled
       var clonedreceipt = new OB.Model.Order();
       OB.UTIL.clone(me, clonedreceipt);
       me.set('canceledorder', clonedreceipt);
       me.set('doCancelAndReplace', true);
-      OB.Dal.remove(this, function() {
-        me.get('lines').each(function(line) {
+
+      OB.Dal.remove(this, function () {
+        me.get('lines').each(function (line) {
           idMap[line.get('id')] = OB.UTIL.get_UUID();
           line.set('replacedorderline', line.get('id'));
           line.set('id', idMap[line.get('id')]);
         }, me);
+
         me.set('replacedorder_documentNo', me.get('documentNo'));
         me.set('replacedorder', me.get('id'));
         me.set('id', null);
         me.set('session', OB.MobileApp.model.get('session'));
+
         me.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
         me.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
+
         if (me.get('isLayaway')) {
           me.set('orderType', 2);
         }
         me.set('isLayaway', false);
+
         me.set('createdBy', OB.MobileApp.model.get('orgUserId'));
         if (!me.get('salesRepresentative')) {
           if (OB.MobileApp.model.get('context').isSalesRepresentative) {
@@ -2619,11 +2832,14 @@
             me.set('salesRepresentative', null);
           }
         }
+
         me.set('hasbeenpaid', 'N');
         me.set('isPaid', false);
         me.set('isEditable', true);
+
         me.set('orderDate', new Date());
         me.set('creationDate', null);
+
         me.set('negativeDocNo', me.get('documentNo') + '*R*');
         newDocNo = '';
         terminalDocNoPrefix = OB.MobileApp.model.attributes.terminal.docNoPrefix;
@@ -2636,10 +2852,10 @@
         }
         me.set('documentNo', newDocNo);
         me.set('posTerminal', OB.MobileApp.model.get('terminal').id);
-        me.save(function() {
-          me.get('lines').each(function(line) {
+        me.save(function () {
+          me.get('lines').each(function (line) {
             if (line.get('relatedLines')) {
-              line.get('relatedLines').forEach(function(rl) {
+              line.get('relatedLines').forEach(function (rl) {
                 rl.orderId = me.get('id');
                 if (idMap[rl.orderlineId]) {
                   rl.orderlineId = idMap[rl.orderlineId];
@@ -2648,31 +2864,33 @@
             }
           }, me);
           me.get('payments').reset(me.get('payments').models);
+
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_OrderReplaced', [me.get('replacedorder_documentNo'), me.get('documentNo')]));
           OB.UTIL.HookManager.executeHooks('OBPOS_PostCancelAndReplace', {
             context: context,
             receipt: me
-          }, function(args) {
-            me.calculateReceipt(function() {
+          }, function (args) {
+            me.calculateReceipt(function () {
               me.unset('skipApplyPromotions');
             });
           });
         });
-      }, function() {
+      }, function () {
         OB.UTIL.showError('Error removing');
       });
     },
-    checkNotProcessedPayments: function(callback) {
+
+    checkNotProcessedPayments: function (callback) {
       var me = this,
           notPrePayments;
-      notPrePayments = _.filter(this.get('payments').models, function(payment) {
+      notPrePayments = _.filter(this.get('payments').models, function (payment) {
         return !payment.get('isPrePayment');
       });
       if (notPrePayments.length) {
         var paymentList = [OB.I18N.getLabel('OBPOS_C&RDeletePaymentsBodyInit')];
         var symbol = OB.MobileApp.model.get('terminal').symbol;
         var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
-        _.each(notPrePayments, function(payment) {
+        _.each(notPrePayments, function (payment) {
           paymentList.push(OB.I18N.getLabel('OBMOBC_Character')[1] + ' ' + payment.get('name') + ' (' + OB.I18N.formatCurrencyWithSymbol(payment.get('amount'), symbol, symbolAtRight) + ')');
         });
         paymentList.push(OB.I18N.getLabel('OBPOS_C&RDeletePaymentsBodyEnd'));
@@ -2681,15 +2899,17 @@
         callback();
       }
     },
-    cancelLayaway: function(context) {
+
+    cancelLayaway: function (context) {
       var me = this;
       OB.UTIL.HookManager.executeHooks('OBPOS_PreCancelLayaway', {
         context: context
-      }, function(args) {
+      }, function (args) {
         if (args && args.cancelOperation) {
           return;
         }
-        me.checkNotProcessedPayments(function() {
+
+        me.checkNotProcessedPayments(function () {
           me.set('cancelLayaway', true);
           context.doShowDivText({
             permission: context.permission,
@@ -2709,7 +2929,8 @@
         });
       });
     },
-    createQuotation: function() {
+
+    createQuotation: function () {
       if (OB.MobileApp.model.hasPermission('OBPOS_receipt.quotation')) {
         this.set('isQuotation', true);
         this.set('generateInvoice', false);
@@ -2717,11 +2938,12 @@
         this.save();
       }
     },
-    createOrderFromQuotation: function(updatePrices) {
+
+    createOrderFromQuotation: function (updatePrices) {
       var idMap = {},
           oldIdMap = {},
           oldId, me = this;
-      this.get('lines').each(function(line) {
+      this.get('lines').each(function (line) {
         oldId = line.get('id');
         line.set('id', OB.UTIL.get_UUID());
         //issue 25055 -> If we don't do the following prices and taxes are calculated
@@ -2732,6 +2954,7 @@
         if (!this.get('priceIncludesTax')) {
           line.set('net', line.get('nondiscountednet'));
         }
+
         //issues 24994 & 24993
         //if the order is created from quotation just after save the quotation
         //(without load the quotation from quotations window). The order has the fields added
@@ -2750,6 +2973,7 @@
           oldIdMap[oldId] = line.get('id');
         }
       }, this);
+
       this.set('oldId', this.get('id'));
       this.set('id', null);
       this.set('isQuotation', false);
@@ -2779,9 +3003,10 @@
       this.set('posTerminal', OB.MobileApp.model.get('terminal').id);
       this.set('session', OB.MobileApp.model.get('session'));
       this.save();
-      this.get('lines').each(function(line) {
+
+      this.get('lines').each(function (line) {
         if (line.get('relatedLines')) {
-          line.get('relatedLines').forEach(function(rl) {
+          line.get('relatedLines').forEach(function (rl) {
             rl.orderId = me.get('id');
             rl.orderDocumentNo = me.get('documentNo');
             if (oldIdMap[rl.orderlineId]) {
@@ -2790,9 +3015,10 @@
           });
         }
       }, this);
+
       if (updatePrices) {
-        this.updatePrices(function(order) {
-          order.calculateReceipt(function() {
+        this.updatePrices(function (order) {
+          order.calculateReceipt(function () {
             OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
             // This event is used in stock validation module.
             order.trigger('orderCreatedFromQuotation');
@@ -2800,7 +3026,7 @@
         });
       } else {
         this.set('skipApplyPromotions', true);
-        this.calculateReceipt(function() {
+        this.calculateReceipt(function () {
           me.unset('skipApplyPromotions');
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
           me.trigger('orderCreatedFromQuotation');
@@ -2808,11 +3034,12 @@
       }
       this.calculateReceipt();
     },
-    reactivateQuotation: function() {
+
+    reactivateQuotation: function () {
       var nextQuotationno, idMap = {},
           oldIdMap = {},
           oldId, me = this;
-      this.get('lines').each(function(line) {
+      this.get('lines').each(function (line) {
         oldId = line.get('id');
         line.set('id', OB.UTIL.get_UUID());
         if (!this.get('priceIncludesTax')) {
@@ -2849,9 +3076,9 @@
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_QuotationCannotBeReactivated_title'), OB.I18N.getLabel('OBPOS_QuotationCannotBeReactivated_body'));
         return;
       }
-      this.get('lines').each(function(line) {
+      this.get('lines').each(function (line) {
         if (line.get('relatedLines')) {
-          line.get('relatedLines').forEach(function(rl) {
+          line.get('relatedLines').forEach(function (rl) {
             rl.orderId = me.get('id');
             if (oldIdMap[rl.orderlineId]) {
               rl.orderlineId = oldIdMap[rl.orderlineId];
@@ -2863,7 +3090,7 @@
       this.save();
       this.calculateReceipt();
     },
-    rejectQuotation: function(rejectReasonId, scope, callback) {
+    rejectQuotation: function (rejectReasonId, scope, callback) {
       if (!this.get('id')) {
         OB.error("The Id of the order is not defined (current value: " + this.get('id') + "'");
       }
@@ -2876,7 +3103,7 @@
           orderid: this.get('id'),
           rejectReasonId: rejectReasonId
         }]
-      }, function(data) {
+      }, function (data) {
         OB.UTIL.showLoading(false);
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_SuccessRejectQuotation'));
         if (callback) {
@@ -2884,13 +3111,13 @@
         }
       });
     },
-    resetOrderInvoice: function() {
+    resetOrderInvoice: function () {
       if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
         this.set('generateInvoice', false);
         this.save();
       }
     },
-    getPrecision: function(payment) {
+    getPrecision: function (payment) {
       var i, p, max;
       for (i = 0, max = OB.MobileApp.model.get('payments').length; i < max; i++) {
         p = OB.MobileApp.model.get('payments')[i];
@@ -2901,13 +3128,13 @@
         }
       }
     },
-    getSumOfOrigAmounts: function(paymentToIgnore) {
+    getSumOfOrigAmounts: function (paymentToIgnore) {
       //returns a result with the sum up of every payments based on origAmount field
       //if paymentToIignore parameter is provided the result will exclude that payment
       var payments = this.get('payments');
       var sumOfPayments = OB.DEC.Zero;
       if (payments && payments.length > 0) {
-        sumOfPayments = _.reduce(payments.models, function(memo, pymnt, index) {
+        sumOfPayments = _.reduce(payments.models, function (memo, pymnt, index) {
           if (paymentToIgnore && (pymnt.get('kind') === paymentToIgnore.get('kind'))) {
             return OB.DEC.add(memo, OB.DEC.Zero);
           } else {
@@ -2919,12 +3146,12 @@
         return sumOfPayments;
       }
     },
-    getDifferenceBetweenPaymentsAndTotal: function(paymentToIgnore) {
+    getDifferenceBetweenPaymentsAndTotal: function (paymentToIgnore) {
       //Returns the difference (abs) between total to pay and payments.
       //if paymentToIignore parameter is provided the result will exclude that payment.
       return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getSumOfOrigAmounts(paymentToIgnore)));
     },
-    getDifferenceRemovingSpecificPayment: function(currentPayment) {
+    getDifferenceRemovingSpecificPayment: function (currentPayment) {
       //Returns the difference (abs) between total to pay and payments without take into account currentPayment
       //Result is returned in the currency used by current payment
       var differenceInDefaultCurrency;
@@ -2937,10 +3164,11 @@
         return differenceInDefaultCurrency;
       }
     },
-    adjustPayment: function() {
+    adjustPayment: function () {
       var i, max, p;
       var payments = this.get('payments');
       var total = OB.DEC.abs(this.getTotal());
+
       var nocash = OB.DEC.Zero;
       var cash = OB.DEC.Zero;
       var origCash = OB.DEC.Zero;
@@ -2953,7 +3181,7 @@
       var multiCurrencyDifference;
       var paymentstatus = this.getPaymentStatus();
       var origAmount;
-      var sumCash = function() {
+      var sumCash = function () {
           if (p.get('kind') === OB.MobileApp.model.get('paymentcash')) {
             // The default cash method
             cash = OB.DEC.add(cash, p.get('origAmount'));
@@ -2968,6 +3196,7 @@
             nocash = OB.DEC.add(nocash, p.get('origAmount'));
           }
           };
+
       for (i = 0, max = payments.length; i < max; i++) {
         p = payments.at(i);
         precision = this.getPrecision(p);
@@ -3008,12 +3237,14 @@
           }
         }
       }
+
       if (!_.isUndefined(this.get('paidInNegativeStatusAmt'))) {
         total = OB.DEC.sub(processedPaymentsAmount, total);
-        payments = _.filter(payments.models, function(payment) {
+        payments = _.filter(payments.models, function (payment) {
           return !payment.get('isPrePayment');
         });
       }
+
       // Calculation of the change....
       //FIXME
       if (pcash) {
@@ -3048,13 +3279,16 @@
         this.set('change', OB.DEC.Zero);
       }
     },
-    addPayment: function(payment, callback) {
+
+    addPayment: function (payment, callback) {
       var payments, total;
       var i, max, p, order;
+
       if (this.get('isPaid') && !payment.get('isReversePayment') && !this.get('doCancelAndReplace') && this.getPrePaymentQty() === OB.DEC.sub(this.getTotal(), this.getCredit()) && !this.isNewReversed()) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
         return;
       }
+
       if (!OB.DEC.isNumber(payment.get('amount'))) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
         return;
@@ -3063,11 +3297,13 @@
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
         return;
       }
+
       order = this;
       if (order.get('orderType') === 3 && order.getGross() === 0) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgVoidLayawayPaymentError'));
         return;
       }
+
       payments = this.get('payments');
       total = OB.DEC.abs(this.getTotal());
       OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
@@ -3075,12 +3311,13 @@
         payments: payments,
         receipt: this,
         callback: callback
-      }, function(args) {
-        var executeFinalCallback = function() {
+      }, function (args) {
+        var executeFinalCallback = function () {
             if (callback instanceof Function) {
               callback(order);
             }
             };
+
         if (args && args.cancellation) {
           if (payment.get('reverseCallback')) {
             var reverseCallback = payment.get('reverseCallback');
@@ -3132,6 +3369,7 @@
           // Added properties to payment related with cancel an replace order
           payment.set('cancelAndReplace', order.get('doCancelAndReplace'));
         }
+
         payments.add(payment, {
           at: payment.get('index')
         });
@@ -3146,17 +3384,19 @@
         return;
       }); // call with callback, no args
     },
-    overpaymentExists: function() {
+
+    overpaymentExists: function () {
       return this.getPaymentStatus().overpayment ? true : false;
     },
-    removePayment: function(payment, removeCallback) {
+
+    removePayment: function (payment, removeCallback) {
       var payments = this.get('payments'),
           max, i, p;
       OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePayment', {
         paymentToRem: payment,
         payments: payments,
         receipt: this
-      }, function(args) {
+      }, function (args) {
         if (args.cancellation) {
           if (removeCallback) {
             removeCallback();
@@ -3181,7 +3421,8 @@
         args.receipt.save();
       });
     },
-    reversePayment: function(payment, sender, reverseCallback) {
+
+    reversePayment: function (payment, sender, reverseCallback) {
       var payments = this.get('payments'),
           me = this,
           provider, usedPayment, reversalPayment;
@@ -3191,15 +3432,17 @@
           paymentToReverse: payment,
           payments: payments,
           receipt: me
-        }, function(args) {
+        }, function (args) {
           if (args.cancellation) {
             if (reverseCallback) {
               reverseCallback();
             }
             return true;
           }
+
           reversalPayment = new Backbone.Model();
           OB.UTIL.clone(payment, reversalPayment);
+
           // Remove the cloned properties that must not be in the payment
           reversalPayment.unset('date');
           reversalPayment.unset('isPaid');
@@ -3207,6 +3450,7 @@
           reversalPayment.unset('paymentAmount');
           reversalPayment.unset('paymentDate');
           reversalPayment.unset('paymentId');
+
           // Modify other properties for the reverse payment
           reversalPayment.set('amount', OB.DEC.sub(0, payment.get('amount')));
           reversalPayment.set('origAmount', OB.DEC.sub(0, payment.get('origAmount')));
@@ -3217,12 +3461,13 @@
           reversalPayment.set('reverseCallback', reverseCallback);
           reversalPayment.set('isReversePayment', true);
           reversalPayment.set('paymentData', payment.get('paymentData') ? payment.get('paymentData') : null);
+
           provider = me.getTotal() > 0 ? OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod.paymentProvider : OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod.refundProvider;
           OB.UTIL.HookManager.executeHooks('OBPOS_PreAddReversalPayment', {
             paymentToReverse: payment,
             reversalPayment: reversalPayment,
             receipt: me
-          }, function(args) {
+          }, function (args) {
             if (args.cancelOperation) {
               if (reverseCallback) {
                 reverseCallback();
@@ -3236,6 +3481,7 @@
               reversalPayment.set('receipt', me);
               reversalPayment.set('provider', provider);
               reversalPayment.set('paymentMethod', OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod);
+
               OB.MobileApp.view.waterfall('onShowPopup', {
                 popup: 'modalpayment',
                 args: reversalPayment.attributes
@@ -3252,7 +3498,8 @@
         sender.removeClass('btn-icon-loading');
         sender.addClass('btn-icon-reversePayment');
       }
-      usedPayment = _.filter(OB.MobileApp.model.get('payments'), function(paymentType) {
+
+      usedPayment = _.filter(OB.MobileApp.model.get('payments'), function (paymentType) {
         return paymentType.payment.searchKey === payment.get('kind');
       });
       if (usedPayment.length === 1) {
@@ -3270,7 +3517,7 @@
             OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, [{
               approval: 'OBPOS_approval.reversePayment',
               message: 'OBPOS_approval.reversePayment'
-            }], function(approved, supervisor, approvalType) {
+            }], function (approved, supervisor, approvalType) {
               if (approved) {
                 reversePaymentConfirmed();
               } else {
@@ -3290,46 +3537,56 @@
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MoreThanOnePaymentMethod', [payment.get('name')]));
       }
     },
-    serializeToJSON: function() {
+
+    serializeToJSON: function () {
       // this.toJSON() generates a collection instance for members like "lines"
       // We need a plain array object
       var jsonorder = JSON.parse(JSON.stringify(this.toJSON()));
+
       // remove not needed members
       delete jsonorder.undo;
       delete jsonorder.json;
-      _.forEach(jsonorder.lines, function(item) {
+
+      _.forEach(jsonorder.lines, function (item) {
         delete item.product.img;
         delete item.product._filter;
       });
+
       return jsonorder;
     },
-    changeSignToShowReturns: function() {
+
+    changeSignToShowReturns: function () {
       this.set('change', OB.DEC.mul(this.get('change'), -1));
       this.set('gross', OB.DEC.mul(this.get('gross'), -1));
       this.set('net', OB.DEC.mul(this.get('net'), -1));
       this.set('qty', OB.DEC.mul(this.get('qty'), -1));
       //lines
-      _.each(this.get('lines').models, function(line) {
+      _.each(this.get('lines').models, function (line) {
         line.set('gross', OB.DEC.mul(line.get('gross'), -1));
         line.set('qty', OB.DEC.mul(line.get('qty'), -1));
       }, this);
+
       //payments
-      _.each(this.get('payments').models, function(payment) {
+      _.each(this.get('payments').models, function (payment) {
         payment.set('amount', OB.DEC.mul(payment.get('amount'), -1));
         payment.set('origAmount', OB.DEC.mul(payment.get('origAmount'), -1));
       }, this);
+
       //taxes
-      _.each(this.get('taxes'), function(tax) {
+      _.each(this.get('taxes'), function (tax) {
         tax.amount = OB.DEC.mul(tax.amount, -1);
         tax.gross = OB.DEC.mul(tax.gross, -1);
         tax.net = OB.DEC.mul(tax.net, -1);
       }, this);
+
     },
-    setProperty: function(_property, _value) {
+
+    setProperty: function (_property, _value) {
       this.set(_property, _value);
       this.save();
     },
-    groupLinesByProduct: function() {
+
+    groupLinesByProduct: function () {
       var lineToMerge, lines = this.get('lines'),
           auxLines = lines.models.slice(0),
           localSkipApplyPromotions = this.get('skipApplyPromotions');
@@ -3338,11 +3595,11 @@
       }, {
         silent: true
       });
-      _.each(auxLines, function(l) {
-        lineToMerge = _.find(lines.models, function(line) {
-          if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') > 0 && l.get('qty') > 0 && !_.find(line.get('promotions'), function(promo) {
+      _.each(auxLines, function (l) {
+        lineToMerge = _.find(lines.models, function (line) {
+          if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') > 0 && l.get('qty') > 0 && !_.find(line.get('promotions'), function (promo) {
             return promo.manual;
-          }) && !_.find(l.get('promotions'), function(promo) {
+          }) && !_.find(l.get('promotions'), function (promo) {
             return promo.manual;
           })) {
             return line;
@@ -3364,13 +3621,14 @@
         silent: true
       });
     },
-    fillPromotionsStandard: function(groupedOrder, isFirstTime) {
+    fillPromotionsStandard: function (groupedOrder, isFirstTime) {
       var me = this,
           copiedPromo, linesToMerge, auxPromo, idx, actProm, linesToCreate = [],
           qtyToReduce, lineToEdit, lineProm, linesToReduce, linesCreated = false;
+
       //reset pendingQtyOffer value of each promotion
-      groupedOrder.get('lines').forEach(function(l) {
-        _.each(l.get('promotions'), function(promo) {
+      groupedOrder.get('lines').forEach(function (l) {
+        _.each(l.get('promotions'), function (promo) {
           promo.pendingQtyOffer = promo.qtyOffer;
           if (!l.get('product').get('groupProduct')) {
             promo.doNotMerge = true;
@@ -3380,12 +3638,12 @@
           }
         });
         //copy lines from virtual ticket to original ticket when they have promotions which avoid us to merge lines
-        if (_.find(l.get('promotions'), function(promo) {
+        if (_.find(l.get('promotions'), function (promo) {
           return promo.doNotMerge;
         })) {
           //First, try to find lines with the same qty
-          lineToEdit = _.find(me.get('lines').models, function(line) {
-            if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') === l.get('qty') && !_.find(line.get('promotions'), function(promo) {
+          lineToEdit = _.find(me.get('lines').models, function (line) {
+            if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') === l.get('qty') && !_.find(line.get('promotions'), function (promo) {
               return promo.doNotMerge;
             })) {
               return line;
@@ -3393,7 +3651,7 @@
           });
           //if we cannot find lines with same qty, find lines with qty > 0
           if (!lineToEdit) {
-            lineToEdit = _.find(me.get('lines').models, function(line) {
+            lineToEdit = _.find(me.get('lines').models, function (line) {
               if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') > 0) {
                 return line;
               }
@@ -3405,6 +3663,7 @@
           lineToEdit.set('noDiscountCandidates', l.get('noDiscountCandidates'), {
             silent: true
           });
+
           //if promotion affects only to few quantities of the line, create a new line with quantities not affected by the promotion
           if (lineToEdit.get('qty') > l.get('qty')) {
             linesToCreate.push({
@@ -3424,8 +3683,8 @@
             //if promotion affects to several lines, edit first line with the promotion info and then remove the affected lines
           } else if (lineToEdit.get('qty') < l.get('qty')) {
             qtyToReduce = OB.DEC.sub(l.get('qty'), lineToEdit.get('qty'));
-            linesToReduce = _.filter(me.get('lines').models, function(line) {
-              if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') > 0 && !_.find(line.get('promotions'), function(promo) {
+            linesToReduce = _.filter(me.get('lines').models, function (line) {
+              if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') > 0 && !_.find(line.get('promotions'), function (promo) {
                 return promo.manual || promo.doNotMerge;
               })) {
                 return line;
@@ -3437,7 +3696,7 @@
             lineProm.set('promotionCandidates', l.get('promotionCandidates'));
             lineProm.set('qtyToApplyDiscount', l.get('qtyToApplyDiscount'));
             lineProm.trigger('change');
-            _.each(linesToReduce, function(line) {
+            _.each(linesToReduce, function (line) {
               if (line.get('qty') > qtyToReduce) {
                 line.set({
                   qty: line.get('qty') - qtyToReduce
@@ -3463,17 +3722,17 @@
           }
         } else {
           //Filter lines which can be merged
-          linesToMerge = _.filter(me.get('lines').models, function(line) {
+          linesToMerge = _.filter(me.get('lines').models, function (line) {
             var qtyReserved = 0;
             var promotions = line.get('promotions') || [];
             if (promotions.length > 0) {
-              promotions.forEach(function(p) {
+              promotions.forEach(function (p) {
                 qtyReserved = OB.DEC.add(qtyReserved, p.qtyOfferReserved || 0);
               });
             }
             if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && OB.UTIL.Math.sign(line.get('qty')) === OB.UTIL.Math.sign(l.get('qty'))) {
               if (OB.DEC.sub(Math.abs(line.get('qty')), qtyReserved) > 0) {
-                var isManualOrNotMerge = _.find(line.get('promotions'), function(promo) {
+                var isManualOrNotMerge = _.find(line.get('promotions'), function (promo) {
                   return promo.manual || promo.doNotMerge;
                 });
                 if (!isManualOrNotMerge) {
@@ -3485,11 +3744,11 @@
           // sort by qty asc to fix issue 28120
           // firstly the discount is applied to the lines with minus quantity, so the discount is applied to all quantity of the line
           // and if it is needed (promotion.qty > line.qty) the rest of promotion will be applied to the other line
-          linesToMerge = _.sortBy(linesToMerge, function(lsb) {
+          linesToMerge = _.sortBy(linesToMerge, function (lsb) {
             lsb.getQty();
           });
           if (linesToMerge.length > 0) {
-            _.each(linesToMerge, function(line) {
+            _.each(linesToMerge, function (line) {
               line.set({
                 promotionCandidates: l.get('promotionCandidates'),
                 promotionMessages: me.showMessagesPromotions(line.get('promotionMessages'), l.get('promotionMessages')),
@@ -3498,7 +3757,7 @@
               }, {
                 silent: true
               });
-              _.each(l.get('promotions'), function(promo) {
+              _.each(l.get('promotions'), function (promo) {
                 copiedPromo = JSON.parse(JSON.stringify(promo));
                 //when ditributing the promotion between different lines, we save accumulated amount
                 promo.distributedAmt = promo.distributedAmt ? promo.distributedAmt : OB.DEC.Zero;
@@ -3517,7 +3776,9 @@
                     copiedPromo.obdiscQtyoffer = line.get('qty');
                     promo.distributedAmt = OB.DEC.add(promo.distributedAmt, OB.DEC.toNumber(OB.DEC.toBigDecimal((promo.fullAmt / promo.qtyOffer) * line.get('qty'))));
                   }
+
                   if (promo.pendingQtyOffer === line.get('qty')) {
+
                     if (!_.isUndefined(promo.actualAmt) && promo.actualAmt && promo.actualAmt !== promo.distributedAmt) {
                       copiedPromo.actualAmt = OB.DEC.add(copiedPromo.actualAmt, OB.DEC.sub(promo.actualAmt, promo.distributedAmt));
                       copiedPromo.amt = promo.amt ? OB.DEC.add(copiedPromo.amt, OB.DEC.sub(promo.amt, promo.distributedAmt)) : promo.amt;
@@ -3527,7 +3788,7 @@
                     promo.pendingQtyOffer = promo.pendingQtyOffer - line.get('qty');
                   }
                   if (line.get('promotions')) {
-                    auxPromo = _.find(line.get('promotions'), function(promo) {
+                    auxPromo = _.find(line.get('promotions'), function (promo) {
                       return promo.ruleId === copiedPromo.ruleId;
                       // return promo.ruleId === copiedPromo.ruleId && promo.hidden !== true && promo.actualAmt > 0;
                     });
@@ -3556,8 +3817,9 @@
                     copiedPromo.actualAmt = OB.DEC.add(copiedPromo.actualAmt, OB.DEC.sub(promo.actualAmt, promo.distributedAmt));
                     copiedPromo.amt = promo.amt ? OB.DEC.add(copiedPromo.amt, OB.DEC.sub(promo.amt, promo.distributedAmt)) : promo.amt;
                   }
+
                   if (line.get('promotions')) {
-                    auxPromo = _.find(line.get('promotions'), function(promo) {
+                    auxPromo = _.find(line.get('promotions'), function (promo) {
                       return promo.ruleId === copiedPromo.ruleId && promo.preserve !== true;
                       // return promo.ruleId === copiedPromo.ruleId;
                     });
@@ -3573,7 +3835,7 @@
                   promo.pendingQtyOffer = null;
                   //if it is the first we enter in this method, promotions which are not in the virtual ticket are deleted.
                 } else if (isFirstTime) {
-                  actProm = _.find(line.get('promotions'), function(prom) {
+                  actProm = _.find(line.get('promotions'), function (prom) {
                     return prom.ruleId === promo.ruleId;
                   });
                   if (actProm) {
@@ -3590,31 +3852,32 @@
         }
       });
       if (!linesCreated) {
-        _.each(linesToCreate, function(line) {
+        _.each(linesToCreate, function (line) {
           me.createLine(line.product, line.qty, null, line.attrs);
         });
         linesCreated = true;
       }
     },
-    fillPromotionsSplitted: function(groupedOrder, isFirstTime) {
+
+    fillPromotionsSplitted: function (groupedOrder, isFirstTime) {
       var receipt = this;
       // Receipt with split lines
-      _.forEach(groupedOrder.get('lines').models, function(gli, index) {
+      _.forEach(groupedOrder.get('lines').models, function (gli, index) {
         if (gli.get('promotions') && gli.get('promotions').length > 0) {
           var linesToApply = new Backbone.Collection();
-          _.forEach(receipt.get('lines').models, function(rli) {
+          _.forEach(receipt.get('lines').models, function (rli) {
             if (gli.get('product').get('groupProduct')) {
               if (gli.get('product').id === rli.get('product').id && gli.get('price') === rli.get('price')) {
                 if (rli.get('promotions') && rli.get('promotions').length > 0) {
                   var samePromos = [];
                   var qtyOffer = 0;
-                  _.forEach(rli.get('promotions'), function(promot) {
+                  _.forEach(rli.get('promotions'), function (promot) {
                     if (!promot.applyNext) {
                       samePromos.push(promot);
                     }
                   });
                   if (samePromos && samePromos.length > 0) {
-                    _.forEach(samePromos, function(samePromo) {
+                    _.forEach(samePromos, function (samePromo) {
                       qtyOffer += samePromo.qtyOffer;
                     });
                     if (rli.get('qty') - qtyOffer === 0) {
@@ -3636,25 +3899,28 @@
               }
             }
           });
+
           var groupedPromos = gli.get('promotions');
-          var promoManual = _.find(groupedPromos, function(promo) {
+          var promoManual = _.find(groupedPromos, function (promo) {
             return promo.manual;
           });
-          _.forEach(groupedPromos, function(promotion) {
+          _.forEach(groupedPromos, function (promotion) {
             if (!promoManual) {
               var promoAmt = 0,
                   promoQtyoffer = promotion.qtyOffer;
-              _.forEach(linesToApply.models, function(line) {
+
+              _.forEach(linesToApply.models, function (line) {
+
                 var samePromos = [];
                 var qtyOffer = 0;
                 var qtyToCheck = line.get('qty');
-                _.forEach(line.get('promotions'), function(promot) {
+                _.forEach(line.get('promotions'), function (promot) {
                   if (!promot.applyNext || (promot.hidden !== promotion.hidden && promot.discountType === promotion.discountType)) {
                     samePromos.push(promot);
                   }
                 });
                 if (samePromos && samePromos.length > 0) {
-                  _.forEach(samePromos, function(samePromo) {
+                  _.forEach(samePromos, function (samePromo) {
                     qtyOffer += samePromo.qtyOffer;
                   });
                   if (line.get('qty') - qtyOffer === 0) {
@@ -3663,10 +3929,11 @@
                     qtyToCheck = line.get('qty') - qtyOffer;
                   }
                 }
+
                 // If it's not the first execution, there could be some promotions already applied and are set in the groupedorder lines too.
                 if (!isFirstTime) {
                   var actProm, indx;
-                  actProm = _.find(line.get('promotions'), function(prom) {
+                  actProm = _.find(line.get('promotions'), function (prom) {
                     return prom.ruleId === promotion.ruleId;
                   });
                   if (actProm) {
@@ -3677,6 +3944,7 @@
                     }
                   }
                 }
+
                 var clonedPromotion = JSON.parse(JSON.stringify(promotion));
                 if (promoQtyoffer > 0) {
                   clonedPromotion.obdiscQtyoffer = (qtyToCheck - promoQtyoffer >= 0) ? promoQtyoffer : qtyToCheck;
@@ -3694,8 +3962,9 @@
                   if (!line.get('promotions')) {
                     line.set('promotions', []);
                   }
+
                   if (clonedPromotion.pendingQtyoffer && clonedPromotion.pendingQtyoffer > 0) {
-                    var auxPromo = _.find(line.get('promotions'), function(lpromo) {
+                    var auxPromo = _.find(line.get('promotions'), function (lpromo) {
                       return lpromo.ruleId === clonedPromotion.ruleId && lpromo.preserve !== true;
                     });
                     if (auxPromo) {
@@ -3714,11 +3983,12 @@
                   OB.error("There is more units consumed than the original promotion");
                 }
               });
+
               // Check the amount discount is the same
               if (promotion.amt !== promoAmt && !promotion.hidden) {
                 // Adjust splitted promotion amount
-                var splittedAmount = _.reduce(linesToApply.models, function(sum, line) {
-                  var linePromo = _.find(line.get('promotions'), function(lp) {
+                var splittedAmount = _.reduce(linesToApply.models, function (sum, line) {
+                  var linePromo = _.find(line.get('promotions'), function (lp) {
                     return lp.ruleId === promotion.ruleId && lp.discountType === promotion.discountType && !lp.hidden;
                   });
                   if (linePromo) {
@@ -3729,11 +3999,11 @@
                 var bdSplittedAmount = OB.DEC.toBigDecimal(splittedAmount),
                     bdPromoAmount = OB.DEC.toBigDecimal(promotion.amt);
                 if (bdPromoAmount.compareTo(bdSplittedAmount) !== 0) {
-                  var linePromo = _.find(linesToApply.map(function(lta) {
-                    return lta.get('promotions').find(function(lp) {
+                  var linePromo = _.find(linesToApply.map(function (lta) {
+                    return lta.get('promotions').find(function (lp) {
                       return lp.discountType === promotion.discountType && !lp.hidden;
                     });
-                  }), function(ltapromo) {
+                  }), function (ltapromo) {
                     return ltapromo;
                   });
                   if (linePromo) {
@@ -3746,10 +4016,10 @@
               }
             } else {
               var appliedPromotion = false;
-              _.forEach(linesToApply.models, function(l) {
+              _.forEach(linesToApply.models, function (l) {
                 if (!appliedPromotion) {
                   if (l.get('qty') === gli.get('qty')) {
-                    if (_.find(l.get('promotions'), function(promo) {
+                    if (_.find(l.get('promotions'), function (promo) {
                       return promo.discountType === promotion.discountType;
                     }) === undefined) {
                       l.get('promotions').push(promotion);
@@ -3764,8 +4034,9 @@
         }
       });
     },
-    fillPromotionsWith: function(groupedOrder, isFirstTime) {
-      var countSplited = _.reduce(this.get('lines').models, function(count, line) {
+
+    fillPromotionsWith: function (groupedOrder, isFirstTime) {
+      var countSplited = _.reduce(this.get('lines').models, function (count, line) {
         return count + (line.get('splitline') ? 1 : 0);
       }, 0);
       var localSkipApplyPromotions = this.get('skipApplyPromotions');
@@ -3786,10 +4057,11 @@
       });
       this.trigger('promotionsUpdated');
     },
+
     // for each line, decrease the qtyOffer of promotions and remove the lines with qty 0
-    removeQtyOffer: function() {
+    removeQtyOffer: function () {
       var linesPending = new Backbone.Collection();
-      this.get('lines').forEach(function(l) {
+      this.get('lines').forEach(function (l) {
         var promotionsApplyNext = [],
             promotionsCascadeApplied = [],
             qtyReserved = 0,
@@ -3797,7 +4069,7 @@
         if (l.get('promotions')) {
           promotionsApplyNext = [];
           promotionsCascadeApplied = [];
-          l.get('promotions').forEach(function(p) {
+          l.get('promotions').forEach(function (p) {
             if (p.qtyOfferReserved > 0) {
               qtyReserved = OB.DEC.add(qtyReserved, p.qtyOfferReserved);
             }
@@ -3814,38 +4086,42 @@
         l.set('promotions', promotionsApplyNext);
         l.set('promotionsCascadeApplied', promotionsCascadeApplied);
       });
-      _.each(this.get('lines').models, function(line) {
+
+      _.each(this.get('lines').models, function (line) {
         if (line.get('qty') > 0) {
           linesPending.add(line);
         }
       });
       this.get('lines').reset(linesPending.models);
     },
-    removeLinesWithoutPromotions: function() {
+
+    removeLinesWithoutPromotions: function () {
       var linesPending = new Backbone.Collection();
-      _.each(this.get('lines').models, function(l) {
+      _.each(this.get('lines').models, function (l) {
         if (l.get('promotions') && l.get('promotions').length > 0) {
           linesPending.push(l);
         }
       });
       this.set('lines', linesPending);
     },
-    hasPromotions: function() {
+
+    hasPromotions: function () {
       var hasPromotions = false;
-      this.get('lines').forEach(function(l) {
+      this.get('lines').forEach(function (l) {
         if (l.get('promotions') && l.get('promotions').length > 0) {
           hasPromotions = true;
         }
       });
       return hasPromotions;
     },
-    isSimilarLine: function(line1, line2) {
-      var equalPromotions = function(x, y) {
+
+    isSimilarLine: function (line1, line2) {
+      var equalPromotions = function (x, y) {
           var isEqual = true;
           if (x.length !== y.length) {
             isEqual = false;
           } else {
-            x.forEach(function(p1, ind) {
+            x.forEach(function (p1, ind) {
               if (p1.amt !== y[ind].amt || p1.displayedTotalAmount !== y[ind].displayedTotalAmount || p1.qtyOffer !== y[ind].qtyOffer || p1.qtyOfferReserved !== y[ind].qtyOfferReserved || p1.ruleId !== y[ind].ruleId || p1.obdiscQtyoffer !== y[ind].obdiscQtyoffer) {
                 isEqual = false;
               }
@@ -3864,11 +4140,11 @@
     // Ex: prod1 - qty 5 - disc3x2 & discPriceAdj -> priceAdj is applied first to 5 units
     //     it is called to applyPromotions, with the 2 units frees, and priceAdj is applied again to this 2 units
     // it is wrong, only to 5 units should be applied priceAdj, no 5 + 2 units
-    removePromotionsCascadeApplied: function() {
-      this.get('lines').forEach(function(l) {
+    removePromotionsCascadeApplied: function () {
+      this.get('lines').forEach(function (l) {
         if (!OB.UTIL.isNullOrUndefined(l.get('promotions')) && l.get('promotions').length > 0 && !OB.UTIL.isNullOrUndefined(l.get('promotionsCascadeApplied')) && l.get('promotionsCascadeApplied').length > 0) {
-          l.get('promotions').forEach(function(p, ind) {
-            l.get('promotionsCascadeApplied').forEach(function(pc) {
+          l.get('promotions').forEach(function (p, ind) {
+            l.get('promotionsCascadeApplied').forEach(function (pc) {
               if (p.ruleId === pc.ruleId) {
                 l.get('promotions')[ind] = pc;
               }
@@ -3877,10 +4153,11 @@
         }
       });
     },
-    showMessagesPromotions: function(arrayMessages1, arrayMessages2) {
+
+    showMessagesPromotions: function (arrayMessages1, arrayMessages2) {
       arrayMessages1 = arrayMessages1 || [];
-      (arrayMessages2 || []).forEach(function(m2) {
-        if (_.filter(arrayMessages1, function(m1) {
+      (arrayMessages2 || []).forEach(function (m2) {
+        if (_.filter(arrayMessages1, function (m1) {
           return m1 === m2;
         }).length === 0) {
           arrayMessages1.push(m2);
@@ -3889,11 +4166,12 @@
       });
       return arrayMessages1;
     },
-    getOrderDescription: function() {
+
+    getOrderDescription: function () {
       var desc = "{id: '" + this.get('id') + "', Docno: '" + this.get('documentNo') + "', Total gross: '" + this.get('gross') + "', Lines: ['";
       var i = 0;
       var propt;
-      this.get('lines').forEach(function(l) {
+      this.get('lines').forEach(function (l) {
         if (i !== 0) {
           desc += ",";
         }
@@ -3902,7 +4180,7 @@
       });
       desc += "], Payments: [";
       i = 0;
-      this.get('payments').forEach(function(l) {
+      this.get('payments').forEach(function (l) {
         if (i !== 0) {
           desc += ",";
         }
@@ -3925,7 +4203,8 @@
       desc += "}";
       return desc;
     },
-    canAddAsServices: function(model, product, callback, scope) {
+
+    canAddAsServices: function (model, product, callback, scope) {
       if (product.get('productType') === 'S') {
         // do not allow to add not linked services to non editable orders
         if (product.get('isLinkedToProduct') === false && model.get('order').get('isEditable') === false) {
@@ -3956,7 +4235,7 @@
                 approval: 'OBPOS_approval.deferred_sell_max_days',
                 message: 'OBPOS_approval.deferred_sell_max_days',
                 params: [product.get('deferredSellMaxDays')]
-              }], function(approved, supervisor, approvalType) {
+              }], function (approved, supervisor, approvalType) {
                 callback.call(scope, approved ? 'OK' : 'NOT_ALLOW_MAX_DAYS');
               });
             } else {
@@ -3977,16 +4256,16 @@
         callback.call(scope, 'ABORT');
       }
     },
-    getOrderlLineIndex: function(orderlineId) {
+    getOrderlLineIndex: function (orderlineId) {
       var index = 0;
-      this.get('lines').forEach(function(line, indx) {
+      this.get('lines').forEach(function (line, indx) {
         if (line.id === orderlineId) {
           index = indx;
         }
       });
       return index;
     },
-    deleteOrder: function(context, callback) {
+    deleteOrder: function (context, callback) {
       var i;
 
       function removePayments(receipt, callback) {
@@ -3996,12 +4275,12 @@
             paymentToRem: payments.at(0),
             payments: payments,
             receipt: receipt
-          }, function(args) {
+          }, function (args) {
             if (args.cancellation) {
               callback(false);
             } else {
               payments.remove(payments.at(0));
-              removePayments(receipt, function(success) {
+              removePayments(receipt, function (success) {
                 callback(success);
               });
             }
@@ -4034,8 +4313,8 @@
           model.get('lines').at(i).set('lineGrossAmount', 0);
         }
         model.set('hasbeenpaid', 'Y');
-        OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function() {
-          model.save(function() {
+        OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
+          model.save(function () {
             if (orderList) {
               orderList.deleteCurrent();
               orderList.synchronizeCurrentOrder();
@@ -4058,10 +4337,10 @@
         function finishRemoveOrder() {
           if (receipt.get('lines') && receipt.get('lines').length > 0 && receipt.get('isEditable')) {
             if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-              receipt.prepareToSend(function() {
+              receipt.prepareToSend(function () {
                 receipt.set('skipApplyPromotions', true);
                 receipt.set('skipCalculateReceipt', true);
-                _.each(receipt.get('lines').models, function(line) {
+                _.each(receipt.get('lines').models, function (line) {
                   line.set('obposQtyDeleted', line.get('qty'));
                   line.set('qty', 0);
                 });
@@ -4071,7 +4350,7 @@
                 // isCalculateReceiptLockState and isCalculateGrossLockState properties must be initialized
                 receipt.setIsCalculateReceiptLockState(false);
                 receipt.setIsCalculateGrossLockState(false);
-                receipt.calculateReceipt(function() {
+                receipt.calculateReceipt(function () {
                   markOrderAsDeleted(receipt, orderList, callback);
                 });
               });
@@ -4115,8 +4394,9 @@
             }
           }
         }
+
         if (receipt.get('id') && !isPaidQuotation) {
-          removePayments(receipt, function(success) {
+          removePayments(receipt, function (success) {
             if (success) {
               finishRemoveOrder();
             }
@@ -4125,11 +4405,12 @@
           finishRemoveOrder();
         }
       }
+
       if (this.get('isEditable') === true) {
         OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteCurrentOrder', {
           context: context,
           receipt: this
-        }, function(args) {
+        }, function (args) {
           if (args && args.cancelOperation && args.cancelOperation === true) {
             return;
           }
@@ -4138,31 +4419,37 @@
       } else {
         removeOrder(this, callback);
       }
+
       return true;
     }
   });
+
   var OrderList = Backbone.Collection.extend({
     model: Order,
-    constructor: function(modelOrder) {
+
+    constructor: function (modelOrder) {
       if (modelOrder) {
         //this._id = 'modelorderlist';
         this.modelorder = modelOrder;
       }
       Backbone.Collection.prototype.constructor.call(this);
     },
-    initialize: function() {
+
+    initialize: function () {
       var me = this;
       this.current = null;
       if (this.modelorder) {
-        this.modelorder.on('saveCurrent', function() {
+        this.modelorder.on('saveCurrent', function () {
           me.saveCurrent();
         });
       }
     },
-    newOrder: function(bp) {
+
+    newOrder: function (bp) {
       var order = new Order(),
           receiptProperties, i, p;
       bp = bp ? bp : OB.MobileApp.model.get('businessPartner');
+
       // reset in new order properties defined in Receipt Properties dialog
       if (OB.MobileApp.view.$.containerWindow && OB.MobileApp.view.$.containerWindow.getRoot() && OB.MobileApp.view.$.containerWindow.getRoot().$.receiptPropertiesDialog) {
         receiptProperties = OB.MobileApp.view.$.containerWindow.getRoot().$.receiptPropertiesDialog.newAttributes;
@@ -4177,6 +4464,7 @@
           }
         }
       }
+
       order.set('client', OB.MobileApp.model.get('terminal').client);
       order.set('organization', OB.MobileApp.model.get('terminal').organization);
       order.set('createdBy', OB.MobileApp.model.get('orgUserId'));
@@ -4235,6 +4523,7 @@
       order.set('isLayaway', false);
       order.set('isPartiallyDelivered', false);
       order.set('taxes', {});
+
       var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
       order.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
       order.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
@@ -4247,7 +4536,8 @@
       });
       return order;
     },
-    newPaidReceipt: function(model, callback) {
+
+    newPaidReceipt: function (model, callback) {
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('newPaidReceipt');
       enyo.$.scrim.show();
       var order = new Order(),
@@ -4256,28 +4546,33 @@
           NoFoundProduct = true,
           NoFoundCustomer = true,
           isLoadedPartiallyFromBackend = false;
+
       // Each payment that has been reverted stores the id of the reversal payment
       // Web POS, instead of that, need to have the information of the payment reverted on the reversal payment
       // This loop switches the information between them
-      _.each(_.filter(model.receiptPayments, function(payment) {
+      _.each(_.filter(model.receiptPayments, function (payment) {
         return payment.isReversed;
-      }), function(payment) {
-        var reversalPayment = _.find(model.receiptPayments, function(currentPayment) {
+      }), function (payment) {
+        var reversalPayment = _.find(model.receiptPayments, function (currentPayment) {
           return currentPayment.paymentId === payment.reversedPaymentId;
         });
         reversalPayment.reversedPaymentId = payment.paymentId;
         delete payment.reversedPaymentId;
       });
+
       // Call orderLoader plugings to adjust remote model to local model first
       // ej: sales on credit: Add a new payment if total payment < total receipt
       // ej: gift cards: Add a new payment for each gift card discount
-      _.each(OB.Model.modelLoaders, function(f) {
+      _.each(OB.Model.modelLoaders, function (f) {
         f(model);
       });
+
       //model.set('id', null);
       lines = new Backbone.Collection();
+
       // set all properties coming from the model
       order.set(model);
+
       // setting specific properties
       order.set('isbeingprocessed', 'N');
       order.set('hasbeenpaid', 'N');
@@ -4308,9 +4603,10 @@
       } else {
         order.set('isPaid', true);
         var paidByPayments = 0;
-        _.each(model.receiptPayments, function(receiptPayment) {
+        _.each(model.receiptPayments, function (receiptPayment) {
           paidByPayments += receiptPayment.amount;
         });
+
         var creditAmount = OB.DEC.sub(model.totalamount, paidByPayments);
         if (OB.DEC.compare(model.totalamount) > 0 && OB.DEC.compare(creditAmount) > 0 && !model.isQuotation) {
           order.set('creditAmount', creditAmount);
@@ -4328,8 +4624,8 @@
       bpLocId = model.bpLocId;
       bpBillLocId = model.bpBillLocId;
       bpId = model.bp;
-      var bpartnerForProduct = function(bp) {
-          var locationForBpartner = function(bpLoc) {
+      var bpartnerForProduct = function (bp) {
+          var locationForBpartner = function (bpLoc) {
               bp.set('shipLocName', bpLoc.get('name'));
               bp.set('shipLocId', bpLoc.get('id'));
               bp.set('locName', bpLoc.get('name'));
@@ -4342,16 +4638,17 @@
               order.set('gross', model.totalamount);
               order.set('net', model.totalNetAmount);
               order.trigger('change:bp', order);
+
               var linepos = 0,
                   hasDeliveredProducts = false,
                   hasNotDeliveredProducts = false,
                   i, sortedPayments = false;
-              _.each(model.receiptLines, function(iter) {
+              _.each(model.receiptLines, function (iter) {
                 var price;
                 iter.linepos = linepos;
-                var addLineForProduct = function(prod) {
+                var addLineForProduct = function (prod) {
                     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-                      OB.Dal.saveIfNew(prod, function() {
+                      OB.Dal.saveIfNew(prod, function () {
                         var productcriteria = {
                           columns: ['product'],
                           operator: 'equals',
@@ -4361,27 +4658,29 @@
                         var remoteCriteria = [productcriteria];
                         var criteriaFilter = {};
                         criteriaFilter.remoteFilters = remoteCriteria;
-                        OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function(productcharacteristic) {
-                          _.each(productcharacteristic.models, function(pchv) {
-                            OB.Dal.saveIfNew(pchv, function() {}, function() {
+                        OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
+                          _.each(productcharacteristic.models, function (pchv) {
+                            OB.Dal.saveIfNew(pchv, function () {}, function () {
                               OB.error(arguments);
                             });
                           });
-                        }, function() {
+                        }, function () {
                           OB.error(arguments);
                         });
-                      }, function() {
+
+                      }, function () {
                         OB.error(arguments);
                       });
+
                     }
                     // Set product services
-                    order._loadRelatedServices(prod.get('productType'), prod.get('id'), prod.get('productCategory'), function(data) {
+                    order._loadRelatedServices(prod.get('productType'), prod.get('id'), prod.get('productCategory'), function (data) {
                       var hasservices;
                       if (!OB.UTIL.isNullOrUndefined(data) && OB.DEC.number(iter.quantity) > 0) {
                         hasservices = data.hasservices;
                       }
-                      _.each(iter.promotions, function(promotion) {
-                        OB.Dal.get(OB.Model.Discount, promotion.ruleId, function(discount) {
+                      _.each(iter.promotions, function (promotion) {
+                        OB.Dal.get(OB.Model.Discount, promotion.ruleId, function (discount) {
                           if (discount && OB.Model.Discounts.discountRules[discount.get('discountType')].addManual) {
                             var percentage;
                             if (discount.get('obdiscPercentage')) {
@@ -4391,7 +4690,7 @@
                             promotion.discountType = discount.get('discountType');
                             promotion.manual = true;
                           }
-                        }, function(tx, error) {
+                        }, function (tx, error) {
                           OB.UTIL.showError("OBDAL error: " + error);
                         });
                       });
@@ -4413,12 +4712,14 @@
                         },
                         relatedLines: iter.relatedLines
                       });
+
                       // copy verbatim not owned properties -> modular properties.
-                      _.each(iter, function(value, key) {
+                      _.each(iter, function (value, key) {
                         if (!newline.ownProperties[key]) {
                           newline.set(key, value);
                         }
                       });
+
                       // add the created line
                       lines.add(newline, {
                         at: iter.linepos
@@ -4426,7 +4727,7 @@
                       numberOfLines--;
                       orderQty = OB.DEC.add(iter.quantity, orderQty);
                       if (numberOfLines === 0) {
-                        lines.reset(lines.sortBy(function(line) {
+                        lines.reset(lines.sortBy(function (line) {
                           return line.get('linepos');
                         }));
                         order.set('lines', lines);
@@ -4438,11 +4739,13 @@
                       }
                     });
                     };
+
                 if (order.get('priceIncludesTax')) {
                   price = OB.DEC.number(iter.unitPrice);
                 } else {
                   price = OB.DEC.number(iter.baseNetUnitPrice);
                 }
+
                 if (!iter.deliveredQuantity) {
                   hasNotDeliveredProducts = true;
                 } else {
@@ -4451,15 +4754,16 @@
                     hasNotDeliveredProducts = true;
                   }
                 }
-                OB.Dal.get(OB.Model.Product, iter.id, function(product) {
+
+                OB.Dal.get(OB.Model.Product, iter.id, function (product) {
                   addLineForProduct(product);
-                }, null, function() {
+                }, null, function () {
                   //Empty
                   new OB.DS.Request('org.openbravo.retail.posterminal.master.LoadedProduct').exec({
                     productId: iter.id
-                  }, function(data) {
+                  }, function (data) {
                     addLineForProduct(OB.Dal.transform(OB.Model.Product, data[0]));
-                  }, function() {
+                  }, function () {
                     if (NoFoundProduct) {
                       NoFoundProduct = false;
                       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'), [{
@@ -4477,9 +4781,9 @@
               }
               if (order.get('isPartiallyDelivered')) {
                 var partiallyPaid = 0;
-                _.each(_.filter(order.get('receiptLines'), function(reciptLine) {
+                _.each(_.filter(order.get('receiptLines'), function (reciptLine) {
                   return reciptLine.deliveredQuantity;
-                }), function(deliveredLine) {
+                }), function (deliveredLine) {
                   partiallyPaid += deliveredLine.deliveredQuantity * deliveredLine.unitPrice;
                 });
                 if (partiallyPaid) {
@@ -4491,7 +4795,7 @@
               }
 
               function getReverserPayment(payment, Payments) {
-                return _.filter(model.receiptPayments, function(receiptPayment) {
+                return _.filter(model.receiptPayments, function (receiptPayment) {
                   return receiptPayment.paymentId === payment.reversedPaymentId;
                 })[0];
               }
@@ -4516,7 +4820,7 @@
                 }
               }
               if (sortedPayments) {
-                model.receiptPayments.forEach(function(receitPayment) {
+                model.receiptPayments.forEach(function (receitPayment) {
                   if (receitPayment.isSorted) {
                     delete receitPayment.isSorted;
                   }
@@ -4524,7 +4828,7 @@
               }
               //order.set('payments', model.receiptPayments);
               payments = new PaymentLineList();
-              _.each(model.receiptPayments, function(iter) {
+              _.each(model.receiptPayments, function (iter) {
                 var paymentProp;
                 curPayment = new PaymentLine();
                 for (paymentProp in iter) {
@@ -4546,8 +4850,9 @@
               });
               order.set('payments', payments);
               order.adjustPayment();
+
               taxes = {};
-              _.each(model.receiptTaxes, function(iter) {
+              _.each(model.receiptTaxes, function (iter) {
                 var taxProp;
                 taxes[iter.taxid] = {};
                 for (taxProp in iter) {
@@ -4557,6 +4862,7 @@
                 }
               });
               order.set('taxes', taxes);
+
               if (!model.isLayaway && !model.isQuotation) {
                 if (model.totalamount > 0 && order.get('payment') < model.totalamount) {
                   order.set('paidOnCredit', true);
@@ -4565,28 +4871,29 @@
                 }
               }
               };
+
           if (isLoadedPartiallyFromBackend) {
             locationForBpartner(bpLoc);
           } else {
-            OB.Dal.get(OB.Model.BPLocation, bpLocId, function(bpLoc) {
+            OB.Dal.get(OB.Model.BPLocation, bpLocId, function (bpLoc) {
               locationForBpartner(bpLoc);
-            }, function() {
+            }, function () {
               // TODO: Report errors properly
             });
           }
           };
-      OB.Dal.get(OB.Model.BusinessPartner, bpId, function(bp) {
+      OB.Dal.get(OB.Model.BusinessPartner, bpId, function (bp) {
         bpartnerForProduct(bp);
-      }, null, function() {
+      }, null, function () {
         //Empty
         new OB.DS.Request('org.openbravo.retail.posterminal.master.LoadedCustomer').exec({
           bpartnerId: bpId,
           bpLocationId: bpLocId
-        }, function(data) {
+        }, function (data) {
           isLoadedPartiallyFromBackend = true;
           bpLoc = OB.Dal.transform(OB.Model.BPLocation, data[1]);
           bpartnerForProduct(OB.Dal.transform(OB.Model.BusinessPartner, data[0]));
-        }, function() {
+        }, function () {
           if (NoFoundCustomer) {
             NoFoundCustomer = false;
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'), [{
@@ -4597,10 +4904,10 @@
         });
       });
     },
-    newDynamicOrder: function(model, callback) {
+    newDynamicOrder: function (model, callback) {
       var order = new OB.Model.Order(),
           undf;
-      _.each(_.keys(model), function(key) {
+      _.each(_.keys(model), function (key) {
         if (model[key] !== undf) {
           if (model[key] === null) {
             order.set(key, null);
@@ -4611,7 +4918,8 @@
       });
       callback(order);
     },
-    addNewOrder: function(isFirstOrder) {
+
+    addNewOrder: function (isFirstOrder) {
       var me = this;
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         me.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
@@ -4621,16 +4929,19 @@
       this.unshift(this.current);
       this.loadCurrent(true);
     },
-    addThisOrder: function(model) {
+
+    addThisOrder: function (model) {
       this.saveCurrent();
       this.current = model;
       this.unshift(this.current);
       this.loadCurrent();
     },
-    addFirstOrder: function() {
+
+    addFirstOrder: function () {
       this.addNewOrder(true);
     },
-    addPaidReceipt: function(model) {
+
+    addPaidReceipt: function (model) {
       var synchId = null;
       enyo.$.scrim.show();
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
@@ -4638,31 +4949,35 @@
       } else {
         OB.UTIL.showLoading(false);
       }
+
       this.saveCurrent();
       this.current = model;
       this.unshift(this.current);
       this.loadCurrent(true);
+
       if (!model.get('isQuotation')) {
         synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('addPaidReceipt');
         // OB.Dal.save is done here because we want to force to save with the original id, only this time.
-        OB.Dal.save(model, function() {
+        OB.Dal.save(model, function () {
           enyo.$.scrim.hide();
           OB.UTIL.SynchronizationHelper.finished(synchId, 'addPaidReceipt');
-        }, function() {
+        }, function () {
           OB.error(arguments);
         }, true);
       }
     },
-    addMultiReceipt: function(model) {
-      OB.Dal.save(model, function() {}, function() {
+
+    addMultiReceipt: function (model) {
+      OB.Dal.save(model, function () {}, function () {
         OB.error(arguments);
       }, model.get('loadedFromServer'));
     },
-    doRemoteBPSettings: function(businessPartner) {
-      OB.Dal.saveIfNew(businessPartner, function() {}, function() {
+
+    doRemoteBPSettings: function (businessPartner) {
+      OB.Dal.saveIfNew(businessPartner, function () {}, function () {
         OB.error(arguments);
       });
-      OB.Dal.saveIfNew(businessPartner.get('locationModel'), function() {}, function() {
+      OB.Dal.saveIfNew(businessPartner.get('locationModel'), function () {}, function () {
         OB.error(arguments);
       });
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)) {
@@ -4675,21 +4990,23 @@
         var remoteCriteria = [bp];
         var criteria = {};
         criteria.remoteFilters = remoteCriteria;
-        findDiscountFilterBusinessPartner(criteria, function(discountsBP) {
-          _.each(discountsBP.models, function(dsc) {
-            OB.Dal.saveIfNew(dsc, function() {}, function() {
+
+        findDiscountFilterBusinessPartner(criteria, function (discountsBP) {
+          _.each(discountsBP.models, function (dsc) {
+            OB.Dal.saveIfNew(dsc, function () {}, function () {
               OB.error(arguments);
             });
           });
           OB.UTIL.showLoading(false);
-        }, function() {
+        }, function () {
           OB.error(arguments);
         });
       } else {
         OB.UTIL.showLoading(false);
       }
     },
-    addNewQuotation: function() {
+
+    addNewQuotation: function () {
       this.saveCurrent();
       this.current = this.newOrder();
       this.current.set('isQuotation', true);
@@ -4700,22 +5017,23 @@
       this.current.set('quotationnoPrefix', OB.MobileApp.model.get('terminal').quotationDocNoPrefix);
       this.current.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
       this.current.set('documentNo', nextQuotationno.documentNo);
+
       this.unshift(this.current);
       this.loadCurrent();
     },
-    deleteCurrentFromDatabase: function(orderToDelete) {
-      OB.Dal.remove(orderToDelete, function() {
+    deleteCurrentFromDatabase: function (orderToDelete) {
+      OB.Dal.remove(orderToDelete, function () {
         return true;
-      }, function() {
+      }, function () {
         OB.UTIL.showError('Error removing');
       });
     },
-    deleteCurrent: function(forceCreateNew) {
+    deleteCurrent: function (forceCreateNew) {
       var i, max, me = this,
-          successCallback = function() {
+          successCallback = function () {
           return true;
           },
-          errorCallback = function() {
+          errorCallback = function () {
           OB.UTIL.showError('Error removing');
           };
       if (!this.current) {
@@ -4727,6 +5045,7 @@
         var createNew = forceCreateNew || me.length === 0;
         if (createNew) {
           var order = me.newOrder();
+
           me.unshift(order);
           if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
             me.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
@@ -4735,12 +5054,13 @@
         me.current = me.at(0);
         me.loadCurrent(createNew);
       }
+
       if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && !this.current.get('isQuotation') && OB.MobileApp.model.receipt.id === this.current.id && this.current.get('lines').length === 0 && !this.current.has('deletedLines') && (this.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0)) {
         OB.MobileApp.model.receipt.setIsCalculateGrossLockState(true);
         OB.MobileApp.model.receipt.set('obposIsDeleted', true);
-        OB.MobileApp.model.receipt.prepareToSend(function() {
+        OB.MobileApp.model.receipt.prepareToSend(function () {
           OB.MobileApp.model.receipt.trigger('closed', {
-            callback: function() {
+            callback: function () {
               OB.MobileApp.model.receipt.setIsCalculateGrossLockState(false);
               finishDeleteCurrent();
             }
@@ -4750,7 +5070,8 @@
         finishDeleteCurrent();
       }
     },
-    load: function(model) {
+
+    load: function (model) {
       // Workaround to prevent the pending receipts moder window from remaining open
       // when the current receipt is selected from the list
       if (model && this.current && model.get('documentNo') === this.current.get('documentNo')) {
@@ -4760,13 +5081,13 @@
       this.current = model;
       this.loadCurrent();
     },
-    saveCurrent: function() {
+    saveCurrent: function () {
       if (this.current) {
         OB.UTIL.clone(this.modelorder, this.current);
         this.current.trigger('updateView');
       }
     },
-    loadCurrent: function(isNew) {
+    loadCurrent: function (isNew) {
       if (this.current) {
         if (isNew) {
           //set values of new attrs in current,
@@ -4783,12 +5104,13 @@
         this.modelorder.setIsCalculateGrossLockState(false);
       }
     },
-    synchronizeCurrentOrder: function() {
+    synchronizeCurrentOrder: function () {
       // NOTE: No need to execute any business logic here
       // The new functionality of loading document no, makes this function obsolete.
       // The function is not removed to avoid api changes
     }
   });
+
   var MultiOrders = Backbone.Model.extend({
     modelName: 'MultiOrders',
     defaults: {
@@ -4799,14 +5121,14 @@
       openDrawer: false,
       additionalInfo: null
     },
-    initialize: function() {
+    initialize: function () {
       this.set('multiOrdersList', new Backbone.Collection());
       this.set('payments', new Backbone.Collection());
       // ISSUE 24487: Callbacks of this collection still exists if you come back from other page.
       // Force to remove callbacks
       this.get('multiOrdersList').off();
     },
-    getPaymentStatus: function() {
+    getPaymentStatus: function () {
       var total = OB.DEC.abs(this.getTotal()),
           pay = this.getPayment();
       return {
@@ -4821,7 +5143,7 @@
         'payments': this.get('payments')
       };
     },
-    getPrecision: function(payment) {
+    getPrecision: function (payment) {
       var i, p, max;
       for (i = 0, max = OB.MobileApp.model.get('payments').length; i < max; i++) {
         p = OB.MobileApp.model.get('payments')[i];
@@ -4832,13 +5154,13 @@
         }
       }
     },
-    getSumOfOrigAmounts: function(paymentToIgnore) {
+    getSumOfOrigAmounts: function (paymentToIgnore) {
       //returns a result with the sum up of every payments based on origAmount field
       //if paymentToIignore parameter is provided the result will exclude that payment
       var payments = this.get('payments');
       var sumOfPayments = OB.DEC.Zero;
       if (payments && payments.length > 0) {
-        sumOfPayments = _.reduce(payments.models, function(memo, pymnt, index) {
+        sumOfPayments = _.reduce(payments.models, function (memo, pymnt, index) {
           if (paymentToIgnore && (pymnt.get('kind') === paymentToIgnore.get('kind'))) {
             return OB.DEC.add(memo, OB.DEC.Zero);
           } else {
@@ -4850,12 +5172,12 @@
         return sumOfPayments;
       }
     },
-    getDifferenceBetweenPaymentsAndTotal: function(paymentToIgnore) {
+    getDifferenceBetweenPaymentsAndTotal: function (paymentToIgnore) {
       //Returns the difference (abs) between total to pay and payments.
       //if paymentToIignore parameter is provided the result will exclude that payment.
       return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getSumOfOrigAmounts(paymentToIgnore)));
     },
-    getDifferenceRemovingSpecificPayment: function(currentPayment) {
+    getDifferenceRemovingSpecificPayment: function (currentPayment) {
       //Returns the difference (abs) between total to pay and payments without take into account currentPayment
       //Result is returned in the currency used by current payment
       var differenceInDefaultCurrency;
@@ -4868,10 +5190,11 @@
         return differenceInDefaultCurrency;
       }
     },
-    adjustPayment: function() {
+    adjustPayment: function () {
       var i, max, p;
       var payments = this.get('payments');
       var total = OB.DEC.abs(this.getTotal());
+
       var nocash = OB.DEC.Zero;
       var cash = OB.DEC.Zero;
       var origCash = OB.DEC.Zero;
@@ -4881,6 +5204,7 @@
       var pcash;
       var precision;
       var multiCurrencyDifference;
+
       for (i = 0, max = payments.length; i < max; i++) {
         p = payments.at(i);
         precision = this.getPrecision(p);
@@ -4916,6 +5240,7 @@
           nocash = OB.DEC.add(nocash, p.get('origAmount'));
         }
       }
+
       // Calculation of the change....
       //FIXME
       if (pcash) {
@@ -4952,9 +5277,10 @@
         this.set('change', OB.DEC.Zero);
       }
     },
-    addPayment: function(payment, callback) {
+    addPayment: function (payment, callback) {
       var payments, total;
       var i, max, p, order;
+
       if (!OB.DEC.isNumber(payment.get('amount'))) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
         return;
@@ -4963,6 +5289,7 @@
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
         return;
       }
+
       payments = this.get('payments');
       total = OB.DEC.abs(this.getTotal());
       order = this;
@@ -4971,16 +5298,18 @@
         payments: payments,
         receipt: this,
         callback: callback
-      }, function(args) {
-        var executeFinalCallback = function() {
+      }, function (args) {
+        var executeFinalCallback = function () {
             if (callback instanceof Function) {
               callback(order);
             }
             };
+
         if (args && args.cancellation) {
           executeFinalCallback();
           return;
         }
+
         if (!payment.get('paymentData')) {
           // search for an existing payment only if there is not paymentData info.
           // this avoids to merge for example card payments of different cards.
@@ -5026,14 +5355,14 @@
         return;
       });
     },
-    removePayment: function(payment) {
+    removePayment: function (payment) {
       var me = this,
           payments = this.get('payments');
       OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePaymentMultiOrder', {
         paymentToRem: payment,
         payments: payments,
         multiOrdersList: this.get('multiOrdersList')
-      }, function(args) {
+      }, function (args) {
         args.payments.remove(args.paymentToRem);
         if (args.paymentToRem.get('openDrawer')) {
           me.set('openDrawer', false);
@@ -5041,35 +5370,35 @@
         me.adjustPayment();
       });
     },
-    printGross: function() {
+    printGross: function () {
       return OB.I18N.formatCurrency(this.getTotal());
     },
-    getTotal: function() {
+    getTotal: function () {
       return this.get('total');
     },
-    getChange: function() {
+    getChange: function () {
       return this.get('change');
     },
-    getPayment: function() {
+    getPayment: function () {
       return this.get('payment');
     },
-    getPending: function() {
+    getPending: function () {
       return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getPayment());
     },
-    toInvoice: function(status) {
+    toInvoice: function (status) {
       if (status === false) {
         this.unset('additionalInfo');
-        _.each(this.get('multiOrdersList').models, function(order) {
+        _.each(this.get('multiOrdersList').models, function (order) {
           order.unset('generateInvoice');
         }, this);
         return;
       }
       this.set('additionalInfo', 'I');
-      _.each(this.get('multiOrdersList').models, function(order) {
+      _.each(this.get('multiOrdersList').models, function (order) {
         order.set('generateInvoice', true);
       }, this);
     },
-    resetValues: function() {
+    resetValues: function () {
       //this.set('isMultiOrders', false);
       this.get('multiOrdersList').reset();
       this.set('total', OB.DEC.Zero);
@@ -5080,7 +5409,7 @@
       this.set('openDrawer', false);
       this.set('additionalInfo', null);
     },
-    hasDataInList: function() {
+    hasDataInList: function () {
       if (this.get('multiOrdersList') && this.get('multiOrdersList').length > 0) {
         return true;
       }
@@ -5090,11 +5419,12 @@
   var TaxLine = Backbone.Model.extend();
   OB.Data.Registry.registerModel(OrderLine);
   OB.Data.Registry.registerModel(PaymentLine);
+
   OB.Collection.OrderLineList = OB.Collection.OrderLineList.extend({
-    isProductPresent: function(product) {
+    isProductPresent: function (product) {
       var result = null;
       if (this.length > 0) {
-        result = _.find(this.models, function(line) {
+        result = _.find(this.models, function (line) {
           if (line.get('product').get('id') === product.get('id')) {
             return true;
           }
@@ -5115,5 +5445,6 @@
   window.OB.Collection.OrderList = OrderList;
   window.OB.Model.TaxLine = TaxLine;
   window.OB.Model.MultiOrders = MultiOrders;
+
   window.OB.Model.modelLoaders = [];
 }());
