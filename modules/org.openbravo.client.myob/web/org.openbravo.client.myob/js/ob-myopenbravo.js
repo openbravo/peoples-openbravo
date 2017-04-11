@@ -442,6 +442,9 @@ isc.OBMyOpenbravo.addProperties({
       this.portalLayout.sendEvents = true;
       this.reloadWidgets();
     }
+
+    // show the heartbeat or registration popups (if it applies)
+    OB.Application.showHeartBeatOrRegistration();
   },
 
   setRecentList: function (layout) {

@@ -197,7 +197,4 @@ OB.Layout.initialize = function () {
 
 
   OB.NavBar.createMembers(OB.Application.navigationBarComponents, OB.Application.dynamicNavigationBarComponents);
-
-  // show the heartbeat or registration popups (if it applies)
-  OB.Application.showHeartBeatOrRegistration();
 };
