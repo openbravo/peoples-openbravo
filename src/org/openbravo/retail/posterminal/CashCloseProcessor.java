@@ -316,7 +316,11 @@ public class CashCloseProcessor {
     transaction.setAccount(account);
     transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
     transaction.setGLItem(glItem);
-    transaction.setPaymentAmount(reconciliationTotal);
+    if (reconciliationTotal.compareTo(BigDecimal.ZERO) < 0) {
+      transaction.setDepositAmount(reconciliationTotal.abs());
+    } else {
+      transaction.setPaymentAmount(reconciliationTotal);
+    }
     transaction.setProcessed(true);
     transaction.setTransactionType("BPW");
     transaction.setStatus("RPPC");
@@ -371,8 +375,13 @@ public class CashCloseProcessor {
     transaction.setAccount(accountTo);
     transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(accountTo) + 10);
     transaction.setGLItem(glItem);
-    transaction.setDepositAmount(reconciliationTotal.multiply(conversionRate).setScale(2,
-        BigDecimal.ROUND_HALF_EVEN));
+    if (reconciliationTotal.compareTo(BigDecimal.ZERO) < 0) {
+      transaction.setPaymentAmount(reconciliationTotal.multiply(conversionRate).abs()
+          .setScale(2, BigDecimal.ROUND_HALF_EVEN));
+    } else {
+      transaction.setDepositAmount(reconciliationTotal.multiply(conversionRate).setScale(2,
+          BigDecimal.ROUND_HALF_EVEN));
+    }
     transaction.setProcessed(true);
     transaction.setTransactionType("BPD");
     transaction.setStatus("RDNC");

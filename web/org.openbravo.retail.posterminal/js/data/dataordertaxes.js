@@ -430,6 +430,7 @@
       line.set({
         'taxLines': {},
         'tax': null,
+        'taxUndo': line.get('tax') ? line.get('tax') : line.get('taxUndo'),
         'taxAmount': OB.DEC.Zero,
         'net': OB.DEC.Zero,
         'pricenet': OB.DEC.Zero,
@@ -814,6 +815,7 @@
         'net': OB.DEC.mul(line.get('price'), line.get('qty')),
         'linerate': OB.DEC.One,
         'tax': null,
+        'taxUndo': line.get('tax') ? line.get('tax') : line.get('taxUndo'),
         'taxAmount': OB.DEC.Zero,
         'taxLines': {}
       }, {

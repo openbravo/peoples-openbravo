@@ -137,6 +137,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean doCancelAndReplace = false;
   private boolean paidReceipt = false;
   private DateFormat dateFormatUTC = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+  private boolean doCancelLayaway = false;
 
   @Inject
   @Any
@@ -206,6 +207,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     doCancelAndReplace = jsonorder.has("doCancelAndReplace")
         && jsonorder.getBoolean("doCancelAndReplace") ? true : false;
+    doCancelLayaway = jsonorder.has("cancelLayaway") && jsonorder.getBoolean("cancelLayaway") ? true
+        : false;
   }
 
   @Override
@@ -1838,8 +1841,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       amountPaidWithCredit = (BigDecimal.valueOf(jsonorder.getDouble("gross")).subtract(BigDecimal
           .valueOf(jsonorder.getDouble("payment")))).setScale(pricePrecision, RoundingMode.HALF_UP);
     }
-    if ((!newLayaway && (notpaidLayaway || creditpaidLayaway || fullypaidLayaway))
-        || partialpaidLayaway || paidReceipt) {
+    if (!doCancelLayaway
+        && ((!newLayaway && (notpaidLayaway || creditpaidLayaway || fullypaidLayaway))
+            || partialpaidLayaway || paidReceipt)) {
       paymentSchedule = order.getFINPaymentScheduleList().get(0);
     } else {
       paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);

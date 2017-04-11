@@ -876,9 +876,9 @@
       payAndCredit = (this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3)) ? OB.DEC.abs(payAndCredit) : payAndCredit;
       processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, credit);
 
-      isNegative = this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3 && (!this.get('isPartiallyDelivered') || (this.get('isPartiallyDelivered') && this.get('isDeliveredGreaterThanGross'))));
+      isNegative = this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3 && (!this.get('isPartiallyDelivered') || (this.get('isPartiallyDelivered') && !this.get('isDeliveredGreaterThanGross'))));
       // Check if the total amount is lower than the already paid (processed)
-      if (!isNegative && this.get('gross') >= 0 && OB.DEC.compare(OB.DEC.sub(processedPaymentsAmount, total)) === 1) {
+      if (this.get('orderType') !== 3 && !isNegative && this.get('gross') >= 0 && OB.DEC.compare(OB.DEC.sub(processedPaymentsAmount, total)) === 1) {
         isNegative = true;
         paidInNegativeStatus = OB.DEC.sub(processedPaymentsAmount, paymentsAmount);
         totalToReturn = OB.DEC.sub(processedPaymentsAmount, total);
@@ -1414,7 +1414,7 @@
             });
 
             lines.forEach(function (line) {
-              if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.get('obposQtyDeleted') !== 0) {
+              if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.get('obposQtyDeleted')) {
                 line.set('qty', line.get('obposQtyDeleted'));
                 line.set('obposQtyDeleted', 0);
               }
@@ -1454,24 +1454,19 @@
           this.set('deletedLines', []);
         }
         if (!line.get('hasTaxError')) {
-          if (OB.UTIL.isNullOrUndefined(isLastLine) || isLastLine) {
-            this.set('skipCalculateReceipt', true);
-            line.set('obposIsDeleted', true);
-            line.set('obposQtyDeleted', line.get('qty'));
-            line.set('qty', 0);
-            this.set('skipCalculateReceipt', false);
-            me.get('deletedLines').push(new OrderLine(line.attributes));
-            // remove the line
-            finishDelete();
-          } else {
-            this.set('skipCalculateReceipt', true);
-            line.set('obposIsDeleted', true);
-            line.set('obposQtyDeleted', line.get('qty'));
-            line.set('qty', 0);
-            this.get('deletedLines').push(new OrderLine(line.attributes));
-            // remove the line
-            finishDelete();
-          }
+          // Clone the line to be moved as deleted.
+          var deletedline = new OrderLine(line.attributes);
+          // Set the line as deleted
+          deletedline.set('obposIsDeleted', true);
+          deletedline.set('obposQtyDeleted', line.get('qty'));
+          // Sets the tax if it has been deleted
+          deletedline.set('tax', deletedline.get('tax') ? deletedline.get('tax') : deletedline.get('taxUndo'));
+          // set quantity as 0
+          deletedline.set('qty', 0);
+          // Move to deleted lines
+          this.get('deletedLines').push(deletedline);
+          // remove the receipt line
+          finishDelete();
         }
       } else {
         // remove the line
@@ -2536,7 +2531,17 @@
           }
         } else {
           me.set('layawayGross', me.getGross());
-          me.set('gross', me.get('payment'));
+          // If the canceling layaway is partially delivered, the payment and gross must be updated to don't create payments
+          // to return the delivered quantity
+          if (me.get('isPartiallyDelivered')) {
+            if (me.get('isDeliveredGreaterThanGross')) {
+              me.set('gross', OB.DEC.sub(me.get('deliveredQuantityAmount'), me.get('payment')));
+            } else {
+              me.set('gross', OB.DEC.sub(me.get('gross'), me.get('deliveredQuantityAmount')));
+            }
+          } else {
+            me.set('gross', me.get('payment'));
+          }
           me.set('payment', OB.DEC.Zero);
           me.get('payments').reset();
         }
@@ -2829,12 +2834,6 @@
             permission: context.permission,
             orderType: 3
           });
-          // If the canceling layaway is partially delivered, the payment and gross must be updated to don't create payments
-          // to return the delivered quantity
-          if (me.get('isPartiallyDelivered')) {
-            me.set('gross', OB.DEC.sub(me.get('deliveredQuantityAmount'), me.get('gross')));
-            me.set('payment', OB.DEC.Zero);
-          }
           context.doTabChange({
             tabPanel: 'payment',
             keyboard: 'toolbarpayment',
@@ -4672,24 +4671,6 @@
                 });
                 linepos++;
               });
-              order.set('isPartiallyDelivered', hasDeliveredProducts && hasNotDeliveredProducts ? true : false);
-              if (hasDeliveredProducts && !hasNotDeliveredProducts) {
-                order.set('isFullyDelivered', true);
-              }
-              if (order.get('isPartiallyDelivered')) {
-                var partiallyPaid = 0;
-                _.each(_.filter(order.get('receiptLines'), function (reciptLine) {
-                  return reciptLine.deliveredQuantity;
-                }), function (deliveredLine) {
-                  partiallyPaid += deliveredLine.deliveredQuantity * deliveredLine.unitPrice;
-                });
-                if (partiallyPaid) {
-                  order.set('deliveredQuantityAmount', partiallyPaid);
-                }
-                if (order.get('deliveredQuantityAmount') && order.get('deliveredQuantityAmount') > order.get('gross')) {
-                  order.set('isDeliveredGreaterThanGross', true);
-                }
-              }
 
               function getReverserPayment(payment, Payments) {
                 return _.filter(model.receiptPayments, function (receiptPayment) {
@@ -4747,6 +4728,23 @@
               });
               order.set('payments', payments);
               order.adjustPayment();
+
+              order.set('isPartiallyDelivered', hasDeliveredProducts && hasNotDeliveredProducts ? true : false);
+              if (hasDeliveredProducts && !hasNotDeliveredProducts) {
+                order.set('isFullyDelivered', true);
+              }
+              if (order.get('isPartiallyDelivered')) {
+                var partiallyPaid = 0;
+                _.each(_.filter(order.get('receiptLines'), function (reciptLine) {
+                  return reciptLine.deliveredQuantity;
+                }), function (deliveredLine) {
+                  partiallyPaid += deliveredLine.deliveredQuantity * deliveredLine.unitPrice;
+                });
+                order.set('deliveredQuantityAmount', partiallyPaid);
+                if (order.get('deliveredQuantityAmount') && order.get('deliveredQuantityAmount') > order.get('payment')) {
+                  order.set('isDeliveredGreaterThanGross', true);
+                }
+              }
 
               taxes = {};
               _.each(model.receiptTaxes, function (iter) {

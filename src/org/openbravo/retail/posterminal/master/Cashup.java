@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014 Openbravo S.L.U.
+ * Copyright (C) 2014-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -33,6 +33,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.retail.posterminal.JSONProcessSimple;
 import org.openbravo.retail.posterminal.OBPOSAppCashup;
+import org.openbravo.retail.posterminal.OBPOSAppPayment;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.OBPOSErrors;
 import org.openbravo.retail.posterminal.OBPOSPaymentMethodCashup;
@@ -169,12 +170,18 @@ public class Cashup extends JSONProcessSimple {
     List<OBPOSPaymentMethodCashup> paymentMethodList = paymentMethodCashupCriteria.list();
     for (BaseOBObject paymentMethod : paymentMethodList) {
       JSONObject paymentMethodJSON = converter.toJsonObject(paymentMethod, DataResolvingMode.FULL);
+      OBCriteria<OBPOSAppPayment> paymentAppMethodCriteria = OBDal.getInstance().createCriteria(
+          OBPOSAppPayment.class);
+      paymentAppMethodCriteria.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_ID,
+          paymentMethodJSON.get("paymentType")));
+      OBPOSAppPayment paymentAppMethod = (OBPOSAppPayment) paymentAppMethodCriteria.uniqueResult();
       paymentMethodJSON.put("cashup_id", paymentMethodJSON.get("cashUp"));
       paymentMethodJSON.put("searchKey", paymentMethodJSON.get("searchkey"));
       paymentMethodJSON.put("paymentmethod_id", paymentMethodJSON.get("paymentType"));
       paymentMethodJSON.put("startingCash", paymentMethodJSON.get("startingcash"));
       paymentMethodJSON.put("totalSales", paymentMethodJSON.get("totalsales"));
       paymentMethodJSON.put("totalReturns", paymentMethodJSON.get("totalreturns"));
+      paymentMethodJSON.put("lineNo", paymentAppMethod.get("line"));
       respArray.put(paymentMethodJSON);
     }
 

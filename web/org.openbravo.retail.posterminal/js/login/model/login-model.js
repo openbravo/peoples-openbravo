@@ -480,8 +480,6 @@
         if (me.get('loggedOffline') === true) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineLogin'));
         }
-
-        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.WelcomeTemplate), {}, null, OB.DS.HWServer.DISPLAY);
       });
 
       OB.Model.Terminal.prototype.initialize.call(me);
