@@ -34,11 +34,19 @@ var OB = {
         contextUrl: '${data.contextUrl}',
         communityBrandingStaticUrl: '${data.communityBrandingStaticUrl?js_string}',
         butlerUtilsUrl: '${data.butlerUtilsUrl?js_string}',
+        communityBrandingUrl: '${data.communityBrandingUrl?js_string}',
         purpose: '${data.instancePurpose?js_string}',
         licenseType: '${data.licenseType?js_string}',
         isTrial: ${data.trialStringValue},
         isGolden: ${data.goldenStringValue},
-        versionDescription: '${data.versionDescription?js_string}'
+        isActiveInstance: ${data.activeInstanceStringValue},
+        versionDescription: '${data.versionDescription?js_string}',
+        companyImage: {
+        <#assign map = data.companyImageLogoData>
+        <#list map?keys as key>
+          '${key}': '${map[key]}'<#if key_has_next>,</#if>
+        </#list>
+        }
     },
 
     Format : {

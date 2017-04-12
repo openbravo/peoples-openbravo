@@ -61,6 +61,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISSTATICCOMPONENT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBUIAPP_T_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -80,5 +84,6 @@
       </unique>
       <check name="OBUIAPP_ALLROLES_CHECK"><![CDATA[ALLROLES IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_CT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="OBUIAPP_NAVBAR_COMPONT_STATIC"><![CDATA[ISSTATICCOMPONENT IN ('Y', 'N')]]></check>
     </table>
   </database>

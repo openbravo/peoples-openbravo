@@ -24,12 +24,14 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.openbravo.client.application.window.WindowDefinitionComponent;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.kernel.BaseComponentProvider;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 
 /**
  * 
@@ -48,12 +50,7 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
    */
   @Override
   public Component getComponent(String componentId, Map<String, Object> parameters) {
-    if (componentId.equals(WindowDefinitionComponent.WINDOW_DEF_COMPONENT)) {
-      final WindowDefinitionComponent component = getComponent(WindowDefinitionComponent.class);
-      component.setId(WindowDefinitionComponent.WINDOW_DEF_COMPONENT);
-      component.setParameters(parameters);
-      return component;
-    } else if (componentId.equals(ApplicationConstants.MAIN_LAYOUT_ID)) {
+    if (componentId.equals(ApplicationConstants.MAIN_LAYOUT_ID)) {
       final MainLayoutComponent component = getComponent(MainLayoutComponent.class);
       component.setId(ApplicationConstants.MAIN_LAYOUT_ID);
       component.setParameters(parameters);
@@ -61,11 +58,6 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     } else if (componentId.equals(ApplicationConstants.MAIN_LAYOUT_VIEW_COMPONENT_ID)) {
       final ViewComponent component = getComponent(ViewComponent.class);
       component.setId(ApplicationConstants.MAIN_LAYOUT_VIEW_COMPONENT_ID);
-      component.setParameters(parameters);
-      return component;
-    } else if (componentId.equals(ApplicationConstants.PROPERTIES_COMPONENT_ID)) {
-      final PropertiesComponent component = getComponent(PropertiesComponent.class);
-      component.setId(ApplicationConstants.PROPERTIES_COMPONENT_ID);
       component.setParameters(parameters);
       return component;
     }
@@ -80,6 +72,7 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
   @Override
   public List<ComponentResource> getGlobalComponentResources() {
     final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
+
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/utilities/ob-utilities.js", true));
     globalResources.add(createStaticResource(
@@ -193,13 +186,6 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/utilities/ob-test-registry.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/utilities/ob-remote-call-manager.js", true));
-    globalResources
-        .add(createDynamicResource("org.openbravo.client.kernel/"
-            + ApplicationConstants.COMPONENT_TYPE + "/"
-            + ApplicationConstants.PROPERTIES_COMPONENT_ID));
-    globalResources.add(createDynamicResource("org.openbravo.client.kernel/"
-        + ApplicationConstants.COMPONENT_TYPE + "/"
-        + WindowDefinitionComponent.WINDOW_DEF_COMPONENT));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/classic/ob-classic-window.js", false));
     globalResources.add(createStaticResource(
@@ -442,10 +428,17 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
             + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.application/ob-navigation-bar-styles.js", false));
 
-    // Application - dynamic as it contains the generated menu also (which is user/role dependant)
-    globalResources.add(createDynamicResource("org.openbravo.client.kernel/"
-        + ApplicationConstants.COMPONENT_TYPE + "/" + ApplicationConstants.MAIN_LAYOUT_ID));
-
+    if (existsDynamicNavigationBarComponents()) {
+      // Adding this dynamic resource will result in an extra request for the 'Application'
+      // component in order to complete the creation of the navigation bar components that are
+      // generated dynamically
+      globalResources.add(createDynamicResource("org.openbravo.client.kernel/"
+          + ApplicationConstants.COMPONENT_TYPE + "/" + ApplicationConstants.MAIN_LAYOUT_ID));
+    }
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/main/ob-notes-datasource.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/main/ob-layout.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/utilities/ob-view-manager.js", false));
     globalResources.add(createStaticResource(
@@ -489,6 +482,13 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource("web/js/cancelAndReplace.js", false));
 
     return globalResources;
+  }
+
+  private static boolean existsDynamicNavigationBarComponents() {
+    OBCriteria<NavBarComponent> obc = OBDal.getInstance().createCriteria(NavBarComponent.class);
+    obc.add(Restrictions.eq(NavBarComponent.PROPERTY_ISSTATICCOMPONENT, false));
+    obc.setMaxResults(1);
+    return obc.uniqueResult() != null;
   }
 
   @Override

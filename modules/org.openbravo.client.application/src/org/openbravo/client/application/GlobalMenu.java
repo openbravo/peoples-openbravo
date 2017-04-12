@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2016 Openbravo SLU
+ * All portions are Copyright (C) 2013-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,6 +34,7 @@ import org.openbravo.client.application.MenuManager.MenuEntryType;
 import org.openbravo.client.application.MenuManager.MenuOption;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.domain.ModelImplementation;
 import org.openbravo.model.ad.domain.ModelImplementationMapping;
@@ -65,7 +66,7 @@ public class GlobalMenu {
    * ones. If it is not present there, it is generated and cached.
    * 
    */
-  synchronized List<MenuOption> getMenuOptions(String roleId, String language) {
+  List<MenuOption> getMenuOptions(String roleId, String language) {
     long t = System.currentTimeMillis();
 
     if (menuOptionsByLangAndTree == null) {
@@ -208,6 +209,7 @@ public class GlobalMenu {
                   foundOption.setObjectId(process.getId());
                   if (process.getUIPattern().equals("Standard")) {
                     foundOption.setType(MenuEntryType.Process);
+                    foundOption.setModal(Utility.isModalProcess(process.getId()));
                   } else if (process.isReport() || process.isJasperReport()) {
                     foundOption.setType(MenuEntryType.Report);
                     foundOption.setReport(true);
@@ -221,6 +223,7 @@ public class GlobalMenu {
             if (!found && "P".equals(menu.getAction())) {
               foundOption.setType(MenuEntryType.Process);
               foundOption.setObjectId(process.getId());
+              foundOption.setModal(Utility.isModalProcess(process.getId()));
               if (process.isExternalService() != null && process.isExternalService()
                   && "PS".equals(process.getServiceType())) {
                 foundOption.setId("/utility/OpenPentaho.html?inpadProcessId=" + process.getId());

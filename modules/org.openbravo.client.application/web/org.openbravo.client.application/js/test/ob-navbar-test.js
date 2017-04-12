@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,35 +27,23 @@ QUnit.test('Basic requirements', function () {
 });
 
 QUnit.test('Test user info data read', function (assert) {
-  var done = assert.async();
+  QUnit.expect(15);
 
-  QUnit.expect(16);
+  QUnit.ok(OB.User.userInfo.language, 'Language present');
+  QUnit.ok(OB.User.userInfo.language.value, 'Language value present');
+  QUnit.ok(OB.User.userInfo.language.valueMap, 'Language valueMap present');
 
-  var callback;
-  callback = function (rpcResponse, data, rpcRequest) {
-    QUnit.ok(data.language, 'Language present');
-    QUnit.ok(data.language.value, 'Language value present');
-    QUnit.ok(data.language.valueMap, 'Language valueMap present');
-    QUnit.ok(data.language.value, 'Language value present');
+  QUnit.ok(OB.User.userInfo.initialValues.role, 'Initial role value set');
+  QUnit.ok(OB.User.userInfo.initialValues.client, 'Initial client value set');
+  QUnit.ok(OB.User.userInfo.initialValues.organization, 'Initial organization value set');
+  QUnit.ok(OB.User.userInfo.initialValues.language, 'Initial language value set');
 
-    QUnit.ok(data.initialValues.role, 'Initial role value set');
-    QUnit.ok(data.initialValues.client, 'Initial client value set');
-    QUnit.ok(data.initialValues.organization, 'Initial organization value set');
-    QUnit.ok(data.initialValues.language, 'Initial language value set');
-
-    QUnit.ok(data.role, 'Role set');
-    QUnit.ok(data.role.value, 'Role value set');
-    QUnit.ok(data.role.valueMap, 'Role valueMap set');
-    QUnit.ok(data.role.roles, 'Role info set');
-    QUnit.ok(data.role.roles.length > 0, 'More than one role present');
-    QUnit.ok(data.role.roles[0].id, 'Role id set');
-    QUnit.ok(data.role.roles[0].organizationValueMap, 'Role org value map set');
-    QUnit.ok(data.role.roles[0].warehouseOrgMap, 'Role wh value map set');
-
-    done();
-  };
-  var action = 'org.openbravo.client.application.navigationbarcomponents.UserInfoWidgetActionHandler';
-  OB.RemoteCallManager.call(action, {}, {
-    'command': 'data'
-  }, callback);
+  QUnit.ok(OB.User.userInfo.role, 'Role set');
+  QUnit.ok(OB.User.userInfo.role.value, 'Role value set');
+  QUnit.ok(OB.User.userInfo.role.valueMap, 'Role valueMap set');
+  QUnit.ok(OB.User.userInfo.role.roles, 'Role info set');
+  QUnit.ok(OB.User.userInfo.role.roles.length > 0, 'More than one role present');
+  QUnit.ok(OB.User.userInfo.role.roles[0].id, 'Role id set');
+  QUnit.ok(OB.User.userInfo.role.roles[0].organizationValueMap, 'Role org value map set');
+  QUnit.ok(OB.User.userInfo.role.roles[0].warehouseOrgMap, 'Role wh value map set');
 });

@@ -11,21 +11,18 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application.navigationbarcomponents;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
@@ -35,42 +32,29 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.KernelServlet;
-import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.client.kernel.StaticResourceComponent;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.erpCommon.obps.ActivationKey;
-import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
-import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
-import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.Language;
-import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.portal.PortalAccessible;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.service.json.JsonConstants;
 import org.openbravo.utils.FormatUtilities;
 
 /**
- * Action handler checks if there are alerts and if so returns these as a json object.
- * 
- * Action handler also updates the session ping value in the database.
+ * Action handler used to save the default user information of the 'Profile' widget and the password
+ * change using the 'Change Password' widget.
  * 
  * @author mtaal
- * @see StaticResourceComponent
  */
 @ApplicationScoped
 public class UserInfoWidgetActionHandler extends BaseActionHandler implements PortalAccessible {
@@ -89,8 +73,6 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
       }
       if (command.equals(ApplicationConstants.SAVE_COMMAND)) {
         return executeSaveCommand(parameters, content);
-      } else if (command.equals(ApplicationConstants.DATA_COMMAND)) {
-        return executeDataCommand(parameters, content);
       } else if (command.equals(ApplicationConstants.CHANGE_PWD_COMMAND)) {
         return executeChangePasswordCommand(parameters, content);
       }
@@ -147,191 +129,6 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
     user.setPassword(FormatUtilities.sha1Base64(newPwd));
     OBDal.getInstance().flush();
     return ApplicationConstants.ACTION_RESULT_SUCCESS;
-  }
-
-  protected JSONObject executeDataCommand(Map<String, Object> parameters, String content)
-      throws Exception {
-    final JSONObject result = new JSONObject();
-    result.put("language", createLanguageFormItemInfo());
-    result.put("initialValues", createInitialValues());
-    result.put("role", createRoleInfo(parameters));
-    return result;
-  }
-
-  private JSONObject createRoleInfo(Map<String, Object> parameters) throws JSONException {
-    final JSONObject formItemInfo = new JSONObject();
-    formItemInfo.put("value", OBContext.getOBContext().getRole().getId());
-    final List<Role> roles = getRoles(parameters);
-    final List<Role> sortedRoles = new ArrayList<Role>(roles);
-    DalUtil.sortByIdentifier(sortedRoles);
-    final JSONArray valueMap = new JSONArray();
-    for (Role role : sortedRoles) {
-      final JSONObject valueMapItem = new JSONObject();
-      valueMapItem.put(JsonConstants.ID, role.getId());
-      valueMapItem.put(JsonConstants.IDENTIFIER, role.getIdentifier() + " - "
-          + role.getClient().getIdentifier());
-      valueMap.put(valueMapItem);
-    }
-    formItemInfo.put("valueMap", valueMap);
-
-    // now for each role store the information
-    final JSONArray jsonRoles = new JSONArray();
-
-    for (Role role : roles) {
-      final JSONObject jsonRole = new JSONObject();
-      jsonRole.put("id", role.getId());
-
-      jsonRole.put("client", role.getClient().getIdentifier());
-
-      // now set the organizations
-      final List<Organization> orgs = getOrganizations(role.getId());
-      final JSONArray orgValueMap = new JSONArray();
-      for (Organization org : orgs) {
-        final JSONObject orgValueMapItem = new JSONObject();
-        orgValueMapItem.put(JsonConstants.ID, org.getId());
-        orgValueMapItem.put(JsonConstants.IDENTIFIER, org.getIdentifier());
-        orgValueMap.put(orgValueMapItem);
-      }
-      jsonRole.put("organizationValueMap", orgValueMap);
-      jsonRole.put("warehouseOrgMap", getWarehouses(role.getClient().getId(), orgs));
-      jsonRoles.put(jsonRole);
-    }
-    formItemInfo.put("roles", jsonRoles);
-    return formItemInfo;
-  }
-
-  private JSONArray getWarehouses(String clientId, List<Organization> orgs) throws JSONException {
-    List<JSONObject> orgWarehouseArray = new ArrayList<JSONObject>();
-    final OrganizationStructureProvider osp = OBContext.getOBContext()
-        .getOrganizationStructureProvider(clientId);
-    for (Organization org : orgs) {
-      JSONObject orgWarehouse = new JSONObject();
-      orgWarehouse.put("orgId", org.getId());
-      final OBQuery<Warehouse> warehouses = OBDal
-          .getInstance()
-          .createQuery(Warehouse.class,
-              "organization.id in (:orgList) and client.id=:clientId and organization.active=true order by name");
-      warehouses.setNamedParameter("orgList", osp.getNaturalTree(org.getId()));
-      warehouses.setNamedParameter("clientId", clientId);
-      warehouses.setFilterOnReadableClients(false);
-      warehouses.setFilterOnReadableOrganization(false);
-      orgWarehouse.put("warehouseMap", createValueMapObject(warehouses.list()));
-      orgWarehouseArray.add(orgWarehouse);
-    }
-    return new JSONArray(orgWarehouseArray);
-  }
-
-  private List<Organization> getOrganizations(String roleId) throws JSONException {
-    final OBQuery<RoleOrganization> roleOrgs = OBDal.getInstance().createQuery(
-        RoleOrganization.class, "role.id=:roleId and organization.active=true");
-    roleOrgs.setFilterOnReadableClients(false);
-    roleOrgs.setFilterOnReadableOrganization(false);
-    roleOrgs.setNamedParameter("roleId", roleId);
-    final List<Organization> orgs = new ArrayList<Organization>();
-    for (RoleOrganization roleOrg : roleOrgs.list()) {
-      if (!orgs.contains(roleOrg.getOrganization())) {
-        orgs.add(roleOrg.getOrganization());
-      }
-    }
-    DalUtil.sortByIdentifier(orgs);
-    return orgs;
-  }
-
-  private JSONObject createLanguageFormItemInfo() throws JSONException {
-    final JSONObject formItemInfo = new JSONObject();
-    formItemInfo.put("value", OBContext.getOBContext().getLanguage().getId());
-
-    final OBQuery<Language> languages = OBDal.getInstance().createQuery(
-        Language.class,
-        "(" + Language.PROPERTY_SYSTEMLANGUAGE + "=true or " + Language.PROPERTY_BASELANGUAGE
-            + "=true)");
-    languages.setFilterOnReadableClients(false);
-    languages.setFilterOnReadableOrganization(false);
-    formItemInfo.put("valueMap", createValueMapObject(languages.list()));
-    return formItemInfo;
-  }
-
-  private JSONObject createInitialValues() throws JSONException {
-    final JSONObject initialValues = new JSONObject();
-    // TODO: externalize these strings
-    initialValues.put("language", OBContext.getOBContext().getLanguage().getId());
-    initialValues.put("role", OBContext.getOBContext().getRole().getId());
-    initialValues.put("client", OBContext.getOBContext().getRole().getClient().getIdentifier());
-    initialValues.put("organization", OBContext.getOBContext().getCurrentOrganization().getId());
-    if (OBContext.getOBContext().getWarehouse() != null) {
-      initialValues.put("warehouse", OBContext.getOBContext().getWarehouse().getId());
-    }
-    return initialValues;
-  }
-
-  private JSONArray createValueMapObject(List<? extends BaseOBObject> objects) throws JSONException {
-    // sort the list by their identifier
-    DalUtil.sortByIdentifier(objects);
-    final JSONArray jsonArray = new JSONArray();
-    for (BaseOBObject bob : objects) {
-      final JSONObject jsonArrayItem = new JSONObject();
-      jsonArrayItem.put(JsonConstants.ID, bob.getId());
-      jsonArrayItem.put(JsonConstants.IDENTIFIER, bob.getIdentifier());
-      jsonArray.put(jsonArrayItem);
-    }
-    return jsonArray;
-  }
-
-  protected List<Role> getRoles(Map<String, Object> parameters) {
-    ActivationKey ak = ActivationKey.getInstance();
-    SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
-    boolean correctSystemStatus = sysInfo.getSystemStatus() == null
-        || KernelServlet.getGlobalParameters().getOBProperty("safe.mode", "false")
-            .equalsIgnoreCase("false") || sysInfo.getSystemStatus().equals("RB70");
-    if (!correctSystemStatus) {
-      return Collections.singletonList(OBDal.getInstance().get(Role.class, "0"));
-    }
-
-    if (parameters.get(KernelConstants.HTTP_SESSION) != null) {
-      final HttpSession session = (HttpSession) parameters.get(KernelConstants.HTTP_SESSION);
-      final String dbSessionId = (String) session.getAttribute("#AD_Session_ID".toUpperCase());
-      LicenseRestriction limitation = ak.checkOPSLimitations(dbSessionId);
-      if (limitation == LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE
-          || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
-          || limitation == LicenseRestriction.MODULE_EXPIRED
-          || limitation == LicenseRestriction.NOT_MATCHED_INSTANCE
-          || limitation == LicenseRestriction.HB_NOT_ACTIVE
-          || limitation == LicenseRestriction.ON_DEMAND_OFF_PLATFORM
-          || limitation == LicenseRestriction.POS_TERMINALS_EXCEEDED) {
-        return Collections.singletonList(OBDal.getInstance().get(Role.class, "0"));
-      }
-    }
-
-    final HttpServletRequest request = RequestContext.get().getRequest();
-    final VariablesSecureApp vars = new VariablesSecureApp(request);
-    boolean onlySystemAdminAccess = "Y".equals(vars
-        .getSessionValue("onlySystemAdminRoleShouldBeAvailableInErp"));
-    if (onlySystemAdminAccess) {
-      return Collections.singletonList(OBDal.getInstance().get(Role.class, "0"));
-    }
-
-    // return the complete role list
-
-    // "        SELECT A_R.AD_ROLE_ID, A_R.NAME, A_R.AD_CLIENT_ID, A_R.CLIENTLIST " +
-    // "        FROM AD_ROLE A_R, AD_USER_ROLES A_U_R " +
-    // "        WHERE A_R.AD_ROLE_ID = A_U_R.AD_ROLE_ID " +
-    // "        AND A_U_R.ISACTIVE = 'Y' " +
-    // "        AND A_R.ISACTIVE = 'Y' " +
-    // "        AND A_U_R.AD_USER_ID = ?" +
-    // "        ORDER BY A_R.NAME";
-    final OBQuery<UserRoles> rolesQuery = OBDal.getInstance().createQuery(UserRoles.class,
-        " userContact.id=? and role.active=true and role.isrestrictbackend=false");
-    rolesQuery.setFilterOnReadableClients(false);
-    rolesQuery.setFilterOnReadableOrganization(false);
-    rolesQuery.setParameters(Collections.singletonList((Object) OBContext.getOBContext().getUser()
-        .getId()));
-    final List<Role> result = new ArrayList<Role>();
-    for (UserRoles userRole : rolesQuery.list()) {
-      if (!result.contains(userRole.getRole())) {
-        result.add(userRole.getRole());
-      }
-    }
-    return result;
   }
 
   protected JSONObject executeSaveCommand(Map<String, Object> parameters, String content)

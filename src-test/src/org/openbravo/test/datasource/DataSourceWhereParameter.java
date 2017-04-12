@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -80,22 +80,6 @@ public class DataSourceWhereParameter extends BaseDataSourceTestDal {
             put("_endRow", "100");
           }
         }, true), //
-    QuickLaunch("99B9CC42FDEA4CA7A4EE35BC49D61E0E", null, null, true,
-        new HashMap<String, String>() {
-          {
-            put("_startRow", "0");
-            put("_endRow", "50");
-          }
-        }), //
-
-    QuickCreate("C17951F970E942FD9F3771B7BE91D049", null, null, true,
-        new HashMap<String, String>() {
-          {
-            put("_startRow", "0");
-            put("_endRow", "50");
-          }
-        }), //
-
     Alert("DB9F062472294F12A0291A7BD203F922", ALERT_EXPECTED_VALUE, ALERT_UNEXPECTED_VALUE, false,
         new HashMap<String, String>() {
           {

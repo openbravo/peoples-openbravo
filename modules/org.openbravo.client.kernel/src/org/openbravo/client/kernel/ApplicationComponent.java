@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.client.kernel.reference.UIDefinitionController.FormatDefinition;
 import org.openbravo.dal.core.OBContext;
@@ -37,6 +38,7 @@ import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DalConnectionProvider;
 
@@ -151,10 +153,6 @@ public class ApplicationComponent extends BaseTemplateComponent {
     return result;
   }
 
-  /**
-   * @deprecated the value is retrieved asynchronously via the MyOpenbravoActionHandler instead
-   */
-  @Deprecated
   public String getCommunityBrandingUrl() {
     return Utility.getCommunityBrandingUrl(MYOB_UIMODE);
   }
@@ -188,6 +186,13 @@ public class ApplicationComponent extends BaseTemplateComponent {
     return Boolean.toString(ActivationKey.getInstance().isGolden());
   }
 
+  public String getActiveInstanceStringValue() {
+    if (SessionFactoryController.isRunningInWebContainer()) {
+      return Boolean.toString(ActivationKey.isActiveInstance());
+    }
+    return Boolean.FALSE.toString();
+  }
+
   public String getVersionDescription() {
     ActivationKey ak = ActivationKey.getInstance();
     String strVersion = OBVersion.getInstance().getMajorVersion();
@@ -204,6 +209,24 @@ public class ApplicationComponent extends BaseTemplateComponent {
     strVersion += " - ";
     strVersion += OBVersion.getInstance().getMP();
     return strVersion;
+  }
+
+  public Map<String, String> getCompanyImageLogoData() {
+    Map<String, String> imageProperties = new HashMap<>();
+    Image img = Utility.getImageLogoObject("yourcompanymenu", "");
+    String imageWidth = "122";
+    String imageHeight = "34";
+    if (img != null) {
+      if (img.getWidth() != null) {
+        imageWidth = String.valueOf(img.getWidth().intValue());
+      }
+      if (img.getHeight() != null) {
+        imageHeight = String.valueOf(img.getHeight().intValue());
+      }
+    }
+    imageProperties.put("width", imageWidth);
+    imageProperties.put("height", imageHeight);
+    return imageProperties;
   }
 
   public static class ModuleVersionParameter {

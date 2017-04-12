@@ -3,6 +3,7 @@
 <%@ page import="org.openbravo.base.HttpBaseServlet" %>
 <%@ page import="org.openbravo.dal.core.OBContext"%>
 <%@ page import="org.openbravo.base.util.OBClassLoader" %>
+<%@ page import="org.openbravo.base.weld.WeldUtils"%>
 <%@ page import="org.openbravo.authentication.AuthenticationManager" %>
 <%@ page import="org.openbravo.client.kernel.KernelUtils" %>
 <%@ page import="org.openbravo.client.kernel.KernelConstants" %>
@@ -20,6 +21,7 @@
 <%@ page import="org.openbravo.erpCommon.utility.OBError" %>
 <%@ page import="java.util.Date" %>
 <%@ page import="org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction" %>
+<%@ page import="org.openbravo.client.application.window.ApplicationDictionaryCachedStructures"%>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%
   /*
@@ -35,7 +37,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -138,7 +140,14 @@ response.addHeader("Expires", "0");
 <link rel="stylesheet" type="text/css" href="./org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_appName=OB3&_skinVersion=Default&_cssDataUri=<%=(!isMSIE || (isMSIE && verMSIE >=8))%>"/>
 
 <title>Openbravo</title>
+<%
+  ApplicationDictionaryCachedStructures adcs = WeldUtils.getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
+  if (!adcs.useCache()) {
+%>
 <script src="./web/org.openbravo.client.kernel/js/scopeleaks.min.js"></script>
+<%
+  }
+%>
 <script src="./web/org.openbravo.client.kernel/js/LAB.min.js"></script>
 <script src="./web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.1.min.js"></script>
 

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -328,23 +328,6 @@ OB.Utilities.replaceNullStringValue = function (form, values) {
   }
 };
 
-// ** {{{OB.Utilities.useClassicMode}}} **
-// Returns true if the user wants to work in classic mode, checks the url parameter
-// as well as a property value.
-OB.Utilities.useClassicMode = function (windowId) {
-  if (OB.Utilities.hasUrlParameter('mode', 'classic')) {
-    return true;
-  }
-  var propValue = OB.PropertyStore.get('OBUIAPP_UseClassicMode', windowId);
-  if (propValue === 'Y') {
-    return true;
-  }
-  if (OB.WindowDefinitions[windowId] && OB.WindowDefinitions[windowId].showInClassicMode) {
-    return true;
-  }
-  return false;
-};
-
 // ** {{{OB.Utilities.openDirectTab}}} **
 // Open a view using a tab id and record id. The tab can be a child tab. If the record id
 // is not set then the tab is opened in grid mode. If command is not set then default is
@@ -423,29 +406,14 @@ OB.Utilities.removeFragment = function (str) {
 // Open a view taking into account if a specific window should be opened in classic mode or not.
 // Returns the object used to open the window.
 OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, icon, readOnly, singleRecord, direct, editOrDeleteOnly) {
-  var isClassicEnvironment = OB.Utilities.useClassicMode(windowId),
-      openObject, isDirect = direct;
+  var openObject, isDirect = direct;
   if (recordId) {
     if (direct !== false) {
       isDirect = true;
     }
 
   }
-  if (isClassicEnvironment) {
-    if (recordId) {
-      OB.Layout.ClassicOBCompatibility.openLinkedItem(tabId, recordId);
-      return null;
-    }
-    openObject = {
-      viewId: 'OBClassicWindow',
-      windowId: windowId,
-      tabId: tabId,
-      id: tabId,
-      command: 'DEFAULT',
-      tabTitle: tabTitle,
-      icon: icon
-    };
-  } else if (recordId) {
+  if (recordId) {
     openObject = {
       viewId: '_' + windowId,
       id: tabId,

@@ -11,24 +11,19 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
 
 /* jslint */
-isc.OBApplicationMenuButton.create({
-    title: OB.I18N.getLabel('${data.label}'),
 
-    // put something in the array, otherwise there 
-    // are small styling issues
-    baseData: [        
-    <#list data.rootMenuOptions as menuOption>
-        <@createMenuItem menuOption=menuOption /><#if menuOption_has_next>,</#if>
-    </#list>
-    ]
-})
+OB.Application.menu = [
+  <#list data.rootMenuOptions as menuOption>
+    <@createMenuItem menuOption=menuOption /><#if menuOption_has_next>,</#if>
+  </#list>
+];
 
 <#macro createMenuItem menuOption>
     {title: '${menuOption.label?js_string}'
@@ -36,35 +31,60 @@ isc.OBApplicationMenuButton.create({
         , type: 'window'
         , tabId: '${menuOption.id?js_string}'
         , windowId: '${menuOption.menu.window.id?js_string}'
+        , optionType: 'tab'
+        , id:'${menuOption.dbId}'
+        , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.process>
         , type: 'process'
+        , optionType: 'process'
         , manualUrl: '${menuOption.id?js_string}'
         , processId: '${menuOption.menu.process.id}'
-        , modal: ${menuOption.modal?string}
+        , modal: '${menuOption.modal?string}'
+        , id:'${menuOption.dbId}'
+        , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.processManual>
         , type: 'processManual'
+        , optionType: 'processManual'
         , manualUrl: '${menuOption.id?js_string}'
         , manualProcessId: '${menuOption.menu.process.id}'
+        , id:'${menuOption.dbId}'
+        , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.report && !menuOption.processDefinition>
         , type: 'report'
+        , optionType: 'url'
         , manualUrl: '${menuOption.id?js_string}'
         , manualProcessId: '${menuOption.menu.process.id}'
+        , id:'${menuOption.dbId}'
+        , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.form>
         , type: 'form'
+        , optionType: 'url'
         , manualUrl: '${menuOption.id?js_string}'
         , formId: '${menuOption.formId?js_string}'
+        , id:'${menuOption.dbId}'
+        , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.external>
         , type: 'external'
+        , optionType: 'external'
         , externalUrl: '${menuOption.id?js_string}'
         , openLinkInBrowser: ${menuOption.menu.openlinkinbrowser?string}
+        , id:'${menuOption.dbId}'
+        , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.view>
         , type: 'view'
+        , optionType: 'url'
         , viewId: '${menuOption.id?js_string}'
         , tabTitle: '${menuOption.label?js_string}'
+        , id:'${menuOption.dbId}'
+        , viewValue: '${menuOption.id?js_string}'
     <#elseif menuOption.processDefinition>
         , type: 'processDefinition'
+        , optionType: 'processDefinition'
         , viewId: 'processDefinition_${menuOption.menu.oBUIAPPProcessDefinition.id}'
         , uiPattern: '${menuOption.menu.oBUIAPPProcessDefinition.uIPattern?js_string}'
+        , processId: '${menuOption.menu.oBUIAPPProcessDefinition.id}'
+        , id:'${menuOption.dbId}'
+        , viewValue: 'processDefinition_${menuOption.menu.oBUIAPPProcessDefinition.id}'
     </#if>
     , singleRecord: ${menuOption.singleRecordStringValue}
     , readOnly: ${menuOption.readOnlyStringValue}

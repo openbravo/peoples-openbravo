@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,22 +25,16 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
-import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.access.Role;
-import org.openbravo.model.ad.access.TabAccess;
-import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.Menu;
 import org.openbravo.model.ad.ui.MenuTrl;
@@ -51,14 +45,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Configures cached global menu (@see {@link GlobalMenu}) to adapt it to the current session's
- * permissions and caches it in memory for easy consumption by components. Reads the menu from the
+ * permissions and caches it in memory for easy consumption by components.
  * 
  * @author mtaal
  */
-@SessionScoped
-public class MenuManager implements Serializable {
+@RequestScoped
+public class MenuManager {
   private static final Logger log = LoggerFactory.getLogger(MenuManager.class);
-  private static final long serialVersionUID = 1L;
 
   public static enum MenuEntryType {
     Window, Process, ProcessManual, Report, Form, External, Summary, View, ProcessDefinition
@@ -75,56 +68,48 @@ public class MenuManager implements Serializable {
   private String roleId;
   private List<MenuOption> menuOptions;
 
-  private long cacheTimeStamp = 0;
-
-  public synchronized MenuOption getMenu() {
+  public MenuOption getMenu() {
     long t = System.currentTimeMillis();
-    if (cachedMenu == null || roleId == null
-        || !roleId.equals(OBContext.getOBContext().getRole().getId())
-        || cacheTimeStamp != globalMenuOptions.getCacheTimeStamp()) {
 
-      // set the current RoleId
-      roleId = OBContext.getOBContext().getRole().getId();
+    // set the current RoleId
+    roleId = OBContext.getOBContext().getRole().getId();
 
-      OBContext.setAdminMode();
-      try {
-        // take from global menus the one for current role and language
-        menuOptions = globalMenuOptions.getMenuOptions(roleId, OBContext.getOBContext()
-            .getLanguage().getId());
-        cacheTimeStamp = globalMenuOptions.getCacheTimeStamp();
+    OBContext.setAdminMode();
+    try {
+      // take from global menus the one for current role and language
+      menuOptions = globalMenuOptions.getMenuOptions(roleId, OBContext.getOBContext().getLanguage()
+          .getId());
 
-        // configure global menu with role permissions
-        linkWindows();
-        linkProcesses();
-        linkForms();
-        linkProcessDefinition();
-        linkViewDefinition();
+      // configure global menu with role permissions
+      linkWindows();
+      linkProcesses();
+      linkForms();
+      linkProcessDefinition();
+      linkViewDefinition();
 
-        removeInvisibleNodes();
-        removeInaccessibleNodes();
+      removeInvisibleNodes();
+      removeInaccessibleNodes();
 
-        // set the globals
-        final MenuOption localCachedRoot = new MenuOption();
-        localCachedRoot.setDbId("-1"); // just use any value
-        selectableMenuOptions = new ArrayList<MenuOption>();
-        for (MenuOption menuOption : menuOptions) {
-          if (menuOption.getParentMenuOption() == null) {
-            localCachedRoot.getChildren().add(menuOption);
-          }
-          if (menuOption.getType() != MenuEntryType.Summary) {
-            selectableMenuOptions.add(menuOption);
-          }
+      // set the globals
+      final MenuOption localCachedRoot = new MenuOption();
+      localCachedRoot.setDbId("-1"); // just use any value
+      selectableMenuOptions = new ArrayList<MenuOption>();
+      for (MenuOption menuOption : menuOptions) {
+        if (menuOption.getParentMenuOption() == null) {
+          localCachedRoot.getChildren().add(menuOption);
         }
-
-        Collections.sort(selectableMenuOptions, new MenuComparator());
-
-        cachedMenu = localCachedRoot;
-      } finally {
-        OBContext.restorePreviousMode();
+        if (menuOption.getType() != MenuEntryType.Summary) {
+          selectableMenuOptions.add(menuOption);
+        }
       }
-    } else {
-      log.debug("Cached menu");
+
+      Collections.sort(selectableMenuOptions, new MenuComparator());
+
+      cachedMenu = localCachedRoot;
+    } finally {
+      OBContext.restorePreviousMode();
     }
+
     log.debug("getMenu took {} ms", System.currentTimeMillis() - t);
     return cachedMenu;
   }
@@ -203,21 +188,35 @@ public class MenuManager implements Serializable {
     }
   }
 
-  @SuppressWarnings("unchecked")
   private void linkWindows() {
-    final String windowsHql = "select wa.window.id " + //
+    final String windowsHql = "select wa.window.id, t.id, ta.editableField, wa.editableField" + //
         " from ADWindowAccess wa " + //
-        "where wa.role = :role" + //
-        "  and wa.active = true ";
+        " left join wa.aDTabAccessList as ta " + //
+        " left join ta.tab as t with t.tabLevel = 0 " + //
+        " where wa.role = :role" + //
+        " and wa.active = true " + //
+        " and (ta.active = true or ta.active is null) " + //
+        " order by wa.id, t.sequenceNumber DESC ";
     final Query windowsQry = OBDal.getInstance().getSession().createQuery(windowsHql);
     windowsQry.setParameter("role", OBContext.getOBContext().getRole());
 
-    for (String windowId : (List<String>) windowsQry.list()) {
+    for (Object obj : windowsQry.list()) {
+      final Object[] row = (Object[]) obj;
+      final String windowId = (String) row[0];
+      final String tabId = (String) row[1];
+      final Boolean isEditableTab = (Boolean) row[2];
+      final Boolean isEditableWindow = (Boolean) row[3];
       MenuOption option = getMenuOptionByType(MenuEntryType.Window, windowId);
       if (option != null) {
         boolean hasAccess = !SessionFactoryController.isRunningInWebContainer()
             || ActivationKey.getInstance().hasLicenseAccess("MW", windowId) == FeatureRestriction.NO_RESTRICTION;
         option.setAccessGranted(hasAccess);
+
+        if (tabId == null) {
+          option.setIsReadOnlyForRole(!isEditableWindow);
+        } else {
+          option.setIsReadOnlyForRole(!isEditableTab);
+        }
       }
     }
   }
@@ -283,10 +282,11 @@ public class MenuManager implements Serializable {
     private MenuOption parentMenuOption;
     private List<MenuOption> children = new ArrayList<MenuOption>();
     private Boolean visible = null;
-    private boolean showInClassicMode = false;
     private String objectId;
+    private boolean isModal;
 
     private boolean accessGranted = false;
+    private Boolean isReadOnlyForRole = false;
 
     public MenuOption() {
       // Default constructor, just sets all the defaults
@@ -303,8 +303,8 @@ public class MenuManager implements Serializable {
       this.tab = option.tab;
       this.form = option.form;
       this.isReport = option.isReport;
-      this.showInClassicMode = option.showInClassicMode;
       this.objectId = option.objectId;
+      this.isModal = option.isModal;
     }
 
     public boolean isSingleRecord() {
@@ -322,7 +322,7 @@ public class MenuManager implements Serializable {
      */
     public boolean isReadOnly() {
       boolean tabIsReadOnlyForAll = getTab() != null && getTab().getUIPattern().equals("RO");
-      boolean tabIsReadOnlyForRole = isTabReadOnlyforRole();
+      boolean tabIsReadOnlyForRole = tabIsReadOnlyForAll || isTabReadOnlyforRole();
       return tabIsReadOnlyForAll || tabIsReadOnlyForRole;
     }
 
@@ -331,45 +331,21 @@ public class MenuManager implements Serializable {
      * TabAccess entities
      */
     public boolean isTabReadOnlyforRole() {
-      boolean isReadOnly = false;
+
       // If there is no tab there is nothing to check
       if (getTab() == null) {
         return false;
-      }
-      // Obtains the Window Access for the current role
-      Role role = OBContext.getOBContext().getRole();
-      OBCriteria<WindowAccess> windowAccessCriteria = OBDal.getInstance().createCriteria(
-          WindowAccess.class);
-      windowAccessCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_ROLE, role));
-      windowAccessCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_WINDOW, getTab().getWindow()));
-      WindowAccess windowAccess = (WindowAccess) windowAccessCriteria.uniqueResult();
-      if (windowAccess != null) {
-        // there is a window access defined for this window and this role
-        OBCriteria<TabAccess> tabAccessCriteria = OBDal.getInstance().createCriteria(
-            TabAccess.class);
-        tabAccessCriteria.add(Restrictions.eq(TabAccess.PROPERTY_TAB, tab));
-        tabAccessCriteria.add(Restrictions.eq(TabAccess.PROPERTY_WINDOWACCESS, windowAccess));
-        TabAccess tabAccess = (TabAccess) tabAccessCriteria.uniqueResult();
-        if (tabAccess != null) {
-          // there is a window access defined and a tab access defined too
-          // The menu entry will be read only if the tab is not editable by this role
-          isReadOnly = !tabAccess.isEditableField();
-          //
-        } else {
-          // There is a window access defined but there is not a tab access defined
-          // The menu entry will be read only if the window is not editable by this role
-          isReadOnly = !windowAccess.isEditableField();
-        }
       } else {
-        // there is not a window access defined. the user should not even be capable of opening the
-        // window
-        isReadOnly = true;
+        return this.getIsReadOnlyForRole();
       }
-      return isReadOnly;
     }
 
     public String getReadOnlyStringValue() {
       return Boolean.toString(isReadOnly());
+    }
+
+    private Boolean getIsReadOnlyForRole() {
+      return isReadOnlyForRole;
     }
 
     public boolean isEditOrDeleteOnly() {
@@ -418,11 +394,10 @@ public class MenuManager implements Serializable {
 
     public boolean isAccessible() {
       // In order to be accessible, all its menu entry parents must be active;
-      Menu menuEntry = OBDal.getInstance().get(Menu.class, treeNode.getNode());
       if (parentMenuOption == null) {
-        return menuEntry.isActive();
+        return treeNode.isActive();
       } else {
-        return menuEntry.isActive() && parentMenuOption.isAccessible();
+        return treeNode.isActive() && parentMenuOption.isAccessible();
       }
     }
 
@@ -539,13 +514,11 @@ public class MenuManager implements Serializable {
     }
 
     public boolean isModal() {
-      if (isProcess()) {
-        // done via isModelProcess(String) as is called from different request and getProcess() is
-        // not initialized
-        String processId = getMenu().getProcess().getId();
-        return Utility.isModalProcess(processId);
-      }
-      return true;
+      return isModal;
+    }
+
+    public void setModal(boolean isModal) {
+      this.isModal = isModal;
     }
 
     public boolean isProcessManual() {
@@ -574,7 +547,6 @@ public class MenuManager implements Serializable {
 
     public void setTab(Tab tab) {
       this.tab = tab;
-      showInClassicMode = ApplicationUtils.showWindowInClassicMode(tab.getWindow());
     }
 
     public List<MenuParameter> getParameters() {
@@ -585,10 +557,6 @@ public class MenuManager implements Serializable {
         }
       }
       return parameters;
-    }
-
-    public boolean isShowInClassicMode() {
-      return showInClassicMode;
     }
 
     public String getDbId() {
@@ -605,6 +573,10 @@ public class MenuManager implements Serializable {
 
     public void setObjectId(String objectId) {
       this.objectId = objectId;
+    }
+
+    public void setIsReadOnlyForRole(Boolean isReadOnlyForRole) {
+      this.isReadOnlyForRole = isReadOnlyForRole;
     }
   }
 

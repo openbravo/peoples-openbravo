@@ -11,13 +11,37 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
+package org.openbravo.client.application;
 
-OB.OBMyOpenbravoProperties = {
-  enableAdminMode: ${data.enableAdminMode},
-  adminModeValueMap: ${data.adminModeValueMap}
-};
+import java.util.Collection;
+
+import org.openbravo.client.application.NavigationBarComponentGenerator.NBComponent;
+import org.openbravo.client.kernel.SessionDynamicTemplateComponent;
+
+/**
+ * This class generates the set of navigation bar components which are accessible for the user of
+ * the current context.
+ * 
+ */
+public class NavigationBarComponent extends SessionDynamicTemplateComponent {
+
+  @Override
+  public String getId() {
+    return ApplicationConstants.NAVIGATION_BAR_ID;
+  }
+
+  @Override
+  protected String getTemplateId() {
+    return ApplicationConstants.NAVIGATION_BAR_TEMPLATE_ID;
+  }
+
+  public Collection<NBComponent> getNavigationBarComponents() {
+    return NavigationBarComponentGenerator.getInstance()
+        .getNavigationBarComponents(getParameters());
+  }
+}

@@ -11,14 +11,12 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
 
-OB.Application.dynamicNavigationBarComponents = [<#list data.navigationBarComponents as nbc>
-                                          ${nbc.jscode}<#if nbc_has_next>,</#if>
-                                          </#list>];
-
-
+OB.Application.showHeartBeatOrRegistration = function() {
+  ${data.heartBeatRegistrationFunction};
+};

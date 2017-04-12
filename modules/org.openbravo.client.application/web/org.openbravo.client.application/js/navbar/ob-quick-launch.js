@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -84,7 +84,6 @@ isc.OBQuickLaunch.addProperties({
   beforeShow: function () {
     var valueField = this.members[2].getField('value'),
         recent = OB.RecentUtilities.getRecentValue(this.recentPropertyName);
-
     if (recent && recent.length > 0) {
       var newFields = [];
       var index = 0,
@@ -153,7 +152,7 @@ isc.OBQuickLaunch.addProperties({
   },
 
   initWidget: function () {
-    var dummyFirstField, dummyLastField;
+    var dummyFirstField, dummyLastField, me;
     dummyFirstField = isc.OBFocusButton.create({
       getFocusTarget: function () {
         return this.parentElement.members[this.parentElement.members.length - 2];
@@ -172,6 +171,7 @@ isc.OBQuickLaunch.addProperties({
       }
     });
 
+    me = this;
     this.members = [dummyFirstField, isc.VLayout.create({
       // To allow height grow with its contents
       height: 1,
@@ -180,6 +180,7 @@ isc.OBQuickLaunch.addProperties({
       autoFocus: true,
       width: '100%',
       titleSuffix: '',
+      quickMenuWidget: me,
       fields: [{
         name: 'value',
         cellStyle: OB.Styles.OBFormField.DefaultComboBox.cellStyle,
@@ -196,11 +197,26 @@ isc.OBQuickLaunch.addProperties({
         // fixes issue https://issues.openbravo.com/view.php?id=15105
         pickListCellHeight: OB.Styles.OBFormField.DefaultComboBox.quickRunPickListCellHeight,
         recentPropertyName: this.recentPropertyName,
+        displayField: OB.Constants.IDENTIFIER,
+        entries: [],
 
         getControlTableCSS: function () {
           // prevent extra width settings, super class
           // sets width to 0 on purpose
           return 'cursor:default;';
+        },
+
+        makePickList: function () {
+          var quickMenu = this.containerWidget.quickMenuWidget;
+
+          quickMenu.getQuickMenuItems(OB.Application.menu, this.entries);
+          quickMenu.sortQuickMenuItems(this.entries);
+          quickMenu.setQuickMenuValueMap(this);
+          this.Super('makePickList', arguments);
+        },
+
+        getClientPickListData: function () {
+          return this.entries;
         },
 
         selectOnFocus: true,
@@ -225,6 +241,7 @@ isc.OBQuickLaunch.addProperties({
           criteria[OB.Constants.IDENTIFIER] = this.getDisplayValue();
           return criteria;
         },
+
         pickListFields: [{
           showValueIconOnly: true,
           name: 'icon',
@@ -250,18 +267,16 @@ isc.OBQuickLaunch.addProperties({
         filterLocally: true,
         fetchDelay: 50,
 
-        optionDataSource: OB.Datasource.get(this.dataSourceId),
         valueField: OB.Constants.ID,
-
         emptyPickListMessage: OB.I18N.getLabel('OBUISC_ListGrid.emptyMessage'),
 
         command: this.command,
 
         pickValue: function (theValue) {
+          var record;
           this.Super('pickValue', arguments);
-
-          if (this.getSelectedRecord()) {
-            var record = this.getSelectedRecord();
+          record = this.getPickListRecordForValue(theValue);
+          if (record) {
             var viewValue = record.viewValue;
             isc.OBQuickRun.currentQuickRun.doHide();
             var openObject = isc.addProperties({}, record);
@@ -327,7 +342,6 @@ isc.OBQuickLaunch.addProperties({
             openObject.readOnly = record.readOnly;
 
             openObject.icon = record.icon;
-
             openObject = isc.addProperties({}, record, openObject);
 
             if (openObject.openLinkInBrowser && openObject.viewId === 'OBExternalPage') {
@@ -372,6 +386,84 @@ isc.OBQuickLaunch.addProperties({
     OB.TestRegistry.register(this.recentPropertyName + '_FIELD', suggestionField);
 
     return ret;
-  }
+  },
 
+  getQuickMenuItems: function (menu, quickMenu) {
+    var i, menuItem, validMenuItem;
+    for (i = 0; i < menu.length; i++) {
+      menuItem = menu[i];
+      if (menuItem.submenu) {
+        this.getQuickMenuItems(menuItem.submenu, quickMenu);
+      } else if (this.isValidMenuItem(menuItem)) {
+        validMenuItem = isc.clone(menuItem);
+        validMenuItem._identifier = validMenuItem.title;
+        validMenuItem.icon = this.getMenuItemIcon(validMenuItem);
+        quickMenu.add(validMenuItem);
+      }
+    }
+  },
+
+  getMenuItemIcon: function (menuItem) {
+    if (menuItem.type === 'process' || menuItem.type === 'processManual') {
+      return 'Process';
+    } else if (menuItem.type === 'processDefinition') {
+      if (menuItem.uiPattern === 'OBUIAPP_Report') {
+        return 'Report';
+      } else {
+        return 'Process';
+      }
+    } else if (menuItem.type === 'report') {
+      return 'Report';
+    } else if (menuItem.type === 'form') {
+      return 'Form';
+    } else if (menuItem.type === 'external') {
+      return 'ExternalLink';
+    }
+    return 'Window';
+  },
+
+  isValidMenuItem: function (menuItem) {
+    return false;
+  },
+
+  sortQuickMenuItems: function (menuItems) {
+    menuItems.sort(function (a, b) {
+      return (a._identifier > b._identifier) - (a._identifier < b._identifier);
+    });
+  },
+
+  isFolder: function (menuItem) {
+    return menuItem.type === 'folder';
+  },
+
+  isWindowAndCanCreateNewRecord: function (menuItem) {
+    return (menuItem.type === 'window' && !menuItem.readOnly && !menuItem.singleRecord && !menuItem.editOrDeleteOnly);
+  },
+
+  setQuickMenuValueMap: function (quickMenuCombo) {
+    var i, menuEntry, menuEntries = isc.clone(quickMenuCombo.entries),
+        valueMap = {};
+
+    if (!quickMenuCombo.setValueMap) {
+      return;
+    }
+
+    for (i = 0; i < menuEntries.length; i++) {
+      menuEntry = menuEntries[i];
+      valueMap[menuEntry.id] = menuEntry._identifier;
+    }
+    quickMenuCombo.preventPickListRequest = true; // preventing 1st request triggered by setValueMap
+    quickMenuCombo.setValueMap(valueMap);
+
+    if (quickMenuCombo.pickList) {
+      quickMenuCombo.pickList.data = menuEntries;
+      quickMenuCombo.pickList.data.initialData = menuEntries;
+      quickMenuCombo.pickList.data.allRows = menuEntries;
+      quickMenuCombo.pickList.data.fetchMode = "local";
+      quickMenuCombo.pickList.data.useClientFiltering = true;
+      quickMenuCombo.pickList.data.useClientSorting = true;
+      quickMenuCombo.pickList.data.disableCacheSync = true;
+      quickMenuCombo.pickList.data.neverDropCache = true;
+    }
+  }
 });

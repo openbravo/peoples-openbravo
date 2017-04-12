@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -81,6 +81,8 @@ public class KernelConstants {
   public static final String CONTEXT_URL = "_contextUrl";
 
   public static final String SERVLET_CONTEXT = "_servletContext";
+
+  public static final String SESSION_DYNAMIC_COMPONENT_ID = "SessionDynamic";
 
   public static final String APPLICATION_COMPONENT_ID = "Application";
 

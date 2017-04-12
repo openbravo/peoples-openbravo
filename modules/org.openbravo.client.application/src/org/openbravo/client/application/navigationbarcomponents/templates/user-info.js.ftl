@@ -11,12 +11,72 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
 
-/* jslint */
-    OBUserProfile.create({}),
-    isc.OBLogout.create({})
+OB.User.userInfo = {
+  language: {
+    value: '${data.contextLanguageId}',
+    valueMap: [
+      <#list data.languages as language>
+        {
+          id: '${language.id}',
+          _identifier: '${language.identifier}'
+        } <#if language_has_next>,</#if>
+      </#list>
+    ]
+  },
+  initialValues: {
+    language: '${data.contextLanguageId}',
+    role: '${data.contextRoleId}',
+    client: '${data.contextClientId}',
+    organization: '${data.contextOrganizationId}'<#if data.contextWarehouseId != "">,
+    warehouse: '${data.contextWarehouseId}'
+    </#if>
+  },
+  role: {
+    value: '${data.contextRoleId}',
+    valueMap: [
+      <#list data.userRolesInfo as roleInfo>
+        {
+          id: '${roleInfo.roleId}',
+          _identifier: '${roleInfo.roleName} - ${roleInfo.clientName}'
+        } <#if roleInfo_has_next>,</#if>
+      </#list>
+    ],
+    roles: [
+      <#list data.userRolesInfo as roleInfo>
+      {
+        id: '${roleInfo.roleId}',
+        client: '${roleInfo.clientName}',
+        organizationValueMap: [
+        <#list roleInfo.organizations?keys as organizationId>
+          {
+            id: '${organizationId}',
+            _identifier: '${roleInfo.organizations[organizationId]}'
+          } <#if organizationId_has_next>,</#if>
+          </#list>
+        ],
+        warehouseOrgMap: [
+          <#list roleInfo.organizationWarehouses?keys as key>
+          {
+            orgId: '${key}',
+            warehouseMap: [
+            <#list roleInfo.organizationWarehouses[key] as warehouse>
+              {
+                id: '${warehouse.warehouseId}',
+                _identifier: '${warehouse.warehouseName}'
+              } <#if warehouse_has_next>,</#if>
+              </#list>
+            ]
+          } <#if key_has_next>,</#if>
+          </#list>
+        ]
+      } <#if roleInfo_has_next>,</#if>
+      </#list>
+    ]
+  }
+}

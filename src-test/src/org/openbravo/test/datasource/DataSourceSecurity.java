@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -260,8 +260,6 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
             put("targetProperty", "gLItem");
           }
         }), //
-    QuickLaunch("99B9CC42FDEA4CA7A4EE35BC49D61E0E", JSONObjectURL.NO_APPLIED, OPERATION_FETCH), //
-    QuickCreate("C17951F970E942FD9F3771B7BE91D049", JSONObjectURL.NO_APPLIED, OPERATION_FETCH), //
     HQLDataSource("3C1148C0AB604DE1B51B7EA4112C325F", JSONObjectURL.NO_APPLIED, OPERATION_FETCH,
         new HashMap<String, String>() {
           {
@@ -368,13 +366,6 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
       testCases.add(new Object[] { type, DataSource.CustomQuerySelectorDatasourceProcess,
           accessForAdminAndSystemOnly });
 
-      // QuickLaunch ds should be always accessible
-      testCases.add(new Object[] { type, DataSource.QuickLaunch,
-          JsonConstants.RPCREQUEST_STATUS_SUCCESS });
-
-      // QuickCreate ds should be always accessible
-      testCases.add(new Object[] { type, DataSource.QuickCreate,
-          JsonConstants.RPCREQUEST_STATUS_SUCCESS });
       testCases.add(new Object[] { type, DataSource.HQLDataSource, accessForAdminOnly });
       testCases.add(new Object[] { type, DataSource.ADTree, accessForAdminAndSystemOnly });
       testCases.add(new Object[] { type, DataSource.AccountTree, accessForAdminOnly });
