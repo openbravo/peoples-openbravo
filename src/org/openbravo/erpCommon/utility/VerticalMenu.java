@@ -73,13 +73,22 @@ public class VerticalMenu extends HttpSecureAppServlet {
             || vars.getSessionValue("#Autosave").equalsIgnoreCase("N") ? "false" : "true") + ";");
 
     xmlDocument.setParameter("menu", "");
-    xmlDocument.setParameter("userName", OBContext.getOBContext().getUser().getUsername());
+    xmlDocument.setParameter("userName", getUserName());
     xmlDocument.setParameter("popup", "");
 
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private String getUserName() {
+    try {
+      OBContext.setAdminMode(true);
+      return OBContext.getOBContext().getUser().getUsername();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   private void printPageLoadingMenu(HttpServletResponse response, VariablesSecureApp vars)
