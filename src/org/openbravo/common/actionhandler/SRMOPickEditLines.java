@@ -309,6 +309,11 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
         orderLines.add(newOrderLine);
         order.setOrderLineList(orderLines);
       }
+      // Copy dimensions from Shipment/Receipt Line to RFC/RTV Order Line
+      newOrderLine.setProject(shipmentLine.getProject());
+      newOrderLine.setCostcenter(shipmentLine.getCostcenter());
+      newOrderLine.setStDimension(shipmentLine.getStDimension());
+      newOrderLine.setNdDimension(shipmentLine.getNdDimension());
 
       OBDal.getInstance().save(newOrderLine);
       OBDal.getInstance().save(order);

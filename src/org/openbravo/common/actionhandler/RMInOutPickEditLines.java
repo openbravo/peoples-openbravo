@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -164,6 +164,12 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
       if (orderLine.isExplode()) {
         newInOutLine.setExplode(true);
       }
+      // Copy Dimensions From RFC Order Line
+      newInOutLine.setProject(orderLine.getProject());
+      newInOutLine.setCostcenter(orderLine.getCostcenter());
+      newInOutLine.setStDimension(orderLine.getStDimension());
+      newInOutLine.setNdDimension(orderLine.getNdDimension());
+
       OBDal.getInstance().save(newInOutLine);
       OBDal.getInstance().save(inOut);
       OBDal.getInstance().flush();

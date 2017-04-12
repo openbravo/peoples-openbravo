@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -160,6 +160,12 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
         inOutLines.add(newInOutLine);
         inOut.setMaterialMgmtShipmentInOutLineList(inOutLines);
       }
+
+      // Copy Dimensions from RTV Order Line
+      newInOutLine.setProject(orderLine.getProject());
+      newInOutLine.setCostcenter(orderLine.getCostcenter());
+      newInOutLine.setStDimension(orderLine.getStDimension());
+      newInOutLine.setNdDimension(orderLine.getNdDimension());
 
       OBDal.getInstance().save(newInOutLine);
       OBDal.getInstance().save(inOut);
