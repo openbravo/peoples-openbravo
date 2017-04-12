@@ -318,11 +318,12 @@ public class CashCloseProcessor {
     transaction.setGLItem(glItem);
     if (reconciliationTotal.compareTo(BigDecimal.ZERO) < 0) {
       transaction.setDepositAmount(reconciliationTotal.abs());
+      transaction.setTransactionType("BPD");
     } else {
       transaction.setPaymentAmount(reconciliationTotal);
+      transaction.setTransactionType("BPW");
     }
     transaction.setProcessed(true);
-    transaction.setTransactionType("BPW");
     transaction.setStatus("RPPC");
     transaction.setDescription("GL Item: " + glItem.getName());
     transaction.setObposAppCashup(cashUp);
@@ -378,12 +379,13 @@ public class CashCloseProcessor {
     if (reconciliationTotal.compareTo(BigDecimal.ZERO) < 0) {
       transaction.setPaymentAmount(reconciliationTotal.multiply(conversionRate).abs()
           .setScale(2, BigDecimal.ROUND_HALF_EVEN));
+      transaction.setTransactionType("BPW");
     } else {
       transaction.setDepositAmount(reconciliationTotal.multiply(conversionRate).setScale(2,
           BigDecimal.ROUND_HALF_EVEN));
+      transaction.setTransactionType("BPD");
     }
     transaction.setProcessed(true);
-    transaction.setTransactionType("BPD");
     transaction.setStatus("RDNC");
     transaction.setDescription("GL Item: " + glItem.getName());
     transaction.setObposAppCashup(cashUp);
