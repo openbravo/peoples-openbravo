@@ -1595,5 +1595,6 @@ OB.POS.registerWindow({
   menuPosition: null,
   permission: 'OBPOS_retail.pointofsale',
   // Not to display it in the menu
-  menuLabel: 'POS'
+  menuLabel: 'POS',
+  defaultWindow: true
 });
