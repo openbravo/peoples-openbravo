@@ -931,11 +931,7 @@ enyo.kind({
         receipt.set('undo', null);
         receipt.set('preventServicesUpdate', true);
         receipt.set('deleting', true);
-        if (selectedModels.length > 1) {
-          receipt.deleteLines(selectedModels, 0, selectedModels.length, postDeleteLine);
-        } else {
-          receipt.deleteLine(ln, false, postDeleteLine);
-        }
+        receipt.deleteLines(selectedModels, 0, selectedModels.length, postDeleteLine);
         receipt.trigger('scan');
       });
     }
