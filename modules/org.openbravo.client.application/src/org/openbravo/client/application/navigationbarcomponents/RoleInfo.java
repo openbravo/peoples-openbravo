@@ -101,6 +101,11 @@ public class RoleInfo {
       return organizationWarehouses;
     }
     organizationWarehouses = new LinkedHashMap<>();
+
+    if (getOrganizations().isEmpty()) {
+      return organizationWarehouses;
+    }
+
     for (String orgId : getOrganizations().keySet()) {
       organizationWarehouses.put(orgId, new ArrayList<RoleWarehouseInfo>());
     }
