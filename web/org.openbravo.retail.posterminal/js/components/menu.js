@@ -1076,8 +1076,9 @@ enyo.kind({
     if (OB.UTIL.RfidController.isRfidConfigured()) {
       var protocol = OB.POS.hwserver.url.split('/')[0];
       if (window.location.protocol === protocol) {
-        if (OB.UTIL.RfidController.get('connectionLost')) {
+        if (OB.UTIL.RfidController.get('connectionLost') || !OB.UTIL.RfidController.get('connected')) {
           this.addClass('btn-icon-switchoffline');
+          return;
         } else {
           this.removeClass('btn-icon-switchoffline');
         }
