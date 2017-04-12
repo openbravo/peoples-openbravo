@@ -406,17 +406,28 @@ enyo.kind({
       // Check in Current Session
       var orderTypeMsg, i;
       for (i = 0; i < me.model.get('orderList').length; i++) {
-        if (me.model.get('orderList').models[i].get('id') === model.get('id')) {
+        if (me.model.get('orderList').models[i].get('id') === model.get('id') || ((!(_.isNull(me.model.get('orderList').models[i].get('oldId')))) && me.model.get('orderList').models[i].get('oldId') === model.get('id'))) {
+          var errorMsg;
           orderTypeMsg = OB.I18N.getLabel('OBPOS_ticket');
+          errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, model.get('documentNo')));
           if (me.model.get('orderList').models[i].get('isLayaway')) {
             orderTypeMsg = OB.I18N.getLabel('OBPOS_LblLayaway');
+            errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, model.get('documentNo')));
           } else if (me.model.get('orderList').models[i].get('isQuotation')) {
             orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
+            errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, model.get('documentNo')));
+          } else if ((!(_.isNull(me.model.get('orderList').models[i].get('oldId')))) && me.model.get('orderList').models[i].get('oldId') === model.get('id')) {
+            //(!(_.isNull(me.model.get('orderList').models[i].get('oldId')) -> It is a sales order created from a quotation
+            //me.model.get('orderList').models[i].get('oldId') === model.get('id') -> The quotation that we are loading created an order which is not synchronized or closed
+            //Quotation %0 cannot be loaded because order %1 (created from quotation %2) is already opened. Please close or complete %3 or select an other quotation
+            var SoFromQtDocNo = me.model.get('orderList').models[i].get('documentNo');
+            var QtDocumentNo = model.get('documentNo');
+            errorMsg = OB.I18N.getLabel('OBPOS_OrderAssociatedToQuotationInProgress', [QtDocumentNo, SoFromQtDocNo, QtDocumentNo, SoFromQtDocNo]);
           }
           me.doShowPopup({
             popup: 'OB_UI_MessageDialog',
             args: {
-              message: (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, model.get('documentNo')))
+              message: errorMsg
             }
           });
           if (OB.MobileApp.model.receipt.get('documentNo') !== model.get('documentNo')) {
