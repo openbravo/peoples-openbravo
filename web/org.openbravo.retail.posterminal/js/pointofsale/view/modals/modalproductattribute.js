@@ -81,7 +81,7 @@ enyo.kind({
         if (this.validateAttributeWithOrderlines(currentlineProduct, orderline, inpattributeValue)) {
           this.deleteOrderline(currentline);
           if (currentlineProduct.get('isSerialNo')) {
-            this.showConfirm(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductHasSerialNo'));
+            this.showConfirm(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductDefinedAsSerialNo'));
             if (me.args.finalCallback) {
               finalCallbackStatus = false;
             }
@@ -98,7 +98,7 @@ enyo.kind({
       } else {
         //VERIFIED RETURN
         if (inpattributeValue !== currentline.getAttributeValue() && options.isVerifiedReturn) {
-          this.showConfirm(OB.I18N.getLabel('OBPOS_NotValidateAttribute'), OB.I18N.getLabel('OBPOS_NotSameAttribute'));
+          this.showConfirm(OB.I18N.getLabel('OBPOS_NotValidAttribute'), OB.I18N.getLabel('OBPOS_AttributeNotInOrder'));
           this.deleteOrderline(currentline);
           finalCallbackStatus = false;
           this.args.initialCallback(receipt, currentlineProduct, currentline, currentlineqty, null, newline, me.args.finalCallback(finalCallbackStatus, currentline));
