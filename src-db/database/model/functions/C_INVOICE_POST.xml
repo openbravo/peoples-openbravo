@@ -1275,6 +1275,7 @@ IF (NOT FINISH_PROCESS) THEN
         END IF;        
         v_InvoiceLineSeqNo:=10 + v_InvoiceLineSeqNo;
         v_InvoiceLine:=get_uuid();
+        v_Discount := ROUND(v_Discount, v_stdPrecision);
         INSERT INTO C_INVOICELINE
           (
            C_INVOICELINE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
