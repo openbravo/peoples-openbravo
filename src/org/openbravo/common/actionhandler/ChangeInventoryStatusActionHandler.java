@@ -24,16 +24,10 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.exception.OBException;
-import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
-import org.openbravo.common.hooks.InventoryStatusHookManager;
-import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.InventoryStatusUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.model.common.enterprise.Locator;
-import org.openbravo.model.materialmgmt.onhandquantity.InventoryStatus;
-import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 
 public class ChangeInventoryStatusActionHandler extends BaseProcessActionHandler {
 
@@ -48,7 +42,7 @@ public class ChangeInventoryStatusActionHandler extends BaseProcessActionHandler
       JSONObject params = request.getJSONObject("_params");
       String inventoryStatusID = params.getString("M_InventoryStatus_ID");
 
-      changeStatusOfStorageBin(mLocatorID, inventoryStatusID);
+      InventoryStatusUtils.changeStatusOfStorageBin(mLocatorID, inventoryStatusID);
       return getResponseBuilder().showMsgInView(MessageType.SUCCESS,
           OBMessageUtils.messageBD("Success"), OBMessageUtils.messageBD("Success")).build();
 
@@ -61,43 +55,6 @@ public class ChangeInventoryStatusActionHandler extends BaseProcessActionHandler
       }
       return getResponseBuilder().showMsgInView(MessageType.ERROR,
           OBMessageUtils.messageBD("Error"), e.getMessage()).build();
-    }
-  }
-
-  private void changeStatusOfStorageBin(String mLocatorID, String inventoryStatusID) {
-    Locator locator = OBDal.getInstance().get(Locator.class, mLocatorID);
-    // No change requiered needed
-    if (StringUtils.equals(locator.getInventoryStatus().getId(), inventoryStatusID)) {
-      return;
-    }
-    String errorMessage = "";
-    if (locator.isVirtual()) {
-      throw new OBException(OBMessageUtils.messageBD("M_VirtualBinCanNotChangeInvStatus").concat(
-          "<br/>"));
-    }
-    for (StorageDetail storageDetail : locator.getMaterialMgmtStorageDetailList()) {
-      try {
-        // Hook to perform validations over the Storage Detail
-        WeldUtils.getInstanceFromStaticBeanManager(InventoryStatusHookManager.class)
-            .executeValidationHooks(storageDetail,
-                OBDal.getInstance().get(InventoryStatus.class, inventoryStatusID));
-      } catch (Exception e) {
-        errorMessage = errorMessage.concat(e.getMessage()).concat("<br/>");
-      }
-    }
-    if (!StringUtils.isEmpty(errorMessage)) {
-      if (StringUtils.startsWith(errorMessage, "WARNING")) {
-        locator.setInventoryStatus(OBDal.getInstance()
-            .get(InventoryStatus.class, inventoryStatusID));
-        OBDal.getInstance().flush();
-        throw new OBException(errorMessage);
-      } else {
-        log4j.error(errorMessage);
-        throw new OBException(errorMessage);
-      }
-    } else {
-      locator.setInventoryStatus(OBDal.getInstance().get(InventoryStatus.class, inventoryStatusID));
-      OBDal.getInstance().flush();
     }
   }
 }
