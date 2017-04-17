@@ -28,4 +28,8 @@ public class ProductDataConstants {
   public final static String DISTRIBUTION_GOOD_D = "8581A3A503C44FC18727516E12A85575";
   // Product Id: Distribution Good E (BOM Taxes)
   public final static String DISTRIBUTION_GOOD_E = "144339F3C9CA4B32986754D3BB0B6D7F";
+  // Product Id: Discount 10%
+  public final static String DISCOUNT_10 = "A9AED2CBF1E64493A65EB07128557934";
+  // Product Id: Discount 100%
+  public final static String DISCOUNT_100 = "7AA829D1675248A786D97438616BCDC0";
 }

@@ -47,9 +47,11 @@ import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.invoice.InvoiceDiscount;
 import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.invoice.InvoiceTax;
 import org.openbravo.model.common.order.Order;
+import org.openbravo.model.common.order.OrderDiscount;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderTax;
 import org.openbravo.model.common.plm.Product;
@@ -78,7 +80,7 @@ public class TaxesTest extends OBBaseTest {
   private final String ORGANIZATION_ID = "357947E87C284935AD1D783CF6F099A1";
   // Role QA Testing Admin
   private final String ROLE_ID = "4028E6C72959682B01295A071429011E";
-  // Sales Invoice: 10000017
+  // Sales Invoice: Taxes Test Template
   private final String SALESINVOICE_ID = "F889F6E61CA6454EA50BDD6DD75582E3";
   // Purchase Invoice: 10000017
   private final String PURCHASEINVOICE_ID = "9D0F6E57E59247F6AB6D063951811F51";
@@ -304,6 +306,22 @@ public class TaxesTest extends OBBaseTest {
         { "182", "PriceIncludingTaxes 182: Doc Big 10% negative", new TaxesTestData182() }, //
         { "183", "PriceIncludingTaxes 183: Line Big 10% positive", new TaxesTestData183() }, //
         { "184", "PriceIncludingTaxes 184: Line Big 10% negative", new TaxesTestData184() }, //
+        { "185", "PriceExcludingTaxes 185: Doc Small Discount positive", new TaxesTestData185() }, //
+        { "186", "PriceExcludingTaxes 186: Doc Small Discount negative", new TaxesTestData186() }, //
+        { "187", "PriceExcludingTaxes 187: Line Small Discount positive", new TaxesTestData187() }, //
+        { "188", "PriceExcludingTaxes 188: Line Small Discount negative", new TaxesTestData188() }, //
+        { "189", "PriceIncludingTaxes 189: Doc Small Discount positive", new TaxesTestData189() }, //
+        { "190", "PriceIncludingTaxes 190: Doc Small Discount negative", new TaxesTestData190() }, //
+        { "191", "PriceIncludingTaxes 191: Line Small Discount positive", new TaxesTestData191() }, //
+        { "192", "PriceIncludingTaxes 192: Line Small Discount negative", new TaxesTestData192() }, //
+        { "193", "PriceExcludingTaxes 193: Doc Big Discount positive", new TaxesTestData193() }, //
+        { "194", "PriceExcludingTaxes 194: Doc Big Discount negative", new TaxesTestData194() }, //
+        { "195", "PriceExcludingTaxes 195: Line Big Discount positive", new TaxesTestData195() }, //
+        { "196", "PriceExcludingTaxes 196: Line Big Discount negative", new TaxesTestData196() }, //
+        { "197", "PriceIncludingTaxes 197: Doc Big Discount positive", new TaxesTestData197() }, //
+        { "198", "PriceIncludingTaxes 198: Doc Big Discount negative", new TaxesTestData198() }, //
+        { "199", "PriceIncludingTaxes 199: Line Big Discount positive", new TaxesTestData199() }, //
+        { "200", "PriceIncludingTaxes 200: Line Big Discount negative", new TaxesTestData200() }, //
     });
   }
 
@@ -527,39 +545,55 @@ public class TaxesTest extends OBBaseTest {
             PRICEEXCLUDINGTAXES_PRICELIST_PURCHASE));
       }
     }
-
     OBDal.getInstance().save(testOrder);
 
     OrderLine orderLine = order.getOrderLineList().get(0);
+    OrderDiscount orderDiscount = order.getOrderDiscountList().get(0);
     for (int i = 0; i < linesData.length; i++) {
-      OrderLine testOrderLine = (OrderLine) DalUtil.copy(orderLine, false);
       Product product = OBDal.getInstance().get(Product.class, linesData[i].getProductId());
-      testOrderLine.setLineNo((i + 1) * 10L);
-      testOrderLine.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
-          isSales ? BPartnerDataConstants.CUSTOMER_A : BPartnerDataConstants.VENDOR_A));
-      testOrderLine.setProduct(product);
-      testOrderLine.setUOM(product.getUOM());
-      testOrderLine.setOrderedQuantity(linesData[i].getQuantity());
 
-      if (isPriceIncludingTaxes) {
-        testOrderLine.setGrossUnitPrice(linesData[i].getPrice());
-        testOrderLine.setGrossListPrice(linesData[i].getPrice());
-        testOrderLine.setBaseGrossUnitPrice(linesData[i].getPrice());
-      } else {
-        testOrderLine.setUnitPrice(linesData[i].getPrice());
-        testOrderLine.setListPrice(linesData[i].getPrice());
-        testOrderLine.setStandardPrice(linesData[i].getPrice());
+      if (product.getPricingDiscountList().isEmpty()) {
+        OrderLine testOrderLine = (OrderLine) DalUtil.copy(orderLine, false);
+        testOrderLine.setLineNo((i + 1) * 10L);
+        testOrderLine.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
+            isSales ? BPartnerDataConstants.CUSTOMER_A : BPartnerDataConstants.VENDOR_A));
+        testOrderLine.setProduct(product);
+        testOrderLine.setUOM(product.getUOM());
+        testOrderLine.setOrderedQuantity(linesData[i].getQuantity());
+
+        if (isPriceIncludingTaxes) {
+          testOrderLine.setGrossUnitPrice(linesData[i].getPrice());
+          testOrderLine.setGrossListPrice(linesData[i].getPrice());
+          testOrderLine.setBaseGrossUnitPrice(linesData[i].getPrice());
+        } else {
+          testOrderLine.setUnitPrice(linesData[i].getPrice());
+          testOrderLine.setListPrice(linesData[i].getPrice());
+          testOrderLine.setStandardPrice(linesData[i].getPrice());
+        }
+        testOrderLine.setTax(OBDal.getInstance().get(TaxRate.class, linesData[i].getTaxid()));
+        testOrderLine.setLineGrossAmount(linesData[i].getQuantity().multiply(
+            linesData[i].getPrice()));
+        testOrderLine
+            .setLineNetAmount(linesData[i].getQuantity().multiply(linesData[i].getPrice()));
+
+        testOrderLine.setSalesOrder(testOrder);
+        testOrder.getOrderLineList().add(testOrderLine);
+        OBDal.getInstance().save(testOrderLine);
+        OBDal.getInstance().flush();
+        OBDal.getInstance().refresh(testOrderLine);
       }
-      testOrderLine.setTax(OBDal.getInstance().get(TaxRate.class, linesData[i].getTaxid()));
-      testOrderLine
-          .setLineGrossAmount(linesData[i].getQuantity().multiply(linesData[i].getPrice()));
-      testOrderLine.setLineNetAmount(linesData[i].getQuantity().multiply(linesData[i].getPrice()));
 
-      testOrderLine.setSalesOrder(testOrder);
-      testOrder.getOrderLineList().add(testOrderLine);
-      OBDal.getInstance().save(testOrderLine);
-      OBDal.getInstance().flush();
-      OBDal.getInstance().refresh(testOrderLine);
+      else {
+        OrderDiscount testOrderDiscount = (OrderDiscount) DalUtil.copy(orderDiscount, false);
+        testOrderDiscount.setDiscount(product.getPricingDiscountList().get(0));
+        orderDiscount.setLineNo((i + 1) * 10L);
+
+        testOrderDiscount.setSalesOrder(testOrder);
+        testOrder.getOrderDiscountList().add(testOrderDiscount);
+        OBDal.getInstance().save(testOrderDiscount);
+        OBDal.getInstance().flush();
+        OBDal.getInstance().refresh(testOrderDiscount);
+      }
     }
 
     OBDal.getInstance().save(testOrder);
@@ -605,39 +639,56 @@ public class TaxesTest extends OBBaseTest {
             PRICEEXCLUDINGTAXES_PRICELIST_PURCHASE));
       }
     }
-
     OBDal.getInstance().save(testInvoice);
 
     InvoiceLine invoiceLine = invoice.getInvoiceLineList().get(0);
+    InvoiceDiscount invoiceDiscount = invoice.getInvoiceDiscountList().get(0);
     for (int i = 0; i < linesData.length; i++) {
-      InvoiceLine testInvoiceLine = (InvoiceLine) DalUtil.copy(invoiceLine, false);
       Product product = OBDal.getInstance().get(Product.class, linesData[i].getProductId());
-      testInvoiceLine.setLineNo((i + 1) * 10L);
-      testInvoiceLine.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
-          isSales ? BPartnerDataConstants.CUSTOMER_A : BPartnerDataConstants.VENDOR_A));
-      testInvoiceLine.setProduct(product);
-      testInvoiceLine.setUOM(product.getUOM());
-      testInvoiceLine.setInvoicedQuantity(linesData[i].getQuantity());
-      if (isPriceIncludingTaxes) {
-        testInvoiceLine.setGrossUnitPrice(linesData[i].getPrice());
-        testInvoiceLine.setGrossListPrice(linesData[i].getPrice());
-        testInvoiceLine.setBaseGrossUnitPrice(linesData[i].getPrice());
-      } else {
-        testInvoiceLine.setUnitPrice(linesData[i].getPrice());
-        testInvoiceLine.setListPrice(linesData[i].getPrice());
-        testInvoiceLine.setStandardPrice(linesData[i].getPrice());
+
+      if (product.getPricingDiscountList().isEmpty()) {
+        InvoiceLine testInvoiceLine = (InvoiceLine) DalUtil.copy(invoiceLine, false);
+        testInvoiceLine.setLineNo((i + 1) * 10L);
+        testInvoiceLine.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
+            isSales ? BPartnerDataConstants.CUSTOMER_A : BPartnerDataConstants.VENDOR_A));
+        testInvoiceLine.setProduct(product);
+        testInvoiceLine.setUOM(product.getUOM());
+        testInvoiceLine.setInvoicedQuantity(linesData[i].getQuantity());
+        if (isPriceIncludingTaxes) {
+          testInvoiceLine.setGrossUnitPrice(linesData[i].getPrice());
+          testInvoiceLine.setGrossListPrice(linesData[i].getPrice());
+          testInvoiceLine.setBaseGrossUnitPrice(linesData[i].getPrice());
+        } else {
+          testInvoiceLine.setUnitPrice(linesData[i].getPrice());
+          testInvoiceLine.setListPrice(linesData[i].getPrice());
+          testInvoiceLine.setStandardPrice(linesData[i].getPrice());
+        }
+        testInvoiceLine.setTax(OBDal.getInstance().get(TaxRate.class, linesData[i].getTaxid()));
+        testInvoiceLine
+            .setGrossAmount(linesData[i].getQuantity().multiply(linesData[i].getPrice()));
+        testInvoiceLine.setLineNetAmount(linesData[i].getQuantity().multiply(
+            linesData[i].getPrice()));
+
+        testInvoiceLine.setInvoice(testInvoice);
+        testInvoice.getInvoiceLineList().add(testInvoiceLine);
+
+        OBDal.getInstance().save(testInvoiceLine);
+        OBDal.getInstance().flush();
+        OBDal.getInstance().refresh(testInvoiceLine);
       }
-      testInvoiceLine.setTax(OBDal.getInstance().get(TaxRate.class, linesData[i].getTaxid()));
-      testInvoiceLine.setGrossAmount(linesData[i].getQuantity().multiply(linesData[i].getPrice()));
-      testInvoiceLine
-          .setLineNetAmount(linesData[i].getQuantity().multiply(linesData[i].getPrice()));
 
-      testInvoiceLine.setInvoice(testInvoice);
-      testInvoice.getInvoiceLineList().add(testInvoiceLine);
+      else {
+        InvoiceDiscount testInvoiceDiscount = (InvoiceDiscount) DalUtil
+            .copy(invoiceDiscount, false);
+        testInvoiceDiscount.setDiscount(product.getPricingDiscountList().get(0));
+        invoiceDiscount.setLineNo((i + 1) * 10L);
 
-      OBDal.getInstance().save(testInvoiceLine);
-      OBDal.getInstance().flush();
-      OBDal.getInstance().refresh(testInvoiceLine);
+        testInvoiceDiscount.setInvoice(testInvoice);
+        testInvoice.getInvoiceDiscountList().add(testInvoiceDiscount);
+        OBDal.getInstance().save(testInvoiceDiscount);
+        OBDal.getInstance().flush();
+        OBDal.getInstance().refresh(testInvoiceDiscount);
+      }
     }
 
     OBDal.getInstance().save(testInvoice);
