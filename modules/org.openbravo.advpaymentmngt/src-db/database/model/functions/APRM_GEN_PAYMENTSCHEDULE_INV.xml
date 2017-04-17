@@ -489,6 +489,8 @@ BEGIN
                 WHERE fin_payment_scheduledetail_id = v_scheduledetailid;
 
                 v_scheduledetailamount := v_scheduledetailamount - v_differenceamount;
+              ELSE
+                v_differenceamount := 0;
               END IF;
 
               IF (v_differenceamount = 0 OR (v_count <> 0 AND NOT v_psdbreakbypartialpayment)) THEN
