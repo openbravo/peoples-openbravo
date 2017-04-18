@@ -110,6 +110,13 @@ enyo.kind({
     var me = this,
         inSenderOriginal = inSender,
         inEventOriginal = inEvent;
+
+    //Validate anonymous customer Address edit allowed
+    if (OB.MobileApp.model.get('terminal').businessPartner === this.customer.id && OB.MobileApp.model.hasPermission('OBPOS_NotAllowEditAnonymousCustomer', true)) {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotEditAnonymousCustAddr'));
+      return;
+    }
+
     OB.UTIL.HookManager.executeHooks('OBPOS_PreCustomerAddrSave', {
       inSender: inSenderOriginal,
       inEvent: inEventOriginal,
