@@ -4272,7 +4272,10 @@
                 receipt.set('skipCalculateReceipt', true);
                 _.each(receipt.get('lines').models, function (line) {
                   line.set('obposQtyDeleted', line.get('qty'));
-                  line.set('qty', 0);
+                  line.set('obposIsDeleted', true);
+                  line.set('qty', 0, {
+                    silent: true
+                  });
                 });
                 receipt.set('skipCalculateReceipt', false);
                 // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function

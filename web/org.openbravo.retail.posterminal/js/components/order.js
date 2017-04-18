@@ -990,7 +990,7 @@ enyo.kind({
                   deferredLines = l.get('relatedLines').filter(function getDeferredServices(relatedLine) {
                     return relatedLine.deferred === true;
                   });
-                  if (!deferredLines.length) {
+                  if (!deferredLines.length && !l.get('obposIsDeleted')) {
                     me.order.get('lines').remove(l);
                   }
                 }
