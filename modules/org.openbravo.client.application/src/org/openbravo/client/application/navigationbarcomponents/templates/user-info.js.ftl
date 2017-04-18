@@ -17,6 +17,8 @@
  ************************************************************************
 */
 
+/* jslint */
+
 OB.User.userInfo = {
   language: {
     value: '${data.contextLanguageId}',
@@ -79,4 +81,4 @@ OB.User.userInfo = {
       </#list>
     ]
   }
-}
+};
