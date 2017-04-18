@@ -53,12 +53,23 @@ public class ApplicationComponent extends BaseTemplateComponent {
 
   private FormatDefinition formatDefinition = null;
 
+  private ActivationKey activationKey;
+
+  private Map<String, String> imageProperties;
+
   private FormatDefinition getFormatDefinition() {
     if (formatDefinition == null) {
       formatDefinition = UIDefinitionController.getInstance().getFormatDefinition("qty",
           UIDefinitionController.INPUTFORMAT_QUALIFIER);
     }
     return formatDefinition;
+  }
+
+  private ActivationKey getActivationKey() {
+    if (activationKey == null) {
+      activationKey = ActivationKey.getInstance();
+    }
+    return activationKey;
   }
 
   public String getDefaultGroupingSymbol() {
@@ -175,15 +186,15 @@ public class ApplicationComponent extends BaseTemplateComponent {
   }
 
   public String getLicenseType() {
-    return ActivationKey.getInstance().getLicenseClass().getCode();
+    return getActivationKey().getLicenseClass().getCode();
   }
 
   public String getTrialStringValue() {
-    return Boolean.toString(ActivationKey.getInstance().isTrial());
+    return Boolean.toString(getActivationKey().isTrial());
   }
 
   public String getGoldenStringValue() {
-    return Boolean.toString(ActivationKey.getInstance().isGolden());
+    return Boolean.toString(getActivationKey().isGolden());
   }
 
   public String getActiveInstanceStringValue() {
@@ -194,7 +205,7 @@ public class ApplicationComponent extends BaseTemplateComponent {
   }
 
   public String getVersionDescription() {
-    ActivationKey ak = ActivationKey.getInstance();
+    ActivationKey ak = getActivationKey();
     String strVersion = OBVersion.getInstance().getMajorVersion();
     strVersion += " - ";
     strVersion += Utility.getListValueName("OBPSLicenseEdition", ak.getLicenseClass().getCode(),
@@ -212,7 +223,10 @@ public class ApplicationComponent extends BaseTemplateComponent {
   }
 
   public Map<String, String> getCompanyImageLogoData() {
-    Map<String, String> imageProperties = new HashMap<>();
+    if (imageProperties != null) {
+      return imageProperties;
+    }
+    imageProperties = new HashMap<>();
     Image img = Utility.getImageLogoObject("yourcompanymenu", "");
     String imageWidth = "122";
     String imageHeight = "34";

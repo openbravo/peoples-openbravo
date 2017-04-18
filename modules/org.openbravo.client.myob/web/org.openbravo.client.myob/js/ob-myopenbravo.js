@@ -434,6 +434,9 @@ isc.OBMyOpenbravo.addProperties({
 
     OB.MyOB = this;
 
+    // show the heartbeat or registration popups (if it applies)
+    OB.Application.showHeartBeatOrRegistration();
+
     // tell each column their index number
     // is used when dragging/dropping 
     if (this.portalLayout) {
@@ -442,9 +445,6 @@ isc.OBMyOpenbravo.addProperties({
       this.portalLayout.sendEvents = true;
       this.reloadWidgets();
     }
-
-    // show the heartbeat or registration popups (if it applies)
-    OB.Application.showHeartBeatOrRegistration();
   },
 
   setRecentList: function (layout) {
