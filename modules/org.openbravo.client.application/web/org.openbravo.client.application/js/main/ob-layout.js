@@ -199,5 +199,5 @@ OB.Layout.initialize = function () {
   OB.TestRegistry.register('org.openbravo.client.application.layout', OB.Layout);
 
 
-  OB.NavBar.createMembers(OB.Application.navigationBarComponents, OB.Application.dynamicNavigationBarComponents);
+  OB.NavBar.createMembers(OB.Application.navigationBarComponents, OB.Application.dynamicNavigationBarComponents());
 };

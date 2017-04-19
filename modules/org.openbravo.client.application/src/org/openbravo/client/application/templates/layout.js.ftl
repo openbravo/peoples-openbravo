@@ -17,8 +17,10 @@
  ************************************************************************
 */
 
-OB.Application.dynamicNavigationBarComponents = [<#list data.navigationBarComponents as nbc>
-                                          ${nbc.jscode}<#if nbc_has_next>,</#if>
-                                          </#list>];
+OB.Application.dynamicNavigationBarComponents = function () {
+  return [<#list data.navigationBarComponents as nbc>
+           ${nbc.jscode}<#if nbc_has_next>,</#if>
+         </#list>];
+};
 
 
