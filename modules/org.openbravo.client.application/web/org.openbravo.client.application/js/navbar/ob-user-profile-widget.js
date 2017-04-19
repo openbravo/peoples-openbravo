@@ -70,7 +70,6 @@ isc.OBUserProfile.addProperties({
 
   initWidget: function () {
     var me = this;
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileButton', this);
     me.formData = isc.clone(OB.User.userInfo);
     // ** {{{ setPrompt }}} **
     // Shown on hover, shows some user information.
@@ -81,6 +80,10 @@ isc.OBUserProfile.addProperties({
     this.title = this.title.asHTML();
 
     this.Super('initWidget', arguments);
+  },
+
+  registerInTestRegistry: function () {
+    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileButton', this);
   },
 
   createProfileForm: function () {

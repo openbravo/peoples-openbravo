@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -141,6 +141,9 @@ isc.OBAlertIcon.addProperties({
 
     // call it to update the number of alerts directly after login
     OB.AlertManager.addListener(listener);
+  },
+
+  registerInTestRegistry: function () {
     OB.TestRegistry.register('org.openbravo.client.application.AlertButton', this);
   },
 

@@ -376,16 +376,16 @@ isc.OBQuickLaunch.addProperties({
       }]
     }), dummyLastField];
 
+    return this.Super('initWidget', arguments);
+  },
+
+  registerInTestRegistry: function () {
     // register the field in the registry
     var suggestionField = this.members[2].getField('value');
     OB.TestRegistry.register(this.recentPropertyName + '_RECENTFORM', this.members[1]);
     OB.TestRegistry.register(this.recentPropertyName + '_FORM', this.members[2]);
     OB.TestRegistry.register(this.recentPropertyName + '_BUTTON', this);
     OB.TestRegistry.register(this.recentPropertyName + '_FIELD', suggestionField);
-
-    var ret = this.Super('initWidget', arguments);
-
-    return ret;
   },
 
   getQuickMenuItems: function (menu, quickMenu) {
