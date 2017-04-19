@@ -1478,6 +1478,21 @@
         if (!line.get('hasTaxError')) {
           // Clone the line to be moved as deleted.
           var deletedline = new OrderLine(line.attributes);
+          if (!line.get('obposIsDeleted')) {
+            // Set the line as deleted
+            deletedline.set('obposIsDeleted', true);
+            deletedline.set('obposQtyDeleted', line.get('qty'));
+            // set quantity as 0
+            deletedline.set('qty', 0);
+            // Set prices as 0
+            deletedline.set('gross', 0);
+            // Calulate Taxes
+            if (this.get('priceIncludesTax')) {
+              OB.DATA.LineTaxesIncPrice(this, deletedline);
+            } else {
+              OB.DATA.LineTaxesExcPrice(this, deletedline);
+            }
+          }
           // Sets the tax if it has been deleted
           deletedline.set('tax', deletedline.get('tax') ? deletedline.get('tax') : deletedline.get('taxUndo'));
           // Move to deleted lines

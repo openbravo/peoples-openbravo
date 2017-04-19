@@ -1019,4 +1019,12 @@
   OB.DATA.OrderFindTaxes = function (receipt, line, taxCategory) {
     return findTaxesCollection(receipt, line, taxCategory);
   };
+
+  OB.DATA.LineTaxesIncPrice = function (receipt, line) {
+    return calcLineTaxesIncPrice(receipt, line);
+  };
+
+  OB.DATA.LineTaxesExcPrice = function (receipt, line) {
+    return calcLineTaxesExcPrice(receipt, line);
+  };
 }());
