@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,9 +19,11 @@
 package org.openbravo.common.actionhandler;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -96,9 +98,8 @@ public class ReservedGoodMovementActionHandler extends BaseProcessActionHandler 
           gmHeader = OBProvider.getInstance().get(InternalMovement.class);
           gmHeader.setOrganization(resStock.getOrganization());
           gmHeader.setClient(resStock.getClient());
-          gmHeader.setMovementDate(new Date());
-          gmHeader.setName(resStock.getReservation().getProduct().getName()); // + " "
-          // + gmHeader.getMovementDate().get);
+          gmHeader.setMovementDate(DateUtils.truncate(new Date(), Calendar.DATE));
+          gmHeader.setName(resStock.getReservation().getProduct().getName());
           OBDal.getInstance().save(gmHeader);
           OBDal.getInstance().flush();
         }
