@@ -95,11 +95,15 @@ OB.Layout.initialize = function () {
       this.Super('addMembers', [newMembers]);
     },
 
-    createMembers: function (allMembers, dynamicMembers) {
+    createMembers: function (allMembers) {
       var members = [],
+          dynamicMembers = [],
           i, j = 0;
       if (!allMembers) {
         return;
+      }
+      if (OB.Application.dynamicNavigationBarComponents) {
+        dynamicMembers = OB.Application.dynamicNavigationBarComponents();
       }
       for (i = 0; i < allMembers.length; i++) {
         if (!allMembers[i].className) {
@@ -199,5 +203,5 @@ OB.Layout.initialize = function () {
   OB.TestRegistry.register('org.openbravo.client.application.layout', OB.Layout);
 
 
-  OB.NavBar.createMembers(OB.Application.navigationBarComponents, OB.Application.dynamicNavigationBarComponents());
+  OB.NavBar.createMembers(OB.Application.navigationBarComponents);
 };
