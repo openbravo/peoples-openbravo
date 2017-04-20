@@ -83,7 +83,8 @@ public class CharacteristicValue extends ProcessHQLQuery {
           + "and pcv.product.id= assort.product.id " + "and assort.obretcoProductlist.id = '"
           + productList.getId() + "')) or cv.summaryLevel = true) "
           + "and $filtersCriteria and $hqlCriteria and cv.$naturalOrgCriteria "
-          + "and cv.$readableSimpleClientCriteria and (cv.$incrementalUpdateCriteria) "
+          + "and cv.$readableSimpleClientCriteria "
+          + "and (cv.$incrementalUpdateCriteria or node.$incrementalUpdateCriteria) "
           + "order by cv.name, cv.id");
     } else {
       hqlQueries.add("select" + regularProductsChValueHQLProperties.getHqlSelect()
