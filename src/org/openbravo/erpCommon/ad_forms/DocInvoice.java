@@ -873,6 +873,7 @@ public class DocInvoice extends AcctServer {
           for (int j = 0; data != null && j < data.length; j++) {
             DocLine docLine1 = new DocLine(DocumentType, Record_ID, "");
             docLine1.m_C_Tax_ID = data[j].cTaxId;
+            docLine1.m_TrxLine_ID = data[j].cInvoicelineId;
             docLine1.m_C_BPartner_ID = data[j].cBpartnerId;
             docLine1.m_M_Product_ID = data[j].mProductId;
             docLine1.m_C_Costcenter_ID = data[j].cCostcenterId;
