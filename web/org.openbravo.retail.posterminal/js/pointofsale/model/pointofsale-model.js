@@ -141,13 +141,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             return e;
           }
         }));
-        //The order object is stored in the json property of the row fetched from the database
-        _.each(checkedMultiOrders, function (iter) {
-          _.each(iter.get('payments').models, function (p) {
-            iter.removePayment(p);
-          }, this);
-          iter.save();
-        });
 
         multiOrderList.reset(checkedMultiOrders);
 

@@ -3257,7 +3257,13 @@
         receipt: this,
         callback: callback
       }, function (args) {
-        var executeFinalCallback = function () {
+        var executeFinalCallback = function (saveChanges) {
+            if (saveChanges) {
+              order.adjustPayment();
+              order.trigger('displayTotal');
+              order.save();
+              order.trigger('saveCurrent');
+            }
             if (callback instanceof Function) {
               callback(order);
             }
@@ -3268,7 +3274,7 @@
             var reverseCallback = payment.get('reverseCallback');
             reverseCallback();
           }
-          executeFinalCallback();
+          executeFinalCallback(false);
           return;
         }
         if (!payment.get('paymentData') && !payment.get('reversedPaymentId')) {
@@ -3281,9 +3287,7 @@
               if (p.get('rate') && p.get('rate') !== '1') {
                 p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
               }
-              order.adjustPayment();
-              order.trigger('displayTotal');
-              executeFinalCallback();
+              executeFinalCallback(true);
               return;
             }
           }
@@ -3296,9 +3300,7 @@
                 p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
               }
               payment.set('date', new Date());
-              order.adjustPayment();
-              order.trigger('displayTotal');
-              executeFinalCallback();
+              executeFinalCallback(true);
               return;
             }
           }
@@ -3322,10 +3324,7 @@
         if (payment.get('reversedPayment')) {
           payment.get('reversedPayment').set('isReversed', true);
         }
-        order.adjustPayment();
-        order.trigger('displayTotal');
-        order.save();
-        executeFinalCallback();
+        executeFinalCallback(true);
         return;
       }); // call with callback, no args
     },

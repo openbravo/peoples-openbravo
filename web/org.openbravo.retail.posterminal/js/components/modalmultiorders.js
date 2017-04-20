@@ -368,10 +368,7 @@ enyo.kind({
     me.owner.owner.model.deleteMultiOrderList();
     _.each(checkedMultiOrders, function (iter) {
       if (_.indexOf(me.owner.owner.model.get('orderList').models, iter) !== -1) {
-        //Just created tickets can have payments. Remove them in order to share correctly payments between all orders
-        _.each(iter.get('payments').models, function (p) {
-          iter.removePayment(p);
-        }, this);
+        iter.set('checked', true);
         iter.save();
         selectedMultiOrders.push(iter);
       } else {
