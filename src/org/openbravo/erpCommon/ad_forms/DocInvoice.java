@@ -1140,7 +1140,7 @@ public class DocInvoice extends AcctServer {
     return fact;
   }// createFact
 
-  String createAccDefRevenueFact(Fact fact, DocLine_Invoice line, Account prodRevAccount,
+  public String createAccDefRevenueFact(Fact fact, DocLine_Invoice line, Account prodRevAccount,
       Account prodDefRevAccount, String lineAmount, String strCurrencyId, ConnectionProvider conn) {
     BigDecimal amount = new BigDecimal(lineAmount);
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
