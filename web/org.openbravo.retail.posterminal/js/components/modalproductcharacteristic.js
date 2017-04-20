@@ -234,6 +234,7 @@ enyo.kind({
         }
       });
       sql = sql + sqlCriteriaFilter;
+      sql = sql + 'order by UPPER(name) asc';
       OB.Dal.query(OB.Model.CharacteristicValue, sql, params, function (dataValues, me) {
         resetValueList(dataValues);
       }, function (tx, error) {
