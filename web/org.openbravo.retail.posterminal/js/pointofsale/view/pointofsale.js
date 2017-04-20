@@ -1279,10 +1279,15 @@ enyo.kind({
     originator.addClass('btn-icon-clearPayment');
   },
   removeMultiOrders: function (inSender, inEvent) {
-    var me = this;
-    var originator = inEvent.originator;
+    var me = this,
+        originator = inEvent.originator;
+    if (me.model.get('multiOrders').get('payments').length > 0) {
+      OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_RemoveReceiptWithPayment'));
+      me.cancelRemoveMultiOrders(originator);
+      return true;
+    }
     // If there are more than 1 order, do as usual
-    if (me.model.get('multiOrders').get('multiOrdersList').length > 1) {
+    if (me.model.get('multiOrders').get('multiOrdersList').length > 1 && inEvent.order) {
       me.model.get('multiOrders').get('multiOrdersList').remove(inEvent.order);
       if (inEvent && inEvent.order && inEvent.order.get('loadedFromServer')) {
         me.model.get('orderList').current = inEvent.order;
@@ -1290,36 +1295,10 @@ enyo.kind({
         me.model.get('orderList').deleteCurrentFromDatabase(inEvent.order);
       }
       return true;
-    } else if (me.model.get('multiOrders').get('multiOrdersList').length === 1) {
-      if (OB.UTIL.isNullOrUndefined(me.model.get('multiOrders').get('payments')) || me.model.get('multiOrders').get('payments').length < 1) {
-        // Delete and exit the multiorder
-        me.removeOrderAndExitMultiOrder(me.model);
-        return true;
-      } else {
-        //Show confirmation popup indicating all payments will be deleted
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_deletepayments_title'), OB.I18N.getLabel('OBPOS_deletepayments_body'), [{
-          label: OB.I18N.getLabel('OBMOBC_LblOk'),
-          action: function () {
-            // Delete payments and exit the multiorder
-            me.removeOrderAndExitMultiOrder(me.model);
-            return false;
-          }
-        }, {
-          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-          action: function (inEvent) {
-            // Return to the original state of the multiorder
-            me.cancelRemoveMultiOrders(originator);
-            return false;
-          }
-        }], {
-          onHideFunction: function (popup) {
-            me.cancelRemoveMultiOrders(originator);
-            return false;
-          }
-        });
-      }
     } else {
-      me.cancelRemoveMultiOrders(originator);
+      // Delete and exit the multiorder
+      me.removeOrderAndExitMultiOrder(me.model);
+      return true;
     }
   },
   doShowLeftHeader: function (inSender, inEvent) {
