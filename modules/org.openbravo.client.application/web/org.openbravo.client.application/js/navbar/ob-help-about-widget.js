@@ -42,11 +42,8 @@ isc.OBHelpAbout.addProperties({
   showTitle: true,
 
   initWidget: function () {
-    this.Super('initWidget', arguments);
-  },
-
-  registerInTestRegistry: function () {
     OB.TestRegistry.register('org.openbravo.client.application.HelpAboutWidget', this);
+    this.Super('initWidget', arguments);
   },
 
   doShow: function () {

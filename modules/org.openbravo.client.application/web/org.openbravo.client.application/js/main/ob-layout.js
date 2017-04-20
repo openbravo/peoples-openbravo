@@ -77,9 +77,6 @@ OB.Layout.initialize = function () {
         if (OB.User.isPortal && !members[i].showInPortal) {
           continue;
         }
-        if (members[i].registerInTestRegistry) {
-          members[i].registerInTestRegistry();
-        }
         var newMember = isc.HLayout.create({
           layoutLeftMargin: 0,
           layoutRightMargin: 0,

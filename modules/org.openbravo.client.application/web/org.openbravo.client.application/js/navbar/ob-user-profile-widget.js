@@ -80,9 +80,6 @@ isc.OBUserProfile.addProperties({
     this.title = this.title.asHTML();
 
     this.Super('initWidget', arguments);
-  },
-
-  registerInTestRegistry: function () {
     OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileButton', this);
   },
 

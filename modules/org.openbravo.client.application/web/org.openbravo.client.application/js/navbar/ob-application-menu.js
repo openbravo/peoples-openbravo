@@ -244,9 +244,7 @@ isc.OBApplicationMenuButton.addProperties({
     // tell the menu who we are
     this.menu.menuButton = this;
     this.Super('initWidget', arguments);
-  },
 
-  registerInTestRegistry: function () {
     OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.ApplicationMenuButton', this);
     OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.ApplicationMenu', this.menu);
   },
