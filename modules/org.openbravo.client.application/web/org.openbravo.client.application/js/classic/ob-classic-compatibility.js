@@ -437,6 +437,7 @@
       postOpen: function (cPopup, postParams) {
         if (!cPopup.isFramesetDraw) {
           cPopup.getIframeHtmlObj().contentWindow.document.write(cPopup.htmlCode);
+          cPopup.getIframeHtmlObj().contentWindow.document.close();
           cPopup.isFramesetDraw = true;
         }
         if (!cPopup.getIframeHtmlObj().contentWindow.frames[0].document.body) {

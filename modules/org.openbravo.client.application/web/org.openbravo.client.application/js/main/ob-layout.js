@@ -199,6 +199,8 @@ OB.Layout.initialize = function () {
   OB.TestRegistry.register('org.openbravo.client.application.mainview.tabset', OB.MainView.TabSet);
   OB.TestRegistry.register('org.openbravo.client.application.layout', OB.Layout);
 
-
   OB.NavBar.createMembers(OB.Application.navigationBarComponents);
+
+  // show the heartbeat or registration popups (if it applies)
+  OB.Application.showHeartBeatOrRegistration();
 };
