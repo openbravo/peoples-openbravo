@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.client.kernel;
 import java.io.File;
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -43,6 +44,7 @@ import org.openbravo.service.web.WebServiceUtil;
  * @author mtaal
  * @author iperdomo
  */
+@ApplicationScoped
 public class StaticResourceComponent extends BaseComponent {
   private static final Logger log = Logger.getLogger(StaticResourceComponent.class);
 
@@ -54,22 +56,29 @@ public class StaticResourceComponent extends BaseComponent {
 
   private Boolean isInDevelopment;
 
+  private String staticResourceFilePath;
+
   @Override
   public boolean isInDevelopment() {
-    if (isInDevelopment == null) {
-      isInDevelopment = false;
-      for (ComponentProvider provider : componentProviders) {
-        final List<ComponentResource> resources = provider.getGlobalComponentResources();
-        if (resources == null || resources.size() == 0) {
-          continue;
-        }
-        if (provider.getModule().isInDevelopment()) {
-          isInDevelopment = true;
-          return isInDevelopment;
+    try {
+      OBContext.setAdminMode(true);
+      if (isInDevelopment == null) {
+        isInDevelopment = false;
+        for (ComponentProvider provider : componentProviders) {
+          final List<ComponentResource> resources = provider.getGlobalComponentResources();
+          if (resources == null || resources.size() == 0) {
+            continue;
+          }
+          if (provider.getModule().isInDevelopment()) {
+            isInDevelopment = true;
+            return isInDevelopment;
+          }
         }
       }
+      return isInDevelopment;
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    return isInDevelopment;
   }
 
   /**
@@ -109,6 +118,9 @@ public class StaticResourceComponent extends BaseComponent {
       StringBuilder result = new StringBuilder();
       final String scriptPath = getContextUrl() + GEN_TARGET_LOCATION.substring(1) + "/"
           + getStaticResourceFileName() + ".js";
+      if (staticResourceFilePath == null) {
+        staticResourceFilePath = scriptPath;
+      }
 
       if (isClassicMode()) {
         result.append("document.write(\"<LINK rel='stylesheet' type='text/css' href='"
@@ -300,5 +312,9 @@ public class StaticResourceComponent extends BaseComponent {
       }
     }
     return md5;
+  }
+
+  public String getStaticResourceFilePath() {
+    return staticResourceFilePath;
   }
 }
