@@ -11,7 +11,7 @@ enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalProductAttributeVerifiedReturns',
   i18nHeader: 'OBPOS_ModalProductAttributeVerifiedReturnsTitle',
-  style: 'width: 900px;',
+  style: 'width: 700px;',
   autoDismiss: false,
   bodyContent: {
     name: 'verifiedReturns'
@@ -38,40 +38,34 @@ enyo.kind({
       }
     }]
   },
-  validAttribute: function (attribute) {
-    var valueAttribute = attribute,
-        pattern = "/^L|[0-9a-zA-Z]*#*[0-9_a-zA-Z]*";
-    return (valueAttribute.match(pattern)) ? true : false;
-  },
   clearAction: function () {
     var me = this,
-        i, orderline = me.owner.model.get('order').get('lines');
-    for (i = 0; i < orderline.length; i++) {
+        i, line = me.args.line;
+    for (i = 0; i < line.length; i++) {
       me.$.bodyContent.$.verifiedReturns.$['valueAttribute' + i].setValue(null);
     }
-    return true;
+    return;
   },
   cancelAction: function () {
-    this.deleteOrderline(this.args.line);
     this.hide();
-    return true;
+    return;
   },
   validateAction: function () {
     this.validateAttributeWithOrderlines();
     this.hide();
-    return true;
+    return;
   },
   validateAttributeWithOrderlines: function (inSender, inEvent) {
     var me = this,
         line = me.args.line,
         notValidAttribute = false,
-        orderlineAttr, orderlineProduct, currentlineProduct, currentlineAttribute, i, orderline = me.owner.model.get('order').get('lines');
-    for (i = 0; i < orderline.length; i++) {
-      orderlineProduct = orderline.models[i].attributes.product.id;
-      orderlineAttr = orderline.models[i].getAttributeValue();
-      currentlineProduct = line[i].id;
-      currentlineAttribute = me.$.bodyContent.$.verifiedReturns.$['valueAttribute' + i].getValue();
-      if ((orderlineAttr !== currentlineAttribute) && (orderlineProduct === currentlineProduct)) {
+        orderlineAttr, orderlineProduct, inputlineProduct, inputlineAttribute, i;
+    for (i = 0; i < line.length; i++) {
+      orderlineProduct = line[i].id;
+      orderlineAttr = line[i].attributeValue;
+      inputlineProduct = me.$.bodyContent.$.verifiedReturns.$['productId' + i].getContent();
+      inputlineAttribute = me.$.bodyContent.$.verifiedReturns.$['valueAttribute' + i].getValue();
+      if ((orderlineAttr !== inputlineAttribute) && (orderlineProduct === inputlineProduct)) {
         notValidAttribute = true;
         break;
       }
@@ -80,10 +74,11 @@ enyo.kind({
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotValidAttribute'), OB.I18N.getLabel('OBPOS_AttributeNotInOrder'), [{
         label: OB.I18N.getLabel('OBMOBC_LblOk'),
         action: function () {
-          me.args.args.cancelOperation = true;
-          OB.UTIL.HookManager.callbackExecutor(me.args.args, me.args.callbacks);
+          return;
         }
-      }]);
+      }], {
+        autoDismiss: false
+      });
     } else {
       me.args.initialCallback();
     }
@@ -92,39 +87,39 @@ enyo.kind({
   executeOnShow: function () {
     var me = this,
         line = me.args.line,
-        i, noOfLines = line.length;
-    this.$.bodyContent.$.verifiedReturns.destroyComponents();
-    this.$.bodyContent.$.verifiedReturns.createComponent({
+        i;
+    me.$.bodyContent.$.verifiedReturns.destroyComponents();
+    me.$.bodyContent.$.verifiedReturns.createComponent({
       initComponents: function () {
         this.setContent(OB.I18N.getLabel('OBPOS_ProductAttributeValueVerifiedReturnsDesc'));
       }
     });
-    for (i = 0; i < noOfLines; i++) {
-      this.$.bodyContent.$.verifiedReturns.createComponent({
+    for (i = 0; i < line.length; i++) {
+      me.$.bodyContent.$.verifiedReturns.createComponent({
         components: [{
+          name: 'productName' + i,
+          type: 'text',
+          classes: 'span4',
+          style: 'line-height: 35px; font-size: 17px;text-align: left;width: 275px; padding-top: 10px;padding-left: 5px;font-weight: bold'
+        }, {
           kind: 'enyo.Input',
           type: 'text',
-          attributes: {
-            maxlength: 70
-          },
-          style: 'text-align: center;width: 400px; height: 40px;',
+          maxlength: '70',
+          classes: 'span4',
+          style: 'line-height: 35px; font-size: 17px;text-align: center;width: 400px; padding-top: 10px;',
           name: 'valueAttribute' + i,
-          selectOnFocus: true,
-          isFirstFocus: true,
-          value: ''
+          //selectOnFocus: true//,
+          isFirstFocus: true //,
         }, {
-          name: 'productName' + i,
-          style: 'text-align: left;width: 400px; height: 40px;'
+          name: 'productId' + i,
+          type: 'hidden'
         }]
       });
-      this.$.bodyContent.$.verifiedReturns.$['productName' + i].setContent(line[i].name);
+      me.$.bodyContent.$.verifiedReturns.$['productId' + i].setContent(line[i].id);
+      me.$.bodyContent.$.verifiedReturns.$['productName' + i].setContent(line[i].name);
+      me.$.bodyContent.$.verifiedReturns.$['productId' + i].hide();
     }
-    this.$.bodyContent.$.verifiedReturns.render();
-  },
-
-  deleteOrderline: function (currentLine) {
-    this.owner.model.get('order').get('lines').remove(currentLine);
-    this.owner.model.get('order').save();
+    me.$.bodyContent.$.verifiedReturns.render();
   }
 });
 
