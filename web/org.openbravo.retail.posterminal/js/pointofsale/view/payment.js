@@ -1471,7 +1471,10 @@ enyo.kind({
     receiptHasPrepaymentAmount = receiptHasPrepaymentAmount && prepaymentLimitAmount !== 0;
     if (receiptHasPrepaymentAmount && pendingPrepayment > 0) {
       OB.UTIL.Approval.requestApproval(
-      me.model, 'OBPOS_approval.prepaymentUnderLimit', function (approved, supervisor, approvalType) {
+      me.model, [{
+        approval: 'OBPOS_approval.prepaymentUnderLimit',
+        message: 'OBPOS_approval.prepaymentUnderLimit'
+      }], function (approved, supervisor, approvalType) {
         if (approved) {
           continueExecution();
         }
