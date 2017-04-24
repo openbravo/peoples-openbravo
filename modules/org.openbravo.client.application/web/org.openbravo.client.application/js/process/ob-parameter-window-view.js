@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2016 Openbravo SLU
+ * All portions are Copyright (C) 2012-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -316,7 +316,7 @@ isc.OBParameterWindowView.addProperties({
 
   doProcess: function (btnValue) {
     var i, tmp, view = this,
-        grid, allProperties, selection, len, allRows, params, tab, actionHandlerCall, clientSideValidationFail, selectedRecords, recordIds;
+        grid, allProperties, selection, len, allRows, params, tab, actionHandlerCall, clientSideValidationFail, selectedRecords, recordIds, additionalInfo;
 
     if (this.button && this.button.multiRecord) {
       selectedRecords = this.buttonOwnerView.viewGrid.getSelectedRecords();
@@ -363,7 +363,9 @@ isc.OBParameterWindowView.addProperties({
       clientSideValidationFail = function () {
         view.setAllButtonEnabled(view.allRequiredParametersSet());
       };
-      this.clientSideValidation(this, actionHandlerCall, clientSideValidationFail);
+      additionalInfo = {};
+      additionalInfo.buttonValue = allProperties._buttonValue;
+      this.clientSideValidation(this, actionHandlerCall, clientSideValidationFail, additionalInfo);
     } else {
       actionHandlerCall();
     }
