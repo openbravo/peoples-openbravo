@@ -106,6 +106,7 @@ enyo.kind({
       }
     } else {
       this.deleteOrderline(currentline);
+      this.showConfirm(OB.I18N.getLabel('OBPOS_NotValidAttribute'), '');
       finalCallbackStatus = false;
       this.args.initialCallback(receipt, currentlineProduct, currentline, currentlineqty, null, newline, me.args.finalCallback(finalCallbackStatus, currentline));
     }
@@ -160,7 +161,9 @@ enyo.kind({
       action: function () {
         return false;
       }
-    }]);
+    }], {
+      autoDismiss: false
+    });
   }
 });
 OB.UI.WindowView.registerPopup('OB.OBPOSPointOfSale.UI.PointOfSale', {
