@@ -285,12 +285,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
     return true;
   }
 
-  // The check of duplicates ids is done in this class
-  @Override
-  protected boolean additionalCheckForDuplicates(JSONObject record) {
-    return false;
-  }
-
   @Override
   protected void additionalProcessForRecordsSavedInErrorsWindow(JSONObject record) {
     try {
