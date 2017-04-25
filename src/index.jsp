@@ -285,7 +285,7 @@ if (onlySystemAdminAccess && role != null && !"0".equals(role.getId())) {
   String staticResourceFilePath = staticResourceComponent.getNotClassicStaticResourceFilePath();
   if (!staticResourceComponent.isInDevelopment() && staticResourceFilePath != null) {
 %>
-<script type="text/javascript" src="<%=staticResourceFilePath%>"></script>
+<script src="<%=staticResourceFilePath%>"></script>
 <%
   } else {
 %>
