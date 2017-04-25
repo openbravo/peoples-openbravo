@@ -277,7 +277,6 @@ enyo.kind({
     receipt = this.model.get('order');
 
     isPaidReceipt = receipt.get('isPaid') === true && !receipt.get('isQuotation');
-    isLayaway = receipt.get('isLayaway') && receipt.get('orderType') !== 3;
     isReturn = receipt.get('orderType') === 1 || receipt.get('documentType') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns || receipt.get('documentType') === 'VBS RFC Order';
     receiptLines = OB.MobileApp.model.receipt.get('receiptLines');
 
@@ -308,15 +307,13 @@ enyo.kind({
       return 'DN';
     }
 
-    if (isLayaway && OB.MobileApp.model.hasPermission('OBPOS_receipt.cancelLayaway', true) && ((OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true) && this.model.get('orderList').current.get('payment') > 0) || !OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true))) {
-      // Show if the current order is a layaway and has both the 'OBPOS_payments.cancelLayaway' property and some payment,
-      // or is a layaway and doesn't have the 'OBPOS_payments.cancelLayaway' property
-      this.show();
-      this.adjustVisibilityBasedOnPermissions();
-    } else if (isPaidReceipt && !isReturn && receipt.get('orderType') !== 3 && delivered() !== 'TD') {
-      // Show if the current order is a fully paid receipt but not fully delivered, return nor a cancelled ticket
-      this.show();
-      this.adjustVisibilityBasedOnPermissions();
+    if (!isReturn && receipt.get('orderType') !== 3 && delivered() !== 'TD') {
+      if ((OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true) && this.model.get('orderList').current && this.model.get('orderList').current.get('payment') > 0) || !OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true)) {
+        this.show();
+        this.adjustVisibilityBasedOnPermissions();
+      } else {
+        this.hide();
+      }
     } else {
       this.hide();
     }
@@ -1214,7 +1211,7 @@ enyo.kind({
       var deliveredresult = delivered();
       if (isPaidReceipt && !OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelReplacePaidOrders', true) && deliveredresult === 'TD') {
         this.hide();
-      } else if (isLayaway && !OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelReplaceLayaways', true) && (deliveredresult === 'ND' && !haspayments)) {
+      } else if (!OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelReplaceLayaways', true) && deliveredresult === 'ND' && !haspayments) {
         this.hide();
       } else if (!OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelAndReplaceOrdersWithDeliveries', true) && (deliveredresult === 'TD' || deliveredresult === 'DN')) {
         this.hide();
