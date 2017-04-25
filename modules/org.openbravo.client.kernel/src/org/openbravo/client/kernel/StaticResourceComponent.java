@@ -21,7 +21,6 @@ package org.openbravo.client.kernel;
 import java.io.File;
 import java.util.List;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -44,7 +43,6 @@ import org.openbravo.service.web.WebServiceUtil;
  * @author mtaal
  * @author iperdomo
  */
-@ApplicationScoped
 public class StaticResourceComponent extends BaseComponent {
   private static final Logger log = Logger.getLogger(StaticResourceComponent.class);
 
@@ -55,8 +53,6 @@ public class StaticResourceComponent extends BaseComponent {
   private Instance<ComponentProvider> componentProviders;
 
   private Boolean isInDevelopment;
-
-  private String notClassicStaticResourceFilePath;
 
   @Override
   public boolean isInDevelopment() {
@@ -118,8 +114,10 @@ public class StaticResourceComponent extends BaseComponent {
       StringBuilder result = new StringBuilder();
       final String scriptPath = getContextUrl() + GEN_TARGET_LOCATION.substring(1) + "/"
           + getStaticResourceFileName() + ".js";
-      if (notClassicStaticResourceFilePath == null && !isClassicMode()) {
-        notClassicStaticResourceFilePath = scriptPath;
+
+      if (useCachedResource()) {
+        KernelComponentProvider.putStaticResourceFilePath(KernelConstants.RESOURCE_COMPONENT_ID,
+            scriptPath);
       }
 
       if (isClassicMode()) {
@@ -148,6 +146,11 @@ public class StaticResourceComponent extends BaseComponent {
           + "ms");
     }
     return "";
+  }
+
+  private boolean useCachedResource() {
+    return KernelComponentProvider.getStaticResourceFilePath(KernelConstants.RESOURCE_COMPONENT_ID) == null
+        && !isClassicMode() && !isInDevelopment();
   }
 
   public String getId() {
@@ -314,7 +317,7 @@ public class StaticResourceComponent extends BaseComponent {
     return md5;
   }
 
-  public String getNotClassicStaticResourceFilePath() {
-    return notClassicStaticResourceFilePath;
+  public static String getGeneratedFilePath() {
+    return KernelComponentProvider.getStaticResourceFilePath(KernelConstants.RESOURCE_COMPONENT_ID);
   }
 }
