@@ -69,7 +69,11 @@ enyo.kind({
       }
     }
     if (element && element.isDefaultAction) {
-      element.focus();
+      this.element = element;
+      var me = this;
+      setTimeout(function () {
+        me.element.focus();
+      }, 100);
     }
     return true;
   },
