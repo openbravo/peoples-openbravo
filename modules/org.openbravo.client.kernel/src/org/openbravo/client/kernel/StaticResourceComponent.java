@@ -56,7 +56,7 @@ public class StaticResourceComponent extends BaseComponent {
 
   private Boolean isInDevelopment;
 
-  private String staticResourceFilePath;
+  private String notClassicStaticResourceFilePath;
 
   @Override
   public boolean isInDevelopment() {
@@ -118,8 +118,8 @@ public class StaticResourceComponent extends BaseComponent {
       StringBuilder result = new StringBuilder();
       final String scriptPath = getContextUrl() + GEN_TARGET_LOCATION.substring(1) + "/"
           + getStaticResourceFileName() + ".js";
-      if (staticResourceFilePath == null) {
-        staticResourceFilePath = scriptPath;
+      if (notClassicStaticResourceFilePath == null && !isClassicMode()) {
+        notClassicStaticResourceFilePath = scriptPath;
       }
 
       if (isClassicMode()) {
@@ -314,7 +314,7 @@ public class StaticResourceComponent extends BaseComponent {
     return md5;
   }
 
-  public String getStaticResourceFilePath() {
-    return staticResourceFilePath;
+  public String getNotClassicStaticResourceFilePath() {
+    return notClassicStaticResourceFilePath;
   }
 }
