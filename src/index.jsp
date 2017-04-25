@@ -282,7 +282,7 @@ if (onlySystemAdminAccess && role != null && !"0".equals(role.getId())) {
 <script src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_History<%=(uncompSC ? ".uncompressed" : "")%>.js"></script>
 <%
   StaticResourceComponent staticResourceComponent = WeldUtils.getInstanceFromStaticBeanManager(StaticResourceComponent.class);
-  String staticResourceFilePath = staticResourceComponent.getNotClassicStaticResourceFilePath();
+  final String staticResourceFilePath = staticResourceComponent.getNotClassicStaticResourceFilePath();
   if (!staticResourceComponent.isInDevelopment() && staticResourceFilePath != null) {
 %>
 <script src="<%=staticResourceFilePath%>"></script>
