@@ -1923,6 +1923,9 @@
             popup: 'modalProductAttribute',
             args: {
               callback: function (attributeValue) {
+                if (OB.UTIL.isNullOrUndefined(attrs)) {
+                  attrs = {};
+                }
                 attrs.attributeValue = attributeValue;
                 me._addProduct(p, qty, options, attrs, function (success, orderline) {
                   if (callback) {
