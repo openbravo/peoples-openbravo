@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -932,13 +932,15 @@
 
   var calcTaxesExcPrice = function (receipt) {
 
+      var frozenLines = new OB.Collection.OrderLineList(receipt.get('lines').models.slice());
+
       // Initialize receipt
       receipt.set('taxes', {}, {
         silent: true
       });
 
       // Calculate
-      return Promise.all(_.map(receipt.get('lines').models, function (line) {
+      return Promise.all(_.map(frozenLines.models, function (line) {
         return calcLineTaxesExcPrice(receipt, line);
       })).then(function () {
         // Ajust gross if net + taxes !== gross
@@ -958,7 +960,7 @@
 
             if (adjustAmount !== 0) {
               // move te adjustment to a net line...
-              receipt.get('lines').forEach(function (line) {
+              frozenLines.forEach(function (line) {
                 _.each(line.get('taxLines'), function (taxline, taxlineid) {
                   if (taxid === taxlineid && Math.sign(newAmount) === Math.sign(taxline.amount)) {
                     // Candidate for applying the adjustment
@@ -982,7 +984,7 @@
           }
         });
 
-        receipt.get('lines').forEach(function (line) {
+        frozenLines.forEach(function (line) {
           totalNet = OB.DEC.add(totalNet, line.get('discountedNet'));
         });
 
@@ -1016,5 +1018,13 @@
 
   OB.DATA.OrderFindTaxes = function (receipt, line, taxCategory) {
     return findTaxesCollection(receipt, line, taxCategory);
+  };
+
+  OB.DATA.LineTaxesIncPrice = function (receipt, line) {
+    return calcLineTaxesIncPrice(receipt, line);
+  };
+
+  OB.DATA.LineTaxesExcPrice = function (receipt, line) {
+    return calcLineTaxesExcPrice(receipt, line);
   };
 }());

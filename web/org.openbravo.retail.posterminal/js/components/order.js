@@ -990,7 +990,7 @@ enyo.kind({
                   deferredLines = l.get('relatedLines').filter(function getDeferredServices(relatedLine) {
                     return relatedLine.deferred === true;
                   });
-                  if (!deferredLines.length) {
+                  if (!deferredLines.length && !l.get('obposIsDeleted')) {
                     me.order.get('lines').remove(l);
                   }
                 }
@@ -1416,6 +1416,10 @@ enyo.kind({
         });
       }
       this.$.totalMultiReceiptLine.renderQty(me.model.get('multiOrders').get('multiOrdersList').length);
+    }, this);
+    var orderListPayment = me.model.get('multiOrders').get('payments');
+    orderListPayment.on('add remove', function () {
+      OB.UTIL.localStorage.setItem('multiOrdersPayment', JSON.stringify(me.model.get('multiOrders').get('payments').toJSON()));
     }, this);
   },
   initComponents: function () {

@@ -476,9 +476,6 @@
                             if (mdl.get('id') === rcpt.get('id')) {
                               mdl.set('isbeingprocessed', 'N');
                               mdl.set('hasbeenpaid', 'N');
-                              _.each(mdl.get('payments').models, function (p) {
-                                mdl.removePayment(p);
-                              }, this);
                               return true;
                             }
                           }, this);

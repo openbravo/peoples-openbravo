@@ -1284,6 +1284,32 @@
       var me = this,
           line = lines[idx],
           i;
+      var removesLines = function (idx, callback) {
+          idx++;
+          if (me.get('lines').get(line)) {
+            if (idx < length) {
+              me.set('skipCalculateReceipt', true);
+              me.deleteLine(line, true, null, false);
+              me.deleteLines(lines, idx, length, callback);
+            } else {
+              me.set('skipCalculateReceipt', false);
+              me.deleteLine(line, false, callback, true);
+            }
+          } else {
+            // If there is a line and other related service line selected to delete, the service is deleted when the product is deleted
+            // This causes that when this recursive line tries to delete the service line, the service line is not in the array which stores the lines to delete
+            // The 'else' clause catches this situation and continues with the next line
+            if (idx === length) {
+              me.set('skipCalculateReceipt', false);
+              if (callback) {
+                callback();
+              }
+            } else {
+              me.deleteLines(lines, idx, length, callback);
+            }
+          }
+          };
+
       if (idx === 0) {
         for (i = 0; i < lines.length; i++) {
           if (me.get('replacedorder') && lines[i].get('remainingQuantity')) {
@@ -1294,27 +1320,23 @@
             return;
           }
         }
-        this.set('undo', null);
-      }
-      idx++;
-      if (this.get('lines').get(line)) {
-        if (idx < length) {
-          this.deleteLine(line, true, null, false);
-          this.deleteLines(lines, idx, length, callback);
+        if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+          for (i = 0; i < lines.length; i++) {
+            lines[i].set('obposIsDeleted', true);
+            lines[i].set('obposQtyDeleted', lines[i].get('qty'));
+            lines[i].set('qty', 0, {
+              silent: true
+            });
+          }
+          this.set('undo', null);
+          this.calculateReceipt(function () {
+            removesLines(idx, callback);
+          });
         } else {
-          this.deleteLine(line, false, callback, true);
+          removesLines(idx, callback);
         }
       } else {
-        // If there is a line and other related service line selected to delete, the service is deleted when the product is deleted
-        // This causes that when this recursive line tries to delete the service line, the service line is not in the array which stores the lines to delete
-        // The 'else' clause catches this situation and continues with the next line
-        if (idx === length) {
-          if (callback) {
-            callback();
-          }
-        } else {
-          this.deleteLines(lines, idx, length, callback);
-        }
+        removesLines(idx, callback);
       }
     },
 
@@ -1456,13 +1478,23 @@
         if (!line.get('hasTaxError')) {
           // Clone the line to be moved as deleted.
           var deletedline = new OrderLine(line.attributes);
-          // Set the line as deleted
-          deletedline.set('obposIsDeleted', true);
-          deletedline.set('obposQtyDeleted', line.get('qty'));
+          if (!line.get('obposIsDeleted')) {
+            // Set the line as deleted
+            deletedline.set('obposIsDeleted', true);
+            deletedline.set('obposQtyDeleted', line.get('qty'));
+            // set quantity as 0
+            deletedline.set('qty', 0);
+            // Set prices as 0
+            deletedline.set('gross', 0);
+            // Calulate Taxes
+            if (this.get('priceIncludesTax')) {
+              OB.DATA.LineTaxesIncPrice(this, deletedline);
+            } else {
+              OB.DATA.LineTaxesExcPrice(this, deletedline);
+            }
+          }
           // Sets the tax if it has been deleted
           deletedline.set('tax', deletedline.get('tax') ? deletedline.get('tax') : deletedline.get('taxUndo'));
-          // set quantity as 0
-          deletedline.set('qty', 0);
           // Move to deleted lines
           this.get('deletedLines').push(deletedline);
           // remove the receipt line
@@ -3225,7 +3257,13 @@
         receipt: this,
         callback: callback
       }, function (args) {
-        var executeFinalCallback = function () {
+        var executeFinalCallback = function (saveChanges) {
+            if (saveChanges) {
+              order.adjustPayment();
+              order.trigger('displayTotal');
+              order.save();
+              order.trigger('saveCurrent');
+            }
             if (callback instanceof Function) {
               callback(order);
             }
@@ -3236,7 +3274,7 @@
             var reverseCallback = payment.get('reverseCallback');
             reverseCallback();
           }
-          executeFinalCallback();
+          executeFinalCallback(false);
           return;
         }
         if (!payment.get('paymentData') && !payment.get('reversedPaymentId')) {
@@ -3249,9 +3287,7 @@
               if (p.get('rate') && p.get('rate') !== '1') {
                 p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
               }
-              order.adjustPayment();
-              order.trigger('displayTotal');
-              executeFinalCallback();
+              executeFinalCallback(true);
               return;
             }
           }
@@ -3264,9 +3300,7 @@
                 p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
               }
               payment.set('date', new Date());
-              order.adjustPayment();
-              order.trigger('displayTotal');
-              executeFinalCallback();
+              executeFinalCallback(true);
               return;
             }
           }
@@ -3290,10 +3324,7 @@
         if (payment.get('reversedPayment')) {
           payment.get('reversedPayment').set('isReversed', true);
         }
-        order.adjustPayment();
-        order.trigger('displayTotal');
-        order.save();
-        executeFinalCallback();
+        executeFinalCallback(true);
         return;
       }); // call with callback, no args
     },
@@ -4255,7 +4286,10 @@
                 receipt.set('skipCalculateReceipt', true);
                 _.each(receipt.get('lines').models, function (line) {
                   line.set('obposQtyDeleted', line.get('qty'));
-                  line.set('qty', 0);
+                  line.set('obposIsDeleted', true);
+                  line.set('qty', 0, {
+                    silent: true
+                  });
                 });
                 receipt.set('skipCalculateReceipt', false);
                 // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
@@ -5353,6 +5387,7 @@
       this.get('payments').reset();
       this.set('openDrawer', false);
       this.set('additionalInfo', null);
+      OB.UTIL.localStorage.removeItem('multiOrdersPayment');
     },
     hasDataInList: function () {
       if (this.get('multiOrdersList') && this.get('multiOrdersList').length > 0) {

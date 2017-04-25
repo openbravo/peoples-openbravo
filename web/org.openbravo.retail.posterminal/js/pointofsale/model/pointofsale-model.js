@@ -128,7 +128,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
   loadCheckedMultiorders: function () {
     // Shows a modal window with the orders pending to be paid
-    var checkedMultiOrders, multiOrderList = this.get('multiOrders').get('multiOrdersList'),
+    var checkedMultiOrders, multiOrders = this.get('multiOrders'),
+        multiOrderList = multiOrders.get('multiOrdersList'),
         criteria = {
         'hasbeenpaid': 'N',
         'session': OB.MobileApp.model.get('session')
@@ -140,15 +141,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             return e;
           }
         }));
-        //The order object is stored in the json property of the row fetched from the database
-        _.each(checkedMultiOrders, function (iter) {
-          _.each(iter.get('payments').models, function (p) {
-            iter.removePayment(p);
-          }, this);
-          iter.save();
-        });
 
         multiOrderList.reset(checkedMultiOrders);
+
+        // MultiOrder payments
+        var payments = JSON.parse(OB.UTIL.localStorage.getItem('multiOrdersPayment'));
+        _.each(payments, function (payment) {
+          multiOrders.addPayment(new OB.Model.PaymentLine(payment));
+        });
       }
     }, function () {
       // If there is an error fetching the checked orders of multiorders,

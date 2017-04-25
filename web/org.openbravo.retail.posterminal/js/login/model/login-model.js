@@ -425,12 +425,12 @@
         OB.UTIL.initCashUp(function () {
           OB.UTIL.calculateCurrentCash(function () {
             OB.UTIL.HookManager.executeHooks('OBPOS_LoadPOSWindow', {}, function () {
-              var defaultWindow = OB.MobileApp.model.get('defaultWindow');
-              if (defaultWindow) {
-                OB.POS.navigate(defaultWindow);
-                OB.MobileApp.model.unset('defaultWindow');
+              var nextWindow = OB.MobileApp.model.get('nextWindow');
+              if (nextWindow) {
+                OB.POS.navigate(nextWindow);
+                OB.MobileApp.model.unset('nextWindow');
               } else {
-                OB.POS.navigate('retail.pointofsale');
+                OB.POS.navigate(OB.MobileApp.model.get('defaultWindow'));
               }
             });
           }, null);
