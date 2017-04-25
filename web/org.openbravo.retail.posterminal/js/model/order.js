@@ -1564,15 +1564,7 @@
               }
               var splitline = !(options && options.line) && !OB.UTIL.isNullOrUndefined(args.line) && !OB.UTIL.isNullOrUndefined(args.line.get('splitline')) && args.line.get('splitline');
               if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')))) {
-                if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true)) {
-                  if (args.p.get('hasAttributes') && (qty === 1 || qty > 1)) {
-                    line = args.receipt.createLine(args.p, args.qty, args.options, args.attrs);
-                  } else {
-                    args.receipt.addUnit(args.line, args.qty);
-                  }
-                } else {
-                  args.receipt.addUnit(args.line, args.qty);
-                }
+                args.receipt.addUnit(args.line, args.qty);
                 if (!_.isUndefined(args.attrs)) {
                   _.each(_.keys(args.attrs), function (key) {
                     if (args.p.get('productType') === 'S' && key === 'relatedLines' && args.line.get('relatedLines')) {
@@ -1621,20 +1613,6 @@
           }
         }
         me.save();
-        if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && p.get('hasAttributes') && (qty === 1 || qty > 1)) {
-          OB.MobileApp.view.waterfall('onShowPopup', {
-            popup: 'modalProductAttribute',
-            args: {
-              line: line,
-              initialCallback: me.postAddProductToOrder,
-              options: options,
-              finalCallback: callback
-            }
-          });
-          OB.UTIL.showLoading(false);
-        } else {
-          me.postAddProductToOrder(me, p, line, qty, options, newLine, callback(true, line));
-        }
       } // End addProductToOrder
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('ignoreReturnApproval')) {
         if (options && options.isVerifiedReturn) {
@@ -1896,7 +1874,8 @@
         receipt: this,
         productToAdd: p,
         qtyToAdd: qty,
-        options: options
+        options: options,
+        attrs: attrs
       }, function (args) {
         // do not allow generic products to be added to the receipt
         if (args && args.productToAdd && args.productToAdd.get('isGeneric')) {
@@ -1939,11 +1918,28 @@
           }
           return;
         }
-        me._addProduct(p, qty, options, attrs, function (success, orderline) {
-          if (callback) {
-            callback(success, orderline);
-          }
-        });
+        if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && p.get('hasAttributes') && (qty === 1 || qty > 1)) {
+          OB.MobileApp.view.waterfall('onShowPopup', {
+            popup: 'modalProductAttribute',
+            args: {
+              callback: function (attributeValue) {
+                attrs.attributeValue = attributeValue;
+                me._addProduct(p, qty, options, attrs, function (success, orderline) {
+                  if (callback) {
+                    callback(success, orderline);
+                  }
+                });
+              },
+              options: options
+            }
+          });
+        } else {
+          me._addProduct(p, qty, options, attrs, function (success, orderline) {
+            if (callback) {
+              callback(success, orderline);
+            }
+          });
+        }
       });
     },
 
