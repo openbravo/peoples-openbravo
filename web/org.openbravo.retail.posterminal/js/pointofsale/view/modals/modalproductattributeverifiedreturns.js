@@ -80,7 +80,7 @@ enyo.kind({
         autoDismiss: false
       });
     } else {
-      me.args.initialCallback();
+      me.args.returnLinesPopup.callbackExecutor();
     }
     return;
   },
