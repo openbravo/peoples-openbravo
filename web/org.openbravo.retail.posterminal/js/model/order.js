@@ -1607,7 +1607,7 @@
               line = options.line;
               newLine = false;
             } else {
-              if (p.get('groupProduct')) {
+              if (p.get('avoidSplitProduct')) {
                 line = me.createLine(p, qty, options, attrs);
               } else {
                 if (qty >= 0) {
