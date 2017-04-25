@@ -94,6 +94,9 @@ public class WeldBaseTest extends OBBaseTest {
   private BeanManager beanManager;
 
   @Inject
+  private WeldUtils weldUtils;
+
+  @Inject
   private KernelInitializer kernelInitializer;
 
   /**
@@ -110,6 +113,7 @@ public class WeldBaseTest extends OBBaseTest {
     if (!initialized) {
       WeldUtils.setStaticInstanceBeanManager(beanManager);
       kernelInitializer.setInterceptor();
+      weldUtils.setBeanManager(beanManager);
       initialized = true;
     }
     super.setUp();

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -138,5 +138,13 @@ public class WeldUtils {
       instances.add(instance);
     }
     return instances;
+  }
+
+  /**
+   * Sets bean manager. The purpose of this setter is to be used just in jUnit test cases. When
+   * working within a container, bean manager should be handled by container.
+   */
+  public void setBeanManager(BeanManager beanManager) {
+    this.beanManager = beanManager;
   }
 }
