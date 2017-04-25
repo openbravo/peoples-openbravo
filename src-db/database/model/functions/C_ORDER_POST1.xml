@@ -784,7 +784,7 @@
                     ), 0)
             )
             LOOP
-              v_QtyOrdered := COALESCE(CASE WHEN (Cur_Inventory.QtyDelivered < 0) THEN LEAST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) ELSE GREATEST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) END, 0);
+              v_QtyOrdered := COALESCE(CASE WHEN (Cur_Inventory.QtyDelivered < 0) THEN LEAST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) ELSE CASE WHEN (Cur_Inventory.QtyDelivered = 0) THEN Cur_Inventory.QtyInvoiced ELSE GREATEST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) END END, 0);
               v_QtyAum := M_GET_CONVERTED_AUMQTY(Cur_Inventory.M_Product_ID, v_QtyOrdered, Cur_Inventory.C_AUM);
               v_linenetamt := ROUND(COALESCE(v_QtyOrdered, 0) * Cur_Inventory.priceactual, C_GET_CURRENCY_PRECISION(Cur_Inventory.C_Currency_ID, 'A'));
               v_linegrossamt := ROUND(COALESCE(v_QtyOrdered, 0) * Cur_Inventory.gross_unit_price, C_GET_CURRENCY_PRECISION(Cur_Inventory.C_Currency_ID, 'A'));
