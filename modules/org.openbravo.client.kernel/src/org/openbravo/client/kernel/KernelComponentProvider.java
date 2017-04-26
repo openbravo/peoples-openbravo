@@ -21,7 +21,6 @@ package org.openbravo.client.kernel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -39,8 +38,6 @@ public class KernelComponentProvider extends BaseComponentProvider {
   public static final String QUALIFIER = KernelConstants.KERNEL_COMPONENT_TYPE;
 
   private List<ComponentResource> globalResources = null;
-
-  private static ConcurrentHashMap<String, String> staticResourceFilePaths = new ConcurrentHashMap<>();
 
   /*
    * (non-Javadoc)
@@ -109,13 +106,5 @@ public class KernelComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.kernel/js/ob-kernel-utilities.js", true));
 
     return globalResources;
-  }
-
-  protected static String getStaticResourceFilePath(String resourceKey) {
-    return staticResourceFilePaths.get(resourceKey);
-  }
-
-  protected static void putStaticResourceFilePath(String resourceKey, String resourceFilePath) {
-    staticResourceFilePaths.putIfAbsent(resourceKey, resourceFilePath);
   }
 }

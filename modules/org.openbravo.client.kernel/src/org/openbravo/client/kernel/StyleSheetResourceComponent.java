@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,9 +46,43 @@ public class StyleSheetResourceComponent extends BaseComponent {
   private static final Logger log = Logger.getLogger(StyleSheetResourceComponent.class);
   private static final String IMGURLHOLDER = "__URLHOLDER__";
 
+  private static final String APP_NAME = "OB3_CSS";
+
   @Inject
   @Any
   private Instance<ComponentProvider> componentProviders;
+
+  @Inject
+  private StaticResourceProvider resourceProvider;
+
+  private Boolean isInDevelopment;
+
+  @Override
+  public boolean isInDevelopment() {
+    if (isInDevelopment == null) {
+      isInDevelopment = false;
+      final List<Module> modules = KernelUtils.getInstance().getModulesOrderedByDependency();
+      for (Module module : modules) {
+        for (ComponentProvider provider : componentProviders) {
+          final List<ComponentResource> resources = provider.getGlobalComponentResources();
+          if (resources == null || resources.size() == 0) {
+            continue;
+          }
+
+          if (provider.getModule().getId().equals(module.getId())) {
+            for (ComponentResource resource : resources) {
+              if (resource.getType() == ComponentResourceType.Stylesheet
+                  && module.isInDevelopment()) {
+                isInDevelopment = true;
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+    return isInDevelopment;
+  }
 
   /**
    * @return returns this instance
@@ -69,40 +103,22 @@ public class StyleSheetResourceComponent extends BaseComponent {
 
   @Override
   public String getETag() {
-    final List<Module> modules = KernelUtils.getInstance().getModulesOrderedByDependency();
-    final StringBuilder version = new StringBuilder();
-    for (Module module : modules) {
-      boolean hasStyleSheet = false;
-      for (ComponentProvider provider : componentProviders) {
-        final List<ComponentResource> resources = provider.getGlobalComponentResources();
-        if (resources == null || resources.size() == 0) {
-          continue;
-        }
-
-        if (provider.getModule().getId().equals(module.getId())) {
-          for (ComponentResource resource : resources) {
-            if (resource.getType() == ComponentResourceType.Stylesheet) {
-              hasStyleSheet = true;
-              break;
-            }
-          }
-        }
-      }
-      if (hasStyleSheet) {
-        if (module.isInDevelopment()) {
-          // do something unique
-          version.append(System.currentTimeMillis() + "");
-        } else {
-          version.append(KernelUtils.getInstance().getVersionParameters(module));
-        }
-      }
+    if (resourceProvider.getStaticResourceCachedInfo(APP_NAME) == null) {
+      // do something unique
+      return String.valueOf(System.currentTimeMillis());
+    } else {
+      // compute the md5 of the CSS cached content
+      return DigestUtils.md5Hex(resourceProvider.getStaticResourceCachedInfo(APP_NAME));
     }
-    // compute the md5 of the version string and return that
-    return DigestUtils.md5Hex(version.toString());
   }
 
   @Override
   public String generate() {
+    String cssContent = resourceProvider.getStaticResourceCachedInfo(APP_NAME);
+    if (cssContent != null) {
+      return cssContent;
+    }
+
     final List<Module> modules = KernelUtils.getInstance().getModulesOrderedByDependency();
     final ServletContext context = (ServletContext) getParameters().get(
         KernelConstants.SERVLET_CONTEXT);
@@ -236,7 +252,11 @@ public class StyleSheetResourceComponent extends BaseComponent {
       }
     }
 
-    return sb.toString();
+    cssContent = sb.toString();
+    if (!isInDevelopment()) {
+      resourceProvider.putStaticResourceCachedInfo(APP_NAME, cssContent);
+    }
+    return cssContent;
   }
 
   public String getId() {

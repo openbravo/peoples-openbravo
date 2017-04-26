@@ -38,7 +38,7 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.service.web.WebServiceUtil;
 
 /**
- * The component representing the component in the
+ * The component in charge of generating the static Javascript resources.
  * 
  * @author mtaal
  * @author iperdomo
@@ -52,29 +52,27 @@ public class StaticResourceComponent extends BaseComponent {
   @Any
   private Instance<ComponentProvider> componentProviders;
 
+  @Inject
+  private StaticResourceProvider resourceProvider;
+
   private Boolean isInDevelopment;
 
   @Override
   public boolean isInDevelopment() {
-    try {
-      OBContext.setAdminMode(true);
-      if (isInDevelopment == null) {
-        isInDevelopment = false;
-        for (ComponentProvider provider : componentProviders) {
-          final List<ComponentResource> resources = provider.getGlobalComponentResources();
-          if (resources == null || resources.size() == 0) {
-            continue;
-          }
-          if (provider.getModule().isInDevelopment()) {
-            isInDevelopment = true;
-            return isInDevelopment;
-          }
+    if (isInDevelopment == null) {
+      isInDevelopment = false;
+      for (ComponentProvider provider : componentProviders) {
+        final List<ComponentResource> resources = provider.getGlobalComponentResources();
+        if (resources == null || resources.size() == 0) {
+          continue;
+        }
+        if (provider.getModule().isInDevelopment()) {
+          isInDevelopment = true;
+          return isInDevelopment;
         }
       }
-      return isInDevelopment;
-    } finally {
-      OBContext.restorePreviousMode();
     }
+    return isInDevelopment;
   }
 
   /**
@@ -95,6 +93,14 @@ public class StaticResourceComponent extends BaseComponent {
     final long t1 = System.currentTimeMillis();
 
     try {
+      final String appName = isClassicMode() ? ComponentResource.APP_CLASSIC
+          : ComponentResource.APP_OB3;
+
+      String cachedFilePath = resourceProvider.getStaticResourceCachedInfo(appName);
+      if (cachedFilePath != null) {
+        return cachedFilePath;
+      }
+
       // note the document.write content must be divided up like this, if the document.write
       // contains a complete string like <script or </script> then the browser will execute
       // them
@@ -115,9 +121,8 @@ public class StaticResourceComponent extends BaseComponent {
       final String scriptPath = getContextUrl() + GEN_TARGET_LOCATION.substring(1) + "/"
           + getStaticResourceFileName() + ".js";
 
-      if (useCachedResource()) {
-        KernelComponentProvider.putStaticResourceFilePath(KernelConstants.RESOURCE_COMPONENT_ID,
-            scriptPath);
+      if (!isInDevelopment()) {
+        resourceProvider.putStaticResourceCachedInfo(appName, scriptPath);
       }
 
       if (isClassicMode()) {
@@ -146,11 +151,6 @@ public class StaticResourceComponent extends BaseComponent {
           + "ms");
     }
     return "";
-  }
-
-  private boolean useCachedResource() {
-    return KernelComponentProvider.getStaticResourceFilePath(KernelConstants.RESOURCE_COMPONENT_ID) == null
-        && !isClassicMode() && !isInDevelopment();
   }
 
   public String getId() {
@@ -315,9 +315,5 @@ public class StaticResourceComponent extends BaseComponent {
       }
     }
     return md5;
-  }
-
-  public static String getGeneratedFilePath() {
-    return KernelComponentProvider.getStaticResourceFilePath(KernelConstants.RESOURCE_COMPONENT_ID);
   }
 }

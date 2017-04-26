@@ -7,7 +7,7 @@
 <%@ page import="org.openbravo.authentication.AuthenticationManager" %>
 <%@ page import="org.openbravo.client.kernel.KernelUtils" %>
 <%@ page import="org.openbravo.client.kernel.KernelConstants" %>
-<%@ page import="org.openbravo.client.kernel.StaticResourceComponent" %>
+<%@ page import="org.openbravo.client.kernel.StaticResourceProvider" %>
 <%@ page import="org.openbravo.dal.core.OBContext" %>
 <%@ page import="org.openbravo.model.ad.module.Module" %>
 <%@ page import="org.apache.log4j.Logger" %>
@@ -281,7 +281,8 @@ if (onlySystemAdminAccess && role != null && !"0".equals(role.getId())) {
 <script src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_Combined<%=(uncompSC ? ".uncompressed" : "")%>.js"></script>
 <script src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_History<%=(uncompSC ? ".uncompressed" : "")%>.js"></script>
 <%
-  final String staticResourceFilePath = StaticResourceComponent.getGeneratedFilePath();
+  StaticResourceProvider resourceProvider = WeldUtils.getInstanceFromStaticBeanManager(StaticResourceProvider.class);
+  final String staticResourceFilePath = resourceProvider.getStaticResourceCachedInfo("OB3");
   if (staticResourceFilePath != null) {
 %>
 <script src="<%=staticResourceFilePath%>"></script>
