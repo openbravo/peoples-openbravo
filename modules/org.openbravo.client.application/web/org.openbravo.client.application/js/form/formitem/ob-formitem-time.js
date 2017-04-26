@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -208,7 +208,7 @@ isc.OBTimeItem.addProperties({
   },
   formSaved: function (request, response, data) {
     var UTCOffsetInMiliseconds;
-    if (this.getValue() !== data[this.name]) {
+    if (data && this.getValue() !== data[this.name]) {
       // it has not been converted to the local time yet, do it now
       if (data[this.name] && data[this.name].getFullYear() <= 1970) {
         UTCOffsetInMiliseconds = OB.Utilities.Date.getUTCOffsetInMiliseconds();
