@@ -118,11 +118,12 @@ public class StaticResourceComponent extends BaseComponent {
       }
 
       StringBuilder result = new StringBuilder();
+      String staticResourceFileName = getStaticResourceFileName() + ".js";
       final String scriptPath = getContextUrl() + GEN_TARGET_LOCATION.substring(1) + "/"
-          + getStaticResourceFileName() + ".js";
+          + staticResourceFileName;
 
       if (!isInDevelopment()) {
-        resourceProvider.putStaticResourceCachedInfo(appName, scriptPath);
+        resourceProvider.putStaticResourceCachedInfo(appName, staticResourceFileName);
       }
 
       if (isClassicMode()) {
