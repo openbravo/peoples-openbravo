@@ -519,7 +519,24 @@
         }, function (data) {
           if (data && data.exception) {
             //ERROR or no connection
-            OB.error("runSyncProcess", OB.I18N.getLabel('OBPOS_TerminalAuthError'));
+            if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('cacheSessionId'))) {
+              OB.error("runSyncProcess", OB.I18N.getLabel('OBPOS_TerminalAuthError'));
+              run();
+            } else {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TerminalAuthChange'), OB.I18N.getLabel('OBPOS_TerminalAuthChangeMsg'), [{
+                label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                isConfirmButton: true,
+                action: function () {
+                  OB.UTIL.showLoading(true);
+                  me.logout();
+                }
+              }], {
+                onHideFunction: function () {
+                  OB.UTIL.showLoading(true);
+                  me.logout();
+                }
+              });
+            }
           } else if (data && (data.isLinked === false || data.terminalAuthentication)) {
             if (data.isLinked === false) {
               OB.UTIL.localStorage.removeItem('terminalName');
