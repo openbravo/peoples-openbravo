@@ -18,20 +18,73 @@
  */
 package org.openbravo.client.kernel;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * This class is used as a cache for the static resources (js and css) used in the application. It
+ * keeps the information needed to make use of those resources without the need of generating them
+ * again.
+ */
 @ApplicationScoped
-public class StaticResourceProvider {
+public class StaticResourceProvider implements StaticResourceProviderMBean {
+  final static private Logger log = LoggerFactory.getLogger(StaticResourceProvider.class);
 
   private ConcurrentHashMap<String, String> staticResources = new ConcurrentHashMap<>();
 
-  public String getStaticResourceCachedInfo(String appName) {
-    return staticResources.get(appName);
+  /**
+   * Returns the information stored for a particular static resource whose identifying name is
+   * passed as parameter.
+   * 
+   * @param resourceName
+   *          the identifying name of the static resource
+   * 
+   * @return a String with information of the static resource
+   */
+  public String getStaticResourceCachedInfo(String resourceName) {
+    return staticResources.get(resourceName);
   }
 
-  public void putStaticResourceCachedInfo(String appName, String content) {
-    staticResources.putIfAbsent(appName, content);
+  /**
+   * Stores the information related to a particular static resource.
+   * 
+   * @param resourceName
+   *          the identifying name of the static resource
+   * @param content
+   *          the information about the static resource to keep in cache
+   */
+  public void putStaticResourceCachedInfo(String resourceName, String content) {
+    String value = staticResources.putIfAbsent(resourceName, content);
+    if (value == null) {
+      log.debug("Information of {} static resource stored in cache", resourceName);
+    }
+  }
+
+  /**
+   * @return a Map with the information about the cached static resources.
+   */
+  @Override
+  public Map<String, String> getCachedStaticResources() {
+    return staticResources;
+  }
+
+  /**
+   * Removes the cached information related to a static resource whose identifying name is passed as
+   * parameter.
+   * 
+   * @param resourceName
+   *          the identifying name of the static resource
+   */
+  @Override
+  public void removeStaticResourceCachedInfo(String resourceName) {
+    if (staticResources.containsKey(resourceName)) {
+      staticResources.remove(resourceName);
+      log.debug("Information of {} static resource removed from cache", resourceName);
+    }
   }
 }

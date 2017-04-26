@@ -18,7 +18,6 @@
  */
 package org.openbravo.apachejdbcconnectionpool;
 
-import java.lang.management.ManagementFactory;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
@@ -26,9 +25,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
@@ -38,9 +34,9 @@ import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
-import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.PoolInterceptorProvider;
+import org.openbravo.jmx.OBManagementFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,25 +159,10 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
       DataSource ds = dse.getValue();
       try {
         if (ds.isJmxEnabled()) {
-          String context = "";
-          if (DalContextListener.getServletContext() != null) {
-            context = "context="
-                + DalContextListener.getServletContext().getContextPath().replace("/", "") + ",";
-          }
-
           // pool needs to be created before it's registered
           ds.createPool();
-          MBeanServer mbs = null;
-          mbs = ManagementFactory.getPlatformMBeanServer();
-          try {
-            ObjectName name = new ObjectName("Openbravo:" + context + "name=Pool-" + dse.getKey());
-            mbs.registerMBean(ds.getPool().getJmxPool(), name);
-          } catch (InstanceAlreadyExistsException alreadyRegistered) {
-            log.debug("JMX instance already registred for pool {}, bean name: {}", dse.getKey(),
-                alreadyRegistered.getMessage());
-          } catch (Exception ignored) {
-            log.error("Could not register {} pool as jmx bean", dse.getKey(), ignored);
-          }
+          OBManagementFactory.getInstance().registerMBean("Pool-" + dse.getKey(),
+              ds.getPool().getJmxPool());
         }
       } catch (Exception e) {
         log.error("Error creating pool {}", dse.getKey(), e);
