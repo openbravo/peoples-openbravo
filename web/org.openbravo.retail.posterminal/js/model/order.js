@@ -1497,13 +1497,10 @@
           deletedline.set('tax', deletedline.get('tax') ? deletedline.get('tax') : deletedline.get('taxUndo'));
           // Move to deleted lines
           this.get('deletedLines').push(deletedline);
-          // remove the receipt line
-          finishDelete();
         }
-      } else {
-        // remove the line
-        finishDelete();
       }
+      // remove the line
+      finishDelete();
     },
 
     //Attrs is an object of attributes that will be set in order
