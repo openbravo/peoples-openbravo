@@ -310,13 +310,6 @@ button.btnbp:disabled {
   height: 22px;
 }
 
-.addresstext {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  max-width: 70px;
-}
-
 .addresshipitems {
   display: table-cell;
   background-image: url('./../../org.openbravo.retail.posterminal/img/iconShippingAddress.png');
@@ -386,24 +379,8 @@ button.btnbp:disabled {
   }
 }
 
-.receipt-header-customer-button {
-  max-width: 125px;
-  float: left; 
-  text-overflow: ellipsis; 
-  white-space: nowrap; 
-  overflow: hidden;
-}
-
-.receipt-header-location-button {
-  margin-left: 0px !important;
-}
-
 .receipt-customer-selector-editor {
   width: 870px !important;
-}
-
-.addresstext-onlyone {
-  max-width: 150px !important;
 }
 
 @media (min-width: 350px) and (max-width: 470px) {
@@ -412,12 +389,6 @@ button.btnbp:disabled {
   }
   .taskBrowserHeader .value {
     width: 145px;
-  }
-  .receipt-header-customer-button {
-    max-width: 101px;
-  }
-  .addresstext {
-    max-width: 45px;
   }
   .receipt-customer-selector-editor {
     width: calc(100% - 24px) !important; 
@@ -430,12 +401,6 @@ button.btnbp:disabled {
   .taskBrowserHeader .value {
     width: 220px;
   }
-  .receipt-header-customer-button {
-    max-width: 126px;
-  }
-  .addresstext {
-    max-width: 70px;
-  }
   .receipt-customer-selector-editor {
     width: calc(100% - 24px) !important; 
   }
@@ -447,12 +412,6 @@ button.btnbp:disabled {
   .taskBrowserHeader .value {
     width: 230px;
   }
-  .receipt-header-customer-button {
-    max-width: 156px;
-  }
-  .addresstext {
-    max-width: 100px;
-  }
   .receipt-customer-selector-editor {
     width: calc(100% - 24px) !important; 
   }
@@ -463,12 +422,6 @@ button.btnbp:disabled {
   }
   .taskBrowserHeader .value {
     width: 330px;
-  }
-  .receipt-header-customer-button {
-    max-width: 206px;
-  }
-  .addresstext {
-    max-width: 150px;
   }
   .receipt-customer-selector-editor {
     width: calc(100% - 24px) !important; 
@@ -482,12 +435,6 @@ button.btnbp:disabled {
   .taskBrowserHeader .value {
     width: 145px;
   }
-  .receipt-header-customer-button {
-    max-width: 96px;
-  }
-  .addresstext {
-    max-width: 40px;
-  }
   .receipt-customer-selector-editor {
     width: 780px !important; 
   }
@@ -499,12 +446,6 @@ button.btnbp:disabled {
   .taskBrowserHeader .value {
     width: 200px;
   }
-  .receipt-header-customer-button {
-    max-width: 106px;
-  }
-  .addresstext {
-    max-width: 50px;
-  }
 }
 @media (min-width: 980px) and (max-width: 1119px) {
   .taskBrowserHeader .label {
@@ -512,12 +453,6 @@ button.btnbp:disabled {
   }
   .taskBrowserHeader .value {
     width: 145px;
-  }
-  .receipt-header-customer-button {
-    max-width: 126px;
-  }
-  .addresstext {
-    max-width: 70px;
   }
 }
 @media (min-width: 1120px) and (max-width: 1199px) {
@@ -527,12 +462,6 @@ button.btnbp:disabled {
   .taskBrowserHeader .value {
     width: 185px;
   }
-  .receipt-header-customer-button {
-    max-width: 146px;
-  }
-  .addresstext {
-    max-width: 90px;
-  }
 }
 @media (min-width: 1200px) {
   .taskBrowserHeader .label {
@@ -540,12 +469,6 @@ button.btnbp:disabled {
   }
   .taskBrowserHeader .value {
     width: 260px;
-  }
-  .receipt-header-customer-button {
-    max-width: 156px;
-  }
-  .addresstext {
-    max-width: 100px;
   }
 }
 
@@ -746,4 +669,54 @@ button.btnbp:disabled {
   display: -webkit-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
+}
+
+.flex-customer-buttons-item {
+  max-width: 70%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+
+  background-color: #e2e2e2;
+  color: black;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 400;
+  height: 30px;
+  margin: 10px;
+  padding: 5px 15px 7px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 18px;
+}
+
+.flex-customer-buttons-item-text {
+  text-overflow: inherit;
+  white-space: inherit;
+  overflow: inherit;
+}
+
+.flex-customer-buttons-item-text-fullwidht {
+  max-width: 100%;
+}
+
+.flex-customer-buttons-item-text-partialwidht {
+  max-width: 90%;
+}
+
+.flex-customer-buttons-customer {
+  flex-shrink: 1; /* To give more priority to the full customer visualization while start shrinking (just in case of large addresses) */
+}
+
+.flex-customer-buttons-addresses {
+  flex-shrink: 10000; /* To give more priority to the full customer visualization while start shrinking (just in case of large addresses) */
+  min-width: 53px;
+}
+
+.customer-buttons-separator {
+  min-width: 5px;
+  padding: 0px;
+  margin: 0px;
 }
