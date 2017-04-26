@@ -46,7 +46,7 @@ public class StyleSheetResourceComponent extends BaseComponent {
   private static final Logger log = Logger.getLogger(StyleSheetResourceComponent.class);
   private static final String IMGURLHOLDER = "__URLHOLDER__";
 
-  private static final String APP_NAME = "OB3_CSS";
+  private static final String CSS = "CSS";
 
   @Inject
   @Any
@@ -103,18 +103,20 @@ public class StyleSheetResourceComponent extends BaseComponent {
 
   @Override
   public String getETag() {
-    if (resourceProvider.getStaticResourceCachedInfo(APP_NAME) == null) {
+    final String appNameKey = getAppNameKey();
+    if (resourceProvider.getStaticResourceCachedInfo(appNameKey) == null) {
       // do something unique
       return String.valueOf(System.currentTimeMillis());
     } else {
       // compute the md5 of the CSS cached content
-      return DigestUtils.md5Hex(resourceProvider.getStaticResourceCachedInfo(APP_NAME));
+      return DigestUtils.md5Hex(resourceProvider.getStaticResourceCachedInfo(appNameKey));
     }
   }
 
   @Override
   public String generate() {
-    String cssContent = resourceProvider.getStaticResourceCachedInfo(APP_NAME);
+    final String appNameKey = getAppNameKey();
+    String cssContent = resourceProvider.getStaticResourceCachedInfo(appNameKey);
     if (cssContent != null) {
       return cssContent;
     }
@@ -254,9 +256,23 @@ public class StyleSheetResourceComponent extends BaseComponent {
 
     cssContent = sb.toString();
     if (!isInDevelopment()) {
-      resourceProvider.putStaticResourceCachedInfo(APP_NAME, cssContent);
+      resourceProvider.putStaticResourceCachedInfo(appNameKey, cssContent);
     }
     return cssContent;
+  }
+
+  private String getAppNameKey() {
+    String appNameKey = getApplicationName() + "_" + CSS;
+
+    if (getParameters().containsKey(KernelConstants.SKIN_PARAMETER)) {
+      appNameKey += "_" + (String) getParameters().get(KernelConstants.SKIN_PARAMETER);
+    } else {
+      appNameKey += "_" + KernelConstants.SKIN_DEFAULT;
+    }
+    if ("true".equals(getParameters().get("_cssDataUri"))) {
+      appNameKey += "_cssDataUri";
+    }
+    return appNameKey;
   }
 
   public String getId() {
