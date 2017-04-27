@@ -1018,9 +1018,6 @@
         this.set('replacedorder_documentNo', _order.get('replacedorder_documentNo'));
       }
 
-      if (_order.get('replacedorder_documentNo')) {
-        this.set('replacedorder_documentNo', _order.get('replacedorder_documentNo'));
-      }
       if (_order.get('replacedorder')) {
         this.set('replacedorder', _order.get('replacedorder'));
       }

@@ -24,6 +24,24 @@
       OB.DATA.executeCustomerAddressSave(this.customerAddr);
     }, this);
 
+    OB.DATA.updateDefaultCustomerLocations = function (customerAddr) {
+      if (customerAddr.get('bpartner') === OB.MobileApp.model.get('businesspartner')) {
+        // Update default BP locations cache
+        var i, foundAddress = false,
+            locations = OB.MobileApp.model.get('businessPartner').get('locations');
+        for (i = 0; i < locations.length; i++) {
+          if (locations[i].get('id') === customerAddr.get('id')) {
+            locations[i] = customerAddr.clone();
+            foundAddress = true;
+            break;
+          }
+        }
+        if (!foundAddress) {
+          locations.push(customerAddr.clone());
+        }
+      }
+    };
+
     OB.DATA.executeCustomerAddressSave = function (customerAddr, callback) {
       var customerAddrList, customerAddrId = this.customerAddr.get('id'),
           isNew = false,
@@ -55,6 +73,7 @@
         }
         me.receipt.trigger('change:bp', me.receipt);
         bpLocToSave.set('isbeingprocessed', 'Y');
+        OB.DATA.updateDefaultCustomerLocations(customerAddr);
         OB.Dal.save(bpLocToSave, function () {
           bpLocToSave.set('json', JSON.stringify(customerAddr.serializeToJSON()));
           var successCallback, errorCallback, List;
@@ -101,6 +120,7 @@
         //save that the customer address is being processed by server
         customerAddr.set('loaded', OB.I18N.normalizeDate(new Date()));
         OB.Dal.save(customerAddr, function () {
+          OB.DATA.updateDefaultCustomerLocations(customerAddr);
           me.receipt.trigger('change:bp', me.receipt);
           if (isNew) {
             customerAddr.set('posTerminal', OB.MobileApp.model.get('terminal').id);

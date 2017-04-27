@@ -926,36 +926,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             successCallbackBPLoc;
 
         if (dataBps) {
-          successCallbackBPLoc = function (bpLoc) {
-            if (bpLoc.get('isBillTo')) {
-              dataBps.set('locId', bpLoc.get('id'));
-              dataBps.set('locName', bpLoc.get('name'));
-            } else {
-              dataBps.set('locId', null);
-              dataBps.set('locName', null);
-            }
-            if (bpLoc.get('isShipTo')) {
-              dataBps.set('shipLocId', bpLoc.get('id'));
-              dataBps.set('shipLocName', bpLoc.get('name'));
-              dataBps.set('shipRegionId', bpLoc.get('regionId'));
-              dataBps.set('shipCountryId', bpLoc.get('countryId'));
-            } else {
-              dataBps.set('shipLocId', null);
-              dataBps.set('shipLocName', null);
-              dataBps.set('shipRegionId', null);
-              dataBps.set('shipCountryId', null);
-            }
-            dataBps.set('cityName', bpLoc.get('cityName'));
-            dataBps.set('countryName', bpLoc.get('countryName'));
-            dataBps.set('postalCode', bpLoc.get('postalCode'));
-            dataBps.set('locationModel', bpLoc);
+          dataBps.loadBPLocations(null, null, function (shipping, billing, locations) {
+            dataBps.setBPLocations(shipping, billing, true);
+            dataBps.set('locations', locations);
             OB.MobileApp.model.set('businessPartner', dataBps);
             OB.Dal.save(dataBps, function () {}, function () {
               OB.error(arguments);
             });
             me.loadUnpaidOrders(callback);
-          };
-          OB.Dal.get(OB.Model.BPLocation, partnerAddressId, successCallbackBPLoc, errorCallback, errorCallback);
+          });
         }
       }
       OB.Dal.get(OB.Model.BusinessPartner, OB.MobileApp.model.get('businesspartner'), successCallbackBPs, errorCallback, errorCallback);

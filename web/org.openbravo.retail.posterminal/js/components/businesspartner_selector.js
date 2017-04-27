@@ -687,32 +687,10 @@ enyo.kind({
     if (shipping && billing) {
       this.setBPLocation(bpartner, shipping, billing);
     } else {
-      var criteria = {
-        bpartner: {
-          operator: OB.Dal.EQ,
-          value: bpartner.get('bpartnerId')
-        }
-      };
-      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-        var filterBpartnerId = {
-          columns: ['bpartner'],
-          operator: OB.Dal.EQ,
-          value: bpartner.get('bpartnerId'),
-          isId: true
-        };
-        criteria.remoteFilters = [filterBpartnerId];
-      }
-      OB.Dal.find(OB.Model.BPLocation, criteria, function (collection) {
-        if (!billing) {
-          billing = _.find(collection.models, function (loc) {
-            return loc.get('isBillTo');
-          });
-        }
-        if (!shipping) {
-          shipping = _.find(collection.models, function (loc) {
-            return loc.get('isShipTo');
-          });
-        }
+      var bp = new OB.Model.BusinessPartner({
+        id: bpartner.get('bpartnerId')
+      });
+      bp.loadBPLocations(shipping, billing, function (shipping, billing) {
         me.setBPLocation(bpartner, shipping, billing);
       });
     }
@@ -730,27 +708,7 @@ enyo.kind({
     }
     var me = this;
     OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function (bp) {
-      if (shipping) {
-        bp.set('shipLocId', shipping.get('id'));
-        bp.set('shipLocName', shipping.get('name'));
-        bp.set('shipCityName', shipping.get('cityName'));
-        bp.set('shipPostalCode', shipping.get('postalCode'));
-      } else {
-        bp.set('shipLocId', null);
-        bp.set('shipLocName', null);
-        bp.set('shipCityName', null);
-        bp.set('shipPostalCode', null);
-      }
-      if (billing) {
-        bp.set("locId", billing.get("id"));
-        bp.set("locName", billing.get("name"));
-      } else {
-        bp.set("locId", null);
-        bp.set("locName", null);
-      }
-      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-        bp.set('locationModel', shipping);
-      }
+      bp.setBPLocations(shipping, billing, OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true));
 
       if (me.target.startsWith('filterSelectorButton_')) {
         me.doChangeFilterSelector({

@@ -198,6 +198,64 @@
     },
     serializeToJSON: function () {
       return JSON.parse(JSON.stringify(this.toJSON()));
+    },
+    loadBPLocations: function (shipping, billing, callback) {
+      var criteria = {
+        bpartner: {
+          operator: OB.Dal.EQ,
+          value: this.get('id')
+        }
+      };
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        var filterBpartnerId = {
+          columns: ['bpartner'],
+          operator: OB.Dal.EQ,
+          value: this.get('id'),
+          isId: true
+        };
+        criteria.remoteFilters = [filterBpartnerId];
+      }
+      OB.Dal.find(OB.Model.BPLocation, criteria, function (collection) {
+        if (!billing) {
+          billing = _.find(collection.models, function (loc) {
+            return loc.get('isBillTo');
+          });
+        }
+        if (!shipping) {
+          shipping = _.find(collection.models, function (loc) {
+            return loc.get('isShipTo');
+          });
+        }
+        callback(shipping, billing, collection.models);
+      });
+    },
+    setBPLocations: function (shipping, billing, locationModel) {
+      if (shipping) {
+        this.set('shipLocId', shipping.get('id'));
+        this.set('shipLocName', shipping.get('name'));
+        this.set('shipCityName', shipping.get('cityName'));
+        this.set('shipPostalCode', shipping.get('postalCode'));
+      } else {
+        this.set('shipLocId', null);
+        this.set('shipLocName', null);
+        this.set('shipCityName', null);
+        this.set('shipPostalCode', null);
+      }
+      if (billing) {
+        this.set("locId", billing.get("id"));
+        this.set("locName", billing.get("name"));
+      } else {
+        this.set("locId", null);
+        this.set("locName", null);
+      }
+      if (locationModel) {
+        this.set('locationModel', shipping);
+        if (shipping !== null) {
+          this.set('cityName', shipping.get('cityName'));
+          this.set('countryName', shipping.get('countryName'));
+          this.set('postalCode', shipping.get('postalCode'));
+        }
+      }
     }
   });
 
