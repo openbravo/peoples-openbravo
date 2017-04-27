@@ -2566,7 +2566,7 @@
             if (me.get('isDeliveredGreaterThanGross')) {
               me.set('gross', OB.DEC.sub(me.get('deliveredQuantityAmount'), me.get('payment')));
             } else {
-              me.set('gross', OB.DEC.sub(me.get('gross'), me.get('deliveredQuantityAmount')));
+              me.set('gross', OB.DEC.sub(me.get('payment'), me.get('deliveredQuantityAmount')));
             }
           } else {
             me.set('gross', me.get('payment'));
