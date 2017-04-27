@@ -161,8 +161,7 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
         if (ds.isJmxEnabled()) {
           // pool needs to be created before it's registered
           ds.createPool();
-          OBManagementFactory.getInstance().registerMBean("Pool-" + dse.getKey(),
-              ds.getPool().getJmxPool());
+          OBManagementFactory.registerMBean("Pool-" + dse.getKey(), ds.getPool().getJmxPool());
         }
       } catch (Exception e) {
         log.error("Error creating pool {}", dse.getKey(), e);

@@ -25,7 +25,6 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.openbravo.apachejdbcconnectionpool.JdbcExternalConnectionPool;
-import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.dal.core.DalContextListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,37 +32,21 @@ import org.slf4j.LoggerFactory;
 /**
  * This class is intended to register the jmx beans defined in the application.
  */
-public class OBManagementFactory implements OBSingleton {
+public class OBManagementFactory {
   final static private Logger log = LoggerFactory.getLogger(JdbcExternalConnectionPool.class);
-  private static OBManagementFactory instance;
-  private MBeanServer mBeanServer;
-
-  public OBManagementFactory() {
-    this.mBeanServer = ManagementFactory.getPlatformMBeanServer();
-  }
 
   /**
-   * @return the single instance of the OBManagementFactory.
-   */
-  public static synchronized OBManagementFactory getInstance() {
-    if (instance == null) {
-      instance = new OBManagementFactory();
-    }
-    return instance;
-  }
-
-  /**
-   * Registers a pre-existing object as an MBean with the MBean server instance of the
-   * OBManagementFactory.
+   * Registers a pre-existing object as an MBean with the platform MBean server.
    * 
    * @param mBeanName
    *          the name of the MBean
    * @param mBean
    *          the MBean object
    */
-  public void registerMBean(String mBeanName, Object mBean) {
+  public static void registerMBean(String mBeanName, Object mBean) {
     try {
       ObjectName name = new ObjectName("Openbravo:" + getContextString() + "name=" + mBeanName);
+      MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
       mBeanServer.registerMBean(mBean, name);
     } catch (InstanceAlreadyExistsException alreadyRegistered) {
       log.debug("JMX instance already registered for {}, bean name: {}", mBeanName,
@@ -73,7 +56,7 @@ public class OBManagementFactory implements OBSingleton {
     }
   }
 
-  private String getContextString() {
+  private static String getContextString() {
     String context = "";
     if (DalContextListener.getServletContext() != null) {
       context = "context="

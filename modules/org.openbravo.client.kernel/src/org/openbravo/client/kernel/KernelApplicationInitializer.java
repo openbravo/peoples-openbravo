@@ -100,7 +100,6 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
   }
 
   private void registerStaticResourcesMBean() {
-    OBManagementFactory.getInstance().registerMBean(KernelConstants.RESOURCE_COMPONENT_ID,
-        resourceProvider);
+    OBManagementFactory.registerMBean(KernelConstants.RESOURCE_COMPONENT_ID, resourceProvider);
   }
 }
