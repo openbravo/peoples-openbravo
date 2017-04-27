@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,7 +19,6 @@
 
 package org.openbravo.erpCommon.security;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -34,7 +33,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.SessionInfo;
-import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.model.ad.access.SessionUsageAudit;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
@@ -145,32 +143,17 @@ public class UsageAudit {
     if (!auditAction) {
       return;
     }
-    Connection con = null;
-    try {
-      log4j.debug("Auditing sessionId: " + sessionId + " -  action:" + action + " - objectType:"
-          + objectType + " - moduleId:" + moduleId + " - objectId:" + objectId
-          + " - javaClassName:" + javaClassName);
 
-      con = conn.getTransactionConnection();
-      SessionLoginData.insertUsageAudit(con, conn, SessionInfo.getUserId(), sessionId, objectId,
+    try {
+      if (log4j.isDebugEnabled()) {
+        log4j.debug("Auditing sessionId: " + sessionId + " -  action:" + action + " - objectType:"
+            + objectType + " - moduleId:" + moduleId + " - objectId:" + objectId
+            + " - javaClassName:" + javaClassName);
+      }
+      SessionLoginData.insertUsageAudit(conn, SessionInfo.getUserId(), sessionId, objectId,
           moduleId, action, javaClassName, objectType, time);
-      conn.releaseCommitConnection(con);
     } catch (ServletException se) {
       log4j.error("Error inserting usage audit", se);
-    } catch (NoConnectionAvailableException e) {
-      log4j.error("Error getting connection to insert usage audit", e);
-    } catch (SQLException e) {
-      log4j.error("Error inserting usage audit", e);
-    } finally {
-      try {
-        // at this point, connection should be closed if everything went ok. If it is not the case,
-        // let's rollback and close
-        if (con != null && !con.isClosed()) {
-          conn.releaseRollbackConnection(con);
-        }
-      } catch (SQLException e) {
-        log4j.error("Error while releasing connection", e);
-      }
     }
   }
 }
