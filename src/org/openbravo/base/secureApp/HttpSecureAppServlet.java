@@ -131,7 +131,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       log4j.debug("Servlet request for class info: " + this.getClass());
 
       if (classInfo == null) {
-        ClassInfoData[] classInfoAux = ClassInfoData.select(this, this.getClass().getName());
+        ClassInfoData[] classInfoAux = ClassInfoData.select(new DalConnectionProvider(false), this
+            .getClass().getName());
         if (classInfoAux != null && classInfoAux.length > 0)
           classInfo = classInfoAux[0];
         else {
@@ -202,6 +203,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
     String strUserAuth;
 
+    ConnectionProvider cp = new DalConnectionProvider(false);
     try {
 
       OBContext.setAdminMode();
@@ -223,7 +225,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         if (areThereLicenseRestrictions(null)) {
           throw new AuthenticationException("No valid license");
         }
-        // make sure that there is an OBContext for the logged in user also in case of stateless requests
+        // make sure that there is an OBContext for the logged in user also in case of stateless
+        // requests
         if (OBContext.getOBContext() == null
             || !strUserAuth.equals(OBContext.getOBContext().getUser().getId())) {
           OBContext.setOBContext(UserContextCache.getInstance().getCreateOBContext(strUserAuth));
@@ -240,7 +243,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       // is done by the fillSessionArguments below
       if (!variables.isLoggingIn()) {
         // log in process is completed, check whether the session in db is still active
-        loggedOK = SeguridadData.loggedOK(this, variables.getDBSession());
+        loggedOK = SeguridadData.loggedOK(cp, variables.getDBSession());
         if (!loggedOK) {
           if (request.getSession(false) != null
               && "Y".equals(request.getSession().getAttribute("forceLogin"))) {
@@ -276,11 +279,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           if (areThereLicenseRestrictions(variables.getDBSession()) || !correctSystemStatus
               || onlySystemAdminAvailable) {
             // it is only allowed to log as system administrator
-            strRole = DefaultOptionsData.getDefaultSystemRole(this, strUserAuth);
+            strRole = DefaultOptionsData.getDefaultSystemRole(cp, strUserAuth);
             if (strRole == null || strRole.equals("")) {
               final OBError roleError = new OBError();
               roleError.setType("Error");
-              roleError.setMessage(Utility.messageBD(this, "SystemLoginRequired",
+              roleError.setMessage(Utility.messageBD(cp, "SystemLoginRequired",
                   variables.getLanguage()));
               invalidLogin(request, response, roleError);
 
@@ -291,20 +294,20 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             strWarehouse = "";
           } else {
             RoleDefaults defaults = LoginUtils.getLoginDefaults(strUserAuth, variables.getRole(),
-                this);
+                cp);
             strRole = defaults.role;
             strClient = defaults.client;
             strOrg = defaults.org;
             strWarehouse = defaults.warehouse;
           }
 
-          DefaultOptionsData dataLanguage[] = DefaultOptionsData.defaultLanguage(this, strUserAuth);
+          DefaultOptionsData dataLanguage[] = DefaultOptionsData.defaultLanguage(cp, strUserAuth);
           if (dataLanguage != null && dataLanguage.length > 0) {
             strLanguage = dataLanguage[0].getField("DEFAULT_AD_LANGUAGE");
             strIsRTL = dataLanguage[0].getField("ISRTL");
           }
           if (strLanguage == null || strLanguage.equals("")) {
-            dataLanguage = DefaultOptionsData.getDefaultLanguage(this);
+            dataLanguage = DefaultOptionsData.getDefaultLanguage(cp);
             if (dataLanguage != null && dataLanguage.length > 0) {
               strLanguage = dataLanguage[0].getField("AD_LANGUAGE");
               strIsRTL = dataLanguage[0].getField("ISRTL");
@@ -313,7 +316,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
           // note fill session arguments will set the LOGGINGIN session var
           // to N
-          if (LoginUtils.fillSessionArguments(this, vars, strUserAuth, strLanguage, strIsRTL,
+          if (LoginUtils.fillSessionArguments(cp, vars, strUserAuth, strLanguage, strIsRTL,
               strRole, strClient, strOrg, strWarehouse)) {
             readProperties(vars);
             readNumberFormat(vars, globalParameters.getFormatPath());
@@ -450,7 +453,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         }
         long t = System.currentTimeMillis();
         super.serviceInitialized(request, response);
-        UsageAudit.auditActionNoDal(this, vars1, this.getClass().getName(),
+        UsageAudit.auditActionNoDal(cp, vars1, this.getClass().getName(),
             System.currentTimeMillis() - t);
       } else {
         if ((strPopUp != null && !strPopUp.equals("")) || classInfo.type.equals("S")) {
@@ -527,19 +530,20 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
    */
   protected boolean hasGeneralAccess(VariablesSecureApp vars, String type, String id) {
     try {
-      final String accessLevel = SeguridadData.selectAccessLevel(this, type, id);
+      ConnectionProvider cp = new DalConnectionProvider(false);
+      final String accessLevel = SeguridadData.selectAccessLevel(cp, type, id);
       vars.setSessionValue("#CurrentAccessLevel", accessLevel);
       if (type.equals("W")) {
         return hasLevelAccess(vars, accessLevel)
-            && SeguridadData.selectAccess(this, vars.getRole(), "TABLE", id).equals("0")
-            && !SeguridadData.selectAccess(this, vars.getRole(), type, id).equals("0");
+            && SeguridadData.selectAccess(cp, vars.getRole(), "TABLE", id).equals("0")
+            && !SeguridadData.selectAccess(cp, vars.getRole(), type, id).equals("0");
       } else if (type.equals("S")) {
-        return !SeguridadData.selectAccessSearch(this, vars.getRole(), id).equals("0");
+        return !SeguridadData.selectAccessSearch(cp, vars.getRole(), id).equals("0");
       } else if (type.equals("C"))
         return true;
       else
         return hasLevelAccess(vars, accessLevel)
-            && !SeguridadData.selectAccess(this, vars.getRole(), type, id).equals("0");
+            && !SeguridadData.selectAccess(cp, vars.getRole(), type, id).equals("0");
     } catch (final Exception e) {
       log4j.error("Error checking access: ", e);
       return false;
