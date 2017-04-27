@@ -44,6 +44,7 @@ enyo.kind({
     for (i = 0; i < line.length; i++) {
       me.$.bodyContent.$.verifiedReturns.$['valueAttribute' + i].setValue(null);
     }
+    this.validateAttributeWithOrderlines();
     return;
   },
   cancelAction: function () {
@@ -51,7 +52,8 @@ enyo.kind({
     return;
   },
   validateAction: function () {
-    this.validateAttributeWithOrderlines();
+    var me = this;
+    me.args.returnLinesPopup.callbackExecutor();
     this.hide();
     return;
   },
@@ -59,30 +61,25 @@ enyo.kind({
     var me = this,
         line = me.args.line,
         notValidAttribute = false,
-        orderlineAttr, orderlineProduct, inputlineProduct, inputlineAttribute, i;
+        orderlineAttribute, orderlineProduct, inputlineProduct, inputlineAttribute, i;
     for (i = 0; i < line.length; i++) {
       orderlineProduct = line[i].id;
-      orderlineAttr = line[i].attributeValue;
+      orderlineAttribute = line[i].attributeValue;
       inputlineProduct = me.$.bodyContent.$.verifiedReturns.$['productId' + i].getContent();
       inputlineAttribute = me.$.bodyContent.$.verifiedReturns.$['valueAttribute' + i].getValue();
-      if ((orderlineAttr !== inputlineAttribute) && (orderlineProduct === inputlineProduct)) {
-        notValidAttribute = true;
-        break;
+      if (inputlineAttribute) {
+        if ((orderlineAttribute !== inputlineAttribute) && (orderlineProduct === inputlineProduct)) {
+          notValidAttribute = true;
+          me.$.bodyContent.$.verifiedReturns.$['valueAttribute' + i].addStyles('background-color: red');
+        } else {
+          me.$.bodyContent.$.verifiedReturns.$['valueAttribute' + i].addStyles('background-color: #6cb33f');
+        }
       }
     }
-    if (notValidAttribute) {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotValidAttribute'), OB.I18N.getLabel('OBPOS_AttributeNotInOrder'), [{
-        label: OB.I18N.getLabel('OBMOBC_LblOk'),
-        action: function () {
-          return;
-        }
-      }], {
-        autoDismiss: false
-      });
-    } else {
-      me.args.returnLinesPopup.callbackExecutor();
+    if (notValidAttribute === false) {
+      me.$.bodyButtons.$.modalDialogButton.setDisabled(true);
     }
-    return;
+    return true;
   },
   executeOnShow: function () {
     var me = this,
@@ -108,8 +105,11 @@ enyo.kind({
           classes: 'span4',
           style: 'line-height: 35px; font-size: 17px;text-align: center;width: 400px; padding-top: 10px;',
           name: 'valueAttribute' + i,
-          //selectOnFocus: true//,
-          isFirstFocus: true //,
+          isFirstFocus: true,
+          handlers: {
+            onblur: 'validateAttributeWithOrderlines'
+          },
+          placeholder: 'Enter attribute value'
         }, {
           name: 'productId' + i,
           type: 'hidden'
@@ -118,6 +118,7 @@ enyo.kind({
       me.$.bodyContent.$.verifiedReturns.$['productId' + i].setContent(line[i].id);
       me.$.bodyContent.$.verifiedReturns.$['productName' + i].setContent(line[i].name);
       me.$.bodyContent.$.verifiedReturns.$['productId' + i].hide();
+      me.$.bodyButtons.$.modalDialogButton.setDisabled(true);
     }
     me.$.bodyContent.$.verifiedReturns.render();
   }
