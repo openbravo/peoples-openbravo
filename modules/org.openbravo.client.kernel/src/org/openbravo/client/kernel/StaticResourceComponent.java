@@ -93,14 +93,6 @@ public class StaticResourceComponent extends BaseComponent {
     final long t1 = System.currentTimeMillis();
 
     try {
-      final String appName = isClassicMode() ? ComponentResource.APP_CLASSIC
-          : ComponentResource.APP_OB3;
-
-      String cachedFilePath = resourceProvider.getStaticResourceCachedInfo(appName);
-      if (cachedFilePath != null) {
-        return cachedFilePath;
-      }
-
       // note the document.write content must be divided up like this, if the document.write
       // contains a complete string like <script or </script> then the browser will execute
       // them
@@ -117,14 +109,20 @@ public class StaticResourceComponent extends BaseComponent {
         OBContext.getOBContext().setNewUI(true);
       }
 
-      StringBuilder result = new StringBuilder();
-      String staticResourceFileName = getStaticResourceFileName() + ".js";
-      final String scriptPath = getContextUrl() + GEN_TARGET_LOCATION.substring(1) + "/"
-          + staticResourceFileName;
+      final String appName = isClassicMode() ? ComponentResource.APP_CLASSIC
+          : ComponentResource.APP_OB3;
 
-      if (!isInDevelopment()) {
-        resourceProvider.putStaticResourceCachedInfo(appName, staticResourceFileName);
+      String staticResourceFileName = resourceProvider.getStaticResourceCachedInfo(appName);
+      if (staticResourceFileName == null) {
+        staticResourceFileName = getStaticResourceFileName();
+        if (!isInDevelopment()) {
+          resourceProvider.putStaticResourceCachedInfo(appName, staticResourceFileName);
+        }
       }
+
+      StringBuilder result = new StringBuilder();
+      final String scriptPath = getContextUrl() + GEN_TARGET_LOCATION.substring(1) + "/"
+          + staticResourceFileName + ".js";
 
       if (isClassicMode()) {
         result.append("document.write(\"<LINK rel='stylesheet' type='text/css' href='"

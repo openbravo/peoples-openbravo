@@ -285,7 +285,7 @@ if (onlySystemAdminAccess && role != null && !"0".equals(role.getId())) {
   final String staticResourceFileName = resourceProvider.getStaticResourceCachedInfo("OB3");
   if (staticResourceFileName != null) {
 %>
-<script src="./web/js/gen/<%=staticResourceFileName%>"></script>
+<script src="./web/js/gen/<%=staticResourceFileName%>.js"></script>
 <%
   } else {
 %>
