@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FormatUtilities;
 
 /**
@@ -70,7 +71,7 @@ public class DynamicJS extends HttpSecureAppServlet {
     OBError myError = null;
     DynamicJSData[] data = null;
     try {
-      data = DynamicJSData.select(this, vars.getLanguage());
+      data = DynamicJSData.select(new DalConnectionProvider(false), vars.getLanguage());
     } catch (ServletException ex) {
       myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       log4j.error("Error in DynamicJS.printPageDataSheet(): " + myError.getTitle() + " - "
