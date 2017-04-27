@@ -1563,7 +1563,14 @@
                 return;
               }
               var splitline = !(options && options.line) && !OB.UTIL.isNullOrUndefined(args.line) && !OB.UTIL.isNullOrUndefined(args.line.get('splitline')) && args.line.get('splitline');
-              if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')))) {
+              if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct'))) && (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && args.line.get('attributeValue') === attrs.attributeValue)) {
+                if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && p.get('isSerialNo') && args.line.get('qty') === 1) {
+                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductDefinedAsSerialNo'));
+                  if (callback) {
+                    callback(false, null);
+                  }
+                  return false;
+                }
                 args.receipt.addUnit(args.line, args.qty);
                 if (!_.isUndefined(args.attrs)) {
                   _.each(_.keys(args.attrs), function (key) {
@@ -1574,11 +1581,9 @@
                     }
                   });
                 }
-                if (!args.p.get('hasAttributes')) {
-                  args.line.trigger('selected', args.line);
-                  line = args.line;
-                  newLine = false;
-                }
+                args.line.trigger('selected', args.line);
+                line = args.line;
+                newLine = false;
               } else {
                 if (args.attrs && args.attrs.relatedLines && args.attrs.relatedLines[0].deferred && args.p.get('quantityRule') === 'PP') {
                   line = args.receipt.createLine(args.p, args.attrs.relatedLines[0].qty, args.options, args.attrs);
@@ -1613,6 +1618,59 @@
           }
         }
         me.save();
+        OB.UTIL.HookManager.executeHooks('OBPOS_PostAddProductToOrder', {
+          receipt: me,
+          productToAdd: p,
+          orderline: line,
+          qtyToAdd: qty,
+          options: options,
+          newLine: newLine
+        }, function (args) {
+          var callbackAddProduct = function () {
+              if (callback) {
+                callback(true, args.orderline);
+              }
+              };
+          if (args.orderline) {
+            args.orderline.set('hasMandatoryServices', false);
+          }
+          if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
+            var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
+            // Display related services after calculate gross, if it is new line
+            // and if the line has not been deleted.
+            // The line might has been deleted during calculate gross for
+            // examples if there was an error in taxes.
+            var productId = args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id;
+            args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
+              if (data) {
+                if (data.hasservices) {
+                  args.orderline.set('hasRelatedServices', true);
+                  args.orderline.trigger('showServicesButton');
+                } else {
+                  args.orderline.set('hasRelatedServices', false);
+                }
+                args.receipt.save();
+                if (data.hasmandatoryservices) {
+                  var splitline = !OB.UTIL.isNullOrUndefined(args.orderline) && !OB.UTIL.isNullOrUndefined(args.orderline.get('splitline')) && args.orderline.get('splitline');
+                  if (!splitline) {
+                    args.receipt.trigger('showProductList', args.orderline, 'mandatory');
+                    args.orderline.set('hasMandatoryServices', true);
+                    callbackAddProduct();
+                  } else {
+                    callbackAddProduct();
+                  }
+                } else {
+                  callbackAddProduct();
+                }
+              } else {
+                callbackAddProduct();
+              }
+              OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
+            }, args.orderline);
+          } else {
+            callbackAddProduct();
+          }
+        });
       } // End addProductToOrder
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('ignoreReturnApproval')) {
         if (options && options.isVerifiedReturn) {
@@ -1634,63 +1692,6 @@
       } else {
         addProductToOrder();
       }
-    },
-
-    postAddProductToOrder: function (me, p, line, qty, options, newLine, callback) {
-
-      OB.UTIL.HookManager.executeHooks('OBPOS_PostAddProductToOrder', {
-        receipt: me,
-        productToAdd: p,
-        orderline: line,
-        qtyToAdd: qty,
-        options: options,
-        newLine: newLine
-      }, function (args) {
-        var callbackAddProduct = function () {
-            if (callback) {
-              callback(true, args.orderline);
-            }
-            };
-        if (args.orderline) {
-          args.orderline.set('hasMandatoryServices', false);
-        }
-        if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
-          var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
-          // Display related services after calculate gross, if it is new line
-          // and if the line has not been deleted.
-          // The line might has been deleted during calculate gross for
-          // examples if there was an error in taxes.
-          var productId = args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id;
-          args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
-            if (data) {
-              if (data.hasservices) {
-                args.orderline.set('hasRelatedServices', true);
-                args.orderline.trigger('showServicesButton');
-              } else {
-                args.orderline.set('hasRelatedServices', false);
-              }
-              args.receipt.save();
-              if (data.hasmandatoryservices) {
-                var splitline = !OB.UTIL.isNullOrUndefined(args.orderline) && !OB.UTIL.isNullOrUndefined(args.orderline.get('splitline')) && args.orderline.get('splitline');
-                if (!splitline) {
-                  args.receipt.trigger('showProductList', args.orderline, 'mandatory');
-                  args.orderline.set('hasMandatoryServices', true);
-                  callbackAddProduct();
-                } else {
-                  callbackAddProduct();
-                }
-              } else {
-                callbackAddProduct();
-              }
-            } else {
-              callbackAddProduct();
-            }
-            OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
-          }, args.orderline);
-        } else {
-          callbackAddProduct();
-        }
-      });
     },
 
     _loadRelatedServices: function (productType, productId, productCategory, callback, line) {
@@ -1923,6 +1924,7 @@
             popup: 'modalProductAttribute',
             args: {
               callback: function (attributeValue) {
+                var i;
                 if (OB.UTIL.isNullOrUndefined(attrs)) {
                   attrs = {};
                 }
