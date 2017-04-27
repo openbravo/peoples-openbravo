@@ -34,6 +34,7 @@ import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.OBError;
@@ -41,6 +42,7 @@ import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class Login extends HttpBaseServlet {
@@ -89,24 +91,25 @@ public class Login extends HttpBaseServlet {
       String strTheme = vars.getTheme();
       OBContext.setAdminMode();
       try {
+        ConnectionProvider cp = new DalConnectionProvider(false);
         Client systemClient = OBDal.getInstance().get(Client.class, "0");
-        final String cacheMsg = Utility.messageBD(this, "OUTDATED_FILES_CACHED", systemClient
+        final String cacheMsg = Utility.messageBD(cp, "OUTDATED_FILES_CACHED", systemClient
             .getLanguage().getLanguage());
-        final String validBrowserMsg = Utility.messageBD(this, "BROWSER_NOT_SUPPORTED",
-            systemClient.getLanguage().getLanguage());
-        final String orHigherMsg = Utility.messageBD(this, "OR_HIGHER_TEXT", systemClient
+        final String validBrowserMsg = Utility.messageBD(cp, "BROWSER_NOT_SUPPORTED", systemClient
             .getLanguage().getLanguage());
-        final String recBrowserMsgTitle = Utility.messageBD(this, "RECOMMENDED_BROWSER_TITLE",
+        final String orHigherMsg = Utility.messageBD(cp, "OR_HIGHER_TEXT", systemClient
+            .getLanguage().getLanguage());
+        final String recBrowserMsgTitle = Utility.messageBD(cp, "RECOMMENDED_BROWSER_TITLE",
             systemClient.getLanguage().getLanguage());
-        final String recBrowserMsgText = Utility.messageBD(this, "RECOMMENDED_BROWSER_TEXT",
+        final String recBrowserMsgText = Utility.messageBD(cp, "RECOMMENDED_BROWSER_TEXT",
             systemClient.getLanguage().getLanguage());
-        final String identificationFailureTitle = Utility.messageBD(this,
+        final String identificationFailureTitle = Utility.messageBD(cp,
             "IDENTIFICATION_FAILURE_TITLE", systemClient.getLanguage().getLanguage());
-        final String emptyUsernameOrPasswordText = Utility.messageBD(this,
+        final String emptyUsernameOrPasswordText = Utility.messageBD(cp,
             "EMPTY_USERNAME_OR_PASSWORD_TEXT", systemClient.getLanguage().getLanguage());
-        final String errorSamePassword = Utility.messageBD(this, "CPSamePassword", systemClient
+        final String errorSamePassword = Utility.messageBD(cp, "CPSamePassword", systemClient
             .getLanguage().getLanguage());
-        final String errorDifferentPasswordInFields = Utility.messageBD(this,
+        final String errorDifferentPasswordInFields = Utility.messageBD(cp,
             "CPDifferentPasswordInFields", systemClient.getLanguage().getLanguage());
         printPageLogin(vars, response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg,
             recBrowserMsgTitle, recBrowserMsgText, identificationFailureTitle,

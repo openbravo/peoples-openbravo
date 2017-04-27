@@ -142,11 +142,7 @@ public abstract class AuthenticationManager {
   }
 
   public void init(HttpServlet s) throws AuthenticationException {
-    if (s instanceof ConnectionProvider) {
-      conn = (ConnectionProvider) s;
-    } else {
-      conn = new DalConnectionProvider();
-    }
+    conn = new DalConnectionProvider(false);
     defaultServletUrl = s.getServletConfig().getServletContext().getInitParameter("LoginServlet");
   }
 
