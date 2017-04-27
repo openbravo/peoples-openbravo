@@ -271,7 +271,8 @@ enyo.kind({
     this.model.get('order').cancelLayaway(this);
   },
   displayLogic: function () {
-    var isPaidReceipt, isLayaway, isReturn, haspayments, receiptLines, receipt;
+    var me = this,
+        isPaidReceipt, isLayaway, isReturn, haspayments, receiptLines, receipt;
 
     receipt = this.model.get('order');
 
@@ -294,6 +295,7 @@ enyo.kind({
             shipqty += shipline.qty;
           });
         });
+        me.model.get('order').getPrepaymentAmount();
       } else {
         return 'udf';
       }

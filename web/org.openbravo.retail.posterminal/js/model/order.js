@@ -4217,6 +4217,7 @@
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
         });
       });
+      me.getPrepaymentAmount();
     },
 
     createQuotation: function () {

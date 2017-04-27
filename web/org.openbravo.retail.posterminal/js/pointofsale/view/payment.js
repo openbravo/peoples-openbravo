@@ -1454,17 +1454,18 @@ enyo.kind({
           }
         }
         },
-        paymentStatus, prepaymentLimitAmount, receiptHasPrepaymentAmount, pendingPrepayment;
+        paymentStatus, prepaymentLimitAmount, pendingPrepayment, receiptHasPrepaymentAmount = true;
 
     if (myModel.get('leftColumnViewManager').isOrder()) {
       paymentStatus = this.owner.receipt.getPaymentStatus();
       prepaymentLimitAmount = this.owner.receipt.get('prepaymentLimitAmt');
+      receiptHasPrepaymentAmount = this.owner.receipt.get('orderType') !== 1 && this.owner.receipt.get('orderType') !== 3;
     } else {
       paymentStatus = this.owner.model.get('multiOrders').getPaymentStatus();
       prepaymentLimitAmount = this.owner.model.get('multiOrders').get('prepaymentLimitAmt');
     }
     pendingPrepayment = prepaymentLimitAmount + paymentStatus.pendingAmt - paymentStatus.totalAmt;
-    receiptHasPrepaymentAmount = prepaymentLimitAmount !== 0;
+    receiptHasPrepaymentAmount = receiptHasPrepaymentAmount && prepaymentLimitAmount !== 0;
     if (receiptHasPrepaymentAmount && pendingPrepayment > 0) {
       OB.UTIL.Approval.requestApproval(
       me.model, 'OBPOS_approval.prepaymentUnderLimit', function (approved, supervisor, approvalType) {
