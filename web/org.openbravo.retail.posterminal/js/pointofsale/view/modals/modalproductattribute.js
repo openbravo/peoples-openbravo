@@ -65,50 +65,11 @@ enyo.kind({
   },
   saveAttribute: function (inSender, inEvent) {
     var me = this,
-        inpattributeValue = this.$.bodyContent.$.valueAttribute.getValue(),
-        receipt = me.owner.model.get('order'),
-        orderline = me.owner.model.get('order').get('lines'),
-        currentline = me.args.line,
-        currentlineProduct = currentline.get('product'),
-        currentlineqty = currentline.get('qty'),
-        options = me.args.options,
-        newline = true,
-        existingAttribute = false,
-        finalCallbackStatus = false;
-    if (this.validAttribute(inpattributeValue) && inpattributeValue) {
-      if (typeof options === 'undefined' || !options) {
-        //NORMAL or BLIND RETURN
-        if (this.validateAttributeWithOrderlines(currentlineProduct, orderline, inpattributeValue)) {
-          this.deleteOrderline(currentline);
-          if (currentlineProduct.get('isSerialNo')) {
-            this.showConfirm(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductDefinedAsSerialNo'));
-            if (me.args.finalCallback) {
-              finalCallbackStatus = false;
-            }
-          }
-          receipt.addUnit(currentline, currentlineqty);
-          receipt.save();
-          finalCallbackStatus = false;
-        } else {
-          currentline.set('attributeValue', inpattributeValue);
-          receipt.save();
-          finalCallbackStatus = true;
-        }
-        this.args.initialCallback(receipt, currentlineProduct, currentline, currentlineqty, null, newline, me.args.finalCallback(finalCallbackStatus, currentline));
-      } else {
-        //VERIFIED RETURN
-        if (inpattributeValue !== currentline.getAttributeValue() && options.isVerifiedReturn) {
-          this.showConfirm(OB.I18N.getLabel('OBPOS_NotValidAttribute'), OB.I18N.getLabel('OBPOS_AttributeNotInOrder'));
-          this.deleteOrderline(currentline);
-          finalCallbackStatus = false;
-          this.args.initialCallback(receipt, currentlineProduct, currentline, currentlineqty, null, newline, me.args.finalCallback(finalCallbackStatus, currentline));
-        }
-      }
+        inpAttributeValue = this.$.bodyContent.$.valueAttribute.getValue();
+    if ((this.validAttribute(inpAttributeValue) && inpAttributeValue)) {
+      this.args.callback(inpAttributeValue);
     } else {
-      this.deleteOrderline(currentline);
-      this.showConfirm(OB.I18N.getLabel('OBPOS_NotValidAttribute'), '');
-      finalCallbackStatus = false;
-      this.args.initialCallback(receipt, currentlineProduct, currentline, currentlineqty, null, newline, me.args.finalCallback(finalCallbackStatus, currentline));
+      this.args.callback(null);
     }
   },
   clearAction: function () {
@@ -125,45 +86,16 @@ enyo.kind({
     this.hide();
     return true;
   },
-  validateAttributeWithOrderlines: function (currentlineProduct, orderline, inpAttributeValue) {
-    var me = this,
-        i, orderlineProduct, ordrerlineAttribute, existingAttribute = false;
-    for (i = 0; i < orderline.length; i++) {
-      orderlineProduct = orderline.models[i].attributes.product.id;
-      ordrerlineAttribute = orderline.models[i].getAttributeValue();
-      if ((ordrerlineAttribute === inpAttributeValue) && (orderlineProduct === currentlineProduct.id)) {
-        existingAttribute = true;
-        break;
-      }
-    }
-    return existingAttribute;
-  },
-  executeOnShow: function () {},
   executeOnHide: function () {
     var me = this;
-    var inpattributeValue = this.$.bodyContent.$.valueAttribute.getValue();
-    if (!inpattributeValue) {
+    var inpAttributeValue = this.$.bodyContent.$.valueAttribute.getValue();
+    if (!inpAttributeValue) {
       this.deleteOrderline(this.args.line);
       if (me.args.finalCallback) {
         me.args.finalCallback(false, null);
       }
     }
     this.$.bodyContent.$.valueAttribute.setValue(null);
-  },
-  deleteOrderline: function (currentLine) {
-    this.owner.model.get('order').deleteLine(currentLine);
-    this.owner.model.get('order').save();
-  },
-  showConfirm: function (label1, label2) {
-    var me = this;
-    OB.UTIL.showConfirmation.display(label1, label2, [{
-      label: OB.I18N.getLabel('OBMOBC_LblOk'),
-      action: function () {
-        return false;
-      }
-    }], {
-      autoDismiss: false
-    });
   }
 });
 OB.UI.WindowView.registerPopup('OB.OBPOSPointOfSale.UI.PointOfSale', {
