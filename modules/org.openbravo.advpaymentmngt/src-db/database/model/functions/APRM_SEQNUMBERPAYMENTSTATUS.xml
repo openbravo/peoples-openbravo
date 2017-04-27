@@ -33,6 +33,7 @@ BEGIN
                       AND value = status);
 
   IF (v_count = 0) THEN
+    -- If status is null, return minimum value for invoice paid status (RPR or PPM)
     RETURN '40';
   END IF;
   
