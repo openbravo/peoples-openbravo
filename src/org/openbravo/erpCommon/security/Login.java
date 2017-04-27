@@ -171,6 +171,7 @@ public class Login extends HttpBaseServlet {
     }
 
     Client systemClient = OBDal.getInstance().get(Client.class, "0");
+    ConnectionProvider cp = new DalConnectionProvider(false);
     xmlEngine.sessionLanguage = systemClient.getLanguage().getLanguage();
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login")
@@ -188,7 +189,7 @@ public class Login extends HttpBaseServlet {
         + ak.getExpirationMessage(vars.getLanguage()).toString() + ";";
     xmlDocument.setParameter("expirationMessage", expirationMessage);
     xmlDocument.setParameter("itServiceUrl",
-        "var itServiceUrl = '" + SessionLoginData.selectSupportContact(this) + "'");
+        "var itServiceUrl = '" + SessionLoginData.selectSupportContact(cp) + "'");
 
     String cacheMsgFinal = "var cacheMsg = \"" + cacheMsg + "\"";
     xmlDocument.setParameter("cacheMsg", cacheMsgFinal.replaceAll("\\n", "\n"));
@@ -223,17 +224,17 @@ public class Login extends HttpBaseServlet {
 
     if (showGSignInButtonDemo || !signInProvider.isUnsatisfied()) {
       String link = "<span class=\"LabelText Login_LabelText\">"
-          + Utility.messageBD(this, "OBUIAPP_SignIn", vars.getLanguage()) + "</span>";
+          + Utility.messageBD(cp, "OBUIAPP_SignIn", vars.getLanguage()) + "</span>";
       if (signInProvider.isUnsatisfied()) {
         // if there is no external sign in provider, show Google Sign In icon with demo purposes
         String lang = OBDal.getInstance().get(Client.class, "0").getLanguage().getLanguage();
         String message = "";
         if (ak.isActive()) {
-          message = Utility.messageBD(this, "OBUIAPP_gSignInButtonDemoProfessional", lang);
+          message = Utility.messageBD(cp, "OBUIAPP_gSignInButtonDemoProfessional", lang);
         } else {
-          message = Utility.messageBD(this, "OBUIAPP_ActivateMessage", lang);
+          message = Utility.messageBD(cp, "OBUIAPP_ActivateMessage", lang);
           message = message.replace("%0",
-              Utility.messageBD(this, "OBUIAPP_gSignInButtonDemoCommunity", lang));
+              Utility.messageBD(cp, "OBUIAPP_gSignInButtonDemoCommunity", lang));
         }
         message = message.replaceAll("&quot;", "\"").replaceAll("\"", "\\\\\"")
             .replaceAll("'", "´");
@@ -273,7 +274,7 @@ public class Login extends HttpBaseServlet {
             + message
             + "\")'>" //
             + "  <span title=\""
-            + Utility.messageBD(this, "OBUIAPP_gSignInButtonDemoAltMsg", vars.getLanguage()) //
+            + Utility.messageBD(cp, "OBUIAPP_gSignInButtonDemoAltMsg", vars.getLanguage()) //
             + "\"></span>" //
             + "</div>";
       } else {
