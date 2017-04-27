@@ -43,7 +43,7 @@ public class OBManagementFactory implements OBSingleton {
   }
 
   /**
-   * @returns the single instance of the OBManagementFactory.
+   * @return the single instance of the OBManagementFactory.
    */
   public static synchronized OBManagementFactory getInstance() {
     if (instance == null) {

@@ -34,5 +34,5 @@ public interface StaticResourceProviderMBean {
    * @param resourceName
    *          the identifying name of the static resource
    */
-  public void removeStaticResourceCachedInfo(String appName);
+  public void removeStaticResourceCachedInfo(String resourceName);
 }
