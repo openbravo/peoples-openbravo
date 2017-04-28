@@ -311,8 +311,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           }));
           cashUpReport.get('drops').push(new Backbone.Model({
             searchKey: p.get('searchKey'),
-            origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(p.get('totalDrops'), p.get('totalReturns'))),
-            amount: OB.DEC.add(0, OB.DEC.add(p.get('totalDrops'), p.get('totalReturns'))),
+            origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(0, p.get('totalReturns'))),
+            amount: OB.DEC.add(0, p.get('totalReturns')),
             description: p.get('name') + paymentSharedStr,
             currency: fromCurrencyId,
             isocode: auxPay.isocode,

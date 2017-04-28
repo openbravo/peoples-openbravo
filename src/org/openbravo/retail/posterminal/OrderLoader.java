@@ -93,6 +93,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.Fin_OrigPaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.PaymentTerm;
+import org.openbravo.model.financialmgmt.payment.PaymentTermLine;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.onhandquantity.StockProposed;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
@@ -1758,25 +1759,47 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  private Date getCalculatedDueDateBasedOnPaymentTerms(Date startingDate, PaymentTerm paymentTerms) {
+  private Date getCalculatedDueDateBasedOnPaymentTerms(Date startingDate, PaymentTerm paymentTerm,
+      PaymentTermLine paymentTermLine) {
     // TODO Take into account the flag "Next business date"
     // TODO Take into account the flag "Fixed due date"
-    long daysToAdd = paymentTerms.getOverduePaymentDaysRule();
-    long MonthOffset = paymentTerms.getOffsetMonthDue();
-    String dayToPay = paymentTerms.getOverduePaymentDayRule();
     Calendar calculatedDueDate = new GregorianCalendar();
     calculatedDueDate.setTime(startingDate);
-    if (MonthOffset > 0) {
-      calculatedDueDate.add(Calendar.MONTH, (int) MonthOffset);
+    long daysToAdd, monthOffset, maturityDate1 = 0, maturityDate2 = 0, maturityDate3 = 0;
+    String dayToPay;
+
+    if (paymentTerm != null) {
+      daysToAdd = paymentTerm.getOverduePaymentDaysRule();
+      monthOffset = paymentTerm.getOffsetMonthDue();
+      dayToPay = paymentTerm.getOverduePaymentDayRule();
+      if (paymentTerm.isFixedDueDate()) {
+        maturityDate1 = paymentTerm.getMaturityDate1();
+        maturityDate2 = paymentTerm.getMaturityDate2();
+        maturityDate3 = paymentTerm.getMaturityDate3();
+      }
+    } else if (paymentTermLine != null) {
+      daysToAdd = paymentTermLine.getOverduePaymentDaysRule();
+      monthOffset = paymentTermLine.getOffsetMonthDue() == null ? 0 : paymentTermLine
+          .getOffsetMonthDue();
+      dayToPay = paymentTermLine.getOverduePaymentDayRule();
+      if (paymentTermLine.isFixedDueDate()) {
+        maturityDate1 = paymentTermLine.getMaturityDate1();
+        maturityDate2 = paymentTermLine.getMaturityDate2();
+        maturityDate3 = paymentTermLine.getMaturityDate3();
+      }
+    } else {
+      return calculatedDueDate.getTime();
+    }
+    if (monthOffset > 0) {
+      calculatedDueDate.add(Calendar.MONTH, (int) monthOffset);
     }
     if (daysToAdd > 0) {
       calculatedDueDate.add(Calendar.DATE, (int) daysToAdd);
     }
     // Calculating due date based on "Fixed due date"
-    if (paymentTerms.isFixedDueDate()) {
+    if ((paymentTerm != null && paymentTerm.isFixedDueDate())
+        || (paymentTermLine != null && paymentTermLine.isFixedDueDate())) {
       long dueDateDay = calculatedDueDate.get(Calendar.DAY_OF_MONTH), finalDueDateDay = 0;
-      long maturityDate1 = paymentTerms.getMaturityDate1(), maturityDate2 = paymentTerms
-          .getMaturityDate2(), maturityDate3 = paymentTerms.getMaturityDate3();
       if (maturityDate2 < dueDateDay && maturityDate3 >= dueDateDay) {
         finalDueDateDay = maturityDate3;
       } else if (maturityDate1 < dueDateDay && maturityDate2 >= dueDateDay) {
@@ -1789,7 +1812,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         calculatedDueDate.add(Calendar.MONTH, 1);
       }
     }
-    if (dayToPay != null && !dayToPay.equals("")) {
+    if (!StringUtils.isEmpty(dayToPay)) {
       // for us: 1 -> Monday
       // for Calendar: 1 -> Sunday
       int dayOfTheWeekToPay = Integer.parseInt(dayToPay);
@@ -1836,10 +1859,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     FIN_PaymentSchedule paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
     int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
         .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
-    BigDecimal amountPaidWithCredit = BigDecimal.ZERO;
+    BigDecimal amountPaidWithCredit = BigDecimal.ZERO, paymentScheduleCreditAmount = BigDecimal.ZERO;
     if (wasPaidOnCredit) {
       amountPaidWithCredit = (BigDecimal.valueOf(jsonorder.getDouble("gross")).subtract(BigDecimal
           .valueOf(jsonorder.getDouble("payment")))).setScale(pricePrecision, RoundingMode.HALF_UP);
+      paymentScheduleCreditAmount = amountPaidWithCredit;
     }
     if (!doCancelLayaway
         && ((!newLayaway && (notpaidLayaway || creditpaidLayaway || fullypaidLayaway))
@@ -1897,8 +1921,72 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         // TODO: If the payment terms is configured to work with fractionated payments, we should
         // generate several payment schedules
         if (wasPaidOnCredit) {
+          OBCriteria<PaymentTermLine> lineCriteria = OBDal.getInstance().createCriteria(
+              PaymentTermLine.class);
+          lineCriteria.add(Restrictions.eq(PaymentTermLine.PROPERTY_PAYMENTTERMS,
+              order.getPaymentTerms()));
+          lineCriteria.add(Restrictions.eq(PaymentTermLine.PROPERTY_ACTIVE, true));
+          List<PaymentTermLine> termLineList = lineCriteria.list();
+          if (termLineList.size() > 0) {
+            BigDecimal pendingCreditAmount = amountPaidWithCredit;
+            for (PaymentTermLine paymentTermLine : termLineList) {
+              if (pendingCreditAmount.compareTo(BigDecimal.ZERO) <= 0) {
+                break;
+              }
+              BigDecimal paymentAmount = BigDecimal.ZERO;
+              if (paymentTermLine.isExcludeTax()) {
+                paymentAmount = (order.getSummedLineAmount().multiply(paymentTermLine
+                    .getPercentageDue().divide(new BigDecimal("100")))).setScale(pricePrecision,
+                    RoundingMode.HALF_UP);
+              } else if (!paymentTermLine.isRest()) {
+                paymentAmount = (amountPaidWithCredit.multiply(paymentTermLine.getPercentageDue()
+                    .divide(new BigDecimal("100")))).setScale(pricePrecision, RoundingMode.HALF_UP);
+              } else {
+                paymentAmount = (pendingCreditAmount.multiply(paymentTermLine.getPercentageDue()
+                    .divide(new BigDecimal("100")))).setScale(pricePrecision, RoundingMode.HALF_UP);
+              }
+
+              if (pendingCreditAmount.compareTo(paymentAmount) < 0) {
+                paymentAmount = pendingCreditAmount;
+                pendingCreditAmount = BigDecimal.ZERO;
+              } else {
+                pendingCreditAmount = pendingCreditAmount.subtract(paymentAmount);
+              }
+
+              Date dueDate = getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(), null,
+                  paymentTermLine);
+              FIN_PaymentSchedule pymtSchedule = OBProvider.getInstance().get(
+                  FIN_PaymentSchedule.class);
+              pymtSchedule.setNewOBObject(true);
+              pymtSchedule.setCurrency(order.getCurrency());
+              pymtSchedule.setInvoice(invoice);
+              pymtSchedule.setFinPaymentmethod(order.getPaymentMethod());
+              pymtSchedule.setAmount(paymentAmount);
+              pymtSchedule.setDueDate(dueDate);
+              pymtSchedule.setExpectedDate(dueDate);
+              pymtSchedule.setOutstandingAmount(paymentAmount);
+              if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
+                  .hasProperty("origDueDate")) {
+                pymtSchedule.set("origDueDate", dueDate);
+              }
+              pymtSchedule.setFINPaymentPriority(order.getFINPaymentPriority());
+              invoice.getFINPaymentScheduleList().add(pymtSchedule);
+              OBDal.getInstance().save(pymtSchedule);
+            }
+
+            if (pendingCreditAmount.compareTo(BigDecimal.ZERO) == 0) {
+              paymentScheduleInvoice.setAmount(BigDecimal.valueOf(jsonorder.getDouble("payment"))
+                  .setScale(pricePrecision, RoundingMode.HALF_UP));
+              paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
+              paymentScheduleCreditAmount = BigDecimal.ZERO;
+            } else if (pendingCreditAmount.compareTo(BigDecimal.ZERO) > 0) {
+              paymentScheduleInvoice.setAmount(pendingCreditAmount);
+              paymentScheduleInvoice.setOutstandingAmount(pendingCreditAmount);
+              paymentScheduleCreditAmount = pendingCreditAmount;
+            }
+          }
           paymentScheduleInvoice.setDueDate(getCalculatedDueDateBasedOnPaymentTerms(
-              order.getOrderDate(), order.getPaymentTerms()));
+              order.getOrderDate(), order.getPaymentTerms(), null));
           paymentScheduleInvoice.setExpectedDate(paymentScheduleInvoice.getDueDate());
         } else {
           paymentScheduleInvoice.setDueDate(order.getOrderDate());
@@ -2004,7 +2092,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       invoice.setDaysTillDue(FIN_Utility.getDaysToDue(paymentScheduleInvoice == null ? invoice
           .getInvoiceDate() : paymentScheduleInvoice.getDueDate()));
       if (paymentScheduleInvoice != null) {
-        paymentScheduleInvoice.setOutstandingAmount(amountPaidWithCredit);
+        paymentScheduleInvoice.setOutstandingAmount(paymentScheduleCreditAmount);
         paymentScheduleInvoice.setPaidAmount(invoice.getGrandTotalAmount().subtract(
             amountPaidWithCredit));
         invoice.getFINPaymentScheduleList().add(paymentScheduleInvoice);
