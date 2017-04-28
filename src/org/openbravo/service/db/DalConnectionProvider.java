@@ -51,6 +51,9 @@ import org.slf4j.LoggerFactory;
  * overriden by using the constructor with the flush parameter ({@link OBDal#flush()})</li>
  * </ul>
  * 
+ * {@code DalConnectionProvider} is not thread safe, the same instance should never be accessed by
+ * two different threads.
+ * 
  * @author mtaal
  */
 public class DalConnectionProvider implements ConnectionProvider {

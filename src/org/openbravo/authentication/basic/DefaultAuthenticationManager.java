@@ -35,9 +35,11 @@ import org.openbravo.base.secureApp.VariablesHistory;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.User;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.web.BaseWebServiceServlet;
 
 /**
@@ -135,7 +137,7 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
       throw e;
     }
     final String sessionId = createDBSession(request, user, userId);
-
+    ConnectionProvider cp = new DalConnectionProvider(false);
     if (userId == null) {
       OBError errorMsg = new OBError();
       errorMsg.setType("Error");
@@ -143,7 +145,7 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
       // LoginUtils.getValidUserId() called by default implementation of checkUserPassword() returns
       // null when the user is locked and when the user password is wrong.
       // LoginUtils.checkUserPassword() is called to check the real cause of null user id.
-      if (LoginUtils.checkUserPassword(conn, user, pass) == null) {
+      if (LoginUtils.checkUserPassword(cp, user, pass) == null) {
         log4j.debug("Failed user/password. Username: " + user + " - Session ID:" + sessionId);
         errorMsg.setTitle("IDENTIFICATION_FAILURE_TITLE");
         errorMsg.setMessage("IDENTIFICATION_FAILURE_MSG");
@@ -169,7 +171,7 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
 
     if (!StringUtils.isEmpty(strAjax) && StringUtils.isEmpty(userId)) {
       bdErrorAjax(response, "Error", "",
-          Utility.messageBD(this.conn, "NotLogged", variables.getLanguage()));
+          Utility.messageBD(cp, "NotLogged", variables.getLanguage()));
       return null;
     } else {
       // redirects to the menu or the menu with the target
