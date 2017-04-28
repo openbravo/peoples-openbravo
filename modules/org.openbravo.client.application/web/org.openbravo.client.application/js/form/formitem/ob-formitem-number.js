@@ -43,7 +43,7 @@ isc.OBNumberItem.addProperties({
 
   changed: function (form, item, value) {
     var view = form.grid ? form.grid.view : form.view,
-        isParamWindow = view.theForm && view.theForm.paramWindow;
+        isParamWindow = form.paramWindow || (view.theForm && view.theForm.paramWindow);
     if (!isParamWindow && item && item.setValue) {
       item.setValue(this.getEnteredValue());
     }
