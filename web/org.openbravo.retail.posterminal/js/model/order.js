@@ -491,7 +491,7 @@
           discount.basePrice = base;
           discount.unitDiscount = OB.DEC.div(discountAmt, line.get('qtyToApplyDisc') || line.get('qty'));
           totalDiscount = OB.DEC.add(totalDiscount, discountAmt);
-          base = OB.DEC.sub(base, totalDiscount);
+          base = OB.DEC.sub(base, discount.unitDiscount);
         }, this);
 
         gross = OB.DEC.sub(gross, totalDiscount);
