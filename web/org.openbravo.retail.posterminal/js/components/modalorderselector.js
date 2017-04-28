@@ -99,7 +99,7 @@ enyo.kind({
 
     this.$.date.setContent(OB.I18N.formatDate(orderDate));
     this.$.documentNo.setContent(this.model.get('documentNo'));
-    this.$.amount.setContent(this.model.get('totalamount'));
+    this.$.amount.setContent(OB.I18N.formatCurrency(this.model.get('totalamount')));
     this.$.time.setContent(OB.I18N.formatHour(orderDate));
     this.$.customer.setContent(this.model.get('businessPartnerName'));
     this.$.orderType.setContent(orderType);
