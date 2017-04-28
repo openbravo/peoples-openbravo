@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -96,8 +96,8 @@
      <Parameter name="mAttributesetinstanceId"/>
      <Parameter name="mProductId"/>
      <Parameter name="mLocatorId"/>
-     <Parameter name="plusQty" optional="true" type="none" after="1=1" ><![CDATA[ AND (T.MOVEMENTTYPE <> 'P+' AND  T.MOVEMENTQTY > 0)]]></Parameter>
-     <Parameter name="minusQty" optional="true" type="none" after="1=1" ><![CDATA[ AND (T.MOVEMENTTYPE <> 'P+' AND  T.MOVEMENTQTY < 0)]]></Parameter>
+     <Parameter name="plusQty" optional="true" type="none" after="AND 1=1"><![CDATA[ AND ((T.MOVEMENTTYPE = 'P+' AND T.MOVEMENTQTY < 0) OR (T.MOVEMENTTYPE <> 'P+' AND T.MOVEMENTQTY > 0))]]></Parameter>
+     <Parameter name="minusQty" optional="true" type="none" after="AND 1=1"><![CDATA[ AND ((T.MOVEMENTTYPE = 'P+' AND T.MOVEMENTQTY > 0) OR (T.MOVEMENTTYPE <> 'P+' AND T.MOVEMENTQTY < 0))]]></Parameter>
   </SqlMethod>
   <SqlMethod name="selectProductionOut" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
