@@ -338,9 +338,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             }
           }
           if (orderlines.length() > 0) {
-            for (int i = 0; i < order.getOrderLineList().size(); i++) {
+            List<OrderLine> lstResultOL = getOrderLineList(order);
+            for (int i = 0; i < lstResultOL.size(); i++) {
               JSONObject jsonOrderLine = orderlines.getJSONObject(i);
-              OrderLine ol = order.getOrderLineList().get(i);
+              OrderLine ol = lstResultOL.get(i);
               ol.setObposCanbedelivered(jsonOrderLine.optBoolean("obposCanbedelivered", false));
               ol.setObposIspaid(jsonOrderLine.optBoolean("obposIspaid", false));
             }
