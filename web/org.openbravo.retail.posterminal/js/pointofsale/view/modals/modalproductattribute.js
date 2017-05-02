@@ -52,16 +52,10 @@ enyo.kind({
       }
     }]
   },
-  /*
-   * - LOT: expression starts with L followed by alphanumeric lot name
-   * - SERIAL and LOT: expression starts with L followed by alphanumeric lot name and serial number
-   * - EXPIRATION DATE: expression should contain a date format (dd-MM-yyyy)
-   * - LOT and SERIAL and EXPIRATION DATE - LJAN17_#6969_28-02-2018
-   */
+  //To be implemented
   validAttribute: function (attribute) {
-    var valueAttribute = attribute,
-        pattern = "/^L|[0-9a-zA-Z]*#*[0-9_a-zA-Z]*";
-    return (valueAttribute.match(pattern)) ? true : false;
+
+    return true;
   },
   saveAttribute: function (inSender, inEvent) {
     var me = this,
@@ -69,7 +63,7 @@ enyo.kind({
     if ((this.validAttribute(inpAttributeValue) && inpAttributeValue)) {
       this.args.callback(inpAttributeValue);
     } else {
-      this.args.callback(null);
+      this.args.callback('');
     }
   },
   clearAction: function () {
@@ -77,7 +71,9 @@ enyo.kind({
     return true;
   },
   cancelAction: function () {
-    this.deleteOrderline(this.args.line);
+    if (this.args.callback) {
+      this.args.callback('');
+    }
     this.hide();
     return true;
   },
@@ -89,13 +85,9 @@ enyo.kind({
   executeOnHide: function () {
     var me = this;
     var inpAttributeValue = this.$.bodyContent.$.valueAttribute.getValue();
-    if (!inpAttributeValue) {
-      this.deleteOrderline(this.args.line);
-      if (me.args.finalCallback) {
-        me.args.finalCallback(false, null);
-      }
+    if (!inpAttributeValue && this.args.callback) {
+      this.args.callback('');
     }
-    this.$.bodyContent.$.valueAttribute.setValue(null);
   }
 });
 OB.UI.WindowView.registerPopup('OB.OBPOSPointOfSale.UI.PointOfSale', {
