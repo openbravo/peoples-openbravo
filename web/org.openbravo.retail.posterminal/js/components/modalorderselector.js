@@ -256,13 +256,21 @@ enyo.kind({
               }
               me.model.get('leftColumnViewManager').setOrderMode();
             }
-            var searchSynchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearchNewReceipt');
-            me.model.get('orderList').newPaidReceipt(data[0], function (order) {
-              me.doChangePaidReceipt({
-                newPaidReceipt: order
-              });
-              OB.UTIL.SynchronizationHelper.finished(searchSynchId, 'clickSearchNewReceipt');
+            OB.UTIL.HookManager.executeHooks('OBRETUR_ReturnFromOrig', {
+              order: data[0],
+              context: me,
+              params: {}
+            }, function (args) {
+              if (!args.cancelOperation) {
+                var searchSynchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearchNewReceipt');
+                me.model.get('orderList').newPaidReceipt(data[0], function (order) {
+                  me.doChangePaidReceipt({
+                    newPaidReceipt: order
+                  });
+                  OB.UTIL.SynchronizationHelper.finished(searchSynchId, 'clickSearchNewReceipt');
 
+                });
+              }
             });
           } else {
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
