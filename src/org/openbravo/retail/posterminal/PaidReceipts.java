@@ -454,8 +454,10 @@ public class PaidReceipts extends JSONProcessSimple {
               if (objectIn.has("reversedPaymentId")) {
                 paidReceiptPayment.put("reversedPaymentId", objectIn.get("reversedPaymentId"));
               }
-              paidReceiptPayment.put("obposAppCashup", objectIn.get("cashup"));
-              paidReceiptPayment.put("oBPOSPOSTerminal", objectIn.get("posTerminal"));
+              paidReceiptPayment.put("obposAppCashup",
+                  objectIn.has("cashup") ? objectIn.get("cashup") : null);
+              paidReceiptPayment.put("oBPOSPOSTerminal",
+                  objectIn.has("posTerminal") ? objectIn.get("posTerminal") : null);
               added = true;
               listpaidReceiptsPayments.put(paidReceiptPayment);
             }
