@@ -1501,6 +1501,23 @@
       if (enyo.Panels.isScreenNarrow()) {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_AddLine', [qty ? qty : 1, p.get('_identifier')]));
       }
+      if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true)) {
+        var lines = me.get('lines'),
+            i, currentline, attributeProduct = false;
+        for (i = 0; i < lines.length; i++) {
+          currentline = lines.models[i].attributes;
+          if (attrs && (currentline.attributeValue === attrs.attributeValue)) {
+            attributeProduct = true;
+            if (p.get('isSerialNo')) {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductDefinedAsSerialNo'));
+              if (callback) {
+                callback(false, null);
+              }
+              return;
+            }
+          }
+        }
+      }
       if (p.get('ispack')) {
         OB.Model.Discounts.discountRules[p.get('productCategory')].addProductToOrder(this, p);
         if (callback) {
