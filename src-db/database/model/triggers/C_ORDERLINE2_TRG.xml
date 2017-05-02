@@ -18,7 +18,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2016 Openbravo SLU
+* All portions are Copyright (C) 2001-2017 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -43,15 +43,15 @@ BEGIN
   IF(UPDATING) THEN
     IF(:NEW.M_PRODUCT_ID IS NOT NULL) THEN
     v_ID:=:old.C_Order_ID;
-    SELECT DocStatus
-    INTO v_DocStatus
+    SELECT DocStatus, isSOTrx
+    INTO v_DocStatus, v_isSOTrx
     FROM c_Order
     WHERE c_order_id = v_ID;
       IF(v_DocStatus <> 'DR') THEN
         IF((COALESCE(:old.QtyDelivered, 0) <> COALESCE(:NEW.QtyDelivered, 0))) THEN
           -- Get ID
           v_ID:=:new.C_Order_ID;
-          v_QtyReserved:=-(:new.qtydelivered - :old.qtydelivered) ;
+          v_QtyReserved:= CASE WHEN v_isSOTrx = 'Y' THEN -(:new.qtydelivered - :old.qtydelivered) ELSE 0 END;
           IF :old.qtydelivered=0 AND :new.qtydelivered=:new.qtyordered THEN
             v_QtyOrderReserved:=-:new.QuantityOrder;
           ELSIF :new.M_Product_UOM_ID IS NOT NULL THEN
