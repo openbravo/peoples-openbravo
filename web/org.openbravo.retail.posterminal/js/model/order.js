@@ -1510,7 +1510,7 @@
           if (attrs && (currentline.attributeValue === attrs.attributeValue)) {
             attributeProduct = true;
             if (p.get('isSerialNo')) {
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductDefinedAsSerialNo'));
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ProductDefinedAsSerialNo'));
               if (callback) {
                 callback(false, null);
               }
