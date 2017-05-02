@@ -46,7 +46,7 @@ public class StyleSheetResourceComponent extends BaseComponent {
   private static final Logger log = Logger.getLogger(StyleSheetResourceComponent.class);
   private static final String IMGURLHOLDER = "__URLHOLDER__";
 
-  private static final String CSS = "CSS";
+  protected static final String CSS = "CSS";
 
   @Inject
   @Any

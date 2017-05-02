@@ -18,14 +18,24 @@
  */
 package org.openbravo.client.kernel;
 
-import java.util.Map;
+import java.util.List;
+import java.util.Set;
 
+/**
+ * This interface allows to define the {@link StaticResourceProvider} class as an standard MBean
+ * that can be managed through JMX.
+ */
 public interface StaticResourceProviderMBean {
 
   /**
-   * @return a Map with the information about the cached static resources.
+   * @return a Set with the keys used in the static resources cache.
    */
-  public Map<String, String> getCachedStaticResources();
+  public Set<String> getCachedStaticResourceKeys();
+
+  /**
+   * @return a List with the names of the files that contain static resources.
+   */
+  public List<String> getStaticResourceFileNames();
 
   /**
    * Removes the cached information related to a static resource whose identifying name is passed as
@@ -35,4 +45,9 @@ public interface StaticResourceProviderMBean {
    *          the identifying name of the static resource
    */
   public void removeStaticResourceCachedInfo(String resourceName);
+
+  /**
+   * Removes all the cached information about the static resources.
+   */
+  public void removeAllStaticResourceCachedInfo();
 }

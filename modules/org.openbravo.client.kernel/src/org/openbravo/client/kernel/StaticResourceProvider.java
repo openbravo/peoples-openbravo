@@ -18,7 +18,9 @@
  */
 package org.openbravo.client.kernel;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -66,11 +68,11 @@ public class StaticResourceProvider implements StaticResourceProviderMBean {
   }
 
   /**
-   * @return a Map with the information about the cached static resources.
+   * @return a Set with the keys used in the static resources cache.
    */
   @Override
-  public Map<String, String> getCachedStaticResources() {
-    return staticResources;
+  public Set<String> getCachedStaticResourceKeys() {
+    return staticResources.keySet();
   }
 
   /**
@@ -84,7 +86,30 @@ public class StaticResourceProvider implements StaticResourceProviderMBean {
   public void removeStaticResourceCachedInfo(String resourceName) {
     if (staticResources.containsKey(resourceName)) {
       staticResources.remove(resourceName);
-      log.debug("Information of {} static resource removed from cache", resourceName);
+      log.info("Information of {} static resource removed from cache", resourceName);
     }
+  }
+
+  /**
+   * Removes all the cached information of the static resources.
+   */
+  @Override
+  public void removeAllStaticResourceCachedInfo() {
+    staticResources.clear();
+    log.info("Static resources information removed from cache");
+  }
+
+  /**
+   * @return a List with the names of the files that contain static resources.
+   */
+  @Override
+  public List<String> getStaticResourceFileNames() {
+    List<String> fileNames = new ArrayList<>();
+    for (String key : staticResources.keySet()) {
+      if (!key.contains(StyleSheetResourceComponent.CSS)) {
+        fileNames.add(staticResources.get(key));
+      }
+    }
+    return fileNames;
   }
 }
