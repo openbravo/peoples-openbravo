@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -450,6 +450,10 @@ public class ApplyModules extends HttpSecureAppServlet {
       tasks.add("UIrebuild");
 
       vars.setSessionValue("ApplyModules|BuildRunning", "Y");
+
+      // finalize current transaction in order to release any lock it might have acquired
+      OBDal.getInstance().commitAndClose();
+
       ant.runTask(tasks);
 
       vars.setSessionValue("ApplyModules|ProcessFinished", "Y");
