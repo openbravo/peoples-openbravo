@@ -18,6 +18,7 @@
  */
 package org.openbravo.client.kernel;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -50,6 +51,32 @@ public class StaticResourceProvider implements StaticResourceProviderMBean {
    */
   public String getStaticResourceCachedInfo(String resourceName) {
     return staticResources.get(resourceName);
+  }
+
+  /**
+   * Returns the file name of a particular static resource whose identifying name is passed as
+   * parameter, if the file exists. If the file does not exists, this method returns null and
+   * removes the mapping of the static resource.
+   * 
+   * @param resourceName
+   *          the identifying name of the static resource
+   * 
+   * @return a String with information of the static resource
+   */
+  public String getStaticResourceCachedFileName(String resourceName) {
+    String resource = staticResources.get(resourceName);
+    if (resource == null) {
+      return null;
+    }
+    final String getTargetLocation = RequestContext.getServletContext().getRealPath(
+        StaticResourceComponent.GEN_TARGET_LOCATION);
+    File resourceFile = new File(getTargetLocation, resource + ".js");
+    if (!resourceFile.exists()) {
+      log.info("Static resource file with name {} not found, it will be re-generated.", resource);
+      staticResources.remove(resourceName);
+      return null;
+    }
+    return resource;
   }
 
   /**
