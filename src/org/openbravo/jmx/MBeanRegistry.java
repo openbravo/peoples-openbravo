@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * This class is intended to register the jmx beans defined in the application.
  */
-public class OBManagementFactory {
+public class MBeanRegistry {
   final static private Logger log = LoggerFactory.getLogger(JdbcExternalConnectionPool.class);
 
   /**

@@ -29,7 +29,7 @@ import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StringType;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.DateTimeData;
-import org.openbravo.jmx.OBManagementFactory;
+import org.openbravo.jmx.MBeanRegistry;
 import org.openbravo.service.db.DalConnectionProvider;
 
 /**
@@ -100,6 +100,6 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
   }
 
   private void registerStaticResourcesMBean() {
-    OBManagementFactory.registerMBean(KernelConstants.RESOURCE_COMPONENT_ID, resourceProvider);
+    MBeanRegistry.registerMBean(KernelConstants.RESOURCE_COMPONENT_ID, resourceProvider);
   }
 }

@@ -36,7 +36,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.PoolInterceptorProvider;
-import org.openbravo.jmx.OBManagementFactory;
+import org.openbravo.jmx.MBeanRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -161,7 +161,7 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
         if (ds.isJmxEnabled()) {
           // pool needs to be created before it's registered
           ds.createPool();
-          OBManagementFactory.registerMBean("Pool-" + dse.getKey(), ds.getPool().getJmxPool());
+          MBeanRegistry.registerMBean("Pool-" + dse.getKey(), ds.getPool().getJmxPool());
         }
       } catch (Exception e) {
         log.error("Error creating pool {}", dse.getKey(), e);
