@@ -1765,6 +1765,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     // TODO Take into account the flag "Fixed due date"
     Calendar calculatedDueDate = new GregorianCalendar();
     calculatedDueDate.setTime(startingDate);
+    calculatedDueDate.set(Calendar.HOUR_OF_DAY, 0);
+    calculatedDueDate.set(Calendar.MINUTE, 0);
+    calculatedDueDate.set(Calendar.SECOND, 0);
+    calculatedDueDate.set(Calendar.MILLISECOND, 0);
     long daysToAdd, monthOffset, maturityDate1 = 0, maturityDate2 = 0, maturityDate3 = 0;
     String dayToPay;
 
@@ -1929,6 +1933,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           List<PaymentTermLine> termLineList = lineCriteria.list();
           if (termLineList.size() > 0) {
             BigDecimal pendingCreditAmount = amountPaidWithCredit;
+            BigDecimal paidAmount = amt;
+            BigDecimal grossTotalAmount = BigDecimal.valueOf(jsonorder.getDouble("gross"));
             for (PaymentTermLine paymentTermLine : termLineList) {
               if (pendingCreditAmount.compareTo(BigDecimal.ZERO) <= 0) {
                 break;
@@ -1939,11 +1945,28 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
                     .getPercentageDue().divide(new BigDecimal("100")))).setScale(pricePrecision,
                     RoundingMode.HALF_UP);
               } else if (!paymentTermLine.isRest()) {
-                paymentAmount = (amountPaidWithCredit.multiply(paymentTermLine.getPercentageDue()
+                paymentAmount = (grossTotalAmount.multiply(paymentTermLine.getPercentageDue()
                     .divide(new BigDecimal("100")))).setScale(pricePrecision, RoundingMode.HALF_UP);
               } else {
                 paymentAmount = (pendingCreditAmount.multiply(paymentTermLine.getPercentageDue()
                     .divide(new BigDecimal("100")))).setScale(pricePrecision, RoundingMode.HALF_UP);
+              }
+
+              if (paidAmount.compareTo(BigDecimal.ZERO) > 0) {
+                if (paymentAmount.compareTo(paidAmount) > 0) {
+                  paymentAmount = paymentAmount.subtract(paidAmount);
+                  paidAmount = BigDecimal.ZERO;
+                } else if (paymentAmount.compareTo(paidAmount) == 0) {
+                  paymentAmount = BigDecimal.ZERO;
+                  paidAmount = BigDecimal.ZERO;
+                } else if (paymentAmount.compareTo(paidAmount) < 0) {
+                  paidAmount = paidAmount.subtract(paymentAmount);
+                  paymentAmount = BigDecimal.ZERO;
+                }
+              }
+
+              if (paymentAmount.compareTo(BigDecimal.ZERO) == 0) {
+                continue;
               }
 
               if (pendingCreditAmount.compareTo(paymentAmount) < 0) {
