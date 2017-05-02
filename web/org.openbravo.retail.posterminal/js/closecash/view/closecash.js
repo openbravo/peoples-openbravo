@@ -590,17 +590,17 @@ OB.POS.registerWindow({
   menuI18NLabel: 'OBPOS_LblCloseCash',
   permission: 'OBPOS_retail.cashup',
   approvalType: 'OBPOS_approval.cashup',
-  navigateTo: function () {
+  navigateTo: function (args, successCallback, errorCallback) {
     var me = this;
     // in case of synchronized mode reload the cashup from the server
     // this is needed because there is a slight change that the cashup on the client 
     // is out of date
     if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
       OB.UTIL.rebuildCashupFromServer(function () {
-        OB.MobileApp.model.navigate(me.route);
+        successCallback(args.route);
       });
     } else {
-      OB.MobileApp.model.navigate(me.route);
+      successCallback(args.route);
     }
   },
   menuItemDisplayLogic: function () {

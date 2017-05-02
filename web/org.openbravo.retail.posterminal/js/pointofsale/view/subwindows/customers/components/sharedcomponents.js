@@ -210,10 +210,12 @@ enyo.kind({
     onSaveChange: 'saveChange',
     onHideShow: 'hideShow',
     onSetValue: 'valueSet',
-    onRetrieveValues: 'retrieveValue'
+    onRetrieveValues: 'retrieveValue',
+    onchange: 'change'
   },
   events: {
-    onSaveProperty: ''
+    onSaveProperty: '',
+    onSetValues: ''
   },
   components: [{
     kind: 'OB.UI.List',
@@ -248,6 +250,7 @@ enyo.kind({
     this.$.customerCombo.setCollection(this.collection);
     this.fetchDataFunction(inEvent);
   },
+  change: function () {},
   dataReadyFunction: function (data, inEvent) {
     var index = 0,
         result = null;

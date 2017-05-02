@@ -408,10 +408,12 @@ enyo.kind({
     onLoadValue: 'loadValue',
     onSaveChange: 'saveChange',
     onSetValue: 'valueSet',
-    onRetrieveValues: 'retrieveValue'
+    onRetrieveValues: 'retrieveValue',
+    onchange: 'change'
   },
   events: {
-    onSaveProperty: ''
+    onSaveProperty: '',
+    onSetValues: ''
   },
   components: [{
     kind: 'OB.UI.List',
@@ -446,6 +448,7 @@ enyo.kind({
     this.$.customerAddrCombo.setCollection(this.collection);
     this.fetchDataFunction(inEvent);
   },
+  change: function () {},
   dataReadyFunction: function (data, inEvent) {
     var index = 0,
         result = null;

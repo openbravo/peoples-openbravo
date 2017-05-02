@@ -128,7 +128,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
   loadCheckedMultiorders: function () {
     // Shows a modal window with the orders pending to be paid
-    var checkedMultiOrders, multiOrderList = this.get('multiOrders').get('multiOrdersList'),
+    var checkedMultiOrders, multiOrders = this.get('multiOrders'),
+        multiOrderList = multiOrders.get('multiOrdersList'),
         criteria = {
         'hasbeenpaid': 'N',
         'session': OB.MobileApp.model.get('session')
@@ -140,15 +141,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             return e;
           }
         }));
-        //The order object is stored in the json property of the row fetched from the database
-        _.each(checkedMultiOrders, function (iter) {
-          _.each(iter.get('payments').models, function (p) {
-            iter.removePayment(p);
-          }, this);
-          iter.save();
-        });
 
         multiOrderList.reset(checkedMultiOrders);
+
+        // MultiOrder payments
+        var payments = JSON.parse(OB.UTIL.localStorage.getItem('multiOrdersPayment'));
+        _.each(payments, function (payment) {
+          multiOrders.addPayment(new OB.Model.PaymentLine(payment));
+        });
       }
     }, function () {
       // If there is an error fetching the checked orders of multiorders,
@@ -251,6 +251,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     this.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(this);
     this.printLine = new OB.OBPOSPointOfSale.Print.ReceiptLine(receipt);
+
+    // Now that templates has been initialized, print welcome message
+    OB.POS.hwserver.print(this.printReceipt.templatewelcome, {}, null, OB.DS.HWServer.DISPLAY);
 
     var ViewManager = Backbone.Model.extend({
       defaults: {
@@ -839,23 +842,25 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               auxReceipt.prepareToSend(function () {
                 OB.UTIL.cashUpReport(auxReceipt, function (cashUp) {
                   receipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
-                  var cancelLayawayObj = receipt.serializeToJSON();
+                  var cancelLayawayObj = receipt.serializeToJSON(),
+                      paymentStatus = receipt.getPaymentStatus();
 
                   cancelLayawayObj.posTerminal = OB.MobileApp.model.get('terminal').id;
 
-                  if (receipt.getPaymentStatus().isNegative) {
+                  if (paymentStatus.isNegative) {
                     cancelLayawayObj.gross = OB.DEC.mul(cancelLayawayObj.gross, -1);
+                    cancelLayawayObj.payments.forEach(function (payment) {
+                      payment.origAmount = OB.DEC.mul(payment.origAmount, -1);
+                      payment.paid = OB.DEC.mul(payment.paid, -1);
+                    });
+                  } else if (receipt.get('isDeliveredGreaterThanGross')) {
+                    cancelLayawayObj.gross = OB.DEC.mul(OB.DEC.sub(receipt.get('layawayGross'), receipt.get('deliveredQuantityAmount')), -1);
+                    cancelLayawayObj.payment = cancelLayawayObj.gross;
                   }
-                  cancelLayawayObj.orderType = 2;
                   cancelLayawayObj.obposAppCashup = OB.MobileApp.model.get('terminal').cashUpId;
                   if (cancelLayawayObj.deliveredQuantityAmount) {
                     cancelLayawayObj.deliveredQuantityAmount = OB.I18N.formatCurrency(receipt.getDeliveredQuantityAmount());
                   }
-
-                  cancelLayawayObj.payments.forEach(function (payment) {
-                    payment.origAmount = receipt.getPaymentStatus().isNegative ? OB.DEC.mul(payment.origAmount, -1) : payment.origAmount;
-                    payment.paid = receipt.getPaymentStatus().isNegative ? OB.DEC.mul(payment.paid, -1) : payment.paid;
-                  });
 
                   cancelLayawayModel.set('json', JSON.stringify(cancelLayawayObj));
 

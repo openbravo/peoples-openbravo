@@ -102,7 +102,11 @@ enyo.kind({
         receiptToPay = this.model.get('multiOrders');
       }
 
-      provider = receiptToPay.getTotal() > 0 ? paymentMethod.paymentProvider : paymentMethod.refundProvider;
+      if (!receiptToPay.getPaymentStatus().isNegative) {
+        provider = paymentMethod.paymentProvider;
+      } else {
+        provider = paymentMethod.refundProvider;
+      }
 
       if (provider) {
         this.doShowPopup({

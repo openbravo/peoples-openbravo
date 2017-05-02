@@ -990,7 +990,7 @@ enyo.kind({
                   deferredLines = l.get('relatedLines').filter(function getDeferredServices(relatedLine) {
                     return relatedLine.deferred === true;
                   });
-                  if (!deferredLines.length) {
+                  if (!deferredLines.length && !l.get('obposIsDeleted')) {
                     me.order.get('lines').remove(l);
                   }
                 }
@@ -1000,6 +1000,9 @@ enyo.kind({
             me.negativeLineUpdated = false;
 
             notDeferredRelatedLines = line.get('relatedLines').filter(function getNotDeferredLines(rl) {
+              if (OB.UTIL.isNullOrUndefined(rl.deferred)) {
+                return false;
+              }
               return !rl.deferred;
             });
             if (!line.get('groupService') && notDeferredRelatedLines.length > 1) {
@@ -1266,7 +1269,7 @@ enyo.kind({
           serviceLinesToCheck = [],
           text, linesToDelete, relations, deletedQty;
 
-      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && model.get('obposQtyDeleted') !== 0) {
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && model.get('obposQtyDeleted')) {
         deletedQty = model.get('obposQtyDeleted');
       } else {
         deletedQty = model.get('qty');
@@ -1413,6 +1416,10 @@ enyo.kind({
         });
       }
       this.$.totalMultiReceiptLine.renderQty(me.model.get('multiOrders').get('multiOrdersList').length);
+    }, this);
+    var orderListPayment = me.model.get('multiOrders').get('payments');
+    orderListPayment.on('add remove', function () {
+      OB.UTIL.localStorage.setItem('multiOrdersPayment', JSON.stringify(me.model.get('multiOrders').get('payments').toJSON()));
     }, this);
   },
   initComponents: function () {

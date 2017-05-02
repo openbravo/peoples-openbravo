@@ -876,9 +876,9 @@
       payAndCredit = (this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3)) ? OB.DEC.abs(payAndCredit) : payAndCredit;
       processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, credit);
 
-      isNegative = this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3 && (!this.get('isPartiallyDelivered') || (this.get('isPartiallyDelivered') && this.get('isDeliveredGreaterThanGross'))));
+      isNegative = this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3 && (!this.get('isPartiallyDelivered') || (this.get('isPartiallyDelivered') && !this.get('isDeliveredGreaterThanGross'))));
       // Check if the total amount is lower than the already paid (processed)
-      if (!isNegative && this.get('gross') >= 0 && OB.DEC.compare(OB.DEC.sub(processedPaymentsAmount, total)) === 1) {
+      if (this.get('orderType') !== 3 && !isNegative && this.get('gross') >= 0 && OB.DEC.compare(OB.DEC.sub(processedPaymentsAmount, total)) === 1) {
         isNegative = true;
         paidInNegativeStatus = OB.DEC.sub(processedPaymentsAmount, paymentsAmount);
         totalToReturn = OB.DEC.sub(processedPaymentsAmount, total);
@@ -1284,6 +1284,32 @@
       var me = this,
           line = lines[idx],
           i;
+      var removesLines = function (idx, callback) {
+          idx++;
+          if (me.get('lines').get(line)) {
+            if (idx < length) {
+              me.set('skipCalculateReceipt', true);
+              me.deleteLine(line, true, null, false);
+              me.deleteLines(lines, idx, length, callback);
+            } else {
+              me.set('skipCalculateReceipt', false);
+              me.deleteLine(line, false, callback, true);
+            }
+          } else {
+            // If there is a line and other related service line selected to delete, the service is deleted when the product is deleted
+            // This causes that when this recursive line tries to delete the service line, the service line is not in the array which stores the lines to delete
+            // The 'else' clause catches this situation and continues with the next line
+            if (idx === length) {
+              me.set('skipCalculateReceipt', false);
+              if (callback) {
+                callback();
+              }
+            } else {
+              me.deleteLines(lines, idx, length, callback);
+            }
+          }
+          };
+
       if (idx === 0) {
         for (i = 0; i < lines.length; i++) {
           if (me.get('replacedorder') && lines[i].get('remainingQuantity')) {
@@ -1294,27 +1320,23 @@
             return;
           }
         }
-        this.set('undo', null);
-      }
-      idx++;
-      if (this.get('lines').get(line)) {
-        if (idx < length) {
-          this.deleteLine(line, true, null, false);
-          this.deleteLines(lines, idx, length, callback);
+        if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+          for (i = 0; i < lines.length; i++) {
+            lines[i].set('obposIsDeleted', true);
+            lines[i].set('obposQtyDeleted', lines[i].get('qty'));
+            lines[i].set('qty', 0, {
+              silent: true
+            });
+          }
+          this.set('undo', null);
+          this.calculateReceipt(function () {
+            removesLines(idx, callback);
+          });
         } else {
-          this.deleteLine(line, false, callback, true);
+          removesLines(idx, callback);
         }
       } else {
-        // If there is a line and other related service line selected to delete, the service is deleted when the product is deleted
-        // This causes that when this recursive line tries to delete the service line, the service line is not in the array which stores the lines to delete
-        // The 'else' clause catches this situation and continues with the next line
-        if (idx === length) {
-          if (callback) {
-            callback();
-          }
-        } else {
-          this.deleteLines(lines, idx, length, callback);
-        }
+        removesLines(idx, callback);
       }
     },
 
@@ -1414,7 +1436,7 @@
             });
 
             lines.forEach(function (line) {
-              if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.get('obposQtyDeleted') !== 0) {
+              if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.get('obposQtyDeleted')) {
                 line.set('qty', line.get('obposQtyDeleted'));
                 line.set('obposQtyDeleted', 0);
               }
@@ -1454,29 +1476,31 @@
           this.set('deletedLines', []);
         }
         if (!line.get('hasTaxError')) {
-          if (OB.UTIL.isNullOrUndefined(isLastLine) || isLastLine) {
-            this.set('skipCalculateReceipt', true);
-            line.set('obposIsDeleted', true);
-            line.set('obposQtyDeleted', line.get('qty'));
-            line.set('qty', 0);
-            this.set('skipCalculateReceipt', false);
-            me.get('deletedLines').push(new OrderLine(line.attributes));
-            // remove the line
-            finishDelete();
-          } else {
-            this.set('skipCalculateReceipt', true);
-            line.set('obposIsDeleted', true);
-            line.set('obposQtyDeleted', line.get('qty'));
-            line.set('qty', 0);
-            this.get('deletedLines').push(new OrderLine(line.attributes));
-            // remove the line
-            finishDelete();
+          // Clone the line to be moved as deleted.
+          var deletedline = new OrderLine(line.attributes);
+          if (!line.get('obposIsDeleted')) {
+            // Set the line as deleted
+            deletedline.set('obposIsDeleted', true);
+            deletedline.set('obposQtyDeleted', line.get('qty'));
+            // set quantity as 0
+            deletedline.set('qty', 0);
+            // Set prices as 0
+            deletedline.set('gross', 0);
+            // Calulate Taxes
+            if (this.get('priceIncludesTax')) {
+              OB.DATA.LineTaxesIncPrice(this, deletedline);
+            } else {
+              OB.DATA.LineTaxesExcPrice(this, deletedline);
+            }
           }
+          // Sets the tax if it has been deleted
+          deletedline.set('tax', deletedline.get('tax') ? deletedline.get('tax') : deletedline.get('taxUndo'));
+          // Move to deleted lines
+          this.get('deletedLines').push(deletedline);
         }
-      } else {
-        // remove the line
-        finishDelete();
       }
+      // remove the line
+      finishDelete();
     },
 
     //Attrs is an object of attributes that will be set in order
@@ -1580,7 +1604,7 @@
               line = options.line;
               newLine = false;
             } else {
-              if (p.get('groupProduct')) {
+              if (p.get('avoidSplitProduct')) {
                 line = me.createLine(p, qty, options, attrs);
               } else {
                 if (qty >= 0) {
@@ -2536,7 +2560,17 @@
           }
         } else {
           me.set('layawayGross', me.getGross());
-          me.set('gross', me.get('payment'));
+          // If the canceling layaway is partially delivered, the payment and gross must be updated to don't create payments
+          // to return the delivered quantity
+          if (me.get('isPartiallyDelivered')) {
+            if (me.get('isDeliveredGreaterThanGross')) {
+              me.set('gross', OB.DEC.sub(me.get('deliveredQuantityAmount'), me.get('payment')));
+            } else {
+              me.set('gross', OB.DEC.sub(me.get('payment'), me.get('deliveredQuantityAmount')));
+            }
+          } else {
+            me.set('gross', me.get('payment'));
+          }
           me.set('payment', OB.DEC.Zero);
           me.get('payments').reset();
         }
@@ -2833,12 +2867,6 @@
             permission: context.permission,
             orderType: 3
           });
-          // If the canceling layaway is partially delivered, the payment and gross must be updated to don't create payments
-          // to return the delivered quantity
-          if (me.get('isPartiallyDelivered')) {
-            me.set('gross', OB.DEC.sub(me.get('deliveredQuantityAmount'), me.get('gross')));
-            me.set('payment', OB.DEC.Zero);
-          }
           context.doTabChange({
             tabPanel: 'payment',
             keyboard: 'toolbarpayment',
@@ -3230,7 +3258,13 @@
         receipt: this,
         callback: callback
       }, function (args) {
-        var executeFinalCallback = function () {
+        var executeFinalCallback = function (saveChanges) {
+            if (saveChanges) {
+              order.adjustPayment();
+              order.trigger('displayTotal');
+              order.save();
+              order.trigger('saveCurrent');
+            }
             if (callback instanceof Function) {
               callback(order);
             }
@@ -3241,7 +3275,7 @@
             var reverseCallback = payment.get('reverseCallback');
             reverseCallback();
           }
-          executeFinalCallback();
+          executeFinalCallback(false);
           return;
         }
         if (!payment.get('paymentData') && !payment.get('reversedPaymentId')) {
@@ -3254,9 +3288,7 @@
               if (p.get('rate') && p.get('rate') !== '1') {
                 p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
               }
-              order.adjustPayment();
-              order.trigger('displayTotal');
-              executeFinalCallback();
+              executeFinalCallback(true);
               return;
             }
           }
@@ -3269,9 +3301,7 @@
                 p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
               }
               payment.set('date', new Date());
-              order.adjustPayment();
-              order.trigger('displayTotal');
-              executeFinalCallback();
+              executeFinalCallback(true);
               return;
             }
           }
@@ -3295,10 +3325,7 @@
         if (payment.get('reversedPayment')) {
           payment.get('reversedPayment').set('isReversed', true);
         }
-        order.adjustPayment();
-        order.trigger('displayTotal');
-        order.save();
-        executeFinalCallback();
+        executeFinalCallback(true);
         return;
       }); // call with callback, no args
     },
@@ -4260,7 +4287,10 @@
                 receipt.set('skipCalculateReceipt', true);
                 _.each(receipt.get('lines').models, function (line) {
                   line.set('obposQtyDeleted', line.get('qty'));
-                  line.set('qty', 0);
+                  line.set('obposIsDeleted', true);
+                  line.set('qty', 0, {
+                    silent: true
+                  });
                 });
                 receipt.set('skipCalculateReceipt', false);
                 // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
@@ -4676,24 +4706,6 @@
                 });
                 linepos++;
               });
-              order.set('isPartiallyDelivered', hasDeliveredProducts && hasNotDeliveredProducts ? true : false);
-              if (hasDeliveredProducts && !hasNotDeliveredProducts) {
-                order.set('isFullyDelivered', true);
-              }
-              if (order.get('isPartiallyDelivered')) {
-                var partiallyPaid = 0;
-                _.each(_.filter(order.get('receiptLines'), function (reciptLine) {
-                  return reciptLine.deliveredQuantity;
-                }), function (deliveredLine) {
-                  partiallyPaid += deliveredLine.deliveredQuantity * deliveredLine.unitPrice;
-                });
-                if (partiallyPaid) {
-                  order.set('deliveredQuantityAmount', partiallyPaid);
-                }
-                if (order.get('deliveredQuantityAmount') && order.get('deliveredQuantityAmount') > order.get('gross')) {
-                  order.set('isDeliveredGreaterThanGross', true);
-                }
-              }
 
               function getReverserPayment(payment, Payments) {
                 return _.filter(model.receiptPayments, function (receiptPayment) {
@@ -4751,6 +4763,23 @@
               });
               order.set('payments', payments);
               order.adjustPayment();
+
+              order.set('isPartiallyDelivered', hasDeliveredProducts && hasNotDeliveredProducts ? true : false);
+              if (hasDeliveredProducts && !hasNotDeliveredProducts) {
+                order.set('isFullyDelivered', true);
+              }
+              if (order.get('isPartiallyDelivered')) {
+                var partiallyPaid = 0;
+                _.each(_.filter(order.get('receiptLines'), function (reciptLine) {
+                  return reciptLine.deliveredQuantity;
+                }), function (deliveredLine) {
+                  partiallyPaid += deliveredLine.deliveredQuantity * deliveredLine.unitPrice;
+                });
+                order.set('deliveredQuantityAmount', partiallyPaid);
+                if (order.get('deliveredQuantityAmount') && order.get('deliveredQuantityAmount') > order.get('payment')) {
+                  order.set('isDeliveredGreaterThanGross', true);
+                }
+              }
 
               taxes = {};
               _.each(model.receiptTaxes, function (iter) {
@@ -5359,6 +5388,7 @@
       this.get('payments').reset();
       this.set('openDrawer', false);
       this.set('additionalInfo', null);
+      OB.UTIL.localStorage.removeItem('multiOrdersPayment');
     },
     hasDataInList: function () {
       if (this.get('multiOrdersList') && this.get('multiOrdersList').length > 0) {

@@ -63,6 +63,9 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
         OBContext.getOBContext().getRole().getId(), OBContext.getOBContext().getCurrentClient()
             .getId(), paymentMethod.getObposApplications().getOrganization().getId());
     String description = jsonsent.getString("description");
+    if (description.length() > 60) {
+      description = description.substring(0, 60);
+    }
     BigDecimal amount = BigDecimal.valueOf(jsonsent.getDouble("amount"));
     BigDecimal origAmount = BigDecimal.valueOf(jsonsent.getDouble("origAmount"));
     String type = jsonsent.getString("type");

@@ -347,6 +347,14 @@
     filter: true,
     type: 'TEXT'
   }, {
+    name: 'regionId',
+    column: 'regionId',
+    type: 'TEXT'
+  }, {
+    name: 'countryId',
+    column: 'countryId',
+    type: 'TEXT'
+  }, {
     name: 'countryName',
     column: 'countryName',
     type: 'TEXT'

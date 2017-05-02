@@ -411,7 +411,7 @@ enyo.kind({
       } else {
         this.$.donezerolbl.hide();
         //        if (this.receipt.get('orderType') === 1 || this.receipt.get('orderType') === 3) {
-        if (paymentstatus.isNegative || this.receipt.get('orderType') === 3) {
+        if (paymentstatus.isNegative) {
           this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_ReturnExact'));
         } else {
           this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsExact'));
