@@ -109,8 +109,7 @@ public class StaticResourceComponent extends BaseComponent {
         OBContext.getOBContext().setNewUI(true);
       }
 
-      final String appName = isClassicMode() ? ComponentResource.APP_CLASSIC
-          : ComponentResource.APP_OB3;
+      final String appName = getApplicationName();
 
       String staticResourceFileName = resourceProvider.getStaticResourceCachedInfo(appName);
       if (staticResourceFileName == null) {
