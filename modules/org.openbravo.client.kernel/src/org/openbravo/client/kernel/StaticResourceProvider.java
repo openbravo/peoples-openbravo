@@ -72,8 +72,9 @@ public class StaticResourceProvider implements StaticResourceProviderMBean {
         StaticResourceComponent.GEN_TARGET_LOCATION);
     File resourceFile = new File(getTargetLocation, resource + ".js");
     if (!resourceFile.exists()) {
-      log.info("Static resource file with name {} not found, it will be re-generated.", resource);
       staticResources.remove(resourceName);
+      log.info("Static resource file with name {} not found, removed its information from cache.",
+          resource);
       return null;
     }
     return resource;
