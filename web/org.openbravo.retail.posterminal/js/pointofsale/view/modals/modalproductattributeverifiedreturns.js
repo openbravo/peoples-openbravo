@@ -43,8 +43,9 @@ enyo.kind({
         i, line = me.args.line;
     for (i = 0; i < line.length; i++) {
       me.$.bodyContent.$.verifiedReturns.$['valueAttribute' + i].setValue(null);
+      me.$.bodyContent.$.verifiedReturns.$['valueAttribute' + i].addStyles('background-color: none');
     }
-    this.validateAttributeWithOrderlines();
+    this.blur();
     return;
   },
   cancelAction: function () {
@@ -57,27 +58,28 @@ enyo.kind({
     this.hide();
     return;
   },
-  validateAttributeWithOrderlines: function (inSender, inEvent) {
+  blur: function (inSender, inEvent) {
     var me = this,
         line = me.args.line,
-        notValidAttribute = false,
-        orderlineAttribute, orderlineProduct, inputlineProduct, inputlineAttribute, i;
+        validAttribute, orderlineAttribute, orderlineProduct, inpProduct, inpAttribute, i;
     for (i = 0; i < line.length; i++) {
+      validAttribute = false;
       orderlineProduct = line[i].id;
       orderlineAttribute = line[i].attributeValue;
-      inputlineProduct = me.$.bodyContent.$.verifiedReturns.$['productId' + i].getContent();
-      inputlineAttribute = me.$.bodyContent.$.verifiedReturns.$['valueAttribute' + i].getValue();
-      if (inputlineAttribute) {
-        if ((orderlineAttribute !== inputlineAttribute) && (orderlineProduct === inputlineProduct)) {
-          notValidAttribute = true;
+      inpProduct = me.$.bodyContent.$.verifiedReturns.$['productId' + i].getContent();
+      inpAttribute = me.$.bodyContent.$.verifiedReturns.$['valueAttribute' + i].getValue();
+      if (inpAttribute) {
+        if ((orderlineAttribute !== inpAttribute) && (orderlineProduct === inpProduct)) {
           me.$.bodyContent.$.verifiedReturns.$['valueAttribute' + i].addStyles('background-color: red');
+          validAttribute = false;
         } else {
           me.$.bodyContent.$.verifiedReturns.$['valueAttribute' + i].addStyles('background-color: #6cb33f');
+          validAttribute = true;
         }
       }
     }
-    if (notValidAttribute === false) {
-      me.$.bodyButtons.$.modalDialogButton.setDisabled(true);
+    if (validAttribute) {
+      me.$.bodyButtons.$.modalDialogButton.setDisabled(false);
     }
     return true;
   },
@@ -107,9 +109,9 @@ enyo.kind({
           name: 'valueAttribute' + i,
           isFirstFocus: true,
           handlers: {
-            onblur: 'validateAttributeWithOrderlines'
+            onblur: 'blur'
           },
-          placeholder: 'Enter attribute value'
+          placeholder: 'Scan attribute value'
         }, {
           name: 'productId' + i,
           type: 'hidden'
