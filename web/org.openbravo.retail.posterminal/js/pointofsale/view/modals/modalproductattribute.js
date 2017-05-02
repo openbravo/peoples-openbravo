@@ -54,7 +54,6 @@ enyo.kind({
   },
   //To be implemented
   validAttribute: function (attribute) {
-
     return true;
   },
   saveAttribute: function (inSender, inEvent) {
@@ -62,32 +61,33 @@ enyo.kind({
         inpAttributeValue = this.$.bodyContent.$.valueAttribute.getValue();
     if ((this.validAttribute(inpAttributeValue) && inpAttributeValue)) {
       this.args.callback(inpAttributeValue);
+      this.hide();
     } else {
-      this.args.callback('');
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NoAttributeValue'));
     }
   },
   clearAction: function () {
     this.$.bodyContent.$.valueAttribute.setValue(null);
-    return true;
+    return;
   },
   cancelAction: function () {
     if (this.args.callback) {
-      this.args.callback('');
+      this.args.callback(null);
     }
     this.hide();
-    return true;
+    return;
   },
   saveAction: function () {
     this.saveAttribute();
-    this.hide();
-    return true;
+    return;
   },
   executeOnHide: function () {
     var me = this;
     var inpAttributeValue = this.$.bodyContent.$.valueAttribute.getValue();
     if (!inpAttributeValue && this.args.callback) {
-      this.args.callback('');
+      this.args.callback(null);
     }
+    this.$.bodyContent.$.valueAttribute.setValue(null);
   }
 });
 OB.UI.WindowView.registerPopup('OB.OBPOSPointOfSale.UI.PointOfSale', {

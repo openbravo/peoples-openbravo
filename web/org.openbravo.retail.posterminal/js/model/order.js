@@ -1497,13 +1497,14 @@
     _addProduct: function (p, qty, options, attrs, callback) {
       var newLine = true,
           line = null,
-          me = this;
+          me = this,
+          attributeProduct = false;
       if (enyo.Panels.isScreenNarrow()) {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_AddLine', [qty ? qty : 1, p.get('_identifier')]));
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true)) {
         var lines = me.get('lines'),
-            i, currentline, attributeProduct = false;
+            i, currentline;
         for (i = 0; i < lines.length; i++) {
           currentline = lines.models[i].attributes;
           if (attrs && (currentline.attributeValue === attrs.attributeValue)) {
@@ -1580,14 +1581,7 @@
                 return;
               }
               var splitline = !(options && options.line) && !OB.UTIL.isNullOrUndefined(args.line) && !OB.UTIL.isNullOrUndefined(args.line.get('splitline')) && args.line.get('splitline');
-              if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct'))) && (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && args.line.get('attributeValue') === attrs.attributeValue)) {
-                if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && p.get('isSerialNo') && args.line.get('qty') === 1) {
-                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotSerialNo'), OB.I18N.getLabel('OBPOS_ProductDefinedAsSerialNo'));
-                  if (callback) {
-                    callback(false, null);
-                  }
-                  return false;
-                }
+              if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct'))) && (attributeProduct || !attributeProduct)) {
                 args.receipt.addUnit(args.line, args.qty);
                 if (!_.isUndefined(args.attrs)) {
                   _.each(_.keys(args.attrs), function (key) {
@@ -1941,16 +1935,22 @@
             popup: 'modalProductAttribute',
             args: {
               callback: function (attributeValue) {
-                var i;
-                if (OB.UTIL.isNullOrUndefined(attrs)) {
-                  attrs = {};
-                }
-                attrs.attributeValue = attributeValue;
-                me._addProduct(p, qty, options, attrs, function (success, orderline) {
-                  if (callback) {
-                    callback(success, orderline);
+                if (attributeValue) {
+                  var i;
+                  if (OB.UTIL.isNullOrUndefined(attrs)) {
+                    attrs = {};
                   }
-                });
+                  attrs.attributeValue = attributeValue;
+                  me._addProduct(p, qty, options, attrs, function (success, orderline) {
+                    if (callback) {
+                      callback(success, orderline);
+                    }
+                  });
+                } else {
+                  if (callback) {
+                    callback(false, null);
+                  }
+                }
               },
               options: options
             }
