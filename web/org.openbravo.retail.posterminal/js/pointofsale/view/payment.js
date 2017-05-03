@@ -292,6 +292,12 @@ enyo.kind({
     this.receipt.on('extrainfo', function (info) {
       this.updateExtraInfo(info);
     }, this);
+    this.receipt.on('checkValidPayments', function (order, callback) {
+      var result = this.checkValidPayments(order.getPaymentStatus(), OB.MobileApp.model.paymentnames[order.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')]);
+      if (callback) {
+        callback(result);
+      }
+    }, this);
   },
 
   updateExtraInfo: function (info) {
@@ -669,7 +675,7 @@ enyo.kind({
         if (paymentstatus.change && selectedPayment.paymentMethod.isshared) {
           resultOK = true;
         } else {
-          resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Done', function (success) {
+          this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Done', function (success) {
             var lsuccess = success;
             if (lsuccess) {
               lsuccess = this.checkValidPaymentMethod(paymentstatus, selectedPayment);
@@ -686,6 +692,7 @@ enyo.kind({
             this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Credit', function (success) {
               this.setStatusButtons(success, 'Credit');
             });
+            resultOK = lsuccess;
           });
         }
       } else if (!this.receipt.stopAddingPayments) {
@@ -705,6 +712,7 @@ enyo.kind({
       this.$.noenoughchangelbl.hide();
     }
     this.alignErrorMessages();
+    return resultOK;
   },
   alignErrorMessages: function () {
     if (OB.MobileApp.view.currentWindow === 'retail.pointofsale' && typeof (this.$.errorLabelArea) !== 'undefined') {
