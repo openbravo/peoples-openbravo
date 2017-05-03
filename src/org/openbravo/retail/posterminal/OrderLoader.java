@@ -700,6 +700,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       JSONArray orderlines, ArrayList<OrderLine> lineReferences, int numIter, int pricePrecision,
       ShipmentInOutLine inOutLine, int lineNo, int numLines, int actualLine) throws JSONException {
 
+    if (lineReferences.get(numIter).getObposQtyDeleted() != null
+        && lineReferences.get(numIter).getObposQtyDeleted().compareTo(BigDecimal.ZERO) > 0) {
+      return;
+    }
+
     BigDecimal movQty = null;
     if (inOutLine != null && inOutLine.getMovementQuantity() != null) {
       movQty = inOutLine.getMovementQuantity();
