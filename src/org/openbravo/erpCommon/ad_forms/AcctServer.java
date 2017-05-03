@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2017 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -123,6 +123,7 @@ public abstract class AcctServer {
   public String C_Charge_ID = "";
   public String ChargeAmt = "";
   public String C_BankAccount_ID = "";
+  public String FIN_Financial_Account_ID = "";
   public String C_CashBook_ID = "";
   public String M_Warehouse_ID = "";
   public String Posted = "";
@@ -953,6 +954,7 @@ public abstract class AcctServer {
     C_Charge_ID = data[0].getField("C_Charge_ID");
     ChargeAmt = data[0].getField("ChargeAmt");
     C_BankAccount_ID = data[0].getField("C_BankAccount_ID");
+    FIN_Financial_Account_ID = data[0].getField("FIN_Financial_Account_ID");
     if (log4j.isDebugEnabled())
       log4j.debug("AcctServer - loadDocument - C_BankAccount_ID : " + C_BankAccount_ID);
     Posted = data[0].getField("Posted");
@@ -1667,10 +1669,10 @@ public abstract class AcctServer {
             as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_ConvertChargeLossAmt)) {
         /** Account Type - Bank Statement */
-        data = AcctServerData.selectConvertChargeLossAmt(conn, C_BankAccount_ID,
+        data = AcctServerData.selectConvertChargeLossAmt(conn, FIN_Financial_Account_ID,
             as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_ConvertChargeGainAmt)) {
-        data = AcctServerData.selectConvertChargeGainAmt(conn, C_BankAccount_ID,
+        data = AcctServerData.selectConvertChargeGainAmt(conn, FIN_Financial_Account_ID,
             as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_BankAsset)) {
         data = AcctServerData.selectAssetAcct(conn, C_BankAccount_ID, as.getC_AcctSchema_ID());
@@ -2546,13 +2548,21 @@ public abstract class AcctServer {
     if (bookDifferences) {
       if ((!isReceipt && amtDiff.compareTo(BigDecimal.ZERO) == 1)
           || (isReceipt && amtDiff.compareTo(BigDecimal.ZERO) == -1)) {
-        fact.createLine(line, getAccount(AcctServer.ACCTTYPE_ConvertGainDefaultAmt, as, conn),
-            currencyIDTo, "", amtDiff.abs().toString(), Fact_Acct_Group_ID, seqNo, DocumentType,
-            conn);
+        String convertAccount = StringUtils.isNotEmpty(FIN_Financial_Account_ID)
+            && StringUtils.equals(
+                OBDal.getInstance().get(FIN_FinancialAccount.class, FIN_Financial_Account_ID)
+                    .getType(), "B") ? AcctServer.ACCTTYPE_ConvertChargeGainAmt
+            : AcctServer.ACCTTYPE_ConvertGainDefaultAmt;
+        fact.createLine(line, getAccount(convertAccount, as, conn), currencyIDTo, "", amtDiff.abs()
+            .toString(), Fact_Acct_Group_ID, seqNo, DocumentType, conn);
       } else if (amtDiff.compareTo(BigDecimal.ZERO) != 0) {
-        fact.createLine(line, getAccount(AcctServer.ACCTTYPE_ConvertChargeDefaultAmt, as, conn),
-            currencyIDTo, amtDiff.abs().toString(), "", Fact_Acct_Group_ID, seqNo, DocumentType,
-            conn);
+        String convertAccount = StringUtils.isNotEmpty(FIN_Financial_Account_ID)
+            && StringUtils.equals(
+                OBDal.getInstance().get(FIN_FinancialAccount.class, FIN_Financial_Account_ID)
+                    .getType(), "B") ? AcctServer.ACCTTYPE_ConvertChargeLossAmt
+            : AcctServer.ACCTTYPE_ConvertChargeDefaultAmt;
+        fact.createLine(line, getAccount(convertAccount, as, conn), currencyIDTo, amtDiff.abs()
+            .toString(), "", Fact_Acct_Group_ID, seqNo, DocumentType, conn);
       } else {
         return amtFromSourcecurrency;
       }

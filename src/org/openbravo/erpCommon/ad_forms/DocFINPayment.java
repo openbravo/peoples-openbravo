@@ -671,6 +671,8 @@ public class DocFINPayment extends AcctServer {
         outputFormat.format(payment.getPaymentDate()));
     FieldProviderFactory.setField(data[0], "C_DocType_ID", payment.getDocumentType().getId());
     FieldProviderFactory.setField(data[0], "C_Currency_ID", payment.getCurrency().getId());
+    FieldProviderFactory
+        .setField(data[0], "FIN_Financial_Account_ID", payment.getAccount().getId());
     FieldProviderFactory.setField(data[0], "Amount", payment.getAmount().toString());
     FieldProviderFactory.setField(data[0], "GeneratedCredit", payment.getGeneratedCredit()
         .toString());

@@ -12,7 +12,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2017 Openbravo S.L.U.
  ******************************************************************************
 -->
 
@@ -402,17 +402,17 @@
    <SqlMethod name="selectConvertChargeLossAmt" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT B_REVALUATIONLOSS_ACCT as account_ID FROM C_BankAccount_Acct WHERE C_BankAccount_ID=? AND C_AcctSchema_ID=?
+        SELECT FIN_BANKREVALUATIONLOSS_ACCT as account_ID FROM Fin_Financial_Account_Acct WHERE Fin_Financial_Account_ID=? AND C_AcctSchema_ID=?
       </Sql>
-      <Parameter name="C_BankAccount_ID"/>
+      <Parameter name="FIN_Financial_Account_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
    </SqlMethod>
    <SqlMethod name="selectConvertChargeGainAmt" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT B_REVALUATIONGAIN_ACCT as account_ID FROM C_BankAccount_Acct WHERE C_BankAccount_ID=? AND C_AcctSchema_ID=?
+        SELECT FIN_BANKREVALUATIONGAIN_ACCT as account_ID FROM Fin_Financial_Account_Acct WHERE Fin_Financial_Account_ID=? AND C_AcctSchema_ID=?
       </Sql>
-      <Parameter name="C_BankAccount_ID"/>
+      <Parameter name="FIN_Financial_Account_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
    </SqlMethod>
    <SqlMethod name="selectInterestRevAcct" type="preparedStatement" return="multiple">
