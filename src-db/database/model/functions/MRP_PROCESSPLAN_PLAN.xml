@@ -31,7 +31,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2016 Openbravo SLU
+* All portions are Copyright (C) 2001-2017 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -72,16 +72,20 @@ BEGIN
 
       v_Qty_New := Cur_Lines.qty;
       IF (Cur_Lines.ISFIXED = 'N' AND v_Qty_New > 0) THEN
-
-        v_neededQty_New := Cur_Lines.qty - v_AvailableStock;
-        IF (v_neededQty_New > 0) THEN
-          v_Qty_New := GREATEST(v_neededqty_New, Cur_Lines.qtymin);
-          IF (Cur_Lines.qtytype = 'M') THEN --Multiple lot qty
-            v_Qty_new := CEIL(v_qty_new/Cur_Lines.qtystd)*Cur_Lines.qtystd;
-          END IF;
+        IF (Cur_Lines.qtytype = 'E' AND Cur_Lines.qty <> Cur_Lines.neededQty) THEN
+          v_Qty_New := Cur_Lines.qtystd;
+          v_neededQty_New := Cur_Lines.neededQty;
         ELSE
-          v_qty_new := 0;
-          v_neededQty_New := 0;
+          v_neededQty_New := Cur_Lines.qty - v_AvailableStock;
+          IF (v_neededQty_New > 0) THEN
+            v_Qty_New := GREATEST(v_neededqty_New, Cur_Lines.qtymin);
+            IF (Cur_Lines.qtytype = 'M') THEN --Multiple lot qty
+              v_Qty_new := CEIL(v_qty_new/Cur_Lines.qtystd)*Cur_Lines.qtystd;
+            END IF;
+          ELSE
+            v_qty_new := 0;
+            v_neededQty_New := 0;
+          END IF;
         END IF;
 
         v_plannedorderdate_new := Cur_Lines.planneddate -

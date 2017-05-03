@@ -41,7 +41,7 @@ public class ReturnFromCustomerHQLInserter extends HqlInserter {
     // discounts
     String buttonOwnerViewTabId = requestParameters.get("buttonOwnerViewTabId");
     if (RETURN_FROM_CUSTOMER_TAB_ID.equals(buttonOwnerViewTabId)) {
-      return " (select e.orderDiscount from OrderLine e where e.id = iol.salesOrderLine.id) is null ";
+      return " not exists (select 1 from OrderLine e where e.id = iol.salesOrderLine.id and e.orderDiscount.id is not null) ";
     } else {
       return null;
     }

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -331,6 +331,8 @@ public class DocFINPayment extends AcctServer {
 
       final OBQuery<AcctSchemaTableDocType> obqParameters = OBDal.getInstance().createQuery(
           AcctSchemaTableDocType.class, whereClause.toString());
+      obqParameters.setFilterOnReadableClients(false);
+      obqParameters.setFilterOnReadableOrganization(false);
       final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
 
       if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0
@@ -347,6 +349,8 @@ public class DocFINPayment extends AcctServer {
 
         final OBQuery<AcctSchemaTable> obqParameters2 = OBDal.getInstance().createQuery(
             AcctSchemaTable.class, whereClause2.toString());
+        obqParameters2.setFilterOnReadableClients(false);
+        obqParameters2.setFilterOnReadableOrganization(false);
         final List<AcctSchemaTable> acctSchemaTables = obqParameters2.list();
         if (acctSchemaTables != null && acctSchemaTables.size() > 0
             && acctSchemaTables.get(0).getCreatefactTemplate() != null)

@@ -61,7 +61,7 @@ OB.User.userInfo = {
             _identifier: '${roleInfo.organizations[organizationId]}'
           } <#if organizationId_has_next>,</#if>
           </#list>
-        ],
+        ].sortByProperty('_identifier', true),
         warehouseOrgMap: [
           <#list roleInfo.organizationWarehouses?keys as key>
           {
@@ -73,7 +73,7 @@ OB.User.userInfo = {
                 _identifier: '${warehouse.warehouseName}'
               } <#if warehouse_has_next>,</#if>
               </#list>
-            ]
+            ].sortByProperty('_identifier', true)
           } <#if key_has_next>,</#if>
           </#list>
         ]

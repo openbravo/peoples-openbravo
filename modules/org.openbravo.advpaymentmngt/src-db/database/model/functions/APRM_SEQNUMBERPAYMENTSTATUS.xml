@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2014 Openbravo SLU
+* All portions are Copyright (C) 2014-2017 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -25,6 +25,7 @@
   v_referencelist VARCHAR2(32):='575BCB88A4694C27BC013DE9C73E6FE7';
 
 BEGIN
+
   -- Check if the status exists
   SELECT count(*) INTO v_count FROM DUAL
   WHERE EXISTS (SELECT 1 FROM ad_ref_list
@@ -32,7 +33,8 @@ BEGIN
                       AND value = status);
 
   IF (v_count = 0) THEN
-    RETURN 'N';
+    -- If status is null, return minimum value for invoice paid status (RPR or PPM)
+    RETURN '40';
   END IF;
   
   SELECT seqno 
