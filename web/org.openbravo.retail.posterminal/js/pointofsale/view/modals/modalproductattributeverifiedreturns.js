@@ -7,6 +7,7 @@
  ************************************************************************************
  */
 /*global OB, moment, enyo */
+
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalProductAttributeVerifiedReturns',
@@ -86,6 +87,7 @@ enyo.kind({
   executeOnShow: function () {
     var me = this,
         line = me.args.line,
+        documentno = me.args.documentno,
         i;
     me.$.bodyContent.$.verifiedReturns.destroyComponents();
     me.$.bodyContent.$.verifiedReturns.createComponent({
@@ -95,7 +97,13 @@ enyo.kind({
     });
     for (i = 0; i < line.length; i++) {
       me.$.bodyContent.$.verifiedReturns.createComponent({
+        style: 'border-bottom: 1px solid #cccccc;',
         components: [{
+          name: 'documentno',
+          type: 'text',
+          classes: 'span4',
+          style: 'line-height: 50px; font-size: 17px;text-align: center;width: 700px;font-weight: bold;'
+        }, {
           name: 'productName' + i,
           type: 'text',
           classes: 'span4',
@@ -111,17 +119,20 @@ enyo.kind({
           handlers: {
             onblur: 'blur'
           },
-          placeholder: 'Scan attribute value'
+          placeholder: 'Scan attribute'
         }, {
           name: 'productId' + i,
-          type: 'hidden'
+          type: 'text',
+          classes: 'span4',
+          style: 'line-height: 50px;width: 700px;'
         }]
       });
-      me.$.bodyContent.$.verifiedReturns.$['productId' + i].setContent(line[i].id);
+      me.$.bodyContent.$.verifiedReturns.$.documentno.setContent(documentno);
       me.$.bodyContent.$.verifiedReturns.$['productName' + i].setContent(line[i].name);
+      me.$.bodyContent.$.verifiedReturns.$['productId' + i].setContent(line[i].id);
       me.$.bodyContent.$.verifiedReturns.$['productId' + i].hide();
-      me.$.bodyButtons.$.modalDialogButton.setDisabled(true);
     }
+    me.$.bodyButtons.$.modalDialogButton.setDisabled(true);
     me.$.bodyContent.$.verifiedReturns.render();
   }
 });
