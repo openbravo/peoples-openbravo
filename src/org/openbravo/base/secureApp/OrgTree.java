@@ -14,7 +14,6 @@ package org.openbravo.base.secureApp;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.openbravo.database.ConnectionProvider;
@@ -24,6 +23,8 @@ public class OrgTree implements Serializable {
   private static final long serialVersionUID = 1L;
   private List<OrgTreeNode> nodes;
   private static final String AD_ORG_TABLE_ID = "155";
+  private static final char QUOUTE = '\'';
+  private static final String QUOUTE_COMMA = "',";
 
   /**
    * Creates a new Organization tree with all the nodes
@@ -106,17 +107,15 @@ public class OrgTree implements Serializable {
    *         Example: "'0','1000000'"
    */
   public static String getTransactionAllowedOrgs(String strOrgs) {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     OrgTree orgTree = new OrgTree(strOrgs);
-    Iterator<OrgTreeNode> iterator = orgTree.iterator();
-    while (iterator.hasNext()) {
-      OrgTreeNode n = iterator.next();
-      if (n.getIsReady() == "true" && n.getOrgType().isTransactionsAllowed()) {
-        sb.append("'" + n.getId() + "',");
+    for (OrgTreeNode n : orgTree.nodes) {
+      if ("true".equals(n.getIsReady()) && n.getOrgType().isTransactionsAllowed()) {
+        sb.append(QUOUTE).append(n.getId()).append(QUOUTE_COMMA);
       }
     }
     // Remove the last ','
-    if (sb.length() > 0 && sb.charAt(sb.length() - 1) == ',') {
+    if (sb.length() > 0) {
       sb.deleteCharAt(sb.length() - 1);
     }
     return sb.toString();
@@ -193,22 +192,30 @@ public class OrgTree implements Serializable {
     }
   }
 
-  private Iterator<OrgTreeNode> iterator() {
-    return nodes.iterator();
-  }
-
   /**
    * Converts the tree into String. Nodes comma separated.
    */
   public String toString() {
-    String s = "";
-    if (nodes == null)
+    if (nodes == null) {
       return "";
-    for (int i = 0; i < nodes.size(); i++) {
-      if (nodes.get(i) != null)
-        s += "'" + nodes.get(i).getId() + "'" + ((i < nodes.size() - 1) ? "," : "");
     }
-    return s;
+
+    StringBuilder s = new StringBuilder();
+    int size = nodes.size();
+    int i = 0;
+    for (OrgTreeNode node : nodes) {
+      if (node == null) {
+        continue;
+      }
+      i++;
+      s.append(QUOUTE).append(node.getId());
+      if (i == size) {
+        s.append(QUOUTE);
+      } else {
+        s.append(QUOUTE_COMMA);
+      }
+    }
+    return s.toString();
   }
 
   /**
@@ -330,11 +337,11 @@ public class OrgTree implements Serializable {
    */
   private List<OrgTreeNode> getNodesWithParent(String parentId) {
     List<OrgTreeNode> vecNodes = new ArrayList<OrgTreeNode>();
-    int idx = 0;
-    for (int i = 0; i < nodes.size(); i++)
-      if (nodes.get(i).getParentId().equals(parentId)) {
-        vecNodes.add(idx++, nodes.get(i));
+    for (OrgTreeNode node : nodes) {
+      if (node.getParentId().equals(parentId)) {
+        vecNodes.add(node);
       }
+    }
     return vecNodes;
   }
 
