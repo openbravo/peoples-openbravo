@@ -144,13 +144,14 @@ create.database: creates the database from scratch.
         TEMPORARY TABLESPACE TEMP;
 
         --GRANTING USER
-      	grant create session     to ${bbdd.user};
-      	grant alter  session     to ${bbdd.user};
-      	grant create table       to ${bbdd.user};
-      	grant create procedure   to ${bbdd.user};
-      	grant create trigger     to ${bbdd.user};
-      	grant create view        to ${bbdd.user};
-        grant create sequence    to ${bbdd.user};
+      	grant create session     	to ${bbdd.user};
+      	grant alter  session     	to ${bbdd.user};
+      	grant create table       	to ${bbdd.user};
+      	grant create procedure   	to ${bbdd.user};
+      	grant create trigger     	to ${bbdd.user};
+      	grant create view        	to ${bbdd.user};
+        grant create sequence    	to ${bbdd.user};
+        grant create materialized view 	to ${bbdd.user};
       	alter user ${bbdd.user} quota unlimited on users;
       </transaction>
     </sql>
