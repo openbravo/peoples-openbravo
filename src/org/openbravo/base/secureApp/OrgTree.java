@@ -267,61 +267,32 @@ public class OrgTree implements Serializable {
     return returnTree;
   }
 
-  /**
-   * List param is modified with all the child nodes, repeatNodes decides what to do in case of
-   * repeated nodes.
-   * 
-   * @param parentNodeId
-   * @param list
-   * @param repeatNodes
-   */
-  private void getDescendantTreeList(String parentNodeId, List<OrgTreeNode> list,
-      boolean repeatNodes, boolean withZero) {
-    List<OrgTreeNode> childNodes = getNodesWithParent(parentNodeId);
-    if (repeatNodes) {
-      if (withZero || !getNodeById(parentNodeId).getId().equals("0")) {
-        OrgTreeNode node = getNodeById(parentNodeId);
-        if (node != null) {
-          list.add(getNodeById(parentNodeId));
-        }
-      }
-    } else {
-      if ((list.size() == 0) && (withZero || !getNodeById(parentNodeId).getId().equals("0")))
-        list.add(getNodeById(parentNodeId));
-      else {
-        boolean exists = false;
-        for (int i = 0; i < list.size(); i++)
-          if (list.get(i).equals(parentNodeId))
-            exists = true;
-        if ((!exists) && (withZero || !getNodeById(parentNodeId).getId().equals("0")))
-          list.add(getNodeById(parentNodeId));
-      }
-    }
-    if (childNodes.size() != 0)
-      for (int i = 0; i < childNodes.size(); i++)
-        getDescendantTreeList(childNodes.get(i).getId(), list, repeatNodes, withZero);
-
-  }
-
-  /**
-   * List param is modified with all the child nodes
-   * 
-   * @param parentNodeId
-   * @param list
-   */
+  /** List param is modified with all the child nodes */
   private void getDescendantTreeList(String parentNodeId, List<OrgTreeNode> list) {
-    getDescendantTreeList(parentNodeId, list, true, true);
+    List<OrgTreeNode> childNodes = getNodesWithParent(parentNodeId);
+
+    OrgTreeNode node = getNodeById(parentNodeId);
+    if (node != null) {
+      list.add(node);
+    }
+
+    for (OrgTreeNode child : childNodes) {
+      getDescendantTreeList(child.getId(), list);
+    }
   }
 
   /**
    * Returns the node matching the id, in case it does not exists it returns null
    */
   private OrgTreeNode getNodeById(String id) {
-    if (nodes == null)
+    if (nodes == null) {
       return null;
-    for (int i = 0; i < nodes.size(); i++)
-      if (nodes.get(i).equals(id))
-        return nodes.get(i);
+    }
+    for (OrgTreeNode node : nodes) {
+      if (node.equals(id)) {
+        return node;
+      }
+    }
     return null;
   }
 
@@ -329,12 +300,7 @@ public class OrgTree implements Serializable {
    * In case the node id is in the tree it returns true, if not false.
    */
   private boolean isNodeInTree(String id) {
-    if (nodes == null)
-      return false;
-    for (int i = 0; i < nodes.size(); i++)
-      if (nodes.get(i).equals(id))
-        return true;
-    return false;
+    return getNodeById(id) != null;
   }
 
   /**
