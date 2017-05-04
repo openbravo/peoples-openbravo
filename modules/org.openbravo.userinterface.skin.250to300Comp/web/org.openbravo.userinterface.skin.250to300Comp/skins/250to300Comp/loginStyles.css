@@ -453,12 +453,45 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
   width: 100%;
 }
 
+.Login_TopLogos_Container_None {
+  position: relative;
+  padding-top: 366px;
+  text-align: center;
+  width: 100%;
+}
+
 .Login_TopLogos_Container_Support_Forge .Login_TopLogos_ForgeLogo_Container {
   left: -90px;
 }
 
 .Login_TopLogos_Container_Support_Forge .Login_TopLogos_SupportLogo_Container {
   left: 356px;
+}
+
+.Login_TopLogos_Container_Support .Login_TopLogos_ForgeLogo_Container {
+  display: none;
+}
+
+.Login_TopLogos_Container_Support .Login_TopLogos_SupportLogo_Container {
+  left: 616px;
+}
+
+
+.Login_TopLogos_Container_Forge .Login_TopLogos_ForgeLogo_Container {
+  left: -90px;
+}
+
+.Login_TopLogos_Container_Forge .Login_TopLogos_SupportLogo_Container {
+  display: none;
+}
+
+
+.Login_TopLogos_Container_None .Login_TopLogos_ForgeLogo_Container {
+  display: none;
+}
+
+.Login_TopLogos_Container_None .Login_TopLogos_SupportLogo_Container {
+  display: none;
 }
 
 .Login_TopLogos_SupportLogo_Container {
