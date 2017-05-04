@@ -11,12 +11,14 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.test.datasource;
+
+import static org.hamcrest.Matchers.is;
 
 /**
  * Test cases for ComboTableDatasourceService
@@ -25,6 +27,7 @@ package org.openbravo.test.datasource;
  */
 
 import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -66,8 +69,7 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
     String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
         params, 200, "POST");
     JSONObject jsonResponse = new JSONObject(response);
-    assertFalse(getStatus(jsonResponse).equals(
-        String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
+    assertResponseStatusIsNot(jsonResponse, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
   }
 
   /**
@@ -91,8 +93,7 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
     String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
         params, 200, "POST");
     JSONObject jsonResponse = new JSONObject(response);
-    assertFalse(getStatus(jsonResponse).equals(
-        String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
+    assertResponseStatusIsNot(jsonResponse, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
   }
 
   /**
@@ -112,8 +113,7 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
 
     JSONObject jsonResponse = requestCombo(params);
     JSONArray data = getData(jsonResponse);
-    assertTrue(getStatus(jsonResponse).equals(
-        String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
+
     assertEquals("paginated combo number of records", 75, data.length());
   }
 
@@ -134,8 +134,6 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
 
     JSONObject jsonResponse = requestCombo(params);
     JSONArray data = getData(jsonResponse);
-    assertTrue(getStatus(jsonResponse).equals(
-        String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
 
     int totalRows = jsonResponse.getJSONObject("response").getInt("totalRows"); // 78
     int endRow = jsonResponse.getJSONObject("response").getInt("endRow"); // 76
@@ -169,8 +167,7 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
 
     JSONObject jsonResponse = requestCombo(params);
     JSONArray data = getData(jsonResponse);
-    assertTrue(getStatus(jsonResponse).equals(
-        String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
+
     assertEquals("number of filtered records", 3, data.length());
   }
 
@@ -197,8 +194,7 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
 
     JSONObject jsonResponse = requestCombo(params);
     JSONArray data = getData(jsonResponse);
-    assertTrue(getStatus(jsonResponse).equals(
-        String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
+
     assertEquals("number of filtered records", 2, data.length());
   }
 
@@ -218,9 +214,8 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
     String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
         params, 200, "POST");
     JSONObject jsonResponse = new JSONObject(response);
-    // error should be raised
-    assertTrue(getStatus(jsonResponse).equals(
-        String.valueOf(JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR)));
+
+    assertResponseStatusIs(jsonResponse, JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR);
   }
 
   /**
@@ -241,9 +236,8 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
     String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
         params, 200, "POST");
     JSONObject jsonResponse = new JSONObject(response);
-    // error should be raised
-    assertTrue(getStatus(jsonResponse).equals(
-        String.valueOf(JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR)));
+
+    assertResponseStatusIs(jsonResponse, JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR);
   }
 
   /**
@@ -306,10 +300,20 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
       paramStr = "[" + paramStr + "]";
       log.debug("Combo request:\n  *params:{}\n  *response:{}", paramStr, jsonResponse);
     }
-    assertTrue(getStatus(jsonResponse).equals(
-        String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
+
+    assertResponseStatusIs(jsonResponse, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     assertNotNull("Combo response shoulnd't be null", jsonResponse.toString());
     return jsonResponse;
+  }
+
+  private void assertResponseStatusIs(JSONObject response, int status) throws JSONException {
+    assertThat("Response status for: " + response.toString(), getStatus(response),
+        is(String.valueOf(status)));
+  }
+
+  private void assertResponseStatusIsNot(JSONObject response, int status) throws JSONException {
+    assertThat("Response status for: " + response.toString(), getStatus(response),
+        is(not(String.valueOf(status))));
   }
 
   /**

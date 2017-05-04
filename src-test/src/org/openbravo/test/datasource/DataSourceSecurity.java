@@ -484,7 +484,8 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     } else if (dataSource.operation.equals(OPERATION_UPDATE)) {
       jsonResponse = updateDataSource();
     }
-    assertThat("Request status", jsonResponse.getInt("status"), is(expectedResponseStatus));
+    assertThat("Response status for: " + jsonResponse.toString(), jsonResponse.getInt("status"),
+        is(expectedResponseStatus));
   }
 
   private JSONObject updateDataSource() throws Exception {
