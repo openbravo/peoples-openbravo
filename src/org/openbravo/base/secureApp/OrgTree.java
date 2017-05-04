@@ -205,6 +205,7 @@ public class OrgTree implements Serializable {
     int i = 0;
     for (OrgTreeNode node : nodes) {
       if (node == null) {
+        size -= 1;
         continue;
       }
       i++;
@@ -278,8 +279,12 @@ public class OrgTree implements Serializable {
       boolean repeatNodes, boolean withZero) {
     List<OrgTreeNode> childNodes = getNodesWithParent(parentNodeId);
     if (repeatNodes) {
-      if (withZero || !getNodeById(parentNodeId).getId().equals("0"))
-        list.add(getNodeById(parentNodeId));
+      if (withZero || !getNodeById(parentNodeId).getId().equals("0")) {
+        OrgTreeNode node = getNodeById(parentNodeId);
+        if (node != null) {
+          list.add(getNodeById(parentNodeId));
+        }
+      }
     } else {
       if ((list.size() == 0) && (withZero || !getNodeById(parentNodeId).getId().equals("0")))
         list.add(getNodeById(parentNodeId));
