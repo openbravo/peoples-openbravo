@@ -18,12 +18,18 @@ enyo.kind({
   executeOnShow: function () {
     if (this.currentLine) {
       var diff = this.propertycomponents;
-      var att;
+      var att, receiptLineDescription;
       for (att in diff) {
         if (diff.hasOwnProperty(att)) {
           this.loadValue(att, diff[att]);
+          if (diff[att].owner.$.receiptLineDescription) {
+            receiptLineDescription = diff[att].owner.$.receiptLineDescription;
+          }
         }
       }
+      setTimeout(function () {
+        receiptLineDescription.focus();
+      }, 200);
     }
     this.autoDismiss = true;
     if (this && this.args && this.args.autoDismiss === false) {
