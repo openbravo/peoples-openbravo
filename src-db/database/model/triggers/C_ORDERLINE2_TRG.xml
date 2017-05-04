@@ -51,15 +51,20 @@ BEGIN
         IF((COALESCE(:old.QtyDelivered, 0) <> COALESCE(:NEW.QtyDelivered, 0))) THEN
           -- Get ID
           v_ID:=:new.C_Order_ID;
-          v_QtyReserved:= CASE WHEN v_isSOTrx = 'Y' THEN -(:new.qtydelivered - :old.qtydelivered) ELSE 0 END;
-          IF :old.qtydelivered=0 AND :new.qtydelivered=:new.qtyordered THEN
-            v_QtyOrderReserved:=-:new.QuantityOrder;
-          ELSIF :new.M_Product_UOM_ID IS NOT NULL THEN
-            SELECT c_uom_id
-            INTO v_UOM_ID
-            FROM m_product_uom
-            WHERE m_product_uom_id = :new.m_product_uom_id;
-            v_QtyOrderReserved:=C_Uom_Convert(v_QtyReserved, :new.C_UOM_ID, v_UOM_ID, 'Y') ;
+          IF (v_isSOTrx = 'Y') THEN
+            v_QtyReserved := -(:new.qtydelivered - :old.qtydelivered);
+            IF (:old.qtydelivered=0 AND :new.qtydelivered=:new.qtyordered) THEN
+              v_QtyOrderReserved := -:new.QuantityOrder;
+            ELSIF (:new.M_Product_UOM_ID IS NOT NULL) THEN
+              SELECT c_uom_id
+              INTO v_UOM_ID
+              FROM m_product_uom
+              WHERE m_product_uom_id = :new.m_product_uom_id;
+              v_QtyOrderReserved := C_Uom_Convert(v_QtyReserved, :new.C_UOM_ID, v_UOM_ID, 'Y');
+            END IF;
+          ELSE
+            v_QtyReserved := 0;
+            v_QtyOrderReserved := null;
           END IF;
           SELECT COUNT(*)
           INTO V_STOCKED
