@@ -91,19 +91,22 @@ enyo.kind({
         i;
     me.$.bodyContent.$.verifiedReturns.destroyComponents();
     me.$.bodyContent.$.verifiedReturns.createComponent({
-      initComponents: function () {
-        this.setContent(OB.I18N.getLabel('OBPOS_ProductAttributeValueVerifiedReturnsDesc'));
-      }
+      style: 'border-bottom: 1px solid #cccccc;',
+      components: [{
+        name: 'headerTitle',
+        type: 'text'
+      }, {
+        name: 'documentno',
+        type: 'text',
+        classes: 'span4',
+        style: 'line-height: 50px; font-size: 17px;text-align: center;width: 700px;font-weight: bold;border-bottom: 1px solid #cccccc;'
+      }]
     });
+    me.$.bodyContent.$.verifiedReturns.$.headerTitle.setContent(OB.I18N.getLabel('OBPOS_ProductAttributeValueVerifiedReturnsDesc'));
+    me.$.bodyContent.$.verifiedReturns.$.documentno.setContent(documentno);
     for (i = 0; i < line.length; i++) {
       me.$.bodyContent.$.verifiedReturns.createComponent({
-        style: 'border-bottom: 1px solid #cccccc;',
         components: [{
-          name: 'documentno',
-          type: 'text',
-          classes: 'span4',
-          style: 'line-height: 50px; font-size: 17px;text-align: center;width: 700px;font-weight: bold;'
-        }, {
           name: 'productName' + i,
           type: 'text',
           classes: 'span4',
@@ -127,7 +130,7 @@ enyo.kind({
           style: 'line-height: 50px;width: 700px;'
         }]
       });
-      me.$.bodyContent.$.verifiedReturns.$.documentno.setContent(documentno);
+
       me.$.bodyContent.$.verifiedReturns.$['productName' + i].setContent(line[i].name);
       me.$.bodyContent.$.verifiedReturns.$['productId' + i].setContent(line[i].id);
       me.$.bodyContent.$.verifiedReturns.$['productId' + i].hide();
