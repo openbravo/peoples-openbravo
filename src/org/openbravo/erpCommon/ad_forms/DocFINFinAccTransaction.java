@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1077,6 +1077,8 @@ public class DocFINFinAccTransaction extends AcctServer {
       FieldProviderFactory.setField(data[0], "AD_Client_ID", transaction.getClient().getId());
       FieldProviderFactory.setField(data[0], "AD_Org_ID", transaction.getOrganization().getId());
       FieldProviderFactory.setField(data[0], "FIN_Finacc_Transaction_ID", transaction.getId());
+      FieldProviderFactory.setField(data[0], "FIN_Financial_Account_ID", transaction.getAccount()
+          .getId());
       FieldProviderFactory.setField(data[0], "DepositAmount", transaction.getDepositAmount()
           .toString());
       FieldProviderFactory.setField(data[0], "PaymentAmount", transaction.getPaymentAmount()
