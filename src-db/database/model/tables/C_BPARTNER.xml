@@ -460,10 +460,6 @@
       <foreign-key foreignTable="C_SALARY_CATEGORY" name="C_SALARY_CATEGORY_CBPARTNER">
         <reference local="C_SALARY_CATEGORY_ID" foreign="C_SALARY_CATEGORY_ID"/>
       </foreign-key>
-      <index name="C_BPARTNER_IDSALESREP" unique="false">
-        <index-column name="C_BPARTNER_ID"/>
-        <index-column name="ISSALESREP"/>
-      </index>
       <index name="C_BPARTNER_NAME_ID" unique="false">
         <index-column name="NAME"/>
         <index-column name="C_BPARTNER_ID"/>
@@ -475,6 +471,10 @@
         <index-column name="REFERENCENO"/>
         <index-column name="C_BPARTNER_ID"/>
         <whereClause><![CDATA[REFERENCENO IS NOT NULL]]></whereClause>
+      </index>
+      <index name="C_BPARTNER_SALESREP_ID" unique="false">
+        <index-column name="ISSALESREP"/>
+        <index-column name="C_BPARTNER_ID"/>
       </index>
       <index name="C_BPARTNER_VALUE_ID" unique="false">
         <index-column name="VALUE"/>
