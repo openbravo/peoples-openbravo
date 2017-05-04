@@ -106,6 +106,10 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
       int stdPrecision = invoice.getPriceList().getCurrency().getStandardPrecision().intValue();
 
       if (data == null || data.length == 0) {
+        try {
+          releaseRollbackConnection(conn);
+        } catch (Exception ignored) {
+        }
         myError = new OBError();
         myError.setType("Success");
         myError.setTitle(OBMessageUtils.messageBD("Success"));
