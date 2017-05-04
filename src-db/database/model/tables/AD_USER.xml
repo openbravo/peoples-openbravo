@@ -208,9 +208,9 @@
         <index-column name="EMAIL"/>
         <whereClause><![CDATA[EMAIL IS NOT NULL]]></whereClause>
       </index>
-      <index name="AD_USER_NAME" unique="false">
-        <index-column name="AD_CLIENT_ID"/>
+      <index name="AD_USER_NAME_ID" unique="false">
         <index-column name="NAME"/>
+        <index-column name="AD_USER_ID"/>
       </index>
       <index name="AD_USER_PARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>

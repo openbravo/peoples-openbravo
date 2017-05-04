@@ -288,7 +288,6 @@
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <index name="FACT_ACCT_ACCOUNT" unique="false">
-        <index-column name="AD_CLIENT_ID"/>
         <index-column name="AD_ORG_ID"/>
         <index-column name="C_ACCTSCHEMA_ID"/>
         <index-column name="ACCOUNT_ID"/>
