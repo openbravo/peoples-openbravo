@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -141,13 +142,21 @@ public class ReportProductMovement extends HttpSecureAppServlet {
       localStrDateTo = DateTimeData.today(this);
       localStrDateFrom = DateTimeData.weekBefore(this);
     }
+    int limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
+    String pgLimit = null, oraLimit = null;
+
     if (vars.commandIn("FIND", "DIRECT")) {
+      if (StringUtils.equals(this.myPool.getRDBMS(), "ORACLE")) {
+        oraLimit = String.valueOf(limit + 1);
+      } else {
+        pgLimit = String.valueOf(limit + 1);
+      }
       if (strInout.equals("-1")) {
         data = ReportProductMovementData.select(this, vars.getLanguage(),
             Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
             localStrDateFrom, DateTimeData.nDaysAfter(this, localStrDateTo, "1"), strcBpartnerId,
-            strmProductId, strmAttributesetinstanceId, "N");
+            strmProductId, strmAttributesetinstanceId, "N", pgLimit, oraLimit);
         if (data == null || data.length == 0) {
           discard[0] = "selEliminar1";
           data = ReportProductMovementData.set();
@@ -162,7 +171,7 @@ public class ReportProductMovement extends HttpSecureAppServlet {
             Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
             localStrDateFrom, DateTimeData.nDaysAfter(this, localStrDateTo, "1"), strcBpartnerId,
-            strmProductId, strmAttributesetinstanceId, "Y");
+            strmProductId, strmAttributesetinstanceId, "Y", pgLimit, oraLimit);
         if (data5 == null || data5.length == 0) {
           discard[5] = "selEliminar6";
           data5 = ReportProductMovementData.set();
@@ -268,6 +277,14 @@ public class ReportProductMovement extends HttpSecureAppServlet {
     }
     {
       OBError myMessage = vars.getMessage("ReportProductMovement");
+      if (limit > 0 && data.length > limit) {
+        myMessage = new OBError();
+        myMessage.setType("Warning");
+        myMessage.setTitle("");
+        String msgbody = Utility.messageBD(this, "ReportsLimit", vars.getLanguage());
+        msgbody = msgbody.replace("@limit@", String.valueOf(limit + 1));
+        myMessage.setMessage(msgbody);
+      }
       vars.removeMessage("ReportProductMovement");
       if (myMessage != null) {
         xmlDocument.setParameter("messageType", myMessage.getType());
