@@ -701,7 +701,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       ShipmentInOutLine inOutLine, int lineNo, int numLines, int actualLine) throws JSONException {
 
     if (lineReferences.get(numIter).getObposQtyDeleted() != null
-        && lineReferences.get(numIter).getObposQtyDeleted().compareTo(BigDecimal.ZERO) > 0) {
+        && lineReferences.get(numIter).getObposQtyDeleted().compareTo(BigDecimal.ZERO) != 0) {
       return;
     }
 
