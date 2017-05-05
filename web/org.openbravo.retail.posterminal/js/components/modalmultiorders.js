@@ -278,7 +278,11 @@ enyo.kind({
             orderModels.push(iter.get('id'));
             re = new RegExp(me.filters.filterText, 'gi');
             toMatch = iter.get('documentNo').match(re) + iter.get('bp').get('_identifier').match(re);
-            if ((me.filters.filterText === '' || toMatch !== 0) && (iter.get('orderType') === 0 || iter.get('orderType') === 2) && !iter.get('isPaid') && !iter.get('isQuotation') && iter.get('gross') >= 0) {
+            var payment = iter.get('payments').models.reduce(function (total, model) {
+              total = +model.get('amount');
+              return total;
+            }, 0);
+            if ((me.filters.filterText === '' || toMatch !== 0) && (iter.get('orderType') === 0 || iter.get('orderType') === 2) && payment < iter.get('gross') && !iter.get('isQuotation') && iter.get('gross') >= 0) {
               actualDate = new Date().setHours(0, 0, 0, 0);
               if (me.filters.endDate === '' || new Date(me.filters.endDate) >= actualDate) {
                 for (i = 0; i < me.filters.documentType.length; i++) {
@@ -497,7 +501,11 @@ enyo.kind({
     if (OB.MobileApp.model.hasPermission('OBPOS_SelectCurrentTicketsOnPaidOpen', true)) {
       _.each(me.model.get('orderList').models, function (iter) {
         if (iter.get('lines') && iter.get('lines').length > 0) {
-          if ((iter.get('orderType') === 0 || iter.get('orderType') === 2) && !iter.get('isPaid') && !iter.get('isQuotation') && iter.get('gross') >= 0) {
+          var payment = iter.get('payments').models.reduce(function (total, model) {
+            total = +model.get('amount');
+            return total;
+          }, 0);
+          if ((iter.get('orderType') === 0 || iter.get('orderType') === 2) && payment < iter.get('gross') && !iter.get('isQuotation') && iter.get('gross') >= 0) {
             if (!_.isNull(iter.id) && !_.isUndefined(iter.id)) {
               iter.set('checked', true);
               me.$.body.$.listMultiOrders.multiOrdersList.add(iter);
