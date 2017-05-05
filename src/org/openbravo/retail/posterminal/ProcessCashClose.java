@@ -143,6 +143,11 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
         doReconciliationAndInvoices(posTerminal, cashUpId, cashUpDate, jsonCashup, jsonData, true,
             new ArrayList<String>());
       }
+    } else if (cashUp.isProcessed() && cashUp.isProcessedbo()) {
+      // This record should go to error
+      throw new OBException(
+          "Cash up is processed and cannot be set as processed again. OBPOS_APP_CASHUP_ID: "
+              + cashUp.getId());
     }
 
     jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);

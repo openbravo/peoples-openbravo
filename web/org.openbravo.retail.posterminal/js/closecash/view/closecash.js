@@ -436,8 +436,13 @@ enyo.kind({
             if (data.hasMaster) {
               me.moveStep(0);
             } else {
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), OB.I18N.getLabel('OBPOS_ErrCashupMasterNotOpen'));
-              OB.POS.navigate('retail.pointofsale');
+              OB.UTIL.showConfirmation.display(
+              OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), OB.I18N.getLabel('OBPOS_ErrCashupMasterNotOpen'), null, {
+                autoDismiss: false,
+                onHideFunction: function () {
+                  OB.POS.navigate('retail.pointofsale');
+                }
+              });
             }
           });
         } else {

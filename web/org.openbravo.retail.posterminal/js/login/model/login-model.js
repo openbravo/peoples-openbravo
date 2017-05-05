@@ -883,10 +883,10 @@
 
     postCloseSession: function (session) {
       if (OB.POS.hwserver !== undefined) {
-        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {}, null, OB.DS.HWServer.DISPLAY);
+        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {}, function () {
+          OB.MobileApp.model.triggerLogout();
+        }, OB.DS.HWServer.DISPLAY);
       }
-      OB.MobileApp.model.triggerLogout();
-
     },
 
     // these variables will keep the minimum value that the document order could have

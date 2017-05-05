@@ -701,7 +701,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       ShipmentInOutLine inOutLine, int lineNo, int numLines, int actualLine) throws JSONException {
 
     if (lineReferences.get(numIter).getObposQtyDeleted() != null
-        && lineReferences.get(numIter).getObposQtyDeleted().compareTo(BigDecimal.ZERO) > 0) {
+        && lineReferences.get(numIter).getObposQtyDeleted().compareTo(BigDecimal.ZERO) != 0) {
       return;
     }
 
@@ -1935,6 +1935,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           lineCriteria.add(Restrictions.eq(PaymentTermLine.PROPERTY_PAYMENTTERMS,
               order.getPaymentTerms()));
           lineCriteria.add(Restrictions.eq(PaymentTermLine.PROPERTY_ACTIVE, true));
+          lineCriteria.addOrderBy(PaymentTermLine.PROPERTY_LINENO, true);
           List<PaymentTermLine> termLineList = lineCriteria.list();
           if (termLineList.size() > 0) {
             BigDecimal pendingCreditAmount = amountPaidWithCredit;
