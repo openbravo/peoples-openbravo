@@ -15,6 +15,8 @@ package org.openbravo.base.secureApp;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.WindowTreeData;
@@ -25,6 +27,8 @@ public class OrgTree implements Serializable {
   private static final String AD_ORG_TABLE_ID = "155";
   private static final char QUOUTE = '\'';
   private static final String QUOUTE_COMMA = "',";
+
+  private Map<String, String> referenceableOrganizations = new ConcurrentHashMap<>();
 
   /**
    * Creates a new Organization tree with all the nodes
@@ -190,6 +194,25 @@ public class OrgTree implements Serializable {
     } catch (Exception e) {
       return new OrgTree();
     }
+  }
+
+  /**
+   * Gets referenceable organizations from cache if available or computes and caches it if not yet
+   * in cache. Referenceable organizations is the comma separated list of organizations that can be
+   * referenced from a given organization.
+   * 
+   * @see OrgTree#getLogicPath(String)
+   */
+  public String getReferenceableOrganizations(String organizationId) {
+    String orgs = null;
+    if (organizationId != null) {
+      orgs = referenceableOrganizations.get(organizationId);
+    }
+    if (orgs == null) {
+      orgs = getLogicPath(organizationId).toString();
+      referenceableOrganizations.put(organizationId, orgs);
+    }
+    return orgs;
   }
 
   /**

@@ -554,7 +554,7 @@ public class Utility {
    */
   public static String getReferenceableOrg(VariablesSecureApp vars, String currentOrg) {
     final OrgTree tree = (OrgTree) vars.getSessionObject("#CompleteOrgTree");
-    return tree.getLogicPath(currentOrg).toString();
+    return tree.getReferenceableOrganizations(currentOrg);
   }
 
   /**
