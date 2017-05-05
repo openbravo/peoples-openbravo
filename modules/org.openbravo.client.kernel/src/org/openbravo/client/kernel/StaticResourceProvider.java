@@ -135,7 +135,7 @@ public class StaticResourceProvider implements StaticResourceProviderMBean {
     List<String> fileNames = new ArrayList<>();
     for (String key : staticResources.keySet()) {
       if (!key.contains(StyleSheetResourceComponent.CSS)) {
-        fileNames.add(staticResources.get(key));
+        fileNames.add(key + ": " + staticResources.get(key) + ".js");
       }
     }
     return fileNames;
