@@ -36,7 +36,9 @@ public class MBeanRegistry {
   final static private Logger log = LoggerFactory.getLogger(JdbcExternalConnectionPool.class);
 
   /**
-   * Registers a pre-existing object as an MBean with the platform MBean server.
+   * Registers a pre-existing object as an MBean with the platform MBean server. The MBean will be
+   * registered with the provided name inside a group called "Openbravo" with the current context
+   * name as context: Openbravo-> contextName -> mBeanName
    * 
    * @param mBeanName
    *          the name of the MBean
