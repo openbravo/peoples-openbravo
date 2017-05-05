@@ -18,7 +18,9 @@
  */
 package org.openbravo.client.kernel;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -69,11 +71,12 @@ public class StaticResourceProvider implements StaticResourceProviderMBean {
     if (resource == null) {
       return null;
     }
-    File resourceFile = new File(getGenTargetLocation(), resource + ".js");
-    if (!resourceFile.exists()) {
+    String jsFileName = resource + ".js";
+    Path resourceFile = Paths.get(getGenTargetLocation(), jsFileName);
+    if (!Files.exists(resourceFile)) {
       staticResources.remove(resourceName);
       log.info("Static resource file with name {} not found, removed its information from cache.",
-          resource);
+          jsFileName);
       return null;
     }
     return resource;
