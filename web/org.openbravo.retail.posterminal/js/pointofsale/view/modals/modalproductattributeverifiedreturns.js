@@ -46,6 +46,7 @@ enyo.kind({
       me.$.bodyContent.$.verifiedReturns.$['valueAttribute' + i].setValue(null);
       me.$.bodyContent.$.verifiedReturns.$['valueAttribute' + i].addStyles('background-color: none');
     }
+    me.$.bodyButtons.$.modalDialogButton.setDisabled(true);
     this.blur();
     return;
   },
