@@ -142,15 +142,17 @@ public class ReportProductMovement extends HttpSecureAppServlet {
       localStrDateTo = DateTimeData.today(this);
       localStrDateFrom = DateTimeData.weekBefore(this);
     }
-    int limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
-    String pgLimit = null, oraLimit = null;
 
+    int limit = 0;
     if (vars.commandIn("FIND", "DIRECT")) {
+      limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
+      String pgLimit = null, oraLimit = null;
       if (StringUtils.equals(this.myPool.getRDBMS(), "ORACLE")) {
         oraLimit = String.valueOf(limit + 1);
       } else {
         pgLimit = String.valueOf(limit + 1);
       }
+
       if (strInout.equals("-1")) {
         data = ReportProductMovementData.select(this, vars.getLanguage(),
             Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
