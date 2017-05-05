@@ -36,8 +36,9 @@ import org.slf4j.LoggerFactory;
  */
 @ApplicationScoped
 public class StaticResourceProvider implements StaticResourceProviderMBean {
-  final static private Logger log = LoggerFactory.getLogger(StaticResourceProvider.class);
+  private static final Logger log = LoggerFactory.getLogger(StaticResourceProvider.class);
 
+  private String genTargetLocation;
   private ConcurrentHashMap<String, String> staticResources = new ConcurrentHashMap<>();
 
   /**
@@ -68,9 +69,7 @@ public class StaticResourceProvider implements StaticResourceProviderMBean {
     if (resource == null) {
       return null;
     }
-    final String getTargetLocation = RequestContext.getServletContext().getRealPath(
-        StaticResourceComponent.GEN_TARGET_LOCATION);
-    File resourceFile = new File(getTargetLocation, resource + ".js");
+    File resourceFile = new File(getGenTargetLocation(), resource + ".js");
     if (!resourceFile.exists()) {
       staticResources.remove(resourceName);
       log.info("Static resource file with name {} not found, removed its information from cache.",
@@ -78,6 +77,14 @@ public class StaticResourceProvider implements StaticResourceProviderMBean {
       return null;
     }
     return resource;
+  }
+
+  private String getGenTargetLocation() {
+    if (genTargetLocation == null) {
+      genTargetLocation = RequestContext.getServletContext().getRealPath(
+          StaticResourceComponent.GEN_TARGET_LOCATION);
+    }
+    return genTargetLocation;
   }
 
   /**
