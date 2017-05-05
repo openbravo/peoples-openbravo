@@ -1935,6 +1935,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           lineCriteria.add(Restrictions.eq(PaymentTermLine.PROPERTY_PAYMENTTERMS,
               order.getPaymentTerms()));
           lineCriteria.add(Restrictions.eq(PaymentTermLine.PROPERTY_ACTIVE, true));
+          lineCriteria.addOrderBy(PaymentTermLine.PROPERTY_LINENO, true);
           List<PaymentTermLine> termLineList = lineCriteria.list();
           if (termLineList.size() > 0) {
             BigDecimal pendingCreditAmount = amountPaidWithCredit;
