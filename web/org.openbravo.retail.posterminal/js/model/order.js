@@ -1507,17 +1507,21 @@
       if (attributeSearchAllowed && productHasAttribute) {
         var lines = me.get('lines'),
             i, currentline;
-        for (i = 0; i < lines.length; i++) {
-          currentline = lines.models[i].attributes;
-          if (attrs && (currentline.attributeValue === attrs.attributeValue) && (p.id === currentline.product.id)) {
-            productHavingSameAttribute = true;
-            line = currentline;
-            if (p.get('isSerialNo')) {
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ProductDefinedAsSerialNo'));
-              if (callback) {
-                callback(false, null);
+        if (options && options.line) {
+          productHavingSameAttribute = true;
+        } else {
+          for (i = 0; i < lines.length; i++) {
+            currentline = lines.models[i].attributes;
+            if (attrs && (currentline.attributeValue === attrs.attributeValue) && (p.id === currentline.product.id)) {
+              productHavingSameAttribute = true;
+              line = currentline;
+              if (p.get('isSerialNo')) {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ProductDefinedAsSerialNo'));
+                if (callback) {
+                  callback(false, null);
+                }
+                return;
               }
-              return;
             }
           }
         }
@@ -1941,7 +1945,7 @@
           }
           return;
         }
-        if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && p.get('hasAttributes') && (qty === 1 || qty > 1)) {
+        if ((!args || !args.options || !args.options.line) && OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && p.get('hasAttributes') && (qty === 1 || qty > 1)) {
           OB.MobileApp.view.waterfall('onShowPopup', {
             popup: 'modalProductAttribute',
             args: {
