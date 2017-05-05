@@ -28,7 +28,6 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT B.* FROM (
       SELECT M_PRODUCT.VALUE, M_PRODUCT.NAME, M_TRANSACTION.MOVEMENTDATE, C_BPARTNER.NAME AS PARTNERNAME,M_ATTRIBUTESETINSTANCE.DESCRIPTION AS ATTR,
       (CASE M_INOUT.ISSOTRX WHEN 'Y' THEN TO_CHAR(M_WAREHOUSE.NAME) ELSE '-' END)AS WA_ORIGIN,
       (CASE M_INOUT.ISSOTRX WHEN 'Y' THEN TO_CHAR(M_LOCATOR.X) ELSE '-' END) AS X_ORIGIN, 
@@ -60,7 +59,6 @@
       M_LOCATOR.Z, M_INOUT.ISSOTRX, C_UOM.NAME, M_INOUT.M_INOUT_ID, M_INOUT.DOCUMENTNO, M_ATTRIBUTESETINSTANCE.DESCRIPTION,
       M_WAREHOUSE.NAME
       ORDER BY C_BPARTNER.NAME, M_TRANSACTION.MOVEMENTDATE DESC
-      ) B
      ]]></Sql>
     <Parameter name="adLanguage"/>
     <Field name="rownum" value="count"/>
@@ -72,8 +70,8 @@
     <Parameter name="mProductId" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_ID = ?]]></Parameter>
     <Parameter name="parmAttributeSetInstanceId" optional="true" after="AND 1=1"><![CDATA[AND M_TRANSACTION.M_ATTRIBUTESETINSTANCE_ID = ?]]></Parameter>
     <Parameter name="isReturn" optional="true" after="AND 1=1"><![CDATA[AND C_DOCTYPE.ISRETURN = ?]]></Parameter>
-    <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
-    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
+    <Parameter name="pgLimit" type="argument" optional="true" after=" DESC"><![CDATA[LIMIT ]]></Parameter>
+    <Parameter name="oraLimit" type="argument" optional="true" after=" DESC"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectInventory" type="preparedStatement" return="multiple">
