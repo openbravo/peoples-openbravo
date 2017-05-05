@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2016 Openbravo S.L.U.
+ * Copyright (C) 2013-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -244,8 +244,18 @@ enyo.kind({
     onModifyWarehouse: 'changeWarehouseInfo'
   },
   changeWarehouseInfo: function (inSender, inEvent) {
-    this.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_warehouseSelected', [inEvent.warehousename, inEvent.warehouseqty]));
-    this.warehouse = inEvent;
+    var me = this;
+    OB.UTIL.HookManager.executeHooks('OBPOS_BeforeWarehouseChange', {
+      oldWarehouse: me.warehouse,
+      newWarehouse: inEvent,
+      currentLine: me.line
+    }, function (args) {
+      if (args && args.cancelOperation) {
+        return;
+      }
+      me.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_warehouseSelected', [inEvent.warehousename, inEvent.warehouseqty]));
+      me.warehouse = inEvent;
+    });
   },
   loadDefaultWarehouseData: function (defaultWarehouse) {
     if (defaultWarehouse) {
