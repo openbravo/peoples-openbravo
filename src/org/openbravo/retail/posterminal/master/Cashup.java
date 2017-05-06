@@ -85,6 +85,7 @@ public class Cashup extends JSONProcessSimple {
             .equalsIgnoreCase("Y"));
       }
       cashupquery.setParameter("terminal", posId);
+      cashupquery.setMaxResults(1);
       @SuppressWarnings("unchecked")
       List<Object[]> cashupList = cashupquery.list();
       DataToJsonConverter converter = new DataToJsonConverter();
