@@ -250,16 +250,29 @@
       if (billing) {
         this.set("locId", billing.get("id"));
         this.set("locName", billing.get("name"));
+        this.set('cityName', billing.get('cityName'));
+        this.set('postalCode', billing.get('postalCode'));
+        this.set('countryName', billing.get('countryName'));
       } else {
         this.set("locId", null);
         this.set("locName", null);
+        this.set('cityName', null);
+        this.set('postalCode', null);
+        this.set('countryName', null);
       }
       if (locationModel) {
         this.set('locationModel', shipping);
         if (shipping !== null) {
-          this.set('cityName', shipping.get('cityName'));
-          this.set('countryName', shipping.get('countryName'));
-          this.set('postalCode', shipping.get('postalCode'));
+          // Change these information if it's null or undefined. Otherwise, the data is correctly set
+          if (OB.UTIL.isNullOrUndefined(this.get('cityName'))) {
+            this.set('cityName', shipping.get('cityName'));
+          }
+          if (OB.UTIL.isNullOrUndefined(this.get('countryName'))) {
+            this.set('countryName', shipping.get('countryName'));
+          }
+          if (OB.UTIL.isNullOrUndefined(this.get('postalCode'))) {
+            this.set('postalCode', shipping.get('postalCode'));
+          }
         }
       }
     }
