@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_process;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.dal.core.OBContext;
@@ -136,9 +137,10 @@ public class UpdateActuals extends DalBaseProcess {
         }
         if (!"".equals(businessPartner)) {
           queryString.append(" and e.businessPartner.id = :businessPartner");
-        } else if (!"".equals(businessPartnerCategory)) {
+        }
+        if (!StringUtils.isEmpty(businessPartnerCategory)) {
           queryString
-              .append(" and exists (select 1 from BusinessPartner bp where businessPartnerCategory.id=:businessPartnerCategory)");
+              .append(" and e.businessPartner.businessPartnerCategory.id=:businessPartnerCategory");
         }
         if (!"".equals(costcenter)) {
           queryString.append(" and e.costcenter.id in (").append(costcenterTree).append(")");
@@ -149,9 +151,10 @@ public class UpdateActuals extends DalBaseProcess {
         }
         if (!"".equals(product)) {
           queryString.append(" and e.product.id=:product");
-        } else if (!"".equals(productCategory)) {
-          queryString.append(" and exists (select 1 from Product p where productCategory.id in (")
-              .append(productCategoryTree).append("))");
+        }
+        if (!StringUtils.isEmpty(productCategory)) {
+          queryString.append(" and e.product.productCategory.id in (").append(productCategoryTree)
+              .append(")");
         }
         if (!"".equals(project)) {
           queryString.append(" and e.project.id in (").append(projectTree).append(")");
