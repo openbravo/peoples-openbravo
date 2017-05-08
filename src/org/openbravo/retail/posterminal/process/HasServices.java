@@ -55,10 +55,10 @@ public class HasServices extends JSONProcessSimple {
       final Query query = querybuilder.getDalQuery();
       query.setParameter("obretcoProductlistId",
           POSUtils.getProductListByOrgId(terminalOrganization.getId()).getId());
+      query.setParameter("productCategoryId", productCategoryId);
       if (productId != null && !("null".equals(productId))) {
         query.setParameter("productId", productId);
         query.setParameter("priceListVersionId", priceListVersion.getId());
-        query.setParameter("productCategoryId", productCategoryId);
       }
 
       data.put("hasservices", false);
@@ -111,9 +111,8 @@ public class HasServices extends JSONProcessSimple {
     hqlString
         .append("or (s.includedProducts = 'N' and exists (select 1 from ServiceProduct sp where s = sp.product and sp.$activeCriteria and sp.relatedProduct.id = :productId)) ");
     hqlString.append("or s.includedProducts is null) ");
-    hqlString.append("and ((s.includedProductCategories = 'Y' and ");
     hqlString
-        .append("not exists (select 1 from ServiceProductCategory spc where s = spc.product and spc.$activeCriteria and spc.productCategory.id = :productCategoryId )) ");
+        .append("and ((s.includedProductCategories = 'Y' and not exists (select 1 from ServiceProductCategory spc where s = spc.product and spc.$activeCriteria and spc.productCategory.id = :productCategoryId )) ");
     hqlString
         .append("or (s.includedProductCategories = 'N' and exists (select 1 from ServiceProductCategory spc where s = spc.product and spc.$activeCriteria and spc.productCategory.id = :productCategoryId)) ");
     hqlString.append("or s.includedProductCategories is null) ");
@@ -126,15 +125,15 @@ public class HasServices extends JSONProcessSimple {
 
     hqlString.append("select count(*), s.obposProposalType ");
     hqlString.append("from OBRETCO_Prol_Product as assort left outer join assort.product as s ");
-    hqlString.append("where s.productType = 'S'  and s.linkedToProduct = true ");
+    hqlString.append("where s.productType = 'S' and s.linkedToProduct = true ");
     hqlString.append("and s.$orgCriteria and s.$activeCriteria ");
-    hqlString.append("and assort.obretcoProductlist.id =  :obretcoProductlistId ");
-    hqlString
-        .append("and ((s.includedProducts = 'Y' and not exists (select 1 from ServiceProduct sp where s = sp.product and sp.$activeCriteria))  or s.includedProducts is null)");
+    hqlString.append("and assort.obretcoProductlist.id = :obretcoProductlistId ");
+    // hqlString.append("and ((s.includedProducts = 'Y' and not exists (select 1 from ServiceProduct sp where s = sp.product and sp.$activeCriteria))  or s.includedProducts is null)");
     hqlString
         .append("and ((s.includedProductCategories = 'N' and exists (select 1 from ServiceProductCategory spc where s = spc.product and spc.$activeCriteria and spc.productCategory.id = :productCategoryId)) ");
     hqlString
-        .append("or (s.includedProductCategories = 'Y' and not exists (select 1 from ServiceProductCategory spc where s = spc.product and spc.$activeCriteria and spc.productCategory.id = :productCategoryId)) or s.includedProductCategories is null) ");
+        .append("or (s.includedProductCategories = 'Y' and not exists (select 1 from ServiceProductCategory spc where s = spc.product and spc.$activeCriteria and spc.productCategory.id = :productCategoryId)) )");
+    // hqlString.append("or (s.includedProductCategories is null and s.productCategory.id = :productCategoryId)) ");
     hqlString.append("group by s.obposProposalType ");
     return hqlString.toString();
   }
