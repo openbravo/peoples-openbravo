@@ -1117,8 +1117,8 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.$.errorLabelArea.render();
-    this.$.prepaymenttotalpendinglbl.setContent(" remaining to pay for delivery.");
-    this.$.prepaymentexactlbl.setContent("Exact amount paid for delivery. ");
+    this.$.prepaymenttotalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsRemainingDelivery'));
+    this.$.prepaymentexactlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsExactDelivery'));
     this.$.totalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsRemaining'));
     this.$.changelbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsChange'));
     this.$.overpaymentlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsOverpayment'));
