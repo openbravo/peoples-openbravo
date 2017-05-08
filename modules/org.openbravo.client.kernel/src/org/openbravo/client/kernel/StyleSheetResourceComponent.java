@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,9 +46,43 @@ public class StyleSheetResourceComponent extends BaseComponent {
   private static final Logger log = Logger.getLogger(StyleSheetResourceComponent.class);
   private static final String IMGURLHOLDER = "__URLHOLDER__";
 
+  protected static final String CSS = "CSS";
+
   @Inject
   @Any
   private Instance<ComponentProvider> componentProviders;
+
+  @Inject
+  private StaticResourceProvider resourceProvider;
+
+  private Boolean isInDevelopment;
+
+  @Override
+  public boolean isInDevelopment() {
+    if (isInDevelopment == null) {
+      isInDevelopment = false;
+      final List<Module> modules = KernelUtils.getInstance().getModulesOrderedByDependency();
+      for (Module module : modules) {
+        for (ComponentProvider provider : componentProviders) {
+          final List<ComponentResource> resources = provider.getGlobalComponentResources();
+          if (resources == null || resources.size() == 0) {
+            continue;
+          }
+
+          if (provider.getModule().getId().equals(module.getId())) {
+            for (ComponentResource resource : resources) {
+              if (resource.getType() == ComponentResourceType.Stylesheet
+                  && module.isInDevelopment()) {
+                isInDevelopment = true;
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+    return isInDevelopment;
+  }
 
   /**
    * @return returns this instance
@@ -69,40 +103,24 @@ public class StyleSheetResourceComponent extends BaseComponent {
 
   @Override
   public String getETag() {
-    final List<Module> modules = KernelUtils.getInstance().getModulesOrderedByDependency();
-    final StringBuilder version = new StringBuilder();
-    for (Module module : modules) {
-      boolean hasStyleSheet = false;
-      for (ComponentProvider provider : componentProviders) {
-        final List<ComponentResource> resources = provider.getGlobalComponentResources();
-        if (resources == null || resources.size() == 0) {
-          continue;
-        }
-
-        if (provider.getModule().getId().equals(module.getId())) {
-          for (ComponentResource resource : resources) {
-            if (resource.getType() == ComponentResourceType.Stylesheet) {
-              hasStyleSheet = true;
-              break;
-            }
-          }
-        }
-      }
-      if (hasStyleSheet) {
-        if (module.isInDevelopment()) {
-          // do something unique
-          version.append(System.currentTimeMillis() + "");
-        } else {
-          version.append(KernelUtils.getInstance().getVersionParameters(module));
-        }
-      }
+    final String appNameKey = getAppNameKey();
+    if (resourceProvider.getStaticResourceCachedInfo(appNameKey) == null) {
+      // do something unique
+      return String.valueOf(System.currentTimeMillis());
+    } else {
+      // compute the md5 of the CSS cached content
+      return DigestUtils.md5Hex(resourceProvider.getStaticResourceCachedInfo(appNameKey));
     }
-    // compute the md5 of the version string and return that
-    return DigestUtils.md5Hex(version.toString());
   }
 
   @Override
   public String generate() {
+    final String appNameKey = getAppNameKey();
+    String cssContent = resourceProvider.getStaticResourceCachedInfo(appNameKey);
+    if (cssContent != null) {
+      return cssContent;
+    }
+
     final List<Module> modules = KernelUtils.getInstance().getModulesOrderedByDependency();
     final ServletContext context = (ServletContext) getParameters().get(
         KernelConstants.SERVLET_CONTEXT);
@@ -236,7 +254,25 @@ public class StyleSheetResourceComponent extends BaseComponent {
       }
     }
 
-    return sb.toString();
+    cssContent = sb.toString();
+    if (!isInDevelopment()) {
+      resourceProvider.putStaticResourceCachedInfo(appNameKey, cssContent);
+    }
+    return cssContent;
+  }
+
+  private String getAppNameKey() {
+    String appNameKey = getApplicationName() + "_" + CSS;
+
+    if (getParameters().containsKey(KernelConstants.SKIN_PARAMETER)) {
+      appNameKey += "_" + (String) getParameters().get(KernelConstants.SKIN_PARAMETER);
+    } else {
+      appNameKey += "_" + KernelConstants.SKIN_DEFAULT;
+    }
+    if ("true".equals(getParameters().get("_cssDataUri"))) {
+      appNameKey += "_cssDataUri";
+    }
+    return appNameKey;
   }
 
   public String getId() {

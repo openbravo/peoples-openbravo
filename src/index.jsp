@@ -7,6 +7,7 @@
 <%@ page import="org.openbravo.authentication.AuthenticationManager" %>
 <%@ page import="org.openbravo.client.kernel.KernelUtils" %>
 <%@ page import="org.openbravo.client.kernel.KernelConstants" %>
+<%@ page import="org.openbravo.client.kernel.StaticResourceProvider" %>
 <%@ page import="org.openbravo.dal.core.OBContext" %>
 <%@ page import="org.openbravo.model.ad.module.Module" %>
 <%@ page import="org.apache.log4j.Logger" %>
@@ -279,7 +280,19 @@ if (onlySystemAdminAccess && role != null && !"0".equals(role.getId())) {
 </script>
 <script src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_Combined<%=(uncompSC ? ".uncompressed" : "")%>.js"></script>
 <script src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_History<%=(uncompSC ? ".uncompressed" : "")%>.js"></script>
+<%
+  StaticResourceProvider resourceProvider = WeldUtils.getInstanceFromStaticBeanManager(StaticResourceProvider.class);
+  final String staticResourceFileName = resourceProvider.getStaticResourceCachedFileName("OB3");
+  if (staticResourceFileName != null) {
+%>
+<script src="./web/js/gen/<%=staticResourceFileName%>.js"></script>
+<%
+  } else {
+%>
 <script src="./org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_appName=OB3&_skinVersion=Default"></script>
+<%
+  }
+%>
 <iframe name="background_target" id="background_target" height="0" width="0"></iframe>
 <form name="OBGlobalHiddenForm" method="post" action="blank.html" target="background_target">
 </form>

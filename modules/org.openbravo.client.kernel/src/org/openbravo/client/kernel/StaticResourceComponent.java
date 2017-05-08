@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,7 +38,7 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.service.web.WebServiceUtil;
 
 /**
- * The component representing the component in the
+ * The component in charge of generating the static Javascript resources.
  * 
  * @author mtaal
  * @author iperdomo
@@ -51,6 +51,9 @@ public class StaticResourceComponent extends BaseComponent {
   @Inject
   @Any
   private Instance<ComponentProvider> componentProviders;
+
+  @Inject
+  private StaticResourceProvider resourceProvider;
 
   private Boolean isInDevelopment;
 
@@ -106,9 +109,19 @@ public class StaticResourceComponent extends BaseComponent {
         OBContext.getOBContext().setNewUI(true);
       }
 
+      final String appName = getApplicationName();
+
+      String staticResourceFileName = resourceProvider.getStaticResourceCachedInfo(appName);
+      if (staticResourceFileName == null) {
+        staticResourceFileName = getStaticResourceFileName();
+        if (!isInDevelopment()) {
+          resourceProvider.putStaticResourceCachedInfo(appName, staticResourceFileName);
+        }
+      }
+
       StringBuilder result = new StringBuilder();
       final String scriptPath = getContextUrl() + GEN_TARGET_LOCATION.substring(1) + "/"
-          + getStaticResourceFileName() + ".js";
+          + staticResourceFileName + ".js";
 
       if (isClassicMode()) {
         result.append("document.write(\"<LINK rel='stylesheet' type='text/css' href='"
