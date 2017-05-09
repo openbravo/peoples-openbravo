@@ -85,6 +85,7 @@ public class Cashup extends JSONProcessSimple {
             .equalsIgnoreCase("Y"));
       }
       cashupquery.setParameter("terminal", posId);
+      cashupquery.setMaxResults(1);
       @SuppressWarnings("unchecked")
       List<Object[]> cashupList = cashupquery.list();
       DataToJsonConverter converter = new DataToJsonConverter();
@@ -177,7 +178,12 @@ public class Cashup extends JSONProcessSimple {
       OBPOSAppPayment paymentAppMethod = (OBPOSAppPayment) paymentAppMethodCriteria.uniqueResult();
       paymentMethodJSON.put("cashup_id", paymentMethodJSON.get("cashUp"));
       paymentMethodJSON.put("searchKey", paymentMethodJSON.get("searchkey"));
+      
+      // there are several ways of refering to the payment method id in webpos
+      // support all of them.
       paymentMethodJSON.put("paymentmethod_id", paymentMethodJSON.get("paymentType"));
+      paymentMethodJSON.put("paymentTypeId", paymentMethodJSON.get("paymentType"));
+      
       paymentMethodJSON.put("startingCash", paymentMethodJSON.get("startingcash"));
       paymentMethodJSON.put("totalSales", paymentMethodJSON.get("totalsales"));
       paymentMethodJSON.put("totalReturns", paymentMethodJSON.get("totalreturns"));

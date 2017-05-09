@@ -461,13 +461,12 @@
           return;
         }
         if (this.line) {
-          this.line.off('change', this.print);
+          this.line.off('change:gross', this.print);
         }
         this.line = line;
         if (this.line) {
-          this.line.on('change', this.print, this);
+          this.line.on('change:gross', this.print, this);
         }
-        this.print();
       }, this);
       this.templateline = new OB.DS.HWResource(terminal.printReceiptLineTemplate || OB.OBPOSPointOfSale.Print.ReceiptLineTemplate);
       extendHWResource(this.templateline, 'printReceiptLineTemplate');

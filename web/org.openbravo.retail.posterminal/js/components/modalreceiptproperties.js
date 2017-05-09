@@ -65,28 +65,32 @@ enyo.kind({
       var me = this,
           actualUser;
 
-      OB.Dal.find(OB.Model.SalesRepresentative, null, function (data) {
-        if (me.destroyed) {
-          return;
-        }
-        if (data.length > 0) {
-          data.unshift({
-            id: null,
-            _identifier: null
-          });
-          me.dataReadyFunction(data, args);
-        } else {
-          actualUser = new OB.Model.SalesRepresentative();
-          actualUser.set('_identifier', me.model.get('order').get('salesRepresentative$_identifier'));
-          actualUser.set('id', me.model.get('order').get('salesRepresentative'));
-          data.models = [actualUser];
-          me.dataReadyFunction(data, args);
-        }
+      if (this.collection.length === 0) {
+        OB.Dal.find(OB.Model.SalesRepresentative, null, function (data) {
+          if (me.destroyed) {
+            return;
+          }
+          if (data.length > 0) {
+            data.unshift({
+              id: null,
+              _identifier: null
+            });
+            me.dataReadyFunction(data, args);
+          } else {
+            actualUser = new OB.Model.SalesRepresentative();
+            actualUser.set('_identifier', me.model.get('order').get('salesRepresentative$_identifier'));
+            actualUser.set('id', me.model.get('order').get('salesRepresentative'));
+            data.models = [actualUser];
+            me.dataReadyFunction(data, args);
+          }
 
-      }, function () {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorGettingSalesRepresentative'));
-        me.dataReadyFunction(null, args);
-      }, args);
+        }, function () {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorGettingSalesRepresentative'));
+          me.dataReadyFunction(null, args);
+        }, args);
+      } else {
+        me.dataReadyFunction(this.collection, args);
+      }
     }
   }, {
     kind: 'OB.UI.SalesRepresentative',

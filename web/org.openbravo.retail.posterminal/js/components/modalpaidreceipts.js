@@ -362,7 +362,8 @@ enyo.kind({
       if (error) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
         me.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterButtons(false);
-        this.$.renderLoading.hide();
+        me.$.renderLoading.hide();
+        me.prsList.reset();
       }
     });
     return true;

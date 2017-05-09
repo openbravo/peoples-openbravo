@@ -281,12 +281,11 @@ public class UpdateCashup {
       newPaymentMethodCashUp = OBProvider.getInstance().get(OBPOSPaymentMethodCashup.class);
       newPaymentMethodCashUp.setNewOBObject(true);
       newPaymentMethodCashUp.setId(jsonCashup.get("id"));
+      cashup.getOBPOSPaymentmethodcashupList().add(newPaymentMethodCashUp);
     }
     JSONPropertyToEntity.fillBobFromJSON(newPaymentMethodCashUp.getEntity(),
         newPaymentMethodCashUp, jsonCashup);
     newPaymentMethodCashUp.setCashUp(cashup);
-
-    cashup.getOBPOSPaymentmethodcashupList().add(newPaymentMethodCashUp);
 
     newPaymentMethodCashUp.setOrganization(cashup.getOrganization());
 
