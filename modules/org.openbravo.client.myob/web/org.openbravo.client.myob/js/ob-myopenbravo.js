@@ -1112,6 +1112,7 @@ isc.defineClass('OBMyOBAddWidgetDialog', isc.OBMyOBDialog).addProperties({
         titleSuffix: '',
         requiredTitleSuffix: '',
         type: 'select',
+        sortField: 'widget',
         valueMap: {},
         changed: function (form, item, value) {
           if (value) {

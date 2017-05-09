@@ -19,8 +19,6 @@
 package org.openbravo.client.myob;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,7 +31,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.kernel.SessionDynamicTemplateComponent;
 import org.openbravo.dal.core.DalUtil;
@@ -58,7 +55,6 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
   private static final String TEMPLATEID = "CA8047B522B44F61831A8CAA3AE2A7CD";
 
   private List<WidgetInstance> widgets = null;
-  private List<String> widgetClassDefinitions = null;
   private Logger log = Logger.getLogger(MyOpenbravoComponent.class);
 
   @Inject
@@ -86,45 +82,26 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
   List<String> getAvailableWidgetClasses(String roleId, boolean shouldBeDisplayed) throws Exception {
     OBContext.setAdminMode();
     try {
-      if (widgetClassDefinitions != null) {
-        return widgetClassDefinitions;
-      }
-
-      final List<JSONObject> definitions = new ArrayList<JSONObject>();
-      final List<String> tmp = new ArrayList<String>();
-      String classDef = "";
       String strConditionQuery = WidgetClass.PROPERTY_SUPERCLASS + " is false";
       if (shouldBeDisplayed) {
         strConditionQuery += " and " + WidgetClass.PROPERTY_AVAILABLEINWORKSPACE + " is true";
       }
-
       final OBQuery<WidgetClass> widgetClassesQry = OBDal.getInstance().createQuery(
           WidgetClass.class, strConditionQuery);
+      List<String> widgetClassDefinitions = new ArrayList<String>();
       for (WidgetClass widgetClass : widgetClassesQry.list()) {
         if (isAccessible(widgetClass, roleId)) {
-          final WidgetProvider widgetProvider = myOBUtils.getWidgetProvider(widgetClass);
-          if (!widgetProvider.validate()) {
+          WidgetClassInfo widgetClassInfo = myOBUtils.getWidgetClassInfo(widgetClass);
+          if (widgetClassInfo == null) {
+            log.debug("Not found information for widget class with id " + widgetClass.getId());
             continue;
           }
-
-          definitions.add(widgetProvider.getWidgetClassDefinition());
-
-          try {
-            classDef = widgetProvider.generate();
-            classDef = classDef.substring(0, classDef.length() - 1);
-            tmp.add(classDef);
-          } catch (Exception e) {
-            // Do nothing as the definition is already in a loaded js file
+          widgetClassDefinitions.add(widgetClassInfo.getWidgetClassProperties());
+          if (!StringUtils.isEmpty(widgetClassInfo.getWidgetClassDefinition())) {
+            widgetClassDefinitions.add(widgetClassInfo.getWidgetClassDefinition());
           }
         }
       }
-      Collections.sort(definitions, new WidgetClassComparator());
-
-      widgetClassDefinitions = new ArrayList<String>();
-      for (JSONObject json : definitions) {
-        widgetClassDefinitions.add(json.toString());
-      }
-      widgetClassDefinitions.addAll(tmp);
       log.debug("Available Widget Classes: " + widgetClassDefinitions.size());
       return widgetClassDefinitions;
     } finally {
@@ -312,20 +289,5 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
       }
     }
     return false;
-  }
-
-  private class WidgetClassComparator implements Comparator<JSONObject> {
-
-    @Override
-    public int compare(JSONObject arg0, JSONObject arg1) {
-      try {
-        final String title0 = arg0.getString(WidgetProvider.TITLE);
-        final String title1 = arg1.getString(WidgetProvider.TITLE);
-        return title0.compareTo(title1);
-      } catch (Exception e) {
-        throw new OBException(e);
-      }
-    }
-
   }
 }
