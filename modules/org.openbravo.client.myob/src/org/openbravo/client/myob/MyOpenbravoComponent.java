@@ -225,28 +225,12 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
   private void copyWidgets() {
     final List<WidgetInstance> userWidgets = new ArrayList<WidgetInstance>(
         MyOBUtils.getUserWidgetInstances(false));
-    final User user = OBDal.getInstance().get(User.class,
-        OBContext.getOBContext().getUser().getId());
-    final Role role = OBDal.getInstance().get(Role.class,
-        OBContext.getOBContext().getRole().getId());
-    final Client client = OBDal.getInstance().get(Client.class,
-        OBContext.getOBContext().getCurrentClient().getId());
-    final Set<WidgetInstance> defaultWidgets = new HashSet<WidgetInstance>();
+    final User user = OBContext.getOBContext().getUser();
+    final Role role = OBContext.getOBContext().getRole();
+    final Client client = OBContext.getOBContext().getCurrentClient();
+    final Set<WidgetInstance> defaultWidgets = getRoleDefaultWidgets(OBContext.getOBContext()
+        .getRole(), client.getId(), OBContext.getOBContext().getWritableOrganizations());
 
-    if (!OBContext.getOBContext().getRole().isForPortalUsers()) {
-      // do not include global widgets in portal roles
-      defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("OB", null));
-      defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("SYSTEM", null));
-    }
-
-    defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("CLIENT",
-        new String[] { client.getId() }));
-    final Set<String> orgs = OBContext.getOBContext().getWritableOrganizations();
-
-    defaultWidgets
-        .addAll(MyOBUtils.getDefaultWidgetInstances("ORG", orgs.toArray(new String[] {})));
-    defaultWidgets
-        .addAll(MyOBUtils.getDefaultWidgetInstances("ROLE", new String[] { role.getId() }));
     log.debug("Copying new widget instances on user: " + user.getId() + " role: " + role.getId());
 
     // remove the default widgets which are already defined on the user
@@ -273,6 +257,24 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     if (copyDone) {
       OBDal.getInstance().flush();
     }
+  }
+
+  private Set<WidgetInstance> getRoleDefaultWidgets(Role role, String clientId, Set<String> orgs) {
+    final Set<WidgetInstance> defaultWidgets = new HashSet<WidgetInstance>();
+
+    if (!role.isForPortalUsers()) {
+      // do not include global widgets in portal roles
+      defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("OB", null));
+      defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("SYSTEM", null));
+    }
+
+    defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("CLIENT", new String[] { clientId }));
+    defaultWidgets
+        .addAll(MyOBUtils.getDefaultWidgetInstances("ORG", orgs.toArray(new String[] {})));
+    defaultWidgets
+        .addAll(MyOBUtils.getDefaultWidgetInstances("ROLE", new String[] { role.getId() }));
+
+    return defaultWidgets;
   }
 
   private boolean isAccessible(WidgetClass widgetClass, String _roleId) {
