@@ -286,8 +286,11 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
   @SuppressWarnings("unchecked")
   private List<String> getCopiedFromWidgetInstances() {
     final StringBuilder hql = new StringBuilder();
-    hql.append("SELECT w.copiedFrom.id FROM OBKMO_WidgetInstance w ");
-    hql.append("WHERE w.client.id=:clientId AND w.visibleAtRole.id=:roleId AND w.visibleAtUser.id=:userId AND w.copiedFrom IS NOT NULL");
+    hql.append("SELECT widgetInstance.copiedFrom.id FROM OBKMO_WidgetInstance widgetInstance ");
+    hql.append("WHERE widgetInstance.copiedFrom IS NOT NULL ");
+    hql.append("AND widgetInstance.client.id=:clientId ");
+    hql.append("AND widgetInstance.visibleAtRole.id=:roleId ");
+    hql.append("AND widgetInstance.visibleAtUser.id=:userId");
     Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
     query.setString("clientId", OBContext.getOBContext().getCurrentClient().getId());
     query.setString("roleId", OBContext.getOBContext().getRole().getId());
