@@ -19,7 +19,6 @@
 package org.openbravo.client.myob;
 
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -51,7 +50,6 @@ public class MyOBUtils {
   private static String MENU_ITEM_IS_SEPARATOR = "isSeparator";
   private static String MENU_ITEM_TITLE = "title";
   private static String MENU_ITEM_CLICK = "click";
-  private ConcurrentHashMap<String, WidgetClassInfo> widgetClasses = new ConcurrentHashMap<>();
 
   /**
    * Calls {@link #getWidgetTitle(WidgetClass)} using the
@@ -227,22 +225,6 @@ public class MyOBUtils {
     } catch (Exception e) {
       throw new OBException(e);
     }
-  }
-
-  private void addWidgetClassInfo(WidgetClass widgetClass) {
-    final WidgetProvider widgetProvider = getWidgetProvider(widgetClass);
-    if (!widgetProvider.validate()) {
-      return;
-    }
-    WidgetClassInfo widgetClassInfo = new WidgetClassInfo(widgetProvider);
-    widgetClasses.putIfAbsent(widgetClass.getId(), widgetClassInfo);
-  }
-
-  protected WidgetClassInfo getWidgetClassInfo(WidgetClass widgetClass) {
-    if (!widgetClasses.containsKey(widgetClass.getId())) {
-      addWidgetClassInfo(widgetClass);
-    }
-    return widgetClasses.get(widgetClass.getId());
   }
 
 }
