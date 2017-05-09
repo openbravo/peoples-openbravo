@@ -17,6 +17,9 @@ enyo.kind({
   bodyContent: {
     name: 'verifiedReturns'
   },
+  handlers: {
+    onFieldChanged: 'fieldChanged'
+  },
   bodyButtons: {
     components: [{
       kind: 'OB.UI.ModalDialogButton',
@@ -47,7 +50,6 @@ enyo.kind({
       me.$.bodyContent.$.verifiedReturns.$['valueAttribute' + i].addStyles('background-color: none');
     }
     me.$.bodyButtons.$.modalDialogButton.setDisabled(true);
-    this.blur();
     return;
   },
   cancelAction: function () {
@@ -60,7 +62,7 @@ enyo.kind({
     this.hide();
     return;
   },
-  blur: function (inSender, inEvent) {
+  fieldChanged: function (inSender, inEvent) {
     var me = this,
         line = me.args.line,
         validAttribute, orderlineAttribute, orderlineProduct, inpProduct, inpAttribute, i;
@@ -105,7 +107,8 @@ enyo.kind({
     });
     me.$.bodyContent.$.verifiedReturns.$.headerTitle.setContent(OB.I18N.getLabel('OBPOS_ProductAttributeValueVerifiedReturnsDesc'));
     me.$.bodyContent.$.verifiedReturns.$.documentno.setContent(documentno);
-    for (i = 0; i < line.length; i++) {
+    i = 0;
+    line.forEach(function (theLine) {
       me.$.bodyContent.$.verifiedReturns.createComponent({
         components: [{
           name: 'productName' + i,
@@ -121,7 +124,11 @@ enyo.kind({
           name: 'valueAttribute' + i,
           isFirstFocus: true,
           handlers: {
-            onblur: 'blur'
+            onblur: 'blur',
+            oninput: 'blur'
+          },
+          blur: function () {
+            this.bubble('onFieldChanged');
           },
           placeholder: 'Scan attribute'
         }, {
@@ -132,10 +139,11 @@ enyo.kind({
         }]
       });
 
-      me.$.bodyContent.$.verifiedReturns.$['productName' + i].setContent(line[i].name);
-      me.$.bodyContent.$.verifiedReturns.$['productId' + i].setContent(line[i].id);
+      me.$.bodyContent.$.verifiedReturns.$['productName' + i].setContent(theLine.name);
+      me.$.bodyContent.$.verifiedReturns.$['productId' + i].setContent(theLine.id);
       me.$.bodyContent.$.verifiedReturns.$['productId' + i].hide();
-    }
+      i++;
+    });
     me.$.bodyButtons.$.modalDialogButton.setDisabled(true);
     me.$.bodyContent.$.verifiedReturns.render();
   }
