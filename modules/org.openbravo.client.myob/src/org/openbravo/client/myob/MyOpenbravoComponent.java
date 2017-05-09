@@ -242,9 +242,9 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("CLIENT",
         new String[] { client.getId() }));
     final Set<String> orgs = OBContext.getOBContext().getWritableOrganizations();
-    for (String org : orgs) {
-      defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("ORG", new String[] { org }));
-    }
+
+    defaultWidgets
+        .addAll(MyOBUtils.getDefaultWidgetInstances("ORG", orgs.toArray(new String[] {})));
     defaultWidgets
         .addAll(MyOBUtils.getDefaultWidgetInstances("ROLE", new String[] { role.getId() }));
     log.debug("Copying new widget instances on user: " + user.getId() + " role: " + role.getId());
