@@ -57,3 +57,19 @@ OB.OnChange.agingProcessDefinitionOverdue = function (item, view, form, grid) {
     view.messageBar.hide();
   }
 };
+
+//**  {{{OB.OnChange.agingProcessDefinitionOrganization}}}**
+//Used to select the General Ledger in use by the selected Organization
+OB.OnChange.agingProcessDefinitionOrganization = function (item, view, form, grid) {
+  var organization = form.getItem('Organization'),
+  gl = form.getItem('AccSchema'),
+  callbackGetGLbyOrganization = function (response, data, request) {
+    gl.valueMap = gl.valueMap || {};
+    gl.valueMap[data.response.value] = data.response.identifier;
+    gl.setValue(data.response.value);
+  };
+
+  OB.RemoteCallManager.call('org.openbravo.common.actionhandler.AgingGeneralLedgerByOrganizationActionHandler', {
+    organization: organization.getValue()
+  }, {}, callbackGetGLbyOrganization);
+};
