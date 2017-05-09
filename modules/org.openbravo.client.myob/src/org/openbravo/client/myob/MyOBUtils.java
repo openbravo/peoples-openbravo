@@ -159,7 +159,7 @@ public class MyOBUtils {
     } else if ("ORG".equals(availableAtLevel)) {
       widgetInstancesCrit.setFilterOnReadableClients(false);
       widgetInstancesCrit.setFilterOnReadableOrganization(false);
-      widgetInstancesCrit.add(Restrictions.in(WidgetInstance.PROPERTY_ORGANIZATION
+      widgetInstancesCrit.add(Restrictions.in(WidgetInstance.PROPERTY_ORGANIZATION + "."
           + Organization.PROPERTY_ID, availableAtValues));
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 3L));
     } else if ("ROLE".equals(availableAtLevel)) {
