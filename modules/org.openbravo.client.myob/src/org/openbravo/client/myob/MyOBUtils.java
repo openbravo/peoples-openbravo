@@ -139,36 +139,39 @@ public class MyOBUtils {
       widgetInstancesCrit.setFilterOnReadableClients(false);
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 0L));
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, OBDal.getInstance()
-          .getProxy(Client.class, "0")));
+          .get(Client.class, "0")));
       widgetInstancesCrit.setFilterOnReadableOrganization(false);
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_ORGANIZATION, OBDal
-          .getInstance().getProxy(Organization.class, "0")));
+          .getInstance().get(Organization.class, "0")));
     } else if ("SYSTEM".equals(availableAtLevel)) {
       widgetInstancesCrit.setFilterOnReadableClients(false);
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 1L));
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, OBDal.getInstance()
-          .getProxy(Client.class, "0")));
+          .get(Client.class, "0")));
       widgetInstancesCrit.setFilterOnReadableOrganization(false);
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_ORGANIZATION, OBDal
-          .getInstance().getProxy(Organization.class, "0")));
+          .getInstance().get(Organization.class, "0")));
     } else if ("CLIENT".equals(availableAtLevel)) {
       widgetInstancesCrit.setFilterOnReadableClients(false);
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, OBDal.getInstance()
-          .getProxy(Client.class, availableAtValues[0])));
+          .get(Client.class, availableAtValues[0])));
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 2L));
     } else if ("ORG".equals(availableAtLevel)) {
+      final Organization organization = OBDal.getInstance().get(Organization.class,
+          availableAtValues[0]);
       widgetInstancesCrit.setFilterOnReadableClients(false);
+      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT,
+          organization.getClient()));
       widgetInstancesCrit.setFilterOnReadableOrganization(false);
-      widgetInstancesCrit.add(Restrictions.in(WidgetInstance.PROPERTY_ORGANIZATION + "."
-          + Organization.PROPERTY_ID, availableAtValues));
+      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_ORGANIZATION, organization));
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 3L));
     } else if ("ROLE".equals(availableAtLevel)) {
-      final Role role = OBDal.getInstance().getProxy(Role.class, availableAtValues[0]);
+      final Role role = OBDal.getInstance().get(Role.class, availableAtValues[0]);
       widgetInstancesCrit.setFilterOnReadableClients(false);
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, role.getClient()));
       widgetInstancesCrit.setFilterOnReadableOrganization(false);
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_ORGANIZATION, OBDal
-          .getInstance().getProxy(Organization.class, "0")));
+          .getInstance().get(Organization.class, "0")));
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATROLE, role));
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 4L));
     } else if ("USER".equals(availableAtLevel)) {
