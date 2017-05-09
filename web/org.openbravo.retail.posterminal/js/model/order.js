@@ -476,7 +476,7 @@
             discountPercentage = parseFloat(discountPercentage.setScale(2, BigDecimal.prototype.ROUND_HALF_UP).toString(), 10);
           }
         } else {
-          discountPercentage = OB.DEC.Zero;
+          discountPercentage = line.get('discountPercentage') ? line.get('discountPercentage') : OB.DEC.Zero;
         }
         line.set({
           discountPercentage: discountPercentage
