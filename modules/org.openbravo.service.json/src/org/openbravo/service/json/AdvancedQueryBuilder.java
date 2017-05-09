@@ -1556,8 +1556,12 @@ public class AdvancedQueryBuilder {
     if (properties.size() == 0) {
       return false;
     }
-    Property firstProperty = properties.get(0);
-    return !firstProperty.isPrimitive() && firstProperty.isMandatory();
+    for (Property property : properties) {
+      if (!property.isPrimitive() && !property.isMandatory()) {
+        return false;
+      }
+    }
+    return true;
   }
 
   // Creates a Hibernate concatenation if there are multiple identifierproperties
