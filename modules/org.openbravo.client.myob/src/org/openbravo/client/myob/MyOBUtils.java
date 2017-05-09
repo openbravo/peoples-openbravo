@@ -157,13 +157,10 @@ public class MyOBUtils {
           .get(Client.class, availableAtValues[0])));
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 2L));
     } else if ("ORG".equals(availableAtLevel)) {
-      final Organization organization = OBDal.getInstance().get(Organization.class,
-          availableAtValues[0]);
       widgetInstancesCrit.setFilterOnReadableClients(false);
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT,
-          organization.getClient()));
       widgetInstancesCrit.setFilterOnReadableOrganization(false);
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_ORGANIZATION, organization));
+      widgetInstancesCrit.add(Restrictions.in(WidgetInstance.PROPERTY_ORGANIZATION
+          + Organization.PROPERTY_ID, availableAtValues));
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 3L));
     } else if ("ROLE".equals(availableAtLevel)) {
       final Role role = OBDal.getInstance().get(Role.class, availableAtValues[0]);
