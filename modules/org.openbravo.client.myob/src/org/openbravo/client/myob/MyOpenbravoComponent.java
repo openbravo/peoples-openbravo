@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.kernel.SessionDynamicTemplateComponent;
 import org.openbravo.dal.core.DalUtil;
@@ -223,8 +224,7 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
   }
 
   private void copyWidgets() {
-    final List<WidgetInstance> userWidgets = new ArrayList<WidgetInstance>(
-        MyOBUtils.getUserWidgetInstances(false));
+    final List<String> userWidgets = getCopiedFromWidgetInstances();
     final User user = OBContext.getOBContext().getUser();
     final Role role = OBContext.getOBContext().getRole();
     final Client client = OBContext.getOBContext().getCurrentClient();
@@ -232,17 +232,13 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
         .getRole(), client.getId(), OBContext.getOBContext().getWritableOrganizations());
 
     log.debug("Copying new widget instances on user: " + user.getId() + " role: " + role.getId());
-
-    // remove the default widgets which are already defined on the user
-    for (WidgetInstance widget : userWidgets) {
-      if (widget.getCopiedFrom() != null) {
-        defaultWidgets.remove(widget.getCopiedFrom());
-      }
-    }
-    // now copy all the default widgets that are not defined on the user
     final Organization orgZero = OBDal.getInstance().get(Organization.class, "0");
     boolean copyDone = false;
     for (WidgetInstance widget : defaultWidgets) {
+      if (userWidgets.contains(widget.getId())) {
+        // do not copy the default widgets which are already defined on the user
+        continue;
+      }
       final WidgetInstance copy = (WidgetInstance) DalUtil.copy(widget);
       copy.setClient(client);
       copy.setOrganization(orgZero);
@@ -257,6 +253,18 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     if (copyDone) {
       OBDal.getInstance().flush();
     }
+  }
+
+  @SuppressWarnings("unchecked")
+  private List<String> getCopiedFromWidgetInstances() {
+    final StringBuilder hql = new StringBuilder();
+    hql.append("SELECT w.copiedFrom.id FROM OBKMO_WidgetInstance w ");
+    hql.append("WHERE w.client.id=:clientId AND w.visibleAtRole.id=:roleId AND w.visibleAtUser.id=:userId AND w.copiedFrom IS NOT NULL");
+    Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    query.setString("clientId", OBContext.getOBContext().getCurrentClient().getId());
+    query.setString("roleId", OBContext.getOBContext().getRole().getId());
+    query.setString("userId", OBContext.getOBContext().getUser().getId());
+    return query.list();
   }
 
   private Set<WidgetInstance> getRoleDefaultWidgets(Role role, String clientId, Set<String> orgs) {
