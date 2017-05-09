@@ -503,23 +503,25 @@ enyo.kind({
       disabled: false
     });
 
-    // Enable/Disable Payment method based on refundable flag
-    _.each(OB.MobileApp.model.paymentnames, function (payment) {
-      keyboard.disableCommandKey(me, {
-        disabled: (isReturnReceipt ? !payment.paymentMethod.refundable : false),
-        commands: [payment.payment.searchKey]
+    if (OB.MobileApp.model.get('payments').length) {
+      // Enable/Disable Payment method based on refundable flag
+      _.each(OB.MobileApp.model.paymentnames, function (payment) {
+        keyboard.disableCommandKey(me, {
+          disabled: (isReturnReceipt ? !payment.paymentMethod.refundable : false),
+          commands: [payment.payment.searchKey]
+        });
       });
-    });
 
-    if (!isReturnReceipt || (isReturnReceipt && me.defaultPayment.paymentMethod.refundable)) {
-      keyboard.defaultcommand = me.defaultPayment.payment.searchKey;
-      keyboard.setStatus(me.defaultPayment.payment.searchKey);
-    } else {
-      refundablePayment = _.find(OB.MobileApp.model.get('payments'), function (payment) {
-        return payment.paymentMethod.refundable;
-      });
-      keyboard.defaultcommand = refundablePayment.payment.searchKey;
-      keyboard.setStatus(refundablePayment.payment.searchKey);
+      if (!isReturnReceipt || (isReturnReceipt && me.defaultPayment.paymentMethod.refundable)) {
+        keyboard.defaultcommand = me.defaultPayment.payment.searchKey;
+        keyboard.setStatus(me.defaultPayment.payment.searchKey);
+      } else {
+        refundablePayment = _.find(OB.MobileApp.model.get('payments'), function (payment) {
+          return payment.paymentMethod.refundable;
+        });
+        keyboard.defaultcommand = refundablePayment.payment.searchKey;
+        keyboard.setStatus(refundablePayment.payment.searchKey);
+      }
     }
   }
 });
