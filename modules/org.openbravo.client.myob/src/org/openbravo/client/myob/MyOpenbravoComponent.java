@@ -61,7 +61,7 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
   @Inject
   private MyOBUtils myOBUtils;
 
-  /*
+  /**
    * (non-Javadoc)
    * 
    * @see org.openbravo.client.kernel.BaseTemplateComponent#getComponentTemplate()
@@ -71,7 +71,7 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     return TEMPLATEID;
   }
 
-  /*
+  /**
    * (non-Javadoc)
    * 
    * @see org.openbravo.client.kernel.BaseComponent#getId()
@@ -80,6 +80,14 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     return COMPONENT_ID;
   }
 
+  /**
+   * @param roleId
+   *          The id of the role whose available widget classes will be retrieved.
+   * @param shouldBeDisplayed
+   *          A flag to indicate if just those widgets marked as "Available in Workspace" should be
+   *          retrieved.
+   * @return the list of available widget classes for the role whose id is passed as parameter.
+   */
   List<String> getAvailableWidgetClasses(String roleId, boolean shouldBeDisplayed) throws Exception {
     OBContext.setAdminMode();
     try {
@@ -110,6 +118,9 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     }
   }
 
+  /**
+   * @return the list of available widget instances in the current context.
+   */
   public List<String> getWidgetInstanceDefinitions() {
     OBContext.setAdminMode();
     try {
