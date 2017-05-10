@@ -88,7 +88,7 @@ public class RTLSkin {
     File fileLTRSrcDeep, fileRTLSrcDeep;
 
     for (int i = 0; i < files.length; i++) {
-      log4j.info("Processing RTL skin " + files[i]);
+      log4j.info("Processing images of RTL skin " + files[i]);
       vImagesToFlip = new Vector<String>();
       fImagesToFlip = new File(srcDirRTLSkin + "/" + files[i] + "/RTLFlippedImages.txt");
       if (!fImagesToFlip.exists()) {
