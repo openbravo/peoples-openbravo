@@ -23,6 +23,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -119,6 +123,7 @@ public class RTLSkin {
       log4j.info("Processing RTL skin " + files[i]);
       fileRTLSrcDeep = new File(srcDirRTLSkin + "/" + files[i], "");
       runFolders(fileRTLSrcDeep, files[i], "", "RTL");
+      copyLoginStyles(fileRTLSrcDeep);
     }
 
     files = fileLTRSrc.list();
@@ -127,9 +132,33 @@ public class RTLSkin {
       log4j.info("Processing LTR skin " + files[i]);
       fileLTRSrcDeep = new File(srcDirLTRSkin + "/" + files[i], "");
       runFolders(fileLTRSrcDeep, files[i], "", "LTR");
+      copyLoginStyles(fileLTRSrcDeep);
     }
 
     log4j.info("Modified files: " + count);
+  }
+
+  private static void copyLoginStyles(File skinDir) {
+    for (File file : skinDir.listFiles()) {
+      if (!file.isDirectory()) {
+        continue;
+      }
+      String targetFolder = file.toPath().toString();
+      Path openbravoERP250 = Paths.get(targetFolder, "Openbravo_ERP_250.css");
+      if (!Files.exists(openbravoERP250)) {
+        continue;
+      }
+      Path loginStyles = Paths.get(targetFolder, "loginStyles.css");
+      if (Files.exists(loginStyles)) {
+        continue;
+      }
+      try {
+        Files.copy(openbravoERP250, loginStyles);
+        log4j.info("Created new file: " + loginStyles);
+      } catch (IOException ioex) {
+        log4j.error("Error copying loginStyles.css file in " + targetFolder, ioex);
+      }
+    }
   }
 
   /**
