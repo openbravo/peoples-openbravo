@@ -90,10 +90,14 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     OBContext.setAdminMode();
     try {
       List<String> widgetClassDefinitions = new ArrayList<String>();
-
       for (String widgetClassId : getAccessibleWidgetClassIds(roleId, shouldBeDisplayed)) {
         WidgetClass widgetClass = OBDal.getInstance().getProxy(WidgetClass.class, widgetClassId);
-        WidgetClassInfo widgetClassInfo = myOBUtils.getWidgetClassInfo(widgetClass);
+        WidgetClassInfo widgetClassInfo;
+        if (isInDevelopment()) {
+          widgetClassInfo = myOBUtils.getWidgetClassInfoFromDatabase(widgetClass);
+        } else {
+          widgetClassInfo = myOBUtils.getWidgetClassInfo(widgetClass);
+        }
         if (widgetClassInfo == null) {
           log.debug("Not found information for widget class with id " + widgetClass.getId());
           continue;

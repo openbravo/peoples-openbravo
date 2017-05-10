@@ -226,20 +226,18 @@ public class MyOBUtils {
     }
   }
 
-  private void addWidgetClassInfo(WidgetClass widgetClass) {
-    final WidgetProvider widgetProvider = getWidgetProvider(widgetClass);
-    if (!widgetProvider.validate()) {
-      return;
-    }
-    WidgetClassInfo widgetClassInfo = new WidgetClassInfo(widgetProvider);
-    widgetClasses.putIfAbsent(widgetClass.getId(), widgetClassInfo);
-  }
-
   protected WidgetClassInfo getWidgetClassInfo(WidgetClass widgetClass) {
     if (!widgetClasses.containsKey(widgetClass.getId())) {
-      addWidgetClassInfo(widgetClass);
+      widgetClasses.putIfAbsent(widgetClass.getId(), getWidgetClassInfoFromDatabase(widgetClass));
     }
     return widgetClasses.get(widgetClass.getId());
   }
 
+  protected WidgetClassInfo getWidgetClassInfoFromDatabase(WidgetClass widgetClass) {
+    final WidgetProvider widgetProvider = getWidgetProvider(widgetClass);
+    if (!widgetProvider.validate()) {
+      return null;
+    }
+    return new WidgetClassInfo(widgetProvider);
+  }
 }
