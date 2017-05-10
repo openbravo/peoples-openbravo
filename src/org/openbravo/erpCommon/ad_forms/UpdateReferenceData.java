@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2010 Openbravo SLU
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,6 +32,7 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ModuleReferenceDataOrgTree;
 import org.openbravo.erpCommon.modules.ModuleUtiltiy;
@@ -43,6 +44,7 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -186,6 +188,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
   private String updateReferenceData(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, StringBuffer m_info) throws IOException, ServletException {
 
+    ConnectionProvider cp = new DalConnectionProvider(false);
     String strOrganization = vars.getStringParameter("inpOrganization");
     String strModules = vars.getInStringParameter("inpNodes", IsIDFilter.instance);
     String strModule = vars.getStringParameter("inpNodeId");
@@ -193,7 +196,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
       strModules = "('" + strModule + "')";
     ArrayList<String> modules = new ArrayList<String>();
     if (strModules != null && !strModules.equals("")) {
-      UpdateReferenceDataData[] data = UpdateReferenceDataData.selectModules(this, strModules,
+      UpdateReferenceDataData[] data = UpdateReferenceDataData.selectModules(cp, strModules,
           strOrganization);
       try {
         ModuleUtiltiy.orderModuleByDependency(data);
@@ -203,7 +206,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
       if (data != null && data.length != 0) {
         DataImportService myData = DataImportService.getInstance();
         m_info.append(SALTO_LINEA)
-            .append(Utility.messageBD(this, "StartingReferenceData", vars.getLanguage()))
+            .append(Utility.messageBD(cp, "StartingReferenceData", vars.getLanguage()))
             .append(SALTO_LINEA);
 
         StringBuffer strError = new StringBuffer("");
@@ -217,7 +220,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
           if (!datasetFile.exists()) {
             continue;
           }
-          if (UpdateReferenceDataData.existsOrgModule(this, vars.getClient(), strOrganization,
+          if (UpdateReferenceDataData.existsOrgModule(cp, vars.getClient(), strOrganization,
               data[j].adModuleId, data[j].version).equals("0")) {
             // Not installed previously
             String strXml = Utility.fileToString(datasetFile.getPath());
@@ -254,9 +257,8 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
               if (!modules.contains(data[j].adModuleId)) {
                 modules.add(data[j].adModuleId);
               }
-              m_info
-                  .append(SALTO_LINEA)
-                  .append(Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage()))
+              m_info.append(SALTO_LINEA)
+                  .append(Utility.messageBD(cp, "CreateReferenceDataSuccess", vars.getLanguage()))
                   .append(SALTO_LINEA);
             }
           } else {
@@ -265,7 +267,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
             m_info
                 .append(SALTO_LINEA)
                 .append(
-                    Utility.messageBD(this, "CreateReferenceDataAlreadyCreated", vars.getLanguage()))
+                    Utility.messageBD(cp, "CreateReferenceDataAlreadyCreated", vars.getLanguage()))
                 .append(SALTO_LINEA);
           }
         }
@@ -273,13 +275,23 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
         modules.toArray(modulesArray);
         for (String module : modulesArray) {
           Module appliedModule = OBDal.getInstance().get(Module.class, module);
-          if (UpdateReferenceDataData.selectRegister(this, module, strOrganization,
-              vars.getClient()).equals("0")) {
-            InitialOrgSetupData.insertOrgModule(this, vars.getClient(), strOrganization,
+          if (UpdateReferenceDataData.selectRegister(cp, module, strOrganization, vars.getClient())
+              .equals("0")) {
+            InitialOrgSetupData.insertOrgModule(cp, vars.getClient(), strOrganization,
                 vars.getUser(), module, appliedModule.getVersion());
+
           } else {
-            UpdateReferenceDataData.updateOrgModule(this, appliedModule.getVersion(),
-                vars.getUser(), vars.getClient(), strOrganization, module);
+            int updatedOrgModule = UpdateReferenceDataData.updateOrgModule(cp,
+                appliedModule.getVersion(), vars.getUser(), vars.getClient(), strOrganization,
+                module);
+            // dataset has been already applied
+            if (updatedOrgModule == 0) {
+              OBDal.getInstance().rollbackAndClose();
+              m_info
+                  .append(SALTO_LINEA)
+                  .append(Utility.messageBD(cp, "DatasetHasBeenAlreadyApplied", vars.getLanguage()))
+                  .append(SALTO_LINEA);
+            }
           }
         }
         HashMap<String, String> checksums = new HashMap<String, String>();
@@ -292,7 +304,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
           }
         }
         for (String moduleId : checksums.keySet()) {
-          UpdateReferenceDataData.updateOrgModuleChecksum(this, checksums.get(moduleId),
+          UpdateReferenceDataData.updateOrgModuleChecksum(cp, checksums.get(moduleId),
               vars.getUser(), vars.getClient(), strOrganization, moduleId);
         }
       } else
