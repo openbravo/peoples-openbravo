@@ -521,7 +521,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
       setPaymentsToReceipts = function (orderList, paymentList, orderListIndex, paymentListIndex, considerPrepaymentAmount, callback) {
         if (orderListIndex >= orderList.length || paymentListIndex >= paymentList.length) {
-          if (paymentListIndex < paymentList.length) {
+          if (paymentListIndex < paymentList.length && considerPrepaymentAmount) {
             setPaymentsToReceipts(orderList, paymentList, 0, paymentListIndex, false, callback);
           } else if (callback instanceof Function) {
             callback();
