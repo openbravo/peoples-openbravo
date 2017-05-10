@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1278,6 +1278,8 @@ public class DocFINReconciliation extends AcctServer {
       FieldProviderFactory.setField(data[0], "AD_Client_ID", reconciliation.getClient().getId());
       FieldProviderFactory.setField(data[0], "AD_Org_ID", reconciliation.getOrganization().getId());
       FieldProviderFactory.setField(data[0], "FIN_Finacc_Transaction_ID", reconciliation.getId());
+      FieldProviderFactory.setField(data[0], "FIN_Financial_Account_ID", reconciliation
+          .getAccount().getId());
       FieldProviderFactory.setField(data[0], "C_Currency_ID", reconciliation.getAccount()
           .getCurrency().getId());
       FieldProviderFactory.setField(data[0], "C_Doctype_ID", reconciliation.getDocumentType()
