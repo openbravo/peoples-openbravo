@@ -19,7 +19,6 @@
 package org.openbravo.client.myob;
 
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -51,7 +50,6 @@ public class MyOBUtils {
   private static String MENU_ITEM_IS_SEPARATOR = "isSeparator";
   private static String MENU_ITEM_TITLE = "title";
   private static String MENU_ITEM_CLICK = "click";
-  private ConcurrentHashMap<String, WidgetClassInfo> widgetClasses = new ConcurrentHashMap<>();
 
   /**
    * Calls {@link #getWidgetTitle(WidgetClass)} using the
@@ -139,36 +137,39 @@ public class MyOBUtils {
       widgetInstancesCrit.setFilterOnReadableClients(false);
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 0L));
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, OBDal.getInstance()
-          .getProxy(Client.class, "0")));
+          .get(Client.class, "0")));
       widgetInstancesCrit.setFilterOnReadableOrganization(false);
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_ORGANIZATION, OBDal
-          .getInstance().getProxy(Organization.class, "0")));
+          .getInstance().get(Organization.class, "0")));
     } else if ("SYSTEM".equals(availableAtLevel)) {
       widgetInstancesCrit.setFilterOnReadableClients(false);
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 1L));
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, OBDal.getInstance()
-          .getProxy(Client.class, "0")));
+          .get(Client.class, "0")));
       widgetInstancesCrit.setFilterOnReadableOrganization(false);
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_ORGANIZATION, OBDal
-          .getInstance().getProxy(Organization.class, "0")));
+          .getInstance().get(Organization.class, "0")));
     } else if ("CLIENT".equals(availableAtLevel)) {
       widgetInstancesCrit.setFilterOnReadableClients(false);
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, OBDal.getInstance()
-          .getProxy(Client.class, availableAtValues[0])));
+          .get(Client.class, availableAtValues[0])));
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 2L));
     } else if ("ORG".equals(availableAtLevel)) {
+      final Organization organization = OBDal.getInstance().get(Organization.class,
+          availableAtValues[0]);
       widgetInstancesCrit.setFilterOnReadableClients(false);
+      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT,
+          organization.getClient()));
       widgetInstancesCrit.setFilterOnReadableOrganization(false);
-      widgetInstancesCrit.add(Restrictions.in(WidgetInstance.PROPERTY_ORGANIZATION + "."
-          + Organization.PROPERTY_ID, availableAtValues));
+      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_ORGANIZATION, organization));
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 3L));
     } else if ("ROLE".equals(availableAtLevel)) {
-      final Role role = OBDal.getInstance().getProxy(Role.class, availableAtValues[0]);
+      final Role role = OBDal.getInstance().get(Role.class, availableAtValues[0]);
       widgetInstancesCrit.setFilterOnReadableClients(false);
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, role.getClient()));
       widgetInstancesCrit.setFilterOnReadableOrganization(false);
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_ORGANIZATION, OBDal
-          .getInstance().getProxy(Organization.class, "0")));
+          .getInstance().get(Organization.class, "0")));
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATROLE, role));
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 4L));
     } else if ("USER".equals(availableAtLevel)) {
@@ -224,22 +225,6 @@ public class MyOBUtils {
     } catch (Exception e) {
       throw new OBException(e);
     }
-  }
-
-  private void addWidgetClassInfo(WidgetClass widgetClass) {
-    final WidgetProvider widgetProvider = getWidgetProvider(widgetClass);
-    if (!widgetProvider.validate()) {
-      return;
-    }
-    WidgetClassInfo widgetClassInfo = new WidgetClassInfo(widgetProvider);
-    widgetClasses.putIfAbsent(widgetClass.getId(), widgetClassInfo);
-  }
-
-  protected WidgetClassInfo getWidgetClassInfo(WidgetClass widgetClass) {
-    if (!widgetClasses.containsKey(widgetClass.getId())) {
-      addWidgetClassInfo(widgetClass);
-    }
-    return widgetClasses.get(widgetClass.getId());
   }
 
 }

@@ -107,10 +107,10 @@ public class LoginHandler extends HttpBaseServlet {
 
       String language = systemClient.getLanguage().getLanguage();
       vars.setSessionValue("#AD_Language", language);
-
+      ConnectionProvider cp = new DalConnectionProvider(false);
       if ("".equals(user)) {
-        goToRetry(res, vars, Utility.messageBD(myPool, "IDENTIFICATION_FAILURE_TITLE", language),
-            Utility.messageBD(myPool, "IDENTIFICATION_FAILURE_MSG", language), "Error",
+        goToRetry(res, vars, Utility.messageBD(cp, "IDENTIFICATION_FAILURE_TITLE", language),
+            Utility.messageBD(cp, "IDENTIFICATION_FAILURE_MSG", language), "Error",
             "../security/Login");
       } else {
         try {
@@ -142,8 +142,8 @@ public class LoginHandler extends HttpBaseServlet {
           if (errorMsg != null) {
             vars.removeSessionValue("#LoginErrorMsg");
 
-            final String failureTitle = Utility.messageBD(this, errorMsg.getTitle(), language);
-            final String failureMessage = Utility.messageBD(this, errorMsg.getMessage(), language);
+            final String failureTitle = Utility.messageBD(cp, errorMsg.getTitle(), language);
+            final String failureMessage = Utility.messageBD(cp, errorMsg.getMessage(), language);
 
             goToRetry(res, vars, failureMessage, failureTitle, "Error", "../security/Login_FS.html");
 
