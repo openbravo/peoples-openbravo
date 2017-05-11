@@ -130,7 +130,11 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
       hql.append("AND widgetClassAccess.widgetClass.availableInWorkspace IS true");
     }
     Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
-    query.setString("roleId", roleId);
+    if (StringUtils.isEmpty(roleId)) {
+      query.setString("roleId", OBContext.getOBContext().getRole().getId());
+    } else {
+      query.setString("roleId", roleId);
+    }
     List<String> widgetClassIds = query.list();
     // Include the widget classes which allow anonymous access
     for (String anonymousWidgetClass : myOBUtils
