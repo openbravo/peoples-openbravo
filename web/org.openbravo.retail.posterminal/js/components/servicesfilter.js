@@ -123,7 +123,7 @@ enyo.kind({
       where += "and ((product.includeProductCategories = 'Y' and not exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id =  ? )) ";
       where += "or (product.includeProductCategories = 'N' and exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id  = ? )) ";
       where += "or product.includeProductCategories is null)) ";
-      where += "and product.m_product_id not in ('" + existingServices.join("','") + "')";
+      where += "and product.m_product_id not in ('" + (existingServices.length > 0 ? existingServices.join("','") : '-') + "')";
 
       var product = this.orderline.get('product'),
           productId = product.get('forceFilterId') || product.get('id');
@@ -191,7 +191,7 @@ enyo.kind({
       columns: [],
       operator: OB.Dal.FILTER,
       value: 'Services_Filter',
-      params: [product.get('isNew') ? null : (product.get('forceFilterId') ? product.get('forceFilterId') : product.get('id')), product.get('productCategory'), '', '', existingServices.join("','")]
+      params: [product.get('isNew') ? null : (product.get('forceFilterId') ? product.get('forceFilterId') : product.get('id')), product.get('productCategory'), '', '', (existingServices.length > 0 ? existingServices.join("','") : "'-'")]
     }, {
       columns: ['ispack'],
       operator: 'equals',
