@@ -370,13 +370,6 @@ enyo.kind({
       }
     }, this);
     receipt.on('change:orderType', function (model) {
-      if (model.get('orderType') === 1) {
-        me.updateVisibility(false);
-      } else {
-        me.updateVisibility(true);
-      }
-    }, this);
-    receipt.on('change:orderType', function (model) {
       if (model.get('orderType') === 1 || model.get('orderType') === 2) {
         me.updateVisibility(false);
       } else {
