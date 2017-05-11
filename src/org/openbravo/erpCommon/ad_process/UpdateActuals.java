@@ -138,7 +138,7 @@ public class UpdateActuals extends DalBaseProcess {
         if (!"".equals(businessPartner)) {
           queryString.append(" and e.businessPartner.id = :businessPartner");
         }
-        if (!StringUtils.isEmpty(businessPartnerCategory)) {
+        if (StringUtils.isNotEmpty(businessPartnerCategory)) {
           queryString
               .append(" and e.businessPartner.businessPartnerCategory.id=:businessPartnerCategory");
         }
@@ -152,7 +152,7 @@ public class UpdateActuals extends DalBaseProcess {
         if (!"".equals(product)) {
           queryString.append(" and e.product.id=:product");
         }
-        if (!StringUtils.isEmpty(productCategory)) {
+        if (StringUtils.isNotEmpty(productCategory)) {
           queryString.append(" and e.product.productCategory.id in (").append(productCategoryTree)
               .append(")");
         }
@@ -176,8 +176,9 @@ public class UpdateActuals extends DalBaseProcess {
         query.setString("accountingSchema", accountingSchema);
         if (!"".equals(businessPartner))
           query.setString("businessPartner", businessPartner);
-        else if (!"".equals(businessPartnerCategory))
+        if (StringUtils.isNotEmpty(businessPartnerCategory)) {
           query.setString("businessPartnerCategory", businessPartnerCategory);
+        }
         if (!"".equals(period))
           query.setString("period", period);
         if (!"".equals(product))
