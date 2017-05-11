@@ -96,13 +96,22 @@
       <foreign-key foreignTable="M_WAREHOUSE" name="M_WAREHOUSE_LOCATOR" onDelete="cascade">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
-      <index name="M_LOCATION_WHERE" unique="true">
+      <index name="M_LOCATION_WHERE_NO_PARENT" unique="true">
         <index-column name="M_WAREHOUSE_ID"/>
         <index-column name="X"/>
         <index-column name="Y"/>
         <index-column name="Z"/>
         <index-column name="M_INVENTORYSTATUS_ID"/>
-        <index-column name="functionBasedColumn" functionExpression="COALESCE(PARENT_LOCATOR_ID,TO_CHAR(0))"/>
+        <whereClause><![CDATA[PARENT_LOCATOR_ID IS NULL]]></whereClause>
+      </index>
+      <index name="M_LOCATION_WHERE_WITH_PARENT" unique="true">
+        <index-column name="M_WAREHOUSE_ID"/>
+        <index-column name="X"/>
+        <index-column name="Y"/>
+        <index-column name="Z"/>
+        <index-column name="M_INVENTORYSTATUS_ID"/>
+        <index-column name="PARENT_LOCATOR_ID"/>
+        <whereClause><![CDATA[PARENT_LOCATOR_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="M_LOCATOR_BARCODE_IDX" unique="false">
         <index-column name="BARCODE"/>
