@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
@@ -52,6 +53,7 @@ public class MyOBUtils {
   private static String MENU_ITEM_TITLE = "title";
   private static String MENU_ITEM_CLICK = "click";
   private ConcurrentHashMap<String, WidgetClassInfo> widgetClasses = new ConcurrentHashMap<>();
+  private List<String> anonymousWidgetClasses;
 
   /**
    * Calls {@link #getWidgetTitle(WidgetClass)} using the
@@ -239,5 +241,19 @@ public class MyOBUtils {
       return null;
     }
     return new WidgetClassInfo(widgetProvider);
+  }
+
+  @SuppressWarnings("unchecked")
+  protected List<String> getAnonymousAccessibleWidgetClasses(boolean fromCache) {
+    if (fromCache && anonymousWidgetClasses != null) {
+      return anonymousWidgetClasses;
+    }
+    final StringBuilder hql = new StringBuilder();
+    hql.append("SELECT widgetClass.id ");
+    hql.append("FROM OBKMO_WidgetClass widgetClass ");
+    hql.append("WHERE widgetClass.allowAnonymousAccess IS true ");
+    Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    anonymousWidgetClasses = query.list();
+    return anonymousWidgetClasses;
   }
 }

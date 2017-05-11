@@ -32,10 +32,12 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.kernel.SessionDynamicTemplateComponent;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
@@ -90,7 +92,7 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     OBContext.setAdminMode();
     try {
       List<String> widgetClassDefinitions = new ArrayList<String>();
-      for (String widgetClassId : getAccessibleWidgetClassIds(roleId, shouldBeDisplayed)) {
+      for (String widgetClassId : getAvailableWidgetClasses(roleId, true, shouldBeDisplayed)) {
         WidgetClass widgetClass = OBDal.getInstance().getProxy(WidgetClass.class, widgetClassId);
         WidgetClassInfo widgetClassInfo;
         if (isInDevelopment()) {
@@ -115,23 +117,29 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
   }
 
   @SuppressWarnings("unchecked")
-  private List<String> getAccessibleWidgetClassIds(String roleId, boolean availableInWorkspace) {
+  private List<String> getAvailableWidgetClasses(String roleId, boolean skipSuperClasses,
+      boolean availableInWorkspace) {
     final StringBuilder hql = new StringBuilder();
-    hql.append("SELECT widgetClass.id FROM OBKMO_WidgetClass widgetClass ");
-    hql.append("LEFT JOIN widgetClass.oBKMOWidgetClassAccessList widgetClassAccess ");
+    hql.append("SELECT widgetClassAccess.widgetClass.id ");
+    hql.append("FROM OBKMO_WidgetClassAccess widgetClassAccess ");
     hql.append("WHERE widgetClassAccess.role.id=:roleId ");
-    hql.append("AND (widgetClassAccess.id IS NOT NULL OR widgetClass.allowAnonymousAccess IS true) ");
-    hql.append("AND widgetClass.superclass IS false ");
+    if (skipSuperClasses) {
+      hql.append("AND widgetClassAccess.widgetClass.superclass IS false ");
+    }
     if (availableInWorkspace) {
-      hql.append("AND widgetClass.availableInWorkspace IS true");
+      hql.append("AND widgetClassAccess.widgetClass.availableInWorkspace IS true");
     }
     Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
-    if (StringUtils.isEmpty(roleId)) {
-      query.setString("roleId", OBContext.getOBContext().getRole().getId());
-    } else {
-      query.setString("roleId", roleId);
+    query.setString("roleId", roleId);
+    List<String> widgetClassIds = query.list();
+    // Include the widget classes which allow anonymous access
+    for (String anonymousWidgetClass : myOBUtils
+        .getAnonymousAccessibleWidgetClasses(!isInDevelopment())) {
+      if (!widgetClassIds.contains(anonymousWidgetClass)) {
+        widgetClassIds.add(anonymousWidgetClass);
+      }
     }
-    return query.list();
+    return widgetClassIds;
   }
 
   /**
@@ -231,28 +239,24 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
 
   private List<WidgetInstance> getContextWidgetInstances() {
     copyWidgets();
-    List<WidgetInstance> widgets = new ArrayList<WidgetInstance>();
-    final List<WidgetInstance> userWidgets = getActiveWidgetInstances();
-    log.debug("Available User widgets:" + widgets.size());
-    return userWidgets;
+    final List<WidgetInstance> widgetInstances = getActiveWidgetInstances();
+    log.debug("Available User widgets:" + widgetInstances.size());
+    return widgetInstances;
   }
 
-  @SuppressWarnings("unchecked")
   private List<WidgetInstance> getActiveWidgetInstances() {
-    final StringBuilder hql = new StringBuilder();
-    hql.append("SELECT widgetInstance FROM OBKMO_WidgetClass widgetClass ");
-    hql.append("LEFT JOIN widgetClass.oBKMOWidgetClassAccessList widgetClassAccess ");
-    hql.append("INNER JOIN widgetClass.oBKMOWidgetInstanceList widgetInstance ");
-    hql.append("WHERE widgetClassAccess.role.id=:roleId ");
-    hql.append("AND (widgetClassAccess.id IS NOT NULL OR widgetClass.allowAnonymousAccess IS true) ");
-    hql.append("AND widgetInstance.visibleAtRole.id=:roleId ");
-    hql.append("AND widgetInstance.visibleAtUser.id=:userId ");
-    hql.append("AND widgetInstance.client.id=:clientId ");
-    Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
-    query.setString("roleId", OBContext.getOBContext().getRole().getId());
-    query.setString("userId", OBContext.getOBContext().getUser().getId());
-    query.setString("clientId", OBContext.getOBContext().getCurrentClient().getId());
-    return query.list();
+    OBCriteria<WidgetInstance> obc = OBDal.getInstance().createCriteria(WidgetInstance.class);
+    obc.setFilterOnReadableClients(false);
+    obc.setFilterOnActive(true);
+    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT,
+        OBDal.getInstance().get(Client.class, OBContext.getOBContext().getCurrentClient().getId())));
+    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATROLE,
+        OBDal.getInstance().get(Role.class, OBContext.getOBContext().getRole().getId())));
+    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATUSER,
+        OBDal.getInstance().get(User.class, OBContext.getOBContext().getUser().getId())));
+    obc.add(Restrictions.in(WidgetInstance.PROPERTY_WIDGETCLASS + "." + WidgetClass.PROPERTY_ID,
+        getAvailableWidgetClasses(OBContext.getOBContext().getRole().getId(), false, false)));
+    return obc.list();
   }
 
   private void copyWidgets() {
