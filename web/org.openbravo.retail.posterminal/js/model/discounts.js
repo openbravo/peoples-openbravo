@@ -230,7 +230,12 @@
         line.unset('noDiscountCandidates', {
           silent: true
         });
-        rule.addManual(receipt, line, promotion);
+        if (line.get('qty') > 0) {
+          rule.addManual(receipt, line, promotion);
+        } else {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_AvoidApplyManualPromotions'));
+        }
+
       });
 
       receipt.setUndo('AddDiscount', {
