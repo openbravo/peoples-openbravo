@@ -217,13 +217,6 @@ enyo.kind({
           renderHeader: 'OB.UI.ModalMultiOrdersHeader',
           renderLine: 'OB.UI.ListMultiOrdersLine',
           renderEmpty: 'OB.UI.RenderEmpty'
-        }, {
-          name: 'renderLoading',
-          style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
-          showing: false,
-          initComponents: function () {
-            this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
-          }
         }]
       }]
     }]
@@ -251,7 +244,6 @@ enyo.kind({
       limit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true));
     }
     this.clearAction();
-    me.$.renderLoading.show();
     // Disable the filters button
     me.disableFilters(true);
     processHeader.exec({
@@ -288,10 +280,8 @@ enyo.kind({
           me.multiOrdersList.add(iter);
         });
 
-        me.$.renderLoading.hide();
         me.disableFilters(false);
       } else {
-        me.$.renderLoading.hide();
         me.disableFilters(false);
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
       }
