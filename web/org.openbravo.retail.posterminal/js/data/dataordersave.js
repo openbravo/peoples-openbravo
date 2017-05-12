@@ -340,7 +340,10 @@
       var context = this;
       if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
         OB.MobileApp.model.setSynchronizedCheckpoint(function () {
-          mainReceiptCloseFunction(eventParams, context);
+          OB.UTIL.rebuildCashupFromServer(function () {
+            OB.UTIL.showLoading(false);
+            mainReceiptCloseFunction(eventParams, context);
+          });
         });
       } else {
         mainReceiptCloseFunction(eventParams, context);
@@ -546,7 +549,10 @@
       };
       if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true) && me.ordersToSend === 0) {
         OB.MobileApp.model.setSynchronizedCheckpoint(function () {
-          recursiveFunction(0, me, callback);
+          OB.UTIL.rebuildCashupFromServer(function () {
+            OB.UTIL.showLoading(false);
+            recursiveFunction(0, me, callback);
+          });
         });
       } else {
         recursiveFunction(0, me, callback);

@@ -18,17 +18,21 @@ enyo.kind({
   executeOnShow: function () {
     if (this.currentLine) {
       var diff = this.propertycomponents;
-      var att, receiptLineDescription;
+      var att, receiptLineDescription, receiptLineDescriptionControl, receiptLineDescriptionNewAttribute;
       for (att in diff) {
         if (diff.hasOwnProperty(att)) {
           this.loadValue(att, diff[att]);
           if (diff[att].owner.$.receiptLineDescription) {
             receiptLineDescription = diff[att].owner.$.receiptLineDescription;
+            receiptLineDescriptionControl = diff[att].owner.owner.$.control.id;
+            receiptLineDescriptionNewAttribute = diff[att].owner.owner.$.newAttribute.id;
           }
         }
       }
       setTimeout(function () {
         receiptLineDescription.focus();
+        document.getElementById(receiptLineDescriptionControl).style.cssText = 'border: 1px solid #F0F0F0; float: left; width: 58%;';
+        document.getElementById(receiptLineDescriptionNewAttribute).style.cssText = 'width: 100%';
       }, 200);
     }
     this.autoDismiss = true;
