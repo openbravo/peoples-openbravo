@@ -100,20 +100,16 @@ enyo.kind({
               style: 'text-align: right; font-weight: bold; color: grey;'
             }]
           }]
-        }, {
-          style: 'clear:both;'
-        }, {
-          name: 'generic',
-          style: 'float: right; width: 20%; text-align: right; font-style: italic; color: grey; padding: 15px; font-weight: bold;',
-          showing: false
-        }, {
-          style: 'clear:both;'
-        }, {
-          style: 'color: #888888; text-align: left; font-style: italic; color: grey; font-size: 13px; padding-top: 10px; padding-right: 6px',
-          name: 'bottonLine'
         }]
       }]
     }]
+  }, {
+    name: 'generic',
+    style: 'text-align: right; font-style: italic; color: grey; font-weight: bold;',
+    showing: false
+  }, {
+    style: 'color: #888888; text-align: left; font-style: italic; color: grey; font-size: 13px; padding-top: 10px; padding-right: 6px',
+    name: 'bottonLine'
   }],
   drawPriceBasedOnSize: function () {
     var shouldResizeWork = ((enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 466) || (!enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 925));
