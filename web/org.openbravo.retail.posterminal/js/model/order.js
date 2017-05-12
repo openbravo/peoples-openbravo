@@ -3430,7 +3430,7 @@
       return this.getPaymentStatus().overpayment ? true : false;
     },
 
-    removePayment: function (payment, removeCallback) {
+    removePayment: function (payment, cancellationCallback, removeCallback) {
       var payments = this.get('payments'),
           max, i, p;
       OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePayment', {
@@ -3439,8 +3439,8 @@
         receipt: this
       }, function (args) {
         if (args.cancellation) {
-          if (removeCallback) {
-            removeCallback();
+          if (cancellationCallback) {
+            cancellationCallback();
           }
           return true;
         }
@@ -3459,7 +3459,7 @@
           args.receipt.set('openDrawer', false);
         }
         args.receipt.adjustPayment();
-        args.receipt.save();
+        args.receipt.save(removeCallback);
       });
     },
 
