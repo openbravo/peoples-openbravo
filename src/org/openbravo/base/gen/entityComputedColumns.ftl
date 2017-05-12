@@ -26,7 +26,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,7 +40,7 @@ ${i}
  *
  * NOTE: This class should not be instantiated directly.
  */
-public class ${entity.simpleClassName}_ComputedColumns extends BaseOBObject implements ClientEnabled, OrganizationEnabled {
+public class ${entity.simpleClassName}_ComputedColumns extends BaseOBObject ${implementsClientEnabled}${implementsOrgEnabled}{
     private static final long serialVersionUID = 1L;
     public static final String ENTITY_NAME = "${entity.simpleClassName}_ComputedColumns";
     

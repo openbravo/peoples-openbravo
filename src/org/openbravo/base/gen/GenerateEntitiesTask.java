@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -183,8 +183,23 @@ public class GenerateEntitiesTask extends Task {
 
           List<Property> properties = entity.getComputedColumnProperties();
 
-          properties.add(entity.getProperty("client"));
-          properties.add(entity.getProperty("organization"));
+          if (entity.hasProperty("client")) {
+            properties.add(entity.getProperty("client"));
+            data.put("implementsClientEnabled", "implements ClientEnabled ");
+          } else {
+            data.put("implementsClientEnabled", "");
+
+          }
+          if (entity.hasProperty("organization")) {
+            properties.add(entity.getProperty("organization"));
+            if (entity.hasProperty("client")) {
+              data.put("implementsOrgEnabled", ", OrganizationEnabled ");
+            } else {
+              data.put("implementsOrgEnabled", "implements OrganizationEnabled ");
+            }
+          } else {
+            data.put("implementsOrgEnabled", "");
+          }
 
           data.put("properties", properties);
           List<String> imports = entity.getJavaImports(properties);

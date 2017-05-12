@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -225,15 +225,20 @@ public class DalMappingGenerator implements OBSingleton {
         + "<tuplizer entity-mode=\"pojo\" class=\"org.openbravo.dal.core.OBTuplizer\"/>" + NL + NL);
     content.append(generateStandardID(entity) + NL);
 
-    content
-        .append(TAB2
-            + "<many-to-one name=\"client\" column=\"AD_Client_ID\" not-null=\"true\" update=\"false\" insert=\"false\" entity-name=\"ADClient\" access=\"org.openbravo.dal.core.OBDynamicPropertyHandler\"/>"
-            + NL);
-    content
-        .append(TAB2
-            + "<many-to-one name=\"organization\" column=\"AD_Org_ID\" not-null=\"true\" update=\"false\" insert=\"false\" entity-name=\"Organization\" access=\"org.openbravo.dal.core.OBDynamicPropertyHandler\"/>"
-            + NL + NL);
-
+    if (!"ADClient".equals(entity.getName())) {
+      content
+          .append(TAB2
+              + "<many-to-one name=\"client\" column=\"AD_Client_ID\" not-null=\"true\" update=\"false\" insert=\"false\" entity-name=\"ADClient\" access=\"org.openbravo.dal.core.OBDynamicPropertyHandler\"/>"
+              + NL);
+    }
+    if (!"Organization".equals(entity.getName())) {
+      content
+          .append(TAB2
+              + "<many-to-one name=\"organization\" column=\"AD_Org_ID\" not-null=\"true\" update=\"false\" insert=\"false\" entity-name=\"Organization\" access=\"org.openbravo.dal.core.OBDynamicPropertyHandler\"/>"
+              + NL + NL);
+    } else {
+      content.append(NL);
+    }
     for (Property p : computedColumns) {
       if (p.isPrimitive()) {
         content.append(generatePrimitiveMapping(p));
@@ -416,7 +421,8 @@ public class DalMappingGenerator implements OBSingleton {
   // assumes one primary key column
   private String generateStandardID(Entity entity) {
     Check.isTrue(entity.getIdProperties().size() == 1,
-        "Method can only handle primary keys with one column in entity " + entity.getName() + ". It has " + entity.getIdProperties().size());
+        "Method can only handle primary keys with one column in entity " + entity.getName()
+            + ". It has " + entity.getIdProperties().size());
     final Property p = entity.getIdProperties().get(0);
     final StringBuffer sb = new StringBuffer();
     sb.append(TAB2 + "<id name=\"" + p.getName() + "\" type=\"string\" " + getAccessorAttribute()
