@@ -786,10 +786,6 @@ enyo.kind({
     } else if (this.args.makeSearch) {
       this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.searchAction();
     }
-    var entityFilterText = this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.$.entityFilterText;
-    setTimeout(function () {
-      entityFilterText.focus();
-    }, 200);
     return true;
   },
   getScrollableTable: function () {
