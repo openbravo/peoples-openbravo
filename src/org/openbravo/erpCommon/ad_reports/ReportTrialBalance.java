@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -757,9 +757,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         DateTimeData.nDaysAfter(this, strDateTo, "1"), "", "");
     ReportTrialBalanceData[] dataInitialBalance = ReportTrialBalanceData.selectInitialBalance(this,
         strDateFrom, strcAcctSchemaId, "", "", "", strOrgFamily,
-        Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"),
-        strNotInitialBalance.equals("Y") ? "initial" : "notinitial",
-        strNotInitialBalance.equals("Y") ? "initial" : "notinitial");
+        Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"));
 
     log4j.debug("Calculating tree...");
     dataAux = calculateTree(dataAux, null, new Vector<Object>(), dataInitialBalance,
@@ -829,6 +827,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         vecParcial.addElement("0");
         ReportTrialBalanceData[] dataChilds = calculateTree(data, data[i].id, vecParcial, dataIB,
             strNotInitialBalance);
+
         BigDecimal parcialDR = new BigDecimal((String) vecParcial.elementAt(0));
         BigDecimal parcialCR = new BigDecimal((String) vecParcial.elementAt(1));
         BigDecimal parcialInicial = new BigDecimal((String) vecParcial.elementAt(2));
@@ -846,17 +845,20 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             if (strNotInitialBalance.equals("Y")) {
               data[i].saldoInicial = (new BigDecimal(dataIB[k].saldoInicial).add(parcialInicial))
                   .toPlainString();
+
             } else {
-              data[i].amtacctdr = (new BigDecimal(dataIB[k].amtacctdr).add(parcialDR)
-                  .add(new BigDecimal(data[i].amtacctdr))).toPlainString();
-              data[i].amtacctcr = (new BigDecimal(dataIB[k].amtacctcr).add(parcialCR)
-                  .add(new BigDecimal(data[i].amtacctcr))).toPlainString();
+              if (new BigDecimal(dataIB[k].saldoInicial).compareTo(BigDecimal.ZERO) > 0) {
+                data[i].amtacctdr = (new BigDecimal(dataIB[k].saldoInicial).add(parcialDR)
+                    .add(new BigDecimal(data[i].amtacctdr))).toPlainString();
+              } else {
+                data[i].amtacctcr = (new BigDecimal(dataIB[k].saldoInicial).negate().add(parcialCR)
+                    .add(new BigDecimal(data[i].amtacctcr))).toPlainString();
+              }
             }
             data[i].saldoFinal = (new BigDecimal(dataIB[k].saldoInicial).add(parcialDR)
                 .subtract(parcialCR)).toPlainString();
           }
         }
-
         totalDR = totalDR.add(new BigDecimal(data[i].amtacctdr));
         totalCR = totalCR.add(new BigDecimal(data[i].amtacctcr));
         totalInicial = totalInicial.add(new BigDecimal(data[i].saldoInicial));

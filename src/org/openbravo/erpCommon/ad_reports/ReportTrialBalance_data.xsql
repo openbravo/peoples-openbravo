@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2016 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,6 +51,7 @@
       AND 1=1
       AND F.FACTACCTTYPE <> 'R'
       AND F.FACTACCTTYPE <> 'C'
+      AND F.FACTACCTTYPE <> 'O'
       AND F.ISACTIVE = 'Y'
       GROUP BY ACCOUNT_ID,EV.NAME, EV.VALUE, EV.ELEMENTLEVEL) A
       GROUP BY ID, NAME, ACCOUNT_ID, ELEMENTLEVEL
@@ -293,30 +294,21 @@
       SELECT ACCOUNT_ID, COALESCE(SUM(AMTACCTDR),0) AS AMTACCTDR, COALESCE(SUM(AMTACCTCR),0) AS AMTACCTCR,
              COALESCE(SUM(AMTACCTDR-AMTACCTCR), 0) AS SALDO_INICIAL
       FROM (
-           (SELECT F.ACCOUNT_ID AS ACCOUNT_ID, F.AMTACCTDR AS AMTACCTDR, F.AMTACCTCR AS AMTACCTCR,
+            SELECT F.ACCOUNT_ID AS ACCOUNT_ID, F.AMTACCTDR AS AMTACCTDR, F.AMTACCTCR AS AMTACCTCR,
                    F.DATEACCT, F.FACTACCTTYPE
             FROM FACT_ACCT F
             WHERE 1=1
-                  AND F.DATEACCT < TO_DATE(?)
+                  AND (F.DATEACCT < TO_DATE(?) OR (F.DATEACCT = TO_DATE(?) AND F.FACTACCTTYPE = 'O'))
                   AND F.C_ACCTSCHEMA_ID = ?
                   AND F.AD_ORG_ID IN ('1')
                   AND F.AD_CLIENT_ID IN ('1')
-                  AND F.ISACTIVE = 'Y')
-            UNION ALL
-            (SELECT F.ACCOUNT_ID AS ACCOUNT_ID, F.AMTACCTDR AS AMTACCTDR, F.AMTACCTCR AS AMTACCTCR,
-                    F.DATEACCT, F.FACTACCTTYPE
-             FROM FACT_ACCT F
-             WHERE 2=2
-                   AND F.DATEACCT = TO_DATE(?)
-                   AND F.C_ACCTSCHEMA_ID = ?
-                   AND  F.AD_ORG_ID IN ('1')
-                   AND  F.AD_CLIENT_ID IN ('1')
-                   AND F.ISACTIVE = 'Y'
-		   AND 3=3)) A
+                  AND F.ISACTIVE = 'Y'
+           ) A
       GROUP BY ACCOUNT_ID
       HAVING SUM(AMTACCTDR) - SUM(AMTACCTCR) <> 0
       ORDER BY ACCOUNT_ID
       ]]></Sql>
+      <Parameter name="dateFrom"/>
       <Parameter name="dateFrom"/>
       <Parameter name="acctschema"/>
       <Parameter name="bpartner" optional="true" type="argument" after="1=1"><![CDATA[ AND F.C_BPARTNER_ID IN]]></Parameter>
@@ -324,16 +316,6 @@
       <Parameter name="project" optional="true" type="argument" after="1=1"><![CDATA[ AND F.C_PROJECT_ID IN]]></Parameter>
       <Parameter name="orgFamily" type="replace" optional="true" after="AND F.AD_ORG_ID IN (" text="'1'"/>
       <Parameter name="clientFamily" type="replace" optional="true" after="AND F.AD_CLIENT_ID IN (" text="'1'"/>
-      <!--  -->
-      <Parameter name="dateFrom"/>
-      <Parameter name="acctschema"/>
-      <Parameter name="bpartner" optional="true" type="argument" after="2=2"><![CDATA[ AND F.C_BPARTNER_ID IN]]></Parameter>
-      <Parameter name="product" optional="true" type="argument" after="2=2"><![CDATA[ AND F.M_PRODUCT_ID IN]]></Parameter>
-      <Parameter name="project" optional="true" type="argument" after="2=2"><![CDATA[ AND F.C_PROJECT_ID IN]]></Parameter>
-      <Parameter name="orgFamily" type="replace" optional="true" after="AND  F.AD_ORG_ID IN (" text="'1'"/>
-      <Parameter name="clientFamily" type="replace" optional="true" after="AND  F.AD_CLIENT_ID IN (" text="'1'"/>
-      <Parameter name="initial" type="none" optional="true" after="AND 3=3"><![CDATA[ AND F.FACTACCTTYPE = 'O']]></Parameter>
-      <Parameter name="notinitial" type="none" optional="true" after="AND 3=3"><![CDATA[ AND F.FACTACCTTYPE <> 'O']]></Parameter>
   </SqlMethod>
   
   <SqlMethod name="treeAccount" type="preparedStatement" return="string">
