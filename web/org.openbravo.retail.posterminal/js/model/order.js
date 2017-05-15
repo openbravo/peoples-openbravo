@@ -1500,7 +1500,7 @@
           me = this,
           productHavingSameAttribute = false,
           productHasAttribute = p.attributes.hasAttributes,
-          attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true);
+          attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true);
       if (enyo.Panels.isScreenNarrow()) {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_AddLine', [qty ? qty : 1, p.get('_identifier')]));
       }
@@ -1570,12 +1570,12 @@
               line = options.line;
             } else {
               line = me.get('lines').find(function (l) {
-                if (attributeSearchAllowed && attrs) {
-                  if (l.get('product').id === p.id && ((l.get('qty') > 0 && qty > 0) || (l.get('qty') < 0 && qty < 0)) && (l.get('attributeValue') === attrs.attributeValue)) {
-                    return true;
-                  }
-                } else {
-                  if (l.get('product').id === p.id && ((l.get('qty') > 0 && qty > 0) || (l.get('qty') < 0 && qty < 0))) {
+                if (l.get('product').id === p.id && ((l.get('qty') > 0 && qty > 0) || (l.get('qty') < 0 && qty < 0))) {
+                  if (attributeSearchAllowed && attrs) {
+                    if ((l.get('attributeValue') === attrs.attributeValue)) {
+                      return true;
+                    }
+                  } else {
                     return true;
                   }
                 }
@@ -1595,8 +1595,8 @@
               }
               var splitline = !(options && options.line) && !OB.UTIL.isNullOrUndefined(args.line) && !OB.UTIL.isNullOrUndefined(args.line.get('splitline')) && args.line.get('splitline');
               var serviceProduct = args.line && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')));
-              var hasAttributeValues = (productHasAttribute && productHavingSameAttribute) || (!productHasAttribute && !productHavingSameAttribute);
-              if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (serviceProduct) && hasAttributeValues) {
+              var groupedByAttributeValues = (productHasAttribute && productHavingSameAttribute) || (!productHasAttribute && !productHavingSameAttribute);
+              if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (serviceProduct) && groupedByAttributeValues) {
                 args.receipt.addUnit(args.line, args.qty);
                 if (!_.isUndefined(args.attrs)) {
                   _.each(_.keys(args.attrs), function (key) {
@@ -1945,7 +1945,7 @@
           }
           return;
         }
-        if ((!args || !args.options || !args.options.line) && OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && p.get('hasAttributes') && (qty === 1 || qty > 1)) {
+        if ((!args || !args.options || !args.options.line) && OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true) && p.get('hasAttributes')) {
           OB.MobileApp.view.waterfall('onShowPopup', {
             popup: 'modalProductAttribute',
             args: {
