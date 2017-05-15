@@ -28,7 +28,7 @@ enyo.kind({
   },
   events: {
     onLineChecked: '',
-    onShowPopup: '',
+    onShowPopup: ''
   },
   components: [{
     name: 'checkBoxColumn',
@@ -86,7 +86,7 @@ enyo.kind({
   }],
   initComponents: function () {
     var me = this;
-        
+
     this.inherited(arguments);
     if (this.model.get('product').get('productType') === 'S') {
       this.$.serviceIcon.show();
@@ -104,7 +104,7 @@ enyo.kind({
     } else {
       this.$.gross.setContent(this.model.printNet());
     }
-    if (OB.MobileApp.model.hasPermission('OBPOS_EnableAttrSetSearch', true) && this.model.get('product').get('hasAttributes')) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true) && this.model.get('product').get('hasAttributes')) {
       this.createComponent({
         style: 'display: block;',
         components: [{
@@ -115,7 +115,7 @@ enyo.kind({
         }, {
           style: 'clear: both;'
         }]
-       });
+      });
     }
     if (this.model.get('product').get('characteristicDescription')) {
       this.createComponent({
