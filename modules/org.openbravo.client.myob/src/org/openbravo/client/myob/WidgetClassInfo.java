@@ -60,6 +60,8 @@ class WidgetClassInfo {
       widgetClassDefinition = "";
       try {
         widgetClassDefinition = widgetProvider.generate();
+        // remove ending semicolon to avoid errors when evaluating the widget class definition on
+        // the client side
         widgetClassDefinition = widgetClassDefinition.substring(0,
             widgetClassDefinition.length() - 1);
       } catch (Exception e) {
