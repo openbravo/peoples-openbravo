@@ -28,24 +28,10 @@ if (window.isc) {
 var OB = {
     Application : {
         testEnvironment: ${data.testEnvironment?string},
-        language: '${data.languageId?js_string}',
-        language_string: '${data.language?js_string}',
-        systemVersion : '${data.systemVersion?js_string}', // global version used in all hyperlinks
         contextUrl: '${data.contextUrl}',
         communityBrandingStaticUrl: '${data.communityBrandingStaticUrl?js_string}',
         butlerUtilsUrl: '${data.butlerUtilsUrl?js_string}',
-        communityBrandingUrl: '${data.communityBrandingUrl?js_string}',
-        purpose: '${data.instancePurpose?js_string}',
-        licenseType: '${data.licenseType?js_string}',
-        isTrial: ${data.trialStringValue},
-        isGolden: ${data.goldenStringValue},
-        isActiveInstance: ${data.activeInstanceStringValue},
-        versionDescription: '${data.versionDescription?js_string}',
-        companyImage: {
-        <#list data.companyImageLogoData?keys as key>
-          '${key}': '${data.companyImageLogoData[key]}'<#if key_has_next>,</#if>
-        </#list>
-        }
+        communityBrandingUrl: '${data.communityBrandingUrl?js_string}'
     },
 
     Format : {

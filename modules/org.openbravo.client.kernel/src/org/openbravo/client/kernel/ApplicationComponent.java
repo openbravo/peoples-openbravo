@@ -25,22 +25,16 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.client.kernel.reference.UIDefinitionController.FormatDefinition;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.obps.ActivationKey;
-import org.openbravo.erpCommon.utility.OBVersion;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
-import org.openbravo.model.ad.system.SystemInformation;
-import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * The component responsible for generating the static part of the application js file.
@@ -53,23 +47,12 @@ public class ApplicationComponent extends BaseTemplateComponent {
 
   private FormatDefinition formatDefinition = null;
 
-  private ActivationKey activationKey;
-
-  private Map<String, String> imageProperties;
-
   private FormatDefinition getFormatDefinition() {
     if (formatDefinition == null) {
       formatDefinition = UIDefinitionController.getInstance().getFormatDefinition("qty",
           UIDefinitionController.INPUTFORMAT_QUALIFIER);
     }
     return formatDefinition;
-  }
-
-  private ActivationKey getActivationKey() {
-    if (activationKey == null) {
-      activationKey = ActivationKey.getInstance();
-    }
-    return activationKey;
   }
 
   public String getDefaultGroupingSymbol() {
@@ -105,18 +88,6 @@ public class ApplicationComponent extends BaseTemplateComponent {
   @Override
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, KernelConstants.APPLICATION_TEMPLATE_ID);
-  }
-
-  public String getSystemVersion() {
-    return KernelUtils.getInstance().getVersionParameters(getModule());
-  }
-
-  public String getLanguageId() {
-    return OBContext.getOBContext().getLanguage().getId();
-  }
-
-  public String getLanguage() {
-    return OBContext.getOBContext().getLanguage().getLanguage();
   }
 
   public String getDateFormat() {
@@ -174,73 +145,6 @@ public class ApplicationComponent extends BaseTemplateComponent {
 
   public String getButlerUtilsUrl() {
     return Utility.BUTLER_UTILS_URL;
-  }
-
-  public String getInstancePurpose() {
-    final String purpose = OBDal.getInstance().get(SystemInformation.class, "0")
-        .getInstancePurpose();
-    if (purpose == null) {
-      return "";
-    }
-    return purpose;
-  }
-
-  public String getLicenseType() {
-    return getActivationKey().getLicenseClass().getCode();
-  }
-
-  public String getTrialStringValue() {
-    return Boolean.toString(getActivationKey().isTrial());
-  }
-
-  public String getGoldenStringValue() {
-    return Boolean.toString(getActivationKey().isGolden());
-  }
-
-  public String getActiveInstanceStringValue() {
-    if (SessionFactoryController.isRunningInWebContainer()) {
-      return Boolean.toString(ActivationKey.isActiveInstance());
-    }
-    return Boolean.FALSE.toString();
-  }
-
-  public String getVersionDescription() {
-    ActivationKey ak = getActivationKey();
-    String strVersion = OBVersion.getInstance().getMajorVersion();
-    strVersion += " - ";
-    strVersion += Utility.getListValueName("OBPSLicenseEdition", ak.getLicenseClass().getCode(),
-        "en_US");
-
-    if (ak.isTrial()) {
-      strVersion += " - ";
-      strVersion += Utility.messageBD(new DalConnectionProvider(false), "OPSTrial", OBContext
-          .getOBContext().getLanguage().getLanguage());
-    }
-
-    strVersion += " - ";
-    strVersion += OBVersion.getInstance().getMP();
-    return strVersion;
-  }
-
-  public Map<String, String> getCompanyImageLogoData() {
-    if (imageProperties != null) {
-      return imageProperties;
-    }
-    imageProperties = new HashMap<>();
-    Image img = Utility.getImageLogoObject("yourcompanymenu", "");
-    String imageWidth = "122";
-    String imageHeight = "34";
-    if (img != null) {
-      if (img.getWidth() != null) {
-        imageWidth = String.valueOf(img.getWidth().intValue());
-      }
-      if (img.getHeight() != null) {
-        imageHeight = String.valueOf(img.getHeight().intValue());
-      }
-    }
-    imageProperties.put("width", imageWidth);
-    imageProperties.put("height", imageHeight);
-    return imageProperties;
   }
 
   public static class ModuleVersionParameter {

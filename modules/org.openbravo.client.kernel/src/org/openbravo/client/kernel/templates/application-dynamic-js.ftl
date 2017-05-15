@@ -55,3 +55,18 @@ OB.AccessibleEntities = {
     '${entity.name?js_string}':  true<#if entity_has_next>,</#if>
     </#list>
 };
+
+OB.Application.language = '${data.languageId?js_string}';
+OB.Application.language_string = '${data.language?js_string}';
+OB.Application.systemVersion = '${data.systemVersion?js_string}'; // global version used in all hyperlinks
+OB.Application.purpose = '${data.instancePurpose?js_string}';
+OB.Application.licenseType = '${data.licenseType?js_string}';
+OB.Application.isTrial = ${data.trialStringValue};
+OB.Application.isGolden = ${data.goldenStringValue};
+OB.Application.isActiveInstance = ${data.activeInstanceStringValue};
+OB.Application.versionDescription = '${data.versionDescription?js_string}';
+OB.Application.companyImage = {
+  <#list data.companyImageLogoData?keys as key>
+    '${key}': '${data.companyImageLogoData[key]}'<#if key_has_next>,</#if>
+  </#list>
+};
