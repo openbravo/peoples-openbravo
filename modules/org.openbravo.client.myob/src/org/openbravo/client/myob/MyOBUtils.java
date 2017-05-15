@@ -228,14 +228,14 @@ public class MyOBUtils {
     }
   }
 
-  protected WidgetClassInfo getWidgetClassInfo(WidgetClass widgetClass) {
+  WidgetClassInfo getWidgetClassInfo(WidgetClass widgetClass) {
     if (!widgetClasses.containsKey(widgetClass.getId())) {
       widgetClasses.putIfAbsent(widgetClass.getId(), getWidgetClassInfoFromDatabase(widgetClass));
     }
     return widgetClasses.get(widgetClass.getId());
   }
 
-  protected WidgetClassInfo getWidgetClassInfoFromDatabase(WidgetClass widgetClass) {
+  WidgetClassInfo getWidgetClassInfoFromDatabase(WidgetClass widgetClass) {
     final WidgetProvider widgetProvider = getWidgetProvider(widgetClass);
     if (!widgetProvider.validate()) {
       return null;
@@ -244,7 +244,7 @@ public class MyOBUtils {
   }
 
   @SuppressWarnings("unchecked")
-  protected List<String> getAnonymousAccessibleWidgetClasses(boolean fromCache) {
+  List<String> getAnonymousAccessibleWidgetClasses(boolean fromCache) {
     if (fromCache && anonymousWidgetClasses != null) {
       return anonymousWidgetClasses;
     }
