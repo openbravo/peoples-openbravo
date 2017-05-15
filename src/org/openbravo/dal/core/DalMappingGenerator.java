@@ -225,20 +225,19 @@ public class DalMappingGenerator implements OBSingleton {
         + "<tuplizer entity-mode=\"pojo\" class=\"org.openbravo.dal.core.OBTuplizer\"/>" + NL + NL);
     content.append(generateStandardID(entity) + NL);
 
-    if (!"ADClient".equals(entity.getName())) {
+    if (entity.isClientEnabled()) {
       content
           .append(TAB2
               + "<many-to-one name=\"client\" column=\"AD_Client_ID\" not-null=\"true\" update=\"false\" insert=\"false\" entity-name=\"ADClient\" access=\"org.openbravo.dal.core.OBDynamicPropertyHandler\"/>"
               + NL);
     }
-    if (!"Organization".equals(entity.getName())) {
+    if (entity.isOrganizationEnabled()) {
       content
           .append(TAB2
               + "<many-to-one name=\"organization\" column=\"AD_Org_ID\" not-null=\"true\" update=\"false\" insert=\"false\" entity-name=\"Organization\" access=\"org.openbravo.dal.core.OBDynamicPropertyHandler\"/>"
-              + NL + NL);
-    } else {
-      content.append(NL);
+              + NL);
     }
+    content.append(NL);
     for (Property p : computedColumns) {
       if (p.isPrimitive()) {
         content.append(generatePrimitiveMapping(p));
