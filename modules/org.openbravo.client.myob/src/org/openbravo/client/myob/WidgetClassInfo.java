@@ -65,7 +65,8 @@ class WidgetClassInfo {
         widgetClassDefinition = widgetClassDefinition.substring(0,
             widgetClassDefinition.length() - 1);
       } catch (Exception e) {
-        // Do nothing as the definition is already in a loaded js file
+        // The widget provider does not support the generate operation. This means that the widget
+        // class definition will be completely created as part of the static Javascript content
       }
     }
     return widgetClassDefinition;
