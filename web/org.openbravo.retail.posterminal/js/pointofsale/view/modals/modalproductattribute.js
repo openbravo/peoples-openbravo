@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2017 Openbravo S.L.U.
+ * Copyright (C) 2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -34,7 +34,6 @@ enyo.kind({
     components: [{
       kind: 'OB.UI.ModalDialogButton',
       i18nContent: 'OBMOBC_LblOk',
-      isDefaultAction: true,
       tap: function () {
         this.owner.owner.saveAction();
       }
@@ -52,7 +51,9 @@ enyo.kind({
       }
     }]
   },
-  //To be implemented
+  /**
+   * This method should be overriden to implement validation of attributes for specific cases
+   */
   validAttribute: function (attribute) {
     return true;
   },
@@ -88,6 +89,9 @@ enyo.kind({
       this.args.callback(null);
     }
     this.$.bodyContent.$.valueAttribute.setValue(null);
+  },
+  executeOnShow: function () {
+    this.$.headerCloseButton.hide();
   }
 });
 OB.UI.WindowView.registerPopup('OB.OBPOSPointOfSale.UI.PointOfSale', {
