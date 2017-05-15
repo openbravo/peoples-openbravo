@@ -21,7 +21,7 @@ package org.openbravo.client.myob;
 /**
  * This class is used to keep information about the definition of a WidgetClass.
  */
-public class WidgetClassInfo {
+class WidgetClassInfo {
   private WidgetProvider widgetProvider;
   private String widgetClassProperties;
   private String widgetClassDefinition;
