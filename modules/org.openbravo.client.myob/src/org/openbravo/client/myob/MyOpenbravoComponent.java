@@ -80,19 +80,39 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     return COMPONENT_ID;
   }
 
+  List<String> getAvailableWorkspaceWidgetClasses(String roleId) throws Exception {
+    List<String> filters = new ArrayList<String>();
+    filters.add("widgetClassAccess.widgetClass.availableInWorkspace IS true");
+    filters.add("widgetClassAccess.widgetClass.superclass IS false");
+    return getAccessibleWidgetClasses(roleId, filters);
+  }
+
+  List<String> getAvailableWidgetClasses(String roleId) throws Exception {
+    List<String> filters = new ArrayList<String>();
+    filters.add("widgetClassAccess.widgetClass.superclass IS false");
+    return getAccessibleWidgetClasses(roleId, filters);
+  }
+
   /**
    * @param roleId
    *          The id of the role whose available widget classes will be retrieved.
-   * @param shouldBeDisplayed
-   *          A flag to indicate if just those widgets marked as "Available in Workspace" should be
-   *          retrieved.
+   * @param additionalFilters
+   *          A list of filters to be applied on the base query to retrieve the accessible widget
+   *          classes of a role.
    * @return the list of available widget classes for the role whose id is passed as parameter.
    */
-  List<String> getAvailableWidgetClasses(String roleId, boolean shouldBeDisplayed) throws Exception {
+  private List<String> getAccessibleWidgetClasses(String roleId, List<String> additionalFilters)
+      throws Exception {
     OBContext.setAdminMode();
     try {
       List<String> widgetClassDefinitions = new ArrayList<String>();
-      for (String widgetClassId : getAvailableWidgetClasses(roleId, true, shouldBeDisplayed)) {
+      StringBuilder whereClause = new StringBuilder();
+      if (additionalFilters != null) {
+        for (String filter : additionalFilters) {
+          whereClause.append("AND " + filter + " ");
+        }
+      }
+      for (String widgetClassId : getAccessibleWidgetClassIds(roleId, whereClause.toString())) {
         WidgetClass widgetClass = OBDal.getInstance().getProxy(WidgetClass.class, widgetClassId);
         WidgetClassInfo widgetClassInfo;
         if (isInDevelopment()) {
@@ -117,17 +137,13 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
   }
 
   @SuppressWarnings("unchecked")
-  private List<String> getAvailableWidgetClasses(String roleId, boolean skipSuperClasses,
-      boolean availableInWorkspace) {
+  private List<String> getAccessibleWidgetClassIds(String roleId, String additionalWhereClause) {
     final StringBuilder hql = new StringBuilder();
     hql.append("SELECT widgetClassAccess.widgetClass.id ");
     hql.append("FROM OBKMO_WidgetClassAccess widgetClassAccess ");
     hql.append("WHERE widgetClassAccess.role.id=:roleId ");
-    if (skipSuperClasses) {
-      hql.append("AND widgetClassAccess.widgetClass.superclass IS false ");
-    }
-    if (availableInWorkspace) {
-      hql.append("AND widgetClassAccess.widgetClass.availableInWorkspace IS true");
+    if (!StringUtils.isEmpty(additionalWhereClause)) {
+      hql.append(additionalWhereClause);
     }
     Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
     if (StringUtils.isEmpty(roleId)) {
@@ -259,7 +275,7 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     obc.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATUSER,
         OBDal.getInstance().get(User.class, OBContext.getOBContext().getUser().getId())));
     obc.add(Restrictions.in(WidgetInstance.PROPERTY_WIDGETCLASS + "." + WidgetClass.PROPERTY_ID,
-        getAvailableWidgetClasses(OBContext.getOBContext().getRole().getId(), false, false)));
+        getAccessibleWidgetClassIds(OBContext.getOBContext().getRole().getId(), null)));
     return obc.list();
   }
 
