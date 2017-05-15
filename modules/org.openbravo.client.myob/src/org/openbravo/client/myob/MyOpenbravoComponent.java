@@ -20,7 +20,6 @@ package org.openbravo.client.myob;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -284,7 +283,7 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     final User user = OBContext.getOBContext().getUser();
     final Role role = OBContext.getOBContext().getRole();
     final Client client = OBContext.getOBContext().getCurrentClient();
-    final Set<WidgetInstance> defaultWidgets = getRoleDefaultWidgets(OBContext.getOBContext()
+    final List<WidgetInstance> defaultWidgets = getRoleDefaultWidgets(OBContext.getOBContext()
         .getRole(), client.getId(), OBContext.getOBContext().getWritableOrganizations());
 
     log.debug("Copying new widget instances on user: " + user.getId() + " role: " + role.getId());
@@ -326,8 +325,8 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     return query.list();
   }
 
-  private Set<WidgetInstance> getRoleDefaultWidgets(Role role, String clientId, Set<String> orgs) {
-    final Set<WidgetInstance> defaultWidgets = new HashSet<WidgetInstance>();
+  private List<WidgetInstance> getRoleDefaultWidgets(Role role, String clientId, Set<String> orgs) {
+    final List<WidgetInstance> defaultWidgets = new ArrayList<WidgetInstance>();
 
     if (!role.isForPortalUsers()) {
       // do not include global widgets in portal roles
