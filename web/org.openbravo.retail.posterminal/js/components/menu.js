@@ -93,6 +93,7 @@ enyo.kind({
     }
     this.inherited(arguments); // Manual dropdown menu closure
     this.model.get('order').checkNotProcessedPayments(function () {
+      me.model.get('order').set('voidLayaway', true);
       me.doShowDivText({
         permission: me.permission,
         orderType: 3
@@ -1075,13 +1076,18 @@ enyo.kind({
     if (OB.UTIL.RfidController.isRfidConfigured()) {
       var protocol = OB.POS.hwserver.url.split('/')[0];
       if (window.location.protocol === protocol) {
-        if (OB.UTIL.RfidController.get('connectionLost')) {
+        if (OB.UTIL.RfidController.get('connectionLost') || !OB.UTIL.RfidController.get('connected')) {
           this.addClass('btn-icon-switchoffline');
+          return;
+        } else {
+          this.removeClass('btn-icon-switchoffline');
         }
         if (!OB.UTIL.RfidController.get('isRFIDEnabled') || !OB.UTIL.RfidController.get('reconnectOnScanningFocus')) {
           this.addClass('btn-icon-switchoff');
+          this.removeClass('btn-icon-switchon');
         } else {
           this.addClass('btn-icon-switchon');
+          this.removeClass('btn-icon-switchoffline');
         }
       } else {
         this.hide();

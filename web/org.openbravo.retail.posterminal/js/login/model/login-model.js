@@ -425,12 +425,12 @@
         OB.UTIL.initCashUp(function () {
           OB.UTIL.calculateCurrentCash(function () {
             OB.UTIL.HookManager.executeHooks('OBPOS_LoadPOSWindow', {}, function () {
-              var defaultWindow = OB.MobileApp.model.get('defaultWindow');
-              if (defaultWindow) {
-                OB.POS.navigate(defaultWindow);
-                OB.MobileApp.model.unset('defaultWindow');
+              var nextWindow = OB.MobileApp.model.get('nextWindow');
+              if (nextWindow) {
+                OB.POS.navigate(nextWindow);
+                OB.MobileApp.model.unset('nextWindow');
               } else {
-                OB.POS.navigate('retail.pointofsale');
+                OB.POS.navigate(OB.MobileApp.model.get('defaultWindow'));
               }
             });
           }, null);
@@ -480,8 +480,6 @@
         if (me.get('loggedOffline') === true) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineLogin'));
         }
-
-        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.WelcomeTemplate), {}, null, OB.DS.HWServer.DISPLAY);
       });
 
       OB.Model.Terminal.prototype.initialize.call(me);
@@ -876,10 +874,10 @@
 
     postCloseSession: function (session) {
       if (OB.POS.hwserver !== undefined) {
-        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {}, null, OB.DS.HWServer.DISPLAY);
+        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {}, function () {
+          OB.MobileApp.model.triggerLogout();
+        }, OB.DS.HWServer.DISPLAY);
       }
-      OB.MobileApp.model.triggerLogout();
-
     },
 
     // these variables will keep the minimum value that the document order could have

@@ -149,6 +149,47 @@ public class ProductProperties extends ModelExtension {
             } else {
               trlName = "product.name";
             }
+            add(new HQLProperty("product.id", "id"));
+            add(new HQLProperty("product.searchKey", "searchkey"));
+            add(new HQLProperty(trlName, "_identifier"));
+            add(new HQLProperty(strTaxCategoryQry, "taxCategory"));
+            add(new HQLProperty("product.productCategory.id", "productCategory"));
+            add(new HQLProperty("product.obposScale", "obposScale"));
+            add(new HQLProperty("product.uOM.id", "uOM"));
+            add(new HQLProperty("product.uOM.symbol", "uOMsymbol"));
+            add(new HQLProperty("coalesce(product.uOM.standardPrecision)", "uOMstandardPrecision"));
+            if (isRemote) {
+              add(new HQLProperty("product.uPCEAN", "uPCEAN"));
+            } else {
+              add(new HQLProperty("upper(product.uPCEAN)", "uPCEAN"));
+            }
+            add(new HQLProperty("product.description", "description"));
+            add(new HQLProperty("product.obposGroupedproduct", "groupProduct"));
+            add(new HQLProperty("product.stocked", "stocked"));
+            add(new HQLProperty("product.obposShowstock", "showstock"));
+            add(new HQLProperty("product.isGeneric", "isGeneric"));
+            add(new HQLProperty("product.genericProduct.id", "generic_product_id"));
+            add(new HQLProperty("product.brand.id", "brand"));
+            add(new HQLProperty("product.characteristicDescription", "characteristicDescription"));
+            add(new HQLProperty("product.obposShowChDesc", "showchdesc"));
+            add(new HQLProperty("product.productType", "productType"));
+            add(new HQLProperty("product.includedProductCategories", "includeProductCategories"));
+            add(new HQLProperty("product.includedProducts", "includeProducts"));
+            add(new HQLProperty("product.printDescription", "printDescription"));
+            add(new HQLProperty("product.oBPOSAllowAnonymousSale", "oBPOSAllowAnonymousSale"));
+            add(new HQLProperty("product.returnable", "returnable"));
+            add(new HQLProperty("product.overdueReturnDays", "overdueReturnDays"));
+            add(new HQLProperty("product.ispricerulebased", "isPriceRuleBased"));
+            add(new HQLProperty("product.obposProposalType", "proposalType"));
+            add(new HQLProperty("product.obposIsmultiselectable", "availableForMultiline"));
+            add(new HQLProperty("product.linkedToProduct", "isLinkedToProduct"));
+            add(new HQLProperty("product.allowDeferredSell", "allowDeferredSell"));
+            add(new HQLProperty("product.deferredSellMaxDays", "deferredSellMaxDays"));
+            add(new HQLProperty("product.quantityRule", "quantityRule"));
+            add(new HQLProperty("product.obposPrintservices", "isPrintServices"));
+            if (multiPriceList) {
+              add(new HQLProperty("pp.standardPrice", "currentStandardPrice"));
+            }
           } catch (PropertyNotFoundException e) {
             if (OBContext.hasTranslationInstalled()) {
               trlName = "coalesce((select pt.name from ProductTrl AS pt where pt.language='"
@@ -157,44 +198,6 @@ public class ProductProperties extends ModelExtension {
             } else {
               trlName = "product.name";
             }
-          }
-
-          add(new HQLProperty("product.id", "id"));
-          add(new HQLProperty("product.searchKey", "searchkey"));
-          add(new HQLProperty(trlName, "_identifier"));
-          add(new HQLProperty(strTaxCategoryQry, "taxCategory"));
-          add(new HQLProperty("product.productCategory.id", "productCategory"));
-          add(new HQLProperty("product.obposScale", "obposScale"));
-          add(new HQLProperty("product.uOM.id", "uOM"));
-          add(new HQLProperty("product.uOM.symbol", "uOMsymbol"));
-          add(new HQLProperty("coalesce(product.uOM.standardPrecision)", "uOMstandardPrecision"));
-          add(new HQLProperty("upper(product.uPCEAN)", "uPCEAN"));
-          add(new HQLProperty("product.description", "description"));
-          add(new HQLProperty("product.obposGroupedproduct", "groupProduct"));
-          add(new HQLProperty("product.stocked", "stocked"));
-          add(new HQLProperty("product.obposShowstock", "showstock"));
-          add(new HQLProperty("product.isGeneric", "isGeneric"));
-          add(new HQLProperty("product.genericProduct.id", "generic_product_id"));
-          add(new HQLProperty("product.brand.id", "brand"));
-          add(new HQLProperty("product.characteristicDescription", "characteristicDescription"));
-          add(new HQLProperty("product.obposShowChDesc", "showchdesc"));
-          add(new HQLProperty("product.productType", "productType"));
-          add(new HQLProperty("product.includedProductCategories", "includeProductCategories"));
-          add(new HQLProperty("product.includedProducts", "includeProducts"));
-          add(new HQLProperty("product.printDescription", "printDescription"));
-          add(new HQLProperty("product.oBPOSAllowAnonymousSale", "oBPOSAllowAnonymousSale"));
-          add(new HQLProperty("product.returnable", "returnable"));
-          add(new HQLProperty("product.overdueReturnDays", "overdueReturnDays"));
-          add(new HQLProperty("product.ispricerulebased", "isPriceRuleBased"));
-          add(new HQLProperty("product.obposProposalType", "proposalType"));
-          add(new HQLProperty("product.obposIsmultiselectable", "availableForMultiline"));
-          add(new HQLProperty("product.linkedToProduct", "isLinkedToProduct"));
-          add(new HQLProperty("product.allowDeferredSell", "allowDeferredSell"));
-          add(new HQLProperty("product.deferredSellMaxDays", "deferredSellMaxDays"));
-          add(new HQLProperty("product.quantityRule", "quantityRule"));
-          add(new HQLProperty("product.obposPrintservices", "isPrintServices"));
-          if (multiPriceList) {
-            add(new HQLProperty("pp.standardPrice", "currentStandardPrice"));
           }
         }
       };

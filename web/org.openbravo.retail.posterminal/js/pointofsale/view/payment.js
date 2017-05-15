@@ -292,6 +292,12 @@ enyo.kind({
     this.receipt.on('extrainfo', function (info) {
       this.updateExtraInfo(info);
     }, this);
+    this.receipt.on('checkValidPayments', function (order, callback) {
+      var result = this.checkValidPayments(order.getPaymentStatus(), OB.MobileApp.model.paymentnames[order.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')]);
+      if (callback) {
+        callback(result);
+      }
+    }, this);
   },
 
   updateExtraInfo: function (info) {
@@ -411,7 +417,7 @@ enyo.kind({
       } else {
         this.$.donezerolbl.hide();
         //        if (this.receipt.get('orderType') === 1 || this.receipt.get('orderType') === 3) {
-        if (paymentstatus.isNegative || this.receipt.get('orderType') === 3) {
+        if (paymentstatus.isNegative) {
           this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_ReturnExact'));
         } else {
           this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsExact'));
@@ -669,7 +675,7 @@ enyo.kind({
         if (paymentstatus.change && selectedPayment.paymentMethod.isshared) {
           resultOK = true;
         } else {
-          resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Done', function (success) {
+          this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Done', function (success) {
             var lsuccess = success;
             if (lsuccess) {
               lsuccess = this.checkValidPaymentMethod(paymentstatus, selectedPayment);
@@ -686,6 +692,7 @@ enyo.kind({
             this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Credit', function (success) {
               this.setStatusButtons(success, 'Credit');
             });
+            resultOK = lsuccess;
           });
         }
       } else if (!this.receipt.stopAddingPayments) {
@@ -705,6 +712,7 @@ enyo.kind({
       this.$.noenoughchangelbl.hide();
     }
     this.alignErrorMessages();
+    return resultOK;
   },
   alignErrorMessages: function () {
     if (OB.MobileApp.view.currentWindow === 'retail.pointofsale' && typeof (this.$.errorLabelArea) !== 'undefined') {
@@ -935,7 +943,7 @@ enyo.kind({
       }
     }, this);
 
-    this.model.get('multiOrders').on('change:payment change:total change:change', function () {
+    this.model.get('multiOrders').on('change:payment change:total change:change paymentCancel', function () {
       this.updatePendingMultiOrders();
     }, this);
     this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {

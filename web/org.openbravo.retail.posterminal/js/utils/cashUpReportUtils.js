@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global OB, _, Backbone */
+/*global OB, _, Backbone, Promise */
 
 (function () {
 
@@ -230,24 +230,35 @@
     });
   };
   OB.UTIL.createNewCashupFromServer = function (cashup, callback) {
+    var promises = [];
     OB.Dal.save(cashup, function () {
       OB.MobileApp.model.get('terminal').cashUpId = cashup.get('id');
       // Create taxes
       _.each(cashup.get('cashTaxInfo'), function (taxCashup) {
         var taxModel = new OB.Model.TaxCashUp();
         taxModel.set(taxCashup);
-        OB.Dal.save(taxModel, null, function () {
-          OB.error(OB.I18N.getLabel('OBPOS_DalSaveError'));
-        }, true);
+        promises.push(new Promise(function (resolve, reject) {
+          OB.Dal.save(taxModel, function () {
+            resolve();
+          }, function () {
+            OB.error(OB.I18N.getLabel('OBPOS_DalSaveError'));
+            reject();
+          }, true);
+        }));
       });
 
       // Create Cash Management
       _.each(cashup.get('cashMgmInfo'), function (cashMgm) {
         var cashMgmModel = new OB.Model.CashManagement();
         cashMgmModel.set(cashMgm);
-        OB.Dal.save(cashMgmModel, null, function () {
-          OB.error(OB.I18N.getLabel('OBPOS_DalSaveError'));
-        }, true);
+        promises.push(new Promise(function (resolve, reject) {
+          OB.Dal.save(cashMgmModel, function () {
+            resolve();
+          }, function () {
+            OB.error(OB.I18N.getLabel('OBPOS_DalSaveError'));
+            reject();
+          }, true);
+        }));
       });
 
       //current cashup
@@ -264,20 +275,23 @@
             return;
           }
           if (pAux.payment.active === true || (pAux.payment.active === false && paymentMethodCashUpModel.get('totalSales') !== 0 && paymentMethodCashUpModel.get('totalReturns') !== 0 && paymentMethodCashUpModel.get('totalDepostis') !== 0 && paymentMethodCashUpModel.get('totalDrops') !== 0)) {
-            OB.Dal.save(paymentMethodCashUpModel, null, function () {
-              OB.error(OB.I18N.getLabel('OBPOS_DalSaveError'));
-            }, true);
+            promises.push(new Promise(function (resolve, reject) {
+              OB.Dal.save(paymentMethodCashUpModel, function () {
+                resolve();
+              }, function () {
+                OB.error(OB.I18N.getLabel('OBPOS_DalSaveError'));
+                reject();
+              }, true);
+            }));
           }
           //end if
           //OB.UTIL.deleteUnactivePaymentMethod(paymentMethodCashUpModel);
         });
       } else {
-        OB.UTIL.initializePaymentMethodCashup(null, cashup);
+        OB.UTIL.initializePaymentMethodCashup(null, cashup, null, promises);
       }
 
-      if (callback) {
-        callback();
-      }
+      Promise.all(promises).then(callback);
     }, function () {
       OB.MobileApp.model.get('terminal').cashUpId = cashup.get('id');
     }, true);
@@ -313,16 +327,20 @@
       OB.Dal.find(OB.Model.CashUp, criteria, function (lastCashUp) {
         var lastCashUpPayments;
         if (lastCashUp.length !== 0) {
+          var promises = [];
           lastCashUpPayments = JSON.parse(lastCashUp.at(0).get('objToSend')).cashCloseInfo;
-          OB.UTIL.initializePaymentMethodCashup(lastCashUpPayments);
-          if (callback) {
-            callback();
-          }
+          OB.UTIL.initializePaymentMethodCashup(lastCashUpPayments, null, false, promises);
+          Promise.all(promises).then(callback);
         } else {
+          var service = 'org.openbravo.retail.posterminal.master.Cashup';
+          if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+            service = 'org.openbravo.retail.posterminal.master.CashupSynchronized';
+          }
           //2. Search in server
-          new OB.DS.Process('org.openbravo.retail.posterminal.master.Cashup').exec({
+          new OB.DS.Process(service).exec({
             isprocessed: 'Y'
           }, function (data) {
+            var promises = [];
             if (data[0]) {
               lastCashUp = new OB.Model.CashUp();
               lastCashUp.set(data[0]);
@@ -332,11 +350,8 @@
               // Set all  to 0
               lastCashUpPayments = null;
             }
-            OB.UTIL.initializePaymentMethodCashup(lastCashUpPayments, null, true);
-
-            if (callback) {
-              callback();
-            }
+            OB.UTIL.initializePaymentMethodCashup(lastCashUpPayments, null, true, promises);
+            Promise.all(promises).then(callback);
           }, function () {
             // error
             //console.error("OB.Model.CashUp fail");
@@ -352,7 +367,12 @@
     }, true);
 
   };
-  OB.UTIL.initializePaymentMethodCashup = function (lastCashUpPayments, cashup, funcType) {
+
+  // add to array of promise objects
+  OB.UTIL.initializePaymentMethodCashup = function (lastCashUpPayments, cashup, funcType, promises) {
+    var promisesArePassedIn = promises;
+    promises = promises || [];
+
     _.each(OB.MobileApp.model.get('payments'), function (payment) {
       var startingCash = payment.currentBalance,
           pAux, cashupId, deposits = payment.payment.totalDeposits,
@@ -367,7 +387,13 @@
           return payMthd.paymentTypeId === payment.payment.id;
         })[0];
         if (!OB.UTIL.isNullOrUndefined(pAux)) {
-          startingCash = pAux.paymentMethod.amountToKeep;
+          // if the last cashup payments are read locally then their structure
+          // is different from when reading from the server
+          if (_.isObject(pAux.paymentMethod)) {
+            startingCash = pAux.paymentMethod.amountToKeep;
+          } else {
+            startingCash = pAux.amountToKeep;
+          }
         }
       }
 
@@ -383,22 +409,34 @@
         if (OB.POS.modelterminal.get('terminal').isslave && payment.paymentMethod.isshared) {
           startingCash = OB.DEC.Zero;
         }
-        OB.Dal.save(new OB.Model.PaymentMethodCashUp({
-          id: OB.UTIL.get_UUID(),
-          paymentmethod_id: payment.payment.id,
-          searchKey: payment.payment.searchKey,
-          name: payment.payment._identifier,
-          startingCash: startingCash,
-          totalSales: OB.DEC.Zero,
-          totalReturns: OB.DEC.Zero,
-          totalDeposits: deposits,
-          totalDrops: drops,
-          rate: payment.rate,
-          isocode: payment.isocode,
-          cashup_id: cashupId
-        }), null, null, true);
+        promises.push(new Promise(function (resolve, reject) {
+          OB.Dal.save(new OB.Model.PaymentMethodCashUp({
+            id: OB.UTIL.get_UUID(),
+            paymentmethod_id: payment.payment.id,
+            searchKey: payment.payment.searchKey,
+            name: payment.payment._identifier,
+            startingCash: startingCash,
+            totalSales: OB.DEC.Zero,
+            totalReturns: OB.DEC.Zero,
+            totalDeposits: deposits,
+            totalDrops: drops,
+            rate: payment.rate,
+            isocode: payment.isocode,
+            cashup_id: cashupId,
+            lineNo: payment.lineNo
+          }), function () {
+            resolve();
+          }, function () {
+            reject();
+          }, true);
+        }));
       }
     }, this);
+
+    // promises parameter not passed, execute right away to preserve api
+    if (!promisesArePassedIn && promises.length > 0) {
+      Promise.all(promises);
+    }
   };
 
   // 1. call server for cashup info
@@ -455,8 +493,12 @@
     OB.Dal.find(OB.Model.CashUp, criteria, function (cashUp) { //OB.Dal.find success
       if (cashUp.length === 0) {
         if (!skipSearchBackend) {
+          var service = 'org.openbravo.retail.posterminal.master.Cashup';
+          if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+            service = 'org.openbravo.retail.posterminal.master.CashupSynchronized';
+          }
           // Search in the backoffice
-          new OB.DS.Process('org.openbravo.retail.posterminal.master.Cashup').exec({
+          new OB.DS.Process(service).exec({
             isprocessed: 'N',
             isprocessedbo: 'N'
           }, function (data) {
@@ -507,7 +549,8 @@
                   totalDrops: OB.DEC.Zero,
                   rate: payment.rate,
                   isocode: payment.isocode,
-                  cashup_id: cashUp.at(0).get('id')
+                  cashup_id: cashUp.at(0).get('id'),
+                  lineNo: payment.lineNo
                 }), null, null, true);
               } else if (!OB.UTIL.isNullOrUndefined(pAux)) {
                 if (pAux.get("name") !== payment.payment._identifier) {

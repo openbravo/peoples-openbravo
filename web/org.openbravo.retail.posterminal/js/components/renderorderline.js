@@ -320,7 +320,11 @@ enyo.kind({
         me.bubble('onTabChange', {
           tabPanel: 'searchCharacteristic'
         });
-        me.bubble('onSelectFilter', {});
+        me.bubble('onSelectFilter', {
+          params: {
+            skipProductCharacteristic: true
+          }
+        });
         me.owner.model.set("obposServiceProposed", true);
         OB.MobileApp.model.receipt.save();
       }, 1);

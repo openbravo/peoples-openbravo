@@ -20,7 +20,7 @@
         where (select count(1) from m_inoutline il where il.c_orderline_id = ol.c_orderline_id) > 1
         and o.em_obpos_app_cashup_id = ?
         and exists (select 1 from c_invoice ci join c_invoiceline cl on ci.c_invoice_id = cl.c_invoice_id 
-        and cl.c_orderline_id = ol.c_orderline_id and ci.description like ('%' || ? || '%'))
+        where cl.c_orderline_id = ol.c_orderline_id and ci.description like ('%' || ? || '%'))
     ]]></Sql>
     <Parameter name="cashupId"/>
     <Parameter name="invDescription"/>

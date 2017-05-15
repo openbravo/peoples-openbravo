@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -299,11 +299,15 @@ enyo.kind({
   pointOfSaleLoad: function (inSender, inEvent) {
     if (OB.UTIL.RfidController.get('connectionLost')) {
       this.$.rfidIcon.addClass(this.rfidOfflineIcon);
+    } else {
+      this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
     }
     if (!OB.UTIL.RfidController.get('isRFIDEnabled') || !OB.UTIL.RfidController.get('reconnectOnScanningFocus')) {
       this.$.rfidIcon.addClass(this.rfidOffIcon);
+      this.$.rfidIcon.removeClass(this.rfidOnIcon);
     } else {
       this.$.rfidIcon.addClass(this.rfidOnIcon);
+      this.$.rfidIcon.removeClass(this.rfidOffIcon);
     }
   }
 });
@@ -403,6 +407,7 @@ enyo.kind({
         keyboard: false,
         edit: false
       });
+      OB.MobileApp.view.scanningFocus(true);
     }
   },
   initComponents: function () {

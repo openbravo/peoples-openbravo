@@ -25,6 +25,8 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.service.importprocess.ImportEntryManager;
@@ -94,10 +96,39 @@ public class UpdateCashup {
         cashUp.setBeingprocessed(jsonCashup.getString("isbeingprocessed").equalsIgnoreCase("Y"));
         cashUp.setNewOBObject(true);
         OBDal.getInstance().save(cashUp);
+
+        boolean isSynchronizeModeActive;
+        try {
+          isSynchronizeModeActive = "Y".equals(Preferences.getPreferenceValue(
+              "OBMOBC_SynchronizedMode", true, OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(),
+              OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+        } catch (PropertyNotFoundException prop) {
+          isSynchronizeModeActive = false;
+        }
+
+        // If synchronize mode is active, there is no way to process two cashups with the same id at
+        // the same time.
+        // If synchronize mode is not active, we have to persist the header of the cashup. Doing
+        // this, we avoid possible conflicts trying to save two cashups with the same id at the same
+        // time.
+        if (!isSynchronizeModeActive) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getConnection().commit();
+        }
+
       } catch (JSONException e) {
-        e.printStackTrace();
+        throw new OBException("Cashup JSON seems to be corrupted: ", e);
       } catch (Exception e) {
-        e.printStackTrace();
+        Query maybeCashupWasCreatedInParallel = OBDal.getInstance().getSession()
+            .createQuery("from OBPOS_App_Cashup where id=?");
+        maybeCashupWasCreatedInParallel.setString(0, cashUpId);
+        cashUp = (OBPOSAppCashup) maybeCashupWasCreatedInParallel.uniqueResult();
+        // If cashup exists, then other process (such as OpenTill) created it in parallel, and
+        // everything is fine. Otherwise, the process should fail.
+        if (cashUp == null) {
+          throw new OBException(e);
+        }
       }
     }
 
@@ -250,12 +281,11 @@ public class UpdateCashup {
       newPaymentMethodCashUp = OBProvider.getInstance().get(OBPOSPaymentMethodCashup.class);
       newPaymentMethodCashUp.setNewOBObject(true);
       newPaymentMethodCashUp.setId(jsonCashup.get("id"));
+      cashup.getOBPOSPaymentmethodcashupList().add(newPaymentMethodCashUp);
     }
     JSONPropertyToEntity.fillBobFromJSON(newPaymentMethodCashUp.getEntity(),
         newPaymentMethodCashUp, jsonCashup);
     newPaymentMethodCashUp.setCashUp(cashup);
-
-    cashup.getOBPOSPaymentmethodcashupList().add(newPaymentMethodCashUp);
 
     newPaymentMethodCashUp.setOrganization(cashup.getOrganization());
 

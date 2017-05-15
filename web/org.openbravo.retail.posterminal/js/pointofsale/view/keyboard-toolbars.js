@@ -77,6 +77,13 @@ enyo.kind({
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
       return;
     }
+
+    // Checks to be done BEFORE payment provider is invoked.
+    if (this.receipt.get('isPaid') && !this.receipt.get('doCancelAndReplace') && this.receipt.getPrePaymentQty() === OB.DEC.sub(this.receipt.getTotal(), this.receipt.getCredit()) && !this.receipt.isNewReversed()) {
+      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
+      return;
+    }
+
     if (options && options.percentaje) {
       var pending = this.model.getPending();
       if (mulrate && mulrate !== '1') {
@@ -86,7 +93,8 @@ enyo.kind({
     }
 
     if (OB.DEC.compare(amount) > 0) {
-      var provider, receiptToPay, me = this;
+      var provider, receiptToPay, me = this,
+          paymentLine, order;
       if (this.model.get('leftColumnViewManager').isOrder()) {
         receiptToPay = this.receipt;
       }
@@ -95,22 +103,48 @@ enyo.kind({
         receiptToPay = this.model.get('multiOrders');
       }
 
-      provider = receiptToPay.getTotal() > 0 ? paymentMethod.paymentProvider : paymentMethod.refundProvider;
+      if (!receiptToPay.getPaymentStatus().isNegative) {
+        provider = paymentMethod.paymentProvider;
+      } else {
+        provider = paymentMethod.refundProvider;
+      }
+
+      paymentLine = new OB.Model.PaymentLine({
+        'kind': key,
+        'name': name,
+        'amount': amount,
+        'rate': rate,
+        'mulrate': mulrate,
+        'isocode': isocode,
+        'allowOpenDrawer': paymentMethod.allowopendrawer,
+        'isCash': paymentMethod.iscash,
+        'openDrawer': paymentMethod.openDrawer,
+        'printtwice': paymentMethod.printtwice
+      });
 
       if (provider) {
-        this.doShowPopup({
-          popup: 'modalpayment',
-          args: {
-            'receipt': receiptToPay,
-            'provider': provider,
-            'key': key,
-            'name': name,
-            'paymentMethod': paymentMethod,
-            'amount': amount,
-            'rate': rate,
-            'mulrate': mulrate,
-            'isocode': isocode
-          }
+        order = new OB.Model.Order(receiptToPay.attributes);
+        order.addPayment(paymentLine, function () {
+          receiptToPay.trigger('checkValidPayments', order, function (result) {
+            if (result) {
+              me.doShowPopup({
+                popup: 'modalpayment',
+                args: {
+                  'receipt': receiptToPay,
+                  'provider': provider,
+                  'key': key,
+                  'name': name,
+                  'paymentMethod': paymentMethod,
+                  'amount': amount,
+                  'rate': rate,
+                  'mulrate': mulrate,
+                  'isocode': isocode
+                }
+              });
+            } else {
+              me.receipt.stopAddingPayments = false;
+            }
+          });
         });
       } else {
         // Calculate total amount to pay with selected PaymentMethod  
@@ -143,18 +177,7 @@ enyo.kind({
             currency: '',
             symbolAtRight: true
           });
-          this.model.addPayment(new OB.Model.PaymentLine({
-            'kind': key,
-            'name': name,
-            'amount': amount,
-            'rate': rate,
-            'mulrate': mulrate,
-            'isocode': isocode,
-            'allowOpenDrawer': paymentMethod.allowopendrawer,
-            'isCash': paymentMethod.iscash,
-            'openDrawer': paymentMethod.openDrawer,
-            'printtwice': paymentMethod.printtwice
-          }), callback);
+          this.model.addPayment(paymentLine, callback);
         }
       }
     }
