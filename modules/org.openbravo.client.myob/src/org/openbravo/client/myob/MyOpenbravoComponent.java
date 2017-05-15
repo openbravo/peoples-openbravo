@@ -268,12 +268,12 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     OBCriteria<WidgetInstance> obc = OBDal.getInstance().createCriteria(WidgetInstance.class);
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnActive(true);
-    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT,
-        OBDal.getInstance().get(Client.class, OBContext.getOBContext().getCurrentClient().getId())));
-    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATROLE,
-        OBDal.getInstance().get(Role.class, OBContext.getOBContext().getRole().getId())));
-    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATUSER,
-        OBDal.getInstance().get(User.class, OBContext.getOBContext().getUser().getId())));
+    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, OBContext.getOBContext()
+        .getCurrentClient()));
+    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATROLE, OBContext.getOBContext()
+        .getRole()));
+    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATUSER, OBContext.getOBContext()
+        .getUser()));
     obc.add(Restrictions.in(WidgetInstance.PROPERTY_WIDGETCLASS + "." + WidgetClass.PROPERTY_ID,
         getAccessibleWidgetClassIds(OBContext.getOBContext().getRole().getId(), null)));
     return obc.list();
