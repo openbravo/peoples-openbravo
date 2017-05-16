@@ -173,7 +173,7 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     OBContext.setAdminMode();
     try {
       final List<String> result = new ArrayList<String>();
-      for (WidgetInstance widget : getContextWidgetInstances()) {
+      for (WidgetInstance widget : retrieveContextWidgetInstances()) {
         final JSONObject jsonObject = myOBUtils.getWidgetProvider(widget.getWidgetClass())
             .getWidgetInstanceDefinition(widget);
         result.add(jsonObject.toString());
@@ -261,7 +261,7 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     return "{}";
   }
 
-  private List<WidgetInstance> getContextWidgetInstances() {
+  private List<WidgetInstance> retrieveContextWidgetInstances() {
     final User user = OBContext.getOBContext().getUser();
     final Role role = OBContext.getOBContext().getRole();
     final Client client = OBContext.getOBContext().getCurrentClient();
