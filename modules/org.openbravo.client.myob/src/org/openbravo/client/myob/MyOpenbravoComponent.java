@@ -151,9 +151,14 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
       query.setString("roleId", roleId);
     }
     List<String> widgetClassIds = query.list();
+    List<String> anonymousWidgetClasses;
+    if (isInDevelopment()) {
+      anonymousWidgetClasses = myOBUtils.getAnonymousAccessibleWidgetClassesFromDatabase();
+    } else {
+      anonymousWidgetClasses = myOBUtils.getAnonymousAccessibleWidgetClasses();
+    }
     // Include the widget classes which allow anonymous access
-    for (String anonymousWidgetClass : myOBUtils
-        .getAnonymousAccessibleWidgetClasses(!isInDevelopment())) {
+    for (String anonymousWidgetClass : anonymousWidgetClasses) {
       if (!widgetClassIds.contains(anonymousWidgetClass)) {
         widgetClassIds.add(anonymousWidgetClass);
       }
