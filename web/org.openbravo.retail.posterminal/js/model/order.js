@@ -1969,7 +1969,7 @@
           }
           return;
         }
-        if ((!args || !args.options || !args.options.line) && OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true) && p.get('hasAttributes')) {
+        if ((!args || !args.options || !args.options.line) && OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true) && p.get('hasAttributes') && qty >= 1) {
           OB.MobileApp.view.waterfall('onShowPopup', {
             popup: 'modalProductAttribute',
             args: {
