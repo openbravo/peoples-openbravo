@@ -202,13 +202,13 @@
     column: 'isPrintServices',
     type: 'BOOL'
   }, {
-	name: 'hasAttributes',
-	column: 'hasAttributes',
-	type: 'BOOL'
+    name: 'hasAttributes',
+    column: 'hasAttributes',
+    type: 'BOOL'
   }, {
-	name: 'isSerialNo',
-	column: 'isSerialNo',
-	type: 'BOOL'
+    name: 'isSerialNo',
+    column: 'isSerialNo',
+    type: 'BOOL'
   }]);
 
   Product.addIndex([{
