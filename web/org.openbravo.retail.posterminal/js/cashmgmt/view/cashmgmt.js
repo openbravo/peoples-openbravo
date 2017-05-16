@@ -228,7 +228,9 @@ OB.POS.registerWindow({
           errorCallback();
         }
       });
+      return;
     }
+    successCallback(args.route);
   },
   menuItemDisplayLogic: function () {
     return OB.MobileApp.model.get('hasPaymentsForCashup');
