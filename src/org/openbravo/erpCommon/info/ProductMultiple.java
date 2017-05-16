@@ -20,8 +20,7 @@ package org.openbravo.erpCommon.info;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.ServletConfig;
@@ -432,20 +431,14 @@ public class ProductMultiple extends HttpSecureAppServlet {
    * Currently this is only being used when the selector is called from: - Sales Dimensional Report
    * - Shipments Dimensional Report - Sales Order Report
    */
-  @SuppressWarnings("rawtypes")
   private boolean isCalledFromSoTrx(HttpServletRequest request) {
-    HashMap parameters = (HashMap) request.getParameterMap();
-    Iterator it = parameters.keySet().iterator();
-    String[] value;
-    boolean isSoTrx = false;
-    while (it.hasNext()) {
-      String key = (String) it.next();
-      if (key.toLowerCase().contains("issotrx")) {
-        value = (String[]) (parameters.get(key));
-        isSoTrx = value[0].contains("isSoTrx='Y'");
+    Map<String, String[]> parameters = request.getParameterMap();
+    for (String parameter : parameters.keySet()) {
+      if (parameter.toLowerCase().contains("issotrx")) {
+        String[] value = parameters.get(parameter);
+        return value[0].contains("isSoTrx='Y'");
       }
     }
-
-    return isSoTrx;
+    return false;
   }
 }
