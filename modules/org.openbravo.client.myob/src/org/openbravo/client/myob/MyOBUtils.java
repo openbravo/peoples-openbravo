@@ -19,6 +19,7 @@
 package org.openbravo.client.myob;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -134,49 +135,95 @@ public class MyOBUtils {
 
   static List<WidgetInstance> getDefaultWidgetInstances(String availableAtLevel,
       String[] availableAtValues) {
-    OBCriteria<WidgetInstance> widgetInstancesCrit = OBDal.getInstance().createCriteria(
-        WidgetInstance.class);
-    widgetInstancesCrit.add(Restrictions.isNull(WidgetInstance.PROPERTY_VISIBLEATUSER));
     if ("OB".equals(availableAtLevel)) {
-      widgetInstancesCrit.setFilterOnReadableClients(false);
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 0L));
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, OBDal.getInstance()
-          .getProxy(Client.class, "0")));
-      widgetInstancesCrit.setFilterOnReadableOrganization(false);
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_ORGANIZATION, OBDal
-          .getInstance().getProxy(Organization.class, "0")));
+      return getDefaultWidgetInstancesAtOBLevel();
     } else if ("SYSTEM".equals(availableAtLevel)) {
-      widgetInstancesCrit.setFilterOnReadableClients(false);
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 1L));
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, OBDal.getInstance()
-          .getProxy(Client.class, "0")));
-      widgetInstancesCrit.setFilterOnReadableOrganization(false);
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_ORGANIZATION, OBDal
-          .getInstance().getProxy(Organization.class, "0")));
+      return getDefaultWidgetInstancesAtSystemLevel();
     } else if ("CLIENT".equals(availableAtLevel)) {
-      widgetInstancesCrit.setFilterOnReadableClients(false);
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, OBDal.getInstance()
-          .getProxy(Client.class, availableAtValues[0])));
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 2L));
+      return getDefaultWidgetInstancesAtClientLevel(availableAtValues[0]);
     } else if ("ORG".equals(availableAtLevel)) {
-      widgetInstancesCrit.setFilterOnReadableClients(false);
-      widgetInstancesCrit.setFilterOnReadableOrganization(false);
-      widgetInstancesCrit.add(Restrictions.in(WidgetInstance.PROPERTY_ORGANIZATION + "."
-          + Organization.PROPERTY_ID, availableAtValues));
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 3L));
+      return getDefaultWidgetInstancesAtOrgLevel(availableAtValues);
     } else if ("ROLE".equals(availableAtLevel)) {
-      final Role role = OBDal.getInstance().getProxy(Role.class, availableAtValues[0]);
-      widgetInstancesCrit.setFilterOnReadableClients(false);
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, role.getClient()));
-      widgetInstancesCrit.setFilterOnReadableOrganization(false);
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_ORGANIZATION, OBDal
-          .getInstance().getProxy(Organization.class, "0")));
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATROLE, role));
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 4L));
-    } else if ("USER".equals(availableAtLevel)) {
-      // not supported
+      return getDefaultWidgetInstancesAtRoleLevel(availableAtValues[0]);
+    } else {
+      // USER level is not supported
     }
-    return widgetInstancesCrit.list();
+    OBCriteria<WidgetInstance> criteria = OBDal.getInstance().createCriteria(WidgetInstance.class);
+    criteria.add(Restrictions.isNull(WidgetInstance.PROPERTY_VISIBLEATUSER));
+    return criteria.list();
+  }
+
+  static List<WidgetInstance> getDefaultWidgetInstancesAtOBLevel() {
+    Client client = OBDal.getInstance().getProxy(Client.class, "0");
+    Organization org = OBDal.getInstance().getProxy(Organization.class, "0");
+    return getWidgetInstanceCriteria(0L, client, org, null).list();
+  }
+
+  static List<WidgetInstance> getDefaultWidgetInstancesAtSystemLevel() {
+    Client client = OBDal.getInstance().getProxy(Client.class, "0");
+    Organization org = OBDal.getInstance().getProxy(Organization.class, "0");
+    return getWidgetInstanceCriteria(1L, client, org, null).list();
+  }
+
+  static List<WidgetInstance> getDefaultWidgetInstancesAtClientLevel(String clientId) {
+    Client client = OBDal.getInstance().getProxy(Client.class, clientId);
+    return getWidgetInstanceCriteria(2L, client, null, null).list();
+  }
+
+  static List<WidgetInstance> getDefaultWidgetInstancesAtOrgLevel(Set<String> orgIds) {
+    return getWidgetInstanceCriteriaForOrgs(3L, null, orgIds, null).list();
+  }
+
+  static List<WidgetInstance> getDefaultWidgetInstancesAtOrgLevel(String[] orgIds) {
+    return getWidgetInstanceCriteriaForOrgs(3L, null, orgIds, null).list();
+  }
+
+  static List<WidgetInstance> getDefaultWidgetInstancesAtRoleLevel(String roleId) {
+    final Role role = OBDal.getInstance().getProxy(Role.class, roleId);
+    return getDefaultWidgetInstancesAtRoleLevel(role);
+  }
+
+  static List<WidgetInstance> getDefaultWidgetInstancesAtRoleLevel(Role role) {
+    Organization org = OBDal.getInstance().getProxy(Organization.class, "0");
+    return getWidgetInstanceCriteria(4L, null, org, role).list();
+  }
+
+  private static OBCriteria<WidgetInstance> getWidgetInstanceCriteria(Long priority, Client client,
+      Organization organization, Role role) {
+    OBCriteria<WidgetInstance> criteria = OBDal.getInstance().createCriteria(WidgetInstance.class);
+    criteria.add(Restrictions.isNull(WidgetInstance.PROPERTY_VISIBLEATUSER));
+    criteria.setFilterOnReadableClients(false);
+    criteria.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, priority));
+    if (client != null) {
+      criteria.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, client));
+    }
+    if (organization != null) {
+      criteria.setFilterOnReadableOrganization(false);
+      criteria.add(Restrictions.eq(WidgetInstance.PROPERTY_ORGANIZATION, organization));
+    }
+    if (role != null) {
+      criteria.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, role.getClient()));
+      criteria.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATROLE, role));
+    }
+    return criteria;
+  }
+
+  private static OBCriteria<WidgetInstance> getWidgetInstanceCriteriaForOrgs(Long priority,
+      Client client, String[] orgIds, Role role) {
+    OBCriteria<WidgetInstance> criteria = getWidgetInstanceCriteria(priority, client, null, role);
+    criteria.setFilterOnReadableOrganization(false);
+    criteria.add(Restrictions.in(WidgetInstance.PROPERTY_ORGANIZATION + "."
+        + Organization.PROPERTY_ID, orgIds));
+    return criteria;
+  }
+
+  private static OBCriteria<WidgetInstance> getWidgetInstanceCriteriaForOrgs(Long priority,
+      Client client, Set<String> orgIds, Role role) {
+    OBCriteria<WidgetInstance> criteria = getWidgetInstanceCriteria(priority, client, null, role);
+    criteria.setFilterOnReadableOrganization(false);
+    criteria.add(Restrictions.in(WidgetInstance.PROPERTY_ORGANIZATION + "."
+        + Organization.PROPERTY_ID, orgIds));
+    return criteria;
   }
 
   static List<WidgetInstance> getUserWidgetInstances() {

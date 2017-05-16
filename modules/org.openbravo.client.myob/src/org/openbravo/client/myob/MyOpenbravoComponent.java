@@ -331,15 +331,13 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
 
     if (!role.isForPortalUsers()) {
       // do not include global widgets in portal roles
-      defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("OB", null));
-      defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("SYSTEM", null));
+      defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstancesAtOBLevel());
+      defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstancesAtSystemLevel());
     }
 
-    defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("CLIENT", new String[] { clientId }));
-    defaultWidgets
-        .addAll(MyOBUtils.getDefaultWidgetInstances("ORG", orgs.toArray(new String[] {})));
-    defaultWidgets
-        .addAll(MyOBUtils.getDefaultWidgetInstances("ROLE", new String[] { role.getId() }));
+    defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstancesAtClientLevel(clientId));
+    defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstancesAtOrgLevel(orgs));
+    defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstancesAtRoleLevel(role));
 
     return defaultWidgets;
   }
