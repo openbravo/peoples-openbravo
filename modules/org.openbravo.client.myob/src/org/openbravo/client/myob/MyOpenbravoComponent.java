@@ -19,10 +19,7 @@
 package org.openbravo.client.myob;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,13 +30,14 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.exception.OBException;
+import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.kernel.SessionDynamicTemplateComponent;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
@@ -57,14 +55,12 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
   static final String COMPONENT_ID = "MyOpenbravo";
   private static final String TEMPLATEID = "CA8047B522B44F61831A8CAA3AE2A7CD";
 
-  private List<WidgetInstance> widgets = null;
-  private List<String> widgetClassDefinitions = null;
   private Logger log = Logger.getLogger(MyOpenbravoComponent.class);
 
   @Inject
   private MyOBUtils myOBUtils;
 
-  /*
+  /**
    * (non-Javadoc)
    * 
    * @see org.openbravo.client.kernel.BaseTemplateComponent#getComponentTemplate()
@@ -74,7 +70,7 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     return TEMPLATEID;
   }
 
-  /*
+  /**
    * (non-Javadoc)
    * 
    * @see org.openbravo.client.kernel.BaseComponent#getId()
@@ -83,48 +79,55 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     return COMPONENT_ID;
   }
 
-  List<String> getAvailableWidgetClasses(String roleId, boolean shouldBeDisplayed) throws Exception {
+  List<String> getAvailableWorkspaceWidgetClasses(String roleId) throws Exception {
+    List<String> filters = new ArrayList<String>();
+    filters.add("widgetClassAccess.widgetClass.availableInWorkspace IS true");
+    filters.add("widgetClassAccess.widgetClass.superclass IS false");
+    return getAccessibleWidgetClasses(roleId, filters);
+  }
+
+  List<String> getAvailableWidgetClasses(String roleId) throws Exception {
+    List<String> filters = new ArrayList<String>();
+    filters.add("widgetClassAccess.widgetClass.superclass IS false");
+    return getAccessibleWidgetClasses(roleId, filters);
+  }
+
+  /**
+   * @param roleId
+   *          The id of the role whose available widget classes will be retrieved.
+   * @param additionalFilters
+   *          A list of filters to be applied on the base query to retrieve the accessible widget
+   *          classes of a role.
+   * @return the list of available widget classes for the role whose id is passed as parameter.
+   */
+  private List<String> getAccessibleWidgetClasses(String roleId, List<String> additionalFilters)
+      throws Exception {
     OBContext.setAdminMode();
     try {
-      if (widgetClassDefinitions != null) {
-        return widgetClassDefinitions;
-      }
-
-      final List<JSONObject> definitions = new ArrayList<JSONObject>();
-      final List<String> tmp = new ArrayList<String>();
-      String classDef = "";
-      String strConditionQuery = WidgetClass.PROPERTY_SUPERCLASS + " is false";
-      if (shouldBeDisplayed) {
-        strConditionQuery += " and " + WidgetClass.PROPERTY_AVAILABLEINWORKSPACE + " is true";
-      }
-
-      final OBQuery<WidgetClass> widgetClassesQry = OBDal.getInstance().createQuery(
-          WidgetClass.class, strConditionQuery);
-      for (WidgetClass widgetClass : widgetClassesQry.list()) {
-        if (isAccessible(widgetClass, roleId)) {
-          final WidgetProvider widgetProvider = myOBUtils.getWidgetProvider(widgetClass);
-          if (!widgetProvider.validate()) {
-            continue;
-          }
-
-          definitions.add(widgetProvider.getWidgetClassDefinition());
-
-          try {
-            classDef = widgetProvider.generate();
-            classDef = classDef.substring(0, classDef.length() - 1);
-            tmp.add(classDef);
-          } catch (Exception e) {
-            // Do nothing as the definition is already in a loaded js file
-          }
+      List<String> widgetClassDefinitions = new ArrayList<String>();
+      StringBuilder whereClause = new StringBuilder();
+      if (additionalFilters != null) {
+        for (String filter : additionalFilters) {
+          whereClause.append("AND " + filter + " ");
         }
       }
-      Collections.sort(definitions, new WidgetClassComparator());
-
-      widgetClassDefinitions = new ArrayList<String>();
-      for (JSONObject json : definitions) {
-        widgetClassDefinitions.add(json.toString());
+      for (String widgetClassId : getAccessibleWidgetClassIds(roleId, whereClause.toString())) {
+        WidgetClass widgetClass = OBDal.getInstance().getProxy(WidgetClass.class, widgetClassId);
+        WidgetClassInfo widgetClassInfo;
+        if (isInDevelopment()) {
+          widgetClassInfo = myOBUtils.getWidgetClassInfoFromDatabase(widgetClass);
+        } else {
+          widgetClassInfo = myOBUtils.getWidgetClassInfo(widgetClass);
+        }
+        if (widgetClassInfo == null) {
+          log.debug("Not found information for widget class with id " + widgetClass.getId());
+          continue;
+        }
+        widgetClassDefinitions.add(widgetClassInfo.getWidgetClassProperties());
+        if (!StringUtils.isEmpty(widgetClassInfo.getWidgetClassDefinition())) {
+          widgetClassDefinitions.add(widgetClassInfo.getWidgetClassDefinition());
+        }
       }
-      widgetClassDefinitions.addAll(tmp);
       log.debug("Available Widget Classes: " + widgetClassDefinitions.size());
       return widgetClassDefinitions;
     } finally {
@@ -132,11 +135,45 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     }
   }
 
+  @SuppressWarnings("unchecked")
+  private List<String> getAccessibleWidgetClassIds(String roleId, String additionalWhereClause) {
+    final StringBuilder hql = new StringBuilder();
+    hql.append("SELECT widgetClassAccess.widgetClass.id ");
+    hql.append("FROM OBKMO_WidgetClassAccess widgetClassAccess ");
+    hql.append("WHERE widgetClassAccess.role.id=:roleId ");
+    if (!StringUtils.isEmpty(additionalWhereClause)) {
+      hql.append(additionalWhereClause);
+    }
+    Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    if (StringUtils.isEmpty(roleId)) {
+      query.setString("roleId", OBContext.getOBContext().getRole().getId());
+    } else {
+      query.setString("roleId", roleId);
+    }
+    List<String> widgetClassIds = query.list();
+    List<String> anonymousWidgetClasses;
+    if (isInDevelopment()) {
+      anonymousWidgetClasses = myOBUtils.getAnonymousAccessibleWidgetClassesFromDatabase();
+    } else {
+      anonymousWidgetClasses = myOBUtils.getAnonymousAccessibleWidgetClasses();
+    }
+    // Include the widget classes which allow anonymous access
+    for (String anonymousWidgetClass : anonymousWidgetClasses) {
+      if (!widgetClassIds.contains(anonymousWidgetClass)) {
+        widgetClassIds.add(anonymousWidgetClass);
+      }
+    }
+    return widgetClassIds;
+  }
+
+  /**
+   * @return the list of available widget instances in the current context.
+   */
   public List<String> getWidgetInstanceDefinitions() {
     OBContext.setAdminMode();
     try {
       final List<String> result = new ArrayList<String>();
-      for (WidgetInstance widget : getContextWidgetInstances()) {
+      for (WidgetInstance widget : retrieveContextWidgetInstances()) {
         final JSONObject jsonObject = myOBUtils.getWidgetProvider(widget.getWidgetClass())
             .getWidgetInstanceDefinition(widget);
         result.add(jsonObject.toString());
@@ -224,108 +261,89 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     return "{}";
   }
 
-  private List<WidgetInstance> getContextWidgetInstances() {
-    if (widgets != null) {
-      return widgets;
-    }
-    copyWidgets();
+  private List<WidgetInstance> retrieveContextWidgetInstances() {
+    final User user = OBContext.getOBContext().getUser();
+    final Role role = OBContext.getOBContext().getRole();
+    final Client client = OBContext.getOBContext().getCurrentClient();
+    final List<String> accessibleWidgetClasses = getAccessibleWidgetClassIds(role.getId(), null);
+    final List<WidgetInstance> userWidgets = getWidgetInstances(client, role, user,
+        accessibleWidgetClasses);
+    final List<WidgetInstance> defaultWidgets = getRoleDefaultWidgets(OBContext.getOBContext()
+        .getRole(), client.getId(), OBContext.getOBContext().getWritableOrganizations());
 
-    widgets = new ArrayList<WidgetInstance>();
-    final List<WidgetInstance> userWidgets = new ArrayList<WidgetInstance>(
-        MyOBUtils.getUserWidgetInstances());
-    log.debug("Defined User widgets:" + userWidgets.size());
-    // filter on the basis of role access
-    for (WidgetInstance widget : userWidgets) {
-      if (isAccessible(widget.getWidgetClass(), null)) {
-        widgets.add(widget);
+    final List<WidgetInstance> contextWidgets = new ArrayList<WidgetInstance>();
+    final List<WidgetInstance> copiedWidgets = new ArrayList<WidgetInstance>();
+    for (WidgetInstance userWidget : userWidgets) {
+      if (userWidget.isActive()) {
+        contextWidgets.add(userWidget);
+      }
+      if (userWidget.getCopiedFrom() != null) {
+        copiedWidgets.add(userWidget);
       }
     }
 
-    log.debug("Available User widgets:" + widgets.size());
-    return widgets;
-  }
-
-  private void copyWidgets() {
-    final List<WidgetInstance> userWidgets = new ArrayList<WidgetInstance>(
-        MyOBUtils.getUserWidgetInstances(false));
-    final User user = OBDal.getInstance().get(User.class,
-        OBContext.getOBContext().getUser().getId());
-    final Role role = OBDal.getInstance().get(Role.class,
-        OBContext.getOBContext().getRole().getId());
-    final Client client = OBDal.getInstance().get(Client.class,
-        OBContext.getOBContext().getCurrentClient().getId());
-    final Set<WidgetInstance> defaultWidgets = new HashSet<WidgetInstance>();
-
-    if (!OBContext.getOBContext().getRole().isForPortalUsers()) {
-      // do not include global widgets in portal roles
-      defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("OB", null));
-      defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("SYSTEM", null));
-    }
-
-    defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("CLIENT",
-        new String[] { client.getId() }));
-    final Set<String> orgs = OBContext.getOBContext().getWritableOrganizations();
-    for (String org : orgs) {
-      defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("ORG", new String[] { org }));
-    }
-    defaultWidgets
-        .addAll(MyOBUtils.getDefaultWidgetInstances("ROLE", new String[] { role.getId() }));
     log.debug("Copying new widget instances on user: " + user.getId() + " role: " + role.getId());
-
-    // remove the default widgets which are already defined on the user
-    for (WidgetInstance widget : userWidgets) {
-      if (widget.getCopiedFrom() != null) {
-        defaultWidgets.remove(widget.getCopiedFrom());
-      }
-    }
-    // now copy all the default widgets that are not defined on the user
     final Organization orgZero = OBDal.getInstance().get(Organization.class, "0");
     boolean copyDone = false;
-    for (WidgetInstance widget : defaultWidgets) {
-      final WidgetInstance copy = (WidgetInstance) DalUtil.copy(widget);
+    for (WidgetInstance defaultWidget : defaultWidgets) {
+      boolean defaultWidgetPresent = false;
+      for (WidgetInstance copiedWidget : copiedWidgets) {
+        if (copiedWidget.getCopiedFrom().getId().equals(defaultWidget.getId())) {
+          defaultWidgetPresent = true;
+          break;
+        }
+      }
+      if (defaultWidgetPresent) {
+        // do not copy the default widgets which are already defined on the user
+        continue;
+      }
+      final WidgetInstance copy = (WidgetInstance) DalUtil.copy(defaultWidget);
       copy.setClient(client);
       copy.setOrganization(orgZero);
       copy.setVisibleAtRole(role);
       copy.setVisibleAtUser(user);
-      copy.setCopiedFrom(widget);
+      copy.setCopiedFrom(defaultWidget);
       OBDal.getInstance().save(copy);
       log.debug("Copied widget instance: " + copy.getId() + " of Widget Class: "
           + copy.getWidgetClass().getWidgetTitle());
       copyDone = true;
+      if (accessibleWidgetClasses.contains(copy.getWidgetClass().getId())) {
+        contextWidgets.add(copy);
+      }
     }
     if (copyDone) {
       OBDal.getInstance().flush();
     }
+    log.debug("Available User widgets:" + contextWidgets.size());
+    return contextWidgets;
   }
 
-  private boolean isAccessible(WidgetClass widgetClass, String _roleId) {
-    if (widgetClass.isAllowAnonymousAccess()) {
-      return true;
-    }
-    String roleId = _roleId;
-    if (StringUtils.isEmpty(roleId)) {
-      roleId = OBContext.getOBContext().getRole().getId();
-    }
-    for (WidgetClassAccess widgetClassAccess : widgetClass.getOBKMOWidgetClassAccessList()) {
-      if (widgetClassAccess.getRole().getId().equals(roleId)) {
-        return true;
-      }
-    }
-    return false;
+  private List<WidgetInstance> getWidgetInstances(Client client, Role visibleAtRole,
+      User visibleAtUser, List<String> widgetClasses) {
+    OBCriteria<WidgetInstance> obc = OBDal.getInstance().createCriteria(WidgetInstance.class);
+    obc.setFilterOnReadableClients(false);
+    obc.setFilterOnActive(false);
+    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, client));
+    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATROLE, visibleAtRole));
+    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATUSER, visibleAtUser));
+    obc.add(Restrictions.in(WidgetInstance.PROPERTY_WIDGETCLASS + "." + WidgetClass.PROPERTY_ID,
+        widgetClasses));
+    return obc.list();
   }
 
-  private class WidgetClassComparator implements Comparator<JSONObject> {
+  private List<WidgetInstance> getRoleDefaultWidgets(Role role, String clientId, Set<String> orgs) {
+    final List<WidgetInstance> defaultWidgets = new ArrayList<WidgetInstance>();
 
-    @Override
-    public int compare(JSONObject arg0, JSONObject arg1) {
-      try {
-        final String title0 = arg0.getString(WidgetProvider.TITLE);
-        final String title1 = arg1.getString(WidgetProvider.TITLE);
-        return title0.compareTo(title1);
-      } catch (Exception e) {
-        throw new OBException(e);
-      }
+    if (!role.isForPortalUsers()) {
+      // do not include global widgets in portal roles
+      defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstancesAtOBLevel());
+      defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstancesAtSystemLevel());
     }
 
+    defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstancesAtClientLevel(clientId));
+    defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstancesAtOrgLevel(orgs));
+    defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstancesAtRoleLevel(role));
+
+    return defaultWidgets;
   }
 }

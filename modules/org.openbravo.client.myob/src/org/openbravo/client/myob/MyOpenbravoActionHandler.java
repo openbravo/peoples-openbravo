@@ -182,8 +182,11 @@ public class MyOpenbravoActionHandler extends BaseActionHandler implements Porta
     List<String> availableClasses = null;
     try {
       final String strEventType = o.getString("eventType");
-      boolean onlyWorkspaceWidgets = GET_AVAILABLE_WIDGET_CLASSES.equals(strEventType);
-      availableClasses = component.getAvailableWidgetClasses(roleId, onlyWorkspaceWidgets);
+      if (GET_AVAILABLE_WIDGET_CLASSES.equals(strEventType)) {
+        availableClasses = component.getAvailableWorkspaceWidgetClasses(roleId);
+      } else {
+        availableClasses = component.getAvailableWidgetClasses(roleId);
+      }
       o.put("availableWidgetClasses", availableClasses);
     } catch (Exception e) {
       log.error("Error retreiving widget classes", e);

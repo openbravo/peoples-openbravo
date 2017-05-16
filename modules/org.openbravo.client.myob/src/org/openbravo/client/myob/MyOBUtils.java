@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,8 @@
 package org.openbravo.client.myob;
 
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -27,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
@@ -50,6 +53,8 @@ public class MyOBUtils {
   private static String MENU_ITEM_IS_SEPARATOR = "isSeparator";
   private static String MENU_ITEM_TITLE = "title";
   private static String MENU_ITEM_CLICK = "click";
+  private ConcurrentHashMap<String, WidgetClassInfo> widgetClasses = new ConcurrentHashMap<>();
+  private List<String> anonymousWidgetClasses;
 
   /**
    * Calls {@link #getWidgetTitle(WidgetClass)} using the
@@ -130,52 +135,95 @@ public class MyOBUtils {
 
   static List<WidgetInstance> getDefaultWidgetInstances(String availableAtLevel,
       String[] availableAtValues) {
-    OBCriteria<WidgetInstance> widgetInstancesCrit = OBDal.getInstance().createCriteria(
-        WidgetInstance.class);
-    widgetInstancesCrit.add(Restrictions.isNull(WidgetInstance.PROPERTY_VISIBLEATUSER));
     if ("OB".equals(availableAtLevel)) {
-      widgetInstancesCrit.setFilterOnReadableClients(false);
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 0L));
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, OBDal.getInstance()
-          .get(Client.class, "0")));
-      widgetInstancesCrit.setFilterOnReadableOrganization(false);
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_ORGANIZATION, OBDal
-          .getInstance().get(Organization.class, "0")));
+      return getDefaultWidgetInstancesAtOBLevel();
     } else if ("SYSTEM".equals(availableAtLevel)) {
-      widgetInstancesCrit.setFilterOnReadableClients(false);
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 1L));
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, OBDal.getInstance()
-          .get(Client.class, "0")));
-      widgetInstancesCrit.setFilterOnReadableOrganization(false);
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_ORGANIZATION, OBDal
-          .getInstance().get(Organization.class, "0")));
+      return getDefaultWidgetInstancesAtSystemLevel();
     } else if ("CLIENT".equals(availableAtLevel)) {
-      widgetInstancesCrit.setFilterOnReadableClients(false);
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, OBDal.getInstance()
-          .get(Client.class, availableAtValues[0])));
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 2L));
+      return getDefaultWidgetInstancesAtClientLevel(availableAtValues[0]);
     } else if ("ORG".equals(availableAtLevel)) {
-      final Organization organization = OBDal.getInstance().get(Organization.class,
-          availableAtValues[0]);
-      widgetInstancesCrit.setFilterOnReadableClients(false);
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT,
-          organization.getClient()));
-      widgetInstancesCrit.setFilterOnReadableOrganization(false);
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_ORGANIZATION, organization));
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 3L));
+      return getDefaultWidgetInstancesAtOrgLevel(availableAtValues);
     } else if ("ROLE".equals(availableAtLevel)) {
-      final Role role = OBDal.getInstance().get(Role.class, availableAtValues[0]);
-      widgetInstancesCrit.setFilterOnReadableClients(false);
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, role.getClient()));
-      widgetInstancesCrit.setFilterOnReadableOrganization(false);
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_ORGANIZATION, OBDal
-          .getInstance().get(Organization.class, "0")));
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATROLE, role));
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 4L));
-    } else if ("USER".equals(availableAtLevel)) {
-      // not supported
+      return getDefaultWidgetInstancesAtRoleLevel(availableAtValues[0]);
+    } else {
+      // USER level is not supported
     }
-    return widgetInstancesCrit.list();
+    OBCriteria<WidgetInstance> criteria = OBDal.getInstance().createCriteria(WidgetInstance.class);
+    criteria.add(Restrictions.isNull(WidgetInstance.PROPERTY_VISIBLEATUSER));
+    return criteria.list();
+  }
+
+  static List<WidgetInstance> getDefaultWidgetInstancesAtOBLevel() {
+    Client client = OBDal.getInstance().getProxy(Client.class, "0");
+    Organization org = OBDal.getInstance().getProxy(Organization.class, "0");
+    return getWidgetInstanceCriteria(0L, client, org, null).list();
+  }
+
+  static List<WidgetInstance> getDefaultWidgetInstancesAtSystemLevel() {
+    Client client = OBDal.getInstance().getProxy(Client.class, "0");
+    Organization org = OBDal.getInstance().getProxy(Organization.class, "0");
+    return getWidgetInstanceCriteria(1L, client, org, null).list();
+  }
+
+  static List<WidgetInstance> getDefaultWidgetInstancesAtClientLevel(String clientId) {
+    Client client = OBDal.getInstance().getProxy(Client.class, clientId);
+    return getWidgetInstanceCriteria(2L, client, null, null).list();
+  }
+
+  static List<WidgetInstance> getDefaultWidgetInstancesAtOrgLevel(Set<String> orgIds) {
+    return getWidgetInstanceCriteriaForOrgs(3L, null, orgIds, null).list();
+  }
+
+  static List<WidgetInstance> getDefaultWidgetInstancesAtOrgLevel(String[] orgIds) {
+    return getWidgetInstanceCriteriaForOrgs(3L, null, orgIds, null).list();
+  }
+
+  static List<WidgetInstance> getDefaultWidgetInstancesAtRoleLevel(String roleId) {
+    final Role role = OBDal.getInstance().getProxy(Role.class, roleId);
+    return getDefaultWidgetInstancesAtRoleLevel(role);
+  }
+
+  static List<WidgetInstance> getDefaultWidgetInstancesAtRoleLevel(Role role) {
+    Organization org = OBDal.getInstance().getProxy(Organization.class, "0");
+    return getWidgetInstanceCriteria(4L, null, org, role).list();
+  }
+
+  private static OBCriteria<WidgetInstance> getWidgetInstanceCriteria(Long priority, Client client,
+      Organization organization, Role role) {
+    OBCriteria<WidgetInstance> criteria = OBDal.getInstance().createCriteria(WidgetInstance.class);
+    criteria.add(Restrictions.isNull(WidgetInstance.PROPERTY_VISIBLEATUSER));
+    criteria.setFilterOnReadableClients(false);
+    criteria.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, priority));
+    if (client != null) {
+      criteria.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, client));
+    }
+    if (organization != null) {
+      criteria.setFilterOnReadableOrganization(false);
+      criteria.add(Restrictions.eq(WidgetInstance.PROPERTY_ORGANIZATION, organization));
+    }
+    if (role != null) {
+      criteria.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, role.getClient()));
+      criteria.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATROLE, role));
+    }
+    return criteria;
+  }
+
+  private static OBCriteria<WidgetInstance> getWidgetInstanceCriteriaForOrgs(Long priority,
+      Client client, String[] orgIds, Role role) {
+    OBCriteria<WidgetInstance> criteria = getWidgetInstanceCriteria(priority, client, null, role);
+    criteria.setFilterOnReadableOrganization(false);
+    criteria.add(Restrictions.in(WidgetInstance.PROPERTY_ORGANIZATION + "."
+        + Organization.PROPERTY_ID, orgIds));
+    return criteria;
+  }
+
+  private static OBCriteria<WidgetInstance> getWidgetInstanceCriteriaForOrgs(Long priority,
+      Client client, Set<String> orgIds, Role role) {
+    OBCriteria<WidgetInstance> criteria = getWidgetInstanceCriteria(priority, client, null, role);
+    criteria.setFilterOnReadableOrganization(false);
+    criteria.add(Restrictions.in(WidgetInstance.PROPERTY_ORGANIZATION + "."
+        + Organization.PROPERTY_ID, orgIds));
+    return criteria;
   }
 
   static List<WidgetInstance> getUserWidgetInstances() {
@@ -227,4 +275,37 @@ public class MyOBUtils {
     }
   }
 
+  WidgetClassInfo getWidgetClassInfo(WidgetClass widgetClass) {
+    if (!widgetClasses.containsKey(widgetClass.getId())) {
+      widgetClasses.putIfAbsent(widgetClass.getId(), getWidgetClassInfoFromDatabase(widgetClass));
+    }
+    return widgetClasses.get(widgetClass.getId());
+  }
+
+  WidgetClassInfo getWidgetClassInfoFromDatabase(WidgetClass widgetClass) {
+    final WidgetProvider widgetProvider = getWidgetProvider(widgetClass);
+    if (!widgetProvider.validate()) {
+      return null;
+    }
+    return new WidgetClassInfo(widgetProvider);
+  }
+
+  List<String> getAnonymousAccessibleWidgetClasses() {
+    if (anonymousWidgetClasses == null) {
+      anonymousWidgetClasses = getAnonymousAccessibleWidgetClassesFromDatabase();
+    }
+    return anonymousWidgetClasses;
+  }
+
+  @SuppressWarnings("unchecked")
+  List<String> getAnonymousAccessibleWidgetClassesFromDatabase() {
+    final StringBuilder hql = new StringBuilder();
+    hql.append("SELECT widgetClass.id ");
+    hql.append("FROM OBKMO_WidgetClass widgetClass ");
+    hql.append("WHERE widgetClass.allowAnonymousAccess IS true ");
+    hql.append("AND widgetClass.superclass IS false ");
+    hql.append("AND widgetClass.availableInWorkspace IS true");
+    Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    return query.list();
+  }
 }

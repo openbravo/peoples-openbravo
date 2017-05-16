@@ -440,8 +440,19 @@ isc.OBMyOpenbravo.addProperties({
       this.portalLayout.members[0].colNum = 0;
       this.portalLayout.members[1].colNum = 1;
       this.portalLayout.sendEvents = true;
-      this.reloadWidgets();
+      this.loadWidgets();
     }
+  },
+
+  loadWidgets: function () {
+    var params = {
+      'preventWidgetMove': true
+    };
+    this.portalLayout.sendEvents = false;
+    this.isReloading = true;
+    this.portalLayout.getMembers()[0].removeAllRows();
+    this.portalLayout.getMembers()[1].removeAllRows();
+    this.notifyEvent('RELOAD_WIDGETS', params);
   },
 
   setRecentList: function (layout) {
@@ -694,7 +705,7 @@ isc.OBMyOpenbravo.addProperties({
     widgetManager.addWidget(widgetProperties);
   },
 
-  notifyEvent: function (eventType) {
+  notifyEvent: function (eventType, callbackProperties) {
     var post;
     if (!eventType) {
       return;
@@ -716,6 +727,8 @@ isc.OBMyOpenbravo.addProperties({
     }
 
     OB.RemoteCallManager.call('org.openbravo.client.myob.MyOpenbravoActionHandler', post, {}, function (rpcResponse, data, rpcRequest) {
+      data = data || {};
+      data.extraProperties = callbackProperties || {};
       OB.MyOB.eventResponseHandler(rpcResponse, data, rpcRequest);
     });
   },
@@ -741,7 +754,9 @@ isc.OBMyOpenbravo.addProperties({
       this.isReloading = false;
       this.portalLayout.sendEvents = !this.adminMode;
 
-      this.notifyEvent('WIDGET_MOVED');
+      if (!data.extraProperties || !data.extraProperties.preventWidgetMove) {
+        this.notifyEvent('WIDGET_MOVED');
+      }
     }
 
     if (data.eventType === 'PUBLISH_CHANGES') {
@@ -1112,6 +1127,7 @@ isc.defineClass('OBMyOBAddWidgetDialog', isc.OBMyOBDialog).addProperties({
         titleSuffix: '',
         requiredTitleSuffix: '',
         type: 'select',
+        sortField: 'widget',
         valueMap: {},
         changed: function (form, item, value) {
           if (value) {
