@@ -257,72 +257,73 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
   }
 
   private List<WidgetInstance> getContextWidgetInstances() {
-    copyWidgets();
-    final List<WidgetInstance> widgetInstances = getActiveWidgetInstances();
-    log.debug("Available User widgets:" + widgetInstances.size());
-    return widgetInstances;
-  }
-
-  private List<WidgetInstance> getActiveWidgetInstances() {
-    OBCriteria<WidgetInstance> obc = OBDal.getInstance().createCriteria(WidgetInstance.class);
-    obc.setFilterOnReadableClients(false);
-    obc.setFilterOnActive(true);
-    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, OBContext.getOBContext()
-        .getCurrentClient()));
-    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATROLE, OBContext.getOBContext()
-        .getRole()));
-    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATUSER, OBContext.getOBContext()
-        .getUser()));
-    obc.add(Restrictions.in(WidgetInstance.PROPERTY_WIDGETCLASS + "." + WidgetClass.PROPERTY_ID,
-        getAccessibleWidgetClassIds(OBContext.getOBContext().getRole().getId(), null)));
-    return obc.list();
-  }
-
-  private void copyWidgets() {
-    final List<String> userWidgets = getCopiedFromWidgetInstances();
     final User user = OBContext.getOBContext().getUser();
     final Role role = OBContext.getOBContext().getRole();
     final Client client = OBContext.getOBContext().getCurrentClient();
+    final List<String> accessibleWidgetClasses = getAccessibleWidgetClassIds(role.getId(), null);
+    final List<WidgetInstance> userWidgets = getActiveWidgetInstances(client, role, user,
+        accessibleWidgetClasses);
     final List<WidgetInstance> defaultWidgets = getRoleDefaultWidgets(OBContext.getOBContext()
         .getRole(), client.getId(), OBContext.getOBContext().getWritableOrganizations());
+
+    final List<WidgetInstance> contextWidgets = new ArrayList<WidgetInstance>();
+    final List<WidgetInstance> copiedWidgets = new ArrayList<WidgetInstance>();
+    for (WidgetInstance userWidget : userWidgets) {
+      if (userWidget.isActive()) {
+        contextWidgets.add(userWidget);
+      }
+      if (userWidget.getCopiedFrom() != null) {
+        copiedWidgets.add(userWidget);
+      }
+    }
 
     log.debug("Copying new widget instances on user: " + user.getId() + " role: " + role.getId());
     final Organization orgZero = OBDal.getInstance().get(Organization.class, "0");
     boolean copyDone = false;
-    for (WidgetInstance widget : defaultWidgets) {
-      if (userWidgets.contains(widget.getId())) {
+    for (WidgetInstance defaultWidget : defaultWidgets) {
+      boolean defaultWidgetPresent = false;
+      for (WidgetInstance copiedWidget : copiedWidgets) {
+        if (copiedWidget.getCopiedFrom().getId().equals(defaultWidget.getId())) {
+          defaultWidgetPresent = true;
+          break;
+        }
+      }
+      if (defaultWidgetPresent) {
         // do not copy the default widgets which are already defined on the user
         continue;
       }
-      final WidgetInstance copy = (WidgetInstance) DalUtil.copy(widget);
+      final WidgetInstance copy = (WidgetInstance) DalUtil.copy(defaultWidget);
       copy.setClient(client);
       copy.setOrganization(orgZero);
       copy.setVisibleAtRole(role);
       copy.setVisibleAtUser(user);
-      copy.setCopiedFrom(widget);
+      copy.setCopiedFrom(defaultWidget);
       OBDal.getInstance().save(copy);
       log.debug("Copied widget instance: " + copy.getId() + " of Widget Class: "
           + copy.getWidgetClass().getWidgetTitle());
       copyDone = true;
+      if (accessibleWidgetClasses.contains(copy.getWidgetClass().getId())) {
+        contextWidgets.add(copy);
+      }
     }
     if (copyDone) {
       OBDal.getInstance().flush();
     }
+    log.debug("Available User widgets:" + contextWidgets.size());
+    return contextWidgets;
   }
 
-  @SuppressWarnings("unchecked")
-  private List<String> getCopiedFromWidgetInstances() {
-    final StringBuilder hql = new StringBuilder();
-    hql.append("SELECT widgetInstance.copiedFrom.id FROM OBKMO_WidgetInstance widgetInstance ");
-    hql.append("WHERE widgetInstance.copiedFrom IS NOT NULL ");
-    hql.append("AND widgetInstance.client.id=:clientId ");
-    hql.append("AND widgetInstance.visibleAtRole.id=:roleId ");
-    hql.append("AND widgetInstance.visibleAtUser.id=:userId");
-    Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
-    query.setString("clientId", OBContext.getOBContext().getCurrentClient().getId());
-    query.setString("roleId", OBContext.getOBContext().getRole().getId());
-    query.setString("userId", OBContext.getOBContext().getUser().getId());
-    return query.list();
+  private List<WidgetInstance> getActiveWidgetInstances(Client client, Role visibleAtRole,
+      User visibleAtUser, List<String> widgetClasses) {
+    OBCriteria<WidgetInstance> obc = OBDal.getInstance().createCriteria(WidgetInstance.class);
+    obc.setFilterOnReadableClients(false);
+    obc.setFilterOnActive(false);
+    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, client));
+    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATROLE, visibleAtRole));
+    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATUSER, visibleAtUser));
+    obc.add(Restrictions.in(WidgetInstance.PROPERTY_WIDGETCLASS + "." + WidgetClass.PROPERTY_ID,
+        widgetClasses));
+    return obc.list();
   }
 
   private List<WidgetInstance> getRoleDefaultWidgets(Role role, String clientId, Set<String> orgs) {
