@@ -261,7 +261,7 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     final Role role = OBContext.getOBContext().getRole();
     final Client client = OBContext.getOBContext().getCurrentClient();
     final List<String> accessibleWidgetClasses = getAccessibleWidgetClassIds(role.getId(), null);
-    final List<WidgetInstance> userWidgets = getActiveWidgetInstances(client, role, user,
+    final List<WidgetInstance> userWidgets = getWidgetInstances(client, role, user,
         accessibleWidgetClasses);
     final List<WidgetInstance> defaultWidgets = getRoleDefaultWidgets(OBContext.getOBContext()
         .getRole(), client.getId(), OBContext.getOBContext().getWritableOrganizations());
@@ -313,7 +313,7 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     return contextWidgets;
   }
 
-  private List<WidgetInstance> getActiveWidgetInstances(Client client, Role visibleAtRole,
+  private List<WidgetInstance> getWidgetInstances(Client client, Role visibleAtRole,
       User visibleAtUser, List<String> widgetClasses) {
     OBCriteria<WidgetInstance> obc = OBDal.getInstance().createCriteria(WidgetInstance.class);
     obc.setFilterOnReadableClients(false);
