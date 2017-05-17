@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -61,8 +61,9 @@ OB.OnChange.agingProcessDefinitionOverdue = function (item, view, form, grid) {
 //**  {{{OB.OnChange.agingProcessDefinitionOrganization}}}**
 //Used to select the General Ledger in use by the selected Organization
 OB.OnChange.agingProcessDefinitionOrganization = function (item, view, form, grid) {
-  var organization = form.getItem('Organization'),
-  gl = form.getItem('AccSchema'),
+  var organization = form.getItem('Organization');
+  var gl = form.getItem('AccSchema');
+  var callbackGetGLbyOrganization;
   callbackGetGLbyOrganization = function (response, data, request) {
     gl.valueMap = gl.valueMap || {};
     gl.valueMap[data.response.value] = data.response.identifier;
