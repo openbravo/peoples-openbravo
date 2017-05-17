@@ -38,6 +38,7 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty("ordLine.orderedQuantity", "quantity"));
         add(new HQLProperty("ordLine.baseGrossUnitPrice", "unitPrice"));
         add(new HQLProperty("ordLine.lineGrossAmount", "linegrossamount"));
+        add(new HQLProperty("ordLine.discount", "discountPercentage"));
         add(new HQLProperty("ordLine.id", "lineId"));
         add(new HQLProperty("ordLine.standardPrice", "baseNetUnitPrice"));
         add(new HQLProperty("ordLine.salesOrder.currency.pricePrecision", "pricePrecision"));

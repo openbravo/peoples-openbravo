@@ -230,7 +230,12 @@
         line.unset('noDiscountCandidates', {
           silent: true
         });
-        rule.addManual(receipt, line, promotion);
+        if (line.get('qty') > 0) {
+          rule.addManual(receipt, line, promotion);
+        } else {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_AvoidApplyManualPromotions'));
+        }
+
       });
 
       receipt.setUndo('AddDiscount', {
@@ -424,8 +429,18 @@
       chunks = 1;
       if (isMultiple) {
         chunks = parseInt((qty / multipleQty), 10);
-        discountedLinePrice = OB.DEC.toNumber(discountRule.get('discountAmount') * chunks);
-        discountAmt = discountedLinePrice;
+        if (!OB.UTIL.isNullOrUndefined(discountRule.get('discountAmount')) && discountRule.get('discountAmount') > 0 && discountRule.get('discountAmount') < linePrice) {
+          discountedLinePrice = OB.DEC.sub(linePrice, discountRule.get('discountAmount'));
+          discountAmt = OB.DEC.mul(discountRule.get('discountAmount'), chunks);
+        } else if (!OB.UTIL.isNullOrUndefined(discountRule.get('discount')) && discountRule.get('discount') > 0) {
+          discountAmt = OB.DEC.mul(linePrice, OB.DEC.div(discountRule.get('discount'), 100));
+          if (discountAmt < linePrice) {
+            discountedLinePrice = OB.DEC.sub(linePrice, discountAmt);
+            discountAmt = OB.DEC.mul(discountAmt, chunks);
+          } else {
+            discountAmt = 0;
+          }
+        }
       } else {
         if (!OB.UTIL.isNullOrUndefined(discountRule.get('fixedPrice')) && discountRule.get('fixedPrice') >= 0) {
           discountedLinePrice = discountRule.get('fixedPrice');
