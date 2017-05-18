@@ -1227,10 +1227,12 @@ public class ActivationKey {
       sb.append(getWSExplanation(conn, lang));
       sb.append("</td></tr>");
 
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSWSCounterDay", lang))
-          .append("</td><td>");
-      sb.append(getNumberWSDayCounter());
-      sb.append("</td></tr>");
+      if (!hasUnlimitedWsAccess()) {
+        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSWSCounterDay", lang))
+            .append("</td><td>");
+        sb.append(getNumberWSDayCounter());
+        sb.append("</td></tr>");
+      }
 
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSPOSLimitation", lang))
           .append("</td><td>");
