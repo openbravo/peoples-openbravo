@@ -82,6 +82,18 @@ public class InventoryStatusUtils {
   }
 
   /**
+   * Changes the Inventory Status of the given Storage Bin
+   * 
+   * @param storageBin
+   *          Storage Bin that is going to change it's Inventory Status
+   * @param inventoryStatusID
+   *          ID of the new Inventory Status that is going to be set to the Storage Bin
+   */
+  public static void changeStatusOfStorageBin(Locator storageBin, String inventoryStatusID) {
+    changeStatusOfStorageBin(storageBin.getId(), inventoryStatusID);
+  }
+
+  /**
    * Returns the number of Virtual Bins that are associated to the given Storage Bin
    */
   public static int getNumberOfVirtualBins(Locator storageBin) {
