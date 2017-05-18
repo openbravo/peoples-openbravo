@@ -218,10 +218,7 @@ public abstract class AuthenticationManager {
   public final String webServiceAuthenticate(HttpServletRequest request)
       throws AuthenticationException {
     final String userId = doWebServiceAuthenticate(request);
-
-    String dbSessionId = setDBSession(request, userId, SUCCESS_SESSION_WEB_SERVICE, false);
-
-    return webServicePostAuthenticate(userId, dbSessionId);
+    return webServicePostAuthenticate(request, userId);
   }
 
   /**
@@ -243,17 +240,24 @@ public abstract class AuthenticationManager {
       throws AuthenticationException {
     username = user;
     final String userId = doWebServiceAuthenticate(user, password);
-    final String dbSessionId = setDBSession(null, userId, SUCCESS_SESSION_WEB_SERVICE, false);
-    return webServicePostAuthenticate(userId, dbSessionId);
+    return webServicePostAuthenticate(null, userId);
   }
 
-  private String webServicePostAuthenticate(String userId, String dbSessionId)
+  private String webServicePostAuthenticate(HttpServletRequest request, String userId)
       throws AuthenticationException {
     if (userId == null) {
       return null;
     }
 
-    switch (ActivationKey.getInstance(true).checkNewWSCall(true)) {
+    ActivationKey activationKey = ActivationKey.getInstance(true);
+    // If the current license has unlimited number of WS calls no limit will be checked, so there is
+    // no need to create a new register in the AD_Session table
+    if (isWebServiceRequest(request) && activationKey.hasUnlimitedWsAccess()) {
+      return userId;
+    }
+
+    String dbSessionId = setDBSession(request, userId, SUCCESS_SESSION_WEB_SERVICE, false);
+    switch (activationKey.checkNewWSCall(true)) {
     case NO_RESTRICTION:
       return userId;
     case EXCEEDED_WARN_WS_CALLS:
@@ -280,6 +284,14 @@ public abstract class AuthenticationManager {
     }
 
     return null;
+  }
+
+  private boolean isWebServiceRequest(HttpServletRequest request) {
+    if (request == null) {
+      // non standard REST web services do not use HttpServletRequest for authentication
+      return true;
+    }
+    return "true".equals(request.getAttribute(BaseWebServiceServlet.WS_CALL));
   }
 
   /**

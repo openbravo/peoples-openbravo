@@ -1312,6 +1312,10 @@ public class ActivationKey {
     return notActiveYet;
   }
 
+  public boolean hasUnlimitedWsAccess() {
+    return !hasExpired && getExpiredInstalledModules().isEmpty() && !limitedWsAccess;
+  }
+
   /**
    * Obtains a List of all the modules that are installed in the instance which license has expired.
    * 
