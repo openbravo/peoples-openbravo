@@ -67,6 +67,7 @@ import org.openbravo.test.db.model.functions.ADOrgTreeTest;
 import org.openbravo.test.db.model.functions.Ad_isorgincludedTest;
 import org.openbravo.test.db.model.functions.SqlCallableStatement;
 import org.openbravo.test.expression.EvaluationTest;
+import org.openbravo.test.inventoryStatus.InventoryStatusTest;
 import org.openbravo.test.model.ClassLoaderTest;
 import org.openbravo.test.model.IndexesTest;
 import org.openbravo.test.model.OneToManyTest;
@@ -207,6 +208,9 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // costing
     TestCosting.class, //
+
+    // Inventory Status
+    InventoryStatusTest.class, //
 
     // scheduling
     ProcessSchedulingTest.class, //
