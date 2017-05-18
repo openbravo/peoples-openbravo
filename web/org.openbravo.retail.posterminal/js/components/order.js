@@ -1397,13 +1397,12 @@ enyo.kind({
           total = OB.DEC.add(total, order.getPending());
           prepayment = OB.DEC.add(prepayment, order.get('prepaymentAmt'));
           prepaymentLimit = OB.DEC.add(prepaymentLimit, order.get('prepaymentLimitAmt'));
-          existingPayment = OB.DEC.add(existingPayment, order.get('payment'));
         } else {
           total = OB.DEC.add(total, order.get('amountToLayaway'));
           prepayment = OB.DEC.add(prepayment, order.get('amountToLayaway'));
           prepaymentLimit = OB.DEC.add(prepaymentLimit, order.get('amountToLayaway'));
-          existingPayment = OB.DEC.add(existingPayment, order.get('amountToLayaway'));
         }
+        existingPayment = OB.DEC.add(existingPayment, order.get('payment'));
       });
       this.total = total;
       this.prepayment = prepayment;
