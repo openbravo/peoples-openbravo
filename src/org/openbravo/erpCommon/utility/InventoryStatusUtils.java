@@ -45,40 +45,63 @@ public class InventoryStatusUtils {
    */
   public static void changeStatusOfStorageBin(String storageBinID, String inventoryStatusID) {
     Locator storageBin = OBDal.getInstance().get(Locator.class, storageBinID);
-    // No change required needed
-    if (StringUtils.equals(storageBin.getInventoryStatus().getId(), inventoryStatusID)) {
+    String errorMessage = "";
+
+    if (statusOfBinEquasGivenStatusID(storageBin, inventoryStatusID)) {
       return;
     }
-    String errorMessage = "";
-    if (storageBin.isVirtual()) {
-      throw new OBException(OBMessageUtils.messageBD("M_VirtualBinCanNotChangeInvStatus").concat(
-          "<br/>"));
-    }
+    throwExceptionIfBinIsVirtual(storageBin);
+
     for (StorageDetail storageDetail : storageBin.getMaterialMgmtStorageDetailList()) {
       try {
-        // Hook to perform validations over the Storage Detail
-        WeldUtils.getInstanceFromStaticBeanManager(InventoryStatusHookManager.class)
-            .executeValidationHooks(storageDetail,
-                OBDal.getInstance().get(InventoryStatus.class, inventoryStatusID));
+        hooksToValidateStatusChangeInStorageDetail(inventoryStatusID, storageDetail);
       } catch (Exception e) {
         errorMessage = errorMessage.concat(e.getMessage()).concat("<br/>");
       }
     }
-    if (!StringUtils.isEmpty(errorMessage)) {
-      if (StringUtils.startsWith(errorMessage, "WARNING")) {
-        storageBin.setInventoryStatus(OBDal.getInstance().get(InventoryStatus.class,
-            inventoryStatusID));
-        OBDal.getInstance().flush();
+    if (errorsWhileChangingStatus(errorMessage)) {
+      if (errorsAreOfWarningType(errorMessage)) {
+        setNewStatusToBin(inventoryStatusID, storageBin);
         throw new OBException(errorMessage);
       } else {
         log4j.error(errorMessage);
         throw new OBException(errorMessage);
       }
     } else {
-      storageBin.setInventoryStatus(OBDal.getInstance().get(InventoryStatus.class,
-          inventoryStatusID));
-      OBDal.getInstance().flush();
+      setNewStatusToBin(inventoryStatusID, storageBin);
     }
+  }
+
+  private static boolean statusOfBinEquasGivenStatusID(Locator storageBin, String inventoryStatusID) {
+    return StringUtils.equals(storageBin.getInventoryStatus().getId(), inventoryStatusID);
+  }
+
+  private static void throwExceptionIfBinIsVirtual(Locator storageBin) {
+    if (storageBin.isVirtual()) {
+      throw new OBException(OBMessageUtils.messageBD("M_VirtualBinCanNotChangeInvStatus").concat(
+          "<br/>"));
+    }
+  }
+
+  private static void hooksToValidateStatusChangeInStorageDetail(String inventoryStatusID,
+      StorageDetail storageDetail) throws Exception {
+    WeldUtils.getInstanceFromStaticBeanManager(InventoryStatusHookManager.class)
+        .executeValidationHooks(storageDetail,
+            OBDal.getInstance().get(InventoryStatus.class, inventoryStatusID));
+  }
+
+  private static boolean errorsWhileChangingStatus(String errorMessage) {
+    return !StringUtils.isEmpty(errorMessage);
+  }
+
+  private static boolean errorsAreOfWarningType(String errorMessage) {
+    return StringUtils.startsWith(errorMessage, "WARNING");
+  }
+
+  private static void setNewStatusToBin(String inventoryStatusID, Locator storageBin) {
+    storageBin
+        .setInventoryStatus(OBDal.getInstance().get(InventoryStatus.class, inventoryStatusID));
+    OBDal.getInstance().save(storageBin);
   }
 
   /**
