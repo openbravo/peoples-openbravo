@@ -15,7 +15,7 @@
   OB.UTIL.prepaymentRules.OBPOS_Default = {
     execute: function (receipt, callback) {
       var prepaymentAmount = receipt.get('lines').reduce(function (memo, line) {
-        if (line.get('obposCanbedelivered')) {
+        if (line.get('obposCanbedelivered') || line.get('deliveredQuantity') === line.get('qty')) {
           return memo + line.get('gross');
         } else {
           return memo;
