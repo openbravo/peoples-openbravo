@@ -254,6 +254,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalDeleteDiscount',
       name: 'modalDeleteDiscount'
+    }, {
+      kind: 'OB.UI.ModalProductAttributes',
+      name: 'modalProductAttribute'
     }]
   }, {
     name: 'mainSubWindow',
@@ -1334,7 +1337,7 @@ enyo.kind({
     if (selectedLinesLength > 1) {
       for (i = 0; i < selectedLinesLength; i++) {
         product = selectedLines[i].get('product');
-        if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || selectedLines[i].get('originalOrderLineId')) {
+        if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || selectedLines[i].get('originalOrderLineId') || product.get('isSerialNo')) {
           enableButton = false;
           break;
         }
@@ -1344,7 +1347,7 @@ enyo.kind({
       }
     } else if (selectedLinesLength === 1) {
       product = selectedLines[0].get('product');
-      if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || selectedLines[0].get('originalOrderLineId')) {
+      if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || selectedLines[0].get('originalOrderLineId') || product.get('isSerialNo')) {
         enableButton = false;
       }
     } else {

@@ -93,8 +93,7 @@ enyo.kind({
     }
 
     if (OB.DEC.compare(amount) > 0) {
-      var provider, receiptToPay, me = this,
-          paymentLine, order;
+      var provider, receiptToPay, me = this;
       if (this.model.get('leftColumnViewManager').isOrder()) {
         receiptToPay = this.receipt;
       }
@@ -109,42 +108,20 @@ enyo.kind({
         provider = paymentMethod.refundProvider;
       }
 
-      paymentLine = new OB.Model.PaymentLine({
-        'kind': key,
-        'name': name,
-        'amount': amount,
-        'rate': rate,
-        'mulrate': mulrate,
-        'isocode': isocode,
-        'allowOpenDrawer': paymentMethod.allowopendrawer,
-        'isCash': paymentMethod.iscash,
-        'openDrawer': paymentMethod.openDrawer,
-        'printtwice': paymentMethod.printtwice
-      });
-
       if (provider) {
-        order = new OB.Model.Order(receiptToPay.attributes);
-        order.addPayment(paymentLine, function () {
-          receiptToPay.trigger('checkValidPayments', order, function (result) {
-            if (result) {
-              me.doShowPopup({
-                popup: 'modalpayment',
-                args: {
-                  'receipt': receiptToPay,
-                  'provider': provider,
-                  'key': key,
-                  'name': name,
-                  'paymentMethod': paymentMethod,
-                  'amount': amount,
-                  'rate': rate,
-                  'mulrate': mulrate,
-                  'isocode': isocode
-                }
-              });
-            } else {
-              me.receipt.stopAddingPayments = false;
-            }
-          });
+        this.doShowPopup({
+          popup: 'modalpayment',
+          args: {
+            'receipt': receiptToPay,
+            'provider': provider,
+            'key': key,
+            'name': name,
+            'paymentMethod': paymentMethod,
+            'amount': amount,
+            'rate': rate,
+            'mulrate': mulrate,
+            'isocode': isocode
+          }
         });
       } else {
         // Calculate total amount to pay with selected PaymentMethod  
@@ -177,7 +154,18 @@ enyo.kind({
             currency: '',
             symbolAtRight: true
           });
-          this.model.addPayment(paymentLine, callback);
+          this.model.addPayment(new OB.Model.PaymentLine({
+            'kind': key,
+            'name': name,
+            'amount': amount,
+            'rate': rate,
+            'mulrate': mulrate,
+            'isocode': isocode,
+            'allowOpenDrawer': paymentMethod.allowopendrawer,
+            'isCash': paymentMethod.iscash,
+            'openDrawer': paymentMethod.openDrawer,
+            'printtwice': paymentMethod.printtwice
+          }), callback);
         }
       }
     }
@@ -504,7 +492,7 @@ enyo.kind({
   },
   shown: function () {
     var me = this,
-        refundablePayment, keyboard = this.owner.owner,
+        refundablePayment, sideButton, keyboard = this.owner.owner,
         isReturnReceipt = (me.receipt && me.receipt.getTotal() < 0) ? true : false;
 
     keyboard.showKeypad('Coins-' + OB.MobileApp.model.get('currency').id); // shows the Coins/Notes panel for the terminal currency
@@ -517,11 +505,23 @@ enyo.kind({
 
     if (OB.MobileApp.model.get('payments').length) {
       // Enable/Disable Payment method based on refundable flag
+      _.each(OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons, function (sideButton) {
+        sideButton.active = true;
+      });
       _.each(OB.MobileApp.model.paymentnames, function (payment) {
         keyboard.disableCommandKey(me, {
           disabled: (isReturnReceipt ? !payment.paymentMethod.refundable : false),
           commands: [payment.payment.searchKey]
         });
+
+        if (isReturnReceipt) {
+          sideButton = _.find(OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons, function (sideBtn) {
+            return sideBtn.btn.command === payment.payment.searchKey;
+          });
+          if (sideButton) {
+            sideButton.active = payment.paymentMethod.refundable;
+          }
+        }
       });
 
       if (!isReturnReceipt || (isReturnReceipt && me.defaultPayment.paymentMethod.refundable)) {
