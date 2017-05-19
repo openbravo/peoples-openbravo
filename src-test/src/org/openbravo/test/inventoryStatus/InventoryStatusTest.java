@@ -157,6 +157,7 @@ public class InventoryStatusTest extends WeldBaseTest {
     reservationsPreference.setVisibleAtRole(null);
     reservationsPreference.setUserContact(null);
     reservationsPreference.setWindow(null);
+    OBDal.getInstance().save(reservationsPreference);
 
   }
 
