@@ -40,6 +40,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runners.MethodSorters;
 import org.openbravo.advpaymentmngt.utility.APRMApplicationInitializer;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -47,7 +48,10 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.InventoryStatusUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.ad.domain.Preference;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Locator;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductAUM;
 import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
@@ -66,6 +70,8 @@ public class InventoryStatusTest extends WeldBaseTest {
 
   // Client QA Testing
   private static final String CLIENT_ID = "4028E6C72959682B01295A070852010D";
+  // Organization *
+  private static final String ORG_STAR_ID = "0";
   // Organization USA
   private static final String ORG_ID = "5EFF95EB540740A3B10510D9814EFAD5";
   // User Openbravo
@@ -102,6 +108,9 @@ public class InventoryStatusTest extends WeldBaseTest {
   private static final String PROCESS_SHIPMENT_RECEIPT = "m_inout_post";
   private static final String PROCESS_RESERVATION = "m_reservation_post";
 
+  // Reservations preference
+  private static final String RESERVATIONS_PREFERENCE = "StockReservations";
+
   // Error messages
   private static final String ERROR_MESSAGE_NEGATIVESTOCK = "There is negative Stock for Product:";
   private static final String LOCATOR_WITH_NOT_AVAILABLE_STATUS_ERROR = "@LocatorWithNotAvailableStatus@";
@@ -125,7 +134,41 @@ public class InventoryStatusTest extends WeldBaseTest {
   public void initialize() {
     log.info("Initializing Inventory Status Test ...");
     OBContext.setOBContext(USER_ID, ROLE_ID, CLIENT_ID, ORG_ID, LANGUAGE_CODE);
+    initializeReservationsPreference();
     initializer.initialize();
+  }
+
+  private void initializeReservationsPreference() {
+    if (!existsReservationsPreference()) {
+      createReservationsPreference();
+    }
+  }
+
+  private void createReservationsPreference() {
+    Preference reservationsPreference = OBProvider.getInstance().get(Preference.class);
+    reservationsPreference.setClient(OBDal.getInstance().get(Client.class, CLIENT_ID));
+    reservationsPreference
+        .setOrganization(OBDal.getInstance().get(Organization.class, ORG_STAR_ID));
+    reservationsPreference.setPropertyList(true);
+    reservationsPreference.setProperty(RESERVATIONS_PREFERENCE);
+    reservationsPreference.setSearchKey("Y");
+    reservationsPreference.setVisibleAtClient(null);
+    reservationsPreference.setVisibleAtOrganization(null);
+    reservationsPreference.setVisibleAtRole(null);
+    reservationsPreference.setUserContact(null);
+    reservationsPreference.setWindow(null);
+
+  }
+
+  private boolean existsReservationsPreference() {
+    OBCriteria<Preference> criteria = OBDal.getInstance().createCriteria(Preference.class);
+    criteria.add(Restrictions.eq(Preference.PROPERTY_PROPERTY, RESERVATIONS_PREFERENCE));
+    criteria.add(Restrictions.eq(Preference.PROPERTY_SEARCHKEY, "Y"));
+    criteria.add(Restrictions.eq(Preference.PROPERTY_CLIENT,
+        OBDal.getInstance().get(Client.class, CLIENT_ID)));
+    criteria.add(Restrictions.eq(Preference.PROPERTY_ORGANIZATION,
+        OBDal.getInstance().get(Organization.class, ORG_STAR_ID)));
+    return !criteria.list().isEmpty();
   }
 
   /**
