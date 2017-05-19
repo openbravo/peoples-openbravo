@@ -81,7 +81,7 @@
       }
     };
 
-    OB.DATA.executeCustomerAddressSave = function (customerAddr, callback) {
+    OB.DATA.executeCustomerAddressSave = function (customerAddr, callback, callbackError) {
       var customerAddrList, customerAddrId = customerAddr.get('id'),
           isNew = false,
           bpLocToSave = new OB.Model.ChangedBPlocation(),
@@ -122,9 +122,14 @@
             OB.DATA.updateDefaultCustomerLocations(customerAddr);
             OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerAddrSaved', [customerAddr.get('_identifier')]));
           };
+          errorCallback = function () {
+            if (callbackError) {
+              callbackError();
+            }
+          };
           customerAddrListToChange = new OB.Collection.ChangedBPlocationList();
           customerAddrListToChange.add(bpLocToSave);
-          OB.MobileApp.model.runSyncProcess(successCallback);
+          OB.MobileApp.model.runSyncProcess(successCallback, errorCallback);
         }, function () {
           //error saving BP changes with changes in changedbusinesspartners
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerAddrChn', [customerAddr.get('_identifier')]));
@@ -157,10 +162,15 @@
               OB.DATA.updateDefaultCustomerLocations(customerAddr);
               OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerAddrSaved', [customerAddr.get('_identifier')]));
             };
+            errorCallback = function () {
+              if (callbackError) {
+                callbackError();
+              }
+            };
             customerAddrListToChange = new OB.Collection.ChangedBPlocationList();
             customerAddrListToChange.add(bpLocToSave);
             if (!OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-              OB.MobileApp.model.runSyncProcess(successCallback);
+              OB.MobileApp.model.runSyncProcess(successCallback, errorCallback);
             }
           }, function () {
             //error saving BP changes with changes in changedbusinesspartners

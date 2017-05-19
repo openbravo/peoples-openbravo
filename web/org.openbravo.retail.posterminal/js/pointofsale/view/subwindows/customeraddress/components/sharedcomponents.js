@@ -25,7 +25,18 @@ enyo.kind({
   kind: 'OB.UI.Button',
   style: 'width: 100px; margin: 0px 0px 8px 5px;',
   classes: 'btnlink-gray btnlink btnlink-small',
-  i18nContent: 'OBMOBC_LblCancel'
+  i18nContent: 'OBMOBC_LblCancel',
+  handlers: {
+    onDisableButton: 'disableButton'
+  },
+  disableButton: function (inSender, inEvent) {
+    this.setDisabled(inEvent.disabled);
+    if (inEvent.disabled) {
+      this.addClass(this.classButtonDisabled);
+    } else {
+      this.removeClass(this.classButtonDisabled);
+    }
+  }
 });
 
 enyo.kind({
@@ -128,6 +139,9 @@ enyo.kind({
         return;
       }
       if (args.passValidation) {
+        args.meObject.waterfall('onDisableButton', {
+          disabled: true
+        });
         args.meObject.saveCustomerAddr(args.inSender, args.inEvent);
       } else {
         OB.UTIL.showWarning(args.error);
@@ -136,6 +150,12 @@ enyo.kind({
   },
   saveCustomerAddr: function (inSender, inEvent) {
     var me = this;
+
+    function enableButtonsCallback() {
+      me.waterfall('onDisableButton', {
+        disabled: false
+      });
+    }
 
     function getCustomerAddrValues(params) {
       me.waterfall('onSaveChange', {
@@ -193,13 +213,16 @@ enyo.kind({
             return true;
           }
           var callback = function () {
+              enableButtonsCallback();
               goToViewWindow({
                 customer: OB.UTIL.clone(me.customer),
                 customerAddr: OB.UTIL.clone(me.model.get('customerAddr'))
               });
               };
-          me.model.get('customerAddr').saveCustomerAddr(callback);
+          me.model.get('customerAddr').saveCustomerAddr(callback, enableButtonsCallback);
         });
+      } else {
+        enableButtonsCallback();
       }
     } else {
       this.model.get('customerAddr').loadModel(this.customerAddr, function (customerAddr) {
@@ -253,8 +276,10 @@ enyo.kind({
                   businessPartner: me.customer,
                   target: 'order'
                 });
+                enableButtonsCallback();
               }, function error(tx) {
                 OB.error(tx);
+                enableButtonsCallback();
               });
             }
             };
@@ -276,6 +301,7 @@ enyo.kind({
                   var receipt = OB.MobileApp.model.receipt,
                       orderlines = [];
                   if (args && args.cancellation && args.cancellation === true) {
+                    enableButtonsCallback();
                     return true;
                   }
                   receipt.set('skipCalculateReceipt', true);
@@ -290,7 +316,7 @@ enyo.kind({
                   receipt.unset('preventServicesUpdate');
                   receipt.unset('deleting');
                   receipt.calculateGross();
-                  args.customerAddr.saveCustomerAddr(callback);
+                  args.customerAddr.saveCustomerAddr(callback, enableButtonsCallback);
                   receipt.set('skipCalculateReceipt', false);
                 });
               }
@@ -308,11 +334,14 @@ enyo.kind({
               isNew: true
             }, function (args) {
               if (args && args.cancellation && args.cancellation === true) {
+                enableButtonsCallback();
                 return true;
               }
-              args.customerAddr.saveCustomerAddr(callback);
+              args.customerAddr.saveCustomerAddr(callback, enableButtonsCallback);
             });
           }
+        } else {
+          enableButtonsCallback();
         }
       });
     }

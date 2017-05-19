@@ -24,6 +24,17 @@ enyo.kind({
   style: 'width: 100px; margin: 0px 0px 8px 5px;',
   classes: 'btnlink-gray btnlink btnlink-small',
   i18nContent: 'OBMOBC_LblCancel',
+  handlers: {
+    onDisableButton: 'disableButton'
+  },
+  disableButton: function (inSender, inEvent) {
+    this.setDisabled(inEvent.disabled);
+    if (inEvent.disabled) {
+      this.addClass(this.classButtonDisabled);
+    } else {
+      this.removeClass(this.classButtonDisabled);
+    }
+  },
   tap: function () {
     this.bubble('onCancelClose');
   }
@@ -462,7 +473,13 @@ enyo.kind({
           return true;
         }
         customerEdited = args.customer;
+        args.windowComponent.waterfall('onDisableButton', {
+          disabled: true
+        });
         args.customer.saveCustomer(function () {
+          args.windowComponent.waterfall('onDisableButton', {
+            disabled: false
+          });
           if (!inEvent.silent) {
             me.bubble('onCancelClose', {
               customer: customerEdited
