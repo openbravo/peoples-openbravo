@@ -192,8 +192,8 @@ BEGIN
           AND rs.quantity > 0
           AND rs.quantity <> COALESCE(rs.releasedqty, 0)
           AND rs.m_locator_id IS NOT NULL
-          AND COALESCE(v_avail, 'Y') = invs.available
-          AND COALESCE(v_nett, 'Y') = invs.nettable
+          AND COALESCE(v_avail, invs.available) = invs.available
+          AND COALESCE(v_nett, invs.nettable) = invs.nettable
     ) LOOP
       INSERT INTO m_stock_proposed (
           m_stock_proposed_id, ad_client_id, ad_org_id, isactive, 
@@ -233,8 +233,8 @@ BEGIN
         AND COALESCE(w.m_warehouse_id, '-1') = COALESCE(v_warehouseid, w.m_warehouse_id, '-1')
         AND ow.ad_org_id = v_orgid
         AND COALESCE(ms.quantity, 0)>0
-        AND COALESCE(v_avail, 'Y') = invs.available
-        AND COALESCE(v_nett, 'Y') = invs.nettable
+        AND COALESCE(v_avail, invs.available) = invs.available
+        AND COALESCE(v_nett, invs.nettable) = invs.nettable
       ORDER BY CASE w.m_warehouse_id WHEN COALESCE(v_PriorityWarehouseID, '-1') THEN 0 ELSE 1 END, ow.priority, l.priorityno, asi.created, t.created
   ) LOOP
     INSERT INTO m_stock_proposed (
@@ -278,8 +278,8 @@ BEGIN
         AND w.m_warehouse_id = COALESCE(r.m_warehouse_id, w.m_warehouse_id)
         AND l.m_locator_id = COALESCE(r.m_locator_id, l.m_locator_id)
         AND asi.m_attributesetinstance_id = COALESCE(r.m_attributesetinstance_id, asi.m_attributesetinstance_id)
-        AND COALESCE(v_avail, 'Y') = invs.available
-        AND COALESCE(v_nett, 'Y') = invs.nettable
+        AND COALESCE(v_avail, invs.available) = invs.available
+        AND COALESCE(v_nett, invs.nettable) = invs.nettable
       GROUP BY w.m_warehouse_id, ow.priority, l.priorityno, asi.created, t.created, t.m_storage_detail_id, t.qtyonhand, t.allocatedqty, t.reservedqty, t.qtyorderonhand, t.updated
       ORDER BY CASE w.m_warehouse_id WHEN COALESCE(v_PriorityWarehouseID, '-1') THEN 0 ELSE 1 END, ow.priority, l.priorityno, asi.created, t.created
   ) LOOP
