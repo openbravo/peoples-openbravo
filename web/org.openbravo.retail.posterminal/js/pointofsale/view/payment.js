@@ -335,13 +335,6 @@ enyo.kind({
         symbolAtRight = true,
         isCashType = true;
 
-    if (this.receipt.get('isPaid') && this.receipt.getGross() === 0) {
-      this.$.totalpending.hide();
-      this.$.totalpendinglbl.hide();
-      this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsExact'));
-      this.$.exactlbl.show();
-      return true;
-    }
     if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
       symbol = OB.MobileApp.model.get('terminal').symbol;
       symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
