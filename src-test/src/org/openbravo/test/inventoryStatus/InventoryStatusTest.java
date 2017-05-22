@@ -145,10 +145,12 @@ public class InventoryStatusTest extends WeldBaseTest {
   }
 
   private void createReservationsPreference() {
+    Client client = OBDal.getInstance().get(Client.class, CLIENT_ID);
+    Organization organization = OBDal.getInstance().get(Organization.class, ORG_STAR_ID);
+
     Preference reservationsPreference = OBProvider.getInstance().get(Preference.class);
-    reservationsPreference.setClient(OBDal.getInstance().get(Client.class, CLIENT_ID));
-    reservationsPreference
-        .setOrganization(OBDal.getInstance().get(Organization.class, ORG_STAR_ID));
+    reservationsPreference.setClient(client);
+    reservationsPreference.setOrganization(organization);
     reservationsPreference.setPropertyList(true);
     reservationsPreference.setProperty(RESERVATIONS_PREFERENCE);
     reservationsPreference.setSearchKey("Y");
@@ -162,13 +164,17 @@ public class InventoryStatusTest extends WeldBaseTest {
   }
 
   private boolean existsReservationsPreference() {
+    Client client = OBDal.getInstance().get(Client.class, CLIENT_ID);
+    Organization organization = OBDal.getInstance().get(Organization.class, ORG_STAR_ID);
+    // Value property is defined as CLOB in Oracle, this is why it is needed this expression to
+    // convert it to a char first
+    String valueISYes = " to_char(value) = 'Y' ";
+
     OBCriteria<Preference> criteria = OBDal.getInstance().createCriteria(Preference.class);
     criteria.add(Restrictions.eq(Preference.PROPERTY_PROPERTY, RESERVATIONS_PREFERENCE));
-    criteria.add(Restrictions.eq(Preference.PROPERTY_SEARCHKEY, "Y"));
-    criteria.add(Restrictions.eq(Preference.PROPERTY_CLIENT,
-        OBDal.getInstance().get(Client.class, CLIENT_ID)));
-    criteria.add(Restrictions.eq(Preference.PROPERTY_ORGANIZATION,
-        OBDal.getInstance().get(Organization.class, ORG_STAR_ID)));
+    criteria.add(Restrictions.sqlRestriction(valueISYes));
+    criteria.add(Restrictions.eq(Preference.PROPERTY_CLIENT, client));
+    criteria.add(Restrictions.eq(Preference.PROPERTY_ORGANIZATION, organization));
     return !criteria.list().isEmpty();
   }
 
