@@ -597,6 +597,20 @@ OB.POS.registerWindow({
   approvalType: 'OBPOS_approval.cashup',
   navigateTo: function (args, successCallback, errorCallback) {
     var me = this;
+    // Cannot navigate to the cashup window in case of being a seller terminal
+    if (!OB.MobileApp.model.get('hasPaymentsForCashup')) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NavigationNotAllowedHeader'), OB.I18N.getLabel('OBPOS_CannotNavigateToCashUp'), [{
+        label: OB.I18N.getLabel('OBMOBC_LblOk'),
+        action: function () {
+          errorCallback();
+        }
+      }], {
+        onHideFunction: function () {
+          errorCallback();
+        }
+      });
+      return;
+    }
     // in case of synchronized mode reload the cashup from the server
     // this is needed because there is a slight change that the cashup on the client 
     // is out of date
@@ -607,6 +621,9 @@ OB.POS.registerWindow({
     } else {
       successCallback(args.route);
     }
+  },
+  menuItemDisplayLogic: function () {
+    return OB.MobileApp.model.get('hasPaymentsForCashup');
   }
 });
 
@@ -629,5 +646,25 @@ OB.POS.registerWindow({
   menuPosition: 21,
   menuI18NLabel: 'OBPOS_LblCloseCashPartial',
   permission: 'OBPOS_retail.cashuppartial',
-  approvalType: 'OBPOS_approval.cashuppartial'
+  approvalType: 'OBPOS_approval.cashuppartial',
+  navigateTo: function (args, successCallback, errorCallback) {
+    if (!OB.MobileApp.model.get('hasPaymentsForCashup')) {
+      // Cannot navigate to the cashup partial window in case of being a seller terminal
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NavigationNotAllowedHeader'), OB.I18N.getLabel('OBPOS_CannotNavigateToPartialCashUp'), [{
+        label: OB.I18N.getLabel('OBMOBC_LblOk'),
+        action: function () {
+          errorCallback();
+        }
+      }], {
+        onHideFunction: function () {
+          errorCallback();
+        }
+      });
+      return;
+    }
+    successCallback(args.route);
+  },
+  menuItemDisplayLogic: function () {
+    return OB.MobileApp.model.get('hasPaymentsForCashup');
+  }
 });

@@ -703,6 +703,21 @@ enyo.kind({
         this.$.paymentBreakdown.hide();
       }
     }, this);
+    // Change Document No based on return lines
+    this.order.get('lines').on('add change:qty change:relatedLines updateRelations', function () {
+      if (this.order.get('isEditable') && !this.order.get('isLayaway') && !this.order.get('isQuotation') && !this.order.get('doCancelAndReplace')) {
+        var negativeLinesLength = _.filter(this.order.get('lines').models, function (line) {
+          return line.get('qty') < 0;
+        }).length;
+        if (negativeLinesLength > 0 && negativeLinesLength === this.order.get('lines').models.length) {
+          //isReturn
+          OB.MobileApp.model.receipt.setDocumentNo(true, false);
+        } else {
+          //isOrder
+          OB.MobileApp.model.receipt.setDocumentNo(false, true);
+        }
+      }
+    }, this);
     this.order.get('lines').on('add change:qty change:relatedLines updateRelations', function () {
       var approvalNeeded = false,
           linesToRemove = [],
@@ -713,19 +728,6 @@ enyo.kind({
         return;
       }
       this.updating = true;
-      //Check Return No logic and change
-      if (!this.order.get('isLayaway') && !this.order.get('isQuotation') && !this.order.get('doCancelAndReplace')) {
-        var negativeLinesLength = _.filter(this.order.get('lines').models, function (line) {
-          return line.get('qty') < 0;
-        }).length;
-        if (negativeLinesLength === this.order.get('lines').models.length && negativeLinesLength > 0) {
-          //isReturn
-          OB.MobileApp.model.receipt.setDocumentNo(true, false);
-        } else {
-          //isOrder
-          OB.MobileApp.model.receipt.setDocumentNo(false, true);
-        }
-      }
 
       function getServiceLines(service) {
         var serviceLines;

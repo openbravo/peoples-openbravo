@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -29,16 +30,26 @@ import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.system.Language;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 
 public class POSLoginHandler extends MobileCoreLoginHandler {
 
   private static final long serialVersionUID = 1L;
-  private static final String WEB_POS_SESSION = "OBPOS_POS";
+  public static final String WEB_POS_SESSION = "OBPOS_POS";
 
   @Override
   protected RoleDefaults getDefaults(HttpServletRequest req, HttpServletResponse res,
       String userId, String roleId, Session session) {
+
+    final String terminalName = req.getParameter("terminalName");
+    final String hql = "SELECT a.organization FROM OBPOS_Applications AS a WHERE a.searchKey = :terminalName";
+    final org.hibernate.Session hibernateSession = OBDal.getInstance().getSession();
+    final Query query = hibernateSession.createQuery(hql);
+    query.setParameter("terminalName", terminalName);
+    query.setMaxResults(1);
+    final Organization org = (Organization) query.uniqueResult();
+    session.setObposStoreOrg(org);
 
     final VariablesSecureApp vars = new VariablesSecureApp(req);
     final String terminalSearchKey = vars.getStringParameter("terminalName");

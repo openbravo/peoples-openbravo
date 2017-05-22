@@ -40,11 +40,14 @@
       priceList: OB.DEC.Zero,
       gross: OB.DEC.Zero,
       net: OB.DEC.Zero,
-      description: ''
+      description: '',
+      attributeValue: ''
     },
 
-    // When copying a line coming from servers these properties are copied manually
-    // the rest are considered extra information coming from modules and are copied verbatim.
+    // When copying a line coming from servers these properties are copied
+    // manually
+    // the rest are considered extra information coming from modules and are
+    // copied verbatim.
     ownProperties: {
       id: true,
       lineId: true,
@@ -68,7 +71,8 @@
       relatedLines: true,
       hasRelatedServices: true,
       warehouse: true,
-      warehousename: true
+      warehousename: true,
+      attributeValue: true
     },
 
     initialize: function (attributes) {
@@ -84,6 +88,7 @@
         this.set('promotions', attributes.promotions);
         this.set('priceIncludesTax', attributes.priceIncludesTax);
         this.set('description', attributes.description);
+        this.set('attributeValue', attributes.attributeValue);
         if (!attributes.grossListPrice && attributes.product && _.isNumber(attributes.priceList)) {
           this.set('grossListPrice', attributes.priceList);
         }
@@ -95,6 +100,10 @@
         }
       }
 
+    },
+
+    getAttributeValue: function () {
+      return this.get('attributeValue');
     },
 
     getQty: function () {
@@ -381,6 +390,7 @@
         this.set('hasbeenpaid', attributes.hasbeenpaid);
         this.set('isbeingprocessed', attributes.isbeingprocessed);
         this.set('description', attributes.description);
+        this.set('attributeValue', attributes.attributeValue);
         this.set('print', attributes.print);
         this.set('sendEmail', attributes.sendEmail);
         this.set('isPaid', attributes.isPaid);
@@ -804,6 +814,10 @@
           order.trigger('saveCurrent');
         }
       }
+    },
+
+    getAttributeValue: function () {
+      return this.get('attributeValue');
     },
 
     getQty: function () {
@@ -1507,9 +1521,34 @@
     _addProduct: function (p, qty, options, attrs, callback) {
       var newLine = true,
           line = null,
-          me = this;
+          me = this,
+          productHavingSameAttribute = false,
+          productHasAttribute = p.attributes.hasAttributes,
+          attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true);
       if (enyo.Panels.isScreenNarrow()) {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_AddLine', [qty ? qty : 1, p.get('_identifier')]));
+      }
+      if (attributeSearchAllowed && productHasAttribute) {
+        var lines = me.get('lines'),
+            i, currentline;
+        if (options && options.line) {
+          productHavingSameAttribute = true;
+        } else {
+          for (i = 0; i < lines.length; i++) {
+            currentline = lines.models[i].attributes;
+            if (attrs && (currentline.attributeValue === attrs.attributeValue) && (p.id === currentline.product.id)) {
+              productHavingSameAttribute = true;
+              line = currentline;
+              if (p.get('isSerialNo')) {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ProductDefinedAsSerialNo'));
+                if (callback) {
+                  callback(false, null);
+                }
+                return;
+              }
+            }
+          }
+        }
       }
       if (p.get('ispack')) {
         OB.Model.Discounts.discountRules[p.get('productCategory')].addProductToOrder(this, p);
@@ -1556,7 +1595,13 @@
             } else {
               line = me.get('lines').find(function (l) {
                 if (l.get('product').id === p.id && ((l.get('qty') > 0 && qty > 0) || (l.get('qty') < 0 && qty < 0))) {
-                  return true;
+                  if (attributeSearchAllowed && attrs) {
+                    if ((l.get('attributeValue') === attrs.attributeValue)) {
+                      return true;
+                    }
+                  } else {
+                    return true;
+                  }
                 }
               });
             }
@@ -1573,7 +1618,9 @@
                 return;
               }
               var splitline = !(options && options.line) && !OB.UTIL.isNullOrUndefined(args.line) && !OB.UTIL.isNullOrUndefined(args.line.get('splitline')) && args.line.get('splitline');
-              if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')))) {
+              var serviceProduct = args.line && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')));
+              var groupedByAttributeValues = (productHasAttribute && productHavingSameAttribute) || (!productHasAttribute && !productHavingSameAttribute);
+              if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (serviceProduct) && groupedByAttributeValues) {
                 args.receipt.addUnit(args.line, args.qty);
                 if (!_.isUndefined(args.attrs)) {
                   _.each(_.keys(args.attrs), function (key) {
@@ -1639,8 +1686,10 @@
           }
           if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
             var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
-            // Display related services after calculate gross, if it is new line and if the line has not been deleted.
-            // The line might has been deleted during calculate gross for examples if there was an error in taxes.
+            // Display related services after calculate gross, if it is new line
+            // and if the line has not been deleted.
+            // The line might has been deleted during calculate gross for
+            // examples if there was an error in taxes.
             var productId = (args.productToAdd.get('isNew') && OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) ? null : (args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id);
             args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
               if (data) {
@@ -1876,7 +1925,8 @@
         receipt: this,
         productToAdd: p,
         qtyToAdd: qty,
-        options: options
+        options: options,
+        attrs: attrs
       }, function (args) {
         // do not allow generic products to be added to the receipt
         if (args && args.productToAdd && args.productToAdd.get('isGeneric')) {
@@ -1919,11 +1969,38 @@
           }
           return;
         }
-        me._addProduct(p, qty, options, attrs, function (success, orderline) {
-          if (callback) {
-            callback(success, orderline);
-          }
-        });
+        if ((!args || !args.options || !args.options.line) && OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true) && p.get('hasAttributes') && qty >= 1) {
+          OB.MobileApp.view.waterfall('onShowPopup', {
+            popup: 'modalProductAttribute',
+            args: {
+              callback: function (attributeValue) {
+                if (attributeValue) {
+                  var i;
+                  if (OB.UTIL.isNullOrUndefined(attrs)) {
+                    attrs = {};
+                  }
+                  attrs.attributeValue = attributeValue;
+                  me._addProduct(p, qty, options, attrs, function (success, orderline) {
+                    if (callback) {
+                      callback(success, orderline);
+                    }
+                  });
+                } else {
+                  if (callback) {
+                    callback(false, null);
+                  }
+                }
+              },
+              options: options
+            }
+          });
+        } else {
+          me._addProduct(p, qty, options, attrs, function (success, orderline) {
+            if (callback) {
+              callback(success, orderline);
+            }
+          });
+        }
       });
     },
 
@@ -2753,6 +2830,7 @@
       me.set('doCancelAndReplace', true);
 
       OB.Dal.remove(this, function () {
+        var deliveredQty = 0;
         me.get('lines').each(function (line) {
           idMap[line.get('id')] = OB.UTIL.get_UUID();
           line.set('replacedorderline', line.get('id'));
@@ -2767,7 +2845,10 @@
         me.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
         me.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
 
-        if (me.get('isLayaway')) {
+        _.each(me.get('lines').models, function (line) {
+          deliveredQty += line.get('deliveredQuantity');
+        });
+        if (me.get('isLayaway') || (OB.MobileApp.model.get('terminal').terminalType.layawayorder && deliveredQty === 0)) {
           me.set('orderType', 2);
         }
         me.set('isLayaway', false);
@@ -4313,6 +4394,9 @@
           } else if (receipt.has('deletedLines')) {
             if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
               receipt.set('skipCalculateReceipt', false);
+              // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
+              // may be called out of the pointofsale window, and in order to call the calculateReceipt function, the
+              // isCalculateReceiptLockState and isCalculateGrossLockState properties must be initialized
               receipt.setIsCalculateReceiptLockState(false);
               receipt.setIsCalculateGrossLockState(false);
               markOrderAsDeleted(receipt, orderList, callback);
@@ -4633,6 +4717,7 @@
                         description: iter.description,
                         priceIncludesTax: order.get('priceIncludesTax'),
                         hasRelatedServices: hasservices,
+                        attributeValue: iter.attributeValue,
                         warehouse: {
                           id: iter.warehouse,
                           warehousename: iter.warehousename

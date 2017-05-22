@@ -88,6 +88,10 @@
       } else {
         isNew = true;
       }
+      // if the bp is already used in one of the orders then update locally also
+      updateLocally = !OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true) || (!isNew && OB.MobileApp.model.orderList && _.filter(OB.MobileApp.model.orderList.models, function (order) {
+        return order.get('bp').get('id') === customerId;
+      }).length > 0);
 
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) { //With high volume we only save locally when it is assigned to the order
         if (isNew) {
@@ -118,30 +122,28 @@
         }
 
         bpToSave.set('isbeingprocessed', 'Y');
-        OB.UTIL.HookManager.executeHooks('OBPOS_PostCustomerSave', {
-          customer: customer,
-          bpToSave: bpToSave
-        }, function (args) {
-          OB.Dal.save(bpToSave, function () {
-            bpToSave.set('json', customer.serializeToJSON());
-            var successCallback = function () {
-                if (callback) {
-                  callback();
-                }
-                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSaved', [customer.get('_identifier')]));
-                };
-            OB.MobileApp.model.runSyncProcess(successCallback);
-          }, function () {
-            //error saving BP changes with changes in changedbusinesspartners
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerChanges', [customer.get('_identifier')]));
-          }, isNew);
-        });
-      }
 
-      // if the bp is already used in one of the orders then update locally also
-      updateLocally = !OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true) || (!isNew && OB.MobileApp.model.orderList && _.filter(OB.MobileApp.model.orderList.models, function (order) {
-        return order.get('bp').get('id') === customerId;
-      }).length > 0);
+        if (!updateLocally) {
+          OB.UTIL.HookManager.executeHooks('OBPOS_PostCustomerSave', {
+            customer: customer,
+            bpToSave: bpToSave
+          }, function (args) {
+            OB.Dal.save(bpToSave, function () {
+              bpToSave.set('json', JSON.stringify(customer.serializeToJSON()));
+              var successCallback = function () {
+                  if (callback) {
+                    callback();
+                  }
+                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSaved', [customer.get('_identifier')]));
+                  };
+              OB.MobileApp.model.runSyncProcess(successCallback);
+            }, function () {
+              //error saving BP changes with changes in changedbusinesspartners
+              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerChanges', [customer.get('_identifier')]));
+            }, isNew);
+          });
+        }
+      }
 
       if (updateLocally) {
         //save that the customer is being processed by server

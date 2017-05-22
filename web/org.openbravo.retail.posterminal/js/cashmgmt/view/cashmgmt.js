@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo */
+/*global OB, enyo, _ */
 
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.LeftToolbarImpl',
@@ -214,5 +214,25 @@ OB.POS.registerWindow({
   menuPosition: 10,
   menuI18NLabel: 'OBPOS_LblCashManagement',
   permission: 'OBPOS_retail.cashmanagement',
-  approvalType: 'OBPOS_approval.cashmgmt'
+  approvalType: 'OBPOS_approval.cashmgmt',
+  navigateTo: function (args, successCallback, errorCallback) {
+    if (!OB.MobileApp.model.get('hasPaymentsForCashup')) {
+      // Cannot navigate to the cash management window in case of being a seller terminal
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NavigationNotAllowedHeader'), OB.I18N.getLabel('OBPOS_CannotNavigateToCashManagement'), [{
+        label: OB.I18N.getLabel('OBMOBC_LblOk'),
+        action: function () {
+          errorCallback();
+        }
+      }], {
+        onHideFunction: function () {
+          errorCallback();
+        }
+      });
+      return;
+    }
+    successCallback(args.route);
+  },
+  menuItemDisplayLogic: function () {
+    return OB.MobileApp.model.get('hasPaymentsForCashup');
+  }
 });
