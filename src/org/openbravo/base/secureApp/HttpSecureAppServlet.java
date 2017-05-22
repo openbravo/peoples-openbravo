@@ -131,8 +131,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       log4j.debug("Servlet request for class info: " + this.getClass());
 
       if (classInfo == null) {
-        ClassInfoData[] classInfoAux = ClassInfoData.select(new DalConnectionProvider(false), this
-            .getClass().getName());
+        // do not use DAL at this point: it's not guaranteed to be executed within a Servlet request
+        ClassInfoData[] classInfoAux = ClassInfoData.select(this, this.getClass().getName());
         if (classInfoAux != null && classInfoAux.length > 0)
           classInfo = classInfoAux[0];
         else {
