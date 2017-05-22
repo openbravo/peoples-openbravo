@@ -323,7 +323,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
         .getDomainType();
     if (domainType.getClass().getSuperclass().equals(BigDecimalDomainType.class)
         || domainType.getClass().equals(LongDomainType.class)) {
-      whereClause = field.getClauseLeftPart() + " = "
+      whereClause = field.getClauseLeftPart() + AdvancedQueryBuilder.getHqlOperator(operator)
           + getTypedParameterAlias(typedParameters, new BigDecimal(value));
     } else if (domainType.getClass().equals(DateDomainType.class)) {
       try {
