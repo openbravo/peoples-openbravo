@@ -105,10 +105,10 @@ enyo.kind({
     }]
   }, {
     name: 'generic',
-    style: 'text-align: right; font-style: italic; color: grey; font-weight: bold;',
+    style: 'text-align: right; font-style: italic; color: grey; font-weight: bold; padding-right: 6px;',
     showing: false
   }, {
-    style: 'color: #888888; text-align: left; font-style: italic; color: grey; font-size: 13px; padding-top: 10px; padding-right: 6px',
+    style: 'color: #888888; text-align: left; font-style: italic; color: grey; font-size: 13px; padding-top: 10px; padding-right: 6px;',
     name: 'bottonLine'
   }],
   drawPriceBasedOnSize: function () {
