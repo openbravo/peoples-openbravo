@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009-2016 Openbravo SL 
+ * All portions are Copyright (C) 2009-2017 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -298,12 +298,14 @@ public class PaymentReportDao {
       } else if (StringUtils.isNotEmpty(strFinancialAccountId)) {
         hsqlScript.append(" left join inv.businessPartner as invbp");
       }
-      hsqlScript.append(" where (fpd is not null or invps is not null)");
-      hsqlScript.append(" and fpsd.organization.id in ");
-      hsqlScript.append(concatOrganizations(OBContext.getOBContext().getReadableOrganizations()));
+      hsqlScript
+          .append(" where (fpsd.paymentDetails is not null or fpsd.invoicePaymentSchedule is not null)");
 
       // organization + include sub-organization
-      if (!strOrg.isEmpty()) {
+      if (StringUtils.isEmpty(strOrg) || StringUtils.equals(strOrg, "0")) {
+        hsqlScript.append(" and fpsd.organization.id in ");
+        hsqlScript.append(concatOrganizations(OBContext.getOBContext().getReadableOrganizations()));
+      } else {
         if (!strInclSubOrg.equalsIgnoreCase("include")) {
           hsqlScript.append(" and fpsd.");
           hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_ORGANIZATION);
