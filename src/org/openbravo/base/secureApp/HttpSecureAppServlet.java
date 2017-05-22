@@ -123,31 +123,28 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     super.init(config);
 
     m_AuthManager = AuthenticationManager.getAuthenticationManager(this);
-    log4j.debug("strdireccion: " + strDireccion);
 
-    // Calculate class info
     try {
-
-      log4j.debug("Servlet request for class info: " + this.getClass());
+      log4j.debug("Initializing Servlet " + this.getClass());
 
       if (classInfo == null) {
         // do not use DAL at this point: it's not guaranteed to be executed within a Servlet request
         ClassInfoData[] classInfoAux = ClassInfoData.select(this, this.getClass().getName());
-        if (classInfoAux != null && classInfoAux.length > 0)
+        if (classInfoAux != null && classInfoAux.length > 0) {
           classInfo = classInfoAux[0];
-        else {
+        } else {
           classInfoAux = ClassInfoData.set();
           classInfo = classInfoAux[0];
         }
       }
     } catch (final Exception ex) {
-      log4j.error(ex);
+      log4j.error("Error initializing Servlet " + this.getClass(), ex);
       ClassInfoData[] classInfoAux;
       try {
         classInfoAux = ClassInfoData.set();
         classInfo = classInfoAux[0];
       } catch (ServletException e) {
-        log4j.error(e);
+        log4j.error("Error initializing Servlet " + this.getClass(), ex);
       }
     }
   }
