@@ -117,6 +117,9 @@
         <index-column name="BARCODE"/>
         <whereClause><![CDATA[BARCODE IS NOT NULL]]></whereClause>
       </index>
+      <index name="M_LOCATOR_INVS" unique="false">
+        <index-column name="M_INVENTORYSTATUS_ID"/>
+      </index>
       <index name="M_LOCATOR_ISVIRTUAL" unique="false">
         <index-column name="ISVIRTUAL"/>
         <whereClause><![CDATA[ISVIRTUAL IS NOT NULL]]></whereClause>
