@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2016 Openbravo SLU
+ * All portions are Copyright (C) 2013-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,7 +63,7 @@ public class EndYearCloseUtility {
     con = _con;
   }
 
-  public synchronized OBError processYearClose() {
+  public OBError processYearClose() {
     String strYearId = year.getId();
     String strOrgId = organization.getId();
     OBError myError = new OBError();
@@ -174,7 +174,7 @@ public class EndYearCloseUtility {
     return myError;
   }
 
-  private synchronized String processButtonReg(String strYearId, String stradOrgId,
+  private String processButtonReg(String strYearId, String stradOrgId,
       String strFact_Acct_Group_ID, String strAcctSchema, String strDivideUpId,
       EndYearCloseUtilityData[] account2) throws ServletException {
     String Fact_Acct_ID = "";
@@ -298,9 +298,8 @@ public class EndYearCloseUtility {
     return "Success";
   }
 
-  private synchronized String processButtonClose(String strYearId, String stradOrgId,
-      String strCloseID, String strOpenID, String strAcctSchema, String strDivideUpId)
-      throws ServletException {
+  private String processButtonClose(String strYearId, String stradOrgId, String strCloseID,
+      String strOpenID, String strAcctSchema, String strDivideUpId) throws ServletException {
     String Fact_Acct_Group_ID = strCloseID;
     String strPediodId = EndYearCloseUtilityData.getLastPeriod(conn, strYearId);
     String newPeriod = EndYearCloseUtilityData.getNextPeriod(conn, strPediodId);
