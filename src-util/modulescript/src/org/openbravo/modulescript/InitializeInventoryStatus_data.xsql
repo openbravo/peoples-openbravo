@@ -18,39 +18,7 @@
  ************************************************************************
 -->
 <SqlClass name="InitializeInventoryStatusData" package="org.openbravo.modulescript">
- <SqlMethod name="select" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql><![CDATA[
-      SELECT '' AS ad_client_id
-      FROM DUAL
-      ]]>
-    </Sql>
-  </SqlMethod>
-  <SqlMethod name="isExecuted" type="preparedStatement" return="boolean">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT count(*) as exist
-        FROM DUAL
-        WHERE EXISTS (SELECT 1 FROM ad_preference
-                      WHERE property = 'EnableInventoryStatus')
-      ]]>
-    </Sql>
-  </SqlMethod>
-   <SqlMethod name="createPreference" type="preparedStatement" return="rowcount">
-      <SqlMethodComment></SqlMethodComment>
-       <Sql> 
-       <![CDATA[ 
-           INSERT INTO ad_preference (
-           ad_preference_id, ad_client_id, ad_org_id, isactive,
-           createdby, created, updatedby, updated, ispropertylist, property, value
-           ) VALUES (
-           get_uuid(), '0', '0', 'Y', '0', NOW(), '0', NOW(), 'Y', 'EnableInventoryStatus', 'Y')
-         ]]>
-        </Sql>
-   </SqlMethod>
    <SqlMethod name="getClientIds" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
         SELECT ad_client_id
@@ -59,7 +27,6 @@
     </Sql>
   </SqlMethod>
    <SqlMethod name="isNegativeStockAllowed" type="preparedStatement" return="boolean">
-      <SqlMethodComment></SqlMethodComment>
        <Sql> 
        <![CDATA[ 
            SELECT count(*) as exist
@@ -72,7 +39,6 @@
         <Parameter name="ad_client_id"/>
    </SqlMethod>
    <SqlMethod name="initializeInventoryStatus" type="preparedStatement" return="rowcount">
-    <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
         UPDATE m_locator
