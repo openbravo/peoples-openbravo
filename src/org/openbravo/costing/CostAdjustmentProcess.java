@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -337,7 +337,7 @@ public class CostAdjustmentProcess {
     return implementor;
   }
 
-  public static synchronized JSONObject doProcessCostAdjustment(CostAdjustment costAdjustment)
+  public static JSONObject doProcessCostAdjustment(CostAdjustment costAdjustment)
       throws OBException {
     String docNo = costAdjustment.getDocumentNo();
     log.debug("Starts process cost adjustment: {}", docNo);
