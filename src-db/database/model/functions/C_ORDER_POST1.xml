@@ -1327,13 +1327,15 @@
                     IF (v_pendingtounreserve > 0) THEN
                       RAISE_APPLICATION_ERROR(-20000, '@CouldNotUnreserveNeededQty@');
                     END IF;
-                    -- Delete reservation lines with zero releasedqty
-                    DELETE FROM m_reservation_stock
-                    WHERE COALESCE(releasedqty, 0) = 0
+                    IF (v_DocAction <> 'CO') THEN
+                      -- Delete reservation lines with zero releasedqty
+                      DELETE FROM m_reservation_stock
+                      WHERE COALESCE(releasedqty, 0) = 0
                       AND m_reservation_id = v_reservation_id;
+                    END IF;
                   END IF;
                   -- Order line orderedqty greater than reservation releasedqty
-                  IF (cur_orderline.qtyordered > v_releasedqty) THEN
+                  IF (cur_orderline.qtyordered > v_releasedqty AND v_DocAction <> 'CO') THEN
                     UPDATE m_reservation_stock
                     SET quantity = releasedqty,
                         updated = now(),
@@ -1342,11 +1344,11 @@
                   END IF;
                   UPDATE m_reservation
                   SET quantity = cur_orderline.qtyordered,
-                      res_status = 'CL',
+                      res_status = CASE WHEN v_DocAction <> 'CO' THEN 'CL' ELSE res_status END,
                       updated = now(),
                       updatedby = v_user
                   WHERE m_reservation_id = v_reservation_id;
-                  IF (v_quantity < cur_orderline.qtyordered AND v_res_status = 'CO') THEN
+                  IF (v_quantity < cur_orderline.qtyordered AND v_res_status = 'CO' AND v_DocAction <> 'CO') THEN
                     --Reservation processed with higher quantity. Try to reserve the new quantity.
                     M_RESERVE_STOCK_AUTO(v_reservation_id, v_user, v_reservedqty);
                   END IF;
