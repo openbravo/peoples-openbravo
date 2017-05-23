@@ -168,6 +168,7 @@ public class DocFINReconciliation extends AcctServer {
     FieldProviderFactory[] data = new FieldProviderFactory[paymentDetails.size()];
     FIN_PaymentSchedule ps = null;
     FIN_PaymentDetail pd = null;
+    BigDecimal totalAmount = new BigDecimal(0);
     OBContext.setAdminMode();
     try {
       for (int i = 0; i < data.length; i++) {
@@ -211,7 +212,14 @@ public class DocFINReconciliation extends AcctServer {
           ps = psi;
           continue;
         } else {
-          FieldProviderFactory.setField(data[i], "Amount", amount.toString());
+          if (amountAndWriteOff.get("merged").compareTo(BigDecimal.ONE) == 0) {
+            // keeps only the current line while merging the amounts
+            data[i - 1] = null;
+            totalAmount = amount.add(totalAmount);
+          } else {
+            totalAmount = amount;
+          }
+          FieldProviderFactory.setField(data[i], "Amount", totalAmount.toString());
         }
         ps = psi;
 

@@ -3070,6 +3070,9 @@ public abstract class AcctServer {
     amountAndWriteOff.put("amount", paymentDetail.getAmount());
     amountAndWriteOff.put("writeoff", paymentDetail.getWriteoffAmount());
 
+    // this value indicates that the current payment detail amount must be added to the previous one
+    amountAndWriteOff.put("merged", new BigDecimal(0));
+
     // If the Payment Detail has either an Invoice or an Order associated to it
     if (psi != null || pso != null) {
       // If the Payment Detail has no Order associated to it, or it has an Invoice associated and is
@@ -3102,10 +3105,16 @@ public abstract class AcctServer {
               paymentDetail.getAmount().add(paymentDetailPrevious.getAmount()));
           amountAndWriteOff.put("writeoff",
               paymentDetail.getWriteoffAmount().add(paymentDetailPrevious.getWriteoffAmount()));
+
           if (fieldProvider != null) {
             FieldProviderFactory.setField(fieldProvider, "MergedPaymentDetailId",
                 paymentDetailPreviousId);
           }
+        }
+        // If there is a previous Payment Detail that belongs to the same Invoice, the amounts
+        // should be added.
+        else if (psdPrevious != null && psdPrevious.getInvoicePaymentSchedule() == psi) {
+          amountAndWriteOff.put("merged", new BigDecimal(1));
         }
       }
     }

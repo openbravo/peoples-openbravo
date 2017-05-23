@@ -120,6 +120,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     FieldProviderFactory[] data = new FieldProviderFactory[paymentDetails.size()];
     String psId = null;
     String pdId = null;
+    BigDecimal totalAmount = new BigDecimal(0);
     OBContext.setAdminMode();
     try {
       for (int i = 0; i < data.length; i++) {
@@ -166,7 +167,14 @@ public class DocFINFinAccTransaction extends AcctServer {
           psId = psi != null ? psi.getId() : null;
           continue;
         } else {
-          FieldProviderFactory.setField(data[i], "Amount", amount.toString());
+          if (amountAndWriteOff.get("merged").compareTo(BigDecimal.ONE) == 0) {
+            // keeps only the current line while merging the amounts
+            data[i - 1] = null;
+            totalAmount = amount.add(totalAmount);
+          } else {
+            totalAmount = amount;
+          }
+          FieldProviderFactory.setField(data[i], "Amount", totalAmount.toString());
         }
         psId = psi != null ? psi.getId() : null;
 
