@@ -882,10 +882,15 @@
     },
 
     postCloseSession: function (session) {
+      var callback = function () {
+          OB.MobileApp.model.triggerLogout();
+          };
       if (OB.POS.hwserver !== undefined) {
         OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {}, function () {
-          OB.MobileApp.model.triggerLogout();
+          callback();
         }, OB.DS.HWServer.DISPLAY);
+      } else {
+        callback();
       }
     },
 
