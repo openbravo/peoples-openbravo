@@ -65,6 +65,7 @@ enyo.kind({
         args: {
           presetCustomerId: OB.MobileApp.model.receipt.get('bp').id,
           target: 'order',
+          clean: true,
           navigationPath: []
         }
       });
@@ -302,6 +303,7 @@ enyo.kind({
           target: 'modal_selector_business_partners',
           businessPartner: bp,
           manageAddress: true,
+          clean: true,
           navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(dialog.owner.owner.args.navigationPath, 'modalcustomer')
         }
       });
@@ -749,7 +751,7 @@ enyo.kind({
     kind: 'OB.UI.ListBpsSelector'
   },
   executeOnShow: function () {
-    if (!this.initialized) {
+    if (!this.isInitialized()) {
       this.inherited(arguments);
       if (_.isUndefined(this.args.visibilityButtons)) {
         this.args.visibilityButtons = true;

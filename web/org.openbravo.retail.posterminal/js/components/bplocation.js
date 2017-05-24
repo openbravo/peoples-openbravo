@@ -814,7 +814,7 @@ enyo.kind({
     onShowPopup: ''
   },
   executeOnShow: function () {
-    if (!this.initialized) {
+    if (!this.isInitialized()) {
       this.inherited(arguments);
       if (_.isUndefined(this.args.visibilityButtons)) {
         this.args.visibilityButtons = true;
