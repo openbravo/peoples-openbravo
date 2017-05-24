@@ -946,7 +946,7 @@ enyo.kind({
                     me.order.get('lines').remove(l);
                   } else {
                     deferredQty = 0;
-                    if (line.get('product').get('quantityRule') === 'PP') {
+                    if (line.get('product').get('quantityRule') === 'PP' && line.get('product').get('groupProduct')) {
                       _.each(deferredLines, function (deferredLine) {
                         deferredQty += deferredLine.qty;
                       });
