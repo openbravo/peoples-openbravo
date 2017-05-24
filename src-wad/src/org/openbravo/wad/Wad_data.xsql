@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -64,11 +64,13 @@
     <Sql>
       <![CDATA[
       SELECT MAX(MO.ACTION || MO.AD_MODEL_OBJECT_ID) AS NAME, MOM.MAPPINGNAME AS CLASSNAME, MO.CLASSNAME AS DISPLAYNAME 
-      FROM AD_MODEL_OBJECT MO, AD_MODEL_OBJECT_MAPPING MOM
+      FROM AD_MODEL_OBJECT_MAPPING MOM, 
+           AD_MODEL_OBJECT MO LEFT JOIN AD_Process p ON mo.AD_Process_ID = p.AD_Process_ID AND p.isReport='N'
       WHERE mo.ISACTIVE = 'Y' 
       AND MO.OBJECT_TYPE = 'S' 
       AND MO.ACTION != 'W'
-      AND MO.AD_MODEL_OBJECT_ID = MOM.AD_MODEL_OBJECT_ID 
+      AND MO.AD_MODEL_OBJECT_ID = MOM.AD_MODEL_OBJECT_ID
+      AND COALESCE(p.uiPattern,'M') = 'M'
       AND AD_CALLOUT_ID IS NULL
       GROUP BY MO.CLASSNAME, MOM.MAPPINGNAME
       ORDER BY NAME
