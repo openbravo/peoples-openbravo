@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2016 Openbravo SLU
+ * All portions are Copyright (C) 2012-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -47,6 +47,7 @@ import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_forms.ProductInfo;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
@@ -75,8 +76,6 @@ import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
@@ -85,6 +84,8 @@ import org.openbravo.service.db.DbUtility;
 
 public class CostingMigrationProcess implements Process {
   private ProcessLogger logger;
+  private String rdbms;
+  private ConnectionProvider connProv;
   private static final Logger log4j = Logger.getLogger(CostingMigrationProcess.class);
   private static CostingAlgorithm averageAlgorithm = null;
   private static final String alertRuleName = "Products with transactions without available cost on date.";
@@ -97,11 +98,14 @@ public class CostingMigrationProcess implements Process {
   private static final String valuedLegacy = "800088";
   private static final String dimensionalLegacy = "800205";
   private static final String processEntity = org.openbravo.model.ad.ui.Process.ENTITY_NAME;
+  private static final int maxRecsToInsert = 10000;
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
     logger = bundle.getLogger();
     OBError msg = new OBError();
+    rdbms = bundle.getConnection().getRDBMS();
+    connProv = bundle.getConnection();
     msg.setType("Success");
     msg.setTitle(OBMessageUtils.messageBD("Success"));
     try {
@@ -389,10 +393,9 @@ public class CostingMigrationProcess implements Process {
         try {
           while (legacyCosts.next()) {
             Costing cost = (Costing) legacyCosts.get(0);
-
             updateTrxLegacyCosts(cost, stdPrecission, naturalTree);
 
-            if ((i % 100) == 0) {
+            if ((++i % 100) == 0) {
               OBDal.getInstance().flush();
               OBDal.getInstance().getSession().clear();
             }
@@ -465,6 +468,7 @@ public class CostingMigrationProcess implements Process {
     delQry.executeUpdate();
 
     List<Client> clients = getClients();
+
     for (Client client : clients) {
       client = OBDal.getInstance().get(Client.class, client.getId());
       OrganizationStructureProvider osp = OBContext.getOBContext()
@@ -843,48 +847,23 @@ public class CostingMigrationProcess implements Process {
   private void insertTrxCosts() {
     TriggerHandler.getInstance().disable();
     try {
-      StringBuffer insert = new StringBuffer();
-      insert.append(" insert into " + TransactionCost.ENTITY_NAME);
-      insert.append(" (" + TransactionCost.PROPERTY_ID);
-      insert.append(", " + TransactionCost.PROPERTY_ACTIVE);
-      insert.append(", " + TransactionCost.PROPERTY_CLIENT);
-      insert.append(", " + TransactionCost.PROPERTY_ORGANIZATION);
-      insert.append(", " + TransactionCost.PROPERTY_CREATIONDATE);
-      insert.append(", " + TransactionCost.PROPERTY_CREATEDBY);
-      insert.append(", " + TransactionCost.PROPERTY_UPDATED);
-      insert.append(", " + TransactionCost.PROPERTY_UPDATEDBY);
-      insert.append(", " + TransactionCost.PROPERTY_INVENTORYTRANSACTION);
-      insert.append(", " + TransactionCost.PROPERTY_COST);
-      insert.append(", " + TransactionCost.PROPERTY_COSTDATE);
-      insert.append(", " + TransactionCost.PROPERTY_CURRENCY);
-      insert.append(", " + TransactionCost.PROPERTY_ACCOUNTINGDATE);
-      insert.append(")");
-      insert.append(" select get_uuid()");
-      insert.append(", t." + MaterialTransaction.PROPERTY_ACTIVE);
-      insert.append(", t." + MaterialTransaction.PROPERTY_CLIENT);
-      insert.append(", t." + MaterialTransaction.PROPERTY_ORGANIZATION);
-      insert.append(", now()");
-      insert.append(", t." + MaterialTransaction.PROPERTY_CREATEDBY);
-      insert.append(", now()");
-      insert.append(", t." + MaterialTransaction.PROPERTY_UPDATEDBY);
-      insert.append(", t");
-      insert.append(", t." + MaterialTransaction.PROPERTY_TRANSACTIONCOST);
-      insert.append(", t." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
-      insert.append(", t." + MaterialTransaction.PROPERTY_CURRENCY);
-      insert.append(", coalesce(io." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", t."
-          + MaterialTransaction.PROPERTY_MOVEMENTDATE + ")");
-      insert.append(" from " + MaterialTransaction.ENTITY_NAME + " as t");
-      insert.append(" left join t." + MaterialTransaction.PROPERTY_TRANSACTIONCOSTLIST + " as tc");
-      insert.append(" left join t." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as iol");
-      insert.append(" left join iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as io");
-      insert.append(" where t." + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " is not null");
-      insert.append(" and tc." + TransactionCost.PROPERTY_ID + " is null");
-
-      Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
-      queryInsert.executeUpdate();
-
-      OBDal.getInstance().flush();
-      OBDal.getInstance().getSession().clear();
+      String trxCount = CostingUtilsData.countTransactionsToInsert(this.connProv);
+      long recCount = Long.valueOf(trxCount).longValue();
+      long iterations = (recCount % maxRecsToInsert == 0) ? (recCount / maxRecsToInsert)
+          : (recCount / maxRecsToInsert) + 1;
+      String pgLimit = null, oraLimit = null;
+      if (this.rdbms.equalsIgnoreCase("ORACLE")) {
+        oraLimit = String.valueOf(maxRecsToInsert);
+      } else {
+        pgLimit = String.valueOf(maxRecsToInsert);
+      }
+      for (int i = 0; i < iterations; i++) {
+        CostingUtilsData.insertTrxCosts(this.connProv, pgLimit, oraLimit);
+        OBDal.getInstance().flush();
+        OBDal.getInstance().getSession().clear();
+      }
+    } catch (Exception e) {
+      log4j.error(e.getMessage());
     } finally {
       TriggerHandler.getInstance().enable();
     }
