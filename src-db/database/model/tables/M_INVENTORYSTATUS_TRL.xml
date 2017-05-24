@@ -69,5 +69,6 @@
         <index-column name="M_INVENTORYSTATUS_ID"/>
       </index>
       <check name="M_INVSTATUS_ACTIVE_TRL_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_INVSTATUS_TRANSLATED_TRL_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>
