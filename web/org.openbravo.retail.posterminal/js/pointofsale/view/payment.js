@@ -335,13 +335,6 @@ enyo.kind({
         symbolAtRight = true,
         isCashType = true;
 
-    if (this.receipt.get('isPaid') && this.receipt.getGross() === 0) {
-      this.$.totalpending.hide();
-      this.$.totalpendinglbl.hide();
-      this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsExact'));
-      this.$.exactlbl.show();
-      return true;
-    }
     if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
       symbol = OB.MobileApp.model.get('terminal').symbol;
       symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
@@ -1042,6 +1035,8 @@ enyo.kind({
         if (!this.owner.receipt.get('doCancelAndReplace') && (this.owner.receipt.get('isLayaway') ? (OB.DEC.number(this.owner.receipt.getPayment()) < OB.DEC.sub(this.owner.receipt.getTotal(), this.owner.receipt.getCredit())) : (this.owner.receipt.getPrePaymentQty() === OB.DEC.sub(this.owner.receipt.getTotal(), this.owner.receipt.getCredit()))) && !this.owner.receipt.isNewReversed()) {
           value = true;
         }
+      } else if (this.owner.receipt && this.owner.receipt.get('isPaid') && this.owner.receipt.getGross() === 0) {
+        value = true;
       }
     }
     this.disabled = value; // for getDisabled() to return the correct value
