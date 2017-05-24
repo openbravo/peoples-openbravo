@@ -140,7 +140,7 @@ OB.Model.Executor = Backbone.Model.extend({
 OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
   // parameters that will be used in the SQL to get promotions, in case this SQL is extended,
   // these parameters might be required to be extended too
-  criteriaParams: ['date', 'bpId', 'bpId', 'bpId', 'bpId', 'productId', 'productId', 'productId', 'productId', 'productId', 'productId', 'priceListId', 'priceListId'],
+  criteriaParams: ['date', 'bpId', 'bpId', 'bpId', 'bpId', 'productId', 'productId', 'categoryId', 'categoryId', 'productId', 'productId', 'priceListId', 'priceListId'],
 
   // defines the property each of the parameters in criteriaParams is translated to, in case of
   // different parameters than standard ones this should be extended
@@ -152,6 +152,10 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     productId: {
       model: 'line',
       property: 'product'
+    },
+    categoryId: {
+      model: 'line',
+      property: 'product.productCategory'
     },
     priceListId: {
       model: 'receipt',
@@ -177,7 +181,18 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       if (paraTrl.model === 'receipt') {
         model = receipt;
       } else if (paraTrl.model === 'line') {
-        model = line;
+        if (paraTrl.originalProperty) {
+          paraTrl.property = paraTrl.originalProperty;
+        }
+
+        if (paraTrl.property.indexOf('.') > 0) {
+          var path = paraTrl.property.split('.');
+          model = line.get(path[0]);
+          paraTrl.originalProperty = paraTrl.property;
+          paraTrl.property = path[1];
+        } else {
+          model = line;
+        }
       } else {
         model = evt.get(paraTrl.model);
       }

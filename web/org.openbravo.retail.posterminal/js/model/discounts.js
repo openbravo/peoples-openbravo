@@ -369,20 +369,16 @@
     + " AND((PROD_CAT_SELECTION = 'Y'" //
     + " AND NOT EXISTS" //
     + " (SELECT 1" //
-    + " FROM M_PRODUCT P," //
-    + "   M_OFFER_PROD_CAT OP" //
+    + " FROM M_OFFER_PROD_CAT OP" //
     + " WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID" //
-    + "   AND P.M_PRODUCT_ID = ?" //
-    + "   AND OP.M_PRODUCT_CATEGORY_ID = P.M_PRODUCT_CATEGORY_ID" //
+    + "   AND OP.M_PRODUCT_CATEGORY_ID = ?" //
     + " ))" //
     + " OR(PROD_CAT_SELECTION = 'N'" //
     + " AND EXISTS" //
     + " (SELECT 1" //
-    + " FROM M_PRODUCT P," //
-    + "   M_OFFER_PROD_CAT OP" //
+    + " FROM M_OFFER_PROD_CAT OP" //
     + " WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID" //
-    + "   AND P.M_PRODUCT_ID = ?" //
-    + "   AND OP.M_PRODUCT_CATEGORY_ID = P.M_PRODUCT_CATEGORY_ID" //
+    + "   AND OP.M_PRODUCT_CATEGORY_ID = ?" //
     + " ))) " //
     + " AND ((CHARACTERISTICS_SELECTION = 'Y'" + " AND NOT EXISTS" + " (SELECT 1" + "  FROM M_OFFER_CHARACTERISTIC C, M_PRODUCT_CH_VALUE V" + "  WHERE C.M_OFFER_ID = M_OFFER.M_OFFER_ID" + "    AND V.M_PRODUCT_ID = ?" + "    AND V.M_CH_VALUE_ID = C.M_CH_VALUE_ID" + " ))" + " OR(CHARACTERISTICS_SELECTION = 'N'" + " AND EXISTS" + " (SELECT 1" + "  FROM M_OFFER_CHARACTERISTIC C, M_PRODUCT_CH_VALUE V" + "  WHERE C.M_OFFER_ID = M_OFFER.M_OFFER_ID" + "    AND V.M_PRODUCT_ID = ?" + "    AND V.M_CH_VALUE_ID = C.M_CH_VALUE_ID" + " ))" + " )" + " AND ((pricelist_selection = 'Y' AND NOT EXISTS" // 
     + "	  (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = ? )) " //
