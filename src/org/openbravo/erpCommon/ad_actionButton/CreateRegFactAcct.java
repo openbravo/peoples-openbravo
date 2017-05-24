@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -84,8 +84,8 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  private synchronized OBError processButton(VariablesSecureApp vars, String strKey,
-      String strOrgId, String windowId) {
+  private OBError processButton(VariablesSecureApp vars, String strKey, String strOrgId,
+      String windowId) {
 
     Connection conn = null;
     OBError myError = new OBError();
@@ -199,9 +199,9 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
     return myError;
   }
 
-  private synchronized String processButtonReg(Connection conn, VariablesSecureApp vars,
-      String strKey, String windowId, String stradOrgId, String strID, String strAcctSchema,
-      String strDivideUpId, CreateRegFactAcctData[] account2) throws ServletException {
+  private String processButtonReg(Connection conn, VariablesSecureApp vars, String strKey,
+      String windowId, String stradOrgId, String strID, String strAcctSchema, String strDivideUpId,
+      CreateRegFactAcctData[] account2) throws ServletException {
     String Fact_Acct_ID = "";
     String Fact_Acct_Group_ID = strID;
     String strPediodId = CreateRegFactAcctData.getLastPeriod(this, strKey);
@@ -323,8 +323,8 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
     return "Success";
   }
 
-  private synchronized String processButtonClose(Connection conn, VariablesSecureApp vars,
-      String strKey, String windowId, String stradOrgId, String strCloseID, String strOpenID,
+  private String processButtonClose(Connection conn, VariablesSecureApp vars, String strKey,
+      String windowId, String stradOrgId, String strCloseID, String strOpenID,
       String strAcctSchema, String strDivideUpId) throws ServletException {
     String Fact_Acct_Group_ID = strCloseID;
     String strPediodId = CreateRegFactAcctData.getLastPeriod(this, strKey);
