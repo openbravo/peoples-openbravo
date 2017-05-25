@@ -84,8 +84,7 @@ import org.openbravo.service.db.DbUtility;
 
 public class CostingMigrationProcess implements Process {
   private ProcessLogger logger;
-  private String rdbms;
-  private ConnectionProvider connProv;
+  private ConnectionProvider conn;
   private static final Logger log4j = Logger.getLogger(CostingMigrationProcess.class);
   private static CostingAlgorithm averageAlgorithm = null;
   private static final String alertRuleName = "Products with transactions without available cost on date.";
@@ -98,14 +97,13 @@ public class CostingMigrationProcess implements Process {
   private static final String valuedLegacy = "800088";
   private static final String dimensionalLegacy = "800205";
   private static final String processEntity = org.openbravo.model.ad.ui.Process.ENTITY_NAME;
-  private static final int maxRecsToInsert = 10000;
+  private static final int maxTrx = 10000;
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
     logger = bundle.getLogger();
     OBError msg = new OBError();
-    rdbms = bundle.getConnection().getRDBMS();
-    connProv = bundle.getConnection();
+    conn = bundle.getConnection();
     msg.setType("Success");
     msg.setTitle(OBMessageUtils.messageBD("Success"));
     try {
@@ -847,18 +845,16 @@ public class CostingMigrationProcess implements Process {
   private void insertTrxCosts() {
     TriggerHandler.getInstance().disable();
     try {
-      String trxCount = CostingUtilsData.countTransactionsToInsert(this.connProv);
-      long recCount = Long.valueOf(trxCount).longValue();
-      long iterations = (recCount % maxRecsToInsert == 0) ? (recCount / maxRecsToInsert)
-          : (recCount / maxRecsToInsert) + 1;
+      long countTrx = Long.valueOf(CostingUtilsData.countTrxCosts(conn)).longValue();
+      long iters = (countTrx % maxTrx == 0) ? (countTrx / maxTrx) : (countTrx / maxTrx) + 1;
       String pgLimit = null, oraLimit = null;
-      if (this.rdbms.equalsIgnoreCase("ORACLE")) {
-        oraLimit = String.valueOf(maxRecsToInsert);
+      if (StringUtils.equalsIgnoreCase(conn.getRDBMS(), "ORACLE")) {
+        oraLimit = String.valueOf(maxTrx);
       } else {
-        pgLimit = String.valueOf(maxRecsToInsert);
+        pgLimit = String.valueOf(maxTrx);
       }
-      for (int i = 0; i < iterations; i++) {
-        CostingUtilsData.insertTrxCosts(this.connProv, pgLimit, oraLimit);
+      for (int i = 0; i < iters; i++) {
+        CostingUtilsData.insertTrxCosts(conn, pgLimit, oraLimit);
         OBDal.getInstance().flush();
         OBDal.getInstance().getSession().clear();
       }
