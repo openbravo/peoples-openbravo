@@ -128,8 +128,8 @@
             customer: customer,
             bpToSave: bpToSave
           }, function (args) {
+            bpToSave.set('json', JSON.stringify(customer.serializeToJSON()));
             OB.Dal.save(bpToSave, function () {
-              bpToSave.set('json', JSON.stringify(customer.serializeToJSON()));
               var successCallback = function () {
                   if (callback) {
                     callback();
