@@ -1063,6 +1063,7 @@ public class CancelAndReplaceUtils {
 
     // Set amount and used credit to zero
     nettingPayment.setAmount(BigDecimal.ZERO);
+    nettingPayment.setFinancialTransactionAmount(BigDecimal.ZERO);
     nettingPayment.setUsedCredit(BigDecimal.ZERO);
     String truncatedDescription = (description.length() > 255) ? description.substring(0, 252)
         .concat("...").toString() : description.toString();
