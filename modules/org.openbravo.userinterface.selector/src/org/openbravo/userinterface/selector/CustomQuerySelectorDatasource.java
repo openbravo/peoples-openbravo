@@ -297,6 +297,9 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    * function which to make comparison case insensitive.
    * </ul>
    * 
+   * @param operator
+   *          String with the operator of the filter expression to be applied on the selector
+   *          field's column.
    * @param value
    *          String with the value that the selector field's column is filtered by.
    * @param field
@@ -304,6 +307,9 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    * @param xmlDateFormat
    *          SimpleDateFormat to parse the value in case the field is a Date field.
    * @param operatorvalue
+   *          a String array containing the filtering criteria.
+   * @param typedParameters
+   *          a list of Strings that will be populated with the parameters of the query.
    * @return a String with the HQL where clause to filter the field by the given value.
    */
   private String getWhereClause(String operator, String value, SelectorField field,
