@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,16 +34,16 @@ OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall, clientSi
     var i, trxSelection = view.getContextInfo().findtransactiontomatch._selection;
 
     if (trxSelection && trxSelection[0]) {
-      var totalTrxAmt = 0,
-          blineAmt = view.callerField.record.amount,
+      var totalTrxAmt = BigDecimal.prototype.ZERO,
+          blineAmt = new BigDecimal(String(view.callerField.record.amount)),
           hideSplitConfirmation = OB.PropertyStore.get('APRM_MATCHSTATEMENT_HIDE_PARTIALMATCH_POPUP', view.windowId);
       for (i = 0; i < trxSelection.length; i++) {
-        var trxDepositAmt = trxSelection[i].depositAmount,
-            trxPaymentAmt = trxSelection[i].paymentAmount,
-            trxAmt = trxDepositAmt - trxPaymentAmt;
-        totalTrxAmt = totalTrxAmt + trxAmt;
+        var trxDepositAmt = new BigDecimal(String(trxSelection[i].depositAmount)),
+            trxPaymentAmt = new BigDecimal(String(trxSelection[i].paymentAmount)),
+            trxAmt = trxDepositAmt.subtract(trxPaymentAmt);
+        totalTrxAmt = totalTrxAmt.add(trxAmt);
       }
-      if (totalTrxAmt !== blineAmt) {
+      if (totalTrxAmt.compareTo(blineAmt) !== 0) {
         // Split required
         if (hideSplitConfirmation === 'Y') {
           // Continue with the match
