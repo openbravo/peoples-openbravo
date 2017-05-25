@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -53,9 +53,10 @@ public class PriceDifferenceProcess {
       MaterialTransaction materialTransaction) throws OBException {
     boolean costAdjCreated = false;
 
-    // With Standard Algorithm, no cost adjustment is needed
-    if (StringUtils.equals(materialTransaction.getCostingAlgorithm().getJavaClassName(),
-        "org.openbravo.costing.StandardAlgorithm")) {
+    // Without algorithm or with Standard Algorithm, no cost adjustment is needed
+    if (materialTransaction.getCostingAlgorithm() == null
+        || StringUtils.equals(materialTransaction.getCostingAlgorithm().getJavaClassName(),
+            "org.openbravo.costing.StandardAlgorithm")) {
       return false;
     }
 
