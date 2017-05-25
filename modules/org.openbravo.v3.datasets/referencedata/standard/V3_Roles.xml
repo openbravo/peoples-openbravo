@@ -1902,8 +1902,6 @@
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <description>Role with access to self-service requisitions.</description>
     <userLevel> CO</userLevel>
-    <clientList> </clientList>
-    <organizationList> </organizationList>
     <currency xsi:nil="true"/>
     <approvalAmount>0.00</approvalAmount>
     <primaryTreeMenu xsi:nil="true"/>
@@ -1922,8 +1920,6 @@
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <description>User working in the procurement department.</description>
     <userLevel> CO</userLevel>
-    <clientList> </clientList>
-    <organizationList> </organizationList>
     <currency xsi:nil="true"/>
     <approvalAmount>0.00</approvalAmount>
     <primaryTreeMenu xsi:nil="true"/>
@@ -1942,8 +1938,6 @@
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <description>User working in the Finance department.</description>
     <userLevel> CO</userLevel>
-    <clientList> </clientList>
-    <organizationList> </organizationList>
     <currency xsi:nil="true"/>
     <approvalAmount>0.00</approvalAmount>
     <primaryTreeMenu xsi:nil="true"/>
@@ -1962,8 +1956,6 @@
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <description>Manage and create sales transactions.</description>
     <userLevel> CO</userLevel>
-    <clientList> </clientList>
-    <organizationList> </organizationList>
     <currency xsi:nil="true"/>
     <approvalAmount>0.00</approvalAmount>
     <primaryTreeMenu xsi:nil="true"/>
@@ -1982,8 +1974,6 @@
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <description>Set vital parameters of the company's Openbravo client.</description>
     <userLevel> CO</userLevel>
-    <clientList> </clientList>
-    <organizationList> </organizationList>
     <currency xsi:nil="true"/>
     <approvalAmount>0.00</approvalAmount>
     <primaryTreeMenu xsi:nil="true"/>
@@ -2002,8 +1992,6 @@
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <description>Overview key performance indicators and manage crucial data.</description>
     <userLevel> CO</userLevel>
-    <clientList> </clientList>
-    <organizationList> </organizationList>
     <currency xsi:nil="true"/>
     <approvalAmount>0.00</approvalAmount>
     <primaryTreeMenu xsi:nil="true"/>
@@ -2022,8 +2010,6 @@
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <description>Manage master data as part of warehouse and procurement management.</description>
     <userLevel> CO</userLevel>
-    <clientList> </clientList>
-    <organizationList> </organizationList>
     <currency xsi:nil="true"/>
     <approvalAmount>0.00</approvalAmount>
     <primaryTreeMenu xsi:nil="true"/>
