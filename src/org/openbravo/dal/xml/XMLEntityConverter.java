@@ -228,7 +228,7 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
           final Property p = entity.getProperty(childElement.getName(), false);
           if (p == null) {
             log.warn("Trying to set property " + childElement.getName() + " in entity "
-                + entity.getName() + ". Cannot find porperty in entity, skipping it.");
+                + entity.getName() + ". Cannot find property in entity, skipping it.");
             continue;
           }
           log.debug(">>> Exporting property " + p.getName());
