@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,7 +51,7 @@
                   WHEN 'Product' THEN (case  AD_COLUMN_IDENTIFIER('M_Product',m_product.m_product_id, ?) when '**' then '' else AD_COLUMN_IDENTIFIER('M_Product',m_product.m_product_id, ?) end)
                   WHEN 'Project' THEN (case  AD_COLUMN_IDENTIFIER('C_Project',c_project.c_project_id, ?) when '**' then '' else AD_COLUMN_IDENTIFIER('C_Project',c_project.c_project_id, ?) end)
                   ELSE '' END AS groupbyname,
-                CASE WHEN AMTACCTDR <> 0 THEN 'Y' ELSE 'N' END AS ISDEBIT, 
+                CASE WHEN (AMTACCTDR > 0 AND AMTACCTCR = 0) OR (AMTACCTCR < 0 AND AMTACCTDR = 0) THEN 'Y' ELSE 'N' END AS ISDEBIT,
 		CASE WHEN FACT_ACCT.FACTACCTTYPE = 'O' THEN 1 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'N' THEN 2 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'R' THEN 3 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'C' THEN 4 END) END) END) END AS FACTACCTTYPE
             FROM FACT_ACCT
               LEFT JOIN C_BPARTNER ON FACT_ACCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
@@ -154,7 +154,7 @@
                   WHEN 'Product' THEN (select to_char(value || ' - ' || name) from m_product p where p.m_product_id = m_product.m_product_id)
                   WHEN 'Project' THEN (select to_char(value || ' - ' || name) from c_project pj where pj.c_project_id = c_project.c_project_id)
                   ELSE '' END AS groupbyname,
-                CASE WHEN AMTACCTDR <> 0 THEN 'Y' ELSE 'N' END AS ISDEBIT, 
+                CASE WHEN (AMTACCTDR > 0 AND AMTACCTCR = 0) OR (AMTACCTCR < 0 AND AMTACCTDR = 0) THEN 'Y' ELSE 'N' END AS ISDEBIT,
         CASE WHEN FACT_ACCT.FACTACCTTYPE = 'O' THEN 1 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'N' THEN 2 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'R' THEN 3 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'C' THEN 4 END) END) END) END AS FACTACCTTYPE
             FROM FACT_ACCT
               LEFT JOIN C_BPARTNER ON FACT_ACCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
@@ -244,7 +244,7 @@
                     WHEN 'Product' THEN (select to_char(value || ' - ' || name) from m_product p where p.m_product_id = m_product.m_product_id)
                     WHEN 'Project' THEN (select to_char(name) from c_project pj where pj.c_project_id = c_project.c_project_id)
                     ELSE '' END AS groupbyname,
-                  CASE WHEN AMTACCTDR <> 0 THEN 'Y' ELSE 'N' END AS ISDEBIT, 
+                  CASE WHEN (AMTACCTDR > 0 AND AMTACCTCR = 0) OR (AMTACCTCR < 0 AND AMTACCTDR = 0) THEN 'Y' ELSE 'N' END AS ISDEBIT,
           CASE WHEN FACT_ACCT.FACTACCTTYPE = 'O' THEN 1 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'N' THEN 2 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'R' THEN 3 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'C' THEN 4 END) END) END) END AS FACTACCTTYPE
               FROM FACT_ACCT
                 LEFT JOIN C_BPARTNER ON FACT_ACCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
@@ -332,7 +332,7 @@
                   WHEN 'Product' THEN (select to_char(value || ' - ' || name) from m_product p where p.m_product_id = m_product.m_product_id)
                   WHEN 'Project' THEN (select to_char(value || ' - ' || name) from c_project pj where pj.c_project_id = c_project.c_project_id)
                   ELSE '' END AS groupbyname,
-                CASE WHEN AMTACCTDR <> 0 THEN 'Y' ELSE 'N' END AS ISDEBIT, 
+                CASE WHEN (AMTACCTDR > 0 AND AMTACCTCR = 0) OR (AMTACCTCR < 0 AND AMTACCTDR = 0) THEN 'Y' ELSE 'N' END AS ISDEBIT,
         CASE WHEN FACT_ACCT.FACTACCTTYPE = 'O' THEN 1 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'N' THEN 2 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'R' THEN 3 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'C' THEN 4 END) END) END) END AS FACTACCTTYPE
             FROM FACT_ACCT
               LEFT JOIN C_BPARTNER ON FACT_ACCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
@@ -401,7 +401,7 @@
             FACT_ACCT_GROUP_ID, FACT_ACCT.ACCOUNT_ID AS ID, FACT_ACCT.DESCRIPTION,
             c_bpartner.c_bpartner_id as bpid, m_product.m_product_id as pdid, c_project.c_project_id as pjid,
             (case AD_COLUMN_IDENTIFIER('C_Bpartner',c_bpartner.c_bpartner_id, ?) when '**' then '' else AD_COLUMN_IDENTIFIER('C_Bpartner',c_bpartner.c_bpartner_id, ?) end) as bpname, (case AD_COLUMN_IDENTIFIER('M_Product',m_product.m_product_id, ?) when '**' then '' else AD_COLUMN_IDENTIFIER('M_Product',m_product.m_product_id, ?) end) as pdname, (case AD_COLUMN_IDENTIFIER('C_Project',c_project.c_project_id, ?) when '**' then '' else AD_COLUMN_IDENTIFIER('C_Project',c_project.c_project_id, ?) end)  as pjname,
-            CASE WHEN AMTACCTDR <> 0 THEN 'Y' ELSE 'N' END AS ISDEBIT,
+            CASE WHEN (AMTACCTDR > 0 AND AMTACCTCR = 0) OR (AMTACCTCR < 0 AND AMTACCTDR = 0) THEN 'Y' ELSE 'N' END AS ISDEBIT,
             CASE WHEN FACT_ACCT.FACTACCTTYPE = 'O' THEN 1 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'N' THEN 2 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'R' THEN 3 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'C' THEN 4 END) END) END) END AS FACTACCTTYPE
         FROM FACT_ACCT
           LEFT JOIN C_BPARTNER ON FACT_ACCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
@@ -474,7 +474,7 @@
             (select name from c_bpartner b where b.c_bpartner_id = c_bpartner.c_bpartner_id) as bpname, 
             (select value || ' - ' || name from m_product p where p.m_product_id = m_product.m_product_id) as pdname, 
             (select value || ' - ' || name from c_project pj where pj.c_project_id = c_project.c_project_id)  as pjname,
-            CASE WHEN AMTACCTDR <> 0 THEN 'Y' ELSE 'N' END AS ISDEBIT,
+            CASE WHEN (AMTACCTDR > 0 AND AMTACCTCR = 0) OR (AMTACCTCR < 0 AND AMTACCTDR = 0) THEN 'Y' ELSE 'N' END AS ISDEBIT,
             CASE WHEN FACT_ACCT.FACTACCTTYPE = 'O' THEN 1 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'N' THEN 2 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'R' THEN 3 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'C' THEN 4 END) END) END) END AS FACTACCTTYPE
         FROM FACT_ACCT
           LEFT JOIN C_BPARTNER ON FACT_ACCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
