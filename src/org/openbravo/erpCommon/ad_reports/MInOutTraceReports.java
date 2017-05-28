@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -178,6 +178,7 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
       return localData;
     }
     for (int i = 0; i < localData.length; i++) {
+      localData[i].htmlHeader = createHeader(vars, localData[i], strIn);
       localData[i].html = processChilds(vars, localData[i].mAttributesetinstanceId,
           localData[i].mProductId, localData[i].mLocatorId, strIn, true, strmProductIdGlobal,
           calculated, count);
@@ -188,6 +189,44 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
       }
     }
     return localData;
+  }
+
+  private String createHeader(VariablesSecureApp vars, MInOutTraceReportsData data, String strIn)
+      throws ServletException {
+    // TODO Auto-generated method stub
+    MInOutTraceReportsData[] dataChild = MInOutTraceReportsData.selectChilds(this,
+        vars.getLanguage(), data.mAttributesetinstanceId, data.mProductId, data.mLocatorId,
+        strIn.equals("Y") ? "plusQty" : "minusQty", strIn.equals("N") ? "minusQty" : "plusQty");
+    boolean hasSecUom = false;
+    for (int i = 0; i < dataChild.length; i++) {
+      if (!dataChild[i].quantityorder.equals("")) {
+        hasSecUom = true;
+        break;
+      }
+    }
+    StringBuffer strHtmlHeader = new StringBuffer();
+    strHtmlHeader.append(insertHeaderHtml(false, "0"));
+    strHtmlHeader.append("<tr style=\"background: #CFDDE8\">");
+    strHtmlHeader.append("<td >\n");
+    strHtmlHeader
+        .append("<table class=\"DataGrid_Header_Table\" border=\"0\" cellspacing=0 cellpadding=0 width=\"100%\">");
+    strHtmlHeader.append("  <tr>");
+    strHtmlHeader.append("    <th class=\"DataGrid_Header_Cell\" width=\"70\">Date</th>");
+    strHtmlHeader.append("    <th class=\"DataGrid_Header_Cell\" width=\"100\">Movement Type</th>");
+    strHtmlHeader.append("    <th class=\"DataGrid_Header_Cell\" width=\"100\">Locator</th>");
+    strHtmlHeader.append("    <th class=\"DataGrid_Header_Cell\" width=\"90\">Quantity Uom</th>");
+    if (hasSecUom) {
+      strHtmlHeader
+          .append("    <th class=\"DataGrid_Header_Cell\" width=\"90\">Order Qty Uom</th>\n");
+    }
+    strHtmlHeader.append("    <th class=\"DataGrid_Header_Cell\"> Transaction Reference</th>");
+    strHtmlHeader.append("</tr></table>");
+    strHtmlHeader.append("</td>");
+    strHtmlHeader.append("<th class=\"DataGrid_Header_Cell\">Quantity Uom\n");
+    strHtmlHeader.append("</th>\n");
+    strHtmlHeader.append("  </tr>");
+    strHtmlHeader.append(insertHeaderHtml(true, ""));
+    return strHtmlHeader.toString();
   }
 
   private String insertTabHtml(boolean border) {
