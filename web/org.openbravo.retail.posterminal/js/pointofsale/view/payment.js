@@ -397,7 +397,7 @@ enyo.kind({
         symbolAtRight = true,
         isCashType = true,
         receiptHasPrepaymentAmount = prepaymentAmount !== 0 && prepaymentAmount !== paymentstatus.totalAmt,
-        pendingPrepayment = prepaymentAmount + paymentstatus.pendingAmt - paymentstatus.totalAmt;
+        pendingPrepayment = paymentstatus.totalAmt - prepaymentAmount - paymentstatus.pendingAmt;
 
     if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
       symbol = OB.MobileApp.model.get('terminal').symbol;
