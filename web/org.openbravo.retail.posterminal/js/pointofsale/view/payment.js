@@ -423,6 +423,7 @@ enyo.kind({
       this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', true);
       this.$.totalpending.applyStyle('font-size', '24px');
     }
+
     if (pendingPrepayment <= 0) {
       this.$.prepaymenttotalpending.hide();
       this.$.prepaymenttotalpendinglbl.hide();
@@ -443,7 +444,7 @@ enyo.kind({
       this.$.change.hide();
       this.$.changelbl.hide();
     }
-    if (paymentstatus.overpayment) {
+    if (this.receipt.getPending() === 0 && paymentstatus.overpayment) {
       this.$.overpayment.setContent(OB.I18N.formatCurrencyWithSymbol(paymentstatus.overpayment, symbol, symbolAtRight));
       this.$.overpayment.show();
       this.$.overpaymentlbl.show();
@@ -452,7 +453,7 @@ enyo.kind({
       this.$.overpaymentlbl.hide();
     }
 
-    if (paymentstatus.done) {
+    if (this.receipt.getPending() === 0 && paymentstatus.done) {
       this.$.totalpending.hide();
       this.$.totalpendinglbl.hide();
       if (!_.isEmpty(OB.MobileApp.model.paymentnames) || this.receipt.get('orderType') === 3) {
@@ -481,7 +482,7 @@ enyo.kind({
       }
     }
 
-    if (paymentstatus.done || this.receipt.getGross() === 0) {
+    if (this.receipt.getPending() === 0 && (paymentstatus.done || this.receipt.getGross() === 0)) {
       this.$.exactbutton.hide();
       this.$.layawayaction.hide();
     } else {
@@ -490,7 +491,7 @@ enyo.kind({
       }
       this.updateLayawayAction();
     }
-    if (paymentstatus.done && !paymentstatus.change && !paymentstatus.overpayment) {
+    if (this.receipt.getPending() === 0 && paymentstatus.done && !paymentstatus.change && !paymentstatus.overpayment) {
       if (this.receipt.getGross() === 0) {
         this.$.exactlbl.hide();
         this.$.donezerolbl.show();
@@ -1033,7 +1034,7 @@ enyo.kind({
       // If there are no not synchronized payments reversed and the full amount qty is paid by prePayment payments,
       // the button 'Done' will be disabled (except for the case of doing a cancel and replace).
       // If the ticket is synchronized and the gross is zero, is also disabled.
-      if (statusOK && ((this.model.get('leftColumnViewManager').isOrder() && (this.receipt.get('isPaid') || this.receipt.get('isLayaway')) && !this.receipt.isNewReversed() && OB.DEC.abs(this.receipt.getPrePaymentQty()) >= OB.DEC.abs(OB.DEC.sub(this.receipt.getTotal(), this.receipt.getCredit())) && !this.receipt.get('doCancelAndReplace') && this.receipt.get('orderType') !== 3) || (this.receipt.get('isPaid') && this.receipt.getGross() === 0))) {
+      if (statusOK && ((this.model.get('leftColumnViewManager').isOrder() && (this.receipt.get('isPaid') || this.receipt.get('isLayaway')) && !this.receipt.isNewReversed() && OB.DEC.abs(this.receipt.getPrePaymentQty()) >= OB.DEC.abs(this.receipt.getTotal()) && !this.receipt.get('doCancelAndReplace') && this.receipt.get('orderType') !== 3) || (this.receipt.get('isPaid') && this.receipt.getGross() === 0))) {
         statusOK = false;
       }
       if (resultOK) {
@@ -1333,6 +1334,8 @@ enyo.kind({
     }
 
     var continueExecution = function () {
+        myModel.get('order').set('donePressed', true);
+
         if (myModel.get('leftColumnViewManager').isOrder()) {
           me.owner.receipt.get('lines').forEach(function (line) {
             if (line.get('obposCanbedelivered')) {

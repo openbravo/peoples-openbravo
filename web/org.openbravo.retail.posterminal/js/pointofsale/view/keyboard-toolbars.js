@@ -87,7 +87,7 @@ enyo.kind({
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
       return true;
     }
-    if (this.model.get('leftColumnViewManager').isOrder() && this.receipt.get('isPaid') && !this.receipt.get('doCancelAndReplace') && this.receipt.getPrePaymentQty() === OB.DEC.sub(this.receipt.getTotal(), this.receipt.getCredit()) && !this.receipt.isNewReversed()) {
+    if (this.model.get('leftColumnViewManager').isOrder() && this.receipt.get('isPaid') && OB.DEC.abs(this.receipt.getPrePaymentQty()) >= OB.DEC.abs(this.receipt.getTotal()) && !this.receipt.isNewReversed()) {
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
       return true;
     }

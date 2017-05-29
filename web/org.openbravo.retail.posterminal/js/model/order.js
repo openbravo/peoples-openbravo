@@ -888,9 +888,9 @@
 
     getPending: function () {
       if (_.isUndefined(this.get('paidInNegativeStatusAmt'))) {
-        return OB.DEC.sub(OB.DEC.abs(OB.DEC.sub(this.getTotal(), this.getCredit())), this.getPayment());
+        return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getPayment());
       } else {
-        return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(OB.DEC.sub(this.getTotal(), this.getCredit())), this.get('paidInNegativeStatusAmt')));
+        return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.get('paidInNegativeStatusAmt')));
       }
     },
 
@@ -970,9 +970,9 @@
       if (_.isUndefined(paidInNegativeStatus)) {
         this.unset('paidInNegativeStatusAmt');
         done = this.get('lines').length > 0 && OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0;
-        pending = OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, payAndCredit));
-        overpayment = OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) > 0 ? OB.DEC.sub(payAndCredit, total) : null;
-        pendingAmt = OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, payAndCredit);
+        pending = OB.DEC.compare(total) < 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(total);
+        overpayment = OB.DEC.compare(total) <= 0 ? OB.I18N.formatCurrency(total) : null;
+        pendingAmt = OB.DEC.compare(total) < 0 ? OB.DEC.Zero : payAndCredit;
       } else {
         this.set('paidInNegativeStatusAmt', paidInNegativeStatus);
         done = this.get('lines').length > 0 && OB.DEC.compare(OB.DEC.sub(paymentsAmount, totalToReturn)) >= 0;
@@ -4604,7 +4604,7 @@
     addPayment: function (payment, callback) {
       var payments, total, i, max, p, order, paymentSign, finalCallback;
 
-      if (this.get('isPaid') && !payment.get('isReversePayment') && !this.get('doCancelAndReplace') && this.getPrePaymentQty() === OB.DEC.sub(this.getTotal(), this.getCredit()) && !this.isNewReversed()) {
+      if (!this.get('paidOnCredit') && !this.get('paidPartiallyOnCredit') && this.get('isPaid') && !payment.get('isReversePayment') && !this.get('doCancelAndReplace') && this.getPrePaymentQty() === OB.DEC.sub(this.getTotal(), this.getCredit()) && !this.isNewReversed()) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
         return;
       }
@@ -5880,7 +5880,7 @@
           receiptShouldBeShipped = false;
 
       if (!isDeleted) {
-        if ((this.get('bp').get('invoiceTerms') === 'I' && this.get('generateInvoice')) || this.get('paidOnCredit')) {
+        if ((this.get('bp').get('invoiceTerms') === 'I' && this.get('generateInvoice')) || (this.get('paidOnCredit') && !this.get('donePressed'))) {
           receiptShouldBeInvoiced = true;
         } else if (this.get('bp').get('invoiceTerms') === 'O') {
           linesPendingToDeliver = _.find(this.get('lines').models, function (line) {

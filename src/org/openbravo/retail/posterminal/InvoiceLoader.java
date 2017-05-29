@@ -576,6 +576,12 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
       }
 
       // Same currency, no conversion required
+      boolean donePressed = jsoninvoice.getBoolean("donePressed");
+      boolean paidOnCredit = jsoninvoice.getBoolean("paidOnCredit")
+          || jsoninvoice.getBoolean("paidPartiallyOnCredit");
+      if (donePressed && paidOnCredit) {
+        total = total.negate();
+      }
       invoice.getBusinessPartner().setCreditUsed(
           invoice.getBusinessPartner().getCreditUsed().add(total));
       OBDal.getInstance().flush();
