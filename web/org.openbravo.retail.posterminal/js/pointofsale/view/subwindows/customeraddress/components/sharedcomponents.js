@@ -281,6 +281,8 @@ enyo.kind({
                 OB.error(tx);
                 enableButtonsCallback();
               });
+            } else {
+              enableButtonsCallback();
             }
             };
 
