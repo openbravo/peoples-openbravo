@@ -656,6 +656,7 @@ public class InventoryStatusTest extends WeldBaseTest {
   private static void setProductParameters(Product product, String name, String suffix) {
     product.setSearchKey(name + "-" + suffix);
     product.setName(name + "-" + suffix);
+    product.setUPCEAN(null);
     product.setId(SequenceIdData.getUUID());
     product.setNewOBObject(true);
     OBDal.getInstance().save(product);
