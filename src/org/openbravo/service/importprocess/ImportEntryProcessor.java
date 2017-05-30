@@ -29,8 +29,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
@@ -42,7 +40,6 @@ import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.service.importprocess.ImportEntryManager.ImportEntryProcessorSelector;
 
 /**
  * The {@link ImportEntryProcessor} is responsible for importing/processing {@link ImportEntry}
@@ -273,10 +270,6 @@ public abstract class ImportEntryProcessor {
     // when the garbagecollector runs
     private Map<String, OBContext> cachedOBContexts = new HashMap<String, OBContext>();
 
-    @Inject
-    @Any
-    private Instance<ImportEntryPostProcessor> importEntryPostProcessors;
-
     public ImportEntryProcessRunnable() {
       logger = Logger.getLogger(this.getClass());
     }
@@ -368,12 +361,6 @@ public abstract class ImportEntryProcessor {
           }
 
           processEntry(localImportEntry);
-
-          // Execute post process hooks.
-          for (ImportEntryPostProcessor importEntryPostProcessor : importEntryPostProcessors
-              .select(new ImportEntryProcessorSelector(typeOfData))) {
-            importEntryPostProcessor.afterProcessing(localImportEntry);
-          }
 
           if (logger.isDebugEnabled()) {
             logger.debug("Finished Processing entry " + localImportEntry.getIdentifier() + " "
