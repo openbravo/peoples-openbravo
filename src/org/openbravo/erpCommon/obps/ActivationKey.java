@@ -1315,7 +1315,7 @@ public class ActivationKey {
   }
 
   public boolean hasUnlimitedWsAccess() {
-    return !hasExpired && getExpiredInstalledModules().isEmpty() && !limitedWsAccess;
+    return !hasExpired && !limitedWsAccess;
   }
 
   /**

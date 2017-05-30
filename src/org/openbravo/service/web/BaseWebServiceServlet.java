@@ -50,7 +50,6 @@ public class BaseWebServiceServlet extends HttpServlet {
 
   public static final String LOGIN_PARAM = "l";
   public static final String PASSWORD_PARAM = "p";
-  public static final String WS_CALL = "WsCall";
 
   private static final long serialVersionUID = 1L;
 
@@ -76,8 +75,6 @@ public class BaseWebServiceServlet extends HttpServlet {
       // way
       // ignore also for backward compatibility
     }
-
-    request.setAttribute(WS_CALL, "true");
 
     String userId = null;
     try {

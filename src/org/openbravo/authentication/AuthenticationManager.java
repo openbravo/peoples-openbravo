@@ -252,7 +252,7 @@ public abstract class AuthenticationManager {
     ActivationKey activationKey = ActivationKey.getInstance(true);
     // If the current license has unlimited number of WS calls no limit will be checked, so there is
     // no need to create a new register in the AD_Session table
-    if (isWebServiceRequest(request) && activationKey.hasUnlimitedWsAccess()) {
+    if (activationKey.hasUnlimitedWsAccess()) {
       return userId;
     }
 
@@ -284,14 +284,6 @@ public abstract class AuthenticationManager {
     }
 
     return null;
-  }
-
-  private boolean isWebServiceRequest(HttpServletRequest request) {
-    if (request == null) {
-      // non standard REST web services do not use HttpServletRequest for authentication
-      return true;
-    }
-    return "true".equals(request.getAttribute(BaseWebServiceServlet.WS_CALL));
   }
 
   /**
