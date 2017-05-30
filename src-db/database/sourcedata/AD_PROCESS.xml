@@ -4872,11 +4872,12 @@ This operation can take a long time to complete.]]></HELP>
 <!--800171-->  <AD_PROCESS_ID><![CDATA[800171]]></AD_PROCESS_ID>
 <!--800171-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800171-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800171-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800171-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800171-->  <VALUE><![CDATA[JR_ReportPurchaseOrder]]></VALUE>
 <!--800171-->  <NAME><![CDATA[Purchase Order Report]]></NAME>
 <!--800171-->  <DESCRIPTION><![CDATA[Purchase Order Report]]></DESCRIPTION>
-<!--800171-->  <HELP><![CDATA[This report displays a detailed list of the purchase orders issued to the suppliers.]]></HELP>
+<!--800171-->  <HELP><![CDATA[This report displays a detailed list of the purchase orders issued to the suppliers.
+This is a deprecated process that will be removed in the next major version.]]></HELP>
 <!--800171-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800171-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800171-->  <ISREPORT><![CDATA[N]]></ISREPORT>

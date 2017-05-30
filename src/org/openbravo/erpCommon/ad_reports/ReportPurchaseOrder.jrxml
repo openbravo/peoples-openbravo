@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2016-07-12T14:40:02 -->
+<!-- 2017-04-18T12:53:51 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportPurchaseOrder" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="782" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="d5112654-5616-45aa-ab46-4a7530b995d6">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="org.openbravo.erpCommon.utility.Utility"/>
 	<import value="java.util.*"/>
+	<import value="org.openbravo.dal.core.OBContext"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<style name="default" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8"/>
 	<style name="Report_Title" fontName="Bitstream Vera Sans" fontSize="18">
@@ -41,33 +43,44 @@
 	<style name="Detail_Data_Field" mode="Opaque" backcolor="#CCCCCC" fontName="Bitstream Vera Sans" fontSize="10"/>
 	<style name="Group_Footer" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
 	<style name="Report_Footer" isDefault="true" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11"/>
-	<parameter name="C_BPartner_ID" class="java.lang.String" isForPrompting="false">
+	<parameter name="DateFrom" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="AD_Org_ID" class="org.codehaus.jettison.json.JSONObject" isForPrompting="false">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
-	<parameter name="DateFrom" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="ChildOrgs" class="java.lang.String">
+		<defaultValueExpression><![CDATA[Utility.getInStrSet(OBContext.getOBContext().getOrganizationStructureProvider().getChildTree($P{AD_Org_ID}.getString("value"), true))]]></defaultValueExpression>
+	</parameter>
+	<parameter name="aux_organization" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[($P{AD_Org_ID} == null || "".equals($P{AD_Org_ID}.getString("value"))) ? "" : " AND C_ORDER.AD_ORG_ID IN (" + $P{ChildOrgs} + ")"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="C_BPartner_ID" class="org.codehaus.jettison.json.JSONObject" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
 	<parameter name="aux_partner" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[$P{C_BPartner_ID}.equals("") ? " " : " AND C_ORDER.C_BPARTNER_ID = '" + $P{C_BPartner_ID} +"'"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{C_BPartner_ID} == null || "".equals($P{C_BPartner_ID}.getString("value"))) ? "" : " AND C_ORDER.C_BPARTNER_ID = '" + $P{C_BPartner_ID}.getString("value") + "'"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="DateTo" class="java.util.Date" isForPrompting="false"/>
-	<parameter name="M_Warehouse_ID" class="java.lang.String" isForPrompting="false">
+	<parameter name="M_Warehouse_ID" class="org.codehaus.jettison.json.JSONObject" isForPrompting="false">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
 	<parameter name="aux_warehouse" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[$P{M_Warehouse_ID}.equals("") ? " " : " AND C_ORDER.M_WAREHOUSE_ID = '" + $P{M_Warehouse_ID} + "'"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{M_Warehouse_ID} == null || "".equals($P{M_Warehouse_ID}.getString("value"))) ? "" : " AND C_ORDER.M_WAREHOUSE_ID = '" + $P{M_Warehouse_ID}.getString("value") + "'"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="C_Project_ID" class="java.lang.String" isForPrompting="false">
+	<parameter name="C_Project_ID" class="org.codehaus.jettison.json.JSONObject" isForPrompting="false">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
 	<parameter name="aux_project" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[$P{C_Project_ID}.equals("") ? " " : " AND C_ORDER.C_PROJECT_ID = '" + $P{C_Project_ID} + "'"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{C_Project_ID} == null || "".equals($P{C_Project_ID}.getString("value"))) ? "" : " AND C_ORDER.C_PROJECT_ID = '" + $P{C_Project_ID}.getString("value") + "'"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="LANGUAGE" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["en_US"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false"/>
+	<parameter name="AMOUNTFORMAT" class="java.text.DecimalFormat" isForPrompting="false"/>
+	<parameter name="QUANTITYFORMAT" class="java.text.DecimalFormat" isForPrompting="false"/>
 	<parameter name="LOCALE" class="java.util.Locale" isForPrompting="false"/>
-	<parameter name="C_Currency_ID" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["102"]]></defaultValueExpression>
+	<parameter name="C_Currency_ID" class="org.codehaus.jettison.json.JSONObject" isForPrompting="false"/>
+	<parameter name="aux_Currency" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{C_Currency_ID}.getString("value")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="aux_DateFrom" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[($P{DateFrom} == null || $P{DateFrom}.equals("")) ? "" : "AND C_ORDER.DATEORDERED >= TO_DATE('" + new java.sql.Date($P{DateFrom}.getTime()).toString() + "', 'YYYY-MM-DD')"]]></defaultValueExpression>
@@ -75,52 +88,62 @@
 	<parameter name="aux_DateTo" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[($P{DateTo} == null || $P{DateTo}.equals("")) ? "" : "AND C_ORDER.DATEORDERED <= TO_DATE('" + new java.sql.Date($P{DateTo}.getTime()) + "', 'YYYY-MM-DD')"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="USER_CLIENT" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="USER_ORG" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="Status" class="org.codehaus.jettison.json.JSONObject" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="aux_Status" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[($P{Status} == null || $P{Status}.equals("")) ? "" : "AND C_ORDER.DOCSTATUS = '" + $P{Status}.getString("value") + "'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Current_Client_ID" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="Readable_Organizations" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
 	<parameter name="isUOMManagementEnabled" class="java.lang.Boolean" isForPrompting="false">
 		<defaultValueExpression><![CDATA[org.openbravo.materialmgmt.UOMUtil.isUomManagementEnabled()]]></defaultValueExpression>
 	</parameter>
 	<queryString language="SQL">
 		<![CDATA[SELECT DOCUMENTNO, DATEORDERED, CLIENT_NAME, SUM(QUANTITYORDER) AS QUANTITYORDER, PRICEACTUAL, CONVPRICEACTUAL,
-	SUM(PRICELIST) AS PRICELIST, SUM(CONVPRICELIST) AS CONVPRICELIST, PRODUCT_NAME, UOMNAME,
-	C_CURRENCY_SYMBOL(TRANSCURRENCYID, '0', 'Y') AS TRANSSYM,
-	C_CURRENCY_SYMBOL($P{C_Currency_ID}, '0', 'Y') AS CONVSYM,
-	C_CURRENCY_ISOSYM($P{C_Currency_ID}) AS CONVISOSYM,
-	ALTERNATIVEQTY AS AUMQTY, ALTERNATIVEUOM AS AUM
-	FROM (
-	SELECT C_ORDER.DOCUMENTNO AS DOCUMENTNO, C_ORDER.DATEORDERED AS DATEORDERED, C_BPARTNER.NAME AS CLIENT_NAME, 
-	SUM(C_ORDERLINE.QTYORDERED) AS QUANTITYORDER, C_ORDERLINE.PRICEACTUAL AS PRICEACTUAL,
-	C_CURRENCY_CONVERT(C_ORDERLINE.PRICEACTUAL, COALESCE(C_ORDERLINE.C_CURRENCY_ID, C_ORDER.C_CURRENCY_ID), $P{C_Currency_ID}, TO_DATE(COALESCE(C_ORDER.DATEORDERED, NOW())), NULL, C_ORDERLINE.AD_CLIENT_ID, C_ORDERLINE.AD_ORG_ID) AS CONVPRICEACTUAL,
-	SUM(C_ORDERLINE.LINENETAMT) AS PRICELIST, 
-	C_CURRENCY_CONVERT(SUM(C_ORDERLINE.LINENETAMT), COALESCE(C_ORDERLINE.C_CURRENCY_ID, C_ORDER.C_CURRENCY_ID), $P{C_Currency_ID}, TO_DATE(COALESCE(C_ORDER.DATEORDERED, NOW())), NULL, C_ORDERLINE.AD_CLIENT_ID, C_ORDERLINE.AD_ORG_ID) AS CONVPRICELIST,
-	M_PRODUCT.NAME AS PRODUCT_NAME, C_UOM.NAME AS UOMNAME,
-	COALESCE(C_ORDERLINE.C_CURRENCY_ID, C_ORDER.C_CURRENCY_ID) AS TRANSCURRENCYID,
-	TO_DATE(COALESCE(C_ORDER.DATEORDERED, NOW())) AS TRANSDATE,
-	C_ORDERLINE.AD_CLIENT_ID AS TRANSCLIENTID, 
-	C_ORDERLINE.AD_ORG_ID AS TRANSORGID,
-	C_ORDERLINE.AUMQTY AS ALTERNATIVEQTY,
-	(CASE WHEN C_ORDERLINE.C_AUM IS NULL THEN NULL ELSE (SELECT NAME FROM C_UOM WHERE C_UOM_ID = C_ORDERLINE.C_AUM) END ) AS ALTERNATIVEUOM
-	FROM C_ORDER, C_ORDERLINE, C_BPARTNER, M_PRODUCT, C_UOM
-	WHERE C_ORDER.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
-  	AND C_ORDER.C_ORDER_ID = C_ORDERLINE.C_ORDER_ID
-  	AND C_ORDERLINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
-  	AND C_ORDERLINE.C_UOM_ID = C_UOM.C_UOM_ID
-  	AND 1=1  
-  	$P!{aux_partner}  
-  	$P!{aux_warehouse}
-  	$P!{aux_project} 
-  	$P!{aux_DateFrom} 
-  	$P!{aux_DateTo}
-  	AND C_ORDER.ISSOTRX = 'N'
-	AND C_ORDER.AD_CLIENT_ID IN ($P!{USER_CLIENT})
-	AND C_ORDER.AD_ORG_ID IN ($P!{USER_ORG})
-	GROUP BY C_BPARTNER.NAME, C_ORDERLINE.PRICEACTUAL, M_PRODUCT.NAME, C_UOM.NAME, C_ORDER.DOCUMENTNO, 
-	C_ORDER.DATEORDERED, C_ORDERLINE.C_CURRENCY_ID, C_ORDER.C_CURRENCY_ID,
-	C_ORDERLINE.AD_CLIENT_ID, C_ORDERLINE.AD_ORG_ID, C_ORDERLINE.AUMQTY, C_ORDERLINE.C_AUM
-	) ZZ
-	GROUP BY CLIENT_NAME, PRICEACTUAL, CONVPRICEACTUAL, PRODUCT_NAME, UOMNAME, DOCUMENTNO, DATEORDERED,
-	TRANSCURRENCYID, TRANSDATE, ALTERNATIVEQTY, ALTERNATIVEUOM
-	ORDER BY CLIENT_NAME, DATEORDERED]]>
+    SUM(PRICELIST) AS PRICELIST, SUM(CONVPRICELIST) AS CONVPRICELIST, PRODUCT_NAME, UOMNAME,
+    C_CURRENCY_SYMBOL(TRANSCURRENCYID, '0', 'Y') AS TRANSSYM,
+    C_CURRENCY_SYMBOL($P{aux_Currency}, '0', 'Y') AS CONVSYM,
+    C_CURRENCY_ISOSYM($P{aux_Currency}) AS CONVISOSYM,
+    ALTERNATIVEQTY AS AUMQTY, ALTERNATIVEUOM AS AUM
+    FROM (
+    SELECT C_ORDER.DOCUMENTNO AS DOCUMENTNO, C_ORDER.DATEORDERED AS DATEORDERED, C_BPARTNER.C_BPARTNER_ID, C_BPARTNER.NAME AS CLIENT_NAME, 
+    SUM(C_ORDERLINE.QTYORDERED) AS QUANTITYORDER, C_ORDERLINE.PRICEACTUAL AS PRICEACTUAL,
+    C_CURRENCY_CONVERT(C_ORDERLINE.PRICEACTUAL, COALESCE(C_ORDERLINE.C_CURRENCY_ID, C_ORDER.C_CURRENCY_ID), $P{aux_Currency}, TO_DATE(COALESCE(C_ORDER.DATEORDERED, NOW())), NULL, C_ORDERLINE.AD_CLIENT_ID, C_ORDERLINE.AD_ORG_ID) AS CONVPRICEACTUAL,
+    SUM(C_ORDERLINE.LINENETAMT) AS PRICELIST, 
+    C_CURRENCY_CONVERT(SUM(C_ORDERLINE.LINENETAMT), COALESCE(C_ORDERLINE.C_CURRENCY_ID, C_ORDER.C_CURRENCY_ID), $P{aux_Currency}, TO_DATE(COALESCE(C_ORDER.DATEORDERED, NOW())), NULL, C_ORDERLINE.AD_CLIENT_ID, C_ORDERLINE.AD_ORG_ID) AS CONVPRICELIST,
+    M_PRODUCT.NAME AS PRODUCT_NAME, C_UOM.NAME AS UOMNAME,
+    COALESCE(C_ORDERLINE.C_CURRENCY_ID, C_ORDER.C_CURRENCY_ID) AS TRANSCURRENCYID,
+    TO_DATE(COALESCE(C_ORDER.DATEORDERED, NOW())) AS TRANSDATE,
+    C_ORDERLINE.AD_CLIENT_ID AS TRANSCLIENTID, 
+    C_ORDERLINE.AD_ORG_ID AS TRANSORGID,
+    C_ORDERLINE.AUMQTY AS ALTERNATIVEQTY,
+    (CASE WHEN C_ORDERLINE.C_AUM IS NULL THEN NULL ELSE (SELECT NAME FROM C_UOM WHERE C_UOM_ID = C_ORDERLINE.C_AUM) END ) AS ALTERNATIVEUOM
+    FROM C_ORDER, C_ORDERLINE, C_BPARTNER, M_PRODUCT, C_UOM
+    WHERE C_ORDER.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+    AND C_ORDER.C_ORDER_ID = C_ORDERLINE.C_ORDER_ID
+    AND C_ORDERLINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
+    AND C_ORDERLINE.C_UOM_ID = C_UOM.C_UOM_ID
+    AND 1=1
+    $P!{aux_organization}
+    $P!{aux_partner}  
+    $P!{aux_warehouse}
+    $P!{aux_project} 
+    $P!{aux_DateFrom} 
+    $P!{aux_DateTo}
+    $P!{aux_Status}
+    AND C_ORDER.ISSOTRX = 'N'
+    AND C_ORDER.AD_CLIENT_ID = ($P{Current_Client_ID})
+    AND C_ORDER.AD_ORG_ID IN ($P!{Readable_Organizations})
+    GROUP BY C_BPARTNER.C_BPARTNER_ID, C_BPARTNER.NAME, C_ORDERLINE.PRICEACTUAL, M_PRODUCT.NAME, C_UOM.NAME, C_ORDER.DOCUMENTNO, 
+    C_ORDER.DATEORDERED, C_ORDERLINE.C_CURRENCY_ID, C_ORDER.C_CURRENCY_ID,
+    C_ORDERLINE.AD_CLIENT_ID, C_ORDERLINE.AD_ORG_ID, C_ORDERLINE.AUMQTY, C_ORDERLINE.C_AUM
+    ) ZZ
+    GROUP BY CLIENT_NAME, PRICEACTUAL, CONVPRICEACTUAL, PRODUCT_NAME, UOMNAME, DOCUMENTNO, DATEORDERED,
+    TRANSCURRENCYID, TRANSDATE, ALTERNATIVEQTY, ALTERNATIVEUOM
+    ORDER BY CLIENT_NAME, DATEORDERED]]>
 	</queryString>
 	<field name="DOCUMENTNO" class="java.lang.String"/>
 	<field name="DATEORDERED" class="java.util.Date"/>
@@ -191,7 +214,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[($V{TOTAL_CLIENT}!=null)?$P{NUMBERFORMAT}.format($V{TOTAL_CLIENT}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{TOTAL_CLIENT}!=null)?$P{AMOUNTFORMAT}.format($V{TOTAL_CLIENT}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<line>
 					<reportElement key="line-14" style="Report_Footer" x="779" y="0" width="1" height="21" forecolor="#555555" uuid="4fecd96d-bec0-48fa-946e-54cd0990b048">
@@ -567,7 +590,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[($V{TOTAL_DOCNO}!=null)?$P{NUMBERFORMAT}.format($V{TOTAL_DOCNO}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{TOTAL_DOCNO}!=null)?$P{AMOUNTFORMAT}.format($V{TOTAL_DOCNO}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement key="staticText-1" style="Report_Footer" x="591" y="6" width="92" height="16" uuid="80f8fd76-b5a7-4466-97bf-e556d86bba6d"/>
@@ -654,7 +677,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{QUANTITYORDER}!=null)?$P{NUMBERFORMAT}.format($F{QUANTITYORDER}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{QUANTITYORDER}!=null)?$P{QUANTITYFORMAT}.format($F{QUANTITYORDER}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" style="Detail_Line" x="233" y="0" width="42" height="14" uuid="e1f6dfda-4efd-4908-b860-3b2a26e07ef7">
@@ -682,7 +705,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{PRICEACTUAL}!=null)?$P{NUMBERFORMAT}.format($F{PRICEACTUAL}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{PRICEACTUAL}!=null)?$P{AMOUNTFORMAT}.format($F{PRICEACTUAL}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" style="Detail_Line" x="580" y="0" width="79" height="14" uuid="cd89330c-7993-4c78-ab2f-445040e41316"/>
@@ -695,7 +718,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{PRICELIST}!=null)?$P{NUMBERFORMAT}.format($F{PRICELIST}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{PRICELIST}!=null)?$P{AMOUNTFORMAT}.format($F{PRICELIST}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-3" style="Report_Footer" x="10" y="0" width="1" height="14" forecolor="#555555" uuid="a9b90163-14fb-4dde-8050-5c217f4cd83d"/>
@@ -717,7 +740,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{CONVPRICELIST}!=null)?$P{NUMBERFORMAT}.format($F{CONVPRICELIST}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{CONVPRICELIST}!=null)?$P{AMOUNTFORMAT}.format($F{CONVPRICELIST}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField-4" style="Detail_Line" x="480" y="0" width="79" height="14" uuid="9b83be8f-2aac-47f5-b3ef-d51ccb7678d1"/>
@@ -730,7 +753,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{CONVPRICEACTUAL}!=null)?$P{NUMBERFORMAT}.format($F{CONVPRICEACTUAL}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{CONVPRICEACTUAL}!=null)?$P{AMOUNTFORMAT}.format($F{CONVPRICEACTUAL}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField-8" style="Detail_Line" x="659" y="0" width="21" height="14" uuid="631bfaf7-e534-4f25-8455-9637f346e4b3"/>
@@ -814,7 +837,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{AUMQTY}!=null)?$P{NUMBERFORMAT}.format($F{AUMQTY}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{AUMQTY}!=null)?$P{QUANTITYFORMAT}.format($F{AUMQTY}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" style="Detail_Line" x="180" y="0" width="95" height="14" uuid="1153f63c-e2ef-4f35-8462-b1ccb00a5f90">
@@ -835,7 +858,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{QUANTITYORDER}!=null)?$P{NUMBERFORMAT}.format($F{QUANTITYORDER}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{QUANTITYORDER}!=null)?$P{QUANTITYFORMAT}.format($F{QUANTITYORDER}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" style="Detail_Line" x="275" y="0" width="105" height="14" uuid="09950aa1-a199-49c8-ba5e-7467d0d77718">
