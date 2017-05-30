@@ -1027,6 +1027,8 @@ enyo.kind({
         if (!this.owner.receipt.get('doCancelAndReplace') && this.owner.receipt.getPrePaymentQty() === OB.DEC.sub(this.owner.receipt.getTotal(), this.owner.receipt.getCredit()) && !this.owner.receipt.isNewReversed()) {
           value = true;
         }
+      } else if (this.owner.receipt && this.owner.receipt.get('isPaid') && this.owner.receipt.getGross() === 0) {
+        value = true;
       }
     }
     this.disabled = value; // for getDisabled() to return the correct value
