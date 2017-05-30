@@ -141,6 +141,11 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
               .equals(selectedLine.getString("returnedUOM"))) {
             qtyReceived = UOMUtil.getConvertedQty(selectedLine.getString("product"), qtyReceived,
                 selectedLine.getString("alternativeUOM"));
+          } else {
+            BigDecimal operativeQuantity = UOMUtil.getConvertedAumQty(
+                selectedLine.getString("product"), qtyReceived,
+                selectedLine.getString("alternativeUOM"));
+            newInOutLine.setOperativeQuantity(operativeQuantity.negate());
           }
         } finally {
           OBContext.restorePreviousMode();
