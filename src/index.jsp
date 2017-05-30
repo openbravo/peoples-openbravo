@@ -24,6 +24,7 @@
 <%@ page import="org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction" %>
 <%@ page import="org.openbravo.client.application.window.ApplicationDictionaryCachedStructures"%>
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page session="false" %>
 <%
   /*
  *************************************************************************
@@ -46,19 +47,25 @@
 
 Logger log = Logger.getLogger(org.openbravo.authentication.AuthenticationManager.class); 
 
+HttpSession currentSession = request.getSession(false);
+
 AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
+if (currentSession == null) {
+  response.sendRedirect(authManager.getLoginURL(request));
+  return;
+}
 
 String userId = authManager.authenticate(request, response);
 
-if(userId == null){
+if (userId == null) {
   return;
 }
 
 OBContext.setAdminMode(false);
 String sessionId = null;
 try {
-  sessionId = (String) session.getAttribute("#AD_SESSION_ID");
-  if (sessionId != null && !"".equals(sessionId) && !"Y".equals(session.getAttribute("forceLogin"))) {
+  sessionId = (String) currentSession.getAttribute("#AD_SESSION_ID");
+  if (sessionId != null && !"".equals(sessionId) && !"Y".equals(currentSession.getAttribute("forceLogin"))) {
     org.openbravo.model.ad.access.Session dbSession = OBDal.getInstance().get(org.openbravo.model.ad.access.Session.class, sessionId);
     String currentSessionType = dbSession.getLoginStatus();
 
@@ -75,7 +82,7 @@ try {
         OBError errMsg = new OBError();
         errMsg.setTitle(OBMessageUtils.messageBD("NUMBER_OF_CONCURRENT_USERS_REACHED_TITLE", false, true));
         errMsg.setMessage(OBMessageUtils.messageBD("NUMBER_OF_CONCURRENT_USERS_REACHED", false, true));
-        session.setAttribute("LOGINERRORMSG", errMsg);
+        currentSession.setAttribute("LOGINERRORMSG", errMsg);
 
         response.sendRedirect(authManager.getLoginURL(request));
         return;
@@ -266,11 +273,11 @@ if (onlySystemAdminAccess && role != null && !"0".equals(role.getId())) {
   document.body.removeChild(document.getElementById('OBLoadingDiv'));
   OB.GlobalHiddenForm = document.forms.OBGlobalHiddenForm;
 <%
-  if (session.getAttribute("STARTUP-MESSAGE") != null) {
-    String text = (String) session.getAttribute("STARTUP-MESSAGE");
-    String title = (String) session.getAttribute("STARTUP-MESSAGE-TITLE");
-    session.removeAttribute("STARTUP-MESSAGE");
-    session.removeAttribute("STARTUP-MESSAGE-TITLE");
+  if (currentSession.getAttribute("STARTUP-MESSAGE") != null) {
+    String text = (String) currentSession.getAttribute("STARTUP-MESSAGE");
+    String title = (String) currentSession.getAttribute("STARTUP-MESSAGE-TITLE");
+    currentSession.removeAttribute("STARTUP-MESSAGE");
+    currentSession.removeAttribute("STARTUP-MESSAGE-TITLE");
 %>
   isc.say('<%=text%>', null, {title: '<%=title%>'});
 <%

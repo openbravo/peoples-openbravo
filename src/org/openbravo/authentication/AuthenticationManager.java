@@ -199,7 +199,7 @@ public abstract class AuthenticationManager {
     // It just need to set an the attribute loginURL in the request
     final String customLoginURL = (String) request.getAttribute("loginURL");
 
-    return localAdress
+    return HttpBaseUtils.getLocalAddress(request)
         + (customLoginURL == null || "".equals(customLoginURL) ? defaultServletUrl : customLoginURL);
   }
 
