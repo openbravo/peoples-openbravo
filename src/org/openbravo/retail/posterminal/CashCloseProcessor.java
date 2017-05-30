@@ -111,8 +111,7 @@ public class CashCloseProcessor {
 
       BigDecimal reconciliationTotal = BigDecimal
           .valueOf(cashCloseObj.getDouble("foreignExpected")).add(foreignDifference);
-      if (paymentType.getPaymentMethod().isAutomatemovementtoother()
-          && reconciliationTotal.compareTo(new BigDecimal(0)) != 0) {
+      if (reconciliationTotal.compareTo(new BigDecimal(0)) != 0) {
 
         if (!cashCloseObj.getJSONObject("paymentMethod").isNull("amountToKeep")
             && BigDecimal.valueOf(
@@ -247,9 +246,7 @@ public class CashCloseProcessor {
     reconciliation.setDocumentNo("99999999temp");
     reconciliation.setEndingDate(currentDate);
     reconciliation.setTransactionDate(currentDate);
-    if (!paymentType.getPaymentMethod().isAutomatemovementtoother()) {
-      reconciliation.setEndingBalance(account.getCurrentBalance());
-    } else if (!cashCloseObj.getJSONObject("paymentMethod").isNull("amountToKeep")) {
+    if (!cashCloseObj.getJSONObject("paymentMethod").isNull("amountToKeep")) {
       reconciliation.setEndingBalance(BigDecimal.valueOf(cashCloseObj
           .getJSONObject("paymentMethod").getDouble("amountToKeep")));
     } else {
