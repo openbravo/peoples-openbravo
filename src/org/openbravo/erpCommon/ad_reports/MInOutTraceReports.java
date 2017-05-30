@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -178,10 +179,20 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
       return localData;
     }
     for (int i = 0; i < localData.length; i++) {
-      localData[i].htmlHeader = createHeader(vars, localData[i], strIn);
-      localData[i].html = processChilds(vars, localData[i].mAttributesetinstanceId,
-          localData[i].mProductId, localData[i].mLocatorId, strIn, true, strmProductIdGlobal,
-          calculated, count);
+      MInOutTraceReportsData[] dataChild = MInOutTraceReportsData.selectChilds(this, vars
+          .getLanguage(), localData[i].mAttributesetinstanceId, localData[i].mProductId,
+          localData[i].mLocatorId, strIn.equals("Y") ? "plusQty" : "minusQty",
+          strIn.equals("N") ? "minusQty" : "plusQty");
+      if (dataChild == null || dataChild.length == 0) {
+        localData[i].htmlHeader = "";
+        localData[i].html = "";
+      } else {
+        localData[i].htmlHeader = createHeader(vars, dataChild);
+        localData[i].html = processChilds(vars, dataChild, localData[i].mAttributesetinstanceId,
+            localData[i].mProductId, localData[i].mLocatorId, strIn, true, strmProductIdGlobal,
+            calculated, count);
+      }
+
       if ("".equals(localData[i].html)) {
         // Delete localData[i] from array
         localData = (MInOutTraceReportsData[]) ArrayUtils.removeElement(localData, localData[i]);
@@ -191,15 +202,11 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     return localData;
   }
 
-  private String createHeader(VariablesSecureApp vars, MInOutTraceReportsData data, String strIn)
+  private String createHeader(VariablesSecureApp vars, MInOutTraceReportsData[] dataChild)
       throws ServletException {
-    // TODO Auto-generated method stub
-    MInOutTraceReportsData[] dataChild = MInOutTraceReportsData.selectChilds(this,
-        vars.getLanguage(), data.mAttributesetinstanceId, data.mProductId, data.mLocatorId,
-        strIn.equals("Y") ? "plusQty" : "minusQty", strIn.equals("N") ? "minusQty" : "plusQty");
     boolean hasSecUom = false;
     for (int i = 0; i < dataChild.length; i++) {
-      if (!dataChild[i].quantityorder.equals("")) {
+      if (StringUtils.isNotEmpty(dataChild[i].quantityorder)) {
         hasSecUom = true;
         break;
       }
@@ -214,15 +221,14 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     strHtmlHeader.append("    <th class=\"DataGrid_Header_Cell\" width=\"70\">Date</th>");
     strHtmlHeader.append("    <th class=\"DataGrid_Header_Cell\" width=\"100\">Movement Type</th>");
     strHtmlHeader.append("    <th class=\"DataGrid_Header_Cell\" width=\"100\">Locator</th>");
-    strHtmlHeader.append("    <th class=\"DataGrid_Header_Cell\" width=\"90\">Quantity Uom</th>");
+    strHtmlHeader.append("    <th class=\"DataGrid_Header_Cell\" width=\"90\">Movement Qty</th>");
     if (hasSecUom) {
-      strHtmlHeader
-          .append("    <th class=\"DataGrid_Header_Cell\" width=\"90\">Order Qty Uom</th>\n");
+      strHtmlHeader.append("    <th class=\"DataGrid_Header_Cell\" width=\"90\">Order Qty</th>\n");
     }
-    strHtmlHeader.append("    <th class=\"DataGrid_Header_Cell\"> Transaction Reference</th>");
+    strHtmlHeader.append("    <th class=\"DataGrid_Header_Cell\">Transaction Reference</th>");
     strHtmlHeader.append("</tr></table>");
     strHtmlHeader.append("</td>");
-    strHtmlHeader.append("<th class=\"DataGrid_Header_Cell\">Quantity Uom\n");
+    strHtmlHeader.append("<th class=\"DataGrid_Header_Cell\">Total Qty\n");
     strHtmlHeader.append("</th>\n");
     strHtmlHeader.append("  </tr>");
     strHtmlHeader.append(insertHeaderHtml(true, ""));
@@ -262,10 +268,10 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     return resultado.toString();
   }
 
-  private String processChilds(VariablesSecureApp vars, String mAttributesetinstanceId,
-      String mProductId, String mLocatorId, String strIn, boolean colorbg2,
-      String strmProductIdGlobal, Hashtable<String, Integer> calculated, Vector<Integer> count)
-      throws ServletException {
+  private String processChilds(VariablesSecureApp vars, MInOutTraceReportsData[] dataChild,
+      String mAttributesetinstanceId, String mProductId, String mLocatorId, String strIn,
+      boolean colorbg2, String strmProductIdGlobal, Hashtable<String, Integer> calculated,
+      Vector<Integer> count) throws ServletException {
     BigDecimal total = BigDecimal.ZERO;
     BigDecimal totalPedido = BigDecimal.ZERO;
     StringBuffer strHtml = new StringBuffer();
@@ -280,12 +286,7 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
 
     if (log4j.isDebugEnabled())
       log4j.debug("****** Hashtable.add: " + strCalculated);
-    MInOutTraceReportsData[] dataChild = MInOutTraceReportsData.selectChilds(this, vars
-        .getLanguage(), mAttributesetinstanceId, mProductId, mLocatorId,
-        strIn.equals("Y") ? "plusQty" : "minusQty", strIn.equals("N") ? "minusQty" : "plusQty");
-    if (dataChild == null || dataChild.length == 0) {
-      return "";
-    }
+
     boolean colorbg = true;
 
     strHtml.append(insertHeaderHtml(false, "0"));
@@ -397,9 +398,15 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
                   + calculated.get(strCalculate));
             Integer isnull = calculated.get(strCalculate);
             if (isnull == null) {
-              String strPartial = processChilds(vars, dataProduction[j].mAttributesetinstanceId,
-                  dataProduction[j].mProductId, dataProduction[j].mLocatorId, strIn, !colorbg,
-                  strmProductIdGlobal, calculated, count);
+              MInOutTraceReportsData[] data = MInOutTraceReportsData.selectChilds(this, vars
+                  .getLanguage(), dataProduction[j].mAttributesetinstanceId,
+                  dataProduction[j].mProductId, dataProduction[j].mLocatorId,
+                  strIn.equals("Y") ? "plusQty" : "minusQty", strIn.equals("N") ? "minusQty"
+                      : "plusQty");
+              String strPartial = data == null || data.length == 0 ? "" : processChilds(vars, data,
+                  dataProduction[j].mAttributesetinstanceId, dataProduction[j].mProductId,
+                  dataProduction[j].mLocatorId, strIn, !colorbg, strmProductIdGlobal, calculated,
+                  count);
               if (!strPartial.equals("")) {
                 strHtml.append("  <tr style=\"background: ")
                     .append((colorbg ? "#CCCCCC" : "#AAAAAA")).append("\">\n");
@@ -476,9 +483,15 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
                 log4j.debug("******** Movement, hashtable calculated: "
                     + calculated.get(strCalculate));
               if (calculated.get(strCalculate) == null) {
-                strPartial = processChilds(vars, dataMovement[j].mAttributesetinstanceId,
-                    dataMovement[j].mProductId, dataMovement[j].mLocatorId, strIn, !colorbg,
-                    strmProductIdGlobal, calculated, count);
+                MInOutTraceReportsData[] data = MInOutTraceReportsData.selectChilds(this, vars
+                    .getLanguage(), dataMovement[j].mAttributesetinstanceId,
+                    dataMovement[j].mProductId, dataMovement[j].mLocatorId,
+                    strIn.equals("Y") ? "plusQty" : "minusQty", strIn.equals("N") ? "minusQty"
+                        : "plusQty");
+                strPartial = data == null || data.length == 0 ? "" : processChilds(vars, data,
+                    dataMovement[j].mAttributesetinstanceId, dataMovement[j].mProductId,
+                    dataMovement[j].mLocatorId, strIn, !colorbg, strmProductIdGlobal, calculated,
+                    count);
               }
             }
             if (!strPartial.equals("")) {
