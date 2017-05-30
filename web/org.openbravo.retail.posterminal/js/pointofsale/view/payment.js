@@ -397,7 +397,7 @@ enyo.kind({
         symbolAtRight = true,
         isCashType = true,
         receiptHasPrepaymentAmount = prepaymentAmount !== 0 && prepaymentAmount !== paymentstatus.totalAmt,
-        pendingPrepayment = paymentstatus.totalAmt - prepaymentAmount - paymentstatus.pendingAmt;
+        pendingPrepayment = prepaymentAmount + paymentstatus.pendingAmt - paymentstatus.totalAmt;
 
     if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
       symbol = OB.MobileApp.model.get('terminal').symbol;
@@ -444,7 +444,7 @@ enyo.kind({
       this.$.change.hide();
       this.$.changelbl.hide();
     }
-    if (this.receipt.getPending() === 0 && paymentstatus.overpayment) {
+    if (this.receipt.getPending() <= 0 && paymentstatus.overpayment) {
       this.$.overpayment.setContent(OB.I18N.formatCurrencyWithSymbol(paymentstatus.overpayment, symbol, symbolAtRight));
       this.$.overpayment.show();
       this.$.overpaymentlbl.show();
@@ -453,7 +453,7 @@ enyo.kind({
       this.$.overpaymentlbl.hide();
     }
 
-    if (this.receipt.getPending() === 0 && paymentstatus.done) {
+    if (this.receipt.getPending() <= 0 && paymentstatus.done) {
       this.$.totalpending.hide();
       this.$.totalpendinglbl.hide();
       if (!_.isEmpty(OB.MobileApp.model.paymentnames) || this.receipt.get('orderType') === 3) {
@@ -482,7 +482,7 @@ enyo.kind({
       }
     }
 
-    if (this.receipt.getPending() === 0 && (paymentstatus.done || this.receipt.getGross() === 0)) {
+    if (this.receipt.getPending() <= 0 && (paymentstatus.done || this.receipt.getGross() === 0)) {
       this.$.exactbutton.hide();
       this.$.layawayaction.hide();
     } else {
