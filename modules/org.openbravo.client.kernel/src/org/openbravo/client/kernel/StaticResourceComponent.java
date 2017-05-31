@@ -103,16 +103,7 @@ public class StaticResourceComponent extends BaseComponent {
         OBContext.getOBContext().setNewUI(true);
       }
 
-      final String appName = getApplicationName();
-      String staticResourceFileName = resourceProvider.getStaticResourceCachedInfo(appName);
-      if (staticResourceFileName == null) {
-        staticResourceFileName = getStaticResourceFileName();
-        if (!isInDevelopment()) {
-          resourceProvider.putStaticResourceCachedInfo(appName, staticResourceFileName);
-        }
-      }
-
-      return generateResult(staticResourceFileName);
+      return generateResult(getStaticResourceFileName());
     } catch (Exception e) {
       log.error("Error generating component; " + e.getMessage(), e);
     } finally {
@@ -171,157 +162,176 @@ public class StaticResourceComponent extends BaseComponent {
    *         client side reload or caching.
    */
   public String getStaticResourceFileName() {
-    final List<Module> modules = KernelUtils.getInstance().getModulesOrderedByDependency();
-    final ServletContext context = (ServletContext) getParameters().get(
-        KernelConstants.SERVLET_CONTEXT);
-    final StringBuffer sb = new StringBuffer();
-
-    final String skinParam;
-    if (getParameters().containsKey(KernelConstants.SKIN_PARAMETER)) {
-      skinParam = (String) getParameters().get(KernelConstants.SKIN_PARAMETER);
-    } else {
-      skinParam = KernelConstants.SKIN_DEFAULT;
+    final String appName = getApplicationName();
+    String staticResourceFileName = resourceProvider.getStaticResourceCachedInfo(appName);
+    if (staticResourceFileName != null) {
+      return staticResourceFileName;
     }
 
-    int cntDynamicScripts = 0;
-    final String appName = getApplicationName();
+    synchronized (StaticResourceComponent.class) {
+      staticResourceFileName = resourceProvider.getStaticResourceCachedInfo(appName);
+      if (staticResourceFileName != null) {
+        return staticResourceFileName;
+      }
 
-    for (Module module : modules) {
-      for (ComponentProvider provider : componentProviders) {
-        final List<ComponentResource> resources = provider.getGlobalComponentResources();
-        if (resources == null || resources.size() == 0) {
-          continue;
-        }
+      final List<Module> modules = KernelUtils.getInstance().getModulesOrderedByDependency();
+      final ServletContext context = (ServletContext) getParameters().get(
+          KernelConstants.SERVLET_CONTEXT);
+      final StringBuffer sb = new StringBuffer();
 
-        if (provider.getModule().getId().equals(module.getId())) {
-          for (ComponentResource resource : resources) {
+      final String skinParam;
+      if (getParameters().containsKey(KernelConstants.SKIN_PARAMETER)) {
+        skinParam = (String) getParameters().get(KernelConstants.SKIN_PARAMETER);
+      } else {
+        skinParam = KernelConstants.SKIN_DEFAULT;
+      }
 
-            if (!resource.isValidForApp(appName)) {
-              continue;
-            }
+      int cntDynamicScripts = 0;
 
-            log.debug("Processing resource: " + resource);
-            String resourcePath = resource.getPath();
-            if (resource.getType() == ComponentResourceType.Stylesheet) {
-              // do these differently...
-            } else if (resource.getType() == ComponentResourceType.Static) {
-              if (resourcePath.startsWith(KernelConstants.KERNEL_JAVA_PACKAGE)) {
-                final String[] pathParts = WebServiceUtil.getInstance().getSegments(
-                    resourcePath.substring(KernelConstants.KERNEL_JAVA_PACKAGE.length()));
-                final Component component = provider.getComponent(pathParts[1], getParameters());
-                sb.append(ComponentGenerator.getInstance().generate(component)).append("\n");
-              } else {
+      for (Module module : modules) {
+        for (ComponentProvider provider : componentProviders) {
+          final List<ComponentResource> resources = provider.getGlobalComponentResources();
+          if (resources == null || resources.size() == 0) {
+            continue;
+          }
 
-                // Skin version handling
-                if (resourcePath.contains(KernelConstants.SKIN_PARAMETER)) {
-                  resourcePath = resourcePath.replaceAll(KernelConstants.SKIN_PARAMETER, skinParam);
-                }
+          if (provider.getModule().getId().equals(module.getId())) {
+            for (ComponentResource resource : resources) {
 
-                if (!resourcePath.startsWith("/")) {
-                  // Tomcat 8 forces getRealPath to start with a slash
-                  resourcePath = "/" + resourcePath;
-                }
+              if (!resource.isValidForApp(appName)) {
+                continue;
+              }
 
-                try {
-                  final File file = new File(context.getRealPath(resourcePath));
-                  if (!file.exists() || !file.canRead()) {
-                    log.error(file.getAbsolutePath() + " cannot be read");
-                    continue;
+              log.debug("Processing resource: " + resource);
+              String resourcePath = resource.getPath();
+              if (resource.getType() == ComponentResourceType.Stylesheet) {
+                // do these differently...
+              } else if (resource.getType() == ComponentResourceType.Static) {
+                if (resourcePath.startsWith(KernelConstants.KERNEL_JAVA_PACKAGE)) {
+                  final String[] pathParts = WebServiceUtil.getInstance().getSegments(
+                      resourcePath.substring(KernelConstants.KERNEL_JAVA_PACKAGE.length()));
+                  final Component component = provider.getComponent(pathParts[1], getParameters());
+                  sb.append(ComponentGenerator.getInstance().generate(component)).append("\n");
+                } else {
+
+                  // Skin version handling
+                  if (resourcePath.contains(KernelConstants.SKIN_PARAMETER)) {
+                    resourcePath = resourcePath.replaceAll(KernelConstants.SKIN_PARAMETER,
+                        skinParam);
                   }
-                  String resourceContents = FileUtils.readFileToString(file, "UTF-8");
-                  sb.append(resourceContents).append("\n");
-                } catch (Exception e) {
-                  log.error("Error reading file: " + resource, e);
-                }
-              }
-            } else if (resource.getType() == ComponentResourceType.Dynamic) {
-              if (resourcePath.startsWith("/") && getContextUrl().length() > 0) {
-                resourcePath = getContextUrl() + resourcePath.substring(1);
-              } else {
-                resourcePath = getContextUrl() + resourcePath;
-              }
 
-              sb.append("$LAB.script('" + resourcePath
-                  + "').wait(function(){var _exception; try{\n");
-              cntDynamicScripts++;
-            } else {
-              log.error("Resource " + resource + " not supported");
+                  if (!resourcePath.startsWith("/")) {
+                    // Tomcat 8 forces getRealPath to start with a slash
+                    resourcePath = "/" + resourcePath;
+                  }
+
+                  try {
+                    final File file = new File(context.getRealPath(resourcePath));
+                    if (!file.exists() || !file.canRead()) {
+                      log.error(file.getAbsolutePath() + " cannot be read");
+                      continue;
+                    }
+                    String resourceContents = FileUtils.readFileToString(file, "UTF-8");
+                    sb.append(resourceContents).append("\n");
+                  } catch (Exception e) {
+                    log.error("Error reading file: " + resource, e);
+                  }
+                }
+              } else if (resource.getType() == ComponentResourceType.Dynamic) {
+                if (resourcePath.startsWith("/") && getContextUrl().length() > 0) {
+                  resourcePath = getContextUrl() + resourcePath.substring(1);
+                } else {
+                  resourcePath = getContextUrl() + resourcePath;
+                }
+
+                sb.append("$LAB.script('" + resourcePath
+                    + "').wait(function(){var _exception; try{\n");
+                cntDynamicScripts++;
+              } else {
+                log.error("Resource " + resource + " not supported");
+              }
             }
           }
         }
       }
-    }
 
-    if (!"".equals(sb.toString())) {
-      /*
-       * If a module is in development or the application is running the tests, add the isDebug
-       * variable to the generated javascript file.
-       * 
-       * If the isDebug variable is present in the javascript files, the code that calls
-       * OB.UTIL.Debug will not be executed
-       * 
-       * This option is intended to run additional code (checks, etc) that will not be run while in
-       * production.
-       * 
-       * This improves performance at the same time that the developer have a tool to improve
-       * stability.
-       * 
-       * TODO: add an algorithm to remove the OB.UTIL.Debug code and calls from the generated
-       * javacript file
-       * 
-       * TODO: don't load the ob-debug.js file if not in use
-       */
-      if (isInDevelopment()
-          || OBPropertiesProvider.getInstance().getBooleanProperty("test.environment")) {
-        // append a global isDebug var and the causes that provoked the application to enter Debug
-        // mode
-        sb.insert(
-            0,
-            String
-                .format(
-                    "var isDebug = true;\nvar debugCauses = {\n  isInDevelopment: %s,\n  isTestEnvironment: %s\n};\n\n",
-                    isInDevelopment(),
-                    OBPropertiesProvider.getInstance().getBooleanProperty("test.environment")));
+      if (!"".equals(sb.toString())) {
+        /*
+         * If a module is in development or the application is running the tests, add the isDebug
+         * variable to the generated javascript file.
+         * 
+         * If the isDebug variable is present in the javascript files, the code that calls
+         * OB.UTIL.Debug will not be executed
+         * 
+         * This option is intended to run additional code (checks, etc) that will not be run while
+         * in production.
+         * 
+         * This improves performance at the same time that the developer have a tool to improve
+         * stability.
+         * 
+         * TODO: add an algorithm to remove the OB.UTIL.Debug code and calls from the generated
+         * javacript file
+         * 
+         * TODO: don't load the ob-debug.js file if not in use
+         */
+        if (isInDevelopment()
+            || OBPropertiesProvider.getInstance().getBooleanProperty("test.environment")) {
+          // append a global isDebug var and the causes that provoked the application to enter Debug
+          // mode
+          sb.insert(
+              0,
+              String
+                  .format(
+                      "var isDebug = true;\nvar debugCauses = {\n  isInDevelopment: %s,\n  isTestEnvironment: %s\n};\n\n",
+                      isInDevelopment(),
+                      OBPropertiesProvider.getInstance().getBooleanProperty("test.environment")));
+        }
+        sb.append("if (window.onerror && window.onerror.name === '"
+            + KernelConstants.BOOTSTRAP_ERROR_HANDLER_NAME + "') { window.onerror = null; }");
+        sb.append("if (typeof OBStartApplication !== 'undefined' && Object.prototype.toString.call(OBStartApplication) === '[object Function]') { OBStartApplication(); }");
       }
-      sb.append("if (window.onerror && window.onerror.name === '"
-          + KernelConstants.BOOTSTRAP_ERROR_HANDLER_NAME + "') { window.onerror = null; }");
-      sb.append("if (typeof OBStartApplication !== 'undefined' && Object.prototype.toString.call(OBStartApplication) === '[object Function]') { OBStartApplication(); }");
-    }
 
-    for (int i = 0; i < cntDynamicScripts; i++) {
-      // add extra exception handling code otherwise exceptions occuring in
-      // the Labs wait function are not visible.
-      sb.append("\n} catch (_exception) {");
-      sb.append("if (isc) { isc.Log.logError(_exception + ' ' + _exception.message + ' ' + _exception.stack); }");
-      sb.append("if (console && console.trace) { console.trace();}");
-      sb.append("}\n});");
-    }
-
-    // note compress, note that modules are cached in memory
-    // when changing development status, system needs to be restarted.
-    final String output;
-    // in classicmode the isc combined is included, compressing that gives errors
-    if (!isInDevelopment() && !isClassicMode()
-        && !OBPropertiesProvider.getInstance().getBooleanProperty("test.environment")) {
-      output = JSCompressor.getInstance().compress(sb.toString());
-    } else {
-      output = sb.toString();
-    }
-    final String md5 = DigestUtils.md5Hex(output);
-    final String getTargetLocation = context.getRealPath(GEN_TARGET_LOCATION);
-    final File dir = new File(getTargetLocation);
-    if (!dir.exists()) {
-      dir.mkdir();
-    }
-    File outFile = new File(getTargetLocation + "/" + md5 + ".js");
-    if (!outFile.exists()) {
-      try {
-        log.debug("Writing file: " + outFile.getAbsolutePath());
-        FileUtils.writeStringToFile(outFile, output, "UTF-8");
-      } catch (Exception e) {
-        log.error("Error writing file: " + e.getMessage(), e);
+      for (int i = 0; i < cntDynamicScripts; i++) {
+        // add extra exception handling code otherwise exceptions occuring in
+        // the Labs wait function are not visible.
+        sb.append("\n} catch (_exception) {");
+        sb.append("if (isc) { isc.Log.logError(_exception + ' ' + _exception.message + ' ' + _exception.stack); }");
+        sb.append("if (console && console.trace) { console.trace();}");
+        sb.append("}\n});");
       }
+
+      // note compress, note that modules are cached in memory
+      // when changing development status, system needs to be restarted.
+      final String output;
+      // in classicmode the isc combined is included, compressing that gives errors
+      if (!isInDevelopment() && !isClassicMode()
+          && !OBPropertiesProvider.getInstance().getBooleanProperty("test.environment")) {
+        output = JSCompressor.getInstance().compress(sb.toString());
+      } else {
+        output = sb.toString();
+      }
+      final String md5 = DigestUtils.md5Hex(output);
+      final String getTargetLocation = context.getRealPath(GEN_TARGET_LOCATION);
+      final File dir = new File(getTargetLocation);
+      if (!dir.exists()) {
+        dir.mkdir();
+      }
+      File outFile = new File(getTargetLocation + "/" + md5 + ".js");
+
+      if (!outFile.exists()) {
+        try {
+          log.debug("Writing file: " + outFile.getAbsolutePath());
+          FileUtils.writeStringToFile(outFile, output, "UTF-8");
+        } catch (Exception e) {
+          log.error("Error writing file: " + e.getMessage(), e);
+        }
+      }
+
+      if (!isInDevelopment()) {
+        resourceProvider.putStaticResourceCachedInfo(appName, md5);
+      }
+
+      return md5;
     }
-    return md5;
   }
 }
