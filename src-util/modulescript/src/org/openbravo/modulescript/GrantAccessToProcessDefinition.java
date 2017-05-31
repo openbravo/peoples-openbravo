@@ -21,12 +21,15 @@ package org.openbravo.modulescript;
 import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
+import org.openbravo.modulescript.ModuleScriptExecutionLimits;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 public class GrantAccessToProcessDefinition extends ModuleScript {
   private static final Logger log4j = Logger.getLogger(GrantAccessToProcessDefinition.class);
   private static final String AD_PROCESS_ACCESS_TABLE_ID = "197";
   private static final String NEW_PURCHASE_ORDER_REPORT_ID = "4BDE0AF5E8C44B6C9575E388AAECDF69";
   private static final String OLD_PURCHASE_ORDER_REPORT_ID = "800171";
+  private static final String MANUAL_ACTION_MESSAGE = "Role '%s (%s)' has access to legacy report '%s'. You should either apply the dataset update on module '%s' or manually grant access to new Process Definition, otherwise users belonging to this role won't be able to launch the report anymore.";
 
   @Override
   public void execute() {
@@ -34,26 +37,40 @@ public class GrantAccessToProcessDefinition extends ModuleScript {
       ConnectionProvider cp = getConnectionProvider();
       String[] newIdArray = { NEW_PURCHASE_ORDER_REPORT_ID };
       String[] oldIdArray = { OLD_PURCHASE_ORDER_REPORT_ID };
+      int autoUpdated = 0;
       for (int i = 0; i < newIdArray.length; i++) {
         String newId = newIdArray[i];
         String oldId = oldIdArray[i];
-        GrantAccessToProcessDefinitionData
-            .grantAccess(cp, newId, oldId, AD_PROCESS_ACCESS_TABLE_ID);
-        GrantAccessToProcessDefinitionData[] rolesToBeUpdated = GrantAccessToProcessDefinitionData
-            .getRolesToBeUpdated(cp, oldId, AD_PROCESS_ACCESS_TABLE_ID);
-        for (int j = 0; j < rolesToBeUpdated.length; j++) {
-          log4j
-              .info("Has been detected that the role "
-                  + rolesToBeUpdated[j].getField("role_name")
-                  + " has access to "
-                  + rolesToBeUpdated[j].getField("process_name")
-                  + ". Notice that you should apply the corresponding dataset again in order to let that role access to the new report version.");
-        }
 
+        autoUpdated = autoUpdated
+            + GrantAccessToProcessDefinitionData.grantAccess(cp, newId, oldId,
+                AD_PROCESS_ACCESS_TABLE_ID);
+
+        GrantAccessToProcessDefinitionData[] rolesToBeUpdated = GrantAccessToProcessDefinitionData
+            .getRolesToBeUpdated(cp, AD_PROCESS_ACCESS_TABLE_ID, oldId);
+        for (int j = 0; j < rolesToBeUpdated.length; j++) {
+          if (j == 0) {
+            log4j.warn("Manual action(s) required:");
+          }
+          log4j.warn(String.format(MANUAL_ACTION_MESSAGE,
+              rolesToBeUpdated[j].getField("role_name"),
+              rolesToBeUpdated[j].getField("client_name"),
+              rolesToBeUpdated[j].getField("process_name"),
+              rolesToBeUpdated[j].getField("module_name")));
+        }
+      }
+
+      if (autoUpdated > 0) {
+        log4j.info("Manual roles automatically updated: " + autoUpdated);
       }
 
     } catch (Exception e) {
       handleError(e);
     }
+  }
+
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    return new ModuleScriptExecutionLimits("0", null, new OpenbravoVersion(3, 0, 32250));
   }
 }
