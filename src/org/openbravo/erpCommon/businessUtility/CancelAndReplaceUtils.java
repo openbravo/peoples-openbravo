@@ -26,10 +26,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import javax.management.Query;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
+import org.hibernate.LockOptions;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
@@ -49,21 +50,18 @@ import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
+import org.openbravo.erpCommon.info.AttributeSetInstance;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.ReservationUtils;
 import org.openbravo.model.ad.access.OrderLineTax;
-import org.openbravo.model.common.enterprise.DocumentType;
-import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.common.order.OrderTax;
-import org.openbravo.model.common.plm.AttributeSetInstance;
-import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
@@ -234,9 +232,10 @@ public class CancelAndReplaceUtils {
         oldOrder = OBDal.getInstance().get(Order.class, orderId);
         oldOrderId = oldOrder.getId();
       }
+      oldOrder = lockOrder(oldOrder);
 
       // Added check in case Cancel and Replace button is hit more than once
-      if (jsonorder == null && oldOrder.isCancelled()) {
+      if (oldOrder.isCancelled()) {
         throw new OBException(String.format(OBMessageUtils.messageBD("IsCancelled"),
             oldOrder.getDocumentNo()));
       }
@@ -247,7 +246,6 @@ public class CancelAndReplaceUtils {
       if (newOrderId != null) {
         newOrder = OBDal.getInstance().get(Order.class, newOrderId);
       }
-      oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
 
       // Get documentNo for the inverse Order Header coming from jsonorder, if exists
       String negativeDocNo = jsonorder != null && jsonorder.has("negativeDocNo") ? jsonorder
@@ -1268,6 +1266,17 @@ public class CancelAndReplaceUtils {
     paymentScheduleCriteria.setMaxResults(1);
     paymentSchedule = (FIN_PaymentSchedule) paymentScheduleCriteria.uniqueResult();
     return paymentSchedule;
+  }
+
+  private static Order lockOrder(Order order) {
+    StringBuilder where = new StringBuilder("select c from " + Order.ENTITY_NAME
+        + " c where id = :id");
+    final Session session = OBDal.getInstance().getSession();
+    final Query query = session.createQuery(where.toString());
+    query.setParameter("id", order.getId());
+    query.setMaxResults(1);
+    query.setLockOptions(LockOptions.UPGRADE);
+    return (Order) query.uniqueResult();
   }
 
 }
