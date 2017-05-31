@@ -273,7 +273,7 @@ enyo.kind({
     var me = this;
     this.$.payments.setCollection(this.receipt.get('payments'));
     this.$.multiPayments.setCollection(this.model.get('multiOrders').get('payments'));
-    this.receipt.on('change:payment change:change calculategross change:bp change:gross change:prepaymentAmt', function () {
+    this.receipt.on('change:payment change:change calculategross change:bp change:gross change:prepaymentLimitAmt', function () {
       if (this.receipt.isCalculateReceiptLocked || this.receipt.isCalculateGrossLocked) {
         //We are processing the receipt, we cannot update pending yet
         return;
@@ -471,7 +471,7 @@ enyo.kind({
       }
       this.$.totalpendinglbl.show();
 
-      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
+      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && this.receipt.get('prepaymentLimitAmt') < this.receipt.get('gross')) {
         this.$.donebutton.show();
       } else {
         this.$.donebutton.hide();
