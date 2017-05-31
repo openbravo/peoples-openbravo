@@ -482,8 +482,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         if (receipt.get('doCancelAndReplace') && receipt.get('replacedorder')) {
           isOrderCancelledProcess.exec({
             orderId: receipt.get('replacedorder'),
-            documentNo: receipt.get('documentNo'),
-            setCancelled: true
+            documentNo: receipt.get('documentNo')
           }, function (data) {
             if (data && data.exception) {
               if (data.exception.message) {
@@ -818,8 +817,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
           process.exec({
             orderId: receipt.get('id'),
-            documentNo: receipt.get('documentNo'),
-            setCancelled: true
+            documentNo: receipt.get('documentNo')
           }, function (data) {
             if (data && data.exception) {
               if (data.exception.message) {

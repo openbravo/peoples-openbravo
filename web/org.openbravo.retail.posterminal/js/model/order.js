@@ -2785,8 +2785,7 @@
 
       process.exec({
         orderId: this.get('id'),
-        documentNo: this.get('documentNo'),
-        setCancelled: false
+        documentNo: this.get('documentNo')
       }, function (data) {
         if (data && data.exception) {
           if (data.exception.message) {

@@ -29,7 +29,6 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
     try {
       String orderId = jsonData.getString("orderId");
       String documentNo = jsonData.getString("documentNo");
-      Boolean cancelOrder = jsonData.getBoolean("setCancelled");
       Order order = OBDal.getInstance().get(Order.class, orderId);
 
       if (order != null) {
@@ -37,10 +36,6 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
           result.put("orderCancelled", true);
         } else {
           result.put("orderCancelled", false);
-          if (cancelOrder) {
-            order.setCancelled(true);
-            OBDal.getInstance().save(order);
-          }
         }
       } else {
         // The layaway was not found in the database.
