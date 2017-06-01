@@ -1134,18 +1134,20 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (field.getColumn() == null) {
         continue;
       }
-      String columnName = field.getColumn().getDBColumnName();
-      columns.add(columnName.toUpperCase());
+
+      String colName = null;
+      if (field.getProperty() != null && !field.getProperty().isEmpty()) {
+        colName = "_propertyField_"
+            + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
+            + field.getColumn().getDBColumnName();
+        columns.add(colName);
+      } else {
+        colName = field.getColumn().getDBColumnName();
+        columns.add(colName.toUpperCase());
+      }
+
       String validation = getValidation(field);
       if (!validation.equals("")) {
-        String colName = null;
-        if (field.getProperty() != null && !field.getProperty().isEmpty()) {
-          colName = "_propertyField_"
-              + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
-              + field.getColumn().getDBColumnName();
-        } else {
-          colName = field.getColumn().getDBColumnName();
-        }
         columnsWithValidation.add(colName);
         validations.put(colName, validation);
       }
