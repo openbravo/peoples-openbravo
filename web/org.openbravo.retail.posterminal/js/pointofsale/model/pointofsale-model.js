@@ -476,9 +476,17 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     receipt.on('paymentDone', function (openDrawer) {
       var isOrderCancelledProcess = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled'),
-          triggerPaymentAccepted;
+          triggerPaymentAccepted, triggerPaymentAcceptedImpl;
 
       triggerPaymentAccepted = function () {
+        if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+          OB.MobileApp.model.setSynchronizedCheckpoint(triggerPaymentAcceptedImpl);
+        } else {
+          triggerPaymentAcceptedImpl();
+        }
+      };
+
+      triggerPaymentAcceptedImpl = function () {
         if (receipt.get('doCancelAndReplace') && receipt.get('replacedorder')) {
           isOrderCancelledProcess.exec({
             orderId: receipt.get('replacedorder'),

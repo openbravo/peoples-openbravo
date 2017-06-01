@@ -229,21 +229,24 @@
             var synErrorCallback = function () {
                 if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
                   // rollback other changes
-                  receipt.set('hasbeenpaid', 'N');
-                  frozenReceipt.set('hasbeenpaid', 'N');
-                  OB.Dal.save(receipt, function () {
-                    OB.UTIL.calculateCurrentCash();
+                  OB.Dal.get(OB.Model.Order, receipt.get('id'), function (loadedReceipt) {
+                    receipt.clearWith(loadedReceipt);
+                    receipt.set('hasbeenpaid', 'N');
+                    frozenReceipt.set('hasbeenpaid', 'N');
+                    OB.Dal.save(receipt, function () {
+                      OB.UTIL.calculateCurrentCash();
 
-                    if (eventParams && eventParams.callback) {
-                      eventParams.callback({
-                        frozenReceipt: frozenReceipt,
-                        isCancelled: true
-                      });
-                      receipt.setIsCalculateReceiptLockState(false);
-                      receipt.setIsCalculateGrossLockState(false);
-                      receipt.trigger('paymentCancel');
-                    }
-                  }, null, false);
+                      if (eventParams && eventParams.callback) {
+                        eventParams.callback({
+                          frozenReceipt: frozenReceipt,
+                          isCancelled: true
+                        });
+                        receipt.setIsCalculateReceiptLockState(false);
+                        receipt.setIsCalculateGrossLockState(false);
+                        receipt.trigger('paymentCancel');
+                      }
+                    }, null, false);
+                  });
                 } else if (eventParams && eventParams.callback) {
                   eventParams.callback({
                     frozenReceipt: frozenReceipt,
@@ -339,11 +342,9 @@
     this.receipt.on('closed', function (eventParams) {
       var context = this;
       if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-        OB.MobileApp.model.setSynchronizedCheckpoint(function () {
-          OB.UTIL.rebuildCashupFromServer(function () {
-            OB.UTIL.showLoading(false);
-            mainReceiptCloseFunction(eventParams, context);
-          });
+        OB.UTIL.rebuildCashupFromServer(function () {
+          OB.UTIL.showLoading(false);
+          mainReceiptCloseFunction(eventParams, context);
         });
       } else {
         mainReceiptCloseFunction(eventParams, context);
