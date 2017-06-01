@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,7 +24,8 @@ import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // examples for the types of postgres messages to be parsed by this class
 
@@ -67,7 +68,7 @@ import org.apache.log4j.Logger;
  *         POSTGRESQL RDBMS.
  */
 class ErrorTextParserPOSTGRE extends ErrorTextParser {
-  static Logger log4j = Logger.getLogger(ErrorTextParserPOSTGRE.class);
+  private static final Logger log4j = LoggerFactory.getLogger(ErrorTextParserPOSTGRE.class);
 
   /**
    * Extracts the name of a constraint out of a postgresql generated error message about a
@@ -80,11 +81,11 @@ class ErrorTextParserPOSTGRE extends ErrorTextParser {
    * @return name of the constraint, or null if no name can be found
    */
   private static String findConstraintName(String input) {
-    log4j.debug("find constraint name in : " + input);
+    log4j.debug("find constraint name in : {}", input);
     Pattern p = Pattern.compile("\".+?\"|«.+?»");
     Matcher m = p.matcher(input);
     if (!m.find()) {
-      log4j.info("did not find constraint name for error message: " + input);
+      log4j.debug("did not find constraint name for error message: {}", input);
       return null;
     }
     String constraintName = input.substring(m.start(), m.end());
