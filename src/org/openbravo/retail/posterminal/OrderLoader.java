@@ -259,6 +259,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         verifyCashupStatus(jsonorder);
       }
 
+      if (!jsonorder.has("loaded")) {
+        verifyOrderLineTax(jsonorder);
+      }
+
       executeOrderLoaderPreProcessHook(orderPreProcesses, jsonorder);
 
       if (jsonorder.has("deletedLines")) {
@@ -2480,6 +2484,18 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       }
     } finally {
       OBContext.restorePreviousMode();
+    }
+  }
+
+  private void verifyOrderLineTax(JSONObject jsonorder) throws JSONException, OBException {
+    JSONArray orderlines = jsonorder.getJSONArray("lines");
+    for (int i = 0; i < orderlines.length(); i++) {
+      JSONObject jsonOrderLine = orderlines.getJSONObject(i);
+      if (!jsonOrderLine.has(OrderLine.PROPERTY_TAX)
+          || StringUtils.length(jsonOrderLine.getString(OrderLine.PROPERTY_TAX)) != 32) {
+        throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
+            "OBPOS_OrderProductWithoutTax", OBContext.getOBContext().getLanguage().getLanguage()));
+      }
     }
   }
 
