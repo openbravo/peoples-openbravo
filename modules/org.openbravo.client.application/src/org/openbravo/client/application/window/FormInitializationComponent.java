@@ -1154,13 +1154,15 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
     for (String column : columnsWithValidation) {
       columnsInValidation.put(column, parseValidation(column, validations.get(column), columns));
-      String cols = "";
-      for (String col : columnsInValidation.get(column)) {
-        cols += col + ",";
+      if (log.isDebugEnabled()) {
+        String cols = "";
+        for (String col : columnsInValidation.get(column)) {
+          cols += col + ",";
+        }
+        log.debug("Column: " + column);
+        log.debug("Validation: '" + validations.get(column) + "'");
+        log.debug("Columns in validation: '" + cols + "'");
       }
-      log.debug("Column: " + column);
-      log.debug("Validation: '" + validations.get(column) + "'");
-      log.debug("Columns in validation: '" + cols + "'");
     }
 
     if (mode.equals("CHANGE") && changedColumn != null && !changedColumn.equals("inpadOrgId")) {
