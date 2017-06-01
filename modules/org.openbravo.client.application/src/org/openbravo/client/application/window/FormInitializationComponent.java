@@ -1244,15 +1244,20 @@ public class FormInitializationComponent extends BaseActionHandler {
           sortedColumns.add(colName);
         }
       }
-      String cycleCols = "";
+
+      String validationErrors = "";
       for (String col : columnsWithValidation) {
         if (!sortedColumns.contains(col)) {
-          cycleCols += "," + col;
+          if (!validationErrors.isEmpty()) {
+            validationErrors += " -- ";
+          }
+          validationErrors += col + " column has a validation that depends on columns "
+              + columnsInValidation.get(col) + " which creates a cycle";
         }
       }
-      if (!cycleCols.equals("")) {
-        throw new OBException("Error. The columns " + cycleCols.substring(1)
-            + " have validations which form a cycle.");
+      if (!validationErrors.equals("")) {
+        throw new OBException(validationErrors + " -- List of sorted columns: " + sortedColumns,
+            false);
       }
     }
     String finalCols = "";
