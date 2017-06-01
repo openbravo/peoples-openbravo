@@ -77,12 +77,7 @@
       this.set('_identifier', this.get('name'));
 
       // in case of synchronized then directly call customer save with the callback
-      if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-        OB.DATA.executeCustomerSave(this, callback);
-      } else {
-        this.trigger('customerSaved');
-        callback();
-      }
+      OB.DATA.executeCustomerSave(this, callback);
       return true;
     },
     loadById: function (CusId, userCallback) {
