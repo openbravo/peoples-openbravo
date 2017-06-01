@@ -94,7 +94,7 @@ public class DocFINPayment extends AcctServer {
     FieldProviderFactory[] data = new FieldProviderFactory[paymentDetails.size()];
     String psId = null;
     String pdId = null;
-    BigDecimal totalAmount = new BigDecimal(0);
+    BigDecimal totalAmount = BigDecimal.ZERO;
     OBContext.setAdminMode();
     try {
       for (int i = 0; i < data.length; i++) {
@@ -142,7 +142,7 @@ public class DocFINPayment extends AcctServer {
           if (amountAndWriteOff.get("merged").compareTo(BigDecimal.ONE) == 0) {
             // keeps only the current line while merging the amounts
             data[i - 1] = null;
-            totalAmount = amount.add(totalAmount);
+            totalAmount = totalAmount.add(amount);
           } else {
             totalAmount = amount;
           }
