@@ -259,10 +259,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         verifyCashupStatus(jsonorder);
       }
 
-      if (!jsonorder.has("loaded")) {
-        verifyOrderLineTax(jsonorder);
-      }
-
       executeOrderLoaderPreProcessHook(orderPreProcesses, jsonorder);
 
       if (jsonorder.has("deletedLines")) {
@@ -366,6 +362,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             order.setOBPOSNotInvoiceOnCashUp(jsonorder.getBoolean("oBPOSNotInvoiceOnCashUp"));
           }
         } else {
+          verifyOrderLineTax(jsonorder);
+
           order = OBProvider.getInstance().get(Order.class);
           createOrder(order, jsonorder);
           OBDal.getInstance().save(order);
