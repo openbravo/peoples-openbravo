@@ -120,19 +120,20 @@ public class FormInitializationComponent extends BaseActionHandler {
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     OBContext.setAdminMode(true);
     long iniTime = System.currentTimeMillis();
+    String mode = null, tabId = null, rowId = null;
     try {
       // Execution mode. It can be:
       // - NEW: used when the user clicks on the "New record" button
       // - EDIT: used when the user opens a record in form view
       // - CHANGE: used when the user changes a field which should fire callouts or comboreloads
       // - SETSESSION: used when the user calls a process
-      String mode = readParameter(parameters, "MODE");
+      mode = readParameter(parameters, "MODE");
       // ID of the parent record
       String parentId = readParameter(parameters, "PARENT_ID");
       // The ID of the tab
-      String tabId = readParameter(parameters, "TAB_ID");
+      tabId = readParameter(parameters, "TAB_ID");
       // The ID of the record. Only relevant on EDIT, CHANGE and SETSESSION modes
-      String rowId = readParameter(parameters, "ROW_ID");
+      rowId = readParameter(parameters, "ROW_ID");
       // The IDs of the selected records in case more than one
       String multipleRowIds[] = (String[]) parameters.get("MULTIPLE_ROW_IDS");
       // The column changed by the user. Only relevant on CHANGE mode
@@ -325,7 +326,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       log.debug("Attachment exists: " + finalObject.getBoolean("attachmentExists"));
       return finalObject;
     } catch (Throwable t) {
-      t.printStackTrace(System.err);
+      log.error("TabId:" + tabId + " - Mode:" + mode + " - rowId:" + rowId, t);
       final String jsonString = JsonUtils.convertExceptionToJson(t);
       try {
         return new JSONObject(jsonString);
@@ -333,7 +334,6 @@ public class FormInitializationComponent extends BaseActionHandler {
         log.error("Error while generating the error JSON object: " + jsonString, e);
       }
     } finally {
-
       // Clear session to prevent slow flush
       OBDal.getInstance().getSession().clear();
 
