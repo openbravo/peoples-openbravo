@@ -350,6 +350,8 @@
         -- Organization
         IF(CUR_CLine.Org_ID IS NOT NULL) THEN
           v_Cmd:=v_Cmd || ' AND h.AD_Org_ID=''' || CUR_CLine.Org_ID || '''';
+        ELSE
+          v_Cmd:=v_Cmd || ' AND AD_ISORGINCLUDED(h.AD_Org_ID, ''' || v_AD_Org_ID || ''', h.AD_Client_ID) <> -1';
         END IF;
         -- BPartner
         IF(CUR_CLine.C_BPartner_ID IS NOT NULL) THEN
