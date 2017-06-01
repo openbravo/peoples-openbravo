@@ -26,12 +26,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 
@@ -52,6 +54,9 @@ public class BaseWebServiceServlet extends HttpServlet {
   public static final String PASSWORD_PARAM = "p";
 
   private static final long serialVersionUID = 1L;
+
+  private static Integer wsInactiveInterval = null;
+  private static final int DEFAULT_WS_INACTIVE_INTERVAL = 60;
 
   @Override
   protected final void service(HttpServletRequest request, HttpServletResponse response)
@@ -92,8 +97,20 @@ public class BaseWebServiceServlet extends HttpServlet {
       log.debug("WS accessed by userId " + userId);
       OBContext.setOBContext(UserContextCache.getInstance().getCreateOBContext(userId));
       OBContext.setOBContextInSession(request, OBContext.getOBContext());
-
-      doService(request, response);
+      try {
+        doService(request, response);
+      } finally {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+          // HttpSession for WS should typically expire fast
+          int maxExpireInterval = getWSInactiveInterval();
+          if (maxExpireInterval == 0) {
+            session.invalidate();
+          } else {
+            session.setMaxInactiveInterval(getWSInactiveInterval());
+          }
+        }
+      }
 
     } else {
       log.debug("WS accessed by unauthenticated user, requesting authentication");
@@ -103,6 +120,22 @@ public class BaseWebServiceServlet extends HttpServlet {
       }
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
+  }
+
+  private int getWSInactiveInterval() {
+    if (wsInactiveInterval == null) {
+      try {
+        wsInactiveInterval = Integer.parseInt(OBPropertiesProvider.getInstance()
+            .getOpenbravoProperties()
+            .getProperty("ws.maxInactiveInterval", Integer.toString(DEFAULT_WS_INACTIVE_INTERVAL)));
+      } catch (Exception e) {
+        wsInactiveInterval = DEFAULT_WS_INACTIVE_INTERVAL;
+      }
+      log.info("Sessions for WS calls expire after " + wsInactiveInterval
+          + " seconds. This can be configured with ws.maxInactiveInterval property.");
+    }
+
+    return wsInactiveInterval;
   }
 
   protected WebService getWebService(HttpServletRequest request) {

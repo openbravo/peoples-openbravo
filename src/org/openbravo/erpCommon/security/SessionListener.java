@@ -59,7 +59,6 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
    */
   @Override
   public void sessionDestroyed(HttpSessionEvent event) {
-    log.debug("Destroying session");
     HttpSession session = event.getSession();
     String sessionId = (String) session.getAttribute("#AD_SESSION_ID");
     if (sessionId != null) {
@@ -78,7 +77,8 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
    */
   @Override
   public void contextDestroyed(ServletContextEvent event) {
-    log.info("Destroy context");
+    log.info("Destroying context. " + sessionsInContext.size() + " sessions to deactivate in DB.");
+    long t = System.currentTimeMillis();
 
     for (String sessionId : sessionsInContext) {
       try {
@@ -86,13 +86,12 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
         SessionLoginData
             .deactivate((ConnectionProvider) event.getServletContext()
                 .getAttribute("openbravoPool"), sessionId);
-        SessionListener.context = null;
-        log.info("Deactivated session: " + sessionId);
       } catch (ServletException e1) {
         log.error(e1.getMessage(), e1);
       }
     }
-
+    SessionListener.context = null;
+    log.info("Sessions deactivated in " + (System.currentTimeMillis() - t) + " ms");
   }
 
   /**
