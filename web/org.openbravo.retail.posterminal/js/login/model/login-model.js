@@ -1010,14 +1010,15 @@
     // get the first document number available
     getLastDocumentnoSuffixInOrderlist: function () {
       var lastSuffix = null;
+      var i;
       if (OB.MobileApp.model.orderList && OB.MobileApp.model.orderList.length > 0) {
-        var i = 0;
-        while (lastSuffix === null && i <= OB.MobileApp.model.orderList.models.length - 1) {
+        for (i = 0; i < OB.MobileApp.model.orderList.length; i++) {
           var order = OB.MobileApp.model.orderList.models[i];
           if (!order.get('isPaid') && !order.get('isQuotation') && order.get('documentnoPrefix') === OB.MobileApp.model.get('terminal').docNoPrefix) {
-            lastSuffix = order.get('documentnoSuffix');
+            if (OB.UTIL.isNullOrUndefined(lastSuffix) || (lastSuffix && order.get('documentnoSuffix') > lastSuffix)) {
+              lastSuffix = order.get('documentnoSuffix');
+            }
           }
-          i++;
         }
       }
       if (lastSuffix === null || lastSuffix < this.documentnoThreshold) {
@@ -1028,14 +1029,15 @@
     // get the first quotation number available
     getLastQuotationnoSuffixInOrderlist: function () {
       var lastSuffix = null;
+      var i;
       if (OB.MobileApp.model.orderList && OB.MobileApp.model.orderList.length > 0) {
-        var i = 0;
-        while (lastSuffix === null && i <= OB.MobileApp.model.orderList.models.length - 1) {
+        for (i = 0; i < OB.MobileApp.model.orderList.length; i++) {
           var order = OB.MobileApp.model.orderList.models[i];
           if (order.get('isQuotation') && order.get('quotationnoPrefix') === OB.MobileApp.model.get('terminal').quotationDocNoPrefix) {
-            lastSuffix = order.get('quotationnoSuffix');
+            if (OB.UTIL.isNullOrUndefined(lastSuffix) || (lastSuffix && order.get('quotationnoSuffix') > lastSuffix)) {
+              lastSuffix = order.get('quotationnoSuffix');
+            }
           }
-          i++;
         }
       }
       if (lastSuffix === null || lastSuffix < this.quotationnoThreshold) {
@@ -1046,14 +1048,15 @@
     // get the first return number available
     getLastReturnnoSuffixInOrderlist: function () {
       var lastSuffix = null;
+      var i;
       if (OB.MobileApp.model.orderList && OB.MobileApp.model.orderList.length > 0) {
-        var i = OB.MobileApp.model.orderList.models.length - 1;
-        while (lastSuffix === null && i >= 0) {
+        for (i = 0; i < OB.MobileApp.model.orderList.length; i++) {
           var order = OB.MobileApp.model.orderList.models[i];
           if ((order.getOrderType() === 1 || order.get('gross') < 0) && order.get('returnnoPrefix') === OB.MobileApp.model.get('terminal').returnDocNoPrefix) {
-            lastSuffix = order.get('returnnoSuffix');
+            if (OB.UTIL.isNullOrUndefined(lastSuffix) || (lastSuffix && order.get('returnnoSuffix') > lastSuffix)) {
+              lastSuffix = order.get('returnnoSuffix');
+            }
           }
-          i--;
         }
       }
       if (lastSuffix === null || lastSuffix < this.returnnoThreshold) {
