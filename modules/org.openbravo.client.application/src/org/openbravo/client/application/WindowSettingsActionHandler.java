@@ -131,7 +131,8 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
               jTab.put("fields", jFields);
               final Set<String> fields = new TreeSet<String>();
               for (Field field : tabAccess.getTab().getADFieldList()) {
-                if (!field.isReadOnly() && !field.isShownInStatusBar()) {
+                if (!field.isReadOnly() && !field.isShownInStatusBar()
+                    && field.getColumn().isUpdatable()) {
                   final Property property = KernelUtils.getProperty(entity, field);
                   if (property != null) {
                     fields.add(property.getName());
@@ -144,8 +145,10 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
                   if (property != null) {
                     final String name = KernelUtils.getProperty(entity, fieldAccess.getField())
                         .getName();
-                    jFields.put(name, fieldAccess.isEditableField());
-                    fields.remove(name);
+                    if (fields.contains(name)) {
+                      jFields.put(name, fieldAccess.isEditableField());
+                      fields.remove(name);
+                    }
                   }
                 }
               }
