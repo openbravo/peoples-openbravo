@@ -4868,32 +4868,6 @@ This operation can take a long time to complete.]]></HELP>
 <!--800170-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--800170--></AD_PROCESS>
 
-<!--800171--><AD_PROCESS>
-<!--800171-->  <AD_PROCESS_ID><![CDATA[800171]]></AD_PROCESS_ID>
-<!--800171-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800171-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800171-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--800171-->  <VALUE><![CDATA[JR_ReportPurchaseOrder]]></VALUE>
-<!--800171-->  <NAME><![CDATA[Purchase Order Report]]></NAME>
-<!--800171-->  <DESCRIPTION><![CDATA[Purchase Order Report]]></DESCRIPTION>
-<!--800171-->  <HELP><![CDATA[This report displays a detailed list of the purchase orders issued to the suppliers.
-This is a deprecated process that will be removed in the next major version.]]></HELP>
-<!--800171-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800171-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800171-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800171-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800171-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800171-->  <ISJASPER><![CDATA[Y]]></ISJASPER>
-<!--800171-->  <JRNAME><![CDATA[@basedesign@/org/openbravo/erpCommon/ad_reports/ReportPurchaseOrder.jrxml]]></JRNAME>
-<!--800171-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
-<!--800171-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800171-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
-<!--800171-->  <ISADVANCEDFEATURE><![CDATA[Y]]></ISADVANCEDFEATURE>
-<!--800171-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--800171-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--800171-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--800171--></AD_PROCESS>
-
 <!--800172--><AD_PROCESS>
 <!--800172-->  <AD_PROCESS_ID><![CDATA[800172]]></AD_PROCESS_ID>
 <!--800172-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
