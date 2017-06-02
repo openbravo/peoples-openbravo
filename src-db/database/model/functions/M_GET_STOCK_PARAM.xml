@@ -338,7 +338,7 @@ BEGIN
 	      /*
 	      * ADD PROPER PROCESS ID!
 	      */
-	      AD_PINSTANCE_PARA_INSERT(p_uuid, '160', 'ProcessID', '---', null, null, null, null, null);
+	      AD_PINSTANCE_PARA_INSERT(p_uuid, '190', 'ProcessID', v_ProcessID, null, null, null, null, null);
       END IF;
       v_ep_instance := get_uuid();
 
@@ -473,7 +473,7 @@ DBMS_OUTPUT.PUT_LINE( 'v_warehouse_rule_id: ' || coalesce(v_warehouse_rule_id,''
   	      /*
   	      * ADD PROPER PROCESS ID!
   	      */
-  	      AD_PINSTANCE_PARA_INSERT(p_uuid, '160', 'ProcessID', '---', null, null, null, null, null);
+  	      AD_PINSTANCE_PARA_INSERT(p_uuid, '190', 'ProcessID', v_ProcessID, null, null, null, null, null);
           AD_UPDATE_PINSTANCE(p_uuid, NULL, 'N', 1, '', p_calledfromapp) ;
         END IF;
         IF (AD_GET_RDBMS() = 'ORACLE') THEN
