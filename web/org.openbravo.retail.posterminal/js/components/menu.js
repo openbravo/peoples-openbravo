@@ -327,12 +327,14 @@ enyo.kind({
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_layawaysOrderWithNotBP'));
       return true;
     }
-    negativeLines = _.find(this.model.get('order').get('lines').models, function (line) {
-      return line.get('qty') < 0;
-    });
-    if (negativeLines) {
-      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
-      return true;
+    if (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true)) {
+      negativeLines = _.find(this.model.get('order').get('lines').models, function (line) {
+        return line.get('qty') < 0;
+      });
+      if (negativeLines) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
+        return true;
+      }
     }
     OB.UTIL.HookManager.executeHooks('OBPOS_LayawayReceipt', {
       context: me

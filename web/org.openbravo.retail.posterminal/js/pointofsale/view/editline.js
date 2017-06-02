@@ -558,7 +558,7 @@ enyo.kind({
     if (OB.MobileApp.model.get('permissions')[this.$.actionButtonsContainer.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
       this.$.actionButtonsContainer.$.returnLine.show();
     }
-    if (this.model.get('order').get('orderType') === 1 || this.model.get('order').get('orderType') === 2) {
+    if (this.model.get('order').get('orderType') === 1 || (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true) && this.model.get('order').get('orderType') === 2)) {
       this.$.actionButtonsContainer.$.returnLine.hide();
     }
     if (line) {
@@ -631,7 +631,7 @@ enyo.kind({
       } else {
         this.$.actionButtonsContainer.$.removeDiscountButton.hide();
       }
-      if ((!_.isUndefined(line) && !_.isUndefined(line.get('originalOrderLineId'))) || this.model.get('order').get('orderType') === 1 || this.model.get('order').get('orderType') === 2) {
+      if ((!_.isUndefined(line) && !_.isUndefined(line.get('originalOrderLineId'))) || this.model.get('order').get('orderType') === 1 || (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true) && this.model.get('order').get('orderType') === 2)) {
         this.$.actionButtonsContainer.$.returnLine.hide();
       } else if (OB.MobileApp.model.get('permissions')[this.$.actionButtonsContainer.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
         this.$.actionButtonsContainer.$.returnLine.show();
