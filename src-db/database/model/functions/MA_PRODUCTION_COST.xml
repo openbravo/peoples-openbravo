@@ -22,7 +22,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2016 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************/
@@ -186,7 +186,7 @@ BEGIN
         v_ResultStr := 'WIP cost';
         v_ProductionCost_Tmp := 0;
 
-        FOR Cur_WIP IN (SELECT c.COST*ppl.MOVEMENTQTY AS cost, ppl.M_PRODUCTIONLINE_ID
+        FOR Cur_WIP IN (SELECT min(c.COST) * ppl.MOVEMENTQTY AS cost, ppl.M_PRODUCTIONLINE_ID
                         FROM M_COSTING c, M_PRODUCTIONLINE ppl
                         WHERE c.M_PRODUCT_ID = ppl.M_PRODUCT_ID
                           AND TRUNC(c.DATEFROM) <= v_CostingDate
@@ -195,7 +195,8 @@ BEGIN
                           AND ppl.M_PRODUCTIONPLAN_ID = Cur_ProductionPlan.M_PRODUCTIONPLAN_ID
                           AND c.ISPRODUCTION='Y'
                           AND ((c.COSTTYPE = (CASE WHEN (SELECT COUNT(1) FROM M_PRODUCT WHERE M_PRODUCT_ID = ppl.M_PRODUCT_ID AND PRODUCTTYPE = 'I' AND ISSTOCKED = 'Y') > 0 THEN 'AVA' ELSE 'STA' END) AND v_iscostmigrated = 'Y')
-				OR (c.COSTTYPE IN ('AV','ST') AND v_iscostmigrated = 'N'))) LOOP
+				OR (c.COSTTYPE IN ('AV','ST') AND v_iscostmigrated = 'N'))
+                        GROUP BY ppl.M_PRODUCTIONLINE_ID, ppl.MOVEMENTQTY) LOOP
           v_ProductionCost_Tmp := v_ProductionCost_Tmp + COALESCE(Cur_WIP.cost,0);
           UPDATE M_PRODUCTIONLINE
           SET calccost = COALESCE(Cur_WIP.cost, 0)
@@ -205,7 +206,7 @@ BEGIN
         v_ProductionCost_Tmp := 0;
         --Second sum of raw materials that had not been added previously as WIP
         v_ResultStr := 'Raw Material cost';
-        FOR Cur_RawMaterial IN (SELECT c.COST*ppl.MOVEMENTQTY AS cost, ppl.M_PRODUCTIONLINE_ID
+        FOR Cur_RawMaterial IN (SELECT min(c.COST) * ppl.MOVEMENTQTY AS cost, ppl.M_PRODUCTIONLINE_ID
                                 FROM M_COSTING c, M_PRODUCTIONLINE ppl
                                 WHERE c.M_PRODUCT_ID = ppl.M_PRODUCT_ID
                                   AND TRUNC(c.DATEFROM) <= v_CostingDate
@@ -224,7 +225,8 @@ BEGIN
                                                     AND M_PRODUCTIONLINE.M_PRODUCT_ID = c.M_Product_ID
                                                     AND M_COSTING.ISPRODUCTION='Y'
 						    AND ((M_COSTING.COSTTYPE = (CASE WHEN (SELECT COUNT(1) FROM M_PRODUCT WHERE M_PRODUCT_ID = ppl.M_PRODUCT_ID AND PRODUCTTYPE = 'I' AND ISSTOCKED = 'Y') > 0 THEN 'AVA' ELSE 'STA' END) AND v_iscostmigrated = 'Y')
-							OR (M_COSTING.COSTTYPE IN ('AV','ST') AND v_iscostmigrated = 'N')))) LOOP
+							OR (M_COSTING.COSTTYPE IN ('AV','ST') AND v_iscostmigrated = 'N')))
+                                GROUP BY ppl.M_PRODUCTIONLINE_ID, ppl.MOVEMENTQTY) LOOP
           v_ProductionCost_Tmp := v_ProductionCost_Tmp + COALESCE(Cur_RawMaterial.cost,0);
           UPDATE M_PRODUCTIONLINE
           SET calccost = COALESCE(Cur_RawMaterial.cost, 0)
