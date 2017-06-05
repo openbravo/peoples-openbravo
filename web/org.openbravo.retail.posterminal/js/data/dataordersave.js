@@ -231,6 +231,12 @@
                   // rollback other changes
                   OB.Dal.get(OB.Model.Order, receipt.get('id'), function (loadedReceipt) {
                     receipt.clearWith(loadedReceipt);
+                    //We need to restore the payment tab, as that's what the user should see if synchronization fails
+                    OB.MobileApp.view.waterfall('onTabChange', {
+                      tabPanel: 'payment',
+                      keyboard: 'toolbarpayment',
+                      edit: false
+                    });
                     receipt.set('hasbeenpaid', 'N');
                     frozenReceipt.set('hasbeenpaid', 'N');
                     OB.Dal.save(receipt, function () {
