@@ -2825,6 +2825,13 @@
       //Cloning order to be canceled
       var clonedreceipt = new OB.Model.Order();
       OB.UTIL.clone(me, clonedreceipt);
+
+      if (this.get('paidOnCredit')) {
+        this.set('paidOnCredit', false);
+        this.set('paidPartiallyOnCredit', false);
+        this.set('creditAmount', 0);
+      }
+
       me.set('canceledorder', clonedreceipt);
       me.set('doCancelAndReplace', true);
 
@@ -2938,7 +2945,16 @@
         }
 
         me.checkNotProcessedPayments(function () {
+          //Cloning order to be canceled
+          var clonedreceipt = new OB.Model.Order();
+          OB.UTIL.clone(me, clonedreceipt);
+          if (me.get('paidOnCredit')) {
+            me.set('paidOnCredit', false);
+            me.set('paidPartiallyOnCredit', false);
+            me.set('creditAmount', 0);
+          }
           me.set('cancelLayaway', true);
+          me.set('canceledorder', clonedreceipt);
           context.doShowDivText({
             permission: context.permission,
             orderType: 3
