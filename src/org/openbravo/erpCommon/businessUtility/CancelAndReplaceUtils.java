@@ -55,7 +55,6 @@ import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.ReservationUtils;
 import org.openbravo.model.ad.access.OrderLineTax;
-import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
@@ -985,16 +984,6 @@ public class CancelAndReplaceUtils {
           TriggerHandler.getInstance().enable();
         }
         if (nettingPayment != null) {
-          if (jsonorder != null) {
-            final JSONObject canceledOrder = jsonorder.getJSONObject("canceledorder");
-            if (canceledOrder.has("paidOnCredit") && canceledOrder.getBoolean("paidOnCredit")) {
-              final BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class,
-                  canceledOrder.getJSONObject("bp").getString("id"));
-              bp.setCreditUsed(bp.getCreditUsed().add(
-                  BigDecimal.valueOf(canceledOrder.getDouble("creditAmount"))));
-              OBDal.getInstance().save(bp);
-            }
-          }
           FIN_PaymentProcess.doProcessPayment(nettingPayment, "P", null, null);
         }
         if (triggersDisabled && replaceOrder) {
