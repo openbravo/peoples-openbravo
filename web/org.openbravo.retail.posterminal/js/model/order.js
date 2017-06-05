@@ -4853,7 +4853,7 @@
                 _.each(_.filter(order.get('receiptLines'), function (reciptLine) {
                   return reciptLine.deliveredQuantity;
                 }), function (deliveredLine) {
-                  partiallyPaid = OB.DEC.add(partiallyPaid, OB.DEC.mul(deliveredLine.deliveredQuantity, deliveredLine.grossUnitPrice));
+                  partiallyPaid += deliveredLine.deliveredQuantity * deliveredLine.unitPrice;
                 });
                 order.set('deliveredQuantityAmount', partiallyPaid);
                 if (order.get('deliveredQuantityAmount') && order.get('deliveredQuantityAmount') > order.get('payment')) {
