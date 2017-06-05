@@ -107,7 +107,7 @@ public class BaseWebServiceServlet extends HttpServlet {
           if (maxExpireInterval == 0) {
             session.invalidate();
           } else {
-            session.setMaxInactiveInterval(getWSInactiveInterval());
+            session.setMaxInactiveInterval(maxExpireInterval);
           }
         }
       }
