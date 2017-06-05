@@ -18,17 +18,19 @@
  */
 package org.openbravo.modulescript;
 
-import org.apache.log4j.Logger;
+import javax.servlet.ServletException;
+
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
 import org.openbravo.modulescript.ModuleScriptExecutionLimits;
 import org.openbravo.modulescript.OpenbravoVersion;
 
 public class GrantAccessToProcessDefinition extends ModuleScript {
-  private static final Logger log4j = Logger.getLogger(GrantAccessToProcessDefinition.class);
   private static final String AD_PROCESS_ACCESS_TABLE_ID = "197";
   private static final String NEW_PURCHASE_ORDER_REPORT_ID = "4BDE0AF5E8C44B6C9575E388AAECDF69";
   private static final String OLD_PURCHASE_ORDER_REPORT_ID = "800171";
+  private static final String MANUAL_ACTION_TITLE = "Grant access to %s";
   private static final String MANUAL_ACTION_MESSAGE = "Role '%s (%s)' has access to legacy report '%s'. You should either apply the dataset update on module '%s' or manually grant access to new Process Definition, otherwise users belonging to this role won't be able to launch the report anymore.";
 
   @Override
@@ -38,6 +40,7 @@ public class GrantAccessToProcessDefinition extends ModuleScript {
       String[] newIdArray = { NEW_PURCHASE_ORDER_REPORT_ID };
       String[] oldIdArray = { OLD_PURCHASE_ORDER_REPORT_ID };
       int autoUpdated = 0;
+
       for (int i = 0; i < newIdArray.length; i++) {
         String newId = newIdArray[i];
         String oldId = oldIdArray[i];
@@ -46,18 +49,7 @@ public class GrantAccessToProcessDefinition extends ModuleScript {
             + GrantAccessToProcessDefinitionData.grantAccess(cp, newId, oldId,
                 AD_PROCESS_ACCESS_TABLE_ID);
 
-//        GrantAccessToProcessDefinitionData[] rolesToBeUpdated = GrantAccessToProcessDefinitionData
-//            .getRolesToBeUpdated(cp, AD_PROCESS_ACCESS_TABLE_ID, oldId);
-//        for (int j = 0; j < rolesToBeUpdated.length; j++) {
-//          if (j == 0) {
-//             log4j.warn("Manual action(s) required:");
-//          }
-//           log4j.warn(String.format(MANUAL_ACTION_MESSAGE,
-//               rolesToBeUpdated[j].getField("role_name"),
-//               rolesToBeUpdated[j].getField("client_name"),
-//               rolesToBeUpdated[j].getField("process_name"),
-//               rolesToBeUpdated[j].getField("module_name")));
-//        }
+        createAlert(cp, oldId);
       }
 
       if (autoUpdated > 0) {
@@ -69,8 +61,47 @@ public class GrantAccessToProcessDefinition extends ModuleScript {
     }
   }
 
+  private void createAlert(ConnectionProvider cp, String oldId) throws ServletException {
+    GrantAccessToProcessDefinitionData[] rolesToBeUpdated = GrantAccessToProcessDefinitionData
+        .getRolesToBeUpdated(cp, AD_PROCESS_ACCESS_TABLE_ID, oldId);
+
+    for (GrantAccessToProcessDefinitionData roleToBeUpdated : rolesToBeUpdated) {
+      String clientId = roleToBeUpdated.getField("client_id");
+      String clientName = roleToBeUpdated.getField("client_name");
+      String roleId = roleToBeUpdated.getField("role_id");
+      String roleName = roleToBeUpdated.getField("role_name");
+      String processName = roleToBeUpdated.getField("process_name");
+      String moduleName = roleToBeUpdated.getField("module_name");
+      String title = String.format(MANUAL_ACTION_TITLE, processName);
+      String msg = String.format(MANUAL_ACTION_MESSAGE, roleName, clientName, processName,
+          moduleName);
+
+      // If exists an alert rule for client, use it, else create a new one
+      String alertRuleId = GrantAccessToProcessDefinitionData.getAlertRule(cp, clientId, title);
+      if (StringUtils.isEmpty(alertRuleId)) {
+        GrantAccessToProcessDefinitionData.createAlertRule(cp, clientId, title);
+        alertRuleId = GrantAccessToProcessDefinitionData.getAlertRule(cp, clientId, title);
+      }
+
+      // Create the alert
+      GrantAccessToProcessDefinitionData.createAlert(cp, clientId, msg, alertRuleId, roleId,
+          roleName);
+
+      // Register the affected role as recipient
+      GrantAccessToProcessDefinitionData.createRecipients(cp, clientId, alertRuleId, roleId);
+
+      // Register the client's admin role as recipient too if it doesn't exist
+      String adminRoleId = GrantAccessToProcessDefinitionData.getAdminRole(cp, clientId);
+      if (StringUtils.isNotEmpty(adminRoleId)
+          && !GrantAccessToProcessDefinitionData.existRecipient(cp, clientId, alertRuleId,
+              adminRoleId)) {
+        GrantAccessToProcessDefinitionData.createRecipients(cp, clientId, alertRuleId, adminRoleId);
+      }
+    }
+  }
+
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
-    return new ModuleScriptExecutionLimits("0", null, new OpenbravoVersion(3, 0, 32250));
+    return new ModuleScriptExecutionLimits("0", null, new OpenbravoVersion(3, 0, 32271));
   }
 }
