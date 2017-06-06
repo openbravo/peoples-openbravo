@@ -46,18 +46,18 @@ public class GrantAccessToProcessDefinition extends ModuleScript {
             + GrantAccessToProcessDefinitionData.grantAccess(cp, newId, oldId,
                 AD_PROCESS_ACCESS_TABLE_ID);
 
-        GrantAccessToProcessDefinitionData[] rolesToBeUpdated = GrantAccessToProcessDefinitionData
-            .getRolesToBeUpdated(cp, AD_PROCESS_ACCESS_TABLE_ID, oldId);
-        for (int j = 0; j < rolesToBeUpdated.length; j++) {
-          if (j == 0) {
-            log4j.warn("Manual action(s) required:");
-          }
-          log4j.warn(String.format(MANUAL_ACTION_MESSAGE,
-              rolesToBeUpdated[j].getField("role_name"),
-              rolesToBeUpdated[j].getField("client_name"),
-              rolesToBeUpdated[j].getField("process_name"),
-              rolesToBeUpdated[j].getField("module_name")));
-        }
+//        GrantAccessToProcessDefinitionData[] rolesToBeUpdated = GrantAccessToProcessDefinitionData
+//            .getRolesToBeUpdated(cp, AD_PROCESS_ACCESS_TABLE_ID, oldId);
+//        for (int j = 0; j < rolesToBeUpdated.length; j++) {
+//          if (j == 0) {
+//             log4j.warn("Manual action(s) required:");
+//          }
+//           log4j.warn(String.format(MANUAL_ACTION_MESSAGE,
+//               rolesToBeUpdated[j].getField("role_name"),
+//               rolesToBeUpdated[j].getField("client_name"),
+//               rolesToBeUpdated[j].getField("process_name"),
+//               rolesToBeUpdated[j].getField("module_name")));
+//        }
       }
 
       if (autoUpdated > 0) {
