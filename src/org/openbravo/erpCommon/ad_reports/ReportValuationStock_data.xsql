@@ -44,21 +44,21 @@
                      END AS COSTTYPE, A.WAREHOUSE AS WAREHOUSE
               FROM M_PRODUCT_CATEGORY,
                    (SELECT trx.M_PRODUCT_ID, sum(trx.MOVEMENTQTY) AS QTY, sum(CASE WHEN trx.MOVEMENTQTY < 0 THEN- tc.trxcost ELSE tc.trxcost END) AS Suma, 
-                   trx.C_UOM_ID, trx.AD_CLIENT_ID, trx.iscostcalculated, tc.c_currency_id, tc.movementdate, WH.NAME AS WAREHOUSE
+                   trx.C_UOM_ID, trx.AD_CLIENT_ID, trx.iscostcalculated, tc.c_currency_id, trx.movementdate, WH.NAME AS WAREHOUSE
                     FROM M_TRANSACTION trx 
                       JOIN M_LOCATOR l ON trx.M_LOCATOR_ID = l.M_LOCATOR_ID
                       INNER JOIN M_WAREHOUSE WH ON l.M_WAREHOUSE_ID = WH.M_WAREHOUSE_ID
-                      LEFT JOIN (SELECT sum(cost) AS trxcost, m_transaction_id, c_currency_id, COALESCE(dateacct, costdate) AS movementdate
+                      LEFT JOIN (SELECT sum(cost) AS trxcost, m_transaction_id, c_currency_id
                                  FROM M_TRANSACTION_COST
                                  WHERE dateacct < to_date(?)
                                    AND dateacct > to_date(?)
-                                 GROUP BY m_transaction_id, c_currency_id, COALESCE(dateacct, costdate)) tc ON trx.m_transaction_id = tc.m_transaction_id
+                                 GROUP BY m_transaction_id, c_currency_id) tc ON trx.m_transaction_id = tc.m_transaction_id
                     WHERE trx.MOVEMENTDATE < to_date(?)
                     AND trx.MOVEMENTDATE > to_date(?)
                     AND trx.TRXPROCESSDATE >= to_timestamp(?, ?)
                     AND trx.ad_org_id IN ('1')
                     AND 0=0
-                    GROUP BY trx.M_PRODUCT_ID, trx.C_UOM_ID, trx.AD_CLIENT_ID, trx.iscostcalculated, tc.c_currency_id, tc.movementdate,WH.NAME
+                    GROUP BY trx.M_PRODUCT_ID, trx.C_UOM_ID, trx.AD_CLIENT_ID, trx.iscostcalculated, tc.c_currency_id, trx.movementdate, WH.NAME
                     UNION ALL
                     SELECT agg.m_product_id, stock as qty, valuation as Suma, agg.c_uom_id, agg.ad_client_id, CASE WHEN valuation <> 0 THEN 'Y' ELSE 'N' END,
                       agg.c_currency_id, dateto, wh.name as warehouse
@@ -292,21 +292,21 @@
                      END AS TOTAL_COST,  A.ISCOSTCALCULATED, A.AD_CLIENT_ID, A.MOVEMENTDATE, A.C_CURRENCY_ID, A.WAREHOUSE AS WAREHOUSE
               FROM M_PRODUCT_CATEGORY,
                    (SELECT trx.M_PRODUCT_ID, sum(trx.MOVEMENTQTY) AS QTY, sum(CASE WHEN trx.MOVEMENTQTY < 0 THEN- tc.trxcost ELSE tc.trxcost END) AS Suma, 
-                   trx.C_UOM_ID, trx.AD_CLIENT_ID, trx.iscostcalculated, tc.c_currency_id, tc.movementdate as movementdate, WH.NAME AS WAREHOUSE
+                   trx.C_UOM_ID, trx.AD_CLIENT_ID, trx.iscostcalculated, tc.c_currency_id, trx.movementdate, WH.NAME AS WAREHOUSE
                     FROM M_TRANSACTION trx 
                       JOIN M_LOCATOR l ON trx.M_LOCATOR_ID = l.M_LOCATOR_ID
                       INNER JOIN M_WAREHOUSE WH ON l.M_WAREHOUSE_ID = WH.M_WAREHOUSE_ID
-                      LEFT JOIN (SELECT sum(cost) AS trxcost, m_transaction_id, c_currency_id, COALESCE(dateacct, costdate) as movementdate
+                      LEFT JOIN (SELECT sum(cost) AS trxcost, m_transaction_id, c_currency_id
                                  FROM M_TRANSACTION_COST
                                  WHERE dateacct < to_date(?)
                                    AND dateacct > to_date(?)
-                                 GROUP BY m_transaction_id, c_currency_id, COALESCE(dateacct, costdate)) tc ON trx.m_transaction_id = tc.m_transaction_id
+                                 GROUP BY m_transaction_id, c_currency_id) tc ON trx.m_transaction_id = tc.m_transaction_id
                     WHERE trx.MOVEMENTDATE < to_date(?)
                     AND trx.MOVEMENTDATE > to_date(?)
                     AND trx.TRXPROCESSDATE >= to_timestamp(?, ?)
                     AND trx.ad_org_id IN ('1')
                     AND 0=0
-                    GROUP BY trx.M_PRODUCT_ID, trx.C_UOM_ID, trx.AD_CLIENT_ID, trx.iscostcalculated, tc.c_currency_id, tc.movementdate,WH.NAME
+                    GROUP BY trx.M_PRODUCT_ID, trx.C_UOM_ID, trx.AD_CLIENT_ID, trx.iscostcalculated, tc.c_currency_id, trx.movementdate, WH.NAME
                     UNION ALL
                     SELECT agg.m_product_id, stock as qty, valuation as Suma, agg.c_uom_id, agg.ad_client_id, CASE WHEN valuation <> 0 THEN 'Y' ELSE 'N' END,
                       agg.c_currency_id, dateto, wh.name as warehouse
