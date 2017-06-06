@@ -481,7 +481,7 @@ enyo.kind({
   },
   shown: function () {
     var me = this,
-        refundablePayment, keyboard = this.owner.owner,
+        refundablePayment, sideButton, keyboard = this.owner.owner,
         isReturnReceipt = (me.receipt && me.receipt.getTotal() < 0) ? true : false;
 
     keyboard.showKeypad('Coins-' + OB.MobileApp.model.get('currency').id); // shows the Coins/Notes panel for the terminal currency
@@ -493,11 +493,24 @@ enyo.kind({
     });
 
     // Enable/Disable Payment method based on refundable flag
+    _.each(OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons, function (sideButton) {
+      sideButton.active = true;
+    });
     _.each(OB.MobileApp.model.paymentnames, function (payment) {
       keyboard.disableCommandKey(me, {
         disabled: (isReturnReceipt ? !payment.paymentMethod.refundable : false),
         commands: [payment.payment.searchKey]
       });
+
+
+      if (isReturnReceipt) {
+        sideButton = _.find(OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons, function (sideBtn) {
+          return sideBtn.btn.command === payment.payment.searchKey;
+        });
+        if (sideButton) {
+          sideButton.active = payment.paymentMethod.refundable;
+        }
+      }
     });
 
     if (!isReturnReceipt || (isReturnReceipt && me.defaultPayment.paymentMethod.refundable)) {
