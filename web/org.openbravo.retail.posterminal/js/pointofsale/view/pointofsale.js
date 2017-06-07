@@ -621,17 +621,21 @@ enyo.kind({
             }
           }
         }, this);
-        if (this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].mainBeforeSetShowing(inEvent) && allHidden) {
-          OB.UTIL.HookManager.executeHooks('OBPOS_LeftSubWindow_beforeSetShowing', {
-            context: this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow],
-            params: inEvent
-          }, function (args) {
-            if (args && !args.cancelOperation) {
-              me.$.multiColumn.$.leftPanel.$.receiptview.setShowing(false);
-              me.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].setShowing(true);
-              me.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].inEvent = inEvent;
-            }
-          });
+        if (allHidden) {
+          inEvent.checkStockCallback = function () {
+            OB.UTIL.HookManager.executeHooks('OBPOS_LeftSubWindow_beforeSetShowing', {
+              context: me.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow],
+              params: inEvent
+            }, function (args) {
+              if (args && !args.cancelOperation) {
+                me.$.multiColumn.$.leftPanel.$.receiptview.setShowing(false);
+                me.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].setShowing(true);
+                me.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].inEvent = inEvent;
+              }
+            });
+          };
+
+          this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].mainBeforeSetShowing(inEvent);
         }
       }
     }

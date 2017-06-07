@@ -309,7 +309,7 @@ enyo.kind({
       this.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_warehouseSelected', [OB.MobileApp.model.get('warehouses')[0].warehousename, '0']));
     }
   },
-  getStoreStock: function () {
+  getStoreStock: function (params) {
     var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.StoreDetailedStock'),
         me = this;
     this.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
@@ -336,6 +336,9 @@ enyo.kind({
           me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock') + data.qty);
         }
         me.bodyComponent.$.productAddToReceipt.setDisabled(false);
+      }
+      if (params.checkStockCallback) {
+        params.checkStockCallback();
       }
     });
   },
@@ -397,7 +400,7 @@ enyo.kind({
     this.bodyComponent.$.descriptionArea.setContent(params.product.get('description'));
     this.bodyComponent.$.productAddToReceipt.setLabel();
     this.getOtherStock();
-    this.getStoreStock();
+    this.getStoreStock(params);
     return true;
   },
   header: {
