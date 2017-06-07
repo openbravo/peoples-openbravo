@@ -290,6 +290,7 @@ OB.UTIL.getPriceListName = function (priceListId, callback) {
  * in this same browser. Data regarding privileged users is stored in supervisor table
  */
 OB.UTIL.checkApproval = function (approvalType, username, password, callback, windowModel) {
+  enyo.$.scrim.show();
   OB.Dal.initCache(OB.Model.Supervisor, [], null, null);
   var approvalList = [];
   approvalType.forEach(function (approvalType) {
@@ -301,6 +302,7 @@ OB.UTIL.checkApproval = function (approvalType, username, password, callback, wi
     p: password,
     approvalType: JSON.stringify(approvalList)
   }, enyo.bind(this, function (response, message) {
+    enyo.$.scrim.hide();
     var approved = false;
     if (response.exception) {
       OB.UTIL.showError(response.exception.message);
@@ -380,6 +382,7 @@ OB.UTIL.checkApproval = function (approvalType, username, password, callback, wi
     }
   }), enyo.bind(this, function () {
     // offline
+    enyo.$.scrim.hide();
     OB.Dal.find(OB.Model.Supervisor, {
       'name': username
     }, enyo.bind(this, function (users) {
