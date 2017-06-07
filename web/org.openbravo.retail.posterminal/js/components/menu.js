@@ -372,7 +372,7 @@ enyo.kind({
       }
     }, this);
     receipt.on('change:orderType', function (model) {
-      if (model.get('orderType') === 1 || model.get('orderType') === 2) {
+      if ((model.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true)) || model.get('orderType') === 2) {
         me.updateVisibility(false);
       } else {
         me.updateVisibility(true);
