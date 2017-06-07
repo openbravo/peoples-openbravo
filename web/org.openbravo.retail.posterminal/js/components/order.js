@@ -639,6 +639,9 @@ enyo.kind({
         }
       }
     }, this);
+    this.order.get('lines').on('change:attributeValue', function (line) {
+      //Disable attribute component if undefined
+    }, this);
     this.order.on('change:hasbeenpaid', function (model) {
       if (model.get('isQuotation') && model.get('hasbeenpaid') === 'Y' && !model.get('obposIsDeleted') && this.$.divText.content && (this.$.divText.content === OB.I18N.getLabel('OBPOS_QuotationNew') || this.$.divText.content === OB.I18N.getLabel('OBPOS_QuotationDraft'))) {
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));

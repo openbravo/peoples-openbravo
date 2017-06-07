@@ -3038,23 +3038,44 @@
         }
       }, this);
 
-      if (updatePrices) {
-        this.updatePrices(function (order) {
-          order.calculateReceipt(function () {
-            OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
-            // This event is used in stock validation module.
-            order.trigger('orderCreatedFromQuotation');
+      var productHasAttribute = false,
+          productWithAttributeValue = [];
+      this.get('lines').each(function (theLine) {
+        var productAttributes = theLine.attributes.product.attributes;
+        if (OB.UTIL.isNullOrUndefined(productAttributes.hasAttributes) === false) {
+          productWithAttributeValue.push(theLine);
+          productHasAttribute = productAttributes.hasAttributes;
+        }
+      });
+      if (!productHasAttribute) {
+        if (updatePrices) {
+          this.updatePrices(function (order) {
+            order.calculateReceipt(function () {
+              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+              // This event is used in stock validation module.
+              order.trigger('orderCreatedFromQuotation');
+            });
           });
-        });
-      } else {
-        this.set('skipApplyPromotions', true);
-        this.calculateReceipt(function () {
-          me.unset('skipApplyPromotions');
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
-          me.trigger('orderCreatedFromQuotation');
-        });
+        } else {
+          this.set('skipApplyPromotions', true);
+          this.calculateReceipt(function () {
+            me.unset('skipApplyPromotions');
+            OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+            me.trigger('orderCreatedFromQuotation');
+          });
+        }
       }
       this.calculateReceipt();
+      //call quotation attributes popup
+      if (OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true) && productHasAttribute) {
+        OB.MobileApp.view.waterfall('onShowPopup', {
+          popup: 'modalQuotationProductAttributes',
+          args: {
+            lines: productWithAttributeValue,
+            quotationProductAttribute: this
+          }
+        });
+      }
     },
 
     reactivateQuotation: function () {

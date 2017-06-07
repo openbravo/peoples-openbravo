@@ -257,7 +257,10 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalProductAttributes',
       name: 'modalProductAttribute'
-    }]
+    }, {
+        kind: 'OB.UI.ModalQuotationProductAttributes',
+        name: 'modalQuotationProductAttribute'
+      }]
   }, {
     name: 'mainSubWindow',
     isMainSubWindow: true,
