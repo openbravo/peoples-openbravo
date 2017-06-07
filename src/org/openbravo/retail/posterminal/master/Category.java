@@ -119,6 +119,7 @@ public class Category extends ProcessHQLQuery {
               + regularProductsCategoriesHQLProperties.getHqlSelect() //
               + "from OBRETCO_Productcategory aCat left outer join aCat.productCategory as pCat left outer join pCat.image as img"
               + " where ( aCat.obretcoProductlist.id = :productListId ) "
+              + " and  aCat.$incrementalUpdateCriteria and aCat.$naturalOrgCriteria and aCat.$readableSimpleClientCriteria  "
               + " order by pCat.name, pCat.id");
       hqlQueries
           .add("select"
