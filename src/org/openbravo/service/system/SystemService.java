@@ -301,10 +301,13 @@ public class SystemService implements OBSingleton {
    *          The client to be deleted
    */
   public void deleteClient(Client client) {
+    Platform platform = null;
+    Connection con = null;
+    String clientId = "";
+    long t1 = System.currentTimeMillis();
     try {
-      long t1 = System.currentTimeMillis();
-      Platform platform = getPlatform();
-      Connection con = OBDal.getInstance().getConnection();
+      platform = getPlatform();
+      con = OBDal.getInstance().getConnection();
       killConnectionsAndSafeMode(con);
       try {
         if (OBScheduler.getInstance() != null && OBScheduler.getInstance().getScheduler() != null
@@ -318,7 +321,7 @@ public class SystemService implements OBSingleton {
       OBContext.setAdminMode(false);
       OBDal.getInstance().flush();
       OBDal.getInstance().getConnection().commit();
-      String clientId = client.getId();
+      clientId = client.getId();
 
       List<String> sqlCommands = new ArrayList<String>();
 
@@ -338,10 +341,19 @@ public class SystemService implements OBSingleton {
         try (PreparedStatement ps = con.prepareStatement(command)) {
           ps.setString(1, clientId);
           ps.executeUpdate();
+        } catch (Exception e) {
+          throw new RuntimeException("Exception when executing the delete queries.", e);
         }
       }
 
       con.commit();
+    } catch (Exception e) {
+      log4j.error("Exception when deleting the client: ", e);
+      OBDal.getInstance().rollbackAndClose();
+      throw new RuntimeException(
+          "The client is not removed because an exception is thrown while executing the delete queries. ",
+          e);
+    } finally {
       OBDal.getInstance().commitAndClose();
       enableConstraints(platform);
       Connection con2 = platform.borrowConnection();
@@ -350,20 +362,20 @@ public class SystemService implements OBSingleton {
       } finally {
         platform.returnConnection(con2);
       }
-      log4j.info("Deletion of client " + clientId + " took " + (System.currentTimeMillis() - t1)
-          + " miliseconds");
-    } catch (Exception e) {
-      log4j.error("exception when deleting the client: ", e);
-    } finally {
+      log4j.info("The delete client process for " + clientId + " took "
+          + (System.currentTimeMillis() - t1) + " miliseconds");
       OBContext.restorePreviousMode();
-      // We restart the scheduler
-      try {
-        if (OBScheduler.getInstance() != null && OBScheduler.getInstance().getScheduler() != null) {
-          OBScheduler.getInstance().getScheduler().start();
-        }
-      } catch (SchedulerException e) {
-        log4j.error("There was an error while restarting the scheduler", e);
+      restartScheduler();
+    }
+  }
+
+  private void restartScheduler() {
+    try {
+      if (OBScheduler.getInstance() != null && OBScheduler.getInstance().getScheduler() != null) {
+        OBScheduler.getInstance().getScheduler().start();
       }
+    } catch (SchedulerException e) {
+      log4j.error("There was an error while restarting the scheduler", e);
     }
   }
 
