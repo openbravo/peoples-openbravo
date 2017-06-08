@@ -373,17 +373,21 @@ public class DefaultJsonDataService implements JsonDataService {
   }
 
   private boolean isLastRecordSelected(List<BaseOBObject> bobs) {
-    if (bobs.size() == 0) {
+    if (bobs.isEmpty()) {
       return false;
     }
-    Boolean b = Boolean.FALSE;
+
     try {
       BaseOBObject bob = bobs.get(bobs.size() - 1);
-      b = (Boolean) bob.get("obSelected");
+
+      if (!bob.getEntity().hasProperty("obSelected")) {
+        return false;
+      }
+      return (Boolean) bob.get("obSelected");
     } catch (Exception ex) {
       // Error retrieving obSelected property, do nothing: record not selected
+      return false;
     }
-    return b.booleanValue();
   }
 
   public void fetch(Map<String, String> parameters, QueryResultWriter writer) {
