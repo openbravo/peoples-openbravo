@@ -660,7 +660,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
               savedNode.put("isOpen", true);
             }
           }
-          // We have to make sure that the filtered node was not aboute the
+          // We have to make sure that the filtered node was not about the
           // root nodes as defined by the hqlTreeWhereClauseRootNodes
           if (this.nodeConformsToWhereClause(tableTree, node.getString("id"),
               hqlTreeWhereClauseRootNodes)) {
