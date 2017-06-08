@@ -137,14 +137,10 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
               selectedLine.getString("alternativeUOM"));
           newInOutLine.setOperativeUOM(operativeUOM);
           newInOutLine.setOperativeQuantity(qtyReceived.negate());
-          if (selectedLine.getString("alternativeUOM")
-              .equals(selectedLine.getString("returnedUOM"))) {
-            qtyReceived = UOMUtil.getConvertedQty(selectedLine.getString("product"), qtyReceived,
-                selectedLine.getString("alternativeUOM"));
+          if (alternativeUOMEqualsToReturnedUOM(selectedLine)) {
+            qtyReceived = convertedQtyReceivedBasedOnTheAUM(qtyReceived, selectedLine);
           } else {
-            BigDecimal operativeQuantity = UOMUtil.getConvertedAumQty(
-                selectedLine.getString("product"), qtyReceived,
-                selectedLine.getString("alternativeUOM"));
+            BigDecimal operativeQuantity = convertQtyReceivedBasedOnTheUOM(qtyReceived, selectedLine);
             newInOutLine.setOperativeQuantity(operativeQuantity.negate());
           }
         } finally {
@@ -192,6 +188,24 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
     }
 
     removeNonSelectedLines(idList, inOut);
+  }
+
+  private BigDecimal convertQtyReceivedBasedOnTheUOM(BigDecimal qtyReceived, JSONObject selectedLine)
+      throws JSONException {
+    return UOMUtil.getConvertedAumQty(
+        selectedLine.getString("product"), qtyReceived,
+        selectedLine.getString("alternativeUOM"));
+  }
+
+  private BigDecimal convertedQtyReceivedBasedOnTheAUM(BigDecimal qtyReceived, JSONObject selectedLine)
+      throws JSONException {
+    return UOMUtil.getConvertedQty(selectedLine.getString("product"), qtyReceived,
+        selectedLine.getString("alternativeUOM"));
+  }
+
+  private boolean alternativeUOMEqualsToReturnedUOM(JSONObject selectedLine) throws JSONException {
+    return selectedLine.getString("alternativeUOM")
+        .equals(selectedLine.getString("returnedUOM"));
   }
 
   private void removeNonSelectedLines(List<String> idList, ShipmentInOut inOut) {
