@@ -330,39 +330,17 @@ public class SystemService implements OBSingleton {
           sqlCommands.add(sql);
         }
       }
+
+      sqlCommands.add("DELETE FROM ad_preference p where visibleat_client_id=?");
+      sqlCommands.add("DELETE FROM obuiapp_uipersonalization p where visibleat_client_id=?");
+
       for (String command : sqlCommands) {
-        PreparedStatement ps = null;
-        try {
-          ps = con.prepareStatement(command);
+        try (PreparedStatement ps = con.prepareStatement(command)) {
           ps.setString(1, clientId);
           ps.executeUpdate();
-        } finally {
-          if (ps != null && !ps.isClosed()) {
-            ps.close();
-          }
         }
       }
-      PreparedStatement stpref = null;
-      try {
-        stpref = con.prepareStatement("DELETE FROM ad_preference p where visibleat_client_id=?");
-        stpref.setString(1, clientId);
-        stpref.executeUpdate();
-      } finally {
-        if (stpref != null && !stpref.isClosed()) {
-          stpref.close();
-        }
-      }
-      PreparedStatement stpers = null;
-      try {
-        stpers = con
-            .prepareStatement("DELETE FROM obuiapp_uipersonalization p where visibleat_client_id=?");
-        stpers.setString(1, clientId);
-        stpers.executeUpdate();
-      } finally {
-        if (stpers != null && !stpers.isClosed()) {
-          stpers.close();
-        }
-      }
+
       con.commit();
       OBDal.getInstance().commitAndClose();
       enableConstraints(platform);
