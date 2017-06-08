@@ -9991,7 +9991,7 @@ WARNING: This window is not supported anymore and it is only kept for backward c
 <!--800177-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--800177-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--800177-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--800177-->  <WHERECLAUSE><![CDATA[Action='C']]></WHERECLAUSE>
+<!--800177-->  <WHERECLAUSE><![CDATA[AD_Model_Object.Action='C']]></WHERECLAUSE>
 <!--800177-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800177-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800177-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
