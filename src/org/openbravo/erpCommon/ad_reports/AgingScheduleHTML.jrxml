@@ -118,6 +118,7 @@
 	<parameter name="recOrPay" class="java.lang.String">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
+	<parameter name="warning" class="java.lang.String"/>
 	<field name="BPartner" class="java.lang.String"/>
 	<field name="amount0" class="java.math.BigDecimal"/>
 	<field name="amount1" class="java.math.BigDecimal"/>
@@ -176,7 +177,7 @@
 	<title>
 		<band height="136" splitType="Stretch">
 			<textField>
-				<reportElement x="6" y="12" width="500" height="28" uuid="666e97f8-a542-4313-8ddf-06c6fa123b77"/>
+				<reportElement x="10" y="30" width="500" height="28" uuid="666e97f8-a542-4313-8ddf-06c6fa123b77"/>
 				<textElement>
 					<font size="18"/>
 				</textElement>
@@ -209,6 +210,23 @@
 				<textElement textAlignment="Right"/>
 				<text><![CDATA[Organization:]]></text>
 			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="0" y="0" width="940" height="20" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" forecolor="#0A0505" backcolor="#FFE79F" uuid="ea37dff9-064d-4031-9f90-196bc35782ee">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Bitstream Vera Sans" size="10"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="1.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{warning}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>

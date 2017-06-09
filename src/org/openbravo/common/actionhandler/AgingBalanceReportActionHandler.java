@@ -89,6 +89,7 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
   private static final String PARAM_COLUMN2 = "Column2";
   private static final String PARAM_COLUMN3 = "Column3";
   private static final String PARAM_COLUMN4 = "Column4";
+  private static final String PARAM_WARNING = "warning";
   private static final String TRUE = "true";
   private static final String FALSE = "false";
   private static final String BLANK = "";
@@ -213,6 +214,9 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
     } finally {
       OBContext.restorePreviousMode();
     }
+    // Save in session if dao needs to limit data or not
+    RequestContext.get().getVariablesSecureApp()
+        .setSessionValue("dataLimited", isDataLimited(content) ? "true" : "false");
     data = dao.getOpenReceivablesAgingScheduleDetails(getReportConnectionProvider(), currentDate,
         dateFormat, convCurrency, new OrganizationStructureProvider().getChildTree(
             getParameter(PARAM_ORGANIZATION, content), true),
@@ -225,12 +229,17 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
 
   private JSONObject printPageDetails(Map<String, Object> parameters) {
     JSONObject result = new JSONObject();
-    String content = (String) parameters.get(CONTENT_PARAM);
+    JSONObject paramContent = null;
+    String content = null;
+
     FieldProvider[] data;
     try {
+      paramContent = new JSONObject((String) parameters.get(CONTENT_PARAM));
+      content = (String) paramContent.toString();
       data = getPageDetailsData(content);
+      JSONObject msg = null;
       if (data.length == 0) {
-        JSONObject msg = new JSONObject();
+        msg = new JSONObject();
         msg.put(MESSAGE_SEVERITY_PROPERTY, MESSAGE_SEVERITY_WARNING);
         msg.put(MESSAGE_TEXT_PROPERTY, OBMessageUtils.messageBD(MESSAGE_NO_DATA_FOUND));
         result.put(MESSAGE_RETRY_EXECUTION_PROPERTY, true);
@@ -238,7 +247,23 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
         result.put(MESSAGE_MESSAGE_PROPERTY, msg);
       } else {
         parameters.put(KEY_REPORT_DATA, data);
-        result = super.doExecute(parameters, content);
+        final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+        String reportLimitPrefValue = Utility.getPreference(vars, "ReportsLimit", "");
+        int limit = Integer.parseInt(reportLimitPrefValue.isEmpty() ? "0" : reportLimitPrefValue);
+        if (isDataLimited(content) && limit > 0 && data.length > limit) {
+          msg = new JSONObject();
+          String msgbody = OBMessageUtils.messageBD("ReportsLimit");
+          msgbody = msgbody.replace("@limit@", String.valueOf(limit));
+          // Add warning to the report
+          ((JSONObject) paramContent.get(PARAM_PARAM)).put(PARAM_WARNING, msgbody);
+          msg.put(MESSAGE_SEVERITY_PROPERTY, MESSAGE_SEVERITY_WARNING);
+          msg.put(MESSAGE_TEXT_PROPERTY, msgbody);
+        }
+
+        result = super.doExecute(parameters, paramContent.toString());
+        if (msg != null) {
+          result.put(MESSAGE_MESSAGE_PROPERTY, msg);
+        }
       }
     } catch (Exception ex) {
       JSONObject msg = new JSONObject();
@@ -263,6 +288,9 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
     cal.setTime(currentDate);
     boolean showDoubtful = TRUE.equals(getParameter(PARAM_DOUBTFUL, content));
     boolean excludeVoid = FALSE.equals(getParameter(PARAM_SHOWVOID, content));
+    // Save in session if dao needs to limit data or not
+    RequestContext.get().getVariablesSecureApp()
+        .setSessionValue("dataLimited", isDataLimited(content) ? "true" : "false");
     data = dao.getOpenReceivablesAgingSchedule(getReportConnectionProvider(),
         getParameter(PARAM_BP, content), getParameter(PARAM_GL, content), currentDate,
         getParameter(PARAM_COLUMN1, content), getParameter(PARAM_COLUMN2, content),
@@ -276,11 +304,16 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
   private JSONObject printPageSchedule(Map<String, Object> parameters) {
     JSONObject result = new JSONObject();
     FieldProvider[] data;
-    String content = (String) parameters.get(CONTENT_PARAM);
+    JSONObject paramContent = null;
+    String content = null;
+
     try {
+      paramContent = new JSONObject((String) parameters.get(CONTENT_PARAM));
+      content = (String) paramContent.toString();
       data = getPageScheduleData(content);
+      JSONObject msg = null;
       if (data.length == 0) {
-        JSONObject msg = new JSONObject();
+        msg = new JSONObject();
         msg.put(MESSAGE_SEVERITY_PROPERTY, MESSAGE_SEVERITY_WARNING);
         msg.put(MESSAGE_TEXT_PROPERTY, OBMessageUtils.messageBD(MESSAGE_NO_DATA_FOUND));
         result.put(MESSAGE_RETRY_EXECUTION_PROPERTY, true);
@@ -288,7 +321,24 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
         result.put(MESSAGE_MESSAGE_PROPERTY, msg);
       } else {
         parameters.put(KEY_REPORT_DATA, data);
-        result = super.doExecute(parameters, content);
+
+        final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+        String reportLimitPrefValue = Utility.getPreference(vars, "ReportsLimit", "");
+        int limit = Integer.parseInt(reportLimitPrefValue.isEmpty() ? "0" : reportLimitPrefValue);
+        if (isDataLimited(content) && limit > 0 && data.length > limit) {
+          msg = new JSONObject();
+          String msgbody = OBMessageUtils.messageBD("ReportsLimit");
+          msgbody = msgbody.replace("@limit@", String.valueOf(limit));
+          // Add warning to the report
+          ((JSONObject) paramContent.get(PARAM_PARAM)).put(PARAM_WARNING, msgbody);
+          msg.put(MESSAGE_SEVERITY_PROPERTY, MESSAGE_SEVERITY_WARNING);
+          msg.put(MESSAGE_TEXT_PROPERTY, msgbody);
+        }
+
+        result = super.doExecute(parameters, paramContent.toString());
+        if (msg != null) {
+          result.put(MESSAGE_MESSAGE_PROPERTY, msg);
+        }
       }
     } catch (Exception ex) {
       JSONObject msg = new JSONObject();
@@ -490,8 +540,21 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
       }
       parameters.put("USER_ORG", Utility.getContext(conn, vars, "#User_Org", BLANK));
       parameters.put("REPORT_TITLE", parameters.get("title"));
+      if (isDataLimited(jsonContent.toString())
+          && ((JSONObject) jsonContent.get(PARAM_PARAM)).has(PARAM_WARNING)) {
+        parameters.put("warning", getParameter(PARAM_WARNING, jsonContent));
+      }
     } catch (Exception e) {
       throw new OBException(e);
+    }
+  }
+
+  private boolean isDataLimited(String content) {
+    try {
+      return StringUtils.equals(getParameter(PARAM_ACTION, content), "HTML");
+    } catch (JSONException e) {
+      e.printStackTrace();
+      return false;
     }
   }
 }

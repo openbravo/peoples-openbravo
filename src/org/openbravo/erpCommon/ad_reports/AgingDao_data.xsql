@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
+         SELECT B.* FROM (
          SELECT A.bpId, bp.name as bpName, SUM(A.amount) as amount, A.scope, 0 as credit, '' as invoiceId, '' as docNo, '' as dateInvoiced, SUM(doubtfuldebtamt) as doubtfuldebt
          FROM ( 
 	             SELECT i.c_bpartner_id AS bpId, 
@@ -65,6 +66,7 @@
 			  ) A 
 			   INNER JOIN c_bpartner bp on (A.bpId = bp.c_bpartner_id)
 		GROUP BY A.bpId, bp.name, A.scope  
+        ) B		
       ]]></Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="showDoubtfulDebt"/>
@@ -85,12 +87,15 @@
     <Parameter name="excludeVoids" type="none" optional="true" after="AND 1=1" text="AND i.DOCSTATUS NOT IN ('VO')"/>
     <Parameter name="asOfDate"/>
     <Parameter name="asOfDate"/>
+    <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
+    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
     </SqlMethod>
     
     <SqlMethod name="selectCredit" type="preparedStatement" return="scrollable">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
+    SELECT B.* FROM (
     SELECT A.credit, bp.c_bpartner_id as bpId, bp.name as bpName, A.dateInvoiced as dateInvoiced, A.invoiceId as invoiceId, A.docNo
     FROM (
         SELECT FIN_AGING_PAYMENTCURRENCY_RATE(P.fin_payment_id, ?, P.c_currency_id) * SUM(P.GENERATED_CREDIT - coalesce(C.USED_CREDIT, 0)) AS credit, P.c_bpartner_id,
@@ -144,6 +149,7 @@
        ) A
       INNER JOIN c_bpartner bp ON A.c_bpartner_id = bp.c_bpartner_id
    WHERE A.credit <> 0
+        ) B
       ]]></Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="currencyId"/>
@@ -154,12 +160,15 @@
     <Parameter name="cbPartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND fp.C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="asOfDate"/>
     <Parameter name="paidStatus" type="replace" optional="true" after="OR ( fp1.status IN (" text="'1'"/>
+    <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
+    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
     </SqlMethod>
     
     <SqlMethod name="selectDetail" type="preparedStatement" return="scrollable">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
+           SELECT C.* FROM (
            SELECT B.bpId, bp.name as bpName, FIN_AGING_INVOICECURRENCY_RATE(B.c_invoice_id, ?, B.c_currency_id) * B.amount as amount, B.scope, B.c_invoice_id as invoiceId, B.documentNo as docNo, 
            B.dateacct as dateInvoiced, FIN_AGING_INVOICECURRENCY_RATE(B.c_invoice_id, ?, B.c_currency_id) * (B.doubtfuldebtamt) as doubtfuldebt
            FROM (  
@@ -210,6 +219,7 @@
                 GROUP BY A.c_invoice_id, A.c_currency_id, A.bpId, A.documentNo, A.dateacct, A.scope
                ) B
           INNER JOIN c_bpartner bp on (B.bpId = bp.c_bpartner_id)     
+          ) C		  
       ]]></Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="currencyId"/>
@@ -229,6 +239,8 @@
     <Parameter name="excludeVoids" type="none" optional="true" after="AND 1=1" text="AND i.DOCSTATUS NOT IN ('VO')"/>
     <Parameter name="asOfDate"/>
     <Parameter name="asOfDate"/>
+    <Parameter name="pgLimit" type="argument" optional="true" after=") C"><![CDATA[LIMIT ]]></Parameter>
+    <Parameter name="oraLimit1" type="argument" optional="true" after=") C"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
     </SqlMethod>
 </SqlClass>
 

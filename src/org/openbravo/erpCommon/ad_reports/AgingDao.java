@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2016 Openbravo SLU
+ * All portions are Copyright (C) 2012-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,6 +41,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -98,6 +100,20 @@ public class AgingDao {
     AgingDaoData dataSR = null;
     AgingDaoData dataCreditSR = null;
     long init = System.currentTimeMillis();
+    int limit = 0;
+    String pgLimit = null, oraLimit = null;
+    final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+    if (StringUtils.equals(vars.getSessionValue("dataLimited"), "true")) {
+      String reportLimitPrefValue = Utility.getPreference(vars, "ReportsLimit", "");
+      limit = Integer.parseInt(reportLimitPrefValue.isEmpty() ? "0" : reportLimitPrefValue);
+
+      if (connectionProvider.getRDBMS().equalsIgnoreCase("ORACLE")) {
+        oraLimit = String.valueOf(limit + 1);
+      } else {
+        pgLimit = String.valueOf(limit + 1);
+      }
+    }
+
     try {
       // Amounts coming from normal PSD (non credit)
       dataSR = AgingDaoData.select(connectionProvider, showDoubtfulDebt ? "Y" : "N", OBDateUtils
@@ -107,7 +123,7 @@ public class AgingDao {
               .formatDate(convertToDate(currentDate, strcolumn3)), OBDateUtils
               .formatDate(convertToDate(currentDate, strcolumn4)), Utility
               .getInStrSet(organizations), strcBpartnerId, StringUtils.equals(recOrPay,
-              "RECEIVABLES") ? "Y" : "N", excludeVoids ? "excludeVoids" : "");
+              "RECEIVABLES") ? "Y" : "N", excludeVoids ? "excludeVoids" : "", pgLimit, oraLimit);
       log4j.debug("Query: " + (System.currentTimeMillis() - init));
       init = System.currentTimeMillis();
       int i = 0;
@@ -143,7 +159,7 @@ public class AgingDao {
       dataCreditSR = AgingDaoData.selectCredit(connectionProvider, convCurrency.getId(), Utility
           .getInStrSet(organizations), Utility.getInStrSet(new HashSet<String>(paidStatus)),
           OBDateUtils.formatDate(currentDate), StringUtils.equals(recOrPay, "RECEIVABLES") ? "Y"
-              : "N", strcBpartnerId);
+              : "N", strcBpartnerId, pgLimit, oraLimit);
       log4j.debug("Credit Query: " + (System.currentTimeMillis() - init));
       init = System.currentTimeMillis();
       i = 0;
@@ -210,6 +226,21 @@ public class AgingDao {
 
     OBContext.setAdminMode(true);
     long init = System.currentTimeMillis();
+    int limit = 0;
+    String pgLimit = null, oraLimit = null;
+    final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+
+    if (StringUtils.equals(vars.getSessionValue("dataLimited"), "true")) {
+      String reportLimitPrefValue = Utility.getPreference(vars, "ReportsLimit", "");
+      limit = Integer.parseInt(reportLimitPrefValue.isEmpty() ? "0" : reportLimitPrefValue);
+
+      if (connectionProvider.getRDBMS().equalsIgnoreCase("ORACLE")) {
+        oraLimit = String.valueOf(limit + 1);
+      } else {
+        pgLimit = String.valueOf(limit + 1);
+      }
+    }
+
     try {
       // Amounts coming from normal PSD (non credit)
       dataSR = AgingDaoData.selectDetail(connectionProvider, convCurrency.getId(),
@@ -219,7 +250,7 @@ public class AgingDao {
               .formatDate(convertToDate(currentDate, strcolumn3)), OBDateUtils
               .formatDate(convertToDate(currentDate, strcolumn4)), Utility
               .getInStrSet(organizations), strcBpartnerId, StringUtils.equals(recOrPay,
-              "RECEIVABLES") ? "Y" : "N", excludeVoid ? "excludeVoids" : "");
+              "RECEIVABLES") ? "Y" : "N", excludeVoid ? "excludeVoids" : "", pgLimit, oraLimit);
 
       log4j.debug("Query Detail: " + (System.currentTimeMillis() - init));
       init = System.currentTimeMillis();
@@ -257,7 +288,7 @@ public class AgingDao {
       dataCreditSR = AgingDaoData.selectCredit(connectionProvider, convCurrency.getId(), Utility
           .getInStrSet(organizations), Utility.getInStrSet(new HashSet<String>(paidStatus)),
           OBDateUtils.formatDate(currentDate), StringUtils.equals(recOrPay, "RECEIVABLES") ? "Y"
-              : "N", strcBpartnerId);
+              : "N", strcBpartnerId, pgLimit, oraLimit);
       log4j.debug("Credit Query: " + (System.currentTimeMillis() - init));
       init = System.currentTimeMillis();
       i = 0;
