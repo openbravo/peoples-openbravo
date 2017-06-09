@@ -245,7 +245,8 @@ enyo.kind({
   }],
 
   receiptChanged: function () {
-    var me = this;
+    var me = this,
+        validatePaymentsByReceipt;
     this.$.payments.setCollection(this.receipt.get('payments'));
     this.$.multiPayments.setCollection(this.model.get('multiOrders').get('payments'));
     this.receipt.on('change:payment change:change calculategross change:bp change:gross', function () {
@@ -291,6 +292,30 @@ enyo.kind({
     this.updateExtraInfo('');
     this.receipt.on('extrainfo', function (info) {
       this.updateExtraInfo(info);
+    }, this);
+
+    validatePaymentsByReceipt = function (auxReceipt, amount, callback) {
+      var selectedPayment = OB.MobileApp.model.paymentnames[auxReceipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')];
+      me.$.errorLabelArea.hide();
+      me.checkValidPayments(auxReceipt.getPaymentStatus(), selectedPayment, function () {
+        var firstShowingObject = me.getFirstShowingObject(me.errorLabels),
+            hasPaymentError = _.isEmpty(firstShowingObject);
+        me.resetLabelAndButton();
+        if (!hasPaymentError) {
+          OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_ErrorInProviderAddPayment', [firstShowingObject.getContent(), amount, selectedPayment.payment.commercialName]));
+          me.receipt.stopAddingPayments = false;
+        }
+        if (callback) {
+          callback(hasPaymentError);
+        }
+      });
+    };
+
+    this.receipt.on('checkValidPaymentsByReceipt', function (auxReceipt, amount, callback) {
+      validatePaymentsByReceipt(auxReceipt, amount, callback);
+    }, this);
+    this.model.get('multiOrders').on('checkValidPaymentsByReceipt', function (auxReceipt, amount, callback) {
+      validatePaymentsByReceipt(auxReceipt, amount, callback);
     }, this);
   },
 
@@ -653,8 +678,8 @@ enyo.kind({
     return check;
   },
 
-  checkValidPayments: function (paymentstatus, selectedPayment) {
-    var resultOK, me = this;
+  checkValidPayments: function (paymentstatus, selectedPayment, callback) {
+    var resultOK, callbackFunc, me = this;
 
     if (!selectedPayment) {
       return;
@@ -667,6 +692,11 @@ enyo.kind({
     }
     this.$.noenoughchangelbl.hide();
     this.$.onlycashpaymentmethod.hide();
+    callbackFunc = function () {
+      if (callback) {
+        callback();
+      }
+    };
 
     // Do the checkins
     this.receipt.stopAddingPayments = !_.isEmpty(this.getShowingErrorMessages());
@@ -676,6 +706,7 @@ enyo.kind({
         // avoid checking for shared paymentMethod
         if (paymentstatus.change && selectedPayment.paymentMethod.isshared) {
           resultOK = true;
+          callbackFunc();
         } else {
           resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Done', function (success) {
             var lsuccess = success;
@@ -694,6 +725,7 @@ enyo.kind({
             this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Credit', function (success) {
               this.setStatusButtons(success, 'Credit');
             });
+            callbackFunc();
           });
         }
       } else if (!this.receipt.stopAddingPayments) {
@@ -701,13 +733,14 @@ enyo.kind({
         this.$.exactbutton.setLocalDisabled(false);
         this.$.layawayaction.setLocalDisabled(false);
         this.$.creditsalesaction.setLocalDisabled(false);
+        callbackFunc();
       }
-
     } else {
       me.receipt.stopAddingPayments = !_.isEmpty(me.getShowingErrorMessages());
       // Finally set status of buttons
       this.setStatusButtons(resultOK, 'Done');
       this.setStatusButtons(resultOK, 'Layaway');
+      callbackFunc();
     }
     if (resultOK) {
       this.$.noenoughchangelbl.hide();
@@ -773,6 +806,19 @@ enyo.kind({
     errorLabelArray.push(this.$.extrainfo);
     return errorLabelArray;
   },
+  resetLabelAndButton: function () {
+    this.$.changeexceedlimit.hide();
+    this.$.overpaymentnotavailable.hide();
+    this.$.overpaymentexceedlimit.hide();
+    this.$.noenoughchangelbl.hide();
+    this.$.onlycashpaymentmethod.hide();
+    this.$.errorLabelArea.show();
+
+    this.$.donebutton.setLocalDisabled(false);
+    this.$.exactbutton.setLocalDisabled(false);
+    this.$.layawayaction.setLocalDisabled(false);
+    this.$.creditsalesaction.setLocalDisabled(false);
+  },
   getFirstShowingObject: function (errorLabelArray) {
     var showingObj = '',
         i;
@@ -826,7 +872,7 @@ enyo.kind({
         var arrayContent = this.errorLabels[i];
         if (arrayContent.showing && arrayContent.type === 'error') {
           count = count + 1;
-          msgToReturn = msgToReturn + '\n' + count + ')' + arrayContent.content;
+          msgToReturn = msgToReturn + '\n' + count + ') ' + arrayContent.content;
         }
       }
     }
