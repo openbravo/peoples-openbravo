@@ -93,8 +93,7 @@ enyo.kind({
     }
 
     if (OB.DEC.compare(amount) > 0) {
-      var provider, receiptToPay, me = this,
-          paymentLine, auxReceipt;
+      var provider, receiptToPay, me = this;
       if (this.model.get('leftColumnViewManager').isOrder()) {
         receiptToPay = this.receipt;
       }
@@ -109,51 +108,20 @@ enyo.kind({
         provider = paymentMethod.refundProvider;
       }
 
-      paymentLine = new OB.Model.PaymentLine({
-        'kind': key,
-        'name': name,
-        'amount': amount,
-        'rate': rate,
-        'mulrate': mulrate,
-        'isocode': isocode,
-        'allowOpenDrawer': paymentMethod.allowopendrawer,
-        'isCash': paymentMethod.iscash,
-        'openDrawer': paymentMethod.openDrawer,
-        'printtwice': paymentMethod.printtwice
-      });
-
       if (provider) {
-        if (this.model.get('leftColumnViewManager').isOrder()) {
-          auxReceipt = new OB.Model.Order();
-        } else if (this.model.get('leftColumnViewManager').isMultiOrder()) {
-          auxReceipt = new OB.Model.MultiOrders();
-        }
-        OB.UTIL.clone(receiptToPay, auxReceipt);
-        auxReceipt.set('id', null);
-        auxReceipt.addPayment(paymentLine, function () {
-          receiptToPay.trigger('checkValidPaymentsByReceipt', auxReceipt, amount, function (result) {
-            if (me.model.get('leftColumnViewManager').isOrder()) {
-              OB.Dal.remove(auxReceipt);
-            } else if (me.model.get('leftColumnViewManager').isMultiOrder()) {
-              auxReceipt.resetValues();
-            }
-            if (result) {
-              me.doShowPopup({
-                popup: 'modalpayment',
-                args: {
-                  'receipt': receiptToPay,
-                  'provider': provider,
-                  'key': key,
-                  'name': name,
-                  'paymentMethod': paymentMethod,
-                  'amount': amount,
-                  'rate': rate,
-                  'mulrate': mulrate,
-                  'isocode': isocode
-                }
-              });
-            }
-          });
+        this.doShowPopup({
+          popup: 'modalpayment',
+          args: {
+            'receipt': receiptToPay,
+            'provider': provider,
+            'key': key,
+            'name': name,
+            'paymentMethod': paymentMethod,
+            'amount': amount,
+            'rate': rate,
+            'mulrate': mulrate,
+            'isocode': isocode
+          }
         });
       } else {
         // Calculate total amount to pay with selected PaymentMethod  
@@ -186,7 +154,18 @@ enyo.kind({
             currency: '',
             symbolAtRight: true
           });
-          this.model.addPayment(paymentLine, callback);
+          this.model.addPayment(new OB.Model.PaymentLine({
+            'kind': key,
+            'name': name,
+            'amount': amount,
+            'rate': rate,
+            'mulrate': mulrate,
+            'isocode': isocode,
+            'allowOpenDrawer': paymentMethod.allowopendrawer,
+            'isCash': paymentMethod.iscash,
+            'openDrawer': paymentMethod.openDrawer,
+            'printtwice': paymentMethod.printtwice
+          }), callback);
         }
       }
     }
