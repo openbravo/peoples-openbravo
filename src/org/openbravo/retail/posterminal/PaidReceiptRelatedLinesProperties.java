@@ -41,8 +41,6 @@ public class PaidReceiptRelatedLinesProperties extends ModelExtension {
             "gross"));
         add(new HQLProperty(
             "olsr.orderlineRelated.standardPrice*olsr.orderlineRelated.orderedQuantity", "net"));
-
-        add(new HQLProperty("'false'", "otherTicket"));
       }
     };
 
