@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -361,7 +361,7 @@ public class UOMUtil {
       List<ProductUOM> pUomList = pUomCriteria.list();
       for (ProductUOM pUom : pUomList) {
         resultMap = new HashMap<>();
-        resultMap.put(FIELD_PROVIDER_ID, pUom.getUOM().getId());
+        resultMap.put(FIELD_PROVIDER_ID, pUom.getId());
         resultMap.put(FIELD_PROVIDER_NAME, pUom.getUOM().getName());
         result.add(resultMap);
       }
