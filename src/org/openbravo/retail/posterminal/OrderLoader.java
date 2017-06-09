@@ -1868,6 +1868,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       } else {
         finalDueDateDay = maturityDate1;
       }
+
+      // Due Date day should be maximum of Month's Last day
+      if (finalDueDateDay == 0) {
+        finalDueDateDay = 1;
+      }
+      if ((int) finalDueDateDay > calculatedDueDate.getActualMaximum(Calendar.DAY_OF_MONTH)) {
+        finalDueDateDay = calculatedDueDate.getActualMaximum(Calendar.DAY_OF_MONTH);
+      }
       calculatedDueDate.set(Calendar.DAY_OF_MONTH, (int) finalDueDateDay);
       if (finalDueDateDay < dueDateDay) {
         calculatedDueDate.add(Calendar.MONTH, 1);
