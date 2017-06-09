@@ -68,7 +68,7 @@
         <default/>
       </parameter>
       <parameter name="p_avail" type="CHAR" mode="in">
-        <default><![CDATA[NULL]]></default>
+        <default><![CDATA[Y]]></default>
       </parameter>
       <parameter name="p_nett" type="CHAR" mode="in">
         <default><![CDATA[NULL]]></default>

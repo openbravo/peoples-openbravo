@@ -39,7 +39,7 @@ public class StockUtils {
     return getStock(uuid, recordId, quantity, mProductId, mLocatorId, mWarehouseId,
         priorityWarehouseId, adOrgId, mAttributeSetInstanceId, adUserId, adClientId,
         warehouseRuleId, cUomId, productUomId, adTableId, auxId, lineNo, processId, mReservationId,
-        calledFromApp, null, null, null);
+        calledFromApp, "Y", null, null);
   }
 
   /*
