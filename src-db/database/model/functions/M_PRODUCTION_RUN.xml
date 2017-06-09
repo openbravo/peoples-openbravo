@@ -625,9 +625,11 @@ BEGIN --BODY
         SELECT pl.M_ProductionLine_ID, pl.AD_Client_ID, pl.AD_Org_ID, p.MovementDate,
             pl.M_Product_ID, pl.M_AttributeSetInstance_ID, pl.MovementQty, pl.M_Locator_ID,
             pl.M_Product_UOM_ID, pl.QuantityOrder, pl.C_UOM_ID, pl.LINE
-        FROM M_PRODUCTION p, M_PRODUCTIONLINE pl, M_PRODUCTIONPLAN pp
+        FROM M_PRODUCTION p, M_PRODUCTIONLINE pl, M_PRODUCTIONPLAN pp, M_PRODUCT pro
         WHERE p.M_Production_ID=pp.M_Production_ID
           AND pp.M_ProductionPlan_ID=pl.M_ProductionPlan_ID
+          AND pl.M_PRODUCT_ID = pro.M_PRODUCT_ID
+          AND pro.ISSTOCKED = 'Y'
           AND pp.M_Production_ID=v_Record_ID
         ORDER BY pp.Line, pl.Line
     ) LOOP
