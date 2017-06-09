@@ -342,17 +342,15 @@ public class SystemService implements OBSingleton {
           ps.setString(1, clientId);
           ps.executeUpdate();
         } catch (Exception e) {
-          throw new RuntimeException("Exception when executing the delete queries.", e);
+          throw new RuntimeException("Exception when executing the following query: " + command, e);
         }
       }
 
       con.commit();
     } catch (Exception e) {
-      log4j.error("Exception when deleting the client: ", e);
+      log4j.error("Exception when deleting the client " + clientId, e);
       OBDal.getInstance().rollbackAndClose();
-      throw new RuntimeException(
-          "The client is not removed because an exception is thrown while executing the delete queries. ",
-          e);
+      throw new RuntimeException("@DeleteClient_ClientNotRemoved@", e);
     } finally {
       OBDal.getInstance().commitAndClose();
       enableConstraints(platform);

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -80,8 +80,7 @@ public class DeleteClient extends HttpSecureAppServlet {
       }
     } catch (Exception e) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
-      e.printStackTrace();
-      log4j.warn("Error");
+      log4j.error("Error while trying to delete a client.", e);
     }
     if (myMessage == null) {
       myMessage = new OBError();
