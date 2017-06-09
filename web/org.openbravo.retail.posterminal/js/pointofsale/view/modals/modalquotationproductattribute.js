@@ -160,9 +160,6 @@ enyo.kind({
       components: [{
         name: 'headerTitle',
         type: 'text'
-      }, {
-        name: 'documentno',
-        type: 'text'
       }]
     });
   }

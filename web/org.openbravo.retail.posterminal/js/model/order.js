@@ -1524,7 +1524,8 @@
           me = this,
           productHavingSameAttribute = false,
           productHasAttribute = p.attributes.hasAttributes,
-          attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true);
+          attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true),
+          isQuotationAndAttributeAllowed = me.attributes.isQuotation && OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenQuotationToSalesOrder', true);
       if (enyo.Panels.isScreenNarrow()) {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_AddLine', [qty ? qty : 1, p.get('_identifier')]));
       }
@@ -1539,7 +1540,7 @@
             if (attrs && (currentline.attributeValue === attrs.attributeValue) && (p.id === currentline.product.id)) {
               productHavingSameAttribute = true;
               line = currentline;
-              if (p.get('isSerialNo')) {
+              if (p.get('isSerialNo') || (p.get('isSerialNo') && isQuotationAndAttributeAllowed)) {
                 OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ProductDefinedAsSerialNo'));
                 if (callback) {
                   callback(false, null);
@@ -1920,7 +1921,8 @@
     },
 
     addProductToOrder: function (p, qty, options, attrs, callback) {
-      var me = this;
+      var me = this,
+          attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true);
       OB.UTIL.HookManager.executeHooks('OBPOS_AddProductToOrder', {
         receipt: this,
         productToAdd: p,
@@ -1969,7 +1971,8 @@
           }
           return;
         }
-        if ((!args || !args.options || !args.options.line) && OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true) && p.get('hasAttributes') && qty >= 1) {
+        var isQuotationAndAttributeAllowed = args.receipt.attributes.isQuotation && OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenQuotationToSalesOrder', true);
+        if ((!args || !args.options || !args.options.line) && attributeSearchAllowed && p.get('hasAttributes') && qty >= 1 && (!args.receipt.attributes.isQuotation || isQuotationAndAttributeAllowed)) {
           OB.MobileApp.view.waterfall('onShowPopup', {
             popup: 'modalProductAttribute',
             args: {
@@ -2964,7 +2967,11 @@
     createOrderFromQuotation: function (updatePrices) {
       var idMap = {},
           oldIdMap = {},
-          oldId, me = this;
+          oldId, me = this,
+          productHasAttribute = false,
+          productWithAttributeValue = [],
+          needAttributeForOrder = OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenQuotationToSalesOrder', true),
+          attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true);
       this.get('lines').each(function (line) {
         oldId = line.get('id');
         line.set('id', OB.UTIL.get_UUID());
@@ -3038,16 +3045,14 @@
         }
       }, this);
 
-      var productHasAttribute = false,
-          productWithAttributeValue = [];
       this.get('lines').each(function (theLine) {
         var productAttributes = theLine.attributes.product.attributes;
-        if (OB.UTIL.isNullOrUndefined(productAttributes.hasAttributes) === false) {
+        if (OB.UTIL.isNullOrUndefined(productAttributes.hasAttributes) === false && productAttributes.hasAttributes) {
           productWithAttributeValue.push(theLine);
           productHasAttribute = productAttributes.hasAttributes;
         }
       });
-      if (!productHasAttribute) {
+      if (!productHasAttribute && !needAttributeForOrder) {
         if (updatePrices) {
           this.updatePrices(function (order) {
             order.calculateReceipt(function () {
@@ -3067,7 +3072,7 @@
       }
       this.calculateReceipt();
       //call quotation attributes popup
-      if (OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true) && productHasAttribute) {
+      if (attributeSearchAllowed && !productHasAttribute && needAttributeForOrder) {
         OB.MobileApp.view.waterfall('onShowPopup', {
           popup: 'modalQuotationProductAttributes',
           args: {
