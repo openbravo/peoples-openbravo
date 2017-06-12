@@ -213,6 +213,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       }
 
       if (strUserAuth == null) {
+        if (AuthenticationManager.isStatelessRequest(request)) {
+          response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        }
         // auth-manager return null after redirecting to the login page -> stop request-processing
         return;
       }
