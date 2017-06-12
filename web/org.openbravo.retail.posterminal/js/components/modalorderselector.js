@@ -193,7 +193,7 @@ enyo.kind({
     if (inEvent.orderby) {
       orderByClause = inEvent.orderby.serverColumn + ' ' + inEvent.orderby.direction;
     } else {
-      orderByClause = 'ord.documentNo';
+      orderByClause = 'ord.creationDate desc';
     }
 
     criteria = {
