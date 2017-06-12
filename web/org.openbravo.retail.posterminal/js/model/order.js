@@ -3769,8 +3769,16 @@
             }
             if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && OB.UTIL.Math.sign(line.get('qty')) === OB.UTIL.Math.sign(l.get('qty'))) {
               if (OB.DEC.sub(Math.abs(line.get('qty')), qtyReserved) > 0) {
+                var isManualAdded = false;
                 var isManualOrNotMerge = _.find(line.get('promotions'), function (promo) {
-                  return promo.manual || promo.doNotMerge;
+                  //Verify if manual promotions was added.
+                  _.each(l.get('promotions'), function (p) {
+                    if (p.ruleId === promo.ruleId) {
+                      isManualAdded = true;
+                    }
+                  });
+                  isManualAdded = (!isManualAdded) ? promo.manual : false;
+                  return isManualAdded || promo.doNotMerge;
                 });
                 if (!isManualOrNotMerge) {
                   return line;
