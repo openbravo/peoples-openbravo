@@ -24,13 +24,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import javax.servlet.ServletContext;
-
 import org.apache.log4j.Logger;
-import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.client.application.window.servlet.CalloutServletConfig;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.exception.NoConnectionAvailableException;
+import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * A connection provider which is used on current SimpleCallout infrastructure (see
@@ -42,21 +40,16 @@ import org.openbravo.exception.NoConnectionAvailableException;
  * @author inigo.sanchez
  */
 public class DelegateConnectionProvider implements ConnectionProvider {
-
   protected ConnectionProvider myPool;
-  private ServletContext context;
   protected Logger log4j = Logger.getLogger(this.getClass());
 
   public void init(CalloutServletConfig config) {
-    context = config.getServletContext();
-    if (myPool == null) {
-      myPool = ConnectionProviderContextListener.getPool(context);
-    }
+    myPool = getPool();
   }
 
   private ConnectionProvider getPool() {
     if (myPool == null) {
-      myPool = ConnectionProviderContextListener.getPool(context);
+      myPool = new DalConnectionProvider(false);
     }
     return myPool;
   }
