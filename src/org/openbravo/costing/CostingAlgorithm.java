@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2016 Openbravo SLU
+ * All portions are Copyright (C) 2012-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -488,16 +488,27 @@ public abstract class CostingAlgorithm {
       // Reload from database in case previous partTrx cost calculation has cleared the session.
       prodLine = (ProductionLine) OBDal.getInstance().getProxy(ProductionLine.ENTITY_NAME,
           prodLine.getId());
-      MaterialTransaction partTransaction = prodLine.getMaterialMgmtMaterialTransactionList()
-          .get(0);
-      // Reload from database in case previous partTrx cost calculation has cleared the session.
-      partTransaction = OBDal.getInstance().get(MaterialTransaction.class, partTransaction.getId());
-      // Calculate transaction cost if it is not calculated yet.
-      BigDecimal trxCost = CostingUtils.getTransactionCost(partTransaction,
-          transaction.getTransactionProcessDate(), true, costCurrency);
-      if (trxCost == null) {
-        throw new OBException("@NoCostCalculated@: " + partTransaction.getIdentifier());
+
+      BigDecimal trxCost;
+      List<MaterialTransaction> trxList = prodLine.getMaterialMgmtMaterialTransactionList();
+      if (trxList.isEmpty()) {
+        // If there isn't any material transaction get the default cost of the product.
+        trxCost = CostingUtils.getStandardCost(prodLine.getProduct(), costOrg,
+            transaction.getTransactionProcessDate(), costDimensions, costCurrency).multiply(
+            prodLine.getMovementQuantity().abs());
+      } else {
+        MaterialTransaction partTransaction = trxList.get(0);
+        // Reload from database in case previous partTrx cost calculation has cleared the session.
+        partTransaction = OBDal.getInstance().get(MaterialTransaction.class,
+            partTransaction.getId());
+        // Calculate transaction cost if it is not calculated yet.
+        trxCost = CostingUtils.getTransactionCost(partTransaction,
+            transaction.getTransactionProcessDate(), true, costCurrency);
+        if (trxCost == null) {
+          throw new OBException("@NoCostCalculated@: " + partTransaction.getIdentifier());
+        }
       }
+
       totalCost = totalCost.add(trxCost);
     }
     return totalCost;
