@@ -107,7 +107,8 @@ enyo.kind({
     onCheckPresetFilterSelector: 'checkPresetFilterSelector',
     onAdvancedFilterSelector: 'advancedFilterSelector',
     onSetSelectorAdvancedSearch: 'setSelectorAdvancedSearch',
-    onCloseSelector: 'closeSelector'
+    onCloseSelector: 'closeSelector',
+    onErrorCalcLineTax: 'errorCalcLineTax'
   },
   events: {
     onShowPopup: '',
@@ -1403,6 +1404,11 @@ enyo.kind({
   },
   closeSelector: function (inSender, inEvent) {
     this.waterfall('onCloseCancelSelector', inEvent);
+  },
+  errorCalcLineTax: function (inSender, inEvent) {
+    if (OB.MobileApp.model.get('serviceSearchMode')) {
+      OB.MobileApp.view.$.containerWindow.getRoot().$.multiColumn.$.rightToolbar.$.rightToolbar.manualTap('edit');
+    }
   },
   rearrangeEditButtonBar: function (inSender, inEvent) {
     this.waterfall('onRearrangedEditButtonBar', inEvent);
