@@ -100,13 +100,10 @@ public class AgingDao {
     AgingDaoData dataSR = null;
     AgingDaoData dataCreditSR = null;
     long init = System.currentTimeMillis();
-    int limit = 0;
-    String pgLimit = null, oraLimit = null;
     final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
-    if (StringUtils.equals(vars.getSessionValue("dataLimited"), "true")) {
-      String reportLimitPrefValue = Utility.getPreference(vars, "ReportsLimit", "");
-      limit = Integer.parseInt(reportLimitPrefValue.isEmpty() ? "0" : reportLimitPrefValue);
-
+    int limit = (int) vars.getSessionObject("reportsLimit");
+    String pgLimit = null, oraLimit = null;
+    if (limit > 0) {
       if (connectionProvider.getRDBMS().equalsIgnoreCase("ORACLE")) {
         oraLimit = String.valueOf(limit + 1);
       } else {
@@ -226,14 +223,9 @@ public class AgingDao {
 
     OBContext.setAdminMode(true);
     long init = System.currentTimeMillis();
-    int limit = 0;
+    int limit = (int) RequestContext.get().getVariablesSecureApp().getSessionObject("reportsLimit");
     String pgLimit = null, oraLimit = null;
-    final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
-
-    if (StringUtils.equals(vars.getSessionValue("dataLimited"), "true")) {
-      String reportLimitPrefValue = Utility.getPreference(vars, "ReportsLimit", "");
-      limit = Integer.parseInt(reportLimitPrefValue.isEmpty() ? "0" : reportLimitPrefValue);
-
+    if (limit > 0) {
       if (connectionProvider.getRDBMS().equalsIgnoreCase("ORACLE")) {
         oraLimit = String.valueOf(limit + 1);
       } else {
