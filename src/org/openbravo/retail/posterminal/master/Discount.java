@@ -82,11 +82,7 @@ public class Discount extends ProcessHQLQuery {
       hql += "    ) ";
     }
     // assortment products
-    hql += "and ((p.includedProducts = 'Y' and not exists (select 1 ";
-    hql += "      from PricingAdjustmentProduct pap, OBRETCO_Prol_Product ppl ";
-    hql += "      where pap.active = true and pap.priceAdjustment = p ";
-    hql += "      and pap.product.id = ppl.product.id ";
-    hql += "      and ppl.obretcoProductlist.id ='" + productList.getId() + "')) ";
+    hql += "and ((p.includedProducts = 'Y') ";
     hql += "  or (p.includedProducts = 'N' and exists (select 1 ";
     hql += "      from PricingAdjustmentProduct pap, OBRETCO_Prol_Product ppl ";
     hql += "      where pap.active = true and pap.priceAdjustment = p ";
