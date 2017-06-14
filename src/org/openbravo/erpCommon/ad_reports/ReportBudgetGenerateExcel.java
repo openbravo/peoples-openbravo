@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,11 +46,10 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      String strcAcctSchemaId = vars.getGlobalVariable("inpcAcctSchemaId",
-          "ReportGeneralLedger|cAcctSchemaId", "");
-      printPageDataSheet(response, vars, strcAcctSchemaId);
-    } else if (vars.commandIn("EXCEL")) {
+      printPageDataSheet(response, vars);
+    }
 
+    else if (vars.commandIn("EXCEL")) {
       vars.removeSessionValue("ReportBudgetGenerateExcel|inpTabId");
       String strBPartner = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportBudgetGenerateExcel|inpcBPartnerId_IN", IsIDFilter.instance);
@@ -79,17 +78,22 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
       String strMonth = vars.getRequestInGlobalVariable("inpMonth",
           "ReportBudgetGenerateExcel|inpMonthId", IsIDFilter.instance);
       String strAccount = vars.getRequestGlobalVariable("paramAccountSelect",
-          "ReportBudgetGenerateExcel|cAccountId");
-      String strcAcctSchemaId = vars.getStringParameter("inpcAcctSchemaId", "");
+          "ReportBudgetGenerateExcel|cAccountId", IsIDFilter.instance);
+      String strcAcctSchemaId = vars
+          .getStringParameter("inpcAcctSchemaId", "", IsIDFilter.instance);
+
       printPageDataExcel(response, vars, strBPartner, strBPGroup, strProduct, strProdCategory,
           strUser1, strUser2, strCostcenter, strSalesRegion, strCampaign, strActivity, strProject,
           strTrxOrg, strMonth, strcAcctSchemaId, strAccount);
-    } else
+    }
+
+    else {
       pageErrorPopUp(response);
+    }
   }
 
-  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
-      String strcAcctSchemaId) throws IOException, ServletException {
+  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = null;
