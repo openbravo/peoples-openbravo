@@ -89,7 +89,7 @@ public class BaseWebServiceServlet extends HttpServlet {
     } catch (AuthenticationException e) {
       final boolean sessionCreated = !sessionExists && null != request.getSession(false);
       if (sessionCreated && AuthenticationManager.isStatelessRequest(request)) {
-        log4j.warn("Stateless request, still a session was created " + request.getRequestURL()
+        log.warn("Stateless request, still a session was created " + request.getRequestURL()
             + " " + request.getQueryString());
       }
 
