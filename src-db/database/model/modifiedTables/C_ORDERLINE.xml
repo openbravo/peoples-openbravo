@@ -33,6 +33,9 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <index name="EM_OBPOS_CANBEDELIVERED" unique="false">
+        <index-column name="EM_OBPOS_CANBEDELIVERED"/>
+      </index>
       <index name="EM_OBPOS_DELIVEREDQTY" unique="false">
         <index-column name="C_ORDER_ID"/>
         <index-column name="QTYDELIVERED"/>
