@@ -166,6 +166,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   public void service(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
 
+    final boolean sessionExists = request.getSession(false) != null;
+
     AllowedCrossDomainsHandler.getInstance().setCORSHeaders(request, response);
 
     // don't process any further requests otherwise sessions are created for OPTIONS
@@ -363,6 +365,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       logout(request, response);
       return;
     } finally {
+      final boolean sessionCreated = !sessionExists && null != request.getSession(false);
+      if (AuthenticationManager.isStatelessRequest(request) && sessionCreated) {
+        log4j.warn("Stateless request, still a session was created " + request.getRequestURL()
+            + " " + request.getQueryString());
+      }
       OBContext.restorePreviousMode();
     }
 

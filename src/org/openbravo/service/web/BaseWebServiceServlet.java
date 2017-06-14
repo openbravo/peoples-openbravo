@@ -62,6 +62,8 @@ public class BaseWebServiceServlet extends HttpServlet {
   protected final void service(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
+    final boolean sessionExists = request.getSession(false) != null;
+
     // do the login action
     AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
 
@@ -85,6 +87,12 @@ public class BaseWebServiceServlet extends HttpServlet {
     try {
       userId = authManager.webServiceAuthenticate(request);
     } catch (AuthenticationException e) {
+      final boolean sessionCreated = !sessionExists && null != request.getSession(false);
+      if (sessionCreated && AuthenticationManager.isStatelessRequest(request)) {
+        log4j.warn("Stateless request, still a session was created " + request.getRequestURL()
+            + " " + request.getQueryString());
+      }
+
       response.setStatus(HttpServletResponse.SC_FORBIDDEN);
       response.setContentType("text/plain;charset=UTF-8");
       final Writer w = response.getWriter();
@@ -100,6 +108,12 @@ public class BaseWebServiceServlet extends HttpServlet {
       try {
         doService(request, response);
       } finally {
+        final boolean sessionCreated = !sessionExists && null != request.getSession(false);
+        if (sessionCreated && AuthenticationManager.isStatelessRequest(request)) {
+          log.warn("Stateless request, still a session was created " + request.getRequestURL()
+              + " " + request.getQueryString());
+        }
+
         HttpSession session = request.getSession(false);
         if (session != null) {
           // HttpSession for WS should typically expire fast
