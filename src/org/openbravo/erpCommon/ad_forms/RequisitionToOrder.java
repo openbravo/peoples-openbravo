@@ -691,7 +691,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
 
         lines[i].aumqty = lines[i].lockaumqty;
         if (uomManagementPreference && lines[i].quantityorder.isEmpty()
-            && lines[i].secuomname.equals("**")) {
+            && StringUtils.equals(lines[i].secuomname, "**")) {
           try {
             if (lines[i].cAum.isEmpty()) {
               RequisitionToOrderData[] defaultAumData = RequisitionToOrderData.selectAUMDefault(
