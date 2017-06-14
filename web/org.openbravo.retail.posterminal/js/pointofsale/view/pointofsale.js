@@ -631,20 +631,31 @@ enyo.kind({
     return true;
   },
   changeBusinessPartner: function (inSender, inEvent) {
-    var bp = this.model.get('order').get('bp'),
+    var component = this,
+        isBPChange = component.model.get('order').get('bp').get('id') !== inEvent.businessPartner.get('id'),
+        isShippingChange = component.model.get('order').get('bp').get('shipLocId') !== inEvent.businessPartner.get('shipLocId'),
+        isInvoicingChange = component.model.get('order').get('bp').get('locId') !== inEvent.businessPartner.get('locId'),
+        bp = this.model.get('order').get('bp'),
         eventBP = inEvent.businessPartner;
-    if (inEvent.target === 'order' || inEvent.target === undefined) {
-      if (this.model.get('order').get('isEditable') === false && (bp.get('id') !== eventBP.get('id') || bp.get('locId') !== eventBP.get('locId') || bp.get('shipLocId') !== eventBP.get('shipLocId'))) {
-        this.doShowPopup({
-          popup: 'modalNotEditableOrder'
-        });
-        return true;
+    OB.UTIL.HookManager.executeHooks('OBPOS_preChangeBusinessPartner', {
+      bp: inEvent.businessPartner,
+      isBPChange: isBPChange,
+      isShippingChange: isShippingChange,
+      isInvoicingChange: isInvoicingChange
+    }, function () {
+      if (inEvent.target === 'order' || inEvent.target === undefined) {
+        if (component.model.get('order').get('isEditable') === false && (isBPChange || isInvoicingChange || isShippingChange)) {
+          component.doShowPopup({
+            popup: 'modalNotEditableOrder'
+          });
+          return true;
+        }
+        component.model.get('order').setBPandBPLoc(eventBP, false, true);
+        component.model.get('orderList').saveCurrent();
+      } else {
+        component.waterfall('onChangeBPartner', inEvent);
       }
-      this.model.get('order').setBPandBPLoc(eventBP, false, true);
-      this.model.get('orderList').saveCurrent();
-    } else {
-      this.waterfall('onChangeBPartner', inEvent);
-    }
+    });
     return true;
   },
   receiptToInvoice: function () {
