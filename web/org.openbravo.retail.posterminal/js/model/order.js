@@ -111,7 +111,7 @@
     },
 
     printQty: function () {
-      return this.get('qty').toString();
+      return OB.DEC.toNumber(OB.DEC.toBigDecimal(this.get('qty')), OB.I18N.qtyScale()).toString();
     },
 
     printPrice: function () {
