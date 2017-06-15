@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -225,7 +225,12 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
       try {
         // now parse the property elements
         for (final Element childElement : (List<Element>) obElement.elements()) {
-          final Property p = entity.getProperty(childElement.getName());
+          final Property p = entity.getProperty(childElement.getName(), false);
+          if (p == null) {
+            log.warn("Trying to set property " + childElement.getName() + " in entity "
+                + entity.getName() + ". Cannot find property in entity, skipping it.");
+            continue;
+          }
           log.debug(">>> Exporting property " + p.getName());
 
           // TODO: make this option controlled
