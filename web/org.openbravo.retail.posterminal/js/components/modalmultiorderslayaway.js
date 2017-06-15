@@ -74,6 +74,7 @@ enyo.kind({
       this.doHideThisPopup();
       return;
     }
+    amount = OB.DEC.toNumber(OB.DEC.toBigDecimal(amount));
     if (amount === 0) {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_amtGreaterThanZero'), [{
         isConfirmButton: true,
