@@ -365,10 +365,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         if (pendingorder && pendingorder.get('lines') && pendingorder.get('lines').length === 0) {
           return true;
         }
-        // Detect Layaway orders
-        if (pendingorder && pendingorder.get('isLayaway') === true) {
-          return true;
-        }
       });
 
       _.each(emptyOrders, function (orderToRemove) {
