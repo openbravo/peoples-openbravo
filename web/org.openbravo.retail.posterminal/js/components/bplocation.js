@@ -630,7 +630,7 @@ enyo.kind({
     }]
   }],
   canHidePopup: function () {
-    return !this.$.btnContextMenu.dialog.manageAddress;
+    return true;
   },
   create: function () {
     this.inherited(arguments);
@@ -762,6 +762,7 @@ enyo.kind({
     this.$.bpsloclistitemprinter.setCollection(this.bpsList);
     this.bpsList.on('click', function (model) {
       var me = this;
+      me.owner.owner.selectorHide = true;
 
       function errorCallback(tx, error) {
         OB.error(tx);
@@ -794,11 +795,11 @@ enyo.kind({
         } else {
           me.doChangeBusinessPartner({
             businessPartner: dataBps,
-            target: me.owner.owner.args.target
+            target: 'order'
           });
         }
       }
-      if (!model.get('ignoreSetBPLoc') && !this.manageAddress) {
+      if (!model.get('ignoreSetBPLoc')) {
         OB.Dal.get(OB.Model.BusinessPartner, this.bPartner.get('id'), successCallbackBPs, errorCallback);
       }
     }, this);
