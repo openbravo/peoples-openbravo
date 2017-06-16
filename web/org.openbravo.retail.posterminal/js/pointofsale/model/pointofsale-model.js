@@ -951,11 +951,20 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           };
 
       function successCallbackBPs(dataBps) {
-        var partnerAddressId = OB.MobileApp.model.get('terminal').partnerAddress,
-            successCallbackBPLoc;
-
         if (dataBps) {
+          var partnerAddressId = OB.MobileApp.model.get('terminal').partnerAddress;
           dataBps.loadBPLocations(null, null, function (shipping, billing, locations) {
+            var defaultAddress = _.find(locations, function (loc) {
+              return loc.id === partnerAddressId;
+            });
+            if (defaultAddress) {
+              if (defaultAddress.get('isShipTo')) {
+                shipping = defaultAddress;
+              }
+              if (defaultAddress.get('isBillTo')) {
+                billing = defaultAddress;
+              }
+            }
             dataBps.setBPLocations(shipping, billing, true);
             dataBps.set('locations', locations);
             OB.MobileApp.model.set('businessPartner', dataBps);
