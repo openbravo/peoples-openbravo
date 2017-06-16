@@ -157,9 +157,12 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
       activeHttpSessions.add(event.getSession());
     }
 
+
     if (RequestContext.get().getRequest() != null
         && AuthenticationManager.isStatelessRequest(RequestContext.get().getRequest())) {
-      log.error("Request is stateless, still a session is created ", new Exception());
+      final String errorLog = RequestContext.get().getRequest().getRequestURL() + " "
+          + RequestContext.get().getRequest().getQueryString();
+      log.error("Request is stateless, still a session is created " + errorLog, new Exception());
     }
 
     log.debug("Session created. Active sessions count: " + activeHttpSessions.size());
