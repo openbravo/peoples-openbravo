@@ -82,7 +82,7 @@ enyo.kind({
   tap: function () {
     this.doChangeBusinessPartner({
       businessPartner: this.customer,
-      target: this.target
+      target: 'order'
     });
     this.doPressedButton();
   },
