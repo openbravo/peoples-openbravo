@@ -1921,7 +1921,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     // Create a unique payment schedule for all payments
     BigDecimal amt = BigDecimal.valueOf(jsonorder.getDouble("payment"));
-    FIN_PaymentSchedule paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
+    FIN_PaymentSchedule paymentSchedule;
     int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
         .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
     BigDecimal amountPaidWithCredit = BigDecimal.ZERO;
@@ -1929,8 +1929,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       amountPaidWithCredit = (BigDecimal.valueOf(jsonorder.getDouble("gross")).subtract(BigDecimal
           .valueOf(jsonorder.getDouble("payment")))).setScale(pricePrecision, RoundingMode.HALF_UP);
     }
-    if (((!newLayaway || isModified) && (notpaidLayaway || creditpaidLayaway || fullypaidLayaway))
-        || partialpaidLayaway || paidReceipt) {
+    if (!order.getFINPaymentScheduleList().isEmpty()) {
       paymentSchedule = order.getFINPaymentScheduleList().get(0);
     } else {
       paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
@@ -1938,25 +1937,26 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       paymentSchedule.setNewOBObject(true);
       paymentSchedule.setCurrency(order.getCurrency());
       paymentSchedule.setOrder(order);
-      paymentSchedule.setFinPaymentmethod(order.getPaymentMethod());
-      // paymentSchedule.setPaidAmount(new BigDecimal(0));
-      paymentSchedule.setAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")).setScale(
-          pricePrecision, RoundingMode.HALF_UP));
-      // Sept 2012 -> gross because outstanding is not allowed in Openbravo Web POS
-      paymentSchedule.setOutstandingAmount(BigDecimal.valueOf(jsonorder.getDouble("gross"))
-          .setScale(pricePrecision, RoundingMode.HALF_UP));
-      paymentSchedule.setDueDate(order.getOrderDate());
-      paymentSchedule.setExpectedDate(order.getOrderDate());
-      if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
-          .hasProperty("origDueDate")) {
-        // This property is checked and set this way to force compatibility with both MP13, MP14
-        // and
-        // later releases of Openbravo. This property is mandatory and must be set. Check issue
-        paymentSchedule.set("origDueDate", paymentSchedule.getDueDate());
-      }
-      paymentSchedule.setFINPaymentPriority(order.getFINPaymentPriority());
-      OBDal.getInstance().save(paymentSchedule);
     }
+    paymentSchedule.setFinPaymentmethod(order.getPaymentMethod());
+    // paymentSchedule.setPaidAmount(new BigDecimal(0));
+    paymentSchedule.setAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")).setScale(
+        pricePrecision, RoundingMode.HALF_UP));
+    // Sept 2012 -> gross because outstanding is not allowed in Openbravo Web POS
+    paymentSchedule.setOutstandingAmount(BigDecimal.valueOf(jsonorder.getDouble("gross"))
+        .setScale(pricePrecision, RoundingMode.HALF_UP));
+    paymentSchedule.setDueDate(order.getOrderDate());
+    paymentSchedule.setExpectedDate(order.getOrderDate());
+    if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
+        .hasProperty("origDueDate")) {
+      // This property is checked and set this way to force compatibility with both MP13, MP14
+      // and
+      // later releases of Openbravo. This property is mandatory and must be set. Check issue
+      paymentSchedule.set("origDueDate", paymentSchedule.getDueDate());
+    }
+    paymentSchedule.setFINPaymentPriority(order.getFINPaymentPriority());
+    OBDal.getInstance().save(paymentSchedule);
+    
     Boolean isInvoicePaymentScheduleNew = false;
     FIN_PaymentSchedule paymentScheduleInvoice = null;
     if (invoice != null && invoice.getGrandTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
