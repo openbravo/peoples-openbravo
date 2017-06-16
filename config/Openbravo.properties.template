@@ -100,8 +100,6 @@ db.pool.testOnReturn=false
 db.pool.validationQuery=SELECT 1 FROM DUAL
 db.pool.validationInterval=30000
 db.pool.jmxEnabled=false
-db.pool.logAbandoned=true
-db.pool.suspectTimeout=60
 
 ##################
 # Tomcat manager #
