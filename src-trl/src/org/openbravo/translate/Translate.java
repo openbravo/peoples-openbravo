@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.xerces.parsers.SAXParser;
 import org.openbravo.database.CPStandAlone;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.utils.DirFilter;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -726,6 +727,9 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * The method to close database connection.
    */
   private void destroy() {
+    // remove cached connection from thread local
+    SessionInfo.init();
+
     pool.destroy();
   }
 }
