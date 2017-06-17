@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2016 Openbravo SLU
+* All portions are Copyright (C) 2001-2017 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -269,6 +269,7 @@
         IL.C_TAX_ID,
         TO_NUMBER(NULL) AS RAPPELINVOICED,
         (-v_Discount) *SUM(IL.LINENETAMT) /100 AS LINENET, --    SUM(IL.LINENETAMT)
+        (-v_Discount) *SUM(IL.LINE_GROSS_AMOUNT) /100 AS GROSS_AMOUNT,
         COALESCE(IL.C_PROJECT_ID, I.C_PROJECT_ID) AS C_PROJECT_ID,
         COALESCE(IL.USER1_ID, I.USER1_ID) AS USER1_ID,
         COALESCE(IL.USER2_ID, I.USER2_ID) AS USER2_ID,
@@ -467,7 +468,7 @@
           CREATED, CREATEDBY, UPDATED, UPDATEDBY,
           C_INVOICE_ID, C_ORDERLINE_ID, M_INOUTLINE_ID, LINE,
           DESCRIPTION, M_PRODUCT_ID, QTYINVOICED, PRICELIST,
-          PRICEACTUAL, PRICELIMIT, LINENETAMT, C_CHARGE_ID,
+          PRICEACTUAL, PRICELIMIT, LINENETAMT, LINE_GROSS_AMOUNT, C_CHARGE_ID,
           CHARGEAMT, C_UOM_ID, C_TAX_ID, S_RESOURCEASSIGNMENT_ID,
           TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION,
           QUANTITYORDER, M_PRODUCT_UOM_ID, PRICESTD, M_OFFER_ID,
@@ -481,7 +482,7 @@
           now(), v_AD_User_ID, now(), v_AD_User_ID,
           v_invoiceId, NULL, NULL, v_line,
           v_description, CUR_INVOICE.M_PRODUCT_ID, 0, 0,
-          0, 0, CUR_INVOICE.LINENET, NULL,
+          0, 0, CUR_INVOICE.LINENET, CUR_INVOICE.GROSS_AMOUNT, NULL,
           0, CUR_INVOICE.C_UOM_ID, CUR_INVOICE.C_TAX_ID, NULL,
           0, NULL, 'N',
           NULL, NULL, 0, NULL,
