@@ -108,7 +108,8 @@
             if (eventParams && eventParams.callback) {
               eventParams.callback({
                 frozenReceipt: receipt,
-                isCancelled: true
+                isCancelled: true,
+                skipCallback: args.skipCallback
               });
             }
             args.context.receipt.setIsCalculateReceiptLockState(false);

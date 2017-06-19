@@ -350,6 +350,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             receipt.set('isBeingClosed', true);
             receipt.trigger('closed', {
               callback: function (args) {
+                if (args.skipCallback) {
+                  enyo.$.scrim.hide();
+                  OB.UTIL.SynchronizationHelper.finished(synchId, "receipt.paymentAccepted");
+                  return true;
+                }
                 receipt.set('isBeingClosed', false);
 
                 _.each(orderList.models, function (ol) {
