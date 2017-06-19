@@ -67,7 +67,7 @@ isc.OBParameterWindowForm.addProperties({
     // Check validation rules (subordinated fields), when value of a
     // parent field is changed, all its subordinated are reset
     var dynamicColumns = this.paramWindow.dynamicColumns;
-    if (dynamicColumns && dynamicColumns[item.name]){
+    if (dynamicColumns && dynamicColumns[item.name]) {
       affectedParams = dynamicColumns[item.name];
     }
     if (affectedParams) {
