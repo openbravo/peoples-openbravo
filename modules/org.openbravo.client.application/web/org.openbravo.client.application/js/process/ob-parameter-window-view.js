@@ -222,7 +222,7 @@ isc.OBParameterWindowView.addProperties({
       tab.setTitle(OB.I18N.getLabel('OBUIAPP_ProcessTitle_Done', [this.tabTitle]));
     }
 
-    if (data.showResultsInProcessView) {
+    if (data && data.showResultsInProcessView) {
       if (!this.resultLayout) {
         this.resultLayout = isc.HLayout.create({
           width: '100%',
