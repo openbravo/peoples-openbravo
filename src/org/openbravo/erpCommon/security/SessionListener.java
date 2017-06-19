@@ -91,6 +91,8 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
       }
     }
     SessionListener.context = null;
+    // detaching db connection from thread so can it be returned to pool
+    SessionInfo.init();
     log.info("Sessions deactivated in " + (System.currentTimeMillis() - t) + " ms");
   }
 
@@ -157,7 +159,6 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
       activeHttpSessions.add(event.getSession());
     }
 
-
     if (RequestContext.get().getRequest() != null
         && AuthenticationManager.isStatelessRequest(RequestContext.get().getRequest())) {
       final String errorLog = RequestContext.get().getRequest().getRequestURL() + " "
@@ -198,6 +199,9 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
       log.debug("Closed session" + sessionId);
     } catch (Exception e) {
       log.error("Error closing session:" + sessionId, e);
+    } finally {
+      // detaching db connection from thread so can it be returned to pool
+      SessionInfo.init();
     }
   }
 
