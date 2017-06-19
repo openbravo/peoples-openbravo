@@ -264,7 +264,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     boolean strHaveAumDataLines = false;
     for (int i = 0; i < datalines.length; i++) {
       try {
-        if (!datalines[i].quantityorder.isEmpty() && !datalines[i].secuomname.equals("**")) {
+        if (!datalines[i].quantityorder.isEmpty()
+            && !StringUtils.equals(datalines[i].secuomname, "**")) {
           strHaveSecDataLines = true;
         }
         if (uomManagementPreference && !datalines[i].cAum.isEmpty()
@@ -286,7 +287,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
         xmlDocument.setParameter("uompreference", "");
         xmlDocument.setParameter("havesecuom", "");
         if (datalines[i].cAum.isEmpty() && datalines[i].aumqty.isEmpty()
-            && datalines[i].quantityorder.isEmpty() && datalines[i].secuomname.equals("**")) {
+            && datalines[i].quantityorder.isEmpty()
+            && StringUtils.equals(datalines[i].secuomname, "**")) {
           RequisitionToOrderData[] defaultAumData = RequisitionToOrderData.selectAUMDefault(this,
               datalines[i].mProductId);
           String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0].cAum
@@ -301,7 +303,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           }
         }
       } else if (uomManagementPreference && datalines[i].quantityorder.isEmpty()
-          && datalines[i].secuomname.equals("**")) {
+          && StringUtils.equals(datalines[i].secuomname, "**")) {
         // UOM preference is Y and no line has secondary UOM
         datalines[i].havesecuom = "none";
         xmlDocument.setParameter("uompreference", "");
@@ -332,7 +334,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     boolean strHaveAumDataSelected = false;
     for (int i = 0; i < dataselected.length; i++) {
       try {
-        if (!dataselected[i].quantityorder.isEmpty() && !dataselected[i].secuomname.equals("**")) {
+        if (!dataselected[i].quantityorder.isEmpty()
+            && !StringUtils.equals(dataselected[i].secuomname, "**")) {
           strHaveSecDataSelected = true;
         }
         if (uomManagementPreference && !dataselected[i].cAum.isEmpty()
@@ -354,7 +357,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
         xmlDocument.setParameter("uompreferencesel", "");
         xmlDocument.setParameter("havesecuomsel", "");
         if (dataselected[i].cAum.isEmpty() && dataselected[i].aumqty.isEmpty()
-            && dataselected[i].quantityorder.isEmpty() && dataselected[i].secuomname.equals("**")) {
+            && dataselected[i].quantityorder.isEmpty()
+            && StringUtils.equals(dataselected[i].secuomname, "**")) {
           RequisitionToOrderData[] defaultAumData = RequisitionToOrderData.selectAUMDefault(this,
               dataselected[i].mProductId);
           String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0].cAum
@@ -369,7 +373,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           }
         }
       } else if (uomManagementPreference && dataselected[i].quantityorder.isEmpty()
-          && dataselected[i].secuomname.equals("**")) {
+          && StringUtils.equals(dataselected[i].secuomname, "**")) {
         // UOM preference is Y and no line has secondary UOM
         dataselected[i].havesecuom = "none";
         xmlDocument.setParameter("uompreferencesel", "");
@@ -431,7 +435,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       String strLockQty = "";
       String strLockAqumQty = null;
       if (uomManagementPreference && dataselected[i].quantityorder.isEmpty()
-          && dataselected[i].secuomname.equals("**")) {
+          && StringUtils.equals(dataselected[i].secuomname, "**")) {
         strLockQty = vars.getNumericParameter("inpQty" + dataselected[i].mRequisitionlineId);
         strLockAqumQty = vars.getNumericParameter("inpAumQty" + dataselected[i].mRequisitionlineId);
       } else {
