@@ -1467,6 +1467,12 @@ public class VariablesBase {
           session.removeAttribute(sessionName);
           e = session.getAttributeNames();
         }
+        if (!target.equals("")) {
+          session.setAttribute("TARGET", target);
+        }
+        if (targetQueryString != null) {
+          session.setAttribute("TARGETQUERYSTRING", targetQueryString);
+        }
       } else {
         for (String key : sessionAttributes.keySet()) {
           if (log4j.isDebugEnabled())
@@ -1479,24 +1485,17 @@ public class VariablesBase {
           }
         }
         sessionAttributes.clear();
+        if (!target.equals("")) {
+          sessionAttributes.put("TARGET", target);
+        }
+        if (targetQueryString != null) {
+          sessionAttributes.put("TARGETQUERYSTRING", targetQueryString);
+        }
       }
+    } catch (IllegalStateException ignored) {
+      // session is already invalidated: don't do anything
     } catch (Exception e) {
       log4j.error("clearSession error ", e);
-    }
-    if (session != null) {
-      if (!target.equals("")) {
-        session.setAttribute("TARGET", target);
-      }
-      if (targetQueryString != null) {
-        session.setAttribute("TARGETQUERYSTRING", targetQueryString);
-      }
-    } else {
-      if (!target.equals("")) {
-        sessionAttributes.put("TARGET", target);
-      }
-      if (targetQueryString != null) {
-        sessionAttributes.put("TARGETQUERYSTRING", targetQueryString);
-      }
     }
   }
 
