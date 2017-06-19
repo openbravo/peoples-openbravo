@@ -119,7 +119,8 @@ enyo.kind({
   icon: 'btn-icon btn-icon-delete',
   events: {
     onShowPopup: '',
-    onDeleteOrder: ''
+    onDeleteOrder: '',
+    onRemoveMultiOrders: ''
   },
   handlers: {
     onLeftToolbarDisabled: 'disabledButton',
@@ -158,35 +159,24 @@ enyo.kind({
     var i, me = this,
         hasPayments = false,
         isMultiOrders = this.model.isValidMultiOrderState();
-    // validate payments
-    if (isMultiOrders && me.model.get('multiOrders').get('payments').length > 0) {
-      hasPayments = true;
-    } else if (!isMultiOrders && me.model.get('order').get('payments').length > 0) {
-      if (me.model.get('order').get('receiptPayments') && me.model.get('order').get('payments').length > me.model.get('order').get('receiptPayments').length) {
-        hasPayments = true;
-      } else if (!me.model.get('order').get('receiptPayments')) {
-        hasPayments = true;
-      }
-    }
-
-    if (hasPayments) {
-      OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_RemoveReceiptWithPayment'));
-      return true;
-    }
 
     if (isMultiOrders) {
-      me.model.deleteMultiOrderList();
-      me.model.get('multiOrders').resetValues();
-      me.model.get('leftColumnViewManager').setOrderMode();
+      this.doRemoveMultiOrders();
       return true;
     }
+
+    // validate payments
+    if (this.model.get('order').checkOrderPayment()) {
+      return false;
+    }
+
     // deletion without warning is allowed if the ticket has been processed
-    if (me.hasClass('paidticket')) {
-      me.doDeleteOrder();
+    if (this.hasClass('paidticket')) {
+      this.doDeleteOrder();
     } else {
       if (OB.MobileApp.model.hasPermission('OBPOS_approval.removereceipts', true)) {
         //Show the pop up to delete or not
-        me.doShowPopup({
+        this.doShowPopup({
           popup: 'modalConfirmReceiptDelete'
         });
       } else {

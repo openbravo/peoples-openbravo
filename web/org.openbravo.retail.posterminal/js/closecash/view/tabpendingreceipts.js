@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -158,6 +158,16 @@ enyo.kind({
         model = inEvent.originator.model,
         i;
 
+    if (OB.MobileApp.model.get('isMultiOrderState')) {
+      if (OB.MobileApp.model.multiOrders.checkMultiOrderPayment()) {
+        return;
+      }
+    }
+
+    if (model.checkOrderPayment()) {
+      return false;
+    }
+
     OB.UTIL.Approval.requestApproval(
     this.model, 'OBPOS_approval.cashupremovereceipts', function (approved, supervisor, approvalType) {
       if (approved) {
@@ -184,6 +194,16 @@ enyo.kind({
   voidAllOrders: function (inSender, inEvent) {
     var me = this,
         i;
+
+    if (OB.MobileApp.model.get('isMultiOrderState')) {
+      if (OB.MobileApp.model.multiOrders.checkMultiOrderPayment()) {
+        return;
+      }
+    }
+
+    if (this.collection.checkOrderListPayment()) {
+      return false;
+    }
 
     function removeOneModel(model, collection) {
       if (collection.length === 0) {

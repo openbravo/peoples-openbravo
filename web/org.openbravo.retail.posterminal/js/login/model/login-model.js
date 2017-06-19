@@ -885,11 +885,31 @@
         OB.error("postCloseSession", arguments);
         OB.MobileApp.model.triggerLogout();
       }
-      //All pending to be paid orders will be removed on logout
-      criteria.session = OB.MobileApp.model.get('session');
-      criteria.hasbeenpaid = 'N';
-      OB.Dal.find(OB.Model.Order, criteria, success, error);
 
+      if (OB.MobileApp.model.get('isMultiOrderState')) {
+        if (OB.MobileApp.model.multiOrders.checkMultiOrderPayment()) {
+          return;
+        }
+      }
+      if (OB.MobileApp.model.orderList && OB.MobileApp.model.orderList.length > 1) {
+        if (OB.MobileApp.model.orderList.checkOrderListPayment()) {
+          return;
+        }
+      } else if (OB.MobileApp.model.receipt && OB.MobileApp.model.receipt.get('lines').length > 0) {
+        if (OB.MobileApp.model.receipt.checkOrderPayment()) {
+          return;
+        }
+      }
+
+      OB.UTIL.Approval.requestApproval(
+      this, 'OBPOS_approval.removereceipts', function (approved, supervisor, approvalType) {
+        if (approved) {
+          //All pending to be paid orders will be removed on logout
+          criteria.session = OB.MobileApp.model.get('session');
+          criteria.hasbeenpaid = 'N';
+          OB.Dal.find(OB.Model.Order, criteria, success, error);
+        }
+      });
     },
 
     postCloseSession: function (session) {

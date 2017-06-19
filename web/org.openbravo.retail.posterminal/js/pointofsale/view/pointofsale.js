@@ -1280,6 +1280,7 @@ enyo.kind({
       me.model.get('multiOrders').get('multiOrdersList').add(iter);
     });
     this.model.get('leftColumnViewManager').setMultiOrderMode();
+    OB.MobileApp.model.set('isMultiOrderState', true);
     //this.model.get('multiOrders').set('isMultiOrders', true);
     return true;
   },
@@ -1296,8 +1297,7 @@ enyo.kind({
   removeMultiOrders: function (inSender, inEvent) {
     var me = this,
         originator = inEvent.originator;
-    if (me.model.get('multiOrders').get('payments').length > 0) {
-      OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_RemoveReceiptWithPayment'));
+    if (me.model.get('multiOrders').checkMultiOrderPayment()) {
       me.cancelRemoveMultiOrders(originator);
       return true;
     }
