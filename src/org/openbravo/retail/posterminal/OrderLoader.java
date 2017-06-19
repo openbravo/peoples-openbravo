@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -760,7 +761,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   }
 
   private List<Invoice> getInvoicesRelatedToOrder(String orderId) {
-    List<String> lstInvoicesIds = new ArrayList<String>();
+    HashSet<String> lstInvoicesIds = new HashSet<String>();
     List<Invoice> lstInvoices = new ArrayList<Invoice>();
     StringBuffer involvedInvoicedHqlQueryWhereStr = new StringBuffer();
     involvedInvoicedHqlQueryWhereStr.append("SELECT DISTINCT i.id, i.creationDate ");
@@ -780,7 +781,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
 
     if (lstInvoicesIds.size() > 0 && lstInvoicesIds.size() <= 1) {
-      lstInvoices.add(OBDal.getInstance().get(Invoice.class, lstInvoicesIds.get(0)));
+      lstInvoices.add(OBDal.getInstance().get(Invoice.class, lstInvoicesIds.iterator().next()));
       return lstInvoices;
     } else if (lstInvoices.size() > 1) {
       // TODO several invoices

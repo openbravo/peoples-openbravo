@@ -5856,7 +5856,7 @@
             receiptShouldBeInvoiced = true;
           }
         } else if (this.get('bp').get('invoiceTerms') === 'D') {
-          receiptShouldBeShipped = !isQuotation && !notpaidLayaway && !isDeleted && !paidReceipt;
+          receiptShouldBeShipped = !isQuotation && !isDeleted && !paidReceipt;
           if (receiptShouldBeShipped) {
             linesToInvoice = _.find(this.get('lines').models, function (line) {
               return (!OB.UTIL.isNullOrUndefined(line.get('obposQtytodeliver')) ? line.get('obposQtytodeliver') : line.get('qty')) !== 0;
@@ -5897,7 +5897,7 @@
           } else if (me.get('bp').get('invoiceTerms') === 'I' || me.get('bp').get('invoiceTerms') === 'O') {
             qtyToInvoice = qtyPendingToBeInvoiced;
           }
-          if (qtyToInvoice !== 0) {
+          if (qtyToInvoice !== 0 && ol.get('obposCanbedelivered')) {
             lineToInvoice = new OB.Model.OrderLine(ol.attributes);
             lineToInvoice.set('id', OB.UTIL.get_UUID());
             lineToInvoice.set('qty', qtyToInvoice);
@@ -5948,19 +5948,26 @@
           }
         });
 
-        invoice.set('skipApplyPromotions', true);
-        invoice.set('hasBeenPaid', true);
-        invoice.set('dummyPaymentId', OB.UTIL.get_UUID());
-        invoice.set('ignoreCheckIfIsActiveOrder', true);
-        invoice.set('hasbeenpaid', 'Y');
-        invoice.calculateReceipt(function () {
-          invoice.adjustPrices();
-          invoice.set('json', JSON.stringify(invoice.serializeToJSON()));
+        if (invoice.get('lines').length > 0) {
+          invoice.set('skipApplyPromotions', true);
+          invoice.set('hasBeenPaid', true);
+          invoice.set('dummyPaymentId', OB.UTIL.get_UUID());
+          invoice.set('ignoreCheckIfIsActiveOrder', true);
+          invoice.set('hasbeenpaid', 'Y');
+          invoice.calculateReceipt(function () {
+            invoice.adjustPrices();
+            invoice.set('json', JSON.stringify(invoice.serializeToJSON()));
 
-          OB.Dal.save(invoice, function () {
+            OB.Dal.save(invoice, function () {
+              invoice.trigger('invoiceCalculated');
+            }, null, true);
+          });
+        } else {
+          //No invoice lines were generated; do not save the invoice, just trigger the event
+          setTimeout(function () {
             invoice.trigger('invoiceCalculated');
-          }, null, true);
-        });
+          }, 0);
+        }
       } else {
         //TODO: not the best way to send the event
         invoice = new Backbone.Model();
