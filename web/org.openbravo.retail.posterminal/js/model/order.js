@@ -3344,7 +3344,6 @@
 
       payments = this.get('payments');
       total = OB.DEC.abs(this.getTotal());
-      OB.UTIL.showLoading(true);
       OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
         paymentToAdd: payment,
         payments: payments,
@@ -3358,7 +3357,6 @@
               order.save();
               order.trigger('saveCurrent');
             }
-            OB.UTIL.showLoading(false);
             if (callback instanceof Function) {
               callback(order);
             }
