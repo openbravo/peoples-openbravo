@@ -64,6 +64,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
 
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/utility/VerticalMenu").createXmlDocument();
+    xmlDocument.ignoreTranslation = true;
 
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
