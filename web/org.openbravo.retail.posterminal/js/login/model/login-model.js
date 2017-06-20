@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, enyo, BigDecimal, localStorage */
+/*global OB, _, enyo, BigDecimal, localStorage, setTimeout */
 
 (function () {
   // initialize the WebPOS terminal model that extends the core terminal model. after this, OB.MobileApp.model will be available
@@ -717,7 +717,9 @@
       var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000,
           minTotalRefresh = this.get('terminal').terminalType.minutestorefreshdatatotal * 60 * 1000,
           lastTotalRefresh = OB.UTIL.localStorage.getItem('POSLastTotalRefresh'),
-          lastIncRefresh = OB.UTIL.localStorage.getItem('POSLastIncRefresh');
+          lastIncRefresh = OB.UTIL.localStorage.getItem('POSLastIncRefresh'),
+          now = new Date().getTime(),
+          intervalInc = lastIncRefresh ? (now - lastIncRefresh - minIncRefresh) : 0;
 
       function setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds) {
         OB.debug("Terminal lock timer reset (" + sessionTimeoutMinutes + " minutes)");
@@ -773,7 +775,16 @@
           });
 
         };
-        setInterval(loadModelsIncFunc, minIncRefresh);
+        // in case there was no incremental load at login then schedule an incremental
+        // load at the next expected time, which can be earlier than the standard interval
+        if (intervalInc < 0 && OB.MobileApp.model.hasPermission('OBMOBC_NotAutoLoadIncrementalAtLogin', true)) {
+          setTimeout(function () {
+            loadModelsIncFunc();
+            setInterval(loadModelsIncFunc, minIncRefresh);
+          }, intervalInc * -1);
+        } else {
+          setInterval(loadModelsIncFunc, minIncRefresh);
+        }
       }
 
       var sessionTimeoutMinutes = this.get('terminal').sessionTimeout;
@@ -874,11 +885,31 @@
         OB.error("postCloseSession", arguments);
         OB.MobileApp.model.triggerLogout();
       }
-      //All pending to be paid orders will be removed on logout
-      criteria.session = OB.MobileApp.model.get('session');
-      criteria.hasbeenpaid = 'N';
-      OB.Dal.find(OB.Model.Order, criteria, success, error);
 
+      if (OB.MobileApp.model.get('isMultiOrderState')) {
+        if (OB.MobileApp.model.multiOrders.checkMultiOrderPayment()) {
+          return;
+        }
+      }
+      if (OB.MobileApp.model.orderList && OB.MobileApp.model.orderList.length > 1) {
+        if (OB.MobileApp.model.orderList.checkOrderListPayment()) {
+          return;
+        }
+      } else if (OB.MobileApp.model.receipt && OB.MobileApp.model.receipt.get('lines').length > 0) {
+        if (OB.MobileApp.model.receipt.checkOrderPayment()) {
+          return;
+        }
+      }
+
+      OB.UTIL.Approval.requestApproval(
+      this, 'OBPOS_approval.removereceipts', function (approved, supervisor, approvalType) {
+        if (approved) {
+          //All pending to be paid orders will be removed on logout
+          criteria.session = OB.MobileApp.model.get('session');
+          criteria.hasbeenpaid = 'N';
+          OB.Dal.find(OB.Model.Order, criteria, success, error);
+        }
+      });
     },
 
     postCloseSession: function (session) {

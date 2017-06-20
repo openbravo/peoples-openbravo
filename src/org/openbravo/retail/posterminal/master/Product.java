@@ -319,4 +319,14 @@ public class Product extends ProcessHQLQuery {
   protected boolean bypassPreferenceCheck() {
     return true;
   }
+
+  @Override
+  protected boolean mustHaveRemoteFilters() {
+    return true;
+  }
+
+  @Override
+  protected String messageWhenNoFilters() {
+    return "OBPOS_ProductSearchTooBroad";
+  }
 }

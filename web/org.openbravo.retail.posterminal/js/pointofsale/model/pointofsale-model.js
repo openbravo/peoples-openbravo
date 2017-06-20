@@ -130,6 +130,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     // Shows a modal window with the orders pending to be paid
     var checkedMultiOrders, multiOrders = this.get('multiOrders'),
         multiOrderList = multiOrders.get('multiOrdersList'),
+        me = this,
         criteria = {
         'hasbeenpaid': 'N',
         'session': OB.MobileApp.model.get('session')
@@ -149,6 +150,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         _.each(payments, function (payment) {
           multiOrders.addPayment(new OB.Model.PaymentLine(payment));
         });
+      } else if (me.isValidMultiOrderState()) {
+        multiOrders.resetValues();
+        me.get('leftColumnViewManager').setOrderMode();
       }
     }, function () {
       // If there is an error fetching the checked orders of multiorders,
@@ -230,8 +234,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     };
     OB.MobileApp.model.receipt = receipt;
 
-    // create the multiOrders
+    // create the multiOrders and expose it
     var multiOrders = new OB.Model.MultiOrders();
+    OB.MobileApp.model.multiOrders = multiOrders;
     // create the orderList and expose it
     var orderList = new OB.Collection.OrderList(receipt);
     OB.MobileApp.model.orderList = orderList;

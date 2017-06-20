@@ -3344,7 +3344,6 @@
 
       payments = this.get('payments');
       total = OB.DEC.abs(this.getTotal());
-      OB.UTIL.showLoading(true);
       OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
         paymentToAdd: payment,
         payments: payments,
@@ -3358,7 +3357,6 @@
               order.save();
               order.trigger('saveCurrent');
             }
-            OB.UTIL.showLoading(false);
             if (callback instanceof Function) {
               callback(order);
             }
@@ -4463,6 +4461,22 @@
       }
 
       return true;
+    },
+    checkOrderPayment: function () {
+      var hasPayments = false;
+      if (this.get('payments').length > 0) {
+        if (this.get('receiptPayments') && this.get('payments').length > this.get('receiptPayments').length) {
+          hasPayments = true;
+        } else if (!this.get('receiptPayments')) {
+          hasPayments = true;
+        }
+      }
+
+      if (hasPayments) {
+        OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_RemoveReceiptWithPayment'));
+        return true;
+      }
+      return false;
     }
   });
 
@@ -5182,6 +5196,15 @@
         this.modelorder.setIsCalculateGrossLockState(false);
       }
     },
+    checkOrderListPayment: function () {
+      var i;
+      for (i = 0; i < this.models.length; i++) {
+        if (this.models[i].checkOrderPayment()) {
+          return true;
+        }
+      }
+      return false;
+    },
     synchronizeCurrentOrder: function () {
       // NOTE: No need to execute any business logic here
       // The new functionality of loading document no, makes this function obsolete.
@@ -5486,7 +5509,15 @@
       this.get('payments').reset();
       this.set('openDrawer', false);
       this.set('additionalInfo', null);
+      OB.MobileApp.model.set('isMultiOrderState', false);
       OB.UTIL.localStorage.removeItem('multiOrdersPayment');
+    },
+    checkMultiOrderPayment: function () {
+      if (this.get('payments').length > 0) {
+        OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_RemoveReceiptWithPayment'));
+        return true;
+      }
+      return false;
     },
     hasDataInList: function () {
       if (this.get('multiOrdersList') && this.get('multiOrdersList').length > 0) {
