@@ -296,6 +296,11 @@ enyo.kind({
                     OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
                     return;
                   }
+                  var decimalAmount = OB.DEC.toBigDecimal(amount);
+                  if (decimalAmount.scale() > OB.DEC.getScale()) {
+                    OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidCurrencyAmount', [txt]));
+                    return;
+                  }
                 }
                 var buttonClass = keyboard.buttons['paymentMethodCategory.showitems.' + payment.paymentMethod.paymentMethodCategory].attributes['class'];
                 if (me.currentPayment && buttonClass.indexOf('btnactive-green') > 0) {
@@ -330,6 +335,11 @@ enyo.kind({
                 amount = OB.DEC.number(OB.I18N.parseNumber(txt));
                 if (_.isNaN(amount)) {
                   OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
+                  return;
+                }
+                var decimalAmount = OB.DEC.toBigDecimal(amount);
+                if (decimalAmount.scale() > OB.DEC.getScale()) {
+                  OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidCurrencyAmount', [txt]));
                   return;
                 }
               }

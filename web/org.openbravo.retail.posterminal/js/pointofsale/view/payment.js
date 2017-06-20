@@ -72,10 +72,12 @@ enyo.kind({
         if (!_.isNull(this.receipt)) {
           this.receipt.set('selectedPayment', payment.payment.searchKey);
           paymentstatus = this.receipt.getPaymentStatus();
+          this.currentOrder = this.receipt;
         }
       } else {
         this.model.get('multiOrders').set('selectedPayment', payment.payment.searchKey);
         paymentstatus = this.model.get('multiOrders').getPaymentStatus();
+        this.currentOrder = this.model.get('multiOrders');
       }
 
       if (!_.isNull(change) && change) {
@@ -345,6 +347,7 @@ enyo.kind({
       symbolAtRight = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].currencySymbolAtTheRight;
       isCashType = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].paymentMethod.iscash;
     }
+    this.currentOrder = this.receipt;
     this.checkValidPayments(paymentstatus, OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')]);
     if (paymentstatus.change) {
       this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), rate), symbol, symbolAtRight));
@@ -426,7 +429,7 @@ enyo.kind({
     this.updateCreditSalesAction();
   },
   updatePendingMultiOrders: function () {
-    var paymentstatus = this.model.get('multiOrders');
+    var multiOrder = this.model.get('multiOrders');
     var symbol = '',
         symbolAtRight = true,
         rate = OB.DEC.One,
@@ -438,8 +441,8 @@ enyo.kind({
       symbol = OB.MobileApp.model.get('terminal').symbol;
       symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
     }
-    if (paymentstatus.get('selectedPayment')) {
-      selectedPayment = OB.MobileApp.model.paymentnames[paymentstatus.get('selectedPayment')];
+    if (multiOrder.get('selectedPayment')) {
+      selectedPayment = OB.MobileApp.model.paymentnames[multiOrder.get('selectedPayment')];
     } else {
       selectedPayment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
     }
@@ -449,10 +452,11 @@ enyo.kind({
       symbolAtRight = selectedPayment.currencySymbolAtTheRight;
       isCashType = selectedPayment.paymentMethod.iscash;
     }
-    this.checkValidPayments(paymentstatus.getPaymentStatus(), selectedPayment);
-    if (paymentstatus.get('change')) {
-      this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(paymentstatus.get('change'), rate), symbol, symbolAtRight));
-      OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(paymentstatus.get('change'), rate), symbol, symbolAtRight));
+    this.currentOrder = this.model.get('multiOrders');
+    this.checkValidPayments(multiOrder.getPaymentStatus(), selectedPayment);
+    if (multiOrder.get('change')) {
+      this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(multiOrder.get('change'), rate), symbol, symbolAtRight));
+      OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(multiOrder.get('change'), rate), symbol, symbolAtRight));
       this.$.change.show();
       this.$.changelbl.show();
     } else {
@@ -460,8 +464,8 @@ enyo.kind({
       this.$.changelbl.hide();
     }
     //overpayment
-    if (OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) > 0) {
-      this.$.overpayment.setContent(OB.I18N.formatCurrency(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))));
+    if (OB.DEC.compare(OB.DEC.sub(multiOrder.get('payment'), multiOrder.get('total'))) > 0) {
+      this.$.overpayment.setContent(OB.I18N.formatCurrency(OB.DEC.sub(multiOrder.get('payment'), multiOrder.get('total'))));
       this.$.overpayment.show();
       this.$.overpaymentlbl.show();
     } else {
@@ -469,7 +473,7 @@ enyo.kind({
       this.$.overpaymentlbl.hide();
     }
 
-    if (paymentstatus.get('multiOrdersList').length > 0 && OB.DEC.compare(paymentstatus.get('total')) >= 0 && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) >= 0) {
+    if (multiOrder.get('multiOrdersList').length > 0 && OB.DEC.compare(multiOrder.get('total')) >= 0 && OB.DEC.compare(OB.DEC.sub(multiOrder.get('payment'), multiOrder.get('total'))) >= 0) {
       this.$.totalpending.hide();
       this.$.totalpendinglbl.hide();
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
@@ -477,7 +481,7 @@ enyo.kind({
       }
       this.updateCreditSalesAction();
     } else {
-      this.setTotalPending(OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment')), rate, symbol, symbolAtRight);
+      this.setTotalPending(OB.DEC.sub(multiOrder.get('total'), multiOrder.get('payment')), rate, symbol, symbolAtRight);
       this.$.totalpending.show();
       this.$.totalpendinglbl.show();
       this.$.donebutton.hide();
@@ -489,15 +493,15 @@ enyo.kind({
 
     this.updateCreditSalesAction();
     this.$.layawayaction.hide();
-    if (paymentstatus.get('multiOrdersList').length > 0 && OB.DEC.compare(paymentstatus.get('total')) >= 0 && (OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) >= 0 || paymentstatus.get('total') === 0)) {
+    if (multiOrder.get('multiOrdersList').length > 0 && OB.DEC.compare(multiOrder.get('total')) >= 0 && (OB.DEC.compare(OB.DEC.sub(multiOrder.get('payment'), multiOrder.get('total'))) >= 0 || multiOrder.get('total') === 0)) {
       this.$.exactbutton.hide();
     } else {
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
         this.$.exactbutton.show();
       }
     }
-    if (paymentstatus.get('multiOrdersList').length > 0 && OB.DEC.compare(paymentstatus.get('total')) >= 0 && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) >= 0 && !paymentstatus.get('change') && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) <= 0) {
-      if (paymentstatus.get('total') === 0) {
+    if (multiOrder.get('multiOrdersList').length > 0 && OB.DEC.compare(multiOrder.get('total')) >= 0 && OB.DEC.compare(OB.DEC.sub(multiOrder.get('payment'), multiOrder.get('total'))) >= 0 && !multiOrder.get('change') && OB.DEC.compare(OB.DEC.sub(multiOrder.get('payment'), multiOrder.get('total'))) <= 0) {
+      if (multiOrder.get('total') === 0) {
         this.$.exactlbl.hide();
         this.$.donezerolbl.show();
       } else {
@@ -580,35 +584,60 @@ enyo.kind({
     }
 
     var currentCash = OB.DEC.Zero,
-        requiredCash;
+        requiredCash, check = false;
 
     if (OB.UTIL.isNullOrUndefined(selectedPayment) || OB.UTIL.isNullOrUndefined(selectedPayment.paymentMethod.overpaymentLimit)) {
-      return true;
+      check = true;
     }
 
-    requiredCash = selectedPayment.paymentMethod.iscash ? paymentstatus.changeAmt : paymentstatus.overpayment;
-    if (requiredCash !== 0) {
-      if (selectedPayment.paymentMethod.overpaymentLimit === 0 && selectedPayment.paymentMethod.overpaymentLimit < requiredCash) {
-        if (selectedPayment.paymentMethod.iscash) {
-          this.$.changeexceedlimit.show();
+    if (!check) {
+      requiredCash = selectedPayment.paymentMethod.iscash ? paymentstatus.changeAmt : paymentstatus.overpayment;
+      if (requiredCash !== 0) {
+        if (selectedPayment.paymentMethod.overpaymentLimit === 0 && selectedPayment.paymentMethod.overpaymentLimit < requiredCash) {
+          if (selectedPayment.paymentMethod.iscash) {
+            this.$.changeexceedlimit.show();
+          } else {
+            this.$.overpaymentnotavailable.show();
+          }
+          check = false;
+        } else if (selectedPayment.paymentMethod.overpaymentLimit < requiredCash) {
+          if (selectedPayment.paymentMethod.iscash) {
+            this.$.changeexceedlimit.show();
+          } else {
+            this.$.overpaymentexceedlimit.show();
+          }
+          check = false;
         } else {
-          this.$.overpaymentnotavailable.show();
+          check = true;
         }
-        return false;
-      } else if (selectedPayment.paymentMethod.overpaymentLimit < requiredCash) {
-        if (selectedPayment.paymentMethod.iscash) {
-          this.$.changeexceedlimit.show();
-        } else {
-          this.$.overpaymentexceedlimit.show();
-        }
-        return false;
-      } else {
-        return true;
+      } else if (requiredCash === 0) {
+        check = true;
       }
-    } else if (requiredCash === 0) {
-      return true;
     }
-    return true;
+
+    if (check) {
+      if (!OB.UTIL.isNullOrUndefined(paymentstatus.overpayment) && paymentstatus.overpayment > 0) {
+        var payments, payment, i;
+        payments = _.filter(this.currentOrder.get('payments').models, function (p) {
+          return !OB.MobileApp.model.paymentnames[p.get('kind')].paymentMethod.iscash;
+        });
+        for (i = 0; i < payments.length; i++) {
+          payment = OB.MobileApp.model.paymentnames[payments[i].get('kind')];
+          if (OB.UTIL.isNullOrUndefined(payment.paymentMethod.overpaymentLimit)) {
+            continue;
+          } else if (payment.paymentMethod.overpaymentLimit === 0 && payment.paymentMethod.overpaymentLimit < paymentstatus.overpayment) {
+            this.$.overpaymentnotavailable.show();
+            check = false;
+            break;
+          } else if (payment.paymentMethod.overpaymentLimit < paymentstatus.overpayment) {
+            this.$.overpaymentexceedlimit.show();
+            check = false;
+            break;
+          }
+        }
+      }
+    }
+    return check;
   },
 
   checkValidPaymentMethod: function (paymentstatus, selectedPayment) {

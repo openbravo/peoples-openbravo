@@ -111,7 +111,7 @@
     },
 
     printQty: function () {
-      return this.get('qty').toString();
+      return OB.DEC.toNumber(OB.DEC.toBigDecimal(this.get('qty')), OB.I18N.qtyScale()).toString();
     },
 
     printPrice: function () {
@@ -2828,6 +2828,13 @@
       //Cloning order to be canceled
       var clonedreceipt = new OB.Model.Order();
       OB.UTIL.clone(me, clonedreceipt);
+
+      if (this.get('paidOnCredit')) {
+        this.set('paidOnCredit', false);
+        this.set('paidPartiallyOnCredit', false);
+        this.set('creditAmount', 0);
+      }
+
       me.set('canceledorder', clonedreceipt);
       me.set('doCancelAndReplace', true);
 
@@ -2941,7 +2948,16 @@
         }
 
         me.checkNotProcessedPayments(function () {
+          //Cloning order to be canceled
+          var clonedreceipt = new OB.Model.Order();
+          OB.UTIL.clone(me, clonedreceipt);
+          if (me.get('paidOnCredit')) {
+            me.set('paidOnCredit', false);
+            me.set('paidPartiallyOnCredit', false);
+            me.set('creditAmount', 0);
+          }
           me.set('cancelLayaway', true);
+          me.set('canceledorder', clonedreceipt);
           context.doShowDivText({
             permission: context.permission,
             orderType: 3
@@ -4471,6 +4487,22 @@
       }
 
       return true;
+    },
+    checkOrderPayment: function () {
+      var hasPayments = false;
+      if (this.get('payments').length > 0) {
+        if (this.get('receiptPayments') && this.get('payments').length > this.get('receiptPayments').length) {
+          hasPayments = true;
+        } else if (!this.get('receiptPayments')) {
+          hasPayments = true;
+        }
+      }
+
+      if (hasPayments) {
+        OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_RemoveReceiptWithPayment'));
+        return true;
+      }
+      return false;
     }
   });
 
@@ -5190,6 +5222,15 @@
         this.modelorder.setIsCalculateGrossLockState(false);
       }
     },
+    checkOrderListPayment: function () {
+      var i;
+      for (i = 0; i < this.models.length; i++) {
+        if (this.models[i].checkOrderPayment()) {
+          return true;
+        }
+      }
+      return false;
+    },
     synchronizeCurrentOrder: function () {
       // NOTE: No need to execute any business logic here
       // The new functionality of loading document no, makes this function obsolete.
@@ -5494,7 +5535,15 @@
       this.get('payments').reset();
       this.set('openDrawer', false);
       this.set('additionalInfo', null);
+      OB.MobileApp.model.set('isMultiOrderState', false);
       OB.UTIL.localStorage.removeItem('multiOrdersPayment');
+    },
+    checkMultiOrderPayment: function () {
+      if (this.get('payments').length > 0) {
+        OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_RemoveReceiptWithPayment'));
+        return true;
+      }
+      return false;
     },
     hasDataInList: function () {
       if (this.get('multiOrdersList') && this.get('multiOrdersList').length > 0) {

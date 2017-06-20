@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, enyo, BigDecimal, localStorage */
+/*global OB, _, enyo, BigDecimal, localStorage, setTimeout */
 
 (function () {
   // initialize the WebPOS terminal model that extends the core terminal model. after this, OB.MobileApp.model will be available
@@ -717,7 +717,9 @@
       var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000,
           minTotalRefresh = this.get('terminal').terminalType.minutestorefreshdatatotal * 60 * 1000,
           lastTotalRefresh = OB.UTIL.localStorage.getItem('POSLastTotalRefresh'),
-          lastIncRefresh = OB.UTIL.localStorage.getItem('POSLastIncRefresh');
+          lastIncRefresh = OB.UTIL.localStorage.getItem('POSLastIncRefresh'),
+          now = new Date().getTime(),
+          intervalInc = lastIncRefresh ? (now - lastIncRefresh - minIncRefresh) : 0;
 
       function setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds) {
         OB.debug("Terminal lock timer reset (" + sessionTimeoutMinutes + " minutes)");
@@ -773,7 +775,16 @@
           });
 
         };
-        setInterval(loadModelsIncFunc, minIncRefresh);
+        // in case there was no incremental load at login then schedule an incremental
+        // load at the next expected time, which can be earlier than the standard interval
+        if (intervalInc < 0 && OB.MobileApp.model.hasPermission('OBMOBC_NotAutoLoadIncrementalAtLogin', true)) {
+          setTimeout(function () {
+            loadModelsIncFunc();
+            setInterval(loadModelsIncFunc, minIncRefresh);
+          }, intervalInc * -1);
+        } else {
+          setInterval(loadModelsIncFunc, minIncRefresh);
+        }
       }
 
       var sessionTimeoutMinutes = this.get('terminal').sessionTimeout;
@@ -874,11 +885,31 @@
         OB.error("postCloseSession", arguments);
         OB.MobileApp.model.triggerLogout();
       }
-      //All pending to be paid orders will be removed on logout
-      criteria.session = OB.MobileApp.model.get('session');
-      criteria.hasbeenpaid = 'N';
-      OB.Dal.find(OB.Model.Order, criteria, success, error);
 
+      if (OB.MobileApp.model.get('isMultiOrderState')) {
+        if (OB.MobileApp.model.multiOrders.checkMultiOrderPayment()) {
+          return;
+        }
+      }
+      if (OB.MobileApp.model.orderList && OB.MobileApp.model.orderList.length > 1) {
+        if (OB.MobileApp.model.orderList.checkOrderListPayment()) {
+          return;
+        }
+      } else if (OB.MobileApp.model.receipt && OB.MobileApp.model.receipt.get('lines').length > 0) {
+        if (OB.MobileApp.model.receipt.checkOrderPayment()) {
+          return;
+        }
+      }
+
+      OB.UTIL.Approval.requestApproval(
+      this, 'OBPOS_approval.removereceipts', function (approved, supervisor, approvalType) {
+        if (approved) {
+          //All pending to be paid orders will be removed on logout
+          criteria.session = OB.MobileApp.model.get('session');
+          criteria.hasbeenpaid = 'N';
+          OB.Dal.find(OB.Model.Order, criteria, success, error);
+        }
+      });
     },
 
     postCloseSession: function (session) {
@@ -1010,14 +1041,15 @@
     // get the first document number available
     getLastDocumentnoSuffixInOrderlist: function () {
       var lastSuffix = null;
+      var i;
       if (OB.MobileApp.model.orderList && OB.MobileApp.model.orderList.length > 0) {
-        var i = 0;
-        while (lastSuffix === null && i <= OB.MobileApp.model.orderList.models.length - 1) {
+        for (i = 0; i < OB.MobileApp.model.orderList.length; i++) {
           var order = OB.MobileApp.model.orderList.models[i];
           if (!order.get('isPaid') && !order.get('isQuotation') && order.get('documentnoPrefix') === OB.MobileApp.model.get('terminal').docNoPrefix) {
-            lastSuffix = order.get('documentnoSuffix');
+            if (OB.UTIL.isNullOrUndefined(lastSuffix) || (lastSuffix && order.get('documentnoSuffix') > lastSuffix)) {
+              lastSuffix = order.get('documentnoSuffix');
+            }
           }
-          i++;
         }
       }
       if (lastSuffix === null || lastSuffix < this.documentnoThreshold) {
@@ -1028,14 +1060,15 @@
     // get the first quotation number available
     getLastQuotationnoSuffixInOrderlist: function () {
       var lastSuffix = null;
+      var i;
       if (OB.MobileApp.model.orderList && OB.MobileApp.model.orderList.length > 0) {
-        var i = 0;
-        while (lastSuffix === null && i <= OB.MobileApp.model.orderList.models.length - 1) {
+        for (i = 0; i < OB.MobileApp.model.orderList.length; i++) {
           var order = OB.MobileApp.model.orderList.models[i];
           if (order.get('isQuotation') && order.get('quotationnoPrefix') === OB.MobileApp.model.get('terminal').quotationDocNoPrefix) {
-            lastSuffix = order.get('quotationnoSuffix');
+            if (OB.UTIL.isNullOrUndefined(lastSuffix) || (lastSuffix && order.get('quotationnoSuffix') > lastSuffix)) {
+              lastSuffix = order.get('quotationnoSuffix');
+            }
           }
-          i++;
         }
       }
       if (lastSuffix === null || lastSuffix < this.quotationnoThreshold) {
@@ -1046,14 +1079,15 @@
     // get the first return number available
     getLastReturnnoSuffixInOrderlist: function () {
       var lastSuffix = null;
+      var i;
       if (OB.MobileApp.model.orderList && OB.MobileApp.model.orderList.length > 0) {
-        var i = OB.MobileApp.model.orderList.models.length - 1;
-        while (lastSuffix === null && i >= 0) {
+        for (i = 0; i < OB.MobileApp.model.orderList.length; i++) {
           var order = OB.MobileApp.model.orderList.models[i];
           if ((order.getOrderType() === 1 || order.get('gross') < 0) && order.get('returnnoPrefix') === OB.MobileApp.model.get('terminal').returnDocNoPrefix) {
-            lastSuffix = order.get('returnnoSuffix');
+            if (OB.UTIL.isNullOrUndefined(lastSuffix) || (lastSuffix && order.get('returnnoSuffix') > lastSuffix)) {
+              lastSuffix = order.get('returnnoSuffix');
+            }
           }
-          i--;
         }
       }
       if (lastSuffix === null || lastSuffix < this.returnnoThreshold) {

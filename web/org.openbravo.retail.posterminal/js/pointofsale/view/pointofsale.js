@@ -107,7 +107,8 @@ enyo.kind({
     onCheckPresetFilterSelector: 'checkPresetFilterSelector',
     onAdvancedFilterSelector: 'advancedFilterSelector',
     onSetSelectorAdvancedSearch: 'setSelectorAdvancedSearch',
-    onCloseSelector: 'closeSelector'
+    onCloseSelector: 'closeSelector',
+    onErrorCalcLineTax: 'errorCalcLineTax'
   },
   events: {
     onShowPopup: '',
@@ -258,9 +259,9 @@ enyo.kind({
       kind: 'OB.UI.ModalProductAttributes',
       name: 'modalProductAttribute'
     }, {
-        kind: 'OB.UI.ModalQuotationProductAttributes',
-        name: 'modalQuotationProductAttribute'
-      }]
+      kind: 'OB.UI.ModalQuotationProductAttributes',
+      name: 'modalQuotationProductAttribute'
+    }]
   }, {
     name: 'mainSubWindow',
     isMainSubWindow: true,
@@ -633,20 +634,31 @@ enyo.kind({
     return true;
   },
   changeBusinessPartner: function (inSender, inEvent) {
-    var bp = this.model.get('order').get('bp'),
+    var component = this,
+        isBPChange = component.model.get('order').get('bp').get('id') !== inEvent.businessPartner.get('id'),
+        isShippingChange = component.model.get('order').get('bp').get('shipLocId') !== inEvent.businessPartner.get('shipLocId'),
+        isInvoicingChange = component.model.get('order').get('bp').get('locId') !== inEvent.businessPartner.get('locId'),
+        bp = this.model.get('order').get('bp'),
         eventBP = inEvent.businessPartner;
-    if (inEvent.target === 'order' || inEvent.target === undefined) {
-      if (this.model.get('order').get('isEditable') === false && (bp.get('id') !== eventBP.get('id') || bp.get('locId') !== eventBP.get('locId') || bp.get('shipLocId') !== eventBP.get('shipLocId'))) {
-        this.doShowPopup({
-          popup: 'modalNotEditableOrder'
-        });
-        return true;
+    OB.UTIL.HookManager.executeHooks('OBPOS_preChangeBusinessPartner', {
+      bp: inEvent.businessPartner,
+      isBPChange: isBPChange,
+      isShippingChange: isShippingChange,
+      isInvoicingChange: isInvoicingChange
+    }, function () {
+      if (inEvent.target === 'order' || inEvent.target === undefined) {
+        if (component.model.get('order').get('isEditable') === false && (isBPChange || isInvoicingChange || isShippingChange)) {
+          component.doShowPopup({
+            popup: 'modalNotEditableOrder'
+          });
+          return true;
+        }
+        component.model.get('order').setBPandBPLoc(eventBP, false, true);
+        component.model.get('orderList').saveCurrent();
+      } else {
+        component.waterfall('onChangeBPartner', inEvent);
       }
-      this.model.get('order').setBPandBPLoc(eventBP, false, true);
-      this.model.get('orderList').saveCurrent();
-    } else {
-      this.waterfall('onChangeBPartner', inEvent);
-    }
+    });
     return true;
   },
   receiptToInvoice: function () {
@@ -1271,6 +1283,7 @@ enyo.kind({
       me.model.get('multiOrders').get('multiOrdersList').add(iter);
     });
     this.model.get('leftColumnViewManager').setMultiOrderMode();
+    OB.MobileApp.model.set('isMultiOrderState', true);
     //this.model.get('multiOrders').set('isMultiOrders', true);
     return true;
   },
@@ -1287,8 +1300,7 @@ enyo.kind({
   removeMultiOrders: function (inSender, inEvent) {
     var me = this,
         originator = inEvent.originator;
-    if (me.model.get('multiOrders').get('payments').length > 0) {
-      OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_RemoveReceiptWithPayment'));
+    if (me.model.get('multiOrders').checkMultiOrderPayment()) {
       me.cancelRemoveMultiOrders(originator);
       return true;
     }
@@ -1406,6 +1418,11 @@ enyo.kind({
   },
   closeSelector: function (inSender, inEvent) {
     this.waterfall('onCloseCancelSelector', inEvent);
+  },
+  errorCalcLineTax: function (inSender, inEvent) {
+    if (OB.MobileApp.model.get('serviceSearchMode')) {
+      OB.MobileApp.view.$.containerWindow.getRoot().$.multiColumn.$.rightToolbar.$.rightToolbar.manualTap('edit');
+    }
   },
   rearrangeEditButtonBar: function (inSender, inEvent) {
     this.waterfall('onRearrangedEditButtonBar', inEvent);

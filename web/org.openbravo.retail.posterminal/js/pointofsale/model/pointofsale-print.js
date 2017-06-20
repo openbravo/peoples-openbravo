@@ -266,6 +266,10 @@
         OB.UTIL.clone(me.receipt, receipt);
       }
 
+      if (!(receipt.get('orderDate') instanceof Date)) {
+        receipt.set('orderDate', new Date(receipt.get('orderDate')));
+      }
+
       var hasNegativeLines = _.filter(receipt.get('lines').models, function (line) {
         return line.get('qty') < 0;
       }).length === receipt.get('lines').size() ? true : false;

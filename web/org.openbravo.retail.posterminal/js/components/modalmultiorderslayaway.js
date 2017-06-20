@@ -74,6 +74,7 @@ enyo.kind({
       this.doHideThisPopup();
       return;
     }
+    amount = OB.DEC.toNumber(OB.DEC.toBigDecimal(amount));
     if (amount === 0) {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_amtGreaterThanZero'), [{
         isConfirmButton: true,
@@ -82,7 +83,7 @@ enyo.kind({
       return;
     }
     total = currentOrder.get('gross');
-    if ((OB.DEC.compare(OB.DEC.sub(total, OB.DEC.add(amount, currentOrder.get('payment')))) <= 0) || (OB.DEC.compare(OB.DEC.sub(amount, total)) > 0 || OB.DEC.compare(amount) < 0)) {
+    if ((OB.DEC.compare(OB.DEC.sub(total, OB.DEC.add(amount, currentOrder.get('payment')))) < 0) || (OB.DEC.compare(OB.DEC.sub(amount, total)) > 0 || OB.DEC.compare(amount) < 0)) {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_notValidQty'));
       this.doHideThisPopup();
       return;

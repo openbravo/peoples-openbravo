@@ -244,14 +244,17 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         return successMessage(jsonorder);
       }
 
-      if (jsonorder.getBoolean("isLayaway")) {
+      if (jsonorder.has("id")) {
         order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
 
-        final Date loaded = dateFormatUTC.parse(jsonorder.getString("loaded")), updated = OBMOBCUtils
-            .convertToUTC(order.getUpdated());
-        if (!(loaded.compareTo(updated) >= 0)) {
-          throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
-              "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
+        if (order != null) {
+          final Date loaded = dateFormatUTC.parse(jsonorder.getString("loaded")), updated = OBMOBCUtils
+              .convertToUTC(order.getUpdated());
+          if (!(loaded.compareTo(updated) >= 0)) {
+            throw new OutDatedDataChangeException(Utility.messageBD(
+                new DalConnectionProvider(false), "OBPOS_outdatedLayaway", OBContext.getOBContext()
+                    .getLanguage().getLanguage()));
+          }
         }
       }
 
@@ -1864,6 +1867,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         finalDueDateDay = maturityDate2;
       } else {
         finalDueDateDay = maturityDate1;
+      }
+
+      // Due Date day should be maximum of Month's Last day
+      if (finalDueDateDay == 0) {
+        finalDueDateDay = 1;
+      }
+      if ((int) finalDueDateDay > calculatedDueDate.getActualMaximum(Calendar.DAY_OF_MONTH)) {
+        finalDueDateDay = calculatedDueDate.getActualMaximum(Calendar.DAY_OF_MONTH);
       }
       calculatedDueDate.set(Calendar.DAY_OF_MONTH, (int) finalDueDateDay);
       if (finalDueDateDay < dueDateDay) {
