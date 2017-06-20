@@ -321,6 +321,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_actionButton/ActionButtonDefaultFrames").createXmlDocument();
+    xmlDocument.ignoreTranslation = true;
     xmlDocument.setParameter("processId", strProcessId);
     xmlDocument.setParameter("trlFormType", "PROCESS");
     xmlDocument.setParameter("language", "defaultLang = \"" + vars.getLanguage() + "\";\n");
