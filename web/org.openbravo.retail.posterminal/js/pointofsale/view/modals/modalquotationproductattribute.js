@@ -86,6 +86,10 @@ enyo.kind({
     return;
   },
   cancelAction: function () {
+    var me = this,
+        lines = me.args.lines,
+        order = me.args.quotationProductAttribute;
+    order.deleteOrder(lines);
     this.hide();
     return;
   },
