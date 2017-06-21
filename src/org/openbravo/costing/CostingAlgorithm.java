@@ -94,60 +94,66 @@ public abstract class CostingAlgorithm {
    *           when the transaction type is unknown.
    */
   public BigDecimal getTransactionCost() throws OBException {
-    log4j.debug("Get transactions cost.");
-    if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) == 0
-        && getZeroMovementQtyCost() != null) {
-      return getZeroMovementQtyCost();
-    }
-    switch (trxType) {
-    case Shipment:
-      return getShipmentCost();
-    case ShipmentReturn:
-      return getShipmentReturnCost();
-    case ShipmentVoid:
-      return getShipmentVoidCost();
-    case ShipmentNegative:
-      return getShipmentNegativeCost();
-    case Receipt:
-      return getReceiptCost();
-    case ReceiptReturn:
-      return getReceiptReturnCost();
-    case ReceiptVoid:
-      return getReceiptVoidCost();
-    case ReceiptNegative:
-      return getReceiptNegativeCost();
-    case InventoryDecrease:
-      return getInventoryDecreaseCost();
-    case InventoryIncrease:
-      return getInventoryIncreaseCost();
-    case InventoryOpening:
-      return getInventoryOpeningCost();
-    case InventoryClosing:
-      return getInventoryClosingCost();
-    case IntMovementFrom:
-      return getIntMovementFromCost();
-    case IntMovementTo:
-      return getIntMovementToCost();
-    case InternalCons:
-      return getInternalConsCost();
-    case InternalConsNegative:
-      return getInternalConsNegativeCost();
-    case InternalConsVoid:
-      return getInternalConsVoidCost();
-    case BOMPart:
-      return getBOMPartCost();
-    case BOMProduct:
-      return getBOMProductCost();
-    case ManufacturingConsumed:
-      // Manufacturing transactions are not fully implemented.
-      return getManufacturingConsumedCost();
-    case ManufacturingProduced:
-      // Manufacturing transactions are not fully implemented.
-      return getManufacturingProducedCost();
-    case Unknown:
-      throw new OBException("@UnknownTrxType@: " + transaction.getIdentifier());
-    default:
-      throw new OBException("@UnknownTrxType@: " + transaction.getIdentifier());
+    log4j.debug("Starting getTransactionCost() for transaction: " + transaction.getIdentifier());
+    long t1 = System.currentTimeMillis();
+    try {
+      if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) == 0
+          && getZeroMovementQtyCost() != null) {
+        return getZeroMovementQtyCost();
+      }
+      switch (trxType) {
+      case Shipment:
+        return getShipmentCost();
+      case ShipmentReturn:
+        return getShipmentReturnCost();
+      case ShipmentVoid:
+        return getShipmentVoidCost();
+      case ShipmentNegative:
+        return getShipmentNegativeCost();
+      case Receipt:
+        return getReceiptCost();
+      case ReceiptReturn:
+        return getReceiptReturnCost();
+      case ReceiptVoid:
+        return getReceiptVoidCost();
+      case ReceiptNegative:
+        return getReceiptNegativeCost();
+      case InventoryDecrease:
+        return getInventoryDecreaseCost();
+      case InventoryIncrease:
+        return getInventoryIncreaseCost();
+      case InventoryOpening:
+        return getInventoryOpeningCost();
+      case InventoryClosing:
+        return getInventoryClosingCost();
+      case IntMovementFrom:
+        return getIntMovementFromCost();
+      case IntMovementTo:
+        return getIntMovementToCost();
+      case InternalCons:
+        return getInternalConsCost();
+      case InternalConsNegative:
+        return getInternalConsNegativeCost();
+      case InternalConsVoid:
+        return getInternalConsVoidCost();
+      case BOMPart:
+        return getBOMPartCost();
+      case BOMProduct:
+        return getBOMProductCost();
+      case ManufacturingConsumed:
+        // Manufacturing transactions are not fully implemented.
+        return getManufacturingConsumedCost();
+      case ManufacturingProduced:
+        // Manufacturing transactions are not fully implemented.
+        return getManufacturingProducedCost();
+      case Unknown:
+        throw new OBException("@UnknownTrxType@: " + transaction.getIdentifier());
+      default:
+        throw new OBException("@UnknownTrxType@: " + transaction.getIdentifier());
+      }
+    } finally {
+      long t2 = System.currentTimeMillis();
+      log4j.debug("Ending getTransactionCost() took: " + (t2 - t1) + " ms.");
     }
   }
 

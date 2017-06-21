@@ -340,13 +340,13 @@ public class CostAdjustmentProcess {
   public static JSONObject doProcessCostAdjustment(CostAdjustment costAdjustment)
       throws OBException {
     String docNo = costAdjustment.getDocumentNo();
-    log.debug("Starts process cost adjustment: {}", docNo);
+    log.debug("Starting doProcessCostAdjustment() for cost adjustment: {}", docNo);
     long t1 = System.currentTimeMillis();
     CostAdjustmentProcess cap = WeldUtils
         .getInstanceFromStaticBeanManager(CostAdjustmentProcess.class);
     JSONObject message = cap.processCostAdjustment(costAdjustment);
-    log.debug("Ends process cost adjustment: {}, took {} ms.", docNo,
-        (System.currentTimeMillis() - t1));
+    long t2 = System.currentTimeMillis();
+    log.debug("Ending doProcessCostAdjustment() took: {} ms.", (t2 - t1));
     return message;
   }
 

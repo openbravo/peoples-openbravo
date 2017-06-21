@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2016 Openbravo SLU
+ * All portions are Copyright (C) 2012-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -110,11 +110,23 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
       int batch = 0;
       int counter = 0;
       int counterBatch;
+      long elapsedTime = 0;
+      long avgTimePerBatch = 0;
+      int pendingTrxs = 0;
+      int pendingBatches = 0;
+      if (log4j.isDebugEnabled()) {
+        pendingTrxs = getTransactionsBatchCount(orgsWithRule);
+        log4j.debug("Pending transactions: " + pendingTrxs);
+        pendingBatches = (pendingTrxs % BATCH_SIZE == 0) ? (pendingTrxs / BATCH_SIZE)
+            : (pendingTrxs / BATCH_SIZE) + 1;
+        log4j.debug("Pending batches: " + pendingBatches);
+      }
       trxs = getTransactionsBatch(orgsWithRule);
       while (!trxs.isEmpty()) {
         long t1 = System.currentTimeMillis();
         batch++;
         counterBatch = 0;
+        pendingBatches--;
         for (String trxId : trxs) {
           if (killProcess) {
             throw new OBException("Process killed");
@@ -135,8 +147,17 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
         }
         trxs = getTransactionsBatch(orgsWithRule);
         long t2 = System.currentTimeMillis();
+
         log4j.debug("Processing batch: " + batch + " (" + counterBatch + " transactions) took: "
             + (t2 - t1) + " ms.");
+
+        if (log4j.isDebugEnabled()) {
+          pendingTrxs -= counterBatch;
+          log4j.debug("Pending transactions: " + pendingTrxs);
+          elapsedTime += t2 - t1;
+          avgTimePerBatch = elapsedTime / batch;
+          log4j.debug("Estimated time to finish: " + (avgTimePerBatch * pendingBatches) + " ms.");
+        }
       }
 
       logger.logln(OBMessageUtils.messageBD("Success"));
@@ -215,6 +236,31 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
     trxQry.setParameterList("orgs", orgsWithRule);
     trxQry.setMaxResults(BATCH_SIZE);
     return trxQry.list();
+  }
+
+  private int getTransactionsBatchCount(List<String> orgsWithRule) {
+    StringBuffer where = new StringBuffer();
+    where.append(" select count(trx." + MaterialTransaction.PROPERTY_ID + ") ");
+    where.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+    where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
+    where.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
+    where.append("\n where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " <> 'S'");
+    where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
+    where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
+    where.append("   and trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refid");
+    where.append("   and trxtype." + CostAdjustmentUtils.propADListValue + " = trx."
+        + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
+    where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :now");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    Query trxQry = OBDal.getInstance().getSession().createQuery(where.toString());
+
+    trxQry.setParameter("refid", CostAdjustmentUtils.MovementTypeRefID);
+    trxQry.setParameter("now", new Date());
+    trxQry.setParameterList("orgs", orgsWithRule);
+    trxQry.setMaxResults(1);
+    Long trxCount = (Long) trxQry.uniqueResult();
+    return trxCount.intValue();
   }
 
   private void initializeMtransCostDateAcct() throws Exception {

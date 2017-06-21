@@ -102,6 +102,10 @@ public class CostingMigrationProcess implements Process {
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
     logger = bundle.getLogger();
+    long start = System.currentTimeMillis();
+    long startPhase = 0;
+    long endPhase = 0;
+    log4j.debug("Starting CostingMigrationProcess at: " + new Date());
     OBError msg = new OBError();
     conn = bundle.getConnection();
     msg.setType("Success");
@@ -120,13 +124,20 @@ public class CostingMigrationProcess implements Process {
           .registerSQLFunction("now", new StandardSQLFunction("now", new DateType()));
 
       if (!isMigrationFirstPhaseCompleted()) {
+        startPhase = System.currentTimeMillis();
+        log4j.debug("Starting CostingMigrationProcess first phase at: " + new Date());
         doChecks();
         updateLegacyCosts();
         createRules();
         createMigrationFirstPhaseCompletedPreference();
+        endPhase = System.currentTimeMillis();
+        log4j.debug("Ending CostingMigrationProcess first phase at: " + new Date() + ". Duration: "
+            + (endPhase - startPhase) + " ms.");
       }
 
       else {
+        startPhase = System.currentTimeMillis();
+        log4j.debug("Starting CostingMigrationProcess second phase at: " + new Date());
         checkAllInventoriesAreProcessed();
         for (CostingRule rule : getRules()) {
           rule.setValidated(true);
@@ -136,6 +147,9 @@ public class CostingMigrationProcess implements Process {
         updateReportRoles();
         CostingStatus.getInstance().setMigrated();
         deleteMigrationFirstPhaseCompletedPreference();
+        endPhase = System.currentTimeMillis();
+        log4j.debug("Ending CostingMigrationProcess second phase at: " + new Date()
+            + ". Duration: " + (endPhase - startPhase) + " ms.");
       }
 
     } catch (final OBException e) {
@@ -161,11 +175,15 @@ public class CostingMigrationProcess implements Process {
     } finally {
       OBContext.restorePreviousMode();
     }
-
+    long end = System.currentTimeMillis();
+    log4j.debug("Ending CostingMigrationProcess at: " + new Date() + ". Duration: " + (end - start)
+        + " ms.");
     bundle.setResult(msg);
   }
 
   private void doChecks() {
+    long start = System.currentTimeMillis();
+    log4j.debug("Starting doChecks() at: " + new Date());
     // Check all transactions have a legacy cost available.
     AlertRule legacyCostAvailableAlert = getLegacyCostAvailableAlert();
     if (legacyCostAvailableAlert == null) {
@@ -365,11 +383,13 @@ public class CostingMigrationProcess implements Process {
       throw new OBException("@InconsistenciesInStock@");
     }
 
+    long end = System.currentTimeMillis();
+    log4j.debug("Ending doChecks() at: " + new Date() + ". Duration: " + (end - start) + " ms.");
   }
 
   private void updateLegacyCosts() {
-    log4j.debug("UpdateLegacyCosts");
-
+    long start = System.currentTimeMillis();
+    log4j.debug("Starting updateLegacyCosts() at: " + new Date());
     resetTransactionCosts();
     fixLegacyCostingCurrency();
 
@@ -408,9 +428,15 @@ public class CostingMigrationProcess implements Process {
     updateWithZeroCostRemainingTrx();
     insertTrxCosts();
     insertStandardCosts();
+
+    long end = System.currentTimeMillis();
+    log4j.debug("Ending updateLegacyCosts() at: " + new Date() + ". Duration: " + (end - start)
+        + " ms.");
   }
 
   private void resetTransactionCosts() {
+    long start = System.currentTimeMillis();
+    log4j.debug("Starting resetTransactionCosts() at: " + new Date());
     TriggerHandler.getInstance().disable();
     try {
       // Reset costs in m_transaction_cost
@@ -434,9 +460,14 @@ public class CostingMigrationProcess implements Process {
     } finally {
       TriggerHandler.getInstance().enable();
     }
+    long end = System.currentTimeMillis();
+    log4j.debug("Ending resetTransactionCosts() at: " + new Date() + ". Duration: " + (end - start)
+        + " ms.");
   }
 
   private void fixLegacyCostingCurrency() {
+    long start = System.currentTimeMillis();
+    log4j.debug("Starting fixLegacyCostingCurrency() at: " + new Date());
     TriggerHandler.getInstance().disable();
     try {
       // Fix legacy costing currency
@@ -457,9 +488,14 @@ public class CostingMigrationProcess implements Process {
     } finally {
       TriggerHandler.getInstance().enable();
     }
+    long end = System.currentTimeMillis();
+    log4j.debug("Ending fixLegacyCostingCurrency() at: " + new Date() + ". Duration: "
+        + (end - start) + " ms.");
   }
 
   private void createRules() throws Exception {
+    long start = System.currentTimeMillis();
+    log4j.debug("Starting createRules() at: " + new Date());
     // Delete manually created rules.
     Query delQry = OBDal.getInstance().getSession()
         .createQuery("delete from " + CostingRule.ENTITY_NAME);
@@ -479,7 +515,8 @@ public class CostingMigrationProcess implements Process {
         calculateCosts(org);
       }
     }
-
+    long end = System.currentTimeMillis();
+    log4j.debug("Ending createRules() at: " + new Date() + ". Duration: " + (end - start) + " ms.");
   }
 
   private void processRule(CostingRule rule) {
@@ -669,6 +706,9 @@ public class CostingMigrationProcess implements Process {
   }
 
   private ScrollableResults getLegacyCostScroll(String clientId, Set<String> naturalTree) {
+    long start = System.currentTimeMillis();
+    log4j.debug("Starting getLegacyCostScroll() at: " + new Date());
+
     StringBuffer where = new StringBuffer();
     where.append(" as c");
     where.append(" where c." + Costing.PROPERTY_CLIENT + ".id = :client");
@@ -693,11 +733,16 @@ public class CostingMigrationProcess implements Process {
     costingQry.setNamedParameter("client", clientId);
     costingQry.setNamedParameter("orgs", naturalTree);
     costingQry.setFetchSize(1000);
+
+    long end = System.currentTimeMillis();
+    log4j.debug("Ending getLegacyCostScroll() at: " + new Date() + ". Duration: " + (end - start)
+        + " ms.");
     return costingQry.scroll(ScrollMode.FORWARD_ONLY);
   }
 
   private void updateTrxLegacyCosts(Costing _cost, int standardPrecision, Set<String> naturalTree) {
-    log4j.debug("****** UpdateTrxLegacyCosts");
+    long start = System.currentTimeMillis();
+    log4j.debug("Starting updateTrxLegacyCosts() at: " + new Date());
     Costing cost = OBDal.getInstance().get(Costing.class, _cost.getId());
 
     StringBuffer where = new StringBuffer();
@@ -757,7 +802,9 @@ public class CostingMigrationProcess implements Process {
       trxs.close();
     }
 
-    log4j.debug("****** UpdateTrxLegacyCosts updated:" + i);
+    long end = System.currentTimeMillis();
+    log4j.debug("Ending updateTrxLegacyCosts() at: " + new Date() + ". Duration: " + (end - start)
+        + " ms. Updated: " + i + " transactions.");
   }
 
   /**
@@ -767,7 +814,8 @@ public class CostingMigrationProcess implements Process {
    * with zero cost.
    */
   private void updateWithZeroCostRemainingTrx() {
-    log4j.debug("****** updateWithCeroRemainingTrx");
+    long start = System.currentTimeMillis();
+    log4j.debug("Starting updateWithZeroCostRemainingTrx() at: " + new Date());
     int n = 0;
     TriggerHandler.getInstance().disable();
     try {
@@ -802,7 +850,9 @@ public class CostingMigrationProcess implements Process {
     } finally {
       TriggerHandler.getInstance().enable();
     }
-    log4j.debug("****** updateWithCeroRemainingTrx updated:" + n);
+    long end = System.currentTimeMillis();
+    log4j.debug("Ending updateWithZeroCostRemainingTrx() at: " + new Date() + ". Duration: "
+        + (end - start) + " ms. Updated: " + n + " transactions.");
   }
 
   private void insertAlertRecipients(AlertRule alertRule) {
@@ -843,9 +893,12 @@ public class CostingMigrationProcess implements Process {
   }
 
   private void insertTrxCosts() {
+    long start = System.currentTimeMillis();
+    log4j.debug("Starting insertTrxCosts() at: " + new Date());
     TriggerHandler.getInstance().disable();
+    long countTrx = 0;
     try {
-      long countTrx = Long.valueOf(CostingUtilsData.countTrxCosts(conn)).longValue();
+      countTrx = Long.valueOf(CostingUtilsData.countTrxCosts(conn)).longValue();
       long iters = (countTrx % maxTrx == 0) ? (countTrx / maxTrx) : (countTrx / maxTrx) + 1;
       String pgLimit = null, oraLimit = null;
       if (StringUtils.equalsIgnoreCase(conn.getRDBMS(), "ORACLE")) {
@@ -861,13 +914,19 @@ public class CostingMigrationProcess implements Process {
     } catch (Exception e) {
       log4j.error(e.getMessage());
     } finally {
+      long end = System.currentTimeMillis();
+      log4j.debug("Ending insertTrxCosts() at: " + new Date() + ". Duration: " + (end - start)
+          + " ms. Inserted: " + countTrx + " transactions.");
       TriggerHandler.getInstance().enable();
     }
   }
 
   private void insertStandardCosts() {
+    long start = System.currentTimeMillis();
+    log4j.debug("Starting insertStandardCosts() at: " + new Date());
     // Insert STANDARD cost for products with costtype = 'ST'.
     TriggerHandler.getInstance().disable();
+    int insertedTrx = 0;
     try {
       StringBuffer insert = new StringBuffer();
       insert.append(" insert into " + Costing.ENTITY_NAME);
@@ -931,13 +990,16 @@ public class CostingMigrationProcess implements Process {
       queryInsert.setString("startingDate", startingDate);
       queryInsert.setString("limitDate", startingDate);
       queryInsert.setString("limitDate2", startingDate);
-      queryInsert.executeUpdate();
+      insertedTrx = queryInsert.executeUpdate();
 
       OBDal.getInstance().flush();
       OBDal.getInstance().getSession().clear();
     } finally {
       TriggerHandler.getInstance().enable();
     }
+    long end = System.currentTimeMillis();
+    log4j.debug("Ending insertStandardCosts() at: " + new Date() + ". Duration: " + (end - start)
+        + " ms. Inserted: " + insertedTrx + " transactions.");
   }
 
   private CostingRule createCostingRule(Organization org) {
