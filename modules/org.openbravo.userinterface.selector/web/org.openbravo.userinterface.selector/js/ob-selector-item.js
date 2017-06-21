@@ -1105,13 +1105,23 @@ isc.OBSelectorItem.addProperties({
   },
 
   getSelectedPropertiesString: function () {
-    var i, fieldName, selectedProperties = OB.Constants.ID;
+    var i, fieldName, selectedProperties = {};
+    selectedProperties.entityProperties = OB.Constants.ID;
+    selectedProperties.derivedProperties = '';
     for (i = 0; i < this.pickListFields.length; i++) {
       fieldName = this.pickListFields[i].name;
       if (fieldName === OB.Constants.ID || fieldName === OB.Constants.IDENTIFIER) {
         continue;
       }
-      selectedProperties += ',' + fieldName;
+      if (fieldName.contains(OB.Constants.FIELDSEPARATOR)) {
+        if (selectedProperties.derivedProperties === '') {
+          selectedProperties.derivedProperties = fieldName;
+        } else {
+          selectedProperties.derivedProperties += ',' + fieldName;
+        }
+      } else {
+        selectedProperties.entityProperties += ',' + fieldName;
+      }
     }
     return selectedProperties;
   },
@@ -1185,6 +1195,8 @@ isc.OBSelectorItem.addClassMethods({
   // Prepares requestProperties adding contextInfo, this is later used in backed
   // to prepare filters 
   prepareDSRequest: function (params, selector, requestType) {
+    var selectedProperties, extraProperties;
+
     function setOrgIdParam(params) {
       if (!params.inpadOrgId) {
         // look for an ad_org_id parameter. If there is no such parameter or its value is empty, use the current user organization
@@ -1253,10 +1265,13 @@ isc.OBSelectorItem.addClassMethods({
     params[OB.Constants.SORTBY_PARAMETER] = selector.displayField;
 
     if (requestType === 'PickList') {
+      selectedProperties = selector.getSelectedPropertiesString();
+      extraProperties = selector.getExtraPropertiesString();
       // Add the fields to be displayed in the picklist as selected properties
-      params[OB.Constants.SELECTED_PROPERTIES] = selector.getSelectedPropertiesString();
+      params[OB.Constants.SELECTED_PROPERTIES] = selectedProperties.entityProperties;
       // Include value field, display field and out fields into additional properties
-      params[OB.Constants.EXTRA_PROPERTIES] = selector.getExtraPropertiesString();
+      // Also include the fields whose value will be obtained through property navigation
+      params[OB.Constants.EXTRA_PROPERTIES] = extraProperties + ',' + selectedProperties.derivedProperties;
     }
 
     // Parameter windows
