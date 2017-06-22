@@ -1551,7 +1551,7 @@
         }
       }
       if (p.get('ispack')) {
-        OB.Model.Discounts.discountRules[p.get('productCategory')].addProductToOrder(this, p);
+        OB.Model.Discounts.discountRules[p.get('productCategory')].addProductToOrder(this, p, attrs);
         if (callback) {
           callback(true);
         }
