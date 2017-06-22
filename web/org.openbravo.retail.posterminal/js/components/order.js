@@ -557,6 +557,12 @@ enyo.kind({
     });
     this.$.listPaymentLines.setCollection(this.order.get('payments'));
     this.setTaxes();
+    this.order.on('change:cancelLayaway change:voidLayaway', function (model) {
+      if (model.get('cancelLayaway') || model.get('voidLayaway')) {
+        this.$.listPaymentLines.hide();
+        this.$.paymentBreakdown.hide();
+      }
+    }, this);
     this.order.on('change:gross change:net', function (model) {
       if (model.get('orderType') !== 3) {
         this.$.totalReceiptLine.renderTotal(model.getTotal());
