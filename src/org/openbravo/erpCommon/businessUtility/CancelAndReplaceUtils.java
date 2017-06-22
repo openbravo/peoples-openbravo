@@ -29,9 +29,11 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentProcess;
@@ -235,9 +237,10 @@ public class CancelAndReplaceUtils {
         oldOrder = OBDal.getInstance().get(Order.class, orderId);
         oldOrderId = oldOrder.getId();
       }
+      oldOrder = lockOrder(oldOrder);
 
       // Added check in case Cancel and Replace button is hit more than once
-      if (jsonorder == null && oldOrder.isCancelled()) {
+      if (oldOrder.isCancelled()) {
         throw new OBException(String.format(OBMessageUtils.messageBD("IsCancelled"),
             oldOrder.getDocumentNo()));
       }
@@ -248,6 +251,7 @@ public class CancelAndReplaceUtils {
       if (newOrderId != null) {
         newOrder = OBDal.getInstance().get(Order.class, newOrderId);
       }
+
       oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
 
       // Get documentNo for the inverse Order Header coming from jsonorder, if exists
@@ -1279,6 +1283,17 @@ public class CancelAndReplaceUtils {
     paymentScheduleCriteria.setMaxResults(1);
     paymentSchedule = (FIN_PaymentSchedule) paymentScheduleCriteria.uniqueResult();
     return paymentSchedule;
+  }
+
+  private static Order lockOrder(Order order) {
+    StringBuilder where = new StringBuilder("select c from " + Order.ENTITY_NAME
+        + " c where id = :id");
+    final Session session = OBDal.getInstance().getSession();
+    final Query query = session.createQuery(where.toString());
+    query.setParameter("id", order.getId());
+    query.setMaxResults(1);
+    query.setLockOptions(LockOptions.UPGRADE);
+    return (Order) query.uniqueResult();
   }
 
 }
