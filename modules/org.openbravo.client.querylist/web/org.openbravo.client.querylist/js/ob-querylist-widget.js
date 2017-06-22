@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,7 +74,9 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
 
   setDbInstanceId: function (instanceId) {
     this.Super('setDbInstanceId', instanceId);
-    this.grid.fetchData();
+    if (this.allRequiredParametersSet()) {
+      this.grid.fetchData();
+    }
   },
 
   setWidgetHeight: function () {
@@ -139,7 +141,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     }
     // sometimes when removing the form, this gets called
     // at that point this.grid is not set anymore
-    if (this.grid) {
+    if (this.grid && this.allRequiredParametersSet()) {
       this.grid.invalidateCache();
       this.grid.filterData();
     }
