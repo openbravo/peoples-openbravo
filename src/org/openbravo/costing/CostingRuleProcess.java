@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2016 Openbravo SLU
+ * All portions are Copyright (C) 2012-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -82,16 +82,22 @@ public class CostingRuleProcess implements Process {
       OBContext.setAdminMode(false);
       final String ruleId = (String) bundle.getParams().get("M_Costing_Rule_ID");
       CostingRule rule = OBDal.getInstance().get(CostingRule.class, ruleId);
+
+      // Checks
       if (rule.getOrganization().getCurrency() == null) {
         throw new OBException("@NoCurrencyInCostingRuleOrg@");
       }
+      migrationCheck();
+      if (rule.isBackdatedTransactionsFixed()) {
+        CostAdjustmentProcess.doGetAlgorithmAdjustmentImp(rule.getCostingAlgorithm()
+            .getJavaClassName());
+      }
+
       OrganizationStructureProvider osp = OBContext.getOBContext()
           .getOrganizationStructureProvider(rule.getClient().getId());
       final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
       final Set<String> naturalOrgs = osp.getNaturalTree(rule.getOrganization().getId());
 
-      // Checks
-      migrationCheck();
       CostingRule prevCostingRule = getPreviousRule(rule);
       boolean existsPreviousRule = prevCostingRule != null;
       boolean existsTransactions = existsTransactions(naturalOrgs, childOrgs);

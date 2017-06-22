@@ -239,9 +239,6 @@ public class CostAdjustmentProcess {
       CostingAlgorithmAdjustmentImp costAdjImp = getAlgorithmAdjustmentImp(trx
           .getCostingAlgorithm().getJavaClassName());
 
-      if (costAdjImp == null) {
-        throw new OBException(OBMessageUtils.messageBD("CostAlgorithmWithoutAdjustment"));
-      }
       log.debug("costing algorithm imp loaded {}", costAdjImp.getClass().getName());
       costAdjImp.init(line);
       costAdjImp.searchRelatedTransactionCosts(null);
@@ -334,6 +331,9 @@ public class CostAdjustmentProcess {
             strJavaClass);
       }
     }
+    if (implementor == null) {
+      throw new OBException(OBMessageUtils.messageBD("CostAlgorithmWithoutAdjustment"));
+    }
     return implementor;
   }
 
@@ -348,5 +348,11 @@ public class CostAdjustmentProcess {
     log.debug("Ends process cost adjustment: {}, took {} ms.", docNo,
         (System.currentTimeMillis() - t1));
     return message;
+  }
+
+  public static CostingAlgorithmAdjustmentImp doGetAlgorithmAdjustmentImp(String strJavaClass) {
+    CostAdjustmentProcess cap = WeldUtils
+        .getInstanceFromStaticBeanManager(CostAdjustmentProcess.class);
+    return cap.getAlgorithmAdjustmentImp(strJavaClass);
   }
 }
