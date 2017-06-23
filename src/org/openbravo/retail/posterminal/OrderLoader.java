@@ -247,7 +247,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         return successMessage(jsonorder);
       }
 
-      if (jsonorder.getBoolean("isLayaway") || (newLayaway && isModified)) {
+      if (jsonorder.getBoolean("isLayaway") || isModified) {
         order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
 
         final Date loaded = dateFormatUTC.parse(jsonorder.getString("loaded")), updated = OBMOBCUtils
