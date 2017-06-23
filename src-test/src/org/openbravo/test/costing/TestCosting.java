@@ -40,7 +40,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -228,87 +228,94 @@ public class TestCosting extends WeldBaseTest {
   // Goods Shipment with documentNo: 500014
   private static String MOVEMENTOUT_ID = "2BCCC64DA82A48C3976B4D007315C2C9";
 
+  private static boolean runBefore = true;
+
   /********************************************** Automated tests **********************************************/
 
-  @BeforeClass
-  public static void setInitialConfiguration() {
-    try {
+  @Before
+  public void setInitialConfiguration() {
+    // FIXME: Change setInitialConfiguration to @BeforeClass and remove runBefore flag
+    // once https://issues.openbravo.com/view.php?id=36326 is fixed
+    if (runBefore) {
+      try {
 
-      // Set System context
-      OBContext.setOBContext(USERADMIN_ID);
-      OBContext.setAdminMode(true);
+        // Set System context
+        OBContext.setOBContext(USERADMIN_ID);
+        OBContext.setAdminMode(true);
 
-      // Set EUR currency costing precision
-      Currency currrencyEur = OBDal.getInstance().get(Currency.class, EURO_ID);
-      currrencyEur.setCostingPrecision(4L);
-      OBDal.getInstance().save(currrencyEur);
+        // Set EUR currency costing precision
+        Currency currrencyEur = OBDal.getInstance().get(Currency.class, EURO_ID);
+        currrencyEur.setCostingPrecision(4L);
+        OBDal.getInstance().save(currrencyEur);
 
-      // Set USD currency costing precision
-      Currency currrencyUsd = OBDal.getInstance().get(Currency.class, DOLLAR_ID);
-      currrencyUsd.setCostingPrecision(4L);
-      OBDal.getInstance().save(currrencyUsd);
+        // Set USD currency costing precision
+        Currency currrencyUsd = OBDal.getInstance().get(Currency.class, DOLLAR_ID);
+        currrencyUsd.setCostingPrecision(4L);
+        OBDal.getInstance().save(currrencyUsd);
 
-      OBDal.getInstance().flush();
+        OBDal.getInstance().flush();
 
-      // Set QA context
-      OBContext.setOBContext(USER_ID, ROLE_ID, CLIENT_ID, ORGANIZATION_ID);
+        // Set QA context
+        OBContext.setOBContext(USER_ID, ROLE_ID, CLIENT_ID, ORGANIZATION_ID);
 
-      // Set Spain organization currency
-      Organization organization = OBDal.getInstance().get(Organization.class, ORGANIZATION_ID);
-      organization.setCurrency(OBDal.getInstance().get(Currency.class, EURO_ID));
-      OBDal.getInstance().save(organization);
+        // Set Spain organization currency
+        Organization organization = OBDal.getInstance().get(Organization.class, ORGANIZATION_ID);
+        organization.setCurrency(OBDal.getInstance().get(Currency.class, EURO_ID));
+        OBDal.getInstance().save(organization);
 
-      // Set allow negatives in General Ledger
-      AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class, GENERALLEDGER_ID);
-      acctSchema.setAllowNegative(false);
-      OBDal.getInstance().save(acctSchema);
+        // Set allow negatives in General Ledger
+        AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class, GENERALLEDGER_ID);
+        acctSchema.setAllowNegative(false);
+        OBDal.getInstance().save(acctSchema);
 
-      // Active tables in General Ledger Configuration
-      List<Table> tableList = new ArrayList<Table>();
-      tableList.add(OBDal.getInstance().get(Table.class, TABLE1_ID));
-      tableList.add(OBDal.getInstance().get(Table.class, TABLE2_ID));
-      tableList.add(OBDal.getInstance().get(Table.class, TABLE3_ID));
-      tableList.add(OBDal.getInstance().get(Table.class, TABLE4_ID));
-      tableList.add(OBDal.getInstance().get(Table.class, TABLE5_ID));
-      tableList.add(OBDal.getInstance().get(Table.class, TABLE6_ID));
-      final OBCriteria<AcctSchemaTable> criteria1 = OBDal.getInstance().createCriteria(
-          AcctSchemaTable.class);
-      criteria1.add(Restrictions.eq(AcctSchemaTable.PROPERTY_ACCOUNTINGSCHEMA, acctSchema));
-      criteria1.add(Restrictions.in(AcctSchemaTable.PROPERTY_TABLE, tableList));
-      criteria1.setFilterOnActive(false);
-      criteria1.setFilterOnReadableClients(false);
-      criteria1.setFilterOnReadableOrganization(false);
-      for (AcctSchemaTable acctSchemaTable : criteria1.list()) {
-        acctSchemaTable.setActive(true);
-        OBDal.getInstance().save(acctSchemaTable);
+        // Active tables in General Ledger Configuration
+        List<Table> tableList = new ArrayList<Table>();
+        tableList.add(OBDal.getInstance().get(Table.class, TABLE1_ID));
+        tableList.add(OBDal.getInstance().get(Table.class, TABLE2_ID));
+        tableList.add(OBDal.getInstance().get(Table.class, TABLE3_ID));
+        tableList.add(OBDal.getInstance().get(Table.class, TABLE4_ID));
+        tableList.add(OBDal.getInstance().get(Table.class, TABLE5_ID));
+        tableList.add(OBDal.getInstance().get(Table.class, TABLE6_ID));
+        final OBCriteria<AcctSchemaTable> criteria1 = OBDal.getInstance().createCriteria(
+            AcctSchemaTable.class);
+        criteria1.add(Restrictions.eq(AcctSchemaTable.PROPERTY_ACCOUNTINGSCHEMA, acctSchema));
+        criteria1.add(Restrictions.in(AcctSchemaTable.PROPERTY_TABLE, tableList));
+        criteria1.setFilterOnActive(false);
+        criteria1.setFilterOnReadableClients(false);
+        criteria1.setFilterOnReadableOrganization(false);
+        for (AcctSchemaTable acctSchemaTable : criteria1.list()) {
+          acctSchemaTable.setActive(true);
+          OBDal.getInstance().save(acctSchemaTable);
+        }
+
+        OBDal.getInstance().flush();
+
+        // Create costing rule
+        CostingRule costingRule = OBProvider.getInstance().get(CostingRule.class);
+        setGeneralData(costingRule);
+        costingRule.setCostingAlgorithm(OBDal.getInstance().get(CostingAlgorithm.class,
+            COSTINGALGORITHM_ID));
+        costingRule.setWarehouseDimension(true);
+        costingRule.setBackdatedTransactionsFixed(true);
+        costingRule.setValidated(false);
+        costingRule.setStartingDate(null);
+        costingRule.setEndingDate(null);
+        OBDal.getInstance().save(costingRule);
+        OBDal.getInstance().flush();
+        OBDal.getInstance().refresh(costingRule);
+        runCostingBackground();
+        validateCostingRule(costingRule.getId());
+
+        OBDal.getInstance().commitAndClose();
+      } catch (Exception e) {
+        System.out.println(e.getMessage());
+        throw new OBException(e);
       }
 
-      OBDal.getInstance().flush();
-
-      // Create costing rule
-      CostingRule costingRule = OBProvider.getInstance().get(CostingRule.class);
-      setGeneralData(costingRule);
-      costingRule.setCostingAlgorithm(OBDal.getInstance().get(CostingAlgorithm.class,
-          COSTINGALGORITHM_ID));
-      costingRule.setWarehouseDimension(true);
-      costingRule.setBackdatedTransactionsFixed(true);
-      costingRule.setValidated(false);
-      costingRule.setStartingDate(null);
-      costingRule.setEndingDate(null);
-      OBDal.getInstance().save(costingRule);
-      OBDal.getInstance().flush();
-      OBDal.getInstance().refresh(costingRule);
-      runCostingBackground();
-      validateCostingRule(costingRule.getId());
-
-      OBDal.getInstance().commitAndClose();
-    } catch (Exception e) {
-      System.out.println(e.getMessage());
-      throw new OBException(e);
-    }
-
-    finally {
-      OBContext.restorePreviousMode();
+      finally {
+        OBContext.restorePreviousMode();
+        runBefore = false;
+      }
     }
   }
 
