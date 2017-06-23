@@ -339,8 +339,8 @@ public class CostAdjustmentProcess {
 
   public static JSONObject doProcessCostAdjustment(CostAdjustment costAdjustment)
       throws OBException {
-    String docNo = costAdjustment.getDocumentNo();
-    log.debug("Starting doProcessCostAdjustment() for cost adjustment: {}", docNo);
+    log.debug("Starting doProcessCostAdjustment() for cost adjustment: {}",
+        costAdjustment.getDocumentNo());
     long t1 = System.currentTimeMillis();
     CostAdjustmentProcess cap = WeldUtils
         .getInstanceFromStaticBeanManager(CostAdjustmentProcess.class);

@@ -110,23 +110,18 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
       int batch = 0;
       int counter = 0;
       int counterBatch;
-      long elapsedTime = 0;
-      long avgTimePerBatch = 0;
       int pendingTrxs = 0;
-      int pendingBatches = 0;
+      long elapsedTime = 0;
       if (log4j.isDebugEnabled()) {
         pendingTrxs = getTransactionsBatchCount(orgsWithRule);
         log4j.debug("Pending transactions: " + pendingTrxs);
-        pendingBatches = (pendingTrxs % BATCH_SIZE == 0) ? (pendingTrxs / BATCH_SIZE)
-            : (pendingTrxs / BATCH_SIZE) + 1;
-        log4j.debug("Pending batches: " + pendingBatches);
       }
+
       trxs = getTransactionsBatch(orgsWithRule);
       while (!trxs.isEmpty()) {
         long t1 = System.currentTimeMillis();
         batch++;
         counterBatch = 0;
-        pendingBatches--;
         for (String trxId : trxs) {
           if (killProcess) {
             throw new OBException("Process killed");
@@ -146,17 +141,20 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
               + ". Took: " + (t4 - t3) + " ms.");
         }
         trxs = getTransactionsBatch(orgsWithRule);
-        long t2 = System.currentTimeMillis();
-
-        log4j.debug("Processing batch: " + batch + " (" + counterBatch + " transactions) took: "
-            + (t2 - t1) + " ms.");
 
         if (log4j.isDebugEnabled()) {
+          long t2 = System.currentTimeMillis();
+          log4j.debug("Processing batch: " + batch + " (" + counterBatch + " transactions) took: "
+              + (t2 - t1) + " ms.");
           pendingTrxs -= counterBatch;
-          log4j.debug("Pending transactions: " + pendingTrxs);
+          int pendingBatches = (pendingTrxs % BATCH_SIZE == 0) ? (pendingTrxs / BATCH_SIZE)
+              : (pendingTrxs / BATCH_SIZE) + 1;
           elapsedTime += t2 - t1;
-          avgTimePerBatch = elapsedTime / batch;
-          log4j.debug("Estimated time to finish: " + (avgTimePerBatch * pendingBatches) + " ms.");
+          long avgTimePerBatch = elapsedTime / batch / 1000;
+          log4j.debug("Pending transactions: " + pendingTrxs);
+          log4j.debug("Average time per batch: " + avgTimePerBatch
+              + " seconds. Estimated time to finish: " + (avgTimePerBatch * pendingBatches)
+              + " seconds.");
         }
       }
 
@@ -259,8 +257,7 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
     trxQry.setParameter("now", new Date());
     trxQry.setParameterList("orgs", orgsWithRule);
     trxQry.setMaxResults(1);
-    Long trxCount = (Long) trxQry.uniqueResult();
-    return trxCount.intValue();
+    return ((Long) trxQry.uniqueResult()).intValue();
   }
 
   private void initializeMtransCostDateAcct() throws Exception {
