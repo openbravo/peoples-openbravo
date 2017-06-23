@@ -174,7 +174,6 @@
   v_iscashvat C_Invoice.IsCashVat%TYPE;
   v_invoiceline_qtysum NUMBER;
   v_prepaymentamt NUMBER;
-  v_prepayment_inorders NUMBER;
   v_hasTaxes NUMBER;
   v_calendarId C_CALENDAR.C_CALENDAR_ID%TYPE;
    
@@ -1797,21 +1796,22 @@ IF (NOT FINISH_PROCESS) THEN
     END IF;
   END IF;--FINISH_PROCESS
   IF (NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
-    --Update the prepayment amount from orders related to the invoice lines.
-    SELECT COALESCE(SUM(fps.paidamt),0)
-      INTO v_prepayment_inorders
-    FROM fin_payment_schedule fps
-      JOIN c_order o ON o.c_order_id=fps.c_order_id
-      JOIN c_orderline ol ON ol.c_order_id = o.c_order_id
-      JOIN c_invoiceline il ON il.c_orderline_id = ol.c_orderline_id
-    WHERE il.c_invoice_id = v_Record_ID;
+    -- Update prepayment amount for invoice related to order
+    UPDATE C_Invoice i
+    SET prepaymentamt = (
+      SELECT COALESCE(SUM(fps.paidamt), 0)
+      FROM FIN_Payment_Schedule fps
+      WHERE fps.C_Order_ID = i.C_Order_ID
+    )
+    WHERE i.C_Invoice_ID = v_Record_ID;
+  END IF;--FINISH_PROCESS
+  IF (NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
 
     -- Finish up -------------------------------------------------------------
     UPDATE C_INVOICE
     SET DocStatus='CO',
         Processed='Y',
         DocAction='RE',
-        PrepaymentAmt=v_prepayment_inorders,
         Updated=now(),
         UpdatedBy=v_UpdatedBy
     WHERE C_Invoice_ID=v_Record_ID;
