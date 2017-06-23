@@ -405,8 +405,10 @@ public class ProcessInvoice extends HttpSecureAppServlet {
 
               // Updating dummy payment lines with invoice and reverse invoice
               for (FIN_PaymentScheduleDetail fpsd : psdQuery.list()) {
-                // invoice payment detail asociated to the order
-                boolean invoiceFPDOrder = fpsd.getPaymentDetails() != null;
+
+                // Invoice payment detail associated to the order
+                FIN_PaymentDetail invoiceFPDOrder = fpsd.getPaymentDetails();
+                FIN_PaymentSchedule orderPaymentSchedule = fpsd.getOrderPaymentSchedule();
 
                 // Create a payment detail
                 FIN_PaymentDetail pd = OBProvider.getInstance().get(FIN_PaymentDetail.class);
@@ -425,22 +427,36 @@ public class ProcessInvoice extends HttpSecureAppServlet {
 
                 dummyPayment.getFINPaymentDetailList().add(pd);
 
-                if (invoiceFPDOrder) {
+                if (invoiceFPDOrder != null) {
                   StringBuilder orderPSDHQLQuery = new StringBuilder();
                   orderPSDHQLQuery.append(" as fpsd");
                   orderPSDHQLQuery.append(" join fpsd.paymentDetails fpd");
                   orderPSDHQLQuery.append(" where fpd.finPayment.id = :paymentId");
                   orderPSDHQLQuery.append(" and fpsd.id <> :invoicePSDId");
+                  orderPSDHQLQuery.append(" and fpsd.invoicePaymentSchedule is null");
                   OBQuery<FIN_PaymentScheduleDetail> orderPSDQuery = OBDal.getInstance()
                       .createQuery(FIN_PaymentScheduleDetail.class, orderPSDHQLQuery.toString());
-                  orderPSDQuery.setNamedParameter("paymentId", orderPayment.getId());
+                  orderPSDQuery.setNamedParameter("paymentId", invoiceFPDOrder.getFinPayment()
+                      .getId());
                   orderPSDQuery.setNamedParameter("invoicePSDId", fpsd.getId());
+                  orderPSDQuery.setMaxResult(1);
+                  FIN_PaymentScheduleDetail orderPSD = orderPSDQuery.uniqueResult();
 
-                  for (FIN_PaymentScheduleDetail orderPSD : orderPSDQuery.list()) {
+                  if (orderPSD == null) {
+                    // Order with no payment schedule detail, create a new one
+                    orderPSD = OBProvider.getInstance().get(FIN_PaymentScheduleDetail.class);
+                    orderPSD.setOrganization(fpsd.getOrganization());
+                    orderPSD.setAmount(fpsd.getAmount());
+                    orderPSD.setBusinessPartner(fpsd.getBusinessPartner());
+                    orderPSD.setPaymentDetails(invoiceFPDOrder);
+                    orderPSD.setOrderPaymentSchedule(orderPaymentSchedule);
+                  } else {
                     // Update order received amount
                     orderPSD.setAmount(orderPSD.getAmount().add(fpsd.getAmount()));
-                    OBDal.getInstance().save(orderPSD);
                   }
+                  OBDal.getInstance().save(orderPSD);
+
+                  // Update invoice payment schedule
                   FIN_PaymentSchedule ps = fpsd.getInvoicePaymentSchedule();
                   ps.setPaidAmount(BigDecimal.ZERO);
                   ps.setOutstandingAmount(fpsd.getAmount());
