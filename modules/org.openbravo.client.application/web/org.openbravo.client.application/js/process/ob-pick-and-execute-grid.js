@@ -1008,7 +1008,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   hideInlineEditor: function (focusInBody, suppressCMHide) {
     var ret;
-    if (this.isRequiredFieldWithNoValue()) {
+    if (this.viewProperties && this.viewProperties.allowAdd && this.isRequiredFieldWithNoValue()) {
       return;
     } else {
       ret = this.Super('hideInlineEditor', arguments);
