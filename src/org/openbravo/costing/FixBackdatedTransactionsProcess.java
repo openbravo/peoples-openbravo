@@ -79,19 +79,20 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
       }
       rule.setFixbackdatedfrom(fixbackdatedfrom);
       try {
-        CostAdjustmentProcess.doGetAlgorithmAdjustmentImp(rule.getCostingAlgorithm()
-            .getJavaClassName());
         OBContext.setAdminMode(false);
+
         if (rule.getStartingDate() != null && rule.getFixbackdatedfrom() != null
             && rule.isBackdatedTransactionsFixed()
             && rule.getFixbackdatedfrom().before(rule.getStartingDate())) {
           throw new OBException(
               OBMessageUtils.parseTranslation("@FixBackdateFromBeforeStartingDate2@"));
         }
+        CostAdjustmentProcess.doGetAlgorithmAdjustmentImp(rule.getCostingAlgorithm()
+            .getJavaClassName());
+
         OrganizationStructureProvider osp = OBContext.getOBContext()
             .getOrganizationStructureProvider(rule.getClient().getId());
         final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
-
         ScrollableResults transactions = getTransactions(childOrgs, fixbackdatedfrom,
             rule.getEndingDate());
         int i = 0;
