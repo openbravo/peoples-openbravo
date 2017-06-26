@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2016 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,7 @@
       <![CDATA[
 		select ad_org.ad_org_id as id, ad_org.name as name,
           '' AS TOTALAMTDR, '' AS TOTALAMTCR, '' AS ACCOUNT_ID, '' as org, '' as acctvalue, '' as acctdescription, '' as value,
-          '' as c_bpartner_id, '' as record_id2, '' as m_product_id, '' as a_asset_id, '' AS REGCOUNT,
+          '' as c_bpartner_id, '' as m_product_id, '' as a_asset_id, '' AS REGCOUNT,
           '' AS C_TAX_ID, '' AS C_PROJECT_ID, '' AS  C_ACTIVITY_ID, '' AS USER1_ID, '' AS  USER2_ID, '' AS  C_CAMPAIGN_ID,
           '' AS  C_SALESREGION_ID, '' AS REG_FACT_ACCT_GROUP_ID, '' AS CLOSE_FACT_ACCT_GROUP_ID, '' AS DIVIDEUP_FACT_ACCT_GROUP_ID,
         '' AS OPEN_FACT_ACCT_GROUP_ID, '' AS AD_ORG_CLOSING_ID
@@ -84,7 +84,7 @@
            AMTSOURCECR,AMTACCTDR, AMTACCTCR,
            FACT_ACCT_GROUP_ID,SEQNO, FACTACCTTYPE,
            ACCTDESCRIPTION, ACCTVALUE, C_BPARTNER_ID,
-           RECORD_ID2, M_PRODUCT_ID, A_ASSET_ID,
+           M_PRODUCT_ID, A_ASSET_ID,
            DESCRIPTION,C_TAX_ID,C_PROJECT_ID,C_ACTIVITY_ID,
            USER1_ID,USER2_ID,C_CAMPAIGN_ID,C_SALESREGION_ID)
         VALUES
@@ -96,7 +96,7 @@
            TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),
            ?,TO_NUMBER(?), 'R',
            ?, ?, ?,
-           ?, ?, ?,
+           ?, ?,
            ?,?,?,?,
            ?,?,?,?)
       ]]>
@@ -124,7 +124,6 @@
     <Parameter name="acctdescription"/>
     <Parameter name="value"/>
     <Parameter name="bpartner"/>
-    <Parameter name="debtPayment"/>
     <Parameter name="product"/>
     <Parameter name="asset"/>
     <Parameter name="description"/>
@@ -149,7 +148,7 @@
         AMTSOURCECR,AMTACCTDR, AMTACCTCR,
         FACT_ACCT_GROUP_ID,SEQNO, FACTACCTTYPE,
         ACCTDESCRIPTION, ACCTVALUE, C_BPARTNER_ID,
-        RECORD_ID2, M_PRODUCT_ID, A_ASSET_ID,DESCRIPTION,
+        M_PRODUCT_ID, A_ASSET_ID, DESCRIPTION,
         C_TAX_ID,C_PROJECT_ID,C_ACTIVITY_ID,
         USER1_ID,USER2_ID,C_CAMPAIGN_ID,C_SALESREGION_ID)
         SELECT get_UUID(), ?, ?,
@@ -162,7 +161,7 @@
         (CASE SIGN(SUM(AMTACCTDR)-SUM(AMTACCTCR)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTDR)-SUM(AMTACCTCR)) END),
         ?, to_number(?), ?, 
         ACCTDESCRIPTION, ACCTVALUE, C_BPARTNER_ID, 
-        RECORD_ID2, M_PRODUCT_ID, A_ASSET_ID, ? ,
+        M_PRODUCT_ID, A_ASSET_ID, ?,
         C_TAX_ID,C_PROJECT_ID,C_ACTIVITY_ID,
         USER1_ID,USER2_ID,C_CAMPAIGN_ID,C_SALESREGION_ID
         FROM FACT_ACCT
@@ -176,7 +175,7 @@
         AND AD_ORG_ID = ?
         AND C_ACCTSCHEMA_ID = ?
         AND (FACTACCTTYPE <>'C' or FACT_ACCT_GROUP_ID = ?) 
-        GROUP BY ACCOUNT_ID, ACCTDESCRIPTION, ACCTVALUE, RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID,
+        GROUP BY ACCOUNT_ID, ACCTDESCRIPTION, ACCTVALUE, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID,
              C_TAX_ID,C_PROJECT_ID,C_ACTIVITY_ID,USER1_ID,USER2_ID,C_CAMPAIGN_ID,C_SALESREGION_ID, C_ACCTSCHEMA_ID
         HAVING SUM(AMTACCTDR)-SUM(AMTACCTCR)<>0
         order by ACCTVALUE
@@ -214,7 +213,7 @@
         AMTSOURCEDR, AMTACCTCR, AMTACCTDR,
         FACT_ACCT_GROUP_ID,SEQNO, FACTACCTTYPE,
         ACCTDESCRIPTION, ACCTVALUE, C_BPARTNER_ID,
-        RECORD_ID2, M_PRODUCT_ID, A_ASSET_ID,DESCRIPTION,
+        M_PRODUCT_ID, A_ASSET_ID, DESCRIPTION,
         C_TAX_ID,C_PROJECT_ID,C_ACTIVITY_ID,
         USER1_ID,USER2_ID,C_CAMPAIGN_ID,C_SALESREGION_ID)
         SELECT get_UUID(), ?, ?,
@@ -227,7 +226,7 @@
         (CASE SIGN(SUM(AMTACCTDR)-SUM(AMTACCTCR)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTDR)-SUM(AMTACCTCR)) END),
         ?, to_number(?), ?, 
         ACCTDESCRIPTION, ACCTVALUE, C_BPARTNER_ID, 
-        RECORD_ID2, M_PRODUCT_ID, A_ASSET_ID, ? ,
+        M_PRODUCT_ID, A_ASSET_ID, ?,
         C_TAX_ID,C_PROJECT_ID,C_ACTIVITY_ID,
         USER1_ID,USER2_ID,C_CAMPAIGN_ID,C_SALESREGION_ID
         FROM FACT_ACCT
@@ -241,7 +240,7 @@
         AND AD_ORG_ID = ?
         AND C_ACCTSCHEMA_ID = ?
         AND (FACTACCTTYPE <>'C' or FACT_ACCT_GROUP_ID = ?) 
-        GROUP BY ACCOUNT_ID, ACCTDESCRIPTION, ACCTVALUE, RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID,
+        GROUP BY ACCOUNT_ID, ACCTDESCRIPTION, ACCTVALUE, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID,
              C_TAX_ID,C_PROJECT_ID,C_ACTIVITY_ID,USER1_ID,USER2_ID,C_CAMPAIGN_ID,C_SALESREGION_ID, C_ACCTSCHEMA_ID
         HAVING SUM(AMTACCTDR)-SUM(AMTACCTCR)<>0
         order by ACCTVALUE
@@ -396,7 +395,7 @@
         AMTSOURCECR,AMTACCTDR, AMTACCTCR,
         FACT_ACCT_GROUP_ID,SEQNO, FACTACCTTYPE,
         ACCTDESCRIPTION, ACCTVALUE, C_BPARTNER_ID,
-        RECORD_ID2, M_PRODUCT_ID, A_ASSET_ID,
+        M_PRODUCT_ID, A_ASSET_ID,
         DESCRIPTION,
         C_TAX_ID, C_PROJECT_ID, C_ACTIVITY_ID,
         USER1_ID, USER2_ID, C_CAMPAIGN_ID,
@@ -410,7 +409,7 @@
            TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),
            ?,TO_NUMBER(?),?,
            ?,?,?,
-           ?, ?, ?,
+           ?, ?,
            ?,
            ?,?,?,
            ?, ?, ?,
@@ -441,7 +440,6 @@
     <Parameter name="acctdescription"/>
     <Parameter name="value"/>
     <Parameter name="bpartner"/>
-    <Parameter name="debtPayment"/>
     <Parameter name="product"/>
     <Parameter name="asset"/>
     <Parameter name="description"/>

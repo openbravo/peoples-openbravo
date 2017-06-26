@@ -210,7 +210,7 @@ public class EndYearCloseUtility {
                   .toString(), "0",
               ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr)
                   .toString(), Fact_Acct_Group_ID, "10", account[0].name, account[0].value,
-              account[0].cBpartnerId, account[0].recordId2, account[0].mProductId,
+              account[0].cBpartnerId, account[0].mProductId,
               account[0].aAssetId, strRegEntry, account[0].cTaxId, account[0].cProjectId,
               account[0].cActivityId, account[0].user1Id, account[0].user2Id,
               account[0].cCampaignId, account[0].cSalesregionId);
@@ -226,7 +226,7 @@ public class EndYearCloseUtility {
               .subtract(RevenueAmtDr).subtract(ExpenseAmtDr).toString(), "0",
           ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr).subtract(ExpenseAmtDr).toString(),
           "0", Fact_Acct_Group_ID, "10", account[0].name, account[0].value, account[0].cBpartnerId,
-          account[0].recordId2, account[0].mProductId, account[0].aAssetId, strRegEntry,
+          account[0].mProductId, account[0].aAssetId, strRegEntry,
           account[0].cTaxId, account[0].cProjectId, account[0].cActivityId, account[0].user1Id,
           account[0].user2Id, account[0].cCampaignId, account[0].cSalesregionId);
     }
@@ -244,7 +244,7 @@ public class EndYearCloseUtility {
                 ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr)
                     .toString(), "0", ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr)
                     .subtract(ExpenseAmtCr).toString(), "0", strDivideUpId, "10", "D",
-                account[0].name, account[0].value, account[0].cBpartnerId, account[0].recordId2,
+                account[0].name, account[0].value, account[0].cBpartnerId,
                 account[0].mProductId, account[0].aAssetId, strClosingEntry, account[0].cTaxId,
                 account[0].cProjectId, account[0].cActivityId, account[0].user1Id,
                 account[0].user2Id, account[0].cCampaignId, account[0].cSalesregionId);
@@ -258,7 +258,7 @@ public class EndYearCloseUtility {
                 ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr)
                     .toString(), "0", ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr)
                     .subtract(ExpenseAmtCr).toString(), strDivideUpId, "10", "D", account2[0].name,
-                account2[0].value, account2[0].cBpartnerId, account2[0].recordId2,
+                account2[0].value, account2[0].cBpartnerId,
                 account2[0].mProductId, account2[0].aAssetId, strClosingEntry, account2[0].cTaxId,
                 account2[0].cProjectId, account2[0].cActivityId, account2[0].user1Id,
                 account2[0].user2Id, account2[0].cCampaignId, account2[0].cSalesregionId);
@@ -274,7 +274,7 @@ public class EndYearCloseUtility {
                 ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr).subtract(ExpenseAmtDr)
                     .toString(), "0", ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr)
                     .subtract(ExpenseAmtDr).toString(), strDivideUpId, "10", "D", account[0].name,
-                account[0].value, account[0].cBpartnerId, account[0].recordId2,
+                account[0].value, account[0].cBpartnerId,
                 account[0].mProductId, account[0].aAssetId, strClosingEntry, account[0].cTaxId,
                 account[0].cProjectId, account[0].cActivityId, account[0].user1Id,
                 account[0].user2Id, account[0].cCampaignId, account[0].cSalesregionId);
@@ -289,7 +289,7 @@ public class EndYearCloseUtility {
                     .toString(), "0", ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr)
                     .subtract(ExpenseAmtDr).toString(), "0", strDivideUpId, "10", "D",
                 account2[0].name, account2[0].value, account2[0].cBpartnerId,
-                account2[0].recordId2, account2[0].mProductId, account2[0].aAssetId,
+                account2[0].mProductId, account2[0].aAssetId,
                 strClosingEntry, account2[0].cTaxId, account2[0].cProjectId,
                 account2[0].cActivityId, account2[0].user1Id, account2[0].user2Id,
                 account2[0].cCampaignId, account2[0].cSalesregionId);
