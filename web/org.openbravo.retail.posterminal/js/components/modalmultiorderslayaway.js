@@ -74,7 +74,6 @@ enyo.kind({
       this.doHideThisPopup();
       return;
     }
-    amount = OB.DEC.toNumber(OB.DEC.toBigDecimal(amount));
     if (amount === 0) {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_amtGreaterThanZero'), [{
         isConfirmButton: true,
@@ -82,9 +81,18 @@ enyo.kind({
       }]);
       return;
     }
+    var decimalAmount = OB.DEC.toBigDecimal(amount);
+    if (decimalAmount.scale() > OB.DEC.getScale()) {
+      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidCurrencyAmount', [amount]));
+      OB.info('Amount to layaway ' + OB.I18N.getLabel('OBPOS_NotValidCurrencyAmount', [amount]));
+      return;
+    } else {
+      amount = OB.DEC.toNumber(decimalAmount);
+    }
     total = currentOrder.get('gross');
     if ((OB.DEC.compare(OB.DEC.sub(total, OB.DEC.add(amount, currentOrder.get('payment')))) < 0) || (OB.DEC.compare(OB.DEC.sub(amount, total)) > 0 || OB.DEC.compare(amount) < 0)) {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_notValidQty'));
+      OB.info(enyo.format('Amount to layaway: Amount %s is greater than receipt amount', amount));
       this.doHideThisPopup();
       return;
     }
