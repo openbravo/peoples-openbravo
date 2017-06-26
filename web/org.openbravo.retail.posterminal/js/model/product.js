@@ -65,6 +65,10 @@
     column: 'img',
     type: 'TEXT'
   }, {
+    name: 'imgId',
+    column: 'imgId',
+    type: 'TEXT'
+  }, {
     name: 'description',
     column: 'description',
     type: 'TEXT'

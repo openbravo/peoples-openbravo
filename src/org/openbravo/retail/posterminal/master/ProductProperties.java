@@ -61,6 +61,7 @@ public class ProductProperties extends ModelExtension {
         } catch (PropertyException e) {
           add(new HQLProperty("img.bindaryData", "img"));
         }
+        add(new HQLProperty("img.id", "imgId"));
         add(new HQLProperty("case when product.isGeneric is false then "
             + "(case when pli.bestseller = 'Y' then true else false end) "
             + "when (product.isGeneric is true and exists(select 1 "
