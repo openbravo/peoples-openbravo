@@ -101,7 +101,9 @@ public class HasServices extends JSONProcessSimple {
     hqlString.append("select count(*), s.obposProposalType ");
     hqlString.append("from OBRETCO_Prol_Product as assort left outer join assort.product as s ");
     hqlString.append("where s.productType = 'S'  and s.linkedToProduct = true ");
-    hqlString.append("and s.$orgCriteria and s.$activeCriteria ");
+    hqlString
+        .append("and s.$naturalOrgCriteria and s.$activeCriteria and s.$readableSimpleClientCriteria ");
+    hqlString.append("and assort.$activeCriteria ");
     hqlString.append("and assort.obretcoProductlist.id =  :obretcoProductlistId ");
     hqlString
         .append("and exists (select 1 from PricingProductPrice as ppp where ppp.product.id = :productId and ppp.priceListVersion.id = :priceListVersionId and ppp.$activeCriteria ) ");
@@ -126,7 +128,9 @@ public class HasServices extends JSONProcessSimple {
     hqlString.append("select count(*), s.obposProposalType ");
     hqlString.append("from OBRETCO_Prol_Product as assort left outer join assort.product as s ");
     hqlString.append("where s.productType = 'S' and s.linkedToProduct = true ");
-    hqlString.append("and s.$orgCriteria and s.$activeCriteria ");
+    hqlString
+        .append("and s.$naturalOrgCriteria and s.$activeCriteria and s.$readableSimpleClientCriteria ");
+    hqlString.append("and assort.$activeCriteria ");
     hqlString.append("and assort.obretcoProductlist.id = :obretcoProductlistId ");
     hqlString
         .append("and ((s.includedProductCategories = 'N' and exists (select 1 from ServiceProductCategory spc where s = spc.product and spc.$activeCriteria and spc.productCategory.id = :productCategoryId)) ");
