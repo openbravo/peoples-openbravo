@@ -82,6 +82,7 @@ enyo.kind({
         popup: 'modalcustomeraddress',
         args: {
           target: 'order',
+          clean: true,
           navigationPath: []
         }
       });
@@ -170,6 +171,7 @@ enyo.kind({
         popup: 'modalcustomershipaddress',
         args: {
           target: 'order',
+          clean: true,
           navigationPath: []
         }
       });
@@ -770,18 +772,36 @@ enyo.kind({
       }
 
       function successCallbackBPs(dataBps) {
-        dataBps.set('locId', model.get('id'));
-        dataBps.set('locName', model.get('name'));
-        dataBps.set('postalCode', model.get('postalCode'));
-        dataBps.set('cityName', model.get('cityName'));
-        dataBps.set('countryName', model.get('countryName'));
+        if (OB.MobileApp.model.receipt.get('bp').get('id') === dataBps.get('id')) {
+          dataBps.set('shipLocId', OB.MobileApp.model.receipt.get('bp').get('shipLocId'));
+          dataBps.set('shipLocName', OB.MobileApp.model.receipt.get('bp').get('shipLocName'));
+          dataBps.set('shipPostalCode', OB.MobileApp.model.receipt.get('bp').get('shipPostalCode'));
+          dataBps.set('shipCityName', OB.MobileApp.model.receipt.get('bp').get('shipPostalCode'));
+          dataBps.set('shipCountryName', OB.MobileApp.model.receipt.get('bp').get('shipCountryName'));
+        }
 
-        // Keep the other address:
-        dataBps.set('shipLocId', me.bPartner.get('shipLocId'));
-        dataBps.set('shipLocName', me.bPartner.get('shipLocName'));
-        dataBps.set('shipPostalCode', me.bPartner.get('shipPostalCode'));
-        dataBps.set('shipCityName', me.bPartner.get('shipPostalCode'));
-        dataBps.set('shipCountryName', me.bPartner.get('shipCountryName'));
+        if (me.manageAddress) {
+          if (model.get('isBillTo')) {
+            dataBps.set('locId', model.get('id'));
+            dataBps.set('locName', model.get('name'));
+            dataBps.set('postalCode', model.get('postalCode'));
+            dataBps.set('cityName', model.get('cityName'));
+            dataBps.set('countryName', model.get('countryName'));
+          }
+          if (model.get('isShipTo')) {
+            dataBps.set('shipLocId', model.get('id'));
+            dataBps.set('shipLocName', model.get('name'));
+            dataBps.set('shipPostalCode', model.get('postalCode'));
+            dataBps.set('shipCityName', model.get('cityName'));
+            dataBps.set('shipCountryName', model.get('countryName'));
+          }
+        } else {
+          dataBps.set('locId', model.get('id'));
+          dataBps.set('locName', model.get('name'));
+          dataBps.set('postalCode', model.get('postalCode'));
+          dataBps.set('cityName', model.get('cityName'));
+          dataBps.set('countryName', model.get('countryName'));
+        }
 
         if (me.target.startsWith('filterSelectorButton_')) {
           me.doChangeFilterSelector({
