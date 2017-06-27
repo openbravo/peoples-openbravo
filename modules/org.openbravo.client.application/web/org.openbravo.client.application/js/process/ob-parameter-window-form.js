@@ -55,7 +55,7 @@ isc.OBParameterWindowForm.addProperties({
   // this function is invoked on the blur action of the formitems
   // this is the proper place to execute the client-side callouts
   handleItemChange: function (item) {
-    var affectedParams, i, field, me = this,
+    var dynamicColumns, affectedParams, i, field, me = this,
         registryId;
 
     registryId = this.paramWindow.viewId || this.paramWindow.processId;
@@ -66,11 +66,9 @@ isc.OBParameterWindowForm.addProperties({
     }
     // Check validation rules (subordinated fields), when value of a
     // parent field is changed, all its subordinated are reset
-    var dynamicColumns = this.paramWindow.dynamicColumns;
+    dynamicColumns = this.paramWindow.dynamicColumns;
     if (dynamicColumns && dynamicColumns[item.name]) {
       affectedParams = dynamicColumns[item.name];
-    }
-    if (affectedParams) {
       for (i = 0; i < affectedParams.length; i++) {
         field = this.getField(affectedParams[i]);
         if (field && field.setValue) {
