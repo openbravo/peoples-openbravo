@@ -210,7 +210,7 @@ enyo.kind({
     }, this);
     this.model.get('leftColumnViewManager').on('order', function () {
       this.removeClass('paidticket');
-      if (this.model.get('order').get('isPaid') || this.model.get('order').get('isLayaway') || (this.model.get('order').get('isQuotation') && this.model.get('order').get('hasbeenpaid') === 'Y')) {
+      if (this.model.get('order').get('isPaid') || this.model.get('order').get('isLayaway') || (this.model.get('order').get('isQuotation') && this.model.get('order').get('hasbeenpaid') === 'Y') || this.model.get('order').get('isModified')) {
         this.addClass('paidticket');
       }
       this.bubble('onChangeTotal', {
@@ -226,8 +226,8 @@ enyo.kind({
     //      }
     //      return true;
     //    }, this);
-    this.model.get('order').on('change:isPaid change:isQuotation change:isLayaway change:hasbeenpaid', function (changedModel) {
-      if (changedModel.get('isPaid') || changedModel.get('isLayaway') || (changedModel.get('isQuotation') && changedModel.get('hasbeenpaid') === 'Y')) {
+    this.model.get('order').on('change:isPaid change:isQuotation change:isLayaway change:hasbeenpaid change:isModified', function (changedModel) {
+      if (changedModel.get('isPaid') || changedModel.get('isLayaway') || (changedModel.get('isQuotation') && changedModel.get('hasbeenpaid') === 'Y') || changedModel.get('isModified')) {
         this.addClass('paidticket');
         return;
       }
