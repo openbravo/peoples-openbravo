@@ -11,12 +11,14 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
+
+import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
@@ -48,11 +50,11 @@ public class SL_Inventory_Locator extends SimpleCallout {
         data[0].qtyorder = "0";
       }
 
+      BigDecimal qty = new BigDecimal(data[0].qty);
       info.addResult("inpquantityorderbook", StringUtils.isEmpty(data[0].qtyorder) ? "\"\""
           : (Object) data[0].qtyorder);
-      info.addResult("inpqtycount", StringUtils.isEmpty(data[0].qty) ? "\"\""
-          : (Object) data[0].qty);
-      info.addResult("inpqtybook", StringUtils.isEmpty(data[0].qty) ? "\"\"" : (Object) data[0].qty);
+      info.addResult("inpqtycount", StringUtils.isEmpty(data[0].qty) ? "\"\"" : qty);
+      info.addResult("inpqtybook", StringUtils.isEmpty(data[0].qty) ? "\"\"" : qty);
 
       info.addResult("EXECUTE", "displayLogic();");
     }
