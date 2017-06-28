@@ -176,6 +176,7 @@
   v_prepaymentamt NUMBER;
   v_prepayment_inorders NUMBER;
   v_hasTaxes NUMBER;
+  v_calendarId C_CALENDAR.C_CALENDAR_ID%TYPE;
    
 BEGIN
   IF (p_PInstance_ID IS NOT NULL) THEN
@@ -344,6 +345,7 @@ BEGIN --BODY
     /*
      * Avoids repeating the same documentno for the same organization tree within the same fiscal year
      */
+    SELECT C_CALENDAR_ID INTO v_calendarId FROM AD_ORG WHERE AD_ORG_ID = AD_ORG_GETCALENDAROWNER(v_Org_ID);
     SELECT COUNT(*) INTO v_count
     FROM (SELECT Y.C_CALENDAR_ID, Y.C_YEAR_ID,
               MIN(P.STARTDATE) AS PERIODSTARTDATE, MAX(P.ENDDATE) AS PERIODENDDATE
@@ -351,9 +353,7 @@ BEGIN --BODY
           WHERE Y.C_YEAR_ID = P.C_YEAR_ID
             AND Y.ISACTIVE = 'Y'
             AND P.ISACTIVE = 'Y'
-            AND Y.C_CALENDAR_ID = (SELECT O.C_CALENDAR_ID 
-                                   FROM AD_ORG O
-                                   WHERE AD_ORG_ID = AD_ORG_GETCALENDAROWNER(v_Org_ID))
+            AND Y.C_CALENDAR_ID = v_calendarId
           GROUP BY Y.C_CALENDAR_ID, Y.C_YEAR_ID) A
     WHERE PERIODSTARTDATE <= v_DateInvoiced
       AND PERIODENDDATE+1 > v_DateInvoiced ;
@@ -366,9 +366,7 @@ BEGIN --BODY
             WHERE Y.C_YEAR_ID = P.C_YEAR_ID
               AND Y.ISACTIVE = 'Y'
               AND P.ISACTIVE = 'Y'
-              AND Y.C_CALENDAR_ID = (SELECT O.C_CALENDAR_ID 
-                                     FROM AD_ORG O
-                                     WHERE AD_ORG_ID = AD_ORG_GETCALENDAROWNER(v_Org_ID))
+              AND Y.C_CALENDAR_ID = v_calendarId
             GROUP BY Y.C_CALENDAR_ID, Y.C_YEAR_ID) A
       WHERE PERIODSTARTDATE <= v_DateInvoiced
         AND PERIODENDDATE+1 > v_DateInvoiced ;
