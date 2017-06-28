@@ -36,7 +36,7 @@ public class ServicesMultiselectionHQLCriteria extends HQLCriteriaProcess {
           + "and ((product.includedProductCategories = 'Y' and not exists (select 1 from ServiceProductCategory spc where product.id = spc.product.id and spc.productCategory.id in ('$2') )) "
           + "or (product.includedProductCategories = 'N' and $4 = (select count(*) from ServiceProductCategory spc where product.id = spc.product.id and spc.productCategory.id in ('$2') )) "
           + "or product.includedProductCategories is null) "
-          + "and product.id not in ('$5') and (product.ispricerulebased = 'N' or (product.quantityRule = 'UQ' and exists" //
+          + "and product.id not in ('$5') and (product.ispricerulebased = 'N' or exists" //
           + "(select 1" //
           + "     from ServicePriceRuleVersion sprv" //
           + "     where sprv.product.id = product.id" //
@@ -46,39 +46,24 @@ public class ServicesMultiselectionHQLCriteria extends HQLCriteriaProcess {
           + "             where sprv2.product.id = product.id" //
           + "             and sprv2.validFromDate <= now()" //
           + "             and sprv2.active = true)" //
-          + "     and" //
-          + "             (sprv.obposMinimum is null" //
-          + "             and sprv.obposMaximum is null" //
-          + "             or sprv.obposMinimum is null" //
-          + "             and sprv.obposMaximum >= "
-          + totalAmountSelected //
-          + "             or sprv.obposMinimum <= " + totalAmountSelected //
-          + "             and sprv.obposMaximum is null" //
-          + "             or sprv.obposMinimum <= " + totalAmountSelected //
-          + "             and sprv.obposMaximum >= " + totalAmountSelected //
-          + "      and sprv.active = true))) " //
-          + "or " //
-          + "(product.quantityRule = 'PP' and exists" //
-          + "(select 1" //
-          + "     from ServicePriceRuleVersion sprv" //
-          + "     where sprv.product.id = product.id" //
-          + "     and sprv.validFromDate =" //
-          + "             (select max(sprv2.validFromDate)" //
-          + "             from ServicePriceRuleVersion sprv2" //
-          + "             where sprv2.product.id = product.id" //
-          + "             and sprv2.validFromDate <= now()" //
-          + "             and sprv2.active = true)" //
-          + "     and" //
-          + "             (sprv.obposMinimum is null" //
-          + "             and sprv.obposMaximum is null" //
-          + "             or sprv.obposMinimum is null" //
-          + "             and sprv.obposMaximum >= " + maximumSelected //
-          + "             or sprv.obposMinimum <= " + minimumSelected //
-          + "             and sprv.obposMaximum is null" //
-          + "             or sprv.obposMinimum <= " + minimumSelected //
-          + "             and sprv.obposMaximum >= " + maximumSelected //
-          + "      and sprv.active = true)))" //
-          + "))"; //
+          + "     and"
+          + "	          ((product.quantityRule = 'UQ'" //
+          + "             and" //
+          + "                  (sprv.obposMinimum is null"  //
+          + "                  or sprv.obposMinimum <= " + totalAmountSelected + ")"//
+          + "             and" //
+          + "			       (sprv.obposMaximum is null" //
+          + "                  or sprv.obposMaximum >= " + totalAmountSelected + "))" //
+          + "             or"
+          + "	          (product.quantityRule = 'PP'" //
+          + "             and" //
+          + "                  (sprv.obposMinimum is null"  //
+          + "                  or sprv.obposMinimum <= " + minimumSelected + ")"//
+          + "             and" //
+          + "			       (sprv.obposMaximum is null" //
+          + "                  or sprv.obposMaximum >= " + maximumSelected + ")))" //
+          + "      and sprv.active = true))" //
+          + ")"; //
     } catch (JSONException e) {
       throw new OBException(e);
     }
