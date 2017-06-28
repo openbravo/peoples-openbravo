@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -43,11 +43,14 @@ public class SL_ProductionPlan_WRPhase_Quantity extends SimpleCallout {
       WorkRequirementOperation wrPhase = OBDal.getInstance().get(WorkRequirementOperation.class,
           strmWRPhase);
       BigDecimal qty = new BigDecimal(strQty);
-      BigDecimal wrPhaseEstTime = wrPhase.getEstimatedTime();
-      if (wrPhaseEstTime != null) {
-        if (wrPhase.getQuantity() != null && wrPhase.getQuantity().compareTo(BigDecimal.ZERO) != 0) {
-          info.addResult("inpestimatedtime",
-              wrPhaseEstTime.divide(wrPhase.getQuantity()).multiply(qty).toPlainString());
+      if (wrPhase != null) {
+        BigDecimal wrPhaseEstTime = wrPhase.getEstimatedTime();
+        if (wrPhaseEstTime != null) {
+          if (wrPhase.getQuantity() != null
+              && wrPhase.getQuantity().compareTo(BigDecimal.ZERO) != 0) {
+            info.addResult("inpestimatedtime", wrPhaseEstTime.divide(wrPhase.getQuantity())
+                .multiply(qty).toPlainString());
+          }
         }
       }
     } finally {
