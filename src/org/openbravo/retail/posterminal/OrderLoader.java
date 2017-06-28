@@ -2391,10 +2391,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       // insert the payment
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, paymentDocType, paymentDocNo,
-          order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), 
-          account == null ? paymentType.getFinancialAccount() : account, amount.toString(), 
-          calculatedDate, order.getOrganization(), null, detail, paymentAmount, false, false, 
-          order.getCurrency(), mulrate, origAmount, true, 
+          order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(),
+          account == null ? paymentType.getFinancialAccount() : account, amount.toString(),
+          calculatedDate, order.getOrganization(), null, detail, paymentAmount, false, false,
+          order.getCurrency(), mulrate, origAmount, true,
           payment.has("id") ? payment.getString("id") : null);
 
       // Associate a GLItem with the overpayment amount to the payment which generates the

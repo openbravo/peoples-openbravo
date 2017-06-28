@@ -3383,7 +3383,7 @@
                   p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
                 }
                 payment.set('date', new Date());
-                executeFinalCallback(false);
+                executeFinalCallback(true);
                 return;
               }
             }

@@ -344,7 +344,7 @@ public class PaidReceipts extends JSONProcessSimple {
                 paidReceiptPayment.put("reversedPaymentId", objectIn.get("reversedPaymentId"));
               }
               // Call all payments in processes injected.
-              executeHooks(paymentsInProcesses, paidReceiptPayment,
+              executeHooks(paymentsInProcesses, paidReceiptPayment, null,
                   (String) objectIn.get("paymentId"));
               added = true;
               listpaidReceiptsPayments.put(paidReceiptPayment);
