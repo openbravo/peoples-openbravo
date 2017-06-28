@@ -274,7 +274,8 @@
               OB.MobileApp.model.runSyncProcess(function () {
                 var successStep = function () {
                     OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
-                      receipt: receiptForPostSyncReceipt
+                      receipt: receiptForPostSyncReceipt,
+                      syncSuccess: true
                     }, function () {
                       serverMessageForQuotation(receipt);
                       if (eventParams && eventParams.callback) {
@@ -304,7 +305,8 @@
                 }
               }, function () {
                 OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
-                  receipt: receiptForPostSyncReceipt
+                  receipt: receiptForPostSyncReceipt,
+                  syncSuccess: false
                 }, synErrorCallback);
               });
             } else {
