@@ -153,17 +153,6 @@ enyo.kind({
       this.$.bodyContent.$.attributes.$.line_addressshipbutton.show();
       this.$.bodyContent.$.attributes.$.line_addressbillbutton.$.labelLine.setContent(OB.I18N.getLabel('OBPOS_LblBillAddr'));
     }
-    // Focus on first item
-    var first = _.find(this.newAttributes, function (prop) {
-      return this.$.bodyContent.$.attributes.$['line_' + prop.name].$.newAttribute.$[prop.name].getShowing();
-    }, this);
-    if (first) {
-      var me = this;
-      setTimeout(function () {
-        var att = me.$.bodyContent.$.attributes.$['line_' + first.name].$.newAttribute.$[first.name];
-        att.focus();
-      }, 200);
-    }
   },
   init: function (model) {
     var me = this,
