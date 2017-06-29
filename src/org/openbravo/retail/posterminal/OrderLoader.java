@@ -1208,12 +1208,19 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
         if (pendingQty.compareTo(BigDecimal.ZERO) != 0) {
           // still qty to ship or return: let's use the bin with highest prio
-          hqlWhereClause = " l where l.warehouse = :warehouse order by l.relativePriority, l.id";
-          OBQuery<Locator> queryLoc = OBDal.getInstance()
-              .createQuery(Locator.class, hqlWhereClause);
-          queryLoc.setNamedParameter("warehouse", warehouse);
-          queryLoc.setMaxResult(1);
-          Locator loc = queryLoc.uniqueResult();
+          JSONObject jsonorderline = orderlines.getJSONObject(i);
+          Locator loc = null;
+          if (jsonorderline.has("overissueStoreBin")) {
+            loc = OBDal.getInstance().get(Locator.class, jsonorderline.get("overissueStoreBin"));
+          } else {
+            hqlWhereClause = " l where l.warehouse = :warehouse order by l.relativePriority, l.id";
+            OBQuery<Locator> queryLoc = OBDal.getInstance().createQuery(Locator.class,
+                hqlWhereClause);
+            queryLoc.setNamedParameter("warehouse", warehouse);
+            queryLoc.setMaxResult(1);
+            loc = queryLoc.uniqueResult();
+          }
+
           lineNo += 10;
           if (jsonorder.getLong("orderType") == 1) {
             pendingQty = pendingQty.negate();
