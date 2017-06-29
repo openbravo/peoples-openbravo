@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -52,6 +53,7 @@ public class SessionLogin {
   protected String serverUrl;
   private String username;
   private String status;
+  private boolean stateless;
 
   public SessionLogin(String ad_client_id, String ad_org_id, String ad_user_id)
       throws ServletException {
@@ -81,6 +83,7 @@ public class SessionLogin {
     if (request != null) {
       defaultParameters(request);
     }
+    stateless = AuthenticationManager.isStatelessRequest(request);
   }
 
   public void setServerUrl(String strAddr) {
@@ -115,7 +118,9 @@ public class SessionLogin {
   public int save() throws ServletException {
     if (getSessionID().equals("")) {
       String key = SequenceIdData.getUUID();
-      SessionListener.addSession(key);
+      if (!stateless) {
+        SessionListener.addSession(key);
+      }
       if (key == null || key.equals(""))
         throw new ServletException("SessionLogin.save() - key creation failed");
       setSessionID(key);
@@ -142,6 +147,11 @@ public class SessionLogin {
       session.setSessionActive(sessionActive);
       session.setLoginStatus(status);
       session.setUsername(username);
+
+      // ensure that the object in the db has the same value as the session id
+      session.setId(getSessionID());
+      session.setNewOBObject(true);
+
       OBDal.getInstance().save(session);
       SessionInfo.auditThisThread(false);
       OBDal.getInstance().commitAndClose();
