@@ -1470,15 +1470,22 @@ enyo.kind({
     pendingPrepayment = prepaymentLimitAmount + paymentStatus.pendingAmt - paymentStatus.totalAmt;
     receiptHasPrepaymentAmount = receiptHasPrepaymentAmount && prepaymentLimitAmount !== 0;
     if (receiptHasPrepaymentAmount && pendingPrepayment > 0) {
-      OB.UTIL.Approval.requestApproval(
-      me.model, [{
-        approval: 'OBPOS_approval.prepaymentUnderLimit',
-        message: 'OBPOS_approval.prepaymentUnderLimit'
-      }], function (approved, supervisor, approvalType) {
-        if (approved) {
-          continueExecution();
-        }
+      var approval = _.find(me.owner.receipt.get('approvals'), function (approval) {
+        return approval.approvalType && approval.approvalType.approval === 'OBPOS_approval.prepaymentUnderLimit';
       });
+      if (!approval) {
+        OB.UTIL.Approval.requestApproval(
+        me.model, [{
+          approval: 'OBPOS_approval.prepaymentUnderLimit',
+          message: 'OBPOS_approval.prepaymentUnderLimit'
+        }], function (approved, supervisor, approvalType) {
+          if (approved) {
+            continueExecution();
+          }
+        });
+      } else {
+        continueExecution();
+      }
     } else {
       continueExecution();
     }
