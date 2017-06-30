@@ -430,6 +430,7 @@ enyo.kind({
       OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
       return true;
     }
+    receipt.trigger('updatePending');
     if (this.model.get('order').get('orderType') === 3) {
       me.doTabChange({
         tabPanel: me.tabPanel,

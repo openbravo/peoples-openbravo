@@ -889,11 +889,7 @@ enyo.kind({
         this.$.linePropertiesContainer.setMaxHeight("110px");
       } else {
         this.$.returnreason.hide();
-        if (this.receipt.get('isPaid')) {
-          this.$.linePropertiesContainer.setMaxHeight("187px");
-        } else {
-          this.$.linePropertiesContainer.setMaxHeight("134px");
-        }
+        this.$.linePropertiesContainer.setMaxHeight("134px");
       }
     } else {
       this.$.txtaction.setContent(OB.I18N.getLabel('OBPOS_NoLineSelected'));
