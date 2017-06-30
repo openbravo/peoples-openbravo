@@ -463,10 +463,6 @@ enyo.kind({
     } else {
       this.$.foreignAmount.setContent('');
     }
-    if (this && this.model && this.model.get('paymentData') && this.model.get('paymentData').name && this.model.get('paymentData').name.length > 0) {
-      this.$.name.setContent(this.$.name.getContent() + ' (' + this.model.get('paymentData').name + ')');
-    }
-
   }
 });
 enyo.kind({
