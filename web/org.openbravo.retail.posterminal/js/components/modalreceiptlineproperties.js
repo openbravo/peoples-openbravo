@@ -31,7 +31,7 @@ enyo.kind({
       }
       setTimeout(function () {
         receiptLineDescription.focus();
-        document.getElementById(receiptLineDescriptionControl).style.cssText = 'border: 1px solid #F0F0F0; float: left; width: 58%;';
+        document.getElementById(receiptLineDescriptionControl).style.cssText = 'border: 1px solid #F0F0F0; float: left; width: 60%;';
         document.getElementById(receiptLineDescriptionNewAttribute).style.cssText = 'width: 100%';
       }, 200);
     }
@@ -142,7 +142,6 @@ enyo.kind({
     kind: 'OB.UI.renderTextProperty',
     name: 'receiptLineDescription',
     modelProperty: 'description',
-    style: 'height: 30px; margin-bottom: 3px; padding: 3px;',
     i18nLabel: 'OBPOS_LblDescription'
   }]
 });
