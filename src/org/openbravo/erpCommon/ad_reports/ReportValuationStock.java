@@ -505,16 +505,20 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     where.append(" as cosrule");
     where.append(" where cosrule." + CostingRule.PROPERTY_ORGANIZATION + ".id = :org");
     where.append(" order by " + CostingRule.PROPERTY_STARTINGDATE + " desc");
-
-    OBQuery<CostingRule> whereQry = OBDal.getInstance().createQuery(CostingRule.class,
-        where.toString());
-    whereQry.setNamedParameter("org", legalEntity);
-    whereQry.setMaxResult(1);
-    CostingRule cr = whereQry.uniqueResult();
-    if (cr == null) {
-      return null;
+    try {
+      OBContext.setAdminMode(true);
+      OBQuery<CostingRule> whereQry = OBDal.getInstance().createQuery(CostingRule.class,
+          where.toString());
+      whereQry.setNamedParameter("org", legalEntity);
+      whereQry.setMaxResult(1);
+      CostingRule cr = whereQry.uniqueResult();
+      if (cr == null) {
+        return null;
+      }
+      return cr;
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    return cr;
   }
 
   private String getCostType(CostingAlgorithm ca) throws ServletException {
@@ -553,28 +557,32 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     if (StringUtils.isNotBlank(strCategoryProduct)) {
       where.append("   and p." + Product.PROPERTY_PRODUCTCATEGORY + ".id = :prodCategory");
     }
-
-    OBQuery<MaterialTransaction> whereQry = OBDal.getInstance().createQuery(
-        MaterialTransaction.class, where.toString());
-    whereQry.setFilterOnReadableClients(false);
-    whereQry.setFilterOnReadableOrganization(false);
     try {
-      whereQry.setNamedParameter("maxDate",
-          OBDateUtils.getDate(DateTimeData.nDaysAfter(this, strDate, "1")));
-    } catch (Exception e) {
-      // DoNothing parse exception not expected.
-      log4j.error("error parsing date: " + strDate, e);
-    }
-    whereQry.setNamedParameter("orgs", orgs);
-    if (StringUtils.isNotBlank(strWarehouse)) {
-      whereQry.setNamedParameter("wh", strWarehouse);
-    }
+      OBContext.setAdminMode(true);
+      OBQuery<MaterialTransaction> whereQry = OBDal.getInstance().createQuery(
+          MaterialTransaction.class, where.toString());
+      whereQry.setFilterOnReadableClients(false);
+      whereQry.setFilterOnReadableOrganization(false);
+      try {
+        whereQry.setNamedParameter("maxDate",
+            OBDateUtils.getDate(DateTimeData.nDaysAfter(this, strDate, "1")));
+      } catch (Exception e) {
+        // DoNothing parse exception not expected.
+        log4j.error("error parsing date: " + strDate, e);
+      }
+      whereQry.setNamedParameter("orgs", orgs);
+      if (StringUtils.isNotBlank(strWarehouse)) {
+        whereQry.setNamedParameter("wh", strWarehouse);
+      }
 
-    if (StringUtils.isNotBlank(strCategoryProduct)) {
-      whereQry.setNamedParameter("prodCategory", strCategoryProduct);
+      if (StringUtils.isNotBlank(strCategoryProduct)) {
+        whereQry.setNamedParameter("prodCategory", strCategoryProduct);
+      }
+      whereQry.setMaxResult(1);
+      return whereQry.uniqueResult() != null;
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    whereQry.setMaxResult(1);
-    return whereQry.uniqueResult() != null;
   }
 
   @SuppressWarnings("unchecked")
