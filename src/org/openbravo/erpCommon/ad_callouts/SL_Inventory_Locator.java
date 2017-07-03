@@ -22,8 +22,6 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
-import org.apache.commons.lang.StringUtils;
-
 public class SL_Inventory_Locator extends SimpleCallout {
 
   @Override
@@ -50,11 +48,11 @@ public class SL_Inventory_Locator extends SimpleCallout {
         data[0].qtyorder = "0";
       }
 
+      BigDecimal qtyOrder = new BigDecimal(data[0].qtyorder);
       BigDecimal qty = new BigDecimal(data[0].qty);
-      info.addResult("inpquantityorderbook", StringUtils.isEmpty(data[0].qtyorder) ? "\"\""
-          : (Object) data[0].qtyorder);
-      info.addResult("inpqtycount", StringUtils.isEmpty(data[0].qty) ? "\"\"" : qty);
-      info.addResult("inpqtybook", StringUtils.isEmpty(data[0].qty) ? "\"\"" : qty);
+      info.addResult("inpquantityorderbook", qtyOrder);
+      info.addResult("inpqtycount", qty);
+      info.addResult("inpqtybook", qty);
 
       info.addResult("EXECUTE", "displayLogic();");
     }
