@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2016 Openbravo S.L.U.
+ * Copyright (C) 2013-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -433,6 +433,9 @@ enyo.kind({
       paymentDate = new Date();
     } else {
       paymentDate = this.model.get('paymentDate');
+      if (typeof (this.model.get('paymentDate')) === 'string') {
+        paymentDate = new Date(paymentDate);
+      }
     }
     this.$.date.setContent(OB.I18N.formatDate(paymentDate));
     if (this.model.get('rate') && this.model.get('rate') !== '1') {
