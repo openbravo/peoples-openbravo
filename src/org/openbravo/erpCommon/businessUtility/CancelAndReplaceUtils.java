@@ -25,8 +25,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.LockOptions;
@@ -50,6 +52,7 @@ import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -65,6 +68,7 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.common.order.OrderTax;
+import org.openbravo.model.common.order.OrderlineServiceRelation;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -92,6 +96,8 @@ public class CancelAndReplaceUtils {
   public static final String ZERO_PAYMENT_SUFIX = "*Z*";
   public static final String DOCTYPE_MatShipment = "MMS";
   public static final int PAYMENT_DOCNO_LENGTH = 30;
+
+  private static Map<String, String> linesRelations = new HashMap<>();
 
   /**
    * Process that creates a replacement order in temporary status in order to Cancel and Replace an
@@ -418,6 +424,8 @@ public class CancelAndReplaceUtils {
           inverseOrder = OBDal.getInstance().get(Order.class, inverseOrderId);
         }
       }
+      // Create or update the needed services relations
+      updateServicesRelations(jsonorder, oldOrder, inverseOrder, newOrder, replaceOrder);
       // The netting shipment is flaged as processed.
       if (nettingGoodsShipment != null) {
         processShipmentHeader(nettingGoodsShipment);
@@ -581,6 +589,8 @@ public class CancelAndReplaceUtils {
     if (triggersDisabled) {
       createInverseOrderLineTaxes(oldOrderLine, inverseOrderLine);
     }
+
+    linesRelations.put(oldOrderLine.getId(), inverseOrderLine.getId());
 
     return inverseOrderLine;
   }
@@ -824,6 +834,142 @@ public class CancelAndReplaceUtils {
 
       OBDal.getInstance().save(transaction);
     }
+  }
+
+  /**
+   * Method that creates the relation between products and services for the inverse order. Also, if
+   * the old order has or has a relation with a deferred service, this relation must be moved to the
+   * new tickets product.
+   * 
+   * @param oldOrder
+   *          The order that have been canceled.
+   * @param inverseOrder
+   *          The order that is canceling the old order.
+   * @param newOrder
+   *          The order that is replacing the old order.
+   * @param replaceOrder
+   *          If true, the process is C&R, otherwise is a CL process.
+   * @throws JSONException
+   */
+  private static void updateServicesRelations(JSONObject jsonorder, Order oldOrder,
+      Order inverseOrder, Order newOrder, boolean replaceOrder) throws JSONException {
+    final List<String> createdRelations = new ArrayList<>();
+    final List<OrderlineServiceRelation> relationsToRemove = new ArrayList<>();
+    final OBCriteria<OrderLine> oldOrderLineCriteria = OBDal.getInstance().createCriteria(
+        OrderLine.class);
+    oldOrderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, oldOrder));
+    for (final OrderLine oldOrderLine : oldOrderLineCriteria.list()) {
+      final StringBuffer where = new StringBuffer();
+      where.append(" WHERE (" + OrderlineServiceRelation.PROPERTY_SALESORDERLINE
+          + " = :salesorderline");
+      where.append(" OR " + OrderlineServiceRelation.PROPERTY_ORDERLINERELATED
+          + " = :salesorderline)");
+      final OBQuery<OrderlineServiceRelation> serviceRelationQuery = OBDal.getInstance()
+          .createQuery(OrderlineServiceRelation.class, where.toString());
+      serviceRelationQuery.setNamedParameter("salesorderline", oldOrderLine);
+      for (final OrderlineServiceRelation serviceRelation : serviceRelationQuery.list()) {
+        if (!createdRelations.contains(serviceRelation.getId())) {
+          createdRelations.add(serviceRelation.getId());
+          if (linesRelations.containsKey(serviceRelation.getSalesOrderLine().getId())
+              && linesRelations.containsKey(serviceRelation.getOrderlineRelated().getId())) {
+            // Create a new relation if is not a deferred service or a product with a deferred
+            // service
+            final OrderlineServiceRelation inverseServiceRelation = (OrderlineServiceRelation) DalUtil
+                .copy(serviceRelation, false, true);
+            final OrderLine inverseServiceLine = OBDal.getInstance().get(OrderLine.class,
+                linesRelations.get(serviceRelation.getSalesOrderLine().getId()));
+            inverseServiceRelation.setSalesOrderLine(inverseServiceLine);
+            final OrderLine inverseProductLine = OBDal.getInstance().get(OrderLine.class,
+                linesRelations.get(serviceRelation.getOrderlineRelated().getId()));
+            inverseServiceRelation.setOrderlineRelated(inverseProductLine);
+            inverseServiceRelation.setAmount(inverseServiceRelation.getAmount().negate());
+            inverseServiceRelation.setQuantity(inverseServiceRelation.getQuantity().negate());
+            OBDal.getInstance().save(inverseServiceRelation);
+          } else {
+            // Is a deferred relation
+            if (replaceOrder) {
+              if (linesRelations.containsKey(serviceRelation.getOrderlineRelated().getId())) {
+                // A product is being replaced, so the service relation must be removed (the new
+                // relation is added in the new ticket synchronization)
+                OrderLine newOrderLine = null;
+                final OBCriteria<OrderLine> newOrderLineCriteria = OBDal.getInstance()
+                    .createCriteria(OrderLine.class);
+                if (jsonorder != null) {
+                  final JSONArray lines = jsonorder.getJSONArray("lines");
+                  for (int i = 0; i < lines.length(); i++) {
+                    final JSONObject line = lines.getJSONObject(i);
+                    if (line.has("linepos")
+                        && (line.getInt("linepos") + 1) * 10 == oldOrderLine.getLineNo()) {
+                      newOrderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER,
+                          newOrder));
+                      newOrderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_LINENO,
+                          (long) ((i + 1) * 10)));
+                      newOrderLineCriteria.setMaxResults(1);
+                      newOrderLine = (OrderLine) newOrderLineCriteria.uniqueResult();
+                      break;
+                    }
+                  }
+                } else {
+                  newOrderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_REPLACEDORDERLINE,
+                      oldOrderLine));
+                  newOrderLineCriteria.setMaxResults(1);
+                  newOrderLine = (OrderLine) newOrderLineCriteria.uniqueResult();
+                }
+                if (newOrderLine != null) {
+                  // The product haven't been removed during the C&R process. The relation must be
+                  // moved from the original order to the new order.
+                  serviceRelation.setOrderlineRelated(newOrderLine);
+                  OBDal.getInstance().save(serviceRelation);
+                } else {
+                  // The product have been removed during the C&R process. The service relation must
+                  // be removed.
+                  relationsToRemove.add(serviceRelation);
+                }
+              } else {
+                // A deferred service has been replaced (or canceled), so the relation must also be
+                // created for the inverse order
+                final OrderLine inverseServiceLine = OBDal.getInstance().get(OrderLine.class,
+                    linesRelations.get(serviceRelation.getSalesOrderLine().getId()));
+                final OrderlineServiceRelation inverseServiceRelation = (OrderlineServiceRelation) DalUtil
+                    .copy(serviceRelation, false, true);
+                inverseServiceRelation.setSalesOrderLine(inverseServiceLine);
+                inverseServiceRelation.setAmount(inverseServiceRelation.getAmount().negate());
+                inverseServiceRelation.setQuantity(inverseServiceRelation.getQuantity().negate());
+                OBDal.getInstance().save(inverseServiceRelation);
+              }
+            } else {
+              if (!linesRelations.containsKey(serviceRelation.getSalesOrderLine().getId())
+                  && linesRelations.containsKey(serviceRelation.getOrderlineRelated().getId())
+                  && serviceRelation.getOrderlineRelated().getSalesOrder().getId()
+                      .equals(oldOrder.getId())) {
+                // A product with a related delivered service (in the same ticket) is being
+                // canceled. The relation between the original product and the service must be
+                // removed.
+                relationsToRemove.add(serviceRelation);
+              } else {
+                // The CL has a service that is being canceled, which is related to a product in
+                // other ticket (the product is deferred) or to a product that have been delivered
+                // in the same ticket. The new cancellation line of this service must also be
+                // related to the product.
+                final OrderLine inverseServiceLine = OBDal.getInstance().get(OrderLine.class,
+                    linesRelations.get(serviceRelation.getSalesOrderLine().getId()));
+                final OrderlineServiceRelation inverseServiceRelation = (OrderlineServiceRelation) DalUtil
+                    .copy(serviceRelation, false, true);
+                inverseServiceRelation.setSalesOrderLine(inverseServiceLine);
+                inverseServiceRelation.setAmount(inverseServiceRelation.getAmount().negate());
+                inverseServiceRelation.setQuantity(inverseServiceRelation.getQuantity().negate());
+                OBDal.getInstance().save(inverseServiceRelation);
+              }
+            }
+          }
+        }
+      }
+    }
+    // Remove the services relation marked to remove
+    for (final OrderlineServiceRelation serviceRelation : relationsToRemove) {
+      OBDal.getInstance().remove(serviceRelation);
+    }
+    linesRelations.clear();
   }
 
   /**

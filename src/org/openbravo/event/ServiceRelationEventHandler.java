@@ -64,7 +64,9 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     BigDecimal amount = (BigDecimal) event.getCurrentState(amountProperty);
     BigDecimal quantity = (BigDecimal) event.getCurrentState(quantityProperty);
     OrderLine orderLine = (OrderLine) event.getCurrentState(solProperty);
-    updateOrderLine(orderLine, amount, quantity, BigDecimal.ZERO, BigDecimal.ZERO);
+    if (orderLine.getSalesOrder().getCancelledorder() == null) {
+      updateOrderLine(orderLine, amount, quantity, BigDecimal.ZERO, BigDecimal.ZERO);
+    }
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -84,7 +86,9 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     BigDecimal oldAmount = (BigDecimal) event.getPreviousState(amountProperty);
     BigDecimal oldQuantity = (BigDecimal) event.getPreviousState(quantityProperty);
     OrderLine currentOrderLine = (OrderLine) event.getCurrentState(solProperty);
-    updateOrderLine(currentOrderLine, currentAmount, currentQuantity, oldAmount, oldQuantity);
+    if (currentOrderLine.getSalesOrder().getCancelledorder() == null) {
+      updateOrderLine(currentOrderLine, currentAmount, currentQuantity, oldAmount, oldQuantity);
+    }
   }
 
   public void onDelete(@Observes EntityDeleteEvent event) {
@@ -102,7 +106,9 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     BigDecimal oldAmount = (BigDecimal) event.getCurrentState(amountProperty);
     BigDecimal oldQuantity = (BigDecimal) event.getCurrentState(quantityProperty);
     OrderLine orderLine = (OrderLine) event.getCurrentState(solProperty);
-    updateOrderLine(orderLine, BigDecimal.ZERO, BigDecimal.ZERO, oldAmount, oldQuantity);
+    if (orderLine.getSalesOrder().getCancelledorder() == null) {
+      updateOrderLine(orderLine, BigDecimal.ZERO, BigDecimal.ZERO, oldAmount, oldQuantity);
+    }
   }
 
   private void updateOrderLine(OrderLine currentOrderLine, BigDecimal currentAmount,
