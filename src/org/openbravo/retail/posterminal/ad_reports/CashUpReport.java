@@ -156,8 +156,8 @@ public class CashUpReport extends HttpSecureAppServlet {
       Collections.sort(paymentMethodCashupList, new PaymentMethodComparator());
       for (int i = 0; i < paymentMethodCashupList.size(); i++) {
         OBPOSPaymentMethodCashup paymentMethodCashup = paymentMethodCashupList.get(i);
-        if (isMaster || (!isMaster && !isSlave)
-            || !paymentMethodCashup.getPaymentType().getPaymentMethod().isShared()) {
+        if ((isMaster || (!isMaster && !isSlave)
+            || !paymentMethodCashup.getPaymentType().getPaymentMethod().isShared()) && paymentMethodCashup.getPaymentType().getPaymentMethod().isCountpaymentincashup()) {
           conversionRate = paymentMethodCashup.getRate() == null ? BigDecimal.ONE
               : paymentMethodCashup.getRate();
           isoCode = paymentMethodCashup.getIsocode();

@@ -89,7 +89,7 @@
     </line>
     <%
     _.each(cashup.report.get('startings'), function(starting){
-    if(starting.get('amount') !== starting.get('origAmount')){
+    if(starting.get('amount') !== starting.get('origAmount') && starting.get('countInCashup')){
     %>
     <line>
       <text align ="left" length="10"><%=OB.UTIL.encodeXMLComponent(starting.get('description')) %></text>
@@ -97,7 +97,7 @@
       <text align ="right" length="12"><%= OB.I18N.formatCurrency(OB.DEC.mul(starting.get('amount'), starting.get('rate'))) %></text>
     </line>
     <%
-    }else{
+    }else if(starting.get('countInCashup')){
     %>
     <line>
       <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(starting.get('description')) %></text>
@@ -115,7 +115,7 @@
     </line>
     <%
     _.each(cashup.report.get('drops'), function(drop){
-    if(drop.get('amount') !== drop.get('origAmount')){
+    if(drop.get('amount') !== drop.get('origAmount') && drop.get('countInCashup')){
     %>
     <line>
       <text align ="left" length="10"><%=OB.UTIL.encodeXMLComponent(drop.get('description')) %></text>
@@ -123,7 +123,7 @@
       <text align ="right" length="12"><%= OB.I18N.formatCurrency(drop.get('origAmount')) %></text>
     </line>
     <%
-    }else{
+    }else if(drop.get('countInCashup')){
     %>
     <line>
       <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(drop.get('description')) %></text>
@@ -141,7 +141,7 @@
     </line>
     <%
     _.each(cashup.report.get('deposits'), function(deposit){
-    if(deposit.get('amount') !== deposit.get('origAmount')){
+    if(deposit.get('amount') !== deposit.get('origAmount') && deposit.get('countInCashup')){
     %>
     <line>
       <text align ="left" length="10"><%=OB.UTIL.encodeXMLComponent(deposit.get('description')) %></text>
@@ -149,7 +149,7 @@
       <text align ="right" length="12"><%= OB.I18N.formatCurrency(deposit.get('origAmount')) %></text>
     </line>
     <%
-    }else{
+    }else if(deposit.get('countInCashup')){
      %>
     <line>
       <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(deposit.get('description')) %></text>
