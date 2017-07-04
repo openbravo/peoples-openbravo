@@ -501,12 +501,14 @@ public class ReportValuationStock extends HttpSecureAppServlet {
   }
 
   public static CostingRule getLEsCostingAlgortithm(Organization legalEntity) {
-    StringBuffer where = new StringBuffer();
-    where.append(" as cosrule");
-    where.append(" where cosrule." + CostingRule.PROPERTY_ORGANIZATION + ".id = :org");
-    where.append(" order by " + CostingRule.PROPERTY_STARTINGDATE + " desc");
     try {
       OBContext.setAdminMode(true);
+
+      StringBuffer where = new StringBuffer();
+      where.append(" as cosrule");
+      where.append(" where cosrule." + CostingRule.PROPERTY_ORGANIZATION + ".id = :org");
+      where.append(" order by " + CostingRule.PROPERTY_STARTINGDATE + " desc");
+
       OBQuery<CostingRule> whereQry = OBDal.getInstance().createQuery(CostingRule.class,
           where.toString());
       whereQry.setNamedParameter("org", legalEntity);
@@ -543,22 +545,24 @@ public class ReportValuationStock extends HttpSecureAppServlet {
 
   private boolean hasTrxWithNoCost(String strDate, Set<String> orgs, String strWarehouse,
       String strCategoryProduct) {
-    StringBuffer where = new StringBuffer();
-    where.append(" as trx");
-    where.append(" join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as loc");
-    where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
-    where.append(" where trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :maxDate");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    if (StringUtils.isNotBlank(strWarehouse)) {
-      where.append("   and loc." + Locator.PROPERTY_WAREHOUSE + ".id = :wh");
-    }
-    where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
-    if (StringUtils.isNotBlank(strCategoryProduct)) {
-      where.append("   and p." + Product.PROPERTY_PRODUCTCATEGORY + ".id = :prodCategory");
-    }
     try {
       OBContext.setAdminMode(true);
+
+      StringBuffer where = new StringBuffer();
+      where.append(" as trx");
+      where.append(" join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as loc");
+      where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
+      where.append(" where trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :maxDate");
+      where.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
+      where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+      if (StringUtils.isNotBlank(strWarehouse)) {
+        where.append("   and loc." + Locator.PROPERTY_WAREHOUSE + ".id = :wh");
+      }
+      where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
+      if (StringUtils.isNotBlank(strCategoryProduct)) {
+        where.append("   and p." + Product.PROPERTY_PRODUCTCATEGORY + ".id = :prodCategory");
+      }
+
       OBQuery<MaterialTransaction> whereQry = OBDal.getInstance().createQuery(
           MaterialTransaction.class, where.toString());
       whereQry.setFilterOnReadableClients(false);
