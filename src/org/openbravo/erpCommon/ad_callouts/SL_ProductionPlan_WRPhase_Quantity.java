@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.NumberFilter;
 import org.openbravo.dal.core.OBContext;
@@ -40,17 +41,16 @@ public class SL_ProductionPlan_WRPhase_Quantity extends SimpleCallout {
       String strmWRPhase = info.getStringParameter("inpmaWrphaseId", idFilter);
       String strQty = info.getStringParameter("inpproductionqty", numFilter);
 
-      WorkRequirementOperation wrPhase = OBDal.getInstance().get(WorkRequirementOperation.class,
-          strmWRPhase);
-      BigDecimal qty = new BigDecimal(strQty);
-      if (wrPhase != null) {
+      if (StringUtils.isNotEmpty(strmWRPhase)) {
+        WorkRequirementOperation wrPhase = OBDal.getInstance().get(WorkRequirementOperation.class,
+            strmWRPhase);
         BigDecimal wrPhaseEstTime = wrPhase.getEstimatedTime();
-        if (wrPhaseEstTime != null) {
-          if (wrPhase.getQuantity() != null
-              && wrPhase.getQuantity().compareTo(BigDecimal.ZERO) != 0) {
-            info.addResult("inpestimatedtime", wrPhaseEstTime.divide(wrPhase.getQuantity())
-                .multiply(qty).toPlainString());
-          }
+        BigDecimal wrPhaseQty = wrPhase.getQuantity();
+        if (wrPhaseEstTime != null && wrPhaseQty != null
+            && wrPhaseQty.compareTo(BigDecimal.ZERO) != 0) {
+          BigDecimal qty = new BigDecimal(strQty);
+          info.addResult("inpestimatedtime", wrPhaseEstTime.divide(wrPhaseQty).multiply(qty)
+              .toPlainString());
         }
       }
     } finally {
