@@ -353,7 +353,7 @@ public class OBDal implements OBNotSingleton {
       return SessionHandler.getInstance().find(poolName, clazz, id);
     } catch (ObjectNotFoundException ignore) {
       // ObjectNotFoundException is thrown when there was a proxy in cache for this id but the
-      // record does not exist in DB. As if there was no proxy, the same invokation would return
+      // record does not exist in DB. As if there was no proxy, the same invocation would return
       // null, let's be consistent and return null also in this case.
       return null;
     }
@@ -383,7 +383,14 @@ public class OBDal implements OBNotSingleton {
    */
   public BaseOBObject get(String entityName, Object id) {
     checkReadAccess(entityName);
-    return SessionHandler.getInstance().find(poolName, entityName, id);
+    try {
+      return SessionHandler.getInstance().find(poolName, entityName, id);
+    } catch (ObjectNotFoundException ignore) {
+      // ObjectNotFoundException is thrown when there was a proxy in cache for this id but the
+      // record does not exist in DB. As if there was no proxy, the same invocation would return
+      // null, let's be consistent and return null also in this case.
+      return null;
+    }
   }
 
   /**

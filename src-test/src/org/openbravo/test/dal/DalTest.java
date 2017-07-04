@@ -422,10 +422,29 @@ public class DalTest extends OBBaseTest {
   }
 
   @Test
+  public void getInexistentObjByEntityNameShouldBeNull() {
+    BusinessPartner bp = (BusinessPartner) OBDal.getInstance().get(BusinessPartner.ENTITY_NAME,
+        "DummyId");
+
+    assertThat(bp, is(nullValue()));
+  }
+
+  @Test
   public void getInexistentObjShouldBeNullEvenIfItWasProxied() {
     @SuppressWarnings("unused")
     BusinessPartner bpProxy = OBDal.getInstance().getProxy(BusinessPartner.class, "DummyId");
     BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, "DummyId");
+
+    assertThat(bp, is(nullValue()));
+  }
+
+  @Test
+  public void getInexistentObjByEntityNameShouldBeNullEvenIfItWasProxied() {
+    @SuppressWarnings("unused")
+    BusinessPartner bpProxy = (BusinessPartner) OBDal.getInstance().getProxy(
+        BusinessPartner.ENTITY_NAME, "DummyId");
+    BusinessPartner bp = (BusinessPartner) OBDal.getInstance().get(BusinessPartner.ENTITY_NAME,
+        "DummyId");
 
     assertThat(bp, is(nullValue()));
   }
