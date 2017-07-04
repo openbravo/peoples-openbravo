@@ -732,6 +732,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         line, jsonorder, jsonorder.getLong("timezoneOffset"));
     line.setId(inOutLine.getId());
     line.setNewOBObject(true);
+    line.set("creationDate", invoice.getCreationDate());
     line.setLineNo((long) lineNo);
     line.setDescription(orderlines.getJSONObject(numIter).has("description") ? orderlines
         .getJSONObject(numIter).getString("description") : "");
@@ -968,11 +969,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       addDocumentNoHandler(invoice, invoiceEntity, invoice.getTransactionDocument(),
           invoice.getDocumentType());
     }
-    Long value = jsonorder.getLong("created");
-    invoice.set("creationDate", new Date(value));
     final Date orderDate = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("orderDate"),
         Long.parseLong(jsonorder.getString("timezoneOffset")));
-    invoice.setAccountingDate(order.getOrderDate());
+    invoice.set("creationDate", orderDate);
+    invoice.setAccountingDate(orderDate);
     invoice.setInvoiceDate(orderDate);
     invoice.setSalesTransaction(true);
     invoice.setDocumentStatus("CO");
