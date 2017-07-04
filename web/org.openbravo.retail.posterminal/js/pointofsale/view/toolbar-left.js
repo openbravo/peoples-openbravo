@@ -455,7 +455,7 @@ enyo.kind({
         criteria = {},
         paymentModels = OB.MobileApp.model.get('payments');
     if (this.disabled === false) {
-      if (!OB.MobileApp.model.get('isMultiOrderState') && (this.model.get('order').getTotal() < 0 || this.model.get('order').getPaymentStatus().isNegative)) {
+      if (!OB.MobileApp.model.get('isMultiOrderState') && this.model.get('order').getPaymentStatus().isNegative) {
         var hasNoRefundablePayment = _.filter(paymentModels, function (payment) {
           return !payment.paymentMethod.refundable;
         }).length === paymentModels.length;
