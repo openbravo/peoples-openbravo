@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2016 Openbravo SLU
+ * All portions are Copyright (C) 2012-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -67,12 +67,15 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
     JSONObject jsonRequest = null;
     try {
       jsonRequest = new JSONObject(content);
+      JSONObject params = jsonRequest.getJSONObject("_params");
+      JSONObject gridInfo = params.getJSONObject("grid");
+
       String strInvoiceId = jsonRequest.getString("inpcInvoiceId");
       if (strInvoiceId == null || strInvoiceId.isEmpty() || "null".equalsIgnoreCase(strInvoiceId)) {
         strInvoiceId = jsonRequest.getString("C_Invoice_ID");
       }
       Invoice invoice = OBDal.getInstance().get(Invoice.class, strInvoiceId);
-      JSONArray gridRows = jsonRequest.getJSONArray(ApplicationConstants.ALL_ROWS_PARAM);
+      JSONArray gridRows = gridInfo.getJSONArray(ApplicationConstants.ALL_ROWS_PARAM);
       List<FIN_PaymentSchedule> databaseRows = new ArrayList<FIN_PaymentSchedule>();
       databaseRows = getDatabaseRows(invoice);
 
