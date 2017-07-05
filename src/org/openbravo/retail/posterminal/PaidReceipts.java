@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -75,7 +76,10 @@ public class PaidReceipts extends JSONProcessSimple {
       JSONArray respArray = new JSONArray();
 
       final DateFormat parseDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-      final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+      parseDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+      final DateFormat paymentDateFormat = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+      paymentDateFormat.setTimeZone(TimeZone.getTimeZone(Calendar.getInstance().getTimeZone()
+          .getID()));
 
       String orderid = jsonsent.getString("orderid");
 
@@ -305,8 +309,7 @@ public class PaidReceipts extends JSONProcessSimple {
               }
               try {
                 Date date = parseDateFormat.parse((String) objectIn.get("paymentDate"));
-                date.setTime(date.getTime() + Calendar.getInstance().get(Calendar.ZONE_OFFSET));
-                paidReceiptPayment.put("paymentDate", dateFormat.format(date));
+                paidReceiptPayment.put("paymentDate", paymentDateFormat.format(date));
               } catch (ParseException e) {
                 log.error(e.getMessage(), e);
               }
@@ -372,8 +375,7 @@ public class PaidReceipts extends JSONProcessSimple {
                   .toString())));
               try {
                 Date date = parseDateFormat.parse((String) objectIn.get("paymentDate"));
-                date.setTime(date.getTime() + Calendar.getInstance().get(Calendar.ZONE_OFFSET));
-                paidReceiptPayment.put("paymentDate", dateFormat.format(date));
+                paidReceiptPayment.put("paymentDate", paymentDateFormat.format(date));
               } catch (ParseException e) {
                 log.error(e.getMessage(), e);
               }
