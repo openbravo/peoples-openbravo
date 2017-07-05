@@ -1134,7 +1134,8 @@ public class CancelAndReplaceUtils {
 
     HashMap<String, BigDecimal> paymentScheduleDetailAmount = new HashMap<String, BigDecimal>();
     FIN_PaymentScheduleDetail paymentScheduleDetail = null;
-    if (paymentScheduleDetailList.size() != 0) {
+    if (paymentScheduleDetailList.size() != 0
+        && paymentScheduleDetailList.get(0).getAmount().compareTo(amount) == 0) {
       paymentScheduleDetail = paymentScheduleDetailList.get(0);
       paymentScheduleDetailAmount.put(paymentScheduleDetail.getId(), amount);
     } else {
@@ -1144,6 +1145,7 @@ public class CancelAndReplaceUtils {
       // null payment detail is missing
       // Lets assume that in this point the payment was created trough Web POS
       // Create missing payment schedule detail
+      paymentScheduleDetailList.clear();
       paymentScheduleDetail = OBProvider.getInstance().get(FIN_PaymentScheduleDetail.class);
       paymentScheduleDetail.setOrganization(order.getOrganization());
       paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
