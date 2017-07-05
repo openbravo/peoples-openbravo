@@ -1523,9 +1523,9 @@
           line = null,
           me = this,
           productHavingSameAttribute = false,
-          productHasAttribute = p.attributes.hasAttributes,
+          productHasAttribute = p.get('hasAttributes'),
           attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true),
-          isQuotationAndAttributeAllowed = me.attributes.isQuotation && OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenQuotationToSalesOrder', true);
+          isQuotationAndAttributeAllowed = p.get('isQuotation') && OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenQuotationToSalesOrder', true);
       if (enyo.Panels.isScreenNarrow()) {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_AddLine', [qty ? qty : 1, p.get('_identifier')]));
       }
@@ -1971,8 +1971,8 @@
           }
           return;
         }
-        var isQuotationAndAttributeAllowed = args.receipt.attributes.isQuotation && OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenQuotationToSalesOrder', true);
-        if ((!args || !args.options || !args.options.line) && attributeSearchAllowed && p.get('hasAttributes') && qty >= 1 && (!args.receipt.attributes.isQuotation || isQuotationAndAttributeAllowed)) {
+        var isQuotationAndAttributeAllowed = args.receipt.get('isQuotation') && OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenQuotationToSalesOrder', true);
+        if ((!args || !args.options || !args.options.line) && attributeSearchAllowed && p.get('hasAttributes') && qty >= 1 && (!args.receipt.get('isQuotation') || isQuotationAndAttributeAllowed)) {
           OB.MobileApp.view.waterfall('onShowPopup', {
             popup: 'modalProductAttribute',
             args: {
@@ -3062,10 +3062,10 @@
       }, this);
 
       this.get('lines').each(function (theLine) {
-        var productAttributes = theLine.attributes.product.attributes;
-        if (OB.UTIL.isNullOrUndefined(productAttributes.hasAttributes) === false && productAttributes.hasAttributes) {
+        var productAttributes = theLine.get('product').get('hasAttributes');
+        if (OB.UTIL.isNullOrUndefined(productAttributes) === false && productAttributes) {
           productWithAttributeValue.push(theLine);
-          productHasAttribute = productAttributes.hasAttributes;
+          productHasAttribute = productAttributes;
         }
       });
       if (productHasAttribute === false && needAttributeForOrder === false) {
@@ -3086,17 +3086,18 @@
           });
         }
       }
-      this.calculateReceipt();
-      //call quotation attributes popup
-      if (attributeSearchAllowed && needAttributeForOrder === false && productHasAttribute) {
-        OB.MobileApp.view.waterfall('onShowPopup', {
-          popup: 'modalQuotationProductAttributes',
-          args: {
-            lines: productWithAttributeValue,
-            quotationProductAttribute: this
-          }
-        });
-      }
+      this.calculateReceipt(function () {
+        //call quotation attributes popup
+        if (attributeSearchAllowed && needAttributeForOrder === false && productHasAttribute) {
+          OB.MobileApp.view.waterfall('onShowPopup', {
+            popup: 'modalQuotationProductAttributes',
+            args: {
+              lines: productWithAttributeValue,
+              quotationProductAttribute: me
+            }
+          });
+        }
+      });
     },
 
     reactivateQuotation: function () {
