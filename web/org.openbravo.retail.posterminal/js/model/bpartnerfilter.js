@@ -58,6 +58,14 @@
     caption: 'OBPOS_LblFullName',
     location: false
   }, {
+    name: 'searchKey',
+    column: 'bp.value',
+    serverColumn: 'bp.searchKey',
+    filter: true,
+    type: 'TEXT',
+    caption: 'OBPOS_LblSearchKey',
+    location: false
+  }, {
     name: 'bpCategory',
     column: 'bp.c_bp_group_name',
     serverColumn: 'bp.businessPartnerCategory.name',

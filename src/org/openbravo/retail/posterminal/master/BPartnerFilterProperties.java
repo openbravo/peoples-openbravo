@@ -30,6 +30,7 @@ public class BPartnerFilterProperties extends ModelExtension {
         add(new HQLProperty("bp.customerBlocking", "customerBlocking"));
         add(new HQLProperty("bp.salesOrder", "salesOrderBlocking"));
         add(new HQLProperty("bp.name", "bpName"));
+        add(new HQLProperty("bp.searchKey", "searchKey"));
         add(new HQLProperty("bp.taxID", "taxID"));
         add(new HQLProperty("bp.businessPartnerCategory.name", "bpCategory"));
         add(new HQLProperty("ulist.email", "email"));
@@ -55,5 +56,4 @@ public class BPartnerFilterProperties extends ModelExtension {
     };
     return list;
   }
-
 }
