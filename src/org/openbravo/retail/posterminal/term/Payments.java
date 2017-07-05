@@ -18,7 +18,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
@@ -37,7 +36,7 @@ public class Payments extends JSONTerminalProperty {
 
     try {
       JSONArray respArray = new JSONArray();
-      String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
+      String posId = jsonsent.getString("pos");
       String hqlPayments = "select p as payment, p.paymentMethod as paymentMethod, "
           + "c_currency_rate(coalesce(c, p.paymentMethod.currency), p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, c_currency_rate(p.obposApplications.organization.currency, coalesce(c, p.paymentMethod.currency), null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
           + "coalesce(c.iSOCode, p.paymentMethod.currency.iSOCode) as isocode, "

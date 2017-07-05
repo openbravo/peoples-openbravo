@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.retail.posterminal.POSUtils;
 
 public class Currency extends QueryTerminalProperty {
@@ -25,9 +24,7 @@ public class Currency extends QueryTerminalProperty {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    String currId = POSUtils
-        .getPriceListByTerminalId(
-            RequestContext.get().getSessionAttribute("POSTerminal").toString()).getCurrency()
+    String currId = POSUtils.getPriceListByTerminalId(jsonsent.getString("pos")).getCurrency()
         .getId();
     return Arrays.asList(new String[] { "from Currency where id ='" + currId
         + "' and $readableSimpleCriteria and $activeCriteria" });
