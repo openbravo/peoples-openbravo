@@ -123,7 +123,7 @@ enyo.kind({
       lineIndex++;
     });
 
-    me.args.quotationProductAttribute.trigger('orderCreatedFromQuotation');
+    order.trigger('orderCreatedFromQuotation');
     this.hide();
     return;
   },
@@ -166,7 +166,7 @@ enyo.kind({
         name: 'quotationLine' + i
       });
       quotationLine.$.valueAttribute.focus();
-      quotationLine.$.productName.setContent(theLine.attributes.product.attributes._identifier);
+      quotationLine.$.productName.setContent(theLine.get('product').get('_identifier'));
       i++;
     });
     me.$.bodyButtons.$.modalDialogButton.setDisabled(true);
