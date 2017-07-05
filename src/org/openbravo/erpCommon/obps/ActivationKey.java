@@ -35,6 +35,8 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.spec.X509EncodedKeySpec;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,6 +54,7 @@ import java.util.zip.CRC32;
 import javax.crypto.Cipher;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
@@ -82,6 +85,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SystemInfo;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.HeartbeatLog;
@@ -1091,22 +1095,42 @@ public class ActivationKey {
       obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSessionId));
     }
 
-    boolean sessionDeactivated = false;
-    for (Session expiredSession : obCriteria.list()) {
+    List<Session> exipiredCandidates = obCriteria.list();
+    ArrayList<String> sessionsToDeactivate = new ArrayList<>(exipiredCandidates.size());
+    for (Session expiredSession : exipiredCandidates) {
       if (shouldDeactivateSession(expiredSession, lastValidPingTime)) {
-        expiredSession.setSessionActive(false);
-        sessionDeactivated = true;
-        log4j.info("Deactivated session: " + expiredSession.getId()
+        sessionsToDeactivate.add(expiredSession.getId());
+        log4j.info("Deactivating session: " + expiredSession.getId()
             + " beacuse of ping time out. Last ping: " + expiredSession.getLastPing()
             + ". Last valid ping time: " + lastValidPingTime);
       }
     }
-    if (sessionDeactivated) {
-      OBDal.getInstance().flush();
-    } else {
-      log4j.debug("No ping timeout sessions");
+
+    if (!sessionsToDeactivate.isEmpty()) {
+      // deactivate sessions is a separate DB trx not to hold locks for a long time
+      DalConnectionProvider cp = new DalConnectionProvider(false);
+      Connection trxConn = null;
+      boolean success = false;
+      try {
+        trxConn = cp.getTransactionConnection();
+        ActivationKeyData.deactivateSessions(trxConn, cp,
+            Utility.arrayListToString(sessionsToDeactivate, true));
+        cp.releaseCommitConnection(trxConn);
+        success = true;
+      } catch (NoConnectionAvailableException | SQLException | ServletException e) {
+        log.error("couldn't deactivate timed out sessions: " + sessionsToDeactivate);
+      } finally {
+        if (!success && trxConn != null) {
+          try {
+            cp.releaseRollbackConnection(trxConn);
+          } catch (SQLException e) {
+            log.error("couldn't rollback failed trx to deactivate timed out sessions: "
+                + sessionsToDeactivate);
+          }
+        }
+      }
     }
-    return sessionDeactivated;
+    return !sessionsToDeactivate.isEmpty();
   }
 
   /**
