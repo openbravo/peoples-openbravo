@@ -5,28 +5,43 @@
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
+ *
+ * Author Yogas Karnik
+ *
  */
 /*global OB, moment, enyo */
 
 enyo.kind({
   name: 'OB.UI.ModalQuotationProductAttributesScroller.QuotationLines',
+  classes: 'flexContainer',
   components: [{
     classes: 'properties-label',
-    name: 'productName',
-    type: 'text',
-    style: 'font-size: 17px;margin-top:4px'
+    components: [{
+      name: 'productName',
+      type: 'text',
+      style: 'font-size: 17px;',
+      classes: 'modal-dialog-receipt-properties-label',
+      content: ''
+    }]
   }, {
-    kind: 'OB.UI.renderTextProperty',
-    name: 'valueAttribute',
-    maxlength: '70',
-    style: 'width: 55%',
-    handlers: {
-      oninput: 'blur'
-    },
-    blur: function () {
-      this.bubble('onFieldChanged');
-    },
-    placeholder: 'Scan attribute'
+    classes: 'properties-component',
+    components: [{
+      name: 'newAttribute',
+      classes: 'modal-dialog-receipt-properties-text',
+      components: [{
+        kind: 'OB.UI.renderTextProperty',
+        name: 'valueAttribute',
+        style: 'color: black',
+        maxlength: '70',
+        handlers: {
+          oninput: 'blur'
+        },
+        blur: function () {
+          this.bubble('onFieldChanged');
+        },
+        placeholder: 'Scan attribute'
+      }]
+    }]
   }, {
     style: 'clear: both'
   }]
@@ -80,7 +95,7 @@ enyo.kind({
         i, line = me.args.lines;
     for (i = 0; i < line.length; i++) {
       me.$.bodyContent.$.quotationLinesComponent.$['quotationLine' + i].$.valueAttribute.setValue(null);
-      me.$.bodyContent.$.quotationLinesComponent.$['quotationLine' + i].$.valueAttribute.addStyles('background-color: none; width: 55%');
+      me.$.bodyContent.$.quotationLinesComponent.$['quotationLine' + i].$.valueAttribute.addStyles('background-color: none;');
     }
     me.$.bodyButtons.$.modalDialogButton.setDisabled(true);
     return;
