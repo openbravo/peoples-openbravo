@@ -177,6 +177,9 @@ enyo.kind({
     this.receipt.on('scan', function (params) {
       if (OB.MobileApp.model.get('lastPaneShown') !== 'scan') {
         this.manualTap('scan', params);
+      } else {
+        this.owner.owner.$.rightPanel.$.keyboard.lastStatus = '';
+        this.owner.owner.$.rightPanel.$.keyboard.setStatus('');
       }
     }, this);
 
