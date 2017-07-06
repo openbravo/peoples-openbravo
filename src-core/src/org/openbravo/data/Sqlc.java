@@ -1512,8 +1512,8 @@ public class Sqlc extends DefaultHandler {
       else
         out2.append("        connectionProvider.releaseTransactionalPreparedStatement(st);\n");
     }
-    out2.append("      } catch(Exception ignore){\n");
-    out2.append("        ignore.printStackTrace();\n");
+    out2.append("      } catch(Exception e){\n");
+    out2.append("        log4j.error(\"Error during release*Statement of query: \" + strSql, e);\n");
     out2.append("      }\n");
     out2.append("    }\n");
     if (sql.sqlType.equals("callableStatement")) {
