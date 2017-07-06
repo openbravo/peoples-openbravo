@@ -152,6 +152,7 @@ public class ActivationKey {
   private static final SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
   private Lock deactivateSessionsLock = new ReentrantLock();
+  private Object wsCountLock = new Object();
 
   /**
    * Number of minutes since last license refresh to wait before doing it again
@@ -1867,7 +1868,7 @@ public class ActivationKey {
    * @param updateCounter
    *          daily calls should be updated
    */
-  public synchronized WSRestriction checkNewWSCall(boolean updateCounter) {
+  public WSRestriction checkNewWSCall(boolean updateCounter) {
     if (hasExpired) {
       return WSRestriction.EXPIRED;
     }
@@ -1887,55 +1888,61 @@ public class ActivationKey {
     }
 
     long checkCalls = maxWsCalls;
+    long currentDayCount;
     if (updateCounter) {
-      wsDayCounter += 1;
+      currentDayCount = wsDayCounter.incrementAndGet();
       // Adding 1 to maxWsCalls because session is already saved in DB
       checkCalls += 1;
+    } else {
+      currentDayCount = wsDayCounter.get();
     }
 
-    if (wsDayCounter > checkCalls) {
-      // clean up old days
-      while (!exceededInLastDays.isEmpty()
-          && exceededInLastDays.get(0).getTime() < today.getTime() - WS_MS_EXCEEDING_ALLOWED_PERIOD) {
-        Date removed = exceededInLastDays.remove(0);
-        log.info("Removed date from exceeded days " + removed);
-      }
+    if (currentDayCount > checkCalls) {
+      synchronized (wsCountLock) {
+        // clean up old days
+        while (!exceededInLastDays.isEmpty()
+            && exceededInLastDays.get(0).getTime() < today.getTime()
+                - WS_MS_EXCEEDING_ALLOWED_PERIOD) {
+          Date removed = exceededInLastDays.remove(0);
+          log.info("Removed date from exceeded days " + removed);
+        }
 
-      if (!exceededInLastDays.contains(today)) {
-        exceededInLastDays.add(today);
+        if (!exceededInLastDays.contains(today)) {
+          exceededInLastDays.add(today);
 
-        // Adding a new failing day, send a new beat to butler
-        Runnable sendBeatProcess = new Runnable() {
-          @Override
-          public void run() {
-            try {
-              String content = "beatType=CWSR";
-              content += "&systemIdentifier="
-                  + URLEncoder.encode(SystemInfo.getSystemIdentifier(), "utf-8");
-              content += "&dbIdentifier="
-                  + URLEncoder.encode(SystemInfo.getDBIdentifier(), "utf-8");
-              content += "&macId=" + URLEncoder.encode(SystemInfo.getMacAddress(), "utf-8");
-              content += "&obpsId=" + URLEncoder.encode(SystemInfo.getOBPSInstance(), "utf-8");
-              content += "&instanceNo="
-                  + URLEncoder.encode(SystemInfo.getOBPSIntanceNumber(), "utf-8");
+          // Adding a new failing day, send a new beat to butler
+          Runnable sendBeatProcess = new Runnable() {
+            @Override
+            public void run() {
+              try {
+                String content = "beatType=CWSR";
+                content += "&systemIdentifier="
+                    + URLEncoder.encode(SystemInfo.getSystemIdentifier(), "utf-8");
+                content += "&dbIdentifier="
+                    + URLEncoder.encode(SystemInfo.getDBIdentifier(), "utf-8");
+                content += "&macId=" + URLEncoder.encode(SystemInfo.getMacAddress(), "utf-8");
+                content += "&obpsId=" + URLEncoder.encode(SystemInfo.getOBPSInstance(), "utf-8");
+                content += "&instanceNo="
+                    + URLEncoder.encode(SystemInfo.getOBPSIntanceNumber(), "utf-8");
 
-              URL url = new URL(HEARTBEAT_URL);
-              HttpsUtils.sendSecure(url, content);
-              log.info("Sending CWSR beat");
-            } catch (Exception e) {
-              log.error("Error connecting server", e);
+                URL url = new URL(HEARTBEAT_URL);
+                HttpsUtils.sendSecure(url, content);
+                log.info("Sending CWSR beat");
+              } catch (Exception e) {
+                log.error("Error connecting server", e);
+              }
+
             }
+          };
+          Thread sendBeat = new Thread(sendBeatProcess);
+          sendBeat.start();
+        }
 
-          }
-        };
-        Thread sendBeat = new Thread(sendBeatProcess);
-        sendBeat.start();
-      }
-
-      if (exceededInLastDays.size() > WS_DAYS_EXCEEDING_ALLOWED) {
-        return WSRestriction.EXCEEDED_MAX_WS_CALLS;
-      } else {
-        return WSRestriction.EXCEEDED_WARN_WS_CALLS;
+        if (exceededInLastDays.size() > WS_DAYS_EXCEEDING_ALLOWED) {
+          return WSRestriction.EXCEEDED_MAX_WS_CALLS;
+        } else {
+          return WSRestriction.EXCEEDED_WARN_WS_CALLS;
+        }
       }
     }
     return WSRestriction.NO_RESTRICTION;
@@ -1950,12 +1957,17 @@ public class ActivationKey {
     }
   }
 
-  private void initializeWsDayCounter() {
+  private synchronized void initializeWsDayCounter() {
+    Date today = getDayAt0(new Date());
+    if (!(initWsCountTime == null || today.getTime() != initWsCountTime.getTime())) {
+      // already initialized in a different thread
+      return;
+    }
     initWsCountTime = getDayAt0(new Date());
     OBContext.setAdminMode();
     try {
-      wsDayCounter = getNumberWSDayCounter();
-      log.info("Initialized ws count to " + wsDayCounter + " from " + initWsCountTime);
+      wsDayCounter = new AtomicLong(getNumberWSDayCounter());
+      log.info("Initialized ws count to " + wsDayCounter.get() + " from " + initWsCountTime);
     } finally {
       OBContext.restorePreviousMode();
     }
