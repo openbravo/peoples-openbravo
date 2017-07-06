@@ -97,7 +97,6 @@ public class StandardWindowComponent extends BaseTemplateComponent {
 
   public String generate() {
     final String jsCode = super.generate();
-    // System.err.println(jsCode);
     return jsCode;
   }
 
