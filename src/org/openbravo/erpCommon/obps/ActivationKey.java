@@ -49,6 +49,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.zip.CRC32;
 
 import javax.crypto.Cipher;
@@ -137,7 +140,7 @@ public class ActivationKey {
   private boolean inconsistentInstance = false;
 
   private long maxWsCalls;
-  private long wsDayCounter;
+  private AtomicLong wsDayCounter;
   private Date initWsCountTime;
   private List<Date> exceededInLastDays;
 
@@ -147,6 +150,8 @@ public class ActivationKey {
   private static final String TIER_2_PREMIUM_FEATURE = "T2P";
   private static final String GOLDEN_EXCLUDED = "GOLDENEXCLUDED";
   private static final SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+  private Lock deactivateSessionsLock = new ReentrantLock();
 
   /**
    * Number of minutes since last license refresh to wait before doing it again
@@ -256,7 +261,7 @@ public class ActivationKey {
    * @see ActivationKey#getInstance(boolean)
    * 
    */
-  public static synchronized ActivationKey getInstance() {
+  public static ActivationKey getInstance() {
     return getInstance(false);
   }
 
@@ -270,7 +275,7 @@ public class ActivationKey {
    *          refresh license if needed to
    * 
    */
-  public static synchronized ActivationKey getInstance(boolean refreshIfNeeded) {
+  public static ActivationKey getInstance(boolean refreshIfNeeded) {
     if (refreshIfNeeded) {
       instance.refreshIfNeeded();
     }
@@ -317,7 +322,7 @@ public class ActivationKey {
     }
   }
 
-  private void loadFromDB() {
+  private synchronized void loadFromDB() {
     org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
         org.openbravo.model.ad.system.System.class, "0");
     strPublicKey = sys.getInstanceKey();
@@ -332,7 +337,7 @@ public class ActivationKey {
     loadRestrictions();
   }
 
-  private void loadInfo(String activationKey) {
+  private synchronized void loadInfo(String activationKey) {
     reset();
 
     if (strPublicKey == null || activationKey == null || strPublicKey.equals("")
@@ -1076,61 +1081,69 @@ public class ActivationKey {
    * PING_TIMEOUT_SECS is hardcoded to 120s, pings are hardcoded in front-end to 50s.
    */
   private boolean deactivateTimeOutSessions(String currentSessionId) {
-    // Last valid ping time is current time substract timeout seconds
-    Calendar cal = Calendar.getInstance();
-    cal.add(Calendar.SECOND, (-1) * PING_TIMEOUT_SECS);
-    Date lastValidPingTime = new Date(cal.getTimeInMillis());
-
-    OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
-
-    // sesion_active='Y' and (lastPing is null or lastPing<lastValidPing)
-    obCriteria.add(Restrictions.and(
-        Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true),
-        Restrictions.or(Restrictions.isNull(Session.PROPERTY_LASTPING),
-            Restrictions.lt(Session.PROPERTY_LASTPING, lastValidPingTime))));
-    obCriteria.add(Restrictions.not(Restrictions.in(Session.PROPERTY_LOGINSTATUS,
-        NO_CU_SESSION_TYPES)));
-
-    if (currentSessionId != null) {
-      obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSessionId));
+    if (!deactivateSessionsLock.tryLock()) {
+      // another thread is already trying to deactivate sessions, don't do anything
+      return false;
     }
+    try {
+      // Last valid ping time is current time substract timeout seconds
+      Calendar cal = Calendar.getInstance();
+      cal.add(Calendar.SECOND, (-1) * PING_TIMEOUT_SECS);
+      Date lastValidPingTime = new Date(cal.getTimeInMillis());
 
-    List<Session> exipiredCandidates = obCriteria.list();
-    ArrayList<String> sessionsToDeactivate = new ArrayList<>(exipiredCandidates.size());
-    for (Session expiredSession : exipiredCandidates) {
-      if (shouldDeactivateSession(expiredSession, lastValidPingTime)) {
-        sessionsToDeactivate.add(expiredSession.getId());
-        log4j.info("Deactivating session: " + expiredSession.getId()
-            + " beacuse of ping time out. Last ping: " + expiredSession.getLastPing()
-            + ". Last valid ping time: " + lastValidPingTime);
+      OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
+
+      // sesion_active='Y' and (lastPing is null or lastPing<lastValidPing)
+      obCriteria.add(Restrictions.and(
+          Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true),
+          Restrictions.or(Restrictions.isNull(Session.PROPERTY_LASTPING),
+              Restrictions.lt(Session.PROPERTY_LASTPING, lastValidPingTime))));
+      obCriteria.add(Restrictions.not(Restrictions.in(Session.PROPERTY_LOGINSTATUS,
+          NO_CU_SESSION_TYPES)));
+
+      if (currentSessionId != null) {
+        obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSessionId));
       }
-    }
 
-    if (!sessionsToDeactivate.isEmpty()) {
-      // deactivate sessions is a separate DB trx not to hold locks for a long time
-      DalConnectionProvider cp = new DalConnectionProvider(false);
-      Connection trxConn = null;
-      boolean success = false;
-      try {
-        trxConn = cp.getTransactionConnection();
-        ActivationKeyData.deactivateSessions(trxConn, cp,
-            Utility.arrayListToString(sessionsToDeactivate, true));
-        cp.releaseCommitConnection(trxConn);
-        success = true;
-      } catch (NoConnectionAvailableException | SQLException | ServletException e) {
-        log.error("couldn't deactivate timed out sessions: " + sessionsToDeactivate);
-      } finally {
-        if (!success && trxConn != null) {
-          try {
-            cp.releaseRollbackConnection(trxConn);
-          } catch (SQLException e) {
-            log.error("couldn't rollback failed trx to deactivate timed out sessions: "
-                + sessionsToDeactivate);
+      List<Session> exipiredCandidates = obCriteria.list();
+      ArrayList<String> sessionsToDeactivate = new ArrayList<>(exipiredCandidates.size());
+      for (Session expiredSession : exipiredCandidates) {
+        if (shouldDeactivateSession(expiredSession, lastValidPingTime)) {
+          sessionsToDeactivate.add(expiredSession.getId());
+          log4j.info("Deactivating session: " + expiredSession.getId()
+              + " beacuse of ping time out. Last ping: " + expiredSession.getLastPing()
+              + ". Last valid ping time: " + lastValidPingTime);
+        }
+      }
+
+      if (!sessionsToDeactivate.isEmpty()) {
+        // deactivate sessions is a separate DB trx not to hold locks for a long time
+        DalConnectionProvider cp = new DalConnectionProvider(false);
+        Connection trxConn = null;
+        boolean success = false;
+        try {
+          trxConn = cp.getTransactionConnection();
+          ActivationKeyData.deactivateSessions(trxConn, cp,
+              Utility.arrayListToString(sessionsToDeactivate, true));
+          cp.releaseCommitConnection(trxConn);
+          success = true;
+        } catch (NoConnectionAvailableException | SQLException | ServletException e) {
+          log.error("couldn't deactivate timed out sessions: " + sessionsToDeactivate);
+        } finally {
+          if (!success && trxConn != null) {
+            try {
+              cp.releaseRollbackConnection(trxConn);
+            } catch (SQLException e) {
+              log.error("couldn't rollback failed trx to deactivate timed out sessions: "
+                  + sessionsToDeactivate);
+            }
           }
         }
       }
+      return !sessionsToDeactivate.isEmpty();
+    } finally {
+      deactivateSessionsLock.unlock();
     }
-    return !sessionsToDeactivate.isEmpty();
   }
 
   /**
