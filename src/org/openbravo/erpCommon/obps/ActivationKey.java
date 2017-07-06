@@ -1530,12 +1530,8 @@ public class ActivationKey {
   }
 
   /**
-   * Refreshes license online in case of:
-   * <ul>
-   * <li>It expired
-   * <li>Maximum number of WS calls has been reached during last 30 days
-   * <li>Maximum number of concurrent users has been reached
-   * </ul>
+   * Tries to refresh license if it wasn't refreshed for last 24hr or there were updates in
+   * ad_system.
    */
   private void refreshIfNeeded() {
     if (hasActivationKey && !subscriptionConvertedProperty && !trial && isTimeToRefresh(24 * 60)) {
