@@ -1156,7 +1156,9 @@ public class ActivationKey {
     HttpSession session = SessionListener.getActiveSession(sessionId);
     if (session == null) {
       log4j.debug("Session " + sessionId + " not found in context");
-      return true;
+      // we cannot deactivate this session because it might have been created in a different node
+      // from cluster and we cannot know when was used last time
+      return false;
     }
     Date lastRequestTime = new Date(session.getLastAccessedTime());
     log4j.debug("Last request received from session " + sessionId + ": " + lastRequestTime);
