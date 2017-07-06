@@ -1043,7 +1043,7 @@ public class VariablesBase {
       }
     }
 
-    if (auxStr == null || auxStr.length == 0 || auxStr.equals("")) {
+    if (auxStr == null || auxStr.length == 0) {
       if (required) {
         throw new ServletException("Request IN parameter required: " + parameter);
       } else {

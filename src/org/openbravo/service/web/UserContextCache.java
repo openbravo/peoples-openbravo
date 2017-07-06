@@ -68,7 +68,8 @@ public class UserContextCache implements OBSingleton {
   private Map<String, CacheEntry> cache = new ConcurrentHashMap<String, CacheEntry>();
 
   /**
-   * Searches the ContextCache for an OBContext. If none is found a new one is created and placed in the cache.
+   * Searches the ContextCache for an OBContext. If none is found a new one is created and placed in
+   * the cache.
    * 
    * @param userId
    *          the user for which an OBContext is required
@@ -81,7 +82,8 @@ public class UserContextCache implements OBSingleton {
   }
 
   /**
-   * Searches the ContextCache for an OBContext. If none is found a new one is created and placed in the cache.
+   * Searches the ContextCache for an OBContext. If none is found a new one is created and placed in
+   * the cache.
    * 
    * @param userId
    *          the user for which an OBContext is required
@@ -108,7 +110,7 @@ public class UserContextCache implements OBSingleton {
               "Found element in cache for userId {}, but had incorrect user {}. Removing it from cache.",
               userId, ce.getObContext().getUser());
         }
-        cache.remove(ce);
+        cache.remove(cacheKey);
       } else {
         if (log.isDebugEnabled()) {
           log.debug("Found element in cache. User: {}, Role: {}", ce.getObContext().getUser(), ce
