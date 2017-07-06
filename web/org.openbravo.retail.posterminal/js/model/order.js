@@ -1552,7 +1552,7 @@
         }
       }
       if (p.get('ispack')) {
-        OB.Model.Discounts.discountRules[p.get('productCategory')].addProductToOrder(this, p);
+        OB.Model.Discounts.discountRules[p.get('productCategory')].addProductToOrder(this, p, attrs);
         if (callback) {
           callback(true);
         }
@@ -4504,6 +4504,9 @@
         return true;
       }
       return false;
+    },
+    getScannableDocumentNo: function () {
+      return this.get('documentNo').replace(/-/g, '\\-').replace(/\+/g, '\\+');
     }
   });
 
@@ -5236,6 +5239,88 @@
       // NOTE: No need to execute any business logic here
       // The new functionality of loading document no, makes this function obsolete.
       // The function is not removed to avoid api changes
+    },
+    checkForDuplicateReceipts: function (model, loadOrder) {
+      // Check in Current Session
+      var orderTypeMsg, i;
+      for (i = 0; i < OB.MobileApp.model.orderList.length; i++) {
+        if (OB.MobileApp.model.orderList.models[i].get('id') === model.get('id') || ((!(_.isNull(OB.MobileApp.model.orderList.models[i].get('oldId')))) && OB.MobileApp.model.orderList.models[i].get('oldId') === model.get('id'))) {
+          var errorMsg;
+          orderTypeMsg = OB.I18N.getLabel('OBPOS_ticket');
+          errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, OB.MobileApp.model.orderList.models[i].get('documentNo')));
+          if (OB.MobileApp.model.orderList.models[i].get('isLayaway')) {
+            orderTypeMsg = OB.I18N.getLabel('OBPOS_LblLayaway');
+            errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, OB.MobileApp.model.orderList.models[i].get('documentNo')));
+          } else if (OB.MobileApp.model.orderList.models[i].get('isQuotation')) {
+            orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
+            errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, OB.MobileApp.model.orderList.models[i].get('documentNo')));
+          } else if ((!(_.isNull(OB.MobileApp.model.orderList.models[i].get('oldId')))) && OB.MobileApp.model.orderList.models[i].get('oldId') === model.get('id')) {
+            var SoFromQtDocNo = OB.MobileApp.model.orderList.models[i].get('documentNo');
+            var QtDocumentNo = model.get('documentNo');
+            errorMsg = OB.I18N.getLabel('OBPOS_OrderAssociatedToQuotationInProgress', [QtDocumentNo, SoFromQtDocNo, QtDocumentNo, SoFromQtDocNo]);
+          }
+          OB.POS.terminal.$.containerWindow.getRoot().doShowPopup({
+            popup: 'OB_UI_MessageDialog',
+            args: {
+              message: errorMsg
+            }
+          });
+          if (OB.MobileApp.model.receipt.get('documentNo') !== model.get('documentNo')) {
+            OB.MobileApp.model.orderList.load(OB.MobileApp.model.orderList.models[i]);
+          }
+          return true;
+        }
+      }
+
+      // Check in Other Session
+      OB.Dal.find(OB.Model.Order, {
+        'hasbeenpaid': 'N'
+      }, function (ordersNotProcessed) {
+        if (ordersNotProcessed.length > 0) {
+          var existingOrder = _.find(ordersNotProcessed.models, function (order) {
+            return order.get('id') === model.get('id') || order.get('oldId') === model.get('id');
+          });
+          if (existingOrder) {
+            var orderTypeMsg = OB.I18N.getLabel('OBPOS_ticket');
+            if (existingOrder.get('isLayaway')) {
+              orderTypeMsg = OB.I18N.getLabel('OBPOS_LblLayaway');
+            } else if (existingOrder.get('isQuotation')) {
+              orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
+            }
+            // Getting Other Session User's username
+            OB.Dal.find(OB.Model.Session, {
+              'id': existingOrder.get('session')
+            }, function (sessions) {
+              if (sessions.length > 0) {
+                OB.Dal.find(OB.Model.User, {
+                  'id': sessions.models[0].get('user')
+                }, function (users) {
+                  if (users.length > 0) {
+                    OB.UTIL.showConfirmation.display(enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpenedInSession'), orderTypeMsg, existingOrder.get('documentNo'), users.models[0].get('name')), enyo.format(OB.I18N.getLabel('OBPOS_MsgConfirmSaveInCurrentSession'), users.models[0].get('name')), [{
+                      label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                      action: function () {
+                        OB.Dal.remove(existingOrder, function () {
+                          loadOrder(model);
+                        }, OB.UTIL.showError);
+                      }
+                    }, {
+                      label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                    }], {
+                      onHideFunction: function (dialog) {
+                        return true;
+                      }
+                    });
+                  }
+                });
+              }
+            });
+          } else {
+            return loadOrder(model);
+          }
+        } else {
+          return loadOrder(model);
+        }
+      });
     }
   });
 

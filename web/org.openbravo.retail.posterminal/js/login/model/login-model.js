@@ -164,6 +164,14 @@
                 }
               }
 
+              OB.DS.commonParams = OB.DS.commonParams || {};
+              OB.DS.commonParams = {
+                client: terminalModel.get('terminal').client,
+                organization: terminalModel.get('terminal').organization,
+                pos: terminalModel.get('terminal').id,
+                terminalName: terminalModel.get('terminalName')
+              };
+
               // update the local database with the document sequence received
               OB.MobileApp.model.saveDocumentSequence(OB.MobileApp.model.get('terminal').lastDocumentNumber, OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber, OB.MobileApp.model.get('terminal').lastReturnDocumentNumber, function () {
                 if (OB.MobileApp.model.orderList) {
@@ -610,13 +618,16 @@
         OB.MobileApp.model.renderLogin();
         return false;
       }
-      OB.DS.commonParams = OB.DS.commonParams || {};
-      OB.DS.commonParams = {
-        client: this.get('terminal').client,
-        organization: this.get('terminal').organization,
-        pos: this.get('terminal').id,
-        terminalName: this.get('terminalName')
-      };
+
+      if (!OB.DS.commonParams) {
+        OB.DS.commonParams = OB.DS.commonParams || {};
+        OB.DS.commonParams = {
+          client: this.get('terminal').client,
+          organization: this.get('terminal').organization,
+          pos: this.get('terminal').id,
+          terminalName: this.get('terminalName')
+        };
+      }
 
       //LEGACY
       this.paymentnames = {};

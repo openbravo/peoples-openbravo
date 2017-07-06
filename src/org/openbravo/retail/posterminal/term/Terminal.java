@@ -70,6 +70,10 @@ public class Terminal extends JSONProcessSimple {
     OBPOSApplications pOSTerminal = POSUtils.getTerminalById(posId);
     try {
       OBContext.setAdminMode(false);
+
+      // TO use posId in QueryTerminalProperty
+      jsonsent.put("pos", posId);
+
       // INITIAL VALIDATIONS
       InitialValidations.validateTerminal(pOSTerminal);
 

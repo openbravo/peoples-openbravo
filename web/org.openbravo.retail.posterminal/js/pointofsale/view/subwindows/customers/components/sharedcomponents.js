@@ -476,11 +476,11 @@ enyo.kind({
         args.windowComponent.waterfall('onDisableButton', {
           disabled: true
         });
-        args.customer.saveCustomer(function () {
+        args.customer.saveCustomer(function (result) {
           args.windowComponent.waterfall('onDisableButton', {
             disabled: false
           });
-          if (!inEvent.silent) {
+          if (result && !inEvent.silent) {
             me.bubble('onCancelClose', {
               customer: customerEdited
             });

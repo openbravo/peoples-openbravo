@@ -23,7 +23,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -55,7 +54,7 @@ public class Cashup extends JSONProcessSimple {
     try {
 
       JSONArray respArray = new JSONArray();
-      String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
+      String posId = jsonsent.getString("pos");
 
       if (cashupErrorsExistInTerminal(posId)) {
         result.put(JsonConstants.RESPONSE_ERRORMESSAGE, "There are cashup errors in this terminal");
@@ -117,7 +116,7 @@ public class Cashup extends JSONProcessSimple {
         cashupJSON.put("cashTaxInfo", cashTaxInfo);
 
         // Get CashManagement
-        JSONArray cashMgmtInfo = getCashMgmt((String) cashup[0], converter);
+        JSONArray cashMgmtInfo = getCashMgmt((String) cashup[0], converter, posId);
         cashupJSON.put("cashMgmInfo", cashMgmtInfo);
 
         respArray.put(cashupJSON);
@@ -178,12 +177,12 @@ public class Cashup extends JSONProcessSimple {
       OBPOSAppPayment paymentAppMethod = (OBPOSAppPayment) paymentAppMethodCriteria.uniqueResult();
       paymentMethodJSON.put("cashup_id", paymentMethodJSON.get("cashUp"));
       paymentMethodJSON.put("searchKey", paymentMethodJSON.get("searchkey"));
-      
+
       // there are several ways of refering to the payment method id in webpos
       // support all of them.
       paymentMethodJSON.put("paymentmethod_id", paymentMethodJSON.get("paymentType"));
       paymentMethodJSON.put("paymentTypeId", paymentMethodJSON.get("paymentType"));
-      
+
       paymentMethodJSON.put("startingCash", paymentMethodJSON.get("startingcash"));
       paymentMethodJSON.put("totalSales", paymentMethodJSON.get("totalsales"));
       paymentMethodJSON.put("totalReturns", paymentMethodJSON.get("totalreturns"));
@@ -215,10 +214,9 @@ public class Cashup extends JSONProcessSimple {
     return respArray;
   }
 
-  private JSONArray getCashMgmt(String cashupId, DataToJsonConverter converter)
+  private JSONArray getCashMgmt(String cashupId, DataToJsonConverter converter, String posId)
       throws JSONException {
     JSONArray respArray = new JSONArray();
-    String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
 
     // Get GL Items associated to the payment methods of this terminal
     String[] paymentTypes = { "fmgi.oBPOSAppPaymentTypeCGlitemDropdepIDList",

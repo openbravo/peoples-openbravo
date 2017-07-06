@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
@@ -31,8 +30,7 @@ public class BusinessPartner extends QueryTerminalProperty {
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     Organization org = OBDal.getInstance().get(Organization.class,
         OBContext.getOBContext().getCurrentOrganization().getId());
-    OBPOSApplications terminal = POSUtils.getTerminalById(RequestContext.get()
-        .getSessionAttribute("POSTerminal").toString());
+    OBPOSApplications terminal = POSUtils.getTerminalById(jsonsent.getString("pos"));
     if (terminal == null) {
       throw new JSONException("OBPOS_TerminalNotFound");
     }

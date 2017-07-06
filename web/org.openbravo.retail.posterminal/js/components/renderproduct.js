@@ -221,7 +221,11 @@ enyo.kind({
     this.drawPriceBasedOnSize(searchTab);
 
     if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
-      this.$.icon.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(this.model.get('id')) + '), url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');
+      if (this.model.get('imgId')) {
+        this.$.icon.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(this.model.get('id')) + '), url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');
+      } else {
+        this.$.icon.applyStyle('background-image', 'url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');
+      }
       this.$.thumbnail.hide();
     } else {
       this.$.thumbnail.setImg(this.model.get('img'));

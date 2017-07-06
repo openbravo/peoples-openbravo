@@ -732,6 +732,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         line, jsonorder, jsonorder.getLong("timezoneOffset"));
     line.setId(inOutLine.getId());
     line.setNewOBObject(true);
+    line.set("creationDate", invoice.getCreationDate());
     line.setLineNo((long) lineNo);
     line.setDescription(orderlines.getJSONObject(numIter).has("description") ? orderlines
         .getJSONObject(numIter).getString("description") : "");
@@ -968,11 +969,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       addDocumentNoHandler(invoice, invoiceEntity, invoice.getTransactionDocument(),
           invoice.getDocumentType());
     }
-    Long value = jsonorder.getLong("created");
-    invoice.set("creationDate", new Date(value));
     final Date orderDate = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("orderDate"),
         Long.parseLong(jsonorder.getString("timezoneOffset")));
-    invoice.setAccountingDate(order.getOrderDate());
+    invoice.set("creationDate", orderDate);
+    invoice.setAccountingDate(orderDate);
     invoice.setInvoiceDate(orderDate);
     invoice.setSalesTransaction(true);
     invoice.setDocumentStatus("CO");
@@ -1208,12 +1208,19 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
         if (pendingQty.compareTo(BigDecimal.ZERO) != 0) {
           // still qty to ship or return: let's use the bin with highest prio
-          hqlWhereClause = " l where l.warehouse = :warehouse order by l.relativePriority, l.id";
-          OBQuery<Locator> queryLoc = OBDal.getInstance()
-              .createQuery(Locator.class, hqlWhereClause);
-          queryLoc.setNamedParameter("warehouse", warehouse);
-          queryLoc.setMaxResult(1);
-          Locator loc = queryLoc.uniqueResult();
+          JSONObject jsonorderline = orderlines.getJSONObject(i);
+          Locator loc = null;
+          if (jsonorderline.has("overissueStoreBin")) {
+            loc = OBDal.getInstance().get(Locator.class, jsonorderline.get("overissueStoreBin"));
+          } else {
+            hqlWhereClause = " l where l.warehouse = :warehouse order by l.relativePriority, l.id";
+            OBQuery<Locator> queryLoc = OBDal.getInstance().createQuery(Locator.class,
+                hqlWhereClause);
+            queryLoc.setNamedParameter("warehouse", warehouse);
+            queryLoc.setMaxResult(1);
+            loc = queryLoc.uniqueResult();
+          }
+
           lineNo += 10;
           if (jsonorder.getLong("orderType") == 1) {
             pendingQty = pendingQty.negate();
