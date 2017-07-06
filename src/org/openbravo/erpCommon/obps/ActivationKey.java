@@ -1129,14 +1129,14 @@ public class ActivationKey {
           cp.releaseCommitConnection(trxConn);
           success = true;
         } catch (NoConnectionAvailableException | SQLException | ServletException e) {
-          log.error("couldn't deactivate timed out sessions: " + sessionsToDeactivate);
+          log.error("couldn't deactivate timed out sessions: " + sessionsToDeactivate, e);
         } finally {
           if (!success && trxConn != null) {
             try {
               cp.releaseRollbackConnection(trxConn);
             } catch (SQLException e) {
               log.error("couldn't rollback failed trx to deactivate timed out sessions: "
-                  + sessionsToDeactivate);
+                  + sessionsToDeactivate, e);
             }
           }
         }
