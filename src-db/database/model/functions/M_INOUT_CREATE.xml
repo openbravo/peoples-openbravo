@@ -435,7 +435,6 @@ BEGIN --BODY
           v_orderline_old varchar2(32);
           v_QtyStorage NUMBER:=0;
           v_LocatorQty NUMBER;
-          v_Locator_ID VARCHAR2(32) ;
           v_IsStocked NUMBER:=0;
           v_pinstance_ID VARCHAR2(32);
         BEGIN

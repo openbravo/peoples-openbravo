@@ -37,7 +37,6 @@
   v_result NUMBER:= 1;  
   v_aum C_ORDERLINE.C_AUM%TYPE;
   v_aumqty NUMBER;
-  v_count NUMBER;
   v_uom_preference AD_PREFERENCE.VALUE%TYPE;
   
   BEGIN

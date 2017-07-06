@@ -35,8 +35,6 @@
   v_istaxincluded CHAR(1) ;
   v_oldGrossAmt NUMBER:=0;
   v_newGrossAmt NUMBER:=0;
-  v_totallines NUMBER:=0;
-  v_grandtotal NUMBER:=0;
   v_oldLineAlternate NUMBER;
   v_create CHAR(1):='Y';  
   
@@ -55,7 +53,6 @@
   v_LineAlternate NUMBER;
   v_LineAlternateAcum NUMBER;
   
-  v_PriceLine NUMBER;
   v_CalcLine NUMBER;
           
   TYPE RECORD IS REF CURSOR;
