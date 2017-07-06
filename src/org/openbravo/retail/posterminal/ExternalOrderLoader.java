@@ -770,6 +770,7 @@ public class ExternalOrderLoader extends OrderLoader {
         terminalQuery.setString(0, posTerminal.getId());
         terminalQuery.setLockOptions(LockOptions.UPGRADE);
         OBPOSApplications lockedTerminal = (OBPOSApplications) terminalQuery.uniqueResult();
+        OBDal.getInstance().refresh(lockedTerminal);
         if (lockedTerminal.getLastassignednum() != null) {
           currentNo = lockedTerminal.getLastassignednum() + 1;
         } else {
