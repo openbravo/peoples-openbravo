@@ -1538,12 +1538,7 @@ public class ActivationKey {
    * </ul>
    */
   private void refreshIfNeeded() {
-    if (hasActivationKey
-        && !subscriptionConvertedProperty
-        && !trial
-        && (hasExpired || checkNewWSCall(false) != WSRestriction.NO_RESTRICTION
-            || checkOPSLimitations(null) == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED || !instanceProperties
-              .containsKey("posTerminals"))) {
+    if (hasActivationKey && !subscriptionConvertedProperty && !trial && isTimeToRefresh(24 * 60)) {
       refreshLicense(24 * 60);
     } else {
       if (licenseType == LicenseType.ON_DEMAND && outOfPlatform) {
@@ -1571,7 +1566,7 @@ public class ActivationKey {
     }
   }
 
-  private synchronized boolean refreshLicense(int minutesToRefresh) {
+  private boolean isTimeToRefresh(int minutesToRefresh) {
     Date timeToRefresh = null;
     if (lastRefreshTime != null) {
       Calendar calendar = Calendar.getInstance();
@@ -1580,48 +1575,51 @@ public class ActivationKey {
       timeToRefresh = calendar.getTime();
     }
 
-    if (timeToRefresh == null || new Date().after(timeToRefresh)) {
-      log4j.debug("Trying to refresh license, last refresh "
-          + (lastRefreshTime == null ? "never" : lastRefreshTime.toString()));
+    return timeToRefresh == null || new Date().after(timeToRefresh);
+  }
 
-      Map<String, Object> params = new HashMap<String, Object>();
-      params.put("publicKey", strPublicKey);
-      params.put("purpose", getProperty("purpose"));
-      params.put("instanceNo", getProperty("instanceno"));
-      params.put("activate", true);
-      ProcessBundle pb = new ProcessBundle(null, new VariablesSecureApp("0", "0", "0"));
-      pb.setParams(params);
-
-      boolean refreshed = false;
-      OBContext.setAdminMode();
-      try {
-        new ActiveInstanceProcess().execute(pb);
-        OBError msg = (OBError) pb.getResult();
-        refreshed = msg.getType().equals("Success");
-        if (refreshed) {
-          OBDal.getInstance().flush();
-          log4j.debug("Instance refreshed");
-        } else {
-          log4j.info("Problem refreshing instance " + msg.getMessage());
-        }
-      } catch (Exception e) {
-        log4j.error("Error refreshing instance", e);
-        refreshed = false;
-      } finally {
-        OBContext.restorePreviousMode();
-      }
-
-      if (!refreshed) {
-        // Even license couldn't be refreshed, set lastRefreshTime not to try to refresh in the
-        // following period of time
-        lastRefreshTime = new Date();
-      }
-      return refreshed;
-    } else {
-      log4j.debug("Not refreshing, last refresh was " + lastRefreshTime.toString()
-          + ". Next time to refresh " + timeToRefresh.toString());
+  private synchronized boolean refreshLicense(int minutesToRefresh) {
+    if (!isTimeToRefresh(minutesToRefresh)) {
       return false;
     }
+
+    log4j.debug("Trying to refresh license, last refresh "
+        + (lastRefreshTime == null ? "never" : lastRefreshTime.toString()));
+
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("publicKey", strPublicKey);
+    params.put("purpose", getProperty("purpose"));
+    params.put("instanceNo", getProperty("instanceno"));
+    params.put("activate", true);
+    ProcessBundle pb = new ProcessBundle(null, new VariablesSecureApp("0", "0", "0"));
+    pb.setParams(params);
+
+    boolean refreshed = false;
+    OBContext.setAdminMode();
+    try {
+      new ActiveInstanceProcess().execute(pb);
+      OBError msg = (OBError) pb.getResult();
+      refreshed = msg.getType().equals("Success");
+      if (refreshed) {
+        OBDal.getInstance().flush();
+        log4j.debug("Instance refreshed");
+      } else {
+        log4j.info("Problem refreshing instance " + msg.getMessage());
+      }
+    } catch (Exception e) {
+      log4j.error("Error refreshing instance", e);
+      refreshed = false;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    if (!refreshed) {
+      // Even license couldn't be refreshed, set lastRefreshTime not to try to
+      // refresh in the
+      // following period of time
+      lastRefreshTime = new Date();
+    }
+    return refreshed;
   }
 
   /**
