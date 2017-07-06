@@ -1564,9 +1564,9 @@ public class ActivationKey {
 
   private boolean isTimeToRefresh(int minutesToRefresh) {
     Date timeToRefresh = null;
-    if (lastRefreshTime != null) {
+    if (instance.lastRefreshTime != null) {
       Calendar calendar = Calendar.getInstance();
-      calendar.setTime(lastRefreshTime);
+      calendar.setTime(instance.lastRefreshTime);
       calendar.add(Calendar.MINUTE, minutesToRefresh);
       timeToRefresh = calendar.getTime();
     }
