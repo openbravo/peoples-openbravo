@@ -231,7 +231,8 @@ public class ActivationKey {
 
   }
 
-  private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
+  private static final int ONE_DAY = 24 * 60;
+  private static final int MILLSECS_PER_DAY = ONE_DAY * 60 * 1000;
   private static final int PING_TIMEOUT_SECS = 120;
   private static final Long EXPIRATION_BASIC_DAYS = 30L;
   private static final Long EXPIRATION_PROF_DAYS = 30L;
@@ -1534,8 +1535,8 @@ public class ActivationKey {
    * ad_system.
    */
   private void refreshIfNeeded() {
-    if (hasActivationKey && !subscriptionConvertedProperty && !trial && isTimeToRefresh(24 * 60)) {
-      refreshLicense(24 * 60);
+    if (hasActivationKey && !subscriptionConvertedProperty && !trial && isTimeToRefresh(ONE_DAY)) {
+      refreshLicense(ONE_DAY);
     } else {
       if (licenseType == LicenseType.ON_DEMAND && outOfPlatform) {
         outOfPlatform = !checkInOnDemandPlatform();
