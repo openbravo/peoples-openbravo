@@ -333,8 +333,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
             OBDal.getInstance().save(dummyPayment);
           } catch (final Exception e) {
             log4j.error("Exception while creating dummy payment for the invoice: "
-                + strC_Invoice_ID);
-            e.printStackTrace();
+                + strC_Invoice_ID, e);
           } finally {
             OBContext.restorePreviousMode();
           }
@@ -515,8 +514,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
             }
           } catch (final Exception e) {
             log4j.error("Exception while creating dummy payment for the invoice: "
-                + strC_Invoice_ID);
-            e.printStackTrace();
+                + strC_Invoice_ID, e);
           } finally {
             OBContext.restorePreviousMode();
           }
@@ -781,8 +779,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           }
 
         } catch (final Exception e) {
-          log4j.error("Exception while canceling the credit in the invoice: " + strC_Invoice_ID);
-          e.printStackTrace();
+          log4j.error("Exception while canceling the credit in the invoice: " + strC_Invoice_ID, e);
         } finally {
           OBContext.restorePreviousMode();
         }

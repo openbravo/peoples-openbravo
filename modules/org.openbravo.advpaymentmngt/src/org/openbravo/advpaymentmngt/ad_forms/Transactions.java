@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -452,8 +452,7 @@ public class Transactions extends HttpSecureAppServlet {
             pageSize, offset, strOrderBy);
         // strNumRows = Integer.toString(finaccTransactions.size());
       } catch (ServletException e) {
-        log4j.error("Error in print page data: " + e);
-        e.printStackTrace();
+        log4j.error("Error in print page data: ", e);
         OBError myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
         if (!myError.isConnectionAvailable()) {
           bdErrorAjax(response, "Error", "Connection Error", "No database connection");
@@ -467,14 +466,13 @@ public class Transactions extends HttpSecureAppServlet {
             description = myError.getMessage();
         }
       } catch (Exception e) {
-        log4j.debug("Error obtaining rows data");
+        log4j.error("Error obtaining rows data", e);
         type = "Error";
         title = "Error";
         if (e.getMessage().startsWith("<![CDATA["))
           description = "<![CDATA[" + e.getMessage() + "]]>";
         else
           description = e.getMessage();
-        e.printStackTrace();
       }
     }
 

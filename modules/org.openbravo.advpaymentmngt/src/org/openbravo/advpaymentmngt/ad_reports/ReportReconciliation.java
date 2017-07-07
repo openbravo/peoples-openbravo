@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReport;
 
+import org.apache.log4j.Logger;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -51,6 +52,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 
 public class ReportReconciliation extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+  private static final Logger log = Logger.getLogger(ReportReconciliation.class);
   final static String DETAIL = "DETAIL";
   final static String SUMMARY = "SUMMARY";
 
@@ -340,7 +342,7 @@ public class ReportReconciliation extends HttpSecureAppServlet {
       BigDecimal totals = getTransactionsTotalAfterReconciliationEndDate(recon);
       balance = recon.getAccount().getCurrentBalance().subtract(totals);
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error("Error during getBalanceOfAccount", e);
     } finally {
       OBContext.restorePreviousMode();
     }
