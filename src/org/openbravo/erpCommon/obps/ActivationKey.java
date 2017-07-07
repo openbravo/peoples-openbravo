@@ -1106,9 +1106,9 @@ public class ActivationKey {
         obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSessionId));
       }
 
-      List<Session> exipiredCandidates = obCriteria.list();
-      ArrayList<String> sessionsToDeactivate = new ArrayList<>(exipiredCandidates.size());
-      for (Session expiredSession : exipiredCandidates) {
+      List<Session> expiredCandidates = obCriteria.list();
+      ArrayList<String> sessionsToDeactivate = new ArrayList<>(expiredCandidates.size());
+      for (Session expiredSession : expiredCandidates) {
         if (shouldDeactivateSession(expiredSession, lastValidPingTime)) {
           sessionsToDeactivate.add(expiredSession.getId());
           log4j.info("Deactivating session: " + expiredSession.getId()
