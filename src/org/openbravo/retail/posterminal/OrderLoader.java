@@ -2262,6 +2262,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   protected void processPayments(FIN_PaymentSchedule paymentSchedule,
       FIN_PaymentSchedule paymentScheduleInvoice, Order order, Invoice invoice,
+      OBPOSAppPayment paymentType, JSONObject payment, BigDecimal writeoffAmt, JSONObject jsonorder)
+      throws Exception {
+    processPayments(paymentSchedule, paymentScheduleInvoice, order, invoice, paymentType, payment,
+        writeoffAmt, jsonorder, null);
+  }
+
+  protected void processPayments(FIN_PaymentSchedule paymentSchedule,
+      FIN_PaymentSchedule paymentScheduleInvoice, Order order, Invoice invoice,
       OBPOSAppPayment paymentType, JSONObject payment, BigDecimal writeoffAmt,
       JSONObject jsonorder, FIN_FinancialAccount account) throws Exception {
     OBContext.setAdminMode(true);
