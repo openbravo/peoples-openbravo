@@ -885,6 +885,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
                     OB.MobileApp.model.runSyncProcess();
                     orderList.deleteCurrent();
+                    receipt.trigger('change:gross', receipt);
                     OB.Dal.get(OB.Model.Order, orderId, function (model) {
                       function cancelAndNew() {
                         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
