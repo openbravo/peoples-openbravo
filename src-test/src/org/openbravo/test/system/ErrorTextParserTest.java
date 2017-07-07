@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,12 +19,18 @@
 
 package org.openbravo.test.system;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.sql.Connection;
 
 import javax.servlet.ServletException;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
@@ -88,6 +94,38 @@ public class ErrorTextParserTest extends OBBaseTest {
     // only test on pgsql, as specifically testing against es_ES/pgsql error messsage
     if (getConnectionProvider().getRDBMS().equals("POSTGRE")) {
       doErrorTextParserTestWithoutDB(1);
+    }
+  }
+
+  @Test
+  public void whenStatementFailsNoStackTraceIsLoggedByDefault() throws Exception {
+    setTestLogAppenderLevel(Level.INFO);
+
+    doErrorTextParserTest(1);
+
+    assertThat(
+        "Stack trace shouldn't be included in log",
+        getTestLogAppender().getMessages(Level.ERROR),
+        not(hasItem(containsString("at org.openbravo.test.system.ErrorTextParserTestData.insertUserPK"))));
+  }
+
+  @Test
+  public void whenStatementFailsStackTraceIsLoggedHavingDebugLogLevel() throws Exception {
+    Logger sqlcLogger = Logger.getLogger(ErrorTextParserTestData.class);
+    Level originalLogLevel = sqlcLogger.getLevel();
+
+    try {
+      setTestLogAppenderLevel(Level.DEBUG);
+      sqlcLogger.setLevel(Level.DEBUG);
+
+      doErrorTextParserTest(1);
+
+      assertThat(
+          "Stack trace should be included in log",
+          getTestLogAppender().getMessages(Level.ERROR),
+          hasItem(containsString("at org.openbravo.test.system.ErrorTextParserTestData.insertUserPK")));
+    } finally {
+      sqlcLogger.setLevel(originalLogLevel);
     }
   }
 
