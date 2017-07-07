@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2017 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.businessUtility;
@@ -84,7 +84,7 @@ public class AccountTree {
           Utility.getContext(conn, vars, "#User_Client", "AccountTree"),
           OBDal.getInstance().get(ElementValue.class, reportNodes[0]).getAccountingElement()
               .getId());
-      reportElements = calculateTree(operands, reportNodes, new Vector<Object>());
+      reportElements = calculateTree(operands, reportNodes, new Vector<String>());
     }
   }
 
@@ -128,11 +128,11 @@ public class AccountTree {
           OBDal.getInstance().get(ElementValue.class, reportNodes[0]).getAccountingElement()
               .getId());
 
-      Vector<Object> vec = new Vector<Object>();
+      Vector<AccountTreeData> vec = new Vector<>();
       AccountTreeData[] r;
 
       for (int i = 0; i < reportNodes.length; i++) {
-        r = calculateTree(operands, reportNodes[i], new Vector<Object>());
+        r = calculateTree(operands, reportNodes[i], new Vector<String>());
         for (int j = 0; j < r.length; j++)
           vec.addElement(r[j]);
       }
@@ -240,7 +240,7 @@ public class AccountTree {
     if (accountsTree == null || accountsTree.length == 0)
       return accountsTree;
     AccountTreeData[] result = null;
-    Vector<Object> vec = new Vector<Object>();
+    Vector<AccountTreeData> vec = new Vector<>();
     // if (log4j.isDebugEnabled())
     // log4j.debug("AccountTree.updateTreeQuantitiesSign() - elements: " +
     // elements.length);
@@ -298,9 +298,9 @@ public class AccountTree {
    * @param vecTotal
    *          Vector with the totals of the operation.
    */
-  private void operandsCalculate(Vector<Object> vecAll, AccountTreeData[] operands,
-      String accountId, Vector<Object> vecTotal, boolean isExactValue) {
-    Vector<Object> localVecTotal = vecTotal;
+  private void operandsCalculate(Vector<AccountTreeData> vecAll, AccountTreeData[] operands,
+      String accountId, Vector<String> vecTotal, boolean isExactValue) {
+    Vector<String> localVecTotal = vecTotal;
     if (isExactValue) {
       recursiveOperands = true;
     } else {
@@ -315,13 +315,13 @@ public class AccountTree {
       return;
     }
     if (localVecTotal == null)
-      localVecTotal = new Vector<Object>();
+      localVecTotal = new Vector<>();
     if (localVecTotal.size() == 0) {
       localVecTotal.addElement("0");
       localVecTotal.addElement("0");
     }
-    BigDecimal total = new BigDecimal((String) localVecTotal.elementAt(0));
-    BigDecimal totalRef = new BigDecimal((String) localVecTotal.elementAt(1));
+    BigDecimal total = new BigDecimal(localVecTotal.elementAt(0));
+    BigDecimal totalRef = new BigDecimal(localVecTotal.elementAt(1));
     boolean encontrado = false;
     for (int i = 0; i < operands.length; i++) {
       if (operands[i].id.equals(accountId)) {
@@ -331,7 +331,7 @@ public class AccountTree {
         // calculateTree to obtain amount (b)
         /* (a) */
         for (int j = 0; j < vecAll.size(); j++) {
-          AccountTreeData actual = (AccountTreeData) vecAll.elementAt(j);
+          AccountTreeData actual = vecAll.elementAt(j);
           log4j.debug("AccountTree.formsCalculate - actual.nodeId: " + actual.nodeId
               + " - forms[i].nodeId: " + operands[i].nodeId);
           if (actual.nodeId.equals(operands[i].nodeId)) {
@@ -353,12 +353,12 @@ public class AccountTree {
           if (log4j.isDebugEnabled())
             log4j.debug("AccountTree.formsCalculate - C_ElementValue_ID: " + operands[i].nodeId
                 + " not found");
-          Vector<Object> amounts = new Vector<Object>();
+          Vector<String> amounts = new Vector<>();
           amounts.addElement("0");
           amounts.addElement("0");
           calculateTree(operands, operands[i].nodeId, amounts, true, true);
-          BigDecimal parcial = new BigDecimal((String) amounts.elementAt(0));
-          BigDecimal parcialRef = new BigDecimal((String) amounts.elementAt(1));
+          BigDecimal parcial = new BigDecimal(amounts.elementAt(0));
+          BigDecimal parcialRef = new BigDecimal(amounts.elementAt(1));
           if (log4j.isDebugEnabled())
             log4j.debug("AccountTree.formsCalculate - parcial: " + parcial.toPlainString());
           parcial = parcial.multiply(new BigDecimal(operands[i].sign));
@@ -387,7 +387,7 @@ public class AccountTree {
    * @return Array with the new calculated tree.
    */
   private AccountTreeData[] calculateTree(AccountTreeData[] forms, String[] indice,
-      Vector<Object> vecTotal) {
+      Vector<String> vecTotal) {
     return calculateTree(forms, indice, vecTotal, true, false);
   }
 
@@ -403,7 +403,7 @@ public class AccountTree {
    * @return Array with the new calculated tree.
    */
   private AccountTreeData[] calculateTree(AccountTreeData[] operands, String reportNode,
-      Vector<Object> vecTotal) {
+      Vector<String> vecTotal) {
     return calculateTree(operands, reportNode, vecTotal, true, false);
   }
 
@@ -430,7 +430,7 @@ public class AccountTree {
    * @return Array with the new calculated tree.
    */
   private AccountTreeData[] calculateTree(AccountTreeData[] operands, String reportNode,
-      Vector<Object> vecTotal, boolean applysign, boolean isExactValue) {
+      Vector<String> vecTotal, boolean applysign, boolean isExactValue) {
     String[] i = new String[1];
     i[0] = reportNode;
 
@@ -453,8 +453,8 @@ public class AccountTree {
    * @return Array with the new calculated tree.
    */
   private AccountTreeData[] calculateTree(AccountTreeData[] operands, String[] reportNode,
-      Vector<Object> totalAmounts, boolean applysign, boolean isExactValue) {
-    Vector<Object> localTotalAmounts = totalAmounts;
+      Vector<String> totalAmounts, boolean applysign, boolean isExactValue) {
+    Vector<String> localTotalAmounts = totalAmounts;
     String[] localReportNode = reportNode;
     if (reportElements == null || reportElements.length == 0)
       return reportElements;
@@ -463,17 +463,17 @@ public class AccountTree {
       localReportNode[0] = "0";
     }
     AccountTreeData[] result = null;
-    Vector<Object> report = new Vector<Object>();
+    Vector<AccountTreeData> report = new Vector<>();
     if (log4j.isDebugEnabled())
       log4j.debug("AccountTree.calculateTree() - accounts: " + reportElements.length);
     if (localTotalAmounts == null)
-      localTotalAmounts = new Vector<Object>();
+      localTotalAmounts = new Vector<>();
     if (localTotalAmounts.size() == 0) {
       localTotalAmounts.addElement("0");
       localTotalAmounts.addElement("0");
     }
-    BigDecimal total = new BigDecimal((String) localTotalAmounts.elementAt(0));
-    BigDecimal totalRef = new BigDecimal((String) localTotalAmounts.elementAt(1));
+    BigDecimal total = new BigDecimal(localTotalAmounts.elementAt(0));
+    BigDecimal totalRef = new BigDecimal(localTotalAmounts.elementAt(1));
 
     for (int i = 0; i < reportElements.length; i++) {
       if ((isExactValue && nodeIn(reportElements[i].nodeId, localReportNode))
@@ -492,11 +492,11 @@ public class AccountTree {
         // times...
         // why????
         {
-          Vector<Object> amounts = new Vector<Object>();
+          Vector<String> amounts = new Vector<>();
           amounts.addElement("0");
           amounts.addElement("0");
           @SuppressWarnings("unchecked")
-          Vector<Object> reportAux = (Vector<Object>) report.clone();
+          Vector<AccountTreeData> reportAux = (Vector<AccountTreeData>) report.clone();
           reportElementChilds = calculateTree(operands, reportElements[i].nodeId, amounts);
           if (reportElementChilds != null && reportElementChilds.length > 0) {
             for (int h = 0; h < reportElementChilds.length; h++) {
@@ -504,8 +504,8 @@ public class AccountTree {
             }
           }
           if (!hasOperand(reportElements[i].nodeId, operands)) {
-            BigDecimal parcial = new BigDecimal((String) amounts.elementAt(0));
-            BigDecimal parcialRef = new BigDecimal((String) amounts.elementAt(1));
+            BigDecimal parcial = new BigDecimal(amounts.elementAt(0));
+            BigDecimal parcialRef = new BigDecimal(amounts.elementAt(1));
             reportElements[i].qtyOperation = (new BigDecimal(reportElements[i].qtyOperation)
                 .add(parcial)).toPlainString();
             reportElements[i].qtyOperationRef = (new BigDecimal(reportElements[i].qtyOperationRef)
@@ -517,8 +517,8 @@ public class AccountTree {
             amounts.set(0, "0");
             amounts.set(1, "0");
             operandsCalculate(reportAux, operands, reportElements[i].nodeId, amounts, isExactValue);
-            BigDecimal parcial = new BigDecimal((String) amounts.elementAt(0));
-            BigDecimal parcialRef = new BigDecimal((String) amounts.elementAt(1));
+            BigDecimal parcial = new BigDecimal(amounts.elementAt(0));
+            BigDecimal parcialRef = new BigDecimal(amounts.elementAt(1));
             reportElements[i].qtyOperation = (new BigDecimal(reportElements[i].qtyOperation)
                 .add(parcial)).toPlainString();
             reportElements[i].qtyOperationRef = (new BigDecimal(reportElements[i].qtyOperationRef)
@@ -593,7 +593,7 @@ public class AccountTree {
         || strLevel.equals(""))
       return reportElements;
     AccountTreeData[] result = null;
-    Vector<Object> vec = new Vector<Object>();
+    Vector<AccountTreeData> vec = new Vector<>();
     if (log4j.isDebugEnabled())
       log4j.debug("AccountTree.levelFilter() - accounts: " + reportElements.length);
 
@@ -663,7 +663,7 @@ public class AccountTree {
     if (reportElements == null || reportElements.length == 0)
       return reportElements;
     AccountTreeData[] result = null;
-    Vector<Object> vec = new Vector<Object>();
+    Vector<AccountTreeData> vec = new Vector<>();
 
     AccountTreeData[] r = levelFilter(indice, false, strLevel);
 

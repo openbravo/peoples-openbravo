@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009-2015 Openbravo SL 
+ * All portions are Copyright (C) 2009-2017 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -622,7 +622,7 @@ public class PaymentReport extends HttpSecureAppServlet {
     xmlDocument.setParameter("paymType", strPaymType);
     xmlDocument.setParameter("inclPaymentUsingCredit", strInclPaymentUsingCredit);
 
-    Vector<Object> vector = new Vector<Object>(0);
+    Vector<SQLReturnObject> vector = new Vector<>(0);
     SQLReturnObject sqlRO = new SQLReturnObject();
     sqlRO.setData("ID", "FINPR_Receivables");
     sqlRO.setData("NAME", Utility.messageBD(this, "FINPR_Receivables", vars.getLanguage()));
@@ -649,7 +649,7 @@ public class PaymentReport extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("groupCrit", strGroupCrit);
 
-    vector = new Vector<Object>(0);
+    vector = new Vector<>(0);
     sqlRO = new SQLReturnObject();
     sqlRO.setData("ID", "APRM_FATS_BPARTNER");
     sqlRO.setData("NAME", Utility.messageBD(this, "APRM_FATS_BPARTNER", vars.getLanguage()));
@@ -681,7 +681,7 @@ public class PaymentReport extends HttpSecureAppServlet {
 
     xmlDocument.setData("reportGroupCrit", "liststructure", objectListData);
 
-    vector = new Vector<Object>(0);
+    vector = new Vector<>(0);
     sqlRO = new SQLReturnObject();
     sqlRO.setData("ID", "Date");
     sqlRO.setData("NAME", Utility.messageBD(this, "Date", vars.getLanguage()));
