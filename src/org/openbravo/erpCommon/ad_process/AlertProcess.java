@@ -149,8 +149,8 @@ public class AlertProcess implements Process {
       try {
         connectionProvider.getConnection().setReadOnly(false);
         connectionProvider.releasePreparedStatement(st);
-      } catch (Exception ignore) {
-        ignore.printStackTrace();
+      } catch (Exception e) {
+        log4j.error("Error during release*Statement of query: " + strSql, e);
       }
     }
     AlertProcessData objectAlertProcessData[] = new AlertProcessData[vector.size()];
@@ -228,8 +228,8 @@ public class AlertProcess implements Process {
     } finally {
       try {
         connectionProvider.releasePreparedStatement(st);
-      } catch (Exception ignore) {
-        ignore.printStackTrace();
+      } catch (Exception e) {
+        log4j.error("Error during release*Statement of query: " + strSql, e);
       }
     }
     return (updateCount);
@@ -415,7 +415,7 @@ public class AlertProcess implements Process {
                     continue;
                   }
                   if (!targetUser.isActive()) {
-                	  continue;
+                    continue;
                   }
                   final Client targetUserClient = targetUser.getClient();
                   final String targetUserClientLanguage = (targetUserClient.getLanguage() != null ? targetUserClient
