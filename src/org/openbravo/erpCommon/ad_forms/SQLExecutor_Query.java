@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -58,7 +58,7 @@ class SQLExecutor_Query implements FieldProvider {
 
     PreparedStatement st = null;
     ResultSet result;
-    Vector<Object> vector = new Vector<Object>(0);
+    Vector<SQLExecutor_Query> vector = new Vector<>(0);
 
     try {
       if (log4j.isDebugEnabled())

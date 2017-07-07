@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -112,7 +112,7 @@ public class AlertProcess implements Process {
         .getProperty("dateTimeFormat.java");
 
     ResultSet result;
-    Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);
+    Vector<AlertProcessData> vector = new Vector<>(0);
     PreparedStatement st = null;
 
     try {

@@ -1111,7 +1111,7 @@ public class Sqlc extends DefaultHandler {
     }
     if (sql.sqlReturn.equalsIgnoreCase("MULTIPLE")) {
       importJavaUtil = true;
-      out2.append("    Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);\n");
+      out2.append("    Vector<" + sqlcName + "> vector = new Vector<" + sqlcName + ">(0);\n");
     } else if (sql.sqlReturn.equalsIgnoreCase("SINGLE")) {
       out2.append("    " + sqlcName + " object" + sqlcName + " = new " + sqlcName + "();\n");
     } else if (sql.sqlReturn.equalsIgnoreCase("STRING")) {

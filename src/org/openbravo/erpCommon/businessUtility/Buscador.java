@@ -123,7 +123,7 @@ public class Buscador extends HttpSecureAppServlet {
       return data;
     if (parentColumn.equals(""))
       return data;
-    Vector<Object> vec = new Vector<Object>();
+    Vector<BuscadorData> vec = new Vector<>();
     BuscadorData[] result = null;
     for (int i = 0; i < data.length; i++) {
       if (!parentColumn.equalsIgnoreCase(data[i].columnname)

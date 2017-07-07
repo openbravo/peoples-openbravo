@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -85,7 +85,7 @@ public class ActionButtonUtility {
     }
     SQLReturnObject[] data = null;
     if (ld != null) {
-      Vector<Object> v = new Vector<Object>();
+      Vector<SQLReturnObject> v = new Vector<>();
       SQLReturnObject data1 = new SQLReturnObject();
       if (!strProcessing.equals("") && strProcessing.equals("Y")) {
         data1.setData("ID", "XL");
@@ -164,7 +164,7 @@ public class ActionButtonUtility {
       int ind1 = 0, ind2 = 0;
       while (ind1 < ld.length && ind2 < v.size()) {
         for (int j = 0; j < v.size(); j++) {
-          SQLReturnObject sqlro = (SQLReturnObject) v.get(j);
+          SQLReturnObject sqlro = v.get(j);
           if (sqlro.getField("ID").equals(ld[ind1].getField("ID"))) {
             if (log4j.isDebugEnabled())
               log4j.debug("DocAction - Element: " + ind1 + " - ID: " + sqlro.getField("ID"));
@@ -206,7 +206,7 @@ public class ActionButtonUtility {
     }
     SQLReturnObject[] data = null;
     if (ld != null) {
-      Vector<Object> v = new Vector<Object>();
+      Vector<SQLReturnObject> v = new Vector<>();
       SQLReturnObject data1 = new SQLReturnObject();
       if (strProjectStatus.equals("NF") || strProjectStatus.equals("OP")) {
         data1.setData("ID", "OR");
