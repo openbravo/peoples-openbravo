@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -52,6 +52,8 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
   private static AdvPaymentMngtDao dao;
 
   public static final String COMINGFROM_PAYMENTPROPOSALPROCESS = "PAYMENT_PROPOSAL";
+
+  private static final Logger log = Logger.getLogger(FIN_PaymentProposalProcess.class);
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -274,7 +276,7 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
           .getLanguage()));
       bundle.setResult(msg);
     } catch (final Exception e) {
-      e.printStackTrace(System.err);
+      log.error("Error while executing FIN_PaymentProposalProcess", e);
       final OBError msg = new OBError();
       msg.setType("Error");
       msg.setMessage(FIN_Utility.getExceptionMessage(e));

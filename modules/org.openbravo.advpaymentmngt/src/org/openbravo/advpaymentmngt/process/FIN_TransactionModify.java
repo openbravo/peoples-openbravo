@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -20,6 +20,7 @@ package org.openbravo.advpaymentmngt.process;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -46,6 +47,7 @@ import org.openbravo.scheduling.ProcessBundle;
 
 public class FIN_TransactionModify implements org.openbravo.scheduling.Process {
   private static AdvPaymentMngtDao dao;
+  private static final Logger log = Logger.getLogger(FIN_TransactionModify.class);
 
   public void execute(ProcessBundle bundle) throws Exception {
     dao = new AdvPaymentMngtDao();
@@ -173,7 +175,7 @@ public class FIN_TransactionModify implements org.openbravo.scheduling.Process {
       bundle.setResult(msg);
     } catch (final Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      e.printStackTrace(System.err);
+      log.error("Error while executing FIN_TransactionModify", e);
       msg.setType("Error");
       msg.setTitle(Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext()
           .getLanguage()));
