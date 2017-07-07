@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -118,6 +119,12 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
     final String strOrderId = jsonRequest.getString("C_Order_ID");
     Order order = OBDal.getInstance().get(Order.class, strOrderId);
     boolean isSOTrx = order.isSalesTransaction();
+
+    for (long i = 0; i < selectedLinesOrphan.length(); i++) {
+      JSONObject selectedLineOrphan = selectedLinesOrphan.getJSONObject((int) i);
+      selectedLines.put(selectedLineOrphan);
+    }
+
     // if no lines selected don't do anything.
     if (selectedLines.length() == 0) {
       removeNonSelectedLines(idList, order);
@@ -130,10 +137,6 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
     Object o = obc.list().get(0);
     if (o != null) {
       lineNo = (Long) o;
-    }
-    for (long i = 0; i < selectedLinesOrphan.length(); i++) {
-      JSONObject selectedLineOrphan = selectedLinesOrphan.getJSONObject((int) i);
-      selectedLines.put(selectedLineOrphan);
     }
 
     boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
@@ -167,9 +170,11 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
         newOrderLine = OBDal.getInstance().get(OrderLine.class, selectedLine.get("salesOrderLine"));
         idList.remove(selectedLine.get("salesOrderLine"));
       }
-
-      ShipmentInOutLine shipmentLine = OBDal.getInstance().get(ShipmentInOutLine.class,
-          selectedLine.getString("goodsShipmentLine"));
+      ShipmentInOutLine shipmentLine = null;
+      if (StringUtils.isNotEmpty(selectedLine.getString("goodsShipmentLine"))) {
+        shipmentLine = OBDal.getInstance().get(ShipmentInOutLine.class,
+            selectedLine.getString("goodsShipmentLine"));
+      }
       AttributeSetInstance asi = null;
       if (!selectedLine.get("attributeSetValue").equals(null)) {
         asi = OBDal.getInstance().get(AttributeSetInstance.class,
@@ -181,14 +186,15 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       newOrderLine.setProduct(product);
       newOrderLine.setAttributeSetValue(asi);
       newOrderLine.setUOM(uom);
-      newOrderLine.setOperativeUOM(shipmentLine.getOperativeUOM());
-      newOrderLine
-          .setOperativeQuantity(shipmentLine.getOperativeQuantity() == null ? BigDecimal.ZERO
-              : shipmentLine.getOperativeQuantity().negate());
+      newOrderLine.setOperativeUOM(shipmentLine != null ? shipmentLine.getOperativeUOM() : null);
+      newOrderLine.setOperativeQuantity(shipmentLine == null
+          || shipmentLine.getOperativeQuantity() == null ? BigDecimal.ZERO : shipmentLine
+          .getOperativeQuantity().negate());
 
       BigDecimal qtyReturned = new BigDecimal(selectedLine.getString("returned")).negate();
 
-      boolean applyAUM = isUomManagementEnabled && shipmentLine.getOrderUOM() == null;
+      boolean applyAUM = isUomManagementEnabled && shipmentLine != null
+          && shipmentLine.getOrderUOM() == null;
       try {
         selectedLine.getString("aum");
       } catch (JSONException jse) {
@@ -310,11 +316,12 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
         order.setOrderLineList(orderLines);
       }
       // Copy dimensions from Shipment/Receipt Line to RFC/RTV Order Line
-      newOrderLine.setProject(shipmentLine.getProject());
-      newOrderLine.setCostcenter(shipmentLine.getCostcenter());
-      newOrderLine.setStDimension(shipmentLine.getStDimension());
-      newOrderLine.setNdDimension(shipmentLine.getNdDimension());
-
+      if (shipmentLine != null) {
+        newOrderLine.setProject(shipmentLine.getProject());
+        newOrderLine.setCostcenter(shipmentLine.getCostcenter());
+        newOrderLine.setStDimension(shipmentLine.getStDimension());
+        newOrderLine.setNdDimension(shipmentLine.getNdDimension());
+      }
       OBDal.getInstance().save(newOrderLine);
       OBDal.getInstance().save(order);
       OBDal.getInstance().flush();
