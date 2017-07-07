@@ -146,7 +146,7 @@ public class GenerateProductImages extends DalBaseProcess {
       // Show a result
       final StringBuilder sb = new StringBuilder();
       sb.append(OBMessageUtils.getI18NMessage("OBPOS_ProductImageCreated", null) + "<br/>");
-      if (errors != null && !errors.equals("")) {
+      if (errors != null && !errors.toString().equals("")) {
         sb.append(errors);
       }
 
