@@ -227,17 +227,6 @@ public class ModelSQLGeneration {
   }
 
   /**
-   * Special case of the method which specifies that only the id column of the base table should be
-   * returned. No extra left joins (besides possible sort columns) are needed.
-   */
-  public static String generateSQLonlyId(ConnectionProvider conn, VariablesSecureApp vars,
-      TableSQLData tableSQL, String selectFields, Vector<String> filter,
-      Vector<String> filterParams, int offset, int pageSize) throws Exception {
-    return generateSQL(conn, vars, tableSQL, selectFields, filter, filterParams, offset, pageSize,
-        true, true);
-  }
-
-  /**
    * Generates the query for this tab. This method adds to the standard query defined in the
    * TableSQLData (from dictionary) the user filter parameters and order by defined by UI
    * 
