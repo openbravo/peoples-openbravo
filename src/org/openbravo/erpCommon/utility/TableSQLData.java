@@ -18,8 +18,6 @@
  */
 package org.openbravo.erpCommon.utility;
 
-import java.io.Serializable;
-
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
@@ -30,8 +28,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
  * 
  *         Handler to manage all the process for the tab's query building.
  */
-@SuppressWarnings("serial")
-public class TableSQLData implements Serializable {
+public class TableSQLData {
   private static Logger log4j = Logger.getLogger(TableSQLData.class);
 
   /**
