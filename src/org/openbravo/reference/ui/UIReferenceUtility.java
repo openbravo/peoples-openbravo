@@ -34,7 +34,6 @@ import org.openbravo.erpCommon.utility.TableSQLData;
  * 
  */
 public class UIReferenceUtility {
-  public static final int MAX_TEXTBOX_LENGTH = 150;
   public static final String INACTIVE_DATA = "**";
 
   /**
@@ -254,12 +253,6 @@ public class UIReferenceUtility {
         reference, first));
     filterParams.addElement("Param" + filterColumnName);
     result.setData("Param" + filterColumnName, aux);
-  }
-
-  public static void addUniqueElement(ArrayList<String> list, String value) {
-    if (!list.contains(value)) {
-      list.add(value);
-    }
   }
 
 }
