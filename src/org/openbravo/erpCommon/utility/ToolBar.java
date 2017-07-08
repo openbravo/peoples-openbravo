@@ -238,10 +238,8 @@ public class ToolBar {
     } else if (name.equals("UNDO")) {
       return "windowUndo(" + form + ");";
     } else if (name.equals("SEARCH")) {
-      return "openSearchWindow('../businessUtility/Buscador.html', 'BUSCADOR', " + form
-          + ".inpTabId.value, '" + window_name + "/" + servlet_action
-          + (isSrcWindow ? "" : "_Relation") + ".html', " + form + ".inpwindowId.value, "
-          + (debug ? "true" : "false") + ");";
+      // implementation does not longer exist
+      return "";
     } else if (name.equals("AUDIT_EDITION")) {
       return "changeAuditStatus();";
     } else if (name.equals("AUDIT_RELATION")) {
@@ -1154,8 +1152,10 @@ public class ToolBar {
       }
       toolbar.append(transformElementsToString(buttons.get("PRINT"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("EMAIL"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("SEARCH"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("SEARCH_FILTERED"), lastType, false));
+      // if some module still runs this code path -> Log error with StackTrace
+      if (buttons.containsKey("SEARCH") || buttons.containsKey("SEARCH_FILTERED")) {
+        log.error("Old 2.50 Buscador/Search functionality does no longer exist.", new Throwable());
+      }
       toolbar.append(transformElementsToString(buttons.get("AUDIT_SHOW_EDITION_ENABLED"), lastType,
           false));
       toolbar.append(transformElementsToString(buttons.get("AUDIT_SHOW_RELATION_ENABLED"),
