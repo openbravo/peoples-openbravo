@@ -70,7 +70,6 @@ import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
@@ -1145,54 +1144,6 @@ public class Utility {
       FieldProvider data, ComboTableData cmb, String window, String actual_value)
       throws ServletException {
     cmb.fillSQLParameters(conn, vars, data, "", window, actual_value);
-  }
-
-  /**
-   * Auxiliary method, used by fillSQLParameters and fillTableSQLParameters to get the values for
-   * each parameter.
-   * 
-   * @param conn
-   *          Handler for the database connection.
-   * @param vars
-   *          Handler for the session info.
-   * @param data
-   *          FieldProvider with the columns values.
-   * @param name
-   *          Name of the parameter.
-   * @param window
-   *          Window id.
-   * @param actual_value
-   *          Actual value.
-   * @param fromSearch
-   *          If the combo is used from the search popup (servlet). If true, then the pattern for
-   *          obtaining the parameter values if changed to conform with the search popup naming.
-   * @return String with the parsed parameter.
-   * @throws Exception
-   */
-  static String parseParameterValue(ConnectionProvider conn, VariablesSecureApp vars,
-      FieldProvider data, String name, String tab, String window, String actual_value)
-      throws Exception {
-    String strAux = null;
-    if (name.equalsIgnoreCase("@ACTUAL_VALUE@"))
-      return actual_value;
-    if (data != null)
-      strAux = data.getField(name);
-    if (strAux == null) {
-      strAux = vars.getStringParameter("inp" + Sqlc.TransformaNombreColumna(name));
-
-      if (log4j.isDebugEnabled())
-        log4j.debug("parseParameterValues - getStringParameter(inp"
-            + Sqlc.TransformaNombreColumna(name) + "): " + strAux);
-
-      if ((strAux == null || strAux.equals("")) && name.startsWith("_propertyField_")) {
-        // property fields are sent in the request with a different format
-        strAux = vars.getStringParameter("inp" + name);
-      }
-
-      if (strAux == null || strAux.equals(""))
-        strAux = Utility.getContext(conn, vars, name, window);
-    }
-    return strAux;
   }
 
   /**

@@ -37,6 +37,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.data.Sqlc;
 import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.model.ad.datamodel.Column;
@@ -1278,8 +1279,8 @@ public class ComboTableData {
         log4j.debug("Combo Parameters: " + vAux.size());
       for (String strAux : vAux) {
         try {
-          final String value = Utility.parseParameterValue(conn, variables, data, strAux, tab,
-              window, actual_value);
+          final String value = parseParameterValue(conn, variables, data, strAux, tab, window,
+              actual_value);
           if (log4j.isDebugEnabled())
             log4j.debug("Combo Parameter: " + strAux + " - Value: " + value);
           setParameter(strAux, value);
@@ -1303,8 +1304,8 @@ public class ComboTableData {
         log4j.debug("Combo Parameters: " + vAux.size());
       for (String strAux : vAux) {
         try {
-          final String value = Utility.parseParameterValue(conn, variables, data, strAux, "",
-              window, actual_value);
+          final String value = parseParameterValue(conn, variables, data, strAux, "", window,
+              actual_value);
           if (log4j.isDebugEnabled())
             log4j.debug("Combo Parameter: " + strAux + " - Value: " + value);
           if (value == null || value.equals("") || "null".equals(value))
@@ -1317,6 +1318,54 @@ public class ComboTableData {
       }
     }
     return lparameters;
+  }
+
+  /**
+   * Auxiliary method, used by fillSQLParameters and fillTableSQLParameters to get the values for
+   * each parameter.
+   * 
+   * @param conn
+   *          Handler for the database connection.
+   * @param vars
+   *          Handler for the session info.
+   * @param data
+   *          FieldProvider with the columns values.
+   * @param name
+   *          Name of the parameter.
+   * @param window
+   *          Window id.
+   * @param actual_value
+   *          Actual value.
+   * @param fromSearch
+   *          If the combo is used from the search popup (servlet). If true, then the pattern for
+   *          obtaining the parameter values if changed to conform with the search popup naming.
+   * @return String with the parsed parameter.
+   * @throws Exception
+   */
+  private static String parseParameterValue(ConnectionProvider conn, VariablesSecureApp vars,
+      FieldProvider data, String name, String tab, String window, String actual_value)
+      throws Exception {
+    String strAux = null;
+    if (name.equalsIgnoreCase("@ACTUAL_VALUE@"))
+      return actual_value;
+    if (data != null)
+      strAux = data.getField(name);
+    if (strAux == null) {
+      strAux = vars.getStringParameter("inp" + Sqlc.TransformaNombreColumna(name));
+
+      if (log4j.isDebugEnabled())
+        log4j.debug("parseParameterValues - getStringParameter(inp"
+            + Sqlc.TransformaNombreColumna(name) + "): " + strAux);
+
+      if ((strAux == null || strAux.equals("")) && name.startsWith("_propertyField_")) {
+        // property fields are sent in the request with a different format
+        strAux = vars.getStringParameter("inp" + name);
+      }
+
+      if (strAux == null || strAux.equals(""))
+        strAux = Utility.getContext(conn, vars, name, window);
+    }
+    return strAux;
   }
 
   public boolean canBeCached() {
