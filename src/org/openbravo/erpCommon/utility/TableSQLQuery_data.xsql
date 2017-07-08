@@ -58,19 +58,6 @@
     <Parameter name="adTabId"/>
   </SqlMethod>
   
-  <SqlMethod name="selectKeyMapStructure" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-       SELECT t.name as tab_name, w.name as window_name
-         FROM AD_Tab t, AD_Window w
-        WHERE t.AD_Window_ID = w.AD_Window_ID
-          AND t.AD_Tab_ID = ?
-      ]]>
-    </Sql>
-    <Parameter name="adTabId"/>
-  </SqlMethod>
-  
   <SqlMethod name="selectRelationStructure" type="preparedStatement" return="multiple">
      <SqlMethodComment></SqlMethodComment>
      <Sql>
