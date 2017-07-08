@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.utility;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -28,6 +29,7 @@ import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.model.ad.ui.Tab;
 
 public class ToolBar {
+  private static final Logger log = Logger.getLogger(ToolBar.class);
   private ConnectionProvider conn;
   private String language = "en_US";
   private String servlet_action = "";
@@ -203,11 +205,14 @@ public class ToolBar {
     } else if (name.equals("EXCEL")) {
       return "openExcel('" + servlet_action + "_Excel.xls?Command=RELATION_XLS', '_blank');";
     } else if (name.equals("GRIDEXCEL")) {
-      return "openServletNewWindow('EXCEL', false, '../utility/ExportGrid.html?inpTabId=' + document.forms[0].inpTabId.value + '&inpWindowId=' + document.forms[0].inpwindowId.value + '&inpAccessLevel=' + document.forms[0].inpAccessLevel.value, 'GRIDEXCEL', null, null, 500, 350, true );";
+      // implementation does not longer exist
+      return "";
     } else if (name.equals("GRIDCSV")) {
-      return "openServletNewWindow('CSV', false, '../utility/ExportGrid.html?inpTabId=' + document.forms[0].inpTabId.value + '&inpWindowId=' + document.forms[0].inpwindowId.value + '&inpAccessLevel=' + document.forms[0].inpAccessLevel.value, 'GRIDCSV', null, null, 500, 350, true );";
+      // implementation does not longer exist
+      return "";
     } else if (name.equals("GRIDPDF")) {
-      return "openServletNewWindow('PDF', false, '../utility/ExportGrid.html?inpTabId=' + document.forms[0].inpTabId.value + '&inpWindowId=' + document.forms[0].inpwindowId.value + '&inpAccessLevel=' + document.forms[0].inpAccessLevel.value, 'GRIDPDF', null, null, 500, 350, true );";
+      // implementation does not longer exist
+      return "";
     } else if (name.equals("PRINT")) {
       return "openPDFSession('"
           + pdf
@@ -1143,9 +1148,10 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("TREE"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("ATTACHMENT"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("EXCEL"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("GRIDEXCEL"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("GRIDCSV"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("GRIDPDF"), lastType, false));
+      // if some module still runs this code path -> Log error with StackTrace
+      if (buttons.containsKey("GRIDEXCEL") || buttons.containsKey("GRIDCSV") || buttons.containsKey("GRIDPDF")) {
+        log.error("Old 2.50 ExportGrid functionality does no longer exist.", new Throwable());
+      }
       toolbar.append(transformElementsToString(buttons.get("PRINT"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("EMAIL"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEARCH"), lastType, false));
