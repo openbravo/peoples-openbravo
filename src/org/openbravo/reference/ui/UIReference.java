@@ -21,9 +21,7 @@ package org.openbravo.reference.ui;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
-import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * Base implementation for UI objects
@@ -33,13 +31,11 @@ public class UIReference {
 
   protected String reference;
   protected String subReference;
-  protected ConnectionProvider conn;
   protected boolean numeric;
 
   public UIReference(String reference, String subreference) {
     this.reference = reference;
     this.subReference = subreference;
-    this.conn = new DalConnectionProvider();
     this.numeric = false;
   }
 
