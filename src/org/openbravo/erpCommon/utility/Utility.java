@@ -1144,7 +1144,7 @@ public class Utility {
   public static void fillSQLParameters(ConnectionProvider conn, VariablesSecureApp vars,
       FieldProvider data, ComboTableData cmb, String window, String actual_value)
       throws ServletException {
-    cmb.fillSQLParameters(conn, vars, data, "", window, actual_value, false);
+    cmb.fillSQLParameters(conn, vars, data, "", window, actual_value);
   }
 
   /**
@@ -1170,47 +1170,27 @@ public class Utility {
    * @throws Exception
    */
   static String parseParameterValue(ConnectionProvider conn, VariablesSecureApp vars,
-      FieldProvider data, String name, String tab, String window, String actual_value,
-      boolean fromSearch) throws Exception {
+      FieldProvider data, String name, String tab, String window, String actual_value)
+      throws Exception {
     String strAux = null;
     if (name.equalsIgnoreCase("@ACTUAL_VALUE@"))
       return actual_value;
     if (data != null)
       strAux = data.getField(name);
     if (strAux == null) {
-      if (fromSearch) {
-        // search popup has different incoming parameter name pattern
-        // also preferences (getContext) should not be used for combos in the search popup,
-        strAux = vars.getStringParameter("inpParam" + name);
-        log4j.debug("parseParameterValues - getStringParameter(inpParam" + name + "): " + strAux);
-        // but as search popup 'remembers' old values via the session the read from there needs
-        // to be made here, as we disabled getContext (where it was before)
-        if (strAux == null || strAux.equals(""))
-          strAux = vars.getSessionValue(tab + "|param" + name);
+      strAux = vars.getStringParameter("inp" + Sqlc.TransformaNombreColumna(name));
 
-        // Do not use context values for the fields that are in the search pop up
-        String strAllFields = vars.getSessionValue("buscador.searchFilds");
-        if (strAllFields == null) {
-          strAllFields = "";
-        }
-        if ((strAux == null || strAux.equals("")) && !strAllFields.contains("|" + name + "|")) {
-          strAux = Utility.getContext(conn, vars, name, window);
-        }
-      } else {
-        strAux = vars.getStringParameter("inp" + Sqlc.TransformaNombreColumna(name));
+      if (log4j.isDebugEnabled())
+        log4j.debug("parseParameterValues - getStringParameter(inp"
+            + Sqlc.TransformaNombreColumna(name) + "): " + strAux);
 
-        if (log4j.isDebugEnabled())
-          log4j.debug("parseParameterValues - getStringParameter(inp"
-              + Sqlc.TransformaNombreColumna(name) + "): " + strAux);
-
-        if ((strAux == null || strAux.equals("")) && name.startsWith("_propertyField_")) {
-          // property fields are sent in the request with a different format
-          strAux = vars.getStringParameter("inp" + name);
-        }
-
-        if (strAux == null || strAux.equals(""))
-          strAux = Utility.getContext(conn, vars, name, window);
+      if ((strAux == null || strAux.equals("")) && name.startsWith("_propertyField_")) {
+        // property fields are sent in the request with a different format
+        strAux = vars.getStringParameter("inp" + name);
       }
+
+      if (strAux == null || strAux.equals(""))
+        strAux = Utility.getContext(conn, vars, name, window);
     }
     return strAux;
   }

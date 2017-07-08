@@ -1236,17 +1236,6 @@ public class ComboTableData {
   }
 
   /**
-   * Special fill parameters function to be used from the search popup (servlet).
-   * 
-   * It flags the combo to be used from a search popup changing the logic to get the needed
-   * parameters for a possible where clause: it uses the pattern inpParam<columnName> to get the
-   * values from the request and does not use the preferences for fields to preset a search filter
-   */
-  public void fillParametersFromSearch(String tab, String window) throws ServletException {
-    fillSQLParameters(getPool(), getVars(), null, tab, window, "", true);
-  }
-
-  /**
    * Fill the parameters of the sql with the session values or FieldProvider values. Used in the
    * combo fields.
    * 
@@ -1262,7 +1251,7 @@ public class ComboTableData {
    */
   public void fillParameters(FieldProvider data, String window, String actual_value)
       throws ServletException {
-    fillSQLParameters(getPool(), getVars(), data, "", window, actual_value, false);
+    fillSQLParameters(getPool(), getVars(), data, "", window, actual_value);
   }
 
   /**
@@ -1282,7 +1271,7 @@ public class ComboTableData {
    * @throws ServletException
    */
   void fillSQLParameters(ConnectionProvider conn, VariablesSecureApp variables, FieldProvider data,
-      String tab, String window, String actual_value, boolean fromSearch) throws ServletException {
+      String tab, String window, String actual_value) throws ServletException {
     final List<String> vAux = getParameters();
     if (vAux != null && vAux.size() > 0) {
       if (log4j.isDebugEnabled())
@@ -1290,7 +1279,7 @@ public class ComboTableData {
       for (String strAux : vAux) {
         try {
           final String value = Utility.parseParameterValue(conn, variables, data, strAux, tab,
-              window, actual_value, fromSearch);
+              window, actual_value);
           if (log4j.isDebugEnabled())
             log4j.debug("Combo Parameter: " + strAux + " - Value: " + value);
           setParameter(strAux, value);
@@ -1315,7 +1304,7 @@ public class ComboTableData {
       for (String strAux : vAux) {
         try {
           final String value = Utility.parseParameterValue(conn, variables, data, strAux, "",
-              window, actual_value, false);
+              window, actual_value);
           if (log4j.isDebugEnabled())
             log4j.debug("Combo Parameter: " + strAux + " - Value: " + value);
           if (value == null || value.equals("") || "null".equals(value))
