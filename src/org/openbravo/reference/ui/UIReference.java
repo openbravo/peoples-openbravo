@@ -18,16 +18,11 @@
  */
 package org.openbravo.reference.ui;
 
-import java.util.Properties;
-import java.util.Vector;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
-import org.openbravo.erpCommon.utility.SQLReturnObject;
-import org.openbravo.erpCommon.utility.TableSQLData;
 import org.openbravo.service.db.DalConnectionProvider;
 
 /**
@@ -38,83 +33,14 @@ public class UIReference {
 
   protected String reference;
   protected String subReference;
-  // addSecondaryFilter is used to add a "to" filter in the standard getFilter method
-  protected boolean addSecondaryFilter;
   protected ConnectionProvider conn;
   protected boolean numeric;
 
   public UIReference(String reference, String subreference) {
     this.reference = reference;
     this.subReference = subreference;
-    this.addSecondaryFilter = false;
     this.conn = new DalConnectionProvider();
     this.numeric = false;
-  }
-
-  /**
-   * Generates the sql needed for TableSQLData class
-   */
-  public void generateSQL(TableSQLData table, Properties field) throws Exception {
-    identifier(table, table.getTableName(), field, field.getProperty("ColumnName"),
-        table.getTableName() + "." + field.getProperty("ColumnName"), false);
-  }
-
-  /**
-   * Helper method called from generateSQL to create the SQL for the identifier
-   */
-  protected void identifier(TableSQLData tableSql, String parentTableName, Properties field,
-      String identifierName, String realName, boolean tableRef) throws Exception {
-    if (field == null)
-      return;
-
-    if (!UIReferenceUtility.checkTableTranslation(tableSql, parentTableName, field, reference,
-        identifierName, realName, tableRef)) {
-      tableSql.addSelectField(UIReferenceUtility.formatField(tableSql.getVars(), reference,
-          (parentTableName + "." + field.getProperty("ColumnName"))), identifierName);
-    }
-  }
-
-  /**
-   * Obtains the type of data to be shown in the grid mode
-   * 
-   */
-  public String getGridType() {
-    return "string";
-  }
-
-  /**
-   * Obtains filter for TableSQLData
-   */
-  public void getFilter(SQLReturnObject result, boolean isNewFilter, VariablesSecureApp vars,
-      TableSQLData tableSQL, Vector<String> filter, Vector<String> filterParams, Properties prop)
-      throws Exception {
-    String aux;
-    if (isNewFilter) {
-      aux = vars.getRequestGlobalVariable("inpParam" + prop.getProperty("ColumnName"),
-          tableSQL.getTabID() + "|param" + prop.getProperty("ColumnName"));
-    } else {
-      aux = vars.getSessionValue(tableSQL.getTabID() + "|param" + prop.getProperty("ColumnName"));
-    }
-    // The filter is not applied if the parameter value is null or
-    // parameter value is '%' for string references.
-    if (!aux.equals("")) {
-      UIReferenceUtility.addFilter(filter, filterParams, result, tableSQL,
-          prop.getProperty("ColumnName"), prop.getProperty("ColumnName"), reference, true, aux);
-    }
-    if (addSecondaryFilter) {
-      if (isNewFilter) {
-        aux = vars.getRequestGlobalVariable("inpParam" + prop.getProperty("ColumnName") + "_f",
-            tableSQL.getTabID() + "|param" + prop.getProperty("ColumnName") + "_f");
-      } else {
-        aux = vars.getSessionValue(tableSQL.getTabID() + "|param" + prop.getProperty("ColumnName")
-            + "_f");
-      }
-      if (!aux.equals("")) {
-        UIReferenceUtility.addFilter(filter, filterParams, result, tableSQL,
-            prop.getProperty("ColumnName"), prop.getProperty("ColumnName") + "_f", reference,
-            false, aux);
-      }
-    }
   }
 
   /**

@@ -27,12 +27,7 @@ import org.openbravo.erpCommon.utility.Utility;
 public class UIPrice extends UIReference {
   public UIPrice(String reference, String subreference) {
     super(reference, subreference);
-    addSecondaryFilter = true;
     numeric = true;
-  }
-
-  public String getGridType() {
-    return "float";
   }
 
   public String formatGridValue(VariablesSecureApp vars, String value) {

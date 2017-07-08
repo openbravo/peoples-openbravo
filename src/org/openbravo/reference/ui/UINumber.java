@@ -29,13 +29,8 @@ public class UINumber extends UIReference {
 
   public UINumber(String reference, String subreference) {
     super(reference, subreference);
-    addSecondaryFilter = true;
     relationFormat = "euroRelation";
     numeric = true;
-  }
-
-  public String getGridType() {
-    return "float";
   }
 
   public String formatGridValue(VariablesSecureApp vars, String value) {

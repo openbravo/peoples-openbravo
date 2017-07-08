@@ -18,28 +18,9 @@
  */
 package org.openbravo.reference.ui;
 
-import java.util.Properties;
-
-import org.openbravo.erpCommon.utility.TableSQLData;
-
 public class UIButton extends UIReference {
   public UIButton(String reference, String subreference) {
     super(reference, subreference);
-  }
-
-  protected void identifier(TableSQLData tableSql, String parentTableName, Properties field,
-      String identifierName, String realName, boolean tableRef) throws Exception {
-    if (field == null)
-      return;
-
-    if (field.getProperty("AD_Reference_Value_ID") != null
-        && !field.getProperty("AD_Reference_Value_ID").equals("")) {
-      UIList list = new UIList("17", null);
-      list.identifier(tableSql, parentTableName, field, identifierName, realName, tableRef);
-    } else {
-      tableSql.addSelectField(parentTableName + "." + field.getProperty("ColumnName"),
-          identifierName);
-    }
   }
 
 }

@@ -30,10 +30,6 @@ public class UIAmount extends UINumber {
     relationFormat = "euroRelation";
   }
 
-  public String getGridType() {
-    return "float";
-  }
-
   public String formatGridValue(VariablesSecureApp vars, String value) {
     String rt = value;
     try {

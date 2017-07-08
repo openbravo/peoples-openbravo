@@ -21,78 +21,14 @@ package org.openbravo.reference.ui;
 import static org.openbravo.erpCommon.utility.ComboTableData.CLIENT_LIST_PARAM_HOLDER;
 import static org.openbravo.erpCommon.utility.ComboTableData.ORG_LIST_PARAM_HOLDER;
 
-import java.util.Properties;
-
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.ComboTableQueryData;
-import org.openbravo.erpCommon.utility.TableSQLData;
-import org.openbravo.reference.Reference;
 
 public class UITableDir extends UIReference {
 
   public UITableDir(String reference, String subreference) {
     super(reference, subreference);
-  }
-
-  public void generateSQL(TableSQLData table, Properties prop) throws Exception {
-    table.addSelectField(table.getTableName() + "." + prop.getProperty("ColumnName"),
-        prop.getProperty("ColumnName"));
-    identifier(table, table.getTableName(), prop, prop.getProperty("ColumnName") + "_R",
-        table.getTableName() + "." + prop.getProperty("ColumnName"), false);
-  }
-
-  public void identifier(TableSQLData tableSql, String parentTableName, Properties field,
-      String identifierName, String realName, boolean tableRef) throws Exception {
-    if (field == null)
-      return;
-
-    int myIndex = tableSql.index++;
-    String name = field.getProperty("ColumnNameSearch");
-    String tableDirName;
-    if (field.containsKey("tableDirName")) {
-      tableDirName = field.getProperty("tableDirName");
-    } else {
-      tableDirName = name.substring(0, name.length() - 3);
-    }
-    if (subReference != null && !subReference.equals("")) {
-      TableSQLQueryData[] search = TableSQLQueryData.searchInfo(tableSql.getPool(), subReference);
-      if (search != null && search.length != 0) {
-        name = search[0].columnname;
-        tableDirName = search[0].tablename;
-      }
-    } else {
-      if (name.equalsIgnoreCase("CreatedBy") || name.equalsIgnoreCase("UpdatedBy")) {
-        tableDirName = "AD_User";
-        name = "AD_User_ID";
-      }
-    }
-    ComboTableQueryData trd[] = ComboTableQueryData.identifierColumns(tableSql.getPool(),
-        tableDirName);
-    String tables = "(SELECT " + name;
-    for (int i = 0; i < trd.length; i++) {
-      // exclude tabledir pk-column as it has already been added in the line above
-      if (!trd[i].name.equals(name)) {
-        tables += ", " + trd[i].name;
-      }
-    }
-    tables += " FROM ";
-    tables += tableDirName + ") td" + myIndex;
-    tables += " on " + parentTableName + "." + field.getProperty("ColumnName") + " = td" + myIndex
-        + "." + name + "\n";
-    tableSql.addFromField(tables, "td" + myIndex, realName);
-    for (int i = 0; i < trd.length; i++) {
-      Properties linkedRefProp = UIReferenceUtility.fieldToProperties(trd[i]);
-      UIReference linkedReference = Reference.getUIReference(
-          linkedRefProp.getProperty("AD_Reference_ID"),
-          linkedRefProp.getProperty("AD_Reference_Value_ID"));
-      linkedReference.identifier(tableSql, "td" + myIndex, linkedRefProp, identifierName, realName,
-          false);
-    }
-  }
-
-  public String getGridType() {
-    return "dynamicEnum";
   }
 
   public void setComboTableDataIdentifier(ComboTableData comboTableData, String tableName,

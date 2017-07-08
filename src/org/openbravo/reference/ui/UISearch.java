@@ -23,8 +23,4 @@ public class UISearch extends UITableDir {
     super(reference, subreference);
   }
 
-  public String getGridType() {
-    return "string";
-  }
-
 }

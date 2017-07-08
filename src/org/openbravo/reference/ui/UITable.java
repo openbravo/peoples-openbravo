@@ -21,56 +21,13 @@ package org.openbravo.reference.ui;
 import static org.openbravo.erpCommon.utility.ComboTableData.CLIENT_LIST_PARAM_HOLDER;
 import static org.openbravo.erpCommon.utility.ComboTableData.ORG_LIST_PARAM_HOLDER;
 
-import java.util.Properties;
-
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.ComboTableQueryData;
-import org.openbravo.erpCommon.utility.TableSQLData;
-import org.openbravo.reference.Reference;
 
 public class UITable extends UIReference {
   public UITable(String reference, String subreference) {
     super(reference, subreference);
-  }
-
-  public void generateSQL(TableSQLData table, Properties prop) throws Exception {
-    table.addSelectField(table.getTableName() + "." + prop.getProperty("ColumnName"),
-        prop.getProperty("ColumnName"));
-    identifier(table, table.getTableName(), prop, prop.getProperty("ColumnName") + "_R",
-        table.getTableName() + "." + prop.getProperty("ColumnName"), false);
-  }
-
-  protected void identifier(TableSQLData tableSql, String parentTableName, Properties field,
-      String identifierName, String realName, boolean tableRef) throws Exception {
-    if (field == null)
-      return;
-
-    String fieldName = field.getProperty("ColumnName");
-
-    int myIndex = tableSql.index++;
-    ComboTableQueryData trd[] = ComboTableQueryData
-        .selectRefTable(tableSql.getPool(), subReference);
-    if (trd == null || trd.length == 0)
-      return;
-    String tables = "(SELECT ";
-    if (trd[0].isvaluedisplayed.equals("Y")) {
-      tableSql.addSelectField("td" + myIndex + ".VALUE", identifierName);
-      tables += "value, ";
-    }
-    tables += trd[0].keyname + " AS tableID, " + trd[0].name + " FROM ";
-    Properties fieldsAux = UIReferenceUtility.fieldToProperties(trd[0]);
-    tables += trd[0].tablename + ") td" + myIndex;
-    tables += " on " + parentTableName + "." + fieldName + " = td" + myIndex + ".tableID";
-    tableSql.addFromField(tables, "td" + myIndex, realName);
-
-    UIReference linkedReference = Reference.getUIReference(
-        fieldsAux.getProperty("AD_Reference_ID"), fieldsAux.getProperty("AD_Reference_Value_ID"));
-    linkedReference.identifier(tableSql, "td" + myIndex, fieldsAux, identifierName, realName, true);
-  }
-
-  public String getGridType() {
-    return "dynamicEnum";
   }
 
   public void setComboTableDataIdentifier(ComboTableData comboTableData, String tableName,

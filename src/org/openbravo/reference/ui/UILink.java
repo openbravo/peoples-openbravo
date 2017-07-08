@@ -23,8 +23,4 @@ public class UILink extends UIReference {
     super(reference, subreference);
   }
 
-  public String getGridType() {
-    return "url";
-  }
-
 }

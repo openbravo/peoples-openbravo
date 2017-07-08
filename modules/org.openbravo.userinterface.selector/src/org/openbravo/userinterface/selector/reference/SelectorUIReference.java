@@ -22,8 +22,6 @@ package org.openbravo.userinterface.selector.reference;
 import static org.openbravo.erpCommon.utility.ComboTableData.CLIENT_LIST_PARAM_HOLDER;
 import static org.openbravo.erpCommon.utility.ComboTableData.ORG_LIST_PARAM_HOLDER;
 
-import java.util.Properties;
-
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -33,10 +31,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.ComboTableQueryData;
-import org.openbravo.erpCommon.utility.TableSQLData;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.reference.ui.UIReference;
-import org.openbravo.reference.ui.UITableDir;
 import org.openbravo.userinterface.selector.Selector;
 
 /**
@@ -49,28 +45,6 @@ public class SelectorUIReference extends UIReference {
 
   public SelectorUIReference(String reference, String subreference) {
     super(reference, subreference);
-  }
-
-  public void generateSQL(TableSQLData tableSql, Properties prop) throws Exception {
-    OBContext.setAdminMode();
-    try {
-      Reference ref = OBDal.getInstance().get(Reference.class, subReference);
-      if (!ref.getOBUISELSelectorList().isEmpty()) {
-        final Selector selector = ref.getOBUISELSelectorList().get(0);
-        final String tableName = getTableName(selector);
-        if (tableName != null) {
-          UITableDir tableDir = new UITableDir("19", null);
-          prop.setProperty("ColumnNameSearch", tableName + "_ID");
-          tableDir.identifier(tableSql, tableSql.getTableName(), prop,
-              prop.getProperty("ColumnName"),
-              tableSql.getTableName() + "." + prop.getProperty("ColumnName") + "_R", false);
-        }
-      } else {
-        super.generateSQL(tableSql, prop);
-      }
-    } finally {
-      OBContext.restorePreviousMode();
-    }
   }
 
   private String getTableName(Selector selector) {
@@ -90,31 +64,6 @@ public class SelectorUIReference extends UIReference {
       return selector.getObserdsDatasource().getTable().getDBTableName();
     }
     return null;
-  }
-
-  public void identifier(TableSQLData tableSql, String parentTableName, Properties field,
-      String identifierName, String realName, boolean tableRef) throws Exception {
-    if (field == null) {
-      return;
-    }
-    OBContext.setAdminMode();
-    try {
-      Reference ref = OBDal.getInstance().get(Reference.class, subReference);
-      if (!ref.getOBUISELSelectorList().isEmpty()) {
-        final Selector selector = ref.getOBUISELSelectorList().get(0);
-        final String tableName = getTableName(selector);
-
-        if (tableName != null) {
-          UITableDir tableDir = new UITableDir("19", null);
-          field.setProperty("ColumnNameSearch", tableName + "_ID");
-          tableDir.identifier(tableSql, parentTableName, field, identifierName, realName, tableRef);
-        }
-      } else {
-        super.identifier(tableSql, parentTableName, field, identifierName, realName, tableRef);
-      }
-    } finally {
-      OBContext.restorePreviousMode();
-    }
   }
 
   public void setComboTableDataIdentifier(ComboTableData comboTableData, String tableName,

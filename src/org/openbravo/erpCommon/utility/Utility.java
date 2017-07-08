@@ -1148,42 +1148,6 @@ public class Utility {
   }
 
   /**
-   * Fill the parameters of the sql with the session values or FieldProvider values. Used in the
-   * combo relation's grids.
-   * 
-   * @param conn
-   *          Handler for the database connection.
-   * @param vars
-   *          Handler for the session info.
-   * @param data
-   *          FieldProvider with the columns values.
-   * @param cmb
-   *          TableSQLData object.
-   * @param window
-   *          Window id.
-   * @throws ServletException
-   */
-  public static void fillTableSQLParameters(ConnectionProvider conn, VariablesSecureApp vars,
-      FieldProvider data, TableSQLData cmb, String window) throws ServletException {
-    final Vector<String> vAux = cmb.getParameters();
-    if (vAux != null && vAux.size() > 0) {
-      if (log4j.isDebugEnabled())
-        log4j.debug("Combo Parameters: " + vAux.size());
-      for (int i = 0; i < vAux.size(); i++) {
-        final String strAux = vAux.elementAt(i);
-        try {
-          final String value = parseParameterValue(conn, vars, data, strAux, "", window, "", false);
-          if (log4j.isDebugEnabled())
-            log4j.debug("Combo Parameter: " + strAux + " - Value: " + value);
-          cmb.setParameter(strAux, value);
-        } catch (final Exception ex) {
-          throw new ServletException(ex);
-        }
-      }
-    }
-  }
-
-  /**
    * Auxiliary method, used by fillSQLParameters and fillTableSQLParameters to get the values for
    * each parameter.
    * 
