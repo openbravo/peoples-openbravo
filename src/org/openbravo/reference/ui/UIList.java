@@ -18,18 +18,11 @@
  */
 package org.openbravo.reference.ui;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Properties;
-import java.util.Vector;
 
-import javax.servlet.ServletException;
-
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.businessUtility.BuscadorData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.ComboTableQueryData;
 import org.openbravo.erpCommon.utility.TableSQLData;
@@ -104,19 +97,6 @@ public class UIList extends UIReference {
 
   public String getGridType() {
     return "dynamicEnum";
-  }
-
-  public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars,
-      BuscadorData fields, String strTab, String strWindow, ArrayList<String> vecScript,
-      Vector<Object> vecKeys) throws IOException, ServletException {
-    UITableDir tableDir = new UITableDir(reference, subReference);
-    tableDir.generateFilterHtml(strHtml, vars, fields, strTab, strWindow, vecScript, null);
-  }
-
-  public void generateFilterAcceptScript(BuscadorData field, StringBuffer params,
-      StringBuffer paramsData) {
-    UITableDir tableDir = new UITableDir(reference, subReference);
-    tableDir.generateFilterAcceptScript(field, params, paramsData);
   }
 
   public void setComboTableDataIdentifier(ComboTableData comboTableData, String tableName,

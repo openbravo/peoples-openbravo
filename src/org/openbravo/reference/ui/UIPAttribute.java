@@ -18,15 +18,12 @@
  */
 package org.openbravo.reference.ui;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
 
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.businessUtility.BuscadorData;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.TableSQLData;
 
@@ -71,19 +68,6 @@ public class UIPAttribute extends UITableDir {
         filter.addElement("1=1");
       }
     }
-  }
-
-  public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars,
-      BuscadorData fields, String strTab, String strWindow, ArrayList<String> vecScript,
-      Vector<Object> vecKeys) throws IOException, ServletException {
-    UIString stringRef = new UIString(reference, subReference);
-    stringRef.generateFilterHtml(strHtml, vars, fields, strTab, strWindow, vecScript, vecKeys);
-  }
-
-  public void generateFilterAcceptScript(BuscadorData field, StringBuffer params,
-      StringBuffer paramsData) {
-    UIString stringRef = new UIString(reference, subReference);
-    stringRef.generateFilterAcceptScript(field, params, paramsData);
   }
 
   @Override

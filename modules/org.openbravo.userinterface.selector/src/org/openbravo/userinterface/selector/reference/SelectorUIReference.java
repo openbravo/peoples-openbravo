@@ -22,35 +22,22 @@ package org.openbravo.userinterface.selector.reference;
 import static org.openbravo.erpCommon.utility.ComboTableData.CLIENT_LIST_PARAM_HOLDER;
 import static org.openbravo.erpCommon.utility.ComboTableData.ORG_LIST_PARAM_HOLDER;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
-
-import javax.servlet.ServletException;
 
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.businessUtility.BuscadorData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.ComboTableQueryData;
 import org.openbravo.erpCommon.utility.TableSQLData;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.reference.ui.UIReference;
-import org.openbravo.reference.ui.UIReferenceUtility;
 import org.openbravo.reference.ui.UITableDir;
 import org.openbravo.userinterface.selector.Selector;
-import org.openbravo.utils.FormatUtilities;
 
 /**
  * Implements the User Interface part of the new customizable Reference. This part takes care of the
@@ -62,68 +49,6 @@ public class SelectorUIReference extends UIReference {
 
   public SelectorUIReference(String reference, String subreference) {
     super(reference, subreference);
-  }
-
-  /**
-   * Generates the HTML code for the input used to display the reference in the filter popup
-   */
-  public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars, BuscadorData field,
-      String strTab, String strWindow, ArrayList<String> vecScript, Vector<Object> vecKeys)
-      throws IOException, ServletException {
-
-    OBContext.setAdminMode();
-    try {
-      UIReferenceUtility.addUniqueElement(vecScript, strReplaceWith
-          + "/../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources");
-      strHtml.append("<td class=\"TextBox_ContentCell\">");
-      final String inputName = FormatUtilities.replace(field.columnname);
-
-      strHtml.append("<script>var sc_" + inputName + " = null;</script>");
-      strHtml.append("<input type='hidden' name='inpParam" + inputName + "' id='" + inputName
-          + "' value='" + field.value + "'");
-      strHtml.append(" onreset='sc_" + inputName
-          + ".resetSelector();' onchange='OB.Utilities.updateSmartClientComponentValue(this, sc_"
-          + inputName + ".selectorField);' ");
-      strHtml.append("></input>");
-      strHtml.append("<script src='" + generateSelectorLink(field) + "'></script>");
-      strHtml.append("</td>");
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  private String generateSelectorLink(BuscadorData field) {
-    final StringBuilder sb = new StringBuilder();
-    sb.append("../org.openbravo.client.kernel/OBUISEL_Selector/" + getSelectorID(field));
-    sb.append("?columnName=" + field.columnname);
-    sb.append("&disabled=false");
-
-    if ((Integer.valueOf(field.fieldlength).intValue() > UIReferenceUtility.MAX_TEXTBOX_LENGTH)) {
-      sb.append("&CssSize=TwoCells");
-    } else {
-      sb.append("&CssSize=OneCell");
-    }
-
-    sb.append("&DisplayLength=" + field.displaylength);
-    sb.append("&required=false");
-    return sb.toString();
-  }
-
-  private String getSelectorID(BuscadorData field) {
-    final String hqlWhere = "reference.id=:reference or reference.id=:referenceValue";
-    final Map<String, Object> parameters = new HashMap<String, Object>();
-    parameters.put("reference", field.reference);
-    parameters.put("referenceValue", field.referencevalue);
-
-    final OBQuery<Selector> query = OBDal.getInstance().createQuery(Selector.class, hqlWhere);
-    query.setNamedParameter("reference", field.reference);
-    query.setNamedParameter("referenceValue", field.referencevalue);
-    final List<Selector> selectors = query.list();
-    if (selectors.isEmpty()) {
-      throw new IllegalArgumentException("No Selectors defined for column " + field.adColumnId
-          + " " + field.columnname);
-    }
-    return selectors.get(0).getId();
   }
 
   public void generateSQL(TableSQLData tableSql, Properties prop) throws Exception {

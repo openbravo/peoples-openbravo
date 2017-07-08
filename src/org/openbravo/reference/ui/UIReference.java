@@ -18,23 +18,17 @@
  */
 package org.openbravo.reference.ui;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Vector;
-
-import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.businessUtility.BuscadorData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.TableSQLData;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.utils.FormatUtilities;
 
 /**
  * Base implementation for UI objects
@@ -47,8 +41,6 @@ public class UIReference {
   // addSecondaryFilter is used to add a "to" filter in the standard getFilter method
   protected boolean addSecondaryFilter;
   protected ConnectionProvider conn;
-  protected String strReplaceWith;
-  protected String strIsSOTrx;
   protected boolean numeric;
 
   public UIReference(String reference, String subreference) {
@@ -133,90 +125,6 @@ public class UIReference {
    */
   public String formatGridValue(VariablesSecureApp vars, String value) {
     return StringEscapeUtils.escapeHtml(value);
-  }
-
-  /**
-   * Generates the HTML code for the input used to display the reference in the filter popup
-   */
-  public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars, BuscadorData field,
-      String strTab, String strWindow, ArrayList<String> vecScript, Vector<Object> vecKeys)
-      throws IOException, ServletException {
-    if ((Integer.valueOf(field.fieldlength).intValue() > UIReferenceUtility.MAX_TEXTBOX_LENGTH)) {
-      // Memo replace with reference 1-2-3 cells doing < MAX_TEXTBOX_LENGTH/4 /2 > /2
-      strHtml.append("<td>");
-      strHtml
-          .append("<textarea class=\"dojoValidateValid TextArea_TwoCells_width TextArea_Medium_height\" ");
-      strHtml.append("name=\"inpParam").append(FormatUtilities.replace(field.columnname))
-          .append("\" ");
-      strHtml.append("cols=\"50\" rows=\"3\" ");
-      strHtml.append(">");
-      strHtml.append(field.value);
-      strHtml.append("</textarea>\n");
-      strHtml.append("</td>");
-    } else {
-      strHtml.append("<td class=\"TextBox_ContentCell\">");
-      strHtml.append("<input type=\"text\" class=\"dojoValidateValid TextBox_OneCell_width\" ");
-      strHtml.append("name=\"inpParam").append(FormatUtilities.replace(field.columnname))
-          .append("\" ");
-      strHtml.append("maxlength=\"").append(field.fieldlength).append("\" ");
-      strHtml.append("value=\"").append(field.value).append("\" ");
-      strHtml.append(">");
-      strHtml.append("</td>");
-    }
-  }
-
-  /**
-   * Generates the body for the accept (aceptar) script called from filter pop-up when OK button is
-   * clicked.
-   */
-  public void generateFilterAcceptScript(BuscadorData field, StringBuffer params,
-      StringBuffer paramsData) {
-    paramsData.append("paramsData[count++] = new Array(\"inpParam")
-        .append(FormatUtilities.replace(field.columnname)).append("\" , ");
-    params.append(", \"inpParam").append(FormatUtilities.replace(field.columnname)).append("\",");
-    params.append(" escape(");
-
-    paramsData.append("frm.inpParam").append(FormatUtilities.replace(field.columnname))
-        .append(".value);\n");
-
-    params.append("frm.inpParam").append(FormatUtilities.replace(field.columnname))
-        .append(".value");
-
-    if (addSecondaryFilter) {
-      paramsData.append("paramsData[count++] = new Array(\"inpParam")
-          .append(FormatUtilities.replace(field.columnname)).append("_f\", ");
-      paramsData.append("frm.inpParam").append(FormatUtilities.replace(field.columnname))
-          .append("_f.value);\n");
-      params.append("), \"inpParam").append(FormatUtilities.replace(field.columnname))
-          .append("_f\",");
-      params.append(" escape(");
-      params.append("frm.inpParam").append(FormatUtilities.replace(field.columnname))
-          .append("_f.value");
-    }
-
-    params.append(")");
-  }
-
-  /**
-   * Used to compose urls
-   */
-  public void setReplaceWith(String replaceWith) {
-    this.strReplaceWith = replaceWith;
-  }
-
-  /**
-   * Secondary filter is true when the filter pop-up shows 2 fields
-   */
-  public boolean hasSecondaryFilter() {
-    return addSecondaryFilter;
-  }
-
-  /**
-   * Sales transaction. Set value if needed in any of the subclasses for any purpose. It is
-   * defaulted to null.
-   */
-  public void setStrIsSOTrx(String strIsSOTrx) {
-    this.strIsSOTrx = strIsSOTrx;
   }
 
   public boolean isNumeric() {
