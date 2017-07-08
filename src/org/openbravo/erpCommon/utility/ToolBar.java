@@ -39,7 +39,6 @@ public class ToolBar {
   private String grid_id = "";
   private String pdf = "";
   private boolean isDirectPrint = false;
-  private String window_name = "";
   private String base_direction = "";
   private boolean debug = false;
   private boolean isSrcWindow = false;
@@ -155,7 +154,6 @@ public class ToolBar {
     if (_PDFName != null)
       this.pdf = _PDFName;
     this.isDirectPrint = _isDirectPrinting;
-    this.window_name = _windowName;
     this.base_direction = _baseDirection;
     this.debug = _debug;
     this.isFrame = _isFrame;
