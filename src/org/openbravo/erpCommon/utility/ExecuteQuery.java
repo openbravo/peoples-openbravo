@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,9 +37,6 @@ import org.openbravo.database.ConnectionProvider;
  *         Implements the needed methods to execute the differents kinds of queries in the database.
  */
 public class ExecuteQuery {
-  public static enum SearchType {
-    FIRST, PREVIOUS, NEXT, LAST, GETPOSITION
-  };
 
   private static Logger log4j = Logger.getLogger(ExecuteQuery.class);
   private ConnectionProvider pool;
@@ -162,106 +159,6 @@ public class ExecuteQuery {
   }
 
   /**
-   * Executes the query and tests the result list via the specified type. This way it is possible to
-   * directly search for the next value (in relation to the oldValue parameter) in the result. This
-   * next value is returned and the search is stopped leading to a speedup depending on the position
-   * inside the result list.
-   * 
-   * @param searchType
-   *          specifies for which value to look in the sql result
-   * @param oldValue
-   *          specifies the related value
-   * @param idFieldName
-   *          specifies the name of the field with the id
-   * @return one value of the result corresponding to searchType and oldValue
-   * @throws ServletException
-   */
-  public String selectAndSearch(SearchType searchType, String oldValue, String idFieldName)
-      throws ServletException {
-    PreparedStatement st = null;
-    ResultSet result;
-
-    String strSQL = getSQL();
-    if (log4j.isDebugEnabled())
-      log4j.debug("SQL: " + strSQL);
-
-    try {
-      st = getPool().getPreparedStatement(strSQL);
-      Vector<String> params = getParameters();
-      if (params != null) {
-        for (int iParameter = 0; iParameter < params.size(); iParameter++) {
-          if (log4j.isDebugEnabled())
-            log4j.debug("PARAMETER " + iParameter + ":" + getParameter(iParameter));
-          UtilSql.setValue(st, iParameter + 1, 12, null, getParameter(iParameter));
-        }
-      }
-      result = st.executeQuery();
-
-      switch (searchType) {
-      case FIRST:
-        if (result.first()) {
-          return result.getString(idFieldName);
-        }
-        break;
-      case LAST:
-        if (result.last()) {
-          return result.getString(idFieldName);
-        }
-        break;
-      // linear search in list and return the previous when found
-      case PREVIOUS:
-        String previous = oldValue;
-        while (result.next()) {
-          String value = result.getString(idFieldName);
-          if (value.equals(oldValue))
-            return previous;
-          previous = value;
-        }
-        break;
-      // linear search in list and return the next when found
-      case NEXT:
-        boolean found = false;
-        while (result.next()) {
-          String value = result.getString(idFieldName);
-          if (!found && value.equals(oldValue))
-            found = true;
-          else if (found) {
-            return value;
-          }
-        }
-        break;
-      // linear search in list and return the position in list when found
-      case GETPOSITION:
-        int rowIndex = 0;
-        while (result.next()) {
-          String value = result.getString(idFieldName);
-          if (value.equals(oldValue)) {
-            return String.valueOf(rowIndex);
-          }
-          rowIndex++;
-        }
-        return "0";
-      }
-
-      result.close();
-      return oldValue;
-    } catch (SQLException e) {
-      log4j.error("SQL error in query: " + strSQL.toString() + "Exception:" + e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
-          + e.getMessage());
-    } catch (Exception ex) {
-      log4j.error("Exception in query: " + strSQL.toString() + "Exception:" + ex);
-      throw new ServletException("@CODE=@" + ex.getMessage());
-    } finally {
-      try {
-        getPool().releasePreparedStatement(st);
-      } catch (Exception ignore) {
-        ignore.printStackTrace();
-      }
-    }
-  }
-
-  /**
    * Executes the query.
    * 
    * @return Array of FieldProviders with the result of the query.
@@ -326,40 +223,4 @@ public class ExecuteQuery {
     return (objectListData);
   }
 
-  /**
-   * Executes a statement query. For insert, update or delete queries.
-   * 
-   * @return Integer with the number of rows affected.
-   * @throws ServletException
-   */
-  public int executeStatement() throws ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("SQL: " + getSQL());
-    PreparedStatement st = null;
-    int total = 0;
-
-    try {
-      st = getPool().getPreparedStatement(getSQL());
-      Vector<String> params = getParameters();
-      if (params != null) {
-        for (int iParameter = 0; iParameter < params.size(); iParameter++) {
-          UtilSql.setValue(st, iParameter + 1, 12, null, getParameter(iParameter));
-        }
-      }
-      total = st.executeUpdate();
-    } catch (SQLException e) {
-      log4j.error("SQLException:" + e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
-          + e.getMessage());
-    } catch (Exception ex) {
-      log4j.error("Exception:" + ex);
-      throw new ServletException("@CODE=@" + ex.getMessage());
-    } finally {
-      try {
-        getPool().releasePreparedStatement(st);
-      } catch (Exception ignore) {
-      }
-    }
-    return (total);
-  }
 }
