@@ -38,7 +38,7 @@ import org.openbravo.database.ConnectionProvider;
  */
 public class ExecuteQuery {
 
-  private static Logger log4j = Logger.getLogger(ExecuteQuery.class);
+  private static final Logger log4j = Logger.getLogger(ExecuteQuery.class);
   private ConnectionProvider pool;
   private Vector<String> parameters = new Vector<String>();
   private String sql;
@@ -74,7 +74,7 @@ public class ExecuteQuery {
    *          Object handler for the database connection.
    * @throws Exception
    */
-  void setPool(ConnectionProvider _conn) throws Exception {
+  private void setPool(ConnectionProvider _conn) throws Exception {
     if (_conn == null)
       throw new Exception("The pool is null");
     this.pool = _conn;
@@ -85,7 +85,7 @@ public class ExecuteQuery {
    * 
    * @return Object with the database connection handler.
    */
-  ConnectionProvider getPool() {
+  private ConnectionProvider getPool() {
     return this.pool;
   }
 
@@ -96,7 +96,7 @@ public class ExecuteQuery {
    *          String with the query.
    * @throws Exception
    */
-  void setSQL(String _sql) throws Exception {
+  private void setSQL(String _sql) throws Exception {
     this.sql = ((_sql == null) ? "" : _sql);
   }
 
@@ -105,7 +105,7 @@ public class ExecuteQuery {
    * 
    * @return String with the query.
    */
-  String getSQL() {
+  private String getSQL() {
     return this.sql;
   }
 
@@ -116,7 +116,7 @@ public class ExecuteQuery {
    *          Vector with the parameters.
    * @throws Exception
    */
-  void setParameters(Vector<String> _parameters) throws Exception {
+  private void setParameters(Vector<String> _parameters) throws Exception {
     this.parameters = _parameters;
   }
 
@@ -125,23 +125,8 @@ public class ExecuteQuery {
    * 
    * @return Vector with the parameters.
    */
-  Vector<String> getParameters() {
+  private Vector<String> getParameters() {
     return this.parameters;
-  }
-
-  /**
-   * Adds new parameter to the list of query parameters.
-   * 
-   * @param _value
-   *          String with the parameter.
-   */
-  void addParameter(String _value) {
-    if (this.parameters == null)
-      this.parameters = new Vector<String>();
-    if (_value == null || _value.equals(""))
-      this.parameters.addElement("");
-    else
-      this.parameters.addElement(_value);
   }
 
   /**
@@ -151,7 +136,7 @@ public class ExecuteQuery {
    *          Position of the selected parameter.
    * @return String with the parameter.
    */
-  String getParameter(int position) {
+  private String getParameter(int position) {
     if (this.parameters == null || this.parameters.size() < position)
       return "";
     else
@@ -214,8 +199,8 @@ public class ExecuteQuery {
     } finally {
       try {
         getPool().releasePreparedStatement(st);
-      } catch (Exception ignore) {
-        ignore.printStackTrace();
+      } catch (Exception e) {
+        log4j.error("Error during release*Statement of query: " + strSQL, e);
       }
     }
     FieldProvider objectListData[] = new FieldProvider[vector.size()];
