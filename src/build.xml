@@ -334,10 +334,10 @@ build.war: build a war file in the lib directory.
       <classpath refid="project.class.path" />
     </javac>
     <copy todir="${build}">
-      <fileset dir="${basedir}" includes="**/*.hbm.xml" />
-    </copy>
-    <copy todir="${build}">
-      <fileset dir="${basedir}" includes="**/*.properties" />
+      <fileset dir="${basedir}">
+        <include name="**/*.hbm.xml" />
+        <include name="**/*.properties" />
+      </fileset>
     </copy>
     
     <!-- also compile the domaintypes in modules -->
@@ -392,34 +392,22 @@ build.war: build a war file in the lib directory.
   <target name="postsrc" depends="postsrc.modules">
 
     <copy todir="${build}">
-      <fileset dir="${basedir}" includes="**/*.properties" />
-    </copy>
-    <copy todir="${build}">
-      <fileset dir="${basedir}" includes="**/*.xslt" />
-    </copy>
-    <copy todir="${build}">
-      <fileset dir="${basedir}" includes="**/*.hbm.xml" />
-    </copy>
-    <copy todir="${build}">
-      <fileset dir="${basedir}" includes="**/*.ftl" />
+      <fileset dir="${basedir}">
+        <include name="**/*.properties" />
+        <include name="**/*.xslt" />
+        <include name="**/*.hbm.xml" />
+        <include name="**/*.ftl" />
+      </fileset>
     </copy>
     <copy todir="${base.design}/design">
-      <fileset dir="${basedir}" includes="**/*.xml" />
-    </copy>
-    <copy todir="${base.design}/design">
-      <fileset dir="${basedir}" includes="**/*.fo" />
-    </copy>
-    <copy todir="${base.design}/design">
-      <fileset dir="${basedir}" includes="**/*.html" />
-    </copy>
-    <copy todir="${base.design}/design">
-      <fileset dir="${basedir}" includes="**/*.srpt" />
-    </copy>
-    <copy todir="${base.design}/design">
-      <fileset dir="${basedir}" includes="**/*.jrxml" />
-    </copy>
-    <copy todir="${base.design}/design">
-      <fileset dir="${basedir}" includes="**/*.jasper" />
+      <fileset dir="${basedir}">
+        <include name="**/*.xml" />
+        <include name="**/*.fo" />
+        <include name="**/*.html" />
+        <include name="**/*.srpt" />
+        <include name="**/*.jrxml" />
+        <include name="**/*.jasper" />
+      </fileset>
     </copy>
     <copy todir="${build}">
       <fileset file="${base.config}/quartz.properties" />
@@ -605,22 +593,14 @@ build.war: build a war file in the lib directory.
 
   <target name="postwad">
     <copy todir="${base.design}/design">
-      <fileset dir="${build.AD}" includes="**/*.xml" />
-    </copy>
-    <copy todir="${base.design}/design">
-      <fileset dir="${build.AD}" includes="**/*.fo" />
-    </copy>
-    <copy todir="${base.design}/design">
-      <fileset dir="${build.AD}" includes="**/*.html" />
-    </copy>
-    <copy todir="${base.design}/design">
-      <fileset dir="${build.AD}" includes="**/*.srpt" />
-    </copy>
-    <copy todir="${base.design}/design">
-      <fileset dir="${build.AD}" includes="**/*.jrxml" />
-    </copy>
-    <copy todir="${base.design}/design">
-      <fileset dir="${build.AD}" includes="**/*.jasper" />
+      <fileset dir="${build.AD}">
+        <include name="**/*.xml" />
+        <include name="**/*.fo" />
+        <include name="**/*.html" />
+        <include name="**/*.srpt" />
+        <include name="**/*.jrxml" />
+        <include name="**/*.jasper" />
+      </fileset>
     </copy>
   </target>
 
