@@ -84,15 +84,12 @@ build.war: build a war file in the lib directory.
   <target name="init">
     <mkdir dir="${build}" />
     <mkdir dir="${base.design}/design" />
-    <mkdir dir="${build.sqlc}" />
     <mkdir dir="${build.sqlc}/src" />
     <mkdir dir="${build.sqlc}/srcAD" />
-    <mkdir dir="${build.AD}" />
     <mkdir dir="${build.AD}/org/openbravo/erpWindows" />
     <mkdir dir="${build.AD}/org/openbravo/erpCommon/ad_actionButton" />
     <mkdir dir="${build.AD}/org/openbravo/erpCommon/ad_callouts" />
     <mkdir dir="${build.AD}/org/openbravo/erpCommon/reference" />
-    <mkdir dir="${build.docs}" />
   </target>
   <macrodef name="updatesystemstatus">
      <attribute name="v" default="NOT SET"/>
@@ -554,8 +551,6 @@ build.war: build a war file in the lib directory.
   <target name="build.web.folder.skins" if="do.skins">
 
     <delete includeEmptyDirs="true" dir="${base.context}/web/skins" quiet="yes" />
-    <mkdir dir="${base.context}/web" />
-    <mkdir dir="${base.context}/web/skins" />
     <mkdir dir="${base.context}/web/skins/ltr" />
     <copy todir="${base.context}/web/skins/ltr" encoding="UTF-8">
       <fileset dir="${base.web}/skins" />
