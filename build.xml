@@ -649,10 +649,6 @@ export.database: exports database structure and data to xml files.
 
   <target name="core.lib" depends="init">
     <ant dir="${base.src.core}" target="build" inheritAll="true" inheritRefs="true" />
-    <antcall target="copy.core.lib" />
-  </target>
-
-  <target name="copy.core.lib">
     <copy file="${base.src.core}/lib/openbravo-core.jar" todir="${base.lib}/runtime" failonerror="false" />
   </target>
 
