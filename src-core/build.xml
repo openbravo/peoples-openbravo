@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
 ************************************************************************************
-* Copyright (C) 2001-2016 Openbravo S.L.U.
+* Copyright (C) 2001-2017 Openbravo S.L.U.
 * Licensed under the Apache Software License version 2.0
 * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -18,8 +18,7 @@ init: creates all the needed folders.
 clean: removes all the files and folders.
 compile: compile the java files of the project.
 build.jar: generates the jar file in the lib folder.
-build: compile the project and generates the jar and doc.
-doc: generates the api for the project.
+build: compile the project and generates the jar
 -->
 <project default="compile" basedir="." name="openbravo-core">
   <property name="build.core" value="${basedir}/build/classes"/>
@@ -34,7 +33,6 @@ doc: generates the api for the project.
 
   <target name="init">
     <mkdir dir="${build.core}"/>
-    <mkdir dir="${build.core.docs}"/>
   </target>
 
   <target name="clean">
@@ -64,18 +62,4 @@ doc: generates the api for the project.
 <target name="build" depends="compile, build.jar">
 </target>
 
-<target name="doc" depends="init" description="Generate api">
-  <javadoc packagenames="org.openbravo.*" 
-    sourcepath="${build.core.src}"
-    destdir="${build.core.docs}"
-    author="true"
-    version="true"
-    use="true"
-    docencoding="UTF-8"
-    encoding="UTF-8"
-    failonerror="false"
-    windowtitle="${ant.project.name}">
-    <classpath refid="core.class.path"/>
-  </javadoc>
-</target>
 </project>

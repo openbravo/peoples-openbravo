@@ -13,7 +13,7 @@
  * and  limitations under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2005-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2005-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s): Openbravo S.L.U.
  ************************************************************************
@@ -27,8 +27,7 @@ sqlc: generates java files from xsql's files.
 compileSqlc: compile the java files generated from xsql's files.
 compile: compile the java files of the project.
 build.jar: generates the jar file in the lib folder.
-build: compile the project, including the xsql's files and generates the jar and doc.
-doc: generates the api for the project.
+build: compile the project, including the xsql's files and generates the jar
 -->
 <project name="openbravo-wad" default="compile" basedir=".">
   <property name="build.wad" value="${basedir}/build/classes" />
@@ -46,7 +45,6 @@ doc: generates the api for the project.
 
   <target name="init">
     <mkdir dir="${build.wad}" />
-    <mkdir dir="${build.wad.docs}" />
     <mkdir dir="${build.wad.sqlc}" />
   </target>
 
@@ -123,9 +121,4 @@ doc: generates the api for the project.
   <target name="build" depends="compile, build.jar">
   </target>
 
-  <target name="doc" depends="init" description="Generate api">
-    <javadoc packagenames="org.openbravo.*" sourcepath="${build.wad.sqlc}/src:${build.wad.src}" destdir="${build.wad.docs}" author="true" version="true" use="true" docencoding="UTF-8" encoding="UTF-8" failonerror="false" windowtitle="${ant.project.name}">
-      <classpath refid="wad.class.path" />
-    </javadoc>
-  </target>
 </project>

@@ -31,13 +31,10 @@ eclipse.compile: refer to eclipse.compile target of src.
 eclipse.compile.complete: refer to eclipse.compile.complete target of src.
 compile.src: refer to compile.src target of src.
 war: refer to build.war target of src.
-core.docs: refer to doc target of src-core.
 core.lib: refer to build target of src-core.
 eclipse.wad.lib: refer to sqlc target of src-wad.
-wad.docs: refer to doc target of src-wad.
 wad.lib: refer to build target of src-wad.
 eclipse.trl.lib: refer to sqlc target of src-trl.
-trl.docs: refer to doc target of src-trl.
 trl.lib: refer to build target of src-trl.
 database.lib: refer to jar target of src-db.
 clean: refer to clean target of src.
@@ -650,10 +647,6 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="build.war" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="core.docs" depends="init">
-    <ant dir="${base.src.core}" target="doc" inheritAll="true" inheritRefs="true" />
-  </target>
-
   <target name="core.lib" depends="init">
     <ant dir="${base.src.core}" target="build" inheritAll="true" inheritRefs="true" />
     <antcall target="copy.core.lib" />
@@ -669,10 +662,6 @@ export.database: exports database structure and data to xml files.
     <eclipse.incrementalBuild project="OpenbravoWAD" kind="full" />
   </target>
 
-  <target name="wad.docs" depends="init">
-    <ant dir="${base.src.wad}" target="doc" inheritAll="true" inheritRefs="true" />
-  </target>
-
   <target name="wad.lib" depends="init">
     <ant dir="${base.src.wad}" target="build" inheritAll="true" inheritRefs="true" />
   </target>
@@ -681,10 +670,6 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src.trl}" target="sqlc" inheritAll="true" inheritRefs="true" />
     <eclipse.refreshLocal resource="OpenbravoTrl" depth="infinite" />
     <eclipse.incrementalBuild project="OpenbravoTrl" kind="full" />
-  </target>
-
-  <target name="trl.docs" depends="init">
-    <ant dir="${base.src.trl}" target="doc" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="trl.lib" depends="init">

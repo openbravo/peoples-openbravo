@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,8 +26,7 @@ sqlc: generates java files from xsql's files.
 compileSqlc: compile the java files generated from xsql's files.
 compile: compile the java files of the project.
 build.jar: generates the jar file in the lib folder.
-build: compile the project, including the xsql's files and generates the jar and doc.
-doc: generates the api for the project.
+build: compile the project, including the xsql's files and generates the jar
 -->
 <project default="compile" basedir="." name="openbravo-trl">
   <property name="build.trl" value="${basedir}/build/classes"/>
@@ -45,7 +44,6 @@ doc: generates the api for the project.
   <target name="init">
     <mkdir dir="${build.trl}"/>
     <mkdir dir="${build.trl.sqlc}"/>
-    <mkdir dir="${build.trl.docs}"/>
   </target>
   
   <target name="clean">
@@ -92,18 +90,4 @@ doc: generates the api for the project.
   <target name="build" depends="compile, build.jar">
   </target>
   
-  <target name="doc" depends="init" description="Generate api">
-    <javadoc packagenames="org.openbravo.*" 
-           sourcepath="${build.trl.sqlc}/src:${build.trl.src}"
-           destdir="${build.trl.docs}"
-           author="true"
-           version="true"
-           use="true"
-           docencoding="UTF-8"
-           encoding="UTF-8"
-           failonerror="false"
-           windowtitle="${ant.project.name}">
-      <classpath refid="trl.class.path"/>
-    </javadoc>
-  </target>
 </project>
