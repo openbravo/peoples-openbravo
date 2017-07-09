@@ -452,25 +452,6 @@ build.war: build a war file in the lib directory.
     </copy>
   </target>
 
-  <!-- FIXME: These tasks is only for development and testing purposes, remove it afterwards-->
-  <target name="sqlcmod">
-    <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" failonerror="true">
-      <arg line="'${base.config}'/Openbravo.properties .xsql '${base.modules}' '${build.sqlc}'/src */src" />
-      <classpath refid="project.class.path" />
-      <syspropertyset>
-         <propertyref name="java.security.egd" />
-      </syspropertyset>
-    </java>
-  </target>
-
-  <target name="compileSqlcmod" depends="sqlcmod">
-    <javac srcdir="${build.sqlc}/src:${base.modules}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on" includeantruntime="false">
-      <classpath refid="project.class.path" />
-      <syspropertyset>
-         <propertyref name="java.security.egd" />
-      </syspropertyset>
-    </javac>
-  </target>
   <target name="postsrcmod">
     <copy todir="${base.design}/design">
       <fileset dir="${base.modules}" includes="*/src/**/*.html" />
