@@ -133,11 +133,10 @@ public class SL_InOutLine_Product extends SimpleCallout {
     }
 
     // Secondary UOM
-
+    info.addResult("inphasseconduom", Integer.parseInt(strHasSecondaryUOM));
     if (strHasSecondaryUOM.equals("1")
         && (!isUomManagementEnabled || (isUomManagementEnabled && !"".equals(strUOMProduct)))) {
       String strPUOM = info.vars.getStringParameter("inpmProductId_PUOM");
-      info.addResult("inphasseconduom", Integer.parseInt(strHasSecondaryUOM));
 
       if (strPUOM.startsWith("\"")) {
         strPUOM = strPUOM.substring(1, strPUOM.length() - 1);
