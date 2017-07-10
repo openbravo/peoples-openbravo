@@ -100,7 +100,7 @@ public class SL_Movement_Product extends SimpleCallout {
     String strPUOM = info.vars.getStringParameter("inpmProductId_PUOM");
 
     String strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strMProductID);
-    info.addResult("inphasseconduom", (Object) strHasSecondaryUOM);
+    info.addResult("inphasseconduom", Integer.parseInt(strHasSecondaryUOM));
 
     if (strPUOM.startsWith("\"")) {
       strPUOM = strPUOM.substring(1, strPUOM.length() - 1);

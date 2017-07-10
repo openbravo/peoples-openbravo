@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -86,7 +86,7 @@ public class SL_Inventory_Product extends SimpleCallout {
     // Secondary UOM
 
     String strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strMProductID);
-    info.addResult("inphasseconduom", (Object) strHasSecondaryUOM);
+    info.addResult("inphasseconduom", Integer.parseInt(strHasSecondaryUOM));
 
     // Quantity order
 
