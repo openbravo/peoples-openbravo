@@ -327,6 +327,11 @@ public class OBBaseTest {
     }
   }
 
+  /** Include in messages possible stack traces for logged Throwables */
+  protected void setLogStackTraces(boolean log) {
+    testLogAppender.setLogStackTraces(log);
+  }
+
   /** Returns log appender in order to be possible to do assertions on it */
   protected TestLogAppender getTestLogAppender() {
     return testLogAppender;
