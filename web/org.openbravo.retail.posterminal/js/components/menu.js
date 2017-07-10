@@ -1186,6 +1186,9 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.cancelreplace',
   i18nLabel: 'OBPOS_CancelReplace',
+  events: {
+    onRearrangeEditButtonBar: ''
+  },
   tap: function () {
     if (this.disabled) {
       return true;

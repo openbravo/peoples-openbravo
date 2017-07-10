@@ -393,7 +393,7 @@ enyo.kind({
     //defined on redenderorderline.js
     listStyle: 'edit',
     isSelectableLine: function (model) {
-      if (!OB.UTIL.isNullOrUndefined(model) && !OB.UTIL.isNullOrUndefined(model.attributes) && !OB.UTIL.isNullOrUndefined(model.attributes.originalOrderLineId)) {
+      if (!OB.UTIL.isNullOrUndefined(model) && !OB.UTIL.isNullOrUndefined(model.attributes) && !model.attributes.isEditable) {
         return false;
       }
       return true;

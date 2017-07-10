@@ -967,7 +967,7 @@ enyo.kind({
 
     //Services validation
     var unGroupedServiceLines = _.filter(selectedModels, function (line) {
-      return line.get('product').get('productType') === 'S' && line.get('product').get('quantityRule') === 'PP' && !line.get('groupService') && line.has('relatedLines') && line.get('relatedLines').length > 0 && !line.get('originalOrderLineId');
+      return line.get('product').get('productType') === 'S' && line.get('product').get('quantityRule') === 'PP' && !line.get('groupService') && line.has('relatedLines') && line.get('relatedLines').length > 0 && line.get('isEditable');
     });
     if (unGroupedServiceLines && unGroupedServiceLines.length > 0) {
       var i, j, serviceQty, productQty, uniqueServices, getServiceQty, getProductQty;
@@ -1354,7 +1354,7 @@ enyo.kind({
     if (selectedLinesLength > 1) {
       for (i = 0; i < selectedLinesLength; i++) {
         product = selectedLines[i].get('product');
-        if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || selectedLines[i].get('originalOrderLineId') || product.get('isSerialNo')) {
+        if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || !selectedLines[i].get('isEditable') || product.get('isSerialNo')) {
           enableButton = false;
           break;
         }
@@ -1364,7 +1364,7 @@ enyo.kind({
       }
     } else if (selectedLinesLength === 1) {
       product = selectedLines[0].get('product');
-      if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || selectedLines[0].get('originalOrderLineId') || product.get('isSerialNo')) {
+      if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || !selectedLines[0].get('isEditable') || product.get('isSerialNo')) {
         enableButton = false;
       }
     } else {

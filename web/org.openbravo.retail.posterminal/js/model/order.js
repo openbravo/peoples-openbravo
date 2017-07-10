@@ -1219,7 +1219,7 @@
         options = args.options || {};
         options.setUndo = (_.isUndefined(options.setUndo) || _.isNull(options.setUndo) || options.setUndo !== false) ? true : options.setUndo;
 
-        if (!OB.UTIL.isNullOrUndefined(args.line.get('originalOrderLineId'))) {
+        if (!args.line.get('isEditable')) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotChangePrice'));
         } else if (args.line.get('replacedorderline') && args.line.get('qty') < 0) {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange'));
@@ -1382,6 +1382,15 @@
         }
         return;
       }
+
+      if (!line.get('isDeletable')) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotDeletableLine', [line.get('product').get('_identifier')]));
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+
       if (me.get('replacedorder') && line.get('remainingQuantity')) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
         if (callback) {
@@ -1595,7 +1604,7 @@
               line = options.line;
             } else {
               line = me.get('lines').find(function (l) {
-                if (l.get('product').id === p.id && ((l.get('qty') > 0 && qty > 0) || (l.get('qty') < 0 && qty < 0))) {
+                if (l.get('product').id === p.id && l.get('isEditable') && ((l.get('qty') > 0 && qty > 0) || (l.get('qty') < 0 && qty < 0))) {
                   if (attributeSearchAllowed && attrs) {
                     if ((l.get('attributeValue') === attrs.attributeValue)) {
                       return true;
@@ -2255,7 +2264,9 @@
           warehouse: {
             id: OB.UTIL.isNullOrUndefined(attrs) || (!OB.UTIL.isNullOrUndefined(attrs) && OB.UTIL.isNullOrUndefined(attrs.splitline)) ? OB.MobileApp.model.get('warehouses')[0].warehouseid : attrs.originalLine.get('warehouse').id,
             warehousename: OB.UTIL.isNullOrUndefined(attrs) || (!OB.UTIL.isNullOrUndefined(attrs) && OB.UTIL.isNullOrUndefined(attrs.splitline)) ? OB.MobileApp.model.get('warehouses')[0].warehousename : attrs.originalLine.get('warehouse').warehousename
-          }
+          },
+          isEditable: options && options.hasOwnProperty('isEditable') ? options.isEditable : true,
+          isDeletable: options && options.hasOwnProperty('isDeletable') ? options.isEditable : true
         });
 
         if (!_.isUndefined(attrs)) {
@@ -2846,42 +2857,41 @@
     },
 
     verifyCancelAndReplace: function (context) {
-      var me = this,
-          process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled');
-
-      process.exec({
-        orderId: this.get('id'),
-        documentNo: this.get('documentNo')
-      }, function (data) {
-        if (data && data.exception) {
-          if (data.exception.message) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message);
-            return;
-          }
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
-          return;
-        } else if (data && data.orderCancelled) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderReplacedError'));
-          return;
-        } else {
-          OB.UTIL.HookManager.executeHooks('OBPOS_PreCancelAndReplace', {
-            context: context
-          }, function (args) {
-            if (args && args.cancelOperation) {
+      var me = this;
+      this.checkNotProcessedPayments(function () {
+        var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled');
+        process.exec({
+          orderId: me.get('id'),
+          documentNo: me.get('documentNo'),
+          checkNotEditableLines: true
+        }, function (data) {
+          if (data && data.exception) {
+            if (data.exception.message) {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message);
               return;
             }
-
-            me.checkNotProcessedPayments(function () {
-              me.cancelAndReplaceOrder(context);
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+            return;
+          } else if (data && data.orderCancelled) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderReplacedError'));
+            return;
+          } else {
+            OB.UTIL.HookManager.executeHooks('OBPOS_PreCancelAndReplace', {
+              context: context
+            }, function (args) {
+              if (args && args.cancelOperation) {
+                return;
+              }
+              me.cancelAndReplaceOrder(context, data.deferredLines);
             });
-          });
-        }
-      }, function () {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+          }
+        }, function () {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+        });
       });
     },
 
-    cancelAndReplaceOrder: function (context) {
+    cancelAndReplaceOrder: function (context, deferredLines) {
       var documentseq, documentseqstr, idMap = {},
           me = this,
           i, splittedDocNo = [],
@@ -2902,7 +2912,8 @@
       me.set('doCancelAndReplace', true);
 
       OB.Dal.remove(this, function () {
-        var deliveredQty = 0;
+        var deliveredQty = 0,
+            linesWithDeferred = [];
         me.get('lines').each(function (line) {
           idMap[line.get('id')] = OB.UTIL.get_UUID();
           line.set('replacedorderline', line.get('id'));
@@ -2932,6 +2943,24 @@
           } else {
             me.set('salesRepresentative', null);
           }
+        }
+
+        if (deferredLines.length) {
+          linesWithDeferred.push(OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBody'));
+        }
+        //Set to not editable and not deletable to all deferred lines or lines that have deferred services
+        _.each(deferredLines, function (deferredLine) {
+          var deffLine = _.find(me.get('lines').models, function (line) {
+            return deferredLine === OB.DEC.mul(OB.DEC.add(line.get('linepos'), 1), 10);
+          });
+          deffLine.set('isEditable', false);
+          deffLine.set('isDeletable', false);
+          linesWithDeferred.push(OB.I18N.getLabel('OBMOBC_Character')[1] + ' ' + deffLine.get('product').get('_identifier') + ' (' + OB.I18N.getLabel('OBPOS_LineQuantity') + ': ' + deffLine.get('qty') + ')');
+        });
+        if (deferredLines.length) {
+          linesWithDeferred.push(OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBodyFooter'));
+          linesWithDeferred.push(OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBodyFooter2'));
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotModifiableLines'), linesWithDeferred);
         }
 
         me.set('hasbeenpaid', 'N');
@@ -2974,6 +3003,11 @@
             me.calculateReceipt(function () {
               me.unset('skipApplyPromotions');
             });
+            // Set the first line as selected to call the 'onRearrangeEditButtonBar' event and update the isEditable and
+            // isDeletable status for the lines (to hide or show the buttons)
+            if (deferredLines.length) {
+              me.get('lines').at(me.get('lines').models.length - 1).trigger('selected', me.get('lines').at(me.get('lines').models.length - 1));
+            }
           });
         });
       }, function () {
@@ -3003,33 +3037,56 @@
 
     cancelLayaway: function (context) {
       var me = this;
-      OB.UTIL.HookManager.executeHooks('OBPOS_PreCancelLayaway', {
-        context: context
-      }, function (args) {
-        if (args && args.cancelOperation) {
-          return;
-        }
-
-        me.checkNotProcessedPayments(function () {
-          //Cloning order to be canceled
-          var clonedreceipt = new OB.Model.Order();
-          OB.UTIL.clone(me, clonedreceipt);
-          if (me.get('paidOnCredit')) {
-            me.set('paidOnCredit', false);
-            me.set('paidPartiallyOnCredit', false);
-            me.set('creditAmount', 0);
+      this.checkNotProcessedPayments(function () {
+        var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled');
+        process.exec({
+          orderId: me.get('id'),
+          documentNo: me.get('documentNo'),
+          checkNotDeliveredDeferredServices: true
+        }, function (data) {
+          if (data && data.exception) {
+            if (data.exception.message) {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message);
+              return;
+            }
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+            return;
+          } else if (data && data.orderCancelled) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderCanceledError'));
+            return;
+          } else if (data && data.hasDeferredServices) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CannotCancelLayWithDeferred'));
+            return;
+          } else {
+            OB.UTIL.HookManager.executeHooks('OBPOS_PreCancelLayaway', {
+              context: context
+            }, function (args) {
+              if (args && args.cancelOperation) {
+                return;
+              }
+              //Cloning order to be canceled
+              var clonedreceipt = new OB.Model.Order();
+              OB.UTIL.clone(me, clonedreceipt);
+              if (me.get('paidOnCredit')) {
+                me.set('paidOnCredit', false);
+                me.set('paidPartiallyOnCredit', false);
+                me.set('creditAmount', 0);
+              }
+              me.set('cancelLayaway', true);
+              me.set('canceledorder', clonedreceipt);
+              context.doShowDivText({
+                permission: context.permission,
+                orderType: 3
+              });
+              context.doTabChange({
+                tabPanel: 'payment',
+                keyboard: 'toolbarpayment',
+                edit: false
+              });
+            });
           }
-          me.set('cancelLayaway', true);
-          me.set('canceledorder', clonedreceipt);
-          context.doShowDivText({
-            permission: context.permission,
-            orderType: 3
-          });
-          context.doTabChange({
-            tabPanel: 'payment',
-            keyboard: 'toolbarpayment',
-            edit: false
-          });
+        }, function () {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
         });
       });
     },
@@ -4855,7 +4912,9 @@
                           id: iter.warehouse,
                           warehousename: iter.warehousename
                         },
-                        relatedLines: iter.relatedLines
+                        relatedLines: iter.relatedLines,
+                        isEditable: true,
+                        isDeletable: true
                       });
 
                       // copy verbatim not owned properties -> modular properties.

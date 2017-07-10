@@ -219,8 +219,10 @@ public class PaidReceipts extends JSONProcessSimple {
               JSONObject jsonObject = relatedLines.getJSONObject(r);
               if (!jsonObject.getString("orderId").equals(orderid)) {
                 jsonObject.put("otherTicket", true);
+                jsonObject.put("deferred", true);
               } else {
                 jsonObject.put("otherTicket", false);
+                jsonObject.put("deferred", false);
               }
               String hqlRelatedLinePromotions = "select olo.totalAmount from OrderLineOffer olo where olo.salesOrderLine.id = ?";
               Query relatedLinePromotionsQuery = OBDal.getInstance().getSession()

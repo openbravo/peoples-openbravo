@@ -656,11 +656,16 @@ enyo.kind({
         }
       }
       if (this.$.actionButtonsContainer.$.returnLine) {
-        if ((!_.isUndefined(line) && !_.isUndefined(line.get('originalOrderLineId'))) || this.model.get('order').get('orderType') === 1 || this.model.get('order').get('orderType') === 2) {
+        if ((!_.isUndefined(line) && !line.get('isEditable')) || this.model.get('order').get('orderType') === 1 || this.model.get('order').get('orderType') === 2) {
           this.$.actionButtonsContainer.$.returnLine.hide();
         } else if (OB.MobileApp.model.get('permissions')[this.$.actionButtonsContainer.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
           this.$.actionButtonsContainer.$.returnLine.show();
         }
+      }
+      if (!line.get('isDeletable')) {
+        this.$.actionButtonsContainer.$.deleteLine.hide();
+      } else {
+        this.$.actionButtonsContainer.$.deleteLine.show();
       }
       if (this.$.actionButtonsContainer.$.showRelatedServices) {
         if (this.selectedModels && this.selectedModels.length > 0) {
