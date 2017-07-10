@@ -281,8 +281,7 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
     BigDecimal bdPriceList = getPriceList(ordLine.getProduct().getId(), strPriceVersionId);
     BigDecimal bdPriceStd = getPriceStd(ordLine.getProduct().getId(), strPriceVersionId);
 
-    if (!"".equals(bdPriceList) && bdPriceList != null
-        && !bdPriceList.equals(BigDecimal.ZERO.setScale(bdPriceList.scale()))) {
+    if (bdPriceList != null && bdPriceList.compareTo(BigDecimal.ZERO) != 0) {
       // List Price
       if (objOrder.getPriceList().isPriceIncludesTax()) {
         // If is Price Including Taxes, change only gross
@@ -294,8 +293,7 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       }
     }
 
-    if (!"".equals(bdPriceStd) && bdPriceStd != null
-        && !bdPriceStd.equals(BigDecimal.ZERO.setScale(bdPriceStd.scale()))) {
+    if (bdPriceStd != null && bdPriceStd.compareTo(BigDecimal.ZERO) != 0) {
       // Unit Price
       if (objOrder.getPriceList().isPriceIncludesTax()) {
         // If is Price Including Taxes, change only gross

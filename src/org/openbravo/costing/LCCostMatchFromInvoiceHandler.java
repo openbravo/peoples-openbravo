@@ -197,7 +197,7 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
         lcCost = OBDal.getInstance().get(LandedCostCost.class,
             matchToRemove.getLandedCostCost().getId());
         lcCost.getLandedCostMatchedList().remove(matchToRemove);
-        localIl.getLandedCostCostList().remove(matchToRemove);
+        localIl.getLandedCostMatchedList().remove(matchToRemove);
         OBDal.getInstance().save(lcCost);
         OBDal.getInstance().remove(matchToRemove);
       }
