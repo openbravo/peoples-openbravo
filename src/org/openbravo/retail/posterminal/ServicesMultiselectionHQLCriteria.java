@@ -26,9 +26,9 @@ public class ServicesMultiselectionHQLCriteria extends HQLCriteriaProcess {
   public String getHQLFilter(String params) {
     try {
       JSONArray paramsArray = new JSONArray(params);
-      BigDecimal totalAmountSelected = new BigDecimal(paramsArray.getLong(5));
-      BigDecimal minimumSelected = new BigDecimal(paramsArray.getLong(6));
-      BigDecimal maximumSelected = new BigDecimal(paramsArray.getLong(7));
+      BigDecimal totalAmountSelected = new BigDecimal(paramsArray.getString(5));
+      BigDecimal minimumSelected = new BigDecimal(paramsArray.getString(6));
+      BigDecimal maximumSelected = new BigDecimal(paramsArray.getString(7));
       return " (product.productType = 'S' and product.linkedToProduct = 'Y' and product.obposIsmultiselectable = 'Y' and "
           + "((product.includedProducts = 'Y' and not exists (select 1 from ServiceProduct sp where product.id = sp.product.id and sp.relatedProduct.id in ('$1') )) "
           + "or (product.includedProducts = 'N' and $3 = (select count(*) from ServiceProduct sp where product.id = sp.product.id and sp.relatedProduct.id in ('$1') )) "
