@@ -187,9 +187,9 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       newOrderLine.setAttributeSetValue(asi);
       newOrderLine.setUOM(uom);
       newOrderLine.setOperativeUOM(shipmentLine != null ? shipmentLine.getOperativeUOM() : null);
-      newOrderLine.setOperativeQuantity(shipmentLine == null
-          || shipmentLine.getOperativeQuantity() == null ? BigDecimal.ZERO : shipmentLine
-          .getOperativeQuantity().negate());
+      newOrderLine.setOperativeQuantity(shipmentLine != null
+          && shipmentLine.getOperativeQuantity() != null ? shipmentLine.getOperativeQuantity()
+          .negate() : BigDecimal.ZERO);
 
       BigDecimal qtyReturned = new BigDecimal(selectedLine.getString("returned")).negate();
 
