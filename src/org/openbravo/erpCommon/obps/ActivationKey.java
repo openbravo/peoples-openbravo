@@ -1573,7 +1573,7 @@ public class ActivationKey {
       timeToRefresh = calendar.getTime();
     }
 
-    return timeToRefresh == null || new Date().after(timeToRefresh);
+    return true || timeToRefresh == null || new Date().after(timeToRefresh);
   }
 
   private boolean refreshLicense(int minutesToRefresh) {
@@ -1587,6 +1587,7 @@ public class ActivationKey {
         return false;
       }
 
+      long t = System.currentTimeMillis();
       log4j.debug("Trying to refresh license, last refresh "
           + (lastRefreshTime == null ? "never" : lastRefreshTime.toString()));
 
@@ -1595,6 +1596,7 @@ public class ActivationKey {
       params.put("purpose", getProperty("purpose"));
       params.put("instanceNo", getProperty("instanceno"));
       params.put("activate", true);
+      params.put("updated", getProperty("updated"));
       ProcessBundle pb = new ProcessBundle(null, new VariablesSecureApp("0", "0", "0"));
       pb.setParams(params);
 
@@ -1623,6 +1625,7 @@ public class ActivationKey {
         // following period of time
         lastRefreshTime = new Date();
       }
+      log.info("License refreshed in " + (System.currentTimeMillis() - t) + "ms");
       return refreshed;
     } finally {
       refreshLicenseLock.unlock();
