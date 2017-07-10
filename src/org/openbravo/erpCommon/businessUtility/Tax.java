@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,32 +36,6 @@ public class Tax {
     log4jTax.debug("Tax.get");
     return Tax.get(conn, M_Product_ID, shipDate, AD_Org_ID, M_Warehouse_ID,
         billC_BPartner_Location_ID, shipC_BPartner_Location_ID, C_Project_ID, IsSOTrx, "");
-
-    // FIXME: If this code is not goint be used, it should be removed
-    /*
-     * System.out.println("billC_BPartner_Location_ID: " + billC_BPartner_Location_ID); String
-     * billFrom = TaxData.billLocation(conn, AD_Org_ID); TaxData[] td = TaxData.billTo(conn,
-     * billC_BPartner_Location_ID);
-     * 
-     * if (td==null || td.length==0) return ""; String billTo = td[0].billtocLocationId; String
-     * IsTaxExempt = (IsSOTrx?td[0].istaxexempt:"N"); String IsSpecialTax =
-     * (IsSOTrx?td[0].isspecialtax:"N"); String taxID=""; if (IsTaxExempt.equalsIgnoreCase("Y")) {
-     * TaxData[] tdAux = TaxData.taxId(conn, AD_Org_ID); if (tdAux!=null && tdAux.length >0) taxID =
-     * tdAux[0].cTaxId; } else { String taxCategory = TaxData.taxCategory(conn, M_Product_ID);
-     * String shipFrom = TaxData.shipLocation(conn, M_Warehouse_ID); String shipTo =
-     * TaxData.shipTo(conn, shipC_BPartner_Location_ID); System.out.println("taxCategory: " +
-     * taxCategory); System.out.println("shipFrom: " + shipFrom); System.out.println("shipTo: " +
-     * shipTo); if (!IsSOTrx) { String strAux = billTo; billTo = billFrom; billFrom = strAux; strAux
-     * = shipTo; shipTo = shipFrom; shipFrom = strAux; System.out.println("shipFrom: " + shipFrom);
-     * System.out.println("shipTo: " + shipTo); } System.out.println("taxCategory: " + taxCategory);
-     * System.out.println("billFrom: " + billFrom); System.out.println("shipTo: " + shipTo);
-     * System.out.println("shipDate: " + shipDate); System.out.println("IsSpecialTax: " +
-     * IsSpecialTax); TaxData[] tdAux = TaxData.select(conn, taxCategory, billFrom, shipTo,
-     * shipDate, IsSpecialTax); if (tdAux==null || tdAux.length==0) tdAux = TaxData.select2(conn,
-     * taxCategory, billFrom, shipDate, IsSpecialTax); if (tdAux==null || tdAux.length==0) tdAux =
-     * TaxData.select3(conn, billFrom, shipDate); if (tdAux!=null && tdAux.length!=0) taxID =
-     * tdAux[0].cTaxId; } System.out.println("TaxID: " + taxID); return taxID;
-     */
   }
 
   public static String get(ConnectionProvider conn, String M_Product_ID, String shipDate,

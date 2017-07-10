@@ -48,8 +48,8 @@ public interface InventoryStatusValidationHook {
 // @Override
 // public void exec(Locator locator, InventoryStatus newStatus) throws OBException {
 // if (Utilities.existTasksForStorageDetail(locator)) {
-// System.out.println("somebody is calling me");
 // throw new OBException(OBMessageUtils.messageBD("OBAWO_StorageDetailWithTask"));
+// // Hook stuff goes here
 // }
 // }
 //

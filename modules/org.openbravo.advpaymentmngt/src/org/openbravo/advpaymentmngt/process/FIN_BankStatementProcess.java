@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -23,6 +24,8 @@ import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.scheduling.ProcessBundle;
 
 public class FIN_BankStatementProcess implements org.openbravo.scheduling.Process {
+
+  private static final Logger log = Logger.getLogger(FIN_BankStatementProcess.class);
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -128,7 +131,7 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
       bundle.setResult(msg);
 
     } catch (Exception e) {
-      e.printStackTrace(System.err);
+      log.error("Error while executing FIN_BankStatementProcess", e);
       msg.setType("Error");
       msg.setTitle(Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext()
           .getLanguage()));

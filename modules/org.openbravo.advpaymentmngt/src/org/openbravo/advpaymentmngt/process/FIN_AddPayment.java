@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -192,7 +192,6 @@ public class FIN_AddPayment {
             paymentId);
       }
     } catch (final Exception e) {
-      e.printStackTrace(System.err);
       throw new OBException(e);
     } finally {
       OBContext.restorePreviousMode();

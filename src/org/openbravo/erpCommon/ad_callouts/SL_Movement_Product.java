@@ -11,12 +11,14 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
+
+import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
@@ -26,6 +28,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.Product;
 
@@ -125,6 +128,15 @@ public class SL_Movement_Product extends SimpleCallout {
       info.endSelect();
     } else {
       info.addResult("inpmProductUomId", null);
+    }
+
+    // AUM
+
+    if (UOMUtil.isUomManagementEnabled() && StringUtils.isBlank(strPUOM)) {
+      String defaultAUMForLogistic = UOMUtil.getDefaultAUMForLogistic(strMProductID);
+      info.addResult("inpcAum", defaultAUMForLogistic);
+      info.addResult("inpaumqty",
+          UOMUtil.getConvertedAumQty(strMProductID, new BigDecimal(strQty), defaultAUMForLogistic));
     }
 
     // displayLogic

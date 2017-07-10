@@ -24,16 +24,6 @@ public class CryptoUtility {
   public CryptoUtility() {
   }
 
-  public static void main(String argv[]) throws Exception {
-    System.out.println("Enter encryption password:  ");
-    System.out.flush();
-    String clave = argv[0];
-    System.out.println("************* " + clave);
-    String strEnc = CryptoUtility.encrypt(clave);
-    System.out.println("ENCRYPTED TEXT: " + strEnc);
-    System.out.println("DECRYPTED TEXT: " + CryptoUtility.decrypt(strEnc));
-  }
-
   private static void initCipher() {
     try {
       s_key = new SecretKeySpec(new byte[] { 100, 25, 28, -122, -26, 94, -3, -72 }, "DES");

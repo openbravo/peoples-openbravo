@@ -56,7 +56,6 @@
   v_Processed VARCHAR2(60) ;
   v_Client_ID VARCHAR2(32);
   v_Org_ID VARCHAR2(32);
-  v_Locator_ID VARCHAR2(32);
   --
   v_Line NUMBER;
   v_Count NUMBER;

@@ -372,8 +372,7 @@ public class EntityAccessChecker implements OBNotSingleton {
   }
 
   /**
-   * Dumps the readable, writable, derived readable entities to the System.err outputstream. For
-   * debugging purposes.
+   * Dumps the readable, writable, derived readable entities. For debugging purposes.
    */
   public void dump() {
     log.info("");

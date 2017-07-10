@@ -134,6 +134,37 @@ public class UOMUtil {
     return finalAUM;
   }
 
+   /**
+   * Get default AUM for a product in Logistic Flow
+   * 
+   * @param mProductId
+   *          The Id of the product
+   * @return The default AUM to use in Logistic flow or Base UOM
+   */
+  public static String getDefaultAUMForLogistic(String mProductId) {
+    if (mProductId == null) {
+      return null;
+    }
+    String finalAUM = "";
+    // Do not check Organization access
+    OBContext.setAdminMode(false);
+    try {
+      OBCriteria<ProductAUM> pAUMCriteria = OBDal.getInstance().createCriteria(ProductAUM.class);
+      pAUMCriteria.add(Restrictions.eq("product.id", mProductId));
+      pAUMCriteria.add(Restrictions.eq(ProductAUM.PROPERTY_LOGISTICS, UOM_PRIMARY));
+      Product product = OBDal.getInstance().get(Product.class, mProductId);
+      finalAUM = product.getUOM().getId();
+      ProductAUM primaryAum = (ProductAUM) pAUMCriteria.uniqueResult();
+      if (primaryAum != null) {
+        finalAUM = primaryAum.getUOM().getId();
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return finalAUM;
+  }
+
+
   /**
    * Get all the available UOM for a product for a given document
    * 

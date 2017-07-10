@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -181,7 +181,7 @@ public class CreateTaxReport extends HttpSecureAppServlet {
     StringBuilder strTreeOrg = new StringBuilder(strOrg);
     treeOrg(vars, strOrg, strTreeOrg);
 
-    Vector<Object> vectorArray = new Vector<Object>();
+    Vector<CreateTaxReportData> vectorArray = new Vector<>();
 
     childData(vars, vectorArray, strTaxReportId, strDateFrom, strDateTo, strTreeOrg.toString(),
         level, "0", 1);
@@ -227,7 +227,7 @@ public class CreateTaxReport extends HttpSecureAppServlet {
     return;
   }
 
-  private void childData(VariablesSecureApp vars, Vector<Object> vectorArray,
+  private void childData(VariablesSecureApp vars, Vector<CreateTaxReportData> vectorArray,
       String strTaxReportId, String strPeriodFrom, String strPeriodTo, String strOrg, int level,
       String strParent, int rownum) throws IOException, ServletException {
     int localRownum = rownum;
@@ -281,12 +281,13 @@ public class CreateTaxReport extends HttpSecureAppServlet {
     }
   }
 
-  private CreateTaxReportData[] convertVector(Vector<Object> vectorArray) throws ServletException {
+  private CreateTaxReportData[] convertVector(Vector<CreateTaxReportData> vectorArray)
+      throws ServletException {
     CreateTaxReportData[] data = new CreateTaxReportData[vectorArray.size()];
     BigDecimal count = BigDecimal.ZERO;
-    Vector<Object> vectorArrayDisplay = new Vector<Object>();
+    Vector<CreateTaxReportData> vectorArrayDisplay = new Vector<>();
     for (int i = 0; i < vectorArray.size(); i++) {
-      data[i] = (CreateTaxReportData) vectorArray.elementAt(i);
+      data[i] = vectorArray.elementAt(i);
       if (data[i].isshown.equals("Y")) {
         vectorArrayDisplay.addElement(data[i]);
       }

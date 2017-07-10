@@ -65,7 +65,6 @@
   v_Aum C_ORDERLINE.C_AUM%TYPE;
   v_AumQty NUMBER;
   v_uom_preference AD_PREFERENCE.VALUE%TYPE;
-  v_count NUMBER;
   
   --  Parameter
   TYPE RECORD IS REF CURSOR;

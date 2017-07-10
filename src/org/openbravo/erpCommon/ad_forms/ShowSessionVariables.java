@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * All portions are Copyright (C) 2001-2017 Openbravo S.L.U.
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -94,11 +94,11 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
     }
   }
 
-  private boolean existsWindow(Vector<Object> windows, String windowId) {
+  private boolean existsWindow(Vector<String> windows, String windowId) {
     if (windows.size() == 0)
       return false;
     for (int i = 0; i < windows.size(); i++) {
-      String aux = (String) windows.elementAt(i);
+      String aux = windows.elementAt(i);
       if (aux.equals(windowId))
         return true;
     }
@@ -120,7 +120,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
       boolean preferences, boolean global, boolean accounting, boolean windowGlobal, String window) {
     ShowSessionVariablesStructureData[] resData = null;
     try {
-      Vector<Object> vecPreferences = new Vector<Object>();
+      Vector<ShowSessionVariablesStructureData> vecPreferences = new Vector<>();
       if (preferences && (window.equals("") || window.equals("0"))) {
         for (int i = 0; i < data.length; i++) {
           if (data[i].isPreference && (data[i].window == null || data[i].window.equals(""))) {
@@ -128,8 +128,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
             data[i].window = "";
             data[i].windowName = "";
             for (int j = 0; j < vecPreferences.size() && !insertado; j++) {
-              ShowSessionVariablesStructureData element = (ShowSessionVariablesStructureData) vecPreferences
-                  .elementAt(j);
+              ShowSessionVariablesStructureData element = vecPreferences.elementAt(j);
               if (element.name.compareTo(data[i].name) >= 0) {
                 vecPreferences.insertElementAt(data[i], j);
                 insertado = true;
@@ -141,7 +140,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
           }
         }
       }
-      Vector<Object> vecPreferencesW = new Vector<Object>();
+      Vector<ShowSessionVariablesStructureData> vecPreferencesW = new Vector<>();
       if (preferences && !window.equals("")) {
         for (int i = 0; i < data.length; i++) {
           if (data[i].isPreference
@@ -150,8 +149,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
             boolean insertado = false;
             data[i].windowName = windowName(windows, data[i].window);
             for (int j = 0; j < vecPreferencesW.size() && !insertado; j++) {
-              ShowSessionVariablesStructureData element = (ShowSessionVariablesStructureData) vecPreferencesW
-                  .elementAt(j);
+              ShowSessionVariablesStructureData element = vecPreferencesW.elementAt(j);
               if (element.windowName.compareTo(data[i].windowName) > 0) {
                 vecPreferencesW.insertElementAt(data[i], j);
                 insertado = true;
@@ -169,7 +167,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
         }
       }
 
-      Vector<Object> vecGlobal = new Vector<Object>();
+      Vector<ShowSessionVariablesStructureData> vecGlobal = new Vector<>();
       if (global) {
         for (int i = 0; i < data.length; i++) {
           if (data[i].isGlobal) {
@@ -177,8 +175,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
             data[i].window = "";
             data[i].windowName = "";
             for (int j = 0; j < vecGlobal.size() && !insertado; j++) {
-              ShowSessionVariablesStructureData element = (ShowSessionVariablesStructureData) vecGlobal
-                  .elementAt(j);
+              ShowSessionVariablesStructureData element = vecGlobal.elementAt(j);
               if (element.name.compareTo(data[i].name) >= 0) {
                 vecGlobal.insertElementAt(data[i], j);
                 insertado = true;
@@ -191,7 +188,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
         }
       }
 
-      Vector<Object> vecAccounting = new Vector<Object>();
+      Vector<ShowSessionVariablesStructureData> vecAccounting = new Vector<>();
       if (accounting) {
         for (int i = 0; i < data.length; i++) {
           if (data[i].isAccounting) {
@@ -199,8 +196,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
             data[i].window = "";
             data[i].windowName = "";
             for (int j = 0; j < vecAccounting.size() && !insertado; j++) {
-              ShowSessionVariablesStructureData element = (ShowSessionVariablesStructureData) vecAccounting
-                  .elementAt(j);
+              ShowSessionVariablesStructureData element = vecAccounting.elementAt(j);
               if (element.name.compareTo(data[i].name) >= 0) {
                 vecAccounting.insertElementAt(data[i], j);
                 insertado = true;
@@ -213,7 +209,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
         }
       }
 
-      Vector<Object> vecWindowG = new Vector<Object>();
+      Vector<ShowSessionVariablesStructureData> vecWindowG = new Vector<>();
       if (windowGlobal) {
         for (int i = 0; i < data.length; i++) {
           if (!data[i].isAccounting && !data[i].isGlobal && !data[i].isPreference
@@ -222,8 +218,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
             data[i].window = "";
             data[i].windowName = "";
             for (int j = 0; j < vecWindowG.size() && !insertado; j++) {
-              ShowSessionVariablesStructureData element = (ShowSessionVariablesStructureData) vecWindowG
-                  .elementAt(j);
+              ShowSessionVariablesStructureData element = vecWindowG.elementAt(j);
               if (element.name.compareTo(data[i].name) >= 0) {
                 vecWindowG.insertElementAt(data[i], j);
                 insertado = true;
@@ -236,7 +231,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
         }
       }
 
-      Vector<Object> vecWindow = new Vector<Object>();
+      Vector<ShowSessionVariablesStructureData> vecWindow = new Vector<>();
       if (!window.equals("")) {
         for (int i = 0; i < data.length; i++) {
           if (!data[i].isAccounting
@@ -247,8 +242,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
             boolean insertado = false;
             data[i].windowName = windowName(windows, data[i].window);
             for (int j = 0; j < vecWindow.size() && !insertado; j++) {
-              ShowSessionVariablesStructureData element = (ShowSessionVariablesStructureData) vecWindow
-                  .elementAt(j);
+              ShowSessionVariablesStructureData element = vecWindow.elementAt(j);
               if (element.windowName.compareTo(data[i].windowName) > 0) {
                 vecWindow.insertElementAt(data[i], j);
                 insertado = true;
@@ -266,7 +260,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
         }
       }
 
-      Vector<Object> vecCompleto = new Vector<Object>();
+      Vector<ShowSessionVariablesStructureData> vecCompleto = new Vector<>();
       for (int i = 0; i < vecPreferences.size(); i++) {
         vecCompleto.addElement(vecPreferences.elementAt(i));
       }
@@ -302,12 +296,12 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
   }
 
   private ShowSessionVariablesStructureData[] compoundSession(HttpServletRequest request,
-      VariablesSecureApp vars, Vector<Object> windows) {
+      VariablesSecureApp vars, Vector<String> windows) {
     if (log4j.isDebugEnabled())
       log4j.debug("ShowSession - compoundSession - view session");
     ShowSessionVariablesStructureData[] data = null;
     HttpSession session = request.getSession(true);
-    Vector<Object> texto = new Vector<Object>();
+    Vector<ShowSessionVariablesStructureData> texto = new Vector<>();
     try {
       String sessionName;
       Enumeration<?> e = session.getAttributeNames();
@@ -357,7 +351,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
       log4j.debug("ShowSession - printPageDataSheet - Output: data sheet");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
-    Vector<Object> windows = new Vector<Object>();
+    Vector<String> windows = new Vector<>();
     ShowSessionVariablesStructureData[] data = compoundSession(request, vars, windows);
     XmlDocument xmlDocument;
     if (data == null || data.length == 0) {
@@ -369,11 +363,11 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
           "org/openbravo/erpCommon/ad_forms/ShowSessionVariables").createXmlDocument();
     }
     StringBuffer strWindows = new StringBuffer();
-    Vector<Object> vecWindows = new Vector<Object>();
+    Vector<ShowSessionVariablesData> vecWindows = new Vector<>();
     if (windows.size() != 0) {
       strWindows.append("(");
       for (int i = 0; i < windows.size(); i++) {
-        String aux = (String) windows.elementAt(i);
+        String aux = windows.elementAt(i);
         try {
           if (i > 0)
             strWindows.append(", ");
@@ -424,7 +418,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
         .select(this, strWindows.toString()) : ShowSessionVariablesData.selectTrl(this,
         strWindows.toString(), vars.getLanguage()));
     {
-      Vector<Object> v = new Vector<Object>();
+      Vector<ShowSessionVariablesData> v = new Vector<>();
       ShowSessionVariablesData d = new ShowSessionVariablesData();
       d.id = "0";
       d.name = "All";

@@ -1111,7 +1111,7 @@ public class Sqlc extends DefaultHandler {
     }
     if (sql.sqlReturn.equalsIgnoreCase("MULTIPLE")) {
       importJavaUtil = true;
-      out2.append("    Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);\n");
+      out2.append("    Vector<" + sqlcName + "> vector = new Vector<" + sqlcName + ">(0);\n");
     } else if (sql.sqlReturn.equalsIgnoreCase("SINGLE")) {
       out2.append("    " + sqlcName + " object" + sqlcName + " = new " + sqlcName + "();\n");
     } else if (sql.sqlReturn.equalsIgnoreCase("STRING")) {
@@ -1285,12 +1285,20 @@ public class Sqlc extends DefaultHandler {
     out2.append("      instance.hasData = instance.result.isBeforeFirst();\n");
     out2.append("      instance.countRecord = 0;\n");
     out2.append("    } catch (SQLException e) {\n");
-    out2.append("      log4j.error(\"SQL error in query: \" + strSql + \"Exception:\" + e);\n");
+    out2.append("      if (log4j.isDebugEnabled()) {\n");
+    out2.append("        log4j.error(\"SQL error in query: \" + strSql, e);\n");
+    out2.append("      } else {\n");
+    out2.append("        log4j.error(\"SQL error in query: \" + strSql + \" :\" + e);\n");
+    out2.append("      }\n");
     out2.append("      instance.errorOcurred = true;\n");
     out2.append("      throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\"\n");
     out2.append("          + e.getMessage());\n");
     out2.append("    } catch (Exception ex) {\n");
-    out2.append("      log4j.error(\"Exception in query: \" + strSql + \"Exception:\", ex);\n");
+    out2.append("      if (log4j.isDebugEnabled()) {\n");
+    out2.append("        log4j.error(\"Exception in query: \" + strSql, ex);\n");
+    out2.append("      } else {\n");
+    out2.append("        log4j.error(\"Exception in query: \" + strSql + \" :\" + ex);\n");
+    out2.append("      }\n");
     out2.append("      instance.errorOcurred = true;\n");
     out2.append("      throw new ServletException(\"@CODE=@\" + ex.getMessage());\n");
     out2.append("    }\n");
@@ -1374,10 +1382,18 @@ public class Sqlc extends DefaultHandler {
       out2.append("      }\n");
       out2.append("      resultKey.close();\n");
       out2.append("    } catch(SQLException e){\n");
-      out2.append("      log4j.error(\"SQL error in query: \" + strSql1 + \"Exception:\"+ e);\n");
+      out2.append("      if (log4j.isDebugEnabled()) {\n");
+      out2.append("        log4j.error(\"SQL error in query: \" + strSql, e);\n");
+      out2.append("      } else {\n");
+      out2.append("        log4j.error(\"SQL error in query: \" + strSql + \" :\" + e);\n");
+      out2.append("      }\n");
       out2.append("      throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\" + e.getMessage());\n");
       out2.append("    } catch(Exception ex){\n");
-      out2.append("      log4j.error(\"Exception in query: \" + strSql1 + \"Exception:\"+ ex);\n");
+      out2.append("      if (log4j.isDebugEnabled()) {\n");
+      out2.append("        log4j.error(\"Exception in query: \" + strSql, ex);\n");
+      out2.append("      } else {\n");
+      out2.append("        log4j.error(\"Exception in query: \" + strSql + \" :\" + ex);\n");
+      out2.append("      }\n");
       out2.append("      throw new ServletException(\"@CODE=@\" + ex.getMessage());\n");
       out2.append("    } finally {\n");
       out2.append("      try {\n");
@@ -1494,10 +1510,18 @@ public class Sqlc extends DefaultHandler {
       }
     }
     out2.append("    } catch(SQLException e){\n");
-    out2.append("      log4j.error(\"SQL error in query: \" + strSql + \"Exception:\"+ e);\n");
+    out2.append("      if (log4j.isDebugEnabled()) {\n");
+    out2.append("        log4j.error(\"SQL error in query: \" + strSql, e);\n");
+    out2.append("      } else {\n");
+    out2.append("        log4j.error(\"SQL error in query: \" + strSql + \" :\" + e);\n");
+    out2.append("      }\n");
     out2.append("      throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\" + e.getMessage());\n");
     out2.append("    } catch(Exception ex){\n");
-    out2.append("      log4j.error(\"Exception in query: \" + strSql + \"Exception:\"+ ex);\n");
+    out2.append("      if (log4j.isDebugEnabled()) {\n");
+    out2.append("        log4j.error(\"Exception in query: \" + strSql, ex);\n");
+    out2.append("      } else {\n");
+    out2.append("        log4j.error(\"Exception in query: \" + strSql + \" :\" + ex);\n");
+    out2.append("      }\n");
     out2.append("      throw new ServletException(\"@CODE=@\" + ex.getMessage());\n");
     out2.append("    } finally {\n");
     out2.append("      try {\n");
@@ -1512,8 +1536,8 @@ public class Sqlc extends DefaultHandler {
       else
         out2.append("        connectionProvider.releaseTransactionalPreparedStatement(st);\n");
     }
-    out2.append("      } catch(Exception ignore){\n");
-    out2.append("        ignore.printStackTrace();\n");
+    out2.append("      } catch(Exception e){\n");
+    out2.append("        log4j.error(\"Error during release*Statement of query: \" + strSql, e);\n");
     out2.append("      }\n");
     out2.append("    }\n");
     if (sql.sqlType.equals("callableStatement")) {
@@ -1553,7 +1577,11 @@ public class Sqlc extends DefaultHandler {
       if (outParams > 0)
         out2.append(paramsReceipt.toString());
       out2.append("      } catch(SQLException e){\n");
-      out2.append("        log4j.error(\"SQL error in query: \" + strSql + \"Exception:\"+ e);\n");
+      out2.append("      if (log4j.isDebugEnabled()) {\n");
+      out2.append("        log4j.error(\"SQL error in query: \" + strSql, e);\n");
+      out2.append("      } else {\n");
+      out2.append("        log4j.error(\"SQL error in query: \" + strSql + \" :\" + e);\n");
+      out2.append("      }\n");
       out2.append("        throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\" + e.getMessage());\n");
       out2.append("      } catch(NoConnectionAvailableException ec){\n");
       out2.append("        log4j.error(\"Connection error in query: \" + strSql + \"Exception:\"+ ec);\n");
@@ -1562,7 +1590,11 @@ public class Sqlc extends DefaultHandler {
       out2.append("        log4j.error(\"Pool error in query: \" + strSql + \"Exception:\"+ ep);\n");
       out2.append("        throw new ServletException(\"@CODE=NoConnectionAvailable\");\n");
       out2.append("      } catch(Exception ex){\n");
-      out2.append("        log4j.error(\"Exception in query: \" + strSql + \"Exception:\"+ ex);\n");
+      out2.append("      if (log4j.isDebugEnabled()) {\n");
+      out2.append("        log4j.error(\"Exception in query: \" + strSql, ex);\n");
+      out2.append("      } else {\n");
+      out2.append("        log4j.error(\"Exception in query: \" + strSql + \" :\" + ex);\n");
+      out2.append("      }\n");
       out2.append("        throw new ServletException(\"@CODE=@\" + ex.getMessage());\n");
       out2.append("      }\n");
       out2.append("    }\n");

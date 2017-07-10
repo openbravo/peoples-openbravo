@@ -45,7 +45,6 @@
   v_Line NUMBER;
   v_LineAcum NUMBER;   
   v_NetActual NUMBER;
-  v_PriceLine NUMBER;
   v_CalcLine NUMBER;
 
   TYPE RECORD IS REF CURSOR;

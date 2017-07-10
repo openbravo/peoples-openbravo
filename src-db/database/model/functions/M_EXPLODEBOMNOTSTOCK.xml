@@ -50,7 +50,6 @@
   v_orderline_ID  VARCHAR2(32);
   v_aum C_ORDERLINE.C_AUM%TYPE;
   v_aumqty NUMBER;
-  v_count NUMBER;
   v_uom_preference AD_PREFERENCE.VALUE%TYPE;
   
   BEGIN

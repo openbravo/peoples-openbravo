@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -146,7 +146,7 @@ public class TabFilter extends HttpSecureAppServlet {
 
   private TabFilterData[] getShownFieldsData(TabFilterData[] data) {
     int contador = 1;
-    Vector<Object> fields = new Vector<Object>();
+    Vector<TabFilterData> fields = new Vector<>();
     for (int i = 0; i < data.length; i++) {
       if (mustBeCount(data[i].columnname)) {
         if (isHasDescriptionReference(data[i].adReferenceId) && data[i].isdisplayed.equals("Y"))
@@ -181,7 +181,7 @@ public class TabFilter extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("TabFilter - getOrderByFields() - String to parse: " + localStrOrderBy);
     StringTokenizer orderBy = new StringTokenizer(localStrOrderBy, ",");
-    Vector<Object> fields = new Vector<Object>();
+    Vector<TabFilterData> fields = new Vector<>();
     boolean isnegative = false;
     while (orderBy.hasMoreTokens()) {
       String token = orderBy.nextToken();
@@ -215,7 +215,7 @@ public class TabFilter extends HttpSecureAppServlet {
 
   private TabFilterData[] getShownFieldsDataWithoutOrderBy(TabFilterData[] data,
       TabFilterData[] dataOrderBy) {
-    Vector<Object> fields = new Vector<Object>();
+    Vector<TabFilterData> fields = new Vector<>();
     boolean exists = false;
     for (int i = 0; i < data.length; i++) {
       for (int j = 0; j < dataOrderBy.length; j++) {

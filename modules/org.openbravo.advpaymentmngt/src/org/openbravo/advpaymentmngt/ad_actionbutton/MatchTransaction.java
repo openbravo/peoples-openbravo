@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -361,8 +361,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
     return ((FIN_ReconciliationLine_v) obc.uniqueResult()).getTransactionDate();
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp variables, String strOrgId,
-      String strWindowId, String strTabId, String strPaymentTypeFilter,
+  private void printPage(HttpServletResponse response, VariablesSecureApp variables,
+      String strOrgId, String strWindowId, String strTabId, String strPaymentTypeFilter,
       String strFinancialAccountId, String reconciliationId, String strShowCleared,
       String strHideDate) throws IOException, ServletException {
     log4j
@@ -403,8 +403,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramPaymentTypeFilter", strPaymentTypeFilter);
     xmlDocument.setParameter("showCleared", strShowCleared);
     xmlDocument.setParameter("hideDate", strHideDate);
-    xmlDocument.setParameter("jsDateFormat", "var sc_JsDateFormat =\"" + variables.getJsDateFormat()
-        + "\";");
+    xmlDocument.setParameter("jsDateFormat",
+        "var sc_JsDateFormat =\"" + variables.getJsDateFormat() + "\";");
     // Check if There is a matching algorithm for the given financial account
     FIN_FinancialAccount financial = OBDal.getInstance().get(FIN_FinancialAccount.class,
         strFinancialAccountId);
@@ -414,7 +414,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
     } catch (Exception ex) {
       OBDal.getInstance().rollbackAndClose();
       OBError message = Utility.translateError(this, variables, variables.getLanguage(), Utility
-          .parseTranslation(this, variables, variables.getLanguage(), "@APRM_MissingMatchingAlgorithm@"));
+          .parseTranslation(this, variables, variables.getLanguage(),
+              "@APRM_MissingMatchingAlgorithm@"));
       variables.setMessage(strTabId, message);
       printPageClosePopUp(response, variables, Utility.getTabURL(strTabId, "R", true));
       return;
@@ -452,12 +453,11 @@ public class MatchTransaction extends HttpSecureAppServlet {
     try {
       OBContext.setAdminMode(true);
       // long init = System.currentTimeMillis();
-      data = getMatchedBankStatementLinesData(variables, strFinancialAccountId, strReconciliationId,
-          strPaymentTypeFilter, strShowCleared, strHideDate, executeMatching);
+      data = getMatchedBankStatementLinesData(variables, strFinancialAccountId,
+          strReconciliationId, strPaymentTypeFilter, strShowCleared, strHideDate, executeMatching);
       // log4j.error("Getting Grid Data: " + (System.currentTimeMillis() - init));
     } catch (Exception e) {
-      log4j.debug("Output: Exception ocurred while retrieving Bank Statement Lines.", e);
-      e.printStackTrace();
+      log4j.error("Output: Exception ocurred while retrieving Bank Statement Lines.", e);
     } finally {
       OBContext.restorePreviousMode();
     }

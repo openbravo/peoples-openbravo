@@ -34,7 +34,6 @@
 ************************************************************************/
 
   TYPE RECORD IS REF CURSOR;
-  Cur_M_Product_Aum RECORD;
   v_isSOTRX char(1);
   v_Default_Aum varchar(32); --OBTG:VARCHAR2--
 BEGIN

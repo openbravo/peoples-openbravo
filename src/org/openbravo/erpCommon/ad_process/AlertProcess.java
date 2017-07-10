@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -112,7 +112,7 @@ public class AlertProcess implements Process {
         .getProperty("dateTimeFormat.java");
 
     ResultSet result;
-    Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);
+    Vector<AlertProcessData> vector = new Vector<>(0);
     PreparedStatement st = null;
 
     try {
@@ -149,8 +149,8 @@ public class AlertProcess implements Process {
       try {
         connectionProvider.getConnection().setReadOnly(false);
         connectionProvider.releasePreparedStatement(st);
-      } catch (Exception ignore) {
-        ignore.printStackTrace();
+      } catch (Exception e) {
+        log4j.error("Error during release*Statement of query: " + strSql, e);
       }
     }
     AlertProcessData objectAlertProcessData[] = new AlertProcessData[vector.size()];
@@ -228,8 +228,8 @@ public class AlertProcess implements Process {
     } finally {
       try {
         connectionProvider.releasePreparedStatement(st);
-      } catch (Exception ignore) {
-        ignore.printStackTrace();
+      } catch (Exception e) {
+        log4j.error("Error during release*Statement of query: " + strSql, e);
       }
     }
     return (updateCount);
@@ -415,7 +415,7 @@ public class AlertProcess implements Process {
                     continue;
                   }
                   if (!targetUser.isActive()) {
-                	  continue;
+                    continue;
                   }
                   final Client targetUserClient = targetUser.getClient();
                   final String targetUserClientLanguage = (targetUserClient.getLanguage() != null ? targetUserClient

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -31,6 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
@@ -77,6 +78,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class AddTransaction extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private AdvPaymentMngtDao dao;
+  private static final Logger log = Logger.getLogger(AddTransaction.class);
 
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
@@ -171,8 +173,7 @@ public class AddTransaction extends HttpSecureAppServlet {
             out.close();
 
           } catch (JSONException e) {
-
-            e.printStackTrace();
+            log.error("Error building json output", e);
           }
 
         }

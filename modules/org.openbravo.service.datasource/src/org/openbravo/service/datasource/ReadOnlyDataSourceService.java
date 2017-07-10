@@ -108,9 +108,6 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
       jsonResponse.put(JsonConstants.RESPONSE_DATA, new JSONArray(jsonObjects));
       jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
 
-      // if (jsonObjects.size() > 0) {
-      // System.err.println(jsonObjects.get(0));
-      // }
       return jsonResult.toString();
     } catch (JSONException e) {
       throw new OBException(e);

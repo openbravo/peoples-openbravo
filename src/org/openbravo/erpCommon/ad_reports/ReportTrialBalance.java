@@ -760,7 +760,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"));
 
     log4j.debug("Calculating tree...");
-    dataAux = calculateTree(dataAux, null, new Vector<Object>(), dataInitialBalance,
+    dataAux = calculateTree(dataAux, null, new Vector<String>(), dataInitialBalance,
         strNotInitialBalance);
     dataAux = levelFilter(dataAux, null, false, strLevel);
     dataAux = dataFilter(dataAux);
@@ -781,7 +781,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
   }
 
   private ReportTrialBalanceData[] filterTree(ReportTrialBalanceData[] data, String strLevel) {
-    ArrayList<Object> arrayList = new ArrayList<Object>();
+    ArrayList<ReportTrialBalanceData> arrayList = new ArrayList<>();
     for (int i = 0; data != null && i < data.length; i++) {
       if (data[i].elementlevel.equals(strLevel))
         arrayList.add(data[i]);
@@ -792,35 +792,35 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
   }
 
   private ReportTrialBalanceData[] calculateTree(ReportTrialBalanceData[] data, String indice,
-      Vector<Object> vecTotal, ReportTrialBalanceData[] dataIB, String strNotInitialBalance) {
-    Vector<Object> localVecTotal = vecTotal;
+      Vector<String> vecTotal, ReportTrialBalanceData[] dataIB, String strNotInitialBalance) {
+    Vector<String> localVecTotal = vecTotal;
     String localIndice = indice;
     if (data == null || data.length == 0)
       return data;
     if (localIndice == null)
       localIndice = "0";
     ReportTrialBalanceData[] result = null;
-    Vector<Object> vec = new Vector<Object>();
+    Vector<ReportTrialBalanceData> vec = new Vector<>();
     // if (log4j.isDebugEnabled())
     // log4j.debug("ReportTrialBalanceData.calculateTree() - data: " +
     // data.length);
     if (localVecTotal == null)
-      localVecTotal = new Vector<Object>();
+      localVecTotal = new Vector<>();
     if (localVecTotal.size() == 0) {
       localVecTotal.addElement("0");
       localVecTotal.addElement("0");
       localVecTotal.addElement("0");
       localVecTotal.addElement("0");
     }
-    BigDecimal totalDR = new BigDecimal((String) localVecTotal.elementAt(0));
-    BigDecimal totalCR = new BigDecimal((String) localVecTotal.elementAt(1));
-    BigDecimal totalInicial = new BigDecimal((String) localVecTotal.elementAt(2));
-    BigDecimal totalFinal = new BigDecimal((String) localVecTotal.elementAt(3));
+    BigDecimal totalDR = new BigDecimal(localVecTotal.elementAt(0));
+    BigDecimal totalCR = new BigDecimal(localVecTotal.elementAt(1));
+    BigDecimal totalInicial = new BigDecimal(localVecTotal.elementAt(2));
+    BigDecimal totalFinal = new BigDecimal(localVecTotal.elementAt(3));
     boolean encontrado = false;
     for (int i = 0; i < data.length; i++) {
       if (data[i].parentId.equals(localIndice)) {
         encontrado = true;
-        Vector<Object> vecParcial = new Vector<Object>();
+        Vector<String> vecParcial = new Vector<>();
         vecParcial.addElement("0");
         vecParcial.addElement("0");
         vecParcial.addElement("0");
@@ -828,9 +828,9 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         ReportTrialBalanceData[] dataChilds = calculateTree(data, data[i].id, vecParcial, dataIB,
             strNotInitialBalance);
 
-        BigDecimal parcialDR = new BigDecimal((String) vecParcial.elementAt(0));
-        BigDecimal parcialCR = new BigDecimal((String) vecParcial.elementAt(1));
-        BigDecimal parcialInicial = new BigDecimal((String) vecParcial.elementAt(2));
+        BigDecimal parcialDR = new BigDecimal(vecParcial.elementAt(0));
+        BigDecimal parcialCR = new BigDecimal(vecParcial.elementAt(1));
+        BigDecimal parcialInicial = new BigDecimal(vecParcial.elementAt(2));
         data[i].amtacctdr = (new BigDecimal(data[i].amtacctdr).add(parcialDR)).toPlainString();
         data[i].amtacctcr = (new BigDecimal(data[i].amtacctcr).add(parcialCR)).toPlainString();
         data[i].saldoInicial = (new BigDecimal(data[i].saldoInicial).add(parcialInicial))
@@ -891,7 +891,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
   private ReportTrialBalanceData[] dataFilter(ReportTrialBalanceData[] data) {
     if (data == null || data.length == 0)
       return data;
-    Vector<Object> dataFiltered = new Vector<Object>();
+    Vector<ReportTrialBalanceData> dataFiltered = new Vector<>();
     for (int i = 0; i < data.length; i++) {
       if (new BigDecimal(data[i].amtacctdr).compareTo(BigDecimal.ZERO) != 0
           || new BigDecimal(data[i].amtacctcr).compareTo(BigDecimal.ZERO) != 0
@@ -911,7 +911,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     if (data == null || data.length == 0 || strLevel == null || strLevel.equals(""))
       return data;
     ReportTrialBalanceData[] result = null;
-    Vector<Object> vec = new Vector<Object>();
+    Vector<ReportTrialBalanceData> vec = new Vector<>();
     // if (log4j.isDebugEnabled())
     // log4j.debug("ReportTrialBalanceData.levelFilter() - data: " +
     // data.length);
@@ -955,7 +955,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     ReportTrialBalanceData[] dataAccountCombinations = ReportTrialBalanceData
         .selectAccountCombinations(this, strcAcctSchemaId, strAccountFromValue, strAccountToValue);
     if (dataAccountCombinations.length > 0) {
-      Vector<Object> vec = new Vector<Object>();
+      Vector<ReportTrialBalanceData> vec = new Vector<>();
       List<String> dataAccounts = new ArrayList<String>(data.length);
       for (int i = 0; i < data.length; i++) {
         dataAccounts.add(data[i].id);

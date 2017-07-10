@@ -180,7 +180,6 @@ public class DataSourceServlet extends BaseKernelServlet {
       log.error(e.getMessage(), e);
       writeResult(response, JsonUtils.convertExceptionToJson(e));
     } catch (final Throwable t) {
-      t.printStackTrace(System.err);
       if (SessionHandler.isSessionHandlerPresent()) {
         SessionHandler.getInstance().setDoRollback(true);
       }

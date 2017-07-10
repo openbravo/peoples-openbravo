@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2017 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,7 @@
 package org.openbravo.test.base;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +39,7 @@ import org.apache.log4j.spi.LoggingEvent;
  */
 public class TestLogAppender extends AppenderSkeleton {
   private Map<Level, List<String>> messages = new HashMap<Level, List<String>>();
+  private boolean logStackTraces = false;
 
   @Override
   protected void append(LoggingEvent event) {
@@ -47,6 +49,9 @@ public class TestLogAppender extends AppenderSkeleton {
       messages.put(event.getLevel(), levelMsgs);
     }
     levelMsgs.add(event.getMessage().toString());
+    if (logStackTraces && event.getThrowableStrRep() != null) {
+      levelMsgs.addAll(Arrays.asList(event.getThrowableStrRep()));
+    }
   }
 
   @Override
@@ -58,9 +63,15 @@ public class TestLogAppender extends AppenderSkeleton {
     return false;
   }
 
+  /** Include in messages possible stack traces for logged Throwables */
+  void setLogStackTraces(boolean logStackTraces) {
+    this.logStackTraces = logStackTraces;
+  }
+
   /** Removes all the messages tracked so far */
   public void reset() {
     messages = new HashMap<Level, List<String>>();
+    logStackTraces = false;
   }
 
   /**
