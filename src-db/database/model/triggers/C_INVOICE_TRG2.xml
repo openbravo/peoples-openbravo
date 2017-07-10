@@ -25,22 +25,22 @@
    TYPE RECORD IS REF CURSOR;
   Cur_Discounts RECORD;
   v_Key VARCHAR2(32) ;
-  v_updateDiscount CHAR(1):= 'N';
+  v_updateDiscount CHAR(1) := 'N';
     
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
-   IF(UPDATING)THEN
-     IF(:OLD.C_BPARTNER_ID <> :NEW.C_BPARTNER_ID)THEN
-       v_updateDiscount:= 'Y';
-     END IF;
-   END IF;
-   
-   IF (INSERTING OR v_updateDiscount = 'Y') THEN  
+  IF (UPDATING) THEN
+    IF (:OLD.C_BPARTNER_ID <> :NEW.C_BPARTNER_ID) THEN
+      v_updateDiscount := 'Y';
+    END IF;
+  END IF;
+
+  IF (INSERTING OR v_updateDiscount = 'Y') THEN
     FOR Cur_Discounts IN
-     (
+    (
       SELECT BPD.C_DISCOUNT_ID,
         BPD.LINE,
         BPD.CASCADE
@@ -53,7 +53,7 @@ BEGIN
         OR BPD.ISVENDOR <> :NEW.ISSOTRX)
         AND BPD.APPLYINORDER='N'
       ORDER BY BPD.LINE
-      )
+    )
     LOOP
       Ad_Sequence_Next('C_Invoice_Discount', :NEW.AD_Client_ID, v_Key) ;
       INSERT
@@ -72,8 +72,8 @@ BEGIN
           Cur_Discounts.C_DISCOUNT_ID, Cur_Discounts.LINE, Cur_Discounts.CASCADE
         )
       ;
-     END LOOP;
-   END IF;
+    END LOOP;
+  END IF;
 END C_INVOICE_TRG2
 ]]></body>
     </trigger>

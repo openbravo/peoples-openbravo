@@ -40,6 +40,7 @@ import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.Order;
+import org.openbravo.model.common.order.OrderDiscount;
 import org.openbravo.model.common.order.OrderLine;
 
 public class OrderEventHandler extends EntityPersistenceEventObserver {
@@ -72,10 +73,8 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
     Date oldScheduledDate = (Date) event.getPreviousState(scheduledDateProperty);
     Warehouse newWarehouseId = (Warehouse) event.getCurrentState(warehouseProperty);
     Warehouse oldWarehouseId = (Warehouse) event.getPreviousState(warehouseProperty);
-    BusinessPartner newBusinessPartner = (BusinessPartner) event
-        .getCurrentState(businessPartnerProperty);
-    BusinessPartner oldBusinessPartner = (BusinessPartner) event
-        .getPreviousState(businessPartnerProperty);
+    String newBPId = ((BusinessPartner) event.getCurrentState(businessPartnerProperty)).getId();
+    String oldBPId = ((BusinessPartner) event.getPreviousState(businessPartnerProperty)).getId();
 
     // Check whether the preference is set to sync with order header
     try {
@@ -129,15 +128,15 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
         }
       }
     }
-    // update discount information
-    if (newBusinessPartner != null && oldBusinessPartner != null
-        && !StringUtils.equals(newBusinessPartner.getId(), oldBusinessPartner.getId())) {
-      StringBuilder removeQuery = new StringBuilder("delete from OrderDiscount disc");
-      removeQuery.append(" where disc.salesOrder.id = :orderId");
 
-      Query updateQry = OBDal.getInstance().getSession().createQuery(removeQuery.toString());
-      updateQry.setString("orderId", event.getId());
-      updateQry.executeUpdate();
+    // Remove discount information
+    if (!StringUtils.equals(newBPId, oldBPId)) {
+      StringBuilder deleteHql = new StringBuilder();
+      deleteHql.append(" delete from " + OrderDiscount.ENTITY_NAME);
+      deleteHql.append(" where " + OrderDiscount.PROPERTY_SALESORDER + ".id = :orderId");
+      Query deleteQry = OBDal.getInstance().getSession().createQuery(deleteHql.toString());
+      deleteQry.setParameter("orderId", orderId);
+      deleteQry.executeUpdate();
     }
   }
 

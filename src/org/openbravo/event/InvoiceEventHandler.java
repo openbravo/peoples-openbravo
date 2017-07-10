@@ -31,8 +31,10 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.invoice.InvoiceDiscount;
 
 public class InvoiceEventHandler extends EntityPersistenceEventObserver {
+
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Invoice.ENTITY_NAME) };
   protected Logger logger = Logger.getLogger(this.getClass());
 
@@ -41,28 +43,26 @@ public class InvoiceEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(@Observes
+  EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
     final Entity invoiceEntity = ModelProvider.getInstance().getEntity(Invoice.ENTITY_NAME);
     final Property businessPartnerProperty = invoiceEntity
         .getProperty(Invoice.PROPERTY_BUSINESSPARTNER);
+    String invoiceId = (String) event.getTargetInstance().getId();
+    String newBPId = ((BusinessPartner) event.getCurrentState(businessPartnerProperty)).getId();
+    String oldBPId = ((BusinessPartner) event.getPreviousState(businessPartnerProperty)).getId();
 
-    BusinessPartner newBusinessPartner = (BusinessPartner) event
-        .getCurrentState(businessPartnerProperty);
-    BusinessPartner oldBusinessPartner = (BusinessPartner) event
-        .getPreviousState(businessPartnerProperty);
-
-    // update discount information
-    if (newBusinessPartner != null && oldBusinessPartner != null
-        && !StringUtils.equals(newBusinessPartner.getId(), oldBusinessPartner.getId())) {
-      StringBuilder removeQuery = new StringBuilder("delete from InvoiceDiscount disc");
-      removeQuery.append(" where disc.invoice.id = :invoiceId");
-
-      Query updateQry = OBDal.getInstance().getSession().createQuery(removeQuery.toString());
-      updateQry.setString("invoiceId", event.getId());
-      updateQry.executeUpdate();
+    // Remove discount information
+    if (!StringUtils.equals(newBPId, oldBPId)) {
+      StringBuilder deleteHql = new StringBuilder();
+      deleteHql.append(" delete from " + InvoiceDiscount.ENTITY_NAME);
+      deleteHql.append(" where " + InvoiceDiscount.PROPERTY_INVOICE + ".id = :invoiceId");
+      Query deleteQry = OBDal.getInstance().getSession().createQuery(deleteHql.toString());
+      deleteQry.setParameter("invoiceId", invoiceId);
+      deleteQry.executeUpdate();
     }
   }
 }
