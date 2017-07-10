@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,9 @@ import java.util.Date;
 
 import javax.enterprise.event.Observes;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -35,6 +37,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
@@ -49,7 +52,8 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(@Observes
+  EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -58,6 +62,8 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
     final Property scheduledDateProperty = orderEntity
         .getProperty(Order.PROPERTY_SCHEDULEDDELIVERYDATE);
     final Property warehouseProperty = orderEntity.getProperty(Order.PROPERTY_WAREHOUSE);
+    final Property businessPartnerProperty = orderEntity
+        .getProperty(Order.PROPERTY_BUSINESSPARTNER);
     String syncDateOrdered = null, syncDateDelivered = null, syncWarehouse = null;
     String orderId = (String) event.getTargetInstance().getId();
     Date newOrderDate = (Date) event.getCurrentState(orderDateProperty);
@@ -66,6 +72,10 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
     Date oldScheduledDate = (Date) event.getPreviousState(scheduledDateProperty);
     Warehouse newWarehouseId = (Warehouse) event.getCurrentState(warehouseProperty);
     Warehouse oldWarehouseId = (Warehouse) event.getPreviousState(warehouseProperty);
+    BusinessPartner newBusinessPartner = (BusinessPartner) event
+        .getCurrentState(businessPartnerProperty);
+    BusinessPartner oldBusinessPartner = (BusinessPartner) event
+        .getPreviousState(businessPartnerProperty);
 
     // Check whether the preference is set to sync with order header
     try {
@@ -119,9 +129,20 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
         }
       }
     }
+    // update discount information
+    if (newBusinessPartner != null && oldBusinessPartner != null
+        && !StringUtils.equals(newBusinessPartner.getId(), oldBusinessPartner.getId())) {
+      StringBuilder removeQuery = new StringBuilder("delete from OrderDiscount disc");
+      removeQuery.append(" where disc.salesOrder.id = :orderId");
+
+      Query updateQry = OBDal.getInstance().getSession().createQuery(removeQuery.toString());
+      updateQry.setString("orderId", event.getId());
+      updateQry.executeUpdate();
+    }
   }
 
-  public void onDelete(@Observes EntityDeleteEvent event) {
+  public void onDelete(@Observes
+  EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
