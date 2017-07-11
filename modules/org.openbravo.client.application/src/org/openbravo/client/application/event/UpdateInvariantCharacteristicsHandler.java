@@ -159,9 +159,9 @@ public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
           }
 
         }
-        new VariantChDescUpdateProcess().update(productId, null);
 
         OBDal.getInstance().flush();
+        new VariantChDescUpdateProcess().update(productId, null);
         JSONObject message = new JSONObject();
         message.put("severity", "success");
         message.put("text", OBMessageUtils.messageBD("UpdateCharacteristicsSuccess"));
