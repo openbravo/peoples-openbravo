@@ -701,8 +701,10 @@ enyo.kind({
   reactivateQuotation: function () {
     this.model.get('order').reactivateQuotation();
     this.model.get('orderList').saveCurrent();
-    if (this.model.get('order').get('isEditable') && this.model.get('order').get('isQuotation')) {
-      this.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$.actionButtonsContainer.$.descriptionButton.show();
+    if (this.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$.actionButtonsContainer.$.descriptionButton) {
+      if (this.model.get('order').get('isEditable') && this.model.get('order').get('isQuotation')) {
+        this.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$.actionButtonsContainer.$.descriptionButton.show();
+      }
     }
     return true;
   },
