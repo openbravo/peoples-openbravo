@@ -3674,15 +3674,15 @@ isc.OBViewGrid.addProperties({
       var focusItem = editForm.getFocusItem();
       if (focusItem && !focusItem.hasPickList) {
         focusItem.blur(focusItem.form, focusItem);
-        if (editForm.inFicCall) {
-          // use editValues object as the edit form will be re-used for a next row
-          this.setEditValue(rowNum, 'actionAfterFicReturn', {
-            target: this,
-            method: this.saveEditedValues,
-            parameters: [rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback, true]
-          }, true, true);
-          return;
-        }
+      }
+      if (editForm.inFicCall) {
+        // use editValues object as the edit form will be re-used for a next row
+        this.setEditValue(rowNum, 'actionAfterFicReturn', {
+          target: this,
+          method: this.saveEditedValues,
+          parameters: [rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback, true]
+        }, true, true);
+        return;
       }
     }
     // reset the new values as this can have changed because of a fic call or in the blur event of the focused item
