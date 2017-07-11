@@ -680,10 +680,7 @@ OB.ViewFormProperties = {
 
     // store grid editing information which can be used when the fic returns
     // this is needed as after the fic return the edit row may have changed.
-    var gridEditInformation = this.view.viewGrid.getEditForm() ? {
-      grid: this.view.viewGrid,
-      editRow: this.view.viewGrid.getEditRow()
-    } : null;
+    var gridEditInformation = this.view.viewGrid.getEditForm() ? this.getGridEditInformation() : null;
 
     // do not make a request to the FIC in NEW mode if:
     // - the record is new and
@@ -785,7 +782,7 @@ OB.ViewFormProperties = {
 
   processFICReturn: function (response, data, request, gridEditInformation) {
     var length, modeIsNew = request.params.MODE === 'NEW',
-        noErrors, errorSolved;
+        noErrors, errorSolved, editingSameRecord, id;
 
     delete this.contextInfo;
 
@@ -815,28 +812,20 @@ OB.ViewFormProperties = {
         sessionAttributes = data.sessionAttributes,
         editValues, item, section, retHiddenInputs = data.hiddenInputs;
 
+    if (this.grid && gridEditInformation) {
+      id = this.getValue(OB.Constants.ID);
+      editingSameRecord = this.grid.getEditRow() === gridEditInformation.editRow && (!gridEditInformation.id || !id || id === gridEditInformation.id);
+      if (!editingSameRecord) {
+        // We're trying to process a FIC response that was triggered for a different row than the
+        // one that's currently being edited, it must be discarded
+        return;
+      }
+    }
 
     // apparently sometimes an empty string is returned
     if (calloutMessages && calloutMessages.length > 0 && calloutMessages[calloutMessages.length - 1].text !== '') {
       // TODO: check as what type should call out messages be displayed
       this.view.messageBar.setMessage(isc.OBMessageBar[calloutMessages[calloutMessages.length - 1].severity], null, calloutMessages[calloutMessages.length - 1].text);
-    }
-
-    // edit row has changed when returning, don't update the form anymore
-    if (this.grid && gridEditInformation && this.grid.getEditRow() !== gridEditInformation.editRow) {
-      if (columnValues) {
-        for (prop in columnValues) {
-          if (columnValues.hasOwnProperty(prop)) {
-            this.setColumnValuesInEditValues(prop, columnValues[prop], gridEditInformation);
-          }
-        }
-      }
-      editValues = gridEditInformation.grid.getEditValues(gridEditInformation.editRow);
-      if (editValues && editValues.actionAfterFicReturn) {
-        OB.Utilities.callAction(editValues.actionAfterFicReturn);
-        gridEditInformation.grid.setEditValue(gridEditInformation.editRow, 'actionAfterFicReturn', null, true, true);
-      }
-      return;
     }
 
     if (columnValues) {
@@ -1455,10 +1444,7 @@ OB.ViewFormProperties = {
 
     // store grid editing information which can be used when the fic returns
     // this is needed as after the fic return the edit row may have changed.
-    var gridEditInformation = this.view.viewGrid.isEditing() ? {
-      grid: this.view.viewGrid,
-      editRow: this.view.viewGrid.getEditRow()
-    } : null;
+    var gridEditInformation = this.view.viewGrid.isEditing() ? this.getGridEditInformation() : null;
 
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function (response, data, request) {
 
@@ -1482,6 +1468,14 @@ OB.ViewFormProperties = {
       }
     });
     this.view.toolBar.updateButtonState(true);
+  },
+
+  getGridEditInformation: function () {
+    return {
+      grid: this.view.viewGrid,
+      editRow: this.view.viewGrid.getEditRow(),
+      id: this.view.viewGrid.getEditForm().getValue(OB.Constants.ID)
+    };
   },
 
   itemChanged: function (item, newValue) {
