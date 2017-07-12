@@ -1573,7 +1573,7 @@ public class ActivationKey {
       timeToRefresh = calendar.getTime();
     }
 
-    return true || timeToRefresh == null || new Date().after(timeToRefresh);
+    return timeToRefresh == null || new Date().after(timeToRefresh);
   }
 
   private boolean refreshLicense(int minutesToRefresh) {
