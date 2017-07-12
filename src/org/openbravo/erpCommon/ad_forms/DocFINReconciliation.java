@@ -31,6 +31,7 @@ import java.util.Set;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -969,13 +970,15 @@ public class DocFINReconciliation extends AcctServer {
         line2.m_DateAcct = OBDateUtils.formatDate(invoice.getAccountingDate());
         // checking if the prepayment account and ReceivablesNo account in the Business Partner
         // is the same.In this case we do not need to create more accounting lines
-        if (!getAccountBPartner(bpartnerId, as, isReceipt, false, conn).Account_ID
-            .equals(getAccountBPartner(bpartnerId, as, isReceipt, true, conn))) {
-          fact.createLine(line2, getAccountBPartner(bpartnerId, as, isReceipt, false, conn),
+        Account accountIDReceivablesNo = getAccountBPartner(bpartnerId, as, isReceipt, false, conn);
+        Account accountIDPrePayment = getAccountBPartner(bpartnerId, as, isReceipt, true, conn);
+        if (!StringUtils.equals(accountIDReceivablesNo.getAccount_ID(),
+            accountIDPrePayment.getAccount_ID())) {
+          fact.createLine(line2, accountIDReceivablesNo,
               paymentCurrency.getId(), !isReceipt ? bpAmountConverted.toString() : "",
               isReceipt ? bpAmountConverted.toString() : "", Fact_Acct_Group_ID2, nextSeqNo(SeqNo),
               DocumentType, line2.m_DateAcct, null, conn);
-          fact.createLine(line2, getAccountBPartner(bpartnerId, as, isReceipt, true, conn),
+          fact.createLine(line2, accountIDPrePayment,
               paymentCurrency.getId(), isReceipt ? bpAmountConverted.toString() : "",
               !isReceipt ? bpAmountConverted.toString() : "", Fact_Acct_Group_ID2,
               nextSeqNo(SeqNo), DocumentType, line2.m_DateAcct, null, conn);

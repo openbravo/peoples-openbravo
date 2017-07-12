@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -118,7 +118,7 @@ public class SL_InOutLine_Product extends SimpleCallout {
 
     if (isUomManagementEnabled && "".equals(strUOMProduct)) {
       // Set AUM based on default
-      try{
+      try {
         OBContext.setAdminMode();
         ShipmentInOut mInOut = OBDal.getInstance().get(ShipmentInOut.class,
             info.vars.getStringParameter("inpmInoutId"));
@@ -127,17 +127,16 @@ public class SL_InOutLine_Product extends SimpleCallout {
         if (finalAUM != null) {
           info.addResult("inpcAum", finalAUM);
         }
-      }finally{
+      } finally {
         OBContext.restorePreviousMode();
       }
     }
 
     // Secondary UOM
-
+    info.addResult("inphasseconduom", Integer.parseInt(strHasSecondaryUOM));
     if (strHasSecondaryUOM.equals("1")
         && (!isUomManagementEnabled || (isUomManagementEnabled && !"".equals(strUOMProduct)))) {
       String strPUOM = info.vars.getStringParameter("inpmProductId_PUOM");
-      info.addResult("inphasseconduom", (Object) strHasSecondaryUOM);
 
       if (strPUOM.startsWith("\"")) {
         strPUOM = strPUOM.substring(1, strPUOM.length() - 1);

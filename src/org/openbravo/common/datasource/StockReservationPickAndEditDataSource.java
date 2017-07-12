@@ -1679,7 +1679,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
 
   private BigDecimal getQtyOnHand(Product product, Locator storageBin,
       AttributeSetInstance attribute, OrderLine orderline) {
-    if (orderline != null && !"".equals(orderline)) {
+    if (orderline != null) {
       return getQtyOnHandFromOrderLine(orderline);
     }
     final StringBuilder hqlString = new StringBuilder();
