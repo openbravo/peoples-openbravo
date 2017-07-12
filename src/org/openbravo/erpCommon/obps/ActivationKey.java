@@ -1621,8 +1621,7 @@ public class ActivationKey {
 
       if (!refreshed) {
         // Even license couldn't be refreshed, set lastRefreshTime not to try to
-        // refresh in the
-        // following period of time
+        // refresh in the following period of time
         lastRefreshTime = new Date();
       }
       log.info("License refreshed in " + (System.currentTimeMillis() - t) + "ms");
@@ -1630,7 +1629,6 @@ public class ActivationKey {
     } finally {
       refreshLicenseLock.unlock();
     }
-
   }
 
   /**
