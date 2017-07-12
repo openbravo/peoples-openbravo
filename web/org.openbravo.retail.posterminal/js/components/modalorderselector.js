@@ -29,7 +29,9 @@ enyo.kind({
   executeOnShow: function () {
     if (!this.initialized) {
       this.inherited(arguments);
-      this.getFilterSelectorTableHeader().clearFilter();
+      if (!this.keepFiltersOnClose) {
+        this.getFilterSelectorTableHeader().clearFilter();
+      }
     }
   },
   init: function (model) {
