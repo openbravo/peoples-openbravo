@@ -6080,7 +6080,7 @@
       // The new functionality of loading document no, makes this function obsolete.
       // The function is not removed to avoid api changes
     },
-    checkForDuplicateReceipts: function (model, loadOrder) {
+    checkForDuplicateReceipts: function (model, loadOrder, callback, errorCallback) {
 
       function openReceiptPermissionError(orderType) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType]));
@@ -6108,8 +6108,22 @@
         break;
       }
 
+      var orderTypeMsg, i, showErrorPopup = function (errorMsg) {
+          OB.UTIL.showConfirmation.display(errorMsg, null, [{
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            action: function () {
+              if (errorCallback) {
+                errorCallback();
+              }
+            }
+          }], {
+            onHideFunction: function (dialog) {
+              return true;
+            }
+          });
+          };
+
       // Check in Current Session
-      var orderTypeMsg, i;
       for (i = 0; i < OB.MobileApp.model.orderList.length; i++) {
         if (OB.MobileApp.model.orderList.models[i].get('id') === model.get('id') || ((!(_.isNull(OB.MobileApp.model.orderList.models[i].get('oldId')))) && OB.MobileApp.model.orderList.models[i].get('oldId') === model.get('id'))) {
           var errorMsg;
@@ -6126,12 +6140,7 @@
             var QtDocumentNo = model.get('documentNo');
             errorMsg = OB.I18N.getLabel('OBPOS_OrderAssociatedToQuotationInProgress', [QtDocumentNo, SoFromQtDocNo, QtDocumentNo, SoFromQtDocNo]);
           }
-          OB.POS.terminal.$.containerWindow.getRoot().doShowPopup({
-            popup: 'OB_UI_MessageDialog',
-            args: {
-              message: errorMsg
-            }
-          });
+          showErrorPopup(errorMsg);
           if (OB.MobileApp.model.receipt.get('documentNo') !== model.get('documentNo')) {
             OB.MobileApp.model.orderList.load(OB.MobileApp.model.orderList.models[i]);
           }
@@ -6171,7 +6180,12 @@
                         }, OB.UTIL.showError);
                       }
                     }, {
-                      label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                      label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+                      action: function () {
+                        if (errorCallback) {
+                          errorCallback();
+                        }
+                      }
                     }], {
                       onHideFunction: function (dialog) {
                         return true;
