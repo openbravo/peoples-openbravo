@@ -313,10 +313,9 @@ public class ActivationKey {
   /**
    * Reloads ActivationKey instance from information in DB.
    */
-  public static synchronized ActivationKey reload() {
-    ActivationKey ak = getInstance();
-    ak.loadFromDB();
-    return ak;
+  public static ActivationKey reload() {
+    instance.loadFromDB();
+    return instance;
   }
 
   /**
@@ -331,13 +330,22 @@ public class ActivationKey {
     loadFromDB();
   }
 
-  private synchronized void loadFromDB() {
-    log.info("Loading activation key from DB");
-    org.openbravo.model.ad.system.System sys = getSystem();
-    strPublicKey = sys.getInstanceKey();
-    lastUpdateTimestamp = sys.getUpdated();
-    loadInfo(sys.getActivationKey());
-    loadRestrictions();
+  private void loadFromDB() {
+    if (!refreshLicenseLock.tryLock()) {
+      // license being loaded by a different thread
+      return;
+    }
+
+    try {
+      log.info("Loading activation key from DB");
+      org.openbravo.model.ad.system.System sys = getSystem();
+      strPublicKey = sys.getInstanceKey();
+      lastUpdateTimestamp = sys.getUpdated();
+      loadInfo(sys.getActivationKey());
+      loadRestrictions();
+    } finally {
+      refreshLicenseLock.unlock();
+    }
   }
 
   public ActivationKey(String publicKey, String activationKey) {
