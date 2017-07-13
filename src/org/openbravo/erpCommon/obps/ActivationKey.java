@@ -294,10 +294,13 @@ public class ActivationKey {
     instance = ak;
     ak.setRefreshTime(new Date());
     OBContext.setAdminMode(true);
+    ak.lastUpdateTimestamp = getSystem().getUpdated();
+  }
+
+  private static org.openbravo.model.ad.system.System getSystem() {
+    OBContext.setAdminMode(true);
     try {
-      org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
-          org.openbravo.model.ad.system.System.class, "0");
-      ak.lastUpdateTimestamp = sys.getUpdated();
+      return OBDal.getInstance().get(org.openbravo.model.ad.system.System.class, "0");
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -325,18 +328,12 @@ public class ActivationKey {
    * @deprecated
    */
   public ActivationKey() {
-    OBContext.setAdminMode();
-    try {
-      loadFromDB();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+    loadFromDB();
   }
 
   private synchronized void loadFromDB() {
     log.info("Loading activation key from DB");
-    org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
-        org.openbravo.model.ad.system.System.class, "0");
+    org.openbravo.model.ad.system.System sys = getSystem();
     strPublicKey = sys.getInstanceKey();
     lastUpdateTimestamp = sys.getUpdated();
     loadInfo(sys.getActivationKey());
@@ -1557,18 +1554,10 @@ public class ActivationKey {
           maxUsers = 0L;
         }
       }
-      OBContext.setAdminMode();
-      try {
-        // Reload from DB if it was modified from outside
-        if (lastUpdateTimestamp == null
-            || !lastUpdateTimestamp.equals(OBDal.getInstance()
-                .get(org.openbravo.model.ad.system.System.class, "0").getUpdated())) {
-          loadFromDB();
-        }
-      } catch (Exception e) {
-        log.error("Error checking if activation key should be refreshed", e);
-      } finally {
-        OBContext.restorePreviousMode();
+
+      // Reload from DB if it was modified from outside
+      if (lastUpdateTimestamp == null || !lastUpdateTimestamp.equals(getSystem().getUpdated())) {
+        loadFromDB();
       }
     }
   }
