@@ -293,6 +293,14 @@ public class ActivationKey {
   public static synchronized void setInstance(ActivationKey ak) {
     instance = ak;
     ak.setRefreshTime(new Date());
+    OBContext.setAdminMode(true);
+    try {
+      org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
+          org.openbravo.model.ad.system.System.class, "0");
+      ak.lastUpdateTimestamp = sys.getUpdated();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   private void setRefreshTime(Date time) {
@@ -326,6 +334,7 @@ public class ActivationKey {
   }
 
   private synchronized void loadFromDB() {
+    log.info("Loading activation key from DB");
     org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
         org.openbravo.model.ad.system.System.class, "0");
     strPublicKey = sys.getInstanceKey();

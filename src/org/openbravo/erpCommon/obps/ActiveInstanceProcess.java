@@ -105,9 +105,12 @@ public class ActiveInstanceProcess implements Process {
         msg.setType("Error");
         msg.setMessage("@LicenseWithoutAccessTo@ " + nonAllowedMods);
       } else {
-
         sys.setActivationKey(activationKey);
         sys.setInstanceKey(publicKey);
+
+        // flushing to get new updated time that will be used in new activation key
+        OBDal.getInstance().flush();
+
         ActivationKey.setInstance(ak);
         if (ak.isActive()) {
           SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
