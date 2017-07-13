@@ -407,7 +407,7 @@ public class ActivationKey {
     } catch (Exception e) {
       isActive = false;
       errorMessage = "@NotAValidKey@";
-      e.printStackTrace();
+      log.error("Could not load activation key " + strPublicKey, e);
       setLogger();
       return;
     }
