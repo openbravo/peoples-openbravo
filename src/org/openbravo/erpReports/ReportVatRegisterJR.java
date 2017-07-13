@@ -28,19 +28,18 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.JasperPrint;
-
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
-import org.openbravo.erpCommon.utility.KeyMap;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.xmlEngine.XmlDocument;
+
+import net.sf.jasperreports.engine.JasperPrint;
 
 public class ReportVatRegisterJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -103,12 +102,6 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
-    try {
-      KeyMap key = new KeyMap(this, "ReportRegisterFilter.html");
-      xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
     try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpReports.TaxPayment");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());

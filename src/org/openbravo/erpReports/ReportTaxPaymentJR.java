@@ -32,7 +32,6 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.DateTimeData;
-import org.openbravo.erpCommon.utility.KeyMap;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
@@ -94,12 +93,6 @@ public class ReportTaxPaymentJR extends HttpSecureAppServlet {
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
-    try {
-      KeyMap key = new KeyMap(this, "ReportRegisterPayment.html");
-      xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
     try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpReports.TaxPayment");// ReportVatRegisterJR
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
