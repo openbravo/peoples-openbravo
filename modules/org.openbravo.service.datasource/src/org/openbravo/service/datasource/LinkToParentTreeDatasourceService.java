@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2016 Openbravo SLU
+ * All portions are Copyright (C) 2013-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -236,7 +236,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     boolean allowNotApplyingWhereClauseToChildren = !tableTree.isApplyWhereClauseToChildNodes();
     if ((fetchRoot || !allowNotApplyingWhereClauseToChildren) && hqlWhereClause != null) {
       // Include the hql where clause for all root nodes and for child nodes only if it is required
-      whereClause.append(hqlWhereClause + " and ");
+      whereClause.append("(" + hqlWhereClause + ") and ");
     }
 
     if (hqlWhereClauseRootNodes != null && fetchRoot) {
@@ -555,7 +555,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       whereClause.append(".id");
     }
     whereClause.append(" = ? ");
-    whereClause.append(" and " + hqlWhereClause);
+    whereClause.append(" and (" + hqlWhereClause + ")");
     final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
         whereClause.toString());
 
