@@ -13,7 +13,7 @@
  * and  limitations under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s): Openbravo S.L.U.
  ************************************************************************
@@ -114,11 +114,5 @@
         <formatter type="xml" />
       </test>
     </junit>
-  </target>
-
-  <target name="run.api.test.javascript" depends="compile.test">
-    <taskdef name="jstest" classname="org.openbravo.test.javascript.JavaScriptAntTest" classpathref="test.class.path" />
-    <property name="export" value="no" />
-    <jstest apiDetailsPath="${api.test.javascript.details}" jsPath="${base.web}/js" export="${export}" />
   </target>
 </project>
