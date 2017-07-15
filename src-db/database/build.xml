@@ -57,9 +57,6 @@ export.database.structure: Exports the database structure in the xml's files.
   <taskdef name="alterdatabasedataall" classname="org.openbravo.ddlutils.task.AlterDatabaseDataAll">
     <classpath refid="runtime-classpath" />
   </taskdef>
-  <taskdef name="alterdatabasedatamod" classname="org.openbravo.ddlutils.task.AlterDatabaseDataMod">
-    <classpath refid="runtime-classpath" />
-  </taskdef>
   <taskdef name="alterscript" classname="org.openbravo.ddlutils.task.AlterXML2SQL">
     <classpath refid="runtime-classpath" />
   </taskdef>
@@ -106,42 +103,6 @@ export.database.structure: Exports the database structure in the xml's files.
          <propertyref name="java.security.egd" />
       </syspropertyset>
     </java>
-    <antcall target="database.postupdate.${bbdd.rdbms}" />
-    <antcall target="update.dbupdate.timestamp" />
-  </target>
-
-  <target name="update.database.mod.java">
-    <java classname="org.openbravo.ddlutils.task.AlterDatabaseModJava" failonerror="true" fork="true" maxmemory="${build.maxmemory}">
-      <arg value="${bbdd.driver}"/>
-      <arg value="${bbdd.owner.url}"/>
-      <arg value="${bbdd.user}"/>
-      <arg value="${bbdd.password}"/>
-      <arg value="com.openbravo.db.OpenbravoExcludeFilter"/>
-      <arg value="model"/>
-      <arg value="com.openbravo.db.OpenbravoMetadataFilter"/>
-      <arg value="sourcedata"/>
-      <arg value="${bbdd.object}"/>
-      <arg value="false"/>
-      <arg value="${bbdd.verbosity}"/>
-      <arg value="${base.modules}/"/>
-      <arg value="${base.config}/"/>
-      <arg value="*/src-db/database/model"/>
-      <arg value="${base.modules}/"/>
-      <arg value="*/src-db/database/sourcedata"/>
-      <arg value="${module}"/>
-      <arg value="${force}"/>
-      <arg value="${strict.template.application}"/>
-      <classpath refid="runtime-classpath" />
-      <syspropertyset>
-         <propertyref name="java.security.egd" />
-      </syspropertyset>
-    </java>
-    <antcall target="database.postupdate.${bbdd.rdbms}" />
-    <antcall target="update.dbupdate.timestamp" />
-  </target>
-  
-  <target name="update.database.mod">
-    <alterdatabasedatamod driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="sourcedata" object="${bbdd.object}" failonerror="false" verbosity="DEBUG" basedir="${base.modules}/" baseConfig="${base.config}" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" module="${module}" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" />
     <antcall target="database.postupdate.${bbdd.rdbms}" />
     <antcall target="update.dbupdate.timestamp" />
   </target>
