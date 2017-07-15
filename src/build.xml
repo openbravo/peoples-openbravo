@@ -35,8 +35,6 @@ postsrc.modules: it does the same as postsrc but for module files
 build.local.context: copies all files to the eclipse base context 
                      (WebContent...).
 compile.src: comiles only the src files.
-eclipse.compile: generates specified wad files and compiles modified xsql files.
-eclipse.compile.complete: generates all wad files and compiles all xsql files
 compile: compiles specified WAD window and src and also translates.
 compile.complete: compiles all WAD windows and src and also translates.
 translate: Translate the modified files.
@@ -602,14 +600,6 @@ build.war: build a war file in the lib directory.
         <include name="**/*.jasper" />
       </fileset>
     </copy>
-  </target>
-
-
-  <target name="eclipse.compile.complete" depends="clean,generate.entities,wad,sqlc,postsrc,translate, trl.remove.unused">
-    <antcall target="update.build.timestamp" />
-  </target>
-
-  <target name="eclipse.compile" depends="wad,sqlc, postsrc, translate">
   </target>
 
   <target name="compile.src" depends="compileSqlc, postsrc, copy.files">

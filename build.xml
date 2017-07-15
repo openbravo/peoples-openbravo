@@ -27,14 +27,10 @@ compile.complete.development: refer to compile.complete.development target of sr
 compile.development: refer to compile.development target of src.
 compile.web: refer to compile.web: target of src.
 compile.web.development: refer to compile.web.development: target of src.
-eclipse.compile: refer to eclipse.compile target of src.
-eclipse.compile.complete: refer to eclipse.compile.complete target of src.
 compile.src: refer to compile.src target of src.
 war: refer to build.war target of src.
 core.lib: refer to build target of src-core.
-eclipse.wad.lib: refer to sqlc target of src-wad.
 wad.lib: refer to build target of src-wad.
-eclipse.trl.lib: refer to sqlc target of src-trl.
 trl.lib: refer to build target of src-trl.
 database.lib: refer to jar target of src-db.
 clean: refer to clean target of src.
@@ -44,7 +40,6 @@ installWebService: refer to installWebService target of src.
 uninstallWebService: refer to uninstallWebService target of src.
 deploy.context: deploy the context into Tomcat using the manager
 install.source: install the ERP from sources (from subversion).
-eclipse.install.source: install the ERP from sources for eclipse (from Mercurial).
 create.database: refer to create.database target of database.
 update.database: refer to update.database target of database.
 create.database.script: refer to create.database.script target of database.
@@ -523,30 +518,6 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="compile.web.development" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="eclipse.compile" depends="init">
-    <fail unless="eclipse.running" message="eclipse.* tasks must be executed inside Eclipse" />
-    <ant dir="${base.src.core}" target="build.jar" inheritAll="true" inheritRefs="true" />
-    <ant dir="${base.src.trl}" target="build.jar" inheritAll="true" inheritRefs="true" />
-    <ant dir="${base.src.wad}" target="build.jar" inheritAll="true" inheritRefs="true" />
-    <ant dir="${base.src}" target="eclipse.compile" inheritAll="true" inheritRefs="true" />
-    <echo message="Refreshing project..." level="info" />
-    <eclipse.refreshLocal resource="openbravo" depth="infinite" />
-    <echo message="Building project..." level="info" />
-    <eclipse.incrementalBuild project="openbravo" kind="incremental" />
-  </target>
-
-  <target name="eclipse.compile.complete" depends="init">
-    <fail unless="eclipse.running" message="eclipse.* tasks must be executed inside Eclipse" />
-    <ant dir="${base.src.core}" target="build.jar" inheritAll="true" inheritRefs="true" />
-    <ant dir="${base.src.trl}" target="build.jar" inheritAll="true" inheritRefs="true" />
-    <ant dir="${base.src.wad}" target="build.jar" inheritAll="true" inheritRefs="true" />
-    <ant dir="${base.src}" target="eclipse.compile.complete" inheritAll="true" inheritRefs="true" />
-    <echo message="Refreshing project..." level="info" />
-    <eclipse.refreshLocal resource="openbravo" depth="infinite" />
-    <echo message="Building project..." level="info" />
-    <eclipse.incrementalBuild project="openbravo" kind="full" />
-  </target>
-
   <target name="compile.src.gen" depends="init">
     <ant dir="${base.src}" target="compile.src.gen" inheritAll="true" inheritRefs="true" />
   </target>
@@ -652,20 +623,8 @@ export.database: exports database structure and data to xml files.
     <copy file="${base.src.core}/lib/openbravo-core.jar" todir="${base.lib}/runtime" failonerror="false" />
   </target>
 
-  <target name="eclipse.wad.lib" depends="init">
-    <ant dir="${base.src.wad}" target="sqlc" inheritAll="true" inheritRefs="true" />
-    <eclipse.refreshLocal resource="OpenbravoWAD" depth="infinite" />
-    <eclipse.incrementalBuild project="OpenbravoWAD" kind="full" />
-  </target>
-
   <target name="wad.lib" depends="init">
     <ant dir="${base.src.wad}" target="build" inheritAll="true" inheritRefs="true" />
-  </target>
-
-  <target name="eclipse.trl.lib" depends="init">
-    <ant dir="${base.src.trl}" target="sqlc" inheritAll="true" inheritRefs="true" />
-    <eclipse.refreshLocal resource="OpenbravoTrl" depth="infinite" />
-    <eclipse.incrementalBuild project="OpenbravoTrl" kind="full" />
   </target>
 
   <target name="trl.lib" depends="init">
@@ -715,20 +674,6 @@ export.database: exports database structure and data to xml files.
 		<antcall target="validate.database" />
 		<antcall target="validate.modules" />
 		-->
-  </target>
-
-  <target name="eclipse.install.source" depends="init, cleanSubfolders, create.database">
-    <fail unless="eclipse.running" message="eclipse.* tasks must be executed inside Eclipse" />
-    <echo message="Building OpenbravoCore project..." level="info" />
-    <eclipse.incrementalBuild project="OpenbravoCore" kind="full"/>
-    <antcall target="eclipse.wad.lib"/>
-    <antcall target="eclipse.trl.lib"/>
-    <antcall target="eclipse.compile.complete"/>
-    <echo message="applying modules" />    
-    <antcall inheritall="true" inheritrefs="true" target="apply.module" />
-    <antcall target="import.sample.data" />
-    <updatesystemstatus v="RB51"/>
-    <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="create.database" depends="init, core.lib, database.lib">
