@@ -16336,7 +16336,7 @@ Do you want to enable the Heartbeat?]]></MSGTEXT>
 <!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <VALUE><![CDATA[OBPSAnyEdition]]></VALUE>
-<!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <MSGTEXT><![CDATA[Professional or Basic Edition]]></MSGTEXT>
+<!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <MSGTEXT><![CDATA[Professional or Enterprise Edition]]></MSGTEXT>
 <!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
@@ -17324,7 +17324,7 @@ Do you want to enable the Heartbeat?]]></MSGTEXT>
 <!--20008B2C36E44251BB8F715DE450633C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--20008B2C36E44251BB8F715DE450633C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--20008B2C36E44251BB8F715DE450633C-->  <VALUE><![CDATA[IP_CLONED_OPS_MSG]]></VALUE>
-<!--20008B2C36E44251BB8F715DE450633C-->  <MSGTEXT><![CDATA[We have detected that this Openbravo Professional/Basic Edition instance is a clone of
+<!--20008B2C36E44251BB8F715DE450633C-->  <MSGTEXT><![CDATA[We have detected that this Openbravo Professional/Enterprise Edition instance is a clone of
 another one.
 
 You need to go to the Instance Activation window to reactivate the clone. Here you will set
@@ -18529,7 +18529,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--368B60C0A224458D8A388F911BD26785-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--368B60C0A224458D8A388F911BD26785-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--368B60C0A224458D8A388F911BD26785-->  <VALUE><![CDATA[OBPS_EXPIRED_TRIAL]]></VALUE>
-<!--368B60C0A224458D8A388F911BD26785-->  <MSGTEXT><![CDATA[This instance is registered with a Trial license for Evaluation. This license has expired.  Now only System Administrators can login the system to switch to a Basic or Professional subscription or to deactivate the subscription, via the Instance Activation window (administrators only). <a href="http://wiki.openbravo.com/wiki/Instance_Activation" target="_blank">Learn more</a>]]></MSGTEXT>
+<!--368B60C0A224458D8A388F911BD26785-->  <MSGTEXT><![CDATA[This instance is registered with a Trial license for Evaluation. This license has expired.  Now only System Administrators can login the system to switch to a Enterprise or Professional subscription or to deactivate the subscription, via the Instance Activation window (administrators only). <a href="http://wiki.openbravo.com/wiki/Instance_Activation" target="_blank">Learn more</a>]]></MSGTEXT>
 <!--368B60C0A224458D8A388F911BD26785-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--368B60C0A224458D8A388F911BD26785-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--368B60C0A224458D8A388F911BD26785-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
@@ -22955,7 +22955,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--9124D4EE7DE048D2A19201A1E779B9A7-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--9124D4EE7DE048D2A19201A1E779B9A7-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--9124D4EE7DE048D2A19201A1E779B9A7-->  <VALUE><![CDATA[OBPS_TO_EXPIRE_TRIAL]]></VALUE>
-<!--9124D4EE7DE048D2A19201A1E779B9A7-->  <MSGTEXT><![CDATA[This instance is registered with a Trial License for Evaluation. This Trial License will expire in @days@ days, before it expires you should buy a a Basic or Professional Subscription and activate it via the Instance Activation window (administrators only). <a href="http://wiki.openbravo.com/wiki/Instance_Activation" target="_blank">Learn more</a>]]></MSGTEXT>
+<!--9124D4EE7DE048D2A19201A1E779B9A7-->  <MSGTEXT><![CDATA[This instance is registered with a Trial License for Evaluation. This Trial License will expire in @days@ days, before it expires you should buy a Enterprise or Professional Subscription and activate it via the Instance Activation window (administrators only). <a href="http://wiki.openbravo.com/wiki/Instance_Activation" target="_blank">Learn more</a>]]></MSGTEXT>
 <!--9124D4EE7DE048D2A19201A1E779B9A7-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--9124D4EE7DE048D2A19201A1E779B9A7-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--9124D4EE7DE048D2A19201A1E779B9A7-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
@@ -23761,7 +23761,7 @@ Do you want to propagate this value to all payment methods?]]></MSGTEXT>
 <!--A29E0EA08B7B49B6A89722E6DD67A4EE-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--A29E0EA08B7B49B6A89722E6DD67A4EE-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--A29E0EA08B7B49B6A89722E6DD67A4EE-->  <VALUE><![CDATA[CannotDeactivateWithCommercialModules]]></VALUE>
-<!--A29E0EA08B7B49B6A89722E6DD67A4EE-->  <MSGTEXT><![CDATA[You cannot deactivate your Professional/Basic Edition because you have active commercial modules installed. Please uninstall or disable all the commercial modules and try again.]]></MSGTEXT>
+<!--A29E0EA08B7B49B6A89722E6DD67A4EE-->  <MSGTEXT><![CDATA[You cannot deactivate your Professional/Enterprise Edition because you have active commercial modules installed. Please uninstall or disable all the commercial modules and try again.]]></MSGTEXT>
 <!--A29E0EA08B7B49B6A89722E6DD67A4EE-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--A29E0EA08B7B49B6A89722E6DD67A4EE-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--A29E0EA08B7B49B6A89722E6DD67A4EE-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
@@ -25326,7 +25326,7 @@ Changing the Business Partner's currency will not allow you to use available cre
 <!--C3172067BB244F8693A584A9FAFBEE38-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C3172067BB244F8693A584A9FAFBEE38-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C3172067BB244F8693A584A9FAFBEE38-->  <VALUE><![CDATA[OPSNotActiveTill]]></VALUE>
-<!--C3172067BB244F8693A584A9FAFBEE38-->  <MSGTEXT><![CDATA[Your Professional/Basic Edition will not be active until ]]></MSGTEXT>
+<!--C3172067BB244F8693A584A9FAFBEE38-->  <MSGTEXT><![CDATA[Your Professional/Enterprise Edition will not be active until ]]></MSGTEXT>
 <!--C3172067BB244F8693A584A9FAFBEE38-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--C3172067BB244F8693A584A9FAFBEE38-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C3172067BB244F8693A584A9FAFBEE38-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
@@ -25604,7 +25604,7 @@ Changing the Business Partner's currency will not allow you to use available cre
 <!--C8433C64354D44C6A76F2A09CAF85907-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C8433C64354D44C6A76F2A09CAF85907-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C8433C64354D44C6A76F2A09CAF85907-->  <VALUE><![CDATA[OBPSNeededForAudit]]></VALUE>
-<!--C8433C64354D44C6A76F2A09CAF85907-->  <MSGTEXT><![CDATA[Openbravo Professional/Basic Edition is needed in order to be able to keep track of audit.]]></MSGTEXT>
+<!--C8433C64354D44C6A76F2A09CAF85907-->  <MSGTEXT><![CDATA[Openbravo Professional/Enterprise Edition is needed in order to be able to keep track of audit.]]></MSGTEXT>
 <!--C8433C64354D44C6A76F2A09CAF85907-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--C8433C64354D44C6A76F2A09CAF85907-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C8433C64354D44C6A76F2A09CAF85907-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
@@ -27013,7 +27013,7 @@ You can revert your changes by reloading the current record from the database cl
 <!--E3EBB7F6B97348EAA669732392EEF310-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--E3EBB7F6B97348EAA669732392EEF310-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E3EBB7F6B97348EAA669732392EEF310-->  <VALUE><![CDATA[OPSActivationExpired]]></VALUE>
-<!--E3EBB7F6B97348EAA669732392EEF310-->  <MSGTEXT><![CDATA[Your Professional/Basic Edition expired on ]]></MSGTEXT>
+<!--E3EBB7F6B97348EAA669732392EEF310-->  <MSGTEXT><![CDATA[Your Professional/Enterprise Edition expired on ]]></MSGTEXT>
 <!--E3EBB7F6B97348EAA669732392EEF310-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--E3EBB7F6B97348EAA669732392EEF310-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--E3EBB7F6B97348EAA669732392EEF310-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
@@ -28106,7 +28106,7 @@ Fix it and restart Tomcat.]]></MSGTEXT>
 <!--FBD240BC51C8471F85D65EFB40E079B6-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FBD240BC51C8471F85D65EFB40E079B6-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FBD240BC51C8471F85D65EFB40E079B6-->  <VALUE><![CDATA[OBPS_SUBSCRIPTION_REQUIRED]]></VALUE>
-<!--FBD240BC51C8471F85D65EFB40E079B6-->  <MSGTEXT><![CDATA[The following module(s) are commercial module(s) that require a subscription to an Openbravo Professional or Basic Edition:&nbsp;<b>@MODULE_LIST@</b>]]></MSGTEXT>
+<!--FBD240BC51C8471F85D65EFB40E079B6-->  <MSGTEXT><![CDATA[The following module(s) are commercial module(s) that require a subscription to an Openbravo Professional or Enterprise Edition:&nbsp;<b>@MODULE_LIST@</b>]]></MSGTEXT>
 <!--FBD240BC51C8471F85D65EFB40E079B6-->  <MSGTIP><![CDATA[@MODULE_LIST@ is a place holder for a list of modules. It must be not changed.]]></MSGTIP>
 <!--FBD240BC51C8471F85D65EFB40E079B6-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--FBD240BC51C8471F85D65EFB40E079B6-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>

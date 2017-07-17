@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1617,32 +1617,16 @@ public class ModuleManagement extends HttpSecureAppServlet {
         discard[1] = "OBPSInstance-Canceled";
       }
 
-      // Decide license type, if any
-      int maxTier = getMaxTier(notAllowedModules);
       LicenseClass licenseEdition = ak.getLicenseClass();
 
       if (!ak.isActive()) {
-        if (maxTier == 1) {
-          // show subscribe to Basic
-          discard[2] = "subscribeSTD";
-          discard[3] = "upgradeSTD";
-        } else {
-          // show subscribe to Standard
-          discard[2] = "subscribeBAS";
-          discard[3] = "upgradeSTD";
-        }
+        // show subscribe to Professional
+        discard[3] = "upgradeSTD";
       } else if (licenseEdition == LicenseClass.BASIC) {
-        discard[2] = "subscribeBAS";
         discard[3] = "subscribeSTD";
-        if (maxTier == 1) {
-          // do not show license action
-          discard[4] = "upgradeSTD";
-        } else {
-          // show upgrade to Standard
-        }
+        // show upgrade to Professional
       } else if (licenseEdition == LicenseClass.STD) {
         // do not show license action
-        discard[2] = "subscribeBAS";
         discard[3] = "subscribeSTD";
         discard[4] = "upgradeSTD";
       }
@@ -1689,22 +1673,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
       }
     }
     return rt;
-  }
-
-  /**
-   * Returns the maximum tier of the commercial modules passed as parameter.
-   * 
-   * @param modulesToCheck
-   * @return The maximum tier of the modules (1 or 2)
-   */
-  private int getMaxTier(List<Module> modulesToCheck) {
-    for (Module mod : modulesToCheck) {
-      String modTier = (String) mod.getAdditionalInfo().get("tier");
-      if ("2".equals(modTier)) {
-        return 2;
-      }
-    }
-    return 1;
   }
 
   /**

@@ -27058,7 +27058,7 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--7079E2FD4AA8799EE040007F010104AD-->  <NAME><![CDATA[Commercial]]></NAME>
 <!--7079E2FD4AA8799EE040007F010104AD-->  <PRINTNAME><![CDATA[Commercial]]></PRINTNAME>
 <!--7079E2FD4AA8799EE040007F010104AD-->  <DESCRIPTION><![CDATA[Commercial Module]]></DESCRIPTION>
-<!--7079E2FD4AA8799EE040007F010104AD-->  <HELP><![CDATA[Commercial modules are only available to Professional and Basic Edition instances whereas non commercial ones can be downloaded and installed in Community Edition Instances.
+<!--7079E2FD4AA8799EE040007F010104AD-->  <HELP><![CDATA[Commercial modules are only available to Professional and Enterprise Edition instances whereas non commercial ones can be downloaded and installed in Community Edition Instances.
 Commercial modules can have a fee to be payed before they can be installed.]]></HELP>
 <!--7079E2FD4AA8799EE040007F010104AD-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7079E2FD4AA8799EE040007F010104AD-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
