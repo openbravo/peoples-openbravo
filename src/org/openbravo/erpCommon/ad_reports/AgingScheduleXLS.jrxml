@@ -404,7 +404,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{net}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($F{net})]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
@@ -418,7 +418,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{credit}.negate()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($F{credit}.negate())]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
@@ -432,7 +432,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount0}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($F{amount0})]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
@@ -446,7 +446,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($F{amount1})]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
@@ -460,7 +460,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($F{amount2})]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
@@ -474,7 +474,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount3}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($F{amount3})]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
@@ -488,7 +488,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount4}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($F{amount4})]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
@@ -502,7 +502,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="html">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount5}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($F{amount5})]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
@@ -516,7 +516,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{Total}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($F{Total})]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
@@ -530,12 +530,12 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$P{showDoubtfulDebt}.equals( "true" ) ?
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($P{showDoubtfulDebt}.equals( "true" ) ?
 ($F{doubtfulDebt}!=null)? $F{doubtfulDebt} : BigDecimal.ZERO
-: ($F{net}!=null)? $F{net} : BigDecimal.ZERO]]></textFieldExpression>
+: ($F{net}!=null)? $F{net} : BigDecimal.ZERO)]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="##0.00%" isBlankWhenNull="false" hyperlinkType="Reference">
+			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
 				<reportElement key="textField" style="Detail_Line" x="779" y="0" width="75" height="16" forecolor="#000000" uuid="2a551a9c-952e-4a45-9c54-a1fca7a7b587">
 					<printWhenExpression><![CDATA[$P{showDoubtfulDebt}.equals( "true" )]]></printWhenExpression>
 				</reportElement>
@@ -548,7 +548,8 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[(($F{percentage}!=null)? $F{percentage} : BigDecimal.ZERO)]]></textFieldExpression>
+				<textFieldExpression><![CDATA[(($F{percentage}!=null)? $P{AMOUNTFORMAT}.format($F{percentage}) : $P{AMOUNTFORMAT}.format(BigDecimal.ZERO)) + " %"]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 		</band>
 	</detail>
@@ -565,7 +566,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_FIVE_1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($V{SUM_FIVE_1})]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
@@ -579,7 +580,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_THREE_1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($V{SUM_THREE_1})]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<line>
@@ -598,7 +599,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_ONE_1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($V{SUM_ONE_1})]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
@@ -612,7 +613,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_ZERO_1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($V{SUM_ZERO_1})]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<line>
@@ -631,7 +632,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_TWO_1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($V{SUM_TWO_1})]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<line>
@@ -663,7 +664,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_CREDIT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($V{SUM_CREDIT})]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
@@ -677,7 +678,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_TOTAL_1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($V{SUM_TOTAL_1})]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
@@ -693,7 +694,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_NET}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($V{SUM_NET})]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
@@ -707,7 +708,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_FOUR_1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($V{SUM_FOUR_1})]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
@@ -721,12 +722,12 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$P{showDoubtfulDebt}.equals( "true" ) ?
+				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($P{showDoubtfulDebt}.equals( "true" ) ?
 ($V{SUM_DOUBTFUL}!=null)? $V{SUM_DOUBTFUL} : BigDecimal.ZERO
-: ($V{SUM_NET}!=null)?$V{SUM_NET} : BigDecimal.ZERO]]></textFieldExpression>
+: ($V{SUM_NET}!=null)?$V{SUM_NET} : BigDecimal.ZERO)]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="##0.00%" isBlankWhenNull="false" hyperlinkType="Reference">
+			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
 				<reportElement key="textField" mode="Opaque" x="779" y="1" width="75" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="a0a01cd6-8f69-4315-b271-191a24b5e259">
 					<printWhenExpression><![CDATA[$P{showDoubtfulDebt}.equals( "true" )]]></printWhenExpression>
 				</reportElement>
@@ -739,7 +740,8 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[(($V{VAR_PERCENT}!=null)? $V{VAR_PERCENT} : BigDecimal.ZERO)]]></textFieldExpression>
+				<textFieldExpression><![CDATA[(($V{VAR_PERCENT}!=null)? $P{AMOUNTFORMAT}.format($V{VAR_PERCENT}) : $P{AMOUNTFORMAT}.format(BigDecimal.ZERO)) + " %"]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<line>
 				<reportElement key="line-33" style="Report_Footer" x="0" y="17" width="779" height="1" uuid="6cff0ad7-0a98-4d31-8a0c-13344540e2bc">
