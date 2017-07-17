@@ -6266,6 +6266,11 @@
                   order.set('paidOnCredit', true);
                 }
               }
+              if (model.receiptLines.length === 0) {
+                order.set('json', JSON.stringify(order.toJSON()));
+                callback(order);
+                enyo.$.scrim.hide();
+              }
               };
 
           var locationForBpartner = function (loc, billLoc) {
