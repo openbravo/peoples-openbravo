@@ -64,6 +64,7 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
@@ -318,6 +319,7 @@ public class CancelAndReplaceUtils {
             // Get the the new order line that replaces the old order line, should be only one
             OrderLine newOrderLine = getReplacementOrderLine(newOrder, oldOrderLine);
             if (newOrderLine != null) {
+              ShipmentInOutLine newGoodsShipmentLine = null;
               // Create Netting goods shipment Line for the new order line
               movementQty = oldOrderLineDeliveredQty;
               BigDecimal newOrderLineDeliveredQty = newOrderLine.getDeliveredQuantity();
@@ -325,14 +327,13 @@ public class CancelAndReplaceUtils {
               OBDal.getInstance().save(newOrderLine);
               OBDal.getInstance().flush();
               if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
-                createNettingShipmentLine(nettingGoodsShipment, newOrderLine, lineNoCounter++,
-                    movementQty, triggersDisabled);
+                newGoodsShipmentLine = createNettingShipmentLine(nettingGoodsShipment,
+                    newOrderLine, lineNoCounter++, movementQty, triggersDisabled);
               }
               if (newOrderLineDeliveredQty == null
                   || newOrderLineDeliveredQty.compareTo(BigDecimal.ZERO) == 0) {
                 // Set new order line delivered quantity to old order line ordered quantity, this
-                // case
-                // coming from Backend (nothing is delivered)
+                // case coming from Backend (nothing is delivered)
                 newOrderLine.setDeliveredQuantity(movementQty);
               } else {
                 // Set new order line delivered quantity to previous delivery quantity, this case
@@ -340,6 +341,14 @@ public class CancelAndReplaceUtils {
                 newOrderLine.setDeliveredQuantity(newOrderLineDeliveredQty);
               }
               OBDal.getInstance().save(newOrderLine);
+              if (jsonorder != null && newGoodsShipmentLine != null) {
+                // Associate the new shipment line to the new invoice line (if exists)
+                final InvoiceLine newInvoiceLine = getNewInvoiceLine(newOrderLine);
+                if (newInvoiceLine != null) {
+                  newInvoiceLine.setGoodsShipmentLine(newGoodsShipmentLine);
+                  OBDal.getInstance().save(newInvoiceLine);
+                }
+              }
             }
           }
           // Shipment lines of original order lines are reassigned to the new order line
@@ -367,6 +376,22 @@ public class CancelAndReplaceUtils {
                   OBDal.getInstance().save(newOrderLine);
                 }
                 OBDal.getInstance().save(shipLine);
+                // The old invoice line cannot have a relation to the shipment line. Later, after
+                // the shipments are created, the invoice will be created for the new order (if
+                // required).
+                final OBCriteria<InvoiceLine> oldInvoiceLineCriteria = OBDal.getInstance()
+                    .createCriteria(InvoiceLine.class);
+                oldInvoiceLineCriteria.add(Restrictions.eq(InvoiceLine.PROPERTY_SALESORDERLINE,
+                    oldOrderLine));
+                oldInvoiceLineCriteria.add(Restrictions.eq(InvoiceLine.PROPERTY_GOODSSHIPMENTLINE,
+                    shipLine));
+                oldInvoiceLineCriteria.setMaxResults(1);
+                final InvoiceLine oldInvoiceLine = (InvoiceLine) oldInvoiceLineCriteria
+                    .uniqueResult();
+                if (oldInvoiceLine != null) {
+                  oldInvoiceLine.setGoodsShipmentLine(null);
+                  OBDal.getInstance().save(oldInvoiceLine);
+                }
               }
               shipLines.add(shipLine);
               if ((++k % 100) == 0) {
@@ -781,6 +806,15 @@ public class CancelAndReplaceUtils {
     goodsShipmentLineCriteria.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE, line));
     ScrollableResults shipmentLines = goodsShipmentLineCriteria.scroll(ScrollMode.FORWARD_ONLY);
     return shipmentLines;
+  }
+
+  private static InvoiceLine getNewInvoiceLine(OrderLine orderLine) {
+    final OBCriteria<InvoiceLine> newInvoiceLineCriteria = OBDal.getInstance().createCriteria(
+        InvoiceLine.class);
+    newInvoiceLineCriteria.add(Restrictions.eq(InvoiceLine.PROPERTY_SALESORDERLINE, orderLine));
+    newInvoiceLineCriteria.add(Restrictions.isNull(InvoiceLine.PROPERTY_GOODSSHIPMENTLINE));
+    newInvoiceLineCriteria.setMaxResults(1);
+    return (InvoiceLine) newInvoiceLineCriteria.uniqueResult();
   }
 
   /**
@@ -1376,26 +1410,39 @@ public class CancelAndReplaceUtils {
     return newDocNo;
   }
 
-  private static boolean getCreateNettingGoodsShipmentPreferenceValue(Order order) {
+  /**
+   * Method to check if a netting shipment must be generated during the C&R and CL process.
+   * 
+   * @param order
+   *          The order that is being canceled.
+   * @return True if is necessary to create the netting shipment.
+   */
+  public static boolean getCreateNettingGoodsShipmentPreferenceValue(Order order) {
     boolean createNettingGoodsShipment = false;
     try {
-      createNettingGoodsShipment = ("Y").equals(Preferences.getPreferenceValue(
-          CancelAndReplaceUtils.CREATE_NETTING_SHIPMENT, true, OBContext.getOBContext()
-              .getCurrentClient(), order.getOrganization(), OBContext.getOBContext().getUser(),
-          null, null));
+      createNettingGoodsShipment = Preferences.getPreferenceValue(CREATE_NETTING_SHIPMENT, true,
+          OBContext.getOBContext().getCurrentClient(), order.getOrganization(),
+          OBContext.getOBContext().getUser(), null, null).equals("Y");
     } catch (PropertyException e1) {
       createNettingGoodsShipment = false;
     }
     return createNettingGoodsShipment;
   }
 
-  private static boolean getAssociateGoodsShipmentToNewSalesOrderPreferenceValue(Order order) {
+  /**
+   * Method to check if during the C&R process the shipment lines must be moved from the old order
+   * to the new order.
+   * 
+   * @param order
+   *          The order that is being canceled.
+   * @return True if the shipment lines must be moved to the new order.
+   */
+  public static boolean getAssociateGoodsShipmentToNewSalesOrderPreferenceValue(Order order) {
     boolean associateShipmentToNewReceipt = false;
     try {
-      associateShipmentToNewReceipt = ("Y").equals(Preferences.getPreferenceValue(
-          CancelAndReplaceUtils.ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET, true, OBContext
-              .getOBContext().getCurrentClient(), order.getOrganization(), OBContext.getOBContext()
-              .getUser(), null, null));
+      associateShipmentToNewReceipt = Preferences.getPreferenceValue(
+          ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET, true, OBContext.getOBContext().getCurrentClient(),
+          order.getOrganization(), OBContext.getOBContext().getUser(), null, null).equals("Y");
     } catch (PropertyException e1) {
       associateShipmentToNewReceipt = false;
     }
