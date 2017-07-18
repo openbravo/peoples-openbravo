@@ -293,7 +293,6 @@ public class ActivationKey {
   public static synchronized void setInstance(ActivationKey ak) {
     instance = ak;
     ak.setRefreshTime(new Date());
-    OBContext.setAdminMode(true);
     ak.lastUpdateTimestamp = getSystem().getUpdated();
   }
 
