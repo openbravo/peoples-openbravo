@@ -1562,7 +1562,9 @@ public class ActivationKey {
         }
       }
 
-      // Reload from DB if it was modified from outside
+      // Reload from DB if it was modified from outside, this can happen if:
+      // * License was refreshed in a different node in a cluster
+      // * Instance was activated through CLI: ant activate.instance
       if (lastUpdateTimestamp == null || !lastUpdateTimestamp.equals(getSystem().getUpdated())) {
         loadFromDB();
       }
