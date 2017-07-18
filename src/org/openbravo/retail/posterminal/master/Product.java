@@ -106,6 +106,12 @@ public class Product extends ProcessHQLQuery {
       e.printStackTrace();
     }
 
+    try {
+      args.put("terminalId", jsonsent.getString("pos"));
+    } catch (JSONException e) {
+      log.error("Error while getting terminalId " + e.getMessage(), e);
+    }
+
     HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils.getPropertyExtensions(
         extensions, args);
     HQLPropertyList regularProductsDiscHQLProperties = ModelExtensionUtils.getPropertyExtensions(
@@ -244,6 +250,12 @@ public class Product extends ProcessHQLQuery {
       }
     } catch (JSONException e) {
       e.printStackTrace();
+    }
+
+    try {
+      args.put("terminalId", jsonsent.getString("pos"));
+    } catch (JSONException e) {
+      log.error("Error while getting terminalId " + e.getMessage(), e);
     }
 
     HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils.getPropertyExtensions(

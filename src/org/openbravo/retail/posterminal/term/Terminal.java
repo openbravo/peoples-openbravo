@@ -27,7 +27,6 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -66,10 +65,14 @@ public class Terminal extends JSONProcessSimple {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
-    String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
+    String posId = jsonsent.getString("pos");
     OBPOSApplications pOSTerminal = POSUtils.getTerminalById(posId);
     try {
       OBContext.setAdminMode(false);
+
+      if (pOSTerminal == null) {
+        throw new OBException("terminal id is not present");
+      }
 
       // TO use posId in QueryTerminalProperty
       jsonsent.put("pos", posId);
