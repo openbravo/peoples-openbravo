@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -55,16 +55,14 @@
         UPDATE C_Order o
         SET IsDelivered = 'Y'
         WHERE o.IsDelivered = 'N'
-        AND o.processed = 'Y'
-        AND EXISTS (SELECT 1
-                    FROM c_doctype dt, c_orderline ol
-                    WHERE o.c_doctypetarget_id = dt.c_doctype_id
-                    AND o.c_order_id = ol.c_order_id
-                    AND (o.issotrx = 'Y' OR (o.issotrx = 'N' AND dt.isreturn = 'Y'))
-                    AND ol.c_order_discount_id IS NULL
-                    GROUP BY ol.C_Order_ID
-                    HAVING SUM(ol.QTYORDERED) = SUM(ol.QTYDELIVERED)
-                   )
+          AND o.processed = 'Y'
+          AND (o.issotrx = 'Y' OR (o.issotrx = 'N' AND (SELECT dt.isreturn FROM c_doctype dt WHERE o.c_doctypetarget_id = dt.c_doctype_id) = 'Y'))
+          AND NOT EXISTS (SELECT 1
+                          FROM c_orderline ol
+                          WHERE o.c_order_id = ol.c_order_id
+                          AND ol.c_order_discount_id IS NULL
+                          AND ol.QTYORDERED <> ol.QTYDELIVERED
+                          )
       ]]>
     </Sql>
   </SqlMethod>
