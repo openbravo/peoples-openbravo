@@ -852,14 +852,15 @@
                -- Normal Scenario
                UPDATE C_Order o
                SET IsDelivered = 'Y'
-               WHERE o.c_order_id = Cur_Order.c_order_id
+               WHERE o.c_order_id = Cur_Order.c_order_id 
                AND o.IsDelivered = 'N'
-               AND EXISTS (SELECT 1
-                           FROM C_ORDERLINE ol
-                           WHERE ol.C_Order_ID = o.C_Order_ID
-                           AND ol.c_order_discount_id IS NULL
-                           GROUP BY ol.C_Order_ID
-                           HAVING SUM(ol.QTYORDERED) = SUM(ol.QTYDELIVERED));
+               AND o.processed = 'Y'                
+               AND NOT EXISTS (SELECT 1
+                               FROM c_orderline ol
+                               WHERE ol.C_Order_ID = o.C_Order_ID
+                               AND ol.c_order_discount_id IS NULL
+                               AND ol.QTYORDERED <> ol.QTYDELIVERED
+                              );
              ELSIF (v_IsReversedDoc = 'Y') THEN
                -- Void Scenario
                UPDATE C_Order o
