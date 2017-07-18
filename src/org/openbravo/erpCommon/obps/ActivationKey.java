@@ -152,6 +152,7 @@ public class ActivationKey {
   private static final SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
   private Lock deactivateSessionsLock = new ReentrantLock();
+  private Lock refreshLicenseLock = new ReentrantLock();
   private Object wsCountLock = new Object();
 
   /**
@@ -231,7 +232,8 @@ public class ActivationKey {
 
   }
 
-  private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
+  private static final int ONE_DAY = 24 * 60;
+  private static final int MILLSECS_PER_DAY = ONE_DAY * 60 * 1000;
   private static final int PING_TIMEOUT_SECS = 120;
   private static final Long EXPIRATION_BASIC_DAYS = 30L;
   private static final Long EXPIRATION_PROF_DAYS = 30L;
@@ -291,6 +293,16 @@ public class ActivationKey {
   public static synchronized void setInstance(ActivationKey ak) {
     instance = ak;
     ak.setRefreshTime(new Date());
+    ak.lastUpdateTimestamp = getSystem().getUpdated();
+  }
+
+  private static org.openbravo.model.ad.system.System getSystem() {
+    OBContext.setAdminMode(true);
+    try {
+      return OBDal.getInstance().get(org.openbravo.model.ad.system.System.class, "0");
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   private void setRefreshTime(Date time) {
@@ -300,10 +312,9 @@ public class ActivationKey {
   /**
    * Reloads ActivationKey instance from information in DB.
    */
-  public static synchronized ActivationKey reload() {
-    ActivationKey ak = getInstance();
-    ak.loadFromDB();
-    return ak;
+  public static ActivationKey reload() {
+    instance.loadFromDB();
+    return instance;
   }
 
   /**
@@ -315,21 +326,25 @@ public class ActivationKey {
    * @deprecated
    */
   public ActivationKey() {
-    OBContext.setAdminMode();
-    try {
-      loadFromDB();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+    loadFromDB();
   }
 
-  private synchronized void loadFromDB() {
-    org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
-        org.openbravo.model.ad.system.System.class, "0");
-    strPublicKey = sys.getInstanceKey();
-    lastUpdateTimestamp = sys.getUpdated();
-    loadInfo(sys.getActivationKey());
-    loadRestrictions();
+  private void loadFromDB() {
+    if (!refreshLicenseLock.tryLock()) {
+      // license being loaded by a different thread
+      return;
+    }
+
+    try {
+      log.info("Loading activation key from DB");
+      org.openbravo.model.ad.system.System sys = getSystem();
+      strPublicKey = sys.getInstanceKey();
+      lastUpdateTimestamp = sys.getUpdated();
+      loadInfo(sys.getActivationKey());
+      loadRestrictions();
+    } finally {
+      refreshLicenseLock.unlock();
+    }
   }
 
   public ActivationKey(String publicKey, String activationKey) {
@@ -399,7 +414,7 @@ public class ActivationKey {
     } catch (Exception e) {
       isActive = false;
       errorMessage = "@NotAValidKey@";
-      e.printStackTrace();
+      log.error("Could not load activation key " + strPublicKey, e);
       setLogger();
       return;
     }
@@ -1530,21 +1545,12 @@ public class ActivationKey {
   }
 
   /**
-   * Refreshes license online in case of:
-   * <ul>
-   * <li>It expired
-   * <li>Maximum number of WS calls has been reached during last 30 days
-   * <li>Maximum number of concurrent users has been reached
-   * </ul>
+   * Tries to refresh license if it wasn't refreshed for last 24hr or there were updates in
+   * ad_system.
    */
   private void refreshIfNeeded() {
-    if (hasActivationKey
-        && !subscriptionConvertedProperty
-        && !trial
-        && (hasExpired || checkNewWSCall(false) != WSRestriction.NO_RESTRICTION
-            || checkOPSLimitations(null) == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED || !instanceProperties
-              .containsKey("posTerminals"))) {
-      refreshLicense(24 * 60);
+    if (hasActivationKey && !subscriptionConvertedProperty && !trial && isTimeToRefresh(ONE_DAY)) {
+      refreshLicense(ONE_DAY);
     } else {
       if (licenseType == LicenseType.ON_DEMAND && outOfPlatform) {
         outOfPlatform = !checkInOnDemandPlatform();
@@ -1555,32 +1561,40 @@ public class ActivationKey {
           maxUsers = 0L;
         }
       }
-      OBContext.setAdminMode();
-      try {
-        // Reload from DB if it was modified from outside
-        if (lastUpdateTimestamp == null
-            || !lastUpdateTimestamp.equals(OBDal.getInstance()
-                .get(org.openbravo.model.ad.system.System.class, "0").getUpdated())) {
-          loadFromDB();
-        }
-      } catch (Exception e) {
-        log.error("Error checking if activation key should be refreshed", e);
-      } finally {
-        OBContext.restorePreviousMode();
+
+      // Reload from DB if it was modified from outside, this can happen if:
+      // * License was refreshed in a different node in a cluster
+      // * Instance was activated through CLI: ant activate.instance
+      if (lastUpdateTimestamp == null || !lastUpdateTimestamp.equals(getSystem().getUpdated())) {
+        loadFromDB();
       }
     }
   }
 
-  private synchronized boolean refreshLicense(int minutesToRefresh) {
+  private boolean isTimeToRefresh(int minutesToRefresh) {
     Date timeToRefresh = null;
-    if (lastRefreshTime != null) {
+    if (instance.lastRefreshTime != null) {
       Calendar calendar = Calendar.getInstance();
-      calendar.setTime(lastRefreshTime);
+      calendar.setTime(instance.lastRefreshTime);
       calendar.add(Calendar.MINUTE, minutesToRefresh);
       timeToRefresh = calendar.getTime();
     }
 
-    if (timeToRefresh == null || new Date().after(timeToRefresh)) {
+    return timeToRefresh == null || new Date().after(timeToRefresh);
+  }
+
+  private boolean refreshLicense(int minutesToRefresh) {
+    if (!refreshLicenseLock.tryLock()) {
+      // another thread already refreshing license, allow it to complete
+      return false;
+    }
+
+    try {
+      if (!isTimeToRefresh(minutesToRefresh)) {
+        return false;
+      }
+
+      long t = System.currentTimeMillis();
       log4j.debug("Trying to refresh license, last refresh "
           + (lastRefreshTime == null ? "never" : lastRefreshTime.toString()));
 
@@ -1589,6 +1603,7 @@ public class ActivationKey {
       params.put("purpose", getProperty("purpose"));
       params.put("instanceNo", getProperty("instanceno"));
       params.put("activate", true);
+      params.put("updated", getProperty("updated"));
       ProcessBundle pb = new ProcessBundle(null, new VariablesSecureApp("0", "0", "0"));
       pb.setParams(params);
 
@@ -1612,15 +1627,14 @@ public class ActivationKey {
       }
 
       if (!refreshed) {
-        // Even license couldn't be refreshed, set lastRefreshTime not to try to refresh in the
-        // following period of time
+        // Even license couldn't be refreshed, set lastRefreshTime not to try to
+        // refresh in the following period of time
         lastRefreshTime = new Date();
       }
+      log.info("License refreshed in " + (System.currentTimeMillis() - t) + "ms");
       return refreshed;
-    } else {
-      log4j.debug("Not refreshing, last refresh was " + lastRefreshTime.toString()
-          + ". Next time to refresh " + timeToRefresh.toString());
-      return false;
+    } finally {
+      refreshLicenseLock.unlock();
     }
   }
 
