@@ -3456,6 +3456,7 @@
         }
         args.receipt.adjustPayment();
         args.receipt.save();
+        args.receipt.trigger('saveCurrent');
       });
     },
 
