@@ -526,7 +526,7 @@ FROM DUAL]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="false" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUMAMT3TOTAL} != null ? $V{SUMAMT3TOTAL} : (new BigDecimal("0"))]]></textFieldExpression>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUMAMT3TOTAL} != null ? $V{SUMAMT3TOTAL} : BigDecimal.ZERO]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true" hyperlinkType="Reference">
 				<reportElement key="textField-6" style="Detail_Header" x="558" y="42" width="75" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -534,7 +534,7 @@ FROM DUAL]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="false" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUMAMT4TOTAL} != null ? $V{SUMAMT4TOTAL} : (new BigDecimal("0"))]]></textFieldExpression>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUMAMT4TOTAL} != null ? $V{SUMAMT4TOTAL} : BigDecimal.ZERO]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-33" style="Report_Footer" x="1" y="63" width="1137" height="1"/>
@@ -545,7 +545,7 @@ FROM DUAL]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="false" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUMAMT2TOTAL} != null ? $V{SUMAMT2TOTAL} : (new BigDecimal("0"))]]></textFieldExpression>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUMAMT2TOTAL} != null ? $V{SUMAMT2TOTAL} : BigDecimal.ZERO]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true" hyperlinkType="Reference">
 				<reportElement key="textField-6" style="Detail_Header" x="633" y="42" width="75" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -553,7 +553,7 @@ FROM DUAL]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="false" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUMAMT5TOTAL} != null ? $V{SUMAMT5TOTAL} : (new BigDecimal("0"))]]></textFieldExpression>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUMAMT5TOTAL} != null ? $V{SUMAMT5TOTAL} : BigDecimal.ZERO]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-33" style="Report_Footer" x="1" y="29" width="1137" height="1"/>
@@ -580,7 +580,7 @@ FROM DUAL]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="false" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUMCREDITSTOTAL} != null ? $V{SUMCREDITSTOTAL} : new BigDecimal("0")]]></textFieldExpression>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUMCREDITSTOTAL} != null ? $V{SUMCREDITSTOTAL} : BigDecimal.ZERO]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
 				<reportElement key="textField-6" style="Detail_Header" x="258" y="42" width="75" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -588,7 +588,7 @@ FROM DUAL]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="false" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUMAMT0TOTAL} != null ? $V{SUMAMT0TOTAL} : (new BigDecimal("0"))]]></textFieldExpression>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUMAMT0TOTAL} != null ? $V{SUMAMT0TOTAL} : BigDecimal.ZERO]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true" hyperlinkType="Reference">
 				<reportElement key="textField-6" style="Detail_Header" x="333" y="42" width="75" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -596,7 +596,7 @@ FROM DUAL]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="false" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUMAMT1TOTAL} != null ? $V{SUMAMT1TOTAL} : (new BigDecimal("0"))]]></textFieldExpression>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUMAMT1TOTAL} != null ? $V{SUMAMT1TOTAL} : BigDecimal.ZERO]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
 				<reportElement key="textField-6" style="Detail_Header" x="783" y="42" width="85" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -604,7 +604,7 @@ FROM DUAL]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="false" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUMDOUBTFULTOTAL} != null ? $V{SUMDOUBTFULTOTAL} : new BigDecimal("0")]]></textFieldExpression>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUMDOUBTFULTOTAL} != null ? $V{SUMDOUBTFULTOTAL} : BigDecimal.ZERO]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference" pattern="##0.00%">
 				<reportElement key="textField-6" style="Detail_Header" x="868" y="42" width="70" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -612,7 +612,7 @@ FROM DUAL]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="false" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($V{PERCENTAGETOTAL} != null ? $V{PERCENTAGETOTAL} : new BigDecimal("0"))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{PERCENTAGETOTAL} != null ? $V{PERCENTAGETOTAL} : BigDecimal.ZERO)]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnFooter>
