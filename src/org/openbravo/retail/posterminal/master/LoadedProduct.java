@@ -42,13 +42,6 @@ public class LoadedProduct extends ProcessHQLQuery {
     List<String> products = new ArrayList<String>();
     Map<String, Object> args = new HashMap<String, Object>();
     args.put("multiPriceList", false);
-
-    try {
-      args.put("terminalId", jsonsent.getString("pos"));
-    } catch (JSONException e) {
-      log.error("Error while getting terminalId " + e.getMessage(), e);
-    }
-
     HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils.getPropertyExtensions(
         extensions, args);
     regularProductsHQLProperties.addAll(ProductProperties.getMainProductHQLProperties(args));

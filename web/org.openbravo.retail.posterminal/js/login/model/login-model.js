@@ -13,24 +13,14 @@
   // initialize the WebPOS terminal model that extends the core terminal model. after this, OB.MobileApp.model will be available
   OB.Model.POSTerminal = OB.Model.Terminal.extend({
 
-    setTerminalDetails: function (terminalId, terminalName) {
-      this.set('terminalId', terminalId);
+    setTerminalName: function (terminalName) {
       this.set('terminalName', terminalName);
       this.set('loginUtilsParams', {
-        terminalId: terminalId,
         terminalName: terminalName
       });
       // set the terminal only if it was empty. this variable is used to detect if the terminal changed
       if (terminalName && !OB.UTIL.localStorage.getItem('terminalName')) {
         OB.UTIL.localStorage.setItem('terminalName', terminalName);
-      }
-
-      if (terminalId) {
-        OB.DS.commonParams = OB.DS.commonParams || {};
-        OB.DS.commonParams = {
-          pos: this.get('terminalId'),
-          terminalName: this.get('terminalName')
-        };
       }
     },
 
@@ -77,12 +67,11 @@
         shouldExecuteBenchmark: true
       });
 
-      me.setTerminalDetails(null, OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
+      me.setTerminalName(OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
 
       OB.UTIL.HookManager.registerHook('OBMOBC_InitActions', function (args, c) {
         me.initActions(function () {
-          me.setTerminalDetails(me.get('terminalId'), OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
-
+          me.setTerminalName(OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
           me.set('logConfiguration', {
             deviceIdentifier: OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
             logPropertiesExtension: [
@@ -175,6 +164,7 @@
                 }
               }
 
+              OB.DS.commonParams = OB.DS.commonParams || {};
               OB.DS.commonParams = {
                 client: terminalModel.get('terminal').client,
                 organization: terminalModel.get('terminal').organization,
@@ -629,7 +619,8 @@
         return false;
       }
 
-      if (!OB.DS.commonParams.client) {
+      if (!OB.DS.commonParams) {
+        OB.DS.commonParams = OB.DS.commonParams || {};
         OB.DS.commonParams = {
           client: this.get('terminal').client,
           organization: this.get('terminal').organization,
@@ -1233,7 +1224,7 @@
           });
         } else {
           OB.appCaption = inResponse.appCaption;
-          me.setTerminalDetails(inResponse.terminalId, inResponse.terminalName);
+          me.setTerminalName(inResponse.terminalName);
           if (me.get('logConfiguration') && me.get('logConfiguration').deviceIdentifier === null) {
             me.get('logConfiguration').deviceIdentifier = inResponse.terminalName;
           }
@@ -1281,7 +1272,7 @@
         }
         OB.RR.RequestRouter.initialize();
 
-        me.setTerminalDetails(inResponse.terminalId, OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
+        me.setTerminalName(OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
         callback();
       }).error(function () {
         callback();

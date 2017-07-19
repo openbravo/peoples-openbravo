@@ -206,7 +206,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
   protected JSONObject getPrerrenderData(HttpServletRequest request) throws JSONException {
 
     JSONObject result = super.getPrerrenderData(request);
-    if (OBContext.getOBContext().getUser().getId().equals("0")) {
+
+    if (RequestContext.get().getSessionAttribute("POSTerminal") == null) {
       final VariablesSecureApp vars = new VariablesSecureApp(request);
       final String terminalSearchKey = vars.getStringParameter("terminalName");
       OBCriteria<OBPOSApplications> qApp = OBDal.getInstance().createCriteria(
@@ -217,6 +218,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       List<OBPOSApplications> apps = qApp.list();
       if (apps.size() == 1) {
         OBPOSApplications terminal = apps.get(0);
+        RequestContext.get().setSessionAttribute("POSTerminal", terminal.getId());
 
         result.put("appCaption", terminal.getIdentifier() + " - "
             + terminal.getOrganization().getIdentifier());
@@ -297,7 +299,6 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         if (success) {
           RequestContext.get().setSessionAttribute("POSTerminal", terminal.getId());
           result.put("terminalName", terminal.getSearchKey());
-          result.put("terminalId", terminal.getId());
           result.put("terminalKeyIdentifier", terminal.getTerminalKey());
           result.put("appCaption", terminal.getIdentifier() + " - "
               + terminal.getOrganization().getIdentifier());
@@ -354,7 +355,6 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       if (apps.size() == 1) {
         terminal = ((OBPOSApplications) apps.get(0));
         result.put("servers", getServers(terminal));
-        result.put("terminalId", apps.get(0).getId());
       }
     }
 
