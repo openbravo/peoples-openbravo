@@ -528,8 +528,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             } else {
               if (_.isUndefined(_.find(receipt.get('lines').models, function (line) {
                 var qty = line.get('qty') ? line.get('qty') : 0,
-                    remainingQuantity = line.get('remainingQuantity') ? line.get('remainingQuantity') : 0;
-                return (qty > 0 && qty > remainingQuantity) || (qty < 0 && qty < remainingQuantity);
+                    deliveredQuantity = line.get('deliveredQuantity') ? line.get('deliveredQuantity') : 0;
+                return (qty > 0 && qty > deliveredQuantity) || (qty < 0 && qty < deliveredQuantity);
               }))) {
                 receipt.set('generateShipment', false);
               }
