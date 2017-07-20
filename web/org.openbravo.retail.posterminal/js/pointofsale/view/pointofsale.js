@@ -456,7 +456,7 @@ enyo.kind({
       });
       return false;
     }
-    if (targetOrder.get('isEditable') === false) {
+    if (targetOrder.get('isEditable') === false && !targetOrder.get('isLayaway')) {
       targetOrder.canAddAsServices(this.model, inEvent.product, function (addAsServices) {
         if (addAsServices !== 'ABORT') {
           if (addAsServices === 'OK') {
@@ -569,6 +569,9 @@ enyo.kind({
         args.context.model.get('orderList').saveCurrent();
         if (inEvent.callback) {
           inEvent.callback.call(inEvent.context, success, orderline);
+        }
+        if (args.receipt.get('isEditable') === false && args.receipt.get('isLayaway')) {
+          args.receipt.calculateReceipt();
         }
       });
     });
