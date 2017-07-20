@@ -544,29 +544,41 @@
 
     this.context.get('multiOrders').on('closed', function (receipt, callback) {
       var me = this;
-      var closedReceipts = this.context.get('multiOrders').get('multiOrdersList').models;
-      var recursiveFunction;
-      recursiveFunction = function (index, me, callback) {
-        if (index < closedReceipts.length) {
-          multiOrdersFunction(closedReceipts[index], me, function () {
-            recursiveFunction(index + 1, me, callback);
-          });
-        } else {
-          if (callback instanceof Function) {
-            callback();
-          }
-        }
-      };
-      if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true) && me.ordersToSend === 0) {
-        OB.MobileApp.model.setSynchronizedCheckpoint(function () {
-          OB.UTIL.rebuildCashupFromServer(function () {
-            OB.UTIL.showLoading(false);
-            recursiveFunction(0, me, callback);
+      OB.Dal.find(OB.Model.Order, {}, function (orderList) {
+        var multiOrderList = me.context.get('multiOrders').get('multiOrdersList').models;
+        var closedReceipts = [];
+
+        _.forEach(orderList.models, function (sortedOrder) {
+          _.forEach(multiOrderList, function (multiOrder) {
+            if (multiOrder.get('id') === sortedOrder.get('id')) {
+              closedReceipts.push(multiOrder);
+            }
           });
         });
-      } else {
-        recursiveFunction(0, me, callback);
-      }
+
+        var recursiveFunction;
+        recursiveFunction = function (index, me, callback) {
+          if (index < closedReceipts.length) {
+            multiOrdersFunction(closedReceipts[index], me, function () {
+              recursiveFunction(index + 1, me, callback);
+            });
+          } else {
+            if (callback instanceof Function) {
+              callback();
+            }
+          }
+        };
+        if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true) && me.ordersToSend === 0) {
+          OB.MobileApp.model.setSynchronizedCheckpoint(function () {
+            OB.UTIL.rebuildCashupFromServer(function () {
+              OB.UTIL.showLoading(false);
+              recursiveFunction(0, me, callback);
+            });
+          });
+        } else {
+          recursiveFunction(0, me, callback);
+        }
+      });
     }, this);
   };
 }());
