@@ -146,7 +146,6 @@ public class Utility {
       url.append("&systemIdentifier=" + SystemInfo.getSystemIdentifier());
       url.append("&macIdentifier=" + SystemInfo.getMacAddress());
       url.append("&databaseIdentifier=" + SystemInfo.getDBIdentifier());
-      url.append("&internetConnection=" + (HttpsUtils.isInternetAvailable() ? "Y" : "N"));
       url.append("&systemDate=" + (new SimpleDateFormat("yyyyMMdd")).format(new Date()));
       url.append("&purpose=" + purpose);
       return url.toString();
