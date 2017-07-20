@@ -90,7 +90,7 @@ BEGIN
              SELECT res.m_reservation_id as m_reservation_id
              FROM m_reservation res
              WHERE res.C_ORDERLINE_ID = :new.C_ORDERLINE_ID
-             AND res.RES_STATUS <> 'CL'
+             AND res.RES_STATUS IN ('CO', 'HO')
            ) LOOP
                M_RESERVATION_POST(null, cur_reservations.m_reservation_id, 'CL', :new.updatedBy);
              END LOOP;
