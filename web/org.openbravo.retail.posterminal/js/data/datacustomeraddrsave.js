@@ -46,39 +46,6 @@
       if (OB.MobileApp.model.get('businessPartner') && customerAddr.get('bpartner') === OB.MobileApp.model.get('businessPartner').get('id')) {
         addToLocations(OB.MobileApp.model.get('businessPartner'));
       }
-      // Check With OrderList
-      if (OB.MobileApp.model.orderList) {
-        _.forEach(OB.MobileApp.model.orderList.models, function (order) {
-          if (customerAddr.get('bpartner') === order.get('bp').get('id')) {
-            bp = order.get('bp');
-            addToLocations(bp);
-            if (bp.get('locId') === customerAddr.get('id')) {
-              bp.set('locId', customerAddr.get('id'));
-              bp.set('locName', customerAddr.get('name'));
-              bp.set('postalCode', customerAddr.get('postalCode'));
-              bp.set('cityName', customerAddr.get('cityName'));
-              bp.set('countryName', customerAddr.get('countryName'));
-              bp.set('locationModel', customerAddr);
-              order.save();
-            } else if (bp.get('shipLocId') === customerAddr.get('id')) {
-              bp.set('shipLocId', customerAddr.get('id'));
-              bp.set('shipLocName', customerAddr.get('name'));
-              if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-                bp.set('postalCode', customerAddr.get('postalCode'));
-                bp.set('cityName', customerAddr.get('cityName'));
-                bp.set('countryName', customerAddr.get('countryName'));
-                bp.set('locationModel', customerAddr);
-              }
-              order.save();
-            }
-
-            // refresh the display
-            if (OB.MobileApp.model.orderList.modelorder && OB.MobileApp.model.orderList.modelorder.get('id') === order.get('id')) {
-              OB.MobileApp.model.orderList.modelorder.setBPandBPLoc(bp, false, true);
-            }
-          }
-        });
-      }
     };
 
     OB.DATA.executeCustomerAddressSave = function (customerAddr, callback, callbackError) {

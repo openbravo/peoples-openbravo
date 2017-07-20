@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -60,7 +60,6 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
   public JSONObject saveRecord(JSONObject jsoncustomer) throws Exception {
     BusinessPartner customer = null;
     User user = null;
-    Location location = null;
     OBContext.setAdminMode(false);
     try {
       customer = getCustomer(jsoncustomer.getString("id"));
@@ -72,13 +71,9 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
         if (jsoncustomer.has("contactId")) {
           user = OBDal.getInstance().get(User.class, jsoncustomer.getString("contactId"));
         }
-        if (jsoncustomer.has("locId")) {
-          location = OBDal.getInstance().get(Location.class, jsoncustomer.getString("locId"));
-        }
 
         if (!(loaded.compareTo(customer.getUpdated()) >= 0)
-            || !(user != null && (loaded.compareTo(user.getUpdated()) >= 0))
-            || !(user != null && (loaded.compareTo(location.getUpdated()) >= 0))) {
+            || !(user != null && (loaded.compareTo(user.getUpdated()) >= 0))) {
           log.warn(Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedbp",
               OBContext.getOBContext().getLanguage().getLanguage()));
         }
@@ -274,23 +269,24 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
   }
 
   private void editLocation(BusinessPartner customer, JSONObject jsonCustomer) throws Exception {
+    if (jsonCustomer.has("locId")) {
+      final Location location = OBDal.getInstance().get(Location.class,
+          jsonCustomer.getString("locId"));
+      if (location == null) {
+        // location doesn't exist > create location(s) and bplocation(s)
+        final org.openbravo.model.common.geography.Location rootLocation = OBProvider.getInstance()
+            .get(org.openbravo.model.common.geography.Location.class);
+        final org.openbravo.model.common.geography.Location rootShippingLocation = OBProvider
+            .getInstance().get(org.openbravo.model.common.geography.Location.class);
 
-    final Location location = OBDal.getInstance().get(Location.class,
-        jsonCustomer.getString("locId"));
-    if (location == null) {
-      // location doesn't exist > create location(s) and bplocation(s)
-      final org.openbravo.model.common.geography.Location rootLocation = OBProvider.getInstance()
-          .get(org.openbravo.model.common.geography.Location.class);
-      final org.openbravo.model.common.geography.Location rootShippingLocation = OBProvider
-          .getInstance().get(org.openbravo.model.common.geography.Location.class);
-
-      if (!jsonCustomer.has("useSameAddrForShipAndInv")
-          || (jsonCustomer.has("useSameAddrForShipAndInv") && jsonCustomer
-              .getBoolean("useSameAddrForShipAndInv"))) {
-        createBPLoc(rootLocation, customer, jsonCustomer, true, true);
-      } else {
-        createBPLoc(rootLocation, customer, jsonCustomer, true, false);
-        createBPLoc(rootShippingLocation, customer, jsonCustomer, false, true);
+        if (!jsonCustomer.has("useSameAddrForShipAndInv")
+            || (jsonCustomer.has("useSameAddrForShipAndInv") && jsonCustomer
+                .getBoolean("useSameAddrForShipAndInv"))) {
+          createBPLoc(rootLocation, customer, jsonCustomer, true, true);
+        } else {
+          createBPLoc(rootLocation, customer, jsonCustomer, true, false);
+          createBPLoc(rootShippingLocation, customer, jsonCustomer, false, true);
+        }
       }
     }
   }

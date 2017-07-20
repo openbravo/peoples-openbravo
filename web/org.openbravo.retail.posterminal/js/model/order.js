@@ -2514,33 +2514,96 @@
         }
 
         var saveBP = function () {
-            me.set('bp', businessPartner);
-            me.save();
-            // copy the modelOrder again, as saveIfNew is possibly async
-            OB.MobileApp.model.orderList.saveCurrent();
-            finishSaveData(callback);
+            if (!businessPartner.get('locId') || !businessPartner.get('shipLocId')) {
+              businessPartner.loadBPLocations(null, null, function (shipping, billing, locations) {
+                businessPartner.set('locationModel', billing);
+                businessPartner.set('locId', billing.get('id'));
+                businessPartner.set('locName', billing.get('name'));
+                businessPartner.set('postalCode', billing.get('postalCode'));
+                businessPartner.set('cityName', billing.get('cityName'));
+                businessPartner.set('countryName', billing.get('countryName'));
+                if (shipping) {
+                  businessPartner.set('shipLocId', shipping.get('id'));
+                  businessPartner.set('shipLocName', shipping.get('name'));
+                  businessPartner.set('shipPostalCode', shipping.get('postalCode'));
+                  businessPartner.set('shipCityName', shipping.get('cityName'));
+                  businessPartner.set('shipCountryName', shipping.get('countryName'));
+                  businessPartner.set('shipRegionId', shipping.get('regionId'));
+                  businessPartner.set('shipCountryId', shipping.get('countryId'));
+                }
+
+                me.set('bp', businessPartner);
+                me.save();
+                // copy the modelOrder again, as saveIfNew is possibly async
+                OB.MobileApp.model.orderList.saveCurrent();
+                finishSaveData(callback);
+              }, businessPartner.get('id'));
+            } else {
+              me.set('bp', businessPartner);
+              me.save();
+              // copy the modelOrder again, as saveIfNew is possibly async
+              OB.MobileApp.model.orderList.saveCurrent();
+              finishSaveData(callback);
+            }
             };
 
-        if (businessPartner.get('locationModel')) {
-          OB.Dal.saveIfNew(businessPartner.get('locationModel'), function () {}, function (tx, error) {
-            OB.UTIL.showError("OBDAL error: " + error);
-          });
-          saveBP();
-        } else {
-          OB.Dal.get(OB.Model.BPLocation, businessPartner.get('shipLocId'), function (location) {
-            OB.Dal.saveIfNew(location, function () {}, function (tx, error) {
-              OB.UTIL.showError("OBDAL error: " + error);
-            });
-            businessPartner.set('locationModel', location);
+        var saveLocModel = function (locModel, lid, callback) {
+            if (businessPartner.get(locModel)) {
+              OB.Dal.saveIfNew(businessPartner.get(locModel), function () {}, function (tx, error) {
+                OB.UTIL.showError("OBDAL error: " + error);
+              });
+              if (callback) {
+                callback();
+              }
+            } else {
+              OB.Dal.get(OB.Model.BPLocation, businessPartner.get(lid), function (location) {
+                OB.Dal.saveIfNew(location, function () {}, function (tx, error) {
+                  OB.UTIL.showError("OBDAL error: " + error);
+                });
+                businessPartner.set(locModel, location);
+                if (callback) {
+                  callback();
+                }
+              }, function () {
+                OB.error(arguments);
+              });
+            }
+            };
+
+        saveLocModel('locationModel', 'shipLocId', function () {
+          saveLocModel('locationBillModel', 'locId', function () {
             saveBP();
-          }, function () {
-            OB.error(arguments);
           });
-        }
+        });
+
       } else {
-        this.set('bp', businessPartner);
-        this.save();
-        finishSaveData(callback);
+
+        if (!businessPartner.get('locId') || !businessPartner.get('shipLocId')) {
+          businessPartner.loadBPLocations(null, null, function (shipping, billing, locations) {
+            businessPartner.set('locationModel', billing);
+            businessPartner.set('locId', billing.get('id'));
+            businessPartner.set('locName', billing.get('name'));
+            businessPartner.set('postalCode', billing.get('postalCode'));
+            businessPartner.set('cityName', billing.get('cityName'));
+            businessPartner.set('countryName', billing.get('countryName'));
+            if (shipping) {
+              businessPartner.set('shipLocId', shipping.get('id'));
+              businessPartner.set('shipLocName', shipping.get('name'));
+              businessPartner.set('shipPostalCode', shipping.get('postalCode'));
+              businessPartner.set('shipCityName', shipping.get('cityName'));
+              businessPartner.set('shipCountryName', shipping.get('countryName'));
+              businessPartner.set('shipRegionId', shipping.get('regionId'));
+              businessPartner.set('shipCountryId', shipping.get('countryId'));
+            }
+            me.set('bp', businessPartner);
+            me.save();
+            finishSaveData(callback);
+          }, businessPartner.get('id'));
+        } else {
+          me.set('bp', businessPartner);
+          me.save();
+          finishSaveData(callback);
+        }
       }
     },
 
@@ -4929,6 +4992,11 @@
           var locationForBpartner = function (loc, billLoc) {
               bp.set('shipLocName', loc.get('name'));
               bp.set('shipLocId', loc.get('id'));
+              bp.set('shipPostalCode', loc.get('postalCode'));
+              bp.set('shipCityName', loc.get('cityName'));
+              bp.set('shipCountryName', loc.get('countryName'));
+              bp.set('shipCountryId', loc.get('countryId'));
+              bp.set('shipRegionId', loc.get('regionId'));
               if (billLoc) {
                 bp.set('locName', billLoc.get('name'));
                 bp.set('locId', billLoc.get('id'));
