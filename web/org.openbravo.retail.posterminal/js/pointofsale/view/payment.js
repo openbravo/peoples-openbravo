@@ -1470,21 +1470,25 @@ enyo.kind({
     pendingPrepayment = prepaymentLimitAmount + paymentStatus.pendingAmt - paymentStatus.totalAmt;
     receiptHasPrepaymentAmount = receiptHasPrepaymentAmount && prepaymentLimitAmount !== 0;
     if (receiptHasPrepaymentAmount && pendingPrepayment > 0) {
-      var approval = _.find(me.owner.receipt.get('approvals'), function (approval) {
-        return approval.approvalType && approval.approvalType.approval === 'OBPOS_approval.prepaymentUnderLimit';
-      });
-      if (!approval) {
-        OB.UTIL.Approval.requestApproval(
-        me.model, [{
-          approval: 'OBPOS_approval.prepaymentUnderLimit',
-          message: 'OBPOS_approval.prepaymentUnderLimit'
-        }], function (approved, supervisor, approvalType) {
-          if (approved) {
-            continueExecution();
-          }
+      if (OB.MobileApp.model.hasPermission('OBPOS_AllowPrepaymentUnderLimit', true)) {
+        var approval = _.find(me.owner.receipt.get('approvals'), function (approval) {
+          return approval.approvalType && approval.approvalType.approval === 'OBPOS_approval.prepaymentUnderLimit';
         });
+        if (!approval) {
+          OB.UTIL.Approval.requestApproval(
+          me.model, [{
+            approval: 'OBPOS_approval.prepaymentUnderLimit',
+            message: 'OBPOS_approval.prepaymentUnderLimit'
+          }], function (approved, supervisor, approvalType) {
+            if (approved) {
+              continueExecution();
+            }
+          });
+        } else {
+          continueExecution();
+        }
       } else {
-        continueExecution();
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_PrepaymentUnderLimit_NotAllowed', [prepaymentLimitAmount]));
       }
     } else {
       continueExecution();
