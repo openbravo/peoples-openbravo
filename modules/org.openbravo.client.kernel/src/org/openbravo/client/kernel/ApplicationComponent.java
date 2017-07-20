@@ -42,9 +42,6 @@ import org.openbravo.model.common.enterprise.Organization;
  * @author mtaal
  */
 public class ApplicationComponent extends BaseTemplateComponent {
-
-  private static final String MYOB_UIMODE = "MyOB";
-
   private FormatDefinition formatDefinition = null;
 
   private FormatDefinition getFormatDefinition() {
@@ -136,7 +133,7 @@ public class ApplicationComponent extends BaseTemplateComponent {
   }
 
   public String getCommunityBrandingUrl() {
-    return Utility.getCommunityBrandingUrl(MYOB_UIMODE);
+    return Utility.getCommunityBrandingUrl();
   }
 
   public String getCommunityBrandingStaticUrl() {
