@@ -232,6 +232,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       initializeVariables(jsonorder);
       Order order = null;
+      OrderLine orderLine = null;
       ShipmentInOut shipment = null;
       Invoice invoice = null;
       boolean createInvoice = false;
@@ -340,6 +341,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         } else if (!newLayaway && (creditpaidLayaway || fullypaidLayaway)) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
+          order.setDelivered(true);
           if (jsonorder.has("oBPOSNotInvoiceOnCashUp")) {
             order.setOBPOSNotInvoiceOnCashUp(jsonorder.getBoolean("oBPOSNotInvoiceOnCashUp"));
           }
@@ -347,7 +349,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           OBQuery<OrderLine> queryOls = OBDal.getInstance().createQuery(OrderLine.class,
               olsHqlWhereClause);
           queryOls.setNamedParameter("orderId", order.getId());
-          lineReferences.addAll(queryOls.list());
+          List<OrderLine> lstResultOL = queryOls.list();
+
+          for (int i = 0; i < lstResultOL.size(); i++) {
+            orderLine = lstResultOL.get(i);
+            orderLine.setDeliveredQuantity(orderLine.getOrderedQuantity());
+            lineReferences.add(orderLine);
+          }
         } else if (partialpaidLayaway) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           if (!jsonorder.has("channel")) {
@@ -400,8 +408,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
                 "OBPOS_WarehouseNotStorageBin", OBContext.getOBContext().getLanguage()
                     .getLanguage()));
           }
-
-          order.setDelivered(true);
 
           shipment = OBProvider.getInstance().get(ShipmentInOut.class);
           createShipment(shipment, order, jsonorder);
@@ -1224,8 +1230,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             objShipmentInOutLine.setMovementQuantity(objShipmentInOutLine.getMovementQuantity()
                 .add(pendingQty));
             OBDal.getInstance().save(objShipmentInOutLine);
-            orderLine.setDeliveredQuantity(orderLine.getDeliveredQuantity().add(pendingQty));
-
           } else {
             addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
                 jsonorder, lineNo, pendingQty, loc, oldAttributeSetValues, i);
@@ -1253,11 +1257,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     line.setSalesOrderLine(orderLine);
 
     orderLine.getMaterialMgmtShipmentInOutLineList().add(line);
-
-    if (orderLine.getDeliveredQuantity() == null) {
-      orderLine.setDeliveredQuantity(BigDecimal.ZERO);
-    }
-    orderLine.setDeliveredQuantity(orderLine.getDeliveredQuantity().add(qty));
 
     line.setMovementQuantity(qty);
     line.setStorageBin(bin);
@@ -1319,10 +1318,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
         .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
 
-    if (doCancelAndReplace && !newLayaway && !notpaidLayaway && !partialpaidLayaway) {
-      order.setDelivered(true);
-    }
-
     for (int i = 0; i < orderlines.length(); i++) {
 
       OrderLine orderline = OBProvider.getInstance().get(OrderLine.class);
@@ -1345,9 +1340,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
           pricePrecision, RoundingMode.HALF_UP));
 
-      orderline.setDeliveredQuantity(BigDecimal.ZERO);
-
-      if ((doCancelAndReplace && !newLayaway && !notpaidLayaway && !partialpaidLayaway)) {
+      if (createShipment
+          || (doCancelAndReplace && !newLayaway && !notpaidLayaway && !partialpaidLayaway)) {
         // shipment is created or is a C&R and is not a layaway, so all is delivered
         orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
       }
@@ -1649,6 +1643,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     order.setProcessed(true);
     order.setProcessNow(false);
     order.setObposSendemail((jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail")));
+    if (!newLayaway && !isQuotation && !isDeleted) {
+      order.setDelivered(true);
+    }
 
     if (!doCancelAndReplace) {
       if (order.getDocumentNo().indexOf("/") > -1) {

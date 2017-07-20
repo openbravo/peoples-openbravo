@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +39,6 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -52,7 +50,6 @@ import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.uom.UOM;
-import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.pricing.priceadjustment.PriceAdjustment;
@@ -527,56 +524,6 @@ public class ExternalOrderLoader extends OrderLoader {
       }
       transformPayment(payment);
     }
-
-    // now use the data to fill the payment field correctly in the json
-    if (!orderJson.has("payment") || -1 == orderJson.getInt("payment")) {
-      final Currency currency = getCurrency(orderJson.getString("currency"));
-      int pricePrecision = currency.getObposPosprecision() == null ? currency.getPricePrecision()
-          .intValue() : currency.getObposPosprecision().intValue();
-
-      BigDecimal paid = BigDecimal.ZERO;
-      if (orderJson.has("id")) {
-        final Order order = OBDal.getInstance().get(Order.class, orderJson.get("id"));
-        if (order != null) {
-          for (FIN_PaymentSchedule paymentSchedule : order.getFINPaymentScheduleList()) {
-            paid = paid.add(paymentSchedule.getPaidAmount());
-          }
-        }
-      }
-      for (int i = 0; i < payments.length(); i++) {
-        final JSONObject payment = payments.getJSONObject(i);
-
-        BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
-            pricePrecision, RoundingMode.HALF_UP);
-        BigDecimal origAmount = amount;
-        BigDecimal mulrate = new BigDecimal(1);
-        // FIXME: Coversion should be only in one direction: (USD-->EUR)
-        if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {
-          mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
-          if (payment.has("amount")) {
-            origAmount = BigDecimal.valueOf(payment.getDouble("amount")).setScale(pricePrecision,
-                RoundingMode.HALF_UP);
-          } else {
-            origAmount = amount.multiply(mulrate).setScale(pricePrecision, RoundingMode.HALF_UP);
-          }
-        }
-        paid = paid.add(origAmount);
-      }
-      orderJson.put("payment", paid.doubleValue());
-    }
-  }
-
-  protected Currency getCurrency(String isoCode) {
-    final OBQuery<Currency> qry = OBDal.getInstance().createQuery(Currency.class,
-        Currency.PROPERTY_ISOCODE + "=:isoCode or id=:id");
-    qry.setNamedParameter("isoCode", isoCode);
-    qry.setNamedParameter("id", isoCode);
-    // copy the list to only execute the query once
-    final ArrayList<Currency> result = new ArrayList<Currency>(qry.list());
-    if (result.isEmpty()) {
-      throw new OBException("No currency found using isocode " + isoCode);
-    }
-    return result.get(0);
   }
 
   protected void transformPayment(JSONObject payment) throws JSONException {
@@ -626,6 +573,7 @@ public class ExternalOrderLoader extends OrderLoader {
     check(json, "product", msg);
     check(json, "netAmount", msg);
     check(json, "grossAmount", msg);
+    check(json, "taxAmount", msg);
   }
 
   protected void validatePayment(JSONObject json) throws JSONException {
