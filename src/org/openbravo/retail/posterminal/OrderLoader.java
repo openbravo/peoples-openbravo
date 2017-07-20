@@ -204,7 +204,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     isDeleted = jsonorder.has("obposIsDeleted") && jsonorder.getBoolean("obposIsDeleted");
 
-    createShipment = !isQuotation && !notpaidLayaway && !paidReceipt;
+    createShipment = !isQuotation && !notpaidLayaway && !paidReceipt && !isDeleted;
     if (jsonorder.has("generateShipment")) {
       createShipment &= jsonorder.getBoolean("generateShipment");
     }
