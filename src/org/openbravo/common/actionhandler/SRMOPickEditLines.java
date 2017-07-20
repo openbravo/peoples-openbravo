@@ -29,15 +29,12 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -130,15 +127,8 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       removeNonSelectedLines(idList, order);
       return;
     }
-    OBCriteria<OrderLine> obc = OBDal.getInstance().createCriteria(OrderLine.class);
-    obc.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, order));
-    obc.setProjection(Projections.max(OrderLine.PROPERTY_LINENO));
-    Long lineNo = 0L;
-    Object o = obc.list().get(0);
-    if (o != null) {
-      lineNo = (Long) o;
-    }
 
+    Long lineNo = 0L;
     boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
     for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
