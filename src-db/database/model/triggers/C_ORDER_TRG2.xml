@@ -18,7 +18,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2015 Openbravo SLU
+    * All portions are Copyright (C) 2001-2017 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -27,6 +27,7 @@
     TYPE RECORD IS REF CURSOR;
     Cur_Discounts RECORD;
     V_RequiresDescription CHAR(1);
+    v_updateDiscount CHAR(1) := 'N';
         
 BEGIN
     
@@ -47,11 +48,16 @@ BEGIN
     AND DocStatus NOT IN('RE', 'CL', 'CO', 'VO') ;
   END IF;
  END IF;
- 
- 
- -- Discounts
- IF (INSERTING) THEN
- FOR Cur_Discounts IN
+
+  -- Discounts
+  IF (UPDATING) THEN
+    IF (:OLD.C_BPARTNER_ID <> :NEW.C_BPARTNER_ID) THEN
+      v_updateDiscount := 'Y';
+    END IF;
+  END IF;
+
+  IF (INSERTING OR v_updateDiscount = 'Y') THEN
+    FOR Cur_Discounts IN
     (
     SELECT C_DISCOUNT_ID,
       LINE,
@@ -64,7 +70,7 @@ BEGIN
       AND APPLYINORDER='Y'
     ORDER BY LINE
     )
-  LOOP
+    LOOP
     INSERT
     INTO C_ORDER_DISCOUNT
       (
@@ -80,9 +86,10 @@ BEGIN
         now(), :NEW.UPDATEDBY, :NEW.C_ORDER_ID,
         Cur_Discounts.C_DISCOUNT_ID, Cur_Discounts.LINE, Cur_Discounts.CASCADE
       )
-      ;
-  END LOOP;
+    ;
+    END LOOP;
   END IF;
+
   IF(INSERTING OR UPDATING) THEN
   	IF(:NEW.C_INCOTERMS_ID IS NOT NULL) THEN
   		SELECT REQUIRESDESCRIPTION INTO V_RequiresDescription FROM C_INCOTERMS WHERE C_INCOTERMS_ID = :NEW.C_INCOTERMS_ID;

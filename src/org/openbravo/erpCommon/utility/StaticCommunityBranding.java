@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,10 +26,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseClass;
 
+/** Redirects to the proper community branding local widget based on current license **/
 public class StaticCommunityBranding extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
@@ -41,21 +41,13 @@ public class StaticCommunityBranding extends HttpSecureAppServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    String uimode = vars.getStringParameter("uimode", "2.50");
-    if (vars.commandIn("DEFAULT")) {
-      printPage(response, uimode);
-    } else
-      pageError(response);
-
+    printPage(response);
   }
 
-  private void printPage(HttpServletResponse response, String strUIMode) throws IOException {
-    log4j.debug("Output: dataSheet");
+  private void printPage(HttpServletResponse response) throws IOException {
     final LicenseClass licenseClass = ActivationKey.getInstance().getLicenseClass();
 
-    String strFilename = "/StaticCommunityBranding-";
-    strFilename += strUIMode;
+    String strFilename = "/StaticCommunityBranding-MyOB";
     if (LicenseClass.COMMUNITY.equals(licenseClass)) {
       strFilename += "-Comm";
     } else if (LicenseClass.BASIC.equals(licenseClass)) {

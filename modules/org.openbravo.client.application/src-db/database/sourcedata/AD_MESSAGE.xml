@@ -2872,7 +2872,7 @@ Please save or discard them before add or remove a note.]]></MSGTEXT>
 <!--FF80808130D5DD6A0130D5EEF54A000A-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FF80808130D5DD6A0130D5EEF54A000A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF80808130D5DD6A0130D5EEF54A000A-->  <VALUE><![CDATA[OBUIAPP_GAinCommunity]]></VALUE>
-<!--FF80808130D5DD6A0130D5EEF54A000A-->  <MSGTEXT><![CDATA[Only Professional and Basic Edition subscribers can restrict access to modules in %0 maturity status.<br/>
+<!--FF80808130D5DD6A0130D5EEF54A000A-->  <MSGTEXT><![CDATA[Only Professional and Enterprise Edition subscribers can restrict access to modules in %0 maturity status.<br/>
 <a href="http://wiki.openbravo.com/wiki/Modules_Management#Learn_why" class="OBNoteListGridDelete" target="_blank">Learn why</a>.]]></MSGTEXT>
 <!--FF80808130D5DD6A0130D5EEF54A000A-->  <MSGTYPE><![CDATA[W]]></MSGTYPE>
 <!--FF80808130D5DD6A0130D5EEF54A000A-->  <AD_MODULE_ID><![CDATA[9BA0836A3CD74EE4AB48753A47211BCC]]></AD_MODULE_ID>
@@ -2885,7 +2885,7 @@ Please save or discard them before add or remove a note.]]></MSGTEXT>
 <!--FF80808130DC55FE0130DC9631A60019-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FF80808130DC55FE0130DC9631A60019-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF80808130DC55FE0130DC9631A60019-->  <VALUE><![CDATA[OBUIAPP_ActivateMessage]]></VALUE>
-<!--FF80808130DC55FE0130DC9631A60019-->  <MSGTEXT><![CDATA[%0 only available for Professional and Basic Edition subscribers. <br/><a target="_blank" href="http://www.openbravo.com/product/erp/editions/">Learn more</a> about the benefits of Openbravo's Professional and Basic Editions.]]></MSGTEXT>
+<!--FF80808130DC55FE0130DC9631A60019-->  <MSGTEXT><![CDATA[%0 only available for Professional and Enterprise Edition subscribers. <br/><a target="_blank" href="http://www.openbravo.com/product/erp/editions/">Learn more</a> about the benefits of Openbravo's Professional and Enterprise Editions.]]></MSGTEXT>
 <!--FF80808130DC55FE0130DC9631A60019-->  <MSGTIP><![CDATA[%0 is a place-holder used to show a feature description]]></MSGTIP>
 <!--FF80808130DC55FE0130DC9631A60019-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--FF80808130DC55FE0130DC9631A60019-->  <AD_MODULE_ID><![CDATA[9BA0836A3CD74EE4AB48753A47211BCC]]></AD_MODULE_ID>

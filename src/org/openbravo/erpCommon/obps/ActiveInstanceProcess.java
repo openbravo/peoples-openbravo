@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,7 @@ import java.net.URLEncoder;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.base.provider.OBProvider;
@@ -55,6 +56,7 @@ public class ActiveInstanceProcess implements Process {
     String publicKey = (String) bundle.getParams().get("publicKey");
     String purpose = (String) bundle.getParams().get("purpose");
     String localActivationKey = (String) bundle.getParams().get("activationKey");
+    String updated = (String) bundle.getParams().get("updated");
     Boolean activate = (Boolean) bundle.getParams().get("activate");
 
     OBError msg = new OBError();
@@ -79,7 +81,7 @@ public class ActiveInstanceProcess implements Process {
           // Changing license, do not send instance number to get a new one
           instanceNo = null;
         }
-        result = send(publicKey, purpose, instanceNo, activate);
+        result = send(publicKey, purpose, instanceNo, activate, updated);
       }
     }
 
@@ -103,9 +105,12 @@ public class ActiveInstanceProcess implements Process {
         msg.setType("Error");
         msg.setMessage("@LicenseWithoutAccessTo@ " + nonAllowedMods);
       } else {
-
         sys.setActivationKey(activationKey);
         sys.setInstanceKey(publicKey);
+
+        // flushing to get new updated time that will be used in new activation key
+        OBDal.getInstance().flush();
+
         ActivationKey.setInstance(ak);
         if (ak.isActive()) {
           SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
@@ -141,6 +146,10 @@ public class ActiveInstanceProcess implements Process {
           msg.setMessage(ak.getErrorMessage());
         }
       }
+    } else if (result != null && "@NoChange@".equals(result[0])) {
+      msg.setType("Success");
+      msg.setMessage("@Success@");
+      log.debug("License was not updated because it didn't change");
     } else {
       // If there is error do not save keys, thus we maintain previous ones in case they were valid
       msg.setType("Error");
@@ -174,12 +183,14 @@ public class ActiveInstanceProcess implements Process {
    *          current instance number (for reactivation purposes)
    * @param activate
    *          activate (true) or cancel (false)
+   * @param updated
+   *          last time current license was updated remotely
    * @return returns a String[] with 2 elements, the first one in the message (@Success@ in case of
    *         success) and the second one the activation key
    * @throws Exception
    */
-  private String[] send(String publickey, String purpose, String instanceNo, boolean activate)
-      throws Exception {
+  private String[] send(String publickey, String purpose, String instanceNo, boolean activate,
+      String updated) throws Exception {
     log.debug("Sending request");
     String content = "publickey=" + URLEncoder.encode(publickey, "utf-8");
     content += "&purpose=" + purpose;
@@ -203,6 +214,10 @@ public class ActiveInstanceProcess implements Process {
 
     if (ActivationKey.getInstance().isOffPlatform()) {
       content += "&offPlatform=true";
+    }
+
+    if (!StringUtils.isBlank(updated)) {
+      content += "&updated=" + updated;
     }
 
     URL url = new URL(BUTLER_URL);

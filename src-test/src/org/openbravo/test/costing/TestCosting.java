@@ -13176,7 +13176,7 @@ public class TestCosting extends WeldBaseTest {
             || document.getEntityName().equals(CostAdjustment.ENTITY_NAME) || (document
             .getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME) && (line.getEntityName()
             .equals(ShipmentInOutLine.ENTITY_NAME) || (line.getEntityName().equals(
-            InvoiceLine.ENTITY_NAME) && ((InvoiceLine) line).getInvoice().getCurrency()
+            InvoiceLine.ENTITY_NAME) && ((InvoiceLine) line).getInvoice().getCurrency().getId()
             .equals(DOLLAR_ID)))))
             && OBDal.getInstance().get(Organization.class, ORGANIZATION_ID).getCurrency() != null
             && OBDal.getInstance().get(Organization.class, ORGANIZATION_ID).getCurrency().getId()

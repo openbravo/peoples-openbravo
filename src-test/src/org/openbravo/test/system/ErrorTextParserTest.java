@@ -100,6 +100,7 @@ public class ErrorTextParserTest extends OBBaseTest {
   @Test
   public void whenStatementFailsNoStackTraceIsLoggedByDefault() throws Exception {
     setTestLogAppenderLevel(Level.INFO);
+    setLogStackTraces(true);
 
     doErrorTextParserTest(1);
 
@@ -117,6 +118,7 @@ public class ErrorTextParserTest extends OBBaseTest {
     try {
       setTestLogAppenderLevel(Level.DEBUG);
       sqlcLogger.setLevel(Level.DEBUG);
+      setLogStackTraces(true);
 
       doErrorTextParserTest(1);
 

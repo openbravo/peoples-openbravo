@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -240,16 +240,17 @@ public class SL_InOut_BPartner extends HttpSecureAppServlet {
     final String rMatReceipt = "123271B9AD60469BAE8A924841456B63";
     String strwindow = vars.getStringParameter("inpwindowId");
     String message = "";
-    if ((!(strwindow.equals(rtvendorship) || strwindow.equals(rMatReceipt)))) {
-      if ((!bpartner.equals(""))
-          && FIN_Utility.isBlockedBusinessPartner(strBPartner, "Y".equals(strIsSOTrx), 2)) {
-        // If the Business Partner is blocked for this document, show an information message.
-        if (message.length() > 0) {
-          message = message + "<br>";
-        }
-        message = message + OBMessageUtils.messageBD("ThebusinessPartner") + " "
-            + bpartner.getIdentifier() + " " + OBMessageUtils.messageBD("BusinessPartnerBlocked");
+    if (!StringUtils.equals(strwindow, rtvendorship)
+        && !StringUtils.equals(strwindow, rMatReceipt)
+        && bpartner != null
+        && FIN_Utility.isBlockedBusinessPartner(bpartner.getId(),
+            StringUtils.equals(strIsSOTrx, "Y"), 2)) {
+      // If the Business Partner is blocked for this document, show an information message.
+      if (message.length() > 0) {
+        message = message + "<br>";
       }
+      message = message + OBMessageUtils.messageBD("ThebusinessPartner") + " "
+          + bpartner.getIdentifier() + " " + OBMessageUtils.messageBD("BusinessPartnerBlocked");
     }
     if (data != null && data.length > 0
         && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0

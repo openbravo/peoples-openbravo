@@ -39,6 +39,7 @@ import org.apache.log4j.spi.LoggingEvent;
  */
 public class TestLogAppender extends AppenderSkeleton {
   private Map<Level, List<String>> messages = new HashMap<Level, List<String>>();
+  private boolean logStackTraces = false;
 
   @Override
   protected void append(LoggingEvent event) {
@@ -48,7 +49,7 @@ public class TestLogAppender extends AppenderSkeleton {
       messages.put(event.getLevel(), levelMsgs);
     }
     levelMsgs.add(event.getMessage().toString());
-    if (event.getThrowableStrRep() != null) {
+    if (logStackTraces && event.getThrowableStrRep() != null) {
       levelMsgs.addAll(Arrays.asList(event.getThrowableStrRep()));
     }
   }
@@ -62,9 +63,15 @@ public class TestLogAppender extends AppenderSkeleton {
     return false;
   }
 
+  /** Include in messages possible stack traces for logged Throwables */
+  void setLogStackTraces(boolean logStackTraces) {
+    this.logStackTraces = logStackTraces;
+  }
+
   /** Removes all the messages tracked so far */
   public void reset() {
     messages = new HashMap<Level, List<String>>();
+    logStackTraces = false;
   }
 
   /**

@@ -10484,7 +10484,10 @@ dojo.provide("dojo._base.xhr");
 			}
 		}
 		// FIXME: is this appropriate for all content types?
-		xhr.setRequestHeader("Content-Type", args.contentType || _defaultContentType);
+		if (method != 'GET') {
+			xhr.setRequestHeader("Content-Type", args.contentType || _defaultContentType);
+		}
+
 		if(!args.headers || !("X-Requested-With" in args.headers)){
 			xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 		}

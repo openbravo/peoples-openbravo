@@ -617,10 +617,6 @@ export.database: exports database structure and data to xml files.
   <target name="run.test" depends="init">
     <ant dir="${base.src.test}" target="run.test" inheritAll="true" inheritRefs="true" />
   </target>
-
-  <target name="run.api.test.javascript">
-    <ant dir="${base.src.test}" target="run.api.test.javascript" inheritAll="true" inheritRefs="true" />
-  </target>
   
   <target name="run.api.test.model" 
           description="Checks current xml db model and dictionary API for not-allowed changes. Requires stableDBdir parameter">

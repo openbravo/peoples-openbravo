@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -105,6 +105,7 @@ public class RoleEventHandler extends EntityPersistenceEventObserver {
       logger.debug("Added organization * to role " + role.getName());
 
       OBCriteria<Organization> criteria = OBDal.getInstance().createCriteria(Organization.class);
+      criteria.setFilterOnActive(false);
       criteria.add(Restrictions.eq(Organization.PROPERTY_CLIENT, role.getClient()));
       criteria.add(Restrictions.ne(Organization.PROPERTY_ID, "0"));
       ScrollableResults scroll = criteria.scroll(ScrollMode.FORWARD_ONLY);
@@ -124,6 +125,7 @@ public class RoleEventHandler extends EntityPersistenceEventObserver {
     else if (StringUtils.equals(role.getUserLevel(), "  O")) {
       OBCriteria<Organization> criteria = OBDal.getInstance().createCriteria(Organization.class);
       criteria.add(Restrictions.eq(Organization.PROPERTY_CLIENT, role.getClient()));
+      criteria.setFilterOnActive(false);
       ScrollableResults scroll = criteria.scroll(ScrollMode.FORWARD_ONLY);
       try {
         while (scroll.next()) {
