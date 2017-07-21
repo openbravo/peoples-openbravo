@@ -4553,6 +4553,7 @@
       order.set('paidOnCredit', false);
       order.set('session', OB.MobileApp.model.get('session'));
       order.set('skipApplyPromotions', true);
+      order.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix); // hack to prevent change number
       if (model.isQuotation) {
         order.set('isQuotation', true);
         order.set('oldId', model.orderid);
