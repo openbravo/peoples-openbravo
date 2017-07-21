@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,59 +19,77 @@
 
 package org.openbravo.base.exception;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.service.db.DbUtility;
 
 /**
  * This is the base exception for all exceptions in Openbravo. It is an unchecked exception which
- * also logs itself.
+ * logs itself if {@code logException=true} is used in constructor or it's logger has at least debug
+ * level.
  * 
  * @author mtaal
  */
 public class OBException extends RuntimeException {
-
   private static final long serialVersionUID = 1L;
   private boolean logExceptionNeeded;
 
   public OBException() {
+    this(false);
+  }
+
+  public OBException(boolean logException) {
     super();
-    getLogger().error("Exception", this);
+    logExceptionNeeded = logException;
+    log("Exception", this);
   }
 
   public OBException(String message, Throwable cause) {
-    this(message, cause, true);
-  }
-
-  public OBException(String message, boolean logException) {
-    super(message);
-    logExceptionNeeded = logException;
-    if (logException) {
-      getLogger().error(message, this);
-    }
+    this(message, cause, false);
   }
 
   public OBException(String message, Throwable cause, boolean logException) {
     super(message, DbUtility.getUnderlyingSQLException(cause));
     logExceptionNeeded = logException;
-    if (logException) {
-      getLogger().error(message, DbUtility.getUnderlyingSQLException(cause));
-    }
+    log(message, cause);
   }
 
   public OBException(String message) {
+    this(message, false);
+  }
+
+  public OBException(String message, boolean logException) {
     super(message);
-    getLogger().error(message, this);
+    logExceptionNeeded = logException;
+    log(message, this);
   }
 
   public OBException(Throwable cause) {
+    this(cause, false);
+  }
+
+  public OBException(Throwable cause, boolean logException) {
     super(cause);
-    Throwable foundCause = DbUtility.getUnderlyingSQLException(cause);
-    if (foundCause != cause) {
-      // passing foundCause ensures that the underlying stack trace is printed
-      getLogger().error(cause.getMessage() + " - " + foundCause.getMessage(), foundCause);
-    } else {
-      getLogger().error(cause.getMessage(), cause);
+    logExceptionNeeded = logException;
+    log(null, cause);
+  }
+
+  private void log(String message, Throwable cause) {
+    boolean shouldLog = isLogExceptionNeeded() || getLogger().isDebugEnabled();
+    if (!shouldLog) {
+      return;
     }
+
+    Throwable foundCause = DbUtility.getUnderlyingSQLException(cause);
+
+    String msg;
+    if (StringUtils.isBlank(message)) {
+      msg = foundCause == cause ? cause.getMessage() : (cause.getMessage() + "-" + foundCause
+          .getMessage());
+    } else {
+      msg = message;
+    }
+    getLogger().error(msg, cause);
   }
 
   /**
