@@ -502,6 +502,13 @@ enyo.kind({
         me.updateVisibility(false);
       }
     }, this);
+    receipt.on('change:generateInvoice', function (model) {
+      if (!model.get('generateInvoice')) {
+        me.updateVisibility(true);
+      } else {
+        me.updateVisibility(false);
+      }
+    }, this);
     receipt.on('change:bp', function (model) {
       // if the receip is cloning, then the called to taxIdValidation is not done because this function does a save
       if (model.get('generateInvoice') && !model.get('cloningReceipt')) {
