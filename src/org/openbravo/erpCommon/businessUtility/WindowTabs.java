@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2011 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -141,7 +141,7 @@ public class WindowTabs {
   private void getProcessInfo(String adProcessId) throws Exception {
     WindowTabsData[] processInfo = WindowTabsData.selectProcessInfo(this.conn, adProcessId);
     if (processInfo == null || processInfo.length == 0) {
-      log4j.warn("Error while trying to obtain window info for process: " + adProcessId);
+      log4j.debug("Error while trying to obtain window info for process: " + adProcessId);
       return;
     }
     this.TabID = processInfo[0].adTabId;
@@ -151,7 +151,7 @@ public class WindowTabs {
     processInfo = WindowTabsData.selectMenuInfo(this.conn, this.vars.getLanguage(), this.action,
         this.TabID);
     if (processInfo == null || processInfo.length == 0) {
-      log4j.warn("Error while trying to obtain window info for process: " + adProcessId);
+      log4j.debug("Error while trying to obtain window info for process: " + adProcessId);
       return;
     }
     this.ID = processInfo[0].id;
@@ -166,7 +166,7 @@ public class WindowTabs {
   private void getWindowInfo() throws Exception {
     WindowTabsData[] windowInfo = WindowTabsData.selectJavaInfo(this.conn, this.className);
     if (windowInfo == null || windowInfo.length == 0) {
-      log4j.warn("Error while trying to obtain window info for class: " + this.className);
+      log4j.debug("Error while trying to obtain window info for class: " + this.className);
       return;
     }
     this.TabID = windowInfo[0].adTabId;
@@ -175,7 +175,7 @@ public class WindowTabs {
     windowInfo = WindowTabsData.selectMenuInfo(this.conn, this.vars.getLanguage(), this.action,
         this.TabID);
     if (windowInfo == null || windowInfo.length == 0) {
-      log4j.warn("Error while trying to obtain window info for class: " + this.className);
+      log4j.debug("Error while trying to obtain window info for class: " + this.className);
       return;
     }
     this.ID = windowInfo[0].id;
@@ -209,7 +209,7 @@ public class WindowTabs {
           .selectManual(this.conn, this.TabID, this.vars.getLanguage(), this.ID);
     int pos = -1;
     if (tabsAux == null || tabsAux.length == 0) {
-      log4j.warn("Error while trying to obtain tabs for id: " + this.TabID);
+      log4j.debug("Error while trying to obtain tabs for id: " + this.TabID);
       return;
     }
     for (int i = 0; i < tabsAux.length; i++) {
