@@ -199,6 +199,7 @@ enyo.kind({
     name: 'deleteLine',
     i18nContent: 'OBPOS_ButtonDelete',
     classes: 'btnlink-orange',
+    permission: 'OBPOS_ActionButtonDelete',
     tap: function () {
       this.owner.owner.doDeleteLine({
         line: this.owner.owner.line,
@@ -222,6 +223,7 @@ enyo.kind({
     i18nContent: 'OBPOS_LblDescription',
     name: 'descriptionButton',
     classes: 'btnlink-orange',
+    permission: 'OBPOS_ActionButtonDescription',
     tap: function () {
       if (this.owner.owner.receipt.get('isQuotation') && this.owner.owner.receipt.get('hasbeenpaid') === 'Y') {
         this.owner.owner.doShowPopup({
@@ -417,6 +419,7 @@ enyo.kind({
     i18nContent: 'OBPOS_lblSplit',
     showing: false,
     classes: 'btnlink-orange',
+    permission: 'OBPOS_ActionButtonSplit',
     tap: function () {
       this.owner.owner.doShowPopup({
         popup: 'OBPOS_modalSplitLine',
@@ -430,6 +433,7 @@ enyo.kind({
     kind: 'OB.UI.SmallButton',
     name: 'showRelatedServices',
     classes: 'btnlink-orange',
+    permission: 'OBPOS_ActionButtonShowRelatedServices',
     style: 'width: 45px; background-repeat: no-repeat; background-position: center; color: rgba(0, 0, 0, 0)',
     content: '-',
     tap: function (inSender, inEvent) {
@@ -477,6 +481,7 @@ enyo.kind({
     i18nContent: 'OBPOS_LblRemoveDiscount',
     showing: false,
     classes: 'btnlink-orange',
+    permission: 'OBPOS_ActionButtonRemoveDiscount',
     tap: function () {
       var linesWithPromotionsLength = 0,
           manualPromotions = OB.Model.Discounts.getManualPromotions(),
@@ -508,6 +513,7 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenStockButton',
     name: 'checkStockButton',
+    permission: 'OBPOS_ActionButtonCheckStock',
     showing: false
   }],
   published: {
@@ -548,18 +554,22 @@ enyo.kind({
     }
   },
   hideReturnLineButton: function (inSender, inEvent) {
-    if (inEvent.hide || !OB.MobileApp.model.hasPermission(this.$.actionButtonsContainer.$.returnLine.permission, true)) {
-      this.$.actionButtonsContainer.$.returnLine.hide();
-    } else {
-      this.$.actionButtonsContainer.$.returnLine.show();
+    if (this.$.actionButtonsContainer.$.returnLine) {
+      if (inEvent.hide || !OB.MobileApp.model.hasPermission(this.$.actionButtonsContainer.$.returnLine.permission, true)) {
+        this.$.actionButtonsContainer.$.returnLine.hide();
+      } else {
+        this.$.actionButtonsContainer.$.returnLine.show();
+      }
     }
   },
   rearrangeEditButtonBar: function (line) {
-    if (OB.MobileApp.model.get('permissions')[this.$.actionButtonsContainer.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
-      this.$.actionButtonsContainer.$.returnLine.show();
-    }
-    if (this.model.get('order').get('orderType') === 1 || this.model.get('order').get('orderType') === 2) {
-      this.$.actionButtonsContainer.$.returnLine.hide();
+    if (this.$.actionButtonsContainer.$.returnLine) {
+      if (OB.MobileApp.model.get('permissions')[this.$.actionButtonsContainer.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
+        this.$.actionButtonsContainer.$.returnLine.show();
+      }
+      if (this.model.get('order').get('orderType') === 1 || this.model.get('order').get('orderType') === 2) {
+        this.$.actionButtonsContainer.$.returnLine.hide();
+      }
     }
     if (line) {
       if (line && !this.isLineInSelection(line)) {
@@ -575,78 +585,107 @@ enyo.kind({
       }
       if (!this.selectedModels || this.selectedModels.length <= 1) {
         if (this.model.get('order').get('isEditable')) {
-          this.$.actionButtonsContainer.$.descriptionButton.show();
+          if (this.$.actionButtonsContainer.$.descriptionButton) {
+            this.$.actionButtonsContainer.$.descriptionButton.show();
+          }
           var showSplitBtn = line && line.get('qty') > 1 && line.get('product').get('productType') !== 'S' && (!line.get('remainingQuantity') || line.get('remainingQuantity') < line.get('qty')) && !_.find(this.model.get('order').get('lines').models, function (l) {
             return l.get('relatedLines') && _.find(l.get('relatedLines'), function (rl) {
               return rl.orderlineId === line.id;
             }) !== undefined;
           });
-          if (showSplitBtn) {
-            var me = this;
-            OB.UTIL.HookManager.executeHooks('OBPOS_CheckSplitLine', {
-              receipt: me.model.get('order'),
-              orderline: line
-            }, function (args) {
-              if (args && args.cancelOperation) {
-                me.$.actionButtonsContainer.$.splitlineButton.hide();
-              } else {
-                me.$.actionButtonsContainer.$.splitlineButton.show();
-              }
-            });
-          } else {
-            this.$.actionButtonsContainer.$.splitlineButton.hide();
+          if (this.$.actionButtonsContainer.$.splitlineButton) {
+            if (showSplitBtn) {
+              var me = this;
+              OB.UTIL.HookManager.executeHooks('OBPOS_CheckSplitLine', {
+                receipt: me.model.get('order'),
+                orderline: line
+              }, function (args) {
+                if (args && args.cancelOperation) {
+                  me.$.actionButtonsContainer.$.splitlineButton.hide();
+                } else {
+                  me.$.actionButtonsContainer.$.splitlineButton.show();
+                }
+              });
+            } else {
+              this.$.actionButtonsContainer.$.splitlineButton.hide();
+            }
           }
         }
-        if (this.line) {
-          if (this.receipt.get('isEditable') && this.line.get('product').get('productType') === 'I' && !this.line.get('product').get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
-            this.$.actionButtonsContainer.$.checkStockButton.show();
+        if (this.$.actionButtonsContainer.$.checkStockButton) {
+          if (this.line) {
+            if (this.receipt.get('isEditable') && this.line.get('product').get('productType') === 'I' && !this.line.get('product').get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
+              this.$.actionButtonsContainer.$.checkStockButton.show();
+            } else {
+              this.$.actionButtonsContainer.$.checkStockButton.hide();
+            }
           } else {
             this.$.actionButtonsContainer.$.checkStockButton.hide();
           }
-        } else {
-          this.$.actionButtonsContainer.$.checkStockButton.hide();
         }
       } else {
-        this.$.actionButtonsContainer.$.checkStockButton.hide();
-        this.$.actionButtonsContainer.$.descriptionButton.hide();
-        this.$.actionButtonsContainer.$.splitlineButton.hide();
+        if (this.$.actionButtonsContainer.$.checkStockButton) {
+          this.$.actionButtonsContainer.$.checkStockButton.hide();
+        }
+        if (this.$.actionButtonsContainer.$.descriptionButton) {
+          this.$.actionButtonsContainer.$.descriptionButton.hide();
+        }
+        if (this.$.actionButtonsContainer.$.splitlineButton) {
+          this.$.actionButtonsContainer.$.splitlineButton.hide();
+        }
       }
-      var promotions = false;
-      if (this.selectedModels) {
-        _.each(this.selectedModels, function (lineModel) {
-          if (lineModel.get('promotions') && lineModel.get('promotions').length > 0) {
-            var filtered;
-            filtered = _.filter(lineModel.get('promotions'), function (prom) {
-              return OB.Model.Discounts.discountRules[prom.discountType].isManual;
-            }, this);
-            if (filtered.length === lineModel.get('promotions').length) {
-              //lines with just discrectionary discounts can be removed.
-              promotions = true;
+      if (this.$.actionButtonsContainer.$.removeDiscountButton) {
+        var promotions = false;
+        if (this.selectedModels) {
+          _.each(this.selectedModels, function (lineModel) {
+            if (lineModel.get('promotions') && lineModel.get('promotions').length > 0) {
+              var filtered;
+              filtered = _.filter(lineModel.get('promotions'), function (prom) {
+                return OB.Model.Discounts.discountRules[prom.discountType].isManual;
+              }, this);
+              if (filtered.length === lineModel.get('promotions').length) {
+                //lines with just discrectionary discounts can be removed.
+                promotions = true;
+              }
             }
+          });
+        }
+        if (promotions) {
+          this.$.actionButtonsContainer.$.removeDiscountButton.show();
+        } else {
+          this.$.actionButtonsContainer.$.removeDiscountButton.hide();
+        }
+      }
+      if (this.$.actionButtonsContainer.$.returnLine) {
+        if ((!_.isUndefined(line) && !_.isUndefined(line.get('originalOrderLineId'))) || this.model.get('order').get('orderType') === 1 || this.model.get('order').get('orderType') === 2) {
+          this.$.actionButtonsContainer.$.returnLine.hide();
+        } else if (OB.MobileApp.model.get('permissions')[this.$.actionButtonsContainer.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
+          this.$.actionButtonsContainer.$.returnLine.show();
+        }
+      }
+      if (this.$.actionButtonsContainer.$.showRelatedServices) {
+        if (this.selectedModels && this.selectedModels.length > 0) {
+          var proposedServices, existRelatedServices;
+          existRelatedServices = this.selectedModels.filter(function (line) {
+            return line.get('hasRelatedServices');
+          }).length === this.selectedModels.length;
+          proposedServices = this.selectedModels.filter(function (line) {
+            return !line.get('hasRelatedServices') || line.get('obposServiceProposed');
+          }).length === this.selectedModels.length;
+          if (existRelatedServices) {
+            this.$.actionButtonsContainer.$.showRelatedServices.show();
+            if (proposedServices) {
+              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', false);
+              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', true);
+            } else {
+              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', true);
+              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', false);
+            }
+          } else {
+            this.$.actionButtonsContainer.$.showRelatedServices.hide();
           }
-        });
-      }
-      if (promotions) {
-        this.$.actionButtonsContainer.$.removeDiscountButton.show();
-      } else {
-        this.$.actionButtonsContainer.$.removeDiscountButton.hide();
-      }
-      if ((!_.isUndefined(line) && !_.isUndefined(line.get('originalOrderLineId'))) || this.model.get('order').get('orderType') === 1 || this.model.get('order').get('orderType') === 2) {
-        this.$.actionButtonsContainer.$.returnLine.hide();
-      } else if (OB.MobileApp.model.get('permissions')[this.$.actionButtonsContainer.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
-        this.$.actionButtonsContainer.$.returnLine.show();
-      }
-      if (this.selectedModels && this.selectedModels.length > 0) {
-        var proposedServices, existRelatedServices;
-        existRelatedServices = this.selectedModels.filter(function (line) {
-          return line.get('hasRelatedServices');
-        }).length === this.selectedModels.length;
-        proposedServices = this.selectedModels.filter(function (line) {
-          return !line.get('hasRelatedServices') || line.get('obposServiceProposed');
-        }).length === this.selectedModels.length;
-        if (existRelatedServices) {
+        } else if (this.line && this.line.get('hasRelatedServices')) {
           this.$.actionButtonsContainer.$.showRelatedServices.show();
-          if (proposedServices) {
+          if (this.line.get('obposServiceProposed')) {
             this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', false);
             this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', true);
           } else {
@@ -656,17 +695,6 @@ enyo.kind({
         } else {
           this.$.actionButtonsContainer.$.showRelatedServices.hide();
         }
-      } else if (this.line && this.line.get('hasRelatedServices')) {
-        this.$.actionButtonsContainer.$.showRelatedServices.show();
-        if (this.line.get('obposServiceProposed')) {
-          this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', false);
-          this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', true);
-        } else {
-          this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', true);
-          this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', false);
-        }
-      } else {
-        this.$.actionButtonsContainer.$.showRelatedServices.hide();
       }
       this.render();
     }
@@ -996,9 +1024,10 @@ enyo.kind({
     enyo.forEach(sortedPropertiesByPosition, function (compToCreate) {
       this.$.linePropertiesContainer.createComponent(compToCreate);
     }, this);
-
     enyo.forEach(this.actionButtons, function (compToCreate) {
-      this.$.actionButtonsContainer.createComponent(compToCreate);
+      if (!compToCreate.permission || OB.MobileApp.model.hasPermission(compToCreate.permission, false)) {
+        this.$.actionButtonsContainer.createComponent(compToCreate);
+      }
     }, this);
   },
   init: function (model) {

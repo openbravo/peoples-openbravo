@@ -221,13 +221,13 @@ public class Product extends ProcessHQLQuery {
     } finally {
       OBContext.restorePreviousMode();
     }
-    boolean showGenericProducts = false;
+    boolean executeGenericProductQry = false;
     try {
       OBContext.setAdminMode(false);
-      showGenericProducts = "Y".equals(Preferences.getPreferenceValue("OBPOS_ShowGenericProduct",
-          true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-              .getOBContext().getRole(), null));
+      executeGenericProductQry = "Y".equals(Preferences.getPreferenceValue(
+          "OBPOS_ExecuteGenericProductQuery", true, OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null));
     } catch (PropertyException e) {
       log.error("Error getting preference OBPOS_ShowGenericProduct " + e.getMessage(), e);
     } finally {
@@ -312,8 +312,9 @@ public class Product extends ProcessHQLQuery {
     // generic products
     boolean isForceRemote = jsonsent.getJSONObject("parameters").has("forceRemote")
         && jsonsent.getJSONObject("parameters").getBoolean("forceRemote");
-    if (showGenericProducts && !isRemote && !isForceRemote) {// BROWSE tab is hidden, we do not need
-                                                             // to
+    if (executeGenericProductQry && !isRemote && !isForceRemote) {// BROWSE tab is hidden, we do not
+                                                                  // need
+      // to
       // send generic
       // products
       products

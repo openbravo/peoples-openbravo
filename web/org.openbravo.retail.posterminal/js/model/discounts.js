@@ -55,6 +55,9 @@
         });
         receipt.trigger('applyPromotionsFinished');
       }
+      if (OB.Model.Discounts.discountRules['4755A35B4DA34F6CB08F15462BA123CF']) {
+        OB.Model.Discounts.discountRules['4755A35B4DA34F6CB08F15462BA123CF'].discountedUnits = {};
+      }
     },
     applyPromotionsLat: function (receipt, line) {
       var me = this;

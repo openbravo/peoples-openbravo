@@ -287,6 +287,7 @@ enyo.kind({
             };
 
         getCustomerAddrValues({
+          customer: me.customer,
           customerAddr: customerAddr
         });
 

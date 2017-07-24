@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016 Openbravo S.L.U.
+ * Copyright (C) 2016-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -61,8 +61,9 @@ public class ProductCharacteristicHQLCriteria extends HQLCriteriaProcess {
     final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
     return "   exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli"
         + " where pchv.product.id=pli.product.id and cv.characteristic = pchv.characteristic and cv.id = pchv.characteristicValue.id "
-        + " and pli.obretcoProductlist.id='" + productList.getId()
-        + "' and upper(pchv.product.name) like upper('$1') ";
+        + " and pli.obretcoProductlist.id='"
+        + productList.getId()
+        + "' and (upper(pchv.product.name) like upper('$1') or upper(pchv.product.uPCEAN) like upper('$1')) ";
   }
 
   public String getProdCategoryQuery() {
@@ -72,7 +73,7 @@ public class ProductCharacteristicHQLCriteria extends HQLCriteriaProcess {
         + " where pchv.product.id=pli.product.id and cv.characteristic = pchv.characteristic and  cv.id = pchv.characteristicValue.id"
         + " and pli.obretcoProductlist.id='"
         + productList.getId()
-        + "' and upper(pchv.product.name) like upper('$1') and pchv.product.productCategory.id in ('$2') ";
+        + "' and (upper(pchv.product.name) like upper('$1') or upper(pchv.product.uPCEAN) like upper('$1')) and pchv.product.productCategory.id in ('$2') ";
   }
 
   public String getBestsellers() {
@@ -81,7 +82,9 @@ public class ProductCharacteristicHQLCriteria extends HQLCriteriaProcess {
     return "  exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli "
         + " where pchv.product.id=pli.product.id "
         + " and cv.characteristic = pchv.characteristic and cv.id = pchv.characteristicValue.id and pli.bestseller = true and pli.obretcoProductlist.id = '"
-        + productList.getId() + "' " + " and upper(pchv.product.name) like upper('$1') ";
+        + productList.getId()
+        + "' "
+        + " and (upper(pchv.product.name) like upper('$1') or upper(pchv.product.uPCEAN) like upper('$1')) ";
   }
 
   public String getCharacteristics(String params) {

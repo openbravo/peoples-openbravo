@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016 Openbravo S.L.U.
+ * Copyright (C) 2016-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -50,6 +50,10 @@ public class LoadedCustomer extends ProcessHQLQuery {
           jsonsent.getJSONObject("parameters").getJSONObject("bpartnerId").get("value"));
       paramValues.put("bplocId", jsonsent.getJSONObject("parameters").getJSONObject("bpLocationId")
           .get("value"));
+      if (jsonsent.getJSONObject("parameters").has("bpBillLocationId")) {
+        paramValues.put("bpbilllocId",
+            jsonsent.getJSONObject("parameters").getJSONObject("bpBillLocationId").get("value"));
+      }
 
       return paramValues;
     } finally {
@@ -83,6 +87,12 @@ public class LoadedCustomer extends ProcessHQLQuery {
         + " from BusinessPartnerLocation AS bploc " + "Where bploc.id= :bplocId"
         + " ORDER BY bploc.locationAddress.addressLine1";
     customers.add(hql);
+    if (jsonsent.getJSONObject("parameters").has("bpBillLocationId")) {
+      hql = " select" + bpartnerLocHQLProperties.getHqlSelect()
+          + " from BusinessPartnerLocation AS bploc " + "Where bploc.id= :bpbilllocId"
+          + " ORDER BY bploc.locationAddress.addressLine1";
+      customers.add(hql);
+    }
     return customers;
   }
 }
