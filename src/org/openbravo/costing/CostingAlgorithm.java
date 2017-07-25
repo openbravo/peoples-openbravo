@@ -284,8 +284,8 @@ public abstract class CostingAlgorithm {
 
     if (stdCost == null && pp == null && orderLine == null) {
       throw new OBException("@NoPriceListOrStandardCostForProduct@ @Organization@: "
-          + costOrg.getName() + ", @Product@: " + transaction.getProduct().getName() + ", @Date@: "
-          + OBDateUtils.formatDate(transaction.getTransactionProcessDate()));
+          + costOrg.getName() + ", @Product@: " + transaction.getProduct().getSearchKey()
+          + ", @Date@: " + OBDateUtils.formatDate(transaction.getTransactionProcessDate()));
     }
     Date stdCostDate = new Date(0L);
     if (stdCost != null) {

@@ -160,7 +160,7 @@ public class CostingUtils {
         false, false);
     if (stdCost == null && pp == null) {
       throw new OBException("@NoPriceListOrStandardCostForProduct@ @Organization@: "
-          + org.getName() + ", @Product@: " + product.getName() + ", @Date@: "
+          + org.getName() + ", @Product@: " + product.getSearchKey() + ", @Date@: "
           + OBDateUtils.formatDate(costDate));
     } else if (stdCost != null && pp == null) {
       BigDecimal standardCost = getStandardCost(product, org, costDate, costDimensions, currency);
