@@ -25,7 +25,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -97,18 +96,23 @@ public class ProductProperties extends ModelExtension {
 
   public static List<HQLProperty> getMainProductHQLProperties(Object params) {
 
+    OBPOSApplications posDetail = null;
     Boolean localmultiPriceList = false;
     try {
       if (params != null) {
         @SuppressWarnings("unchecked")
         HashMap<String, Object> localParams = (HashMap<String, Object>) params;
         localmultiPriceList = (Boolean) localParams.get("multiPriceList");
-
+        posDetail = POSUtils.getTerminalById((String) localParams.get("terminalId"));
       }
     } catch (Exception e) {
-      log.error("Error getting posPrecision: " + e.getMessage(), e);
+      log.error("Error getting params: " + e.getMessage(), e);
     }
     final boolean multiPriceList = localmultiPriceList;
+
+    if (posDetail == null) {
+      throw new OBException("terminal id is not present in session ");
+    }
 
     // Build Product Tax Category select clause
     final Dialect dialect = ((SessionFactoryImpl) ((SessionImpl) OBDal.getInstance().getSession())
@@ -117,12 +121,6 @@ public class ProductProperties extends ModelExtension {
     if (!function.containsKey("c_get_product_taxcategory")) {
       dialect.getFunctions().put("c_get_product_taxcategory",
           new StandardSQLFunction("c_get_product_taxcategory", new StringType()));
-    }
-    OBPOSApplications posDetail;
-    posDetail = POSUtils.getTerminalById(RequestContext.get().getSessionAttribute("POSTerminal")
-        .toString());
-    if (posDetail == null) {
-      throw new OBException("terminal id is not present in session ");
     }
     StringBuffer taxCategoryQry = new StringBuffer();
     taxCategoryQry.append("c_get_product_taxcategory(product.id, '");

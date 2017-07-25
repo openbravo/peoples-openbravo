@@ -207,7 +207,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
 
     JSONObject result = super.getPrerrenderData(request);
 
-    if (RequestContext.get().getSessionAttribute("POSTerminal") == null) {
+    if (OBContext.getOBContext().getUser().getId().equals("0")) {
       final VariablesSecureApp vars = new VariablesSecureApp(request);
       final String terminalSearchKey = vars.getStringParameter("terminalName");
       OBCriteria<OBPOSApplications> qApp = OBDal.getInstance().createCriteria(

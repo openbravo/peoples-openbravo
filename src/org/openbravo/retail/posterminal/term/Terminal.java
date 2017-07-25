@@ -27,7 +27,6 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -66,16 +65,16 @@ public class Terminal extends JSONProcessSimple {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
-    String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
-    OBPOSApplications pOSTerminal = POSUtils.getTerminalById(posId);
     try {
       OBContext.setAdminMode(false);
 
-      // TO use posId in QueryTerminalProperty
-      jsonsent.put("pos", posId);
+      OBPOSApplications pOSTerminal = POSUtils.getTerminal(jsonsent.optString("terminalName"));
 
       // INITIAL VALIDATIONS
       InitialValidations.validateTerminal(pOSTerminal);
+
+      // TO use terminalId in QueryTerminalProperty
+      jsonsent.put("pos", pOSTerminal.getId());
 
       // saving quotations doc id to prevent session to be lost in getLastDocumentNumberForPOS
       String quotationsDocTypeId = pOSTerminal.getObposTerminaltype()

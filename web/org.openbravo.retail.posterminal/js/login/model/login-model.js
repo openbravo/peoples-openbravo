@@ -98,6 +98,9 @@
           params.terminalTime = currentDate;
           params.terminalTimeOffset = currentDate.getTimezoneOffset();
 
+          OB.DS.commonParams = OB.DS.commonParams || {};
+          OB.DS.commonParams.terminalName = terminalModel.get('terminalName');
+
           handleError = function (data) {
             if (data && data.exception && data.exception.message && OB.I18N.hasLabel(data.exception.message)) {
               //Common error (not a random caught exception).
@@ -164,7 +167,6 @@
                 }
               }
 
-              OB.DS.commonParams = OB.DS.commonParams || {};
               OB.DS.commonParams = {
                 client: terminalModel.get('terminal').client,
                 organization: terminalModel.get('terminal').organization,
@@ -619,15 +621,13 @@
         return false;
       }
 
-      if (!OB.DS.commonParams) {
-        OB.DS.commonParams = OB.DS.commonParams || {};
-        OB.DS.commonParams = {
-          client: this.get('terminal').client,
-          organization: this.get('terminal').organization,
-          pos: this.get('terminal').id,
-          terminalName: this.get('terminalName')
-        };
-      }
+      OB.DS.commonParams = OB.DS.commonParams || {};
+      OB.DS.commonParams = {
+        client: this.get('terminal').client,
+        organization: this.get('terminal').organization,
+        pos: this.get('terminal').id,
+        terminalName: this.get('terminalName')
+      };
 
       //LEGACY
       this.paymentnames = {};
