@@ -5,6 +5,7 @@
 	<property name="ireport.zoom" value="3.138428376721006"/>
 	<property name="ireport.x" value="1671"/>
 	<property name="ireport.y" value="105"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -618,7 +619,8 @@
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHT_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHT_TOTAL}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHT_TOTAL}!=null)?$V{WEIGHT_TOTAL}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<staticText>
 					<reportElement key="staticText-15" style="Report_Data_Label" x="206" y="2" width="34" height="18" uuid="afd632e9-9484-4a22-aba9-f66bc0c0820c"/>
@@ -645,7 +647,8 @@
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHTREF_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHTREF_TOTAL}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHTREF_TOTAL}!=null)?$V{WEIGHTREF_TOTAL}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Report" isBlankWhenNull="false">
 					<reportElement key="textField-101" style="Total_Field" x="240" y="2" width="65" height="18" uuid="68140b4e-44b3-454c-8c40-fe749fd68e37"/>
@@ -659,7 +662,8 @@
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNT_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNT_TOTAL}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNT_TOTAL}!=null)?$V{CONVAMOUNT_TOTAL}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-102" style="Total_Field" x="320" y="2" width="65" height="18" uuid="4c63afb6-d130-45af-80d7-5a552e6f0909"/>
@@ -673,7 +677,8 @@
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNTREF_TOTAL}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_TOTAL}!=null)?$V{CONVAMOUNTREF_TOTAL}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-103" style="Total_Field" x="400" y="2" width="25" height="18" uuid="2dd981de-73de-485c-bdd2-9bc10d5d3b95"/>
@@ -687,7 +692,8 @@
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_T}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMT_PCT_T}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_T}!=null)?$V{CONVAMT_PCT_T}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-100" style="Total_Field" x="630" y="2" width="65" height="18" uuid="ce3b0947-5304-43aa-bb96-3d51faf27070"/>
@@ -701,7 +707,8 @@
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTYREF_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{QTYREF_TOTAL}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTYREF_TOTAL}!=null)?$V{QTYREF_TOTAL}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-100" style="Total_Field" x="565" y="2" width="65" height="18" uuid="4351191d-1f34-4864-b99a-1c2a66f70614"/>
@@ -715,7 +722,8 @@
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{QTY_TOTAL}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_TOTAL}!=null)?$V{QTY_TOTAL}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement key="textField-104" style="Detail_Header" mode="Opaque" x="0" y="2" width="15" height="18" uuid="eab948e5-487f-4d0a-a036-5f59c483f6b5"/>
@@ -934,7 +942,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_SUM1}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM1}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_SUM1}!=null)?$V{QTY_SUM1}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL1" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level1_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="425" y="0" width="65" height="18" uuid="62a514f7-ac24-4ba8-a6ae-a3a5b36dc9bc"/>
@@ -947,7 +956,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHT_SUM1}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHT_SUM1}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHT_SUM1}!=null)?$V{WEIGHT_SUM1}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL1" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level1_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="490" y="0" width="75" height="18" uuid="bc47fc03-0472-4664-8284-de8f5453eb2b"/>
@@ -960,7 +970,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM1}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHTREF_SUM1}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM1}!=null)?$V{WEIGHTREF_SUM1}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL1" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level1_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="630" y="0" width="65" height="18" uuid="1b3f2445-b09b-497d-b3ea-b4e65c05ae4e">
@@ -975,7 +986,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTYREF_SUM1}!=null)?$P{NUMBERFORMAT}.format($V{QTYREF_SUM1}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTYREF_SUM1}!=null)?$V{QTYREF_SUM1}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL1" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level1_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="695" y="0" width="35" height="18" uuid="3a696c3f-9cdd-4d56-88fa-a8e068b55feb">
@@ -990,7 +1002,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_PCT_1}!=null)?$P{NUMBERFORMAT}.format($V{QTY_PCT_1}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_PCT_1}!=null)?$V{QTY_PCT_1}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL1" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-12" style="Level1_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="240" y="0" width="65" height="18" uuid="3247444c-be0a-4db5-a27d-b0e5ddb18b47"/>
@@ -1003,7 +1016,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM1}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNT_SUM1}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM1}!=null)?$V{CONVAMOUNT_SUM1}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL1" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-13" style="Level1_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="320" y="0" width="65" height="18" uuid="b0bd86bd-819b-4043-8e72-ad85b11fe4db"/>
@@ -1016,7 +1030,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM1}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNTREF_SUM1}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM1}!=null)?$V{CONVAMOUNTREF_SUM1}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL1" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-14" style="Level1_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="400" y="0" width="25" height="18" uuid="e1ac5ff3-4f2c-4a1d-90f7-7e78b647e885"/>
@@ -1029,7 +1044,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_1}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMT_PCT_1}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_1}!=null)?$V{CONVAMT_PCT_1}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL1" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-114" style="Level1_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="385" y="0" width="15" height="18" uuid="7a94b13a-ddf6-41fe-8eb4-dd476aecdf04"/>
@@ -1094,7 +1110,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_SUM2}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM2}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_SUM2}!=null)?$V{QTY_SUM2}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL2" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level2_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="425" y="0" width="65" height="18" uuid="97b3e338-44f2-4a10-8c26-a0cf803434d8"/>
@@ -1107,7 +1124,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHT_SUM2}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHT_SUM2}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHT_SUM2}!=null)?$V{WEIGHT_SUM2}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL2" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level2_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="490" y="0" width="75" height="18" uuid="e1a38f61-9fc1-49a0-bb2e-e01e0e79db33"/>
@@ -1120,7 +1138,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM2}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHTREF_SUM2}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM2}!=null)?$V{WEIGHTREF_SUM2}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL2" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level2_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="630" y="0" width="65" height="18" uuid="1b0ab5a5-430e-44e8-bacb-ee0a61a10adc">
@@ -1135,7 +1154,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTYREF_SUM2}!=null)?$P{NUMBERFORMAT}.format($V{QTYREF_SUM2}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTYREF_SUM2}!=null)?$V{QTYREF_SUM2}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL2" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level2_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="695" y="0" width="35" height="18" uuid="d1c8bf20-bf05-48da-b268-85609070c134">
@@ -1150,7 +1170,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_PCT_2}!=null)?$P{NUMBERFORMAT}.format($V{QTY_PCT_2}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_PCT_2}!=null)?$V{QTY_PCT_2}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL2" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-15" style="Level2_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="240" y="0" width="65" height="18" uuid="ca8687b0-9bcd-4646-b93b-9be8b5dd3eeb"/>
@@ -1163,7 +1184,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM2}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNT_SUM2}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM2}!=null)?$V{CONVAMOUNT_SUM2}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL2" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-16" style="Level2_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="320" y="0" width="65" height="18" uuid="80e70109-2cf1-4f66-9b4d-3370db0dc4c1"/>
@@ -1176,7 +1198,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM2}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNTREF_SUM2}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM2}!=null)?$V{CONVAMOUNTREF_SUM2}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL2" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-17" style="Level2_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="400" y="0" width="25" height="18" uuid="a97cad08-3136-4865-adc6-e4988fd489f6"/>
@@ -1189,7 +1212,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_2}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMT_PCT_2}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_2}!=null)?$V{CONVAMT_PCT_2}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement key="textField-42" style="Level1_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="15" height="18" uuid="7f430e7b-4fb7-45f4-aee2-473891cbf138"/>
@@ -1267,7 +1291,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_SUM3}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM3}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_SUM3}!=null)?$V{QTY_SUM3}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL3" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level3_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="425" y="0" width="65" height="18" uuid="67c0e3b4-aec8-4941-9f66-e7e1ba6d0534"/>
@@ -1280,7 +1305,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHT_SUM3}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHT_SUM3}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHT_SUM3}!=null)?$V{WEIGHT_SUM3}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL3" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level3_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="490" y="0" width="75" height="18" uuid="da8c01cb-c8d5-4dbb-96b1-0db30d11b7f6"/>
@@ -1293,7 +1319,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM3}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHTREF_SUM3}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM3}!=null)?$V{WEIGHTREF_SUM3}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL3" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level3_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="630" y="0" width="65" height="18" uuid="6fe42723-1579-4076-8a9f-e4a354df3fc3">
@@ -1308,7 +1335,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTYREF_SUM3}!=null)?$P{NUMBERFORMAT}.format($V{QTYREF_SUM3}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTYREF_SUM3}!=null)?$V{QTYREF_SUM3}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL3" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level3_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="695" y="0" width="35" height="18" uuid="f0d3a9e8-0fcd-46c0-ba01-00b84551ac42">
@@ -1323,7 +1351,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_PCT_3}!=null)?$P{NUMBERFORMAT}.format($V{QTY_PCT_3}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_PCT_3}!=null)?$V{QTY_PCT_3}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL3" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-18" style="Level3_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="240" y="0" width="65" height="18" uuid="c0a744f8-516f-46d7-bba3-ebf2f6328f6a"/>
@@ -1336,7 +1365,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM3}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNT_SUM3}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM3}!=null)?$V{CONVAMOUNT_SUM3}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL3" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-19" style="Level3_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="320" y="0" width="65" height="18" uuid="321f4fe7-001f-4da6-83e1-f46bc0cf950a"/>
@@ -1349,7 +1379,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM3}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNTREF_SUM3}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM3}!=null)?$V{CONVAMOUNTREF_SUM3}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL3" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-20" style="Level3_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="400" y="0" width="25" height="18" uuid="6c502530-52bd-4f78-b275-8c9ca4979969"/>
@@ -1362,7 +1393,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_3}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMT_PCT_3}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_3}!=null)?$V{CONVAMT_PCT_3}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement key="textField-43" style="Level1_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="15" height="18" uuid="159ebab5-da8f-41e8-9266-c709063ab5b4"/>
@@ -1453,7 +1485,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_SUM4}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM4}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_SUM4}!=null)?$V{QTY_SUM4}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL4" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level4_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="425" y="0" width="65" height="18" uuid="0f60c6a2-6cfd-461e-9e82-a041141253de"/>
@@ -1466,7 +1499,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHT_SUM4}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHT_SUM4}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHT_SUM4}!=null)?$V{WEIGHT_SUM4}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL4" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level4_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="490" y="0" width="75" height="18" uuid="699bf908-3b75-4452-a3b9-11ff11edaf70"/>
@@ -1479,7 +1513,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM4}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHTREF_SUM4}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM4}!=null)?$V{WEIGHTREF_SUM4}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL4" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level4_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="630" y="0" width="65" height="18" uuid="eaf0d4db-0e6e-40d3-9543-83979298c39f">
@@ -1494,7 +1529,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTYREF_SUM4}!=null)?$P{NUMBERFORMAT}.format($V{QTYREF_SUM4}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTYREF_SUM4}!=null)?$V{QTYREF_SUM4}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL4" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level4_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="695" y="0" width="35" height="18" uuid="acc09c0c-c739-49c9-8ca5-3ec2a7de52a5">
@@ -1509,7 +1545,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_PCT_4}!=null)?$P{NUMBERFORMAT}.format($V{QTY_PCT_4}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_PCT_4}!=null)?$V{QTY_PCT_4}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL4" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-21" style="Level4_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="240" y="0" width="65" height="18" uuid="16bc351e-01cb-4b49-8661-4c703b9c6a38"/>
@@ -1522,7 +1559,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM4}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNT_SUM4}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM4}!=null)?$V{CONVAMOUNT_SUM4}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL4" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-22" style="Level4_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="320" y="0" width="65" height="18" uuid="180c84ed-2a42-4bf3-af6e-5c1d825bcd04"/>
@@ -1535,7 +1573,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM4}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNTREF_SUM4}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM4}!=null)?$V{CONVAMOUNTREF_SUM4}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="NIVEL4" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-23" style="Level4_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="400" y="0" width="25" height="18" uuid="99874d96-ccb6-4637-b986-bf1c465b91e8"/>
@@ -1548,7 +1587,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_4}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMT_PCT_4}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_4}!=null)?$V{CONVAMT_PCT_4}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement key="textField-44" style="Level1_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="15" height="18" uuid="e1520ad1-5fb5-43e4-b569-4c9ee98f8972"/>
@@ -1652,7 +1692,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_SUM5}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM5}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_SUM5}!=null)?$V{QTY_SUM5}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL5" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level5_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="425" y="0" width="65" height="18" uuid="9e403463-bdb0-4fec-93a5-209d4329beb3"/>
@@ -1665,7 +1706,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHT_SUM5}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHT_SUM5}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHT_SUM5}!=null)?$V{WEIGHT_SUM5}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL5" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level5_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="490" y="0" width="75" height="18" uuid="9a40649d-8118-403c-9882-9ea9ba6ee728"/>
@@ -1678,7 +1720,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM5}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHTREF_SUM5}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM5}!=null)?$V{WEIGHTREF_SUM5}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL5" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level5_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="630" y="0" width="65" height="18" uuid="ac4c4ec6-1d4b-4a00-b607-ccc40c345adb">
@@ -1693,7 +1736,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTYREF_SUM5}!=null)?$P{NUMBERFORMAT}.format($V{QTYREF_SUM5}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTYREF_SUM5}!=null)?$V{QTYREF_SUM5}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL5" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level5_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="695" y="0" width="35" height="18" uuid="52f7369d-68a3-4063-8991-eb30ef79f512">
@@ -1708,7 +1752,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_PCT_5}!=null)?$P{NUMBERFORMAT}.format($V{QTY_PCT_5}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_PCT_5}!=null)?$V{QTY_PCT_5}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL5" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-24" style="Level5_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="240" y="0" width="65" height="18" uuid="01b5500b-d067-4761-a1b8-448838e4360e"/>
@@ -1721,7 +1766,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM5}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNT_SUM5}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM5}!=null)?$V{CONVAMOUNT_SUM5}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL5" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-25" style="Level5_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="320" y="0" width="65" height="18" uuid="77674dac-c9ed-4fbc-b2d5-a5b62217696a"/>
@@ -1734,7 +1780,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM5}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNTREF_SUM5}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM5}!=null)?$V{CONVAMOUNTREF_SUM5}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL5" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-26" style="Level5_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="400" y="0" width="25" height="18" uuid="5438ed71-54d7-4dd6-9795-f599f113a223"/>
@@ -1747,7 +1794,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_5}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMT_PCT_5}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_5}!=null)?$V{CONVAMT_PCT_5}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement key="textField-45" style="Level1_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="15" height="18" uuid="8290c6e0-cfad-4fec-81f5-84b4867d7beb"/>
@@ -1864,7 +1912,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_SUM6}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM6}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_SUM6}!=null)?$V{QTY_SUM6}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL6" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level6_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="425" y="0" width="65" height="18" uuid="9a1ab029-9cb8-43bc-aea1-b48e7a31cc6f"/>
@@ -1877,7 +1926,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHT_SUM6}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHT_SUM6}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHT_SUM6}!=null)?$V{WEIGHT_SUM6}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL6" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level6_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="490" y="0" width="75" height="18" uuid="d3db1934-2534-4621-80aa-a6c758b51fb3"/>
@@ -1890,7 +1940,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM6}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHTREF_SUM6}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM6}!=null)?$V{WEIGHTREF_SUM6}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL6" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level6_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="630" y="0" width="65" height="18" uuid="ffab6a79-623a-42e2-b1b0-a8117e5fc9ec">
@@ -1905,7 +1956,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTYREF_SUM6}!=null)?$P{NUMBERFORMAT}.format($V{QTYREF_SUM6}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTYREF_SUM6}!=null)?$V{QTYREF_SUM6}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL6" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level6_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="695" y="0" width="35" height="18" uuid="74cc6d9a-1f5d-4151-b8cf-cc87c7acddcb">
@@ -1920,7 +1972,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_PCT_6}!=null)?$P{NUMBERFORMAT}.format($V{QTY_PCT_6}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_PCT_6}!=null)?$V{QTY_PCT_6}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL6" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-27" style="Level6_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="240" y="0" width="65" height="18" uuid="a761cc9c-8e7c-437e-86b6-e92b8886750e"/>
@@ -1933,7 +1986,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM6}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNT_SUM6}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM6}!=null)?$V{CONVAMOUNT_SUM6}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL6" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-28" style="Level6_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="320" y="0" width="65" height="18" uuid="2f810e71-3fe6-48eb-8bf7-e9442426247e"/>
@@ -1946,7 +2000,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM6}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNTREF_SUM6}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM6}!=null)?$V{CONVAMOUNTREF_SUM6}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL6" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-29" style="Level6_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="400" y="0" width="25" height="18" uuid="884fc74b-d0f8-4b39-99b9-b17e4ba91a90"/>
@@ -1959,7 +2014,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_6}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMT_PCT_6}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_6}!=null)?$V{CONVAMT_PCT_6}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement key="textField-46" style="Level1_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="15" height="18" uuid="0047984f-95d9-4a05-9183-c4eaad8604f8"/>
@@ -2089,7 +2145,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_SUM7}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM7}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_SUM7}!=null)?$V{QTY_SUM7}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL7" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level7_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="425" y="0" width="65" height="18" uuid="db46a7fe-ad38-44b6-8414-8c3f46b58405"/>
@@ -2102,7 +2159,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHT_SUM7}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHT_SUM7}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHT_SUM7}!=null)?$V{WEIGHT_SUM7}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL7" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level7_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="490" y="0" width="75" height="18" uuid="4c028599-0a84-4731-9cb4-6d3a137638e0"/>
@@ -2115,7 +2173,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM7}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHTREF_SUM7}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM7}!=null)?$V{WEIGHTREF_SUM7}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL7" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level7_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="630" y="0" width="65" height="18" uuid="98ed6409-e487-4ce6-90a1-cf59f40f6303">
@@ -2130,7 +2189,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTYREF_SUM7}!=null)?$P{NUMBERFORMAT}.format($V{QTYREF_SUM7}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTYREF_SUM7}!=null)?$V{QTYREF_SUM7}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL7" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level7_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="695" y="0" width="35" height="18" uuid="1ccb3156-d2a4-425d-8283-5d64856fa653">
@@ -2145,7 +2205,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_PCT_7}!=null)?$P{NUMBERFORMAT}.format($V{QTY_PCT_7}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_PCT_7}!=null)?$V{QTY_PCT_7}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL7" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-30" style="Level7_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="240" y="0" width="65" height="18" uuid="736436d8-f882-4e9b-8863-34796de93624"/>
@@ -2158,7 +2219,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM7}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNT_SUM7}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM7}!=null)?$V{CONVAMOUNT_SUM7}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL7" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-31" style="Level7_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="320" y="0" width="65" height="18" uuid="f1a3c9d7-bf0d-4e9a-8e43-5b925470322b"/>
@@ -2171,7 +2233,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM7}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNTREF_SUM7}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM7}!=null)?$V{CONVAMOUNTREF_SUM7}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL7" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-32" style="Level7_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="400" y="0" width="25" height="18" uuid="26081681-4bbb-49ea-a7c5-21c9033fb493"/>
@@ -2184,7 +2247,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_7}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMT_PCT_7}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_7}!=null)?$V{CONVAMT_PCT_7}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement key="textField-47" style="Level1_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="15" height="18" uuid="cc3998ba-c42a-4ee3-9777-fcd9f72a6802"/>
@@ -2327,7 +2391,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_SUM8}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM8}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_SUM8}!=null)?$V{QTY_SUM8}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL8" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level8_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="425" y="0" width="65" height="18" uuid="77c192a6-8d63-426b-8c6e-57e15a73938d"/>
@@ -2340,7 +2405,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHT_SUM8}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHT_SUM8}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHT_SUM8}!=null)?$V{WEIGHT_SUM8}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL8" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level8_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="490" y="0" width="75" height="18" uuid="044e5dee-edf7-47a2-a1ac-f63b39e1f8e1"/>
@@ -2353,7 +2419,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM8}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHTREF_SUM8}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM8}!=null)?$V{WEIGHTREF_SUM8}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL8" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level8_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="630" y="0" width="65" height="18" uuid="52dc832d-8943-409d-adf6-6ed9ffd4186d">
@@ -2368,7 +2435,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTYREF_SUM8}!=null)?$P{NUMBERFORMAT}.format($V{QTYREF_SUM8}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTYREF_SUM8}!=null)?$V{QTYREF_SUM8}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL8" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level8_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="695" y="0" width="35" height="18" uuid="74fc1b9c-408c-4604-b36f-2f5780d83d88">
@@ -2383,7 +2451,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_PCT_8}!=null)?$P{NUMBERFORMAT}.format($V{QTY_PCT_8}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_PCT_8}!=null)?$V{QTY_PCT_8}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL8" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-33" style="Level8_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="240" y="0" width="65" height="18" uuid="eb3b032d-7f2c-4cbc-96de-9cb67ad968c1"/>
@@ -2396,7 +2465,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM8}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNT_SUM8}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM8}!=null)?$V{CONVAMOUNT_SUM8}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL8" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-34" style="Level8_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="320" y="0" width="65" height="18" uuid="c944e2c4-28a1-4b89-9bd7-a7ca0cffc431"/>
@@ -2409,7 +2479,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM8}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNTREF_SUM8}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM8}!=null)?$V{CONVAMOUNTREF_SUM8}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL8" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-35" style="Level8_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="400" y="0" width="25" height="18" uuid="164aae45-edac-446a-a46f-c2e2e0ebbf74"/>
@@ -2422,7 +2493,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_8}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMT_PCT_8}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_8}!=null)?$V{CONVAMT_PCT_8}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement key="textField-48" style="Level1_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="15" height="18" uuid="10e81893-c577-4c4b-969d-333650496d9f"/>
@@ -2578,7 +2650,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_SUM9}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM9}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_SUM9}!=null)?$V{QTY_SUM9}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL9" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level9_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="425" y="0" width="65" height="18" uuid="1a6554fe-484a-4469-9154-352bc12b9ef9"/>
@@ -2591,7 +2664,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHT_SUM9}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHT_SUM9}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHT_SUM9}!=null)?$V{WEIGHT_SUM9}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL9" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level9_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="490" y="0" width="75" height="18" uuid="b1ad7390-70c1-4a24-af6e-4c75699dbaef"/>
@@ -2604,7 +2678,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM9}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHTREF_SUM9}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM9}!=null)?$V{WEIGHTREF_SUM9}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL9" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level9_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="630" y="0" width="65" height="18" uuid="9f41553b-a524-4875-abe4-a7d81f08bd98">
@@ -2619,7 +2694,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTYREF_SUM9}!=null)?$P{NUMBERFORMAT}.format($V{QTYREF_SUM9}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTYREF_SUM9}!=null)?$V{QTYREF_SUM9}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL9" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level9_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="695" y="0" width="35" height="18" uuid="4d7da0fb-976f-45b6-98e2-3d67331ed2a2">
@@ -2634,7 +2710,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_PCT_9}!=null)?$P{NUMBERFORMAT}.format($V{QTY_PCT_9}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_PCT_9}!=null)?$V{QTY_PCT_9}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL9" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-36" style="Level9_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="240" y="0" width="65" height="18" uuid="52862d9a-4742-42ab-9322-cf4301e374fa"/>
@@ -2647,7 +2724,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM9}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNT_SUM9}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM9}!=null)?$V{CONVAMOUNT_SUM9}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL9" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-37" style="Level9_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="320" y="0" width="65" height="18" uuid="62eab7f8-3e10-47c4-a89e-1071ccd26a51"/>
@@ -2660,7 +2738,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM9}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNTREF_SUM9}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM9}!=null)?$V{CONVAMOUNTREF_SUM9}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL9" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-38" style="Level9_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="400" y="0" width="25" height="18" uuid="479e73dc-9e28-4a93-a79d-81b31fbc2a00"/>
@@ -2673,7 +2752,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_9}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMT_PCT_9}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_9}!=null)?$V{CONVAMT_PCT_9}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement key="textField-49" style="Level1_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="15" height="18" uuid="ead2e8cc-cb0e-4b86-bcd3-6a4b35d9215c"/>
@@ -2842,7 +2922,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_SUM10}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM10}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_SUM10}!=null)?$V{QTY_SUM10}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL10" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level10_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="425" y="0" width="65" height="18" uuid="6e154a06-403d-416d-96d0-9d5736d7c5b5"/>
@@ -2855,7 +2936,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHT_SUM10}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHT_SUM10}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHT_SUM10}!=null)?$V{WEIGHT_SUM10}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL10" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level10_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="490" y="0" width="75" height="18" uuid="eff6db0a-0a92-4160-bbbf-7ff6ac99b7fe"/>
@@ -2868,7 +2950,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM10}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHTREF_SUM10}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM10}!=null)?$V{WEIGHTREF_SUM10}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL10" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level10_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="630" y="0" width="65" height="18" uuid="e9651ac5-2a17-4bcf-bf27-52440e5c31f2">
@@ -2883,7 +2966,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTYREF_SUM10}!=null)?$P{NUMBERFORMAT}.format($V{QTYREF_SUM10}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTYREF_SUM10}!=null)?$V{QTYREF_SUM10}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL10" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level10_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="695" y="0" width="35" height="18" uuid="a84cee38-58c9-4c24-82ea-86d24ce1a25f">
@@ -2898,7 +2982,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_PCT_10}!=null)?$P{NUMBERFORMAT}.format($V{QTY_PCT_10}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_PCT_10}!=null)?$V{QTY_PCT_10}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL10" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-36" style="Level10_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="240" y="0" width="65" height="18" uuid="cd19e9d3-aa92-4a05-83d9-411ad002baed"/>
@@ -2911,7 +2996,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM10}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNT_SUM10}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM10}!=null)?$V{CONVAMOUNT_SUM10}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL10" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-37" style="Level10_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="320" y="0" width="65" height="18" uuid="857a7113-0928-4d2f-9040-e5e96f1cca35"/>
@@ -2924,7 +3010,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM10}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNTREF_SUM10}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM10}!=null)?$V{CONVAMOUNTREF_SUM10}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL10" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-38" style="Level10_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="400" y="0" width="25" height="18" uuid="d59916dd-ec3a-47e8-a3a5-6130eb787a57"/>
@@ -2937,7 +3024,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_10}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMT_PCT_10}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_10}!=null)?$V{CONVAMT_PCT_10}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement key="textField-49" style="Level1_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="15" height="18" uuid="c3dcec92-2ba3-43b9-8d6a-a1e5f5364402"/>
@@ -3119,7 +3207,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_SUM11}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM11}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_SUM11}!=null)?$V{QTY_SUM11}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL11" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level11_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="425" y="0" width="65" height="18" uuid="4da93268-487d-45ea-951d-84df29b65709"/>
@@ -3132,7 +3221,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHT_SUM11}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHT_SUM11}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHT_SUM11}!=null)?$V{WEIGHT_SUM11}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL11" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level11_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="490" y="0" width="75" height="18" uuid="806e3436-f447-4b00-8c04-6490812ad2b0"/>
@@ -3145,7 +3235,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM11}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHTREF_SUM11}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{WEIGHTREF_SUM11}!=null)?$V{WEIGHTREF_SUM11}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL11" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level11_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="630" y="0" width="65" height="18" uuid="1b07fc76-5250-4620-baf4-4e643ffab56f">
@@ -3160,7 +3251,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTYREF_SUM11}!=null)?$P{NUMBERFORMAT}.format($V{QTYREF_SUM11}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTYREF_SUM11}!=null)?$V{QTYREF_SUM11}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL11" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Level11_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="695" y="0" width="35" height="18" uuid="904431fa-12c5-4ae5-9a7c-bf1934a56266">
@@ -3175,7 +3267,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{QTY_PCT_11}!=null)?$P{NUMBERFORMAT}.format($V{QTY_PCT_11}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{QTY_PCT_11}!=null)?$V{QTY_PCT_11}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL11" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-36" style="Level11_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="240" y="0" width="65" height="18" uuid="5200c9df-a32b-4866-b113-62bfdb015544"/>
@@ -3188,7 +3281,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM11}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNT_SUM11}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNT_SUM11}!=null)?$V{CONVAMOUNT_SUM11}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL11" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-37" style="Level11_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="320" y="0" width="65" height="18" uuid="6c74c84b-808c-4243-b158-203cd40df59e"/>
@@ -3201,7 +3295,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM11}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMOUNTREF_SUM11}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMOUNTREF_SUM11}!=null)?$V{CONVAMOUNTREF_SUM11}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="LEVEL11" pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-38" style="Level11_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="400" y="0" width="25" height="18" uuid="65f4f5a2-3728-45c0-9572-a9fb1c6c9863"/>
@@ -3214,7 +3309,8 @@
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_11}!=null)?$P{NUMBERFORMAT}.format($V{CONVAMT_PCT_11}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{CONVAMT_PCT_11}!=null)?$V{CONVAMT_PCT_11}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement key="textField-49" style="Level1_Line" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="15" height="18" uuid="9803b151-2243-4895-a4e3-7c59daad922e"/>

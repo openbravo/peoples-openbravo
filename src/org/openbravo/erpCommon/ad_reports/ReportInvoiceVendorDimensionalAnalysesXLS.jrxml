@@ -366,6 +366,7 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{QTY}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-8" stretchType="RelativeToBandHeight" x="1520" y="0" width="100" height="13" uuid="b230f45b-0364-40cb-ae4d-72fc46e0a1c4"/>
@@ -379,6 +380,7 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{UNITPRICE}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-8" stretchType="RelativeToBandHeight" x="1620" y="0" width="100" height="13"/>
@@ -392,6 +394,7 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{AMOUNT}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 		</band>
 	</detail>

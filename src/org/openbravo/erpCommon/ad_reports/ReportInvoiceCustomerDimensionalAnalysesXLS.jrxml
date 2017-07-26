@@ -238,6 +238,7 @@
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totalQty}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement x="1100" y="0" width="100" height="16" uuid="7a0dc66f-1e1d-4dba-81b7-016d70c9bc69"/>
@@ -246,6 +247,7 @@
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totalAmt}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement x="1200" y="0" width="100" height="16" uuid="6601ab30-4e55-4798-af99-86ac9a0360fa"/>
@@ -254,6 +256,7 @@
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totalCost}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement x="1300" y="0" width="100" height="16" uuid="a95e6755-6bce-4449-8f95-ea982b8a5bef"/>
@@ -262,6 +265,7 @@
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totalProfit}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement x="1400" y="0" width="50" height="16" uuid="a53f8c90-bfaa-4ce7-94dd-033ca0e10da6"/>
@@ -269,7 +273,8 @@
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{totalMargin}!=null)?$P{NUMBERFORMAT}.format($V{totalMargin}):new String(" ")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{totalMargin}!=null)?$V{totalMargin}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement x="1450" y="0" width="50" height="16" uuid="e9aaf868-723e-4e05-80df-27c71e96d54e"/>
@@ -278,6 +283,7 @@
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totalWeight}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<staticText>
 					<reportElement x="800" y="0" width="100" height="16" uuid="a30644d0-a0c3-4836-960a-5fb330742476"/>
@@ -743,6 +749,7 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{QTY}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-8" stretchType="RelativeToBandHeight" x="1100" y="0" width="100" height="13" uuid="09f0aa65-d2eb-4ee4-a68f-a368840c5904"/>
@@ -756,6 +763,7 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{AMOUNT}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-9" stretchType="RelativeToBandHeight" x="1200" y="0" width="100" height="13" uuid="485e1ead-f9d9-4b7e-9b69-de548e006df9"/>
@@ -769,6 +777,7 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{COST}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-10" stretchType="RelativeToBandHeight" x="1300" y="0" width="100" height="13" uuid="98e73443-30bf-4370-9c33-c03f18722331"/>
@@ -782,6 +791,7 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{PROFIT}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-11" stretchType="RelativeToBandHeight" x="1400" y="0" width="50" height="13" uuid="3d0815a2-b760-434e-bb63-ec856afae135"/>
@@ -795,6 +805,7 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{MARGIN}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-12" stretchType="RelativeToBandHeight" x="1450" y="0" width="50" height="13" uuid="d9693cbb-9d69-418a-becf-e47130fcc0a3"/>
@@ -808,6 +819,7 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{WEIGHT}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-14" stretchType="RelativeToBandHeight" x="1500" y="0" width="100" height="13" uuid="79490dd4-4d29-4e5a-9301-aeb669776a2d"/>

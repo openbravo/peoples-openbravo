@@ -7,6 +7,7 @@
 	<property name="ireport.zoom" value="1.2100000000000006"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="org.openbravo.erpCommon.ReportsUtility"/>
@@ -204,7 +205,8 @@ ORDER BY f.dateacct, f.created]]>
 						<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{customerInitialBalance}.compareTo(BigDecimal.ZERO) < 0 ? "(" + $P{NUMBERFORMAT}.format($V{customerInitialBalance}.abs()) + ")" : $P{NUMBERFORMAT}.format($V{customerInitialBalance})]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{customerInitialBalance}.compareTo(BigDecimal.ZERO) < 0 ?  $V{customerInitialBalance}.abs() : $V{customerInitialBalance}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{customerInitialBalance}.compareTo(BigDecimal.ZERO) < 0 ? ("("+$P{NUMBERFORMAT}.toPattern()+")") : $P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<staticText>
 					<reportElement x="331" y="56" width="115" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="b7fa0a14-eaf8-4ba3-8f63-b539a95d5c7f"/>
@@ -287,7 +289,8 @@ ORDER BY f.dateacct, f.created]]>
 						<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{vendorInitialBalance}.compareTo(BigDecimal.ZERO) < 0 ? "(" + $P{NUMBERFORMAT}.format($V{vendorInitialBalance}.abs()) + ")" : $P{NUMBERFORMAT}.format($V{vendorInitialBalance})]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{vendorInitialBalance}.compareTo(BigDecimal.ZERO) < 0 ? $V{vendorInitialBalance}.abs() : $V{vendorInitialBalance}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{vendorInitialBalance}.compareTo(BigDecimal.ZERO) < 0 ? ("("+$P{NUMBERFORMAT}.toPattern()+")") : $P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -302,7 +305,8 @@ ORDER BY f.dateacct, f.created]]>
 						<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{customerBalance}.compareTo(BigDecimal.ZERO) < 0 ? "(" + $P{NUMBERFORMAT}.format($V{customerBalance}.abs()) + ")" : $P{NUMBERFORMAT}.format($V{customerBalance})]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{customerBalance}.compareTo(BigDecimal.ZERO) < 0 ? $V{customerBalance}.abs() : $V{customerBalance}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{customerBalance}.compareTo(BigDecimal.ZERO) < 0 ? ("("+$P{NUMBERFORMAT}.toPattern()+")") : $P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<staticText>
 					<reportElement positionType="Float" mode="Opaque" x="330" y="12" width="115" height="15" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="8d228eb8-2fde-4f0a-9bfb-b6ee85f1eb54"/>
@@ -327,7 +331,8 @@ ORDER BY f.dateacct, f.created]]>
 						<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{vendorBalance}.compareTo(BigDecimal.ZERO) < 0 ? "(" + $P{NUMBERFORMAT}.format($V{vendorBalance}.abs()) + ")" : $P{NUMBERFORMAT}.format($V{vendorBalance})]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{vendorBalance}.compareTo(BigDecimal.ZERO) < 0 ? $V{vendorBalance}.abs() : $V{vendorBalance}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{vendorBalance}.compareTo(BigDecimal.ZERO) < 0 ? ("("+$P{NUMBERFORMAT}.toPattern()+")") : $P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -486,7 +491,8 @@ ORDER BY f.dateacct, f.created]]>
 					<font fontName="DejaVu Sans" size="8"/>
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{credit}.compareTo(BigDecimal.ZERO) < 0 ? "(" + $P{NUMBERFORMAT}.format($F{credit}.abs()) + ")" : $P{NUMBERFORMAT}.format($F{credit})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{credit}.compareTo(BigDecimal.ZERO) < 0 ? $F{credit}.abs() : $F{credit}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{credit}.compareTo(BigDecimal.ZERO) < 0 ? ("("+$P{NUMBERFORMAT}.toPattern()+")") : $P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="330" y="0" width="75" height="14" uuid="b9cb19fe-6b55-4c0c-9089-a3c3c8e88223"/>
@@ -494,7 +500,8 @@ ORDER BY f.dateacct, f.created]]>
 					<font fontName="DejaVu Sans" size="8"/>
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{debit}.compareTo(BigDecimal.ZERO) < 0 ? "(" + $P{NUMBERFORMAT}.format($F{debit}.abs()) + ")" : $P{NUMBERFORMAT}.format($F{debit})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{debit}.compareTo(BigDecimal.ZERO) < 0 ? $F{debit}.abs() : $F{debit}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{debit}.compareTo(BigDecimal.ZERO) < 0 ? ("("+$P{NUMBERFORMAT}.toPattern()+")") : $P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="480" y="0" width="75" height="14" uuid="50a77f9b-8c48-4f56-837c-590c02bf0166"/>
@@ -503,7 +510,8 @@ ORDER BY f.dateacct, f.created]]>
 					<font fontName="DejaVu Sans" size="8"/>
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{SUM}.compareTo(BigDecimal.ZERO) < 0 ? "(" + $P{NUMBERFORMAT}.format($V{SUM}.abs()) + ")" : $P{NUMBERFORMAT}.format($V{SUM})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{SUM}.compareTo(BigDecimal.ZERO) < 0 ? $V{SUM}.abs() : $V{SUM}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{SUM}.compareTo(BigDecimal.ZERO) < 0 ? ("("+$P{NUMBERFORMAT}.toPattern()+")") : $P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 		</band>
 	</detail>
@@ -516,7 +524,8 @@ ORDER BY f.dateacct, f.created]]>
 					<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{totalInitialBalance}.compareTo(BigDecimal.ZERO) < 0 ? "(" + $P{NUMBERFORMAT}.format($V{totalInitialBalance}.abs()) + ")" : $P{NUMBERFORMAT}.format($V{totalInitialBalance})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalInitialBalance}.compareTo(BigDecimal.ZERO) < 0 ? $V{totalInitialBalance}.abs() : $V{totalInitialBalance}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{totalInitialBalance}.compareTo(BigDecimal.ZERO) < 0 ? ("("+$P{NUMBERFORMAT}.toPattern()+")") : $P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<staticText>
 				<reportElement x="235" y="13" width="210" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="62499066-a0e4-46b3-bd28-3e611823c5dd"/>
@@ -546,7 +555,8 @@ ORDER BY f.dateacct, f.created]]>
 					<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{totalBalance}.compareTo(BigDecimal.ZERO) < 0 ? "(" + $P{NUMBERFORMAT}.format($V{totalBalance}.abs()) + ")" : $P{NUMBERFORMAT}.format($V{totalBalance})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalBalance}.compareTo(BigDecimal.ZERO) < 0 ? $V{totalBalance}.abs() : $V{totalBalance}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{totalBalance}.compareTo(BigDecimal.ZERO) < 0 ? ("("+$P{NUMBERFORMAT}.toPattern()+")") : $P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<line>
 				<reportElement x="235" y="57" width="320" height="3" uuid="382bf123-c27c-426b-a320-1a2df3a239e9"/>
