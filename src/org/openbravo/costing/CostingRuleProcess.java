@@ -306,7 +306,7 @@ public class CostingRuleProcess implements Process {
     insert.append(" left join t." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as iol");
     insert.append(" left join iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as io");
     insert.append(" where t." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    insert.append(" and t." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :date");
+    insert.append(" and t." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :date");
     insert.append(" and t." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
     insert.append(" and t." + MaterialTransaction.PROPERTY_ACTIVE + " = true");
     insert.append(" and t." + MaterialTransaction.PROPERTY_CLIENT + ".id = :client");
@@ -328,7 +328,7 @@ public class CostingRuleProcess implements Process {
     update.append(", " + MaterialTransaction.PROPERTY_CURRENCY + " = :currency");
     update.append(", " + MaterialTransaction.PROPERTY_ISPROCESSED + " = true");
     update.append(" where " + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    update.append(" and " + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :date");
+    update.append(" and " + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :date");
     update.append(" and " + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
     update.append(" and " + MaterialTransaction.PROPERTY_ACTIVE + " = true");
     update.append(" and " + MaterialTransaction.PROPERTY_CLIENT + ".id = :client");
@@ -460,7 +460,8 @@ public class CostingRuleProcess implements Process {
     select.append("    join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as loc");
     select.append(" where trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
     if (date != null) {
-      select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :date");
+      select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+          + " < :date");
     }
     select.append("   and trx." + MaterialTransaction.PROPERTY_PRODUCT + ".productType = 'I'");
     select.append("   and trx." + MaterialTransaction.PROPERTY_PRODUCT + ".stocked = true");
