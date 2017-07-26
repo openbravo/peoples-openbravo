@@ -2095,7 +2095,7 @@
         line = lines.at(i);
         for (j = i + 1; j < lines.length; j++) {
           otherLine = lines.at(j);
-          if (otherLine.get('product').id !== line.get('product').id) {
+          if (otherLine.get('product').id !== line.get('product').id || !line.get('product').groupProduct) {
             continue;
           }
 
