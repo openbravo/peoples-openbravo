@@ -161,17 +161,18 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
     qTabAccess.setNamedParameter("windowId", window.getId());
 
     for (TabAccess tabAccess : qTabAccess.list()) {
+      Tab tab = adcs.getTab(tabAccess.getTab().getId());
       boolean tabEditable = tabAccess.isEditableField();
-      final Entity entity = ModelProvider.getInstance().getEntityByTableId(
-          tabAccess.getTab().getTable().getId());
+      final Entity entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
       final JSONObject jTab = new JSONObject();
       tabs.put(jTab);
-      jTab.put("tabId", tabAccess.getTab().getId());
+      jTab.put("tabId", tab.getId());
       jTab.put("updatable", tabEditable);
       final JSONObject jFields = new JSONObject();
       jTab.put("fields", jFields);
       final Set<String> fields = new TreeSet<String>();
-      for (Field field : tabAccess.getTab().getADFieldList()) {
+      List<Field> tabFields = tab.getADFieldList();
+      for (Field field : tabFields) {
         if (!field.isReadOnly() && !field.isShownInStatusBar() && field.getColumn().isUpdatable()) {
           final Property property = KernelUtils.getProperty(entity, field);
           if (property != null) {
@@ -181,13 +182,15 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
       }
       for (FieldAccess fieldAccess : tabAccess.getADFieldAccessList()) {
         if (fieldAccess.isActive()) {
-          final Property property = KernelUtils.getProperty(entity, fieldAccess.getField());
-          if (property != null) {
-            final String name = KernelUtils.getProperty(entity, fieldAccess.getField()).getName();
-            if (fields.contains(name)) {
-              jFields.put(name, fieldAccess.isEditableField());
-              fields.remove(name);
-            }
+          Field field = getField(tabFields, fieldAccess.getField());
+          final Property property = field != null ? KernelUtils.getProperty(entity, field) : null;
+          if (property == null) {
+            continue;
+          }
+          final String name = property.getName();
+          if (fields.contains(name)) {
+            jFields.put(name, fieldAccess.isEditableField());
+            fields.remove(name);
           }
         }
       }
@@ -197,6 +200,15 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
     }
 
     return tabs;
+  }
+
+  private Field getField(List<Field> tabFields, Field field) {
+    for (Field f : tabFields) {
+      if (f.getId().equals(field.getId())) {
+        return f;
+      }
+    }
+    return null;
   }
 
   private void setExtraSettings(Map<String, Object> parameters, JSONObject json)
