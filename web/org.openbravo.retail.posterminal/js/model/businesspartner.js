@@ -228,6 +228,10 @@
             return loc.get('isShipTo');
           });
         }
+        if (!shipping && !billing) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerNoShippingAddress', [bpId]));
+          return;
+        }
         callback(shipping, billing, collection.models);
       });
     },

@@ -264,6 +264,10 @@ enyo.kind({
                 me.customer.set('shipCountryName', customerAddr.get('countryName'));
               }
               me.customer.set('locationModel', customerAddr);
+              //If it an js object, convert in a BPLocation
+              if (me.customer.get('locationBillModel') && !me.customer.get('locationBillModel').get) {
+                me.customer.set('locationBillModel', new OB.Model.BPLocation(me.customer.get('locationBillModel')));
+              }
               if (me.model.get('orderList').length > 1) {
                 for (i = 0; i < me.model.get('orderList').length; i++) {
                   if (me.model.get('orderList').models[i].get('bp').get('id') === me.customer.get('id')) {
