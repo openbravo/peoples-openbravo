@@ -38,6 +38,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.application.personalization.PersonalizationHandler;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.StaticResourceComponent;
@@ -48,7 +49,6 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.access.FieldAccess;
 import org.openbravo.model.ad.access.TabAccess;
-import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
@@ -71,6 +71,9 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
   private PersonalizationHandler personalizationHandler;
 
   @Inject
+  private ApplicationDictionaryCachedStructures adcs;
+
+  @Inject
   @Any
   private Instance<ExtraWindowSettingsInjector> extraSettings;
 
@@ -79,7 +82,7 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
     final String windowId = (String) parameters.get("windowId");
     try {
       OBContext.setAdminMode();
-      final Window window = OBDal.getInstance().get(Window.class, windowId);
+      final Window window = adcs.getWindow(windowId);
 
       final JSONObject json = new JSONObject();
       json.put("uiPattern", getUIPattern(window));
@@ -148,47 +151,48 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
     final String roleId = OBContext.getOBContext().getRole().getId();
     final JSONArray tabs = new JSONArray();
 
-    for (WindowAccess winAccess : window.getADWindowAccessList()) {
-      if (winAccess.isActive() && winAccess.getRole().getId().equals(roleId)) {
-        for (TabAccess tabAccess : winAccess.getADTabAccessList()) {
-          if (tabAccess.isActive()) {
-            boolean tabEditable = tabAccess.isEditableField();
-            final Entity entity = ModelProvider.getInstance().getEntityByTableId(
-                tabAccess.getTab().getTable().getId());
-            final JSONObject jTab = new JSONObject();
-            tabs.put(jTab);
-            jTab.put("tabId", tabAccess.getTab().getId());
-            jTab.put("updatable", tabEditable);
-            final JSONObject jFields = new JSONObject();
-            jTab.put("fields", jFields);
-            final Set<String> fields = new TreeSet<String>();
-            for (Field field : tabAccess.getTab().getADFieldList()) {
-              if (!field.isReadOnly() && !field.isShownInStatusBar()
-                  && field.getColumn().isUpdatable()) {
-                final Property property = KernelUtils.getProperty(entity, field);
-                if (property != null) {
-                  fields.add(property.getName());
-                }
-              }
-            }
-            for (FieldAccess fieldAccess : tabAccess.getADFieldAccessList()) {
-              if (fieldAccess.isActive()) {
-                final Property property = KernelUtils.getProperty(entity, fieldAccess.getField());
-                if (property != null) {
-                  final String name = KernelUtils.getProperty(entity, fieldAccess.getField())
-                      .getName();
-                  if (fields.contains(name)) {
-                    jFields.put(name, fieldAccess.isEditableField());
-                    fields.remove(name);
-                  }
-                }
-              }
-            }
-            for (String name : fields) {
-              jFields.put(name, tabEditable);
+    OBQuery<TabAccess> qTabAccess = OBDal.getInstance().createQuery(
+        TabAccess.class,
+        "as ta where ta.windowAccess.role.id= :roleId\n"
+            + "and ta.windowAccess.window.id = :windowId\n" //
+            + "and ta.windowAccess.active = true\n" //
+            + "and ta.active=true");
+    qTabAccess.setNamedParameter("roleId", roleId);
+    qTabAccess.setNamedParameter("windowId", window.getId());
+
+    for (TabAccess tabAccess : qTabAccess.list()) {
+      boolean tabEditable = tabAccess.isEditableField();
+      final Entity entity = ModelProvider.getInstance().getEntityByTableId(
+          tabAccess.getTab().getTable().getId());
+      final JSONObject jTab = new JSONObject();
+      tabs.put(jTab);
+      jTab.put("tabId", tabAccess.getTab().getId());
+      jTab.put("updatable", tabEditable);
+      final JSONObject jFields = new JSONObject();
+      jTab.put("fields", jFields);
+      final Set<String> fields = new TreeSet<String>();
+      for (Field field : tabAccess.getTab().getADFieldList()) {
+        if (!field.isReadOnly() && !field.isShownInStatusBar() && field.getColumn().isUpdatable()) {
+          final Property property = KernelUtils.getProperty(entity, field);
+          if (property != null) {
+            fields.add(property.getName());
+          }
+        }
+      }
+      for (FieldAccess fieldAccess : tabAccess.getADFieldAccessList()) {
+        if (fieldAccess.isActive()) {
+          final Property property = KernelUtils.getProperty(entity, fieldAccess.getField());
+          if (property != null) {
+            final String name = KernelUtils.getProperty(entity, fieldAccess.getField()).getName();
+            if (fields.contains(name)) {
+              jFields.put(name, fieldAccess.isEditableField());
+              fields.remove(name);
             }
           }
         }
+      }
+      for (String name : fields) {
+        jFields.put(name, tabEditable);
       }
     }
 
@@ -244,7 +248,7 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
       // do nothing, property is not set so securedProcess is false
     }
 
-    String restrictedProcessesQry = " as f where  tab.window = :window and tab.active = true and (";
+    String restrictedProcessesQry = " as f where  tab.window.id = :window and tab.active = true and (";
 
     restrictedProcessesQry += "(column.oBUIAPPProcess is not null";
     if (!securedProcess) {
@@ -273,7 +277,7 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
     restrictedProcessesQry += ")  order by f.tab";
 
     OBQuery<Field> q = OBDal.getInstance().createQuery(Field.class, restrictedProcessesQry);
-    q.setNamedParameter("window", window);
+    q.setNamedParameter("window", window.getId());
     q.setNamedParameter("role", OBContext.getOBContext().getRole().getId());
 
     final JSONArray processes = new JSONArray();
