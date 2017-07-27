@@ -30,7 +30,6 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -54,6 +53,8 @@ import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Computes different settings which may be user/role specific for a certain window.
@@ -63,7 +64,7 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 @ApplicationScoped
 public class WindowSettingsActionHandler extends BaseActionHandler {
-  private static final Logger log4j = Logger.getLogger(WindowSettingsActionHandler.class);
+  private static final Logger log = LoggerFactory.getLogger(WindowSettingsActionHandler.class);
   public static final String EXTRA_CALLBACKS = "extraCallbacks";
 
   @Inject
@@ -74,9 +75,10 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
   private Instance<ExtraWindowSettingsInjector> extraSettings;
 
   protected JSONObject execute(Map<String, Object> parameters, String data) {
+    long t = System.currentTimeMillis();
+    final String windowId = (String) parameters.get("windowId");
     try {
       OBContext.setAdminMode();
-      final String windowId = (String) parameters.get("windowId");
       final Window window = OBDal.getInstance().get(Window.class, windowId);
 
       final JSONObject json = new JSONObject();
@@ -85,9 +87,10 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
 
       try {
         json.put("personalization", personalizationHandler.getPersonalizationForWindow(window));
-      } catch (Throwable t) {
+      } catch (Throwable e) {
         // be robust about errors in the personalization settings
-        log4j.error("Error for window " + window, t);
+        log.error("Error for window: " + window + " - role: " + OBContext.getOBContext().getRole(),
+            e);
       }
 
       json.put("showAutoSaveConfirmation",
@@ -98,11 +101,15 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
 
       return json;
     } catch (Exception e) {
+      log.error("Error for window: " + windowId + " - role: " + OBContext.getOBContext().getRole(),
+          e);
       throw new OBException(e);
     } finally {
       OBContext.restorePreviousMode();
       // clear anything we have in session as there's no change to make faster flush
       OBDal.getInstance().getSession().clear();
+      log.debug("window: {} - role: {} - took: {}ms", new Object[] { windowId,
+          OBContext.getOBContext().getRole(), System.currentTimeMillis() - t });
     }
   }
 
@@ -117,7 +124,7 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
       // window should be read only when is assigned with a table defined as a view
       if (!"RO".equals(uiPattern) && ("T".equals(windowType) || "M".equals(windowType))
           && tab.getTable().isView()) {
-        log4j.warn("Tab \"" + tab.getName()
+        log.warn("Tab \"" + tab.getName()
             + "\" is set to read only because is assigned with a table defined as a view.");
         uiPattern = "RO";
       }
@@ -205,13 +212,13 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
               if (callbackExtra instanceof String) {
                 extraCallbacks.put(callbackExtra);
               } else {
-                log4j.warn("You are trying to set a wrong instance of extraCallbacks");
+                log.warn("You are trying to set a wrong instance of extraCallbacks");
               }
             }
           } else if (settingValue instanceof String) {
             extraCallbacks.put(settingValue);
           } else {
-            log4j.warn("You are trying to set a wrong instance of extraCallbacks");
+            log.warn("You are trying to set a wrong instance of extraCallbacks");
           }
         } else {
           extraSettingsJson.put(settingKey, settingValue);
