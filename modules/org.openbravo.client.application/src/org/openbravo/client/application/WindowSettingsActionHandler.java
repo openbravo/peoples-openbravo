@@ -120,15 +120,16 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
     final String roleId = OBContext.getOBContext().getRole().getId();
     final JSONObject jsonUIPattern = new JSONObject();
     final String windowType = window.getWindowType();
+    DalConnectionProvider cp = new DalConnectionProvider(false);
     for (Tab tab : window.getADTabList()) {
       final boolean readOnlyAccess = org.openbravo.erpCommon.utility.WindowAccessData
-          .hasReadOnlyAccess(new DalConnectionProvider(false), roleId, tab.getId());
+          .hasReadOnlyAccess(cp, roleId, tab.getId());
       String uiPattern = readOnlyAccess ? "RO" : tab.getUIPattern();
       // window should be read only when is assigned with a table defined as a view
       if (!"RO".equals(uiPattern) && ("T".equals(windowType) || "M".equals(windowType))
           && tab.getTable().isView()) {
-        log.warn("Tab \"" + tab.getName()
-            + "\" is set to read only because is assigned with a table defined as a view.");
+        log.warn("Tab {} is set to read only because is assigned with a table defined as a view.",
+            tab);
         uiPattern = "RO";
       }
       jsonUIPattern.put(tab.getId(), uiPattern);
@@ -181,17 +182,18 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
         }
       }
       for (FieldAccess fieldAccess : tabAccess.getADFieldAccessList()) {
-        if (fieldAccess.isActive()) {
-          Field field = getField(tabFields, fieldAccess.getField());
-          final Property property = field != null ? KernelUtils.getProperty(entity, field) : null;
-          if (property == null) {
-            continue;
-          }
-          final String name = property.getName();
-          if (fields.contains(name)) {
-            jFields.put(name, fieldAccess.isEditableField());
-            fields.remove(name);
-          }
+        if (!fieldAccess.isActive()) {
+          continue;
+        }
+        Field field = getField(tabFields, fieldAccess.getField());
+        final Property property = field != null ? KernelUtils.getProperty(entity, field) : null;
+        if (property == null) {
+          continue;
+        }
+        final String name = property.getName();
+        if (fields.contains(name)) {
+          jFields.put(name, fieldAccess.isEditableField());
+          fields.remove(name);
         }
       }
       for (String name : fields) {
