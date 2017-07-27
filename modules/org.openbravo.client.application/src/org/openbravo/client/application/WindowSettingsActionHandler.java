@@ -28,9 +28,11 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -76,29 +78,10 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
       OBContext.setAdminMode();
       final String windowId = (String) parameters.get("windowId");
       final Window window = OBDal.getInstance().get(Window.class, windowId);
-      final String roleId = OBContext.getOBContext().getRole().getId();
-      final DalConnectionProvider dalConnectionProvider = new DalConnectionProvider(false);
-      final JSONObject jsonUIPattern = new JSONObject();
-      final String windowType = window.getWindowType();
-      for (Tab tab : window.getADTabList()) {
-        final boolean readOnlyAccess = org.openbravo.erpCommon.utility.WindowAccessData
-            .hasReadOnlyAccess(dalConnectionProvider, roleId, tab.getId());
-        String uiPattern = readOnlyAccess ? "RO" : tab.getUIPattern();
-        // window should be read only when is assigned with a table defined as a view
-        if (!"RO".equals(uiPattern) && ("T".equals(windowType) || "M".equals(windowType))
-            && tab.getTable().isView()) {
-          log4j.warn("Tab \"" + tab.getName()
-              + "\" is set to read only because is assigned with a table defined as a view.");
-          uiPattern = "RO";
-        }
-        jsonUIPattern.put(tab.getId(), uiPattern);
-      }
+
       final JSONObject json = new JSONObject();
-      json.put("uiPattern", jsonUIPattern);
-      final String autoSaveStr = Preferences.getPreferenceValue("Autosave", false, OBContext
-          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
-          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), window);
-      json.put("autoSave", Preferences.YES.equals(autoSaveStr));
+      json.put("uiPattern", getUIPattern(window));
+      json.put("autoSave", getBooleanProperty(window, "Autosave", true));
 
       try {
         json.put("personalization", personalizationHandler.getPersonalizationForWindow(window));
@@ -107,152 +90,11 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
         log4j.error("Error for window " + window, t);
       }
 
-      final String showConfirmationStr = Preferences.getPreferenceValue("ShowConfirmationDefault",
-          false, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-              .getOBContext().getRole(), window);
-      json.put("showAutoSaveConfirmation", Preferences.YES.equals(showConfirmationStr));
-
-      // Field Level Roles
-      final JSONArray tabs = new JSONArray();
-      json.put("tabs", tabs);
-      for (WindowAccess winAccess : window.getADWindowAccessList()) {
-        if (winAccess.isActive() && winAccess.getRole().getId().equals(roleId)) {
-          for (TabAccess tabAccess : winAccess.getADTabAccessList()) {
-            if (tabAccess.isActive()) {
-              boolean tabEditable = tabAccess.isEditableField();
-              final Entity entity = ModelProvider.getInstance().getEntityByTableId(
-                  tabAccess.getTab().getTable().getId());
-              final JSONObject jTab = new JSONObject();
-              tabs.put(jTab);
-              jTab.put("tabId", tabAccess.getTab().getId());
-              jTab.put("updatable", tabEditable);
-              final JSONObject jFields = new JSONObject();
-              jTab.put("fields", jFields);
-              final Set<String> fields = new TreeSet<String>();
-              for (Field field : tabAccess.getTab().getADFieldList()) {
-                if (!field.isReadOnly() && !field.isShownInStatusBar()
-                    && field.getColumn().isUpdatable()) {
-                  final Property property = KernelUtils.getProperty(entity, field);
-                  if (property != null) {
-                    fields.add(property.getName());
-                  }
-                }
-              }
-              for (FieldAccess fieldAccess : tabAccess.getADFieldAccessList()) {
-                if (fieldAccess.isActive()) {
-                  final Property property = KernelUtils.getProperty(entity, fieldAccess.getField());
-                  if (property != null) {
-                    final String name = KernelUtils.getProperty(entity, fieldAccess.getField())
-                        .getName();
-                    if (fields.contains(name)) {
-                      jFields.put(name, fieldAccess.isEditableField());
-                      fields.remove(name);
-                    }
-                  }
-                }
-              }
-              for (String name : fields) {
-                jFields.put(name, tabEditable);
-              }
-            }
-          }
-        }
-      }
-
-      // processes can be secured in 3 ways:
-      // - Secured preference is set: explicit grant is required
-      // - Process is marked as requiresExplicitAccessPermission: explicit grant is required
-      // - None of the above: permission is inherited from window
-      boolean securedProcess = false;
-      try {
-        securedProcess = Preferences.YES.equals(Preferences.getPreferenceValue("SecuredProcess",
-            true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                .getOBContext().getRole(), window));
-      } catch (PropertyException e) {
-        // do nothing, property is not set so securedProcess is false
-      }
-
-      String restrictedProcessesQry = " as f where  tab.window = :window and tab.active = true and (";
-
-      restrictedProcessesQry += "(column.oBUIAPPProcess is not null";
-      if (!securedProcess) {
-        // not secured, restrict only those that require explicit permission
-        // subquery required to prevent inner join due to compound path check
-        // (process.requiresExplicitAccessPermission)
-        restrictedProcessesQry += " and exists (select 1 from OBUIAPP_Process p where p = f.column.oBUIAPPProcess and requiresExplicitAccessPermission = true) ";
-      }
-      restrictedProcessesQry += " and not exists (select 1 from " //
-          + " OBUIAPP_Process_Access a"
-          + " where a.obuiappProcess = f.column.oBUIAPPProcess"
-          + " and a.role.id = :role and a.active=true))"//
-
-          + " or (column.process is not null ";
-
-      if (!securedProcess) {
-        // not secured, restrict only those that require explicit permission
-        // subquery required to prevent inner join due to compound path check
-        // (process.requiresExplicitAccessPermission)
-        restrictedProcessesQry += " and exists (select 1 from ADProcess p where p = f.column.process and requiresExplicitAccessPermission = true) ";
-      }
-
-      restrictedProcessesQry += " and not exists (select 1 from ADProcessAccess a where a.process = f.column.process and "
-          + " a.role.id = :role and a.active=true))";
-
-      restrictedProcessesQry += ")  order by f.tab";
-
-      OBQuery<Field> q = OBDal.getInstance().createQuery(Field.class, restrictedProcessesQry);
-      q.setNamedParameter("window", window);
-      q.setNamedParameter("role", OBContext.getOBContext().getRole().getId());
-
-      final JSONArray processes = new JSONArray();
-      json.put("notAccessibleProcesses", processes);
-      Tab tab = null;
-      JSONObject t;
-      JSONArray ps = null;
-      for (Field f : q.list()) {
-        if (tab == null || !tab.getId().equals(f.getTab().getId())) {
-          t = new JSONObject();
-          tab = f.getTab();
-          ps = new JSONArray();
-          t.put("tabId", tab.getId());
-          t.put("processes", ps);
-          processes.put(t);
-        }
-        ps.put(KernelUtils.getProperty(f).getName());
-      }
-
-      JSONObject extraSettingsJson = new JSONObject();
-      json.put("extraSettings", extraSettingsJson);
-      JSONArray extraCallbacks = new JSONArray();
-
-      // Add the extraSettings injected
-      for (ExtraWindowSettingsInjector nextSetting : extraSettings) {
-        Map<String, Object> settingsToAdd = nextSetting.doAddSetting(parameters, json);
-        for (Entry<String, Object> setting : settingsToAdd.entrySet()) {
-          String settingKey = setting.getKey();
-          Object settingValue = setting.getValue();
-          if (settingKey.equals(EXTRA_CALLBACKS)) {
-            if (settingValue instanceof List) {
-              for (Object callbackExtra : (List<?>) settingValue) {
-                if (callbackExtra instanceof String) {
-                  extraCallbacks.put(callbackExtra);
-                } else {
-                  log4j.warn("You are trying to set a wrong instance of extraCallbacks");
-                }
-              }
-            } else if (settingValue instanceof String) {
-              extraCallbacks.put(settingValue);
-            } else {
-              log4j.warn("You are trying to set a wrong instance of extraCallbacks");
-            }
-          } else {
-            extraSettingsJson.put(settingKey, settingValue);
-          }
-        }
-      }
-      json.put("extraCallbacks", extraCallbacks);
+      json.put("showAutoSaveConfirmation",
+          getBooleanProperty(window, "ShowConfirmationDefault", false));
+      json.put("tabs", getFieldLevelRoles(window));
+      json.put("notAccessibleProcesses", getNotAccessibleProcesses(window));
+      setExtraSettings(parameters, json);
 
       return json;
     } catch (Exception e) {
@@ -263,4 +105,187 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
       OBDal.getInstance().getSession().clear();
     }
   }
+
+  private JSONObject getUIPattern(Window window) throws ServletException, JSONException {
+    final String roleId = OBContext.getOBContext().getRole().getId();
+    final JSONObject jsonUIPattern = new JSONObject();
+    final String windowType = window.getWindowType();
+    for (Tab tab : window.getADTabList()) {
+      final boolean readOnlyAccess = org.openbravo.erpCommon.utility.WindowAccessData
+          .hasReadOnlyAccess(new DalConnectionProvider(false), roleId, tab.getId());
+      String uiPattern = readOnlyAccess ? "RO" : tab.getUIPattern();
+      // window should be read only when is assigned with a table defined as a view
+      if (!"RO".equals(uiPattern) && ("T".equals(windowType) || "M".equals(windowType))
+          && tab.getTable().isView()) {
+        log4j.warn("Tab \"" + tab.getName()
+            + "\" is set to read only because is assigned with a table defined as a view.");
+        uiPattern = "RO";
+      }
+      jsonUIPattern.put(tab.getId(), uiPattern);
+    }
+    return jsonUIPattern;
+  }
+
+  private boolean getBooleanProperty(Window window, String propertyName, boolean defaultValue) {
+    try {
+      String autoSaveStr = Preferences.getPreferenceValue(propertyName, false, OBContext
+          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
+          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), window);
+      return Preferences.YES.equals(autoSaveStr);
+    } catch (PropertyException ignore) {
+      return defaultValue;
+    }
+  }
+
+  private JSONArray getFieldLevelRoles(Window window) throws JSONException {
+    final String roleId = OBContext.getOBContext().getRole().getId();
+    final JSONArray tabs = new JSONArray();
+
+    for (WindowAccess winAccess : window.getADWindowAccessList()) {
+      if (winAccess.isActive() && winAccess.getRole().getId().equals(roleId)) {
+        for (TabAccess tabAccess : winAccess.getADTabAccessList()) {
+          if (tabAccess.isActive()) {
+            boolean tabEditable = tabAccess.isEditableField();
+            final Entity entity = ModelProvider.getInstance().getEntityByTableId(
+                tabAccess.getTab().getTable().getId());
+            final JSONObject jTab = new JSONObject();
+            tabs.put(jTab);
+            jTab.put("tabId", tabAccess.getTab().getId());
+            jTab.put("updatable", tabEditable);
+            final JSONObject jFields = new JSONObject();
+            jTab.put("fields", jFields);
+            final Set<String> fields = new TreeSet<String>();
+            for (Field field : tabAccess.getTab().getADFieldList()) {
+              if (!field.isReadOnly() && !field.isShownInStatusBar()
+                  && field.getColumn().isUpdatable()) {
+                final Property property = KernelUtils.getProperty(entity, field);
+                if (property != null) {
+                  fields.add(property.getName());
+                }
+              }
+            }
+            for (FieldAccess fieldAccess : tabAccess.getADFieldAccessList()) {
+              if (fieldAccess.isActive()) {
+                final Property property = KernelUtils.getProperty(entity, fieldAccess.getField());
+                if (property != null) {
+                  final String name = KernelUtils.getProperty(entity, fieldAccess.getField())
+                      .getName();
+                  if (fields.contains(name)) {
+                    jFields.put(name, fieldAccess.isEditableField());
+                    fields.remove(name);
+                  }
+                }
+              }
+            }
+            for (String name : fields) {
+              jFields.put(name, tabEditable);
+            }
+          }
+        }
+      }
+    }
+
+    return tabs;
+  }
+
+  private void setExtraSettings(Map<String, Object> parameters, JSONObject json)
+      throws JSONException {
+    JSONObject extraSettingsJson = new JSONObject();
+    JSONArray extraCallbacks = new JSONArray();
+
+    // Add the extraSettings injected
+    for (ExtraWindowSettingsInjector nextSetting : extraSettings) {
+      Map<String, Object> settingsToAdd = nextSetting.doAddSetting(parameters, json);
+      for (Entry<String, Object> setting : settingsToAdd.entrySet()) {
+        String settingKey = setting.getKey();
+        Object settingValue = setting.getValue();
+        if (settingKey.equals(EXTRA_CALLBACKS)) {
+          if (settingValue instanceof List) {
+            for (Object callbackExtra : (List<?>) settingValue) {
+              if (callbackExtra instanceof String) {
+                extraCallbacks.put(callbackExtra);
+              } else {
+                log4j.warn("You are trying to set a wrong instance of extraCallbacks");
+              }
+            }
+          } else if (settingValue instanceof String) {
+            extraCallbacks.put(settingValue);
+          } else {
+            log4j.warn("You are trying to set a wrong instance of extraCallbacks");
+          }
+        } else {
+          extraSettingsJson.put(settingKey, settingValue);
+        }
+      }
+    }
+    json.put("extraSettings", extraSettingsJson);
+    json.put("extraCallbacks", extraCallbacks);
+  }
+
+  private JSONArray getNotAccessibleProcesses(Window window) throws JSONException {
+    // processes can be secured in 3 ways:
+    // - Secured preference is set: explicit grant is required
+    // - Process is marked as requiresExplicitAccessPermission: explicit grant is required
+    // - None of the above: permission is inherited from window
+    boolean securedProcess = false;
+    try {
+      securedProcess = Preferences.YES.equals(Preferences.getPreferenceValue("SecuredProcess",
+          true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+              .getOBContext().getRole(), window));
+    } catch (PropertyException e) {
+      // do nothing, property is not set so securedProcess is false
+    }
+
+    String restrictedProcessesQry = " as f where  tab.window = :window and tab.active = true and (";
+
+    restrictedProcessesQry += "(column.oBUIAPPProcess is not null";
+    if (!securedProcess) {
+      // not secured, restrict only those that require explicit permission
+      // subquery required to prevent inner join due to compound path check
+      // (process.requiresExplicitAccessPermission)
+      restrictedProcessesQry += " and exists (select 1 from OBUIAPP_Process p where p = f.column.oBUIAPPProcess and requiresExplicitAccessPermission = true) ";
+    }
+    restrictedProcessesQry += " and not exists (select 1 from " //
+        + " OBUIAPP_Process_Access a"
+        + " where a.obuiappProcess = f.column.oBUIAPPProcess"
+        + " and a.role.id = :role and a.active=true))"//
+
+        + " or (column.process is not null ";
+
+    if (!securedProcess) {
+      // not secured, restrict only those that require explicit permission
+      // subquery required to prevent inner join due to compound path check
+      // (process.requiresExplicitAccessPermission)
+      restrictedProcessesQry += " and exists (select 1 from ADProcess p where p = f.column.process and requiresExplicitAccessPermission = true) ";
+    }
+
+    restrictedProcessesQry += " and not exists (select 1 from ADProcessAccess a where a.process = f.column.process and "
+        + " a.role.id = :role and a.active=true))";
+
+    restrictedProcessesQry += ")  order by f.tab";
+
+    OBQuery<Field> q = OBDal.getInstance().createQuery(Field.class, restrictedProcessesQry);
+    q.setNamedParameter("window", window);
+    q.setNamedParameter("role", OBContext.getOBContext().getRole().getId());
+
+    final JSONArray processes = new JSONArray();
+
+    Tab tab = null;
+    JSONObject t;
+    JSONArray ps = null;
+    for (Field f : q.list()) {
+      if (tab == null || !tab.getId().equals(f.getTab().getId())) {
+        t = new JSONObject();
+        tab = f.getTab();
+        ps = new JSONArray();
+        t.put("tabId", tab.getId());
+        t.put("processes", ps);
+        processes.put(t);
+      }
+      ps.put(KernelUtils.getProperty(f).getName());
+    }
+    return processes;
+  }
+
 }
