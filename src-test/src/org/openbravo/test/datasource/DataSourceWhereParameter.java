@@ -175,27 +175,31 @@ public class DataSourceWhereParameter extends BaseDataSourceTestDal {
 
   @Test
   public void datasourceWithNoManualWhereParameter() throws Exception {
-    boolean isRecordPresent;
-    if (!datasource.onlySuccessAssert) {
-      if (datasource.hasImplicitFilter) {
-        datasource.params.put("isImplicitFilterApplied", "true");
-        isRecordPresent = isRecordPresentInTheResponse(datasource.expected);
-        assertThat("Record present.", isRecordPresent, is(true));
-        isRecordPresent = isRecordPresentInTheResponse(datasource.unexpected);
-        assertThat("Record not present.", isRecordPresent, is(false));
-        datasource.params.put("isImplicitFilterApplied", "false");
-        isRecordPresent = isRecordPresentInTheResponse(datasource.expected);
-        assertThat("Record present.", isRecordPresent, is(true));
-        isRecordPresent = isRecordPresentInTheResponse(datasource.unexpected);
-        assertThat("Record present.", isRecordPresent, is(true));
-
-      } else {
-        isRecordPresent = isRecordPresentInTheResponse(datasource.expected);
-        assertThat("Record present.", isRecordPresent, is(true));
-        isRecordPresent = isRecordPresentInTheResponse(datasource.unexpected);
-        assertThat("Record not present", isRecordPresent, is(false));
-      }
+    if (datasource.onlySuccessAssert) {
+      return;
     }
+
+    if (datasource.hasImplicitFilter) {
+      datasource.params.put("isImplicitFilterApplied", "true");
+      assertRecordInResponse();
+
+      datasource.params.put("isImplicitFilterApplied", "false");
+      assertRecordInResponse();
+
+    } else {
+      assertRecordInResponse();
+    }
+  }
+
+  private void assertRecordInResponse() throws Exception {
+    String datasourceResponse = getDataSourceResponse();
+    boolean isRecordPresent = isValueInTheResponseData(datasource.expected, datasourceResponse);
+    assertThat("Record [" + datasource.expected + "] - params:" + datasource.params
+        + " - present in response: " + datasourceResponse, isRecordPresent, is(true));
+
+    isRecordPresent = isValueInTheResponseData(datasource.unexpected, datasourceResponse);
+    assertThat("Record [" + datasource.unexpected + "] - params:" + datasource.params
+        + " - not present in response: " + datasourceResponse, isRecordPresent, is(false));
   }
 
   @Test
@@ -223,28 +227,20 @@ public class DataSourceWhereParameter extends BaseDataSourceTestDal {
         is(String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
   }
 
-  private boolean isRecordPresentInTheResponse(String expectedRecord) throws Exception {
-    boolean isExpectedRecordPresent;
-    String datasourceResponse = getDataSourceResponse();
-    isExpectedRecordPresent = isValueInTheResponseData(expectedRecord, datasourceResponse);
-    return isExpectedRecordPresent;
-  }
-
   private boolean isValueInTheResponseData(String valueId, String dataSourceResponse)
       throws Exception {
     JSONObject dataSourceResponseMid = new JSONObject();
     JSONArray dataSourceData = new JSONArray();
-    boolean existsValue = false;
     JSONObject jsonResponse = new JSONObject(dataSourceResponse);
     dataSourceResponseMid = jsonResponse.getJSONObject("response");
     dataSourceData = dataSourceResponseMid.getJSONArray("data");
-    String dataSourceDataString = dataSourceData.toString();
-    if (dataSourceDataString.contains(valueId)) {
-      existsValue = true;
-    } else {
-      existsValue = false;
+    for (int i = 0; i < dataSourceData.length(); i++) {
+      JSONObject row = dataSourceData.getJSONObject(i);
+      if (valueId.equals(row.getString("id"))) {
+        return true;
+      }
     }
-    return existsValue;
+    return false;
   }
 
   private String getDataSourceResponse() throws Exception {
