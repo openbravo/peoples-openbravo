@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,8 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.access.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +65,8 @@ public class UserContextCache implements OBSingleton {
 
   private Map<String, CacheEntry> cache = new ConcurrentHashMap<String, CacheEntry>();
 
+  private boolean invalidated = false;
+
   /**
    * Searches the ContextCache for an OBContext. If none is found a new one is created and placed in
    * the cache.
@@ -97,8 +97,9 @@ public class UserContextCache implements OBSingleton {
    */
   public OBContext getCreateOBContext(String userId, String roleId, String orgId) {
     final String cacheKey = userId + (roleId != null ? roleId : "") + (orgId != null ? orgId : "");
-    CacheEntry ce = cache.get(cacheKey);
     purgeCache();
+    CacheEntry ce = cache.get(cacheKey);
+
     if (ce != null) {
       if (!userId.equals(ce.getObContext().getUser().getId())) {
         // check cached OBContext has the same userId than the one used as key, if not invalidate it
@@ -116,7 +117,6 @@ public class UserContextCache implements OBSingleton {
           log.debug("Found element in cache. User: {}, Role: {}", ce.getObContext().getUser(), ce
               .getObContext().getRole());
         }
-        ce.setLastUsed(System.currentTimeMillis());
         return ce.getObContext();
       }
     }
@@ -125,7 +125,6 @@ public class UserContextCache implements OBSingleton {
     obContext.initialize(userId, roleId, null, orgId);
 
     ce = new CacheEntry();
-    ce.setLastUsed(System.currentTimeMillis());
     ce.setObContext(obContext);
     ce.setUserId(userId);
     cache.put(cacheKey, ce);
@@ -136,7 +135,21 @@ public class UserContextCache implements OBSingleton {
     return obContext;
   }
 
+  /** Invalidates {@link UserContextCache}. */
+  public void invalidate() {
+    if (!invalidated) {
+      invalidated = true;
+      log.debug("Invalidating user context cache");
+    }
+  }
+
   private void purgeCache() {
+    if (invalidated) {
+      cache = new ConcurrentHashMap<>();
+      invalidated = false;
+      return;
+    }
+
     final List<CacheEntry> toRemove = new ArrayList<CacheEntry>();
     for (final CacheEntry ce : cache.values()) {
       if (ce.hasExpired()) {
@@ -150,21 +163,15 @@ public class UserContextCache implements OBSingleton {
 
   class CacheEntry {
     private OBContext obContext;
-    private long lastUsed;
-    private long lastUpdated;
     private String userId;
+    private long cacheCreationTime;
+
+    public CacheEntry() {
+      cacheCreationTime = System.currentTimeMillis();
+    }
 
     public boolean hasExpired() {
-      try {
-        OBContext.setAdminMode();
-        final User user = OBDal.getInstance().get(User.class, userId);
-        if (user == null || user.getUpdated().getTime() > lastUpdated) {
-          return true;
-        }
-      } finally {
-        OBContext.restorePreviousMode();
-      }
-      return getLastUsed() < (System.currentTimeMillis() - EXPIRES_IN);
+      return cacheCreationTime < (System.currentTimeMillis() - EXPIRES_IN);
     }
 
     public OBContext getObContext() {
@@ -173,15 +180,6 @@ public class UserContextCache implements OBSingleton {
 
     public void setObContext(OBContext obContext) {
       this.obContext = obContext;
-      lastUpdated = obContext.getUser().getUpdated().getTime();
-    }
-
-    public long getLastUsed() {
-      return lastUsed;
-    }
-
-    public void setLastUsed(long lastUsed) {
-      this.lastUsed = lastUsed;
     }
 
     public String getUserId() {
@@ -191,7 +189,5 @@ public class UserContextCache implements OBSingleton {
     public void setUserId(String userId) {
       this.userId = userId;
     }
-
   }
-
 }
