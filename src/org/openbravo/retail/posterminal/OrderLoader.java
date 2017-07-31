@@ -366,19 +366,21 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           if (jsonorder.has("oBPOSNotInvoiceOnCashUp")) {
             order.setOBPOSNotInvoiceOnCashUp(jsonorder.getBoolean("oBPOSNotInvoiceOnCashUp"));
           }
-          List<OrderLine> lstResultOL = getOrderLineList(order);
+          if (orderlines.length() > 0) {
+            List<OrderLine> lstResultOL = getOrderLineList(order);
 
-          for (int i = 0; i < lstResultOL.size(); i++) {
-            orderLine = lstResultOL.get(i);
-            JSONObject jsonOrderLine = orderlines.getJSONObject(i);
-            orderLine
-                .setObposCanbedelivered(jsonOrderLine.optBoolean("obposCanbedelivered", false));
-            orderLine.setObposIspaid(jsonOrderLine.optBoolean("obposIspaid", false));
-            BigDecimal qtyToDeliver = jsonOrderLine.has("obposQtytodeliver") ? BigDecimal
-                .valueOf(jsonOrderLine.getDouble("obposQtytodeliver")) : orderLine
-                .getOrderedQuantity();
-            orderLine.setDeliveredQuantity(qtyToDeliver);
-            lineReferences.add(orderLine);
+            for (int i = 0; i < lstResultOL.size(); i++) {
+              orderLine = lstResultOL.get(i);
+              JSONObject jsonOrderLine = orderlines.getJSONObject(i);
+              orderLine.setObposCanbedelivered(jsonOrderLine.optBoolean("obposCanbedelivered",
+                  false));
+              orderLine.setObposIspaid(jsonOrderLine.optBoolean("obposIspaid", false));
+              BigDecimal qtyToDeliver = jsonOrderLine.has("obposQtytodeliver") ? BigDecimal
+                  .valueOf(jsonOrderLine.getDouble("obposQtytodeliver")) : orderLine
+                  .getOrderedQuantity();
+              orderLine.setDeliveredQuantity(qtyToDeliver);
+              lineReferences.add(orderLine);
+            }
           }
         } else if (partialpaidLayaway) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
