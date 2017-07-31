@@ -62,6 +62,7 @@ public class ApplicationDictionaryCachedStructures {
   private static final Logger log = LoggerFactory
       .getLogger(ApplicationDictionaryCachedStructures.class);
 
+  private Map<String, Window> windowMap;
   private Map<String, Tab> tabMap;
   private Map<String, Table> tableMap;
   private Map<String, List<Field>> fieldMap;
@@ -86,6 +87,7 @@ public class ApplicationDictionaryCachedStructures {
   @PostConstruct
   public void init() {
     log.debug("Resetting cache");
+    windowMap = new ConcurrentHashMap<>();
     tabMap = new ConcurrentHashMap<>();
     tableMap = new ConcurrentHashMap<>();
     fieldMap = new ConcurrentHashMap<>();
@@ -109,12 +111,13 @@ public class ApplicationDictionaryCachedStructures {
    * In case caching is enabled, Tab for tabId is returned from cache if present. If it is not, this
    * tab and all the ones in the same window are initialized and cached.
    * <p>
-   * Note as this method is in charge of doing the full initialization, it should be invoked before
-   * any other getter in this class. Other case, partially initialized object could be cached, being
-   * potentially harmful if obtained from another thread and tried to be initialized.
+   * Note as this method is in charge of doing the full initialization, {@link #getWindow(String)}
+   * or {@link #getTab(String)} should be invoked before any other getter in this class. Other case,
+   * partially initialized object could be cached, being potentially harmful if obtained from
+   * another thread and tried to be initialized.
    * 
    * @param tabId
-   *          , ID of the tab to look for
+   *          ID of the tab to look for
    * @return Tab for the tabId, from cache if it is enabled
    */
   public Tab getTab(String tabId) {
@@ -150,6 +153,32 @@ public class ApplicationDictionaryCachedStructures {
   }
 
   /**
+   * In case caching is enabled, Window for windowId is returned from cache if present. If it is
+   * not, this window and its tabs are initialized and cached.
+   * <p>
+   * Note as this method is in charge of doing the full initialization, {@link #getWindow(String)}
+   * or {@link #getTab(String)} should be invoked before any other getter in this class. Other case,
+   * partially initialized object could be cached, being potentially harmful if obtained from
+   * another thread and tried to be initialized.
+   * 
+   * @param windowId
+   *          ID of the window to look for
+   * @return Window for the windowId, from cache if it is enabled
+   */
+  public Window getWindow(String windowId) {
+    if (!useCache()) {
+      return OBDal.getInstance().get(Window.class, windowId);
+    }
+
+    if (windowMap.containsKey(windowId)) {
+      return windowMap.get(windowId);
+    }
+
+    initializeWindow(windowId);
+    return windowMap.get(windowId);
+  }
+
+  /**
    * Initialized all the tabs for a given window
    */
   private void initializeWindow(String windowId) {
@@ -174,6 +203,7 @@ public class ApplicationDictionaryCachedStructures {
 
       synchronized (initializedWindows) {
         initializedWindows.add(windowId);
+        windowMap.put(windowId, window);
       }
     }
   }
@@ -197,6 +227,7 @@ public class ApplicationDictionaryCachedStructures {
 
     if (useCache()) {
       tabMap.put(tabId, tab);
+      log.debug("Initialized tab {}", tabId);
     }
   }
 
