@@ -16,6 +16,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -577,11 +579,34 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
+  protected List<Object> sortHooksByPriority(Instance<? extends Object> hooks) throws Exception {
+
+    List<Object> hookList = new ArrayList<Object>();
+    for (Object hookToAdd : hooks) {
+      hookList.add(hookToAdd);
+    }
+
+    Collections.sort(hookList, new Comparator<Object>() {
+      @Override
+      public int compare(Object o1, Object o2) {
+        int o1Priority = (o1 instanceof PrioritizedHook) ? ((PrioritizedHook) o1).getPriority()
+            : 100;
+        int o2Priority = (o2 instanceof PrioritizedHook) ? ((PrioritizedHook) o2).getPriority()
+            : 100;
+
+        return (int) Math.signum(o2Priority - o1Priority);
+      }
+    });
+
+    return hookList;
+  }
+
   protected void executeOrderLoaderPreProcessHook(Instance<? extends Object> hooks,
       JSONObject jsonorder) throws Exception {
 
-    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
-      Object proc = procIter.next();
+    List<Object> hookList = sortHooksByPriority(hooks);
+
+    for (Object proc : hookList) {
       if (proc instanceof OrderLoaderPreProcessHook) {
         ((OrderLoaderPreProcessHook) proc).exec(jsonorder);
       }
