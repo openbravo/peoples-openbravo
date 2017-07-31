@@ -178,28 +178,28 @@ public class DataSourceWhereParameter extends BaseDataSourceTestDal {
     if (datasource.onlySuccessAssert) {
       return;
     }
-
+    String datasourceResponse;
     if (datasource.hasImplicitFilter) {
       datasource.params.put("isImplicitFilterApplied", "true");
-      assertRecordInResponse();
+    }
+    datasourceResponse = getDataSourceResponse();
+    assertRecordInResponse(datasourceResponse, datasource.expected, true);
+    assertRecordInResponse(datasourceResponse, datasource.unexpected, false);
 
+    if (datasource.hasImplicitFilter) {
       datasource.params.put("isImplicitFilterApplied", "false");
-      assertRecordInResponse();
 
-    } else {
-      assertRecordInResponse();
+      datasourceResponse = getDataSourceResponse();
+      assertRecordInResponse(datasourceResponse, datasource.expected, true);
+      assertRecordInResponse(datasourceResponse, datasource.unexpected, true);
     }
   }
 
-  private void assertRecordInResponse() throws Exception {
-    String datasourceResponse = getDataSourceResponse();
-    boolean isRecordPresent = isValueInTheResponseData(datasource.expected, datasourceResponse);
-    assertThat("Record [" + datasource.expected + "] - params:" + datasource.params
-        + " - present in response: " + datasourceResponse, isRecordPresent, is(true));
-
-    isRecordPresent = isValueInTheResponseData(datasource.unexpected, datasourceResponse);
-    assertThat("Record [" + datasource.unexpected + "] - params:" + datasource.params
-        + " - not present in response: " + datasourceResponse, isRecordPresent, is(false));
+  private void assertRecordInResponse(String datasourceResponse, String recordId,
+      boolean shouldBePresent) throws Exception {
+    boolean isRecordPresent = isValueInTheResponseData(recordId, datasourceResponse);
+    assertThat("Record [" + recordId + "] - params:" + datasource.params
+        + " - present in response: " + datasourceResponse, isRecordPresent, is(shouldBePresent));
   }
 
   @Test
