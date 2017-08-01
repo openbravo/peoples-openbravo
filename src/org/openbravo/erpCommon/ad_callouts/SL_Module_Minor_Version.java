@@ -11,26 +11,18 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.module.Module;
-import org.openbravo.xmlEngine.XmlDocument;
 
 /**
  * A callout used in the module dependency form. When the dependent module changes then the minor
@@ -38,70 +30,20 @@ import org.openbravo.xmlEngine.XmlDocument;
  * 
  * @author mtaal
  */
-public class SL_Module_Minor_Version extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_Module_Minor_Version extends SimpleCallout {
 
   private static final String DEPENDENT_MODULE_FIELD = "inpadDependentModuleId";
   private static final String MINOR_VERSION_FIELD = "inpstartversion";
-  private static final String LAST_CHANGED_FIELD = "inpLastFieldChanged";
 
-  /**
-   * Initializes the servlet.
-   */
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
+    String strChanged = info.getLastFieldChanged();
+    String strModule = info.getStringParameter(DEPENDENT_MODULE_FIELD);
 
-  /**
-   * Receives the request to compute the version.
-   */
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter(LAST_CHANGED_FIELD);
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
-      String strModule = vars.getStringParameter(DEPENDENT_MODULE_FIELD);
-      String strFirstVersion = vars.getStringParameter(MINOR_VERSION_FIELD);
-      try {
-        printPage(response, vars, strChanged, strFirstVersion, strModule);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
-      String firstVersion, String strModule) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    StringBuffer result = new StringBuffer();
-    result.append("var calloutName='SL_Module_Minor_version';\n\n");
-    result.append("var respuesta = new Array(");
-    // do not change the name field, if the user just left it
-    if (strChanged.equals(DEPENDENT_MODULE_FIELD)) {
-      // get the minor version
+    // Set Minor Version
+    if (StringUtils.equals(strChanged, DEPENDENT_MODULE_FIELD)) {
       final Module dependsOnModule = OBDal.getInstance().get(Module.class, strModule);
-      if (dependsOnModule.getVersion() != null) {
-        result.append("new Array(\"" + MINOR_VERSION_FIELD + "\", \""
-            + dependsOnModule.getVersion() + "\")");
-      } else {
-        result.append("new Array(\"" + MINOR_VERSION_FIELD + "\", \""
-            + dependsOnModule.getVersion() + "\")");
-      }
+      info.addResult(MINOR_VERSION_FIELD, dependsOnModule.getVersion());
     }
-    result.append(");");
-    xmlDocument.setParameter("array", result.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
   }
 }

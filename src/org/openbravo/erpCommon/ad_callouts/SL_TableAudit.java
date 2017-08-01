@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,100 +19,54 @@
 
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
-import org.openbravo.xmlEngine.XmlDocument;
 
-public class SL_TableAudit extends HttpSecureAppServlet {
+/** After setting audit trail for a table, shows message with next steps */
+public class SL_TableAudit extends SimpleCallout {
 
-  private static final long serialVersionUID = 1L;
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
+    String strChanged = info.getLastFieldChanged();
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
-
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
-      try {
-        printPage(response, vars, strChanged);
-      } catch (Exception ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged)
-      throws IOException, ServletException {
-    // Change audit trail status regarding whether there are audited tables
-    StringBuffer action = new StringBuffer();
-    if (strChanged.equalsIgnoreCase("inpisfullyaudited")) {
-      boolean currentRecordFullyAudited = vars.getStringParameter("inpisfullyaudited").equals("Y");
+    if (StringUtils.equalsIgnoreCase(strChanged, "inpisfullyaudited")) {
+      String strIsFullyAudited = info.getStringParameter("inpisfullyaudited");
+      boolean currentRecordFullyAudited = StringUtils.equals(strIsFullyAudited, "Y");
       if (currentRecordFullyAudited) {
         SessionInfo.setAuditActive(true);
-
         OBCriteria<Table> qTables = OBDal.getInstance().createCriteria(Table.class);
         qTables.add(Restrictions.eq(Table.PROPERTY_ISFULLYAUDITED, true));
         qTables.add(Restrictions.eq(Table.PROPERTY_ISAUDITINSERTS, true));
         if (qTables.count() == 0) {
-          action.append("new Array(\"inpisauditinserts\", \"N\"),\n");
+          info.addResult("inpisauditinserts", "N");
         } else {
-          action.append("new Array(\"inpisauditinserts\", \"Y\"),\n");
+          info.addResult("inpisauditinserts", "Y");
         }
-        action.append("new Array(\"MESSAGE\", \""
-            + Utility.messageBD(this, "RegenerateAudit_ExcludeColumn", vars.getLanguage())
-            + "\")\n");
+        info.showMessage(Utility.messageBD(this, "RegenerateAudit_ExcludeColumn",
+            info.vars.getLanguage()));
       } else {
         OBCriteria<Table> obc = OBDal.getInstance().createCriteria(Table.class);
         obc.add(Restrictions.eq(Table.PROPERTY_ISFULLYAUDITED, true));
-        SessionInfo.setAuditActive(obc.list().size() > 0);
+        SessionInfo.setAuditActive(!obc.list().isEmpty());
       }
-    } else if (strChanged.equalsIgnoreCase("inpisexcludeaudit")) {
-      boolean currentRecordExcludeAudit = vars.getStringParameter("inpisexcludeaudit").equals("Y");
+    } else if (StringUtils.equalsIgnoreCase(strChanged, "inpisexcludeaudit")) {
+      String strIsExcludedAudit = info.getStringParameter("inpisexcludeaudit");
+      boolean currentRecordExcludeAudit = StringUtils.equals(strIsExcludedAudit, "Y");
       if (currentRecordExcludeAudit) {
         SessionInfo.setAuditActive(true);
-        action.append("new Array(\"MESSAGE\", \""
-            + Utility.messageBD(this, "RegenerateAudit", vars.getLanguage()) + "\")\n");
+        info.showMessage(Utility.messageBD(this, "RegenerateAudit", info.vars.getLanguage()));
       } else {
         OBCriteria<Table> obc = OBDal.getInstance().createCriteria(Table.class);
         obc.add(Restrictions.eq(Table.PROPERTY_ISFULLYAUDITED, true));
-        SessionInfo.setAuditActive(obc.list().size() > 0);
+        SessionInfo.setAuditActive(!obc.list().isEmpty());
       }
     }
-
-    StringBuffer result = new StringBuffer();
-    result.append("var calloutName='SL_TableAudit';\n\n");
-    result.append("var respuesta = new Array(");
-    result.append(action);
-    result.append(");");
-
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    xmlDocument.setParameter("array", result.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
   }
 }

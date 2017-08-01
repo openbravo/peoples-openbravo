@@ -18,134 +18,125 @@
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.exception.NoConnectionAvailableException;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FormatUtilities;
-import org.openbravo.xmlEngine.XmlDocument;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Checks the SQL in Alert Rule to ensure all required columns are included.
  */
-public class SL_AlertRule_SQL extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
-  private static final Logger log = LoggerFactory.getLogger(SL_AlertRule_SQL.class);
+public class SL_AlertRule_SQL extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
+    String sql = info.getStringParameter("inpsql");
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strSQL = vars.getStringParameter("inpsql");
+    if (StringUtils.isEmpty(sql)) {
+      return;
+    }
+
+    String msg = "";
+    if (sql.toUpperCase().trim().startsWith("SELECT ")) {
+      PreparedStatement st = null;
+      Connection con = null;
+      ConnectionProvider cp = new DalConnectionProvider(false);
       try {
-        printPage(response, vars, strSQL);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
+        con = cp.getTransactionConnection();
+        con.setReadOnly(true);
+
+        st = con.prepareStatement(sql);
+        ResultSetMetaData rmeta = st.getMetaData();
+        if (!existsColumn(rmeta, "AD_CLIENT_ID")) {
+          msg = "AD_CLIENT_ID ";
+        }
+        if (!existsColumn(rmeta, "AD_ORG_ID")) {
+          msg += "AD_ORG_ID ";
+        }
+        if (!existsColumn(rmeta, "CREATED")) {
+          msg += "CREATED ";
+        }
+        if (!existsColumn(rmeta, "CREATEDBY")) {
+          msg += "CREATEDBY ";
+        }
+        if (!existsColumn(rmeta, "UPDATED")) {
+          msg += "UPDATED ";
+        }
+        if (!existsColumn(rmeta, "UPDATEDBY")) {
+          msg += "UPDATEDBY ";
+        }
+        if (!existsColumn(rmeta, "ISACTIVE")) {
+          msg += "ISACTIVE ";
+        }
+        if (!existsColumn(rmeta, "AD_USER_ID")) {
+          msg += "AD_USER_ID ";
+        }
+        if (!existsColumn(rmeta, "AD_ROLE_ID")) {
+          msg += "AD_ROLE_ID ";
+        }
+        if (!existsColumn(rmeta, "RECORD_ID")) {
+          msg += "RECORD_ID ";
+        }
+        if (!existsColumn(rmeta, "DESCRIPTION")) {
+          msg += "DESCRIPTION ";
+        }
+        if (!existsColumn(rmeta, "REFERENCEKEY_ID")) {
+          msg += "REFERENCEKEY_ID";
+        }
+        if (StringUtils.isNotEmpty(msg)) {
+          msg = Utility.messageBD(this, "notColumnInQuery", info.vars.getLanguage()) + msg;
+        }
+      } catch (Exception ex) {
+        msg = "error in query: " + FormatUtilities.replaceJS(ex.toString());
+      } finally {
+
+        if (st != null) {
+          try {
+            st.close();
+          } catch (SQLException e) {
+            log4j.error("Error closing statement in Alert Rule query: " + sql, e);
+          }
+        }
+
+        if (con != null) {
+          try {
+            con.setReadOnly(false);
+          } catch (SQLException e) {
+            log4j.error("Error resetting readonly to connection in Alert Rule query: " + sql, e);
+          }
+        }
+        try {
+          cp.releaseRollbackConnection(con);
+        } catch (SQLException e) {
+          log4j.error("Error releasing statement in Alert Rule query: " + sql, e);
+        }
       }
-    } else
-      pageError(response);
+    } else {
+      msg = Utility.messageBD(this, "AlertSelectConstraint", info.vars.getLanguage());
+    }
+
+    if (StringUtils.isNotEmpty(msg)) {
+      info.showMessage(msg);
+    }
   }
 
   private boolean existsColumn(ResultSetMetaData rmeta, String col) {
     try {
       for (int i = 1; i <= rmeta.getColumnCount(); i++) {
-        if (rmeta.getColumnName(i).equalsIgnoreCase(col))
+        if (StringUtils.equalsIgnoreCase(rmeta.getColumnName(i), col)) {
           return true;
+        }
       }
-    } catch (Exception ex) {
+    } catch (SQLException ignore) {
     }
     return false;
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strSQL)
-      throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    String msg = "";
-
-    if (!strSQL.equals("")) {
-      if (strSQL.toUpperCase().trim().startsWith("SELECT ")) {
-        PreparedStatement st = null;
-        try {
-          this.getConnection().setReadOnly(true);
-          st = this.getPreparedStatement(strSQL);
-          ResultSetMetaData rmeta = st.getMetaData();
-          if (!existsColumn(rmeta, "AD_CLIENT_ID"))
-            msg = "AD_CLIENT_ID ";
-          if (!existsColumn(rmeta, "AD_ORG_ID"))
-            msg += "AD_ORG_ID ";
-          if (!existsColumn(rmeta, "CREATED"))
-            msg += "CREATED ";
-          if (!existsColumn(rmeta, "CREATEDBY"))
-            msg += "CREATEDBY ";
-          if (!existsColumn(rmeta, "UPDATED"))
-            msg += "UPDATED ";
-          if (!existsColumn(rmeta, "UPDATEDBY"))
-            msg += "UPDATEDBY ";
-          if (!existsColumn(rmeta, "ISACTIVE"))
-            msg += "ISACTIVE ";
-          if (!existsColumn(rmeta, "AD_USER_ID"))
-            msg += "AD_USER_ID ";
-          if (!existsColumn(rmeta, "AD_ROLE_ID"))
-            msg += "AD_ROLE_ID ";
-          if (!existsColumn(rmeta, "RECORD_ID"))
-            msg += "RECORD_ID ";
-          if (!existsColumn(rmeta, "DESCRIPTION"))
-            msg += "DESCRIPTION ";
-          if (!existsColumn(rmeta, "REFERENCEKEY_ID"))
-            msg += "REFERENCEKEY_ID";
-          if (!msg.equals(""))
-            msg = Utility.messageBD(this, "notColumnInQuery", vars.getLanguage()) + msg;
-        } catch (Exception ex) {
-          msg = "error in query: " + FormatUtilities.replaceJS(ex.toString());
-        } finally {
-          try {
-            this.getConnection().setReadOnly(false);
-          } catch (SQLException | NoConnectionAvailableException e) {
-            log.error("Error resetting readonly to connection in Alert Rule query: {}", strSQL, e);
-          }
-          try {
-            this.releasePreparedStatement(st);
-          } catch (SQLException e) {
-            log.error("Error releasing statement in Alert Rule query: {}", strSQL, e);
-          }
-        }
-      } else {
-        msg = Utility.messageBD(this, "AlertSelectConstraint", vars.getLanguage());
-      }
-    }
-
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_AlertRule_SQL';\n\n");
-    resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"MESSAGE\", \"" + msg + "\")");
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
   }
 }

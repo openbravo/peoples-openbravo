@@ -11,30 +11,22 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.xmlEngine.XmlDocument;
 
 /**
  * This callout checks if this is the only active isDefault checked for the table (with
@@ -44,85 +36,54 @@ import org.openbravo.xmlEngine.XmlDocument;
  * If another one already exists an error message is raised and the checkbox is unchecked.
  * 
  */
-public class SL_IsDefault extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_IsDefault extends SimpleCallout {
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+    String strChanged = info.getLastFieldChanged();
+    String strValue = info.getStringParameter(strChanged);
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      try {
-        printPage(response, vars);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
+    if (StringUtils.equals(strValue, "Y")) {
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+      // Parameters
+      String strTableId = info.getStringParameter("inpTableId", IsIDFilter.instance);
+      String strOrg = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
+      String parentColumn = info.getStringParameter("inpParentKeyColumn");
+      String currentColumnKey = info.getStringParameter("inpkeyColumnId");
+      String currentKeyValue = info.getStringParameter(info.getStringParameter("inpKeyName"));
 
-    String strValue = vars.getStringParameter(vars.getStringParameter("inpLastFieldChanged"));
-    StringBuffer result = new StringBuffer();
-    result.append("var calloutName='SL_IsDefault';\n\n");
-    result.append("var respuesta = new Array(");
-
-    if (strValue.equals("Y")) {
-
-      String strTableId = vars.getStringParameter("inpTableId");
-      String strOrg = vars.getStringParameter("inpadOrgId");
-      String parentColumn = vars.getStringParameter("inpParentKeyColumn");
-      String tabId = vars.getStringParameter("TAB_ID");
-      // if parentColumn is not null, compute parentColumn using tab information
-      if ((parentColumn == null || parentColumn.isEmpty()) && StringUtils.isNotEmpty(tabId)) {
-        Tab currentTab = OBDal.getInstance().get(Tab.class, tabId);
+      // if parentColumn is null, compute parentColumn using tab information
+      if ((StringUtils.isEmpty(parentColumn) && StringUtils.isNotEmpty(info.getTabId()))) {
+        Tab currentTab = OBDal.getInstance().get(Tab.class, info.getTabId());
         parentColumn = KernelUtils.getInstance().getParentColumnName(currentTab);
       }
-      String parentValue = vars.getStringParameter("inp"
-          + Sqlc.TransformaNombreColumna(parentColumn));
-
-      String currentColumnKey = vars.getStringParameter("inpkeyColumnId");
-      String currentKeyValue = vars.getStringParameter(vars.getStringParameter("inpKeyName"));
 
       SLIsDefaultData[] data = SLIsDefaultData.select(this, strTableId);
-      if (data != null && data.length != 0) {
+      if (data != null && data.length > 0) {
         String parentClause = "";
         String currentClause = "";
         // Include parent column if it exists
-        if (!parentColumn.equals("") && !parentValue.equals(""))
-          parentClause = "AND " + parentColumn + "='" + parentValue + "'";
+        if (StringUtils.isNotEmpty(parentColumn)) {
+          String parentValue = info.getStringParameter(
+              "inp" + Sqlc.TransformaNombreColumna(parentColumn), IsIDFilter.instance);
+          if (StringUtils.isNotEmpty(parentValue)) {
+            parentClause = "AND " + parentColumn + "='" + parentValue + "'";
+          }
+        }
 
         // In case the current record already exists in DB not sum it to
         // the total
-        if (!currentKeyValue.equals(""))
+        if (StringUtils.isNotEmpty(currentKeyValue)) {
           currentClause = "AND " + currentColumnKey + " != '" + currentKeyValue + "'";
+        }
 
         String strTotalDefaults = SLIsDefaultData.selectHasDefaults(this, data[0].tablename,
             parentClause, currentClause, strOrg);
-        if (!strTotalDefaults.equals("0")) {
-          String msg = Utility.messageBD(this, "DuplicatedDefaults", vars.getLanguage());
-          result.append("new Array(\"ERROR\", \"" + msg + "\"), \n");
-          result.append("new Array(\"inpisdefault\", \"N\")\n");
+        if (!StringUtils.equals(strTotalDefaults, "0")) {
+          info.showError(Utility.messageBD(this, "DuplicatedDefaults", info.vars.getLanguage()));
+          info.addResult("inpisdefault", "N");
         }
       }
     }
-
-    result.append(");");
-    xmlDocument.setParameter("array", result.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
   }
 }
