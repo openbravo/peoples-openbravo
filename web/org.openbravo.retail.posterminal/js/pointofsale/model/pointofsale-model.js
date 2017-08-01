@@ -92,19 +92,18 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         if (order && order.get('session') !== OB.MobileApp.model.get('session')) {
           return true;
         }
-        var isGiftCardProduct = false;
-        _.each(order.get('lines').models, function (l) {
-          if (l.get('product').get('gcnvGiftcardtype') === 'G' && _.isUndefined(l.get('giftcardid'))) {
-            isGiftCardProduct = true;
-            return;
-          }
-        });
-        if (isGiftCardProduct) {
-          return true;
-        }
       });
       _.each(outOfSessionOrder, function (orderToRemove) {
         ordersNotPaid.remove(orderToRemove);
+      });
+
+      //removing Orders with GiftCard lines without mandatory fields filled
+      OB.UTIL.HookManager.executeHooks('OBPOS_CheckGiftCardMandatoryFields', {
+        orders: ordersNotPaid.models
+      }, function (args) {
+        _.each(args.removeOrderList, function (orderToRemove) {
+          ordersNotPaid.remove(orderToRemove);
+        });
       });
 
       OB.UTIL.HookManager.executeHooks('OBPOS_PreLoadUnpaidOrdersHook', {
