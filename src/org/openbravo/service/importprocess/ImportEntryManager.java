@@ -41,6 +41,7 @@ import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -51,6 +52,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
+import org.openbravo.service.json.JsonUtils;
 
 /**
  * This class is the main manager for performing multi-threaded and parallel import of data from the
@@ -402,6 +404,7 @@ public class ImportEntryManager {
   public void handleImportError(ImportEntry importEntry, Throwable t) {
     importEntry.setImportStatus("Error");
     importEntry.setErrorinfo(ImportProcessUtils.getErrorMessage(t));
+    importEntry.setResponseinfo(createErrorResponseContent(t));
     OBDal.getInstance().save(importEntry);
   }
 
@@ -425,6 +428,7 @@ public class ImportEntryManager {
     if (importEntry != null && !"Processed".equals(importEntry.getImportStatus())) {
       importEntry.setImportStatus("Error");
       importEntry.setErrorinfo(ImportProcessUtils.getErrorMessage(t));
+      importEntry.setResponseinfo(createErrorResponseContent(t));
       OBDal.getInstance().save(importEntry);
     }
   }
@@ -455,6 +459,7 @@ public class ImportEntryManager {
       if (importEntry != null && !"Processed".equals(importEntry.getImportStatus())) {
         importEntry.setImportStatus("Error");
         importEntry.setErrorinfo(ImportProcessUtils.getErrorMessage(t));
+        importEntry.setResponseinfo(createErrorResponseContent(t));
         OBDal.getInstance().save(importEntry);
         OBDal.getInstance().commitAndClose();
       }
@@ -467,6 +472,20 @@ public class ImportEntryManager {
     } finally {
       OBContext.restorePreviousMode();
       OBContext.setOBContext(prevOBContext);
+    }
+  }
+
+  private String createErrorResponseContent(Throwable t) {
+    try {
+      final String jsonStr = JsonUtils.convertExceptionToJson(t);
+      final JSONObject json = new JSONObject(jsonStr);
+      if (json.has("response")) {
+        return json.getJSONObject("response").toString();
+      }
+      return json.toString();
+    } catch (Exception logIt) {
+      log.error(logIt.getMessage(), logIt);
+      return "{error:\"" + logIt.getMessage() + "\"}";
     }
   }
 

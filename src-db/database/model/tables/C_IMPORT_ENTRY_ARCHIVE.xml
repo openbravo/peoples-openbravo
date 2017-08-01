@@ -57,6 +57,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="RESPONSEINFO" primaryKey="false" required="false" type="CLOB" size="4000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ROLE" name="C_IMPORT_EA_AD_ROLE">
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
       </foreign-key>

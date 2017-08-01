@@ -221,7 +221,8 @@ public class JsonUtils {
       VariablesSecureApp vars = null;
 
       // in case of stateless then prevent creation of a http session when an error is reported
-      if (AuthenticationManager.isStatelessRequest(RequestContext.get().getRequest())) {
+      if (RequestContext.get().getRequest() == null
+          || AuthenticationManager.isStatelessRequest(RequestContext.get().getRequest())) {
         obError = new OBError();
         obError.setType("Error");
         obError.setMessage(throwable.getMessage());
