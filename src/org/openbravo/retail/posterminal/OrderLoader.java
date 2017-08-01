@@ -370,6 +370,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             createLinesForServiceProduct();
           }
         }
+
         if (log.isDebugEnabled()) {
           t112 = System.currentTimeMillis();
         }
@@ -474,7 +475,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
 
       } catch (Exception ex) {
-        throw new OBException("Error in OrderLoader: ", ex);
+        throw new OBException("Error in OrderLoader: " + ex.getMessage(), ex);
       } finally {
         // flush and enable triggers, the rest of this method needs enabled
         // triggers
