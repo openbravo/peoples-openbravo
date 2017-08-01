@@ -380,6 +380,10 @@
       <foreign-key foreignTable="M_WAREHOUSE_RULE" name="C_ORDERLINE_WAREHOUSERULE">
         <reference local="M_WAREHOUSE_RULE_ID" foreign="M_WAREHOUSE_RULE_ID"/>
       </foreign-key>
+      <index name="C_ORDERLINE_BOMPARENT" unique="false">
+        <index-column name="BOM_PARENT_ID"/>
+        <whereClause><![CDATA[BOM_PARENT_ID IS NOT NULL]]></whereClause>
+      </index>
       <index name="C_ORDERLINE_C_RETURN_REASON" unique="false">
         <index-column name="C_RETURN_REASON_ID"/>
         <whereClause><![CDATA[C_RETURN_REASON_ID IS NOT NULL]]></whereClause>
@@ -393,6 +397,14 @@
       </index>
       <index name="C_ORDERLINE_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
+      </index>
+      <index name="C_ORDERLINE_QUOTATIONLINE" unique="false">
+        <index-column name="QUOTATIONLINE_ID"/>
+        <whereClause><![CDATA[QUOTATIONLINE_ID IS NOT NULL]]></whereClause>
+      </index>
+      <index name="C_ORDERLINE_REFORDERLINE" unique="false">
+        <index-column name="REF_ORDERLINE_ID"/>
+        <whereClause><![CDATA[REF_ORDERLINE_ID IS NOT NULL]]></whereClause>
       </index>
       <check name="C_ORDERLINE_CHECK1"><![CDATA[QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL OR QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL]]></check>
       <check name="C_ORDERLINE_CHECK2"><![CDATA[LINENETAMT = 0 OR C_TAX_ID IS NOT NULL]]></check>
