@@ -194,6 +194,14 @@
       <foreign-key foreignTable="USER2" name="M_INOUTLINE_USER2">
         <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
+      <index name="M_INOUTLINE_BOMPARENT" unique="false">
+        <index-column name="BOM_PARENT_ID"/>
+        <whereClause><![CDATA[BOM_PARENT_ID IS NOT NULL]]></whereClause>
+      </index>
+      <index name="M_INOUTLINE_CANCELEDINOUTLINE" unique="false">
+        <index-column name="CANCELED_INOUTLINE_ID"/>
+        <whereClause><![CDATA[CANCELED_INOUTLINE_ID IS NOT NULL]]></whereClause>
+      </index>
       <index name="M_INOUTLINE_INOUT" unique="false">
         <index-column name="M_INOUT_ID"/>
       </index>
