@@ -782,27 +782,29 @@
     setDocumentNo: function (isReturn, isOrder) {
       var order = this,
           nextDocumentNo;
-      if (isOrder && (order.get('documentnoPrefix') !== OB.MobileApp.model.get('terminal').docNoPrefix)) {
-        nextDocumentNo = OB.MobileApp.model.getNextDocumentno();
-        order.set('returnnoPrefix', -1);
-        order.set('returnnoSuffix', -1);
-        order.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
-        order.set('documentnoSuffix', nextDocumentNo.documentnoSuffix);
-        order.set('quotationnoPrefix', -1);
-        order.set('quotationnoSuffix', -1);
-        order.set('documentNo', nextDocumentNo.documentNo);
-        order.trigger('saveCurrent');
-      } else if (OB.MobileApp.model.get('terminal').returnDocNoPrefix && isReturn) {
-        if (order.get('returnnoPrefix') !== OB.MobileApp.model.get('terminal').returnDocNoPrefix) {
-          nextDocumentNo = OB.MobileApp.model.getNextReturnno();
-          order.set('returnnoPrefix', OB.MobileApp.model.get('terminal').returnDocNoPrefix);
-          order.set('returnnoSuffix', nextDocumentNo.documentnoSuffix);
-          order.set('documentnoPrefix', -1);
-          order.set('documentnoSuffix', -1);
+      if (!order.get('isModified')) {
+        if (isOrder && (order.get('documentnoPrefix') !== OB.MobileApp.model.get('terminal').docNoPrefix)) {
+          nextDocumentNo = OB.MobileApp.model.getNextDocumentno();
+          order.set('returnnoPrefix', -1);
+          order.set('returnnoSuffix', -1);
+          order.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
+          order.set('documentnoSuffix', nextDocumentNo.documentnoSuffix);
           order.set('quotationnoPrefix', -1);
           order.set('quotationnoSuffix', -1);
           order.set('documentNo', nextDocumentNo.documentNo);
           order.trigger('saveCurrent');
+        } else if (OB.MobileApp.model.get('terminal').returnDocNoPrefix && isReturn) {
+          if (order.get('returnnoPrefix') !== OB.MobileApp.model.get('terminal').returnDocNoPrefix) {
+            nextDocumentNo = OB.MobileApp.model.getNextReturnno();
+            order.set('returnnoPrefix', OB.MobileApp.model.get('terminal').returnDocNoPrefix);
+            order.set('returnnoSuffix', nextDocumentNo.documentnoSuffix);
+            order.set('documentnoPrefix', -1);
+            order.set('documentnoSuffix', -1);
+            order.set('quotationnoPrefix', -1);
+            order.set('quotationnoSuffix', -1);
+            order.set('documentNo', nextDocumentNo.documentNo);
+            order.trigger('saveCurrent');
+          }
         }
       }
     },
