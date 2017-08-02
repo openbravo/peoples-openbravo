@@ -53,9 +53,6 @@ public class Discount extends ProcessHQLQuery {
 
     String hql = "from PricingAdjustment p ";
     hql += "where client.id = '" + OBContext.getOBContext().getCurrentClient().getId() + "' ";
-    if (addIncrementalUpdateFilter) {
-      hql += "and (p.$incrementalUpdateCriteria) ";
-    }
     boolean multiPrices = false;
     try {
       multiPrices = "Y".equals(Preferences.getPreferenceValue("OBPOS_EnableMultiPriceList", true,
@@ -82,12 +79,16 @@ public class Discount extends ProcessHQLQuery {
       hql += "    ) ";
     }
     // assortment products
-    hql += "and ((p.includedProducts = 'Y') ";
-    hql += "  or (p.includedProducts = 'N' and exists (select 1 ";
+    hql += "and ((p.includedProducts = 'Y' ";
+    hql += (addIncrementalUpdateFilter ? "and (p.$incrementalUpdateCriteria))" : ")");
+    hql += " or (p.includedProducts = 'N' and (";
+    hql += (addIncrementalUpdateFilter ? "(p.$incrementalUpdateCriteria) or " : "");
+    hql += "   exists (select 1 ";
     hql += "      from PricingAdjustmentProduct pap, OBRETCO_Prol_Product ppl ";
     hql += "      where pap.active = true and pap.priceAdjustment = p ";
     hql += "      and pap.product.id = ppl.product.id ";
-    hql += "      and ppl.obretcoProductlist.id ='" + productList.getId() + "')) ";
+    hql += "      and ppl.active = true and (ppl.$incrementalUpdateCriteria) ";
+    hql += "      and ppl.obretcoProductlist.id ='" + productList.getId() + "'))) ";
     hql += "  ) ";
 
     // organization
