@@ -99,6 +99,7 @@ public class PaidReceipts extends JSONProcessSimple {
         JSONObject paidReceipt = paidReceipts.getJSONObject(receipt);
 
         paidReceipt.put("orderid", orderid);
+        paidReceipt.put("recordInImportEntry", checkOrderInErrorEntry(orderid));
 
         // get the Invoice for the Order
         String hqlPaidReceiptsInvoice = "select inv.id from Invoice as inv where inv.salesOrder.id = :orderId";
@@ -145,8 +146,8 @@ public class PaidReceipts extends JSONProcessSimple {
 
           if (paidReceiptLine.has("goodsShipmentLine")
               && !paidReceiptLine.getString("goodsShipmentLine").equals("null")) {
-            String hqlShipLines = "select ordLine.goodsShipmentLine.salesOrderLine.salesOrder.documentNo, ordLine.goodsShipmentLine.salesOrderLine.id "
-                + " from OrderLine as ordLine where ordLine.id = ? ";
+            String hqlShipLines = "select ordLine.goodsShipmentLine.salesOrderLine.salesOrder.documentNo, ordLine.goodsShipmentLine.salesOrderLine.id, "
+                + "ordLine.goodsShipmentLine.salesOrderLine.salesOrder.id from OrderLine as ordLine where ordLine.id = ? ";
             OBDal.getInstance().getSession().createQuery(hqlShipLines);
             Query shipLines = OBDal.getInstance().getSession().createQuery(hqlShipLines);
             shipLines.setString(0, paidReceiptLine.getString("lineId"));
@@ -155,6 +156,11 @@ public class PaidReceipts extends JSONProcessSimple {
               Object[] line = (Object[]) obj;
               paidReceiptLine.put("originalDocumentNo", line[0]);
               paidReceiptLine.put("originalOrderLineId", line[1]);
+
+              if (!paidReceipt.getBoolean("recordInImportEntry")) {
+                paidReceipt.put("recordInImportEntry",
+                    checkOrderInErrorEntry(String.valueOf(line[2])));
+              }
             }
           }
 
@@ -456,6 +462,25 @@ public class PaidReceipts extends JSONProcessSimple {
       OBContext.restorePreviousMode();
     }
     return result;
+  }
+
+  private boolean checkOrderInErrorEntry(String orderId) {
+    boolean hasRecord = false;
+    try {
+      // OBPOS Errors
+      String hqlError = "select line.id from OBPOS_Errors_Line line inner join line.obposErrors error "
+          + "where error.client.id = ? and line.recordID = ? and error.typeofdata = 'Order' and error.orderstatus = 'N' ";
+      Query errorQuery = OBDal.getInstance().getSession().createQuery(hqlError);
+      errorQuery.setString(0, OBContext.getOBContext().getCurrentClient().getId());
+      errorQuery.setString(1, orderId);
+      if (errorQuery.list().size() > 0) {
+        return true;
+      }
+
+    } catch (final Exception e) {
+      log.error("Error while checking order in ErrorEntry", e);
+    }
+    return hasRecord;
   }
 
   @Override

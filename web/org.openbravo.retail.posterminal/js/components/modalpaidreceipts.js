@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2016 Openbravo S.L.U.
+ * Copyright (C) 2014-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -382,29 +382,34 @@ enyo.kind({
         process.exec({
           orderid: model.get('id')
         }, function (data) {
-          if (data) {
+          if (data && data[0]) {
             if (me.model.get('leftColumnViewManager').isMultiOrder()) {
               if (me.model.get('multiorders')) {
                 me.model.get('multiorders').resetValues();
               }
               me.model.get('leftColumnViewManager').setOrderMode();
             }
-            OB.UTIL.HookManager.executeHooks('OBRETUR_ReturnFromOrig', {
-              order: data[0],
-              context: me,
-              params: me.parent.parent.params
-            }, function (args) {
-              if (!args.cancelOperation) {
-                var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearchNewReceipt');
-                me.model.get('orderList').newPaidReceipt(data[0], function (order) {
-                  me.doChangePaidReceipt({
-                    newPaidReceipt: order
-                  });
-                  OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearchNewReceipt');
+            if (data[0].recordInImportEntry) {
+              OB.UTIL.showLoading(false);
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ReceiptNotSynced', [data[0].documentNo]));
+            } else {
+              OB.UTIL.HookManager.executeHooks('OBRETUR_ReturnFromOrig', {
+                order: data[0],
+                context: me,
+                params: me.parent.parent.params
+              }, function (args) {
+                if (!args.cancelOperation) {
+                  var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearchNewReceipt');
+                  me.model.get('orderList').newPaidReceipt(data[0], function (order) {
+                    me.doChangePaidReceipt({
+                      newPaidReceipt: order
+                    });
+                    OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearchNewReceipt');
 
-                });
-              }
-            });
+                  });
+                }
+              });
+            }
           } else {
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
           }

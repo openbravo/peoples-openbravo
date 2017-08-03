@@ -15,6 +15,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -24,21 +25,23 @@ public class ClearErrorActionHandler extends BaseActionHandler {
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     JSONArray errorIds = null;
+    JSONObject result = new JSONObject();
     try {
+      OBContext.setAdminMode(true);
+
       errorIds = new JSONArray(content);
       for (int i = 0; i < errorIds.length(); i++) {
         String errorId = errorIds.getString(i);
         OBPOSErrors error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
         OBDal.getInstance().remove(error);
       }
-      JSONObject result = new JSONObject();
+      OBDal.getInstance().flush();
       result.put(
           "message",
           Utility.messageBD(new DalConnectionProvider(false), "Success", RequestContext.get()
               .getVariablesSecureApp().getLanguage()));
       return result;
-    } catch (Exception e) {
-      JSONObject result = new JSONObject();
+    } catch (final Exception e) {
       try {
         result.put(
             "message",
@@ -47,8 +50,10 @@ public class ClearErrorActionHandler extends BaseActionHandler {
       } catch (JSONException e1) {
         // won't happen
       }
-      return result;
+    } finally {
+      OBContext.restorePreviousMode();
     }
+    return result;
   }
 
 }
