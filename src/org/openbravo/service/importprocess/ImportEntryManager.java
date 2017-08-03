@@ -41,6 +41,8 @@ import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
@@ -280,6 +282,8 @@ public class ImportEntryManager {
    * Note will commit the session/connection using {@link OBDal#commitAndClose()}
    */
   public void createImportEntry(String id, String typeOfData, String json, boolean commitAndClose) {
+    String recordId = null;
+    JSONObject jsonData = null;
     OBContext.setAdminMode(true);
     try {
       // check if it is not there already or already archived
@@ -306,6 +310,25 @@ public class ImportEntryManager {
         }
       }
 
+      try {
+        jsonData = new JSONObject(json);
+        if (jsonData.has("id")) {
+          recordId = jsonData.optString("id", null);
+        } else if (jsonData.has("data")) {
+          JSONArray jsonArray = jsonData.optJSONArray("data");
+          if (jsonArray == null || jsonArray.length() == 0) {
+            JSONObject jsonObject = jsonData.optJSONObject("data");
+            if (jsonObject != null) {
+              recordId = jsonObject.optString("id", null);
+            }
+          } else if (jsonArray.length() == 1) {
+            recordId = jsonArray.getJSONObject(0).optString("id");
+          }
+        }
+      } catch (JSONException e) {
+        log.error("Error while getting recordid", e);
+      }
+
       ImportEntry importEntry = OBProvider.getInstance().get(ImportEntry.class);
       importEntry.setId(id);
       importEntry.setRole(OBDal.getInstance().getProxy(Role.class,
@@ -316,6 +339,7 @@ public class ImportEntryManager {
       importEntry.setImported(null);
       importEntry.setTypeofdata(typeOfData);
       importEntry.setJsonInfo(json);
+      importEntry.setRecordID(recordId);
 
       for (ImportEntryPreProcessor processor : entryPreProcessors) {
         processor.beforeCreate(importEntry);
