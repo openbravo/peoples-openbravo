@@ -1584,8 +1584,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if (useOrderDocumentNoForRelatedDocs) {
           paymentCount++;
         }
-        if (invoice != null && jsonorder.getBoolean("donePressed") && !isQuotation && !isDeleted
-            && !notpaidLayaway && !payment.has("isPrePayment")) {
+        if (invoice != null && jsonorder.optBoolean("donePressed", false) && !isQuotation
+            && !isDeleted && !notpaidLayaway && !payment.has("isPrePayment")) {
           invoice.getBusinessPartner().setCreditUsed(
               invoice.getBusinessPartner().getCreditUsed()
                   .subtract(new BigDecimal(payment.getDouble("amount"))));
