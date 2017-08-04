@@ -1298,9 +1298,11 @@ enyo.kind({
     model.get('leftColumnViewManager').setOrderMode();
   },
   cancelRemoveMultiOrders: function (originator) {
-    originator.deleting = false;
-    originator.removeClass('btn-icon-loading');
-    originator.addClass('btn-icon-clearPayment');
+    if (originator.kind === 'OB.UI.RemoveMultiOrders') {
+      originator.deleting = false;
+      originator.removeClass('btn-icon-loading');
+      originator.addClass('btn-icon-clearPayment');
+    }
   },
   removeMultiOrders: function (inSender, inEvent) {
     var me = this,
