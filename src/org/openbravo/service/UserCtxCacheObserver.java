@@ -29,7 +29,6 @@ import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
-import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.web.UserContextCache;
 
@@ -62,8 +61,6 @@ public class UserCtxCacheObserver extends EntityPersistenceEventObserver {
   @Override
   protected boolean isValidEvent(EntityPersistenceEvent event) {
     boolean valid = super.isValidEvent(event);
-    return valid
-        || (event.getTargetInstance() instanceof InheritedAccessEnabled && !(event
-            .getTargetInstance() instanceof Preference));
+    return valid || event.getTargetInstance() instanceof InheritedAccessEnabled;
   }
 }
