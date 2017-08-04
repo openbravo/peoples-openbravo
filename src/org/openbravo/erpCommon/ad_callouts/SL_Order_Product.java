@@ -11,24 +11,20 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.PAttributeSet;
@@ -41,281 +37,182 @@ import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.utils.FormatUtilities;
-import org.openbravo.xmlEngine.XmlDocument;
 
-public class SL_Order_Product extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_Order_Product extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
       log4j.debug("CHANGED: " + strChanged);
-      String strUOM = vars.getStringParameter("inpmProductId_UOM");
-      String strPriceList = vars.getNumericParameter("inpmProductId_PLIST");
-      String strPriceStd = vars.getNumericParameter("inpmProductId_PSTD");
-      String strPriceLimit = vars.getNumericParameter("inpmProductId_PLIM");
-      String strCurrency = vars.getStringParameter("inpmProductId_CURR");
-      String strQty = vars.getNumericParameter("inpqtyordered");
-
-      String strMProductID = vars.getStringParameter("inpmProductId");
-      String strCBPartnerLocationID = vars.getStringParameter("inpcBpartnerLocationId");
-      String strADOrgID = vars.getStringParameter("inpadOrgId");
-      String strMWarehouseID = vars.getStringParameter("inpmWarehouseId");
-      String strCOrderId = vars.getStringParameter("inpcOrderId");
-      String strWindowId = vars.getStringParameter("inpwindowId");
-      String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
-      String cancelPriceAd = vars.getStringParameter("inpcancelpricead");
-      String strUOMProduct = vars.getStringParameter("inpmProductUomId");
-
-      try {
-        printPage(response, vars, strUOM, strPriceList, strPriceStd, strPriceLimit, strCurrency,
-            strMProductID, strCBPartnerLocationID, strADOrgID, strMWarehouseID, strCOrderId,
-            strIsSOTrx, strQty, cancelPriceAd, strUOMProduct);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String _strUOM,
-      String strPriceList, String _strPriceStd, String _strPriceLimit, String strCurrency,
-      String strMProductID, String strCBPartnerLocationID, String strADOrgID,
-      String strMWarehouseID, String strCOrderId, String strIsSOTrx, String strQty,
-      String cancelPriceAd, String strUOMProduct) throws IOException, ServletException {
-
-    log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    String strPriceActual = "";
-    String strHasSecondaryUOM = "";
-    String strUOM = _strUOM;
-    String strPriceLimit = _strPriceLimit;
-    String strPriceStd = _strPriceStd;
-    String strNetPriceList = strPriceList;
-    String strGrossPriceList = strPriceList;
-    String strGrossBaseUnitPrice = _strPriceStd;
-    if (strPriceList.startsWith("\"")) {
-      strNetPriceList = strPriceList.substring(1, strPriceList.length() - 1);
-      strGrossPriceList = strPriceList.substring(1, strPriceList.length() - 1);
     }
-    if (_strPriceStd.startsWith("\"")) {
-      strPriceStd = _strPriceStd.substring(1, _strPriceStd.length() - 1);
-    }
-    boolean isTaxIncludedPriceList = OBDal.getInstance().get(Order.class, strCOrderId)
-        .getPriceList().isPriceIncludesTax();
 
-    if (!strMProductID.equals("")) {
+    // Parameters
+    String strUOM = info.getStringParameter("inpmProductId_UOM", IsIDFilter.instance);
+    String strCurrency = info.getStringParameter("inpmProductId_CURR", IsIDFilter.instance);
+    String strMProductID = info.getStringParameter("inpmProductId", IsIDFilter.instance);
+    String strCBPartnerLocationID = info.getStringParameter("inpcBpartnerLocationId",
+        IsIDFilter.instance);
+    String strADOrgID = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
+    String strMWarehouseID = info.getStringParameter("inpmWarehouseId", IsIDFilter.instance);
+    String strCOrderId = info.getStringParameter("inpcOrderId", IsIDFilter.instance);
+    String strIsSOTrx = Utility.getContext(this, info.vars, "isSOTrx", info.getWindowId());
+    String cancelPriceAd = info.getStringParameter("inpcancelpricead",
+        new ValueListFilter("Y", "N"));
+    String strUOMProduct = info.getStringParameter("inpmProductUomId", IsIDFilter.instance);
 
-      Order order = OBDal.getInstance().get(Order.class, strCOrderId);
+    BigDecimal qtyOrdered = info.getBigDecimalParameter("inpqtyordered");
+    BigDecimal priceList = info.getBigDecimalParameter("inpmProductId_PLIST");
+    BigDecimal priceStd = info.getBigDecimalParameter("inpmProductId_PSTD");
+    BigDecimal priceLimit = info.getBigDecimalParameter("inpmProductId_PLIM");
+    BigDecimal netPriceList = priceList;
+    BigDecimal grossPriceList = priceList;
+    BigDecimal grossBaseUnitPrice = priceStd;
+
+    // UOM and Prices
+    BigDecimal priceActual = BigDecimal.ZERO;
+    Order order = OBDal.getInstance().get(Order.class, strCOrderId);
+    boolean isTaxIncludedPriceList = order.getPriceList().isPriceIncludesTax();
+
+    if (StringUtils.isNotEmpty(strMProductID)) {
       Product product = OBDal.getInstance().get(Product.class, strMProductID);
-
-      if (!"Y".equals(cancelPriceAd)) {
+      if (!StringUtils.equals(cancelPriceAd, "Y")) {
         if (isTaxIncludedPriceList) {
-          strPriceActual = PriceAdjustment.calculatePriceActual(order, product,
-              "".equals(strQty) ? BigDecimal.ZERO : new BigDecimal(strQty),
-              new BigDecimal(strGrossBaseUnitPrice.equals("") ? "0" : strGrossBaseUnitPrice))
-              .toString();
-          strNetPriceList = "0";
+          priceActual = PriceAdjustment.calculatePriceActual(order, product, qtyOrdered,
+              grossBaseUnitPrice);
+          netPriceList = BigDecimal.ZERO;
         } else {
-          strPriceActual = PriceAdjustment.calculatePriceActual(order, product,
-              "".equals(strQty) ? BigDecimal.ZERO : new BigDecimal(strQty),
-              new BigDecimal(strPriceStd.equals("") ? "0" : strPriceStd)).toString();
-          strGrossPriceList = "0";
+          priceActual = PriceAdjustment.calculatePriceActual(order, product, qtyOrdered, priceStd);
+          grossPriceList = BigDecimal.ZERO;
         }
       } else {
-        if (isTaxIncludedPriceList)
-          strPriceActual = strGrossBaseUnitPrice;
-        else
-          strPriceActual = strPriceList;
+        priceActual = isTaxIncludedPriceList ? grossBaseUnitPrice : priceList;
       }
     } else {
-      strUOM = strNetPriceList = strGrossPriceList = strPriceLimit = strPriceStd = "";
-    }
-    StringBuffer resultado = new StringBuffer();
-    // Discount...
-    BigDecimal discount = BigDecimal.ZERO;
-    BigDecimal priceStd = null;
-    if (isTaxIncludedPriceList) {
-      BigDecimal priceList = (strGrossPriceList.equals("") ? BigDecimal.ZERO : new BigDecimal(
-          strGrossPriceList));
-      BigDecimal grossBaseUnitPrice = (strGrossBaseUnitPrice.equals("") ? BigDecimal.ZERO
-          : new BigDecimal(strGrossBaseUnitPrice));
-      if (priceList.compareTo(BigDecimal.ZERO) != 0) {
-        discount = priceList.subtract(grossBaseUnitPrice).multiply(new BigDecimal("100"))
-            .divide(priceList, 2, BigDecimal.ROUND_HALF_UP);
-      }
-    } else {
-      BigDecimal priceList = (strNetPriceList.equals("") ? BigDecimal.ZERO : new BigDecimal(
-          strNetPriceList));
-      priceStd = (strPriceStd.equals("") ? BigDecimal.ZERO : new BigDecimal(strPriceStd));
-      if (priceList.compareTo(BigDecimal.ZERO) != 0) {
-        discount = priceList.subtract(priceStd).multiply(new BigDecimal("100"))
-            .divide(priceList, 2, BigDecimal.ROUND_HALF_UP);
-      }
+      strUOM = "";
+      netPriceList = grossPriceList = priceLimit = priceStd = BigDecimal.ZERO;
     }
 
-    resultado.append("var calloutName='SL_Order_Product';\n\n");
-    resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),");
+    // UOM
+    info.addResult("inpcUomId", strUOM);
+
+    // Prices
     if (isTaxIncludedPriceList) {
-      resultado.append("new Array(\"inpgrossUnitPrice\", "
-          + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
-      resultado.append("new Array(\"inpgrosspricelist\", "
-          + (strGrossPriceList.equals("") ? "0" : strGrossPriceList) + "),");
-      resultado.append("new Array(\"inpgrosspricestd\", "
-          + (strGrossBaseUnitPrice.equals("") ? "0" : strGrossBaseUnitPrice) + "),");
+      info.addResult("inpgrossUnitPrice", priceActual);
+      info.addResult("inpgrosspricelist", grossPriceList);
+      info.addResult("inpgrosspricestd", grossBaseUnitPrice);
     } else {
-      resultado.append("new Array(\"inppricelist\", "
-          + (strNetPriceList.equals("") ? "0" : strNetPriceList) + "),");
-      resultado.append("new Array(\"inppricelimit\", "
-          + (strPriceLimit.equals("") ? "0" : strPriceLimit) + "),");
-      resultado.append("new Array(\"inppricestd\", " + (strPriceStd.equals("") ? "0" : strPriceStd)
-          + "),");
-      resultado.append("new Array(\"inppriceactual\", "
-          + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
+      info.addResult("inppricelist", netPriceList);
+      info.addResult("inppricelimit", priceLimit);
+      info.addResult("inppricestd", priceStd);
+      info.addResult("inppriceactual", priceActual);
     }
-    if (!"".equals(strCurrency)) {
-      resultado.append("new Array(\"inpcCurrencyId\", \"" + strCurrency + "\"),");
+
+    // Currency
+    if (StringUtils.isNotEmpty(strCurrency)) {
+      info.addResult("inpcCurrencyId", strCurrency);
     }
-    resultado.append("new Array(\"inpdiscount\", " + discount.toString() + "),");
-    if (!strMProductID.equals("")) {
+
+    // Discount
+    BigDecimal discount = BigDecimal.ZERO;
+    BigDecimal price = isTaxIncludedPriceList ? grossPriceList : netPriceList;
+    BigDecimal priceToSubtract = isTaxIncludedPriceList ? grossBaseUnitPrice : priceStd;
+    if (price.compareTo(BigDecimal.ZERO) != 0) {
+      discount = price.subtract(priceToSubtract).multiply(new BigDecimal("100"))
+          .divide(price, 2, BigDecimal.ROUND_HALF_UP);
+    }
+    info.addResult("inpdiscount", discount);
+
+    // Attribute Set Instance
+    if (StringUtils.isNotEmpty(strMProductID)) {
       PAttributeSetData[] dataPAttr = PAttributeSetData.selectProductAttr(this, strMProductID);
-      if (dataPAttr != null && dataPAttr.length > 0 && dataPAttr[0].attrsetvaluetype.equals("D")) {
+      if (dataPAttr != null && dataPAttr.length > 0
+          && StringUtils.equals(dataPAttr[0].attrsetvaluetype, "D")) {
         PAttributeSetData[] data2 = PAttributeSetData.select(this, dataPAttr[0].mAttributesetId);
         if (PAttributeSet.isInstanceAttributeSet(data2)) {
-          resultado.append("new Array(\"inpmAttributesetinstanceId\", \"\"),");
-          resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \"\"),");
+          info.addResult("inpmAttributesetinstanceId", null);
         } else {
-          resultado.append("new Array(\"inpmAttributesetinstanceId\", \""
-              + dataPAttr[0].mAttributesetinstanceId + "\"),");
-          resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \""
-              + FormatUtilities.replaceJS(dataPAttr[0].description) + "\"),");
+          info.addResult("inpmAttributesetinstanceId", dataPAttr[0].mAttributesetinstanceId);
         }
+        info.addResult("inpattributeset", FormatUtilities.replaceJS(dataPAttr[0].mAttributesetId));
+        info.addResult("inpattrsetvaluetype",
+            FormatUtilities.replaceJS(dataPAttr[0].attrsetvaluetype));
       } else {
-        resultado.append("new Array(\"inpmAttributesetinstanceId\", \"\"),");
-        resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \"\"),");
+        info.addResult("inpmAttributesetinstanceId", null);
+        info.addResult("inpattributeset", null);
+        info.addResult("inpattrsetvaluetype", null);
       }
-      resultado.append("new Array(\"inpattributeset\", \""
-          + FormatUtilities.replaceJS(dataPAttr[0].mAttributesetId) + "\"),\n");
-      resultado.append("new Array(\"inpattrsetvaluetype\", \""
-          + FormatUtilities.replaceJS(dataPAttr[0].attrsetvaluetype) + "\"),\n");
-      strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strMProductID);
-      resultado.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
     }
 
-    String strCTaxID = "";
+    // Organization Location and Tax
     String orgLocationID = SLOrderProductData.getOrgLocationId(this,
-        Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), "'" + strADOrgID + "'");
-    if (orgLocationID.equals("")) {
-      resultado.append("new Array('MESSAGE', \""
-          + FormatUtilities.replaceJS(Utility.messageBD(this, "NoLocationNoTaxCalculated",
-              vars.getLanguage())) + "\"),\n");
+        Utility.getContext(this, info.vars, "#User_Client", "SLOrderProduct"), "'" + strADOrgID
+            + "'");
+    if (StringUtils.isEmpty(orgLocationID)) {
+      info.showMessage(FormatUtilities.replaceJS(Utility.messageBD(this,
+          "NoLocationNoTaxCalculated", info.vars.getLanguage())));
     } else {
       SLOrderTaxData[] data = SLOrderTaxData.select(this, strCOrderId);
-      strCTaxID = Tax.get(this, strMProductID, data[0].dateordered, strADOrgID, strMWarehouseID,
-          (data[0].billtoId.equals("") ? strCBPartnerLocationID : data[0].billtoId),
-          strCBPartnerLocationID, data[0].cProjectId, strIsSOTrx.equals("Y"),
-          "Y".equals(data[0].iscashvat));
-    }
-    if (!strCTaxID.equals("")) {
-      resultado.append("new Array(\"inpcTaxId\", \"" + strCTaxID + "\"),\n");
+      if (data != null && data.length > 0) {
+        try {
+          String strCTaxID = Tax.get(this, strMProductID, data[0].dateordered, strADOrgID,
+              strMWarehouseID, (StringUtils.isEmpty(data[0].billtoId) ? strCBPartnerLocationID
+                  : data[0].billtoId), strCBPartnerLocationID, data[0].cProjectId, StringUtils
+                  .equals(strIsSOTrx, "Y"), StringUtils.equals(data[0].iscashvat, "Y"));
+          info.addResult("inpcTaxId", strCTaxID);
+        } catch (Exception e) {
+          log4j.error(e.getMessage());
+          throw new ServletException(e.getMessage());
+        }
+      }
     }
 
-    strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strMProductID);
-    if (UOMUtil.isUomManagementEnabled() && "".equals(strUOMProduct)) {
-      // Set AUM based on default
-      Order order = OBDal.getInstance().get(Order.class, strCOrderId);
+    // Has Second UOM
+    String strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strMProductID);
+    info.addResult("inphasseconduom", Integer.parseInt(strHasSecondaryUOM));
+
+    // Set AUM based on default
+    if (UOMUtil.isUomManagementEnabled() && StringUtils.isEmpty(strUOMProduct)) {
       String finalAUM = UOMUtil.getDefaultAUMForDocument(strMProductID, order
           .getTransactionDocument().getId());
-      if (finalAUM != null) {
-        resultado.append("new Array(\"inpcAum\", \"" + finalAUM + "\"),\n");
+      if (StringUtils.isNotEmpty(finalAUM)) {
+        info.addResult("inpcAum", finalAUM);
       }
     }
 
-    if (strHasSecondaryUOM.equals("1")
-        && (!UOMUtil.isUomManagementEnabled() || (UOMUtil.isUomManagementEnabled() && !""
-            .equals(strUOMProduct)))) {
-      resultado.append("new Array(\"inpmProductUomId\", ");
-      if (vars.getLanguage().equals("en_US")) {
-        FieldProvider[] tld = null;
-        try {
-          ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-              "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                  "SLOrderProduct"), Utility.getContext(this, vars, "#User_Client",
-                  "SLOrderProduct"), 0);
-          Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
-          tld = comboTableData.select(false);
-          comboTableData = null;
-        } catch (Exception ex) {
-          throw new ServletException(ex);
+    // Load Product UOM if product has Second UOM
+    if (StringUtils.equals(strHasSecondaryUOM, "1")
+        && (!UOMUtil.isUomManagementEnabled() || (UOMUtil.isUomManagementEnabled() && StringUtils
+            .isNotEmpty(strUOMProduct)))) {
+      FieldProvider[] tld = null;
+      try {
+        ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE", "",
+            "M_Product_UOM", "", Utility.getContext(this, info.vars, "#AccessibleOrgTree",
+                "SLOrderProduct"), Utility.getContext(this, info.vars, "#User_Client",
+                "SLOrderProduct"), 0);
+        Utility.fillSQLParameters(this, info.vars, null, comboTableData, "SLOrderProduct", "");
+        tld = comboTableData.select(false);
+        comboTableData = null;
+      } catch (Exception ex) {
+        throw new ServletException(ex);
+      }
+      if (tld != null && tld.length > 0) {
+        info.addSelect("inpmProductUomId");
+        for (int i = 0; i < tld.length; i++) {
+          info.addSelectResult(tld[i].getField("id"),
+              FormatUtilities.replaceJS(tld[i].getField("name")), false);
         }
-
-        if (tld != null && tld.length > 0) {
-          resultado.append("new Array(");
-          for (int i = 0; i < tld.length; i++) {
-            resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
-                + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \"false\")");
-            if (i < tld.length - 1) {
-              resultado.append(",\n");
-            }
-          }
-          resultado.append("\n)");
-        } else {
-          resultado.append("null");
-        }
-        resultado.append("\n),");
+        info.endSelect();
       } else {
-        FieldProvider[] tld = null;
-        try {
-          ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-              "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                  "SLOrderProduct"), Utility.getContext(this, vars, "#User_Client",
-                  "SLOrderProduct"), 0);
-          Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
-          tld = comboTableData.select(false);
-          comboTableData = null;
-        } catch (Exception ex) {
-          throw new ServletException(ex);
-        }
-
-        if (tld != null && tld.length > 0) {
-          resultado.append("new Array(");
-          for (int i = 0; i < tld.length; i++) {
-            resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
-                + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \"false\")");
-            if (i < tld.length - 1) {
-              resultado.append(",\n");
-            }
-          }
-          resultado.append("\n)");
-        } else {
-          resultado.append("null");
-        }
-        resultado.append("\n),");
+        info.addResult("inpmProductUomId", null);
       }
     }
 
-    resultado.append("new Array(\"EXECUTE\", \"displayLogic();\"),\n");
-    // Para posicionar el cursor en el campo de cantidad
-    resultado.append("new Array(\"CURSOR_FIELD\", \"inpqtyordered\")\n");
-    if (!strHasSecondaryUOM.equals("0")) {
-      resultado.append(", new Array(\"CURSOR_FIELD\", \"inpquantityorder\")\n");
+    // Move cursor to quantity field
+    info.addResult("CURSOR_FIELD", "inpqtyordered");
+    if (!StringUtils.equals(strHasSecondaryUOM, "0")) {
+      info.addResult("CURSOR_FIELD", "inpquantityorder");
     }
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
   }
 }

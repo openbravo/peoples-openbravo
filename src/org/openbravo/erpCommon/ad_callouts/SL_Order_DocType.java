@@ -11,206 +11,192 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.reference.ListData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
-import org.openbravo.xmlEngine.XmlDocument;
 
-public class SL_Order_DocType extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_Order_DocType extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
-      String strBPartner = vars.getStringParameter("inpcBpartnerId");
-      String strDocTypeTarget = vars.getStringParameter("inpcDoctypetargetId");
-      String strDocType = vars.getStringParameter("inpcDoctypeId");
-      String docNo = vars.getStringParameter("inpdocumentno");
-      String strOrder = vars.getStringParameter("inpcOrderId");
-      String strDescription = vars.getStringParameter("inpdescription");
-      String strTabId = vars.getStringParameter("inpTabId");
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
+    }
 
-      try {
-        printPage(response, vars, strBPartner, strDocTypeTarget, strDocType, docNo, strOrder,
-            strDescription, strTabId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
+    // Parameters
+    String strOrder = info.getStringParameter("inpcOrderId", IsIDFilter.instance);
+    String strBPartner = info.getStringParameter("inpcBpartnerId", IsIDFilter.instance);
+    String strDocTypeTarget = info.getStringParameter("inpcDoctypetargetId", IsIDFilter.instance);
+    String strDocType = info.getStringParameter("inpcDoctypeId", IsIDFilter.instance);
+    String docNo = info.getStringParameter("inpdocumentno");
+    String strDescription = info.getStringParameter("inpdescription");
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
-      String strDocTypeTarget, String strDocType, String docNo, String strOrder,
-      String strDescription, String strTabId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    if (StringUtils.isNotEmpty(strDocTypeTarget)) {
+      String paymentRule = "P";
+      String invoiceRule = "D";
+      String deliveryRule = "A";
 
-    StringBuffer resultado = new StringBuffer();
-    if (strDocTypeTarget.equals(""))
-      resultado.append("var respuesta = null;");
-    else {
-      resultado.append("var calloutName='SL_Order_DocType';\n\n");
-      resultado.append("var respuesta = new Array(");
-      String PaymentRule = "P";
-      String InvoiceRule = "D";
-      String DeliveryRule = "A";
-      boolean newDocNo = docNo.equals("");
-      if (!newDocNo && docNo.startsWith("<") && docNo.endsWith(">"))
+      boolean newDocNo = StringUtils.isEmpty(docNo);
+      if (!newDocNo && docNo.startsWith("<") && docNo.endsWith(">")) {
         newDocNo = true;
-      String AD_Sequence_ID = "0";
-      SLOrderDocTypeData[] data = null;
+      }
 
-      if (!newDocNo && !"0".equals(strDocType)) {
-        data = SLOrderDocTypeData.select(this, strDocType);
+      // Document Sequence
+      String ad_sequence_id = "0";
+      if (!newDocNo && !StringUtils.equals(strDocType, "0")) {
+        SLOrderDocTypeData[] data = SLOrderDocTypeData.select(this, strDocType);
         if (data != null && data.length > 0) {
-          AD_Sequence_ID = data[0].adSequenceId;
+          ad_sequence_id = data[0].adSequenceId;
         }
-      }
-      String DocSubTypeSO = "";
-      boolean IsSOTrx = true;
-      SLOrderDocTypeData[] dataNew = SLOrderDocTypeData.select(this, strDocTypeTarget);
-      if (dataNew != null && dataNew.length > 0) {
-        DocSubTypeSO = dataNew[0].docsubtypeso;
-        if (DocSubTypeSO == null)
-          DocSubTypeSO = "--";
-        String strOldDocTypeTarget = SLOrderDocTypeData.selectOldDocSubType(this, strOrder);
-        if (!DocSubTypeSO.equals("OB") && strOldDocTypeTarget.equals("OB")) {
-          String strOldDocNo = SLOrderDocTypeData.selectOldDocNo(this, strOrder);
-          resultado.append("new Array(\"inpdescription\", \""
-              + FormatUtilities.replaceJS(Utility.messageBD(this, "Quotation", vars.getLanguage())
-                  + " " + strOldDocNo + ". " + strDescription) + "\"),\n");
-        }
-        resultado.append("new Array(\"inpordertype\", \"" + DocSubTypeSO + "\")\n");
-        PaymentRule = "P";
-        InvoiceRule = (DocSubTypeSO.equals("PR") || DocSubTypeSO.equals("WI") ? "I" : "D");
-        DeliveryRule = "A";
-        if (dataNew[0].isdocnocontrolled.equals("Y")) {
-          if (!newDocNo
-              && !AD_Sequence_ID.equals(dataNew[0].adSequenceId)
-              && !SLOrderDocTypeData.selectOldDocTypeTargetId(this, strOrder).equalsIgnoreCase(
-                  strDocTypeTarget))
-            newDocNo = true;
-          if (newDocNo) {
-            if (vars.getRole().equalsIgnoreCase("System")
-                && new BigDecimal(vars.getClient()).compareTo(new BigDecimal("1000000.0")) < 0)
-              resultado.append(", new Array(\"inpdocumentno\", \"<" + dataNew[0].currentnextsys
-                  + ">\")\n");
-            else
-              resultado.append(", new Array(\"inpdocumentno\", \"<" + dataNew[0].currentnext
-                  + ">\")\n");
-          }
-        }
-        if (dataNew[0].issotrx.equals("N"))
-          IsSOTrx = false;
       }
 
-      if (!DocSubTypeSO.equalsIgnoreCase("WR")) {
-        SLOrderDocTypeData[] dataBP = SLOrderDocTypeData.BPartner(this, strBPartner);
-        if (dataBP != null && dataBP.length > 0) {
-          String s = (IsSOTrx ? dataBP[0].paymentrule : dataBP[0].paymentrulepo);
-          if (s != null && s.length() != 0) {
-            if (s.equals("B"))
-              s = "P";
-            if (IsSOTrx && (s.equals("S") || s.equals("U")))
-              s = "P";
-            if (!s.equals(""))
-              PaymentRule = s;
-          }
-          InvoiceRule = (DocSubTypeSO.equals("PR") || DocSubTypeSO.equals("WI") ? "I"
-              : dataBP[0].invoicerule);
-          DeliveryRule = dataBP[0].deliveryrule;
-          if (!dataBP[0].deliveryviarule.equals(""))
-            resultado.append(", new Array(\"inpdeliveryviarule\", \"" + dataBP[0].deliveryviarule
-                + "\")\n");
+      // Document No
+      SLOrderDocTypeData[] dataNew = SLOrderDocTypeData.select(this, strDocTypeTarget);
+
+      String docSubTypeSO = "";
+      boolean isSOTrx = true;
+      if (dataNew != null && dataNew.length > 0) {
+
+        // DocSubTypeSO
+        docSubTypeSO = dataNew[0].docsubtypeso;
+        if (docSubTypeSO == null) {
+          docSubTypeSO = "--";
         }
+        info.addResult("inpordertype", docSubTypeSO);
+
+        // Description for Quotation
+        String strOldDocSubTypeSO = SLOrderDocTypeData.selectOldDocSubType(this, strOrder);
+        if (!StringUtils.equals(docSubTypeSO, "OB") && StringUtils.equals(strOldDocSubTypeSO, "OB")) {
+          String strOldDocNo = SLOrderDocTypeData.selectOldDocNo(this, strOrder);
+          info.addResult(
+              "inpdescription",
+              FormatUtilities.replaceJS(Utility.messageBD(this, "Quotation",
+                  info.vars.getLanguage())
+                  + " " + strOldDocNo + ". " + strDescription));
+        }
+
+        if (StringUtils.equals(dataNew[0].isdocnocontrolled, "Y")) {
+          String strOldDocTypeTarget = SLOrderDocTypeData.selectOldDocTypeTargetId(this, strOrder);
+          if (!newDocNo && !StringUtils.equals(ad_sequence_id, dataNew[0].adSequenceId)
+              && !StringUtils.equalsIgnoreCase(strOldDocTypeTarget, strDocTypeTarget)) {
+            newDocNo = true;
+          }
+          if (newDocNo) {
+            if (StringUtils.equalsIgnoreCase(info.vars.getRole(), "System")
+                && new BigDecimal(info.vars.getClient()).compareTo(new BigDecimal("1000000.0")) < 0) {
+              info.addResult("inpdocumentno", "<" + dataNew[0].currentnextsys + ">");
+            } else {
+              info.addResult("inpdocumentno", "<" + dataNew[0].currentnext + ">");
+            }
+          }
+        }
+
+        // Payment Rule, Invoice Rule, Delivery Rule
+        paymentRule = "P";
+        invoiceRule = StringUtils.equals(docSubTypeSO, "PR")
+            || StringUtils.equals(docSubTypeSO, "WI") ? "I" : "D";
+        deliveryRule = "A";
+
+        if (StringUtils.equals(dataNew[0].issotrx, "N")) {
+          isSOTrx = false;
+        }
+      }
+
+      if (!StringUtils.equalsIgnoreCase(docSubTypeSO, "WR")) {
+
+        // Get Business Partner Data
+        SLOrderDocTypeData[] dataBP = SLOrderDocTypeData.BPartner(this, strBPartner);
+
+        // Get Payment Rule from business partner
+        if (dataBP != null && dataBP.length > 0) {
+          String bpPaymentRule = isSOTrx ? dataBP[0].paymentrule : dataBP[0].paymentrulepo;
+          if (StringUtils.isNotEmpty(bpPaymentRule)) {
+            if (StringUtils.equals(bpPaymentRule, "B")
+                || (isSOTrx && (StringUtils.equals(bpPaymentRule, "S") || StringUtils.equals(
+                    bpPaymentRule, "U")))) {
+              bpPaymentRule = "P";
+            }
+            paymentRule = bpPaymentRule;
+          }
+
+          // Get Invoice Rule from business partner for other than Credit and Prepay Order
+          invoiceRule = StringUtils.equals(docSubTypeSO, "PR")
+              || StringUtils.equals(docSubTypeSO, "WI") ? "I" : dataBP[0].invoicerule;
+
+          // Get Delivery Rule from business partner
+          deliveryRule = dataBP[0].deliveryrule;
+
+          // Get Delivery Via Rule from business partner
+          if (StringUtils.isNotEmpty(dataBP[0].deliveryviarule)) {
+            info.addResult("inpdeliveryviarule", dataBP[0].deliveryviarule);
+          }
+        }
+
         // Added by gorkaion remove when feature request 4350 is done
         FieldProvider[] l = null;
         try {
-          ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-              "C_Order InvoiceRule", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                  "SLOrderDocType"), Utility.getContext(this, vars, "#User_Client",
+          ComboTableData comboTableData = new ComboTableData(info.vars, this, "LIST", "",
+              "C_Order InvoiceRule", "", Utility.getContext(this, info.vars, "#AccessibleOrgTree",
+                  "SLOrderDocType"), Utility.getContext(this, info.vars, "#User_Client",
                   "SLOrderDocType"), 0);
-          Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderDocType", "");
+          Utility.fillSQLParameters(this, info.vars, null, comboTableData, "SLOrderDocType", "");
           l = comboTableData.select(false);
           comboTableData = null;
         } catch (Exception ex) {
           throw new ServletException(ex);
         }
-        resultado.append(", new Array(\"inpinvoicerule\", ");
+        // Load All Invoice Rules for Non POS Order Document Type
         if (l != null && l.length > 0) {
-          resultado.append("new Array(");
+          info.addSelect("inpinvoicerule");
           for (int i = 0; i < l.length; i++) {
-            resultado.append("new Array(\"" + l[i].getField("id") + "\", \""
-                + FormatUtilities.replaceJS(l[i].getField("name")) + "\", \""
-                + (l[i].getField("id").equalsIgnoreCase(InvoiceRule) ? "true" : "false") + "\")");
-            if (i < l.length - 1)
-              resultado.append(",\n");
+            info.addSelectResult(l[i].getField("id"),
+                FormatUtilities.replaceJS(l[i].getField("name")),
+                StringUtils.equalsIgnoreCase(l[i].getField("id"), invoiceRule));
           }
-          resultado.append(")");
-        } else
-          resultado.append("null");
-        resultado.append(")");
-        InvoiceRule = "";
+          info.endSelect();
+        } else {
+          info.addResult("inpinvoicerule", null);
+        }
+
       } else {
-        resultado.append(", new Array(\"inpinvoicerule\", new Array(");
-        resultado.append("new Array(\"D\", \"")
-            .append(FormatUtilities.replaceJS(ListData.selectName(this, "150", "D")))
-            .append("\", ").append(InvoiceRule.equals("D") ? "true" : "false").append("),");
-        resultado.append("new Array(\"I\", \"")
-            .append(FormatUtilities.replaceJS(ListData.selectName(this, "150", "I")))
-            .append("\", ").append(InvoiceRule.equals("I") ? "true" : "false").append("),");
-        resultado.append("new Array(\"O\", \"")
-            .append(FormatUtilities.replaceJS(ListData.selectName(this, "150", "O")))
-            .append("\", ").append(InvoiceRule.equals("O") ? "true" : "false").append(")))\n");
-        InvoiceRule = "";
-        // End of add
+        // Load only selected Invoice Rules for POS Order Document Type
+        info.addSelect("inpinvoicerule");
+        info.addSelectResult("D", FormatUtilities.replaceJS(ListData.selectName(this, "150", "D")),
+            StringUtils.equals(invoiceRule, "D"));
+        info.addSelectResult("I", FormatUtilities.replaceJS(ListData.selectName(this, "150", "I")),
+            StringUtils.equals(invoiceRule, "I"));
+        info.addSelectResult("O", FormatUtilities.replaceJS(ListData.selectName(this, "150", "O")),
+            StringUtils.equals(invoiceRule, "O"));
+        info.endSelect();
       }
-      if (!PaymentRule.equals(""))
-        resultado.append(", new Array(\"inppaymentrule\", \"" + PaymentRule + "\")\n");
-      if (!InvoiceRule.equals(""))
-        resultado.append(", new Array(\"inpinvoicerule\", \"" + InvoiceRule + "\")\n");
-      if (!DeliveryRule.equals(""))
-        resultado.append(", new Array(\"inpdeliveryrule\", \"" + DeliveryRule + "\")\n");
-      resultado.append(", new Array(\"EXECUTE\", \"displayLogic();\")\n");
-      resultado.append(");\n");
+
+      // Set Payment Rule
+      if (StringUtils.isNotEmpty(paymentRule)) {
+        info.addResult("inppaymentrule", paymentRule);
+      }
+
+      // Set Delivery Rule
+      if (StringUtils.isNotEmpty(deliveryRule)) {
+        info.addResult("inpdeliveryrule", deliveryRule);
+      }
     }
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+
   }
 }

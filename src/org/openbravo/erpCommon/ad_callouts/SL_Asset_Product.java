@@ -11,90 +11,59 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.erpCommon.businessUtility.PAttributeSet;
 import org.openbravo.erpCommon.businessUtility.PAttributeSetData;
 import org.openbravo.utils.FormatUtilities;
-import org.openbravo.xmlEngine.XmlDocument;
 
-public class SL_Asset_Product extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_Asset_Product extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strTabId = vars.getStringParameter("inpTabId");
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
+    }
 
-      String strMProductID = vars.getStringParameter("inpmProductId");
-      String strPAttr = vars.getStringParameter("inpmProductId_ATR");
+    // Parameters
+    String strMProductID = info.getStringParameter("inpmProductId", IsIDFilter.instance);
 
-      try {
-        printPage(response, vars, strTabId, strMProductID, strPAttr);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTabId,
-      String strMProductID, String strPAttr) throws IOException, ServletException {
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    StringBuffer result = new StringBuffer();
-    result.append("var calloutName='SL_Asset_Product';\n\n");
-    result.append("var respuesta = new Array(");
+    // Get the product attribute data
     PAttributeSetData[] dataPAttr = PAttributeSetData.selectProductAttr(this, strMProductID);
-    if (dataPAttr != null && dataPAttr.length > 0 && dataPAttr[0].attrsetvaluetype.equals("D")) {
+    if (dataPAttr != null && dataPAttr.length > 0
+        && StringUtils.equals(dataPAttr[0].attrsetvaluetype, "D")) {
+
+      // If the attribute value type is "D"
       PAttributeSetData[] data2 = PAttributeSetData.select(this, dataPAttr[0].mAttributesetId);
+
+      // If it is an Instance Attribute, clean value of Attribute set instance, else fill it with
+      // the attribute set instance
       if (PAttributeSet.isInstanceAttributeSet(data2)) {
-        result.append("new Array(\"inpmAttributesetinstanceId\", \"\"),");
-        result.append("new Array(\"inpmAttributesetinstanceId_R\", \"\"),");
+        info.addResult("inpmAttributesetinstanceId", "");
+        info.addResult("inpmAttributesetinstanceId_R", "");
       } else {
-        result.append("new Array(\"inpmAttributesetinstanceId\", \""
-            + dataPAttr[0].mAttributesetinstanceId + "\"),");
-        result.append("new Array(\"inpmAttributesetinstanceId_R\", \""
-            + FormatUtilities.replaceJS(dataPAttr[0].description) + "\"),");
+        info.addResult("inpmAttributesetinstanceId", dataPAttr[0].mAttributesetinstanceId);
+        info.addResult("inpmAttributesetinstanceId_R",
+            FormatUtilities.replaceJS(dataPAttr[0].description));
       }
     } else {
-      result.append("new Array(\"inpmAttributesetinstanceId\", \"\"),");
-      result.append("new Array(\"inpmAttributesetinstanceId_R\", \"\"),");
+      info.addResult("inpmAttributesetinstanceId", "");
+      info.addResult("inpmAttributesetinstanceId_R", "");
     }
-    result.append("new Array(\"inpattributeset\", \""
-        + FormatUtilities.replaceJS(dataPAttr[0].mAttributesetId) + "\"),\n");
-    result.append("new Array(\"inpattrsetvaluetype\", \""
-        + FormatUtilities.replaceJS(dataPAttr[0].attrsetvaluetype) + "\"),\n");
-    result.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
-    result.append(");\n");
 
-    xmlDocument.setParameter("array", result.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    // Update the attribute set and attribute set value type according the product attribute.
+    info.addResult("inpattributeset", FormatUtilities.replaceJS(dataPAttr[0].mAttributesetId));
+    info.addResult("inpattrsetvaluetype", FormatUtilities.replaceJS(dataPAttr[0].attrsetvaluetype));
   }
 }

@@ -139,8 +139,5 @@ public class SL_Movement_Product extends SimpleCallout {
           UOMUtil.getConvertedAumQty(strMProductID, new BigDecimal(strQty), defaultAUMForLogistic));
     }
 
-    // displayLogic
-
-    info.addResult("EXECUTE", "displayLogic();");
   }
 }

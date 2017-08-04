@@ -11,172 +11,93 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
-import org.openbravo.xmlEngine.XmlDocument;
 
-public class SE_Proposal_BPartner extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SE_Proposal_BPartner extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
-      String strBPartner = vars.getStringParameter("inpcBpartnerId");
-      String strLocation = vars.getStringParameter("inpcBpartnerId_LOC");
-      String strContact = vars.getStringParameter("inpcBpartnerId_CON");
-      String strWindowId = vars.getStringParameter("inpwindowId");
-      String strTabId = vars.getStringParameter("inpTabId");
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
+    }
 
-      try {
-        printPage(response, vars, strBPartner, strWindowId, strLocation, strContact, strTabId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
+    // Parameters
+    String strBPartner = info.getStringParameter("inpcBpartnerId", IsIDFilter.instance);
+    String strLocation = info.getStringParameter("inpcBpartnerLocationId", IsIDFilter.instance);
+    String strContact = info.getStringParameter("inpadUserId", IsIDFilter.instance);
+    String strWindowId = info.getWindowId();
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
-      String strWindowId, String strLocation, String strContact, String strTabId)
-      throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SE_Order_BPartner';\n\n");
-    resultado.append("var respuesta = new Array(");
+    // Update payment rule
     String strPaymentRule = SEProposalBPartnerData.selectPaymentRule(this, strBPartner);
-    resultado.append("new Array(\"inppaymentrule\", \"" + strPaymentRule + "\"),");
+    info.addResult("inppaymentrule", strPaymentRule);
+
+    // Update payment term
     String strPaymentTerm = SEProposalBPartnerData.selectPaymentTerm(this, strBPartner);
-    resultado.append("new Array(\"inpcPaymenttermId\", \"" + strPaymentTerm + "\"),");
+    info.addResult("inpcPaymenttermId", strPaymentTerm);
+
+    // If a Location ID has not been specified, the first one is selected. Else if Location ID is
+    // provided, it is selected.
     FieldProvider[] tdv = null;
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
+      ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLEDIR",
           "C_BPartner_Location_ID", "", "C_BPartner Location - Ship To", Utility.getContext(this,
-              vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(this, vars,
+              info.vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(this, info.vars,
               "#User_Client", strWindowId), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
+      Utility.fillSQLParameters(this, info.vars, null, comboTableData, strWindowId, "");
       tdv = comboTableData.select(false);
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-
-    resultado.append("new Array(\"inpcBpartnerLocationId\", ");
     if (tdv != null && tdv.length > 0) {
-      resultado.append("new Array(");
-
-      if (strLocation.isEmpty()) {
-        // If no location is provided, the first one is selected
-        resultado.append("new Array(\"" + tdv[0].getField("id") + "\", \""
-            + FormatUtilities.replaceJS(tdv[0].getField("name")) + "\", \"" + "true" + "\")");
-        if (tdv.length > 1) {
-          resultado.append(",\n");
-        }
-        for (int i = 1; i < tdv.length; i++) {
-          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \"" + "false" + "\")");
-          if (i < tdv.length - 1) {
-            resultado.append(",\n");
-          }
-        }
-      } else {
-        // If a location is provided, it is selected
-        for (int i = 0; i < tdv.length; i++) {
-          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \""
-              + (tdv[i].getField("id").equalsIgnoreCase(strLocation) ? "true" : "false") + "\")");
-          if (i < tdv.length - 1) {
-            resultado.append(",\n");
-          }
-        }
+      info.addSelect("inpcBpartnerLocationId");
+      for (int i = 0; i < tdv.length; i++) {
+        boolean selected = (StringUtils.isEmpty(strLocation) && i == 0)
+            || StringUtils.equalsIgnoreCase(tdv[i].getField("id"), strLocation);
+        info.addSelectResult(tdv[i].getField("id"),
+            FormatUtilities.replaceJS(tdv[i].getField("name")), selected);
       }
-      resultado.append("\n)");
-    } else {
-      resultado.append("null");
+      info.endSelect();
     }
-    resultado.append("\n),");
+
+    // If a contactID has not been specified, the first one is selected. Else if contact ID is
+    // provided, it is selected.
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_User_ID", "",
-          "AD_User C_BPartner User/Contacts", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              strWindowId), Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
+      ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLEDIR", "AD_User_ID",
+          "", "AD_User C_BPartner User/Contacts", Utility.getContext(this, info.vars,
+              "#AccessibleOrgTree", strWindowId), Utility.getContext(this, info.vars,
+              "#User_Client", strWindowId), 0);
+      Utility.fillSQLParameters(this, info.vars, null, comboTableData, strWindowId, "");
       tdv = comboTableData.select(false);
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-
-    resultado.append("new Array(\"inpadUserId\", ");
     if (tdv != null && tdv.length > 0) {
-      resultado.append("new Array(");
-
-      if (strContact.isEmpty()) {
-        // If a contactID has not been specified, the first one is selected
-        resultado.append("new Array(\"" + tdv[0].getField("id") + "\", \""
-            + FormatUtilities.replaceJS(tdv[0].getField("name")) + "\", \"" + "true" + "\")");
-        if (tdv.length > 1) {
-          resultado.append(",\n");
-        }
-        for (int i = 1; i < tdv.length; i++) {
-          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \"" + "false" + "\")");
-          if (i < tdv.length - 1) {
-            resultado.append(",\n");
-          }
-        }
-      } else {
-        for (int i = 0; i < tdv.length; i++) {
-          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \""
-              + (tdv[i].getField("id").equalsIgnoreCase(strContact) ? "true" : "false") + "\")");
-          if (i < tdv.length - 1) {
-            resultado.append(",\n");
-          }
-        }
+      info.addSelect("inpadUserId");
+      for (int i = 0; i < tdv.length; i++) {
+        boolean selected = (StringUtils.isEmpty(strContact) && i == 0)
+            || StringUtils.equalsIgnoreCase(tdv[i].getField("id"), strContact);
+        info.addSelectResult(tdv[i].getField("id"),
+            FormatUtilities.replaceJS(tdv[i].getField("name")), selected);
       }
-
-      resultado.append("\n)");
-    } else
-      resultado.append("null");
-    resultado.append("\n)");
-
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+      info.endSelect();
+    }
   }
 }

@@ -11,85 +11,45 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.filter.IsIDFilter;
 
-public class SE_InOut_DocType extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SE_InOut_DocType extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
-      String strTabId = vars.getStringParameter("inpTabId");
-      String strDocType = vars.getStringParameter("inpcDoctypeId");
-
-      try {
-        printPage(response, vars, strDocType, strTabId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDocType,
-      String strTabId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    SEInOutDocTypeData[] data = SEInOutDocTypeData.select(this, strDocType);
-
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SE_InOut_DocType';\n\n");
-    if (data != null && data.length > 0) {
-      resultado.append("var respuesta = new Array(");
-      if (data[0].docbasetype.equals("MMS"))
-        resultado.append("new Array(\"inpmovementtype\", \"C-\")");
-      else if (data[0].docbasetype.equals("MMR"))
-        resultado.append("new Array(\"inpmovementtype\", \"V+\")");
-      else
-        resultado.append("new Array(\"inpmovementtype\", \"\")");
-      if (data[0].isdocnocontrolled.equals("Y"))
-        resultado.append(", new Array(\"inpdocumentno\", \"<" + data[0].currentnext + ">\")");
-      resultado.append("\n);");
-    } else {
-      resultado.append("var respuesta = new Array(");
-      resultado.append("new Array(\"inpmovementtype\", \"\")");
-      resultado.append(");");
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
     }
 
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    // Parameter
+    String strDocType = info.getStringParameter("inpcDoctypeId", IsIDFilter.instance);
+
+    // Movement Type and Document No.
+    SEInOutDocTypeData[] data = SEInOutDocTypeData.select(this, strDocType);
+    if (data != null && data.length > 0) {
+      if (StringUtils.equals(data[0].docbasetype, "MMS")) {
+        info.addResult("inpmovementtype", "C-");
+      } else if (StringUtils.equals(data[0].docbasetype, "MMR")) {
+        info.addResult("inpmovementtype", "V+");
+      } else {
+        info.addResult("inpmovementtype", null);
+      }
+      if (StringUtils.equals(data[0].isdocnocontrolled, "Y")) {
+        info.addResult("inpdocumentno", "<" + data[0].currentnext + ">");
+      }
+    }
+
   }
 }

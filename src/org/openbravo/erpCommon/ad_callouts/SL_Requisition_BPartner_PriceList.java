@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,108 +19,70 @@
 
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.pricing.pricelist.PriceList;
-import org.openbravo.xmlEngine.XmlDocument;
 
-public class SL_Requisition_BPartner_PriceList extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_Requisition_BPartner_PriceList extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
       log4j.debug("CHANGED: " + strChanged);
-      String strPriceList = vars.getStringParameter("inpmPricelistId");
-      String strBPartner = vars.getStringParameter("inpcBpartnerId");
-      String strWindowId = vars.getStringParameter("inpwindowId");
-      try {
-        printPage(response, vars, strChanged, strWindowId, strPriceList, strBPartner);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
+    }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
-      String strWindowId, String strPriceList, String strBPartner) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
+    // Parameters
+    String strBPartner = info.getStringParameter("inpcBpartnerId", IsIDFilter.instance);
+    String strPriceList = info.getStringParameter("inpmPricelistId", IsIDFilter.instance);
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    StringBuffer strResult = new StringBuffer();
-    strResult.append("var calloutName='SL_Requisition_BPartner';\n\n");
-    strResult.append("var respuesta = new Array(");
-
-    if (strChanged.equals("inpcBpartnerId")) {
-      if (strBPartner.equals("")) {
-        vars.removeSessionValue(strWindowId + "|C_BPartner_ID");
+    if (StringUtils.equals(strChanged, "inpcBpartnerId")) {
+      if (StringUtils.isEmpty(strBPartner)) {
+        // Remove C_BPartner_ID from session
+        info.vars.removeSessionValue(info.getWindowId() + "|C_BPartner_ID");
       } else {
         OBContext.setAdminMode(true);
         try {
           BusinessPartner bPartner = OBDal.getInstance().get(BusinessPartner.class, strBPartner);
+          // If the Business Partner is blocked for this document, show an information message.
           if (FIN_Utility.isBlockedBusinessPartner(strBPartner, false, 1)) {
-            // If the Business Partner is blocked for this document, show an information message.
-            strResult.append("new Array('MESSAGE', \""
-                + OBMessageUtils.messageBD("ThebusinessPartner") + " " + bPartner.getIdentifier()
-                + " " + OBMessageUtils.messageBD("BusinessPartnerBlocked") + "\"), ");
+            info.showMessage(OBMessageUtils.messageBD("ThebusinessPartner") + " "
+                + bPartner.getIdentifier() + " "
+                + OBMessageUtils.messageBD("BusinessPartnerBlocked"));
           }
+          // Set Price List and Currency for business partner in Requisition or RequisitionLine
           if (bPartner.getPurchasePricelist() != null) {
-            strResult.append("new Array(\"inpmPricelistId\", \""
-                + bPartner.getPurchasePricelist().getId() + "\"),");
-            strResult.append("new Array(\"inpcCurrencyId\", \""
-                + bPartner.getPurchasePricelist().getCurrency().getId() + "\")");
+            info.addResult("inpmPricelistId", bPartner.getPurchasePricelist().getId());
+            info.addResult("inpcCurrencyId", bPartner.getPurchasePricelist().getCurrency().getId());
           }
-        } finally {
-          OBContext.restorePreviousMode();
-        }
-      }
-    } else { // strChanged.equals("inpmPricelistId")
-      if (strPriceList.equals("")) {
-        vars.removeSessionValue(strWindowId + "|M_PriceList_ID");
-      } else {
-        OBContext.setAdminMode(true);
-        try {
-          PriceList priceList = OBDal.getInstance().get(PriceList.class, strPriceList);
-          strResult.append("new Array(\"inpcCurrencyId\", \"" + priceList.getCurrency().getId()
-              + "\")");
         } finally {
           OBContext.restorePreviousMode();
         }
       }
     }
 
-    strResult.append(");");
-    xmlDocument.setParameter("array", strResult.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    else if (StringUtils.equals(strChanged, "inpmPricelistId")) {
+      if (StringUtils.isEmpty(strPriceList)) {
+        // Remove M_PriceList_ID from session
+        info.vars.removeSessionValue(info.getWindowId() + "|M_PriceList_ID");
+      } else {
+        // Set Price List currency in Requisition or RequisitionLine
+        OBContext.setAdminMode(true);
+        try {
+          PriceList priceList = OBDal.getInstance().get(PriceList.class, strPriceList);
+          info.addResult("inpcCurrencyId", priceList.getCurrency().getId());
+        } finally {
+          OBContext.restorePreviousMode();
+        }
+      }
+    }
   }
-
 }

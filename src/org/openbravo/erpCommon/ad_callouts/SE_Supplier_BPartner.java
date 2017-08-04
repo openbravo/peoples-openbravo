@@ -11,73 +11,39 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.filter.IsIDFilter;
 
-public class SE_Supplier_BPartner extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SE_Supplier_BPartner extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
-      String strBPartner = vars.getStringParameter("inpcBpartnerId");
-      String strWindowId = vars.getStringParameter("inpwindowId");
-      try {
-        printPage(response, vars, strBPartner, strWindowId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
+    }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
-      String strWindowId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
+    // Parameter
+    String strBPartner = info.getStringParameter("inpcBpartnerId", IsIDFilter.instance);
 
-    if (strBPartner.equals(""))
-      vars.removeSessionValue(strWindowId + "|C_BPartner_ID");
+    // Remove C_BPartner_ID from session when input parameter strBPartner is empty
+    if (StringUtils.isEmpty(strBPartner)) {
+      info.vars.removeSessionValue(info.getWindowId() + "|C_BPartner_ID");
+    } else {
+      // Price List
+      String strPriceList = SLRequisitionBPartnerData.select(this, strBPartner)[0].poPricelistId;
+      info.addResult("inpmPricelistId", strPriceList);
+    }
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    String strPriceList = SLRequisitionBPartnerData.select(this, strBPartner)[0].poPricelistId;
-
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_Supplier_BPartner';\n\n");
-    resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpmPricelistId\", \"" + strPriceList + "\")");
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
   }
 }

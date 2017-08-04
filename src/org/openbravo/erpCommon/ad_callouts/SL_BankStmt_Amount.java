@@ -11,109 +11,61 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.filter.IsIDFilter;
 
-public class SL_BankStmt_Amount extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_BankStmt_Amount extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
-      String strStmAmount = vars.getNumericParameter("inpstmtamt");
-      String strChgAmount = vars.getNumericParameter("inpchargeamt");
-      String strTrxAmount = vars.getNumericParameter("inptrxamt");
-      String strConvChgAmount = vars.getNumericParameter("inpconvertchargeamt");
-      String strTabId = vars.getStringParameter("inpTabId");
-      String strBankStmtLine = vars.getStringParameter("inpcBankstatementlineId");
-      String strCurrencyId = vars.getStringParameter("inpcCurrencyId");
-      String strDP = vars.getStringParameter("inpcDebtPaymentId");
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
+    }
 
-      try {
-        printPage(response, vars, strChanged, strStmAmount, strTrxAmount, strChgAmount, strTabId,
-            strConvChgAmount, strBankStmtLine, strCurrencyId, strDP);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
+    // Parameters
+    BigDecimal stmAmount = info.getBigDecimalParameter("inpstmtamt");
+    BigDecimal trxAmount = info.getBigDecimalParameter("inptrxamt");
+    BigDecimal chgAmount = info.getBigDecimalParameter("inpchargeamt");
+    BigDecimal convChgAmount = info.getBigDecimalParameter("inpconvertchargeamt");
+    String strCurrencyId = info.getStringParameter("inpcCurrencyId", IsIDFilter.instance);
+    String strDP = info.getStringParameter("inpcDebtPaymentId", IsIDFilter.instance);
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
-      String strStmAmount, String strTrxAmount, String strChgAmount, String strTabId,
-      String strConChgAmount, String strBankStmtLine, String strCurrencyId, String strDP)
-      throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    BigDecimal StmAmount = new BigDecimal(strStmAmount.equals("") ? "0" : strStmAmount);
-    BigDecimal TrxAmount = new BigDecimal(strTrxAmount.equals("") ? "0" : strTrxAmount);
-    BigDecimal ChgAmount = new BigDecimal(strChgAmount.equals("") ? "0" : strChgAmount);
-    BigDecimal ConvChgAmount = new BigDecimal(strConChgAmount.equals("") ? "0" : strConChgAmount);
-
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_BankStmt_Amount';\n\n");
-    resultado.append("var respuesta = new Array(");
     boolean isConversion = false;
+    if (StringUtils.isNotEmpty(strDP)) {
+      isConversion = StringUtils.equals(
+          SLBankStmtAmountData.isConversion(this, strCurrencyId, strDP), "Y");
+    }
 
-    if (!strDP.equals(""))
-      isConversion = SLBankStmtAmountData.isConversion(this, strCurrencyId, strDP).equals("Y");
-
-    if (strChanged.equals("inpstmtamt")) {
+    if (StringUtils.equals(strChanged, "inpstmtamt")) {
       if (isConversion) {
-        if (log4j.isDebugEnabled())
-          log4j.debug("trx: " + TrxAmount.toString() + "chg" + ChgAmount.toString());
-        // ConvChgAmount =
-        // StmAmount.subtract(TrxAmount).subtract(ChgAmount);
-        ConvChgAmount = TrxAmount.subtract(ChgAmount).subtract(StmAmount);
-        resultado.append("new Array(\"inpconvertchargeamt\", " + ConvChgAmount.toString() + ")");
-        resultado.append(");");
+        if (log4j.isDebugEnabled()) {
+          log4j.debug("trx: " + trxAmount.toString() + "chg" + chgAmount.toString());
+        }
+        convChgAmount = trxAmount.subtract(chgAmount).subtract(stmAmount);
+        info.addResult("inpconvertchargeamt", convChgAmount);
       } else {
-        TrxAmount = StmAmount.subtract(ChgAmount);
-        resultado.append("new Array(\"inptrxamt\", " + TrxAmount.toString() + ")");
-        resultado.append(");");
+        trxAmount = stmAmount.subtract(chgAmount);
+        info.addResult("inptrxamt", trxAmount);
       }
     }
-    if (strChanged.equals("inpchargeamt") || (strChanged.equals("inpconvertchargeamt"))) {
-      // StmAmount = TrxAmount.add(ChgAmount).add(ConvChgAmount);
-      StmAmount = TrxAmount.subtract(ChgAmount).subtract(ConvChgAmount);
-      resultado.append("new Array(\"inpstmtamt\", " + StmAmount.toString() + ")");
-      resultado.append(");");
-    }
 
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    if (StringUtils.equals(strChanged, "inpchargeamt")
+        || (StringUtils.equals(strChanged, "inpconvertchargeamt"))) {
+      stmAmount = trxAmount.subtract(chgAmount).subtract(convChgAmount);
+      info.addResult("inpstmtamt", stmAmount);
+    }
   }
 }

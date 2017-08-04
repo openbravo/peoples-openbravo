@@ -11,117 +11,65 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.model.financialmgmt.gl.GLJournal;
-import org.openbravo.xmlEngine.XmlDocument;
 
-public class SL_JournalLineAmt extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_JournalLineAmt extends SimpleCallout {
 
-  static final BigDecimal ZERO = new BigDecimal(0.0);
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
+    }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      String strWindowId = vars.getStringParameter("inpWindowId");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
-      String strGLJournal = vars.getRequiredStringParameter("inpglJournalId");
-      String strCurrencyRate = vars.getNumericParameter("inpcurrencyrate", "1");
-      String strCurrency = vars.getStringParameter("inpcCurrencyId");
-      String strDateAcct = vars.getStringParameter("inpdateacct", DateTimeData.today(this));
-      String strCurrencyRateType = vars.getStringParameter("inpcurrencyratetype", "S");
-      String strAmtSourceDr = vars.getNumericParameter("inpamtsourcedr", "0");
-      String strAmtSourceCr = vars.getNumericParameter("inpamtsourcecr", "0");
-      String strTabId = vars.getStringParameter("inpTabId");
-      if (!(strAmtSourceDr.equals("0")) && (strChanged.equals("inpamtsourcedr"))) {
-        strAmtSourceCr = "0";
-      }
-      if ((!strAmtSourceCr.equals("0")) && (strChanged.equals("inpamtsourcecr"))) {
-        strAmtSourceDr = "0";
-      }
-      try {
-        printPage(response, vars, strGLJournal, strCurrencyRate, strCurrency, strDateAcct,
-            strCurrencyRateType, strWindowId, strAmtSourceDr, strAmtSourceCr, strTabId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
+    // Parameters
+    String strGLJournal = info.vars.getRequiredStringParameter("inpglJournalId");
+    String strCurrencyRateType = info.vars.getStringParameter("inpcurrencyratetype", "S");
+    BigDecimal amtSourceDr = info.getBigDecimalParameter("inpamtsourcedr");
+    BigDecimal amtSourceCr = info.getBigDecimalParameter("inpamtsourcecr");
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strGLJournal, String strCurrencyRate, String strCurrency, String strDateAcct,
-      String strCurrencyRateType, String strWindowId, String strAmtSourceDr, String strAmtSourceCr,
-      String strTabId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
     String strAcctSchema = SLJournalLineAmtData.selectGeneralLedger(this, strGLJournal);
     SLJournalLineAmtData[] data = SLJournalLineAmtData.select(this, strAcctSchema);
-    String strPrecision = "2";
+    int stdPrecision = 2;
     if (data != null && data.length > 0) {
-      strPrecision = data[0].stdprecision.equals("") ? "2" : data[0].stdprecision;
+      stdPrecision = Integer.valueOf(data[0].stdprecision);
     }
+
+    if (StringUtils.equals(strChanged, "inpamtsourcedr")
+        && amtSourceDr.compareTo(BigDecimal.ZERO) != 0) {
+      amtSourceCr = BigDecimal.ZERO;
+    }
+    if (StringUtils.equals(strChanged, "inpamtsourcecr")
+        && amtSourceCr.compareTo(BigDecimal.ZERO) != 0) {
+      amtSourceDr = BigDecimal.ZERO;
+    }
+
     GLJournal gLJournal = OBDal.getInstance().get(GLJournal.class, strGLJournal);
-    BigDecimal CurrencyRateValue = gLJournal.getRate();
-    String CurrencyRate = CurrencyRateValue.toString();
-    int StdPrecision = Integer.valueOf(strPrecision).intValue();
+    BigDecimal currencyRate = gLJournal.getRate().setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+    BigDecimal amtAcctDr = amtSourceDr.multiply(currencyRate).setScale(stdPrecision,
+        BigDecimal.ROUND_HALF_UP);
+    BigDecimal amtAcctCr = amtSourceCr.multiply(currencyRate).setScale(stdPrecision,
+        BigDecimal.ROUND_HALF_UP);
 
-    BigDecimal AmtSourceDr = new BigDecimal(strAmtSourceDr);
-    BigDecimal AmtSourceCr = new BigDecimal(strAmtSourceCr);
-
-    CurrencyRateValue = CurrencyRateValue.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
-    BigDecimal AmtAcctDr, AmtAcctCr;
-
-    AmtAcctDr = (strAmtSourceDr.equals("") ? ZERO : AmtSourceDr.multiply(new BigDecimal(
-        CurrencyRate))).setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
-    AmtAcctCr = (strAmtSourceCr.equals("") ? ZERO : AmtSourceCr.multiply(new BigDecimal(
-        CurrencyRate))).setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
-
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_JournalLineAmt';\n\n");
-    resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpamtacctdr\", " + AmtAcctDr.toString() + "),");
-    resultado.append("new Array(\"inpamtacctcr\", " + AmtAcctCr.toString() + "),");
-    resultado.append("new Array(\"inpamtsourcedr\", " + strAmtSourceDr + "),");
-    resultado.append("new Array(\"inpamtsourcecr\", " + strAmtSourceCr + "),");
-    resultado.append("new Array(\"inpcurrencyrate\", " + CurrencyRateValue.toString() + "),");
-    resultado.append("new Array(\"inpcurrencyratetype\", \"" + strCurrencyRateType + "\")");
-
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    info.addResult("inpamtacctdr", amtAcctDr);
+    info.addResult("inpamtacctcr", amtAcctCr);
+    info.addResult("inpamtsourcedr", amtAcctDr);
+    info.addResult("inpamtsourcecr", amtAcctCr);
+    info.addResult("inpcurrencyrate", currencyRate);
+    info.addResult("inpcurrencyratetype", strCurrencyRateType);
   }
 }

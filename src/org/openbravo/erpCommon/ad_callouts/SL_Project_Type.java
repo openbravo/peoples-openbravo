@@ -11,107 +11,58 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.xmlEngine.XmlDocument;
 
-public class SL_Project_Type extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_Project_Type extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
+    String fieldChanged = info.getLastFieldChanged();
+    log4j.debug("CHANGED: " + fieldChanged);
 
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
+    // Parameters
+    String projectTypeID = info.getStringParameter("inpcProjecttypeId", IsIDFilter.instance);
+    String orgId = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
+    String windowId = info.getWindowId();
 
+    if (StringUtils.isNotEmpty(projectTypeID)) {
+      ComboTableData comboTableData = null;
+      boolean isRelatedProjectType = false;
+      FieldProvider[] data = null;
       try {
-        printPage(response, vars);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars)
-      throws ServletException, IOException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    StringBuffer resultado = new StringBuffer();
-    ComboTableData comboTableData = null;
-    boolean isRelatedProjectType = false;
-    FieldProvider[] data = null;
-
-    String strCProjectTypeID = vars.getStringParameter("inpcProjecttypeId");
-    String strWindowId = vars.getStringParameter("inpwindowId");
-
-    resultado.append("var calloutName='SL_Project_Type';\n\n");
-    resultado.append("var respuesta = new Array(");
-
-    if (!strCProjectTypeID.isEmpty()) {
-      try {
-        comboTableData = new ComboTableData(vars, this, "19", "C_ProjectType_ID", "", "",
-            Utility.getReferenceableOrg(vars, vars.getStringParameter("inpadOrgId")),
-            Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
-        comboTableData.fillParameters(null, strWindowId, "");
+        comboTableData = new ComboTableData(info.vars, this, "19", "C_ProjectType_ID", "", "",
+            Utility.getReferenceableOrg(info.vars, orgId), Utility.getContext(this, info.vars,
+                "#User_Client", windowId), 0);
+        comboTableData.fillParameters(null, windowId, "");
         data = comboTableData.select(false);
       } catch (Exception ex) {
         throw new ServletException(ex);
       }
-
-      if (data != null && data.length != 0) {
+      if (data != null && data.length > 0) {
         for (FieldProvider fp : data) {
-          if (fp.getField("ID").trim().equalsIgnoreCase(strCProjectTypeID)) {
+          if (StringUtils.equalsIgnoreCase(fp.getField("ID").trim(), projectTypeID)) {
             isRelatedProjectType = true;
             break;
           }
         }
       }
-
-      if (!isRelatedProjectType && "130".equalsIgnoreCase(strWindowId)) {
-        resultado.append("new Array('MESSAGE', \""
-            + Utility.messageBD(this, "ProjectTypeNull", vars.getLanguage()) + "\"));");
-      } else {
-        resultado.append(");");
+      if (!isRelatedProjectType && StringUtils.equals(windowId, "130")) {
+        info.showMessage(Utility.messageBD(this, "ProjectTypeNull", info.vars.getLanguage()));
       }
-    } else {
-      resultado.append(");");
     }
-
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
   }
 }

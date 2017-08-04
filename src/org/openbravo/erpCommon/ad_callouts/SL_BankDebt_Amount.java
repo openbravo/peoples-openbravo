@@ -1,4 +1,4 @@
-/*ALO
+/*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -11,100 +11,55 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.math.BigDecimal;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.utils.FormatUtilities;
-import org.openbravo.xmlEngine.XmlDocument;
 
-public class SL_BankDebt_Amount extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_BankDebt_Amount extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
-      String strDebtPayment = vars.getStringParameter("inpcDebtPaymentId");
-      String strBankStatement = vars.getStringParameter("inpcBankstatementId");
-      String strTabId = vars.getStringParameter("inpTabId");
-      String strCurrency = vars.getStringParameter("inpcCurrencyId");
-      String strDescription = vars.getStringParameter("inpdescription");
-
-      try {
-        printPage(response, vars, strChanged, strDebtPayment, strTabId, strBankStatement,
-            strCurrency, strDescription);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
-      String strDebtPayment, String strTabId, String strBankStatement, String strCurrency,
-      String strDescription) throws IOException, ServletException {
-    String localStrDescription = strDescription;
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    String Amount = null;
-    String ConvChargeAmt = "0";
-    String conv = null;
-
-    if (!strDebtPayment.equals("")) {
-      Amount = SLCashJournalAmountsData.amountDebtPaymentBank(this, strBankStatement,
-          strDebtPayment);
-      if (!localStrDescription.equals("")) {
-        localStrDescription = localStrDescription + " - ";
-      }
-      localStrDescription = localStrDescription
-          + SLCashJournalAmountsData.debtPaymentDescription(this, strDebtPayment);
-      conv = SLBankStmtAmountData.isConversion(this, strCurrency, strDebtPayment);
-    } else {
-      Amount = "0";
-      // strDescription="";
-      conv = "N";
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
     }
 
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_BankDebt_Amount';\n\n");
-    resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpdescription\", \""
-        + FormatUtilities.replaceJS(localStrDescription) + "\"),");
-    resultado.append("new Array(\"inptrxamt\", " + Amount + "),");
-    resultado.append("new Array(\"inpcurrconv\", \"" + conv + "\"),");
-    resultado.append("new Array(\"inpconvertchargeamt\", " + ConvChargeAmt + "),");
-    resultado.append("new Array(\"inpstmtamt\", " + Amount + ")");
+    // Parameters
+    String strDebtPayment = info.getStringParameter("inpcDebtPaymentId", IsIDFilter.instance);
+    String strBankStatement = info.getStringParameter("inpcBankstatementId", IsIDFilter.instance);
+    String strCurrency = info.getStringParameter("inpcCurrencyId", IsIDFilter.instance);
+    String strDesc = info.getStringParameter("inpdescription");
 
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    String conv = "N";
+    BigDecimal amount = BigDecimal.ZERO;
+    if (StringUtils.isNotEmpty(strDebtPayment)) {
+      String strAmt = SLCashJournalAmountsData.amountDebtPaymentBank(this, strBankStatement,
+          strDebtPayment);
+      amount = StringUtils.isEmpty(strAmt) ? BigDecimal.ZERO : new BigDecimal(strAmt);
+
+      if (StringUtils.isNotEmpty(strDesc)) {
+        strDesc = strDesc + " - ";
+      }
+      strDesc = strDesc + SLCashJournalAmountsData.debtPaymentDescription(this, strDebtPayment);
+      conv = SLBankStmtAmountData.isConversion(this, strCurrency, strDebtPayment);
+    }
+
+    info.addResult("inpdescription", FormatUtilities.replaceJS(strDesc));
+    info.addResult("inptrxamt", amount);
+    info.addResult("inpcurrconv", conv);
+    info.addResult("inpconvertchargeamt", BigDecimal.ZERO);
+    info.addResult("inpstmtamt", amount);
   }
 }

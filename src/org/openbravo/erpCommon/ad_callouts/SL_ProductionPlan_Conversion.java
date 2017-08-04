@@ -11,78 +11,41 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.filter.IsIDFilter;
 
-public class SL_ProductionPlan_Conversion extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_ProductionPlan_Conversion extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
-      String strSecQty = vars.getNumericParameter("inpsecondaryqty");
-      String strTabId = vars.getStringParameter("inpTabId");
-      String strMaWrphaseId = vars.getStringParameter("inpmaWrphaseId");
-      try {
-        printPage(response, vars, strSecQty, strTabId, strMaWrphaseId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strSecQty,
-      String strTabId, String strMaWrphaseId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    BigDecimal secondaryQty, quantity, convRate;
-
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_ProductionPlan_Conversion';\n\n");
-    resultado.append("var respuesta = new Array(");
-    if (!strSecQty.equals("")) {
-      String multiplier = SLProductionPlanWRPhaseData.getMultiplier(this, strMaWrphaseId);
-      convRate = new BigDecimal(multiplier);
-      secondaryQty = new BigDecimal(strSecQty);
-      quantity = secondaryQty.divide(convRate, 0, BigDecimal.ROUND_HALF_UP);
-      resultado.append("new Array(\"inpproductionqty\", " + quantity.toString() + ")");
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
     }
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+
+    // Parameters
+    String strSecQty = info.vars.getNumericParameter("inpsecondaryqty");
+    String strMaWrphaseId = info.getStringParameter("inpmaWrphaseId", IsIDFilter.instance);
+
+    // Production Quantity
+    if (StringUtils.isNotEmpty(strSecQty)) {
+      BigDecimal convRate = new BigDecimal(SLProductionPlanWRPhaseData.getMultiplier(this,
+          strMaWrphaseId));
+      BigDecimal secondaryQty = new BigDecimal(strSecQty);
+      BigDecimal quantity = secondaryQty.divide(convRate, 0, BigDecimal.ROUND_HALF_UP);
+      info.addResult("inpproductionqty", quantity);
+    }
   }
 }

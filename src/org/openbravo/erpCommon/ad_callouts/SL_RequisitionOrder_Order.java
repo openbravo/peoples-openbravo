@@ -11,78 +11,40 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
+import org.openbravo.base.filter.IsIDFilter;
 
-public class SL_RequisitionOrder_Order extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_RequisitionOrder_Order extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
-      String strOrderLine = vars.getStringParameter("inpcOrderlineId");
-      String strRequisitionLine = vars.getStringParameter("inpmRequisitionlineId");
-      try {
-        printPage(response, vars, strOrderLine, strRequisitionLine);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
+    }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strOrderLine, String strRequisitionLine) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    // Parameters
+    String strOrderLineId = info.getStringParameter("inpcOrderlineId", IsIDFilter.instance);
+    String strRequisitionLineId = info.getStringParameter("inpmRequisitionlineId",
+        IsIDFilter.instance);
 
-    BigDecimal required, orderLine, reqOrder;
-
-    required = new BigDecimal(SLRequisitionOrderOrderData.getRequired(this, strRequisitionLine));
-    orderLine = new BigDecimal(SLRequisitionOrderOrderData.getOrderLine(this, strOrderLine));
-    if (required.compareTo(orderLine) == 1)
-      reqOrder = orderLine;
-    else
-      reqOrder = required;
-
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_RequisitionOrder_Order';\n\n");
-    resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpqty\", " + reqOrder.toString() + ")");
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    // Set Quantity
+    BigDecimal qtyRequired = new BigDecimal(SLRequisitionOrderOrderData.getRequired(this,
+        strRequisitionLineId));
+    BigDecimal qtyOrderLine = new BigDecimal(SLRequisitionOrderOrderData.getOrderLine(this,
+        strOrderLineId));
+    BigDecimal reqOrder = qtyRequired.compareTo(qtyOrderLine) > 0 ? qtyOrderLine : qtyRequired;
+    info.addResult("inpqty", reqOrder);
   }
 }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,73 +19,36 @@
 
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.filter.ValueListFilter;
 
-public class SE_Period_Control extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SE_Period_Control extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
-      String strAdOrgTypeID = vars.getStringParameter("inpadOrgtypeId");
-      String strIsReady = vars.getStringParameter("inpisready");
-      try {
-        printPage(response, vars, strAdOrgTypeID, strIsReady);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
+    }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strAdOrgTypeID, String strIsReady) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    // Parameters
+    String strAdOrgTypeID = info.getStringParameter("inpadOrgtypeId", IsIDFilter.instance);
+    String strIsReady = info.getStringParameter("inpisready", new ValueListFilter("Y", "N"));
 
     String strIsBULE = SEPeriodControlData.select(this, strAdOrgTypeID);
+    info.addResult("inpisperiodcontrolallowedAux", strIsBULE);
 
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SE_Period_Control';\n\n");
-    resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpisperiodcontrolallowedAux\", \"" + strIsBULE + "\"),\n ");
-
-    if (strIsBULE == null && strIsReady.equals("N")) {
-      resultado.append("new Array(\"inpisperiodcontrolallowed\", \"" + "N" + "\"),\n ");
+    if (StringUtils.isEmpty(strIsBULE) && StringUtils.equals(strIsReady, "N")) {
+      info.addResult("inpisperiodcontrolallowed", "N");
     }
+
     String strIsLegalEntity = SEPeriodControlData.selectIsLegalEntity(this, strAdOrgTypeID);
     String strIsBusinessUnit = SEPeriodControlData.selectIsBusinessUnit(this, strAdOrgTypeID);
-    resultado.append("new Array(\"inpisorglegalentiy\", \"" + strIsLegalEntity + "\"),\n ");
-    resultado.append("new Array(\"inpisorgbusinessunit\", \"" + strIsBusinessUnit + "\"),\n ");
-
-    resultado.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
-    resultado.append(");");
-
-    xmlDocument.setParameter("array", resultado.toString());
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    info.addResult("inpisorglegalentiy", strIsLegalEntity);
+    info.addResult("inpisorgbusinessunit", strIsBusinessUnit);
   }
 }

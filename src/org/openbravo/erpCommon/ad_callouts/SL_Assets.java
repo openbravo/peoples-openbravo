@@ -11,115 +11,55 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
+import org.apache.commons.lang.StringUtils;
 
-public class SL_Assets extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_Assets extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
+    String strLastChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strLastChanged);
+    }
 
-      String strAssetvalue = vars.getNumericParameter("inpassetvalueamt");
-      String strResidualvalue = vars.getNumericParameter("inpresidualassetvalueamt");
-      String strAmortizationvalue = vars.getNumericParameter("inpamortizationvalueamt");
-      String strLastChanged = vars.getStringParameter("inpLastFieldChanged");
-      String strTabId = vars.getStringParameter("inpTabId");
+    // Parameters
+    BigDecimal fAssetvalue = info.getBigDecimalParameter("inpassetvalueamt");
+    BigDecimal fResidualvalue = info.getBigDecimalParameter("inpresidualassetvalueamt");
+    BigDecimal fAmortizationvalue = info.getBigDecimalParameter("inpamortizationvalueamt");
 
-      try {
-        printPage(response, vars, strTabId, strAssetvalue, strResidualvalue, strAmortizationvalue,
-            strLastChanged);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTabId,
-      String strAssetvalue, String strResidualvalue, String strAmortizationvalue,
-      String strLastChanged) throws IOException, ServletException {
-    String localStrResidualvalue = strResidualvalue;
-    String localStrAssetvalue = strAssetvalue;
-    String localStrAmortizationvalue = strAmortizationvalue;
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    if (localStrAssetvalue.equals(""))
-      localStrAssetvalue = "0";
-    if (localStrResidualvalue.equals(""))
-      localStrResidualvalue = "0";
-    if (localStrAmortizationvalue.equals(""))
-      localStrAmortizationvalue = "0";
-
-    BigDecimal fAssetvalue = new BigDecimal(localStrAssetvalue);
-    BigDecimal fResidualvalue = new BigDecimal(localStrResidualvalue);
-    BigDecimal fAmortizationvalue = new BigDecimal(localStrAmortizationvalue);
-    // Float fAssetvalue = Float.valueOf(strAssetvalue);
-    // Float fResidualvalue = Float.valueOf(strResidualvalue);
-    // Float fAmortizationvalue = Float.valueOf(strAmortizationvalue);
-
-    if (strLastChanged.equals("inpassetvalueamt")) {
-      if (!fAmortizationvalue.equals(BigDecimal.ZERO))
+    // If Asset Value changes recalculate Residual Asset Value using current Depreciation amount
+    if (StringUtils.equals(strLastChanged, "inpassetvalueamt")) {
+      if (fAmortizationvalue.compareTo(BigDecimal.ZERO) != 0) {
         fResidualvalue = fAssetvalue.subtract(fAmortizationvalue);
+      }
       fAmortizationvalue = fAssetvalue.subtract(fResidualvalue);
     }
 
-    if (strLastChanged.equals("inpresidualassetvalueamt")) {
-      // if (fAmortizationvalue != 0) fAssetvalue = fResidualvalue +
-      // fAmortizationvalue;
+    // If Residual Asset Value changes recalculate Asset Value using new residual value
+    if (StringUtils.equals(strLastChanged, "inpresidualassetvalueamt")) {
       fAmortizationvalue = fAssetvalue.subtract(fResidualvalue);
     }
 
-    if (strLastChanged.equals("inpamortizationvalueamt")) {
-      // if (fResidualvalue != 0 ) fAssetvalue = fResidualvalue +
-      // fAmortizationvalue;
+    // If Depreciation amount changes recalculate Residual Asset Value using current Asset and
+    // Depreciation values
+    if (StringUtils.equals(strLastChanged, "inpamortizationvalueamt")) {
       fResidualvalue = fAssetvalue.subtract(fAmortizationvalue);
     }
 
-    localStrAssetvalue = fAssetvalue.toString();
-    localStrResidualvalue = fResidualvalue.toString();
-    localStrAmortizationvalue = fAmortizationvalue.toString();
-
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_Assets';\n\n");
-    resultado.append("var respuesta = new Array(new Array(\"inpassetvalueamt\","
-        + fAssetvalue.toString() + "), new Array(\"inpresidualassetvalueamt\","
-        + fResidualvalue.toString() + "), new Array(\"inpamortizationvalueamt\","
-        + fAmortizationvalue.toString() + "));");
-    resultado.append("\n\n//" + strLastChanged);
-
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    info.addResult("inpassetvalueamt", fAssetvalue);
+    info.addResult("inpresidualassetvalueamt", fResidualvalue);
+    info.addResult("inpamortizationvalueamt", fAmortizationvalue);
   }
 }

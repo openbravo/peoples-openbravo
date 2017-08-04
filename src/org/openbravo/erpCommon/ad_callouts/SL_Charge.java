@@ -11,76 +11,34 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.filter.IsIDFilter;
 
-public class SL_Charge extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_Charge extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
-      String strCChargeID = vars.getStringParameter("inpcChargeId");
-      String strTabId = vars.getStringParameter("inpTabId");
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
+    }
 
-      try {
-        printPage(response, vars, strCChargeID, strTabId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
+    // Parameter
+    String strCChargeID = info.getStringParameter("inpcChargeId", IsIDFilter.instance);
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strCChargeID, String strTabId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    String chargeAmt;
-    if (strCChargeID.equals(""))
-      chargeAmt = "0";
-    else
-      chargeAmt = SLChargeData.chargeAmt(this, strCChargeID);
-
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_Charge';\n\n");
-    resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpchargeamt\", " + chargeAmt + ")\n");
-    resultado.append(");");
-
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    // Charge Amount
+    String chargeAmt = StringUtils.isEmpty(strCChargeID) ? "0" : SLChargeData.chargeAmt(this,
+        strCChargeID);
+    info.addResult("inpchargeamt", chargeAmt);
   }
 }

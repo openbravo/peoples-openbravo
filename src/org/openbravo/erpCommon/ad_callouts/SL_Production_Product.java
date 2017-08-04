@@ -11,186 +11,95 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.utils.FormatUtilities;
-import org.openbravo.xmlEngine.XmlDocument;
 
-public class SL_Production_Product extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_Production_Product extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
-      String strProduct = vars.getStringParameter("inpmProductId");
-      // String strLocator = vars.getStringParameter("inpmLocatorId");
-      String strPLocator = vars.getStringParameter("inpmProductId_LOC");
-      String strPAttr = vars.getStringParameter("inpmProductId_ATR");
-      String strPQty = vars.getNumericParameter("inpmProductId_PQTY");
-      String strPUOM = vars.getStringParameter("inpmProductId_PUOM");
-      String strQty = vars.getNumericParameter("inpmProductId_QTY");
-      String strUOM = vars.getStringParameter("inpmProductId_UOM");
-      String strTabId = vars.getStringParameter("inpTabId");
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
+    }
 
-      try {
-        printPage(response, vars, strChanged, strProduct, strPLocator, strPAttr, strPQty, strPUOM,
-            strQty, strUOM, strTabId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
+    // Parameters
+    String strProduct = info.getStringParameter("inpmProductId", IsIDFilter.instance);
+    String strPLocator = info.getStringParameter("inpmProductId_LOC", IsIDFilter.instance);
+    String strPAttr = info.getStringParameter("inpmProductId_ATR", IsIDFilter.instance);
+    String strPQty = info.vars.getNumericParameter("inpmProductId_PQTY");
+    String strPUOM = info.getStringParameter("inpmProductId_PUOM", IsIDFilter.instance);
+    String strQty = info.vars.getNumericParameter("inpmProductId_QTY");
+    String strUOM = info.getStringParameter("inpmProductId_UOM", IsIDFilter.instance);
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
-      String strProduct, String strPLocator, String strPAttr, String strPQty, String strPUOM,
-      String strQty, String strUOM, String strTabId) throws IOException, ServletException {
-    String localStrPUOM = strPUOM;
-    String localStrPLocator = strPLocator;
-    String localStrPAttr = strPAttr;
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    // UOM, Locator
+    info.addResult("inpcUomId", strUOM);
+    info.addResult("inpmLocatorId", strPLocator);
 
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_Production_Product';\n\n");
-    resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),\n");
-    if (localStrPLocator.startsWith("\""))
-      localStrPLocator = localStrPLocator.substring(1, localStrPLocator.length() - 1);
-    resultado.append("new Array(\"inpmLocatorId\", \"" + localStrPLocator + "\"),\n");
-    resultado.append("new Array(\"inpmLocatorId_R\", \""
-        + FormatUtilities.replaceJS(SLProductionProductData.selectLocator(this, localStrPLocator))
-        + "\"),\n");
+    // Has Second UOM
     String strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strProduct);
-    resultado.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
-    if (localStrPAttr.startsWith("\""))
-      localStrPAttr = localStrPAttr.substring(1, localStrPAttr.length() - 1);
-    resultado.append("new Array(\"inpmAttributesetinstanceId\", \"" + localStrPAttr + "\"),\n");
-    resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \""
-        + FormatUtilities.replaceJS(SLInOutLineProductData.attribute(this, localStrPAttr))
-        + "\"),\n");
-    String strAttrSet, strAttrSetValueType;
-    strAttrSet = strAttrSetValueType = "";
+    info.addResult("inphasseconduom", Integer.parseInt(strHasSecondaryUOM));
+
+    // AttributeSetInstance, AttributeSet, AttributeSetValueType
+    info.addResult("inpmAttributesetinstanceId", strPAttr);
     OBContext.setAdminMode();
     try {
       final Product product = OBDal.getInstance().get(Product.class, strProduct);
       if (product != null) {
-        AttributeSet attributeset = product.getAttributeSet();
-        if (attributeset != null)
-          strAttrSet = product.getAttributeSet().toString();
-        strAttrSetValueType = product.getUseAttributeSetValueAs();
+        info.addResult("inpattributeset", product.getAttributeSet() != null ? product
+            .getAttributeSet().getId() : "");
+        info.addResult("inpattrsetvaluetype",
+            FormatUtilities.replaceJS(product.getUseAttributeSetValueAs()));
       }
     } finally {
       OBContext.restorePreviousMode();
     }
-    resultado.append("new Array(\"inpattributeset\", \"" + FormatUtilities.replaceJS(strAttrSet)
-        + "\"),\n");
-    resultado.append("new Array(\"inpattrsetvaluetype\", \""
-        + FormatUtilities.replaceJS(strAttrSetValueType == null ? "" : strAttrSetValueType)
-        + "\"),\n");
-    resultado.append("new Array(\"inpmovementqty\", " + (strQty.equals("") ? "\"\"" : strQty)
-        + "),\n");
-    resultado.append("new Array(\"inpquantityorder\", " + (strPQty.equals("") ? "\"\"" : strPQty)
-        + "),\n");
 
-    if (localStrPUOM.startsWith("\""))
-      localStrPUOM = localStrPUOM.substring(1, localStrPUOM.length() - 1);
-    resultado.append("new Array(\"inpmProductUomId\", ");
-    if (vars.getLanguage().equals("en_US")) {
-      FieldProvider[] tld = null;
-      try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "SLProductionProduct"), Utility.getContext(this, vars, "#User_Client",
-                "SLProductionProduct"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, "SLProductionProduct", "");
-        tld = comboTableData.select(false);
-        comboTableData = null;
-      } catch (Exception ex) {
-        throw new ServletException(ex);
-      }
+    // MovementQty, Quantity Order
+    info.addResult("inpmovementqty", strQty);
+    info.addResult("inpquantityorder", strPQty);
 
-      if (tld != null && tld.length > 0) {
-        resultado.append("new Array(");
-        for (int i = 0; i < tld.length; i++) {
-          resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
-              + ((tld[i].getField("id").equals(localStrPUOM)) ? "true" : "false") + "\")");
-          if (i < tld.length - 1)
-            resultado.append(",\n");
-        }
-        resultado.append("\n)");
-      } else
-        resultado.append("null");
-      resultado.append("\n),");
-    } else {
-      FieldProvider[] tld = null;
-      try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "SLProductionProduct"), Utility.getContext(this, vars, "#User_Client",
-                "SLProductionProduct"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, "SLProductionProduct", "");
-        tld = comboTableData.select(false);
-        comboTableData = null;
-      } catch (Exception ex) {
-        throw new ServletException(ex);
-      }
-
-      if (tld != null && tld.length > 0) {
-        resultado.append("new Array(");
-        for (int i = 0; i < tld.length; i++) {
-          resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
-              + ((tld[i].getField("id").equals(localStrPUOM)) ? "true" : "false") + "\")");
-          if (i < tld.length - 1)
-            resultado.append(",\n");
-        }
-        resultado.append("\n)");
-      } else
-        resultado.append("null");
-      resultado.append("\n),");
+    // Product UOM List
+    FieldProvider[] tld = null;
+    try {
+      ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE", "",
+          "M_Product_UOM", "", Utility.getContext(this, info.vars, "#AccessibleOrgTree",
+              "SLProductionProduct"), Utility.getContext(this, info.vars, "#User_Client",
+              "SLProductionProduct"), 0);
+      Utility.fillSQLParameters(this, info.vars, null, comboTableData, "SLProductionProduct", "");
+      tld = comboTableData.select(false);
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
     }
-    resultado.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    if (tld != null && tld.length > 0) {
+      info.addSelect("inpmProductUomId");
+      for (int i = 0; i < tld.length; i++) {
+        info.addSelectResult(tld[i].getField("id"),
+            FormatUtilities.replaceJS(tld[i].getField("name")),
+            StringUtils.equals(tld[i].getField("id"), strPUOM));
+      }
+      info.endSelect();
+    } else {
+      info.addResult("inpmProductUomId", null);
+    }
+
   }
 }

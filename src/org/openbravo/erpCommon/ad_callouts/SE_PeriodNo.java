@@ -11,161 +11,90 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.filter.IsIDFilter;
 
-public class SE_PeriodNo extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SE_PeriodNo extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strOrgId = vars.getStringParameter("inpadOrgId");
-      String strCalendarId = vars.getStringParameter("inpcCalendarId");
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      String strYearId = vars.getStringParameter("inpcYearId");
-      String strWindowId = vars.getStringParameter("inpwindowId");
-      try {
-        printPage(response, vars, strYearId, strWindowId, strOrgId, strCalendarId, strChanged);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strYearId,
-      String strWindowId, String strOrgId, String strCalendarId, String strChanged)
-      throws IOException, ServletException {
-    String localStrCalendarId = strCalendarId;
-
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SE_PeriodNo';\n\n");
-    resultado.append("var respuesta = new Array(");
-
-    if (strChanged.equals("inpcYearId") && !strYearId.equals("")) {
-      SEPeriodNoData[] tdv = null;
-      // Update the Periods
-      try {
-        tdv = SEPeriodNoData.getPeriodNo(this, strYearId);
-      } catch (Exception ex) {
-        throw new ServletException(ex);
-      }
-
-      resultado.append("new Array(\"inpperiodno\", ");
-      if (tdv != null && tdv.length > 0) {
-        resultado.append("new Array(");
-        for (int i = 0; i < tdv.length; i++) {
-          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-              + tdv[i].getField("Name") + "\")");
-          if (i < tdv.length - 1)
-            resultado.append(",\n");
-        }
-        resultado.append("\n)");
-      } else
-        resultado.append("null");
-      resultado.append("\n)");
-    } else if (!strOrgId.equals("")) {
-      SEPeriodNoData[] tdv = null;
-      // Update the Calendar
-      try {
-        tdv = SEPeriodNoData.getCalendar(this, strOrgId);
-      } catch (Exception ex) {
-        throw new ServletException(ex);
-      }
-      resultado.append("new Array(\"inpcCalendarId\", ");
-      if (tdv != null && tdv.length > 0) {
-        resultado.append("new Array(");
-        for (int i = 0; i < tdv.length; i++) {
-          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-              + tdv[i].getField("Name") + "\")");
-          localStrCalendarId = tdv[i].getField("id");
-          if (i < tdv.length - 1)
-            resultado.append(",\n");
-        }
-        resultado.append("\n)");
-      } else
-        resultado.append("null");
-      resultado.append("\n),");
-
-      // Update the years
-      try {
-        tdv = SEPeriodNoData.getYears(this, localStrCalendarId);
-      } catch (Exception ex) {
-        throw new ServletException(ex);
-      }
-
-      String strLastYear = "";
-      resultado.append("new Array(\"inpcYearId\", ");
-      if (tdv != null && tdv.length > 0) {
-        resultado.append("new Array(");
-        for (int i = 0; i < tdv.length; i++) {
-          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-              + tdv[i].getField("Name") + "\", \"" + (i == 0 ? "true" : "false") + "\")");
-          if (i == 0)
-            strLastYear = tdv[i].getField("id");
-          if (i < tdv.length - 1)
-            resultado.append(",\n");
-        }
-        resultado.append("\n)");
-      } else
-        resultado.append("null");
-      resultado.append("\n),");
-
-      // Update the Periods
-      try {
-        tdv = SEPeriodNoData.getPeriodNo(this, strLastYear);
-      } catch (Exception ex) {
-        throw new ServletException(ex);
-      }
-
-      resultado.append("new Array(\"inpperiodno\", ");
-      if (tdv != null && tdv.length > 0) {
-        resultado.append("new Array(");
-        for (int i = 0; i < tdv.length; i++) {
-          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-              + tdv[i].getField("Name") + "\")");
-          if (i < tdv.length - 1)
-            resultado.append(",\n");
-        }
-        resultado.append("\n)");
-      } else
-        resultado.append("null");
-      resultado.append("\n)");
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
     }
 
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    // Parameters
+    String strOrgId = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
+    String strCalendarId = info.getStringParameter("inpcCalendarId", IsIDFilter.instance);
+    String strYearId = info.getStringParameter("inpcYearId", IsIDFilter.instance);
+
+    try {
+
+      // Update the Periods
+      if (StringUtils.equals(strChanged, "inpcYearId") && StringUtils.isNotEmpty(strYearId)) {
+        SEPeriodNoData[] tdv = null;
+        tdv = SEPeriodNoData.getPeriodNo(this, strYearId);
+        if (tdv != null && tdv.length > 0) {
+          info.addSelect("inpperiodno");
+          for (int i = 0; i < tdv.length; i++) {
+            info.addSelectResult(tdv[i].getField("id"), tdv[i].getField("Name"));
+          }
+          info.endSelect();
+        }
+      }
+
+      else if (StringUtils.isNotEmpty(strOrgId)) {
+
+        // Update the Calendar
+        SEPeriodNoData[] tdv = null;
+        tdv = SEPeriodNoData.getCalendar(this, strOrgId);
+        if (tdv != null && tdv.length > 0) {
+          info.addSelect("inpcCalendarId");
+          for (int i = 0; i < tdv.length; i++) {
+            info.addSelectResult(tdv[i].getField("id"), tdv[i].getField("Name"));
+            strCalendarId = tdv[i].getField("id");
+          }
+          info.endSelect();
+        }
+
+        // Update the years
+        tdv = SEPeriodNoData.getYears(this, strCalendarId);
+        String strLastYear = "";
+        if (tdv != null && tdv.length > 0) {
+          info.addSelect("inpcYearId");
+          for (int i = 0; i < tdv.length; i++) {
+            info.addSelectResult(tdv[i].getField("id"), tdv[i].getField("Name"), (i == 0));
+            if (i == 0) {
+              strLastYear = tdv[i].getField("id");
+            }
+          }
+          info.endSelect();
+        }
+
+        // Update the Periods
+        tdv = SEPeriodNoData.getPeriodNo(this, strLastYear);
+        if (tdv != null && tdv.length > 0) {
+          info.addSelect("inpperiodno");
+          for (int i = 0; i < tdv.length; i++) {
+            info.addSelectResult(tdv[i].getField("id"), tdv[i].getField("Name"));
+          }
+          info.endSelect();
+        }
+
+      }
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
   }
 
 }

@@ -53,8 +53,6 @@ public class SL_Inventory_Locator extends SimpleCallout {
       info.addResult("inpquantityorderbook", qtyOrder);
       info.addResult("inpqtycount", qty);
       info.addResult("inpqtybook", qty);
-
-      info.addResult("EXECUTE", "displayLogic();");
     }
   }
 }

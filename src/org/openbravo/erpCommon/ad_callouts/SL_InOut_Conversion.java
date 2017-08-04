@@ -11,115 +11,68 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
-import org.openbravo.xmlEngine.XmlDocument;
 
-public class SL_InOut_Conversion extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_InOut_Conversion extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
-      String strUOM = vars.getStringParameter("inpcUomId");
-      String strMProductUOMID = vars.getStringParameter("inpmProductUomId");
-      String strQuantityOrder = vars.getNumericParameter("inpquantityorder");
-      String strTabId = vars.getStringParameter("inpTabId");
-
-      try {
-        printPage(response, vars, strUOM, strMProductUOMID, strQuantityOrder, strTabId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strUOM,
-      String strMProductUOMID, String strQuantityOrder, String strTabId) throws IOException,
-      ServletException {
-    String localStrUOM = strUOM;
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    if (localStrUOM.startsWith("\""))
-      localStrUOM = localStrUOM.substring(1, localStrUOM.length() - 1);
-    int stdPrecision = Integer.valueOf(SLInvoiceConversionData.stdPrecision(this, localStrUOM))
-        .intValue();
-    String strInitUOM = SLInvoiceConversionData.initUOMId(this, strMProductUOMID);
-    String strMultiplyRate;
-    boolean check = false;
-
-    strMultiplyRate = SLInvoiceConversionData.multiplyRate(this, strInitUOM, localStrUOM);
-    if (strInitUOM.equals(localStrUOM))
-      strMultiplyRate = "1";
-    if (strMultiplyRate.equals(""))
-      strMultiplyRate = SLInvoiceConversionData.divideRate(this, localStrUOM, strInitUOM);
-    if (strMultiplyRate.equals("")) {
-      strMultiplyRate = "1";
-      if (!strMProductUOMID.equals(""))
-        check = true;
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
     }
 
-    BigDecimal quantityOrder, movementQty, multiplyRate;
+    // Parameters
+    String strUOM = info.getStringParameter("inpcUomId", IsIDFilter.instance);
+    String strMProductUOMID = info.getStringParameter("inpmProductUomId", IsIDFilter.instance);
+    String strQuantityOrder = info.vars.getNumericParameter("inpquantityorder");
 
+    // Multiply Rate for UOM Conversion if any
+    String strInitUOM = SLInvoiceConversionData.initUOMId(this, strMProductUOMID);
+    String strMultiplyRate = StringUtils.equals(strInitUOM, strUOM) ? "1" : "";
+    if (StringUtils.isEmpty(strMultiplyRate)) {
+      strMultiplyRate = SLInvoiceConversionData.multiplyRate(this, strInitUOM, strUOM);
+    }
+    if (StringUtils.isEmpty(strMultiplyRate)) {
+      strMultiplyRate = SLInvoiceConversionData.divideRate(this, strUOM, strInitUOM);
+    }
+    // Set message when no UOM Conversion exists
+    if (StringUtils.isEmpty(strMultiplyRate)) {
+      strMultiplyRate = "1";
+      if (StringUtils.isNotEmpty(strMProductUOMID)) {
+        info.showMessage(FormatUtilities.replaceJS(Utility.messageBD(this, "NoUOMConversion",
+            info.vars.getLanguage())));
+      }
+    }
+    // Calculate Movement Qty based on UOM Conversion
+    BigDecimal quantityOrder, movementQty, multiplyRate;
     multiplyRate = new BigDecimal(strMultiplyRate);
 
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_InOut_Conversion';\n\n");
-    if (strMultiplyRate.equals("0")) {
-      resultado.append("var respuesta = null");
-    } else {
-      resultado.append("var respuesta = new Array(");
-      if (!strQuantityOrder.equals("")) {
-        quantityOrder = new BigDecimal(strQuantityOrder);
-        movementQty = quantityOrder.multiply(multiplyRate);
-        if (movementQty.scale() > stdPrecision)
-          movementQty = movementQty.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
-        resultado.append("new Array(\"inpmovementqty\", " + movementQty.toString() + ")");
+    if (StringUtils.isNotEmpty(strQuantityOrder)) {
+      quantityOrder = new BigDecimal(strQuantityOrder);
+      movementQty = quantityOrder.multiply(multiplyRate);
+      int stdPrecision = Integer.valueOf(SLInvoiceConversionData.stdPrecision(this, strUOM))
+          .intValue();
+      if (movementQty.scale() > stdPrecision) {
+        movementQty = movementQty.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
       }
-      if (check) {
-        if (!strQuantityOrder.equals(""))
-          resultado.append(",");
-        resultado.append("new Array('MESSAGE', \""
-            + FormatUtilities.replaceJS(Utility.messageBD(this, "NoUOMConversion",
-                vars.getLanguage())) + "\")");
-      }
-      resultado.append(");");
+      info.addResult("inpmovementqty", movementQty);
     }
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+
   }
 }

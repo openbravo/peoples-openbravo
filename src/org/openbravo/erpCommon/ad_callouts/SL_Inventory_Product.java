@@ -139,9 +139,5 @@ public class SL_Inventory_Product extends SimpleCallout {
       info.addResult("inpmProductUomId", null);
     }
 
-    // displaylogic
-
-    info.addResult("EXECUTE", "displayLogic();");
-
   }
 }

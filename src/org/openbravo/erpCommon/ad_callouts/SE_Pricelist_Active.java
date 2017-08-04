@@ -11,76 +11,43 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.xmlEngine.XmlDocument;
+import org.openbravo.utils.FormatUtilities;
 
-public class SE_Pricelist_Active extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SE_Pricelist_Active extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strIsActive = vars.getStringParameter("inpisactive");
-      String strPricelistId = vars.getStringParameter("inpmPricelistId");
-      try {
-        printPage(response, vars, strIsActive, strPricelistId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strIsActive,
-      String strPricelistId) throws IOException, ServletException {
-
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SE_Pricelist_Active';\n\n");
-    resultado.append("var respuesta = new Array(");
-
-    String msg = "";
-    if (strIsActive.equals("")) {
-      SEPricelistActiveData[] pricelistVersion = SEPricelistActiveData.getActivePricelistVersion(
-          this, strPricelistId);
-      if (pricelistVersion.length > 0) {
-        msg = Utility.messageBD(this, "PricelistVersionActive", vars.getLanguage());
-      }
+    String strLastChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("Changed: " + strLastChanged);
     }
 
-    resultado.append("new Array(\"MESSAGE\", \"" + msg + "\")");
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+    // Parameters
+    String strPricelistId = info.getStringParameter("inpmPricelistId", IsIDFilter.instance);
+    String strIsActive = info.getStringParameter("inpisactive", new ValueListFilter("Y", "N"));
 
+    // Check whether there exists active versions for price list being set Active = No
+    if (StringUtils.equals(strIsActive, "N")) {
+      SEPricelistActiveData[] pricelistVersion = SEPricelistActiveData.getActivePricelistVersion(
+          this, strPricelistId);
+      if (pricelistVersion != null && pricelistVersion.length > 0) {
+        info.showMessage(FormatUtilities.replaceJS(Utility.messageBD(this,
+            "PricelistVersionActive", info.vars.getLanguage())));
+      }
+    }
+  }
 }

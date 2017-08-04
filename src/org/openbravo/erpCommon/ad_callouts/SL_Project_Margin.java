@@ -11,92 +11,51 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.filter.IsIDFilter;
 
-public class SL_Project_Margin extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_Project_Margin extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strTabId = vars.getStringParameter("inpTabId");
-      String strcProjectId = vars.getStringParameter("inpcProjectId");
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      // Services
-      String strServiceRevenue = vars.getNumericParameter("inpservrevenue", "0");
-      String strServiceCost = vars.getNumericParameter("inpservcost", "0");
-      String strServiceMargin = vars.getNumericParameter("inpservmargin", "0");
-      // Expenses
-      String strPlannedExpenses = vars.getNumericParameter("inpexpexpenses", "0");
-      String strReinvoicedExpenses = vars.getNumericParameter("inpexpreinvoicing", "0");
-      String strPlannedMargin = vars.getNumericParameter("inpexpmargin", "0");
-      try {
-        printPage(response, vars, strTabId, strcProjectId, strChanged, strServiceRevenue,
-            strServiceCost, strServiceMargin, strPlannedExpenses, strReinvoicedExpenses,
-            strPlannedMargin);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTabId,
-      String strcProjectId, String strChanged, String strServiceRevenue, String strServiceCost,
-      String strServiceMargin, String strPlannedExpenses, String strReinvoicedExpenses,
-      String strPlannedMargin) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    SLProjectMarginData[] data = SLProjectMarginData.select(this, strcProjectId);
-    String strPrecision = "0";
-    if (data != null && data.length > 0) {
-      strPrecision = data[0].stdprecision;
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
     }
-    int StdPrecision = Integer.valueOf(strPrecision).intValue();
 
-    BigDecimal serviceRevenue, plannedExpenses, serviceCost, reinvoicedExpenses, serviceMargin, expensesMargin;
+    // Parameters
+    String strcProjectId = info.getStringParameter("inpcProjectId", IsIDFilter.instance);
     // Services
-    serviceRevenue = new BigDecimal(strServiceRevenue); // SR
-    serviceCost = new BigDecimal(strServiceCost); // SC
-    serviceMargin = new BigDecimal(strServiceMargin); // SM
+    BigDecimal serviceRevenue = info.getBigDecimalParameter("inpservrevenue");
+    BigDecimal serviceCost = info.getBigDecimalParameter("inpservcost");
+    BigDecimal serviceMargin = info.getBigDecimalParameter("inpservmargin");
     // Expenses
-    plannedExpenses = new BigDecimal(strPlannedExpenses); // PE
-    reinvoicedExpenses = new BigDecimal(strReinvoicedExpenses); // RE
-    expensesMargin = new BigDecimal(strPlannedMargin); // EM
+    BigDecimal plannedExpenses = info.getBigDecimalParameter("inpexpexpenses");
+    BigDecimal reinvoicedExpenses = info.getBigDecimalParameter("inpexpreinvoicing");
+    BigDecimal expensesMargin = info.getBigDecimalParameter("inpexpmargin");
 
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_Project_Margin';\n\n");
-    resultado.append("var respuesta = new Array(");
+    // Standard Precision
+    SLProjectMarginData[] data = SLProjectMarginData.select(this, strcProjectId);
+    int stdPrecision = 0;
+    if (data != null && data.length > 0) {
+      stdPrecision = Integer.valueOf(data[0].stdprecision);
+    }
 
-    // Services
-    if (strChanged.equals("inpservrevenue") || strChanged.equals("inpservcost")) {
-      // SM = (SR-SC)*100/SR
+    // Service Margin - SM = (SR-SC)*100/SR
+    if (StringUtils.equals(strChanged, "inpservrevenue")
+        || StringUtils.equals(strChanged, "inpservcost")) {
       if (serviceRevenue.compareTo(BigDecimal.ZERO) != 0) {
         serviceMargin = (((serviceRevenue.subtract(serviceCost)).divide(serviceRevenue, 12,
             BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100"))).setScale(2,
@@ -104,21 +63,22 @@ public class SL_Project_Margin extends HttpSecureAppServlet {
       } else {
         serviceMargin = BigDecimal.ZERO;
       }
-      resultado.append("\n new Array(\"inpservmargin\", " + serviceMargin.toString() + ")");
+      info.addResult("inpservmargin", serviceMargin);
     }
 
-    if (strChanged.equals("inpservmargin")) {
-      // SC = SR*(1-SM/100)
+    // Service Cost - SC = SR*(1-SM/100)
+    if (StringUtils.equals(strChanged, "inpservmargin")) {
       serviceCost = serviceRevenue.multiply((BigDecimal.ONE).subtract(serviceMargin
           .divide(new BigDecimal("100"))));
-      if (serviceCost.scale() > StdPrecision)
-        serviceCost = serviceCost.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
-      resultado.append("\n new Array(\"inpservcost\", " + serviceCost.toString() + ")\n");
+      if (serviceCost.scale() > stdPrecision) {
+        serviceCost = serviceCost.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+      }
+      info.addResult("inpservcost", serviceCost);
     }
 
-    // Expenses
-    if (strChanged.equals("inpexpexpenses") || strChanged.equals("inpexpreinvoicing")) {
-      // EM = (RE-PE)*100/RE
+    // Expense Margin - EM = (RE-PE)*100/RE
+    if (StringUtils.equals(strChanged, "inpexpexpenses")
+        || StringUtils.equals(strChanged, "inpexpreinvoicing")) {
       if (reinvoicedExpenses.compareTo(BigDecimal.ZERO) != 0) {
         expensesMargin = (((reinvoicedExpenses.subtract(plannedExpenses)).multiply(new BigDecimal(
             "100"))).divide(reinvoicedExpenses, 12, BigDecimal.ROUND_HALF_EVEN)).setScale(2,
@@ -126,33 +86,29 @@ public class SL_Project_Margin extends HttpSecureAppServlet {
       } else {
         expensesMargin = BigDecimal.ZERO;
       }
-      resultado.append("\n new Array(\"inpexpmargin\", " + expensesMargin.toString() + ")");
+      info.addResult("inpexpmargin", expensesMargin);
     }
 
-    if (strChanged.equals("inpexpmargin")) {
+    if (StringUtils.equals(strChanged, "inpexpmargin")) {
+      // Planned Expenses - PE = 0 (because EM = 100 %)
       if (expensesMargin.compareTo(new BigDecimal("100")) == 0) {
-        // PE = 0 (because EM = 100 %)
         plannedExpenses = BigDecimal.ZERO;
-        if (plannedExpenses.scale() > StdPrecision)
-          plannedExpenses = plannedExpenses.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
-        resultado.append("\n new Array(\"inpexpexpenses\", " + plannedExpenses.toString() + ")\n");
-      } else {
-        // RE = PE/(1-EM/100)
+        if (plannedExpenses.scale() > stdPrecision) {
+          plannedExpenses = plannedExpenses.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+        }
+        info.addResult("inpexpexpenses", plannedExpenses);
+      }
+      // Re-Invoiced Expenses - RE = PE/(1-EM/100)
+      else {
         reinvoicedExpenses = plannedExpenses.divide((BigDecimal.ONE).subtract(expensesMargin
-            .divide(new BigDecimal("100"), 12, BigDecimal.ROUND_HALF_EVEN)));
-        if (reinvoicedExpenses.scale() > StdPrecision)
-          reinvoicedExpenses = reinvoicedExpenses.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
-        resultado.append("\n new Array(\"inpexpreinvoicing\", " + reinvoicedExpenses.toString()
-            + ")\n");
+            .divide(new BigDecimal("100"), 12, BigDecimal.ROUND_HALF_EVEN)), 12,
+            BigDecimal.ROUND_HALF_EVEN);
+        if (reinvoicedExpenses.scale() > stdPrecision) {
+          reinvoicedExpenses = reinvoicedExpenses.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+        }
+        info.addResult("inpexpreinvoicing", reinvoicedExpenses);
       }
     }
 
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
   }
 }

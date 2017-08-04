@@ -169,9 +169,5 @@ public class SL_InOutLine_Product extends SimpleCallout {
     // UOM
 
     info.addResult("inpcUomId", info.vars.getStringParameter("inpmProductId_UOM"));
-
-    // displayLogic
-
-    info.addResult("EXECUTE", "displayLogic();");
   }
 }

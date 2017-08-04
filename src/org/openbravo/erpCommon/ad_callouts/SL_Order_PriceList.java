@@ -11,75 +11,35 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
+import org.openbravo.base.filter.IsIDFilter;
 
-public class SL_Order_PriceList extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_Order_PriceList extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
-      String strMPriceListID = vars.getStringParameter("inpmPricelistId");
-      String strTabId = vars.getStringParameter("inpTabId");
-
-      try {
-        printPage(response, vars, strMPriceListID, strTabId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strMPriceListID, String strTabId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    SLOrderPriceListData[] data = SLOrderPriceListData.select(this, strMPriceListID);
-    StringBuffer resultado = new StringBuffer();
-
-    resultado.append("var calloutName='SL_Order_PriceList';\n\n");
-    resultado.append("var respuesta = new Array(");
-    if (data != null && data.length > 0) {
-      resultado.append("new Array(\"inpistaxincluded\", \"" + data[0].istaxincluded + "\"),\n");
-      resultado.append("new Array(\"inpcCurrencyId\", \"" + data[0].cCurrencyId + "\")\n");
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
     }
-    resultado.append(");\n");
 
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    // Parameter
+    String strMPriceListID = info.getStringParameter("inpmPricelistId", IsIDFilter.instance);
+
+    // IsTaxIncluded and Currency
+    SLOrderPriceListData[] data = SLOrderPriceListData.select(this, strMPriceListID);
+    if (data != null && data.length > 0) {
+      info.addResult("inpistaxincluded", data[0].istaxincluded);
+      info.addResult("inpcCurrencyId", data[0].cCurrencyId);
+    }
   }
 }

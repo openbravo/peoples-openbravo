@@ -18,19 +18,13 @@
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.BpartnerMiscData;
@@ -40,236 +34,159 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.utils.Replace;
-import org.openbravo.xmlEngine.XmlDocument;
 
-public class SL_InOut_BPartner extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_InOut_BPartner extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
-      String strBPartner = vars.getStringParameter("inpcBpartnerId");
-      String strLocation = vars.getStringParameter("inpcBpartnerId_LOC");
-      String strContact = vars.getStringParameter("inpcBpartnerId_CON");
-      String strWindowId = vars.getStringParameter("inpwindowId");
-      String strProjectId = vars.getStringParameter("inpcProjectId");
-      String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
-      String strTabId = vars.getStringParameter("inpTabId");
-      String strDeliveryTerms = vars.getStringParameter("inpdeliveryrule");
-      String strDeliveryMethod = vars.getStringParameter("inpdeliveryviarule");
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
+    }
 
-      try {
-        printPage(response, vars, strBPartner, strLocation, strDeliveryTerms, strDeliveryMethod,
-            strContact, strWindowId, strProjectId, strIsSOTrx, strTabId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
-      String strLocation, String strDeliveryTerms, String strDeliveryMethod, String strContact,
-      String strWindowId, String strProjectId, String strIsSOTrx, String strTabId)
-      throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    // Parameters
+    String strBPartner = info.getStringParameter("inpcBpartnerId", IsIDFilter.instance);
+    String strLocation = info.getStringParameter("inpcBpartnerId_LOC", IsIDFilter.instance);
+    String strContact = info.getStringParameter("inpcBpartnerId_CON", IsIDFilter.instance);
+    String strOrgId = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
+    String strDeliveryTerms = info.getStringParameter("inpdeliveryrule");
+    String strDeliveryMethod = info.getStringParameter("inpdeliveryviarule");
+    String strIsSOTrx = Utility.getContext(this, info.vars, "isSOTrx", info.getWindowId());
 
     BpartnerMiscData[] data = BpartnerMiscData.select(this, strBPartner);
-
     String strUserRep = "";
     if (data != null && data.length > 0) {
       strUserRep = SEOrderBPartnerData.userIdSalesRep(this, data[0].salesrepId);
-    }
-    if (StringUtils.isEmpty(strUserRep)) {
-      strUserRep = vars.getUser();
+      if (StringUtils.isEmpty(strUserRep)) {
+        strUserRep = info.vars.getUser();
+      }
     }
 
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_InOut_BPartner';\n\n");
-    resultado.append("var respuesta = new Array(");
-
+    // Business Partner Location
     FieldProvider[] tdv = null;
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
+      ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLEDIR",
           "C_BPartner_Location_ID", "", "C_BPartner Location - Ship To", Utility.getContext(this,
-              vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(this, vars,
-              "#User_Client", strWindowId), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
+              info.vars, "#AccessibleOrgTree", info.getWindowId()), Utility.getContext(this,
+              info.vars, "#User_Client", info.getWindowId()), 0);
+      Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
       tdv = comboTableData.select(false);
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-
-    resultado.append("new Array(\"inpcBpartnerLocationId\", ");
     if (tdv != null && tdv.length > 0) {
-      resultado.append("new Array(");
-
-      if (strLocation.isEmpty()) {
-        // If no location is provided, the first one is selected
-        resultado.append("new Array(\"" + tdv[0].getField("id") + "\", \""
-            + FormatUtilities.replaceJS(Replace.replace(tdv[0].getField("name"), "\"", "\\\""))
-            + "\", \"" + "true" + "\")");
-        if (tdv.length > 1) {
-          resultado.append(",\n");
-        }
-        for (int i = 1; i < tdv.length; i++) {
-          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(Replace.replace(tdv[i].getField("name"), "\"", "\\\""))
-              + "\", \"" + "false" + "\")");
-          if (i < tdv.length - 1) {
-            resultado.append(",\n");
-          }
-        }
-      } else {
-        // If a location is provided, it is selected
-        for (int i = 0; i < tdv.length; i++) {
-          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(Replace.replace(tdv[i].getField("name"), "\"", "\\\""))
-              + "\", \"" + (tdv[i].getField("id").equalsIgnoreCase(strLocation) ? "true" : "false")
-              + "\")");
-          if (i < tdv.length - 1) {
-            resultado.append(",\n");
-          }
-        }
+      info.addSelect("inpcBpartnerLocationId");
+      for (int i = 0; i < tdv.length; i++) {
+        // If a location is provided it is selected, else the first one is selected
+        boolean selected = (StringUtils.isEmpty(strLocation) && i == 0)
+            || (StringUtils.isNotEmpty(strLocation) && StringUtils.equalsIgnoreCase(
+                tdv[i].getField("id"), strLocation));
+        info.addSelectResult(tdv[i].getField("id"),
+            FormatUtilities.replaceJS(Replace.replace(tdv[i].getField("name"), "\"", "\\\"")),
+            selected);
       }
-      resultado.append("\n)");
+      info.endSelect();
     } else {
-      resultado.append("null");
+      info.addResult("inpcBpartnerLocationId", null);
     }
-    resultado.append("\n),");
-    resultado.append("new Array(\"inpsalesrepId\", ");
+
+    // Sales Representative
     FieldProvider[] tld = null;
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "SalesRep_ID",
-          "AD_User SalesRep", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "SEOrderBPartner"),
-          Utility.getContext(this, vars, "#User_Client", "SEOrderBPartner"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "SEOrderBPartner", "");
+      ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE", "SalesRep_ID",
+          "AD_User SalesRep", "", Utility.getReferenceableOrg(info.vars, strOrgId),
+          Utility.getContext(this, info.vars, "#User_Client", info.getWindowId()), 0);
+      Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
       tld = comboTableData.select(false);
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-
     if (tld != null && tld.length > 0) {
-      resultado.append("new Array(");
+      info.addSelect("inpsalesrepId");
       for (int i = 0; i < tld.length; i++) {
-        resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
-            + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
-            + (tld[i].getField("id").equalsIgnoreCase(strUserRep) ? "true" : "false") + "\")");
-        if (i < tld.length - 1)
-          resultado.append(",\n");
+        info.addSelectResult(tld[i].getField("id"),
+            FormatUtilities.replaceJS(tld[i].getField("name")),
+            StringUtils.equalsIgnoreCase(tld[i].getField("id"), strUserRep));
       }
-      resultado.append("\n)");
-    } else
-      resultado.append("null");
-    resultado.append("\n),");
-    resultado.append("new Array(\"inpcProjectId\", \"\"),");
-    resultado.append("new Array(\"inpcProjectId_R\", \"\"),");
+      info.endSelect();
+    } else {
+      info.addResult("inpsalesrepId", null);
+    }
+
+    // Project
+    info.addResult("inpcProjectId", null);
+
+    // Business Partner Contact
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_User_ID", "",
-          "AD_User C_BPartner User/Contacts", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              strWindowId), Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
+      ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLEDIR", "AD_User_ID",
+          "", "AD_User C_BPartner User/Contacts", Utility.getReferenceableOrg(info.vars, strOrgId),
+          Utility.getContext(this, info.vars, "#User_Client", info.getWindowId()), 0);
+      Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
       tdv = comboTableData.select(false);
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-
-    resultado.append("new Array(\"inpadUserId\", ");
     if (tdv != null && tdv.length > 0) {
-      resultado.append("new Array(");
-
-      if (strContact.isEmpty()) {
-        resultado.append("new Array(\"" + tdv[0].getField("id") + "\", \""
-            + FormatUtilities.replaceJS(Replace.replace(tdv[0].getField("name"), "\"", "\\\""))
-            + "\", \"" + "true" + "\")");
-        if (tdv.length > 1) {
-          resultado.append(",\n");
-        }
-        for (int i = 1; i < tdv.length; i++) {
-          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(Replace.replace(tdv[i].getField("name"), "\"", "\\\""))
-              + "\", \"" + "false" + "\")");
-          if (i < tdv.length - 1) {
-            resultado.append(",\n");
-          }
-        }
-      } else {
-        for (int i = 0; i < tdv.length; i++) {
-          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(Replace.replace(tdv[i].getField("name"), "\"", "\\\""))
-              + "\", \"" + (tdv[i].getField("id").equalsIgnoreCase(strContact) ? "true" : "false")
-              + "\")");
-          if (i < tdv.length - 1) {
-            resultado.append(",\n");
-          }
-        }
+      info.addSelect("inpadUserId");
+      for (int i = 0; i < tdv.length; i++) {
+        // If no contact is provided it is selected, else the first one is selected
+        boolean selected = (StringUtils.isEmpty(strContact) && i == 0)
+            || (StringUtils.isNotEmpty(strContact) && StringUtils.equalsIgnoreCase(
+                tdv[i].getField("id"), strContact));
+        info.addSelectResult(tdv[i].getField("id"),
+            FormatUtilities.replaceJS(Replace.replace(tdv[i].getField("name"), "\"", "\\\"")),
+            selected);
       }
-
-      resultado.append("\n)");
+      info.endSelect();
     } else {
-      resultado.append("null");
+      info.addResult("inpadUserId", null);
     }
-    resultado.append("\n)");
-    BusinessPartner bpartner = OBDal.getInstance().get(BusinessPartner.class, strBPartner);
-    if (StringUtils.isNotEmpty(bpartner.getDeliveryTerms())
-        && !StringUtils.equals(strDeliveryTerms, bpartner.getDeliveryTerms())) {
-      resultado.append(", new Array(\"inpdeliveryrule\", \"" + bpartner.getDeliveryTerms() + "\")");
-    }
-    if (StringUtils.isNotEmpty(bpartner.getDeliveryMethod())
-        && !StringUtils.equals(strDeliveryMethod, bpartner.getDeliveryMethod())) {
-      resultado.append(", new Array(\"inpdeliveryviarule\", \"" + bpartner.getDeliveryMethod()
-          + "\")");
-    }
-    final String rtvendorship = "273673D2ED914C399A6C51DB758BE0F9";
-    final String rMatReceipt = "123271B9AD60469BAE8A924841456B63";
-    String strwindow = vars.getStringParameter("inpwindowId");
-    String message = "";
-    if (!StringUtils.equals(strwindow, rtvendorship)
-        && !StringUtils.equals(strwindow, rMatReceipt)
-        && bpartner != null
-        && FIN_Utility.isBlockedBusinessPartner(bpartner.getId(),
-            StringUtils.equals(strIsSOTrx, "Y"), 2)) {
-      // If the Business Partner is blocked for this document, show an information message.
-      if (message.length() > 0) {
-        message = message + "<br>";
-      }
-      message = message + OBMessageUtils.messageBD("ThebusinessPartner") + " "
-          + bpartner.getIdentifier() + " " + OBMessageUtils.messageBD("BusinessPartnerBlocked");
-    }
-    if (data != null && data.length > 0
-        && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0
-        && strIsSOTrx.equals("Y")) {
-      String creditLimitExceed = "" + Double.parseDouble(data[0].creditavailable) * -1;
-      if (message.length() > 0) {
-        message = message + "<br>";
-      }
-      message = message + Utility.messageBD(this, "CreditLimitOver", vars.getLanguage())
-          + creditLimitExceed;
-    }
-    resultado.append(", new Array('MESSAGE', \"" + message + "\")");
 
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    // Delivery Rule
+    BusinessPartner bpartner = OBDal.getInstance().get(BusinessPartner.class, strBPartner);
+    if (bpartner != null) {
+      if (StringUtils.isNotEmpty(bpartner.getDeliveryTerms())
+          && !StringUtils.equals(strDeliveryTerms, bpartner.getDeliveryTerms())) {
+        info.addResult("inpdeliveryrule", bpartner.getDeliveryTerms());
+      }
+
+      // Delivery Via Rule
+      if (StringUtils.isNotEmpty(bpartner.getDeliveryMethod())
+          && !StringUtils.equals(strDeliveryMethod, bpartner.getDeliveryMethod())) {
+        info.addResult("inpdeliveryviarule", bpartner.getDeliveryMethod());
+      }
+
+      // If the Business Partner is blocked for this document, show an information message
+      final String rtvendorship = "273673D2ED914C399A6C51DB758BE0F9";
+      final String rMatReceipt = "123271B9AD60469BAE8A924841456B63";
+      final boolean isSOTrx = StringUtils.equals(strIsSOTrx, "Y");
+      String message = "";
+      if (!StringUtils.equals(info.getWindowId(), rtvendorship)
+          && !StringUtils.equals(info.getWindowId(), rMatReceipt)
+          && FIN_Utility.isBlockedBusinessPartner(strBPartner, isSOTrx, 2)) {
+        message = OBMessageUtils.messageBD("ThebusinessPartner") + " " + bpartner.getIdentifier()
+            + " " + OBMessageUtils.messageBD("BusinessPartnerBlocked");
+      }
+
+      // If the Business Partner has negative credit available, show an information message
+      if (data != null && data.length > 0 && isSOTrx
+          && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0) {
+        String creditLimitExceed = String.valueOf(Double.parseDouble(data[0].creditavailable) * -1);
+        if (StringUtils.isNotEmpty(message)) {
+          message = message + "<br>";
+        }
+        message = message + Utility.messageBD(this, "CreditLimitOver", info.vars.getLanguage())
+            + creditLimitExceed;
+      }
+
+      if (StringUtils.isNotEmpty(message)) {
+        info.showMessage(message);
+      }
+    }
+
   }
 }

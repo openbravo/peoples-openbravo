@@ -11,270 +11,166 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.BpartnerMiscData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
-import org.openbravo.xmlEngine.XmlDocument;
 
-public class SE_Project_BPartner extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SE_Project_BPartner extends SimpleCallout {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
-      String strBPartner = vars.getStringParameter("inpcBpartnerId");
-      String strLocation = vars.getStringParameter("inpcBpartnerId_LOC");
-      String strContact = vars.getStringParameter("inpcBpartnerId_CON");
-      String strWindowId = vars.getStringParameter("inpwindowId");
-      String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
-
-      try {
-        printPage(response, vars, strBPartner, strIsSOTrx, strWindowId, strLocation, strContact);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
-      String strIsSOTrx, String strWindowId, String strLocation, String strContact)
-      throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    String strPaymentrule, strPaymentterm, strPricelist, strPaymentMethod, strUserRep;
-    strPaymentrule = strPaymentterm = strPricelist = strPaymentMethod = strUserRep = "";
-    BpartnerMiscData[] data = BpartnerMiscData.select(this, strBPartner);
-    if (data != null && data.length > 0) {
-      strPaymentrule = (strIsSOTrx.equals("Y") ? data[0].paymentrule : data[0].paymentrulepo);
-      strPaymentterm = (strIsSOTrx.equals("Y") ? data[0].cPaymenttermId : data[0].poPaymenttermId);
-      strPricelist = (strIsSOTrx.equals("Y") ? data[0].mPricelistId : data[0].poPricelistId);
-      strPaymentMethod = (strIsSOTrx.equals("Y") ? data[0].finPaymentmethodId
-          : data[0].poPaymentmethodId);
-      strUserRep = SEOrderBPartnerData.userIdSalesRep(this, data[0].salesrepId);
-      strUserRep = strUserRep.equals("") ? vars.getStringParameter("inpsalesrepId") : strUserRep;
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
     }
 
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SE_Project_BPartner';\n\n");
-    resultado.append("var respuesta = new Array(");
+    // Parameters
+    String strBPartner = info.getStringParameter("inpcBpartnerId", IsIDFilter.instance);
+    String strLocation = info.getStringParameter("inpcBpartnerId_LOC", IsIDFilter.instance);
+    String strContact = info.getStringParameter("inpcBpartnerId_CON", IsIDFilter.instance);
+    String strSalesRep = info.getStringParameter("inpsalesrepId", IsIDFilter.instance);
+    String strOrgId = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
+    String strIsSOTrx = Utility.getContext(this, info.vars, "isSOTrx", info.getWindowId());
+    boolean isSales = StringUtils.equals(strIsSOTrx, "Y");
+
+    // Business Partner Data
+    BpartnerMiscData[] data = BpartnerMiscData.select(this, strBPartner);
+    String strPaymentrule = "", strPaymentterm = "", strPricelist = "", strPaymentMethod = "", strUserRep = "";
+    if (data != null && data.length > 0) {
+      strPaymentrule = isSales ? data[0].paymentrule : data[0].paymentrulepo;
+      strPaymentterm = isSales ? data[0].cPaymenttermId : data[0].poPaymenttermId;
+      strPricelist = isSales ? data[0].mPricelistId : data[0].poPricelistId;
+      strPaymentMethod = isSales ? data[0].finPaymentmethodId : data[0].poPaymentmethodId;
+      strUserRep = SEOrderBPartnerData.userIdSalesRep(this, data[0].salesrepId);
+      strUserRep = StringUtils.isEmpty(strUserRep) ? strSalesRep : strUserRep;
+    }
+
+    // Business Partner - Ship To Address
     FieldProvider[] tdv = null;
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_PriceList_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
-          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
-      tdv = comboTableData.select(false);
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-
-    try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
+      ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLEDIR",
           "C_BPartner_Location_ID", "", "C_BPartner Location - Ship To", Utility.getContext(this,
-              vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(this, vars,
-              "#User_Client", strWindowId), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
+              info.vars, "#AccessibleOrgTree", info.getWindowId()), Utility.getContext(this,
+              info.vars, "#User_Client", info.getWindowId()), 0);
+      Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
       tdv = comboTableData.select(false);
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-
-    resultado.append("new Array(\"inpcBpartnerLocationId\", ");
     if (tdv != null && tdv.length > 0) {
-      resultado.append("new Array(");
-      if (strLocation.isEmpty()) {
-        // If no location is provided, the first one is selected
-        if (tdv.length > 0) {
-          resultado.append("new Array(\"" + tdv[0].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tdv[0].getField("name")) + "\", \"" + "true" + "\")");
-          if (tdv.length > 1) {
-            resultado.append(",\n");
-          }
-        }
-        for (int i = 1; i < tdv.length; i++) {
-          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \"" + "false" + "\")");
-          if (i < tdv.length - 1) {
-            resultado.append(",\n");
-          }
-        }
-      } else {
-        // If a location is provided, it is selected
-        for (int i = 0; i < tdv.length; i++) {
-          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \""
-              + (tdv[i].getField("id").equalsIgnoreCase(strLocation) ? "true" : "false") + "\")");
-          if (i < tdv.length - 1) {
-            resultado.append(",\n");
-          }
-        }
+      info.addSelect("inpcBpartnerLocationId");
+      // If location is provided it is selected, else the first one is selected
+      for (int i = 0; i < tdv.length; i++) {
+        info.addSelectResult(
+            tdv[i].getField("id"),
+            FormatUtilities.replaceJS(tdv[i].getField("name")),
+            (StringUtils.isEmpty(strLocation) && i == 0)
+                || (StringUtils.isNotEmpty(strLocation) && StringUtils.equalsIgnoreCase(
+                    tdv[i].getField("id"), strLocation)));
       }
-      resultado.append("\n)");
-
+      info.endSelect();
     } else {
-      resultado.append("null");
+      info.addResult("inpcBpartnerLocationId", null);
     }
-    resultado.append("\n),");
 
     // Sales Representative
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-          "AD_User SalesRep", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(
-              this, vars, "#User_Client", strWindowId), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
+      ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE", "",
+          "AD_User SalesRep", "", Utility.getReferenceableOrg(info.vars, strOrgId),
+          Utility.getContext(this, info.vars, "#User_Client", info.getWindowId()), 0);
+      Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
       tdv = comboTableData.select(false);
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-
-    resultado.append("new Array(\"inpsalesrepId\", ");
     if (tdv != null && tdv.length > 0) {
-      resultado.append("new Array(");
+      info.addSelect("inpsalesrepId");
       for (int i = 0; i < tdv.length; i++) {
-        resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-            + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \""
-            + (tdv[i].getField("id").equalsIgnoreCase(strUserRep) ? "true" : "false") + "\")");
-        if (i < tdv.length - 1) {
-          resultado.append(",\n");
-        }
+        info.addSelectResult(tdv[i].getField("id"),
+            FormatUtilities.replaceJS(tdv[i].getField("name")),
+            StringUtils.equalsIgnoreCase(tdv[i].getField("id"), strUserRep));
       }
-      resultado.append("\n)");
+      info.endSelect();
     } else {
-      resultado.append("null");
+      info.addResult("inpsalesrepId", null);
     }
-    resultado.append("\n),");
 
+    // Business Partner - User/Contacts
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_User_ID", "",
-          "AD_User C_BPartner User/Contacts", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              strWindowId), Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
+      ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLEDIR", "AD_User_ID",
+          "", "AD_User C_BPartner User/Contacts", Utility.getReferenceableOrg(info.vars, strOrgId),
+          Utility.getContext(this, info.vars, "#User_Client", info.getWindowId()), 0);
+      Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
       tdv = comboTableData.select(false);
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-
-    resultado.append("new Array(\"inpadUserId\", ");
     if (tdv != null && tdv.length > 0) {
-      resultado.append("new Array(");
-
-      if (strContact.isEmpty()) {
-        resultado.append("new Array(\"" + tdv[0].getField("id") + "\", \""
-            + FormatUtilities.replaceJS(tdv[0].getField("name")) + "\", \"" + "true" + "\")");
-        if (tdv.length > 1) {
-          resultado.append(",\n");
-        }
-        for (int i = 1; i < tdv.length; i++) {
-          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \"" + "false" + "\")");
-          if (i < tdv.length - 1) {
-            resultado.append(",\n");
-          }
-        }
-      } else {
-        for (int i = 0; i < tdv.length; i++) {
-          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \""
-              + (tdv[i].getField("id").equalsIgnoreCase(strContact) ? "true" : "false") + "\")");
-          if (i < tdv.length - 1) {
-            resultado.append(",\n");
-          }
-        }
+      info.addSelect("inpadUserId");
+      // If contact is provided it is selected, else the first one is selected
+      for (int i = 0; i < tdv.length; i++) {
+        info.addSelectResult(
+            tdv[i].getField("id"),
+            FormatUtilities.replaceJS(tdv[i].getField("name")),
+            (StringUtils.isEmpty(strContact) && i == 0)
+                || (StringUtils.isNotEmpty(strContact) && StringUtils.equalsIgnoreCase(
+                    tdv[i].getField("id"), strContact)));
       }
+      info.endSelect();
+    } else {
+      info.addResult("inpadUserId", null);
+    }
 
-      resultado.append("\n)");
-    } else
-      resultado.append("null");
-    resultado.append("\n),");
+    // Business Partner - Bill To Address
     FieldProvider[] tlv = null;
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-          "C_BPartner Location", "C_BPartner Location - Bill To", Utility.getContext(this, vars,
-              "#AccessibleOrgTree", strWindowId), Utility.getContext(this, vars, "#User_Client",
-              strWindowId), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
+      ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE", "",
+          "C_BPartner Location", "C_BPartner Location - Bill To", Utility.getContext(this,
+              info.vars, "#AccessibleOrgTree", info.getWindowId()), Utility.getContext(this,
+              info.vars, "#User_Client", info.getWindowId()), 0);
+      Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
       tlv = comboTableData.select(false);
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-
-    resultado.append("new Array(\"inpbilltoId\", ");
     if (tlv != null && tlv.length > 0) {
-      resultado.append("new Array(");
-
-      if (strLocation.isEmpty()) {
-        if (tlv.length > 0) {
-          resultado.append("new Array(\"" + tlv[0].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tlv[0].getField("name")) + "\", \"" + "true" + "\")");
-          if (tlv.length > 1) {
-            resultado.append(",\n");
-          }
-        }
-        for (int i = 1; i < tlv.length; i++) {
-          resultado.append("new Array(\"" + tlv[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tlv[i].getField("name")) + "\", \"" + "false" + "\")");
-          if (i < tlv.length - 1)
-            resultado.append(",\n");
-        }
-      } else {
-        for (int i = 0; i < tlv.length; i++) {
-          resultado.append("new Array(\"" + tlv[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tlv[i].getField("name")) + "\", \""
-              + (tlv[i].getField("id").equalsIgnoreCase(strLocation) ? "true" : "false") + "\")");
-          if (i < tlv.length - 1)
-            resultado.append(",\n");
-        }
+      info.addSelect("inpbilltoId");
+      // If location is provided it is selected, else the first one is selected
+      for (int i = 0; i < tlv.length; i++) {
+        info.addSelectResult(
+            tlv[i].getField("id"),
+            FormatUtilities.replaceJS(tlv[i].getField("name")),
+            (StringUtils.isEmpty(strLocation) && i == 0)
+                || (StringUtils.isNotEmpty(strLocation) && StringUtils.equalsIgnoreCase(
+                    tdv[i].getField("id"), strLocation)));
       }
-      resultado.append("\n)");
-    } else
-      resultado.append("null");
-    resultado.append("\n),");
-    resultado.append("new Array(\"inppaymentrule\", \"" + strPaymentrule + "\"),");
-    resultado.append("new Array(\"inpcPaymenttermId\", \"" + strPaymentterm + "\"),");
-    resultado.append("new Array(\"inpmPricelistId\", \"" + strPricelist + "\"),");
-    resultado.append("new Array(\"inpfinPaymentmethodId\", \"" + strPaymentMethod + "\")");
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+      info.endSelect();
+    } else {
+      info.addResult("inpbilltoId", null);
+    }
+
+    // Payment Rule, Payment Term, Price List, Payment Method
+    info.addResult("inppaymentrule", strPaymentrule);
+    info.addResult("inpcPaymenttermId", strPaymentterm);
+    info.addResult("inpmPricelistId", strPricelist);
+    info.addResult("inpfinPaymentmethodId", strPaymentMethod);
   }
 }

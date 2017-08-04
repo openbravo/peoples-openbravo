@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,196 +19,82 @@
 
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
+import org.apache.commons.lang.StringUtils;
 
-public class SL_MachineCost extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_MachineCost extends SimpleCallout {
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
+    }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
-      String strPurchaseAmt = vars.getNumericParameter("inppurchaseamt");
-      String strToolsetAmt = vars.getNumericParameter("inptoolsetamt");
-      String strYearValue = vars.getNumericParameter("inpyearvalue");
-      String strAmortization = vars.getNumericParameter("inpamortization");
-      String strDaysYear = vars.getNumericParameter("inpdaysyear");
-      String strDayHours = vars.getNumericParameter("inpdayhours");
-      String strImproductiveHoursYear = vars.getNumericParameter("inpimproductivehoursyear");
-      String strCostUomYear = vars.getNumericParameter("inpcostuomyear");
-      String strCost = vars.getNumericParameter("inpcost");
-      String strCostUom = vars.getStringParameter("inpcostuom");
-      try {
-        printPage(response, vars, strChanged, strPurchaseAmt, strToolsetAmt, strYearValue,
-            strAmortization, strDaysYear, strDayHours, strImproductiveHoursYear, strCostUomYear,
-            strCost, strCostUom);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
+    // Parameters
+    BigDecimal fPurchaseAmt = info.getBigDecimalParameter("inppurchaseamt");
+    BigDecimal fToolsetAmt = info.getBigDecimalParameter("inptoolsetamt");
+    BigDecimal fYearValue = info.getBigDecimalParameter("inpyearvalue");
+    BigDecimal fAmortization = info.getBigDecimalParameter("inpamortization");
+    BigDecimal fDaysYear = info.getBigDecimalParameter("inpdaysyear");
+    BigDecimal fDayHours = info.getBigDecimalParameter("inpdayhours");
+    BigDecimal fImproductiveHoursYear = info.getBigDecimalParameter("inpimproductivehoursyear");
+    BigDecimal fCostUomYear = info.getBigDecimalParameter("inpcostuomyear");
+    BigDecimal fCost = info.getBigDecimalParameter("inpcost");
+    String strCostUom = info.getStringParameter("inpcostuom");
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
-      String strPurchaseAmt, String strToolsetAmt, String strYearValue, String strAmortization,
-      String strDaysYear, String strDayHours, String strImproductiveHoursYear,
-      String strCostUomYear, String strCost, String strCostUom) throws IOException,
-      ServletException {
-    String localStrYearValue = strYearValue;
-    String localStrImproductiveHoursYear = strImproductiveHoursYear;
-    String localStrCostUomYear = strCostUomYear;
-    String localStrCost = strCost;
-    String localStrAmortization = strAmortization;
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    if (StringUtils.equals(strChanged, "inppurchaseamt")
+        || StringUtils.equals(strChanged, "inptoolsetamt")
+        || StringUtils.equals(strChanged, "inpyearvalue")) {
+      // Calculate Amortization, Cost
+      fAmortization = fYearValue.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : (fPurchaseAmt
+          .add(fToolsetAmt)).divide(fYearValue, 12, BigDecimal.ROUND_HALF_EVEN);
+      fCost = fCostUomYear.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : fYearValue.divide(
+          fCostUomYear, 12, BigDecimal.ROUND_HALF_EVEN);
 
-    if (strChanged.equals("inppurchaseamt") || strChanged.equals("inptoolsetamt")
-        || strChanged.equals("inpyearvalue")) {
-      if (strPurchaseAmt != null && !strPurchaseAmt.equals("") && strToolsetAmt != null
-          && !strToolsetAmt.equals("") && localStrYearValue != null
-          && !localStrYearValue.equals("")) {
-        BigDecimal fPurchaseAmt = new BigDecimal(strPurchaseAmt);
-        BigDecimal fToolsetAmt = new BigDecimal(strToolsetAmt);
-        BigDecimal fYearValue = new BigDecimal(localStrYearValue);
-        BigDecimal fAmortization = (fPurchaseAmt.add(fToolsetAmt)).divide(fYearValue, 12,
-            BigDecimal.ROUND_HALF_EVEN);
-        localStrAmortization = fAmortization.toString();
+    } else if (StringUtils.equals(strChanged, "inpamortization")) {
+      // Calculate Value per Year, Cost
+      fYearValue = fAmortization.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : (fPurchaseAmt
+          .add(fToolsetAmt)).divide(fAmortization, 12, BigDecimal.ROUND_HALF_EVEN);
+      fCost = fCostUomYear.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : fYearValue.divide(
+          fCostUomYear, 12, BigDecimal.ROUND_HALF_EVEN);
 
-        if (localStrCostUomYear != null && !localStrCostUomYear.equals("")) {
-          BigDecimal fCostUomYear = new BigDecimal(localStrCostUomYear);
-          BigDecimal fCost = fYearValue.divide(fCostUomYear, 12, BigDecimal.ROUND_HALF_EVEN);
-          localStrCost = fCost.toPlainString();
-        }
-      }
-    } else if (strChanged.equals("inpamortization")) {
-      if (strPurchaseAmt != null && !strPurchaseAmt.equals("") && strToolsetAmt != null
-          && !strToolsetAmt.equals("") && localStrAmortization != null
-          && !localStrAmortization.equals("")) {
-        BigDecimal fPurchaseAmt = new BigDecimal(strPurchaseAmt);
-        BigDecimal fToolsetAmt = new BigDecimal(strToolsetAmt);
-        BigDecimal fAmortization = new BigDecimal(localStrAmortization);
-        BigDecimal fYearValue = (fPurchaseAmt.add(fToolsetAmt)).divide(fAmortization, 12,
-            BigDecimal.ROUND_HALF_EVEN);
-        localStrYearValue = fYearValue.toPlainString();
-
-        if (localStrCostUomYear != null && !localStrCostUomYear.equals("")) {
-          BigDecimal fCostUomYear = new BigDecimal(localStrCostUomYear);
-          BigDecimal fCost = fYearValue.divide(fCostUomYear, 12, BigDecimal.ROUND_HALF_EVEN);
-          localStrCost = fCost.toPlainString();
-        }
-      }
-    } else if (strChanged.equals("inpdaysyear") || strChanged.equals("inpdayhours")
+    } else if (StringUtils.equals(strChanged, "inpdaysyear")
+        || StringUtils.equals(strChanged, "inpdayhours")
         || strChanged.equals("inpimproductivehoursyear")) {
-      if (strDaysYear != null && !strDaysYear.equals("") && strDayHours != null
-          && !strDayHours.equals("") && localStrImproductiveHoursYear != null
-          && !localStrImproductiveHoursYear.equals("")) {
-        BigDecimal fDaysYear = new BigDecimal(strDaysYear);
-        BigDecimal fDayHours = new BigDecimal(strDayHours);
-        BigDecimal fImproductiveHoursYear = new BigDecimal(localStrImproductiveHoursYear);
-        BigDecimal fCostUomYear = (fDaysYear.multiply(fDayHours)).subtract(fImproductiveHoursYear);
-        localStrCostUomYear = fCostUomYear.toPlainString();
+      // Calculate UOM Annual Cost, Cost
+      fCostUomYear = (fDaysYear.multiply(fDayHours)).subtract(fImproductiveHoursYear);
+      fCost = fCostUomYear.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : fYearValue.divide(
+          fCostUomYear, 12, BigDecimal.ROUND_HALF_EVEN);
 
-        if (localStrYearValue != null && !localStrYearValue.equals("")) {
-          BigDecimal fYearValue = new BigDecimal(localStrYearValue);
-          BigDecimal fCost = fYearValue.divide(fCostUomYear, 12, BigDecimal.ROUND_HALF_EVEN);
-          localStrCost = fCost.toPlainString();
-        }
+    } else if (StringUtils.equals(strChanged, "inpcostuomyear")) {
+      // Calculate Productive Hours per Year, Cost
+      if (strCostUom.equals("H")) {
+        fImproductiveHoursYear = (fDaysYear.multiply(fDayHours)).subtract(fCostUomYear);
       }
-    } else if (strChanged.equals("inpcostuomyear")) {
-      if (strCostUom.equals("H"))
-        if (strDaysYear != null && !strDaysYear.equals("") && strDayHours != null
-            && !strDayHours.equals("") && localStrCostUomYear != null
-            && !localStrCostUomYear.equals("")) {
-          BigDecimal fDaysYear = new BigDecimal(strDaysYear);
-          BigDecimal fDayHours = new BigDecimal(strDayHours);
-          BigDecimal fCostUomYear = new BigDecimal(localStrCostUomYear);
-          BigDecimal fImproductiveHoursYear = (fDaysYear.multiply(fDayHours))
-              .subtract(fCostUomYear);
-          localStrImproductiveHoursYear = fImproductiveHoursYear.toPlainString();
-        }
-      if (localStrYearValue != null && !localStrYearValue.equals("") && localStrCostUomYear != null
-          && !localStrCostUomYear.equals("")) {
-        BigDecimal fYearValue = new BigDecimal(localStrYearValue);
-        BigDecimal fCostUomYear = new BigDecimal(localStrCostUomYear);
-        BigDecimal fCost = fYearValue.divide(fCostUomYear, 12, BigDecimal.ROUND_HALF_EVEN);
-        localStrCost = fCost.toPlainString();
-      }
-    } else if (strChanged.equals("inpcost")) {
-      if (localStrCost != null && !localStrCost.equals("") && localStrCostUomYear != null
-          && !localStrCostUomYear.equals("")) {
-        BigDecimal fCostUomYear = new BigDecimal(localStrCostUomYear);
-        BigDecimal fCost = new BigDecimal(localStrCost);
-        BigDecimal fYearValue = fCost.multiply(fCostUomYear);
-        localStrYearValue = fYearValue.toPlainString();
+      fCost = fCostUomYear.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : fYearValue.divide(
+          fCostUomYear, 12, BigDecimal.ROUND_HALF_EVEN);
 
-        if (strPurchaseAmt != null && !strPurchaseAmt.equals("") && strToolsetAmt != null
-            && !strToolsetAmt.equals("")) {
-          BigDecimal fPurchaseAmt = new BigDecimal(strPurchaseAmt);
-          BigDecimal fToolsetAmt = new BigDecimal(strToolsetAmt);
-          BigDecimal fAmortization = (fPurchaseAmt.add(fToolsetAmt)).divide(fYearValue, 12,
-              BigDecimal.ROUND_HALF_EVEN);
-          localStrAmortization = fAmortization.toPlainString();
-        }
-      }
+    } else if (StringUtils.equals(strChanged, "inpcost")) {
+      // Calculate Value per Year, Amortization
+      fYearValue = fCost.multiply(fCostUomYear);
+      fAmortization = fYearValue.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : (fPurchaseAmt
+          .add(fToolsetAmt)).divide(fYearValue, 12, BigDecimal.ROUND_HALF_EVEN);
     }
 
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_MachineCost';\n\n");
-    resultado.append("var respuesta = new Array(");
-    if (!"".equals(strPurchaseAmt) && strPurchaseAmt != null) {
-      resultado.append("new Array(\"inppurchaseamt\", " + strPurchaseAmt + "),\n");
-    }
-    if (!"".equals(strToolsetAmt) && strToolsetAmt != null) {
-      resultado.append("new Array(\"inptoolsetamt\", " + strToolsetAmt + "),\n");
-    }
-    if (!"".equals(localStrYearValue) && localStrYearValue != null) {
-      resultado.append("new Array(\"inpyearvalue\", " + localStrYearValue + "),\n");
-    }
-    if (!"".equals(localStrAmortization) && localStrAmortization != null) {
-      resultado.append("new Array(\"inpamortization\", " + localStrAmortization + "), \n");
-    }
-    if (!"".equals(strDaysYear) && strDaysYear != null) {
-      resultado.append("new Array(\"inpdaysyear\", " + strDaysYear + "),\n");
-    }
-    if (!"".equals(strDayHours) && strDayHours != null) {
-      resultado.append("new Array(\"inpdayhours\", " + strDayHours + "),\n");
-    }
-    if (!"".equals(localStrImproductiveHoursYear) && localStrImproductiveHoursYear != null) {
-      resultado.append("new Array(\"inpimproductivehoursyear\", " + localStrImproductiveHoursYear
-          + "),\n");
-    }
-    if (!"".equals(localStrCostUomYear) && localStrCostUomYear != null) {
-      resultado.append("new Array(\"inpcostuomyear\", " + localStrCostUomYear + "),\n");
-    }
-    if (!"".equals(localStrCost) && localStrCost != null) {
-      resultado.append("new Array(\"inpcost\", " + localStrCost + ") \n");
-    }
-    resultado.append(");\n");
-    xmlDocument.setParameter("array", resultado.toString());
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    // Set Purchase Amount, ToolSetAmount, Value per Year, Amortization, Hours per Day,
+    // ProductiveHours per Year, UOM Annual Cost, Cost
+    info.addResult("inppurchaseamt", fPurchaseAmt);
+    info.addResult("inptoolsetamt", fToolsetAmt);
+    info.addResult("inpyearvalue", fYearValue);
+    info.addResult("inpamortization", fAmortization);
+    info.addResult("inpdaysyear", fDaysYear);
+    info.addResult("inpdayhours", fDayHours);
+    info.addResult("inpimproductivehoursyear", fImproductiveHoursYear);
+    info.addResult("inpcostuomyear", fCostUomYear);
+    info.addResult("inpcost", fCost);
   }
 }

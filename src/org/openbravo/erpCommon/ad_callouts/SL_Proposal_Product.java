@@ -11,80 +11,41 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.utils.FormatUtilities;
-import org.openbravo.xmlEngine.XmlDocument;
 
-public class SL_Proposal_Product extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+public class SL_Proposal_Product extends SimpleCallout {
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
-      String strPriceStd = vars.getNumericParameter("inpmProductId_PSTD");
-      String strTabId = vars.getStringParameter("inpTabId");
-      String strmProductId = vars.getStringParameter("inpmProductId");
-      try {
-        printPage(response, vars, strPriceStd, strTabId, strmProductId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strPriceStd,
-      String strTabId, String strmProductId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    StringBuffer resultado = new StringBuffer();
-    SLProposalProductData[] data = null;
-    if (strmProductId != null && !strmProductId.equals("")) {
-      data = SLProposalProductData.select(this, strmProductId);
-    } else {
-      data = SLProposalProductData.set();
+    String strChanged = info.getLastFieldChanged();
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("CHANGED: " + strChanged);
     }
-    resultado.append("var calloutName='SL_Proposal_Product';\n\n");
-    resultado.append("var respuesta = new Array(");
-    if (log4j.isDebugEnabled())
-      log4j.debug("strPriceStd*******************" + strPriceStd);
-    resultado.append("new Array(\"inpprice\", " + (strPriceStd.equals("") ? "0" : strPriceStd)
-        + "),");
-    resultado.append("new Array(\"inpproductValue\", \"" + FormatUtilities.replaceJS(data[0].value)
-        + "\"),\n");
-    resultado.append("new Array(\"inpproductName\", \"" + FormatUtilities.replaceJS(data[0].name)
-        + "\"),\n");
-    resultado.append("new Array(\"inpproductDescription\", \""
-        + FormatUtilities.replaceJS(data[0].description) + "\")");
 
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    // Parameters
+    String strmProductId = info.getStringParameter("inpmProductId", IsIDFilter.instance);
+    BigDecimal priceStd = info.getBigDecimalParameter("inpmProductId_PSTD");
+
+    // Get Product Search Key, Name, Description and Set in Proposal
+    SLProposalProductData[] data = StringUtils.isNotEmpty(strmProductId) ? SLProposalProductData
+        .select(this, strmProductId) : SLProposalProductData.set();
+    info.addResult("inpprice", priceStd);
+    info.addResult("inpproductValue", FormatUtilities.replaceJS(data[0].value));
+    info.addResult("inpproductName", FormatUtilities.replaceJS(data[0].name));
+    info.addResult("inpproductDescription", FormatUtilities.replaceJS(data[0].description));
   }
 }
