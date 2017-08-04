@@ -45,12 +45,12 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
       boolean useContains = true;
       try {
         OBContext.setAdminMode(false);
-        useContains = "Y".equals(Preferences.getPreferenceValue(
-            "OBPOS_remote.receipt_usesContains", true, OBContext.getOBContext().getCurrentClient(),
-            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-            OBContext.getOBContext().getRole(), null));
+        useContains = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.order_usesContains",
+            true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                .getOBContext().getRole(), null));
       } catch (PropertyException e) {
-        log.error("Error getting preference OBPOS_remote.receipt_usesContains " + e.getMessage(), e);
+        log.error("Error getting preference OBPOS_remote.order_usesContains " + e.getMessage(), e);
       } finally {
         OBContext.restorePreviousMode();
       }

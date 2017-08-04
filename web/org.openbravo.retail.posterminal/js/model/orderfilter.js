@@ -14,7 +14,7 @@
   OB.Model.OrderFilter = OB.Data.ExtensibleModel.extend({
     source: 'org.openbravo.retail.posterminal.PaidReceiptsFilter',
     dataLimit: OB.Dal.DATALIMIT,
-    remote: 'OBPOS_remote.receipt'
+    remote: 'OBPOS_remote.order'
   });
 
   OB.Model.OrderFilter.addProperties([{
