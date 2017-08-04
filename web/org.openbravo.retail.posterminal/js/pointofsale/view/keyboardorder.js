@@ -259,6 +259,8 @@ enyo.kind({
               } else {
                 actionAddProduct(keyboard, toadd);
               }
+            } else {
+              keyboard.clearInput();
             }
           });
           keyboard.receipt.set('multipleUndo', null);
