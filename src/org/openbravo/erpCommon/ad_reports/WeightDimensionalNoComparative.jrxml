@@ -370,6 +370,7 @@
 					</box>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[($V{CONVAMOUNT_TOTAL}!=null)?$V{CONVAMOUNT_TOTAL}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<line>
 					<reportElement key="line-5" x="0" y="1" width="729" height="1" uuid="fed11dc1-1ca8-4a42-920b-03df2aa93a5c"/>
@@ -396,6 +397,7 @@
 					</box>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[($V{QUANTITY_TOTAL}!=null)?$V{QUANTITY_TOTAL}:BigDecimal.ZERO]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement key="textField-97" style="Detail_Header" positionType="FixRelativeToBottom" x="0" y="2" width="15" height="18" uuid="4573afd8-2426-48da-b29c-0e225b939b68"/>

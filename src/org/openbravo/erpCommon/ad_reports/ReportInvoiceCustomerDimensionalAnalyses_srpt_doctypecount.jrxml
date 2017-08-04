@@ -3,6 +3,7 @@
 <!-- 2017-02-23T10:42:31 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportInvoiceCustomerDimensionalAnalyses_srpt_doctypecount" pageWidth="400" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="400" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Error" uuid="dcc54a6a-4fa7-4363-918c-1e721f63d8f0">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="si"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
 	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#5D5D5D" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="9" isBold="true"/>
 	<style name="Detail_Line" fontName="Bitstream Vera Sans" fontSize="8" isBold="true">
 		<conditionalStyle>
@@ -145,7 +146,7 @@
 				<textElement textAlignment="Left">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{doctypecount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[Integer.parseInt($F{doctypecount})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="Detail_Line" x="0" y="0" width="350" height="14" uuid="d4593cb6-8fa6-4f11-a6e1-d62b345662af">
