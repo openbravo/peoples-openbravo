@@ -97,8 +97,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         ordersNotPaid.remove(orderToRemove);
       });
 
-      //removing Orders with GiftCard lines without mandatory fields filled
-      OB.UTIL.HookManager.executeHooks('OBPOS_CheckGiftCardMandatoryFields', {
+      //removing Orders lines without mandatory fields filled
+      OB.UTIL.HookManager.executeHooks('OBPOS_CheckReceiptMandatoryFields', {
         orders: ordersNotPaid.models
       }, function (args) {
         _.each(args.removeOrderList, function (orderToRemove) {
