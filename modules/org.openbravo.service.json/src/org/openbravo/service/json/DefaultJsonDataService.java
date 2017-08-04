@@ -1130,13 +1130,12 @@ public class DefaultJsonDataService implements JsonDataService {
 
   protected String doPostAction(Map<String, String> parameters, String content,
       DataSourceAction action, String originalObject) {
-
-    // Clear session to prevent slow flush if a fetch is done
-    if (action.name().equals("FETCH")) {
+    if (action == DataSourceAction.FETCH) {
+      // Clear session to prevent slow flush
       OBDal.getInstance().getSession().clear();
+    } else {
+      OBDal.getInstance().flush();
     }
-
-    OBDal.getInstance().flush();
 
     try {
       // this gets the data before the insert, so that it can be used
