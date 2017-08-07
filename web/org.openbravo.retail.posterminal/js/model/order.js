@@ -4144,7 +4144,7 @@
                   if (!promotion.hidden) {
                     clonedPromotion.amt = OB.DEC.toNumber(OB.DEC.toBigDecimal(promotion.amt * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)));
                     clonedPromotion.fullAmt = OB.DEC.toNumber(OB.DEC.toBigDecimal(clonedPromotion.amt));
-                    clonedPromotion.displayedTotalAmount = OB.DEC.toNumber(OB.DEC.toBigDecimal(promotion.displayedTotalAmount * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)));
+                    clonedPromotion.displayedTotalAmount = OB.DEC.toNumber(OB.DEC.toBigDecimal((promotion.displayedTotalAmount || 0) * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)));
                   } else {
                     clonedPromotion.amt = 0;
                   }
