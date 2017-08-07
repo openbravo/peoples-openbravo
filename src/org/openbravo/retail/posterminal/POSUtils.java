@@ -402,7 +402,7 @@ public class POSUtils {
           }
         }
       } catch (Exception e) {
-        e.printStackTrace();
+        log.error("Error while parsing jsonData", e);
         // If not parseable, we continue
       }
     }
@@ -496,7 +496,7 @@ public class POSUtils {
           }
         }
       } catch (Exception e) {
-        e.printStackTrace();
+        log.error("Error while parsing jsonData", e);
         // If not parseable, we continue
       }
     }
@@ -587,7 +587,7 @@ public class POSUtils {
           }
         }
       } catch (Exception e) {
-        e.printStackTrace();
+        log.error("Error while parsing jsonData", e);
         // If not parseable, we continue
       }
     }

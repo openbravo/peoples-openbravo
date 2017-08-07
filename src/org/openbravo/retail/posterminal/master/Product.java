@@ -103,7 +103,7 @@ public class Product extends ProcessHQLQuery {
         args.put("multiPriceList", false);
       }
     } catch (JSONException e) {
-      e.printStackTrace();
+      log.error("Error while getting multiPriceList", e);
     }
 
     try {
@@ -249,7 +249,7 @@ public class Product extends ProcessHQLQuery {
         args.put("multiPriceList", false);
       }
     } catch (JSONException e) {
-      e.printStackTrace();
+      log.error("Error while getting multiPriceList", e);
     }
 
     try {

@@ -2,6 +2,7 @@ package org.openbravo.retail.posterminal.term;
 
 import javax.servlet.ServletException;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
@@ -11,6 +12,8 @@ import org.openbravo.retail.posterminal.POSConstants;
 import org.openbravo.service.json.JsonConstants;
 
 public class Labels extends JSONProcessSimple {
+
+  public static final Logger log = Logger.getLogger(Labels.class);
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -31,7 +34,7 @@ public class Labels extends JSONProcessSimple {
       result.put("result", "0");
       return result;
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error("Error while getting labels", e);
       return null;
     } finally {
       OBContext.restorePreviousMode();

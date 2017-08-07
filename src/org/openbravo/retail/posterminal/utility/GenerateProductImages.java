@@ -159,7 +159,7 @@ public class GenerateProductImages extends DalBaseProcess {
       bundle.setResult(msg);
 
     } catch (final Exception e) {
-      e.printStackTrace(System.err);
+      log4j.error("Error in generate product images", e);
       final OBError msg = new OBError();
       msg.setType("Error");
       msg.setMessage(e.getMessage());
