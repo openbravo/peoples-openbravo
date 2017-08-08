@@ -783,11 +783,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                     OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway'));
                     OB.UTIL.SynchronizationHelper.finished(synchId, "finishVoidLayaway");
                   }
-                  enyo.$.scrim.hide();
+                  if (OB.MobileApp.view.openedPopup === null) {
+                    enyo.$.scrim.hide();
+                  }
                 }, function () {
                   OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
                   OB.UTIL.SynchronizationHelper.finished(synchId, "finishVoidLayaway");
-                  enyo.$.scrim.hide();
+                  if (OB.MobileApp.view.openedPopup === null) {
+                    enyo.$.scrim.hide();
+                  }
                 });
               });
             });
