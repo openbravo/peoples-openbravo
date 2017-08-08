@@ -69,22 +69,20 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
 
     // save order_id, order_id from verified return in error line
     HashSet<String> orderIdList = new HashSet<String>();
-    try {
-      orderIdList.add(jsonRecord.optString("id", null));
+    orderIdList.add(jsonRecord.optString("id", null));
 
-      JSONArray orderlines = jsonRecord.getJSONArray("lines");
+    JSONArray orderlines = jsonRecord.optJSONArray("lines");
+    if (orderlines != null) {
       for (int i = 0; i < orderlines.length(); i++) {
-        JSONObject jsonOrderLine = orderlines.getJSONObject(i);
-        if (jsonOrderLine.has("originalOrderLineId")) {
+        JSONObject jsonOrderLine = orderlines.optJSONObject(i);
+        if (jsonOrderLine != null && jsonOrderLine.has("originalOrderLineId")) {
           OrderLine orderLine = OBDal.getInstance().get(OrderLine.class,
               jsonOrderLine.optString("originalOrderLineId"));
           orderIdList.add(orderLine.getSalesOrder().getId());
         }
       }
-      orderIdList.remove(null);
-    } catch (JSONException e) {
-      log.error("Error while getting orderid", e);
     }
+    orderIdList.remove(null);
 
     for (String orderId : orderIdList) {
       OBPOSErrorsLine errorLineEntry = OBProvider.getInstance().get(OBPOSErrorsLine.class);
