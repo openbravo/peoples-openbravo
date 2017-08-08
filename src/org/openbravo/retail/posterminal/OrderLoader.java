@@ -196,7 +196,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     newLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2;
     notpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
-        && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
+        && (jsonorder.getDouble("payment") < jsonorder.getDouble("gross") || jsonorder.getDouble("gross") == 0)
         && !jsonorder.optBoolean("paidOnCredit");
     creditpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
         && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
