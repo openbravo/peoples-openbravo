@@ -590,9 +590,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     Collections.sort(hookList, new Comparator<Object>() {
       @Override
       public int compare(Object o1, Object o2) {
-        int o1Priority = (o1 instanceof PrioritizedHook) ? ((PrioritizedHook) o1).getPriority()
+        int o1Priority = (o1 instanceof PreOrderLoaderPrioritizedHook) ? ((PreOrderLoaderPrioritizedHook) o1).getPriority()
             : 100;
-        int o2Priority = (o2 instanceof PrioritizedHook) ? ((PrioritizedHook) o2).getPriority()
+        int o2Priority = (o2 instanceof PreOrderLoaderPrioritizedHook) ? ((PreOrderLoaderPrioritizedHook) o2).getPriority()
             : 100;
 
         return (int) Math.signum(o2Priority - o1Priority);

@@ -9,6 +9,6 @@
 
 package org.openbravo.retail.posterminal;
 
-public abstract class PrioritizedHook {
+public abstract class PreOrderLoaderPrioritizedHook {
   public abstract int getPriority();
 }
