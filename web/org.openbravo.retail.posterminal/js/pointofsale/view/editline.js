@@ -662,10 +662,12 @@ enyo.kind({
           this.$.actionButtonsContainer.$.returnLine.show();
         }
       }
-      if (!line.get('isDeletable')) {
-        this.$.actionButtonsContainer.$.deleteLine.hide();
-      } else {
-        this.$.actionButtonsContainer.$.deleteLine.show();
+      if (this.$.actionButtonsContainer.$.deleteLine) {
+        if (!line.get('isDeletable')) {
+          this.$.actionButtonsContainer.$.deleteLine.hide();
+        } else {
+          this.$.actionButtonsContainer.$.deleteLine.show();
+        }
       }
       if (this.$.actionButtonsContainer.$.showRelatedServices) {
         if (this.selectedModels && this.selectedModels.length > 0) {
