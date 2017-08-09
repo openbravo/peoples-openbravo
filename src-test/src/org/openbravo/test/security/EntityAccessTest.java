@@ -38,9 +38,12 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.EntityAccessChecker;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.currency.CurrencyTrl;
-import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.Warehouse;
+import org.openbravo.model.common.order.Order;
 
 /**
  * Tests access on the basis of window and table definitions. Also tests derived read access.
@@ -54,7 +57,7 @@ import org.openbravo.test.base.OBBaseTest;
  */
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class EntityAccessTest extends OBBaseTest {
+public class EntityAccessTest extends CrossOrganizationReference {
 
   private static final Logger log = Logger.getLogger(EntityAccessTest.class);
 
@@ -211,5 +214,22 @@ public class EntityAccessTest extends OBBaseTest {
     final List<Currency> cs = obc.list();
     assertEquals(1, cs.size());
     OBDal.getInstance().remove(cs.get(0));
+  }
+
+  /** Covers issue #36628: it was not possible to update organization if entity had computed columns */
+  @Test
+  public void changeOrgIsAllowedHavingComputedColumns() {
+    setTestAdminContext();
+    Order order = createOrder(SPAIN_ORG);
+    String orderId = order.getId();
+
+    // reload it from DB so that computed columns property is not null
+    OBDal.getInstance().getSession().evict(order);
+    order = OBDal.getInstance().get(Order.class, orderId);
+
+    order.setOrganization(OBDal.getInstance().getProxy(Organization.class, USA_ORG));
+    order.setWarehouse(OBDal.getInstance().getProxy(Warehouse.class, USA_WAREHOUSE));
+    order.setBusinessPartner(OBDal.getInstance().getProxy(BusinessPartner.class, USA_BP));
+    OBDal.getInstance().flush();
   }
 }
