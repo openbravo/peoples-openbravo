@@ -304,6 +304,7 @@ public class OBInterceptor extends EmptyInterceptor {
             && bob.getEntity().getProperty(propertyNames[i]).isAllowedCrossOrgReference();
 
         if (!skipCrossOrgCheck
+            && !obObject.getEntity().isVirtualEntity()
             && !obContext.getOrganizationStructureProvider(o1.getClient().getId()).isInNaturalTree(
                 o1, o2)) {
           throw new OBSecurityException("Entity " + bob.getIdentifier() + " ("
