@@ -133,7 +133,7 @@ public class MyOpenbravoActionHandler extends BaseActionHandler implements Porta
 
       // Translate message:
       VariablesSecureApp vars = new VariablesSecureApp(RequestContext.get().getRequest());
-      message.setMessage(Utility.parseTranslation(new DalConnectionProvider(), vars,
+      message.setMessage(Utility.parseTranslation(new DalConnectionProvider(false), vars,
           vars.getLanguage(), message.getMessage()));
 
       o.put("message", message.toMap());
