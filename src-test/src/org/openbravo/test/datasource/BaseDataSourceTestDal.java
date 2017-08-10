@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,7 +19,10 @@
 
 package org.openbravo.test.datasource;
 
+import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.test.base.OBBaseTest;
 
@@ -39,6 +42,8 @@ public class BaseDataSourceTestDal extends OBBaseTest {
   protected static final String PWD = "openbravo";
   private static boolean authenticated = false;
   private static String cookie;
+
+  protected static final String POST_METHOD = "POST";
 
   /**
    * Performs a request to Openbravo returning its response and asserting the response code matches
@@ -115,5 +120,14 @@ public class BaseDataSourceTestDal extends OBBaseTest {
     }
 
     DatasourceTestUtil.changeProfile(getOpenbravoURL(), cookie, roleId, langId, orgId, warehouseId);
+  }
+
+  /** Logs out current session */
+  protected void logout() throws Exception {
+    Map<String, String> params = new HashMap<>();
+    params.put("_action", "org.openbravo.client.application.LogOutActionHandler");
+    doRequest("/org.openbravo.client.kernel", params, HttpServletResponse.SC_OK, POST_METHOD);
+    authenticated = false;
+    cookie = null;
   }
 }
