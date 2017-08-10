@@ -68,26 +68,28 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
     OBDal.getInstance().save(errorEntry);
 
     // save order_id, order_id from verified return in error line
-    HashSet<String> orderIdList = new HashSet<String>();
-    orderIdList.add(jsonRecord.optString("id", null));
+    HashSet<String> recordIdList = new HashSet<String>();
+    recordIdList.add(jsonRecord.optString("id", null));
 
-    JSONArray orderlines = jsonRecord.optJSONArray("lines");
-    if (orderlines != null) {
-      for (int i = 0; i < orderlines.length(); i++) {
-        JSONObject jsonOrderLine = orderlines.optJSONObject(i);
-        if (jsonOrderLine != null && jsonOrderLine.has("originalOrderLineId")) {
-          OrderLine orderLine = OBDal.getInstance().get(OrderLine.class,
-              jsonOrderLine.optString("originalOrderLineId"));
-          orderIdList.add(orderLine.getSalesOrder().getId());
+    if (jsonRecord.has("lines")) {
+      JSONArray orderlines = jsonRecord.optJSONArray("lines");
+      if (orderlines != null) {
+        for (int i = 0; i < orderlines.length(); i++) {
+          JSONObject jsonOrderLine = orderlines.optJSONObject(i);
+          if (jsonOrderLine != null && jsonOrderLine.has("originalOrderLineId")) {
+            OrderLine orderLine = OBDal.getInstance().get(OrderLine.class,
+                jsonOrderLine.optString("originalOrderLineId"));
+            recordIdList.add(orderLine.getSalesOrder().getId());
+          }
         }
       }
     }
-    orderIdList.remove(null);
+    recordIdList.remove(null);
 
-    for (String orderId : orderIdList) {
+    for (String recordId : recordIdList) {
       OBPOSErrorsLine errorLineEntry = OBProvider.getInstance().get(OBPOSErrorsLine.class);
       errorLineEntry.setObposErrors(errorEntry);
-      errorLineEntry.setRecordID(orderId);
+      errorLineEntry.setRecordID(recordId);
       OBDal.getInstance().save(errorLineEntry);
     }
 
