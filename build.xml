@@ -712,10 +712,6 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="translate" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="translate.modules" depends="init">
-    <ant dir="${base.src}" target="translate.modules" inheritAll="true" inheritRefs="true" />
-  </target>
-
   <target name="installWebService" depends="init">
     <ant dir="${base.src}" target="installWebService" inheritAll="true" inheritRefs="true">
       <property name="wsdd" value="1" />

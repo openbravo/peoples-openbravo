@@ -40,7 +40,6 @@ eclipse.compile.complete: generates all wad files and compiles all xsql files
 compile: compiles specified WAD window and src and also translates.
 compile.complete: compiles all WAD windows and src and also translates.
 translate: Translate the modified files.
-compile.translate: Translate the specified extensions files.
 installWebService: install the web services configuration file.
 uninstallWebService: uninstall the web services configuration file.
 copy.files: copy the local files to the context.
@@ -70,7 +69,6 @@ build.war: build a war file in the lib directory.
   <property name="tab" value="%" />
 
   <property name="base.translate.structure" value="org/openbravo/erpWindows" />
-  <property name="extension" value="html" />
   <property name="src" value="." />
   <property name="tr" value="yes" />
 
@@ -124,7 +122,7 @@ build.war: build a war file in the lib directory.
 
   <target name="trl.clean" if="translation">
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="clean '${base.config}/Openbravo.properties'" />
+      <arg line="'${base.config}/Openbravo.properties' clean" />
       <classpath refid="project.class.path" />
       <syspropertyset>
          <propertyref name="java.security.egd" />
@@ -134,7 +132,7 @@ build.war: build a war file in the lib directory.
   
   <target name="trl.remove.unused" if="translation">
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="remove '${base.config}/Openbravo.properties'" />
+      <arg line="'${base.config}/Openbravo.properties' remove" />
       <classpath refid="project.class.path" />
       <syspropertyset>
          <propertyref name="java.security.egd" />
@@ -689,47 +687,16 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="translate" if="translation">
-    <antcall inheritall="true" inheritrefs="true" target="compile.translate">
-      <param name="extension" value="html" />
-    </antcall>
-    <antcall inheritall="true" inheritrefs="true" target="compile.translate">
-      <param name="extension" value="fo" />
-    </antcall>
-    <antcall inheritall="true" inheritrefs="true" target="compile.translate">
-      <param name="extension" value="srpt" />
-    </antcall>
-    <antcall inheritall="true" inheritrefs="true" target="compile.translate">
-      <param name="extension" value="jrxml" />
-    </antcall>
-    <antcall inheritall="true" inheritrefs="true" target="translate.modules" />
-  </target>
-
-  <target name="compile" depends="wad,compileSqlc, postsrc, translate">
-  </target>
-
-  <target name="translate.modules" if="translation">
-    <antcall inheritall="true" inheritrefs="true" target="compile.translate.modules">
-      <param name="extension" value="html" />
-    </antcall>
-    <antcall inheritall="true" inheritrefs="true" target="compile.translate.modules">
-      <param name="extension" value="fo" />
-    </antcall>
-    <antcall inheritall="true" inheritrefs="true" target="compile.translate.modules">
-      <param name="extension" value="srpt" />
-    </antcall>
-    <antcall inheritall="true" inheritrefs="true" target="compile.translate.modules">
-      <param name="extension" value="jrxml" />
-    </antcall>
-  </target>
-
-  <target name="compile.translate.modules">
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}/Openbravo.properties' ${extension} '${base.modules}' '*/src'" />
+      <arg line="'${base.config}/Openbravo.properties' '${basedir}/..'" />
       <classpath refid="project.class.path" />
       <syspropertyset>
          <propertyref name="java.security.egd" />
       </syspropertyset>
     </java>
+  </target>
+
+  <target name="compile" depends="wad,compileSqlc, postsrc, translate">
   </target>
 
   <target name="installWebService" depends="init" if="wsdd">
@@ -748,16 +715,6 @@ build.war: build a war file in the lib directory.
     <wsAdmin axisServlet="${context.url}/servlet/AxisServlet"
              baseDir="${source.path}"
              action="undeploy"/>
-  </target>
-
-  <target name="compile.translate">
-    <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}/Openbravo.properties' ${extension} '${basedir}'" />
-      <classpath refid="project.class.path" />
-      <syspropertyset>
-         <propertyref name="java.security.egd" />
-      </syspropertyset>
-    </java>
   </target>
 
   <!-- Note (see issue 15709 for details):

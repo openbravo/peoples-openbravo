@@ -18,13 +18,27 @@
  */
 package org.openbravo.translate;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 
@@ -33,74 +47,63 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.xerces.parsers.SAXParser;
 import org.openbravo.database.CPStandAlone;
 import org.openbravo.database.SessionInfo;
-import org.openbravo.utils.DirFilter;
+import org.openbravo.exception.NoConnectionAvailableException;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
-import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * @author Fernando Iriazabal
+ * Looks for translatable elements in html, fo, srpt and jrxml files inserting them in
+ * ad_textinterfaces table.
  * 
- *         Translate the HTML file of the folder especified
+ * @author Fernando Iriazabal
  **/
-public class Translate extends DefaultHandler implements LexicalHandler {
-  protected static CPStandAlone pool;
-  static XMLReader parser;
-  static TranslateData[] toLanguage;
-  static String actualLanguage;
-  static String fileTermination;
+public class Translate extends DefaultHandler {
+  private static CPStandAlone pool;
+  private static final Pattern LETTER_PATTERN = Pattern.compile("[a-zA-Z]");
+  private static final List<String> translatableExtensions = Arrays.asList("html", "fo", "srpt",
+      "jrxml");
+  private static final Logger log = Logger.getLogger(Translate.class);
 
-  static boolean isHtml = false;
+  private XMLReader parser;
+  private String extension;
 
-  static String actualTag;
-  static String actualFile;
-  static String actualPrefix;
-  static StringBuffer translationText;
-  static int count = 0;
-  static ArrayList<String> moduleDirectories;
-  static String moduleName = "";
-  static String moduleLang = "";
-  static String moduleID = "";
-  static boolean translateModule = true;
-  static final String[] tokens = { "-", ":" };
+  private String actualTag;
+  private String actualFile;
+  private String actualPrefix;
+  private StringBuilder translationText;
+  private int count = 0;
 
-  static Logger log4j = Logger.getLogger(Translate.class);
+  private String moduleLang = "";
+  private String moduleID = "";
+  private Path moduleBasePath;
+  private Connection conn;
+  private boolean canTranslateModule = true;
 
-  /**
-   * Constructor
-   * 
-   * @param xmlPoolFile
-   *          Path to the Openbravo.properties file.
-   * @throws ServletException
-   */
-  public Translate(String xmlPoolFile) throws ServletException {
+  private static Map<String, List<TranslateData>> allLabels;
+  private static HashSet<String> modsInDev = new HashSet<>();
+
+  private static void init(String xmlPoolFile) {
     pool = new CPStandAlone(xmlPoolFile);
   }
 
+  private Translate() {
+  }
+
   /**
-   * Constructor
-   * 
-   * @param xmlPoolFile
-   *          Path to the Openbravo.properties file.
    * @param _fileTermination
    *          File extension to filter.
-   * @throws ServletException
    */
-  public Translate(String xmlPoolFile, String _fileTermination) throws ServletException {
-    this(xmlPoolFile);
-    fileTermination = _fileTermination;
-    isHtml = fileTermination.toLowerCase().endsWith("html");
+  public Translate(String _fileTermination) throws ServletException {
+    extension = _fileTermination;
+    boolean isHtml = extension.toLowerCase().endsWith("html");
     if (isHtml)
       parser = new org.cyberneko.html.parsers.SAXParser();
     else
       parser = new SAXParser();
     parser.setEntityResolver(new LocalEntityResolver());
     parser.setContentHandler(this);
-    toLanguage = TranslateData.systemLanguage(pool);
-    if (toLanguage.length == 0)
-      log4j.warn("No system languages defined, translation will parse all files.");
   }
 
   /**
@@ -110,66 +113,71 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    *          List of arguments. There is 2 call ways, with 2 arguments; the first one is the
    *          attribute to indicate if the AD_TEXTINTERFACES must be cleaned ("clean") and the
    *          second one is the Openbravo.properties path. The other way is with more arguments,
-   *          where: 0- Openbravo.properties path. 1- File extension. 2- Path where are the files to
-   *          translate. 3- Relative path.
-   * @throws Exception
+   *          where: 0- Openbravo.properties path. 1- Path where are the files to translate.
    */
   public static void main(String argv[]) throws Exception {
     PropertyConfigurator.configure("log4j.lcf");
-    String dirIni;
-    boolean boolFilter;
-    DirFilter dirFilter = null;
-    String relativePath = "";
 
-    if ((argv.length == 2)) {
-      if (argv[0].equals("clean")) {
-        log4j.debug("clean AD_TEXTINTERFACES");
-        final Translate translate = new Translate(argv[1]);
-        translate.clean();
-        return;
-      } else if (argv[0].equals("remove")) {
-        log4j.debug("remove AD_TEXTINTERFACES");
-        final Translate translate = new Translate(argv[1]);
-        translate.remove();
-        return;
+    if (argv.length != 2) {
+      log.error("Usage: Translate Openbravo.properties [clean|remove|sourceDir]");
+      log.error("Received: " + Arrays.asList(argv));
+      return;
+    }
+
+    init(argv[0]);
+    Translate translate;
+    switch (argv[1]) {
+    case "clean":
+      log.debug("clean AD_TEXTINTERFACES");
+      translate = new Translate();
+      translate.clean();
+      return;
+    case "remove":
+      log.debug("remove AD_TEXTINTERFACES");
+      translate = new Translate();
+      translate.remove();
+      return;
+    }
+
+    Path obPath = Paths.get(argv[1]).normalize();
+
+    TranslateData[] mods = TranslateData.getModulesInDevelopment(pool);
+    for (TranslateData mod : mods) {
+      modsInDev.add(mod.id);
+    }
+    for (TranslateData mod : mods) {
+      Path path;
+      if ("0".equals(mod.id)) {
+        path = obPath.resolve("src");
+      } else {
+        path = obPath.resolve(Paths.get("modules", mod.javapackage, "src"));
+        if (!Files.exists(path)) {
+          continue;
+        }
+      }
+      log.info("Looking for translatable elements in " + mod.javapackage + " (" + mod.name + ")");
+
+      for (String extension : translatableExtensions) {
+        translate = new Translate(extension);
+        translate.moduleLang = mod.lang;
+        translate.moduleID = mod.id;
+        translate.moduleBasePath = path;
+
+        translate.execute();
+        if (translate.count > 0) {
+          log.info("  parsed " + translate.count + " " + extension + " files");
+        }
+
+        if (!translate.canTranslateModule) {
+          break;
+        }
       }
     }
 
-    if (argv.length < 3) {
-      log4j.error("Usage: java Translate Openbravo.properties fileTermination sourceDir");
-      return;
+    if (mods.length == 0) {
+      log.info("No modules in development to look for translatable elements.");
     }
-
-    final Translate translate = new Translate(argv[0], argv[1]);
-
-    dirIni = argv[2].replace("\\", "/");
-
-    if (argv.length > 3) {
-      moduleDirectories = getDirectories(argv[3]);
-      log4j.info("Translation for modules");
-    }
-    boolFilter = true;
-    dirFilter = new DirFilter(fileTermination);
-    log4j.info("directory source: " + dirIni);
-    log4j.info("file termination: " + fileTermination);
-
-    final File path = new File(dirIni, relativePath);
-    if (!path.exists()) {
-      log4j.error("Can't find directory: " + dirIni);
-      translate.destroy();
-      return;
-    }
-    if (moduleDirectories == null) {
-      if (TranslateData.isInDevelopmentModule(pool, "0")) {
-        listDir(path, boolFilter, dirFilter, relativePath, true, "", 0, "");
-        log4j.info("Translated files for " + fileTermination + ": " + count);
-      } else
-        log4j.info("Core is not in development: skipping it");
-    } else {
-      listDir(path, boolFilter, dirFilter, relativePath, false, "", 0, "");
-      log4j.info("Translated files for " + fileTermination + ": " + count);
-    }
-    translate.destroy();
+    destroy();
   }
 
   /**
@@ -179,115 +187,52 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     try {
       TranslateData.clean(pool);
     } catch (final Exception e) {
-      log4j.error("clean error", e);
+      log.error("clean error", e);
     }
   }
 
   private void remove() {
     try {
-      TranslateData.remove(pool);
+      int n = TranslateData.remove(pool);
+      if (n > 0) {
+        log.info("Removed " + n + " unused elements");
+      }
     } catch (final Exception e) {
-      log4j.error("remove error", e);
+      log.error("remove error", e);
     }
   }
 
-  /**
-   * Receives a list of directories and returns this list as an ArrayList
-   * 
-   */
-  private static ArrayList<String> getDirectories(String s) {
-    final ArrayList<String> l = new ArrayList<String>();
-    final StringTokenizer tok = new StringTokenizer(s, "/");
-    while (tok.hasMoreTokens())
-      l.add(tok.nextToken());
-    return l;
-  }
-
-  /**
-   * List all the files and folders in the selected path.
-   * 
-   * @param file
-   *          The selected path to list.
-   * @param boolFilter
-   *          If is filtered.
-   * @param dirFilter
-   *          Filter to apply.
-   * @param _relativePath
-   *          The relative path.
-   */
-  private static void listDir(File file, boolean boolFilter, DirFilter dirFilter,
-      String _relativePath, boolean parse, String parent, int level, String module) {
-    String relativePath = _relativePath;
-    File[] list;
-    if (boolFilter)
-      list = file.listFiles(dirFilter);
-    else
-      list = file.listFiles();
-    for (int i = 0; i < list.length; i++) {
-      final File fileItem = list[i];
-      if (fileItem.isDirectory()) {
-        // if it is a subdirectory then list recursively
-        final String prevRelativePath = new String(relativePath);
-        relativePath += "/" + fileItem.getName();
-
-        if (log4j.isDebugEnabled())
-          log4j.debug("dir: "
-              + fileItem.getName()
-              + " - parse:"
-              + parse
-              + " - parent:"
-              + parent
-              + " - level:"
-              + level
-              + " - include:"
-              + (moduleDirectories != null && moduleDirectories.size() > level ? moduleDirectories
-                  .get(level) : "--"));
-        if (parse)
-          listDir(fileItem, boolFilter, dirFilter, relativePath, true, parent, level + 1, module);
-        else {
-          if ((moduleDirectories.size() == level + 1)
-              && (moduleDirectories.get(level).equals("*") || moduleDirectories.get(level).equals(
-                  fileItem.getName()))) {
-            log4j.info("Start parsing module: " + parent.replace("/", ""));
-            translateModule = true;
-            try {
-              if (TranslateData.isInDevelopmentModulePack(pool, parent.replace("/", "")))
-                listDir(fileItem, boolFilter, dirFilter, relativePath, true, parent + "/"
-                    + fileItem.getName(), level + 1, parent.replace("/", ""));
-              else
-                log4j.info("Module is not in development: skipping it");
-            } catch (final Exception e) {
-              e.printStackTrace();
-            }
-          } else if (moduleDirectories.size() > level
-              && (moduleDirectories.get(level).equals("*") || moduleDirectories.get(level).equals(
-                  fileItem.getName())))
-            listDir(fileItem, boolFilter, dirFilter, relativePath, false,
-                parent + "/" + fileItem.getName(), level + 1, module);
-          // other case don't follow deeping into the tree
-        }
-
-        relativePath = prevRelativePath;
-      } else {
-        try {
-          if (parse) {
-            if (log4j.isDebugEnabled())
-              log4j.debug(list[i] + " Parent: " + fileItem.getParent() + " getName() "
-                  + fileItem.getName() + " canonical: " + fileItem.getCanonicalPath());
-            for (int h = 0; h < toLanguage.length; h++) {
-              actualLanguage = toLanguage[h].name;
-              parseFile(list[i], relativePath, parent, module);
-            }
-            if (toLanguage.length == 0) {
-              actualLanguage = "";
-              parseFile(list[i], relativePath, parent, module);
-            }
+  /** Looks for translatable elements for a given module and extension */
+  private void execute() throws IOException {
+    final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("regex:.*\\." + extension);
+    Files.walkFileTree(moduleBasePath, new SimpleFileVisitor<Path>() {
+      @Override
+      public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        if (matcher.matches(file)) {
+          if (!canTranslateModule()) {
+            log.error("  Module is not set as translatable or has not defined language, but has translatable elements");
+            log.error("  No translations will be inserted. Set the module as 'is translation requiered' and select a language");
+            log.error("  then execute translation again.");
+            canTranslateModule = false;
+            return FileVisitResult.TERMINATE;
           }
-        } catch (final IOException e) {
-          log4j.error("IOException: " + e);
+          parseFile(file);
         }
+        return FileVisitResult.CONTINUE;
+      }
+    });
+
+    if (conn != null) {
+      try {
+        pool.releaseCommitConnection(conn);
+      } catch (SQLException e) {
+        log.error("Error commiting changes to database", e);
       }
     }
+  }
+
+  private boolean canTranslateModule() {
+    return !(moduleLang == null || moduleLang.equals(""));
   }
 
   /**
@@ -295,66 +240,18 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * 
    * @param fileParsing
    *          File to parse.
-   * @param _relativePath
-   *          The relative path.
    */
-  private static void parseFile(File fileParsing, String _relativePath, String parent, String module) {
-    if (!translateModule)
-      return;
-    String relativePath = _relativePath;
-    final String strFileName = fileParsing.getName();
-    if (log4j.isDebugEnabled())
-      log4j.debug("Parsing of " + strFileName);
-    final int pos = strFileName.indexOf(fileTermination);
-    if (pos == -1) {
-      log4j.error("File " + strFileName + " don't have termination " + fileTermination);
-      return;
-    }
-    final String strFileWithoutTermination = strFileName.substring(0, pos);
-    if (log4j.isDebugEnabled())
-      log4j.debug("File without termination: " + strFileWithoutTermination);
+  private void parseFile(Path fileParsing) {
+    actualFile = "/" + moduleBasePath.relativize(fileParsing).toString().replace("\\", "/");
 
-    // In case moduleDirectories has value remove parent from path to keep
-    // clean the package
-    try {
-      moduleName = module.equals("") ? "org.openbravo" : module;
-      moduleID = TranslateData.getModuleID(pool, moduleName);
-      if (moduleID == null || moduleID.equals("")) {
-        log4j.error("Trying to insert element in module " + moduleName
-            + " which has no ID, it will be set to core");
-        moduleName = "CORE";
-        moduleID = "0";
-      }
-      moduleLang = TranslateData.getModuleLang(pool, moduleID);
-    } catch (final ServletException e) {
-      e.printStackTrace();
-    }
+    log.debug("File: " + actualFile);
 
-    if (log4j.isDebugEnabled())
-      log4j.debug("Module name: " + module + " - oldRelativePath:" + relativePath + " - parent:"
-          + parent);
-    if (moduleDirectories != null && relativePath.startsWith(parent)) {
-      relativePath = relativePath.substring(parent.length());
-      if (log4j.isDebugEnabled())
-        log4j.debug("new relativePath:" + relativePath);
-    }
-
-    actualFile = relativePath + "/" + strFileName;
-
-    log4j.debug("File: " + fileParsing);
-
-    try {
-      FileInputStream fis = new FileInputStream(fileParsing);
-      InputStreamReader reader = new InputStreamReader(fis, "UTF-8");
+    try (InputStream in = Files.newInputStream(fileParsing);
+        InputStreamReader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
       parser.parse(new InputSource(reader));
-      if (translateModule)
-        count++;
-    } catch (final IOException e) {
-      log4j.error("file: " + actualFile);
-      e.printStackTrace();
+      count++;
     } catch (final Exception e) {
-      log4j.error("file: " + actualFile);
-      e.printStackTrace();
+      log.error("file: " + actualFile, e);
     }
   }
 
@@ -366,8 +263,6 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    *          Attributes of the element.
    */
   private void parseAttributes(Attributes amap) {
-    if (!translateModule)
-      return;
     String type = "";
     String value = "";
     for (int i = 0; i < amap.getLength(); i++) {
@@ -391,9 +286,8 @@ public class Translate extends DefaultHandler implements LexicalHandler {
         translate(strAux);
       }
     }
-    if (value != null && !value.equals("")) {
-      if (type.equalsIgnoreCase("button"))
-        translate(value);
+    if (value != null && !value.equals("") && type.equalsIgnoreCase("button")) {
+      translate(value);
     }
   }
 
@@ -419,10 +313,10 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    *          Name of the element.
    * @return True if the element is parseable, false if not.
    */
-  private static boolean isParseable(String tagname) {
+  private boolean isParseable(String tagname) {
     if (tagname.equalsIgnoreCase("script"))
       return false;
-    else if (fileTermination.equalsIgnoreCase("jrxml")) {
+    else if (extension.equalsIgnoreCase("jrxml")) {
       if (!tagname.equalsIgnoreCase("text") && !tagname.equalsIgnoreCase("textFieldExpression"))
         return false;
     }
@@ -434,15 +328,9 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * this method.
    */
   @Override
-  public void startElement(String uri, String name, String qName, Attributes amap) {// (String name,
-    // AttributeList
-    // amap) throws
-    // SAXException {
-    if (!translateModule)
-      return;
-    if (log4j.isDebugEnabled())
-      log4j.info("Configuration: startElement is called: element name=" + qName + " actualtag"
-          + actualTag + " trlTxt" + translationText);
+  public void startElement(String uri, String name, String qName, Attributes amap) {
+    log.debug("startElement element name=" + qName + " actualtag" + actualTag + " trlTxt"
+        + translationText);
     if (actualTag != null && isParseable(actualTag) && translationText != null) {
       translate(translationText.toString());
     }
@@ -454,49 +342,13 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     actualTag = name.trim().toUpperCase();
   }
 
-  public void comment(char[] ch, int start, int length) {
-  }
-
-  public void endDTD() {
-  }
-
-  public void endEntity(String name) {
-  }
-
-  public void startDTD(String name, String publicId, String systemId) {
-  }
-
-  public void startEntity(String name) {
-  }
-
-  /**
-   * Method to insert begining of CDATA expresions.
-   */
-  public void startCDATA() {
-
-  }
-
-  /**
-   * Method to insert ends of CDATA expresions.
-   */
-  public void endCDATA() {
-
-  }
-
   /**
    * End of an element of the file. When the parser finds the end of an element in the file, it
    * calls to this method.
    */
   @Override
-  public void endElement(String uri, String name, String qName) {// (String
-    // name)
-    // throws
-    // SAXException
-    // {
-    if (!translateModule)
-      return;
-    if (log4j.isDebugEnabled())
-      log4j.debug("Configuration: endElement is called: " + qName);
+  public void endElement(String uri, String name, String qName) {
+    log.debug("endElement : " + qName);
 
     if (isParseable(actualTag) && translationText != null) {
       translate(translationText.toString());
@@ -510,24 +362,22 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * element's tags.
    */
   @Override
-  public void characters(char[] ch, int start, int length) {// throws
-    // SAXException {
+  public void characters(char[] ch, int start, int length) {
     final String chars = new String(ch, start, length);
-    if (log4j.isDebugEnabled())
-      log4j.debug("Configuration(characters) is called: " + chars);
+    log.debug("characters: " + chars);
     if (translationText == null)
-      translationText = new StringBuffer();
+      translationText = new StringBuilder();
     translationText.append(chars);
   }
 
   /**
    * This method is the one in charge of the translation of the found text.
    * 
-   * @param ini
+   * @param txt
    *          String with the text to translate.
    */
-  private void translate(String ini) {
-    translate(ini, false);
+  private void translate(String txt) {
+    translate(txt, false);
   }
 
   /**
@@ -540,63 +390,125 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    *          content.
    */
   private void translate(String input, boolean isPartial) {
-    if (!translateModule)
-      return;
-    String ini = input;
-    ini = replace(replace(ini.trim(), "\r", ""), "\n", " ");
-    ini = ini.trim();
-    ini = delSp(ini);
+    String txt = input.replace("\r", "").replace("\n", " ").replaceAll(" ( )+", " ").trim();
+
     if (!isPartial && actualTag.equalsIgnoreCase("textFieldExpression")) {
-      int pos = ini.indexOf("\"");
+      int pos = txt.indexOf("\"");
       while (pos != -1) {
-        ini = ini.substring(pos + 1);
-        pos = ini.indexOf("\"");
+        txt = txt.substring(pos + 1);
+        pos = txt.indexOf("\"");
         if (pos != -1) {
-          translate(ini.substring(0, pos), true);
-          ini = ini.substring(pos + 1);
+          translate(txt.substring(0, pos), true);
+          txt = txt.substring(pos + 1);
         } else
           break;
-        pos = ini.indexOf("\"");
+        pos = txt.indexOf("\"");
       }
       return;
     }
-    final Vector<String> translated = new Vector<String>(0);
-    boolean aux = true;
-    translated.addElement("Y");
-    if (!ini.equals("") && !ini.toLowerCase().startsWith("xx") && !isNumeric(ini)) {
-      log4j.debug("Translating " + ini + " for file" + actualFile + " moduleLang:" + moduleLang);
-      tokenize(ini, 0, translated);
-      try {
-        aux = translated.elementAt(0).equals("Y");
-        if (moduleLang == null || moduleLang.equals("")) {
-          log4j
-              .error("Module is not set as translateable or has not defined language, but has translateable elements");
-          log4j
-              .error("No translations will be inserted. Set the module as 'is translation requiered' and select a language");
-          log4j.error("then execute translation again.");
-          translateModule = false;
-          return;
-        }
-        if (!aux) {
-          if (TranslateData.existsExpresionModFile(pool, ini, actualFile, moduleLang) == 0
-              && TranslateData.existsExpresionModNoFile(pool, ini, moduleLang) == 0
-              && TranslateData.existsExpresionNoModFile(pool, ini, actualFile, moduleLang) == 0
-              && TranslateData.existsExpresionNoModNoFile(pool, ini, moduleLang) == 0) {
+    boolean translatableTxt = !(txt.equals("") || txt.toLowerCase().startsWith("xx") || isNumeric(txt));
+    if (!translatableTxt) {
+      return;
+    }
 
-            if (!TranslateData.isInDevelopmentModule(pool, moduleID))
-              log4j.error("Module  is not in development, it will be inserted anyway");
-            if (log4j.isDebugEnabled())
-              log4j.debug("inserting in module:" + moduleName + " - ID:" + moduleID);
-            TranslateData.insert(pool, ini, actualFile, moduleID);
-            log4j.info("Inserting text: " + ini + "from file: " + actualFile
-                + "into ad_textinterfaces");
-          }
+    log.debug("Checking [" + txt + "] from file" + actualFile + " - language: " + moduleLang);
+    TranslateData t = getLabel(txt);
+    if (t != null) {
+      if ("N".equals(t.tr) && t.module.equals(moduleID) && t.id != null) {
+        try {
+          TranslateData.update(getConnection(), pool, t.id);
+          t.tr = "Y";
+        } catch (ServletException e) {
+          log.error("Could not set label as used [" + txt + "]");
         }
-      } catch (final ServletException e) {
-        e.printStackTrace();
+      }
+    } else {
+      createLabel(txt);
+    }
+  }
+
+  /** Returns a suitable text interface element for the given txt or null if there is none. */
+  private TranslateData getLabel(String txt) {
+    if (allLabels == null) {
+      // lazy initialization: in case none of the modules in development has elements to translate
+      // it won't be initialized
+      initializeAllLabels();
+    }
+
+    List<TranslateData> labels = allLabels.get(txt);
+    if (labels == null) {
+      return null;
+    }
+
+    TranslateData selected = null;
+    for (TranslateData label : labels) {
+      if (!moduleLang.equals(label.lang)) {
+        continue;
+      }
+      if (actualFile.equals(label.filename)) {
+        return label;
+      } else if (label.filename == null || "".equals(label.filename)) {
+        selected = label;
       }
     }
-    return;
+    return selected;
+  }
+
+  /**
+   * Loads in memory all text interfaces. Typically this is faster than querying them each time a
+   * translatable element is found in a file by reducing significantly the number of queries.
+   */
+  private void initializeAllLabels() {
+    TranslateData[] all;
+    try {
+      all = TranslateData.getTextInterfaces(pool);
+    } catch (ServletException e) {
+      throw new RuntimeException("Error loading text interfaces from DB", e);
+    }
+    allLabels = new HashMap<>(all.length);
+    String currentTxt = null;
+    List<TranslateData> currentList = null;
+    for (TranslateData label : all) {
+      if (!label.text.equals(currentTxt)) {
+        currentTxt = label.text;
+        currentList = new ArrayList<>();
+        allLabels.put(currentTxt, currentList);
+      }
+      currentList.add(label);
+    }
+  }
+
+  private void createLabel(String txt) {
+    try {
+      TranslateData.insert(getConnection(), pool, txt, actualFile, moduleID);
+      log.info("    New label found [" + txt + "] in " + actualFile);
+    } catch (ServletException e) {
+      log.error("   Could not insert label [" + txt + "]", e);
+    }
+
+    List<TranslateData> labelsForTxt = allLabels.get(txt);
+    if (labelsForTxt == null) {
+      labelsForTxt = new ArrayList<>();
+      allLabels.put(txt, labelsForTxt);
+    }
+
+    TranslateData newElement = new TranslateData();
+    newElement.text = txt;
+    newElement.filename = actualFile;
+    newElement.lang = moduleLang;
+
+    labelsForTxt.add(newElement);
+  }
+
+  private Connection getConnection() {
+    if (conn == null) {
+      try {
+        conn = pool.getTransactionConnection();
+      } catch (NoConnectionAvailableException | SQLException e) {
+        throw new RuntimeException("Could not get a DB connection", e);
+      }
+    }
+    return conn;
   }
 
   /**
@@ -607,129 +519,13 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * @return True if has no letter in the text or false if has any letter.
    */
   private static boolean isNumeric(String ini) {
-    boolean isNumericData = true;
-    for (int i = 0; i < ini.length(); i++) {
-      if (Character.isLetter(ini.charAt(i))) {
-        isNumericData = false;
-        break;
-      }
-    }
-    return isNumericData;
+    return !LETTER_PATTERN.matcher(ini).find();
   }
 
-  /**
-   * Replace a char, inside a given text, with another char.
-   * 
-   * @param strInicial
-   *          Text where is the char to replace.
-   * @param strReplaceWhat
-   *          Char to replace.
-   * @param strReplaceWith
-   *          Char to replace with.
-   * @return String with the replaced text.
-   */
-  private static String replace(String strInicial, String strReplaceWhat, String strReplaceWith) {
-    int index = 0;
-    int pos;
-    final StringBuffer strFinal = new StringBuffer("");
-    do {
-      pos = strInicial.indexOf(strReplaceWhat, index);
-      if (pos != -1) {
-        strFinal.append(strInicial.substring(index, pos) + strReplaceWith);
-        index = pos + strReplaceWhat.length();
-      } else {
-        strFinal.append(strInicial.substring(index));
-      }
-    } while (index < strInicial.length() && pos != -1);
-    return strFinal.toString();
-  }
-
-  /**
-   * This method remove all the spaces in the string.
-   * 
-   * @param strIni
-   *          String to clean.
-   * @return String without spaces.
-   */
-  private static String delSp(String strIni) {
-    boolean sp = false;
-    String strFin = "";
-    for (int i = 0; i < strIni.length(); i++) {
-      if (!sp || strIni.charAt(i) != ' ')
-        strFin += strIni.charAt(i);
-      sp = (strIni.charAt(i) == ' ');
-    }
-    return strFin;
-  }
-
-  /**
-   * This method splits the main string into shortest fragments to translate them separately.
-   * 
-   * @param ini
-   *          String to split
-   * @param indice
-   *          Index of the separator array to use.
-   * @param isTranslated
-   *          Indicates if the text has been translated.
-   * @return String translated.
-   */
-  private String tokenize(String ini, int indice, Vector<String> isTranslated) {
-    final StringBuffer fin = new StringBuffer();
-    try {
-      boolean first = true;
-      String translated = null;
-      TranslateData[] dataTranslated = TranslateData.select(pool, ini.trim(), actualFile,
-          actualLanguage);
-      if (dataTranslated != null && dataTranslated.length > 0) {
-        translated = dataTranslated[0].tr;
-        // TranslateData.update(pool,
-        // dataTranslated[0].baseDictionaryEntryId, actualLanguage);
-        TranslateData.update(pool, dataTranslated[0].adTextinterfacesId);
-      }
-      if (translated != null && translated.length() > 0) {
-        fin.append(translated);
-        return fin.toString();
-      }
-      final StringTokenizer st = new StringTokenizer(ini, tokens[indice], false);
-      while (st.hasMoreTokens()) {
-        if (first) {
-          first = false;
-        } else {
-          fin.append(tokens[indice]);
-        }
-        String token = st.nextToken();
-        token = token.trim();
-        if (log4j.isDebugEnabled())
-          log4j.debug("Token of " + ini + " : -" + token + "-");
-        translated = null;
-        dataTranslated = TranslateData.select(pool, token.trim(), actualFile, actualLanguage);
-        if (dataTranslated != null && dataTranslated.length > 0) {
-          translated = dataTranslated[0].tr;
-          // TranslateData.update(pool,
-          // dataTranslated[0].baseDictionaryEntryId, actualLanguage);
-          TranslateData.update(pool, dataTranslated[0].adTextinterfacesId);
-        }
-        if ((translated == null || translated.equals("")) && indice < (tokens.length - 1))
-          translated = tokenize(token, indice + 1, isTranslated);
-        if (translated == null || translated.equals("")) {
-          fin.append(token);
-          isTranslated.set(0, "N");
-        } else
-          fin.append(translated);
-      }
-    } catch (final Exception e) {
-      e.printStackTrace();
-    }
-    return fin.toString();
-  }
-
-  /**
-   * The method to close database connection.
-   */
-  private void destroy() {
+  /** Closes database connection. */
+  private static void destroy() {
     // remove cached connection from thread local
     SessionInfo.init();
-
     pool.destroy();
   }
 }

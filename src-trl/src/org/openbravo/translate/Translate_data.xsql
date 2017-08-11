@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,166 +20,25 @@
 
 
 <SqlClass name="TranslateData" package="org.openbravo.translate">
-  <SqlMethod name="select" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
-    <Sql>
-      select A.ad_textinterfaces_id, A.tr, '' AS NAME, '' AS TOTAL
-        from (select tt.ad_textinterfaces_id AS ad_textinterfaces_id, trim(tt.text) AS tr, 1 AS o
-                from ad_textinterfaces_trl tt
-               where tt.ad_textinterfaces_id =  (select min(ad_textinterfaces_id)
-                                                   from ad_textinterfaces t
-                                                  where t.text     = ?
-                                                    and t.filename = ?)
-                 and tt.ad_language = ?
-               union
-              select tt.ad_textinterfaces_id AS id, trim(tt.text) AS tr, 2 AS o
-                from ad_textinterfaces_trl tt
-               where tt.ad_textinterfaces_id =  (select min(ad_textinterfaces_id)
-                                                   from ad_textinterfaces t
-                                                  where t.text =  ?
-                                                    and t.filename is null)
-                 and tt.ad_language = ?
-               order by o) A
-      group by A.ad_textinterfaces_id, A.tr, A.o
-      order by A.o
+  <SqlMethod name="getTextInterfaces" type="preparedStatement" return="multiple">
+      <Sql>
+      select ad_textinterfaces_id as id, isUsed as tr, text, t.ad_module_id as module, filename, m.ad_language as lang, '' as name,'' as javapackage
+        from ad_textinterfaces t, ad_module m
+       where t.ad_module_id = m.ad_module_id
+       order by text, case when filename is not null then 0 else 1 end
     </Sql>
-    <Parameter name="string"/>
-    <Parameter name="filename"/>
-    <Parameter name="languajeFin"/>
-    <Parameter name="string"/>
-    <Parameter name="languajeFin"/>
-  </SqlMethod>
-
-  <SqlMethod name="existsExpresionModFile" type="preparedStatement" return="rowCount">
-    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
-    <Sql>
-         update ad_textinterfaces
-           set isUsed = 'Y'
-         where ad_textinterfaces_id = ( select min(A.ad_textinterfaces_id)
-                                          from (select B.*
-                                                from (select min(ad_textinterfaces_id) AS ad_textinterfaces_id, 1 AS o
-                                                          from ad_textinterfaces t,
-                                                               ad_module m
-                                                         where text     = ?
-                                                           and filename = ?
-                                                           and m.ad_module_id = t.ad_module_id
-                                                           and m.ad_language = ?
-                                                         order by o) B
-                                                 where ad_textinterfaces_id is not null) A)
-    </Sql>
-    <Parameter name="text"/>
-    <Parameter name="filename"/>
-    <Parameter name="moduleLang"/>
   </SqlMethod>
   
-  <SqlMethod name="existsExpresionNoModFile" type="preparedStatement" return="rowCount">
-    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
+  <SqlMethod name="getModulesInDevelopment" type="preparedStatement" return="multiple">
     <Sql>
-         update ad_textinterfaces
-           set isUsed = 'Y'
-         where ad_textinterfaces_id = ( select min(A.ad_textinterfaces_id)
-                                          from (select B.*
-                                                from (select min(t.ad_textinterfaces_id) AS ad_textinterfaces_id, 2 AS o
-                                                          from ad_textinterfaces t, ad_textinterfaces_trl trl
-                                                         where trl.text     = ?
-                                                           and t.filename = ?
-                                                           and trl.ad_textinterfaces_id = t.ad_textinterfaces_id
-                                                           and trl.ad_language = ?
-                                                         order by o) B
-                                                 where ad_textinterfaces_id is not null) A)
+      select AD_Module_id as id, name, javapackage, AD_LANGUAGE as lang
+        from AD_Module
+       where isInDevelopment = 'Y'
+       order by 1
     </Sql>
-    
-    <Parameter name="text"/>
-    <Parameter name="filename"/>
-    <Parameter name="moduleLang"/>
   </SqlMethod>
   
-  <SqlMethod name="existsExpresionModNoFile" type="preparedStatement" return="rowCount">
-    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
-    <Sql>
-         update ad_textinterfaces
-           set isUsed = 'Y'
-         where ad_textinterfaces_id = ( select min(A.ad_textinterfaces_id)
-                                          from (select B.*
-                                                from (select min(ad_textinterfaces_id) AS ad_textinterfaces_id, 3 AS o
-                                                          from ad_textinterfaces t,
-                                                               ad_module m
-                                                         where text = ?
-                                                           and filename is null
-                                                           and m.ad_module_id = t.ad_module_id
-                                                           and m.ad_language = ?
-                                                         order by o) B
-                                                 where ad_textinterfaces_id is not null) A)
-    </Sql>
-    <Parameter name="text"/>
-    <Parameter name="moduleLang"/>
-  </SqlMethod>
-  
-  <SqlMethod name="existsExpresionNoModNoFile" type="preparedStatement" return="rowCount">
-    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
-    <Sql>
-         update ad_textinterfaces
-           set isUsed = 'Y'
-         where ad_textinterfaces_id = ( select min(A.ad_textinterfaces_id)
-                                          from (select B.*
-                                                from (select min(t.ad_textinterfaces_id) AS ad_textinterfaces_id, 4 AS o
-                                                          from ad_textinterfaces t, ad_textinterfaces_trl trl
-                                                         where trl.text = ?
-                                                           and t.filename is null
-                                                           and trl.ad_textinterfaces_id = t.ad_textinterfaces_id
-                                                           and trl.ad_language = ?
-                                                         order by o) B
-                                                 where ad_textinterfaces_id is not null) A)
-    </Sql>
-    
-    <Parameter name="text"/>
-    <Parameter name="moduleLang"/>
-  </SqlMethod>
-
-   <SqlMethod name="getModuleID" type="preparedStatement" return="string">
-    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
-    <Sql>
-      SELECT AD_MODULE_ID
-        FROM AD_MODULE
-       WHERE JavaPackage = ?
-    </Sql>
-    <Parameter name="name"/>
-  </SqlMethod>
-  
-  <SqlMethod name="getModuleLang" type="preparedStatement" return="string">
-    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
-    <Sql>
-      SELECT AD_LANGUAGE
-        FROM AD_MODULE
-       WHERE AD_MODULE_ID = ?
-    </Sql>
-    <Parameter name="module_id"/>
-  </SqlMethod>
-  
-  <SqlMethod name="isInDevelopmentModule" type="preparedStatement" return="boolean">
-    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
-    <Sql>
-      SELECT COUNT(*) AS TOTAL
-        FROM AD_MODULE
-       WHERE AD_MODULE_ID = ?
-         AND ISINDEVELOPMENT = 'Y'
-    </Sql>
-    <Parameter name="name"/>
-  </SqlMethod>
-
-  <SqlMethod name="isInDevelopmentModulePack" type="preparedStatement" return="boolean">
-    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
-    <Sql>
-      SELECT COUNT(*) AS TOTAL
-        FROM AD_MODULE
-       WHERE JAVAPACKAGE = ?
-         AND ISINDEVELOPMENT = 'Y'
-    </Sql>
-    <Parameter name="pack"/>
-  </SqlMethod>
-  
-  <SqlMethod name="insert" type="preparedStatement" return="rowCount">
-    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
+  <SqlMethod name="insert" type="preparedStatement" connection="true" return="rowCount">
     <Sql>
       insert into ad_textinterfaces
         (AD_TEXTINTERFACES_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, TEXT, FILENAME, ISUSED, AD_MODULE_ID)
@@ -191,32 +50,19 @@
     <Parameter name="module"/>
   </SqlMethod>
 
-  <SqlMethod name="update" type="preparedStatement" return="rowCount">
-    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
+  <SqlMethod name="update" type="preparedStatement" connection="true" return="rowCount">
     <Sql>
       update ad_textinterfaces t
-         set isUsed='Y'
+         set isUsed='Y', updated=now(), updatedBy = '0'
        where ad_textinterfaces_id = ?
-         and exists (select 1 
-                       from ad_module m
-                      where m.ad_module_id = t.ad_module_id
-                        and m.isInDevelopment = 'Y')
     </Sql>
     <Parameter name="adTextinterfacesId"/>
   </SqlMethod>
 
-  <SqlMethod name="systemLanguage" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
-    <Sql>
-      SELECT AD_LANGUAGE AS NAME FROM AD_LANGUAGE WHERE ISACTIVE='Y' AND ISSYSTEMLANGUAGE='Y' AND ISBASELANGUAGE='N'
-    </Sql>
-  </SqlMethod>
-  
   <SqlMethod name="clean" type="preparedStatement" return="rowCount">
-    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
     <Sql>
       update ad_textinterfaces t
-         set isUsed='N'
+         set isUsed='N', updated=now(), updatedBy = '0'
        where exists (select 1 
                        from ad_module m
                       where m.ad_module_id = t.ad_module_id
@@ -225,7 +71,6 @@
   </SqlMethod>
   
   <SqlMethod name="remove" type="preparedStatement" return="rowCount">
-    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
     <Sql>
       delete from ad_textinterfaces t
        where isUsed='N'
