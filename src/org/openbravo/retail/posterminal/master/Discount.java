@@ -87,7 +87,9 @@ public class Discount extends ProcessHQLQuery {
     hql += "      from PricingAdjustmentProduct pap, OBRETCO_Prol_Product ppl ";
     hql += "      where pap.active = true and pap.priceAdjustment = p ";
     hql += "      and pap.product.id = ppl.product.id ";
-    hql += "      and ppl.active = true and (ppl.$incrementalUpdateCriteria) ";
+    hql += "      and ppl.active = true and pap.product.active = true ";
+    hql += "      and ((ppl.$incrementalUpdateCriteria) ";
+    hql += "      or (pap.product.$incrementalUpdateCriteria)) ";
     hql += "      and ppl.obretcoProductlist.id ='" + productList.getId() + "'))) ";
     hql += "  ) ";
 

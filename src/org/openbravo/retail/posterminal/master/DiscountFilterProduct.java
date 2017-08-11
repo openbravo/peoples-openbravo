@@ -44,6 +44,7 @@ public class DiscountFilterProduct extends Discount {
     hql += " and ppl.obretcoProductlist.id ='" + productList.getId() + "' ";
     hql += " and ((ap.$incrementalUpdateCriteria) " + jsonsent.get("operator")
         + " (ap.priceAdjustment.$incrementalUpdateCriteria) " + jsonsent.get("operator")
+        + " (ap.product.$incrementalUpdateCriteria) " + jsonsent.get("operator")
         + " (ppl.$incrementalUpdateCriteria)) ";
     hql += " and exists (select 1 " + getPromotionsHQL(jsonsent, false);
     hql += "              and ap.priceAdjustment = p) ";
