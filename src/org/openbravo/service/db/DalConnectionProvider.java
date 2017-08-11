@@ -95,7 +95,7 @@ public class DalConnectionProvider implements ConnectionProvider {
   public Connection getConnection() throws NoConnectionAvailableException {
     try {
       if (connection == null || connection.isClosed()) {
-        connection = OBDal.getInstance(pool).getConnection(flush);
+        connection = OBDal.getInstance(pool).getConnection(false);
       }
     } catch (SQLException sqlex) {
       log.error("Error checking connection of {} pool", pool, sqlex);
@@ -103,10 +103,9 @@ public class DalConnectionProvider implements ConnectionProvider {
       // Handle the case of a connection retrieved from Hibernate pool which has been already
       // closed. In this case the connection is marked as not usable and when we try to check its
       // status a HibernateException is thrown.
-      connection = OBDal.getInstance(pool).getConnection(flush);
+      connection = OBDal.getInstance(pool).getConnection(false);
     }
 
-    // always flush all remaining actions
     if (flush) {
       OBDal.getInstance(pool).flush();
     }
