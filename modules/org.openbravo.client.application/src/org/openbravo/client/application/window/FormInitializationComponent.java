@@ -21,7 +21,6 @@ package org.openbravo.client.application.window;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1452,16 +1451,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       List<JSONObject> messages, List<String> dynamicCols, List<String> jsExecuteCode,
       Map<String, Object> hiddenInputs, List<String> overwrittenAuxiliaryInputs) {
     HashMap<String, Object> calloutInstances = new HashMap<String, Object>();
-
-    // flush&commit to release lock in db which otherwise interfere with callouts which run in their
-    // own jdbc connection (i.e. lock on AD_Sequence when using with Sales Invoice window)
-    OBDal.getInstance().flush();
     List<String> changedCols = new ArrayList<String>();
-    try {
-      OBDal.getInstance().getConnection().commit();
-    } catch (SQLException e1) {
-      throw new OBException("Error committing before runnings callouts", e1);
-    }
     List<Field> fields = getADFieldList(tab.getId());
     HashMap<String, Field> inpFields = buildInpField(fields);
     String lastCalledCallout = "";
