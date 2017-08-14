@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.TimeZone;
 
 import javax.enterprise.inject.Any;
@@ -28,6 +29,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -67,6 +69,13 @@ public class PaidReceipts extends JSONProcessSimple {
   @Any
   @Qualifier(paidReceiptsPaymentsPropertyExtension)
   private Instance<ModelExtension> extensionsPayments;
+  @Inject
+  @Any
+  private Instance<PaidReceiptsPaymentsTypeHook> paymentsTypeInProcesses;
+
+  @Inject
+  @Any
+  private Instance<PaidReceiptsPaymentsInHook> paymentsInProcesses;
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -295,6 +304,8 @@ public class PaidReceipts extends JSONProcessSimple {
           paymentsType.put("openDrawer", objPaymentsType[6]);
           listPaymentsType.put(paymentsType);
         }
+        executeHooks(paymentsTypeInProcesses, null, listPaymentsType, orderid);
+
         for (int i = 0; i < listPaymentsIn.length(); i++) {
           JSONObject objectIn = (JSONObject) listPaymentsIn.get(i);
 
@@ -340,6 +351,9 @@ public class PaidReceipts extends JSONProcessSimple {
               if (objectIn.has("reversedPaymentId")) {
                 paidReceiptPayment.put("reversedPaymentId", objectIn.get("reversedPaymentId"));
               }
+              // Call all payments in processes injected.
+              executeHooks(paymentsInProcesses, paidReceiptPayment, null,
+                  (String) objectIn.get("paymentId"));
               added = true;
               listpaidReceiptsPayments.put(paidReceiptPayment);
             }
@@ -457,11 +471,26 @@ public class PaidReceipts extends JSONProcessSimple {
         result.put(JsonConstants.RESPONSE_DATA, respArray);
         result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       }
+    } catch (Exception e) {
+      throw new OBException("Error in PaidReceips: ", e);
     } finally {
 
       OBContext.restorePreviousMode();
     }
     return result;
+  }
+
+  protected void executeHooks(Instance<? extends Object> hooks, JSONObject paymentIn,
+      JSONArray paymentsTypes, String id) throws Exception {
+
+    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
+      Object proc = procIter.next();
+      if (proc instanceof PaidReceiptsPaymentsInHook) {
+        ((PaidReceiptsPaymentsInHook) proc).exec(paymentIn, id);
+      } else if (proc instanceof PaidReceiptsPaymentsTypeHook) {
+        ((PaidReceiptsPaymentsTypeHook) proc).exec(paymentsTypes, id);
+      }
+    }
   }
 
   private boolean checkOrderInErrorEntry(String orderId) {

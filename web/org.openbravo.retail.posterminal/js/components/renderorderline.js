@@ -468,7 +468,6 @@ enyo.kind({
     } else {
       this.$.foreignAmount.setContent('');
     }
-
   }
 });
 enyo.kind({
