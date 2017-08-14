@@ -55,7 +55,7 @@
 <!--3-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3-->  <NAME><![CDATA[Transit]]></NAME>
-<!--3-->  <AVAILABLE><![CDATA[N]]></AVAILABLE>
+<!--3-->  <AVAILABLE><![CDATA[Y]]></AVAILABLE>
 <!--3-->  <NETTABLE><![CDATA[Y]]></NETTABLE>
 <!--3-->  <OVERISSUE><![CDATA[N]]></OVERISSUE>
 <!--3-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
