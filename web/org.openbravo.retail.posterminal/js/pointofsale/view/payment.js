@@ -424,15 +424,15 @@ enyo.kind({
       this.$.totalpending.applyStyle('font-size', '24px');
     }
 
-    if (pendingPrepayment <= 0) {
-      this.$.prepaymenttotalpending.hide();
-      this.$.prepaymenttotalpendinglbl.hide();
-      this.$.prepaymentexactlbl.show();
-    } else {
+    if ((OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && this.receipt.get('prepaymentLimitAmt') < this.receipt.get('gross'))) {
       this.setPrepaymentTotalPending(pendingPrepayment, rate, symbol, symbolAtRight);
       this.$.prepaymenttotalpending.show();
       this.$.prepaymenttotalpendinglbl.show();
       this.$.prepaymentexactlbl.hide();
+    } else {
+      this.$.prepaymenttotalpending.hide();
+      this.$.prepaymenttotalpendinglbl.hide();
+      this.$.prepaymentexactlbl.show();
     }
 
     if (paymentstatus.change) {
@@ -556,15 +556,15 @@ enyo.kind({
       this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', true);
       this.$.totalpending.applyStyle('font-size', '24px');
     }
-    if (pendingPrepayment <= 0) {
-      this.$.prepaymenttotalpending.hide();
-      this.$.prepaymenttotalpendinglbl.hide();
-      this.$.prepaymentexactlbl.show();
-    } else {
+    if (pendingPrepayment > 0 && pendingPrepayment !== paymentstatus.get('total')) {
       this.setPrepaymentTotalPending(pendingPrepayment, rate, symbol, symbolAtRight);
       this.$.prepaymenttotalpending.show();
       this.$.prepaymenttotalpendinglbl.show();
       this.$.prepaymentexactlbl.hide();
+    } else {
+      this.$.prepaymenttotalpending.hide();
+      this.$.prepaymenttotalpendinglbl.hide();
+      this.$.prepaymentexactlbl.show();
     }
 
     this.checkValidPayments(paymentStatus, selectedPayment);
@@ -598,7 +598,7 @@ enyo.kind({
       this.setTotalPending(OB.DEC.sub(multiOrders.get('total'), multiOrders.get('payment')), rate, symbol, symbolAtRight);
       this.$.totalpending.show();
       this.$.totalpendinglbl.show();
-      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
+      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && paymentstatus.get('prepaymentLimitAmt') < paymentstatus.get('total') + paymentstatus.get('existingPayment')) {
         this.$.donebutton.show();
       } else {
         this.$.donebutton.hide();
@@ -1459,16 +1459,17 @@ enyo.kind({
         },
         paymentStatus, prepaymentLimitAmount, pendingPrepayment, receiptHasPrepaymentAmount = true;
 
-    this.owner.receipt.getPrepaymentAmount();
     if (myModel.get('leftColumnViewManager').isOrder()) {
+      this.owner.receipt.getPrepaymentAmount();
       paymentStatus = this.owner.receipt.getPaymentStatus();
       prepaymentLimitAmount = this.owner.receipt.get('prepaymentLimitAmt');
       receiptHasPrepaymentAmount = this.owner.receipt.get('orderType') !== 1 && this.owner.receipt.get('orderType') !== 3;
+      pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentLimitAmount, paymentStatus.pendingAmt), paymentStatus.totalAmt);
     } else {
       paymentStatus = this.owner.model.get('multiOrders').getPaymentStatus();
       prepaymentLimitAmount = this.owner.model.get('multiOrders').get('prepaymentLimitAmt');
+      pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentLimitAmount, paymentStatus.pendingAmt), OB.DEC.add(paymentStatus.totalAmt, this.owner.model.get('multiOrders').get('existingPayment')));
     }
-    pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentLimitAmount, paymentStatus.pendingAmt), paymentStatus.totalAmt);
     receiptHasPrepaymentAmount = receiptHasPrepaymentAmount && prepaymentLimitAmount !== 0;
     if (receiptHasPrepaymentAmount && pendingPrepayment > 0) {
       if (OB.MobileApp.model.hasPermission('OBPOS_AllowPrepaymentUnderLimit', true)) {
