@@ -25,7 +25,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2016 Openbravo SLU
+* All portions are Copyright (C) 2012-2017 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -311,18 +311,6 @@ BEGIN
         RAISE_APPLICATION_ERROR(-20000, '@ActionNotSupported@');
       END IF;
 
-      UPDATE c_orderline
-      SET so_res_status = 'NR'
-      WHERE c_orderline_id = v_orderline_id;
-
-      SELECT c_order_id INTO v_sales_order_id
-      FROM c_orderline
-      WHERE c_orderline_id = v_orderline_id;
-      SELECT COUNT(*) INTO v_reservedcount
-      FROM c_orderline
-      WHERE c_order_id = v_sales_order_id
-        AND so_res_status <> 'NR';
-      
       -- Convert to pre-reserve reservations related to purchase orders that are not released.
       FOR cur_prereserve IN (
           SELECT m_reservation_stock_id, quantity - COALESCE(releasedqty, 0) AS reservedqty, c_orderline_id
@@ -366,11 +354,28 @@ BEGIN
         AND quantity = 0
         AND COALESCE(releasedqty, 0) = 0;
 
-      UPDATE c_order
-      SET so_res_status = CASE WHEN v_reservedcount > 0 THEN 'PR'
-                               ELSE 'NR'
-                          END
-      WHERE c_order_id = v_sales_order_id;
+      IF (v_orderline_id IS NOT NULL) THEN
+
+        UPDATE c_orderline
+        SET so_res_status = 'NR'
+        WHERE c_orderline_id = v_orderline_id;
+
+        SELECT c_order_id
+        INTO v_sales_order_id
+        FROM c_orderline
+        WHERE c_orderline_id = v_orderline_id;
+
+        SELECT count(1)
+        INTO v_reservedcount
+        FROM c_orderline
+        WHERE c_order_id = v_sales_order_id
+        AND so_res_status <> 'NR';
+
+        UPDATE c_order
+        SET so_res_status = CASE WHEN v_reservedcount > 0 THEN 'PR' ELSE 'NR' END
+        WHERE c_order_id = v_sales_order_id;
+
+      END IF;
 
       v_newstatus := 'DR';
       v_newaction := 'PR';
