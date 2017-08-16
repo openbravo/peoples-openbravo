@@ -9,7 +9,9 @@
 package org.openbravo.retail.posterminal.master;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -32,6 +34,18 @@ public class SalesRepresentative extends ProcessHQLQuery {
   private Instance<ModelExtension> extensions;
 
   @Override
+  protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
+    // Get Sales Representative Properties
+    List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
+    Map<String, Object> args = new HashMap<String, Object>();
+    HQLPropertyList characteristicsHQLProperties = ModelExtensionUtils.getPropertyExtensions(
+        extensions, args);
+    propertiesList.add(characteristicsHQLProperties);
+
+    return propertiesList;
+  }
+
+  @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     Long lastUpdated = jsonsent.has("lastUpdated")
         && !jsonsent.get("lastUpdated").equals("undefined")
@@ -46,7 +60,7 @@ public class SalesRepresentative extends ProcessHQLQuery {
         .add("select"
             + regularSalesRepresentativeHQLProperties.getHqlSelect() //
             + "from ADUser user "
-            + "where "
+            + "where $filtersCriteria AND"
             + " exists (select 1 from BusinessPartner bp where user.businessPartner = bp AND bp.isSalesRepresentative = true AND (bp.$naturalOrgCriteria)) "
             + "AND ((user.$incrementalUpdateCriteria) "
             + operator
