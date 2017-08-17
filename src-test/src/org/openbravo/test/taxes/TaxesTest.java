@@ -23,8 +23,6 @@ import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeFalse;
-import static org.junit.Assume.assumeTrue;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -326,114 +324,22 @@ public class TaxesTest extends OBBaseTest {
   }
 
   @Test
-  public void test_PurchaseOrderTaxes_PriceIncludingTaxes_DocumentLevelTaxes() {
-    assumeTrue(this.isPriceIncludingTaxes);
-    assumeTrue(this.isTaxDocumentLevel);
+  public void testPurchaseOrderTaxes() {
     testOrderTaxes(false);
   }
 
   @Test
-  public void test_SalesOrderTaxes_PriceIncludingTaxes_DocumentLevelTaxes() {
-    assumeTrue(this.isPriceIncludingTaxes);
-    assumeTrue(this.isTaxDocumentLevel);
+  public void testSalesOrderTaxes() {
     testOrderTaxes(true);
   }
 
   @Test
-  public void test_PurchaseOrderTaxes_PriceExcludingTaxes_DocumentLevelTaxes() {
-    assumeFalse(this.isPriceIncludingTaxes);
-    assumeTrue(this.isTaxDocumentLevel);
-    testOrderTaxes(false);
-  }
-
-  @Test
-  public void test_SalesOrderTaxes_PriceExcludingTaxes_DocumentLevelTaxes() {
-    assumeFalse(this.isPriceIncludingTaxes);
-    assumeTrue(this.isTaxDocumentLevel);
-    testOrderTaxes(true);
-  }
-
-  @Test
-  public void test_PurchaseOrderTaxes_PriceIncludingTaxes_LineLevelTaxes() {
-    assumeTrue(this.isPriceIncludingTaxes);
-    assumeFalse(this.isTaxDocumentLevel);
-    testOrderTaxes(false);
-  }
-
-  @Test
-  public void test_SalesOrderTaxes_PriceIncludingTaxes_LineLevelTaxes() {
-    assumeTrue(this.isPriceIncludingTaxes);
-    assumeFalse(this.isTaxDocumentLevel);
-    testOrderTaxes(true);
-  }
-
-  @Test
-  public void test_PurchaseOrderTaxes_PriceExcludingTaxes_LineLevelTaxes() {
-    assumeFalse(this.isPriceIncludingTaxes);
-    assumeFalse(this.isTaxDocumentLevel);
-    testOrderTaxes(false);
-  }
-
-  @Test
-  public void test_SalesOrderTaxes_PriceExcludingTaxes_LineLevelTaxes() {
-    assumeFalse(this.isPriceIncludingTaxes);
-    assumeFalse(this.isTaxDocumentLevel);
-    testOrderTaxes(true);
-  }
-
-  @Test
-  public void test_PurchaseInvoiceTaxes_PriceIncludingTaxes_DocumentLevelTaxes() {
-    assumeTrue(this.isPriceIncludingTaxes);
-    assumeTrue(this.isTaxDocumentLevel);
+  public void testPurchaseInvoiceTaxes() {
     testInvoiceTaxes(false);
   }
 
   @Test
-  public void test_SalesInvoiceTaxes_PriceIncludingTaxes_DocumentLevelTaxes() {
-    assumeTrue(this.isPriceIncludingTaxes);
-    assumeTrue(this.isTaxDocumentLevel);
-    testInvoiceTaxes(true);
-  }
-
-  @Test
-  public void test_PurchaseInvoiceTaxes_PriceExcludingTaxes_DocumentLevelTaxes() {
-    assumeFalse(this.isPriceIncludingTaxes);
-    assumeTrue(this.isTaxDocumentLevel);
-    testInvoiceTaxes(false);
-  }
-
-  @Test
-  public void test_SalesInvoiceTaxes_PriceExcludingTaxes_DocumentLevelTaxes() {
-    assumeFalse(this.isPriceIncludingTaxes);
-    assumeTrue(this.isTaxDocumentLevel);
-    testInvoiceTaxes(true);
-  }
-
-  @Test
-  public void test_PurchaseInvoiceTaxes_PriceIncludingTaxes_LineLevelTaxes() {
-    assumeTrue(this.isPriceIncludingTaxes);
-    assumeFalse(this.isTaxDocumentLevel);
-    testInvoiceTaxes(false);
-  }
-
-  @Test
-  public void test_SalesInvoiceTaxes_PriceIncludingTaxes_LineLevelTaxes() {
-    assumeTrue(this.isPriceIncludingTaxes);
-    assumeFalse(this.isTaxDocumentLevel);
-    testInvoiceTaxes(true);
-  }
-
-  @Test
-  public void test_PurchaseInvoiceTaxes_PriceExcludingTaxes_LineLevelTaxes() {
-    assumeFalse(this.isPriceIncludingTaxes);
-    assumeFalse(this.isTaxDocumentLevel);
-    testInvoiceTaxes(false);
-  }
-
-  @Test
-  public void test_SalesInvoiceTaxes_PriceExcludingTaxes_LineLevelTaxes() {
-    assumeFalse(this.isPriceIncludingTaxes);
-    assumeFalse(this.isTaxDocumentLevel);
+  public void testSalesInvoiceTaxes() {
     testInvoiceTaxes(true);
   }
 
