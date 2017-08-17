@@ -588,7 +588,7 @@ public class CostingMigrationProcess implements Process {
           trxCost = totalCost.multiply(trx.getMovementQuantity().abs()).divide(totalStock,
               stdPrecision, BigDecimal.ROUND_HALF_UP);
         }
-        if (trx.getMovementQuantity().compareTo(totalStock) == 0) {
+        if (trx.getMovementQuantity().negate().compareTo(totalStock) == 0) {
           // Last transaction adjusts remaining cost amount.
           trxCost = totalCost;
         }
