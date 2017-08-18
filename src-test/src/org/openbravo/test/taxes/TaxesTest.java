@@ -420,37 +420,21 @@ public class TaxesTest extends OBBaseTest {
   }
 
   private Order createOrder(boolean isSales) {
-    Order order;
-    if (isSales) {
-      order = OBDal.getInstance().get(Order.class, SALESORDER_ID);
-    } else {
-      order = OBDal.getInstance().get(Order.class, PURCHASEORDER_ID);
-    }
+    Order order = OBDal.getInstance().get(Order.class, isSales ? SALESORDER_ID : PURCHASEORDER_ID);
     Order testOrder = (Order) DalUtil.copy(order, false);
     String documentNo = isPriceIncludingTaxes ? "PriceIncludingTaxes" : "PriceExcludingTaxes";
     testOrder.setDocumentNo(documentNo + " " + testNumber);
-    testOrder.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
+    testOrder.setBusinessPartner(OBDal.getInstance().getProxy(BusinessPartner.class,
         isSales ? BPartnerDataConstants.CUSTOMER_A : BPartnerDataConstants.VENDOR_A));
     testOrder.setSummedLineAmount(BigDecimal.ZERO);
     testOrder.setGrandTotalAmount(BigDecimal.ZERO);
     testOrder.setPriceIncludesTax(isPriceIncludingTaxes);
-    if (isPriceIncludingTaxes) {
-      if (isSales) {
-        testOrder.setPriceList(OBDal.getInstance().get(PriceList.class,
-            PRICEINCLUDINGTAXES_PRICELIST_SALES));
-      } else {
-        testOrder.setPriceList(OBDal.getInstance().get(PriceList.class,
-            PRICEINCLUDINGTAXES_PRICELIST_PURCHASE));
-      }
-    } else {
-      if (isSales) {
-        testOrder.setPriceList(OBDal.getInstance().get(PriceList.class,
-            PRICEEXCLUDINGTAXES_PRICELIST_SALES));
-      } else {
-        testOrder.setPriceList(OBDal.getInstance().get(PriceList.class,
-            PRICEEXCLUDINGTAXES_PRICELIST_PURCHASE));
-      }
-    }
+    testOrder.setPriceList(OBDal.getInstance().getProxy(
+        PriceList.class,
+        isPriceIncludingTaxes ? isSales ? PRICEINCLUDINGTAXES_PRICELIST_SALES
+            : PRICEINCLUDINGTAXES_PRICELIST_PURCHASE
+            : isSales ? PRICEEXCLUDINGTAXES_PRICELIST_SALES
+                : PRICEEXCLUDINGTAXES_PRICELIST_PURCHASE));
     OBDal.getInstance().save(testOrder);
 
     OrderLine orderLine = order.getOrderLineList().get(0);
@@ -461,7 +445,7 @@ public class TaxesTest extends OBBaseTest {
       if (product.getPricingDiscountList().isEmpty()) {
         OrderLine testOrderLine = (OrderLine) DalUtil.copy(orderLine, false);
         testOrderLine.setLineNo((i + 1) * 10L);
-        testOrderLine.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
+        testOrderLine.setBusinessPartner(OBDal.getInstance().getProxy(BusinessPartner.class,
             isSales ? BPartnerDataConstants.CUSTOMER_A : BPartnerDataConstants.VENDOR_A));
         testOrderLine.setProduct(product);
         testOrderLine.setUOM(product.getUOM());
@@ -476,7 +460,7 @@ public class TaxesTest extends OBBaseTest {
           testOrderLine.setListPrice(linesData[i].getPrice());
           testOrderLine.setStandardPrice(linesData[i].getPrice());
         }
-        testOrderLine.setTax(OBDal.getInstance().get(TaxRate.class, linesData[i].getTaxid()));
+        testOrderLine.setTax(OBDal.getInstance().getProxy(TaxRate.class, linesData[i].getTaxid()));
         testOrderLine.setLineGrossAmount(linesData[i].getQuantity().multiply(
             linesData[i].getPrice()));
         testOrderLine
@@ -513,38 +497,23 @@ public class TaxesTest extends OBBaseTest {
   }
 
   private Invoice createInvoice(boolean isSales) {
-    Invoice invoice;
-    if (isSales) {
-      invoice = OBDal.getInstance().get(Invoice.class, SALESINVOICE_ID);
-    } else {
-      invoice = OBDal.getInstance().get(Invoice.class, PURCHASEINVOICE_ID);
-    }
+    Invoice invoice = OBDal.getInstance().get(Invoice.class,
+        isSales ? SALESINVOICE_ID : PURCHASEINVOICE_ID);
     Invoice testInvoice = (Invoice) DalUtil.copy(invoice, false);
     String documentNo = isPriceIncludingTaxes ? "PriceIncludingTaxes" : "PriceExcludingTaxes";
     testInvoice.setDocumentNo(documentNo + " " + testNumber);
     testInvoice.setDescription(testDescription);
-    testInvoice.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
+    testInvoice.setBusinessPartner(OBDal.getInstance().getProxy(BusinessPartner.class,
         isSales ? BPartnerDataConstants.CUSTOMER_A : BPartnerDataConstants.VENDOR_A));
     testInvoice.setSummedLineAmount(BigDecimal.ZERO);
     testInvoice.setGrandTotalAmount(BigDecimal.ZERO);
     testInvoice.setPriceIncludesTax(isPriceIncludingTaxes);
-    if (isPriceIncludingTaxes) {
-      if (isSales) {
-        testInvoice.setPriceList(OBDal.getInstance().get(PriceList.class,
-            PRICEINCLUDINGTAXES_PRICELIST_SALES));
-      } else {
-        testInvoice.setPriceList(OBDal.getInstance().get(PriceList.class,
-            PRICEINCLUDINGTAXES_PRICELIST_PURCHASE));
-      }
-    } else {
-      if (isSales) {
-        testInvoice.setPriceList(OBDal.getInstance().get(PriceList.class,
-            PRICEEXCLUDINGTAXES_PRICELIST_SALES));
-      } else {
-        testInvoice.setPriceList(OBDal.getInstance().get(PriceList.class,
-            PRICEEXCLUDINGTAXES_PRICELIST_PURCHASE));
-      }
-    }
+    testInvoice.setPriceList(OBDal.getInstance().getProxy(
+        PriceList.class,
+        isPriceIncludingTaxes ? isSales ? PRICEINCLUDINGTAXES_PRICELIST_SALES
+            : PRICEINCLUDINGTAXES_PRICELIST_PURCHASE
+            : isSales ? PRICEEXCLUDINGTAXES_PRICELIST_SALES
+                : PRICEEXCLUDINGTAXES_PRICELIST_PURCHASE));
     OBDal.getInstance().save(testInvoice);
 
     InvoiceLine invoiceLine = invoice.getInvoiceLineList().get(0);
@@ -555,7 +524,7 @@ public class TaxesTest extends OBBaseTest {
       if (product.getPricingDiscountList().isEmpty()) {
         InvoiceLine testInvoiceLine = (InvoiceLine) DalUtil.copy(invoiceLine, false);
         testInvoiceLine.setLineNo((i + 1) * 10L);
-        testInvoiceLine.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
+        testInvoiceLine.setBusinessPartner(OBDal.getInstance().getProxy(BusinessPartner.class,
             isSales ? BPartnerDataConstants.CUSTOMER_A : BPartnerDataConstants.VENDOR_A));
         testInvoiceLine.setProduct(product);
         testInvoiceLine.setUOM(product.getUOM());
@@ -569,7 +538,8 @@ public class TaxesTest extends OBBaseTest {
           testInvoiceLine.setListPrice(linesData[i].getPrice());
           testInvoiceLine.setStandardPrice(linesData[i].getPrice());
         }
-        testInvoiceLine.setTax(OBDal.getInstance().get(TaxRate.class, linesData[i].getTaxid()));
+        testInvoiceLine
+            .setTax(OBDal.getInstance().getProxy(TaxRate.class, linesData[i].getTaxid()));
         testInvoiceLine
             .setGrossAmount(linesData[i].getQuantity().multiply(linesData[i].getPrice()));
         testInvoiceLine.setLineNetAmount(linesData[i].getQuantity().multiply(
