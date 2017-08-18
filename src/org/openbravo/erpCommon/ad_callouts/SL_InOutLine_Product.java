@@ -18,6 +18,8 @@
  */
 package org.openbravo.erpCommon.ad_callouts;
 
+import java.math.BigDecimal;
+
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
@@ -106,14 +108,11 @@ public class SL_InOutLine_Product extends SimpleCallout {
     boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
     String fromOrder = SLInOutLineProductData.fromOrder(this, strmInoutlineId);
     if (fromOrder.equals("0")) {
-      info.addResult("inpquantityorder", StringUtils.isEmpty(strQtyOrder) ? "\"\""
-          : (Object) strQtyOrder);
-      if (strHasSecondaryUOM.equals("1")
-          && (!isUomManagementEnabled || (isUomManagementEnabled && !"".equals(strUOMProduct)))) {
-        info.addResult("inpquantityorder", StringUtils.isEmpty(strQtyOrder) ? "\"\""
-            : (Object) strQtyOrder);
-      }
-      info.addResult("inpmovementqty", StringUtils.isEmpty(strQty) ? "\"\"" : (Object) strQty);
+      BigDecimal qtyOrder = StringUtils.isNotEmpty(strQtyOrder) ? new BigDecimal(strQtyOrder)
+          : null;
+      BigDecimal qty = StringUtils.isNotEmpty(strQty) ? new BigDecimal(strQty) : null;
+      info.addResult("inpquantityorder", qtyOrder);
+      info.addResult("inpmovementqty", qty);
     }
 
     if (isUomManagementEnabled && "".equals(strUOMProduct)) {

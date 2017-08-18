@@ -90,10 +90,11 @@ public class SL_Movement_Product extends SimpleCallout {
 
     String strQtyOrder = info.vars.getNumericParameter("inpmProductId_PQTY");
     String strQty = info.vars.getNumericParameter("inpmProductId_QTY");
+    BigDecimal qtyOrder = StringUtils.isNotEmpty(strQtyOrder) ? new BigDecimal(strQtyOrder) : null;
+    BigDecimal qty = StringUtils.isNotEmpty(strQty) ? new BigDecimal(strQty) : null;
 
-    info.addResult("inpmovementqty", StringUtils.isEmpty(strQty) ? "\"\"" : (Object) strQty);
-    info.addResult("inpquantityorder", StringUtils.isEmpty(strQtyOrder) ? "\"\""
-        : (Object) strQtyOrder);
+    info.addResult("inpquantityorder", qtyOrder);
+    info.addResult("inpmovementqty", qty);
 
     // Secondary UOM
 
