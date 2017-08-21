@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2017 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -273,11 +273,16 @@ public class Fact {
     log4jFact.debug("C_Currency_ID: " + m_acctSchema.getC_Currency_ID() + " - ConversionDate: "
         + localConversionDate + " - CurrencyRateType: " + m_acctSchema.getCurrencyRateType());
     // Convert
+    boolean converted;
     if (conversionRate != null) {
-      line.convertByRate(m_acctSchema.getC_Currency_ID(), conversionRate);
+      converted = line.convertByRate(m_acctSchema.getC_Currency_ID(), conversionRate);
     } else {
-      line.convert(m_acctSchema.getC_Currency_ID(), localConversionDate,
+      converted = line.convert(m_acctSchema.getC_Currency_ID(), localConversionDate,
           m_acctSchema.getCurrencyRateType(), conn);
+    }
+    if (!converted) {
+      m_doc.setStatus(AcctServer.STATUS_NotConvertible);
+      return null;
     }
     // Optionally overwrite Acct Amount
     if (docLine != null && !docLine.m_AmtAcctDr.equals("") && !docLine.m_AmtAcctCr.equals(""))

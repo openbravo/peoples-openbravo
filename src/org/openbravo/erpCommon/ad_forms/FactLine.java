@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2017 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -25,6 +25,7 @@ import java.sql.Statement;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -258,12 +259,14 @@ public class FactLine {
     if (conversionRateDoc != null) {
       m_AmtAcctDr = AcctServer.applyRate(new BigDecimal(m_AmtSourceDr), conversionRateDoc, true)
           .toString();
-      if (m_AmtAcctDr == null || m_AmtAcctDr.equals(""))
+      if (StringUtils.isEmpty(m_AmtAcctDr)) {
         return false;
+      }
       m_AmtAcctCr = AcctServer.applyRate(new BigDecimal(m_AmtSourceCr), conversionRateDoc, true)
           .toString();
-      if (m_AmtAcctCr == null || m_AmtAcctCr.equals(""))
+      if (StringUtils.isEmpty(m_AmtAcctCr)) {
         return false;
+      }
     } else {
       // Try to find reversal conversion rate at doc level and use it
       ConversionRateDoc reversalConversionRateDoc = m_docVO.getConversionRateDoc(tableID, recordId,
@@ -271,19 +274,25 @@ public class FactLine {
       if (reversalConversionRateDoc != null) {
         m_AmtAcctDr = AcctServer.applyRate(new BigDecimal(m_AmtSourceDr),
             reversalConversionRateDoc, false).toString();
-        if (m_AmtAcctDr == null || m_AmtAcctDr.equals(""))
+        if (StringUtils.isEmpty(m_AmtAcctDr)) {
           return false;
+        }
         m_AmtAcctCr = AcctServer.applyRate(new BigDecimal(m_AmtSourceCr),
             reversalConversionRateDoc, false).toString();
-        if (m_AmtAcctCr == null || m_AmtAcctCr.equals(""))
+        if (StringUtils.isEmpty(m_AmtAcctCr)) {
           return false;
+        }
       } else {
         m_AmtAcctDr = AcctServer.getConvertedAmt(m_AmtSourceDr, m_C_Currency_ID, Acct_Currency_ID,
             ConversionDate, CurrencyRateType, m_docVO.AD_Client_ID, m_docVO.AD_Org_ID, conn);
-        if (m_AmtAcctDr == null || m_AmtAcctDr.equals(""))
+        if (StringUtils.isEmpty(m_AmtAcctDr)) {
           return false;
+        }
         m_AmtAcctCr = AcctServer.getConvertedAmt(m_AmtSourceCr, m_C_Currency_ID, Acct_Currency_ID,
             ConversionDate, CurrencyRateType, m_docVO.AD_Client_ID, m_docVO.AD_Org_ID, conn);
+        if (StringUtils.isEmpty(m_AmtAcctCr)) {
+          return false;
+        }
       }
     }
     return true;
