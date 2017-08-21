@@ -18,6 +18,8 @@
  */
 package org.openbravo.erpCommon.ad_callouts;
 
+import java.math.BigDecimal;
+
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
@@ -91,18 +93,18 @@ public class SL_Inventory_Product extends SimpleCallout {
     // Quantity order
 
     String strQtyOrder = info.vars.getNumericParameter("inpmProductId_PQTY");
+    BigDecimal qtyOrder = StringUtils.isNotEmpty(strQtyOrder) ? new BigDecimal(strQtyOrder) : null;
 
-    info.addResult("inpquantityorder", StringUtils.isEmpty(strQtyOrder) ? "\"\""
-        : (Object) strQtyOrder);
-    info.addResult("inpquantityorderbook", StringUtils.isEmpty(strQtyOrder) ? "\"\""
-        : (Object) strQtyOrder);
+    info.addResult("inpquantityorder", qtyOrder);
+    info.addResult("inpquantityorderbook", qtyOrder);
 
     // Quantity
 
     String strQty = info.vars.getNumericParameter("inpmProductId_QTY");
+    BigDecimal qty = StringUtils.isNotEmpty(strQty) ? new BigDecimal(strQty) : null;
 
-    info.addResult("inpqtycount", StringUtils.isEmpty(strQty) ? "\"\"" : (Object) strQty);
-    info.addResult("inpqtybook", StringUtils.isEmpty(strQty) ? "\"\"" : (Object) strQty);
+    info.addResult("inpqtycount", qty);
+    info.addResult("inpqtybook", qty);
 
     // UOM
 
@@ -138,10 +140,5 @@ public class SL_Inventory_Product extends SimpleCallout {
     } else {
       info.addResult("inpmProductUomId", null);
     }
-
-    // displaylogic
-
-    info.addResult("EXECUTE", "displayLogic();");
-
   }
 }
