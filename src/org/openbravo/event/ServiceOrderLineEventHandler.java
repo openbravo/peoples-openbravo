@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2016 Openbravo SLU
+ * All portions are Copyright (C) 2015-20167 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -50,8 +50,7 @@ public class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver
     return entities;
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -139,7 +138,7 @@ public class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver
             }
           }
         } catch (Exception e) {
-          throw new OBException("Error in SalesOrderLineEventHandler" + e.getMessage());
+          throw new OBException("Error in SalesOrderLineEventHandler" + e.getMessage(), true);
         } finally {
           if (scroller != null) {
             scroller.close();
@@ -149,8 +148,7 @@ public class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver
     }
   }
 
-  public void onDelete(@Observes
-  EntityDeleteEvent event) {
+  public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }

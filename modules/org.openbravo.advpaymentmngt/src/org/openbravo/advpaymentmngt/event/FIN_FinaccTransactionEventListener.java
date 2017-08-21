@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -46,16 +46,14 @@ public class FIN_FinaccTransactionEventListener extends EntityPersistenceEventOb
     return entities;
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
     validateTransactionType(event);
   }
 
-  public void onSave(@Observes
-  EntityNewEvent event) {
+  public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -82,7 +80,7 @@ public class FIN_FinaccTransactionEventListener extends EntityPersistenceEventOb
         && glItem == null
         && payment == null) {
       logger.debug("@APRM_INVALID_TRANSACTION@");
-      throw new OBException("@APRM_INVALID_TRANSACTION@", false);
+      throw new OBException("@APRM_INVALID_TRANSACTION@");
     }
   }
 }
