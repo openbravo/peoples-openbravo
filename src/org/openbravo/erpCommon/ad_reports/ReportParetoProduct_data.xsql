@@ -46,7 +46,7 @@ with
           sum(t.movementqty) as movementqty,
           case when tc.c_currency_id = ?
              then sum(case when t.movementqty>=0 then tc.cost else -tc.cost end)
-             else c_currency_convert_precision(sum(case when t.movementqty>=0 then tc.cost else -tc.cost end), tc.c_currency_id, ?, to_date(now()), null, ?, ?) 
+             else c_currency_convert_precision(sum(case when t.movementqty>=0 then tc.cost else -tc.cost end), tc.c_currency_id, ?, tc.dateacct, null, ?, ?)
           end as value_per_orgwarehouseproduct
    from m_transaction_cost tc
    join m_transaction t on (tc.m_transaction_id = t.m_transaction_id)
@@ -62,7 +62,7 @@ with
      and t.ad_client_id = ?
      and 1=1
      and ad_isorgincluded(w.AD_ORG_ID, ?, w.ad_client_id) <> -1 
-   group by w.ad_org_id, t.m_product_id, tc.c_currency_id ), 
+   group by w.ad_org_id, t.m_product_id, tc.c_currency_id, tc.dateacct),
    
  org_prod_agg (ad_org_id, m_product_id, movementqty, value_per_orgwarehouseproduct) as
  (select wh.ad_org_id,
@@ -70,7 +70,7 @@ with
          agg.stock as movementqty,
          case when agg.c_currency_id = ?
              then agg.valuation
-             else c_currency_convert_precision(agg.valuation, agg.c_currency_id, ?, to_date(now()), null, agg.ad_client_id, agg.ad_org_id) 
+             else c_currency_convert_precision(agg.valuation, agg.c_currency_id, ?, agg.dateto, null, agg.ad_client_id, agg.ad_org_id)
          end as value_per_orgwarehouseproduct
   from m_valued_stock_agg agg
   join m_locator l on (agg.m_locator_id = l.m_locator_id)
