@@ -1769,7 +1769,7 @@ OB.ViewFormProperties = {
         form.setHasChanged(false);
 
         // remove any edit info in the grid
-        view.viewGrid.discardEdits(recordIndex, null, false, isc.ListGrid.PROGRAMMATIC, true);
+        view.viewGrid.discardEdits(recordIndex, null, false, isc.ListGrid.PROGRAMMATIC);
 
         // Change some labels:
         //  * set isNew as false if we continue editing same record or we move to an existent one

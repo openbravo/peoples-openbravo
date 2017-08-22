@@ -3340,86 +3340,55 @@ isc.OBViewGrid.addProperties({
     return this.Super('getCellStyle', arguments);
   },
 
-  discardEdits: function (rowNum, colNum, dontHideEditor, editCompletionEvent, preventConfirm) {
+  discardEdits: function (rowNum, colNum, dontHideEditor, editCompletionEvent) {
     var localArguments = arguments,
         editForm = this.getEditForm(),
-        totalRows, me = this,
-        record = this.getRecord(rowNum),
+        totalRows, record = this.getRecord(rowNum),
         selectedRecord = this.getSelectedRecord();
 
     if (record) {
       this.removeRecordFromValidationErrorList(record);
     }
 
-    if (!preventConfirm && ((editForm && editForm.hasChanged) || this.rowHasErrors(rowNum))) {
-      me.Super('discardEdits', localArguments);
+    this.Super('discardEdits', localArguments);
 
-      // remove the record if new
-      if (record._new) {
-        totalRows = me.data.totalRows;
-        me.data.handleUpdate('remove', [{
+    // remove the record if new
+    if (record && record._new) {
+      // after cancelling a not saved record, the value for the selected record should be cleared
+      // see issue https://issues.openbravo.com/view.php?id=31434
+      if (this.selection && selectedRecord) {
+        this.selection.deselect(selectedRecord);
+      }
+      totalRows = this.data.totalRows;
+      if (this.showGridSummary) {
+        this.showGridSummary = false;
+        this.isBeingCancelled = true;
+        this.data.handleUpdate('remove', [{
           id: record.id
         }]);
-        // the total rows should be decreased
-        if (me.data.totalRows === totalRows) {
-          me.data.totalRows = me.data.totalRows - 1;
-        }
-        me.updateRowCountDisplay();
-        me.view.toolBar.updateButtonState(true);
-        me.view.refreshChildViews();
+        this.setShowGridSummary(true);
+        delete this.isBeingCancelled;
       } else {
-        // remove the error style/msg    
-        me.setRecordErrorMessage(rowNum, null);
+        this.data.handleUpdate('remove', [{
+          id: record.id
+        }]);
       }
-
-      me.view.standardWindow.cleanUpAutoSaveProperties();
-
-      // update after removing the error msg
-      me.view.updateTabTitle();
-      me.view.toolBar.updateButtonState(true);
+      // the total rows should be decreased
+      if (this.data.totalRows === totalRows) {
+        this.data.totalRows = this.data.totalRows - 1;
+      }
+      this.updateRowCountDisplay();
+      this.view.toolBar.updateButtonState(true);
+      this.view.refreshChildViews();
     } else {
-      me.Super('discardEdits', localArguments);
-
-      // remove the record if new
-      if (record && record._new) {
-        // after cancelling a not saved record, the value for the selected record should be cleared
-        // see issue https://issues.openbravo.com/view.php?id=31434
-        if (me.selection && selectedRecord) {
-          me.selection.deselect(selectedRecord);
-        }
-        totalRows = me.data.totalRows;
-        if (this.showGridSummary) {
-          this.showGridSummary = false;
-          this.isBeingCancelled = true;
-          me.data.handleUpdate('remove', [{
-            id: record.id
-          }]);
-          this.setShowGridSummary(true);
-          delete this.isBeingCancelled;
-        } else {
-          me.data.handleUpdate('remove', [{
-            id: record.id
-          }]);
-        }
-        // the total rows should be decreased
-        if (me.data.totalRows === totalRows) {
-          me.data.totalRows = me.data.totalRows - 1;
-        }
-        me.updateRowCountDisplay();
-        me.view.toolBar.updateButtonState(true);
-        me.view.refreshChildViews();
-      } else {
-        // remove the error style/msg    
-        me.setRecordErrorMessage(rowNum, null);
-      }
-
-      this.view.standardWindow.cleanUpAutoSaveProperties();
-
-      this.refreshRow(rowNum);
-
-      // update after removing the error msg
-      this.view.updateTabTitle();
+      // remove the error style/msg
+      this.setRecordErrorMessage(rowNum, null);
     }
+
+    this.view.standardWindow.cleanUpAutoSaveProperties();
+    this.refreshRow(rowNum);
+    // update after removing the error msg
+    this.view.updateTabTitle();
   },
 
   saveEdits: function (editCompletionEvent, callback, rowNum, colNum, validateOnly, skipValidation) {
