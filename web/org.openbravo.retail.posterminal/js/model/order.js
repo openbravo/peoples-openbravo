@@ -3517,31 +3517,35 @@
           executeFinalCallback(false);
           return;
         }
-        if (!payment.get('paymentData') && !payment.get('reversedPaymentId')) {
-          // search for an existing payment only if there is not paymentData info.
-          // this avoids to merge for example card payments of different cards.
-          for (i = 0, max = payments.length; i < max; i++) {
-            p = payments.at(i);
-            if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment') && !p.get('reversedPaymentId')) {
-              p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
-              if (p.get('rate') && p.get('rate') !== '1') {
-                p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+        // search for an existing payment only if is not a reverser payment.
+        if (!payment.get('reversedPaymentId')) {
+          if (!payment.get('paymentData')) {
+            // search for an existing payment only if there is not paymentData info or if there is, when there is any other paymentData with same groupingCriteria.
+            // this avoids to merge for example card payments of different cards.
+            for (i = 0, max = payments.length; i < max; i++) {
+              p = payments.at(i);
+              if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment') && !p.get('reversedPaymentId')) {
+                p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+                if (p.get('rate') && p.get('rate') !== '1') {
+                  p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+                }
+                payment.set('date', new Date());
+                executeFinalCallback(true);
+                return;
               }
-              executeFinalCallback(true);
-              return;
             }
-          }
-        } else {
-          for (i = 0, max = payments.length; i < max; i++) {
-            p = payments.at(i);
-            if (p.get('kind') === payment.get('kind') && p.get('paymentData') && payment.get('paymentData') && p.get('paymentData').groupingCriteria && payment.get('paymentData').groupingCriteria && p.get('paymentData').groupingCriteria === payment.get('paymentData').groupingCriteria) {
-              p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
-              if (p.get('rate') && p.get('rate') !== '1') {
-                p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+          } else {
+            for (i = 0, max = payments.length; i < max; i++) {
+              p = payments.at(i);
+              if (p.get('kind') === payment.get('kind') && p.get('paymentData') && payment.get('paymentData') && p.get('paymentData').groupingCriteria && payment.get('paymentData').groupingCriteria && p.get('paymentData').groupingCriteria === payment.get('paymentData').groupingCriteria && !p.get('reversedPaymentId') && !p.get('isPrePayment')) {
+                p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+                if (p.get('rate') && p.get('rate') !== '1') {
+                  p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+                }
+                payment.set('date', new Date());
+                executeFinalCallback(true);
+                return;
               }
-              payment.set('date', new Date());
-              executeFinalCallback(true);
-              return;
             }
           }
         }
@@ -3573,7 +3577,7 @@
       return this.getPaymentStatus().overpayment ? true : false;
     },
 
-    removePayment: function (payment, removeCallback) {
+    removePayment: function (payment, cancellationCallback, removeCallback) {
       var payments = this.get('payments'),
           max, i, p;
       OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePayment', {
@@ -3582,8 +3586,8 @@
         receipt: this
       }, function (args) {
         if (args.cancellation) {
-          if (removeCallback) {
-            removeCallback();
+          if (cancellationCallback) {
+            cancellationCallback();
           }
           return true;
         }
@@ -3602,7 +3606,7 @@
           args.receipt.set('openDrawer', false);
         }
         args.receipt.adjustPayment();
-        args.receipt.save();
+        args.receipt.save(removeCallback);
         args.receipt.trigger('saveCurrent');
       });
     },

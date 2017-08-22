@@ -2213,7 +2213,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         PaymentProcessor paymentinst = paymentclazz.newInstance();
         paymentinst.process(payment, order, invoice, writeoffAmt);
       } else {
-        if (paymentType.getFinancialAccount() == null) {
+        FIN_FinancialAccount account = null;
+        if (payment.has("account") && payment.get("account") != JSONObject.NULL) {
+          account = OBDal.getInstance().get(FIN_FinancialAccount.class,
+              payment.getString("account"));
+        }
+        if (paymentType.getFinancialAccount() == null && account == null) {
           continue;
         }
         BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
@@ -2225,7 +2230,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           tempWriteoffAmt = amount.abs().subtract(BigDecimal.ONE);
         }
         processPayments(paymentSchedule, paymentScheduleInvoice, order, invoice, paymentType,
-            payment, tempWriteoffAmt, jsonorder);
+            payment, tempWriteoffAmt, jsonorder, account);
         writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
       }
     }
@@ -2328,6 +2333,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       FIN_PaymentSchedule paymentScheduleInvoice, Order order, Invoice invoice,
       OBPOSAppPayment paymentType, JSONObject payment, BigDecimal writeoffAmt, JSONObject jsonorder)
       throws Exception {
+    processPayments(paymentSchedule, paymentScheduleInvoice, order, invoice, paymentType, payment,
+        writeoffAmt, jsonorder, null);
+  }
+
+  protected void processPayments(FIN_PaymentSchedule paymentSchedule,
+      FIN_PaymentSchedule paymentScheduleInvoice, Order order, Invoice invoice,
+      OBPOSAppPayment paymentType, JSONObject payment, BigDecimal writeoffAmt,
+      JSONObject jsonorder, FIN_FinancialAccount account) throws Exception {
     OBContext.setAdminMode(true);
     try {
       boolean totalIsNegative = jsonorder.getDouble("gross") < 0;
@@ -2427,8 +2440,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       HashMap<String, BigDecimal> paymentAmount = new HashMap<String, BigDecimal>();
       paymentAmount.put(paymentScheduleDetail.getId(), amount);
 
-      FIN_FinancialAccount account = paymentType.getFinancialAccount();
-
       // Save Payment
       List<FIN_PaymentScheduleDetail> detail = new ArrayList<FIN_PaymentScheduleDetail>();
       detail.add(paymentScheduleDetail);
@@ -2457,9 +2468,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       // insert the payment
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, paymentDocType, paymentDocNo,
-          order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
-          amount.toString(), calculatedDate, order.getOrganization(), null, detail, paymentAmount,
-          false, false, order.getCurrency(), mulrate, origAmount, true,
+          order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(),
+          account == null ? paymentType.getFinancialAccount() : account, amount.toString(),
+          calculatedDate, order.getOrganization(), null, detail, paymentAmount, false, false,
+          order.getCurrency(), mulrate, origAmount, true,
           payment.has("id") ? payment.getString("id") : null);
 
       // Associate a GLItem with the overpayment amount to the payment which generates the
