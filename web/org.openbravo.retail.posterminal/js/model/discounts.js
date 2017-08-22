@@ -429,6 +429,10 @@
       }
 
       linePrice = line.get('discountedLinePrice') || line.get('price');
+      if (linePrice < discountRule.get('fixedPrice')) {
+        return;
+      }
+
       chunks = 1;
       if (isMultiple) {
         chunks = parseInt((qty / multipleQty), 10);
