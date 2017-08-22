@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -189,6 +190,21 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
     customer.setCustomer(true);
     // security
     customer.setCreditLimit(previousCL);
+
+    // Fixed birth date issue(-1 day) when converted to UTC from client time zone
+    if (jsonCustomer.has("birthDay")) {
+      final long timezoneOffset;
+      if (jsonCustomer.has("timezoneOffset")) {
+        timezoneOffset = (long) Double.parseDouble(jsonCustomer.getString("timezoneOffset"));
+      } else {
+        // Using the current timezoneOffset
+        timezoneOffset = -((Calendar.getInstance().get(Calendar.ZONE_OFFSET) + Calendar
+            .getInstance().get(Calendar.DST_OFFSET)) / (60 * 1000));
+      }
+
+      customer.setBirthDay(OBMOBCUtils.calculateServerDate((String) jsonCustomer.get("birthDay"),
+          timezoneOffset));
+    }
 
     OBDal.getInstance().save(customer);
     return customer;
