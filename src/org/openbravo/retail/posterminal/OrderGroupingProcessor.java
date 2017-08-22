@@ -27,7 +27,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
@@ -92,38 +91,27 @@ public class OrderGroupingProcessor {
         OBMessageUtils.messageBD("OBPOS_InvoiceCashupDescription"), cashUp.getIdentifier());
 
     // Validate Order Business Partner
-    final List<String> customerErrorList = new ArrayList<String>();
-    final String strBPValidation = OBMessageUtils.messageBD("OBPOS_BPValidationOnCashup");
-    final String strPaymentMethod = OBMessageUtils.messageBD("OBPOS_LblPaymentMethod");
-    final String strPaymentTerm = OBMessageUtils.messageBD("OBPOS_LblPaymentTerm");
-    final String sql = "select ad_column_identifier('c_bpartner', bp.c_bpartner_id, ?) as bpname, "
-        + " bp.c_paymentterm_id, bp.fin_paymentmethod_id "
-        + " from c_order o, obpos_applications ap, obpos_terminaltype tt, c_doctype dt, c_bpartner bp "
-        + " where o.em_obpos_applications_id = ap.obpos_applications_id "
-        + " and ap.obpos_terminaltype_id = tt.obpos_terminaltype_id "
-        + " and tt.c_doctype_id = dt.c_doctype_id "
-        + " and o.c_bpartner_id = bp.c_bpartner_id "
-        + " and o.em_obpos_app_cashup_id = ? "
-        + " and o.c_doctype_id in (tt.c_doctype_id, tt.c_doctyperet_id) "
-        + " and not exists (select 1 from c_orderline ol2 where (ol2.qtyinvoiced <> 0 or ol2.qtyordered = 0 or ol2.qtydelivered <> ol2.qtyordered) and ol2.c_order_id = o.c_order_id) "
-        + " and o.em_obpos_notinvoiceoncashup = 'N' "
-        + " and (bp.c_paymentterm_id is null or bp.fin_paymentmethod_id is null) "
-        + " group by bp.c_bpartner_id, bp.c_paymentterm_id, bp.fin_paymentmethod_id order by bpname";
-    SQLQuery bpSQLQuery = OBDal.getInstance().getSession().createSQLQuery(sql);
-    bpSQLQuery.setString(0, strLang);
-    bpSQLQuery.setString(1, cashUp.getId());
-    for (final Object row : bpSQLQuery.list()) {
-      final Object[] vals = (Object[]) row;
-      if (vals[1] == null) {
-        customerErrorList.add(String.format(strBPValidation, strPaymentTerm, vals[0].toString()));
+    OrderGroupingProcessorData[] orderBusinesspartner = OrderGroupingProcessorData
+        .selectOrderBusinessPartner(conn, strLang, cashUp.getId());
+    if (orderBusinesspartner.length > 0) {
+      final List<String> customerErrorList = new ArrayList<String>();
+      final String strBPValidation = OBMessageUtils.messageBD("OBPOS_BPValidationOnCashup");
+      final String strPaymentMethod = OBMessageUtils.messageBD("OBPOS_LblPaymentMethod");
+      final String strPaymentTerm = OBMessageUtils.messageBD("OBPOS_LblPaymentTerm");
+      for (OrderGroupingProcessorData businessPartner : orderBusinesspartner) {
+        if (StringUtils.isEmpty(businessPartner.cPaymenttermId)) {
+          customerErrorList.add(String.format(strBPValidation, strPaymentTerm,
+              businessPartner.bpname));
+        }
+        if (StringUtils.isEmpty(businessPartner.finPaymentmethodId)) {
+          customerErrorList.add(String.format(strBPValidation, strPaymentMethod,
+              businessPartner.bpname));
+        }
       }
-      if (vals[2] == null) {
-        customerErrorList.add(String.format(strBPValidation, strPaymentMethod, vals[0].toString()));
+      if (customerErrorList.size() > 0) {
+        throw new OBException(StringUtils.join(
+            customerErrorList.toArray(new String[customerErrorList.size()]), "\n        "));
       }
-    }
-    if (customerErrorList.size() > 0) {
-      throw new OBException(StringUtils.join(
-          customerErrorList.toArray(new String[customerErrorList.size()]), "\n        "));
     }
 
     // random string is created as random numeric between 0 and 1000000
