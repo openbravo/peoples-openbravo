@@ -192,7 +192,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
     customer.setCreditLimit(previousCL);
 
     // Fixed birth date issue(-1 day) when converted to UTC from client time zone
-    if (jsonCustomer.has("birthDay")) {
+    if (jsonCustomer.has("birthDay") && jsonCustomer.get("birthDay") != null
+        && !jsonCustomer.getString("birthDay").isEmpty()) {
       final long timezoneOffset;
       if (jsonCustomer.has("timezoneOffset")) {
         timezoneOffset = (long) Double.parseDouble(jsonCustomer.getString("timezoneOffset"));
