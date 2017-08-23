@@ -50,5 +50,6 @@
       <foreign-key foreignTable="AD_ORG" name="OBPOS_ERRORS_LINE_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="OBPOS_ERRORSLN_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
