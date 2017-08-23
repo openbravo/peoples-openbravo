@@ -3482,6 +3482,10 @@
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
         return;
       }
+      if (!payment.get('isReversePayment') && this.getPending() <= 0 && payment.get('amount') > 0) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_PaymentsExact'));
+        return;
+      }
 
       order = this;
       if (order.get('orderType') === 3 && order.getGross() === 0) {
