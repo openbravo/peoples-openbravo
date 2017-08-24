@@ -104,7 +104,7 @@
   cur_allocated RECORD;
 
   -- Parameter Variables
-  v_Quantity NUMBER(10);
+  v_Quantity NUMBER;
   v_ProductID   VARCHAR2(32);
   v_LocatorID   VARCHAR2(32);
   v_WarehouseID VARCHAR2(32) ;
