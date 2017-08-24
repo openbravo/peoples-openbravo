@@ -23,7 +23,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.ConnectException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -1386,6 +1388,13 @@ public class ModuleManagement extends HttpSecureAppServlet {
       }
     } catch (final Exception e) {
       log4j.error(e.getMessage(), e);
+      Throwable cause = e.getCause();
+      if (cause instanceof ConnectException || cause instanceof UnknownHostException) {
+        String popUpTitle = Utility.messageBD(this, "OBUIAPP_Error", vars.getLanguage());
+        String connectErrorMsg = Utility.messageBD(this, "CR_CouldNotConnect", vars.getLanguage());
+        advisePopUpRefresh(request, response, "ERROR", popUpTitle, connectErrorMsg);
+        return;
+      }
       message = new OBError();
       message.setType("Error");
       message.setTitle(Utility.messageBD(this, message.getType(), vars.getLanguage()));
