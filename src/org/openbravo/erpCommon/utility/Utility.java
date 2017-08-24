@@ -1991,19 +1991,31 @@ public class Utility {
   }
 
   /**
-   * Provides the image as a byte array. These images are stored in the table AD_IMAGES as a BLOB
+   * Provides the image as a byte array. These images are stored in the table AD_IMAGE as a BLOB
    * field.
    * 
    * @param id
    *          The id of the image to display
    * @return The image requested
-   * @see #getImage(String)
    */
   public static byte[] getImage(String id) {
+    return getImage(id, false);
+  }
 
+  /**
+   * Provides the image as a byte array. These images are stored in the table AD_IMAGE as a BLOB
+   * field.
+   *
+   * @param id
+   *          The id of the image to display
+   * @param doCommit
+   *          A flag to force the commit of the DAL connection after retrieve the image
+   * @return The image requested
+   */
+  private static byte[] getImage(String id, boolean doCommit) {
     byte[] imageByte;
     try {
-      Image img = getImageObject(id);
+      Image img = getImageObject(id, doCommit);
       if (img == null) {
         imageByte = getBlankImage();
       } else {
@@ -2023,7 +2035,7 @@ public class Utility {
   }
 
   /**
-   * Provides the image as an image object. These images are stored in the table AD_IMAGES as a BLOB
+   * Provides the image as an image object. These images are stored in the table AD_IMAGE as a BLOB
    * field.
    * 
    * @param id
@@ -2032,6 +2044,20 @@ public class Utility {
    * @see #getImage(String)
    */
   public static Image getImageObject(String id) {
+    return getImageObject(id, false);
+  }
+
+  /**
+   * Provides the image as an image object. These images are stored in the table AD_IMAGE as a BLOB
+   * field.
+   *
+   * @param id
+   *          The id of the image to display
+   * @param doCommit
+   *          A flag to force the commit of the DAL connection after retrieve the image
+   * @return The image requested
+   */
+  private static Image getImageObject(String id, boolean doCommit) {
     Image img = null;
     OBContext.setAdminMode();
     try {
@@ -2040,6 +2066,9 @@ public class Utility {
       log4j.error("Could not load image from database: " + id, e);
     } finally {
       OBContext.restorePreviousMode();
+      if (doCommit) {
+        OBDal.getInstance().commitAndClose();
+      }
     }
     return img;
   }
@@ -2054,7 +2083,10 @@ public class Utility {
    * @see #getImage(String)
    */
   public static BufferedImage showImage(String id) throws IOException {
-    return ImageIO.read(new ByteArrayInputStream(getImage(id)));
+    // Use getImage(id, true) to close the DAL connection once the image has been retrieved.
+    // This is required to avoid connection leaks when invoking this method from a sub-report.
+    // This is needed until issue https://issues.openbravo.com/view.php?id=30182 is fixed.
+    return ImageIO.read(new ByteArrayInputStream(getImage(id, true)));
   }
 
   /**
