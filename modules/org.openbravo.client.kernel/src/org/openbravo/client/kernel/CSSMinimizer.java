@@ -514,8 +514,8 @@ class Part {
   }
 
   private void simplifyParameters() {
-    if (this.property.equals("transform-origin")) {
-      // "transform-origin" can have several parameters, one per axis, and having
+    if (this.property.equals("transform-origin") || this.property.equals("background-size")) {
+      // These properties have several parameters, typically one per axis, and having
       // just one does not imply that the remaining ones will take the same value
       return;
     }
