@@ -38,9 +38,9 @@ public class SalesRepresentative extends ProcessHQLQuery {
     // Get Sales Representative Properties
     List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
     Map<String, Object> args = new HashMap<String, Object>();
-    HQLPropertyList characteristicsHQLProperties = ModelExtensionUtils.getPropertyExtensions(
-        extensions, args);
-    propertiesList.add(characteristicsHQLProperties);
+    HQLPropertyList salesRepHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions,
+        args);
+    propertiesList.add(salesRepHQLProperties);
 
     return propertiesList;
   }
