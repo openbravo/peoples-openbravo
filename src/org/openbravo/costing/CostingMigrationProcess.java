@@ -390,7 +390,7 @@ public class CostingMigrationProcess implements Process {
   }
 
   private void updateLegacyCosts() {
-    long start = System.currentTimeMillis();
+    long start1 = System.currentTimeMillis();
     log4j.debug("Starting updateLegacyCosts() at: " + new Date());
 
     resetTransactionCosts();
@@ -404,35 +404,69 @@ public class CostingMigrationProcess implements Process {
       client = OBDal.getInstance().get(Client.class, clientId);
       Currency clientCur = client.getCurrency();
       int stdPrecission = clientCur.getStandardPrecision().intValue();
-      log4j.debug("** Processing client: " + client.getIdentifier() + " with currency: "
-          + clientCur.getIdentifier());
       for (Organization legalEntity : osp.getLegalEntitiesList()) {
-        log4j.debug("** Processing organization: " + legalEntity.getIdentifier());
+        long start2 = System.currentTimeMillis();
+        log4j.debug("Starting updateTrxLegacyCosts() at: " + new Date() + " for client: "
+            + client.getName() + " and organization: " + legalEntity.getName());
+
         Set<String> naturalTree = osp.getNaturalTree(legalEntity.getId());
         ScrollableResults legacyCosts = getLegacyCostScroll(clientId, naturalTree);
         int i = 0;
+
+        int pendingCosts = 0;
+        int batchSize = 100;
+        long t1 = 0;
+        long elapsedTime = 0;
+        if (log4j.isDebugEnabled()) {
+          pendingCosts = getLegacyCostCount(clientId, naturalTree);
+          t1 = System.currentTimeMillis();
+          log4j.debug("Pending costs: " + pendingCosts);
+        }
+
         try {
           while (legacyCosts.next()) {
             Costing cost = (Costing) legacyCosts.get(0);
             updateTrxLegacyCosts(cost, stdPrecission, naturalTree);
 
-            if ((++i % 100) == 0) {
+            if (++i % batchSize == 0) {
               OBDal.getInstance().flush();
               OBDal.getInstance().getSession().clear();
+
+              if (log4j.isDebugEnabled()) {
+                long t2 = System.currentTimeMillis();
+                long t = t2 - t1;
+                t1 = System.currentTimeMillis();
+                int batch = i / batchSize;
+                pendingCosts -= batchSize;
+                int pendingBatches = (pendingCosts % batchSize == 0) ? (pendingCosts / batchSize)
+                    : (pendingCosts / batchSize) + 1;
+                elapsedTime += t;
+                long avgTimePerBatch = elapsedTime / batch / 1000;
+                log4j.debug("Processing batch: " + batch + " (" + batchSize + " costs) took: " + t
+                    + " ms.");
+                log4j.debug("Pending costs: " + pendingCosts);
+                log4j.debug("Average time per batch: " + avgTimePerBatch
+                    + " seconds. Estimated time to finish: " + (avgTimePerBatch * pendingBatches)
+                    + " seconds.");
+              }
             }
           }
         } finally {
           legacyCosts.close();
         }
         SessionHandler.getInstance().commitAndStart();
+
+        long end2 = System.currentTimeMillis();
+        log4j.debug("Ending updateTrxLegacyCosts() at: " + new Date() + ". Duration: "
+            + (end2 - start2) + " ms.");
       }
     }
 
     updateWithZeroCostRemainingTrx();
     insertStandardCosts();
 
-    long end = System.currentTimeMillis();
-    log4j.debug("Ending updateLegacyCosts() at: " + new Date() + ". Duration: " + (end - start)
+    long end1 = System.currentTimeMillis();
+    log4j.debug("Ending updateLegacyCosts() at: " + new Date() + ". Duration: " + (end1 - start1)
         + " ms.");
   }
 
@@ -639,7 +673,7 @@ public class CostingMigrationProcess implements Process {
 
     long end = System.currentTimeMillis();
     log4j.debug("Ending calculateCosts() at: " + new Date() + ". Duration: " + (end - start)
-        + " ms.");
+        + " ms. Updated: " + i + " transactions.");
   }
 
   private HashMap<String, BigDecimal> getCurrentValuedStock(String productId, String curId,
@@ -763,10 +797,31 @@ public class CostingMigrationProcess implements Process {
     return costingQry.scroll(ScrollMode.FORWARD_ONLY);
   }
 
-  private void updateTrxLegacyCosts(Costing _cost, int standardPrecision, Set<String> naturalTree) {
-    long start = System.currentTimeMillis();
-    log4j.debug("Starting updateTrxLegacyCosts() at: " + new Date());
+  private int getLegacyCostCount(String clientId, Set<String> naturalTree) {
+    StringBuffer where = new StringBuffer();
+    where.append(" select count(c." + Costing.PROPERTY_ID + ") ");
+    where.append(" from " + Costing.ENTITY_NAME + " as c");
+    where.append(" where c." + Costing.PROPERTY_CLIENT + ".id = :client");
+    where.append("   and exists (select 1 from " + MaterialTransaction.ENTITY_NAME + " as trx");
+    where.append("     where trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    where.append("       and trx." + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " is null");
+    where.append("       and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " >= c."
+        + Costing.PROPERTY_STARTINGDATE);
+    where.append("       and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = c."
+        + Costing.PROPERTY_PRODUCT);
+    where.append("       and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " -1 < (c."
+        + Costing.PROPERTY_ENDINGDATE + ") ");
+    where.append("     )");
+    where.append("   and " + Costing.PROPERTY_COST + " is not null");
 
+    Query costingQry = OBDal.getInstance().getSession().createQuery(where.toString());
+    costingQry.setParameter("client", clientId);
+    costingQry.setParameterList("orgs", naturalTree);
+    costingQry.setMaxResults(1);
+    return ((Long) costingQry.uniqueResult()).intValue();
+  }
+
+  private void updateTrxLegacyCosts(Costing _cost, int standardPrecision, Set<String> naturalTree) {
     Costing cost = OBDal.getInstance().get(Costing.class, _cost.getId());
     StringBuffer where = new StringBuffer();
     where.append(MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
@@ -791,7 +846,6 @@ public class CostingMigrationProcess implements Process {
         MaterialTransaction trx = (MaterialTransaction) trxs.get(0);
         Date accountingDate = trx.getGoodsShipmentLine() != null ? trx.getGoodsShipmentLine()
             .getShipmentReceipt().getAccountingDate() : trx.getMovementDate();
-        log4j.debug("********** UpdateTrxLegacyCosts process trx:" + trx.getIdentifier());
 
         if (accountingDate.compareTo(trx.getMovementDate()) != 0) {
           // Shipments with accounting date different than the movement date gets the cost valid on
@@ -832,10 +886,6 @@ public class CostingMigrationProcess implements Process {
     } finally {
       trxs.close();
     }
-
-    long end = System.currentTimeMillis();
-    log4j.debug("Ending updateTrxLegacyCosts() at: " + new Date() + ". Duration: " + (end - start)
-        + " ms. Updated: " + i + " transactions.");
   }
 
   /**
@@ -848,7 +898,8 @@ public class CostingMigrationProcess implements Process {
     long start = System.currentTimeMillis();
     log4j.debug("Starting updateWithZeroCostRemainingTrx() at: " + new Date());
 
-    int n = 0;
+    int n1 = 0;
+    int n2 = 0;
     TriggerHandler.getInstance().disable();
     try {
 
@@ -897,7 +948,7 @@ public class CostingMigrationProcess implements Process {
           insert.append(" and t." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
           Query insertQry = OBDal.getInstance().getSession().createQuery(insert.toString());
           insertQry.setParameterList("orgs", childOrgs);
-          insertQry.executeUpdate();
+          n1 += insertQry.executeUpdate();
 
           StringBuffer update = new StringBuffer();
           update.append(" update " + MaterialTransaction.ENTITY_NAME);
@@ -912,7 +963,7 @@ public class CostingMigrationProcess implements Process {
           Query updateQry = OBDal.getInstance().getSession().createQuery(update.toString());
           updateQry.setParameter("currency", org.getClient().getCurrency());
           updateQry.setParameterList("orgs", childOrgs);
-          n = updateQry.executeUpdate();
+          n2 += updateQry.executeUpdate();
 
         }
       }
@@ -925,7 +976,8 @@ public class CostingMigrationProcess implements Process {
 
     long end = System.currentTimeMillis();
     log4j.debug("Ending updateWithZeroCostRemainingTrx() at: " + new Date() + ". Duration: "
-        + (end - start) + " ms. Updated: " + n + " transactions.");
+        + (end - start) + " ms. Inserted: " + n1 + " transactions. Updated: " + n2
+        + " transactions.");
   }
 
   private void insertAlertRecipients(AlertRule alertRule) {
@@ -970,6 +1022,7 @@ public class CostingMigrationProcess implements Process {
     log4j.debug("Starting insertStandardCosts() at: " + new Date());
 
     // Insert STANDARD cost for products with costtype = 'ST'.
+    int n = 0;
     TriggerHandler.getInstance().disable();
     try {
       StringBuffer insert = new StringBuffer();
@@ -1034,7 +1087,7 @@ public class CostingMigrationProcess implements Process {
       queryInsert.setString("startingDate", startingDate);
       queryInsert.setString("limitDate", startingDate);
       queryInsert.setString("limitDate2", startingDate);
-      queryInsert.executeUpdate();
+      n = queryInsert.executeUpdate();
 
       OBDal.getInstance().flush();
       OBDal.getInstance().getSession().clear();
@@ -1044,7 +1097,7 @@ public class CostingMigrationProcess implements Process {
 
     long end = System.currentTimeMillis();
     log4j.debug("Ending insertStandardCosts() at: " + new Date() + ". Duration: " + (end - start)
-        + " ms.");
+        + " ms. Inserted: " + n + " costs.");
   }
 
   private CostingRule createCostingRule(Organization org) {
