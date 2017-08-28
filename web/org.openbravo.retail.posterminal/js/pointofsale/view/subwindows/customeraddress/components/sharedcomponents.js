@@ -226,130 +226,141 @@ enyo.kind({
       }
     } else {
       this.model.get('customerAddr').loadModel(this.customerAddr, function (customerAddr) {
-        var callback = function () {
-            var i;
-            goToViewWindow({
-              customer: me.customer,
-              customerAddr: customerAddr
-            });
-            if (customerAddr.get('id') === me.customer.get('locId') || customerAddr.get('id') === me.customer.get('shipLocId')) {
-              if (!customerAddr.get('isBillTo')) {
-                me.customer.set('locId', null);
-                me.customer.set('locName', null);
-                me.customer.set('postalCode', null);
-                me.customer.set('cityName', null);
-                me.customer.set('countryName', null);
-              } else {
-                me.customer.set('locId', customerAddr.get('id'));
-                me.customer.set('locName', customerAddr.get('name'));
-                me.customer.set('postalCode', customerAddr.get('postalCode'));
-                me.customer.set('cityName', customerAddr.get('cityName'));
-                me.customer.set('countryName', customerAddr.get('countryName'));
-              }
-              if (!customerAddr.get('isShipTo')) {
-                me.customer.set('shipLocId', null);
-                me.customer.set('shipLocName', null);
-                me.customer.set('shipPostalCode', null);
-                me.customer.set('shipCityName', null);
-                me.customer.set('shipRegionId', null);
-                me.customer.set('shipCountryId', null);
-                me.customer.set('shipCountryName', null);
-              } else {
-                me.customer.set('shipLocId', customerAddr.get('id'));
-                me.customer.set('shipLocName', customerAddr.get('name'));
-                me.customer.set('shipPostalCode', customerAddr.get('postalCode'));
-                me.customer.set('shipCityName', customerAddr.get('cityName'));
-                me.customer.set('shipRegionId', customerAddr.get('regionId'));
-                me.customer.set('shipCountryId', customerAddr.get('countryId'));
-                me.customer.set('shipCountryName', customerAddr.get('countryName'));
-              }
-              me.customer.set('locationModel', customerAddr);
-              //If it an js object, convert in a BPLocation
-              if (me.customer.get('locationBillModel') && !me.customer.get('locationBillModel').get) {
-                me.customer.set('locationBillModel', new OB.Model.BPLocation(me.customer.get('locationBillModel')));
-              }
-              if (me.model.get('orderList').length > 1) {
-                for (i = 0; i < me.model.get('orderList').length; i++) {
-                  if (me.model.get('orderList').models[i].get('bp').get('id') === me.customer.get('id')) {
-                    me.model.get('orderList').models[i].set('bp', me.customer);
+        me.customer.loadBPLocations(null, null, function (ships, bills, locs) {
+          var callback = function () {
+              var i;
+              goToViewWindow({
+                customer: me.customer,
+                customerAddr: customerAddr
+              });
+              if (customerAddr.get('id') === me.customer.get('locId') || customerAddr.get('id') === me.customer.get('shipLocId')) {
+                if (!customerAddr.get('isBillTo')) {
+                  me.customer.set('locId', null);
+                  me.customer.set('locName', null);
+                  me.customer.set('postalCode', null);
+                  me.customer.set('cityName', null);
+                  me.customer.set('countryName', null);
+                } else {
+                  me.customer.set('locId', customerAddr.get('id'));
+                  me.customer.set('locName', customerAddr.get('name'));
+                  me.customer.set('postalCode', customerAddr.get('postalCode'));
+                  me.customer.set('cityName', customerAddr.get('cityName'));
+                  me.customer.set('countryName', customerAddr.get('countryName'));
+                }
+                if (!customerAddr.get('isShipTo')) {
+                  me.customer.set('shipLocId', null);
+                  me.customer.set('shipLocName', null);
+                  me.customer.set('shipPostalCode', null);
+                  me.customer.set('shipCityName', null);
+                  me.customer.set('shipRegionId', null);
+                  me.customer.set('shipCountryId', null);
+                  me.customer.set('shipCountryName', null);
+                } else {
+                  me.customer.set('shipLocId', customerAddr.get('id'));
+                  me.customer.set('shipLocName', customerAddr.get('name'));
+                  me.customer.set('shipPostalCode', customerAddr.get('postalCode'));
+                  me.customer.set('shipCityName', customerAddr.get('cityName'));
+                  me.customer.set('shipRegionId', customerAddr.get('regionId'));
+                  me.customer.set('shipCountryId', customerAddr.get('countryId'));
+                  me.customer.set('shipCountryName', customerAddr.get('countryName'));
+                }
+                me.customer.set('locationModel', customerAddr);
+                //If it an js object, convert in a BPLocation
+                if (me.customer.get('locationBillModel') && !me.customer.get('locationBillModel').get) {
+                  me.customer.set('locationBillModel', new OB.Model.BPLocation(me.customer.get('locationBillModel')));
+                }
+                if (me.model.get('orderList').length > 1) {
+                  for (i = 0; i < me.model.get('orderList').length; i++) {
+                    if (me.model.get('orderList').models[i].get('bp').get('id') === me.customer.get('id')) {
+                      me.model.get('orderList').models[i].set('bp', me.customer);
+                    }
                   }
                 }
-              }
-              OB.Dal.save(me.customer, function success(tx) {
-                me.doChangeBusinessPartner({
-                  businessPartner: me.customer,
-                  target: 'order'
+                OB.Dal.save(me.customer, function success(tx) {
+                  me.doChangeBusinessPartner({
+                    businessPartner: me.customer,
+                    target: 'order'
+                  });
+                  enableButtonsCallback();
+                }, function error(tx) {
+                  OB.error(tx);
+                  enableButtonsCallback();
                 });
+              } else {
                 enableButtonsCallback();
-              }, function error(tx) {
-                OB.error(tx);
-                enableButtonsCallback();
-              });
-            } else {
-              enableButtonsCallback();
-            }
-            };
+              }
+              };
 
-        getCustomerAddrValues({
-          customer: me.customer,
-          customerAddr: customerAddr
-        });
+          getCustomerAddrValues({
+            customer: me.customer,
+            customerAddr: customerAddr
+          });
 
-        if (validateForm(me)) {
-          if (OB.MobileApp.model.receipt.get('lines').length > 0 && OB.MobileApp.model.receipt.get('bp').get('shipLocId') === customerAddr.get('id') && !customerAddr.get('isShipTo')) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_UncheckShipToText'), [{
-              label: OB.I18N.getLabel('OBPOS_LblOk'),
-              isConfirmButton: true,
-              action: function () {
+          var billingLocs = _.filter(locs, function (loc) {
+            return loc.get('isBillTo') && loc.get('id') !== me.model.get('customerAddr').get('id');
+          });
+
+          if (!me.model.get('customerAddr').get('isBillTo') && billingLocs.length === 0) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NoBillingAddrHeader'), OB.I18N.getLabel('OBPOS_NoBillingAddrBody', [me.model.get('customerAddr').get('customerName'), me.model.get('customerAddr').get('name')]));
+            enableButtonsCallback();
+          } else {
+            if (validateForm(me)) {
+              if (OB.MobileApp.model.receipt.get('lines').length > 0 && OB.MobileApp.model.receipt.get('bp').get('shipLocId') === customerAddr.get('id') && !customerAddr.get('isShipTo')) {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_UncheckShipToText'), [{
+                  label: OB.I18N.getLabel('OBPOS_LblOk'),
+                  isConfirmButton: true,
+                  action: function () {
+                    OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerAddrSave', {
+                      customerAddr: me.model.get('customerAddr'),
+                      isNew: true
+                    }, function (args) {
+                      var receipt = OB.MobileApp.model.receipt,
+                          orderlines = [];
+                      if (args && args.cancellation && args.cancellation === true) {
+                        enableButtonsCallback();
+                        return true;
+                      }
+                      receipt.set('skipCalculateReceipt', true);
+                      receipt.set('preventServicesUpdate', true);
+                      receipt.set('deleting', true);
+                      _.each(receipt.get('lines').models, function (line) {
+                        orderlines.push(line);
+                      });
+                      _.each(orderlines, function (line) {
+                        receipt.deleteLine(line, true);
+                      });
+                      receipt.unset('preventServicesUpdate');
+                      receipt.unset('deleting');
+                      receipt.calculateGross();
+                      args.customerAddr.saveCustomerAddr(callback, enableButtonsCallback);
+                      receipt.set('skipCalculateReceipt', false);
+                    });
+                  }
+                }, {
+                  label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                }], {
+                  autoDismiss: false,
+                  onHideFunction: function () {
+                    return;
+                  }
+                });
+              } else {
                 OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerAddrSave', {
                   customerAddr: me.model.get('customerAddr'),
                   isNew: true
                 }, function (args) {
-                  var receipt = OB.MobileApp.model.receipt,
-                      orderlines = [];
                   if (args && args.cancellation && args.cancellation === true) {
                     enableButtonsCallback();
                     return true;
                   }
-                  receipt.set('skipCalculateReceipt', true);
-                  receipt.set('preventServicesUpdate', true);
-                  receipt.set('deleting', true);
-                  _.each(receipt.get('lines').models, function (line) {
-                    orderlines.push(line);
-                  });
-                  _.each(orderlines, function (line) {
-                    receipt.deleteLine(line, true);
-                  });
-                  receipt.unset('preventServicesUpdate');
-                  receipt.unset('deleting');
-                  receipt.calculateGross();
                   args.customerAddr.saveCustomerAddr(callback, enableButtonsCallback);
-                  receipt.set('skipCalculateReceipt', false);
                 });
               }
-            }, {
-              label: OB.I18N.getLabel('OBMOBC_LblCancel')
-            }], {
-              autoDismiss: false,
-              onHideFunction: function () {
-                return;
-              }
-            });
-          } else {
-            OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerAddrSave', {
-              customerAddr: me.model.get('customerAddr'),
-              isNew: true
-            }, function (args) {
-              if (args && args.cancellation && args.cancellation === true) {
-                enableButtonsCallback();
-                return true;
-              }
-              args.customerAddr.saveCustomerAddr(callback, enableButtonsCallback);
-            });
+            } else {
+              enableButtonsCallback();
+            }
           }
-        } else {
-          enableButtonsCallback();
-        }
+        }, me.customer.get('id'));
       });
     }
   },
