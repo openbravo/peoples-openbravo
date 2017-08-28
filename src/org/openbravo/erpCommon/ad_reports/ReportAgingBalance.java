@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,9 +27,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.axis.utils.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -41,19 +43,19 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportAgingBalance extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  // static Category log4j = Category.getInstance(ReportAgingBalance.class);
-
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     // Get user Client's base currency
-    final String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+    final String strUserCurrencyId = Utility.stringBaseCurrencyId(readOnlyCP, vars.getClient());
 
     if (vars.commandIn("DEFAULT")) {
       String strisReceipt = vars.getGlobalVariable("inpReceipt", "ReportAgingBalance|IsReceipt",
@@ -119,27 +121,26 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
       String strfirstPrint, final String strCurrencyId) throws IOException, ServletException {
     String localStrisReceipt = strisReceipt;
     ReportAgingBalanceData[] data = null;
-    // Jarenor
-    /*
-     * String strClient=Utility.getContext(this, vars, "#User_Client", "ReportAgingBalance"); String
-     * strOrg= Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportAgingBalance");
-     */
 
-    String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    String strTreeOrg = TreeData.getTreeOrg(readOnlyCP, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrgTrx);
 
-    if (localStrisReceipt.equals(""))
+    if (StringUtils.isEmpty(localStrisReceipt)) {
       localStrisReceipt = "N";
+    }
 
     try {
-      data = ReportAgingBalanceData.select(this, vars.getLanguage(), strOrgTrx, strCurrencyId,
-          strcolumn1, strcolumn2, strcolumn3, strcolumn4, localStrisReceipt, strcBpartnerId,
-          strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportAgingBalance"),
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportAgingBalance"));
+      data = ReportAgingBalanceData.select(readOnlyCP, vars.getLanguage(), strOrgTrx,
+          strCurrencyId, strcolumn1, strcolumn2, strcolumn3, strcolumn4, localStrisReceipt,
+          strcBpartnerId, strOrgFamily,
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportAgingBalance"),
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportAgingBalance"));
     } catch (ServletException ex) {
-      advisePopUp(request, response, Utility.messageBD(this, "NoConversionRateHeader",
+      advisePopUp(request, response, Utility.messageBD(readOnlyCP, "NoConversionRateHeader",
           vars.getLanguage()),
-          Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage()).getMessage());
+          Utility.translateError(readOnlyCP, vars, vars.getLanguage(), ex.getMessage())
+              .getMessage());
     }
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportAgingBalance.jrxml";
     HashMap<String, Object> parameters = new HashMap<String, Object>();
@@ -157,32 +158,37 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
       String strcolumn4, String strcBpartnerId, String strOrgTrx, String strfirstPrint,
       final String strCurrencyId) throws IOException, ServletException {
     String localStrisReceipt = strisReceipt;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     String discard[] = { "sectionDocType" };
     XmlDocument xmlDocument = null;
     ReportAgingBalanceData[] data = null;
 
-    String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    String strTreeOrg = TreeData.getTreeOrg(readOnlyCP, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrgTrx);
 
-    if (localStrisReceipt.equals(""))
+    if (StringUtils.isEmpty(localStrisReceipt)) {
       localStrisReceipt = "N";
+    }
 
     if (vars.commandIn("FIND")) {
       try {
-        data = ReportAgingBalanceData.select(this, vars.getLanguage(), strOrgTrx, strCurrencyId,
-            strcolumn1, strcolumn2, strcolumn3, strcolumn4, localStrisReceipt, strcBpartnerId,
-            strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportAgingBalance"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportAgingBalance"));
+        data = ReportAgingBalanceData.select(readOnlyCP, vars.getLanguage(), strOrgTrx,
+            strCurrencyId, strcolumn1, strcolumn2, strcolumn3, strcolumn4, localStrisReceipt,
+            strcBpartnerId, strOrgFamily,
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportAgingBalance"),
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportAgingBalance"));
       } catch (final ServletException ex) {
         final OBError message = new OBError();
         message.setType("Error");
-        message.setTitle(Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()));
-        message.setMessage(Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage())
-            .getMessage());
+        message
+            .setTitle(Utility.messageBD(readOnlyCP, "NoConversionRateHeader", vars.getLanguage()));
+        message.setMessage(Utility.translateError(readOnlyCP, vars, vars.getLanguage(),
+            ex.getMessage()).getMessage());
         vars.setMessage("ReportAgingBalance", message);
       }
     }
@@ -195,23 +201,24 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
           "org/openbravo/erpCommon/ad_reports/ReportAgingBalance").createXmlDocument();
     }
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportAgingBalance", false, "", "",
-        "", false, "ad_reports", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportAgingBalance", false, "",
+        "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
 
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.erpCommon.ad_reports.ReportAgingBalance");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportAgingBalance.html",
-          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
+          "ReportAgingBalance.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportAgingBalance.html",
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(), "ReportAgingBalance.html",
           strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
@@ -237,9 +244,9 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("column4", strcolumn4);
     xmlDocument.setParameter("paramAD_ORG_Id", strOrgTrx);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org", "ReportAgingBalanceData"),
-          Utility.getContext(this, vars, "#User_Client", "ReportAgingBalanceData"), '*');
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "AD_ORG_ID",
+          "", "", Utility.getContext(readOnlyCP, vars, "#User_Org", "ReportAgingBalanceData"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportAgingBalanceData"), '*');
       comboTableData.fillParameters(null, "ReportAgingBalanceData", strOrgTrx);
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
     } catch (Exception ex) {
@@ -248,10 +255,11 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductionCost"),
-          Utility.getContext(this, vars, "#User_Client", "ReportProductionCost"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProductionCost",
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+          "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportProductionCost"), Utility.getContext(readOnlyCP, vars, "#User_Client",
+              "ReportProductionCost"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportProductionCost",
           strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -269,53 +277,48 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("titleColumn5", "&gt;" + strcolumn4);
 
     xmlDocument.setParameter("dateFromPrevious",
-        DateTimeData.nDaysAfter(this, DateTimeData.today(this), "-1"));
-    xmlDocument.setParameter("dateFromCol1", DateTimeData.today(this));
+        DateTimeData.nDaysAfter(readOnlyCP, DateTimeData.today(readOnlyCP), "-1"));
+    xmlDocument.setParameter("dateFromCol1", DateTimeData.today(readOnlyCP));
     xmlDocument.setParameter("dateToCol1",
-        DateTimeData.nDaysAfter(this, DateTimeData.today(this), strcolumn1));
+        DateTimeData.nDaysAfter(readOnlyCP, DateTimeData.today(readOnlyCP), strcolumn1));
     iAux = Integer.valueOf(strcolumn1).intValue() + Integer.valueOf("1").intValue();
     xmlDocument.setParameter("dateFromCol2",
-        DateTimeData.nDaysAfter(this, DateTimeData.today(this), iAux.toString()));
+        DateTimeData.nDaysAfter(readOnlyCP, DateTimeData.today(readOnlyCP), iAux.toString()));
     xmlDocument.setParameter("dateToCol2",
-        DateTimeData.nDaysAfter(this, DateTimeData.today(this), strcolumn2));
+        DateTimeData.nDaysAfter(readOnlyCP, DateTimeData.today(readOnlyCP), strcolumn2));
     iAux = Integer.valueOf(strcolumn2).intValue() + Integer.valueOf("1").intValue();
     xmlDocument.setParameter("dateFromCol3",
-        DateTimeData.nDaysAfter(this, DateTimeData.today(this), iAux.toString()));
+        DateTimeData.nDaysAfter(readOnlyCP, DateTimeData.today(readOnlyCP), iAux.toString()));
     xmlDocument.setParameter("dateToCol3",
-        DateTimeData.nDaysAfter(this, DateTimeData.today(this), strcolumn3));
+        DateTimeData.nDaysAfter(readOnlyCP, DateTimeData.today(readOnlyCP), strcolumn3));
     iAux = Integer.valueOf(strcolumn3).intValue() + Integer.valueOf("1").intValue();
     xmlDocument.setParameter("dateFromCol4",
-        DateTimeData.nDaysAfter(this, DateTimeData.today(this), iAux.toString()));
+        DateTimeData.nDaysAfter(readOnlyCP, DateTimeData.today(readOnlyCP), iAux.toString()));
     xmlDocument.setParameter("dateToCol4",
-        DateTimeData.nDaysAfter(this, DateTimeData.today(this), strcolumn4));
+        DateTimeData.nDaysAfter(readOnlyCP, DateTimeData.today(readOnlyCP), strcolumn4));
     iAux = Integer.valueOf(strcolumn4).intValue() + Integer.valueOf("1").intValue();
     xmlDocument.setParameter("dateFromCol5",
-        DateTimeData.nDaysAfter(this, DateTimeData.today(this), iAux.toString()));
+        DateTimeData.nDaysAfter(readOnlyCP, DateTimeData.today(readOnlyCP), iAux.toString()));
     xmlDocument.setParameter("dateToCol5", "");
 
     xmlDocument.setData(
         "reportCBPartnerId_IN",
         "liststructure",
-        SelectorUtilityData.selectBpartner(this,
-            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
-            Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
+        SelectorUtilityData.selectBpartner(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strcBpartnerId));
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
     out.close();
   }
 
   private String getFamily(String strTree, String strChild) throws IOException, ServletException {
-    return Tree.getMembers(this, strTree, strChild);
-    /*
-     * ReportGeneralLedgerData [] data = ReportGeneralLedgerData.selectChildren(this, strTree,
-     * strChild); String strFamily = ""; if(data!=null && data.length>0) { for (int i =
-     * 0;i<data.length;i++){ if (i>0) strFamily = strFamily + ","; strFamily = strFamily +
-     * data[i].id; } return strFamily; }else return "'1'";
-     */
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    return Tree.getMembers(readOnlyCP, strTree, strChild);
   }
 
   @Override
   public String getServletInfo() {
     return "Servlet ReportAgingBalance. This Servlet was made by David Alsasua";
-  } // end of the getServletInfo() method
+  }
 }

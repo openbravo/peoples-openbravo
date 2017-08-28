@@ -33,7 +33,7 @@
  order by taxreg.name]]>
 	</queryString>
 	<field name="NAME" class="java.lang.String"/>
-	<field name="DOCNUM" class="java.math.BigDecimal"/>
+	<field name="DOCNUM" class="java.lang.String"/>
 	<field name="REGDATE" class="java.util.Date"/>
 	<field name="DOCINV" class="java.lang.String"/>
 	<field name="RAGSOC" class="java.lang.String"/>

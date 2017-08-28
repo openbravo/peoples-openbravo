@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -38,6 +39,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
@@ -47,6 +49,7 @@ import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.ui.WindowTrl;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class RptC_Bpartner extends HttpSecureAppServlet {
@@ -54,12 +57,14 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
+
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
       String strcBpartnerId = vars.getSessionValue("RptC_Bpartner.inpcBpartnerId_R");
-      if (strcBpartnerId.equals(""))
+      if (StringUtils.isEmpty(strcBpartnerId)) {
         strcBpartnerId = vars.getSessionValue("RptC_Bpartner.inpcBpartnerId");
+      }
       printPageDataSheet(response, vars, strcBpartnerId);
     } else if (vars.commandIn("OPEN")) {
       String strcBpartnerId = vars.getRequiredStringParameter("inpcBpartnerId");
@@ -69,56 +74,65 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
       String strcBpartnerId = vars.getRequiredStringParameter("inpcBpartnerId");
       String strmTypeDocument = vars.getRequiredStringParameter("inpTypeDocument");
       printPageAjaxDocumentResponse(response, vars, strcBpartnerId, strmTypeDocument);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strcBpartnerId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
+
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     String discard[] = { "", "", "", "", "", "", "", "", "", "", "", "", "" };
-    XmlDocument xmlDocument = null;
+
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
 
     try {
       OBContext.setAdminMode(true);
-      RptCBpartnerData[] dataPartner = RptCBpartnerData.select(this, vars.getLanguage(),
+      RptCBpartnerData[] dataPartner = RptCBpartnerData.select(readOnlyCP, vars.getLanguage(),
           strcBpartnerId);
-      RptCBpartnerData[] dataAccount = RptCBpartnerData.selectAccount(this, strcBpartnerId);
-      RptCBpartnerData[] dataShipper = RptCBpartnerData.selectShipper(this, strcBpartnerId);
-      RptCBpartnerData[] dataTemplate = RptCBpartnerData.selectTemplate(this, vars.getLanguage(),
-          strcBpartnerId);
-      RptCBpartnerData[] dataDiscount = RptCBpartnerData.selectDiscount(this, strcBpartnerId);
+      RptCBpartnerData[] dataAccount = RptCBpartnerData.selectAccount(readOnlyCP, strcBpartnerId);
+      RptCBpartnerData[] dataShipper = RptCBpartnerData.selectShipper(readOnlyCP, strcBpartnerId);
+      RptCBpartnerData[] dataTemplate = RptCBpartnerData.selectTemplate(readOnlyCP,
+          vars.getLanguage(), strcBpartnerId);
+      RptCBpartnerData[] dataDiscount = RptCBpartnerData.selectDiscount(readOnlyCP, strcBpartnerId);
 
-      Client c = OBDal.getInstance().get(Client.class,
+      Client c = OBDal.getReadOnlyInstance().get(Client.class,
           OBContext.getOBContext().getCurrentClient().getId());
-      BusinessPartner bp = OBDal.getInstance()
+      BusinessPartner bp = OBDal.getReadOnlyInstance()
           .get(
               BusinessPartner.class,
               strcBpartnerId.substring(strcBpartnerId.indexOf("'") + 1,
                   strcBpartnerId.lastIndexOf("'")));
 
-      RptCBpartnerSalesData[] dataPaymentsIn = RptCBpartnerSalesData.selectPayments(this,
+      RptCBpartnerSalesData[] dataPaymentsIn = RptCBpartnerSalesData.selectPayments(readOnlyCP,
           "PAYMENTIN", c.getCurrency().getId(), c.getId(), bp.getOrganization().getId(), "Y",
           strcBpartnerId);
-      RptCBpartnerSalesData[] dataPaymentsOut = RptCBpartnerSalesData.selectPayments(this,
+      RptCBpartnerSalesData[] dataPaymentsOut = RptCBpartnerSalesData.selectPayments(readOnlyCP,
           "PAYMENTOUT", c.getCurrency().getId(), c.getId(), bp.getOrganization().getId(), "N",
           strcBpartnerId);
 
-      RptCBpartnerCustomerData[] dataCustomer = RptCBpartnerCustomerData.select(this,
+      RptCBpartnerCustomerData[] dataCustomer = RptCBpartnerCustomerData.select(readOnlyCP,
           vars.getLanguage(), strcBpartnerId);
-      RptCBpartnerVendorData[] dataVendor = RptCBpartnerVendorData.select(this, vars.getLanguage(),
+      RptCBpartnerVendorData[] dataVendor = RptCBpartnerVendorData.select(readOnlyCP,
+          vars.getLanguage(), strcBpartnerId);
+      RptCBpartnerlocationData[] dataLocation = RptCBpartnerlocationData.select(readOnlyCP,
           strcBpartnerId);
-      RptCBpartnerlocationData[] dataLocation = RptCBpartnerlocationData.select(this,
+      RptCBpartnercontactData[] dataContact = RptCBpartnercontactData.select(readOnlyCP,
           strcBpartnerId);
-      RptCBpartnercontactData[] dataContact = RptCBpartnercontactData.select(this, strcBpartnerId);
-      RptCBpartnerSalesData[] dataSales = RptCBpartnerSalesData.selectOrder(this, strcBpartnerId);
-      RptCBpartnerSalesData[] dataInvoice = RptCBpartnerSalesData.select(this, strcBpartnerId);
-      RptCBpartnerSalesData[] dataInout = RptCBpartnerSalesData.selectinout(this, strcBpartnerId);
-      RptCBpartnerSalesData[] dataABC = RptCBpartnerSalesData.selectABC(this,
-          DateTimeData.sysdateYear(this), DateTimeData.lastYear(this), strcBpartnerId);
+      RptCBpartnerSalesData[] dataSales = RptCBpartnerSalesData.selectOrder(readOnlyCP,
+          strcBpartnerId);
+      RptCBpartnerSalesData[] dataInvoice = RptCBpartnerSalesData
+          .select(readOnlyCP, strcBpartnerId);
+      RptCBpartnerSalesData[] dataInout = RptCBpartnerSalesData.selectinout(readOnlyCP,
+          strcBpartnerId);
+      RptCBpartnerSalesData[] dataABC = RptCBpartnerSalesData.selectABC(readOnlyCP,
+          DateTimeData.sysdateYear(readOnlyCP), DateTimeData.lastYear(readOnlyCP), strcBpartnerId);
 
       if (dataAccount == null || dataAccount.length == 0) {
         dataAccount = RptCBpartnerData.set();
@@ -177,13 +191,13 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
         discard[11] = "sectionPaymentout";
       }
 
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/RptC_Bpartner", discard)
-          .createXmlDocument();
+      XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/RptC_Bpartner",
+          discard).createXmlDocument();
       xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
       xmlDocument.setParameter("theme", vars.getTheme());
       xmlDocument.setParameter("paramBpartner", dataPartner[0].cBpartnerId);
-      xmlDocument.setParameter("paramSysdate", DateTimeData.today(this));
+      xmlDocument.setParameter("paramSysdate", DateTimeData.today(readOnlyCP));
 
       xmlDocument.setData("structureAccount", dataAccount);
       xmlDocument.setData("structureShipper", dataShipper);
@@ -210,18 +224,22 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
 
   private void printPageAjaxResponse(HttpServletResponse response, VariablesSecureApp vars,
       String strcBpartnerId, String strmProductTemplate) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: ajaxreponse");
-    XmlDocument xmlDocument = null;
 
-    RptCBpartnerData[] data = RptCBpartnerData.selectTemplateDetail(this, strcBpartnerId,
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("Output: ajaxreponse");
+    }
+
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+
+    RptCBpartnerData[] data = RptCBpartnerData.selectTemplateDetail(readOnlyCP, strcBpartnerId,
         strmProductTemplate);
 
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       data = RptCBpartnerData.set();
+    }
 
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/RptC_BpartnerTemplateLines")
-        .createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpReports/RptC_BpartnerTemplateLines").createXmlDocument();
 
     response.setContentType("text/plain; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
@@ -234,64 +252,71 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
 
   private void printPageAjaxDocumentResponse(HttpServletResponse response, VariablesSecureApp vars,
       String strcBpartnerId, String strmTypeDocument) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: ajaxreponse");
+    }
+
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
 
     try {
       OBContext.setAdminMode(true);
       XmlDocument xmlDocument = null;
 
       RptCBpartnerSalesData[] data = null;
-      RptCBpartnerSalesData[] dataPeriod = RptCBpartnerSalesData.selectperiod(this);
+      RptCBpartnerSalesData[] dataPeriod = RptCBpartnerSalesData.selectperiod(readOnlyCP);
 
       HashMap<String, String> orderHM = new HashMap<String, String>();
       HashMap<String, String> invoiceHM = new HashMap<String, String>();
 
-      if (strmTypeDocument.equals("INVOICE")) {
-        data = RptCBpartnerSalesData.selectInvoiceperiod(this, strcBpartnerId);
+      if (StringUtils.equals(strmTypeDocument, "INVOICE")) {
+        data = RptCBpartnerSalesData.selectInvoiceperiod(readOnlyCP, strcBpartnerId);
         xmlDocument = xmlEngine.readXmlTemplate(
             "org/openbravo/erpReports/RptC_BpartnerPeriodInvoice").createXmlDocument();
         xmlDocument.setData("structurePeriod", dataPeriod);
-        if (data == null || data.length == 0)
+        if (data == null || data.length == 0) {
           data = RptCBpartnerSalesData.set();
+        }
       }
-      if (strmTypeDocument.equals("ORDER")) {
-        data = RptCBpartnerSalesData.selectOrderperiod(this, strcBpartnerId);
+      if (StringUtils.equals(strmTypeDocument, "ORDER")) {
+        data = RptCBpartnerSalesData.selectOrderperiod(readOnlyCP, strcBpartnerId);
         xmlDocument = xmlEngine
             .readXmlTemplate("org/openbravo/erpReports/RptC_BpartnerPeriodSales")
             .createXmlDocument();
         xmlDocument.setData("structurePeriod", dataPeriod);
-        if (data == null || data.length == 0)
+        if (data == null || data.length == 0) {
           data = RptCBpartnerSalesData.set();
+        }
       }
-      if (strmTypeDocument.equals("INOUT")) {
-        data = RptCBpartnerSalesData.selectInoutperiod(this, strcBpartnerId);
+      if (StringUtils.equals(strmTypeDocument, "INOUT")) {
+        data = RptCBpartnerSalesData.selectInoutperiod(readOnlyCP, strcBpartnerId);
         xmlDocument = xmlEngine
             .readXmlTemplate("org/openbravo/erpReports/RptC_BpartnerPeriodInout")
             .createXmlDocument();
         xmlDocument.setData("structurePeriod", dataPeriod);
-        if (data == null || data.length == 0)
+        if (data == null || data.length == 0) {
           data = RptCBpartnerSalesData.set();
+        }
       }
-      if (strmTypeDocument.equals("ABC")) {
-        data = RptCBpartnerSalesData.selectABCactualdetail(this, DateTimeData.sysdateYear(this),
-            strcBpartnerId);
+      if (StringUtils.equals(strmTypeDocument, "ABC")) {
+        data = RptCBpartnerSalesData.selectABCactualdetail(readOnlyCP,
+            DateTimeData.sysdateYear(readOnlyCP), strcBpartnerId);
         xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/RptC_BpartnerABC")
             .createXmlDocument();
       }
-      if (strmTypeDocument.equals("ABCREF")) {
-        data = RptCBpartnerSalesData.selectABCrefdetail(this, DateTimeData.lastYear(this),
-            strcBpartnerId);
+      if (StringUtils.equals(strmTypeDocument, "ABCREF")) {
+        data = RptCBpartnerSalesData.selectABCrefdetail(readOnlyCP,
+            DateTimeData.lastYear(readOnlyCP), strcBpartnerId);
         xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/RptC_BpartnerABCref")
             .createXmlDocument();
       }
 
-      Client c = OBDal.getInstance().get(Client.class,
+      Client c = OBDal.getReadOnlyInstance().get(Client.class,
           OBContext.getOBContext().getCurrentClient().getId());
 
-      if (strmTypeDocument.equals("PAYMENTIN")) {
-        data = RptCBpartnerSalesData.selectPaymentsdetail(this, vars.getLanguage(), c.getCurrency()
-            .getId(), "Y", strcBpartnerId);
+      if (StringUtils.equals(strmTypeDocument, "PAYMENTIN")) {
+        data = RptCBpartnerSalesData.selectPaymentsdetail(readOnlyCP, vars.getLanguage(), c
+            .getCurrency().getId(), "Y", strcBpartnerId);
         xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/RptC_BpartnerPaymentsIn")
             .createXmlDocument();
         orderHM = getLinkParameters("70E57DEA195843729FF303C9A71EBCA3", "Y");
@@ -307,9 +332,9 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
         xmlDocument.setParameter("mappingNameSI", invoiceHM.get("mappingName"));
         xmlDocument.setParameter("keyParameterSI", invoiceHM.get("keyParameter"));
       }
-      if (strmTypeDocument.equals("PAYMENTOUT")) {
-        data = RptCBpartnerSalesData.selectPaymentsdetail(this, vars.getLanguage(), c.getCurrency()
-            .getId(), "N", strcBpartnerId);
+      if (StringUtils.equals(strmTypeDocument, "PAYMENTOUT")) {
+        data = RptCBpartnerSalesData.selectPaymentsdetail(readOnlyCP, vars.getLanguage(), c
+            .getCurrency().getId(), "N", strcBpartnerId);
         xmlDocument = xmlEngine
             .readXmlTemplate("org/openbravo/erpReports/RptC_BpartnerPaymentsOut")
             .createXmlDocument();
@@ -340,14 +365,16 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
 
   public BigDecimal getCustomerCredit(BusinessPartner bp, boolean isReceipt) {
     BigDecimal creditAmount = BigDecimal.ZERO;
-    for (FIN_Payment payment : getCustomerPaymentsWithCredit(bp, isReceipt))
+    for (FIN_Payment payment : getCustomerPaymentsWithCredit(bp, isReceipt)) {
       creditAmount = creditAmount.add(payment.getGeneratedCredit()).subtract(
           payment.getUsedCredit());
+    }
     return creditAmount;
   }
 
   public List<FIN_Payment> getCustomerPaymentsWithCredit(BusinessPartner bp, boolean isReceipt) {
-    OBCriteria<FIN_Payment> obcPayment = OBDal.getInstance().createCriteria(FIN_Payment.class);
+    OBCriteria<FIN_Payment> obcPayment = OBDal.getReadOnlyInstance().createCriteria(
+        FIN_Payment.class);
     obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_BUSINESSPARTNER, bp));
     obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_RECEIPT, isReceipt));
     obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_GENERATEDCREDIT, BigDecimal.ZERO));
@@ -364,10 +391,10 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
 
     OBContext.setAdminMode();
     try {
-      Table adTable = OBDal.getInstance().get(Table.class, adTableId);
+      Table adTable = OBDal.getReadOnlyInstance().get(Table.class, adTableId);
 
       Window adWindow = null;
-      if (isSOtrx.equalsIgnoreCase("Y")) {
+      if (StringUtils.equalsIgnoreCase(isSOtrx, "Y")) {
         adWindow = adTable.getWindow();
       } else {
         adWindow = adTable.getPOWindow();
@@ -377,7 +404,7 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
       java.util.List<Tab> adTabList = adWindow.getADTabList();
       Tab tab = null;
       for (int i = 0; i < adTabList.size(); i++) {
-        if (adTabList.get(i).getTable().getId().equalsIgnoreCase(adTableId)) {
+        if (StringUtils.equalsIgnoreCase(adTabList.get(i).getTable().getId(), adTableId)) {
           hmValues.put("tabId", adTabList.get(i).getId());
           tab = adTabList.get(i);
         }
@@ -390,7 +417,7 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
       String tabTitle = null;
       for (WindowTrl windowTrl : tab.getWindow().getADWindowTrlList()) {
         final String trlLanguageId = windowTrl.getLanguage().getId();
-        if (trlLanguageId.equals(userLanguageId)) {
+        if (StringUtils.equals(trlLanguageId, userLanguageId)) {
           tabTitle = windowTrl.getName();
         }
       }

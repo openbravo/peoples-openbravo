@@ -85,11 +85,11 @@ public class AgingDao {
 
     OBContext.setAdminMode(true);
     try {
-      if (strAccSchema == null || "".equals(strAccSchema)) {
-        organization = OBDal.getInstance().get(Organization.class, strOrg);
+      if (StringUtils.isEmpty(strAccSchema)) {
+        organization = OBDal.getReadOnlyInstance().get(Organization.class, strOrg);
         convCurrency = organization.getCurrency();
       } else {
-        AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class, strAccSchema);
+        AcctSchema acctSchema = OBDal.getReadOnlyInstance().get(AcctSchema.class, strAccSchema);
         convCurrency = acctSchema.getCurrency();
       }
     } finally {
@@ -104,7 +104,7 @@ public class AgingDao {
     int limit = (int) vars.getSessionObject("reportsLimit");
     String pgLimit = null, oraLimit = null;
     if (limit > 0) {
-      if (connectionProvider.getRDBMS().equalsIgnoreCase("ORACLE")) {
+      if (StringUtils.equalsIgnoreCase(connectionProvider.getRDBMS(), "ORACLE")) {
         oraLimit = String.valueOf(limit + 1);
       } else {
         pgLimit = String.valueOf(limit + 1);
@@ -226,7 +226,7 @@ public class AgingDao {
     int limit = (int) RequestContext.get().getVariablesSecureApp().getSessionObject("reportsLimit");
     String pgLimit = null, oraLimit = null;
     if (limit > 0) {
-      if (connectionProvider.getRDBMS().equalsIgnoreCase("ORACLE")) {
+      if (StringUtils.equalsIgnoreCase(connectionProvider.getRDBMS(), "ORACLE")) {
         oraLimit = String.valueOf(limit + 1);
       } else {
         pgLimit = String.valueOf(limit + 1);
@@ -260,8 +260,8 @@ public class AgingDao {
 
         HashMap<String, String> psData = insertData(docNo, invoiceId, invoiceDate, amount,
             strBusinessPartnerId, strBpName, intScope,
-            recOrPay.equals("RECEIVABLES") ? salesInvoiceTab : purchaseInvoiceTab, dateFormat,
-            false, doubtfulDebtAmount);
+            StringUtils.equals(recOrPay, "RECEIVABLES") ? salesInvoiceTab : purchaseInvoiceTab,
+            dateFormat, false, doubtfulDebtAmount);
         hashMapList.add(psData);
 
         i++;
@@ -295,8 +295,8 @@ public class AgingDao {
 
         HashMap<String, String> psData = insertData(documentNo, paymentId, paymentDate, creditLeft,
             strBusinessPartnerId, strBpName, CREDIT_SCOPE,
-            recOrPay.equals("RECEIVABLES") ? paymentInTab : paymentOutTab, dateFormat, true,
-            BigDecimal.ZERO);
+            StringUtils.equals(recOrPay, "RECEIVABLES") ? paymentInTab : paymentOutTab, dateFormat,
+            true, BigDecimal.ZERO);
         hashMapList.add(psData);
 
         i++;

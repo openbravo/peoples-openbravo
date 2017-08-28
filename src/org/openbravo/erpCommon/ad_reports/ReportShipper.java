@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,8 +25,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -34,6 +36,7 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportShipper extends HttpSecureAppServlet {
@@ -44,7 +47,8 @@ public class ReportShipper extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Get user Client's base currency
-    String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    String strUserCurrencyId = Utility.stringBaseCurrencyId(readOnlyCP, vars.getClient());
     if (vars.commandIn("DEFAULT")) {
       String strFrom = vars.getGlobalVariable("inpFrom", "ReportShipper|From", "");
       String strTo = vars.getGlobalVariable("inpTo", "ReportShipper|To", "");
@@ -68,16 +72,18 @@ public class ReportShipper extends HttpSecureAppServlet {
       printPageDataSheet(request, response, vars, strFrom, strTo, strShipper, strShipperReport,
           strDetail, strCurrencyId);
 
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strFrom, String strTo, String strShipper,
       String strShipperReport, String strDetail, String strCurrencyId) throws IOException,
       ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
@@ -85,44 +91,49 @@ public class ReportShipper extends HttpSecureAppServlet {
     ReportShipperData[][] dataLine = null;
 
     String discard[] = { "" };
-    if (!strDetail.equals("Y"))
+    if (!StringUtils.equals(strDetail, "Y")) {
       discard[0] = "reportLine";
-    if (vars.commandIn("DEFAULT"))
+    }
+    if (vars.commandIn("DEFAULT")) {
       discard[0] = "selEliminar";
+    }
 
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportShipper",
         discard).createXmlDocument();
 
     String strIsSOTrx = "";
-    if (strShipperReport.equalsIgnoreCase("sale"))
+    if (StringUtils.equalsIgnoreCase(strShipperReport, "sale")) {
       strIsSOTrx = "Y";
-    else if (strShipperReport.equalsIgnoreCase("purchase"))
+    } else if (StringUtils.equalsIgnoreCase(strShipperReport, "purchase")) {
       strIsSOTrx = "N";
-    else if (strShipperReport.equalsIgnoreCase("all"))
+    } else if (StringUtils.equalsIgnoreCase(strShipperReport, "all")) {
       strIsSOTrx = "";
+    }
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("****data passed from: " + strFrom + " to: " + strTo + " shiper: " + strShipper
           + " isso " + strIsSOTrx + " det " + strDetail);
+    }
     String strConvRateErrorMsg = "";
     OBError myMessage = null;
     myMessage = new OBError();
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     if (vars.commandIn("FIND")) {
       // Checks if there is a conversion rate for each of the transactions of
       // the report
-      String strBaseCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+      String strBaseCurrencyId = Utility.stringBaseCurrencyId(readOnlyCP, vars.getClient());
       try {
-        data = ReportShipperData.select(this, vars.getLanguage(), strCurrencyId, strBaseCurrencyId,
-            strFrom, strTo, strShipper, strIsSOTrx);
+        data = ReportShipperData.select(readOnlyCP, vars.getLanguage(), strCurrencyId,
+            strBaseCurrencyId, strFrom, strTo, strShipper, strIsSOTrx);
       } catch (ServletException ex) {
-        myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+        myMessage = Utility.translateError(readOnlyCP, vars, vars.getLanguage(), ex.getMessage());
       }
       strConvRateErrorMsg = myMessage.getMessage();
       // If a conversion rate is missing for a certain transaction, an error
       // message window pops-up.
-      if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+      if (StringUtils.isNotEmpty(strConvRateErrorMsg)) {
         advise(request, response, "ERROR",
-            Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+            Utility.messageBD(readOnlyCP, "NoConversionRateHeader", vars.getLanguage()),
             strConvRateErrorMsg);
       } else { // Otherwise, the report is launched
         dataLine = new ReportShipperData[0][0];
@@ -130,10 +141,11 @@ public class ReportShipper extends HttpSecureAppServlet {
           dataLine = new ReportShipperData[data.length][];
 
           for (int i = 0; i < data.length; i++) {
-            if (log4j.isDebugEnabled())
+            if (log4j.isDebugEnabled()) {
               log4j.debug("shipment " + data[i].shipmentid);
-            dataLine[i] = ReportShipperData
-                .selectLine(this, vars.getLanguage(), data[i].shipmentid);
+            }
+            dataLine[i] = ReportShipperData.selectLine(readOnlyCP, vars.getLanguage(),
+                data[i].shipmentid);
             // if (RawMaterialData[i] == null ||
             // RawMaterialData[i].length == 0) RawMaterialData[i] =
             // ReportRawMaterialData.set();
@@ -142,23 +154,23 @@ public class ReportShipper extends HttpSecureAppServlet {
       }
     }
 
-    if (strConvRateErrorMsg.equals("") || strConvRateErrorMsg == null) {
-      ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportShipper", false, "", "", "",
-          false, "ad_reports", strReplaceWith, false, true);
+    if (StringUtils.isEmpty(strConvRateErrorMsg)) {
+      ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportShipper", false, "", "",
+          "", false, "ad_reports", strReplaceWith, false, true);
       toolbar.prepareSimpleToolBarTemplate();
       xmlDocument.setParameter("toolbar", toolbar.toString());
 
       try {
-        WindowTabs tabs = new WindowTabs(this, vars,
+        WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
             "org.openbravo.erpCommon.ad_reports.ReportShipper");
         xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
         xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
         xmlDocument.setParameter("childTabContainer", tabs.childTabs());
         xmlDocument.setParameter("theme", vars.getTheme());
-        NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportShipper.html",
+        NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(), "ReportShipper.html",
             classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
         xmlDocument.setParameter("navigationBar", nav.toString());
-        LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportShipper.html",
+        LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(), "ReportShipper.html",
             strReplaceWith);
         xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
       } catch (Exception ex) {
@@ -190,10 +202,12 @@ public class ReportShipper extends HttpSecureAppServlet {
 
       xmlDocument.setParameter("paramShipper", strShipper);
       try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Shipper_ID",
-            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportShipper"),
-            Utility.getContext(this, vars, "#User_Client", "ReportShipper"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportShipper", strShipper);
+        ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+            "M_Shipper_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+                "ReportShipper"), Utility.getContext(readOnlyCP, vars, "#User_Client",
+                "ReportShipper"), 0);
+        Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportShipper",
+            strShipper);
         xmlDocument.setData("reportShipper", "liststructure", comboTableData.select(false));
         comboTableData = null;
       } catch (Exception ex) {
@@ -202,10 +216,12 @@ public class ReportShipper extends HttpSecureAppServlet {
 
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportShipper"),
-            Utility.getContext(this, vars, "#User_Client", "ReportShipper"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportShipper", strCurrencyId);
+        ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+            "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+                "ReportShipper"), Utility.getContext(readOnlyCP, vars, "#User_Client",
+                "ReportShipper"), 0);
+        Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportShipper",
+            strCurrencyId);
         xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
         comboTableData = null;
       } catch (Exception ex) {

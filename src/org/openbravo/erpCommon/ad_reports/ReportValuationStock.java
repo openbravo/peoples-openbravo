@@ -51,6 +51,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -69,6 +70,7 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.CostingAlgorithm;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportValuationStock extends HttpSecureAppServlet {
@@ -87,10 +89,11 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     }
 
     // Get user Client's base currency
-    String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    String strUserCurrencyId = Utility.stringBaseCurrencyId(readOnlyCP, vars.getClient());
     if (vars.commandIn("DEFAULT", "RELATION")) {
       String strDate = vars.getGlobalVariable("inpDate", "ReportValuationStock|Date",
-          DateTimeData.today(this));
+          DateTimeData.today(readOnlyCP));
       String strOrganization = vars.getGlobalVariable("inpOrg",
           "ReportValuationStock|Organization", "", IsIDFilter.instance);
       String strWarehouse = vars.getGlobalVariable("inpmWarehouseId",
@@ -103,13 +106,13 @@ public class ReportValuationStock extends HttpSecureAppServlet {
       }
       String strWarehouseConsolidation = vars.getGlobalVariable("inpWarehouseConsolidation",
           "ReportValuationStock|warehouseConsolidation", "");
-      boolean isWarehouseConsolidation = "on".equals(strWarehouseConsolidation);
+      boolean isWarehouseConsolidation = StringUtils.equals(strWarehouseConsolidation, "on");
 
       printPageDataSheet(response, vars, strDate, strOrganization, strWarehouse,
           strCategoryProduct, strCurrencyId, isWarehouseConsolidation, null, null, null, null);
     } else if (vars.commandIn("FIND", "PDF", "XLS")) {
       String strDate = vars.getGlobalVariable("inpDate", "ReportValuationStock|Date",
-          DateTimeData.today(this));
+          DateTimeData.today(readOnlyCP));
       String strOrganization = vars.getRequestGlobalVariable("inpOrg",
           "ReportValuationStock|Organization", IsIDFilter.instance);
       String strWarehouse = vars.getRequestGlobalVariable("inpmWarehouseId",
@@ -120,7 +123,7 @@ public class ReportValuationStock extends HttpSecureAppServlet {
           "ReportValuationStock|currency", strUserCurrencyId, IsIDFilter.instance);
       String strWarehouseConsolidation = vars.getRequestGlobalVariable("inpWarehouseConsolidation",
           "ReportValuationStock|warehouseConsolidation");
-      boolean isWarehouseConsolidation = "on".equals(strWarehouseConsolidation);
+      boolean isWarehouseConsolidation = StringUtils.equals(strWarehouseConsolidation, "on");
 
       buildData(response, vars, strDate, strOrganization, strWarehouse, strCategoryProduct,
           strCurrencyId, isWarehouseConsolidation);
@@ -151,8 +154,9 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     Set<String> orgs = null;
     Set<String> warehouseIds = null;
     String strWarehouseIncluded = null;
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     try {
-      Organization filterOrg = OBDal.getInstance().get(Organization.class, strOrganization);
+      Organization filterOrg = OBDal.getReadOnlyInstance().get(Organization.class, strOrganization);
       OrganizationStructureProvider osp = OBContext.getOBContext()
           .getOrganizationStructureProvider(OBContext.getOBContext().getCurrentClient().getId());
       Organization legalEntity = osp.getLegalEntity(filterOrg);
@@ -171,11 +175,11 @@ public class ReportValuationStock extends HttpSecureAppServlet {
         processTime = OBDateUtils.formatDate(CostingUtils.getCostingRuleStartingDate(costRule),
             "dd-MM-yyyy HH:mm:ss");
       }
-      String compare = DateTimeData.compare(this, strDate,
-          ReportValuationStockData.getCostingMigrationDate(this, legalEntity.getClient().getId()));
+      String compare = DateTimeData.compare(readOnlyCP, strDate, ReportValuationStockData
+          .getCostingMigrationDate(readOnlyCP, legalEntity.getClient().getId()));
       String strCostOrg = "";
       String strCostClientId = "";
-      if (compare.equals("-1")) {
+      if (StringUtils.equals(compare, "-1")) {
         // Date is before migration, available types are ST and AV. These costs are created at
         // client level and organization can be any that belong to the client.
         strCostType = "'AV', 'ST'";
@@ -185,10 +189,11 @@ public class ReportValuationStock extends HttpSecureAppServlet {
         strCostType = getCostType(ca);
         strCostOrg = strLegalEntity;
       }
-      String strDateNext = DateTimeData.nDaysAfter(this, strDate, "1");
-      String strMaxAggDate = ReportValuationStockData.selectMaxAggregatedDate(this, OBDal
-          .getInstance().get(Organization.class, strLegalEntity).getClient().getId(), orgIds);
-      if (strMaxAggDate == null || "".equals(strMaxAggDate)) {
+      String strDateNext = DateTimeData.nDaysAfter(readOnlyCP, strDate, "1");
+      String strMaxAggDate = ReportValuationStockData.selectMaxAggregatedDate(readOnlyCP, OBDal
+          .getReadOnlyInstance().get(Organization.class, strLegalEntity).getClient().getId(),
+          orgIds);
+      if (StringUtils.isEmpty(strMaxAggDate)) {
         DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         Date maxAggDate = formatter.parse("01-01-0000");
         strMaxAggDate = OBDateUtils.formatDate(maxAggDate);
@@ -204,20 +209,20 @@ public class ReportValuationStock extends HttpSecureAppServlet {
         strWarehouseIncluded = "(" + Utility.getInStrSet(warehouseIds) + ")";
       }
       if (strCostType != null && !isWarehouseConsolidation) {
-        data = ReportValuationStockData.select(this, vars.getLanguage(), strCurrencyId,
+        data = ReportValuationStockData.select(readOnlyCP, vars.getLanguage(), strCurrencyId,
             strLegalEntity, strDateNext, strMaxAggDate, processTime, dateFormat, orgIds,
             strWarehouseIncluded, strCostOrg, strCostClientId, strCostType, strCategoryProduct);
       } else if (strCostType == null && !isWarehouseConsolidation) {
-        data = ReportValuationStockData.selectWithoutCost(this, vars.getLanguage(), strCurrencyId,
-            strLegalEntity, strDateNext, strMaxAggDate, processTime, dateFormat, orgIds,
-            strWarehouseIncluded, strCategoryProduct);
+        data = ReportValuationStockData.selectWithoutCost(readOnlyCP, vars.getLanguage(),
+            strCurrencyId, strLegalEntity, strDateNext, strMaxAggDate, processTime, dateFormat,
+            orgIds, strWarehouseIncluded, strCategoryProduct);
       } else if (strCostType != null && isWarehouseConsolidation) {
-        data = ReportValuationStockData.selectClusteredByWarehouse(this, vars.getLanguage(),
+        data = ReportValuationStockData.selectClusteredByWarehouse(readOnlyCP, vars.getLanguage(),
             strDateNext, strLegalEntity, strCurrencyId, strMaxAggDate, processTime, dateFormat,
             orgIds, strWarehouseIncluded, strCategoryProduct, strCostOrg, strCostClientId,
             strCostType);
       } else {
-        data = ReportValuationStockData.selectClusteredByWarehouseWithoutCost(this,
+        data = ReportValuationStockData.selectClusteredByWarehouseWithoutCost(readOnlyCP,
             vars.getLanguage(), strCurrencyId, strLegalEntity, strDateNext, strMaxAggDate,
             processTime, dateFormat, orgIds, strWarehouseIncluded, strCategoryProduct);
       }
@@ -255,6 +260,7 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     String discard[] = { "discard", "discard1" };
     XmlDocument xmlDocument;
     OBError myMessage = new OBError();
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
 
     // Otherwise, the report is launched
     if (vars.commandIn("DEFAULT")) {
@@ -285,23 +291,24 @@ public class ReportValuationStock extends HttpSecureAppServlet {
       }
     }
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportValuationStock", true, "", "",
-        "printReport('PDF');return false;", false, "ad_reports", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportValuationStock", true, "",
+        "", "printReport('PDF');return false;", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareRelationBarTemplate(false, false, "printReport('XLS');return false;");
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.erpCommon.ad_reports.ReportValuationStock");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportValuationStock.html",
-          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
+          "ReportValuationStock.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportValuationStock.html",
-          strReplaceWith);
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(),
+          "ReportValuationStock.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -328,11 +335,11 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     xmlDocument.setParameter("warehouseConsolidation", isWarehouseConsolidation ? "" : "on");
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "D4DF252DEC3B44858454EE5292A8B836", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportValuationStock"), Utility.getContext(this, vars, "#User_Client",
-              "ReportValuationStock"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportValuationStock",
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "AD_Org_ID",
+          "", "D4DF252DEC3B44858454EE5292A8B836", Utility.getContext(readOnlyCP, vars,
+              "#AccessibleOrgTree", "ReportValuationStock"), Utility.getContext(readOnlyCP, vars,
+              "#User_Client", "ReportValuationStock"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportValuationStock",
           strOrganization);
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -342,10 +349,11 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     }
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "M_Warehouse_ID",
-          "M_Warehouse of Client", "", Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
-          Utility.getContext(this, vars, "#User_Client", ""), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "", "");
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLE",
+          "M_Warehouse_ID", "M_Warehouse of Client", "", Utility.getContext(readOnlyCP, vars,
+              "#AccessibleOrgTree", ""), Utility.getContext(readOnlyCP, vars, "#User_Client", ""),
+          0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "", "");
       xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -354,16 +362,16 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     xmlDocument.setParameter(
         "warehouses",
         Utility.arrayDobleEntrada("arrWh",
-            ReportValuationStockData.selectWhsDouble(this, vars.getClient())));
+            ReportValuationStockData.selectWhsDouble(readOnlyCP, vars.getClient())));
     xmlDocument.setParameter("warehouseID", strWarehouse);
     xmlDocument.setParameter("whwh", strWarehouse);
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "M_Product_Category_ID", "", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this, vars,
-              "#User_Client", ""), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "", strCategoryProduct);
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+          "M_Product_Category_ID", "", "", Utility.getContext(readOnlyCP, vars,
+              "#AccessibleOrgTree", ""), Utility.getContext(readOnlyCP, vars, "#User_Client", ""),
+          0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "", strCategoryProduct);
       xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure",
           comboTableData.select(false));
       comboTableData = null;
@@ -373,10 +381,11 @@ public class ReportValuationStock extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportValuationStock"),
-          Utility.getContext(this, vars, "#User_Client", "ReportValuationStock"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportValuationStock",
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+          "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportValuationStock"), Utility.getContext(readOnlyCP, vars, "#User_Client",
+              "ReportValuationStock"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportValuationStock",
           strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -509,9 +518,9 @@ public class ReportValuationStock extends HttpSecureAppServlet {
       where.append(" where cosrule." + CostingRule.PROPERTY_ORGANIZATION + ".id = :org");
       where.append(" order by " + CostingRule.PROPERTY_STARTINGDATE + " desc");
 
-      OBQuery<CostingRule> whereQry = OBDal.getInstance().createQuery(CostingRule.class,
+      OBQuery<CostingRule> whereQry = OBDal.getReadOnlyInstance().createQuery(CostingRule.class,
           where.toString());
-      whereQry.setNamedParameter("org", legalEntity);
+      whereQry.setNamedParameter("org", legalEntity.getId());
       whereQry.setMaxResult(1);
       CostingRule cr = whereQry.uniqueResult();
       if (cr == null) {
@@ -563,13 +572,14 @@ public class ReportValuationStock extends HttpSecureAppServlet {
         where.append("   and p." + Product.PROPERTY_PRODUCTCATEGORY + ".id = :prodCategory");
       }
 
-      OBQuery<MaterialTransaction> whereQry = OBDal.getInstance().createQuery(
+      OBQuery<MaterialTransaction> whereQry = OBDal.getReadOnlyInstance().createQuery(
           MaterialTransaction.class, where.toString());
       whereQry.setFilterOnReadableClients(false);
       whereQry.setFilterOnReadableOrganization(false);
       try {
+        ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
         whereQry.setNamedParameter("maxDate",
-            OBDateUtils.getDate(DateTimeData.nDaysAfter(this, strDate, "1")));
+            OBDateUtils.getDate(DateTimeData.nDaysAfter(readOnlyCP, strDate, "1")));
       } catch (Exception e) {
         // DoNothing parse exception not expected.
         log4j.error("error parsing date: " + strDate, e);
@@ -598,7 +608,7 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     hqlString.append(" from Warehouse as e");
     hqlString.append(" where e.organization.id in (:orgList)");
     hqlString.append(" and e.client.id = :clientId");
-    Query qry = OBDal.getInstance().getSession().createQuery(hqlString.toString());
+    Query qry = OBDal.getReadOnlyInstance().getSession().createQuery(hqlString.toString());
     qry.setParameterList("orgList", osp.getNaturalTree(orgId));
     qry.setParameter("clientId", clientId);
     return (List<String>) qry.list();

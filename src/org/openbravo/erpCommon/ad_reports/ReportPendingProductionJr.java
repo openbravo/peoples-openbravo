@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,12 +28,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportPendingProductionJr extends HttpSecureAppServlet {
@@ -43,31 +45,31 @@ public class ReportPendingProductionJr extends HttpSecureAppServlet {
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (vars.commandIn("FIND"))
+    if (vars.commandIn("FIND")) {
       printPageDataHtml(response, vars);
-    else
+    } else {
       printPageDataSheet(response, vars);
+    }
   }
 
   private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     // PrintWriter out = response.getWriter();
     // XmlDocument xmlDocument=null;
-    ReportPendingProductionJrData[] data = null;
     // xmlDocument =
     // xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportPendingProductionEdit").
     // createXmlDocument();
-    data = ReportPendingProductionJrData.select(this,
-        Utility.getContext(this, vars, "#User_Client", "ReportPendingProductionJr"),
-        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportPendingProductionJr"));
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    ReportPendingProductionJrData[] data = ReportPendingProductionJrData.select(readOnlyCP,
+        Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportPendingProductionJr"),
+        Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportPendingProductionJr"));
 
     String strOutput = "html";
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportPendingProductionJr.jrxml";
-    if (strOutput.equals("pdf"))
-      response.setHeader("Content-disposition", "inline; filename=ReportPendingProductionJr.pdf");
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     // parameters.put("PRODUCT_LEVEL", new Integer(intProductLevel));
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
@@ -76,31 +78,33 @@ public class ReportPendingProductionJr extends HttpSecureAppServlet {
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportPendingProductionJr").createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportPendingProductionJr", false, "",
-        "", "", false, "ad_reports", strReplaceWith, false, true);
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportPendingProductionJr",
+        false, "", "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.erpCommon.ad_reports.ReportPendingProductionJr");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
           "ReportPendingProductionJr.html", classInfo.id, classInfo.type, strReplaceWith,
           tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(),
           "ReportPendingProductionJr.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {

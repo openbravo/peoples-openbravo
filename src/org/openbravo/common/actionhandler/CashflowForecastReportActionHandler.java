@@ -64,8 +64,7 @@ public class CashflowForecastReportActionHandler extends BaseReportActionHandler
 
   @Override
   protected ConnectionProvider getReportConnectionProvider() {
-    ConnectionProvider conn = new DalConnectionProvider(false);
-    return conn;
+    return DalConnectionProvider.getReadOnlyConnectionProvider();
   }
 
   @Override

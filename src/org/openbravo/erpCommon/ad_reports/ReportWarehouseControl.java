@@ -25,8 +25,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -34,6 +36,7 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportWarehouseControl extends HttpSecureAppServlet {
@@ -58,36 +61,39 @@ public class ReportWarehouseControl extends HttpSecureAppServlet {
       String strReferential = vars.getRequestGlobalVariable("inpReferential",
           "ReportWarehouseControl|Referential");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strReferential);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strReferential) throws IOException,
       ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
 
     ReportWarehouseControlData[] data = null;
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     int limit = 0;
     if (!vars.commandIn("DEFAULT")) {
       limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
 
       String pgLimit = null, oraLimit = null;
-      if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+      if (StringUtils.equalsIgnoreCase(readOnlyCP.getRDBMS(), "ORACLE")) {
         oraLimit = String.valueOf(limit + 1);
       } else {
         pgLimit = String.valueOf(limit + 1);
       }
 
-      data = ReportWarehouseControlData.select(this,
-        Utility.getContext(this, vars, "#User_Client", "ReportWarehouseControl"),
-        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWarehouseControl"),
-          strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strReferential, pgLimit,
-          oraLimit);
+      data = ReportWarehouseControlData.select(readOnlyCP,
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportWarehouseControl"),
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportWarehouseControl"),
+          strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strReferential,
+          pgLimit, oraLimit);
     }
 
     if (data == null || data.length == 0 || vars.commandIn("DEFAULT")) {
@@ -95,38 +101,33 @@ public class ReportWarehouseControl extends HttpSecureAppServlet {
       xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_reports/ReportWarehouseControl", discard).createXmlDocument();
       data = ReportWarehouseControlData.set();
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("DEFAULT INPUT");
+      }
     } else {
       String discard[] = { "discard" };
       xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_reports/ReportWarehouseControl", discard).createXmlDocument();
-      // data = ReportWarehouseControlData.select(this,
-      // Utility.getContext(this, vars, "#User_Client",
-      // "ReportWarehouseControl"), Utility.getContext(this, vars,
-      // "#AccessibleOrgTree", "ReportWarehouseControl"), strDateFrom,
-      // DateTimeData.nDaysAfter(this, strDateTo,"1"), strRef);
-
     }
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportWarehouseControl", false, "",
-        "", "", false, "ad_reports", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportWarehouseControl", false,
+        "", "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.erpCommon.ad_reports.ReportWarehouseControl");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
           "ReportWarehouseControl.html", classInfo.id, classInfo.type, strReplaceWith,
           tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportWarehouseControl.html",
-          strReplaceWith);
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(),
+          "ReportWarehouseControl.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -137,7 +138,7 @@ public class ReportWarehouseControl extends HttpSecureAppServlet {
         myMessage = new OBError();
         myMessage.setType("Warning");
         myMessage.setTitle("");
-        String msgbody = Utility.messageBD(this, "ReportsLimit", vars.getLanguage());
+        String msgbody = Utility.messageBD(readOnlyCP, "ReportsLimit", vars.getLanguage());
         msgbody = msgbody.replace("@limit@", String.valueOf(limit + 1));
         myMessage.setMessage(msgbody);
       }
@@ -166,5 +167,5 @@ public class ReportWarehouseControl extends HttpSecureAppServlet {
 
   public String getServletInfo() {
     return "Servlet ReportWarehouseControl. This Servlet was made by Jon Alegria";
-  } // end of getServletInfo() method
+  }
 }

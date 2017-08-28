@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,8 +25,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class RptMA_CCP_Measures extends HttpSecureAppServlet {
@@ -43,42 +46,54 @@ public class RptMA_CCP_Measures extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       String strmaMeasureShift = vars.getSessionValue("RptMA_CCP_Measures.inpmaMeasureShift_R");
-      if (strmaMeasureShift.equals(""))
+      if (StringUtils.isEmpty(strmaMeasureShift)) {
         strmaMeasureShift = vars.getSessionValue("RptMA_CCP_Measures.inpmaMeasureShiftId");
+      }
       printPagePartePDF(request, response, vars, strmaMeasureShift);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPagePartePDF(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strmaMeasureShift) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: pdf");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpReports/RptMA_CCP_Measures").createXmlDocument();
+    }
+
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+
     // here we pass the familiy-ID with report.setData
-    RptMACCPMeasuresData[] data = RptMACCPMeasuresData.select(this, strmaMeasureShift);
-    if (data == null || data.length == 0)
+    RptMACCPMeasuresData[] data = RptMACCPMeasuresData.select(readOnlyCP, strmaMeasureShift);
+    if (data == null || data.length == 0) {
       data = RptMACCPMeasuresData.set();
+    }
 
     RptMACCPMeasuresHoursData[][] dataHours = new RptMACCPMeasuresHoursData[data.length][10];
     RptMACCPMeasuresValuesData[][] dataValues = new RptMACCPMeasuresValuesData[data.length][];
 
     for (int i = 0; i < data.length; i++) {
-      dataHours[i] = RptMACCPMeasuresHoursData.select(this, data[i].groupid);
-      if (dataHours[i] == null || dataHours[i].length == 0)
+      dataHours[i] = RptMACCPMeasuresHoursData.select(readOnlyCP, data[i].groupid);
+      if (dataHours[i] == null || dataHours[i].length == 0) {
         dataHours[i] = new RptMACCPMeasuresHoursData[0];
+      }
 
-      dataValues[i] = RptMACCPMeasuresValuesData.select(this, data[i].groupid);
-      if (dataValues[i] == null || dataValues[i].length == 0)
+      dataValues[i] = RptMACCPMeasuresValuesData.select(readOnlyCP, data[i].groupid);
+      if (dataValues[i] == null || dataValues[i].length == 0) {
         dataValues[i] = new RptMACCPMeasuresValuesData[0];
+      }
     }
+
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpReports/RptMA_CCP_Measures").createXmlDocument();
     xmlDocument.setData("structure1", data);
     xmlDocument.setDataArray("reportHours", "structureHours", dataHours);
     xmlDocument.setDataArray("reportValues", "structureValues", dataValues);
     String strResult = xmlDocument.print();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(strResult);
+    }
     renderFO(strResult, request, response);
   }
 

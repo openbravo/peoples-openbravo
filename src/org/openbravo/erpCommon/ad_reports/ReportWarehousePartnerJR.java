@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2007-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2007-2017 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.info.SelectorUtilityData;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -38,6 +39,7 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
@@ -48,8 +50,9 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
+      ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
       String strDate = vars.getGlobalVariable("inpDateFrom", "ReportWarehousePartnerJR|Date",
-          DateTimeData.today(this));
+          DateTimeData.today(readOnlyCP));
       String strProductCategory = vars.getGlobalVariable("inpProductCategory",
           "ReportWarehousePartnerJR|productCategory", "");
       String strmProductId = vars.getInGlobalVariable("inpmProductId_IN",
@@ -103,20 +106,24 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
       setHistoryCommand(request, "FIND");
       printPageDataHtml(response, vars, strDate, strProductCategory, strmProductId, strmLocatorId,
           strX, strY, strZ, "xls");
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
       String strDate, String strProductCategory, String strmProductId, String strmLocatorId,
       String strX, String strY, String strZ, String strOutput) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
 
-    ReportWarehousePartnerData[] data = ReportWarehousePartnerData.select(this, vars.getLanguage(),
-        Utility.getContext(this, vars, "#User_Client", "ReportWarehouseControl"),
-        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWarehouseControl"),
-        DateTimeData.nDaysAfter(this, strDate, "1"), strmProductId, strmLocatorId,
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    ReportWarehousePartnerData[] data = ReportWarehousePartnerData.select(readOnlyCP,
+        vars.getLanguage(),
+        Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportWarehouseControl"),
+        Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportWarehouseControl"),
+        DateTimeData.nDaysAfter(readOnlyCP, strDate, "1"), strmProductId, strmLocatorId,
         strProductCategory, strX, strY, strZ);
 
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportWarehousePartnerJR.jrxml";
@@ -130,31 +137,33 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDate, String strProductCategory, String strmProductId, String strmLocatorId,
       String strX, String strY, String strZ) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportWarehousePartnerJR").createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportWarehousePartnerJR", false, "",
-        "", "", false, "ad_reports", strReplaceWith, false, true);
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportWarehousePartnerJR",
+        false, "", "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.erpCommon.ad_reports.ReportWarehousePartnerJR");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
           "ReportWarehousePartnerJR.html", classInfo.id, classInfo.type, strReplaceWith,
           tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportWarehousePartnerJR.html",
-          strReplaceWith);
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(),
+          "ReportWarehousePartnerJR.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -180,11 +189,11 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("parameterZ", strZ);
     xmlDocument.setParameter("mProductCategoryId", strProductCategory);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportPricelist"),
-          Utility.getContext(this, vars, "#User_Client", "ReportPricelist"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportPricelist",
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+          "M_Product_Category_ID", "", "", Utility.getContext(readOnlyCP, vars,
+              "#AccessibleOrgTree", "ReportPricelist"), Utility.getContext(readOnlyCP, vars,
+              "#User_Client", "ReportPricelist"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportPricelist",
           strProductCategory);
       xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure",
           comboTableData.select(false));
@@ -195,15 +204,15 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
     xmlDocument.setData(
         "reportMProductId_IN",
         "liststructure",
-        SelectorUtilityData.selectMproduct(this,
-            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
-            Utility.getContext(this, vars, "#User_Client", ""), strmProductId));
+        SelectorUtilityData.selectMproduct(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strmProductId));
     xmlDocument.setData(
         "reportMLocatorId_IN",
         "liststructure",
-        SelectorUtilityData.selectMlocator(this,
-            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
-            Utility.getContext(this, vars, "#User_Client", ""), strmLocatorId));
+        SelectorUtilityData.selectMlocator(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strmLocatorId));
 
     out.println(xmlDocument.print());
     out.close();

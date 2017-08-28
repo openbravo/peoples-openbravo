@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,8 +26,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class RptMA_ProcessPlan extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -43,22 +46,31 @@ public class RptMA_ProcessPlan extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       String strmaProcessPlan = vars.getSessionValue("RptMA_ProcessPlan.inpmaProcessplan_R");
-      if (strmaProcessPlan.equals(""))
+      if (StringUtils.isEmpty(strmaProcessPlan)) {
         strmaProcessPlan = vars.getSessionValue("RptMA_ProcessPlan.inpmaProcessplanId");
+      }
       printPagePartePDF(response, vars, strmaProcessPlan);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPagePartePDF(HttpServletResponse response, VariablesSecureApp vars,
       String strmaProcessPlan) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: pdf");
+    }
+
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+
     // here we pass the familiy-ID with report.setData
-    RptMAProcessPlanData[] data = RptMAProcessPlanData.select(this, vars.getLanguage(),
+    RptMAProcessPlanData[] data = RptMAProcessPlanData.select(readOnlyCP, vars.getLanguage(),
         strmaProcessPlan);
-    if (data == null || data.length == 0)
+
+    if (data == null || data.length == 0) {
       data = RptMAProcessPlanData.set();
+    }
 
     String strReportName = "@basedesign@/org/openbravo/erpReports/RptMA_ProcessPlan.jrxml";
     String strOutput = "pdf";

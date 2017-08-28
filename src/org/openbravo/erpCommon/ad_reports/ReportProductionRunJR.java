@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2007-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2007-2017 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,8 +26,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -35,6 +37,7 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportProductionRunJR extends HttpSecureAppServlet {
@@ -95,44 +98,55 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
           "ReportProductionRunJR|maWorkRequirement");
       printPageDataHtml(response, vars, strLaunchDateFrom, strLaunchDateTo, strStartDateFrom,
           strStartDateTo, strEndDateFrom, strEndDateTo, strmaWorkRequirement, "pdf");
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
       String strLaunchDateFrom, String strLaunchDateTo, String strStartDateFrom,
       String strStartDateTo, String strEndDateFrom, String strEndDateTo,
       String strmaWorkRequirement, String strOutput) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataHtmlJR");
+    }
 
-    ReportProductionRunData[] data = null;
-    data = ReportProductionRunData.select(this, vars.getLanguage(),
-        Utility.getContext(this, vars, "#User_Client", "ReportProductionRunJR"),
-        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductionRunJR"),
+    // Use ReadOnly Connection Provider
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    ReportProductionRunData[] data = ReportProductionRunData.select(readOnlyCP, vars.getLanguage(),
+        Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProductionRunJR"),
+        Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProductionRunJR"),
         strLaunchDateFrom, strLaunchDateTo, strStartDateFrom, strStartDateTo, strEndDateFrom,
         strEndDateTo, strmaWorkRequirement);
 
     String strSubtitle = "";
-    if (!strLaunchDateFrom.equals(""))
-      strSubtitle = Utility.messageBD(this, "LaunchDateFrom", vars.getLanguage()) + ":"
+    if (StringUtils.isNotEmpty(strLaunchDateFrom)) {
+      strSubtitle = Utility.messageBD(readOnlyCP, "LaunchDateFrom", vars.getLanguage()) + ":"
           + strLaunchDateFrom;
-    if (!strLaunchDateTo.equals(""))
-      strSubtitle += strSubtitle.equals("") ? "" : " - "
-          + Utility.messageBD(this, "LaunchDateTo", vars.getLanguage()) + ":" + strLaunchDateTo;
-    if (!strStartDateFrom.equals(""))
-      strSubtitle += strSubtitle.equals("") ? "" : " - "
-          + Utility.messageBD(this, "StartDateFrom", vars.getLanguage()) + ":" + strStartDateFrom;
-    if (!strStartDateTo.equals(""))
-      strSubtitle += strSubtitle.equals("") ? "" : " - "
-          + Utility.messageBD(this, "StartDateTo", vars.getLanguage()) + ":" + strStartDateTo;
-    if (!strEndDateFrom.equals(""))
-      strSubtitle += strSubtitle.equals("") ? "" : " - "
-          + Utility.messageBD(this, "EndDateFrom", vars.getLanguage()) + ":" + strEndDateFrom;
-    if (!strmaWorkRequirement.equals(""))
-      strSubtitle += strSubtitle.equals("") ? "" : " - "
-          + Utility.messageBD(this, "WorkRequirement", vars.getLanguage()) + ":"
+    }
+    if (StringUtils.isNotEmpty(strLaunchDateTo)) {
+      strSubtitle += StringUtils.isEmpty(strSubtitle) ? "" : " - "
+          + Utility.messageBD(readOnlyCP, "LaunchDateTo", vars.getLanguage()) + ":"
+          + strLaunchDateTo;
+    }
+    if (StringUtils.isNotEmpty(strStartDateFrom)) {
+      strSubtitle += StringUtils.isEmpty(strSubtitle) ? "" : " - "
+          + Utility.messageBD(readOnlyCP, "StartDateFrom", vars.getLanguage()) + ":"
+          + strStartDateFrom;
+    }
+    if (StringUtils.isNotEmpty(strStartDateTo)) {
+      strSubtitle += StringUtils.isEmpty(strSubtitle) ? "" : " - "
+          + Utility.messageBD(readOnlyCP, "StartDateTo", vars.getLanguage()) + ":" + strStartDateTo;
+    }
+    if (StringUtils.isNotEmpty(strEndDateFrom)) {
+      strSubtitle += StringUtils.isEmpty(strSubtitle) ? "" : " - "
+          + Utility.messageBD(readOnlyCP, "EndDateFrom", vars.getLanguage()) + ":" + strEndDateFrom;
+    }
+    if (StringUtils.isNotEmpty(strmaWorkRequirement)) {
+      strSubtitle += StringUtils.isEmpty(strSubtitle) ? "" : " - "
+          + Utility.messageBD(readOnlyCP, "WorkRequirement", vars.getLanguage()) + ":"
           + strmaWorkRequirement;
+    }
 
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportProductionRun.jrxml";
 
@@ -145,33 +159,35 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
       String strLaunchDateFrom, String strLaunchDateTo, String strStartDateFrom,
       String strStartDateTo, String strEndDateFrom, String strEndDateTo, String strmaWorkRequirement)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
 
-    XmlDocument xmlDocument = null;
-
-    xmlDocument = xmlEngine.readXmlTemplate(
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportProductionRunJR").createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportProductionRunJR", false, "", "",
-        "", false, "ad_reports", strReplaceWith, false, true);
+    // Use ReadOnly Connection Provider
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportProductionRunJR", false,
+        "", "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.erpCommon.ad_reports.ReportProductionRunJR");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportProductionRunJR.html",
-          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
+          "ReportProductionRunJR.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportProductionRunJR.html",
-          strReplaceWith);
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(),
+          "ReportProductionRunJR.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -212,11 +228,11 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("endDateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "MA_Workrequirement_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportProductionRunJR"), Utility.getContext(this, vars, "#User_Client",
-              "ReportProductionRunJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProductionRunJR",
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+          "MA_Workrequirement_ID", "", "", Utility.getContext(readOnlyCP, vars,
+              "#AccessibleOrgTree", "ReportProductionRunJR"), Utility.getContext(readOnlyCP, vars,
+              "#User_Client", "ReportProductionRunJR"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportProductionRunJR",
           strmaWorkRequirement);
       xmlDocument
           .setData("reportMA_WORKREQUIREMENT", "liststructure", comboTableData.select(false));
@@ -229,54 +245,6 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
     out.close();
   }
 
-  /*
-   * void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String
-   * strLaunchDateFrom, String strLaunchDateTo, String strStartDateFrom, String strStartDateTo,
-   * String strEndDateFrom, String strEndDateTo, String strmaWorkRequirement) throws IOException,
-   * ServletException { if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-   * response.setContentType("text/html; charset=UTF-8"); PrintWriter out = response.getWriter();
-   * //String discard[]={"sectionAmount"}; XmlDocument xmlDocument=null; ReportProductionRunData[]
-   * data=null; xmlDocument = xmlEngine
-   * .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportProductionRun"
-   * ).createXmlDocument(); data = ReportProductionRunData.select(this, Utility.getContext(this,
-   * vars, "#User_Client", "ReportProductionRun"), Utility.getContext(this, vars,
-   * "#AccessibleOrgTree", "ReportProductionRun"), strLaunchDateFrom, strLaunchDateTo,
-   * strStartDateFrom, strStartDateTo, strEndDateFrom, strEndDateTo, strmaWorkRequirement);
-   * 
-   * ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportProductionRun", false, "", "",
-   * "",false, "ad_reports", strReplaceWith, false, true); toolbar.prepareSimpleToolBarTemplate();
-   * xmlDocument.setParameter("toolbar", toolbar.toString());
-   * 
-   * try { WindowTabs tabs = new WindowTabs(this, vars,
-   * "org.openbravo.erpCommon.ad_reports.ReportProductionRun");
-   * xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-   * xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-   * xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-   * xmlDocument.setParameter("theme", vars.getTheme()); NavigationBar nav = new NavigationBar(this,
-   * vars.getLanguage(), "ReportProductionRun.html", classInfo.id, classInfo.type, strReplaceWith,
-   * tabs.breadcrumb()); xmlDocument.setParameter("navigationBar", nav.toString()); LeftTabsBar lBar
-   * = new LeftTabsBar(this, vars.getLanguage(), "ReportProductionRun.html", strReplaceWith);
-   * xmlDocument.setParameter("leftTabs", lBar.manualTemplate()); } catch (Exception ex) { throw new
-   * ServletException(ex); } { OBError myMessage = vars.getMessage("ReportProductionRun");
-   * vars.removeMessage("ReportProductionRun"); if (myMessage!=null) {
-   * xmlDocument.setParameter("messageType", myMessage.getType());
-   * xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-   * xmlDocument.setParameter("messageMessage", myMessage.getMessage()); } }
-   * 
-   * xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-   * xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
-   * xmlDocument.setParameter("maWorkRequirement", strmaWorkRequirement);
-   * xmlDocument.setParameter("launchDateFrom", strLaunchDateFrom);
-   * xmlDocument.setParameter("launchDateTo", strLaunchDateTo);
-   * xmlDocument.setParameter("startDateFrom", strStartDateFrom);
-   * xmlDocument.setParameter("startDateTo", strStartDateTo);
-   * xmlDocument.setParameter("endDateFrom", strEndDateFrom); xmlDocument.setParameter("endDateTo",
-   * strEndDateTo); xmlDocument.setData("reportMA_WORKREQUIREMENT", "liststructure",
-   * WorkRequirementComboData.select(this, Utility.getContext(this, vars, "#User_Client",
-   * "ReportProductionRun"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-   * "ReportProductionRun"))); xmlDocument.setData("structure1", data);
-   * out.println(xmlDocument.print()); out.close(); }
-   */
   public String getServletInfo() {
     return "Servlet ReportProductionRunJR.";
   } // end of getServletInfo() method

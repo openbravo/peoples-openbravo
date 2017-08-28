@@ -33,12 +33,14 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class MInOutTraceReports extends HttpSecureAppServlet {
@@ -58,8 +60,9 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     String strmAttributesetinstanceIdGlobal = "";
     Hashtable<String, Integer> calculated = new Hashtable<String, Integer>();
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("MInOutTraceReports doPost, commandIn: " + vars.getCommand());
+    }
 
     if (vars.commandIn("DEFAULT")) {
       strmProductIdGlobal = vars.getGlobalVariable("inpmProductId",
@@ -74,7 +77,7 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
           "MInOutTraceReports|M_Product_Id");
       strmAttributesetinstanceIdGlobal = vars.getRequestGlobalVariable(
           "inpmAttributeSetInstanceId", "MInOutTraceReports|M_AttributeSetInstance_Id");
-      String strIn = vars.getStringParameter("inpInOut").equals("") ? "N" : vars
+      String strIn = StringUtils.isEmpty(vars.getStringParameter("inpInOut")) ? "N" : vars
           .getStringParameter("inpInOut");
       printPageDataSheet(response, vars, strIn, strmProductIdGlobal,
           strmAttributesetinstanceIdGlobal, calculated, count);
@@ -83,32 +86,36 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
       strmAttributesetinstanceIdGlobal = vars
           .getRequiredStringParameter("inpmAttributeSetInstanceId2");
       String strIn = vars.getRequiredStringParameter("inpIn2");
-      if (strIn.equals(""))
+      if (StringUtils.isEmpty(strIn)) {
         strIn = "N";
+      }
       vars.setSessionValue("MInOutTraceReports|in", strIn);
       printPageDataSheet(response, vars, strIn, strmProductIdGlobal,
           strmAttributesetinstanceIdGlobal, calculated, count);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strIn, String strmProductIdGlobal, String strmAttributesetinstanceIdGlobal,
       Hashtable<String, Integer> calculated, Vector<Integer> count) throws IOException,
       ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "/org/openbravo/erpCommon/ad_reports/MInOutTraceReports").createXmlDocument();
     MInOutTraceReportsData[] data = null;
     calculated.clear();
-    if (strmProductIdGlobal.equals("")) {
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    if (StringUtils.isEmpty(strmProductIdGlobal)) {
       data = new MInOutTraceReportsData[0];
     } else {
-      data = MInOutTraceReportsData.select(this, vars.getLanguage(), strmProductIdGlobal,
+      data = MInOutTraceReportsData.select(readOnlyCP, vars.getLanguage(), strmProductIdGlobal,
           strmAttributesetinstanceIdGlobal,
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "MInOutTraceReports"),
-          Utility.getContext(this, vars, "#User_Client", "MInOutTraceReports"));
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "MInOutTraceReports"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "MInOutTraceReports"));
     }
 
     xmlDocument.setParameter("calendar", vars.getLanguage());
@@ -116,40 +123,40 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     xmlDocument.setParameter("mProduct", strmProductIdGlobal);
     xmlDocument
         .setParameter("parameterM_ATTRIBUTESETINSTANCE_ID", strmAttributesetinstanceIdGlobal);
-    xmlDocument.setData(
-        "reportM_ATTRIBUTESETINSTANCE_ID",
-        "liststructure",
-        AttributeSetInstanceComboData.select(this, vars.getLanguage(), strmProductIdGlobal,
-            Utility.getContext(this, vars, "#User_Client", "MInOutTraceReports"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "MInOutTraceReports")));
+    xmlDocument.setData("reportM_ATTRIBUTESETINSTANCE_ID", "liststructure",
+        AttributeSetInstanceComboData.select(readOnlyCP, vars.getLanguage(), strmProductIdGlobal,
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "MInOutTraceReports"),
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "MInOutTraceReports")));
     xmlDocument.setParameter("productDescription",
-        MInOutTraceReportsData.selectMproduct(this, strmProductIdGlobal));
+        MInOutTraceReportsData.selectMproduct(readOnlyCP, strmProductIdGlobal));
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("in", strIn);
     xmlDocument.setParameter("out", strIn);
 
     xmlDocument.setData("structure1",
         processData(vars, data, strIn, strmProductIdGlobal, calculated, count));
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("****FIN: "/*
                               * + ((data!=null && data.length>0)?data[0].html:"")
                               */);
+    }
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "MInOutTraceReports", false, "", "",
-        "", false, "ad_reports", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "MInOutTraceReports", false, "",
+        "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.erpCommon.ad_reports.MInOutTraceReports");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "MInOutTraceReports.html",
-          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
+          "MInOutTraceReports.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "MInOutTraceReports.html",
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(), "MInOutTraceReports.html",
           strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
@@ -178,11 +185,12 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     if (localData == null || localData.length == 0) {
       return localData;
     }
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     for (int i = 0; i < localData.length; i++) {
-      MInOutTraceReportsData[] dataChild = MInOutTraceReportsData.selectChilds(this, vars
-          .getLanguage(), localData[i].mAttributesetinstanceId, localData[i].mProductId,
-          localData[i].mLocatorId, strIn.equals("Y") ? "plusQty" : "minusQty",
-          strIn.equals("N") ? "minusQty" : "plusQty");
+      MInOutTraceReportsData[] dataChild = MInOutTraceReportsData.selectChilds(readOnlyCP,
+          vars.getLanguage(), localData[i].mAttributesetinstanceId, localData[i].mProductId,
+          localData[i].mLocatorId, StringUtils.equals(strIn, "Y") ? "plusQty" : "minusQty",
+          StringUtils.equals(strIn, "N") ? "minusQty" : "plusQty");
       if (dataChild == null || dataChild.length == 0) {
         localData[i].htmlHeader = "";
         localData[i].html = "";
@@ -193,7 +201,7 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
             calculated, count);
       }
 
-      if ("".equals(localData[i].html)) {
+      if (StringUtils.isEmpty(localData[i].html)) {
         // Delete localData[i] from array
         localData = (MInOutTraceReportsData[]) ArrayUtils.removeElement(localData, localData[i]);
         i--;
@@ -242,17 +250,18 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
   }
 
   private String insertHeaderHtml(boolean isClose, String border) {
-    if (!isClose)
+    if (!isClose) {
       return "<table border=\"" + border + "\" cellspacing=0 cellpadding=0 width=\"100%\" >\n";
-    else
+    } else {
       return "</table>\n";
+    }
   }
 
   private String insertTotal(String strTotal, String strUnit, String strTotalPedido,
       String strUnitPedido) {
     BigDecimal total, totalPedido;
     total = new BigDecimal(strTotal);
-    totalPedido = (!strTotalPedido.equals("") ? new BigDecimal(strTotalPedido) : ZERO);
+    totalPedido = (StringUtils.isNotEmpty(strTotalPedido) ? new BigDecimal(strTotalPedido) : ZERO);
     total = total.setScale(2, BigDecimal.ROUND_HALF_UP);
     totalPedido = totalPedido.setScale(2, BigDecimal.ROUND_HALF_UP);
     StringBuffer resultado = new StringBuffer();
@@ -284,8 +293,9 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     count.add(new Integer(c));
     calculated.put(strCalculated, new Integer(c));
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("****** Hashtable.add: " + strCalculated);
+    }
 
     boolean colorbg = true;
 
@@ -300,15 +310,17 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
       strHtml.append(getData(dataChild[i], ""));
       strHtml.append("</td>");
       total = total.add(new BigDecimal(dataChild[i].movementqty));
-      if (!dataChild[i].quantityorder.equals(""))
+      if (StringUtils.isNotEmpty(dataChild[i].quantityorder)) {
         totalPedido = totalPedido.add(new BigDecimal(dataChild[i].quantityorder));
+      }
 
       strHtml.append(insertTotal(total.toPlainString(), dataChild[i].uomName,
           totalPedido.toPlainString(), dataChild[i].productUomName));
       strHtml.append("  </tr>\n");
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("****** New line, qty: " + dataChild[i].movementqty + " "
             + getData(dataChild[i], "TraceSubTable"));
+      }
       strHtml.append(processExternalChilds(vars, dataChild[i], strIn, colorbg2,
           strmProductIdGlobal, calculated, count));
     }
@@ -321,24 +333,28 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
       Hashtable<String, Integer> calculated, Vector<Integer> count) throws ServletException {
     StringBuffer strHtml = new StringBuffer();
     BigDecimal movementQty = new BigDecimal(dataChild.movementqty);
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     // if (log4j.isDebugEnabled()) log4j.debug("****PROCESSING EXTERNAL 1: "
     // + movementQty.toString() + " and strIn: " + strIn);
-    if (strIn.equals("Y"))
+    if (StringUtils.equals(strIn, "Y")) {
       movementQty = movementQty.negate();
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("****PROCESSING EXTERNAL 2: " + movementQty.toString() + " and movementType:"
           + dataChild.movementtype);
+    }
 
     if (dataChild.movementtype.startsWith("P") && (movementQty.compareTo(BigDecimal.ZERO) > 0)) {
       String strNewId = dataChild.mProductionlineId;
       MInOutTraceReportsData[] dataProduction;
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("****PROCESSING PRODUCTIONLINE: " + strNewId + " " + strIn);
-      if (strIn.equals("Y")) {
-        dataProduction = MInOutTraceReportsData.selectProductionOut(this, vars.getLanguage(),
+      }
+      if (StringUtils.equals(strIn, "Y")) {
+        dataProduction = MInOutTraceReportsData.selectProductionOut(readOnlyCP, vars.getLanguage(),
             strNewId);
       } else {
-        dataProduction = MInOutTraceReportsData.selectProductionIn(this, vars.getLanguage(),
+        dataProduction = MInOutTraceReportsData.selectProductionIn(readOnlyCP, vars.getLanguage(),
             strNewId);
       }
       if (dataProduction != null && dataProduction.length > 0) {
@@ -375,39 +391,41 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
                   + "&inpmAttributeSetInstanceId2="
                   + dataProduction[j].mAttributesetinstanceId
                   + "&inpIn2="
-                  + (strIn.equals("Y") ? "N" : "Y")
+                  + (StringUtils.equals(strIn, "Y") ? "N" : "Y")
                   + "', '_self');return true;\" class=\"LabelLink\">");
-          if (!resultado2.equals(""))
+          if (StringUtils.isNotEmpty(resultado2)) {
             strHtml.append(StringEscapeUtils.escapeHtml(resultado2));
+          }
           strHtml.append("&nbsp;</a></td>\n");
           resultado2 = dataProduction[j].attributeName;
           strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"120\">");
-          if (!resultado2.equals(""))
+          if (StringUtils.isNotEmpty(resultado2)) {
             strHtml.append(StringEscapeUtils.escapeHtml(resultado2));
+          }
           strHtml.append("&nbsp;</td>\n");
           strHtml.append("</tr></table>");
 
           strHtml.append("  </td></tr>\n");
-          if (!dataProduction[j].mAttributesetinstanceId.equals("0")) {
+          if (!StringUtils.equals(dataProduction[j].mAttributesetinstanceId, "0")) {
             String strCalculate = dataProduction[j].mProductId + "&"
                 + dataProduction[j].mAttributesetinstanceId + "&" + dataProduction[j].mLocatorId;
-            if (log4j.isDebugEnabled())
+            if (log4j.isDebugEnabled()) {
               log4j.debug("******** Hashtable.production: " + strCalculate);
-            if (log4j.isDebugEnabled())
               log4j.debug("******** Production, hashtable calculated: "
                   + calculated.get(strCalculate));
+            }
             Integer isnull = calculated.get(strCalculate);
             if (isnull == null) {
-              MInOutTraceReportsData[] data = MInOutTraceReportsData.selectChilds(this, vars
-                  .getLanguage(), dataProduction[j].mAttributesetinstanceId,
+              MInOutTraceReportsData[] data = MInOutTraceReportsData.selectChilds(readOnlyCP,
+                  vars.getLanguage(), dataProduction[j].mAttributesetinstanceId,
                   dataProduction[j].mProductId, dataProduction[j].mLocatorId,
-                  strIn.equals("Y") ? "plusQty" : "minusQty", strIn.equals("N") ? "minusQty"
-                      : "plusQty");
+                  StringUtils.equals(strIn, "Y") ? "plusQty" : "minusQty",
+                  StringUtils.equals(strIn, "N") ? "minusQty" : "plusQty");
               String strPartial = data == null || data.length == 0 ? "" : processChilds(vars, data,
                   dataProduction[j].mAttributesetinstanceId, dataProduction[j].mProductId,
                   dataProduction[j].mLocatorId, strIn, !colorbg, strmProductIdGlobal, calculated,
                   count);
-              if (!strPartial.equals("")) {
+              if (StringUtils.isNotEmpty(strPartial)) {
                 strHtml.append("  <tr style=\"background: ")
                     .append((colorbg ? "#CCCCCC" : "#AAAAAA")).append("\">\n");
                 strHtml.append(insertTabHtml(false));
@@ -427,10 +445,11 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     if (dataChild.movementtype.startsWith("M") && (movementQty.compareTo(BigDecimal.ZERO) > 0)) {
       String strNewId = dataChild.mMovementlineId;
       MInOutTraceReportsData[] dataMovement;
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("****PROCESSING MOVEMENTLINE: " + strNewId + " " + strIn);
-      dataMovement = MInOutTraceReportsData.selectMovement(this, vars.getLanguage(),
-          strIn.equals("Y") ? "M+" : "M-", strNewId);
+      }
+      dataMovement = MInOutTraceReportsData.selectMovement(readOnlyCP, vars.getLanguage(),
+          StringUtils.equals(strIn, "Y") ? "M+" : "M-", strNewId);
       if (dataMovement != null && dataMovement.length > 0) {
         strHtml.append("  <tr>\n");
         strHtml.append("    <td colspan=\"3\">\n");
@@ -458,43 +477,47 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
               .append(dataMovement[j].productUomName).append("</td>\n");
           resultado2 = dataMovement[j].productName;
           strHtml.append("    <td class=\"DataGrid_Body_Cell\">");
-          if (!resultado2.equals(""))
+          if (StringUtils.isNotEmpty(resultado2)) {
             strHtml.append(resultado2);
+          }
           strHtml.append("&nbsp;</td>\n");
           resultado2 = dataMovement[j].attributeName;
           strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"120\">");
-          if (!resultado2.equals(""))
+          if (StringUtils.isNotEmpty(resultado2)) {
             strHtml.append(resultado2);
+          }
           strHtml.append("&nbsp;</td>\n");
           strHtml.append("</tr></table>");
 
           // strHtml.append(getData(dataProduction[j], "Bordes"));
           strHtml.append("  </td></tr>\n");
-          if (!dataMovement[j].mAttributesetinstanceId.equals("0")) {
+          if (!StringUtils.equals(dataMovement[j].mAttributesetinstanceId, "0")) {
             String strPartial = "";
-            if (!dataMovement[j].mProductId.equals(strmProductIdGlobal)) {
-              if (log4j.isDebugEnabled())
+            if (!StringUtils.equals(dataMovement[j].mProductId, strmProductIdGlobal)) {
+              if (log4j.isDebugEnabled()) {
                 log4j.debug("******** hashtable.production: Prod: " + dataMovement[j].mProductId
                     + " Attr " + dataMovement[j].mAttributesetinstanceId + " Loc: "
                     + dataMovement[j].mLocatorId);
+              }
               String strCalculate = dataMovement[j].mProductId + "&"
                   + dataMovement[j].mAttributesetinstanceId + "&" + dataMovement[j].mLocatorId;
-              if (log4j.isDebugEnabled())
+              if (log4j.isDebugEnabled()) {
                 log4j.debug("******** Movement, hashtable calculated: "
                     + calculated.get(strCalculate));
+              }
               if (calculated.get(strCalculate) == null) {
-                MInOutTraceReportsData[] data = MInOutTraceReportsData.selectChilds(this, vars
-                    .getLanguage(), dataMovement[j].mAttributesetinstanceId,
+                MInOutTraceReportsData[] data = MInOutTraceReportsData.selectChilds(readOnlyCP,
+                    vars.getLanguage(), dataMovement[j].mAttributesetinstanceId,
                     dataMovement[j].mProductId, dataMovement[j].mLocatorId,
-                    strIn.equals("Y") ? "plusQty" : "minusQty", strIn.equals("N") ? "minusQty"
-                        : "plusQty");
+                    StringUtils.equals(strIn, "Y") ? "plusQty" : "minusQty",
+                    StringUtils.equals(strIn, "N") ? "minusQty" : "plusQty");
                 strPartial = data == null || data.length == 0 ? "" : processChilds(vars, data,
                     dataMovement[j].mAttributesetinstanceId, dataMovement[j].mProductId,
                     dataMovement[j].mLocatorId, strIn, !colorbg, strmProductIdGlobal, calculated,
                     count);
               }
             }
-            if (!strPartial.equals("")) {
+            if (StringUtils.isNotEmpty(strPartial)) {
               strHtml.append("  <tr style=\"background: ")
                   .append((colorbg ? "#CCCCCC" : "#AAAAAA")).append("\">\n");
               strHtml.append(insertTabHtml(false));
@@ -527,41 +550,43 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     resultado.append("    <td class=\"DataGrid_Body_Cell_Amount\" width=\"90\">")
         .append(data.movementqty).append("&nbsp;")
         .append(StringEscapeUtils.escapeHtml(data.uomName)).append("</td>\n");
-    if (!data.quantityorder.equals("")) {
+    if (StringUtils.isNotEmpty(data.quantityorder)) {
       resultado.append("    <td class=\"DataGrid_Body_Cell\" width=\"90\">")
           .append(data.quantityorder).append("&nbsp;")
           .append(StringEscapeUtils.escapeHtml(data.productUomName)).append("</td>\n");
     }
-    if (data.movementtype.equalsIgnoreCase("W+")) {
+    if (StringUtils.equalsIgnoreCase(data.movementtype, "W+")) {
       // resultado2 = data.productionName;
-    } else if (data.movementtype.equalsIgnoreCase("W-")) {
+    } else if (StringUtils.equalsIgnoreCase(data.movementtype, "W-")) {
       // resultado2 = data.productionName;
-    } else if (data.movementtype.equalsIgnoreCase("C+")) {
+    } else if (StringUtils.equalsIgnoreCase(data.movementtype, "C+")) {
       resultado2 = data.vendorName;
-    } else if (data.movementtype.equalsIgnoreCase("C-")) {
+    } else if (StringUtils.equalsIgnoreCase(data.movementtype, "C-")) {
       resultado2 = data.vendorName;
-    } else if (data.movementtype.equalsIgnoreCase("V+")) {
+    } else if (StringUtils.equalsIgnoreCase(data.movementtype, "V+")) {
       resultado2 = data.vendorName;
-    } else if (data.movementtype.equalsIgnoreCase("V-")) {
+    } else if (StringUtils.equalsIgnoreCase(data.movementtype, "V-")) {
       resultado2 = data.vendorName;
-    } else if (data.movementtype.equalsIgnoreCase("I+")) {
+    } else if (StringUtils.equalsIgnoreCase(data.movementtype, "I+")) {
       resultado2 = data.inventoryName;
-    } else if (data.movementtype.equalsIgnoreCase("I-")) {
+    } else if (StringUtils.equalsIgnoreCase(data.movementtype, "I-")) {
       resultado2 = data.inventoryName;
-    } else if (data.movementtype.equalsIgnoreCase("M+")) {
+    } else if (StringUtils.equalsIgnoreCase(data.movementtype, "M+")) {
       resultado2 = data.movementName;
-    } else if (data.movementtype.equalsIgnoreCase("M-")) {
+    } else if (StringUtils.equalsIgnoreCase(data.movementtype, "M-")) {
       resultado2 = data.movementName;
-    } else if (data.movementtype.equalsIgnoreCase("P+")) {
+    } else if (StringUtils.equalsIgnoreCase(data.movementtype, "P+")) {
       resultado2 = data.productionName;
-    } else if (data.movementtype.equalsIgnoreCase("P-")) {
+    } else if (StringUtils.equalsIgnoreCase(data.movementtype, "P-")) {
       resultado2 = data.productionName;
-    } else
+    } else {
       resultado2 = data.name;
+    }
 
     resultado.append("    <td class=\"DataGrid_Body_Cell\">");
-    if (!resultado2.equals(""))
+    if (StringUtils.isNotEmpty(resultado2)) {
       resultado.append(StringEscapeUtils.escapeHtml(resultado2));
+    }
     resultado.append("&nbsp;</td>\n");
     resultado.append("</tr></table>");
     return resultado.toString();

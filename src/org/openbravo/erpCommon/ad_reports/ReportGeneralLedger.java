@@ -50,6 +50,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBLedgerUtils;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportGeneralLedger extends HttpSecureAppServlet {
@@ -78,15 +79,19 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strcelementvalueto = vars.getGlobalVariable("inpcElementValueIdTo",
           "ReportGeneralLedger|C_ElementValue_IDTO", "");
       String strcelementvaluefromdes = "", strcelementvaluetodes = "";
-      if (!strcelementvaluefrom.equals(""))
-        strcelementvaluefromdes = ReportGeneralLedgerData.selectSubaccountDescription(this,
+      ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+      if (StringUtils.isNotEmpty(strcelementvaluefrom)) {
+        strcelementvaluefromdes = ReportGeneralLedgerData.selectSubaccountDescription(readOnlyCP,
             strcelementvaluefrom);
-      if (!strcelementvalueto.equals(""))
-        strcelementvaluetodes = ReportGeneralLedgerData.selectSubaccountDescription(this,
+      }
+      if (StringUtils.isNotEmpty(strcelementvalueto)) {
+        strcelementvaluetodes = ReportGeneralLedgerData.selectSubaccountDescription(readOnlyCP,
             strcelementvalueto);
-      strcelementvaluefromdes = (strcelementvaluefromdes.equals("null")) ? ""
+      }
+      strcelementvaluefromdes = (StringUtils.equals(strcelementvaluefromdes, "null")) ? ""
           : strcelementvaluefromdes;
-      strcelementvaluetodes = (strcelementvaluetodes.equals("null")) ? "" : strcelementvaluetodes;
+      strcelementvaluetodes = (StringUtils.equals(strcelementvaluetodes, "null")) ? ""
+          : strcelementvaluetodes;
       vars.setSessionValue("inpElementValueIdFrom_DES", strcelementvaluefromdes);
       vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
@@ -119,12 +124,15 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strcelementvalueto = vars.getRequestGlobalVariable("inpcElementValueIdTo",
           "ReportGeneralLedger|C_ElementValue_IDTO");
       String strcelementvaluefromdes = "", strcelementvaluetodes = "";
-      if (!strcelementvaluefrom.equals(""))
-        strcelementvaluefromdes = ReportGeneralLedgerData.selectSubaccountDescription(this,
+      ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+      if (StringUtils.isNotEmpty(strcelementvaluefrom)) {
+        strcelementvaluefromdes = ReportGeneralLedgerData.selectSubaccountDescription(readOnlyCP,
             strcelementvaluefrom);
-      if (!strcelementvalueto.equals(""))
-        strcelementvaluetodes = ReportGeneralLedgerData.selectSubaccountDescription(this,
+      }
+      if (StringUtils.isNotEmpty(strcelementvalueto)) {
+        strcelementvaluetodes = ReportGeneralLedgerData.selectSubaccountDescription(readOnlyCP,
             strcelementvalueto);
+      }
       vars.setSessionValue("inpElementValueIdFrom_DES", strcelementvaluefromdes);
       vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
       String strShowOpenBalances = vars.getRequestGlobalVariable("inpShowOpenBalances",
@@ -148,23 +156,29 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           strcProjectId, strGroupBy, strcAcctSchemaId, strcelementvaluefromdes,
           strcelementvaluetodes, strShowOpenBalances);
     } else if (vars.commandIn("PREVIOUS_RELATION")) {
+      ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
       String strInitRecord = vars.getSessionValue("ReportGeneralLedger.initRecordNumber");
-      String strRecordRange = Utility.getContext(this, vars, "#RecordRange", "ReportGeneralLedger");
-      int intRecordRange = strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange);
-      if (strInitRecord.equals("") || strInitRecord.equals("0"))
+      String strRecordRange = Utility.getContext(readOnlyCP, vars, "#RecordRange",
+          "ReportGeneralLedger");
+      int intRecordRange = StringUtils.isEmpty(strRecordRange) ? 0 : Integer
+          .parseInt(strRecordRange);
+      if (StringUtils.isEmpty(strInitRecord) || StringUtils.equals(strInitRecord, "0")) {
         vars.setSessionValue("ReportGeneralLedger.initRecordNumber", "0");
-      else {
-        int initRecord = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
+      } else {
+        int initRecord = (StringUtils.isEmpty(strInitRecord) ? 0 : Integer.parseInt(strInitRecord));
         initRecord -= intRecordRange;
         strInitRecord = ((initRecord < 0) ? "0" : Integer.toString(initRecord));
         vars.setSessionValue("ReportGeneralLedger.initRecordNumber", strInitRecord);
       }
       response.sendRedirect(strDireccion + request.getServletPath());
     } else if (vars.commandIn("NEXT_RELATION")) {
+      ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
       String strInitRecord = vars.getSessionValue("ReportGeneralLedger.initRecordNumber");
-      String strRecordRange = Utility.getContext(this, vars, "#RecordRange", "ReportGeneralLedger");
-      int intRecordRange = strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange);
-      int initRecord = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
+      String strRecordRange = Utility.getContext(readOnlyCP, vars, "#RecordRange",
+          "ReportGeneralLedger");
+      int intRecordRange = StringUtils.isEmpty(strRecordRange) ? 0 : Integer
+          .parseInt(strRecordRange);
+      int initRecord = StringUtils.isEmpty(strInitRecord) ? 0 : Integer.parseInt(strInitRecord);
       // if (initRecord == 0)
       // initRecord = 1; Removed by DAL 30/4/09
       initRecord += intRecordRange;
@@ -228,17 +242,19 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       throws IOException, ServletException {
     String localStrcelementvaluetodes = strcelementvaluetodes;
     String localStrcelementvalueto = strcelementvalueto;
-    String strRecordRange = Utility.getContext(this, vars, "#RecordRange", "ReportGeneralLedger");
-    int intRecordRange = (strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange));
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    String strRecordRange = Utility.getContext(readOnlyCP, vars, "#RecordRange",
+        "ReportGeneralLedger");
+    int intRecordRange = StringUtils.isEmpty(strRecordRange) ? 0 : Integer.parseInt(strRecordRange);
     String strInitRecord = vars.getSessionValue("ReportGeneralLedger.initRecordNumber");
-    int initRecordNumber = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
+    int initRecordNumber = StringUtils.isEmpty(strInitRecord) ? 0 : Integer.parseInt(strInitRecord);
     // built limit/offset parameters for oracle/postgres
     String rowNum = "0";
     String oraLimit1 = null;
     String oraLimit2 = null;
     String pgLimit = null;
     if (intRecordRange != 0) {
-      if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+      if (StringUtils.equalsIgnoreCase(readOnlyCP.getRDBMS(), "ORACLE")) {
         rowNum = "ROWNUM";
         oraLimit1 = String.valueOf(initRecordNumber + intRecordRange);
         oraLimit2 = (initRecordNumber + 1) + " AND " + oraLimit1;
@@ -254,21 +270,22 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
     ReportGeneralLedgerData[] data = null;
-    String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
+    String strTreeOrg = TreeData.getTreeOrg(readOnlyCP, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
-    String toDatePlusOne = DateTimeData.nDaysAfter(this, strDateTo, "1");
+    String toDatePlusOne = DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1");
 
-    String strGroupByText = (strGroupBy.equals("BPartner") ? Utility.messageBD(this, "BusPartner",
-        vars.getLanguage()) : (strGroupBy.equals("Product") ? Utility.messageBD(this, "Product",
-        vars.getLanguage()) : (strGroupBy.equals("Project") ? Utility.messageBD(this, "Project",
-        vars.getLanguage()) : "")));
+    String strGroupByText = (StringUtils.equals(strGroupBy, "BPartner") ? Utility.messageBD(
+        readOnlyCP, "BusPartner", vars.getLanguage())
+        : (StringUtils.equals(strGroupBy, "Product") ? Utility.messageBD(readOnlyCP, "Product",
+            vars.getLanguage()) : (StringUtils.equals(strGroupBy, "Project") ? Utility.messageBD(
+            readOnlyCP, "Project", vars.getLanguage()) : "")));
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportGeneralLedger", true, "", "",
-        "imprimir();return false;", false, "ad_reports", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportGeneralLedger", true, "",
+        "", "imprimir();return false;", false, "ad_reports", strReplaceWith, false, true);
     String strcBpartnerIdAux = strcBpartnerId;
     String strmProductIdAux = strmProductId;
     String strcProjectIdAux = strcProjectId;
-    if (strDateFrom.equals("") && strDateTo.equals("")) {
+    if (StringUtils.isEmpty(strDateFrom) && StringUtils.isEmpty(strDateTo)) {
       String discard[] = { "sectionAmount", "sectionPartner" };
       xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_reports/ReportGeneralLedger", discard).createXmlDocument();
@@ -278,18 +295,19 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       data = ReportGeneralLedgerData.set();
     } else {
       String[] discard = { "discard" };
-      if (strGroupBy.equals(""))
+      if (StringUtils.isEmpty(strGroupBy)) {
         discard[0] = "sectionPartner";
-      else
+      } else {
         discard[0] = "sectionAmount";
+      }
       BigDecimal previousDebit = BigDecimal.ZERO;
       BigDecimal previousCredit = BigDecimal.ZERO;
       String strAllaccounts = "Y";
-      if (strcelementvaluefrom != null && !strcelementvaluefrom.equals("")) {
-        if (localStrcelementvalueto.equals("")) {
+      if (StringUtils.isNotEmpty(strcelementvaluefrom)) {
+        if (StringUtils.isEmpty(localStrcelementvalueto)) {
           localStrcelementvalueto = strcelementvaluefrom;
-          localStrcelementvaluetodes = ReportGeneralLedgerData.selectSubaccountDescription(this,
-              localStrcelementvalueto);
+          localStrcelementvaluetodes = ReportGeneralLedgerData.selectSubaccountDescription(
+              readOnlyCP, localStrcelementvalueto);
           vars.setSessionValue("inpElementValueIdTo_DES", localStrcelementvaluetodes);
 
         }
@@ -304,13 +322,13 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       Long initMainSelect = System.currentTimeMillis();
       ReportGeneralLedgerData scroll = null;
       try {
-        scroll = ReportGeneralLedgerData.select2(this, rowNum, strGroupByText, strGroupBy,
+        scroll = ReportGeneralLedgerData.select2(readOnlyCP, rowNum, strGroupByText, strGroupBy,
             strAllaccounts, strcelementvaluefrom, localStrcelementvalueto,
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-            Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
-            "Y".equals(strShowOpenBalances) ? strDateTo : null, strcAcctSchemaId, strDateFrom,
-            toDatePlusOne, strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom,
-            strAmtTo, null, null, pgLimit, oraLimit1, oraLimit2, null);
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
+            StringUtils.equals(strShowOpenBalances, "Y") ? strDateTo : null, strcAcctSchemaId,
+            strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId, strmProductId, strcProjectId,
+            strAmtFrom, strAmtTo, null, null, pgLimit, oraLimit1, oraLimit2, null);
         Vector<ReportGeneralLedgerData> res = new Vector<ReportGeneralLedgerData>();
         while (scroll.next()) {
           res.add(scroll.get());
@@ -332,31 +350,31 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       // boolean firstPagBlock = false;
       ReportGeneralLedgerData[] subreportElement = new ReportGeneralLedgerData[1];
       for (int i = 0; data != null && i < data.length; i++) {
-        if (!strOld.equals(data[i].groupbyid + data[i].id)) {
+        if (!StringUtils.equals(strOld, (data[i].groupbyid + data[i].id))) {
           subreportElement = new ReportGeneralLedgerData[1];
           // firstPagBlock = false;
           if (i == 0 && initRecordNumber > 0) {
             // firstPagBlock = true;
             Long init = System.currentTimeMillis();
-            dataTotal = ReportGeneralLedgerData.select2Total(this, rowNum, strGroupByText,
+            dataTotal = ReportGeneralLedgerData.select2Total(readOnlyCP, rowNum, strGroupByText,
                 strGroupBy, strAllaccounts, strcelementvaluefrom, localStrcelementvalueto,
-                Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-                Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
-                strcAcctSchemaId, "", DateTimeData.nDaysAfter(this, data[0].dateacct, "1"),
+                Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+                Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
+                strcAcctSchemaId, "", DateTimeData.nDaysAfter(readOnlyCP, data[0].dateacct, "1"),
                 strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom, strAmtTo,
                 data[0].id, data[0].groupbyid, null, null, null, data[0].dateacctnumber
                     + data[0].factaccttype + data[0].factAcctGroupId + data[0].factAcctId);
-            dataSubtotal = ReportGeneralLedgerData.select2sum(this, rowNum, strGroupByText,
-                strGroupBy, strAllaccounts, strcelementvaluefrom, localStrcelementvalueto,
-                Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-                Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
-                strcAcctSchemaId, strDateFrom, toDatePlusOne, strOrgFamily,
-                (strGroupBy.equals("BPartner") ? "('" + data[i].groupbyid + "')" : strcBpartnerId),
-                (strGroupBy.equals("Product") ? "('" + data[i].groupbyid + "')" : strmProductId),
-                (strGroupBy.equals("Project") ? "('" + data[i].groupbyid + "')" : strcProjectId),
-                strAmtFrom, strAmtTo, null, null, null, null, null, data[0].dateacctnumber
-                    + data[0].factaccttype + data[0].factAcctGroupId + data[0].factAcctId,
-                data[0].id);
+            dataSubtotal = ReportGeneralLedgerData.select2sum(readOnlyCP, rowNum, strGroupByText,
+                strGroupBy, strAllaccounts, strcelementvaluefrom, localStrcelementvalueto, Utility
+                    .getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+                Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
+                strcAcctSchemaId, strDateFrom, toDatePlusOne, strOrgFamily, (StringUtils.equals(
+                    strGroupBy, "BPartner") ? "('" + data[i].groupbyid + "')" : strcBpartnerId),
+                (StringUtils.equals(strGroupBy, "Product") ? "('" + data[i].groupbyid + "')"
+                    : strmProductId), (StringUtils.equals(strGroupBy, "Project") ? "('"
+                    + data[i].groupbyid + "')" : strcProjectId), strAmtFrom, strAmtTo, null, null,
+                null, null, null, data[0].dateacctnumber + data[0].factaccttype
+                    + data[0].factAcctGroupId + data[0].factAcctId, data[0].id);
 
             log4j.debug("Select2Total. Time in mils: " + (System.currentTimeMillis() - init));
             // Now dataTotal is covered adding debit and credit amounts
@@ -374,24 +392,24 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
                 : data[0].amtacctcrprevsum;
             subreportElement[0].total = previousDebit.subtract(previousCredit).toPlainString();
           } else {
-            if ("".equals(data[i].groupbyid)) {
+            if (StringUtils.isEmpty(data[i].groupbyid)) {
               // The argument " " is used to simulate one value and put the optional parameter-->
               // AND FACT_ACCT.C_PROJECT_ID IS NULL for example
               Long init = System.currentTimeMillis();
-              subreportElement = ReportGeneralLedgerData.selectTotal2(this, strcBpartnerId,
-                  (strGroupBy.equals("BPartner") ? " " : null), strmProductId,
-                  (strGroupBy.equals("Product") ? " " : null), strcProjectId,
-                  (strGroupBy.equals("Project") ? " " : null), strcAcctSchemaId, data[i].id, "",
-                  strDateFrom, strOrgFamily);
+              subreportElement = ReportGeneralLedgerData.selectTotal2(readOnlyCP, strcBpartnerId,
+                  (StringUtils.equals(strGroupBy, "BPartner") ? " " : null), strmProductId,
+                  (StringUtils.equals(strGroupBy, "Product") ? " " : null), strcProjectId,
+                  (StringUtils.equals(strGroupBy, "Project") ? " " : null), strcAcctSchemaId,
+                  data[i].id, "", strDateFrom, strOrgFamily);
               log4j.debug("SelectTotalNew. Time in mils: " + (System.currentTimeMillis() - init));
             } else {
               Long init = System.currentTimeMillis();
-              subreportElement = ReportGeneralLedgerData
-                  .selectTotal2(this, (strGroupBy.equals("BPartner") ? "('" + data[i].groupbyid
-                      + "')" : strcBpartnerId), null, (strGroupBy.equals("Product") ? "('"
-                      + data[i].groupbyid + "')" : strmProductId), null, (strGroupBy
-                      .equals("Project") ? "('" + data[i].groupbyid + "')" : strcProjectId), null,
-                      strcAcctSchemaId, data[i].id, "", strDateFrom, strOrgFamily);
+              subreportElement = ReportGeneralLedgerData.selectTotal2(readOnlyCP, (StringUtils
+                  .equals(strGroupBy, "BPartner") ? "('" + data[i].groupbyid + "')"
+                  : strcBpartnerId), null, (StringUtils.equals(strGroupBy, "Product") ? "('"
+                  + data[i].groupbyid + "')" : strmProductId), null, (StringUtils.equals(
+                  strGroupBy, "Project") ? "('" + data[i].groupbyid + "')" : strcProjectId), null,
+                  strcAcctSchemaId, data[i].id, "", strDateFrom, strOrgFamily);
               log4j.debug("SelectTotalNew. Time in mils: " + (System.currentTimeMillis() - init));
             }
           }
@@ -410,26 +428,26 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strTotal = "";
       subreportElement = new ReportGeneralLedgerData[1];
       for (int i = 0; data != null && i < data.length; i++) {
-        if (!strTotal.equals(data[i].groupbyid + data[i].id)) {
+        if (!StringUtils.equals(strTotal, (data[i].groupbyid + data[i].id))) {
           subreportElement = new ReportGeneralLedgerData[1];
-          if ("".equals(data[i].groupbyid)) {
+          if (StringUtils.isEmpty(data[i].groupbyid)) {
             // The argument " " is used to simulate one value and put the optional parameter--> AND
             // FACT_ACCT.C_PROJECT_ID IS NULL for example
             Long init = System.currentTimeMillis();
-            subreportElement = ReportGeneralLedgerData.selectTotal2(this, strcBpartnerId,
-                (strGroupBy.equals("BPartner") ? " " : null), strmProductId,
-                (strGroupBy.equals("Product") ? " " : null), strcProjectId,
-                (strGroupBy.equals("Project") ? " " : null), strcAcctSchemaId, data[i].id, "",
-                toDatePlusOne, strOrgFamily);
+            subreportElement = ReportGeneralLedgerData.selectTotal2(readOnlyCP, strcBpartnerId,
+                (StringUtils.equals(strGroupBy, "BPartner") ? " " : null), strmProductId,
+                (StringUtils.equals(strGroupBy, "Product") ? " " : null), strcProjectId,
+                (StringUtils.equals(strGroupBy, "Project") ? " " : null), strcAcctSchemaId,
+                data[i].id, "", toDatePlusOne, strOrgFamily);
             log4j.debug("SelectTotal2. Time in mils: " + (System.currentTimeMillis() - init));
           } else {
             Long init = System.currentTimeMillis();
-            subreportElement = ReportGeneralLedgerData.selectTotal2(this, (strGroupBy
-                .equals("BPartner") ? "('" + data[i].groupbyid + "')" : strcBpartnerId), null,
-                (strGroupBy.equals("Product") ? "('" + data[i].groupbyid + "')" : strmProductId),
-                null, (strGroupBy.equals("Project") ? "('" + data[i].groupbyid + "')"
-                    : strcProjectId), null, strcAcctSchemaId, data[i].id, "", toDatePlusOne,
-                strOrgFamily);
+            subreportElement = ReportGeneralLedgerData.selectTotal2(readOnlyCP,
+                (StringUtils.equals(strGroupBy, "BPartner") ? "('" + data[i].groupbyid + "')"
+                    : strcBpartnerId), null, (StringUtils.equals(strGroupBy, "Product") ? "('"
+                    + data[i].groupbyid + "')" : strmProductId), null, (StringUtils.equals(
+                    strGroupBy, "Project") ? "('" + data[i].groupbyid + "')" : strcProjectId),
+                null, strcAcctSchemaId, data[i].id, "", toDatePlusOne, strOrgFamily);
             log4j.debug("SelectTotal2. Time in mils: " + (System.currentTimeMillis() - init));
           }
         }
@@ -451,17 +469,18 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.erpCommon.ad_reports.ReportGeneralLedger");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportGeneralLedger.html",
-          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
+          "ReportGeneralLedger.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportGeneralLedger.html",
-          strReplaceWith);
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(),
+          "ReportGeneralLedger.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -479,9 +498,9 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"),
-          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), '*');
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "AD_ORG_ID",
+          "", "", Utility.getContext(readOnlyCP, vars, "#User_Org", "ReportGeneralLedger"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"), '*');
       comboTableData.fillParameters(null, "ReportGeneralLedger", "");
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
     } catch (Exception ex) {
@@ -510,43 +529,43 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     xmlDocument.setData(
         "reportCBPartnerId_IN",
         "liststructure",
-        SelectorUtilityData.selectBpartner(this,
-            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
-            Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerIdAux));
+        SelectorUtilityData.selectBpartner(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strcBpartnerIdAux));
     xmlDocument.setData(
         "reportMProductId_IN",
         "liststructure",
-        SelectorUtilityData.selectMproduct(this,
-            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
-            Utility.getContext(this, vars, "#User_Client", ""), strmProductIdAux));
+        SelectorUtilityData.selectMproduct(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strmProductIdAux));
     xmlDocument.setData(
         "reportCProjectId_IN",
         "liststructure",
-        SelectorUtilityData.selectProject(this,
-            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
-            Utility.getContext(this, vars, "#User_Client", ""), strcProjectIdAux));
-    xmlDocument
-        .setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
-            .selectC_ACCTSCHEMA_ID(this,
-                Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-                Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
-                strcAcctSchemaId));
+        SelectorUtilityData.selectProject(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strcProjectIdAux));
+    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
+        .selectC_ACCTSCHEMA_ID(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
+            strcAcctSchemaId));
 
     log4j.debug("data.length: " + data.length);
 
     if (data != null && data.length > 0) {
-      if (strGroupBy.equals(""))
+      if (StringUtils.isEmpty(strGroupBy)) {
         xmlDocument.setData("structure1", data);
-      else
+      } else {
         xmlDocument.setData("structure2", data);
+      }
     } else {
       if (vars.commandIn("FIND")) {
         // No data has been found. Show warning message.
         xmlDocument.setParameter("messageType", "WARNING");
         xmlDocument.setParameter("messageTitle",
-            Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()));
+            Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()));
         xmlDocument.setParameter("messageMessage",
-            Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+            Utility.messageBD(readOnlyCP, "NoDataFound", vars.getLanguage()));
       }
     }
 
@@ -563,49 +582,52 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String localStrcelementvalueto = strcelementvalueto;
     log4j.debug("Output: PDF");
     response.setContentType("text/html; charset=UTF-8");
-    String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    String strTreeOrg = TreeData.getTreeOrg(readOnlyCP, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
-    String toDatePlusOne = DateTimeData.nDaysAfter(this, strDateTo, "1");
+    String toDatePlusOne = DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1");
 
-    String strGroupByText = (strGroupBy.equals("BPartner") ? Utility.messageBD(this, "BusPartner",
-        vars.getLanguage()) : (strGroupBy.equals("Product") ? Utility.messageBD(this, "Product",
-        vars.getLanguage()) : (strGroupBy.equals("Project") ? Utility.messageBD(this, "Project",
-        vars.getLanguage()) : "")));
+    String strGroupByText = (StringUtils.equals(strGroupBy, "BPartner") ? Utility.messageBD(
+        readOnlyCP, "BusPartner", vars.getLanguage())
+        : (StringUtils.equals(strGroupBy, "Product") ? Utility.messageBD(readOnlyCP, "Product",
+            vars.getLanguage()) : (StringUtils.equals(strGroupBy, "Project") ? Utility.messageBD(
+            readOnlyCP, "Project", vars.getLanguage()) : "")));
     String strAllaccounts = "Y";
 
-    if (strDateFrom.equals("") || strDateTo.equals("")) {
+    if (StringUtils.isEmpty(strDateFrom) || StringUtils.isEmpty(strDateTo)) {
       advisePopUp(request, response, "WARNING",
-          Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
-          Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+          Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()),
+          Utility.messageBD(readOnlyCP, "NoDataFound", vars.getLanguage()));
       return;
     }
 
-    if (strcelementvaluefrom != null && !strcelementvaluefrom.equals("")) {
-      if (localStrcelementvalueto.equals(""))
+    if (StringUtils.isNotEmpty(strcelementvaluefrom)) {
+      if (StringUtils.isEmpty(localStrcelementvalueto)) {
         localStrcelementvalueto = strcelementvaluefrom;
+      }
       strAllaccounts = "N";
     }
 
     ReportGeneralLedgerData data = null;
     try {
-      data = ReportGeneralLedgerData.select2(this, "0", strGroupByText, strGroupBy, strAllaccounts,
-          strcelementvaluefrom, localStrcelementvalueto,
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
-          "Y".equals(strShowOpenBalances) ? strDateTo : null, strcAcctSchemaId, strDateFrom,
-          toDatePlusOne, strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom,
-          strAmtTo, null, null, null, null, null, null);
+      data = ReportGeneralLedgerData.select2(readOnlyCP, "0", strGroupByText, strGroupBy,
+          strAllaccounts, strcelementvaluefrom, localStrcelementvalueto,
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
+          StringUtils.equals(strShowOpenBalances, "Y") ? strDateTo : null, strcAcctSchemaId,
+          strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId, strmProductId, strcProjectId,
+          strAmtFrom, strAmtTo, null, null, null, null, null, null);
 
       if (!data.hasData()) {
         advisePopUp(request, response, "WARNING",
-            Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
-            Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+            Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()),
+            Utility.messageBD(readOnlyCP, "NoDataFound", vars.getLanguage()));
         return;
       }
 
       // augment data with totals
       AddTotals dataWithTotals = new AddTotals(data, strGroupBy, strcBpartnerId, strmProductId,
-          strcProjectId, strcAcctSchemaId, strDateFrom, strOrgFamily, this);
+          strcProjectId, strcAcctSchemaId, strDateFrom, strOrgFamily, readOnlyCP);
 
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGeneralLedger.jrxml";
       response.setHeader("Content-disposition", "inline; filename=ReportGeneralLedgerPDF.pdf");
@@ -614,15 +636,17 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
       String strLanguage = vars.getLanguage();
 
-      parameters.put("ShowGrouping", new Boolean(!strGroupBy.equals("")));
+      parameters.put("ShowGrouping", new Boolean(StringUtils.isNotEmpty(strGroupBy)));
       StringBuilder strSubTitle = new StringBuilder();
-      strSubTitle.append(Utility.messageBD(this, "DateFrom", strLanguage) + ": " + strDateFrom
-          + " - " + Utility.messageBD(this, "DateTo", strLanguage) + ": " + strDateTo + " (");
-      strSubTitle.append(ReportGeneralLedgerData.selectCompany(this, vars.getClient()) + " - ");
-      strSubTitle.append(ReportGeneralLedgerData.selectOrganization(this, strOrg) + ")");
+      strSubTitle.append(Utility.messageBD(readOnlyCP, "DateFrom", strLanguage) + ": "
+          + strDateFrom + " - " + Utility.messageBD(readOnlyCP, "DateTo", strLanguage) + ": "
+          + strDateTo + " (");
+      strSubTitle.append(ReportGeneralLedgerData.selectCompany(readOnlyCP, vars.getClient())
+          + " - ");
+      strSubTitle.append(ReportGeneralLedgerData.selectOrganization(readOnlyCP, strOrg) + ")");
       parameters.put("REPORT_SUBTITLE", strSubTitle.toString());
-      parameters.put("Previous", Utility.messageBD(this, "Initial Balance", strLanguage));
-      parameters.put("Total", Utility.messageBD(this, "Total", strLanguage));
+      parameters.put("Previous", Utility.messageBD(readOnlyCP, "Initial Balance", strLanguage));
+      parameters.put("Total", Utility.messageBD(readOnlyCP, "Total", strLanguage));
       parameters.put("PageNo", strPageNo);
       String strDateFormat;
       strDateFormat = vars.getJavaDateFormat();
@@ -644,40 +668,42 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String localStrcelementvalueto = strcelementvalueto;
     log4j.debug("Output: XLS");
     response.setContentType("text/html; charset=UTF-8");
-    String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    String strTreeOrg = TreeData.getTreeOrg(readOnlyCP, vars.getClient());
     String strOrgFamily = "";
     strOrgFamily = getFamily(strTreeOrg, strOrg);
-    String toDatePlusOne = DateTimeData.nDaysAfter(this, strDateTo, "1");
+    String toDatePlusOne = DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1");
 
     String strAllaccounts = "Y";
 
-    if (strDateFrom.equals("") || strDateTo.equals("")) {
+    if (StringUtils.isEmpty(strDateFrom) || StringUtils.isEmpty(strDateTo)) {
       advisePopUp(request, response, "WARNING",
-          Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
-          Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+          Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()),
+          Utility.messageBD(readOnlyCP, "NoDataFound", vars.getLanguage()));
       return;
     }
 
-    if (strcelementvaluefrom != null && !strcelementvaluefrom.equals("")) {
-      if (localStrcelementvalueto.equals(""))
+    if (StringUtils.isNotEmpty(strcelementvaluefrom)) {
+      if (StringUtils.isEmpty(localStrcelementvalueto)) {
         localStrcelementvalueto = strcelementvaluefrom;
+      }
       strAllaccounts = "N";
     }
 
     ReportGeneralLedgerData data = null;
     try {
-      data = ReportGeneralLedgerData.selectXLS2(this, strAllaccounts, strcelementvaluefrom,
+      data = ReportGeneralLedgerData.selectXLS2(readOnlyCP, strAllaccounts, strcelementvaluefrom,
           localStrcelementvalueto,
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
-          "Y".equals(strShowOpenBalances) ? strDateTo : null, strcAcctSchemaId, strDateFrom,
-          toDatePlusOne, strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom,
-          strAmtTo);
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
+          StringUtils.equals(strShowOpenBalances, "Y") ? strDateTo : null, strcAcctSchemaId,
+          strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId, strmProductId, strcProjectId,
+          strAmtFrom, strAmtTo);
 
       if (!data.hasData()) {
         advisePopUp(request, response, "WARNING",
-            Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
-            Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+            Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()),
+            Utility.messageBD(readOnlyCP, "NoDataFound", vars.getLanguage()));
         return;
       }
 
@@ -690,10 +716,12 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strLanguage = vars.getLanguage();
 
       StringBuilder strSubTitle = new StringBuilder();
-      strSubTitle.append(Utility.messageBD(this, "DateFrom", strLanguage) + ": " + strDateFrom
-          + " - " + Utility.messageBD(this, "DateTo", strLanguage) + ": " + strDateTo + " (");
-      strSubTitle.append(ReportGeneralLedgerData.selectCompany(this, vars.getClient()) + " - ");
-      strSubTitle.append(ReportGeneralLedgerData.selectOrganization(this, strOrg) + ")");
+      strSubTitle.append(Utility.messageBD(readOnlyCP, "DateFrom", strLanguage) + ": "
+          + strDateFrom + " - " + Utility.messageBD(readOnlyCP, "DateTo", strLanguage) + ": "
+          + strDateTo + " (");
+      strSubTitle.append(ReportGeneralLedgerData.selectCompany(readOnlyCP, vars.getClient())
+          + " - ");
+      strSubTitle.append(ReportGeneralLedgerData.selectOrganization(readOnlyCP, strOrg) + ")");
       parameters.put("REPORT_SUBTITLE", strSubTitle.toString());
       String strDateFormat;
       strDateFormat = vars.getJavaDateFormat();
@@ -744,21 +772,21 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       ReportGeneralLedgerData cur = (ReportGeneralLedgerData) data;
 
       // adjust data as needed
-      if (!strOld.equals(cur.groupbyid + cur.id)) {
-        if ("".equals(cur.groupbyid)) {
+      if (!StringUtils.equals(strOld, (cur.groupbyid + cur.id))) {
+        if (StringUtils.isEmpty(cur.groupbyid)) {
           // The argument " " is used to simulate one value and put the optional parameter--> AND
           // FACT_ACCT.C_PROJECT_ID IS NULL for example
           subreport = ReportGeneralLedgerData.selectTotal2(conn, strcBpartnerId,
-              (strGroupBy.equals("BPartner") ? " " : null), strmProductId,
-              (strGroupBy.equals("Product") ? " " : null), strcProjectId,
-              (strGroupBy.equals("Project") ? " " : null), strcAcctSchemaId, cur.id, "",
-              strDateFrom, strOrgFamily);
+              (StringUtils.equals(strGroupBy, "BPartner") ? " " : null), strmProductId,
+              (StringUtils.equals(strGroupBy, "Product") ? " " : null), strcProjectId,
+              (StringUtils.equals(strGroupBy, "Project") ? " " : null), strcAcctSchemaId, cur.id,
+              "", strDateFrom, strOrgFamily);
         } else {
-          subreport = ReportGeneralLedgerData.selectTotal2(conn,
-              (strGroupBy.equals("BPartner") ? "('" + cur.groupbyid + "')" : strcBpartnerId), null,
-              (strGroupBy.equals("Product") ? "('" + cur.groupbyid + "')" : strmProductId), null,
-              (strGroupBy.equals("Project") ? "('" + cur.groupbyid + "')" : strcProjectId), null,
-              strcAcctSchemaId, cur.id, "", strDateFrom, strOrgFamily);
+          subreport = ReportGeneralLedgerData.selectTotal2(conn, (StringUtils.equals(strGroupBy,
+              "BPartner") ? "('" + cur.groupbyid + "')" : strcBpartnerId), null, (StringUtils
+              .equals(strGroupBy, "Product") ? "('" + cur.groupbyid + "')" : strmProductId), null,
+              (StringUtils.equals(strGroupBy, "Project") ? "('" + cur.groupbyid + "')"
+                  : strcProjectId), null, strcAcctSchemaId, cur.id, "", strDateFrom, strOrgFamily);
         }
         totalDebit = BigDecimal.ZERO;
         totalCredit = BigDecimal.ZERO;
@@ -781,7 +809,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
   }
 
   private String getFamily(String strTree, String strChild) throws IOException, ServletException {
-    return Tree.getMembers(this, strTree, strChild);
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    return Tree.getMembers(readOnlyCP, strTree, strChild);
   }
 
   @Override

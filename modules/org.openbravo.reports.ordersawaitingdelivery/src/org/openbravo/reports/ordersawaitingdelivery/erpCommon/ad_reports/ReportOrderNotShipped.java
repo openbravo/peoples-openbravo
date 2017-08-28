@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,8 +28,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -39,6 +41,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.UOMUtil;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportOrderNotShipped extends HttpSecureAppServlet {
@@ -77,42 +80,47 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
           "ReportOrderNotShipped|orderRef");
       String strCOrgId = vars.getRequestGlobalVariable("inpOrg", "ReportOrderNotShipped|Org");
       String strOutput = "html";
-      if (vars.commandIn("FIND_PDF"))
+      if (vars.commandIn("FIND_PDF")) {
         strOutput = "pdf";
+      }
       printPage(request, response, vars, strdateFrom, strdateTo, strcBpartnerId, strDeliveryTerms,
           strOrderDocNo, strOrderRef, strCOrgId, strOutput);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strdateFrom, String strdateTo, String strcBpartnerId, String strDeliveryTerms,
       String strOrderDocNo, String strOrderRef, String strCOrgId) throws IOException,
       ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     XmlDocument xmlDocument = null;
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/reports/ordersawaitingdelivery/erpCommon/ad_reports/ReportOrderNotShipped")
         .createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportOrderNotShipped", false, "", "",
-        "", false, "ad_reports", strReplaceWith, false, true);
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportOrderNotShipped", false,
+        "", "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.reports.ordersawaitingdelivery.erpCommon.ad_reports.ReportOrderNotShipped");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportOrderNotShipped.html",
-          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
+          "ReportOrderNotShipped.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportOrderNotShipped.html",
-          strReplaceWith);
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(),
+          "ReportOrderNotShipped.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -138,14 +146,14 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("paramBPartnerId", strcBpartnerId);
     xmlDocument.setParameter("paramBPartnerDescription",
-        ReportOrderNotShippedData.bPartnerDescription(this, strcBpartnerId));
+        ReportOrderNotShippedData.bPartnerDescription(readOnlyCP, strcBpartnerId));
     xmlDocument.setParameter("deliveryTerms", strDeliveryTerms);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "C_Order DeliveryRule", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportOrderNotShipped"), Utility.getContext(this, vars, "#User_Client",
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "LIST", "",
+          "C_Order DeliveryRule", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportOrderNotShipped"), Utility.getContext(readOnlyCP, vars, "#User_Client",
               "ReportOrderNotShipped"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportOrderNotShipped",
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportOrderNotShipped",
           strDeliveryTerms);
       xmlDocument.setData("reportDeliveryTerms", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -156,11 +164,12 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
     xmlDocument.setParameter("orderRef", strOrderRef);
     xmlDocument.setParameter("adOrgId", strCOrgId);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "49DC1D6F086945AB82F84C66F5F13F16", Utility.getContext(this, vars, "#User_Org",
-              "ReportOrderNotShipped"), Utility.getContext(this, vars, "#User_Client",
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "AD_Org_ID",
+          "", "49DC1D6F086945AB82F84C66F5F13F16", Utility.getContext(readOnlyCP, vars, "#User_Org",
+              "ReportOrderNotShipped"), Utility.getContext(readOnlyCP, vars, "#User_Client",
               "ReportOrderNotShipped"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportOrderNotShipped", "");
+      Utility
+          .fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportOrderNotShipped", "");
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
       comboTableData = null;
 
@@ -182,23 +191,25 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
       VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcBpartnerId,
       String strDeliveryTerms, String strOrderDocNo, String strOrderRef, String strCOrgId,
       String strOutput) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print html");
+    }
 
     ReportOrderNotShippedData[] data = null;
 
-    data = ReportOrderNotShippedData.select(this, vars.getLanguage(),
-        Utility.getContext(this, vars, "#User_Client", "ReportOrderNotShipped"),
-        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOrderNotShipped"), strdateFrom,
-        DateTimeData.nDaysAfter(this, strdateTo, "1"), strcBpartnerId, strDeliveryTerms,
-        strOrderDocNo, strOrderRef, strCOrgId);
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    data = ReportOrderNotShippedData.select(readOnlyCP, vars.getLanguage(),
+        Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportOrderNotShipped"),
+        Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportOrderNotShipped"),
+        strdateFrom, DateTimeData.nDaysAfter(readOnlyCP, strdateTo, "1"), strcBpartnerId,
+        strDeliveryTerms, strOrderDocNo, strOrderRef, strCOrgId);
 
     // Launch the report as usual, calling the JRXML file
     String strReportName = "@basedesign@/org/openbravo/reports/ordersawaitingdelivery/erpCommon/ad_reports/ReportOrderNotShipped.jrxml";
 
     String strShowInAUM = vars.getRequestGlobalVariable("inpShowInAumVal",
         "ReportOrderNotShipped|showInAum");
-    if (!strShowInAUM.isEmpty() && strShowInAUM.equalsIgnoreCase("on")) {
+    if (StringUtils.isNotEmpty(strShowInAUM) && StringUtils.equalsIgnoreCase(strShowInAUM, "on")) {
       DecimalFormat df = Utility.getFormat(vars, "priceEdition");
       for (int i = 0; i < data.length; i++) {
         data[i].orderedqty = df.format(UOMUtil.getConvertedAumQty(data[i].mProductId,
@@ -215,20 +226,22 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
       }
     }
 
-    if (strOutput.equals("pdf"))
+    if (StringUtils.equals(strOutput, "pdf")) {
       response.setHeader("Content-disposition", "inline; filename=OrdersAwaitingDelivery.pdf");
+    }
 
     String strSubTitle = "";
-    strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " " + strdateFrom + " "
-        + Utility.messageBD(this, "To", vars.getLanguage()) + " " + strdateTo;
+    strSubTitle = Utility.messageBD(readOnlyCP, "From", vars.getLanguage()) + " " + strdateFrom
+        + " " + Utility.messageBD(readOnlyCP, "To", vars.getLanguage()) + " " + strdateTo;
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("REPORT_SUBTITLE", strSubTitle);
-    parameters.put("showInAUM", !strShowInAUM.isEmpty() && strShowInAUM.equalsIgnoreCase("on"));
+    parameters.put("showInAUM",
+        StringUtils.isNotEmpty(strShowInAUM) && StringUtils.equalsIgnoreCase(strShowInAUM, "on"));
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
   }
 
   public String getServletInfo() {
     return "Servlet ReportOrderNotShipped.";
-  } // end of getServletInfo() method
+  }
 }

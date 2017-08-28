@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,9 +30,11 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReport;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -40,6 +42,7 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportProductionJR extends HttpSecureAppServlet {
@@ -62,36 +65,40 @@ public class ReportProductionJR extends HttpSecureAppServlet {
       String strRawMaterial = vars.getRequestGlobalVariable("inpRawMaterial",
           "ReportProductionJR|RawMaterial");
       printPagePDF(response, vars, strDateFrom, strDateTo, strRawMaterial);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strRawMaterial) throws IOException,
       ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportProductionJR").createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportProduction", false, "", "", "",
-        false, "ad_reports", strReplaceWith, false, true);
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportProduction", false, "",
+        "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.erpCommon.ad_reports.ReportProductionJR");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportProductionJR.html",
-          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
+          "ReportProductionJR.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportProductionJR.html",
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(), "ReportProductionJR.html",
           strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
@@ -126,26 +133,30 @@ public class ReportProductionJR extends HttpSecureAppServlet {
       ServletException {
 
     String localStrRawMaterial = strRawMaterial;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Jasper Report : Production Report");
+    }
 
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/productionReport.jrxml";
     response.setHeader("Content-disposition", "inline; filename=ProductionReportJR.pdf");
 
     String strTitle = "Production Report";
-    String strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " " + strDateFrom
-        + " " + Utility.messageBD(this, "To", vars.getLanguage()) + " " + strDateTo;
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    String strSubTitle = Utility.messageBD(readOnlyCP, "From", vars.getLanguage()) + " "
+        + strDateFrom + " " + Utility.messageBD(readOnlyCP, "To", vars.getLanguage()) + " "
+        + strDateTo;
 
     // String strSubTitle = (!strDateFrom.equals("")?"From "+strDateFrom:"")
     // + (!strDateTo.equals("")?" to "+strDateTo:"");
 
-    if (!localStrRawMaterial.equals("Y"))
+    if (!StringUtils.equals(localStrRawMaterial, "Y")) {
       localStrRawMaterial = "N";
+    }
 
-    ReportProductionData[] data = ReportProductionData.select(this, localStrRawMaterial,
-        Utility.getContext(this, vars, "#User_Client", "ReportProductionJR"),
-        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductionJR"), strDateFrom,
-        DateTimeData.nDaysAfter(this, strDateTo, "1"));
+    ReportProductionData[] data = ReportProductionData.select(readOnlyCP, localStrRawMaterial,
+        Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProductionJR"),
+        Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProductionJR"),
+        strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"));
 
     if (data == null || data.length == 0) {
       data = ReportProductionData.set();
@@ -153,12 +164,12 @@ public class ReportProductionJR extends HttpSecureAppServlet {
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("inpDateFrom:"
           + vars.getRequestGlobalVariable("inpDateFrom", "ReportProductionJR|DateFrom"));
-    if (log4j.isDebugEnabled())
       log4j.debug("inpDateTo:"
           + vars.getRequestGlobalVariable("inpDateTo", "ReportProductionJR|DateFrom"));
+    }
 
     String strLanguage = vars.getLanguage();
     String strBaseDesign = getBaseDesignPath(strLanguage);
@@ -177,18 +188,20 @@ public class ReportProductionJR extends HttpSecureAppServlet {
     parameters.put("REPORT_SUBTITLE", strSubTitle);
 
     try {
-      if (!strDateFrom.equals(""))
+      if (StringUtils.isNotEmpty(strDateFrom)) {
         parameters.put("DATE_FROM", new SimpleDateFormat("dd-MM-yyyy").parse(strDateFrom));
-      if (!strDateTo.equals(""))
+      }
+      if (StringUtils.isNotEmpty(strDateTo)) {
         parameters.put("DATE_TO", new SimpleDateFormat("dd-MM-yyyy").parse(strDateTo));
+      }
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("parameters: " + parameters.toString());
-    if (log4j.isDebugEnabled())
       log4j.debug("data: " + data);
+    }
 
     renderJR(vars, response, strReportName, "pdf", parameters, data, null);
 

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,8 +27,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
@@ -39,6 +41,7 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
@@ -90,8 +93,9 @@ public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
           "ReportAssetDepreciationSchedule|cAssetCategoryId");
       printPageDataPdf(response, vars, strDateFrom, strDateTo, strValue, strDescription,
           strcAssetCategoryId, strcAcctSchemaId, strOrg);
-    } else
+    } else {
       pageError(response);
+    }
   } // end of the doPost() method
 
   /*
@@ -103,14 +107,18 @@ public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
       String strDateFrom, String strDateTo, String strValue, String strDescription,
       String strcAssetCategoryId, String strcAcctSchemaId, String strOrg) throws IOException,
       ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     String discard[] = { "sectionAssetReport" };
+
+    // Use ReadyOnly Connection Provider
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     XmlDocument xmlDocument = null;
     ReportAssetDepreciationScheduleData[] data = null;
-    if (strOrg.equals("")) {
+    if (StringUtils.isEmpty(strOrg)) {
       xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_reports/ReportAssetDepreciationSchedule", discard)
           .createXmlDocument();
@@ -118,28 +126,29 @@ public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
     } else {
       xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_reports/ReportAssetDepreciationSchedule").createXmlDocument();
-      data = ReportAssetDepreciationScheduleData.select(this, vars.getClient(), strDateFrom,
+      data = ReportAssetDepreciationScheduleData.select(readOnlyCP, vars.getClient(), strDateFrom,
           strDateTo, strValue, strDescription, strcAssetCategoryId, strcAcctSchemaId,
-          Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
+          Tree.getMembers(readOnlyCP, TreeData.getTreeOrg(readOnlyCP, vars.getClient()), strOrg));
     }
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportAssetDepreciationSchedule",
-        false, "", "", "", false, "ad_reports", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(),
+        "ReportAssetDepreciationSchedule", false, "", "", "", false, "ad_reports", strReplaceWith,
+        false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.erpCommon.ad_reports.ReportAssetDepreciationSchedule");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
           "ReportAssetDepreciationSchedule.html", classInfo.id, classInfo.type, strReplaceWith,
           tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(),
           "ReportAssetDepreciationSchedule.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
@@ -156,10 +165,11 @@ public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
     }
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "A_Asset_Group_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
-          Utility.getContext(this, vars, "#User_Client", ""), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "", "");
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+          "A_Asset_Group_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""), Utility.getContext(
+              readOnlyCP, vars, "#User_Client", ""), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "", "");
       xmlDocument.setData("reportA_ASSET_GROUP_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -184,9 +194,10 @@ public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
     xmlDocument.setData("structure1", data);
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org", "ReportAssetDepreciationSchedule"),
-          Utility.getContext(this, vars, "#User_Client", "ReportAssetDepreciationSchedule"), '*');
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "AD_ORG_ID",
+          "", "", Utility.getContext(readOnlyCP, vars, "#User_Org",
+              "ReportAssetDepreciationSchedule"), Utility.getContext(readOnlyCP, vars,
+              "#User_Client", "ReportAssetDepreciationSchedule"), '*');
       comboTableData.fillParameters(null, "ReportAssetDepreciationSchedule", "");
       xmlDocument.setData("reportAD_ORG_ID", "liststructure", comboTableData.select(false));
     } catch (Exception ex) {
@@ -195,9 +206,10 @@ public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
 
     xmlDocument
         .setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
-            .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "ReportAssetDepreciationSchedule"), Utility.getContext(this, vars, "#User_Client",
-                "ReportAssetDepreciationSchedule"), strcAcctSchemaId));
+            .selectC_ACCTSCHEMA_ID(readOnlyCP, Utility.getContext(readOnlyCP, vars,
+                "#AccessibleOrgTree", "ReportAssetDepreciationSchedule"), Utility.getContext(
+                readOnlyCP, vars, "#User_Client", "ReportAssetDepreciationSchedule"),
+                strcAcctSchemaId));
 
     out.println(xmlDocument.print());
     out.close();
@@ -213,17 +225,19 @@ public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
       String strcAssetCategoryId, String strcAcctSchemaId, String strOrg) throws IOException,
       ServletException {
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
-
-    ReportAssetDepreciationScheduleData[] pdfData = null;
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
 
-    pdfData = ReportAssetDepreciationScheduleData.select(this, vars.getClient(), strDateFrom,
-        strDateTo, strValue, strDescription, strcAssetCategoryId, strcAcctSchemaId,
-        Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
+    // Use ReadyOnly Connection Provider
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    ReportAssetDepreciationScheduleData[] pdfData = ReportAssetDepreciationScheduleData.select(
+        readOnlyCP, vars.getClient(), strDateFrom, strDateTo, strValue, strDescription,
+        strcAssetCategoryId, strcAcctSchemaId,
+        Tree.getMembers(readOnlyCP, TreeData.getTreeOrg(readOnlyCP, vars.getClient()), strOrg));
     String strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportAssetDepreciationSchedule.jrxml";
     renderJR(vars, response, strReportPath, "pdf", parameters, pdfData, null);
   } // end of the printPageDataPdf() method

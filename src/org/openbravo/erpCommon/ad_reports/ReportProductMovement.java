@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -35,6 +36,7 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportProductMovement extends HttpSecureAppServlet {
@@ -115,8 +117,9 @@ public class ReportProductMovement extends HttpSecureAppServlet {
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId, strmProductId,
           strInout, strReturn, strInventory, strMovement, strProduction,
           strmAttributesetinstanceId, strInternalConsumption);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
@@ -126,8 +129,9 @@ public class ReportProductMovement extends HttpSecureAppServlet {
       throws IOException, ServletException {
     String localStrDateTo = strDateTo;
     String localStrDateFrom = strDateFrom;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
@@ -138,27 +142,28 @@ public class ReportProductMovement extends HttpSecureAppServlet {
     ReportProductMovementData[] data4 = null;
     ReportProductMovementData[] data5 = null;
     String discard[] = { "discard", "discard", "discard", "discard", "discard", "discard" };
-    if (localStrDateFrom.equals("") && localStrDateTo.equals("")) {
-      localStrDateTo = DateTimeData.today(this);
-      localStrDateFrom = DateTimeData.weekBefore(this);
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    if (StringUtils.isEmpty(localStrDateFrom) && StringUtils.isEmpty(localStrDateTo)) {
+      localStrDateTo = DateTimeData.today(readOnlyCP);
+      localStrDateFrom = DateTimeData.weekBefore(readOnlyCP);
     }
 
     int limit = 0;
     if (vars.commandIn("FIND", "DIRECT")) {
       limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
       String pgLimit = null, oraLimit = null;
-      if (StringUtils.equals(this.myPool.getRDBMS(), "ORACLE")) {
+      if (StringUtils.equals(readOnlyCP.getRDBMS(), "ORACLE")) {
         oraLimit = String.valueOf(limit + 1);
       } else {
         pgLimit = String.valueOf(limit + 1);
       }
 
-      if (strInout.equals("-1")) {
-        data = ReportProductMovementData.select(this, vars.getLanguage(),
-            Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
-            localStrDateFrom, DateTimeData.nDaysAfter(this, localStrDateTo, "1"), strcBpartnerId,
-            strmProductId, strmAttributesetinstanceId, "N", pgLimit, oraLimit);
+      if (StringUtils.equals(strInout, "-1")) {
+        data = ReportProductMovementData.select(readOnlyCP, vars.getLanguage(),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProductMovement"),
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProductMovement"),
+            localStrDateFrom, DateTimeData.nDaysAfter(readOnlyCP, localStrDateTo, "1"),
+            strcBpartnerId, strmProductId, strmAttributesetinstanceId, "N", pgLimit, oraLimit);
         if (data == null || data.length == 0) {
           discard[0] = "selEliminar1";
           data = ReportProductMovementData.set();
@@ -168,12 +173,12 @@ public class ReportProductMovement extends HttpSecureAppServlet {
         data = ReportProductMovementData.set();
       }
 
-      if (strReturn.equals("-1")) {
-        data5 = ReportProductMovementData.select(this, vars.getLanguage(),
-            Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
-            localStrDateFrom, DateTimeData.nDaysAfter(this, localStrDateTo, "1"), strcBpartnerId,
-            strmProductId, strmAttributesetinstanceId, "Y", pgLimit, oraLimit);
+      if (StringUtils.equals(strReturn, "-1")) {
+        data5 = ReportProductMovementData.select(readOnlyCP, vars.getLanguage(),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProductMovement"),
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProductMovement"),
+            localStrDateFrom, DateTimeData.nDaysAfter(readOnlyCP, localStrDateTo, "1"),
+            strcBpartnerId, strmProductId, strmAttributesetinstanceId, "Y", pgLimit, oraLimit);
         if (data5 == null || data5.length == 0) {
           discard[5] = "selEliminar6";
           data5 = ReportProductMovementData.set();
@@ -183,12 +188,12 @@ public class ReportProductMovement extends HttpSecureAppServlet {
         data5 = ReportProductMovementData.set();
       }
 
-      if (strInventory.equals("-1")) {
-        data1 = ReportProductMovementData.selectInventory(this,
-            Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
-            localStrDateFrom, DateTimeData.nDaysAfter(this, localStrDateTo, "1"), strcBpartnerId,
-            strmProductId, strmAttributesetinstanceId);
+      if (StringUtils.equals(strInventory, "-1")) {
+        data1 = ReportProductMovementData.selectInventory(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProductMovement"),
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProductMovement"),
+            localStrDateFrom, DateTimeData.nDaysAfter(readOnlyCP, localStrDateTo, "1"),
+            strcBpartnerId, strmProductId, strmAttributesetinstanceId);
         if (data1 == null || data1.length == 0) {
           discard[1] = "selEliminar2";
           data1 = ReportProductMovementData.set();
@@ -197,12 +202,12 @@ public class ReportProductMovement extends HttpSecureAppServlet {
         discard[1] = "selEliminar2";
         data1 = ReportProductMovementData.set();
       }
-      if (strMovement.equals("-1")) {
-        data2 = ReportProductMovementData.selectMovement(this,
-            Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
-            localStrDateFrom, DateTimeData.nDaysAfter(this, localStrDateTo, "1"), strcBpartnerId,
-            strmProductId);
+      if (StringUtils.equals(strMovement, "-1")) {
+        data2 = ReportProductMovementData.selectMovement(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProductMovement"),
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProductMovement"),
+            localStrDateFrom, DateTimeData.nDaysAfter(readOnlyCP, localStrDateTo, "1"),
+            strcBpartnerId, strmProductId);
         if (data2 == null || data2.length == 0) {
           discard[2] = "selEliminar3";
           data2 = ReportProductMovementData.set();
@@ -211,12 +216,12 @@ public class ReportProductMovement extends HttpSecureAppServlet {
         discard[2] = "selEliminar3";
         data2 = ReportProductMovementData.set();
       }
-      if (strProduction.equals("-1")) {
-        data3 = ReportProductMovementData.selectProduction(this,
-            Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
-            localStrDateFrom, DateTimeData.nDaysAfter(this, localStrDateTo, "1"), strcBpartnerId,
-            strmProductId, strmAttributesetinstanceId);
+      if (StringUtils.equals(strProduction, "-1")) {
+        data3 = ReportProductMovementData.selectProduction(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProductMovement"),
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProductMovement"),
+            localStrDateFrom, DateTimeData.nDaysAfter(readOnlyCP, localStrDateTo, "1"),
+            strcBpartnerId, strmProductId, strmAttributesetinstanceId);
         if (data3 == null || data3.length == 0) {
           discard[3] = "selEliminar4";
           data3 = ReportProductMovementData.set();
@@ -225,12 +230,12 @@ public class ReportProductMovement extends HttpSecureAppServlet {
         discard[3] = "selEliminar4";
         data3 = ReportProductMovementData.set();
       }
-      if (strInternalConsumption.equals("-1")) {
-        data4 = ReportProductMovementData.selectInternalConsumption(this,
-            Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
-            localStrDateFrom, DateTimeData.nDaysAfter(this, localStrDateTo, "1"), strcBpartnerId,
-            strmProductId);
+      if (StringUtils.equals(strInternalConsumption, "-1")) {
+        data4 = ReportProductMovementData.selectInternalConsumption(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProductMovement"),
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProductMovement"),
+            localStrDateFrom, DateTimeData.nDaysAfter(readOnlyCP, localStrDateTo, "1"),
+            strcBpartnerId, strmProductId);
         if (data4 == null || data4.length == 0) {
           discard[4] = "selEliminar5";
           data4 = ReportProductMovementData.set();
@@ -256,23 +261,24 @@ public class ReportProductMovement extends HttpSecureAppServlet {
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportProductMovement", discard).createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportProductMovement", false, "", "",
-        "", false, "ad_reports", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportProductMovement", false,
+        "", "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.erpCommon.ad_reports.ReportProductMovement");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportProductMovement.html",
-          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
+          "ReportProductMovement.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportProductMovement.html",
-          strReplaceWith);
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(),
+          "ReportProductMovement.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -283,7 +289,7 @@ public class ReportProductMovement extends HttpSecureAppServlet {
         myMessage = new OBError();
         myMessage.setType("Warning");
         myMessage.setTitle("");
-        String msgbody = Utility.messageBD(this, "ReportsLimit", vars.getLanguage());
+        String msgbody = Utility.messageBD(readOnlyCP, "ReportsLimit", vars.getLanguage());
         msgbody = msgbody.replace("@limit@", String.valueOf(limit + 1));
         myMessage.setMessage(msgbody);
       }
@@ -310,15 +316,15 @@ public class ReportProductMovement extends HttpSecureAppServlet {
     xmlDocument.setData(
         "reportM_ATTRIBUTESETINSTANCE_ID",
         "liststructure",
-        AttributeSetInstanceComboData.select(this, vars.getLanguage(), strmProductId,
-            Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement")));
+        AttributeSetInstanceComboData.select(readOnlyCP, vars.getLanguage(), strmProductId,
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProductMovement"),
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProductMovement")));
     xmlDocument.setParameter("parameterM_ATTRIBUTESETINSTANCE_ID", strmAttributesetinstanceId);
 
     xmlDocument.setParameter("bPartnerDescription",
-        ReportProductMovementData.selectBpartner(this, strcBpartnerId));
+        ReportProductMovementData.selectBpartner(readOnlyCP, strcBpartnerId));
     xmlDocument.setParameter("productDescription",
-        ReportProductMovementData.selectMproduct(this, strmProductId));
+        ReportProductMovementData.selectMproduct(readOnlyCP, strmProductId));
     xmlDocument.setParameter("inout", strInout);
     xmlDocument.setParameter("return", strReturn);
     xmlDocument.setParameter("inventory", strInventory);

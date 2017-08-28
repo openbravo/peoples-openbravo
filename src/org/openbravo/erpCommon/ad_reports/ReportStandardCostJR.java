@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2015 Openbravo SLU
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,9 +31,11 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReport;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -41,6 +43,7 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportStandardCostJR extends HttpSecureAppServlet {
@@ -56,8 +59,12 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
           "ReportStandardCostJR|ProcessPlanID", "");
       String strVersion = vars.getGlobalVariable("inpmaProcessPlanVersionId",
           "ReportStandardCostJR|versionID", "");
+
+      // Use ReadOnly Connection Provider
+      ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
-          "ReportStandardCostJR|currency", Utility.stringBaseCurrencyId(this, vars.getClient()));
+          "ReportStandardCostJR|currency",
+          Utility.stringBaseCurrencyId(readOnlyCP, vars.getClient()));
       printPageDataSheet(response, vars, strdate, strProcessPlan, strVersion, strCurrencyId);
     } else if (vars.commandIn("PRINT_HTML")) {
       String strdate = vars.getRequestGlobalVariable("inpDateFrom", "ReportStandardCostJR|date");
@@ -77,36 +84,41 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
       String strCurrencyId = vars.getRequiredGlobalVariable("inpCurrencyId",
           "ReportStandardCostJR|currency");
       printPageHtml(response, vars, strdate, strProcessPlan, strVersion, strCurrencyId, "pdf");
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strdate, String strProcessPlan, String strVersion, String strCurrencyId)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     XmlDocument xmlDocument = null;
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportStandardCostJRFilter").createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportStandardCostJRFilter", false,
-        "", "", "", false, "ad_reports", strReplaceWith, false, true);
+    // Use ReadOnly Connection Provider
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportStandardCostJRFilter",
+        false, "", "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.erpCommon.ad_reports.ReportStandardCostJR");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportStandardCostJR.html",
-          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
+          "ReportStandardCostJR.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportStandardCostJR.html",
-          strReplaceWith);
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(),
+          "ReportStandardCostJR.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -114,11 +126,11 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportSalesDimensionalAnalyzeJR"), Utility.getContext(this, vars, "#User_Client",
-              "ReportSalesDimensionalAnalyzeJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData,
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+          "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportSalesDimensionalAnalyzeJR"), Utility.getContext(readOnlyCP, vars,
+              "#User_Client", "ReportSalesDimensionalAnalyzeJR"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportSalesDimensionalAnalyzeJR", strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -145,16 +157,14 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
     xmlDocument.setData(
         "reportMA_PROCESSPLAN",
         "liststructure",
-        ProcessPlanComboData.select(this,
-            Utility.getContext(this, vars, "#User_Client", "ReportStandardCostJR"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportStandardCostJR")));
-    xmlDocument.setParameter(
-        "standardCostReports",
-        Utility.arrayDobleEntrada(
-            "arrStandardCostReports",
-            ProcessPlanVersionComboData.select(this,
-                Utility.getContext(this, vars, "#User_Client", "ReportStandardCostJR"),
-                Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportStandardCostJR"))));
+        ProcessPlanComboData.select(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportStandardCostJR"),
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportStandardCostJR")));
+    xmlDocument.setParameter("standardCostReports", Utility.arrayDobleEntrada(
+        "arrStandardCostReports",
+        ProcessPlanVersionComboData.select(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportStandardCostJR"),
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportStandardCostJR"))));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
@@ -164,15 +174,19 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
   private void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strdate,
       String strProcessPlan, String strVersion, String strCurrencyId, String strOutput)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print html");
+    }
     String strLanguage = vars.getLanguage();
     String strBaseDesign = getBaseDesignPath(strLanguage);
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("MA_PROCESSPLAN_ID", strProcessPlan);
     parameters.put("MA_PROCESSPLAN_VERSION_ID", strVersion);
     parameters.put("CURRENCY_ID", strCurrencyId);
-    parameters.put("BASE_CURRENCY_ID", Utility.stringBaseCurrencyId(this, vars.getClient()));
+
+    // Use ReadOnly Connection Provider
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    parameters.put("BASE_CURRENCY_ID", Utility.stringBaseCurrencyId(readOnlyCP, vars.getClient()));
     JasperReport jasperReportCost;
     JasperReport jasperReportProduced;
     try {
@@ -187,7 +201,7 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
     parameters.put("SR_COST", jasperReportCost);
     parameters.put("SR_PRODUCED", jasperReportProduced);
 
-    if (strdate != null && !strdate.equals("")) {
+    if (StringUtils.isNotEmpty(strdate)) {
       String strDateFormat;
       strDateFormat = vars.getJavaDateFormat();
       SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);

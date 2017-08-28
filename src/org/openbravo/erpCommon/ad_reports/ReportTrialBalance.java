@@ -33,6 +33,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -40,6 +41,7 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
@@ -54,6 +56,7 @@ import org.openbravo.erpCommon.utility.OBLedgerUtils;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportTrialBalance extends HttpSecureAppServlet {
@@ -79,23 +82,26 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       String strGroupBy = vars.getGlobalVariable("inpGroupBy", "ReportTrialBalance|GroupBy", "");
       String strcElementValueFrom = vars.getGlobalVariable("inpcElementValueIdFrom",
           "ReportTrialBalance|C_ElementValue_IDFROM", "");
+      ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
       String strcElementValueTo = vars.getGlobalVariable(
           "inpcElementValueIdTo",
           "ReportTrialBalance|C_ElementValue_IDTO",
-          ReportTrialBalanceData.selectLastAccount(this,
-              Utility.getContext(this, vars, "#AccessibleOrgTree", "Account"),
-              Utility.getContext(this, vars, "#User_Client", "Account")));
+          ReportTrialBalanceData.selectLastAccount(readOnlyCP,
+              Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "Account"),
+              Utility.getContext(readOnlyCP, vars, "#User_Client", "Account")));
       String strNotInitialBalance = vars.getGlobalVariable("inpNotInitialBalance",
           "ReportTrialBalance|notInitialBalance", "Y");
       String strIncludeZeroFigures = vars.getGlobalVariable("inpIncludeZeroFigures",
           "ReportTrialBalance|includeZeroFigures", "");
       String strcElementValueFromDes = "", strcElementValueToDes = "";
-      if (!strcElementValueFrom.equals(""))
-        strcElementValueFromDes = ReportTrialBalanceData.selectSubaccountDescription(this,
+      if (StringUtils.isNotEmpty(strcElementValueFrom)) {
+        strcElementValueFromDes = ReportTrialBalanceData.selectSubaccountDescription(readOnlyCP,
             strcElementValueFrom);
-      if (!strcElementValueTo.equals(""))
-        strcElementValueToDes = ReportTrialBalanceData.selectSubaccountDescription(this,
+      }
+      if (StringUtils.isNotEmpty(strcElementValueTo)) {
+        strcElementValueToDes = ReportTrialBalanceData.selectSubaccountDescription(readOnlyCP,
             strcElementValueTo);
+      }
       strcElementValueFromDes = (strcElementValueFromDes == null) ? "" : strcElementValueFromDes;
       strcElementValueToDes = (strcElementValueToDes == null) ? "" : strcElementValueToDes;
       vars.setSessionValue("inpElementValueIdFrom_DES", strcElementValueFromDes);
@@ -131,12 +137,15 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       String strIncludeZeroFigures = vars.getRequestGlobalVariable("inpIncludeZeroFigures",
           "ReportTrialBalance|includeZeroFigures");
       String strcElementValueFromDes = "", strcElementValueToDes = "";
-      if (!strcElementValueFrom.equals(""))
-        strcElementValueFromDes = ReportTrialBalanceData.selectSubaccountDescription(this,
+      ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+      if (StringUtils.isNotEmpty(strcElementValueFrom)) {
+        strcElementValueFromDes = ReportTrialBalanceData.selectSubaccountDescription(readOnlyCP,
             strcElementValueFrom);
-      if (!strcElementValueTo.equals(""))
-        strcElementValueToDes = ReportTrialBalanceData.selectSubaccountDescription(this,
+      }
+      if (StringUtils.isNotEmpty(strcElementValueTo)) {
+        strcElementValueToDes = ReportTrialBalanceData.selectSubaccountDescription(readOnlyCP,
             strcElementValueTo);
+      }
       vars.setSessionValue("inpElementValueIdFrom_DES", strcElementValueFromDes);
       vars.setSessionValue("inpElementValueIdTo_DES", strcElementValueToDes);
 
@@ -158,12 +167,15 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       String strcElementValueTo = vars.getGlobalVariable("inpcElementValueIdTo",
           "ReportTrialBalance|C_ElementValue_IDTO", "");
       String strcElementValueFromDes = "", strcElementValueToDes = "";
-      if (!strcElementValueFrom.equals(""))
-        strcElementValueFromDes = ReportTrialBalanceData.selectSubaccountDescription(this,
+      ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+      if (StringUtils.isNotEmpty(strcElementValueFrom)) {
+        strcElementValueFromDes = ReportTrialBalanceData.selectSubaccountDescription(readOnlyCP,
             strcElementValueFrom);
-      if (!strcElementValueTo.equals(""))
-        strcElementValueToDes = ReportTrialBalanceData.selectSubaccountDescription(this,
+      }
+      if (StringUtils.isNotEmpty(strcElementValueTo)) {
+        strcElementValueToDes = ReportTrialBalanceData.selectSubaccountDescription(readOnlyCP,
             strcElementValueTo);
+      }
       strcElementValueFromDes = (strcElementValueFromDes == null) ? "" : strcElementValueFromDes;
       strcElementValueToDes = (strcElementValueToDes == null) ? "" : strcElementValueToDes;
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
@@ -179,15 +191,16 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       String strIncludeZeroFigures = vars.getStringParameter("inpIncludeZeroFigures", "N");
       vars.setSessionValue("ReportTrialBalance|includeZeroFigures", strIncludeZeroFigures);
 
-      if (vars.commandIn("PDF"))
+      if (vars.commandIn("PDF")) {
         printPageDataPDF(request, response, vars, strDateFrom, strDateTo, strOrg, strLevel,
             strcElementValueFrom, strcElementValueFromDes, strcElementValueTo,
             strcElementValueToDes, strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId,
             strNotInitialBalance, strGroupBy, strPageNo, strIncludeZeroFigures);
-      else
+      } else {
         printPageDataXLS(request, response, vars, strDateFrom, strDateTo, strOrg, strLevel,
             strcElementValueFrom, strcElementValueTo, strcBpartnerId, strmProductId, strcProjectId,
             strcAcctSchemaId, strNotInitialBalance, strGroupBy, strIncludeZeroFigures);
+      }
 
     } else if (vars.commandIn("OPEN")) {
       String strAccountId = vars.getRequiredStringParameter("inpcAccountId");
@@ -229,38 +242,39 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       String strAccountId, String strNotInitialBalance) throws IOException, ServletException {
 
     ReportTrialBalanceData[] data = null;
-    String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    String strTreeOrg = TreeData.getTreeOrg(readOnlyCP, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
 
     log4j.debug("Output: Expand subaccount details " + strAccountId);
 
     data = ReportTrialBalanceData.selectLines(
-        this,
-        "BPartner".equals(strGroupBy) ? "C_BPARTNER" : ("Product".equals(strGroupBy) ? "M_PRODUCT"
-            : ("Project".equals(strGroupBy) ? "C_PROJECT"
-                : ("CostCenter".equals(strGroupBy) ? "C_COSTCENTER" : null))),
+        readOnlyCP,
+        StringUtils.equals(strGroupBy, "BPartner") ? "C_BPARTNER" : (StringUtils.equals(strGroupBy,
+            "Product") ? "M_PRODUCT" : (StringUtils.equals(strGroupBy, "Project") ? "C_PROJECT"
+            : (StringUtils.equals(strGroupBy, "CostCenter") ? "C_COSTCENTER" : null))),
         vars.getLanguage(),
         strDateFrom,
-        (strNotInitialBalance.equals("Y") ? "O" : null),
-        (strNotInitialBalance.equals("Y") ? null : "O"),
-        "BPartner".equals(strGroupBy) ? "f.c_bpartner_id"
-            : ("Product".equals(strGroupBy) ? "f.m_product_id"
-                : ("Project".equals(strGroupBy) ? "f.c_project_id" : ("CostCenter"
-                    .equals(strGroupBy) ? "f.c_costcenter_id" : "to_char('')"))),
+        (StringUtils.equals(strNotInitialBalance, "Y") ? "O" : null),
+        (StringUtils.equals(strNotInitialBalance, "Y") ? null : "O"),
+        StringUtils.equals(strGroupBy, "BPartner") ? "f.c_bpartner_id" : (StringUtils.equals(
+            strGroupBy, "Product") ? "f.m_product_id"
+            : (StringUtils.equals(strGroupBy, "Project") ? "f.c_project_id" : (StringUtils.equals(
+                strGroupBy, "CostCenter") ? "f.c_costcenter_id" : "to_char('')"))),
         strOrgFamily,
-        Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"),
-        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"),
-        DateTimeData.nDaysAfter(this, strDateTo, "1"),
+        Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportTrialBalance"),
+        Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportTrialBalance"),
+        DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"),
         strAccountId,
         strcBpartnerId,
         strmProductId,
         strcProjectId,
         strcAcctSchemaId,
         strLevel,
-        "BPartner".equals(strGroupBy) ? ", f.c_bpartner_id"
-            : ("Product".equals(strGroupBy) ? ", f.m_product_id"
-                : ("Project".equals(strGroupBy) ? ", f.c_project_id" : ("CostCenter"
-                    .equals(strGroupBy) ? ", f.c_costcenter_id" : " "))), null, null);
+        StringUtils.equals(strGroupBy, "BPartner") ? ", f.c_bpartner_id" : (StringUtils.equals(
+            strGroupBy, "Product") ? ", f.m_product_id" : (StringUtils
+            .equals(strGroupBy, "Project") ? ", f.c_project_id" : (StringUtils.equals(strGroupBy,
+            "CostCenter") ? ", f.c_costcenter_id" : " "))), null, null);
 
     if (data == null) {
       data = ReportTrialBalanceData.set();
@@ -323,23 +337,24 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
     String discard[] = { "sectionGridView", "discard", "discard", "discard" };
 
-    if (strLevel.equals("C")) {
+    if (StringUtils.equals(strLevel, "C")) {
       discard[1] = "fieldId1";
     } else {
       discard[1] = "fieldDescAccount";
     }
-
-    String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    String strTreeOrg = TreeData.getTreeOrg(readOnlyCP, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
-    String strTreeAccount = ReportTrialBalanceData.treeAccount(this, vars.getClient());
+    String strTreeAccount = ReportTrialBalanceData.treeAccount(readOnlyCP, vars.getClient());
     // Remember values
     String strcBpartnerIdAux = strcBpartnerId;
     String strmProductIdAux = strmProductId;
     String strcProjectIdAux = strcProjectId;
 
-    String strAccountFromValue = ReportTrialBalanceData.selectAccountValue(this,
+    String strAccountFromValue = ReportTrialBalanceData.selectAccountValue(readOnlyCP,
         strcElementValueFrom);
-    String strAccountToValue = ReportTrialBalanceData.selectAccountValue(this, strcElementValueTo);
+    String strAccountToValue = ReportTrialBalanceData.selectAccountValue(readOnlyCP,
+        strcElementValueTo);
 
     log4j.debug("Output: DataSheet");
     log4j.debug("strTreeOrg: " + strTreeOrg + "strOrgFamily: " + strOrgFamily + "strTreeAccount: "
@@ -347,25 +362,28 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     log4j.debug("strcBpartnerId: " + strcBpartnerId + "strmProductId: " + strmProductId
         + "strcProjectId: " + strcProjectId);
 
-    if (strDateFrom.equals("") && strDateTo.equals("")) {
+    if (StringUtils.isEmpty(strDateFrom) && StringUtils.isEmpty(strDateTo)) {
       xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_reports/ReportTrialBalance", discard).createXmlDocument();
       data = ReportTrialBalanceData.set();
       if (vars.commandIn("FIND")) {
-        strMessage = Utility.messageBD(this, "BothDatesCannotBeBlank", vars.getLanguage());
+        strMessage = Utility.messageBD(readOnlyCP, "BothDatesCannotBeBlank", vars.getLanguage());
         log4j.warn("Both dates are blank");
       }
     } else {
-      if (strLevel.equals("S")) { // SubAccount selected
-        data = ReportTrialBalanceData.selectLines(this, null, vars.getLanguage(), strDateFrom,
-            (strNotInitialBalance.equals("Y") ? "O" : null),
-            (strNotInitialBalance.equals("Y") ? null : "O"), "to_char('')", strOrgFamily, Utility
-                .getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(
-                this, vars, "#AccessibleOrgTree", "ReportTrialBalance"), DateTimeData.nDaysAfter(
-                this, strDateTo, "1"), null, strcBpartnerId, strmProductId, strcProjectId,
-            strcAcctSchemaId, strLevel, " ", strAccountFromValue, strAccountToValue);
-        if (strGroupBy.equals(""))
+      if (StringUtils.equals(strLevel, "S")) { // SubAccount selected
+        data = ReportTrialBalanceData.selectLines(readOnlyCP, null, vars.getLanguage(),
+            strDateFrom, (StringUtils.equals(strNotInitialBalance, "Y") ? "O" : null),
+            (StringUtils.equals(strNotInitialBalance, "Y") ? null : "O"), "to_char('')",
+            strOrgFamily,
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportTrialBalance"),
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportTrialBalance"),
+            DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), null, strcBpartnerId,
+            strmProductId, strcProjectId, strcAcctSchemaId, strLevel, " ", strAccountFromValue,
+            strAccountToValue);
+        if (StringUtils.isEmpty(strGroupBy)) {
           discard[2] = "showExpand";
+        }
 
       } else {
         discard[2] = "showExpand";
@@ -373,27 +391,28 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             strcAcctSchemaId, strLevel, strTreeAccount, strNotInitialBalance);
       }
 
-      if (data != null && data.length > 0)
+      if (data != null && data.length > 0) {
         discard[0] = "discard";
+      }
 
     }
 
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportTrialBalance", discard).createXmlDocument();
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "C_ElementValue level", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Client",
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "LIST", "",
+          "C_ElementValue level", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportTrialBalance"), Utility.getContext(readOnlyCP, vars, "#User_Client",
               "ReportTrialBalance"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportTrialBalance", "");
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportTrialBalance", "");
       xmlDocument.setData("reportLevel", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportTrialBalance", false, "", "",
-        "if (validate()) { imprimir(); } return false;", false, "ad_reports", strReplaceWith,
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportTrialBalance", false, "",
+        "", "if (validate()) { imprimir(); } return false;", false, "ad_reports", strReplaceWith,
         false, true);
     toolbar.setEmail(false);
     toolbar.prepareSimpleToolBarTemplate();
@@ -405,16 +424,17 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.erpCommon.ad_reports.ReportTrialBalance");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportTrialBalance.html",
-          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
+          "ReportTrialBalance.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportTrialBalance.html",
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(), "ReportTrialBalance.html",
           strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
@@ -429,21 +449,20 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     }
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"),
-          Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), '*');
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "AD_ORG_ID",
+          "", "", Utility.getContext(readOnlyCP, vars, "#User_Org", "ReportTrialBalance"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportTrialBalance"), '*');
       comboTableData.fillParameters(null, "ReportTrialBalance", "");
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
 
-    xmlDocument
-        .setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
-            .selectC_ACCTSCHEMA_ID(this,
-                Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"),
-                Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"),
-                strcAcctSchemaId));
+    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
+        .selectC_ACCTSCHEMA_ID(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportTrialBalance"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportTrialBalance"),
+            strcAcctSchemaId));
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -455,14 +474,14 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("adOrgId", strOrg);
-    xmlDocument.setParameter("Level", "".equals(strLevel) ? "S" : strLevel);
+    xmlDocument.setParameter("Level", StringUtils.isEmpty(strLevel) ? "S" : strLevel);
     xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);
     xmlDocument.setParameter("paramElementvalueIdFrom", strcElementValueFrom);
     xmlDocument.setParameter("paramElementvalueIdTo", strcElementValueTo);
     xmlDocument.setParameter("inpElementValueIdFrom_DES", strcElementValueFromDes);
     xmlDocument.setParameter("inpElementValueIdTo_DES", strcElementValueToDes);
-    xmlDocument.setParameter("paramMessage", (strMessage.equals("") ? "" : "alert('" + strMessage
-        + "');"));
+    xmlDocument.setParameter("paramMessage", (StringUtils.isEmpty(strMessage) ? "" : "alert('"
+        + strMessage + "');"));
     xmlDocument.setParameter("groupbyselected", strGroupBy);
     xmlDocument.setParameter("notInitialBalance", strNotInitialBalance);
     xmlDocument.setParameter("paramZeroFigures", strIncludeZeroFigures);
@@ -470,37 +489,38 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     xmlDocument.setData(
         "reportCBPartnerId_IN",
         "liststructure",
-        SelectorUtilityData.selectBpartner(this,
-            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
-            Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerIdAux));
+        SelectorUtilityData.selectBpartner(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strcBpartnerIdAux));
 
     xmlDocument.setData(
         "reportMProductId_IN",
         "liststructure",
-        SelectorUtilityData.selectMproduct(this,
-            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
-            Utility.getContext(this, vars, "#User_Client", ""), strmProductIdAux));
+        SelectorUtilityData.selectMproduct(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strmProductIdAux));
 
     xmlDocument.setData(
         "reportCProjectId_IN",
         "liststructure",
-        SelectorUtilityData.selectProject(this,
-            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
-            Utility.getContext(this, vars, "#User_Client", ""), strcProjectIdAux));
+        SelectorUtilityData.selectProject(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strcProjectIdAux));
 
     if (data != null && data.length > 0) {
-      if ("Y".equals(strIncludeZeroFigures) && "S".equals(strLevel))
+      if (StringUtils.equals(strIncludeZeroFigures, "Y") && StringUtils.equals(strLevel, "S")) {
         data = includeZeroFigures(data, strcAcctSchemaId, strOrg, strAccountFromValue,
             strAccountToValue);
+      }
       xmlDocument.setData("structure1", data);
     } else {
       if (vars.commandIn("FIND")) {
         // No data has been found. Show warning message.
         xmlDocument.setParameter("messageType", "WARNING");
         xmlDocument.setParameter("messageTitle",
-            Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()));
+            Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()));
         xmlDocument.setParameter("messageMessage",
-            Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+            Utility.messageBD(readOnlyCP, "NoDataFound", vars.getLanguage()));
       }
     }
 
@@ -521,13 +541,15 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     boolean showproduct = false;
     boolean showProject = false;
     boolean showCostcenter = false;
-    String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    String strTreeOrg = TreeData.getTreeOrg(readOnlyCP, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
-    String strTreeAccount = ReportTrialBalanceData.treeAccount(this, vars.getClient());
+    String strTreeAccount = ReportTrialBalanceData.treeAccount(readOnlyCP, vars.getClient());
 
-    String strAccountFromValue = ReportTrialBalanceData.selectAccountValue(this,
+    String strAccountFromValue = ReportTrialBalanceData.selectAccountValue(readOnlyCP,
         strcElementValueFrom);
-    String strAccountToValue = ReportTrialBalanceData.selectAccountValue(this, strcElementValueTo);
+    String strAccountToValue = ReportTrialBalanceData.selectAccountValue(readOnlyCP,
+        strcElementValueTo);
 
     log4j.debug("Output: XLS report");
     log4j.debug("strTreeOrg: " + strTreeOrg + "strOrgFamily: " + strOrgFamily + "strTreeAccount: "
@@ -535,32 +557,33 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     log4j.debug("strcBpartnerId: " + strcBpartnerId + "strmProductId: " + strmProductId
         + "strcProjectId: " + strcProjectId);
 
-    if (!strDateFrom.equals("") && !strDateTo.equals("") && !strOrg.equals("")
-        && !strcAcctSchemaId.equals("")) {
+    if (StringUtils.isNotEmpty(strDateFrom) && StringUtils.isNotEmpty(strDateTo)
+        && StringUtils.isNotEmpty(strOrg) && StringUtils.isNotEmpty(strcAcctSchemaId)) {
 
-      if (strLevel.equals("S")) {
-        data = ReportTrialBalanceData.selectXLS(this, vars.getLanguage(), strLevel, strOrgFamily,
-            Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"),
+      if (StringUtils.equals(strLevel, "S")) {
+        data = ReportTrialBalanceData.selectXLS(readOnlyCP, vars.getLanguage(), strLevel,
+            strOrgFamily, Utility
+                .getContext(readOnlyCP, vars, "#User_Client", "ReportTrialBalance"), Utility
+                .getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportTrialBalance"),
             strAccountFromValue, strAccountToValue, strDateFrom, strcBpartnerId, strmProductId,
-            strcProjectId, strcAcctSchemaId, (strNotInitialBalance.equals("Y") ? "O" : "P"),
-            DateTimeData.nDaysAfter(this, strDateTo, "1"));
-        if (strGroupBy.equals("BPartner")) {
+            strcProjectId, strcAcctSchemaId, (StringUtils.equals(strNotInitialBalance, "Y") ? "O"
+                : "P"), DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"));
+        if (StringUtils.equals(strGroupBy, "BPartner")) {
           showbpartner = true;
           showproduct = false;
           showProject = false;
           showCostcenter = false;
-        } else if (strGroupBy.equals("Product")) {
+        } else if (StringUtils.equals(strGroupBy, "Product")) {
           showbpartner = false;
           showproduct = true;
           showProject = false;
           showCostcenter = false;
-        } else if (strGroupBy.equals("Project")) {
+        } else if (StringUtils.equals(strGroupBy, "Project")) {
           showbpartner = false;
           showproduct = false;
           showProject = true;
           showCostcenter = false;
-        } else if (strGroupBy.equals("CostCenter")) {
+        } else if (StringUtils.equals(strGroupBy, "CostCenter")) {
           showbpartner = false;
           showproduct = false;
           showProject = false;
@@ -578,19 +601,19 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
       if (data == null || data.length == 0) {
         advisePopUp(request, response, "WARNING",
-            Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
-            Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+            Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()),
+            Utility.messageBD(readOnlyCP, "NoDataFound", vars.getLanguage()));
       } else if (data.length > 65532) {
         advisePopUp(request, response, "ERROR",
-            Utility.messageBD(this, "ProcessStatus-E", vars.getLanguage()),
-            Utility.messageBD(this, "numberOfRowsExceeded", vars.getLanguage()));
+            Utility.messageBD(readOnlyCP, "ProcessStatus-E", vars.getLanguage()),
+            Utility.messageBD(readOnlyCP, "numberOfRowsExceeded", vars.getLanguage()));
       } else {
-        if ("Y".equals(strIncludeZeroFigures) && "S".equals(strLevel)) {
+        if (StringUtils.equals(strIncludeZeroFigures, "Y") && StringUtils.equals(strLevel, "S")) {
           data = includeZeroFigures(data, strcAcctSchemaId, strOrg, strAccountFromValue,
               strAccountToValue);
         }
 
-        AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class, strcAcctSchemaId);
+        AcctSchema acctSchema = OBDal.getReadOnlyInstance().get(AcctSchema.class, strcAcctSchemaId);
 
         String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportTrialBalanceExcel.jrxml";
 
@@ -598,14 +621,16 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
         StringBuilder strSubTitle = new StringBuilder();
 
-        strSubTitle.append(Utility.messageBD(this, "LegalEntity", vars.getLanguage()) + ": ");
-        strSubTitle.append(ReportTrialBalanceData.selectCompany(this, vars.getClient()) + " (");
-        strSubTitle.append(Utility.messageBD(this, "ACCS_AD_ORG_ID_D", vars.getLanguage()) + ": ");
-        strSubTitle.append(ReportTrialBalanceData.selectOrgName(this, strOrg) + ") \n");
-        strSubTitle.append(Utility.messageBD(this, "asof", vars.getLanguage()) + ": " + strDateTo
-            + " \n");
-        strSubTitle.append(Utility.messageBD(this, "generalLedger", vars.getLanguage()) + ": "
-            + acctSchema.getName());
+        strSubTitle.append(Utility.messageBD(readOnlyCP, "LegalEntity", vars.getLanguage()) + ": ");
+        strSubTitle.append(ReportTrialBalanceData.selectCompany(readOnlyCP, vars.getClient())
+            + " (");
+        strSubTitle.append(Utility.messageBD(readOnlyCP, "ACCS_AD_ORG_ID_D", vars.getLanguage())
+            + ": ");
+        strSubTitle.append(ReportTrialBalanceData.selectOrgName(readOnlyCP, strOrg) + ") \n");
+        strSubTitle.append(Utility.messageBD(readOnlyCP, "asof", vars.getLanguage()) + ": "
+            + strDateTo + " \n");
+        strSubTitle.append(Utility.messageBD(readOnlyCP, "generalLedger", vars.getLanguage())
+            + ": " + acctSchema.getName());
 
         parameters.put("REPORT_SUBTITLE", strSubTitle.toString());
         parameters.put("SHOWTOTALS", false);
@@ -620,8 +645,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       }
     } else {
       advisePopUp(request, response, "WARNING",
-          Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
-          Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+          Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()),
+          Utility.messageBD(readOnlyCP, "NoDataFound", vars.getLanguage()));
     }
 
   }
@@ -636,14 +661,16 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
     response.setContentType("text/html; charset=UTF-8");
     ReportTrialBalanceData[] data = null;
-    String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    String strTreeOrg = TreeData.getTreeOrg(readOnlyCP, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
-    String strTreeAccount = ReportTrialBalanceData.treeAccount(this, vars.getClient());
+    String strTreeAccount = ReportTrialBalanceData.treeAccount(readOnlyCP, vars.getClient());
     boolean strIsSubAccount = false;
 
-    String strAccountFromValue = ReportTrialBalanceData.selectAccountValue(this,
+    String strAccountFromValue = ReportTrialBalanceData.selectAccountValue(readOnlyCP,
         strcElementValueFrom);
-    String strAccountToValue = ReportTrialBalanceData.selectAccountValue(this, strcElementValueTo);
+    String strAccountToValue = ReportTrialBalanceData.selectAccountValue(readOnlyCP,
+        strcElementValueTo);
 
     log4j.debug("Output: PDF report");
     log4j.debug("strTreeOrg: " + strTreeOrg + "strOrgFamily: " + strOrgFamily + "strTreeAccount: "
@@ -651,41 +678,43 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     log4j.debug("strcBpartnerId: " + strcBpartnerId + "strmProductId: " + strmProductId
         + "strcProjectId: " + strcProjectId);
 
-    if (!strDateFrom.equals("") && !strDateTo.equals("") && !strOrg.equals("")
-        && !strcAcctSchemaId.equals("")) {
+    if (StringUtils.isNotEmpty(strDateFrom) && StringUtils.isNotEmpty(strDateTo)
+        && StringUtils.isNotEmpty(strOrg) && StringUtils.isNotEmpty(strcAcctSchemaId)) {
 
-      if (strLevel.equals("S")) {
+      if (StringUtils.equals(strLevel, "S")) {
         data = ReportTrialBalanceData.selectLines(
-            this,
-            "BPartner".equals(strGroupBy) ? "C_BPARTNER"
-                : ("Product".equals(strGroupBy) ? "M_PRODUCT"
-                    : ("Project".equals(strGroupBy) ? "C_PROJECT" : ("CostCenter"
-                        .equals(strGroupBy) ? "C_COSTCENTER" : null))),
+            readOnlyCP,
+            StringUtils.equals(strGroupBy, "BPartner") ? "C_BPARTNER" : (StringUtils.equals(
+                strGroupBy, "Product") ? "M_PRODUCT"
+                : (StringUtils.equals(strGroupBy, "Project") ? "C_PROJECT" : (StringUtils.equals(
+                    strGroupBy, "CostCenter") ? "C_COSTCENTER" : null))),
             vars.getLanguage(),
             strDateFrom,
-            (strNotInitialBalance.equals("Y") ? "O" : null),
-            (strNotInitialBalance.equals("Y") ? null : "O"),
-            "BPartner".equals(strGroupBy) ? "f.c_bpartner_id"
-                : ("Product".equals(strGroupBy) ? "f.m_product_id"
-                    : ("Project".equals(strGroupBy) ? "f.c_project_id" : ("CostCenter"
-                        .equals(strGroupBy) ? "f.c_costcenter_id" : "to_char('')"))),
+            (StringUtils.equals(strNotInitialBalance, "Y") ? "O" : null),
+            (StringUtils.equals(strNotInitialBalance, "Y") ? null : "O"),
+            StringUtils.equals(strGroupBy, "BPartner") ? "f.c_bpartner_id" : (StringUtils.equals(
+                strGroupBy, "Product") ? "f.m_product_id" : (StringUtils.equals(strGroupBy,
+                "Project") ? "f.c_project_id"
+                : (StringUtils.equals(strGroupBy, "CostCenter") ? "f.c_costcenter_id"
+                    : "to_char('')"))),
             strOrgFamily,
-            Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"),
-            DateTimeData.nDaysAfter(this, strDateTo, "1"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportTrialBalance"),
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportTrialBalance"),
+            DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"),
             null,
             strcBpartnerId,
             strmProductId,
             strcProjectId,
             strcAcctSchemaId,
             strLevel,
-            "BPartner".equals(strGroupBy) ? ", f.c_bpartner_id"
-                : ("Product".equals(strGroupBy) ? ", f.m_product_id" : ("Project"
-                    .equals(strGroupBy) ? ", f.c_project_id"
-                    : ("CostCenter".equals(strGroupBy) ? ", f.c_costcenter_id" : " "))),
+            StringUtils.equals(strGroupBy, "BPartner") ? ", f.c_bpartner_id" : (StringUtils.equals(
+                strGroupBy, "Product") ? ", f.m_product_id" : (StringUtils.equals(strGroupBy,
+                "Project") ? ", f.c_project_id"
+                : (StringUtils.equals(strGroupBy, "CostCenter") ? ", f.c_costcenter_id" : " "))),
             strAccountFromValue, strAccountToValue);
-        if (!strGroupBy.equals(""))
+        if (StringUtils.isNotEmpty(strGroupBy)) {
           strIsSubAccount = true;
+        }
 
       } else {
         data = getDataWhenNotSubAccount(vars, strDateFrom, strDateTo, strOrg, strOrgFamily,
@@ -694,34 +723,36 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
       if (data == null || data.length == 0) {
         advisePopUp(request, response, "WARNING",
-            Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
-            Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+            Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()),
+            Utility.messageBD(readOnlyCP, "NoDataFound", vars.getLanguage()));
       } else {
-        if ("Y".equals(strIncludeZeroFigures) && "S".equals(strLevel)) {
+        if (StringUtils.equals(strIncludeZeroFigures, "Y") && StringUtils.equals(strLevel, "S")) {
           data = includeZeroFigures(data, strcAcctSchemaId, strOrg, strAccountFromValue,
               strAccountToValue);
         }
 
-        AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class, strcAcctSchemaId);
+        AcctSchema acctSchema = OBDal.getReadOnlyInstance().get(AcctSchema.class, strcAcctSchemaId);
 
         String strLanguage = vars.getLanguage();
         String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportTrialBalancePDF.jrxml";
         HashMap<String, Object> parameters = new HashMap<String, Object>();
 
-        parameters.put("TOTAL", Utility.messageBD(this, "Total", strLanguage));
+        parameters.put("TOTAL", Utility.messageBD(readOnlyCP, "Total", strLanguage));
         StringBuilder strSubTitle = new StringBuilder();
 
-        strSubTitle.append(Utility.messageBD(this, "LegalEntity", vars.getLanguage()) + ": ");
-        strSubTitle.append(ReportTrialBalanceData.selectCompany(this, vars.getClient()) + " \n");
-        strSubTitle.append(Utility.messageBD(this, "asof", vars.getLanguage()) + ": " + strDateTo
+        strSubTitle.append(Utility.messageBD(readOnlyCP, "LegalEntity", vars.getLanguage()) + ": ");
+        strSubTitle.append(ReportTrialBalanceData.selectCompany(readOnlyCP, vars.getClient())
             + " \n");
+        strSubTitle.append(Utility.messageBD(readOnlyCP, "asof", vars.getLanguage()) + ": "
+            + strDateTo + " \n");
 
-        if (!("0".equals(strOrg)))
-          strSubTitle.append(Utility.messageBD(this, "ACCS_AD_ORG_ID_D", vars.getLanguage()) + ": "
-              + ReportTrialBalanceData.selectOrgName(this, strOrg) + " \n");
+        if (!StringUtils.equals(strOrg, "0")) {
+          strSubTitle.append(Utility.messageBD(readOnlyCP, "ACCS_AD_ORG_ID_D", vars.getLanguage())
+              + ": " + ReportTrialBalanceData.selectOrgName(readOnlyCP, strOrg) + " \n");
+        }
 
-        strSubTitle.append(Utility.messageBD(this, "generalLedger", vars.getLanguage()) + ": "
-            + acctSchema.getName());
+        strSubTitle.append(Utility.messageBD(readOnlyCP, "generalLedger", vars.getLanguage())
+            + ": " + acctSchema.getName());
 
         parameters.put("REPORT_SUBTITLE", strSubTitle.toString());
 
@@ -731,15 +762,15 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         parameters.put("PageNo", strPageNo);
         parameters.put("DATE_FROM", strDateFrom);
         parameters.put("DATE_TO", strDateTo);
-        parameters.put("PAGEOF", Utility.messageBD(this, "PageOfNumber", vars.getLanguage()));
+        parameters.put("PAGEOF", Utility.messageBD(readOnlyCP, "PageOfNumber", vars.getLanguage()));
 
         renderJR(vars, response, strReportName, "pdf", parameters, data, null);
       }
 
     } else {
       advisePopUp(request, response, "WARNING",
-          Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
-          Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+          Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()),
+          Utility.messageBD(readOnlyCP, "NoDataFound", vars.getLanguage()));
     }
 
   }
@@ -750,14 +781,16 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       throws IOException, ServletException {
     ReportTrialBalanceData[] data = null;
     ReportTrialBalanceData[] dataAux = null;
-    dataAux = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg, strTreeAccount,
-        strcAcctSchemaId, strNotInitialBalance.equals("Y") ? "O" : "P", strOrgFamily,
-        Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"),
-        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"), strDateFrom,
-        DateTimeData.nDaysAfter(this, strDateTo, "1"), "", "");
-    ReportTrialBalanceData[] dataInitialBalance = ReportTrialBalanceData.selectInitialBalance(this,
-        strDateFrom, strcAcctSchemaId, "", "", "", strOrgFamily,
-        Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"));
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    dataAux = ReportTrialBalanceData.select(readOnlyCP, strDateFrom, strDateTo, strOrg,
+        strTreeAccount, strcAcctSchemaId,
+        StringUtils.equals(strNotInitialBalance, "Y") ? "O" : "P", strOrgFamily,
+        Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportTrialBalance"),
+        Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportTrialBalance"),
+        strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), "", "");
+    ReportTrialBalanceData[] dataInitialBalance = ReportTrialBalanceData.selectInitialBalance(
+        readOnlyCP, strDateFrom, strcAcctSchemaId, "", "", "", strOrgFamily,
+        Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportTrialBalance"));
 
     log4j.debug("Calculating tree...");
     dataAux = calculateTree(dataAux, null, new Vector<String>(), dataInitialBalance,
@@ -783,8 +816,9 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
   private ReportTrialBalanceData[] filterTree(ReportTrialBalanceData[] data, String strLevel) {
     ArrayList<ReportTrialBalanceData> arrayList = new ArrayList<>();
     for (int i = 0; data != null && i < data.length; i++) {
-      if (data[i].elementlevel.equals(strLevel))
+      if (StringUtils.equals(data[i].elementlevel, strLevel)) {
         arrayList.add(data[i]);
+      }
     }
     ReportTrialBalanceData[] new_data = new ReportTrialBalanceData[arrayList.size()];
     arrayList.toArray(new_data);
@@ -795,17 +829,20 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       Vector<String> vecTotal, ReportTrialBalanceData[] dataIB, String strNotInitialBalance) {
     Vector<String> localVecTotal = vecTotal;
     String localIndice = indice;
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       return data;
-    if (localIndice == null)
+    }
+    if (localIndice == null) {
       localIndice = "0";
+    }
     ReportTrialBalanceData[] result = null;
     Vector<ReportTrialBalanceData> vec = new Vector<>();
     // if (log4j.isDebugEnabled())
     // log4j.debug("ReportTrialBalanceData.calculateTree() - data: " +
     // data.length);
-    if (localVecTotal == null)
+    if (localVecTotal == null) {
       localVecTotal = new Vector<>();
+    }
     if (localVecTotal.size() == 0) {
       localVecTotal.addElement("0");
       localVecTotal.addElement("0");
@@ -818,7 +855,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     BigDecimal totalFinal = new BigDecimal(localVecTotal.elementAt(3));
     boolean encontrado = false;
     for (int i = 0; i < data.length; i++) {
-      if (data[i].parentId.equals(localIndice)) {
+      if (StringUtils.equals(data[i].parentId, localIndice)) {
         encontrado = true;
         Vector<String> vecParcial = new Vector<>();
         vecParcial.addElement("0");
@@ -841,8 +878,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
         // Set calculated Initial Balances
         for (int k = 0; k < dataIB.length; k++) {
-          if (dataIB[k].accountId.equals(data[i].id)) {
-            if (strNotInitialBalance.equals("Y")) {
+          if (StringUtils.equals(dataIB[k].accountId, data[i].id)) {
+            if (StringUtils.equals(strNotInitialBalance, "Y")) {
               data[i].saldoInicial = (new BigDecimal(dataIB[k].saldoInicial).add(parcialInicial))
                   .toPlainString();
 
@@ -866,11 +903,13 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
         vec.addElement(data[i]);
         if (dataChilds != null && dataChilds.length > 0) {
-          for (int j = 0; j < dataChilds.length; j++)
+          for (int j = 0; j < dataChilds.length; j++) {
             vec.addElement(dataChilds[j]);
+          }
         }
-      } else if (encontrado)
+      } else if (encontrado) {
         break;
+      }
     }
     localVecTotal.set(0, totalDR.toPlainString());
     localVecTotal.set(1, totalCR.toPlainString());
@@ -889,8 +928,9 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
    * @return ReportTrialBalanceData array filtered.
    */
   private ReportTrialBalanceData[] dataFilter(ReportTrialBalanceData[] data) {
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       return data;
+    }
     Vector<ReportTrialBalanceData> dataFiltered = new Vector<>();
     for (int i = 0; i < data.length; i++) {
       if (new BigDecimal(data[i].amtacctdr).compareTo(BigDecimal.ZERO) != 0
@@ -908,25 +948,29 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
   private ReportTrialBalanceData[] levelFilter(ReportTrialBalanceData[] data, String indice,
       boolean found, String strLevel) {
     String localIndice = indice;
-    if (data == null || data.length == 0 || strLevel == null || strLevel.equals(""))
+    if (data == null || data.length == 0 || StringUtils.isEmpty(strLevel)) {
       return data;
+    }
     ReportTrialBalanceData[] result = null;
     Vector<ReportTrialBalanceData> vec = new Vector<>();
     // if (log4j.isDebugEnabled())
     // log4j.debug("ReportTrialBalanceData.levelFilter() - data: " +
     // data.length);
 
-    if (localIndice == null)
+    if (localIndice == null) {
       localIndice = "0";
+    }
     for (int i = 0; i < data.length; i++) {
-      if (data[i].parentId.equals(localIndice)
-          && (!found || data[i].elementlevel.equalsIgnoreCase(strLevel))) {
+      if (StringUtils.equals(data[i].parentId, localIndice)
+          && (!found || StringUtils.equalsIgnoreCase(data[i].elementlevel, strLevel))) {
         ReportTrialBalanceData[] dataChilds = levelFilter(data, data[i].id,
-            (found || data[i].elementlevel.equals(strLevel)), strLevel);
+            (found || StringUtils.equals(data[i].elementlevel, strLevel)), strLevel);
         vec.addElement(data[i]);
-        if (dataChilds != null && dataChilds.length > 0)
-          for (int j = 0; j < dataChilds.length; j++)
+        if (dataChilds != null && dataChilds.length > 0) {
+          for (int j = 0; j < dataChilds.length; j++) {
             vec.addElement(dataChilds[j]);
+          }
+        }
       }
     }
     result = new ReportTrialBalanceData[vec.size()];
@@ -936,7 +980,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
   }
 
   private String getFamily(String strTree, String strChild) throws IOException, ServletException {
-    return Tree.getMembers(this, strTree, strChild);
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    return Tree.getMembers(readOnlyCP, strTree, strChild);
   }
 
   /**
@@ -952,8 +997,10 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       String strcAcctSchemaId, String strOrg, String strAccountFromValue, String strAccountToValue)
       throws ServletException {
     ReportTrialBalanceData[] dataZeroFigures = null;
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     ReportTrialBalanceData[] dataAccountCombinations = ReportTrialBalanceData
-        .selectAccountCombinations(this, strcAcctSchemaId, strAccountFromValue, strAccountToValue);
+        .selectAccountCombinations(readOnlyCP, strcAcctSchemaId, strAccountFromValue,
+            strAccountToValue);
     if (dataAccountCombinations.length > 0) {
       Vector<ReportTrialBalanceData> vec = new Vector<>();
       List<String> dataAccounts = new ArrayList<String>(data.length);
@@ -970,8 +1017,9 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           for (int k = j; k <= lastAccountMatch; k++) {
             vec.addElement(data[k]);
             j++;
-            if (extraCount > 0)
+            if (extraCount > 0) {
               extra++;
+            }
             extraCount++;
           }
         } else {

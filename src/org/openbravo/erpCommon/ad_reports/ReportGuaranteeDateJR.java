@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,8 +26,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -36,6 +38,7 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
@@ -65,24 +68,27 @@ public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
       String strmWarehouseId = vars.getStringParameter("inpmWarehouseId");
       setHistoryCommand(request, "FIND");
       printPageDataHtml(response, vars, strDate, strcBpartnerId, strmWarehouseId, "pdf");
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
       String strDate, String strcBpartnerId, String strmWarehouseId, String strOutput)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
 
     // XmlDocument xmlDocument=null;
     ReportGuaranteeDateData[] data = null;
     String discard[] = { "discard" };
-    data = ReportGuaranteeDateData.select(this,
-        Utility.getContext(this, vars, "#User_Client", "ReportGuaranteeDateJR"),
-        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGuaranteeDateJR"),
-        DateTimeData.nDaysAfter(this, strDate, "1"), strcBpartnerId, strmWarehouseId);
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    data = ReportGuaranteeDateData.select(readOnlyCP,
+        Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGuaranteeDateJR"),
+        Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGuaranteeDateJR"),
+        DateTimeData.nDaysAfter(readOnlyCP, strDate, "1"), strcBpartnerId, strmWarehouseId);
 
     if (data == null || data.length == 0) {
       discard[0] = "selEliminar";
@@ -90,8 +96,9 @@ public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
     }
 
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGuaranteeDateJR.jrxml";
-    if (strOutput.equals("pdf"))
+    if (StringUtils.equals(strOutput, "pdf")) {
       response.setHeader("Content-disposition", "inline; filename=ReportGuaranteeDateJR.pdf");
+    }
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("ReportData", strDate);
@@ -103,8 +110,9 @@ public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDate, String strcBpartnerId, String strmWarehouseId) throws IOException,
       ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
@@ -112,22 +120,24 @@ public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportGuaranteeDateJR").createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportGuaranteeDateJR", false, "", "",
-        "", false, "ad_reports", strReplaceWith, false, true);
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportGuaranteeDateJR", false,
+        "", "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.erpCommon.ad_reports.ReportGuaranteeDateJR");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportGuaranteeDateJR.html",
-          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
+          "ReportGuaranteeDateJR.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportGuaranteeDateJR.html",
-          strReplaceWith);
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(),
+          "ReportGuaranteeDateJR.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -151,12 +161,13 @@ public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramBPartnerId", strcBpartnerId);
     xmlDocument.setParameter("mWarehouseId", strmWarehouseId);
     xmlDocument.setParameter("bPartnerDescription",
-        ReportGuaranteeDateData.selectBpartner(this, strcBpartnerId));
+        ReportGuaranteeDateData.selectBpartner(readOnlyCP, strcBpartnerId));
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGuaranteeDateJR"),
-          Utility.getContext(this, vars, "#User_Client", "ReportGuaranteeDateJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportGuaranteeDateJR",
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+          "M_Warehouse_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportGuaranteeDateJR"), Utility.getContext(readOnlyCP, vars, "#User_Client",
+              "ReportGuaranteeDateJR"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportGuaranteeDateJR",
           strmWarehouseId);
       xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
       comboTableData = null;

@@ -39,6 +39,7 @@ import org.openbravo.costing.CostingStatus;
 import org.openbravo.costing.CostingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -53,6 +54,7 @@ import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportParetoProduct extends HttpSecureAppServlet {
@@ -61,9 +63,10 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
 
     // Get user Client's base currency
-    String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+    String strUserCurrencyId = Utility.stringBaseCurrencyId(readOnlyCP, vars.getClient());
     if (vars.commandIn("DEFAULT")) {
       String strWarehouse = vars.getGlobalVariable("inpmWarehouseId",
           "ReportParetoProduct|M_Warehouse_ID", "");
@@ -96,7 +99,7 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       OBError myMessage = mUpdateParetoProduct(vars, strWarehouse, strAD_Org_ID, strClient);
       myMessage.setTitle("");
       myMessage.setType("Success");
-      myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+      myMessage.setTitle(Utility.messageBD(readOnlyCP, "Success", vars.getLanguage()));
       vars.setMessage("ReportParetoProduct", myMessage);
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
           "ReportParetoProduct|currency", strUserCurrencyId);
@@ -113,36 +116,40 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       PrintWriter out = response.getWriter();
       out.print(strCurrencyId);
       out.close();
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strWarehouse, String strAD_Org_ID, String strClient,
       String strCurrencyId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
+
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument = null;
+
     ReportParetoProductData[] data = null;
     String strConvRateErrorMsg = "";
-
     String discard[] = { "discard" };
 
     // If the instance is not migrated the user should use the Legacy report
-    if (CostingStatus.getInstance().isMigrated() == false) {
+    if (!CostingStatus.getInstance().isMigrated()) {
       advise(request, response, "ERROR", OBMessageUtils.messageBD("NotUsingNewCost"), "");
       return;
     }
 
-    xmlDocument = xmlEngine.readXmlTemplate(
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportParetoProduct", discard).createXmlDocument();
+
     if (vars.commandIn("FIND")) {
       // Checks if there is a conversion rate for each of the transactions
       // of the report
-      OBError myMessage = null;
-      myMessage = new OBError();
+      OBError myMessage = new OBError();
       try {
         OBContext.setAdminMode(true);
 
@@ -150,13 +157,13 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
         // possible because the report can be launched only for one legal entity at the same time)
         final Organization legalEntity = OBContext.getOBContext()
             .getOrganizationStructureProvider(strClient)
-            .getLegalEntity(OBDal.getInstance().get(Organization.class, strAD_Org_ID));
+            .getLegalEntity(OBDal.getReadOnlyInstance().get(Organization.class, strAD_Org_ID));
         if (legalEntity == null) {
           throw new OBException(OBMessageUtils.messageBD("WarehouseNotInLE"));
         }
 
         // Calculate max aggregated date or set a default value if not aggregated data
-        String strMaxAggDate = ReportParetoProductData.selectMaxAggregatedDate(this,
+        String strMaxAggDate = ReportParetoProductData.selectMaxAggregatedDate(readOnlyCP,
             legalEntity.getId());
         if (StringUtils.isBlank(strMaxAggDate)) {
           final DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
@@ -173,11 +180,11 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
         }
         final String processTimeDateFormat = "DD-MM-YYYY HH24:MI:SS";
 
-        data = ReportParetoProductData.select(this, strCurrencyId, strClient, legalEntity.getId(),
-            processTime, processTimeDateFormat, strMaxAggDate, strWarehouse, strAD_Org_ID,
-            vars.getLanguage());
+        data = ReportParetoProductData.select(readOnlyCP, strCurrencyId, strClient,
+            legalEntity.getId(), processTime, processTimeDateFormat, strMaxAggDate, strWarehouse,
+            strAD_Org_ID, vars.getLanguage());
       } catch (ServletException ex) {
-        myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+        myMessage = Utility.translateError(readOnlyCP, vars, vars.getLanguage(), ex.getMessage());
       } catch (ParseException ignore) {
       } finally {
         OBContext.restorePreviousMode();
@@ -185,9 +192,9 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       strConvRateErrorMsg = myMessage.getMessage();
       // If a conversion rate is missing for a certain transaction, an
       // error message window pops-up.
-      if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+      if (StringUtils.isNotEmpty(strConvRateErrorMsg)) {
         advise(request, response, "ERROR",
-            Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+            Utility.messageBD(readOnlyCP, "NoConversionRateHeader", vars.getLanguage()),
             strConvRateErrorMsg);
       } else { // Otherwise, the report is launched
         if (data == null || data.length == 0) {
@@ -200,7 +207,7 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
           int toAdjustPosition = 0;
           String currentOrganization = data[0].orgid;
           for (int i = 0; i < data.length; i++) {
-            if (data[i].orgid.equals(currentOrganization)) {
+            if (StringUtils.equals(data[i].orgid, currentOrganization)) {
               total = total.add(new BigDecimal(data[i].percentage)).setScale(2,
                   BigDecimal.ROUND_HALF_UP);
             } else {
@@ -223,32 +230,33 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
     }
 
     else {
-      if (strConvRateErrorMsg.equals("") || strConvRateErrorMsg == null) {
+      if (StringUtils.isEmpty(strConvRateErrorMsg)) {
         discard[0] = "selEliminar";
         data = ReportParetoProductData.set();
       }
     }
 
-    if (strConvRateErrorMsg.equals("") || strConvRateErrorMsg == null) {
+    if (StringUtils.isEmpty(strConvRateErrorMsg)) {
       // Load Toolbar
-      ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportParetoProduct", false, "", "",
-          "", false, "ad_reports", strReplaceWith, false, true);
+      ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportParetoProduct", false,
+          "", "", "", false, "ad_reports", strReplaceWith, false, true);
       toolbar.prepareSimpleToolBarTemplate();
       xmlDocument.setParameter("toolbar", toolbar.toString());
 
       // Create WindowTabs
       try {
-        WindowTabs tabs = new WindowTabs(this, vars,
+        WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
             "org.openbravo.erpCommon.ad_reports.ReportParetoProduct");
         xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
         xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
         xmlDocument.setParameter("childTabContainer", tabs.childTabs());
         xmlDocument.setParameter("theme", vars.getTheme());
-        NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportParetoProduct.html",
-            classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+        NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
+            "ReportParetoProduct.html", classInfo.id, classInfo.type, strReplaceWith,
+            tabs.breadcrumb());
         xmlDocument.setParameter("navigationBar", nav.toString());
-        LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportParetoProduct.html",
-            strReplaceWith);
+        LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(),
+            "ReportParetoProduct.html", strReplaceWith);
         xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
       } catch (Exception ex) {
         throw new ServletException(ex);
@@ -272,11 +280,11 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
 
       // Load Business Partner Group combo with data
       try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-            "M_Warehouse_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "ReportParetoProduct"), Utility.getContext(this, vars, "#User_Client",
+        ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+            "M_Warehouse_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+                "ReportParetoProduct"), Utility.getContext(readOnlyCP, vars, "#User_Client",
                 "ReportParetoProduct"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportParetoProduct",
+        Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportParetoProduct",
             strWarehouse);
         xmlDocument.setData("reportM_Warehouse_ID", "liststructure", comboTableData.select(false));
         comboTableData = null;
@@ -285,11 +293,11 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       }
 
       try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-            "D4DF252DEC3B44858454EE5292A8B836", Utility.getContext(this, vars, "#User_Org",
-                "ReportParetoProduct"), Utility.getContext(this, vars, "#User_Client",
-                "ReportParetoProduct"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportParetoProduct",
+        ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+            "AD_Org_ID", "", "D4DF252DEC3B44858454EE5292A8B836", Utility.getContext(readOnlyCP,
+                vars, "#User_Org", "ReportParetoProduct"), Utility.getContext(readOnlyCP, vars,
+                "#User_Client", "ReportParetoProduct"), 0);
+        Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportParetoProduct",
             strAD_Org_ID);
         xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
         comboTableData = null;
@@ -299,10 +307,11 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
 
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportParetoProduct"),
-            Utility.getContext(this, vars, "#User_Client", "ReportParetoProduct"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportParetoProduct",
+        ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+            "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+                "ReportParetoProduct"), Utility.getContext(readOnlyCP, vars, "#User_Client",
+                "ReportParetoProduct"), 0);
+        Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportParetoProduct",
             strCurrencyId);
         xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
         comboTableData = null;
@@ -314,8 +323,8 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
           "warehouseArray",
           Utility.arrayDobleEntrada(
               "arrWarehouse",
-              ReportParetoProductData.selectWarehouseDouble(this,
-                  Utility.getContext(this, vars, "#User_Client", "ReportParetoProduct"))));
+              ReportParetoProductData.selectWarehouseDouble(readOnlyCP,
+                  Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportParetoProduct"))));
 
       xmlDocument.setParameter("mWarehouseId", strWarehouse);
       xmlDocument.setParameter("adOrg", strAD_Org_ID);
@@ -347,6 +356,6 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
 
   public String getServletInfo() {
     return "Servlet ReportParetoProduct info. Insert here any relevant information";
-  } // end of getServletInfo() method
+  }
 
 }

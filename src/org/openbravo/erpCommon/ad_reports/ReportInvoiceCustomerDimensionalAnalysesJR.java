@@ -39,6 +39,7 @@ import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.costing.CostingBackground;
 import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
@@ -55,6 +56,7 @@ import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -66,7 +68,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Get user Client's base currency
-    String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    String strUserCurrencyId = Utility.stringBaseCurrencyId(readOnlyCP, vars.getClient());
     if (vars.commandIn("DEFAULT", "DEFAULT_COMPARATIVE")) {
       String strDateFrom = vars.getGlobalVariable("inpDateFrom",
           "ReportInvoiceCustomerDimensionalAnalysesJR|dateFrom", "");
@@ -308,8 +311,9 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       PrintWriter out = response.getWriter();
       out.print(strOrgCurrencyId);
       out.close();
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletRequest request, HttpServletResponse response,
@@ -321,10 +325,11 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       String strProducttype, String strcDocTypeId, String strOrder, String strMayor,
       String strMenor, String strPartnerSalesrepId, String strCurrencyId, String strVoid)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     String discard[] = { "selEliminarHeader1" };
-    if (strComparative.equals("Y")) {
+    if (StringUtils.equals(strComparative, "Y")) {
       discard[0] = "selEliminarHeader2";
     }
     XmlDocument xmlDocument = null;
@@ -332,23 +337,24 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
         "org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalysesJRFilter",
         discard).createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(),
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(),
         "ReportInvoiceCustomerDimensionalAnalysesJRFilter", false, "", "", "", false, "ad_reports",
         strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.erpCommon.ad_reports.ReportInvoiceCustomerDimensionalAnalysesJR");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
           "ReportInvoiceCustomerDimensionalAnalysesJR.html", classInfo.id, classInfo.type,
           strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(),
           "ReportInvoiceCustomerDimensionalAnalysesJR.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
@@ -364,12 +370,16 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       }
       if (CostingStatus.getInstance().isMigrated() == false) {
         advise(request, response, "ERROR",
-            Utility.messageBD(this, "NotUsingNewCost", vars.getLanguage()), "");
+            Utility.messageBD(readOnlyCP, "NotUsingNewCost", vars.getLanguage()), "");
         return;
       }
       if (!transactionCostDateAcctInitialized()) {
-        advise(request, response, "ERROR",
-            Utility.messageBD(this, "TransactionCostDateAcctNotInitilized", vars.getLanguage()), "");
+        advise(
+            request,
+            response,
+            "ERROR",
+            Utility.messageBD(readOnlyCP, "TransactionCostDateAcctNotInitilized",
+                vars.getLanguage()), "");
         return;
       }
     }
@@ -418,13 +428,13 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     xmlDocument.setParameter("producttype", strProducttype);
     xmlDocument.setParameter("partnerSalesRepId", strPartnerSalesrepId);
     xmlDocument.setParameter("projectName",
-        ReportInvoiceCustomerDimensionalAnalysesJRData.selectProject(this, strcProjectId));
+        ReportInvoiceCustomerDimensionalAnalysesJRData.selectProject(readOnlyCP, strcProjectId));
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BP_Group_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportInvoiceCustomerDimensionalAnalysesJR"), Utility.getContext(this, vars,
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+          "C_BP_Group_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportInvoiceCustomerDimensionalAnalysesJR"), Utility.getContext(readOnlyCP, vars,
               "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData,
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportInvoiceCustomerDimensionalAnalysesJR", strPartnerGroup);
       xmlDocument.setData("reportC_BP_GROUPID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -433,11 +443,12 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     }
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportInvoiceCustomerDimensionalAnalysesJR"), Utility.getContext(this, vars,
-              "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData,
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+          "M_Product_Category_ID", "", "", Utility.getContext(readOnlyCP, vars,
+              "#AccessibleOrgTree", "ReportInvoiceCustomerDimensionalAnalysesJR"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client",
+              "ReportInvoiceCustomerDimensionalAnalysesJR"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportInvoiceCustomerDimensionalAnalysesJR", strProductCategory);
       xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure",
           comboTableData.select(false));
@@ -447,11 +458,11 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     }
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org",
-              "ReportInvoiceCustomerDimensionalAnalysesJR"), Utility.getContext(this, vars,
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "AD_Org_ID",
+          "", "", Utility.getContext(readOnlyCP, vars, "#User_Org",
+              "ReportInvoiceCustomerDimensionalAnalysesJR"), Utility.getContext(readOnlyCP, vars,
               "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData,
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportInvoiceCustomerDimensionalAnalysesJR", strOrg);
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -462,22 +473,22 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     xmlDocument.setData(
         "reportCBPartnerId_IN",
         "liststructure",
-        SelectorUtilityData.selectBpartner(this,
-            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
-            Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
+        SelectorUtilityData.selectBpartner(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strcBpartnerId));
     xmlDocument.setData(
         "reportMProductId_IN",
         "liststructure",
-        SelectorUtilityData.selectMproduct(this,
-            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
-            Utility.getContext(this, vars, "#User_Client", ""), strmProductId));
+        SelectorUtilityData.selectMproduct(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strmProductId));
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "M_Product_ProductType", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportInvoiceCustomerDimensionalAnalysesJR"), Utility.getContext(this, vars,
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "LIST", "",
+          "M_Product_ProductType", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportInvoiceCustomerDimensionalAnalysesJR"), Utility.getContext(readOnlyCP, vars,
               "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData,
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportInvoiceCustomerDimensionalAnalysesJR", "");
       xmlDocument.setData("reportProductType", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -486,11 +497,11 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     }
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "SalesRep_ID",
-          "AD_User SalesRep", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportSalesDimensionalAnalyzeJR"), Utility.getContext(this, vars, "#User_Client",
-              "ReportSalesDimensionalAnalyzeJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData,
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLE", "SalesRep_ID",
+          "AD_User SalesRep", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportSalesDimensionalAnalyzeJR"), Utility.getContext(readOnlyCP, vars,
+              "#User_Client", "ReportSalesDimensionalAnalyzeJR"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportSalesDimensionalAnalyzeJR", strsalesrepId);
       xmlDocument.setData("reportSalesRep_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -499,11 +510,11 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     }
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-          "C_BPartner SalesRep", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportInvoiceCustomerDimensionalAnalysesJR"), Utility.getContext(this, vars,
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLE", "",
+          "C_BPartner SalesRep", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportInvoiceCustomerDimensionalAnalysesJR"), Utility.getContext(readOnlyCP, vars,
               "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData,
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportInvoiceCustomerDimensionalAnalysesJR", strPartnerSalesrepId);
       xmlDocument
           .setData("reportPartnerSalesRep_ID", "liststructure", comboTableData.select(false));
@@ -514,11 +525,11 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
 
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportInvoiceCustomerDimensionalAnalysesJR"), Utility.getContext(this, vars,
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+          "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportInvoiceCustomerDimensionalAnalysesJR"), Utility.getContext(readOnlyCP, vars,
               "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData,
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportInvoiceCustomerDimensionalAnalysesJR", strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -529,23 +540,25 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     xmlDocument.setData(
         "reportCDocTypeId_IN",
         "liststructure",
-        SelectorUtilityData.selectCDocType(this,
-            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
-            Utility.getContext(this, vars, "#User_Client", ""), strcDocTypeId));
+        SelectorUtilityData.selectCDocType(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strcDocTypeId));
 
-    if (vars.getLanguage().equals("en_US")) {
+    if (StringUtils.equals(vars.getLanguage(), "en_US")) {
       xmlDocument.setData("structure1",
-          ReportInvoiceCustomerDimensionalAnalysesJRData.selectNotShown(this, strShown));
+          ReportInvoiceCustomerDimensionalAnalysesJRData.selectNotShown(readOnlyCP, strShown));
       xmlDocument.setData("structure2",
-          strShown.equals("") ? new ReportInvoiceCustomerDimensionalAnalysesJRData[0]
-              : ReportInvoiceCustomerDimensionalAnalysesJRData.selectShown(this, strShown));
+          StringUtils.isEmpty(strShown) ? new ReportInvoiceCustomerDimensionalAnalysesJRData[0]
+              : ReportInvoiceCustomerDimensionalAnalysesJRData.selectShown(readOnlyCP, strShown));
     } else {
-      xmlDocument.setData("structure1", ReportInvoiceCustomerDimensionalAnalysesJRData
-          .selectNotShownTrl(this, vars.getLanguage(), strShown));
+      xmlDocument.setData(
+          "structure1",
+          ReportInvoiceCustomerDimensionalAnalysesJRData.selectNotShownTrl(readOnlyCP,
+              vars.getLanguage(), strShown));
       xmlDocument.setData(
           "structure2",
-          strShown.equals("") ? new ReportInvoiceCustomerDimensionalAnalysesJRData[0]
-              : ReportInvoiceCustomerDimensionalAnalysesJRData.selectShownTrl(this,
+          StringUtils.isEmpty(strShown) ? new ReportInvoiceCustomerDimensionalAnalysesJRData[0]
+              : ReportInvoiceCustomerDimensionalAnalysesJRData.selectShownTrl(readOnlyCP,
                   vars.getLanguage(), strShown));
     }
 
@@ -570,8 +583,9 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     String localStrDateToRef2 = strDateToRef2;
     String localStrDateFromRef2 = strDateFromRef2;
     String localStrDateFromRef3 = strDateFromRef3;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print html");
+    }
     String strOrderby = "";
     String[] discard = { "", "", "", "", "", "", "", "", "", "" };
     String[] discard1 = { "selEliminarBody1", "discard", "discard", "discard", "discard",
@@ -582,11 +596,12 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard" };
-    if (localStrOrg.equals(""))
+    if (StringUtils.isEmpty(localStrOrg)) {
       localStrOrg = vars.getOrg();
+    }
     boolean multiComparative2 = false;
     boolean multiComparative3 = false;
-    if (strComparative.equals("Y")) {
+    if (StringUtils.equals(strComparative, "Y")) {
       discard1[0] = "selEliminarBody2";
       if (StringUtils.isNotBlank(localStrDateFromRef2)
           && StringUtils.isNotBlank(localStrDateToRef2)) {
@@ -605,52 +620,67 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
         localStrDateToRef3 = "";
       }
     }
-    String strTitle = "";
-    strTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " " + strDateFrom + " "
-        + Utility.messageBD(this, "to", vars.getLanguage()) + " " + strDateTo;
-    String strSubTitle = strTitle;
-    if (!strPartnerGroup.equals(""))
-      strTitle = strTitle + ", " + Utility.messageBD(this, "ForBPartnerGroup", vars.getLanguage())
-          + " "
-          + ReportInvoiceCustomerDimensionalAnalysesJRData.selectBpgroup(this, strPartnerGroup);
 
-    if (!strProductCategory.equals(""))
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    String strTitle = Utility.messageBD(readOnlyCP, "From", vars.getLanguage()) + " " + strDateFrom
+        + " " + Utility.messageBD(readOnlyCP, "to", vars.getLanguage()) + " " + strDateTo;
+    String strSubTitle = strTitle;
+    if (StringUtils.isNotEmpty(strPartnerGroup)) {
       strTitle = strTitle
           + ", "
-          + Utility.messageBD(this, "ProductCategory", vars.getLanguage())
+          + Utility.messageBD(readOnlyCP, "ForBPartnerGroup", vars.getLanguage())
           + " "
-          + ReportInvoiceCustomerDimensionalAnalysesJRData.selectProductCategory(this,
+          + ReportInvoiceCustomerDimensionalAnalysesJRData.selectBpgroup(readOnlyCP,
+              strPartnerGroup);
+    }
+
+    if (StringUtils.isNotEmpty(strProductCategory)) {
+      strTitle = strTitle
+          + ", "
+          + Utility.messageBD(readOnlyCP, "ProductCategory", vars.getLanguage())
+          + " "
+          + ReportInvoiceCustomerDimensionalAnalysesJRData.selectProductCategory(readOnlyCP,
               strProductCategory);
-    if (!strcProjectId.equals(""))
-      strTitle = strTitle + ", " + Utility.messageBD(this, "Project", vars.getLanguage()) + " "
-          + ReportInvoiceCustomerDimensionalAnalysesJRData.selectProject(this, strcProjectId);
-    if (!strProducttype.equals(""))
+    }
+    if (StringUtils.isNotEmpty(strcProjectId)) {
+      strTitle = strTitle + ", " + Utility.messageBD(readOnlyCP, "Project", vars.getLanguage())
+          + " "
+          + ReportInvoiceCustomerDimensionalAnalysesJRData.selectProject(readOnlyCP, strcProjectId);
+    }
+    if (StringUtils.isNotEmpty(strProducttype)) {
       strTitle = strTitle
           + ", "
-          + Utility.messageBD(this, "PRODUCTTYPE", vars.getLanguage())
+          + Utility.messageBD(readOnlyCP, "PRODUCTTYPE", vars.getLanguage())
           + " "
-          + ReportInvoiceCustomerDimensionalAnalysesJRData.selectProducttype(this, "270",
+          + ReportInvoiceCustomerDimensionalAnalysesJRData.selectProducttype(readOnlyCP, "270",
               vars.getLanguage(), strProducttype);
-    if (!strsalesrepId.equals(""))
-      strTitle = strTitle + ", " + Utility.messageBD(this, "TheClientSalesRep", vars.getLanguage())
+    }
+    if (StringUtils.isNotEmpty(strsalesrepId)) {
+      strTitle = strTitle
+          + ", "
+          + Utility.messageBD(readOnlyCP, "TheClientSalesRep", vars.getLanguage())
           + " "
-          + ReportInvoiceCustomerDimensionalAnalysesJRData.selectSalesrep(this, strsalesrepId);
-    if (!strPartnerSalesrepId.equals(""))
+          + ReportInvoiceCustomerDimensionalAnalysesJRData
+              .selectSalesrep(readOnlyCP, strsalesrepId);
+    }
+    if (StringUtils.isNotEmpty(strPartnerSalesrepId)) {
       strTitle = strTitle
           + " "
-          + Utility.messageBD(this, "And", vars.getLanguage())
+          + Utility.messageBD(readOnlyCP, "And", vars.getLanguage())
           + " "
-          + Utility.messageBD(this, "TheClientSalesRep", vars.getLanguage())
+          + Utility.messageBD(readOnlyCP, "TheClientSalesRep", vars.getLanguage())
           + " "
-          + ReportInvoiceCustomerDimensionalAnalysesJRData.selectSalesrep(this,
+          + ReportInvoiceCustomerDimensionalAnalysesJRData.selectSalesrep(readOnlyCP,
               strPartnerSalesrepId);
+    }
 
     ReportInvoiceCustomerDimensionalAnalysesJRData[] data = null;
     ReportInvoiceCustomerDimensionalAnalysesJRData dataXLS = null;
     String[] strShownArray = { "", "", "", "", "", "", "", "", "", "" };
-    if (localStrShown.startsWith("("))
+    if (localStrShown.startsWith("(")) {
       localStrShown = localStrShown.substring(1, localStrShown.length() - 1);
-    if (!localStrShown.equals("")) {
+    }
+    if (StringUtils.isNotEmpty(localStrShown)) {
       localStrShown = Replace.replace(localStrShown, "'", "");
       localStrShown = Replace.replace(localStrShown, " ", "");
       StringTokenizer st = new StringTokenizer(localStrShown, ",", false);
@@ -663,10 +693,11 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     }
 
     ReportInvoiceCustomerDimensionalAnalysesJRData[] dimensionLabel = null;
-    if (vars.getLanguage().equals("en_US")) {
-      dimensionLabel = ReportInvoiceCustomerDimensionalAnalysesJRData.selectNotShown(this, "");
+    if (StringUtils.equals(vars.getLanguage(), "en_US")) {
+      dimensionLabel = ReportInvoiceCustomerDimensionalAnalysesJRData
+          .selectNotShown(readOnlyCP, "");
     } else {
-      dimensionLabel = ReportInvoiceCustomerDimensionalAnalysesJRData.selectNotShownTrl(this,
+      dimensionLabel = ReportInvoiceCustomerDimensionalAnalysesJRData.selectNotShownTrl(readOnlyCP,
           vars.getLanguage(), "");
     }
 
@@ -679,26 +710,26 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     int intProductLevel = 11;
     int intAuxDiscard = -1;
     for (int i = 0; i < 10; i++) {
-      if (strShownArray[i].equals("1")) {
+      if (StringUtils.equals(strShownArray[i], "1")) {
         strTextShow[i] = "C_BP_GROUP.NAME";
         intOrder++;
         strLevelLabel[i] = dimensionLabel[0].name;
         levelsconcat.append(" || ");
         levelsconcat.append("C_BP_GROUP.C_BP_GROUP_ID");
-      } else if (strShownArray[i].equals("2")) {
+      } else if (StringUtils.equals(strShownArray[i], "2")) {
         strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('C_Bpartner'), to_char( C_BPARTNER.C_BPARTNER_ID), to_char( '"
             + vars.getLanguage() + "'))";
         intOrder++;
         strLevelLabel[i] = dimensionLabel[1].name;
         levelsconcat.append(" || ");
         levelsconcat.append("C_BPARTNER.C_BPARTNER_ID");
-      } else if (strShownArray[i].equals("3")) {
+      } else if (StringUtils.equals(strShownArray[i], "3")) {
         strTextShow[i] = "M_PRODUCT_CATEGORY.NAME";
         intOrder++;
         strLevelLabel[i] = dimensionLabel[2].name;
         levelsconcat.append(" || ");
         levelsconcat.append("M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID");
-      } else if (strShownArray[i].equals("4")) {
+      } else if (StringUtils.equals(strShownArray[i], "4")) {
         strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char( M_PRODUCT.M_PRODUCT_ID), to_char( '"
             + vars.getLanguage()
             + "'))|| CASE WHEN uomsymbol IS NULL THEN '' ELSE to_char(' ('||uomsymbol||')') END";
@@ -708,38 +739,38 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
         strLevelLabel[i] = dimensionLabel[3].name;
         levelsconcat.append(" || ");
         levelsconcat.append("M_PRODUCT.M_PRODUCT_ID");
-      } else if (strShownArray[i].equals("5")) {
+      } else if (StringUtils.equals(strShownArray[i], "5")) {
         strTextShow[i] = "C_INVOICE.DOCUMENTNO";
         intOrder++;
         strLevelLabel[i] = dimensionLabel[4].name;
         levelsconcat.append(" || ");
         levelsconcat.append("C_INVOICE.C_INVOICE_ID");
-      } else if (strShownArray[i].equals("6")) {
+      } else if (StringUtils.equals(strShownArray[i], "6")) {
         strTextShow[i] = "AD_USER.FIRSTNAME||' '||' '||AD_USER.LASTNAME";
         intOrder++;
         strLevelLabel[i] = dimensionLabel[5].name;
         levelsconcat.append(" || ");
         levelsconcat.append("AD_USER.AD_USER_ID");
-      } else if (strShownArray[i].equals("8")) {
+      } else if (StringUtils.equals(strShownArray[i], "8")) {
         strTextShow[i] = "AD_ORG.NAME";
         intOrder++;
         strLevelLabel[i] = dimensionLabel[6].name;
         levelsconcat.append(" || ");
         levelsconcat.append("AD_ORG.AD_ORG_ID");
-      } else if (strShownArray[i].equals("9")) {
+      } else if (StringUtils.equals(strShownArray[i], "9")) {
         strTextShow[i] = "CASE WHEN AD_USER.AD_USER_ID IS NOT NULL THEN AD_COLUMN_IDENTIFIER(to_char('Ad_User'), to_char( AD_USER.AD_USER_ID), to_char( '"
             + vars.getLanguage() + "')) ELSE '' END";
         intOrder++;
         strLevelLabel[i] = dimensionLabel[7].name;
         levelsconcat.append(" || ");
         levelsconcat.append("AD_USER.AD_USER_ID");
-      } else if (strShownArray[i].equals("10")) {
+      } else if (StringUtils.equals(strShownArray[i], "10")) {
         strTextShow[i] = "C_PROJECT.NAME";
         intOrder++;
         strLevelLabel[i] = dimensionLabel[8].name;
         levelsconcat.append(" || ");
         levelsconcat.append("C_PROJECT.C_PROJECT_ID");
-      } else if (strShownArray[i].equals("11")) {
+      } else if (StringUtils.equals(strShownArray[i], "11")) {
         strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('C_Bpartner_Location'), to_char( M_INOUT.C_BPARTNER_LOCATION_ID), to_char( '"
             + vars.getLanguage() + "'))";
         intOrder++;
@@ -763,21 +794,21 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
         k++;
       }
       if (k == 1) {
-        if (strOrder.equals("Normal")) {
+        if (StringUtils.equals(strOrder, "Normal")) {
           strOrderby = " ORDER BY NIVEL" + k;
-        } else if (strOrder.equals("Amountasc")) {
+        } else if (StringUtils.equals(strOrder, "Amountasc")) {
           strOrderby = " ORDER BY CONVAMOUNT ASC";
-        } else if (strOrder.equals("Amountdesc")) {
+        } else if (StringUtils.equals(strOrder, "Amountdesc")) {
           strOrderby = " ORDER BY CONVAMOUNT DESC";
         } else {
           strOrderby = "1";
         }
       } else {
-        if (strOrder.equals("Normal")) {
+        if (StringUtils.equals(strOrder, "Normal")) {
           strOrderby += "NIVEL" + k;
-        } else if (strOrder.equals("Amountasc")) {
+        } else if (StringUtils.equals(strOrder, "Amountasc")) {
           strOrderby += "CONVAMOUNT ASC";
-        } else if (strOrder.equals("Amountdesc")) {
+        } else if (StringUtils.equals(strOrder, "Amountdesc")) {
           strOrderby += "CONVAMOUNT DESC";
         } else {
           strOrderby = "1";
@@ -788,12 +819,12 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       strOrderby = " ORDER BY 1";
     }
     String strHaving = "";
-    if (!strMayor.equals("") && !strMenor.equals("")) {
+    if (StringUtils.isNotEmpty(strMayor) && StringUtils.isNotEmpty(strMenor)) {
       strHaving = " HAVING (SUM(CONVAMOUNT) >= " + strMayor + " AND SUM(CONVAMOUNT) <= " + strMenor
           + ")";
-    } else if (!strMayor.equals("") && strMenor.equals("")) {
+    } else if (StringUtils.isNotEmpty(strMayor) && StringUtils.isEmpty(strMenor)) {
       strHaving = " HAVING (SUM(CONVAMOUNT) >= " + strMayor + ")";
-    } else if (strMayor.equals("") && !strMenor.equals("")) {
+    } else if (StringUtils.isEmpty(strMayor) && StringUtils.isNotEmpty(strMenor)) {
       strHaving = " HAVING (SUM(CONVAMOUNT) <= " + strMenor + ")";
     }
     strOrderby = strHaving + strOrderby;
@@ -804,145 +835,155 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
       if (limit > 0) {
         mycount = Integer
-            .parseInt((strComparative.equals("Y")) ? ReportInvoiceCustomerDimensionalAnalysesJRData.selectCount(
-                this, levelsconcat.toString(), Tree.getMembers(this,
-                    TreeData.getTreeOrg(this, vars.getClient()), localStrOrg), Utility.getContext(
-                    this, vars, "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"),
-                strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
-                strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, strVoid
-                    .equals("Y") ? "" : "VO", strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,
-                    "1"), strDateFromRef, DateTimeData.nDaysAfter(this, strDateToRef, "1"),
-                localStrDateFromRef2, DateTimeData.nDaysAfter(this, localStrDateToRef2, "1"),
-                localStrDateFromRef3, DateTimeData.nDaysAfter(this, localStrDateToRef3, "1"))
-                : ReportInvoiceCustomerDimensionalAnalysesJRData.selectNoComparativeCount(this,
-                    levelsconcat.toString(), Tree.getMembers(this,
-                        TreeData.getTreeOrg(this, vars.getClient()), localStrOrg), Utility
-                        .getContext(this, vars, "#User_Client",
+            .parseInt((StringUtils.equals(strComparative, "Y")) ? ReportInvoiceCustomerDimensionalAnalysesJRData
+                .selectCount(readOnlyCP, levelsconcat.toString(), Tree.getMembers(readOnlyCP,
+                    TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg), Utility
+                    .getContext(readOnlyCP, vars, "#User_Client",
+                        "ReportInvoiceCustomerDimensionalAnalysesJR"), strPartnerGroup,
+                    strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
+                    strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, StringUtils
+                        .equals(strVoid, "Y") ? "" : "VO", strDateFrom, DateTimeData.nDaysAfter(
+                        readOnlyCP, strDateTo, "1"), strDateFromRef, DateTimeData.nDaysAfter(
+                        readOnlyCP, strDateToRef, "1"), localStrDateFromRef2, DateTimeData
+                        .nDaysAfter(readOnlyCP, localStrDateToRef2, "1"), localStrDateFromRef3,
+                    DateTimeData.nDaysAfter(readOnlyCP, localStrDateToRef3, "1"))
+                : ReportInvoiceCustomerDimensionalAnalysesJRData.selectNoComparativeCount(
+                    readOnlyCP, levelsconcat.toString(), Tree.getMembers(readOnlyCP,
+                        TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg), Utility
+                        .getContext(readOnlyCP, vars, "#User_Client",
                             "ReportInvoiceCustomerDimensionalAnalysesJR"), strPartnerGroup,
                     strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
-                    strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, strVoid
-                        .equals("Y") ? "" : "VO", strDateFrom, DateTimeData.nDaysAfter(this,
-                        strDateTo, "1")));
+                    strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, StringUtils
+                        .equals(strVoid, "Y") ? "" : "VO", strDateFrom, DateTimeData.nDaysAfter(
+                        readOnlyCP, strDateTo, "1")));
       }
     } catch (NumberFormatException e) {
     }
 
     if (limit > 0 && mycount > limit) {
-      String msgbody = Utility.messageBD(this, "ReportsLimitBody", vars.getLanguage());
+      String msgbody = Utility.messageBD(readOnlyCP, "ReportsLimitBody", vars.getLanguage());
       msgbody = msgbody.replace("@rows@", Integer.toString(mycount));
       msgbody = msgbody.replace("@limit@", Integer.toString(limit));
       advisePopUp(request, response, "ERROR",
-          Utility.messageBD(this, "ReportsLimitHeader", vars.getLanguage()), msgbody);
+          Utility.messageBD(readOnlyCP, "ReportsLimitHeader", vars.getLanguage()), msgbody);
     } else {
       // Checks if there is a conversion rate for each of the transactions of the report
       String strConvRateErrorMsg = "";
       OBError myMessage = null;
       myMessage = new OBError();
-      if ("xls".equals(strOutput)) {
+      if (StringUtils.equals(strOutput, "xls")) {
         try {
-          dataXLS = ReportInvoiceCustomerDimensionalAnalysesJRData.selectXLS(this, strCurrencyId,
-              vars.getLanguage(), Tree.getMembers(this,
-                  TreeData.getTreeOrg(this, vars.getClient()), localStrOrg), Utility.getContext(
-                  this, vars, "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"),
-              strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
-              strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
-              strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, strVoid
-                  .equals("Y") ? "" : "VO");
+          dataXLS = ReportInvoiceCustomerDimensionalAnalysesJRData.selectXLS(readOnlyCP,
+              strCurrencyId, vars.getLanguage(), Tree.getMembers(readOnlyCP,
+                  TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg), Utility
+                  .getContext(readOnlyCP, vars, "#User_Client",
+                      "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
+                  .nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
+              strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,
+              strcProjectId, strProducttype, strcDocTypeId, StringUtils.equals(strVoid, "Y") ? ""
+                  : "VO");
 
         } catch (ServletException ex) {
-          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+          myMessage = Utility.translateError(readOnlyCP, vars, vars.getLanguage(), ex.getMessage());
         }
       } else {
-        if (strComparative.equals("Y")) {
+        if (StringUtils.equals(strComparative, "Y")) {
           try {
             if (multiComparative2) {
               if (multiComparative3) {
                 // Multi-comparative B: 1 base date, 3 reference dates
-                data = ReportInvoiceCustomerDimensionalAnalysesJRData
-                    .select3(this, strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2],
-                        strTextShow[3], strTextShow[4], strTextShow[5], strTextShow[6],
-                        strTextShow[7], strTextShow[8], strTextShow[9], Tree.getMembers(this,
-                            TreeData.getTreeOrg(this, vars.getClient()), localStrOrg), Utility
-                            .getContext(this, vars, "#User_Client",
-                                "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom,
-                        DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
-                        strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
-                        strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, strVoid
-                            .equals("Y") ? "" : "VO", strDateFromRef, DateTimeData.nDaysAfter(this,
-                            strDateToRef, "1"), localStrDateFromRef2, DateTimeData.nDaysAfter(this,
-                            localStrDateToRef2, "1"), localStrDateFromRef3, DateTimeData
-                            .nDaysAfter(this, localStrDateToRef3, "1"), strOrderby);
+                data = ReportInvoiceCustomerDimensionalAnalysesJRData.select3(readOnlyCP,
+                    strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3],
+                    strTextShow[4], strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8],
+                    strTextShow[9], Tree.getMembers(readOnlyCP,
+                        TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg), Utility
+                        .getContext(readOnlyCP, vars, "#User_Client",
+                            "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom,
+                    DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup,
+                    strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
+                    strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, StringUtils
+                        .equals(strVoid, "Y") ? "" : "VO", strDateFromRef, DateTimeData.nDaysAfter(
+                        readOnlyCP, strDateToRef, "1"), localStrDateFromRef2, DateTimeData
+                        .nDaysAfter(readOnlyCP, localStrDateToRef2, "1"), localStrDateFromRef3,
+                    DateTimeData.nDaysAfter(readOnlyCP, localStrDateToRef3, "1"), strOrderby);
               } else {
                 // Multi-comparative A: 1 base date, 2 reference dates
-                data = ReportInvoiceCustomerDimensionalAnalysesJRData
-                    .select2(this, strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2],
-                        strTextShow[3], strTextShow[4], strTextShow[5], strTextShow[6],
-                        strTextShow[7], strTextShow[8], strTextShow[9], Tree.getMembers(this,
-                            TreeData.getTreeOrg(this, vars.getClient()), localStrOrg), Utility
-                            .getContext(this, vars, "#User_Client",
-                                "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom,
-                        DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
-                        strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
-                        strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, strVoid
-                            .equals("Y") ? "" : "VO", strDateFromRef, DateTimeData.nDaysAfter(this,
-                            strDateToRef, "1"), localStrDateFromRef2, DateTimeData.nDaysAfter(this,
-                            localStrDateToRef2, "1"), strOrderby);
+                data = ReportInvoiceCustomerDimensionalAnalysesJRData.select2(readOnlyCP,
+                    strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3],
+                    strTextShow[4], strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8],
+                    strTextShow[9], Tree.getMembers(readOnlyCP,
+                        TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg), Utility
+                        .getContext(readOnlyCP, vars, "#User_Client",
+                            "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom,
+                    DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup,
+                    strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
+                    strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, StringUtils
+                        .equals(strVoid, "Y") ? "" : "VO", strDateFromRef, DateTimeData.nDaysAfter(
+                        readOnlyCP, strDateToRef, "1"), localStrDateFromRef2, DateTimeData
+                        .nDaysAfter(readOnlyCP, localStrDateToRef2, "1"), strOrderby);
               }
             } else {
               // Regular comparative: 1 base date, 1 reference date
-              data = ReportInvoiceCustomerDimensionalAnalysesJRData.select(this, strCurrencyId,
-                  strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4],
-                  strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8], strTextShow[9],
-                  Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), localStrOrg),
-                  Utility.getContext(this, vars, "#User_Client",
-                      "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
-                      .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
+              data = ReportInvoiceCustomerDimensionalAnalysesJRData.select(readOnlyCP,
+                  strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3],
+                  strTextShow[4], strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8],
+                  strTextShow[9], Tree.getMembers(readOnlyCP,
+                      TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg), Utility
+                      .getContext(readOnlyCP, vars, "#User_Client",
+                          "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
+                      .nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
                   strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,
-                  strcProjectId, strProducttype, strcDocTypeId, strVoid.equals("Y") ? "" : "VO",
-                  strDateFromRef, DateTimeData.nDaysAfter(this, strDateToRef, "1"), strOrderby);
+                  strcProjectId, strProducttype, strcDocTypeId,
+                  StringUtils.equals(strVoid, "Y") ? "" : "VO", strDateFromRef, DateTimeData
+                      .nDaysAfter(readOnlyCP, strDateToRef, "1"), strOrderby);
             }
           } catch (ServletException ex) {
-            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            myMessage = Utility.translateError(readOnlyCP, vars, vars.getLanguage(),
+                ex.getMessage());
           }
         } else {
           try {
-            data = ReportInvoiceCustomerDimensionalAnalysesJRData.selectNoComparative(this,
+            data = ReportInvoiceCustomerDimensionalAnalysesJRData.selectNoComparative(readOnlyCP,
                 strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3],
                 strTextShow[4], strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8],
-                strTextShow[9], Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()),
-                    localStrOrg), Utility.getContext(this, vars, "#User_Client",
-                    "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
-                    .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
+                strTextShow[9], Tree.getMembers(readOnlyCP,
+                    TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg), Utility
+                    .getContext(readOnlyCP, vars, "#User_Client",
+                        "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
+                    .nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
                 strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,
-                strcProjectId, strProducttype, strcDocTypeId, strVoid.equals("Y") ? "" : "VO",
-                strOrderby);
+                strcProjectId, strProducttype, strcDocTypeId, StringUtils.equals(strVoid, "Y") ? ""
+                    : "VO", strOrderby);
           } catch (ServletException ex) {
-            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            myMessage = Utility.translateError(readOnlyCP, vars, vars.getLanguage(),
+                ex.getMessage());
           }
         }
       }
-      // Passing secondary filters Organization tree and businees partner group and product group
-      Organization organization = OBDal.getInstance().get(Organization.class, strOrg);
-      String strOrgName = organization.getName();
-      String strPartnerGroupName = ReportInvoiceCustomerDimensionalAnalysesJRData.selectBpgroup(
-          this, strPartnerGroup);
-      String strProductGroupName = ReportInvoiceCustomerDimensionalAnalysesJRData
-          .selectProductCategory(this, strProductCategory);
 
       strConvRateErrorMsg = myMessage.getMessage();
       // If a conversion rate is missing for a certain transaction, an error message window pops-up.
-      if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+      if (StringUtils.isNotEmpty(strConvRateErrorMsg)) {
         advisePopUp(request, response, "ERROR",
-            Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+            Utility.messageBD(readOnlyCP, "NoConversionRateHeader", vars.getLanguage()),
             strConvRateErrorMsg);
       } else {
         // Otherwise, the report is launched
-        if ("xls".equals(strOutput)) {
+
+        // Passing secondary filters Organization tree and businees partner group and product group
+        Organization organization = OBDal.getReadOnlyInstance().get(Organization.class, strOrg);
+        String strOrgName = organization.getName();
+        String strPartnerGroupName = ReportInvoiceCustomerDimensionalAnalysesJRData.selectBpgroup(
+            readOnlyCP, strPartnerGroup);
+        String strProductGroupName = ReportInvoiceCustomerDimensionalAnalysesJRData
+            .selectProductCategory(readOnlyCP, strProductCategory);
+
+        if (StringUtils.equals(strOutput, "xls")) {
           try {
             if (!dataXLS.hasData()) {
               advisePopUp(request, response, "WARNING",
-                  Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
-                  Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+                  Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()),
+                  Utility.messageBD(readOnlyCP, "NoDataFound", vars.getLanguage()));
             } else {
               /*
                * int rowLimit = 65532; ScrollableFieldProvider limitedData = new
@@ -965,7 +1006,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                 throw new ServletException(e.getMessage());
               }
 
-              parameters.put("USER_CLIENT", Utility.getContext(this, vars, "#User_Client",
+              parameters.put("USER_CLIENT", Utility.getContext(readOnlyCP, vars, "#User_Client",
                   "ReportInvoiceCustomerDimensionalAnalysesJR"));
               String strDateFormat;
               strDateFormat = vars.getJavaDateFormat();
@@ -975,10 +1016,10 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
               parameters.put("BPGROUP", strPartnerGroupName);
               parameters.put("PRODUCTGROUP", strProductGroupName);
               parameters.put("C_CURRENCY_ID", strCurrencyId);
-              parameters.put("AD_ORG_ID",
-                  Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
+              parameters.put("AD_ORG_ID", Tree.getMembers(readOnlyCP,
+                  TreeData.getTreeOrg(readOnlyCP, vars.getClient()), strOrg));
               parameters.put("DateFrom", strDateFrom);
-              parameters.put("DateTo", DateTimeData.nDaysAfter(this, strDateTo, "1"));
+              parameters.put("DateTo", DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"));
               parameters.put("C_BP_GROUP_ID", strPartnerGroup);
               parameters.put("C_BPARTNER_ID", strcBpartnerId);
               parameters.put("M_PRODUCT_CATEGORY_ID", strProductCategory);
@@ -988,7 +1029,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
               parameters.put("C_PROJECT_ID", strcProjectId);
               parameters.put("PRODUCTTYPE", strProducttype);
               parameters.put("C_DOCTYPE_ID", strcDocTypeId);
-              parameters.put("DOCSTATUS", strVoid.equals("Y") ? "" : "VO");
+              parameters.put("DOCSTATUS", StringUtils.equals(strVoid, "Y") ? "" : "VO");
               parameters.put("LANGUAGE", vars.getLanguage());
               parameters.put("SR_LINES", jasperReportLines);
 
@@ -1001,7 +1042,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           }
         } else {
           String strReportPath;
-          if (strComparative.equals("Y")) {
+          if (StringUtils.equals(strComparative, "Y")) {
             strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalysesComparativeJR.jrxml";
             if (multiComparative2) {
               strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalysesMultiComparativeJR.jrxml";
@@ -1014,8 +1055,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           }
           if (data == null || data.length == 0) {
             advisePopUp(request, response, "WARNING",
-                Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
-                Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+                Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()),
+                Utility.messageBD(readOnlyCP, "NoDataFound", vars.getLanguage()));
           } else {
             String strLanguage = vars.getLanguage();
             String strBaseDesign = getBaseDesignPath(strLanguage);
@@ -1033,16 +1074,16 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
             HashMap<String, Object> parameters = new HashMap<String, Object>();
 
             parameters.put("BASE_DESIGN", strBaseDesign);
-            parameters.put("USER_CLIENT", Utility.getContext(this, vars, "#User_Client",
+            parameters.put("USER_CLIENT", Utility.getContext(readOnlyCP, vars, "#User_Client",
                 "ReportInvoiceCustomerDimensionalAnalysesJR"));
             parameters.put("ORGANIZATION", strOrgName);
             parameters.put("BPGROUP", strPartnerGroupName);
             parameters.put("PRODUCTGROUP", strProductGroupName);
             parameters.put("C_CURRENCY_ID", strCurrencyId);
-            parameters.put("AD_ORG_ID",
-                Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
+            parameters.put("AD_ORG_ID", Tree.getMembers(readOnlyCP,
+                TreeData.getTreeOrg(readOnlyCP, vars.getClient()), strOrg));
             parameters.put("DateFrom", strDateFrom);
-            parameters.put("DateTo", DateTimeData.nDaysAfter(this, strDateTo, "1"));
+            parameters.put("DateTo", DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"));
             parameters.put("C_BP_GROUP_ID", strPartnerGroup);
             parameters.put("C_BPARTNER_ID", strcBpartnerId);
             parameters.put("M_PRODUCT_CATEGORY_ID", strProductCategory);
@@ -1052,7 +1093,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
             parameters.put("C_PROJECT_ID", strcProjectId);
             parameters.put("PRODUCTTYPE", strProducttype);
             parameters.put("C_DOCTYPE_ID", strcDocTypeId);
-            parameters.put("DOCSTATUS", strVoid.equals("Y") ? "" : "VO");
+            parameters.put("DOCSTATUS", StringUtils.equals(strVoid, "Y") ? "" : "VO");
             parameters.put("LANGUAGE", vars.getLanguage());
             parameters.put("SR_LINES", jasperReportLines);
 
@@ -1078,12 +1119,12 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
 
   private boolean transactionCostDateAcctInitialized() {
     boolean transactionCostDateacctInitialized = false;
-    Client client = OBDal.getInstance().get(Client.class, "0");
-    Organization organization = OBDal.getInstance().get(Organization.class, "0");
+    Client client = OBDal.getReadOnlyInstance().get(Client.class, "0");
+    Organization organization = OBDal.getReadOnlyInstance().get(Organization.class, "0");
     try {
-      transactionCostDateacctInitialized = Preferences.getPreferenceValue(
+      transactionCostDateacctInitialized = StringUtils.equals(Preferences.getPreferenceValue(
           CostingBackground.TRANSACTION_COST_DATEACCT_INITIALIZED, false, client, organization,
-          null, null, null).equals(Preferences.YES);
+          null, null, null), Preferences.YES);
     } catch (PropertyException e1) {
       transactionCostDateacctInitialized = false;
     }

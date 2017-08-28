@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.ValueListFilter;
@@ -37,6 +38,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.info.SelectorUtilityData;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -54,6 +56,7 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.project.Project;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class PaymentReport extends HttpSecureAppServlet {
@@ -120,8 +123,9 @@ public class PaymentReport extends HttpSecureAppServlet {
         strConvertCurrency = vars.getGlobalVariable("inpConvertCurrencyId",
             "PaymentReport|ConvertCurrency", "");
       }
+      ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
       String strConversionDate = vars.getGlobalVariable("inpConversionDate",
-          "PaymentReport|ConversionDate", DateTimeData.today(this));
+          "PaymentReport|ConversionDate", DateTimeData.today(readOnlyCP));
       String strPaymType = vars.getGlobalVariable("inpPaymType", "PaymentReport|PaymentType",
           "FINPR_RecPay");
       String strOverdue = vars.getGlobalVariable("inpOverdue", "PaymentReport|Overdue", "");
@@ -152,12 +156,12 @@ public class PaymentReport extends HttpSecureAppServlet {
           "PaymentReport|ExpectedDateFrom");
       String strExpectedDateTo = vars.getRequestGlobalVariable("inpExpectedDateTo",
           "PaymentReport|ExpectedDateTo");
-      if (vars.getNumericParameter("inpAmountFrom").isEmpty()) {
+      if (StringUtils.isEmpty(vars.getNumericParameter("inpAmountFrom"))) {
         vars.removeSessionValue("PaymentReport|AmountFrom");
       }
       String strAmountFrom = vars.getNumericRequestGlobalVariable("inpAmountFrom",
           "PaymentReport|AmountFrom");
-      if (vars.getNumericParameter("inpAmountTo").isEmpty()) {
+      if (StringUtils.isEmpty(vars.getNumericParameter("inpAmountTo"))) {
         vars.removeSessionValue("PaymentReport|AmountTo");
       }
       String strAmountTo = vars.getNumericRequestGlobalVariable("inpAmountTo",
@@ -282,10 +286,11 @@ public class PaymentReport extends HttpSecureAppServlet {
       vars.setSessionValue("PaymentReport|IncludePaymentUsingCredit", strInclPaymentUsingCredit);
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",
           "PaymentReport|SalesRepId", IsIDFilter.instance);
-      if (vars.commandIn("PDF"))
+      if (vars.commandIn("PDF")) {
         strOutput = "pdf";
-      else if (vars.commandIn("XLS"))
+      } else if (vars.commandIn("XLS")) {
         strOutput = "xls";
+      }
 
       printPage(request, response, vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
           strExpectedDateFrom, strExpectedDateTo, strAmountFrom, strAmountTo, strDocumentDateFrom,
@@ -301,13 +306,13 @@ public class PaymentReport extends HttpSecureAppServlet {
       String strRecordId = vars.getRequiredStringParameter("inpRecordId", IsIDFilter.instance);
 
       HashMap<String, String> data = PaymentReportDao.getLinkParameters(strTableId, strIsReceipt);
-      if (data == null || data.size() == 0)
+      if (data == null || data.size() == 0) {
         bdError(request, response, "RecordError", vars.getLanguage());
-      else {
+      } else {
         String inputName = "inp" + Sqlc.TransformaNombreColumna(data.get("adColumnName"));
 
         String strWindowPath = Utility.getTabURL(data.get("adTabId"), "R", true);
-        if (strWindowPath.equals("")) {
+        if (StringUtils.isEmpty(strWindowPath)) {
           strWindowPath = strDefaultServlet;
         }
         response.sendRedirect(strWindowPath + "?" + "Command=DIRECT&" + inputName + "="
@@ -327,8 +332,11 @@ public class PaymentReport extends HttpSecureAppServlet {
       String strGroupCrit, String strOrdCrit, String strInclPaymentUsingCredit,
       String strPaymentDateFrom, String strPaymentDateTo, String strsalesrepId) throws IOException,
       ServletException {
-    if (log4j.isDebugEnabled())
+
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     XmlDocument xmlDocument = null;
     ArrayList<String> discardAL = new ArrayList<String>();
     FieldProvider[] data = null;
@@ -359,13 +367,14 @@ public class PaymentReport extends HttpSecureAppServlet {
 
         xmlDocument.setParameter("messageType", "WARNING");
         xmlDocument.setParameter("messageTitle",
-            Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()));
+            Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()));
         String noConversionFound = "";
-        if (e.getMessage() != null && e.getMessage().contains("->"))
-          noConversionFound = Utility
-              .messageBD(this, "FINPR_NoConversionFound", vars.getLanguage());
+        if (e.getMessage() != null && e.getMessage().contains("->")) {
+          noConversionFound = Utility.messageBD(readOnlyCP, "FINPR_NoConversionFound",
+              vars.getLanguage());
+        }
         xmlDocument.setParameter("messageMessage",
-            noConversionFound + Utility.messageBD(this, e.getMessage(), vars.getLanguage()));
+            noConversionFound + Utility.messageBD(readOnlyCP, e.getMessage(), vars.getLanguage()));
       }
 
       if (data != null && data.length == 0) {
@@ -383,15 +392,15 @@ public class PaymentReport extends HttpSecureAppServlet {
 
         xmlDocument.setParameter("messageType", "WARNING");
         xmlDocument.setParameter("messageTitle",
-            Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()));
+            Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()));
         xmlDocument.setParameter("messageMessage",
-            Utility.messageBD(this, "FINPR_NoDataFound", vars.getLanguage()));
+            Utility.messageBD(readOnlyCP, "FINPR_NoDataFound", vars.getLanguage()));
 
       } else if (data != null && data.length == 1 && data[0].getField("conversionDate") != null) {
 
-        String transCurrency = OBDal.getInstance()
+        String transCurrency = OBDal.getReadOnlyInstance()
             .get(Currency.class, data[0].getField("transCurrency")).getISOCode();
-        String baseCurrency = OBDal.getInstance()
+        String baseCurrency = OBDal.getReadOnlyInstance()
             .get(Currency.class, data[0].getField("baseCurrency")).getISOCode();
 
         String message = transCurrency + " -> " + baseCurrency + " "
@@ -410,13 +419,13 @@ public class PaymentReport extends HttpSecureAppServlet {
 
         xmlDocument.setParameter("messageType", "WARNING");
         xmlDocument.setParameter("messageTitle",
-            Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()));
+            Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()));
         xmlDocument.setParameter("messageMessage",
-            Utility.messageBD(this, "FINPR_NoConversionFound", vars.getLanguage()) + message);
+            Utility.messageBD(readOnlyCP, "FINPR_NoConversionFound", vars.getLanguage()) + message);
 
       } else if (data != null) {
 
-        if (strGroupCrit.isEmpty()) {
+        if (StringUtils.isEmpty(strGroupCrit)) {
           discardAL.add("sectionGroupCrit");
           discardAL.add("sectionTotal2");
           discardAL.add("sectionSubtotalGroupCrit");
@@ -430,10 +439,11 @@ public class PaymentReport extends HttpSecureAppServlet {
             "org/openbravo/financial/paymentreport/erpCommon/ad_reports/PaymentReport",
             discardAL.toArray(discard)).createXmlDocument();
 
-        if (strGroupCrit.equals(""))
+        if (StringUtils.isEmpty(strGroupCrit)) {
           xmlDocument.setData("structure1", data);
-        else
+        } else {
           xmlDocument.setData("structure2", data);
+        }
       }
 
     } else {
@@ -450,7 +460,7 @@ public class PaymentReport extends HttpSecureAppServlet {
           discardAL.toArray(discard)).createXmlDocument();
     }
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "PaymentReport", false, "", "",
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "PaymentReport", false, "", "",
         "printPDF();return false;", false, "ad_reports", strReplaceWith, false, true);
     toolbar.setEmail(false);
     toolbar.prepareSimpleToolBarTemplate();
@@ -458,16 +468,16 @@ public class PaymentReport extends HttpSecureAppServlet {
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.financial.paymentreport.erpCommon.ad_reports.PaymentReport");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "PaymentReport.html",
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(), "PaymentReport.html",
           classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "PaymentReport.html",
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(), "PaymentReport.html",
           strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
@@ -488,10 +498,10 @@ public class PaymentReport extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("org", strOrg);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org", "PaymentReport"), Utility.getContext(
-              this, vars, "#User_Client", "PaymentReport"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "PaymentReport", strOrg);
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "AD_Org_ID",
+          "", "", Utility.getContext(readOnlyCP, vars, "#User_Org", "PaymentReport"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "PaymentReport"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "PaymentReport", strOrg);
       xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -524,16 +534,18 @@ public class PaymentReport extends HttpSecureAppServlet {
     xmlDocument.setData(
         "paramcBPartnerId_IN",
         "liststructure",
-        SelectorUtilityData.selectBpartner(this,
-            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
-            Utility.getContext(this, vars, "#User_Client", ""), strcBPartnerIdIN));
+        SelectorUtilityData.selectBpartner(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strcBPartnerIdIN));
 
     xmlDocument.setParameter("cBPGroupId_IN", strcBPGroupIdIN);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BP_Group_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "PaymentReport"),
-          Utility.getContext(this, vars, "#User_Client", "PaymentReport"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "PaymentReport", strcBPGroupIdIN);
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+          "C_BP_Group_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "PaymentReport"), Utility.getContext(readOnlyCP, vars, "#User_Client",
+              "PaymentReport"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "PaymentReport",
+          strcBPGroupIdIN);
       xmlDocument.setData("reportBPGroupId_IN", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -545,16 +557,18 @@ public class PaymentReport extends HttpSecureAppServlet {
     xmlDocument.setData(
         "paramcProjectId_IN",
         "liststructure",
-        SelectorUtilityData.selectProject(this,
-            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
-            Utility.getContext(this, vars, "#User_Client", ""), strcProjectIdIN));
+        SelectorUtilityData.selectProject(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strcProjectIdIN));
 
     xmlDocument.setParameter("selectedStatuses", strfinPaymSt);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "FIN_Payment status", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "PaymentReport"), Utility.getContext(this, vars, "#User_Client", "PaymentReport"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "PaymentReport", strfinPaymSt);
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "LIST", "",
+          "FIN_Payment status", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "PaymentReport"), Utility.getContext(readOnlyCP, vars, "#User_Client",
+              "PaymentReport"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "PaymentReport",
+          strfinPaymSt);
       xmlDocument.setData("reportStatus", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -563,11 +577,11 @@ public class PaymentReport extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("paymentMethodId", strPaymentMethodId);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "FIN_PaymentMethod_ID", "", "FIN_PaymentMethodsWithAccount", Utility.getContext(this,
-              vars, "#AccessibleOrgTree", "PaymentReport"), Utility.getContext(this, vars,
-              "#User_Client", "PaymentReport"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "PaymentReport",
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+          "FIN_PaymentMethod_ID", "", "FIN_PaymentMethodsWithAccount", Utility.getContext(
+              readOnlyCP, vars, "#AccessibleOrgTree", "PaymentReport"), Utility.getContext(
+              readOnlyCP, vars, "#User_Client", "PaymentReport"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "PaymentReport",
           strPaymentMethodId);
       xmlDocument.setData("reportPaymentMethod_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -577,10 +591,11 @@ public class PaymentReport extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("financialAccountId", strFinancialAccountId);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "FIN_Financial_Account_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "PaymentReport"), Utility.getContext(this, vars, "#User_Client", "PaymentReport"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "PaymentReport",
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+          "FIN_Financial_Account_ID", "", "", Utility.getContext(readOnlyCP, vars,
+              "#AccessibleOrgTree", "PaymentReport"), Utility.getContext(readOnlyCP, vars,
+              "#User_Client", "PaymentReport"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "PaymentReport",
           strFinancialAccountId);
       xmlDocument.setData("reportFinancialAccount_ID", "liststructure",
           comboTableData.select(false));
@@ -591,10 +606,12 @@ public class PaymentReport extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("cCurrencyId", strcCurrency);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "PaymentReport"),
-          Utility.getContext(this, vars, "#User_Client", "PaymentReport"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "PaymentReport", strcCurrency);
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+          "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "PaymentReport"), Utility.getContext(readOnlyCP, vars, "#User_Client",
+              "PaymentReport"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "PaymentReport",
+          strcCurrency);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -603,10 +620,11 @@ public class PaymentReport extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("cConvertCurrencyId", strConvertCurrency);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "PaymentReport"),
-          Utility.getContext(this, vars, "#User_Client", "PaymentReport"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "PaymentReport",
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+          "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "PaymentReport"), Utility.getContext(readOnlyCP, vars, "#User_Client",
+              "PaymentReport"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "PaymentReport",
           strConvertCurrency);
       xmlDocument
           .setData("reportConvertCurrency_ID", "liststructure", comboTableData.select(false));
@@ -625,17 +643,17 @@ public class PaymentReport extends HttpSecureAppServlet {
     Vector<SQLReturnObject> vector = new Vector<>(0);
     SQLReturnObject sqlRO = new SQLReturnObject();
     sqlRO.setData("ID", "FINPR_Receivables");
-    sqlRO.setData("NAME", Utility.messageBD(this, "FINPR_Receivables", vars.getLanguage()));
+    sqlRO.setData("NAME", Utility.messageBD(readOnlyCP, "FINPR_Receivables", vars.getLanguage()));
     sqlRO.setData("DESCRIPTION", "");
     vector.addElement(sqlRO);
     sqlRO = new SQLReturnObject();
     sqlRO.setData("ID", "FINPR_Payables");
-    sqlRO.setData("NAME", Utility.messageBD(this, "FINPR_Payables", vars.getLanguage()));
+    sqlRO.setData("NAME", Utility.messageBD(readOnlyCP, "FINPR_Payables", vars.getLanguage()));
     sqlRO.setData("DESCRIPTION", "");
     vector.addElement(sqlRO);
     sqlRO = new SQLReturnObject();
     sqlRO.setData("ID", "FINPR_RecPay");
-    sqlRO.setData("NAME", Utility.messageBD(this, "FINPR_RecPay", vars.getLanguage()));
+    sqlRO.setData("NAME", Utility.messageBD(readOnlyCP, "FINPR_RecPay", vars.getLanguage()));
     sqlRO.setData("DESCRIPTION", "");
     vector.addElement(sqlRO);
 
@@ -652,27 +670,28 @@ public class PaymentReport extends HttpSecureAppServlet {
     vector = new Vector<>(0);
     sqlRO = new SQLReturnObject();
     sqlRO.setData("ID", "APRM_FATS_BPARTNER");
-    sqlRO.setData("NAME", Utility.messageBD(this, "APRM_FATS_BPARTNER", vars.getLanguage()));
+    sqlRO.setData("NAME", Utility.messageBD(readOnlyCP, "APRM_FATS_BPARTNER", vars.getLanguage()));
     sqlRO.setData("DESCRIPTION", "");
     vector.addElement(sqlRO);
     sqlRO = new SQLReturnObject();
     sqlRO.setData("ID", "Project");
-    sqlRO.setData("NAME", Utility.messageBD(this, "Project", vars.getLanguage()));
+    sqlRO.setData("NAME", Utility.messageBD(readOnlyCP, "Project", vars.getLanguage()));
     sqlRO.setData("DESCRIPTION", "");
     vector.addElement(sqlRO);
     sqlRO = new SQLReturnObject();
     sqlRO.setData("ID", "FINPR_BPartner_Category");
-    sqlRO.setData("NAME", Utility.messageBD(this, "FINPR_BPartner_Category", vars.getLanguage()));
+    sqlRO.setData("NAME",
+        Utility.messageBD(readOnlyCP, "FINPR_BPartner_Category", vars.getLanguage()));
     sqlRO.setData("DESCRIPTION", "");
     vector.addElement(sqlRO);
     sqlRO = new SQLReturnObject();
     sqlRO.setData("ID", "INS_CURRENCY");
-    sqlRO.setData("NAME", Utility.messageBD(this, "INS_CURRENCY", vars.getLanguage()));
+    sqlRO.setData("NAME", Utility.messageBD(readOnlyCP, "INS_CURRENCY", vars.getLanguage()));
     sqlRO.setData("DESCRIPTION", "");
     vector.addElement(sqlRO);
     sqlRO = new SQLReturnObject();
     sqlRO.setData("ID", "ACCS_ACCOUNT_ID_D");
-    sqlRO.setData("NAME", Utility.messageBD(this, "ACCS_ACCOUNT_ID_D", vars.getLanguage()));
+    sqlRO.setData("NAME", Utility.messageBD(readOnlyCP, "ACCS_ACCOUNT_ID_D", vars.getLanguage()));
     sqlRO.setData("DESCRIPTION", "");
     vector.addElement(sqlRO);
 
@@ -684,43 +703,44 @@ public class PaymentReport extends HttpSecureAppServlet {
     vector = new Vector<>(0);
     sqlRO = new SQLReturnObject();
     sqlRO.setData("ID", "Date");
-    sqlRO.setData("NAME", Utility.messageBD(this, "Date", vars.getLanguage()));
+    sqlRO.setData("NAME", Utility.messageBD(readOnlyCP, "Date", vars.getLanguage()));
     sqlRO.setData("DESCRIPTION", "");
     vector.addElement(sqlRO);
 
     sqlRO = new SQLReturnObject();
     sqlRO.setData("ID", "APRM_FATS_BPARTNER");
-    sqlRO.setData("NAME", Utility.messageBD(this, "APRM_FATS_BPARTNER", vars.getLanguage()));
+    sqlRO.setData("NAME", Utility.messageBD(readOnlyCP, "APRM_FATS_BPARTNER", vars.getLanguage()));
     sqlRO.setData("DESCRIPTION", "");
     vector.addElement(sqlRO);
 
     sqlRO = new SQLReturnObject();
     sqlRO.setData("ID", "Project");
-    sqlRO.setData("NAME", Utility.messageBD(this, "Project", vars.getLanguage()));
+    sqlRO.setData("NAME", Utility.messageBD(readOnlyCP, "Project", vars.getLanguage()));
     sqlRO.setData("DESCRIPTION", "");
     vector.addElement(sqlRO);
 
     sqlRO = new SQLReturnObject();
     sqlRO.setData("ID", "FINPR_BPartner_Category");
-    sqlRO.setData("NAME", Utility.messageBD(this, "FINPR_BPartner_Category", vars.getLanguage()));
+    sqlRO.setData("NAME",
+        Utility.messageBD(readOnlyCP, "FINPR_BPartner_Category", vars.getLanguage()));
     sqlRO.setData("DESCRIPTION", "");
     vector.addElement(sqlRO);
 
     sqlRO = new SQLReturnObject();
     sqlRO.setData("ID", "INS_CURRENCY");
-    sqlRO.setData("NAME", Utility.messageBD(this, "INS_CURRENCY", vars.getLanguage()));
+    sqlRO.setData("NAME", Utility.messageBD(readOnlyCP, "INS_CURRENCY", vars.getLanguage()));
     sqlRO.setData("DESCRIPTION", "");
     vector.addElement(sqlRO);
 
     sqlRO = new SQLReturnObject();
     sqlRO.setData("ID", "ACCS_ACCOUNT_ID_D");
-    sqlRO.setData("NAME", Utility.messageBD(this, "ACCS_ACCOUNT_ID_D", vars.getLanguage()));
+    sqlRO.setData("NAME", Utility.messageBD(readOnlyCP, "ACCS_ACCOUNT_ID_D", vars.getLanguage()));
     sqlRO.setData("DESCRIPTION", "");
     vector.addElement(sqlRO);
 
     sqlRO = new SQLReturnObject();
     sqlRO.setData("ID", "DueDate");
-    sqlRO.setData("NAME", Utility.messageBD(this, "DueDate", vars.getLanguage()));
+    sqlRO.setData("NAME", Utility.messageBD(readOnlyCP, "DueDate", vars.getLanguage()));
     sqlRO.setData("DESCRIPTION", "");
     vector.addElement(sqlRO);
 
@@ -732,10 +752,12 @@ public class PaymentReport extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("salesrepId", strsalesrepId);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "SalesRep_ID",
-          "AD_User SalesRep", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "PaymentReport"), Utility.getContext(this, vars, "#User_Client", "PaymentReport"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "PaymentReport", strsalesrepId);
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLE", "SalesRep_ID",
+          "AD_User SalesRep", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "PaymentReport"), Utility.getContext(readOnlyCP, vars, "#User_Client",
+              "PaymentReport"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "PaymentReport",
+          strsalesrepId);
       xmlDocument.setData("reportSalesRep_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -752,16 +774,19 @@ public class PaymentReport extends HttpSecureAppServlet {
   }
 
   private boolean showAsterisk(FieldProvider[] data, String asterisk) {
-    if (asterisk == null || "".equals(asterisk) || data == null)
+    if (StringUtils.isEmpty(asterisk) || data == null) {
       return false;
+    }
     boolean showAsterisk = false;
     for (final FieldProvider fp : data) {
       if (fp.getField("INVOICE_NUMBER") != null
-          && !"".equals(fp.getField("INVOICE_NUMBER"))
+          && StringUtils.isNotEmpty(fp.getField("INVOICE_NUMBER"))
           && fp.getField("INVOICE_NUMBER").length() >= asterisk.length()
-          && asterisk.equals(fp.getField("INVOICE_NUMBER").substring(0, asterisk.length()))
-          && !"*".equals(fp.getField("INVOICE_NUMBER").substring(asterisk.length(),
-              asterisk.length() + 1))) {
+          && StringUtils.equals(asterisk,
+              fp.getField("INVOICE_NUMBER").substring(0, asterisk.length()))
+          && !StringUtils.equals(
+              fp.getField("INVOICE_NUMBER").substring(asterisk.length(), asterisk.length() + 1),
+              "*")) {
         showAsterisk = true;
         break;
       }
@@ -784,6 +809,7 @@ public class PaymentReport extends HttpSecureAppServlet {
     response.setContentType("text/html; charset=UTF-8");
 
     dao = new PaymentReportDao();
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     FieldProvider[] data = null;
     try {
       data = dao.getPaymentReport(vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
@@ -794,46 +820,50 @@ public class PaymentReport extends HttpSecureAppServlet {
           strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo, strExpectedDateFrom,
           strExpectedDateTo, strsalesrepId, strOutput);
     } catch (OBException e) {
-      advisePopUp(request, response, "WARNING",
-          Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
-          Utility.messageBD(this, "FINPR_NoConversionFound", vars.getLanguage()) + e.getMessage());
+      advisePopUp(
+          request,
+          response,
+          "WARNING",
+          Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()),
+          Utility.messageBD(readOnlyCP, "FINPR_NoConversionFound", vars.getLanguage())
+              + e.getMessage());
     }
 
     if (data != null && data.length == 1 && data[0] == null) {
 
       advisePopUp(request, response, "WARNING",
-          Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
-          Utility.messageBD(this, "FINPR_NoDataFound", vars.getLanguage()));
+          Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()),
+          Utility.messageBD(readOnlyCP, "FINPR_NoDataFound", vars.getLanguage()));
 
     } else if (data != null && data.length == 1 && data[0].getField("conversionDate") != null) {
 
-      String transCurrency = OBDal.getInstance()
+      String transCurrency = OBDal.getReadOnlyInstance()
           .get(Currency.class, data[0].getField("transCurrency")).getISOCode();
-      String baseCurrency = OBDal.getInstance()
+      String baseCurrency = OBDal.getReadOnlyInstance()
           .get(Currency.class, data[0].getField("baseCurrency")).getISOCode();
 
       String message = transCurrency + " -> " + baseCurrency + " "
           + data[0].getField("conversionDate");
       advisePopUp(request, response, "WARNING",
-          Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
-          Utility.messageBD(this, "FINPR_NoConversionFound", vars.getLanguage()) + message);
+          Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()),
+          Utility.messageBD(readOnlyCP, "FINPR_NoConversionFound", vars.getLanguage()) + message);
 
     }
 
     String strReportName = "";
 
-    if (strOutput.equals("pdf")) {
+    if (StringUtils.equals(strOutput, "pdf")) {
       // Launch the report as usual, calling the JRXML file
       strReportName = "@basedesign@/org/openbravo/financial/paymentreport/erpCommon/ad_reports/PaymentReportPDF.jrxml";
       response.setHeader("Content-disposition", "inline; filename=PaymentReport.pdf");
-    } else if (strOutput.equals("xls")) {
+    } else if (StringUtils.equals(strOutput, "xls")) {
       strReportName = "@basedesign@/org/openbravo/financial/paymentreport/erpCommon/ad_reports/PaymentReportExcel.jrxml";
       response.setHeader("Content-disposition", "inline; filename=PaymentReportExcel.xls");
     }
 
     String strSubTitle = "";
-    strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " " + strDueDateFrom + " "
-        + Utility.messageBD(this, "To", vars.getLanguage()) + " " + strDueDateTo;
+    strSubTitle = Utility.messageBD(readOnlyCP, "From", vars.getLanguage()) + " " + strDueDateFrom
+        + " " + Utility.messageBD(readOnlyCP, "To", vars.getLanguage()) + " " + strDueDateTo;
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("REPORT_SUBTITLE", strSubTitle);
@@ -852,99 +882,95 @@ public class PaymentReport extends HttpSecureAppServlet {
 
     String[] elements;
 
-    if (!strOrg.isEmpty())
-      strOrgShow = dao.getObject(Organization.class, strOrg).getIdentifier();
-    else
-      strOrgShow = "";
+    strOrgShow = StringUtils.isNotEmpty(strOrg) ? dao.getObject(Organization.class, strOrg)
+        .getIdentifier() : "";
 
-    if (!strcBPartnerIdIN.isEmpty()) {
+    if (StringUtils.isNotEmpty(strcBPartnerIdIN)) {
       strBPartnerShow = strcBPartnerIdIN.substring(2, strcBPartnerIdIN.length() - 2);
       elements = strBPartnerShow.split("', '");
       strBPartnerShow = "";
-      for (int i = 0; i < elements.length; i++)
-        if (i < (elements.length - 1))
+      for (int i = 0; i < elements.length; i++) {
+        if (i < (elements.length - 1)) {
           strBPartnerShow = strBPartnerShow.concat(dao
               .getObject(BusinessPartner.class, elements[i]).getIdentifier()) + ", ";
-        else
+        } else {
           strBPartnerShow = strBPartnerShow.concat(dao
               .getObject(BusinessPartner.class, elements[i]).getIdentifier());
-    } else
+        }
+      }
+    } else {
       strBPartnerShow = "";
+    }
 
-    if (!strcBPGroupIdIN.isEmpty())
-      strBPGroupShow = dao.getObject(Category.class, strcBPGroupIdIN).getIdentifier();
-    else
-      strBPGroupShow = "";
+    strBPGroupShow = StringUtils.isNotEmpty(strcBPGroupIdIN) ? dao.getObject(Category.class,
+        strcBPGroupIdIN).getIdentifier() : "";
 
-    if (!strcProjectIdIN.isEmpty()) {
+    if (StringUtils.isNotEmpty(strcProjectIdIN)) {
       strProjectShow = strcProjectIdIN.substring(2, strcProjectIdIN.length() - 2);
       elements = strProjectShow.split("', '");
       strProjectShow = "";
-      for (int i = 0; i < elements.length; i++)
-        if (i < (elements.length - 1))
+      for (int i = 0; i < elements.length; i++) {
+        if (i < (elements.length - 1)) {
           strProjectShow = strProjectShow.concat(dao.getObject(Project.class, elements[i])
               .getIdentifier()) + ", ";
-        else
+        } else {
           strProjectShow = strProjectShow.concat(dao.getObject(Project.class, elements[i])
               .getIdentifier());
-    } else
+        }
+      }
+    } else {
       strProjectShow = "";
+    }
 
-    if (!strfinPaymSt.isEmpty()) {
+    if (StringUtils.isNotEmpty(strfinPaymSt)) {
       strStatusShow = strfinPaymSt.substring(2, strfinPaymSt.length() - 2);
       elements = strStatusShow.split("', '");
       strStatusShow = "";
-      for (int i = 0; i < elements.length; i++)
-        if (i < (elements.length - 1))
+      for (int i = 0; i < elements.length; i++) {
+        if (i < (elements.length - 1)) {
           strStatusShow = strStatusShow.concat(PaymentReportDao.translateRefList(elements[i])
               + ", ");
-        else
+        } else {
           strStatusShow = strStatusShow.concat(PaymentReportDao.translateRefList(elements[i]));
-    } else
+        }
+      }
+    } else {
       strStatusShow = "";
+    }
 
-    if (!strPaymentMethodId.isEmpty())
-      strPaymentMethodShow = dao.getObject(FIN_PaymentMethod.class, strPaymentMethodId)
-          .getIdentifier();
-    else
-      strPaymentMethodShow = "";
+    strPaymentMethodShow = StringUtils.isNotEmpty(strPaymentMethodId) ? dao.getObject(
+        FIN_PaymentMethod.class, strPaymentMethodId).getIdentifier() : "";
+    strFinancialAccountShow = StringUtils.isNotEmpty(strFinancialAccountId) ? dao.getObject(
+        FIN_FinancialAccount.class, strFinancialAccountId).getIdentifier() : "";
+    strCurrencyShow = StringUtils.isNotEmpty(strcCurrency) ? dao.getObject(Currency.class,
+        strcCurrency).getIdentifier() : "";
+    strConvertCurrencyShow = StringUtils.isNotEmpty(strConvertCurrency) ? dao.getObject(
+        Currency.class, strConvertCurrency).getIdentifier() : "";
 
-    if (!strFinancialAccountId.isEmpty())
-      strFinancialAccountShow = dao.getObject(FIN_FinancialAccount.class, strFinancialAccountId)
-          .getIdentifier();
-    else
-      strFinancialAccountShow = "";
-
-    if (!strcCurrency.isEmpty())
-      strCurrencyShow = dao.getObject(Currency.class, strcCurrency).getIdentifier();
-    else
-      strCurrencyShow = "";
-
-    if (!strConvertCurrency.isEmpty())
-      strConvertCurrencyShow = dao.getObject(Currency.class, strConvertCurrency).getIdentifier();
-    else
-      strConvertCurrencyShow = "";
-
-    if (!strOrdCrit.isEmpty()) {
+    if (StringUtils.isNotEmpty(strOrdCrit)) {
       elements = strOrdCrit.substring(2, strOrdCrit.length() - 2).split("', '");
       strOrdCritShow = "";
 
-      for (int i = 0; i < elements.length; i++)
-        if (i < (elements.length - 1))
-          strOrdCritShow = strOrdCritShow.concat(Utility.messageBD(this, elements[i],
+      for (int i = 0; i < elements.length; i++) {
+        if (i < (elements.length - 1)) {
+          strOrdCritShow = strOrdCritShow.concat(Utility.messageBD(readOnlyCP, elements[i],
               vars.getLanguage())
               + ", ");
-        else
-          strOrdCritShow = strOrdCritShow.concat(Utility.messageBD(this, elements[i],
+        } else {
+          strOrdCritShow = strOrdCritShow.concat(Utility.messageBD(readOnlyCP, elements[i],
               vars.getLanguage()));
-    } else
+        }
+      }
+    } else {
       strOrdCritShow = "";
+    }
 
     parameters.put("ORG_SHOW", strOrgShow);
-    if (strInclSubOrg.equalsIgnoreCase("include"))
-      parameters.put("INCL_SUBORG_SHOW", Utility.messageBD(this, "Yes", vars.getLanguage()));
-    else
-      parameters.put("INCL_SUBORG_SHOW", Utility.messageBD(this, "No", vars.getLanguage()));
+    if (StringUtils.equalsIgnoreCase(strInclSubOrg, "include")) {
+      parameters.put("INCL_SUBORG_SHOW", Utility.messageBD(readOnlyCP, "Yes", vars.getLanguage()));
+    } else {
+      parameters.put("INCL_SUBORG_SHOW", Utility.messageBD(readOnlyCP, "No", vars.getLanguage()));
+    }
     parameters.put("DUEDATEFROM_SHOW", strDueDateFrom);
     parameters.put("DUEDATETO_SHOW", strDueDateTo);
     parameters.put("EXPECTEDDATEFROM_SHOW", strExpectedDateFrom);
@@ -964,17 +990,21 @@ public class PaymentReport extends HttpSecureAppServlet {
     parameters.put("CURRENCY_SHOW", strCurrencyShow);
     parameters.put("CONVERT_CURRENCY_SHOW", strConvertCurrencyShow);
     parameters.put("CONVERSIONDATE_SHOW", strConversionDate);
-    parameters.put("PAYMTYPE_SHOW", Utility.messageBD(this, strPaymType, vars.getLanguage()));
-    if (strOverdue.equalsIgnoreCase("Y"))
-      parameters.put("OVERDUE_SHOW", Utility.messageBD(this, "Yes", vars.getLanguage()));
-    else
-      parameters.put("OVERDUE_SHOW", Utility.messageBD(this, "No", vars.getLanguage()));
-    parameters.put("GROUPCRIT_SHOW", Utility.messageBD(this, strGroupCrit, vars.getLanguage()));
-    parameters.put("ORDCRIT_SHOW", strOrdCritShow);
-    if ("Y".equals(strInclPaymentUsingCredit)) {
-      parameters.put("INCL_PAYMENTUSINGCREDIT", Utility.messageBD(this, "Yes", vars.getLanguage()));
+    parameters.put("PAYMTYPE_SHOW", Utility.messageBD(readOnlyCP, strPaymType, vars.getLanguage()));
+    if (StringUtils.equalsIgnoreCase(strOverdue, "Y")) {
+      parameters.put("OVERDUE_SHOW", Utility.messageBD(readOnlyCP, "Yes", vars.getLanguage()));
     } else {
-      parameters.put("INCL_PAYMENTUSINGCREDIT", Utility.messageBD(this, "No", vars.getLanguage()));
+      parameters.put("OVERDUE_SHOW", Utility.messageBD(readOnlyCP, "No", vars.getLanguage()));
+    }
+    parameters.put("GROUPCRIT_SHOW",
+        Utility.messageBD(readOnlyCP, strGroupCrit, vars.getLanguage()));
+    parameters.put("ORDCRIT_SHOW", strOrdCritShow);
+    if (StringUtils.equals(strInclPaymentUsingCredit, "Y")) {
+      parameters.put("INCL_PAYMENTUSINGCREDIT",
+          Utility.messageBD(readOnlyCP, "Yes", vars.getLanguage()));
+    } else {
+      parameters.put("INCL_PAYMENTUSINGCREDIT",
+          Utility.messageBD(readOnlyCP, "No", vars.getLanguage()));
     }
 
     parameters.put("ONE_ASTERISK_SHOW", new Boolean(showAsterisk(data, "*")));
@@ -987,5 +1017,5 @@ public class PaymentReport extends HttpSecureAppServlet {
 
   public String getServletInfo() {
     return "Servlet PaymentReport.";
-  } // end of getServletInfo() method
+  }
 }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,10 +29,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -44,6 +46,7 @@ import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.project.Project;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
@@ -54,7 +57,8 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Get user Client's base currency
-    String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    String strUserCurrencyId = Utility.stringBaseCurrencyId(readOnlyCP, vars.getClient());
     if (vars.commandIn("DEFAULT")) {
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportProjectProfitabilityJR|Org",
           vars.getOrg());
@@ -112,13 +116,15 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
           "ReportProjectProfitabilityJR|currency", strUserCurrencyId);
       String strOutput = "html";
-      if (vars.commandIn("PDF"))
+      if (vars.commandIn("PDF")) {
         strOutput = "pdf";
+      }
       printPageDataHtml(request, response, vars, strOrg, strProject, strProjectType,
           strResponsible, strDateFrom, strDateTo, strExpand, strPartner, strDateFrom2, strDateTo2,
           strDateFrom3, strDateTo3, strOutput, strCurrencyId);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataHtml(HttpServletRequest request, HttpServletResponse response,
@@ -127,49 +133,51 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       String strPartner, String strDateFrom2, String strDateTo2, String strDateFrom3,
       String strDateTo3, String strOutput, String strCurrencyId) throws IOException,
       ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
 
     String discard[] = { "discard" };
     String strTreeOrg = "'" + strOrg + "'";
-    if (strExpand.equals("Y"))
+    if (StringUtils.equals(strExpand, "Y")) {
       strTreeOrg += treeOrg(vars, strOrg);
+    }
     ReportProjectProfitabilityData[] data = null;
 
     // Checks if there is a conversion rate for each of the transactions of
     // the report
-    String strConvRateErrorMsg = "";
-    OBError myMessage = null;
-    myMessage = new OBError();
-    String strBaseCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+    OBError myMessage = new OBError();
+
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    String strBaseCurrencyId = Utility.stringBaseCurrencyId(readOnlyCP, vars.getClient());
     try {
       List<UOM> uomList = noConversionToHours(strProject, OBDateUtils.getDate(strDateFrom2),
           OBDateUtils.getDate(strDateTo2), strTreeOrg, strProjectType, strResponsible,
           OBDateUtils.getDate(strDateFrom), OBDateUtils.getDate(strDateTo), strPartner,
           OBDateUtils.getDate(strDateFrom3), OBDateUtils.getDate(strDateTo3));
-      if (uomList.size() > 0) {
+      if (!uomList.isEmpty()) {
         String uomsString = getUOMsString(uomList);
         advisePopUp(request, response, "ERROR",
-            Utility.messageBD(this, "Error", vars.getLanguage()),
-            Utility.messageBD(this, "NoConversionHourUOM", vars.getLanguage()) + uomsString);
+            Utility.messageBD(readOnlyCP, "Error", vars.getLanguage()),
+            Utility.messageBD(readOnlyCP, "NoConversionHourUOM", vars.getLanguage()) + uomsString);
       }
-      data = ReportProjectProfitabilityData.select(this, strCurrencyId, strBaseCurrencyId,
-          strDateFrom2, DateTimeData.nDaysAfter(this, strDateTo2, "1"), strTreeOrg,
-          Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"),
-          strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDateFrom3,
-          DateTimeData.nDaysAfter(this, strDateTo3, "1"), strProjectType, strProject,
+      data = ReportProjectProfitabilityData.select(readOnlyCP, strCurrencyId, strBaseCurrencyId,
+          strDateFrom2, DateTimeData.nDaysAfter(readOnlyCP, strDateTo2, "1"), strTreeOrg,
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProjectProfitabilityJR"),
+          strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strDateFrom3,
+          DateTimeData.nDaysAfter(readOnlyCP, strDateTo3, "1"), strProjectType, strProject,
           strResponsible, strPartner);
     } catch (ServletException ex) {
-      myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+      myMessage = Utility.translateError(readOnlyCP, vars, vars.getLanguage(), ex.getMessage());
     } catch (Exception ex) {
     }
-    strConvRateErrorMsg = myMessage.getMessage();
+    String strConvRateErrorMsg = myMessage.getMessage();
 
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
-    if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+    if (StringUtils.isNotEmpty(strConvRateErrorMsg)) {
       advisePopUp(request, response, "ERROR",
-          Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+          Utility.messageBD(readOnlyCP, "NoConversionRateHeader", vars.getLanguage()),
           strConvRateErrorMsg);
     } else { // Otherwise, the report is launched
       if (data == null || data.length == 0) {
@@ -178,9 +186,10 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       }
 
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportProjectProfitabilityJR.jrxml";
-      if (strOutput.equals("pdf"))
+      if (StringUtils.equals(strOutput, "pdf")) {
         response.setHeader("Content-disposition",
             "inline; filename=ReportProjectProfitabilityJR.pdf");
+      }
       HashMap<String, Object> parameters = new HashMap<String, Object>();
 
       renderJR(vars, response, strReportName, strOutput, parameters, data, null);
@@ -212,22 +221,22 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     hsqlScript.append("         and tel.uOM.id = unitofmeasure.id ");
     hsqlScript.append("         and tel.uOM.id <> '101' ");
     hsqlScript.append("         and es.processed = 'Y' ");
-    if (!"".equals(strProject)) {
+    if (StringUtils.isNotEmpty(strProject)) {
       hsqlScript.append("    and p.id = ?");
       parameters.add(strProject);
     }
-    if (!"".equals(strOrg)) {
+    if (StringUtils.isNotEmpty(strOrg)) {
       hsqlScript.append("    and p." + Project.PROPERTY_ORGANIZATION + ".id in (" + strOrg + ")");
     }
-    if (!"".equals(strProjectType)) {
+    if (StringUtils.isNotEmpty(strProjectType)) {
       hsqlScript.append("    and p." + Project.PROPERTY_PROJECTTYPE + ".id = ?");
       parameters.add(strProjectType);
     }
-    if (!"".equals(strResponsible)) {
+    if (StringUtils.isNotEmpty(strResponsible)) {
       hsqlScript.append("    and p." + Project.PROPERTY_PERSONINCHARGE + ".id = ?");
       parameters.add(strResponsible);
     }
-    if (!"".equals(strPartner)) {
+    if (StringUtils.isNotEmpty(strPartner)) {
       hsqlScript.append("    and p." + Project.PROPERTY_BUSINESSPARTNER + ".id = ?");
       parameters.add(strPartner);
     }
@@ -263,14 +272,10 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     hsqlScript.append("         and uomconv.toUOM.id =  '101' ");
     hsqlScript.append(" )");
 
-    final OBQuery<UOM> query = OBDal.getInstance().createQuery(UOM.class, hsqlScript.toString());
+    final OBQuery<UOM> query = OBDal.getReadOnlyInstance().createQuery(UOM.class,
+        hsqlScript.toString());
     query.setParameters(parameters);
-    if (query.list().size() == 0) {
-      return new ArrayList<UOM>();
-    } else {
-      List<UOM> noConvUOMList = query.list();
-      return noConvUOMList;
-    }
+    return query.list();
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
@@ -278,32 +283,33 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       String strDateFrom, String strDateTo, String strExpand, String strPartner,
       String strDateFrom2, String strDateTo2, String strDateFrom3, String strDateTo3,
       String strCurrencyId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
 
-    XmlDocument xmlDocument;
-    xmlDocument = xmlEngine.readXmlTemplate(
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportProjectProfitabilityJR").createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportProjectProfitabilityJR", false,
-        "", "", "", false, "ad_reports", strReplaceWith, false, true);
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportProjectProfitabilityJR",
+        false, "", "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.erpCommon.ad_reports.ReportProjectProfitabilityJR");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
           "ReportProjectProfitabilityJR.html", classInfo.id, classInfo.type, strReplaceWith,
           tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(),
           "ReportProjectProfitabilityJR.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
@@ -349,38 +355,38 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("expand", strExpand);
 
     try {
-      ComboTableData comboTableData = null;
-
-      comboTableData = new ComboTableData(vars, this, "TABLE", "Responsible_ID",
-          "Responsible employee", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportProjectProfitabilityJR"), Utility.getContext(this, vars, "#User_Client",
-              "ReportProjectProfitabilityJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProfitabilityJR",
-          strResponsible);
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLE",
+          "Responsible_ID", "Responsible employee", "", Utility.getContext(readOnlyCP, vars,
+              "#AccessibleOrgTree", "ReportProjectProfitabilityJR"), Utility.getContext(readOnlyCP,
+              vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
+          "ReportProjectProfitabilityJR", strResponsible);
       xmlDocument.setData("reportResponsible", "liststructure", comboTableData.select(false));
-      comboTableData = null;
 
-      comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "", "",
-          Utility.getContext(this, vars, "#User_Org", "ReportProjectProfitabilityJR"),
-          Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProfitabilityJR",
-          strOrg);
+      comboTableData = null;
+      comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "AD_Org_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#User_Org", "ReportProjectProfitabilityJR"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
+          "ReportProjectProfitabilityJR", strOrg);
       xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
 
-      comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Project_ID", "", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"),
-          Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProfitabilityJR",
-          strProject);
+      comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "C_Project_ID", "", "",
+          Utility
+              .getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
+          "ReportProjectProfitabilityJR", strProject);
       xmlDocument.setData("reportC_Project_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
 
-      comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_ProjectType_ID", "", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"),
-          Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProfitabilityJR",
-          strProjectType);
+      comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "C_ProjectType_ID", "", "",
+          Utility
+              .getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
+          "ReportProjectProfitabilityJR", strProjectType);
       xmlDocument.setData("reportC_ProjectType_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
 
@@ -390,12 +396,12 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportProjectProfitabilityJR"), Utility.getContext(this, vars, "#User_Client",
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+          "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportProjectProfitabilityJR"), Utility.getContext(readOnlyCP, vars, "#User_Client",
               "ReportProjectProfitabilityJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProfitabilityJR",
-          strCurrencyId);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
+          "ReportProjectProfitabilityJR", strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -408,16 +414,18 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
 
   public String getServletInfo() {
     return "Servlet ReportProjectProfitabilityJR. This Servlet was made by Pablo Sarobe";
-  } // end of getServletInfo() method
+  }
 
   private String treeOrg(VariablesSecureApp vars, String strOrg) throws ServletException {
-    ReportProjectProfitabilityData[] dataOrg = ReportProjectProfitabilityData.selectOrg(this,
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    ReportProjectProfitabilityData[] dataOrg = ReportProjectProfitabilityData.selectOrg(readOnlyCP,
         strOrg, vars.getClient());
     String strTreeOrg = "";
     for (int i = 0; i < dataOrg.length; i++) {
       strTreeOrg += "," + "'" + dataOrg[i].nodeId + "'";
-      if (dataOrg[i].issummary.equals("Y"))
+      if (StringUtils.equals(dataOrg[i].issummary, "Y")) {
         strTreeOrg += treeOrg(vars, dataOrg[i].nodeId);
+      }
     }
     return strTreeOrg;
   }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,14 +26,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportWorkRequirementJR extends HttpSecureAppServlet {
@@ -82,25 +85,32 @@ public class ReportWorkRequirementJR extends HttpSecureAppServlet {
           "ReportWorkRequirementJR|MA_ProcessPlan_ID");
       printPageDataHtml(response, vars, strStartDateFrom, strStartDateTo, strEndDateFrom,
           strEndDateTo, strmaProcessPlan, "pdf");
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
       String strStartDateFrom, String strStartDateTo, String strEndDateFrom, String strEndDateTo,
       String strmaProcessPlan, String strOutput) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
-    ReportWorkRequirementJRData[] data = null;
-    data = ReportWorkRequirementJRData.select(this, vars.getLanguage(),
-        Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementJR"),
-        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementJR"),
+
+    // Use ReadOnly Connection Provider
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    ReportWorkRequirementJRData[] data = ReportWorkRequirementJRData.select(readOnlyCP,
+        vars.getLanguage(),
+        Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportWorkRequirementJR"),
+        Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportWorkRequirementJR"),
         strStartDateFrom, strStartDateTo, strEndDateFrom, strEndDateTo, strmaProcessPlan);
     for (int i = 0; i < data.length; i++) {
-      String strqty = ReportWorkRequirementJRData.inprocess(this, data[i].wrid, data[i].productid);
-      if (strqty == null || strqty.equals(""))
+      String strqty = ReportWorkRequirementJRData.inprocess(readOnlyCP, data[i].wrid,
+          data[i].productid);
+      if (StringUtils.isEmpty(strqty)) {
         strqty = "0";
+      }
       data[i].inprocess = strqty;
     }
     String strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportWorkRequirementJR.jrxml";
@@ -111,34 +121,35 @@ public class ReportWorkRequirementJR extends HttpSecureAppServlet {
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strStartDateFrom, String strStartDateTo, String strEndDateFrom, String strEndDateTo,
       String strmaProcessPlan) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
 
-    XmlDocument xmlDocument = null;
-
-    xmlDocument = xmlEngine.readXmlTemplate(
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportWorkRequirementJR").createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportWorkRequirementJR", false, "",
-        "", "", false, "ad_reports", strReplaceWith, false, true);
+    // Use ReadOnly Connection Provider
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportWorkRequirementJR", false,
+        "", "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.erpCommon.ad_reports.ReportWorkRequirementJR");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
           "ReportWorkRequirementJR.html", classInfo.id, classInfo.type, strReplaceWith,
           tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportWorkRequirementJR.html",
-          strReplaceWith);
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(),
+          "ReportWorkRequirementJR.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -168,12 +179,10 @@ public class ReportWorkRequirementJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("endDateTo", strEndDateTo);
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setData(
-        "reportMA_PROCESSPLAN",
-        "liststructure",
-        ProcessPlanComboData.select(this,
-            Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementJR"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementJR")));
+    xmlDocument.setData("reportMA_PROCESSPLAN", "liststructure", ProcessPlanComboData.select(
+        readOnlyCP,
+        Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportWorkRequirementJR"),
+        Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportWorkRequirementJR")));
 
     out.println(xmlDocument.print());
     out.close();

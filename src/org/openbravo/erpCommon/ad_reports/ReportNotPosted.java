@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,12 +28,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportNotPosted extends HttpSecureAppServlet {
@@ -53,18 +55,19 @@ public class ReportNotPosted extends HttpSecureAppServlet {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportNotPosted|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportNotPosted|DateTo");
       printPageDataSheet(response, vars, strDateFrom, strDateTo);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
-    ReportNotPostedData[] data = null;
     // if (strDateFrom.equals("") && strDateTo.equals("")) {
     // xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportNotPosted",
     // discard).createXmlDocument();
@@ -72,27 +75,30 @@ public class ReportNotPosted extends HttpSecureAppServlet {
     // } else {
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportNotPosted")
         .createXmlDocument();
-    data = ReportNotPostedData.select(this, vars.getLanguage(), vars.getClient(), strDateFrom,
-        strDateTo);
+
+    // Use ReadOnly Connection Provider
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    ReportNotPostedData[] data = ReportNotPostedData.select(readOnlyCP, vars.getLanguage(),
+        vars.getClient(), strDateFrom, strDateTo);
     // }// DateTimeData.nDaysAfter
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportNotPosted", false, "", "", "",
-        false, "ad_reports", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportNotPosted", false, "", "",
+        "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
 
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.erpCommon.ad_reports.ReportNotPosted");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportNotPosted.html",
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(), "ReportNotPosted.html",
           classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportNotPosted.html",
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(), "ReportNotPosted.html",
           strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
@@ -112,9 +118,9 @@ public class ReportNotPosted extends HttpSecureAppServlet {
       // No data has been found. Show warning message.
       xmlDocument.setParameter("messageType", "WARNING");
       xmlDocument.setParameter("messageTitle",
-          Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()));
+          Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()));
       xmlDocument.setParameter("messageMessage",
-          Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+          Utility.messageBD(readOnlyCP, "NoDataFound", vars.getLanguage()));
     }
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));

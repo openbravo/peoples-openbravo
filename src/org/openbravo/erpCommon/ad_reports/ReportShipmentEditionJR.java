@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,8 +26,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -35,6 +37,7 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportShipmentEditionJR extends HttpSecureAppServlet {
@@ -58,37 +61,40 @@ public class ReportShipmentEditionJR extends HttpSecureAppServlet {
       String strissotrx = "Y";
       printPagePdf(response, vars, strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId,
           strcProjectId, strissotrx);
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
 
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strdateFrom, String strdateTo) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     XmlDocument xmlDocument = null;
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportShipmentFilterJR").createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportShipmentFilterJR", false, "",
-        "", "", false, "ad_reports", strReplaceWith, false, true);
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportShipmentFilterJR", false,
+        "", "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.erpCommon.ad_reports.ReportShipmentEditionJR");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
           "ReportShipmentEditionJR.html", classInfo.id, classInfo.type, strReplaceWith,
           tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportShipmentEditionJR.html",
-          strReplaceWith);
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(),
+          "ReportShipmentEditionJR.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -117,10 +123,11 @@ public class ReportShipmentEditionJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("cProjectId", "");
     xmlDocument.setParameter("projectName", "");
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ShipmentFilter"),
-          Utility.getContext(this, vars, "#User_Client", "ShipmentFilter"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ShipmentFilter", "");
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
+          "M_Warehouse_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ShipmentFilter"), Utility.getContext(readOnlyCP, vars, "#User_Client",
+              "ShipmentFilter"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ShipmentFilter", "");
       xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -136,29 +143,33 @@ public class ReportShipmentEditionJR extends HttpSecureAppServlet {
   private void printPagePdf(HttpServletResponse response, VariablesSecureApp vars,
       String strdateFrom, String strdateTo, String strcBpartnetId, String strmWarehouseId,
       String strcProjectId, String strissotrx) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print pdf");
+    }
     String strOutput = new String(vars.commandIn("EDIT_PDF") ? "pdf" : "html");
 
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportShipmentEdition.jrxml";
-    if (strOutput.equals("pdf"))
+    if (StringUtils.equals(strOutput, "pdf")) {
       response.setHeader("Content-disposition", "inline; filename=ReportShipmetEditionJR.pdf");
+    }
 
-    InoutEditionData[] data = InoutEditionData.selectShipment(this,
-        Utility.getContext(this, vars, "#AccessibleOrgTree", "ShipmentFilter"),
-        Utility.getContext(this, vars, "#User_Client", "ShipmentFilter"), strdateFrom, strdateTo,
-        strcBpartnetId, strmWarehouseId, strcProjectId, strissotrx);
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    InoutEditionData[] data = InoutEditionData.selectShipment(readOnlyCP,
+        Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ShipmentFilter"),
+        Utility.getContext(readOnlyCP, vars, "#User_Client", "ShipmentFilter"), strdateFrom,
+        strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId, strissotrx);
     HashMap<String, Object> parameters = new HashMap<String, Object>();
 
-    String strSubTitle = "";
-    strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " " + strdateFrom + " "
-        + Utility.messageBD(this, "To", vars.getLanguage()) + " " + strdateTo;
+    String strSubTitle = Utility.messageBD(readOnlyCP, "From", vars.getLanguage()) + " "
+        + strdateFrom + " " + Utility.messageBD(readOnlyCP, "To", vars.getLanguage()) + " "
+        + strdateTo;
     parameters.put("REPORT_SUBTITLE", strSubTitle);
-    if (log4j.isDebugEnabled())
+
+    if (log4j.isDebugEnabled()) {
       log4j.debug("data" + data.length);
+    }
 
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
-
   }
 
   public String getServletInfo() {

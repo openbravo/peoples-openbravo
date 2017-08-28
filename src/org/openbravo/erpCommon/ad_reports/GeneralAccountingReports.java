@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,6 +47,7 @@ import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.AccountTree;
 import org.openbravo.erpCommon.businessUtility.AccountTreeData;
 import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
@@ -68,6 +69,7 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.accounting.OrganizationClosing;
 import org.openbravo.model.financialmgmt.calendar.Calendar;
 import org.openbravo.model.financialmgmt.calendar.Year;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class GeneralAccountingReports extends HttpSecureAppServlet {
@@ -154,7 +156,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     } else if (vars.commandIn("CMBORG")) {
       String strAccSchema = vars.getStringParameter("inpcAcctSchemaId");
       String strAcctRpt = vars.getStringParameter("inpcElementvalueId", "");
-      if (!strAcctRpt.isEmpty()) {
+      if (StringUtils.isNotEmpty(strAcctRpt)) {
         strAcctRpt = strAcctRpt.substring(1);
       }
       String strOrg = vars.getStringParameter("inpOrganizacion", "");
@@ -169,8 +171,9 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         }
         i++;
       }
-      GeneralAccountingReportsData[] data = GeneralAccountingReportsData.selectOrgsDouble(this,
-          vars.getClient(), strOrgList, strAccSchema, strAcctRpt);
+      ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+      GeneralAccountingReportsData[] data = GeneralAccountingReportsData.selectOrgsDouble(
+          readOnlyCP, vars.getClient(), strOrgList, strAccSchema, strAcctRpt);
       String combobox = getJSONComboBox(data, strOrg, false);
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
@@ -179,8 +182,9 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     } else if (vars.commandIn("CMBYEAR")) {
       String strOrg = vars.getStringParameter("inpOrganizacion", "");
       String strAgno = vars.getStringParameter("inpAgno", "");
-      GeneralAccountingReportsData[] data = GeneralAccountingReportsData.selectYearsDouble(this,
-          vars.getUserClient(), strOrg);
+      ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+      GeneralAccountingReportsData[] data = GeneralAccountingReportsData.selectYearsDouble(
+          readOnlyCP, vars.getUserClient(), strOrg);
       String combobox = getJSONComboBox(data, strAgno, false);
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
@@ -213,7 +217,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           orgs.add(obj.id);
           attr = new HashMap<String, String>();
           attr.put("value", obj.id);
-          attr.put("selected", ((obj.name).equals(selectedValue)) ? "true" : "false");
+          attr.put("selected", StringUtils.equals(obj.name, selectedValue) ? "true" : "false");
           attr.put("text", obj.name);
           select.put(i, attr);
           json.put("optionlist", select);
@@ -238,61 +242,65 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     String localStrDateFrom = strDateFrom;
     String localStrDateFromRef = strDateFromRef;
     String localStrDateTo = strDateTo;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: pdf");
+    }
 
     String strCalculateOpening = localStrElementValue.substring(0, 1);
     localStrElementValue = localStrElementValue.substring(1, localStrElementValue.length());
-    GeneralAccountingReportsData[] strGroups = GeneralAccountingReportsData.selectGroups(this,
-        localStrElementValue);
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    GeneralAccountingReportsData[] strGroups = GeneralAccountingReportsData.selectGroups(
+        readOnlyCP, localStrElementValue);
 
     try {
       strGroups[strGroups.length - 1].pagebreak = "";
 
       String[][] strElementValueDes = new String[strGroups.length][];
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("strElementValue:" + localStrElementValue + " - strGroups.length:"
             + strGroups.length);
+      }
       for (int i = 0; i < strGroups.length; i++) {
         GeneralAccountingReportsData[] strElements = GeneralAccountingReportsData.selectElements(
-            this, strGroups[i].id);
+            readOnlyCP, strGroups[i].id);
         strElementValueDes[i] = new String[strElements.length];
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("strElements.length:" + strElements.length);
+        }
         for (int j = 0; j < strElements.length; j++) {
           strElementValueDes[i][j] = strElements[j].id;
         }
       }
-
-      String strTreeOrg = GeneralAccountingReportsData.treeOrg(this, vars.getClient());
+      String strTreeOrg = GeneralAccountingReportsData.treeOrg(readOnlyCP, vars.getClient());
       AccountTree[] acct = new AccountTree[strGroups.length];
 
       AccountTreeData[][] elements = new AccountTreeData[strGroups.length][];
 
-      WindowTreeData[] dataTree = WindowTreeData.selectTreeIDWithTableId(this,
+      WindowTreeData[] dataTree = WindowTreeData.selectTreeIDWithTableId(readOnlyCP,
           Utility.stringList(vars.getClient()), C_ELEMENT_VALUE_TABLE_ID);
       String TreeID = "";
-      if (dataTree != null && dataTree.length != 0)
+      if (dataTree != null && dataTree.length != 0) {
         TreeID = dataTree[0].id;
+      }
       OBContext.setAdminMode(false);
       try {
         String openingEntryOwner = "";
         String openingEntryOwnerRef = "";
         // For each year, the initial and closing date is obtained
-        Year year = OBDal.getInstance().get(Year.class, strYearId);
-        Year yearRef = OBDal.getInstance().get(Year.class, strYearRefId);
+        Year year = OBDal.getReadOnlyInstance().get(Year.class, strYearId);
+        Year yearRef = OBDal.getReadOnlyInstance().get(Year.class, strYearRefId);
         HashMap<String, Date> startingEndingDate = getStartingEndingDate(year);
         /* Improved Balance Sheet */
         String yrRef = "";
         HashMap<String, Date> startingEndingDateRef = null;
-        if (strCompareTo.equals("Y")) {
+        if (StringUtils.equals(strCompareTo, "Y")) {
           yrRef = yearRef.getFiscalYear();
           startingEndingDateRef = getStartingEndingDate(yearRef);
         }
         // Years to be included as no closing is present
         String strYearsToClose = "";
         String strYearsToCloseRef = "";
-        if (strCalculateOpening.equals("Y")) {
+        if (StringUtils.equals(strCalculateOpening, "Y")) {
           strCalculateOpening = "N";
           localStrDateTo = strAsDateTo;
           localStrDateToRef = strAsDateToRef;
@@ -307,7 +315,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
             strYearsToClose = "," + strYearsToClose;
           }
           /* Improved Balance Sheet */
-          if (strCompareTo.equals("Y")) {
+          if (StringUtils.equals(strCompareTo, "Y")) {
             yearsInfo = getYearsToClose(startingEndingDateRef.get("startingDate"), strOrg,
                 yearRef.getCalendar(), strcAcctSchemaId, true);
             strYearsToCloseRef = yearsInfo[0];
@@ -319,55 +327,61 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           }
         }
         // Income summary amount is calculated and included in the balance sheet data
-        String strIncomeSummaryAccount = GeneralAccountingReportsData.incomesummary(this,
+        String strIncomeSummaryAccount = GeneralAccountingReportsData.incomesummary(readOnlyCP,
             strcAcctSchemaId);
 
         for (int i = 0; i < strGroups.length; i++) {
           // All account tree is obtained
-          if (vars.getLanguage().equals("en_US")) {
-            elements[i] = AccountTreeData.select(this, strConCodigo, TreeID);
+          if (StringUtils.equals(vars.getLanguage(), "en_US")) {
+            elements[i] = AccountTreeData.select(readOnlyCP, strConCodigo, TreeID);
           } else {
-            elements[i] = AccountTreeData.selectTrl(this, strConCodigo, vars.getLanguage(), TreeID);
+            elements[i] = AccountTreeData.selectTrl(readOnlyCP, strConCodigo, vars.getLanguage(),
+                TreeID);
           }
           // For each account with movements in the year, debit and credit total amounts are
           // calculated according to fact_acct movements.
-          AccountTreeData[] accounts = AccountTreeData.selectFactAcct(this,
-              Utility.getContext(this, vars, "#AccessibleOrgTree", "GeneralAccountingReports"),
-              Utility.getContext(this, vars, "#User_Client", "GeneralAccountingReports"),
-              localStrDateFrom, DateTimeData.nDaysAfter(this, localStrDateTo, "1"),
-              strcAcctSchemaId, Tree.getMembers(this, strTreeOrg, strOrg),
+          AccountTreeData[] accounts = AccountTreeData.selectFactAcct(readOnlyCP, Utility
+              .getContext(readOnlyCP, vars, "#AccessibleOrgTree", "GeneralAccountingReports"),
+              Utility.getContext(readOnlyCP, vars, "#User_Client", "GeneralAccountingReports"),
+              localStrDateFrom, DateTimeData.nDaysAfter(readOnlyCP, localStrDateTo, "1"),
+              strcAcctSchemaId, Tree.getMembers(readOnlyCP, strTreeOrg, strOrg),
               "'" + year.getFiscalYear() + "'" + strYearsToClose, openingEntryOwner, strCompareTo,
-              localStrDateFromRef, DateTimeData.nDaysAfter(this, localStrDateToRef, "1"), "'"
+              localStrDateFromRef, DateTimeData.nDaysAfter(readOnlyCP, localStrDateToRef, "1"), "'"
                   + yrRef + "'" + strYearsToCloseRef, openingEntryOwnerRef);
           {
-            if (log4j.isDebugEnabled())
+            if (log4j.isDebugEnabled()) {
               log4j.debug("*********** strIncomeSummaryAccount: " + strIncomeSummaryAccount);
+            }
             String strISyear = processIncomeSummary(localStrDateFrom,
-                DateTimeData.nDaysAfter(this, localStrDateTo, "1"), "'" + year.getFiscalYear()
-                    + "'" + strYearsToClose, strTreeOrg, strOrg, strcAcctSchemaId);
-            if (log4j.isDebugEnabled())
+                DateTimeData.nDaysAfter(readOnlyCP, localStrDateTo, "1"),
+                "'" + year.getFiscalYear() + "'" + strYearsToClose, strTreeOrg, strOrg,
+                strcAcctSchemaId);
+            if (log4j.isDebugEnabled()) {
               log4j.debug("*********** strISyear: " + strISyear);
+            }
             /* Improved Balance Sheet */
             String strISyearRef = "0";
-            if (strCompareTo.equals("Y")) {
+            if (StringUtils.equals(strCompareTo, "Y")) {
               strISyearRef = processIncomeSummary(localStrDateFromRef,
-                  DateTimeData.nDaysAfter(this, localStrDateToRef, "1"),
+                  DateTimeData.nDaysAfter(readOnlyCP, localStrDateToRef, "1"),
                   "'" + yearRef.getFiscalYear() + "'" + strYearsToCloseRef, strTreeOrg, strOrg,
                   strcAcctSchemaId);
-              if (log4j.isDebugEnabled())
+              if (log4j.isDebugEnabled()) {
                 log4j.debug("*********** strISyearRef: " + strISyearRef);
+              }
             }
             accounts = appendRecords(accounts, strIncomeSummaryAccount, strISyear, strISyearRef);
 
           }
           // Report tree is built with given the account tree, and the amounts obtained from
           // fact_acct
-          acct[i] = new AccountTree(vars, this, elements[i], accounts, strElementValueDes[i]);
+          acct[i] = new AccountTree(vars, readOnlyCP, elements[i], accounts, strElementValueDes[i]);
           if (acct[i] != null) {
             acct[i].filterSVC();
-            acct[i].filter(strConImporte.equals("Y"), strLevel, false);
-          } else if (log4j.isDebugEnabled())
+            acct[i].filter(StringUtils.equals(strConImporte, "Y"), strLevel, false);
+          } else if (log4j.isDebugEnabled()) {
             log4j.debug("acct null!!!");
+          }
         }
 
         String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/GeneralAccountingReportsPDF.jrxml";
@@ -379,39 +393,44 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         parameters.put("agno2", yrRef);
         parameters.put("column", year.getFiscalYear());
         parameters.put("columnRef", yrRef);
-        parameters.put("org", OrganizationData.selectOrgName(this, strOrg));
+        parameters.put("org", OrganizationData.selectOrgName(readOnlyCP, strOrg));
         parameters.put("column1", year.getFiscalYear());
         parameters.put("columnRef1", yrRef);
         parameters.put("companyName",
-            GeneralAccountingReportsData.companyName(this, vars.getClient()));
-        parameters.put("date", DateTimeData.today(this));
-        if (localStrDateFrom.equals(""))
+            GeneralAccountingReportsData.companyName(readOnlyCP, vars.getClient()));
+        parameters.put("date", DateTimeData.today(readOnlyCP));
+        if (StringUtils.isEmpty(localStrDateFrom)) {
           localStrDateFrom = OBDateUtils.formatDate(startingEndingDate.get("startingDate"));
-        if (localStrDateTo.equals(""))
+        }
+        if (StringUtils.isEmpty(localStrDateTo)) {
           localStrDateTo = OBDateUtils.formatDate(startingEndingDate.get("endingDate"));
+        }
         /* Improved Balance Sheet */
-        if (strCompareTo.equals("Y")) {
-          if (localStrDateFromRef.equals(""))
+        if (StringUtils.equals(strCompareTo, "Y")) {
+          if (StringUtils.isEmpty(localStrDateFromRef)) {
             localStrDateFromRef = OBDateUtils.formatDate(startingEndingDateRef.get("startingDate"));
-          if (localStrDateToRef.equals(""))
+          }
+          if (StringUtils.isEmpty(localStrDateToRef)) {
             localStrDateToRef = OBDateUtils.formatDate(startingEndingDateRef.get("endingDate"));
+          }
         }
         parameters.put("period", localStrDateFrom + " - " + localStrDateTo);
         parameters.put("periodRef", localStrDateFromRef + " - " + localStrDateToRef);
         parameters.put("agnoInitial", year.getFiscalYear());
         parameters.put("agnoRef", yrRef);
-        parameters.put("compareTo", (strCompareTo.equals("Y") ? "Y" : "N"));
+        parameters.put("compareTo", StringUtils.equals(strCompareTo, "Y") ? "Y" : "N");
         parameters.put(
             "principalTitle",
-            strCalculateOpening.equals("Y") ? GeneralAccountingReportsData.rptTitle(this,
-                localStrElementValue) + " (Provisional)" : GeneralAccountingReportsData.rptTitle(
-                this, localStrElementValue));
+            StringUtils.equals(strCalculateOpening, "Y") ? GeneralAccountingReportsData.rptTitle(
+                readOnlyCP, localStrElementValue) + " (Provisional)" : GeneralAccountingReportsData
+                .rptTitle(readOnlyCP, localStrElementValue));
 
         parameters.put("pageNo", strPageNo);
 
         AccountTreeData[][] trees = new AccountTreeData[strGroups.length][];
-        for (int i = 0; i < strGroups.length; i++)
+        for (int i = 0; i < strGroups.length; i++) {
           trees[i] = acct[i].getAccounts();
+        }
 
         List<HashMap<String, String>> hashMapList = new ArrayList<HashMap<String, String>>();
 
@@ -437,8 +456,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
 
     } catch (ArrayIndexOutOfBoundsException e) {
       advisePopUp(request, response, "ERROR",
-          Utility.messageBD(this, "ReportWithoutNodes", vars.getLanguage()));
-
+          Utility.messageBD(readOnlyCP, "ReportWithoutNodes", vars.getLanguage()));
     }
   }
 
@@ -462,7 +480,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
 
   private Set<Organization> getCalendarOwnerOrgs(String strOrg) {
     Set<Organization> calendarOwnerOrgs = new HashSet<Organization>();
-    Organization organization = OBDal.getInstance().get(Organization.class, strOrg);
+    Organization organization = OBDal.getReadOnlyInstance().get(Organization.class, strOrg);
     if (organization.isAllowPeriodControl()) {
       calendarOwnerOrgs.add(organization);
     }
@@ -475,7 +493,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
   private boolean isNotClosed(Year year, Organization org, String strcAcctSchemaId) {
     OBContext.setAdminMode(false);
     try {
-      OBCriteria<OrganizationClosing> obc = OBDal.getInstance().createCriteria(
+      OBCriteria<OrganizationClosing> obc = OBDal.getReadOnlyInstance().createCriteria(
           OrganizationClosing.class);
       obc.createAlias(OrganizationClosing.PROPERTY_ORGACCTSCHEMA, "oa");
       obc.add(Restrictions.eq("organization", org));
@@ -496,7 +514,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     hqlString.append(" from FinancialMgmtYear y, FinancialMgmtPeriod as p");
     hqlString
         .append(" where p.year = y  and p.endingDate < :date and y.calendar = :calendar order by p.startingDate");
-    final Session session = OBDal.getInstance().getSession();
+    final Session session = OBDal.getReadOnlyInstance().getSession();
     final Query query = session.createQuery(hqlString.toString());
     query.setParameter("date", startingDate);
     query.setParameter("calendar", calendar);
@@ -518,7 +536,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     hqlString.append(" from FinancialMgmtPeriod as p");
     hqlString.append(" where p.year = :year");
 
-    final Session session = OBDal.getInstance().getSession();
+    final Session session = OBDal.getReadOnlyInstance().getSession();
     final Query query = session.createQuery(hqlString.toString());
     query.setParameter("year", year);
     for (Object resultObject : query.list()) {
@@ -533,14 +551,14 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
 
   private AccountTreeData[] appendRecords(AccountTreeData[] data, String strIncomeSummary,
       String strISyear, String strISyearRef) throws ServletException {
-    if (data == null || strIncomeSummary == null || strIncomeSummary.equals("")
-        || strISyear == null || strISyear.equals("") || strISyearRef == null
-        || strISyearRef.equals(""))
+    if (data == null || StringUtils.isEmpty(strIncomeSummary) || StringUtils.isEmpty(strISyear)
+        || StringUtils.isEmpty(strISyearRef)) {
       return data;
+    }
     AccountTreeData[] data2 = new AccountTreeData[data.length + 1];
     boolean found = false;
     for (int i = 0; i < data.length; i++) {
-      if (data[i].id.equals(strIncomeSummary)) {
+      if (StringUtils.equals(data[i].id, strIncomeSummary)) {
         found = true;
         BigDecimal isYear = new BigDecimal(strISyear);
         BigDecimal isYearRef = new BigDecimal(strISyearRef);
@@ -559,23 +577,26 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       data2[data2.length - 1].qtycredit = strISyear;
       data2[data2.length - 1].qtyRef = new BigDecimal(strISyearRef).negate().toPlainString();
       data2[data2.length - 1].qtycreditRef = strISyearRef;
-    } else
+    } else {
       return data;
+    }
     return data2;
   }
 
   private String processIncomeSummary(String strDateFrom, String strDateTo, String strAgno,
       String strTreeOrg, String strOrg, String strcAcctSchemaId) throws ServletException,
       IOException {
-    String strISRevenue = GeneralAccountingReportsData.selectPyG(this, "R", strDateFrom, strDateTo,
-        strcAcctSchemaId, strAgno, Tree.getMembers(this, strTreeOrg, strOrg));
-    String strISExpense = GeneralAccountingReportsData.selectPyG(this, "E", strDateFrom, strDateTo,
-        strcAcctSchemaId, strAgno, Tree.getMembers(this, strTreeOrg, strOrg));
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    String strISRevenue = GeneralAccountingReportsData.selectPyG(readOnlyCP, "R", strDateFrom,
+        strDateTo, strcAcctSchemaId, strAgno, Tree.getMembers(readOnlyCP, strTreeOrg, strOrg));
+    String strISExpense = GeneralAccountingReportsData.selectPyG(readOnlyCP, "E", strDateFrom,
+        strDateTo, strcAcctSchemaId, strAgno, Tree.getMembers(readOnlyCP, strTreeOrg, strOrg));
     BigDecimal totalRevenue = new BigDecimal(strISRevenue);
     BigDecimal totalExpense = new BigDecimal(strISExpense);
     BigDecimal total = totalRevenue.add(totalExpense);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(total.toString());
+    }
     return total.toString();
   }
 
@@ -585,29 +606,30 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       String strElementValue, String strConImporte, String strOrg, String strLevel,
       String strConCodigo, String strcAcctSchemaId, String strCompareTo) throws IOException,
       ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/GeneralAccountingReports").createXmlDocument();
-
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "GeneralAccountingReports", false, "",
-        "", "", false, "ad_reports", strReplaceWith, false, true);
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "GeneralAccountingReports",
+        false, "", "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      WindowTabs tabs = new WindowTabs(this, vars,
+      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
           "org.openbravo.erpCommon.ad_reports.GeneralAccountingReports");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
           "GeneralAccountingReports.html", classInfo.id, classInfo.type, strReplaceWith,
           tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "GeneralAccountingReports.html",
-          strReplaceWith);
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(),
+          "GeneralAccountingReports.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -654,16 +676,17 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     xmlDocument.setParameter("level", strLevel);
     xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);
     xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
-        .selectC_ACCTSCHEMA_ID(this,
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "GeneralAccountingReports"),
-            Utility.getContext(this, vars, "#User_Client", "GeneralAccountingReports"),
+        .selectC_ACCTSCHEMA_ID(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "GeneralAccountingReports"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "GeneralAccountingReports"),
             strcAcctSchemaId));
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "C_ElementValue level", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "GeneralAccountingReports"), Utility.getContext(this, vars, "#User_Client",
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "LIST", "",
+          "C_ElementValue level", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "GeneralAccountingReports"), Utility.getContext(readOnlyCP, vars, "#User_Client",
               "GeneralAccountingReports"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "GeneralAccountingReports", "");
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "GeneralAccountingReports",
+          "");
       xmlDocument.setData("reportLevel", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -673,7 +696,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     xmlDocument.setParameter(
         "accountingReports",
         Utility.arrayDobleEntrada("arrAccountingReports",
-            GeneralAccountingReportsData.selectRptDouble(this)));
+            GeneralAccountingReportsData.selectRptDouble(readOnlyCP)));
     xmlDocument.setParameter("years", Utility.arrayDobleEntrada("arrYears", new FieldProvider[0]));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -689,7 +712,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       hqlString.append(" select " + RoleOrganization.PROPERTY_ORGANIZATION + ".id");
       hqlString.append(" from " + RoleOrganization.ENTITY_NAME);
       hqlString.append(" where " + RoleOrganization.PROPERTY_ROLE + ".id = :roleId");
-      Query query = OBDal.getInstance().getSession().createQuery(hqlString.toString());
+      Query query = OBDal.getReadOnlyInstance().getSession().createQuery(hqlString.toString());
       query.setParameter("roleId", roleId);
       return query.list();
     } finally {
