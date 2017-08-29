@@ -1178,6 +1178,12 @@ public class ModuleManagement extends HttpSecureAppServlet {
           final WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
           final WebService3Impl ws = loc.getWebService3();
           module = ws.moduleDetail(recordId);
+        } else {
+          String popUpTitle = Utility.messageBD(this, "OBUIAPP_Error", vars.getLanguage());
+          String connectErrorMsg = Utility
+              .messageBD(this, "CR_CouldNotConnect", vars.getLanguage());
+          advisePopUpRefresh(request, response, "ERROR", popUpTitle, connectErrorMsg);
+          return;
         }
       } catch (final Exception e) {
         log4j.error("Error obtaining module info", e);
