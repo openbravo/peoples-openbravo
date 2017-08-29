@@ -102,7 +102,9 @@
     <junit printsummary="yes" haltonfailure="yes">
       <classpath refid="test.class.path" />
       <formatter type="plain" usefile="no"/>
-      <test name="${test}" haltonfailure="no"/>
+      <test name="${test}" haltonfailure="no" outfile="../src/result-${test}">
+        <formatter type="xml"/>
+      </test>
     </junit>
   </target>
 
