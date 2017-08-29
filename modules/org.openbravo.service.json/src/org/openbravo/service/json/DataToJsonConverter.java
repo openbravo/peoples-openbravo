@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -214,7 +214,8 @@ public class DataToJsonConverter {
         if (value == null) {
           jsonObject.put(replaceDots(additionalProperty), (Object) null);
         } else if (value instanceof BaseOBObject) {
-          final Property additonalPropertyObject = getPropertyFromPath(bob, additionalProperty);
+          final Property additonalPropertyObject = DalUtil.getPropertyFromPath(bob.getEntity(),
+              additionalProperty);
           addBaseOBObject(jsonObject, additonalPropertyObject, additionalProperty,
               additonalPropertyObject.getReferencedProperty(), (BaseOBObject) value);
         } else {
@@ -254,34 +255,6 @@ public class DataToJsonConverter {
 
   private String replaceDots(String value) {
     return value.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
-  }
-
-  private Property getPropertyFromPath(BaseOBObject bob, String propertyPath) {
-    final String[] parts = propertyPath.split("\\.");
-    BaseOBObject currentBob = bob;
-    Property result = null;
-    Object value = null;
-    for (String part : parts) {
-      // only consider it as an identifier if it is called an identifier and
-      // the entity does not accidentally have an identifier property
-      // && !currentEntity.hasProperty(part)
-      // NOTE disabled for now, there is one special case: AD_Column.IDENTIFIER
-      // which is NOT HANDLED
-      final Entity currentEntity = currentBob.getEntity();
-      if (!currentEntity.hasProperty(part)) {
-        return null;
-      }
-      result = currentEntity.getProperty(part);
-      value = currentBob.get(part);
-      // if there is a next step, just make it
-      // if it is last then we stop anyway
-      if (value instanceof BaseOBObject) {
-        currentBob = (BaseOBObject) value;
-      } else {
-        return currentEntity.getProperty(part);
-      }
-    }
-    return result;
   }
 
   private void addBaseOBObject(JSONObject jsonObject, Property referencingProperty,
