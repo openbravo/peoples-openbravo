@@ -24,8 +24,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JRDataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -53,6 +51,8 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonUtils;
+
+import net.sf.jasperreports.engine.JRDataSource;
 
 /**
  * 
@@ -140,7 +140,7 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
 
   @Override
   protected ConnectionProvider getReportConnectionProvider() {
-    return new DalConnectionProvider(false);
+    return DalConnectionProvider.getReadOnlyConnectionProvider();
   }
 
   private String getParameter(String parameter, JSONObject jsonContent) {
