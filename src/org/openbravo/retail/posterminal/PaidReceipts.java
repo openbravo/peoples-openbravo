@@ -37,6 +37,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.service.json.JsonConstants;
 
@@ -172,6 +173,27 @@ public class PaidReceipts extends JSONProcessSimple {
               }
             }
           }
+
+          // taxes per line
+          OBCriteria<OrderLineTax> qTaxes = OBDal.getInstance().createCriteria(OrderLineTax.class);
+          qTaxes.add(Restrictions.eq(OrderLineTax.PROPERTY_SALESORDERLINE + ".id",
+              (String) paidReceiptLine.getString("lineId")));
+          qTaxes.addOrder(Order.asc(OrderLineTax.PROPERTY_LINENO));
+          JSONArray taxes = new JSONArray();
+          for (OrderLineTax tax : qTaxes.list()) {
+            JSONObject jsonTax = new JSONObject();
+            jsonTax.put("taxId", tax.getTax().getId());
+            jsonTax.put("identifier", tax.getTax().getName());
+            jsonTax.put("taxAmount", tax.getTaxAmount());
+            jsonTax.put("taxableAmount", tax.getTaxableAmount());
+            jsonTax.put("taxRate", tax.getTax().getRate());
+            jsonTax.put("docTaxAmount", tax.getTax().getDocTaxAmount());
+            jsonTax.put("lineNo", tax.getTax().getLineNo());
+            jsonTax.put("cascade", tax.getTax().isCascade());
+            taxes.put(jsonTax);
+          }
+
+          paidReceiptLine.put("taxes", taxes);
 
           // promotions per line
           OBCriteria<OrderLineOffer> qPromotions = OBDal.getInstance().createCriteria(
@@ -431,7 +453,7 @@ public class PaidReceipts extends JSONProcessSimple {
         paidReceipt.put("receiptPayments", listpaidReceiptsPayments);
 
         // TODO: make this extensible
-        String hqlReceiptTaxes = "select orderTax.tax.id as taxId, orderTax.tax.rate as rate, orderTax.taxableAmount as taxableamount, orderTax.taxAmount as taxamount, orderTax.tax.name as name from OrderTax as orderTax where orderTax.salesOrder.id=?";
+        String hqlReceiptTaxes = "select orderTax.tax.id as taxId, orderTax.tax.rate as rate, orderTax.taxableAmount as taxableamount, orderTax.taxAmount as taxamount, orderTax.tax.name as name, orderTax.tax.cascade as cascade, orderTax.tax.docTaxAmount as docTaxAmount, orderTax.tax.lineNo as lineNo, orderTax.tax.taxBase.id as taxBase from OrderTax as orderTax where orderTax.salesOrder.id=?";
         Query ReceiptTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlReceiptTaxes);
         ReceiptTaxesQuery.setString(0, orderid);
         JSONArray jsonListTaxes = new JSONArray();
@@ -445,6 +467,10 @@ public class PaidReceipts extends JSONProcessSimple {
           jsonObjTaxes.put("name", objTaxInfo[4]);
           jsonObjTaxes.put("gross", new BigDecimal((String) objTaxInfo[2].toString())
               .add(new BigDecimal((String) objTaxInfo[3].toString())));
+          jsonObjTaxes.put("cascade", objTaxInfo[5]);
+          jsonObjTaxes.put("docTaxAmount", objTaxInfo[6]);
+          jsonObjTaxes.put("lineNo", objTaxInfo[7]);
+          jsonObjTaxes.put("taxBase", objTaxInfo[8]);
           jsonListTaxes.put(jsonObjTaxes);
         }
         paidReceipt.put("receiptTaxes", jsonListTaxes);
