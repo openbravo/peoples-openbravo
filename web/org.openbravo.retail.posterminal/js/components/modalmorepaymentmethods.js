@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone, enyo*/
+/*global OB, Backbone, enyo, _*/
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.PaymentMethods',
   kind: 'OB.UI.Modal',
@@ -37,14 +37,19 @@ enyo.kind({
   },
   createPaymentButtons: function (toolbar) {
     enyo.forEach(this.sideButtons, function (sidebutton) {
-      sidebutton.btn.definition.includedInPopUp = true;
-      this.$.body.$.buttonslist.createComponent(sidebutton);
+      if (sidebutton.active) {
+        sidebutton.btn.definition.includedInPopUp = true;
+        this.$.body.$.buttonslist.createComponent(sidebutton);
+      }
     }, this);
   },
   executeOnShow: function () {
+    var sideButtonLength = _.filter(this.sideButtons, function (sideButton) {
+      return sideButton.active;
+    }).length;
     if (this.$.body.$.buttonslist.children.length === 0) {
       this.createPaymentButtons(this.args.toolbar);
-    } else if (this.$.body.$.buttonslist.children.length > 0 && this.$.body.$.buttonslist.children.length !== this.sideButtons.length) {
+    } else if (this.$.body.$.buttonslist.children.length > 0 && this.$.body.$.buttonslist.children.length !== sideButtonLength) {
       this.$.body.$.buttonslist.destroyComponents();
       this.createPaymentButtons();
       this.$.body.$.buttonslist.render();

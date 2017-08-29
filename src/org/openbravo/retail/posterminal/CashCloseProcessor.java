@@ -85,16 +85,24 @@ public class CashCloseProcessor {
       if (paymentType.getFinancialAccount() == null) {
         continue;
       }
-      FIN_Reconciliation reconciliation = createReconciliation(cashCloseObj, posTerminal,
-          paymentType.getFinancialAccount(), currentDate);
-
-      arrayReconciliations.add(reconciliation);
       FIN_FinaccTransaction diffTransaction = null;
       if (!differenceToApply.equals(BigDecimal.ZERO)) {
-        diffTransaction = createDifferenceTransaction(posTerminal, reconciliation, paymentType,
-            differenceToApply, currentDate, cashUp);
+        diffTransaction = createDifferenceTransaction(posTerminal, paymentType, differenceToApply,
+            currentDate, cashUp);
         OBDal.getInstance().save(diffTransaction);
       }
+
+      if (!paymentType.getPaymentMethod().getPaymentMethod().isAutomaticDeposit()) {
+        continue;
+      }
+
+      FIN_Reconciliation reconciliation = createReconciliation(cashCloseObj, posTerminal,
+          paymentType.getFinancialAccount(), currentDate, paymentType);
+      if (diffTransaction != null) {
+        diffTransaction.setReconciliation(reconciliation);
+      }
+
+      arrayReconciliations.add(reconciliation);
       OBDal.getInstance().save(reconciliation);
 
       OBPOSAppCashReconcil recon = createCashUpReconciliation(posTerminal, paymentType,
@@ -210,8 +218,8 @@ public class CashCloseProcessor {
   }
 
   private FIN_Reconciliation createReconciliation(JSONObject cashCloseObj,
-      OBPOSApplications posTerminal, FIN_FinancialAccount account, Date currentDate)
-      throws JSONException {
+      OBPOSApplications posTerminal, FIN_FinancialAccount account, Date currentDate,
+      OBPOSAppPayment paymentType) throws JSONException {
 
     BigDecimal startingBalance;
     OBCriteria<FIN_Reconciliation> reconciliationsForAccount = OBDal.getInstance().createCriteria(
@@ -260,8 +268,7 @@ public class CashCloseProcessor {
   }
 
   private FIN_FinaccTransaction createDifferenceTransaction(OBPOSApplications terminal,
-      FIN_Reconciliation reconciliation, OBPOSAppPayment payment, BigDecimal difference,
-      Date currentDate, OBPOSAppCashup cashUp) {
+      OBPOSAppPayment payment, BigDecimal difference, Date currentDate, OBPOSAppCashup cashUp) {
     FIN_FinancialAccount account = payment.getFinancialAccount();
     GLItem glItem = null;
     if (payment.isOverrideconfiguration()) {
@@ -271,8 +278,6 @@ public class CashCloseProcessor {
     }
 
     FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
-    transaction.setId(OBMOBCUtils.getUUIDbyString(reconciliation.getId() + "Difference"));
-    transaction.setNewOBObject(true);
     transaction.setCurrency(account.getCurrency());
     transaction.setAccount(account);
     transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
@@ -292,7 +297,6 @@ public class CashCloseProcessor {
     transaction.setObposAppCashup(cashUp);
     transaction.setDateAcct(OBMOBCUtils.stripTime(currentDate));
     transaction.setTransactionDate(OBMOBCUtils.stripTime(currentDate));
-    transaction.setReconciliation(reconciliation);
 
     return transaction;
   }
@@ -316,9 +320,14 @@ public class CashCloseProcessor {
     transaction.setAccount(account);
     transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
     transaction.setGLItem(glItem);
-    transaction.setPaymentAmount(reconciliationTotal);
+    if (reconciliationTotal.compareTo(BigDecimal.ZERO) < 0) {
+      transaction.setDepositAmount(reconciliationTotal.abs());
+      transaction.setTransactionType("BPD");
+    } else {
+      transaction.setPaymentAmount(reconciliationTotal);
+      transaction.setTransactionType("BPW");
+    }
     transaction.setProcessed(true);
-    transaction.setTransactionType("BPW");
     transaction.setStatus("RPPC");
     transaction.setDescription("GL Item: " + glItem.getName());
     transaction.setObposAppCashup(cashUp);
@@ -371,10 +380,16 @@ public class CashCloseProcessor {
     transaction.setAccount(accountTo);
     transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(accountTo) + 10);
     transaction.setGLItem(glItem);
-    transaction.setDepositAmount(reconciliationTotal.multiply(conversionRate).setScale(2,
-        BigDecimal.ROUND_HALF_EVEN));
+    if (reconciliationTotal.compareTo(BigDecimal.ZERO) < 0) {
+      transaction.setPaymentAmount(reconciliationTotal.multiply(conversionRate).abs()
+          .setScale(2, BigDecimal.ROUND_HALF_EVEN));
+      transaction.setTransactionType("BPW");
+    } else {
+      transaction.setDepositAmount(reconciliationTotal.multiply(conversionRate).setScale(2,
+          BigDecimal.ROUND_HALF_EVEN));
+      transaction.setTransactionType("BPD");
+    }
     transaction.setProcessed(true);
-    transaction.setTransactionType("BPD");
     transaction.setStatus("RDNC");
     transaction.setDescription("GL Item: " + glItem.getName());
     transaction.setObposAppCashup(cashUp);

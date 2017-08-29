@@ -25,24 +25,63 @@
     }, this);
 
     OB.DATA.updateDefaultCustomerLocations = function (customerAddr) {
-      if (customerAddr.get('bpartner') === OB.MobileApp.model.get('businesspartner')) {
-        // Update default BP locations cache
-        var i, foundAddress = false,
-            locations = OB.MobileApp.model.get('businessPartner').get('locations');
-        for (i = 0; i < locations.length; i++) {
-          if (locations[i].get('id') === customerAddr.get('id')) {
-            locations[i] = customerAddr.clone();
-            foundAddress = true;
-            break;
+      var i, bp, foundAddress, locations, addToLocations;
+      addToLocations = function (bp) {
+        foundAddress = false;
+        locations = bp.get('locations');
+        if (locations && locations.length > 0) {
+          for (i = 0; i < locations.length; i++) {
+            if (locations[i].get('id') === customerAddr.get('id')) {
+              locations[i] = customerAddr.clone();
+              foundAddress = true;
+              break;
+            }
+          }
+          if (!foundAddress) {
+            locations.push(customerAddr.clone());
           }
         }
-        if (!foundAddress) {
-          locations.push(customerAddr.clone());
-        }
+      };
+      // Check with Default Customer
+      if (OB.MobileApp.model.get('businessPartner') && customerAddr.get('bpartner') === OB.MobileApp.model.get('businessPartner').get('id')) {
+        addToLocations(OB.MobileApp.model.get('businessPartner'));
+      }
+      // Check With OrderList
+      if (OB.MobileApp.model.orderList) {
+        _.forEach(OB.MobileApp.model.orderList.models, function (order) {
+          if (customerAddr.get('bpartner') === order.get('bp').get('id')) {
+            bp = order.get('bp');
+            addToLocations(bp);
+            if (bp.get('locId') === customerAddr.get('id')) {
+              bp.set('locId', customerAddr.get('id'));
+              bp.set('locName', customerAddr.get('name'));
+              bp.set('postalCode', customerAddr.get('postalCode'));
+              bp.set('cityName', customerAddr.get('cityName'));
+              bp.set('countryName', customerAddr.get('countryName'));
+              bp.set('locationModel', customerAddr);
+              order.save();
+            } else if (bp.get('shipLocId') === customerAddr.get('id')) {
+              bp.set('shipLocId', customerAddr.get('id'));
+              bp.set('shipLocName', customerAddr.get('name'));
+              if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+                bp.set('postalCode', customerAddr.get('postalCode'));
+                bp.set('cityName', customerAddr.get('cityName'));
+                bp.set('countryName', customerAddr.get('countryName'));
+                bp.set('locationModel', customerAddr);
+              }
+              order.save();
+            }
+
+            // refresh the display
+            if (OB.MobileApp.model.orderList.modelorder && OB.MobileApp.model.orderList.modelorder.get('id') === order.get('id')) {
+              OB.MobileApp.model.orderList.modelorder.setBPandBPLoc(bp, false, true);
+            }
+          }
+        });
       }
     };
 
-    OB.DATA.executeCustomerAddressSave = function (customerAddr, callback) {
+    OB.DATA.executeCustomerAddressSave = function (customerAddr, callback, callbackError) {
       var customerAddrList, customerAddrId = customerAddr.get('id'),
           isNew = false,
           bpLocToSave = new OB.Model.ChangedBPlocation(),
@@ -71,9 +110,7 @@
           bpLocToSave.set('json', JSON.stringify(customerAddr.serializeToJSON()));
           bpLocToSave.set('id', customerAddr.get('id'));
         }
-        me.receipt.trigger('change:bp', me.receipt);
         bpLocToSave.set('isbeingprocessed', 'Y');
-        OB.DATA.updateDefaultCustomerLocations(customerAddr);
         OB.Dal.save(bpLocToSave, function () {
           bpLocToSave.set('json', JSON.stringify(customerAddr.serializeToJSON()));
           var successCallback, errorCallback, List;
@@ -82,29 +119,17 @@
               callback();
             }
             // update each order also so that new name is shown
-            if (OB.MobileApp.model.orderList) {
-              _.forEach(OB.MobileApp.model.orderList.models, function (order) {
-                if (order.get('bp').get('locId') === customerAddr.get('id')) {
-                  var bp = order.get('bp');
-                  bp.set('locId', customerAddr.get('id'));
-                  bp.set('locName', customerAddr.get('name'));
-                  bp.set('postalCode', customerAddr.get('postalCode'));
-                  bp.set('cityName', customerAddr.get('cityName'));
-                  bp.set('countryName', customerAddr.get('countryName'));
-                  bp.set('locationModel', customerAddr);
-                  order.save();
-                  // refresh the display
-                  if (OB.MobileApp.model.orderList.modelorder && OB.MobileApp.model.orderList.modelorder.get('id') === order.get('id')) {
-                    OB.MobileApp.model.orderList.modelorder.setBPandBPLoc(bp, false, true);
-                  }
-                }
-              });
-            }
+            OB.DATA.updateDefaultCustomerLocations(customerAddr);
             OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerAddrSaved', [customerAddr.get('_identifier')]));
+          };
+          errorCallback = function () {
+            if (callbackError) {
+              callbackError();
+            }
           };
           customerAddrListToChange = new OB.Collection.ChangedBPlocationList();
           customerAddrListToChange.add(bpLocToSave);
-          OB.MobileApp.model.runSyncProcess(successCallback);
+          OB.MobileApp.model.runSyncProcess(successCallback, errorCallback);
         }, function () {
           //error saving BP changes with changes in changedbusinesspartners
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerAddrChn', [customerAddr.get('_identifier')]));
@@ -120,8 +145,6 @@
         //save that the customer address is being processed by server
         customerAddr.set('loaded', OB.I18N.normalizeDate(new Date()));
         OB.Dal.save(customerAddr, function () {
-          OB.DATA.updateDefaultCustomerLocations(customerAddr);
-          me.receipt.trigger('change:bp', me.receipt);
           if (isNew) {
             customerAddr.set('posTerminal', OB.MobileApp.model.get('terminal').id);
             bpLocToSave.set('json', JSON.stringify(customerAddr.serializeToJSON()));
@@ -136,30 +159,18 @@
                 callback();
               }
               // update each order also so that new name is shown
-              if (OB.MobileApp.model.orderList) {
-                _.forEach(OB.MobileApp.model.orderList.models, function (order) {
-                  if (order.get('bp').get('locId') === customerAddr.get('id')) {
-                    var bp = order.get('bp');
-                    bp.set('locId', customerAddr.get('id'));
-                    bp.set('locName', customerAddr.get('name'));
-                    bp.set('postalCode', customerAddr.get('postalCode'));
-                    bp.set('cityName', customerAddr.get('cityName'));
-                    bp.set('countryName', customerAddr.get('countryName'));
-                    bp.set('locationModel', customerAddr);
-                    order.save();
-                    // refresh the display
-                    if (OB.MobileApp.model.orderList.modelorder && OB.MobileApp.model.orderList.modelorder.get('id') === order.get('id')) {
-                      OB.MobileApp.model.orderList.modelorder.setBPandBPLoc(bp, false, true);
-                    }
-                  }
-                });
-              }
+              OB.DATA.updateDefaultCustomerLocations(customerAddr);
               OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerAddrSaved', [customerAddr.get('_identifier')]));
+            };
+            errorCallback = function () {
+              if (callbackError) {
+                callbackError();
+              }
             };
             customerAddrListToChange = new OB.Collection.ChangedBPlocationList();
             customerAddrListToChange.add(bpLocToSave);
             if (!OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-              OB.MobileApp.model.runSyncProcess(successCallback);
+              OB.MobileApp.model.runSyncProcess(successCallback, errorCallback);
             }
           }, function () {
             //error saving BP changes with changes in changedbusinesspartners

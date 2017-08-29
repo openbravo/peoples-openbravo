@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -86,6 +86,12 @@
     major: 2,
     minor: 5
   }, "The use of OB.MobileApp.model.get('documentsequence'), OB.MobileApp.model.get('quotationDocumentSequence') and the 'seqNoReady' event are deprecated. Please use 'OB.MobileApp.model.getNextDocumentno()' and 'OB.MobileApp.model.getNextQuotationno()' instead.");
+
+  OB.UTIL.VersionManagement.registerDeprecation(35607, {
+    year: 17,
+    major: 3,
+    minor: 0
+  }, "The use of 'checkApproval' is deprecated. Please use 'OB.UTIL.checkApproval' instead.");
 
   /**
    * Global deprecations have to be executed somewhere, this is a good place

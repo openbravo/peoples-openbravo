@@ -230,7 +230,12 @@
         line.unset('noDiscountCandidates', {
           silent: true
         });
-        rule.addManual(receipt, line, promotion);
+        if (line.get('qty') > 0) {
+          rule.addManual(receipt, line, promotion);
+        } else {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_AvoidApplyManualPromotions'));
+        }
+
       });
 
       receipt.setUndo('AddDiscount', {
@@ -364,20 +369,16 @@
     + " AND((PROD_CAT_SELECTION = 'Y'" //
     + " AND NOT EXISTS" //
     + " (SELECT 1" //
-    + " FROM M_PRODUCT P," //
-    + "   M_OFFER_PROD_CAT OP" //
+    + " FROM M_OFFER_PROD_CAT OP" //
     + " WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID" //
-    + "   AND P.M_PRODUCT_ID = ?" //
-    + "   AND OP.M_PRODUCT_CATEGORY_ID = P.M_PRODUCT_CATEGORY_ID" //
+    + "   AND OP.M_PRODUCT_CATEGORY_ID = ?" //
     + " ))" //
     + " OR(PROD_CAT_SELECTION = 'N'" //
     + " AND EXISTS" //
     + " (SELECT 1" //
-    + " FROM M_PRODUCT P," //
-    + "   M_OFFER_PROD_CAT OP" //
+    + " FROM M_OFFER_PROD_CAT OP" //
     + " WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID" //
-    + "   AND P.M_PRODUCT_ID = ?" //
-    + "   AND OP.M_PRODUCT_CATEGORY_ID = P.M_PRODUCT_CATEGORY_ID" //
+    + "   AND OP.M_PRODUCT_CATEGORY_ID = ?" //
     + " ))) " //
     + " AND ((CHARACTERISTICS_SELECTION = 'Y'" + " AND NOT EXISTS" + " (SELECT 1" + "  FROM M_OFFER_CHARACTERISTIC C, M_PRODUCT_CH_VALUE V" + "  WHERE C.M_OFFER_ID = M_OFFER.M_OFFER_ID" + "    AND V.M_PRODUCT_ID = ?" + "    AND V.M_CH_VALUE_ID = C.M_CH_VALUE_ID" + " ))" + " OR(CHARACTERISTICS_SELECTION = 'N'" + " AND EXISTS" + " (SELECT 1" + "  FROM M_OFFER_CHARACTERISTIC C, M_PRODUCT_CH_VALUE V" + "  WHERE C.M_OFFER_ID = M_OFFER.M_OFFER_ID" + "    AND V.M_PRODUCT_ID = ?" + "    AND V.M_CH_VALUE_ID = C.M_CH_VALUE_ID" + " ))" + " )" + " AND ((pricelist_selection = 'Y' AND NOT EXISTS" // 
     + "	  (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = ? )) " //
@@ -404,34 +405,58 @@
   OB.Model.Discounts.registerRule('5D4BAF6BB86D4D2C9ED3D5A6FC051579', {
     async: false,
     implementation: function (discountRule, receipt, line) {
-      var linePrice, discountedLinePrice, qty = line.get('qty'),
+      var linePrice, discountedLinePrice, discountAmt, chunks, qty = line.get('qty'),
           promotionCandidates = line.get('promotionCandidates'),
           minQty = discountRule.get('minQuantity'),
-          maxQty = discountRule.get('maxQuantity');
+          maxQty = discountRule.get('maxQuantity'),
+          isMultiple = discountRule.get('ismultiple'),
+          multipleQty = discountRule.get('multiple');
 
       if (OB.UTIL.isNullOrUndefined(promotionCandidates) || promotionCandidates.indexOf(discountRule.id) === -1) {
         // The line is not valid for this discountRule
         return;
       }
 
-      if ((minQty && qty < minQty) || (maxQty && qty > maxQty)) {
+      if (isMultiple) {
+        if (qty < multipleQty) {
+          return;
+        }
+      } else if ((minQty && qty < minQty) || (maxQty && qty > maxQty)) {
         return;
       }
 
       linePrice = line.get('discountedLinePrice') || line.get('price');
-      if (discountRule.get('fixedPrice') || discountRule.get('fixedPrice') === 0) {
-        discountedLinePrice = discountRule.get('fixedPrice');
+      chunks = 1;
+      if (isMultiple) {
+        chunks = parseInt((qty / multipleQty), 10);
+        if (!OB.UTIL.isNullOrUndefined(discountRule.get('discountAmount')) && discountRule.get('discountAmount') > 0 && discountRule.get('discountAmount') < linePrice) {
+          discountedLinePrice = OB.DEC.sub(linePrice, discountRule.get('discountAmount'));
+          discountAmt = OB.DEC.mul(discountRule.get('discountAmount'), chunks);
+        } else if (!OB.UTIL.isNullOrUndefined(discountRule.get('discount')) && discountRule.get('discount') > 0) {
+          discountAmt = OB.DEC.mul(linePrice, OB.DEC.div(discountRule.get('discount'), 100));
+          if (discountAmt < linePrice) {
+            discountedLinePrice = OB.DEC.sub(linePrice, discountAmt);
+            discountAmt = OB.DEC.mul(discountAmt, chunks);
+          } else {
+            discountAmt = 0;
+          }
+        }
       } else {
-        discountedLinePrice = (linePrice - discountRule.get('discountAmount')) * (1 - discountRule.get('discount') / 100);
+        if (!OB.UTIL.isNullOrUndefined(discountRule.get('fixedPrice')) && discountRule.get('fixedPrice') >= 0) {
+          discountedLinePrice = discountRule.get('fixedPrice');
+        } else {
+          discountedLinePrice = (linePrice - discountRule.get('discountAmount')) * (1 - discountRule.get('discount') / 100);
+        }
+        discountAmt = OB.DEC.toNumber((linePrice - (new BigDecimal(String(discountedLinePrice)))) * qty);
       }
       discountRule.set('qtyOffer', qty);
       receipt.addPromotion(line, discountRule, {
-        amt: OB.DEC.toNumber((linePrice - (new BigDecimal(String(discountedLinePrice)))) * qty)
+        amt: discountAmt,
+        chunks: chunks
       });
       line.set('discountedLinePrice', discountedLinePrice);
     }
   });
-
 
   // Because of dependency models cannot be directly registered in promotions module
   if (OB && OB.Model && OB.Model.Discounts && OB.Model.Discounts.extraModels) {

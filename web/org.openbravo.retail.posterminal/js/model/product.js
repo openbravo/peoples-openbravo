@@ -65,6 +65,10 @@
     column: 'img',
     type: 'TEXT'
   }, {
+    name: 'imgId',
+    column: 'imgId',
+    type: 'TEXT'
+  }, {
     name: 'description',
     column: 'description',
     type: 'TEXT'
@@ -200,6 +204,14 @@
   }, {
     name: 'isPrintServices',
     column: 'isPrintServices',
+    type: 'BOOL'
+  }, {
+    name: 'hasAttributes',
+    column: 'hasAttributes',
+    type: 'BOOL'
+  }, {
+    name: 'isSerialNo',
+    column: 'isSerialNo',
     type: 'BOOL'
   }]);
 

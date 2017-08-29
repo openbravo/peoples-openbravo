@@ -299,11 +299,15 @@ enyo.kind({
   pointOfSaleLoad: function (inSender, inEvent) {
     if (OB.UTIL.RfidController.get('connectionLost')) {
       this.$.rfidIcon.addClass(this.rfidOfflineIcon);
+    } else {
+      this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
     }
     if (!OB.UTIL.RfidController.get('isRFIDEnabled') || !OB.UTIL.RfidController.get('reconnectOnScanningFocus')) {
       this.$.rfidIcon.addClass(this.rfidOffIcon);
+      this.$.rfidIcon.removeClass(this.rfidOnIcon);
     } else {
       this.$.rfidIcon.addClass(this.rfidOnIcon);
+      this.$.rfidIcon.removeClass(this.rfidOffIcon);
     }
   }
 });

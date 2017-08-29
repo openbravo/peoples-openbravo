@@ -107,7 +107,8 @@ enyo.kind({
     onCheckPresetFilterSelector: 'checkPresetFilterSelector',
     onAdvancedFilterSelector: 'advancedFilterSelector',
     onSetSelectorAdvancedSearch: 'setSelectorAdvancedSearch',
-    onCloseSelector: 'closeSelector'
+    onCloseSelector: 'closeSelector',
+    onErrorCalcLineTax: 'errorCalcLineTax'
   },
   events: {
     onShowPopup: '',
@@ -254,6 +255,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalDeleteDiscount',
       name: 'modalDeleteDiscount'
+    }, {
+      kind: 'OB.UI.ModalProductAttributes',
+      name: 'modalProductAttribute'
     }]
   }, {
     name: 'mainSubWindow',
@@ -627,20 +631,31 @@ enyo.kind({
     return true;
   },
   changeBusinessPartner: function (inSender, inEvent) {
-    var bp = this.model.get('order').get('bp'),
+    var component = this,
+        isBPChange = component.model.get('order').get('bp').get('id') !== inEvent.businessPartner.get('id'),
+        isShippingChange = component.model.get('order').get('bp').get('shipLocId') !== inEvent.businessPartner.get('shipLocId'),
+        isInvoicingChange = component.model.get('order').get('bp').get('locId') !== inEvent.businessPartner.get('locId'),
+        bp = this.model.get('order').get('bp'),
         eventBP = inEvent.businessPartner;
-    if (inEvent.target === 'order' || inEvent.target === undefined) {
-      if (this.model.get('order').get('isEditable') === false && (bp.get('id') !== eventBP.get('id') || bp.get('locId') !== eventBP.get('locId') || bp.get('shipLocId') !== eventBP.get('shipLocId'))) {
-        this.doShowPopup({
-          popup: 'modalNotEditableOrder'
-        });
-        return true;
+    OB.UTIL.HookManager.executeHooks('OBPOS_preChangeBusinessPartner', {
+      bp: inEvent.businessPartner,
+      isBPChange: isBPChange,
+      isShippingChange: isShippingChange,
+      isInvoicingChange: isInvoicingChange
+    }, function () {
+      if (inEvent.target === 'order' || inEvent.target === undefined) {
+        if (component.model.get('order').get('isEditable') === false && (isBPChange || isInvoicingChange || isShippingChange)) {
+          component.doShowPopup({
+            popup: 'modalNotEditableOrder'
+          });
+          return true;
+        }
+        component.model.get('order').setBPandBPLoc(eventBP, false, true);
+        component.model.get('orderList').saveCurrent();
+      } else {
+        component.waterfall('onChangeBPartner', inEvent);
       }
-      this.model.get('order').setBPandBPLoc(eventBP, false, true);
-      this.model.get('orderList').saveCurrent();
-    } else {
-      this.waterfall('onChangeBPartner', inEvent);
-    }
+    });
     return true;
   },
   receiptToInvoice: function () {
@@ -931,11 +946,7 @@ enyo.kind({
         receipt.set('undo', null);
         receipt.set('preventServicesUpdate', true);
         receipt.set('deleting', true);
-        if (selectedModels.length > 1) {
-          receipt.deleteLines(selectedModels, 0, selectedModels.length, postDeleteLine);
-        } else {
-          receipt.deleteLine(ln, false, postDeleteLine);
-        }
+        receipt.deleteLines(selectedModels, 0, selectedModels.length, postDeleteLine);
         receipt.trigger('scan');
       });
     }
@@ -1269,6 +1280,7 @@ enyo.kind({
       me.model.get('multiOrders').get('multiOrdersList').add(iter);
     });
     this.model.get('leftColumnViewManager').setMultiOrderMode();
+    OB.MobileApp.model.set('isMultiOrderState', true);
     //this.model.get('multiOrders').set('isMultiOrders', true);
     return true;
   },
@@ -1283,10 +1295,14 @@ enyo.kind({
     originator.addClass('btn-icon-clearPayment');
   },
   removeMultiOrders: function (inSender, inEvent) {
-    var me = this;
-    var originator = inEvent.originator;
+    var me = this,
+        originator = inEvent.originator;
+    if (me.model.get('multiOrders').checkMultiOrderPayment()) {
+      me.cancelRemoveMultiOrders(originator);
+      return true;
+    }
     // If there are more than 1 order, do as usual
-    if (me.model.get('multiOrders').get('multiOrdersList').length > 1) {
+    if (me.model.get('multiOrders').get('multiOrdersList').length > 1 && inEvent.order) {
       me.model.get('multiOrders').get('multiOrdersList').remove(inEvent.order);
       if (inEvent && inEvent.order && inEvent.order.get('loadedFromServer')) {
         me.model.get('orderList').current = inEvent.order;
@@ -1294,36 +1310,10 @@ enyo.kind({
         me.model.get('orderList').deleteCurrentFromDatabase(inEvent.order);
       }
       return true;
-    } else if (me.model.get('multiOrders').get('multiOrdersList').length === 1) {
-      if (OB.UTIL.isNullOrUndefined(me.model.get('multiOrders').get('payments')) || me.model.get('multiOrders').get('payments').length < 1) {
-        // Delete and exit the multiorder
-        me.removeOrderAndExitMultiOrder(me.model);
-        return true;
-      } else {
-        //Show confirmation popup indicating all payments will be deleted
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_deletepayments_title'), OB.I18N.getLabel('OBPOS_deletepayments_body'), [{
-          label: OB.I18N.getLabel('OBMOBC_LblOk'),
-          action: function () {
-            // Delete payments and exit the multiorder
-            me.removeOrderAndExitMultiOrder(me.model);
-            return false;
-          }
-        }, {
-          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-          action: function (inEvent) {
-            // Return to the original state of the multiorder
-            me.cancelRemoveMultiOrders(originator);
-            return false;
-          }
-        }], {
-          onHideFunction: function (popup) {
-            me.cancelRemoveMultiOrders(originator);
-            return false;
-          }
-        });
-      }
     } else {
-      me.cancelRemoveMultiOrders(originator);
+      // Delete and exit the multiorder
+      me.removeOrderAndExitMultiOrder(me.model);
+      return true;
     }
   },
   doShowLeftHeader: function (inSender, inEvent) {
@@ -1359,7 +1349,7 @@ enyo.kind({
     if (selectedLinesLength > 1) {
       for (i = 0; i < selectedLinesLength; i++) {
         product = selectedLines[i].get('product');
-        if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || selectedLines[i].get('originalOrderLineId')) {
+        if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || selectedLines[i].get('originalOrderLineId') || product.get('isSerialNo')) {
           enableButton = false;
           break;
         }
@@ -1369,7 +1359,7 @@ enyo.kind({
       }
     } else if (selectedLinesLength === 1) {
       product = selectedLines[0].get('product');
-      if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || selectedLines[0].get('originalOrderLineId')) {
+      if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || selectedLines[0].get('originalOrderLineId') || product.get('isSerialNo')) {
         enableButton = false;
       }
     } else {
@@ -1425,6 +1415,11 @@ enyo.kind({
   },
   closeSelector: function (inSender, inEvent) {
     this.waterfall('onCloseCancelSelector', inEvent);
+  },
+  errorCalcLineTax: function (inSender, inEvent) {
+    if (OB.MobileApp.model.get('serviceSearchMode')) {
+      OB.MobileApp.view.$.containerWindow.getRoot().$.multiColumn.$.rightToolbar.$.rightToolbar.manualTap('edit');
+    }
   },
   rearrangeEditButtonBar: function (inSender, inEvent) {
     this.waterfall('onRearrangedEditButtonBar', inEvent);
@@ -1595,5 +1590,6 @@ OB.POS.registerWindow({
   menuPosition: null,
   permission: 'OBPOS_retail.pointofsale',
   // Not to display it in the menu
-  menuLabel: 'POS'
+  menuLabel: 'POS',
+  defaultWindow: true
 });

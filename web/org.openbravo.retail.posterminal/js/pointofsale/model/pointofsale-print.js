@@ -266,6 +266,10 @@
         OB.UTIL.clone(me.receipt, receipt);
       }
 
+      if (!(receipt.get('orderDate') instanceof Date)) {
+        receipt.set('orderDate', new Date(receipt.get('orderDate')));
+      }
+
       var hasNegativeLines = _.filter(receipt.get('lines').models, function (line) {
         return line.get('qty') < 0;
       }).length === receipt.get('lines').size() ? true : false;
@@ -454,31 +458,21 @@
       var terminal = OB.MobileApp.model.get('terminal');
 
       this.receipt = receipt;
-      this.line = null;
 
-      this.receipt.get('lines').on('selected', function (line) {
+      this.receipt.get('lines').on('add', function (line) {
         if (this.receipt.get("isPaid") === true) {
           return;
         }
-        if (this.line) {
-          this.line.off('change', this.print);
-        }
-        this.line = line;
-        if (this.line) {
-          this.line.on('change', this.print, this);
-        }
-        this.print();
+        line.on('change:gross', this.print, this);
       }, this);
       this.templateline = new OB.DS.HWResource(terminal.printReceiptLineTemplate || OB.OBPOSPointOfSale.Print.ReceiptLineTemplate);
       extendHWResource(this.templateline, 'printReceiptLineTemplate');
       };
 
-  PrintReceiptLine.prototype.print = function () {
-    if (this.line) {
-      OB.POS.hwserver.print(this.templateline, {
-        line: this.line
-      }, null, OB.DS.HWServer.DISPLAY);
-    }
+  PrintReceiptLine.prototype.print = function (line) {
+    OB.POS.hwserver.print(this.templateline, {
+      line: line
+    }, null, OB.DS.HWServer.DISPLAY);
   };
 
   OB.OBPOS = {};

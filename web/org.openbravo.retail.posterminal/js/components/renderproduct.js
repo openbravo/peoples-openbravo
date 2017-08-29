@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -33,7 +33,7 @@ enyo.kind({
         style: 'max-width: 100%;',
         classes: 'standardFlexContainer',
         components: [{
-          style: 'vertical-align: top;  width: 50px; ',
+          style: 'vertical-align: top; width: 50px; ',
           components: [{
             tag: 'div',
             classes: 'flex-image-wrap',
@@ -52,20 +52,31 @@ enyo.kind({
         cssClass: 'flex-image-wrap'
       }]
     }, {
-      classes: 'standardFlexContainer flexColumn flexAllWidth',
+      classes: 'flexAllWidth',
       components: [{
-        name: 'identifierContainer',
-        classes: 'standardFlexContainer flexColumn',
+        classes: 'standardFlexContainer',
         components: [{
-          name: 'identifier',
-          classes: 'productIdentifier'
+          name: 'identifierContainer',
+          classes: 'standardFlexContainer flexColumn',
+          components: [{
+            name: 'identifier',
+            classes: 'productIdentifier'
+          }, {
+            style: 'color: #888888',
+            name: 'filterAttr',
+            allowHtml: true
+          }]
         }, {
-          style: 'color: #888888',
-          name: 'filterAttr',
-          allowHtml: true
+          classes: 'standardFlexContainer flexColumn',
+          style: 'width: 38px;',
+          components: [{
+            kind: 'OB.UI.ProductContextMenu',
+            name: 'btnProductContextMenu'
+          }]
         }]
       }, {
         classes: 'standardFlexContainer flexwrap flexend',
+        style: 'padding-right: 6px',
         components: [{
           name: 'icons',
           minWidth: 0,
@@ -94,10 +105,10 @@ enyo.kind({
     }]
   }, {
     name: 'generic',
-    style: 'text-align: right; font-style: italic; color: grey; font-weight: bold;',
+    style: 'text-align: right; font-style: italic; color: grey; font-weight: bold; padding-right: 6px;',
     showing: false
   }, {
-    style: 'color: #888888; text-align: left; font-style: italic; color: grey; font-size: 13px; padding-top: 10px;',
+    style: 'color: #888888; text-align: left; font-style: italic; color: grey; font-size: 13px; padding-top: 10px; padding-right: 6px;',
     name: 'bottonLine'
   }],
   drawPriceBasedOnSize: function () {
@@ -171,6 +182,17 @@ enyo.kind({
       }
       this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
     }
+    // Context menu
+    if (this.model.get('productType') !== 'I' || this.$.btnProductContextMenu.$.menu.itemsCount === 0) {
+      this.$.btnProductContextMenu.hide();
+      this.$.identifierContainer.setStyle("");
+    } else {
+      this.$.btnProductContextMenu.setModel(this.model);
+      this.$.identifierContainer.setStyle("width: calc(100% - 38px)");
+      if (this.model.get('showchdesc') && !this.model.get('characteristicDescription')) {
+        this.setStyle('padding: 8px 10px 0px 10px');
+      }
+    }
   },
   initComponents: function () {
     this.inherited(arguments);
@@ -199,7 +221,11 @@ enyo.kind({
     this.drawPriceBasedOnSize(searchTab);
 
     if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
-      this.$.icon.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(this.model.get('id')) + '), url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');
+      if (this.model.get('imgId')) {
+        this.$.icon.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(this.model.get('id')) + '), url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');
+      } else {
+        this.$.icon.applyStyle('background-image', 'url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');
+      }
       this.$.thumbnail.hide();
     } else {
       this.$.thumbnail.setImg(this.model.get('img'));
@@ -263,5 +289,14 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.removeClass('image-wrap');
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.ListContextMenu',
+  name: 'OB.UI.ProductContextMenu',
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.menu.setItems(OB.MobileApp.model.get('productContextMenuOptions'));
   }
 });

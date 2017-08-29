@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2016 Openbravo S.L.U.
+ * Copyright (C) 2014-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -101,7 +101,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       'isprocessed': 'N'
     }, function (cashUp) {
       OB.Dal.find(OB.Model.PaymentMethodCashUp, {
-        'cashup_id': cashUp.at(0).get('id')
+        'cashup_id': cashUp.at(0).get('id'),
+        '_orderByClause': 'lineNo asc'
       }, function (payMthds) { //OB.Dal.find success
         // Get list of active payments
         _.each(OB.MobileApp.model.get('payments'), function (payment) {
@@ -242,7 +243,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       }, this);
 
       OB.Dal.find(OB.Model.PaymentMethodCashUp, {
-        'cashup_id': cashUpReport.get('id')
+        'cashup_id': cashUpReport.get('id'),
+        '_orderByClause': 'lineNo asc'
       }, function (payMthds) { //OB.Dal.find success
         cashUpReport.set('totalStartings', _.reduce(payMthds.models, function (accum, trx) {
           if (OB.MobileApp.model.paymentnames[trx.get('searchKey')]) {
@@ -309,8 +311,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           }));
           cashUpReport.get('drops').push(new Backbone.Model({
             searchKey: p.get('searchKey'),
-            origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(p.get('totalDrops'), p.get('totalReturns'))),
-            amount: OB.DEC.add(0, OB.DEC.add(p.get('totalDrops'), p.get('totalReturns'))),
+            origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(0, p.get('totalReturns'))),
+            amount: OB.DEC.add(0, p.get('totalReturns')),
             description: p.get('name') + paymentSharedStr,
             currency: fromCurrencyId,
             isocode: auxPay.isocode,
@@ -361,10 +363,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       // Detect empty orders and remove them from here
       emptyOrders = _.filter(pendingOrderList.models, function (pendingorder) {
         if (pendingorder && pendingorder.get('lines') && pendingorder.get('lines').length === 0) {
-          return true;
-        }
-        // Detect Layaway orders
-        if (pendingorder && pendingorder.get('isLayaway') === true) {
           return true;
         }
       });

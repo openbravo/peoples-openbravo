@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -75,7 +76,10 @@ public class PaidReceipts extends JSONProcessSimple {
       JSONArray respArray = new JSONArray();
 
       final DateFormat parseDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-      final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+      parseDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+      final DateFormat paymentDateFormat = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+      paymentDateFormat.setTimeZone(TimeZone.getTimeZone(Calendar.getInstance().getTimeZone()
+          .getID()));
 
       String orderid = jsonsent.getString("orderid");
 
@@ -177,6 +181,7 @@ public class PaidReceipts extends JSONProcessSimple {
             jsonPromo.put("amt", displayedAmount);
             jsonPromo.put("actualAmt", promotion.getTotalAmount());
             jsonPromo.put("hidden", BigDecimal.ZERO.equals(displayedAmount));
+            jsonPromo.put("displayedTotalAmount", promotion.getDisplayedTotalAmount());
             if (promotion.getObdiscIdentifier() != null) {
               jsonPromo.put("identifier", promotion.getObdiscIdentifier());
             }
@@ -213,7 +218,9 @@ public class PaidReceipts extends JSONProcessSimple {
             for (int r = 0; r < relatedLines.length(); r++) {
               JSONObject jsonObject = relatedLines.getJSONObject(r);
               if (!jsonObject.getString("orderId").equals(orderid)) {
-                jsonObject.put("otherTicket", "true");
+                jsonObject.put("otherTicket", true);
+              } else {
+                jsonObject.put("otherTicket", false);
               }
               String hqlRelatedLinePromotions = "select olo.totalAmount from OrderLineOffer olo where olo.salesOrderLine.id = ?";
               Query relatedLinePromotionsQuery = OBDal.getInstance().getSession()
@@ -236,14 +243,16 @@ public class PaidReceipts extends JSONProcessSimple {
 
         HQLPropertyList hqlPropertiesPayments = ModelExtensionUtils
             .getPropertyExtensions(extensionsPayments);
-        String hqlPaymentsIn = "select " + hqlPropertiesPayments.getHqlSelect()
+        String hqlPaymentsIn = "select "
+            + hqlPropertiesPayments.getHqlSelect()
             + "from FIN_Payment_ScheduleDetail as scheduleDetail "
             + "join scheduleDetail.paymentDetails as paymentDetail "
             + "join paymentDetail.finPayment as finPayment "
             + "join scheduleDetail.orderPaymentSchedule.order as order "
             + "left join finPayment.reversedPayment as reversedPayment "//
             + "where order.id=? " //
-            + "order by finPayment.documentNo";
+            + "group by " + hqlPropertiesPayments.getHqlGroupBy()
+            + " order by finPayment.documentNo";
         Query paidReceiptsPaymentsQuery = OBDal.getInstance().getSession()
             .createQuery(hqlPaymentsIn);
         paidReceiptsPaymentsQuery.setString(0, orderid);
@@ -281,32 +290,26 @@ public class PaidReceipts extends JSONProcessSimple {
         for (int i = 0; i < listPaymentsIn.length(); i++) {
           JSONObject objectIn = (JSONObject) listPaymentsIn.get(i);
 
-          String hqlPaymentTrxAmount = "select p.financialTransactionAmount as amount "
-              + " from FIN_Payment as p where p.id=?)";
-          Query paymentTrxQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentTrxAmount);
-          paymentTrxQuery.setString(0, objectIn.getString("paymentId"));
-          BigDecimal objPaymentTrx = BigDecimal.ZERO;
-          if (paymentTrxQuery.list().size() > 0) {
-            objPaymentTrx = (BigDecimal) paymentTrxQuery.list().get(0);
-          }
-
           boolean added = false;
           for (int j = 0; j < listPaymentsType.length(); j++) {
             JSONObject objectType = (JSONObject) listPaymentsType.get(j);
             if (objectIn.get("account").equals(objectType.get("account"))) {
               JSONObject paidReceiptPayment = new JSONObject();
               // FIXME: Multicurrency problem, amount always in terminal currency
-              if ((objectIn.getDouble("paymentAmount")) == ((double) 0)) {
-                paidReceiptPayment.put("amount", new BigDecimal((String) objectIn.get("amount")
-                    .toString()).multiply(new BigDecimal((String) objectType.get("mulrate")
-                    .toString())));
+              BigDecimal objPaymentTrx = BigDecimal.ZERO;
+              if (objectIn.getDouble("amount") == objectIn.getDouble("paymentAmount")) {
+                objPaymentTrx = BigDecimal
+                    .valueOf(objectIn.getDouble("financialTransactionAmount"));
               } else {
-                paidReceiptPayment.put("amount", objPaymentTrx);
+                objPaymentTrx = BigDecimal.valueOf(objectIn.getDouble("amount")).multiply(
+                    BigDecimal.valueOf(objectType.getDouble("mulrate")));
               }
+              paidReceiptPayment.put("amount", objPaymentTrx);
+              paidReceiptPayment.put("paymentAmount",
+                  BigDecimal.valueOf(objectIn.getDouble("financialTransactionAmount")));
               try {
                 Date date = parseDateFormat.parse((String) objectIn.get("paymentDate"));
-                date.setTime(date.getTime() + Calendar.getInstance().get(Calendar.ZONE_OFFSET));
-                paidReceiptPayment.put("paymentDate", dateFormat.format(date));
+                paidReceiptPayment.put("paymentDate", paymentDateFormat.format(date));
               } catch (ParseException e) {
                 log.error(e.getMessage(), e);
               }
@@ -323,13 +326,6 @@ public class PaidReceipts extends JSONProcessSimple {
               paidReceiptPayment.put("openDrawer", objectType.get("openDrawer"));
               paidReceiptPayment.put("isPrePayment", true);
               paidReceiptPayment.put("paymentId", objectIn.get("paymentId"));
-              if ((objectIn.getDouble("paymentAmount")) == ((double) 0)) {
-                paidReceiptPayment.put("paymentAmount", new BigDecimal(objectIn
-                    .get("paymentAmount").toString()).multiply(new BigDecimal(objectType.get(
-                    "mulrate").toString())));
-              } else {
-                paidReceiptPayment.put("paymentAmount", objPaymentTrx);
-              }
               if (objectIn.has("reversedPaymentId")) {
                 paidReceiptPayment.put("isReversed", true);
               }
@@ -367,13 +363,20 @@ public class PaidReceipts extends JSONProcessSimple {
 
               JSONObject paidReceiptPayment = new JSONObject();
               // FIXME: Multicurrency problem, amount always in terminal currency
-              paidReceiptPayment.put("amount", new BigDecimal((String) objectIn.get("amount")
-                  .toString()).multiply(new BigDecimal((String) paymentsType.get("mulrate")
-                  .toString())));
+              BigDecimal objPaymentTrx = BigDecimal.ZERO;
+              if (objectIn.getDouble("amount") == objectIn.getDouble("paymentAmount")) {
+                objPaymentTrx = BigDecimal
+                    .valueOf(objectIn.getDouble("financialTransactionAmount"));
+              } else {
+                objPaymentTrx = BigDecimal.valueOf(objectIn.getDouble("amount")).multiply(
+                    BigDecimal.valueOf(paymentsType.getDouble("mulrate")));
+              }
+              paidReceiptPayment.put("amount", objPaymentTrx);
+              paidReceiptPayment.put("paymentAmount",
+                  BigDecimal.valueOf(objectIn.getDouble("financialTransactionAmount")));
               try {
                 Date date = parseDateFormat.parse((String) objectIn.get("paymentDate"));
-                date.setTime(date.getTime() + Calendar.getInstance().get(Calendar.ZONE_OFFSET));
-                paidReceiptPayment.put("paymentDate", dateFormat.format(date));
+                paidReceiptPayment.put("paymentDate", paymentDateFormat.format(date));
               } catch (ParseException e) {
                 log.error(e.getMessage(), e);
               }

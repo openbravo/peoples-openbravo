@@ -411,7 +411,7 @@ enyo.kind({
       } else {
         this.$.donezerolbl.hide();
         //        if (this.receipt.get('orderType') === 1 || this.receipt.get('orderType') === 3) {
-        if (paymentstatus.isNegative || this.receipt.get('orderType') === 3) {
+        if (paymentstatus.isNegative) {
           this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_ReturnExact'));
         } else {
           this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsExact'));
@@ -575,6 +575,10 @@ enyo.kind({
   },
 
   checkValidCashOverpayment: function (paymentstatus, selectedPayment) {
+    if (!selectedPayment) {
+      return false;
+    }
+
     var currentCash = OB.DEC.Zero,
         requiredCash;
 
@@ -608,6 +612,10 @@ enyo.kind({
   },
 
   checkValidPaymentMethod: function (paymentstatus, selectedPayment) {
+    if (!selectedPayment) {
+      return false;
+    }
+
     var change = this.model.getChange();
     var check = true;
     var currentcash = selectedPayment.currentCash;
@@ -935,7 +943,7 @@ enyo.kind({
       }
     }, this);
 
-    this.model.get('multiOrders').on('change:payment change:total change:change', function () {
+    this.model.get('multiOrders').on('change:payment change:total change:change paymentCancel', function () {
       this.updatePendingMultiOrders();
     }, this);
     this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
@@ -1024,9 +1032,11 @@ enyo.kind({
     // the button 'Done' will be desabled (except for the case of doing a cancel and replace)
     if (!value) {
       if (this.owner.receipt && this.owner.receipt.get('payments') && this.owner.receipt.get('payments').size() > 0) {
-        if (!this.owner.receipt.get('doCancelAndReplace') && this.owner.receipt.getPrePaymentQty() === OB.DEC.sub(this.owner.receipt.getTotal(), this.owner.receipt.getCredit()) && !this.owner.receipt.isNewReversed()) {
+        if (!this.owner.receipt.get('doCancelAndReplace') && (this.owner.receipt.get('isLayaway') ? (OB.DEC.number(this.owner.receipt.getPayment()) < OB.DEC.sub(this.owner.receipt.getTotal(), this.owner.receipt.getCredit())) : (this.owner.receipt.getPrePaymentQty() === OB.DEC.sub(this.owner.receipt.getTotal(), this.owner.receipt.getCredit()))) && !this.owner.receipt.isNewReversed()) {
           value = true;
         }
+      } else if (this.owner.receipt && this.owner.receipt.get('isPaid') && this.owner.receipt.getGross() === 0) {
+        value = true;
       }
     }
     this.disabled = value; // for getDisabled() to return the correct value

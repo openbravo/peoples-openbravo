@@ -27,7 +27,8 @@ enyo.kind({
     this.model.trigger('click', this.model);
   },
   events: {
-    onLineChecked: ''
+    onLineChecked: '',
+    onShowPopup: ''
   },
   components: [{
     name: 'checkBoxColumn',
@@ -85,6 +86,7 @@ enyo.kind({
   }],
   initComponents: function () {
     var me = this;
+
     this.inherited(arguments);
     if (this.model.get('product').get('productType') === 'S') {
       this.$.serviceIcon.show();
@@ -101,6 +103,19 @@ enyo.kind({
       this.$.gross.setContent(this.model.printGross());
     } else {
       this.$.gross.setContent(this.model.printNet());
+    }
+    if (OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true) && this.model.get('product').get('hasAttributes')) {
+      this.createComponent({
+        style: 'display: block;',
+        components: [{
+          content: OB.I18N.getLabel('OBPOS_AttributeValue') + this.model.get('attributeValue'),
+          attributes: {
+            style: 'float: left; width: 100%; clear: left;'
+          }
+        }, {
+          style: 'clear: both;'
+        }]
+      });
     }
     if (this.model.get('product').get('characteristicDescription')) {
       this.createComponent({
@@ -305,7 +320,11 @@ enyo.kind({
         me.bubble('onTabChange', {
           tabPanel: 'searchCharacteristic'
         });
-        me.bubble('onSelectFilter', {});
+        me.bubble('onSelectFilter', {
+          params: {
+            skipProductCharacteristic: true
+          }
+        });
         me.owner.model.set("obposServiceProposed", true);
         OB.MobileApp.model.receipt.save();
       }, 1);
@@ -434,6 +453,9 @@ enyo.kind({
       paymentDate = new Date();
     } else {
       paymentDate = this.model.get('paymentDate');
+      if (typeof (this.model.get('paymentDate')) === 'string') {
+        paymentDate = new Date(paymentDate);
+      }
     }
     this.$.date.setContent(OB.I18N.formatDate(paymentDate));
     if (this.model.get('rate') && this.model.get('rate') !== '1') {

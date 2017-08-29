@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+  <database name="MODIFIED TABLE AD_SESSION">
+    <table name="AD_SESSION" primaryKey="AD_SESSION_KEY">
+      <column name="EM_OBPOS_STORE_ORG_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="AD_ORG" name="EM_OBPOS_AD_SESSION_STORE">
+        <reference local="EM_OBPOS_STORE_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+    </table>
+  </database>

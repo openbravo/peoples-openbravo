@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -436,8 +436,13 @@ enyo.kind({
             if (data.hasMaster) {
               me.moveStep(0);
             } else {
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), OB.I18N.getLabel('OBPOS_ErrCashupMasterNotOpen'));
-              OB.POS.navigate('retail.pointofsale');
+              OB.UTIL.showConfirmation.display(
+              OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), OB.I18N.getLabel('OBPOS_ErrCashupMasterNotOpen'), null, {
+                autoDismiss: false,
+                onHideFunction: function () {
+                  OB.POS.navigate('retail.pointofsale');
+                }
+              });
             }
           });
         } else {
@@ -590,18 +595,35 @@ OB.POS.registerWindow({
   menuI18NLabel: 'OBPOS_LblCloseCash',
   permission: 'OBPOS_retail.cashup',
   approvalType: 'OBPOS_approval.cashup',
-  navigateTo: function () {
+  navigateTo: function (args, successCallback, errorCallback) {
     var me = this;
+    // Cannot navigate to the cashup window in case of being a seller terminal
+    if (!OB.MobileApp.model.get('hasPaymentsForCashup')) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NavigationNotAllowedHeader'), OB.I18N.getLabel('OBPOS_CannotNavigateToCashUp'), [{
+        label: OB.I18N.getLabel('OBMOBC_LblOk'),
+        action: function () {
+          errorCallback();
+        }
+      }], {
+        onHideFunction: function () {
+          errorCallback();
+        }
+      });
+      return;
+    }
     // in case of synchronized mode reload the cashup from the server
     // this is needed because there is a slight change that the cashup on the client 
     // is out of date
     if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
       OB.UTIL.rebuildCashupFromServer(function () {
-        OB.MobileApp.model.navigate(me.route);
+        successCallback(args.route);
       });
     } else {
-      OB.MobileApp.model.navigate(me.route);
+      successCallback(args.route);
     }
+  },
+  menuItemDisplayLogic: function () {
+    return OB.MobileApp.model.get('hasPaymentsForCashup');
   }
 });
 
@@ -624,5 +646,25 @@ OB.POS.registerWindow({
   menuPosition: 21,
   menuI18NLabel: 'OBPOS_LblCloseCashPartial',
   permission: 'OBPOS_retail.cashuppartial',
-  approvalType: 'OBPOS_approval.cashuppartial'
+  approvalType: 'OBPOS_approval.cashuppartial',
+  navigateTo: function (args, successCallback, errorCallback) {
+    if (!OB.MobileApp.model.get('hasPaymentsForCashup')) {
+      // Cannot navigate to the cashup partial window in case of being a seller terminal
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NavigationNotAllowedHeader'), OB.I18N.getLabel('OBPOS_CannotNavigateToPartialCashUp'), [{
+        label: OB.I18N.getLabel('OBMOBC_LblOk'),
+        action: function () {
+          errorCallback();
+        }
+      }], {
+        onHideFunction: function () {
+          errorCallback();
+        }
+      });
+      return;
+    }
+    successCallback(args.route);
+  },
+  menuItemDisplayLogic: function () {
+    return OB.MobileApp.model.get('hasPaymentsForCashup');
+  }
 });

@@ -12,28 +12,34 @@ import javax.servlet.ServletException;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 
 public class ProcessCashCloseSlave extends JSONProcessSimple {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
-    OBPOSAppCashup appCashup = OBDal.getInstance().get(OBPOSAppCashup.class,
-        jsonsent.getString("cashUpId"));
+    OBContext.setAdminMode(true);
+    try {
+      OBPOSAppCashup appCashup = OBDal.getInstance().get(OBPOSAppCashup.class,
+          jsonsent.getString("cashUpId"));
 
-    UpdateCashup.associateMasterSlave(appCashup, appCashup.getPOSTerminal());
-    OBDal.getInstance().flush();
+      UpdateCashup.associateMasterSlave(appCashup, appCashup.getPOSTerminal());
+      OBDal.getInstance().flush();
 
-    OBDal.getInstance().getSession().evict(appCashup);
-    appCashup = OBDal.getInstance().get(OBPOSAppCashup.class, jsonsent.getString("cashUpId"));
+      OBDal.getInstance().getSession().evict(appCashup);
+      appCashup = OBDal.getInstance().get(OBPOSAppCashup.class, jsonsent.getString("cashUpId"));
 
-    JSONObject result = new JSONObject();
-    JSONObject data = new JSONObject();
-    boolean hasMaster = appCashup != null && appCashup.getObposParentCashup() != null;
-    data.put("hasMaster", hasMaster);
-    result.put("data", data);
-    result.put("status", 0);
-    return result;
+      JSONObject result = new JSONObject();
+      JSONObject data = new JSONObject();
+      boolean hasMaster = appCashup != null && appCashup.getObposParentCashup() != null;
+      data.put("hasMaster", hasMaster);
+      result.put("data", data);
+      result.put("status", 0);
+      return result;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
 }

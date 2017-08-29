@@ -456,7 +456,11 @@ enyo.kind({
           me.bubble('onTabChange', {
             tabPanel: 'searchCharacteristic'
           });
-          me.bubble('onSelectFilter', {});
+          me.bubble('onSelectFilter', {
+            params: {
+              skipProductCharacteristic: true
+            }
+          });
           me.owner.owner.selectedModels.filter(function (line) {
             return line.get('hasRelatedServices');
           }).forEach(function (l) {

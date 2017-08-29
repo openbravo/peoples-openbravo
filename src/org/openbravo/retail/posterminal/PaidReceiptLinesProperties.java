@@ -37,7 +37,9 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty("ordLine.product.uOM.id", "uOM"));
         add(new HQLProperty("ordLine.orderedQuantity", "quantity"));
         add(new HQLProperty("ordLine.baseGrossUnitPrice", "unitPrice"));
+        add(new HQLProperty("ordLine.grossUnitPrice", "grossUnitPrice"));
         add(new HQLProperty("ordLine.lineGrossAmount", "linegrossamount"));
+        add(new HQLProperty("ordLine.discount", "discountPercentage"));
         add(new HQLProperty("ordLine.id", "lineId"));
         add(new HQLProperty("ordLine.standardPrice", "baseNetUnitPrice"));
         add(new HQLProperty("ordLine.salesOrder.currency.pricePrecision", "pricePrecision"));
@@ -58,6 +60,9 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty("returnReason.id", "returnReason"));
         add(new HQLProperty("returnReason.name", "returnReasonName"));
         add(new HQLProperty("ordLine.goodsShipmentLine.id", "goodsShipmentLine"));
+        add(new HQLProperty(
+            "(select case when line.attributeSetValue is not null then line.attributeSetValue.description else null end FROM OrderLine line where line.id =  ordLine.id)",
+            "attributeValue"));
       }
     };
 

@@ -8,6 +8,8 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -42,6 +44,14 @@ public class CancelLayawayLoader extends POSDataSynchronizationProcess implement
     }
 
     try {
+      if (json.has("cashUpReportInformation")) {
+        // Update CashUp Report
+        JSONObject jsoncashup = json.getJSONObject("cashUpReportInformation");
+        Date cashUpDate = new Date();
+
+        UpdateCashup.getAndUpdateCashUp(jsoncashup.getString("id"), jsoncashup, cashUpDate);
+      }
+
       Order order = OBDal.getInstance().get(Order.class, json.getString("orderid"));
       POSUtils.setDefaultPaymentType(json, order);
       CancelAndReplaceUtils.cancelOrder(json.getString("orderid"), json,

@@ -77,6 +77,13 @@ enyo.kind({
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
       return;
     }
+
+    // Checks to be done BEFORE payment provider is invoked.
+    if (this.receipt.get('isPaid') && !this.receipt.get('doCancelAndReplace') && this.receipt.getPrePaymentQty() === OB.DEC.sub(this.receipt.getTotal(), this.receipt.getCredit()) && !this.receipt.isNewReversed()) {
+      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
+      return;
+    }
+
     if (options && options.percentaje) {
       var pending = this.model.getPending();
       if (mulrate && mulrate !== '1') {
@@ -95,7 +102,11 @@ enyo.kind({
         receiptToPay = this.model.get('multiOrders');
       }
 
-      provider = receiptToPay.getTotal() > 0 ? paymentMethod.paymentProvider : paymentMethod.refundProvider;
+      if (!receiptToPay.getPaymentStatus().isNegative) {
+        provider = paymentMethod.paymentProvider;
+      } else {
+        provider = paymentMethod.refundProvider;
+      }
 
       if (provider) {
         this.doShowPopup({
@@ -285,6 +296,11 @@ enyo.kind({
                     OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
                     return;
                   }
+                  var decimalAmount = OB.DEC.toBigDecimal(amount);
+                  if (decimalAmount.scale() > OB.DEC.getScale()) {
+                    OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidCurrencyAmount', [txt]));
+                    return;
+                  }
                 }
                 var buttonClass = keyboard.buttons['paymentMethodCategory.showitems.' + payment.paymentMethod.paymentMethodCategory].attributes['class'];
                 if (me.currentPayment && buttonClass.indexOf('btnactive-green') > 0) {
@@ -319,6 +335,11 @@ enyo.kind({
                 amount = OB.DEC.number(OB.I18N.parseNumber(txt));
                 if (_.isNaN(amount)) {
                   OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
+                  return;
+                }
+                var decimalAmount = OB.DEC.toBigDecimal(amount);
+                if (decimalAmount.scale() > OB.DEC.getScale()) {
+                  OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidCurrencyAmount', [txt]));
                   return;
                 }
               }
@@ -481,8 +502,8 @@ enyo.kind({
   },
   shown: function () {
     var me = this,
-        refundablePayment, keyboard = this.owner.owner,
-        isReturnReceipt = (me.receipt && me.receipt.getTotal() < 0) ? true : false;
+        refundablePayment, sideButton, keyboard = this.owner.owner,
+        isReturnReceipt = (me.receipt && (me.receipt.getTotal() < 0 || me.receipt.getPaymentStatus().isNegative)) ? true : false;
 
     keyboard.showKeypad('Coins-' + OB.MobileApp.model.get('currency').id); // shows the Coins/Notes panel for the terminal currency
     keyboard.showSidepad('sidedisabled');
@@ -492,23 +513,37 @@ enyo.kind({
       disabled: false
     });
 
-    // Enable/Disable Payment method based on refundable flag
-    _.each(OB.MobileApp.model.paymentnames, function (payment) {
-      keyboard.disableCommandKey(me, {
-        disabled: (isReturnReceipt ? !payment.paymentMethod.refundable : false),
-        commands: [payment.payment.searchKey]
+    if (OB.MobileApp.model.get('payments').length) {
+      // Enable/Disable Payment method based on refundable flag
+      _.each(OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons, function (sideButton) {
+        sideButton.active = true;
       });
-    });
+      _.each(OB.MobileApp.model.paymentnames, function (payment) {
+        keyboard.disableCommandKey(me, {
+          disabled: (isReturnReceipt ? !payment.paymentMethod.refundable : false),
+          commands: [payment.payment.searchKey]
+        });
 
-    if (!isReturnReceipt || (isReturnReceipt && me.defaultPayment.paymentMethod.refundable)) {
-      keyboard.defaultcommand = me.defaultPayment.payment.searchKey;
-      keyboard.setStatus(me.defaultPayment.payment.searchKey);
-    } else {
-      refundablePayment = _.find(OB.MobileApp.model.get('payments'), function (payment) {
-        return payment.paymentMethod.refundable;
+        if (isReturnReceipt) {
+          sideButton = _.find(OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons, function (sideBtn) {
+            return sideBtn.btn.command === payment.payment.searchKey;
+          });
+          if (sideButton) {
+            sideButton.active = payment.paymentMethod.refundable;
+          }
+        }
       });
-      keyboard.defaultcommand = refundablePayment.payment.searchKey;
-      keyboard.setStatus(refundablePayment.payment.searchKey);
+
+      if (!isReturnReceipt || (isReturnReceipt && me.defaultPayment.paymentMethod.refundable)) {
+        keyboard.defaultcommand = me.defaultPayment.payment.searchKey;
+        keyboard.setStatus(me.defaultPayment.payment.searchKey);
+      } else {
+        refundablePayment = _.find(OB.MobileApp.model.get('payments'), function (payment) {
+          return payment.paymentMethod.refundable;
+        });
+        keyboard.defaultcommand = refundablePayment.payment.searchKey;
+        keyboard.setStatus(refundablePayment.payment.searchKey);
+      }
     }
   }
 });
@@ -522,6 +557,8 @@ enyo.kind({
   handlers: {
     onButtonStatusChanged: 'buttonStatusChanged'
   },
+  classButtonActive: 'btnactive-green',
+  classButtonDisabled: 'btnkeyboard-inactive',
   components: [{
     style: 'margin: 5px;',
     components: [{
@@ -537,19 +574,30 @@ enyo.kind({
     this.activegreen = false;
   },
   tap: function () {
-    this.doShowAllButtons();
+    if (!this.$.btn.hasClass(this.classButtonDisabled)) {
+      this.doShowAllButtons();
+    }
   },
   buttonStatusChanged: function (inSender, inEvent) {
     var status = inEvent.value.status;
+    this.$.btn.removeClass(this.classButtonDisabled);
     if (this.activegreen) {
       this.$.btn.setContent(OB.I18N.getLabel('OBPOS_MorePayments'));
-      this.$.btn.removeClass('btnactive-green');
+      this.$.btn.removeClass(this.classButtonActive);
       this.activegreen = false;
     }
     if (this.owner.showing && (this.dialogbuttons[status] || this.dialogbuttons[this.owner.keyboard.status])) {
       this.$.btn.setContent(OB.I18N.getLabel('OBPOS_MorePayments') + ' (' + (this.dialogbuttons[status] || this.dialogbuttons[this.owner.keyboard.status]) + ')');
-      this.$.btn.addClass('btnactive-green');
+      this.$.btn.addClass(this.classButtonActive);
       this.activegreen = true;
+    }
+    if (this.owner.showing) {
+      if (_.filter(OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons, function (sideButton) {
+        return sideButton.active;
+      }).length === 0) {
+        this.$.btn.removeClass(this.classButtonActive);
+        this.$.btn.addClass(this.classButtonDisabled);
+      }
     }
     OB.UTIL.createElipsisEffect(this.$.btn);
   }

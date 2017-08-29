@@ -40,11 +40,14 @@
       priceList: OB.DEC.Zero,
       gross: OB.DEC.Zero,
       net: OB.DEC.Zero,
-      description: ''
+      description: '',
+      attributeValue: ''
     },
 
-    // When copying a line coming from servers these properties are copied manually
-    // the rest are considered extra information coming from modules and are copied verbatim.
+    // When copying a line coming from servers these properties are copied
+    // manually
+    // the rest are considered extra information coming from modules and are
+    // copied verbatim.
     ownProperties: {
       id: true,
       lineId: true,
@@ -68,7 +71,8 @@
       relatedLines: true,
       hasRelatedServices: true,
       warehouse: true,
-      warehousename: true
+      warehousename: true,
+      attributeValue: true
     },
 
     initialize: function (attributes) {
@@ -84,6 +88,7 @@
         this.set('promotions', attributes.promotions);
         this.set('priceIncludesTax', attributes.priceIncludesTax);
         this.set('description', attributes.description);
+        this.set('attributeValue', attributes.attributeValue);
         if (!attributes.grossListPrice && attributes.product && _.isNumber(attributes.priceList)) {
           this.set('grossListPrice', attributes.priceList);
         }
@@ -97,12 +102,16 @@
 
     },
 
+    getAttributeValue: function () {
+      return this.get('attributeValue');
+    },
+
     getQty: function () {
       return this.get('qty');
     },
 
     printQty: function () {
-      return this.get('qty').toString();
+      return OB.DEC.toNumber(OB.DEC.toBigDecimal(this.get('qty')), OB.I18N.qtyScale()).toString();
     },
 
     printPrice: function () {
@@ -381,6 +390,7 @@
         this.set('hasbeenpaid', attributes.hasbeenpaid);
         this.set('isbeingprocessed', attributes.isbeingprocessed);
         this.set('description', attributes.description);
+        this.set('attributeValue', attributes.attributeValue);
         this.set('print', attributes.print);
         this.set('sendEmail', attributes.sendEmail);
         this.set('isPaid', attributes.isPaid);
@@ -477,7 +487,7 @@
             discountPercentage = parseFloat(discountPercentage.setScale(2, BigDecimal.prototype.ROUND_HALF_UP).toString(), 10);
           }
         } else {
-          discountPercentage = OB.DEC.Zero;
+          discountPercentage = line.get('discountPercentage') ? line.get('discountPercentage') : OB.DEC.Zero;
         }
         line.set({
           discountPercentage: discountPercentage
@@ -492,7 +502,7 @@
           discount.basePrice = base;
           discount.unitDiscount = OB.DEC.div(discountAmt, line.get('qtyToApplyDisc') || line.get('qty'));
           totalDiscount = OB.DEC.add(totalDiscount, discountAmt);
-          base = OB.DEC.sub(base, totalDiscount);
+          base = OB.DEC.sub(base, discount.unitDiscount);
         }, this);
 
         gross = OB.DEC.sub(gross, totalDiscount);
@@ -809,6 +819,10 @@
       }
     },
 
+    getAttributeValue: function () {
+      return this.get('attributeValue');
+    },
+
     getQty: function () {
       return this.get('qty');
     },
@@ -879,9 +893,9 @@
       payAndCredit = (this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3)) ? OB.DEC.abs(payAndCredit) : payAndCredit;
       processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, credit);
 
-      isNegative = this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3 && (!this.get('isPartiallyDelivered') || (this.get('isPartiallyDelivered') && this.get('isDeliveredGreaterThanGross'))));
+      isNegative = this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3 && (!this.get('isPartiallyDelivered') || (this.get('isPartiallyDelivered') && !this.get('isDeliveredGreaterThanGross'))));
       // Check if the total amount is lower than the already paid (processed)
-      if (!isNegative && this.get('gross') >= 0 && OB.DEC.compare(OB.DEC.sub(processedPaymentsAmount, total)) === 1) {
+      if (this.get('orderType') !== 3 && !isNegative && this.get('gross') >= 0 && OB.DEC.compare(OB.DEC.sub(processedPaymentsAmount, total)) === 1) {
         isNegative = true;
         paidInNegativeStatus = OB.DEC.sub(processedPaymentsAmount, paymentsAmount);
         totalToReturn = OB.DEC.sub(processedPaymentsAmount, total);
@@ -1288,6 +1302,32 @@
       var me = this,
           line = lines[idx],
           i;
+      var removesLines = function (idx, callback) {
+          idx++;
+          if (me.get('lines').get(line)) {
+            if (idx < length) {
+              me.set('skipCalculateReceipt', true);
+              me.deleteLine(line, true, null, false);
+              me.deleteLines(lines, idx, length, callback);
+            } else {
+              me.set('skipCalculateReceipt', false);
+              me.deleteLine(line, false, callback, true);
+            }
+          } else {
+            // If there is a line and other related service line selected to delete, the service is deleted when the product is deleted
+            // This causes that when this recursive line tries to delete the service line, the service line is not in the array which stores the lines to delete
+            // The 'else' clause catches this situation and continues with the next line
+            if (idx === length) {
+              me.set('skipCalculateReceipt', false);
+              if (callback) {
+                callback();
+              }
+            } else {
+              me.deleteLines(lines, idx, length, callback);
+            }
+          }
+          };
+
       if (idx === 0) {
         for (i = 0; i < lines.length; i++) {
           if (me.get('replacedorder') && lines[i].get('remainingQuantity')) {
@@ -1298,27 +1338,23 @@
             return;
           }
         }
-        this.set('undo', null);
-      }
-      idx++;
-      if (this.get('lines').get(line)) {
-        if (idx < length) {
-          this.deleteLine(line, true, null, false);
-          this.deleteLines(lines, idx, length, callback);
+        if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+          for (i = 0; i < lines.length; i++) {
+            lines[i].set('obposIsDeleted', true);
+            lines[i].set('obposQtyDeleted', lines[i].get('qty'));
+            lines[i].set('qty', 0, {
+              silent: true
+            });
+          }
+          this.set('undo', null);
+          this.calculateReceipt(function () {
+            removesLines(idx, callback);
+          });
         } else {
-          this.deleteLine(line, false, callback, true);
+          removesLines(idx, callback);
         }
       } else {
-        // If there is a line and other related service line selected to delete, the service is deleted when the product is deleted
-        // This causes that when this recursive line tries to delete the service line, the service line is not in the array which stores the lines to delete
-        // The 'else' clause catches this situation and continues with the next line
-        if (idx === length) {
-          if (callback) {
-            callback();
-          }
-        } else {
-          this.deleteLines(lines, idx, length, callback);
-        }
+        removesLines(idx, callback);
       }
     },
 
@@ -1418,7 +1454,7 @@
             });
 
             lines.forEach(function (line) {
-              if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.get('obposQtyDeleted') !== 0) {
+              if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.get('obposQtyDeleted')) {
                 line.set('qty', line.get('obposQtyDeleted'));
                 line.set('obposQtyDeleted', 0);
               }
@@ -1458,41 +1494,68 @@
           this.set('deletedLines', []);
         }
         if (!line.get('hasTaxError')) {
-          if (OB.UTIL.isNullOrUndefined(isLastLine) || isLastLine) {
-            this.set('skipCalculateReceipt', true);
-            line.set('obposIsDeleted', true);
-            line.set('obposQtyDeleted', line.get('qty'));
-            line.set('qty', 0);
-            this.set('skipCalculateReceipt', false);
-            me.get('deletedLines').push(new OrderLine(line.attributes));
-            // remove the line
-            finishDelete();
-          } else {
-            this.set('skipCalculateReceipt', true);
-            line.set('obposIsDeleted', true);
-            line.set('obposQtyDeleted', line.get('qty'));
-            line.set('qty', 0);
-            this.get('deletedLines').push(new OrderLine(line.attributes));
-            // remove the line
-            finishDelete();
+          // Clone the line to be moved as deleted.
+          var deletedline = new OrderLine(line.attributes);
+          if (!line.get('obposIsDeleted')) {
+            // Set the line as deleted
+            deletedline.set('obposIsDeleted', true);
+            deletedline.set('obposQtyDeleted', line.get('qty'));
+            // set quantity as 0
+            deletedline.set('qty', 0);
+            // Set prices as 0
+            deletedline.set('gross', 0);
+            // Calulate Taxes
+            if (this.get('priceIncludesTax')) {
+              OB.DATA.LineTaxesIncPrice(this, deletedline);
+            } else {
+              OB.DATA.LineTaxesExcPrice(this, deletedline);
+            }
           }
+          // Sets the tax if it has been deleted
+          deletedline.set('tax', deletedline.get('tax') ? deletedline.get('tax') : deletedline.get('taxUndo'));
+          // Move to deleted lines
+          this.get('deletedLines').push(deletedline);
         }
-      } else {
-        // remove the line
-        finishDelete();
       }
+      // remove the line
+      finishDelete();
     },
 
     //Attrs is an object of attributes that will be set in order
     _addProduct: function (p, qty, options, attrs, callback) {
       var newLine = true,
           line = null,
-          me = this;
+          me = this,
+          productHavingSameAttribute = false,
+          productHasAttribute = p.attributes.hasAttributes,
+          attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true);
       if (enyo.Panels.isScreenNarrow()) {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_AddLine', [qty ? qty : 1, p.get('_identifier')]));
       }
+      if (attributeSearchAllowed && productHasAttribute) {
+        var lines = me.get('lines'),
+            i, currentline;
+        if (options && options.line) {
+          productHavingSameAttribute = true;
+        } else {
+          for (i = 0; i < lines.length; i++) {
+            currentline = lines.models[i].attributes;
+            if (attrs && (currentline.attributeValue === attrs.attributeValue) && (p.id === currentline.product.id)) {
+              productHavingSameAttribute = true;
+              line = currentline;
+              if (p.get('isSerialNo')) {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ProductDefinedAsSerialNo'));
+                if (callback) {
+                  callback(false, null);
+                }
+                return;
+              }
+            }
+          }
+        }
+      }
       if (p.get('ispack')) {
-        OB.Model.Discounts.discountRules[p.get('productCategory')].addProductToOrder(this, p);
+        OB.Model.Discounts.discountRules[p.get('productCategory')].addProductToOrder(this, p, attrs);
         if (callback) {
           callback(true);
         }
@@ -1536,7 +1599,13 @@
             } else {
               line = me.get('lines').find(function (l) {
                 if (l.get('product').id === p.id && ((l.get('qty') > 0 && qty > 0) || (l.get('qty') < 0 && qty < 0))) {
-                  return true;
+                  if (attributeSearchAllowed && attrs) {
+                    if ((l.get('attributeValue') === attrs.attributeValue)) {
+                      return true;
+                    }
+                  } else {
+                    return true;
+                  }
                 }
               });
             }
@@ -1553,7 +1622,9 @@
                 return;
               }
               var splitline = !(options && options.line) && !OB.UTIL.isNullOrUndefined(args.line) && !OB.UTIL.isNullOrUndefined(args.line.get('splitline')) && args.line.get('splitline');
-              if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')))) {
+              var serviceProduct = args.line && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')));
+              var groupedByAttributeValues = (productHasAttribute && productHavingSameAttribute) || (!productHasAttribute && !productHavingSameAttribute);
+              if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (serviceProduct) && groupedByAttributeValues) {
                 args.receipt.addUnit(args.line, args.qty);
                 if (!_.isUndefined(args.attrs)) {
                   _.each(_.keys(args.attrs), function (key) {
@@ -1584,7 +1655,7 @@
               line = options.line;
               newLine = false;
             } else {
-              if (p.get('groupProduct')) {
+              if (p.get('avoidSplitProduct')) {
                 line = me.createLine(p, qty, options, attrs);
               } else {
                 if (qty >= 0) {
@@ -1619,9 +1690,11 @@
           }
           if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
             var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
-            // Display related services after calculate gross, if it is new line and if the line has not been deleted.
-            // The line might has been deleted during calculate gross for examples if there was an error in taxes.
-            var productId = args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id;
+            // Display related services after calculate gross, if it is new line
+            // and if the line has not been deleted.
+            // The line might has been deleted during calculate gross for
+            // examples if there was an error in taxes.
+            var productId = (args.productToAdd.get('isNew') && OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) ? null : (args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id);
             args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
               if (data) {
                 if (data.hasservices) {
@@ -1856,7 +1929,8 @@
         receipt: this,
         productToAdd: p,
         qtyToAdd: qty,
-        options: options
+        options: options,
+        attrs: attrs
       }, function (args) {
         // do not allow generic products to be added to the receipt
         if (args && args.productToAdd && args.productToAdd.get('isGeneric')) {
@@ -1899,11 +1973,38 @@
           }
           return;
         }
-        me._addProduct(p, qty, options, attrs, function (success, orderline) {
-          if (callback) {
-            callback(success, orderline);
-          }
-        });
+        if ((!args || !args.options || !args.options.line) && OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true) && p.get('hasAttributes') && qty >= 1) {
+          OB.MobileApp.view.waterfall('onShowPopup', {
+            popup: 'modalProductAttribute',
+            args: {
+              callback: function (attributeValue) {
+                if (attributeValue) {
+                  var i;
+                  if (OB.UTIL.isNullOrUndefined(attrs)) {
+                    attrs = {};
+                  }
+                  attrs.attributeValue = attributeValue;
+                  me._addProduct(p, qty, options, attrs, function (success, orderline) {
+                    if (callback) {
+                      callback(success, orderline);
+                    }
+                  });
+                } else {
+                  if (callback) {
+                    callback(false, null);
+                  }
+                }
+              },
+              options: options
+            }
+          });
+        } else {
+          me._addProduct(p, qty, options, attrs, function (success, orderline) {
+            if (callback) {
+              callback(success, orderline);
+            }
+          });
+        }
       });
     },
 
@@ -2414,73 +2515,31 @@
               OB.error(arguments);
             });
           }
+        }
 
+        var saveBP = function () {
+            me.set('bp', businessPartner);
+            me.save();
+            // copy the modelOrder again, as saveIfNew is possibly async
+            OB.MobileApp.model.orderList.saveCurrent();
+            finishSaveData(callback);
+            };
+
+        if (businessPartner.get('locationModel')) {
+          OB.Dal.saveIfNew(businessPartner.get('locationModel'), function () {}, function (tx, error) {
+            OB.UTIL.showError("OBDAL error: " + error);
+          });
+          saveBP();
+        } else {
           OB.Dal.get(OB.Model.BPLocation, businessPartner.get('shipLocId'), function (location) {
-
-            OB.Dal.saveIfNew(location, function () {
-              businessPartner.set('locationModel', location);
-              me.set('bp', businessPartner);
-              me.save();
-              // copy the modelOrder again, as the get/save are async
-              OB.MobileApp.model.orderList.saveCurrent();
-              finishSaveData(callback);
-            }, function () {
-              OB.error(arguments);
+            OB.Dal.saveIfNew(location, function () {}, function (tx, error) {
+              OB.UTIL.showError("OBDAL error: " + error);
             });
-
+            businessPartner.set('locationModel', location);
+            saveBP();
           }, function () {
             OB.error(arguments);
-            errorSaveData(callback);
-          }, function () {
-            // Is the result is empty the location is not valid or not exits
-            // Call LoadedCustomer to find the customer and location
-            // if not exist show the information and break the process
-            new OB.DS.Request('org.openbravo.retail.posterminal.master.LoadedCustomer').exec({
-              bpartnerId: businessPartner.id,
-              bpLocationId: businessPartner.get('shipLocId')
-            }, function (data) {
-              var bpLoc = OB.Dal.transform(OB.Model.BPLocation, data[1]);
-              OB.Dal.saveIfNew(bpLoc, function () {
-                businessPartner.set('locationModel', bpLoc);
-                me.set('bp', businessPartner);
-                me.save();
-                // copy the modelOrder again, as the get/save are async
-                OB.MobileApp.model.orderList.saveCurrent();
-                finishSaveData(callback);
-              }, function () {
-                OB.error(arguments);
-              });
-            }, function () {
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_NoReceiptLoadedLocation'), [{
-                label: OB.I18N.getLabel('OBPOS_LblOk'),
-                isConfirmButton: true
-              }]);
-            });
           });
-
-        } else {
-          if (businessPartner.get('locationModel')) { //Location has changed or we are assigning current bp
-            OB.Dal.saveIfNew(businessPartner.get('locationModel'), function () {
-              me.set('bp', businessPartner);
-              me.save();
-              // copy the modelOrder again, as saveIfNew is possibly async
-              OB.MobileApp.model.orderList.saveCurrent();
-              finishSaveData(callback);
-            }, function () {
-              OB.UTIL.showError('Error removing');
-            });
-          } else {
-            OB.Dal.get(OB.Model.BPLocation, businessPartner.get('shipLocId'), function (location) {
-              OB.Dal.saveIfNew(location, function () {}, function () {
-                OB.error(arguments);
-              });
-              businessPartner.set('locationModel', location);
-              me.set('bp', businessPartner);
-              me.save();
-            }, function () {
-              OB.error(arguments);
-            });
-          }
         }
       } else {
         this.set('bp', businessPartner);
@@ -2582,7 +2641,17 @@
           }
         } else {
           me.set('layawayGross', me.getGross());
-          me.set('gross', me.get('payment'));
+          // If the canceling layaway is partially delivered, the payment and gross must be updated to don't create payments
+          // to return the delivered quantity
+          if (me.get('isPartiallyDelivered')) {
+            if (me.get('isDeliveredGreaterThanGross')) {
+              me.set('gross', OB.DEC.sub(me.get('deliveredQuantityAmount'), me.get('payment')));
+            } else {
+              me.set('gross', OB.DEC.sub(me.get('payment'), me.get('deliveredQuantityAmount')));
+            }
+          } else {
+            me.set('gross', me.get('payment'));
+          }
           me.set('payment', OB.DEC.Zero);
           me.get('payments').reset();
         }
@@ -2720,8 +2789,7 @@
 
       process.exec({
         orderId: this.get('id'),
-        documentNo: this.get('documentNo'),
-        setCancelled: false
+        documentNo: this.get('documentNo')
       }, function (data) {
         if (data && data.exception) {
           if (data.exception.message) {
@@ -2761,10 +2829,18 @@
       //Cloning order to be canceled
       var clonedreceipt = new OB.Model.Order();
       OB.UTIL.clone(me, clonedreceipt);
+
+      if (this.get('paidOnCredit')) {
+        this.set('paidOnCredit', false);
+        this.set('paidPartiallyOnCredit', false);
+        this.set('creditAmount', 0);
+      }
+
       me.set('canceledorder', clonedreceipt);
       me.set('doCancelAndReplace', true);
 
       OB.Dal.remove(this, function () {
+        var deliveredQty = 0;
         me.get('lines').each(function (line) {
           idMap[line.get('id')] = OB.UTIL.get_UUID();
           line.set('replacedorderline', line.get('id'));
@@ -2779,7 +2855,10 @@
         me.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
         me.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
 
-        if (me.get('isLayaway')) {
+        _.each(me.get('lines').models, function (line) {
+          deliveredQty += line.get('deliveredQuantity');
+        });
+        if (me.get('isLayaway') || (OB.MobileApp.model.get('terminal').terminalType.layawayorder && deliveredQty === 0)) {
           me.set('orderType', 2);
         }
         me.set('isLayaway', false);
@@ -2870,17 +2949,20 @@
         }
 
         me.checkNotProcessedPayments(function () {
+          //Cloning order to be canceled
+          var clonedreceipt = new OB.Model.Order();
+          OB.UTIL.clone(me, clonedreceipt);
+          if (me.get('paidOnCredit')) {
+            me.set('paidOnCredit', false);
+            me.set('paidPartiallyOnCredit', false);
+            me.set('creditAmount', 0);
+          }
           me.set('cancelLayaway', true);
+          me.set('canceledorder', clonedreceipt);
           context.doShowDivText({
             permission: context.permission,
             orderType: 3
           });
-          // If the canceling layaway is partially delivered, the payment and gross must be updated to don't create payments
-          // to return the delivered quantity
-          if (me.get('isPartiallyDelivered')) {
-            me.set('gross', OB.DEC.sub(me.get('deliveredQuantityAmount'), me.get('gross')));
-            me.set('payment', OB.DEC.Zero);
-          }
           context.doTabChange({
             tabPanel: 'payment',
             keyboard: 'toolbarpayment',
@@ -3272,7 +3354,13 @@
         receipt: this,
         callback: callback
       }, function (args) {
-        var executeFinalCallback = function () {
+        var executeFinalCallback = function (saveChanges) {
+            if (saveChanges) {
+              order.adjustPayment();
+              order.trigger('displayTotal');
+              order.save();
+              order.trigger('saveCurrent');
+            }
             if (callback instanceof Function) {
               callback(order);
             }
@@ -3283,7 +3371,7 @@
             var reverseCallback = payment.get('reverseCallback');
             reverseCallback();
           }
-          executeFinalCallback();
+          executeFinalCallback(false);
           return;
         }
         if (!payment.get('paymentData') && !payment.get('reversedPaymentId')) {
@@ -3296,9 +3384,7 @@
               if (p.get('rate') && p.get('rate') !== '1') {
                 p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
               }
-              order.adjustPayment();
-              order.trigger('displayTotal');
-              executeFinalCallback();
+              executeFinalCallback(true);
               return;
             }
           }
@@ -3311,9 +3397,7 @@
                 p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
               }
               payment.set('date', new Date());
-              order.adjustPayment();
-              order.trigger('displayTotal');
-              executeFinalCallback();
+              executeFinalCallback(true);
               return;
             }
           }
@@ -3337,10 +3421,7 @@
         if (payment.get('reversedPayment')) {
           payment.get('reversedPayment').set('isReversed', true);
         }
-        order.adjustPayment();
-        order.trigger('displayTotal');
-        order.save();
-        executeFinalCallback();
+        executeFinalCallback(true);
         return;
       }); // call with callback, no args
     },
@@ -4302,7 +4383,10 @@
                 receipt.set('skipCalculateReceipt', true);
                 _.each(receipt.get('lines').models, function (line) {
                   line.set('obposQtyDeleted', line.get('qty'));
-                  line.set('qty', 0);
+                  line.set('obposIsDeleted', true);
+                  line.set('qty', 0, {
+                    silent: true
+                  });
                 });
                 receipt.set('skipCalculateReceipt', false);
                 // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
@@ -4329,6 +4413,9 @@
           } else if (receipt.has('deletedLines')) {
             if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
               receipt.set('skipCalculateReceipt', false);
+              // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
+              // may be called out of the pointofsale window, and in order to call the calculateReceipt function, the
+              // isCalculateReceiptLockState and isCalculateGrossLockState properties must be initialized
               receipt.setIsCalculateReceiptLockState(false);
               receipt.setIsCalculateGrossLockState(false);
               markOrderAsDeleted(receipt, orderList, callback);
@@ -4379,7 +4466,23 @@
 
       return true;
     },
+    checkOrderPayment: function () {
+      var hasPayments = false;
+      if (this.get('payments').length > 0) {
+        if (this.get('receiptPayments') && this.get('payments').length > this.get('receiptPayments').length) {
+          hasPayments = true;
+        } else if (!this.get('receiptPayments')) {
+          hasPayments = true;
+        }
+      }
 
+      if (hasPayments) {
+        OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_RemoveReceiptWithPayment'));
+        return true;
+      }
+      return false;
+    },
+    
     turnEditable: function () {
       if (this.get('payment') > 0 || this.get('isPartiallyDelivered') || this.get('isFullyDelivered')) {
         return;
@@ -4596,20 +4699,7 @@
       bpBillLocId = model.bpBillLocId;
       bpId = model.bp;
       var bpartnerForProduct = function (bp) {
-          var locationForBpartner = function (bpLoc) {
-              bp.set('shipLocName', bpLoc.get('name'));
-              bp.set('shipLocId', bpLoc.get('id'));
-              bp.set('locName', bpLoc.get('name'));
-              bp.set('locId', bpLoc.get('id'));
-              bp.set('postalCode', bpLoc.get('postalCode'));
-              bp.set('cityName', bpLoc.get('cityName'));
-              bp.set('countryName', bpLoc.get('countryName'));
-              bp.set('locationModel', bpLoc);
-              order.set('bp', bp);
-              order.set('gross', model.totalamount);
-              order.set('net', model.totalNetAmount);
-              order.trigger('change:bp', order);
-
+          var loadProducts = function () {
               var linepos = 0,
                   hasDeliveredProducts = false,
                   hasNotDeliveredProducts = false,
@@ -4676,6 +4766,7 @@
                         description: iter.description,
                         priceIncludesTax: order.get('priceIncludesTax'),
                         hasRelatedServices: hasservices,
+                        attributeValue: iter.attributeValue,
                         warehouse: {
                           id: iter.warehouse,
                           warehousename: iter.warehousename
@@ -4697,6 +4788,9 @@
                       numberOfLines--;
                       orderQty = OB.DEC.add(iter.quantity, orderQty);
                       if (numberOfLines === 0) {
+                        lines.reset(lines.sortBy(function (line) {
+                          return line.get('linepos');
+                        }));
                         order.set('lines', lines);
                         order.set('qty', orderQty);
                         order.set('json', JSON.stringify(order.toJSON()));
@@ -4742,24 +4836,6 @@
                 });
                 linepos++;
               });
-              order.set('isPartiallyDelivered', hasDeliveredProducts && hasNotDeliveredProducts ? true : false);
-              if (hasDeliveredProducts && !hasNotDeliveredProducts) {
-                order.set('isFullyDelivered', true);
-              }
-              if (order.get('isPartiallyDelivered')) {
-                var partiallyPaid = 0;
-                _.each(_.filter(order.get('receiptLines'), function (reciptLine) {
-                  return reciptLine.deliveredQuantity;
-                }), function (deliveredLine) {
-                  partiallyPaid += deliveredLine.deliveredQuantity * deliveredLine.unitPrice;
-                });
-                if (partiallyPaid) {
-                  order.set('deliveredQuantityAmount', partiallyPaid);
-                }
-                if (order.get('deliveredQuantityAmount') && order.get('deliveredQuantityAmount') > order.get('gross')) {
-                  order.set('isDeliveredGreaterThanGross', true);
-                }
-              }
 
               function getReverserPayment(payment, Payments) {
                 return _.filter(model.receiptPayments, function (receiptPayment) {
@@ -4818,6 +4894,23 @@
               order.set('payments', payments);
               order.adjustPayment();
 
+              order.set('isPartiallyDelivered', hasDeliveredProducts && hasNotDeliveredProducts ? true : false);
+              if (hasDeliveredProducts && !hasNotDeliveredProducts) {
+                order.set('isFullyDelivered', true);
+              }
+              if (order.get('isPartiallyDelivered')) {
+                var partiallyPaid = 0;
+                _.each(_.filter(order.get('receiptLines'), function (reciptLine) {
+                  return reciptLine.deliveredQuantity;
+                }), function (deliveredLine) {
+                  partiallyPaid = OB.DEC.add(partiallyPaid, OB.DEC.mul(deliveredLine.deliveredQuantity, deliveredLine.grossUnitPrice));
+                });
+                order.set('deliveredQuantityAmount', partiallyPaid);
+                if (order.get('deliveredQuantityAmount') && order.get('deliveredQuantityAmount') > order.get('payment')) {
+                  order.set('isDeliveredGreaterThanGross', true);
+                }
+              }
+
               taxes = {};
               _.each(model.receiptTaxes, function (iter) {
                 var taxProp;
@@ -4845,15 +4938,65 @@
               }
               };
 
-          if (isLoadedPartiallyFromBackend) {
-            locationForBpartner(bpLoc);
+          var locationForBpartner = function (loc, billLoc) {
+              bp.set('shipLocName', loc.get('name'));
+              bp.set('shipLocId', loc.get('id'));
+              if (billLoc) {
+                bp.set('locName', billLoc.get('name'));
+                bp.set('locId', billLoc.get('id'));
+                bp.set('postalCode', billLoc.get('postalCode'));
+                bp.set('cityName', billLoc.get('cityName'));
+                bp.set('countryName', billLoc.get('countryName'));
+                bp.set('locationModel', billLoc);
+              } else {
+                bp.set('locationModel', loc);
+              }
+
+              order.set('bp', bp);
+              order.set('gross', model.totalamount);
+              order.set('net', model.totalNetAmount);
+              order.trigger('change:bp', order);
+              loadProducts();
+              };
+
+          if (bpLocId === bpBillLocId) {
+            if (isLoadedPartiallyFromBackend) {
+              locationForBpartner(bpLoc, bpLoc);
+            } else {
+              OB.Dal.get(OB.Model.BPLocation, bpLocId, function (bpLoc) {
+                locationForBpartner(bpLoc, bpLoc);
+              }, function (tx, error) {
+                OB.UTIL.showError("OBDAL error: " + error);
+              });
+            }
           } else {
-            OB.Dal.get(OB.Model.BPLocation, bpLocId, function (bpLoc) {
-              locationForBpartner(bpLoc);
-            }, function () {
-              // TODO: Report errors properly
+            var criteria = {};
+            if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+              var remoteCriteria = [{
+                columns: ['id'],
+                operator: 'equals',
+                value: [bpLocId, bpBillLocId]
+              }];
+              criteria.remoteFilters = remoteCriteria;
+            } else {
+              criteria._whereClause = "where c_bpartner_location_id in (?, ?)";
+              criteria.params = [bpLocId, bpBillLocId];
+            }
+            OB.Dal.find(OB.Model.BPLocation, criteria, function (locations) {
+              var loc, billLoc;
+              _.each(locations.models, function (l) {
+                if (l.id === bpLocId) {
+                  loc = l;
+                } else if (l.id === bpBillLocId) {
+                  billLoc = l;
+                }
+              });
+              locationForBpartner(loc, billLoc);
+            }, function (tx, error) {
+              OB.UTIL.showError("OBDAL error: " + error);
             });
           }
+
           };
       OB.Dal.get(OB.Model.BusinessPartner, bpId, function (bp) {
         bpartnerForProduct(bp);
@@ -5076,6 +5219,15 @@
         this.modelorder.setIsCalculateReceiptLockState(false);
         this.modelorder.setIsCalculateGrossLockState(false);
       }
+    },
+    checkOrderListPayment: function () {
+      var i;
+      for (i = 0; i < this.models.length; i++) {
+        if (this.models[i].checkOrderPayment()) {
+          return true;
+        }
+      }
+      return false;
     },
     synchronizeCurrentOrder: function () {
       // NOTE: No need to execute any business logic here
@@ -5381,6 +5533,15 @@
       this.get('payments').reset();
       this.set('openDrawer', false);
       this.set('additionalInfo', null);
+      OB.MobileApp.model.set('isMultiOrderState', false);
+      OB.UTIL.localStorage.removeItem('multiOrdersPayment');
+    },
+    checkMultiOrderPayment: function () {
+      if (this.get('payments').length > 0) {
+        OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_RemoveReceiptWithPayment'));
+        return true;
+      }
+      return false;
     },
     hasDataInList: function () {
       if (this.get('multiOrdersList') && this.get('multiOrdersList').length > 0) {

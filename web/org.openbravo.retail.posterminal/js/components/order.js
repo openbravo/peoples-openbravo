@@ -557,6 +557,12 @@ enyo.kind({
     });
     this.$.listPaymentLines.setCollection(this.order.get('payments'));
     this.setTaxes();
+    this.order.on('change:cancelLayaway change:voidLayaway', function (model) {
+      if (model.get('cancelLayaway') || model.get('voidLayaway')) {
+        this.$.listPaymentLines.hide();
+        this.$.paymentBreakdown.hide();
+      }
+    }, this);
     this.order.on('change:gross change:net', function (model) {
       if (model.get('orderType') !== 3) {
         this.$.totalReceiptLine.renderTotal(model.getTotal());
@@ -703,6 +709,21 @@ enyo.kind({
         this.$.paymentBreakdown.hide();
       }
     }, this);
+    // Change Document No based on return lines
+    this.order.get('lines').on('add change:qty change:relatedLines updateRelations', function () {
+      if (this.order.get('isEditable') && !this.order.get('isLayaway') && !this.order.get('isQuotation') && !this.order.get('doCancelAndReplace')) {
+        var negativeLinesLength = _.filter(this.order.get('lines').models, function (line) {
+          return line.get('qty') < 0;
+        }).length;
+        if (negativeLinesLength > 0 && negativeLinesLength === this.order.get('lines').models.length) {
+          //isReturn
+          OB.MobileApp.model.receipt.setDocumentNo(true, false);
+        } else {
+          //isOrder
+          OB.MobileApp.model.receipt.setDocumentNo(false, true);
+        }
+      }
+    }, this);
     this.order.get('lines').on('add change:qty change:relatedLines updateRelations', function () {
       var approvalNeeded = false,
           linesToRemove = [],
@@ -713,19 +734,6 @@ enyo.kind({
         return;
       }
       this.updating = true;
-      //Check Return No logic and change
-      if (!this.order.get('isLayaway') && !this.order.get('isQuotation') && !this.order.get('doCancelAndReplace')) {
-        var negativeLinesLength = _.filter(this.order.get('lines').models, function (line) {
-          return line.get('qty') < 0;
-        }).length;
-        if (negativeLinesLength === this.order.get('lines').models.length && negativeLinesLength > 0) {
-          //isReturn
-          OB.MobileApp.model.receipt.setDocumentNo(true, false);
-        } else {
-          //isOrder
-          OB.MobileApp.model.receipt.setDocumentNo(false, true);
-        }
-      }
 
       function getServiceLines(service) {
         var serviceLines;
@@ -944,7 +952,7 @@ enyo.kind({
                     me.order.get('lines').remove(l);
                   } else {
                     deferredQty = 0;
-                    if (line.get('product').get('quantityRule') === 'PP') {
+                    if (line.get('product').get('quantityRule') === 'PP' && line.get('product').get('groupProduct')) {
                       _.each(deferredLines, function (deferredLine) {
                         deferredQty += deferredLine.qty;
                       });
@@ -990,7 +998,7 @@ enyo.kind({
                   deferredLines = l.get('relatedLines').filter(function getDeferredServices(relatedLine) {
                     return relatedLine.deferred === true;
                   });
-                  if (!deferredLines.length) {
+                  if (!deferredLines.length && !l.get('obposIsDeleted')) {
                     me.order.get('lines').remove(l);
                   }
                 }
@@ -1000,6 +1008,9 @@ enyo.kind({
             me.negativeLineUpdated = false;
 
             notDeferredRelatedLines = line.get('relatedLines').filter(function getNotDeferredLines(rl) {
+              if (OB.UTIL.isNullOrUndefined(rl.deferred)) {
+                return false;
+              }
               return !rl.deferred;
             });
             if (!line.get('groupService') && notDeferredRelatedLines.length > 1) {
@@ -1266,7 +1277,7 @@ enyo.kind({
           serviceLinesToCheck = [],
           text, linesToDelete, relations, deletedQty;
 
-      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && model.get('obposQtyDeleted') !== 0) {
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && model.get('obposQtyDeleted')) {
         deletedQty = model.get('obposQtyDeleted');
       } else {
         deletedQty = model.get('qty');
@@ -1413,6 +1424,10 @@ enyo.kind({
         });
       }
       this.$.totalMultiReceiptLine.renderQty(me.model.get('multiOrders').get('multiOrdersList').length);
+    }, this);
+    var orderListPayment = me.model.get('multiOrders').get('payments');
+    orderListPayment.on('add remove', function () {
+      OB.UTIL.localStorage.setItem('multiOrdersPayment', JSON.stringify(me.model.get('multiOrders').get('payments').toJSON()));
     }, this);
   },
   initComponents: function () {

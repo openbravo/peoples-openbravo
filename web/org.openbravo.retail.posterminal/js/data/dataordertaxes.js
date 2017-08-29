@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -424,12 +424,39 @@
       });
       };
 
+  var showLineTaxError = function (receipt, line, reason) {
+      var title = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
+      OB.error(title + ":" + reason);
+      line.set('hasTaxError', true, {
+        silent: true
+      });
+      receipt.set('preventServicesUpdate', true);
+      receipt.set('deleting', true);
+      receipt.deleteLine(line);
+      receipt.unset('preventServicesUpdate');
+      receipt.unset('deleting');
+      receipt.get('lines').trigger('updateRelations');
+      OB.MobileApp.view.$.containerWindow.getRoot().bubble('onErrorCalcLineTax', {
+        line: line,
+        reason: reason
+      });
+      OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+        popup: 'OB_UI_MessageDialog',
+        args: {
+          header: title,
+          message: reason
+        }
+      });
+
+      };
+
   var calcLineTaxesIncPrice = function (receipt, line) {
 
       // Initialize line properties
       line.set({
         'taxLines': {},
         'tax': null,
+        'taxUndo': line.get('tax') ? line.get('tax') : line.get('taxUndo'),
         'taxAmount': OB.DEC.Zero,
         'net': OB.DEC.Zero,
         'pricenet': OB.DEC.Zero,
@@ -483,24 +510,7 @@
           silent: true
         });
       })['catch'](function (reason) {
-        var title = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
-        OB.error(title + ":" + reason);
-        line.set('hasTaxError', true, {
-          silent: true
-        });
-        receipt.set('preventServicesUpdate', true);
-        receipt.set('deleting', true);
-        receipt.deleteLine(line);
-        receipt.unset('preventServicesUpdate');
-        receipt.unset('deleting');
-        receipt.get('lines').trigger('updateRelations');
-        OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
-          popup: 'OB_UI_MessageDialog',
-          args: {
-            header: title,
-            message: reason
-          }
-        });
+        showLineTaxError(receipt, line, reason);
       });
       };
 
@@ -814,6 +824,7 @@
         'net': OB.DEC.mul(line.get('price'), line.get('qty')),
         'linerate': OB.DEC.One,
         'tax': null,
+        'taxUndo': line.get('tax') ? line.get('tax') : line.get('taxUndo'),
         'taxAmount': OB.DEC.Zero,
         'taxLines': {}
       }, {
@@ -907,28 +918,13 @@
           silent: true
         });
       })['catch'](function (reason) {
-        var title = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
-        OB.error(title + ":" + reason);
-        line.set('hasTaxError', true, {
-          silent: true
-        });
-        receipt.set('preventServicesUpdate', true);
-        receipt.set('deleting', true);
-        receipt.deleteLine(line);
-        receipt.unset('preventServicesUpdate');
-        receipt.unset('deleting');
-        receipt.get('lines').trigger('updateRelations');
-        OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
-          popup: 'OB_UI_MessageDialog',
-          args: {
-            header: title,
-            message: reason
-          }
-        });
+        showLineTaxError(receipt, line, reason);
       });
       };
 
   var calcTaxesExcPrice = function (receipt) {
+
+      var frozenLines = new OB.Collection.OrderLineList(receipt.get('lines').models.slice());
 
       // Initialize receipt
       receipt.set('taxes', {}, {
@@ -936,7 +932,7 @@
       });
 
       // Calculate
-      return Promise.all(_.map(receipt.get('lines').models, function (line) {
+      return Promise.all(_.map(frozenLines.models, function (line) {
         return calcLineTaxesExcPrice(receipt, line);
       })).then(function () {
         // Ajust gross if net + taxes !== gross
@@ -956,7 +952,7 @@
 
             if (adjustAmount !== 0) {
               // move te adjustment to a net line...
-              receipt.get('lines').forEach(function (line) {
+              frozenLines.forEach(function (line) {
                 _.each(line.get('taxLines'), function (taxline, taxlineid) {
                   if (taxid === taxlineid && Math.sign(newAmount) === Math.sign(taxline.amount)) {
                     // Candidate for applying the adjustment
@@ -980,7 +976,7 @@
           }
         });
 
-        receipt.get('lines').forEach(function (line) {
+        frozenLines.forEach(function (line) {
           totalNet = OB.DEC.add(totalNet, line.get('discountedNet'));
         });
 
@@ -1014,5 +1010,13 @@
 
   OB.DATA.OrderFindTaxes = function (receipt, line, taxCategory) {
     return findTaxesCollection(receipt, line, taxCategory);
+  };
+
+  OB.DATA.LineTaxesIncPrice = function (receipt, line) {
+    return calcLineTaxesIncPrice(receipt, line);
+  };
+
+  OB.DATA.LineTaxesExcPrice = function (receipt, line) {
+    return calcLineTaxesExcPrice(receipt, line);
   };
 }());

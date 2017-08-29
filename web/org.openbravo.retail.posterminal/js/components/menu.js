@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -55,7 +55,6 @@ enyo.kind({
       this.hide();
       return;
     }
-
     this.adjustVisibilityBasedOnPermissions();
   },
   init: function (model) {
@@ -93,6 +92,7 @@ enyo.kind({
     }
     this.inherited(arguments); // Manual dropdown menu closure
     this.model.get('order').checkNotProcessedPayments(function () {
+      me.model.get('order').set('voidLayaway', true);
       me.doShowDivText({
         permission: me.permission,
         orderType: 3
@@ -370,7 +370,7 @@ enyo.kind({
       }
     }, this);
     receipt.on('change:orderType', function (model) {
-      if (model.get('orderType') === 1) {
+      if (model.get('orderType') === 1 || model.get('orderType') === 2) {
         me.updateVisibility(false);
       } else {
         me.updateVisibility(true);
@@ -529,14 +529,21 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_retail.opendrawerfrommenu',
   i18nLabel: 'OBPOS_LblOpenDrawer',
+  updateVisibility: function () {
+    if (!OB.MobileApp.model.get('hasPaymentsForCashup')) {
+      this.hide();
+    }
+  },
   init: function (model) {
     this.model = model;
+    this.updateVisibility();
   },
   tap: function () {
     var me = this;
     if (this.disabled) {
       return true;
     }
+    this.inherited(arguments);
     OB.UTIL.Approval.requestApproval(
     me.model, 'OBPOS_approval.opendrawer.menu', function (approved, supervisor, approvalType) {
       if (approved) {
@@ -545,7 +552,6 @@ enyo.kind({
         }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
       }
     });
-    this.inherited(arguments);
   }
 });
 
@@ -970,6 +976,15 @@ enyo.kind({
     if (OB.MobileApp.model.hasPermission(this.permission)) {
       this.doMultiOrders();
     }
+  },
+  updateVisibility: function () {
+    if (OB.MobileApp.model.get('payments').length <= 0) {
+      this.hide();
+    }
+  },
+  init: function (model) {
+    this.model = model;
+    this.updateVisibility();
   }
 });
 
@@ -1075,13 +1090,18 @@ enyo.kind({
     if (OB.UTIL.RfidController.isRfidConfigured()) {
       var protocol = OB.POS.hwserver.url.split('/')[0];
       if (window.location.protocol === protocol) {
-        if (OB.UTIL.RfidController.get('connectionLost')) {
+        if (OB.UTIL.RfidController.get('connectionLost') || !OB.UTIL.RfidController.get('connected')) {
           this.addClass('btn-icon-switchoffline');
+          return;
+        } else {
+          this.removeClass('btn-icon-switchoffline');
         }
         if (!OB.UTIL.RfidController.get('isRFIDEnabled') || !OB.UTIL.RfidController.get('reconnectOnScanningFocus')) {
           this.addClass('btn-icon-switchoff');
+          this.removeClass('btn-icon-switchon');
         } else {
           this.addClass('btn-icon-switchon');
+          this.removeClass('btn-icon-switchoffline');
         }
       } else {
         this.hide();

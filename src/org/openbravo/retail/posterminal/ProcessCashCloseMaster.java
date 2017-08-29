@@ -19,6 +19,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
@@ -27,64 +28,69 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
-    JSONObject result = new JSONObject();
-    String masterterminal = jsonsent.getString("masterterminal");
-    String cashUpId = jsonsent.getString("cashUpId");
+    OBContext.setAdminMode(true);
+    try {
+      JSONObject result = new JSONObject();
+      String masterterminal = jsonsent.getString("masterterminal");
+      String cashUpId = jsonsent.getString("cashUpId");
 
-    OBPOSAppCashup appCashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
-    UpdateCashup.associateMasterSlave(appCashup,
-        OBDal.getInstance().get(OBPOSApplications.class, masterterminal));
-    OBDal.getInstance().flush();
+      OBPOSAppCashup appCashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
+      UpdateCashup.associateMasterSlave(appCashup,
+          OBDal.getInstance().get(OBPOSApplications.class, masterterminal));
+      OBDal.getInstance().flush();
 
-    OBDal.getInstance().getSession().evict(appCashup);
-    appCashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
+      OBDal.getInstance().getSession().evict(appCashup);
+      appCashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
 
-    OBCriteria<OBPOSApplications> obCriteria = OBDal.getInstance().createCriteria(
-        OBPOSApplications.class);
-    obCriteria.add(Restrictions.eq(OBPOSApplications.PROPERTY_MASTERTERMINAL + ".id",
-        masterterminal));
-    obCriteria.addOrderBy(OBPOSApplications.PROPERTY_SEARCHKEY, true);
-    List<OBPOSApplications> applications = obCriteria.list();
-    JSONArray terminals = new JSONArray();
-    boolean finishAll = true;
-    for (OBPOSApplications application : applications) {
-      JSONObject terminal = new JSONObject();
-      terminal.put("id", application.getId());
-      terminal.put("searchKey", application.getSearchKey());
-      terminal.put("name", application.getName());
-      OBPOSAppCashup terminalCashUp = getTerminalCashUp(application.getId(), cashUpId);
-      boolean finish = terminalCashUp != null && terminalCashUp.isProcessed()
-          && terminalCashUp.isProcessedbo();
-      terminal.put("finish", finish);
-      int noOfTransactions = (terminalCashUp != null ? getnoOfTransactions(terminalCashUp.getId())
-          : 0);
-      terminal.put("noOfTransactions", noOfTransactions);
-      terminal.put("cashUpId", terminalCashUp != null ? terminalCashUp.getId() : null);
-      if (!finish && noOfTransactions > 0) {
-        finishAll = false;
+      OBCriteria<OBPOSApplications> obCriteria = OBDal.getInstance().createCriteria(
+          OBPOSApplications.class);
+      obCriteria.add(Restrictions.eq(OBPOSApplications.PROPERTY_MASTERTERMINAL + ".id",
+          masterterminal));
+      obCriteria.addOrderBy(OBPOSApplications.PROPERTY_SEARCHKEY, true);
+      List<OBPOSApplications> applications = obCriteria.list();
+      JSONArray terminals = new JSONArray();
+      boolean finishAll = true;
+      for (OBPOSApplications application : applications) {
+        JSONObject terminal = new JSONObject();
+        terminal.put("id", application.getId());
+        terminal.put("searchKey", application.getSearchKey());
+        terminal.put("name", application.getName());
+        OBPOSAppCashup terminalCashUp = getTerminalCashUp(application.getId(), cashUpId);
+        boolean finish = terminalCashUp != null && terminalCashUp.isProcessed()
+            && terminalCashUp.isProcessedbo();
+        terminal.put("finish", finish);
+        int noOfTransactions = (terminalCashUp != null ? getnoOfTransactions(terminalCashUp.getId())
+            : 0);
+        terminal.put("noOfTransactions", noOfTransactions);
+        terminal.put("cashUpId", terminalCashUp != null ? terminalCashUp.getId() : null);
+        if (!finish && noOfTransactions > 0) {
+          finishAll = false;
+        }
+        terminals.put(terminal);
       }
-      terminals.put(terminal);
-    }
-    JSONObject data = new JSONObject();
-    data.put("terminals", terminals);
-    data.put("finishAll", finishAll);
-    if (finishAll) {
-      JSONArray payments = new JSONArray();
-      data.put("payments", payments);
-      List<String> cashUpIds = new ArrayList<String>();
-      for (int i = 0; i < terminals.length(); i++) {
-        JSONObject terminal = terminals.getJSONObject(i);
-        if (terminal.getBoolean("finish")) {
-          cashUpIds.add(terminal.getString("cashUpId"));
+      JSONObject data = new JSONObject();
+      data.put("terminals", terminals);
+      data.put("finishAll", finishAll);
+      if (finishAll) {
+        JSONArray payments = new JSONArray();
+        data.put("payments", payments);
+        List<String> cashUpIds = new ArrayList<String>();
+        for (int i = 0; i < terminals.length(); i++) {
+          JSONObject terminal = terminals.getJSONObject(i);
+          if (terminal.getBoolean("finish")) {
+            cashUpIds.add(terminal.getString("cashUpId"));
+          }
+        }
+        if (cashUpIds.size() > 0) {
+          addPaymentmethodCashup(payments, cashUpIds);
         }
       }
-      if (cashUpIds.size() > 0) {
-        addPaymentmethodCashup(payments, cashUpIds);
-      }
+      result.put("data", data);
+      result.put("status", 0);
+      return result;
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    result.put("data", data);
-    result.put("status", 0);
-    return result;
   }
 
   /**

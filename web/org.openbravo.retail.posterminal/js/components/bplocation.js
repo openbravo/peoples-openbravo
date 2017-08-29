@@ -82,6 +82,7 @@ enyo.kind({
         popup: 'modalcustomeraddress',
         args: {
           target: 'order',
+          clean: true,
           navigationPath: []
         }
       });
@@ -132,7 +133,7 @@ enyo.kind({
     function successLocations(dataBps) {
       if (dataBps && dataBps.length > 1) {
         me.changeStyle(true);
-      } else if (dataBps && dataBps.models && _.isArray(dataBps.models) && dataBps.models[0] && ((dataBps.models[0].get('isBillTo') && !dataBps.models[0].get('isShipTo')) || (!dataBps.models[0].get('isBillTo') && dataBps.models[0].get('isShipTo')))) {
+      } else if (dataBps && _.isArray(dataBps) && dataBps[0] && ((dataBps[0].get('isBillTo') && !dataBps[0].get('isShipTo')) || (!dataBps[0].get('isBillTo') && dataBps[0].get('isShipTo')))) {
         me.changeStyle(true);
       } else {
         me.changeStyle(false);
@@ -142,8 +143,8 @@ enyo.kind({
     if (!bp.get('shipLocId') && !bp.get('locId')) {
       me.changeStyle(false);
     } else {
-      if (bp.get('id') === OB.MobileApp.model.get('businesspartner')) {
-        successLocations(OB.MobileApp.model.get('businessPartner').get('locations'));
+      if (bp.get('locations') && bp.get('locations').length > 0 && bp.get('locations')[0].attributes) {
+        successLocations(bp.get('locations'));
       } else {
         criteria.bpartner = bp.get('id');
         if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
@@ -156,7 +157,9 @@ enyo.kind({
           var remoteCriteria = [bPartnerId];
           criteria.remoteFilters = remoteCriteria;
         }
-        OB.Dal.find(OB.Model.BPLocation, criteria, successLocations, function (tx, error) {
+        OB.Dal.find(OB.Model.BPLocation, criteria, function (locations) {
+          successLocations(locations.models);
+        }, function (tx, error) {
           OB.UTIL.showError("OBDAL error: " + error);
         });
       }
@@ -168,6 +171,7 @@ enyo.kind({
         popup: 'modalcustomershipaddress',
         args: {
           target: 'order',
+          clean: true,
           navigationPath: []
         }
       });
@@ -208,7 +212,9 @@ enyo.kind({
     if (this.disabled) {
       return true;
     }
-    this.doHideSelector();
+    this.doHideSelector({
+      selectorHide: false
+    });
     var me = this;
 
     function errorCallback(tx, error) {
@@ -626,7 +632,7 @@ enyo.kind({
     }]
   }],
   canHidePopup: function () {
-    return !this.$.btnContextMenu.dialog.manageAddress;
+    return true;
   },
   create: function () {
     this.inherited(arguments);
@@ -758,6 +764,7 @@ enyo.kind({
     this.$.bpsloclistitemprinter.setCollection(this.bpsList);
     this.bpsList.on('click', function (model) {
       var me = this;
+      me.owner.owner.selectorHide = true;
 
       function errorCallback(tx, error) {
         OB.error(tx);
@@ -765,18 +772,36 @@ enyo.kind({
       }
 
       function successCallbackBPs(dataBps) {
-        dataBps.set('locId', model.get('id'));
-        dataBps.set('locName', model.get('name'));
-        dataBps.set('postalCode', model.get('postalCode'));
-        dataBps.set('cityName', model.get('cityName'));
-        dataBps.set('countryName', model.get('countryName'));
+        if (OB.MobileApp.model.receipt.get('bp').get('id') === dataBps.get('id')) {
+          dataBps.set('shipLocId', OB.MobileApp.model.receipt.get('bp').get('shipLocId'));
+          dataBps.set('shipLocName', OB.MobileApp.model.receipt.get('bp').get('shipLocName'));
+          dataBps.set('shipPostalCode', OB.MobileApp.model.receipt.get('bp').get('shipPostalCode'));
+          dataBps.set('shipCityName', OB.MobileApp.model.receipt.get('bp').get('shipPostalCode'));
+          dataBps.set('shipCountryName', OB.MobileApp.model.receipt.get('bp').get('shipCountryName'));
+        }
 
-        // Keep the other address:
-        dataBps.set('shipLocId', me.bPartner.get('shipLocId'));
-        dataBps.set('shipLocName', me.bPartner.get('shipLocName'));
-        dataBps.set('shipPostalCode', me.bPartner.get('shipPostalCode'));
-        dataBps.set('shipCityName', me.bPartner.get('shipPostalCode'));
-        dataBps.set('shipCountryName', me.bPartner.get('shipCountryName'));
+        if (me.manageAddress) {
+          if (model.get('isBillTo')) {
+            dataBps.set('locId', model.get('id'));
+            dataBps.set('locName', model.get('name'));
+            dataBps.set('postalCode', model.get('postalCode'));
+            dataBps.set('cityName', model.get('cityName'));
+            dataBps.set('countryName', model.get('countryName'));
+          }
+          if (model.get('isShipTo')) {
+            dataBps.set('shipLocId', model.get('id'));
+            dataBps.set('shipLocName', model.get('name'));
+            dataBps.set('shipPostalCode', model.get('postalCode'));
+            dataBps.set('shipCityName', model.get('cityName'));
+            dataBps.set('shipCountryName', model.get('countryName'));
+          }
+        } else {
+          dataBps.set('locId', model.get('id'));
+          dataBps.set('locName', model.get('name'));
+          dataBps.set('postalCode', model.get('postalCode'));
+          dataBps.set('cityName', model.get('cityName'));
+          dataBps.set('countryName', model.get('countryName'));
+        }
 
         if (me.target.startsWith('filterSelectorButton_')) {
           me.doChangeFilterSelector({
@@ -790,11 +815,11 @@ enyo.kind({
         } else {
           me.doChangeBusinessPartner({
             businessPartner: dataBps,
-            target: me.owner.owner.args.target
+            target: 'order'
           });
         }
       }
-      if (!model.get('ignoreSetBPLoc') && !this.manageAddress) {
+      if (!model.get('ignoreSetBPLoc')) {
         OB.Dal.get(OB.Model.BusinessPartner, this.bPartner.get('id'), successCallbackBPs, errorCallback);
       }
     }, this);
@@ -810,7 +835,7 @@ enyo.kind({
     onShowPopup: ''
   },
   executeOnShow: function () {
-    if (!this.initialized) {
+    if (!this.isInitialized()) {
       this.inherited(arguments);
       if (_.isUndefined(this.args.visibilityButtons)) {
         this.args.visibilityButtons = true;
@@ -866,7 +891,7 @@ enyo.kind({
     function successCallbackBPsLoc(dataBps) {
       if (dataBps && dataBps.length > 1) {
         me.$.header.setContent(OB.I18N.getLabel('OBPOS_LblAssignCustomerBillAddress'));
-      } else if (dataBps.models[0] && dataBps.models[0].get('isBillTo') && dataBps.models[0].get('isShipTo')) {
+      } else if (dataBps && dataBps[0] && dataBps[0].get('isBillTo') && dataBps[0].get('isShipTo')) {
         me.$.header.setContent(OB.I18N.getLabel('OBPOS_LblAssignCustomerAddress'));
       } else {
         me.$.header.setContent(OB.I18N.getLabel('OBPOS_LblAssignCustomerBillAddress'));
@@ -876,18 +901,25 @@ enyo.kind({
     function errorCallback(tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
     }
-    criteria.bpartner = bp.get('id');
-    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-      var bPartnerId = {
-        columns: ['bpartner'],
-        operator: 'equals',
-        value: bp.get('id'),
-        isId: true
-      };
-      var remoteCriteria = [bPartnerId];
-      criteria.remoteFilters = remoteCriteria;
+
+    if (bp.get('locations') && bp.get('locations').length > 0 && bp.get('locations')[0].attributes) {
+      successCallbackBPsLoc(bp.get('locations'));
+    } else {
+      criteria.bpartner = bp.get('id');
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        var bPartnerId = {
+          columns: ['bpartner'],
+          operator: 'equals',
+          value: bp.get('id'),
+          isId: true
+        };
+        var remoteCriteria = [bPartnerId];
+        criteria.remoteFilters = remoteCriteria;
+      }
+      OB.Dal.find(OB.Model.BPLocation, criteria, function (locations) {
+        successCallbackBPsLoc(locations.models);
+      }, errorCallback);
     }
-    OB.Dal.find(OB.Model.BPLocation, criteria, successCallbackBPsLoc, errorCallback);
   },
   i18nHeader: '',
   body: {

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, enyo, BigDecimal, localStorage */
+/*global OB, _, enyo, BigDecimal, localStorage, setTimeout */
 
 (function () {
   // initialize the WebPOS terminal model that extends the core terminal model. after this, OB.MobileApp.model will be available
@@ -425,12 +425,12 @@
         OB.UTIL.initCashUp(function () {
           OB.UTIL.calculateCurrentCash(function () {
             OB.UTIL.HookManager.executeHooks('OBPOS_LoadPOSWindow', {}, function () {
-              var defaultWindow = OB.MobileApp.model.get('defaultWindow');
-              if (defaultWindow) {
-                OB.POS.navigate(defaultWindow);
-                OB.MobileApp.model.unset('defaultWindow');
+              var nextWindow = OB.MobileApp.model.get('nextWindow');
+              if (nextWindow) {
+                OB.POS.navigate(nextWindow);
+                OB.MobileApp.model.unset('nextWindow');
               } else {
-                OB.POS.navigate('retail.pointofsale');
+                OB.POS.navigate(OB.MobileApp.model.get('defaultWindow'));
               }
             });
           }, null);
@@ -480,8 +480,6 @@
         if (me.get('loggedOffline') === true) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineLogin'));
         }
-
-        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.WelcomeTemplate), {}, null, OB.DS.HWServer.DISPLAY);
       });
 
       OB.Model.Terminal.prototype.initialize.call(me);
@@ -647,6 +645,15 @@
       // sets the default payment method
       this.set('paymentcash', defaultpaymentcashcurrency || defaultpaymentcash || paymentcashcurrency || paymentcash || paymentlegacy);
 
+      // set if there's or not any payment method that is counted in cashup
+      if (_.find(this.get('payments'), function (payment) {
+        return payment.paymentMethod.countpaymentincashup;
+      })) {
+        this.set('hasPaymentsForCashup', true);
+      } else {
+        this.set('hasPaymentsForCashup', false);
+      }
+
       // add the currency converters
       _.each(OB.MobileApp.model.get('payments'), function (paymentMethod) {
         var fromCurrencyId = parseInt(OB.MobileApp.model.get('currency').id, 10);
@@ -710,7 +717,9 @@
       var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000,
           minTotalRefresh = this.get('terminal').terminalType.minutestorefreshdatatotal * 60 * 1000,
           lastTotalRefresh = OB.UTIL.localStorage.getItem('POSLastTotalRefresh'),
-          lastIncRefresh = OB.UTIL.localStorage.getItem('POSLastIncRefresh');
+          lastIncRefresh = OB.UTIL.localStorage.getItem('POSLastIncRefresh'),
+          now = new Date().getTime(),
+          intervalInc = lastIncRefresh ? (now - lastIncRefresh - minIncRefresh) : 0;
 
       function setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds) {
         OB.debug("Terminal lock timer reset (" + sessionTimeoutMinutes + " minutes)");
@@ -766,7 +775,16 @@
           });
 
         };
-        setInterval(loadModelsIncFunc, minIncRefresh);
+        // in case there was no incremental load at login then schedule an incremental
+        // load at the next expected time, which can be earlier than the standard interval
+        if (intervalInc < 0 && OB.MobileApp.model.hasPermission('OBMOBC_NotAutoLoadIncrementalAtLogin', true)) {
+          setTimeout(function () {
+            loadModelsIncFunc();
+            setInterval(loadModelsIncFunc, minIncRefresh);
+          }, intervalInc * -1);
+        } else {
+          setInterval(loadModelsIncFunc, minIncRefresh);
+        }
       }
 
       var sessionTimeoutMinutes = this.get('terminal').sessionTimeout;
@@ -867,19 +885,44 @@
         OB.error("postCloseSession", arguments);
         OB.MobileApp.model.triggerLogout();
       }
-      //All pending to be paid orders will be removed on logout
-      criteria.session = OB.MobileApp.model.get('session');
-      criteria.hasbeenpaid = 'N';
-      OB.Dal.find(OB.Model.Order, criteria, success, error);
 
+      if (OB.MobileApp.model.get('isMultiOrderState')) {
+        if (OB.MobileApp.model.multiOrders.checkMultiOrderPayment()) {
+          return;
+        }
+      }
+      if (OB.MobileApp.model.orderList && OB.MobileApp.model.orderList.length > 1) {
+        if (OB.MobileApp.model.orderList.checkOrderListPayment()) {
+          return;
+        }
+      } else if (OB.MobileApp.model.receipt && OB.MobileApp.model.receipt.get('lines').length > 0) {
+        if (OB.MobileApp.model.receipt.checkOrderPayment()) {
+          return;
+        }
+      }
+
+      OB.UTIL.Approval.requestApproval(
+      this, 'OBPOS_approval.removereceipts', function (approved, supervisor, approvalType) {
+        if (approved) {
+          //All pending to be paid orders will be removed on logout
+          criteria.session = OB.MobileApp.model.get('session');
+          criteria.hasbeenpaid = 'N';
+          OB.Dal.find(OB.Model.Order, criteria, success, error);
+        }
+      });
     },
 
     postCloseSession: function (session) {
+      var callback = function () {
+          OB.MobileApp.model.triggerLogout();
+          };
       if (OB.POS.hwserver !== undefined) {
-        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {}, null, OB.DS.HWServer.DISPLAY);
+        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {}, function () {
+          callback();
+        }, OB.DS.HWServer.DISPLAY);
+      } else {
+        callback();
       }
-      OB.MobileApp.model.triggerLogout();
-
     },
 
     // these variables will keep the minimum value that the document order could have
@@ -998,14 +1041,15 @@
     // get the first document number available
     getLastDocumentnoSuffixInOrderlist: function () {
       var lastSuffix = null;
+      var i;
       if (OB.MobileApp.model.orderList && OB.MobileApp.model.orderList.length > 0) {
-        var i = 0;
-        while (lastSuffix === null && i <= OB.MobileApp.model.orderList.models.length - 1) {
+        for (i = 0; i < OB.MobileApp.model.orderList.length; i++) {
           var order = OB.MobileApp.model.orderList.models[i];
           if (!order.get('isPaid') && !order.get('isQuotation') && order.get('documentnoPrefix') === OB.MobileApp.model.get('terminal').docNoPrefix) {
-            lastSuffix = order.get('documentnoSuffix');
+            if (OB.UTIL.isNullOrUndefined(lastSuffix) || (lastSuffix && order.get('documentnoSuffix') > lastSuffix)) {
+              lastSuffix = order.get('documentnoSuffix');
+            }
           }
-          i++;
         }
       }
       if (lastSuffix === null || lastSuffix < this.documentnoThreshold) {
@@ -1016,14 +1060,15 @@
     // get the first quotation number available
     getLastQuotationnoSuffixInOrderlist: function () {
       var lastSuffix = null;
+      var i;
       if (OB.MobileApp.model.orderList && OB.MobileApp.model.orderList.length > 0) {
-        var i = 0;
-        while (lastSuffix === null && i <= OB.MobileApp.model.orderList.models.length - 1) {
+        for (i = 0; i < OB.MobileApp.model.orderList.length; i++) {
           var order = OB.MobileApp.model.orderList.models[i];
           if (order.get('isQuotation') && order.get('quotationnoPrefix') === OB.MobileApp.model.get('terminal').quotationDocNoPrefix) {
-            lastSuffix = order.get('quotationnoSuffix');
+            if (OB.UTIL.isNullOrUndefined(lastSuffix) || (lastSuffix && order.get('quotationnoSuffix') > lastSuffix)) {
+              lastSuffix = order.get('quotationnoSuffix');
+            }
           }
-          i++;
         }
       }
       if (lastSuffix === null || lastSuffix < this.quotationnoThreshold) {
@@ -1034,14 +1079,15 @@
     // get the first return number available
     getLastReturnnoSuffixInOrderlist: function () {
       var lastSuffix = null;
+      var i;
       if (OB.MobileApp.model.orderList && OB.MobileApp.model.orderList.length > 0) {
-        var i = OB.MobileApp.model.orderList.models.length - 1;
-        while (lastSuffix === null && i >= 0) {
+        for (i = 0; i < OB.MobileApp.model.orderList.length; i++) {
           var order = OB.MobileApp.model.orderList.models[i];
           if ((order.getOrderType() === 1 || order.get('gross') < 0) && order.get('returnnoPrefix') === OB.MobileApp.model.get('terminal').returnDocNoPrefix) {
-            lastSuffix = order.get('returnnoSuffix');
+            if (OB.UTIL.isNullOrUndefined(lastSuffix) || (lastSuffix && order.get('returnnoSuffix') > lastSuffix)) {
+              lastSuffix = order.get('returnnoSuffix');
+            }
           }
-          i--;
         }
       }
       if (lastSuffix === null || lastSuffix < this.returnnoThreshold) {

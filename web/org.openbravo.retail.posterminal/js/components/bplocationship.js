@@ -167,7 +167,7 @@ enyo.kind({
   name: 'OB.UI.ModalBPLocationShip',
   topPosition: '125px',
   executeOnShow: function () {
-    if (!this.initialized) {
+    if (!this.isInitialized()) {
       this.inherited(arguments);
       this.args.navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(null, 'modalcustomershipaddress');
       if (_.isUndefined(this.args.visibilityButtons)) {

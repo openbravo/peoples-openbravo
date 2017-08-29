@@ -65,6 +65,7 @@ enyo.kind({
         args: {
           presetCustomerId: OB.MobileApp.model.receipt.get('bp').id,
           target: 'order',
+          clean: true,
           navigationPath: []
         }
       });
@@ -302,6 +303,7 @@ enyo.kind({
           target: 'modal_selector_business_partners',
           businessPartner: bp,
           manageAddress: true,
+          clean: true,
           navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(dialog.owner.owner.args.navigationPath, 'modalcustomer')
         }
       });
@@ -700,12 +702,12 @@ enyo.kind({
       var bp = new OB.Model.BusinessPartner({
         id: bpartner.get('bpartnerId')
       });
-      bp.loadBPLocations(shipping, billing, function (shipping, billing) {
-        me.setBPLocation(bpartner, shipping, billing);
+      bp.loadBPLocations(shipping, billing, function (shipping, billing, locations) {
+        me.setBPLocation(bpartner, shipping, billing, locations);
       });
     }
   },
-  setBPLocation: function (bpartner, shipping, billing) {
+  setBPLocation: function (bpartner, shipping, billing, locations) {
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       if (!shipping) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerNoShippingAddress', [bpartner.get('_identifier')]));
@@ -719,7 +721,7 @@ enyo.kind({
     var me = this;
     OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function (bp) {
       bp.setBPLocations(shipping, billing, OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true));
-
+      bp.set('locations', locations);
       if (me.target.startsWith('filterSelectorButton_')) {
         me.doChangeFilterSelector({
           selector: {
@@ -749,7 +751,7 @@ enyo.kind({
     kind: 'OB.UI.ListBpsSelector'
   },
   executeOnShow: function () {
-    if (!this.initialized) {
+    if (!this.isInitialized()) {
       this.inherited(arguments);
       if (_.isUndefined(this.args.visibilityButtons)) {
         this.args.visibilityButtons = true;

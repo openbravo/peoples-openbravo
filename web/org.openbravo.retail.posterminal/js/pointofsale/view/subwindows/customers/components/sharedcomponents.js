@@ -24,6 +24,17 @@ enyo.kind({
   style: 'width: 100px; margin: 0px 0px 8px 5px;',
   classes: 'btnlink-gray btnlink btnlink-small',
   i18nContent: 'OBMOBC_LblCancel',
+  handlers: {
+    onDisableButton: 'disableButton'
+  },
+  disableButton: function (inSender, inEvent) {
+    this.setDisabled(inEvent.disabled);
+    if (inEvent.disabled) {
+      this.addClass(this.classButtonDisabled);
+    } else {
+      this.removeClass(this.classButtonDisabled);
+    }
+  },
   tap: function () {
     this.bubble('onCancelClose');
   }
@@ -210,10 +221,12 @@ enyo.kind({
     onSaveChange: 'saveChange',
     onHideShow: 'hideShow',
     onSetValue: 'valueSet',
-    onRetrieveValues: 'retrieveValue'
+    onRetrieveValues: 'retrieveValue',
+    onchange: 'change'
   },
   events: {
-    onSaveProperty: ''
+    onSaveProperty: '',
+    onSetValues: ''
   },
   components: [{
     kind: 'OB.UI.List',
@@ -248,6 +261,7 @@ enyo.kind({
     this.$.customerCombo.setCollection(this.collection);
     this.fetchDataFunction(inEvent);
   },
+  change: function () {},
   dataReadyFunction: function (data, inEvent) {
     var index = 0,
         result = null;
@@ -361,6 +375,13 @@ enyo.kind({
     var me = this,
         inSenderOriginal = inSender,
         inEventOriginal = inEvent;
+
+    //Validate anonymous customer edit allowed
+    if (this.customer && OB.MobileApp.model.get('terminal').businessPartner === this.customer.id && OB.MobileApp.model.hasPermission('OBPOS_NotAllowEditAnonymousCustomer', true)) {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotEditAnonymousCustomer'));
+      return;
+    }
+
     OB.UTIL.HookManager.executeHooks('OBPOS_PreCustomerSave', {
       inSender: inSenderOriginal,
       inEvent: inEventOriginal,
@@ -452,8 +473,14 @@ enyo.kind({
           return true;
         }
         customerEdited = args.customer;
-        args.customer.saveCustomer(function () {
-          if (!inEvent.silent) {
+        args.windowComponent.waterfall('onDisableButton', {
+          disabled: true
+        });
+        args.customer.saveCustomer(function (result) {
+          args.windowComponent.waterfall('onDisableButton', {
+            disabled: false
+          });
+          if (result && !inEvent.silent) {
             me.bubble('onCancelClose', {
               customer: customerEdited
             });
