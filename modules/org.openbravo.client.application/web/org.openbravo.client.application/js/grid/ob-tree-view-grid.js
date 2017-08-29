@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2016 Openbravo SLU
+ * All portions are Copyright (C) 2013-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -453,11 +453,12 @@ isc.OBTreeViewGrid.addProperties({
 
   // refreshes record after edition
   refreshRecord: function (values) {
-    var record, p;
+    var record, p, childrenProperty;
     record = this.getNodeByID(values.id);
     if (record) {
+      childrenProperty = this.data ? this.data.childrenProperty : 'children';
       for (p in values) {
-        if (values.hasOwnProperty(p)) {
+        if (values.hasOwnProperty(p) && p !== childrenProperty) {
           record[p] = values[p];
         }
       }
