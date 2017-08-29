@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,7 +27,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
@@ -50,46 +49,45 @@ public class ReportBudgetExportExcel extends HttpSecureAppServlet {
       String strKey = vars.getRequiredGlobalVariable("inpcBudgetId",
           "ReportBudgetGenerateExcel|inpcBudgetId");
       printPageDataExportExcel(response, vars, strKey);
-    } else {
+    } else
       pageErrorPopUp(response);
-    }
   }
 
   private void printPageDataExportExcel(HttpServletResponse response, VariablesSecureApp vars,
       String strBudgetId) throws IOException, ServletException {
 
-    if (log4j.isDebugEnabled()) {
+    if (log4j.isDebugEnabled())
       log4j.debug("Output: EXCEL");
-    }
 
     vars.removeSessionValue("ReportBudgetGenerateExcel|inpTabId");
 
     response.setContentType("application/xls; charset=UTF-8");
     PrintWriter out = response.getWriter();
 
-    Budget budget = OBDal.getReadOnlyInstance().get(Budget.class, strBudgetId);
+    XmlDocument xmlDocument = null;
+    ReportBudgetGenerateExcelData[] data = null;
+    Budget budget = OBDal.getInstance().get(Budget.class, strBudgetId);
     boolean exportActualData = budget.isExportActualData();
-    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     if (exportActualData) {
       try {
-        ProcessBundle pb = new ProcessBundle("ABDFC8131D964936AD2EF7E0CED97FD9", vars)
-            .init(readOnlyCP);
+        ConnectionProvider conn = new DalConnectionProvider(false);
+        ProcessBundle pb = new ProcessBundle("ABDFC8131D964936AD2EF7E0CED97FD9", vars).init(conn);
         HashMap<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("C_Budget_ID", strBudgetId);
         pb.setParams(parameters);
+        OBError myMessage = null;
         new UpdateActuals().execute(pb);
-        OBError myMessage = (OBError) pb.getResult();
-        if (myMessage != null && StringUtils.equals(myMessage.getType(), "Error")) {
+        myMessage = (OBError) pb.getResult();
+        if (myMessage != null && "Error".equals(myMessage.getType())) {
           log4j.error(myMessage.getMessage());
         }
       } catch (Exception e) {
         e.printStackTrace();
       }
     }
-    ReportBudgetGenerateExcelData[] data = ReportBudgetGenerateExcelData.selectLines(readOnlyCP,
-        vars.getLanguage(), strBudgetId);
-    XmlDocument xmlDocument = null;
-    if (data.length != 0 && StringUtils.equals(data[0].exportactual, "Y")) {
+    data = ReportBudgetGenerateExcelData.selectLines(this, vars.getLanguage(), strBudgetId);
+
+    if (data.length != 0 && data[0].exportactual.equals("Y")) {
       xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcelXLS").createXmlDocument();
     } else {

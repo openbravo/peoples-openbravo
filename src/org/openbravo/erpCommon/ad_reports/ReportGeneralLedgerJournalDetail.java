@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,17 +25,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
@@ -65,90 +62,78 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
     } else if (vars.commandIn("PREVIOUS_RELATION")) {
       String strInitRecord = vars
           .getSessionValue("ReportGeneralLedgerJournalDetail.initRecordNumber");
-      ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
-      String strRecordRange = Utility.getContext(readOnlyCP, vars, "#RecordRange",
+      String strRecordRange = Utility.getContext(this, vars, "#RecordRange",
           "ReportGeneralLedgerJournalDetail");
-      int intRecordRange = StringUtils.isEmpty(strRecordRange) ? 0 : Integer
-          .parseInt(strRecordRange);
-      if (StringUtils.isEmpty(strInitRecord) || StringUtils.equals(strInitRecord, "0")) {
+      int intRecordRange = strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange);
+      if (strInitRecord.equals("") || strInitRecord.equals("0"))
         vars.setSessionValue("ReportGeneralLedgerJournalDetail.initRecordNumber", "0");
-      } else {
-        int initRecord = (StringUtils.isEmpty(strInitRecord) ? 0 : Integer.parseInt(strInitRecord));
+      else {
+        int initRecord = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
         initRecord -= intRecordRange;
         strInitRecord = ((initRecord < 0) ? "0" : Integer.toString(initRecord));
         vars.setSessionValue("ReportGeneralLedgerJournalDetail.initRecordNumber", strInitRecord);
       }
       response.sendRedirect(strDireccion + request.getServletPath());
     } else if (vars.commandIn("NEXT_RELATION")) {
-      ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
       String strInitRecord = vars
           .getSessionValue("ReportGeneralLedgerJournalDetail.initRecordNumber");
-      String strRecordRange = Utility.getContext(readOnlyCP, vars, "#RecordRange",
+      String strRecordRange = Utility.getContext(this, vars, "#RecordRange",
           "ReportGeneralLedgerJournalDetail");
-      int intRecordRange = StringUtils.isEmpty(strRecordRange) ? 0 : Integer
-          .parseInt(strRecordRange);
-      int initRecord = (StringUtils.isEmpty(strInitRecord) ? 0 : Integer.parseInt(strInitRecord));
-      if (initRecord == 0) {
+      int intRecordRange = strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange);
+      int initRecord = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
+      if (initRecord == 0)
         initRecord = 1;
-      }
       initRecord += intRecordRange;
       strInitRecord = ((initRecord < 0) ? "0" : Integer.toString(initRecord));
       vars.setSessionValue("ReportGeneralLedgerJournalDetail.initRecordNumber", strInitRecord);
       response.sendRedirect(strDireccion + request.getServletPath());
-    } else {
+    } else
       pageError(response);
-    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strFactAcctGroupId, String strDateacct, String strDPId, String strcAcctSchemaId)
       throws IOException, ServletException {
-    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
-    String strRecordRange = Utility.getContext(readOnlyCP, vars, "#RecordRange",
+    String strRecordRange = Utility.getContext(this, vars, "#RecordRange",
         "ReportGeneralLedgerJournalDetail");
-    int intRecordRange = (StringUtils.isEmpty(strRecordRange) ? 0 : Integer
-        .parseInt(strRecordRange));
+    int intRecordRange = (strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange));
     String strInitRecord = vars
         .getSessionValue("ReportGeneralLedgerJournalDetail.initRecordNumber");
-    int initRecordNumber = (StringUtils.isEmpty(strInitRecord) ? 0 : Integer
-        .parseInt(strInitRecord));
+    int initRecordNumber = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
 
-    if (log4j.isDebugEnabled()) {
+    if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
-    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
     ReportGeneralLedgerJournalDetailData[] data = null;
 
-    if (strDPId == null) {
-      data = ReportGeneralLedgerJournalDetailData.select(readOnlyCP, strFactAcctGroupId,
-          strDateacct, initRecordNumber, intRecordRange);
-    } else {
-      data = ReportGeneralLedgerJournalDetailData.selectByDP(readOnlyCP, strDPId, strcAcctSchemaId);
-    }
+    if (strDPId == null)
+      data = ReportGeneralLedgerJournalDetailData.select(this, strFactAcctGroupId, strDateacct,
+          initRecordNumber, intRecordRange);
+    else
+      data = ReportGeneralLedgerJournalDetailData.selectByDP(this, strDPId, strcAcctSchemaId);
 
     boolean hasPrevious = !(data == null || data.length == 0 || initRecordNumber <= 1);
     boolean hasNext = !(data == null || data.length == 0 || data.length < intRecordRange);
-    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(),
-        "ReportGeneralLedgerJournalDetail", false, "", "", "", false, "ad_reports", strReplaceWith,
-        false, true);
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportGeneralLedgerJournalDetail",
+        false, "", "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareRelationBarTemplate(hasPrevious, hasNext);
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerJournalDetail").createXmlDocument();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     try {
-      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
+      WindowTabs tabs = new WindowTabs(this, vars,
           "org.openbravo.erpCommon.ad_reports.ReportGeneralLedgerJournalDetail");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
           "ReportGeneralLedgerJournalDetail.html", classInfo.id, classInfo.type, strReplaceWith,
           tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(),
+      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
           "ReportGeneralLedgerJournalDetail.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
