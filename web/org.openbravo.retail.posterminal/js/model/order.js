@@ -4780,6 +4780,7 @@
           return currentPayment.paymentId === payment.reversedPaymentId;
         });
         reversalPayment.reversedPaymentId = payment.paymentId;
+        reversalPayment.isReversePayment = true;
         delete payment.reversedPaymentId;
       });
 
@@ -5644,6 +5645,11 @@
       }
       if (this.stopAddingPayments) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
+        return;
+      }
+
+      if (!payment.get('isReversePayment') && this.getPending() <= 0 && payment.get('amount') > 0) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_PaymentsExact'));
         return;
       }
 
