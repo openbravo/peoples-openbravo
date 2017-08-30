@@ -19,6 +19,7 @@
 
 package org.openbravo.test.datasource;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -56,7 +57,8 @@ public class SelectorPickListFieldsDataSourceTest extends BaseDataSourceTestNoDa
   public void extraPropertyIsCalculated() throws Exception {
     JSONObject resp = performRequest();
     JSONObject product = resp.getJSONArray("data").getJSONObject(0);
-    assertTrue("Extra property is calculated", product.has(extraProperty));
+    assertTrue("Extra property is returned", product.has(extraProperty));
+    assertFalse("Extra property has a value", product.isNull(extraProperty));
   }
 
   private JSONObject performRequest() throws Exception {
