@@ -1096,8 +1096,6 @@ enyo.kind({
       }
     }
 
-    this.avoidCompleteReceipt = false;
-    this.alreadyPaid = false;
     this.allowOpenDrawer = false;
 
     if (this.disabled) {
@@ -1129,27 +1127,6 @@ enyo.kind({
           me.allowOpenDrawer = true;
         }
       });
-
-      var totalPaid = 0;
-      var totalToPaid = myModel.get('leftColumnViewManager').isOrder() ? this.owner.receipt.getTotal() : this.owner.model.get('multiOrders').getTotal();
-      payments.each(function (payment) {
-        if (me.alreadyPaid) {
-          me.avoidCompleteReceipt = true;
-          return false;
-        }
-        if (!payment.get('isReversePayment') && !payment.get('isReversed')) {
-          totalPaid += payment.get('amount');
-          if (totalPaid >= totalToPaid) {
-            me.alreadyPaid = true;
-          }
-        }
-      });
-
-      if (this.avoidCompleteReceipt) {
-        OB.UTIL.showWarning('There is more payments than needed. Please, remove your unnecesary payments before continuing');
-        OB.UTIL.SynchronizationHelper.finished(synchId, "doneButton");
-        return;
-      }
 
       if (myModel.get('leftColumnViewManager').isOrder()) {
         if (this.drawerpreference && this.allowOpenDrawer) {
