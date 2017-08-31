@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -177,7 +177,9 @@ isc.OBPickAndExecuteGrid.addProperties({
         // include in the request the values of the parameters of the parameter window
         isc.addProperties(dsRequest.params, me.view.theForm.getValues());
       }
-      dsRequest.params[OB.Constants.ORG_PARAMETER] = me.getOrgParameter();
+      if (!dsRequest.params[OB.Constants.CALCULATE_ORGS]) {
+        dsRequest.params[OB.Constants.ORG_PARAMETER] = me.getOrgParameter();
+      }
       // Add to the params the tabId of the P&E window
       if (me.viewProperties && me.viewProperties.tabId) {
         dsRequest.params.tabId = me.viewProperties.tabId;
@@ -779,7 +781,12 @@ isc.OBPickAndExecuteGrid.addProperties({
       isc.addProperties(params, view.getContextInfo(true, false));
     }
 
-    params[OB.Constants.ORG_PARAMETER] = this.getOrgParameter();
+    // When more than one record is selected, _org parameter is not valid because the records could have had different orgs
+    if (view && view.lastRecordSelectedCount > 1) {
+      params[OB.Constants.CALCULATE_ORGS] = true;
+    } else {
+      params[OB.Constants.ORG_PARAMETER] = this.getOrgParameter();
+    }
 
     if (this.orderByClause) {
       params[OB.Constants.ORDERBY_PARAMETER] = this.orderByClause;
