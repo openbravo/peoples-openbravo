@@ -160,6 +160,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   @Any
   private Instance<OrderLoaderPreProcessPaymentHook> preProcessPayment;
 
+  @Inject
+  @Any
+  private Instance<OrderLoaderPreAddShipmentLineHook> preAddShipmentLine;
+
   private boolean useOrderDocumentNoForRelatedDocs = false;
 
   protected String getImportQualifier() {
@@ -610,10 +614,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     Collections.sort(hookList, new Comparator<Object>() {
       @Override
       public int compare(Object o1, Object o2) {
-        int o1Priority = (o1 instanceof PreOrderLoaderPrioritizedHook) ? ((PreOrderLoaderPrioritizedHook) o1).getPriority()
-            : 100;
-        int o2Priority = (o2 instanceof PreOrderLoaderPrioritizedHook) ? ((PreOrderLoaderPrioritizedHook) o2).getPriority()
-            : 100;
+        int o1Priority = (o1 instanceof PreOrderLoaderPrioritizedHook) ? ((PreOrderLoaderPrioritizedHook) o1)
+            .getPriority() : 100;
+        int o2Priority = (o2 instanceof PreOrderLoaderPrioritizedHook) ? ((PreOrderLoaderPrioritizedHook) o2)
+            .getPriority() : 100;
 
         return (int) Math.signum(o2Priority - o1Priority);
       }
@@ -644,6 +648,21 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         ((OrderLoaderPreProcessPaymentHook) proc).exec(jsonorder, order, jsonpayment, payment);
       }
     }
+  }
+
+  protected boolean executeOrderLoaderPreAddShipmentLineHook(Instance<? extends Object> hooks,
+      String action, JSONObject jsonorderline, OrderLine orderline, JSONObject jsonorder,
+      Order order, Locator bin) throws Exception {
+    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
+      Object proc = procIter.next();
+      if (proc instanceof OrderLoaderPreAddShipmentLineHook) {
+        if (!((OrderLoaderPreAddShipmentLineHook) proc).exec(action, jsonorderline, orderline,
+            jsonorder, order, bin)) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   private void associateOrderToQuotation(JSONObject jsonorder, Order order) throws JSONException {
@@ -1190,10 +1209,28 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         } else {
           binForReturn = getBinForReturns(jsonorder.getString("posTerminal"));
         }
+
+        try {
+          executeOrderLoaderPreAddShipmentLineHook(preAddShipmentLine, "Return",
+              orderlines.getJSONObject(i), orderLine, jsonorder, order, binForReturn);
+        } catch (Exception e) {
+          log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook "
+              + e.getMessage());
+        }
+
         addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
             lineNo, pendingQty.negate(), binForReturn, null, i);
       } else if (useSingleBin && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
         lineNo += 10;
+
+        try {
+          executeOrderLoaderPreAddShipmentLineHook(preAddShipmentLine, "SingleBinSale",
+              orderlines.getJSONObject(i), orderLine, jsonorder, order, foundSingleBin);
+        } catch (Exception e) {
+          log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook "
+              + e.getMessage());
+        }
+
         addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
             lineNo, pendingQty, foundSingleBin, null, i);
       } else {
@@ -1221,6 +1258,17 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               // TODO: Can we safely clear session here?
               StockProposed stock = (StockProposed) bins.get(0);
               BigDecimal qty;
+
+              try {
+                if (!executeOrderLoaderPreAddShipmentLineHook(preAddShipmentLine, "SimpleSale",
+                    orderlines.getJSONObject(i), orderLine, jsonorder, order, stock
+                        .getStorageDetail().getStorageBin())) {
+                  continue;
+                }
+              } catch (Exception e) {
+                log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook "
+                    + e.getMessage());
+              }
 
               Object stockQty = stock.get("quantity");
               if (stockQty instanceof Long) {
