@@ -316,9 +316,9 @@ public class Translate extends DefaultHandler {
   private boolean isParseable(String tagname) {
     if (tagname.equalsIgnoreCase("script"))
       return false;
-    else if (extension.equalsIgnoreCase("jrxml")) {
-      if (!tagname.equalsIgnoreCase("text") && !tagname.equalsIgnoreCase("textFieldExpression"))
-        return false;
+    else if (extension.equalsIgnoreCase("jrxml") && !tagname.equalsIgnoreCase("text")
+        && !tagname.equalsIgnoreCase("textFieldExpression")) {
+      return false;
     }
     return true;
   }
