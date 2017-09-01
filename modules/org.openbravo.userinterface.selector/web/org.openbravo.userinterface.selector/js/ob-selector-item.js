@@ -1204,6 +1204,14 @@ isc.OBSelectorItem.addClassMethods({
       }
     }
 
+    function multipleRecordsSelected() {
+      // Check if multiple records are selected in the parent grid
+      if (selector && selector.view && selector.view.buttonOwnerView && selector.view.buttonOwnerView.lastRecordSelectedCount > 1) {
+        return true;
+      }
+      return false;
+    }
+
     // on purpose not passing the third boolean param
     if (selector.form && selector.form.view && selector.form.view.getContextInfo) {
       // for table and table dir reference values needs to be transformed to classic (ex.: true -> Y)
@@ -1242,7 +1250,7 @@ isc.OBSelectorItem.addClassMethods({
     }
 
     // also add the special ORG parameter
-    if (params.inpadOrgId) {
+    if (params.inpadOrgId && !multipleRecordsSelected()) {
       params[OB.Constants.ORG_PARAMETER] = params.inpadOrgId;
     } else {
       params[OB.Constants.CALCULATE_ORGS] = true;
