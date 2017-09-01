@@ -420,7 +420,6 @@ BEGIN
     v_finalqty NUMBER;
     v_totalqty NUMBER;
     v_availableqty NUMBER;
-    v_qtyaux NUMBER:=v_quantity;
     v_AuxResult NUMBER;
     v_AuxMessage VARCHAR2(2000):='';
     v_productname M_PRODUCT.NAME%TYPE;
@@ -587,8 +586,7 @@ DBMS_OUTPUT.PUT_LINE( 'v_warehouse_rule_id: ' || coalesce(v_warehouse_rule_id,''
       WHERE ad_pinstance_id = p_uuid
         AND priority <= cur_warehouse.priority
         AND isfinal = 'Y';
-      v_qtyaux := v_qtyaux - v_finalqty;
-      IF (v_qtyaux <= 0) THEN
+      IF (v_quantity - v_finalqty <= 0) THEN
         DELETE FROM m_stock_proposed
         WHERE ad_pinstance_id = p_uuid
           AND (priority > cur_warehouse.priority
