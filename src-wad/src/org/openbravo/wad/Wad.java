@@ -51,7 +51,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Fernando Iriazabal
  */
 public class Wad extends DefaultHandler {
-  private static final int NUM_TABS = 8;
   private static final int INCR_TABS = 8;
   private static final int HEIGHT_TABS = 38;
   private static final int MAX_SIZE_EDITION_1_COLUMNS = 90;
@@ -860,16 +859,6 @@ public class Wad extends DefaultHandler {
       if (allTabs == null || allTabs.length == 0)
         throw new Exception("No tabs found for AD_Tab_ID: " + tabsData.tabid + " - key: "
             + tabsData.key + " - level: " + tabsData.tablevel);
-      final TabsData[] tab1 = new TabsData[(allTabs.length > NUM_TABS) ? NUM_TABS : allTabs.length];
-      final TabsData[] tab2 = new TabsData[(allTabs.length > NUM_TABS) ? NUM_TABS : 0];
-      for (int i = 0; i < NUM_TABS && i < allTabs.length; i++) {
-        tab1[i] = allTabs[i];
-      }
-      if (allTabs.length > NUM_TABS) {
-        int j = 0;
-        for (int i = allTabs.length - NUM_TABS; i < allTabs.length; i++)
-          tab2[j++] = allTabs[i];
-      }
 
       int parentTabIndex = -1;
       if (allTabs != null && allTabs.length > 0)
