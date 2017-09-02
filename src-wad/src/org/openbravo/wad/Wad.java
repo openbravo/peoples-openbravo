@@ -860,10 +860,6 @@ public class Wad extends DefaultHandler {
         throw new Exception("No tabs found for AD_Tab_ID: " + tabsData.tabid + " - key: "
             + tabsData.key + " - level: " + tabsData.tablevel);
 
-      int parentTabIndex = -1;
-      if (allTabs != null && allTabs.length > 0)
-        parentTabIndex = parentTabId(allTabs, tabsData.tabid);
-
       final Vector<Object> vecFields = new Vector<Object>();
       final Vector<Object> vecTables = new Vector<Object>();
       final Vector<Object> vecWhere = new Vector<Object>();
@@ -889,30 +885,6 @@ public class Wad extends DefaultHandler {
                         // modules
       final File fileDir = new File(fileFin, javaPackage);
 
-      int grandfatherTabIndex = -1;
-      FieldsData auxFieldsData[] = null;
-      if (parentTabIndex != -1 && allTabs != null && allTabs.length > 0) {
-        final Vector<Object> vecParametersParent = new Vector<Object>();
-        if (vecParametersParent.size() > 0) {
-          ArrayList<String> usedParameters = new ArrayList<String>();
-          for (int h = 0; h < vecParametersParent.size(); h++) {
-            String strParam = WadUtility.getWhereParameter(vecParametersParent.get(h), false);
-
-            if (!usedParameters.contains(strParam)) {
-              usedParameters.add(strParam);
-            }
-          }
-        }
-        grandfatherTabIndex = parentTabId(allTabs, allTabs[parentTabIndex].tabid);
-        auxFieldsData = FieldsData.parentsColumnName(pool,
-            (grandfatherTabIndex != -1 ? allTabs[grandfatherTabIndex].tabid : ""),
-            allTabs[parentTabIndex].tabid);
-        if (grandfatherTabIndex != -1 && (auxFieldsData == null || auxFieldsData.length == 0)) {
-          auxFieldsData = FieldsData.parentsColumnReal(pool, allTabs[grandfatherTabIndex].tabid,
-              allTabs[parentTabIndex].tabid);
-        }
-      }
-      auxFieldsData = null;
       String keyColumnName = "";
       final FieldsData[] dataKey = FieldsData.keyColumnName(pool, tabsData.tabid);
       if (dataKey != null && dataKey.length > 0) {
@@ -1489,40 +1461,6 @@ public class Wad extends DefaultHandler {
     vec.copyInto(aux);
 
     return aux;
-  }
-
-  /**
-   * Returns the index of the parent tab in the given array.
-   * 
-   * @param allTabs
-   *          Array of tabs.
-   * @param tabId
-   *          The id of the actual tab.
-   * @return Int with the index of the parent tab or -1 if there is no parent.
-   * @throws ServletException
-   * @throws IOException
-   */
-  private int parentTabId(TabsData[] allTabs, String tabId) throws ServletException, IOException {
-    if (allTabs == null || allTabs.length == 0)
-      return -1;
-    else if (tabId == null || tabId.equals(""))
-      return -1;
-    else if (tabId.equals(allTabs[0].tabid))
-      return -1;
-    String parentTab = "";
-    for (int i = 1; i < allTabs.length; i++) {
-      if (allTabs[i].tabid.equals(tabId)) {
-        parentTab = allTabs[i].parentKey;
-        break;
-      }
-    }
-    if (!parentTab.equals("-1")) {
-      for (int i = 0; i < allTabs.length; i++) {
-        if (allTabs[i].tabid.equals(parentTab))
-          return i;
-      }
-    }
-    return -1;
   }
 
   /**
