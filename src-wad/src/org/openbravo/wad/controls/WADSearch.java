@@ -18,18 +18,11 @@
  */
 package org.openbravo.wad.controls;
 
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Properties;
-import java.util.Vector;
-
-import javax.servlet.ServletException;
 
 import org.openbravo.data.Sqlc;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.wad.EditionFieldsData;
-import org.openbravo.wad.FieldsData;
-import org.openbravo.wad.WadUtility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADSearch extends WADControl {
@@ -259,163 +252,6 @@ public class WADSearch extends WADControl {
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     return replaceHTML(xmlDocument.print());
-  }
-
-  public int addAdditionDefaulSQLFields(Vector<Object> v, FieldsData fieldsDef, int _itable) {
-    int itable = _itable;
-    if (fieldsDef.isdisplayed.equals("Y")) {
-      final FieldsData fd = new FieldsData();
-      fd.adcolumnid = fieldsDef.adcolumnid + "_" + (itable++);
-      fd.name = fieldsDef.columnname + "R";
-      String tableN = "";
-
-      HashMap<String, String> tableColumnName = getTableColumnName(fieldsDef);
-      tableN = tableColumnName.get("table");
-      fieldsDef.name = tableColumnName.get("column");
-
-      final Vector<Object> vecFields2 = new Vector<Object>();
-      final Vector<Object> vecTables2 = new Vector<Object>();
-      final Vector<Object> vecWhere2 = new Vector<Object>();
-
-      final Vector<Object> vecCounters = new Vector<Object>();
-      vecCounters.addElement("1");
-      vecCounters.addElement("0");
-      final Vector<Object> vecParameters = new Vector<Object>();
-      final Vector<Object> vecTableParameters = new Vector<Object>();
-      try {
-        WadUtility.columnIdentifier(conn, tableN, false, fieldsDef, vecCounters, false, vecFields2,
-            vecTables2, vecWhere2, vecParameters, vecTableParameters, sqlDateFormat);
-      } catch (ServletException e2) {
-        e2.printStackTrace();
-      }
-
-      final StringBuffer strFields2 = new StringBuffer();
-      strFields2.append(" ( ");
-      boolean boolFirst = true;
-      for (final Enumeration<Object> e = vecFields2.elements(); e.hasMoreElements();) {
-        final String tableField = (String) e.nextElement();
-        if (boolFirst) {
-          boolFirst = false;
-        } else {
-          strFields2.append(" || ' - ' || ");
-        }
-        strFields2.append("COALESCE(TO_CHAR(").append(tableField).append("), '') ");
-      }
-      strFields2.append(") as ").append(fieldsDef.columnname);
-      final StringBuffer fields = new StringBuffer();
-      fields.append("SELECT ").append(strFields2);
-      fields.append(" FROM " + tableN + " ");
-      for (int j = 0; j < vecTables2.size(); j++) {
-        fields.append(vecTables2.elementAt(j));
-      }
-      fields.append(" WHERE " + tableN + ".isActive='Y'");
-      for (int j = 0; j < vecWhere2.size(); j++) {
-        fields.append(vecWhere2.elementAt(j));
-      }
-      fields.append(" AND " + tableN + "." + fieldsDef.name + " = ? ");
-      fd.defaultvalue = fields.toString();
-
-      fd.whereclause = "";
-      for (Object param : vecTableParameters) {
-        fd.whereclause += ((String) param) + "\n";
-      }
-
-      fd.whereclause += "<Parameter name=\"" + fd.name + "\"/>";
-      v.addElement(fd);
-    }
-    return itable;
-  }
-
-  private HashMap<String, String> getTableColumnName(FieldsData fieldsDef) {
-    EditionFieldsData[] dataSearchs = null;
-    HashMap<String, String> ret = new HashMap<String, String>();
-    if (fieldsDef.name == null) {
-      fieldsDef.name = "";
-    }
-
-    if (fieldsDef.reference.equals("30")) {
-      try {
-        dataSearchs = EditionFieldsData.selectSearchs(conn, "", fieldsDef.referencevalue);
-      } catch (ServletException e2) {
-        e2.printStackTrace();
-      }
-    }
-    if (dataSearchs == null || dataSearchs.length == 0) {
-      // set table name
-      if (fieldsDef.reference.equals("25")) {
-        ret.put("table", "C_ValidCombination");
-      } else if (fieldsDef.reference.equals("31")) {
-        ret.put("table", "M_Locator");
-      } else if (fieldsDef.reference.equals("35")) {
-        ret.put("table", "M_AttributeSetInstance");
-      } else if (fieldsDef.reference.equals("800011")) {
-        ret.put("table", "M_Product");
-      } else if (fieldsDef.name.equalsIgnoreCase("createdBy")
-          || fieldsDef.name.equalsIgnoreCase("updatedBy")) {
-        ret.put("table", "AD_User");
-      } else {
-        ret.put("table", fieldsDef.name.substring(0, fieldsDef.name.length() - 3));
-      }
-
-      // set column
-      if (fieldsDef.reference.equals("25")) {
-        ret.put("column", "C_ValidCombination_ID");
-
-      } else if (fieldsDef.reference.equals("31")) {
-        ret.put("column", "M_Locator_ID");
-      } else if (fieldsDef.reference.equals("35")) {
-        ret.put("column", "M_AttributeSetInstance_ID");
-      } else if (fieldsDef.reference.equals("800011")) {
-        ret.put("column", "M_Product_ID");
-      } else if (fieldsDef.name.equalsIgnoreCase("createdBy")
-          || fieldsDef.name.equalsIgnoreCase("updatedBy")) {
-        ret.put("column", "AD_User_ID");
-      }
-    } else {
-      ret.put("table", dataSearchs[0].reference);
-      fieldsDef.name = dataSearchs[0].columnname;
-    }
-    if (ret.get("table") == null) {
-      ret.put("table", "");
-    }
-    if (ret.get("column") == null) {
-      ret.put("column", ret.get("table") + "_ID");
-    }
-    return ret;
-  }
-
-  public int addAdditionDefaulJavaFields(StringBuffer strDefaultValues, FieldsData fieldsDef,
-      String tabName, int _itable) {
-    int itable = _itable;
-    if (fieldsDef.isdisplayed.equals("Y")) {
-
-      HashMap<String, String> tableColumnName = getTableColumnName(fieldsDef);
-      String tableN = tableColumnName.get("table");
-      fieldsDef.name = tableColumnName.get("column");
-
-      final Vector<Object> vecFields2 = new Vector<Object>();
-      final Vector<Object> vecTables2 = new Vector<Object>();
-      final Vector<Object> vecWhere2 = new Vector<Object>();
-
-      final Vector<Object> vecCounters = new Vector<Object>();
-      vecCounters.addElement("1");
-      vecCounters.addElement("0");
-      final Vector<Object> vecParameters = new Vector<Object>();
-      final Vector<Object> vecTableParameters = new Vector<Object>();
-      try {
-        WadUtility.columnIdentifier(conn, tableN, false, fieldsDef, vecCounters, false, vecFields2,
-            vecTables2, vecWhere2, vecParameters, vecTableParameters, sqlDateFormat);
-      } catch (ServletException e2) {
-        e2.printStackTrace();
-      }
-
-      boolean hasLangParam = vecTableParameters.size() > 0;
-
-      strDefaultValues.append(", " + tabName + "Data.selectDef" + fieldsDef.adcolumnid + "_"
-          + (itable++) + "(this, " + (hasLangParam ? " vars.getLanguage(), " : "")
-          + fieldsDef.defaultvalue + ")");
-    }
-    return itable;
   }
 
   public boolean isLink() {
