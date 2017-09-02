@@ -177,19 +177,6 @@ public class WADInteger extends WADControl {
     return true;
   }
 
-  public String getDisplayLogic(boolean display, boolean isreadonly) {
-    StringBuffer displayLogic = new StringBuffer();
-
-    displayLogic.append(super.getDisplayLogic(display, isreadonly));
-
-    if (!getData("IsReadOnly").equals("Y") && !isreadonly) {
-      displayLogic.append("displayLogicElement('");
-      displayLogic.append(getData("ColumnName"));
-      displayLogic.append("_btt', ").append(display ? "true" : "false").append(");\n");
-    }
-    return displayLogic.toString();
-  }
-
   public String getDefaultValue() {
     if (getData("required").equals("Y")) {
       return "0";

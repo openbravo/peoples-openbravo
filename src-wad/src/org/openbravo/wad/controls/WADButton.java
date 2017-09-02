@@ -172,10 +172,6 @@ public class WADButton extends WADControl {
     return text.toString();
   }
 
-  public String getDisplayLogic(boolean display, boolean isreadonly) {
-    return "";
-  }
-
   public String getDefaultValue() {
     if (!getData("name").endsWith("_ID")) {
       return "N";

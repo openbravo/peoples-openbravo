@@ -400,23 +400,6 @@ public class WADControl {
   }
 
   /**
-   * Returns the display javascript logic
-   * 
-   */
-  public String getDisplayLogic(boolean display, boolean isreadonly) {
-    StringBuffer displayLogic = new StringBuffer();
-
-    displayLogic.append("displayLogicElement('");
-    displayLogic.append(getData("ColumnName"));
-    displayLogic.append("_lbl_td', ").append(display ? "true" : "false").append(");\n");
-    displayLogic.append("displayLogicElement('");
-    displayLogic.append(getData("ColumnName"));
-    displayLogic.append("_lbl', ").append(display ? "true" : "false").append(");\n");
-
-    return displayLogic.toString();
-  }
-
-  /**
    * Obtains default value for the field
    */
   public String getDefaultValue() {
