@@ -82,15 +82,4 @@ public class WADTable extends WADList {
     return texto.toString();
   }
 
-  public boolean isLink() {
-    return true;
-  }
-
-  public String getLinkColumnId() {
-    try {
-      return WADTableData.getLinkColumn(conn, getData("AD_Reference_Value_ID"));
-    } catch (Exception e) {
-      return "";
-    }
-  }
 }

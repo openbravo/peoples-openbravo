@@ -185,18 +185,6 @@ public class WADSelector extends WADControl {
     return displayLogic.toString();
   }
 
-  public boolean isLink() {
-    return true;
-  }
-
-  public String getLinkColumnId() {
-    try {
-      return WADSelectorData.getLinkedColumnId(getConnection(), subreference);
-    } catch (Exception e) {
-      return "";
-    }
-  }
-
   @Override
   public String columnIdentifier(String tableName, FieldsData fields, Vector<Object> vecCounters,
       Vector<Object> vecFields, Vector<Object> vecTable, Vector<Object> vecWhere,

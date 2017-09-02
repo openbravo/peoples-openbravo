@@ -119,7 +119,4 @@ public class WADYesNo extends WADControl {
     return "N";
   }
 
-  public boolean isText() {
-    return true;
-  }
 }

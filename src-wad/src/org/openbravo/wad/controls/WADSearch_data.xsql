@@ -46,14 +46,4 @@
       <Parameter name="adReferenceId"/>
   </SqlMethod>
   
-  <SqlMethod name="getLinkColumn" type="preparedStatement" return="String" default="">
-    <Sql>
-       SELECT C.AD_COLUMN_ID as name
-       FROM AD_TABLE T, AD_COLUMN C 
-       WHERE T.AD_TABLE_ID = C.AD_TABLE_ID 
-       AND C.ISKEY='Y'
-       AND UPPER(T.TABLENAME) = UPPER(?) 
-    </Sql>
-    <Parameter name="tableName"/>
-  </SqlMethod>
 </SqlClass>

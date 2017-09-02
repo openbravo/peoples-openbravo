@@ -22,7 +22,6 @@ import java.util.Properties;
 
 import org.openbravo.data.Sqlc;
 import org.openbravo.utils.FormatUtilities;
-import org.openbravo.wad.EditionFieldsData;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADSearch extends WADControl {
@@ -252,26 +251,6 @@ public class WADSearch extends WADControl {
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     return replaceHTML(xmlDocument.print());
-  }
-
-  public boolean isLink() {
-    return true;
-  }
-
-  public String getLinkColumnId() {
-    try {
-      EditionFieldsData[] dataSearchs = EditionFieldsData.selectSearchs(conn, "",
-          getData("AD_Reference_Value_ID"));
-      if (dataSearchs != null && dataSearchs.length != 0) {
-        return dataSearchs[0].adColumnId;
-      } else {
-        String strTableName = getData("ColumnNameSearch");
-        strTableName = strTableName.substring(0, (strTableName.length() - 3));
-        return WADSearchData.getLinkColumn(conn, strTableName);
-      }
-    } catch (Exception e) {
-      return "";
-    }
   }
 
   public String getDisplayLogic(boolean display, boolean isreadonly) {

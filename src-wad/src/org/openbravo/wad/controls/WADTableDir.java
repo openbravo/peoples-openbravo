@@ -44,19 +44,4 @@ public class WADTableDir extends WADList {
     return "'xxxx'";
   }
 
-  public boolean isLink() {
-    return true;
-  }
-
-  public String getLinkColumnId() {
-    try {
-
-      String strTableName = getData("ColumnNameSearch");
-      strTableName = strTableName.substring(0, (strTableName.length() - 3));
-      return WADSearchData.getLinkColumn(conn, strTableName);
-
-    } catch (Exception e) {
-      return "";
-    }
-  }
 }

@@ -209,10 +209,6 @@ public class WADList extends WADControl {
     return texto.toString();
   }
 
-  public boolean isText() {
-    return true;
-  }
-
   public String getReadOnlyLogicColumn() {
     return "report" + getData("columnName") + "_S";
   }

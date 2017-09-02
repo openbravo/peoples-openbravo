@@ -400,29 +400,6 @@ public class WADControl {
   }
 
   /**
-   * Determines whether the reference is a foreign key to another table. Used to generate links
-   * 
-   */
-  public boolean isLink() {
-    return false;
-  }
-
-  /**
-   * Determines whether the reference is text
-   * 
-   */
-  public boolean isText() {
-    return false;
-  }
-
-  /**
-   * In case the control is a link this method should return the id for the column the link is for
-   */
-  public String getLinkColumnId() {
-    return "";
-  }
-
-  /**
    * Returns the display javascript logic
    * 
    */
