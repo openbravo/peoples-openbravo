@@ -435,13 +435,6 @@ build.war: build a war file in the lib directory.
     </copy>
   </target>
 
-  <target name="postsrcmod">
-    <copy todir="${base.design}/design">
-      <fileset dir="${base.modules}" includes="*/src/**/*.html" />
-      <mapper type="regexp" from="(.*\${file.separator}src)(.*)" to="\2" />
-    </copy>
-  </target>
-
   <!-- end of auxiliar tasks-->
 
   <target name="build.local.context">
