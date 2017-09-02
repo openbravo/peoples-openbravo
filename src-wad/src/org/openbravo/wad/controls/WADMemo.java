@@ -127,10 +127,6 @@ public class WADMemo extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
-  public String toJava() {
-    return "";
-  }
-
   public void processSelCol(String tableName, EditionFieldsData selCol, Vector<Object> vecAuxSelCol) {
     selCol.xmltext = " + ((strParam" + selCol.columnname + ".equals(\"\") || strParam"
         + selCol.columnname + ".equals(\"%\"))?\"\":\" AND ";

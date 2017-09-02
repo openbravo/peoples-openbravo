@@ -180,10 +180,6 @@ public class WADTime extends WADControl {
     return text.toString();
   }
 
-  public String toJava() {
-    return "";
-  }
-
   public String getSQLCasting() {
     return "TO_DATE";
   }

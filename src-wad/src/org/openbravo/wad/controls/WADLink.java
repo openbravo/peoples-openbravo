@@ -141,10 +141,6 @@ public class WADLink extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
-  public String toJava() {
-    return "";
-  }
-
   public String getDisplayLogic(boolean display, boolean isreadonly) {
     StringBuffer displayLogic = new StringBuffer();
 

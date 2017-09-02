@@ -98,19 +98,4 @@ public class WADImageBLOB extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
-  public String toJava() {
-    StringBuffer text = new StringBuffer();
-    if (getData("IsDisplayed").equals("Y")) {
-      text.append("String strCurrentImageURL" + getData("ColumnName")
-          + " = (dataField==null?data[0].getField(\"");
-      text.append(getData("ColumnNameInp")).append("\"):dataField.getField(\"");
-      text.append(getData("ColumnNameInp")).append("\"));\n");
-      text.append("if (strCurrentImageURL" + getData("ColumnName") + "==null || strCurrentImageURL"
-          + getData("ColumnName") + ".equals(\"\")){\n");
-      text.append("  xmlDocument.setParameter(\"").append(getData("ColumnName"))
-          .append("Class\", \"Image_NotAvailable_medium\");\n");
-      text.append("}\n");
-    }
-    return text.toString();
-  }
 }

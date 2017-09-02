@@ -180,54 +180,6 @@ public class WADList extends WADControl {
     return text.toString();
   }
 
-  public String toJava() {
-    StringBuffer text = new StringBuffer();
-    if (getData("IsDisplayed").equals("Y")) {
-      if (getData("ColumnName").equalsIgnoreCase("AD_Org_ID")) {
-        text.append("String userOrgList = \"\";\n");
-        text.append("if (editableTab) \n");
-        if (getData("hasParentsFields").equals("N"))
-          text.append("  userOrgList=Utility.getContext(this, vars, \"#User_Org\", windowId, accesslevel); //editable record \n");
-        else
-          text.append("  userOrgList= Utility.getReferenceableOrg(this, vars, currentPOrg, windowId, accesslevel); //referenceable from parent org, only the writeable orgs\n");
-        text.append("else \n");
-        text.append("  userOrgList=currentOrg;\n");
-      } else if (getData("ColumnName").equalsIgnoreCase("AD_Client_ID")) {
-        text.append("String userClientList = \"\";\n");
-        text.append("if (editableTab) \n");
-        text.append("  userClientList=Utility.getContext(this, vars, \"#User_Client\", windowId, accesslevel); //editable record \n");
-        text.append("else \n");
-        text.append("  userClientList=currentClient;\n");
-      }
-      text.append("comboTableData = new ComboTableData(vars, this, \"")
-          .append(getData("AD_Reference_ID")).append("\", ");
-      text.append("\"").append(getData("ColumnName")).append("\", \"");
-      text.append(getData("AD_Reference_Value_ID")).append("\", ");
-      text.append("\"").append(getData("AD_Val_Rule_ID")).append("\", ");
-
-      if (getData("ColumnName").equalsIgnoreCase("AD_Org_ID"))
-        text.append("userOrgList, ");
-      else if (getData("ColumnName").equalsIgnoreCase("AD_Client_ID"))
-        text.append("null, ");
-      else
-        text.append("Utility.getReferenceableOrg(vars, (dataField!=null?dataField.getField(\"adOrgId\"):data[0].getField(\"adOrgId\").equals(\"\")?vars.getOrg():data[0].getField(\"adOrgId\"))), ");
-
-      if (getData("ColumnName").equalsIgnoreCase("AD_Client_ID"))
-        text.append("userClientList, 0);\n");
-      else
-        text.append("Utility.getContext(this, vars, \"#User_Client\", windowId), 0);\n");
-
-      text.append("Utility.fillSQLParameters(this, vars, (dataField==null?data[0]:dataField), comboTableData, windowId, (dataField==null?data[0].getField(\"");
-      text.append(getData("ColumnNameInp")).append("\"):dataField.getField(\"");
-      text.append(getData("ColumnNameInp")).append("\")));\n");
-      text.append("xmlDocument.setData(\"report").append(getData("ColumnName"))
-          .append("\",\"liststructure\", ");
-      text.append("comboTableData.select(!strCommand.equals(\"NEW\")));\n");
-      text.append("comboTableData = null;");
-    }
-    return text.toString();
-  }
-
   public boolean has2UIFields() {
     return true;
   }

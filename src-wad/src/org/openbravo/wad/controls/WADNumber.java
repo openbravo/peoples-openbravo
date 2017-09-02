@@ -177,11 +177,6 @@ public class WADNumber extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
-  public String toJava() {
-    return "xmlDocument.setParameter(\"button" + getData("ColumnName")
-        + "\", Utility.messageBD(this, \"Calc\", vars.getLanguage()));";
-  }
-
   private void setFormat(XmlDocument xmlDocument) {
     xmlDocument.setParameter("columnName", getData("ColumnName"));
 

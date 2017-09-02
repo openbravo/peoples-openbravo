@@ -173,40 +173,6 @@ public class WADButton extends WADControl {
     return text.toString();
   }
 
-  public String toJava() {
-
-    boolean isDisabled = getData("IsReadOnly").equals("Y") || getData("IsUpdateable").equals("N");
-
-    String javaCode = "";
-
-    if (getData("IsDisplayed").equals("Y")) {
-      if (!getData("AD_Reference_Value_ID").equals("")
-          && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus")) {
-        javaCode = "xmlDocument.setParameter(\"" + getData("ColumnName")
-            + "_BTNname\", Utility.getButtonName(this, vars, \"" + getData("AD_Reference_Value_ID")
-            + "\", (dataField==null?data[0].getField(\"" + getData("ColumnNameInp")
-            + "\"):dataField.getField(\"" + getData("ColumnNameInp") + "\")), \""
-            + getData("ColumnName") + "_linkBTN\", usedButtonShortCuts, reservedButtonShortCuts));";
-      } else {
-        javaCode = "xmlDocument.setParameter(\"" + getData("ColumnName")
-            + "_BTNname\", Utility.getButtonName(this, vars, \"" + getData("AD_Field_ID")
-            + "\", \"" + getData("ColumnName")
-            + "_linkBTN\", usedButtonShortCuts, reservedButtonShortCuts));";
-      }
-      if (!isDisabled) {
-        String varName = "modal" + FormatUtilities.replace(getData("ColumnName"));
-        javaCode += "boolean " + varName
-            + " = org.openbravo.erpCommon.utility.Utility.isModalProcess(\""
-            + getData("AD_Process_ID") + "\"); \n";
-        javaCode += "xmlDocument.setParameter(\"" + getData("ColumnName") + "_Modal\", " + varName
-            + "?\"true\":\"false\");";
-      }
-    } else {
-      javaCode = "";
-    }
-    return javaCode;
-  }
-
   public int addAdditionDefaulJavaFields(StringBuffer strDefaultValues, FieldsData fieldsDef,
       String tabName, int itable) {
     // not need to implement sql method as itable is not modified

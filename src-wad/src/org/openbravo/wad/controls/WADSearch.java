@@ -261,10 +261,6 @@ public class WADSearch extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
-  public String toJava() {
-    return "";
-  }
-
   public boolean has2UIFields() {
     return true;
   }

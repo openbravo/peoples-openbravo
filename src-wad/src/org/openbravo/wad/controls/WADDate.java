@@ -175,13 +175,6 @@ public class WADDate extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
-  public String toJava() {
-    StringBuffer text = new StringBuffer();
-    text.append("xmlDocument.setParameter(\"").append(getData("ColumnName"))
-        .append("_Format\", vars.getSessionValue(\"#AD_SqlDateFormat\"));");
-    return text.toString();
-  }
-
   public String getSQLCasting() {
     return "TO_DATE";
   }

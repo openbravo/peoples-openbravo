@@ -294,10 +294,6 @@ public class WADControl {
     return builder.getLabelString();
   }
 
-  public String toJava() {
-    return "";
-  }
-
   public String toXml() {
     StringBuffer text = new StringBuffer();
     if (getData("IsParameter").equals("Y")) {
