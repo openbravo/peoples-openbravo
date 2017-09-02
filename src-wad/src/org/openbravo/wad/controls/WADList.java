@@ -180,10 +180,6 @@ public class WADList extends WADControl {
     return text.toString();
   }
 
-  public boolean has2UIFields() {
-    return true;
-  }
-
   public String columnIdentifier(String tableName, FieldsData fields, Vector<Object> vecCounters,
       Vector<Object> vecFields, Vector<Object> vecTable, Vector<Object> vecWhere,
       Vector<Object> vecParameters, Vector<Object> vecTableParameters) throws ServletException {

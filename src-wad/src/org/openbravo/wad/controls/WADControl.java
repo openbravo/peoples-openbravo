@@ -349,17 +349,6 @@ public class WADControl {
   }
 
   /**
-   * Checks whether there are two ui fields for the control. These 2 fields are used in case the
-   * displayed value is different than the actual one in database, for example for list or table
-   * references.
-   * 
-   * @return true in case there are 2 ui fields
-   */
-  public boolean has2UIFields() {
-    return false;
-  }
-
-  /**
    * Generates SQL identifier
    */
   public String columnIdentifier(String tableName, FieldsData field, Vector<Object> vecCounters,

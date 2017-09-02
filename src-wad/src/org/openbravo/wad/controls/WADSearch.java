@@ -261,10 +261,6 @@ public class WADSearch extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
-  public boolean has2UIFields() {
-    return true;
-  }
-
   public int addAdditionDefaulSQLFields(Vector<Object> v, FieldsData fieldsDef, int _itable) {
     int itable = _itable;
     if (fieldsDef.isdisplayed.equals("Y")) {
