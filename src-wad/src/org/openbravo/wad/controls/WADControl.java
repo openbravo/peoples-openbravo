@@ -18,7 +18,6 @@
  */
 package org.openbravo.wad.controls;
 
-import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -438,23 +437,6 @@ public class WADControl {
    */
   public String getSQLCasting() {
     return "";
-  }
-
-  /**
-   * Prepares SQL query calculating all fields and parameters required
-   * 
-   * @param vecCounters
-   */
-  public void processTable(String strTab, Vector<Object> vecFields, Vector<Object> vecTables,
-      Vector<Object> vecWhere, Vector<Object> vecOrder, Vector<Object> vecParameters,
-      String tableName, Vector<Object> vecTableParameters, FieldsData field,
-      Vector<String> vecFieldParameters, Vector<Object> vecCounters) throws ServletException,
-      IOException {
-    String strOrder = tableName + "." + field.name;
-
-    final String[] aux = { new String(field.name),
-        new String(strOrder + (field.name.equalsIgnoreCase("DocumentNo") ? " DESC" : "")) };
-    vecOrder.addElement(aux);
   }
 
   public static void setDateFormat(String dateFormat) {
