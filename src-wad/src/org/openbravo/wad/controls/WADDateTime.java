@@ -173,10 +173,6 @@ public class WADDateTime extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
-  public String getSQLCasting() {
-    return "TO_DATE";
-  }
-
   public void processSelCol(String tableName, EditionFieldsData selCol, Vector<Object> vecAuxSelCol) {
     final EditionFieldsData aux = new EditionFieldsData();
     aux.adColumnId = selCol.adColumnId;

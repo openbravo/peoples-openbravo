@@ -396,14 +396,6 @@ public class WADControl {
     return texto.toString();
   }
 
-  /**
-   * Obtains the SQL casting depending on the data type
-   * 
-   */
-  public String getSQLCasting() {
-    return "";
-  }
-
   public static void setDateFormat(String dateFormat) {
     sqlDateFormat = dateFormat;
   }

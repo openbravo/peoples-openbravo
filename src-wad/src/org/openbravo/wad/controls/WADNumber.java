@@ -235,10 +235,6 @@ public class WADNumber extends WADControl {
     return true;
   }
 
-  public String getSQLCasting() {
-    return "TO_NUMBER";
-  }
-
   public void processSelCol(String tableName, EditionFieldsData selCol, Vector<Object> vecAuxSelCol) {
     final EditionFieldsData aux = new EditionFieldsData();
     aux.adColumnId = selCol.adColumnId;
