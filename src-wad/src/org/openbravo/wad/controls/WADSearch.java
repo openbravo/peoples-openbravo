@@ -266,7 +266,4 @@ public class WADSearch extends WADControl {
     return displayLogic.toString();
   }
 
-  public String getReadOnlyLogicColumn() {
-    return getData("columnName") + "_R";
-  }
 }
