@@ -232,14 +232,6 @@ public class WADNumber extends WADControl {
     return true;
   }
 
-  public String getDefaultValue() {
-    if (getData("required").equals("Y")) {
-      return "0";
-    } else {
-      return "";
-    }
-  }
-
   public String getHiddenHTML() {
     XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
         "org/openbravo/wad/controls/WADHiddenNumber").createXmlDocument();

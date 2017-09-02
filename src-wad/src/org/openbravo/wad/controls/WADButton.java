@@ -172,12 +172,4 @@ public class WADButton extends WADControl {
     return text.toString();
   }
 
-  public String getDefaultValue() {
-    if (!getData("name").endsWith("_ID")) {
-      return "N";
-    } else {
-      return "";
-    }
-  }
-
 }

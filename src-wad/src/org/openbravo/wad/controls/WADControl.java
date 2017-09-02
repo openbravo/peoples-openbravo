@@ -399,13 +399,6 @@ public class WADControl {
     sqlDateFormat = dateFormat;
   }
 
-  /**
-   * Obtains default value for the field
-   */
-  public String getDefaultValue() {
-    return "";
-  }
-
   public boolean isDate() {
     return false;
   }
