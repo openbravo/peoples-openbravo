@@ -26,7 +26,6 @@ import java.util.Vector;
 import javax.servlet.ServletException;
 
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.wad.EditionFieldsData;
 import org.openbravo.wad.FieldsData;
 import org.openbravo.wad.TableRelationData;
 import org.openbravo.wad.WadUtility;
@@ -398,34 +397,6 @@ public class WADControl {
 
   public static void setDateFormat(String dateFormat) {
     sqlDateFormat = dateFormat;
-  }
-
-  /**
-   * Processes selection columns.
-   */
-  public void processSelCol(String tableName, EditionFieldsData selCol, Vector<Object> vecAuxSelCol) {
-    selCol.xmltext = " + ((strParam" + selCol.columnname + ".equals(\"\") || strParam"
-        + selCol.columnname + ".equals(\"%\"))?\"\":\" AND ";
-
-    selCol.xmltext += "(" + tableName + "." + selCol.realcolumnname + ")";
-
-    selCol.xmltext += " = (";
-    if (isText())
-      selCol.xmltext += "'";
-
-    selCol.xmltext += "\" + strParam" + selCol.columnname + " + \"";
-    if (isText()) {
-      selCol.xmltext += "'";
-    }
-    selCol.xmltext += ") \")";
-    selCol.xsqltext = "";
-
-    selCol.xsqltext += "(" + tableName + "." + selCol.realcolumnname + ")";
-
-    selCol.xsqltext += " = ";
-
-    selCol.xsqltext += "(?)";
-
   }
 
   /**

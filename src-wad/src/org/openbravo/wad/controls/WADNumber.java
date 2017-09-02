@@ -19,10 +19,7 @@
 package org.openbravo.wad.controls;
 
 import java.util.Properties;
-import java.util.Vector;
 
-import org.openbravo.utils.FormatUtilities;
-import org.openbravo.wad.EditionFieldsData;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADNumber extends WADControl {
@@ -233,49 +230,6 @@ public class WADNumber extends WADControl {
 
   public boolean isNumericType() {
     return true;
-  }
-
-  public void processSelCol(String tableName, EditionFieldsData selCol, Vector<Object> vecAuxSelCol) {
-    final EditionFieldsData aux = new EditionFieldsData();
-    aux.adColumnId = selCol.adColumnId;
-    aux.name = selCol.name;
-    aux.reference = selCol.reference;
-    aux.referencevalue = selCol.referencevalue;
-    aux.adValRuleId = selCol.adValRuleId;
-    aux.fieldlength = selCol.fieldlength;
-    aux.displaylength = selCol.displaylength;
-    aux.columnname = selCol.columnname + "_f";
-    aux.realcolumnname = selCol.realcolumnname;
-    aux.columnnameinp = selCol.columnnameinp;
-    aux.value = selCol.value;
-    aux.adWindowId = selCol.adWindowId;
-    aux.htmltext = "strParam" + aux.columnname + ".equals(\"\")";
-    selCol.xmltext = " + ((strParam" + selCol.columnname + ".equals(\"\") || strParam"
-        + selCol.columnname + ".equals(\"%\"))?\"\":\" AND ";
-
-    selCol.xmltext += "(" + tableName + "." + selCol.realcolumnname + ") >= ";
-    selCol.xsqltext = tableName + "." + selCol.realcolumnname + " >= ";
-
-    selCol.xmltext += "\" + strParam" + selCol.columnname + " + \"";
-    selCol.xmltext += " \")";
-    selCol.xsqltext += "(?" + ") ";
-    aux.columnnameinp = FormatUtilities.replace(selCol.columnname) + "_f";
-    aux.xmltext = " + ((strParam" + aux.columnname + ".equals(\"\") || strParam" + aux.columnname
-        + ".equals(\"%\"))?\"\":\" AND";
-
-    aux.xmltext += "(" + tableName + "." + aux.realcolumnname + ") < ";
-    aux.xsqltext = tableName + "." + aux.realcolumnname + " < ";
-
-    aux.xmltext += "TO_NUMBER('";
-    aux.xsqltext += "TO_NUMBER";
-
-    aux.xmltext += "\" + strParam" + aux.columnname + " + \"";
-
-    aux.xmltext += "')";
-    aux.xmltext += " + 1 \")";
-    aux.xsqltext += "(?" + ") + 1 ";
-    vecAuxSelCol.addElement(aux);
-
   }
 
   public String getDisplayLogic(boolean display, boolean isreadonly) {

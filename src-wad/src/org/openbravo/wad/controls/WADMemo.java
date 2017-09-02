@@ -19,10 +19,7 @@
 package org.openbravo.wad.controls;
 
 import java.util.Properties;
-import java.util.Vector;
 
-import org.openbravo.wad.EditionFieldsData;
-import org.openbravo.wad.WadUtility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADMemo extends WADControl {
@@ -127,33 +124,4 @@ public class WADMemo extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
-  public void processSelCol(String tableName, EditionFieldsData selCol, Vector<Object> vecAuxSelCol) {
-    selCol.xmltext = " + ((strParam" + selCol.columnname + ".equals(\"\") || strParam"
-        + selCol.columnname + ".equals(\"%\"))?\"\":\" AND ";
-    if (!WadUtility.isSearchValueColumn(selCol.realcolumnname)) {
-      selCol.xmltext += "C_IGNORE_ACCENT";
-    }
-    selCol.xmltext += "(" + tableName + "." + selCol.realcolumnname + ")";
-    if (!WadUtility.isSearchValueColumn(selCol.realcolumnname)) {
-      selCol.xmltext += " LIKE C_IGNORE_ACCENT('";
-    } else {
-      selCol.xmltext += " LIKE ('";
-    }
-
-    selCol.xmltext += "\" + strParam" + selCol.columnname + " + \"";
-    selCol.xmltext += "'";
-    selCol.xmltext += ") \")";
-
-    selCol.xsqltext = "";
-    if (!WadUtility.isSearchValueColumn(selCol.realcolumnname)) {
-      selCol.xsqltext = "C_IGNORE_ACCENT";
-    }
-    selCol.xsqltext += "(" + tableName + "." + selCol.realcolumnname + ")";
-    if (!WadUtility.isSearchValueColumn(selCol.realcolumnname)) {
-      selCol.xsqltext += " LIKE C_IGNORE_ACCENT";
-    } else {
-      selCol.xsqltext += " LIKE ";
-    }
-    selCol.xsqltext += "(?)";
-  }
 }
