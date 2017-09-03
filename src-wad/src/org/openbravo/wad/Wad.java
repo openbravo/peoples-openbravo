@@ -709,9 +709,6 @@ public class Wad extends DefaultHandler {
       final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/webConf")
           .createXmlDocument();
 
-      xmlDocument.setParameter("webPath", webPath);
-      xmlDocument.setParameter("attachPath", attachPath);
-
       String excludeWeldListener = excludeCDI ? WELD_LISTENER_ID : NONE;
       xmlDocument.setData("structureListener", WadData.selectListener(pool, excludeWeldListener));
 
