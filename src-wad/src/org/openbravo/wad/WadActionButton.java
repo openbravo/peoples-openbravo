@@ -761,10 +761,7 @@ class WadActionButton {
         .readXmlTemplate("org/openbravo/wad/Template_ActionButton", discard).createXmlDocument();
     final ProcessRelationData[] efd = ProcessRelationData.selectParameters(conn, strLanguage,
         fd.reference);
-    xmlDocument.setParameter("tab", fd.realname);
     xmlDocument.setParameter("columnname", fd.columnname + fd.reference);
-    xmlDocument.setParameter("processDescription", fd.tablename);
-    xmlDocument.setParameter("processHelp", fd.xmltext);
     xmlDocument.setParameter("adProcessId", fd.reference);
 
     {

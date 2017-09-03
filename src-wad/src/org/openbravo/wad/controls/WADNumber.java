@@ -115,7 +115,8 @@ public class WADNumber extends WADControl {
 
     xmlDocument.setParameter("callout", getOnChangeCode());
 
-    setFormat(xmlDocument);
+    xmlDocument.setParameter("columnName", getData("ColumnName"));
+    xmlDocument.setParameter("outputFormat", getFormat());
 
     return replaceHTML(xmlDocument.print());
   }
@@ -157,7 +158,8 @@ public class WADNumber extends WADControl {
 
     xmlDocument.setParameter("callout", getOnChangeCode());
 
-    setFormat(xmlDocument);
+    xmlDocument.setParameter("columnName", getData("ColumnName"));
+    xmlDocument.setParameter("outputFormat", getFormat());
 
     return replaceHTML(xmlDocument.print());
   }
@@ -169,16 +171,10 @@ public class WADNumber extends WADControl {
     XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
         "org/openbravo/wad/controls/WADNumberXML", discard).createXmlDocument();
 
-    setFormat(xmlDocument);
+    xmlDocument.setParameter("columnName", getData("ColumnName"));
+    xmlDocument.setParameter("columnFormat", getFormat());
 
     return replaceHTML(xmlDocument.print());
-  }
-
-  private void setFormat(XmlDocument xmlDocument) {
-    xmlDocument.setParameter("columnName", getData("ColumnName"));
-
-    xmlDocument.setParameter("columnFormat", getFormat());
-    xmlDocument.setParameter("outputFormat", getFormat());
   }
 
   private String getFormat() {

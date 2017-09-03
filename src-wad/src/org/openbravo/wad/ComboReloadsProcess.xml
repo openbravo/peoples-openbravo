@@ -22,7 +22,6 @@
 
 <REPORT>
 <template file="ComboReloadsProcess.javaxml" />
-<PARAMETER id="paramTabId" name="tabId"/>
 
 <structure name="structure1">
   <FIELD id="fieldColumnsName">whereclause</FIELD>
