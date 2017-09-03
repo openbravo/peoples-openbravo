@@ -873,7 +873,7 @@ public class Wad extends DefaultHandler {
       /************************************************
        * JAVA
        *************************************************/
-      processTabJava(fileDir, tabsData.tabid, tabName, tableName, windowName, keyColumnName,
+      processTabJava(fileDir, tabsData.tabid, tabName, windowName, keyColumnName,
           isSOTrx, tabsData.key, tabsData.accesslevel, tabsData.tableId, tabsData.javapackage,
           tabsData.tabmodule);
 
@@ -899,8 +899,6 @@ public class Wad extends DefaultHandler {
    *          The id of the tab.
    * @param tabName
    *          The name of the tab.
-   * @param tableName
-   *          The name of the tab's table.
    * @param windowName
    *          The name of the window.
    * @param keyColumnName
@@ -917,7 +915,7 @@ public class Wad extends DefaultHandler {
    *          The id of the tab's table.
    * @param tabmodule
    */
-  private void processTabJava(File fileDir, String strTab, String tabName, String tableName,
+  private void processTabJava(File fileDir, String strTab, String tabName, 
       String windowName, String keyColumnName, String isSOTrx, String strWindow,
       String accesslevel, String tableId, String javaPackage, String tabmodule)
       throws ServletException, IOException {
@@ -960,12 +958,9 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("class", tabName);
     xmlDocument.setParameter("package", (!javaPackage.equals("") ? javaPackage + "." : "")
         + windowName);
-    xmlDocument.setParameter("path", (!javaPackage.equals("") ? javaPackage.replace(".", "/") + "/"
-        : "") + windowName);
     xmlDocument.setParameter("key", keyColumnName);
 
     xmlDocument.setParameter("keyData", Sqlc.TransformaNombreColumna(keyColumnName));
-    xmlDocument.setParameter("table", tableName);
     xmlDocument.setParameter("windowId", strWindow);
     xmlDocument.setParameter("accessLevel", accesslevel);
     xmlDocument.setParameter("moduleId", tabmodule);

@@ -25,31 +25,16 @@
 
   <PARAMETER id="class" name = "class" default=" "/>
   <PARAMETER id="package" name = "package" default=" "/>
-  <PARAMETER id="path" name = "path" default=" "/>
   <PARAMETER id="key" name = "key" default=" "/>
   <PARAMETER id="keyData" name = "keyData" default=" "/>
-  <PARAMETER id="table" name = "table" default=" "/>
   <PARAMETER id="paramTableId" name = "tableId" default=" "/>
   <PARAMETER id="windowId" name = "windowId" default=" "/>
   <PARAMETER id="accessLevel" name = "accessLevel" default=" "/>
   <PARAMETER id="moduleId" name = "moduleId" default=" "/>
   <PARAMETER id="tabId" name = "tabId" default=" "/>
-  <PARAMETER id="parentClass" name = "parentClass" default=" "/>
   <PARAMETER id="paramCreateFromProcessId" name="createFromProcessId" default=""/>
   <PARAMETER id="paramPostedProcessId" name="postedProcessId" default=""/>
   
-<structure name="structure1">
-  <FIELD id="fieldName">Name</FIELD>
-  <FIELD id="fieldType">type</FIELD>
-  <FIELD id="fieldDefault">xmltext</FIELD>
-  <FIELD id="fieldEncryption">htmltext</FIELD>
-  <FIELD id="fieldEndEncryption">htmltexttrl</FIELD>
-  <FIELD id="fieldName1">columnname</FIELD>
-  <FIELD id="fieldTry">trytext</FIELD>
-  <FIELD id="fieldCatch">catchtext</FIELD>
-  <SECTION id="sectionDetailgetEditVariables"/>
-</structure>
-
 <structure name="structureActionBtnService">
   <FIELD id="ProcessIDsrv">adProcessId</FIELD>
   <FIELD id="ProcessModulesrv">adModuleId</FIELD>
@@ -64,7 +49,6 @@
 
 <structure name="structureActionBtnServiceJavaSecuredProcess">
   <FIELD id="ProcessIDsrvJSP">adProcessId</FIELD>
-  <FIELD id="ProcessModulesrvJSP">adModuleId</FIELD>
   <SECTION id="sectionActionButtonsServiceJavaSecuredProcess"/>
 </structure>
 
@@ -72,7 +56,6 @@
   <FIELD id="ProcessID1">adProcessId</FIELD>
   <FIELD id="ButtonName1">columnname</FIELD>
   <FIELD id="ButtonRealName1">realname</FIELD>
-  <FIELD id="ButtonMapping1">mappingname</FIELD>
   <FIELD id="FieldsLoad1">htmltext</FIELD>
   <FIELD id="SetSession1">setsession</FIELD>
   <FIELD id="FieldsLoadName1">htmlfields</FIELD>
@@ -84,7 +67,6 @@
   <FIELD id="ProcessID4">adProcessId</FIELD>
   <FIELD id="ButtonName4">columnname</FIELD>
   <FIELD id="ButtonRealName4">realname</FIELD>
-  <FIELD id="ButtonMapping4">mappingname</FIELD>
   <FIELD id="FieldsLoad4">htmltext</FIELD>
   <FIELD id="SetSessionJava1">setsession</FIELD>
   <FIELD id="FieldsLoadName4">htmlfields</FIELD>
@@ -97,7 +79,6 @@
   <FIELD id="ButtonName2">columnname</FIELD>
   <FIELD id="ButtonRealName2">realname</FIELD>
   <FIELD id="ButtonProcessId2">xmlid</FIELD>
-  <FIELD id="ButtonMapping2">mappingname</FIELD>
   <FIELD id="FieldsLoadName2">htmlfieldsHeader</FIELD>
   <FIELD id="JavaCode2">javacode</FIELD>
   <SECTION id="sectionActionButtons2"/>
@@ -108,7 +89,6 @@
   <FIELD id="ButtonName2j">columnname</FIELD>
   <FIELD id="ButtonRealName2j">realname</FIELD>
   <FIELD id="ButtonProcessId2j">xmlid</FIELD>
-  <FIELD id="ButtonMapping2j">mappingname</FIELD>
   <FIELD id="FieldsLoadName2j">htmlfieldsHeader</FIELD>
   <FIELD id="JavaCode2j">javacode</FIELD>
   <SECTION id="sectionActionButtons2java"/>
@@ -118,20 +98,15 @@
   <FIELD id="ProcessID3">adProcessId</FIELD>
   <FIELD id="ButtonName3">columnname</FIELD>
   <FIELD id="ButtonRealName3">realname</FIELD>
-  <FIELD id="ButtonMapping3">mappingname</FIELD>
-  <FIELD id="FieldsLoad3">htmltext</FIELD>
   <FIELD id="FieldsLoadParams3">processParams</FIELD>
-  <FIELD id="ProcessCode3">processCode</FIELD>
   <FIELD id="AdditionalCode3">additionalCode</FIELD>
   <SECTION id="sectionActionButtons3"/>
 </structure>
 
 <structure name="structure16java">
   <FIELD id="ProcessID3j">adProcessId</FIELD>
-  <FIELD id="ButtonName3j">columnname</FIELD>
   <FIELD id="ButtonRealName3j">realname</FIELD>
   <FIELD id="FieldsLoadParams3j">processParams</FIELD>
-  <FIELD id="ProcessCode3j">processCode</FIELD>
   <SECTION id="sectionActionButtons3java"/>
 </structure>
 
