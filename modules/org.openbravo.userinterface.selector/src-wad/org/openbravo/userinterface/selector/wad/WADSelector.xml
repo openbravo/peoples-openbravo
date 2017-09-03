@@ -31,7 +31,6 @@
   <PARAMETER id="xx" name="columnName" attribute="id"/>
   <PARAMETER id="xx" name="disabled" boolean="readonly=true" withId="paramChecked"/>
   <PARAMETER id="fieldLink" name="selectorLink" attribute="src" replace="yy"/>
-  <PARAMETER id="selectorLink" name="selectorLinkId" attribute="id" replace="yy"/>
   <PARAMETER id="xxinvalidSpan" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="xxinvalidSpanText" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="xxmissingSpan" name="columnName" attribute="id" replace="xx"/>
