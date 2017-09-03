@@ -1158,14 +1158,6 @@ public class Wad extends DefaultHandler {
           data[i].orgcode = "Utility.getReferenceableOrg(vars, vars.getStringParameter(\"inpadOrgId\"))";
 
           if (data[i].reference.equals("17")) { // List
-            data[i].tablename = "List";
-            data[i].tablenametrl = "List";
-            data[i].htmltext = "select";
-            data[i].htmltexttrl = "selectLanguage";
-            data[i].xmltext = ", \"" + data[i].nameref + "\"";
-            data[i].xmltexttrl = data[i].xmltext + ", vars.getLanguage()";
-            data[i].xmltext += ", \"\"";
-            data[i].xmltexttrl += ", \"\"";
           } else if (data[i].reference.equals("18")) { // Table
             final FieldsData[] tables = FieldsData.selectColumnTableProcess(pool, data[i].id);
             if (tables == null || tables.length == 0)
@@ -1185,37 +1177,16 @@ public class Wad extends DefaultHandler {
 
             where.append(tables[0].whereclause);
 
-            data[i].tablename = "TableList";
-            data[i].htmltext = "select" + tables[0].referencevalue;
             if (!tables[0].columnname.equals("")) {
-              data[i].htmltext += "_" + tables[0].columnname;
-              data[i].tablename = "TableListVal";
               if (!where.toString().equals(""))
                 where.append(" AND ");
               where.append(tables[0].defaultvalue);
             }
-            data[i].tablenametrl = data[i].tablename + "Trl";
-            data[i].htmltexttrl = data[i].htmltext;
-            data[i].xmltext = "";
-            if (vecTableParameters.size() > 0) {
-              data[i].xmltext = ", vars.getLanguage()";
-            }
-            data[i].xmltext += ", Utility.getContext(this, vars, \"#User_Org\", windowId), Utility.getContext(this, vars, \"#User_Client\", windowId)";
-            data[i].xmltext += WadUtility.getWadComboReloadContext(where.toString(), "N");
-            data[i].xmltexttrl = data[i].xmltext;
-            if (vecParameters.size() > 0 && vecTableParameters.size() == 0) {
-              data[i].xmltext += ", vars.getLanguage()";
-              data[i].xmltexttrl += ", vars.getLanguage()";
-            }
-            data[i].xmltext += ", \"\"";
-            data[i].xmltexttrl += ", \"\"";
           } else if (data[i].reference.equals("19")) { // TableDir
             final FieldsData[] tableDir = FieldsData.selectColumnTableDirProcess(pool, data[i].id);
             if (tableDir == null || tableDir.length == 0)
               throw new ServletException("No se ha encontrado la TableDir para la columnId: "
                   + data[i].id);
-            data[i].tablename = "TableDir";
-            data[i].htmltext = "select" + tableDir[0].referencevalue;
             final String table_Name = tableDir[0].name.substring(0, tableDir[0].name.length() - 3);
             final Vector<Object> vecFields1 = new Vector<Object>();
             final Vector<Object> vecTables = new Vector<Object>();
@@ -1228,27 +1199,6 @@ public class Wad extends DefaultHandler {
             control.columnIdentifier(table_Name, data[i], vecCounters, vecFields1, vecTables,
                 vecWhere, vecParameters, vecTableParameters);
 
-            data[i].xmltext = "";
-            if (vecTableParameters.size() > 0) {
-              data[i].xmltext = ", vars.getLanguage()";
-            }
-            data[i].xmltext += ", Utility.getContext(this, vars, \"#User_Org\", windowId), Utility.getContext(this, vars, \"#User_Client\", windowId)";
-            if (!tableDir[0].columnname.equals("")) {
-              data[i].htmltext += "_" + tableDir[0].columnname;
-              data[i].tablename = "TableDirVal";
-              data[i].xmltext += WadUtility.getWadComboReloadContext(tableDir[0].defaultvalue, "N");
-            } else {
-              data[i].tablename = "TableDir";
-            }
-            data[i].tablenametrl = data[i].tablename + "Trl";
-            data[i].htmltexttrl = data[i].htmltext;
-            data[i].xmltexttrl = data[i].xmltext;
-            if (vecParameters.size() > 0 && vecTableParameters.size() == 0) {
-              data[i].xmltext += ", vars.getLanguage()";
-              data[i].xmltexttrl += ", vars.getLanguage()";
-            }
-            data[i].xmltext += ", \"\"";
-            data[i].xmltexttrl += ", \"\"";
           }
           vecTotal.addElement(data[i]);
         }
