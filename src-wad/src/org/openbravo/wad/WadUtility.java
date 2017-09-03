@@ -155,55 +155,6 @@ public class WadUtility {
     return strOut.toString();
   }
 
-  public static String getWadComboReloadContext(String code, String isSOTrx) {
-    if (code == null || code.trim().equals(""))
-      return "";
-    String token;
-    String strValue = code;
-    StringBuffer strOut = new StringBuffer();
-
-    int i = strValue.indexOf("@");
-    String strAux;
-    while (i != -1) {
-      if (strValue.length() > (i + 5) && strValue.substring(i + 1, i + 5).equalsIgnoreCase("SQL=")) {
-        strValue = strValue.substring(i + 5, strValue.length());
-      } else {
-        strValue = strValue.substring(i + 1, strValue.length());
-
-        int j = strValue.indexOf("@");
-        if (j < 0)
-          return "";
-
-        token = strValue.substring(0, j);
-        strAux = getWadComboReloadContextTranslate(token, isSOTrx);
-        if (!strAux.trim().equals("") && strOut.toString().indexOf(strAux) == -1)
-          strOut.append(", " + strAux);
-
-        strValue = strValue.substring(j + 1, strValue.length());
-      }
-      i = strValue.indexOf("@");
-    }
-    return strOut.toString();
-  }
-
-  private static String getWadComboReloadContextTranslate(String token, String isSOTrx) {
-    String result = "";
-    if (token.substring(0, 1).indexOf("#") > -1 || token.substring(0, 1).indexOf("$") > -1) {
-      if (token.equalsIgnoreCase("#DATE"))
-        result = "DateTimeData.today(this)";
-      // else result = "vars.getSessionValue(\"" + token + "\")";
-      else
-        result = "Utility.getContext(this, vars, \"" + token + "\", windowId)";
-    } else {
-      String aux = Sqlc.TransformaNombreColumna(token);
-      if (token.equalsIgnoreCase("ISSOTRX"))
-        result = ("\"" + isSOTrx + "\"");
-      else
-        result = "vars.getStringParameter(\"inp" + aux + "\")";
-    }
-    return result;
-  }
-
   public static String getTextWadContext(String code, Vector<Object> vecFields,
       Vector<Object> vecAuxiliarFields, FieldsData[] parentsFieldsData, boolean isDefaultValue,
       String isSOTrx, String windowId) {

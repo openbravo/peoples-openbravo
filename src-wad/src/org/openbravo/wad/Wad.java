@@ -1128,9 +1128,6 @@ public class Wad extends DefaultHandler {
 
       final Vector<Object> vecReloads = new Vector<Object>();
       final Vector<Object> vecTotal = new Vector<Object>();
-      final Vector<Object> vecCounters = new Vector<Object>();
-      vecCounters.addElement("0");
-      vecCounters.addElement("0");
 
       FieldsData[] result = null;
 
@@ -1163,42 +1160,11 @@ public class Wad extends DefaultHandler {
             if (tables == null || tables.length == 0)
               throw new ServletException("No se ha encontrado la Table para la columnId: "
                   + data[i].id);
-            final StringBuffer where = new StringBuffer();
-            final Vector<Object> vecFields1 = new Vector<Object>();
-            final Vector<Object> vecTables = new Vector<Object>();
-            final Vector<Object> vecWhere = new Vector<Object>();
-            final Vector<Object> vecParameters = new Vector<Object>();
-            final Vector<Object> vecTableParameters = new Vector<Object>();
-
-            WADControl control = WadUtility.getWadControlClass(pool, data[i].reference,
-                data[i].referencevalue);
-            control.columnIdentifier(tables[0].tablename, tables[0], vecCounters, vecFields1,
-                vecTables, vecWhere, vecParameters, vecTableParameters);
-
-            where.append(tables[0].whereclause);
-
-            if (!tables[0].columnname.equals("")) {
-              if (!where.toString().equals(""))
-                where.append(" AND ");
-              where.append(tables[0].defaultvalue);
-            }
           } else if (data[i].reference.equals("19")) { // TableDir
             final FieldsData[] tableDir = FieldsData.selectColumnTableDirProcess(pool, data[i].id);
             if (tableDir == null || tableDir.length == 0)
               throw new ServletException("No se ha encontrado la TableDir para la columnId: "
                   + data[i].id);
-            final String table_Name = tableDir[0].name.substring(0, tableDir[0].name.length() - 3);
-            final Vector<Object> vecFields1 = new Vector<Object>();
-            final Vector<Object> vecTables = new Vector<Object>();
-            final Vector<Object> vecWhere = new Vector<Object>();
-            final Vector<Object> vecParameters = new Vector<Object>();
-            final Vector<Object> vecTableParameters = new Vector<Object>();
-
-            WADControl control = WadUtility.getWadControlClass(pool, data[i].reference,
-                data[i].referencevalue);
-            control.columnIdentifier(table_Name, data[i], vecCounters, vecFields1, vecTables,
-                vecWhere, vecParameters, vecTableParameters);
-
           }
           vecTotal.addElement(data[i]);
         }
