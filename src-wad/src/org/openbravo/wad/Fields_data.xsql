@@ -43,26 +43,6 @@
     <Field name="catchtext" value="void" />
   </SqlMethod>
   
-  <SqlMethod name="tableKeyColumnName" type="preparedStatement" return="multiple">
-      <SqlMethodComment>Name of the column key of the tab</SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT ad_column.ColumnName As Name 
-        FROM ad_table, ad_column 
-        WHERE ad_table.ad_table_id = ad_column.ad_table_id
-          AND UPPER(ad_table.tablename) = UPPER(?) 
-          AND ad_column.isActive = 'Y'
-          and ad_column.iskey='Y'
-        UNION
-        SELECT ad_column.ColumnName As Name 
-        FROM ad_table, ad_column 
-        WHERE ad_table.ad_table_id = ad_column.ad_table_id
-          AND UPPER(ad_table.tablename) = UPPER(?) 
-          AND ad_column.isActive = 'Y'
-          and ad_column.issecondarykey='Y'
-      ]]></Sql>
-      <Parameter name="tablename"/>
-      <Parameter name="tablename"/>
-  </SqlMethod>
   <SqlMethod name="keyColumnName" type="preparedStatement" return="multiple">
       <SqlMethodComment>Name of the column key of the tab</SqlMethodComment>
       <Sql><![CDATA[
@@ -98,21 +78,6 @@
                                  WHERE AD_Table_ID=AD_TABLE.AD_Table_ID 
                                    AND IsIdentifier='Y')
                            END)
-      </Sql>
-      <Parameter name="tableName"/>
-  </SqlMethod>
-  <SqlMethod name="identifierColumns" type="preparedStatement" return="multiple">
-      <SqlMethodComment>identifier columns of a table</SqlMethodComment>
-      <Sql>
-        SELECT ad_column.columnname as name, ad_reference_id as reference, ismandatory as required, 
-        REPLACE(replace(REPLACE(REPLACE(AD_ELEMENT.columnname, 'Substitute_ID', 'M_Product_ID'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM_ID', '_ID'), 'M_LocatorTo_ID', 'M_Locator_ID') as columnname, ad_reference_value_id as referencevalue, 
-        ad_column.istranslated, ad_table.tablename, ad_reference_value_id
-        FROM ad_column left join ad_element on ad_column.ad_element_id = ad_element.ad_element_id, 
-             ad_table 
-        WHERE UPPER(ad_table.tablename) = UPPER(?)
-          AND ad_column.ad_table_id = ad_table.ad_table_id
-          AND isidentifier = 'Y' 
-        order by seqno
       </Sql>
       <Parameter name="tableName"/>
   </SqlMethod>

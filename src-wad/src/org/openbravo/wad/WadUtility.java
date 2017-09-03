@@ -38,7 +38,7 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.wad.controls.WADControl;
 import org.openbravo.xmlEngine.XmlEngine;
 
-public class WadUtility {
+class WadUtility {
   private static final Logger log4j = Logger.getLogger(WadUtility.class);
 
   // small cache to store mapping of <subRef + "-" + parentRef,classname>
@@ -46,18 +46,6 @@ public class WadUtility {
 
   public WadUtility() {
     PropertyConfigurator.configure("log4j.lcf");
-  }
-
-  public static String applyFormat(String text, String reference, String sqlDateFormat) {
-    // used from WADControl column identifier, keep hardcoded for core references
-    if (reference.equals("15"))
-      return "TO_CHAR(" + text + ", '" + sqlDateFormat + "')";
-    else if (reference.equals("24"))
-      return "TO_CHAR(" + text + ", 'HH24:MM:SS')";
-    else if (reference.equals("16"))
-      return "TO_CHAR(" + text + ", '" + sqlDateFormat + " HH24:MM:SS')";
-    else
-      return "TO_CHAR(COALESCE(TO_CHAR(" + text + "), ''))";
   }
 
   public static String getSQLWadContext(String code, Vector<Object> vecParameters) {

@@ -23,12 +23,7 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Vector;
 
-import javax.servlet.ServletException;
-
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.wad.FieldsData;
-import org.openbravo.wad.TableRelationData;
-import org.openbravo.wad.WadUtility;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.xmlEngine.XmlEngine;
 
@@ -345,54 +340,6 @@ public class WADControl {
    */
   public boolean isNumericType() {
     return false;
-  }
-
-  /**
-   * Generates SQL identifier
-   */
-  public String columnIdentifier(String tableName, FieldsData field, Vector<Object> vecCounters,
-      Vector<Object> vecFields, Vector<Object> vecTable, Vector<Object> vecWhere,
-      Vector<Object> vecParameters, Vector<Object> vecTableParameters) throws ServletException {
-    if (field == null)
-      return "";
-    StringBuffer texto = new StringBuffer();
-    int itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
-    if ("Y".equals(field.istranslated)
-        && TableRelationData.existsTableColumn(conn, field.tablename + "_TRL", field.name)) {
-      FieldsData fdi[] = FieldsData.tableKeyColumnName(conn, field.tablename);
-      if (fdi == null || fdi.length == 0) {
-        vecFields.addElement(WadUtility.applyFormat(
-            ((tableName != null && tableName.length() != 0) ? (tableName + ".") : "") + field.name,
-            field.reference, sqlDateFormat));
-        texto.append(WadUtility.applyFormat(
-            ((tableName != null && tableName.length() != 0) ? (tableName + ".") : "") + field.name,
-            field.reference, sqlDateFormat));
-      } else {
-        vecTable.addElement("left join (select " + fdi[0].name + ",AD_Language"
-            + (!fdi[0].name.equalsIgnoreCase(field.name) ? (", " + field.name) : "") + " from "
-            + field.tablename + "_TRL) tableTRL" + itable + " on (" + tableName + "." + fdi[0].name
-            + " = tableTRL" + itable + "." + fdi[0].name + " and tableTRL" + itable
-            + ".AD_Language = ?) ");
-        vecTableParameters.addElement("<Parameter name=\"paramLanguage\"/>");
-        vecFields.addElement(WadUtility.applyFormat("(CASE WHEN tableTRL" + itable + "."
-            + field.name + " IS NULL THEN TO_CHAR(" + tableName + "." + field.name
-            + ") ELSE TO_CHAR(tableTRL" + itable + "." + field.name + ") END)", field.reference,
-            sqlDateFormat));
-        texto.append(WadUtility.applyFormat("(CASE WHEN tableTRL" + itable + "." + field.name
-            + " IS NULL THEN TO_CHAR(" + tableName + "." + field.name + ") ELSE TO_CHAR(tableTRL"
-            + itable + "." + field.name + ") END)", field.reference, sqlDateFormat));
-        vecCounters.set(0, Integer.toString(++itable));
-      }
-    } else {
-      vecFields.addElement(WadUtility.applyFormat(
-          ((tableName != null && tableName.length() != 0) ? (tableName + ".") : "") + field.name,
-          field.reference, sqlDateFormat));
-      texto.append(WadUtility.applyFormat(
-          ((tableName != null && tableName.length() != 0) ? (tableName + ".") : "") + field.name,
-          field.reference, sqlDateFormat));
-    }
-
-    return texto.toString();
   }
 
   public static void setDateFormat(String dateFormat) {

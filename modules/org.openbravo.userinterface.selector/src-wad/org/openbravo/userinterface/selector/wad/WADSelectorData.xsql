@@ -32,14 +32,4 @@
     <Field name="tablename" value="void" />
   </SqlMethod>
   
-  <SqlMethod name="getTableName" type="preparedStatement" return="single">
-    <SqlMethodComment>Returns the table name for a specific selector reference</SqlMethodComment>
-    <Sql>
-      SELECT T.TABLENAME
-      FROM  OBUISEL_SELECTOR S, AD_TABLE T
-      WHERE S.AD_REFERENCE_ID=? AND S.AD_TABLE_ID = T.AD_TABLE_ID
-    </Sql>
-    <Parameter name="referenceId"/>
-  </SqlMethod>
-
 </SqlClass>

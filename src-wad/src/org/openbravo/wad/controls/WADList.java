@@ -19,11 +19,7 @@
 package org.openbravo.wad.controls;
 
 import java.util.Properties;
-import java.util.Vector;
 
-import javax.servlet.ServletException;
-
-import org.openbravo.wad.FieldsData;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADList extends WADControl {
@@ -178,35 +174,6 @@ public class WADList extends WADControl {
       text.append("</SUBREPORT>");
     }
     return text.toString();
-  }
-
-  public String columnIdentifier(String tableName, FieldsData fields, Vector<Object> vecCounters,
-      Vector<Object> vecFields, Vector<Object> vecTable, Vector<Object> vecWhere,
-      Vector<Object> vecParameters, Vector<Object> vecTableParameters) throws ServletException {
-    if (fields == null)
-      return "";
-    StringBuffer texto = new StringBuffer();
-    int ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
-    int itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
-
-    ilist++;
-    if (tableName != null && tableName.length() != 0) {
-      vecTable.addElement("left join ad_ref_list_v list" + ilist + " on (" + tableName + "."
-          + fields.name + " = list" + ilist + ".value and list" + ilist + ".ad_reference_id = '"
-          + fields.referencevalue + "' and list" + ilist + ".ad_language = ?) ");
-      vecTableParameters.addElement("<Parameter name=\"paramLanguage\"/>");
-    } else {
-      vecTable.addElement("ad_ref_list_v list" + ilist);
-      vecWhere.addElement(fields.referencevalue + " = " + "list" + ilist + ".ad_reference_id ");
-      vecWhere.addElement("list" + ilist + ".ad_language = ? ");
-      vecParameters.addElement("<Parameter name=\"paramLanguage\"/>");
-    }
-    texto.append("list").append(ilist).append(".name");
-    vecFields.addElement(texto.toString());
-    vecCounters.set(0, Integer.toString(itable));
-    vecCounters.set(1, Integer.toString(ilist));
-
-    return texto.toString();
   }
 
 }

@@ -19,11 +19,6 @@
 package org.openbravo.wad.controls;
 
 import java.util.Properties;
-import java.util.Vector;
-
-import javax.servlet.ServletException;
-
-import org.openbravo.wad.FieldsData;
 
 public class WADTableDir extends WADList {
 
@@ -32,16 +27,6 @@ public class WADTableDir extends WADList {
 
   public WADTableDir(Properties prop) {
     super(prop);
-  }
-
-  @Override
-  public String columnIdentifier(String tableName, FieldsData fields, Vector<Object> vecCounters,
-      Vector<Object> vecFields, Vector<Object> vecTable, Vector<Object> vecWhere,
-      Vector<Object> vecParameters, Vector<Object> vecTableParameters) throws ServletException {
-
-    // XXX: Not implemented. See issue #30505
-    vecFields.addElement("'xxxx'");
-    return "'xxxx'";
   }
 
 }
