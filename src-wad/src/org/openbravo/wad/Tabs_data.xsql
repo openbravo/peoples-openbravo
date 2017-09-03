@@ -321,33 +321,6 @@
       <Parameter name="parentId"/>
   </SqlMethod>
 
-
-  <SqlMethod name="processName" type="preparedStatement" return="string" default="">
-    <SqlMethodComment>Subtabs of the tab of the parameter</SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT coalesce(mom.mappingname, TO_CHAR(ad_process.value) || '.pdf') as name FROM ad_process 
-                              left join ad_model_object mo on ad_process.ad_process_id = mo.ad_process_id 
-                                    and mo.action IN ('P', 'R')
-                                    and mo.isactive = 'Y'
-                                    and mo.isdefault = 'Y'
-                              left join ad_model_object_mapping mom on mo.ad_model_object_id = mom.ad_model_object_id 
-                                    and mom.isactive = 'Y' 
-                                    and mom.isdefault = 'Y'
-        WHERE ad_process.ad_process_id = ?
-        ]]>
-      </Sql>
-      <Parameter name="adProcessId"/>
-  </SqlMethod>
-  <SqlMethod name="directPrint" type="preparedStatement" return="string" default="N">
-    <SqlMethodComment>Subtabs of the tab of the parameter</SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT isdirectprint as name FROM ad_process 
-        WHERE ad_process_id = ?
-        ]]>
-      </Sql>
-      <Parameter name="adProcessId"/>
-  </SqlMethod>
-  
   <SqlMethod name="isTabActive" type="preparedStatement" return="boolean">
       <Sql><![CDATA[
         SELECT COUNT(*) as ad_tab_id
