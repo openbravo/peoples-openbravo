@@ -51,8 +51,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Fernando Iriazabal
  */
 public class Wad extends DefaultHandler {
-  private static final int INCR_TABS = 8;
-  private static final int HEIGHT_TABS = 38;
   private static final int MAX_SIZE_EDITION_1_COLUMNS = 90;
   private static final int MAX_TEXTBOX_LENGTH = 110;
   private static final String WELD_LISTENER_ID = "3F88D97C7E9E4DD9847A5488771F4AB3";
@@ -849,8 +847,7 @@ public class Wad extends DefaultHandler {
       final String windowName = FormatUtilities.replace(tabsData.windowname);
       final String tableName = FieldsData.tableName(pool, tabsData.tabid);
       final String isSOTrx = FieldsData.isSOTrx(pool, tabsData.tabid);
-      final TabsData[] allTabs = getPrimaryTabs(tabsData.key, tabsData.tabid,
-          Integer.valueOf(tabsData.tablevel).intValue(), HEIGHT_TABS, INCR_TABS);
+      final TabsData[] allTabs = TabsData.selectTabParent(pool, tabsData.key);
 
       /************************************************
        * The 2 tab lines generation
@@ -1202,64 +1199,6 @@ public class Wad extends DefaultHandler {
    * ##################################################################
    * #####################################################
    */
-  /**
-   * Returns the subtabs for a given parent tab id. Also marks as selected one of them.
-   * 
-   * @param vec
-   *          Vector with the subtabs.
-   * @param strTabParent
-   *          Id of the parent tab.
-   * @param strTabSelected
-   *          Id of the selected tab.
-   * @throws IOException
-   * @throws ServletException
-   */
-  private void getSubTabs(Vector<Object> vec, String strTabParent, String strTabSelected)
-      throws IOException, ServletException {
-    TabsData[] aux = null;
-    aux = TabsData.selectSubtabs(pool, strTabParent);
-    if (aux == null || aux.length <= 0)
-      return;
-    for (int i = 0; i < aux.length; i++) {
-      vec.addElement(aux[i]);
-      getSubTabs(vec, aux[i].tabid, strTabSelected);
-    }
-  }
-
-  /**
-   * Returns the primary tabs of a given window.
-   * 
-   * @param strWindowId
-   *          Id of the window.
-   * @param strTabSelected
-   *          The selected tab.
-   * @param level
-   *          The level of the tab to return.
-   * @param heightTabs
-   *          The default height for the tabs.
-   * @param incrTabs
-   *          The increment over the height.
-   * @return Array with the primary tabs.
-   * @throws IOException
-   * @throws ServletException
-   */
-  private TabsData[] getPrimaryTabs(String strWindowId, String strTabSelected, int level,
-      int heightTabs, int incrTabs) throws IOException, ServletException {
-    TabsData[] aux = null;
-    TabsData[] aux1 = null;
-    final Vector<Object> vec = new Vector<Object>();
-    aux1 = TabsData.selectTabParent(pool, strWindowId);
-    if (aux1 == null || aux1.length == 0)
-      return null;
-    for (int i = 0; i < aux1.length; i++) {
-      vec.addElement(aux1[i]);
-      getSubTabs(vec, aux1[i].tabid, strTabSelected);
-    }
-    aux = new TabsData[vec.size()];
-    vec.copyInto(aux);
-
-    return aux;
-  }
 
   /**
    * Method to prepare the XmlEngine object, which is the one in charged of the templates.
