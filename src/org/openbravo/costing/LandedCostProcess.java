@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -183,6 +183,7 @@ public class LandedCostProcess {
     criteria.add(Restrictions.eq(LandedCostCost.PROPERTY_LANDEDCOST, landedCost));
     criteria.addOrderBy(LandedCostCost.PROPERTY_LINENO, true);
     for (LandedCostCost lcCost : criteria.list()) {
+      lcCost = OBDal.getInstance().get(LandedCostCost.class, lcCost.getId());
       log.debug("Start Distributing lcCost {}", lcCost.getIdentifier());
       // Load distribution algorithm
       LandedCostDistributionAlgorithm lcDistAlg = getDistributionAlgorithm(lcCost
