@@ -1040,6 +1040,7 @@
       this.set('paidOnCredit', _order.get('paidOnCredit'));
       this.set('isLayaway', _order.get('isLayaway'));
       this.set('isPartiallyDelivered', _order.get('isPartiallyDelivered'));
+      this.set('isModified', _order.get('isModified'));
       if (!_order.get('isEditable')) {
         // keeping it no editable as much as possible, to prevent
         // modifications to trigger editable events incorrectly
@@ -4482,7 +4483,7 @@
       }
       return false;
     },
-    
+
     turnEditable: function () {
       if (this.get('payment') > 0 || this.get('isPartiallyDelivered') || this.get('isFullyDelivered')) {
         return;
@@ -4494,7 +4495,7 @@
         this.set('isLayaway', false);
         this.set('orderType', 2);
       }
-      this.set('skipApplyPromotions', undefined);
+      this.unset('skipApplyPromotions');
     }
   });
 
@@ -4651,6 +4652,7 @@
       order.set('isbeingprocessed', 'N');
       order.set('hasbeenpaid', 'N');
       order.set('isEditable', false);
+      order.set('isModified', false);
       order.set('checked', model.checked); //TODO: what is this for, where it comes from?
       order.set('orderDate', OB.I18N.normalizeDate(model.orderDate));
       order.set('creationDate', OB.I18N.normalizeDate(model.creationDate));

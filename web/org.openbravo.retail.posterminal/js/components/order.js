@@ -709,9 +709,10 @@ enyo.kind({
         this.$.paymentBreakdown.hide();
       }
     }, this);
+
     // Change Document No based on return lines
     this.order.get('lines').on('add change:qty change:relatedLines updateRelations', function () {
-      if (this.order.get('isEditable') && !this.order.get('isLayaway') && !this.order.get('isQuotation') && !this.order.get('doCancelAndReplace')) {
+      if (this.order.get('isEditable') && !this.order.get('isModified') && !this.order.get('isLayaway') && !this.order.get('isQuotation') && !this.order.get('doCancelAndReplace')) {
         var negativeLinesLength = _.filter(this.order.get('lines').models, function (line) {
           return line.get('qty') < 0;
         }).length;
@@ -724,6 +725,7 @@ enyo.kind({
         }
       }
     }, this);
+
     this.order.get('lines').on('add change:qty change:relatedLines updateRelations', function () {
       var approvalNeeded = false,
           linesToRemove = [],
