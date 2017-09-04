@@ -1671,12 +1671,13 @@ public class CreateFrom extends HttpSecureAppServlet {
               }
             }
 
-            final int curPrecision;
-            if (strType.equals("SHIPMENT")) {
-              curPrecision = Integer.valueOf(dataAux[0].priceprecision).intValue();
+            final int pricePrecision;
+            if (StringUtils.equals(strType, "SHIPMENT")) {
+              pricePrecision = Integer.valueOf(dataAux[0].priceprecision).intValue();
             } else {
-              curPrecision = Integer.valueOf(data[i].priceprecision).intValue();
+              pricePrecision = Integer.valueOf(data[i].priceprecision).intValue();
             }
+
             if (!data[i].cOrderlineId.equals("")) {
               price = CreateFromInvoiceData.selectPrices(conn, this, data[i].cOrderlineId);
               if (price != null && price.length > 0) {
@@ -1714,20 +1715,23 @@ public class CreateFrom extends HttpSecureAppServlet {
               }
               price = null;
             }
-            BigDecimal lineNetAmt = (new BigDecimal(priceActual)).multiply(qty);
-            lineNetAmt = lineNetAmt.setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
+            final int stdPrecision = StringUtils.isNotEmpty(data[i].currencystdprecision) ? Integer
+                .valueOf(data[i].currencystdprecision).intValue() : 2;
+            BigDecimal lineNetAmt = (new BigDecimal(priceActual).setScale(pricePrecision,
+                BigDecimal.ROUND_HALF_UP)).multiply(qty);
+            lineNetAmt = lineNetAmt.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
             BigDecimal grossAmt = BigDecimal.ZERO;
-            if ("Y".equals(strIsTaxIncluded)) {
+            if (StringUtils.equals(strIsTaxIncluded, "Y")) {
               grossAmt = new BigDecimal(priceGross).multiply(qty);
-              grossAmt = grossAmt.setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
+              grossAmt = grossAmt.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
             }
-            if (!strPO.equals("")) {
+            if (StringUtils.isNotEmpty(strPO)) {
               String strInvoiceprepaymentamt = CreateFromInvoiceData.selectInvoicePrepaymentAmt(
                   this, strKey);
-              BigDecimal invoiceprepaymentamt = (strInvoiceprepaymentamt.equals("") ? BigDecimal.ZERO
+              BigDecimal invoiceprepaymentamt = (StringUtils.isEmpty(strInvoiceprepaymentamt) ? BigDecimal.ZERO
                   : new BigDecimal(strInvoiceprepaymentamt));
               String strprepaymentamt = CreateFromInvoiceData.selectPrepaymentAmt(this, strPO);
-              BigDecimal prepaymentamt = (strprepaymentamt.equals("") ? BigDecimal.ZERO
+              BigDecimal prepaymentamt = (StringUtils.isEmpty(strprepaymentamt) ? BigDecimal.ZERO
                   : new BigDecimal(strprepaymentamt));
 
               BigDecimal totalprepayment = invoiceprepaymentamt.add(prepaymentamt);
@@ -1735,10 +1739,10 @@ public class CreateFrom extends HttpSecureAppServlet {
                   strKey);
             }
             String strTaxRate = CreateFromInvoiceData.selectTaxRate(this, C_Tax_ID);
-            BigDecimal taxRate = (strTaxRate.equals("") ? new BigDecimal(1) : new BigDecimal(
-                strTaxRate));
+            BigDecimal taxRate = (StringUtils.isEmpty(strTaxRate) ? BigDecimal.ONE
+                : new BigDecimal(strTaxRate));
             BigDecimal taxAmt = ((lineNetAmt.multiply(taxRate)).divide(new BigDecimal("100"), 12,
-                BigDecimal.ROUND_HALF_EVEN)).setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
+                BigDecimal.ROUND_HALF_EVEN)).setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
             try {
               // Calculate Acc and Def Plan from Product
               String isDeferred = "N";
@@ -1765,7 +1769,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                     BigDecimal qtyOrdered = ol.getOrderedQuantity();
                     taxBaseAmt = ol.getTaxableAmount();
                     if (qtyOrdered.compareTo(ZERO) != 0) {
-                      taxBaseAmt = (taxBaseAmt.multiply(qty)).divide(qtyOrdered, curPrecision,
+                      taxBaseAmt = (taxBaseAmt.multiply(qty)).divide(qtyOrdered, stdPrecision,
                           BigDecimal.ROUND_HALF_UP);
                     }
                   }
