@@ -148,6 +148,9 @@ public class AttachImplementationManager {
         } else {
           attachMethod = AttachmentUtils.getDefaultAttachmentMethod();
         }
+        // The information of the existing attachment may have not changed. Force the update of the
+        // 'updated' field, the rest of the audit information will be updated automatically.
+        attachment.setUpdated(new Date());
       }
       attachment.setOrganization(org);
       String strDataType = null;
