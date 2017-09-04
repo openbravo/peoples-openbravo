@@ -392,6 +392,7 @@ BEGIN
                 SELECT COALESCE(COUNT(*),0) INTO v_Count
                 FROM c_orderline
                 WHERE qtyordered <> (qtyinvoiced*v_MultiplierARC)
+                  AND linenetamt <> 0
                   AND c_order_id = order_schdet.order_id;
               ELSE
                 SELECT count(*) INTO v_count
