@@ -709,6 +709,8 @@ public class CostingRuleProcess implements Process {
     where.append(MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + "."
         + InventoryCountLine.PROPERTY_PHYSINVENTORY + "." + InventoryCount.PROPERTY_ID
         + " = :inventory");
+    where.append(" order by " + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " desc");
+    where.append(" , " + MaterialTransaction.PROPERTY_ID);
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());
     trxQry.setNamedParameter("inventory", inventory.getId());
