@@ -34,7 +34,7 @@
        WHERE  CI.C_INVOICE_ID=? AND CO.C_ORDERLINE_ID = l.c_orderline_id
        GROUP BY CI.C_orderline_id , CO.QtyORDERED),0) AS QTY, 
        l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,Ad_Column_Identifier(to_char('M_Product'), to_char(l.m_product_id), to_char(?)) AS RELATION_NAME, 
-        l.C_OrderLine_ID,l.Line, l.ad_org_id, '' as STDPRECISION, 
+        l.C_OrderLine_ID,l.Line, l.ad_org_id, '' as STDPRECISION, '' AS currencyStdPrecision,
         '' as M_InOutLine_ID, '' AS PriceActual, '' AS PriceList, '' AS PriceLimit, '' AS Description, '' as PriceStd,
         '' AS QUANTITYORDER, l.M_Product_UOM_ID, '' AS M_ATTRIBUTESETINSTANCE_ID, '' AS M_Offer_ID, '' AS PricePrecision,
         l.taxbaseamt, l.CancelPriceAD, '' AS Rate, '' AS gross_unit_price, '' AS grosspricelist, '' AS grosspricestd,
@@ -276,7 +276,7 @@
       <![CDATA[
       SELECT (CASE WHEN B.M_InOutLine_ID IS NULL THEN A.QTY ELSE B.QTY END) AS ID, 
       A.C_UOM_ID,uom.UOMSymbol, A.M_Product_ID,Ad_Column_Identifier(to_char('M_Product'), to_char(A.m_product_id), to_char(?)) AS NAME, 
-      A.C_OrderLine_ID,A.Line, uom.stdprecision AS stdprecision, cur.priceprecision, 
+      A.C_OrderLine_ID,A.Line, uom.stdprecision AS stdprecision, cur.priceprecision, cur.stdprecision as currencyStdPrecision,
       B.M_InOutLine_ID, A.Description, (CASE WHEN B.M_InOutLine_ID IS NULL THEN A.quantityOrder ELSE B.quantityOrder END) AS quantityOrder, 
       (CASE WHEN B.M_InOutLine_ID IS NULL THEN A.M_Product_UOM_ID ELSE B.M_Product_UOM_ID END) AS M_Product_UOM_ID, A.M_ATTRIBUTESETINSTANCE_ID, A.ad_org_id,
       A.taxbaseamt, A.a_asset_id, A.c_project_id, A.c_costcenter_id, A.user1_id, A.user2_id, A.explode, 'Y' as isOrder,
@@ -326,7 +326,7 @@
       <![CDATA[
         SELECT (CASE WHEN il.M_INOUTLINE_ID IS NULL THEN (l.QtyOrdered-COALESCE(l.QTYINVOICED ,0)) ELSE il.MOVEMENTQTY END) AS ID, 
         l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,Ad_Column_Identifier(to_char('M_Product'), to_char(l.m_product_id), to_char(?)) AS NAME, 
-        l.C_OrderLine_ID,l.Line, max(uom.stdprecision) AS stdprecision, cur.priceprecision, il.M_InOutLine_ID as M_InOutLine_ID, l.Description,
+        l.C_OrderLine_ID,l.Line, max(uom.stdprecision) AS stdprecision, cur.priceprecision, cur.stdprecision as currencyStdPrecision, il.M_InOutLine_ID as M_InOutLine_ID, l.Description,
         (CASE WHEN il.M_INOUTLINE_ID IS NULL THEN l.quantityOrder*C_DIVIDE((l.QtyOrdered-COALESCE(l.QTYINVOICED ,0)),(l.QtyOrdered)) ELSE il.quantityOrder END) AS quantityOrder, 
         (CASE WHEN il.M_INOUTLINE_ID IS NULL THEN l.M_Product_UOM_ID ELSE il.M_Product_UOM_ID END) AS M_Product_UOM_ID, il.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id,
         l.taxbaseamt, COALESCE(l.A_Asset_ID, o.A_Asset_ID) as A_Asset_ID, COALESCE(l.C_Project_ID, o.C_Project_ID) as C_Project_ID,
@@ -342,7 +342,7 @@
         AND l.M_Product_ID=p.M_Product_ID 
         GROUP BY l.QtyOrdered,l.qtydelivered,l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, 
         l.QTYINVOICED, il.M_InOutLine_ID, il.MovementQty, l.Description, l.quantityOrder, il.quantityOrder, 
-        l.M_Product_UOM_ID, il.M_Product_UOM_ID, il.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, cur.priceprecision,
+        l.M_Product_UOM_ID, il.M_Product_UOM_ID, il.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, cur.priceprecision, cur.stdprecision,
         l.taxbaseamt, COALESCE(l.A_Asset_ID, o.A_Asset_ID), COALESCE(l.C_Project_ID, o.C_Project_ID), COALESCE(l.C_Costcenter_ID, o.C_Costcenter_ID),
         COALESCE(l.User1_ID, o.User1_ID), COALESCE(l.User2_ID, o.User2_ID), l.explode, o.C_DOCTYPE_ID, l.C_AUM, l.AUMQTY
         HAVING ( (l.explode='Y') OR ((l.QtyOrdered-COALESCE(l.QTYINVOICED ,0)) <> 0)) 
