@@ -206,7 +206,7 @@
                             ) LOOP
                v_Message_product:=v_Message_product||Cur_Lines.line||', ';
           END LOOP;
-          if v_Message_product != '' then
+          if length(v_Message_product) > 0 then
              RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_Message_product||' '||'@ProductNullAndMovementQtyGreaterZero@') ;
           end if ;
 	     End ;
@@ -224,7 +224,7 @@
                             ) LOOP
           v_Message_Qty:=v_Message_Qty||Cur_Lines.line||', ';
           END LOOP;
-          IF v_Message_Qty != '' THEN
+          IF length(v_Message_Qty) > 0 THEN
              RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_Message_Qty||' '||'@ProductNotNullAndMovementQtyZero@') ;
           END IF;
 	     End ;
@@ -244,7 +244,7 @@
                             ) LOOP
           v_Message_NotAvail:=v_Message_NotAvail||Cur_Lines.line||', ';
           END LOOP;
-          IF v_Message_NotAvail != '' THEN
+          IF length(v_Message_NotAvail) > 0 THEN
              RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_Message_NotAvail||' '||'@LocatorWithNotAvailableStatus@') ;
           END IF;
 	     End ;
@@ -262,7 +262,7 @@
         LOOP
           v_Message_Inactive_Products:=v_Message_Inactive_Products||Cur_Lines.line||', ';
         END LOOP;
-        IF v_Message_Inactive_Products != '' THEN
+        IF length(v_Message_Inactive_Products) > 0 THEN
           RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_Message_Inactive_Products||' '||'@InActiveProducts@') ;
         END IF;
       END;

@@ -590,12 +590,12 @@ BEGIN --BODY
             LOOP
               v_Message_ProductLine:=v_Message_ProductLine||CUR_PL_Post.line||', ';
             END LOOP;
-            IF(v_Message_ProductLine != '') THEN
+            IF(length(v_Message_ProductLine) > 0) THEN
               v_Message_ProductionRun:=v_Message_ProductionRun||'@ProductionRunLine@'||Cur_ProductionPlan.line||' @ProductLine@'||v_Message_ProductLine;
               v_Message_ProductLine:='';
             END IF;
           END LOOP;
-          IF v_Message_ProductionRun != '' THEN
+          IF length(v_Message_ProductionRun) > 0 THEN
             RAISE_APPLICATION_ERROR(-20000, v_Message_ProductionRun||'@InActiveProducts@');
           END IF;
         END;
