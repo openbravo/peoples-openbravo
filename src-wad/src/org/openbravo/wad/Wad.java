@@ -1141,8 +1141,7 @@ public class Wad extends DefaultHandler {
 
           param.orgcode = "Utility.getReferenceableOrg(vars, vars.getStringParameter(\"inpadOrgId\"))";
 
-          if (param.reference.equals("17")) { // List
-          } else if (param.reference.equals("18")) { // Table
+          if (param.reference.equals("18")) { // Table
             final FieldsData[] tables = FieldsData.selectColumnTableProcess(pool, param.id);
             if (tables == null || tables.length == 0) {
               throw new ServletException("Not found Table reference for parameter with id: "
