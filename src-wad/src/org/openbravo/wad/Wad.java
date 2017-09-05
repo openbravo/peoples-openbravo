@@ -1119,44 +1119,43 @@ public class Wad extends DefaultHandler {
 
       FieldsData[] result = null;
 
-      for (int i = 0; i < data.length; i++) {
-
-        final String code = data[i].whereclause
-            + ((!data[i].whereclause.equals("") && !data[i].referencevalue.equals("")) ? " AND "
-                : "") + data[i].referencevalue;
-        data[i].columnname = "inp" + Sqlc.TransformaNombreColumna(data[i].columnname);
-        data[i].whereclause = WadUtility.getComboReloadText(code, null, null, vecReloads, "inp");
-        if (data[i].whereclause.equals("") && data[i].type.equals("R")) {
+      for (FieldsData param : data) {
+        final String code = param.whereclause
+            + ((!param.whereclause.equals("") && !param.referencevalue.equals("")) ? " AND " : "")
+            + param.referencevalue;
+        param.columnname = "inp" + Sqlc.TransformaNombreColumna(param.columnname);
+        param.whereclause = WadUtility.getComboReloadText(code, null, null, vecReloads, "inp");
+        if (param.whereclause.equals("") && param.type.equals("R")) {
           // Add combo reloads for all combo references in case there is a ad_org parameter, if not
           // only for the params with validation rule
           if (!hasOrg) {
             continue;
           }
-          data[i].whereclause = "\"inpadOrgId\"";
+          param.whereclause = "\"inpadOrgId\"";
         }
-        if (data[i].reference.equals("17") && data[i].whereclause.equals(""))
-          data[i].whereclause = "\"inp" + data[i].columnname + "\"";
-        if (!data[i].whereclause.equals("")
-            && (data[i].reference.equals("17") || data[i].reference.equals("18") || data[i].reference
+        if (param.reference.equals("17") && param.whereclause.equals(""))
+          param.whereclause = "\"inp" + param.columnname + "\"";
+        if (!param.whereclause.equals("")
+            && (param.reference.equals("17") || param.reference.equals("18") || param.reference
                 .equals("19"))) {
 
-          data[i].orgcode = "Utility.getReferenceableOrg(vars, vars.getStringParameter(\"inpadOrgId\"))";
+          param.orgcode = "Utility.getReferenceableOrg(vars, vars.getStringParameter(\"inpadOrgId\"))";
 
-          if (data[i].reference.equals("17")) { // List
-          } else if (data[i].reference.equals("18")) { // Table
-            final FieldsData[] tables = FieldsData.selectColumnTableProcess(pool, data[i].id);
+          if (param.reference.equals("17")) { // List
+          } else if (param.reference.equals("18")) { // Table
+            final FieldsData[] tables = FieldsData.selectColumnTableProcess(pool, param.id);
             if (tables == null || tables.length == 0) {
-              throw new ServletException("Not found Table reference for column with id: "
-                  + data[i].id);
+              throw new ServletException("Not found Table reference for parameter with id: "
+                  + param.id);
             }
-          } else if (data[i].reference.equals("19")) { // TableDir
-            final FieldsData[] tableDir = FieldsData.selectColumnTableDirProcess(pool, data[i].id);
+          } else if (param.reference.equals("19")) { // TableDir
+            final FieldsData[] tableDir = FieldsData.selectColumnTableDirProcess(pool, param.id);
             if (tableDir == null || tableDir.length == 0) {
-              throw new ServletException("Not found TableDir reference for column with id "
-                  + data[i].id);
+              throw new ServletException("Not found TableDir reference for parameter with id "
+                  + param.id);
             }
           }
-          vecTotal.addElement(data[i]);
+          vecTotal.addElement(param);
         }
       }
       if (vecTotal != null && vecTotal.size() > 0) {
