@@ -1145,14 +1145,16 @@ public class Wad extends DefaultHandler {
           if (data[i].reference.equals("17")) { // List
           } else if (data[i].reference.equals("18")) { // Table
             final FieldsData[] tables = FieldsData.selectColumnTableProcess(pool, data[i].id);
-            if (tables == null || tables.length == 0)
-              throw new ServletException("No se ha encontrado la Table para la columnId: "
+            if (tables == null || tables.length == 0) {
+              throw new ServletException("Not found Table reference for column with id: "
                   + data[i].id);
+            }
           } else if (data[i].reference.equals("19")) { // TableDir
             final FieldsData[] tableDir = FieldsData.selectColumnTableDirProcess(pool, data[i].id);
-            if (tableDir == null || tableDir.length == 0)
-              throw new ServletException("No se ha encontrado la TableDir para la columnId: "
+            if (tableDir == null || tableDir.length == 0) {
+              throw new ServletException("Not found TableDir reference for column with id "
                   + data[i].id);
+            }
           }
           vecTotal.addElement(data[i]);
         }
