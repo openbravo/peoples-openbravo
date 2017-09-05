@@ -1671,13 +1671,6 @@ public class CreateFrom extends HttpSecureAppServlet {
               }
             }
 
-            final int pricePrecision;
-            if (StringUtils.equals(strType, "SHIPMENT")) {
-              pricePrecision = Integer.valueOf(dataAux[0].priceprecision).intValue();
-            } else {
-              pricePrecision = Integer.valueOf(data[i].priceprecision).intValue();
-            }
-
             if (!data[i].cOrderlineId.equals("")) {
               price = CreateFromInvoiceData.selectPrices(conn, this, data[i].cOrderlineId);
               if (price != null && price.length > 0) {
@@ -1715,11 +1708,12 @@ public class CreateFrom extends HttpSecureAppServlet {
               }
               price = null;
             }
-            final int stdPrecision = StringUtils.isNotEmpty(data[i].currencystdprecision) ? Integer
-                .valueOf(data[i].currencystdprecision).intValue() : 2;
-            BigDecimal lineNetAmt = (new BigDecimal(priceActual).setScale(pricePrecision,
-                BigDecimal.ROUND_HALF_UP)).multiply(qty);
-            lineNetAmt = lineNetAmt.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+
+            final int stdPrecision = Integer.valueOf(
+                StringUtils.equals(strType, "SHIPMENT") ? dataAux[0].curstdprecision
+                    : data[i].curstdprecision).intValue();
+            BigDecimal lineNetAmt = new BigDecimal(priceActual).multiply(qty).setScale(
+                stdPrecision, BigDecimal.ROUND_HALF_UP);
             BigDecimal grossAmt = BigDecimal.ZERO;
             if (StringUtils.equals(strIsTaxIncluded, "Y")) {
               grossAmt = new BigDecimal(priceGross).multiply(qty);
