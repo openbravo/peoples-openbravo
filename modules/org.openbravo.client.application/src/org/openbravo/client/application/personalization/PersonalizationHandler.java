@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,6 @@ import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -48,6 +47,8 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.enterprise.Organization;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles personalization settings, stores them and retrieves them, taking into account priority
@@ -55,7 +56,7 @@ import org.openbravo.model.common.enterprise.Organization;
  */
 @RequestScoped
 public class PersonalizationHandler {
-  private static final Logger log = Logger.getLogger(PersonalizationHandler.class);
+  private static final Logger log = LoggerFactory.getLogger(PersonalizationHandler.class);
 
   /**
    * Returns all the personalization settings in an object keyed by tabid. The current client, org,
@@ -193,13 +194,13 @@ public class PersonalizationHandler {
         result.put("clients", clientObject);
       }
 
-      final Map<String, String> orgs = new HashMap<String, String>();
+      final Map<String, String> orgs = new HashMap<>();
       for (RoleOrganization currentRoleOrg : adminOrgs) {
         orgs.put(currentRoleOrg.getOrganization().getId(), currentRoleOrg.getOrganization()
             .getName());
       }
 
-      final Map<String, String> roles = new HashMap<String, String>();
+      final Map<String, String> roles = new HashMap<>();
       for (UserRoles currentUserRole : adminRoles) {
         roles.put(currentUserRole.getRole().getId(), currentUserRole.getRole().getName());
       }
@@ -337,7 +338,6 @@ public class PersonalizationHandler {
       }
       return selectedUIPersonalization;
     } catch (Exception e) {
-      // TODO: add param values to message
       throw new OBException(e);
     } finally {
       OBContext.restorePreviousMode();
@@ -475,7 +475,7 @@ public class PersonalizationHandler {
       OBDal.getInstance().save(uiPersonalization);
       return uiPersonalization;
     } catch (Exception e) {
-      // TODO: add param values to message
+      log.error("Error when storing personalization settings for tab with ID = {}", tabId);
       throw new OBException(e);
     } finally {
       OBContext.restorePreviousMode();
@@ -485,7 +485,7 @@ public class PersonalizationHandler {
   private static List<UIPersonalization> getPersonalizations(String clientId, String orgId,
       String userId, String roleId, String tabId, String windowId, boolean exactMatch) {
 
-    List<Object> parameters = new ArrayList<Object>();
+    List<Object> parameters = new ArrayList<>();
     StringBuilder hql = new StringBuilder();
     hql.append(" as p ");
     hql.append(" where ");
@@ -565,9 +565,8 @@ public class PersonalizationHandler {
       // Remove from list organization that are not visible
       final Organization org = OBDal.getInstance().get(Organization.class, orgId);
       List<String> parentTree = OBContext.getOBContext()
-          .getOrganizationStructureProvider(org.getClient().getId())
-          .getParentList(orgId, true);
-      List<UIPersonalization> auxPersonalizations = new ArrayList<UIPersonalization>();
+          .getOrganizationStructureProvider(org.getClient().getId()).getParentList(orgId, true);
+      List<UIPersonalization> auxPersonalizations = new ArrayList<>();
       for (UIPersonalization pers : personalizations) {
         if (pers.getVisibleAtOrganization() == null
             || parentTree.contains(pers.getVisibleAtOrganization().getId())) {
