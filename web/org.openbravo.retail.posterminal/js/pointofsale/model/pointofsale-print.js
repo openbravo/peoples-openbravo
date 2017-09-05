@@ -100,10 +100,16 @@
         me = this,
         template;
 
+    if (!OB.UTIL.isNullOrUndefined(order)) {
+      OB.UTIL.clone(order, receipt);
+    } else {
+      OB.UTIL.clone(me.receipt, receipt);
+    }
+
     OB.UTIL.HookManager.executeHooks('OBPRINT_PrePrint', {
       forcePrint: printargs.forcePrint,
       offline: printargs.offline,
-      order: order ? order : me.receipt,
+      order: receipt,
       template: template,
       forcedtemplate: printargs.forcedtemplate,
       callback: printargs.callback
@@ -259,11 +265,6 @@
           args.callback();
         }
         return true;
-      }
-      if (!_.isUndefined(args.order) && !_.isNull(args.order)) {
-        OB.UTIL.clone(args.order, receipt);
-      } else {
-        OB.UTIL.clone(me.receipt, receipt);
       }
 
       if (!(receipt.get('orderDate') instanceof Date)) {
