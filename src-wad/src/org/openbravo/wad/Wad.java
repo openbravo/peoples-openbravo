@@ -870,8 +870,8 @@ public class Wad extends DefaultHandler {
       /************************************************
        * JAVA
        *************************************************/
-      processTabJava(fileDir, tabsData.tabid, tabName, windowName, keyColumnName,
-          isSOTrx, tabsData.key, tabsData.accesslevel, tabsData.tableId, tabsData.javapackage,
+      processTabJava(fileDir, tabsData.tabid, tabName, windowName, keyColumnName, isSOTrx,
+          tabsData.key, tabsData.accesslevel, tabsData.tableId, tabsData.javapackage,
           tabsData.tabmodule);
 
       /************************************************
@@ -912,10 +912,9 @@ public class Wad extends DefaultHandler {
    *          The id of the tab's table.
    * @param tabmodule
    */
-  private void processTabJava(File fileDir, String strTab, String tabName, 
-      String windowName, String keyColumnName, String isSOTrx, String strWindow,
-      String accesslevel, String tableId, String javaPackage, String tabmodule)
-      throws ServletException, IOException {
+  private void processTabJava(File fileDir, String strTab, String tabName, String windowName,
+      String keyColumnName, String isSOTrx, String strWindow, String accesslevel, String tableId,
+      String javaPackage, String tabmodule) throws ServletException, IOException {
     log4j.debug("Processing java: " + strTab + ", " + tabName);
     XmlDocument xmlDocument;
     final String createFromProcess = FieldsData.hasCreateFromButton(pool, strTab);
