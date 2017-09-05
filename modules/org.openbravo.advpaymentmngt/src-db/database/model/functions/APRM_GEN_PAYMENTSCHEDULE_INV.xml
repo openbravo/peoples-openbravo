@@ -402,6 +402,7 @@ BEGIN
                        LEFT JOIN m_matchpo mpo ON ol.c_orderline_id = mpo.c_orderline_id
                                                   AND mpo.c_invoiceline_id IS NOT NULL
                   WHERE ol.c_order_id = order_schdet.order_id
+                    AND ol.linenetamt <> 0
                   GROUP BY ol.c_orderline_id, ol.qtyordered) a
                 WHERE a.qtyordered != (a.matchedqty*v_MultiplierARC);
               END IF;
