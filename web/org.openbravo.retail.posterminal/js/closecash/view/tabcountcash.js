@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -291,7 +291,7 @@ enyo.kind({
       var paymentMethod = payment.get('paymentMethod'),
           difference = OB.DEC.abs(payment.get('difference'));
       if (difference !== 0) {
-        totalCashDiff += difference;
+        totalCashDiff = OB.DEC.add(totalCashDiff, difference);
         var countDiffLimit = paymentMethod.countDiffLimit;
         if (!OB.UTIL.isNullOrUndefined(countDiffLimit) && difference >= countDiffLimit) {
           cashDiff.push({

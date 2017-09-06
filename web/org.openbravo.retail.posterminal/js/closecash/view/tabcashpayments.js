@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -344,7 +344,7 @@ enyo.kind({
         }
       }
       coin.set('totalAmount', OB.DEC.mul(coin.get('numberOfCoins'), coin.get('coinValue')));
-      totalCounted += coin.get('totalAmount');
+      totalCounted = OB.DEC.add(totalCounted, coin.get('totalAmount'));
     });
     this.payment.set('foreignCounted', totalCounted);
     var cTotalCounted = OB.UTIL.currency.toDefaultCurrency(this.payment.attributes.paymentMethod.currency, totalCounted);
