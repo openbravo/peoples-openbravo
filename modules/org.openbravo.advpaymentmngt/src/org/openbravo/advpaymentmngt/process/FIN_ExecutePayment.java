@@ -210,11 +210,11 @@ public class FIN_ExecutePayment {
                         return processTransactionError;
                       }
                     }
-                    updatePaymentAmounts(paymentRunPayment.getPayment());
+                    FIN_Utility.updatePaymentAmounts(psd);
                   }
                 }
-                break;
               }
+              FIN_Utility.updateBusinessPartnerCredit(paymentRunPayment.getPayment());
             } finally {
               OBContext.restorePreviousMode();
             }
@@ -263,52 +263,6 @@ public class FIN_ExecutePayment {
     for (PaymentExecutionProcessParameter parameter : allParameters)
       if ("CONSTANT".equals(parameter.getParameterType()))
         constantParameters.put(parameter.getSearchKey(), parameter.getDefaultTextValue());
-  }
-
-  private static void updatePaymentAmounts(FIN_Payment payment) {
-    for (FIN_PaymentDetail pDetail : payment.getFINPaymentDetailList()) {
-      for (FIN_PaymentScheduleDetail psd : pDetail.getFINPaymentScheduleDetailList()) {
-        if (psd.getInvoicePaymentSchedule() != null) {
-          BusinessPartner bPartner = psd.getInvoicePaymentSchedule().getInvoice()
-              .getBusinessPartner();
-          BigDecimal creditUsed = bPartner.getCreditUsed();
-          BigDecimal amountWithSign = psd.getInvoicePaymentSchedule().getInvoice()
-              .isSalesTransaction() ? psd.getAmount() : psd.getAmount().negate();
-          creditUsed = creditUsed.subtract(amountWithSign);
-          bPartner.setCreditUsed(creditUsed);
-          OBDal.getInstance().save(bPartner);
-          FIN_AddPayment.updatePaymentScheduleAmounts(pDetail, psd.getInvoicePaymentSchedule(),
-              psd.getAmount(), psd.getWriteoffAmount());
-        }
-        if (psd.getOrderPaymentSchedule() != null) {
-          FIN_AddPayment.updatePaymentScheduleAmounts(pDetail, psd.getOrderPaymentSchedule(),
-              psd.getAmount(), psd.getWriteoffAmount());
-        }
-        if (pDetail.isPrepayment() && psd.getOrderPaymentSchedule() == null
-            && psd.getInvoicePaymentSchedule() == null) {
-          // This PSD is credit
-          BusinessPartner bPartner = psd.getPaymentDetails().getFinPayment().getBusinessPartner();
-          BigDecimal creditUsed = bPartner.getCreditUsed();
-          BigDecimal amountWithSign = psd.getPaymentDetails().getFinPayment().isReceipt() ? psd
-              .getAmount() : psd.getAmount().negate();
-          creditUsed = creditUsed.subtract(amountWithSign);
-          bPartner.setCreditUsed(creditUsed);
-          OBDal.getInstance().save(bPartner);
-        }
-      }
-    }
-    // When credit is used (consumed) we compensate so_creditused as this amount is already
-    // included in the payment details. Credit consumed should not affect to so_creditused
-    if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
-        && payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0) {
-      BusinessPartner bp = payment.getBusinessPartner();
-      if (payment.isReceipt()) {
-        bp.setCreditUsed(bp.getCreditUsed().add(payment.getUsedCredit()));
-      } else {
-        bp.setCreditUsed(bp.getCreditUsed().subtract(payment.getUsedCredit()));
-      }
-      OBDal.getInstance().save(bp);
-    }
   }
 
   /**
