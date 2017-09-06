@@ -22,13 +22,13 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2016 Openbravo SLU
+* All portions are Copyright (C) 2001-2017 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   TYPE RECORD IS REF CURSOR;
     Cur_Offer RECORD;
-    v_Names varchar2(10000) := '';
+    v_Names varchar2(10000);
   BEGIN
     FOR Cur_Offer IN
       (SELECT NAME
@@ -103,10 +103,10 @@
         M_OFFER_ID DESC
       )
     LOOP
-      IF v_Names <> '' THEN
+      IF (v_Names IS NOT NULL) THEN
         v_Names := v_Names||'<br/>&nbsp;';
       END IF;
-      v_Names := v_Names||Cur_Offer.name;
+      v_Names := COALESCE(v_Names, '') || Cur_Offer.name;
     END LOOP;
     RETURN v_Names;
 EXCEPTION

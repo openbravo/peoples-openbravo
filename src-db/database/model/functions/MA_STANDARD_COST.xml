@@ -127,7 +127,7 @@ BEGIN --BODY
   END LOOP;
 
   --  Update AD_PInstance
-  IF (v_Message IS NOT NULL AND v_Message <> '') THEN
+  IF (v_Message IS NOT NULL) THEN
     v_Message := '@Success@<br>' || v_Message;
     v_Result := 2;
   END IF;

@@ -570,8 +570,8 @@ BEGIN --BODY
     END IF;
 
     DECLARE
-        v_Message_ProductionRun VARCHAR(2000) :='';
-        v_Message_ProductLine VARCHAR(2000) :='';
+        v_Message_ProductionRun VARCHAR(2000);
+        v_Message_ProductLine VARCHAR(2000);
         BEGIN
           FOR CUR_ProductionPlan IN
             (SELECT pp.Line, pp.M_PRODUCTIONPLAN_ID
@@ -588,14 +588,14 @@ BEGIN --BODY
               AND pr.ISACTIVE='N'
               ORDER BY pl.Line)
             LOOP
-              v_Message_ProductLine:=v_Message_ProductLine||CUR_PL_Post.line||', ';
+              v_Message_ProductLine := COALESCE(v_Message_ProductLine, '') || CUR_PL_Post.line || ', ';
             END LOOP;
-            IF(length(v_Message_ProductLine) > 0) THEN
-              v_Message_ProductionRun:=v_Message_ProductionRun||'@ProductionRunLine@'||Cur_ProductionPlan.line||' @ProductLine@'||v_Message_ProductLine;
-              v_Message_ProductLine:='';
+            IF (v_Message_ProductLine IS NOT NULL) THEN
+              v_Message_ProductionRun := COALESCE(v_Message_ProductionRun, '') || '@ProductionRunLine@' || Cur_ProductionPlan.line || ' @ProductLine@' || v_Message_ProductLine;
+              v_Message_ProductLine := NULL;
             END IF;
           END LOOP;
-          IF length(v_Message_ProductionRun) > 0 THEN
+          IF (v_Message_ProductionRun IS NOT NULL) THEN
             RAISE_APPLICATION_ERROR(-20000, v_Message_ProductionRun||'@InActiveProducts@');
           END IF;
         END;

@@ -45,7 +45,7 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Message_aux VARCHAR2(2000):='';
+  v_Message_aux VARCHAR2(2000);
   v_Record_ID VARCHAR2(32);
   v_User VARCHAR2(32);
   v_PUser VARCHAR2(32);
@@ -193,7 +193,7 @@
         END IF;
       END IF;
        Declare
-       v_Message_product VARCHAR(2000) :='';
+       v_Message_product VARCHAR(2000);
        Begin
           FOR Cur_Lines IN (
                              SELECT M.line
@@ -204,14 +204,14 @@
                                AND (M.M_PRODUCT_ID IS NULL AND M.MOVEMENTQTY <> 0)
                                ORDER BY M.line
                             ) LOOP
-               v_Message_product:=v_Message_product||Cur_Lines.line||', ';
+               v_Message_product := COALESCE(v_Message_product, '') || Cur_Lines.line || ', ';
           END LOOP;
-          if length(v_Message_product) > 0 then
+          IF (v_Message_product IS NOT NULL) THEN
              RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_Message_product||' '||'@ProductNullAndMovementQtyGreaterZero@') ;
-          end if ;
+          END IF;
 	     End ;
 	     Declare
-       v_Message_Qty VARCHAR(2000) :='';
+       v_Message_Qty VARCHAR(2000);
 	     BEGIN
 					FOR Cur_Lines IN (
                              SELECT M.line
@@ -222,14 +222,14 @@
                                AND (M.M_PRODUCT_ID IS NOT NULL AND M.MOVEMENTQTY = 0)
                                ORDER BY M.line
                             ) LOOP
-          v_Message_Qty:=v_Message_Qty||Cur_Lines.line||', ';
+          v_Message_Qty := COALESCE(v_Message_Qty, '') || Cur_Lines.line || ', ';
           END LOOP;
-          IF length(v_Message_Qty) > 0 THEN
+          IF (v_Message_Qty IS NOT NULL) THEN
              RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_Message_Qty||' '||'@ProductNotNullAndMovementQtyZero@') ;
           END IF;
 	     End ;
 	     Declare
-       v_Message_NotAvail VARCHAR(2000) :='';
+       v_Message_NotAvail VARCHAR(2000);
 	     BEGIN
 					FOR Cur_Lines IN (
                              SELECT M.line
@@ -245,14 +245,14 @@
                                   (I.issotrx = 'N' AND v_isreturndoctype = 'Y'))
                              ORDER BY M.line
                             ) LOOP
-          v_Message_NotAvail:=v_Message_NotAvail||Cur_Lines.line||', ';
+          v_Message_NotAvail := COALESCE(v_Message_NotAvail, '') || Cur_Lines.line || ', ';
           END LOOP;
-          IF length(v_Message_NotAvail) > 0 THEN
+          IF (v_Message_NotAvail IS NOT NULL) THEN
              RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_Message_NotAvail||' '||'@LocatorWithNotAvailableStatus@') ;
           END IF;
 	     End ;
       DECLARE
-      v_Message_Inactive_Products VARCHAR(2000) :='';
+      v_Message_Inactive_Products VARCHAR(2000);
       BEGIN
         FOR Cur_Lines IN (
           SELECT IOL.line
@@ -263,9 +263,9 @@
           ORDER BY IOL.line
           )
         LOOP
-          v_Message_Inactive_Products:=v_Message_Inactive_Products||Cur_Lines.line||', ';
+          v_Message_Inactive_Products := COALESCE(v_Message_Inactive_Products, '') || Cur_Lines.line || ', ';
         END LOOP;
-        IF length(v_Message_Inactive_Products) > 0 THEN
+        IF (v_Message_Inactive_Products IS NOT NULL) THEN
           RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_Message_Inactive_Products||' '||'@InActiveProducts@') ;
         END IF;
       END;
@@ -994,7 +994,6 @@
             where M_INOUT.M_INOUT_id =v_Record_ID;
             if v_voiddoccount = 0 then
               v_ResultStr:='Check delivery rule for sales orders';
-              v_Message_aux:='';
               v_orderid_old:='0';
               FOR Cur_Order IN 
                 (SELECT c_order.deliveryrule, m_inoutline.line, c_order.c_order_id,
@@ -1024,7 +1023,7 @@
                 END IF;
                 v_orderid_old := cur_order.c_order_id;
               END LOOP;
-              IF (v_Message_aux IS NOT NULL AND v_Message_aux <> '') THEN
+              IF (v_Message_aux IS NOT NULL) THEN
                 RAISE_APPLICATION_ERROR(-20000, v_Message_aux);
               END IF;
             END IF;
