@@ -598,9 +598,13 @@ public class PersonalizationHandler {
   private static int isHigherPriority(UIPersonalization pers1, UIPersonalization pers2,
       List<String> parentTree) {
     // Check priority by client
-    if ((pers2.getVisibleAtClient() == null || pers2.getVisibleAtClient().getId().equals("0"))
-        && pers1.getVisibleAtClient() != null && !pers1.getVisibleAtClient().getId().equals("0")) {
+    boolean firstIsClientVisible = visibleAtNonSystemClient(pers1);
+    boolean secondIsClientVisible = visibleAtNonSystemClient(pers2);
+    if (firstIsClientVisible && !secondIsClientVisible) {
       return 1;
+    }
+    if (!firstIsClientVisible && secondIsClientVisible) {
+      return 2;
     }
 
     // Check priority by organization
@@ -645,5 +649,13 @@ public class PersonalizationHandler {
 
     // Actual conflict
     return 0;
+  }
+
+  private static boolean visibleAtNonSystemClient(UIPersonalization personalization) {
+    Client client = personalization.getVisibleAtClient();
+    if (client == null) {
+      return false;
+    }
+    return !"0".equals(client.getId());
   }
 }
