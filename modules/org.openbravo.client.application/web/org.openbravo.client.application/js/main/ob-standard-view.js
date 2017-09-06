@@ -498,7 +498,7 @@ isc.OBStandardView.addProperties({
           isLabel = true;
           msg = error.message;
           params = error.params;
-        } else if (error.message) {
+        } else if (isc.isA.String(error.message)) {
           type = error.messageType || type;
           params = error.params;
           // error.messageType can be Error
@@ -513,7 +513,7 @@ isc.OBStandardView.addProperties({
         // hope that someone else will handle it
         return false;
       }
-    } else if (data.data) {
+    } else if (data && data.data) {
       // try it with data.data
       return this.setErrorMessageFromResponse(resp, data.data, req);
     } else {
