@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -895,7 +895,8 @@ public class DatabaseValidator implements SystemValidator {
     List<org.openbravo.model.ad.ui.Process> processList = obc.list();
     for (org.openbravo.model.ad.ui.Process process : processList) {
       try {
-        Class<?> processClass = Class.forName(process.getJavaClassName());
+        Class<?> processClass = Class.forName(process.getJavaClassName(), false, this.getClass()
+            .getClassLoader());
         if (!KillableProcess.class.isAssignableFrom(processClass)) {
           result
               .addWarning(
