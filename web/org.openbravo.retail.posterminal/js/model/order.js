@@ -3560,6 +3560,7 @@
         payment.set('id', OB.UTIL.get_UUID());
         payment.set('orderGross', order.getGross());
         payment.set('isPaid', order.get('isPaid'));
+        payment.set('isReturnOrder', order.getPaymentStatus().isNegative);
         if (order.get('doCancelAndReplace') && order.get('replacedorder')) {
           // Added properties to payment related with cancel an replace order
           payment.set('cancelAndReplace', order.get('doCancelAndReplace'));
@@ -4780,6 +4781,7 @@
           return currentPayment.paymentId === payment.reversedPaymentId;
         });
         reversalPayment.reversedPaymentId = payment.paymentId;
+        reversalPayment.isReversePayment = true;
         delete payment.reversedPaymentId;
       });
 
@@ -5644,6 +5646,11 @@
       }
       if (this.stopAddingPayments) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
+        return;
+      }
+
+      if (!payment.get('isReversePayment') && this.getPending() <= 0 && payment.get('amount') > 0) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_PaymentsExact'));
         return;
       }
 
