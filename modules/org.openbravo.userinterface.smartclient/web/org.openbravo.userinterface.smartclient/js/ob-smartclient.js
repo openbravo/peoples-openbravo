@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -777,6 +777,7 @@ isc.RPCManager.addClassProperties({
       this._originalhandleError(response, request);
     }
   },
+
   _originalEvalResult: isc.RPCManager.evalResult,
   evalResult: function (request, response, results) {
     // if the response contains an error status, call the errorCallback
@@ -784,6 +785,38 @@ isc.RPCManager.addClassProperties({
       request.errorCallback(request, response);
     }
     return this._originalEvalResult(request, response, results);
+  },
+
+  // Escape characters that are not properly handled in JavaScript's eval. See issue #36788.
+  // Solution based on Crockford's JSON.parse implementation
+  // https://github.com/douglascrockford/JSON-js
+  dangerousChars: /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+  _originalperformTransactionReply: isc.RPCManager.performTransactionReply,
+  performTransactionReply: function (transactionNum, results, wd) {
+    var resp = results.responseText;
+
+    this.dangerousChars.lastIndex = 0;
+    if (resp && isc.isA.String(resp) && this.dangerousChars.test(resp)) {
+      resp = resp.replace(this.dangerousChars, function (a) {
+        return '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+      });
+
+      // results is a XMLHttpRequest, response properties are immutable by default,
+      // this hacks allows to modify them
+      Object.defineProperties(results, {
+        'responseText': {
+          writable: true
+        },
+        'response': {
+          writable: true
+        }
+      });
+
+      results.responseText = resp;
+      results.response = resp;
+    }
+
+    return this._originalperformTransactionReply(transactionNum, results, wd)
   }
 });
 
