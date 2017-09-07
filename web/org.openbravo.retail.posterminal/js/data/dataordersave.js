@@ -568,6 +568,7 @@
             }
           }
         };
+        me.ordersToSend = OB.DEC.Zero;
         if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true) && me.ordersToSend === 0) {
           OB.MobileApp.model.setSynchronizedCheckpoint(function () {
             OB.UTIL.rebuildCashupFromServer(function () {
