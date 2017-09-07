@@ -9,7 +9,6 @@
 
 /*global OB, enyo, _, Audio, Backbone */
 
-
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.KeyboardOrder',
   kind: 'OB.UI.Keyboard',
@@ -339,6 +338,8 @@ enyo.kind({
           keyboard.receipt.trigger('discount', model, discount);
         });
         keyboard.receipt.set('multipleUndo', null);
+        keyboard.lastStatus = '';
+        keyboard.setStatus('');
       }
     });
 
