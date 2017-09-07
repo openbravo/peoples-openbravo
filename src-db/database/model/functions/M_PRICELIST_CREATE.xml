@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2017 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -67,7 +67,8 @@
     v_Sql_analyze_pg VARCHAR2(2000):='ANALYZE C_TEMP_Selection';
     v_Sql_insert VARCHAR2(2000);
     v_rdbms VARCHAR2(2000):=AD_GET_RDBMS();
-    
+
+    v_priceRemoved CHAR(1) := 'N';
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing') ;
@@ -157,6 +158,7 @@
         rowcount:=SQL%ROWCOUNT;
         v_Message:='@Deleted@=' || rowcount || ' - ';
         DBMS_OUTPUT.PUT_LINE(v_Message) ;
+        v_priceRemoved := 'Y';
       END IF;
       /**
       * For All Discount Lines in Sequence
@@ -261,8 +263,8 @@
           EXECUTE IMMEDIATE v_Sql_analyze_pg;
         END IF;
 
-        -- Delete Prices in Selection, so that we can insert
-        IF(v_PriceList_Version_Base_ID IS NULL  OR v_PriceList_Version_Base_ID<>v_PriceList_Version_ID) THEN
+        -- Product Price will be created with initial values only the first time and will be used as basis for next iterations
+        IF (v_priceRemoved = 'N' AND (v_PriceList_Version_Base_ID IS NULL OR v_PriceList_Version_Base_ID <> v_PriceList_Version_ID)) THEN
           v_ResultStr:=v_ResultStr || ', Delete';
           DELETE
           FROM M_ProductPrice
@@ -273,8 +275,7 @@
             WHERE M_ProductPrice.M_Product_ID=s.C_TEMP_Selection_ID
             )
             ;
-          rowcount:=SQL%ROWCOUNT;
-          v_Message:=', @Deleted@=' || rowcount;
+          v_priceRemoved := 'Y';
         END IF;
         -- --------------------
         -- Copy (Insert) Prices
@@ -304,7 +305,13 @@
             COALESCE(M_GET_COST (mp.M_Product_ID, add_hms(v_validfromdate, 23, 59, 59), CASE v_isCostMigrated WHEN 0 THEN mp.costtype ELSE null END, v_Org_ID, mp.ad_client_id, null, v_clientCurrencyId, v_Currency_ID),0)
             from m_product mp
             where EXISTS (SELECT 1 FROM C_TEMP_Selection s WHERE mp.M_Product_ID=s.C_TEMP_Selection_ID)
-            AND mp.IsActive='Y'; 
+            AND mp.IsActive='Y'
+            AND NOT EXISTS (
+              SELECT 1
+              FROM M_ProductPrice pp
+              WHERE pp.M_Product_ID = mp.M_Product_ID
+              AND pp.M_PriceList_Version_ID = v_PriceList_Version_ID
+            );
             
         ELSE
           -- Copy and Convert from other PriceList_Version
@@ -336,7 +343,13 @@
           WHERE pp.M_PriceList_Version_ID=v_PriceList_Version_Base_ID
             AND EXISTS
             (SELECT 1 FROM C_TEMP_Selection s WHERE pp.M_Product_ID=s.C_TEMP_Selection_ID)
-            AND pp.IsActive='Y';
+            AND pp.IsActive='Y'
+            AND NOT EXISTS (
+              SELECT 1
+              FROM M_ProductPrice pp2
+              WHERE pp2.M_Product_ID = pp.M_Product_ID
+              AND pp2.M_PriceList_Version_ID = v_PriceList_Version_ID
+            );
         END IF;
         rowcount:=SQL%ROWCOUNT;
         v_Message:=v_Message || ', @Inserted@=' || rowcount;
