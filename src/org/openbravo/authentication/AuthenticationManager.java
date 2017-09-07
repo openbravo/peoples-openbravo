@@ -57,14 +57,15 @@ public abstract class AuthenticationManager {
 
   private static final Logger log4j = Logger.getLogger(AuthenticationManager.class);
   private static final String DEFAULT_AUTH_CLASS = "org.openbravo.authentication.basic.DefaultAuthenticationManager";
-
-  public static final String STATELESS_REQUEST_PARAMETER = "stateless";
+  private static final String AD_SESSION_ID_ATTR = "#AD_SESSION_ID";
   private static final String SUCCESS_SESSION_WEB_SERVICE = "WS";
   private static final String REJECTED_SESSION_WEB_SERVICE = "WSR";
   private static final String SUCCESS_SESSION_CONNECTOR = "WSC";
   private static final String FAILED_SESSION = "F";
+
   protected static final String LOGIN_PARAM = "user";
   protected static final String PASSWORD_PARAM = "password";
+  public static final String STATELESS_REQUEST_PARAMETER = "stateless";
 
   protected ConnectionProvider conn = null;
   protected String defaultServletUrl = null;
@@ -98,7 +99,7 @@ public abstract class AuthenticationManager {
    * Returns an instance of AuthenticationManager subclass, based on the authentication.class
    * property in Openbravo.properties
    */
-  public final static AuthenticationManager getAuthenticationManager(HttpServlet s) {
+  public static final AuthenticationManager getAuthenticationManager(HttpServlet s) {
     AuthenticationManager authManager;
     String authClass = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("authentication.class", DEFAULT_AUTH_CLASS);
@@ -176,7 +177,7 @@ public abstract class AuthenticationManager {
     }
 
     final VariablesSecureApp vars = new VariablesSecureApp(request, false);
-    if (StringUtils.isEmpty(vars.getSessionValue("#AD_SESSION_ID"))) {
+    if (StringUtils.isEmpty(vars.getSessionValue(AD_SESSION_ID_ATTR))) {
       setDBSession(request, userId, SUCCESS_SESSION_STANDARD, true);
     }
 
@@ -339,12 +340,12 @@ public abstract class AuthenticationManager {
     VariablesSecureApp vars = null;
     if (!AuthenticationManager.isStatelessRequest(request)) {
       vars = new VariablesSecureApp(request, false);
-      dbSessionId = vars.getSessionValue("#AD_SESSION_ID");
+      dbSessionId = vars.getSessionValue(AD_SESSION_ID_ATTR);
     }
     if (StringUtils.isEmpty(dbSessionId)) {
       dbSessionId = createDBSession(request, username, userId, successSessionType);
       if (setSession && vars != null) {
-        vars.setSessionValue("#AD_SESSION_ID", dbSessionId);
+        vars.setSessionValue(AD_SESSION_ID_ATTR, dbSessionId);
         if (userId != null) {
           HttpSession session = request.getSession(false);
           if (session != null) {
@@ -518,7 +519,7 @@ public abstract class AuthenticationManager {
 
       // Decode it, using any base 64 decoder
       final String decodedUserPass = new String(Base64.decodeBase64(userpassEncoded.getBytes()));
-      final int index = decodedUserPass.indexOf(":");
+      final int index = decodedUserPass.indexOf(':');
       if (index == -1) {
         return null;
       }
