@@ -1079,6 +1079,13 @@ enyo.kind({
         me = this,
         payments, avoidPayment = false,
         orderDesc = '';
+
+    // Avoid closing the order before receipt is being calculated
+    if (this.owner.receipt.calculatingReceipt) {
+      OB.UTIL.showI18NError('OBPOS_ReceiptBeingPrepared');
+      return;
+    }
+
     //*** Avoid double click ***
     if (this.getContent() === OB.I18N.getLabel('OBPOS_LblDone')) {
       if (this.owner.receipt && this.owner.receipt.getOrderDescription) {
