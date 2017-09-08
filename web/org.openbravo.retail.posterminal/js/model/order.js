@@ -616,7 +616,6 @@
       });
       var saveAndTriggerEvents = function (gross, save) {
           var now = new Date();
-          me.set('loaded', OB.I18N.normalizeDate(now));
           me.set('timezoneOffset', now.getTimezoneOffset());
           var net = me.get('lines').reduce(function (memo, e) {
             var netLine = e.get('discountedNet');
