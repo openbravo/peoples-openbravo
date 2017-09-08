@@ -20,6 +20,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -63,6 +65,8 @@ public abstract class AuthenticationManager {
   private static final String SUCCESS_SESSION_CONNECTOR = "WSC";
   private static final String FAILED_SESSION = "F";
 
+  protected static final String LOGIN_USER = "loginUser";
+  protected static final String LOGIN_PASS = "loginPass";
   protected static final String LOGIN_PARAM = "user";
   protected static final String PASSWORD_PARAM = "password";
   public static final String STATELESS_REQUEST_PARAMETER = "stateless";
@@ -70,7 +74,10 @@ public abstract class AuthenticationManager {
   protected ConnectionProvider conn = null;
   protected String defaultServletUrl = null;
   protected String localAdress = null;
-  protected String username = "";
+
+  // It is used to keep the name of the user performing the request and save it in the DB session
+  // information (AD_Session table)
+  protected static ThreadLocal<String> loginName = new ThreadLocal<>();
 
   /**
    * Is used to determine if the request is a stateless request. A stateless request does not create
@@ -239,7 +246,6 @@ public abstract class AuthenticationManager {
    */
   public final String webServiceAuthenticate(String user, String password)
       throws AuthenticationException {
-    username = user;
     final String userId = doWebServiceAuthenticate(user, password);
     return webServicePostAuthenticate(null, userId);
   }
@@ -343,7 +349,8 @@ public abstract class AuthenticationManager {
       dbSessionId = vars.getSessionValue(AD_SESSION_ID_ATTR);
     }
     if (StringUtils.isEmpty(dbSessionId)) {
-      dbSessionId = createDBSession(request, username, userId, successSessionType);
+      String userName = (loginName != null && loginName.get() != null) ? loginName.get() : "";
+      dbSessionId = createDBSession(request, userName, userId, successSessionType);
       if (setSession && vars != null) {
         vars.setSessionValue(AD_SESSION_ID_ATTR, dbSessionId);
         if (userId != null) {
@@ -391,7 +398,7 @@ public abstract class AuthenticationManager {
       throws AuthenticationException, ServletException, IOException;
 
   /**
-   * Authentication used by web services and connectors. This authentication can be overriden by
+   * Authentication used by web services and connectors. This authentication can be overridden by
    * subclasses. By default it looks for user and password parameters in the request, if they are
    * not present, Basic authentication is performed
    * 
@@ -405,6 +412,16 @@ public abstract class AuthenticationManager {
    *         </ul>
    */
   protected String doWebServiceAuthenticate(HttpServletRequest request) {
+    Map<String, String> authenticationData = getAuthenticationData(request);
+    if (authenticationData == null) {
+      return null;
+    }
+    String user = authenticationData.get(LOGIN_USER);
+    String password = authenticationData.get(LOGIN_PASS);
+    return doWebServiceAuthenticate(user, password);
+  }
+
+  private Map<String, String> getAuthenticationData(HttpServletRequest request) {
     String login = request.getParameter(BaseWebServiceServlet.LOGIN_PARAM);
     if (StringUtils.isEmpty(login)) {
       login = request.getParameter(LOGIN_PARAM);
@@ -413,18 +430,61 @@ public abstract class AuthenticationManager {
     if (StringUtils.isEmpty(password)) {
       password = request.getParameter(PASSWORD_PARAM);
     }
-    String userId = null;
     if (login != null && password != null) {
-      username = login;
-      userId = checkUserPassword(login, password);
-    } else { // use basic authentication
-      userId = doBasicAuthentication(request);
+      Map<String, String> authenticationData = new HashMap<>();
+      authenticationData.put(LOGIN_USER, login);
+      authenticationData.put(LOGIN_PASS, password);
+      return authenticationData;
     }
-
-    return userId;
+    return decodeBasicAuthenticationData(request);
   }
 
+  protected final Map<String, String> decodeBasicAuthenticationData(HttpServletRequest request) {
+    try {
+      final String auth = request.getHeader("Authorization");
+      if (auth == null) {
+        return null;
+      }
+      if (!auth.toUpperCase().startsWith("BASIC ")) {
+        return null; // only BASIC supported
+      }
+
+      // user and password come after BASIC
+      final String userpassEncoded = auth.substring(6);
+
+      // Decode it, using any base 64 decoder
+      final String decodedUserPass = new String(Base64.decodeBase64(userpassEncoded.getBytes()));
+      final int index = decodedUserPass.indexOf(':');
+      if (index == -1) {
+        return null;
+      }
+      Map<String, String> authenticationData = new HashMap<>();
+      authenticationData.put(LOGIN_USER, decodedUserPass.substring(0, index));
+      authenticationData.put(LOGIN_PASS, decodedUserPass.substring(index + 1));
+      return authenticationData;
+    } catch (final Exception e) {
+      throw new OBException(e);
+    }
+  }
+
+  /**
+   * Authentication used by web services and connectors. This authentication can be overridden by
+   * subclasses. By default it looks for user and password parameters in the request, if they are
+   * not present, Basic authentication is performed
+   * 
+   * @param user
+   *          A String with the user name
+   * @param password
+   *          A String with the password of the user
+   * @return <ul>
+   *         <li>The user id (AD_User_ID) if the request is already authenticated or the
+   *         authentication process succeeded</li>
+   *         <li><b>null</b> if the request is not authenticated or authentication process failed
+   *         (e.g. wrong password)</li>
+   *         </ul>
+   */
   protected String doWebServiceAuthenticate(String user, String password) {
+    loginName.set(user);
     return checkUserPassword(user, password);
   }
 
@@ -502,35 +562,6 @@ public abstract class AuthenticationManager {
       OBContext.restorePreviousMode();
     }
 
-  }
-
-  private String doBasicAuthentication(HttpServletRequest request) {
-    try {
-      final String auth = request.getHeader("Authorization");
-      if (auth == null) {
-        return null;
-      }
-      if (!auth.toUpperCase().startsWith("BASIC ")) {
-        return null; // only BASIC supported
-      }
-
-      // user and password come after BASIC
-      final String userpassEncoded = auth.substring(6);
-
-      // Decode it, using any base 64 decoder
-      final String decodedUserPass = new String(Base64.decodeBase64(userpassEncoded.getBytes()));
-      final int index = decodedUserPass.indexOf(':');
-      if (index == -1) {
-        return null;
-      }
-      final String login = decodedUserPass.substring(0, index);
-      final String password = decodedUserPass.substring(index + 1);
-      String userId = checkUserPassword(login, password);
-      username = login;
-      return userId;
-    } catch (final Exception e) {
-      throw new OBException(e);
-    }
   }
 
   /**

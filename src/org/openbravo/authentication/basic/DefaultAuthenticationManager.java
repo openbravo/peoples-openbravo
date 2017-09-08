@@ -15,13 +15,13 @@ package org.openbravo.authentication.basic;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
@@ -29,7 +29,6 @@ import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationExpirationPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.HttpBaseUtils;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.base.secureApp.VariablesHistory;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -95,22 +94,10 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
 
       if (StringUtils.isEmpty(user)) {
         // try basic authentication
-        try {
-          final String auth = request.getHeader("Authorization");
-          if (auth != null && auth.toUpperCase().startsWith("BASIC ")) {
-            // user and password come after BASIC
-            final String userpassEncoded = auth.substring(6);
-            // Decode it, using any base 64 decoder
-            final String decodedUserPass = new String(Base64.decodeBase64(userpassEncoded
-                .getBytes()));
-            final int index = decodedUserPass.indexOf(":");
-            if (index != -1) {
-              user = decodedUserPass.substring(0, index);
-              pass = decodedUserPass.substring(index + 1);
-            }
-          }
-        } catch (final Exception e) {
-          throw new OBException(e);
+        Map<String, String> authenticationData = decodeBasicAuthenticationData(request);
+        if (authenticationData != null) {
+          user = authenticationData.get(LOGIN_USER);
+          pass = authenticationData.get(LOGIN_PASS);
         }
       }
     }
@@ -121,7 +108,7 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
       }
     }
 
-    username = user;
+    loginName.set(user);
     if (StringUtils.isEmpty(user)) {
       // redirects to the menu or the menu with the target
       setTargetInfoInVariables(request, variables);
