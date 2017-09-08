@@ -101,7 +101,7 @@ public class InventoryStatusUtils {
   private static void setNewStatusToBin(String inventoryStatusID, Locator storageBin) {
     storageBin
         .setInventoryStatus(OBDal.getInstance().get(InventoryStatus.class, inventoryStatusID));
-    OBDal.getInstance().save(storageBin);
+    OBDal.getInstance().flush();
   }
 
   /**
@@ -119,11 +119,26 @@ public class InventoryStatusUtils {
   /**
    * Returns the number of Virtual Bins that are associated to the given Storage Bin
    */
-  public static int getNumberOfVirtualBins(Locator storageBin) {
+  public static int getNumberOfVirtualBins(Locator storageBin, boolean active) {
     OBCriteria<Locator> obc = OBDal.getInstance().createCriteria(Locator.class);
     obc.add(Restrictions.eq(Locator.PROPERTY_ISVIRTUAL, true));
     obc.add(Restrictions.eq(Locator.PROPERTY_PARENTLOCATOR, storageBin));
+    obc.setFilterOnActive(active);
     return obc.list().size();
+  }
+
+  /**
+   * Returns the Total number of Virtual Bins created for the given Storage Bin
+   */
+  public static int getNumberOfTotalVirtualBins(Locator storageBin) {
+    return getNumberOfVirtualBins(storageBin, false);
+  }
+
+  /**
+   * Returns the Number of Virtual Bins created for the given Storage Bin that are active = 'Y'
+   */
+  public static int getNumberOfActiveVirtualBins(Locator storageBin) {
+    return getNumberOfVirtualBins(storageBin, true);
   }
 
 }
