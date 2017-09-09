@@ -21,58 +21,28 @@
 
 
 <SqlClass name="FieldsData" package="org.openbravo.wad" accessModifier="public">
-  <SqlMethod name="select" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
+  <SqlMethod name="dummy" type="preparedStatement" return="multiple">
     <Sql>
       <![CDATA[
-      SELECT ad_column.ad_column_id as adColumnId, ad_column.ColumnName as realName, ad_column.ColumnName As Name, '' as NameRef, 
-        'x' as xmltext, ad_reference_id as reference, ad_reference_value_id as referencevalue,
-        ismandatory as required, (CASE ad_field.isActive WHEN 'N' THEN 'N' ELSE isDisplayed END) as isdisplayed, isupdateable as isupdateable,
-        REPLACE(ad_column.defaultvalue, CHR(10), '') As defaultValue, 
-        ad_column.fieldlength As fieldLength, 
-        'Medio' as Text_Align, '' AS Xml_Format, 
-        ad_field.displaylength, REPLACE(replace(REPLACE(REPLACE(AD_ELEMENT.columnname, 'Substitute_ID', 'M_Product_ID'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM_ID', '_ID'), 'M_LocatorTo_ID', 'M_Locator_ID') as columnname, 
-        '' as WHERECLAUSE, ad_table.tablename, 'StringParameter' as Type, ad_column.ISSESSIONATTR, ad_column.iskey, 
-        isParent, '' as ACCESSLEVEL, ad_field.isreadonly, '' as issecondarykey, ad_field.showInRelation, ad_column.isEncrypted,
-        ad_field.SORTNO, ad_column.istranslated, '' as id, '' as htmltext, '' as htmltexttrl, '' as xmltexttrl, '' as tablenametrl, 
-        0 AS NOWRAP, ad_column.isEncrypted AS isColumnEncrypted, ad_column.isDesencryptable, ad_reference_value_id, ad_column.ad_val_rule_id, '' AS isjasper, ad_field.isactive, '' as AD_Tab_ID, '' as parent_tab_name, '' as orgcode,
+      SELECT '' as adColumnId, '' as realName, '' As Name, '' as NameRef, 
+        'x' as xmltext, '' as reference, '' as referencevalue,
+        '' as required, '' as isdisplayed, '' as isupdateable,
+        '' As defaultValue, 
+        '' As fieldLength, 
+        '' as Text_Align, '' AS Xml_Format, 
+        '' as displaylength, '' as columnname, 
+        '' as WHERECLAUSE, '' as tablename, '' as Type, '' as ISSESSIONATTR, '' as iskey, 
+        '' as isParent, '' as ACCESSLEVEL, '' as isreadonly, '' as issecondarykey, '' as showInRelation, '' as isEncrypted,
+        '' as SORTNO, '' as istranslated, '' as id, '' as htmltext, '' as htmltexttrl, '' as xmltexttrl, '' as tablenametrl, 
+        0 AS NOWRAP, '' as isColumnEncrypted, '' as isDesencryptable, '' as ad_reference_value_id, '' as ad_val_rule_id, '' AS isjasper, '' as isactive, '' as AD_Tab_ID, '' as parent_tab_name, '' as orgcode,
         '' as tableModule, '' as columnModule, '' as clientcode, '' as isautosave, '' as ad_field_id
-      FROM ad_column left join ad_element on ad_column.ad_element_id = ad_element.ad_element_id,
-           ad_field,  ad_table
-      WHERE ad_field.ad_column_id = ad_column.ad_column_id 
-        AND ad_column.ad_table_id = ad_table.ad_table_id 
-        AND ad_column.isActive = 'Y' 
-        AND ad_field.ignoreinwad='N'
-        AND upper(ad_column.columnname) <> 'BINARYDATA' 
-        AND ad_tab_id = ?
-      ORDER BY ad_field.SEQNO
+      FROM dual
       ]]>
     </Sql>
     <Field name="trytext" value="void" />
     <Field name="catchtext" value="void" />
-    <Parameter name="tab"/>
   </SqlMethod>
   
-  <SqlMethod name="tableKeyColumnName" type="preparedStatement" return="multiple">
-      <SqlMethodComment>Name of the column key of the tab</SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT ad_column.ColumnName As Name 
-        FROM ad_table, ad_column 
-        WHERE ad_table.ad_table_id = ad_column.ad_table_id
-          AND UPPER(ad_table.tablename) = UPPER(?) 
-          AND ad_column.isActive = 'Y'
-          and ad_column.iskey='Y'
-        UNION
-        SELECT ad_column.ColumnName As Name 
-        FROM ad_table, ad_column 
-        WHERE ad_table.ad_table_id = ad_column.ad_table_id
-          AND UPPER(ad_table.tablename) = UPPER(?) 
-          AND ad_column.isActive = 'Y'
-          and ad_column.issecondarykey='Y'
-      ]]></Sql>
-      <Parameter name="tablename"/>
-      <Parameter name="tablename"/>
-  </SqlMethod>
   <SqlMethod name="keyColumnName" type="preparedStatement" return="multiple">
       <SqlMethodComment>Name of the column key of the tab</SqlMethodComment>
       <Sql><![CDATA[
@@ -85,61 +55,6 @@
       <Parameter name="tab"/>
   </SqlMethod>
 
-<!-- method copied to src/src/org/openbravo/erpCommon/businessUtility/AuditTrailPopup_data.xsql, both copies need to stay in sync -->
-  <SqlMethod name="parentsColumnName" type="preparedStatement" return="multiple">
-      <SqlMethodComment>Name of the columns parent of the tab</SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT AD_FIELD.AD_FIELD_ID, ColumnName AS NAME, AD_REFERENCE_id AS reference, ad_reference_value_id AS referencevalue,
-        (SELECT tableNAME FROM AD_TABLE, AD_TAB WHERE AD_TABLE.ad_table_id = AD_TAB.ad_table_id
-        AND AD_TAB.ad_tab_id=?) AS tablename, ? as AD_Tab_ID, (select name from ad_tab where ad_tab_id = ?) as parent_tab_name,
-        (SELECT P.ad_module_id FROM AD_TABLE T, AD_PACKAGE P WHERE T.ad_table_id = AD_COLUMN.ad_table_id AND T.AD_PACKAGE_ID = P.AD_PACKAGE_ID) as tableModule,
-        AD_COLUMN.AD_Module_ID as columnModule, 
-          (SELECT c.issecondarykey 
-             FROM AD_COLUMN c, AD_FIELD f 
-            WHERE c.ad_column_id = f.ad_column_id AND (c.iskey='Y' OR c.issecondarykey='Y')
-              AND ad_tab_id=? AND UPPER(c.columnname) = UPPER(AD_COLUMN.columnname)) as issecondarykey 
-        FROM AD_FIELD, AD_COLUMN 
-        WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id AND ad_tab_id = ? AND isParent='Y' 
-        AND EXISTS (SELECT 1 FROM AD_COLUMN c, AD_FIELD f WHERE c.ad_column_id = f.ad_column_id AND (c.iskey='Y' OR c.issecondarykey='Y')
-        AND ad_tab_id=? AND UPPER(c.columnname) = UPPER(AD_COLUMN.columnname))
-      ]]></Sql>
-      <Parameter name="parentTab"/>
-      <Parameter name="parentTab"/>
-      <Parameter name="parentTab"/>
-      <Parameter name="parentTab"/>
-      <Parameter name="tab"/>
-      <Parameter name="parentTab"/>
-  </SqlMethod>
-
-<!-- method copied to src/src/org/openbravo/erpCommon/businessUtility/AuditTrailPopup_data.xsql, both copies need to stay in sync -->
-  <SqlMethod name="parentsColumnReal" type="preparedStatement" return="multiple">
-      <SqlMethodComment>Name of the columns parent of the tab</SqlMethodComment>
-      <Sql>
-        SELECT AD_FIELD.AD_FIELD_ID, ColumnName AS NAME, AD_REFERENCE_id AS reference, ad_reference_value_id AS referencevalue,
-        (SELECT tableNAME FROM AD_TABLE, AD_TAB WHERE AD_TABLE.ad_table_id = AD_TAB.ad_table_id
-        AND AD_TAB.ad_tab_id=?) AS tablename,
-        (SELECT P.ad_module_id FROM AD_TABLE T, AD_PACKAGE P WHERE T.ad_table_id = AD_COLUMN.ad_table_id AND T.AD_PACKAGE_ID = P.AD_PACKAGE_ID) as tableModule,
-        AD_COLUMN.AD_Module_ID as columnModule
-        FROM AD_FIELD, AD_COLUMN 
-        WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id AND ad_tab_id = ?
-        AND (UPPER(columnname) IN (SELECT UPPER(columnname) 
-                                    FROM AD_FIELD, AD_COLUMN 
-                                   WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id 
-                                     AND AD_COLUMN.iskey='Y' 
-                                     AND AD_FIELD.ad_tab_id=?)
-            OR (UPPER(columnname) LIKE 'EM_%'  
-               AND UPPER(SUBSTR(COLUMNNAME,4)) IN  (SELECT UPPER(columnname) 
-                                    FROM AD_FIELD, AD_COLUMN 
-                                   WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id 
-                                     AND AD_COLUMN.iskey='Y' 
-                                     AND AD_FIELD.ad_tab_id=?)))
-      </Sql>
-      <Parameter name="parentTab"/>
-      <Parameter name="tab"/>
-      <Parameter name="parentTab"/>
-      <Parameter name="parentTab"/>
-  </SqlMethod>
- 
   <SqlMethod name="tableName" type="preparedStatement" return="string">
       <SqlMethodComment>Name of the table of the tab</SqlMethodComment>
       <Sql>
@@ -165,36 +80,6 @@
                            END)
       </Sql>
       <Parameter name="tableName"/>
-  </SqlMethod>
-  <SqlMethod name="identifierColumns" type="preparedStatement" return="multiple">
-      <SqlMethodComment>identifier columns of a table</SqlMethodComment>
-      <Sql>
-        SELECT ad_column.columnname as name, ad_reference_id as reference, ismandatory as required, 
-        REPLACE(replace(REPLACE(REPLACE(AD_ELEMENT.columnname, 'Substitute_ID', 'M_Product_ID'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM_ID', '_ID'), 'M_LocatorTo_ID', 'M_Locator_ID') as columnname, ad_reference_value_id as referencevalue, 
-        ad_column.istranslated, ad_table.tablename, ad_reference_value_id
-        FROM ad_column left join ad_element on ad_column.ad_element_id = ad_element.ad_element_id, 
-             ad_table 
-        WHERE UPPER(ad_table.tablename) = UPPER(?)
-          AND ad_column.ad_table_id = ad_table.ad_table_id
-          AND isidentifier = 'Y' 
-        order by seqno
-      </Sql>
-      <Parameter name="tableName"/>
-  </SqlMethod>
-  <SqlMethod name="selectSequence" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Names of the columns to order by</SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT ColumnName As Name
-      FROM ad_field, ad_column
-      WHERE ad_field.ad_column_id = ad_column.ad_column_id 
-        AND ad_tab_id = ?
-        AND ad_field.ignoreinwad='N'
-        AND ad_field.SORTNO is not null
-      ORDER BY ad_field.SORTNO, ad_field.SEQNO
-      ]]>
-    </Sql>
-    <Parameter name="tab"/>
   </SqlMethod>
   <SqlMethod name="isSOTrx" type="preparedStatement" return="String" default="N">
     <SqlMethodComment>isSOTrx of the window</SqlMethodComment>

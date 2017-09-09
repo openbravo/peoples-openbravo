@@ -22,7 +22,6 @@
 
 <REPORT>
 <template file="ComboReloadsProcessHelper.javaxml" />
-<PARAMETER id="paramTabId" name="tabId"/>
 
 <structure name="structure1">
   <FIELD id="fieldProcessId">id</FIELD>

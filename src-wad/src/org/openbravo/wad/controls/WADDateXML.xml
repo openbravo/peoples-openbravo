@@ -27,8 +27,6 @@
   <PARAMETER id="xx_Display" name="columnName" attribute="name" replace="xx"/>
   <PARAMETER id="xx_Save" name="columnName" attribute="id"/>
   <PARAMETER id="xx_Save" name="columnName" attribute="name" replace="xx"/>
-  <PARAMETER id="xxlinkCalendar" name="columnName" attribute="id" replace="xx"/>
-  <PARAMETER id="xxlinkCalendar" name="columnName" attribute="name" replace="xx"/>
 
   <DISCARD id="discard"/>
 </REPORT>

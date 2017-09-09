@@ -19,12 +19,9 @@
 package org.openbravo.userinterface.selector.wad;
 
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.servlet.ServletException;
 
-import org.openbravo.wad.FieldsData;
-import org.openbravo.wad.WadUtility;
 import org.openbravo.wad.controls.WADControl;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -172,88 +169,4 @@ public class WADSelector extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
-  public String toJava() {
-    return "";
-  }
-
-  public String getDisplayLogic(boolean display, boolean isreadonly) {
-    StringBuffer displayLogic = new StringBuffer();
-
-    displayLogic.append(super.getDisplayLogic(display, isreadonly));
-
-    if (!getData("IsReadOnly").equals("Y") && !isreadonly) {
-      displayLogic.append("displayLogicElement('");
-      displayLogic.append(getData("ColumnName"));
-      displayLogic.append("_inp_td', ").append(display ? "true" : "false").append(");\n");
-    }
-    return displayLogic.toString();
-  }
-
-  public boolean isLink() {
-    return true;
-  }
-
-  public String getLinkColumnId() {
-    try {
-      return WADSelectorData.getLinkedColumnId(getConnection(), subreference);
-    } catch (Exception e) {
-      return "";
-    }
-  }
-
-  @Override
-  public String columnIdentifier(String tableName, FieldsData fields, Vector<Object> vecCounters,
-      Vector<Object> vecFields, Vector<Object> vecTable, Vector<Object> vecWhere,
-      Vector<Object> vecParameters, Vector<Object> vecTableParameters) throws ServletException {
-    if (fields == null)
-      return "";
-
-    StringBuffer texto = new StringBuffer();
-    int ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
-    int itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
-
-    itable++;
-    String fieldId = "";
-    String tableDirName = "";
-
-    WADSelectorData wadSelectorData = WADSelectorData.getTableName(conn, fields.referencevalue);
-    if (wadSelectorData != null && wadSelectorData.tablename != null
-        && wadSelectorData.tablename.length() > 0) {
-      tableDirName = wadSelectorData.tablename;
-      fieldId = tableDirName + "_ID";
-    } else {
-      tableDirName = fields.name.substring(0, fields.name.length() - 3);
-      fieldId = fields.name;
-    }
-
-    FieldsData fdi[] = FieldsData.identifierColumns(conn, tableDirName);
-    if (tableName != null && tableName.length() != 0) {
-      StringBuffer fieldsAux = new StringBuffer();
-      for (int i = 0; i < fdi.length; i++) {
-        if (!fdi[i].name.equalsIgnoreCase(fieldId)) {
-          fieldsAux.append(", ");
-          fieldsAux.append(fdi[i].name);
-        }
-      }
-      vecTable.addElement("left join (select " + fieldId + fieldsAux.toString() + " from "
-          + tableDirName + ") table" + itable + " on (" + tableName + "." + fields.name
-          + " = table" + itable + "." + fieldId + ")");
-    } else {
-      vecTable.addElement(tableDirName + " table" + itable);
-    }
-    for (int i = 0; i < fdi.length; i++) {
-      if (i > 0)
-        texto.append(" || ' - ' || ");
-      vecCounters.set(0, Integer.toString(itable));
-      vecCounters.set(1, Integer.toString(ilist));
-
-      WADControl control = WadUtility.getWadControlClass(conn, fdi[i].reference,
-          fdi[i].adReferenceValueId);
-      texto.append(control.columnIdentifier("table" + itable, fdi[i], vecCounters, vecFields,
-          vecTable, vecWhere, vecParameters, vecTableParameters));
-      ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
-      itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
-    }
-    return texto.toString();
-  }
 }

@@ -51,9 +51,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Fernando Iriazabal
  */
 public class Wad extends DefaultHandler {
-  private static final int NUM_TABS = 8;
-  private static final int INCR_TABS = 8;
-  private static final int HEIGHT_TABS = 38;
   private static final int MAX_SIZE_EDITION_1_COLUMNS = 90;
   private static final int MAX_TEXTBOX_LENGTH = 110;
   private static final String WELD_LISTENER_ID = "3F88D97C7E9E4DD9847A5488771F4AB3";
@@ -712,9 +709,6 @@ public class Wad extends DefaultHandler {
       final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/webConf")
           .createXmlDocument();
 
-      xmlDocument.setParameter("webPath", webPath);
-      xmlDocument.setParameter("attachPath", attachPath);
-
       String excludeWeldListener = excludeCDI ? WELD_LISTENER_ID : NONE;
       xmlDocument.setData("structureListener", WadData.selectListener(pool, excludeWeldListener));
 
@@ -850,9 +844,7 @@ public class Wad extends DefaultHandler {
       final String windowName = FormatUtilities.replace(tabsData.windowname);
       final String tableName = FieldsData.tableName(pool, tabsData.tabid);
       final String isSOTrx = FieldsData.isSOTrx(pool, tabsData.tabid);
-      final TabsData[] allTabs = getPrimaryTabs(tabsData.key, tabsData.tabid,
-          Integer.valueOf(tabsData.tablevel).intValue(), HEIGHT_TABS, INCR_TABS);
-      final FieldsData[] fieldsData = FieldsData.select(pool, tabsData.tabid);
+      final TabsData[] allTabs = TabsData.selectTabParent(pool, tabsData.key);
 
       /************************************************
        * The 2 tab lines generation
@@ -860,38 +852,6 @@ public class Wad extends DefaultHandler {
       if (allTabs == null || allTabs.length == 0)
         throw new Exception("No tabs found for AD_Tab_ID: " + tabsData.tabid + " - key: "
             + tabsData.key + " - level: " + tabsData.tablevel);
-      final TabsData[] tab1 = new TabsData[(allTabs.length > NUM_TABS) ? NUM_TABS : allTabs.length];
-      final TabsData[] tab2 = new TabsData[(allTabs.length > NUM_TABS) ? NUM_TABS : 0];
-      for (int i = 0; i < NUM_TABS && i < allTabs.length; i++) {
-        tab1[i] = allTabs[i];
-      }
-      if (allTabs.length > NUM_TABS) {
-        int j = 0;
-        for (int i = allTabs.length - NUM_TABS; i < allTabs.length; i++)
-          tab2[j++] = allTabs[i];
-      }
-
-      int parentTabIndex = -1;
-      if (allTabs != null && allTabs.length > 0)
-        parentTabIndex = parentTabId(allTabs, tabsData.tabid);
-
-      final Vector<Object> vecFields = new Vector<Object>();
-      final Vector<Object> vecTables = new Vector<Object>();
-      final Vector<Object> vecWhere = new Vector<Object>();
-      final Vector<Object> vecOrder = new Vector<Object>();
-      final Vector<Object> vecParameters = new Vector<Object>();
-      final Vector<Object> vecTableParameters = new Vector<Object>();
-      final Vector<Object> vecTotalParameters = new Vector<Object>();
-      final Vector<String> vecFieldParameters = new Vector<String>();
-      processTable(tabsData.tabid, vecFields, vecTables, vecWhere, vecOrder, vecParameters,
-          tableName, tabsData.windowtype, tabsData.tablevel, vecTableParameters, fieldsData,
-          vecFieldParameters);
-      for (int i = 0; i < vecTableParameters.size(); i++) {
-        vecTotalParameters.addElement(vecTableParameters.elementAt(i));
-      }
-      for (int i = 0; i < vecParameters.size(); i++) {
-        vecTotalParameters.addElement(vecParameters.elementAt(i));
-      }
 
       final String javaPackage = (!tabsData.javapackage.equals("") ? tabsData.javapackage.replace(
           ".", "/") + "/" : "")
@@ -900,30 +860,6 @@ public class Wad extends DefaultHandler {
                         // modules
       final File fileDir = new File(fileFin, javaPackage);
 
-      int grandfatherTabIndex = -1;
-      FieldsData auxFieldsData[] = null;
-      if (parentTabIndex != -1 && allTabs != null && allTabs.length > 0) {
-        final Vector<Object> vecParametersParent = new Vector<Object>();
-        if (vecParametersParent.size() > 0) {
-          ArrayList<String> usedParameters = new ArrayList<String>();
-          for (int h = 0; h < vecParametersParent.size(); h++) {
-            String strParam = WadUtility.getWhereParameter(vecParametersParent.get(h), false);
-
-            if (!usedParameters.contains(strParam)) {
-              usedParameters.add(strParam);
-            }
-          }
-        }
-        grandfatherTabIndex = parentTabId(allTabs, allTabs[parentTabIndex].tabid);
-        auxFieldsData = FieldsData.parentsColumnName(pool,
-            (grandfatherTabIndex != -1 ? allTabs[grandfatherTabIndex].tabid : ""),
-            allTabs[parentTabIndex].tabid);
-        if (grandfatherTabIndex != -1 && (auxFieldsData == null || auxFieldsData.length == 0)) {
-          auxFieldsData = FieldsData.parentsColumnReal(pool, allTabs[grandfatherTabIndex].tabid,
-              allTabs[parentTabIndex].tabid);
-        }
-      }
-      auxFieldsData = null;
       String keyColumnName = "";
       final FieldsData[] dataKey = FieldsData.keyColumnName(pool, tabsData.tabid);
       if (dataKey != null && dataKey.length > 0) {
@@ -934,8 +870,8 @@ public class Wad extends DefaultHandler {
       /************************************************
        * JAVA
        *************************************************/
-      processTabJava(fileDir, tabsData.tabid, tabName, tableName, windowName, keyColumnName,
-          isSOTrx, tabsData.key, tabsData.accesslevel, tabsData.tableId, tabsData.javapackage,
+      processTabJava(fileDir, tabsData.tabid, tabName, windowName, keyColumnName, isSOTrx,
+          tabsData.key, tabsData.accesslevel, tabsData.tableId, tabsData.javapackage,
           tabsData.tabmodule);
 
       /************************************************
@@ -950,105 +886,6 @@ public class Wad extends DefaultHandler {
   }
 
   /**
-   * Generates the structure for the query fields.
-   * 
-   * @param strTab
-   *          The id of the tab.
-   * @param vecFields
-   *          Vector of query fields (select fields).
-   * @param vecTables
-   *          Vector of query tables (from tables).
-   * @param vecWhere
-   *          Vector of where clauses.
-   * @param vecOrder
-   *          Vector of order clauses.
-   * @param vecParameters
-   *          Vector of query parameters.
-   * @param tableName
-   *          The name of the table.
-   * @param windowType
-   *          The type of window.
-   * @param tablevel
-   *          The tab level.
-   * @param vecTableParameters
-   *          Vector of the from clause parameters.
-   * @param fieldsDataSelectAux
-   *          Array with the fields of the tab.
-   * @param vecFieldParameters
-   * @throws ServletException
-   * @throws IOException
-   */
-  private void processTable(String strTab, Vector<Object> vecFields, Vector<Object> vecTables,
-      Vector<Object> vecWhere, Vector<Object> vecOrder, Vector<Object> vecParameters,
-      String tableName, String windowType, String tablevel, Vector<Object> vecTableParameters,
-      FieldsData[] fieldsDataSelectAux, Vector<String> vecFieldParameters) throws ServletException,
-      IOException {
-    int ilist = 0;
-    final int itable = 0;
-    final Vector<Object> vecCounters = new Vector<Object>();
-    final Vector<Object> vecOrderAux = new Vector<Object>();
-    vecCounters.addElement(Integer.toString(itable));
-    vecCounters.addElement(Integer.toString(ilist));
-    FieldsData[] fieldsData = null;
-    fieldsData = copyarray(fieldsDataSelectAux);
-    for (int i = 0; i < fieldsData.length; i++) {
-      if (!fieldsData[i].columnname.equalsIgnoreCase("Created")
-          && !fieldsData[i].columnname.equalsIgnoreCase("CreatedBy")
-          && !fieldsData[i].columnname.equalsIgnoreCase("Updated")
-          && !fieldsData[i].columnname.equalsIgnoreCase("UpdatedBy")) {
-
-        // hardcoded these special cases
-        if (fieldsData[i].reference.equals("24")) {
-          vecFields.addElement("TO_CHAR(" + tableName + "." + fieldsData[i].name
-              + ", 'HH24:MI:SS') AS " + fieldsData[i].name);
-        } else if (fieldsData[i].reference.equals("20")) {
-          vecFields.addElement("COALESCE(" + tableName + "." + fieldsData[i].name + ", 'N') AS "
-              + fieldsData[i].name);
-        } else if (fieldsData[i].reference.equals("16")) { // datetime
-          vecFields.addElement("TO_CHAR(" + tableName + "." + fieldsData[i].name + ", ?) AS "
-              + fieldsData[i].name);
-          vecFieldParameters.addElement("<Parameter name=\"dateTimeFormat\"/>");
-        } else {
-          vecFields.addElement(tableName + "." + fieldsData[i].name);
-        }
-
-        WADControl control = WadUtility.getWadControlClass(pool, fieldsData[i].reference,
-            fieldsData[i].referencevalue);
-        control.processTable(strTab, vecFields, vecTables, vecWhere, vecOrderAux, vecParameters,
-            tableName, vecTableParameters, fieldsData[i], vecFieldParameters, vecCounters);
-      }
-    }
-    final FieldsData sfd1[] = FieldsData.selectSequence(pool, strTab);
-    if (sfd1 != null && sfd1.length > 0) {
-      for (int i = 0; i < sfd1.length; i++) {
-        final String aux = findOrderVector(vecOrderAux, sfd1[i].name);
-        if (aux != null && aux.length() > 0)
-          vecOrder.addElement(aux);
-      }
-    }
-  }
-
-  /**
-   * Searchs a field in the order vector and returns the column name.
-   * 
-   * @param vecOrder
-   *          Vector with the order fields
-   * @param name
-   *          The name of the field to find
-   * @return String with the name of the column.
-   */
-  private String findOrderVector(Vector<Object> vecOrder, String name) {
-    if (vecOrder.size() == 0 || name.equals(""))
-      return "";
-    for (int i = 0; i < vecOrder.size(); i++) {
-      final String[] aux = (String[]) vecOrder.elementAt(i);
-      if (aux[0].equalsIgnoreCase(name))
-        return aux[1];
-    }
-    return "";
-  }
-
-  /**
    * Generates the java files for a normal tab type.
    * 
    * @param allfields
@@ -1059,8 +896,6 @@ public class Wad extends DefaultHandler {
    *          The id of the tab.
    * @param tabName
    *          The name of the tab.
-   * @param tableName
-   *          The name of the tab's table.
    * @param windowName
    *          The name of the window.
    * @param keyColumnName
@@ -1077,10 +912,9 @@ public class Wad extends DefaultHandler {
    *          The id of the tab's table.
    * @param tabmodule
    */
-  private void processTabJava(File fileDir, String strTab, String tabName, String tableName,
-      String windowName, String keyColumnName, String isSOTrx, String strWindow,
-      String accesslevel, String tableId, String javaPackage, String tabmodule)
-      throws ServletException, IOException {
+  private void processTabJava(File fileDir, String strTab, String tabName, String windowName,
+      String keyColumnName, String isSOTrx, String strWindow, String accesslevel, String tableId,
+      String javaPackage, String tabmodule) throws ServletException, IOException {
     log4j.debug("Processing java: " + strTab + ", " + tabName);
     XmlDocument xmlDocument;
     final String createFromProcess = FieldsData.hasCreateFromButton(pool, strTab);
@@ -1120,12 +954,9 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("class", tabName);
     xmlDocument.setParameter("package", (!javaPackage.equals("") ? javaPackage + "." : "")
         + windowName);
-    xmlDocument.setParameter("path", (!javaPackage.equals("") ? javaPackage.replace(".", "/") + "/"
-        : "") + windowName);
     xmlDocument.setParameter("key", keyColumnName);
 
     xmlDocument.setParameter("keyData", Sqlc.TransformaNombreColumna(keyColumnName));
-    xmlDocument.setParameter("table", tableName);
     xmlDocument.setParameter("windowId", strWindow);
     xmlDocument.setParameter("accessLevel", accesslevel);
     xmlDocument.setParameter("moduleId", tabmodule);
@@ -1285,129 +1116,45 @@ public class Wad extends DefaultHandler {
 
       final Vector<Object> vecReloads = new Vector<Object>();
       final Vector<Object> vecTotal = new Vector<Object>();
-      final Vector<Object> vecCounters = new Vector<Object>();
-      vecCounters.addElement("0");
-      vecCounters.addElement("0");
 
       FieldsData[] result = null;
 
-      for (int i = 0; i < data.length; i++) {
-
-        final String code = data[i].whereclause
-            + ((!data[i].whereclause.equals("") && !data[i].referencevalue.equals("")) ? " AND "
-                : "") + data[i].referencevalue;
-        data[i].columnname = "inp" + Sqlc.TransformaNombreColumna(data[i].columnname);
-        data[i].whereclause = WadUtility.getComboReloadText(code, null, null, vecReloads, "inp");
-        if (data[i].whereclause.equals("") && data[i].type.equals("R")) {
+      for (FieldsData param : data) {
+        final String code = param.whereclause
+            + ((!param.whereclause.equals("") && !param.referencevalue.equals("")) ? " AND " : "")
+            + param.referencevalue;
+        param.columnname = "inp" + Sqlc.TransformaNombreColumna(param.columnname);
+        param.whereclause = WadUtility.getComboReloadText(code, null, null, vecReloads, "inp");
+        if (param.whereclause.equals("") && param.type.equals("R")) {
           // Add combo reloads for all combo references in case there is a ad_org parameter, if not
           // only for the params with validation rule
           if (!hasOrg) {
             continue;
           }
-          data[i].whereclause = "\"inpadOrgId\"";
+          param.whereclause = "\"inpadOrgId\"";
         }
-        if (data[i].reference.equals("17") && data[i].whereclause.equals(""))
-          data[i].whereclause = "\"inp" + data[i].columnname + "\"";
-        if (!data[i].whereclause.equals("")
-            && (data[i].reference.equals("17") || data[i].reference.equals("18") || data[i].reference
+        if (param.reference.equals("17") && param.whereclause.equals(""))
+          param.whereclause = "\"inp" + param.columnname + "\"";
+        if (!param.whereclause.equals("")
+            && (param.reference.equals("17") || param.reference.equals("18") || param.reference
                 .equals("19"))) {
 
-          data[i].orgcode = "Utility.getReferenceableOrg(vars, vars.getStringParameter(\"inpadOrgId\"))";
+          param.orgcode = "Utility.getReferenceableOrg(vars, vars.getStringParameter(\"inpadOrgId\"))";
 
-          if (data[i].reference.equals("17")) { // List
-            data[i].tablename = "List";
-            data[i].tablenametrl = "List";
-            data[i].htmltext = "select";
-            data[i].htmltexttrl = "selectLanguage";
-            data[i].xmltext = ", \"" + data[i].nameref + "\"";
-            data[i].xmltexttrl = data[i].xmltext + ", vars.getLanguage()";
-            data[i].xmltext += ", \"\"";
-            data[i].xmltexttrl += ", \"\"";
-          } else if (data[i].reference.equals("18")) { // Table
-            final FieldsData[] tables = FieldsData.selectColumnTableProcess(pool, data[i].id);
-            if (tables == null || tables.length == 0)
-              throw new ServletException("No se ha encontrado la Table para la columnId: "
-                  + data[i].id);
-            final StringBuffer where = new StringBuffer();
-            final Vector<Object> vecFields1 = new Vector<Object>();
-            final Vector<Object> vecTables = new Vector<Object>();
-            final Vector<Object> vecWhere = new Vector<Object>();
-            final Vector<Object> vecParameters = new Vector<Object>();
-            final Vector<Object> vecTableParameters = new Vector<Object>();
-
-            WADControl control = WadUtility.getWadControlClass(pool, data[i].reference,
-                data[i].referencevalue);
-            control.columnIdentifier(tables[0].tablename, tables[0], vecCounters, vecFields1,
-                vecTables, vecWhere, vecParameters, vecTableParameters);
-
-            where.append(tables[0].whereclause);
-
-            data[i].tablename = "TableList";
-            data[i].htmltext = "select" + tables[0].referencevalue;
-            if (!tables[0].columnname.equals("")) {
-              data[i].htmltext += "_" + tables[0].columnname;
-              data[i].tablename = "TableListVal";
-              if (!where.toString().equals(""))
-                where.append(" AND ");
-              where.append(tables[0].defaultvalue);
+          if (param.reference.equals("18")) { // Table
+            final FieldsData[] tables = FieldsData.selectColumnTableProcess(pool, param.id);
+            if (tables == null || tables.length == 0) {
+              throw new ServletException("Not found Table reference for parameter with id: "
+                  + param.id);
             }
-            data[i].tablenametrl = data[i].tablename + "Trl";
-            data[i].htmltexttrl = data[i].htmltext;
-            data[i].xmltext = "";
-            if (vecTableParameters.size() > 0) {
-              data[i].xmltext = ", vars.getLanguage()";
+          } else if (param.reference.equals("19")) { // TableDir
+            final FieldsData[] tableDir = FieldsData.selectColumnTableDirProcess(pool, param.id);
+            if (tableDir == null || tableDir.length == 0) {
+              throw new ServletException("Not found TableDir reference for parameter with id "
+                  + param.id);
             }
-            data[i].xmltext += ", Utility.getContext(this, vars, \"#User_Org\", windowId), Utility.getContext(this, vars, \"#User_Client\", windowId)";
-            data[i].xmltext += WadUtility.getWadComboReloadContext(where.toString(), "N");
-            data[i].xmltexttrl = data[i].xmltext;
-            if (vecParameters.size() > 0 && vecTableParameters.size() == 0) {
-              data[i].xmltext += ", vars.getLanguage()";
-              data[i].xmltexttrl += ", vars.getLanguage()";
-            }
-            data[i].xmltext += ", \"\"";
-            data[i].xmltexttrl += ", \"\"";
-          } else if (data[i].reference.equals("19")) { // TableDir
-            final FieldsData[] tableDir = FieldsData.selectColumnTableDirProcess(pool, data[i].id);
-            if (tableDir == null || tableDir.length == 0)
-              throw new ServletException("No se ha encontrado la TableDir para la columnId: "
-                  + data[i].id);
-            data[i].tablename = "TableDir";
-            data[i].htmltext = "select" + tableDir[0].referencevalue;
-            final String table_Name = tableDir[0].name.substring(0, tableDir[0].name.length() - 3);
-            final Vector<Object> vecFields1 = new Vector<Object>();
-            final Vector<Object> vecTables = new Vector<Object>();
-            final Vector<Object> vecWhere = new Vector<Object>();
-            final Vector<Object> vecParameters = new Vector<Object>();
-            final Vector<Object> vecTableParameters = new Vector<Object>();
-
-            WADControl control = WadUtility.getWadControlClass(pool, data[i].reference,
-                data[i].referencevalue);
-            control.columnIdentifier(table_Name, data[i], vecCounters, vecFields1, vecTables,
-                vecWhere, vecParameters, vecTableParameters);
-
-            data[i].xmltext = "";
-            if (vecTableParameters.size() > 0) {
-              data[i].xmltext = ", vars.getLanguage()";
-            }
-            data[i].xmltext += ", Utility.getContext(this, vars, \"#User_Org\", windowId), Utility.getContext(this, vars, \"#User_Client\", windowId)";
-            if (!tableDir[0].columnname.equals("")) {
-              data[i].htmltext += "_" + tableDir[0].columnname;
-              data[i].tablename = "TableDirVal";
-              data[i].xmltext += WadUtility.getWadComboReloadContext(tableDir[0].defaultvalue, "N");
-            } else {
-              data[i].tablename = "TableDir";
-            }
-            data[i].tablenametrl = data[i].tablename + "Trl";
-            data[i].htmltexttrl = data[i].htmltext;
-            data[i].xmltexttrl = data[i].xmltext;
-            if (vecParameters.size() > 0 && vecTableParameters.size() == 0) {
-              data[i].xmltext += ", vars.getLanguage()";
-              data[i].xmltexttrl += ", vars.getLanguage()";
-            }
-            data[i].xmltext += ", \"\"";
-            data[i].xmltexttrl += ", \"\"";
           }
-          vecTotal.addElement(data[i]);
+          vecTotal.addElement(param);
         }
       }
       if (vecTotal != null && vecTotal.size() > 0) {
@@ -1435,105 +1182,6 @@ public class Wad extends DefaultHandler {
       WadUtility.writeFile(fileDir, "ComboReloadsProcessHelper.java", xmlDocumentHelper.print());
       log4j.debug("created :" + fileDir + "/ComboReloadsProcessHelper.java");
     }
-  }
-
-  /*
-   * ##########################################################################
-   * ################################################### # Utilities # ########
-   * ##################################################################
-   * #####################################################
-   */
-  /**
-   * Returns the subtabs for a given parent tab id. Also marks as selected one of them.
-   * 
-   * @param vec
-   *          Vector with the subtabs.
-   * @param strTabParent
-   *          Id of the parent tab.
-   * @param strTabSelected
-   *          Id of the selected tab.
-   * @throws IOException
-   * @throws ServletException
-   */
-  private void getSubTabs(Vector<Object> vec, String strTabParent, String strTabSelected)
-      throws IOException, ServletException {
-    TabsData[] aux = null;
-    aux = TabsData.selectSubtabs(pool, strTabParent);
-    if (aux == null || aux.length <= 0)
-      return;
-    for (int i = 0; i < aux.length; i++) {
-      vec.addElement(aux[i]);
-      getSubTabs(vec, aux[i].tabid, strTabSelected);
-    }
-  }
-
-  /**
-   * Returns the primary tabs of a given window.
-   * 
-   * @param strWindowId
-   *          Id of the window.
-   * @param strTabSelected
-   *          The selected tab.
-   * @param level
-   *          The level of the tab to return.
-   * @param heightTabs
-   *          The default height for the tabs.
-   * @param incrTabs
-   *          The increment over the height.
-   * @return Array with the primary tabs.
-   * @throws IOException
-   * @throws ServletException
-   */
-  private TabsData[] getPrimaryTabs(String strWindowId, String strTabSelected, int level,
-      int heightTabs, int incrTabs) throws IOException, ServletException {
-    TabsData[] aux = null;
-    TabsData[] aux1 = null;
-    final Vector<Object> vec = new Vector<Object>();
-    aux1 = TabsData.selectTabParent(pool, strWindowId);
-    if (aux1 == null || aux1.length == 0)
-      return null;
-    for (int i = 0; i < aux1.length; i++) {
-      vec.addElement(aux1[i]);
-      getSubTabs(vec, aux1[i].tabid, strTabSelected);
-    }
-    aux = new TabsData[vec.size()];
-    vec.copyInto(aux);
-
-    return aux;
-  }
-
-  /**
-   * Returns the index of the parent tab in the given array.
-   * 
-   * @param allTabs
-   *          Array of tabs.
-   * @param tabId
-   *          The id of the actual tab.
-   * @return Int with the index of the parent tab or -1 if there is no parent.
-   * @throws ServletException
-   * @throws IOException
-   */
-  private int parentTabId(TabsData[] allTabs, String tabId) throws ServletException, IOException {
-    if (allTabs == null || allTabs.length == 0)
-      return -1;
-    else if (tabId == null || tabId.equals(""))
-      return -1;
-    else if (tabId.equals(allTabs[0].tabid))
-      return -1;
-    String parentTab = "";
-    for (int i = 1; i < allTabs.length; i++) {
-      if (allTabs[i].tabid.equals(tabId)) {
-        parentTab = allTabs[i].parentKey;
-        break;
-      }
-    }
-    if (!parentTab.equals("-1")) {
-      for (int i = 0; i < allTabs.length; i++) {
-        if (allTabs[i].tabid.equals(parentTab))
-          return i;
-      }
-    }
-    return -1;
   }
 
   /**
@@ -1564,74 +1212,6 @@ public class Wad extends DefaultHandler {
   private void createPool(String strFileConnection) {
     pool = new WadConnection(strFileConnection);
     WADControl.setConnection(pool);
-  }
-
-  /**
-   * Auxiliar method to make a copy of a FieldsData element.
-   * 
-   * @param from
-   *          The FieldsData object to copy.
-   * @return The new copy of the given FieldsData object.
-   */
-  private FieldsData copyarrayElement(FieldsData from) {
-    final FieldsData toAux = new FieldsData();
-    toAux.realname = from.realname;
-    toAux.name = from.name;
-    toAux.nameref = from.nameref;
-    toAux.xmltext = from.xmltext;
-    toAux.reference = from.reference;
-    toAux.referencevalue = from.referencevalue;
-    toAux.required = from.required;
-    toAux.isdisplayed = from.isdisplayed;
-    toAux.isupdateable = from.isupdateable;
-    toAux.defaultvalue = from.defaultvalue;
-    toAux.fieldlength = from.fieldlength;
-    toAux.textAlign = from.textAlign;
-    toAux.xmlFormat = from.xmlFormat;
-    toAux.displaylength = from.displaylength;
-    toAux.columnname = from.columnname;
-    toAux.whereclause = from.whereclause;
-    toAux.tablename = from.tablename;
-    toAux.type = from.type;
-    toAux.issessionattr = from.issessionattr;
-    toAux.iskey = from.iskey;
-    toAux.isparent = from.isparent;
-    toAux.accesslevel = from.accesslevel;
-    toAux.isreadonly = from.isreadonly;
-    toAux.issecondarykey = from.issecondarykey;
-    toAux.showinrelation = from.showinrelation;
-    toAux.isencrypted = from.isencrypted;
-    toAux.sortno = from.sortno;
-    toAux.istranslated = from.istranslated;
-    toAux.id = from.id;
-    toAux.htmltext = from.htmltext;
-    toAux.htmltexttrl = from.htmltexttrl;
-    toAux.xmltexttrl = from.xmltexttrl;
-    toAux.tablenametrl = from.tablenametrl;
-    toAux.nowrap = from.nowrap;
-    toAux.iscolumnencrypted = from.iscolumnencrypted;
-    toAux.isdesencryptable = from.isdesencryptable;
-    toAux.adReferenceValueId = from.adReferenceValueId;
-    return toAux;
-  }
-
-  /**
-   * Auxiliar method to copy an array of FieldsData objects.
-   * 
-   * @param from
-   *          The array of FieldsData objects to copy.
-   * @return The copy array of FieldsData objects.
-   */
-  private FieldsData[] copyarray(FieldsData[] from) {
-    if (from == null)
-      return null;
-    log4j.debug("Starting copyarray: " + from.length);
-    final FieldsData[] to = new FieldsData[from.length];
-    for (int i = 0; i < from.length; i++) {
-      log4j.debug("For copyarray");
-      to[i] = copyarrayElement(from[i]);
-    }
-    return to;
   }
 
   /**

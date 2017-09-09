@@ -18,15 +18,10 @@
  */
 package org.openbravo.wad.controls;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.Vector;
-
-import javax.servlet.ServletException;
 
 import org.openbravo.utils.FormatUtilities;
-import org.openbravo.wad.FieldsData;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADButton extends WADControl {
@@ -175,102 +170,6 @@ public class WADButton extends WADControl {
       text.append("_Modal\" attribute=\"onclick\" replace=\"zz\" default=\"false\"/>");
     }
     return text.toString();
-  }
-
-  public String toJava() {
-
-    boolean isDisabled = getData("IsReadOnly").equals("Y") || getData("IsUpdateable").equals("N");
-
-    String javaCode = "";
-
-    if (getData("IsDisplayed").equals("Y")) {
-      if (!getData("AD_Reference_Value_ID").equals("")
-          && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus")) {
-        javaCode = "xmlDocument.setParameter(\"" + getData("ColumnName")
-            + "_BTNname\", Utility.getButtonName(this, vars, \"" + getData("AD_Reference_Value_ID")
-            + "\", (dataField==null?data[0].getField(\"" + getData("ColumnNameInp")
-            + "\"):dataField.getField(\"" + getData("ColumnNameInp") + "\")), \""
-            + getData("ColumnName") + "_linkBTN\", usedButtonShortCuts, reservedButtonShortCuts));";
-      } else {
-        javaCode = "xmlDocument.setParameter(\"" + getData("ColumnName")
-            + "_BTNname\", Utility.getButtonName(this, vars, \"" + getData("AD_Field_ID")
-            + "\", \"" + getData("ColumnName")
-            + "_linkBTN\", usedButtonShortCuts, reservedButtonShortCuts));";
-      }
-      if (!isDisabled) {
-        String varName = "modal" + FormatUtilities.replace(getData("ColumnName"));
-        javaCode += "boolean " + varName
-            + " = org.openbravo.erpCommon.utility.Utility.isModalProcess(\""
-            + getData("AD_Process_ID") + "\"); \n";
-        javaCode += "xmlDocument.setParameter(\"" + getData("ColumnName") + "_Modal\", " + varName
-            + "?\"true\":\"false\");";
-      }
-    } else {
-      javaCode = "";
-    }
-    return javaCode;
-  }
-
-  public int addAdditionDefaulJavaFields(StringBuffer strDefaultValues, FieldsData fieldsDef,
-      String tabName, int itable) {
-    // not need to implement sql method as itable is not modified
-    if (fieldsDef.isdisplayed.equals("Y") && !fieldsDef.referencevalue.equals("")) {
-      strDefaultValues
-          .append(", (vars.getLanguage().equals(\"en_US\")?ListData.selectName(this, \"")
-          .append(fieldsDef.referencevalue).append("\", ").append(fieldsDef.defaultvalue)
-          .append("):ListData.selectNameTrl(this, vars.getLanguage(), \"")
-          .append(fieldsDef.referencevalue).append("\", ").append(fieldsDef.defaultvalue)
-          .append("))");
-    }
-    return itable;
-  }
-
-  public void processTable(String strTab, Vector<Object> vecFields, Vector<Object> vecTables,
-      Vector<Object> vecWhere, Vector<Object> vecOrder, Vector<Object> vecParameters,
-      String tableName, Vector<Object> vecTableParameters, FieldsData field,
-      Vector<String> vecFieldParameters, Vector<Object> vecCounters) throws ServletException,
-      IOException {
-
-    String strOrder = "";
-    if (field.isdisplayed.equals("Y") && !field.referencevalue.equals("")
-        && !field.name.equalsIgnoreCase("ChangeProjectStatus")) {
-      int ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
-      ilist++;
-      vecFields.addElement("list" + ilist + ".name as " + field.name + "_BTN");
-      strOrder = "list" + ilist + ".name";
-      final StringBuffer strWhere = new StringBuffer();
-      if (field.name.equalsIgnoreCase("DocAction")) {
-        strWhere.append(" AND (CASE " + tableName + "." + field.name
-            + " WHEN '--' THEN 'CL' ELSE TO_CHAR(" + tableName + "." + field.name + ") END) = "
-            + "list" + ilist + ".value");
-      } else {
-        strWhere.append(" AND " + tableName + "." + field.name + " = TO_CHAR(list" + ilist
-            + ".value)");
-      }
-      vecTables.addElement("left join ad_ref_list_v list" + ilist + " on (" + "list" + ilist
-          + ".ad_reference_id = '" + field.referencevalue + "' and list" + ilist
-          + ".ad_language = ? " + strWhere.toString() + ")");
-      vecTableParameters.addElement("<Parameter name=\"paramLanguage\"/>");
-      vecCounters.set(1, Integer.toString(ilist));
-    } else {
-      strOrder = tableName + "." + field.name;
-    }
-
-    final String[] aux = { new String(field.name),
-        new String(strOrder + (field.name.equalsIgnoreCase("DocumentNo") ? " DESC" : "")) };
-    vecOrder.addElement(aux);
-  }
-
-  public String getDisplayLogic(boolean display, boolean isreadonly) {
-    return "";
-  }
-
-  public String getDefaultValue() {
-    if (!getData("name").endsWith("_ID")) {
-      return "N";
-    } else {
-      return "";
-    }
   }
 
 }

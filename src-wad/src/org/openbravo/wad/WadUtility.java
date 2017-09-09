@@ -38,7 +38,7 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.wad.controls.WADControl;
 import org.openbravo.xmlEngine.XmlEngine;
 
-public class WadUtility {
+class WadUtility {
   private static final Logger log4j = Logger.getLogger(WadUtility.class);
 
   // small cache to store mapping of <subRef + "-" + parentRef,classname>
@@ -46,114 +46,6 @@ public class WadUtility {
 
   public WadUtility() {
     PropertyConfigurator.configure("log4j.lcf");
-  }
-
-  public static String applyFormat(String text, String reference, String sqlDateFormat) {
-    // used from WADControl column identifier, keep hardcoded for core references
-    if (reference.equals("15"))
-      return "TO_CHAR(" + text + ", '" + sqlDateFormat + "')";
-    else if (reference.equals("24"))
-      return "TO_CHAR(" + text + ", 'HH24:MM:SS')";
-    else if (reference.equals("16"))
-      return "TO_CHAR(" + text + ", '" + sqlDateFormat + " HH24:MM:SS')";
-    else
-      return "TO_CHAR(COALESCE(TO_CHAR(" + text + "), ''))";
-  }
-
-  public static String columnIdentifier(ConnectionProvider conn, String tableName,
-      boolean required, FieldsData fields, Vector<Object> vecCounters, boolean translated,
-      Vector<Object> vecFields, Vector<Object> vecTable, Vector<Object> vecWhere,
-      Vector<Object> vecParameters, Vector<Object> vecTableParameters, String sqlDateFormat)
-      throws ServletException {
-    if (fields == null)
-      return "";
-
-    int ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
-    int itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
-
-    String retValue;
-    if (fields.reference.equals("19") || fields.reference.equals("30")
-        || fields.reference.equals("31") || fields.reference.equals("35")
-        || fields.reference.equals("25") || fields.reference.equals("800011")) {
-      // TableDir, Search and Locator
-      // Maintain this old code for convenience, rest of code moved to WADControl subclasses
-
-      StringBuffer texto = new StringBuffer();
-      itable++;
-      EditionFieldsData[] dataSearchs = null;
-      if (fields.reference.equals("30"))
-        dataSearchs = EditionFieldsData.selectSearchs(conn, "", fields.referencevalue);
-      String tableDirName = "", fieldId = "";
-      if (dataSearchs == null || dataSearchs.length == 0) {
-        int ilength = fields.name.length();
-        if (fields.reference.equals("25"))
-          tableDirName = "C_ValidCombination";
-        else if (fields.reference.equals("31"))
-          tableDirName = "M_Locator";
-        else if (fields.reference.equals("35"))
-          tableDirName = "M_AttributeSetInstance";
-        else if (fields.reference.equals("800011"))
-          tableDirName = "M_Product";
-        else if (fields.name.equalsIgnoreCase("C_SETTLEMENT_CANCEL_ID"))
-          tableDirName = "C_Settlement";
-        else if (fields.name.equalsIgnoreCase("SUBSTITUTE_ID"))
-          tableDirName = "M_Product";
-        else
-          tableDirName = fields.name.substring(0, ilength - 3);
-        if (fields.reference.equals("25"))
-          fieldId = "C_ValidCombination_ID";
-        else if (fields.reference.equals("31"))
-          fieldId = "M_Locator_ID";
-        else if (fields.reference.equals("35"))
-          fieldId = "M_AttributeSetInstance_ID";
-        else if (fields.reference.equals("800011"))
-          fieldId = "M_Product_ID";
-        else if (fields.name.equalsIgnoreCase("C_SETTLEMENT_CANCEL_ID"))
-          fieldId = "C_Settlement_ID";
-        else if (fields.name.equalsIgnoreCase("SUBSTITUTE_ID"))
-          fieldId = "M_Product_ID";
-        else
-          fieldId = fields.name;
-      } else {
-        tableDirName = dataSearchs[0].reference;
-        fieldId = dataSearchs[0].columnname;
-      }
-      FieldsData fdi[] = FieldsData.identifierColumns(conn, tableDirName);
-      if (tableName != null && tableName.length() != 0) {
-        StringBuffer fieldsAux = new StringBuffer();
-        for (int i = 0; i < fdi.length; i++) {
-          if (!fdi[i].name.equalsIgnoreCase(fieldId))
-            fieldsAux.append(", ").append(fdi[i].name);
-        }
-        vecTable.addElement("left join (select " + fieldId + fieldsAux.toString() + " from "
-            + tableDirName + ") table" + itable + " on (" + tableName + "." + fields.name
-            + " = table" + itable + "." + fieldId + ")");
-      } else {
-        vecTable.addElement(tableDirName + " table" + itable);
-      }
-      int tableId = itable;
-      for (int i = 0; i < fdi.length; i++) {
-        if (i > 0)
-          texto.append(" || ' - ' || ");
-        vecCounters.set(0, Integer.toString(itable));
-        vecCounters.set(1, Integer.toString(ilist));
-        texto.append(columnIdentifier(conn, "table" + tableId, required, fdi[i], vecCounters,
-            translated, vecFields, vecTable, vecWhere, vecParameters, vecTableParameters,
-            sqlDateFormat));
-        ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
-        itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
-      }
-      vecCounters.set(0, Integer.toString(itable));
-      vecCounters.set(1, Integer.toString(ilist));
-      retValue = texto.toString();
-    } else {
-      WADControl control = WadUtility.getWadControlClass(conn, fields.reference,
-          fields.adReferenceValueId);
-      retValue = control.columnIdentifier(tableName, fields, vecCounters, vecFields, vecTable,
-          vecWhere, vecParameters, vecTableParameters);
-    }
-    return retValue;
-
   }
 
   public static String getSQLWadContext(String code, Vector<Object> vecParameters) {
@@ -249,55 +141,6 @@ public class WadUtility {
       i = strValue.indexOf("@");
     }
     return strOut.toString();
-  }
-
-  public static String getWadComboReloadContext(String code, String isSOTrx) {
-    if (code == null || code.trim().equals(""))
-      return "";
-    String token;
-    String strValue = code;
-    StringBuffer strOut = new StringBuffer();
-
-    int i = strValue.indexOf("@");
-    String strAux;
-    while (i != -1) {
-      if (strValue.length() > (i + 5) && strValue.substring(i + 1, i + 5).equalsIgnoreCase("SQL=")) {
-        strValue = strValue.substring(i + 5, strValue.length());
-      } else {
-        strValue = strValue.substring(i + 1, strValue.length());
-
-        int j = strValue.indexOf("@");
-        if (j < 0)
-          return "";
-
-        token = strValue.substring(0, j);
-        strAux = getWadComboReloadContextTranslate(token, isSOTrx);
-        if (!strAux.trim().equals("") && strOut.toString().indexOf(strAux) == -1)
-          strOut.append(", " + strAux);
-
-        strValue = strValue.substring(j + 1, strValue.length());
-      }
-      i = strValue.indexOf("@");
-    }
-    return strOut.toString();
-  }
-
-  private static String getWadComboReloadContextTranslate(String token, String isSOTrx) {
-    String result = "";
-    if (token.substring(0, 1).indexOf("#") > -1 || token.substring(0, 1).indexOf("$") > -1) {
-      if (token.equalsIgnoreCase("#DATE"))
-        result = "DateTimeData.today(this)";
-      // else result = "vars.getSessionValue(\"" + token + "\")";
-      else
-        result = "Utility.getContext(this, vars, \"" + token + "\", windowId)";
-    } else {
-      String aux = Sqlc.TransformaNombreColumna(token);
-      if (token.equalsIgnoreCase("ISSOTRX"))
-        result = ("\"" + isSOTrx + "\"");
-      else
-        result = "vars.getStringParameter(\"inp" + aux + "\")";
-    }
-    return result;
   }
 
   public static String getTextWadContext(String code, Vector<Object> vecFields,
@@ -482,12 +325,6 @@ public class WadUtility {
     }
     return ((prefix.equals("")) ? ("\"" + FormatUtilities.replace(token) + "\"") : ("\"" + prefix
         + Sqlc.TransformaNombreColumna(token) + "\""));
-  }
-
-  public static boolean isSearchValueColumn(String name) {
-    if (name == null || name.equals(""))
-      return false;
-    return (name.equalsIgnoreCase("Value") || name.equalsIgnoreCase("DocumentNo"));
   }
 
   private static void setPropertyValue(Properties _prop, FieldProvider _field, String _name,

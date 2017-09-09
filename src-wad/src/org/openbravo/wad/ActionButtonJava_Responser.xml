@@ -26,8 +26,6 @@
 
 <structure name="structure1">
   <FIELD id="ProcessID1">adProcessId</FIELD>
-  <FIELD id="ButtonName1">columnname</FIELD>
-  <FIELD id="ButtonRealName1">realname</FIELD>
   <FIELD id="FieldsLoad1">htmltext</FIELD>
   <FIELD id="FieldsLoadName1">htmlfields</FIELD>
   <SECTION id="sectionActionButtons1"/>
@@ -35,8 +33,6 @@
 
 <structure name="structure2">
   <FIELD id="ProcessID2">adProcessId</FIELD>
-  <FIELD id="ButtonName2">columnname</FIELD>
-  <FIELD id="ButtonRealName2">realname</FIELD>
   <FIELD id="ButtonProcessId2">xmlid</FIELD>
   <FIELD id="FieldsLoadName2">htmlfieldsHeader</FIELD>
   <FIELD id="JavaCode2">javacode</FIELD>
@@ -50,8 +46,6 @@
 
 <structure name="structure4">
   <FIELD id="ProcessID4">adProcessId</FIELD>
-  <FIELD id="ButtonName4">columnname</FIELD>
-  <FIELD id="ButtonRealName4">realname</FIELD>
   <FIELD id="FieldsLoad4">htmltext</FIELD>
   <FIELD id="FieldsLoadParams4">processParams</FIELD>
   <FIELD id="ProcessCode4">processCode</FIELD>

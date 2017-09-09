@@ -23,7 +23,6 @@
 <REPORT>
 <template file="Template_ActionButton.html" />
 
-<PARAMETER id="tab" name = "tab" default=" "/>
 <PARAMETER id="buttonOK" name = "columnname" default=" " attribute="onclick" replace="xx"/>
 <PARAMETER id="importCSS" name = "importCSS" default=" "/>
 <PARAMETER id="importJS" name = "importJS" default=" "/>

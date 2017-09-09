@@ -22,8 +22,6 @@
 
 <REPORT>
   <template file="web.xml" />
-  <PARAMETER id="paramWebPath" name="webPath" default="" />
-  <PARAMETER id="paramAttachPath" name="attachPath" default="" />
 
   <PARAMETER id="webapp1" name="webapp1" default="Y" />
   <PARAMETER id="webapp" name="webapp" default="Y" withId="webapp1"

@@ -141,20 +141,4 @@ public class WADLink extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
-  public String toJava() {
-    return "";
-  }
-
-  public String getDisplayLogic(boolean display, boolean isreadonly) {
-    StringBuffer displayLogic = new StringBuffer();
-
-    displayLogic.append(super.getDisplayLogic(display, isreadonly));
-
-    if (!getData("IsReadOnly").equals("Y") && !isreadonly) {
-      displayLogic.append("displayLogicElement('");
-      displayLogic.append(getData("ColumnName"));
-      displayLogic.append("_btt', ").append(display ? "true" : "false").append(");\n");
-    }
-    return displayLogic.toString();
-  }
 }

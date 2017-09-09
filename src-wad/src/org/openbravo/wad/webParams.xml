@@ -22,5 +22,4 @@
     <FIELD id="fieldValue">value</FIELD>
     <SECTION id="sectionDetail" />
   </structure>
-  <DISCARD id="discard" />
 </REPORT>

@@ -115,15 +115,4 @@ public class WADYesNo extends WADControl {
     return text.toString();
   }
 
-  public String toJava() {
-    return "";
-  }
-
-  public String getDefaultValue() {
-    return "N";
-  }
-
-  public boolean isText() {
-    return true;
-  }
 }

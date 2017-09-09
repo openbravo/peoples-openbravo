@@ -28,7 +28,4 @@ public class WADSelectorPrimitive extends WADSelector {
     super(prop);
   }
 
-  public boolean isLink() {
-    return false;
-  }
 }
