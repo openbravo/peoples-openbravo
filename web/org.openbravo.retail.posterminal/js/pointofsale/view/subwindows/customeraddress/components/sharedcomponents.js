@@ -210,6 +210,7 @@ enyo.kind({
           windowComponent: me
         }, function (args) {
           if (args && args.cancellation && args.cancellation === true) {
+            enableButtonsCallback();
             return true;
           }
           var callback = function () {
