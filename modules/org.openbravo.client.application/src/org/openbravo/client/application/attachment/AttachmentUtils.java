@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2016 Openbravo SLU
+ * All portions are Copyright (C) 2015-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -169,7 +169,7 @@ public class AttachmentUtils {
     OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
         Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds));
     attachmentFiles.addOrderBy("creationDate", false);
-    List<JSONObject> attachments = new ArrayList<JSONObject>();
+    List<JSONObject> attachments = new ArrayList<>();
     // do not filter by the attachment's organization
     // if the user has access to the record where the file its attached, it has access to all its
     // attachments
@@ -179,7 +179,8 @@ public class AttachmentUtils {
       try {
         attachmentobj.put("id", attachment.getId());
         attachmentobj.put("name", attachment.getName());
-        attachmentobj.put("age", (new Date().getTime() - attachment.getUpdated().getTime()));
+        attachmentobj.put("age", (new Date().getTime() - getLastUpdateOfAttachment(attachment)
+            .getTime()));
         attachmentobj.put("updatedby", attachment.getUpdatedBy().getName());
         String attachmentMethod = DEFAULT_METHOD_ID;
         if (attachment.getAttachmentConf() != null) {
@@ -193,6 +194,20 @@ public class AttachmentUtils {
       attachments.add(attachmentobj);
     }
     return attachments;
+  }
+
+  private static Date getLastUpdateOfAttachment(Attachment attachment) {
+    final StringBuilder hql = new StringBuilder();
+    hql.append("SELECT MAX(pv.updated) FROM OBUIAPP_ParameterValue pv");
+    hql.append(" WHERE pv.file.id =:fileId");
+    final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    query.setParameter("fileId", attachment.getId());
+    query.setMaxResults(1);
+    Date metadataLastUpdate = (Date) query.uniqueResult();
+    if (metadataLastUpdate == null || attachment.getUpdated().after(metadataLastUpdate)) {
+      return attachment.getUpdated();
+    }
+    return metadataLastUpdate;
   }
 
   /**
