@@ -1255,6 +1255,8 @@
       if (OB.UTIL.localStorage.getItem('cacheSessionId') && OB.UTIL.localStorage.getItem('cacheSessionId').length === 32) {
         cacheSessionId = OB.UTIL.localStorage.getItem('cacheSessionId');
       }
+      me.setTerminalName(OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
+
       params.cacheSessionId = cacheSessionId;
       params.command = 'initActions';
       new OB.OBPOSLogin.UI.LoginRequest({
