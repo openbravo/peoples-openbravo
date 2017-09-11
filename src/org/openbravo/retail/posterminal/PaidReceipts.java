@@ -12,9 +12,11 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TimeZone;
 
 import javax.enterprise.inject.Any;
@@ -84,6 +86,7 @@ public class PaidReceipts extends JSONProcessSimple {
     OBContext.setAdminMode(true);
     try {
       JSONArray respArray = new JSONArray();
+      List<String> orderIds = new ArrayList<String>();
 
       final DateFormat parseDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
       parseDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -107,9 +110,11 @@ public class PaidReceipts extends JSONProcessSimple {
 
       for (int receipt = 0; receipt < paidReceipts.length(); receipt++) {
         JSONObject paidReceipt = paidReceipts.getJSONObject(receipt);
+        if (orderIds.indexOf(orderid) == -1) {
+          orderIds.add(orderid);
+        }
 
         paidReceipt.put("orderid", orderid);
-        paidReceipt.put("recordInImportEntry", checkOrderInErrorEntry(orderid));
         paidReceipt.put("loaded", parseDateFormat.format(new Date()));
 
         // get the Invoice for the Order
@@ -138,7 +143,9 @@ public class PaidReceipts extends JSONProcessSimple {
 
         for (int receiptLine = 0; receiptLine < paidReceiptsLines.length(); receiptLine++) {
           JSONObject paidReceiptLine = paidReceiptsLines.getJSONObject(receiptLine);
-
+          if (orderIds.indexOf((String) paidReceiptLine.get("orderId")) == -1) {
+            orderIds.add((String) paidReceiptLine.get("orderId"));
+          }
           paidReceiptLine.put("priceIncludesTax", paidReceipt.getBoolean("priceIncludesTax"));
 
           // get shipmentLines for returns
@@ -157,8 +164,8 @@ public class PaidReceipts extends JSONProcessSimple {
 
           if (paidReceiptLine.has("goodsShipmentLine")
               && !paidReceiptLine.getString("goodsShipmentLine").equals("null")) {
-            String hqlShipLines = "select ordLine.goodsShipmentLine.salesOrderLine.salesOrder.documentNo, ordLine.goodsShipmentLine.salesOrderLine.id, "
-                + "ordLine.goodsShipmentLine.salesOrderLine.salesOrder.id from OrderLine as ordLine where ordLine.id = ? ";
+            String hqlShipLines = "select ordLine.goodsShipmentLine.salesOrderLine.salesOrder.documentNo, ordLine.goodsShipmentLine.salesOrderLine.id "
+                + "from OrderLine as ordLine where ordLine.id = ? ";
             OBDal.getInstance().getSession().createQuery(hqlShipLines);
             Query shipLines = OBDal.getInstance().getSession().createQuery(hqlShipLines);
             shipLines.setString(0, paidReceiptLine.getString("lineId"));
@@ -167,11 +174,6 @@ public class PaidReceipts extends JSONProcessSimple {
               Object[] line = (Object[]) obj;
               paidReceiptLine.put("originalDocumentNo", line[0]);
               paidReceiptLine.put("originalOrderLineId", line[1]);
-
-              if (!paidReceipt.getBoolean("recordInImportEntry")) {
-                paidReceipt.put("recordInImportEntry",
-                    checkOrderInErrorEntry(String.valueOf(line[2])));
-              }
             }
           }
 
@@ -258,6 +260,9 @@ public class PaidReceipts extends JSONProcessSimple {
               if (!jsonObject.getString("orderId").equals(orderid)) {
                 jsonObject.put("otherTicket", true);
                 jsonObject.put("deferred", true);
+                if (orderIds.indexOf((String) jsonObject.getString("orderId")) == -1) {
+                  orderIds.add((String) jsonObject.getString("orderId"));
+                }
               } else {
                 jsonObject.put("otherTicket", false);
                 jsonObject.put("deferred", false);
@@ -493,6 +498,8 @@ public class PaidReceipts extends JSONProcessSimple {
           paidReceipt.put("approvedList", jsonListApproval);
         }
 
+        paidReceipt.put("recordInImportEntry", checkOrderInErrorEntry(orderIds));
+
         respArray.put(paidReceipt);
 
         result.put(JsonConstants.RESPONSE_DATA, respArray);
@@ -520,16 +527,44 @@ public class PaidReceipts extends JSONProcessSimple {
     }
   }
 
-  private boolean checkOrderInErrorEntry(String orderId) {
+  private boolean checkOrderInErrorEntry(List<String> orderIds) {
     boolean hasRecord = false;
+    final String COMMA = ",";
+    StringBuilder idsBuilder = new StringBuilder();
+    final String OR = "OR";
+    StringBuilder orBuilder = new StringBuilder();
     try {
+      for (String id : orderIds) {
+        idsBuilder.append(id);
+        idsBuilder.append(COMMA);
+
+        orBuilder.append(" imp.jsonInfo like '%" + id + "%' ");
+        orBuilder.append(OR);
+      }
+      String ids = idsBuilder.toString();
+      // Remove last comma
+      ids = ids.substring(0, ids.length() - COMMA.length());
+
+      String orIds = orBuilder.toString();
+      // Remove last OR
+      orIds = orIds.substring(0, orIds.length() - OR.length());
+
       // OBPOS Errors
       String hqlError = "select line.id from OBPOS_Errors_Line line inner join line.obposErrors error "
-          + "where error.client.id = ? and line.recordID = ? and error.typeofdata = 'Order' and error.orderstatus = 'N' ";
+          + "where error.client.id = ? and line.recordID in (?) and error.typeofdata = 'Order' and error.orderstatus = 'N' ";
       Query errorQuery = OBDal.getInstance().getSession().createQuery(hqlError);
       errorQuery.setString(0, OBContext.getOBContext().getCurrentClient().getId());
-      errorQuery.setString(1, orderId);
+      errorQuery.setString(1, ids);
       if (errorQuery.list().size() > 0) {
+        return true;
+      }
+
+      String hqlError2 = "select imp.id from C_IMPORT_ENTRY imp "
+          + "where imp.client.id = ? and imp.typeofdata = 'Order' and imp.importStatus = 'Error' "
+          + "and (" + orIds + ")";
+      Query errorQuery2 = OBDal.getInstance().getSession().createQuery(hqlError2);
+      errorQuery2.setString(0, OBContext.getOBContext().getCurrentClient().getId());
+      if (errorQuery2.list().size() > 0) {
         return true;
       }
 

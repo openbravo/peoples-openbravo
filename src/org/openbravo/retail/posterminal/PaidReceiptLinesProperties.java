@@ -63,6 +63,7 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty(
             "(select case when line.attributeSetValue is not null then line.attributeSetValue.description else null end FROM OrderLine line where line.id =  ordLine.id)",
             "attributeValue"));
+        add(new HQLProperty("ordLine.salesOrder.id", "orderId"));
       }
     };
 
