@@ -365,7 +365,7 @@ enyo.kind({
         me.$.renderLoading.hide();
         me.prsList.reset();
       }
-    });
+    }, true, 30000);
     return true;
   },
   prsList: null,
