@@ -119,7 +119,7 @@ public class InventoryStatusUtils {
   /**
    * Returns the number of Virtual Bins that are associated to the given Storage Bin
    */
-  public static int getNumberOfVirtualBins(Locator storageBin, boolean active) {
+  private static int getNumberOfVirtualBins(Locator storageBin, boolean active) {
     OBCriteria<Locator> obc = OBDal.getInstance().createCriteria(Locator.class);
     obc.add(Restrictions.eq(Locator.PROPERTY_ISVIRTUAL, true));
     obc.add(Restrictions.eq(Locator.PROPERTY_PARENTLOCATOR, storageBin));
