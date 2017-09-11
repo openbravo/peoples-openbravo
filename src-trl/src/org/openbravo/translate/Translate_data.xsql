@@ -53,7 +53,7 @@
   <SqlMethod name="update" type="preparedStatement" connection="true" return="rowCount">
     <Sql>
       update ad_textinterfaces t
-         set isUsed='Y', updated=now(), updatedBy = '0'
+         set isUsed='Y'
        where ad_textinterfaces_id = ?
     </Sql>
     <Parameter name="adTextinterfacesId"/>
@@ -62,7 +62,7 @@
   <SqlMethod name="clean" type="preparedStatement" return="rowCount">
     <Sql>
       update ad_textinterfaces t
-         set isUsed='N', updated=now(), updatedBy = '0'
+         set isUsed='N'
        where exists (select 1 
                        from ad_module m
                       where m.ad_module_id = t.ad_module_id
