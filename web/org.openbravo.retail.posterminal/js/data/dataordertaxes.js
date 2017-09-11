@@ -101,6 +101,56 @@
       }
       };
 
+  var regenerateTaxesInfo = function (receipt) {
+      return Promise.all(_.map(receipt.get('lines').models, function (line) {
+        var lineObj = {};
+        var linerate = BigDecimal.prototype.ONE;
+        _.forEach(line.get('taxes'), function (tax) {
+          lineObj[tax.taxId] = {
+            'amount': tax.taxAmount,
+            'name': tax.identifier,
+            'net': tax.taxableAmount,
+            'rate': tax.taxRate
+          };
+          line.set({
+            'taxLines': lineObj,
+            'tax': tax.taxId,
+            'taxAmount': tax.taxAmount,
+            'net': tax.taxableAmount,
+            'pricenet': tax.taxableAmount,
+            'discountedNet': tax.taxableAmount,
+            'linerate': OB.DEC.toNumber(linerate.add(getTaxRateNumber(tax.taxRate)))
+          }, {
+            silent: true
+          });
+        });
+      })).then(function (value) {
+        if (value.length !== receipt.get('lines').length) {
+          OB.debug('The number of original lines of the receipt has change!');
+          return;
+        }
+
+        var taxesColl = {};
+        receipt.set('net', receipt.get('lines').reduce(function (memo, line) {
+          return memo + line.get('discountedNet');
+        }, 0));
+        _.forEach(receipt.get('receiptTaxes'), function (receiptTax) {
+          var taxObj = {
+            'amount': receiptTax.amount,
+            'cascade': receiptTax.cascade,
+            'docTaxAmount': receiptTax.docTaxAmount,
+            'lineNo': receiptTax.lineNo,
+            'name': receiptTax.name,
+            'net': receiptTax.net,
+            'rate': receiptTax.rate,
+            'taxBase': receiptTax.taxBase
+          };
+          taxesColl[receiptTax.taxid] = taxObj;
+        });
+        receipt.set('taxes', taxesColl);
+      });
+      };
+
   var findTaxesCollection = function (receipt, line, taxCategory) {
       return new Promise(function (fulfill, reject) {
         // sql parameters 
@@ -526,53 +576,7 @@
 
       // If the receipt is not editable avoid the calculation of taxes
       if (!receipt.get('isEditable') && !receipt.get('forceCalculateTaxes')) {
-        return Promise.all(_.map(receipt.get('lines').models, function (line) {
-          var lineObj = {};
-          var linerate = BigDecimal.prototype.ONE;
-          _.forEach(line.get('taxes'), function (tax) {
-            lineObj[tax.taxId] = {
-              'amount': tax.taxAmount,
-              'name': tax.identifier,
-              'net': tax.taxableAmount,
-              'rate': tax.taxRate
-            };
-            line.set({
-              'taxLines': lineObj,
-              'tax': tax.taxId,
-              'taxAmount': tax.taxAmount,
-              'net': tax.taxableAmount,
-              'pricenet': tax.taxableAmount,
-              'discountedNet': tax.taxableAmount,
-              'linerate': OB.DEC.toNumber(linerate.add(getTaxRateNumber(tax.taxRate)))
-            }, {
-              silent: true
-            });
-          });
-        })).then(function (value) {
-          if (value.length !== receipt.get('lines').length) {
-            OB.debug('The number of original lines of the receipt has change!');
-            return;
-          }
-
-          var taxesColl = {};
-          receipt.set('net', receipt.get('lines').reduce(function (memo, line) {
-            return memo + line.get('discountedNet');
-          }, 0));
-          _.forEach(receipt.get('receiptTaxes'), function (receiptTax) {
-            var taxObj = {
-              'amount': receiptTax.amount,
-              'cascade': receiptTax.cascade,
-              'docTaxAmount': receiptTax.docTaxAmount,
-              'lineNo': receiptTax.lineNo,
-              'name': receiptTax.name,
-              'net': receiptTax.net,
-              'rate': receiptTax.rate,
-              'taxBase': receiptTax.taxBase
-            };
-            taxesColl[receiptTax.taxid] = taxObj;
-          });
-          receipt.set('taxes', taxesColl);
-        });
+        return regenerateTaxesInfo(receipt);
       }
 
       // Calculate
@@ -984,48 +988,7 @@
 
       // If the receipt is not editable avoid the calculation of taxes
       if (!receipt.get('isEditable') && !receipt.get('forceCalculateTaxes')) {
-        return Promise.all(_.map(frozenLines.models, function (line) {
-          var lineObj = {};
-          var linerate = BigDecimal.prototype.ONE;
-          _.forEach(line.get('taxes'), function (tax) {
-            lineObj[tax.taxId] = {
-              'amount': tax.taxAmount,
-              'name': tax.identifier,
-              'net': tax.taxableAmount,
-              'rate': tax.taxRate
-            };
-            line.set({
-              'taxLines': lineObj,
-              'tax': tax.taxId,
-              'taxAmount': tax.taxAmount,
-              'net': tax.taxableAmount,
-              'pricenet': tax.taxableAmount,
-              'discountedNet': tax.taxableAmount,
-              'linerate': OB.DEC.toNumber(linerate.add(getTaxRateNumber(tax.taxRate)))
-            }, {
-              silent: true
-            });
-          });
-        })).then(function () {
-          var taxesColl = {};
-          receipt.set('net', receipt.get('lines').reduce(function (memo, line) {
-            return memo + line.get('discountedNet');
-          }, 0));
-          _.forEach(receipt.get('receiptTaxes'), function (receiptTax) {
-            var taxObj = {
-              'amount': receiptTax.amount,
-              'cascade': receiptTax.cascade,
-              'docTaxAmount': receiptTax.docTaxAmount,
-              'lineNo': receiptTax.lineNo,
-              'name': receiptTax.name,
-              'net': receiptTax.net,
-              'rate': receiptTax.rate,
-              'taxBase': receiptTax.taxBase
-            };
-            taxesColl[receiptTax.taxid] = taxObj;
-          });
-          receipt.set('taxes', taxesColl);
-        });
+        return regenerateTaxesInfo(receipt);
       }
 
       // Calculate
