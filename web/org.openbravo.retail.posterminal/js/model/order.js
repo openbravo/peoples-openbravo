@@ -3166,6 +3166,7 @@
       this.set('documentNo', nextDocumentno.documentNo);
       this.set('posTerminal', OB.MobileApp.model.get('terminal').id);
       this.set('session', OB.MobileApp.model.get('session'));
+      this.unset('deletedLines');
       this.save();
 
       this.get('lines').each(function (line) {
