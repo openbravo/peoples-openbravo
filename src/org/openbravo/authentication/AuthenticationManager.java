@@ -438,8 +438,8 @@ public abstract class AuthenticationManager {
    * Retrieves the login credentials (user and password) from the basic authentication present in a
    * HttpServletRequest.
    * 
-   * @param HttpServletRequest
-   *          the request that contains the basic authentication credentials
+   * @param request
+   *          the HttpServletRequest that contains the basic authentication credentials
    * @return a UserLoginInfo that contains the decoded credentials (user and password) or
    *         <b>null</b> if is not possible to retrieve the credentials.
    */
