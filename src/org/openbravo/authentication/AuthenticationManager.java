@@ -20,8 +20,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -65,8 +63,6 @@ public abstract class AuthenticationManager {
   private static final String SUCCESS_SESSION_CONNECTOR = "WSC";
   private static final String FAILED_SESSION = "F";
 
-  protected static final String LOGIN_USER = "loginUser";
-  protected static final String LOGIN_PASS = "loginPass";
   protected static final String LOGIN_PARAM = "user";
   protected static final String PASSWORD_PARAM = "password";
   public static final String STATELESS_REQUEST_PARAMETER = "stateless";
@@ -176,6 +172,8 @@ public abstract class AuthenticationManager {
     if (localAdress == null) {
       localAdress = HttpBaseUtils.getLocalAddress(request);
     }
+
+    loginName.set("");
 
     final String userId = doAuthenticate(request, response);
 
@@ -349,7 +347,7 @@ public abstract class AuthenticationManager {
       dbSessionId = vars.getSessionValue(AD_SESSION_ID_ATTR);
     }
     if (StringUtils.isEmpty(dbSessionId)) {
-      String userName = (loginName != null && loginName.get() != null) ? loginName.get() : "";
+      String userName = loginName.get() != null ? loginName.get() : "";
       dbSessionId = createDBSession(request, userName, userId, successSessionType);
       if (setSession && vars != null) {
         vars.setSessionValue(AD_SESSION_ID_ATTR, dbSessionId);
@@ -412,16 +410,16 @@ public abstract class AuthenticationManager {
    *         </ul>
    */
   protected String doWebServiceAuthenticate(HttpServletRequest request) {
-    Map<String, String> authenticationData = getAuthenticationData(request);
+    UserLoginInfo authenticationData = getAuthenticationData(request);
     if (authenticationData == null) {
       return null;
     }
-    String user = authenticationData.get(LOGIN_USER);
-    String password = authenticationData.get(LOGIN_PASS);
+    String user = authenticationData.getUserName();
+    String password = authenticationData.getPassword();
     return doWebServiceAuthenticate(user, password);
   }
 
-  private Map<String, String> getAuthenticationData(HttpServletRequest request) {
+  private UserLoginInfo getAuthenticationData(HttpServletRequest request) {
     String login = request.getParameter(BaseWebServiceServlet.LOGIN_PARAM);
     if (StringUtils.isEmpty(login)) {
       login = request.getParameter(LOGIN_PARAM);
@@ -431,15 +429,21 @@ public abstract class AuthenticationManager {
       password = request.getParameter(PASSWORD_PARAM);
     }
     if (login != null && password != null) {
-      Map<String, String> authenticationData = new HashMap<>();
-      authenticationData.put(LOGIN_USER, login);
-      authenticationData.put(LOGIN_PASS, password);
-      return authenticationData;
+      return new UserLoginInfo(login, password);
     }
     return decodeBasicAuthenticationData(request);
   }
 
-  protected final Map<String, String> decodeBasicAuthenticationData(HttpServletRequest request) {
+  /**
+   * Retrieves the login credentials (user and password) from the basic authentication present in a
+   * HttpServletRequest.
+   * 
+   * @param HttpServletRequest
+   *          the request that contains the basic authentication credentials
+   * @return a UserLoginInfo that contains the decoded credentials (user and password) or
+   *         <b>null</b> if is not possible to retrieve the credentials.
+   */
+  protected final UserLoginInfo decodeBasicAuthenticationData(HttpServletRequest request) {
     try {
       final String auth = request.getHeader("Authorization");
       if (auth == null) {
@@ -458,10 +462,10 @@ public abstract class AuthenticationManager {
       if (index == -1) {
         return null;
       }
-      Map<String, String> authenticationData = new HashMap<>();
-      authenticationData.put(LOGIN_USER, decodedUserPass.substring(0, index));
-      authenticationData.put(LOGIN_PASS, decodedUserPass.substring(index + 1));
-      return authenticationData;
+
+      String user = decodedUserPass.substring(0, index);
+      String password = decodedUserPass.substring(index + 1);
+      return new UserLoginInfo(user, password);
     } catch (final Exception e) {
       throw new OBException(e);
     }
@@ -562,6 +566,27 @@ public abstract class AuthenticationManager {
       OBContext.restorePreviousMode();
     }
 
+  }
+
+  /**
+   * A class used to keep and recover the login credentials (user and password)
+   */
+  protected class UserLoginInfo {
+    private String userName;
+    private String password;
+
+    public UserLoginInfo(String userName, String password) {
+      this.userName = userName;
+      this.password = password;
+    }
+
+    public String getUserName() {
+      return userName;
+    }
+
+    public String getPassword() {
+      return password;
+    }
   }
 
   /**

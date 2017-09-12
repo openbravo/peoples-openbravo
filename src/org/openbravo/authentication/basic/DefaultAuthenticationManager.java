@@ -15,7 +15,6 @@ package org.openbravo.authentication.basic;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -94,10 +93,10 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
 
       if (StringUtils.isEmpty(user)) {
         // try basic authentication
-        Map<String, String> authenticationData = decodeBasicAuthenticationData(request);
+        UserLoginInfo authenticationData = decodeBasicAuthenticationData(request);
         if (authenticationData != null) {
-          user = authenticationData.get(LOGIN_USER);
-          pass = authenticationData.get(LOGIN_PASS);
+          user = authenticationData.getUserName();
+          pass = authenticationData.getPassword();
         }
       }
     }
