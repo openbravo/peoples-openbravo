@@ -37,14 +37,13 @@ import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.OBPOSErrors;
 import org.openbravo.retail.posterminal.OBPOSPaymentMethodCashup;
 import org.openbravo.retail.posterminal.OBPOSTaxCashup;
-import org.openbravo.retail.posterminal.ProcessCashClose;
 import org.openbravo.service.importprocess.ImportEntry;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.JsonConstants;
 
 public class Cashup extends JSONProcessSimple {
-  private static final Logger log = Logger.getLogger(ProcessCashClose.class);
+  private static final Logger log = Logger.getLogger(Cashup.class);
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -126,7 +125,7 @@ public class Cashup extends JSONProcessSimple {
       return result;
 
     } catch (Exception e) {
-      log.error(e);
+      log.error("Error during exec", e);
       return result;
     } finally {
       OBContext.restorePreviousMode();
