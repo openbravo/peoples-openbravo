@@ -183,7 +183,3 @@ enyo.kind({
     });
   }
 });
-OB.UI.WindowView.registerPopup('OB.OBPOSPointOfSale.UI.PointOfSale', {
-  kind: 'OB.UI.ModalQuotationProductAttributes',
-  name: 'modalQuotationProductAttributes'
-});
