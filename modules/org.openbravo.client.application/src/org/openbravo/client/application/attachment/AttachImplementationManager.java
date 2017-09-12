@@ -516,9 +516,15 @@ public class AttachImplementationManager {
 
       String strValue = "";
       if (value == null || (value instanceof String && StringUtils.isEmpty((String) value))) {
-        // There is no value for this parameter. Remove metadataStoredValue from Database.
         metadataValues.put(strMetadataId, null);
-        OBDal.getInstance().remove(metadataStoredValue);
+        // There is no value for this parameter. Just do not create it if is new or set its value to
+        // null if it already existed in order to keep the correct last updated information of the
+        // attachment
+        if (metadataStoredValue.isNewOBObject()) {
+          OBDal.getInstance().remove(metadataStoredValue);
+        } else {
+          ParameterUtils.setParameterValue(metadataStoredValue, getJSONValue(""));
+        }
       } else {
         String strReferenceId = parameter.getReference().getId();
         if (REFERENCE_LIST.equals(strReferenceId)) {
@@ -561,12 +567,8 @@ public class AttachImplementationManager {
           } else {
             strValue = value.toString();
           }
-          JSONObject jsonValue = new JSONObject();
-          try {
-            jsonValue.put("value", strValue);
-          } catch (JSONException ignore) {
-          }
-          ParameterUtils.setParameterValue(metadataStoredValue, jsonValue);
+
+          ParameterUtils.setParameterValue(metadataStoredValue, getJSONValue(strValue));
           metadataValues.put(strMetadataId, ParameterUtils.getParameterValue(metadataStoredValue));
         }
         OBDal.getInstance().save(metadataStoredValue);
@@ -580,5 +582,14 @@ public class AttachImplementationManager {
     }
 
     return metadataValues;
+  }
+
+  private JSONObject getJSONValue(String value) {
+    JSONObject jsonValue = new JSONObject();
+    try {
+      jsonValue.put("value", value);
+    } catch (JSONException ignore) {
+    }
+    return jsonValue;
   }
 }
