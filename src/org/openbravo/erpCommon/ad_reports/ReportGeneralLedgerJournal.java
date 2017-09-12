@@ -637,7 +637,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           }
         }
       } else if (vars.commandIn("DIRECT")) {
-        scrollData = ReportGeneralLedgerJournalData.selectDirect(readOnlyCP, rowNum,
+        scrollData = ReportGeneralLedgerJournalData.selectDirect(this, rowNum,
             StringUtils.equals(strShowDescription, "Y") ? "'Y'" : "'N'",
             Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
@@ -649,7 +649,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         data = new ReportGeneralLedgerJournalData[res.size()];
         res.copyInto(data);
         if (data != null && data.length > 0) {
-          strPosition = ReportGeneralLedgerJournalData.selectCountDirect(readOnlyCP,
+          strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this,
               Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
               Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
               strTable, strRecord, strFactAcctGroupId, data[0].dateacct, data[0].identifier);

@@ -122,10 +122,10 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
     ReportGeneralLedgerJournalDetailData[] data = null;
 
     if (strDPId == null) {
-      data = ReportGeneralLedgerJournalDetailData.select(readOnlyCP, strFactAcctGroupId,
-          strDateacct, initRecordNumber, intRecordRange);
+      data = ReportGeneralLedgerJournalDetailData.select(this, strFactAcctGroupId, strDateacct,
+          initRecordNumber, intRecordRange);
     } else {
-      data = ReportGeneralLedgerJournalDetailData.selectByDP(readOnlyCP, strDPId, strcAcctSchemaId);
+      data = ReportGeneralLedgerJournalDetailData.selectByDP(this, strDPId, strcAcctSchemaId);
     }
 
     boolean hasPrevious = !(data == null || data.length == 0 || initRecordNumber <= 1);
