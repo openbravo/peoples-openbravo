@@ -11,13 +11,14 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application;
 
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -25,13 +26,15 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.json.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * JS - Java binding to use in JavaScript expressions.
@@ -40,7 +43,7 @@ import org.openbravo.service.json.JsonUtils;
  */
 public class OBBindings {
 
-  private Logger log = Logger.getLogger(OBBindings.class);
+  private static final Logger log = LoggerFactory.getLogger(OBBindings.class);
 
   private OBContext context;
   private Map<String, String> requestMap;
@@ -173,14 +176,38 @@ public class OBBindings {
     return dateFormat.format(d);
   }
 
+  public String formatDate(Object d) {
+    return formatDate(getTimeFromNashornNativeDate(d));
+  }
+
+  private Date getTimeFromNashornNativeDate(Object d) {
+    // Since Java 8, Nashorn is the Javascript engine used by default. When returning Javascript
+    // Date objects to Java the java.util.Date class is no longer used but
+    // jdk.nashorn.internal.objects.NativeDate is used instead.
+    // We need to use reflection to access to the time information contained in such class. Thus, we
+    // avoid the usage of unsupported classes in Java 7.
+    try {
+      Method m = d.getClass().getMethod("callMember", String.class, Object[].class);
+      long localTime = ((Double) m.invoke(d, "getTime", null)).longValue();
+      return new Date(localTime);
+    } catch (Exception ex) {
+      log.error("Error getting javascript date from object {} of class {}", d, d.getClass()
+          .getName());
+      throw new OBException(ex.getMessage(), ex);
+    }
+  }
+
   public String formatDateTime(Date d) {
     return dateTimeFormat.format(d);
   }
 
+  public String formatDateTime(Object d) {
+    return formatDateTime(getTimeFromNashornNativeDate(d));
+  }
+
   public Date parseDate(String date) {
     try {
-      Date result = dateFormat.parse(date);
-      return result;
+      return dateFormat.parse(date);
     } catch (Exception e) {
       log.error("Error parsing string date " + date + " with format: " + dateFormat, e);
     }
@@ -217,6 +244,10 @@ public class OBBindings {
     Check.isNotNull(format, "Format is a required parameter");
     SimpleDateFormat df = new SimpleDateFormat(format);
     return df.format(d);
+  }
+
+  public String formatDate(Object d, String format) {
+    return formatDate(getTimeFromNashornNativeDate(d), format);
   }
 
   public Date parseDate(String date, String format) {
