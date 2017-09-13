@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.openbravo.advpaymentmngt.test.FundsTransferTest;
 import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
+import org.openbravo.client.application.OBBindings;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.centralbroker.CentralBrokerTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
@@ -91,7 +92,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     TrlColumnsOraTypeTest.class,
 
     // expression
-    EvaluationTest.class,
+    EvaluationTest.class, //
+    OBBindings.class,
 
     // xml
     EntityXMLImportTestBusinessObject.class, //

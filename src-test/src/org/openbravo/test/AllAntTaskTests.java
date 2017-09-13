@@ -25,6 +25,7 @@ import org.openbravo.advpaymentmngt.test.DocumentNumberGeneration;
 import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.base.weld.test.testinfrastructure.DalPersistanceEventTest;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
+import org.openbravo.client.application.OBBindings;
 import org.openbravo.client.application.test.ADCSInitialization;
 import org.openbravo.client.application.test.ApplicationTest;
 import org.openbravo.client.application.test.DisplayLogicAtServerLevelTest;
@@ -150,7 +151,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     PersistanceObserver.class, //
 
     // expression
-    EvaluationTest.class,
+    EvaluationTest.class, //
+    OBBindings.class,
 
     // model
     RuntimeModelTest.class, //
