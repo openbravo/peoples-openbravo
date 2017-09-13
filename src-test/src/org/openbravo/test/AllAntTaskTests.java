@@ -25,7 +25,6 @@ import org.openbravo.advpaymentmngt.test.DocumentNumberGeneration;
 import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.base.weld.test.testinfrastructure.DalPersistanceEventTest;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
-import org.openbravo.client.application.OBBindings;
 import org.openbravo.client.application.test.ADCSInitialization;
 import org.openbravo.client.application.test.ApplicationTest;
 import org.openbravo.client.application.test.DisplayLogicAtServerLevelTest;
@@ -68,6 +67,7 @@ import org.openbravo.test.db.model.functions.ADOrgTreeTest;
 import org.openbravo.test.db.model.functions.Ad_isorgincludedTest;
 import org.openbravo.test.db.model.functions.SqlCallableStatement;
 import org.openbravo.test.expression.EvaluationTest;
+import org.openbravo.test.expression.OBBindingsTest;
 import org.openbravo.test.inventoryStatus.InventoryStatusTest;
 import org.openbravo.test.model.ClassLoaderTest;
 import org.openbravo.test.model.IndexesTest;
@@ -152,7 +152,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // expression
     EvaluationTest.class, //
-    OBBindings.class,
+    OBBindingsTest.class,
 
     // model
     RuntimeModelTest.class, //

@@ -23,7 +23,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.openbravo.advpaymentmngt.test.FundsTransferTest;
 import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
-import org.openbravo.client.application.OBBindings;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.centralbroker.CentralBrokerTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
@@ -41,6 +40,7 @@ import org.openbravo.test.dal.MappingGenerationTest;
 import org.openbravo.test.dal.ReadByNameTest;
 import org.openbravo.test.dal.ValidationTest;
 import org.openbravo.test.expression.EvaluationTest;
+import org.openbravo.test.expression.OBBindingsTest;
 import org.openbravo.test.model.ClassLoaderTest;
 import org.openbravo.test.model.IndexesTest;
 import org.openbravo.test.model.OneToManyTest;
@@ -93,7 +93,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // expression
     EvaluationTest.class, //
-    OBBindings.class,
+    OBBindingsTest.class,
 
     // xml
     EntityXMLImportTestBusinessObject.class, //
