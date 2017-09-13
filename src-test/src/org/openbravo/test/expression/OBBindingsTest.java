@@ -66,13 +66,6 @@ public class OBBindingsTest extends OBBaseTest {
   }
 
   @Test
-  public void formatNowDate() throws ScriptException {
-    Object result = engine.eval("OB.formatDate(new Date())");
-    String expectedDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
-    assertThat(result.toString(), equalTo(expectedDate));
-  }
-
-  @Test
   public void formatDate() throws ScriptException {
     Object result = engine.eval("OB.formatDate(new Date('12/29/2017'))");
     assertThat(result.toString(), equalTo("29-12-2017"));
