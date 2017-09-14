@@ -176,6 +176,7 @@
   v_prepaymentamt NUMBER;
   v_hasTaxes NUMBER;
   v_calendarId C_CALENDAR.C_CALENDAR_ID%TYPE;
+  v_calendar_owner_id AD_Org.AD_Org_ID%TYPE;
    
 BEGIN
   IF (p_PInstance_ID IS NOT NULL) THEN
@@ -344,9 +345,11 @@ BEGIN --BODY
     /*
      * Avoids repeating the same documentno for the same organization tree within the same fiscal year
      */
-    SELECT C_CALENDAR_ID INTO v_calendarId FROM AD_ORG WHERE AD_ORG_ID = AD_ORG_GETCALENDAROWNER(v_Org_ID);
-    SELECT COUNT(*) INTO v_count
-    FROM (SELECT Y.C_CALENDAR_ID, Y.C_YEAR_ID,
+    SELECT AD_ORG_GETCALENDAROWNER(v_Org_ID) INTO v_calendar_owner_id FROM DUAL;
+    IF (v_calendar_owner_id IS NOT NULL) THEN
+      SELECT C_CALENDAR_ID INTO v_calendarId FROM AD_ORG WHERE AD_ORG_ID = AD_ORG_GETCALENDAROWNER(v_Org_ID);
+      SELECT COUNT(*) INTO v_count
+      FROM (SELECT Y.C_CALENDAR_ID, Y.C_YEAR_ID,
               MIN(P.STARTDATE) AS PERIODSTARTDATE, MAX(P.ENDDATE) AS PERIODENDDATE
           FROM C_YEAR Y, C_PERIOD P
           WHERE Y.C_YEAR_ID = P.C_YEAR_ID
@@ -354,36 +357,37 @@ BEGIN --BODY
             AND P.ISACTIVE = 'Y'
             AND Y.C_CALENDAR_ID = v_calendarId
           GROUP BY Y.C_CALENDAR_ID, Y.C_YEAR_ID) A
-    WHERE PERIODSTARTDATE <= v_DateInvoiced
-      AND PERIODENDDATE+1 > v_DateInvoiced ;
-    IF (v_count<>0) THEN
-      SELECT PERIODSTARTDATE, PERIODENDDATE
-        INTO v_PeriodStartDate, v_PeriodEndDate
-      FROM (SELECT Y.C_CALENDAR_ID, Y.C_YEAR_ID,
-                MIN(P.STARTDATE) AS PERIODSTARTDATE, MAX(P.ENDDATE) AS PERIODENDDATE
-            FROM C_YEAR Y, C_PERIOD P
-            WHERE Y.C_YEAR_ID = P.C_YEAR_ID
-              AND Y.ISACTIVE = 'Y'
-              AND P.ISACTIVE = 'Y'
-              AND Y.C_CALENDAR_ID = v_calendarId
-            GROUP BY Y.C_CALENDAR_ID, Y.C_YEAR_ID) A
       WHERE PERIODSTARTDATE <= v_DateInvoiced
         AND PERIODENDDATE+1 > v_DateInvoiced ;
-      IF (v_PeriodStartDate IS NOT NULL AND v_PeriodEndDate IS NOT NULL) THEN
-        SELECT D.AD_ORG_ID INTO v_DocNo_Org_ID
-        FROM C_DOCTYPE D
-        WHERE D.C_DOCTYPE_ID = v_DocTypeTarget_ID ;
-        SELECT COUNT(*) INTO v_count
-        FROM C_INVOICE I
-        WHERE I.DOCUMENTNO = v_DocumentNo
-          AND I.C_DOCTYPETARGET_ID = v_DocTypeTarget_ID
-          AND I.DATEINVOICED >= v_PeriodStartDate
-          AND I.DATEINVOICED < v_PeriodEndDate+1 
-          AND I.C_INVOICE_ID <> v_Record_ID 
-          AND AD_ISORGINCLUDED(I.AD_ORG_ID, v_DocNo_Org_ID, I.AD_CLIENT_ID) <> -1
-          AND I.AD_CLIENT_ID = v_Client_ID ;
-        IF (v_count<>0) THEN
-          RAISE_APPLICATION_ERROR(-20000, '@DifferentDocumentNo@');
+      IF (v_count<>0) THEN
+        SELECT PERIODSTARTDATE, PERIODENDDATE
+          INTO v_PeriodStartDate, v_PeriodEndDate
+        FROM (SELECT Y.C_CALENDAR_ID, Y.C_YEAR_ID,
+                  MIN(P.STARTDATE) AS PERIODSTARTDATE, MAX(P.ENDDATE) AS PERIODENDDATE
+              FROM C_YEAR Y, C_PERIOD P
+              WHERE Y.C_YEAR_ID = P.C_YEAR_ID
+                AND Y.ISACTIVE = 'Y'
+                AND P.ISACTIVE = 'Y'
+                AND Y.C_CALENDAR_ID = v_calendarId
+              GROUP BY Y.C_CALENDAR_ID, Y.C_YEAR_ID) A
+        WHERE PERIODSTARTDATE <= v_DateInvoiced
+          AND PERIODENDDATE+1 > v_DateInvoiced ;
+        IF (v_PeriodStartDate IS NOT NULL AND v_PeriodEndDate IS NOT NULL) THEN
+          SELECT D.AD_ORG_ID INTO v_DocNo_Org_ID
+          FROM C_DOCTYPE D
+          WHERE D.C_DOCTYPE_ID = v_DocTypeTarget_ID ;
+          SELECT COUNT(*) INTO v_count
+          FROM C_INVOICE I
+          WHERE I.DOCUMENTNO = v_DocumentNo
+            AND I.C_DOCTYPETARGET_ID = v_DocTypeTarget_ID
+            AND I.DATEINVOICED >= v_PeriodStartDate
+            AND I.DATEINVOICED < v_PeriodEndDate+1
+            AND I.C_INVOICE_ID <> v_Record_ID
+            AND AD_ISORGINCLUDED(I.AD_ORG_ID, v_DocNo_Org_ID, I.AD_CLIENT_ID) <> -1
+            AND I.AD_CLIENT_ID = v_Client_ID ;
+          IF (v_count<>0) THEN
+            RAISE_APPLICATION_ERROR(-20000, '@DifferentDocumentNo@');
+          END IF;
         END IF;
       END IF;
     END IF;
