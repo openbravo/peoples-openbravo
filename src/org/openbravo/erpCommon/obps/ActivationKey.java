@@ -292,7 +292,7 @@ public class ActivationKey {
 
   public static synchronized void setInstance(ActivationKey ak) {
     instance = ak;
-    ak.setRefreshTime(new Date());
+    ak.resetRefreshTime();
     ak.lastUpdateTimestamp = getSystem().getUpdated();
   }
 
@@ -305,8 +305,8 @@ public class ActivationKey {
     }
   }
 
-  private void setRefreshTime(Date time) {
-    lastRefreshTime = time;
+  private void resetRefreshTime() {
+    lastRefreshTime = new Date();
   }
 
   /**
@@ -543,6 +543,9 @@ public class ActivationKey {
     }
 
     checkDates();
+
+    // this occurs on Tomcat start, don't want to try to refresh on next login, let's wait for 24hr
+    resetRefreshTime();
   }
 
   private void reset() {
@@ -1626,11 +1629,10 @@ public class ActivationKey {
         OBContext.restorePreviousMode();
       }
 
-      if (!refreshed) {
-        // Even license couldn't be refreshed, set lastRefreshTime not to try to
-        // refresh in the following period of time
-        lastRefreshTime = new Date();
-      }
+      // Even license couldn't be refreshed, set lastRefreshTime not to try to
+      // refresh in the following period of time
+      resetRefreshTime();
+
       log.info("License refreshed in " + (System.currentTimeMillis() - t) + "ms");
       return refreshed;
     } finally {
