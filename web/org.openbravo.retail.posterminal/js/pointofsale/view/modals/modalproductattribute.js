@@ -94,3 +94,7 @@ enyo.kind({
     this.$.headerCloseButton.hide();
   }
 });
+OB.UI.WindowView.registerPopup('OB.OBPOSPointOfSale.UI.PointOfSale', {
+  kind: 'OB.UI.ModalProductAttributes',
+  name: 'OB.UI.ModalProductAttributes'
+});
