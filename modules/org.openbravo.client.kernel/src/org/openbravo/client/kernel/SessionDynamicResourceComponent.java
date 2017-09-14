@@ -52,7 +52,7 @@ public class SessionDynamicResourceComponent extends BaseComponent {
       log.debug("Generation of session dynamic resource {} took {} ms", component.getId(),
           System.currentTimeMillis() - t);
     }
-    return result.toString();
+    return escapeInvalidJSCharacters(result.toString());
   }
 
   @Override
@@ -78,5 +78,15 @@ public class SessionDynamicResourceComponent extends BaseComponent {
       }
     }
     return componentList;
+  }
+
+  private String escapeInvalidJSCharacters(String js) {
+    if (js == null) {
+      return null;
+    }
+
+    // TODO: workaround for issue in current freemarker version, it should be removed once it gets
+    // updated (see issue #36857)
+    return js.replace("\u2028", "\\u2028").replace("\u2029", "\\u2029");
   }
 }
