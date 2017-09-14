@@ -186,6 +186,7 @@ public class OBBindings {
     // jdk.nashorn.internal.objects.NativeDate is used instead.
     // We need to use reflection to access to the time information contained in such class. Thus, we
     // avoid the usage of unsupported classes in Java 7.
+    // TODO: Once Java 7 is desupported, change this implementation to not use reflection
     try {
       Method m = d.getClass().getMethod("callMember", String.class, Object[].class);
       long localTime = ((Double) m.invoke(d, "getTime", null)).longValue();
