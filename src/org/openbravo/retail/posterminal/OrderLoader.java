@@ -1841,9 +1841,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       monthOffset = paymentTerm.getOffsetMonthDue();
       dayToPay = paymentTerm.getOverduePaymentDayRule();
       if (paymentTerm.isFixedDueDate()) {
-        maturityDate1 = paymentTerm.getMaturityDate1();
-        maturityDate2 = paymentTerm.getMaturityDate2();
-        maturityDate3 = paymentTerm.getMaturityDate3();
+        maturityDate1 = paymentTerm.getMaturityDate1() == null ? 0 : paymentTerm.getMaturityDate1();
+        maturityDate2 = paymentTerm.getMaturityDate2() == null ? 0 : paymentTerm.getMaturityDate2();
+        maturityDate3 = paymentTerm.getMaturityDate3() == null ? 0 : paymentTerm.getMaturityDate3();
       }
     } else if (paymentTermLine != null) {
       daysToAdd = paymentTermLine.getOverduePaymentDaysRule();
@@ -1851,9 +1851,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           .getOffsetMonthDue();
       dayToPay = paymentTermLine.getOverduePaymentDayRule();
       if (paymentTermLine.isFixedDueDate()) {
-        maturityDate1 = paymentTermLine.getMaturityDate1();
-        maturityDate2 = paymentTermLine.getMaturityDate2();
-        maturityDate3 = paymentTermLine.getMaturityDate3();
+        maturityDate1 = paymentTermLine.getMaturityDate1() == null ? 0 : paymentTermLine
+            .getMaturityDate1();
+        maturityDate2 = paymentTermLine.getMaturityDate2() == null ? 0 : paymentTermLine
+            .getMaturityDate2();
+        maturityDate3 = paymentTermLine.getMaturityDate3() == null ? 0 : paymentTermLine
+            .getMaturityDate3();
       }
     } else {
       return calculatedDueDate.getTime();
@@ -1868,18 +1871,19 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     if ((paymentTerm != null && paymentTerm.isFixedDueDate())
         || (paymentTermLine != null && paymentTermLine.isFixedDueDate())) {
       long dueDateDay = calculatedDueDate.get(Calendar.DAY_OF_MONTH), finalDueDateDay = 0;
-      if (maturityDate2 < dueDateDay && maturityDate3 >= dueDateDay) {
+      if (maturityDate3 > 0 && maturityDate2 > 0 && maturityDate2 < dueDateDay
+          && maturityDate3 >= dueDateDay) {
         finalDueDateDay = maturityDate3;
-      } else if (maturityDate1 < dueDateDay && maturityDate2 >= dueDateDay) {
+      } else if (maturityDate2 > 0 && maturityDate1 > 0 && maturityDate1 < dueDateDay
+          && maturityDate2 >= dueDateDay) {
         finalDueDateDay = maturityDate2;
-      } else {
+      } else if (maturityDate1 > 0) {
         finalDueDateDay = maturityDate1;
-      }
-
-      // Due Date day should be maximum of Month's Last day
-      if (finalDueDateDay == 0) {
+      } else {
+        // Due Date day should be maximum of Month's Last day
         finalDueDateDay = 1;
       }
+
       if ((int) finalDueDateDay > calculatedDueDate.getActualMaximum(Calendar.DAY_OF_MONTH)) {
         finalDueDateDay = calculatedDueDate.getActualMaximum(Calendar.DAY_OF_MONTH);
       }
