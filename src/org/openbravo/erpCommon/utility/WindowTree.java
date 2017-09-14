@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -60,7 +60,7 @@ import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 public class WindowTree extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static final String CHILD_SHEETS = "frameWindowTreeF3";
-  private static List<String> nodeIdList = new ArrayList<String>();
+  private static List<String> nodeIdList = new ArrayList<>();
 
   @Inject
   GlobalMenu menu;
@@ -98,9 +98,9 @@ public class WindowTree extends HttpSecureAppServlet {
       } else {
         String key = WindowTreeData.selectKey(this, strTabId);
         {
-          String TreeType = WindowTreeUtility.getTreeType(key);
+          String treeType = WindowTreeUtility.getTreeType(key);
           WindowTreeData[] data = WindowTreeData.selectTreeID(this,
-              Utility.getContext(this, vars, "#User_Client", ""), TreeType);
+              Utility.getContext(this, vars, "#User_Client", ""), treeType);
           if (data != null && data.length > 0)
             strTreeID = data[0].id;
         }
@@ -128,7 +128,7 @@ public class WindowTree extends HttpSecureAppServlet {
       PrintWriter out = response.getWriter();
 
       if (strResult != "") {
-        // create OBError and serizalize it using JSON
+        // create OBError and serialize it using JSON
         OBError error = new OBError();
         error.setType("Error");
         error.setTitle("Error");
@@ -165,7 +165,7 @@ public class WindowTree extends HttpSecureAppServlet {
     String TreeName = "";
     String TreeDescription = "";
 
-    StringBuffer nodesMenu = new StringBuffer();
+    StringBuilder nodesMenu = new StringBuilder();
     if (key == null || key.isEmpty()) {
       Tab tab = OBDal.getInstance().get(Tab.class, strTabId);
       Table table = tab.getTable();
@@ -234,7 +234,7 @@ public class WindowTree extends HttpSecureAppServlet {
     if (localIndice == null)
       localIndice = "0";
     boolean hayDatos = false;
-    StringBuffer strResultado = new StringBuffer();
+    StringBuilder strResultado = new StringBuilder();
     strResultado.append("<ul>");
     localIsFirst = false;
     List<WindowTreeData> subList = wtdTree.get(localIndice);
@@ -290,10 +290,10 @@ public class WindowTree extends HttpSecureAppServlet {
       OBQuery<BaseOBObject> entityResults = OBDal.getInstance().createQuery("" + entityName + "",
           hqlWhereClause);
       if (nodeIdList == null) {
-        nodeIdList = new ArrayList<String>();
+        nodeIdList = new ArrayList<>();
       }
 
-      if (nodeIdList.size() == 0 && nodeIdList.size() != entityResults.count()) {
+      if (nodeIdList.isEmpty() && nodeIdList.size() != entityResults.count()) {
         ScrollableResults entityData = entityResults.scroll(ScrollMode.FORWARD_ONLY);
         int clearEachLoops = 100;
         int i = 0;
@@ -325,12 +325,12 @@ public class WindowTree extends HttpSecureAppServlet {
   }
 
   private static Map<String, List<WindowTreeData>> buildTree(WindowTreeData[] input) {
-    Map<String, List<WindowTreeData>> resMap = new HashMap<String, List<WindowTreeData>>();
+    Map<String, List<WindowTreeData>> resMap = new HashMap<>();
 
     for (WindowTreeData elem : input) {
       List<WindowTreeData> list = resMap.get(elem.parentId);
       if (list == null) {
-        list = new ArrayList<WindowTreeData>();
+        list = new ArrayList<>();
       }
       list.add(elem);
       resMap.put(elem.parentId, list);
@@ -413,7 +413,7 @@ public class WindowTree extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     } catch (Exception ex) {
-      ex.printStackTrace();
+      log4j.error(ex.getMessage(), ex);
     }
 
     response.setContentType("text/html; charset=UTF-8");
