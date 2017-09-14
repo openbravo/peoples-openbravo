@@ -2311,7 +2311,23 @@ WHERE MA_MAINTENANCE_ID = @MA_MAINTENANCE_ID@]]></CODE>
 <!--600FD6A6E8E74921AA876A03ECF46C41-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--600FD6A6E8E74921AA876A03ECF46C41-->  <AD_TAB_ID><![CDATA[BD883B355F1B448A9CB6BD472600EB2D]]></AD_TAB_ID>
 <!--600FD6A6E8E74921AA876A03ECF46C41-->  <NAME><![CDATA[isWarehouseDimension]]></NAME>
-<!--600FD6A6E8E74921AA876A03ECF46C41-->  <CODE><![CDATA[N]]></CODE>
+<!--600FD6A6E8E74921AA876A03ECF46C41-->  <CODE><![CDATA[@SQL=SELECT COALESCE(costingrule.Warehouse_Dimension,'N')
+FROM M_Costing_Rule costingrule
+WHERE costingrule.AD_Org_ID=@AD_ORG_ID@
+  AND (costingrule.Datefrom IS NULL
+       OR costingrule.Datefrom <= to_timestamp(@REFERENCEDATE@, 'DD-MM-YYYY HH24:MI:SS'))
+  AND (costingrule.Dateto IS NULL
+       OR costingrule.Dateto >= to_timestamp(@REFERENCEDATE@, 'DD-MM-YYYY HH24:MI:SS'))
+  AND costingrule.IsValidated='Y'
+  AND costingrule.Isactive='Y'
+  AND EXISTS (select 1 FROM M_Costing_Rule costingrule2
+             WHERE costingrule2.AD_Org_ID=@AD_ORG_ID@
+            AND (costingrule2.Datefrom IS NULL
+            OR costingrule2.Datefrom <= to_timestamp(@REFERENCEDATE@, 'DD-MM-YYYY HH24:MI:SS'))
+           AND (costingrule2.Dateto IS NULL
+       OR costingrule2.Dateto >= to_timestamp(@REFERENCEDATE@, 'DD-MM-YYYY HH24:MI:SS'))
+       AND costingrule2.IsValidated='Y'
+  AND costingrule2.Isactive='Y' HAVING max(costingrule2.Datefrom) = costingrule.Datefrom)]]></CODE>
 <!--600FD6A6E8E74921AA876A03ECF46C41-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--600FD6A6E8E74921AA876A03ECF46C41--></AD_AUXILIARINPUT>
 
