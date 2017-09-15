@@ -3146,5 +3146,23 @@ isc.OBStandardView.addProperties({
     });
 
     return result;
+  },
+
+  roleCanCreateRecords: function () {
+    return this.organizationFieldIsEditable() || this.roleHasWriteAccessToParentRecordOrg();
+  },
+
+  organizationFieldIsEditable: function () {
+    var organizationField = this.fields.find('name', 'organization');
+    return organizationField !== null && !organizationField.disabled;
+  },
+
+  roleHasWriteAccessToParentRecordOrg: function () {
+    var parentRecordOrganization;
+    if (this.parentView === null || this.parentView.viewGrid.getSelectedRecord() === null) {
+      return true;
+    }
+    parentRecordOrganization = this.parentView.viewGrid.getSelectedRecord().organization;
+    return OB.User.writableOrganizations.contains(parentRecordOrganization);
   }
 });

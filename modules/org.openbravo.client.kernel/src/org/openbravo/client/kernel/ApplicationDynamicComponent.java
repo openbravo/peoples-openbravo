@@ -142,6 +142,10 @@ public class ApplicationDynamicComponent extends SessionDynamicTemplateComponent
     return Boolean.toString(getActivationKey().isGolden());
   }
 
+  public Set<String> getWritableOrganizations() {
+    return OBContext.getOBContext().getWritableOrganizations();
+  }
+
   public String getActiveInstanceStringValue() {
     if (SessionFactoryController.isRunningInWebContainer()) {
       return Boolean.toString(ActivationKey.isActiveInstance());
