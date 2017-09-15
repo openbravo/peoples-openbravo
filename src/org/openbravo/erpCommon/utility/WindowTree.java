@@ -85,7 +85,7 @@ public class WindowTree extends HttpSecureAppServlet {
       String strTabId = vars.getGlobalVariable("inpTabId", "WindowTree|tabId");
       ADTreeData treeData = new ADTreeData(strTabId);
       treeData.initializeData(vars, this);
-      if (treeData.getTreeId() == null) {
+      if (treeData.treeId == null) {
         advisePopUp(request, response, "ERROR",
             Utility.messageBD(this, "Error", vars.getLanguage()),
             Utility.messageBD(this, "AccessTableNoView", vars.getLanguage()));
@@ -141,24 +141,24 @@ public class WindowTree extends HttpSecureAppServlet {
    */
   private String loadNodes(VariablesSecureApp vars, ADTreeData treeData, boolean editable)
       throws ServletException {
-    if (treeData.getTreeId() == null) {
-      log4j.error("WindowTree.loadNodes() - Unknown TreeNode: TreeType " + treeData.getTreeType()
-          + " - TreeKey " + treeData.getKey());
+    if (treeData.treeId == null) {
+      log4j.error("WindowTree.loadNodes() - Unknown TreeNode: TreeType " + treeData.treeType
+          + " - TreeKey " + treeData.key);
       throw new ServletException("WindowTree.loadNodes() - Unknown TreeNode");
     }
     StringBuilder nodesMenu = new StringBuilder();
     if (log4j.isDebugEnabled())
-      log4j.debug("WindowTree.loadNodes() - TreeType: " + treeData.getTreeType() + " || TreeID: "
-          + treeData.getTreeId());
+      log4j.debug("WindowTree.loadNodes() - TreeType: " + treeData.treeType + " || TreeID: "
+          + treeData.treeId);
     nodesMenu.append("\n<ul class=\"dhtmlgoodies_tree\">\n");
-    nodesMenu.append(WindowTreeUtility.addNodeElement(treeData.getTreeName(),
-        treeData.getTreeDescription(), CHILD_SHEETS, true, "", strDireccion, "clickItem(0, '"
-            + Replace.replace(treeData.getTreeName(), "'", "\\'") + "', 'N');", "dblClickItem(0);",
-        true, "0", ""));
-    WindowTreeData[] wtd = WindowTreeUtility.getTree(this, vars, treeData.getTreeType(),
-        treeData.getTreeId(), editable, "", "", treeData.getTabId());
+    nodesMenu.append(WindowTreeUtility.addNodeElement(treeData.treeName, treeData.treeDescription,
+        CHILD_SHEETS, true, "", strDireccion,
+        "clickItem(0, '" + Replace.replace(treeData.treeName, "'", "\\'") + "', 'N');",
+        "dblClickItem(0);", true, "0", ""));
+    WindowTreeData[] wtd = WindowTreeUtility.getTree(this, vars, treeData.treeType,
+        treeData.treeId, editable, "", "", treeData.tabId);
     Map<String, List<WindowTreeData>> wtdTree = buildTree(wtd);
-    nodesMenu.append(generateTree(wtd, wtdTree, strDireccion, "0", true, treeData.getTabId()));
+    nodesMenu.append(generateTree(wtd, wtdTree, strDireccion, "0", true, treeData.tabId));
     nodesMenu.append("\n</ul>\n");
     nodeIdList = null;
     return nodesMenu.toString();
@@ -308,7 +308,7 @@ public class WindowTree extends HttpSecureAppServlet {
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       ADTreeData treeData) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
-      log4j.debug("Output: Tree's screen for the tab: " + treeData.getTabId());
+      log4j.debug("Output: Tree's screen for the tab: " + treeData.tabId);
     OBError defaultInfo = new OBError();
     defaultInfo.setType("INFO");
     defaultInfo.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
@@ -322,17 +322,15 @@ public class WindowTree extends HttpSecureAppServlet {
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
 
-    WindowTreeData[] data = WindowTreeData.selectTabName(this, treeData.getTabId());
+    WindowTreeData[] data = WindowTreeData.selectTabName(this, treeData.tabId);
 
     xmlDocument.setParameter("description", data[0].name);
-    xmlDocument.setParameter("page", Utility.getTabURL(treeData.getTabId(), "E", true));
-    xmlDocument.setParameter(
-        "menu",
-        loadNodes(vars, treeData,
-            WindowTreeData.selectEditable(this, treeData.getTabId()).equals("Y")));
-    xmlDocument.setParameter("treeID", treeData.getTreeId());
-    xmlDocument.setParameter("tabID", treeData.getTabId());
-    String key = "inp" + Sqlc.TransformaNombreColumna(treeData.getKey());
+    xmlDocument.setParameter("page", Utility.getTabURL(treeData.tabId, "E", true));
+    xmlDocument.setParameter("menu",
+        loadNodes(vars, treeData, WindowTreeData.selectEditable(this, treeData.tabId).equals("Y")));
+    xmlDocument.setParameter("treeID", treeData.treeId);
+    xmlDocument.setParameter("tabID", treeData.tabId);
+    String key = "inp" + Sqlc.TransformaNombreColumna(treeData.key);
     xmlDocument.setParameter("keyField", key);
     xmlDocument.setParameter("keyFieldScript",
         "function getKeyField() {\n return document.frmMain." + key + ";\n}\n");
@@ -515,16 +513,15 @@ public class WindowTree extends HttpSecureAppServlet {
   } // end of getServletInfo() method
 
   private class ADTreeData {
-    String tabId;
-    String treeId;
-    String treeName;
-    String treeType;
-    String treeDescription;
-    String key;
+    private String tabId;
+    private String treeId;
+    private String treeName;
+    private String treeType;
+    private String treeDescription;
+    private String key;
 
     private ADTreeData(String tabId) {
       this.tabId = tabId;
-      this.treeId = null;
     }
 
     private void initializeData(VariablesSecureApp vars, ConnectionProvider connectionProvider)
@@ -566,30 +563,5 @@ public class WindowTree extends HttpSecureAppServlet {
         OBContext.restorePreviousMode();
       }
     }
-
-    private String getTabId() {
-      return tabId;
-    }
-
-    private String getTreeId() {
-      return treeId;
-    }
-
-    private String getTreeName() {
-      return treeName;
-    }
-
-    private String getTreeDescription() {
-      return treeDescription;
-    }
-
-    private String getTreeType() {
-      return treeType;
-    }
-
-    private String getKey() {
-      return key;
-    }
-
   }
 }
