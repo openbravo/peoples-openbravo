@@ -778,6 +778,7 @@
               tap: function () {
                 OB.MobileApp.model.off('change:secondsToRefreshMasterdata');
                 clearInterval(counterIntervalId);
+                this.doHideThisPopup();
               }
             },
             autoDismiss: false,
