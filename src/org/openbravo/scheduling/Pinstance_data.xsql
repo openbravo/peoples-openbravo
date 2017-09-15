@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,9 +20,8 @@
 
 <SqlClass name="PinstanceData" package="org.openbravo.scheduling">
    <SqlMethod name="select" type="preparedStatement" return="single">
-      <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-      	SELECT AD_Process_ID, Record_ID, Isprocessing, Result, Errormsg, Isactive 
+      	SELECT AD_Process_ID
       	FROM AD_Pinstance
       	WHERE AD_Pinstance_ID = ?
     ]]></Sql>

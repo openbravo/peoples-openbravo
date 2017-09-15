@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,10 +20,9 @@
 
 <SqlClass name="ProcessData" package="org.openbravo.scheduling">
    <SqlMethod name="select" type="preparedStatement" return="single">
-      <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-      	SELECT p.AD_Process_ID as Id, p.Name, p.AccessLevel, p.IsUserStartable, p.ProcedureName, p.IsReport, p.IsDirectPrint, 
-         COALESCE(TO_CHAR(p.ClassName), TO_CHAR(mo.ClassName)) as ClassName, p.IsBackground, p.IsJasper, p.JRName, p.Service_Type, p.IsExternalService, p.Service_Source
+      	SELECT p.ProcedureName,
+         COALESCE(TO_CHAR(p.ClassName), TO_CHAR(mo.ClassName)) as ClassName, p.IsJasper
          FROM AD_Process p LEFT JOIN AD_Model_Object mo on p.AD_Process_ID = mo.AD_Process_ID
         WHERE p.AD_Process_ID = ?
     ]]></Sql>

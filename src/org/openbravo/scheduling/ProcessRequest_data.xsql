@@ -20,23 +20,20 @@
 
 <SqlClass name="ProcessRequestData" package="org.openbravo.scheduling">
    <SqlMethod name="select" type="preparedStatement" return="single">
-      <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
       	SELECT AD_Process_Request_ID AS Id, AD_Process_ID AS Process_Id,
-      	AD_Client_ID AS Client, AD_Org_Id AS Organization, AD_User_ID AS UserId,
-      	IsRoleSecurity, Status, Channel, Ob_Context, Params, AD_Process_Set_Id,
-      	IsGroup, AD_Process_Group_ID, timing_option
+      	AD_Client_ID AS Client, AD_Org_Id AS Organization,
+      	IsRoleSecurity, Status, Channel, Ob_Context, Params,
+      	IsGroup, timing_option
       	FROM AD_Process_Request
       	WHERE AD_Process_Request_ID = ?
     ]]></Sql>
     <Parameter name="processRequestId"/>
    </SqlMethod>
    <SqlMethod name="selectByStatus" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
       	SELECT AD_Process_Request_ID AS Id, AD_Process_ID AS Process_Id,
-      	AD_Client_ID AS Client, AD_Org_Id AS Organization, AD_User_ID AS UserId,
-      	IsRoleSecurity, Status, Channel, Ob_Context, AD_Process_Set_Id, timing_option
+      	Channel, Ob_Context,timing_option
       	FROM AD_Process_Request
       	WHERE Status = ?
     ]]></Sql>
