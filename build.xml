@@ -94,7 +94,6 @@ export.database: exports database structure and data to xml files.
   <property name="friendlyWarnings" value="false"/>
   <property name="checkTranslationConsistency" value="true"/>
   <property name="buildValidation" value="true"/>
-  <property name="disableCheckReferencedOrganizations" value="false"/>
   <property name="modules" value=""/> 
  
   <available file=".hg" property="is.hg" />
@@ -602,14 +601,6 @@ export.database: exports database structure and data to xml files.
     />    
   </target>
   
-  <target name="export.sample.data.old" depends="code.rev">
-    <ant dir="${base.src}" target="export.sample.data.old" inheritAll="true" inheritRefs="true" />
-  </target>
-
-  <target name="import.sample.data.old" depends="code.rev">
-    <ant dir="${base.src}" target="import.sample.data.old" inheritAll="true" inheritRefs="true" />
-  </target>
-
   <target name="compile.src" depends="init">
     <ant dir="${base.src}" target="compile.src" inheritAll="true" inheritRefs="true" />
   </target>

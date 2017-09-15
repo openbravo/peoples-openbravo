@@ -79,7 +79,7 @@ public class ClientExportImportTest extends XMLBaseTest {
   //
   // final String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
   // .getProperty("source.path");
-  // final File importDir = new File(sourcePath, ReferenceDataTask.REFERENCE_DATA_DIRECTORY);
+  // final File importDir = new File(sourcePath, "/referencedata/sampledata");
   //
   // for (final File importFile : importDir.listFiles()) {
   // if (importFile.isDirectory()) {

@@ -198,24 +198,6 @@ build.war: build a war file in the lib directory.
     </delete>
   </target>
 
-  <target name="export.sample.data.old" description="Exports Sample Data">
-    <taskdef name="exportsampledata" classname="org.openbravo.service.db.ExportReferenceDataTask">
-      <classpath refid="project.class.path" />
-    </taskdef>
-    <echo message="Exporting sample reference data" />
-    <exportsampledata userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" clients="F&amp;B International Group" />
-    <exportsampledata userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" clients="QA Testing" />
-  </target>
-
-  <target name="import.sample.data.old" description="Import Sample Data" depends="generate.entities">
-    <taskdef name="importsampledata" classname="org.openbravo.service.db.ImportReferenceDataTask">
-      <classpath refid="project.class.path" />
-    </taskdef>
-    <echo message="Importing sample reference data" />
-    <importsampledata userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" disableCheckReferencedOrganizations="${disableCheckReferencedOrganizations}"/>
-    <ant dir="${base.db}" target="database.postupdate.${bbdd.rdbms}" inheritAll="true" inheritRefs="true" />
-  </target>
-
   <!-- full generate.entities -> clean + .quick -->
   <target name="generate.entities" depends="clean.src.gen,generate.entities.quick" />
 
