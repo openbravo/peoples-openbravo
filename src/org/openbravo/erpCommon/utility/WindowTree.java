@@ -43,6 +43,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Tree;
@@ -82,36 +83,15 @@ public class WindowTree extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT", "TAB")) {
       String strTabId = vars.getGlobalVariable("inpTabId", "WindowTree|tabId");
-
-      Tab tab = OBDal.getInstance().get(Tab.class, strTabId);
-      Table table = tab.getTable();
-      OBCriteria<Tree> adTreeCriteria = OBDal.getInstance().createCriteria(Tree.class);
-      adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_TABLE, table));
-      adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_CLIENT, OBContext.getOBContext()
-          .getCurrentClient()));
-      adTreeCriteria.setFilterOnReadableOrganization(false);
-      Tree adTree = (Tree) adTreeCriteria.uniqueResult();
-
-      String strTreeID = "";
-      if (adTree != null) {
-        strTreeID = adTree.getId();
-      } else {
-        String key = WindowTreeData.selectKey(this, strTabId);
-        {
-          String treeType = WindowTreeUtility.getTreeType(key);
-          WindowTreeData[] data = WindowTreeData.selectTreeID(this,
-              Utility.getContext(this, vars, "#User_Client", ""), treeType);
-          if (data != null && data.length > 0)
-            strTreeID = data[0].id;
-        }
-      }
-
-      if (strTreeID.equals(""))
+      ADTreeData treeData = new ADTreeData(strTabId);
+      treeData.initializeData(vars, this);
+      if (treeData.getTreeId() == null) {
         advisePopUp(request, response, "ERROR",
             Utility.messageBD(this, "Error", vars.getLanguage()),
             Utility.messageBD(this, "AccessTableNoView", vars.getLanguage()));
-      else
-        printPageDataSheet(response, vars, strTabId);
+      } else {
+        printPageDataSheet(response, vars, treeData);
+      }
     } else if (vars.commandIn("ASSIGN")) {
       String strTabId = vars.getRequiredStringParameter("inpTabId");
       String strTop = vars.getRequiredStringParameter("inpTop");
@@ -119,9 +99,9 @@ public class WindowTree extends HttpSecureAppServlet {
       String strChild = vars.getStringParameter("inpChild", "N");
       String strResult = WindowTreeChecks.checkChanges(this, vars, strTabId, strTop, strLink,
           strChild.equals("Y"));
-      if (strResult.equals(""))
+      if (strResult.equals("")) {
         changeNode(vars, strTabId, strTop, strLink, strChild);
-      else {
+      } else {
         vars.setSessionValue("WindowTree|message", strResult);
       }
       vars.setSessionValue("WindowTree|tabId", strTabId);
@@ -140,8 +120,9 @@ public class WindowTree extends HttpSecureAppServlet {
 
       out.print(strResult);
       out.close();
-    } else
+    } else {
       throw new ServletException();
+    }
   }
 
   /**
@@ -158,53 +139,26 @@ public class WindowTree extends HttpSecureAppServlet {
    * @return String html with the tree.
    * @throws ServletException
    */
-  private String loadNodes(VariablesSecureApp vars, String key, boolean editable, String strTabId)
+  private String loadNodes(VariablesSecureApp vars, ADTreeData treeData, boolean editable)
       throws ServletException {
-    String TreeType = null;
-    String TreeID = "";
-    String TreeName = "";
-    String TreeDescription = "";
-
-    StringBuilder nodesMenu = new StringBuilder();
-    if (key == null || key.isEmpty()) {
-      Tab tab = OBDal.getInstance().get(Tab.class, strTabId);
-      Table table = tab.getTable();
-      OBCriteria<Tree> adTreeCriteria = OBDal.getInstance().createCriteria(Tree.class);
-      adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_TABLE, table));
-      adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_CLIENT, OBContext.getOBContext()
-          .getCurrentClient()));
-      adTreeCriteria.setFilterOnReadableOrganization(false);
-      Tree adTree = (Tree) adTreeCriteria.uniqueResult();
-
-      TreeID = adTree.getId();
-      TreeName = adTree.getName();
-      TreeDescription = adTree.getDescription();
-      TreeType = adTree.getTypeArea();
-    } else {
-      TreeType = WindowTreeUtility.getTreeType(key);
-      WindowTreeData[] data = WindowTreeData.selectTreeID(this,
-          Utility.getContext(this, vars, "#User_Client", ""), TreeType);
-      if (data == null || data.length == 0) {
-        log4j.error("WindowTree.loadNodes() - Unknown TreeNode: TreeType " + TreeType
-            + " - TreeKey " + key);
-        throw new ServletException("WindowTree.loadNodes() - Unknown TreeNode");
-      } else {
-        TreeID = data[0].id;
-        TreeName = data[0].name;
-        TreeDescription = data[0].description;
-      }
+    if (treeData.getTreeId() == null) {
+      log4j.error("WindowTree.loadNodes() - Unknown TreeNode: TreeType " + treeData.getTreeType()
+          + " - TreeKey " + treeData.getKey());
+      throw new ServletException("WindowTree.loadNodes() - Unknown TreeNode");
     }
-
+    StringBuilder nodesMenu = new StringBuilder();
     if (log4j.isDebugEnabled())
-      log4j.debug("WindowTree.loadNodes() - TreeType: " + TreeType + " || TreeID: " + TreeID);
+      log4j.debug("WindowTree.loadNodes() - TreeType: " + treeData.getTreeType() + " || TreeID: "
+          + treeData.getTreeId());
     nodesMenu.append("\n<ul class=\"dhtmlgoodies_tree\">\n");
-    nodesMenu.append(WindowTreeUtility.addNodeElement(TreeName, TreeDescription, CHILD_SHEETS,
-        true, "", strDireccion, "clickItem(0, '" + Replace.replace(TreeName, "'", "\\'")
-            + "', 'N');", "dblClickItem(0);", true, "0", ""));
-    WindowTreeData[] wtd = WindowTreeUtility.getTree(this, vars, TreeType, TreeID, editable, "",
-        "", strTabId);
+    nodesMenu.append(WindowTreeUtility.addNodeElement(treeData.getTreeName(),
+        treeData.getTreeDescription(), CHILD_SHEETS, true, "", strDireccion, "clickItem(0, '"
+            + Replace.replace(treeData.getTreeName(), "'", "\\'") + "', 'N');", "dblClickItem(0);",
+        true, "0", ""));
+    WindowTreeData[] wtd = WindowTreeUtility.getTree(this, vars, treeData.getTreeType(),
+        treeData.getTreeId(), editable, "", "", treeData.getTabId());
     Map<String, List<WindowTreeData>> wtdTree = buildTree(wtd);
-    nodesMenu.append(generateTree(wtd, wtdTree, strDireccion, "0", true, strTabId));
+    nodesMenu.append(generateTree(wtd, wtdTree, strDireccion, "0", true, treeData.getTabId()));
     nodesMenu.append("\n</ul>\n");
     nodeIdList = null;
     return nodesMenu.toString();
@@ -352,9 +306,9 @@ public class WindowTree extends HttpSecureAppServlet {
    * @throws ServletException
    */
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
-      String TabId) throws IOException, ServletException {
+      ADTreeData treeData) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
-      log4j.debug("Output: Tree's screen for the tab: " + TabId);
+      log4j.debug("Output: Tree's screen for the tab: " + treeData.getTabId());
     OBError defaultInfo = new OBError();
     defaultInfo.setType("INFO");
     defaultInfo.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
@@ -367,39 +321,18 @@ public class WindowTree extends HttpSecureAppServlet {
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
-    String strTreeID = "";
 
-    Tab tab = OBDal.getInstance().get(Tab.class, TabId);
-    Table table = tab.getTable();
-    OBCriteria<Tree> adTreeCriteria = OBDal.getInstance().createCriteria(Tree.class);
-    adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_TABLE, table));
-    adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_CLIENT, OBContext.getOBContext()
-        .getCurrentClient()));
-    adTreeCriteria.setFilterOnReadableOrganization(false);
-    Tree adTree = (Tree) adTreeCriteria.uniqueResult();
-    String key = "";
-    if (adTree != null) {
-      strTreeID = adTree.getId();
-    } else {
-      key = WindowTreeData.selectKey(this, TabId);
-      {
-        String TreeType = WindowTreeUtility.getTreeType(key);
-        WindowTreeData[] data = WindowTreeData.selectTreeID(this,
-            Utility.getContext(this, vars, "#User_Client", ""), TreeType);
-        if (data != null && data.length > 0)
-          strTreeID = data[0].id;
-      }
-    }
-
-    WindowTreeData[] data = WindowTreeData.selectTabName(this, TabId);
+    WindowTreeData[] data = WindowTreeData.selectTabName(this, treeData.getTabId());
 
     xmlDocument.setParameter("description", data[0].name);
-    xmlDocument.setParameter("page", Utility.getTabURL(TabId, "E", true));
-    xmlDocument.setParameter("menu",
-        loadNodes(vars, key, WindowTreeData.selectEditable(this, TabId).equals("Y"), TabId));
-    xmlDocument.setParameter("treeID", strTreeID);
-    xmlDocument.setParameter("tabID", TabId);
-    key = "inp" + Sqlc.TransformaNombreColumna(key);
+    xmlDocument.setParameter("page", Utility.getTabURL(treeData.getTabId(), "E", true));
+    xmlDocument.setParameter(
+        "menu",
+        loadNodes(vars, treeData,
+            WindowTreeData.selectEditable(this, treeData.getTabId()).equals("Y")));
+    xmlDocument.setParameter("treeID", treeData.getTreeId());
+    xmlDocument.setParameter("tabID", treeData.getTabId());
+    String key = "inp" + Sqlc.TransformaNombreColumna(treeData.getKey());
     xmlDocument.setParameter("keyField", key);
     xmlDocument.setParameter("keyFieldScript",
         "function getKeyField() {\n return document.frmMain." + key + ";\n}\n");
@@ -580,4 +513,83 @@ public class WindowTree extends HttpSecureAppServlet {
   public String getServletInfo() {
     return "Servlet that presents the tree of a TreeNode windo windoww";
   } // end of getServletInfo() method
+
+  private class ADTreeData {
+    String tabId;
+    String treeId;
+    String treeName;
+    String treeType;
+    String treeDescription;
+    String key;
+
+    private ADTreeData(String tabId) {
+      this.tabId = tabId;
+      this.treeId = null;
+    }
+
+    private void initializeData(VariablesSecureApp vars, ConnectionProvider connectionProvider)
+        throws ServletException {
+      initFromADTree();
+      if (treeId == null) {
+        key = WindowTreeData.selectKey(connectionProvider, tabId);
+        treeType = WindowTreeUtility.getTreeType(key);
+        WindowTreeData[] data = WindowTreeData.selectTreeID(connectionProvider,
+            Utility.getContext(connectionProvider, vars, "#User_Client", ""), treeType);
+        if (data != null && data.length > 0) {
+          treeId = data[0].id;
+          treeName = data[0].name;
+          treeDescription = data[0].description;
+        }
+      }
+    }
+
+    private void initFromADTree() {
+      try {
+        OBContext.setAdminMode(true);
+        Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+        Table table = tab.getTable();
+        OBCriteria<Tree> adTreeCriteria = OBDal.getInstance().createCriteria(Tree.class);
+        adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_TABLE, table));
+        adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_CLIENT, OBContext.getOBContext()
+            .getCurrentClient()));
+        adTreeCriteria.setFilterOnReadableOrganization(false);
+        Tree adTree = (Tree) adTreeCriteria.uniqueResult();
+        if (adTree == null) {
+          return;
+        }
+        treeId = adTree.getId();
+        treeName = adTree.getName();
+        treeDescription = adTree.getDescription();
+        treeType = adTree.getTypeArea();
+        key = "";
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    }
+
+    private String getTabId() {
+      return tabId;
+    }
+
+    private String getTreeId() {
+      return treeId;
+    }
+
+    private String getTreeName() {
+      return treeName;
+    }
+
+    private String getTreeDescription() {
+      return treeDescription;
+    }
+
+    private String getTreeType() {
+      return treeType;
+    }
+
+    private String getKey() {
+      return key;
+    }
+
+  }
 }
