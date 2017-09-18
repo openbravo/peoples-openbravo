@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import java.util.HashMap;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostAdjustmentUtils;
@@ -47,9 +48,9 @@ public class SL_InvAmtUpd_ProductRefDate extends SimpleCallout {
       Date referenceDate;
       BigDecimal currentValuedStock = BigDecimal.ZERO;
       BigDecimal currentStock = BigDecimal.ZERO;
-      HashMap<CostDimension, BaseOBObject> costDimensions;
 
       String warehouseId = info.getStringParameter("inpmWarehouseId", null);
+      String isWarehouseDimension = info.getStringParameter("isWarehouseDimension");
       String productId = info.getStringParameter("inpmProductId", null);
       Product product = OBDal.getInstance().get(Product.class, productId);
       String orgId = info.getStringParameter("inpadOrgId", null);
@@ -62,19 +63,18 @@ public class SL_InvAmtUpd_ProductRefDate extends SimpleCallout {
 
       referenceDate = outputFormat.parse(info.getStringParameter("inpreferencedate", null));
 
-      CostingRule costRule = CostingUtils.getCostDimensionRule(organization, referenceDate);
-      if (costRule.isWarehouseDimension()) {
-        info.addResult("inpiswarehousedimension", "Y");
-      } else {
-        info.addResult("inpiswarehousedimension", "N");
+      if (StringUtils.equals(isWarehouseDimension, "N")) {
+        warehouseId = null;
         info.addResult("inpmWarehouseId", null);
       }
 
       if (product == null) {
         return;
       }
-      costDimensions = CostingUtils.getEmptyDimensions();
-      if (costRule.isWarehouseDimension() && warehouseId != null && !warehouseId.isEmpty()) {
+
+      CostingRule costRule = CostingUtils.getCostDimensionRule(organization, referenceDate);
+      HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils.getEmptyDimensions();
+      if (costRule.isWarehouseDimension() && StringUtils.isNotEmpty(warehouseId)) {
         Warehouse warehouse = OBDal.getInstance().get(Warehouse.class, warehouseId);
         costDimensions.put(CostDimension.Warehouse, warehouse);
       }
@@ -84,10 +84,10 @@ public class SL_InvAmtUpd_ProductRefDate extends SimpleCallout {
           referenceDate, costDimensions, costRule.isBackdatedTransactionsFixed());
       info.addResult("inpcurInventoryAmount", currentValuedStock);
       info.addResult("inponhandqty", currentStock);
-      info.addResult(
-          "inpcurUnitcost",
-          currentStock.intValue() == 0 ? BigDecimal.ZERO : currentValuedStock.divide(currentStock,
-              currency.getPricePrecision().intValue(), RoundingMode.HALF_UP));
+      info.addResult("inpcurUnitcost",
+          currentStock.intValue() == 0 ? BigDecimal.ZERO
+              : currentValuedStock.divide(currentStock, currency.getPricePrecision().intValue(),
+                  RoundingMode.HALF_UP));
     } catch (ParseException ignore) {
     }
   }
