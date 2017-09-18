@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -209,7 +209,9 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
         if (curCosting.getCost().compareTo(cost) != 0
             || (curCosting.getTotalMovementQuantity() != null && curCosting
-                .getTotalMovementQuantity().compareTo(currentStock) != 0)) {
+                .getTotalMovementQuantity().compareTo(currentStock) != 0)
+            || (curCosting.getTotalStockValuation() != null && curCosting.getTotalStockValuation()
+                .compareTo(currentValueAmt.add(adjustmentBalance)) != 0)) {
           curCosting.setPermanent(Boolean.FALSE);
           OBDal.getInstance().save(curCosting);
           OBDal.getInstance().flush();
@@ -368,7 +370,9 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           if (curCosting.getCost().compareTo(cost) == 0
               && StringUtils.isEmpty(bdCostingId)
               && (curCosting.getTotalMovementQuantity() != null && curCosting
-                  .getTotalMovementQuantity().compareTo(currentStock) == 0)) {
+                  .getTotalMovementQuantity().compareTo(currentStock) == 0)
+              && (curCosting.getTotalStockValuation() != null && curCosting
+                  .getTotalStockValuation().compareTo(currentValueAmt.add(adjustmentBalance)) == 0)) {
             // new cost hasn't changed and total movement qty is equal to current stock, following
             // transactions will have the same cost, so no more
             // related transactions are needed to include.
@@ -433,7 +437,9 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             }
             if (curCosting.getCost().compareTo(cost) != 0
                 || (curCosting.getTotalMovementQuantity() != null && curCosting
-                    .getTotalMovementQuantity().compareTo(currentStock) != 0)) {
+                    .getTotalMovementQuantity().compareTo(currentStock) != 0)
+                || (curCosting.getTotalStockValuation() != null && curCosting
+                    .getTotalStockValuation().compareTo(currentValueAmt.add(adjustmentBalance)) != 0)) {
               curCosting.setPermanent(Boolean.FALSE);
               OBDal.getInstance().save(curCosting);
               OBDal.getInstance().flush();
