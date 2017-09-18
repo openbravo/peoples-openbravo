@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -333,23 +334,17 @@ public class AdvancedQueryBuilder {
 
     // add the organization parameter
     StringBuilder orgPart = new StringBuilder();
-    Set<String> orgs = new HashSet<String>();
     if (filterParameters.containsKey(JsonConstants.ORG_PARAMETER)) {
       final String value = filterParameters.get(JsonConstants.ORG_PARAMETER);
       if (entity.isOrganizationEnabled() && value != null && value.length() > 0) {
-        orgs = OBContext.getOBContext().getOrganizationStructureProvider().getNaturalTree(value);
-        orgPart = buildOrgPartWhereClause(orgs);
+        orgPart = buildOrgPartWhereClause(getDirectReadableOrgsInNaturalTree(value));
+      } else if (Organization.TABLE_NAME.equals(entity.getTableName())) {
+        orgPart = buildOrgPartWhereClause(getReadableOrgs());
       }
-      localWhereClause = buildLocalWhereClause(localWhereClause, orgPart);
     } else if (filterParameters.containsKey(JsonConstants.CALCULATE_ORGS)) {
-      // add natural tree of writable organizations
-      final Set<String> orgsWritables = OBContext.getOBContext().getWritableOrganizations();
-      for (final String o : orgsWritables) {
-        orgs.addAll(OBContext.getOBContext().getOrganizationStructureProvider().getNaturalTree(o));
-      }
-      orgPart = buildOrgPartWhereClause(orgs);
-      localWhereClause = buildLocalWhereClause(localWhereClause, orgPart);
+      orgPart = buildOrgPartWhereClause(getReadableOrgs());
     }
+    localWhereClause = buildLocalWhereClause(localWhereClause, orgPart);
 
     // add the special whereParameter
     final String whereParameter = filterParameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE);
@@ -361,6 +356,23 @@ public class AdvancedQueryBuilder {
       }
     }
     return localWhereClause;
+  }
+
+  private Set<String> getDirectReadableOrgsInNaturalTree(String adOrgId) {
+    Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
+        .getNaturalTree(adOrgId);
+    String userOrgs = RequestContext.get().getVariablesSecureApp().getSessionValue("#User_Org");
+    if (StringUtils.isEmpty(userOrgs)) {
+      return orgs;
+    }
+    userOrgs = userOrgs.replaceAll("'", "");
+    Set<String> userOrgsSet = new HashSet<>(Arrays.asList(userOrgs.split(",")));
+    orgs.retainAll(userOrgsSet);
+    return orgs;
+  }
+
+  private Set<String> getReadableOrgs() {
+    return new HashSet<>(Arrays.asList(OBContext.getOBContext().getReadableOrganizations()));
   }
 
   private String buildLocalWhereClause(String localWhere, StringBuilder orgPart) {
