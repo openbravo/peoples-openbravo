@@ -161,7 +161,7 @@
         AND ic.C_BPartner_ID = ?
         AND pl.istaxincluded = ? 
         AND o.C_Order_Id = ic.C_Order_Id
-        AND ((ic.term = 'D' AND ic.qtydelivered <>0) OR (ic.term = 'I' AND exists (SELECT 1 FROM C_ORDERLINE ol WHERE ol.C_ORDER_ID = o.C_ORDER_ID group by ol.c_orderline_id having SUM(ol.QTYORDERED)-SUM(ol.QTYINVOICED)<>0)) OR (ic.term IN ('O','S') AND (ic.qtyordered = ic.qtydelivered) ) )
+        AND ((ic.term IN ('D', 'S') AND ic.qtydelivered <> 0) OR (ic.term = 'I' AND exists (SELECT 1 FROM C_ORDERLINE ol WHERE ol.C_ORDER_ID = o.C_ORDER_ID group by ol.c_orderline_id having SUM(ol.QTYORDERED) - SUM(ol.QTYINVOICED) <> 0)) OR (ic.term = 'O' AND (ic.qtyordered = ic.qtydelivered)))
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal 
         ORDER BY NAME
       ]]>
