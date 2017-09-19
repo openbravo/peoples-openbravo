@@ -2376,7 +2376,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       FIN_PaymentSchedule paymentScheduleInvoice, BigDecimal diffPaid, boolean usedCredit) {
     // Unlinked PaymentScheduleDetail records will be recreated
     // First all non linked PaymentScheduleDetail records are deleted
-    String pSchedId = null;
+
+    // Issue 36371, when setting the new FIN_PaymentScheduleDetail, we have reuse the first non
+    // linked, so in typical case, next method will not delete any FIN_PaymentScheduleDetail of the
+    // order
     List<FIN_PaymentScheduleDetail> pScheduleDetails = new ArrayList<FIN_PaymentScheduleDetail>();
     pScheduleDetails.addAll(paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList());
     for (FIN_PaymentScheduleDetail pSched : pScheduleDetails) {
@@ -2389,7 +2392,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().remove(
               pSched);
         }
-        pSchedId = pSched.getId();
         OBDal.getInstance().remove(pSched);
       }
     }
@@ -2404,11 +2406,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       if (paymentScheduleInvoice != null) {
         paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
       }
-      if (usedCredit) {
-        paymentScheduleDetail.setId(pSchedId == null ? paymentScheduleInvoice.getId() : pSchedId);
-      } else {
-        paymentScheduleDetail.setId(pSchedId == null ? paymentSchedule.getId() : pSchedId);
-      }
+
       paymentScheduleDetail.setNewOBObject(true);
       OBDal.getInstance().save(paymentScheduleDetail);
     }
@@ -2483,17 +2481,30 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
       }
 
-      FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
-          FIN_PaymentScheduleDetail.class);
+      // Issue 36371, delete a FIN_PaymentScheduleDetail is slow, so instead of create one, and
+      // deleted all not linked. To avoid that, instead create one, take the first non linked
+      FIN_PaymentScheduleDetail paymentScheduleDetail = null;
+      List<FIN_PaymentScheduleDetail> pScheduleDetails = new ArrayList<FIN_PaymentScheduleDetail>();
+      pScheduleDetails
+          .addAll(paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList());
+      for (FIN_PaymentScheduleDetail pSched : pScheduleDetails) {
+        if (pSched.getPaymentDetails() == null) {
+          paymentScheduleDetail = OBDal.getInstance().get(FIN_PaymentScheduleDetail.class,
+              pSched.getId());
+          break;
+        }
+      }
+      if (paymentScheduleDetail == null) {
+        // When creating the layaway
+        paymentScheduleDetail = OBProvider.getInstance().get(FIN_PaymentScheduleDetail.class);
+        paymentScheduleDetail.setNewOBObject(true);
+      }
+
       paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
       paymentScheduleDetail.setAmount(amount);
       paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
       paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(
           paymentScheduleDetail);
-      if (payment.has("id")) {
-        paymentScheduleDetail.setId(payment.getString("id"));
-        paymentScheduleDetail.setNewOBObject(true);
-      }
       OBDal.getInstance().save(paymentScheduleDetail);
       if (paymentScheduleInvoice != null) {
         paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
