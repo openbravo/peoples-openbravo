@@ -103,6 +103,7 @@ import org.openbravo.model.materialmgmt.onhandquantity.StockProposed;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.retail.posterminal.OrderLoaderPreAddShipmentLineHook.OrderLoaderPreAddShipmentLineHook_Actions;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.importprocess.ImportEntryManager;
@@ -650,19 +651,22 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  protected boolean executeOrderLoaderPreAddShipmentLineHook(Instance<? extends Object> hooks,
-      String action, JSONObject jsonorderline, OrderLine orderline, JSONObject jsonorder,
-      Order order, Locator bin) throws Exception {
+  protected OrderLoaderPreAddShipmentLineHook_Response executeOrderLoaderPreAddShipmentLineHook(
+      Instance<? extends Object> hooks, OrderLoaderPreAddShipmentLineHook_Actions action,
+      JSONObject jsonorderline, OrderLine orderline, JSONObject jsonorder, Order order, Locator bin)
+      throws Exception {
     for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
       Object proc = procIter.next();
       if (proc instanceof OrderLoaderPreAddShipmentLineHook) {
-        if (!((OrderLoaderPreAddShipmentLineHook) proc).exec(action, jsonorderline, orderline,
-            jsonorder, order, bin)) {
-          return false;
+        OrderLoaderPreAddShipmentLineHook_Response hookResponse = ((OrderLoaderPreAddShipmentLineHook) proc)
+            .exec(action, jsonorderline, orderline, jsonorder, order, bin);
+        if (hookResponse == null) {
+          return null;
         }
+        return hookResponse;
       }
     }
-    return true;
+    return null;
   }
 
   private void associateOrderToQuotation(JSONObject jsonorder, Order order) throws JSONException {
@@ -1202,6 +1206,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       AttributeSetInstance oldAttributeSetValues = null;
 
       if (negativeLine && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
+        OrderLoaderPreAddShipmentLineHook_Response returnBinHookResponse;
         lineNo += 10;
         Locator binForReturn = null;
         if (orderLine.getWarehouse() != null && orderLine.getWarehouse().getReturnlocator() != null) {
@@ -1211,26 +1216,43 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
 
         try {
-          executeOrderLoaderPreAddShipmentLineHook(preAddShipmentLine, "Return",
-              orderlines.getJSONObject(i), orderLine, jsonorder, order, binForReturn);
+          returnBinHookResponse = executeOrderLoaderPreAddShipmentLineHook(preAddShipmentLine,
+              OrderLoaderPreAddShipmentLineHook_Actions.ACTION_RETURN, orderlines.getJSONObject(i),
+              orderLine, jsonorder, order, binForReturn);
         } catch (Exception e) {
-          log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook "
+          log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook for Return action "
               + e.getMessage());
+          returnBinHookResponse = null;
         }
-
+        if (returnBinHookResponse != null) {
+          if (!returnBinHookResponse.isValid()) {
+            throw new OBException(returnBinHookResponse.getMsg());
+          } else if (returnBinHookResponse.getNewLocator() != null) {
+            binForReturn = returnBinHookResponse.getNewLocator();
+          }
+        }
         addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
             lineNo, pendingQty.negate(), binForReturn, null, i);
       } else if (useSingleBin && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
+        OrderLoaderPreAddShipmentLineHook_Response singleBinHookResponse = null;
         lineNo += 10;
 
         try {
-          executeOrderLoaderPreAddShipmentLineHook(preAddShipmentLine, "SingleBinSale",
+          singleBinHookResponse = executeOrderLoaderPreAddShipmentLineHook(preAddShipmentLine,
+              OrderLoaderPreAddShipmentLineHook_Actions.ACTION_SINGLEBIN,
               orderlines.getJSONObject(i), orderLine, jsonorder, order, foundSingleBin);
         } catch (Exception e) {
-          log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook "
+          log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook for SingleBin action"
               + e.getMessage());
+          singleBinHookResponse = null;
         }
-
+        if (singleBinHookResponse != null) {
+          if (!singleBinHookResponse.isValid()) {
+            throw new OBException(singleBinHookResponse.getMsg());
+          } else if (singleBinHookResponse.getNewLocator() != null) {
+            foundSingleBin = singleBinHookResponse.getNewLocator();
+          }
+        }
         addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
             lineNo, pendingQty, foundSingleBin, null, i);
       } else {
@@ -1258,16 +1280,27 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               // TODO: Can we safely clear session here?
               StockProposed stock = (StockProposed) bins.get(0);
               BigDecimal qty;
+              OrderLoaderPreAddShipmentLineHook_Response standardSaleBinHookResponse = null;
 
               try {
-                if (!executeOrderLoaderPreAddShipmentLineHook(preAddShipmentLine, "SimpleSale",
+                standardSaleBinHookResponse = executeOrderLoaderPreAddShipmentLineHook(
+                    preAddShipmentLine,
+                    OrderLoaderPreAddShipmentLineHook_Actions.ACTION_STANDARD_SALE,
                     orderlines.getJSONObject(i), orderLine, jsonorder, order, stock
-                        .getStorageDetail().getStorageBin())) {
+                        .getStorageDetail().getStorageBin());
+              } catch (Exception e) {
+                log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook for SimpleSale action "
+                    + e.getMessage());
+                standardSaleBinHookResponse = null;
+              }
+              if (standardSaleBinHookResponse != null) {
+                if (!standardSaleBinHookResponse.isValid()) {
+                  if (standardSaleBinHookResponse.isCancelExecution()) {
+                    throw new OBException(standardSaleBinHookResponse.getMsg());
+                  }
+                  foundStockProposed = false;
                   continue;
                 }
-              } catch (Exception e) {
-                log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook "
-                    + e.getMessage());
               }
 
               Object stockQty = stock.get("quantity");
@@ -1318,6 +1351,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
         if (pendingQty.compareTo(BigDecimal.ZERO) != 0) {
           // still qty to ship or return: let's use the bin with highest prio
+          OrderLoaderPreAddShipmentLineHook_Response lastAttemptBinHookResponse = null;
           JSONObject jsonorderline = orderlines.getJSONObject(i);
           Locator loc = null;
           if (jsonorderline.has("overissueStoreBin")) {
@@ -1329,6 +1363,23 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             queryLoc.setNamedParameter("warehouse", warehouse);
             queryLoc.setMaxResult(1);
             loc = queryLoc.uniqueResult();
+          }
+
+          try {
+            lastAttemptBinHookResponse = executeOrderLoaderPreAddShipmentLineHook(
+                preAddShipmentLine, OrderLoaderPreAddShipmentLineHook_Actions.ACTION_LAST_ATTEMPT,
+                orderlines.getJSONObject(i), orderLine, jsonorder, order, loc);
+          } catch (Exception e) {
+            log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook for SimpleSaleLastAttempt action "
+                + e.getMessage());
+            lastAttemptBinHookResponse = null;
+          }
+          if (lastAttemptBinHookResponse != null) {
+            if (!lastAttemptBinHookResponse.isValid()) {
+              throw new OBException(lastAttemptBinHookResponse.getMsg());
+            } else if (lastAttemptBinHookResponse.getNewLocator() != null) {
+              loc = lastAttemptBinHookResponse.getNewLocator();
+            }
           }
 
           lineNo += 10;
