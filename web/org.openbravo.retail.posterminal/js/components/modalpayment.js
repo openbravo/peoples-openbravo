@@ -38,7 +38,10 @@ enyo.kind({
       allowOpenDrawer: this.args.paymentMethod.allowopendrawer,
       isCash: this.args.paymentMethod.iscash,
       openDrawer: this.args.paymentMethod.openDrawer,
-      printtwice: this.args.paymentMethod.printtwice
+      printtwice: this.args.paymentMethod.printtwice,
+      isReversePayment: this.args.isReversePayment,
+      reversedPaymentId: this.args.reversedPaymentId,
+      reversedPayment: this.args.reversedPayment
     }).render();
   },
   initComponents: function () {
