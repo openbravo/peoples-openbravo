@@ -40,6 +40,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.model.AccessLevel;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BooleanDomainType;
@@ -202,12 +203,22 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
 
     if (includeOrgFilter(parameters)) {
       // Organization filter
-      final String orgs = DataSourceUtils.getOrgs(parameters.get(JsonConstants.ORG_PARAMETER));
+      boolean isOrgSelector = sel.getTable().getName().equals("Organization");
+      String orgs;
+      if (isOrgSelector) {
+        // Just retrieve the list of readable organizations in the current context
+        orgs = RequestContext.get().getVariablesSecureApp().getSessionValue("#User_Org");
+        int accessLevel = Integer.parseInt(sel.getTable().getDataAccessLevel());
+        if (AccessLevel.ORGANIZATION.getDbValue() != accessLevel && !orgs.contains("'0'")) {
+          orgs += "".equals(orgs) ? "0" : ",'0'";
+        }
+      } else {
+        orgs = DataSourceUtils.getOrgs(parameters.get(JsonConstants.ORG_PARAMETER));
+      }
       if (StringUtils.isNotEmpty(orgs)) {
         additionalFilter.append(NEW_FILTER_CLAUSE);
         additionalFilter.append(entityAlias
-            + (sel.getTable().getName().equals("Organization") ? ".id in (" + orgs + ")"
-                : ".organization in (" + orgs + ")"));
+            + (isOrgSelector ? ".id in (" + orgs + ")" : ".organization in (" + orgs + ")"));
       }
     }
     additionalFilter.append(getDefaultFilterExpression(sel, parameters));
