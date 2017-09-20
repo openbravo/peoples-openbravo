@@ -1342,12 +1342,16 @@ enyo.kind({
           _.each(line.get('relatedLines'), function (relatedLine) {
             _.each(model.attributes.lines.models, function (line2) {
               if ((line2.id === relatedLine.orderlineId) && line2.get('qty') > 0) {
-                totalAmountSelected += line2.get('gross');
-                if (line2.get('price') < minimumSelected) {
-                  minimumSelected = line2.get('price');
+                var discountAmount = _.reduce(line2.get('promotions'), function (memo, promo) {
+                  return memo + promo.amt;
+                }, 0),
+                    currentLinePrice = (line2.get('gross') - discountAmount) / line2.get('qty');
+                totalAmountSelected += line2.get('gross') - discountAmount;
+                if (currentLinePrice < minimumSelected) {
+                  minimumSelected = currentLinePrice;
                 }
-                if (line2.get('price') > maximumSelected) {
-                  maximumSelected = line2.get('price');
+                if (currentLinePrice > maximumSelected) {
+                  maximumSelected = currentLinePrice;
                 }
               }
             }, this);

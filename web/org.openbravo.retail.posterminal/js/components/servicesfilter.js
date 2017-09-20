@@ -77,12 +77,16 @@ enyo.kind({
           auxCatFilters.push(l.get('product').get('productCategory'));
         }
         if (l.get('qty') > 0) {
-          totalAmountSelected += l.get('gross');
-          if (l.get('price') < minimumSelected) {
-            minimumSelected = l.get('price');
+          var discountAmount = _.reduce(l.get('promotions'), function (memo, promo) {
+            return memo + promo.amt;
+          }, 0),
+              currentLinePrice = (l.get('gross') - discountAmount) / l.get('qty');
+          totalAmountSelected += l.get('gross') - discountAmount;
+          if (currentLinePrice < minimumSelected) {
+            minimumSelected = currentLinePrice;
           }
-          if (l.get('price') > maximumSelected) {
-            maximumSelected = l.get('price');
+          if (currentLinePrice > maximumSelected) {
+            maximumSelected = currentLinePrice;
           }
         }
       });
@@ -133,12 +137,16 @@ enyo.kind({
         return product.get('forceFilterId') || product.get('id');
       });
       if (this.orderline.get('qty') > 0) {
-        totalAmountSelected = this.orderline.get('gross');
-        if (this.orderline.get('price') < minimumSelected) {
-          minimumSelected = this.orderline.get('price');
+        var discountAmount = _.reduce(this.orderline.get('promotions'), function (memo, promo) {
+          return memo + promo.amt;
+        }, 0),
+            currentLinePrice = (this.orderline.get('gross') - discountAmount) / this.orderline.get('qty');
+        totalAmountSelected += this.orderline.get('gross') - discountAmount;
+        if (currentLinePrice < minimumSelected) {
+          minimumSelected = currentLinePrice;
         }
-        if (this.orderline.get('price') > maximumSelected) {
-          maximumSelected = this.orderline.get('price');
+        if (currentLinePrice > maximumSelected) {
+          maximumSelected = currentLinePrice;
         }
       }
 
@@ -207,12 +215,16 @@ enyo.kind({
       });
       this.orderlineList.forEach(function (line) {
         if (line.get('qty') > 0) {
-          totalAmountSelected += line.get('gross');
-          if (line.get('price') < minimumSelected) {
-            minimumSelected = line.get('price');
+          var discountAmount = _.reduce(line.get('promotions'), function (memo, promo) {
+            return memo + promo.amt;
+          }, 0),
+              currentLinePrice = (line.get('gross') - discountAmount) / line.get('qty');
+          totalAmountSelected += line.get('gross') - discountAmount;
+          if (currentLinePrice < minimumSelected) {
+            minimumSelected = currentLinePrice;
           }
-          if (line.get('price') > maximumSelected) {
-            maximumSelected = line.get('price');
+          if (currentLinePrice > maximumSelected) {
+            maximumSelected = currentLinePrice;
           }
         }
       });
@@ -240,12 +252,16 @@ enyo.kind({
     });
     var product = this.orderline.get('product');
     if (this.orderline.get('qty') > 0) {
-      totalAmountSelected = this.orderline.get('gross');
-      if (this.orderline.get('price') < minimumSelected) {
-        minimumSelected = this.orderline.get('price');
+      var discountAmount = _.reduce(this.orderline.get('promotions'), function (memo, promo) {
+        return memo + promo.amt;
+      }, 0),
+          currentLinePrice = (this.orderline.get('gross') - discountAmount) / this.orderline.get('qty');
+      totalAmountSelected += this.orderline.get('gross') - discountAmount;
+      if (currentLinePrice < minimumSelected) {
+        minimumSelected = currentLinePrice;
       }
-      if (this.orderline.get('price') > maximumSelected) {
-        maximumSelected = this.orderline.get('price');
+      if (currentLinePrice > maximumSelected) {
+        maximumSelected = currentLinePrice;
       }
     }
     return [{
