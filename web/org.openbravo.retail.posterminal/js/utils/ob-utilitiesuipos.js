@@ -302,19 +302,15 @@ OB.UTIL.checkApproval = function (approvalType, username, password, callback, wi
     p: password,
     approvalType: JSON.stringify(approvalList)
   }, enyo.bind(this, function (response, message) {
-    enyo.$.scrim.hide();
+    // enyo.$.scrim.hide();
     var approved = false;
     if (response.exception) {
-      OB.UTIL.showError(response.exception.message);
-      if (windowModel && windowModel.approvedRequest) {
-        windowModel.approvedRequest(false, null, null, callback);
-      } else {
-        callback(false, null, null);
-      }
+      callback(false, null, null, true, response.exception.message);
     } else {
       approved = response.canApprove;
+
       if (!approved) {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_UserCannotApprove'));
+        callback(false, null, null, false, OB.I18N.getLabel('OBPOS_UserCannotApprove', [username]));
       }
 
       // saving supervisor in local so next time it is possible to approve offline
@@ -373,16 +369,13 @@ OB.UTIL.checkApproval = function (approvalType, username, password, callback, wi
 
           OB.Dal.save(supervisor);
         }
-        if (windowModel && windowModel.approvedRequest) {
-          windowModel.approvedRequest(approved, supervisor, approvalType, callback);
-        } else {
-          callback(approved, supervisor, approvalType);
-        }
+
+        callback(approved, supervisor, approvalType, true, null);
       }));
     }
   }), enyo.bind(this, function () {
     // offline
-    enyo.$.scrim.hide();
+    // enyo.$.scrim.hide();
     OB.Dal.find(OB.Model.Supervisor, {
       'name': username
     }, enyo.bind(this, function (users) {
@@ -403,13 +396,9 @@ OB.UTIL.checkApproval = function (approvalType, username, password, callback, wi
           });
           if (countApprovals === approvalType.length) {
             approved = true;
-            if (windowModel && windowModel.approvedRequest) {
-              windowModel.approvedRequest(approved, supervisor, approvalType, callback);
-            } else {
-              callback(approved, supervisor, approvalType);
-            }
+            callback(approved, supervisor, approvalType, true, null);
           } else {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_UserCannotApprove'));
+            callback(false, null, null, false, OB.I18N.getLabel('OBPOS_UserCannotApprove', [username]));
           }
         }), function () {});
       } else {
@@ -422,11 +411,7 @@ OB.UTIL.checkApproval = function (approvalType, username, password, callback, wi
           }, this);
           if (countApprovals === approvalType.length) {
             approved = true;
-            if (windowModel && windowModel.approvedRequest) {
-              windowModel.approvedRequest(approved, supervisor, approvalType, callback);
-            } else {
-              callback(approved, supervisor, approvalType);
-            }
+            callback(approved, supervisor, approvalType, true, null);
           } else {
             countApprovals = 0;
             OB.Dal.find(OB.Model.User, null, enyo.bind(this, function (users) {
@@ -442,18 +427,14 @@ OB.UTIL.checkApproval = function (approvalType, username, password, callback, wi
               });
               if (countApprovals === approvalType.length) {
                 approved = true;
-                if (windowModel && windowModel.approvedRequest) {
-                  windowModel.approvedRequest(approved, supervisor, approvalType, callback);
-                } else {
-                  callback(approved, supervisor, approvalType);
-                }
+                callback(approved, supervisor, approvalType, true, null);
               } else {
-                OB.UTIL.showError(OB.I18N.getLabel('OBPOS_UserCannotApprove'));
+                callback(false, null, null, false, OB.I18N.getLabel('OBPOS_UserCannotApprove', [username]));
               }
             }), function () {});
           }
         } else {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_InvalidUserPassword'));
+          callback(false, null, null, false, OB.I18N.getLabel('OBPOS_InvalidUserPassword'));
         }
       }
     }), function () {});
