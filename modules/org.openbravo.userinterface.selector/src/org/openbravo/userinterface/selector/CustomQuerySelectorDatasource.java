@@ -206,7 +206,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       boolean isOrgSelector = sel.getTable().getName().equals("Organization");
       String orgs;
       if (isOrgSelector) {
-        // Just retrieve the list of readable organizations in the current context
+        // Just retrieve the list of direct accessible organizations in the current context
         orgs = RequestContext.get().getVariablesSecureApp().getSessionValue("#User_Org");
         int accessLevel = Integer.parseInt(sel.getTable().getDataAccessLevel());
         if (AccessLevel.ORGANIZATION.getDbValue() != accessLevel && !orgs.contains("'0'")) {
