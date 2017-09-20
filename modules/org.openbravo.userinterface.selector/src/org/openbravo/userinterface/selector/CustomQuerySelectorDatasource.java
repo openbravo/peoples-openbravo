@@ -208,8 +208,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       if (isOrgSelector) {
         // Just retrieve the list of direct accessible organizations in the current context
         orgs = RequestContext.get().getVariablesSecureApp().getSessionValue("#User_Org");
-        int accessLevel = Integer.parseInt(sel.getTable().getDataAccessLevel());
-        if (AccessLevel.ORGANIZATION.getDbValue() != accessLevel && !orgs.contains("'0'")) {
+        if (includeOrgZero(parameters, orgs)) {
           orgs += "".equals(orgs) ? "'0'" : ",'0'";
         }
       } else {
@@ -290,6 +289,23 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     }
     HQL = HQL.replace(ADDITIONAL_FILTERS, additionalFilter.toString());
     return HQL;
+  }
+
+  private boolean includeOrgZero(Map<String, String> parameters, String userOrgs) {
+    if (userOrgs.contains("'0'")) {
+      return false;
+    }
+    String tabId = parameters.get("tabId");
+    if (StringUtils.isEmpty(tabId)) {
+      return false;
+    }
+    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    Table table = tab.getTable();
+    if (table == null) {
+      return false;
+    }
+    int accessLevel = Integer.parseInt(table.getDataAccessLevel());
+    return AccessLevel.ORGANIZATION.getDbValue() != accessLevel;
   }
 
   /**
