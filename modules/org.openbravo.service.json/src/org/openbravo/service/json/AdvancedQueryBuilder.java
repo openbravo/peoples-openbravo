@@ -38,6 +38,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.AccessLevel;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -337,7 +338,8 @@ public class AdvancedQueryBuilder {
     if (filterParameters.containsKey(JsonConstants.ORG_PARAMETER)) {
       final String value = filterParameters.get(JsonConstants.ORG_PARAMETER);
       if (entity.isOrganizationEnabled() && value != null && value.length() > 0) {
-        orgPart = buildOrgPartWhereClause(getDirectReadableOrgsInNaturalTree(value));
+        orgPart = buildOrgPartWhereClause(getDirectReadableOrgsInNaturalTree(value,
+            entity.getAccessLevel()));
       } else if (Organization.TABLE_NAME.equals(entity.getTableName())) {
         orgPart = buildOrgPartWhereClause(getReadableOrgs());
       }
@@ -358,10 +360,13 @@ public class AdvancedQueryBuilder {
     return localWhereClause;
   }
 
-  private Set<String> getDirectReadableOrgsInNaturalTree(String adOrgId) {
+  private Set<String> getDirectReadableOrgsInNaturalTree(String adOrgId, AccessLevel accessLevel) {
     Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
         .getNaturalTree(adOrgId);
     String userOrgs = RequestContext.get().getVariablesSecureApp().getSessionValue("#User_Org");
+    if (AccessLevel.ORGANIZATION != accessLevel && !userOrgs.contains("'0'")) {
+      userOrgs += "".equals(userOrgs) ? "'0'" : ",'0'";
+    }
     if (StringUtils.isEmpty(userOrgs)) {
       return orgs;
     }
