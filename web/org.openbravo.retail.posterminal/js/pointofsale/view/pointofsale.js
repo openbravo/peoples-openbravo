@@ -260,7 +260,7 @@ enyo.kind({
       name: 'modalProductAttribute'
     }, {
       kind: 'OB.UI.ModalQuotationProductAttributes',
-      name: 'modalQuotationProductAttribute'
+      name: 'modalQuotationProductAttributes'
     }]
   }, {
     name: 'mainSubWindow',
