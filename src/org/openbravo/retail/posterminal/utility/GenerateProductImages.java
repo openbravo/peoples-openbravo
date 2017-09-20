@@ -35,12 +35,15 @@ import org.openbravo.service.db.DalBaseProcess;
 public class GenerateProductImages extends DalBaseProcess {
 
   private static final Logger log4j = Logger.getLogger(GenerateProductImages.class);
+  private boolean generateAllImages;
 
   public void doExecute(ProcessBundle bundle) throws Exception {
     try {
 
       // retrieve the parameters from the bundle
       final String assortmentId = (String) bundle.getParams().get("obretcoProductlistId");
+      final String generateParam = (String) bundle.getParams().get("generateallimages");
+      generateAllImages = generateParam.equals("Y") ? true : false;
 
       // implement your process here
 
@@ -70,8 +73,22 @@ public class GenerateProductImages extends DalBaseProcess {
           OBRETCOProlProduct prolProduct = (OBRETCOProlProduct) prolProductScroll.get(0);
           if (prolProduct.getProduct().getImage() != null) {
             try {
-              generateImageFile(prolProduct.getProduct().getId(), prolProduct.getProduct()
-                  .getImage().getId(), imagesDir);
+              if (generateAllImages
+                  || (!generateAllImages && !fileExists(prolProduct.getProduct().getId(),
+                      imagesDir, false))) {
+                generateImageFile(prolProduct.getProduct().getId(), prolProduct.getProduct()
+                    .getImage().getId(), imagesDir);
+              } else {
+                log4j.info("Image not generated " + prolProduct.getProduct().getId());
+              }
+              if (generateAllImages
+                  || (!generateAllImages && !fileExists(prolProduct.getProduct().getId(),
+                      imagesDir, true))) {
+                generateImageFile(prolProduct.getProduct().getId(), prolProduct.getProduct()
+                    .getImage().getId(), imagesDir, 49, true);
+              } else {
+                log4j.info("Small image not generated " + prolProduct.getProduct().getId());
+              }
               imageCounter++;
               if (imageCounter % 100 == 0) {
                 log4j.info(imageCounter + " images generated.");
@@ -103,7 +120,18 @@ public class GenerateProductImages extends DalBaseProcess {
       packs.add(Restrictions.isNotNull(PriceAdjustment.PROPERTY_OBDISCIMAGE));
       for (PriceAdjustment pack : packs.list()) {
         try {
-          generateImageFile(pack.getId(), pack.getObdiscImage().getId(), imagesDir);
+          if (generateAllImages
+              || (!generateAllImages && !fileExists(pack.getId(), imagesDir, false))) {
+            generateImageFile(pack.getId(), pack.getObdiscImage().getId(), imagesDir);
+          } else {
+            log4j.info("Image not generated " + pack.getId());
+          }
+          if (generateAllImages
+              || (!generateAllImages && !fileExists(pack.getId(), imagesDir, true))) {
+            generateImageFile(pack.getId(), pack.getObdiscImage().getId(), imagesDir, 49, true);
+          } else {
+            log4j.info("Small image not generated " + pack.getId());
+          }
         } catch (Exception ex) {
           if (errorCounter < 30) {
             String error = OBMessageUtils.getI18NMessage("OBPOS_ProductCanNotBeResized",
@@ -168,20 +196,44 @@ public class GenerateProductImages extends DalBaseProcess {
     }
   }
 
+  private boolean fileExists(String id, File imagesDir, boolean isSmall) {
+    String imagePath = getProductImage(imagesDir, id);
+    File f = null;
+    if (isSmall) {
+      f = new File(imagePath, id.concat("_min"));
+    } else {
+      f = new File(imagePath, id);
+    }
+
+    return f.exists() && !f.isDirectory();
+  }
+
   private void generateImageFile(String id, String imageId, File imagesDir) throws Exception {
+    generateImageFile(id, imageId, imagesDir, 160, false);
+  }
+
+  private void generateImageFile(String id, String imageId, File imagesDir, int imageSize,
+      boolean isSmall) throws Exception {
 
     byte[] img = Utility.getImage(imageId);
 
-    img = Utility.resizeImageByte(img, 160, 0, true, true);
+    img = Utility.resizeImageByte(img, imageSize, imageSize, true, true);
     img = resizeImageByteToSquare(img);
 
     if (img != null) {
       String imageDir = getProductImage(imagesDir, id);
-      File f = new File(imageDir, id);
-      f.createNewFile();
-      FileOutputStream is = new FileOutputStream(f);
-      is.write(img);
-      is.close();
+      File f = null;
+      if (isSmall) {
+        f = new File(imageDir, id.concat("_min"));
+      } else {
+        f = new File(imageDir, id);
+      }
+      if (f != null) {
+        f.createNewFile();
+        FileOutputStream is = new FileOutputStream(f);
+        is.write(img);
+        is.close();
+      }
     }
   }
 
