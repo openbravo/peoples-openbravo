@@ -210,7 +210,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
         orgs = RequestContext.get().getVariablesSecureApp().getSessionValue("#User_Org");
         int accessLevel = Integer.parseInt(sel.getTable().getDataAccessLevel());
         if (AccessLevel.ORGANIZATION.getDbValue() != accessLevel && !orgs.contains("'0'")) {
-          orgs += "".equals(orgs) ? "0" : ",'0'";
+          orgs += "".equals(orgs) ? "'0'" : ",'0'";
         }
       } else {
         orgs = DataSourceUtils.getOrgs(parameters.get(JsonConstants.ORG_PARAMETER));
