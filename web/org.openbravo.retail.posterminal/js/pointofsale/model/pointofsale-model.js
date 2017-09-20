@@ -714,11 +714,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           paymentstatus = this.get('multiOrders'),
           overpayment = OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total')),
           orders = paymentstatus.get('multiOrdersList'),
-          triggerPaymentAccepted;
+          triggerPaymentAccepted, triggerPaymentAcceptedImpl;
 
       triggerPaymentAccepted = function (orders, index) {
         if (index === orders.length) {
-          me.get('multiOrders').trigger('paymentAccepted');
+          if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+            OB.MobileApp.model.setSynchronizedCheckpoint(triggerPaymentAcceptedImpl);
+          } else {
+            triggerPaymentAcceptedImpl();
+          }
         } else {
           OB.UTIL.HookManager.executeHooks('OBPOS_PostPaymentDone', {
             receipt: orders.at(index)
@@ -726,6 +730,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             triggerPaymentAccepted(orders, index + 1);
           });
         }
+      };
+
+      triggerPaymentAcceptedImpl = function () {
+        me.get('multiOrders').trigger('paymentAccepted');
       };
 
       if (overpayment > 0) {
