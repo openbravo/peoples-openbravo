@@ -40,7 +40,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.base.model.AccessLevel;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BooleanDomainType;
@@ -56,8 +55,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
-import org.openbravo.model.ad.datamodel.Table;
-import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.datasource.DataSourceUtils;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 import org.openbravo.service.json.AdvancedQueryBuilder;
@@ -208,11 +205,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       boolean isOrgSelector = sel.getTable().getName().equals("Organization");
       String orgs;
       if (isOrgSelector) {
-        // Just retrieve the list of direct accessible organizations in the current context
-        orgs = RequestContext.get().getVariablesSecureApp().getSessionValue("#User_Org");
-        if (includeOrgZero(parameters, orgs)) {
-          orgs += "".equals(orgs) ? "'0'" : ",'0'";
-        }
+        // Just retrieve the list of readable organizations in the current context
+        orgs = DataSourceUtils.getOrgs(parameters.get(""));
       } else {
         orgs = DataSourceUtils.getOrgs(parameters.get(JsonConstants.ORG_PARAMETER));
       }
@@ -291,23 +285,6 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     }
     HQL = HQL.replace(ADDITIONAL_FILTERS, additionalFilter.toString());
     return HQL;
-  }
-
-  private boolean includeOrgZero(Map<String, String> parameters, String userOrgs) {
-    if (userOrgs.contains("'0'")) {
-      return false;
-    }
-    String tabId = parameters.get("tabId");
-    if (StringUtils.isEmpty(tabId)) {
-      return false;
-    }
-    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-    Table table = tab.getTable();
-    if (table == null) {
-      return false;
-    }
-    int accessLevel = Integer.parseInt(table.getDataAccessLevel());
-    return AccessLevel.ORGANIZATION.getDbValue() != accessLevel;
   }
 
   /**
