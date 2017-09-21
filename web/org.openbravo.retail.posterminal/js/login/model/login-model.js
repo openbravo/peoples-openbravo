@@ -714,11 +714,92 @@
             }
           });
         }
+        if (OB.UTIL.localStorage.getItem('synchronizedMessageId') && !this.checkProcessingMessageLocked) {
+          this.checkProcessingMessageLocked = true;
+          var me = this;
+          if (!me.showSynchronizedDialog) {
+            me.showSynchronizingDialog("CheckProcessingMessage");
+          }
+          var prcss = new OB.DS.Process('org.openbravo.retail.posterminal.CheckProcessingMessage');
+          var checkProcessingMessage;
+          checkProcessingMessage = function (counter) {
+            prcss.exec({
+              messageId: OB.UTIL.localStorage.getItem('synchronizedMessageId')
+            }, function (data) {
+              if (data && data.exception) {
+                //ERROR or no connection
+                OB.error("renderMain", data.exception.message);
+              } else if (data) {
+                if (data.status === "Processed") {
+                  OB.MobileApp.model.orderList.current.deleteOrder();
+                  OB.UTIL.rebuildCashupFromServer(function () {
+                    this.checkProcessingMessageLocked = false;
+                    OB.UTIL.localStorage.removeItem('synchronizedMessageId');
+                    OB.UTIL.showLoading(false);
+                    if (OB.MobileApp.model.showSynchronizedDialog) {
+                      OB.MobileApp.model.hideSynchronizingDialog("CheckProcessingMessage");
+                    }
+                  });
+                } else if (data.status === "Initial") {
+                  //recursively check process status 
+                  setTimeout(function () {
+                    counter++;
+                    OB.UTIL.showConfirmation.setText(OB.I18N.getLabel('OBMOBC_DataIsBeingProcessed') + " " + OB.I18N.getLabel('OBMOBC_NumOfRetries') + " " + counter);
+                    checkProcessingMessage(counter);
+                  }, 15000);
 
+                } else if (data.status === "Error") {
+                  //Show modal advicing that there was an error
+                  this.checkProcessingMessageLocked = false;
+                  OB.UTIL.localStorage.removeItem('synchronizedMessageId');
+                  if (OB.MobileApp.model.showSynchronizedDialog) {
+                    OB.MobileApp.model.hideSynchronizingDialog("CheckProcessingMessage");
+                  }
+                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_TransactionFailedTitle'), OB.I18N.getLabel('OBMOBC_TransactionFailed', [data.errorMessage]), [{
+                    isConfirmButton: true,
+                    label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                    action: function () {
+                      if (OB && OB.POS) {
+                        OB.POS.navigate('retail.pointofsale');
+                        return true;
+                      }
+                    }
+                  }]);
+                }
+              }
+            }, function (data) {
+              counter++;
+              //If the server is down, we show error message
+              if (data && data.exception && data.exception.inSender === 0) {
+                //Show modal advicing that there was an error
+                this.checkProcessingMessageLocked = false;
+                OB.UTIL.localStorage.removeItem('synchronizedMessageId');
+                if (OB.MobileApp.model.showSynchronizedDialog) {
+                  OB.MobileApp.model.hideSynchronizingDialog("CheckProcessingMessage");
+                }
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_TransactionFailedTitle'), OB.I18N.getLabel('OBMOBC_TransactionFailed', [data.exception.message]), [{
+                  isConfirmButton: true,
+                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                  action: function () {
+                    if (OB && OB.POS) {
+                      OB.POS.navigate('retail.pointofsale');
+                      return true;
+                    }
+                  }
+                }]);
+              } else {
+                setTimeout(function () {
+                  OB.UTIL.showConfirmation.setText(OB.I18N.getLabel('OBMOBC_DataIsBeingProcessed') + " " + OB.I18N.getLabel('OBMOBC_NumOfRetries') + " " + counter);
+                  checkProcessingMessage(counter);
+                }, 15000);
+              }
+
+            }, undefined, 15000);
+          };
+          checkProcessingMessage(0);
+        }
       });
-
       this.trigger('ready');
-
     },
 
     postLoginActions: function () {
