@@ -24,7 +24,6 @@
 	<PARAMETER id="paramAutosave" name="autosave" default="var autosave = false;"/>
 	<PARAMETER id="paramMenu" name="menu"/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
-	<PARAMETER id="fieldUserName" name="userName"/>
 	<PARAMETER id="paramBody" name="popup" attribute="onload" replace="xx();"/>
 	<DISCARD id="discard"/>
 </REPORT>

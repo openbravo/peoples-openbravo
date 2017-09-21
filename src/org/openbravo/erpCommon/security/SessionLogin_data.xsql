@@ -21,10 +21,9 @@
 <SqlClass name="SessionLoginData" package="org.openbravo.erpCommon.security">
    <SqlClassComment></SqlClassComment>
    
-  <SqlMethod name="selectSupportContact" type="preparedStatement" return="string">
+  <SqlMethod name="dummy" type="preparedStatement" return="string">
     <Sql><![CDATA[
-        SELECT SUPPORT_CONTACT
-          FROM AD_SYSTEM_INFO
+        SELECT '' AS dummy from DUAL
     ]]></Sql>
   </SqlMethod>
 

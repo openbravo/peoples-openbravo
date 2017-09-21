@@ -19,11 +19,9 @@
 -->
 <REPORT>
   <template file="Login.html"/>
-  <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="visualPrefs" name="visualPrefs" default=""/>
   <PARAMETER id="expirationMessage" name="expirationMessage" default=""/>
-  <PARAMETER id="itServiceUrl" name="itServiceUrl" default=""/>
   <PARAMETER id="cacheMsg" name="cacheMsg" default=""/>
   <PARAMETER id="validBrowserMsg" name="validBrowserMsg" default=""/>
   <PARAMETER id="validBrowserMsgOrHigher" name="validBrowserMsgOrHigher" default=""/>

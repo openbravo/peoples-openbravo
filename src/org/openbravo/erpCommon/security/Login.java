@@ -177,7 +177,6 @@ public class Login extends HttpBaseServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login")
         .createXmlDocument();
 
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", strTheme);
 
     String visualPrefs = "var showCompanyLogo = " + showCompanyLogo + ", showSupportLogo = "
@@ -188,8 +187,6 @@ public class Login extends HttpBaseServlet {
     String expirationMessage = "var expirationMessage="
         + ak.getExpirationMessage(vars.getLanguage()).toString() + ";";
     xmlDocument.setParameter("expirationMessage", expirationMessage);
-    xmlDocument.setParameter("itServiceUrl",
-        "var itServiceUrl = '" + SessionLoginData.selectSupportContact(cp) + "'");
 
     String cacheMsgFinal = "var cacheMsg = \"" + cacheMsg + "\"";
     xmlDocument.setParameter("cacheMsg", cacheMsgFinal.replaceAll("\\n", "\n"));
