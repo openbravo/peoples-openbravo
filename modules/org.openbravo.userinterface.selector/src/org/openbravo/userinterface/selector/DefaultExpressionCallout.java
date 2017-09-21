@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,12 +22,12 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.JSExpressionCallout;
 
 /**
+ * This class is used to evaluate the Javascript expressions that can be used as a filter expression
+ * of a selector or as the default expression of a selector field.
  * 
  * @author iperdomo
  */
 public class DefaultExpressionCallout extends JSExpressionCallout {
-
-  private static final long serialVersionUID = 1L;
 
   @Override
   protected String getExpression(VariablesSecureApp vars) {

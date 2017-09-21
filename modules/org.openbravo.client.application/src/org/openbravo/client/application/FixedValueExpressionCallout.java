@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,12 +21,12 @@ package org.openbravo.client.application;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 
 /**
+ * This class is used to evaluate the Javascript fixed expression assigned to a parameter
+ * (OBUIAPP_Parameter) if it is marked as fixed.
  * 
  * @author gorkaion
  */
 public class FixedValueExpressionCallout extends JSExpressionCallout {
-
-  private static final long serialVersionUID = 1L;
 
   @Override
   protected String getExpression(VariablesSecureApp vars) {
