@@ -501,12 +501,12 @@ enyo.kind({
             me.doClearUserInput();
           });
         } else {
-          me.model.completePayment(this);
+          me.model.completePayment(me);
           me.doClearUserInput();
         }
         OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
       }, function (trx, error) {
-        me.model.completePayment(this);
+        me.model.completePayment(me);
         me.doClearUserInput();
         OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
       });
