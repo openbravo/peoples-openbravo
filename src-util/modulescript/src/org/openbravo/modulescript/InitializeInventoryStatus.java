@@ -19,38 +19,36 @@
 
 package org.openbravo.modulescript;
 
-import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.utils.FormatUtilities;
 
 public class InitializeInventoryStatus extends ModuleScript {
-  
+
   final static String INVENTORY_STATUS_NO_NEGATIVE_STOCK = "7B3DC15A20234C418D26EECDC5D59003";
   final static String INVENTORY_STATUS_NEGATIVE_STOCK = "0";
 
   @Override
-  // Initialize the Inventory Status of Locators of clients
-  // with allowNegativeStock = 'Y' as  "Undefined-overissue"
-  // and with allowNegativeStock = 'N' as "Undefined"
+  // Initialize locators inventory status of clients with allowNegativeStock = 'Y' as
+  // "Undefined-OverIssue" and with allowNegativeStock = 'N' as "Undefined"
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
-      InitializeInventoryStatusData [] clients = InitializeInventoryStatusData.getClientIds(cp);
-      for(int i =0; i< clients.length;i++){
-        if (!InitializeInventoryStatusData.isNegativeStockAllowed(cp, clients[i].adClientId)){
-          InitializeInventoryStatusData.initializeInventoryStatus(cp, INVENTORY_STATUS_NO_NEGATIVE_STOCK, clients[i].adClientId);
+      InitializeInventoryStatusData[] clients = InitializeInventoryStatusData.getClientIds(cp);
+      for (int i = 0; i < clients.length; i++) {
+        if (!InitializeInventoryStatusData.isNegativeStockAllowed(cp, clients[i].adClientId)) {
+          InitializeInventoryStatusData.initializeInventoryStatus(cp,
+              INVENTORY_STATUS_NO_NEGATIVE_STOCK, clients[i].adClientId);
         } else {
-          InitializeInventoryStatusData.initializeInventoryStatus(cp, INVENTORY_STATUS_NEGATIVE_STOCK, clients[i].adClientId);
+          InitializeInventoryStatusData.initializeInventoryStatus(cp,
+              INVENTORY_STATUS_NEGATIVE_STOCK, clients[i].adClientId);
         }
       }
     } catch (Exception e) {
       handleError(e);
     }
   }
-  
+
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
-    return new ModuleScriptExecutionLimits("0", new OpenbravoVersion(3,0,32778),
-        null);
+    return new ModuleScriptExecutionLimits("0", null, new OpenbravoVersion(3, 0, 32778));
   }
 }
