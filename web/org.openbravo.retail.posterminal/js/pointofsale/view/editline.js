@@ -499,7 +499,9 @@ enyo.kind({
               popup: 'modalDeleteDiscount',
               args: {
                 receipt: this.owner.owner.receipt,
-                selectedLines: selectedLines
+                selectedLines: selectedLines,
+                selectedLine: lineModel,
+                context: this
               }
             });
             break;
@@ -642,7 +644,7 @@ enyo.kind({
               filtered = _.filter(lineModel.get('promotions'), function (prom) {
                 return OB.Model.Discounts.discountRules[prom.discountType].isManual;
               }, this);
-              if (filtered.length === lineModel.get('promotions').length) {
+              if (filtered.length > 0) {
                 //lines with just discrectionary discounts can be removed.
                 promotions = true;
               }
