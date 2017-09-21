@@ -66,7 +66,7 @@
         <onCreateDefault/>
       </column>
       <column name="M_INVENTORYSTATUS_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
-        <default><![CDATA[0]]></default>
+        <default><![CDATA[7B3DC15A20234C418D26EECDC5D59003]]></default>
         <onCreateDefault><![CDATA['0']]></onCreateDefault>
       </column>
       <column name="CHANGE_STATUS" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
