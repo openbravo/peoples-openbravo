@@ -4942,7 +4942,7 @@ Are you sure you want to use %0 of %1 's credit to complete this receipt?]]></MS
 <!--88CAACF56A594BC285A673FF76537943-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--88CAACF56A594BC285A673FF76537943-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--88CAACF56A594BC285A673FF76537943-->  <VALUE><![CDATA[OBPOS_CannotIntroducePayment]]></VALUE>
-<!--88CAACF56A594BC285A673FF76537943-->  <MSGTEXT><![CDATA[Is not possible in introduce payments in a synchronized order that doesn't contains reversal payments]]></MSGTEXT>
+<!--88CAACF56A594BC285A673FF76537943-->  <MSGTEXT><![CDATA[It is not possible to introduce payments in a synchronized order that doesn't contain reversal payments]]></MSGTEXT>
 <!--88CAACF56A594BC285A673FF76537943-->  <MSGTYPE><![CDATA[W]]></MSGTYPE>
 <!--88CAACF56A594BC285A673FF76537943-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--88CAACF56A594BC285A673FF76537943-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
