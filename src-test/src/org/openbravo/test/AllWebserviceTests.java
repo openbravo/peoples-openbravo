@@ -32,6 +32,7 @@ import org.openbravo.test.datasource.HQLDataSourceTest;
 import org.openbravo.test.datasource.OrganizationSelectorDataSourceTest;
 import org.openbravo.test.datasource.ProductSelectorDataSourceTest;
 import org.openbravo.test.datasource.SelectorFieldPropertySelectorDSTest;
+import org.openbravo.test.datasource.SelectorPickListFieldsDataSourceTest;
 import org.openbravo.test.datasource.TestAllowUnpagedDatasourcePreference;
 import org.openbravo.test.datasource.TestCSVEncoding;
 import org.openbravo.test.datasource.TestComboDatasource;
@@ -65,6 +66,7 @@ DataSourceWhereParameter.class, //
     SelectorFieldPropertySelectorDSTest.class, //
     OrganizationSelectorDataSourceTest.class, //
     ProductSelectorDataSourceTest.class, //
+    SelectorPickListFieldsDataSourceTest.class, //
     TestComboDatasource.class, //
     FKDropDownDatasource.class, //
     JSONWebServices.class, //
