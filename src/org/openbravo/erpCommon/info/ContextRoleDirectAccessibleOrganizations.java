@@ -23,10 +23,8 @@ import java.util.Map;
 
 import org.openbravo.base.model.AccessLevel;
 import org.openbravo.client.application.FilterExpression;
-import org.openbravo.client.application.Process;
-import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.springframework.util.StringUtils;
 
 /**
  * Filter expression for the "Context Role Direct Accessible Organizations" reference.
@@ -40,23 +38,41 @@ public class ContextRoleDirectAccessibleOrganizations implements FilterExpressio
   @Override
   public String getExpression(Map<String, String> requestMap) {
     StringBuilder filterExpression = new StringBuilder("");
-    String userOrgs = RequestContext.get().getVariablesSecureApp().getSessionValue("#User_Org");
-    if (StringUtils.isEmpty(userOrgs)) {
+    filterExpression.append("exists (select 1 from ADRoleOrganization ro where ro.role.id = '"
+        + OBContext.getOBContext().getRole().getId() + "' and ro.organization.id = e.id)");
+
+    int accessLevel;
+    if (requestMap.containsKey("inpadProcessId")) {
+      accessLevel = getProcessAccessLevel(requestMap.get("inpadProcessId"));
+    } else if (requestMap.containsKey("_processDefinitionId")) {
+      accessLevel = getProcessDefinitionAccessLevel(requestMap.get("_processDefinitionId"));
+    } else {
       return filterExpression.toString();
     }
-    filterExpression.append("e.id IN(" + userOrgs + ")");
-    if (!requestMap.containsKey("_processDefinitionId")) {
-      return filterExpression.toString();
-    }
-    int accessLevel = getProcessDefinitionAccessLevel(requestMap.get("_processDefinitionId"));
-    if (AccessLevel.ORGANIZATION.getDbValue() == accessLevel) {
+
+    if (accessLevel == AccessLevel.ORGANIZATION.getDbValue()) {
       filterExpression.append(" AND e.id <> '0'");
+    } else if (accessLevel == AccessLevel.ALL.getDbValue()
+        || accessLevel == AccessLevel.CLIENT_ORGANIZATION.getDbValue()) {
+      filterExpression.append(" OR e.id = '0'");
+    } else if (accessLevel == AccessLevel.SYSTEM_CLIENT.getDbValue()) {
+      filterExpression = new StringBuilder("e.id = '0'");
     }
     return filterExpression.toString();
   }
 
+  private int getProcessAccessLevel(String processId) {
+    org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
+        org.openbravo.model.ad.ui.Process.class, processId);
+    if (process == null) {
+      return -1;
+    }
+    return Integer.parseInt(process.getDataAccessLevel());
+  }
+
   private int getProcessDefinitionAccessLevel(String processDefinitionId) {
-    Process processDefinition = OBDal.getInstance().get(Process.class, processDefinitionId);
+    org.openbravo.client.application.Process processDefinition = OBDal.getInstance().get(
+        org.openbravo.client.application.Process.class, processDefinitionId);
     if (processDefinition == null) {
       return -1;
     }
