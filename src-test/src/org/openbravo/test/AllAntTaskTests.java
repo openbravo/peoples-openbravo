@@ -96,6 +96,7 @@ import org.openbravo.test.security.WritableReadableOrganizationClientTest;
 import org.openbravo.test.services.ServicesTest;
 import org.openbravo.test.services.ServicesTest2;
 import org.openbravo.test.services.ServicesTest3;
+import org.openbravo.test.system.CryptoUtilities;
 import org.openbravo.test.system.ErrorTextParserTest;
 import org.openbravo.test.system.ImportEntrySizeTest;
 import org.openbravo.test.system.Issue29934Test;
@@ -187,6 +188,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     TestInfrastructure.class, //
     Issue29934Test.class, //
     ImportEntrySizeTest.class, //
+    CryptoUtilities.class, //
 
     // xml
     ClientExportImportTest.class, //
