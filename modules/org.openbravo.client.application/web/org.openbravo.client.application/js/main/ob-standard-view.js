@@ -2264,6 +2264,7 @@ isc.OBStandardView.addProperties({
           if (!localData) {
             // bail out, an error occured which should be displayed to the user now
             //clear deleting prompt
+            view.restoreGridSelection(selection);
             isc.clearPrompt();
             return;
           }
@@ -2314,6 +2315,7 @@ isc.OBStandardView.addProperties({
             }
             view.refreshParentRecord();
           } else {
+            view.restoreGridSelection(selection);
             // get the error message from the dataObject 
             if (localData.response && localData.response.error && localData.response.error.message) {
               error = localData.response.error;
@@ -2339,6 +2341,8 @@ isc.OBStandardView.addProperties({
           }
 
           selection = currentGrid.getSelection().duplicate();
+          // deselect the current records
+          currentGrid.deselectAllRecords();
           view.viewGrid.markForCalculateSummaries();
 
           if (selection.length > 1) {
@@ -2376,6 +2380,17 @@ isc.OBStandardView.addProperties({
         });
       });
     }
+  },
+
+  restoreGridSelection: function (selection) {
+    var currentGrid;
+    if (this.isShowingTree) {
+      currentGrid = this.treeGrid;
+    } else {
+      currentGrid = this.viewGrid;
+    }
+    currentGrid.selection.selectList(selection);
+    currentGrid.fireSelectionUpdated();
   },
 
   newRow: function (rowNum) {
