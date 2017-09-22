@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -34,7 +35,8 @@ public class SE_InOut_Warehouse extends SimpleCallout {
     final String strIsSOTrx = info.getStringParameter("inpissotrx", null);
     final String strIsReturnWindow = info.vars.getStringParameter("isReturnMaterial", "N");
 
-    if ("Y".equals(strIsSOTrx) && "Y".equals(strIsReturnWindow)) {
+    if (StringUtils.equals(strIsSOTrx, "Y") && StringUtils.equals(strIsReturnWindow, "Y")
+        && StringUtils.isNotEmpty(strWarehouseId)) {
       OBContext.setAdminMode();
       try {
         Warehouse warehouse = OBDal.getInstance().get(Warehouse.class, strWarehouseId);
