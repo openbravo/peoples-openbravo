@@ -29,6 +29,7 @@ import org.openbravo.test.datasource.FICTest;
 import org.openbravo.test.datasource.FKDropDownDatasource;
 import org.openbravo.test.datasource.FetchDSNoActiveEntityObjects;
 import org.openbravo.test.datasource.HQLDataSourceTest;
+import org.openbravo.test.datasource.OrganizationSelectorDataSourceTest;
 import org.openbravo.test.datasource.ProductSelectorDataSourceTest;
 import org.openbravo.test.datasource.SelectorFieldPropertySelectorDSTest;
 import org.openbravo.test.datasource.TestAllowUnpagedDatasourcePreference;
@@ -62,6 +63,7 @@ DataSourceWhereParameter.class, //
     WSAddRecordWithComputedColumns.class, //
     TestCSVEncoding.class, //
     SelectorFieldPropertySelectorDSTest.class, //
+    OrganizationSelectorDataSourceTest.class, //
     ProductSelectorDataSourceTest.class, //
     TestComboDatasource.class, //
     FKDropDownDatasource.class, //
