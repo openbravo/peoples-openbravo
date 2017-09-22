@@ -468,6 +468,9 @@ isc.OBViewGrid.addProperties({
         if (grid.isGrouped) {
           return;
         }
+        if (!grid.view.roleCanCreateRecords()) {
+          return;
+        }
         if (!grid.view.isActiveView()) {
           // The view where the context menu is being opened must be active
           // See issue https://issues.openbravo.com/view.php?id=20872
@@ -2532,7 +2535,7 @@ isc.OBViewGrid.addProperties({
       });
     }
 
-    if (!this.view.singleRecord && !this.view.readOnly && !this.isGrouped && !this.view.editOrDeleteOnly) {
+    if (!this.view.singleRecord && !this.view.readOnly && !this.isGrouped && !this.view.editOrDeleteOnly && this.view.roleCanCreateRecords()) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_CreateRecordInGrid'),
         keyTitle: OB.KeyboardManager.Shortcuts.getProperty('keyComb.text', 'ToolBar_NewRow', 'id'),

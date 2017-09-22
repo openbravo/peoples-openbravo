@@ -3159,7 +3159,7 @@ isc.OBStandardView.addProperties({
 
   roleHasWriteAccessToParentRecordOrg: function () {
     var parentRecordOrganization;
-    if (this.parentView === null || this.parentView.viewGrid.getSelectedRecord() === null || this.parentView.viewGrid.getSelectedRecord() === undefined) {
+    if (!this.parentView || !this.parentView.viewGrid.getSelectedRecord()) {
       return true;
     }
     parentRecordOrganization = this.parentView.viewGrid.getSelectedRecord().organization;
