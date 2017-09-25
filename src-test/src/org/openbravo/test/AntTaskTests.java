@@ -55,6 +55,7 @@ import org.openbravo.test.modularity.TableNameTest;
 import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
 import org.openbravo.test.security.EntityAccessTest;
+import org.openbravo.test.security.OBContextCollectionsTest;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
 import org.openbravo.test.system.ErrorTextParserTest;
 import org.openbravo.test.system.ImportEntrySizeTest;
@@ -123,7 +124,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     AccessLevelTest.class, //
     AllowedOrganizationsTest.class, //
     EntityAccessTest.class, //
-    WritableReadableOrganizationClientTest.class,
+    WritableReadableOrganizationClientTest.class, //
+    OBContextCollectionsTest.class,
 
     // system
     SystemServiceTest.class, //

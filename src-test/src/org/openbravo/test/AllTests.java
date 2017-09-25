@@ -49,6 +49,7 @@ import org.openbravo.test.model.TrlColumnsOraTypeTest;
 import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
 import org.openbravo.test.security.EntityAccessTest;
+import org.openbravo.test.security.OBContextCollectionsTest;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
 import org.openbravo.test.xml.DefaultsDataset;
 import org.openbravo.test.xml.EntityXMLImportTestBusinessObject;
@@ -61,11 +62,12 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-    // security
+// security
     EntityAccessTest.class, //
     AccessLevelTest.class, //
     AllowedOrganizationsTest.class, //
-    WritableReadableOrganizationClientTest.class,
+    WritableReadableOrganizationClientTest.class, //
+    OBContextCollectionsTest.class,
 
     // dal
     HiddenUpdateTest.class, //
@@ -107,7 +109,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // cdi
     CdiInfrastructure.class,
-    
+
     // Funds transfer
     FundsTransferTest.class
 
