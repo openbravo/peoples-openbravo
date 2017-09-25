@@ -79,7 +79,7 @@ public class GenerateProductImages extends DalBaseProcess {
                 generateImageFile(prolProduct.getProduct().getId(), prolProduct.getProduct()
                     .getImage().getId(), imagesDir);
               } else {
-                log4j.info("Image not generated " + prolProduct.getProduct().getId());
+                log4j.debug("Image not generated " + prolProduct.getProduct().getId());
               }
               if (generateAllImages
                   || (!generateAllImages && !fileExists(prolProduct.getProduct().getId(),
@@ -87,7 +87,7 @@ public class GenerateProductImages extends DalBaseProcess {
                 generateImageFile(prolProduct.getProduct().getId(), prolProduct.getProduct()
                     .getImage().getId(), imagesDir, 49, true);
               } else {
-                log4j.info("Small image not generated " + prolProduct.getProduct().getId());
+                log4j.debug("Small image not generated " + prolProduct.getProduct().getId());
               }
               imageCounter++;
               if (imageCounter % 100 == 0) {
