@@ -731,7 +731,11 @@
                 OB.error("renderMain", data.exception.message);
               } else if (data) {
                 if (data.status === "Processed") {
-                  OB.MobileApp.model.orderList.current.deleteOrder();
+                  var orderId = JSON.parse(data.json).data[0].data[0].id;
+                  OB.MobileApp.model.orderList.loadById(orderId);
+                  if (orderId === OB.MobileApp.model.orderList.current.id) {
+                    OB.MobileApp.model.orderList.current.deleteOrder();
+                  }
                   OB.UTIL.rebuildCashupFromServer(function () {
                     this.checkProcessingMessageLocked = false;
                     OB.UTIL.localStorage.removeItem('synchronizedMessageId');
