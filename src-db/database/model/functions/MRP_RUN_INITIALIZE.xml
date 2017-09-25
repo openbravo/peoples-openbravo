@@ -225,10 +225,9 @@ BEGIN --BODY
            AND AD_ISORGINCLUDED(w.ad_org_id, p_org_id, p_client_id) > -1
          GROUP BY o.issotrx, ol.datepromised, ol.dateordered, o.dateordered, ol.qtyordered,
                   ol.qtydelivered, res.reservedqty, res.releasedqty, ol.c_orderline_id, dt.docsubtypeso
-         HAVING ((o.issotrx = 'N' AND ol.qtyordered - COALESCE(sum(matchpo.qty), 0) > COALESCE(sum(rs.quantity - COALESCE(rs.releasedqty, 0)), 0))
-               OR (o.issotrx = 'Y' AND (dt.docsubtypeso <> 'OB')
-                   AND ol.qtyordered - COALESCE(ol.qtydelivered, 0) > COALESCE(res.reservedqty, 0) - COALESCE(res.releasedqty, 0)))
-                AND ol.qtyordered <> (COALESCE(ol.qtydelivered, 0) + COALESCE(sum(matchpo.qty), 0))
+         HAVING ol.qtyordered <> (COALESCE(ol.qtydelivered, 0) + COALESCE(sum(matchpo.qty), 0))
+            AND ((o.issotrx = 'N' AND ol.qtyordered - COALESCE(sum(matchpo.qty), 0) > COALESCE(sum(rs.quantity - COALESCE(rs.releasedqty, 0)), 0))
+             OR (o.issotrx = 'Y' AND dt.docsubtypeso <> 'OB' AND ol.qtyordered - COALESCE(ol.qtydelivered, 0) > COALESCE(res.reservedqty, 0) - COALESCE(res.releasedqty, 0)))
     ) LOOP
       MRP_RUN_INSERTLINES(p_Client_ID, p_Org_ID, p_User_ID, p_Run, Cur_Product.M_Product_ID, (CASE Cur_OrderLine.IsSOTrx WHEN 'Y' THEN (-1*Cur_OrderLine.Qty*Cur_OrderLine.Weighting) ELSE (Cur_OrderLine.Qty*Cur_OrderLine.Weighting) END), (CASE Cur_OrderLine.IsSOTrx WHEN 'Y' THEN (-1*Cur_OrderLine.Qty*Cur_OrderLine.Weighting) ELSE (Cur_OrderLine.Qty*Cur_OrderLine.Weighting) END), NULL, (CASE Cur_OrderLine.IsSOTrx WHEN 'Y' THEN 'SO' ELSE 'PO' END), 'Y', Cur_OrderLine.C_OrderLine_ID, NULL, NULL, NULL, NULL, Cur_OrderLine.planningDate, Cur_OrderLine.dateordered, p_Production, (CASE WHEN (Cur_OrderLine.IsSOTrx = 'Y' AND p_Production = 'Y') OR (p_Production = 'N' AND Cur_OrderLine.Qty < 0 ) THEN 'N' ELSE 'Y' END), NULL, v_Aux_ID);
     END LOOP;
