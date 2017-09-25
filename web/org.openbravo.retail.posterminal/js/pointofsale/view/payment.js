@@ -1471,7 +1471,7 @@ enyo.kind({
       pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentLimitAmount, paymentStatus.pendingAmt), OB.DEC.add(paymentStatus.totalAmt, this.owner.model.get('multiOrders').get('existingPayment')));
     }
     receiptHasPrepaymentAmount = receiptHasPrepaymentAmount && prepaymentLimitAmount !== 0;
-    if (receiptHasPrepaymentAmount && pendingPrepayment > 0) {
+    if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && receiptHasPrepaymentAmount && pendingPrepayment > 0) {
       if (OB.MobileApp.model.hasPermission('OBPOS_AllowPrepaymentUnderLimit', true)) {
         var approval = _.find(me.owner.receipt.get('approvals'), function (approval) {
           return approval.approvalType && approval.approvalType.approval === 'OBPOS_approval.prepaymentUnderLimit';
