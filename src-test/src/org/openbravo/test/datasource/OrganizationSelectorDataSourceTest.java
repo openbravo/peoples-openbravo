@@ -19,17 +19,22 @@
 
 package org.openbravo.test.datasource;
 
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,75 +52,76 @@ import org.openbravo.dal.core.OBContext;
  */
 @RunWith(Parameterized.class)
 public class OrganizationSelectorDataSourceTest extends BaseDataSourceTestDal {
-  private static boolean defaultRoleSet = false;
-  private boolean customQuerySelector;
+  private static final String USER_ID = "100";
+  private static final String ROLE_ID = "9D320A774FCD4E47801DF5E03AA11F2D";
+  private static final String LANGUAGE_ID = "192";
+  private OBContext initialContext;
   private boolean organizationSelected;
 
-  public OrganizationSelectorDataSourceTest(boolean customQuerySelector,
-      boolean organizationSelected) {
-    this.customQuerySelector = customQuerySelector;
+  public OrganizationSelectorDataSourceTest(boolean organizationSelected) {
     this.organizationSelected = organizationSelected;
   }
 
   @Parameters(name = "{index}: organizationSelected = {0}")
   public static Collection<Object[]> data() {
-    return Arrays.asList(new Object[][] { { false, false }, { false, true }, { true, false },
-        { true, true } });
+    return Arrays.asList(new Object[][] { { false }, { true } });
   }
 
   @Before
-  public void initOBContext() {
-    // Set F&B España, S.A - Procurement role context
-    OBContext.setOBContext("100", "9D320A774FCD4E47801DF5E03AA11F2D",
-        "23C59575B9CF467C9620760EB255B389", "E443A31992CB4635AFCAEABE7183CE85");
+  public void initOBContext() throws Exception {
+    initialContext = OBContext.getOBContext();
+    // Use F&B España, S.A - Procurement role
+    OBContext.setOBContext(USER_ID, ROLE_ID, TEST_CLIENT_ID, TEST_ORG_ID);
+    changeProfile(ROLE_ID, LANGUAGE_ID, TEST_ORG_ID, TEST_WAREHOUSE_ID);
+  }
+
+  @After
+  public void resetOBContext() throws Exception {
+    String roleId = initialContext.getRole() != null ? initialContext.getRole().getId() : null;
+    String languageId = initialContext.getLanguage() != null ? initialContext.getLanguage().getId()
+        : null;
+    String orgId = initialContext.getCurrentOrganization() != null ? initialContext
+        .getCurrentOrganization().getId() : null;
+    String warehouseId = initialContext.getWarehouse() != null ? initialContext.getWarehouse()
+        .getId() : null;
+    changeProfile(roleId, languageId, orgId, warehouseId);
   }
 
   @Test
-  public void retrieveExpectedOrganizationList() throws Exception {
-
-    JSONObject resp;
-    if (customQuerySelector) {
-      resp = performCustomQuerySelectorRequest();
-    } else {
-      resp = performSelectorRequest();
-    }
-    assertTrue("Retrieved the expected organizations",
-        returnedExpectedOrgs(resp.getJSONArray("data")));
+  public void retrieveExpectedOrganizationListFromSelector() throws Exception {
+    JSONObject resp = performSelectorRequest();
+    assertOrganizations(getReturnedOrgs(resp.getJSONArray("data")));
   }
 
-  private boolean returnedExpectedOrgs(JSONArray returnedOrgs) {
-    Set<String> readableOrgs = new HashSet<>(Arrays.asList(OBContext.getOBContext()
-        .getReadableOrganizations()));
+  @Test
+  public void retrieveExpectedOrganizationListFromCustomQuerySelector() throws Exception {
+    JSONObject resp = performCustomQuerySelectorRequest();
+    assertOrganizations(getReturnedOrgs(resp.getJSONArray("data")));
+  }
+
+  private List<String> getReturnedOrgs(JSONArray returnedOrgs) {
+    List<String> orgs = new ArrayList<>();
     try {
-      if (readableOrgs.size() != returnedOrgs.length()) {
-        return false;
-      }
       for (int i = 0; i < returnedOrgs.length(); i++) {
         JSONObject org = returnedOrgs.getJSONObject(i);
-        String orgId;
         if (org.has("orgid")) {
-          orgId = org.getString("orgid");
+          orgs.add(org.getString("orgid"));
         } else {
-          orgId = org.getString("id");
-        }
-        if (!readableOrgs.contains(orgId)) {
-          return false;
+          orgs.add(org.getString("id"));
         }
       }
-    } catch (Exception ex) {
-      return false;
+    } catch (Exception ignore) {
     }
-    return true;
+    return orgs;
+  }
+
+  private void assertOrganizations(List<String> returnedOrgs) {
+    Object[] readableOrgs = OBContext.getOBContext().getReadableOrganizations();
+    assertThat("Retrieved the expected organizations", returnedOrgs,
+        allOf(hasSize(readableOrgs.length), containsInAnyOrder(readableOrgs)));
   }
 
   private JSONObject performSelectorRequest() throws Exception {
-    if (!defaultRoleSet) {
-      // Use F&B España, S.A - Procurement role
-      changeProfile("9D320A774FCD4E47801DF5E03AA11F2D", "192", "E443A31992CB4635AFCAEABE7183CE85",
-          "B2D40D8A5D644DD89E329DC297309055");
-      defaultRoleSet = true;
-    }
-
     Map<String, String> params = new HashMap<String, String>();
     params.put("_selectorDefinitionId", "4E0AC6FEC5EA4A2BB474747DB03A3A21");
     params.put("filterClass", "org.openbravo.userinterface.selector.SelectorDataSourceFilter");
@@ -152,13 +158,6 @@ public class OrganizationSelectorDataSourceTest extends BaseDataSourceTestDal {
   }
 
   private JSONObject performCustomQuerySelectorRequest() throws Exception {
-    if (!defaultRoleSet) {
-      // Use F&B España, S.A - Procurement role
-      changeProfile("9D320A774FCD4E47801DF5E03AA11F2D", "192", "E443A31992CB4635AFCAEABE7183CE85",
-          "B2D40D8A5D644DD89E329DC297309055");
-      defaultRoleSet = true;
-    }
-
     Map<String, String> params = new HashMap<String, String>();
     params.put("_selectorDefinitionId", "B748F356A65641D4974E5C349A16FB27");
     params.put("filterClass", "org.openbravo.userinterface.selector.SelectorDataSourceFilter");
