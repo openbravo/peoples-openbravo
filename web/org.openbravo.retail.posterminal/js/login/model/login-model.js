@@ -765,6 +765,13 @@
                       }
                     }
                   }]);
+                } else {
+                  this.checkProcessingMessageLocked = false;
+                  OB.UTIL.localStorage.removeItem('synchronizedMessageId');
+                  OB.UTIL.showLoading(false);
+                  if (OB.MobileApp.model.showSynchronizedDialog) {
+                    OB.MobileApp.model.hideSynchronizingDialog("CheckProcessingMessage");
+                  }
                 }
               }
             }, function (data) {

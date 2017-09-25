@@ -8,16 +8,12 @@
  */
 package org.openbravo.retail.posterminal;
 
-import java.util.List;
-
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.importprocess.ImportEntryArchive;
 import org.openbravo.service.json.JsonConstants;
@@ -35,12 +31,9 @@ public class CheckProcessingMessage extends JSONProcessSimple {
     try {
       final String messageId = jsonsent.getString("messageId");
 
-      final OBCriteria<ImportEntryArchive> qApp = OBDal.getInstance().createCriteria(
-          ImportEntryArchive.class);
-      qApp.add(Restrictions.like(ImportEntryArchive.PROPERTY_JSONINFO, "%" + messageId + "%"));
-      final List<ImportEntryArchive> apps = qApp.list();
-      if (apps.size() == 1) {
-        final ImportEntryArchive importEntry = (apps.get(0));
+      final ImportEntryArchive importEntry = OBDal.getInstance().get(ImportEntryArchive.class,
+          messageId);
+      if (importEntry != null) {
         respArray.put("status", importEntry.getImportStatus());
         respArray.put("errorMessage", importEntry.getErrorinfo());
       }
