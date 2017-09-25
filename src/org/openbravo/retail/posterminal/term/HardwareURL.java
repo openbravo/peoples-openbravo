@@ -15,7 +15,6 @@ import java.util.Map;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
 
@@ -39,8 +38,7 @@ public class HardwareURL extends QueryTerminalProperty {
 
   @Override
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
-    final OBPOSApplications posDetail = POSUtils.getTerminalById(RequestContext.get()
-        .getSessionAttribute("POSTerminal").toString());
+    final OBPOSApplications posDetail = POSUtils.getTerminalById(jsonsent.getString("pos"));
     Map<String, Object> paramValues = new HashMap<String, Object>();
     paramValues.put("terminalTypeID", posDetail.getObposTerminaltype().getId());
     return paramValues;

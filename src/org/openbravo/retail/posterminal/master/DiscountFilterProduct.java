@@ -18,9 +18,12 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.retail.config.OBRETCOProductList;
+import org.openbravo.retail.posterminal.POSUtils;
 
 public class DiscountFilterProduct extends Discount {
   public static final String discFilterProductPropertyExtension = "PricingAdjustmentProduct";
@@ -31,12 +34,18 @@ public class DiscountFilterProduct extends Discount {
 
   @Override
   protected List<String> prepareQuery(JSONObject jsonsent) throws JSONException {
+    final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
     HQLPropertyList regularDiscFilProductPropertyExtensionHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
-    String hql = "select" + regularDiscFilProductPropertyExtensionHQLProperties.getHqlSelect()
-        + "from PricingAdjustmentProduct ap where ((ap.$incrementalUpdateCriteria) "
-        + jsonsent.get("operator") + " (ap.priceAdjustment.$incrementalUpdateCriteria))";
-
+    String hql = "select" + regularDiscFilProductPropertyExtensionHQLProperties.getHqlSelect();
+    hql += " from PricingAdjustmentProduct ap, OBRETCO_Prol_Product ppl ";
+    hql += " where ap.product.id = ppl.product.id and ppl.active = true ";
+    hql += " and ppl.obretcoProductlist.id ='" + productList.getId() + "' ";
+    hql += " and ((ap.$incrementalUpdateCriteria) " + jsonsent.get("operator")
+        + " (ap.priceAdjustment.$incrementalUpdateCriteria) " + jsonsent.get("operator")
+        + " (ap.product.$incrementalUpdateCriteria) " + jsonsent.get("operator")
+        + " (ppl.$incrementalUpdateCriteria)) ";
     hql += " and exists (select 1 " + getPromotionsHQL(jsonsent, false);
     hql += "              and ap.priceAdjustment = p) ";
     hql += "order by ap.priceAdjustment.id asc";

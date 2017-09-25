@@ -23,7 +23,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -34,18 +33,15 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.retail.posterminal.JSONProcessSimple;
 import org.openbravo.retail.posterminal.OBPOSAppCashup;
 import org.openbravo.retail.posterminal.OBPOSAppPayment;
-import org.openbravo.retail.posterminal.OBPOSApplications;
-import org.openbravo.retail.posterminal.OBPOSErrors;
 import org.openbravo.retail.posterminal.OBPOSPaymentMethodCashup;
 import org.openbravo.retail.posterminal.OBPOSTaxCashup;
-import org.openbravo.retail.posterminal.ProcessCashClose;
-import org.openbravo.service.importprocess.ImportEntry;
+import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.JsonConstants;
 
 public class Cashup extends JSONProcessSimple {
-  private static final Logger log = Logger.getLogger(ProcessCashClose.class);
+  private static final Logger log = Logger.getLogger(Cashup.class);
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -55,9 +51,9 @@ public class Cashup extends JSONProcessSimple {
     try {
 
       JSONArray respArray = new JSONArray();
-      String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
+      String posId = jsonsent.getString("pos");
 
-      if (cashupErrorsExistInTerminal(posId)) {
+      if (POSUtils.cashupErrorsExistInTerminal(posId)) {
         result.put(JsonConstants.RESPONSE_ERRORMESSAGE, "There are cashup errors in this terminal");
         result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
         return result;
@@ -117,7 +113,7 @@ public class Cashup extends JSONProcessSimple {
         cashupJSON.put("cashTaxInfo", cashTaxInfo);
 
         // Get CashManagement
-        JSONArray cashMgmtInfo = getCashMgmt((String) cashup[0], converter);
+        JSONArray cashMgmtInfo = getCashMgmt((String) cashup[0], converter, posId);
         cashupJSON.put("cashMgmInfo", cashMgmtInfo);
 
         respArray.put(cashupJSON);
@@ -127,36 +123,11 @@ public class Cashup extends JSONProcessSimple {
       return result;
 
     } catch (Exception e) {
-      log.error(e);
+      log.error("Error during exec", e);
       return result;
     } finally {
       OBContext.restorePreviousMode();
     }
-
-  }
-
-  private boolean cashupErrorsExistInTerminal(String posId) {
-    OBPOSApplications terminal = OBDal.getInstance().getProxy(OBPOSApplications.class, posId);
-    OBCriteria<OBPOSErrors> errorsInPOSWindow = OBDal.getInstance().createCriteria(
-        OBPOSErrors.class);
-    errorsInPOSWindow.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, terminal));
-    errorsInPOSWindow.add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "OBPOS_App_Cashup"));
-    errorsInPOSWindow.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
-    errorsInPOSWindow.setMaxResults(1);
-    if (errorsInPOSWindow.list().size() > 0) {
-      return true;
-    }
-    OBCriteria<ImportEntry> errorsInImportEntry = OBDal.getInstance().createCriteria(
-        ImportEntry.class);
-    errorsInImportEntry.add(Restrictions.eq(ImportEntry.PROPERTY_OBPOSPOSTERMINAL, terminal));
-    errorsInImportEntry.add(Restrictions.eq(ImportEntry.PROPERTY_TYPEOFDATA, "OBPOS_App_Cashup"));
-    errorsInImportEntry.add(Restrictions.eq(ImportEntry.PROPERTY_IMPORTSTATUS, "Error"));
-    errorsInImportEntry.setMaxResults(1);
-    if (errorsInImportEntry.list().size() > 0) {
-      return true;
-    }
-
-    return false;
 
   }
 
@@ -178,12 +149,12 @@ public class Cashup extends JSONProcessSimple {
       OBPOSAppPayment paymentAppMethod = (OBPOSAppPayment) paymentAppMethodCriteria.uniqueResult();
       paymentMethodJSON.put("cashup_id", paymentMethodJSON.get("cashUp"));
       paymentMethodJSON.put("searchKey", paymentMethodJSON.get("searchkey"));
-      
+
       // there are several ways of refering to the payment method id in webpos
       // support all of them.
       paymentMethodJSON.put("paymentmethod_id", paymentMethodJSON.get("paymentType"));
       paymentMethodJSON.put("paymentTypeId", paymentMethodJSON.get("paymentType"));
-      
+
       paymentMethodJSON.put("startingCash", paymentMethodJSON.get("startingcash"));
       paymentMethodJSON.put("totalSales", paymentMethodJSON.get("totalsales"));
       paymentMethodJSON.put("totalReturns", paymentMethodJSON.get("totalreturns"));
@@ -215,10 +186,9 @@ public class Cashup extends JSONProcessSimple {
     return respArray;
   }
 
-  private JSONArray getCashMgmt(String cashupId, DataToJsonConverter converter)
+  private JSONArray getCashMgmt(String cashupId, DataToJsonConverter converter, String posId)
       throws JSONException {
     JSONArray respArray = new JSONArray();
-    String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
 
     // Get GL Items associated to the payment methods of this terminal
     String[] paymentTypes = { "fmgi.oBPOSAppPaymentTypeCGlitemDropdepIDList",

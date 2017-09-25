@@ -23,11 +23,13 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
@@ -87,6 +89,30 @@ public class OrderGroupingProcessor {
     final OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
     final String strInvDescription = String.format(
         OBMessageUtils.messageBD("OBPOS_InvoiceCashupDescription"), cashUp.getIdentifier());
+
+    // Validate Order Business Partner
+    OrderGroupingProcessorData[] orderBusinesspartner = OrderGroupingProcessorData
+        .selectOrderBusinessPartner(conn, strLang, cashUp.getId());
+    if (orderBusinesspartner.length > 0) {
+      final List<String> customerErrorList = new ArrayList<String>();
+      final String strBPValidation = OBMessageUtils.messageBD("OBPOS_BPValidationOnCashup");
+      final String strPaymentMethod = OBMessageUtils.messageBD("OBPOS_LblPaymentMethod");
+      final String strPaymentTerm = OBMessageUtils.messageBD("OBPOS_LblPaymentTerm");
+      for (OrderGroupingProcessorData businessPartner : orderBusinesspartner) {
+        if (StringUtils.isEmpty(businessPartner.cPaymenttermId)) {
+          customerErrorList.add(String.format(strBPValidation, strPaymentTerm,
+              businessPartner.bpname));
+        }
+        if (StringUtils.isEmpty(businessPartner.finPaymentmethodId)) {
+          customerErrorList.add(String.format(strBPValidation, strPaymentMethod,
+              businessPartner.bpname));
+        }
+      }
+      if (customerErrorList.size() > 0) {
+        throw new OBException(StringUtils.join(
+            customerErrorList.toArray(new String[customerErrorList.size()]), "\n        "));
+      }
+    }
 
     // random string is created as random numeric between 0 and 1000000
     Random rnd = new Random();

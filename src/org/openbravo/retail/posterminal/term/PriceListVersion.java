@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.retail.posterminal.POSUtils;
 
@@ -27,8 +26,7 @@ public class PriceListVersion extends QueryTerminalProperty {
         jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
 
     org.openbravo.model.pricing.pricelist.PriceListVersion priceListVersion = POSUtils
-        .getPriceListVersionByTerminalId(RequestContext.get().getSessionAttribute("POSTerminal")
-            .toString(), terminalDate);
+        .getPriceListVersionByTerminalId(jsonsent.getString("pos"), terminalDate);
     if (priceListVersion == null) {
       throw new JSONException("OBPOS_NoPriceListVersion");
     }

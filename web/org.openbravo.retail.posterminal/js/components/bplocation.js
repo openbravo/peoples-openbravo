@@ -773,6 +773,12 @@ enyo.kind({
 
       function successCallbackBPs(dataBps) {
         if (OB.MobileApp.model.receipt.get('bp').get('id') === dataBps.get('id')) {
+          dataBps.set('locId', OB.MobileApp.model.receipt.get('bp').get('locId'));
+          dataBps.set('locName', OB.MobileApp.model.receipt.get('bp').get('locName'));
+          dataBps.set('postalCode', OB.MobileApp.model.receipt.get('bp').get('postalCode'));
+          dataBps.set('cityName', OB.MobileApp.model.receipt.get('bp').get('cityName'));
+          dataBps.set('countryName', OB.MobileApp.model.receipt.get('bp').get('countryName'));
+
           dataBps.set('shipLocId', OB.MobileApp.model.receipt.get('bp').get('shipLocId'));
           dataBps.set('shipLocName', OB.MobileApp.model.receipt.get('bp').get('shipLocName'));
           dataBps.set('shipPostalCode', OB.MobileApp.model.receipt.get('bp').get('shipPostalCode'));

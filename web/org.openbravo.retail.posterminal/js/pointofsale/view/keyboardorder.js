@@ -9,7 +9,6 @@
 
 /*global OB, enyo, _, Audio, Backbone */
 
-
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.KeyboardOrder',
   kind: 'OB.UI.Keyboard',
@@ -259,6 +258,8 @@ enyo.kind({
               } else {
                 actionAddProduct(keyboard, toadd);
               }
+            } else {
+              keyboard.clearInput();
             }
           });
           keyboard.receipt.set('multipleUndo', null);
@@ -337,6 +338,8 @@ enyo.kind({
           keyboard.receipt.trigger('discount', model, discount);
         });
         keyboard.receipt.set('multipleUndo', null);
+        keyboard.lastStatus = '';
+        keyboard.setStatus('');
       }
     });
 
@@ -716,16 +719,23 @@ enyo.kind({
   kind: 'OB.UI.AbstractBarcodeActionHandler',
 
   errorCallback: function (tx, error) {
-    OB.UTIL.showError("OBDAL error: " + error);
+    OB.UTIL.showError('OBDAL error: ' + error);
   },
 
   findProductByBarcode: function (code, callback, keyboard, attrs) {
+    if (attrs.receipt && attrs.receipt.get('isEditable') === false) {
+      //Checking preference to search Receipt using Scanner
+      attrs.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
+      return true;
+    }
     var me = this;
     OB.debug('BarcodeActionHandler - id: ' + code);
     if (code.length > 0) {
       OB.UTIL.HookManager.executeHooks('OBPOS_BarcodeScan', {
         context: me,
-        code: code,
+        code: code.replace(/\\-/g, '-').replace(/\\+/g, '+'),
         callback: callback,
         attrs: attrs
       }, function (args) {
@@ -788,26 +798,34 @@ enyo.kind({
         if (args.attrs && args.attrs.obposEpccode) {
           OB.UTIL.RfidController.removeEpc(args.attrs.obposEpccode);
         }
-        // If the preference to show that the 'UPC/EAN code has not been found is enabled'
-        if (OB.MobileApp.model.hasPermission('OBPOS_showPopupEANNotFound', true)) {
-          reproduceErrorSound();
-          OB.MobileApp.model.set('reproduceErrorSound', true);
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]), undefined, [{
-            isConfirmButton: true,
-            label: OB.I18N.getLabel('OBMOBC_LblOk'),
-            action: function () {
-              OB.MobileApp.model.set('reproduceErrorSound', false);
-            }
-          }], {
-            defaultAction: false,
-            onHideFunction: function () {
-              OB.MobileApp.model.set('reproduceErrorSound', false);
-            }
-          });
-        } else {
-          reproduceErrorSound();
-          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]));
-        }
+        OB.UTIL.HookManager.executeHooks('OBPOS_PostBarcodeAction', {
+          keyboard: this,
+          code: code
+        }, function (args) {
+          if (args.cancellation) {
+            return;
+          }
+          // If the preference to show that the 'UPC/EAN code has not been found is enabled'
+          if (OB.MobileApp.model.hasPermission('OBPOS_showPopupEANNotFound', true)) {
+            reproduceErrorSound();
+            OB.MobileApp.model.set('reproduceErrorSound', true);
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]), undefined, [{
+              isConfirmButton: true,
+              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              action: function () {
+                OB.MobileApp.model.set('reproduceErrorSound', false);
+              }
+            }], {
+              defaultAction: false,
+              onHideFunction: function () {
+                OB.MobileApp.model.set('reproduceErrorSound', false);
+              }
+            });
+          } else {
+            reproduceErrorSound();
+            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]));
+          }
+        });
       }
     });
   },

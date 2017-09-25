@@ -25,8 +25,6 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.service.importprocess.ImportEntryManager;
@@ -97,22 +95,12 @@ public class UpdateCashup {
         cashUp.setNewOBObject(true);
         OBDal.getInstance().save(cashUp);
 
-        boolean isSynchronizeModeActive;
-        try {
-          isSynchronizeModeActive = "Y".equals(Preferences.getPreferenceValue(
-              "OBMOBC_SynchronizedMode", true, OBContext.getOBContext().getCurrentClient(),
-              OBContext.getOBContext().getCurrentOrganization(),
-              OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
-        } catch (PropertyNotFoundException prop) {
-          isSynchronizeModeActive = false;
-        }
-
         // If synchronize mode is active, there is no way to process two cashups with the same id at
         // the same time.
         // If synchronize mode is not active, we have to persist the header of the cashup. Doing
         // this, we avoid possible conflicts trying to save two cashups with the same id at the same
         // time.
-        if (!isSynchronizeModeActive) {
+        if (!POSUtils.isSynchronizedModeEnabled()) {
           OBDal.getInstance().flush();
           OBDal.getInstance().getConnection().commit();
         }

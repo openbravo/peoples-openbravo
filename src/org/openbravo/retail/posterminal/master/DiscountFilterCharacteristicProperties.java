@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014 Openbravo S.L.U.
+ * Copyright (C) 2014-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -31,9 +31,9 @@ public class DiscountFilterCharacteristicProperties extends ModelExtension {
     ArrayList<HQLProperty> list = new ArrayList<HQLProperty>() {
       private static final long serialVersionUID = 1L;
       {
-        add(new HQLProperty("distinct(coalesce(c.id,cvl.characteristicValue.id))", "id"));
+        add(new HQLProperty("distinct(coalesce(c.id, cvl.id))", "id"));
         add(new HQLProperty("c.characteristic.id", "characteristic"));
-        add(new HQLProperty("cvl.characteristicValue.id", "chValue"));
+        add(new HQLProperty("cvl.id", "chValue"));
         add(new HQLProperty("c.offer.id", "offer"));
         add(new HQLProperty("c.characteristic.name", "_identifier"));
         add(new HQLProperty(

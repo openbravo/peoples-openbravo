@@ -258,6 +258,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalProductAttributes',
       name: 'modalProductAttribute'
+    }, {
+      kind: 'OB.UI.ModalQuotationProductAttributes',
+      name: 'modalQuotationProductAttributes'
     }]
   }, {
     name: 'mainSubWindow',
@@ -701,8 +704,10 @@ enyo.kind({
   reactivateQuotation: function () {
     this.model.get('order').reactivateQuotation();
     this.model.get('orderList').saveCurrent();
-    if (this.model.get('order').get('isEditable') && this.model.get('order').get('isQuotation')) {
-      this.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$.actionButtonsContainer.$.descriptionButton.show();
+    if (this.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$.actionButtonsContainer.$.descriptionButton) {
+      if (this.model.get('order').get('isEditable') && this.model.get('order').get('isQuotation')) {
+        this.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$.actionButtonsContainer.$.descriptionButton.show();
+      }
     }
     return true;
   },
@@ -962,7 +967,7 @@ enyo.kind({
 
     //Services validation
     var unGroupedServiceLines = _.filter(selectedModels, function (line) {
-      return line.get('product').get('productType') === 'S' && line.get('product').get('quantityRule') === 'PP' && !line.get('groupService') && line.has('relatedLines') && line.get('relatedLines').length > 0 && !line.get('originalOrderLineId');
+      return line.get('product').get('productType') === 'S' && line.get('product').get('quantityRule') === 'PP' && !line.get('groupService') && line.has('relatedLines') && line.get('relatedLines').length > 0 && line.get('isEditable');
     });
     if (unGroupedServiceLines && unGroupedServiceLines.length > 0) {
       var i, j, serviceQty, productQty, uniqueServices, getServiceQty, getProductQty;
@@ -1290,9 +1295,11 @@ enyo.kind({
     model.get('leftColumnViewManager').setOrderMode();
   },
   cancelRemoveMultiOrders: function (originator) {
-    originator.deleting = false;
-    originator.removeClass('btn-icon-loading');
-    originator.addClass('btn-icon-clearPayment');
+    if (originator.kind === 'OB.UI.RemoveMultiOrders') {
+      originator.deleting = false;
+      originator.removeClass('btn-icon-loading');
+      originator.addClass('btn-icon-clearPayment');
+    }
   },
   removeMultiOrders: function (inSender, inEvent) {
     var me = this,
@@ -1349,7 +1356,7 @@ enyo.kind({
     if (selectedLinesLength > 1) {
       for (i = 0; i < selectedLinesLength; i++) {
         product = selectedLines[i].get('product');
-        if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || selectedLines[i].get('originalOrderLineId') || product.get('isSerialNo')) {
+        if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || !selectedLines[i].get('isEditable') || product.get('isSerialNo')) {
           enableButton = false;
           break;
         }
@@ -1359,7 +1366,7 @@ enyo.kind({
       }
     } else if (selectedLinesLength === 1) {
       product = selectedLines[0].get('product');
-      if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || selectedLines[0].get('originalOrderLineId') || product.get('isSerialNo')) {
+      if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || !selectedLines[0].get('isEditable') || product.get('isSerialNo')) {
         enableButton = false;
       }
     } else {

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,6 +21,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -35,10 +37,13 @@ import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -50,12 +55,15 @@ import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.uom.UOM;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.pricing.priceadjustment.PriceAdjustment;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.importprocess.ImportEntry;
 import org.openbravo.service.importprocess.ImportEntryArchive;
+import org.openbravo.service.importprocess.ImportEntryManager.ImportEntryQualifier;
+import org.openbravo.service.importprocess.ImportEntryProcessor;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.JsonConstants;
@@ -68,12 +76,15 @@ import org.openbravo.service.json.JsonUtils;
  */
 public class ExternalOrderLoader extends OrderLoader {
 
+  private static final String ORDERLOADER_QUALIFIER = "OBPOS_ExternalOrder";
+
   public static final String APP_NAME = "External";
 
   private static final Logger log = Logger.getLogger(ExternalOrderLoader.class);
 
   private static ThreadLocal<JSONArray> processedOrders = new ThreadLocal<JSONArray>();
   private static ThreadLocal<Throwable> exception = new ThreadLocal<Throwable>();
+  private static ThreadLocal<JSONObject> transformedMessage = new ThreadLocal<JSONObject>();
 
   protected static Throwable getCurrentException() {
     return exception.get();
@@ -117,50 +128,83 @@ public class ExternalOrderLoader extends OrderLoader {
       exception.set(null);
       processedOrders.set(new JSONArray());
 
-      message = transformMessage(jsonObject);
-      if (messageAlreadyReceived(jsonObject.getString("messageId"))) {
-        log.debug("Message already received, ignoring it " + jsonObject);
-        OBDal.getInstance().rollbackAndClose();
-
-        JSONObject jsonResponse = new JSONObject();
-        jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-        jsonResponse.put("result", "0");
-        jsonResponse.put("message", "Message with id " + jsonObject.getString("messageId")
-            + " already received, ignoring second request");
-        // write only the properties, brackets are written outside.
-        writeJson(w, jsonResponse);
+      // check if the message was already sent, if so return previous responses
+      final String messageId = jsonObject.getString("messageId");
+      String currentImportState = getCurrentImportEntryState(messageId);
+      if ("Processed".equals(currentImportState) || "Error".equals(currentImportState)) {
+        final String currentResponse = getCurrentResponse(messageId);
+        if (currentResponse == null) {
+          if ("Processed".equals(currentImportState)) {
+            writeSuccessMessage(w);
+          } else if ("Error".equals(currentImportState)) {
+            writeJson(w, createErrorJSON(jsonObject, new OBException()));
+          } else {
+            throw new OBException("Import state not supported " + currentImportState, true);
+          }
+        }
+        writeCurrentResponse(currentResponse, w);
+        log.debug("Found already processed message, returning its response " + currentResponse);
         return;
+      } else if ("Initial".equals(currentImportState)) {
+        log.debug("Found message being processed, waiting for result");
+
+        // is being processed, wait a while for the response to happen
+        final long waitUntil = System.currentTimeMillis() + getProcessingWaitTime();
+        String currentResponse = null;
+        while (waitUntil > System.currentTimeMillis()) {
+          Thread.sleep(500); // try every 0.5 secs
+          currentResponse = getCurrentResponse(messageId);
+          if (currentResponse != null) {
+            break;
+          }
+        }
+        if (currentResponse == null) {
+          // try one more time
+          currentResponse = getCurrentResponse(messageId);
+          if (currentResponse == null) {
+            throw new OBException("Message is being processed, but processing takes too long "
+                + jsonObject, true);
+          }
+        }
+        writeCurrentResponse(currentResponse, w);
+        log.debug("Message finished processing, returning its response " + currentResponse);
+        return;
+      } else if (currentImportState != null) {
+        throw new OBException("Can not handle current state " + currentImportState + " "
+            + jsonObject);
       }
+
+      // note to prevent dead locking this call needs to be done after the check if the
+      // import entry was already processed
+      // deadlocking happens on the document no of the pos terminal
+      message = transformMessage(jsonObject);
+      transformedMessage.set(message);
 
       if (isSynchronizedRequest()) {
         // also for synchronized requests create an import entry for syncing
         // and tracking
         try {
           OBContext.setAdminMode(false);
-          // create the entry but don't commit
+
+          String checkImportState = getCurrentImportEntryState(messageId);
+          if (checkImportState != null) {
+            throw new OBException("Duplicate message found, but not captured on time " + message);
+          }
+          // create the entry in initial state, will be set to processed by the parent class
           final String id = jsonObject.getString("messageId");
-          getImportEntryManager().createImportEntry(id, getImportQualifier(), message.toString(),
+          getImportEntryManager().createImportEntry(id, ORDERLOADER_QUALIFIER, message.toString(),
               false);
 
-          // set to processed, if error occurs it will not be saved but rolled back
-          final ImportEntry importEntry = OBDal.getInstance().get(ImportEntry.class, id);
-          importEntry.setImported(new Date());
-          importEntry.setImportStatus("Processed");
+          // save it so that double requests can be detected right away
+          OBDal.getInstance().commitAndClose();
+
           setImportEntryId(id);
         } finally {
           OBContext.restorePreviousMode();
         }
 
         // Now execute the orderloader directly
-        // pass in a dummy writer, we will create our own successmessage in the next step
-        super.exec(new StringWriter(), message);
-
-        if (exception.get() != null) {
-          writeJson(w, createErrorJSON(message, exception.get()));
-        } else {
-          // we got here, no error, write a successmessage with all the orders
-          writeSuccessMessage(w);
-        }
+        super.exec(w, message);
       } else {
         super.executeCreateImportEntry(w, message);
       }
@@ -171,6 +215,37 @@ public class ExternalOrderLoader extends OrderLoader {
     } finally {
       exception.set(null);
       processedOrders.set(null);
+      transformedMessage.set(null);
+    }
+  }
+
+  private void writeCurrentResponse(String currentResponse, Writer w) throws JSONException {
+    final JSONObject responseJson = new JSONObject(currentResponse);
+
+    JSONObject contextInfo = getContextInformation();
+    if (contextInfo != null) {
+      responseJson.put("contextInfo", contextInfo);
+    }
+    writeJson(w, responseJson);
+
+    if (RequestContext.get().getResponse() != null) {
+      RequestContext.get().getResponse().setStatus(HttpServletResponse.SC_OK);
+    }
+  }
+
+  private long getProcessingWaitTime() {
+    try {
+      OBContext.setAdminMode(false);
+      final String value = Preferences.getPreferenceValue(
+          "OBPOS_ExternalOrderLoaderWaitForProcessingTime", true, OBContext.getOBContext()
+              .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
+              .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+      return 1000 * Long.parseLong(value);
+    } catch (Exception e) {
+      // default wait 10 seconds
+      return 10000;
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 
@@ -204,6 +279,10 @@ public class ExternalOrderLoader extends OrderLoader {
     }
   }
 
+  /**
+   * Deprecated: method is not being used anymore
+   */
+  @Deprecated
   protected boolean messageAlreadyReceived(String id) {
     // check if it is not there already or already archived
     {
@@ -223,6 +302,124 @@ public class ExternalOrderLoader extends OrderLoader {
       }
     }
     return false;
+  }
+
+  protected String getCurrentImportEntryState(String id) {
+    try {
+      OBContext.setAdminMode();
+      // check if it is not there already or already archived
+      {
+        final Query qry = SessionHandler
+            .getInstance()
+            .getSession()
+            .createQuery(
+                "select " + ImportEntry.PROPERTY_IMPORTSTATUS + " from " + ImportEntry.ENTITY_NAME
+                    + " where id=:id");
+        qry.setParameter("id", id);
+        @SuppressWarnings("unchecked")
+        final List<?> result = new ArrayList<Object>(qry.list());
+        if (!result.isEmpty()) {
+          return (String) result.get(0);
+        }
+      }
+      {
+        final Query qry = SessionHandler
+            .getInstance()
+            .getSession()
+            .createQuery(
+                "select " + ImportEntry.PROPERTY_IMPORTSTATUS + " from "
+                    + ImportEntryArchive.ENTITY_NAME + " where id=:id");
+        qry.setParameter("id", id);
+        @SuppressWarnings("unchecked")
+        final List<?> result = new ArrayList<Object>(qry.list());
+        if (!result.isEmpty()) {
+          return (String) result.get(0);
+        }
+      }
+      return null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  protected String getCurrentResponse(String id) {
+    // check if it is not there already or already archived
+    {
+      final Query qry = SessionHandler
+          .getInstance()
+          .getSession()
+          .createQuery(
+              "select " + ImportEntry.PROPERTY_RESPONSEINFO + " from " + ImportEntry.ENTITY_NAME
+                  + " where id=:id");
+      qry.setParameter("id", id);
+      @SuppressWarnings("unchecked")
+      final List<?> result = new ArrayList<Object>(qry.list());
+      if (!result.isEmpty()) {
+        return (String) result.get(0);
+      }
+    }
+    {
+      final Query qry = SessionHandler
+          .getInstance()
+          .getSession()
+          .createQuery(
+              "select " + ImportEntry.PROPERTY_RESPONSEINFO + " from "
+                  + ImportEntryArchive.ENTITY_NAME + " where id=:id");
+      qry.setParameter("id", id);
+      @SuppressWarnings("unchecked")
+      final List<?> result = new ArrayList<Object>(qry.list());
+      if (!result.isEmpty()) {
+        return (String) result.get(0);
+      }
+    }
+    return null;
+  }
+
+  protected JSONObject createErrorResponse(JSONArray incomingJson, List<String> errorIds,
+      List<String> errorMsgs) throws JSONException {
+    if (exception.get() != null) {
+      Throwable cause = DbUtility.getUnderlyingSQLException(exception.get());
+      return createErrorJSON(transformedMessage.get(), cause);
+    } else {
+      return createSuccessResponse(incomingJson);
+    }
+  }
+
+  protected JSONObject createSuccessResponse(JSONArray incomingJson) throws JSONException {
+
+    try {
+      // be backward compatible
+      final StringWriter w = new StringWriter();
+      writeSuccessMessage(w);
+      if (RequestContext.get().getResponse() != null) {
+        RequestContext.get().getResponse().setStatus(HttpServletResponse.SC_OK);
+      }
+
+      return new JSONObject("{" + w.toString() + "}");
+    } catch (Exception e) {
+      throw new OBException(e);
+    }
+  }
+
+  protected void writeSuccessMessage(Writer w) {
+    try {
+      final JSONObject jsonResponse = new JSONObject();
+      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+      jsonResponse.put("result", "0");
+      jsonResponse.put("orders", processedOrders.get());
+      if (RequestContext.get().getResponse() != null) {
+        RequestContext.get().getResponse().setStatus(HttpServletResponse.SC_OK);
+      }
+      writeJson(w, jsonResponse);
+    } catch (Exception e) {
+      throw new OBException(e);
+    }
+  }
+
+  // collect all the successfully created orders
+  protected JSONObject successMessage(JSONObject jsonOrder) throws Exception {
+    processedOrders.get().put(processedOrders.get().length(), jsonOrder);
+    return super.successMessage(jsonOrder);
   }
 
   protected JSONObject transformMessage(JSONObject messageIn) throws JSONException {
@@ -524,6 +721,56 @@ public class ExternalOrderLoader extends OrderLoader {
       }
       transformPayment(payment);
     }
+
+    // now use the data to fill the payment field correctly in the json
+    if (!orderJson.has("payment") || -1 == orderJson.getInt("payment")) {
+      final Currency currency = getCurrency(orderJson.getString("currency"));
+      int pricePrecision = currency.getObposPosprecision() == null ? currency.getPricePrecision()
+          .intValue() : currency.getObposPosprecision().intValue();
+
+      BigDecimal paid = BigDecimal.ZERO;
+      if (orderJson.has("id")) {
+        final Order order = OBDal.getInstance().get(Order.class, orderJson.get("id"));
+        if (order != null) {
+          for (FIN_PaymentSchedule paymentSchedule : order.getFINPaymentScheduleList()) {
+            paid = paid.add(paymentSchedule.getPaidAmount());
+          }
+        }
+      }
+      for (int i = 0; i < payments.length(); i++) {
+        final JSONObject payment = payments.getJSONObject(i);
+
+        BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
+            pricePrecision, RoundingMode.HALF_UP);
+        BigDecimal origAmount = amount;
+        BigDecimal mulrate = new BigDecimal(1);
+        // FIXME: Coversion should be only in one direction: (USD-->EUR)
+        if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {
+          mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
+          if (payment.has("amount")) {
+            origAmount = BigDecimal.valueOf(payment.getDouble("amount")).setScale(pricePrecision,
+                RoundingMode.HALF_UP);
+          } else {
+            origAmount = amount.multiply(mulrate).setScale(pricePrecision, RoundingMode.HALF_UP);
+          }
+        }
+        paid = paid.add(origAmount);
+      }
+      orderJson.put("payment", paid.doubleValue());
+    }
+  }
+
+  protected Currency getCurrency(String isoCode) {
+    final OBQuery<Currency> qry = OBDal.getInstance().createQuery(Currency.class,
+        Currency.PROPERTY_ISOCODE + "=:isoCode or id=:id");
+    qry.setNamedParameter("isoCode", isoCode);
+    qry.setNamedParameter("id", isoCode);
+    // copy the list to only execute the query once
+    final ArrayList<Currency> result = new ArrayList<Currency>(qry.list());
+    if (result.isEmpty()) {
+      throw new OBException("No currency found using isocode " + isoCode);
+    }
+    return result.get(0);
   }
 
   protected void transformPayment(JSONObject payment) throws JSONException {
@@ -573,7 +820,6 @@ public class ExternalOrderLoader extends OrderLoader {
     check(json, "product", msg);
     check(json, "netAmount", msg);
     check(json, "grossAmount", msg);
-    check(json, "taxAmount", msg);
   }
 
   protected void validatePayment(JSONObject json) throws JSONException {
@@ -770,6 +1016,8 @@ public class ExternalOrderLoader extends OrderLoader {
         terminalQuery.setString(0, posTerminal.getId());
         terminalQuery.setLockOptions(LockOptions.UPGRADE);
         OBPOSApplications lockedTerminal = (OBPOSApplications) terminalQuery.uniqueResult();
+        OBDal.getInstance().getSession().evict(lockedTerminal);
+        lockedTerminal = OBDal.getInstance().get(OBPOSApplications.class, lockedTerminal.getId());
         if (lockedTerminal.getLastassignednum() != null) {
           currentNo = lockedTerminal.getLastassignednum() + 1;
         } else {
@@ -1000,27 +1248,6 @@ public class ExternalOrderLoader extends OrderLoader {
     return null;
   }
 
-  protected void writeSuccessMessage(Writer w) {
-    try {
-      final JSONObject jsonResponse = new JSONObject();
-      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-      jsonResponse.put("result", "0");
-      jsonResponse.put("orders", processedOrders.get());
-      if (RequestContext.get().getResponse() != null) {
-        RequestContext.get().getResponse().setStatus(HttpServletResponse.SC_OK);
-      }
-      writeJson(w, jsonResponse);
-    } catch (Exception e) {
-      throw new OBException(e);
-    }
-  }
-
-  // collect all the successfully created orders
-  protected JSONObject successMessage(JSONObject jsonOrder) throws Exception {
-    processedOrders.get().put(processedOrders.get().length(), jsonOrder);
-    return super.successMessage(jsonOrder);
-  }
-
   public class SetOrderIDHook implements OrderLoaderHook {
     @Override
     public void exec(JSONObject jsonorder, Order order, ShipmentInOut shipment, Invoice invoice)
@@ -1084,4 +1311,34 @@ public class ExternalOrderLoader extends OrderLoader {
     }
   }
 
+  /**
+   * Is default handler of external orders. Is not processing the external order.
+   * 
+   * @author mtaal
+   */
+  @ImportEntryQualifier(entity = "OBPOS_ExternalOrder")
+  @ApplicationScoped
+  public static class ExternalOrderImportEntryProcessor extends ImportEntryProcessor {
+
+    protected ImportEntryProcessRunnable createImportEntryProcessRunnable() {
+      return WeldUtils.getInstanceFromStaticBeanManager(ExternalOrderRunnable.class);
+    }
+
+    protected boolean canHandleImportEntry(ImportEntry importEntryInformation) {
+      return ORDERLOADER_QUALIFIER.equals(importEntryInformation.getTypeofdata());
+    }
+
+    protected String getProcessSelectionKey(ImportEntry importEntry) {
+      return importEntry.getOrganization().getId();
+    }
+
+    private static class ExternalOrderRunnable extends ImportEntryProcessRunnable {
+      public void run() {
+      }
+
+      @Override
+      protected void processEntry(ImportEntry importEntry) throws Exception {
+      }
+    }
+  }
 }

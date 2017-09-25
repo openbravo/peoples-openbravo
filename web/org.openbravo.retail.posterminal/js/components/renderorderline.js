@@ -108,6 +108,7 @@ enyo.kind({
       this.createComponent({
         style: 'display: block;',
         components: [{
+          name: 'productAttribute',
           content: OB.I18N.getLabel('OBPOS_AttributeValue') + this.model.get('attributeValue'),
           attributes: {
             style: 'float: left; width: 100%; clear: left;'
@@ -116,7 +117,11 @@ enyo.kind({
           style: 'clear: both;'
         }]
       });
+      if (!this.model.get('attributeValue')) {
+        this.$.productAttribute.hide();
+      }
     }
+
     if (this.model.get('product').get('characteristicDescription')) {
       this.createComponent({
         style: 'display: block; ',
@@ -463,7 +468,6 @@ enyo.kind({
     } else {
       this.$.foreignAmount.setContent('');
     }
-
   }
 });
 enyo.kind({

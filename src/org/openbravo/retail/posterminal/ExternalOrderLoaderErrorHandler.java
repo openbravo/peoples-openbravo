@@ -11,7 +11,6 @@ package org.openbravo.retail.posterminal;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.service.db.DbUtility;
@@ -25,21 +24,14 @@ public class ExternalOrderLoaderErrorHandler extends POSDataSynchronizationError
   @Override
   public void handleError(Throwable t, Entity entity, JSONObject result, JSONObject jsonRecord) {
     if (ExternalOrderLoader.isSynchronizedRequest()) {
-      Throwable localT = t;
-      if (localT instanceof OBException && localT.getCause() != null) {
-        localT = t.getCause();
-      }
-      ExternalOrderLoader.setCurrentException(DbUtility.getUnderlyingSQLException(localT));
-      if (ExternalOrderLoader.getCurrentException() instanceof RuntimeException) {
-        throw (RuntimeException) ExternalOrderLoader.getCurrentException();
-      }
-      throw new OBException(ExternalOrderLoader.getCurrentException());
+      ExternalOrderLoader.setCurrentException(DbUtility.getUnderlyingSQLException(t));
+      return;
     }
     super.handleError(t, entity, result, jsonRecord);
   }
 
   public boolean setImportEntryStatusToError() {
-    return false;
+    return true;
   }
 
 }

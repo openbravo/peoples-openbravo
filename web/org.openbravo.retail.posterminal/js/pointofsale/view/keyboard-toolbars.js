@@ -469,7 +469,7 @@ enyo.kind({
       if (this.keyboard.lastStatus !== '' && status === '') {
         var defaultPayment = this.defaultPayment;
         //check if defaultPayment is returnable
-        if (me.receipt && me.receipt.getTotal() < 0 && !defaultPayment.paymentMethod.refundable) {
+        if (me.receipt && me.receipt.getPaymentStatus().isNegative && !defaultPayment.paymentMethod.refundable) {
           //if default payment is not returnable, select cash by default
           for (i = 0; i < OB.MobileApp.model.get('payments').length; i++) {
             if (OB.MobileApp.model.get('payments')[i].paymentMethod.iscash && OB.MobileApp.model.get('payments')[i].paymentMethod.refundable) {
@@ -503,7 +503,7 @@ enyo.kind({
   shown: function () {
     var me = this,
         refundablePayment, sideButton, keyboard = this.owner.owner,
-        isReturnReceipt = (me.receipt && (me.receipt.getTotal() < 0 || me.receipt.getPaymentStatus().isNegative)) ? true : false;
+        isReturnReceipt = (me.receipt && me.receipt.getPaymentStatus().isNegative) ? true : false;
 
     keyboard.showKeypad('Coins-' + OB.MobileApp.model.get('currency').id); // shows the Coins/Notes panel for the terminal currency
     keyboard.showSidepad('sidedisabled');

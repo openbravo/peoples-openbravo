@@ -368,11 +368,9 @@
         if (!_.isUndefined(receipt)) {
           me.receipt = receipt;
         }
-        var receiptId = me.receipt.get('id');
-        var currentReceipt = me.receipt;
-
-        var normalizedCreationDate = OB.I18N.normalizeDate(currentReceipt.get('creationDate'));
-        var creationDate;
+        var creationDate, restoreMultiOrder, receiptId = me.receipt.get('id'),
+            currentReceipt = me.receipt,
+            normalizedCreationDate = OB.I18N.normalizeDate(currentReceipt.get('creationDate'));
         if (normalizedCreationDate === null) {
           creationDate = new Date();
           normalizedCreationDate = OB.I18N.normalizeDate(creationDate);
@@ -405,6 +403,47 @@
 
         OB.trace('Executing pre order save hook.');
 
+        restoreMultiOrder = function () {
+          // recalculate after an error also
+          if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+
+            model.get('multiOrders').get('payments').forEach(function (p) {
+              var itemP = _.find(model.get('multiOrders').get('frozenPayments').models, function (fp) {
+                return p.get('id') === fp.get('id');
+              }, this);
+              p.set('origAmount', itemP.get('origAmount'));
+            });
+            model.get('multiOrders').trigger('paymentCancel');
+            model.get('multiOrders').get('multiOrdersList').reset(model.get('multiOrders').get('frozenMultiOrdersList').models);
+            var promises = [];
+            _.each(model.get('multiOrders').get('multiOrdersList').models, function (rcpt) {
+              promises.push(new Promise(function (resolve, reject) {
+                rcpt.set('isbeingprocessed', 'N');
+                rcpt.set('hasbeenpaid', 'N');
+                _.each(model.get('orderList').models, function (mdl) {
+                  if (mdl.get('id') === rcpt.get('id')) {
+                    mdl.set('isbeingprocessed', 'N');
+                    mdl.set('hasbeenpaid', 'N');
+                    return true;
+                  }
+                }, this);
+                OB.Dal.save(rcpt, function () {
+                  resolve();
+                }, function () {
+                  reject();
+                }, false);
+              }));
+            });
+
+            Promise.all(promises).then(function () {
+              OB.UTIL.calculateCurrentCash();
+              if (callback instanceof Function) {
+                callback(false);
+              }
+            });
+          }
+        };
+
         OB.UTIL.HookManager.executeHooks('OBPOS_PreOrderSave', {
           context: me,
           model: model,
@@ -413,11 +452,8 @@
 
           OB.trace('Execution of pre order save hook OK.');
           if (args && args.cancellation && args.cancellation === true) {
-            args.context.receipt.set('isbeingprocessed', 'N');
             OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
-            if (callback instanceof Function) {
-              callback();
-            }
+            restoreMultiOrder();
             return true;
           }
 
@@ -468,45 +504,7 @@
                 var errorCallback = function () {
                     OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
                     OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
-
-                    // recalculate after an error also
-                    if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-
-                      model.get('multiOrders').get('payments').forEach(function (p) {
-                        var itemP = _.find(model.get('multiOrders').get('frozenPayments').models, function (fp) {
-                          return p.get('id') === fp.get('id');
-                        }, this);
-                        p.set('origAmount', itemP.get('origAmount'));
-                      });
-                      model.get('multiOrders').trigger('paymentCancel');
-                      model.get('multiOrders').get('multiOrdersList').reset(model.get('multiOrders').get('frozenMultiOrdersList').models);
-                      var promises = [];
-                      _.each(model.get('multiOrders').get('multiOrdersList').models, function (rcpt) {
-                        promises.push(new Promise(function (resolve, reject) {
-                          rcpt.set('isbeingprocessed', 'N');
-                          rcpt.set('hasbeenpaid', 'N');
-                          _.each(model.get('orderList').models, function (mdl) {
-                            if (mdl.get('id') === rcpt.get('id')) {
-                              mdl.set('isbeingprocessed', 'N');
-                              mdl.set('hasbeenpaid', 'N');
-                              return true;
-                            }
-                          }, this);
-                          OB.Dal.save(rcpt, function () {
-                            resolve();
-                          }, function () {
-                            reject();
-                          }, false);
-                        }));
-                      });
-
-                      Promise.all(promises).then(function () {
-                        OB.UTIL.calculateCurrentCash();
-                        if (callback instanceof Function) {
-                          callback();
-                        }
-                      });
-                    }
+                    restoreMultiOrder();
                     };
 
                 if (!_.isUndefined(receipt.get('amountToLayaway')) && !_.isNull(receipt.get('amountToLayaway')) && receipt.get('generateInvoice')) {
@@ -544,29 +542,46 @@
 
     this.context.get('multiOrders').on('closed', function (receipt, callback) {
       var me = this;
-      var closedReceipts = this.context.get('multiOrders').get('multiOrdersList').models;
-      var recursiveFunction;
-      recursiveFunction = function (index, me, callback) {
-        if (index < closedReceipts.length) {
-          multiOrdersFunction(closedReceipts[index], me, function () {
-            recursiveFunction(index + 1, me, callback);
+      OB.Dal.find(OB.Model.Order, {}, function (orderList) {
+        var multiOrderList = me.context.get('multiOrders').get('multiOrdersList').models;
+        var closedReceipts = [];
+
+        _.forEach(orderList.models, function (sortedOrder) {
+          _.forEach(multiOrderList, function (multiOrder) {
+            if (multiOrder.get('id') === sortedOrder.get('id')) {
+              closedReceipts.push(multiOrder);
+            }
           });
-        } else {
-          if (callback instanceof Function) {
-            callback();
+        });
+
+        var recursiveFunction;
+        recursiveFunction = function (index, me, callback) {
+          if (index < closedReceipts.length) {
+            multiOrdersFunction(closedReceipts[index], me, function (result) {
+              if (OB.UTIL.isNullOrUndefined(result)) {
+                recursiveFunction(index + 1, me, callback);
+              } else if (result === false) {
+                if (callback instanceof Function) {
+                  callback(false);
+                }
+              }
+            });
+          } else {
+            if (callback instanceof Function) {
+              callback();
+            }
           }
-        }
-      };
-      if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true) && me.ordersToSend === 0) {
-        OB.MobileApp.model.setSynchronizedCheckpoint(function () {
+        };
+        me.ordersToSend = OB.DEC.Zero;
+        if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true) && me.ordersToSend === 0) {
           OB.UTIL.rebuildCashupFromServer(function () {
             OB.UTIL.showLoading(false);
             recursiveFunction(0, me, callback);
           });
-        });
-      } else {
-        recursiveFunction(0, me, callback);
-      }
+        } else {
+          recursiveFunction(0, me, callback);
+        }
+      });
     }, this);
   };
 }());

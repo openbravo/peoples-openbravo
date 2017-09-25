@@ -84,7 +84,8 @@ public class CheckApproval extends JSONProcessSimple {
         if (preferenceList.size() == 0) {
           result.put("status", 1);
           JSONObject jsonError = new JSONObject();
-          jsonError.put("message", OBMessageUtils.getI18NMessage("OBPOS_UserCannotApprove", null));
+          jsonError.put("message",
+              OBMessageUtils.getI18NMessage("OBPOS_UserCannotApprove", new String[] { username }));
           result.put("error", jsonError);
         } else {
           result.put("status", 0);

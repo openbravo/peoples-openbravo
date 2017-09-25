@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2016 Openbravo S.L.U.
+ * Copyright (C) 2014-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -365,7 +365,7 @@ enyo.kind({
         me.$.renderLoading.hide();
         me.prsList.reset();
       }
-    });
+    }, true, 30000);
     return true;
   },
   prsList: null,
@@ -382,29 +382,34 @@ enyo.kind({
         process.exec({
           orderid: model.get('id')
         }, function (data) {
-          if (data) {
+          if (data && data[0]) {
             if (me.model.get('leftColumnViewManager').isMultiOrder()) {
               if (me.model.get('multiorders')) {
                 me.model.get('multiorders').resetValues();
               }
               me.model.get('leftColumnViewManager').setOrderMode();
             }
-            OB.UTIL.HookManager.executeHooks('OBRETUR_ReturnFromOrig', {
-              order: data[0],
-              context: me,
-              params: me.parent.parent.params
-            }, function (args) {
-              if (!args.cancelOperation) {
-                var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearchNewReceipt');
-                me.model.get('orderList').newPaidReceipt(data[0], function (order) {
-                  me.doChangePaidReceipt({
-                    newPaidReceipt: order
-                  });
-                  OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearchNewReceipt');
+            if (data[0].recordInImportEntry) {
+              OB.UTIL.showLoading(false);
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ReceiptNotSynced', [data[0].documentNo]));
+            } else {
+              OB.UTIL.HookManager.executeHooks('OBRETUR_ReturnFromOrig', {
+                order: data[0],
+                context: me,
+                params: me.parent.parent.params
+              }, function (args) {
+                if (!args.cancelOperation) {
+                  var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearchNewReceipt');
+                  me.model.get('orderList').newPaidReceipt(data[0], function (order) {
+                    me.doChangePaidReceipt({
+                      newPaidReceipt: order
+                    });
+                    OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearchNewReceipt');
 
-                });
-              }
-            });
+                  });
+                }
+              });
+            }
           } else {
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
           }
@@ -412,95 +417,8 @@ enyo.kind({
         });
         return true;
       }
-
-      // Check in Current Session
-      var orderTypeMsg, i;
-      for (i = 0; i < me.model.get('orderList').length; i++) {
-        if (me.model.get('orderList').models[i].get('id') === model.get('id') || ((!(_.isNull(me.model.get('orderList').models[i].get('oldId')))) && me.model.get('orderList').models[i].get('oldId') === model.get('id'))) {
-          var errorMsg;
-          orderTypeMsg = OB.I18N.getLabel('OBPOS_ticket');
-          errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, model.get('documentNo')));
-          if (me.model.get('orderList').models[i].get('isLayaway')) {
-            orderTypeMsg = OB.I18N.getLabel('OBPOS_LblLayaway');
-            errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, model.get('documentNo')));
-          } else if (me.model.get('orderList').models[i].get('isQuotation')) {
-            orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
-            errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, model.get('documentNo')));
-          } else if ((!(_.isNull(me.model.get('orderList').models[i].get('oldId')))) && me.model.get('orderList').models[i].get('oldId') === model.get('id')) {
-            //(!(_.isNull(me.model.get('orderList').models[i].get('oldId')) -> It is a sales order created from a quotation
-            //me.model.get('orderList').models[i].get('oldId') === model.get('id') -> The quotation that we are loading created an order which is not synchronized or closed
-            //Quotation %0 cannot be loaded because order %1 (created from quotation %2) is already opened. Please close or complete %3 or select an other quotation
-            var SoFromQtDocNo = me.model.get('orderList').models[i].get('documentNo');
-            var QtDocumentNo = model.get('documentNo');
-            errorMsg = OB.I18N.getLabel('OBPOS_OrderAssociatedToQuotationInProgress', [QtDocumentNo, SoFromQtDocNo, QtDocumentNo, SoFromQtDocNo]);
-          }
-          me.doShowPopup({
-            popup: 'OB_UI_MessageDialog',
-            args: {
-              message: errorMsg
-            }
-          });
-          if (OB.MobileApp.model.receipt.get('documentNo') !== model.get('documentNo')) {
-            me.doChangeCurrentOrder({
-              newCurrentOrder: me.model.get('orderList').models[i]
-            });
-          }
-          return true;
-        }
-      }
-
-      // Check in Other Session
-      OB.Dal.find(OB.Model.Order, {
-        'hasbeenpaid': 'N'
-      }, function (ordersNotProcessed) {
-        if (ordersNotProcessed.length > 0) {
-          var existingOrder = _.find(ordersNotProcessed.models, function (order) {
-            return order.get('id') === model.get('id') || order.get('oldId') === model.get('id');
-          });
-          if (existingOrder) {
-            var orderTypeMsg = OB.I18N.getLabel('OBPOS_ticket');
-            if (existingOrder.get('isLayaway')) {
-              orderTypeMsg = OB.I18N.getLabel('OBPOS_LblLayaway');
-            } else if (existingOrder.get('isQuotation')) {
-              orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
-            }
-            // Getting Other Session User's username
-            OB.Dal.find(OB.Model.Session, {
-              'id': existingOrder.get('session')
-            }, function (sessions) {
-              if (sessions.length > 0) {
-                OB.Dal.find(OB.Model.User, {
-                  'id': sessions.models[0].get('user')
-                }, function (users) {
-                  if (users.length > 0) {
-                    OB.UTIL.showConfirmation.display(enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpenedInSession'), orderTypeMsg, model.get('documentNo'), users.models[0].get('name')), enyo.format(OB.I18N.getLabel('OBPOS_MsgConfirmSaveInCurrentSession'), users.models[0].get('name')), [{
-                      label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                      action: function () {
-                        OB.Dal.remove(existingOrder, function () {
-                          loadOrder(model);
-                        }, OB.UTIL.showError);
-                      }
-                    }, {
-                      label: OB.I18N.getLabel('OBMOBC_LblCancel')
-                    }], {
-                      onHideFunction: function (dialog) {
-                        return true;
-                      }
-                    });
-                  }
-                });
-              }
-            });
-          } else {
-            return loadOrder(model);
-          }
-        } else {
-          return loadOrder(model);
-        }
-      });
-
+      OB.MobileApp.model.orderList.checkForDuplicateReceipts(model, loadOrder);
       return true;
-
     }, this);
   }
 });

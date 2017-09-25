@@ -199,8 +199,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         'cashup_id': cashUpReport.get('id'),
         'type': 'deposit'
       }, function (cashMgmts) {
-        _.forEach(cashMgmts.models, function (cashMgmt) {
-          cashMgmt.set('searchKey', 'cashMgmtDeposit' + (_.filter(OB.MobileApp.model.get('payments'), function (pay) {
+        _.forEach(cashMgmts.models, function (cashMgmt, index) {
+          cashMgmt.set('searchKey', 'cashMgmtDeposit' + index + (_.filter(OB.MobileApp.model.get('payments'), function (pay) {
             return pay.payment.id === cashMgmt.get('paymentMethodId');
           }))[0].payment.searchKey.replace('_', '') + cashMgmt.get('amount'));
         });
@@ -213,8 +213,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         'cashup_id': cashUpReport.get('id'),
         'type': 'drop'
       }, function (cashMgmts) {
-        _.forEach(cashMgmts.models, function (cashMgmt) {
-          cashMgmt.set('searchKey', 'cashMgmtDrop' + (_.filter(OB.MobileApp.model.get('payments'), function (pay) {
+        _.forEach(cashMgmts.models, function (cashMgmt, index) {
+          cashMgmt.set('searchKey', 'cashMgmtDrop' + index + (_.filter(OB.MobileApp.model.get('payments'), function (pay) {
             return pay.payment.id === cashMgmt.get('paymentMethodId');
           }))[0].payment.searchKey.replace('_', '') + cashMgmt.get('amount'));
         });
@@ -307,7 +307,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             description: p.get('name') + paymentSharedStr,
             currency: fromCurrencyId,
             isocode: auxPay.isocode,
-            rate: p.get('rate')
+            rate: p.get('rate'),
+            countInCashup: auxPay.paymentMethod.countpaymentincashup
           }));
           cashUpReport.get('drops').push(new Backbone.Model({
             searchKey: p.get('searchKey'),
@@ -316,7 +317,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             description: p.get('name') + paymentSharedStr,
             currency: fromCurrencyId,
             isocode: auxPay.isocode,
-            rate: p.get('rate')
+            rate: p.get('rate'),
+            countInCashup: auxPay.paymentMethod.countpaymentincashup
           }));
           startings.push(new Backbone.Model({
             searchKey: p.get('searchKey'),
@@ -326,7 +328,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             currency: fromCurrencyId,
             isocode: auxPay.isocode,
             rate: p.get('rate'),
-            paymentId: p.get('paymentmethod_id')
+            paymentId: p.get('paymentmethod_id'),
+            countInCashup: auxPay.paymentMethod.countpaymentincashup
           }));
         }, this);
         cashUpReport.set('startings', startings);

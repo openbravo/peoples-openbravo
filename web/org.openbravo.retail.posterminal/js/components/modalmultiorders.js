@@ -255,14 +255,14 @@ enyo.kind({
           if (iter.get('lines') && iter.get('lines').length > 0) {
             re = new RegExp(me.filters.filterText, 'gi');
             toMatch = iter.get('documentNo').match(re) + iter.get('bp').get('_identifier').match(re);
-            if ((me.filters.filterText === "" || toMatch !== 0) && (iter.get('orderType') === 0 || iter.get('orderType') === 2) && !iter.get('isPaid') && !iter.get('isQuotation') && iter.get('gross') >= 0) {
+            if ((me.filters.filterText === '' || toMatch !== 0) && (iter.get('orderType') === 0 || iter.get('orderType') === 2) && !iter.get('isPaid') && !iter.get('isQuotation') && iter.get('gross') >= 0) {
               actualDate = new Date().setHours(0, 0, 0, 0);
-              if (me.filters.endDate === "" || new Date(me.filters.endDate) >= actualDate) {
+              if (me.filters.endDate === '' || new Date(me.filters.endDate) >= actualDate) {
                 for (i = 0; i < me.filters.documentType.length; i++) {
                   if (me.filters.documentType[i] === iter.get('documentType')) {
                     if (!_.isNull(iter.id) && !_.isUndefined(iter.id)) {
                       if (me.cleanFilter) {
-                        iter.unset("checked");
+                        iter.unset('checked');
                       }
                       me.multiOrdersList.add(iter);
                       break;
@@ -428,9 +428,25 @@ enyo.kind({
     this.$.body.$.listMultiOrders.$.multiorderslistitemprinter.$.theader.$.modalMultiOrdersHeader.clearAction();
   },
   executeOnShow: function () {
+    var me = this,
+        i, j;
     this.$.header.$.modalMultiOrdersTopHeader.$.title.setContent(OB.I18N.getLabel('OBPOS_LblMultiOrders'));
     this.$.body.$.listMultiOrders.cleanFilter = true;
     this.$.header.$.modalMultiOrdersTopHeader.disableDoneButton(true);
+    if (OB.MobileApp.model.hasPermission('OBPOS_SelectCurrentTicketsOnPaidOpen', true)) {
+      _.each(me.model.get('orderList').models, function (iter) {
+        if (iter.get('lines') && iter.get('lines').length > 0) {
+          if ((iter.get('orderType') === 0 || iter.get('orderType') === 2) && !iter.get('isPaid') && !iter.get('isQuotation') && iter.get('gross') >= 0) {
+            if (!_.isNull(iter.id) && !_.isUndefined(iter.id)) {
+              iter.set('checked', true);
+              me.$.body.$.listMultiOrders.multiOrdersList.add(iter);
+            }
+          }
+        }
+      });
+      me.$.header.$.modalMultiOrdersTopHeader.disableDoneButton(false);
+      me.$.body.$.listMultiOrders.cleanFilter = false;
+    }
   },
   i18nHeader: '',
   body: {

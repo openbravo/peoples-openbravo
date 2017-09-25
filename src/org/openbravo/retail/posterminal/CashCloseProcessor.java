@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -39,6 +39,7 @@ import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
+import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
@@ -92,7 +93,16 @@ public class CashCloseProcessor {
         OBDal.getInstance().save(diffTransaction);
       }
 
-      if (!paymentType.getPaymentMethod().getPaymentMethod().isAutomaticDeposit()) {
+      boolean isAutomaticDeposit = true;
+      for (FinAccPaymentMethod finAccPaymentMethod : paymentType.getFinancialAccount()
+          .getFinancialMgmtFinAccPaymentMethodList()) {
+        if (finAccPaymentMethod.getPaymentMethod().getId()
+            .equals(paymentType.getPaymentMethod().getPaymentMethod().getId())) {
+          isAutomaticDeposit = finAccPaymentMethod.isAutomaticDeposit();
+          break;
+        }
+      }
+      if (!isAutomaticDeposit) {
         continue;
       }
 

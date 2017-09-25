@@ -8,9 +8,12 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.util.HashSet;
+
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
@@ -19,6 +22,7 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.DataSynchronizationErrorHandler;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess;
+import org.openbravo.model.common.order.OrderLine;
 
 @ApplicationScoped
 @Qualifier(POSConstants.APP_NAME)
@@ -47,6 +51,7 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
       // and a new one will be created
       try {
         errorEntry = OBDal.getInstance().get(OBPOSErrors.class, jsonRecord.getString("posErrorId"));
+        errorEntry.getOBPOSErrorsLineList().clear();
       } catch (JSONException e1) {
         // won't happen
       }
@@ -61,6 +66,33 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
     errorEntry
         .setObposApplications(OBDal.getInstance().get(OBPOSApplications.class, posTerminalId));
     OBDal.getInstance().save(errorEntry);
+
+    // save order_id, order_id from verified return in error line
+    HashSet<String> recordIdList = new HashSet<String>();
+    recordIdList.add(jsonRecord.optString("id", null));
+
+    if (jsonRecord.has("lines")) {
+      JSONArray orderlines = jsonRecord.optJSONArray("lines");
+      if (orderlines != null) {
+        for (int i = 0; i < orderlines.length(); i++) {
+          JSONObject jsonOrderLine = orderlines.optJSONObject(i);
+          if (jsonOrderLine != null && jsonOrderLine.has("originalOrderLineId")) {
+            OrderLine orderLine = OBDal.getInstance().get(OrderLine.class,
+                jsonOrderLine.optString("originalOrderLineId"));
+            recordIdList.add(orderLine.getSalesOrder().getId());
+          }
+        }
+      }
+    }
+    recordIdList.remove(null);
+
+    for (String recordId : recordIdList) {
+      OBPOSErrorsLine errorLineEntry = OBProvider.getInstance().get(OBPOSErrorsLine.class);
+      errorLineEntry.setObposErrors(errorEntry);
+      errorLineEntry.setRecordID(recordId);
+      OBDal.getInstance().save(errorLineEntry);
+    }
+
     OBDal.getInstance().flush();
     log.error("Error while loading order", t);
 

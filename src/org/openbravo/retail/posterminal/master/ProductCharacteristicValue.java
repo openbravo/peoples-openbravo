@@ -84,17 +84,18 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
     HQLPropertyList regularProductsCharacteristicHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
-    hqlQueries
-        .add("select "
-            + regularProductsCharacteristicHQLProperties.getHqlSelect()
-            + "from ProductCharacteristicValue pcv "
-            + "where pcv.product.id in (select product.id from OBRETCO_Prol_Product assort where obretcoProductlist.id= :productListId) "
-            + "AND exists (select 1 from PricingProductPrice ppp WHERE (ppp.priceListVersion.id= :priceListVersionId ) AND (ppp.product.id=pcv.product.id) ) "
-            + "and pcv.characteristicValue.characteristic.obposUseonwebpos = true "
-            + "and $filtersCriteria AND $hqlCriteria and $naturalOrgCriteria and $readableSimpleClientCriteria and (pcv.$incrementalUpdateCriteria "
-            + "OR pcv.characteristic.$incrementalUpdateCriteria OR pcv.characteristicValue.$incrementalUpdateCriteria) "
-            + "order by pcv.id");
-
+    hqlQueries.add("select " + regularProductsCharacteristicHQLProperties.getHqlSelect()
+        + "from ProductCharacteristicValue pcv "
+        + "inner join pcv.product.oBRETCOProlProductList opp "
+        + "inner join pcv.product.pricingProductPriceList ppp "
+        + "where opp.obretcoProductlist.id= :productListId "
+        + "and ppp.priceListVersion.id= :priceListVersionId "
+        + "and pcv.characteristicValue.characteristic.obposUseonwebpos = true "
+        + "and pcv.$filtersCriteria AND pcv.$hqlCriteria "
+        + "and pcv.$naturalOrgCriteria and pcv.$readableSimpleClientCriteria "
+        + "and (opp.$incrementalUpdateCriteria OR ppp.$incrementalUpdateCriteria OR "
+        + "pcv.$incrementalUpdateCriteria OR pcv.characteristic.$incrementalUpdateCriteria OR "
+        + "pcv.characteristicValue.$incrementalUpdateCriteria) " + "order by pcv.id");
     return hqlQueries;
   }
 }

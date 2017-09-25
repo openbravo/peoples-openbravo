@@ -97,6 +97,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         ordersNotPaid.remove(orderToRemove);
       });
 
+      //removing Orders lines without mandatory fields filled
+      OB.UTIL.HookManager.executeHooks('OBPOS_CheckReceiptMandatoryFields', {
+        orders: ordersNotPaid.models
+      }, function (args) {
+        _.each(args.removeOrderList, function (orderToRemove) {
+          ordersNotPaid.remove(orderToRemove);
+        });
+      });
+
       OB.UTIL.HookManager.executeHooks('OBPOS_PreLoadUnpaidOrdersHook', {
         ordersNotPaid: ordersNotPaid,
         model: model
@@ -489,11 +498,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           triggerPaymentAccepted, triggerPaymentAcceptedImpl;
 
       triggerPaymentAccepted = function () {
-        if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-          OB.MobileApp.model.setSynchronizedCheckpoint(triggerPaymentAcceptedImpl);
-        } else {
-          triggerPaymentAcceptedImpl();
-        }
+        OB.UTIL.HookManager.executeHooks('OBPOS_PostPaymentDone', {
+          receipt: receipt
+        }, function (args) {
+          if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+            OB.MobileApp.model.setSynchronizedCheckpoint(triggerPaymentAcceptedImpl);
+          } else {
+            triggerPaymentAcceptedImpl();
+          }
+        });
       };
 
       triggerPaymentAcceptedImpl = function () {
@@ -515,8 +528,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             } else {
               if (_.isUndefined(_.find(receipt.get('lines').models, function (line) {
                 var qty = line.get('qty') ? line.get('qty') : 0,
-                    remainingQuantity = line.get('remainingQuantity') ? line.get('remainingQuantity') : 0;
-                return (qty > 0 && qty > remainingQuantity) || (qty < 0 && qty < remainingQuantity);
+                    deliveredQuantity = line.get('deliveredQuantity') ? line.get('deliveredQuantity') : 0;
+                return (qty > 0 && qty > deliveredQuantity) || (qty < 0 && qty < deliveredQuantity);
               }))) {
                 receipt.set('generateShipment', false);
               }
@@ -699,7 +712,29 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.get('multiOrders').on('paymentDone', function (openDrawer) {
       var me = this,
           paymentstatus = this.get('multiOrders'),
-          overpayment = OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'));
+          overpayment = OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total')),
+          orders = paymentstatus.get('multiOrdersList'),
+          triggerPaymentAccepted, triggerPaymentAcceptedImpl;
+
+      triggerPaymentAccepted = function (orders, index) {
+        if (index === orders.length) {
+          if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+            OB.MobileApp.model.setSynchronizedCheckpoint(triggerPaymentAcceptedImpl);
+          } else {
+            triggerPaymentAcceptedImpl();
+          }
+        } else {
+          OB.UTIL.HookManager.executeHooks('OBPOS_PostPaymentDone', {
+            receipt: orders.at(index)
+          }, function (args) {
+            triggerPaymentAccepted(orders, index + 1);
+          });
+        }
+      };
+
+      triggerPaymentAcceptedImpl = function () {
+        me.get('multiOrders').trigger('paymentAccepted');
+      };
 
       if (overpayment > 0) {
         var symbol = OB.MobileApp.model.get('terminal').symbol,
@@ -709,14 +744,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           isConfirmButton: true,
           action: function () {
             me.openDrawer = openDrawer;
-            me.get('multiOrders').trigger('paymentAccepted');
+            triggerPaymentAccepted(orders, 0);
           }
         }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel')
         }]);
       } else {
         me.openDrawer = openDrawer;
-        this.get('multiOrders').trigger('paymentAccepted');
+        triggerPaymentAccepted(orders, 0);
       }
     }, this);
 
@@ -889,6 +924,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
                     OB.MobileApp.model.runSyncProcess();
                     orderList.deleteCurrent();
+                    receipt.trigger('change:gross', receipt);
                     OB.Dal.get(OB.Model.Order, orderId, function (model) {
                       function cancelAndNew() {
                         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));

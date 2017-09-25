@@ -1077,8 +1077,16 @@ enyo.kind({
   tap: function () {
     var myModel = this.owner.model,
         me = this,
-        payments, avoidPayment = false,
+        payments, isMultiOrder = myModel.get('leftColumnViewManager').isOrder() ? false : true,
+        avoidPayment = false,
         orderDesc = '';
+
+    // Avoid closing the order before receipt is being calculated
+    if (this.owner.receipt.calculatingReceipt) {
+      OB.UTIL.showI18NError('OBPOS_ReceiptBeingPrepared');
+      return;
+    }
+
     //*** Avoid double click ***
     if (this.getContent() === OB.I18N.getLabel('OBPOS_LblDone')) {
       if (this.owner.receipt && this.owner.receipt.getOrderDescription) {
@@ -1096,13 +1104,15 @@ enyo.kind({
       }
     }
 
+    this.avoidCompleteReceipt = false;
+    this.alreadyPaid = false;
     this.allowOpenDrawer = false;
 
     if (this.disabled) {
       return true;
     }
 
-    if (!myModel.get('leftColumnViewManager').isOrder()) {
+    if (isMultiOrder) {
       var receipts = this.owner.model.get('multiOrders').get('multiOrdersList').models;
       receipts.forEach(function (receipt) {
         if ((receipt.get('orderType') === 2 || receipt.get('orderType') === 3) && receipt.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner && !OB.MobileApp.model.get('terminal').layaway_anonymouscustomer) {
@@ -1116,10 +1126,44 @@ enyo.kind({
     var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("doneButton");
 
     if (!avoidPayment) {
-      if (myModel.get('leftColumnViewManager').isOrder()) {
-        payments = this.owner.receipt.get('payments');
-      } else {
+      if (isMultiOrder) {
         payments = this.owner.model.get('multiOrders').get('payments');
+      } else {
+        payments = this.owner.receipt.get('payments');
+      }
+
+      var errorMsgLbl, totalPaid = 0,
+          totalToPaid = isMultiOrder ? this.owner.model.get('multiOrders').getTotal() : this.owner.receipt.getTotal(),
+          isReturnOrder = isMultiOrder ? false : this.owner.receipt.getPaymentStatus().isNegative;
+
+      if (_.filter(payments.models, function (payment) {
+        return (OB.UTIL.isNullOrUndefined(payment.get('isReturnOrder')) ? isReturnOrder : payment.get('isReturnOrder')) !== isReturnOrder;
+      }).length > 0) {
+        me.avoidCompleteReceipt = true;
+        if (isReturnOrder) {
+          errorMsgLbl = 'OBPOS_PaymentOnReturnReceipt';
+        } else {
+          errorMsgLbl = 'OBPOS_NegativePaymentOnReceipt';
+        }
+      }
+
+      payments.each(function (payment) {
+        if (me.alreadyPaid) {
+          me.avoidCompleteReceipt = true;
+          errorMsgLbl = 'OBPOS_UnnecessaryPaymentAdded';
+          return false;
+        }
+        if (!payment.get('isReversePayment') && !payment.get('isReversed') && !payment.get('isPrePayment')) {
+          totalPaid = OB.DEC.add(totalPaid, payment.get('amount'));
+          if (totalPaid >= totalToPaid) {
+            me.alreadyPaid = true;
+          }
+        }
+      });
+      if (this.avoidCompleteReceipt) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel(errorMsgLbl));
+        OB.UTIL.SynchronizationHelper.finished(synchId, "doneButton");
+        return;
       }
 
       payments.each(function (payment) {
@@ -1128,7 +1172,7 @@ enyo.kind({
         }
       });
 
-      if (myModel.get('leftColumnViewManager').isOrder()) {
+      if (!isMultiOrder) {
         if (this.drawerpreference && this.allowOpenDrawer) {
           if (this.drawerOpened) {
             if (this.owner.receipt.get('orderType') === 3 && !this.owner.receipt.get('cancelLayaway')) {

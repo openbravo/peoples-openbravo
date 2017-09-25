@@ -22,7 +22,6 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
@@ -58,8 +57,7 @@ public class ProductPrice extends ProcessHQLQuery {
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     try {
       OBContext.setAdminMode(true);
-      String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
-      OBPOSApplications POSTerminal = POSUtils.getTerminalById(posId);
+      OBPOSApplications POSTerminal = POSUtils.getTerminalById(jsonsent.getString("pos"));
       String pricelist = POSUtils.getPriceListByTerminal(POSTerminal.getSearchKey()).getId();
       String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);

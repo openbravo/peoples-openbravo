@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2016 Openbravo S.L.U.
+ * Copyright (C) 2015-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -11,6 +11,7 @@ package org.openbravo.retail.posterminal.process;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -27,15 +28,51 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
 
     OBContext.setAdminMode(true);
     try {
-      String orderId = jsonData.getString("orderId");
-      String documentNo = jsonData.getString("documentNo");
-      Order order = OBDal.getInstance().get(Order.class, orderId);
+      final String orderId = jsonData.getString("orderId");
+      final String documentNo = jsonData.getString("documentNo");
+      final Order order = OBDal.getInstance().get(Order.class, orderId);
 
       if (order != null) {
         if (order.isCancelled()) {
           result.put("orderCancelled", true);
         } else {
           result.put("orderCancelled", false);
+          if (jsonData.has("checkNotEditableLines") && jsonData.getBoolean("checkNotEditableLines")) {
+            // Find the deferred services or the products that have related deferred services in the
+            // order that is being canceled
+            final StringBuffer hql = new StringBuffer();
+            hql.append("SELECT DISTINCT sol.lineNo ");
+            hql.append("FROM OrderlineServiceRelation AS olsr ");
+            hql.append("JOIN olsr.salesOrderLine AS sol ");
+            hql.append("JOIN olsr.orderlineRelated AS pol ");
+            hql.append("JOIN sol.salesOrder AS so ");
+            hql.append("WHERE so.id <> :orderId ");
+            hql.append("AND pol.salesOrder.id = :orderId ");
+            hql.append("AND so.iscancelled = false");
+            final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+            query.setParameter("orderId", orderId);
+            result.put("deferredLines", query.list());
+          }
+          if (jsonData.has("checkNotDeliveredDeferredServices")
+              && jsonData.getBoolean("checkNotDeliveredDeferredServices")) {
+            // Find if there's any line in the ticket which is not delivered and has deferred
+            // services
+            final StringBuffer hql = new StringBuffer();
+            hql.append("SELECT DISTINCT po.id ");
+            hql.append("FROM OrderlineServiceRelation AS olsr ");
+            hql.append("JOIN olsr.orderlineRelated AS pol ");
+            hql.append("JOIN olsr.salesOrderLine AS sol ");
+            hql.append("JOIN pol.salesOrder AS po ");
+            hql.append("JOIN sol.salesOrder AS so ");
+            hql.append("WHERE po.id = :orderId ");
+            hql.append("AND so.id <> :orderId ");
+            hql.append("AND so.iscancelled = false ");
+            hql.append("AND pol.orderedQuantity > pol.deliveredQuantity");
+            final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+            query.setParameter("orderId", orderId);
+            query.setMaxResults(1);
+            result.put("hasDeferredServices", query.uniqueResult() != null);
+          }
         }
       } else {
         // The layaway was not found in the database.

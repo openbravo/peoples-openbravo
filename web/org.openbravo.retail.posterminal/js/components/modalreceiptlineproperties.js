@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -31,7 +31,7 @@ enyo.kind({
       }
       setTimeout(function () {
         receiptLineDescription.focus();
-        document.getElementById(receiptLineDescriptionControl).style.cssText = 'border: 1px solid #F0F0F0; float: left; width: 58%;';
+        document.getElementById(receiptLineDescriptionControl).style.cssText = 'border: 1px solid #F0F0F0; float: left; width: 60%;';
         document.getElementById(receiptLineDescriptionNewAttribute).style.cssText = 'width: 100%';
       }, 200);
     }
@@ -142,8 +142,8 @@ enyo.kind({
     kind: 'OB.UI.renderTextProperty',
     name: 'receiptLineDescription',
     modelProperty: 'description',
-    style: 'height: 30px; margin-bottom: 3px; padding: 3px;',
-    i18nLabel: 'OBPOS_LblDescription'
+    i18nLabel: 'OBPOS_LblDescription',
+    maxLength: 255
   }]
 });
 

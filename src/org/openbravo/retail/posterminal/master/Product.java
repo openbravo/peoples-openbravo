@@ -103,7 +103,13 @@ public class Product extends ProcessHQLQuery {
         args.put("multiPriceList", false);
       }
     } catch (JSONException e) {
-      e.printStackTrace();
+      log.error("Error while getting multiPriceList", e);
+    }
+
+    try {
+      args.put("terminalId", jsonsent.getString("pos"));
+    } catch (JSONException e) {
+      log.error("Error while getting terminalId " + e.getMessage(), e);
     }
 
     HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils.getPropertyExtensions(
@@ -221,6 +227,18 @@ public class Product extends ProcessHQLQuery {
     } finally {
       OBContext.restorePreviousMode();
     }
+    boolean executeGenericProductQry = false;
+    try {
+      OBContext.setAdminMode(false);
+      executeGenericProductQry = "Y".equals(Preferences.getPreferenceValue(
+          "OBPOS_ExecuteGenericProductQuery", true, OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null));
+    } catch (PropertyException e) {
+      log.error("Error getting preference OBPOS_ShowGenericProduct " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     Map<String, Object> args = new HashMap<String, Object>();
     args.put("posPrecision", posPrecision);
     try {
@@ -231,7 +249,13 @@ public class Product extends ProcessHQLQuery {
         args.put("multiPriceList", false);
       }
     } catch (JSONException e) {
-      e.printStackTrace();
+      log.error("Error while getting multiPriceList", e);
+    }
+
+    try {
+      args.put("terminalId", jsonsent.getString("pos"));
+    } catch (JSONException e) {
+      log.error("Error while getting terminalId " + e.getMessage(), e);
     }
 
     HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils.getPropertyExtensions(
@@ -300,8 +324,11 @@ public class Product extends ProcessHQLQuery {
     // generic products
     boolean isForceRemote = jsonsent.getJSONObject("parameters").has("forceRemote")
         && jsonsent.getJSONObject("parameters").getBoolean("forceRemote");
-    if (!isRemote && !isForceRemote) {// BROWSE tab is hidden, we do not need to send generic
-                                      // products
+    if (executeGenericProductQry && !isRemote && !isForceRemote) {// BROWSE tab is hidden, we do not
+                                                                  // need
+      // to
+      // send generic
+      // products
       products
           .add("select "
               + regularProductsHQLProperties.getHqlSelect()

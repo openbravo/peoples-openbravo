@@ -51,11 +51,17 @@ public class Discount extends ProcessHQLQuery {
       throw new JSONException("Product list not found");
     }
 
+    Long lastUpdated;
+
+    if (jsonsent != null) {
+      lastUpdated = jsonsent.has("lastUpdated") && !jsonsent.get("lastUpdated").equals("undefined")
+          && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
+    } else {
+      lastUpdated = null;
+    }
+
     String hql = "from PricingAdjustment p ";
     hql += "where client.id = '" + OBContext.getOBContext().getCurrentClient().getId() + "' ";
-    if (addIncrementalUpdateFilter) {
-      hql += "and (p.$incrementalUpdateCriteria) ";
-    }
     boolean multiPrices = false;
     try {
       multiPrices = "Y".equals(Preferences.getPreferenceValue("OBPOS_EnableMultiPriceList", true,
@@ -65,6 +71,13 @@ public class Discount extends ProcessHQLQuery {
     } catch (PropertyException e1) {
       log.error("Error getting Preference: " + e1.getMessage(), e1);
     }
+
+    if (lastUpdated != null) {
+      hql += ""; // Incremental Refresh
+    } else {
+      hql += "AND ((p.$incrementalUpdateCriteria)) "; // Full Refresh
+    }
+
     if (!multiPrices) {
       // price list
       hql += "and ((includePriceLists='Y' ";
@@ -82,12 +95,18 @@ public class Discount extends ProcessHQLQuery {
       hql += "    ) ";
     }
     // assortment products
-    hql += "and ((p.includedProducts = 'Y') ";
-    hql += "  or (p.includedProducts = 'N' and exists (select 1 ";
+    hql += "and ((p.includedProducts = 'Y' ";
+    hql += (addIncrementalUpdateFilter ? "and (p.$incrementalUpdateCriteria))" : ")");
+    hql += " or (p.includedProducts = 'N' and (";
+    hql += (addIncrementalUpdateFilter ? "(p.$incrementalUpdateCriteria) or " : "");
+    hql += "   exists (select 1 ";
     hql += "      from PricingAdjustmentProduct pap, OBRETCO_Prol_Product ppl ";
     hql += "      where pap.active = true and pap.priceAdjustment = p ";
     hql += "      and pap.product.id = ppl.product.id ";
-    hql += "      and ppl.obretcoProductlist.id ='" + productList.getId() + "')) ";
+    hql += "      and ppl.active = true and pap.product.active = true ";
+    hql += "      and ((ppl.$incrementalUpdateCriteria) ";
+    hql += "      or (pap.product.$incrementalUpdateCriteria)) ";
+    hql += "      and ppl.obretcoProductlist.id ='" + productList.getId() + "'))) ";
     hql += "  ) ";
 
     // organization

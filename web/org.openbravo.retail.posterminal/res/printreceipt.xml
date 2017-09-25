@@ -232,7 +232,7 @@
     </line>
 
     <line>
-      <barcode type="CODE128" position="left"><%= OB.UTIL.encodeXMLComponent(order.get('documentNo')) %></barcode>
+      <barcode type="CODE128" position="left"><%= OB.UTIL.encodeXMLComponent(order.getScannableDocumentNo()) %></barcode>
     </line>
 
   </ticket>

@@ -106,11 +106,11 @@
         me.clearModelWith(null);
         userCallback(me);
       } else {
-        OB.Dal.get(OB.Model.BPLocation, customerCol.get('locId'), function (location) { //OB.Dal.find success
-          customerCol.set('locationModel', location);
+        this.loadBPLocations(null, null, function (shipping, billing, locations) {
+          customerCol.set('locationModel', shipping || billing);
           me.clearModelWith(customerCol);
           userCallback(me);
-        });
+        }, customerCol.get('id'));
       }
     },
     loadByModel: function (cusToLoad) {
@@ -200,12 +200,13 @@
     serializeToJSON: function () {
       return JSON.parse(JSON.stringify(this.toJSON()));
     },
-    loadBPLocations: function (shipping, billing, callback) {
+    loadBPLocations: function (shipping, billing, callback, bpId) {
       var criteria = {
         bpartner: {
           operator: OB.Dal.EQ,
-          value: this.get('id')
-        }
+          value: bpId || this.get('id')
+        },
+        '_orderByClause': 'c_bpartner_location_id desc'
       };
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         var filterBpartnerId = {
@@ -226,6 +227,10 @@
           shipping = _.find(collection.models, function (loc) {
             return loc.get('isShipTo');
           });
+        }
+        if (!shipping && !billing) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerNoShippingAddress', [bpId]));
+          return;
         }
         callback(shipping, billing, collection.models);
       });
@@ -248,6 +253,7 @@
         this.set('cityName', billing.get('cityName'));
         this.set('postalCode', billing.get('postalCode'));
         this.set('countryName', billing.get('countryName'));
+        this.set('locationBillModel', billing);
       } else {
         this.set("locId", null);
         this.set("locName", null);
@@ -333,65 +339,6 @@
   }, {
     name: 'invoiceTerms',
     column: 'invoicerule',
-    type: 'TEXT'
-  }, {
-    name: 'locId',
-    column: 'c_bpartnerlocation_id',
-    type: 'TEXT'
-  }, {
-    name: 'locName',
-    column: 'c_bpartnerlocation_name',
-    filter: true,
-    skipremote: true,
-    type: 'TEXT'
-  }, {
-    name: 'postalCode',
-    column: 'postalCode',
-    filter: true,
-    type: 'TEXT'
-  }, {
-    name: 'cityName',
-    column: 'cityName',
-    filter: true,
-    type: 'TEXT'
-  }, {
-    name: 'regionId',
-    column: 'regionId',
-    type: 'TEXT'
-  }, {
-    name: 'countryId',
-    column: 'countryId',
-    type: 'TEXT'
-  }, {
-    name: 'countryName',
-    column: 'countryName',
-    type: 'TEXT'
-  }, {
-    name: 'shipLocId',
-    column: 'shipLocId',
-    type: 'TEXT'
-  }, {
-    name: 'shipLocName',
-    column: 'shipLocName',
-    filter: true,
-    type: 'TEXT'
-  }, {
-    name: 'shipPostalCode',
-    column: 'shipPostalCode',
-    filter: true,
-    type: 'TEXT'
-  }, {
-    name: 'shipCityName',
-    column: 'shipCityName',
-    filter: true,
-    type: 'TEXT'
-  }, {
-    name: 'shipRegionId',
-    column: 'shipRegionId',
-    type: 'TEXT'
-  }, {
-    name: 'shipCountryId',
-    column: 'shipCountryId',
     type: 'TEXT'
   }, {
     name: 'contactId',

@@ -195,6 +195,7 @@ enyo.kind({
       }, args);
     },
     i18nLabel: 'OBPOS_BPCategory',
+    mandatory: true,
     displayLogic: function () {
       return OB.MobileApp.model.get('terminal').bp_showcategoryselector;
     }
@@ -438,6 +439,7 @@ enyo.kind({
         me.dataReadyFunction(null, args);
       }, args);
     },
+    mandatory: true,
     hideShow: function (inSender, inEvent) {
       if (inEvent.checked) {
         this.owner.removeClass('width52');

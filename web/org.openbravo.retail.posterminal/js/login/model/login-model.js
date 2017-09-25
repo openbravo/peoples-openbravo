@@ -98,6 +98,9 @@
           params.terminalTime = currentDate;
           params.terminalTimeOffset = currentDate.getTimezoneOffset();
 
+          OB.DS.commonParams = OB.DS.commonParams || {};
+          OB.DS.commonParams.terminalName = terminalModel.get('terminalName');
+
           handleError = function (data) {
             if (data && data.exception && data.exception.message && OB.I18N.hasLabel(data.exception.message)) {
               //Common error (not a random caught exception).
@@ -163,6 +166,13 @@
                   terminalModel.set(Object.keys(data[i])[0], data[i][Object.keys(data[i])[0]]);
                 }
               }
+
+              OB.DS.commonParams = {
+                client: terminalModel.get('terminal').client,
+                organization: terminalModel.get('terminal').organization,
+                pos: terminalModel.get('terminal').id,
+                terminalName: terminalModel.get('terminalName')
+              };
 
               // update the local database with the document sequence received
               OB.MobileApp.model.saveDocumentSequence(OB.MobileApp.model.get('terminal').lastDocumentNumber, OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber, OB.MobileApp.model.get('terminal').lastReturnDocumentNumber, function () {
@@ -610,6 +620,7 @@
         OB.MobileApp.model.renderLogin();
         return false;
       }
+
       OB.DS.commonParams = OB.DS.commonParams || {};
       OB.DS.commonParams = {
         client: this.get('terminal').client,
@@ -703,23 +714,106 @@
             }
           });
         }
+        if (OB.UTIL.localStorage.getItem('synchronizedMessageId') && !this.checkProcessingMessageLocked) {
+          this.checkProcessingMessageLocked = true;
+          var me = this;
+          if (!me.showSynchronizedDialog) {
+            me.showSynchronizingDialog("CheckProcessingMessage");
+          }
+          var prcss = new OB.DS.Process('org.openbravo.retail.posterminal.CheckProcessingMessage');
+          var checkProcessingMessage;
+          checkProcessingMessage = function (counter) {
+            prcss.exec({
+              messageId: OB.UTIL.localStorage.getItem('synchronizedMessageId')
+            }, function (data) {
+              if (data && data.exception) {
+                //ERROR or no connection
+                OB.error("renderMain", data.exception.message);
+              } else if (data) {
+                if (data.status === "Processed") {
+                  OB.MobileApp.model.orderList.current.deleteOrder();
+                  OB.UTIL.rebuildCashupFromServer(function () {
+                    this.checkProcessingMessageLocked = false;
+                    OB.UTIL.localStorage.removeItem('synchronizedMessageId');
+                    OB.UTIL.showLoading(false);
+                    if (OB.MobileApp.model.showSynchronizedDialog) {
+                      OB.MobileApp.model.hideSynchronizingDialog("CheckProcessingMessage");
+                    }
+                  });
+                } else if (data.status === "Initial") {
+                  //recursively check process status 
+                  setTimeout(function () {
+                    counter++;
+                    OB.UTIL.showConfirmation.setText(OB.I18N.getLabel('OBMOBC_DataIsBeingProcessed') + " " + OB.I18N.getLabel('OBMOBC_NumOfRetries') + " " + counter);
+                    checkProcessingMessage(counter);
+                  }, 15000);
 
+                } else if (data.status === "Error") {
+                  //Show modal advicing that there was an error
+                  this.checkProcessingMessageLocked = false;
+                  OB.UTIL.localStorage.removeItem('synchronizedMessageId');
+                  if (OB.MobileApp.model.showSynchronizedDialog) {
+                    OB.MobileApp.model.hideSynchronizingDialog("CheckProcessingMessage");
+                  }
+                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_TransactionFailedTitle'), OB.I18N.getLabel('OBMOBC_TransactionFailed', [data.errorMessage]), [{
+                    isConfirmButton: true,
+                    label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                    action: function () {
+                      if (OB && OB.POS) {
+                        OB.POS.navigate('retail.pointofsale');
+                        return true;
+                      }
+                    }
+                  }]);
+                }
+              }
+            }, function (data) {
+              counter++;
+              //If the server is down, we show error message
+              if (data && data.exception && data.exception.inSender === 0) {
+                //Show modal advicing that there was an error
+                this.checkProcessingMessageLocked = false;
+                OB.UTIL.localStorage.removeItem('synchronizedMessageId');
+                if (OB.MobileApp.model.showSynchronizedDialog) {
+                  OB.MobileApp.model.hideSynchronizingDialog("CheckProcessingMessage");
+                }
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_TransactionFailedTitle'), OB.I18N.getLabel('OBMOBC_TransactionFailed', [data.exception.message]), [{
+                  isConfirmButton: true,
+                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                  action: function () {
+                    if (OB && OB.POS) {
+                      OB.POS.navigate('retail.pointofsale');
+                      return true;
+                    }
+                  }
+                }]);
+              } else {
+                setTimeout(function () {
+                  OB.UTIL.showConfirmation.setText(OB.I18N.getLabel('OBMOBC_DataIsBeingProcessed') + " " + OB.I18N.getLabel('OBMOBC_NumOfRetries') + " " + counter);
+                  checkProcessingMessage(counter);
+                }, 15000);
+              }
+
+            }, undefined, 15000);
+          };
+          checkProcessingMessage(0);
+        }
       });
-
       this.trigger('ready');
-
     },
 
     postLoginActions: function () {
       OB.debug("next process: renderTerminalMain");
       var loadModelsIncFunc;
       //MASTER DATA REFRESH
-      var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000,
+      var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc,
           minTotalRefresh = this.get('terminal').terminalType.minutestorefreshdatatotal * 60 * 1000,
           lastTotalRefresh = OB.UTIL.localStorage.getItem('POSLastTotalRefresh'),
           lastIncRefresh = OB.UTIL.localStorage.getItem('POSLastIncRefresh'),
           now = new Date().getTime(),
           intervalInc = lastIncRefresh ? (now - lastIncRefresh - minIncRefresh) : 0;
+
+      minIncRefresh = (minIncRefresh > 99999 ? 99999 : minIncRefresh) * 60 * 1000;
 
       function setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds) {
         OB.debug("Terminal lock timer reset (" + sessionTimeoutMinutes + " minutes)");
@@ -753,26 +847,34 @@
             }
           }, 1000);
 
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshed'), OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshedMessage', [OB.MobileApp.model.get('secondsToRefreshMasterdata')]), [{
-            label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-            action: function () {
-              OB.MobileApp.model.off('change:secondsToRefreshMasterdata');
-              clearInterval(counterIntervalId);
-            }
-          }], {
+          OB.MobileApp.view.$.dialogsContainer.createComponent({
+            kind: 'OB.UI.ModalAction',
+            header: OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshed'),
+            bodyContent: {
+              content: OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshedMessage', [OB.MobileApp.model.get('secondsToRefreshMasterdata')])
+            },
+            bodyButtons: {
+              kind: 'OB.UI.ModalDialogButton',
+              content: OB.I18N.getLabel('OBMOBC_LblCancel'),
+              tap: function () {
+                OB.MobileApp.model.off('change:secondsToRefreshMasterdata');
+                clearInterval(counterIntervalId);
+                this.doHideThisPopup();
+              }
+            },
             autoDismiss: false,
             hideCloseButton: true,
-            onShowFunction: function (popup) {
-              var thePopup = popup;
+            executeOnShow: function () {
+              var reloadPopup = this;
               OB.MobileApp.model.on('change:secondsToRefreshMasterdata', function () {
-                thePopup.$.bodyContent.$.control.setContent(OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshedMessage', [OB.MobileApp.model.get('secondsToRefreshMasterdata')]));
+                reloadPopup.$.bodyContent.$.control.setContent(OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshedMessage', [OB.MobileApp.model.get('secondsToRefreshMasterdata')]));
                 if (OB.MobileApp.model.get('secondsToRefreshMasterdata') === 0) {
-                  thePopup.hide();
+                  reloadPopup.hide();
                   OB.MobileApp.model.off('change:secondsToRefreshMasterdata');
                 }
               });
             }
-          });
+          }).show();
 
         };
         // in case there was no incremental load at login then schedule an incremental
@@ -1235,6 +1337,8 @@
       if (OB.UTIL.localStorage.getItem('cacheSessionId') && OB.UTIL.localStorage.getItem('cacheSessionId').length === 32) {
         cacheSessionId = OB.UTIL.localStorage.getItem('cacheSessionId');
       }
+      me.setTerminalName(OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
+
       params.cacheSessionId = cacheSessionId;
       params.command = 'initActions';
       new OB.OBPOSLogin.UI.LoginRequest({

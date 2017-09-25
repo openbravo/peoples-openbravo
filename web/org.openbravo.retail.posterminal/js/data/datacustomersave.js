@@ -215,16 +215,23 @@
                   if (order.get('bp').get('id') === customerId) {
                     var clonedBP = new OB.Model.BusinessPartner();
                     OB.UTIL.clone(customer, clonedBP);
+                    var bp = order.get('bp');
                     if (order.get('bp').get('locId') !== customer.get('locId')) {
                       // if the order has a different address but same BP than the bp
                       // then copy over the address data
-                      var bp = order.get('bp');
                       clonedBP.set('locId', bp.get('locId'));
                       clonedBP.set('locName', bp.get('locName'));
                       clonedBP.set('postalCode', bp.get('postalCode'));
                       clonedBP.set('cityName', bp.get('cityName'));
                       clonedBP.set('countryName', bp.get('countryName'));
                       clonedBP.set('locationModel', bp.get('locationModel'));
+                    }
+                    if (order.get('bp').get('shipLocId') !== customer.get('shipLocId')) {
+                      clonedBP.set('shipLocId', bp.get('shipLocId'));
+                      clonedBP.set('shipLocName', bp.get('shipLocName'));
+                      clonedBP.set('shipPostalCode', bp.get('shipPostalCode'));
+                      clonedBP.set('shipCityName', bp.get('shipCityName'));
+                      clonedBP.set('shipCountryName', bp.get('shipCountryName'));
                     }
                     order.set('bp', clonedBP);
                     order.save();

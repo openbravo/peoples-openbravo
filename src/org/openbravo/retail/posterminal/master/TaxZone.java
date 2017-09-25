@@ -21,7 +21,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
@@ -50,8 +49,7 @@ public class TaxZone extends ProcessHQLQuery {
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     try {
       OBContext.setAdminMode(true);
-      OBPOSApplications posDetail = POSUtils.getTerminalById(RequestContext.get()
-          .getSessionAttribute("POSTerminal").toString());
+      OBPOSApplications posDetail = POSUtils.getTerminalById(jsonsent.getString("pos"));
       final OrganizationInformation storeInfo = posDetail.getOrganization()
           .getOrganizationInformationList().get(0);
       final Country fromCountry = storeInfo.getLocationAddress().getCountry();
@@ -75,8 +73,7 @@ public class TaxZone extends ProcessHQLQuery {
 
     OBPOSApplications posDetail;
 
-    posDetail = POSUtils.getTerminalById(RequestContext.get().getSessionAttribute("POSTerminal")
-        .toString());
+    posDetail = POSUtils.getTerminalById(jsonsent.getString("pos"));
 
     if (posDetail == null) {
       throw new OBException("terminal id is not present in session ");

@@ -22,7 +22,6 @@ import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 import org.openbravo.mobile.core.servercontroller.SynchronizedServerProcessCaller;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.retail.posterminal.OBPOSErrors;
-import org.openbravo.retail.posterminal.ProcessCashClose;
 import org.openbravo.service.importprocess.ImportEntry;
 
 /**
@@ -32,7 +31,7 @@ import org.openbravo.service.importprocess.ImportEntry;
  * @author mtaal
  */
 public class CashupSynchronized extends Cashup {
-  private static final Logger log = Logger.getLogger(ProcessCashClose.class);
+  private static final Logger log = Logger.getLogger(CashupSynchronized.class);
 
   @Override
   public JSONObject exec(JSONObject json) throws JSONException, ServletException {

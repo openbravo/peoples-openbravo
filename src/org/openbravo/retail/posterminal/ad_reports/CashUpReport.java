@@ -34,14 +34,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.data.ListOfArrayDataSource;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
-
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.hibernate.Query;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -56,12 +49,22 @@ import org.openbravo.retail.posterminal.OBPOSAppPayment;
 import org.openbravo.retail.posterminal.OBPOSPaymentMethodCashup;
 import org.openbravo.retail.posterminal.OBPOSPaymentcashupEvents;
 
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.ListOfArrayDataSource;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+
 public class CashUpReport extends HttpSecureAppServlet {
   @Inject
   @Any
   private Instance<CashupReportHook> cashupReportHooks;
 
   private static final long serialVersionUID = 1L;
+
+  public static final Logger log = Logger.getLogger(CashUpReport.class);
 
   @Override
   @SuppressWarnings("unchecked")
@@ -153,8 +156,8 @@ public class CashUpReport extends HttpSecureAppServlet {
       Collections.sort(paymentMethodCashupList, new PaymentMethodComparator());
       for (int i = 0; i < paymentMethodCashupList.size(); i++) {
         OBPOSPaymentMethodCashup paymentMethodCashup = paymentMethodCashupList.get(i);
-        if (isMaster || (!isMaster && !isSlave)
-            || !paymentMethodCashup.getPaymentType().getPaymentMethod().isShared()) {
+        if ((isMaster || (!isMaster && !isSlave)
+            || !paymentMethodCashup.getPaymentType().getPaymentMethod().isShared()) && paymentMethodCashup.getPaymentType().getPaymentMethod().isCountpaymentincashup()) {
           conversionRate = paymentMethodCashup.getRate() == null ? BigDecimal.ONE
               : paymentMethodCashup.getRate();
           isoCode = paymentMethodCashup.getIsocode();
@@ -390,7 +393,7 @@ public class CashUpReport extends HttpSecureAppServlet {
           }
         }
       } catch (final Exception e) {
-        e.printStackTrace();
+        log.error("Error in executing hooks", e);
       }
     }
 

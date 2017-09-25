@@ -80,6 +80,24 @@ enyo.kind({
     onPressedButton: ''
   },
   tap: function () {
+    var orderBP = this.model.get('order').get('bp');
+    if (this.customer.get('id') === orderBP.get('id')) {
+      if (this.customer.get('locId') !== orderBP.get('locId')) {
+        this.customer.set('locId', orderBP.get('locId'));
+        this.customer.set('locName', orderBP.get('locName'));
+        this.customer.set('postalCode', orderBP.get('postalCode'));
+        this.customer.set('cityName', orderBP.get('cityName'));
+        this.customer.set('countryName', orderBP.get('countryName'));
+        this.customer.set('locationModel', orderBP.get('locationModel'));
+      }
+      if (this.customer.get('shipLocId') !== orderBP.get('shipLocId')) {
+        this.customer.set('shipLocId', orderBP.get('shipLocId'));
+        this.customer.set('shipLocName', orderBP.get('shipLocName'));
+        this.customer.set('shipPostalCode', orderBP.get('shipPostalCode'));
+        this.customer.set('shipCityName', orderBP.get('shipCityName'));
+        this.customer.set('shipCountryName', orderBP.get('shipCountryName'));
+      }
+    }
     this.doChangeBusinessPartner({
       businessPartner: this.customer,
       target: 'order'

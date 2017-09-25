@@ -191,6 +191,9 @@ enyo.kind({
         }
       }
     }
+    if (this.args.context) {
+      this.args.context.owner.owner.rearrangeEditButtonBar(this.args.selectedLine);
+    }
     receipt.calculateReceipt();
   },
   updateTotal: function () {

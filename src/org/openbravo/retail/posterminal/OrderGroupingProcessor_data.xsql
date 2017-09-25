@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
  *************************************************************************
- * Copyright (C) 2015 Openbravo S.L.U.
+ * Copyright (C) 2015-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -14,7 +14,8 @@
     <SqlMethodComment>select orderlines with multiple shipmentlines</SqlMethodComment>
     <Sql>
     <![CDATA[
-        select ol.c_orderline_id, o.c_order_id, '' as c_invoice_id
+        select ol.c_orderline_id, o.c_order_id, '' as c_invoice_id,
+        '' as bpname, '' as c_paymentterm_id, '' as fin_paymentmethod_id
         from c_orderline ol
         join c_order o on ol.c_order_id = o.c_order_id
         where (select count(1) from m_inoutline il where il.c_orderline_id = ol.c_orderline_id) > 1
@@ -25,6 +26,30 @@
     <Parameter name="cashupId"/>
     <Parameter name="invDescription"/>
   </SqlMethod>
+  <SqlMethod name="selectOrderBusinessPartner" type="preparedStatement" return="multiple">
+    <SqlMethodComment>select order business partner by cashup</SqlMethodComment>
+    <Sql>
+    <![CDATA[
+        select '' as c_orderline_id, '' as c_order_id, '' as c_invoice_id, 
+        ad_column_identifier('c_bpartner', bp.c_bpartner_id, ?) as bpname,
+        bp.c_paymentterm_id, bp.fin_paymentmethod_id
+        from c_order o, obpos_applications ap, obpos_terminaltype tt, c_doctype dt, c_bpartner bp
+        where o.em_obpos_applications_id = ap.obpos_applications_id
+        and ap.obpos_terminaltype_id = tt.obpos_terminaltype_id
+        and tt.c_doctype_id = dt.c_doctype_id
+        and o.c_bpartner_id = bp.c_bpartner_id
+        and o.em_obpos_app_cashup_id = ?
+        and o.c_doctype_id in (tt.c_doctype_id, tt.c_doctyperet_id)
+        and not exists (select 1 from c_orderline ol2 where 
+        (ol2.qtyinvoiced <> 0 or ol2.qtyordered = 0 or ol2.qtydelivered <> ol2.qtyordered) 
+        and ol2.c_order_id = o.c_order_id)
+        and o.em_obpos_notinvoiceoncashup = 'N'
+        and (bp.c_paymentterm_id is null or bp.fin_paymentmethod_id is null)
+        group by bp.c_bpartner_id, bp.c_paymentterm_id, bp.fin_paymentmethod_id order by bpname
+    ]]></Sql>
+    <Parameter name="lang"/>
+    <Parameter name="cashupId"/>
+  </SqlMethod>
   <SqlMethod name="insertHeaderGrouping" type="preparedStatement" return="rowcount">
     <SqlMethodComment>Insert invoice headers grouping orders</SqlMethodComment>
     <Sql>
@@ -33,13 +58,13 @@
         (c_invoice_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, issotrx,
          documentno, docstatus, docaction, processing, processed, posted, c_doctype_id, c_doctypetarget_id, c_order_id, description, dateordered,
          salesrep_id, dateinvoiced, dateacct, c_bpartner_id, c_bpartner_location_id,  c_currency_id, paymentrule, c_paymentterm_id, totallines,
-         grandtotal, m_pricelist_id, ispaid, totalpaid, outstandingamt, fin_paymentmethod_id, em_aprm_processinvoice)
+         grandtotal, m_pricelist_id, ispaid, totalpaid, outstandingamt, fin_paymentmethod_id, ad_user_id, em_aprm_processinvoice)
         select get_uuid(), o.ad_client_id, o.ad_org_id, 'Y', now(), ?, now(), ?, 'Y', ?,
         'CO', 'RE', 'N', 'Y', 'N', dt.c_doctypeinvoice_id, dt.c_doctypeinvoice_id,
         null, ?, null, max(o.salesrep_id), to_timestamp(to_char(?), to_char('DD-MM-YYYY HH24:MI:SS')),
         to_timestamp(to_char(?), to_char('DD-MM-YYYY HH24:MI:SS')), o.c_bpartner_id, coalesce(o.billto_id, o.c_bpartner_location_id),
         o.c_currency_id, bp.paymentrule, bp.c_paymentterm_id, sum(o.totallines), sum(o.grandtotal), max(o.m_pricelist_id),
-        'Y', sum(o.grandtotal),  0, bp.fin_paymentmethod_id, 'RE'
+        'Y', sum(o.grandtotal),  0, bp.fin_paymentmethod_id, o.ad_user_id, 'RE'
         from  c_order o, obpos_applications ap, obpos_terminaltype tt, c_doctype dt, c_bpartner bp
         where o.em_obpos_applications_id = ap.obpos_applications_id
         and ap.obpos_terminaltype_id = tt.obpos_terminaltype_id
@@ -51,7 +76,7 @@
         and o.em_obpos_notinvoiceoncashup = 'N'
         group by  o.ad_client_id, o.ad_org_id, dt.c_doctypeinvoice_id, dt.c_doctypeinvoice_id,
         o.c_bpartner_id, coalesce(o.billto_id, o.c_bpartner_location_id), o.c_currency_id, bp.paymentrule,
-        bp.c_paymentterm_id, o.m_pricelist_id, bp.fin_paymentmethod_id
+        bp.c_paymentterm_id, o.m_pricelist_id, bp.fin_paymentmethod_id, o.ad_user_id
     ]]>
     </Sql>
     <Parameter name="userId"/>
@@ -71,14 +96,14 @@
         (c_invoice_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, issotrx,
          documentno, docstatus, docaction, processing, processed, posted, c_doctype_id, c_doctypetarget_id, c_order_id, description, dateordered,
          salesrep_id, dateinvoiced, dateacct, c_bpartner_id, c_bpartner_location_id,  c_currency_id, paymentrule, c_paymentterm_id, totallines,
-         grandtotal, m_pricelist_id, ispaid, totalpaid, outstandingamt, fin_paymentmethod_id, em_aprm_processinvoice)
+         grandtotal, m_pricelist_id, ispaid, totalpaid, outstandingamt, fin_paymentmethod_id, ad_user_id, em_aprm_processinvoice)
         select get_uuid(), o.ad_client_id, o.ad_org_id, 'Y', now(), ?, now(), ?, 'Y', ?, 'CO', 'RE', 'N', 'Y', 'N',
         dt.c_doctypeinvoice_id, dt.c_doctypeinvoice_id,
         o.c_order_id, ? || '. ' || max(ad_message_get2('OrderDocumentno', ?)) || ' ' || o.documentno, o.dateordered,
         max(o.salesrep_id), to_timestamp(to_char(?), to_char('DD-MM-YYYY HH24:MI:SS')),
         to_timestamp(to_char(?), to_char('DD-MM-YYYY HH24:MI:SS')),
         o.c_bpartner_id, coalesce(o.billto_id, o.c_bpartner_location_id), o.c_currency_id, bp.paymentrule,
-        bp.c_paymentterm_id, sum(o.totallines), sum(o.grandtotal), max(o.m_pricelist_id), 'Y', sum(o.grandtotal),  0, bp.fin_paymentmethod_id, 'RE'
+        bp.c_paymentterm_id, sum(o.totallines), sum(o.grandtotal), max(o.m_pricelist_id), 'Y', sum(o.grandtotal),  0, bp.fin_paymentmethod_id, o.ad_user_id, 'RE'
         from  c_order o, obpos_applications ap, obpos_terminaltype tt, c_doctype dt, c_bpartner bp
         where o.em_obpos_applications_id = ap.obpos_applications_id
         and ap.obpos_terminaltype_id = tt.obpos_terminaltype_id
@@ -90,7 +115,7 @@
         and o.em_obpos_notinvoiceoncashup = 'N'
         group by  o.ad_client_id, o.ad_org_id, dt.c_doctypeinvoice_id, dt.c_doctypeinvoice_id,
         o.c_bpartner_id, coalesce(o.billto_id, o.c_bpartner_location_id), o.c_currency_id, bp.paymentrule,
-        bp.c_paymentterm_id, o.m_pricelist_id, bp.fin_paymentmethod_id,
+        bp.c_paymentterm_id, o.m_pricelist_id, bp.fin_paymentmethod_id, o.ad_user_id,
         o.c_order_id, o.dateOrdered, o.documentno
         order by o.dateOrdered, o.documentno
       ]]>

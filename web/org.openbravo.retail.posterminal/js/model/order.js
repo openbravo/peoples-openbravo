@@ -617,7 +617,6 @@
       });
       var saveAndTriggerEvents = function (gross, save) {
           var now = new Date();
-          me.set('loaded', OB.I18N.normalizeDate(now));
           me.set('timezoneOffset', now.getTimezoneOffset());
           var net = me.get('lines').reduce(function (memo, e) {
             var netLine = e.get('discountedNet');
@@ -1224,7 +1223,7 @@
         options = args.options || {};
         options.setUndo = (_.isUndefined(options.setUndo) || _.isNull(options.setUndo) || options.setUndo !== false) ? true : options.setUndo;
 
-        if (!OB.UTIL.isNullOrUndefined(args.line.get('originalOrderLineId'))) {
+        if (!args.line.get('isEditable')) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotChangePrice'));
         } else if (args.line.get('replacedorderline') && args.line.get('qty') < 0) {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange'));
@@ -1387,6 +1386,15 @@
         }
         return;
       }
+
+      if (!line.get('isDeletable')) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotDeletableLine', [line.get('product').get('_identifier')]));
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+
       if (me.get('replacedorder') && line.get('remainingQuantity')) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
         if (callback) {
@@ -1528,8 +1536,9 @@
           line = null,
           me = this,
           productHavingSameAttribute = false,
-          productHasAttribute = p.attributes.hasAttributes,
-          attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true);
+          productHasAttribute = p.get('hasAttributes'),
+          attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true),
+          isQuotationAndAttributeAllowed = p.get('isQuotation') && OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenCreatingQuotation', true);
       if (enyo.Panels.isScreenNarrow()) {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_AddLine', [qty ? qty : 1, p.get('_identifier')]));
       }
@@ -1544,7 +1553,7 @@
             if (attrs && (currentline.attributeValue === attrs.attributeValue) && (p.id === currentline.product.id)) {
               productHavingSameAttribute = true;
               line = currentline;
-              if (p.get('isSerialNo')) {
+              if (p.get('isSerialNo') || (p.get('isSerialNo') && isQuotationAndAttributeAllowed)) {
                 OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ProductDefinedAsSerialNo'));
                 if (callback) {
                   callback(false, null);
@@ -1599,7 +1608,7 @@
               line = options.line;
             } else {
               line = me.get('lines').find(function (l) {
-                if (l.get('product').id === p.id && ((l.get('qty') > 0 && qty > 0) || (l.get('qty') < 0 && qty < 0))) {
+                if (l.get('product').id === p.id && l.get('isEditable') && ((l.get('qty') > 0 && qty > 0) || (l.get('qty') < 0 && qty < 0))) {
                   if (attributeSearchAllowed && attrs) {
                     if ((l.get('attributeValue') === attrs.attributeValue)) {
                       return true;
@@ -1624,8 +1633,8 @@
               }
               var splitline = !(options && options.line) && !OB.UTIL.isNullOrUndefined(args.line) && !OB.UTIL.isNullOrUndefined(args.line.get('splitline')) && args.line.get('splitline');
               var serviceProduct = args.line && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')));
-              var groupedByAttributeValues = (productHasAttribute && productHavingSameAttribute) || (!productHasAttribute && !productHavingSameAttribute);
-              if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (serviceProduct) && groupedByAttributeValues) {
+              var groupedByAttributeValues = ((productHasAttribute && productHavingSameAttribute) || (!productHasAttribute && !productHavingSameAttribute)) && attributeSearchAllowed;
+              if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (serviceProduct) && (groupedByAttributeValues || !groupedByAttributeValues)) {
                 args.receipt.addUnit(args.line, args.qty);
                 if (!_.isUndefined(args.attrs)) {
                   _.each(_.keys(args.attrs), function (key) {
@@ -1925,7 +1934,8 @@
     },
 
     addProductToOrder: function (p, qty, options, attrs, callback) {
-      var me = this;
+      var me = this,
+          attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true);
       OB.UTIL.HookManager.executeHooks('OBPOS_AddProductToOrder', {
         receipt: this,
         productToAdd: p,
@@ -1974,7 +1984,8 @@
           }
           return;
         }
-        if ((!args || !args.options || !args.options.line) && OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true) && p.get('hasAttributes') && qty >= 1) {
+        var isQuotationAndAttributeAllowed = args.receipt.get('isQuotation') && OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenCreatingQuotation', true);
+        if ((!args || !args.options || !args.options.line) && attributeSearchAllowed && p.get('hasAttributes') && qty >= 1 && (!args.receipt.get('isQuotation') || isQuotationAndAttributeAllowed)) {
           OB.MobileApp.view.waterfall('onShowPopup', {
             popup: 'modalProductAttribute',
             args: {
@@ -2088,7 +2099,7 @@
         line = lines.at(i);
         for (j = i + 1; j < lines.length; j++) {
           otherLine = lines.at(j);
-          if (otherLine.get('product').id !== line.get('product').id) {
+          if (otherLine.get('product').id !== line.get('product').id || !line.get('product').groupProduct) {
             continue;
           }
 
@@ -2257,7 +2268,9 @@
           warehouse: {
             id: OB.UTIL.isNullOrUndefined(attrs) || (!OB.UTIL.isNullOrUndefined(attrs) && OB.UTIL.isNullOrUndefined(attrs.splitline)) ? OB.MobileApp.model.get('warehouses')[0].warehouseid : attrs.originalLine.get('warehouse').id,
             warehousename: OB.UTIL.isNullOrUndefined(attrs) || (!OB.UTIL.isNullOrUndefined(attrs) && OB.UTIL.isNullOrUndefined(attrs.splitline)) ? OB.MobileApp.model.get('warehouses')[0].warehousename : attrs.originalLine.get('warehouse').warehousename
-          }
+          },
+          isEditable: options && options.hasOwnProperty('isEditable') ? options.isEditable : true,
+          isDeletable: options && options.hasOwnProperty('isDeletable') ? options.isEditable : true
         });
 
         if (!_.isUndefined(attrs)) {
@@ -2519,33 +2532,96 @@
         }
 
         var saveBP = function () {
-            me.set('bp', businessPartner);
-            me.save();
-            // copy the modelOrder again, as saveIfNew is possibly async
-            OB.MobileApp.model.orderList.saveCurrent();
-            finishSaveData(callback);
+            if (!businessPartner.get('locId') || !businessPartner.get('shipLocId')) {
+              businessPartner.loadBPLocations(null, null, function (shipping, billing, locations) {
+                businessPartner.set('locationModel', billing);
+                businessPartner.set('locId', billing.get('id'));
+                businessPartner.set('locName', billing.get('name'));
+                businessPartner.set('postalCode', billing.get('postalCode'));
+                businessPartner.set('cityName', billing.get('cityName'));
+                businessPartner.set('countryName', billing.get('countryName'));
+                if (shipping) {
+                  businessPartner.set('shipLocId', shipping.get('id'));
+                  businessPartner.set('shipLocName', shipping.get('name'));
+                  businessPartner.set('shipPostalCode', shipping.get('postalCode'));
+                  businessPartner.set('shipCityName', shipping.get('cityName'));
+                  businessPartner.set('shipCountryName', shipping.get('countryName'));
+                  businessPartner.set('shipRegionId', shipping.get('regionId'));
+                  businessPartner.set('shipCountryId', shipping.get('countryId'));
+                }
+
+                me.set('bp', businessPartner);
+                me.save();
+                // copy the modelOrder again, as saveIfNew is possibly async
+                OB.MobileApp.model.orderList.saveCurrent();
+                finishSaveData(callback);
+              }, businessPartner.get('id'));
+            } else {
+              me.set('bp', businessPartner);
+              me.save();
+              // copy the modelOrder again, as saveIfNew is possibly async
+              OB.MobileApp.model.orderList.saveCurrent();
+              finishSaveData(callback);
+            }
             };
 
-        if (businessPartner.get('locationModel')) {
-          OB.Dal.saveIfNew(businessPartner.get('locationModel'), function () {}, function (tx, error) {
-            OB.UTIL.showError("OBDAL error: " + error);
-          });
-          saveBP();
-        } else {
-          OB.Dal.get(OB.Model.BPLocation, businessPartner.get('shipLocId'), function (location) {
-            OB.Dal.saveIfNew(location, function () {}, function (tx, error) {
-              OB.UTIL.showError("OBDAL error: " + error);
-            });
-            businessPartner.set('locationModel', location);
+        var saveLocModel = function (locModel, lid, callback) {
+            if (businessPartner.get(locModel)) {
+              OB.Dal.saveIfNew(businessPartner.get(locModel), function () {}, function (tx, error) {
+                OB.UTIL.showError("OBDAL error: " + error);
+              });
+              if (callback) {
+                callback();
+              }
+            } else {
+              OB.Dal.get(OB.Model.BPLocation, businessPartner.get(lid), function (location) {
+                OB.Dal.saveIfNew(location, function () {}, function (tx, error) {
+                  OB.UTIL.showError("OBDAL error: " + error);
+                });
+                businessPartner.set(locModel, location);
+                if (callback) {
+                  callback();
+                }
+              }, function () {
+                OB.error(arguments);
+              });
+            }
+            };
+
+        saveLocModel('locationModel', 'shipLocId', function () {
+          saveLocModel('locationBillModel', 'locId', function () {
             saveBP();
-          }, function () {
-            OB.error(arguments);
           });
-        }
+        });
+
       } else {
-        this.set('bp', businessPartner);
-        this.save();
-        finishSaveData(callback);
+
+        if (!businessPartner.get('locId') || !businessPartner.get('shipLocId')) {
+          businessPartner.loadBPLocations(null, null, function (shipping, billing, locations) {
+            businessPartner.set('locationModel', billing);
+            businessPartner.set('locId', billing.get('id'));
+            businessPartner.set('locName', billing.get('name'));
+            businessPartner.set('postalCode', billing.get('postalCode'));
+            businessPartner.set('cityName', billing.get('cityName'));
+            businessPartner.set('countryName', billing.get('countryName'));
+            if (shipping) {
+              businessPartner.set('shipLocId', shipping.get('id'));
+              businessPartner.set('shipLocName', shipping.get('name'));
+              businessPartner.set('shipPostalCode', shipping.get('postalCode'));
+              businessPartner.set('shipCityName', shipping.get('cityName'));
+              businessPartner.set('shipCountryName', shipping.get('countryName'));
+              businessPartner.set('shipRegionId', shipping.get('regionId'));
+              businessPartner.set('shipCountryId', shipping.get('countryId'));
+            }
+            me.set('bp', businessPartner);
+            me.save();
+            finishSaveData(callback);
+          }, businessPartner.get('id'));
+        } else {
+          me.set('bp', businessPartner);
+          me.save();
+          finishSaveData(callback);
+        }
       }
     },
 
@@ -2785,42 +2861,41 @@
     },
 
     verifyCancelAndReplace: function (context) {
-      var me = this,
-          process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled');
-
-      process.exec({
-        orderId: this.get('id'),
-        documentNo: this.get('documentNo')
-      }, function (data) {
-        if (data && data.exception) {
-          if (data.exception.message) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message);
-            return;
-          }
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
-          return;
-        } else if (data && data.orderCancelled) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderReplacedError'));
-          return;
-        } else {
-          OB.UTIL.HookManager.executeHooks('OBPOS_PreCancelAndReplace', {
-            context: context
-          }, function (args) {
-            if (args && args.cancelOperation) {
+      var me = this;
+      this.checkNotProcessedPayments(function () {
+        var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled');
+        process.exec({
+          orderId: me.get('id'),
+          documentNo: me.get('documentNo'),
+          checkNotEditableLines: true
+        }, function (data) {
+          if (data && data.exception) {
+            if (data.exception.message) {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message);
               return;
             }
-
-            me.checkNotProcessedPayments(function () {
-              me.cancelAndReplaceOrder(context);
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+            return;
+          } else if (data && data.orderCancelled) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderReplacedError'));
+            return;
+          } else {
+            OB.UTIL.HookManager.executeHooks('OBPOS_PreCancelAndReplace', {
+              context: context
+            }, function (args) {
+              if (args && args.cancelOperation) {
+                return;
+              }
+              me.cancelAndReplaceOrder(context, data.deferredLines);
             });
-          });
-        }
-      }, function () {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+          }
+        }, function () {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+        });
       });
     },
 
-    cancelAndReplaceOrder: function (context) {
+    cancelAndReplaceOrder: function (context, deferredLines) {
       var documentseq, documentseqstr, idMap = {},
           me = this,
           i, splittedDocNo = [],
@@ -2841,7 +2916,8 @@
       me.set('doCancelAndReplace', true);
 
       OB.Dal.remove(this, function () {
-        var deliveredQty = 0;
+        var deliveredQty = 0,
+            linesWithDeferred = [];
         me.get('lines').each(function (line) {
           idMap[line.get('id')] = OB.UTIL.get_UUID();
           line.set('replacedorderline', line.get('id'));
@@ -2871,6 +2947,24 @@
           } else {
             me.set('salesRepresentative', null);
           }
+        }
+
+        if (deferredLines.length) {
+          linesWithDeferred.push(OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBody'));
+        }
+        //Set to not editable and not deletable to all deferred lines or lines that have deferred services
+        _.each(deferredLines, function (deferredLine) {
+          var deffLine = _.find(me.get('lines').models, function (line) {
+            return deferredLine === OB.DEC.mul(OB.DEC.add(line.get('linepos'), 1), 10);
+          });
+          deffLine.set('isEditable', false);
+          deffLine.set('isDeletable', false);
+          linesWithDeferred.push(OB.I18N.getLabel('OBMOBC_Character')[1] + ' ' + deffLine.get('product').get('_identifier') + ' (' + OB.I18N.getLabel('OBPOS_LineQuantity') + ': ' + deffLine.get('qty') + ')');
+        });
+        if (deferredLines.length) {
+          linesWithDeferred.push(OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBodyFooter'));
+          linesWithDeferred.push(OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBodyFooter2'));
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotModifiableLines'), linesWithDeferred);
         }
 
         me.set('hasbeenpaid', 'N');
@@ -2913,6 +3007,11 @@
             me.calculateReceipt(function () {
               me.unset('skipApplyPromotions');
             });
+            // Set the first line as selected to call the 'onRearrangeEditButtonBar' event and update the isEditable and
+            // isDeletable status for the lines (to hide or show the buttons)
+            if (deferredLines.length) {
+              me.get('lines').at(me.get('lines').models.length - 1).trigger('selected', me.get('lines').at(me.get('lines').models.length - 1));
+            }
           });
         });
       }, function () {
@@ -2942,33 +3041,56 @@
 
     cancelLayaway: function (context) {
       var me = this;
-      OB.UTIL.HookManager.executeHooks('OBPOS_PreCancelLayaway', {
-        context: context
-      }, function (args) {
-        if (args && args.cancelOperation) {
-          return;
-        }
-
-        me.checkNotProcessedPayments(function () {
-          //Cloning order to be canceled
-          var clonedreceipt = new OB.Model.Order();
-          OB.UTIL.clone(me, clonedreceipt);
-          if (me.get('paidOnCredit')) {
-            me.set('paidOnCredit', false);
-            me.set('paidPartiallyOnCredit', false);
-            me.set('creditAmount', 0);
+      this.checkNotProcessedPayments(function () {
+        var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled');
+        process.exec({
+          orderId: me.get('id'),
+          documentNo: me.get('documentNo'),
+          checkNotDeliveredDeferredServices: true
+        }, function (data) {
+          if (data && data.exception) {
+            if (data.exception.message) {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message);
+              return;
+            }
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+            return;
+          } else if (data && data.orderCancelled) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderCanceledError'));
+            return;
+          } else if (data && data.hasDeferredServices) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CannotCancelLayWithDeferred'));
+            return;
+          } else {
+            OB.UTIL.HookManager.executeHooks('OBPOS_PreCancelLayaway', {
+              context: context
+            }, function (args) {
+              if (args && args.cancelOperation) {
+                return;
+              }
+              //Cloning order to be canceled
+              var clonedreceipt = new OB.Model.Order();
+              OB.UTIL.clone(me, clonedreceipt);
+              if (me.get('paidOnCredit')) {
+                me.set('paidOnCredit', false);
+                me.set('paidPartiallyOnCredit', false);
+                me.set('creditAmount', 0);
+              }
+              me.set('cancelLayaway', true);
+              me.set('canceledorder', clonedreceipt);
+              context.doShowDivText({
+                permission: context.permission,
+                orderType: 3
+              });
+              context.doTabChange({
+                tabPanel: 'payment',
+                keyboard: 'toolbarpayment',
+                edit: false
+              });
+            });
           }
-          me.set('cancelLayaway', true);
-          me.set('canceledorder', clonedreceipt);
-          context.doShowDivText({
-            permission: context.permission,
-            orderType: 3
-          });
-          context.doTabChange({
-            tabPanel: 'payment',
-            keyboard: 'toolbarpayment',
-            edit: false
-          });
+        }, function () {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
         });
       });
     },
@@ -2985,7 +3107,11 @@
     createOrderFromQuotation: function (updatePrices) {
       var idMap = {},
           oldIdMap = {},
-          oldId, me = this;
+          oldId, me = this,
+          productHasAttribute = false,
+          productWithAttributeValue = [],
+          needAttributeWhenCreatingQuotation = OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenCreatingQuotation', true),
+          attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true);
       this.get('lines').each(function (line) {
         oldId = line.get('id');
         line.set('id', OB.UTIL.get_UUID());
@@ -3045,6 +3171,7 @@
       this.set('documentNo', nextDocumentno.documentNo);
       this.set('posTerminal', OB.MobileApp.model.get('terminal').id);
       this.set('session', OB.MobileApp.model.get('session'));
+      this.unset('deletedLines');
       this.save();
 
       this.get('lines').each(function (line) {
@@ -3059,23 +3186,43 @@
         }
       }, this);
 
-      if (updatePrices) {
-        this.updatePrices(function (order) {
-          order.calculateReceipt(function () {
-            OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
-            // This event is used in stock validation module.
-            order.trigger('orderCreatedFromQuotation');
+      this.get('lines').each(function (theLine) {
+        var productAttributes = theLine.get('product').get('hasAttributes');
+        if (OB.UTIL.isNullOrUndefined(productAttributes) === false && productAttributes) {
+          productWithAttributeValue.push(theLine);
+          productHasAttribute = productAttributes;
+        }
+      });
+      if (productHasAttribute === false && needAttributeWhenCreatingQuotation === false) {
+        if (updatePrices) {
+          this.updatePrices(function (order) {
+            order.calculateReceipt(function () {
+              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+              // This event is used in stock validation module.
+              order.trigger('orderCreatedFromQuotation');
+            });
           });
-        });
-      } else {
-        this.set('skipApplyPromotions', true);
-        this.calculateReceipt(function () {
-          me.unset('skipApplyPromotions');
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
-          me.trigger('orderCreatedFromQuotation');
-        });
+        } else {
+          this.set('skipApplyPromotions', true);
+          this.calculateReceipt(function () {
+            me.unset('skipApplyPromotions');
+            OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+            me.trigger('orderCreatedFromQuotation');
+          });
+        }
       }
-      this.calculateReceipt();
+      this.calculateReceipt(function () {
+        //call quotation attributes popup
+        if (attributeSearchAllowed && needAttributeWhenCreatingQuotation === false && productHasAttribute) {
+          OB.MobileApp.view.waterfall('onShowPopup', {
+            popup: 'modalQuotationProductAttributes',
+            args: {
+              lines: productWithAttributeValue,
+              quotationProductAttribute: me
+            }
+          });
+        }
+      });
     },
 
     reactivateQuotation: function () {
@@ -3340,6 +3487,10 @@
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
         return;
       }
+      if (!payment.get('isReversePayment') && this.getPending() <= 0 && payment.get('amount') > 0) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_PaymentsExact'));
+        return;
+      }
 
       order = this;
       if (order.get('orderType') === 3 && order.getGross() === 0) {
@@ -3375,31 +3526,35 @@
           executeFinalCallback(false);
           return;
         }
-        if (!payment.get('paymentData') && !payment.get('reversedPaymentId')) {
-          // search for an existing payment only if there is not paymentData info.
-          // this avoids to merge for example card payments of different cards.
-          for (i = 0, max = payments.length; i < max; i++) {
-            p = payments.at(i);
-            if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment') && !p.get('reversedPaymentId')) {
-              p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
-              if (p.get('rate') && p.get('rate') !== '1') {
-                p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+        // search for an existing payment only if is not a reverser payment.
+        if (!payment.get('reversedPaymentId')) {
+          if (!payment.get('paymentData')) {
+            // search for an existing payment only if there is not paymentData info or if there is, when there is any other paymentData with same groupingCriteria.
+            // this avoids to merge for example card payments of different cards.
+            for (i = 0, max = payments.length; i < max; i++) {
+              p = payments.at(i);
+              if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment') && !p.get('reversedPaymentId')) {
+                p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+                if (p.get('rate') && p.get('rate') !== '1') {
+                  p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+                }
+                payment.set('date', new Date());
+                executeFinalCallback(true);
+                return;
               }
-              executeFinalCallback(true);
-              return;
             }
-          }
-        } else {
-          for (i = 0, max = payments.length; i < max; i++) {
-            p = payments.at(i);
-            if (p.get('kind') === payment.get('kind') && p.get('paymentData') && payment.get('paymentData') && p.get('paymentData').groupingCriteria && payment.get('paymentData').groupingCriteria && p.get('paymentData').groupingCriteria === payment.get('paymentData').groupingCriteria) {
-              p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
-              if (p.get('rate') && p.get('rate') !== '1') {
-                p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+          } else {
+            for (i = 0, max = payments.length; i < max; i++) {
+              p = payments.at(i);
+              if (p.get('kind') === payment.get('kind') && p.get('paymentData') && payment.get('paymentData') && p.get('paymentData').groupingCriteria && payment.get('paymentData').groupingCriteria && p.get('paymentData').groupingCriteria === payment.get('paymentData').groupingCriteria && !p.get('reversedPaymentId') && !p.get('isPrePayment')) {
+                p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+                if (p.get('rate') && p.get('rate') !== '1') {
+                  p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+                }
+                payment.set('date', new Date());
+                executeFinalCallback(true);
+                return;
               }
-              payment.set('date', new Date());
-              executeFinalCallback(true);
-              return;
             }
           }
         }
@@ -3410,6 +3565,7 @@
         payment.set('id', OB.UTIL.get_UUID());
         payment.set('orderGross', order.getGross());
         payment.set('isPaid', order.get('isPaid'));
+        payment.set('isReturnOrder', order.getPaymentStatus().isNegative);
         if (order.get('doCancelAndReplace') && order.get('replacedorder')) {
           // Added properties to payment related with cancel an replace order
           payment.set('cancelAndReplace', order.get('doCancelAndReplace'));
@@ -3431,7 +3587,7 @@
       return this.getPaymentStatus().overpayment ? true : false;
     },
 
-    removePayment: function (payment, removeCallback) {
+    removePayment: function (payment, cancellationCallback, removeCallback) {
       var payments = this.get('payments'),
           max, i, p;
       OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePayment', {
@@ -3440,8 +3596,8 @@
         receipt: this
       }, function (args) {
         if (args.cancellation) {
-          if (removeCallback) {
-            removeCallback();
+          if (cancellationCallback) {
+            cancellationCallback();
           }
           return true;
         }
@@ -3460,7 +3616,8 @@
           args.receipt.set('openDrawer', false);
         }
         args.receipt.adjustPayment();
-        args.receipt.save();
+        args.receipt.save(removeCallback);
+        args.receipt.trigger('saveCurrent');
       });
     },
 
@@ -3774,8 +3931,16 @@
             }
             if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && OB.UTIL.Math.sign(line.get('qty')) === OB.UTIL.Math.sign(l.get('qty'))) {
               if (OB.DEC.sub(Math.abs(line.get('qty')), qtyReserved) > 0) {
+                var isManualAdded = false;
                 var isManualOrNotMerge = _.find(line.get('promotions'), function (promo) {
-                  return promo.manual || promo.doNotMerge;
+                  //Verify if manual promotions was added.
+                  _.each(l.get('promotions'), function (p) {
+                    if (p.ruleId === promo.ruleId) {
+                      isManualAdded = true;
+                    }
+                  });
+                  isManualAdded = (!isManualAdded) ? promo.manual : false;
+                  return isManualAdded || promo.doNotMerge;
                 });
                 if (!isManualOrNotMerge) {
                   return line;
@@ -3993,7 +4158,7 @@
                   if (!promotion.hidden) {
                     clonedPromotion.amt = OB.DEC.toNumber(OB.DEC.toBigDecimal(promotion.amt * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)));
                     clonedPromotion.fullAmt = OB.DEC.toNumber(OB.DEC.toBigDecimal(clonedPromotion.amt));
-                    clonedPromotion.displayedTotalAmount = OB.DEC.toNumber(OB.DEC.toBigDecimal(promotion.displayedTotalAmount * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)));
+                    clonedPromotion.displayedTotalAmount = OB.DEC.toNumber(OB.DEC.toBigDecimal((promotion.displayedTotalAmount || 0) * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)));
                   } else {
                     clonedPromotion.amt = 0;
                   }
@@ -4483,7 +4648,9 @@
       }
       return false;
     },
-
+    getScannableDocumentNo: function () {
+      return this.get('documentNo').replace(/-/g, '\\-').replace(/\+/g, '\\+');
+    },
     turnEditable: function () {
       if (this.get('payment') > 0 || this.get('isPartiallyDelivered') || this.get('isFullyDelivered')) {
         return;
@@ -4632,6 +4799,7 @@
           return currentPayment.paymentId === payment.reversedPaymentId;
         });
         reversalPayment.reversedPaymentId = payment.paymentId;
+        reversalPayment.isReversePayment = true;
         delete payment.reversedPaymentId;
       });
 
@@ -4773,7 +4941,9 @@
                           id: iter.warehouse,
                           warehousename: iter.warehousename
                         },
-                        relatedLines: iter.relatedLines
+                        relatedLines: iter.relatedLines,
+                        isEditable: true,
+                        isDeletable: true
                       });
 
                       // copy verbatim not owned properties -> modular properties.
@@ -4943,6 +5113,11 @@
           var locationForBpartner = function (loc, billLoc) {
               bp.set('shipLocName', loc.get('name'));
               bp.set('shipLocId', loc.get('id'));
+              bp.set('shipPostalCode', loc.get('postalCode'));
+              bp.set('shipCityName', loc.get('cityName'));
+              bp.set('shipCountryName', loc.get('countryName'));
+              bp.set('shipCountryId', loc.get('countryId'));
+              bp.set('shipRegionId', loc.get('regionId'));
               if (billLoc) {
                 bp.set('locName', billLoc.get('name'));
                 bp.set('locId', billLoc.get('id'));
@@ -5235,6 +5410,88 @@
       // NOTE: No need to execute any business logic here
       // The new functionality of loading document no, makes this function obsolete.
       // The function is not removed to avoid api changes
+    },
+    checkForDuplicateReceipts: function (model, loadOrder) {
+      // Check in Current Session
+      var orderTypeMsg, i;
+      for (i = 0; i < OB.MobileApp.model.orderList.length; i++) {
+        if (OB.MobileApp.model.orderList.models[i].get('id') === model.get('id') || ((!(_.isNull(OB.MobileApp.model.orderList.models[i].get('oldId')))) && OB.MobileApp.model.orderList.models[i].get('oldId') === model.get('id'))) {
+          var errorMsg;
+          orderTypeMsg = OB.I18N.getLabel('OBPOS_ticket');
+          errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, OB.MobileApp.model.orderList.models[i].get('documentNo')));
+          if (OB.MobileApp.model.orderList.models[i].get('isLayaway')) {
+            orderTypeMsg = OB.I18N.getLabel('OBPOS_LblLayaway');
+            errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, OB.MobileApp.model.orderList.models[i].get('documentNo')));
+          } else if (OB.MobileApp.model.orderList.models[i].get('isQuotation')) {
+            orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
+            errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, OB.MobileApp.model.orderList.models[i].get('documentNo')));
+          } else if ((!(_.isNull(OB.MobileApp.model.orderList.models[i].get('oldId')))) && OB.MobileApp.model.orderList.models[i].get('oldId') === model.get('id')) {
+            var SoFromQtDocNo = OB.MobileApp.model.orderList.models[i].get('documentNo');
+            var QtDocumentNo = model.get('documentNo');
+            errorMsg = OB.I18N.getLabel('OBPOS_OrderAssociatedToQuotationInProgress', [QtDocumentNo, SoFromQtDocNo, QtDocumentNo, SoFromQtDocNo]);
+          }
+          OB.POS.terminal.$.containerWindow.getRoot().doShowPopup({
+            popup: 'OB_UI_MessageDialog',
+            args: {
+              message: errorMsg
+            }
+          });
+          if (OB.MobileApp.model.receipt.get('documentNo') !== model.get('documentNo')) {
+            OB.MobileApp.model.orderList.load(OB.MobileApp.model.orderList.models[i]);
+          }
+          return true;
+        }
+      }
+
+      // Check in Other Session
+      OB.Dal.find(OB.Model.Order, {
+        'hasbeenpaid': 'N'
+      }, function (ordersNotProcessed) {
+        if (ordersNotProcessed.length > 0) {
+          var existingOrder = _.find(ordersNotProcessed.models, function (order) {
+            return order.get('id') === model.get('id') || order.get('oldId') === model.get('id');
+          });
+          if (existingOrder) {
+            var orderTypeMsg = OB.I18N.getLabel('OBPOS_ticket');
+            if (existingOrder.get('isLayaway')) {
+              orderTypeMsg = OB.I18N.getLabel('OBPOS_LblLayaway');
+            } else if (existingOrder.get('isQuotation')) {
+              orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
+            }
+            // Getting Other Session User's username
+            OB.Dal.find(OB.Model.Session, {
+              'id': existingOrder.get('session')
+            }, function (sessions) {
+              if (sessions.length > 0) {
+                OB.Dal.find(OB.Model.User, {
+                  'id': sessions.models[0].get('user')
+                }, function (users) {
+                  if (users.length > 0) {
+                    OB.UTIL.showConfirmation.display(enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpenedInSession'), orderTypeMsg, existingOrder.get('documentNo'), users.models[0].get('name')), enyo.format(OB.I18N.getLabel('OBPOS_MsgConfirmSaveInCurrentSession'), users.models[0].get('name')), [{
+                      label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                      action: function () {
+                        OB.Dal.remove(existingOrder, function () {
+                          loadOrder(model);
+                        }, OB.UTIL.showError);
+                      }
+                    }, {
+                      label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                    }], {
+                      onHideFunction: function (dialog) {
+                        return true;
+                      }
+                    });
+                  }
+                });
+              }
+            });
+          } else {
+            return loadOrder(model);
+          }
+        } else {
+          return loadOrder(model);
+        }
+      });
     }
   });
 
@@ -5417,6 +5674,11 @@
         return;
       }
 
+      if (!payment.get('isReversePayment') && this.getPending() <= 0 && payment.get('amount') > 0) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_PaymentsExact'));
+        return;
+      }
+
       payments = this.get('payments');
       total = OB.DEC.abs(this.getTotal());
       order = this;
@@ -5474,6 +5736,7 @@
           order.set('openDrawer', payment.get('openDrawer'));
         }
         payment.set('date', new Date());
+        payment.set('isReturnOrder', false);
         payment.set('id', OB.UTIL.get_UUID());
         payments.add(payment);
         order.adjustPayment();

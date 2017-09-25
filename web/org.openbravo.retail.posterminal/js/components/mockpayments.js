@@ -55,13 +55,16 @@ enyo.kind({
   isDefaultAction: true,
   tap: function () {
     this.owner.receipt.addPayment(new OB.Model.PaymentLine({
-      'kind': this.owner.key,
+      'kind': (this.owner.isReversePayment) ? this.owner.reversedPayment.get('kind') : this.owner.key,
       'name': this.owner.paymentType,
       'amount': this.owner.paymentAmount,
       'allowOpenDrawer': this.owner.allowOpenDrawer,
       'isCash': this.owner.isCash,
       'openDrawer': this.owner.openDrawer,
-      'printtwice': this.owner.printtwice
+      'printtwice': this.owner.printtwice,
+      'isReversePayment': this.owner.isReversePayment,
+      'reversedPaymentId': this.owner.reversedPaymentId,
+      'reversedPayment': this.owner.reversedPayment
     }));
 
     this.doHideThisPopup();

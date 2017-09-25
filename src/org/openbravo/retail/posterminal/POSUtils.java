@@ -38,7 +38,10 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
@@ -51,6 +54,7 @@ import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.importprocess.ImportEntry;
 
 /**
  * @author iperdomo
@@ -402,7 +406,7 @@ public class POSUtils {
           }
         }
       } catch (Exception e) {
-        e.printStackTrace();
+        log.error("Error while parsing jsonData", e);
         // If not parseable, we continue
       }
     }
@@ -496,7 +500,7 @@ public class POSUtils {
           }
         }
       } catch (Exception e) {
-        e.printStackTrace();
+        log.error("Error while parsing jsonData", e);
         // If not parseable, we continue
       }
     }
@@ -587,7 +591,7 @@ public class POSUtils {
           }
         }
       } catch (Exception e) {
-        e.printStackTrace();
+        log.error("Error while parsing jsonData", e);
         // If not parseable, we continue
       }
     }
@@ -816,4 +820,43 @@ public class POSUtils {
     return result;
   }
 
+  public static boolean cashupErrorsExistInTerminal(String posId) {
+    OBPOSApplications terminal = OBDal.getInstance().getProxy(OBPOSApplications.class, posId);
+    OBCriteria<OBPOSErrors> errorsInPOSWindow = OBDal.getInstance().createCriteria(
+        OBPOSErrors.class);
+    errorsInPOSWindow.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, terminal));
+    errorsInPOSWindow.add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "OBPOS_App_Cashup"));
+    errorsInPOSWindow.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
+    errorsInPOSWindow.setMaxResults(1);
+    if (errorsInPOSWindow.list().size() > 0) {
+      return true;
+    }
+    OBCriteria<ImportEntry> errorsInImportEntry = OBDal.getInstance().createCriteria(
+        ImportEntry.class);
+    errorsInImportEntry.add(Restrictions.eq(ImportEntry.PROPERTY_OBPOSPOSTERMINAL, terminal));
+    errorsInImportEntry.add(Restrictions.eq(ImportEntry.PROPERTY_TYPEOFDATA, "OBPOS_App_Cashup"));
+    errorsInImportEntry.add(Restrictions.eq(ImportEntry.PROPERTY_IMPORTSTATUS, "Error"));
+    errorsInImportEntry.setMaxResults(1);
+    if (errorsInImportEntry.list().size() > 0) {
+      return true;
+    }
+
+    return false;
+  }
+
+  public static boolean isSynchronizedModeEnabled() {
+
+    boolean isSynchronizeModeActive;
+    try {
+      isSynchronizeModeActive = "Y".equals(Preferences.getPreferenceValue(
+          "OBMOBC_SynchronizedMode", true, OBContext.getOBContext().getCurrentClient(), OBContext
+              .getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null));
+    } catch (PropertyNotFoundException prop) {
+      isSynchronizeModeActive = false;
+    } catch (PropertyException e) {
+      throw new OBException("Error while reading synchronized preference", e);
+    }
+    return isSynchronizeModeActive;
+  }
 }

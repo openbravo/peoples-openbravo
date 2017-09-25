@@ -16,6 +16,7 @@ import javax.enterprise.inject.spi.BeanManager;
 
 import org.codehaus.jettison.json.JSONException;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -154,6 +155,13 @@ public class InitialValidations {
       if (obCriteria.list().size() == 0) {
         throw new JSONException("OBPOS_NoSlaveTerminal");
       }
+    }
+
+    // Login should be disallowed if synchronized mode is enabled, and there are cashup errors in
+    // the current terminal
+    if (POSUtils.isSynchronizedModeEnabled()
+        && POSUtils.cashupErrorsExistInTerminal(posTerminal.getId())) {
+      throw new OBException("OBPOS_CashupErrorsMsg");
     }
 
     for (CustomInitialValidation customInitialValidation : getCustomInitialValidations()) {
