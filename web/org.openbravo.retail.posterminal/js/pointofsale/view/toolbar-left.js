@@ -630,12 +630,6 @@ enyo.kind({
       kind: 'OB.UI.MenuCustomers'
     });
     this.menuEntries.push({
-      kind: 'OB.UI.MenuPaidReceipts'
-    });
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuQuotations'
-    });
-    this.menuEntries.push({
       kind: 'OB.UI.MenuOpenDrawer'
     });
     // TODO: what is this for?!!
@@ -669,11 +663,6 @@ enyo.kind({
     this.menuEntries.push({
       kind: 'OB.UI.MenuQuotation'
     });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuLayaways'
-    });
-
     this.menuEntries.push({
       kind: 'OB.UI.MenuMultiOrders'
     });
