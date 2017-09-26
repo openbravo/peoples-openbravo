@@ -32,7 +32,7 @@
       WHERE EXISTS (
         SELECT 1
         FROM ad_preference
-        WHERE property = 'EnableInventoryStatus'
+        WHERE attribute = 'EnableInventoryStatus'
       )
       ]]>
     </Sql>
@@ -40,11 +40,13 @@
   <SqlMethod name="createPreference" type="preparedStatement" return="rowcount">
     <Sql><![CDATA[
       INSERT INTO ad_preference (
-        ad_preference_id, ad_client_id, ad_org_id, isactive, createdby, created, updatedby, updated,
-        ispropertylist, property, value
+        ad_preference_id, ad_client_id, ad_org_id, isactive,
+        createdby, created, updatedby, updated,
+        attribute, value
       ) VALUES (
-        get_uuid(), '0', '0', 'Y', '0', now(), '0', now(),
-        'Y', 'EnableInventoryStatus', 'Y'
+        get_uuid(), '0', '0', 'Y',
+        '0', now(), '0', now(),
+        'EnableInventoryStatus', 'Y'
       )
       ]]>
     </Sql>
