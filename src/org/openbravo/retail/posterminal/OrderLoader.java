@@ -1101,8 +1101,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           && orderLine.getWarehouseRule() == null
           && (order.getWarehouse().getId().equals(warehouse.getId()));
 
-      AttributeSetInstance oldAttributeSetValues = null;
-
       if (negativeLine && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
         lineNo += 10;
         Locator binForReturn = null;
@@ -1135,10 +1133,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
           ScrollableResults bins = stockProposed.scroll(ScrollMode.FORWARD_ONLY);
 
-          boolean foundStockProposed = false;
           try {
             while (pendingQty.compareTo(BigDecimal.ZERO) > 0 && bins.next()) {
-              foundStockProposed = true;
               // TODO: Can we safely clear session here?
               StockProposed stock = (StockProposed) bins.get(0);
               BigDecimal qty;
@@ -1169,24 +1165,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           } finally {
             bins.close();
           }
-          if (!foundStockProposed && orderLine.getProduct().getAttributeSet() != null) {
-            // M_GetStock couldn't find any valid stock, and the product has an attribute set. We
-            // will
-            // attempt to find an old transaction for this product, and get the attribute values
-            // from
-            // there
-            OBCriteria<ShipmentInOutLine> oldLines = OBDal.getInstance().createCriteria(
-                ShipmentInOutLine.class);
-            oldLines
-                .add(Restrictions.eq(ShipmentInOutLine.PROPERTY_PRODUCT, orderLine.getProduct()));
-            oldLines.setMaxResults(1);
-            oldLines.addOrderBy(ShipmentInOutLine.PROPERTY_CREATIONDATE, false);
-            List<ShipmentInOutLine> oldLine = oldLines.list();
-            if (oldLine.size() > 0) {
-              oldAttributeSetValues = oldLine.get(0).getAttributeSetValue();
-            }
-
-          }
         }
 
         if (pendingQty.compareTo(BigDecimal.ZERO) != 0) {
@@ -1208,7 +1186,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             OBDal.getInstance().save(objShipmentInOutLine);
           } else {
             addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-                jsonorder, lineNo, pendingQty, loc, oldAttributeSetValues, i);
+                jsonorder, lineNo, pendingQty, loc, null, i);
           }
         }
       }
