@@ -667,6 +667,18 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     return this.Super('setElementValue', arguments);
   },
 
+  compareValues: function (value1, value2) {
+    if (this.isTargetRecordBeingOpened() && value1 === '' && value2 === undefined) {
+      // prevent extra DS requests when opening a record directly by ignoring false updates in the item value
+      return true;
+    }
+    return (0 === isc.Date.compareLogicalDates(value1, value2));
+  },
+
+  isTargetRecordBeingOpened: function () {
+    return this.grid && this.grid.parentElement && this.grid.parentElement.targetRecordId;
+  },
+
   mapDisplayToValue: function (display) {
     return display;
   },
