@@ -79,6 +79,9 @@ enyo.kind({
           targetOrder: orderModel,
           product: this.owner.owner.args.product,
           attrs: this.owner.owner.args.attrs,
+          options: {
+            blockAddProduct: true
+          },
           context: this.owner.owner.args.context,
           callback: function () {
             if (me.owner.owner.args.callback) {
