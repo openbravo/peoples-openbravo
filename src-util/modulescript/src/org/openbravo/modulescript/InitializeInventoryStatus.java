@@ -32,15 +32,18 @@ public class InitializeInventoryStatus extends ModuleScript {
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
-      InitializeInventoryStatusData[] clients = InitializeInventoryStatusData.getClientIds(cp);
-      for (int i = 0; i < clients.length; i++) {
-        if (!InitializeInventoryStatusData.isNegativeStockAllowed(cp, clients[i].adClientId)) {
-          InitializeInventoryStatusData.initializeInventoryStatus(cp,
-              INVENTORY_STATUS_NO_NEGATIVE_STOCK, clients[i].adClientId);
-        } else {
-          InitializeInventoryStatusData.initializeInventoryStatus(cp,
-              INVENTORY_STATUS_NEGATIVE_STOCK, clients[i].adClientId);
+      if (!InitializeInventoryStatusData.isExecuted(cp)) {
+        InitializeInventoryStatusData[] clients = InitializeInventoryStatusData.getClientIds(cp);
+        for (int i = 0; i < clients.length; i++) {
+          if (!InitializeInventoryStatusData.isNegativeStockAllowed(cp, clients[i].adClientId)) {
+            InitializeInventoryStatusData.initializeInventoryStatus(cp,
+                INVENTORY_STATUS_NO_NEGATIVE_STOCK, clients[i].adClientId);
+          } else {
+            InitializeInventoryStatusData.initializeInventoryStatus(cp,
+                INVENTORY_STATUS_NEGATIVE_STOCK, clients[i].adClientId);
+          }
         }
+        InitializeInventoryStatusData.createPreference(cp);
       }
     } catch (Exception e) {
       handleError(e);
@@ -49,6 +52,6 @@ public class InitializeInventoryStatus extends ModuleScript {
 
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
-    return new ModuleScriptExecutionLimits("0", null, new OpenbravoVersion(3, 0, 32778));
+    return new ModuleScriptExecutionLimits("0", null, new OpenbravoVersion(3, 0, 32816));
   }
 }
