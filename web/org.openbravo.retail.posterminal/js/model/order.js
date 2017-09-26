@@ -4600,14 +4600,25 @@
           }
         }
 
-        if (receipt.get('id') && !isPaidQuotation) {
-          removePayments(receipt, function (success) {
-            if (success) {
-              finishRemoveOrder();
-            }
+        function validateRemoveOrder() {
+          if (receipt.get('id') && !isPaidQuotation) {
+            removePayments(receipt, function (success) {
+              if (success) {
+                finishRemoveOrder();
+              }
+            });
+          } else {
+            finishRemoveOrder();
+          }
+        }
+
+        if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+          OB.UTIL.rebuildCashupFromServer(function () {
+            OB.UTIL.showLoading(false);
+            validateRemoveOrder();
           });
         } else {
-          finishRemoveOrder();
+          validateRemoveOrder();
         }
       }
 
