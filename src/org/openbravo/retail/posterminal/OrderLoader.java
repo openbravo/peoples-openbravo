@@ -1435,7 +1435,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
 
     shipment.setPartnerAddress(OBDal.getInstance().getProxy(Location.class,
-        jsonorder.getJSONObject("bp").getString("locId")));
+        jsonorder.getJSONObject("bp").getString("shipLocId")));
     shipment.setSalesTransaction(true);
     shipment.setDocumentStatus("CO");
     shipment.setDocumentAction("--");
