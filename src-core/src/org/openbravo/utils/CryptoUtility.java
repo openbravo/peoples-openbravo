@@ -24,6 +24,7 @@ import javax.servlet.ServletException;
 public class CryptoUtility {
   private static final SecretKey KEY = new SecretKeySpec(new byte[] { 100, 25, 28, -122, -26, 94,
       -3, -72 }, "DES");
+  private static final String TRANSFORMATION = "DES/ECB/PKCS5Padding";
 
   /**
    * Encrypts a String
@@ -36,9 +37,9 @@ public class CryptoUtility {
     String clearText = value == null ? "" : value;
 
     try {
-      Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+      Cipher cipher = Cipher.getInstance(TRANSFORMATION);
       cipher.init(Cipher.ENCRYPT_MODE, KEY);
-      byte encString[] = cipher.doFinal(clearText.getBytes());
+      byte[] encString = cipher.doFinal(clearText.getBytes());
       return new String(encodeBase64(encString), "UTF-8");
     } catch (Exception ex) {
       throw new ServletException("CryptoUtility.encrypt() - Can't init cipher", ex);
@@ -58,8 +59,8 @@ public class CryptoUtility {
     }
 
     try {
-      byte decode[] = decodeBase64(value.getBytes("UTF-8"));
-      Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+      byte[] decode = decodeBase64(value.getBytes("UTF-8"));
+      Cipher cipher = Cipher.getInstance(TRANSFORMATION);
       cipher.init(Cipher.DECRYPT_MODE, KEY, cipher.getParameters());
       return new String(cipher.doFinal(decode));
     } catch (Exception ex) {
