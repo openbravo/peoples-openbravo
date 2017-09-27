@@ -302,7 +302,6 @@ OB.UTIL.checkApproval = function (approvalType, username, password, callback, wi
     p: password,
     approvalType: JSON.stringify(approvalList)
   }, enyo.bind(this, function (response, message) {
-    // enyo.$.scrim.hide();
     var approved = false;
     if (response.exception) {
       callback(false, null, null, true, response.exception.message);
@@ -375,7 +374,6 @@ OB.UTIL.checkApproval = function (approvalType, username, password, callback, wi
     }
   }), enyo.bind(this, function () {
     // offline
-    // enyo.$.scrim.hide();
     OB.Dal.find(OB.Model.Supervisor, {
       'name': username
     }, enyo.bind(this, function (users) {
