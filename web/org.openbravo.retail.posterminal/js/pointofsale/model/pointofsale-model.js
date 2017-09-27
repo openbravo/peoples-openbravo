@@ -501,6 +501,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         OB.UTIL.HookManager.executeHooks('OBPOS_PostPaymentDone', {
           receipt: receipt
         }, function (args) {
+          if (args && args.cancellation && args.cancellation === true) {
+            receipt.trigger('paymentCancel');
+            return;
+          }
           if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
             OB.MobileApp.model.setSynchronizedCheckpoint(triggerPaymentAcceptedImpl);
           } else {
@@ -727,6 +731,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           OB.UTIL.HookManager.executeHooks('OBPOS_PostPaymentDone', {
             receipt: orders.at(index)
           }, function (args) {
+            if (args && args.cancellation && args.cancellation === true) {
+              me.get('multiOrders').trigger('paymentCancel');
+              return;
+            }
             triggerPaymentAccepted(orders, index + 1);
           });
         }
