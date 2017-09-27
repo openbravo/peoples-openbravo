@@ -297,6 +297,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             return;
           }
 
+          if (!auxPay.paymentMethod.countpaymentincashup) {
+            return;
+          }
+
           var fromCurrencyId = auxPay.paymentMethod.currency,
               paymentShared = (OB.POS.modelterminal.get('terminal').ismaster || OB.POS.modelterminal.get('terminal').isslave) && OB.MobileApp.model.paymentnames[auxPay.payment.searchKey].paymentMethod.isshared,
               paymentSharedStr = paymentShared ? OB.I18N.getLabel('OBPOS_LblPaymentMethodShared') : "";
