@@ -44,7 +44,7 @@
                      END AS COSTTYPE, A.WAREHOUSE AS WAREHOUSE
               FROM M_PRODUCT_CATEGORY,
                    (SELECT trx.M_PRODUCT_ID, sum(trx.MOVEMENTQTY) AS QTY, sum(CASE WHEN trx.MOVEMENTQTY < 0 THEN- tc.trxcost ELSE tc.trxcost END) AS Suma, 
-                   trx.C_UOM_ID, trx.AD_CLIENT_ID, trx.iscostcalculated, tc.c_currency_id, trx.movementdate, WH.NAME AS WAREHOUSE
+                   trx.C_UOM_ID, trx.AD_CLIENT_ID, trx.iscostcalculated, tc.c_currency_id, trx.movementdate, WH.NAME AS WAREHOUSE, WH.M_WAREHOUSE_ID 
                     FROM M_TRANSACTION trx 
                       JOIN M_LOCATOR l ON trx.M_LOCATOR_ID = l.M_LOCATOR_ID
                       INNER JOIN M_WAREHOUSE WH ON l.M_WAREHOUSE_ID = WH.M_WAREHOUSE_ID
@@ -58,10 +58,10 @@
                     AND trx.TRXPROCESSDATE >= to_timestamp(?, ?)
                     AND trx.ad_org_id IN ('1')
                     AND 0=0
-                    GROUP BY trx.M_PRODUCT_ID, trx.C_UOM_ID, trx.AD_CLIENT_ID, trx.iscostcalculated, tc.c_currency_id, trx.movementdate, WH.NAME
+                    GROUP BY trx.M_PRODUCT_ID, trx.C_UOM_ID, trx.AD_CLIENT_ID, trx.iscostcalculated, tc.c_currency_id, trx.movementdate, WH.NAME, WH.M_WAREHOUSE_ID 
                     UNION ALL
                     SELECT agg.m_product_id, stock as qty, valuation as Suma, agg.c_uom_id, agg.ad_client_id, CASE WHEN valuation <> 0 THEN 'Y' ELSE 'N' END,
-                      agg.c_currency_id, dateto, wh.name as warehouse
+                      agg.c_currency_id, dateto, wh.name as warehouse, WH.M_WAREHOUSE_ID 
                     FROM m_valued_stock_agg agg
                       JOIN m_locator l ON (agg.m_locator_id = l.m_locator_id)
                       JOIN m_warehouse wh ON (l.m_warehouse_id = wh.m_warehouse_id)
@@ -73,19 +73,21 @@
                       AND 3=3
                     ) A,
                     C_UOM,
-                    M_PRODUCT LEFT JOIN (SELECT mc.COST as COST, mc.DATEFROM, mc.M_PRODUCT_ID, mc.c_currency_id
+                    M_PRODUCT LEFT JOIN (SELECT mc.COST as COST, mc.DATEFROM, mc.M_PRODUCT_ID, mc.c_currency_id, MC.M_WAREHOUSE_ID
                                         FROM M_COSTING mc
-                                          JOIN (SELECT mc2.M_PRODUCT_ID, max(mc2.DATEFROM) AS datefrom
+                                          JOIN (SELECT mc2.M_PRODUCT_ID, max(mc2.DATEFROM) AS datefrom, MC2.M_WAREHOUSE_ID
                                                 FROM M_COSTING mc2
                                                 WHERE mc2.DATEFROM < to_date(?)
                                                   AND 2 = 2
                                                   AND mc2.COSTTYPE IN ('1')
-                                                GROUP BY mc2.M_PRODUCT_ID) dc ON (mc.DATEFROM = dc.DATEFROM AND mc.M_PRODUCT_ID = dc.M_PRODUCT_ID)
+                                                GROUP BY mc2.M_PRODUCT_ID, MC2.M_WAREHOUSE_ID) dc ON (mc.DATEFROM = dc.DATEFROM AND mc.M_PRODUCT_ID = dc.M_PRODUCT_ID
+                                                  AND COALESCE(MC.M_WAREHOUSE_ID, '1') = COALESCE(DC.M_WAREHOUSE_ID, '1'))
                                         WHERE mc.DATETO> mc.DATEFROM
                                        AND 9 = 9
                                        ) P
                                ON M_PRODUCT.M_PRODUCT_ID = P.M_PRODUCT_ID
               WHERE A.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
+              AND   (A.M_WAREHOUSE_ID = P.M_WAREHOUSE_ID OR P.M_WAREHOUSE_ID IS NULL)
               AND   A.C_UOM_ID = C_UOM.C_UOM_ID
               AND   M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID
               AND   1 = 1
@@ -176,11 +178,20 @@
   HAVING SUM(A.QTY) <>0
   ) ZZ
     JOIN C_UOM ON c_uom.c_uom_id = zz.c_uom_id
-    JOIN M_COSTING c ON  c.datefrom = (SELECT max(c2.datefrom) FROM m_costing c2 WHERE ZZ.m_product_id = c2.m_product_id AND c2.DATEFROM < to_date(?) AND 4 = 4 AND c2.costtype IN ('1'))
-                    AND 5 = 5
-                    AND c.costtype IN ('1')
-                    AND c.dateto > c.datefrom
-                    AND c.m_product_id = ZZ.m_product_id
+    JOIN (
+        SELECT SUM(c.COST) as COST, c.DATEFROM, c.M_PRODUCT_ID, c.c_currency_id, c.ad_client_id
+        FROM M_COSTING c
+          JOIN (SELECT c2.M_PRODUCT_ID, max(c2.DATEFROM) AS datefrom
+                FROM M_COSTING c2
+                WHERE c2.DATEFROM < to_date(?)
+                  AND 4 = 4
+                  AND c2.costtype IN ('1')
+                GROUP BY c2.M_PRODUCT_ID) dc ON (c.DATEFROM = dc.DATEFROM AND c.M_PRODUCT_ID = dc.M_PRODUCT_ID)
+        WHERE c.DATETO > c.DATEFROM
+          AND 5 = 5
+          AND c.costtype IN ('1')
+        GROUP BY c.DATEFROM, c.M_PRODUCT_ID, c.c_currency_id, c.ad_client_id
+    ) C ON C.M_PRODUCT_ID = ZZ.M_PRODUCT_ID
     JOIN c_currency ON c_currency.c_currency_id = ?
   UNION ALL
   SELECT pc.name AS category_name,
@@ -212,11 +223,20 @@
     ) stock ON pc.m_product_category_id = stock.m_product_category_id
     JOIN c_uom uom ON stock.c_uom_id = uom.c_uom_id
     JOIN c_currency ON c_currency.c_currency_id = ?
-    JOIN m_costing c ON c.datefrom = (SELECT max(datefrom) FROM m_costing c2 WHERE stock.m_product_id = c2.m_product_id AND c2.DATEFROM < to_date(?) AND 6 = 6 AND  c2.costtype IN ('2'))
-                      AND 7 = 7
-                      AND  c.costtype IN ('2')
-                      AND c.dateto > c.datefrom
-                      AND c.m_product_id = stock.m_product_id
+    JOIN (
+        SELECT SUM(c.COST) as COST, c.DATEFROM, c.M_PRODUCT_ID, c.c_currency_id, c.ad_client_id
+        FROM M_COSTING c
+          JOIN (SELECT c2.M_PRODUCT_ID, max(c2.DATEFROM) AS datefrom
+                FROM M_COSTING c2
+                WHERE c2.DATEFROM < to_date(?)
+                  AND 6 = 6
+                  AND  c2.costtype IN ('2')
+                GROUP BY c2.M_PRODUCT_ID) dc ON (c.DATEFROM = dc.DATEFROM AND c.M_PRODUCT_ID = dc.M_PRODUCT_ID)
+        WHERE c.DATETO > c.DATEFROM
+          AND 7 = 7
+          AND  c.costtype IN ('2')
+        GROUP BY c.DATEFROM, c.M_PRODUCT_ID, c.c_currency_id, c.ad_client_id
+    ) C ON C.M_PRODUCT_ID = stock.M_PRODUCT_ID
   WHERE 3 = 3
   ORDER BY CATEGORY_NAME, PRODUCT_NAME
      ]]></Sql>
