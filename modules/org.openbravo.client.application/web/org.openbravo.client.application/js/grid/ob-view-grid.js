@@ -3085,7 +3085,7 @@ isc.OBViewGrid.addProperties({
 
   editFailed: function (rowNum, colNum, newValues, oldValues, editCompletionEvent, dsResponse, dsRequest) {
     var record = this.getRecord(rowNum),
-        editRow, editSession, view = this.view,
+        view = this.view,
         form, isNewRecord;
 
     // set the default error message,
@@ -3107,9 +3107,14 @@ isc.OBViewGrid.addProperties({
       isc.warn(OB.I18N.getLabel('OBUIAPP_AutoSaveError', [this.view.tabTitle]));
     }
 
-    // show an error message in the toolbar if the event that triggered the action was an autosave, to mimic the way client side validation errors are handled
+    form = this.getEditForm();
     if (view.standardWindow.isAutoSaving) {
+      // show an error message in the toolbar if the event that triggered the action was an autosave, to mimic the way client side validation errors are handled
       view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFieldsGrid', [view.ID]));
+      if (form) {
+        // return the focus to the edit form of the record that failed to be edited
+        form.setFocusInForm();
+      }
     }
     view.standardWindow.cleanUpAutoSaveProperties();
     view.updateTabTitle();
@@ -3120,7 +3125,6 @@ isc.OBViewGrid.addProperties({
       this.selectRecord(record);
     }
 
-    form = this.getEditForm();
     isNewRecord = (form === null) ? false : form.isNew;
     if (isNewRecord) {
       delete this.view._savingNewRecord;
