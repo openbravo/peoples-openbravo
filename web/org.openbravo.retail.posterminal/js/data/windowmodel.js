@@ -21,7 +21,7 @@ OB.Model.WindowModel = Backbone.Model.extend({
 
     _.extend(this.models, Backbone.Events);
 
-    this.models.on('ready', function () {
+    OB.MobileApp.model.on('allModelsLoaded', function () {
       if (this.init) {
         this.init();
       }

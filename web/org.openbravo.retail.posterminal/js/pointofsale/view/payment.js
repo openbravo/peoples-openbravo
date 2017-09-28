@@ -260,6 +260,17 @@ enyo.kind({
     }, this);
     this.receipt.on('paymentCancel', function () {
       this.$.layawayaction.setDisabled(false);
+      this.$.donebutton.setDisabled(false);
+      if (OB.MobileApp.view.openedPopup === null) {
+        enyo.$.scrim.hide();
+      }
+      OB.UTIL.showLoading(false);
+    }, this);
+    this.model.get('multiOrders').on('paymentCancel', function () {
+      if (OB.MobileApp.view.openedPopup === null) {
+        enyo.$.scrim.hide();
+      }
+      OB.UTIL.showLoading(false);
     }, this);
     this.model.get('leftColumnViewManager').on('change:currentView', function () {
       if (!this.model.get('leftColumnViewManager').isMultiOrder()) {
@@ -1067,10 +1078,6 @@ enyo.kind({
         this.drawerOpened = true;
         this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
       }
-    }, this);
-    this.model.get('order').on('paymentCancel', function () {
-      OB.UTIL.showLoading(false);
-      this.setDisabled(false);
     }, this);
   },
   blocked: false,

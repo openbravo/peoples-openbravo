@@ -1631,6 +1631,12 @@
               if (args && args.cancelOperation) {
                 return;
               }
+              if (OB.MobileApp.model.get('inPaymentTab')) {
+                if (args.options && args.options.blockAddProduct) {
+                  OB.error('An add product is executed. At this point, this action is not allowed. Skipping product ' + p.get('_identifier'));
+                  return;
+                }
+              }
               var splitline = !(options && options.line) && !OB.UTIL.isNullOrUndefined(args.line) && !OB.UTIL.isNullOrUndefined(args.line.get('splitline')) && args.line.get('splitline');
               var serviceProduct = args.line && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')));
               var groupedByAttributeValues = ((productHasAttribute && productHavingSameAttribute) || (!productHasAttribute && !productHavingSameAttribute)) && attributeSearchAllowed;
@@ -1658,6 +1664,12 @@
             });
 
           } else {
+            if (OB.MobileApp.model.get('inPaymentTab')) {
+              if (options && options.blockAddProduct) {
+                OB.error('An add product is executed. At this point, this action is not allowed. Skipping product ' + p.get('_identifier'));
+                return;
+              }
+            }
             var count;
             //remove line even it is a grouped line
             if (options && options.line && qty === -1) {
@@ -4605,14 +4617,25 @@
           }
         }
 
-        if (receipt.get('id') && !isPaidQuotation) {
-          removePayments(receipt, function (success) {
-            if (success) {
-              finishRemoveOrder();
-            }
+        function validateRemoveOrder() {
+          if (receipt.get('id') && !isPaidQuotation) {
+            removePayments(receipt, function (success) {
+              if (success) {
+                finishRemoveOrder();
+              }
+            });
+          } else {
+            finishRemoveOrder();
+          }
+        }
+
+        if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+          OB.UTIL.rebuildCashupFromServer(function () {
+            OB.UTIL.showLoading(false);
+            validateRemoveOrder();
           });
         } else {
-          finishRemoveOrder();
+          validateRemoveOrder();
         }
       }
 
@@ -5373,6 +5396,14 @@
       this.saveCurrent();
       this.current = model;
       this.loadCurrent();
+    },
+    loadById: function (id) {
+      var mdl = _.find(OB.MobileApp.model.orderList.models, function (model) {
+        return model.get('id') === id;
+      });
+      if (mdl) {
+        this.load(mdl);
+      }
     },
     saveCurrent: function () {
       if (this.current) {

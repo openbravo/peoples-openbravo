@@ -148,7 +148,8 @@ enyo.kind({
                 product: keyboard.line.get('product'),
                 qty: value,
                 options: {
-                  line: keyboard.line
+                  line: keyboard.line,
+                  blockAddProduct: true
                 }
               });
               keyboard.receipt.trigger('scan');
@@ -835,6 +836,9 @@ enyo.kind({
       product: product,
       qty: attrs.unitsToAdd,
       ignoreStockTab: true,
+      options: {
+        blockAddProduct: true
+      },
       attrs: attrs
     });
     keyboard.receipt.trigger('scan');
