@@ -21,10 +21,10 @@ enyo.kind({
     kind: 'OB.UI.ReceiptsList'
   },
   getFilterSelectorTableHeader: function () {
-    return this.$.body.$.receiptsList.$.receiptslistitemprinter.$.theader.$.modalReceiptsScrollableHeader.$.filterSelector;
+    return this.$.body.$.receiptsList.$.openreceiptslistitemprinter.$.theader.$.modalReceiptsScrollableHeader.$.filterSelector;
   },
   getAdvancedFilterBtn: function () {
-    return this.$.body.$.receiptsList.$.receiptslistitemprinter.$.theader.$.modalReceiptsScrollableHeader.$.advancedFilterWindowButtonReceipts;
+    return this.$.body.$.receiptsList.$.openreceiptslistitemprinter.$.theader.$.modalReceiptsScrollableHeader.$.advancedFilterWindowButtonReceipts;
   },
   getAdvancedFilterDialog: function () {
     return 'OB_UI_ModalAdvancedFilterReceipts';
@@ -143,7 +143,7 @@ enyo.kind({
       components: [{
         classes: 'span12',
         components: [{
-          name: 'receiptslistitemprinter',
+          name: 'openreceiptslistitemprinter',
           kind: 'OB.UI.ScrollableTable',
           scrollAreaMaxHeight: '350px',
           renderHeader: 'OB.UI.ModalReceiptsScrollableHeader',
@@ -170,22 +170,22 @@ enyo.kind({
     function errorCallback() {
       me.$.renderLoading.hide();
       me.receiptList.reset();
-      me.$.receiptslistitemprinter.$.tempty.show();
+      me.$.openreceiptslistitemprinter.$.tempty.show();
     }
 
     function successCallback(data) {
       me.$.renderLoading.hide();
       if (data && data.length > 0) {
         me.receiptList.reset(data.models);
-        me.$.receiptslistitemprinter.$.tbody.show();
+        me.$.openreceiptslistitemprinter.$.tbody.show();
       } else {
         me.receiptList.reset();
-        me.$.receiptslistitemprinter.$.tempty.show();
+        me.$.openreceiptslistitemprinter.$.tempty.show();
       }
     }
-    this.$.receiptslistitemprinter.$.tempty.hide();
-    this.$.receiptslistitemprinter.$.tbody.hide();
-    this.$.receiptslistitemprinter.$.tlimit.hide();
+    this.$.openreceiptslistitemprinter.$.tempty.hide();
+    this.$.openreceiptslistitemprinter.$.tbody.hide();
+    this.$.openreceiptslistitemprinter.$.tlimit.hide();
     this.$.renderLoading.show();
 
     var criteria, orderByClause = '';
@@ -241,7 +241,7 @@ enyo.kind({
         process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts');
     this.model = model;
     this.receiptList = new Backbone.Collection();
-    this.$.receiptslistitemprinter.setCollection(this.receiptList);
+    this.$.openreceiptslistitemprinter.setCollection(this.receiptList);
     this.receiptList.on('click', function (model) {
       function loadOrder(model) {
         var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearch');
