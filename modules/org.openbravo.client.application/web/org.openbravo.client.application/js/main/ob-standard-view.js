@@ -1249,6 +1249,12 @@ isc.OBStandardView.addProperties({
     if (keepSelection) {
       callback = function () {
         var length, i, recordIndex;
+
+        if (me.viewGrid.gridHasValidationErrors()) {
+          // there are unsaved records with errors: discard the changes in order to show the refreshed data
+          me.viewGrid.discardAllEdits();
+        }
+
         length = me.viewGrid.recordsSelectedBeforeRefresh.length;
         for (i = 0; i < length; i++) {
           recordIndex = me.viewGrid.getRecordIndex(me.viewGrid.recordsSelectedBeforeRefresh[i]);
