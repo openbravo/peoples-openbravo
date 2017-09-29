@@ -2541,6 +2541,9 @@ public class TestCosting extends WeldBaseTest {
       purchaseOrderList.add(purchaseOrder2);
       ShipmentInOut goodsReceipt = createGoodsReceipt(purchaseOrderList, price3, quantity3, day2);
 
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
+
       // Create goods shipment, run costing background, post it and assert it
       ShipmentInOut goodsShipment = createGoodsShipment(product, price3, quantity4, day5);
 
