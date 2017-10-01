@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -209,16 +209,13 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
 
     StringBuilder where = new StringBuilder();
     where.append(" as cr");
-    where.append(" where cr.organization.id in (:org)");
+    where.append(" where cr.organization.id = :org");
     where.append(" and");
-    where.append(" (((cr.startingDate is null or cr.startingDate <= :startingDate)");
-    where.append("   and (:endingDate >= cr.endingDate or cr.endingDate is null))");
-    where.append(" or ");
-    where.append(" ((cr.startingDate is null or cr.startingDate >= :startingDate)");
-    where.append("   and (:endingDate <= cr.endingDate or cr.endingDate is null))");
-    where.append(" or ");
-    where.append(" ((cr.startingDate is null or cr.startingDate <= :startingDate)");
-    where.append("   and (:endingDate <= cr.endingDate or cr.endingDate is null)))");
+    where.append(" (((cr.startingDate <= :startingDate or cr.startingDate is null)");
+    where.append(" and (cr.endingDate > :startingDate or cr.endingDate is null))");
+    where.append(" or");
+    where.append(" ((cr.startingDate < :endingDate or cr.startingDate is null)");
+    where.append(" and (cr.endingDate >= :endingDate or cr.endingDate is null)))");
 
     OBQuery<CostingRule> query = OBDal.getInstance().createQuery(CostingRule.class,
         where.toString());
