@@ -66,6 +66,7 @@ public class AlertProcess implements Process {
   private ConnectionProvider connection;
   private ProcessLogger logger;
   private static final String SYSTEM_CLIENT_ID = "0";
+  private static final String CLIENT_ORG_SEPARATOR = "-";
   private static String LANGUAGE = null;
 
   public void execute(ProcessBundle bundle) throws Exception {
@@ -260,7 +261,7 @@ public class AlertProcess implements Process {
     // Insert
     if (alert != null && alert.length != 0) {
       int insertions = 0;
-      HashMap<String, StringBuilder> messageByOrg = new HashMap<String, StringBuilder>();
+      HashMap<String, StringBuilder> messageByClientOrg = new HashMap<String, StringBuilder>();
       StringBuilder msg = new StringBuilder();
 
       for (int i = 0; i < alert.length; i++) {
@@ -282,12 +283,12 @@ public class AlertProcess implements Process {
         msg.append(messageLine);
         newMsg.append(messageLine);
 
-        if (messageByOrg.containsKey(alert[i].adOrgId)) {
-          messageByOrg.get(alert[i].adOrgId).append(newMsg);
+        String clientOrg = alert[i].adClientId + CLIENT_ORG_SEPARATOR + alert[i].adOrgId;
+        if (messageByClientOrg.containsKey(clientOrg)) {
+          messageByClientOrg.get(clientOrg).append(newMsg);
         } else {
-          messageByOrg.put(alert[i].adOrgId, newMsg);
+          messageByClientOrg.put(clientOrg, newMsg);
         }
-
       }
 
       if (insertions > 0) {
@@ -396,14 +397,18 @@ public class AlertProcess implements Process {
 
                 // Create alert's message
                 final StringBuilder finalMessage = new StringBuilder();
-                for (String org : messageByOrg.keySet()) {
-                  Organization orgEntity = OBDal.getInstance().get(Organization.class, org);
-                  for (RoleOrganization roleOrganization : currentAlertRecipient.getRole()
-                      .getADRoleOrganizationList()) {
-                    if (OBContext.getOBContext().getOrganizationStructureProvider()
-                        .isInNaturalTree(roleOrganization.getOrganization(), orgEntity)) {
-                      finalMessage.append(messageByOrg.get(org));
-                      break;
+                for (String currentClientAndOrg : messageByClientOrg.keySet()) {
+                  String[] clientAndOrg = currentClientAndOrg.split(CLIENT_ORG_SEPARATOR);
+                  Organization orgEntity = OBDal.getInstance().get(Organization.class,
+                      clientAndOrg[1]);
+                  if (currentAlertRecipient.getClient().getId().equals(clientAndOrg[0])) {
+                    for (RoleOrganization roleOrganization : currentAlertRecipient.getRole()
+                        .getADRoleOrganizationList()) {
+                      if (OBContext.getOBContext().getOrganizationStructureProvider()
+                          .isInNaturalTree(roleOrganization.getOrganization(), orgEntity)) {
+                        finalMessage.append(messageByClientOrg.get(currentClientAndOrg));
+                        break;
+                      }
                     }
                   }
                 }
