@@ -35,6 +35,7 @@ public class CheckProcessingMessage extends JSONProcessSimple {
           messageId);
       if (importEntry != null) {
         respArray.put("status", importEntry.getImportStatus());
+        respArray.put("json", importEntry.getJsonInfo());
         respArray.put("errorMessage", importEntry.getErrorinfo());
       }
     } catch (final Exception e) {
