@@ -311,7 +311,7 @@ BEGIN
           M_ATTRIBUTESETINSTANCE_ID,
           M_WAREHOUSE_ID, C_UOM_ID, QTYORDERED, C_CURRENCY_ID,
           PRICELIST, PRICEACTUAL, PRICELIMIT,
-          PRICESTD, LINENETAMT, DISCOUNT,
+          PRICESTD, LINENETAMT, DISCOUNT, GROSSPRICESTD,
           C_TAX_ID, M_PRODUCT_UOM_ID, QUANTITYORDER, GROSS_UNIT_PRICE, LINE_GROSS_AMOUNT,
           C_AUM, AUMQTY
       ) VALUES (
@@ -322,7 +322,7 @@ BEGIN
           Cur_Lines.M_AttributeSetInstance_ID,
           p_Warehouse_ID, Cur_Lines.C_UOM_ID, Cur_Lines.QTY - Cur_Lines.ORDEREDQTY, v_Currency_ID,
           v_PriceList, v_PriceActual, v_PriceLimit,
-          v_PriceStd, v_LineNetAmt,v_Discount,
+          v_PriceStd, v_LineNetAmt, v_Discount, v_gross_unit_price,
           v_Tax_ID, Cur_Lines.M_Product_UOM_ID, Cur_Lines.QuantityOrder, v_gross_unit_price, v_line_gross_amount,
           v_Aum, v_AumQty
       );
