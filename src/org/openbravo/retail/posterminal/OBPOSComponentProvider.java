@@ -124,6 +124,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "utils/eventbus",
         "utils/cashUpReportUtils",
         "utils/cashManagementUtils",
+        "utils/ticketCloseUtils",
         "components/keypadcoins",
         "data/dataordersave",
         "data/dataordertaxes",
