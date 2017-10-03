@@ -263,12 +263,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.DATA.OrderSave(this);
     OB.DATA.OrderTaxes(receipt);
 
-    this.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(this);
-    this.printLine = new OB.OBPOSPointOfSale.Print.ReceiptLine(receipt);
-
-    // Now that templates has been initialized, print welcome message
-    OB.POS.hwserver.print(this.printReceipt.templatewelcome, {}, null, OB.DS.HWServer.DISPLAY);
-
     var ViewManager = Backbone.Model.extend({
       defaults: {
         currentWindow: {
@@ -1029,7 +1023,22 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             OB.Dal.save(dataBps, function () {}, function () {
               OB.error(arguments);
             });
-            me.loadUnpaidOrders(callback);
+            me.loadUnpaidOrders(function () {
+              var receipt = new OB.Model.Order();
+
+              me.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(me);
+              me.printLine = new OB.OBPOSPointOfSale.Print.ReceiptLine(receipt);
+
+              // Now that templates has been initialized, print welcome message
+              OB.POS.hwserver.print(me.printReceipt.templatewelcome, {}, function (data) {
+                if (data && data.exception) {
+                  OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'));
+                  callback();
+                } else {
+                  callback();
+                }
+              }, OB.DS.HWServer.DISPLAY);
+            });
           });
         }
       }
@@ -1039,7 +1048,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     //Because in terminal we've the BP id and we want to have the BP model.
     //In this moment we can ensure data is already loaded in the local database
     searchCurrentBP(loadModelsCallback);
-
   },
 
   /**
