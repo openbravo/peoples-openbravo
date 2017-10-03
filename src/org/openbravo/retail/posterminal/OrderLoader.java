@@ -2203,24 +2203,26 @@ public class OrderLoader extends POSDataSynchronizationProcess
       paymentSchedule.setCurrency(order.getCurrency());
       paymentSchedule.setOrder(order);
     }
-    paymentSchedule.setFinPaymentmethod(order.getPaymentMethod());
-    // paymentSchedule.setPaidAmount(new BigDecimal(0));
-    paymentSchedule.setAmount(BigDecimal.valueOf(jsonorder.getDouble("gross"))
-        .setScale(pricePrecision, RoundingMode.HALF_UP));
-    // Sept 2012 -> gross because outstanding is not allowed in Openbravo Web POS
-    paymentSchedule.setOutstandingAmount(BigDecimal.valueOf(jsonorder.getDouble("gross"))
-        .setScale(pricePrecision, RoundingMode.HALF_UP));
-    paymentSchedule.setDueDate(order.getOrderDate());
-    paymentSchedule.setExpectedDate(order.getOrderDate());
-    if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
-        .hasProperty("origDueDate")) {
-      // This property is checked and set this way to force compatibility with both MP13, MP14
-      // and
-      // later releases of Openbravo. This property is mandatory and must be set. Check issue
-      paymentSchedule.set("origDueDate", paymentSchedule.getDueDate());
+    if (order.getFINPaymentScheduleList().isEmpty() || isModified) {
+      paymentSchedule.setFinPaymentmethod(order.getPaymentMethod());
+      // paymentSchedule.setPaidAmount(new BigDecimal(0));
+      paymentSchedule.setAmount(BigDecimal.valueOf(jsonorder.getDouble("gross"))
+          .setScale(pricePrecision, RoundingMode.HALF_UP));
+      // Sept 2012 -> gross because outstanding is not allowed in Openbravo Web POS
+      paymentSchedule.setOutstandingAmount(BigDecimal.valueOf(jsonorder.getDouble("gross"))
+          .setScale(pricePrecision, RoundingMode.HALF_UP));
+      paymentSchedule.setDueDate(order.getOrderDate());
+      paymentSchedule.setExpectedDate(order.getOrderDate());
+      if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
+          .hasProperty("origDueDate")) {
+        // This property is checked and set this way to force compatibility with both MP13, MP14
+        // and
+        // later releases of Openbravo. This property is mandatory and must be set. Check issue
+        paymentSchedule.set("origDueDate", paymentSchedule.getDueDate());
+      }
+      paymentSchedule.setFINPaymentPriority(order.getFINPaymentPriority());
+      OBDal.getInstance().save(paymentSchedule);
     }
-    paymentSchedule.setFINPaymentPriority(order.getFINPaymentPriority());
-    OBDal.getInstance().save(paymentSchedule);
 
     Boolean isInvoicePaymentScheduleNew = false;
     FIN_PaymentSchedule paymentScheduleInvoice = null;
