@@ -351,7 +351,7 @@ public class EntityAccessChecker implements OBNotSingleton {
    *          the data access level defined in the table
    * @return true if access is allowed, false otherwise
    */
-  private boolean hasCorrectAccessLevel(String userLevel, int accessLevel) {
+  public static boolean hasCorrectAccessLevel(String userLevel, int accessLevel) {
     // copied from HttpSecureAppServlet.
     if (!OBContext.getOBContext().doAccessLevelCheck()) {
       return true;

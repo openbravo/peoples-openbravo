@@ -32,6 +32,7 @@ import org.openbravo.client.application.Process;
 import org.openbravo.client.application.ProcessAccess;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.EntityAccessChecker;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
@@ -170,6 +171,13 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
    * 
    */
   public static boolean hasAccess(Process processDefinition, Map<String, Object> parameters) {
+    // Check Process Definition Access Level
+    String userLevel = OBContext.getOBContext().getUserLevel();
+    int accessLevel = Integer.parseInt(processDefinition.getDataAccessLevel());
+    if (!EntityAccessChecker.hasCorrectAccessLevel(userLevel, accessLevel)) {
+      return false;
+    }
+    // Check Process Definition Permission
     String windowId = (String) parameters.get("windowId");
     if (windowId != null && !"null".equals(windowId)) {
       Window window = OBDal.getInstance().get(Window.class, windowId);

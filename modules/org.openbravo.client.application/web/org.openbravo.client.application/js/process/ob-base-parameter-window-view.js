@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2016 Openbravo SLU
+ * All portions are Copyright (C) 2015-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -230,7 +230,11 @@ isc.OBBaseParameterWindowView.addProperties({
 
     params.windowId = this.windowId;
     OB.RemoteCallManager.call(this.defaultsActionHandler, context, params, function (rpcResponse, data, rpcRequest) {
-      view.handleDefaults(data);
+      if (data && data.message && data.message.severity === isc.OBMessageBar.TYPE_ERROR) {
+        view.handleErrorState(data.message);
+      } else {
+        view.handleDefaults(data);
+      }
     });
   },
 
@@ -269,7 +273,6 @@ isc.OBBaseParameterWindowView.addProperties({
   },
 
   showProcessing: function (processing) {
-    var i;
     if (processing) {
       if (this.theForm) {
         this.theForm.hide();
@@ -277,15 +280,7 @@ isc.OBBaseParameterWindowView.addProperties({
       if (this.popupButtons) {
         this.popupButtons.hide();
       }
-
-      if (this.toolBarLayout) {
-        for (i = 0; i < this.toolBarLayout.children.length; i++) {
-          if (this.toolBarLayout.children[i].hide) {
-            this.toolBarLayout.children[i].hide();
-          }
-        }
-      }
-
+      this.hideToolBarLayoutChildren();
       this.loading.show();
     } else {
       if (this.theForm) {
@@ -293,6 +288,17 @@ isc.OBBaseParameterWindowView.addProperties({
       }
 
       this.loading.hide();
+    }
+  },
+
+  hideToolBarLayoutChildren: function () {
+    var i;
+    if (this.toolBarLayout) {
+      for (i = 0; i < this.toolBarLayout.children.length; i++) {
+        if (this.toolBarLayout.children[i].hide) {
+          this.toolBarLayout.children[i].hide();
+        }
+      }
     }
   },
 
@@ -331,6 +337,28 @@ isc.OBBaseParameterWindowView.addProperties({
           field.canvas.viewGrid.evaluateDisplayLogicForGridColumns();
         }
       }
+    }
+  },
+
+  handleErrorState: function (message) {
+    // Disable the parameter view elements
+    this.disableFormItems();
+    if (this.theForm) {
+      this.theForm.disable();
+    }
+    // Hide the buttons (if any)
+    this.hideToolBarLayoutChildren();
+    if (this.popupButtons && this.popupButtons.hide) {
+      this.popupButtons.hide();
+    }
+    if (!message) {
+      return;
+    }
+    // Show the error message
+    if (message.title) {
+      this.messageBar.setMessage(message.severity, message.title, message.text);
+    } else {
+      this.messageBar.setMessage(message.severity, OB.I18N.getLabel('OBUIAPP_Error'), message.text);
     }
   },
 
