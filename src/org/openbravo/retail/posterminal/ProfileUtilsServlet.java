@@ -8,149 +8,90 @@
  */
 package org.openbravo.retail.posterminal;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
-import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.mobile.core.process.WebServiceAbstractServlet;
-import org.openbravo.model.ad.system.Language;
-import org.openbravo.service.json.JsonConstants;
-import org.openbravo.service.json.JsonUtils;
+import org.openbravo.mobile.core.MobileDefaults;
+import org.openbravo.mobile.core.login.ProfileUtils;
+import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.UserRoles;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.Warehouse;
 
-public class ProfileUtilsServlet extends WebServiceAbstractServlet {
+public class ProfileUtilsServlet extends ProfileUtils {
 
-  private static final Logger log = Logger.getLogger(ProfileUtilsServlet.class);
-
-  private static final long serialVersionUID = 1L;
-
-  private String[] getClientOrgIds(String terminalName) {
-    final String hqlOrg = "select terminal.organization.client.id, terminal.organization.id "
-        + "from OBPOS_Applications terminal " + "where terminal.searchKey = :theTerminalSearchKey";
-    Query qryOrg = OBDal.getInstance().getSession().createQuery(hqlOrg);
-    qryOrg.setParameter("theTerminalSearchKey", terminalName);
-    qryOrg.setMaxResults(1);
-
-    String strClient = "none";
-    String strOrg = "none";
-
-    if (qryOrg.uniqueResult() != null) {
-      final Object[] orgResult = (Object[]) qryOrg.uniqueResult();
-      strClient = orgResult[0].toString();
-      strOrg = orgResult[1].toString();
+  @Override
+  protected JSONArray getWarehouses(String clientId, List<Organization> orgs) throws JSONException {
+    // Web POS filters those warehouses which are defined in the organization window as store
+    // warehouses
+    List<JSONObject> orgWarehouseArray = new ArrayList<JSONObject>();
+    final OrganizationStructureProvider osp = OBContext.getOBContext()
+        .getOrganizationStructureProvider(clientId);
+    for (Organization org : orgs) {
+      JSONObject orgWarehouse = new JSONObject();
+      orgWarehouse.put("orgId", org.getId());
+      StringBuffer hqlQuery = new StringBuffer();
+      hqlQuery.append("organization.id in (:orgList) AND ");
+      hqlQuery.append("client.id=:clientId AND ");
+      hqlQuery.append("id in (");
+      hqlQuery.append("  select owar.warehouse.id from OrganizationWarehouse owar ");
+      hqlQuery.append("  where owar.organization.id = :orgId");
+      hqlQuery.append(") AND ");
+      hqlQuery.append("organization.active=true ");
+      hqlQuery.append("order by name");
+      final OBQuery<Warehouse> warehouses = OBDal.getInstance().createQuery(Warehouse.class,
+          hqlQuery.toString());
+      warehouses.setNamedParameter("orgList", osp.getNaturalTree(org.getId()));
+      warehouses.setNamedParameter("orgId", org.getId());
+      warehouses.setNamedParameter("clientId", clientId);
+      warehouses.setFilterOnReadableClients(false);
+      warehouses.setFilterOnReadableOrganization(false);
+      orgWarehouse.put("warehouseMap", createValueMapObject(warehouses.list(), null, null));
+      orgWarehouseArray.add(orgWarehouse);
     }
-
-    final String result[] = { strClient, strOrg };
-    return result;
+    return new JSONArray(orgWarehouseArray);
   }
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  protected List<Role> getRoles(MobileDefaults defaults) {
+    // Web pos filters by roles of the current organization
+    String formId = defaults.getFormId();
+    String clientId = OBContext.getOBContext().getCurrentClient().getId();
+    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+    String whereClause = "as r where userContact.id=:user and role.active=true ";
+    whereClause += "and exists (select 1 from ADFormAccess a "//
+        + " where a.active = true" //
+        + " and a.role.id = r.role.id "//
+        + " and a.role.client.id = :clientId "//
+        + " and a.specialForm.id = :formId) "//
+        + " and exists (select 1 from ADRoleOrganization o "//
+        + " where o.active = true and o.role.id = r.role.id "//
+        + " and o.organization.id = :orgId)"//
+        + " order by role.name ASC";
 
-    OBContext.setAdminMode(false);
+    final OBQuery<UserRoles> rolesQuery = OBDal.getInstance().createQuery(UserRoles.class,
+        whereClause);
+    rolesQuery.setFilterOnReadableClients(false);
+    rolesQuery.setFilterOnReadableOrganization(false);
+    rolesQuery.setNamedParameter("user", OBContext.getOBContext().getUser().getId());
+    rolesQuery.setNamedParameter("formId", formId);
+    rolesQuery.setNamedParameter("clientId", clientId);
+    rolesQuery.setNamedParameter("orgId", orgId);
 
-    final String terminalName = request.getParameter("terminalName");
-    final String userId = request.getParameter("userId");
-    final String command = request.getParameter("command");
-
-    JSONObject result = new JSONObject();
-    JSONObject resp = new JSONObject();
-    JSONArray data = new JSONArray();
-    JSONObject item = null;
-    try {
-      if (command.equals("availableRoles")) {
-
-        String strClient = getClientOrgIds(terminalName)[0];
-        String strOrg = getClientOrgIds(terminalName)[1];
-        if ("none".equals(strClient)) {
-          strClient = "0";
-        }
-        if ("none".equals(strOrg)) {
-          strOrg = "0";
-        }
-
-        // Get the role and role name list with the following criteria
-        // * The "Role" is available for the current organization
-        // * The "Role" is available for the current user
-        // * The "Role" has the "Web POS" form as an allowed one
-
-        final String hqlRole = "select distinct role.id, role.name "
-            + "from ADRole role, ADRoleOrganization roleOrg, ADUserRoles userRoles, ADFormAccess formAccess "
-            + "where role.active = true and " + "roleOrg.active = true and "
-            + "userRoles.active = true and " + "formAccess.active = true and "
-            + "roleOrg.organization.id = :strOrg and " + "role.id = roleOrg.role.id and "
-            + "role.id = userRoles.role.id and " + "role.id = formAccess.role.id and "
-            + "userRoles.userContact.id = :userId and "
-            + "formAccess.specialForm.id = :webPOSFormId " + "order by role.name";
-        Query qryRole = OBDal.getInstance().getSession().createQuery(hqlRole);
-        qryRole.setParameter("strOrg", strOrg);
-        qryRole.setParameter("userId", userId);
-        qryRole.setParameter("webPOSFormId", "B7B7675269CD4D44B628A2C6CF01244F");
-        int queryCount = 0;
-
-        for (Object qryRoleObject : qryRole.list()) {
-          queryCount++;
-          final Object[] qryRoleObjectItem = (Object[]) qryRoleObject;
-
-          item = new JSONObject();
-          item.put("id", qryRoleObjectItem[0]);
-          item.put("_identifier", qryRoleObjectItem[1]);
-
-          data.put(item);
-        }
-
-        resp.put("startRow", 0);
-        resp.put("endRow", (queryCount == 0 ? 0 : queryCount - 1));
-        resp.put("totalRows", queryCount);
-        resp.put("data", data);
-        result.append("response", resp);
-        writeResult(response, result.toString());
-
-      } else if (command.equals("availableLanguages")) {
-        int queryCount = 0;
-
-        final OBQuery<Language> languages = OBDal.getInstance().createQuery(
-            Language.class,
-            "(" + Language.PROPERTY_SYSTEMLANGUAGE + "=true or " + Language.PROPERTY_BASELANGUAGE
-                + "=true)");
-        languages.setFilterOnReadableClients(false);
-        languages.setFilterOnReadableOrganization(false);
-
-        DalUtil.sortByIdentifier(languages.list());
-
-        for (BaseOBObject bob : languages.list()) {
-          queryCount++;
-          final JSONObject jsonArrayItem = new JSONObject();
-          jsonArrayItem.put(JsonConstants.ID, (String) bob.getId());
-          jsonArrayItem.put(JsonConstants.IDENTIFIER, (String) bob.getIdentifier());
-          data.put(jsonArrayItem);
-        }
-
-        resp.put("startRow", 0);
-        resp.put("endRow", (queryCount == 0 ? 0 : queryCount - 1));
-        resp.put("totalRows", queryCount);
-        resp.put("data", data);
-        result.append("response", resp);
-        writeResult(response, result.toString());
+    final List<Role> result = new ArrayList<Role>();
+    for (UserRoles userRole : rolesQuery.list()) {
+      if (!result.contains(userRole.getRole())) {
+        result.add(userRole.getRole());
       }
-    } catch (JSONException e) {
-      log.error(e.getMessage(), e);
-      writeResult(response, JsonUtils.convertExceptionToJson(e));
-    } finally {
-      OBContext.restorePreviousMode();
-      OBContext.setOBContext((OBContext) null);
     }
+    return result;
   }
+
 }
