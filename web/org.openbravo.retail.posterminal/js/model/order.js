@@ -5751,19 +5751,33 @@
         return;
       });
     },
-    removePayment: function (payment) {
+    removePayment: function (payment, cancellationCallback, removeCallback) {
       var me = this,
           payments = this.get('payments');
+      var finalCallback = function () {
+          if (removeCallback) {
+            removeCallback();
+          }
+          };
       OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePaymentMultiOrder', {
         paymentToRem: payment,
         payments: payments,
         multiOrdersList: this.get('multiOrdersList')
       }, function (args) {
+        if (args.cancellation) {
+          if (cancellationCallback) {
+            cancellationCallback();
+          }
+          return true;
+        }
         args.payments.remove(args.paymentToRem);
         if (args.paymentToRem.get('openDrawer')) {
           me.set('openDrawer', false);
         }
         me.adjustPayment();
+        if (finalCallback) {
+          finalCallback();
+        }
       });
     },
     printGross: function () {
