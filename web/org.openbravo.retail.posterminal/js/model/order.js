@@ -1423,66 +1423,69 @@
         var text, lines, indexes, relations, rl, rls, i;
 
         me.get('lines').remove(line);
-        text = me.get('undo').text;
-        lines = me.get('undo').lines;
-        relations = me.get('undo').relations;
 
-        me.setUndo('DeleteLine', {
-          text: text,
-          lines: lines,
-          relations: relations,
-          undo: function () {
-            if (OB.UTIL.RfidController.isRfidConfigured() && line.get('obposEpccode')) {
-              OB.UTIL.RfidController.addEpcLine(line);
-            }
-            enyo.$.scrim.show();
-            me.set('preventServicesUpdate', true);
-            me.set('deleting', true);
-            if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id')) {
-              for (i = 0; i < me.get('undo').lines.length; i++) {
-                if (!me.get('undo').lines[i].get('product').get('oBPOSAllowAnonymousSale')) {
-                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('undo').lines[i].get('product').get('_identifier')]));
-                  return;
+        if (me.get('undo')) {
+          text = me.get('undo').text;
+          lines = me.get('undo').lines;
+          relations = me.get('undo').relations;
+
+          me.setUndo('DeleteLine', {
+            text: text,
+            lines: lines,
+            relations: relations,
+            undo: function () {
+              if (OB.UTIL.RfidController.isRfidConfigured() && line.get('obposEpccode')) {
+                OB.UTIL.RfidController.addEpcLine(line);
+              }
+              enyo.$.scrim.show();
+              me.set('preventServicesUpdate', true);
+              me.set('deleting', true);
+              if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id')) {
+                for (i = 0; i < me.get('undo').lines.length; i++) {
+                  if (!me.get('undo').lines[i].get('product').get('oBPOSAllowAnonymousSale')) {
+                    OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('undo').lines[i].get('product').get('_identifier')]));
+                    return;
+                  }
                 }
               }
-            }
-            me.get('undo').lines.sort(function (a, b) {
-              if (a.get('undoPosition') > b.get('undoPosition')) {
-                return 1;
-              }
-              if (a.get('undoPosition') < b.get('undoPosition')) {
-                return -1;
-              }
-              // a must be equal to b
-              return 0;
-            });
-
-            lines.forEach(function (line) {
-              if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.get('obposQtyDeleted')) {
-                line.set('qty', line.get('obposQtyDeleted'));
-                line.set('obposQtyDeleted', 0);
-              }
-              me.removeDeleteLine(line);
-              me.get('lines').add(line, {
-                at: line.get('undoPosition')
+              me.get('undo').lines.sort(function (a, b) {
+                if (a.get('undoPosition') > b.get('undoPosition')) {
+                  return 1;
+                }
+                if (a.get('undoPosition') < b.get('undoPosition')) {
+                  return -1;
+                }
+                // a must be equal to b
+                return 0;
               });
-            });
-            relations.forEach(function (rel) {
-              var rls = rel[0].get('relatedLines').slice(),
-                  lineToAddRelated = _.filter(me.get('lines').models, function (line) {
-                  return line.id === rel[0].id;
+
+              lines.forEach(function (line) {
+                if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.get('obposQtyDeleted')) {
+                  line.set('qty', line.get('obposQtyDeleted'));
+                  line.set('obposQtyDeleted', 0);
+                }
+                me.removeDeleteLine(line);
+                me.get('lines').add(line, {
+                  at: line.get('undoPosition')
                 });
-              rls.push(rel[1]);
-              lineToAddRelated[0].set('relatedLines', rls);
-            });
-            me.set('undo', null);
-            me.unset('preventServicesUpdate');
-            me.unset('deleting');
-            me.get('lines').trigger('updateRelations');
-            me.calculateReceipt();
-            enyo.$.scrim.hide();
-          }
-        });
+              });
+              relations.forEach(function (rel) {
+                var rls = rel[0].get('relatedLines').slice(),
+                    lineToAddRelated = _.filter(me.get('lines').models, function (line) {
+                    return line.id === rel[0].id;
+                  });
+                rls.push(rel[1]);
+                lineToAddRelated[0].set('relatedLines', rls);
+              });
+              me.set('undo', null);
+              me.unset('preventServicesUpdate');
+              me.unset('deleting');
+              me.get('lines').trigger('updateRelations');
+              me.calculateReceipt();
+              enyo.$.scrim.hide();
+            }
+          });
+        }
 
         me.adjustPayment();
         if (!doNotSave) {
