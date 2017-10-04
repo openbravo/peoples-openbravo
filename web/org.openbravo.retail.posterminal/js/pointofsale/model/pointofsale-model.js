@@ -263,12 +263,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.DATA.OrderSave(this);
     OB.DATA.OrderTaxes(receipt);
 
-    this.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(this);
-    this.printLine = new OB.OBPOSPointOfSale.Print.ReceiptLine(receipt);
-
-    // Now that templates has been initialized, print welcome message
-    OB.POS.hwserver.print(this.printReceipt.templatewelcome, {}, null, OB.DS.HWServer.DISPLAY);
-
     var ViewManager = Backbone.Model.extend({
       defaults: {
         currentWindow: {
@@ -346,208 +340,23 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     receipt.on('paymentAccepted', function () {
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("receipt.paymentAccepted");
-      receipt.setIsCalculateReceiptLockState(true);
-      receipt.setIsCalculateGrossLockState(true);
-      receipt.prepareToSend(function () {
-        //Create the negative payment for change
-        var oldChange = receipt.get('change'),
-            clonedCollection = new Backbone.Collection(),
-            paymentKind, i, totalPrePayment = OB.DEC.Zero,
-            totalNotPrePayment = OB.DEC.Zero;
-        var triggerReceiptClose = function (receipt) {
-            // There is only 1 receipt object.
-            receipt.set('isBeingClosed', true);
-            receipt.trigger('closed', {
-              callback: function (args) {
-                if (args.skipCallback) {
-                  enyo.$.scrim.hide();
-                  OB.UTIL.SynchronizationHelper.finished(synchId, "receipt.paymentAccepted");
-                  return true;
-                }
-                receipt.set('isBeingClosed', false);
-
-                _.each(orderList.models, function (ol) {
-                  if (ol.get('id') === receipt.get('id')) {
-                    ol.set('isBeingClosed', false);
-                    return true;
-                  }
-                }, this);
-                receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
-                OB.Dal.save(receipt, function () {
-                  OB.UTIL.Debug.execute(function () {
-                    if (!args.frozenReceipt) {
-                      throw "A clone of the receipt must be provided because it is possible that some rogue process could have changed it";
-                    }
-                    if (OB.UTIL.isNullOrUndefined(args.isCancelled)) { // allow boolean values
-                      throw "The isCancelled flag must be set";
-                    }
-                  });
-
-                  // verify that the receipt was not cancelled
-                  if (args.isCancelled !== true) {
-                    var orderToPrint = OB.UTIL.clone(args.frozenReceipt);
-                    orderToPrint.get('payments').reset();
-                    clonedCollection.each(function (model) {
-                      orderToPrint.get('payments').add(new Backbone.Model(model.toJSON()), {
-                        silent: true
-                      });
-                    });
-                    orderToPrint.set('hasbeenpaid', 'Y');
-                    receipt.trigger('print', orderToPrint, {
-                      offline: true
-                    });
-
-                    // Verify that the receipt has not been changed while the ticket has being closed
-                    var diff = OB.UTIL.diffJson(receipt.serializeToJSON(), args.frozenReceipt.serializeToJSON());
-                    // hasBeenPaid and cashUpReportInformation are the only difference allowed in the receipt
-                    delete diff.hasbeenpaid;
-                    delete diff.cashUpReportInformation;
-                    // isBeingClosed is a flag only used to log purposes
-                    delete diff.isBeingClosed;
-                    // verify if there have been any modification to the receipt
-                    var diffStringified = JSON.stringify(diff, undefined, 2);
-                    if (diffStringified !== '{}') {
-                      OB.error("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
-                    }
-
-                    orderList.deleteCurrent();
-                    receipt.setIsCalculateReceiptLockState(false);
-                    receipt.setIsCalculateGrossLockState(false);
-
-                    orderList.synchronizeCurrentOrder();
-                  }
-                  if (OB.MobileApp.view.openedPopup === null) {
-                    enyo.$.scrim.hide();
-                  }
-                  OB.UTIL.SynchronizationHelper.finished(synchId, "receipt.paymentAccepted");
-                }, null, false);
-
-              }
-            });
-            };
-
-        if (receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3) {
-          var negativeLines = _.filter(receipt.get('lines').models, function (line) {
-            return line.get('qty') < 0;
-          }).length;
-          if (negativeLines === receipt.get('lines').models.length) {
-            receipt.setOrderType('OBPOS_receipt.return', OB.DEC.One, {
-              applyPromotions: false,
-              saveOrder: false
-            });
-          } else {
-            receipt.setOrderType('', OB.DEC.Zero, {
-              applyPromotions: false,
-              saveOrder: false
-            });
-          }
+      OB.UTIL.TicketCloseUtils.paymentAccepted(receipt, orderList, function () {
+        if (OB.MobileApp.view.openedPopup === null) {
+          enyo.$.scrim.hide();
         }
-
-        receipt.get('payments').each(function (model) {
-          clonedCollection.add(new Backbone.Model(model.toJSON()));
-          if (model.get('isPrePayment')) {
-            totalPrePayment = OB.DEC.add(totalPrePayment, model.get('origAmount'));
-          } else {
-            totalNotPrePayment = OB.DEC.add(totalNotPrePayment, model.get('origAmount'));
-          }
-        });
-        if (!_.isUndefined(receipt.get('selectedPayment')) && receipt.getChange() > 0) {
-          var payment = OB.MobileApp.model.paymentnames[receipt.get('selectedPayment')];
-          if (!payment.paymentMethod.iscash) {
-            payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
-          }
-          if (receipt.get('payment') >= receipt.get('gross') || (!_.isUndefined(receipt.get('paidInNegativeStatusAmt')) && OB.DEC.compare(OB.DEC.sub(receipt.get('gross'), OB.DEC.sub(totalPrePayment, totalNotPrePayment))) >= 0)) {
-            receipt.addPayment(new OB.Model.PaymentLine({
-              'kind': payment.payment.searchKey,
-              'name': payment.payment.commercialName,
-              'amount': OB.DEC.sub(0, OB.DEC.mul(receipt.getChange(), payment.mulrate)),
-              'rate': payment.rate,
-              'mulrate': payment.mulrate,
-              'isocode': payment.isocode,
-              'allowOpenDrawer': payment.paymentMethod.allowopendrawer,
-              'isCash': payment.paymentMethod.iscash,
-              'openDrawer': payment.paymentMethod.openDrawer,
-              'printtwice': payment.paymentMethod.printtwice
-            }), function (receipt) {
-              receipt.set('change', oldChange);
-              for (i = 0; i < receipt.get('payments').length; i++) {
-                paymentKind = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
-                if (paymentKind && paymentKind.paymentMethod && paymentKind.paymentMethod.leaveascredit) {
-                  receipt.set('payment', OB.DEC.sub(receipt.get('payment'), receipt.get('payments').models[i].get('amount')));
-                  receipt.set('paidOnCredit', true);
-                }
-              }
-              triggerReceiptClose(receipt);
-            });
-          }
-        } else {
-          for (i = 0; i < receipt.get('payments').length; i++) {
-            paymentKind = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
-            if (paymentKind && paymentKind.paymentMethod && paymentKind.paymentMethod.leaveascredit) {
-              receipt.set('payment', OB.DEC.sub(receipt.get('payment'), receipt.get('payments').models[i].get('amount')));
-              receipt.set('paidOnCredit', true);
-            }
-          }
-          triggerReceiptClose(receipt);
-        }
+        OB.UTIL.SynchronizationHelper.finished(synchId, "receipt.paymentAccepted");
       });
     }, this);
 
     receipt.on('paymentDone', function (openDrawer) {
-      var isOrderCancelledProcess = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled'),
-          triggerPaymentAccepted, triggerPaymentAcceptedImpl;
-
-      triggerPaymentAccepted = function () {
-        OB.UTIL.HookManager.executeHooks('OBPOS_PostPaymentDone', {
-          receipt: receipt
-        }, function (args) {
-          if (args && args.cancellation && args.cancellation === true) {
-            receipt.trigger('paymentCancel');
-            return;
-          }
-          if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-            OB.MobileApp.model.setSynchronizedCheckpoint(triggerPaymentAcceptedImpl);
-          } else {
-            triggerPaymentAcceptedImpl();
-          }
-        });
-      };
-
-      triggerPaymentAcceptedImpl = function () {
-        if (receipt.get('doCancelAndReplace') && receipt.get('replacedorder')) {
-          isOrderCancelledProcess.exec({
-            orderId: receipt.get('replacedorder'),
-            documentNo: receipt.get('documentNo')
-          }, function (data) {
-            if (data && data.exception) {
-              if (data.exception.message) {
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message);
-                return;
-              }
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
-              return;
-            } else if (data && data.orderCancelled) {
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderReplacedError'));
-              return;
-            } else {
-              if (_.isUndefined(_.find(receipt.get('lines').models, function (line) {
-                var qty = line.get('qty') ? line.get('qty') : 0,
-                    deliveredQuantity = line.get('deliveredQuantity') ? line.get('deliveredQuantity') : 0;
-                return (qty > 0 && qty > deliveredQuantity) || (qty < 0 && qty < deliveredQuantity);
-              }))) {
-                receipt.set('generateShipment', false);
-              }
-              receipt.trigger('paymentAccepted');
-            }
-          }, function () {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
-          });
-        } else {
-          receipt.trigger('paymentAccepted');
+      function callbackPaymentAccepted(allowedOpenDrawer) {
+        if (allowedOpenDrawer) {
+          me.openDrawer = openDrawer;
         }
-      };
+        receipt.trigger('paymentAccepted');
+      }
 
-      if (receipt.overpaymentExists()) {
+      function callbackOverpaymentExist(callback) {
         var symbol = OB.MobileApp.model.get('terminal').symbol;
         var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
         var amount = receipt.getPaymentStatus().overpayment;
@@ -556,25 +365,44 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           isConfirmButton: true,
           action: function () {
             me.openDrawer = openDrawer;
-            triggerPaymentAccepted();
+            callback(true);
           }
         }, {
-          label: OB.I18N.getLabel('OBMOBC_LblCancel')
+          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+          action: function () {
+            callback(false);
+          }
         }]);
-      } else if (OB.DEC.abs(receipt.getPayment()) !== OB.DEC.abs(receipt.getGross()) && _.isUndefined(receipt.get('paidInNegativeStatusAmt')) && !receipt.isLayaway() && !receipt.get('paidOnCredit')) {
+      }
+
+      function callbackPaymentAmountDistinctThanReceipt() {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountTitle'), OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountBody'), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           isConfirmButton: true,
           action: function () {
-            triggerPaymentAccepted();
+            callback(true);
           }
         }, {
-          label: OB.I18N.getLabel('OBMOBC_LblCancel')
+          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+          action: function () {
+            callback(false);
+          }
         }]);
-      } else {
-        me.openDrawer = openDrawer;
-        triggerPaymentAccepted();
       }
+
+      function callbackErrorCancelAndReplace(errorMessage) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), errorMessage);
+      }
+
+      function callbackErrorCancelAndReplaceOffline() {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+      }
+
+      function callbackErrorOrderCancelled() {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderReplacedError'));
+      }
+
+      OB.UTIL.TicketCloseUtils.paymentDone(receipt, callbackPaymentAccepted, callbackOverpaymentExist, callbackPaymentAmountDistinctThanReceipt, callbackErrorCancelAndReplace, callbackErrorCancelAndReplaceOffline, callbackErrorOrderCancelled);
     }, this);
 
     this.get('multiOrders').on('paymentAccepted', function () {
@@ -1029,7 +857,22 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             OB.Dal.save(dataBps, function () {}, function () {
               OB.error(arguments);
             });
-            me.loadUnpaidOrders(callback);
+            me.loadUnpaidOrders(function () {
+              var receipt = new OB.Model.Order();
+
+              me.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(me);
+              me.printLine = new OB.OBPOSPointOfSale.Print.ReceiptLine(receipt);
+
+              // Now that templates has been initialized, print welcome message
+              OB.POS.hwserver.print(me.printReceipt.templatewelcome, {}, function (data) {
+                if (data && data.exception) {
+                  OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'));
+                  callback();
+                } else {
+                  callback();
+                }
+              }, OB.DS.HWServer.DISPLAY);
+            });
           });
         }
       }
@@ -1039,7 +882,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     //Because in terminal we've the BP id and we want to have the BP model.
     //In this moment we can ensure data is already loaded in the local database
     searchCurrentBP(loadModelsCallback);
-
   },
 
   /**

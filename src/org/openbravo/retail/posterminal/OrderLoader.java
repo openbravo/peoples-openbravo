@@ -12,8 +12,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.CallableStatement;
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -143,7 +141,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
   private boolean isModified = false;
   private boolean doCancelAndReplace = false;
   private boolean paidReceipt = false;
-  private DateFormat dateFormatUTC = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
   @Inject
   @Any
@@ -270,8 +267,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
         order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
 
         if (order != null) {
-          final Date loaded = dateFormatUTC.parse(jsonorder.getString("loaded")),
-              updated = OBMOBCUtils.convertToUTC(order.getUpdated());
+          final Date loaded = POSUtils.dateFormatUTC.parse(jsonorder.getString("loaded")), updated = OBMOBCUtils
+              .convertToUTC(order.getUpdated());
           if (!(loaded.compareTo(updated) >= 0)) {
             throw new OutDatedDataChangeException(
                 Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedLayaway",

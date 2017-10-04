@@ -18,6 +18,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -66,6 +67,8 @@ public class POSUtils {
   public static final String MODULE_JAVA_PACKAGE = "org.openbravo.retail.posterminal";
   public static final String APP_NAME = "WebPOS";
   public static final String WEB_POS_FORM_ID = "B7B7675269CD4D44B628A2C6CF01244F";
+  public static final DateFormat dateFormatUTC = new SimpleDateFormat(
+      "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
   public static boolean isModuleInDevelopment() {
     OBContext.setAdminMode(false);

@@ -14,10 +14,15 @@ import java.util.HashMap;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
+import org.openbravo.mobile.core.process.OutDatedDataChangeException;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.order.Order;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
 public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
@@ -31,14 +36,22 @@ public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
 
     JSONArray respArray = new JSONArray();
     JSONObject jsonorder = (JSONObject) jsonRecord.get("order");
+    Order order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+
+    if (order != null) {
+      final Date loaded = POSUtils.dateFormatUTC.parse(jsonorder.getString("loaded")), updated = OBMOBCUtils
+          .convertToUTC(order.getUpdated());
+      if (!(loaded.compareTo(updated) >= 0)) {
+        throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
+            "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
+      }
+    }
 
     // Update CashUp Report
     JSONObject jsoncashup = jsonorder.getJSONObject("cashUpReportInformation");
     Date cashUpDate = new Date();
 
     UpdateCashup.getAndUpdateCashUp(jsoncashup.getString("id"), jsoncashup, cashUpDate);
-
-    Order order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
 
     VoidLayaway proc = WeldUtils.getInstanceFromStaticBeanManager(VoidLayaway.class);
     proc.voidLayaway(jsonorder, order);

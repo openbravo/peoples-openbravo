@@ -1428,66 +1428,69 @@
         var text, lines, indexes, relations, rl, rls, i;
 
         me.get('lines').remove(line);
-        text = me.get('undo').text;
-        lines = me.get('undo').lines;
-        relations = me.get('undo').relations;
 
-        me.setUndo('DeleteLine', {
-          text: text,
-          lines: lines,
-          relations: relations,
-          undo: function () {
-            if (OB.UTIL.RfidController.isRfidConfigured() && line.get('obposEpccode')) {
-              OB.UTIL.RfidController.addEpcLine(line);
-            }
-            enyo.$.scrim.show();
-            me.set('preventServicesUpdate', true);
-            me.set('deleting', true);
-            if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id')) {
-              for (i = 0; i < me.get('undo').lines.length; i++) {
-                if (!me.get('undo').lines[i].get('product').get('oBPOSAllowAnonymousSale')) {
-                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('undo').lines[i].get('product').get('_identifier')]));
-                  return;
+        if (me.get('undo')) {
+          text = me.get('undo').text;
+          lines = me.get('undo').lines;
+          relations = me.get('undo').relations;
+
+          me.setUndo('DeleteLine', {
+            text: text,
+            lines: lines,
+            relations: relations,
+            undo: function () {
+              if (OB.UTIL.RfidController.isRfidConfigured() && line.get('obposEpccode')) {
+                OB.UTIL.RfidController.addEpcLine(line);
+              }
+              enyo.$.scrim.show();
+              me.set('preventServicesUpdate', true);
+              me.set('deleting', true);
+              if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id')) {
+                for (i = 0; i < me.get('undo').lines.length; i++) {
+                  if (!me.get('undo').lines[i].get('product').get('oBPOSAllowAnonymousSale')) {
+                    OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('undo').lines[i].get('product').get('_identifier')]));
+                    return;
+                  }
                 }
               }
-            }
-            me.get('undo').lines.sort(function (a, b) {
-              if (a.get('undoPosition') > b.get('undoPosition')) {
-                return 1;
-              }
-              if (a.get('undoPosition') < b.get('undoPosition')) {
-                return -1;
-              }
-              // a must be equal to b
-              return 0;
-            });
-
-            lines.forEach(function (line) {
-              if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.get('obposQtyDeleted')) {
-                line.set('qty', line.get('obposQtyDeleted'));
-                line.set('obposQtyDeleted', 0);
-              }
-              me.removeDeleteLine(line);
-              me.get('lines').add(line, {
-                at: line.get('undoPosition')
+              me.get('undo').lines.sort(function (a, b) {
+                if (a.get('undoPosition') > b.get('undoPosition')) {
+                  return 1;
+                }
+                if (a.get('undoPosition') < b.get('undoPosition')) {
+                  return -1;
+                }
+                // a must be equal to b
+                return 0;
               });
-            });
-            relations.forEach(function (rel) {
-              var rls = rel[0].get('relatedLines').slice(),
-                  lineToAddRelated = _.filter(me.get('lines').models, function (line) {
-                  return line.id === rel[0].id;
+
+              lines.forEach(function (line) {
+                if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.get('obposQtyDeleted')) {
+                  line.set('qty', line.get('obposQtyDeleted'));
+                  line.set('obposQtyDeleted', 0);
+                }
+                me.removeDeleteLine(line);
+                me.get('lines').add(line, {
+                  at: line.get('undoPosition')
                 });
-              rls.push(rel[1]);
-              lineToAddRelated[0].set('relatedLines', rls);
-            });
-            me.set('undo', null);
-            me.unset('preventServicesUpdate');
-            me.unset('deleting');
-            me.get('lines').trigger('updateRelations');
-            me.calculateReceipt();
-            enyo.$.scrim.hide();
-          }
-        });
+              });
+              relations.forEach(function (rel) {
+                var rls = rel[0].get('relatedLines').slice(),
+                    lineToAddRelated = _.filter(me.get('lines').models, function (line) {
+                    return line.id === rel[0].id;
+                  });
+                rls.push(rel[1]);
+                lineToAddRelated[0].set('relatedLines', rls);
+              });
+              me.set('undo', null);
+              me.unset('preventServicesUpdate');
+              me.unset('deleting');
+              me.get('lines').trigger('updateRelations');
+              me.calculateReceipt();
+              enyo.$.scrim.hide();
+            }
+          });
+        }
 
         me.adjustPayment();
         if (!doNotSave) {
@@ -4711,95 +4714,26 @@
     },
 
     newOrder: function (bp) {
-      var order = new Order(),
-          receiptProperties, i, p;
-      bp = bp ? bp : OB.MobileApp.model.get('businessPartner');
-
+      var i, p, receiptProperties, propertiesToReset = [];
       // reset in new order properties defined in Receipt Properties dialog
       if (OB.MobileApp.view.$.containerWindow && OB.MobileApp.view.$.containerWindow.getRoot() && OB.MobileApp.view.$.containerWindow.getRoot().$.receiptPropertiesDialog) {
         receiptProperties = OB.MobileApp.view.$.containerWindow.getRoot().$.receiptPropertiesDialog.newAttributes;
         for (i = 0; i < receiptProperties.length; i++) {
           if (receiptProperties[i].modelProperty) {
-            order.set(receiptProperties[i].modelProperty, '');
+            propertiesToReset.push({
+              'propertyName': receiptProperties[i].modelProperty
+            });
           }
           if (receiptProperties[i].extraProperties) {
             for (p = 0; p < receiptProperties[i].extraProperties.length; p++) {
-              order.set(receiptProperties[i].extraProperties[p], '');
+              propertiesToReset.push({
+                'propertyName': receiptProperties[i].extraProperties[p]
+              });
             }
           }
         }
       }
-
-      order.set('client', OB.MobileApp.model.get('terminal').client);
-      order.set('organization', OB.MobileApp.model.get('terminal').organization);
-      order.set('createdBy', OB.MobileApp.model.get('orgUserId'));
-      order.set('updatedBy', OB.MobileApp.model.get('orgUserId'));
-      order.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
-      order.set('orderType', OB.MobileApp.model.get('terminal').terminalType.layawayorder ? 2 : 0); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
-      order.set('generateInvoice', false);
-      order.set('isQuotation', false);
-      order.set('oldId', null);
-      order.set('session', OB.MobileApp.model.get('session'));
-      order.set('bp', bp);
-      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
-        // Set price list for order
-        order.set('priceList', bp.get('priceList'));
-        var priceIncludesTax = bp.get('priceIncludesTax');
-        if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
-          priceIncludesTax = OB.MobileApp.model.get('pricelist').priceIncludesTax;
-        }
-        order.set('priceIncludesTax', priceIncludesTax);
-      } else {
-        order.set('priceList', OB.MobileApp.model.get('terminal').priceList);
-        order.set('priceIncludesTax', OB.MobileApp.model.get('pricelist').priceIncludesTax);
-      }
-      if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
-        if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice', true) && !bp.get('taxID')) {
-          if (OB.MobileApp.model.get('terminal').terminalType.generateInvoice) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
-          } else {
-            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
-          }
-          order.set('generateInvoice', false);
-        } else {
-          order.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
-        }
-      } else {
-        order.set('generateInvoice', false);
-      }
-      order.set('currency', OB.MobileApp.model.get('terminal').currency);
-      order.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
-      order.set('warehouse', OB.MobileApp.model.get('terminal').warehouse);
-      if (OB.MobileApp.model.get('context').user.isSalesRepresentative) {
-        order.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
-        order.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('context').user._identifier);
-      } else {
-        order.set('salesRepresentative', null);
-        order.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
-      }
-      order.set('posTerminal', OB.MobileApp.model.get('terminal').id);
-      order.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
-      order.set('orderDate', OB.I18N.normalizeDate(new Date()));
-      order.set('creationDate', null);
-      order.set('isPaid', false);
-      order.set('creditAmount', OB.DEC.Zero);
-      order.set('paidPartiallyOnCredit', false);
-      order.set('paidOnCredit', false);
-      order.set('isLayaway', false);
-      order.set('isPartiallyDelivered', false);
-      order.set('taxes', {});
-
-      var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
-      order.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
-      order.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
-      order.set('documentNo', nextDocumentno.documentNo);
-      order.set('print', true);
-      order.set('sendEmail', false);
-      order.set('openDrawer', false);
-      OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
-        newOrder: order
-      });
-      return order;
+      return OB.Collection.OrderList.newOrder(bp, propertiesToReset);
     },
 
     newPaidReceipt: function (model, callback) {
@@ -5523,6 +5457,89 @@
           return loadOrder(model);
         }
       });
+    }
+  }, {
+    newOrder: function (bp, propertiesToReset) {
+      var order = new Order(),
+          i;
+      bp = bp ? bp : OB.MobileApp.model.get('businessPartner');
+
+      if (propertiesToReset && _.isArray(propertiesToReset)) {
+        for (i = 0; i < propertiesToReset.length; i++) {
+          order.set(propertiesToReset[i].propertyName, '');
+        }
+      }
+
+      order.set('client', OB.MobileApp.model.get('terminal').client);
+      order.set('organization', OB.MobileApp.model.get('terminal').organization);
+      order.set('createdBy', OB.MobileApp.model.get('orgUserId'));
+      order.set('updatedBy', OB.MobileApp.model.get('orgUserId'));
+      order.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
+      order.set('orderType', OB.MobileApp.model.get('terminal').terminalType.layawayorder ? 2 : 0); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
+      order.set('generateInvoice', false);
+      order.set('isQuotation', false);
+      order.set('oldId', null);
+      order.set('session', OB.MobileApp.model.get('session'));
+      order.set('bp', bp);
+      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+        // Set price list for order
+        order.set('priceList', bp.get('priceList'));
+        var priceIncludesTax = bp.get('priceIncludesTax');
+        if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
+          priceIncludesTax = OB.MobileApp.model.get('pricelist').priceIncludesTax;
+        }
+        order.set('priceIncludesTax', priceIncludesTax);
+      } else {
+        order.set('priceList', OB.MobileApp.model.get('terminal').priceList);
+        order.set('priceIncludesTax', OB.MobileApp.model.get('pricelist').priceIncludesTax);
+      }
+      if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
+        if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice', true) && !bp.get('taxID')) {
+          if (OB.MobileApp.model.get('terminal').terminalType.generateInvoice) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+          } else {
+            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+          }
+          order.set('generateInvoice', false);
+        } else {
+          order.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
+        }
+      } else {
+        order.set('generateInvoice', false);
+      }
+      order.set('currency', OB.MobileApp.model.get('terminal').currency);
+      order.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
+      order.set('warehouse', OB.MobileApp.model.get('terminal').warehouse);
+      if (OB.MobileApp.model.get('context').user.isSalesRepresentative) {
+        order.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
+        order.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('context').user._identifier);
+      } else {
+        order.set('salesRepresentative', null);
+        order.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
+      }
+      order.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+      order.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
+      order.set('orderDate', OB.I18N.normalizeDate(new Date()));
+      order.set('creationDate', null);
+      order.set('isPaid', false);
+      order.set('creditAmount', OB.DEC.Zero);
+      order.set('paidPartiallyOnCredit', false);
+      order.set('paidOnCredit', false);
+      order.set('isLayaway', false);
+      order.set('isPartiallyDelivered', false);
+      order.set('taxes', {});
+
+      var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
+      order.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
+      order.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
+      order.set('documentNo', nextDocumentno.documentNo);
+      order.set('print', true);
+      order.set('sendEmail', false);
+      order.set('openDrawer', false);
+      OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
+        newOrder: order
+      });
+      return order;
     }
   });
 
