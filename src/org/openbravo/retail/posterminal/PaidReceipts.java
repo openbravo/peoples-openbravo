@@ -88,7 +88,7 @@ public class PaidReceipts extends JSONProcessSimple {
       JSONArray respArray = new JSONArray();
       List<String> orderIds = new ArrayList<String>();
 
-      final DateFormat parseDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+      final DateFormat parseDateFormat = (DateFormat) POSUtils.dateFormatUTC.clone();
       parseDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
       final DateFormat paymentDateFormat = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
       paymentDateFormat.setTimeZone(TimeZone.getTimeZone(Calendar.getInstance().getTimeZone()
