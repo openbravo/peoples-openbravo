@@ -597,10 +597,18 @@
     },
 
     returnToOnline: function () {
-
-      //The session is fine, we don't need to warn the user
-      //but we will attempt to send all pending orders automatically
-      this.runSyncProcess();
+      if (OB.MobileApp.model.get('isLoggingIn')) {
+        OB.MobileApp.model.on('change:isLoggingIn', function () {
+          if (OB.MobileApp.model.get('isLoggingIn')) {
+            OB.MobileApp.model.off('change:isLoggingIn', this.returnToOnline);
+            this.runSyncProcess();
+          }
+        });
+      } else {
+        //The session is fine, we don't need to warn the user
+        //but we will attempt to send all pending orders automatically
+        this.runSyncProcess();
+      }
     },
 
     renderMain: function () {
