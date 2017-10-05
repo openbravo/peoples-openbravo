@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):   Sreedhar Sirigiri (TDS), Mallikarjun M (TDS)
  ************************************************************************
@@ -519,6 +519,9 @@ isc.OBToolbar.addClassProperties({
         if (view.isShowingForm && form.isNew) {
           disabled = true;
         }
+        if (view.isEditingGrid && grid.getEditForm().isNew) {
+          disabled = true;
+        }
         /*
          * Fixes Issue 0023270. The Business partner print button provides statistics about the
          * business partner transactions in a pop up and so handling multiple records are not allowed.
@@ -544,6 +547,9 @@ isc.OBToolbar.addClassProperties({
           disabled = true;
         }
         if (view.isShowingForm && form.isNew) {
+          disabled = true;
+        }
+        if (view.isEditingGrid && grid.getEditForm().isNew) {
           disabled = true;
         }
         this.setDisabled(disabled);
