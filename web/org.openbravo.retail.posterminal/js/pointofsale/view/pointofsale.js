@@ -884,6 +884,11 @@ enyo.kind({
       this.$.multiColumn.$.rightPanel.$.keyboard.lastStatus = '';
       this.$.multiColumn.$.rightPanel.$.keyboard.setStatus(inEvent.status);
     }
+    if (inEvent.tabPanel === 'payment') {
+      OB.MobileApp.model.set('inPaymentTab', true);
+    } else {
+      OB.MobileApp.model.set('inPaymentTab', false);
+    }
     this.hideProductDetails();
   },
   discountsModeFinished: function (inSender, inEvent) {

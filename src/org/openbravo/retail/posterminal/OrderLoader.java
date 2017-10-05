@@ -12,8 +12,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.CallableStatement;
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -142,7 +140,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean isDeleted = false;
   private boolean doCancelAndReplace = false;
   private boolean paidReceipt = false;
-  private DateFormat dateFormatUTC = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
   private boolean doCancelLayaway = false;
 
   @Inject
@@ -258,7 +255,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
 
         if (order != null) {
-          final Date loaded = dateFormatUTC.parse(jsonorder.getString("loaded")), updated = OBMOBCUtils
+          final Date loaded = POSUtils.dateFormatUTC.parse(jsonorder.getString("loaded")), updated = OBMOBCUtils
               .convertToUTC(order.getUpdated());
           if (!(loaded.compareTo(updated) >= 0)) {
             throw new OutDatedDataChangeException(Utility.messageBD(
@@ -2378,7 +2375,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       FIN_PaymentSchedule paymentScheduleInvoice, BigDecimal diffPaid, boolean usedCredit) {
     // Unlinked PaymentScheduleDetail records will be recreated
     // First all non linked PaymentScheduleDetail records are deleted
-    String pSchedId = null;
+
+    // Issue 36371, when setting the new FIN_PaymentScheduleDetail, we have reuse the first non
+    // linked, so in typical case, next method will not delete any FIN_PaymentScheduleDetail of the
+    // order
     List<FIN_PaymentScheduleDetail> pScheduleDetails = new ArrayList<FIN_PaymentScheduleDetail>();
     pScheduleDetails.addAll(paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList());
     for (FIN_PaymentScheduleDetail pSched : pScheduleDetails) {
@@ -2391,7 +2391,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().remove(
               pSched);
         }
-        pSchedId = pSched.getId();
         OBDal.getInstance().remove(pSched);
       }
     }
@@ -2406,11 +2405,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       if (paymentScheduleInvoice != null) {
         paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
       }
-      if (usedCredit) {
-        paymentScheduleDetail.setId(pSchedId == null ? paymentScheduleInvoice.getId() : pSchedId);
-      } else {
-        paymentScheduleDetail.setId(pSchedId == null ? paymentSchedule.getId() : pSchedId);
-      }
+
       paymentScheduleDetail.setNewOBObject(true);
       OBDal.getInstance().save(paymentScheduleDetail);
     }
@@ -2485,17 +2480,30 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
       }
 
-      FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
-          FIN_PaymentScheduleDetail.class);
+      // Issue 36371, delete a FIN_PaymentScheduleDetail is slow, so instead of create one, and
+      // deleted all not linked. To avoid that, instead create one, take the first non linked
+      FIN_PaymentScheduleDetail paymentScheduleDetail = null;
+      List<FIN_PaymentScheduleDetail> pScheduleDetails = new ArrayList<FIN_PaymentScheduleDetail>();
+      pScheduleDetails
+          .addAll(paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList());
+      for (FIN_PaymentScheduleDetail pSched : pScheduleDetails) {
+        if (pSched.getPaymentDetails() == null) {
+          paymentScheduleDetail = OBDal.getInstance().get(FIN_PaymentScheduleDetail.class,
+              pSched.getId());
+          break;
+        }
+      }
+      if (paymentScheduleDetail == null) {
+        // When creating the layaway
+        paymentScheduleDetail = OBProvider.getInstance().get(FIN_PaymentScheduleDetail.class);
+        paymentScheduleDetail.setNewOBObject(true);
+      }
+
       paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
       paymentScheduleDetail.setAmount(amount);
       paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
       paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(
           paymentScheduleDetail);
-      if (payment.has("id")) {
-        paymentScheduleDetail.setId(payment.getString("id"));
-        paymentScheduleDetail.setNewOBObject(true);
-      }
       OBDal.getInstance().save(paymentScheduleDetail);
       if (paymentScheduleInvoice != null) {
         paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(

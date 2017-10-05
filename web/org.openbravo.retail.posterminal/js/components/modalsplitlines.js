@@ -408,7 +408,8 @@ enyo.kind({
             originalLine: this.orderline
           },
           options: {
-            at: addline.collection.indexOf(addline) + 1
+            at: addline.collection.indexOf(addline) + 1,
+            blockAddProduct: true
           },
           context: this,
           callback: function (success, addline) {
@@ -468,7 +469,8 @@ enyo.kind({
     this.receipt.set('skipCalculateReceipt', true);
     this.doAddProduct({
       options: {
-        line: this.orderline
+        line: this.orderline,
+        blockAddProduct: true
       },
       product: this.orderline.get('product'),
       qty: this.qtysToAdd[0] - this.orderline.get('qty'),

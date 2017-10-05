@@ -106,7 +106,8 @@ enyo.kind({
         this.doAddProduct({
           attrs: attrs,
           options: {
-            line: line
+            line: line,
+            blockAddProduct: true
           },
           product: this.leftSubWindow.product,
           ignoreStockTab: true

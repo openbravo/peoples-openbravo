@@ -32,6 +32,7 @@
         appModuleId: 'FF808181326CC34901326D53DBCF0018',
         appModulePrefix: 'OBPOS',
         supportsOffline: true,
+        profileHandlerUrl: 'org.openbravo.retail.posterminal.ProfileUtilsServlet',
         loginUtilsUrl: '../../org.openbravo.retail.posterminal.service.loginutils',
         loginHandlerUrl: '../../org.openbravo.retail.posterminal/POSLoginHandler',
         applicationFormatUrl: '../../org.openbravo.mobile.core/OBPOS_Main/ApplicationFormats',
@@ -596,10 +597,18 @@
     },
 
     returnToOnline: function () {
-
-      //The session is fine, we don't need to warn the user
-      //but we will attempt to send all pending orders automatically
-      this.runSyncProcess();
+      if (OB.MobileApp.model.get('isLoggingIn')) {
+        OB.MobileApp.model.on('change:isLoggingIn', function () {
+          if (OB.MobileApp.model.get('isLoggingIn')) {
+            OB.MobileApp.model.off('change:isLoggingIn', this.returnToOnline);
+            this.runSyncProcess();
+          }
+        });
+      } else {
+        //The session is fine, we don't need to warn the user
+        //but we will attempt to send all pending orders automatically
+        this.runSyncProcess();
+      }
     },
 
     renderMain: function () {
@@ -731,15 +740,21 @@
                 OB.error("renderMain", data.exception.message);
               } else if (data) {
                 if (data.status === "Processed") {
-                  OB.MobileApp.model.orderList.current.deleteOrder();
-                  OB.UTIL.rebuildCashupFromServer(function () {
-                    this.checkProcessingMessageLocked = false;
-                    OB.UTIL.localStorage.removeItem('synchronizedMessageId');
-                    OB.UTIL.showLoading(false);
-                    if (OB.MobileApp.model.showSynchronizedDialog) {
-                      OB.MobileApp.model.hideSynchronizingDialog("CheckProcessingMessage");
-                    }
-                  });
+                  var orderId = JSON.parse(data.json).data[0].data[0].id;
+                  var callback = function () {
+                      me.checkProcessingMessageLocked = false;
+                      OB.UTIL.localStorage.removeItem('synchronizedMessageId');
+                      OB.UTIL.showLoading(false);
+                      if (OB.MobileApp.model.showSynchronizedDialog) {
+                        OB.MobileApp.model.hideSynchronizingDialog("CheckProcessingMessage");
+                      }
+                      };
+                  OB.MobileApp.model.orderList.loadById(orderId);
+                  if (orderId === OB.MobileApp.model.orderList.current.id) {
+                    OB.MobileApp.model.orderList.current.deleteOrder(me, callback);
+                  } else {
+                    callback();
+                  }
                 } else if (data.status === "Initial") {
                   //recursively check process status 
                   setTimeout(function () {
@@ -750,7 +765,7 @@
 
                 } else if (data.status === "Error") {
                   //Show modal advicing that there was an error
-                  this.checkProcessingMessageLocked = false;
+                  me.checkProcessingMessageLocked = false;
                   OB.UTIL.localStorage.removeItem('synchronizedMessageId');
                   if (OB.MobileApp.model.showSynchronizedDialog) {
                     OB.MobileApp.model.hideSynchronizingDialog("CheckProcessingMessage");
@@ -765,6 +780,13 @@
                       }
                     }
                   }]);
+                } else {
+                  me.checkProcessingMessageLocked = false;
+                  OB.UTIL.localStorage.removeItem('synchronizedMessageId');
+                  OB.UTIL.showLoading(false);
+                  if (OB.MobileApp.model.showSynchronizedDialog) {
+                    OB.MobileApp.model.hideSynchronizingDialog("CheckProcessingMessage");
+                  }
                 }
               }
             }, function (data) {
@@ -772,7 +794,7 @@
               //If the server is down, we show error message
               if (data && data.exception && data.exception.inSender === 0) {
                 //Show modal advicing that there was an error
-                this.checkProcessingMessageLocked = false;
+                me.checkProcessingMessageLocked = false;
                 OB.UTIL.localStorage.removeItem('synchronizedMessageId');
                 if (OB.MobileApp.model.showSynchronizedDialog) {
                   OB.MobileApp.model.hideSynchronizingDialog("CheckProcessingMessage");

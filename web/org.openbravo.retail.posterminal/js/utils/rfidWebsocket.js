@@ -90,7 +90,8 @@ OB.UTIL.RfidController.startRfidWebsocket = function startRfidWebsocket(websocke
         product: product,
         qty: 1,
         options: {
-          rfid: true
+          rfid: true,
+          blockAddProduct: true
         },
         attrs: data.dataToSave
       });

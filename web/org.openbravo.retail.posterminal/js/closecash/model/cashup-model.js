@@ -297,13 +297,17 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             return;
           }
 
+          if (!auxPay.paymentMethod.countpaymentincashup) {
+            return;
+          }
+
           var fromCurrencyId = auxPay.paymentMethod.currency,
               paymentShared = (OB.POS.modelterminal.get('terminal').ismaster || OB.POS.modelterminal.get('terminal').isslave) && OB.MobileApp.model.paymentnames[auxPay.payment.searchKey].paymentMethod.isshared,
               paymentSharedStr = paymentShared ? OB.I18N.getLabel('OBPOS_LblPaymentMethodShared') : "";
           cashUpReport.get('deposits').push(new Backbone.Model({
             searchKey: p.get('searchKey'),
-            origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(p.get('totalDeposits'), p.get('totalSales'))),
-            amount: OB.DEC.add(0, OB.DEC.add(p.get('totalDeposits'), p.get('totalSales'))),
+            origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(0, p.get('totalSales'))),
+            amount: OB.DEC.add(0, p.get('totalSales')),
             description: p.get('name') + paymentSharedStr,
             currency: fromCurrencyId,
             isocode: auxPay.isocode,
