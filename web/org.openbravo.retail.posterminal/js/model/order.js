@@ -2315,28 +2315,11 @@
                 if (OB.UTIL.RfidController.isRfidConfigured() && newline.get('obposEpccode')) {
                   OB.UTIL.RfidController.removeEpcLine(newline);
                 }
-                // If the OBPOS_remove_ticket preference is active then mark the line as deleted
-                if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-                  if (!order.get('deletedLines')) {
-                    order.set('deletedLines', []);
-                  }
-                  newline.set('obposIsDeleted', true);
-                  order.set('skipCalculateReceipt', true);
-                  newline.set('obposQtyDeleted', newline.get('qty'));
-                  newline.set('qty', 0);
-                  order.set('skipCalculateReceipt', false);
-                  order.calculateReceipt(function () {
-                    order.get('deletedLines').push(new OrderLine(newline.attributes));
-                    order.save(function () {
-                      order.get('lines').remove(newline);
-                      order.set('undo', null);
-                    });
-                  });
-                } else {
-                  // remove the line
-                  order.get('lines').remove(newline);
+                order.set('preventServicesUpdate', true);
+                order.deleteLines([newline], 0, 1, function () {
+                  order.unset('preventServicesUpdate');
                   order.set('undo', null);
-                }
+                });
               }
             });
           }
