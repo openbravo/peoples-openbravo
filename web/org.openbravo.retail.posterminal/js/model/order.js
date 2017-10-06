@@ -2166,6 +2166,8 @@
       disc.obdiscQtyoffer = rule.get('qtyOffer') ? OB.DEC.toNumber(rule.get('qtyOffer')) : line.get('qty');
       disc.qtyOffer = disc.obdiscQtyoffer;
       disc.doNotMerge = discount.doNotMerge;
+      disc.qtyToGift = discount.qtyToGift;
+      disc.qtyToPay = discount.qtyToPay;
       if (!OB.UTIL.isNullOrUndefined(discount.chunks)) {
         disc.chunks = discount.chunks;
       } else {
@@ -2214,10 +2216,23 @@
         }
       }
 
+      var unitsConsumed = 0;
       for (i = 0; i < promotions.length; i++) {
-        if (promotions[i].ruleId === rule.id) {
-          if (promotions[i].hidden !== true) {
-            promotions[i] = disc;
+        if (!promotions[i].applyNext || promotions[i].ruleId === disc.ruleId) {
+          unitsConsumed += promotions[i].qtyOffer;
+        }
+      }
+
+      if (!disc.manual) {
+        for (i = 0; i < promotions.length; i++) {
+          if (unitsConsumed + disc.qtyOffer > line.get('qty')) {
+            if (discount.forceReplace) {
+              if (promotions[i].ruleId === rule.id) {
+                if (promotions[i].hidden !== true) {
+                  promotions[i] = disc;
+                }
+              }
+            }
             replaced = true;
             break;
           }
@@ -3815,7 +3830,7 @@
     },
     fillPromotionsStandard: function (groupedOrder, isFirstTime) {
       var me = this,
-          copiedPromo, linesToMerge, auxPromo, idx, actProm, linesToCreate = [],
+          copiedPromo, linesToMerge, idx, linesToCreate = [],
           qtyToReduce, lineToEdit, lineProm, linesToReduce, linesCreated = false;
 
       //reset pendingQtyOffer value of each promotion
@@ -3988,16 +4003,7 @@
                     promo.pendingQtyOffer = promo.pendingQtyOffer - line.get('qty');
                   }
                   if (line.get('promotions')) {
-                    auxPromo = _.find(line.get('promotions'), function (promo) {
-                      return promo.ruleId === copiedPromo.ruleId;
-                      // return promo.ruleId === copiedPromo.ruleId && promo.hidden !== true && promo.actualAmt > 0;
-                    });
-                    if (auxPromo) {
-                      idx = line.get('promotions').indexOf(auxPromo);
-                      line.get('promotions').splice(idx, 1, copiedPromo);
-                    } else {
-                      line.get('promotions').push(copiedPromo);
-                    }
+                    line.get('promotions').push(copiedPromo);
                   } else {
                     line.set('promotions', [copiedPromo]);
                   }
@@ -4019,31 +4025,12 @@
                   }
 
                   if (line.get('promotions')) {
-                    auxPromo = _.find(line.get('promotions'), function (promo) {
-                      return promo.ruleId === copiedPromo.ruleId && promo.preserve !== true;
-                      // return promo.ruleId === copiedPromo.ruleId;
-                    });
-                    if (auxPromo) {
-                      idx = line.get('promotions').indexOf(auxPromo);
-                      line.get('promotions').splice(idx, 1, copiedPromo);
-                    } else {
-                      line.get('promotions').push(copiedPromo);
-                    }
+                    line.get('promotions').push(copiedPromo);
                   } else {
                     line.set('promotions', [copiedPromo]);
                   }
                   promo.pendingQtyOffer = null;
                   //if it is the first we enter in this method, promotions which are not in the virtual ticket are deleted.
-                } else if (isFirstTime) {
-                  actProm = _.find(line.get('promotions'), function (prom) {
-                    return prom.ruleId === promo.ruleId;
-                  });
-                  if (actProm) {
-                    idx = line.get('promotions').indexOf(actProm);
-                    if (idx > -1) {
-                      line.get('promotions').splice(idx, 1);
-                    }
-                  }
                 }
               });
               line.trigger('change');
@@ -4051,6 +4038,53 @@
           }
         }
       });
+      _.each(me.get('lines').models, function (line) {
+        var orderPromotions = false;
+        var position;
+        var prom = line.get('promotions');
+        var validProm = _.filter(prom, function (p) {
+          return !p.hidden;
+        });
+        var groupProm = _.groupBy(validProm, function (p) {
+          return p.ruleId;
+        });
+        for (position = 0; position < _.keys(groupProm).length; position++) {
+          var i;
+          var key = _.keys(groupProm)[position];
+          var promList = groupProm[key];
+          if (promList && promList.length > 1) {
+            orderPromotions = true;
+            var finalAmt = 0;
+            var finalQtyOffer = 0;
+            copiedPromo = JSON.parse(JSON.stringify(promList[0]));
+            if (!copiedPromo.manual) {
+              for (i = 0; i < promList.length; i++) {
+                finalAmt += promList[i].amt;
+                finalQtyOffer += promList[i].qtyOffer;
+              }
+              if (finalQtyOffer <= line.get('qty')) {
+                copiedPromo.amt = finalAmt;
+                copiedPromo.qtyOffer = finalQtyOffer;
+                copiedPromo.chunks = promList.length;
+              }
+            }
+
+            me.removePromotion(line, {
+              id: key
+            });
+            line.get('promotions').push(copiedPromo);
+          }
+          if (orderPromotions) {
+            var lineNoNormalized = 10;
+            var promos = line.get('promotions');
+            for (i = 0; i < promos.length; i++) {
+              promos[i].lineNo = lineNoNormalized;
+              lineNoNormalized += 10;
+            }
+          }
+        }
+      });
+
       if (!linesCreated) {
         _.each(linesToCreate, function (line) {
           me.createLine(line.product, line.qty, null, line.attrs);
@@ -4130,21 +4164,6 @@
                   }
                 }
 
-                // If it's not the first execution, there could be some promotions already applied and are set in the groupedorder lines too.
-                if (!isFirstTime) {
-                  var actProm, indx;
-                  actProm = _.find(line.get('promotions'), function (prom) {
-                    return prom.ruleId === promotion.ruleId;
-                  });
-                  if (actProm) {
-                    indx = line.get('promotions').indexOf(actProm);
-                    if (indx > -1) {
-                      line.get('promotions').splice(indx, 1);
-                      line.trigger('change');
-                    }
-                  }
-                }
-
                 var clonedPromotion = JSON.parse(JSON.stringify(promotion));
                 if (promoQtyoffer > 0) {
                   clonedPromotion.obdiscQtyoffer = (qtyToCheck - promoQtyoffer >= 0) ? promoQtyoffer : qtyToCheck;
@@ -4164,15 +4183,7 @@
                   }
 
                   if (clonedPromotion.pendingQtyoffer && clonedPromotion.pendingQtyoffer > 0) {
-                    var auxPromo = _.find(line.get('promotions'), function (lpromo) {
-                      return lpromo.ruleId === clonedPromotion.ruleId && lpromo.preserve !== true;
-                    });
-                    if (auxPromo) {
-                      var idx = line.get('promotions').indexOf(auxPromo);
-                      line.get('promotions').splice(idx, 1, clonedPromotion);
-                    } else {
-                      line.get('promotions').push(clonedPromotion);
-                    }
+                    line.get('promotions').push(clonedPromotion);
                   } else {
                     line.get('promotions').push(clonedPromotion);
                   }
