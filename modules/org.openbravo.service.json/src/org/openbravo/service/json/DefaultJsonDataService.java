@@ -1120,23 +1120,11 @@ public class DefaultJsonDataService implements JsonDataService {
 
     } catch (JSONException e) {
       throw new OBException(e);
-    } finally {
-      if (DataSourceAction.FETCH != action) {
-        // Only flush non fetch operations.
-        OBDal.getInstance().flush();
-      }
     }
   }
 
   protected String doPostAction(Map<String, String> parameters, String content,
       DataSourceAction action, String originalObject) {
-    if (action == DataSourceAction.FETCH) {
-      // Clear session to prevent slow flush
-      OBDal.getInstance().getSession().clear();
-    } else {
-      OBDal.getInstance().flush();
-    }
-
     try {
       // this gets the data before the insert, so that it can be used
       // for preprocessing, for example inserting an order
