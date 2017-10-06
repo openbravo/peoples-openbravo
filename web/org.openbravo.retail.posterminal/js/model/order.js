@@ -4580,7 +4580,7 @@
                 callback();
               }
             }
-          } else if (receipt.has('deletedLines')) {
+          } else if (receipt.has('deletedLines') && !receipt.get('isQuotation')) {
             if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
               receipt.set('skipCalculateReceipt', false);
               // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
