@@ -197,7 +197,7 @@ public class ReportReconciliation extends HttpSecureAppServlet {
           recon.getEndingDate()));
       List<FIN_Reconciliation> afterReconciliations = MatchTransactionDao
           .getReconciliationListAfterDate(recon);
-      if (afterReconciliations.size() > 0) {
+      if (!afterReconciliations.isEmpty()) {
         obcTrans.add(Restrictions.or(
             Restrictions.isNull(FIN_FinaccTransaction.PROPERTY_RECONCILIATION),
             Restrictions.in(FIN_FinaccTransaction.PROPERTY_RECONCILIATION, afterReconciliations)));
@@ -209,10 +209,9 @@ public class ReportReconciliation extends HttpSecureAppServlet {
       projections.add(Projections.sum(FIN_FinaccTransaction.PROPERTY_PAYMENTAMOUNT));
       projections.add(Projections.sum(FIN_FinaccTransaction.PROPERTY_DEPOSITAMOUNT));
       obcTrans.setProjection(projections);
-
-      if (obcTrans.list() != null && obcTrans.list().size() > 0) {
-        @SuppressWarnings("rawtypes")
-        List o = obcTrans.list();
+      @SuppressWarnings("rawtypes")
+      List o = obcTrans.list();
+      if (o != null && !o.isEmpty()) {
         Object[] resultSet = (Object[]) o.get(0);
         BigDecimal paymentAmt = (resultSet[0] != null) ? (BigDecimal) resultSet[0]
             : BigDecimal.ZERO;
@@ -255,7 +254,7 @@ public class ReportReconciliation extends HttpSecureAppServlet {
           recon.getEndingDate()));
       List<FIN_Reconciliation> afterReconciliations = MatchTransactionDao
           .getReconciliationListAfterDate(recon);
-      if (afterReconciliations.size() > 0) {
+      if (!afterReconciliations.isEmpty()) {
         obcBsl.add(Restrictions.or(Restrictions
             .isNull(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION), Restrictions.in(
             "tr." + FIN_FinaccTransaction.PROPERTY_RECONCILIATION, afterReconciliations)));
@@ -269,9 +268,9 @@ public class ReportReconciliation extends HttpSecureAppServlet {
       projections.add(Projections.sum(FIN_BankStatementLine.PROPERTY_DRAMOUNT));
       obcBsl.setProjection(projections);
 
-      if (obcBsl.list() != null && obcBsl.list().size() > 0) {
-        @SuppressWarnings("rawtypes")
-        List o = obcBsl.list();
+      @SuppressWarnings("rawtypes")
+      List o = obcBsl.list();
+      if (o != null && !o.isEmpty()) {
         Object[] resultSet = (Object[]) o.get(0);
         BigDecimal credit = (resultSet[0] != null) ? (BigDecimal) resultSet[0] : BigDecimal.ZERO;
         BigDecimal debit = (resultSet[1] != null) ? (BigDecimal) resultSet[1] : BigDecimal.ZERO;
@@ -309,9 +308,9 @@ public class ReportReconciliation extends HttpSecureAppServlet {
       projections.add(Projections.sum(FIN_FinaccTransaction.PROPERTY_DEPOSITAMOUNT));
       obcTrans.setProjection(projections);
 
-      if (obcTrans.list() != null && obcTrans.list().size() > 0) {
-        @SuppressWarnings("rawtypes")
-        List o = obcTrans.list();
+      @SuppressWarnings("rawtypes")
+      List o = obcTrans.list();
+      if (o != null && !o.isEmpty()) {
         Object[] resultSet = (Object[]) o.get(0);
         BigDecimal paymentAmt = (resultSet[0] != null) ? (BigDecimal) resultSet[0]
             : BigDecimal.ZERO;
