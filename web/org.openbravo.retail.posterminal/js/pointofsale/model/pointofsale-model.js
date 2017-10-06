@@ -263,6 +263,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.DATA.OrderSave(this);
     OB.DATA.OrderTaxes(receipt);
 
+    this.printLine = new OB.OBPOSPointOfSale.Print.ReceiptLine(receipt);
+
     var ViewManager = Backbone.Model.extend({
       defaults: {
         currentWindow: {
@@ -858,10 +860,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               OB.error(arguments);
             });
             me.loadUnpaidOrders(function () {
-              var receipt = new OB.Model.Order();
-
               me.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(me);
-              me.printLine = new OB.OBPOSPointOfSale.Print.ReceiptLine(receipt);
 
               // Now that templates has been initialized, print welcome message
               OB.POS.hwserver.print(me.printReceipt.templatewelcome, {}, function (data) {
