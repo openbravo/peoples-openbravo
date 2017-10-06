@@ -62,6 +62,7 @@
     caption: 'OBPOS_LblCustomer',
     isSelector: true,
     selectorPopup: 'modalcustomer',
+    operator: OB.Dal.EQ,
     preset: {
       id: '',
       name: ''

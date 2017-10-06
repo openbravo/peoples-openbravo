@@ -193,7 +193,7 @@ enyo.kind({
     if (inEvent.orderby) {
       orderByClause = inEvent.orderby.serverColumn + ' ' + inEvent.orderby.direction;
     } else {
-      orderByClause = 'ord.creationDate desc';
+      orderByClause = 'ord.orderDate desc, ord.documentNo desc';
     }
 
     criteria = {
@@ -220,7 +220,7 @@ enyo.kind({
           value: flt.value,
           columns: [flt.column],
           operator: flt.operator || OB.Dal.STARTSWITH,
-          isId: flt.column === 'orderType'
+          isId: flt.column === 'orderType' || flt.isId
         });
       }
     });
