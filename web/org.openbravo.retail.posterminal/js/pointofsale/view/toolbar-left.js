@@ -160,6 +160,7 @@ enyo.kind({
         hasPayments = false,
         isMultiOrders = this.model.isValidMultiOrderState();
 
+    this.disableButton();
     if (isMultiOrders) {
       this.doRemoveMultiOrders();
       return true;
@@ -167,6 +168,7 @@ enyo.kind({
 
     // validate payments
     if (this.model.get('order').checkOrderPayment()) {
+      this.updateDisabled(false);
       return false;
     }
 

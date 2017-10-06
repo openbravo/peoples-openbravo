@@ -1299,18 +1299,22 @@ enyo.kind({
     model.get('multiOrders').resetValues();
     model.get('leftColumnViewManager').setOrderMode();
   },
-  cancelRemoveMultiOrders: function (originator) {
+  cancelRemoveMultiOrders: function (inSender, originator) {
     if (originator.kind === 'OB.UI.RemoveMultiOrders') {
       originator.deleting = false;
       originator.removeClass('btn-icon-loading');
       originator.addClass('btn-icon-clearPayment');
     }
+    this.leftToolbarDisabled(inSender, {
+      status: false,
+      disableButtonNew: true
+    });
   },
   removeMultiOrders: function (inSender, inEvent) {
     var me = this,
         originator = inEvent.originator;
     if (me.model.get('multiOrders').checkMultiOrderPayment()) {
-      me.cancelRemoveMultiOrders(originator);
+      me.cancelRemoveMultiOrders(inSender, originator);
       return true;
     }
     // If there are more than 1 order, do as usual
