@@ -714,12 +714,14 @@
       OB.debug("next process: renderTerminalMain");
       var loadModelsIncFunc;
       //MASTER DATA REFRESH
-      var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000,
+      var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc,
           minTotalRefresh = this.get('terminal').terminalType.minutestorefreshdatatotal * 60 * 1000,
           lastTotalRefresh = OB.UTIL.localStorage.getItem('POSLastTotalRefresh'),
           lastIncRefresh = OB.UTIL.localStorage.getItem('POSLastIncRefresh'),
           now = new Date().getTime(),
           intervalInc = lastIncRefresh ? (now - lastIncRefresh - minIncRefresh) : 0;
+
+      minIncRefresh = (minIncRefresh > 99999 ? 99999 : minIncRefresh) * 60 * 1000;
 
       function setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds) {
         OB.debug("Terminal lock timer reset (" + sessionTimeoutMinutes + " minutes)");
@@ -753,26 +755,34 @@
             }
           }, 1000);
 
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshed'), OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshedMessage', [OB.MobileApp.model.get('secondsToRefreshMasterdata')]), [{
-            label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-            action: function () {
-              OB.MobileApp.model.off('change:secondsToRefreshMasterdata');
-              clearInterval(counterIntervalId);
-            }
-          }], {
+          OB.MobileApp.view.$.dialogsContainer.createComponent({
+            kind: 'OB.UI.ModalAction',
+            header: OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshed'),
+            bodyContent: {
+              content: OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshedMessage', [OB.MobileApp.model.get('secondsToRefreshMasterdata')])
+            },
+            bodyButtons: {
+              kind: 'OB.UI.ModalDialogButton',
+              content: OB.I18N.getLabel('OBMOBC_LblCancel'),
+              tap: function () {
+                OB.MobileApp.model.off('change:secondsToRefreshMasterdata');
+                clearInterval(counterIntervalId);
+                this.doHideThisPopup();
+              }
+            },
             autoDismiss: false,
             hideCloseButton: true,
-            onShowFunction: function (popup) {
-              var thePopup = popup;
+            executeOnShow: function () {
+              var reloadPopup = this;
               OB.MobileApp.model.on('change:secondsToRefreshMasterdata', function () {
-                thePopup.$.bodyContent.$.control.setContent(OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshedMessage', [OB.MobileApp.model.get('secondsToRefreshMasterdata')]));
+                reloadPopup.$.bodyContent.$.control.setContent(OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshedMessage', [OB.MobileApp.model.get('secondsToRefreshMasterdata')]));
                 if (OB.MobileApp.model.get('secondsToRefreshMasterdata') === 0) {
-                  thePopup.hide();
+                  reloadPopup.hide();
                   OB.MobileApp.model.off('change:secondsToRefreshMasterdata');
                 }
               });
             }
-          });
+          }).show();
 
         };
         // in case there was no incremental load at login then schedule an incremental
