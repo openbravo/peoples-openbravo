@@ -1657,7 +1657,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     if ((payments.length() == 0 || diffPaid.compareTo(BigDecimal.ZERO) != 0) && invoice != null
         && invoice.getGrandTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
       setRemainingPayment(order, invoice, paymentSchedule, paymentScheduleInvoice, diffPaid, true);
-    } else if (notpaidLayaway || fullypaidLayaway) {
+    } else {
       setRemainingPayment(order, invoice, paymentSchedule, paymentScheduleInvoice, diffPaid, false);
     }
 
