@@ -2050,8 +2050,7 @@
       finishDelete();
     },
     getStoreStock: function (p, qty, options, attrs, callback) {
-      var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.StoreDetailedStock'),
-          me = this,
+      var me = this,
           lines = this.get('lines'),
           line = !OB.UTIL.isNullOrUndefined(options) ? options.line : null,
           warehouseId, warehouse, params = {};
@@ -2085,10 +2084,7 @@
       });
 
       if (qty > 0) {
-        serverCallStoreDetailedStock.exec({
-          organization: OB.MobileApp.model.get('terminal').organization,
-          product: p.get('id')
-        }, function (data) {
+        OB.UTIL.StockUtils.getReceiptLineStock(p.get('id'), undefined, function (data) {
           if (data && data.exception) {
             OB.UTIL.showConfirmation.display('', data.exception.message);
           } else {

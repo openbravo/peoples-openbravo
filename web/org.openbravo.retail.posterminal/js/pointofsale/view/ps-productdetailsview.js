@@ -313,14 +313,10 @@ enyo.kind({
     }
   },
   getStoreStock: function (params) {
-    var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.StoreDetailedStock'),
-        me = this;
+    var me = this;
     this.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
     this.bodyComponent.$.productAddToReceipt.setDisabled(true);
-    serverCallStoreDetailedStock.exec({
-      organization: OB.MobileApp.model.get('terminal').organization,
-      product: me.product.get('id')
-    }, function (data) {
+    OB.UTIL.StockUtils.getReceiptLineStock(me.product.get('id'), undefined, function (data) {
       if (data && data.exception) {
         me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved'));
         me.bodyComponent.$.stockHere.addClass('error');
