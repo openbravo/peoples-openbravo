@@ -184,8 +184,6 @@
 
               OB.UTIL.localStorage.setItem('terminalId', data[0].terminal.id);
               terminalModel.set('useBarcode', terminalModel.get('terminal').terminalType.usebarcodescanner);
-              OB.MobileApp.view.scanMode = true;
-              OB.MobileApp.view.scanningFocus(true);
               if (!terminalModel.usermodel) {
                 OB.MobileApp.model.loadingErrorsActions("The terminal.usermodel should be loaded at this point");
               } else if (OB.MobileApp.model.attributes.loadManifeststatus && OB.MobileApp.model.attributes.loadManifeststatus.type === 'error' && !OB.RR.RequestRouter.ignoreManifestLoadError()) {
@@ -484,6 +482,8 @@
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_WrongHardwareManagerProtocol'));
           }
         }
+
+        OB.MobileApp.view.scanningFocus(false);
 
         // Set Arithmetic properties:
         OB.DEC.setContext(OB.UTIL.getFirstValidValue([me.get('currency').obposPosprecision, me.get('currency').pricePrecision]), BigDecimal.prototype.ROUND_HALF_UP);
