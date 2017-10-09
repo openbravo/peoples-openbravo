@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -73,13 +73,12 @@ public class ApplyModule {
   }
 
   /**
-   * Process the Installed but not applied modules, the treatement for these modules is: Translation
-   * modules In case the module contains translations the process will: <br/>
-   * -Sets the module language as system -Populates the trl tables calling the verify language
-   * process (this is done just once for all the modules with translations.<br/>
-   * -Imports the xml files with translations into trl tables.
-   * 
-   * Reference data modules for client system Loads the reference data in client system
+   * Process the Installed but not applied modules, the treatement for these modules is: <br/>
+   * 1.- Reference data modules for client system Loads the reference data in client system. <br/>
+   * 2.- Translation modules In case the module contains translations the process will: <br/>
+   * 2.1.- Sets the module language as system -Populates the trl tables calling the verify language
+   * process (this is done just once for all the modules with translations. <br/>
+   * 2.2.- Imports the xml files with translations into trl tables.
    * 
    * All modules Sets them as installed
    * 
@@ -91,54 +90,8 @@ public class ApplyModule {
       log4j.setLevel(Level.INFO);
     }
     try {
-      // **************** Translation modules ************************
-      // Check whether modules to install are translations
-      log4j.info("Looking for translation modules");
-      final ApplyModuleData[] data;
-      if (!forceRefData) {
-        data = ApplyModuleData.selectTranslationModules(pool);
-      } else {
-        data = ApplyModuleData.selectAllTranslationModules(pool);
-      }
-
-      if (data != null && data.length > 0) {
-        log4j.info(data.length + " translation modules found");
-        // Set language as system in case it is not already
-        for (int i = 0; i < data.length; i++) {
-          if (data[i].issystemlanguage.equals("N")) {
-            ApplyModuleData.setSystemLanguage(pool, data[i].adLanguage);
-          }
-        }
-
-        // Populate trl tables (execute verify languages)
-        try {
-          log4j.info("Executing verify language process");
-          final String pinstance = SequenceIdData.getUUID();
-          PInstanceProcessData.insertPInstance(pool, pinstance, "179", "0", "N", "0", "0", "0");
-
-          ApplyModuleData.process179(pool, pinstance);
-
-          final OBError myMessage = getProcessInstanceMessageSimple(pool, pinstance);
-          if (myMessage.getType().equals("Error"))
-            log4j.error(myMessage.getMessage());
-          else
-            log4j.info(myMessage.getMessage());
-        } catch (final ServletException ex) {
-          log4j.error("Error running verify language process", ex);
-        }
-
-        // Import language modules
-        for (int i = 0; i < data.length; i++) {
-          String folder = obDir + "/modules/" + data[i].javapackage + "/referencedata/translation";
-          log4j.info("Importing language " + data[i].adLanguage + " from module " + data[i].name
-              + " from folder: " + folder);
-          TranslationManager.importTrlDirectory(pool, folder, data[i].adLanguage, "0", null);
-        }
-      }
       // ************ Reference data for system client modules ************
-
       log4j.info("Looking for reference data modules");
-
       final ApplyModuleData[] ds;
       if (!forceRefData) {
         ds = ApplyModuleData.selectClientReferenceModules(pool);
@@ -193,6 +146,51 @@ public class ApplyModule {
             log4j.debug(msg);
         }
         OBDal.getInstance().commitAndClose();
+      }
+
+      // **************** Translation modules ************************
+      // Check whether modules to install are translations
+      log4j.info("Looking for translation modules");
+      final ApplyModuleData[] data;
+      if (!forceRefData) {
+        data = ApplyModuleData.selectTranslationModules(pool);
+      } else {
+        data = ApplyModuleData.selectAllTranslationModules(pool);
+      }
+
+      if (data != null && data.length > 0) {
+        log4j.info(data.length + " translation modules found");
+        // Set language as system in case it is not already
+        for (int i = 0; i < data.length; i++) {
+          if (data[i].issystemlanguage.equals("N")) {
+            ApplyModuleData.setSystemLanguage(pool, data[i].adLanguage);
+          }
+        }
+
+        // Populate trl tables (execute verify languages)
+        try {
+          log4j.info("Executing verify language process");
+          final String pinstance = SequenceIdData.getUUID();
+          PInstanceProcessData.insertPInstance(pool, pinstance, "179", "0", "N", "0", "0", "0");
+
+          ApplyModuleData.process179(pool, pinstance);
+
+          final OBError myMessage = getProcessInstanceMessageSimple(pool, pinstance);
+          if (myMessage.getType().equals("Error"))
+            log4j.error(myMessage.getMessage());
+          else
+            log4j.info(myMessage.getMessage());
+        } catch (final ServletException ex) {
+          log4j.error("Error running verify language process", ex);
+        }
+
+        // Import language modules
+        for (int i = 0; i < data.length; i++) {
+          String folder = obDir + "/modules/" + data[i].javapackage + "/referencedata/translation";
+          log4j.info("Importing language " + data[i].adLanguage + " from module " + data[i].name
+              + " from folder: " + folder);
+          TranslationManager.importTrlDirectory(pool, folder, data[i].adLanguage, "0", null);
+        }
       }
 
     } catch (final OBException e) {
