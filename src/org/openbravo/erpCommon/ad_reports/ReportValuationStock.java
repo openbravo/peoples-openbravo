@@ -35,9 +35,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperReport;
-
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
@@ -72,6 +69,9 @@ import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
 
 public class ReportValuationStock extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -150,6 +150,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
 
     CostingAlgorithm ca = null;
     String processTime = null;
+    // By default, Warehouse Dimension is never enabled
+    String warehouseDimension = "N";
     String strCostType = null;
     Set<String> orgs = null;
     Set<String> warehouseIds = null;
@@ -174,6 +176,7 @@ public class ReportValuationStock extends HttpSecureAppServlet {
         ca = costRule.getCostingAlgorithm();
         processTime = OBDateUtils.formatDate(CostingUtils.getCostingRuleStartingDate(costRule),
             "dd-MM-yyyy HH:mm:ss");
+        warehouseDimension = costRule.isWarehouseDimension() ? "Y" : "N";
       }
       String compare = DateTimeData.compare(readOnlyCP, strDate, ReportValuationStockData
           .getCostingMigrationDate(readOnlyCP, legalEntity.getClient().getId()));
@@ -211,7 +214,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
       if (strCostType != null && !isWarehouseConsolidation) {
         data = ReportValuationStockData.select(readOnlyCP, vars.getLanguage(), strCurrencyId,
             strLegalEntity, strDateNext, strMaxAggDate, processTime, dateFormat, orgIds,
-            strWarehouseIncluded, strCostOrg, strCostClientId, strCostType, strCategoryProduct);
+            strWarehouseIncluded, strCostOrg, strCostClientId, strCostType, warehouseDimension,
+            strCategoryProduct);
       } else if (strCostType == null && !isWarehouseConsolidation) {
         data = ReportValuationStockData.selectWithoutCost(readOnlyCP, vars.getLanguage(),
             strCurrencyId, strLegalEntity, strDateNext, strMaxAggDate, processTime, dateFormat,
@@ -220,7 +224,7 @@ public class ReportValuationStock extends HttpSecureAppServlet {
         data = ReportValuationStockData.selectClusteredByWarehouse(readOnlyCP, vars.getLanguage(),
             strDateNext, strLegalEntity, strCurrencyId, strMaxAggDate, processTime, dateFormat,
             orgIds, strWarehouseIncluded, strCategoryProduct, strCostOrg, strCostClientId,
-            strCostType);
+            strCostType, warehouseDimension, filterOrg.getId());
       } else {
         data = ReportValuationStockData.selectClusteredByWarehouseWithoutCost(readOnlyCP,
             vars.getLanguage(), strCurrencyId, strLegalEntity, strDateNext, strMaxAggDate,

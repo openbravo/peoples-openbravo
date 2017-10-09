@@ -81,13 +81,13 @@
                                                   AND 2 = 2
                                                   AND mc2.COSTTYPE IN ('1')
                                                 GROUP BY mc2.M_PRODUCT_ID, MC2.M_WAREHOUSE_ID) dc ON (mc.DATEFROM = dc.DATEFROM AND mc.M_PRODUCT_ID = dc.M_PRODUCT_ID
-                                                  AND COALESCE(MC.M_WAREHOUSE_ID, '1') = COALESCE(DC.M_WAREHOUSE_ID, '1'))
+                                                  AND ((? = 'N' AND DC.M_WAREHOUSE_ID IS NULL) OR MC.M_WAREHOUSE_ID = DC.M_WAREHOUSE_ID))
                                         WHERE mc.DATETO> mc.DATEFROM
                                        AND 9 = 9
                                        ) P
                                ON M_PRODUCT.M_PRODUCT_ID = P.M_PRODUCT_ID
               WHERE A.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
-              AND   (A.M_WAREHOUSE_ID = P.M_WAREHOUSE_ID OR P.M_WAREHOUSE_ID IS NULL)
+              AND   ((? = 'N' AND P.M_WAREHOUSE_ID IS NULL) OR A.M_WAREHOUSE_ID = P.M_WAREHOUSE_ID)
               AND   A.C_UOM_ID = C_UOM.C_UOM_ID
               AND   M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID
               AND   1 = 1
@@ -119,7 +119,9 @@
       <Parameter name="costOrg" optional="true" after="AND 2 = 2"><![CDATA[ AND mc2.AD_ORG_ID IN (?,'0') ]]></Parameter>
       <Parameter name="costClient" optional="true" after="AND 2 = 2"><![CDATA[ AND mc2.ad_client_id = ? ]]></Parameter>
       <Parameter name="costType" type="replace" optional="true" after="AND mc2.COSTTYPE IN (" text="'1'"/>
+      <Parameter name="warehouseDimension"/>
       <Parameter name="costOrg" optional="true" after="AND 9 = 9"><![CDATA[ AND mc.AD_ORG_ID IN (?,'0') ]]></Parameter>
+      <Parameter name="warehouseDimension"/>
       <Parameter name="categoryProduct" optional="true" after="AND   1 = 1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_CATEGORY_ID= ? ]]></Parameter>
   </SqlMethod>
   
@@ -179,8 +181,9 @@
   ) ZZ
     JOIN C_UOM ON c_uom.c_uom_id = zz.c_uom_id
     JOIN (
-        SELECT SUM(c.COST) as COST, c.DATEFROM, c.M_PRODUCT_ID, c.c_currency_id, c.ad_client_id
+        SELECT AVG(c.COST) as COST, c.DATEFROM, c.M_PRODUCT_ID, c.c_currency_id, c.ad_client_id
         FROM M_COSTING c
+        LEFT JOIN M_WAREHOUSE w ON (c.m_warehouse_id = w.m_warehouse_id)
           JOIN (SELECT c2.M_PRODUCT_ID, max(c2.DATEFROM) AS datefrom
                 FROM M_COSTING c2
                 WHERE c2.DATEFROM < to_date(?)
@@ -190,6 +193,7 @@
         WHERE c.DATETO > c.DATEFROM
           AND 5 = 5
           AND c.costtype IN ('1')
+          AND ((? = 'N' AND c.m_warehouse_id IS NULL) OR ad_isorgincluded(w.ad_org_id, ?, w.ad_client_id) <> -1)
         GROUP BY c.DATEFROM, c.M_PRODUCT_ID, c.c_currency_id, c.ad_client_id
     ) C ON C.M_PRODUCT_ID = ZZ.M_PRODUCT_ID
     JOIN c_currency ON c_currency.c_currency_id = ?
@@ -202,12 +206,12 @@
       uom.name as UOM_NAME,
       null AS AVERAGE_COST,
       null AS TOTAL_COST,
-      C_CURRENCY_CONVERT_PRECISION(c.COST, c.c_currency_id, c_currency.c_currency_id, to_date(?), NULL, c.AD_CLIENT_ID, ?, 'C') as COST_TYPE,
-      ROUND(stock.QTY * C_CURRENCY_CONVERT_PRECISION(c.COST, c.c_currency_id, c_currency.c_currency_id, to_date(?), NULL, c.AD_CLIENT_ID, ?, 'C'), c_currency.stdprecision) as VALUATION_TYPE,
+      null as COST_TYPE,
+      null as VALUATION_TYPE,
       'ALL Warehouses' as WAREHOUSE,
       '' as ID, '' as PADRE , '' AS NAME
   FROM m_product_category pc
-    JOIN (
+    LEFT JOIN (
       SELECT sum(trx.movementqty) as QTY, p.m_product_id, p.value, p.m_product_category_id, trx.c_uom_id
       FROM m_product p
         JOIN m_transaction trx ON trx.m_product_id = p.m_product_id
@@ -223,20 +227,6 @@
     ) stock ON pc.m_product_category_id = stock.m_product_category_id
     JOIN c_uom uom ON stock.c_uom_id = uom.c_uom_id
     JOIN c_currency ON c_currency.c_currency_id = ?
-    JOIN (
-        SELECT SUM(c.COST) as COST, c.DATEFROM, c.M_PRODUCT_ID, c.c_currency_id, c.ad_client_id
-        FROM M_COSTING c
-          JOIN (SELECT c2.M_PRODUCT_ID, max(c2.DATEFROM) AS datefrom
-                FROM M_COSTING c2
-                WHERE c2.DATEFROM < to_date(?)
-                  AND 6 = 6
-                  AND  c2.costtype IN ('2')
-                GROUP BY c2.M_PRODUCT_ID) dc ON (c.DATEFROM = dc.DATEFROM AND c.M_PRODUCT_ID = dc.M_PRODUCT_ID)
-        WHERE c.DATETO > c.DATEFROM
-          AND 7 = 7
-          AND  c.costtype IN ('2')
-        GROUP BY c.DATEFROM, c.M_PRODUCT_ID, c.c_currency_id, c.ad_client_id
-    ) C ON C.M_PRODUCT_ID = stock.M_PRODUCT_ID
   WHERE 3 = 3
   ORDER BY CATEGORY_NAME, PRODUCT_NAME
      ]]></Sql>
@@ -270,12 +260,10 @@
       <Parameter name="costOrg" optional="true" after="AND 5 = 5"><![CDATA[ AND c.AD_ORG_ID IN (?,'0') ]]></Parameter>
       <Parameter name="costClient" optional="true" after="AND 5 = 5"><![CDATA[ AND c.ad_client_id = ? ]]></Parameter>
       <Parameter name="costType" type="replace" optional="true" after="AND c.costtype IN (" text="'1'"/>
+      <Parameter name="warehouseDimension"/>
+      <Parameter name="filterOrgId"/>
       <Parameter name="cCurrencyConv"/>
       <Parameter name="adLanguage"/>
-      <Parameter name="datePlus"/>
-      <Parameter name="legalEntity"/>
-      <Parameter name="datePlus"/>
-      <Parameter name="legalEntity"/>
       <Parameter name="datePlus"/>
       <Parameter name="maxaggDate"/>
       <Parameter name="processTime"/>
@@ -284,13 +272,6 @@
       <Parameter name="warehouse" type="argument" optional="true" after="AND 2 = 2"><![CDATA[ AND l.M_WAREHOUSE_ID IN ]]></Parameter>
       <Parameter name="categoryProduct" optional="true" after="AND 2 = 2"><![CDATA[ AND p.M_PRODUCT_CATEGORY_ID= ? ]]></Parameter>
       <Parameter name="cCurrencyConv"/>
-      <Parameter name="datePlus"/>
-      <Parameter name="costOrg" optional="true" after="AND 6 = 6"><![CDATA[ AND c2.AD_ORG_ID IN (?,'0') ]]></Parameter>
-      <Parameter name="costClient" optional="true" after="AND 6 = 6"><![CDATA[ AND c2.ad_client_id = ? ]]></Parameter>
-      <Parameter name="costType" type="replace" optional="true" after="AND  c2.costtype IN (" text="'2'"/>
-      <Parameter name="costOrg" optional="true" after="AND 7 = 7"><![CDATA[ AND c.AD_ORG_ID IN (?,'0') ]]></Parameter>
-      <Parameter name="costClient" optional="true" after="AND 7 = 7"><![CDATA[ AND c.ad_client_id = ? ]]></Parameter>
-      <Parameter name="costType" type="replace" optional="true" after="AND  c.costtype IN (" text="'2'"/>
       <Parameter name="categoryProduct" optional="true" after="WHERE 3 = 3"><![CDATA[ AND pc.M_PRODUCT_CATEGORY_ID= ? ]]></Parameter>
   </SqlMethod>
   
