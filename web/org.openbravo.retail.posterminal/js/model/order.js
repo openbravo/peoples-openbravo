@@ -901,7 +901,7 @@
         this.unset('paidInNegativeStatusAmt');
         done = this.get('lines').length > 0 && OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0;
         pending = OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, payAndCredit));
-        overpayment = OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(payAndCredit, total)) : null;
+        overpayment = OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) > 0 ? OB.DEC.sub(payAndCredit, total) : null;
         pendingAmt = OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, payAndCredit);
       } else {
         this.set('paidInNegativeStatusAmt', paidInNegativeStatus);
