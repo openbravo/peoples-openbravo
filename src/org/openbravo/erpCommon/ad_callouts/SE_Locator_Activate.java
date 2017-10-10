@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2016 Openbravo SLU
+ * All portions are Copyright (C) 2012-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -100,7 +100,8 @@ public class SE_Locator_Activate extends SimpleCallout {
     final OBQuery<StorageDetail> query = OBDal.getInstance().createQuery(StorageDetail.class,
         hsqlScript.toString());
     query.setParameters(parameters);
-    return query.list().size() > 0;
+    query.setMaxResult(1);
+    return query.uniqueResult() != null;
   }
 
   /**
