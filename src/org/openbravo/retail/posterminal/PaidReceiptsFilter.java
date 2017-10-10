@@ -38,7 +38,8 @@ public class PaidReceiptsFilter extends ProcessHQLQuery {
   @Override
   protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
     List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
-    HQLPropertyList receiptsHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
+    HQLPropertyList receiptsHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions,
+        jsonsent);
     propertiesList.add(receiptsHQLProperties);
 
     return propertiesList;
@@ -47,7 +48,8 @@ public class PaidReceiptsFilter extends ProcessHQLQuery {
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
 
-    HQLPropertyList receiptsHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
+    HQLPropertyList receiptsHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions,
+        jsonsent);
 
     String orderTypeFilter = getOrderTypeFilter(jsonsent);
     String orderTypeHql;
@@ -55,9 +57,6 @@ public class PaidReceiptsFilter extends ProcessHQLQuery {
     switch (orderTypeFilter) {
     case "RET":
       orderTypeHql = "and ord.documentType.return = true";
-      break;
-    case "QT":
-      orderTypeHql = "and ord.documentType.sOSubType = 'OB'";
       break;
     case "LAY":
       orderTypeHql = "and ord.obposIslayaway = true";
@@ -74,7 +73,7 @@ public class PaidReceiptsFilter extends ProcessHQLQuery {
         + "from Order as ord "
         + "where $filtersCriteria and $hqlCriteria "
         + orderTypeHql
-        + " and ord.$orgId"
+        + " and ord.client.id =  $clientId and ord.$orgId"
         + " and ord.obposIsDeleted = false and ord.obposApplications is not null and ord.documentStatus <> 'CJ' "
         + " and ord.documentStatus <> 'CA' and (ord.documentStatus <> 'CL' or ord.iscancelled = true)"//
         + " $orderByCriteria";
@@ -82,24 +81,26 @@ public class PaidReceiptsFilter extends ProcessHQLQuery {
     return Arrays.asList(new String[] { hqlPaidReceipts });
   }
 
-  private String getOrderTypeFilter(JSONObject jsonsent) throws JSONException {
-    String orderType = "NONE";
-
-    if (jsonsent.has("remoteFilters")) {
-      JSONArray remoteFilters = jsonsent.getJSONArray("remoteFilters");
-      for (int i = 0; i < remoteFilters.length(); i++) {
-        JSONObject filter = remoteFilters.getJSONObject(i);
-        JSONArray columns = filter.getJSONArray("columns");
-        for (int j = 0; j < columns.length(); j++) {
-          String column = columns.getString(j);
-          if ("orderType".equals(column)) {
-            orderType = filter.getString("value");
-            break;
+  protected static String getOrderTypeFilter(JSONObject jsonsent) {
+    String orderType = "";
+    try {
+      if (jsonsent.has("remoteFilters")) {
+        JSONArray remoteFilters = jsonsent.getJSONArray("remoteFilters");
+        for (int i = 0; i < remoteFilters.length(); i++) {
+          JSONObject filter = remoteFilters.getJSONObject(i);
+          JSONArray columns = filter.getJSONArray("columns");
+          for (int j = 0; j < columns.length(); j++) {
+            String column = columns.getString(j);
+            if ("orderType".equals(column)) {
+              orderType = filter.getString("value");
+              break;
+            }
           }
         }
       }
+    } catch (Exception e) {
+      // Ignored
     }
-
     return orderType;
   }
 

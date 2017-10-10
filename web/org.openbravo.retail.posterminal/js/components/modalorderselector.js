@@ -223,6 +223,15 @@ enyo.kind({
           isId: flt.column === 'orderType' || flt.isId
         });
       }
+      if (flt.column === 'orderType' && flt.value === 'QT') {
+        //When filtering by quotations, use the specific documentType filter
+        criteria.remoteFilters.push({
+          value: OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations,
+          columns: ['documentTypeId'],
+          operator: '=',
+          isId: true
+        });
+      }
     });
 
     OB.Dal.find(OB.Model.OrderFilter, criteria, function (data) {
