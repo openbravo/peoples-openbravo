@@ -520,6 +520,7 @@ public class ReportValuationStock extends HttpSecureAppServlet {
       StringBuffer where = new StringBuffer();
       where.append(" as cosrule");
       where.append(" where cosrule." + CostingRule.PROPERTY_ORGANIZATION + ".id = :org");
+      where.append(" and cosrule." + CostingRule.PROPERTY_VALIDATED + " = true");
       where.append(" order by " + CostingRule.PROPERTY_STARTINGDATE + " desc");
 
       OBQuery<CostingRule> whereQry = OBDal.getReadOnlyInstance().createQuery(CostingRule.class,

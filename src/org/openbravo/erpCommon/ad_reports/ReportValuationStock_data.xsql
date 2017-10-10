@@ -81,13 +81,13 @@
                                                   AND 2 = 2
                                                   AND mc2.COSTTYPE IN ('1')
                                                 GROUP BY mc2.M_PRODUCT_ID, MC2.M_WAREHOUSE_ID) dc ON (mc.DATEFROM = dc.DATEFROM AND mc.M_PRODUCT_ID = dc.M_PRODUCT_ID
-                                                  AND ((? = 'N' AND DC.M_WAREHOUSE_ID IS NULL) OR MC.M_WAREHOUSE_ID = DC.M_WAREHOUSE_ID))
+                                                  AND ((? = 'N' AND DC.M_WAREHOUSE_ID IS NULL) OR (? = 'Y' AND MC.M_WAREHOUSE_ID = DC.M_WAREHOUSE_ID)))
                                         WHERE mc.DATETO> mc.DATEFROM
                                        AND 9 = 9
                                        ) P
                                ON M_PRODUCT.M_PRODUCT_ID = P.M_PRODUCT_ID
               WHERE A.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
-              AND   ((? = 'N' AND P.M_WAREHOUSE_ID IS NULL) OR A.M_WAREHOUSE_ID = P.M_WAREHOUSE_ID)
+              AND   ((? = 'N' AND P.M_WAREHOUSE_ID IS NULL) OR (? = 'Y' AND A.M_WAREHOUSE_ID = P.M_WAREHOUSE_ID))
               AND   A.C_UOM_ID = C_UOM.C_UOM_ID
               AND   M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID
               AND   1 = 1
@@ -120,7 +120,9 @@
       <Parameter name="costClient" optional="true" after="AND 2 = 2"><![CDATA[ AND mc2.ad_client_id = ? ]]></Parameter>
       <Parameter name="costType" type="replace" optional="true" after="AND mc2.COSTTYPE IN (" text="'1'"/>
       <Parameter name="warehouseDimension"/>
+      <Parameter name="warehouseDimension"/>
       <Parameter name="costOrg" optional="true" after="AND 9 = 9"><![CDATA[ AND mc.AD_ORG_ID IN (?,'0') ]]></Parameter>
+      <Parameter name="warehouseDimension"/>
       <Parameter name="warehouseDimension"/>
       <Parameter name="categoryProduct" optional="true" after="AND   1 = 1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_CATEGORY_ID= ? ]]></Parameter>
   </SqlMethod>
@@ -180,7 +182,7 @@
   HAVING SUM(A.QTY) <>0
   ) ZZ
     JOIN C_UOM ON c_uom.c_uom_id = zz.c_uom_id
-    JOIN (
+    LEFT JOIN (
         SELECT AVG(c.COST) as COST, c.DATEFROM, c.M_PRODUCT_ID, c.c_currency_id, c.ad_client_id
         FROM M_COSTING c
         LEFT JOIN M_WAREHOUSE w ON (c.m_warehouse_id = w.m_warehouse_id)
@@ -193,7 +195,7 @@
         WHERE c.DATETO > c.DATEFROM
           AND 5 = 5
           AND c.costtype IN ('1')
-          AND ((? = 'N' AND c.m_warehouse_id IS NULL) OR ad_isorgincluded(w.ad_org_id, ?, w.ad_client_id) <> -1)
+          AND ((? = 'N' AND c.m_warehouse_id IS NULL) OR (? = 'Y' AND ad_isorgincluded(w.ad_org_id, ?, w.ad_client_id) <> -1))
         GROUP BY c.DATEFROM, c.M_PRODUCT_ID, c.c_currency_id, c.ad_client_id
     ) C ON C.M_PRODUCT_ID = ZZ.M_PRODUCT_ID
     JOIN c_currency ON c_currency.c_currency_id = ?
@@ -260,6 +262,7 @@
       <Parameter name="costOrg" optional="true" after="AND 5 = 5"><![CDATA[ AND c.AD_ORG_ID IN (?,'0') ]]></Parameter>
       <Parameter name="costClient" optional="true" after="AND 5 = 5"><![CDATA[ AND c.ad_client_id = ? ]]></Parameter>
       <Parameter name="costType" type="replace" optional="true" after="AND c.costtype IN (" text="'1'"/>
+      <Parameter name="warehouseDimension"/>
       <Parameter name="warehouseDimension"/>
       <Parameter name="filterOrgId"/>
       <Parameter name="cCurrencyConv"/>
