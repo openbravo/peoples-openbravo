@@ -261,6 +261,7 @@ enyo.kind({
     this.receipt.on('paymentCancel', function () {
       this.$.layawayaction.setDisabled(false);
       this.$.donebutton.setDisabled(false);
+      this.$.creditsalesaction.putDisabled(false);
       if (OB.MobileApp.view.openedPopup === null) {
         enyo.$.scrim.hide();
       }
@@ -1479,9 +1480,10 @@ enyo.kind({
       }]);
       return true;
     }
-    var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
-    var me = this;
-    var paymentstatus = this.model.get('order').getPaymentStatus();
+    this.putDisabled(true);
+    var me = this,
+        paymentstatus = this.model.get('order').getPaymentStatus(),
+        process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
     if (!paymentstatus.isReturn) {
       //this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("creditButtonTap");
@@ -1509,11 +1511,13 @@ enyo.kind({
                 actualCredit: actualCredit
               }
             });
+            me.putDisabled(false);
             //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
             //OB.UI.UTILS.domIdEnyoReference['modalNotEnoughCredit'].$.bodyContent.children[0].setContent();
           }
         } else {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorCreditSales'));
+          me.putDisabled(false);
         }
       }, function () {
         OB.UTIL.SynchronizationHelper.finished(synchId, "creditButtonTap");
