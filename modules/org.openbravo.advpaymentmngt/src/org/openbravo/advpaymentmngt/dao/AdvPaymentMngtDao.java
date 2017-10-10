@@ -259,7 +259,7 @@ public class AdvPaymentMngtDao {
       whereClause.append(" and (oinfo is null or oinfo.active = true)");
 
       // remove selected payments
-      if (selectedScheduledPaymentDetails != null && selectedScheduledPaymentDetails.size() > 0) {
+      if (selectedScheduledPaymentDetails != null && !selectedScheduledPaymentDetails.isEmpty()) {
         String strSelectedPaymentDetails = Utility.getInStrList(selectedScheduledPaymentDetails);
         whereClause.append(" and psd not in (");
         whereClause.append(strSelectedPaymentDetails);
@@ -270,9 +270,10 @@ public class AdvPaymentMngtDao {
       final OBCriteria<FIN_PaymentPropDetail> obc = OBDal.getInstance().createCriteria(
           FIN_PaymentPropDetail.class);
       obc.add(Restrictions.isNotNull(FIN_PaymentPropDetail.PROPERTY_FINPAYMENTSCHEDULEDETAIL));
-      if (obc.list() != null && obc.list().size() > 0) {
+      List<FIN_PaymentPropDetail> paymentPropDetailList = obc.list();
+      if (paymentPropDetailList != null && !paymentPropDetailList.isEmpty()) {
         List<FIN_PaymentScheduleDetail> aux = new ArrayList<FIN_PaymentScheduleDetail>();
-        for (FIN_PaymentPropDetail ppd : obc.list()) {
+        for (FIN_PaymentPropDetail ppd : paymentPropDetailList) {
           aux.add(ppd.getFINPaymentScheduledetail());
         }
         whereClause.append(" and psd.id not in (" + Utility.getInStrList(aux) + ")");
@@ -1153,7 +1154,7 @@ public class AdvPaymentMngtDao {
           FIN_FinaccTransaction.class, whereClause.toString());
       obqFATrx.setFirstResult(offset);
       obqFATrx.setMaxResult(maxrowspergridpage);
-      return obqFATrx.list().size();
+      return obqFATrx.count();
 
     } finally {
       OBContext.restorePreviousMode();
@@ -1545,28 +1546,29 @@ public class AdvPaymentMngtDao {
     }
     obc.addOrder(org.hibernate.criterion.Order.asc("pm." + FIN_PaymentMethod.PROPERTY_NAME));
     obc.setFilterOnReadableOrganization(false);
-    List<FinAccPaymentMethod> defaults = obc.list();
-    if (defaults.size() > 0) {
-      return obc.list().get(0).getPaymentMethod().getId();
+    obc.setMaxResults(1);
+    FinAccPaymentMethod paymentMethod = (FinAccPaymentMethod) obc.uniqueResult();
+    if (paymentMethod != null) {
+      return paymentMethod.getPaymentMethod().getId();
     } else {
       return "";
     }
   }
 
   private void addPaymentMethodList(OBCriteria<FIN_PaymentMethod> obc, List<String> paymentMethods) {
-    List<String> paymentMethodsToRemove;
     Criterion compoundExp = null;
-    while (paymentMethods.size() > 999) {
-      paymentMethodsToRemove = new ArrayList<String>(paymentMethods.subList(0, 999));
+    int paymentMethodsSize = paymentMethods.size();
+    while (paymentMethodsSize > 999) {
+      List<String> paymentMethodsToRemove = paymentMethods.subList(0, 999);
       if (compoundExp == null) {
-        compoundExp = Restrictions.in("id", paymentMethods.subList(0, 999));
+        compoundExp = Restrictions.in("id", paymentMethodsToRemove);
       } else {
-        compoundExp = Restrictions.or(compoundExp,
-            Restrictions.in("id", paymentMethods.subList(0, 999)));
+        compoundExp = Restrictions.or(compoundExp, Restrictions.in("id", paymentMethodsToRemove));
       }
       paymentMethods.removeAll(paymentMethodsToRemove);
+      paymentMethodsSize = paymentMethodsSize - 999;
     }
-    if (paymentMethods.size() > 0) {
+    if (paymentMethodsSize > 0) {
       if (compoundExp == null) {
         compoundExp = Restrictions.in("id", paymentMethods);
       } else {
@@ -1676,14 +1678,14 @@ public class AdvPaymentMngtDao {
     }
 
     public Criterion getCriterion() {
-      if (finAccs.size() > 0) {
+      if (!finAccs.isEmpty()) {
         refresh();
       }
       return compoundexp;
     }
 
     private void refresh() {
-      // finAccs.size() must be > 0
+      // finAccs size must be > 0
       if (compoundexp == null) {
         compoundexp = Restrictions.in("id", finAccs);
       } else {
@@ -1879,9 +1881,10 @@ public class AdvPaymentMngtDao {
     OBCriteria<APRMPendingPaymentFromInvoice> ppfiCriteria = OBDal.getInstance().createCriteria(
         APRMPendingPaymentFromInvoice.class);
     ppfiCriteria.add(Restrictions.eq(APRMPendingPaymentFromInvoice.PROPERTY_PAYMENT, payment));
-    List<APRMPendingPaymentFromInvoice> pendingPayments = ppfiCriteria.list();
-    if (pendingPayments != null && pendingPayments.size() > 0) {
-      APRMPendingPaymentFromInvoice pendingPayment = pendingPayments.get(0);
+    ppfiCriteria.setMaxResults(1);
+    APRMPendingPaymentFromInvoice pendingPayment = (APRMPendingPaymentFromInvoice) ppfiCriteria
+        .uniqueResult();
+    if (pendingPayment != null) {
       pendingPayment.setProcessNow(executing);
       OBDal.getInstance().flush();
       OBDal.getInstance().save(pendingPayment);
@@ -1892,11 +1895,14 @@ public class AdvPaymentMngtDao {
     OBCriteria<APRMPendingPaymentFromInvoice> ppfiCriteria = OBDal.getInstance().createCriteria(
         APRMPendingPaymentFromInvoice.class);
     ppfiCriteria.add(Restrictions.eq(APRMPendingPaymentFromInvoice.PROPERTY_PAYMENT, payment));
-    List<APRMPendingPaymentFromInvoice> pendingPayments = ppfiCriteria.list();
-    if (pendingPayments != null && pendingPayments.size() > 0) {
-      return pendingPayments.get(0).isProcessNow();
-    } else
+    ppfiCriteria.setMaxResults(1);
+    APRMPendingPaymentFromInvoice pendingPayment = (APRMPendingPaymentFromInvoice) ppfiCriteria
+        .uniqueResult();
+    if (pendingPayment != null) {
+      return pendingPayment.isProcessNow();
+    } else {
       return false;
+    }
 
   }
 
@@ -2047,15 +2053,9 @@ public class AdvPaymentMngtDao {
     obc.add(Restrictions.in("organization.id", OBContext.getOBContext()
         .getOrganizationStructureProvider().getNaturalTree(strOrgId)));
     obc.setFilterOnReadableOrganization(false);
-
     obc.add(Restrictions.eq(FIN_FinancialAccount.PROPERTY_DEFAULT, true));
-
-    final List<FIN_FinancialAccount> defaultAccounts = obc.list();
-    if (defaultAccounts.size() > 0) {
-      return defaultAccounts.get(0);
-    } else {
-      return null;
-    }
+    obc.setMaxResults(1);
+    return (FIN_FinancialAccount) obc.uniqueResult();
   }
 
   public boolean existsAPRMReadyPreference() {
@@ -2111,13 +2111,7 @@ public class AdvPaymentMngtDao {
           .getOrganizationStructureProvider().getNaturalTree(organization.getId())));
       obcFinPayment.addOrderBy(FIN_Payment.PROPERTY_PAYMENTDATE, true);
       obcFinPayment.setMaxResults(1);
-
-      final List<FIN_Payment> finPayments = obcFinPayment.list();
-      if (finPayments.size() > 0) {
-        return finPayments.get(0);
-      } else {
-        return null;
-      }
+      return (FIN_Payment) obcFinPayment.uniqueResult();
     } finally {
       OBContext.restorePreviousMode();
     }
