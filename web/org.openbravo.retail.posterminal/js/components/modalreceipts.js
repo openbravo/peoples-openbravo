@@ -115,6 +115,9 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalDeleteReceipt',
+  events: {
+    onDisableLeftToolbar: ''
+  },
   bodyContent: {
     i18nContent: 'OBPOS_MsgConfirmDelete' // TODO: add this as part of the message + '\n' + OB.I18N.getLabel('OBPOS_cannotBeUndone')
   },
@@ -124,6 +127,11 @@ enyo.kind({
     }, {
       kind: 'OB.UI.btnModalCancelDelete'
     }]
+  },
+  executeOnHide: function () {
+    this.doDisableLeftToolbar({
+      status: false
+    });
   },
   initComponents: function () {
     this.header = OB.I18N.getLabel('OBPOS_ConfirmDeletion');
@@ -151,13 +159,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.btnModalCancelDelete',
   i18nContent: 'OBMOBC_LblCancel',
-  events: {
-    onDisableLeftToolbar: ''
-  },
   tap: function () {
-    this.doDisableLeftToolbar({
-      status: false
-    });
     this.doHideThisPopup();
   }
 });
