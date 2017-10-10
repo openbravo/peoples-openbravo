@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Projections;
@@ -202,7 +203,8 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
     }
     obc.add(Restrictions.eq(FIN_PaymentSchedInvV.PROPERTY_INVOICE, invoice));
     obc.setProjection(Projections.max(FIN_PaymentSchedInvV.PROPERTY_LASTPAYMENT));
-    Object o = obc.list().get(0);
+    obc.setMaxResults(1);
+    Object o = obc.uniqueResult();
     if (o != null) {
       return ((Date) o);
     } else {
@@ -307,7 +309,8 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
     obc.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_INVOICE, invoice));
     obc.add(Restrictions.ne(FIN_PaymentSchedule.PROPERTY_OUTSTANDINGAMOUNT, BigDecimal.ZERO));
     obc.setProjection(Projections.min(FIN_PaymentSchedule.PROPERTY_DUEDATE));
-    Object o = obc.list().get(0);
+    obc.setMaxResults(1);
+    Object o = obc.uniqueResult();
     if (o != null) {
       return (FIN_Utility.getDaysToDue((Date) o));
     } else {
@@ -338,12 +341,18 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
     obcSel.setFilterOnReadableClients(false);
     obcSel.setFilterOnReadableOrganization(false);
 
-    if (obcNotSel.list() != null && obcNotSel.list().size() == 1) {
-      return obcNotSel.list().get(0).getModule().getId().equals(moduleId);
-    } else if (obcSel.list() != null && obcSel.list().size() == 1) {
-      return obcSel.list().get(0).getModule().getId().equals(moduleId);
+    obcNotSel.setMaxResults(1);
+    Preference preference = (Preference) obcNotSel.uniqueResult();
+    if (preference != null) {
+      return StringUtils.equals(preference.getModule().getId(), moduleId);
     } else {
-      return false;
+      obcSel.setMaxResults(1);
+      preference = (Preference) obcSel.uniqueResult();
+      if (preference != null) {
+        return StringUtils.equals(preference.getModule().getId(), moduleId);
+      } else {
+        return false;
+      }
     }
   }
 
