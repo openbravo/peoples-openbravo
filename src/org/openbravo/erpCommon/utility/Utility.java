@@ -57,6 +57,9 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -89,9 +92,6 @@ import org.openbravo.model.common.geography.Location;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.FormatUtilities;
-
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperReport;
 
 /**
  * @author Fernando Iriazabal
@@ -1844,9 +1844,10 @@ public class Utility {
         + "  and rlt.language.language = '" + lang + "'" + "  and r.name =  '" + ListName + "'"
         + "  and rl.searchKey = '" + value + "'";
     Query q = OBDal.getInstance().getSession().createQuery(hql);
-
-    if (q.list().size() > 0) {
-      return (String) q.list().get(0);
+    q.setMaxResults(1);
+    String name = (String) q.uniqueResult();
+    if (name != null) {
+      return name;
     }
 
     // No translated value obtained, get the standard one
@@ -1854,9 +1855,10 @@ public class Utility {
         + " where rl.reference = r" + "  and r.name =  '" + ListName + "'"
         + "  and rl.searchKey = '" + value + "'";
     q = OBDal.getInstance().getSession().createQuery(hql);
-
-    if (q.list().size() > 0) {
-      return (String) q.list().get(0);
+    q.setMaxResults(1);
+    name = (String) q.uniqueResult();
+    if (name != null) {
+      return name;
     } else {
       // Nothing found, return the value
       return value;
@@ -2005,7 +2007,7 @@ public class Utility {
   /**
    * Provides the image as a byte array. These images are stored in the table AD_IMAGE as a BLOB
    * field.
-   *
+   * 
    * @param id
    *          The id of the image to display
    * @param doCommit
@@ -2050,7 +2052,7 @@ public class Utility {
   /**
    * Provides the image as an image object. These images are stored in the table AD_IMAGE as a BLOB
    * field.
-   *
+   * 
    * @param id
    *          The id of the image to display
    * @param doCommit
