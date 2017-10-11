@@ -9241,7 +9241,8 @@ public class TestCosting extends WeldBaseTest {
       criteria1.add(Restrictions.eq(ReceiptInvoiceMatch.PROPERTY_INVOICELINE, purchaseInvoiceLine));
       criteria1.add(Restrictions.eq(ReceiptInvoiceMatch.PROPERTY_GOODSSHIPMENTLINE,
           goodsReceiptLine));
-      ReceiptInvoiceMatch receiptInvoiceMatch = criteria1.list().get(0);
+      criteria1.setMaxResults(1);
+      ReceiptInvoiceMatch receiptInvoiceMatch = (ReceiptInvoiceMatch) criteria1.uniqueResult();
       assertMatchedInvoice(receiptInvoiceMatch, new MatchedInvoicesAssert(purchaseInvoiceLine,
           goodsReceiptLine));
 
@@ -9261,8 +9262,9 @@ public class TestCosting extends WeldBaseTest {
           .getShipmentReceipt().getId()));
       criteria2.add(Restrictions.eq(AccountingFact.PROPERTY_LINEID, goodsReceiptLine.getId()));
       criteria2.addOrderBy(AccountingFact.PROPERTY_SEQUENCENUMBER, true);
-      BigDecimal receiptPrice = criteria2.list().get(0).getDebit()
-          .divide(receiptInvoiceMatch.getQuantity());
+      criteria2.setMaxResults(1);
+      BigDecimal receiptPrice = ((AccountingFact) criteria2.uniqueResult()).getDebit().divide(
+          receiptInvoiceMatch.getQuantity());
 
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
       documentPostAssertList.add(new DocumentPostAssert("40090", receiptPrice
@@ -10567,8 +10569,12 @@ public class TestCosting extends WeldBaseTest {
           ProductAccounts.class);
       criteria.add(Restrictions.eq(ProductAccounts.PROPERTY_PRODUCT, product));
       criteria.add(Restrictions.isNotNull(ProductAccounts.PROPERTY_INVOICEPRICEVARIANCE));
-      productClone.getProductAccountsList().get(0)
-          .setInvoicePriceVariance(criteria.list().get(0).getInvoicePriceVariance());
+      criteria.setMaxResults(1);
+      productClone
+          .getProductAccountsList()
+          .get(0)
+          .setInvoicePriceVariance(
+              ((ProductAccounts) criteria.uniqueResult()).getInvoicePriceVariance());
 
       OBDal.getInstance().save(productClone);
       OBDal.getInstance().flush();
@@ -10585,7 +10591,7 @@ public class TestCosting extends WeldBaseTest {
     try {
       final OBCriteria<Product> criteria = OBDal.getInstance().createCriteria(Product.class);
       criteria.add(Restrictions.like(Product.PROPERTY_NAME, name + "-%"));
-      return criteria.list().size();
+      return criteria.count();
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -10838,9 +10844,10 @@ public class TestCosting extends WeldBaseTest {
         OBCriteria<ShipmentInOutLine> criteria = OBDal.getInstance().createCriteria(
             ShipmentInOutLine.class);
         criteria.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE, orderLine));
-
-        if (criteria.list().size() > 0) {
-          invoiceLine.setGoodsShipmentLine(criteria.list().get(0));
+        criteria.setMaxResults(1);
+        ShipmentInOutLine shipmentInOutLine = (ShipmentInOutLine) criteria.uniqueResult();
+        if (shipmentInOutLine != null) {
+          invoiceLine.setGoodsShipmentLine(shipmentInOutLine);
         }
 
         orderLine.getInvoiceLineList().add(invoiceLine);
@@ -10990,8 +10997,11 @@ public class TestCosting extends WeldBaseTest {
         OBCriteria<ShipmentInOutLine> criteria = OBDal.getInstance().createCriteria(
             ShipmentInOutLine.class);
         criteria.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE, orderLine));
-        if (criteria.list().size() > 0)
-          invoiceLine.setGoodsShipmentLine(criteria.list().get(0));
+        criteria.setMaxResults(1);
+        ShipmentInOutLine shipmentInOutLine = (ShipmentInOutLine) criteria.uniqueResult();
+        if (shipmentInOutLine != null) {
+          invoiceLine.setGoodsShipmentLine(shipmentInOutLine);
+        }
 
         order.getInvoiceList().add(invoice);
         order.setReinvoice(true);
@@ -11398,7 +11408,8 @@ public class TestCosting extends WeldBaseTest {
       final OBCriteria<DocumentType> criteria = OBDal.getInstance().createCriteria(
           DocumentType.class);
       criteria.add(Restrictions.eq(DocumentType.PROPERTY_NAME, "Inventory Amount Update"));
-      DocumentType documentType = criteria.list().get(0);
+      criteria.setMaxResults(1);
+      DocumentType documentType = (DocumentType) criteria.uniqueResult();
 
       inventoryAmountUpdate.setDocumentType(documentType);
       inventoryAmountUpdate.setDocumentNo(getDocumentNo(inventoryAmountUpdate.getDocumentType()
@@ -11556,7 +11567,8 @@ public class TestCosting extends WeldBaseTest {
             OBDal.getInstance().get(Product.class, landedCostTypeId).getTaxCategory()));
         criteria.add(Restrictions.eq(TaxRate.PROPERTY_ORGANIZATION,
             OBDal.getInstance().get(Organization.class, ORGANIZATION_ID)));
-        invoiceLine.setTax(criteria.list().get(0));
+        criteria.setMaxResults(1);
+        invoiceLine.setTax((TaxRate) criteria.uniqueResult());
       }
 
       else {
@@ -11889,7 +11901,8 @@ public class TestCosting extends WeldBaseTest {
     try {
       final OBCriteria<Table> criteria = OBDal.getInstance().createCriteria(Table.class);
       criteria.add(Restrictions.eq(Table.PROPERTY_NAME, document.getEntityName()));
-      String procedureName = criteria.list().get(0).getDBTableName() + "_post";
+      criteria.setMaxResults(1);
+      String procedureName = ((Table) criteria.uniqueResult()).getDBTableName() + "_post";
 
       final List<Object> parameters = new ArrayList<Object>();
       if (processId == null) {
@@ -11930,7 +11943,8 @@ public class TestCosting extends WeldBaseTest {
     try {
       final OBCriteria<Table> criteria = OBDal.getInstance().createCriteria(Table.class);
       criteria.add(Restrictions.eq(Table.PROPERTY_NAME, document.getEntityName()));
-      String tableId = criteria.list().get(0).getId();
+      criteria.setMaxResults(1);
+      String tableId = ((Table) criteria.uniqueResult()).getId();
       con = conn.getTransactionConnection();
       AcctServer acct = AcctServer.get(tableId, ((Client) document.get("client")).getId(),
           ((Organization) document.get("organization")).getId(), conn);
@@ -12506,7 +12520,8 @@ public class TestCosting extends WeldBaseTest {
           criteria2.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY, OBDal.getInstance()
               .get(Currency.class, EURO_ID)));
           criteria2.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, calendar.getTime()));
-          BigDecimal rate = criteria2.list().get(0).getMultipleRateBy();
+          criteria2.setMaxResults(1);
+          BigDecimal rate = ((ConversionRate) criteria2.uniqueResult()).getMultipleRateBy();
 
           assertEquals(
               landedCostCostMatched.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP),
@@ -12988,7 +13003,8 @@ public class TestCosting extends WeldBaseTest {
             criteria2.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY, OBDal.getInstance()
                 .get(Currency.class, EURO_ID)));
             criteria2.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, calendar.getTime()));
-            BigDecimal rate = criteria2.list().get(0).getMultipleRateBy();
+            criteria2.setMaxResults(1);
+            BigDecimal rate = ((ConversionRate) criteria2.uniqueResult()).getMultipleRateBy();
 
             if (productTransactionAssert.getCurrency().getId().equals(EURO_ID)
                 && costAdjustmentLineList.get(k - 1).getCurrency().getId().equals(DOLLAR_ID))
@@ -13148,9 +13164,11 @@ public class TestCosting extends WeldBaseTest {
           criteria.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_ADJUSTMENTAMOUNT,
               costAdjustmentAssertLineList.get(0).getAmount().negate()));
           criteria.add(Restrictions.ne(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, costAdjustment));
-          assertEquals(costAdjustment.getCostAdjustmentCancel(), criteria.list().get(0)
-              .getCostAdjustment().getCostAdjustmentCancel() != null ? null : criteria.list()
-              .get(0).getCostAdjustment());
+          criteria.setMaxResults(1);
+          assertEquals(costAdjustment.getCostAdjustmentCancel(),
+              ((CostAdjustmentLine) criteria.uniqueResult()).getCostAdjustment()
+                  .getCostAdjustmentCancel() != null ? null : criteria.list().get(0)
+                  .getCostAdjustment());
         } else
           assertEquals(costAdjustment.getCostAdjustmentCancel(), null);
 
@@ -13306,19 +13324,21 @@ public class TestCosting extends WeldBaseTest {
 
       final OBCriteria<Table> criteria1 = OBDal.getInstance().createCriteria(Table.class);
       criteria1.add(Restrictions.eq(Table.PROPERTY_NAME, document.getEntityName()));
-      Table table = criteria1.list().get(0);
+      criteria1.setMaxResults(1);
+      Table table = (Table) criteria1.uniqueResult();
 
       final OBCriteria<AccountingFact> criteria2 = OBDal.getInstance().createCriteria(
           AccountingFact.class);
       criteria2.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, document.getId()));
       criteria2.add(Restrictions.eq(AccountingFact.PROPERTY_TABLE, table));
       criteria2.addOrderBy(AccountingFact.PROPERTY_SEQUENCENUMBER, true);
-      String groupId = criteria2.list().get(0).getGroupID();
+      List<AccountingFact> accountingFactList = criteria2.list();
+      String groupId = accountingFactList.get(0).getGroupID();
 
-      assertEquals(criteria2.list().size(), documentPostAssertList.size());
+      assertEquals(accountingFactList.size(), documentPostAssertList.size());
 
       int i = 0;
-      for (AccountingFact accountingFact : criteria2.list()) {
+      for (AccountingFact accountingFact : accountingFactList) {
 
         String lineListProperty = Character.toLowerCase(document.getEntityName().charAt(0))
             + document.getEntityName().substring(1) + "LineList";
@@ -13449,7 +13469,8 @@ public class TestCosting extends WeldBaseTest {
             criteria.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY, OBDal.getInstance()
                 .get(Currency.class, EURO_ID)));
             criteria.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, calendar.getTime()));
-            rate = criteria.list().get(0).getMultipleRateBy();
+            criteria.setMaxResults(1);
+            rate = ((ConversionRate) criteria.uniqueResult()).getMultipleRateBy();
           }
         }
 
@@ -13513,7 +13534,8 @@ public class TestCosting extends WeldBaseTest {
           criteria.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY,
               OBDal.getInstance().get(Currency.class, DOLLAR_ID)));
           criteria.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, calendar.getTime()));
-          rate = criteria.list().get(0).getMultipleRateBy();
+          criteria.setMaxResults(1);
+          rate = ((ConversionRate) criteria.uniqueResult()).getMultipleRateBy();
         }
 
         else if (document.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)
@@ -13553,7 +13575,8 @@ public class TestCosting extends WeldBaseTest {
         final OBCriteria<Period> criteria3 = OBDal.getInstance().createCriteria(Period.class);
         criteria3.add(Restrictions.eq(Period.PROPERTY_STARTINGDATE, calendar1.getTime()));
         criteria3.add(Restrictions.eq(Period.PROPERTY_ENDINGDATE, calendar2.getTime()));
-        assertEquals(accountingFact.getPeriod(), criteria3.list().get(0));
+        criteria3.setMaxResults(1);
+        assertEquals(accountingFact.getPeriod(), (Period) criteria3.uniqueResult());
 
         if (document.getEntityName().equals(CostAdjustment.ENTITY_NAME)) {
           assertEquals(formatDate(accountingFact.getTransactionDate()), formatDate(new Date()));
@@ -13697,7 +13720,8 @@ public class TestCosting extends WeldBaseTest {
                 OBDal.getInstance().get(Product.class, productId).getTaxCategory()));
             criteria.add(Restrictions.eq(TaxRate.PROPERTY_ORGANIZATION,
                 OBDal.getInstance().get(Organization.class, ORGANIZATION_ID)));
-            assertEquals(accountingFact.getTax(), criteria.list().get(0));
+            criteria.setMaxResults(1);
+            assertEquals(accountingFact.getTax(), (TaxRate) criteria.uniqueResult());
           } else {
             assertEquals(accountingFact.getProduct().getId(), productId);
             assertEquals(accountingFact.getUOM(), line.get("uOM"));
@@ -13811,8 +13835,9 @@ public class TestCosting extends WeldBaseTest {
             ElementValue.class);
         criteria4.add(Restrictions.eq(ElementValue.PROPERTY_SEARCHKEY,
             documentPostAssert.getAccount()));
-        assertEquals(accountingFact.getAccountingEntryDescription(), criteria4.list().get(0)
-            .getDescription());
+        criteria4.setMaxResults(1);
+        assertEquals(accountingFact.getAccountingEntryDescription(),
+            ((ElementValue) criteria4.uniqueResult()).getDescription());
 
         i++;
       }
