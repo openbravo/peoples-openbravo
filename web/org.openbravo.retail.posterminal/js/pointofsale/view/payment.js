@@ -137,7 +137,7 @@ enyo.kind({
       components: [{
         classes: 'span9',
         components: [{
-          style: 'padding: 5px 0px 0px 10px; height: 17px;',
+          style: 'padding: 0px 0px 0px 10px; height: 17px;',
           name: 'prepaymentLine',
           components: [{
             tag: 'span',
@@ -151,6 +151,7 @@ enyo.kind({
             name: 'prepaymentexactlbl'
           }]
         }, {
+          style: 'padding: 5px 0px 0px 10px; height: 17px;',
           name: 'paymentLine',
           components: [{
             tag: 'span',
@@ -253,6 +254,24 @@ enyo.kind({
       }, {
         classes: 'span3',
         components: [{
+          name: 'prepaymentsbuttons',
+          style: 'width: 85%; max-width: 125px; float: right; margin: 5px 5px 10px 0px; clear: right; font-weight: normal; padding: 0px',
+          components: [{
+            name: 'prepaymentsexactbutton',
+            kind: 'OB.OBPOSPointOfSale.UI.PrepaymentsExactButton',
+            components: [{
+              name: 'prepaymentsexactbuttonlbl',
+              style: 'font-size: 10px; font-weight: bold; color: black; position: relative; bottom: -15px'
+            }]
+          }, {
+            name: 'prepaymentsdeliverybutton',
+            kind: 'OB.OBPOSPointOfSale.UI.PrepaymentsDeliveryButton',
+            components: [{
+              name: 'prepaymentsdeliverybuttonlbl',
+              style: 'font-size: 10px; font-weight: bold; color: black; position: relative; bottom: -15px'
+            }]
+          }]
+        }, {
           name: 'exactbutton',
           kind: 'OB.OBPOSPointOfSale.UI.ExactButton'
         }, {
@@ -416,7 +435,7 @@ enyo.kind({
       this.$.prepaymentLine.show();
       this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', true);
       this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', false);
-      this.$.totalpending.applyStyle('font-size', '19px');
+      this.$.totalpending.applyStyle('font-size', '18px');
     } else {
       this.$.prepaymentLine.hide();
       this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', false);
@@ -429,10 +448,19 @@ enyo.kind({
       this.$.prepaymenttotalpending.show();
       this.$.prepaymenttotalpendinglbl.show();
       this.$.prepaymentexactlbl.hide();
+      this.$.prepaymentsbuttons.show();
+      this.$.exactbutton.hide();
     } else {
       this.$.prepaymenttotalpending.hide();
       this.$.prepaymenttotalpendinglbl.hide();
       this.$.prepaymentexactlbl.show();
+      if (!receiptHasPrepaymentAmount) {
+        this.$.prepaymentsbuttons.hide();
+        this.$.exactbutton.show();
+      } else {
+        this.$.prepaymentsbuttons.show();
+        this.$.exactbutton.hide();
+      }
     }
 
     if (paymentstatus.change) {
@@ -476,6 +504,11 @@ enyo.kind({
       } else {
         this.$.donebutton.hide();
       }
+      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && pendingPrepayment <= 0) {
+        this.$.prepaymentsdeliverybutton.hide();
+      } else {
+        this.$.prepaymentsdeliverybutton.show();
+      }
       if (this.$.donebutton.drawerpreference) {
         this.$.donebutton.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
         this.$.donebutton.drawerOpened = false;
@@ -484,10 +517,13 @@ enyo.kind({
 
     if (this.receipt.getPending() <= 0 && (paymentstatus.done || this.receipt.getGross() === 0)) {
       this.$.exactbutton.hide();
+      this.$.prepaymentsbuttons.hide();
       this.$.layawayaction.hide();
     } else {
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
-        this.$.exactbutton.show();
+        if (!OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
+          this.$.exactbutton.show();
+        }
       }
       this.updateLayawayAction();
     }
@@ -549,7 +585,7 @@ enyo.kind({
       this.$.prepaymentLine.show();
       this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', true);
       this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', false);
-      this.$.totalpending.applyStyle('font-size', '19px');
+      this.$.totalpending.applyStyle('font-size', '18px');
     } else {
       this.$.prepaymentLine.hide();
       this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', false);
@@ -561,10 +597,20 @@ enyo.kind({
       this.$.prepaymenttotalpending.show();
       this.$.prepaymenttotalpendinglbl.show();
       this.$.prepaymentexactlbl.hide();
+      this.$.prepaymentsbuttons.show();
+      this.$.exactbutton.hide();
     } else {
       this.$.prepaymenttotalpending.hide();
       this.$.prepaymenttotalpendinglbl.hide();
       this.$.prepaymentexactlbl.show();
+      if (!receiptHasPrepaymentAmount) {
+        this.$.prepaymentsbuttons.hide();
+        this.$.exactbutton.show();
+      } else {
+        this.$.prepaymentsbuttons.show();
+        this.$.exactbutton.hide();
+      }
+
     }
 
     this.checkValidPayments(paymentStatus, selectedPayment);
@@ -603,6 +649,11 @@ enyo.kind({
       } else {
         this.$.donebutton.hide();
       }
+      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && pendingPrepayment <= 0) {
+        this.$.prepaymentsdeliverybutton.hide();
+      } else {
+        this.$.prepaymentsdeliverybutton.show();
+      }
       if (this.$.donebutton.drawerpreference) {
         this.$.donebutton.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
         this.$.donebutton.drawerOpened = false;
@@ -613,9 +664,13 @@ enyo.kind({
     this.$.layawayaction.hide();
     if (multiOrders.get('multiOrdersList').length > 0 && OB.DEC.compare(multiOrders.get('total')) >= 0 && (OB.DEC.compare(OB.DEC.sub(multiOrders.get('payment'), multiOrders.get('total'))) >= 0 || multiOrders.get('total') === 0)) {
       this.$.exactbutton.hide();
+      this.$.prepaymentsbuttons.hide();
     } else {
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
-        this.$.exactbutton.show();
+        if (!OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
+          OB.debug('updatePendingMultiOrders: show exact button 1');
+          this.$.exactbutton.show();
+        }
       }
     }
     if (multiOrders.get('multiOrdersList').length > 0 && OB.DEC.compare(multiOrders.get('total')) >= 0 && OB.DEC.compare(OB.DEC.sub(multiOrders.get('payment'), multiOrders.get('total'))) >= 0 && !multiOrders.get('change') && OB.DEC.compare(OB.DEC.sub(multiOrders.get('payment'), multiOrders.get('total'))) <= 0) {
@@ -857,6 +912,10 @@ enyo.kind({
               this.$.noenoughchangelbl.show();
               this.$.donebutton.setLocalDisabled(true);
               this.$.exactbutton.setLocalDisabled(true);
+              if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
+                this.$.prepaymentsdeliverybutton.setLocalDisabled(true);
+                this.$.prepaymentsexactbutton.setLocalDisabled(true);
+              }
             }
             me.updateAddPaymentAction();
             this.setStatusButtons(lsuccess, 'Done');
@@ -876,6 +935,10 @@ enyo.kind({
             disableDoneButton = (!total && !this.model.get('order').get('isPaid')) || paymentstatus.isReversal || this.model.get('order').get('doCancelAndReplace') ? false : this.model.get('order').getPrePaymentQty() >= total;
         this.$.donebutton.setLocalDisabled(disableDoneButton);
         this.$.exactbutton.setLocalDisabled(false);
+        if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
+          this.$.prepaymentsdeliverybutton.setLocalDisabled(false);
+          this.$.prepaymentsexactbutton.setLocalDisabled(false);
+        }
         this.$.creditsalesaction.setLocalDisabled(false);
         this.updateLayawayAction();
       }
@@ -1041,6 +1104,10 @@ enyo.kind({
         var disableButton = !statusOK;
         this.$.donebutton.setLocalDisabled(disableButton);
         this.$.exactbutton.setLocalDisabled(false);
+        if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
+          this.$.prepaymentsdeliverybutton.setLocalDisabled(false);
+          this.$.prepaymentsexactbutton.setLocalDisabled(false);
+        }
       } else {
         if (this.$.changeexceedlimit.showing || this.$.overpaymentnotavailable.showing || this.$.overpaymentexceedlimit.showing || this.$.onlycashpaymentmethod.showing) {
           this.$.noenoughchangelbl.hide();
@@ -1049,6 +1116,10 @@ enyo.kind({
         }
         this.$.donebutton.setLocalDisabled(true);
         this.$.exactbutton.setLocalDisabled(true);
+        if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
+          this.$.prepaymentsdeliverybutton.setLocalDisabled(true);
+          this.$.prepaymentsexactbutton.setLocalDisabled(true);
+        }
       }
     } else if (button === 'Layaway') {
       this.updateLayawayAction(resultOK ? false : true);
@@ -1138,6 +1209,7 @@ enyo.kind({
     if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
       this.$.donebutton.show();
       this.$.exactbutton.hide();
+      this.$.prepaymentsbuttons.hide();
     }
     this.model.get('multiOrders').get('multiOrdersList').on('all', function (event) {
       if (this.model.isValidMultiOrderState()) {
@@ -1494,6 +1566,52 @@ enyo.kind({
       }
     } else {
       continueExecution();
+    }
+  }
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.PrepaymentsDeliveryButton',
+  kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
+  events: {
+    onDeliveryPayment: ''
+  },
+  classes: 'btn-icon-adaptative btn-icon-check btnlink-green',
+  style: 'width: calc(50% - 5px); margin: 0px 5px 0px 0px; clear: unset',
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    this.doDeliveryPayment();
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.children[0].setContent(OB.I18N.getLabel('OBPOS_PrepaymentsDeliveryButtonLbl'));
+    if (!OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
+      this.hide();
+    }
+  }
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.PrepaymentsExactButton',
+  kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
+  events: {
+    onExactPayment: ''
+  },
+  classes: 'btn-icon-adaptative btn-icon-doubleCheck btnlink-green',
+  style: 'width: calc(50% - 5px); margin: 0px 0px 0px 5px;',
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    this.doExactPayment();
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.children[0].setContent(OB.I18N.getLabel('OBPOS_PrepaymentsExactButtonLbl'));
+    if (!OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
+      this.hide();
     }
   }
 });

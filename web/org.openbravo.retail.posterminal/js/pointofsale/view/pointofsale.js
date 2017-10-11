@@ -38,6 +38,7 @@ enyo.kind({
     onDeleteLine: 'deleteLine',
     onEditLine: 'editLine',
     onReturnLine: 'returnLine',
+    onDeliveryPayment: 'deliveryPayment',
     onExactPayment: 'exactPayment',
     onRemovePayment: 'removePayment',
     onReversePayment: 'reversePayment',
@@ -1000,6 +1001,9 @@ enyo.kind({
     } else {
       this.model.get('order').returnLine(inEvent.line);
     }
+  },
+  deliveryPayment: function (inSender, inEvent) {
+    this.$.multiColumn.$.rightPanel.$.keyboard.execStatelessCommand('cashdelivery');
   },
   exactPayment: function (inSender, inEvent) {
     this.$.multiColumn.$.rightPanel.$.keyboard.execStatelessCommand('cashexact');

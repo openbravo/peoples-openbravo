@@ -515,7 +515,7 @@ enyo.kind({
       keyboard: this.keyboard
     });
 
-    this.owner.owner.addCommand('cashexact', {
+    this.owner.owner.addCommand('cashdelivery', {
       action: function (keyboard, txt) {
         var status = keyboard.status.indexOf('paymentMethodCategory.showitems.') === 0 && me.currentPayment ? me.currentPayment.payment.searchKey : keyboard.status;
         if (status && !allpayments[status] && !providerGroups[status]) {
@@ -556,6 +556,33 @@ enyo.kind({
                 me.pay(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
               }
             }
+          }
+        }
+      }
+    });
+
+    this.owner.owner.addCommand('cashexact', {
+      action: function (keyboard, txt) {
+        var status = keyboard.status.indexOf('paymentMethodCategory.showitems.') === 0 && me.currentPayment ? me.currentPayment.payment.searchKey : keyboard.status;
+        if (status && !allpayments[status]) {
+          // Is not a payment, so continue with the default path...
+          keyboard.execCommand(status, null);
+        } else {
+          me.bubble('onClearPaymentSelect');
+          // It is a payment...
+          var exactpayment = allpayments[status] || exactdefault,
+              amount = me.model.getPending(),
+              altexactamount = me.receipt.get('exactpayment');
+          // check if alternate exact amount must be applied based on the payment method selected.
+          if (altexactamount && altexactamount[exactpayment.payment.searchKey]) {
+            amount = altexactamount[exactpayment.payment.searchKey];
+          }
+          if (exactpayment.rate && exactpayment.rate !== '1') {
+            amount = OB.DEC.div(amount, exactpayment.rate);
+          }
+
+          if (amount > 0 && exactpayment && OB.MobileApp.model.hasPermission(exactpayment.payment.searchKey)) {
+            me.pay(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
           }
         }
       }
