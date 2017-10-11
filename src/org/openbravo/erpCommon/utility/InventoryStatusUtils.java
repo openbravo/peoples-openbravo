@@ -124,7 +124,7 @@ public class InventoryStatusUtils {
     obc.add(Restrictions.eq(Locator.PROPERTY_ISVIRTUAL, true));
     obc.add(Restrictions.eq(Locator.PROPERTY_PARENTLOCATOR, storageBin));
     obc.setFilterOnActive(active);
-    return obc.list().size();
+    return obc.count();
   }
 
   /**
