@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,8 +50,7 @@ public class RichTextUIDefinition extends TextUIDefinition {
       rowSpan = 2L;
 
     return super.getGridFieldProperties(field)
-        + ",  escapeHTML: false , canEdit: false , rowSpan : " + rowSpan + " , colSpan : "
-        + colSpan;
+        + ",  escapeHTML: true , canEdit: false , rowSpan : " + rowSpan + " , colSpan : " + colSpan;
   }
 
 }
