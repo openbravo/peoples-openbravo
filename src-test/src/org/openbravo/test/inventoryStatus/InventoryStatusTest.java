@@ -593,7 +593,7 @@ public class InventoryStatusTest extends WeldBaseTest {
     try {
       final OBCriteria<Locator> criteria = OBDal.getInstance().createCriteria(Locator.class);
       criteria.add(Restrictions.like(Locator.PROPERTY_SEARCHKEY, searchKey + "-%"));
-      return criteria.list().size();
+      return criteria.count();
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -647,7 +647,7 @@ public class InventoryStatusTest extends WeldBaseTest {
     try {
       final OBCriteria<Product> criteria = OBDal.getInstance().createCriteria(Product.class);
       criteria.add(Restrictions.like(Product.PROPERTY_NAME, name + "-%"));
-      return criteria.list().size();
+      return criteria.count();
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -723,7 +723,7 @@ public class InventoryStatusTest extends WeldBaseTest {
       final OBCriteria<ShipmentInOut> criteria = OBDal.getInstance().createCriteria(
           ShipmentInOut.class);
       criteria.add(Restrictions.like(ShipmentInOut.PROPERTY_DOCUMENTNO, docNo + "-%"));
-      return criteria.list().size();
+      return criteria.count();
     } catch (Exception e) {
       throw new OBException(e);
     }
