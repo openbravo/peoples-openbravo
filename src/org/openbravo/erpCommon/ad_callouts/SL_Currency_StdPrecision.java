@@ -102,7 +102,7 @@ public class SL_Currency_StdPrecision extends SimpleCallout {
         Document doc = createDocumentFromFile(iso4217XML);
         // Get all currency nodes
         NodeList ccyList = doc.getElementsByTagName(CURRENCY_TAG_NAME);
-        return getPrecissionForCurrencyFromList(paramISOCode, ccyList);
+        return getPrecisionForCurrencyFromList(paramISOCode, ccyList);
       } else {
         log4j.error("SL_Currency_StdPrecision: No ISO0417 XML file found: " + SOURCE_RELATIVE_PATH
             + ISO_4217_XML_FILE_NAME);
@@ -139,7 +139,7 @@ public class SL_Currency_StdPrecision extends SimpleCallout {
     return doc;
   }
 
-  private int getPrecissionForCurrencyFromList(String paramISOCode, NodeList ccyList) {
+  private int getPrecisionForCurrencyFromList(String paramISOCode, NodeList ccyList) {
     // Iterate them to find currency specification for currency iso code param
     for (int currentIndex = 0; currentIndex < ccyList.getLength(); currentIndex++) {
       Node ccyNode = ccyList.item(currentIndex);
@@ -151,7 +151,7 @@ public class SL_Currency_StdPrecision extends SimpleCallout {
         String ccyIsoCode = getFirstValueWithTagName(ccyNode, CURRENCY_ISO_CODE_TAG_NAME);
         String ccyPrecision = getFirstValueWithTagName(ccyNode, CURRENCY_PRECISION_TAG_NAME);
 
-        if (isSameCurrencyAsParameterAndIsPrecissionDefined(paramISOCode, ccyIsoCode, ccyPrecision)) {
+        if (isSameCurrencyAsParameterAndIsPrecisionDefined(paramISOCode, ccyIsoCode, ccyPrecision)) {
           return Integer.parseInt(ccyPrecision);
         }
       }
@@ -166,7 +166,7 @@ public class SL_Currency_StdPrecision extends SimpleCallout {
     return tags.getLength() > 0 ? tags.item(0).getTextContent() : null;
   }
 
-  private boolean isSameCurrencyAsParameterAndIsPrecissionDefined(String paramISOCode,
+  private boolean isSameCurrencyAsParameterAndIsPrecisionDefined(String paramISOCode,
       String ccyIsoCode, String ccyPrecision) {
     return StringUtils.isNotEmpty(ccyIsoCode) && StringUtils.equals(paramISOCode, ccyIsoCode)
         && StringUtils.isNotEmpty(ccyPrecision)
