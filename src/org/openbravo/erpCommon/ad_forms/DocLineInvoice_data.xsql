@@ -127,10 +127,12 @@
         left join c_tax on c_tax.c_tax_id=c_invoicelinetax.c_tax_id
         WHERE C_INVOICELINE.C_INVOICE_ID = ?
         and c_tax.istaxundeductable='Y'
+        and c_invoicelinetax.C_TAX_ID = ?
         ORDER BY LINE
 
      ]]>
      </Sql>
      <Parameter name="C_Invoice_ID"/>
+     <Parameter name="C_Tax_ID"/>
    </SqlMethod>
   </SqlClass>
