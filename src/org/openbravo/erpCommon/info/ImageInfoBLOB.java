@@ -162,7 +162,8 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
         Long[] sizeNew = new Long[2];
         if (!mimeType.contains("image")
             || (!mimeType.contains("jpeg") && !mimeType.contains("png")
-                && !mimeType.contains("gif") && !mimeType.contains("bmp"))) {
+                && !mimeType.contains("gif") && !mimeType.contains("bmp") && !mimeType
+                  .contains("svg+xml"))) {
           imageId = "";
           imageSizeAction = "WRONGFORMAT";
           sizeOld[0] = (long) 0;
@@ -171,44 +172,52 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
           sizeNew[1] = (long) 0;
         } else {
 
-          int newWidth;
-          if (vars.getStringParameter("imageWidthValue") != "") {
-            newWidth = Integer.parseInt(vars.getStringParameter("imageWidthValue"));
+          if (mimeType.contains("svg+xml")) {
+            // Vector images do not have width nor height
+            imageSizeAction = "N";
+            sizeNew[0] = 0L;
+            sizeNew[1] = 0L;
           } else {
-            newWidth = 0;
-          }
-          int newHeight;
-          if (vars.getStringParameter("imageHeightValue") != "") {
-            newHeight = Integer.parseInt(vars.getStringParameter("imageHeightValue"));
-          } else {
-            newHeight = 0;
+            // Bitmap images need to manage width and height
+            int newWidth;
+            if (vars.getStringParameter("imageWidthValue") != "") {
+              newWidth = Integer.parseInt(vars.getStringParameter("imageWidthValue"));
+            } else {
+              newWidth = 0;
+            }
+            int newHeight;
+            if (vars.getStringParameter("imageHeightValue") != "") {
+              newHeight = Integer.parseInt(vars.getStringParameter("imageHeightValue"));
+            } else {
+              newHeight = 0;
+            }
+
+            if (imageSizeAction.equals("ALLOWED") || imageSizeAction.equals("ALLOWED_MINIMUM")
+                || imageSizeAction.equals("ALLOWED_MAXIMUM")
+                || imageSizeAction.equals("RECOMMENDED")
+                || imageSizeAction.equals("RECOMMENDED_MINIMUM")
+                || imageSizeAction.equals("RECOMMENDED_MAXIMUM")) {
+              sizeOld[0] = (long) newWidth;
+              sizeOld[1] = (long) newHeight;
+              sizeNew = Utility.computeImageSize(bytea);
+            } else if (imageSizeAction.equals("RESIZE_NOASPECTRATIO")) {
+              sizeOld = Utility.computeImageSize(bytea);
+              bytea = Utility.resizeImageByte(bytea, newWidth, newHeight, false, false);
+              sizeNew = Utility.computeImageSize(bytea);
+            } else if (imageSizeAction.equals("RESIZE_ASPECTRATIO")) {
+              sizeOld = Utility.computeImageSize(bytea);
+              bytea = Utility.resizeImageByte(bytea, newWidth, newHeight, true, true);
+              sizeNew = Utility.computeImageSize(bytea);
+            } else if (imageSizeAction.equals("RESIZE_ASPECTRATIONL")) {
+              sizeOld = Utility.computeImageSize(bytea);
+              bytea = Utility.resizeImageByte(bytea, newWidth, newHeight, true, false);
+              sizeNew = Utility.computeImageSize(bytea);
+            } else {
+              sizeOld = Utility.computeImageSize(bytea);
+              sizeNew = sizeOld;
+            }
           }
 
-          if (imageSizeAction.equals("ALLOWED") || imageSizeAction.equals("ALLOWED_MINIMUM")
-              || imageSizeAction.equals("ALLOWED_MAXIMUM") || imageSizeAction.equals("RECOMMENDED")
-              || imageSizeAction.equals("RECOMMENDED_MINIMUM")
-              || imageSizeAction.equals("RECOMMENDED_MAXIMUM")) {
-            sizeOld[0] = (long) newWidth;
-            sizeOld[1] = (long) newHeight;
-            sizeNew = Utility.computeImageSize(bytea);
-          } else if (imageSizeAction.equals("RESIZE_NOASPECTRATIO")) {
-            sizeOld = Utility.computeImageSize(bytea);
-            bytea = Utility.resizeImageByte(bytea, newWidth, newHeight, false, false);
-            sizeNew = Utility.computeImageSize(bytea);
-          } else if (imageSizeAction.equals("RESIZE_ASPECTRATIO")) {
-            sizeOld = Utility.computeImageSize(bytea);
-            bytea = Utility.resizeImageByte(bytea, newWidth, newHeight, true, true);
-            sizeNew = Utility.computeImageSize(bytea);
-          } else if (imageSizeAction.equals("RESIZE_ASPECTRATIONL")) {
-            sizeOld = Utility.computeImageSize(bytea);
-            bytea = Utility.resizeImageByte(bytea, newWidth, newHeight, true, false);
-            sizeNew = Utility.computeImageSize(bytea);
-          } else {
-            sizeOld = Utility.computeImageSize(bytea);
-            sizeNew = sizeOld;
-          }
-
-          mimeType = MimeTypeUtil.getInstance().getMimeTypeName(bytea);
           // Using DAL to write the image data to the database
           Image image;
 
