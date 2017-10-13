@@ -179,18 +179,13 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
             sizeNew[1] = 0L;
           } else {
             // Bitmap images need to manage width and height
-            int newWidth;
-            if (vars.getStringParameter("imageWidthValue") != "") {
-              newWidth = Integer.parseInt(vars.getStringParameter("imageWidthValue"));
-            } else {
-              newWidth = 0;
-            }
-            int newHeight;
-            if (vars.getStringParameter("imageHeightValue") != "") {
-              newHeight = Integer.parseInt(vars.getStringParameter("imageHeightValue"));
-            } else {
-              newHeight = 0;
-            }
+            String paramWidth = vars.getStringParameter("imageWidthValue");
+            int newWidth = paramWidth == null || paramWidth.isEmpty() ? 0 : Integer
+                .parseInt(paramWidth);
+
+            String paramHeight = vars.getStringParameter("imageHeightValue");
+            int newHeight = paramHeight == null || paramHeight.isEmpty() ? 0 : Integer
+                .parseInt(paramHeight);
 
             if (imageSizeAction.equals("ALLOWED") || imageSizeAction.equals("ALLOWED_MINIMUM")
                 || imageSizeAction.equals("ALLOWED_MAXIMUM")
