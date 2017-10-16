@@ -110,7 +110,7 @@ public abstract class ImportEntryProcessor {
 
   // multiple threads access this map, its access is handled through
   // synchronized methods
-  private Map<String, ImportEntryProcessRunnable> runnables = new HashMap<String, ImportEntryProcessRunnable>();
+  private Map<String, ImportEntryProcessRunnable> runnables = new HashMap<>();
 
   @Inject
   private ImportEntryManager importEntryManager;
@@ -254,8 +254,8 @@ public abstract class ImportEntryProcessor {
    * @author mtaal
    *
    */
-  public static abstract class ImportEntryProcessRunnable implements Runnable {
-    private Queue<QueuedEntry> importEntries = new ConcurrentLinkedQueue<QueuedEntry>();
+  public abstract static class ImportEntryProcessRunnable implements Runnable {
+    private Queue<QueuedEntry> importEntries = new ConcurrentLinkedQueue<>();
 
     private Logger logger;
 
@@ -268,7 +268,7 @@ public abstract class ImportEntryProcessor {
     private String key = null;
     // use weakhashmap so that the content is automatically purged
     // when the garbagecollector runs
-    private Map<String, OBContext> cachedOBContexts = new HashMap<String, OBContext>();
+    private Map<String, OBContext> cachedOBContexts = new HashMap<>();
 
     public ImportEntryProcessRunnable() {
       logger = Logger.getLogger(this.getClass());
@@ -428,7 +428,7 @@ public abstract class ImportEntryProcessor {
           cleanUpThreadForNextCycle();
         }
       }
-      if (logger.isDebugEnabled() & cnt > 0) {
+      if (logger.isDebugEnabled() && cnt > 0) {
         logger.debug("Runnable: " + key + ", processed " + cnt + " import entries in " + totalT
             + " millis, " + (totalT / cnt) + " per import entry, current queue size: "
             + importEntries.size());
