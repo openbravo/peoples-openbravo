@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
@@ -109,6 +110,12 @@ public abstract class DalBaseProcess implements Process {
             }
           }
         }
+      }
+
+      // if the default connection should be closed after process execution, then close also other
+      // opened connections (if any)
+      if (bundle.getCloseConnection() && SessionHandler.existsOpenedSessions()) {
+        SessionHandler.getInstance().cleanUpSessions();
       }
 
       // remove the context at the end, maybe the process scheduler

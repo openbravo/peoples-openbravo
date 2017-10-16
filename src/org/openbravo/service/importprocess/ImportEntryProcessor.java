@@ -243,8 +243,10 @@ public abstract class ImportEntryProcessor {
    * <li>OBContexts are temporary cached in a {@link WeakHashMap}</li>
    * <li>the process checks the {@link ImportEntry} status just before it is processed, it also
    * prevents the same {@link ImportEntry} to be processed twice by one thread</li>
-   * <li>each {@link ImportEntry} is processed in its own connection and transaction. Note the
-   * process here does not commit a transaction, the implementing subclass must do that.</li>
+   * <li>each {@link ImportEntry} is processed in its own connection and transaction. Note that the
+   * class delegates into the implementing subclass the ability of handling the commit/rollback of
+   * the transaction. But in order to prevent possible connection leaks, this class closes all the
+   * opened connections (if any) before ending.</li>
    * <li>the process sets admin mode, before calling the subclass</li>
    * <li>an error which ends up in the main loop here is stored in the {@link ImportEntry} in the
    * errorInfo property</li>
@@ -393,13 +395,12 @@ public abstract class ImportEntryProcessor {
             OBDal.getInstance().commitAndClose();
           }
 
-          // the import entry processEntry calls should not leave an open active session
+          // close sessions in case the import entry processEntry left them opened
           if (SessionHandler.isSessionHandlerPresent()) {
-            // change to warning if the code in the subclasses really works correctly
-            logger
-                .warn("Session handler present after processing import entry, this indicates that the processing code "
-                    + "does not correctly clean/close the session after its last actions. This should be fixed.");
             OBDal.getInstance().commitAndClose();
+          }
+          if (SessionHandler.existsOpenedSessions()) {
+            SessionHandler.getInstance().cleanUpSessions();
           }
 
         } catch (Throwable t) {
