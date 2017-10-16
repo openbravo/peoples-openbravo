@@ -217,12 +217,17 @@ enyo.kind({
         if (!me.validateReceipt(keyboard, true)) {
           return true;
         }
-        if (keyboard.line) {
-          keyboard.doDeleteLine({
-            line: keyboard.line,
-            selectedModels: keyboard.selectedModels
-          });
+        if (keyboard.model.get('leftColumnViewManager') && !keyboard.model.get('leftColumnViewManager').isMultiOrder()) {
+          if (keyboard.line) {
+            keyboard.doDeleteLine({
+              line: keyboard.line,
+              selectedModels: keyboard.selectedModels
+            });
+          }
+        } else {
+          return true;
         }
+
         };
 
     this.addCommand('line:qty', {
