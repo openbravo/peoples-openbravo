@@ -98,6 +98,15 @@ export.database: exports database structure and data to xml files.
  
   <available file=".hg" property="is.hg" />
 
+  <condition property="j9.module.args" value="--add-modules=java.activation,java.xml.ws.annotation" else="">
+    <not>
+      <or>
+        <equals arg1="${ant.java.version}" arg2="1.7"/>
+        <equals arg1="${ant.java.version}" arg2="1.8"/>
+      </or>
+    </not>
+  </condition>
+
   <condition property="calculate.core.rev">
    <istrue value="${calculate.core.revision}"/>
   </condition>
@@ -545,7 +554,7 @@ export.database: exports database structure and data to xml files.
         </fileset>
       </classpath>
       <link href="http://docs.oracle.com/javase/7/docs/api/"/>
-      <arg value="--add-modules=java.activation,java.xml.ws.annotation" />
+      <arg value="${j9.module.args}"/>
     </javadoc>
   </target>
 
