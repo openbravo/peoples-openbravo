@@ -45,6 +45,11 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
         return;
       }
 
+      if (OB.DEC.mul(p.amount, p.rate) <= 0) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_amtGreaterThanZero'));
+        return;
+      }
+
       // synch logic
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("paymentDone");
 
