@@ -260,15 +260,23 @@ enyo.kind({
             name: 'prepaymentsexactbutton',
             kind: 'OB.OBPOSPointOfSale.UI.PrepaymentsExactButton',
             components: [{
+              name: 'prepaymentsexactbuttonicon',
+              classes: 'btn-icon-doubleCheck',
+              style: 'display: block'
+            }, {
               name: 'prepaymentsexactbuttonlbl',
-              style: 'font-size: 10px; font-weight: bold; color: black; position: relative; bottom: -15px'
+              style: 'font-size: 10px; font-weight: bold; color: black; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; position: relative;'
             }]
           }, {
             name: 'prepaymentsdeliverybutton',
             kind: 'OB.OBPOSPointOfSale.UI.PrepaymentsDeliveryButton',
             components: [{
+              name: 'prepaymentsdeliverybuttonicon',
+              classes: 'btn-icon-check',
+              style: 'display: block'
+            }, {
               name: 'prepaymentsdeliverybuttonlbl',
-              style: 'font-size: 10px; font-weight: bold; color: black; position: relative; bottom: -15px'
+              style: 'font-size: 10px; font-weight: bold; color: black; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; position: relative;'
             }]
           }]
         }, {
@@ -1576,7 +1584,7 @@ enyo.kind({
   events: {
     onDeliveryPayment: ''
   },
-  classes: 'btn-icon-adaptative btn-icon-check btnlink-green',
+  classes: 'btn-icon-adaptative btnlink-green',
   style: 'width: calc(50% - 5px); margin: 0px 5px 0px 0px; clear: unset',
   tap: function () {
     if (this.disabled) {
@@ -1586,7 +1594,7 @@ enyo.kind({
   },
   initComponents: function () {
     this.inherited(arguments);
-    this.children[0].setContent(OB.I18N.getLabel('OBPOS_PrepaymentsDeliveryButtonLbl'));
+    this.children[1].setContent(OB.I18N.getLabel('OBPOS_PrepaymentsDeliveryButtonLbl'));
     if (!OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
       this.hide();
     }
@@ -1599,7 +1607,7 @@ enyo.kind({
   events: {
     onExactPayment: ''
   },
-  classes: 'btn-icon-adaptative btn-icon-doubleCheck btnlink-green',
+  classes: 'btn-icon-adaptative btnlink-green',
   style: 'width: calc(50% - 5px); margin: 0px 0px 0px 5px;',
   tap: function () {
     if (this.disabled) {
@@ -1609,7 +1617,7 @@ enyo.kind({
   },
   initComponents: function () {
     this.inherited(arguments);
-    this.children[0].setContent(OB.I18N.getLabel('OBPOS_PrepaymentsExactButtonLbl'));
+    this.children[1].setContent(OB.I18N.getLabel('OBPOS_PrepaymentsExactButtonLbl'));
     if (!OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
       this.hide();
     }
