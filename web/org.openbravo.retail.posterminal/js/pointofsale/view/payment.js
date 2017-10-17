@@ -628,6 +628,9 @@ enyo.kind({
     }
 
     requiredCash = paymentstatus.changeAmt;
+    if (!OB.UTIL.isNullOrUndefined(requiredCash)) {
+      requiredCash = OB.DEC.toNumber(requiredCash);
+    }
     if (requiredCash !== 0) {
       if (selectedPayment.paymentMethod.overpaymentLimit === 0 && selectedPayment.paymentMethod.overpaymentLimit < requiredCash) {
         this.$.changeexceedlimit.show();
