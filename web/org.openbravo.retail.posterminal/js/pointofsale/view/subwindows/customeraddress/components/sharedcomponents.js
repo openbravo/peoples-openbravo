@@ -139,9 +139,6 @@ enyo.kind({
         return;
       }
       if (args.passValidation) {
-        args.meObject.waterfall('onDisableButton', {
-          disabled: true
-        });
         args.meObject.saveCustomerAddr(args.inSender, args.inEvent);
       } else {
         OB.UTIL.showWarning(args.error);

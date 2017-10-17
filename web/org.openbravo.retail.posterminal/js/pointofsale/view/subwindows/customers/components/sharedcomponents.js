@@ -473,9 +473,6 @@ enyo.kind({
           return true;
         }
         customerEdited = args.customer;
-        args.windowComponent.waterfall('onDisableButton', {
-          disabled: true
-        });
         args.customer.saveCustomer(function (result) {
           args.windowComponent.waterfall('onDisableButton', {
             disabled: false

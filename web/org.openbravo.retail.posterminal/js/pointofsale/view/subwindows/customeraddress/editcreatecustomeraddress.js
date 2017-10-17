@@ -96,6 +96,20 @@ enyo.kind({
     }
   },
   tap: function () {
+    var me = this;
+    this.disableButton(this, {
+      disabled: true
+    });
+    OB.info('Time: ' + new Date() + '. Customer Addr Save Button Pressed ( Status: ' + this.disabled + ') ');
+    if (me.blocked) {
+      OB.error('Time: ' + new Date() + '. Customer Addr Save button has been pressed 2 times and second execution is discarded ');
+      return;
+    } else {
+      me.blocked = true;
+      setTimeout(function () {
+        me.blocked = false;
+      }, 1000);
+    }
     this.doSaveCustomerAddr();
   }
 });
