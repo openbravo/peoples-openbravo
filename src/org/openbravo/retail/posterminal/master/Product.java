@@ -215,6 +215,15 @@ public class Product extends ProcessHQLQuery {
     } finally {
       OBContext.restorePreviousMode();
     }
+    boolean useGetForProductImages = false;
+    try {
+      useGetForProductImages = "Y".equals(Preferences.getPreferenceValue(
+          "OBPOS_retail.productImages", true, OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null));
+    } catch (PropertyException e) {
+      useGetForProductImages = false;
+    }
     boolean isMultipricelist = false;
     try {
       OBContext.setAdminMode(false);
@@ -268,10 +277,12 @@ public class Product extends ProcessHQLQuery {
         && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
 
     // regular products
-    String hql = "select"
-        + regularProductsHQLProperties.getHqlSelect()
-        + "FROM OBRETCO_Prol_Product as pli left outer join pli.product.image img inner join pli.product as product, "
-        + "PricingProductPrice ppp ";
+    String hql = "select" + regularProductsHQLProperties.getHqlSelect()
+        + "FROM OBRETCO_Prol_Product as pli ";
+    if (!useGetForProductImages) {
+      hql += "left outer join pli.product.image img ";
+    }
+    hql += "inner join pli.product as product, PricingProductPrice ppp ";
     if (isRemote && isMultipricelist && jsonsent.has("remoteParams")) {
       hql += ", PricingProductPrice pp WHERE pp.product=pli.product and pp.priceListVersion.id= :multipriceListVersionId ";
     } else {
@@ -289,13 +300,17 @@ public class Product extends ProcessHQLQuery {
       hql += "AND ((pli.product.$incrementalUpdateCriteria) AND (pli.$incrementalUpdateCriteria)) ";
     }
 
-    hql += "order by pli.product.name asc, pli.product.id";
+    if (isRemote) {
+      hql += "order by pli.product.name asc, pli.product.id";
+    }
     products.add(hql);
     // Packs, combos...
-    products.add("select "
-        + regularProductsDiscHQLProperties.getHqlSelect()
-        + " from PricingAdjustment as p left outer join p.obdiscImage img" //
-        + " where $filtersCriteria AND p.discountType.obposIsCategory = true "//
+    String packAndCombosHqlString = "select " //
+        + regularProductsDiscHQLProperties.getHqlSelect() + " from PricingAdjustment as p ";
+    if (!useGetForProductImages) {
+      packAndCombosHqlString += "left outer join p.obdiscImage img ";
+    }
+    packAndCombosHqlString += "where $filtersCriteria AND p.discountType.obposIsCategory = true "//
         + "   and p.discountType.active = true " //
         + "   and p.$readableSimpleClientCriteria"//
         + "   and (p.endingDate is null or p.endingDate >= :endingDate)" //
@@ -314,32 +329,40 @@ public class Product extends ProcessHQLQuery {
         + "      and ppl.obretcoProductlist.id = :productListId))) "
         // organization
         + "and p.$naturalOrgCriteria and ((p.includedOrganizations='Y' "
-        + "  and not exists (select 1 " + "         from PricingAdjustmentOrganization o"
-        + "        where active = true" + "          and o.priceAdjustment = p"
-        + "          and o.organization.id = :orgId )) " + "   or (p.includedOrganizations='N' "
-        + "  and  exists (select 1 " + "         from PricingAdjustmentOrganization o"
-        + "        where active = true" + "          and o.priceAdjustment = p"
-        + "          and o.organization.id = :orgId )) " + "    ) order by p.name asc, p.id");
+        + "  and not exists (select 1 "
+        + "         from PricingAdjustmentOrganization o"
+        + "        where active = true"
+        + "          and o.priceAdjustment = p"
+        + "          and o.organization.id = :orgId )) "
+        + "   or (p.includedOrganizations='N' "
+        + "  and  exists (select 1 "
+        + "         from PricingAdjustmentOrganization o"
+        + "        where active = true"
+        + "          and o.priceAdjustment = p"
+        + "          and o.organization.id = :orgId )) )";
+    if (isRemote) {
+      packAndCombosHqlString += " order by p.name asc, p.id";
+    }
 
+    products.add(packAndCombosHqlString);
     // generic products
     boolean isForceRemote = jsonsent.getJSONObject("parameters").has("forceRemote")
         && jsonsent.getJSONObject("parameters").getBoolean("forceRemote");
-    if (executeGenericProductQry && !isRemote && !isForceRemote) {// BROWSE tab is hidden, we do not
-                                                                  // need
-      // to
-      // send generic
-      // products
-      products
-          .add("select "
-              + regularProductsHQLProperties.getHqlSelect()
-              + " from Product product left outer join product.image img left join product.oBRETCOProlProductList as pli left outer join product.pricingProductPriceList ppp "
-              + " where $filtersCriteria AND ppp.priceListVersion.id = :priceListVersionId AND product.isGeneric = 'Y' AND (product.$incrementalUpdateCriteria) and exists (select 1 from Product product2 left join product2.oBRETCOProlProductList as pli2, "
-              + " PricingProductPrice ppp2 where product.id = product2.genericProduct.id and product2 = ppp2.product and ppp2.priceListVersion.id = :priceListVersionId "
-              + " and pli2.obretcoProductlist.id = :productListId) order by product.id");
+    if (executeGenericProductQry && !isRemote && !isForceRemote) {
+      // BROWSE tab is hidden, we do not need to send generic products
+      String genericProductsHqlString = "select " //
+          + regularProductsHQLProperties.getHqlSelect() + " from Product product ";
+      if (!useGetForProductImages) {
+        genericProductsHqlString += "left outer join product.image img ";
+      }
+      genericProductsHqlString += "left join product.oBRETCOProlProductList as pli left outer join product.pricingProductPriceList ppp "
+          + " where $filtersCriteria AND ppp.priceListVersion.id = :priceListVersionId AND product.isGeneric = 'Y' AND (product.$incrementalUpdateCriteria) and exists (select 1 from Product product2 left join product2.oBRETCOProlProductList as pli2, "
+          + " PricingProductPrice ppp2 where product.id = product2.genericProduct.id and product2 = ppp2.product and ppp2.priceListVersion.id = :priceListVersionId "
+          + " and pli2.obretcoProductlist.id = :productListId)" //
+          + " order by product.id";
+      products.add(genericProductsHqlString);
     }
-
     return products;
-
   }
 
   @Override
