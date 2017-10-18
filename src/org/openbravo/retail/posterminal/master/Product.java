@@ -302,6 +302,8 @@ public class Product extends ProcessHQLQuery {
 
     if (isRemote) {
       hql += "order by pli.product.name asc, pli.product.id";
+    } else {
+      hql += "order by pli.product.id";
     }
     products.add(hql);
     // Packs, combos...
@@ -342,6 +344,8 @@ public class Product extends ProcessHQLQuery {
         + "          and o.organization.id = :orgId )) )";
     if (isRemote) {
       packAndCombosHqlString += " order by p.name asc, p.id";
+    } else {
+      packAndCombosHqlString += " order by p.id";
     }
 
     products.add(packAndCombosHqlString);
