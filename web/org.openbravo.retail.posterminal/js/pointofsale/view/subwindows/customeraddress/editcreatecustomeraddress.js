@@ -108,7 +108,7 @@ enyo.kind({
       me.blocked = true;
       setTimeout(function () {
         me.blocked = false;
-      }, 1000);
+      }, 500);
     }
     this.doSaveCustomerAddr();
   }
