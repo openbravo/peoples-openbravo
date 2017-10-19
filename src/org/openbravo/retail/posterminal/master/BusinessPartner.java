@@ -19,6 +19,9 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -46,6 +49,19 @@ public class BusinessPartner extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
+
+    boolean isRemote = false;
+    try {
+      OBContext.setAdminMode(false);
+      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.customer", true, OBContext
+          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
+          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+    } catch (PropertyException e) {
+      isRemote = false;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
     HQLPropertyList regularBusinessPartnerHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
     String hql = "SELECT "
@@ -56,8 +72,13 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "WHERE $filtersCriteria AND " //
         + "bp.customer = true AND " + "(bp.$incrementalUpdateCriteria) AND "
         + "bp.$readableSimpleClientCriteria AND " + "bp.$naturalOrgCriteria AND "
-        + "(not exists (select 1 from ADUser usr where usr.businessPartner = bp)) "
-        + "ORDER BY bp.name, bp.id";
+        + "(not exists (select 1 from ADUser usr where usr.businessPartner = bp)) ";
+    if (isRemote) {
+      hql += "ORDER BY bp.name, bp.id";
+    } else {
+      hql += "ORDER BY bp.id";
+    }
+
     String hql2 = "SELECT"
         + regularBusinessPartnerHQLProperties.getHqlSelect() //
         + "FROM BusinessPartner AS bp " //
@@ -68,8 +89,12 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "bp.$readableSimpleClientCriteria AND "
         + "bp.$naturalOrgCriteria AND "
         + "(bp.$incrementalUpdateCriteria) AND "
-        + "(ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner=bp)) "
-        + "ORDER BY bp.name, bp.id";
+        + "(ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner=bp)) ";
+    if (isRemote) {
+      hql2 += "ORDER BY bp.name, bp.id";
+    } else {
+      hql2 += "ORDER BY bp.id";
+    }
     return Arrays.asList(new String[] { hql, hql2 });
   }
 
