@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -72,15 +72,26 @@ public class AddPaymentOnProcessActionHandler extends BaseActionHandler {
         String currencyId = jsonData.getString("currencyId");
         boolean usesCredit = jsonData.getBoolean("usesCredit");
         boolean generatesCredit = jsonData.getBoolean("generatesCredit");
-        if ((usesCredit || generatesCredit)
-            && !StringUtils.equals(currencyId, businessPartner.getCurrency().getId())) {
-          String message = String.format(OBMessageUtils.messageBD("APRM_CreditCurrency"),
-              businessPartner.getCurrency().getISOCode());
+
+        if (businessPartner.getCurrency() == null) {
+          String message = String.format(OBMessageUtils.messageBD("InitBPCurrencyLnk", false),
+              businessPartner.getId(), businessPartner.getName());
           errorMessage.put("severity", "error");
           errorMessage.put("title", "Error");
           errorMessage.put("text", message);
           result.put("message", errorMessage);
           return result;
+        } else {
+          if ((usesCredit || generatesCredit)
+              && !StringUtils.equals(currencyId, businessPartner.getCurrency().getId())) {
+            String message = String.format(OBMessageUtils.messageBD("APRM_CreditCurrency"),
+                businessPartner.getCurrency().getISOCode());
+            errorMessage.put("severity", "error");
+            errorMessage.put("title", "Error");
+            errorMessage.put("text", message);
+            result.put("message", errorMessage);
+            return result;
+          }
         }
 
       } else {
