@@ -599,11 +599,11 @@
     returnToOnline: function () {
       if (OB.MobileApp.model.get('isLoggingIn')) {
         OB.MobileApp.model.on('change:isLoggingIn', function () {
-          if (OB.MobileApp.model.get('isLoggingIn')) {
-            OB.MobileApp.model.off('change:isLoggingIn', this.returnToOnline);
+          if (!OB.MobileApp.model.get('isLoggingIn')) {
+            OB.MobileApp.model.off('change:isLoggingIn', null, this);
             this.runSyncProcess();
           }
-        });
+        }, this);
       } else {
         //The session is fine, we don't need to warn the user
         //but we will attempt to send all pending orders automatically
