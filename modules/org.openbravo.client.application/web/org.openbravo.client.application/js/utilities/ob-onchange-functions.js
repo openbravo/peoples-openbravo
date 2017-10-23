@@ -74,3 +74,34 @@ OB.OnChange.agingProcessDefinitionOrganization = function (item, view, form, gri
     organization: organization.getValue()
   }, {}, callbackGetGLbyOrganization);
 };
+
+//**  {{{OB.CopyFromOrders.onLoad}}}**
+//Used to filter by isSOTrx when Copy From Orders PE is loaded
+OB.CopyFromOrders = {};
+OB.CopyFromOrders.onLoad = function (view) {
+  var selection, selectedRecord, paramGrid, parentGrid, criteria, gridCriteria;
+
+  parentGrid = view.parentWindow.view.viewGrid;
+  selection = parentGrid.getSelectedRecords();
+  paramGrid = view.theForm.getItem('grid').canvas.viewGrid;
+
+  if(selection.length === 1){
+    selectedRecord = selection[0];
+    var isSalesTransaction = (selectedRecord && selectedRecord.salesTransaction);
+
+    //Set information message
+    var messageBar = isSalesTransaction ? 'OBUIAPP_GridFilteredWithSO' : 'OBUIAPP_GridFilteredWithPO';
+    view.messageBar.setMessage('info', OB.I18N.getLabel(messageBar), '');
+  
+    gridCriteria = {
+      _constructor: "AdvancedCriteria",
+      operator: "or",
+      criteria:[{ 
+        fieldName: "salesTransaction", 
+        operator: "equals", 
+        value: isSalesTransaction
+      }]
+    };
+    paramGrid.setCriteria(gridCriteria);
+  }
+};
