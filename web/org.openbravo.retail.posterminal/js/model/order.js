@@ -3724,7 +3724,7 @@
             reversePaymentConfirmed();
           } else {
             OB.UTIL.Approval.requestApproval(
-            OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, [{
+            OB.MobileApp.view.$.containerWindow.getRoot().model, [{
               approval: 'OBPOS_approval.reversePayment',
               message: 'OBPOS_approval.reversePayment'
             }], function (approved, supervisor, approvalType) {
