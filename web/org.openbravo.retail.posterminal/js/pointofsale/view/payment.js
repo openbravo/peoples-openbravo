@@ -424,7 +424,7 @@ enyo.kind({
         symbolAtRight = true,
         isCashType = true,
         receiptHasPrepaymentAmount = prepaymentAmount !== 0 && prepaymentAmount !== paymentstatus.totalAmt,
-        pendingPrepayment = prepaymentAmount + paymentstatus.pendingAmt - paymentstatus.totalAmt;
+        pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentAmount, paymentstatus.pendingAmt), paymentstatus.totalAmt);
 
     if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
       symbol = OB.MobileApp.model.get('terminal').symbol;
@@ -568,7 +568,7 @@ enyo.kind({
         selectedPayment, paymentStatus = multiOrders.getPaymentStatus(),
         prepaymentAmount = paymentstatus.get('prepaymentAmt'),
         receiptHasPrepaymentAmount = prepaymentAmount !== 0 && prepaymentAmount !== paymentstatus.get('total'),
-        pendingPrepayment = prepaymentAmount - (paymentstatus.get('existingPayment') ? paymentstatus.get('existingPayment') : 0) - paymentstatus.get('payment');
+        pendingPrepayment = OB.DEC.sub(OB.DEC.sub(prepaymentAmount, (paymentstatus.get('existingPayment') ? paymentstatus.get('existingPayment') : 0)), paymentstatus.get('payment'));
 
     this.updateExtraInfo('');
     this.$.layawayaction.hide();
