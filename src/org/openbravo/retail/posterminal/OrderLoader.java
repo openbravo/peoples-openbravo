@@ -385,8 +385,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
         } else {
           verifyOrderLineTax(jsonorder);
 
-          if (isModified) {
-            order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+          order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+          if (order != null) {
             deleteOrderlineServiceRelations(order);
           } else {
             order = OBProvider.getInstance().get(Order.class);
