@@ -1453,6 +1453,7 @@ enyo.kind({
     OB.Model.OfflinePrinter.printPendingJobs();
 
     this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
+      this.$.multiColumn.$.rightPanel.$.keyboard.clearInput();
       if (changedModel.isMultiOrder()) {
         this.rightToolbarDisabled({}, {
           status: true,
