@@ -6080,7 +6080,7 @@
       // The new functionality of loading document no, makes this function obsolete.
       // The function is not removed to avoid api changes
     },
-    checkForDuplicateReceipts: function (model, loadOrder, callback, errorCallback) {
+    checkForDuplicateReceipts: function (model, callback, errorCallback) {
 
       function openReceiptPermissionError(orderType) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType]));
@@ -6124,25 +6124,28 @@
           };
 
       // Check in Current Session
-      for (i = 0; i < OB.MobileApp.model.orderList.length; i++) {
-        if (OB.MobileApp.model.orderList.models[i].get('id') === model.get('id') || ((!(_.isNull(OB.MobileApp.model.orderList.models[i].get('oldId')))) && OB.MobileApp.model.orderList.models[i].get('oldId') === model.get('id'))) {
+      for (i = 0; i < this.length; i++) {
+        if (this.at(i).get('id') === model.get('id') || ((!(_.isNull(this.at(i).get('oldId')))) && this.at(i).get('oldId') === model.get('id'))) {
           var errorMsg;
           orderTypeMsg = OB.I18N.getLabel('OBPOS_ticket');
-          errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, OB.MobileApp.model.orderList.models[i].get('documentNo')));
-          if (OB.MobileApp.model.orderList.models[i].get('isLayaway')) {
+          errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, this.at(i).get('documentNo')));
+          if (this.at(i).get('isLayaway')) {
             orderTypeMsg = OB.I18N.getLabel('OBPOS_LblLayaway');
-            errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, OB.MobileApp.model.orderList.models[i].get('documentNo')));
+            errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, this.at(i).get('documentNo')));
           } else if (OB.MobileApp.model.orderList.models[i].get('isQuotation')) {
             orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
-            errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, OB.MobileApp.model.orderList.models[i].get('documentNo')));
-          } else if ((!(_.isNull(OB.MobileApp.model.orderList.models[i].get('oldId')))) && OB.MobileApp.model.orderList.models[i].get('oldId') === model.get('id')) {
-            var SoFromQtDocNo = OB.MobileApp.model.orderList.models[i].get('documentNo');
+            errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, this.at(i).get('documentNo')));
+          } else if ((!(_.isNull(this.at(i).get('oldId')))) && this.at(i).get('oldId') === model.get('id')) {
+            var SoFromQtDocNo = this.at(i).get('documentNo');
             var QtDocumentNo = model.get('documentNo');
             errorMsg = OB.I18N.getLabel('OBPOS_OrderAssociatedToQuotationInProgress', [QtDocumentNo, SoFromQtDocNo, QtDocumentNo, SoFromQtDocNo]);
           }
           showErrorPopup(errorMsg);
           if (OB.MobileApp.model.receipt.get('documentNo') !== model.get('documentNo')) {
-            OB.MobileApp.model.orderList.load(OB.MobileApp.model.orderList.models[i]);
+            this.load(this.at(i));
+          }
+          if (model.get('searchSynchId')) {
+            model.unset('searchSynchId');
           }
           return true;
         }
@@ -6176,7 +6179,7 @@
                       label: OB.I18N.getLabel('OBMOBC_LblOk'),
                       action: function () {
                         OB.Dal.remove(existingOrder, function () {
-                          loadOrder(model);
+                          callback(model);
                         }, OB.UTIL.showError);
                       }
                     }, {
@@ -6196,10 +6199,10 @@
               }
             });
           } else {
-            return loadOrder(model);
+            return callback(model);
           }
         } else {
-          return loadOrder(model);
+          return callback(model);
         }
       });
     }

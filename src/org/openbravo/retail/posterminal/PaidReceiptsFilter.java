@@ -73,17 +73,22 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
       orderTypeHql = "";
     }
 
-    String hqlPaidReceipts = "select"
-        + receiptsHQLProperties.getHqlSelect()
-        + "from Order as ord "
-        + "where $filtersCriteria and $hqlCriteria "
-        + orderTypeHql
-        + " and ord.client.id =  $clientId and ord.$orgId"
-        + " and ord.obposIsDeleted = false and ord.obposApplications is not null and ord.documentStatus <> 'CJ' "
-        + " and ord.documentStatus <> 'CA' and (ord.documentStatus <> 'CL' or ord.iscancelled = true)"//
-        + " $orderByCriteria";
+    final StringBuilder hqlPaidReceipts = new StringBuilder();
+    hqlPaidReceipts.append("select");
+    hqlPaidReceipts.append(receiptsHQLProperties.getHqlSelect());
+    hqlPaidReceipts.append("from Order as ord ");
+    hqlPaidReceipts.append("where $filtersCriteria and $hqlCriteria ");
+    hqlPaidReceipts.append(orderTypeHql);
+    hqlPaidReceipts.append(" and ord.client.id =  $clientId and ord.$orgId");
+    hqlPaidReceipts
+        .append(" and ord.obposIsDeleted = false and ord.obposApplications is not null and ord.documentStatus <> 'CJ' ");
+    hqlPaidReceipts
+        .append(" and ord.documentStatus <> 'CA' and (ord.documentStatus <> 'CL' or ord.iscancelled = true)");
+    if (jsonsent.has("orderByClause") && jsonsent.get("orderByClause") != JSONObject.NULL) {
+      hqlPaidReceipts.append(" $orderByCriteria");
+    }
 
-    return Arrays.asList(new String[] { hqlPaidReceipts });
+    return Arrays.asList(new String[] { hqlPaidReceipts.toString() });
   }
 
   protected static String getOrderTypeFilter(JSONObject jsonsent) {
