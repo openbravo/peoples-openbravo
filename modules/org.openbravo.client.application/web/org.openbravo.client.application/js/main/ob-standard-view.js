@@ -1662,6 +1662,10 @@ isc.OBStandardView.addProperties({
     }
 
     if (this.parentView) {
+      if (this.parentView.defaultEditMode && this.parentView.viewGrid) {
+        // mark the parent grid to open the parent record in edit mode once its data has arrived
+        this.parentView.viewGrid.isOpenDirectModeLeaf = true;
+      }
       this.parentView.openDirectTabView(false);
     }
   },

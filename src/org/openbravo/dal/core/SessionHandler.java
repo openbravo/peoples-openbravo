@@ -265,7 +265,7 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   /** Commits all remaining sessions and closes them */
-  void cleanUpSessions() {
+  public void cleanUpSessions() {
     for (String pool : sessions.keySet()) {
       commitAndCloseNoCheck(pool);
     }

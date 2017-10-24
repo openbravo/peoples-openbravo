@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -421,11 +421,10 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
    * @return a String representation of the duration
    */
   public static String getDuration(long duration) {
-
     final int milliseconds = (int) (duration % 1000);
     final int seconds = (int) ((duration / 1000) % 60);
     final int minutes = (int) ((duration / 60000) % 60);
-    final int hours = (int) ((duration / 3600000) % 24);
+    final int hours = (int) (duration / 3600000);
 
     final String m = (milliseconds < 10 ? "00" : (milliseconds < 100 ? "0" : "")) + milliseconds;
     final String sec = (seconds < 10 ? "0" : "") + seconds;

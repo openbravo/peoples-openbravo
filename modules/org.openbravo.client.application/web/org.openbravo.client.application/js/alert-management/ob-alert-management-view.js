@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,45 @@ isc.OBUIAPP_AlertManagement.addProperties({
     var result = {};
     result.viewId = 'OBUIAPP_AlertManagement';
     return result;
+  },
+
+  createAlertDataSource: function () {
+    return OB.Datasource.create({
+      createClassName: '',
+      ID: 'DB9F062472294F12A0291A7BD203F922' + '_' + new Date().getTime(),
+      potentiallyShared: true,
+      dataURL: OB.Utilities.applicationUrl('org.openbravo.service.datasource/DB9F062472294F12A0291A7BD203F922'),
+      requestProperties: {
+        params: {
+          _contextUrl: OB.Utilities.getLocationUrlWithoutFragment(),
+          _skinVersion: 'Default',
+          Constants_IDENTIFIER: OB.Constants.IDENTIFIER,
+          Constants_FIELDSEPARATOR: OB.Constants.FIELDSEPARATOR,
+          _new: 'true',
+          _create: 'true'
+        }
+      },
+      fields: [{
+        name: 'id',
+        type: '_id_13',
+        primaryKey: true
+      }, {
+        name: 'creationDate',
+        type: '_id_16'
+      }, {
+        name: 'description',
+        type: '_id_14'
+      }, {
+        name: 'alertRule',
+        type: '_id_19'
+      }, {
+        name: 'comments',
+        type: '_id_14'
+      }, {
+        name: 'recordID',
+        type: '_id_10'
+      }]
+    });
   },
 
   translatedStatus: {
@@ -110,6 +149,7 @@ isc.OBUIAPP_AlertManagement.addProperties({
     this.grids.New = isc.OBAlertGrid.create({
       alertStatus: 'New'
     });
+
     this.NewAcknowledged = isc.OBAlertSectionStackControl.create({
       currentStatus: 'New',
       newStatus: 'Acknowledged',
@@ -183,6 +223,11 @@ isc.OBUIAPP_AlertManagement.addProperties({
       items: [this.grids.Solved]
     };
     this.sectionStack.addSection(this.sections.Solved);
+
+    this.grids.New.setDataSource(this.createAlertDataSource());
+    this.grids.Acknowledged.setDataSource(this.createAlertDataSource());
+    this.grids.Suppressed.setDataSource(this.createAlertDataSource());
+    this.grids.Solved.setDataSource(this.createAlertDataSource());
   },
 
   destroy: function () {
@@ -268,12 +313,30 @@ isc.OBUIAPP_AlertManagement.addProperties({
     for (i = 0; i < 4; i++) {
       OB.AlertManagement.grids[alertStatus[i]].invalidateCache();
       if (!OB.AlertManagement.sections[alertStatus[i]].expanded) {
+        OB.AlertManagement.getTotalRowsForAlert();
         OB.AlertManagement.grids[alertStatus[i]].getGridTotalRows();
       }
       if (OB.AlertManagement.grids[alertStatus[i]].isDrawn()) {
         OB.AlertManagement.grids[alertStatus[i]].isRefreshing = true;
       }
     }
+  },
+
+  getTotalRowsForAlert: function () {
+    var criteria = this.getCriteria() || {},
+        requestProperties = {};
+
+    // fetch to the datasource with an empty criteria to get all the rows
+    requestProperties.params = requestProperties.params || {};
+    requestProperties.params._alertStatus = this.alertStatus;
+    requestProperties.params._startRow = 0;
+    requestProperties.params._endRow = this.dataPageSize;
+    requestProperties.clientContext = {
+      alertStatus: this.alertStatus
+    };
+    this.dataSource.fetchData(criteria, function (dsResponse, data, dsRequest) {
+      OB.AlertManagement.setTotalRows(dsResponse.totalRows, dsResponse.clientContext.alertStatus);
+    }, requestProperties);
   },
 
   notifyRefreshEnd: function () {
