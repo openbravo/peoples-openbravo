@@ -20,8 +20,8 @@ package org.openbravo.erpCommon.info;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
+import javax.inject.Inject;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -36,12 +36,11 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.MimeTypeUtil;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Image;
@@ -49,7 +48,11 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ImageInfoBLOB extends HttpSecureAppServlet {
+
   private static final long serialVersionUID = 1L;
+
+  @Inject
+  private ApplicationDictionaryCachedStructures adcs;
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -58,59 +61,17 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
+
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    String columnName = vars.getStringParameter("columnName");
-    if (columnName == null || columnName.equals(""))
-      columnName = vars.getStringParameter("inpColumnName");
-    String tableId = vars.getStringParameter("tableId");
-    if (tableId == null || tableId.equals("")) {
-      tableId = vars.getStringParameter("inpTableId");
-    }
-    if (tableId == null || tableId.equals("")) {
-      String tabId = vars.getStringParameter("inpTabId");
-      try {
-        OBContext.setAdminMode(true);
-        Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-        tableId = tab.getTable().getId();
-      } finally {
-        OBContext.restorePreviousMode();
-      }
-    }
-    String imageID = vars.getStringParameter("inp" + Sqlc.TransformaNombreColumna(columnName));
-    if (imageID == null || imageID.equals("")) {
-      imageID = vars.getStringParameter("imageId");
-    }
-
-    String orgId = vars.getStringParameter("inpOrgId");
-    if (orgId == null || orgId.equals("")) {
-      orgId = vars.getStringParameter("inpadOrgId");
-    }
-    if (orgId == null || orgId.equals("")) {
-      orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-    }
-
+    String columnName = vars.getStringParameter("inpColumnName");
+    String tabId = vars.getStringParameter("inpTabId");
+    Tab tab = adcs.getTab(tabId);
+    String tableId = tab.getTable().getId();
+    String imageID = "";
+    String orgId = vars.getStringParameter("inpadOrgId");
     String parentObjectId = vars.getStringParameter("parentObjectId");
-    if (parentObjectId == null || parentObjectId.equals("")) {
-      OBContext.setAdminMode(true);
-      try {
-        Table table = OBDal.getInstance().get(Table.class, vars.getStringParameter("inpTableId"));
-        if (table != null) {
-          List<Column> cols = table.getADColumnList();
-          String keyCol = "";
-          for (Column col : cols) {
-            if (col.isKeyColumn()) {
-              keyCol = col.getDBColumnName();
-              break;
-            }
-          }
-          parentObjectId = vars.getStringParameter("inp" + Sqlc.TransformaNombreColumna(keyCol));
-        }
-      } finally {
-        OBContext.restorePreviousMode();
-      }
 
-    }
     if (vars.commandIn("DEFAULT")) {
 
       printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId, orgId);
