@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -34,6 +35,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Tax;
@@ -222,8 +224,12 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
             throwTaxNotFoundException(data[i].accountId, data[i].productId,
                 dataInvoice[0].cBpartnerLocationId);
           }
+
+          // Get correct Organization for the new line created
+          String newLineOrganizationId = getOrganizationForNewLine(dataInvoice, invLine);
+
           CopyFromInvoiceData.insert(conn, this, strSequence, strKey, dataInvoice[0].adClientId,
-              dataInvoice[0].adOrgId, vars.getUser(), data[i].qtyinvoiced, priceList.toString(),
+              newLineOrganizationId, vars.getUser(), data[i].qtyinvoiced, priceList.toString(),
               priceActual.toString(), priceLimit.toString(), lineNetAmt.toString(), strCTaxID,
               priceGross.toString(), lineGrossAmt.toString(), priceListGross.toString(),
               priceStdGross.toString(), data[i].cAum, data[i].aumqty, data[i].cInvoicelineId);
@@ -345,6 +351,19 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
       }
     }
 
+  }
+
+  private String getOrganizationForNewLine(CopyFromInvoiceData[] dataInvoice, InvoiceLine invLine) {
+    String copiedLineOrganizationId = dataInvoice[0].adOrgId;
+    Set<String> parentOrgTree = new OrganizationStructureProvider().getChildTree(
+        dataInvoice[0].adOrgId, true);
+    // If the Organization of the line that is being copied belongs to the child tree of the
+    // Organization of the document header of the new line, use the organization of the line being
+    // copied, else use the organization of the document header of the new line
+    if (parentOrgTree.contains(invLine.getOrganization().getId())) {
+      copiedLineOrganizationId = invLine.getOrganization().getId();
+    }
+    return copiedLineOrganizationId;
   }
 
   public String getServletInfo() {
