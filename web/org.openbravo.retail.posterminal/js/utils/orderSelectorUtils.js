@@ -7,71 +7,97 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone */
+/*global OB, _, Backbone */
 
 (function () {
 
   OB.UTIL.OrderSelectorUtils = {};
 
+  OB.UTIL.OrderSelectorUtils.addToListOfReceipts = function (receipt) {
+    if (OB.UTIL.isNullOrUndefined(this.listOfReceipts)) {
+      this.listOfReceipts = [];
+    }
+    if (!OB.UTIL.isNullOrUndefined(receipt)) {
+      this.listOfReceipts.push(receipt);
+    }
+  };
+
   OB.UTIL.OrderSelectorUtils.checkOrderAndLoad = function (model, context) {
-    var orderCounter = 0,
-        orderData, continueAfterPaidReceipt, loadOrder;
+    var me = this,
+        continueAfterPaidReceipt, checkListCallback, loadOrder;
+
+    checkListCallback = function () {
+      if (me.listOfReceipts && me.listOfReceipts.length > 0) {
+        var currentReceipt = me.listOfReceipts.shift();
+        context.model.get('orderList').checkForDuplicateReceipts(currentReceipt, loadOrder, checkListCallback);
+      } else {
+        me.loadingReceipt = false;
+      }
+    };
 
     continueAfterPaidReceipt = function (order) {
       order.calculateReceipt(function () {
-        var loadNextOrder = function () {
-            var newModel = new Backbone.Model(orderData[orderCounter]);
-            orderCounter += 1;
-            context.model.get('orderList').checkForDuplicateReceipts(newModel, loadOrder, continueAfterPaidReceipt);
-            };
         if (order.get('searchSynchId')) {
           OB.UTIL.SynchronizationHelper.finished(order.get('searchSynchId'), 'clickSearchNewReceipt');
           order.unset('searchSynchId');
         }
-        if (orderCounter === 0) {
-          if (OB.MobileApp.model.get('terminal').terminalType.obsrOpenrelatedreceipts) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBSR_OpenRelatedReceipts'), null, [{
-              label: OB.I18N.getLabel('OBPOS_LblOk'),
-              isConfirmButton: true,
-              action: function () {
-                var processRelatedReceipts = new OB.DS.Process('org.openbravo.retail.scanreceipt.OpenRelatedReceipts');
-                processRelatedReceipts.exec({
-                  bp: order.get('bp').get('id'),
-                  currentOrder: order.get('id')
-                }, function (data) {
-                  if (data && data.exception) {
-                    OB.UTIL.showConfirmation.display('', data.exception.message);
-                  } else {
-                    if (data.length > 0) {
-                      orderData = data;
-                      loadNextOrder();
+        if (order.get('askForRelatedReceipts') && OB.MobileApp.model.get('terminal').terminalType.obsrOpenrelatedreceipts) {
+          order.unset('askForRelatedReceipts');
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBSR_OpenRelatedReceipts'), null, [{
+            label: OB.I18N.getLabel('OBPOS_LblOk'),
+            isConfirmButton: true,
+            action: function () {
+              var processRelatedReceipts = new OB.DS.Process('org.openbravo.retail.scanreceipt.OpenRelatedReceipts');
+              processRelatedReceipts.exec({
+                bp: order.get('bp').get('id'),
+                currentOrder: order.get('id')
+              }, function (data) {
+                if (data && data.exception) {
+                  OB.UTIL.showConfirmation.display('', data.exception.message);
+                } else {
+                  if (data.length > 0) {
+                    if (OB.UTIL.isNullOrUndefined(me.listOfReceipts)) {
+                      me.listOfReceipts = [];
                     }
+                    _.each(data, function (newOrder) {
+                      var newModel = new Backbone.Model(newOrder);
+                      me.listOfReceipts.push(newModel);
+                    });
+                    checkListCallback();
+                  } else {
+                    checkListCallback();
                   }
-                }, function (error) {});
-              }
-            }, {
-              label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-              isConfirmButton: false,
-              action: function () {}
-            }], {
-              onHideFunction: function (popup) {},
-              autoDismiss: true
-            });
-          }
+                }
+              }, function (error) {
+                OB.UTIL.showError(error);
+                checkListCallback();
+              });
+            }
+          }, {
+            label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+            isConfirmButton: false,
+            action: function () {
+              checkListCallback();
+            }
+          }], {
+            onHideFunction: function (popup) {
+              checkListCallback();
+            },
+            autoDismiss: true
+          });
         } else {
-          if (orderCounter < orderData.length) {
-            loadNextOrder();
-          }
+          order.unset('askForRelatedReceipts');
+          checkListCallback();
         }
       });
     };
 
-    loadOrder = function (model) {
+    loadOrder = function (order) {
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearch'),
           process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts');
       OB.UTIL.showLoading(true);
       process.exec({
-        orderid: model.get('id')
+        orderid: order.get('id')
       }, function (data) {
         if (data && data.length === 1) {
           if (context.model.get('leftColumnViewManager').isMultiOrder()) {
@@ -87,9 +113,13 @@
           }, function (args) {
             if (!args.cancelOperation) {
               var searchSynchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearchNewReceipt');
-              context.model.get('orderList').newPaidReceipt(data[0], function (order) {
-                order.set('searchSynchId', searchSynchId);
-                context.model.get('orderList').addPaidReceipt(order, continueAfterPaidReceipt);
+              if (order.get('askForRelatedReceipts')) {
+                order.unset('askForRelatedReceipts');
+                data[0].askForRelatedReceipts = true;
+              }
+              context.model.get('orderList').newPaidReceipt(data[0], function (newOrder) {
+                newOrder.set('searchSynchId', searchSynchId);
+                context.model.get('orderList').addPaidReceipt(newOrder, continueAfterPaidReceipt);
               });
             }
           });
@@ -102,7 +132,13 @@
       }, true, 5000);
     };
 
-    context.model.get('orderList').checkForDuplicateReceipts(model, loadOrder);
+    if (me.loadingReceipt) {
+      OB.UTIL.OrderSelectorUtils.addToListOfReceipts(model);
+      return;
+    }
+    me.loadingReceipt = true;
+    model.set('askForRelatedReceipts', true);
+    context.model.get('orderList').checkForDuplicateReceipts(model, loadOrder, checkListCallback);
   };
 
 }());

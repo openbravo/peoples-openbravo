@@ -6118,6 +6118,9 @@
             }
           }], {
             onHideFunction: function (dialog) {
+              if (errorCallback) {
+                errorCallback();
+              }
               return true;
             }
           });
