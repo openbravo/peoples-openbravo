@@ -123,9 +123,12 @@ public class PriceDifferenceProcess {
       expectedCost = expectedCost.add(baseAmt);
     }
 
-    BigDecimal expectedUnitCost = invoiceQty.compareTo(BigDecimal.ZERO) == 0 ? expectedCost.divide(
-        notInvoicedQty, costCurPrecission, RoundingMode.HALF_UP) : expectedCost.divide(invoiceQty,
-        costCurPrecission, RoundingMode.HALF_UP);
+    // Since expected Cost already takes into account invoiced and not invoiced amount, expected
+    // Quantity must take into account the same. If there is more invoiced quantity than received
+    // quantity, then the invoiced quantity is used, else the recived quantity
+    BigDecimal expectedQty = invoiceQty.compareTo(receiptQty) >= 0 ? invoiceQty : receiptQty;
+    BigDecimal expectedUnitCost = expectedQty.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO
+        : expectedCost.divide(expectedQty, costCurPrecission, RoundingMode.HALF_UP);
     BigDecimal currentUnitCost = receiptQty.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO
         : currentTrxCost.divide(receiptQty, costCurPrecission, RoundingMode.HALF_UP);
 
@@ -137,9 +140,8 @@ public class PriceDifferenceProcess {
       }
       createCostAdjustmenHeader(trxOrg);
 
-      BigDecimal trxCostDifference = invoiceQty.compareTo(BigDecimal.ZERO) == 0 ? (expectedUnitCost
-          .multiply(notInvoicedQty)).subtract(currentTrxCost) : (expectedUnitCost
-          .multiply(invoiceQty)).subtract(currentTrxCost);
+      BigDecimal trxCostDifference = (expectedUnitCost.multiply(receiptQty))
+          .subtract(currentTrxCost);
 
       CostAdjustmentLine costAdjLine = CostAdjustmentUtils.insertCostAdjustmentLine(
           materialTransaction, costAdjHeader, trxCostDifference, Boolean.TRUE, costAdjDateAcct);
