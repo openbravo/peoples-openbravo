@@ -30,22 +30,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.MimeTypeUtil;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.datamodel.Table;
-import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.xmlEngine.XmlDocument;
 
 public class ImageInfoBLOB extends HttpSecureAppServlet {
 
@@ -64,61 +58,17 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
 
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    String columnName = vars.getStringParameter("inpColumnName");
-    String tabId = vars.getStringParameter("inpTabId");
-    Tab tab = adcs.getTab(tabId);
-    String tableId = tab.getTable().getId();
-    String imageID = "";
-    String orgId = vars.getStringParameter("inpadOrgId");
-    String parentObjectId = vars.getStringParameter("parentObjectId");
-
-    if (vars.commandIn("DEFAULT")) {
-
-      printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId, orgId);
-    } else if (vars.getCommand().equals("SAVE")) {
+    if (vars.getCommand().startsWith("SAVE_OB3")) {
       OBContext.setAdminMode(true);
-      try {
-        final FileItem fi = vars.getMultiFile("inpFile");
-        byte[] bytea = fi.get();
-        Long[] size = Utility.computeImageSize(bytea);
-        String mimeType = MimeTypeUtil.getInstance().getMimeTypeName(bytea);
-        // Using DAL to write the image data to the database
-        Image image;
-        if (imageID == null || imageID.equals("")) {
-          image = OBProvider.getInstance().get(Image.class);
-          Organization org = OBDal.getInstance().get(Organization.class, orgId);
-          image.setOrganization(org);
-          image.setBindaryData(bytea);
-          image.setActive(true);
-          image.setName("Image");
-          image.setWidth(size[0]);
-          image.setHeight(size[1]);
-          image.setMimetype(mimeType);
-          OBDal.getInstance().save(image);
-          OBDal.getInstance().flush();
-        } else {
-          image = OBDal.getInstance().get(Image.class, imageID);
-          image.setActive(true);
-          image.setBindaryData(bytea);
-          image.setWidth(size[0]);
-          image.setHeight(size[1]);
-          image.setMimetype(mimeType);
-          OBDal.getInstance().flush();
-        }
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter writer = response.getWriter();
-        writeRedirect(writer, image.getId(), columnName);
-      } finally {
-        OBContext.restorePreviousMode();
-      }
-    } else if (vars.getCommand().startsWith("SAVE_OB3")) {
-      OBContext.setAdminMode(true);
+      String selectorId = vars.getStringParameter("inpSelectorId");
       try {
         final FileItem fi = vars.getMultiFile("inpFile");
         byte[] bytea = fi.get();
         String mimeType = MimeTypeUtil.getInstance().getMimeTypeName(bytea);
+        String orgId = vars.getStringParameter("inpadOrgId");
         String imageSizeAction = vars.getStringParameter("imageSizeAction");
-        String imageId = "";
+
+        String imageId;
         Long[] sizeOld = new Long[2];
         Long[] sizeNew = new Long[2];
         if (!mimeType.contains("image")
@@ -193,51 +143,16 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
         }
         response.setContentType("text/html; charset=UTF-8");
         PrintWriter writer = response.getWriter();
-        String selectorId = orgId = vars.getStringParameter("inpSelectorId");
         writeRedirectOB3(writer, selectorId, imageId, imageSizeAction, sizeOld, sizeNew, null);
-      } catch (Throwable t) {
-        log4j.error("Error uploading image", t);
+      } catch (Exception ex) {
+        log4j.error("Error uploading image", ex);
         response.setContentType("text/html; charset=UTF-8");
         PrintWriter writer = response.getWriter();
-        String selectorId = orgId = vars.getStringParameter("inpSelectorId");
+
         writeRedirectOB3(writer, selectorId, "", "ERROR_UPLOADING", new Long[] { 0L, 0L },
-            new Long[] { 0L, 0L }, t.getMessage());
+            new Long[] { 0L, 0L }, ex.getMessage());
       } finally {
         OBContext.restorePreviousMode();
-      }
-    } else if (vars.getCommand().equals("DELETE")) {
-      if (imageID != null && !imageID.equals("")) {
-        OBContext.setAdminMode(true);
-        try {
-          Image image = OBDal.getInstance().get(Image.class, imageID);
-          Table table = OBDal.getInstance().get(Table.class, tableId);
-          Entity entity = ModelProvider.getInstance().getEntityByTableName(table.getDBTableName());
-          String propertyName = entity.getPropertyByColumnName(columnName).getName();
-          BaseOBObject parentObject = OBDal.getInstance().get(entity.getName(), parentObjectId);
-          parentObject.set(propertyName, null);
-          OBDal.getInstance().flush();
-          OBDal.getInstance().remove(image);
-        } finally {
-          OBContext.restorePreviousMode();
-        }
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter writer = response.getWriter();
-        writeRedirect(writer, "", columnName);
-      } else {
-        printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId, orgId);
-      }
-    } else if (vars.getCommand().startsWith("DELETE_OB3")) {
-      if (imageID != null && !imageID.equals("")) {
-        OBContext.setAdminMode(true);
-        try {
-          Image image = OBDal.getInstance().get(Image.class, imageID);
-          OBDal.getInstance().flush();
-          OBDal.getInstance().remove(image);
-        } finally {
-          OBContext.restorePreviousMode();
-        }
-      } else {
-        printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId, orgId);
       }
     } else {
       pageError(response);
@@ -258,70 +173,4 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
     writer.write(");");
     writer.write("</SCRIPT></BODY></HTML>");
   }
-
-  private void printPageFrame(HttpServletResponse response, VariablesSecureApp vars,
-      String imageID, String tableId, String columnName, String parentObjectId, String orgId)
-      throws IOException, ServletException {
-    String[] discard;
-    if (imageID.equals("")) {
-      discard = new String[1];
-      discard[0] = "divDelete";
-    } else
-      discard = new String[0];
-
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/info/ImageInfoBLOB", discard).createXmlDocument();
-
-    xmlDocument.setParameter("parentObjectId", parentObjectId);
-    xmlDocument.setParameter("imageId", imageID);
-    xmlDocument.setParameter("inpColumnName", columnName);
-    xmlDocument.setParameter("inpOrgId", orgId);
-    xmlDocument.setParameter("tableId", tableId);
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  private void writeRedirect(PrintWriter writer, String imageId, String columnname) {
-    writer.println("<html>");
-    writer.println("<head>");
-    writer.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
-    writer
-        .println("<script language=\"JavaScript\" src=\"../../../../../web/js/searchs.js\" type=\"text/javascript\"></script>");
-    writer.println("<script language=\"JavaScript\" type=\"text/javascript\">");
-    writer.println("function onLoadDo(){");
-    writer.println("var parentWindow = parent.opener;");
-    writer.println("parentWindow.document.getElementById('" + columnname + "').value = \""
-        + imageId + "\";");
-    writer.println("parentWindow.document.getElementById('" + columnname
-        + "_R').src = \"../utility/ShowImage?id=" + imageId + "\";");
-    if (imageId.equals("")) {
-      writer.println("parentWindow.document.getElementById('" + columnname
-          + "_R').className = \"Image_NotAvailable_medium\"");
-    } else {
-      writer.println("parentWindow.document.getElementById('" + columnname
-          + "_R').className = \"dummyClass_\" + parent.opener.document.getElementById('"
-          + columnname + "_R').className;");
-    }
-
-    // When deleting an image, reset parent status to not changed in order to avoid trigger Autosave
-    if (imageId.equals("")) {
-      writer.println("parentWindow.isUserChanges = false;");
-      writer.println("parentWindow.document.forms[0].inpLastFieldChanged.value=\"\";");
-    }
-    writer.println("window.close();");
-
-    writer.println("try { parentWindow.changeToEditingMode('force'); } catch (e) {}");
-    writer.println("}");
-    writer.println("</script>");
-    writer.println("</head>");
-    writer.println("<body  onload=\"onLoadDo();\">");
-    writer.println("</body>");
-    writer.println("</html>");
-  }
-
 }
