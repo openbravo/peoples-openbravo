@@ -21,19 +21,16 @@ package org.openbravo.erpCommon.info;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.inject.Inject;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.MimeTypeUtil;
@@ -44,9 +41,6 @@ import org.openbravo.model.common.enterprise.Organization;
 public class ImageInfoBLOB extends HttpSecureAppServlet {
 
   private static final long serialVersionUID = 1L;
-
-  @Inject
-  private ApplicationDictionaryCachedStructures adcs;
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -59,35 +53,31 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.getCommand().startsWith("SAVE_OB3")) {
-      OBContext.setAdminMode(true);
       String selectorId = vars.getStringParameter("inpSelectorId");
+      OBContext.setAdminMode(true);
       try {
-        final FileItem fi = vars.getMultiFile("inpFile");
-        byte[] bytea = fi.get();
+        byte[] bytea = vars.getMultiFile("inpFile").get();
         String mimeType = MimeTypeUtil.getInstance().getMimeTypeName(bytea);
-        String orgId = vars.getStringParameter("inpadOrgId");
-        String imageSizeAction = vars.getStringParameter("imageSizeAction");
 
+        String imageSizeAction = vars.getStringParameter("imageSizeAction");
         String imageId;
-        Long[] sizeOld = new Long[2];
-        Long[] sizeNew = new Long[2];
+        Long[] sizeOld;
+        Long[] sizeNew;
         if (!mimeType.contains("image")
             || (!mimeType.contains("jpeg") && !mimeType.contains("png")
                 && !mimeType.contains("gif") && !mimeType.contains("bmp") && !mimeType
                   .contains("svg+xml"))) {
           imageId = "";
           imageSizeAction = "WRONGFORMAT";
-          sizeOld[0] = (long) 0;
-          sizeOld[1] = (long) 0;
-          sizeNew[0] = (long) 0;
-          sizeNew[1] = (long) 0;
+          sizeOld = new Long[] { 0L, 0L };
+          sizeNew = new Long[] { 0L, 0L };
         } else {
 
           if (mimeType.contains("svg+xml")) {
             // Vector images do not have width nor height
             imageSizeAction = "N";
-            sizeNew[0] = 0L;
-            sizeNew[1] = 0L;
+            sizeOld = new Long[] { 0L, 0L };
+            sizeNew = new Long[] { 0L, 0L };
           } else {
             // Bitmap images need to manage width and height
             String paramWidth = vars.getStringParameter("imageWidthValue");
@@ -103,8 +93,7 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
                 || imageSizeAction.equals("RECOMMENDED")
                 || imageSizeAction.equals("RECOMMENDED_MINIMUM")
                 || imageSizeAction.equals("RECOMMENDED_MAXIMUM")) {
-              sizeOld[0] = (long) newWidth;
-              sizeOld[1] = (long) newHeight;
+              sizeOld = new Long[] { (long) newWidth, (long) newHeight };
               sizeNew = Utility.computeImageSize(bytea);
             } else if (imageSizeAction.equals("RESIZE_NOASPECTRATIO")) {
               sizeOld = Utility.computeImageSize(bytea);
@@ -125,9 +114,8 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
           }
 
           // Using DAL to write the image data to the database
-          Image image;
-
-          image = OBProvider.getInstance().get(Image.class);
+          Image image = OBProvider.getInstance().get(Image.class);
+          String orgId = vars.getStringParameter("inpadOrgId");
           Organization org = OBDal.getInstance().get(Organization.class, orgId);
           image.setOrganization(org);
           image.setBindaryData(bytea);
