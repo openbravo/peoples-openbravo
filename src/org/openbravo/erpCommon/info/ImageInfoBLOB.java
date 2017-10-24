@@ -38,6 +38,15 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.enterprise.Organization;
 
+/**
+ * Image upload process. This class is in charge of storing image files in AD_IMAGE table for
+ * columns with reference ImageBLOB. This class also checks the mime type of the file uploaded to
+ * verify only supported images are uploaded and also resizes the image following the column
+ * configuration options.
+ * 
+ * @author Openbravo
+ */
+
 public class ImageInfoBLOB extends HttpSecureAppServlet {
 
   private static final long serialVersionUID = 1L;
