@@ -863,7 +863,8 @@ public class DocInvoice extends AcctServer {
         } else {
           DocLineInvoiceData[] data = null;
           try {
-            data = DocLineInvoiceData.selectUndeductable(connectionProvider, Record_ID);
+            data = DocLineInvoiceData.selectUndeductable(connectionProvider, Record_ID,
+                m_taxes[i].m_C_Tax_ID);
           } catch (ServletException e) {
             log4jDocInvoice.warn(e);
           }

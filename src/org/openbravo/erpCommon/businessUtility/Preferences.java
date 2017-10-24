@@ -419,7 +419,7 @@ public class Preferences {
       hql.append("        p.visibleAtRole is null) ");
 
       if (org == null) {
-        hql.append("     and (coalesce(p.visibleAtOrganization, '0')='0'))");
+        hql.append("     and coalesce(p.visibleAtOrganization, '0')='0'");
       }
 
       if (user != null) {

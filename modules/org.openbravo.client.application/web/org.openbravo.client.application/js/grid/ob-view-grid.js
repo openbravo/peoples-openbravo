@@ -1761,7 +1761,7 @@ isc.OBViewGrid.addProperties({
     } else if (this.targetRecordId || this.selectedRecordId) {
       // direct link from other tab to a specific record
       this.delayedHandleTargetRecord(startRow, endRow);
-    } else if (this.view.shouldOpenDefaultEditMode()) {
+    } else if (this.view.shouldOpenDefaultEditMode() && !Array.isLoading(this.getRecord(startRow))) {
       // ui-pattern: single record/edit mode
       this.view.openDefaultEditView(this.getRecord(startRow));
     } else if (this.data && this.data.getLength() === 1) {

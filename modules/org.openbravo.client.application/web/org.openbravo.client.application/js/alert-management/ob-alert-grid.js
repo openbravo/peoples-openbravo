@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -126,8 +126,6 @@ isc.OBAlertGrid.addProperties({
       items: []
     });
 
-    OB.Datasource.get('DB9F062472294F12A0291A7BD203F922', this, null, true);
-
     this.Super('initWidget', arguments);
   },
 
@@ -135,6 +133,10 @@ isc.OBAlertGrid.addProperties({
     if (this.contextMenu) {
       this.contextMenu.destroy();
       this.contextMenu = null;
+    }
+    if (this.dataSource) {
+      this.dataSource.destroy();
+      this.dataSource = null;
     }
     this.Super('destroy', arguments);
   },
@@ -177,25 +179,7 @@ isc.OBAlertGrid.addProperties({
   },
 
   getGridTotalRows: function () {
-    var criteria = this.getCriteria() || {},
-        requestProperties = {};
-
-    if (!OB.AlertManagement.sections[this.alertStatus].expanded) {
-      // fetch to the datasource with an empty criteria to get all the rows
-      requestProperties.params = requestProperties.params || {};
-      requestProperties.params._alertStatus = this.alertStatus;
-      requestProperties.params._startRow = 0;
-      requestProperties.params._endRow = this.dataPageSize;
-      requestProperties.clientContext = {
-        alertStatus: this.alertStatus
-      };
-      this.dataSource.fetchData(criteria, function (dsResponse, data, dsRequest) {
-        OB.AlertManagement.setTotalRows(dsResponse.totalRows, dsResponse.clientContext.alertStatus);
-      }, requestProperties);
-
-    } else {
-      OB.AlertManagement.setTotalRows(this.getTotalRows(), this.alertStatus);
-    }
+    OB.AlertManagement.setTotalRows(this.getTotalRows(), this.alertStatus);
   },
 
   getFetchRequestParams: function (params) {

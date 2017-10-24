@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -242,32 +242,34 @@ isc.OBImageItem.addProperties({
       this.canvas.setImage('');
     } else {
       this.canvas.setImage("../utility/ShowImage?id=" + newValue + '&nocache=' + Math.random());
-      var d = {
-        inpimageId: newValue,
-        command: 'GETSIZE'
-      };
-      var image = this.canvas.image;
-      var imageLayout = this.canvas.imageLayout;
-      OB.RemoteCallManager.call('org.openbravo.client.application.window.ImagesActionHandler', {}, d, function (response, data, request) {
-        var maxHeight = imageLayout.getHeight() - 12;
-        var maxWidth = imageLayout.getWidth() - 12;
-        var maxRatio = maxWidth / maxHeight;
+      if (this.getValue() !== newValue) {
+        var d = {
+          inpimageId: newValue,
+          command: 'GETSIZE'
+        };
+        var image = this.canvas.image;
+        var imageLayout = this.canvas.imageLayout;
+        OB.RemoteCallManager.call('org.openbravo.client.application.window.ImagesActionHandler', {}, d, function (response, data, request) {
+          var maxHeight = imageLayout.getHeight() - 12;
+          var maxWidth = imageLayout.getWidth() - 12;
+          var maxRatio = maxWidth / maxHeight;
 
-        var imgHeight = data.height;
-        var imgWidth = data.width;
-        var imgRatio = imgWidth / imgHeight;
+          var imgHeight = data.height;
+          var imgWidth = data.width;
+          var imgRatio = imgWidth / imgHeight;
 
-        if (imgHeight < maxHeight && imgWidth < maxWidth) {
-          image.setHeight(imgHeight);
-          image.setWidth(imgWidth);
-        } else if (imgRatio < maxRatio) {
-          image.setHeight(maxHeight);
-          image.setWidth(maxHeight * imgRatio);
-        } else {
-          image.setHeight(maxWidth / imgRatio);
-          image.setWidth(maxWidth);
-        }
-      });
+          if (imgHeight < maxHeight && imgWidth < maxWidth) {
+            image.setHeight(imgHeight);
+            image.setWidth(imgWidth);
+          } else if (imgRatio < maxRatio) {
+            image.setHeight(maxHeight);
+            image.setWidth(maxHeight * imgRatio);
+          } else {
+            image.setHeight(maxWidth / imgRatio);
+            image.setWidth(maxWidth);
+          }
+        });
+      }
     }
     //Buttons will not be shown if the form is readonly
     this.canvas.deleteButton.updateState(newValue && (this.form && !this.form.readOnly) && !this.disabled);
