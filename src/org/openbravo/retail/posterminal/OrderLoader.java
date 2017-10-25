@@ -84,9 +84,7 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.common.order.OrderTax;
 import org.openbravo.model.common.order.OrderlineServiceRelation;
-import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.AttributeSetInstance;
-import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
@@ -103,6 +101,7 @@ import org.openbravo.model.materialmgmt.onhandquantity.StockProposed;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.retail.posterminal.utility.AttributesUtils;
 import org.openbravo.retail.posterminal.OrderLoaderPreAddShipmentLineHook.OrderLoaderPreAddShipmentLineHook_Actions;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -1398,9 +1397,16 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     line.setMovementQuantity(qty);
     line.setStorageBin(bin);
-    if (jsonOrderLine.has("attributeValue") && jsonOrderLine.get("attributeValue") != null) {
-      line.setAttributeSetValue(fetchAttributeSetValue(jsonOrderLine.get("attributeValue")
-          .toString(), jsonOrderLine.getJSONObject("product").get("id").toString()));
+    if (OBMOBCUtils.isJsonObjectPropertyStringPresentNotNullAndNotEmptyString(jsonOrderLine,
+        "attSetInstanceDesc")) {
+      line.setAttributeSetValue(AttributesUtils.fetchAttributeSetValue(
+          jsonOrderLine.get("attSetInstanceDesc").toString(), jsonOrderLine
+              .getJSONObject("product").get("id").toString()));
+    } else if (OBMOBCUtils.isJsonObjectPropertyStringPresentNotNullAndNotEmptyString(jsonOrderLine,
+        "attributeValue")) {
+      line.setAttributeSetValue(AttributesUtils.fetchAttributeSetValue(
+          jsonOrderLine.get("attributeValue").toString(), jsonOrderLine.getJSONObject("product")
+              .get("id").toString()));
     } else {
       line.setAttributeSetValue(attributeSetInstance);
     }
@@ -1488,9 +1494,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         // shipment is created or is a C&R and is not a layaway, so all is delivered
         orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
       }
-      if (jsonOrderLine.has("attributeValue") && jsonOrderLine.get("attributeValue") != null) {
-        orderline.setAttributeSetValue(fetchAttributeSetValue(jsonOrderLine.get("attributeValue")
-            .toString(), jsonOrderLine.getJSONObject("product").get("id").toString()));
+      if (OBMOBCUtils.isJsonObjectPropertyStringPresentNotNullAndNotEmptyString(jsonOrderLine,
+          "attributeValue")) {
+        orderline.setAttributeSetValue(AttributesUtils.fetchAttributeSetValue(
+            jsonOrderLine.get("attributeValue").toString(), jsonOrderLine.getJSONObject("product")
+                .get("id").toString()));
       }
 
       lineReferences.add(orderline);
@@ -1571,43 +1579,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
       }
     }
-  }
-
-  private AttributeSetInstance fetchAttributeSetValue(String attributeValue, String productId) {
-    AttributeSetInstance attrSetInst = null;
-    Product product = OBDal.getInstance().get(Product.class, productId);
-    try {
-      if (StringUtils.isNotEmpty(attributeValue) || StringUtils.isNotBlank(attributeValue)) {
-        OBCriteria<AttributeSetInstance> attrSICrit = OBDal.getInstance().createCriteria(
-            AttributeSetInstance.class);
-        attrSICrit.add(Restrictions.eq(AttributeSetInstance.PROPERTY_DESCRIPTION, attributeValue));
-        List<AttributeSetInstance> attrSIList = attrSICrit.list();
-        if (attrSIList.isEmpty() && attrSIList.size() == 0) {
-          attrSetInst = createAttributeSetValue(attributeValue, product.getAttributeSet());
-          return attrSetInst;
-        } else {
-          attrSetInst = attrSIList.get(0);
-          return attrSetInst;
-        }
-      } else {
-        return attrSetInst;
-      }
-    } catch (Exception e) {
-      throw new OBException(e.getMessage(), e);
-    }
-  }
-
-  private AttributeSetInstance createAttributeSetValue(String string, AttributeSet attributeSet) {
-    AttributeSetInstance newAttrSetInst = OBProvider.getInstance().get(AttributeSetInstance.class);
-    try {
-      newAttrSetInst.setAttributeSet(attributeSet);
-      newAttrSetInst.setDescription(string);
-      OBDal.getInstance().save(newAttrSetInst);
-      OBDal.getInstance().flush();
-    } catch (Exception e) {
-      throw new OBException(e.getMessage(), e);
-    }
-    return newAttrSetInst;
   }
 
   protected void createLinesForServiceProduct() throws JSONException {
