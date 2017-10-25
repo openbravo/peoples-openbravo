@@ -108,7 +108,7 @@ enyo.kind({
       this.createComponent({
         style: 'display: block;',
         components: [{
-          content: OB.I18N.getLabel('OBPOS_AttributeValue') + this.model.get('attributeValue'),
+          content: OB.I18N.getLabel('OBPOS_AttributeValue') + (this.model.get('attSetInstanceDesc') ? this.model.get('attSetInstanceDesc') : this.model.get('attributeValue')),
           attributes: {
             style: 'float: left; width: 100%; clear: left;'
           }

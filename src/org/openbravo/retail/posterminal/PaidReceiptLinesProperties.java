@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
 
@@ -30,7 +31,7 @@ public class PaidReceiptLinesProperties extends ModelExtension {
   public List<HQLProperty> getHQLProperties(Object params) {
     ArrayList<HQLProperty> list = new ArrayList<HQLProperty>() {
       private static final long serialVersionUID = 1L;
-
+      private final String currentLanguage = OBContext.getOBContext().getLanguage().getId();
       {
         add(new HQLProperty("ordLine.product.id", "id"));
         add(new HQLProperty("ordLine.product.name", "name"));
@@ -61,7 +62,9 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty("returnReason.name", "returnReasonName"));
         add(new HQLProperty("ordLine.goodsShipmentLine.id", "goodsShipmentLine"));
         add(new HQLProperty(
-            "(select case when line.attributeSetValue is not null then line.attributeSetValue.description else null end FROM OrderLine line where line.id =  ordLine.id)",
+            "(select case when line.attributeSetValue is not null then (m_getjsondescription(line.attributeSetValue.id, 'Y', '"
+                + currentLanguage
+                + "')) ELSE null end FROM OrderLine line where line.id =  ordLine.id)",
             "attributeValue"));
       }
     };

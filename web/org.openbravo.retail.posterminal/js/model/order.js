@@ -4737,6 +4737,14 @@
                           OB.UTIL.showError("OBDAL error: " + error);
                         });
                       });
+                      if (OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true)) {
+                        if (iter.attributeValue && _.isString(iter.attributeValue)) {
+                          var processedAttValues = OB.UTIL.AttributeUtils.generateDescriptionBasedOnJson(iter.attributeValue);
+                          if (processedAttValues && processedAttValues.keyValue && _.isArray(processedAttValues.keyValue) && processedAttValues.keyValue.length > 0) {
+                            iter.attSetInstanceDesc = processedAttValues.description;
+                          }
+                        }
+                      }
                       newline = new OrderLine({
                         id: iter.lineId,
                         product: prod,
@@ -4753,7 +4761,8 @@
                           id: iter.warehouse,
                           warehousename: iter.warehousename
                         },
-                        relatedLines: iter.relatedLines
+                        relatedLines: iter.relatedLines,
+                        attSetInstanceDesc: (iter.attSetInstanceDesc ? iter.attSetInstanceDesc : null)
                       });
 
                       // copy verbatim not owned properties -> modular properties.
