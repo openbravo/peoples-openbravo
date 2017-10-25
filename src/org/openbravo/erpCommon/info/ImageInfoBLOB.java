@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.info;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.inject.Inject;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -28,9 +29,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.MimeTypeUtil;
@@ -51,6 +55,9 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
 
   private static final long serialVersionUID = 1L;
 
+  @Inject
+  private ApplicationDictionaryCachedStructures adcs;
+
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
@@ -65,6 +72,12 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
       String selectorId = vars.getStringParameter("inpSelectorId");
       OBContext.setAdminMode(true);
       try {
+        // Check access to record...
+        String tabId = vars.getStringParameter("inpTabId");
+        String tableId = adcs.getTab(tabId).getTable().getId();
+        Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
+        OBContext.getOBContext().getEntityAccessChecker().checkWritableAccess(entity);
+
         byte[] bytea = vars.getMultiFile("inpFile").get();
         String mimeType = MimeTypeUtil.getInstance().getMimeTypeName(bytea);
 
