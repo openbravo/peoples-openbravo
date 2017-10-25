@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.hibernate.dialect.function.StandardSQLFunction;
+import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.StringType;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -62,6 +63,8 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
         new StandardSQLFunction("ad_org_getperiodcontrolallow", new StringType()));
     OBDal.getInstance().registerSQLFunction("m_isparent_ch_value",
         new StandardSQLFunction("m_isparent_ch_value", new StringType()));
+    OBDal.getInstance().registerSQLFunction("m_getjsondescription",
+        new StandardSQLFunction("m_getjsondescription", StandardBasicTypes.STRING));
   }
 
   private void checkDatabaseAndTomcatDateTime() {
