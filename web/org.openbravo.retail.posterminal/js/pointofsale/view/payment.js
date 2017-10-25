@@ -451,7 +451,7 @@ enyo.kind({
       this.$.totalpending.applyStyle('font-size', '24px');
     }
 
-    if ((OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && this.receipt.get('prepaymentLimitAmt') < this.receipt.get('gross') && pendingPrepayment > 0)) {
+    if ((OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && this.receipt.get('prepaymentLimitAmt') < this.receipt.get('gross') && pendingPrepayment > 0 && receiptHasPrepaymentAmount)) {
       this.setPrepaymentTotalPending(pendingPrepayment, rate, symbol, symbolAtRight);
       this.$.prepaymenttotalpending.show();
       this.$.prepaymenttotalpendinglbl.show();
@@ -567,7 +567,7 @@ enyo.kind({
         isCashType = true,
         selectedPayment, paymentStatus = multiOrders.getPaymentStatus(),
         prepaymentAmount = paymentstatus.get('prepaymentAmt'),
-        receiptHasPrepaymentAmount = prepaymentAmount !== 0 && prepaymentAmount !== paymentstatus.get('total'),
+        receiptHasPrepaymentAmount = prepaymentAmount !== 0 && prepaymentAmount !== OB.DEC.add(paymentstatus.get('total'), paymentstatus.get('existingPayment')),
         pendingPrepayment = OB.DEC.sub(OB.DEC.sub(prepaymentAmount, (paymentstatus.get('existingPayment') ? paymentstatus.get('existingPayment') : 0)), paymentstatus.get('payment'));
 
     this.updateExtraInfo('');
