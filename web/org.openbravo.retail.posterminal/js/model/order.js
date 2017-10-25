@@ -2253,17 +2253,25 @@
           return;
         }
       }
-
       var unitsConsumed = 0;
+      var unitsConsumedByNoCascadeRules = 0;
+      var unitsConsumedByTheSameRule = 0;
       for (i = 0; i < promotions.length; i++) {
-        if (!promotions[i].applyNext || promotions[i].ruleId === disc.ruleId) {
-          unitsConsumed += promotions[i].qtyOffer;
+        if (!promotions[i].applyNext) {
+          unitsConsumedByNoCascadeRules += promotions[i].qtyOffer;
+        } else if (promotions[i].ruleId === disc.ruleId) {
+          unitsConsumedByTheSameRule += promotions[i].qtyOffer;
         }
       }
 
+      if (disc.applyNext && unitsConsumedByTheSameRule === 0) {
+        unitsConsumed = unitsConsumedByNoCascadeRules;
+      } else {
+        unitsConsumed = unitsConsumedByNoCascadeRules + unitsConsumedByTheSameRule + disc.qtyOffer;
+      }
       if (!disc.manual) {
         for (i = 0; i < promotions.length; i++) {
-          if (unitsConsumed + disc.qtyOffer > line.get('qty')) {
+          if (unitsConsumed > line.get('qty')) {
             if (discount.forceReplace) {
               if (promotions[i].ruleId === rule.id) {
                 if (promotions[i].hidden !== true) {
