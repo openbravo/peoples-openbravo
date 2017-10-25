@@ -833,8 +833,17 @@
           lastTotalRefresh = OB.UTIL.localStorage.getItem('POSLastTotalRefresh'),
           lastIncRefresh = OB.UTIL.localStorage.getItem('POSLastIncRefresh'),
           now = new Date().getTime(),
-          intervalInc = lastIncRefresh ? (now - lastIncRefresh - minIncRefresh) : 0;
+          intervalInc;
 
+      // lastTotalRefresh should be used to set lastIncRefresh when it is null or minor.
+      if (lastIncRefresh === null) {
+        lastIncRefresh = lastTotalRefresh;
+      } else {
+        if (lastTotalRefresh > lastIncRefresh) {
+          lastIncRefresh = lastTotalRefresh;
+        }
+      }
+      intervalInc = lastIncRefresh ? (now - lastIncRefresh - minIncRefresh) : 0;
       minIncRefresh = (minIncRefresh > 99999 ? 99999 : minIncRefresh) * 60 * 1000;
 
       function setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds) {
