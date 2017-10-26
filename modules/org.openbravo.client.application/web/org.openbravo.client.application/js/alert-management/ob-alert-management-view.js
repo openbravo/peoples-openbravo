@@ -309,34 +309,18 @@ isc.OBUIAPP_AlertManagement.addProperties({
   },
 
   refresh: function () {
-    var i, alertStatus = ['New', 'Acknowledged', 'Suppressed', 'Solved'];
+    var i, section, alertStatus = ['New', 'Acknowledged', 'Suppressed', 'Solved'];
     for (i = 0; i < 4; i++) {
       OB.AlertManagement.grids[alertStatus[i]].invalidateCache();
-      if (!OB.AlertManagement.sections[alertStatus[i]].expanded) {
-        OB.AlertManagement.getTotalRowsForAlert();
-        OB.AlertManagement.grids[alertStatus[i]].getGridTotalRows();
+      section = OB.AlertManagement.sections[alertStatus[i]];
+      // force to refresh collapsed grids
+      if (!section.getSectionHeader(alertStatus[i]).expanded) {
+        OB.AlertManagement.grids[alertStatus[i]].getTotalRowsForAlert();
       }
       if (OB.AlertManagement.grids[alertStatus[i]].isDrawn()) {
         OB.AlertManagement.grids[alertStatus[i]].isRefreshing = true;
       }
     }
-  },
-
-  getTotalRowsForAlert: function () {
-    var criteria = this.getCriteria() || {},
-        requestProperties = {};
-
-    // fetch to the datasource with an empty criteria to get all the rows
-    requestProperties.params = requestProperties.params || {};
-    requestProperties.params._alertStatus = this.alertStatus;
-    requestProperties.params._startRow = 0;
-    requestProperties.params._endRow = this.dataPageSize;
-    requestProperties.clientContext = {
-      alertStatus: this.alertStatus
-    };
-    this.dataSource.fetchData(criteria, function (dsResponse, data, dsRequest) {
-      OB.AlertManagement.setTotalRows(dsResponse.totalRows, dsResponse.clientContext.alertStatus);
-    }, requestProperties);
   },
 
   notifyRefreshEnd: function () {

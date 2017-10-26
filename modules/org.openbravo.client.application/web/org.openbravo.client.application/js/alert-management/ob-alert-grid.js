@@ -182,6 +182,23 @@ isc.OBAlertGrid.addProperties({
     OB.AlertManagement.setTotalRows(this.getTotalRows(), this.alertStatus);
   },
 
+  getTotalRowsForAlert: function () {
+    var criteria = this.getCriteria() || {},
+        requestProperties = {};
+
+    // fetch to the datasource with an empty criteria to get all the rows
+    requestProperties.params = requestProperties.params || {};
+    requestProperties.params._alertStatus = this.alertStatus;
+    requestProperties.params._startRow = 0;
+    requestProperties.params._endRow = this.dataPageSize;
+    requestProperties.clientContext = {
+      alertStatus: this.alertStatus
+    };
+    this.dataSource.fetchData(criteria, function (dsResponse, data, dsRequest) {
+      OB.AlertManagement.setTotalRows(dsResponse.totalRows, dsResponse.clientContext.alertStatus);
+    }, requestProperties);
+  },
+
   getFetchRequestParams: function (params) {
     // include alertStatus in the request in order to identify the grid being filtered
     // this allows to display the correct values on the Alert Rule filter drop-down
