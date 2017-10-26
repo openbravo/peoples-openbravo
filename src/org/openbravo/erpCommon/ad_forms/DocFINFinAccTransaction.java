@@ -570,15 +570,16 @@ public class DocFINFinAccTransaction extends AcctServer {
                 as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn);
           }
           if (line.getDoubtFulDebtAmount().signum() != 0) {
+            String strcCurrencyId = invoice.getCurrency().getId();
             BigDecimal doubtFulDebtAmount = convertAmount(line.getDoubtFulDebtAmount(), isReceipt,
-                DateAcct, TABLEID_Invoice, invoice.getId(), C_Currency_ID, as.m_C_Currency_ID,
+                DateAcct, TABLEID_Invoice, invoice.getId(), strcCurrencyId, as.m_C_Currency_ID,
                 line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn, false);
             fact.createLine(line, getAccountBPartner(bpartnerId, as, true, false, true, conn),
-                C_Currency_ID, "", doubtFulDebtAmount.toString(), Fact_Acct_Group_ID,
+                strcCurrencyId, "", doubtFulDebtAmount.toString(), Fact_Acct_Group_ID,
                 nextSeqNo(SeqNo), DocumentType, conn);
             bpAmountConverted = bpAmountConverted.subtract(doubtFulDebtAmount);
             fact.createLine(line, getAccountBPartnerAllowanceForDoubtfulDebt(bpartnerId, as, conn),
-                this.C_Currency_ID, doubtFulDebtAmount.toString(), "", Fact_Acct_Group_ID2,
+                strcCurrencyId, doubtFulDebtAmount.toString(), "", Fact_Acct_Group_ID2,
                 nextSeqNo(SeqNo), DocumentType, conn);
             // Assign expense to the dimensions of the invoice lines
             BigDecimal assignedAmount = BigDecimal.ZERO;
@@ -607,7 +608,7 @@ public class DocFINFinAccTransaction extends AcctServer {
                   lineDD,
                   getAccountBPartnerBadDebt(
                       (lineDD.m_C_BPartner_ID == null || lineDD.m_C_BPartner_ID.equals("")) ? bpartnerId
-                          : lineDD.m_C_BPartner_ID, false, as, conn), this.C_Currency_ID, "",
+                          : lineDD.m_C_BPartner_ID, false, as, conn), strcCurrencyId, "",
                   lineAmount.toString(), Fact_Acct_Group_ID2, nextSeqNo(SeqNo), DocumentType, conn);
               assignedAmount = assignedAmount.add(lineAmount);
             }

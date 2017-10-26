@@ -915,15 +915,16 @@ public class DocFINReconciliation extends AcctServer {
             as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn);
       }
       if (line.getDoubtFulDebtAmount().signum() != 0) {
+        String strcCurrencyId = invoice.getCurrency().getId();
         BigDecimal doubtFulDebtAmount = convertAmount(line.getDoubtFulDebtAmount(), isReceipt,
-            DateAcct, TABLEID_Invoice, invoice.getId(), C_Currency_ID, as.m_C_Currency_ID, line,
+            DateAcct, TABLEID_Invoice, invoice.getId(), strcCurrencyId, as.m_C_Currency_ID, line,
             as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn, false);
         fact.createLine(line, getAccountBPartner(bpartnerId, as, true, false, true, conn),
-            C_Currency_ID, "", doubtFulDebtAmount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, conn);
+            strcCurrencyId, "", doubtFulDebtAmount.toString(), Fact_Acct_Group_ID,
+            nextSeqNo(SeqNo), DocumentType, conn);
         bpAmountConverted = bpAmountConverted.subtract(doubtFulDebtAmount);
         fact.createLine(line, getAccountBPartnerAllowanceForDoubtfulDebt(bpartnerId, as, conn),
-            this.C_Currency_ID, doubtFulDebtAmount.toString(), "", Fact_Acct_Group_ID2,
+            strcCurrencyId, doubtFulDebtAmount.toString(), "", Fact_Acct_Group_ID2,
             nextSeqNo(SeqNo), DocumentType, conn);
         // Assign expense to the dimensions of the invoice lines
         BigDecimal assignedAmount = BigDecimal.ZERO;
@@ -951,7 +952,7 @@ public class DocFINReconciliation extends AcctServer {
               lineDD,
               getAccountBPartnerBadDebt((lineDD.m_C_BPartner_ID == null || lineDD.m_C_BPartner_ID
                   .equals("")) ? bpartnerId : lineDD.m_C_BPartner_ID, false, as, conn),
-              this.C_Currency_ID, "", lineAmount.toString(), Fact_Acct_Group_ID2, nextSeqNo(SeqNo),
+              strcCurrencyId, "", lineAmount.toString(), Fact_Acct_Group_ID2, nextSeqNo(SeqNo),
               DocumentType, conn);
           assignedAmount = assignedAmount.add(lineAmount);
         }
@@ -974,12 +975,12 @@ public class DocFINReconciliation extends AcctServer {
         Account accountIDPrePayment = getAccountBPartner(bpartnerId, as, isReceipt, true, conn);
         if (!StringUtils.equals(accountIDReceivablesNo.getAccount_ID(),
             accountIDPrePayment.getAccount_ID())) {
-          fact.createLine(line2, accountIDReceivablesNo,
-              paymentCurrency.getId(), !isReceipt ? bpAmountConverted.toString() : "",
+          fact.createLine(line2, accountIDReceivablesNo, paymentCurrency.getId(),
+              !isReceipt ? bpAmountConverted.toString() : "",
               isReceipt ? bpAmountConverted.toString() : "", Fact_Acct_Group_ID2, nextSeqNo(SeqNo),
               DocumentType, line2.m_DateAcct, null, conn);
-          fact.createLine(line2, accountIDPrePayment,
-              paymentCurrency.getId(), isReceipt ? bpAmountConverted.toString() : "",
+          fact.createLine(line2, accountIDPrePayment, paymentCurrency.getId(),
+              isReceipt ? bpAmountConverted.toString() : "",
               !isReceipt ? bpAmountConverted.toString() : "", Fact_Acct_Group_ID2,
               nextSeqNo(SeqNo), DocumentType, line2.m_DateAcct, null, conn);
         }
