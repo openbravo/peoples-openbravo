@@ -315,12 +315,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.set('leftColumnViewManager', new LeftColumnViewManager());
     this.set('subWindowManager', new ViewManager());
 
-
-    OB.MobileApp.view.showScrimOnCalculation = false;
-    if (OB.UTIL.localStorage.getItem('benchmarkScore') && parseInt(OB.UTIL.localStorage.getItem('benchmarkScore'), 10) < 1000) {
-      OB.MobileApp.view.showScrimOnCalculation = true;
-    }
-
     OB.MobileApp.model.runSyncProcess(function () {
       OB.RR.RequestRouter.sendAllMessages();
       me.loadCheckedMultiorders();
@@ -337,18 +331,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
       }
     };
-
-    receipt.on('calculatingReceipt', function () {
-      if (OB.MobileApp.view.showScrimOnCalculation && OB.MobileApp.view.openedPopup === null) {
-        enyo.$.scrim.show();
-      }
-    });
-
-    receipt.on('calculatedReceipt', function () {
-      if (OB.MobileApp.view.showScrimOnCalculation && OB.MobileApp.view.openedPopup === null) {
-        enyo.$.scrim.hide();
-      }
-    });
 
     receipt.on('checkOpenDrawer', function () {
       me.checkOpenDrawer();
