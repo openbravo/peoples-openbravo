@@ -229,7 +229,7 @@
       }
     });
   };
-  OB.UTIL.createNewCashupFromServer = function (cashup, callback) {
+  OB.UTIL.createNewCashupFromServer = function (cashup, callback, oldCashupPaymentMethods) {
     var promises = [];
     OB.Dal.save(cashup, function () {
       OB.MobileApp.model.get('terminal').cashUpId = cashup.get('id');
@@ -263,6 +263,7 @@
 
       //current cashup
       if (cashup.get('cashPaymentMethodInfo').length !== 0) {
+        var paymentsAlreadyAdded = [];
         _.each(cashup.get('cashPaymentMethodInfo'), function (paymentMethodCashUp) {
           var paymentMethodCashUpModel = new OB.Model.PaymentMethodCashUp();
           paymentMethodCashUpModel.set(paymentMethodCashUp);
@@ -274,6 +275,7 @@
             OB.info('Payment method not found. This is likely due to the fact that the payment method was disabled.');
             return;
           }
+          paymentsAlreadyAdded.push(paymentMethodCashUpModel.get('paymentmethod_id'));
           if (pAux.payment.active === true || (pAux.payment.active === false && paymentMethodCashUpModel.get('totalSales') !== 0 && paymentMethodCashUpModel.get('totalReturns') !== 0 && paymentMethodCashUpModel.get('totalDepostis') !== 0 && paymentMethodCashUpModel.get('totalDrops') !== 0)) {
             promises.push(new Promise(function (resolve, reject) {
               OB.Dal.save(paymentMethodCashUpModel, function () {
@@ -284,9 +286,23 @@
               }, true);
             }));
           }
-          //end if
-          //OB.UTIL.deleteUnactivePaymentMethod(paymentMethodCashUpModel);
         });
+
+        // Process those payment method cashup stored in database and not included in the actual cashup
+        if (oldCashupPaymentMethods && oldCashupPaymentMethods.length > 0) {
+          _.each(oldCashupPaymentMethods.models, function (oldPaymentMethodCashup) {
+            if (paymentsAlreadyAdded.indexOf(oldPaymentMethodCashup.get('paymentmethod_id')) === -1) {
+              promises.push(new Promise(function (resolve, reject) {
+                OB.Dal.save(oldPaymentMethodCashup, function () {
+                  resolve();
+                }, function () {
+                  OB.error(OB.I18N.getLabel('OBPOS_DalSaveError'));
+                  reject();
+                }, true);
+              }));
+            }
+          });
+        }
       } else {
         OB.UTIL.initializePaymentMethodCashup(null, cashup, null, promises);
       }
@@ -452,7 +468,7 @@
       isprocessed: 'N',
       isprocessedbo: 'N'
     }, function (data) {
-      var afterDeleteCallback = function () {
+      var afterDeleteCallback = function (cashupPaymentMethods) {
           // Found non processed cashups
           if (data[0]) {
             var cashUp = new OB.Model.CashUp();
@@ -462,20 +478,25 @@
             OB.UTIL.createNewCashupFromServer(cashUp, function () {
               OB.UTIL.composeCashupInfo(cashUpCollection, null, null);
               OB.UTIL.calculateCurrentCash(callback);
-            });
+            }, cashupPaymentMethods);
           } else {
             OB.UTIL.createNewCashup(callback);
           }
           };
-
-      // remove the current cashup
-      OB.Dal.transaction(function (tx) {
-        OB.Dal.removeAllInTransaction(tx, OB.Model.PaymentMethodCashUp);
-        OB.Dal.removeAllInTransaction(tx, OB.Model.TaxCashUp);
-        OB.Dal.removeAllInTransaction(tx, OB.Model.CashUp);
-        OB.Dal.removeAllInTransaction(tx, OB.Model.CashManagement);
-      }, null, afterDeleteCallback);
-
+      // get actual payment method cashup from localdatabase
+      OB.Dal.find(OB.Model.PaymentMethodCashUp, {}, function (cashupPaymentMethods) {
+        // remove the current cashup
+        OB.Dal.transaction(function (tx) {
+          OB.Dal.removeAllInTransaction(tx, OB.Model.PaymentMethodCashUp);
+          OB.Dal.removeAllInTransaction(tx, OB.Model.TaxCashUp);
+          OB.Dal.removeAllInTransaction(tx, OB.Model.CashUp);
+          OB.Dal.removeAllInTransaction(tx, OB.Model.CashManagement);
+        }, null, function () {
+          afterDeleteCallback(cashupPaymentMethods);
+        });
+      }, function () {
+        afterDeleteCallback();
+      });
     });
   };
 
