@@ -740,6 +740,7 @@
         return;
       }
       OB.MobileApp.view.waterfall('calculatingReceipt');
+      this.trigger('calculatingReceipt');
       this.calculatingReceipt = true;
 
       this.addToListOfCallbacks(callback);
@@ -770,10 +771,12 @@
               executeCallback(me.get('calculateReceiptCallbacks'), function () {
                 me.calculatingReceipt = false;
                 OB.MobileApp.view.waterfall('calculatedReceipt');
+                me.trigger('calculatedReceipt');
               });
             } else {
               me.calculatingReceipt = false;
               OB.MobileApp.view.waterfall('calculatedReceipt');
+              me.trigger('calculatedReceipt');
             }
           }
         });
