@@ -51,6 +51,15 @@ public class Discount extends ProcessHQLQuery {
       throw new JSONException("Product list not found");
     }
 
+    Long lastUpdated;
+
+    if (jsonsent != null) {
+      lastUpdated = jsonsent.has("lastUpdated") && !jsonsent.get("lastUpdated").equals("undefined")
+          && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
+    } else {
+      lastUpdated = null;
+    }
+
     String hql = "from PricingAdjustment p ";
     hql += "where client.id = '" + OBContext.getOBContext().getCurrentClient().getId() + "' ";
     if (addIncrementalUpdateFilter) {
@@ -65,6 +74,13 @@ public class Discount extends ProcessHQLQuery {
     } catch (PropertyException e1) {
       log.error("Error getting Preference: " + e1.getMessage(), e1);
     }
+
+    if (lastUpdated != null) {
+      hql += ""; // Incremental Refresh
+    } else {
+      hql += "AND ((p.$incrementalUpdateCriteria)) "; // Full Refresh
+    }
+
     if (!multiPrices) {
       // price list
       hql += "and ((includePriceLists='Y' ";
