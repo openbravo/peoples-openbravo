@@ -68,7 +68,8 @@
         from  c_order o, obpos_applications ap, obpos_terminaltype tt, c_doctype dt, c_bpartner bp
         where o.em_obpos_applications_id = ap.obpos_applications_id
         and ap.obpos_terminaltype_id = tt.obpos_terminaltype_id
-        and tt.c_doctype_id = dt.c_doctype_id
+        and dt.c_doctype_id in ('1')
+        and 1=1
         and o.c_bpartner_id = bp.c_bpartner_id
         and o.em_obpos_app_cashup_id = ?
         and o.c_doctype_id in (tt.c_doctype_id, tt.c_doctyperet_id)
@@ -86,6 +87,8 @@
     <Parameter name="currentDate"/>
     <Parameter name="currentDate"/>
     <Parameter name="cashupId"/>
+    <Parameter name="separateReturnInv" type="replace" optional="false" after="and dt.c_doctype_id in (" text="'1'"/>
+    <Parameter name="separateReturnInvLines" optional="true" type="argument" after="and 1=1" text=" "/>
   </SqlMethod>
 
   <SqlMethod name="insertHeaderNoGrouping" type="preparedStatement" return="rowcount">
@@ -155,7 +158,7 @@
         and o.m_pricelist_id = i.m_pricelist_id
         and o.em_obpos_applications_id = ap.obpos_applications_id
         and ap.obpos_terminaltype_id = tt.obpos_terminaltype_id
-        and tt.c_doctype_id = dt.c_doctype_id
+        and 1=1
         and o.em_obpos_app_cashup_id = ?
         and ol.qtydelivered = ol.qtyordered
         and ol.qtyordered <> 0
@@ -177,6 +180,7 @@
     </Sql>
     <Parameter name="cashupId"/>
     <Parameter name="executionId"/>
+    <Parameter name="separateReturnInvLines" optional="true" type="argument" after="and 1=1" text=" "/>
   </SqlMethod>
   <SqlMethod name="insertLinesNoGrouping" type="preparedStatement" return="rowcount" >
     <SqlMethodComment>Insert invoice lines no grouping orders</SqlMethodComment>
