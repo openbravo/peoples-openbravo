@@ -336,6 +336,13 @@ enyo.kind({
       _dateFormat: OB.Format.date
     }, function (data) {
       if (data) {
+        if (data.exception) {
+          me.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterButtons(false);
+          me.$.renderLoading.hide();
+          me.prsList.reset();
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message ? data.exception.message : OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+          return;
+        }
         ordersLoaded = [];
         _.each(data, function (iter) {
           me.model.get('orderList').newDynamicOrder(iter, function (order) {
@@ -359,11 +366,12 @@ enyo.kind({
       }
       me.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterButtons(false);
     }, function (error) {
-      if (error) {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+      if (error && error.exception) {
         me.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterButtons(false);
         me.$.renderLoading.hide();
         me.prsList.reset();
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), error.exception.message ? error.exception.message : OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+        return;
       }
     });
     return true;
