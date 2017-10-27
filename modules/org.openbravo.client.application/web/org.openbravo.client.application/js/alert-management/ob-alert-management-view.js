@@ -314,7 +314,7 @@ isc.OBUIAPP_AlertManagement.addProperties({
       OB.AlertManagement.grids[alertStatus[i]].invalidateCache();
       section = OB.AlertManagement.sections[alertStatus[i]];
       // force to refresh collapsed grids
-      if (!section.getSectionHeader(alertStatus[i]).expanded) {
+      if (!section.getSectionHeader().expanded) {
         OB.AlertManagement.grids[alertStatus[i]].getTotalRowsForAlert();
       }
       if (OB.AlertManagement.grids[alertStatus[i]].isDrawn()) {
