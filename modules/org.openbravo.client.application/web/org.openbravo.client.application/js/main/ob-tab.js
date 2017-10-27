@@ -699,10 +699,8 @@ isc.OBTabSetChild.addProperties({
       if (pane.members[0]) {
         pane.members[0].show();
       }
-      if (pane.members[1]) {
-        if (!this.allTabsHidden(pane.members[1])) {
-          pane.members[1].show();
-        }
+      if (pane.members[1] && !this.allTabsHidden(pane.members[1])) {
+        pane.members[1].show();
       }
     }
   },
