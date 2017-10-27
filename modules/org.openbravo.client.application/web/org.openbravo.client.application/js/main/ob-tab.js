@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -700,10 +700,25 @@ isc.OBTabSetChild.addProperties({
         pane.members[0].show();
       }
       if (pane.members[1]) {
-        pane.members[1].show();
+        if (!this.allTabsHidden(pane.members[1])) {
+          pane.members[1].show();
+        }
       }
-      //      this.selectTab(tab);
     }
+  },
+
+  allTabsHidden: function (tabSet) {
+    var i, tabViewPane;
+    if (!isc.isA.Array(tabSet.tabs)) {
+      return false;
+    }
+    for (i = 0; i < tabSet.tabs.length; i++) {
+      tabViewPane = tabSet.tabs[i].pane;
+      if (!tabViewPane.hidden) {
+        return false;
+      }
+    }
+    return true;
   },
 
   tabSelected: function (tabNum, tabPane, ID, tab) {
