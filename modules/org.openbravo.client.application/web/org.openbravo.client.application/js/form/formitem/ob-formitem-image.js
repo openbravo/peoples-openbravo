@@ -241,8 +241,10 @@ isc.OBImageItem.addProperties({
     if (!newValue || newValue === '') {
       this.canvas.setImage('');
     } else {
-      this.canvas.setImage("../utility/ShowImage?id=" + newValue + '&nocache=' + Math.random());
-      if (this.getValue() !== newValue) {
+      if (this.isLoadedCurrentImage(newValue)) {
+        this.canvas.setImage(this.canvas.image.src);
+      } else {
+        this.canvas.setImage("../utility/ShowImage?id=" + newValue + '&nocache=' + Math.random());
         var d = {
           inpimageId: newValue,
           command: 'GETSIZE'
@@ -275,6 +277,9 @@ isc.OBImageItem.addProperties({
     this.canvas.deleteButton.updateState(newValue && (this.form && !this.form.readOnly) && !this.disabled);
     this.canvas.selectorButton.updateState((this.form && !this.form.readOnly) && !this.disabled);
     return this.Super('setValue', arguments);
+  },
+  isLoadedCurrentImage: function (imageId) {
+    return this.canvas.image && this.canvas.image.src && this.canvas.image.src.contains('ShowImage?id=' + imageId);
   },
   refreshImage: function (imageId) {
     //If creating/replacing an image, the form is marked as modified
