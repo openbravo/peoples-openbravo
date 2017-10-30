@@ -6109,21 +6109,10 @@
       }
 
       var orderTypeMsg, i, showErrorPopup = function (errorMsg) {
-          OB.UTIL.showConfirmation.display(errorMsg, null, [{
-            label: OB.I18N.getLabel('OBMOBC_LblOk'),
-            action: function () {
-              if (errorCallback) {
-                errorCallback();
-              }
-            }
-          }], {
-            onHideFunction: function (dialog) {
-              if (errorCallback) {
-                errorCallback();
-              }
-              return true;
-            }
-          });
+          OB.UTIL.showError(errorMsg);
+          if (errorCallback) {
+            errorCallback();
+          }
           };
 
       // Check in Current Session
