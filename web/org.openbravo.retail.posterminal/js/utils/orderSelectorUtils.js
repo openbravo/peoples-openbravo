@@ -22,26 +22,26 @@
     }
   };
 
-  OB.UTIL.OrderSelectorUtils.checkOrderAndLoad = function (model, context) {
+  OB.UTIL.OrderSelectorUtils.checkOrderAndLoad = function (model, orderList, context) {
     var me = this,
         continueAfterPaidReceipt, checkListCallback, loadOrder;
 
     checkListCallback = function () {
       if (me.listOfReceipts && me.listOfReceipts.length > 0) {
         var currentReceipt = me.listOfReceipts.shift();
-        context.model.get('orderList').checkForDuplicateReceipts(currentReceipt, loadOrder, checkListCallback);
+        orderList.checkForDuplicateReceipts(currentReceipt, loadOrder, checkListCallback);
       } else {
         me.loadingReceipt = false;
       }
     };
 
     continueAfterPaidReceipt = function (order) {
-      order.calculateReceipt(function () {
+      OB.MobileApp.model.receipt.calculateReceipt(function () {
         if (order.get('searchSynchId')) {
           OB.UTIL.SynchronizationHelper.finished(order.get('searchSynchId'), 'clickSearchNewReceipt');
           order.unset('searchSynchId');
         }
-        if (order.get('askForRelatedReceipts') && OB.MobileApp.model.get('terminal').terminalType.obsrOpenrelatedreceipts) {
+        if (order.get('askForRelatedReceipts') && OB.MobileApp.model.get('terminal').terminalType.obsrOpenrelatedreceipts && order.get('bp').get('id') !== OB.MobileApp.model.get('terminal').businessPartner) {
           order.unset('askForRelatedReceipts');
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBSR_OpenRelatedReceipts'), null, [{
             label: OB.I18N.getLabel('OBPOS_LblOk'),
@@ -113,13 +113,13 @@
           }, function (args) {
             if (!args.cancelOperation) {
               var searchSynchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearchNewReceipt');
-              if (order.get('askForRelatedReceipts')) {
-                order.unset('askForRelatedReceipts');
+              if (order.askForRelatedReceipts) {
+                order.askForRelatedReceipts = undefined;
                 data[0].askForRelatedReceipts = true;
               }
-              context.model.get('orderList').newPaidReceipt(data[0], function (newOrder) {
+              orderList.newPaidReceipt(data[0], function (newOrder) {
                 newOrder.set('searchSynchId', searchSynchId);
-                context.model.get('orderList').addPaidReceipt(newOrder, continueAfterPaidReceipt);
+                orderList.addPaidReceipt(newOrder, continueAfterPaidReceipt);
               });
             }
           });
@@ -137,8 +137,8 @@
       return;
     }
     me.loadingReceipt = true;
-    model.set('askForRelatedReceipts', true);
-    context.model.get('orderList').checkForDuplicateReceipts(model, loadOrder, checkListCallback);
+    model.askForRelatedReceipts = true;
+    orderList.checkForDuplicateReceipts(model, loadOrder, checkListCallback);
   };
 
 }());
