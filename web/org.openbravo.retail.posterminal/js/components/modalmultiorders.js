@@ -250,6 +250,12 @@ enyo.kind({
       _limit: limit
     }, function (data) {
       if (data) {
+        if (data.exception) {
+          me.disableFilters(false);
+          me.multiOrdersList.reset();
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message ? data.exception.message : OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+          return;
+        }
         _.each(me.model.get('orderList').models, function (iter) {
           if (iter.get('lines') && iter.get('lines').length > 0) {
             re = new RegExp(me.filters.filterText, 'gi');
@@ -283,6 +289,13 @@ enyo.kind({
       } else {
         me.disableFilters(false);
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
+      }
+    }, function (error) {
+      if (error && error.exception) {
+        me.disableFilters(false);
+        me.multiOrdersList.reset();
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), error.exception.message ? error.exception.message : OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+        return;
       }
     });
     return true;
