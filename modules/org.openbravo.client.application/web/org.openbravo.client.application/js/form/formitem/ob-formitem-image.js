@@ -45,14 +45,18 @@ isc.OBImageItemSmallImageContainer.addProperties({
     OB.RemoteCallManager.call('org.openbravo.client.application.window.ImagesActionHandler', {}, d, function (response, data, request) {
       var pageHeight = isc.Page.getHeight() - 100;
       var pageWidth = isc.Page.getWidth() - 100;
-      var height;
-      var width;
-      var ratio = data.width / data.height;
+      var height = data.height;
+      var width = data.width;
+      if (!width && !height) {
+        width = pageWidth;
+        height = pageHeight;
+      }
+      var ratio = width / height;
       if (ratio > pageWidth / pageHeight) {
-        width = data.width > pageWidth ? pageWidth : data.width;
+        width = width > pageWidth ? pageWidth : width;
         height = width / ratio;
       } else {
-        height = data.height > pageHeight ? pageHeight : data.height;
+        height = height > pageHeight ? pageHeight : height;
         width = height * ratio;
       }
       var imagePopup = isc.OBPopup.create({
@@ -258,6 +262,10 @@ isc.OBImageItem.addProperties({
 
           var imgHeight = data.height;
           var imgWidth = data.width;
+          if (!imgWidth && !imgHeight) {
+            imgWidth = maxWidth;
+            imgHeight = maxHeight;
+          }
           var imgRatio = imgWidth / imgHeight;
 
           if (imgHeight < maxHeight && imgWidth < maxWidth) {
