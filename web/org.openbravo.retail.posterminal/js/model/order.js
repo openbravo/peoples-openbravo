@@ -6108,7 +6108,7 @@
         break;
       }
 
-      var orderTypeMsg, i, showErrorPopup = function (errorMsg) {
+      var orderTypeMsg, i, showErrorMessage = function (errorMsg) {
           OB.UTIL.showError(errorMsg);
           if (errorCallback) {
             errorCallback();
@@ -6132,7 +6132,7 @@
             var QtDocumentNo = model.get('documentNo');
             errorMsg = OB.I18N.getLabel('OBPOS_OrderAssociatedToQuotationInProgress', [QtDocumentNo, SoFromQtDocNo, QtDocumentNo, SoFromQtDocNo]);
           }
-          showErrorPopup(errorMsg);
+          showErrorMessage(errorMsg);
           if (OB.MobileApp.model.receipt.get('documentNo') !== model.get('documentNo')) {
             this.load(this.at(i));
           }
