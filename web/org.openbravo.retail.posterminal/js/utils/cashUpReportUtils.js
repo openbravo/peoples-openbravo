@@ -513,36 +513,45 @@
     };
     OB.Dal.find(OB.Model.CashUp, criteria, function (cashUp) { //OB.Dal.find success
       if (cashUp.length === 0) {
-        if (!skipSearchBackend) {
-          var service = 'org.openbravo.retail.posterminal.master.Cashup';
-          if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-            service = 'org.openbravo.retail.posterminal.master.CashupSynchronized';
-          }
-          // Search in the backoffice
-          new OB.DS.Process(service).exec({
-            isprocessed: 'N',
-            isprocessedbo: 'N'
-          }, function (data) {
-            // Found non processed cashups
-            if (data && data.exception) {
-              errorCallback();
-            } else if (data && _.isArray(data) && data.length > 0 && data[0]) {
-              cashUp = new OB.Model.CashUp();
-              cashUp.set(data[0]);
-              var cashUpCollection = new Backbone.Collection();
-              cashUpCollection.push(cashUp);
-              OB.UTIL.createNewCashupFromServer(cashUp, function () {
-                OB.UTIL.composeCashupInfo(cashUpCollection, null, null);
-                OB.UTIL.calculateCurrentCash(callback);
+        var processedCriteria = {
+          'isprocessed': 'Y',
+          '_orderByClause': 'creationDate desc'
+        };
+        OB.Dal.find(OB.Model.CashUp, processedCriteria, function (cashUpProcessed) {
+          if (cashUpProcessed.length === 0) {
+            if (!skipSearchBackend) {
+              var service = 'org.openbravo.retail.posterminal.master.Cashup';
+              if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+                service = 'org.openbravo.retail.posterminal.master.CashupSynchronized';
+              }
+              // Search in the backoffice
+              new OB.DS.Process(service).exec({
+                isprocessed: 'N',
+                isprocessedbo: 'N'
+              }, function (data) {
+                // Found non processed cashups
+                if (data && data.exception) {
+                  errorCallback();
+                } else if (data && _.isArray(data) && data.length > 0 && data[0]) {
+                  cashUp = new OB.Model.CashUp();
+                  cashUp.set(data[0]);
+                  var cashUpCollection = new Backbone.Collection();
+                  cashUpCollection.push(cashUp);
+                  OB.UTIL.createNewCashupFromServer(cashUp, function () {
+                    OB.UTIL.composeCashupInfo(cashUpCollection, null, null);
+                    OB.UTIL.calculateCurrentCash(callback);
+                  });
+                } else {
+                  OB.UTIL.createNewCashup(callback);
+                }
               });
             } else {
               OB.UTIL.createNewCashup(callback);
             }
-          });
-        } else {
-          OB.UTIL.createNewCashup(callback);
-        }
-
+          } else {
+            OB.UTIL.createNewCashup(callback);
+          }
+        });
       } else {
         if (!OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal'))) {
           OB.MobileApp.model.get('terminal').cashUpId = cashUp.at(0).get('id');
