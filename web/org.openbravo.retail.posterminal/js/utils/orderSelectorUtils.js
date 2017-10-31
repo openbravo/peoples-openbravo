@@ -22,7 +22,7 @@
     }
   };
 
-  OB.UTIL.OrderSelectorUtils.checkOrderAndLoad = function (model, orderList, context) {
+  OB.UTIL.OrderSelectorUtils.checkOrderAndLoad = function (model, orderList, context, originServer) {
     var me = this,
         continueAfterPaidReceipt, checkListCallback, loadOrder;
 
@@ -109,7 +109,8 @@
           process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts');
       OB.UTIL.showLoading(true);
       process.exec({
-        orderid: order.get('id')
+        orderid: order.get('id'),
+        originServer: originServer
       }, function (data) {
         if (data && data.length === 1) {
           if (context.model.get('leftColumnViewManager').isMultiOrder()) {

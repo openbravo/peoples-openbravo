@@ -39,6 +39,9 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.mobile.core.servercontroller.MobileServerController;
+import org.openbravo.mobile.core.servercontroller.MobileServerRequestExecutor;
+import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.service.json.JsonConstants;
@@ -82,6 +85,12 @@ public class PaidReceipts extends JSONProcessSimple {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
+    final String ORIGIN_CENTRAL = MobileServerController.getInstance().getCentralServerKey();
+    if (MobileServerController.getInstance().isThisAStoreServer()
+        && ORIGIN_CENTRAL.equals(jsonsent.optString("originServer"))) {
+      return MobileServerRequestExecutor.getInstance().executeCentralRequest(
+          MobileServerUtils.OBWSPATH + PaidReceipts.class.getName(), jsonsent);
+    }
     JSONObject result = new JSONObject();
     OBContext.setAdminMode(true);
     try {
