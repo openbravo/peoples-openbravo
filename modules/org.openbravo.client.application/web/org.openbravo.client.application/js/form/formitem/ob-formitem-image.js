@@ -45,14 +45,18 @@ isc.OBImageItemSmallImageContainer.addProperties({
     OB.RemoteCallManager.call('org.openbravo.client.application.window.ImagesActionHandler', {}, d, function (response, data, request) {
       var pageHeight = isc.Page.getHeight() - 100;
       var pageWidth = isc.Page.getWidth() - 100;
-      var height;
-      var width;
-      var ratio = data.width / data.height;
+      var height = data.height;
+      var width = data.width;
+      if (!width && !height) {
+        width = pageWidth;
+        height = pageHeight;
+      }
+      var ratio = width / height;
       if (ratio > pageWidth / pageHeight) {
-        width = data.width > pageWidth ? pageWidth : data.width;
+        width = width > pageWidth ? pageWidth : width;
         height = width / ratio;
       } else {
-        height = data.height > pageHeight ? pageHeight : data.height;
+        height = height > pageHeight ? pageHeight : height;
         width = height * ratio;
       }
       var imagePopup = isc.OBPopup.create({
@@ -241,8 +245,10 @@ isc.OBImageItem.addProperties({
     if (!newValue || newValue === '') {
       this.canvas.setImage('');
     } else {
-      this.canvas.setImage("../utility/ShowImage?id=" + newValue + '&nocache=' + Math.random());
-      if (this.getValue() !== newValue) {
+      if (this.isLoadedCurrentImage(newValue)) {
+        this.canvas.setImage(this.canvas.image.src);
+      } else {
+        this.canvas.setImage("../utility/ShowImage?id=" + newValue + '&nocache=' + Math.random());
         var d = {
           inpimageId: newValue,
           command: 'GETSIZE'
@@ -256,6 +262,10 @@ isc.OBImageItem.addProperties({
 
           var imgHeight = data.height;
           var imgWidth = data.width;
+          if (!imgWidth && !imgHeight) {
+            imgWidth = maxWidth;
+            imgHeight = maxHeight;
+          }
           var imgRatio = imgWidth / imgHeight;
 
           if (imgHeight < maxHeight && imgWidth < maxWidth) {
@@ -275,6 +285,9 @@ isc.OBImageItem.addProperties({
     this.canvas.deleteButton.updateState(newValue && (this.form && !this.form.readOnly) && !this.disabled);
     this.canvas.selectorButton.updateState((this.form && !this.form.readOnly) && !this.disabled);
     return this.Super('setValue', arguments);
+  },
+  isLoadedCurrentImage: function (imageId) {
+    return this.canvas.image && this.canvas.image.src && this.canvas.image.src.contains('ShowImage?id=' + imageId);
   },
   refreshImage: function (imageId) {
     //If creating/replacing an image, the form is marked as modified

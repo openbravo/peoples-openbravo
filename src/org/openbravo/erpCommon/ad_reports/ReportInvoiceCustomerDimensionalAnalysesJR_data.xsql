@@ -60,13 +60,13 @@
       TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())) AS TRDATE,      
       C_INVOICELINE.AD_CLIENT_ID AS TRCLIENTID,      
       C_INVOICELINE.AD_ORG_ID AS TRORGID,
-                CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
+                CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
                 END AS COSTCALCULATED,
-                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(trxcost.cost/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)
+                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(sum(trxcost.cost)/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)
                      ELSE (COALESCE(M_GET_NO_TRX_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, 'STA', ad_org.ad_org_id, null, C_INVOICE.C_CURRENCY_ID), 0)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END))
                 END AS COST,
                 0 AS COSTREF,
-                CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
+                CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
                      ELSE CASE WHEN C_DOCTYPE.DOCBASETYPE='ARC' THEN C_INVOICELINE.LINENETAMT*-1 ELSE C_INVOICELINE.LINENETAMT END
                 END AS COSTEDAMT, 0 AS COSTEDAMTREF
             FROM C_INVOICELINE 
@@ -84,15 +84,13 @@
                 left join M_INOUTLINE on C_INVOICELINE.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
                 left join M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID
                 left join m_transaction trx ON trx.m_inoutline_id = m_inoutline.m_inoutline_id
-                left join (SELECT SUM(cost) as cost, m_transaction_id, c_currency_id
-                           FROM m_transaction_cost
-                           GROUP BY m_transaction_id, c_currency_id
-                          ) trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
+                left join m_transaction_cost trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
       WHERE C_INVOICE.ISSOTRX = 'Y'
       AND C_INVOICE.PROCESSED = 'Y'
       AND 0=0 AND C_INVOICE.AD_ORG_ID IN ('1')
       AND C_INVOICE.AD_CLIENT_ID IN ('7')
       AND 1=1
+      GROUP BY trxcost.m_transaction_id, C_INVOICELINE.C_INVOICELINE_ID, C_BPARTNER.C_BPARTNER_ID, M_PRODUCT_CATEGORY.NAME, C_INVOICE.DOCUMENTNO, AD_ORG.NAME, AD_USER.AD_USER_ID, C_PROJECT.NAME, AD_USER.FIRSTNAME, AD_USER.LASTNAME, C_BP_GROUP.NAME, M_INOUT.C_BPARTNER_LOCATION_ID, C_INVOICELINE.AD_CLIENT_ID, C_INVOICELINE.AD_ORG_ID, C_INVOICELINE.LINENETAMT, C_INVOICELINE.QTYINVOICED, C_UOM.UOMSYMBOL, c_doctype.docbasetype, ad_org.ad_org_id, C_INVOICE.C_CURRENCY_ID, C_INVOICE.DATEINVOICED, trx.movementqty, trx.movementdate, trx.ad_client_id, trx.ad_org_id, trxcost.c_currency_id, M_PRODUCT.WEIGHT, M_PRODUCT.M_PRODUCT_ID, M_PRODUCT.ISSTOCKED, M_PRODUCT.PRODUCTTYPE
       UNION ALL SELECT to_char('8') AS NIVEL1 , to_char('9') AS NIVEL2 , to_char('10') AS NIVEL3 , to_char('11') AS NIVEL4 , to_char('12') AS NIVEL5 , to_char('13') AS NIVEL6 , to_char('14') AS NIVEL7 , to_char('17') AS NIVEL8 , to_char('19') AS NIVEL9 , to_char('21') AS NIVEL10,
       0 AS LINENETAMT, 0 AS QTYINVOICED, 0 AS WEIGHT, 
       CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.LINENETAMT *- 1 ELSE c_invoiceline.LINENETAMT END AS LINENETREF,
@@ -103,14 +101,14 @@
       TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())) AS TRDATE,
       C_INVOICELINE.AD_CLIENT_ID AS TRCLIENTID,
       C_INVOICELINE.AD_ORG_ID AS TRORGID,
-                CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
+                CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
                 END AS COSTCALCULATED,
                 0 AS COST,
-                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(trxcost.cost/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)
+                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(sum(trxcost.cost)/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)
                      ELSE (COALESCE(M_GET_NO_TRX_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, 'STA', ad_org.ad_org_id, null, C_INVOICE.C_CURRENCY_ID), 0)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END))
                 END AS COSTREF,
                 0 AS COSTEDAMT,
-                CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
+                CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
                      ELSE CASE WHEN C_DOCTYPE.DOCBASETYPE='ARC' THEN C_INVOICELINE.LINENETAMT*-1 ELSE C_INVOICELINE.LINENETAMT END
                 END AS COSTEDAMTREF
             FROM C_INVOICELINE 
@@ -128,15 +126,13 @@
                 left join M_INOUTLINE on C_INVOICELINE.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
                 left join M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID
                 left join m_transaction trx ON trx.m_inoutline_id = m_inoutline.m_inoutline_id
-                left join (SELECT SUM(cost) as cost, m_transaction_id, c_currency_id
-                           FROM m_transaction_cost
-                           GROUP BY m_transaction_id, c_currency_id
-                          ) trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
+                left join m_transaction_cost trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
       WHERE C_INVOICE.ISSOTRX = 'Y'
       AND C_INVOICE.PROCESSED = 'Y'
       AND 3=3 AND C_INVOICE.AD_ORG_ID IN ('1')
       AND C_INVOICE.AD_CLIENT_ID IN('14')
       AND 2=2
+      GROUP BY trxcost.m_transaction_id, C_INVOICELINE.C_INVOICELINE_ID, C_BPARTNER.C_BPARTNER_ID, M_PRODUCT_CATEGORY.NAME, C_INVOICE.DOCUMENTNO, AD_ORG.NAME, AD_USER.AD_USER_ID, C_PROJECT.NAME, AD_USER.FIRSTNAME, AD_USER.LASTNAME, C_BP_GROUP.NAME, M_INOUT.C_BPARTNER_LOCATION_ID, C_INVOICELINE.AD_CLIENT_ID, C_INVOICELINE.AD_ORG_ID, C_INVOICELINE.LINENETAMT, C_INVOICELINE.QTYINVOICED, C_UOM.UOMSYMBOL, c_doctype.docbasetype, ad_org.ad_org_id, C_INVOICE.C_CURRENCY_ID, C_INVOICE.DATEINVOICED, trx.movementqty, trx.movementdate, trx.ad_client_id, trx.ad_org_id, trxcost.c_currency_id, M_PRODUCT.WEIGHT, M_PRODUCT.M_PRODUCT_ID, M_PRODUCT.ISSTOCKED, M_PRODUCT.PRODUCTTYPE
       ORDER BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10) AA
       GROUP BY  NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID) ZZ
       GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 1
@@ -245,14 +241,14 @@
       TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())) AS TRDATE,      
       C_INVOICELINE.AD_CLIENT_ID AS TRCLIENTID,      
       C_INVOICELINE.AD_ORG_ID AS TRORGID,
-                CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
+                CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
                 END AS COSTCALCULATED,
-                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(trxcost.cost/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)
+                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(sum(trxcost.cost)/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)
                      ELSE (COALESCE(M_GET_NO_TRX_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, 'STA', ad_org.ad_org_id, null, C_INVOICE.C_CURRENCY_ID), 0)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END))
                 END AS COST,
                 0 AS COSTREF,
                 0 AS COSTREF2,
-                CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
+                CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
                      ELSE CASE WHEN C_DOCTYPE.DOCBASETYPE='ARC' THEN C_INVOICELINE.LINENETAMT*-1 ELSE C_INVOICELINE.LINENETAMT END
                 END AS COSTEDAMT, 
                 0 AS COSTEDAMTREF, 
@@ -272,15 +268,13 @@
                 left join M_INOUTLINE on C_INVOICELINE.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
                 left join M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID
                 left join m_transaction trx ON trx.m_inoutline_id = m_inoutline.m_inoutline_id
-                left join (SELECT SUM(cost) as cost, m_transaction_id, c_currency_id
-                           FROM m_transaction_cost
-                           GROUP BY m_transaction_id, c_currency_id
-                          ) trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
+                left join m_transaction_cost trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
       WHERE C_INVOICE.ISSOTRX = 'Y'
       AND C_INVOICE.PROCESSED = 'Y'
       AND 0=0 AND C_INVOICE.AD_ORG_ID IN ('1')
       AND C_INVOICE.AD_CLIENT_ID IN ('7')
-      AND 1=1        
+      AND 1=1
+      GROUP BY trxcost.m_transaction_id, C_INVOICELINE.C_INVOICELINE_ID, C_BPARTNER.C_BPARTNER_ID, M_PRODUCT_CATEGORY.NAME, C_INVOICE.DOCUMENTNO, AD_ORG.NAME, AD_USER.AD_USER_ID, C_PROJECT.NAME, AD_USER.FIRSTNAME, AD_USER.LASTNAME, C_BP_GROUP.NAME, M_INOUT.C_BPARTNER_LOCATION_ID, C_INVOICELINE.AD_CLIENT_ID, C_INVOICELINE.AD_ORG_ID, C_INVOICELINE.LINENETAMT, C_INVOICELINE.QTYINVOICED, C_UOM.UOMSYMBOL, c_doctype.docbasetype, ad_org.ad_org_id, C_INVOICE.C_CURRENCY_ID, C_INVOICE.DATEINVOICED, trx.movementqty, trx.movementdate, trx.ad_client_id, trx.ad_org_id, trxcost.c_currency_id, M_PRODUCT.WEIGHT, M_PRODUCT.M_PRODUCT_ID, M_PRODUCT.ISSTOCKED, M_PRODUCT.PRODUCTTYPE
       UNION ALL SELECT to_char('8') AS NIVEL1 , to_char('9') AS NIVEL2 , to_char('10') AS NIVEL3 , to_char('11') AS NIVEL4 , to_char('12') AS NIVEL5 , to_char('13') AS NIVEL6 , to_char('14') AS NIVEL7 , to_char('17') AS NIVEL8 , to_char('19') AS NIVEL9 , to_char('21') AS NIVEL10,
       0 AS LINENETAMT, 0 AS QTYINVOICED, 0 AS WEIGHT, 
       CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.LINENETAMT *- 1 ELSE c_invoiceline.LINENETAMT END AS LINENETREF,
@@ -292,15 +286,15 @@
       TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())) AS TRDATE,
       C_INVOICELINE.AD_CLIENT_ID AS TRCLIENTID,
       C_INVOICELINE.AD_ORG_ID AS TRORGID,
-                CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
+                CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
                 END AS COSTCALCULATED,
                 0 AS COST,
-                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(trxcost.cost/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)
+                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(sum(trxcost.cost)/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)
                      ELSE (COALESCE(M_GET_NO_TRX_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, 'STA', ad_org.ad_org_id, null, C_INVOICE.C_CURRENCY_ID), 0)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END))
                 END AS COSTREF,
                 0 AS COSTREF2,
                 0 AS COSTEDAMT,
-                CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
+                CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
                      ELSE CASE WHEN C_DOCTYPE.DOCBASETYPE='ARC' THEN C_INVOICELINE.LINENETAMT*-1 ELSE C_INVOICELINE.LINENETAMT END
                 END AS COSTEDAMTREF,
                 0 AS COSTEDAMTREF2
@@ -319,15 +313,13 @@
                 left join M_INOUTLINE on C_INVOICELINE.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
                 left join M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID
                 left join m_transaction trx ON trx.m_inoutline_id = m_inoutline.m_inoutline_id
-                left join (SELECT SUM(cost) as cost, m_transaction_id, c_currency_id
-                           FROM m_transaction_cost
-                           GROUP BY m_transaction_id, c_currency_id
-                          ) trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
+                left join m_transaction_cost trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
       WHERE C_INVOICE.ISSOTRX = 'Y'
       AND C_INVOICE.PROCESSED = 'Y'
       AND 3=3 AND C_INVOICE.AD_ORG_ID IN ('1')
       AND C_INVOICE.AD_CLIENT_ID IN('14')
       AND 2=2
+      GROUP BY trxcost.m_transaction_id, C_INVOICELINE.C_INVOICELINE_ID, C_BPARTNER.C_BPARTNER_ID, M_PRODUCT_CATEGORY.NAME, C_INVOICE.DOCUMENTNO, AD_ORG.NAME, AD_USER.AD_USER_ID, C_PROJECT.NAME, AD_USER.FIRSTNAME, AD_USER.LASTNAME, C_BP_GROUP.NAME, M_INOUT.C_BPARTNER_LOCATION_ID, C_INVOICELINE.AD_CLIENT_ID, C_INVOICELINE.AD_ORG_ID, C_INVOICELINE.LINENETAMT, C_INVOICELINE.QTYINVOICED, C_UOM.UOMSYMBOL, c_doctype.docbasetype, ad_org.ad_org_id, C_INVOICE.C_CURRENCY_ID, C_INVOICE.DATEINVOICED, trx.movementqty, trx.movementdate, trx.ad_client_id, trx.ad_org_id, trxcost.c_currency_id, M_PRODUCT.WEIGHT, M_PRODUCT.M_PRODUCT_ID, M_PRODUCT.ISSTOCKED, M_PRODUCT.PRODUCTTYPE
       UNION ALL SELECT  to_char('28') AS NIVEL1 ,to_char('29') AS NIVEL2 ,to_char('30') AS NIVEL3 ,to_char('31') AS NIVEL4 ,to_char('32') AS NIVEL5 ,to_char('33') AS NIVEL6 ,to_char('34') AS NIVEL7 ,to_char('35') AS NIVEL8 ,to_char('36') AS NIVEL9 ,to_char('37') AS NIVEL10,
       0 AS LINENETAMT, 0 AS QTYINVOICED, 0 AS WEIGHT, 
       0 AS LINENETREF, 0 AS QTYINVOICEDREF, 0 AS WEIGHT_REF,
@@ -339,16 +331,16 @@
       TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())) AS TRDATE,
       C_INVOICELINE.AD_CLIENT_ID AS TRCLIENTID,
       C_INVOICELINE.AD_ORG_ID AS TRORGID,
-                CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
+                CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
                 END AS COSTCALCULATED,
                 0 AS COST,
                 0 AS COSTREF,
-                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(trxcost.cost/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)
+                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(sum(trxcost.cost)/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)
                      ELSE (COALESCE(M_GET_NO_TRX_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, 'STA', ad_org.ad_org_id, null, C_INVOICE.C_CURRENCY_ID), 0)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END))
                 END AS COSTREF2,                
                 0 AS COSTEDAMT,
                 0 AS COSTEDAMTREF,
-                CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
+                CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
                      ELSE CASE WHEN C_DOCTYPE.DOCBASETYPE='ARC' THEN C_INVOICELINE.LINENETAMT*-1 ELSE C_INVOICELINE.LINENETAMT END
                 END AS COSTEDAMTREF2                
             FROM C_INVOICELINE 
@@ -366,15 +358,13 @@
                 left join M_INOUTLINE on C_INVOICELINE.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
                 left join M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID
                 left join m_transaction trx ON trx.m_inoutline_id = m_inoutline.m_inoutline_id
-                left join (SELECT SUM(cost) as cost, m_transaction_id, c_currency_id
-                           FROM m_transaction_cost
-                           GROUP BY m_transaction_id, c_currency_id
-                          ) trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
+                left join m_transaction_cost trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
       WHERE C_INVOICE.ISSOTRX = 'Y'
       AND C_INVOICE.PROCESSED = 'Y'
       AND 5=5 AND C_INVOICE.AD_ORG_ID IN ('1')
       AND C_INVOICE.AD_CLIENT_ID  IN('38')
       AND 4=4
+      GROUP BY trxcost.m_transaction_id, C_INVOICELINE.C_INVOICELINE_ID, C_BPARTNER.C_BPARTNER_ID, M_PRODUCT_CATEGORY.NAME, C_INVOICE.DOCUMENTNO, AD_ORG.NAME, AD_USER.AD_USER_ID, C_PROJECT.NAME, AD_USER.FIRSTNAME, AD_USER.LASTNAME, C_BP_GROUP.NAME, M_INOUT.C_BPARTNER_LOCATION_ID, C_INVOICELINE.AD_CLIENT_ID, C_INVOICELINE.AD_ORG_ID, C_INVOICELINE.LINENETAMT, C_INVOICELINE.QTYINVOICED, C_UOM.UOMSYMBOL, c_doctype.docbasetype, ad_org.ad_org_id, C_INVOICE.C_CURRENCY_ID, C_INVOICE.DATEINVOICED, trx.movementqty, trx.movementdate, trx.ad_client_id, trx.ad_org_id, trxcost.c_currency_id, M_PRODUCT.WEIGHT, M_PRODUCT.M_PRODUCT_ID, M_PRODUCT.ISSTOCKED, M_PRODUCT.PRODUCTTYPE
       ORDER BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10) AA
       GROUP BY  NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID) ZZ
       GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 1
@@ -518,15 +508,15 @@
       TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())) AS TRDATE,      
       C_INVOICELINE.AD_CLIENT_ID AS TRCLIENTID,      
       C_INVOICELINE.AD_ORG_ID AS TRORGID,
-                CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
+                CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
                 END AS COSTCALCULATED,
-                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(trxcost.cost/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)
+                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(sum(trxcost.cost)/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)
                      ELSE (COALESCE(M_GET_NO_TRX_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, 'STA', ad_org.ad_org_id, null, C_INVOICE.C_CURRENCY_ID), 0)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END))
                 END AS COST,
                 0 AS COSTREF,
                 0 AS COSTREF2,
                 0 AS COSTREF3,
-                CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
+                CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
                      ELSE CASE WHEN C_DOCTYPE.DOCBASETYPE='ARC' THEN C_INVOICELINE.LINENETAMT*-1 ELSE C_INVOICELINE.LINENETAMT END
                 END AS COSTEDAMT, 
                 0 AS COSTEDAMTREF, 
@@ -547,15 +537,13 @@
                 left join M_INOUTLINE on C_INVOICELINE.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
                 left join M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID
                 left join m_transaction trx ON trx.m_inoutline_id = m_inoutline.m_inoutline_id
-                left join (SELECT SUM(cost) as cost, m_transaction_id, c_currency_id
-                           FROM m_transaction_cost
-                           GROUP BY m_transaction_id, c_currency_id
-                          ) trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
+                left join m_transaction_cost trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
       WHERE C_INVOICE.ISSOTRX = 'Y'
       AND C_INVOICE.PROCESSED = 'Y'
       AND 0=0 AND C_INVOICE.AD_ORG_ID IN ('1')
       AND C_INVOICE.AD_CLIENT_ID IN ('7')
-      AND 1=1        
+      AND 1=1
+      GROUP BY trxcost.m_transaction_id, C_INVOICELINE.C_INVOICELINE_ID, C_BPARTNER.C_BPARTNER_ID, M_PRODUCT_CATEGORY.NAME, C_INVOICE.DOCUMENTNO, AD_ORG.NAME, AD_USER.AD_USER_ID, C_PROJECT.NAME, AD_USER.FIRSTNAME, AD_USER.LASTNAME, C_BP_GROUP.NAME, M_INOUT.C_BPARTNER_LOCATION_ID, C_INVOICELINE.AD_CLIENT_ID, C_INVOICELINE.AD_ORG_ID, C_INVOICELINE.LINENETAMT, C_INVOICELINE.QTYINVOICED, C_UOM.UOMSYMBOL, c_doctype.docbasetype, ad_org.ad_org_id, C_INVOICE.C_CURRENCY_ID, C_INVOICE.DATEINVOICED, trx.movementqty, trx.movementdate, trx.ad_client_id, trx.ad_org_id, trxcost.c_currency_id, M_PRODUCT.WEIGHT, M_PRODUCT.M_PRODUCT_ID, M_PRODUCT.ISSTOCKED, M_PRODUCT.PRODUCTTYPE
       UNION ALL SELECT to_char('8') AS NIVEL1 , to_char('9') AS NIVEL2 , to_char('10') AS NIVEL3 , to_char('11') AS NIVEL4 , to_char('12') AS NIVEL5 , to_char('13') AS NIVEL6 , to_char('14') AS NIVEL7 , to_char('17') AS NIVEL8 , to_char('19') AS NIVEL9 , to_char('21') AS NIVEL10,
       0 AS LINENETAMT, 0 AS QTYINVOICED, 0 AS WEIGHT, 
       CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.LINENETAMT *- 1 ELSE c_invoiceline.LINENETAMT END AS LINENETREF,
@@ -568,16 +556,16 @@
       TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())) AS TRDATE,
       C_INVOICELINE.AD_CLIENT_ID AS TRCLIENTID,
       C_INVOICELINE.AD_ORG_ID AS TRORGID,
-                CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
+                CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
                 END AS COSTCALCULATED,
                 0 AS COST,
-                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(trxcost.cost/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)
+                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(sum(trxcost.cost)/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)
                      ELSE (COALESCE(M_GET_NO_TRX_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, 'STA', ad_org.ad_org_id, null, C_INVOICE.C_CURRENCY_ID), 0)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END))
                 END AS COSTREF,
                 0 AS COSTREF2,
                 0 AS COSTREF3,
                 0 AS COSTEDAMT,
-                CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
+                CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
                      ELSE CASE WHEN C_DOCTYPE.DOCBASETYPE='ARC' THEN C_INVOICELINE.LINENETAMT*-1 ELSE C_INVOICELINE.LINENETAMT END
                 END AS COSTEDAMTREF,
                 0 AS COSTEDAMTREF2,
@@ -597,15 +585,13 @@
                 left join M_INOUTLINE on C_INVOICELINE.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
                 left join M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID
                 left join m_transaction trx ON trx.m_inoutline_id = m_inoutline.m_inoutline_id
-                left join (SELECT SUM(cost) as cost, m_transaction_id, c_currency_id
-                           FROM m_transaction_cost
-                           GROUP BY m_transaction_id, c_currency_id
-                          ) trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
+                left join m_transaction_cost trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
       WHERE C_INVOICE.ISSOTRX = 'Y'
       AND C_INVOICE.PROCESSED = 'Y'
       AND 3=3 AND C_INVOICE.AD_ORG_ID IN ('1')
       AND C_INVOICE.AD_CLIENT_ID IN('14')
       AND 2=2
+      GROUP BY trxcost.m_transaction_id, C_INVOICELINE.C_INVOICELINE_ID, C_BPARTNER.C_BPARTNER_ID, M_PRODUCT_CATEGORY.NAME, C_INVOICE.DOCUMENTNO, AD_ORG.NAME, AD_USER.AD_USER_ID, C_PROJECT.NAME, AD_USER.FIRSTNAME, AD_USER.LASTNAME, C_BP_GROUP.NAME, M_INOUT.C_BPARTNER_LOCATION_ID, C_INVOICELINE.AD_CLIENT_ID, C_INVOICELINE.AD_ORG_ID, C_INVOICELINE.LINENETAMT, C_INVOICELINE.QTYINVOICED, C_UOM.UOMSYMBOL, c_doctype.docbasetype, ad_org.ad_org_id, C_INVOICE.C_CURRENCY_ID, C_INVOICE.DATEINVOICED, trx.movementqty, trx.movementdate, trx.ad_client_id, trx.ad_org_id, trxcost.c_currency_id, M_PRODUCT.WEIGHT, M_PRODUCT.M_PRODUCT_ID, M_PRODUCT.ISSTOCKED, M_PRODUCT.PRODUCTTYPE
       UNION ALL SELECT  to_char('28') AS NIVEL1 ,to_char('29') AS NIVEL2 ,to_char('30') AS NIVEL3 ,to_char('31') AS NIVEL4 ,to_char('32') AS NIVEL5 ,to_char('33') AS NIVEL6 ,to_char('34') AS NIVEL7 ,to_char('35') AS NIVEL8 ,to_char('36') AS NIVEL9 ,to_char('37') AS NIVEL10,
       0 AS LINENETAMT, 0 AS QTYINVOICED, 0 AS WEIGHT, 
       0 AS LINENETREF, 0 AS QTYINVOICEDREF, 0 AS WEIGHT_REF,
@@ -618,17 +604,17 @@
       TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())) AS TRDATE,
       C_INVOICELINE.AD_CLIENT_ID AS TRCLIENTID,
       C_INVOICELINE.AD_ORG_ID AS TRORGID,
-                CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
+                CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
                 END AS COSTCALCULATED,
                 0 AS COST,
                 0 AS COSTREF,
-                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(trxcost.cost/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)
+                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(sum(trxcost.cost)/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)
                      ELSE (COALESCE(M_GET_NO_TRX_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, 'STA', ad_org.ad_org_id, null, C_INVOICE.C_CURRENCY_ID), 0)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END))
                 END AS COSTREF2, 
                 0 AS COSTREF3,               
                 0 AS COSTEDAMT,
                 0 AS COSTEDAMTREF,
-                CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
+                CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
                      ELSE CASE WHEN C_DOCTYPE.DOCBASETYPE='ARC' THEN C_INVOICELINE.LINENETAMT*-1 ELSE C_INVOICELINE.LINENETAMT END
                 END AS COSTEDAMTREF2,
                 0 AS COSTEDAMTREF3                
@@ -647,15 +633,13 @@
                 left join M_INOUTLINE on C_INVOICELINE.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
                 left join M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID
                 left join m_transaction trx ON trx.m_inoutline_id = m_inoutline.m_inoutline_id
-                left join (SELECT SUM(cost) as cost, m_transaction_id, c_currency_id
-                           FROM m_transaction_cost
-                           GROUP BY m_transaction_id, c_currency_id
-                          ) trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
+                left join m_transaction_cost trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
       WHERE C_INVOICE.ISSOTRX = 'Y'
       AND C_INVOICE.PROCESSED = 'Y'
       AND 5=5 AND C_INVOICE.AD_ORG_ID IN ('1')
       AND C_INVOICE.AD_CLIENT_ID  IN('38')
       AND 4=4
+      GROUP BY trxcost.m_transaction_id, C_INVOICELINE.C_INVOICELINE_ID, C_BPARTNER.C_BPARTNER_ID, M_PRODUCT_CATEGORY.NAME, C_INVOICE.DOCUMENTNO, AD_ORG.NAME, AD_USER.AD_USER_ID, C_PROJECT.NAME, AD_USER.FIRSTNAME, AD_USER.LASTNAME, C_BP_GROUP.NAME, M_INOUT.C_BPARTNER_LOCATION_ID, C_INVOICELINE.AD_CLIENT_ID, C_INVOICELINE.AD_ORG_ID, C_INVOICELINE.LINENETAMT, C_INVOICELINE.QTYINVOICED, C_UOM.UOMSYMBOL, c_doctype.docbasetype, ad_org.ad_org_id, C_INVOICE.C_CURRENCY_ID, C_INVOICE.DATEINVOICED, trx.movementqty, trx.movementdate, trx.ad_client_id, trx.ad_org_id, trxcost.c_currency_id, M_PRODUCT.WEIGHT, M_PRODUCT.M_PRODUCT_ID, M_PRODUCT.ISSTOCKED, M_PRODUCT.PRODUCTTYPE
       UNION ALL  SELECT  to_char('39') AS NIVEL1  ,to_char('40') AS NIVEL2  ,to_char('41') AS NIVEL3  ,to_char('42') AS NIVEL4  ,to_char('43') AS NIVEL5  ,to_char('44') AS NIVEL6  ,to_char('45') AS NIVEL7  ,to_char('46') AS NIVEL8  ,to_char('47') AS NIVEL9  ,to_char('48') AS NIVEL10,
       0 AS LINENETAMT, 0 AS QTYINVOICED, 0 AS WEIGHT, 
       0 AS LINENETREF, 0 AS QTYINVOICEDREF, 0 AS WEIGHT_REF,
@@ -668,18 +652,18 @@
       TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())) AS TRDATE,
       C_INVOICELINE.AD_CLIENT_ID AS TRCLIENTID,
       C_INVOICELINE.AD_ORG_ID AS TRORGID,
-                CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
+                CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
                 END AS COSTCALCULATED,
                 0 AS COST,
                 0 AS COSTREF,
                 0 AS COSTREF2,
-                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(trxcost.cost/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)
+                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(sum(trxcost.cost)/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)
                      ELSE (COALESCE(M_GET_NO_TRX_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, 'STA', ad_org.ad_org_id, null, C_INVOICE.C_CURRENCY_ID), 0)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END))
                 END AS COSTREF3,                
                 0 AS COSTEDAMT,
                 0 AS COSTEDAMTREF,
                 0 AS COSTEDAMTREF2,
-                CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
+                CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
                      ELSE CASE WHEN C_DOCTYPE.DOCBASETYPE='ARC' THEN C_INVOICELINE.LINENETAMT*-1 ELSE C_INVOICELINE.LINENETAMT END
                 END AS COSTEDAMTREF3                
             FROM C_INVOICELINE 
@@ -697,15 +681,13 @@
                 left join M_INOUTLINE on C_INVOICELINE.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
                 left join M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID
                 left join m_transaction trx ON trx.m_inoutline_id = m_inoutline.m_inoutline_id
-                left join (SELECT SUM(cost) as cost, m_transaction_id, c_currency_id
-                           FROM m_transaction_cost
-                           GROUP BY m_transaction_id, c_currency_id
-                          ) trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
+                left join m_transaction_cost trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
       WHERE C_INVOICE.ISSOTRX = 'Y'
       AND C_INVOICE.PROCESSED = 'Y'
       AND 7=7 AND C_INVOICE.AD_ORG_ID IN ('1')
       AND  C_INVOICE.AD_CLIENT_ID  IN('49')
       AND 6=6
+      GROUP BY trxcost.m_transaction_id, C_INVOICELINE.C_INVOICELINE_ID, C_BPARTNER.C_BPARTNER_ID, M_PRODUCT_CATEGORY.NAME, C_INVOICE.DOCUMENTNO, AD_ORG.NAME, AD_USER.AD_USER_ID, C_PROJECT.NAME, AD_USER.FIRSTNAME, AD_USER.LASTNAME, C_BP_GROUP.NAME, M_INOUT.C_BPARTNER_LOCATION_ID, C_INVOICELINE.AD_CLIENT_ID, C_INVOICELINE.AD_ORG_ID, C_INVOICELINE.LINENETAMT, C_INVOICELINE.QTYINVOICED, C_UOM.UOMSYMBOL, c_doctype.docbasetype, ad_org.ad_org_id, C_INVOICE.C_CURRENCY_ID, C_INVOICE.DATEINVOICED, trx.movementqty, trx.movementdate, trx.ad_client_id, trx.ad_org_id, trxcost.c_currency_id, M_PRODUCT.WEIGHT, M_PRODUCT.M_PRODUCT_ID, M_PRODUCT.ISSTOCKED, M_PRODUCT.PRODUCTTYPE
       ORDER BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10) AA
       GROUP BY  NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID) ZZ
       GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 1
@@ -903,12 +885,12 @@
                 TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())) AS TRDATE,      
                 C_INVOICELINE.AD_CLIENT_ID AS TRCLIENTID,      
                 C_INVOICELINE.AD_ORG_ID AS TRORGID,
-                CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
+                CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
                 END AS COSTCALCULATED,
-                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(trxcost.cost/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)
+                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(sum(trxcost.cost)/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)
                      ELSE (COALESCE(M_GET_NO_TRX_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, 'STA', ad_org.ad_org_id, null, C_INVOICE.C_CURRENCY_ID), 0)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END))
                 END AS COST,
-                CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
+                CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
                      ELSE CASE WHEN C_DOCTYPE.DOCBASETYPE='ARC' THEN C_INVOICELINE.LINENETAMT*-1 ELSE C_INVOICELINE.LINENETAMT END
                 END AS COSTEDAMT
             FROM C_INVOICELINE 
@@ -926,15 +908,13 @@
                 left join M_INOUTLINE on C_INVOICELINE.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
                 left join M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID
                 left join m_transaction trx ON trx.m_inoutline_id = m_inoutline.m_inoutline_id
-                left join (SELECT SUM(cost) as cost, m_transaction_id, c_currency_id
-                           FROM m_transaction_cost
-                           GROUP BY m_transaction_id, c_currency_id
-                          ) trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
+                left join m_transaction_cost trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
       WHERE C_INVOICE.ISSOTRX = 'Y'
         AND C_INVOICE.PROCESSED = 'Y'
         AND C_INVOICE.AD_ORG_ID IN ('1')
         AND C_INVOICE.AD_CLIENT_ID IN ('7')
         AND 1=1
+      GROUP BY trxcost.m_transaction_id, C_INVOICELINE.C_INVOICELINE_ID, C_BPARTNER.C_BPARTNER_ID, M_PRODUCT_CATEGORY.NAME, C_INVOICE.DOCUMENTNO, AD_ORG.NAME, AD_USER.AD_USER_ID, C_PROJECT.NAME, AD_USER.FIRSTNAME, AD_USER.LASTNAME, C_BP_GROUP.NAME, M_INOUT.C_BPARTNER_LOCATION_ID, C_INVOICELINE.AD_CLIENT_ID, C_INVOICELINE.AD_ORG_ID, C_INVOICELINE.LINENETAMT, C_INVOICELINE.QTYINVOICED, C_UOM.UOMSYMBOL, c_doctype.docbasetype, ad_org.ad_org_id, C_INVOICE.C_CURRENCY_ID, C_INVOICE.DATEINVOICED, trx.movementqty, trx.movementdate, trx.ad_client_id, trx.ad_org_id, trxcost.c_currency_id, M_PRODUCT.WEIGHT, M_PRODUCT.M_PRODUCT_ID, M_PRODUCT.ISSTOCKED, M_PRODUCT.PRODUCTTYPE
       ORDER BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10) AA
       GROUP BY  NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID) ZZ
       GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 1
@@ -1157,7 +1137,7 @@
             M_PRODUCT.VALUE AS SEARCHKEY, 
             C_CURRENCY_CONVERT(CASE WHEN C_INVOICELINE.QTYINVOICED = 0 THEN 0 ELSE C_INVOICELINE.LINENETAMT/C_INVOICELINE.QTYINVOICED END, C_INVOICE.C_CURRENCY_ID, ?, TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())), NULL, C_INVOICE.AD_CLIENT_ID, C_INVOICE.AD_ORG_ID) AS UNITPRICE,
             CASE WHEN C_DOCTYPE.DOCBASETYPE = 'ARC' THEN C_CURRENCY_CONVERT(C_INVOICELINE.LINENETAMT*-1, C_INVOICE.C_CURRENCY_ID, ?, TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())), NULL, C_INVOICE.AD_CLIENT_ID, C_INVOICE.AD_ORG_ID) ELSE C_CURRENCY_CONVERT(C_INVOICELINE.LINENETAMT, C_INVOICE.C_CURRENCY_ID, ?, TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())), NULL, C_INVOICE.AD_CLIENT_ID, C_INVOICE.AD_ORG_ID) END AS AMOUNT,
-            CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(trxcost.cost/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)    ELSE (COALESCE(M_GET_NO_TRX_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, 'STA', ad_org.ad_org_id, null, C_INVOICE.C_CURRENCY_ID), 0)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END)) END AS COST,                
+            CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(sum(trxcost.cost)/abs(trx.movementqty)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END), C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)    ELSE (COALESCE(M_GET_NO_TRX_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, 'STA', ad_org.ad_org_id, null, C_INVOICE.C_CURRENCY_ID), 0)*(CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END)) END AS COST,
             C_INVOICELINE.QTYINVOICED*M_PRODUCT.WEIGHT AS WEIGHT,
             CASE WHEN c_doctype.docbasetype = 'ARC' THEN c_invoiceline.qtyinvoiced *- 1 ELSE c_invoiceline.qtyinvoiced END AS QTY,
             (SELECT U.NAME FROM AD_USER U WHERE U.AD_USER_ID = C_INVOICE.AD_USER_ID) AS CONTACT,
@@ -1180,16 +1160,14 @@
                 left join M_INOUTLINE on C_INVOICELINE.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
                 left join M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID
                 left join m_transaction trx ON trx.m_inoutline_id = m_inoutline.m_inoutline_id
-                left join (SELECT SUM(cost) as cost, m_transaction_id, c_currency_id
-                           FROM m_transaction_cost
-                           GROUP BY m_transaction_id, c_currency_id
-                          ) trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
+                left join m_transaction_cost trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
           WHERE C_INVOICE.ISSOTRX = 'Y'
             AND C_INVOICE.PROCESSED = 'Y'
             AND C_INVOICE.AD_ORG_ID IN ('1')
             AND C_INVOICE.AD_CLIENT_ID IN ('7')
             AND 1=1
-          AND 1=1) AA  
+          AND 1=1
+          GROUP BY trxcost.m_transaction_id, C_INVOICELINE.C_INVOICELINE_ID, C_DOCTYPE_TRL.NAME, C_DOCTYPE.NAME, C_BPARTNER.NAME, C_BPARTNER.C_BPARTNER_ID, M_PRODUCT_CATEGORY.NAME, M_PRODUCT.NAME, M_PRODUCT.VALUE, C_INVOICE.DOCUMENTNO, AD_ORG.NAME, C_INVOICE.AD_USER_ID, C_INVOICE.SALESREP_ID, C_INVOICE.C_PROJECT_ID, C_BP_GROUP.NAME, M_INOUT.C_BPARTNER_LOCATION_ID, C_INVOICE.AD_CLIENT_ID, C_INVOICE.AD_ORG_ID, C_INVOICELINE.LINENETAMT, C_INVOICELINE.QTYINVOICED, C_UOM.UOMSYMBOL, c_doctype.docbasetype, ad_org.ad_org_id, C_INVOICE.C_CURRENCY_ID, C_INVOICE.DATEINVOICED, trx.movementqty, trx.movementdate, trx.ad_client_id, trx.ad_org_id, trxcost.c_currency_id, M_PRODUCT.WEIGHT, M_PRODUCT.M_PRODUCT_ID, M_PRODUCT.ISSTOCKED, M_PRODUCT.PRODUCTTYPE) AA
           ORDER BY ORG, DOCUMENTNO, INVOICEDATE
      ]]></Sql>
     <Parameter name="cCurrencyConv"/>
