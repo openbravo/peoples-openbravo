@@ -292,12 +292,10 @@ enyo.kind({
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
       }
     }, function (error) {
-      if (error && error.exception) {
-        me.disableFilters(false);
-        me.multiOrdersList.reset();
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), error.exception.message ? error.exception.message : OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
-        return;
-      }
+      me.disableFilters(false);
+      me.multiOrdersList.reset();
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), (error && error.exception && error.exception.message) ? error.exception.message : OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+      return;
     });
     return true;
   },

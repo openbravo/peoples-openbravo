@@ -366,13 +366,11 @@ enyo.kind({
       }
       me.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterButtons(false);
     }, function (error) {
-      if (error && error.exception) {
-        me.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterButtons(false);
-        me.$.renderLoading.hide();
-        me.prsList.reset();
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), error.exception.message ? error.exception.message : OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
-        return;
-      }
+      me.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterButtons(false);
+      me.$.renderLoading.hide();
+      me.prsList.reset();
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), (error && error.exception && error.exception.message) ? error.exception.message : OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+      return;
     });
     return true;
   },
