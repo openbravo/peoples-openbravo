@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2013-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -130,7 +130,7 @@ isc.OBTreeGrid.addProperties({
   },
 
   handleFilterEditorSubmit: function (criteria, context, callback) {
-    if (isc.isA.Tree(this.data)) {
+    if (isc.isA.Tree(this.data) && this.willFetchData(criteria)) {
       // Only reset the open state if the tree already has data
       this.setOpenState('[]');
     }
