@@ -41,9 +41,9 @@
           OB.UTIL.SynchronizationHelper.finished(order.get('searchSynchId'), 'clickSearchNewReceipt');
           order.unset('searchSynchId');
         }
-        if (order.get('askForRelatedReceipts') && OB.MobileApp.model.get('terminal').terminalType.obsrOpenrelatedreceipts && order.get('bp').get('id') !== OB.MobileApp.model.get('terminal').businessPartner) {
+        if (order.get('askForRelatedReceipts') && OB.MobileApp.model.get('terminal').terminalType.openrelatedreceipts && order.get('bp').get('id') !== OB.MobileApp.model.get('terminal').businessPartner) {
           order.unset('askForRelatedReceipts');
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBSR_OpenRelatedReceipts'), null, [{
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OpenRelatedReceiptsTitle'), OB.I18N.getLabel('OBPOS_OpenRelatedReceiptsBody'), [{
             label: OB.I18N.getLabel('OBPOS_LblOk'),
             isConfirmButton: true,
             action: function () {
