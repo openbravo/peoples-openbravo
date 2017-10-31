@@ -507,7 +507,7 @@ enyo.kind({
       }
       this.$.totalpendinglbl.show();
 
-      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && this.receipt.get('prepaymentLimitAmt') < this.receipt.get('gross')) {
+      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
         this.$.donebutton.show();
       } else {
         this.$.donebutton.hide();
