@@ -84,6 +84,7 @@ public class AppPaymentEventHandler extends EntityPersistenceEventObserver {
           OBPOSApplications.PROPERTY_MASTERTERMINAL, appPayment.getObposApplications()),
           Restrictions.eq(OBPOSApplications.PROPERTY_MASTERTERMINAL, appPayment
               .getObposApplications().getMasterterminal()))));
+      queryApplications.setFilterOnActive(false);
       List<OBPOSApplications> terminalList = queryApplications.list();
 
       ScrollableResults scrollableResults = queryAppPayments.scroll(ScrollMode.FORWARD_ONLY);
