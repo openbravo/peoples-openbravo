@@ -1547,18 +1547,6 @@
     <editableField>true</editableField>
     <inheritedFrom xsi:nil="true"/>
   </ADProcessAccess>
-  <ADProcessAccess id="FF808181259DADEB01259DDDA4D3022D" identifier="Copy from Order - Finance">
-    <id>FF808181259DADEB01259DDDA4D3022D</id>
-    <process id="800165" entity-name="ADProcess" identifier="Copy from Order"/>
-    <role id="FF8081812250326E012250353BDE0005" entity-name="ADRole" identifier="Finance"/>
-    <active>true</active>
-    <creationDate transient="true">2017-05-30T11:47:04.340Z</creationDate>
-    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <updated transient="true">2017-05-30T11:47:04.340Z</updated>
-    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <editableField>true</editableField>
-    <inheritedFrom xsi:nil="true"/>
-  </ADProcessAccess>
   <ADProcessAccess id="FF808181259DADEB01259DDDA4D4022E" identifier="Trial Balance - Company Executive">
     <id>FF808181259DADEB01259DDDA4D4022E</id>
     <process id="800039" entity-name="ADProcess" identifier="Trial Balance"/>
@@ -1845,18 +1833,6 @@
     <updated transient="true">2017-05-30T11:47:04.335Z</updated>
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <editableField>false</editableField>
-    <inheritedFrom xsi:nil="true"/>
-  </ADProcessAccess>
-  <ADProcessAccess id="FF808181259DADEB01259DDDA4E6024E" identifier="Copy from Order - Sales">
-    <id>FF808181259DADEB01259DDDA4E6024E</id>
-    <process id="800165" entity-name="ADProcess" identifier="Copy from Order"/>
-    <role id="FF8081812250326E012250353BDE0006" entity-name="ADRole" identifier="Sales"/>
-    <active>true</active>
-    <creationDate transient="true">2017-05-30T11:47:04.334Z</creationDate>
-    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <updated transient="true">2017-05-30T11:47:04.334Z</updated>
-    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <editableField>true</editableField>
     <inheritedFrom xsi:nil="true"/>
   </ADProcessAccess>
   <ADProcessAccess id="FF808181259DADEB01259DDDA4E70250" identifier="Monthly Invoice - Finance">
