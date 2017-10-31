@@ -591,6 +591,7 @@ export.database: exports database structure and data to xml files.
       </classpath>
       <link href="http://docs.oracle.com/javase/9/docs/api/"/>
       <arg value="${j9.module.args}"/>
+      <arg value="-Xdoclint:none"/>
     </javadoc>
   </target>
 
