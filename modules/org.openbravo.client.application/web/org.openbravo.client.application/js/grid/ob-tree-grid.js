@@ -131,7 +131,7 @@ isc.OBTreeGrid.addProperties({
 
   handleFilterEditorSubmit: function (criteria, context, callback) {
     if (isc.isA.Tree(this.data) && this.willFetchData(criteria)) {
-      // Only reset the open state if the tree already has data
+      // Only reset the open state if the tree already has data and if the filter criteria has changed
       this.setOpenState('[]');
     }
     this.Super('handleFilterEditorSubmit', arguments);
