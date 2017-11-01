@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,49 +24,13 @@
   <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS" />
 
   <script language="JavaScript" src="../utility/DynamicJS.js" type="text/javascript"></script>
-  <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
-  <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
-  <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
-  <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
   <script language="JavaScript" type="text/javascript" id="paramDirectory">var baseDirectory = "../../../../../web/";</script>
   <script language="JavaScript" type="text/javascript" id="paramLanguage">  defaultLang = "en_US";</script>
-  <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
-  <script language="JavaScript" type="text/javascript">
-    var selectedRow = "";
-    function selectActual(obj) {
-      if (selectedRow != "") {
-        selectedRow.className = selectedRow.className.replace(' DataGrid_Body_Row_selected', '');
-      }
-      selectedRow = obj;
-      selectedRow.className += " DataGrid_Body_Row_selected";
-      selectedCheck = selectedRow.id.toString().replace('funcEvenOddRow', 'CheckNum');
-      document.getElementById(selectedCheck).checked = true;
-    }
-
-    function HoverCell(cell) {
-      cell.className = cell.className + ' DataGrid_Body_Cell_hover';
-    }
-
-    function unHoverCell(cell) {
-      cell.className = cell.className.replace(' DataGrid_Body_Cell_hover', '');
-    }
-    
-    function onloadFunctions() {
-        var listInputs = document.getElementsByTagName('input');
-        for(var i=0; i < listInputs.length; i++){
-            if(listInputs[i].id == 'BpartnerId'){
-                var name  = listInputs[i].name;
-                var id = name.substring("inpcBPartnerId".length, name.length);
-                keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId"+id+"', 'inpcBpartnerId_D"+id+"', document.frmMain.inpcBpartnerId_D"+id+".value, 'Command', 'KEY');", "inpcBpartnerId_D"+id+"", "null");
-            }
-        }
-    }
-  </script>
 
   <script language="JavaScript" type="text/javascript">
     function onLoadDo(){
@@ -79,20 +43,11 @@
       enableShortcuts('popup');
       setBrowserAutoComplete(false);
 
-      try {
-        onloadFunctions();
-      } catch (e) {}
-
       setWindowElementFocus('firstElement');
-      resizeAreaCreateFrom();
-    }
-
-    function onResizeDo(){
-     resizeAreaCreateFrom();
     }
   </script>
 </head>
-<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();">
 <form name="frmMain" method="post" action="ExportReferenceData.html">
   <input type="hidden" name="Command">
   <input type="hidden" name="IsPopUpCall" value="1"></input>
