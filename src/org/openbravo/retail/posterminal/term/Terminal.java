@@ -100,7 +100,7 @@ public class Terminal extends JSONProcessSimple {
             pOSTerminal.getSearchKey(), returnsDocTypeId);
       }
       String warehouseId = POSUtils.getWarehouseForTerminal(pOSTerminal).getId();
-      final org.openbravo.model.pricing.pricelist.PriceList pricesList = POSUtils
+      final org.openbravo.model.pricing.pricelist.PriceList priceList = POSUtils
           .getPriceListByTerminal(pOSTerminal.getSearchKey());
 
       HQLPropertyList regularTerminalHQLProperties = ModelExtensionUtils
@@ -164,23 +164,15 @@ public class Terminal extends JSONProcessSimple {
       String terminalhqlquery = "select " + "'"
           + currencyFormat
           + "' as currencyFormat, "
+          + "pricelist.id as priceList, "
+          + "pricelist.currency.id as currency, "
           + "'"
-          + pricesList.getId()
-          + "' as priceList, "
-          + "'"
-          + pricesList.getCurrency().getId()
-          + "' as currency, "
-          + "'"
-          + pricesList.getCurrency().getIdentifier()
+          + priceList.getCurrency().getIdentifier()
           + "' as "
           + getIdentifierAlias("currency")
           + ", "
-          + "'"
-          + pricesList.getCurrency().isCurrencySymbolAtTheRight()
-          + "' as currencySymbolAtTheRight, "
-          + "'"
-          + pricesList.getCurrency().getSymbol()
-          + "' as symbol, "
+          + "pricelist.currency.currencySymbolAtTheRight as currencySymbolAtTheRight, "
+          + "pricelist.currency.symbol as symbol, "
           + "'"
           + warehouseId
           + "' as warehouse, "
@@ -204,9 +196,9 @@ public class Terminal extends JSONProcessSimple {
           + " as sessionTimeout, "
           + selectOrgImage
           + regularTerminalHQLProperties.getHqlSelect()
-          + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype "
+          + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype, PricingPriceList pricelist "
           + fromOrgImage
-          + " where pos.$readableSimpleCriteria and pos.$activeCriteria  and pos.searchKey = :searchKey "
+          + " where pos.$readableSimpleCriteria and pos.$activeCriteria and pos.searchKey =:searchKey and pricelist.id =:pricelistId "
           + whereOrgImage;
 
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(terminalhqlquery, OBContext
@@ -215,6 +207,8 @@ public class Terminal extends JSONProcessSimple {
 
       final Query terminalquery = querybuilder.getDalQuery();
       terminalquery.setParameter("searchKey", pOSTerminal.getSearchKey());
+      terminalquery.setParameter("pricelistId", priceList.getId());
+
       if (myOrgInfo.getYourCompanyDocumentImage() != null) {
         terminalquery.setParameter("imageId", myOrgInfo.getYourCompanyDocumentImage().getId());
       }
