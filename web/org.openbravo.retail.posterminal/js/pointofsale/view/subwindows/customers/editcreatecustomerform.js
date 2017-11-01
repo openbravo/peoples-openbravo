@@ -14,7 +14,8 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.newcustomer',
   classes: 'receipt-customer-selector-editor',
   events: {
-    onShowPopup: ''
+    onShowPopup: '',
+    onDisableButton: ''
   },
   handlers: {
     onCancelClose: 'cancelClose',
@@ -59,6 +60,9 @@ enyo.kind({
         this.$.body.$.edit_createcustomers_impl.$.shippingAddrFields.show();
         this.$.header.setContent(OB.I18N.getLabel('OBPOS_TitleNewCustomer'));
       }
+      this.waterfall('onDisableButton', {
+        disabled: false
+      });
       //show
       return true;
     } else {

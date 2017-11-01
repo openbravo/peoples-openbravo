@@ -16,7 +16,8 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddr',
   classes: 'receipt-customer-selector-editor',
   events: {
-    onShowPopup: ''
+    onShowPopup: '',
+    onDisableButton: ''
   },
   handlers: {
     onSetValues: 'setValues',
@@ -45,6 +46,9 @@ enyo.kind({
       } else {
         this.$.header.setContent(OB.I18N.getLabel('OBPOS_TitleNewCustomerAddress'));
       }
+      this.waterfall('onDisableButton', {
+        disabled: false
+      });
       //show
       return true;
     } else {

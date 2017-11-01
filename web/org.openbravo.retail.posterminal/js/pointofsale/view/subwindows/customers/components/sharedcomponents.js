@@ -405,6 +405,12 @@ enyo.kind({
     var me = this,
         customerEdited;
 
+    function enableButtonsCallback(disable) {
+      me.waterfall('onDisableButton', {
+        disabled: disable
+      });
+    }
+
     function getCustomerValues(params) {
       me.waterfall('onSaveChange', {
         customer: params.customer
@@ -470,6 +476,7 @@ enyo.kind({
         windowComponent: me
       }, function (args) {
         if (args && args.cancellation && args.cancellation === true) {
+          enableButtonsCallback(false);
           return true;
         }
         customerEdited = args.customer;
@@ -493,6 +500,8 @@ enyo.kind({
       });
       if (validateForm(this)) {
         beforeCustomerSave(this.model.get('customer'), true);
+      } else {
+        enableButtonsCallback(false);
       }
     } else {
       this.model.get('customer').loadModel(this.customer, function (customer) {
@@ -501,6 +510,8 @@ enyo.kind({
         });
         if (validateForm(me)) {
           beforeCustomerSave(customer, false);
+        } else {
+          enableButtonsCallback(false);
         }
       });
     }
