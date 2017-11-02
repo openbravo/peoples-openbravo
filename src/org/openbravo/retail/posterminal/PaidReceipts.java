@@ -85,11 +85,14 @@ public class PaidReceipts extends JSONProcessSimple {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
-    final String ORIGIN_CENTRAL = MobileServerController.getInstance().getCentralServerKey();
-    if (MobileServerController.getInstance().isThisAStoreServer()
-        && ORIGIN_CENTRAL.equals(jsonsent.optString("originServer"))) {
-      return MobileServerRequestExecutor.getInstance().executeCentralRequest(
-          MobileServerUtils.OBWSPATH + PaidReceipts.class.getName(), jsonsent);
+    if (MobileServerController.getInstance().getCentralServer() != null) {
+      final String ORIGIN_CENTRAL = MobileServerController.getInstance().getCentralServer()
+          .getName();
+      if (MobileServerController.getInstance().isThisAStoreServer()
+          && ORIGIN_CENTRAL.equals(jsonsent.optString("originServer"))) {
+        return MobileServerRequestExecutor.getInstance().executeCentralRequest(
+            MobileServerUtils.OBWSPATH + PaidReceipts.class.getName(), jsonsent);
+      }
     }
     JSONObject result = new JSONObject();
     OBContext.setAdminMode(true);
