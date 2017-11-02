@@ -85,20 +85,20 @@ OB.CopyFromOrders.onLoad = function (view) {
   selection = parentGrid.getSelectedRecords();
   paramGrid = view.theForm.getItem('grid').canvas.viewGrid;
 
-  if(selection.length === 1){
+  if (selection.length === 1) {
     selectedRecord = selection[0];
     var isSalesTransaction = (selectedRecord && selectedRecord.salesTransaction);
 
     //Set information message
     var messageBar = isSalesTransaction ? 'OBUIAPP_GridFilteredWithSO' : 'OBUIAPP_GridFilteredWithPO';
     view.messageBar.setMessage('info', OB.I18N.getLabel(messageBar), '');
-  
+
     gridCriteria = {
       _constructor: "AdvancedCriteria",
       operator: "or",
-      criteria:[{ 
-        fieldName: "salesTransaction", 
-        operator: "equals", 
+      criteria: [{
+        fieldName: "salesTransaction",
+        operator: "equals",
         value: isSalesTransaction
       }]
     };
