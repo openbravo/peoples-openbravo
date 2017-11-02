@@ -280,7 +280,7 @@
               (Cur_MoveLine.QuantityOrder * -1), Cur_MoveLine.C_UOM_ID
             )
             ;
-            
+          --Check Stock for Locator from which the Stock is going to be picked
           M_Check_Stock(Cur_MoveLine.M_Product_ID, v_Client_ID, v_Org_ID, v_Result, v_Message, Cur_MoveLine.M_Locator_ID) ;
           IF (v_Result = 0) THEN
             RAISE_APPLICATION_ERROR(-20000, v_Message||' '||'@line@'||' '||Cur_MoveLine.line) ;
@@ -305,10 +305,9 @@
               Cur_MoveLine.QuantityOrder, Cur_MoveLine.C_UOM_ID
             )
             ;
-          M_Check_Stock(Cur_MoveLine.M_Product_ID, v_Client_ID, v_Org_ID, v_Result, v_Message, Cur_MoveLine.M_LocatorTo_ID) ;
-          IF (v_Result = 0) THEN
-            RAISE_APPLICATION_ERROR(-20000, v_Message||' '||'@line@'||' '||Cur_MoveLine.line) ;
-          END IF;
+          --No need to check the Stock for the Locator to which the Stock is gointg to be moved
+          --It has been validated before that the quantity to be moved is positive or that the locator to allows negative stock
+          --If the Locator to has already negative stock before this transaction, the goods movement should not be stopped
         END LOOP;
       END; -- FOR COMMIT
     END IF;--END_PROCESS
