@@ -408,7 +408,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
       costAdjLine = getCostAdjLine();
     }
     ShipmentInOutLine inoutline = costAdjLine.getInventoryTransaction().getGoodsShipmentLine();
-    BigDecimal costAdjAmt = costAdjLine.getAdjustmentAmount().negate();
+    BigDecimal costAdjAmt = costAdjLine.getAdjustmentAmount();
     int precission = getCostCurrency().getStandardPrecision().intValue();
     StringBuffer where = new StringBuffer();
     where.append(" as trx");
