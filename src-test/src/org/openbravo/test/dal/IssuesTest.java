@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -821,14 +821,23 @@ public class IssuesTest extends OBBaseTest {
 
   @Test
   public void test21360() throws Exception {
-    final DalConnectionProvider connectionProvider = new DalConnectionProvider();
-    // test that a new connection is returned
-    final Connection connection = connectionProvider.getConnection();
-    final Connection otherConnection = connectionProvider.getTransactionConnection();
-    final Connection yetAnotherConnection = connectionProvider.getTransactionConnection();
-    Assert.assertNotSame(connection, yetAnotherConnection);
-    Assert.assertNotSame(connection, otherConnection);
-    Assert.assertNotSame(otherConnection, yetAnotherConnection);
+    final DalConnectionProvider connectionProvider = new DalConnectionProvider(false);
+
+    Connection connection;
+    Connection otherConnection = null;
+    Connection yetAnotherConnection = null;
+    try {
+      connection = connectionProvider.getConnection();
+      otherConnection = connectionProvider.getTransactionConnection();
+      yetAnotherConnection = connectionProvider.getTransactionConnection();
+      Assert.assertNotSame(connection, yetAnotherConnection);
+      Assert.assertNotSame(connection, otherConnection);
+      Assert.assertNotSame(otherConnection, yetAnotherConnection);
+    } finally {
+      connectionProvider.releaseCommitConnection(otherConnection);
+      connectionProvider.releaseCommitConnection(yetAnotherConnection);
+      // no need to explicitly return 1st connection as it's DAL's connection that's already handled
+    }
   }
 
   @Test
