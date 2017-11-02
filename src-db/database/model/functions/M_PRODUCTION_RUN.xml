@@ -659,7 +659,7 @@ BEGIN --BODY
           CUR_PL_Post.MovementDate, CUR_PL_Post.MovementQty, CUR_PL_Post.M_Product_UOM_ID, CUR_PL_Post.QuantityOrder,
           CUR_PL_Post.C_UOM_ID
       );
-      M_Check_Stock(CUR_PL_Post.M_Product_ID, v_Client_ID, v_Org_ID, v_Result, v_Message) ;
+      M_Check_Stock(CUR_PL_Post.M_Product_ID, v_Client_ID, v_Org_ID, v_Result, v_Message, CUR_PL_Post.M_Locator_ID) ;
       IF (v_Result = 0) THEN
         v_Message:=v_Message || ' @Inline@ ' || CUR_PL_Post.line;
         RAISE_APPLICATION_ERROR(-20000, v_Message);
