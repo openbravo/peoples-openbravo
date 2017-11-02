@@ -1492,7 +1492,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
       }
       if (OBMOBCUtils.isJsonObjectPropertyStringPresentNotNullAndNotEmptyString(jsonOrderLine,
-          "attributeValue")) {
+          "attSetInstanceDesc")) {
+        orderline.setAttributeSetValue(AttributesUtils.fetchAttributeSetValue(
+            jsonOrderLine.get("attSetInstanceDesc").toString(),
+            jsonOrderLine.getJSONObject("product").get("id").toString()));
+      } else if (OBMOBCUtils.isJsonObjectPropertyStringPresentNotNullAndNotEmptyString(
+          jsonOrderLine, "attributeValue")) {
         orderline.setAttributeSetValue(AttributesUtils.fetchAttributeSetValue(
             jsonOrderLine.get("attributeValue").toString(), jsonOrderLine.getJSONObject("product")
                 .get("id").toString()));

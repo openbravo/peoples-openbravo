@@ -48,6 +48,7 @@ public class AttributesUtils {
               AttributeSetInstance.class);
           attrSICrit.add(Restrictions.eq(AttributeSetInstance.PROPERTY_DESCRIPTION,
               validatedAttributeSetInstanceDescription));
+          attrSICrit.addOrderBy("id", false);
           List<AttributeSetInstance> attrSIList = attrSICrit.list();
           if (attrSIList.isEmpty() && attrSIList.size() == 0) {
             attrSetInst = AttributesUtils.createAttributeSetValue(
