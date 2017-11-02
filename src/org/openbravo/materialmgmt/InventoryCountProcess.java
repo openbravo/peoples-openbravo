@@ -56,14 +56,12 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.hook.InventoryCountCheckHook;
 import org.openbravo.materialmgmt.hook.InventoryCountProcessHook;
 import org.openbravo.model.ad.access.User;
-import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.calendar.Period;
 import org.openbravo.model.financialmgmt.calendar.PeriodControl;
-import org.openbravo.model.materialmgmt.onhandquantity.InventoryStatus;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
@@ -419,21 +417,20 @@ public class InventoryCountProcess implements Process {
     final StringBuilder hqlString = new StringBuilder();
     hqlString.append("select sd.id ");
     hqlString.append(" from MaterialMgmtInventoryCountLine as icl");
-    hqlString.append(" , " + StorageDetail.ENTITY_NAME + " as sd");
-    hqlString.append(" , " + Locator.ENTITY_NAME + " as l");
-    hqlString.append(" , " + InventoryStatus.ENTITY_NAME + " as invs");
-    hqlString.append(" where icl." + InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = ?");
-    hqlString.append("   and sd." + StorageDetail.PROPERTY_PRODUCT + " = icl."
-        + InventoryCountLine.PROPERTY_PRODUCT);
-    hqlString.append("   and sd." + StorageDetail.PROPERTY_ORGANIZATION + " = icl."
-        + InventoryCountLine.PROPERTY_ORGANIZATION);
-    hqlString.append("   and (sd." + StorageDetail.PROPERTY_QUANTITYONHAND + " < 0");
-    hqlString.append("     or sd." + StorageDetail.PROPERTY_ONHANDORDERQUANITY + " < 0");
+    hqlString.append(" , MaterialMgmtStorageDetail as sd");
+    hqlString.append(" , Locator as l");
+    hqlString.append(" , MaterialMgmtInventoryStatus as invs");
+    hqlString.append(" where icl.physInventory.id = ?");
+    hqlString.append("   and sd.product = icl.product");
+    hqlString.append("   and (sd.quantityOnHand < 0");
+    hqlString.append("     or sd.onHandOrderQuanity < 0");
     hqlString.append("     )");
-    hqlString.append("   and sd." + StorageDetail.PROPERTY_STORAGEBIN + ".id = l.id");
-    hqlString.append("   and l." + Locator.PROPERTY_INVENTORYSTATUS + ".id = invs.id");
-    hqlString.append("   and invs." + InventoryStatus.PROPERTY_OVERISSUE + " = false");
-    hqlString.append(" order by icl." + InventoryCountLine.PROPERTY_LINENO);
+    // Check only negative Stock for the Bins of the Lines of the Physical Inventory
+    hqlString.append("   and sd.storageBin.id = icl.storageBin.id");
+    hqlString.append("   and l.id = icl.storageBin.id");
+    hqlString.append("   and l.inventoryStatus.id = invs.id");
+    hqlString.append("   and invs.overissue = false");
+    hqlString.append(" order by icl.lineNo");
 
     final Session session = OBDal.getInstance().getSession();
     final Query query = session.createQuery(hqlString.toString());
