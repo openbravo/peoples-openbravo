@@ -255,7 +255,7 @@
             Cur_InvLine.QuantityOrder-COALESCE(Cur_InvLine.QuantityOrderBook, 0), Cur_InvLine.C_UOM_ID
           )
           ;
-        M_Check_Stock(Cur_InvLine.M_Product_ID, v_Client_ID, v_Org_ID, v_Result, v_Message) ;
+        M_Check_Stock(Cur_InvLine.M_Product_ID, v_Client_ID, v_Org_ID, v_Result, v_Message, Cur_InvLine.M_Locator_ID) ;
         IF v_Result=0 THEN
           RAISE_APPLICATION_ERROR(-20000, v_Message||' '||'@line@'||' '||Cur_InvLine.line) ;
         END IF;
