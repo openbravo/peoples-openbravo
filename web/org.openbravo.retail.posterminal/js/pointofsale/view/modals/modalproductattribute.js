@@ -21,7 +21,7 @@ enyo.kind({
       kind: 'enyo.Input',
       type: 'text',
       attributes: {
-        maxlength: 70
+        maxlength: 190
       },
       style: 'text-align: center;width: 400px; height: 40px;',
       name: 'valueAttribute',
