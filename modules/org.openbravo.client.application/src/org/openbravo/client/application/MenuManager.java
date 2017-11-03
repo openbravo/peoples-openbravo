@@ -118,7 +118,8 @@ public class MenuManager {
   private void linkForms() {
     final String formsHql = "select fa.specialForm.id " + //
         " from ADFormAccess fa " + //
-        "where fa.role.id=:roleId";
+        "where fa.role.id=:roleId" + //
+        "  and fa.active = true";
 
     final Query formsQry = OBDal.getInstance().getSession().createQuery(formsHql);
     formsQry.setParameter("roleId", OBContext.getOBContext().getRole().getId());
@@ -138,7 +139,8 @@ public class MenuManager {
   private void linkProcesses() {
     final String allowedProcessHql = "select pa.process.id " + //
         " from ADProcessAccess pa " + //
-        "where pa.role = :role";
+        "where pa.role = :role" + //
+        "  and pa.active = true";
 
     final Query allowedProcessQry = OBDal.getInstance().getSession().createQuery(allowedProcessHql);
     allowedProcessQry.setParameter("role", OBContext.getOBContext().getRole());
