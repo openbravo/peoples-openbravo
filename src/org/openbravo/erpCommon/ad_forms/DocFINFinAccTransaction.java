@@ -570,6 +570,8 @@ public class DocFINFinAccTransaction extends AcctServer {
                 as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn);
           }
           if (line.getDoubtFulDebtAmount().signum() != 0) {
+            // For Doubtful Debts, the Currency of the Invoice must be used to convert the amounts,
+            // since the debt has been recognized with the Currency of the Invoice
             String strcCurrencyId = invoice.getCurrency().getId();
             BigDecimal doubtFulDebtAmount = convertAmount(line.getDoubtFulDebtAmount(), isReceipt,
                 DateAcct, TABLEID_Invoice, invoice.getId(), strcCurrencyId, as.m_C_Currency_ID,

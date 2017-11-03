@@ -915,6 +915,9 @@ public class DocFINReconciliation extends AcctServer {
             as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn);
       }
       if (line.getDoubtFulDebtAmount().signum() != 0) {
+        // For Doubtful Debts, the Currency of the Invoice must be used to convert the amounts,
+        // since the debt has been recognized with the Currency of the Invoice
+
         String strcCurrencyId = invoice.getCurrency().getId();
         BigDecimal doubtFulDebtAmount = convertAmount(line.getDoubtFulDebtAmount(), isReceipt,
             DateAcct, TABLEID_Invoice, invoice.getId(), strcCurrencyId, as.m_C_Currency_ID, line,
@@ -936,7 +939,8 @@ public class DocFINReconciliation extends AcctServer {
           if (j == data.length - 1) {
             lineAmount = doubtFulDebtAmount.subtract(assignedAmount);
           }
-          DocLine lineDD = new DocLine(DocumentType, Record_ID, "");
+          DocLine_FINReconciliation lineDD = new DocLine_FINReconciliation(DocumentType, Record_ID,
+              "");
           lineDD.m_A_Asset_ID = data[j].aAssetId;
           lineDD.m_M_Product_ID = data[j].mProductId;
           lineDD.m_C_Project_ID = data[j].cProjectId;
@@ -948,6 +952,9 @@ public class DocFINReconciliation extends AcctServer {
           lineDD.m_User1_ID = data[j].user1id;
           lineDD.m_User2_ID = data[j].user2id;
           lineDD.m_AD_Org_ID = data[j].adOrgId;
+          // Set the related financial account, so the Conversion Rate at Doc Level can be retrieved
+          // from it
+          lineDD.setFinFinAccTransactionId(line.getFinFinAccTransactionId());
           fact.createLine(
               lineDD,
               getAccountBPartnerBadDebt((lineDD.m_C_BPartner_ID == null || lineDD.m_C_BPartner_ID
