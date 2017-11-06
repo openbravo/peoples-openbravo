@@ -1890,8 +1890,7 @@ public class CreateFrom extends HttpSecureAppServlet {
             String strAumQty = "";
             if (UOMUtil.isUomManagementEnabled() && data[i].mProductUomId.isEmpty()) {
               try {
-                BigDecimal qtyAum = new BigDecimal(
-                    vars.getNumericParameter("inpaumqty" + strLineId));
+                BigDecimal qtyAum = new BigDecimal(data[i].aumqty);
                 strAumQty = qtyAum.toString();
                 strMovementqty = qtyAum.toString();
                 if (data[i].cAum.isEmpty()) {
