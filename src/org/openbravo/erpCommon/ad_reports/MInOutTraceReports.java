@@ -415,7 +415,10 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
                   + calculated.get(strCalculate));
             }
             Integer isnull = calculated.get(strCalculate);
-            if (isnull == null) {
+            if (isnull == null
+                && !StringUtils.equals(dataProduction[j].mAttributesetinstanceId, "0")) {
+              // If there is not attribute Set Instance ID, do not explode the children for this
+              // report. It is meant to explode children of Products with attribute in this scenario
               MInOutTraceReportsData[] data = MInOutTraceReportsData.selectChilds(readOnlyCP,
                   vars.getLanguage(), dataProduction[j].mAttributesetinstanceId,
                   dataProduction[j].mProductId, dataProduction[j].mLocatorId,
@@ -505,7 +508,11 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
                 log4j.debug("******** Movement, hashtable calculated: "
                     + calculated.get(strCalculate));
               }
-              if (calculated.get(strCalculate) == null) {
+              if (calculated.get(strCalculate) == null
+                  && !StringUtils.equals(dataMovement[j].mAttributesetinstanceId, "0")) {
+                // If there is not attribute Set Instance ID, do not explode the children for this
+                // report. It is meant to explode children of Products with attribute in this
+                // scenario
                 MInOutTraceReportsData[] data = MInOutTraceReportsData.selectChilds(readOnlyCP,
                     vars.getLanguage(), dataMovement[j].mAttributesetinstanceId,
                     dataMovement[j].mProductId, dataMovement[j].mLocatorId,
