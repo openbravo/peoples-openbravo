@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -40,12 +40,12 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
+import org.openbravo.erpCommon.utility.AccDefUtility;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBObjectFieldProvider;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.financialmgmt.accounting.AccountingFact;
-import org.openbravo.model.financialmgmt.calendar.Period;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -256,20 +256,10 @@ public class TransactionsDao {
     for (AccountingFact aFact : obcAF.list()) {
       aFact.setAccountingDate(transaction.getTransactionDate());
       aFact.setTransactionDate(transaction.getTransactionDate());
-      aFact.setPeriod(getPeriod(transaction.getTransactionDate()));
+      aFact.setPeriod((AccDefUtility.getCurrentPeriod(transaction.getTransactionDate(),
+          AccDefUtility.getCalendar(transaction.getOrganization()))));
     }
     return;
-  }
-
-  public static Period getPeriod(Date date) {
-    Period period = null;
-    OBCriteria<Period> obcPe = OBDal.getInstance().createCriteria(Period.class);
-    obcPe.add(Restrictions.le(Period.PROPERTY_ENDINGDATE, date));
-    obcPe.add(Restrictions.ge(Period.PROPERTY_STARTINGDATE, date));
-    if (obcPe.list() != null && obcPe.list().size() > 0) {
-      period = obcPe.list().get(0);
-    }
-    return period;
   }
 
   public static List<FIN_FinaccTransaction> getTransactionsToReconciled(
