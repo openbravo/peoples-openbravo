@@ -865,7 +865,7 @@
 <!--170-->  <DESCRIPTION><![CDATA[Create and edit internal inventory movements among warehouses and storage bins.]]></DESCRIPTION>
 <!--170-->  <HELP><![CDATA[Goods Movements window allows to create internal inventory movements among warehouses and storage bins.]]></HELP>
 <!--170-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
-<!--170-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
+<!--170-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--170-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--170-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--170-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
