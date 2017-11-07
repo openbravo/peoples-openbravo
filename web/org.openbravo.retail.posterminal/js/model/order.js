@@ -737,6 +737,9 @@
       // Verify if it's necesary to skip applying the function
       if (this.get('skipCalculateReceipt')) {
         OB.debug('Skipping calculateReceipt function');
+        if (callback) {
+          callback();
+        }
         return;
       }
       OB.MobileApp.view.waterfall('calculatingReceipt');
@@ -1180,22 +1183,12 @@
         if (line.get('deleteApproved')) {
           // The approval to delete the line has already been granted
           line.unset('deleteApproved');
-          this.set('preventServicesUpdate', true);
-          this.set('deleting', true);
-          this.deleteLine(line);
-          this.unset('preventServicesUpdate');
-          this.unset('deleting');
-          this.get('lines').trigger('updateRelations');
+          this.deleteLinesFromOrder([line]);
         } else {
           // We don't have the approval to delete the line yet; request it
           OB.UTIL.Approval.requestApproval(OB.MobileApp.view.$.containerWindow.getRoot().model, 'OBPOS_approval.deleteLine', function (approved) {
             if (approved) {
-              me.set('preventServicesUpdate', true);
-              me.set('deleting', true);
-              me.deleteLine(line);
-              me.unset('preventServicesUpdate');
-              me.unset('deleting');
-              me.get('lines').trigger('updateRelations');
+              me.deleteLinesFromOrder([line]);
             }
           });
         }
@@ -1296,6 +1289,447 @@
       });
     },
 
+    removeDeleteLine: function (line) {
+      var deleteIndex = -1;
+      _.each(this.get('deletedLines'), function (d, index) {
+        if (d.id === line.id) {
+          deleteIndex = index;
+        }
+      });
+      if (deleteIndex !== -1) {
+        this.get('deletedLines').splice(deleteIndex, 1);
+        if (this.get('deletedLines').length === 0) {
+          this.unset('deletedLines');
+        }
+      }
+      line.unset('obposIsDeleted');
+    },
+
+    deleteLinesFromOrder: function (selectedModels, callback) {
+      var me = this,
+          pointofsale = OB.MobileApp.view.$.containerWindow.getRoot();
+
+      function postDeleteLine() {
+        var cleanReceipt, cloneLines;
+
+        cleanReceipt = function () {
+          me.adjustPayment();
+          me.unset('preventServicesUpdate');
+          me.unset('deleting');
+          me.get('lines').trigger('updateRelations');
+          me.save(function () {
+            enyo.$.scrim.hide();
+            OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteLine', {
+              order: me,
+              selectedLines: selectedModels
+            }, function (args) {
+              if (callback) {
+                callback();
+              }
+            });
+          });
+        };
+
+        cloneLines = function () {
+          var clonedLines = [];
+          _.each(me.get('lines').models, function (line) {
+            var clonedLine = new OrderLine(line.attributes);
+            clonedLines.push(clonedLine);
+          });
+          return clonedLines;
+        };
+
+        if (me.get('undo')) {
+          var text, lines, relations;
+          text = me.get('undo').text;
+          lines = me.get('undo').lines;
+          relations = me.get('undo').relations;
+
+          me.setUndo('DeleteLine', {
+            text: text,
+            lines: lines,
+            relations: relations,
+            undo: function () {
+              var i;
+              enyo.$.scrim.show();
+              me.set('preventServicesUpdate', true);
+              me.set('deleting', true);
+              if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id')) {
+                for (i = 0; i < me.get('undo').lines.length; i++) {
+                  if (!me.get('undo').lines[i].get('product').get('oBPOSAllowAnonymousSale')) {
+                    OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('undo').lines[i].get('product').get('_identifier')]));
+                    return;
+                  }
+                }
+              }
+              me.get('undo').lines.sort(function (a, b) {
+                if (a.get('undoPosition') > b.get('undoPosition')) {
+                  return 1;
+                }
+                if (a.get('undoPosition') < b.get('undoPosition')) {
+                  return -1;
+                }
+                // a must be equal to b
+                return 0;
+              });
+
+              lines.forEach(function (line) {
+                if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.get('obposQtyDeleted')) {
+                  line.set('qty', line.get('obposQtyDeleted'));
+                  line.set('obposQtyDeleted', 0);
+                }
+                me.removeDeleteLine(line);
+                me.get('lines').add(line, {
+                  at: line.get('undoPosition')
+                });
+                if (OB.UTIL.RfidController.isRfidConfigured() && line.get('obposEpccode')) {
+                  OB.UTIL.RfidController.addEpcLine(line);
+                }
+              });
+              relations.forEach(function (rel) {
+                var rls = rel[0].get('relatedLines').slice(),
+                    lineToAddRelated = _.filter(me.get('lines').models, function (line) {
+                    return line.id === rel[0].id;
+                  });
+                rls.push(rel[1]);
+                lineToAddRelated[0].set('relatedLines', rls);
+              });
+              me.set('undo', null);
+              me.unset('preventServicesUpdate');
+              me.unset('deleting');
+              me.get('lines').trigger('updateRelations');
+              me.calculateReceipt(function () {
+                enyo.$.scrim.hide();
+              });
+            }
+          });
+        }
+
+        if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+          var skippingCalculateReceipt = me.get('skipCalculateReceipt');
+          if (skippingCalculateReceipt) {
+            me.unset('skipCalculateReceipt');
+          }
+          me.calculateReceipt(function () {
+            if (skippingCalculateReceipt) {
+              me.set('skipCalculateReceipt', true);
+            }
+            if (!me.get('deletedLines')) {
+              me.set('deletedLines', []);
+            }
+            _.each(cloneLines(), function (line) {
+              if (line.get('obposIsDeleted')) {
+                var deletedLine = new OrderLine(line.attributes);
+                // Move to deleted lines
+                me.get('deletedLines').push(deletedLine);
+                me.get('lines').remove(line);
+              }
+            });
+            cleanReceipt();
+          });
+        } else {
+          _.each(cloneLines(), function (line) {
+            if (line.get('obposIsDeleted')) {
+              me.get('lines').remove(line);
+            }
+          });
+          me.calculateReceipt(function () {
+            cleanReceipt();
+          });
+        }
+      }
+
+      function preDeleteLine() {
+        OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteLine', {
+          order: me,
+          selectedLines: selectedModels
+        }, function (args) {
+          if (args && args.cancelOperation && args.cancelOperation === true) {
+            return;
+          }
+          enyo.$.scrim.show();
+          me.get('lines').forEach(function (line, idx) {
+            line.set('undoPosition', idx);
+          });
+          me.set('undo', null);
+          me.set('preventServicesUpdate', true);
+          me.set('deleting', true);
+          me._deleteLines(selectedModels, 0, selectedModels.length, postDeleteLine);
+          me.trigger('scan');
+        });
+      }
+
+      //If there are no lines to delete, continue
+      if (!selectedModels || (selectedModels && !selectedModels.length)) {
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+
+      //Editable Validation
+      if (this.get('isEditable') === false) {
+        pointofsale.doShowPopup({
+          popup: 'modalNotEditableOrder'
+        });
+        return true;
+      }
+
+      //Services validation
+      var unGroupedServiceLines = _.filter(selectedModels, function (line) {
+        return line.get('product').get('productType') === 'S' && line.get('product').get('quantityRule') === 'PP' && !line.get('groupService') && line.has('relatedLines') && line.get('relatedLines').length > 0 && line.get('isEditable');
+      });
+      if (unGroupedServiceLines && unGroupedServiceLines.length > 0) {
+        var i, j, serviceQty, productQty, uniqueServices, getServiceQty, getProductQty;
+        uniqueServices = _.uniq(unGroupedServiceLines, false, function (line) {
+          return line.get('product').get('id') + line.get('relatedLines')[0].orderlineId;
+        });
+        getServiceQty = function (service) {
+          return _.filter(unGroupedServiceLines, function (line) {
+            return line.get('product').get('id') === service.get('product').get('id') && line.get('relatedLines')[0].orderlineId === service.get('relatedLines')[0].orderlineId;
+          }).length;
+        };
+        getProductQty = function (service) {
+          return _.find(me.get('lines').models, function (line) {
+            return _.indexOf(_.pluck(service.get('relatedLines'), 'orderlineId'), line.get('id')) !== -1;
+          }).get('qty');
+        };
+
+        for (i = 0; i < uniqueServices.length; i++) {
+          serviceQty = getServiceQty(uniqueServices[i]);
+          productQty = getProductQty(uniqueServices[i]);
+          if (productQty && productQty !== serviceQty) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LineCanNotBeDeleted'), OB.I18N.getLabel('OBPOS_AllServiceLineMustSelectToDelete'), [{
+              label: OB.I18N.getLabel('OBMOBC_LblOk')
+            }]);
+            return;
+          }
+        }
+      }
+
+      OB.UTIL.Approval.requestApproval(pointofsale.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+        if (approved) {
+          selectedModels.forEach(function (line, idx) {
+            line.set('deleteApproved', true);
+          });
+          preDeleteLine();
+        }
+      });
+    },
+
+    _deleteLines: function (lines, idx, length, callback) {
+      var me = this,
+          line = lines[idx];
+
+      if (idx === 0) {
+        var i;
+        for (i = 0; i < lines.length; i++) {
+          if (me.get('replacedorder') && lines[i].get('remainingQuantity')) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
+            if (callback) {
+              callback();
+            }
+            return;
+          }
+        }
+      } else if (idx === length) {
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+      if (this.get('lines').get(line).get('obposIsDeleted')) {
+        this._deleteLines(lines, idx + 1, length, callback);
+      } else {
+        this._deleteLine(line, function () {
+          me._deleteLines(lines, idx + 1, length, callback);
+        });
+      }
+    },
+
+    _deleteLine: function (line, callback) {
+      var me = this,
+          pack = line.isAffectedByPack(),
+          productId = line.get('product').id,
+          text, linesToDelete, relations, deletedQty;
+
+      //Defensive code: Do not remove non existing line
+      if (!this.get('lines').get(line)) {
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+
+      if (line.get('obposIsDeleted')) {
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+
+      if (!line.get('isDeletable')) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotDeletableLine', [line.get('product').get('_identifier')]));
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+
+      if (me.get('replacedorder') && line.get('remainingQuantity')) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+
+      if (pack) {
+        // When deleting a line, check lines with other product that are affected by
+        // same pack than deleted one and merge splitted lines created for those
+        this.get('lines').forEach(function (l) {
+          var affected;
+          if (productId === l.get('product').id) {
+            return; //continue
+          }
+          affected = l.isAffectedByPack();
+          if (affected && affected.ruleId === pack.ruleId) {
+            this.mergeLines(l);
+          }
+        }, this);
+      }
+
+      // trigger
+      line.trigger('removed', line);
+
+      if (OB.UTIL.RfidController.isRfidConfigured() && line.get('obposEpccode')) {
+        OB.UTIL.RfidController.removeEpcLine(line);
+      }
+
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+        if (!line.get('hasTaxError')) {
+          line.set('obposQtyDeleted', line.get('qty'));
+          line.set('qty', 0, {
+            silent: true
+          });
+        } else {
+          // The line must be removed here because when the preference OBPOS_remove_ticket is enabled, the
+          // calculateReceipt process is executed before removing the lines, causing a js error during the
+          // tax calculation (due to the tax error)
+          this.get('lines').remove(line);
+        }
+      }
+
+      line.set('obposIsDeleted', true);
+
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.get('obposQtyDeleted')) {
+        deletedQty = line.get('obposQtyDeleted');
+      } else {
+        deletedQty = line.get('qty');
+      }
+
+      if (!this.get('undo')) {
+        text = OB.I18N.getLabel('OBPOS_DeleteLine') + ': ' + deletedQty + ' x ' + line.get('product').get('_identifier');
+        linesToDelete = [line];
+        relations = [];
+        this.setUndo('DeleteLine', {
+          text: text,
+          lines: linesToDelete,
+          relations: relations
+        });
+      } else {
+        linesToDelete = this.get('undo').lines;
+        if (!linesToDelete) {
+          linesToDelete = [];
+        }
+        linesToDelete.push(line);
+        text = this.get('undo').text;
+        if (text) {
+          text += ', ' + deletedQty + ' x ' + line.get('product').get('_identifier');
+        } else {
+          text = OB.I18N.getLabel('OBPOS_DeleteLine') + ': ' + deletedQty + ' x ' + line.get('product').get('_identifier');
+        }
+        relations = this.get('undo').relations;
+        if (!relations) {
+          relations = [];
+        }
+        this.get('undo').text = text;
+        this.get('undo').lines = linesToDelete;
+        this.get('undo').relations = relations;
+      }
+
+      this.removeRelatedServices(line, function () {
+        OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteRelatedServices', {
+          receipt: me,
+          removedLine: line
+        }, function (args) {
+          if (callback) {
+            callback();
+          }
+        });
+      });
+    },
+
+    removeRelatedServices: function (lineToDelete, callback) {
+      var me = this,
+          removedId = lineToDelete.get('id'),
+          serviceLinesToCheck = [],
+          deletedQty;
+
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && lineToDelete.get('obposQtyDeleted')) {
+        deletedQty = lineToDelete.get('obposQtyDeleted');
+      } else {
+        deletedQty = lineToDelete.get('qty');
+      }
+
+      _.filter(this.get('lines').models, function (line) {
+        return !line.get('obposIsDeleted');
+      }).forEach(function (line, idx) {
+        if (line.has('relatedLines') && line.get('relatedLines').length > 0) {
+          var relationIds = _.pluck(line.get('relatedLines'), 'orderlineId');
+          if (_.indexOf(relationIds, removedId) !== -1) {
+            serviceLinesToCheck.push([line, idx]);
+          }
+        }
+      });
+      if (serviceLinesToCheck.length > 0) {
+        var removeNextRelatedService;
+        removeNextRelatedService = function (idx) {
+          if (idx === serviceLinesToCheck.length) {
+            if (callback) {
+              callback();
+            }
+          } else {
+            var lineToCheck = serviceLinesToCheck[idx],
+                rl, rls;
+            if (lineToCheck[0].get('relatedLines').length > 1) {
+              rl = _.filter(lineToCheck[0].get('relatedLines'), function (rl) {
+                return rl.orderlineId === lineToDelete.get('id');
+              });
+              me.get('undo').relations.push([lineToCheck[0], rl[0]]);
+              //Effectively remove the relation from the service line
+              rls = lineToCheck[0].get('relatedLines').slice();
+              rls.splice(lineToCheck[0].get('relatedLines').indexOf(rl[0]), 1);
+              lineToCheck[0].set('relatedLines', rls);
+              if (lineToCheck[0].get('product').get('quantityRule') === 'PP') {
+                me.get('undo').text += ', ' + deletedQty + ' x ' + lineToCheck[0].get('product').get('_identifier');
+              }
+              removeNextRelatedService(idx + 1);
+            } else {
+              me._deleteLine(lineToCheck[0], function () {
+                removeNextRelatedService(idx + 1);
+              });
+            }
+          }
+        };
+        removeNextRelatedService(0);
+      } else {
+        if (callback) {
+          callback();
+        }
+      }
+    },
+
     deleteLines: function (lines, idx, length, callback) {
       var me = this,
           line = lines[idx],
@@ -1326,6 +1760,7 @@
           }
           };
 
+      OB.warn('DEPRECATED deleteLines FUNCTION!!! Use the deleteLinesFromOrder function. The related services will not be removed');
       if (idx === 0) {
         for (i = 0; i < lines.length; i++) {
           if (me.get('replacedorder') && lines[i].get('remainingQuantity')) {
@@ -1356,27 +1791,12 @@
       }
     },
 
-    removeDeleteLine: function (line) {
-      var deleteIndex = -1;
-      _.each(this.get('deletedLines'), function (d, index) {
-        if (d.id === line.id) {
-          deleteIndex = index;
-        }
-      });
-      if (deleteIndex !== -1) {
-        this.get('deletedLines').splice(deleteIndex, 1);
-        if (this.get('deletedLines').length === 0) {
-          this.unset('deletedLines');
-        }
-      }
-      line.unset('obposIsDeleted');
-    },
-
     deleteLine: function (line, doNotSave, callback, isLastLine) {
       var me = this,
           pack = line.isAffectedByPack(),
           productId = line.get('product').id;
 
+      OB.warn('DEPRECATED deleteLine FUNCTION!!! Use the deleteLinesFromOrder function. The related services will not be removed');
       //Defensive code: Do not remove non existing line
       if (!this.get('lines').get(line)) {
         if (callback) {
@@ -1879,6 +2299,14 @@
     },
 
     _drawLinesDistribution: function (data) {
+      var me = this,
+          checkLinesToAdd = function () {
+          if (data && data.linesToAdd && data.linesToAdd.length > 0) {
+            _.each(data.linesToAdd, function (lineToAdd) {
+              me.createLine(lineToAdd.product, lineToAdd.qtyToAdd);
+            }, me);
+          }
+          };
       if (data && data.linesToModify && data.linesToModify.length > 0) {
         _.each(data.linesToModify, function (lineToChange) {
           var line = this.get('lines').getByCid(lineToChange.lineCid);
@@ -1900,20 +2328,16 @@
         }, this);
       }
       if (data && data.linesToRemove && data.linesToRemove.length > 0) {
+        var linesToRemove = [];
         _.each(data.linesToRemove, function (lineCidToRemove) {
           var line = this.get('lines').getByCid(lineCidToRemove);
-          this.set('preventServicesUpdate', true);
-          this.set('deleting', true);
-          this.deleteLine(line);
-          this.unset('preventServicesUpdate');
-          this.unset('deleting');
-          this.get('lines').trigger('updateRelations');
-        }, this);
-      }
-      if (data && data.linesToAdd && data.linesToAdd.length > 0) {
-        _.each(data.linesToAdd, function (lineToAdd) {
-          this.createLine(lineToAdd.product, lineToAdd.qtyToAdd);
-        }, this);
+          linesToRemove.push(line);
+        });
+        this.deleteLinesFromOrder(linesToRemove, function () {
+          checkLinesToAdd();
+        });
+      } else {
+        checkLinesToAdd();
       }
     },
 
@@ -2383,9 +2807,7 @@
                 if (OB.UTIL.RfidController.isRfidConfigured() && newline.get('obposEpccode')) {
                   OB.UTIL.RfidController.removeEpcLine(newline);
                 }
-                order.set('preventServicesUpdate', true);
-                order.deleteLines([newline], 0, 1, function () {
-                  order.unset('preventServicesUpdate');
+                order.deleteLinesFromOrder([newline], function () {
                   order.set('undo', null);
                 });
               }
@@ -2752,19 +3174,13 @@
           });
         });
       };
-      _.each(me.get('lines').models, function (line) {
+      _.each(this.get('lines').models, function (line) {
         orderlines.push(line);
         promotionlines.push(line.get('promotions'));
       });
-      this.set('preventServicesUpdate', true);
-      this.set('deleting', true);
-      _.each(orderlines, function (line) {
-        me.deleteLine(line, true);
+      this.deleteLinesFromOrder(orderlines, function () {
+        addProductsOfLines(me, orderlines, 0, callback, promotionlines);
       });
-      this.unset('preventServicesUpdate');
-      this.unset('deleting');
-      this.get('lines').trigger('updateRelations');
-      addProductsOfLines(this, orderlines, 0, callback, promotionlines);
     },
 
     setOrderType: function (permission, orderType, options) {

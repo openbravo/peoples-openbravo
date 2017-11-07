@@ -202,7 +202,6 @@ enyo.kind({
     permission: 'OBPOS_ActionButtonDelete',
     tap: function () {
       this.owner.owner.doDeleteLine({
-        line: this.owner.owner.line,
         selectedModels: this.owner.owner.selectedModels
       });
     },

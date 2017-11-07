@@ -607,7 +607,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     }, this);
 
     receipt.get('lines').on('remove', function () {
-      if (!receipt.get('isEditable')) {
+      if (!receipt.get('isEditable') || receipt.get('deleting')) {
         return;
       }
       // Calculate the receipt
