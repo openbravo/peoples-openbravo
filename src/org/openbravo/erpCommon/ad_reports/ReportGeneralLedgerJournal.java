@@ -362,10 +362,10 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
        * strFactAcctGroupId(will take care of criteria from current screen)
        */
       String strFactAcctGroupId = "";
-      if (StringUtils.isEmpty(strcAcctSchemaId) && StringUtils.isEmpty(strDateFrom)
-          && StringUtils.isEmpty(strDocument) && StringUtils.equals(strOrg, "0")
-          && StringUtils.isEmpty(strShowClosing) && StringUtils.isEmpty(strShowReg)
-          && StringUtils.isEmpty(strShowOpening) && StringUtils.isEmpty(strRecord)) {
+      if (StringUtils.isEmpty(strDateFrom) && StringUtils.isEmpty(strDocument)
+          && StringUtils.equals(strOrg, "0") && StringUtils.isEmpty(strShowClosing)
+          && StringUtils.isEmpty(strShowReg) && StringUtils.isEmpty(strShowOpening)
+          && StringUtils.isEmpty(strRecord)) {
 
         int currentHistoryIndex = new Integer(
             new VariablesHistory(request).getCurrentHistoryIndex()).intValue();
@@ -845,14 +845,36 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       } else if (StringUtils.isEmpty(strRecord)) {
         String strCheck = buildCheck(strShowClosing, strShowReg, strShowOpening, strShowRegular,
             strShowDivideUp);
-        scrollData = ReportGeneralLedgerJournalData.select(readOnlyCP, "0",
-            StringUtils.equals(strShowDescription, "Y") ? "'Y'" : "'N'",
+        int recordCount = Integer.parseInt(ReportGeneralLedgerJournalData.selectCount2(readOnlyCP,
             Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
             strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strDocument,
             getDocumentNo(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
             strOrgFamily, strCheck, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
-            vars.getLanguage(), null, null, null);
+            StringUtils.equals(strShowDescription, "Y") ? "'Y'" : "'N'"));
+        int limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
+        if (vars.commandIn("XLS") && recordCount > 65532) {
+          advisePopUp(request, response, "ERROR",
+              Utility.messageBD(readOnlyCP, "ProcessStatus-E", vars.getLanguage()),
+              Utility.messageBD(readOnlyCP, "numberOfRowsExceeded", vars.getLanguage()));
+        } else if (limit > 0 && recordCount > limit) {
+          advisePopUp(
+              request,
+              response,
+              "WARNING",
+              Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()),
+              Utility.messageBD(readOnlyCP, "ReportsLimit", vars.getLanguage()).replace("@limit@",
+                  String.valueOf(limit)));
+        } else {
+          scrollData = ReportGeneralLedgerJournalData.select(readOnlyCP, "0",
+              StringUtils.equals(strShowDescription, "Y") ? "'Y'" : "'N'",
+              Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
+              Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+              strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strDocument,
+              getDocumentNo(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
+              strOrgFamily, strCheck, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
+              vars.getLanguage(), null, null, null);
+        }
       } else {
         scrollData = ReportGeneralLedgerJournalData.selectDirect(readOnlyCP, "0",
             StringUtils.equals(strShowDescription, "Y") ? "'Y'" : "'N'",
@@ -866,15 +888,10 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       }
       data = new ReportGeneralLedgerJournalData[res.size()];
       res.copyInto(data);
-
       if (data == null || data.length == 0) {
         advisePopUp(request, response, "WARNING",
             Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()),
             Utility.messageBD(readOnlyCP, "NoDataFound", vars.getLanguage()));
-      } else if (vars.commandIn("XLS") && data.length > 65532) {
-        advisePopUp(request, response, "ERROR",
-            Utility.messageBD(readOnlyCP, "ProcessStatus-E", vars.getLanguage()),
-            Utility.messageBD(readOnlyCP, "numberOfRowsExceeded", vars.getLanguage()));
       } else {
         String strSubtitle = (Utility.messageBD(readOnlyCP, "LegalEntity", vars.getLanguage()) + ": ")
             + ReportGeneralLedgerJournalData.selectCompany(readOnlyCP, vars.getClient()) + "\n";

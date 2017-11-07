@@ -99,6 +99,59 @@
     <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
     <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[ AND RN1 BETWEEN ]]></Parameter>
   </SqlMethod>
+  <SqlMethod name="selectCount2" type="preparedStatement" return="string" default="0">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT COUNT(1) AS TOTAL
+      FROM (SELECT 1
+      FROM FACT_ACCT F
+      WHERE F.AD_CLIENT_ID IN ('1')
+      AND F.AD_ORG_ID IN('1')
+      AND 1=1
+      AND f.AD_ORG_ID IN('2')
+      AND F.FactAcctType IN ('C','N','O','R','D')
+      AND (?='Y' OR F.FACT_ACCT_GROUP_ID IN (
+                SELECT FACT_ACCT_GROUP_ID FROM FACT_ACCT WHERE ACCOUNT_ID IN (
+                  SELECT c_elementvalue_id as name
+                  FROM C_ELEMENTVALUE
+                  WHERE value >= (  select value from c_elementvalue where c_elementvalue_id = ?)
+                    and value <= (  select value from c_elementvalue where c_elementvalue_id = ?)
+                    and c_elementvalue.ELEMENTLEVEL = 'S')
+                  AND AD_CLIENT_ID IN ('3')
+                  AND AD_ORG_ID IN ('3')
+                  AND 3=3
+                  AND AD_ORG_ID IN('4')
+                  AND FactAcctType IN ('C','N','O','R','D')
+                ))
+      GROUP BY f.C_ACCTSCHEMA_ID, F.AD_TABLE_ID, F.DATEACCT, CASE WHEN 'Y' = 'Y' THEN TO_CHAR(F.DESCRIPTION) ELSE TO_CHAR('') END,
+      F.DOCBASETYPE, F.RECORD_ID,
+      F.FACT_ACCT_GROUP_ID, F.ACCOUNT_ID,F.FACTACCTTYPE,
+      (CASE F.AMTACCTDR WHEN 0 THEN (CASE SIGN(F.AMTACCTCR) WHEN -1 THEN 1 ELSE 2 END) ELSE (CASE SIGN(F.AMTACCTDR) WHEN -1 THEN 3 ELSE 4 END) END), F.AD_CLIENT_ID
+      HAVING sum(F.AMTACCTDR) <> 0 OR sum(F.AMTACCTCR) <> 0) AA
+      ]]></Sql>
+    <Parameter name="adUserClient" type="replace" optional="true" after="WHERE F.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="AND F.AD_ORG_ID IN(" text="'1'"/>
+    <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND f.dateacct >= TO_DATE(?)]]></Parameter>
+    <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND f.dateacct < TO_DATE(?)]]></Parameter>
+    <Parameter name="docbasetype" optional="true" after="AND 1=1"><![CDATA[ AND f.DOCBASETYPE = ?]]></Parameter>
+    <Parameter name="documentNo" optional="true" after="AND 1=1" type="argument"><![CDATA[ AND EXISTS ]]></Parameter>
+    <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND f.C_ACCTSCHEMA_ID = ?]]></Parameter>
+    <Parameter name="orgFamily" type="replace" optional="true" after="AND f.AD_ORG_ID IN(" text="'2'"/>
+    <Parameter name="checks" type="replace" optional="true" after="AND F.FactAcctType IN (" text="'C','N','O','R','D'"/>
+    <Parameter name="allaccounts"/>
+    <Parameter name="accountFrom"/>
+    <Parameter name="accountTo"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND AD_CLIENT_ID IN (" text="'3'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="AND AD_ORG_ID IN (" text="'3'"/>
+    <Parameter name="parDateFrom" optional="true" after="AND 3=3"><![CDATA[ AND dateacct >= TO_DATE(?)]]></Parameter>
+    <Parameter name="parDateTo" optional="true" after="AND 3=3"><![CDATA[ AND dateacct < TO_DATE(?)]]></Parameter>
+    <Parameter name="docbasetype" optional="true" after="AND 3=3"><![CDATA[ AND DOCBASETYPE = ?]]></Parameter>
+    <Parameter name="acctschema" optional="true" after="AND 3=3"><![CDATA[ AND C_ACCTSCHEMA_ID = ?]]></Parameter>
+    <Parameter name="orgFamily" type="replace" optional="true" after="AND AD_ORG_ID IN(" text="'4'"/>
+    <Parameter name="checks" type="replace" optional="true" after="AND FactAcctType IN (" text="'C','N','O','R','D'"/>
+    <Parameter name="descriptionGrouping" type="replace" optional="true" after="F.DATEACCT, CASE WHEN " text="'Y'"/>
+  </SqlMethod>
   <SqlMethod name="selectCountGroupedLines" type="preparedStatement" return="scrollable">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
