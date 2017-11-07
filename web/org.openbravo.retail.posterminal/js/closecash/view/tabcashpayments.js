@@ -116,6 +116,7 @@ enyo.kind({
     if (counted !== null && counted !== undefined) {
       this.$.numberOfCoins.setContent(counted);
       this.$.total.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('totalAmount'))));
+      this.adjustFontSize();
     }
     return this;
   },
@@ -127,6 +128,26 @@ enyo.kind({
   },
   subUnit: function () {
     this.doSubUnit();
+  },
+  adjustFontSize: function () {
+    var contentLengthCoins = this.$.numberOfCoins.getContent().toString().length;
+    var contentLengthTotal = this.$.total.getContent().toString().length;
+    var newFontSize = 16;
+    if (contentLengthCoins >= 15) {
+      newFontSize = 7;
+    } else if (contentLengthCoins >= 11) {
+      newFontSize = 8;
+    } else if (contentLengthCoins >= 8) {
+      newFontSize = 10;
+    }
+    var newStyle = "font-size: " + newFontSize + "px; background-color: white; border: 1px solid lightgray; border-radius: 3px; width: 18%;";
+    this.$.numberOfCoins.setStyle(newStyle);
+    newFontSize = 16;
+    if (contentLengthTotal > 18) {
+      newFontSize = 14;
+    }
+    newStyle = "font-size: " + newFontSize + "px; margin-left: 2%; display:inline-block;padding: 10px 0px 10px 0px; width: 26%; text-align: center;";
+    this.$.total.setStyle(newStyle);
   }
 });
 
@@ -137,6 +158,14 @@ enyo.kind({
   printAmount: function (value) {
     this.setContent(OB.I18N.formatCurrency(value));
     this.applyStyle('color', OB.DEC.compare(value) < 0 ? 'red' : 'black');
+    var contentLength = this.getContent().length;
+    var newFontSize = 16;
+    if (contentLength > 12) {
+      newFontSize = 14;
+    } else if (contentLength > 15) {
+      newFontSize = 12;
+    }
+    this.applyStyle('font-size', newFontSize + 'px');
   }
 });
 
