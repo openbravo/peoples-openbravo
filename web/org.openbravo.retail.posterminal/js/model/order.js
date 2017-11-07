@@ -2606,6 +2606,37 @@
       });
     },
 
+    checkAvailableUnitsPerLine: function (discountRule) {
+      var offered, rest, i, promotion, applyingToLines = new Backbone.Collection();
+      this.get('lines').forEach(function (l) {
+        offered = BigDecimal.prototype.ZERO;
+        rest = BigDecimal.prototype.ZERO;
+        if (l.get('promotions') && l.get('promotions').length > 0) {
+          for (i = 0; i < l.get('promotions').length; i++) {
+            promotion = l.get('promotions')[i];
+            if (promotion.qtyOffer && !promotion.applyNext) {
+              offered = offered.add(OB.DEC.toBigDecimal(promotion.qtyOffer));
+            }
+          }
+        }
+        if (l.get('promotionCandidates')) {
+          l.get('promotionCandidates').forEach(function (candidateRule) {
+            // If there is any line to apply the promotion, we add it
+            if (candidateRule === discountRule.id) {
+              if (OB.DEC.toBigDecimal(l.get('qty')).subtract(OB.DEC.toBigDecimal(offered)) > 0) {
+                applyingToLines.add(l);
+                rest = OB.DEC.toBigDecimal(l.get('qty')).subtract(OB.DEC.toBigDecimal(offered));
+                l.set('qtyAvailable', OB.DEC.toNumber(rest));
+              } else {
+                l.set('qtyAvailable', OB.DEC.toNumber(BigDecimal.prototype.ZERO));
+              }
+            }
+          });
+        }
+      });
+      return applyingToLines;
+    },
+
     addPromotion: function (line, rule, discount) {
       var promotions = line.get('promotions') || [],
           disc = {},
@@ -2625,7 +2656,7 @@
       disc.manual = discount.manual;
       disc.userAmt = discount.userAmt;
       disc.lastApplied = discount.lastApplied;
-      disc.obdiscQtyoffer = rule.get('qtyOffer') ? OB.DEC.toNumber(rule.get('qtyOffer')) : line.get('qty');
+      disc.obdiscQtyoffer = OB.UTIL.isNullOrUndefined(rule.get('qtyOffer')) ? line.get('qty') : OB.DEC.toNumber(rule.get('qtyOffer'));
       disc.qtyOffer = disc.obdiscQtyoffer;
       disc.doNotMerge = discount.doNotMerge;
       disc.qtyToGift = discount.qtyToGift;
@@ -2670,13 +2701,6 @@
       }
       disc._idx = discount._idx || rule.get('_idx');
 
-      for (i = 0; i < promotions.length; i++) {
-        if (disc._idx !== -1 && disc._idx < promotions[i]._idx) {
-          // Trying to apply promotions in incorrect order: recalculate whole line again
-          OB.Model.Discounts.applyPromotionsImp(this, line, true);
-          return;
-        }
-      }
       var unitsConsumed = 0;
       var unitsConsumedByNoCascadeRules = 0;
       var unitsConsumedByTheSameRule = 0;
@@ -2705,6 +2729,14 @@
             }
             replaced = true;
             break;
+          } else if (discount.forceReplace) {
+            if (promotions[i].ruleId === rule.id) {
+              if (promotions[i].hidden !== true) {
+                promotions[i] = disc;
+                replaced = true;
+                break;
+              }
+            }
           }
         }
       }
@@ -4476,7 +4508,7 @@
                   } else {
                     line.set('promotions', [copiedPromo]);
                   }
-                } else if (promo.pendingQtyOffer) {
+                } else if (!OB.UTIL.isNullOrUndefined(promo.pendingQtyOffer)) {
                   if (_.isUndefined(promo.actualAmt)) {
                     if (promo.pendingQtyOffer !== promo.qtyOffer) {
                       copiedPromo.hidden = true;
