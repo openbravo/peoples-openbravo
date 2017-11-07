@@ -97,7 +97,6 @@
       <index name="M_MATCHPO_SHIP" unique="false">
         <index-column name="C_ORDERLINE_ID"/>
         <index-column name="M_INOUTLINE_ID"/>
-        <whereClause><![CDATA[M_INOUTLINE_ID IS NOT NULL]]></whereClause>
       </index>
       <check name="M_MATCHPO_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_MATCHPO_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
