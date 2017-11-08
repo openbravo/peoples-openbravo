@@ -845,18 +845,24 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       } else if (StringUtils.isEmpty(strRecord)) {
         String strCheck = buildCheck(strShowClosing, strShowReg, strShowOpening, strShowRegular,
             strShowDivideUp);
-        int recordCount = Integer.parseInt(ReportGeneralLedgerJournalData.selectCount2(readOnlyCP,
+        // Get the number of records that the query would return
+        int recordCount = Integer.parseInt(ReportGeneralLedgerJournalData.selectCountNoOfRecords(
+            readOnlyCP,
             Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
             strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strDocument,
             getDocumentNo(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
             strOrgFamily, strCheck, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
             StringUtils.equals(strShowDescription, "Y") ? "'Y'" : "'N'"));
+        // Get the limit of number of records shown for a report based on the preference
         int limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
+        // Do not print the XLS report if there are more than 65532 records
         if (vars.commandIn("XLS") && recordCount > 65532) {
           advisePopUp(request, response, "ERROR",
               Utility.messageBD(readOnlyCP, "ProcessStatus-E", vars.getLanguage()),
               Utility.messageBD(readOnlyCP, "numberOfRowsExceeded", vars.getLanguage()));
+          // Do not print the PDF report if the number of records is greater than the limit of
+          // records shown
         } else if (limit > 0 && recordCount > limit) {
           advisePopUp(
               request,
