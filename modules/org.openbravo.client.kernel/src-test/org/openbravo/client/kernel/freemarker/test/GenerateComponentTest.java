@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,8 @@ package org.openbravo.client.kernel.freemarker.test;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.weld.ee.embedded_1_1.mock.MockServletContext;
@@ -34,6 +36,7 @@ import org.openbravo.client.kernel.ComponentGenerator;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.KernelComponentProvider;
 import org.openbravo.client.kernel.KernelConstants;
+import org.openbravo.client.kernel.SessionDynamicTemplateComponent;
 import org.openbravo.dal.core.DalContextListener;
 
 /**
@@ -47,6 +50,10 @@ public class GenerateComponentTest extends WeldBaseTest {
   @Inject
   @ComponentProvider.Qualifier(KernelComponentProvider.QUALIFIER)
   private ComponentProvider kernelComponentProvider;
+
+  @Inject
+  @Any
+  private Instance<SessionDynamicTemplateComponent> components;
 
   @Test
   public void testApplication() throws Exception {
@@ -70,7 +77,7 @@ public class GenerateComponentTest extends WeldBaseTest {
 
   @Test
   public void testLabels() throws Exception {
-    generateComponent(KernelConstants.LABELS_COMPONENT_ID, null);
+    generateDynamicComponent(KernelConstants.LABELS_COMPONENT_ID);
   }
 
   protected void generateComponent(String componentID, Map<String, Object> params) {
@@ -79,6 +86,16 @@ public class GenerateComponentTest extends WeldBaseTest {
 
     final String output = ComponentGenerator.getInstance().generate(component);
     System.err.println(output);
+  }
+
+  private void generateDynamicComponent(String componentId) {
+    for (SessionDynamicTemplateComponent component : components) {
+      if (component.getId().equals(componentId)) {
+        final String output = ComponentGenerator.getInstance().generate(component);
+        System.err.println(output);
+        return;
+      }
+    }
   }
 
 }
