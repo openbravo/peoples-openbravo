@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,6 +35,8 @@ import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.KernelComponentProvider;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.dal.core.DalContextListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Test the generation of several kernel components.
@@ -43,6 +45,8 @@ import org.openbravo.dal.core.DalContextListener;
  */
 
 public class GenerateComponentTest extends WeldBaseTest {
+
+  private static final Logger log = LoggerFactory.getLogger(GenerateComponentTest.class);
 
   @Inject
   @ComponentProvider.Qualifier(KernelComponentProvider.QUALIFIER)
@@ -68,17 +72,10 @@ public class GenerateComponentTest extends WeldBaseTest {
     });
   }
 
-  @Test
-  public void testLabels() throws Exception {
-    generateComponent(KernelConstants.LABELS_COMPONENT_ID, null);
-  }
-
   protected void generateComponent(String componentID, Map<String, Object> params) {
     final Component component = kernelComponentProvider.getComponent(componentID,
         params == null ? new HashMap<String, Object>() : params);
-
     final String output = ComponentGenerator.getInstance().generate(component);
-    System.err.println(output);
+    log.debug(output);
   }
-
 }
