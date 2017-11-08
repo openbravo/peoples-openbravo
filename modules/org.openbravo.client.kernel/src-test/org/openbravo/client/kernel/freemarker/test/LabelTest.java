@@ -30,7 +30,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
-import org.openbravo.client.kernel.ComponentGenerator;
 import org.openbravo.client.kernel.I18NComponent;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.SessionDynamicTemplateComponent;
@@ -40,6 +39,8 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Message;
 import org.openbravo.model.ad.ui.MessageTrl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Test the {@link I18NComponent}, test that a translated label actually is used inside of the label
@@ -49,6 +50,8 @@ import org.openbravo.model.ad.ui.MessageTrl;
  */
 
 public class LabelTest extends WeldBaseTest {
+
+  private static final Logger log = LoggerFactory.getLogger(LabelTest.class);
 
   @Inject
   @Any
@@ -97,8 +100,8 @@ public class LabelTest extends WeldBaseTest {
     OBDal.getInstance().flush();
 
     // generate the javascript and check if the above strings are present
-    final String output = ComponentGenerator.getInstance().generate(i18nComponent);
-    System.err.println(output);
+    final String output = i18nComponent.generate();
+    log.debug(output);
 
     // do some checks
     assertTrue(output.contains(msgKeyWithOutTranslation));

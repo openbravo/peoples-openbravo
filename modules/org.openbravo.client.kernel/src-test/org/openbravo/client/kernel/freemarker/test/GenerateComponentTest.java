@@ -22,8 +22,6 @@ package org.openbravo.client.kernel.freemarker.test;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.weld.ee.embedded_1_1.mock.MockServletContext;
@@ -36,8 +34,9 @@ import org.openbravo.client.kernel.ComponentGenerator;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.KernelComponentProvider;
 import org.openbravo.client.kernel.KernelConstants;
-import org.openbravo.client.kernel.SessionDynamicTemplateComponent;
 import org.openbravo.dal.core.DalContextListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Test the generation of several kernel components.
@@ -47,13 +46,11 @@ import org.openbravo.dal.core.DalContextListener;
 
 public class GenerateComponentTest extends WeldBaseTest {
 
+  private static final Logger log = LoggerFactory.getLogger(GenerateComponentTest.class);
+
   @Inject
   @ComponentProvider.Qualifier(KernelComponentProvider.QUALIFIER)
   private ComponentProvider kernelComponentProvider;
-
-  @Inject
-  @Any
-  private Instance<SessionDynamicTemplateComponent> components;
 
   @Test
   public void testApplication() throws Exception {
@@ -75,27 +72,10 @@ public class GenerateComponentTest extends WeldBaseTest {
     });
   }
 
-  @Test
-  public void testLabels() throws Exception {
-    generateDynamicComponent(KernelConstants.LABELS_COMPONENT_ID);
-  }
-
   protected void generateComponent(String componentID, Map<String, Object> params) {
     final Component component = kernelComponentProvider.getComponent(componentID,
         params == null ? new HashMap<String, Object>() : params);
-
     final String output = ComponentGenerator.getInstance().generate(component);
-    System.err.println(output);
+    log.debug(output);
   }
-
-  private void generateDynamicComponent(String componentId) {
-    for (SessionDynamicTemplateComponent component : components) {
-      if (component.getId().equals(componentId)) {
-        final String output = ComponentGenerator.getInstance().generate(component);
-        System.err.println(output);
-        return;
-      }
-    }
-  }
-
 }
