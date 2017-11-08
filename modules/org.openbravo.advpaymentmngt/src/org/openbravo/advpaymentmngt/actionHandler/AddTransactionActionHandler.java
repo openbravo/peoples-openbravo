@@ -171,7 +171,9 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
         paymentAmt = FIN_Utility.getPaymentAmount(payment.isReceipt(),
             payment.getFinancialTransactionAmount());
         isReceipt = payment.isReceipt();
-        description = StringUtils.isNotBlank(strDescription) ? strDescription : "";
+        String paymentDescription = StringUtils.isNotBlank(payment.getDescription()) ? payment
+            .getDescription().replace("\n", ". ") : "";
+        description = StringUtils.isNotBlank(strDescription) ? strDescription : paymentDescription;
         paymentCurrency = payment.getCurrency();
         convertRate = payment.getFinancialTransactionConvertRate();
         sourceAmount = payment.getAmount();
