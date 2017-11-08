@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,10 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -37,16 +34,35 @@ import org.openbravo.model.ad.ui.Message;
 import org.openbravo.model.ad.ui.MessageTrl;
 
 /**
- * Collects all labels of the modules which have registered a component provider and generates the
- * client side javascript holding the labels.
+ * Generates the client side javascript holding the labels defined in modules and the labels defined
+ * in core which are configured to be forcibly available in the client.
  * 
  * @author mtaal
  */
-public class I18NComponent extends BaseTemplateComponent {
+public class I18NComponent extends SessionDynamicTemplateComponent {
+  private static Map<String, String> cachedLabels = new ConcurrentHashMap<>();
 
   @Override
-  protected Template getComponentTemplate() {
-    return OBDal.getInstance().get(Template.class, KernelConstants.I18N_TEMPLATE_ID);
+  public String getId() {
+    return KernelConstants.LABELS_COMPONENT_ID;
+  }
+
+  @Override
+  protected String getTemplateId() {
+    return KernelConstants.I18N_TEMPLATE_ID;
+  }
+
+  @Override
+  public String generate() {
+    String languageId = OBContext.getOBContext().getLanguage().getId();
+    if (cachedLabels.containsKey(languageId)) {
+      return cachedLabels.get(languageId);
+    }
+    String labels = super.generate();
+    if (!isInDevelopment()) {
+      cachedLabels.put(languageId, labels);
+    }
+    return labels;
   }
 
   /**
@@ -80,8 +96,10 @@ public class I18NComponent extends BaseTemplateComponent {
         label.setValue(message.getMessageText());
         labels.put(message.getSearchKey(), label);
       }
-      final OBQuery<MessageTrl> messagesTrl = OBDal.getInstance().createQuery(MessageTrl.class,
-          "(message.module.id in (:modules) or message.includeInI18N='Y') and language.id=:languageId");
+      final OBQuery<MessageTrl> messagesTrl = OBDal
+          .getInstance()
+          .createQuery(MessageTrl.class,
+              "(message.module.id in (:modules) or message.includeInI18N='Y') and language.id=:languageId");
       messagesTrl.setNamedParameter("modules", modules);
       messagesTrl.setNamedParameter("languageId", OBContext.getOBContext().getLanguage().getId());
       for (MessageTrl message : messagesTrl.list()) {
@@ -94,28 +112,6 @@ public class I18NComponent extends BaseTemplateComponent {
       OBContext.restorePreviousMode();
     }
     return labels.values();
-  }
-
-  @Inject
-  @Any
-  private Instance<ComponentProvider> componentProviders;
-
-  public String getETag() {
-
-    if (getModule().isInDevelopment()) {
-      return OBContext.getOBContext().getLanguage().getId() + "_" + getLastModified().getTime();
-    } else {
-      final StringBuilder version = new StringBuilder();
-      final List<String> modules = new ArrayList<String>();
-      // TODO: it is possible that the modules need to be deterministically sorted
-      // to ensure that the version string won't change
-      for (ComponentProvider componentProvider : componentProviders) {
-        if (!modules.contains(componentProvider.getModule().getId())) {
-          version.append(componentProvider.getModule().getVersion());
-        }
-      }
-      return OBContext.getOBContext().getLanguage().getId() + "_" + version;
-    }
   }
 
   public static class Label {
