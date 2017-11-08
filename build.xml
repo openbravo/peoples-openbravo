@@ -107,7 +107,7 @@ export.database: exports database structure and data to xml files.
     </not>
   </condition>
 
-  <condition property="j9.module.args" value="--add-modules=java.activation,java.xml.ws.annotation" else="">
+  <condition property="j9.module.args" value="--add-modules=java.se.ee" else="">
     <isset property="jdk9"/>
   </condition>
 
