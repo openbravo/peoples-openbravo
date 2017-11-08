@@ -60,6 +60,7 @@ enyo.kind({
   saveAttribute: function (inSender, inEvent) {
     var me = this,
         inpAttributeValue = this.$.bodyContent.$.valueAttribute.getValue();
+    inpAttributeValue = inpAttributeValue.replace(/\s+/, "");
     if ((this.validAttribute(inpAttributeValue) && inpAttributeValue)) {
       this.args.callback(inpAttributeValue);
       this.hide();
