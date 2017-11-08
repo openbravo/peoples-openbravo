@@ -67,8 +67,6 @@ public class KernelComponentProvider extends BaseComponentProvider {
       return getComponent(TestComponent.class);
     } else if (componentId.equals(KernelConstants.DOCUMENT_COMPONENT_ID)) {
       return getComponent(DocumentationComponent.class);
-    } else if (componentId.equals(KernelConstants.LABELS_COMPONENT_ID)) {
-      return getComponent(I18NComponent.class);
     }
     throw new IllegalArgumentException("Component " + componentId + " not supported here");
   }
@@ -100,8 +98,6 @@ public class KernelComponentProvider extends BaseComponentProvider {
         + KernelConstants.KERNEL_COMPONENT_TYPE + "/"
         + KernelConstants.SESSION_DYNAMIC_COMPONENT_ID));
 
-    globalResources.add(createStaticResource("org.openbravo.client.kernel/"
-        + KernelConstants.KERNEL_COMPONENT_TYPE + "/" + KernelConstants.LABELS_COMPONENT_ID, true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.kernel/js/ob-kernel-utilities.js", true));
 
