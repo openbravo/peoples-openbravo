@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,20 +22,18 @@ package org.openbravo.client.kernel.freemarker.test;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
-
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
-import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentGenerator;
-import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.I18NComponent;
-import org.openbravo.client.kernel.KernelComponentProvider;
 import org.openbravo.client.kernel.KernelConstants;
+import org.openbravo.client.kernel.SessionDynamicTemplateComponent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.module.Module;
@@ -53,8 +51,8 @@ import org.openbravo.model.ad.ui.MessageTrl;
 public class LabelTest extends WeldBaseTest {
 
   @Inject
-  @ComponentProvider.Qualifier(KernelComponentProvider.QUALIFIER)
-  private ComponentProvider kernelComponentProvider;
+  @Any
+  private Instance<SessionDynamicTemplateComponent> components;
 
   @Before
   public void setUpLt() throws Exception {
@@ -64,8 +62,8 @@ public class LabelTest extends WeldBaseTest {
 
   @Test
   public void testLabel() throws Exception {
-    final Module module = OBDal.getInstance().get(Module.class,
-        kernelComponentProvider.getModule().getId());
+    SessionDynamicTemplateComponent i18nComponent = getI18NComponent();
+    final Module module = OBDal.getInstance().get(Module.class, i18nComponent.getModule().getId());
     module.setInDevelopment(true);
     OBDal.getInstance().flush();
 
@@ -85,8 +83,8 @@ public class LabelTest extends WeldBaseTest {
     messageTrl.setMessage(messageWithTrl);
     messageTrl.setMessageText(msgTextTranslated);
     messageTrl.setTranslation(true);
-    messageTrl.setLanguage(
-        OBDal.getInstance().get(Language.class, OBContext.getOBContext().getLanguage().getId()));
+    messageTrl.setLanguage(OBDal.getInstance().get(Language.class,
+        OBContext.getOBContext().getLanguage().getId()));
     messageWithTrl.getADMessageTrlList().add(messageTrl);
     OBDal.getInstance().save(messageWithTrl);
 
@@ -99,10 +97,7 @@ public class LabelTest extends WeldBaseTest {
     OBDal.getInstance().flush();
 
     // generate the javascript and check if the above strings are present
-    final Component component = kernelComponentProvider
-        .getComponent(KernelConstants.LABELS_COMPONENT_ID, new HashMap<String, Object>());
-
-    final String output = ComponentGenerator.getInstance().generate(component);
+    final String output = ComponentGenerator.getInstance().generate(i18nComponent);
     System.err.println(output);
 
     // do some checks
@@ -114,5 +109,14 @@ public class LabelTest extends WeldBaseTest {
 
     // and prevent the database from being updated
     OBDal.getInstance().rollbackAndClose();
+  }
+
+  private SessionDynamicTemplateComponent getI18NComponent() {
+    for (SessionDynamicTemplateComponent component : components) {
+      if (component.getId().equals(KernelConstants.LABELS_COMPONENT_ID)) {
+        return component;
+      }
+    }
+    return null;
   }
 }
