@@ -1140,7 +1140,7 @@ enyo.kind({
       }
 
       var errorMsgLbl, totalPaid = 0,
-          totalToPaid = isMultiOrder ? this.owner.model.get('multiOrders').getTotal() : this.owner.receipt.getTotal(),
+          totalToPaid = OB.DEC.abs(isMultiOrder ? this.owner.model.get('multiOrders').getTotal() : this.owner.receipt.getTotal()),
           isReturnOrder = isMultiOrder ? false : this.owner.receipt.getPaymentStatus().isNegative;
 
       if (_.filter(payments.models, function (payment) {
