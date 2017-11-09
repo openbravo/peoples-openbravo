@@ -184,20 +184,6 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         }
         item.put("image", imageData);
 
-        // Get the session status for the current user
-        String hqlSession = "select distinct session.username, session.sessionActive "
-            + "from ADSession session "
-            + "where session.username = :theUsername and session.sessionActive = 'Y' and "
-            + "session.loginStatus = 'OBPOS_POS'";
-        Query qrySession = OBDal.getInstance().getSession().createQuery(hqlSession);
-        qrySession.setParameter("theUsername", qryUserObjectItem[1].toString());
-        qrySession.setMaxResults(1);
-        String sessionData = "false";
-        if (qrySession.uniqueResult() != null) {
-          sessionData = "true";
-        }
-        item.put("connected", sessionData);
-
         data.put(item);
       }
     }
