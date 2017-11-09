@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2016 Openbravo SLU
+ * All portions are Copyright (C) 2012-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -192,8 +192,7 @@ OB.Utilities.Action.set('OBUIAPP_downloadReport', function (paramObj) {
 //* {{{tmpfileName}}}: Name of the temporary file.
 //* {{{fileName}}}: The name to be used in the file to download.
 OB.Utilities.Action.set('OBUIAPP_browseReport', function (paramObj) {
-  var processParameters = paramObj.processParameters,
-      params = isc.clone(processParameters);
+  var processParameters = paramObj.processParameters;
   OB.Layout.ViewManager.openView('OBClassicWindow', {
     tabTitle: paramObj.tabTitle,
     addToRecents: false,
