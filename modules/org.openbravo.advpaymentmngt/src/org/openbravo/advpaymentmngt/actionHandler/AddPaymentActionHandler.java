@@ -382,28 +382,30 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
               businessPartner.getCurrency().getISOCode()));
         }
         BigDecimal usedCreditAmt = selectedCreditPaymentAmounts.get(creditPayment.getId());
-        if (strDifferenceAction.equals("refund")) {
-          if (remainingRefundAmt.compareTo(usedCreditAmt) > 0) {
-            remainingRefundAmt = remainingRefundAmt.subtract(usedCreditAmt);
-            usedCreditAmt = BigDecimal.ZERO;
-          } else {
-            usedCreditAmt = usedCreditAmt.subtract(remainingRefundAmt);
-            remainingRefundAmt = BigDecimal.ZERO;
-          }
+
+        // Reset usedCredit by traversing through each credit payment
+        if (remainingRefundAmt.compareTo(usedCreditAmt) > 0) {
+          remainingRefundAmt = remainingRefundAmt.subtract(usedCreditAmt);
+          usedCreditAmt = BigDecimal.ZERO;
+        } else {
+          usedCreditAmt = usedCreditAmt.subtract(remainingRefundAmt);
+          remainingRefundAmt = BigDecimal.ZERO;
         }
-        final StringBuffer description = new StringBuffer();
-        if (creditPayment.getDescription() != null && !creditPayment.getDescription().equals("")) {
-          description.append(creditPayment.getDescription()).append("\n");
-        }
-        description.append(String.format(OBMessageUtils.messageBD("APRM_CreditUsedPayment"),
-            payment.getDocumentNo()));
-        String truncateDescription = (description.length() > 255) ? description.substring(0, 251)
-            .concat("...").toString() : description.toString();
-        creditPayment.setDescription(truncateDescription);
+
         // Set Used Credit = Amount + Previous used credit introduced by the user
         creditPayment.setUsedCredit(usedCreditAmt.add(creditPayment.getUsedCredit()));
 
         if (usedCreditAmt.compareTo(BigDecimal.ZERO) > 0) {
+          // Set Credit description only when it is actually used
+          final StringBuffer description = new StringBuffer();
+          if (creditPayment.getDescription() != null && !creditPayment.getDescription().equals("")) {
+            description.append(creditPayment.getDescription()).append("\n");
+          }
+          description.append(String.format(OBMessageUtils.messageBD("APRM_CreditUsedPayment"),
+              payment.getDocumentNo()));
+          String truncateDescription = (description.length() > 255) ? description.substring(0, 251)
+              .concat("...").toString() : description.toString();
+          creditPayment.setDescription(truncateDescription);
           FIN_PaymentProcess.linkCreditPayment(payment, usedCreditAmt, creditPayment);
         }
         OBDal.getInstance().save(creditPayment);
