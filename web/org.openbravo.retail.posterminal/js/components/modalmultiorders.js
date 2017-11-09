@@ -281,7 +281,7 @@ enyo.kind({
             var payment = iter.get('payments').models.reduce(function (total, model) {
               return OB.DEC.add(total, model.get('amount'));
             }, 0);
-            if ((me.filters.filterText === '' || toMatch !== 0) && (iter.get('orderType') === 0 || iter.get('orderType') === 2) && payment < iter.get('gross') && !iter.get('isQuotation') && iter.get('gross') >= 0) {
+            if ((me.filters.filterText === '' || toMatch !== 0) && (iter.get('orderType') === 0 || iter.get('orderType') === 2) && (payment < iter.get('gross') || iter.get('gross') === 0) && !iter.get('isQuotation') && iter.get('gross') >= 0) {
               actualDate = new Date().setHours(0, 0, 0, 0);
               if (me.filters.endDate === '' || new Date(me.filters.endDate) >= actualDate) {
                 for (i = 0; i < me.filters.documentType.length; i++) {
@@ -503,7 +503,7 @@ enyo.kind({
           var payment = iter.get('payments').models.reduce(function (total, model) {
             return OB.DEC.add(total, model.get('amount'));
           }, 0);
-          if ((iter.get('orderType') === 0 || iter.get('orderType') === 2) && payment < iter.get('gross') && !iter.get('isQuotation') && iter.get('gross') >= 0) {
+          if ((iter.get('orderType') === 0 || iter.get('orderType') === 2) && (payment < iter.get('gross') || iter.get('gross') === 0) && !iter.get('isQuotation') && iter.get('gross') >= 0) {
             if (!OB.UTIL.isNullOrUndefined(iter.id)) {
               iter.set('checked', true);
               me.$.body.$.listMultiOrders.multiOrdersList.add(iter);
