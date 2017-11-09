@@ -214,7 +214,7 @@
             });
 
             handleError(data);
-          });
+          }, true, 5000);
         }
       });
 
@@ -280,22 +280,6 @@
             ajaxRequest: ajaxRequest2
           });
           rr.exec(ajaxRequest2.url);
-        }
-      });
-
-      this.addPropertiesLoader({
-        properties: ['rejectReasons'],
-        loadFunction: function (terminalModel) {
-          OB.info('[terminal] Loading... ' + this.properties);
-          var me = this;
-          new OB.DS.Request('org.openbravo.retail.posterminal.term.RejectReason').exec(null, function (data) {
-            if (data && data.exception) {
-              terminalModel.set(me.properties[0], []);
-            } else {
-              terminalModel.set(me.properties[0], data);
-            }
-            terminalModel.propertiesReady(me.properties);
-          });
         }
       });
 
