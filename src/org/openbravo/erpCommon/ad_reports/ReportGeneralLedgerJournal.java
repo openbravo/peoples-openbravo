@@ -44,6 +44,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesHistory;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -60,6 +61,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBLedgerUtils;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
@@ -83,6 +85,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
    */
   private static final String PREVIOUS_RANGE = "ReportGeneralLedgerJournal.previousRange";
   private static final String PREVIOUS_RANGE_OLD = "ReportGeneralLedgerJournal.previousRangeOld";
+  private static final Map<String, Integer> userExecutions = new HashMap<String, Integer>();
+  private static int reportExecutions = 0;
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
@@ -202,190 +206,210 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       printPageDataSheet(response, vars, "", "", "", "", "", "", "", strFactAcctGroupId, "", "",
           "", "", "1", "1", "", "Y", "", "", "", "", "", "", "");
     } else if (vars.commandIn("FIND")) {
-      String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
-          "ReportGeneralLedger|cAcctSchemaId");
-      vars.setSessionValue("ReportGeneralLedgerJournal|cAcctSchemaId", strcAcctSchemaId);
-      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
-          "ReportGeneralLedgerJournal|DateFrom");
-      String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
-          "ReportGeneralLedgerJournal|DateTo");
-      String strDocument = vars.getRequestGlobalVariable("inpDocument",
-          "ReportGeneralLedgerJournal|Document");
-      String strDocumentNo = vars.getRequestGlobalVariable("inpDocumentNo",
-          "ReportGeneralLedgerJournal|DocumentNo");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
-      String strShowClosing = vars.getRequestGlobalVariable("inpShowClosing",
-          "ReportGeneralLedgerJournal|ShowClosing");
-      if (StringUtils.isEmpty(strShowClosing)) {
-        vars.setSessionValue("ReportGeneralLedgerJournal|ShowClosing", "N");
-      }
-      String strShowDivideUp = vars.getRequestGlobalVariable("inpShowDivideUp",
-          "ReportGeneralLedgerJournal|ShowDivideUp");
-      if (StringUtils.isEmpty(strShowDivideUp)) {
-        vars.setSessionValue("ReportGeneralLedgerJournal|ShowDivideUp", "N");
-      }
-      String strShowRegular = vars.getRequestGlobalVariable("inpShowRegular",
-          "ReportGeneralLedgerJournal|ShowRegular");
-      if (StringUtils.isEmpty(strShowRegular)) {
-        vars.setSessionValue("ReportGeneralLedgerJournal|ShowRegular", "N");
-      }
-      String strShowReg = vars.getRequestGlobalVariable("inpShowReg",
-          "ReportGeneralLedgerJournal|ShowReg");
-      if (StringUtils.isEmpty(strShowReg)) {
-        vars.setSessionValue("ReportGeneralLedgerJournal|ShowReg", "N");
-      }
-      String strShowOpening = vars.getRequestGlobalVariable("inpShowOpening",
-          "ReportGeneralLedgerJournal|ShowOpening");
-      if (StringUtils.isEmpty(strShowOpening)) {
-        vars.setSessionValue("ReportGeneralLedgerJournal|ShowOpening", "N");
-      }
-      if (!(StringUtils.equals(strShowOpening, "Y")) && !(StringUtils.equals(strShowReg, "Y"))
-          && !(StringUtils.equals(strShowRegular, "Y"))
-          && !(StringUtils.equals(strShowClosing, "Y"))
-          && !(StringUtils.equals(strShowDivideUp, "Y"))) {
-        strShowRegular = "Y";
-        vars.setSessionValue("ReportGeneralLedgerJournal|ShowRegular", "Y");
-      }
-      String strShowClosing1 = vars.getStringParameter("inpShowClosing");
-      String strShowReg1 = vars.getStringParameter("inpShowReg");
-      String strShowOpening1 = vars.getStringParameter("inpShowOpening");
-      String strShowDivideUp1 = vars.getStringParameter("inpShowDivideUp");
-      log4j.debug("********FIND***************  strShowClosing: " + strShowClosing);
-      log4j.debug("********FIND***************  strShowReg: " + strShowReg);
-      log4j.debug("********FIND***************  strShowOpening: " + strShowOpening);
-      log4j.debug("********FIND***************  strShowDivideUp: " + strShowDivideUp);
-      log4j.debug("********FIND***************  strShowClosing1: " + strShowClosing1);
-      log4j.debug("********FIND***************  strShowReg1: " + strShowReg1);
-      log4j.debug("********FIND***************  strShowOpening1: " + strShowOpening1);
-      log4j.debug("********FIND***************  strShowDivideUp1: " + strShowDivideUp1);
-      vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
-      vars.setSessionValue(PREVIOUS_ACCTENTRIES, "0");
-      vars.setSessionValue(PREVIOUS_RANGE, "");
-      setHistoryCommand(request, "DEFAULT");
-      String strPageNo = vars.getRequestGlobalVariable("inpPageNo",
-          "ReportGeneralLedgerJournal|PageNo");
-      String strEntryNo = vars.getRequestGlobalVariable("inpEntryNo",
-          "ReportGeneralLedgerJournal|EntryNo");
-      String strShowDescription = vars.getRequestGlobalVariable("inpShowDescription",
-          "ReportGeneralLedgerJournal|ShowDescription");
-      if (StringUtils.isEmpty(strShowDescription)) {
-        vars.setSessionValue("ReportGeneralLedgerJournal|ShowDescription", "N");
-      }
-      String strcelementvaluefrom = vars.getRequestGlobalVariable("inpcElementValueIdFrom",
-          "ReportGeneralLedgerJournal|C_ElementValue_IDFROM");
-      String strcelementvalueto = vars.getRequestGlobalVariable("inpcElementValueIdTo",
-          "ReportGeneralLedgerJournal|C_ElementValue_IDTO");
-      String strcelementvaluefromdes = "", strcelementvaluetodes = "";
-      ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
-      if (StringUtils.isNotEmpty(strcelementvaluefrom)) {
-        strcelementvaluefromdes = ReportGeneralLedgerData.selectSubaccountDescription(readOnlyCP,
-            strcelementvaluefrom);
-      }
-      if (StringUtils.isNotEmpty(strcelementvalueto)) {
-        strcelementvaluetodes = ReportGeneralLedgerData.selectSubaccountDescription(readOnlyCP,
-            strcelementvalueto);
-      }
-      vars.setSessionValue("inpElementValueIdFrom_DES", strcelementvaluefromdes);
-      vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strDocument, strDocumentNo,
-          strOrg, "", "", "", strcAcctSchemaId, strShowClosing, strShowReg, strShowOpening,
-          strPageNo, strEntryNo, strShowDescription, strShowRegular, strShowDivideUp, "", "",
-          strcelementvaluefrom, strcelementvalueto, strcelementvaluefromdes, strcelementvaluetodes);
-    } else if (vars.commandIn("PDF", "XLS")) {
-      if (log4j.isDebugEnabled()) {
-        log4j.debug("PDF");
-      }
-      String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
-          "ReportGeneralLedger|cAcctSchemaId");
-      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
-          "ReportGeneralLedgerJournal|DateFrom");
-      String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
-          "ReportGeneralLedgerJournal|DateTo");
-      String strDocument = vars.getRequestGlobalVariable("inpDocument",
-          "ReportGeneralLedgerJournal|Document");
-      String strDocumentNo = vars.getRequestGlobalVariable("inpDocumentNo",
-          "ReportGeneralLedgerJournal|DocumentNo");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
-      String strShowClosing = vars.getRequestGlobalVariable("inpShowClosing",
-          "ReportGeneralLedgerJournal|ShowClosing");
-      if (StringUtils.isEmpty(strShowClosing)) {
-        vars.setSessionValue("ReportGeneralLedgerJournal|ShowClosing", "N");
-      }
-      String strShowRegular = vars.getRequestGlobalVariable("inpShowRegular",
-          "ReportGeneralLedgerJournal|ShowRegular");
-      if (StringUtils.isEmpty(strShowRegular)) {
-        vars.setSessionValue("ReportGeneralLedgerJournal|ShowRegular", "N");
-      }
-      String strShowReg = vars.getRequestGlobalVariable("inpShowReg",
-          "ReportGeneralLedgerJournal|ShowReg");
-      if (StringUtils.isEmpty(strShowReg)) {
-        vars.setSessionValue("ReportGeneralLedgerJournal|ShowReg", "N");
-      }
-      String strShowOpening = vars.getRequestGlobalVariable("inpShowOpening",
-          "ReportGeneralLedgerJournal|ShowOpening");
-      if (StringUtils.isEmpty(strShowOpening)) {
-        vars.setSessionValue("ReportGeneralLedgerJournal|ShowOpening", "N");
-      }
-      String strShowDivideUp = vars.getRequestGlobalVariable("inpShowDivideUp",
-          "ReportGeneralLedgerJournal|ShowDivideUp");
-      if (StringUtils.isEmpty(strShowDivideUp)) {
-        vars.setSessionValue("ReportGeneralLedgerJournal|ShowDivideUp", "N");
-      }
-      // In case all flags "Type" are deactivated, the "Regular" one is activated by default
-      if (!(StringUtils.equals(strShowOpening, "Y")) && !(StringUtils.equals(strShowReg, "Y"))
-          && !(StringUtils.equals(strShowRegular, "Y"))
-          && !(StringUtils.equals(strShowClosing, "Y"))
-          && !(StringUtils.equals(strShowDivideUp, "Y"))) {
-        strShowRegular = "Y";
-        vars.setSessionValue("ReportGeneralLedgerJournal|ShowRegular", "Y");
-      }
-
-      String strTable = vars.getStringParameter("inpTable");
-      String strRecord = vars.getStringParameter("inpRecord");
-      String strPageNo = vars.getGlobalVariable("inpPageNo", "ReportGeneralLedgerJournal|PageNo",
-          "1");
-      String strEntryNo = vars.getGlobalVariable("inpEntryNo",
-          "ReportGeneralLedgerJournal|EntryNo", "1");
-      String strShowDescription = vars.getRequestGlobalVariable("inpShowDescription",
-          "ReportGeneralLedgerJournal|ShowDescription");
-      if (StringUtils.isEmpty(strShowDescription)) {
-        vars.setSessionValue("ReportGeneralLedgerJournal|ShowDescription", "N");
-      }
-      /*
-       * Scenario 1: We will have FactAcctGroupId while the request redirect from
-       * ReportGeneralLedger Report. Otherwise we don't need to use FactAcctGroupId for PDF or Excel
-       * report. So we have to check the immediate history command has DIRECT2 (It means previous
-       * request from ReportGeneralLedger Report) Scenario 2: If we print once in PDF, it will reset
-       * the history of COMMAND with DEFAULT, so same record of redirect wont print more than one
-       * time. It will consider as default in second time.Scenario 3: If user change the filter
-       * criteria, however he has come from ReportGeneralLedger Report(DIRECT2) We don't take
-       * strFactAcctGroupId(will take care of criteria from current screen)
-       */
-      String strFactAcctGroupId = "";
-      if (StringUtils.isEmpty(strDateFrom) && StringUtils.isEmpty(strDocument)
-          && StringUtils.equals(strOrg, "0") && StringUtils.isEmpty(strShowClosing)
-          && StringUtils.isEmpty(strShowReg) && StringUtils.isEmpty(strShowOpening)
-          && StringUtils.isEmpty(strRecord)) {
-
-        int currentHistoryIndex = new Integer(
-            new VariablesHistory(request).getCurrentHistoryIndex()).intValue();
-        String currentCommand = vars.getSessionValue("reqHistory.command" + currentHistoryIndex);
-        if (StringUtils.equals(currentCommand, "DIRECT2")) {
-          strFactAcctGroupId = vars.getGlobalVariable("inpFactAcctGroupId",
-              "ReportGeneralLedgerJournal|FactAcctGroupId");
+      try {
+        OBError msg = checkReportUsage(vars);
+        if (msg != null) {
+          advise(request, response, msg.getType(), msg.getTitle(), msg.getMessage());
+          return;
         }
-      }
+        String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
+            "ReportGeneralLedger|cAcctSchemaId");
+        vars.setSessionValue("ReportGeneralLedgerJournal|cAcctSchemaId", strcAcctSchemaId);
+        String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
+            "ReportGeneralLedgerJournal|DateFrom");
+        String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
+            "ReportGeneralLedgerJournal|DateTo");
+        String strDocument = vars.getRequestGlobalVariable("inpDocument",
+            "ReportGeneralLedgerJournal|Document");
+        String strDocumentNo = vars.getRequestGlobalVariable("inpDocumentNo",
+            "ReportGeneralLedgerJournal|DocumentNo");
+        String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
+        String strShowClosing = vars.getRequestGlobalVariable("inpShowClosing",
+            "ReportGeneralLedgerJournal|ShowClosing");
+        if (StringUtils.isEmpty(strShowClosing)) {
+          vars.setSessionValue("ReportGeneralLedgerJournal|ShowClosing", "N");
+        }
+        String strShowDivideUp = vars.getRequestGlobalVariable("inpShowDivideUp",
+            "ReportGeneralLedgerJournal|ShowDivideUp");
+        if (StringUtils.isEmpty(strShowDivideUp)) {
+          vars.setSessionValue("ReportGeneralLedgerJournal|ShowDivideUp", "N");
+        }
+        String strShowRegular = vars.getRequestGlobalVariable("inpShowRegular",
+            "ReportGeneralLedgerJournal|ShowRegular");
+        if (StringUtils.isEmpty(strShowRegular)) {
+          vars.setSessionValue("ReportGeneralLedgerJournal|ShowRegular", "N");
+        }
+        String strShowReg = vars.getRequestGlobalVariable("inpShowReg",
+            "ReportGeneralLedgerJournal|ShowReg");
+        if (StringUtils.isEmpty(strShowReg)) {
+          vars.setSessionValue("ReportGeneralLedgerJournal|ShowReg", "N");
+        }
+        String strShowOpening = vars.getRequestGlobalVariable("inpShowOpening",
+            "ReportGeneralLedgerJournal|ShowOpening");
+        if (StringUtils.isEmpty(strShowOpening)) {
+          vars.setSessionValue("ReportGeneralLedgerJournal|ShowOpening", "N");
+        }
+        if (!(StringUtils.equals(strShowOpening, "Y")) && !(StringUtils.equals(strShowReg, "Y"))
+            && !(StringUtils.equals(strShowRegular, "Y"))
+            && !(StringUtils.equals(strShowClosing, "Y"))
+            && !(StringUtils.equals(strShowDivideUp, "Y"))) {
+          strShowRegular = "Y";
+          vars.setSessionValue("ReportGeneralLedgerJournal|ShowRegular", "Y");
+        }
+        String strShowClosing1 = vars.getStringParameter("inpShowClosing");
+        String strShowReg1 = vars.getStringParameter("inpShowReg");
+        String strShowOpening1 = vars.getStringParameter("inpShowOpening");
+        String strShowDivideUp1 = vars.getStringParameter("inpShowDivideUp");
+        log4j.debug("********FIND***************  strShowClosing: " + strShowClosing);
+        log4j.debug("********FIND***************  strShowReg: " + strShowReg);
+        log4j.debug("********FIND***************  strShowOpening: " + strShowOpening);
+        log4j.debug("********FIND***************  strShowDivideUp: " + strShowDivideUp);
+        log4j.debug("********FIND***************  strShowClosing1: " + strShowClosing1);
+        log4j.debug("********FIND***************  strShowReg1: " + strShowReg1);
+        log4j.debug("********FIND***************  strShowOpening1: " + strShowOpening1);
+        log4j.debug("********FIND***************  strShowDivideUp1: " + strShowDivideUp1);
+        vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
+        vars.setSessionValue(PREVIOUS_ACCTENTRIES, "0");
+        vars.setSessionValue(PREVIOUS_RANGE, "");
+        setHistoryCommand(request, "DEFAULT");
+        String strPageNo = vars.getRequestGlobalVariable("inpPageNo",
+            "ReportGeneralLedgerJournal|PageNo");
+        String strEntryNo = vars.getRequestGlobalVariable("inpEntryNo",
+            "ReportGeneralLedgerJournal|EntryNo");
+        String strShowDescription = vars.getRequestGlobalVariable("inpShowDescription",
+            "ReportGeneralLedgerJournal|ShowDescription");
+        if (StringUtils.isEmpty(strShowDescription)) {
+          vars.setSessionValue("ReportGeneralLedgerJournal|ShowDescription", "N");
+        }
+        String strcelementvaluefrom = vars.getRequestGlobalVariable("inpcElementValueIdFrom",
+            "ReportGeneralLedgerJournal|C_ElementValue_IDFROM");
+        String strcelementvalueto = vars.getRequestGlobalVariable("inpcElementValueIdTo",
+            "ReportGeneralLedgerJournal|C_ElementValue_IDTO");
+        String strcelementvaluefromdes = "", strcelementvaluetodes = "";
+        ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+        if (StringUtils.isNotEmpty(strcelementvaluefrom)) {
+          strcelementvaluefromdes = ReportGeneralLedgerData.selectSubaccountDescription(readOnlyCP,
+              strcelementvaluefrom);
+        }
+        if (StringUtils.isNotEmpty(strcelementvalueto)) {
+          strcelementvaluetodes = ReportGeneralLedgerData.selectSubaccountDescription(readOnlyCP,
+              strcelementvalueto);
+        }
+        vars.setSessionValue("inpElementValueIdFrom_DES", strcelementvaluefromdes);
+        vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
 
-      setHistoryCommand(request, "DEFAULT");
-      String strcelementvaluefrom = vars.getRequestGlobalVariable("inpcElementValueIdFrom",
-          "ReportGeneralLedgerJournal|C_ElementValue_IDFROM");
-      String strcelementvalueto = vars.getRequestGlobalVariable("inpcElementValueIdTo",
-          "ReportGeneralLedgerJournal|C_ElementValue_IDTO");
-      printPagePDF(request, response, vars, strDateFrom, strDateTo, strDocument, strDocumentNo,
-          strOrg, strTable, strRecord, strFactAcctGroupId, strcAcctSchemaId, strShowClosing,
-          strShowReg, strShowOpening, strPageNo, strEntryNo,
-          StringUtils.equals(strShowDescription, "Y") ? "Y" : "", strShowRegular, strShowDivideUp,
-          strcelementvaluefrom, strcelementvalueto);
+        printPageDataSheet(response, vars, strDateFrom, strDateTo, strDocument, strDocumentNo,
+            strOrg, "", "", "", strcAcctSchemaId, strShowClosing, strShowReg, strShowOpening,
+            strPageNo, strEntryNo, strShowDescription, strShowRegular, strShowDivideUp, "", "",
+            strcelementvaluefrom, strcelementvalueto, strcelementvaluefromdes,
+            strcelementvaluetodes);
+      } finally {
+        decreaseReportUsage();
+      }
+    } else if (vars.commandIn("PDF", "XLS")) {
+      try {
+        if (log4j.isDebugEnabled()) {
+          log4j.debug("PDF");
+        }
+        OBError msg = checkReportUsage(vars);
+        if (msg != null) {
+          advisePopUp(request, response, msg.getType(), msg.getTitle(), msg.getMessage());
+          return;
+        }
+        String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
+            "ReportGeneralLedger|cAcctSchemaId");
+        String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
+            "ReportGeneralLedgerJournal|DateFrom");
+        String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
+            "ReportGeneralLedgerJournal|DateTo");
+        String strDocument = vars.getRequestGlobalVariable("inpDocument",
+            "ReportGeneralLedgerJournal|Document");
+        String strDocumentNo = vars.getRequestGlobalVariable("inpDocumentNo",
+            "ReportGeneralLedgerJournal|DocumentNo");
+        String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
+        String strShowClosing = vars.getRequestGlobalVariable("inpShowClosing",
+            "ReportGeneralLedgerJournal|ShowClosing");
+        if (StringUtils.isEmpty(strShowClosing)) {
+          vars.setSessionValue("ReportGeneralLedgerJournal|ShowClosing", "N");
+        }
+        String strShowRegular = vars.getRequestGlobalVariable("inpShowRegular",
+            "ReportGeneralLedgerJournal|ShowRegular");
+        if (StringUtils.isEmpty(strShowRegular)) {
+          vars.setSessionValue("ReportGeneralLedgerJournal|ShowRegular", "N");
+        }
+        String strShowReg = vars.getRequestGlobalVariable("inpShowReg",
+            "ReportGeneralLedgerJournal|ShowReg");
+        if (StringUtils.isEmpty(strShowReg)) {
+          vars.setSessionValue("ReportGeneralLedgerJournal|ShowReg", "N");
+        }
+        String strShowOpening = vars.getRequestGlobalVariable("inpShowOpening",
+            "ReportGeneralLedgerJournal|ShowOpening");
+        if (StringUtils.isEmpty(strShowOpening)) {
+          vars.setSessionValue("ReportGeneralLedgerJournal|ShowOpening", "N");
+        }
+        String strShowDivideUp = vars.getRequestGlobalVariable("inpShowDivideUp",
+            "ReportGeneralLedgerJournal|ShowDivideUp");
+        if (StringUtils.isEmpty(strShowDivideUp)) {
+          vars.setSessionValue("ReportGeneralLedgerJournal|ShowDivideUp", "N");
+        }
+        // In case all flags "Type" are deactivated, the "Regular" one is activated by default
+        if (!(StringUtils.equals(strShowOpening, "Y")) && !(StringUtils.equals(strShowReg, "Y"))
+            && !(StringUtils.equals(strShowRegular, "Y"))
+            && !(StringUtils.equals(strShowClosing, "Y"))
+            && !(StringUtils.equals(strShowDivideUp, "Y"))) {
+          strShowRegular = "Y";
+          vars.setSessionValue("ReportGeneralLedgerJournal|ShowRegular", "Y");
+        }
+
+        String strTable = vars.getStringParameter("inpTable");
+        String strRecord = vars.getStringParameter("inpRecord");
+        String strPageNo = vars.getGlobalVariable("inpPageNo", "ReportGeneralLedgerJournal|PageNo",
+            "1");
+        String strEntryNo = vars.getGlobalVariable("inpEntryNo",
+            "ReportGeneralLedgerJournal|EntryNo", "1");
+        String strShowDescription = vars.getRequestGlobalVariable("inpShowDescription",
+            "ReportGeneralLedgerJournal|ShowDescription");
+        if (StringUtils.isEmpty(strShowDescription)) {
+          vars.setSessionValue("ReportGeneralLedgerJournal|ShowDescription", "N");
+        }
+        /*
+         * Scenario 1: We will have FactAcctGroupId while the request redirect from
+         * ReportGeneralLedger Report. Otherwise we don't need to use FactAcctGroupId for PDF or
+         * Excel report. So we have to check the immediate history command has DIRECT2 (It means
+         * previous request from ReportGeneralLedger Report) Scenario 2: If we print once in PDF, it
+         * will reset the history of COMMAND with DEFAULT, so same record of redirect wont print
+         * more than one time. It will consider as default in second time.Scenario 3: If user change
+         * the filter criteria, however he has come from ReportGeneralLedger Report(DIRECT2) We
+         * don't take strFactAcctGroupId(will take care of criteria from current screen)
+         */
+        String strFactAcctGroupId = "";
+        if (StringUtils.isEmpty(strDateFrom) && StringUtils.isEmpty(strDocument)
+            && StringUtils.equals(strOrg, "0") && StringUtils.isEmpty(strShowClosing)
+            && StringUtils.isEmpty(strShowReg) && StringUtils.isEmpty(strShowOpening)
+            && StringUtils.isEmpty(strRecord)) {
+
+          int currentHistoryIndex = new Integer(
+              new VariablesHistory(request).getCurrentHistoryIndex()).intValue();
+          String currentCommand = vars.getSessionValue("reqHistory.command" + currentHistoryIndex);
+          if (StringUtils.equals(currentCommand, "DIRECT2")) {
+            strFactAcctGroupId = vars.getGlobalVariable("inpFactAcctGroupId",
+                "ReportGeneralLedgerJournal|FactAcctGroupId");
+          }
+        }
+
+        setHistoryCommand(request, "DEFAULT");
+        String strcelementvaluefrom = vars.getRequestGlobalVariable("inpcElementValueIdFrom",
+            "ReportGeneralLedgerJournal|C_ElementValue_IDFROM");
+        String strcelementvalueto = vars.getRequestGlobalVariable("inpcElementValueIdTo",
+            "ReportGeneralLedgerJournal|C_ElementValue_IDTO");
+        printPagePDF(request, response, vars, strDateFrom, strDateTo, strDocument, strDocumentNo,
+            strOrg, strTable, strRecord, strFactAcctGroupId, strcAcctSchemaId, strShowClosing,
+            strShowReg, strShowOpening, strPageNo, strEntryNo,
+            StringUtils.equals(strShowDescription, "Y") ? "Y" : "", strShowRegular,
+            strShowDivideUp, strcelementvaluefrom, strcelementvalueto);
+      } finally {
+        decreaseReportUsage();
+      }
     } else if (vars.commandIn("PREVIOUS_RELATION")) {
       String strInitRecord = vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber");
       String strPreviousRecordRange = vars.getSessionValue(PREVIOUS_RANGE);
@@ -836,6 +860,13 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     String strTreeOrg = TreeData.getTreeOrg(readOnlyCP, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
     try {
+      OBError myMessage = vars.getMessage("ReportGeneralLedgerJournal");
+      vars.removeMessage("ReportGeneralLedgerJournal");
+      if (myMessage != null) {
+        advisePopUp(request, response, myMessage.getType(), myMessage.getTitle(),
+            myMessage.getMessage());
+        return;
+      }
       if (StringUtils.isNotEmpty(strFactAcctGroupId)) {
         scrollData = ReportGeneralLedgerJournalData.selectDirect2(readOnlyCP,
             Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
@@ -1103,6 +1134,62 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       return null;
     } finally {
       OBContext.restorePreviousMode();
+    }
+  }
+
+  private OBError checkReportUsage(VariablesSecureApp vars) {
+    String userId = getUser();
+    int userExecution = userExecutions.containsKey(userId) ? userExecutions.get(userId) : 0;
+    userExecution++;
+    userExecutions.put(userId, userExecution);
+    reportExecutions++;
+
+    String userExecutionPreference = Utility.getPreference(vars, "ReportsUserExecutionsLimit", "");
+    int userExecutionLimit = Integer.parseInt(StringUtils.isEmpty(userExecutionPreference) ? "0"
+        : userExecutionPreference);
+    String reportExecutionPreference = Utility.getPreference(vars, "ReportsExecutionsLimit", "");
+    int reportExecutionLimit = Integer
+        .parseInt(StringUtils.isEmpty(reportExecutionPreference) ? "0" : reportExecutionPreference);
+
+    if (userExecution > userExecutionLimit) {
+      OBError myMessage = new OBError();
+      myMessage.setType("Error");
+      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+      String msgbody = Utility.messageBD(this, "ReportsUserExecutionsLimit", vars.getLanguage());
+      String userName = OBDal.getInstance().get(User.class, userId).getName();
+      msgbody = String.format(msgbody, userExecutionLimit, userName);
+      myMessage.setMessage(msgbody);
+      return myMessage;
+    }
+
+    else if (reportExecutions > reportExecutionLimit) {
+      OBError myMessage = new OBError();
+      myMessage.setType("Error");
+      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+      String msgbody = Utility.messageBD(this, "ReportsExecutionsLimit", vars.getLanguage());
+      msgbody = String.format(msgbody, reportExecutionLimit);
+      myMessage.setMessage(msgbody);
+      return myMessage;
+    }
+
+    return null;
+  }
+
+  private String getUser() {
+    return (String) RequestContext.get().getSession().getAttribute("#Authenticated_user");
+  }
+
+  private void decreaseReportUsage() {
+    String userId = getUser();
+    if (userExecutions.containsKey(userId)) {
+      userExecutions.put(userId, userExecutions.get(userId) - 1);
+      if (userExecutions.get(userId) <= 0) {
+        userExecutions.remove(userId);
+      }
+    }
+    reportExecutions--;
+    if (reportExecutions < 0) {
+      reportExecutions = 0;
     }
   }
 
