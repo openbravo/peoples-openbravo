@@ -82,10 +82,8 @@ public class TransactionsDao {
       final OBQuery<FIN_FinaccTransaction> obQuery = OBDal.getInstance().createQuery(
           FIN_FinaccTransaction.class, whereClause.toString());
       obQuery.setParameters(parameters);
-      OBObjectFieldProvider[] objectFieldProvider = null;
-      if (obQuery != null && obQuery.list().size() > 0) {
-        objectFieldProvider = OBObjectFieldProvider.createOBObjectFieldProvider(obQuery.list());
-      }
+      OBObjectFieldProvider[] objectFieldProvider = OBObjectFieldProvider
+          .createOBObjectFieldProvider(obQuery.list());
       return objectFieldProvider;
     } finally {
       OBContext.restorePreviousMode();
@@ -216,10 +214,7 @@ public class TransactionsDao {
       obc.addOrderBy(FIN_Reconciliation.PROPERTY_ENDINGDATE, false);
       obc.addOrderBy(FIN_Reconciliation.PROPERTY_CREATIONDATE, false);
       obc.setMaxResults(1);
-      final List<FIN_Reconciliation> rec = obc.list();
-      if (rec.size() == 0)
-        return null;
-      return rec.get(0);
+      return (FIN_Reconciliation) obc.uniqueResult();
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -240,7 +235,7 @@ public class TransactionsDao {
           .append(" is null ");
       final OBQuery<FIN_FinaccTransaction> obqFATrx = OBDal.getInstance().createQuery(
           FIN_FinaccTransaction.class, whereClause.toString());
-      return obqFATrx.list().size();
+      return obqFATrx.count();
 
     } finally {
       OBContext.restorePreviousMode();
