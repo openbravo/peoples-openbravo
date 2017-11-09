@@ -371,7 +371,6 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     final Query processTrl = OBDal.getInstance().getSession().createQuery(query.toString());
     processTrl.setParameter("processId", processDefinition.getId());
     processTrl.setParameter("languageId", OBContext.getOBContext().getLanguage().getId());
-    processTrl.setMaxResults(1);
     String translation = (String) processTrl.uniqueResult();
     if (translation != null) {
       return translation;
