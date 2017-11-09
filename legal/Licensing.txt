@@ -52,6 +52,10 @@ CRM files included in Openbravo ERP in this distribution are available
 under the Compiere Public license 1.1 and are located in the /database/
 folder. For more information, see CompiereAddendum.txt in the /legal/ folder
 
+# src/org/openbravo/erpCommon/ad_callouts/ISO_4217.xml
+Currency XML from Swiss Association for Standardisation
+https://www.iso.org/iso-4217-currency-codes.html
+
 # calculator.js (at web/js)
 Under Tigra Calculator license (license available at http://www.softcomplex.com/)
 Copyright © 2003-2004 Softcomplex Inc. 
