@@ -653,6 +653,8 @@ enyo.kind({
         if (args.cancellation) {
           return;
         }
+        args.attrs = args.attrs || {};
+        args.attrs.isScanning = true;
         me.searchProduct(args.code, args.callback, args.attrs);
       });
     }
