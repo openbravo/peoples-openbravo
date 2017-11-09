@@ -24,20 +24,15 @@
       <Sql>
         <![CDATA[
           update c_order set em_obpos_islayaway = 'Y' where c_order_id in ( 
-              select c_order_id from c_order ord 
-              where (select coalesce(sum(scheduleDetail.amount), 0) 
-                     from FIN_Payment_ScheduleDetail scheduleDetail 
-                         join fin_payment_schedule ps on ps.fin_payment_schedule_id = scheduleDetail.fin_payment_schedule_order 
-                     where ps.c_order_id=ord.c_order_id 
-                         and scheduleDetail.fin_payment_detail_id is not null 
-                         and scheduleDetail.iscanceled = 'N' 
-                         and scheduleDetail.c_bpartner_id = ord.c_bpartner_id) < ord.grandTotal 
-                         and ord.em_obpos_applications_id is not null 
-                         and not exists (select 1 
-                                         from c_orderline ol 
-                                         where ol.c_order_id = ord.c_order_id 
-                                             and ol.qtydelivered > 0) 
-                         and ord.docstatus = 'CO');
+              select o.c_order_id 
+              from c_order as o 
+              where o.em_obpos_isdeleted = 'N' 
+                  and o.em_obpos_applications_id is not null 
+                  and not exists (select 1 
+                                  from c_orderline as ol 
+                                  where ol.c_order_id = o.c_order_id 
+                                      and qtydelivered != 0) 
+                  and o.docstatus = 'CO';
         ]]>
       </Sql>
   </SqlMethod>
