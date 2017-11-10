@@ -38,7 +38,6 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -345,7 +344,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
 
     final JSONObject reportAction = new JSONObject();
     if (expType.equals(ExportType.HTML)) {
-      recordInfo.put("tabTitle", getResultTabTitle(report.getProcessDefintion()));
+      recordInfo.put("tabTitle", getResultTabTitle(report));
       reportAction.put("OBUIAPP_browseReport", recordInfo);
     } else {
       reportAction.put("OBUIAPP_downloadReport", recordInfo);
@@ -363,19 +362,10 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     return ExportType.getExportType(action);
   }
 
-  private String getResultTabTitle(Process processDefinition) {
-    final StringBuilder query = new StringBuilder();
-    query.append("SELECT trl.name FROM OBUIAPP_ProcessTrl trl ");
-    query.append("WHERE trl.processDefintion.id=:processId ");
-    query.append("AND trl.language.id=:languageId");
-    final Query processTrl = OBDal.getInstance().getSession().createQuery(query.toString());
-    processTrl.setParameter("processId", processDefinition.getId());
-    processTrl.setParameter("languageId", OBContext.getOBContext().getLanguage().getId());
-    String translation = (String) processTrl.uniqueResult();
-    if (translation != null) {
-      return translation;
-    }
-    return processDefinition.getName();
+  private String getResultTabTitle(ReportDefinition report) {
+    Process processDefinition = report.getProcessDefintion();
+    return (String) processDefinition.get(Process.PROPERTY_NAME, OBContext.getOBContext()
+        .getLanguage());
   }
 
   /**
