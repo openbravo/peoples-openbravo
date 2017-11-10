@@ -18,18 +18,14 @@
  */
 package org.openbravo.client.kernel;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Message;
 import org.openbravo.model.ad.ui.MessageTrl;
 
@@ -72,35 +68,24 @@ public class I18NComponent extends SessionDynamicTemplateComponent {
    * @return a collection of labels.
    */
   public Collection<Label> getLabels() {
-    final Map<String, Label> labels = new HashMap<String, Label>();
+    final Map<String, Label> labels = new HashMap<>();
     OBContext.setAdminMode();
     try {
-      final OBQuery<Module> moduleQuery = OBDal.getInstance()
-          .createQuery(Module.class, "id != '0'");
-      final List<String> modules = new ArrayList<String>();
-      for (Module module : moduleQuery.list()) {
-        modules.add(module.getId());
-      }
-
-      if (modules.isEmpty()) {
-        return Collections.emptyList();
-      }
-
       // first read the labels from the base table
       final OBQuery<Message> messages = OBDal.getInstance().createQuery(Message.class,
-          "module.id in (:modules) or includeInI18N='Y'");
-      messages.setNamedParameter("modules", modules);
+          "module.id!='0' or includeInI18N='Y'");
       for (Message message : messages.list()) {
         final Label label = new Label();
         label.setKey(message.getSearchKey());
         label.setValue(message.getMessageText());
         labels.put(message.getSearchKey(), label);
       }
+
       final OBQuery<MessageTrl> messagesTrl = OBDal
           .getInstance()
-          .createQuery(MessageTrl.class,
-              "(message.module.id in (:modules) or message.includeInI18N='Y') and language.id=:languageId");
-      messagesTrl.setNamedParameter("modules", modules);
+          .createQuery(
+              MessageTrl.class,
+              "(message.module.id!='0' or message.includeInI18N='Y') and message.active = true and language.id=:languageId");
       messagesTrl.setNamedParameter("languageId", OBContext.getOBContext().getLanguage().getId());
       for (MessageTrl message : messagesTrl.list()) {
         final Label label = new Label();
