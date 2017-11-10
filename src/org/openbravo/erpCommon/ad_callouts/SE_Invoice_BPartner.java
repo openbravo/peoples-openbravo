@@ -253,7 +253,7 @@ public class SE_Invoice_BPartner extends SimpleCallout {
           obc.add(Restrictions.in(FinAccPaymentMethod.PROPERTY_ORGANIZATION + ".id", OBContext
               .getOBContext().getOrganizationStructureProvider().getNaturalTree(strOrgId)));
 
-          // filter is on unique constraint so list().size() <=1 always
+          // filter is on unique constraint so list() size <=1 always
           if (obc.uniqueResult() == null) {
             message = Utility.messageBD(this, "PaymentmethodNotbelongsFinAccount",
                 vars.getLanguage());

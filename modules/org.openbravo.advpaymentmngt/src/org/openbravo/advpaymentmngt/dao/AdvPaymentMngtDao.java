@@ -1555,6 +1555,11 @@ public class AdvPaymentMngtDao {
     }
   }
 
+  /**
+   * This method adds a filter to the Query to filter by Payment Methods Id's. However, since the
+   * list can be bigger than 1000 records, it is necessary to split it to create several
+   * "paymentMethod.id in ('')" clauses that have less than 1000 records.
+   */
   private void addPaymentMethodList(OBCriteria<FIN_PaymentMethod> obc, List<String> paymentMethods) {
     Criterion compoundExp = null;
     int paymentMethodsSize = paymentMethods.size();

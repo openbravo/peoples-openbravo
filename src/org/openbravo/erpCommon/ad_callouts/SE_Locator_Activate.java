@@ -125,7 +125,8 @@ public class SE_Locator_Activate extends SimpleCallout {
     final OBQuery<StoragePending> query = OBDal.getInstance().createQuery(StoragePending.class,
         hsqlScript.toString());
     query.setParameters(parameters);
-    return query.list().size() > 0;
+    query.setMaxResult(1);
+    return query.uniqueResult() != null;
   }
 
   /**

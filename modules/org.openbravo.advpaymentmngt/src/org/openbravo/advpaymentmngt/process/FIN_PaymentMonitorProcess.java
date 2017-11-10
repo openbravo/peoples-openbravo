@@ -334,19 +334,19 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
     obcNotSel.add(Restrictions.eq(Preference.PROPERTY_PROPERTY, property));
     obcNotSel.setFilterOnReadableClients(false);
     obcNotSel.setFilterOnReadableOrganization(false);
+    obcNotSel.setMaxResults(1);
 
     final OBCriteria<Preference> obcSel = OBDal.getInstance().createCriteria(Preference.class);
     obcSel.add(Restrictions.eq(Preference.PROPERTY_PROPERTY, property));
     obcSel.add(Restrictions.eq(Preference.PROPERTY_SELECTED, true));
     obcSel.setFilterOnReadableClients(false);
     obcSel.setFilterOnReadableOrganization(false);
+    obcSel.setMaxResults(1);
 
-    obcNotSel.setMaxResults(1);
     Preference preference = (Preference) obcNotSel.uniqueResult();
     if (preference != null) {
       return StringUtils.equals(preference.getModule().getId(), moduleId);
     } else {
-      obcSel.setMaxResults(1);
       preference = (Preference) obcSel.uniqueResult();
       if (preference != null) {
         return StringUtils.equals(preference.getModule().getId(), moduleId);
