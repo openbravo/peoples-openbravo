@@ -19,15 +19,17 @@
 package org.openbravo.erpCommon.ad_forms;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.hibernate.SQLQuery;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.exception.NoConnectionAvailableException;
@@ -56,41 +58,42 @@ class SQLExecutor_Query implements FieldProvider {
   public static SQLExecutor_Query[] select(ConnectionProvider connectionProvider, String strSQL,
       int firstRegister, int numberRegisters) throws ServletException {
 
-    PreparedStatement st = null;
-    ResultSet result;
     Vector<SQLExecutor_Query> vector = new Vector<>(0);
 
     try {
       if (log4j.isDebugEnabled())
-        log4j.debug("select - Preparing Statement\n");
-      st = connectionProvider.getPreparedStatement(strSQL);
+        log4j.debug("select - Preparing Native SQL \n");
+      SQLQuery sqlQuery = OBDal.getInstance().getSession().createSQLQuery(strSQL);
+      sqlQuery.setFirstResult(firstRegister);
+      sqlQuery.setMaxResults(numberRegisters);
       if (log4j.isDebugEnabled())
-        log4j.debug("select - Statement Prepared\n");
+        log4j.debug("select - Native SQL Prepared\n");
+
       if (log4j.isDebugEnabled())
-        log4j.debug("select - Executing Statement\n");
-      result = st.executeQuery();
+        log4j.debug("select - Executing Native SQL\n");
+      @SuppressWarnings("unchecked")
+      List<Object> results = sqlQuery.list();
       if (log4j.isDebugEnabled())
-        log4j.debug("select - Statement Executed\n");
-      long countRecord = 0;
-      long countRecordSkip = 1;
-      boolean continueResult = true;
-      while (countRecordSkip < firstRegister && continueResult) {
-        continueResult = result.next();
-        countRecordSkip++;
-      }
-      ResultSetMetaData rmeta = result.getMetaData();
+        log4j.debug("select - Native SQL Executed\n");
+
+      PreparedStatement st = connectionProvider.getPreparedStatement(strSQL);
+      ResultSetMetaData rmeta = st.getMetaData();
       int numColumns = rmeta.getColumnCount();
       Vector<String> types = new Vector<String>(0);
       Vector<String> names = new Vector<String>(0);
       if (log4j.isDebugEnabled())
         log4j.debug("select - Making data\n");
-      while (continueResult && result.next()) {
+
+      int countRecord = 0;
+      for (Object result : results) {
+        Object[] resultFields = (Object[]) result;
         countRecord++;
         SQLExecutor_Query objectSQLExecutor_Query = new SQLExecutor_Query();
         for (int i = 1; i <= numColumns; i++) {
+
           String aux = "";
           try {
-            aux = result.getString(i);
+            aux = resultFields[i].toString();
           } catch (Exception ignored) {
           }
           if (aux == null)
@@ -110,15 +113,9 @@ class SQLExecutor_Query implements FieldProvider {
         }
         types = objectSQLExecutor_Query.type;
         names = objectSQLExecutor_Query.name;
-
         vector.addElement(objectSQLExecutor_Query);
-        if (countRecord >= numberRegisters && numberRegisters != 0) {
-          continueResult = false;
-        }
       }
-      if (log4j.isDebugEnabled())
-        log4j.debug("select - Closing resultset\n");
-      result.close();
+
     } catch (NoConnectionAvailableException ex) {
       log4j.error("No connection available error in query: " + strSQL + "Exception:" + ex);
       throw new ServletException("@CODE=NoConnectionAvailable");
@@ -128,12 +125,7 @@ class SQLExecutor_Query implements FieldProvider {
           + ex2.getMessage());
     } catch (Exception ex3) {
       log4j.error("Error in query: " + strSQL + "Exception:" + ex3);
-      throw new ServletException("@CODE=@" + ex3.getMessage());
-    } finally {
-      try {
-        connectionProvider.releasePreparedStatement(st);
-      } catch (Exception ignored) {
-      }
+      throw new ServletException("@CODE=@" + ex3.getMessage() + ": " + ex3.getCause().getMessage());
     }
     SQLExecutor_Query objectSQLExecutor_Query[] = new SQLExecutor_Query[vector.size()];
     vector.copyInto(objectSQLExecutor_Query);
