@@ -73,6 +73,7 @@ public class KernelComponentProvider extends BaseComponentProvider {
 
   // in case of the application component also make it role/org dependent, this
   // also covers client dependency
+  @Override
   public String getVersionParameters(String resource) {
     final String versionParam = super.getVersionParameters(resource);
     if (resource.contains(KernelConstants.APPLICATION_COMPONENT_ID)
@@ -88,7 +89,7 @@ public class KernelComponentProvider extends BaseComponentProvider {
     if (globalResources != null) {
       return globalResources;
     }
-    globalResources = new ArrayList<ComponentResource>();
+    globalResources = new ArrayList<>();
 
     globalResources.add(createStaticResource("org.openbravo.client.kernel/"
         + KernelConstants.KERNEL_COMPONENT_TYPE + "/" + KernelConstants.APPLICATION_COMPONENT_ID,
@@ -97,6 +98,9 @@ public class KernelComponentProvider extends BaseComponentProvider {
     globalResources.add(createDynamicResource("org.openbravo.client.kernel/"
         + KernelConstants.KERNEL_COMPONENT_TYPE + "/"
         + KernelConstants.SESSION_DYNAMIC_COMPONENT_ID));
+
+    globalResources
+        .add(createStaticResource("web/org.openbravo.client.kernel/js/ob-i18n.js", true));
 
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.kernel/js/ob-kernel-utilities.js", true));
