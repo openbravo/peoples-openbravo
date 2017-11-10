@@ -27,7 +27,6 @@ import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.exception.SQLGrammarException;
@@ -95,15 +94,17 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
 
   private List<String> getAlertIds(String alertStatus) {
     // Get alert rules visible for context's the role/user.
-    final String sql = "SELECT arule.ad_alertrule_id, arule.filterclause"
-        + " FROM ad_alertrule arule "
-        + " WHERE (EXISTS(SELECT 1 FROM ad_alertrecipient arecipient"
-        + " WHERE arule.ad_alertrule_id = arecipient.ad_alertrule_id"
-        + " AND (arecipient.ad_user_id = :userId OR (arecipient.ad_user_id is null)"
-        + " AND arecipient.ad_role_id = :roleId)))"//
-        + " AND arule.ad_client_id " + OBDal.getInstance().getReadableClientsInClause()
-        + " AND ad_org_id " + OBDal.getInstance().getReadableOrganizationsInClause()
-        + " AND arule.isactive='Y'";
+    final String sql = "SELECT ad_alertrule_id, filterclause"
+        + "  FROM ad_alertrule arule" //
+        + " WHERE EXISTS (SELECT 1" //
+        + "                 FROM ad_alertrecipient arecipient"
+        + "                WHERE arule.ad_alertrule_id = arecipient.ad_alertrule_id"
+        + "                  AND (ad_user_id = :userId"
+        + "                       OR (ad_user_id is null AND ad_role_id = :roleId)))"
+        + "  AND ad_client_id " + OBDal.getInstance().getReadableClientsInClause()
+        + "  AND ad_org_id " + OBDal.getInstance().getReadableOrganizationsInClause()
+        + "  AND isactive='Y'";
+
     final SQLQuery alertRules = OBDal.getInstance().getSession().createSQLQuery(sql);
     alertRules.setParameter("userId", OBContext.getOBContext().getUser().getId());
     alertRules.setParameter("roleId", OBContext.getOBContext().getRole().getId());
@@ -122,15 +123,13 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
         String alertRuleId = resultAlertRules[ALERT_RULE_ID].toString();
         String alertRuleFilterClause = resultAlertRules[ALERT_RULE_FILTERCLAUSE] == null ? ""
             : resultAlertRules[ALERT_RULE_FILTERCLAUSE].toString();
-        if (alertRulesIdGroupByFilterClauses.containsKey(alertRuleFilterClause)) {
-          List<String> oldIds = alertRulesIdGroupByFilterClauses.get(alertRuleFilterClause);
-          oldIds.add(alertRuleId);
-          alertRulesIdGroupByFilterClauses.put(alertRuleFilterClause, oldIds);
-        } else {
-          List<String> newFilterClause = new ArrayList<>();
-          newFilterClause.add(alertRuleId);
-          alertRulesIdGroupByFilterClauses.put(alertRuleFilterClause, newFilterClause);
+
+        List<String> ids = alertRulesIdGroupByFilterClauses.get(alertRuleFilterClause);
+        if (ids == null) {
+          ids = new ArrayList<>();
+          alertRulesIdGroupByFilterClauses.put(alertRuleFilterClause, ids);
         }
+        ids.add(alertRuleId);
       }
     } catch (SQLGrammarException e) {
       log.error("An error has ocurred when trying to process the alert rules: " + e.getMessage(), e);
@@ -153,14 +152,16 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
           + " AND ad_client_id " + OBDal.getInstance().getReadableClientsInClause()
           + " AND ad_org_id " + OBDal.getInstance().getReadableOrganizationsInClause()
           + " AND ad_alertrule_id IN (" + toStringList(alertRuleList.getValue()) + ")"
-          + filterClause + " AND coalesce(to_char(status), 'NEW') = '"
-          + StringEscapeUtils.escapeSql(alertStatus) + "'";
+          + filterClause + " AND coalesce(to_char(status), 'NEW') = :status";
       final SQLQuery sqlQuery = OBDal.getInstance().getSession().createSQLQuery(sql);
+      sqlQuery.setParameter("status", alertStatus);
       try {
         @SuppressWarnings("unchecked")
         List<String> alertsFound = sqlQuery.list();
-        log.debug("Alerts ID: " + alertRuleList.getValue().toString() + ") - SQL:'" + sql
-            + "' - Rows: " + alertsFound.size());
+        if (log.isDebugEnabled()) {
+          log.debug("Alert rule IDs: " + alertRuleList.getValue() + ") - SQL:'" + sql
+              + "' - Rows: " + alertsFound.size());
+        }
         alertIds.addAll(alertsFound);
       } catch (SQLGrammarException e) {
         log.error("An error has ocurred when trying to process the alerts: " + e.getMessage(), e);
