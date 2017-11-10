@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,7 +41,6 @@ public class SQLExecutor extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-    OBError myMessage = null;
 
     if (vars.commandIn("DEFAULT")) {
       String strSQL = vars.getGlobalVariable("inpSQL", "SQLExecutor|sql", "");
@@ -73,15 +72,7 @@ public class SQLExecutor extends HttpSecureAppServlet {
         }
         data = SQLExecutor_Query.select(this, strSQL, initRecordNumber, intRecordRange);
       } catch (Exception ex) {
-        ex.printStackTrace();
-        // new message system
-        myMessage = new OBError();
-        myMessage.setType("Error");
-        myMessage.setTitle("");
-        myMessage.setMessage(Utility.messageBD(this, "Error", vars.getLanguage()));
-        vars.setMessage("SQLExecutor", myMessage);
-        // vars.setSessionValue("SQLExecutor|message",
-        // Utility.messageBD(this, "Error", vars.getLanguage()));
+        showsErrorMessage(vars, ex);
       }
       log4j.debug("sql: " + strSQL);
       printPage(response, vars, strSQL, data, "0", initRecordNumber, intRecordRange);
@@ -99,19 +90,11 @@ public class SQLExecutor extends HttpSecureAppServlet {
           throw new ServletException("Invalid SQL statement");
         }
         data = SQLExecutor_Query.select(this, strSQL, initRecordNumber, intRecordRange);
+        log4j.debug("sql: " + strSQL);
+        printExcel(response, vars, strSQL, data);
       } catch (Exception ex) {
-        ex.printStackTrace();
-        // new message system
-        myMessage = new OBError();
-        myMessage.setType("Error");
-        myMessage.setTitle("");
-        myMessage.setMessage(Utility.messageBD(this, "Error", vars.getLanguage()));
-        vars.setMessage("SQLExecutor", myMessage);
-        // vars.setSessionValue("SQLExecutor|message",
-        // Utility.messageBD(this, "Error", vars.getLanguage()));
+        showsErrorMessage(vars, ex);
       }
-      log4j.debug("sql: " + strSQL);
-      printExcel(response, vars, strSQL, data);
     } else if (vars.commandIn("FIRST_RELATION")) {
       vars.setSessionValue("SQLExecutor|initRecordNumber", "0");
       response.sendRedirect(strDireccion + request.getServletPath() + "?Command=DEFAULT");
@@ -147,6 +130,15 @@ public class SQLExecutor extends HttpSecureAppServlet {
       response.sendRedirect(strDireccion + request.getServletPath() + "?Command=DEFAULT");
     } else
       pageError(response);
+  }
+
+  private void showsErrorMessage(VariablesSecureApp vars, Exception ex) {
+    ex.printStackTrace();
+    OBError myMessage = new OBError();
+    myMessage.setType("Error");
+    myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+    myMessage.setMessage(Utility.messageBD(this, ex.getMessage(), vars.getLanguage()));
+    vars.setMessage("SQLExecutor", myMessage);
   }
 
   private String lastRange(VariablesSecureApp vars, String strSQL, String strRecordRange) {
@@ -225,15 +217,6 @@ public class SQLExecutor extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/ad_forms/SQLExecutor").createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-
-    // new message system
-    // String strMessage = vars.getSessionValue("SQLExecutor|message");;
-    // if (!strMessage.equals("")) strMessage = "alert('" + strMessage +
-    // "');";
-    // vars.removeSessionValue("SQLExecutor|message");
-    // xmlDocument.setParameter("buscador", strMessage);
-    //
-
     xmlDocument.setParameter("sql", strSQL);
     log4j.debug("sql");
     SQLExecutorData[] dataHeader = null;
@@ -258,30 +241,8 @@ public class SQLExecutor extends HttpSecureAppServlet {
         dataBuffer.append("</tr>\n");
       }
     }
-    /*
-     * StringBuffer strData = new StringBuffer("var myData = new Array(\n"); StringBuffer strHeader
-     * = new StringBuffer(); if (log4j.isDebugEnabled())
-     * log4j.debug("printPage - Making grid data\n"); int selectedIndex = 0; if (data!=null &&
-     * data.length!=0) { for (int countHeads=0;countHeads<data[0].type.size();countHeads++) {
-     * strHeader. append("obj.addHeader(new Header(\"").append(data[0].name.elementAt (countHeads
-     * )).append("\", \"").append(data[0].type.elementAt(countHeads
-     * )).append("\", 100, 20, true));\n"); } for (int
-     * contadorData=0;contadorData<data.length;contadorData++) { strData.append("new Array("); for
-     * (int countHeads=0;countHeads<data[0].data.size();countHeads++) { if (countHeads>0)
-     * strData.append(","); strData.append("\"").append(Replace
-     * .replace(Replace.replace(Replace.replace
-     * (data[contadorData].getField(Integer.toString(countHeads)), "\r", ""), "\n", "<br>"), "\"",
-     * "\\\"")).append("\""); } strData.append(")"); if (contadorData < (data.length-1))
-     * strData.append(","); strData.append("\n"); } } else { strInitRecord = "0"; }
-     * strData.append(");"); String strGrid = "obj.setSelectedRow(" +
-     * Integer.toString(selectedIndex) + ");\n"; strGrid += "obj.setInitRowNum(" +
-     * (strInitRecord.equals("0")?"1":strInitRecord) + ");\n"; xmlDocument.setParameter("grid",
-     * strGrid); xmlDocument.setParameter("header", strHeader.toString());
-     * xmlDocument.setParameter("data", strData.toString());
-     */
     xmlDocument.setData("structureHeader", dataHeader);
     xmlDocument.setParameter("data", dataBuffer.toString());
-    // xmlDocument.setData("reportLinea", "structure1", dataLinea);
     if (log4j.isDebugEnabled())
       log4j.debug("printPage - Making toolbar\n");
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "SQLExecutor", false,
@@ -338,5 +299,5 @@ public class SQLExecutor extends HttpSecureAppServlet {
 
   public String getServletInfo() {
     return "Servlet for the standard SQL execution";
-  } // end of getServletInfo() method
+  }
 }
