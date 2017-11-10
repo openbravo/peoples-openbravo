@@ -14,16 +14,38 @@
   OB.UTIL.prepaymentRules = {};
   OB.UTIL.prepaymentRules.OBPOS_Default = {
     execute: function (receipt, callback) {
-      var prepaymentAmount = receipt.get('lines').reduce(function (memo, line) {
-        if (line.get('obposCanbedelivered') || line.get('deliveredQuantity') === line.get('qty')) {
-          return memo + line.get('gross');
-        } else {
-          return memo;
-        }
-      }, 0),
+      var me = this,
+          prepaymentAmount = receipt.get('lines').reduce(function (memo, line) {
+          if (line.get('obposCanbedelivered') || line.get('deliveredQuantity') === line.get('qty')) {
+            return memo + me.currentLinePrepaymentAmount(line, 100);
+          } else {
+            return memo;
+          }
+        }, 0),
           prepaymentLimitAmount = prepaymentAmount;
       callback(prepaymentAmount, prepaymentLimitAmount);
+    },
+    currentLinePrepaymentAmount: function (line, percentage, units) {
+      var price, discount;
+      if (units) {
+        price = line.get('grossListPrice');
+        if (line.get('promotions') && line.get('promotions').length > 0) {
+          discount = line.get('promotions').reduce(function (total, model) {
+            return total + model.amt;
+          }, 0);
+          price = price - discount * units / line.get('qty');
+        }
+        price = price * units;
+      } else {
+        price = line.get('gross');
+        if (line.get('promotions') && line.get('promotions').length > 0) {
+          discount = line.get('promotions').reduce(function (total, model) {
+            return total + model.amt;
+          }, 0);
+          price = price - discount;
+        }
+      }
+      return price * percentage / 100;
     }
   };
-
 }());
