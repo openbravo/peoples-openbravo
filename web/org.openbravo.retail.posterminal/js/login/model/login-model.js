@@ -184,6 +184,7 @@
 
               OB.UTIL.localStorage.setItem('terminalId', data[0].terminal.id);
               terminalModel.set('useBarcode', terminalModel.get('terminal').terminalType.usebarcodescanner);
+              terminalModel.set('useEmbededBarcode', terminalModel.get('terminal').terminalType.useembededbarcodescanner);
               if (!terminalModel.usermodel) {
                 OB.MobileApp.model.loadingErrorsActions("The terminal.usermodel should be loaded at this point");
               } else if (OB.MobileApp.model.attributes.loadManifeststatus && OB.MobileApp.model.attributes.loadManifeststatus.type === 'error' && !OB.RR.RequestRouter.ignoreManifestLoadError()) {
