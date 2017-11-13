@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -30,6 +30,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 
 public class InvoiceLineEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
@@ -59,8 +60,21 @@ public class InvoiceLineEventHandler extends EntityPersistenceEventObserver {
       if (ObjInvoice != null) {
         ObjInvoice.setSalesOrder(null);
         OBDal.getInstance().save(ObjInvoice);
+        unlinkInvoiceFromGoodsReceipt(ObjInvoice);
         OBDal.getInstance().flush();
       }
+    }
+  }
+
+  private void unlinkInvoiceFromGoodsReceipt(Invoice objInvoice) {
+    OBCriteria<ShipmentInOut> criteria = OBDal.getInstance().createCriteria(ShipmentInOut.class);
+    criteria.add(Restrictions.eq(ShipmentInOut.PROPERTY_SALESTRANSACTION, Boolean.FALSE));
+    criteria.add(Restrictions.eq(ShipmentInOut.PROPERTY_INVOICE, objInvoice));
+
+    ShipmentInOut goodsReceipt = (ShipmentInOut) criteria.uniqueResult();
+    if (goodsReceipt != null) {
+      goodsReceipt.setInvoice(null);
+      OBDal.getInstance().save(goodsReceipt);
     }
   }
 }
