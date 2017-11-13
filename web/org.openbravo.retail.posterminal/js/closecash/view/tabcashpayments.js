@@ -144,7 +144,7 @@ enyo.kind({
     this.$.numberOfCoins.setStyle(newStyle);
     newFontSize = 16;
     if (contentLengthTotal > 18) {
-      newFontSize = 14;
+      newFontSize = 12;
     }
     newStyle = "font-size: " + newFontSize + "px; margin-left: 2%; display:inline-block;padding: 10px 0px 10px 0px; width: 26%; text-align: center;";
     this.$.total.setStyle(newStyle);
@@ -160,10 +160,12 @@ enyo.kind({
     this.applyStyle('color', OB.DEC.compare(value) < 0 ? 'red' : 'black');
     var contentLength = this.getContent().length;
     var newFontSize = 16;
-    if (contentLength > 12) {
-      newFontSize = 14;
+    if (contentLength > 21) {
+      newFontSize = 7;
     } else if (contentLength > 15) {
-      newFontSize = 12;
+      newFontSize = 10;
+    } else if (contentLength > 11) {
+      newFontSize = 14;
     }
     this.applyStyle('font-size', newFontSize + 'px');
   }
