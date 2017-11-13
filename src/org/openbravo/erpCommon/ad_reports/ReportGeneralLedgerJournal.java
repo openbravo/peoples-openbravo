@@ -1151,7 +1151,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     int reportExecutionLimit = Integer
         .parseInt(StringUtils.isEmpty(reportExecutionPreference) ? "0" : reportExecutionPreference);
 
-    if (userExecution > userExecutionLimit) {
+    // userExecutionLimit = 0 means that the userExecutionLimit must not be checked
+    if (userExecution > userExecutionLimit && userExecutionLimit > 0) {
       OBError myMessage = new OBError();
       myMessage.setType("Error");
       myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
@@ -1162,7 +1163,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       return myMessage;
     }
 
-    else if (reportExecutions > reportExecutionLimit) {
+    // reportExecutionLimit = 0 means that the reportExecutionLimit must not be checked
+    else if (reportExecutions > reportExecutionLimit && reportExecutionLimit > 0) {
       OBError myMessage = new OBError();
       myMessage.setType("Error");
       myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
