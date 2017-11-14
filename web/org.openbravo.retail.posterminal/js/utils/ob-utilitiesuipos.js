@@ -38,6 +38,16 @@ OB.UTIL.getNumberOfSequence = function (documentNo, isQuotation) {
   }
 };
 
+OB.UTIL.getPaymentByKey = function (key) {
+  var i;
+  var terminalPayments = OB.MobileApp.model.get('payments');
+  for (i = 0; i < terminalPayments.length; i++) {
+    if (terminalPayments[i].payment.searchKey === key) {
+      return terminalPayments[i];
+    }
+  }
+  return null;
+};
 
 /**
  * Facilitates to work reliably with currency conversions
