@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -267,9 +267,11 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
         }
 
         try {
+          String orgList = Utility.getInStrSet(OBContext.getOBContext()
+              .getOrganizationStructureProvider().getNaturalTree(taxRegister.adOrgId));
           TaxRegister.updateTaxTotalAmt(this, taxRegister.cTaxregisterId);
           TaxRegister.updateRegAccumAmt(this, taxRegister.cTaxregisterId,
-              taxRegister.cTaxregisterTypeId, strDatefrom);
+              taxRegister.cTaxregisterTypeId, strDatefrom, orgList);
         } catch (ServletException ex) {
           myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
           return myMessage;

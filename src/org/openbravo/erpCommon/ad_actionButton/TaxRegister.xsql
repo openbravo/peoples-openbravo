@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -123,7 +123,8 @@
   	   AND C_TAXREGISTER.C_TAXPAYMENT_ID=C_TAXPAYMENT.C_TAXPAYMENT_ID
   	   AND C_TAXPAYMENT.DATETO = TO_DATE( ? )-1
   	   AND C_TAXPAYMENT.PROCESSED='Y'
-  	   AND C_TAXPAYMENT.GENERATEPAYMENT='N'))
+  	   AND C_TAXPAYMENT.GENERATEPAYMENT='N'
+  	   AND C_TAXREGISTER.AD_Org_ID IN ('1')))
   	   ,0)
   	   +
   	   COALESCE( 
@@ -134,7 +135,8 @@
   	   AND C_TAXREGISTER.C_TAXPAYMENT_ID=C_TAXPAYMENT.C_TAXPAYMENT_ID
   	   AND C_TAXPAYMENT.DATETO = TO_DATE( ? )-1
   	   AND C_TAXPAYMENT.PROCESSED='Y'
-  	   AND C_TAXPAYMENT.GENERATEPAYMENT='N'))
+  	   AND C_TAXPAYMENT.GENERATEPAYMENT='N'
+  	   AND  C_TAXREGISTER.AD_Org_ID IN ('1')))
   	   ,0)
   	   WHERE C_TAXREGISTER_id = ?		
       ]]>
@@ -142,9 +144,11 @@
   <Parameter name="taxregister_id"/>
   <Parameter name="taxregistertype_id"/>
   <Parameter name="datefrom"/>
+  <Parameter name="adUserOrg" type="replace" optional="true" after="AND C_TAXREGISTER.AD_Org_ID IN (" text="'1'"/>
   <Parameter name="taxregister_id"/>
   <Parameter name="taxregistertype_id"/>
   <Parameter name="datefrom"/>
+  <Parameter name="adUserOrg" type="replace" optional="true" after="AND  C_TAXREGISTER.AD_Org_ID IN (" text="'1'"/>
   <Parameter name="taxregister_id"/>
   
   </SqlMethod>
