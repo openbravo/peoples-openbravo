@@ -37,89 +37,84 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This test ensures that a deactivated role in the User Roles subtab is not appeared in the User
- * profile widget. The problem was introduced with the performance improvements applied on the login
- * process.
- * 
- * See regression: https://issues.openbravo.com/view.php?id=37278
- * 
- * @author inigo.sanchez
+ * profile widget.
  */
-
 public class RoleListForTheCurrentUser extends BaseDataSourceTestDal {
   private static Logger log = LoggerFactory.getLogger(RoleListForTheCurrentUser.class);
 
-  private static final String STR_START = ",role:{value";
-  private static final String STR_FINISH = "],roles";
+  private static final String USER_INFO_START = "OB.User.userInfo=";
+  private static final String USER_INFO_FINISH = "};";
+
+  private static final String ROLE_START = ",role:{value";
+  private static final String ROLE_FINISH = "],roles";
 
   // Role: F&B US, Inc. - Employee
   private static final String TESTED_ROLE_ID = "19AE26382A674FE8946D2B8070D10122";
   // User Role: Openbravo User - F&B US, Inc. - Employee Role
   private static final String USER_ROLE_TEST = "3B960D8A87CA4F77907DF2B7F9A77366";
-  private static final int EXPECTED_ROLES = 13;
 
   @Test
-  public void isShownDeactivateRoleInUserProfileWidget() throws Exception {
+  public void deactivatedRoleNotShowInUserProfile() throws Exception {
     try {
-      String response = doLoginRequest();
-      JSONArray rolesInUserProfileWidget = transformResponse(response);
+      String response = doSessionDynamicRequest();
+      JSONArray rolesInfo = getRoles(response);
       assertThat("The activated role is not present in the dropdown.",
-          isRoleInUserProfileWidget(rolesInUserProfileWidget), equalTo(true));
-      assertThat("Number of the roles is not correct", rolesInUserProfileWidget.length(),
-          equalTo(EXPECTED_ROLES));
+          isRoleInUserProfileWidget(rolesInfo), equalTo(true));
 
       setActiveUserRole(false);
 
-      String responseDeactivatedUserRole = doLoginRequest();
-      rolesInUserProfileWidget = transformResponse(responseDeactivatedUserRole);
+      String responseDeactivatedUserRole = doSessionDynamicRequest();
+      rolesInfo = getRoles(responseDeactivatedUserRole);
       assertThat("The activated role is present in the dropdown.",
-          isRoleInUserProfileWidget(rolesInUserProfileWidget), equalTo(false));
-      assertThat("Number of the roles is not correct", rolesInUserProfileWidget.length(),
-          equalTo(EXPECTED_ROLES - 1));
+          isRoleInUserProfileWidget(rolesInfo), equalTo(false));
     } finally {
       setActiveUserRole(true);
     }
   }
 
-  private String doLoginRequest() throws Exception {
+  private String doSessionDynamicRequest() throws Exception {
     Map<String, String> params = new HashMap<String, String>();
     return doRequest("/org.openbravo.client.kernel/OBCLKER_Kernel/SessionDynamic", params, 200,
         "POST");
   }
 
   /**
-   * Remove the data of the response that is not necessary for the test. Then retrieve the data into
-   * a JSONArray.
+   * Remove the data of the response that is not necessary for the test. Then retrieve the roles
+   * into a JSONArray.
    * 
    * @param resp
    *          original response
    * @return JSONArray with the roles
    */
-  private JSONArray transformResponse(String resp) {
-    String strResponse = resp.substring(resp.indexOf(STR_START) + 6);
-    strResponse = strResponse.substring(0, strResponse.indexOf(STR_FINISH) + 1) + "}";
-    JSONObject json = null;
+  private JSONArray getRoles(String resp) {
+    String userInfoResp = getUserInfo(resp);
+    userInfoResp = userInfoResp.substring(userInfoResp.indexOf(ROLE_START) + 6);
+    userInfoResp = userInfoResp.substring(0, userInfoResp.indexOf(ROLE_FINISH) + 1) + "}";
     JSONArray resultRoles = null;
     try {
-      json = new JSONObject(strResponse);
-      resultRoles = new JSONArray(json.get("valueMap").toString());
+      resultRoles = new JSONObject(userInfoResp).getJSONArray("valueMap");
     } catch (JSONException e) {
       log.error("Failed transforming the response in JSONArray: {}", e);
     }
     return resultRoles;
   }
 
-  private boolean isRoleInUserProfileWidget(JSONArray roles) {
-    for (int i = 0; i < roles.length(); i++) {
-      JSONObject role;
-      try {
-        role = roles.getJSONObject(i);
-        if (!TESTED_ROLE_ID.equals(role.getString("id"))) {
-          continue;
+  private String getUserInfo(String resp) {
+    String strResponse = resp.substring(resp.indexOf(USER_INFO_START) + USER_INFO_START.length());
+    strResponse = strResponse.substring(0, strResponse.indexOf(USER_INFO_FINISH) + 1);
+    return strResponse;
+  }
+
+  private boolean isRoleInUserProfileWidget(JSONArray resultRoles) {
+    try {
+      for (int i = 0; i < resultRoles.length(); i++) {
+        JSONObject role = resultRoles.getJSONObject(i);
+        if (TESTED_ROLE_ID.equals(role.getString("id"))) {
+          return true;
         }
-        return true;
-      } catch (JSONException e) {
-        log.error("Failed retrieving the JSONObject from the JSONArray: {}", e);
       }
+    } catch (JSONException e) {
+      log.error("Failed retrieving the id from JSONArray: {}", e);
     }
     return false;
   }
