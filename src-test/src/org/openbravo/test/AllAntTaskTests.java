@@ -93,6 +93,7 @@ import org.openbravo.test.security.CrossOrganizationUI;
 import org.openbravo.test.security.CrossOrganizationUICDI;
 import org.openbravo.test.security.EntityAccessTest;
 import org.openbravo.test.security.OBContextCollectionsTest;
+import org.openbravo.test.security.RoleListForTheCurrentUser;
 import org.openbravo.test.security.StandardCrossOrganizationReference;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
 import org.openbravo.test.services.ServicesTest;
@@ -182,7 +183,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     BypassAccessLevelCheck.class, //
     CrossOrganizationUI.class, //
     CrossOrganizationUICDI.class, //
-    OBContextCollectionsTest.class,
+    OBContextCollectionsTest.class, //
+    RoleListForTheCurrentUser.class,
 
     // system
     SystemServiceTest.class, //
