@@ -217,72 +217,7 @@
           }, true, 5000);
         }
       });
-
-      this.addPropertiesLoader({
-        properties: ['context'],
-        sync: false,
-        loadFunction: function (terminalModel) {
-          OB.info('[terminal] Loading... ' + this.properties);
-          var me = this;
-
-          var rr, ajaxRequest2 = new enyo.Ajax({
-            url: '../../org.openbravo.mobile.core.context',
-            cacheBust: false,
-            method: 'GET',
-            handleAs: 'json',
-            timeout: 20000,
-            data: {
-              ignoreForConnectionStatus: true
-            },
-            contentType: 'application/json;charset=utf-8',
-            success: function (inSender, inResponse) {
-              if (inResponse && inResponse.data) {
-                terminalModel.set(me.properties[0], inResponse.data[0]);
-                terminalModel.propertiesReady(me.properties);
-              } else {
-                //Something went wrong server-side
-                if (OB.MobileApp.model.get('isLoggingIn') === true) {
-                  var msg = OB.I18N.getLabel('OBMOBC_ContextErrorBody') + OB.I18N.getLabel('OBMOBC_LoadingErrorBody');
-                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), msg, [{
-                    label: OB.I18N.getLabel('OBMOBC_Reload'),
-                    action: function () {
-                      window.location.reload();
-                    }
-                  }], {
-                    onShowFunction: function (popup) {
-                      OB.UTIL.localStorage.removeItem('cacheAvailableForUser:' + OB.MobileApp.model.get('orgUserId'));
-                      popup.$.headerCloseButton.hide();
-                    },
-                    autoDismiss: false
-                  });
-                }
-              }
-            },
-            fail: function () {
-              if (OB.MobileApp.model.get('isLoggingIn') === true) {
-                var msg = OB.I18N.getLabel('OBMOBC_ContextErrorBody') + OB.I18N.getLabel('OBMOBC_LoadingErrorBody');
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), msg, [{
-                  label: OB.I18N.getLabel('OBMOBC_Reload'),
-                  action: function () {
-                    window.location.reload();
-                  }
-                }], {
-                  onShowFunction: function (popup) {
-                    OB.UTIL.localStorage.removeItem('cacheAvailableForUser:' + OB.MobileApp.model.get('orgUserId'));
-                    popup.$.headerCloseButton.hide();
-                  },
-                  autoDismiss: false
-                });
-              }
-            }
-          });
-          rr = new OB.RR.Request({
-            ajaxRequest: ajaxRequest2
-          });
-          rr.exec(ajaxRequest2.url);
-        }
-      });
-
+      
       this.get('dataSyncModels').push({
         name: 'Customer',
         model: OB.Model.ChangedBusinessPartners,
