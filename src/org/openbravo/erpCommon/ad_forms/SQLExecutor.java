@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -50,12 +51,13 @@ public class SQLExecutor extends HttpSecureAppServlet {
       String strInitRecord = vars.getSessionValue("SQLExecutor|initRecordNumber");
       int initRecordNumber = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
       try {
-        if (!strSQL.toUpperCase().trim().startsWith("SELECT ")) {
+        if (StringUtils.isNotBlank(strSQL) && !strSQL.toUpperCase().trim().startsWith("SELECT ")) {
           vars.removeSessionValue("SQLExecutor|sql");
           throw new ServletException("Invalid SQL statement");
         }
         data = SQLExecutor_Query.select(this, strSQL, initRecordNumber, intRecordRange);
-      } catch (Exception ignored) {
+      } catch (Exception ex) {
+        showErrorMessage(vars, ex);
       }
       printPage(response, vars, strSQL, data, strInitRecord, initRecordNumber, intRecordRange);
     } else if (vars.commandIn("FIND")) {
@@ -66,15 +68,14 @@ public class SQLExecutor extends HttpSecureAppServlet {
       vars.setSessionValue("SQLExecutor|initRecordNumber", "0");
       int initRecordNumber = 0;
       try {
-        if (!strSQL.toUpperCase().trim().startsWith("SELECT ")) {
+        if (StringUtils.isNotBlank(strSQL) && !strSQL.toUpperCase().trim().startsWith("SELECT ")) {
           vars.removeSessionValue("SQLExecutor|sql");
           throw new ServletException("Invalid SQL statement");
         }
         data = SQLExecutor_Query.select(this, strSQL, initRecordNumber, intRecordRange);
       } catch (Exception ex) {
-        showsErrorMessage(vars, ex);
+        showErrorMessage(vars, ex);
       }
-      log4j.debug("sql: " + strSQL);
       printPage(response, vars, strSQL, data, "0", initRecordNumber, intRecordRange);
     } else if (vars.commandIn("RELATION_XLS")) {
       String strSQL = vars.getGlobalVariable("inpSQL", "SQLExecutor|sql", "");
@@ -85,15 +86,14 @@ public class SQLExecutor extends HttpSecureAppServlet {
       vars.setSessionValue("SQLExecutor|initRecordNumber", "0");
       int initRecordNumber = 0;
       try {
-        if (!strSQL.toUpperCase().trim().startsWith("SELECT ")) {
+        if (StringUtils.isNotBlank(strSQL) && !strSQL.toUpperCase().trim().startsWith("SELECT ")) {
           vars.removeSessionValue("SQLExecutor|sql");
           throw new ServletException("Invalid SQL statement");
         }
         data = SQLExecutor_Query.select(this, strSQL, initRecordNumber, intRecordRange);
-        log4j.debug("sql: " + strSQL);
         printExcel(response, vars, strSQL, data);
       } catch (Exception ex) {
-        showsErrorMessage(vars, ex);
+        showErrorMessage(vars, ex);
       }
     } else if (vars.commandIn("FIRST_RELATION")) {
       vars.setSessionValue("SQLExecutor|initRecordNumber", "0");
@@ -132,7 +132,7 @@ public class SQLExecutor extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  private void showsErrorMessage(VariablesSecureApp vars, Exception ex) {
+  private void showErrorMessage(VariablesSecureApp vars, Exception ex) {
     ex.printStackTrace();
     OBError myMessage = new OBError();
     myMessage.setType("Error");
@@ -162,71 +162,50 @@ public class SQLExecutor extends HttpSecureAppServlet {
 
   private void printExcel(HttpServletResponse response, VariablesSecureApp vars, String strSQL,
       SQLExecutor_Query[] data) throws IOException, ServletException {
-    log4j.info("print page");
-    if (log4j.isDebugEnabled())
-      log4j.debug("printPage - Reading xml\n");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_forms/SQLExecutor_Excel").createXmlDocument();
-
     SQLExecutorData[] dataHeader = null;
     StringBuffer dataBuffer = new StringBuffer();
     if (data != null && data.length != 0) {
-      log4j.debug("data != null || data.length != 0");
       dataHeader = new SQLExecutorData[data[0].name.size()];
       for (int i = 0; i < data[0].name.size(); i++) {
-        log4j.debug("data[0].name: " + data[0].name);
-        log4j.debug(data[0].name.elementAt(i));
         dataHeader[i] = new SQLExecutorData();
         dataHeader[i].header = data[0].name.elementAt(i);
       }
-      dataBuffer.append("<tr>\n");
       for (int j = 0; j < data.length; j++) {
-        if (j != 0) {
-          dataBuffer.append("<tr>\n");
-          for (int k = 0; k < data[0].name.size(); k++) {
-            dataBuffer.append("<td>");
-            dataBuffer.append(data[j].getField(Integer.toString(k)));
-            dataBuffer.append("</td>\n");
-          }
-          dataBuffer.append("</tr>\n");
+        dataBuffer.append("<tr>\n");
+        for (int k = 0; k < data[0].name.size(); k++) {
+          dataBuffer.append("<td>");
+          dataBuffer.append(data[j].getField(Integer.toString(k)));
+          dataBuffer.append("</td>\n");
         }
+        dataBuffer.append("</tr>\n");
       }
     }
-    log4j.debug("dataBuffer: " + dataBuffer.toString());
     xmlDocument.setParameter("data", dataBuffer.toString());
     xmlDocument.setData("structureHeader", dataHeader);
 
     response.setContentType("text/xls; charset=UTF-8");
     response.setHeader("Content-Disposition", "attachment");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
-      log4j.debug("printPage - Printing document\n");
     out.println(xmlDocument.print());
     out.close();
-    if (log4j.isDebugEnabled())
-      log4j.debug("printPage - End printing document\n");
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strSQL,
       SQLExecutor_Query[] data, String strInitRecord, int initRecordNumber, int intRecordRange)
       throws IOException, ServletException {
-    log4j.info("print page");
-    if (log4j.isDebugEnabled())
-      log4j.debug("printPage - Reading xml\n");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_forms/SQLExecutor").createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("sql", strSQL);
-    log4j.debug("sql");
+
     SQLExecutorData[] dataHeader = null;
     StringBuffer dataBuffer = new StringBuffer();
     if (data != null && data.length != 0) {
-      log4j.debug("data != null || data.length != 0");
       dataHeader = new SQLExecutorData[data[0].name.size()];
       for (int i = 0; i < data[0].name.size(); i++) {
-        log4j.debug("data[0].name: " + data[0].name);
-        log4j.debug(data[0].name.elementAt(i));
         dataHeader[i] = new SQLExecutorData();
         dataHeader[i].header = data[0].name.elementAt(i);
       }
@@ -243,8 +222,7 @@ public class SQLExecutor extends HttpSecureAppServlet {
     }
     xmlDocument.setData("structureHeader", dataHeader);
     xmlDocument.setParameter("data", dataBuffer.toString());
-    if (log4j.isDebugEnabled())
-      log4j.debug("printPage - Making toolbar\n");
+
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "SQLExecutor", false,
         "document.frmMain.inpKey", "myGrid", null, false, "ad_forms", strReplaceWith, false, true);
     toolbar.prepareQueryTemplate((initRecordNumber > 1),
@@ -252,27 +230,18 @@ public class SQLExecutor extends HttpSecureAppServlet {
         vars.getSessionValue("#ShowTest", "N").equals("Y"));
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
-    log4j.debug("toolbar");
-    log4j.debug("keymap");
     try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_forms.SQLExecutor");
-      log4j.debug("tabs");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-      log4j.debug("parentTabContainer");
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-      log4j.debug("mainTabContainer");
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-      log4j.debug("childTabContainer");
       xmlDocument.setParameter("theme", vars.getTheme());
-      log4j.debug("theme");
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "SQLExecutor.html",
           classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      log4j.debug("navigationBar");
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "SQLExecutor.html",
           strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-      log4j.debug("leftTabs");
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
@@ -286,15 +255,10 @@ public class SQLExecutor extends HttpSecureAppServlet {
       }
     }
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
-    log4j.debug("calendar");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
-      log4j.debug("printPage - Printing document\n");
     out.println(xmlDocument.print());
     out.close();
-    if (log4j.isDebugEnabled())
-      log4j.debug("printPage - End printing document\n");
   }
 
   public String getServletInfo() {
