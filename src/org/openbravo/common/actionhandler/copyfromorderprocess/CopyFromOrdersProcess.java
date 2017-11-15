@@ -218,10 +218,12 @@ public class CopyFromOrdersProcess {
   }
 
   private void executeHooks(final OrderLine orderLine, OrderLine newOrderLine) {
-    for (CopyFromOrdersProcessImplementationInterface hook : copyFromOrdersProcessHooks
-        .select(new ComponentProvider.Selector(
-            CopyFromOrdersProcessImplementationInterface.COPY_FROM_ORDER_PROCESS_HOOK_QUALIFIER))) {
-      hook.exec(processingOrder, orderLine, newOrderLine);
+    if (copyFromOrdersProcessHooks != null) {
+      for (CopyFromOrdersProcessImplementationInterface hook : copyFromOrdersProcessHooks
+          .select(new ComponentProvider.Selector(
+              CopyFromOrdersProcessImplementationInterface.COPY_FROM_ORDER_PROCESS_HOOK_QUALIFIER))) {
+        hook.exec(processingOrder, orderLine, newOrderLine);
+      }
     }
   }
 
