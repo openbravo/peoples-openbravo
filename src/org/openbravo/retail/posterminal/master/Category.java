@@ -113,19 +113,31 @@ public class Category extends ProcessHQLQuery {
     } finally {
       OBContext.restorePreviousMode();
     }
+
+    Long lastUpdated;
+
+    if (jsonsent != null) {
+      lastUpdated = jsonsent.has("lastUpdated") && !jsonsent.get("lastUpdated").equals("undefined")
+          && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
+    } else {
+      lastUpdated = null;
+    }
+
+    String fullRefreshCondition = lastUpdated == null ? "and pCat.active = true " : "";
+
     if (isRemote) {
       hqlQueries
           .add("select"
               + regularProductsCategoriesHQLProperties.getHqlSelect() //
               + "from OBRETCO_Productcategory aCat left outer join aCat.productCategory as pCat left outer join pCat.image as img"
               + " where ( aCat.obretcoProductlist.id = :productListId ) "
-              + " and  aCat.$incrementalUpdateCriteria and aCat.$naturalOrgCriteria and aCat.$readableSimpleClientCriteria  "
+              + " and  aCat.$incrementalUpdateCriteria and aCat.active = true and aCat.$naturalOrgCriteria and aCat.$readableSimpleClientCriteria  "
               + " order by pCat.name, pCat.id");
       hqlQueries
           .add("select"
               + regularProductsCategoriesHQLProperties.getHqlSelect() //
               + "from ADTreeNode tn, ProductCategory pCat left outer join pCat.image as img "
-              + "where tn.$incrementalUpdateCriteria and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
+              + "where tn.$incrementalUpdateCriteria and pCat.active = true and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
               + " and tn.node = pCat.id and tn.tree.table.id = :productCategoryTableId "
               + " and pCat.summaryLevel = 'Y'"
               + " and not exists (select pc.id from OBRETCO_Productcategory pc where tn.node = pc.productCategory.id) "
@@ -144,7 +156,9 @@ public class Category extends ProcessHQLQuery {
               + "AND (pplv.id= :priceListVersionId) AND (" + "ppp.priceListVersion.id = pplv.id"
               + ") AND (" + "pli.product.id = ppp.product.id" + ") AND ("
               + "pli.product.active = true)) "
-              + "OR (pCat.summaryLevel = 'Y' AND pCat.$naturalOrgCriteria AND "
+              + "OR (pCat.summaryLevel = 'Y' "
+              + fullRefreshCondition
+              + "AND pCat.$naturalOrgCriteria AND "
               + "pCat.$readableSimpleClientCriteria)) AND pCat.$incrementalUpdateCriteria "
               + "order by pCat.name, pCat.id");
     }
