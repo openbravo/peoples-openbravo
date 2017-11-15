@@ -841,6 +841,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     line.setInvoice(invoice);
     line.setSalesOrderLine(lineReferences.get(numIter));
     line.setGoodsShipmentLine(inOutLine);
+    line.setAttributeSetValue(lineReferences.get(numIter).getAttributeSetValue());
     invoice.getInvoiceLineList().add(line);
     OBDal.getInstance().save(line);
 
