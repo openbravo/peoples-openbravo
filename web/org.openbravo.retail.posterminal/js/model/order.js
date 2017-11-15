@@ -573,7 +573,7 @@
       this.isCalculateReceiptLocked = state;
     },
 
-    calculateGross: function () {
+    calculateGross: function (callback) {
       // check if it's all ok and calculateGross is being called from where it's supposed to
       var stack = OB.UTIL.getStackTrace('Backbone.Model.extend.calculateGross', false);
       if (stack.indexOf('Backbone.Model.extend.calculateGross') > -1 && stack.indexOf('Backbone.Model.extend.calculateReceipt') > -1) {
@@ -600,10 +600,10 @@
         OB.error("calculateGross should only be called by the UI receipt");
       }
 
-      this.calculateGrossAndSave(true);
+      this.calculateGrossAndSave(true, callback);
     },
 
-    calculateGrossAndSave: function (save) {
+    calculateGrossAndSave: function (save, callback) {
       this.calculatingGross = true;
       var me = this;
       // reset some vital receipt values because, at this point, they are obsolete. do not fire the change event
@@ -651,15 +651,21 @@
               me.calculatingReceipt = false;
               if (me.pendingCalculateGross) {
                 me.pendingCalculateGross = false;
-                me.calculateGross();
+                me.calculateGross(callback);
                 return;
               }
               me.trigger('calculategross');
               me.trigger('saveCurrent');
+              if (callback) {
+                callback();
+              }
             });
           } else {
             me.calculatingGross = false;
             me.calculatingReceipt = false;
+            if (callback) {
+              callback();
+            }
           }
           };
 

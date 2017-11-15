@@ -36,7 +36,9 @@
     };
 
     continueAfterPaidReceipt = function (order) {
-      OB.MobileApp.model.receipt.calculateReceipt(function () {
+      var loadNextOrder;
+
+      loadNextOrder = function () {
         if (order.get('searchSynchId')) {
           OB.UTIL.SynchronizationHelper.finished(order.get('searchSynchId'), 'clickSearchNewReceipt');
           order.unset('searchSynchId');
@@ -89,7 +91,17 @@
           order.unset('askForRelatedReceipts');
           checkListCallback();
         }
-      });
+      };
+
+      if (order.get('isLayaway')) {
+        OB.MobileApp.model.receipt.calculateReceipt(function () {
+          loadNextOrder();
+        });
+      } else {
+        OB.MobileApp.model.receipt.calculateGrossAndSave(false, function () {
+          loadNextOrder();
+        });
+      }
     };
 
     loadOrder = function (order) {
