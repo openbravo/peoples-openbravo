@@ -58,14 +58,14 @@ public class RoleListForTheCurrentUser extends BaseDataSourceTestDal {
     try {
       String response = doSessionDynamicRequest();
       JSONArray rolesInfo = getRoles(response);
-      assertThat("The activated role is not present in the dropdown.",
-          isRoleInUserProfileWidget(rolesInfo), equalTo(true));
+      assertThat("Active role is available for the user.", isRoleInUserProfileWidget(rolesInfo),
+          equalTo(true));
 
       setActiveUserRole(false);
 
       String responseDeactivatedUserRole = doSessionDynamicRequest();
       rolesInfo = getRoles(responseDeactivatedUserRole);
-      assertThat("The activated role is present in the dropdown.",
+      assertThat("Deactivated role is available for the user.",
           isRoleInUserProfileWidget(rolesInfo), equalTo(false));
     } finally {
       setActiveUserRole(true);
@@ -94,7 +94,7 @@ public class RoleListForTheCurrentUser extends BaseDataSourceTestDal {
     try {
       resultRoles = new JSONObject(userInfoResp).getJSONArray("valueMap");
     } catch (JSONException e) {
-      log.error("Failed transforming the response in JSONArray: {}", e);
+      log.error("Could not transform the response in a JSONArray.", e);
     }
     return resultRoles;
   }
@@ -114,7 +114,7 @@ public class RoleListForTheCurrentUser extends BaseDataSourceTestDal {
         }
       }
     } catch (JSONException e) {
-      log.error("Failed retrieving the id from JSONArray: {}", e);
+      log.error("Could not retrieve the role information.", e);
     }
     return false;
   }
