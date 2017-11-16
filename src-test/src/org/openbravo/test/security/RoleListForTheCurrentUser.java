@@ -65,7 +65,7 @@ public class RoleListForTheCurrentUser extends BaseDataSourceTestDal {
 
       String responseDeactivatedUserRole = doSessionDynamicRequest();
       rolesInfo = getRoles(responseDeactivatedUserRole);
-      assertThat("Deactivated role is available for the user.",
+      assertThat("Deactivated role is not available for the user.",
           isRoleInUserProfileWidget(rolesInfo), equalTo(false));
     } finally {
       setActiveUserRole(true);
