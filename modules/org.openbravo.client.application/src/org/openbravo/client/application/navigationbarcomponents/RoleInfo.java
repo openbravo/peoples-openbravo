@@ -86,7 +86,7 @@ public class RoleInfo {
 
     final StringBuilder hql = new StringBuilder();
     hql.append("select ro.organization.id, ro.organization.name from ADRoleOrganization ro ");
-    hql.append("where ro.role.id=:roleId and ro.organization.active=true ");
+    hql.append("where ro.active=true and ro.role.id=:roleId and ro.organization.active=true ");
     Query roleOrgs = OBDal.getInstance().getSession().createQuery(hql.toString());
     roleOrgs.setString("roleId", roleId);
     for (Object entry : roleOrgs.list()) {
@@ -112,7 +112,7 @@ public class RoleInfo {
 
     final StringBuilder hql = new StringBuilder();
     hql.append("select w.id, w.name, w.organization.id from Warehouse w ");
-    hql.append("where w.organization.id in (:orgList) and w.client.id=:clientId and w.organization.active=true ");
+    hql.append("where w.active=true and w.organization.id in (:orgList) and w.client.id=:clientId and w.organization.active=true ");
     Query orgWarehouses = OBDal.getInstance().getSession().createQuery(hql.toString());
     orgWarehouses.setParameterList("orgList", getOrganizations().keySet());
     orgWarehouses.setString("clientId", clientId);
