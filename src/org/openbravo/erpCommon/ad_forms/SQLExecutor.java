@@ -133,7 +133,6 @@ public class SQLExecutor extends HttpSecureAppServlet {
   }
 
   private void showErrorMessage(VariablesSecureApp vars, Exception ex) {
-    ex.printStackTrace();
     OBError myMessage = new OBError();
     myMessage.setType("Error");
     myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
@@ -147,7 +146,6 @@ public class SQLExecutor extends HttpSecureAppServlet {
     try {
       data = SQLExecutor_Query.select(this, strSQL);
     } catch (Exception ex) {
-      ex.printStackTrace();
       return "0";
     }
     while (initRecord < data.length) {
