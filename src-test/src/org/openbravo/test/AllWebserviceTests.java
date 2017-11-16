@@ -38,7 +38,7 @@ import org.openbravo.test.datasource.TestCSVEncoding;
 import org.openbravo.test.datasource.TestComboDatasource;
 import org.openbravo.test.datasource.TestNoteDatasource;
 import org.openbravo.test.security.ExplicitCrossOrganizationReference;
-import org.openbravo.test.security.RoleListForTheCurrentUser;
+import org.openbravo.test.security.UserInfoSessionDataTest;
 import org.openbravo.test.webservice.JSONWebServices;
 import org.openbravo.test.webservice.JSONWebServicesWhereParameter;
 import org.openbravo.test.webservice.PerformanceTest;
@@ -84,6 +84,6 @@ DataSourceWhereParameter.class, //
     EmptyStringWhereAndFilterClauseParameter.class, //
     JSONWebServicesWhereParameter.class, //
     WSReadableClientsTest.class, //
-    RoleListForTheCurrentUser.class })
+    UserInfoSessionDataTest.class })
 public class AllWebserviceTests {
 }
