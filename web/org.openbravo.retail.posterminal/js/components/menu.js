@@ -162,18 +162,27 @@ enyo.kind({
     if (this.model.get('order').get('orderType') === 3) {
       return;
     }
+
+    var errorsConvertingLayawayToReceipt = [];
+
+    if (!this.model.get('order').checkAllAttributesHasValue()) {
+      errorsConvertingLayawayToReceipt.push('OBPOS_AllAttributesNeedValue');
+    }
+
     enyo.forEach(this.model.get('order').get('payments').models, function (curPayment) {
-      receiptAllowed = false;
+      errorsConvertingLayawayToReceipt.push('OBPOS_LayawayHasPayment');
       return;
     }, this);
 
-    if (receiptAllowed) {
+    if (errorsConvertingLayawayToReceipt.length === 0) {
       this.doShowDivText({
         permission: this.permission,
         orderType: 0
       });
     } else {
-      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_LayawayHasPayment'));
+      errorsConvertingLayawayToReceipt.forEach(function (error) {
+        OB.UTIL.showWarning(OB.I18N.getLabel(error));
+      });
     }
   },
   displayLogic: function () {

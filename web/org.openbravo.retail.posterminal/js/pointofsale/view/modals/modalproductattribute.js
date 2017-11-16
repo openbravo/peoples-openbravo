@@ -26,8 +26,7 @@ enyo.kind({
       style: 'text-align: center;width: 400px; height: 40px;',
       name: 'valueAttribute',
       selectOnFocus: true,
-      isFirstFocus: true,
-      value: ''
+      isFirstFocus: true
     }]
   },
   bodyButtons: {
@@ -61,7 +60,7 @@ enyo.kind({
     var me = this,
         inpAttributeValue = this.$.bodyContent.$.valueAttribute.getValue();
     inpAttributeValue = inpAttributeValue.replace(/\s+/, "");
-    if ((this.validAttribute(inpAttributeValue) && inpAttributeValue)) {
+    if ((this.validAttribute(inpAttributeValue) && inpAttributeValue) || this.owner.model.get('order').get('orderType') === 2 || this.owner.model.get('order').get('isLayaway')) {
       this.args.callback(inpAttributeValue);
       this.hide();
     } else {
@@ -74,7 +73,7 @@ enyo.kind({
   },
   cancelAction: function () {
     if (this.args.callback) {
-      this.args.callback(null);
+      this.args.callback(null, true);
     }
     this.hide();
     return;
@@ -86,12 +85,14 @@ enyo.kind({
   executeOnHide: function () {
     var me = this;
     var inpAttributeValue = this.$.bodyContent.$.valueAttribute.getValue();
-    if (!inpAttributeValue && this.args.callback) {
-      this.args.callback(null);
-    }
     this.$.bodyContent.$.valueAttribute.setValue(null);
   },
   executeOnShow: function () {
+    if (this.args.options.attSetInstanceDesc) {
+      this.$.bodyContent.$.valueAttribute.setValue(this.args.options.attSetInstanceDesc);
+    } else if (this.args.options.attributeValue) {
+      this.$.bodyContent.$.valueAttribute.setValue(this.args.options.attributeValue);
+    }
     this.$.headerCloseButton.hide();
   },
   initComponents: function () {
