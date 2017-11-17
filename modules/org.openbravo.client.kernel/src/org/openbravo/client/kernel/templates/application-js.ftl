@@ -25,6 +25,8 @@ if (window.isc) {
   isc.screenReader = false;
 }
 
+// On logging in, create the OB object from scratch.
+// But if we are in an old 2.50 window/process, clone the already existing OB object from the parent
 var OB = (window.LayoutMDI_windowObj && window.LayoutMDI_windowObj.OB) ? window.LayoutMDI_windowObj.shallowClone(window.LayoutMDI_windowObj.OB) : {
     Application : {
         testEnvironment: ${data.testEnvironment?string},
