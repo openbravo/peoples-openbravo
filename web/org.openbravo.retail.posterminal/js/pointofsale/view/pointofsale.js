@@ -432,8 +432,12 @@ enyo.kind({
     return true;
   },
   deleteCurrentOrder: function (inSender, inEvent) {
+    var me = this;
+    this.leftToolbarDisabled(inSender, inEvent);
     var receipt = this.model.get('order');
     receipt.deleteOrder(this, function () {
+      inEvent.status = false;
+      me.leftToolbarDisabled(inSender, inEvent);
       OB.MobileApp.model.runSyncProcess();
     });
   },

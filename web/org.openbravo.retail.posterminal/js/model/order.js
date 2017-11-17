@@ -5138,6 +5138,9 @@
           receipt: this
         }, function (args) {
           if (args && args.cancelOperation && args.cancelOperation === true) {
+            if (callback instanceof Function) {
+              callback();
+            }
             return;
           }
           removeOrder(args.receipt, callback);
