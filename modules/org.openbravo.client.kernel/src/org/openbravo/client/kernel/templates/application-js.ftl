@@ -25,7 +25,7 @@ if (window.isc) {
   isc.screenReader = false;
 }
 
-var OB = {
+var OB = (window.LayoutMDI_windowObj && window.LayoutMDI_windowObj.OB) ? window.LayoutMDI_windowObj.shallowClone(window.LayoutMDI_windowObj.OB) : {
     Application : {
         testEnvironment: ${data.testEnvironment?string},
         contextUrl: '${data.contextUrl}',
