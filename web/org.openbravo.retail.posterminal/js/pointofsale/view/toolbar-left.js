@@ -276,7 +276,6 @@ enyo.kind({
         isReceiptHasbeenpaidEqualToN: undefined,
         isToolbarEnabled: undefined,
         isDisabledRequest: undefined,
-        isCreditAndNotPartialCredit: undefined,
         isLocallyGeneratedPayments: undefined
       };
 
@@ -317,10 +316,6 @@ enyo.kind({
       if (OB.UTIL.isNullOrUndefined(requirements.receiptBpId) || !requirements.isReceiptDocnoLengthGreaterThanThree || (!requirements.isReceiptLinesLengthGreaterThanZero && !requirements.isLocallyGeneratedPayments) || !requirements.isReceiptHasbeenpaidEqualToN) {
         return false;
       }
-      requirements.isCreditAndNotPartialCredit = receipt.get('paidOnCredit') && !receipt.get('paidPartiallyOnCredit');
-      if (requirements.isCreditAndNotPartialCredit) {
-        return false;
-      }
       // All requirements are met
       return true;
     }
@@ -354,7 +349,7 @@ enyo.kind({
     // view of which requirements haven't been met if the button is disabled.
     // The enabling/disabling flow MUST go through this point to ensure that all requests are logged
     var msg = enyo.format("Pay button is %s", (newIsDisabledState ? 'disabled' : 'enabled'));
-    if (newIsDisabledState === true && requirements.isReceiptLinesLengthGreaterThanZero && requirements.isReceiptHasbeenpaidEqualToN && !requirements.isCreditAndNotPartialCredit) {
+    if (newIsDisabledState === true && requirements.isReceiptLinesLengthGreaterThanZero && requirements.isReceiptHasbeenpaidEqualToN) {
       msg += " and should be enabled";
       OB.error(msg, requirements);
       OB.UTIL.Debug.execute(function () {

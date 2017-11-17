@@ -6177,9 +6177,9 @@
         order.set('hasbeenpaid', 'N');
       } else {
         order.set('isPaid', true);
-        var paidByPayments = 0;
+        var paidByPayments = OB.DEC.Zero;
         _.each(model.receiptPayments, function (receiptPayment) {
-          paidByPayments += OB.DEC.mul(receiptPayment.amount, receiptPayment.rate);
+          paidByPayments = OB.DEC.add(paidByPayments, OB.DEC.mul(receiptPayment.amount, receiptPayment.rate));
         });
 
         var creditAmount = OB.DEC.sub(model.totalamount, paidByPayments);
@@ -6440,11 +6440,7 @@
               });
               order.set('taxes', taxes);
 
-              var notPaidLines = _.find(model.receiptLines, function (line) {
-                return !line.obposIspaid;
-              });
-
-              if (!model.isLayaway && !model.isQuotation && !notPaidLines) {
+              if (!model.isLayaway && !model.isQuotation) {
                 if (model.totalamount > 0 && order.get('payment') < model.totalamount) {
                   order.set('paidOnCredit', true);
                 } else if (model.totalamount < 0 && (order.get('payment') === 0 || (OB.DEC.abs(model.totalamount)) > order.get('payment'))) {
