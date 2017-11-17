@@ -268,7 +268,7 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 
         try {
           String orgList = Utility.getInStrSet(OBContext.getOBContext()
-              .getOrganizationStructureProvider().getNaturalTree(taxRegister.adOrgId));
+              .getOrganizationStructureProvider().getChildTree(taxRegister.adOrgId, true));
           TaxRegister.updateTaxTotalAmt(this, taxRegister.cTaxregisterId);
           TaxRegister.updateRegAccumAmt(this, taxRegister.cTaxregisterId,
               taxRegister.cTaxregisterTypeId, strDatefrom, orgList);
