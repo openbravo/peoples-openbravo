@@ -114,11 +114,11 @@
       </foreign-key>
       <index name="OBPOS_APP_CASHUP_PARENT_IDX" unique="false">
         <index-column name="OBPOS_PARENT_CASHUP_ID"/>
-        <index-column name="CREATED"/>
         <whereClause><![CDATA[OBPOS_PARENT_CASHUP_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="OBPOS_APP_CASHUP_TERMINAL_IDX" unique="false">
         <index-column name="OBPOS_APPLICATIONS_ID"/>
+        <index-column name="CREATED"/>
       </index>
       <check name="OBPOS_APPCASH_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
