@@ -766,7 +766,7 @@
                   }, 15000);
 
                 } else if (data.status === "Error") {
-                  //Show modal advicing that there was an error
+                  //Show modal advising that there was an error
                   me.checkProcessingMessageLocked = false;
                   OB.UTIL.localStorage.removeItem('synchronizedMessageId');
                   if (OB.MobileApp.model.showSynchronizedDialog) {
@@ -792,7 +792,7 @@
                 }
               }
             }, function (data) {
-              //Continue retring till we know the status of the message
+              //Continue retrying till we know the status of the message
               counter++;
               setTimeout(function () {
                 OB.UTIL.showConfirmation.setText(OB.I18N.getLabel('OBMOBC_DataIsBeingProcessed') + " " + OB.I18N.getLabel('OBMOBC_NumOfRetries') + " " + counter);
