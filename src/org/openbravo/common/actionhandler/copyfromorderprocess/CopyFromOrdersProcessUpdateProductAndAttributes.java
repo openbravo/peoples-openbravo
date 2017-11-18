@@ -28,6 +28,7 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.AttributeInstance;
 import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.AttributeSetInstance;
+import org.openbravo.model.common.plm.AttributeUse;
 
 class CopyFromOrdersProcessUpdateProductAndAttributes implements
     CopyFromOrdersProcessImplementationInterface {
@@ -66,10 +67,10 @@ class CopyFromOrdersProcessUpdateProductAndAttributes implements
       return Boolean.FALSE;
     }
     AttributeSet attributeSet = attributeSetInstance.getAttributeSet();
-    List<AttributeInstance> attributeInstances = attributeSetInstance.getAttributeInstanceList();
+    List<AttributeUse> attributeUses = attributeSet.getAttributeUseList();
     boolean hasInstanceAttribute = false;
-    for (AttributeInstance attrInstance : attributeInstances) {
-      if (attrInstance.getAttribute().isInstanceAttribute()) {
+    for (AttributeUse attributeUse : attributeUses) {
+      if (attributeUse.getAttribute().isInstanceAttribute()) {
         hasInstanceAttribute = Boolean.TRUE;
         break;
       }
