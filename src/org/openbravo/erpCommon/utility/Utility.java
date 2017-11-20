@@ -43,10 +43,12 @@ import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -1547,6 +1549,52 @@ public class Utility {
       showConfirmation = vars.getSessionValue("#ShowConfirmation");
     jsString = jsString + (showConfirmation.equalsIgnoreCase("Y") ? "true" : "false") + ";";
     return jsString;
+  }
+
+  /**
+   * Returns a {@code String} including all elements in the {@code Collection} received as parameter
+   * separated by a comma.
+   *
+   * @param col
+   *          A {@code Collection} to be represented as comma separated {@code String}.
+   * @param addQuotes
+   *          Should each value in the {@code Collection} be sourrended by single quotes ({@code'})?
+   * @return A {@code String} represnetantation of {@code col}.
+   */
+  public static String commaSeparated(Collection<?> col, boolean addQuotes) {
+    Iterator<?> it = col.iterator();
+    if (!it.hasNext()) {
+      return "";
+    }
+
+    // typically used for lists of UUIDs, assuming it to calculate a proper initial capacity
+    int initialCapacity = col.size() * (32 + (addQuotes ? 3 : 1));
+    StringBuilder sb = new StringBuilder(initialCapacity);
+
+    for (;;) {
+      Object e = it.next();
+      if (addQuotes) {
+        sb.append('\'').append(e).append('\'');
+      } else {
+        sb.append(e);
+      }
+      if (!it.hasNext()) {
+        return sb.toString();
+      }
+      sb.append(',');
+    }
+  }
+
+  /**
+   * Returns a {@code String} including all elements in the {@code Collection} received as parameter
+   * separated by a comma and quoted with single quoutes ({@code'}).
+   *
+   * @param col
+   *          A {@code Collection} to be represented as comma separated {@code String}.
+   * @return A {@code String} represnetantation of {@code col}.
+   */
+  public static String commaSeparated(Collection<?> col) {
+    return commaSeparated(col, true);
   }
 
   /**
