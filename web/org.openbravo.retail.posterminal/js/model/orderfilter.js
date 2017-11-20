@@ -15,7 +15,8 @@
     source: 'org.openbravo.retail.posterminal.PaidReceiptsFilter',
     dataLimit: OB.Dal.DATALIMIT,
     remote: 'OBPOS_remote.order',
-    _modelName: 'OrderFilter'
+    _modelName: 'OrderFilter',
+    forceRemoteEntity: true
   });
 
   OB.Model.OrderFilter.addProperties([{
