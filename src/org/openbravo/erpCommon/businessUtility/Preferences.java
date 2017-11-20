@@ -70,26 +70,31 @@ public class Preferences {
       List<String> parentTree = OBContext.getOBContext().getOrganizationStructureProvider()
           .getParentList(org, true);
 
-      ArrayList<Preference> preferences = new ArrayList<Preference>();
-      for (Preference pref : getPreferences(null, false, client, org, user, role, null, false,
-          false, null)) {
-        Preference existentPreference = getPreferenceFromList(pref, preferences);
+      List<Preference> allPreferences = getPreferences(null, false, client, org, user, role, null,
+          false, false, null);
+      Map<String, Preference> preferences = new HashMap<>(allPreferences.size());
+      for (Preference pref : allPreferences) {
+        String prefKey = getPrefKey(pref);
+        Preference existentPreference = preferences.get(prefKey);
         if (existentPreference == null) {
           // There is not a preference for the current property, add it to the list
-          preferences.add(pref);
-        } else {
+          preferences.put(prefKey, pref);
+        } else if (getHighestPriority(pref, existentPreference, parentTree) == 1) {
           // There is a preference for the current property, check whether it is higher priority and
           // if so replace it. In case of conflict leave current preference.
-          if (getHighestPriority(pref, existentPreference, parentTree) == 1) {
-            preferences.remove(existentPreference);
-            preferences.add(pref);
-          }
+          preferences.put(prefKey, pref);
         }
       }
-      return preferences;
+      return new ArrayList<>(preferences.values());
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private static String getPrefKey(Preference pref) {
+    return pref.isPropertyList() //
+        + (pref.isPropertyList() ? pref.getProperty() : pref.getAttribute()) //
+        + (pref.getWindow() != null ? pref.getWindow().getId() : "");
   }
 
   /**
@@ -579,33 +584,4 @@ public class Preferences {
     return 0;
   }
 
-  /**
-   * Checks whether there is a preference for the same property in a List. If so, it is returned,
-   * other case null is returned.
-   * 
-   * @param pref
-   *          Preference to look for.
-   * @param preferences
-   *          List of preferences to look in.
-   * @return The preference if it exists in the list, null if not.
-   */
-  private static Preference getPreferenceFromList(Preference pref, List<Preference> preferences) {
-    for (Preference listPref : preferences) {
-      boolean isCurrentPreference = pref.isPropertyList() == listPref.isPropertyList()
-          && ((pref.isPropertyList() && pref.getProperty().equals(listPref.getProperty())) || (!pref
-              .isPropertyList() && pref.getAttribute().equals(listPref.getAttribute())));
-      if (!isCurrentPreference) {
-        continue;
-      }
-      boolean winVisbilityNotDefined = (pref.getWindow() == null && listPref.getWindow() == null);
-      boolean sameWinVisibility = (pref.getWindow() != null && pref.getWindow().equals(
-          listPref.getWindow()))
-          || (listPref.getWindow() != null && listPref.getWindow().equals(pref.getWindow()));
-
-      if (isCurrentPreference && (winVisbilityNotDefined || sameWinVisibility)) {
-        return listPref;
-      }
-    }
-    return null;
-  }
 }
