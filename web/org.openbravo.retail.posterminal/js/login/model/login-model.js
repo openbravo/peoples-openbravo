@@ -752,9 +752,11 @@
                       };
                   OB.MobileApp.model.orderList.loadById(orderId);
                   if (orderId === OB.MobileApp.model.orderList.current.id) {
-                    OB.MobileApp.model.orderList.saveCurrent();
-                    OB.Dal.remove(OB.MobileApp.model.orderList.current, null, null);
-                    OB.MobileApp.model.orderList.deleteCurrent();
+                    OB.UTIL.rebuildCashupFromServer(function () {
+                      OB.MobileApp.model.orderList.saveCurrent();
+                      OB.Dal.remove(OB.MobileApp.model.orderList.current, null, null);
+                      OB.MobileApp.model.orderList.deleteCurrent();
+                    });
                   }
                   callback();
                 } else if (data.status === "Initial") {
