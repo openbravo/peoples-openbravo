@@ -241,6 +241,9 @@ enyo.kind({
       criteria._orderByProperties = [{
         property: 'orderDateFrom',
         sorting: 'desc'
+      }, {
+        property: 'documentNo',
+        sorting: 'desc'
       }];
     }
 

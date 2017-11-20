@@ -5352,6 +5352,33 @@
       // The function is not removed to avoid api changes
     },
     checkForDuplicateReceipts: function (model, loadOrder) {
+
+      function openReceiptPermissionError(orderType) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType]));
+      }
+
+      //Check Permissions
+      switch (model.get('orderType')) {
+      case 'QT':
+        if (!OB.MobileApp.model.hasPermission('OBPOS_retail.quotations')) {
+          openReceiptPermissionError(OB.I18N.getLabel('OBPOS_Quotations'));
+          return;
+        }
+        break;
+      case 'LAY':
+        if (!OB.MobileApp.model.hasPermission('OBPOS_retail.layaways')) {
+          openReceiptPermissionError(OB.I18N.getLabel('OBPOS_LblLayaways'));
+          return;
+        }
+        break;
+      default:
+        if (!OB.MobileApp.model.hasPermission('OBPOS_retail.paidReceipts')) {
+          openReceiptPermissionError(OB.I18N.getLabel('OBPOS_LblPaidReceipts'));
+          return;
+        }
+        break;
+      }
+
       // Check in Current Session
       var orderTypeMsg, i;
       for (i = 0; i < OB.MobileApp.model.orderList.length; i++) {
