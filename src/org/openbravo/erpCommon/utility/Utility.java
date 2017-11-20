@@ -1602,15 +1602,12 @@ public class Utility {
    * 
    * @param list
    * @return a comma separated String containing the contents of the array.
+   *
+   * @deprecated Use instead the more generic {@link Utility#commaSeparated(Collection, boolean)}
    */
+  @Deprecated
   public static String arrayListToString(ArrayList<String> list, boolean addQuotes) {
-    String rt = "";
-    for (int i = 0; i < list.size(); i++) {
-      String aux = (rt.equals("") ? "" : ", ") + (addQuotes ? "'" : "") + list.get(i)
-          + (addQuotes ? "'" : "");
-      rt = rt + aux;
-    }
-    return rt;
+    return commaSeparated(list, addQuotes);
   }
 
   /**
