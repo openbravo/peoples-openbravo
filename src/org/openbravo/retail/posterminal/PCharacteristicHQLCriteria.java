@@ -27,7 +27,11 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
     String[] array_params = getParams(params);
     String sql = null;
     if (array_params[1].equals("__all__")) {
-      sql = getAllQuery();
+      if (array_params[0].equals("%")) {
+        sql = getAllCharacteristics();
+      } else {
+        sql = getAllQuery();
+      }
     } else if (array_params[1].equals("OBPOS_bestsellercategory")) {
       sql = getBestsellers();
     } else {
@@ -58,9 +62,18 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
     final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
     return " exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli "
         + "where ch.id = pchv.characteristic.id "
-        + "and pchv.product.id= pli.product.id  and   pli.obretcoProductlist.id='"
+        + "and pchv.product.id= pli.product.id and pli.obretcoProductlist.id='"
         + productList.getId()
         + "' and (upper(pchv.product.name) like upper('$1') or upper(pchv.product.uPCEAN) like upper('$1'))  ";
+  }
+
+  public String getAllCharacteristics() {
+    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+    return " exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli "
+        + "where ch.id = pchv.characteristic.id "
+        + "and pchv.product.id= pli.product.id and pli.obretcoProductlist.id='"
+        + productList.getId() + "' ";
   }
 
   public String getProdCategoryQuery() {
@@ -68,7 +81,7 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
     final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
     return " exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli "
         + "where ch.id = pchv.characteristic.id "
-        + "and pchv.product.id= pli.product.id  and   pli.obretcoProductlist.id='"
+        + "and pchv.product.id= pli.product.id and pli.obretcoProductlist.id='"
         + productList.getId()
         + "' and (upper(pchv.product.name) like upper('$1') or upper(pchv.product.uPCEAN) like upper('$1')) and pchv.product.productCategory.id in ( '$2')  ";
   }
