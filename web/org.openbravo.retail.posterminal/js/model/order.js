@@ -5892,7 +5892,8 @@
     },
 
     addPaidReceipt: function (model, callback) {
-      var synchId = null;
+      var me = this,
+          synchId = null;
       enyo.$.scrim.show();
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         this.doRemoteBPSettings(model.get('bp'));
@@ -5912,16 +5913,20 @@
           enyo.$.scrim.hide();
           OB.UTIL.SynchronizationHelper.finished(synchId, 'addPaidReceipt');
           if (callback instanceof Function) {
-            callback();
+            callback(me.modelorder);
           }
         }, function () {
           enyo.$.scrim.hide();
           OB.UTIL.SynchronizationHelper.finished(synchId, 'addPaidReceipt');
           OB.error(arguments);
           if (callback instanceof Function) {
-            callback();
+            callback(me.modelorder);
           }
         }, true);
+      } else {
+        if (callback instanceof Function) {
+          callback(this.modelorder);
+        }
       }
     },
 

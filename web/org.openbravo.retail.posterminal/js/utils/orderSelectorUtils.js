@@ -94,11 +94,11 @@
       };
 
       if (order.get('isLayaway')) {
-        OB.MobileApp.model.receipt.calculateReceipt(function () {
+        order.calculateReceipt(function () {
           loadNextOrder();
         });
       } else {
-        OB.MobileApp.model.receipt.calculateGrossAndSave(false, function () {
+        order.calculateGrossAndSave(false, function () {
           loadNextOrder();
         });
       }
