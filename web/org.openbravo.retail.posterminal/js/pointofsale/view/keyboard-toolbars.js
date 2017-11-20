@@ -343,15 +343,7 @@ enyo.kind({
                   return;
                 }
               }
-              me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options, function () {
-                me.waterfall('onButtonStatusChanged', {
-                  value: {
-                    originator: me,
-                    payment: undefined,
-                    status: ''
-                  }
-                });
-              });
+              me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options, null);
             }
           });
         }

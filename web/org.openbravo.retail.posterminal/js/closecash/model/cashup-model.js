@@ -247,7 +247,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         '_orderByClause': 'lineNo asc'
       }, function (payMthds) { //OB.Dal.find success
         cashUpReport.set('totalStartings', _.reduce(payMthds.models, function (accum, trx) {
-          if (OB.MobileApp.model.paymentnames[trx.get('searchKey')]) {
+          if (OB.MobileApp.model.paymentnames[trx.get('searchKey')] && OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod.countpaymentincashup) {
             // Not accumulate shared payments on slave terminal
             if (terminalSlave && OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod.isshared) {
               return accum;

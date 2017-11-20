@@ -123,6 +123,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalmorepaymentmethods",
         // Web POS window
         "utils/eventbus",
+        "utils/attributeUtils",
         "utils/cashUpReportUtils",
         "utils/cashManagementUtils",
         "utils/ticketCloseUtils",

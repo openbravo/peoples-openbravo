@@ -16,7 +16,8 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddr',
   classes: 'receipt-customer-selector-editor',
   events: {
-    onShowPopup: ''
+    onShowPopup: '',
+    onDisableButton: ''
   },
   handlers: {
     onSetValues: 'setValues',
@@ -45,6 +46,9 @@ enyo.kind({
       } else {
         this.$.header.setContent(OB.I18N.getLabel('OBPOS_TitleNewCustomerAddress'));
       }
+      this.waterfall('onDisableButton', {
+        disabled: false
+      });
       //show
       return true;
     } else {
@@ -96,6 +100,20 @@ enyo.kind({
     }
   },
   tap: function () {
+    var me = this;
+    this.disableButton(this, {
+      disabled: true
+    });
+    OB.info('Time: ' + new Date() + '. Customer Addr Save Button Pressed ( Status: ' + this.disabled + ') ');
+    if (me.blocked) {
+      OB.error('Time: ' + new Date() + '. Customer Addr Save button has been pressed 2 times and second execution is discarded ');
+      return;
+    } else {
+      me.blocked = true;
+      setTimeout(function () {
+        me.blocked = false;
+      }, 500);
+    }
     this.doSaveCustomerAddr();
   }
 });

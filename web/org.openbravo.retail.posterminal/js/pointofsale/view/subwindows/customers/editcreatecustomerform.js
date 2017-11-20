@@ -14,7 +14,8 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.newcustomer',
   classes: 'receipt-customer-selector-editor',
   events: {
-    onShowPopup: ''
+    onShowPopup: '',
+    onDisableButton: ''
   },
   handlers: {
     onCancelClose: 'cancelClose',
@@ -59,6 +60,9 @@ enyo.kind({
         this.$.body.$.edit_createcustomers_impl.$.shippingAddrFields.show();
         this.$.header.setContent(OB.I18N.getLabel('OBPOS_TitleNewCustomer'));
       }
+      this.waterfall('onDisableButton', {
+        disabled: false
+      });
       //show
       return true;
     } else {
@@ -107,6 +111,20 @@ enyo.kind({
     onDisableButton: 'disableButton'
   },
   tap: function () {
+    var me = this;
+    this.disableButton(this, {
+      disabled: true
+    });
+    OB.info('Time: ' + new Date() + '. Customer Save Button Pressed ( Status: ' + this.disabled + ') ');
+    if (me.blocked) {
+      OB.error('Time: ' + new Date() + '. Customer Save button has been pressed 2 times and second execution is discarded ');
+      return;
+    } else {
+      me.blocked = true;
+      setTimeout(function () {
+        me.blocked = false;
+      }, 500);
+    }
     this.doSaveCustomer({
       validations: true
     });

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -120,12 +120,15 @@ enyo.kind({
             tap: function () {
               var me = this,
                   undoaction = this.undoaction;
+              this.setDisabled(true);
               OB.UTIL.HookManager.executeHooks('OBPOS_PreUndo_' + undoaction, {
                 undoBtn: me,
                 order: OB.MobileApp.model.receipt
               }, function (args) {
                 if (!args.cancellation && me.undoclick) {
                   me.undoclick();
+                } else {
+                  me.setDisabled(false);
                 }
                 OB.UTIL.HookManager.executeHooks('OBPOS_PostUndo_' + undoaction, {
                   undoBtn: me,
@@ -163,6 +166,7 @@ enyo.kind({
       this.$.txtaction.setContent(undoaction.text);
       this.$.undobutton.undoaction = undoaction.action;
       this.$.undobutton.undoclick = undoaction.undo;
+      this.$.undobutton.setDisabled(false);
     } else {
       this.$.msgaction.hide();
       this.$.msgwelcome.show();

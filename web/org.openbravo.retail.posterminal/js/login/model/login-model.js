@@ -184,8 +184,7 @@
 
               OB.UTIL.localStorage.setItem('terminalId', data[0].terminal.id);
               terminalModel.set('useBarcode', terminalModel.get('terminal').terminalType.usebarcodescanner);
-              OB.MobileApp.view.scanMode = true;
-              OB.MobileApp.view.scanningFocus(true);
+              terminalModel.set('useEmbededBarcode', terminalModel.get('terminal').terminalType.useembededbarcodescanner);
               if (!terminalModel.usermodel) {
                 OB.MobileApp.model.loadingErrorsActions("The terminal.usermodel should be loaded at this point");
               } else if (OB.MobileApp.model.attributes.loadManifeststatus && OB.MobileApp.model.attributes.loadManifeststatus.type === 'error' && !OB.RR.RequestRouter.ignoreManifestLoadError()) {
@@ -485,6 +484,8 @@
           }
         }
 
+        OB.MobileApp.view.scanningFocus(false);
+
         // Set Arithmetic properties:
         OB.DEC.setContext(OB.UTIL.getFirstValidValue([me.get('currency').obposPosprecision, me.get('currency').pricePrecision]), BigDecimal.prototype.ROUND_HALF_UP);
 
@@ -599,11 +600,11 @@
     returnToOnline: function () {
       if (OB.MobileApp.model.get('isLoggingIn')) {
         OB.MobileApp.model.on('change:isLoggingIn', function () {
-          if (OB.MobileApp.model.get('isLoggingIn')) {
-            OB.MobileApp.model.off('change:isLoggingIn', this.returnToOnline);
+          if (!OB.MobileApp.model.get('isLoggingIn')) {
+            OB.MobileApp.model.off('change:isLoggingIn', null, this);
             this.runSyncProcess();
           }
-        });
+        }, this);
       } else {
         //The session is fine, we don't need to warn the user
         //but we will attempt to send all pending orders automatically
@@ -751,10 +752,13 @@
                       };
                   OB.MobileApp.model.orderList.loadById(orderId);
                   if (orderId === OB.MobileApp.model.orderList.current.id) {
-                    OB.MobileApp.model.orderList.current.deleteOrder(me, callback);
-                  } else {
-                    callback();
+                    OB.UTIL.rebuildCashupFromServer(function () {
+                      OB.MobileApp.model.orderList.saveCurrent();
+                      OB.Dal.remove(OB.MobileApp.model.orderList.current, null, null);
+                      OB.MobileApp.model.orderList.deleteCurrent();
+                    });
                   }
+                  callback();
                 } else if (data.status === "Initial") {
                   //recursively check process status 
                   setTimeout(function () {
@@ -764,7 +768,7 @@
                   }, 15000);
 
                 } else if (data.status === "Error") {
-                  //Show modal advicing that there was an error
+                  //Show modal advising that there was an error
                   me.checkProcessingMessageLocked = false;
                   OB.UTIL.localStorage.removeItem('synchronizedMessageId');
                   if (OB.MobileApp.model.showSynchronizedDialog) {
@@ -790,31 +794,12 @@
                 }
               }
             }, function (data) {
+              //Continue retrying till we know the status of the message
               counter++;
-              //If the server is down, we show error message
-              if (data && data.exception && data.exception.inSender === 0) {
-                //Show modal advicing that there was an error
-                me.checkProcessingMessageLocked = false;
-                OB.UTIL.localStorage.removeItem('synchronizedMessageId');
-                if (OB.MobileApp.model.showSynchronizedDialog) {
-                  OB.MobileApp.model.hideSynchronizingDialog("CheckProcessingMessage");
-                }
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_TransactionFailedTitle'), OB.I18N.getLabel('OBMOBC_TransactionFailed', [data.exception.message]), [{
-                  isConfirmButton: true,
-                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                  action: function () {
-                    if (OB && OB.POS) {
-                      OB.POS.navigate('retail.pointofsale');
-                      return true;
-                    }
-                  }
-                }]);
-              } else {
-                setTimeout(function () {
-                  OB.UTIL.showConfirmation.setText(OB.I18N.getLabel('OBMOBC_DataIsBeingProcessed') + " " + OB.I18N.getLabel('OBMOBC_NumOfRetries') + " " + counter);
-                  checkProcessingMessage(counter);
-                }, 15000);
-              }
+              setTimeout(function () {
+                OB.UTIL.showConfirmation.setText(OB.I18N.getLabel('OBMOBC_DataIsBeingProcessed') + " " + OB.I18N.getLabel('OBMOBC_NumOfRetries') + " " + counter);
+                checkProcessingMessage(counter);
+              }, 15000);
 
             }, undefined, 15000);
           };
@@ -833,8 +818,17 @@
           lastTotalRefresh = OB.UTIL.localStorage.getItem('POSLastTotalRefresh'),
           lastIncRefresh = OB.UTIL.localStorage.getItem('POSLastIncRefresh'),
           now = new Date().getTime(),
-          intervalInc = lastIncRefresh ? (now - lastIncRefresh - minIncRefresh) : 0;
+          intervalInc;
 
+      // lastTotalRefresh should be used to set lastIncRefresh when it is null or minor.
+      if (lastIncRefresh === null) {
+        lastIncRefresh = lastTotalRefresh;
+      } else {
+        if (lastTotalRefresh > lastIncRefresh) {
+          lastIncRefresh = lastTotalRefresh;
+        }
+      }
+      intervalInc = lastIncRefresh ? (now - lastIncRefresh - minIncRefresh) : 0;
       minIncRefresh = (minIncRefresh > 99999 ? 99999 : minIncRefresh) * 60 * 1000;
 
       function setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds) {

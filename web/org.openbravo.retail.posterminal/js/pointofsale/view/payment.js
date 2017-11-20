@@ -261,6 +261,7 @@ enyo.kind({
     this.receipt.on('paymentCancel', function () {
       this.$.layawayaction.setDisabled(false);
       this.$.donebutton.setDisabled(false);
+      this.$.creditsalesaction.putDisabled(false);
       if (OB.MobileApp.view.openedPopup === null) {
         enyo.$.scrim.hide();
       }
@@ -585,33 +586,57 @@ enyo.kind({
     });
   },
 
-  checkValidCashOverpayment: function (paymentstatus, selectedPayment) {
+  checkValidOverpayment: function (paymentstatus) {
+    var requiredOverpayment = paymentstatus.overpayment,
+        overPaymentUsed = _.last(paymentstatus.payments.models),
+        overPaymentMethod = overPaymentUsed ? OB.MobileApp.model.paymentnames[overPaymentUsed.get('kind')].paymentMethod : undefined;
+
+    // Execute logic only if all the following requirements are met:
+    //  * There is at least one payment added to the receipt
+    //  * The payment method has a overpayment limit defined
+    //  * There is an overpayment
+    if (overPaymentMethod && !OB.UTIL.isNullOrUndefined(overPaymentMethod.overpaymentLimit) && !OB.UTIL.isNullOrUndefined(requiredOverpayment)) {
+      var overpaymentAmt = new BigDecimal(String(requiredOverpayment));
+      var overpaymentLimit = new BigDecimal(String(overPaymentMethod.overpaymentLimit));
+      if (overpaymentAmt.compareTo(BigDecimal.prototype.ZERO) !== 0) {
+        if (overpaymentLimit.compareTo(BigDecimal.prototype.ZERO) === 0 && overpaymentLimit.compareTo(overpaymentAmt) < 0) {
+          this.$.overpaymentnotavailable.show();
+          return false;
+        } else if (overpaymentLimit.compareTo(overpaymentAmt) < 0) {
+          this.$.overpaymentexceedlimit.show();
+          return false;
+        } else {
+          return true;
+        }
+      } else if (overpaymentAmt.compareTo(BigDecimal.prototype.ZERO) === 0) {
+        return true;
+      }
+    } else {
+      return true;
+    }
+  },
+
+  checkValidCashChange: function (paymentstatus, selectedPayment) {
     if (!selectedPayment) {
       return false;
     }
 
-    var currentCash = OB.DEC.Zero,
-        requiredCash;
+    var requiredCash;
 
     if (OB.UTIL.isNullOrUndefined(selectedPayment) || OB.UTIL.isNullOrUndefined(selectedPayment.paymentMethod.overpaymentLimit)) {
       return true;
     }
 
-    requiredCash = selectedPayment.paymentMethod.iscash ? paymentstatus.changeAmt : paymentstatus.overpayment;
+    requiredCash = paymentstatus.changeAmt;
+    if (!OB.UTIL.isNullOrUndefined(requiredCash)) {
+      requiredCash = OB.DEC.toNumber(requiredCash);
+    }
     if (requiredCash !== 0) {
       if (selectedPayment.paymentMethod.overpaymentLimit === 0 && selectedPayment.paymentMethod.overpaymentLimit < requiredCash) {
-        if (selectedPayment.paymentMethod.iscash) {
-          this.$.changeexceedlimit.show();
-        } else {
-          this.$.overpaymentnotavailable.show();
-        }
+        this.$.changeexceedlimit.show();
         return false;
       } else if (selectedPayment.paymentMethod.overpaymentLimit < requiredCash) {
-        if (selectedPayment.paymentMethod.iscash) {
-          this.$.changeexceedlimit.show();
-        } else {
-          this.$.overpaymentexceedlimit.show();
-        }
+        this.$.changeexceedlimit.show();
         return false;
       } else {
         return true;
@@ -681,7 +706,15 @@ enyo.kind({
 
     // Do the checkins
     this.receipt.stopAddingPayments = !_.isEmpty(this.getShowingErrorMessages());
-    resultOK = !selectedPayment.paymentMethod.iscash || paymentstatus.changeAmt > 0 ? this.checkValidCashOverpayment(paymentstatus, selectedPayment) : undefined;
+    if (this.checkValidOverpayment(paymentstatus)) {
+      if (selectedPayment.paymentMethod.iscash && paymentstatus.changeAmt > 0) {
+        resultOK = this.checkValidCashChange(paymentstatus, selectedPayment);
+      } else {
+        resultOK = undefined;
+      }
+    } else {
+      resultOK = false;
+    }
     if (resultOK || _.isUndefined(resultOK)) {
       if (!_.isNull(paymentstatus.change) || ((paymentstatus.isNegative || paymentstatus.isReversal) && !_.isNull(paymentstatus.pending))) {
         // avoid checking for shared paymentMethod
@@ -1140,7 +1173,7 @@ enyo.kind({
       }
 
       var errorMsgLbl, totalPaid = 0,
-          totalToPaid = isMultiOrder ? this.owner.model.get('multiOrders').getTotal() : this.owner.receipt.getTotal(),
+          totalToPaid = OB.DEC.abs(isMultiOrder ? this.owner.model.get('multiOrders').getTotal() : this.owner.receipt.getTotal()),
           isReturnOrder = isMultiOrder ? false : this.owner.receipt.getPaymentStatus().isNegative;
 
       if (_.filter(payments.models, function (payment) {
@@ -1479,9 +1512,10 @@ enyo.kind({
       }]);
       return true;
     }
-    var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
-    var me = this;
-    var paymentstatus = this.model.get('order').getPaymentStatus();
+    this.putDisabled(true);
+    var me = this,
+        paymentstatus = this.model.get('order').getPaymentStatus(),
+        process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
     if (!paymentstatus.isReturn) {
       //this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("creditButtonTap");
@@ -1509,11 +1543,13 @@ enyo.kind({
                 actualCredit: actualCredit
               }
             });
+            me.putDisabled(false);
             //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
             //OB.UI.UTILS.domIdEnyoReference['modalNotEnoughCredit'].$.bodyContent.children[0].setContent();
           }
         } else {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorCreditSales'));
+          me.putDisabled(false);
         }
       }, function () {
         OB.UTIL.SynchronizationHelper.finished(synchId, "creditButtonTap");

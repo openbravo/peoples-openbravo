@@ -37,15 +37,15 @@ public class Payments extends JSONTerminalProperty {
     try {
       JSONArray respArray = new JSONArray();
       String posId = jsonsent.getString("pos");
-      String hqlPayments = "select p as payment, p.paymentMethod as paymentMethod, "
-          + "c_currency_rate(coalesce(c, p.paymentMethod.currency), p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, c_currency_rate(p.obposApplications.organization.currency, coalesce(c, p.paymentMethod.currency), null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
-          + "coalesce(c.iSOCode, p.paymentMethod.currency.iSOCode) as isocode, "
-          + "coalesce(c.symbol, p.paymentMethod.currency.symbol) as symbol, coalesce(c.currencySymbolAtTheRight, p.paymentMethod.currency.currencySymbolAtTheRight) as currencySymbolAtTheRight, "
+      String hqlPayments = "select p as payment, pm as paymentMethod, "
+          + "c_currency_rate(coalesce(c, pmc), p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, c_currency_rate(p.obposApplications.organization.currency, coalesce(c, pmc), null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
+          + "coalesce(c.iSOCode, pmc.iSOCode) as isocode, "
+          + "coalesce(c.symbol, pmc.symbol) as symbol, coalesce(c.currencySymbolAtTheRight, pmc.currencySymbolAtTheRight) as currencySymbolAtTheRight, "
           + "coalesce(f.currentBalance, 0) as currentBalance, "
           + "coalesce(c.obposPosprecision, null) as obposPosprecision, "
           + "img.bindaryData as image, img.mimetype as mimetype "
           + "from OBPOS_App_Payment as p left join p.financialAccount as f left join f.currency as c "
-          + "left outer join p.paymentMethod as pm left outer join pm.image as img "
+          + "left outer join p.paymentMethod as pm left outer join pm.image as img left outer join pm.currency as pmc "
           + "where p.obposApplications.id = :posID  "
           + "and p.$readableSimpleCriteria and p.$activeCriteria and pm.$activeCriteria"
           + "order by p.line, p.commercialName";

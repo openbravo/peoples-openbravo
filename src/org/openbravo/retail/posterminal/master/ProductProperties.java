@@ -54,13 +54,15 @@ public class ProductProperties extends ModelExtension {
               OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
                   .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
                   .getOBContext().getRole(), null))) {
+            add(new HQLProperty("product.image.id", "imgId"));
           } else {
             add(new HQLProperty("img.bindaryData", "img"));
+            add(new HQLProperty("img.id", "imgId"));
           }
         } catch (PropertyException e) {
           add(new HQLProperty("img.bindaryData", "img"));
+          add(new HQLProperty("img.id", "imgId"));
         }
-        add(new HQLProperty("img.id", "imgId"));
         add(new HQLProperty("case when product.isGeneric is false then "
             + "(case when pli.bestseller = 'Y' then true else false end) "
             + "when (product.isGeneric is true and exists(select 1 "
@@ -114,21 +116,6 @@ public class ProductProperties extends ModelExtension {
       throw new OBException("terminal id is not present in session ");
     }
 
-    // Build Product Tax Category select clause
-    final Dialect dialect = ((SessionFactoryImpl) ((SessionImpl) OBDal.getInstance().getSession())
-        .getSessionFactory()).getDialect();
-    Map<String, SQLFunction> function = dialect.getFunctions();
-    if (!function.containsKey("c_get_product_taxcategory")) {
-      dialect.getFunctions().put("c_get_product_taxcategory",
-          new StandardSQLFunction("c_get_product_taxcategory", new StringType()));
-    }
-    StringBuffer taxCategoryQry = new StringBuffer();
-    taxCategoryQry.append("c_get_product_taxcategory(product.id, '");
-    taxCategoryQry.append(posDetail.getOrganization().getId());
-    // Date, shipfrom and shipto as null
-    taxCategoryQry.append("', null, null, null)");
-    final String strTaxCategoryQry = taxCategoryQry.toString();
-
     ArrayList<HQLProperty> list = null;
     try {
       list = new ArrayList<HQLProperty>() {
@@ -151,7 +138,6 @@ public class ProductProperties extends ModelExtension {
             add(new HQLProperty("product.id", "id"));
             add(new HQLProperty("product.searchKey", "searchkey"));
             add(new HQLProperty(trlName, "_identifier"));
-            add(new HQLProperty(strTaxCategoryQry, "taxCategory"));
             add(new HQLProperty("product.productCategory.id", "productCategory"));
             add(new HQLProperty("product.obposScale", "obposScale"));
             add(new HQLProperty("product.uOM.id", "uOM"));
@@ -204,6 +190,33 @@ public class ProductProperties extends ModelExtension {
     } catch (PropertyException e) {
       log.error("Error getting preference: " + e.getMessage(), e);
     }
+
+    // If preference for Product Tax Category exists we will use the pl function, otherwise we will
+    // just read the tax category from the product itself
+    try {
+      Preferences.getPreferenceValue("GETPRODUCTTAXCATEGORY", true, OBContext.getOBContext()
+          .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
+          .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+      // Build Product Tax Category select clause
+      final Dialect dialect = ((SessionFactoryImpl) ((SessionImpl) OBDal.getInstance().getSession())
+          .getSessionFactory()).getDialect();
+      Map<String, SQLFunction> function = dialect.getFunctions();
+      if (!function.containsKey("c_get_product_taxcategory")) {
+        dialect.getFunctions().put("c_get_product_taxcategory",
+            new StandardSQLFunction("c_get_product_taxcategory", new StringType()));
+      }
+      StringBuffer taxCategoryQry = new StringBuffer();
+      taxCategoryQry.append("c_get_product_taxcategory(product.id, '");
+      taxCategoryQry.append(posDetail.getOrganization().getId());
+      // Date, shipfrom and shipto as null
+      taxCategoryQry.append("', null, null, null)");
+      final String strTaxCategoryQry = taxCategoryQry.toString();
+      list.add(new HQLProperty(strTaxCategoryQry, "taxCategory"));
+
+    } catch (PropertyException e) {
+      list.add(new HQLProperty("product.taxCategory.id", "taxCategory"));
+    }
+
     return list;
   }
 }

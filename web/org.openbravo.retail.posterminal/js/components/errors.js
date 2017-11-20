@@ -26,7 +26,7 @@
         } else {
           OB.RemoteCallManager.call('org.openbravo.retail.posterminal.SaveDataActionHandler', recordIds, {}, function (response, data, request) {
             isc.say(data.message);
-            params.button.closeProcessPopup();
+            params.button.contextView.viewGrid.refreshGrid();
           });
         }
         };

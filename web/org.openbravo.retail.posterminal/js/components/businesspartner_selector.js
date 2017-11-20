@@ -297,7 +297,7 @@ enyo.kind({
       silent: true
     });
     OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function (bp) {
-      OB.MobileApp.view.$.containerWindow.$.pointOfSale.bubble('onShowPopup', {
+      OB.MobileApp.view.$.containerWindow.getRoot().bubble('onShowPopup', {
         popup: 'modalcustomeraddress',
         args: {
           target: 'modal_selector_business_partners',

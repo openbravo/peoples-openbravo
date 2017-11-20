@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -112,7 +112,11 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.cancel_button',
   i18nContent: 'OBMOBC_LblCancel',
+  init: function (model) {
+    this.model = model;
+  },
   tap: function () {
+    this.model.get('order').trigger('paymentCancel');
     this.doHideThisPopup();
   }
 });

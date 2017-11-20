@@ -75,7 +75,18 @@ public class ProductDiscProperties extends ModelExtension {
         add(new HQLProperty("round(p.obdiscPrice, " + posPrecision + ")", "listPrice"));
         add(new HQLProperty("round(p.obdiscPrice, " + posPrecision + ")", "standardPrice"));
         add(new HQLProperty("p.obdiscUpc", "uPCEAN"));
-        add(new HQLProperty("img.bindaryData", "img"));
+        try {
+          if ("Y".equals(Preferences.getPreferenceValue("OBPOS_retail.productImages", true,
+              OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                  .getOBContext().getRole(), null))) {
+            // Not include img
+          } else {
+            add(new HQLProperty("img.bindaryData", "img"));
+          }
+        } catch (PropertyException e) {
+          add(new HQLProperty("img.bindaryData", "img"));
+        }
         add(new HQLProperty("p.active", "active"));
         add(new HQLProperty("'[[null]]'", "generic_product_id"));
         add(new HQLProperty("'false'", "showchdesc"));

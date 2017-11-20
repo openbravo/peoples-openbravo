@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2016 Openbravo S.L.U.
+ * Copyright (C) 2013-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -115,6 +115,9 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalDeleteReceipt',
+  events: {
+    onDisableLeftToolbar: ''
+  },
   bodyContent: {
     i18nContent: 'OBPOS_MsgConfirmDelete' // TODO: add this as part of the message + '\n' + OB.I18N.getLabel('OBPOS_cannotBeUndone')
   },
@@ -124,6 +127,11 @@ enyo.kind({
     }, {
       kind: 'OB.UI.btnModalCancelDelete'
     }]
+  },
+  executeOnHide: function () {
+    this.doDisableLeftToolbar({
+      status: false
+    });
   },
   initComponents: function () {
     this.header = OB.I18N.getLabel('OBPOS_ConfirmDeletion');

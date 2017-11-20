@@ -119,12 +119,26 @@ public class OrderGroupingProcessor {
     final String strExecutionId = "WebPOS_CashUp_" + String.valueOf(rnd.nextInt(1000000));
 
     if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
+      // Extend sql to separate invoices for sales and returns
+      final String strSeparateInvoiceForReturnsHeaderParameter1 = posTerminal
+          .getObposTerminaltype().isSeparateinvoiceforreturns() ? "tt.c_doctype_id, tt.c_doctyperet_id"
+          : "tt.c_doctype_id";
+      final String strSeparateInvoiceForReturnsHeaderParameter2 = posTerminal
+          .getObposTerminaltype().isSeparateinvoiceforreturns() ? "and o.c_doctype_id = dt.c_doctype_id"
+          : "";
+      final String strSeparateInvoiceForReturnsLines = posTerminal.getObposTerminaltype()
+          .isSeparateinvoiceforreturns() ? "and o.c_doctype_id = dt.c_doctype_id and dt.c_doctypeinvoice_id = i.c_doctype_id"
+          : "and tt.c_doctype_id = dt.c_doctype_id";
+
       // insert invoice headers
       OrderGroupingProcessorData.insertHeaderGrouping(conn, strUserId, strExecutionId,
-          strInvDescription, strCurrentDate, cashUpId);
+          strInvDescription, strCurrentDate, cashUpId,
+          strSeparateInvoiceForReturnsHeaderParameter1,
+          strSeparateInvoiceForReturnsHeaderParameter2);
       t1 = System.currentTimeMillis();
       // insert invoice lines
-      OrderGroupingProcessorData.insertLinesGrouping(conn, cashUpId, strExecutionId);
+      OrderGroupingProcessorData.insertLinesGrouping(conn, cashUpId, strExecutionId,
+          strSeparateInvoiceForReturnsLines);
       t2 = System.currentTimeMillis();
       OrderGroupingProcessorData.updateQtyOrderLinesGrouping(conn, strExecutionId);
       // insert invoice lines Tax

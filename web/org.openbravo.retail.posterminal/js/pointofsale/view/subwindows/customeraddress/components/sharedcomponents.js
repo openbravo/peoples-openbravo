@@ -139,9 +139,6 @@ enyo.kind({
         return;
       }
       if (args.passValidation) {
-        args.meObject.waterfall('onDisableButton', {
-          disabled: true
-        });
         args.meObject.saveCustomerAddr(args.inSender, args.inEvent);
       } else {
         OB.UTIL.showWarning(args.error);
@@ -321,20 +318,12 @@ enyo.kind({
                         enableButtonsCallback();
                         return true;
                       }
-                      receipt.set('skipCalculateReceipt', true);
-                      receipt.set('preventServicesUpdate', true);
-                      receipt.set('deleting', true);
                       _.each(receipt.get('lines').models, function (line) {
                         orderlines.push(line);
                       });
-                      _.each(orderlines, function (line) {
-                        receipt.deleteLine(line, true);
+                      receipt.deleteLinesFromOrder(orderlines, function () {
+                        args.customerAddr.saveCustomerAddr(callback, enableButtonsCallback);
                       });
-                      receipt.unset('preventServicesUpdate');
-                      receipt.unset('deleting');
-                      receipt.calculateGross();
-                      args.customerAddr.saveCustomerAddr(callback, enableButtonsCallback);
-                      receipt.set('skipCalculateReceipt', false);
                     });
                   }
                 }, {

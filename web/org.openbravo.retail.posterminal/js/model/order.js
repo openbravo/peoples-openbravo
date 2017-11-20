@@ -737,9 +737,13 @@
       // Verify if it's necesary to skip applying the function
       if (this.get('skipCalculateReceipt')) {
         OB.debug('Skipping calculateReceipt function');
+        if (callback) {
+          callback();
+        }
         return;
       }
       OB.MobileApp.view.waterfall('calculatingReceipt');
+      this.trigger('calculatingReceipt');
       this.calculatingReceipt = true;
 
       this.addToListOfCallbacks(callback);
@@ -770,10 +774,12 @@
               executeCallback(me.get('calculateReceiptCallbacks'), function () {
                 me.calculatingReceipt = false;
                 OB.MobileApp.view.waterfall('calculatedReceipt');
+                me.trigger('calculatedReceipt');
               });
             } else {
               me.calculatingReceipt = false;
               OB.MobileApp.view.waterfall('calculatedReceipt');
+              me.trigger('calculatedReceipt');
             }
           }
         });
@@ -901,13 +907,13 @@
         this.unset('paidInNegativeStatusAmt');
         done = this.get('lines').length > 0 && OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0;
         pending = OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, payAndCredit));
-        overpayment = OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(payAndCredit, total)) : null;
+        overpayment = OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) > 0 ? OB.DEC.sub(payAndCredit, total) : null;
         pendingAmt = OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, payAndCredit);
       } else {
         this.set('paidInNegativeStatusAmt', paidInNegativeStatus);
         done = this.get('lines').length > 0 && OB.DEC.compare(OB.DEC.sub(paymentsAmount, totalToReturn)) >= 0;
         pending = OB.DEC.compare(OB.DEC.sub(totalToReturn, paymentsAmount)) === 1 ? OB.I18N.formatCurrency(OB.DEC.sub(totalToReturn, paymentsAmount)) : null;
-        overpayment = OB.DEC.compare(OB.DEC.sub(OB.DEC.sub(paymentsAmount, totalToReturn), this.getChange())) === 1 ? OB.I18N.formatCurrency(OB.DEC.sub(OB.DEC.sub(paymentsAmount, totalToReturn), this.getChange())) : null;
+        overpayment = OB.DEC.compare(OB.DEC.sub(OB.DEC.sub(paymentsAmount, totalToReturn), this.getChange())) === 1 ? OB.DEC.sub(OB.DEC.sub(paymentsAmount, totalToReturn), this.getChange()) : null;
         pendingAmt = OB.DEC.compare(OB.DEC.sub(totalToReturn, paymentsAmount)) === 1 ? OB.DEC.sub(totalToReturn, paymentsAmount) : OB.DEC.Zero;
       }
 
@@ -1177,22 +1183,12 @@
         if (line.get('deleteApproved')) {
           // The approval to delete the line has already been granted
           line.unset('deleteApproved');
-          this.set('preventServicesUpdate', true);
-          this.set('deleting', true);
-          this.deleteLine(line);
-          this.unset('preventServicesUpdate');
-          this.unset('deleting');
-          this.get('lines').trigger('updateRelations');
+          this.deleteLinesFromOrder([line]);
         } else {
           // We don't have the approval to delete the line yet; request it
           OB.UTIL.Approval.requestApproval(OB.MobileApp.view.$.containerWindow.getRoot().model, 'OBPOS_approval.deleteLine', function (approved) {
             if (approved) {
-              me.set('preventServicesUpdate', true);
-              me.set('deleting', true);
-              me.deleteLine(line);
-              me.unset('preventServicesUpdate');
-              me.unset('deleting');
-              me.get('lines').trigger('updateRelations');
+              me.deleteLinesFromOrder([line]);
             }
           });
         }
@@ -1293,6 +1289,447 @@
       });
     },
 
+    removeDeleteLine: function (line) {
+      var deleteIndex = -1;
+      _.each(this.get('deletedLines'), function (d, index) {
+        if (d.id === line.id) {
+          deleteIndex = index;
+        }
+      });
+      if (deleteIndex !== -1) {
+        this.get('deletedLines').splice(deleteIndex, 1);
+        if (this.get('deletedLines').length === 0) {
+          this.unset('deletedLines');
+        }
+      }
+      line.unset('obposIsDeleted');
+    },
+
+    deleteLinesFromOrder: function (selectedModels, callback) {
+      var me = this,
+          pointofsale = OB.MobileApp.view.$.containerWindow.getRoot();
+
+      function postDeleteLine() {
+        var cleanReceipt, cloneLines;
+
+        cleanReceipt = function () {
+          me.adjustPayment();
+          me.unset('preventServicesUpdate');
+          me.unset('deleting');
+          me.get('lines').trigger('updateRelations');
+          me.save(function () {
+            enyo.$.scrim.hide();
+            OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteLine', {
+              order: me,
+              selectedLines: selectedModels
+            }, function (args) {
+              if (callback) {
+                callback();
+              }
+            });
+          });
+        };
+
+        cloneLines = function () {
+          var clonedLines = [];
+          _.each(me.get('lines').models, function (line) {
+            var clonedLine = new OrderLine(line.attributes);
+            clonedLines.push(clonedLine);
+          });
+          return clonedLines;
+        };
+
+        if (me.get('undo')) {
+          var text, lines, relations;
+          text = me.get('undo').text;
+          lines = me.get('undo').lines;
+          relations = me.get('undo').relations;
+
+          me.setUndo('DeleteLine', {
+            text: text,
+            lines: lines,
+            relations: relations,
+            undo: function () {
+              var i;
+              enyo.$.scrim.show();
+              me.set('preventServicesUpdate', true);
+              me.set('deleting', true);
+              if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id')) {
+                for (i = 0; i < me.get('undo').lines.length; i++) {
+                  if (!me.get('undo').lines[i].get('product').get('oBPOSAllowAnonymousSale')) {
+                    OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_AnonymousSaleForProductNotAllowed', [me.get('undo').lines[i].get('product').get('_identifier')]));
+                    return;
+                  }
+                }
+              }
+              me.get('undo').lines.sort(function (a, b) {
+                if (a.get('undoPosition') > b.get('undoPosition')) {
+                  return 1;
+                }
+                if (a.get('undoPosition') < b.get('undoPosition')) {
+                  return -1;
+                }
+                // a must be equal to b
+                return 0;
+              });
+
+              lines.forEach(function (line) {
+                if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.get('obposQtyDeleted')) {
+                  line.set('qty', line.get('obposQtyDeleted'));
+                  line.set('obposQtyDeleted', 0);
+                }
+                me.removeDeleteLine(line);
+                me.get('lines').add(line, {
+                  at: line.get('undoPosition')
+                });
+                if (OB.UTIL.RfidController.isRfidConfigured() && line.get('obposEpccode')) {
+                  OB.UTIL.RfidController.addEpcLine(line);
+                }
+              });
+              relations.forEach(function (rel) {
+                var rls = rel[0].get('relatedLines').slice(),
+                    lineToAddRelated = _.filter(me.get('lines').models, function (line) {
+                    return line.id === rel[0].id;
+                  });
+                rls.push(rel[1]);
+                lineToAddRelated[0].set('relatedLines', rls);
+              });
+              me.set('undo', null);
+              me.unset('preventServicesUpdate');
+              me.unset('deleting');
+              me.get('lines').trigger('updateRelations');
+              me.calculateReceipt(function () {
+                enyo.$.scrim.hide();
+              });
+            }
+          });
+        }
+
+        if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+          var skippingCalculateReceipt = me.get('skipCalculateReceipt');
+          if (skippingCalculateReceipt) {
+            me.unset('skipCalculateReceipt');
+          }
+          me.calculateReceipt(function () {
+            if (skippingCalculateReceipt) {
+              me.set('skipCalculateReceipt', true);
+            }
+            if (!me.get('deletedLines')) {
+              me.set('deletedLines', []);
+            }
+            _.each(cloneLines(), function (line) {
+              if (line.get('obposIsDeleted')) {
+                var deletedLine = new OrderLine(line.attributes);
+                // Move to deleted lines
+                me.get('deletedLines').push(deletedLine);
+                me.get('lines').remove(line);
+              }
+            });
+            cleanReceipt();
+          });
+        } else {
+          _.each(cloneLines(), function (line) {
+            if (line.get('obposIsDeleted')) {
+              me.get('lines').remove(line);
+            }
+          });
+          me.calculateReceipt(function () {
+            cleanReceipt();
+          });
+        }
+      }
+
+      function preDeleteLine() {
+        OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteLine', {
+          order: me,
+          selectedLines: selectedModels
+        }, function (args) {
+          if (args && args.cancelOperation && args.cancelOperation === true) {
+            return;
+          }
+          enyo.$.scrim.show();
+          me.get('lines').forEach(function (line, idx) {
+            line.set('undoPosition', idx);
+          });
+          me.set('undo', null);
+          me.set('preventServicesUpdate', true);
+          me.set('deleting', true);
+          me._deleteLines(selectedModels, 0, selectedModels.length, postDeleteLine);
+          me.trigger('scan');
+        });
+      }
+
+      //If there are no lines to delete, continue
+      if (!selectedModels || (selectedModels && !selectedModels.length)) {
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+
+      //Editable Validation
+      if (this.get('isEditable') === false) {
+        pointofsale.doShowPopup({
+          popup: 'modalNotEditableOrder'
+        });
+        return true;
+      }
+
+      //Services validation
+      var unGroupedServiceLines = _.filter(selectedModels, function (line) {
+        return line.get('product').get('productType') === 'S' && line.get('product').get('quantityRule') === 'PP' && !line.get('groupService') && line.has('relatedLines') && line.get('relatedLines').length > 0 && line.get('isEditable');
+      });
+      if (unGroupedServiceLines && unGroupedServiceLines.length > 0) {
+        var i, j, serviceQty, productQty, uniqueServices, getServiceQty, getProductQty;
+        uniqueServices = _.uniq(unGroupedServiceLines, false, function (line) {
+          return line.get('product').get('id') + line.get('relatedLines')[0].orderlineId;
+        });
+        getServiceQty = function (service) {
+          return _.filter(unGroupedServiceLines, function (line) {
+            return line.get('product').get('id') === service.get('product').get('id') && line.get('relatedLines')[0].orderlineId === service.get('relatedLines')[0].orderlineId;
+          }).length;
+        };
+        getProductQty = function (service) {
+          return _.find(me.get('lines').models, function (line) {
+            return _.indexOf(_.pluck(service.get('relatedLines'), 'orderlineId'), line.get('id')) !== -1;
+          }).get('qty');
+        };
+
+        for (i = 0; i < uniqueServices.length; i++) {
+          serviceQty = getServiceQty(uniqueServices[i]);
+          productQty = getProductQty(uniqueServices[i]);
+          if (productQty && productQty !== serviceQty) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LineCanNotBeDeleted'), OB.I18N.getLabel('OBPOS_AllServiceLineMustSelectToDelete'), [{
+              label: OB.I18N.getLabel('OBMOBC_LblOk')
+            }]);
+            return;
+          }
+        }
+      }
+
+      OB.UTIL.Approval.requestApproval(pointofsale.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+        if (approved) {
+          selectedModels.forEach(function (line, idx) {
+            line.set('deleteApproved', true);
+          });
+          preDeleteLine();
+        }
+      });
+    },
+
+    _deleteLines: function (lines, idx, length, callback) {
+      var me = this,
+          line = lines[idx];
+
+      if (idx === 0) {
+        var i;
+        for (i = 0; i < lines.length; i++) {
+          if (me.get('replacedorder') && lines[i].get('remainingQuantity')) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
+            if (callback) {
+              callback();
+            }
+            return;
+          }
+        }
+      } else if (idx === length) {
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+      if (this.get('lines').get(line).get('obposIsDeleted')) {
+        this._deleteLines(lines, idx + 1, length, callback);
+      } else {
+        this._deleteLine(line, function () {
+          me._deleteLines(lines, idx + 1, length, callback);
+        });
+      }
+    },
+
+    _deleteLine: function (line, callback) {
+      var me = this,
+          pack = line.isAffectedByPack(),
+          productId = line.get('product').id,
+          text, linesToDelete, relations, deletedQty;
+
+      //Defensive code: Do not remove non existing line
+      if (!this.get('lines').get(line)) {
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+
+      if (line.get('obposIsDeleted')) {
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+
+      if (!line.get('isDeletable')) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotDeletableLine', [line.get('product').get('_identifier')]));
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+
+      if (me.get('replacedorder') && line.get('remainingQuantity')) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+
+      if (pack) {
+        // When deleting a line, check lines with other product that are affected by
+        // same pack than deleted one and merge splitted lines created for those
+        this.get('lines').forEach(function (l) {
+          var affected;
+          if (productId === l.get('product').id) {
+            return; //continue
+          }
+          affected = l.isAffectedByPack();
+          if (affected && affected.ruleId === pack.ruleId) {
+            this.mergeLines(l);
+          }
+        }, this);
+      }
+
+      // trigger
+      line.trigger('removed', line);
+
+      if (OB.UTIL.RfidController.isRfidConfigured() && line.get('obposEpccode')) {
+        OB.UTIL.RfidController.removeEpcLine(line);
+      }
+
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+        if (!line.get('hasTaxError')) {
+          line.set('obposQtyDeleted', line.get('qty'));
+          line.set('qty', 0, {
+            silent: true
+          });
+        } else {
+          // The line must be removed here because when the preference OBPOS_remove_ticket is enabled, the
+          // calculateReceipt process is executed before removing the lines, causing a js error during the
+          // tax calculation (due to the tax error)
+          this.get('lines').remove(line);
+        }
+      }
+
+      line.set('obposIsDeleted', true);
+
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.get('obposQtyDeleted')) {
+        deletedQty = line.get('obposQtyDeleted');
+      } else {
+        deletedQty = line.get('qty');
+      }
+
+      if (!this.get('undo')) {
+        text = OB.I18N.getLabel('OBPOS_DeleteLine') + ': ' + deletedQty + ' x ' + line.get('product').get('_identifier');
+        linesToDelete = [line];
+        relations = [];
+        this.setUndo('DeleteLine', {
+          text: text,
+          lines: linesToDelete,
+          relations: relations
+        });
+      } else {
+        linesToDelete = this.get('undo').lines;
+        if (!linesToDelete) {
+          linesToDelete = [];
+        }
+        linesToDelete.push(line);
+        text = this.get('undo').text;
+        if (text) {
+          text += ', ' + deletedQty + ' x ' + line.get('product').get('_identifier');
+        } else {
+          text = OB.I18N.getLabel('OBPOS_DeleteLine') + ': ' + deletedQty + ' x ' + line.get('product').get('_identifier');
+        }
+        relations = this.get('undo').relations;
+        if (!relations) {
+          relations = [];
+        }
+        this.get('undo').text = text;
+        this.get('undo').lines = linesToDelete;
+        this.get('undo').relations = relations;
+      }
+
+      this.removeRelatedServices(line, function () {
+        OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteRelatedServices', {
+          receipt: me,
+          removedLine: line
+        }, function (args) {
+          if (callback) {
+            callback();
+          }
+        });
+      });
+    },
+
+    removeRelatedServices: function (lineToDelete, callback) {
+      var me = this,
+          removedId = lineToDelete.get('id'),
+          serviceLinesToCheck = [],
+          deletedQty;
+
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && lineToDelete.get('obposQtyDeleted')) {
+        deletedQty = lineToDelete.get('obposQtyDeleted');
+      } else {
+        deletedQty = lineToDelete.get('qty');
+      }
+
+      _.filter(this.get('lines').models, function (line) {
+        return !line.get('obposIsDeleted');
+      }).forEach(function (line, idx) {
+        if (line.has('relatedLines') && line.get('relatedLines').length > 0) {
+          var relationIds = _.pluck(line.get('relatedLines'), 'orderlineId');
+          if (_.indexOf(relationIds, removedId) !== -1) {
+            serviceLinesToCheck.push([line, idx]);
+          }
+        }
+      });
+      if (serviceLinesToCheck.length > 0) {
+        var removeNextRelatedService;
+        removeNextRelatedService = function (idx) {
+          if (idx === serviceLinesToCheck.length) {
+            if (callback) {
+              callback();
+            }
+          } else {
+            var lineToCheck = serviceLinesToCheck[idx],
+                rl, rls;
+            if (lineToCheck[0].get('relatedLines').length > 1) {
+              rl = _.filter(lineToCheck[0].get('relatedLines'), function (rl) {
+                return rl.orderlineId === lineToDelete.get('id');
+              });
+              me.get('undo').relations.push([lineToCheck[0], rl[0]]);
+              //Effectively remove the relation from the service line
+              rls = lineToCheck[0].get('relatedLines').slice();
+              rls.splice(lineToCheck[0].get('relatedLines').indexOf(rl[0]), 1);
+              lineToCheck[0].set('relatedLines', rls);
+              if (lineToCheck[0].get('product').get('quantityRule') === 'PP') {
+                me.get('undo').text += ', ' + deletedQty + ' x ' + lineToCheck[0].get('product').get('_identifier');
+              }
+              removeNextRelatedService(idx + 1);
+            } else {
+              me._deleteLine(lineToCheck[0], function () {
+                removeNextRelatedService(idx + 1);
+              });
+            }
+          }
+        };
+        removeNextRelatedService(0);
+      } else {
+        if (callback) {
+          callback();
+        }
+      }
+    },
+
     deleteLines: function (lines, idx, length, callback) {
       var me = this,
           line = lines[idx],
@@ -1323,6 +1760,7 @@
           }
           };
 
+      OB.warn('DEPRECATED deleteLines FUNCTION!!! Use the deleteLinesFromOrder function. The related services will not be removed');
       if (idx === 0) {
         for (i = 0; i < lines.length; i++) {
           if (me.get('replacedorder') && lines[i].get('remainingQuantity')) {
@@ -1353,27 +1791,12 @@
       }
     },
 
-    removeDeleteLine: function (line) {
-      var deleteIndex = -1;
-      _.each(this.get('deletedLines'), function (d, index) {
-        if (d.id === line.id) {
-          deleteIndex = index;
-        }
-      });
-      if (deleteIndex !== -1) {
-        this.get('deletedLines').splice(deleteIndex, 1);
-        if (this.get('deletedLines').length === 0) {
-          this.unset('deletedLines');
-        }
-      }
-      line.unset('obposIsDeleted');
-    },
-
     deleteLine: function (line, doNotSave, callback, isLastLine) {
       var me = this,
           pack = line.isAffectedByPack(),
           productId = line.get('product').id;
 
+      OB.warn('DEPRECATED deleteLine FUNCTION!!! Use the deleteLinesFromOrder function. The related services will not be removed');
       //Defensive code: Do not remove non existing line
       if (!this.get('lines').get(line)) {
         if (callback) {
@@ -1617,6 +2040,13 @@
                 }
               });
             }
+            if (me.isCalculateReceiptLocked === true) {
+              OB.error('Before execute OBPOS_GroupedProductPreCreateLine hook, system has detected that line is being added when calculate receipt is closed. Ignore line creation');
+              if (attrs && attrs.obposEpccode) {
+                OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
+              }
+              return null;
+            }
             OB.UTIL.HookManager.executeHooks('OBPOS_GroupedProductPreCreateLine', {
               receipt: me,
               line: line,
@@ -1629,9 +2059,19 @@
               if (args && args.cancelOperation) {
                 return;
               }
+              if (args.receipt.isCalculateReceiptLocked === true) {
+                OB.error('After execute OBPOS_GroupedProductPreCreateLine hook, system has detected that line is being added when calculate receipt is closed. Ignore line creation');
+                if (args && args.attrs && args.attrs.obposEpccode) {
+                  OB.UTIL.RfidController.removeEpc(args.attrs.obposEpccode);
+                }
+                return null;
+              }
               if (OB.MobileApp.model.get('inPaymentTab')) {
                 if (args.options && args.options.blockAddProduct) {
                   OB.error('An add product is executed. At this point, this action is not allowed. Skipping product ' + p.get('_identifier'));
+                  if (args && args.attrs && args.attrs.obposEpccode) {
+                    OB.UTIL.RfidController.removeEpc(args.attrs.obposEpccode);
+                  }
                   return;
                 }
               }
@@ -1665,8 +2105,18 @@
             if (OB.MobileApp.model.get('inPaymentTab')) {
               if (options && options.blockAddProduct) {
                 OB.error('An add product is executed. At this point, this action is not allowed. Skipping product ' + p.get('_identifier'));
+                if (attrs && attrs.obposEpccode) {
+                  OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
+                }
                 return;
               }
+            }
+            if (me.isCalculateReceiptLocked === true) {
+              OB.error('An add product is executed. At this point, this action is not allowed because calculate Receipt is blocked. Skipping product ' + p.get('_identifier'));
+              if (attrs && attrs.obposEpccode) {
+                OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
+              }
+              return null;
             }
             var count;
             //remove line even it is a grouped line
@@ -1691,7 +2141,15 @@
             }
           }
         }
-        me.save();
+        if ((OB.UTIL.isNullOrUndefined(me.isCalculateReceiptLocked) || me.isCalculateReceiptLocked === false) && line) {
+          me.save();
+        } else {
+          OB.error('Save ignored before execute OBPOS_PostAddProductToOrder hook, system has detected that a line is being added when calculate receipt is closed. Ignore line creation');
+          if (attrs && attrs.obposEpccode) {
+            OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
+          }
+          return null;
+        }
         OB.UTIL.HookManager.executeHooks('OBPOS_PostAddProductToOrder', {
           receipt: me,
           productToAdd: p,
@@ -1841,6 +2299,14 @@
     },
 
     _drawLinesDistribution: function (data) {
+      var me = this,
+          checkLinesToAdd = function () {
+          if (data && data.linesToAdd && data.linesToAdd.length > 0) {
+            _.each(data.linesToAdd, function (lineToAdd) {
+              me.createLine(lineToAdd.product, lineToAdd.qtyToAdd);
+            }, me);
+          }
+          };
       if (data && data.linesToModify && data.linesToModify.length > 0) {
         _.each(data.linesToModify, function (lineToChange) {
           var line = this.get('lines').getByCid(lineToChange.lineCid);
@@ -1862,20 +2328,16 @@
         }, this);
       }
       if (data && data.linesToRemove && data.linesToRemove.length > 0) {
+        var linesToRemove = [];
         _.each(data.linesToRemove, function (lineCidToRemove) {
           var line = this.get('lines').getByCid(lineCidToRemove);
-          this.set('preventServicesUpdate', true);
-          this.set('deleting', true);
-          this.deleteLine(line);
-          this.unset('preventServicesUpdate');
-          this.unset('deleting');
-          this.get('lines').trigger('updateRelations');
-        }, this);
-      }
-      if (data && data.linesToAdd && data.linesToAdd.length > 0) {
-        _.each(data.linesToAdd, function (lineToAdd) {
-          this.createLine(lineToAdd.product, lineToAdd.qtyToAdd);
-        }, this);
+          linesToRemove.push(line);
+        });
+        this.deleteLinesFromOrder(linesToRemove, function () {
+          checkLinesToAdd();
+        });
+      } else {
+        checkLinesToAdd();
       }
     },
 
@@ -2144,6 +2606,37 @@
       });
     },
 
+    checkAvailableUnitsPerLine: function (discountRule) {
+      var offered, rest, i, promotion, applyingToLines = new Backbone.Collection();
+      this.get('lines').forEach(function (l) {
+        offered = BigDecimal.prototype.ZERO;
+        rest = BigDecimal.prototype.ZERO;
+        if (l.get('promotions') && l.get('promotions').length > 0) {
+          for (i = 0; i < l.get('promotions').length; i++) {
+            promotion = l.get('promotions')[i];
+            if (promotion.qtyOffer && !promotion.applyNext) {
+              offered = offered.add(OB.DEC.toBigDecimal(promotion.qtyOffer));
+            }
+          }
+        }
+        if (l.get('promotionCandidates')) {
+          l.get('promotionCandidates').forEach(function (candidateRule) {
+            // If there is any line to apply the promotion, we add it
+            if (candidateRule === discountRule.id) {
+              if (OB.DEC.toBigDecimal(l.get('qty')).subtract(OB.DEC.toBigDecimal(offered)) > 0) {
+                applyingToLines.add(l);
+                rest = OB.DEC.toBigDecimal(l.get('qty')).subtract(OB.DEC.toBigDecimal(offered));
+                l.set('qtyAvailable', OB.DEC.toNumber(rest));
+              } else {
+                l.set('qtyAvailable', OB.DEC.toNumber(BigDecimal.prototype.ZERO));
+              }
+            }
+          });
+        }
+      });
+      return applyingToLines;
+    },
+
     addPromotion: function (line, rule, discount) {
       var promotions = line.get('promotions') || [],
           disc = {},
@@ -2163,9 +2656,11 @@
       disc.manual = discount.manual;
       disc.userAmt = discount.userAmt;
       disc.lastApplied = discount.lastApplied;
-      disc.obdiscQtyoffer = rule.get('qtyOffer') ? OB.DEC.toNumber(rule.get('qtyOffer')) : line.get('qty');
+      disc.obdiscQtyoffer = OB.UTIL.isNullOrUndefined(rule.get('qtyOffer')) ? line.get('qty') : OB.DEC.toNumber(rule.get('qtyOffer'));
       disc.qtyOffer = disc.obdiscQtyoffer;
       disc.doNotMerge = discount.doNotMerge;
+      disc.qtyToGift = discount.qtyToGift;
+      disc.qtyToPay = discount.qtyToPay;
       if (!OB.UTIL.isNullOrUndefined(discount.chunks)) {
         disc.chunks = discount.chunks;
       } else {
@@ -2206,20 +2701,42 @@
       }
       disc._idx = discount._idx || rule.get('_idx');
 
+      var unitsConsumed = 0;
+      var unitsConsumedByNoCascadeRules = 0;
+      var unitsConsumedByTheSameRule = 0;
       for (i = 0; i < promotions.length; i++) {
-        if (disc._idx !== -1 && disc._idx < promotions[i]._idx) {
-          // Trying to apply promotions in incorrect order: recalculate whole line again
-          OB.Model.Discounts.applyPromotionsImp(this, line, true);
-          return;
+        if (!promotions[i].applyNext) {
+          unitsConsumedByNoCascadeRules += promotions[i].qtyOffer;
+        } else if (promotions[i].ruleId === disc.ruleId) {
+          unitsConsumedByTheSameRule += promotions[i].qtyOffer;
         }
       }
 
-      for (i = 0; i < promotions.length; i++) {
-        if (promotions[i].ruleId === rule.id) {
-          if (promotions[i].hidden !== true) {
-            promotions[i] = disc;
+      if (disc.applyNext && unitsConsumedByTheSameRule === 0) {
+        unitsConsumed = unitsConsumedByNoCascadeRules;
+      } else {
+        unitsConsumed = unitsConsumedByNoCascadeRules + unitsConsumedByTheSameRule + disc.qtyOffer;
+      }
+      if (!disc.manual) {
+        for (i = 0; i < promotions.length; i++) {
+          if (unitsConsumed > line.get('qty')) {
+            if (discount.forceReplace) {
+              if (promotions[i].ruleId === rule.id) {
+                if (promotions[i].hidden !== true) {
+                  promotions[i] = disc;
+                }
+              }
+            }
             replaced = true;
             break;
+          } else if (discount.forceReplace) {
+            if (promotions[i].ruleId === rule.id) {
+              if (promotions[i].hidden !== true) {
+                promotions[i] = disc;
+                replaced = true;
+                break;
+              }
+            }
           }
         }
       }
@@ -2299,6 +2816,13 @@
           newline.get('product').set("_showstock", true);
         }
 
+        if (me.isCalculateReceiptLocked === true) {
+          OB.error('Create line - Trying to add a line when calculate receipt is closed. Ignore line creation');
+          if (attrs && attrs.obposEpccode) {
+            OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
+          }
+          return null;
+        }
         // add the created line
         me.get('lines').add(newline, options);
         newline.trigger('created', newline);
@@ -2315,28 +2839,9 @@
                 if (OB.UTIL.RfidController.isRfidConfigured() && newline.get('obposEpccode')) {
                   OB.UTIL.RfidController.removeEpcLine(newline);
                 }
-                // If the OBPOS_remove_ticket preference is active then mark the line as deleted
-                if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-                  if (!order.get('deletedLines')) {
-                    order.set('deletedLines', []);
-                  }
-                  newline.set('obposIsDeleted', true);
-                  order.set('skipCalculateReceipt', true);
-                  newline.set('obposQtyDeleted', newline.get('qty'));
-                  newline.set('qty', 0);
-                  order.set('skipCalculateReceipt', false);
-                  order.calculateReceipt(function () {
-                    order.get('deletedLines').push(new OrderLine(newline.attributes));
-                    order.save(function () {
-                      order.get('lines').remove(newline);
-                      order.set('undo', null);
-                    });
-                  });
-                } else {
-                  // remove the line
-                  order.get('lines').remove(newline);
+                order.deleteLinesFromOrder([newline], function () {
                   order.set('undo', null);
-                }
+                });
               }
             });
           }
@@ -2701,19 +3206,13 @@
           });
         });
       };
-      _.each(me.get('lines').models, function (line) {
+      _.each(this.get('lines').models, function (line) {
         orderlines.push(line);
         promotionlines.push(line.get('promotions'));
       });
-      this.set('preventServicesUpdate', true);
-      this.set('deleting', true);
-      _.each(orderlines, function (line) {
-        me.deleteLine(line, true);
+      this.deleteLinesFromOrder(orderlines, function () {
+        addProductsOfLines(me, orderlines, 0, callback, promotionlines);
       });
-      this.unset('preventServicesUpdate');
-      this.unset('deleting');
-      this.get('lines').trigger('updateRelations');
-      addProductsOfLines(this, orderlines, 0, callback, promotionlines);
     },
 
     setOrderType: function (permission, orderType, options) {
@@ -3723,7 +4222,7 @@
             reversePaymentConfirmed();
           } else {
             OB.UTIL.Approval.requestApproval(
-            OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, [{
+            OB.MobileApp.view.$.containerWindow.getRoot().model, [{
               approval: 'OBPOS_approval.reversePayment',
               message: 'OBPOS_approval.reversePayment'
             }], function (approved, supervisor, approvalType) {
@@ -3832,7 +4331,7 @@
     },
     fillPromotionsStandard: function (groupedOrder, isFirstTime) {
       var me = this,
-          copiedPromo, linesToMerge, auxPromo, idx, actProm, linesToCreate = [],
+          copiedPromo, linesToMerge, idx, linesToCreate = [],
           qtyToReduce, lineToEdit, lineProm, linesToReduce, linesCreated = false;
 
       //reset pendingQtyOffer value of each promotion
@@ -4005,20 +4504,11 @@
                     promo.pendingQtyOffer = promo.pendingQtyOffer - line.get('qty');
                   }
                   if (line.get('promotions')) {
-                    auxPromo = _.find(line.get('promotions'), function (promo) {
-                      return promo.ruleId === copiedPromo.ruleId;
-                      // return promo.ruleId === copiedPromo.ruleId && promo.hidden !== true && promo.actualAmt > 0;
-                    });
-                    if (auxPromo) {
-                      idx = line.get('promotions').indexOf(auxPromo);
-                      line.get('promotions').splice(idx, 1, copiedPromo);
-                    } else {
-                      line.get('promotions').push(copiedPromo);
-                    }
+                    line.get('promotions').push(copiedPromo);
                   } else {
                     line.set('promotions', [copiedPromo]);
                   }
-                } else if (promo.pendingQtyOffer) {
+                } else if (!OB.UTIL.isNullOrUndefined(promo.pendingQtyOffer)) {
                   if (_.isUndefined(promo.actualAmt)) {
                     if (promo.pendingQtyOffer !== promo.qtyOffer) {
                       copiedPromo.hidden = true;
@@ -4036,31 +4526,12 @@
                   }
 
                   if (line.get('promotions')) {
-                    auxPromo = _.find(line.get('promotions'), function (promo) {
-                      return promo.ruleId === copiedPromo.ruleId && promo.preserve !== true;
-                      // return promo.ruleId === copiedPromo.ruleId;
-                    });
-                    if (auxPromo) {
-                      idx = line.get('promotions').indexOf(auxPromo);
-                      line.get('promotions').splice(idx, 1, copiedPromo);
-                    } else {
-                      line.get('promotions').push(copiedPromo);
-                    }
+                    line.get('promotions').push(copiedPromo);
                   } else {
                     line.set('promotions', [copiedPromo]);
                   }
                   promo.pendingQtyOffer = null;
                   //if it is the first we enter in this method, promotions which are not in the virtual ticket are deleted.
-                } else if (isFirstTime) {
-                  actProm = _.find(line.get('promotions'), function (prom) {
-                    return prom.ruleId === promo.ruleId;
-                  });
-                  if (actProm) {
-                    idx = line.get('promotions').indexOf(actProm);
-                    if (idx > -1) {
-                      line.get('promotions').splice(idx, 1);
-                    }
-                  }
                 }
               });
               line.trigger('change');
@@ -4068,6 +4539,53 @@
           }
         }
       });
+      _.each(me.get('lines').models, function (line) {
+        var orderPromotions = false;
+        var position;
+        var prom = line.get('promotions');
+        var validProm = _.filter(prom, function (p) {
+          return !p.hidden;
+        });
+        var groupProm = _.groupBy(validProm, function (p) {
+          return p.ruleId;
+        });
+        for (position = 0; position < _.keys(groupProm).length; position++) {
+          var i;
+          var key = _.keys(groupProm)[position];
+          var promList = groupProm[key];
+          if (promList && promList.length > 1) {
+            orderPromotions = true;
+            var finalAmt = 0;
+            var finalQtyOffer = 0;
+            copiedPromo = JSON.parse(JSON.stringify(promList[0]));
+            if (!copiedPromo.manual) {
+              for (i = 0; i < promList.length; i++) {
+                finalAmt += promList[i].amt;
+                finalQtyOffer += promList[i].qtyOffer;
+              }
+              if (finalQtyOffer <= line.get('qty')) {
+                copiedPromo.amt = finalAmt;
+                copiedPromo.qtyOffer = finalQtyOffer;
+                copiedPromo.chunks = promList.length;
+              }
+            }
+
+            me.removePromotion(line, {
+              id: key
+            });
+            line.get('promotions').push(copiedPromo);
+          }
+          if (orderPromotions) {
+            var lineNoNormalized = 10;
+            var promos = line.get('promotions');
+            for (i = 0; i < promos.length; i++) {
+              promos[i].lineNo = lineNoNormalized;
+              lineNoNormalized += 10;
+            }
+          }
+        }
+      });
+
       if (!linesCreated) {
         _.each(linesToCreate, function (line) {
           me.createLine(line.product, line.qty, null, line.attrs);
@@ -4147,21 +4665,6 @@
                   }
                 }
 
-                // If it's not the first execution, there could be some promotions already applied and are set in the groupedorder lines too.
-                if (!isFirstTime) {
-                  var actProm, indx;
-                  actProm = _.find(line.get('promotions'), function (prom) {
-                    return prom.ruleId === promotion.ruleId;
-                  });
-                  if (actProm) {
-                    indx = line.get('promotions').indexOf(actProm);
-                    if (indx > -1) {
-                      line.get('promotions').splice(indx, 1);
-                      line.trigger('change');
-                    }
-                  }
-                }
-
                 var clonedPromotion = JSON.parse(JSON.stringify(promotion));
                 if (promoQtyoffer > 0) {
                   clonedPromotion.obdiscQtyoffer = (qtyToCheck - promoQtyoffer >= 0) ? promoQtyoffer : qtyToCheck;
@@ -4181,15 +4684,7 @@
                   }
 
                   if (clonedPromotion.pendingQtyoffer && clonedPromotion.pendingQtyoffer > 0) {
-                    var auxPromo = _.find(line.get('promotions'), function (lpromo) {
-                      return lpromo.ruleId === clonedPromotion.ruleId && lpromo.preserve !== true;
-                    });
-                    if (auxPromo) {
-                      var idx = line.get('promotions').indexOf(auxPromo);
-                      line.get('promotions').splice(idx, 1, clonedPromotion);
-                    } else {
-                      line.get('promotions').push(clonedPromotion);
-                    }
+                    line.get('promotions').push(clonedPromotion);
                   } else {
                     line.get('promotions').push(clonedPromotion);
                   }
@@ -4586,7 +5081,7 @@
                 callback();
               }
             }
-          } else if (receipt.has('deletedLines')) {
+          } else if (receipt.has('deletedLines') && !receipt.get('isQuotation')) {
             if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
               receipt.set('skipCalculateReceipt', false);
               // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
@@ -4643,6 +5138,9 @@
           receipt: this
         }, function (args) {
           if (args && args.cancelOperation && args.cancelOperation === true) {
+            if (callback instanceof Function) {
+              callback();
+            }
             return;
           }
           removeOrder(args.receipt, callback);
@@ -4863,6 +5361,14 @@
                           OB.UTIL.showError("OBDAL error: " + error);
                         });
                       });
+                      if (OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true)) {
+                        if (iter.attributeValue && _.isString(iter.attributeValue)) {
+                          var processedAttValues = OB.UTIL.AttributeUtils.generateDescriptionBasedOnJson(iter.attributeValue);
+                          if (processedAttValues && processedAttValues.keyValue && _.isArray(processedAttValues.keyValue) && processedAttValues.keyValue.length > 0) {
+                            iter.attSetInstanceDesc = processedAttValues.description;
+                          }
+                        }
+                      }
                       newline = new OrderLine({
                         id: iter.lineId,
                         product: prod,
@@ -4881,7 +5387,8 @@
                         },
                         relatedLines: iter.relatedLines,
                         isEditable: true,
-                        isDeletable: true
+                        isDeletable: true,
+                        attSetInstanceDesc: (iter.attSetInstanceDesc ? iter.attSetInstanceDesc : null)
                       });
 
                       // copy verbatim not owned properties -> modular properties.
@@ -5166,7 +5673,7 @@
       this.addNewOrder(true);
     },
 
-    addPaidReceipt: function (model) {
+    addPaidReceipt: function (model, callback) {
       var synchId = null;
       enyo.$.scrim.show();
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
@@ -5186,8 +5693,16 @@
         OB.Dal.save(model, function () {
           enyo.$.scrim.hide();
           OB.UTIL.SynchronizationHelper.finished(synchId, 'addPaidReceipt');
+          if (callback instanceof Function) {
+            callback();
+          }
         }, function () {
+          enyo.$.scrim.hide();
+          OB.UTIL.SynchronizationHelper.finished(synchId, 'addPaidReceipt');
           OB.error(arguments);
+          if (callback instanceof Function) {
+            callback();
+          }
         }, true);
       }
     },
@@ -5284,11 +5799,13 @@
         OB.MobileApp.model.receipt.setIsCalculateGrossLockState(true);
         OB.MobileApp.model.receipt.set('obposIsDeleted', true);
         OB.MobileApp.model.receipt.prepareToSend(function () {
-          OB.MobileApp.model.receipt.trigger('closed', {
-            callback: function () {
-              OB.MobileApp.model.receipt.setIsCalculateGrossLockState(false);
-              finishDeleteCurrent();
-            }
+          OB.MobileApp.model.receipt.save(function () {
+            OB.MobileApp.model.receipt.trigger('closed', {
+              callback: function () {
+                OB.MobileApp.model.receipt.setIsCalculateGrossLockState(false);
+                finishDeleteCurrent();
+              }
+            });
           });
         });
       } else {
@@ -5569,7 +6086,7 @@
         'total': OB.I18N.formatCurrency(total),
         'pending': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay)),
         'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
-        'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null,
+        'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.DEC.sub(pay, total) : null,
         'isReturn': this.get('gross') < 0 ? true : false,
         'isNegative': this.get('gross') < 0 ? true : false,
         'changeAmt': this.getChange(),

@@ -160,6 +160,7 @@ enyo.kind({
         hasPayments = false,
         isMultiOrders = this.model.isValidMultiOrderState();
 
+    this.disableButton();
     if (isMultiOrders) {
       this.doRemoveMultiOrders();
       return true;
@@ -167,6 +168,7 @@ enyo.kind({
 
     // validate payments
     if (this.model.get('order').checkOrderPayment()) {
+      this.updateDisabled(false);
       return false;
     }
 
@@ -389,24 +391,33 @@ enyo.kind({
     if (receipt.get('isQuotation')) {
       if (receipt.get('hasbeenpaid') !== 'Y') {
         receipt.set('isEditable', false);
-        receipt.prepareToSend(function () {
-          receipt.trigger('closed', {
-            callback: function () {
-              //In case the processed document is a quotation, we remove its id so it can be reactivated
-              if (receipt.get('isQuotation')) {
-                if (!(receipt.get('oldId') && receipt.get('oldId').length > 0)) {
-                  receipt.set('oldId', receipt.get('id'));
+        var cbk = function () {
+            receipt.prepareToSend(function () {
+              receipt.trigger('closed', {
+                callback: function () {
+                  //In case the processed document is a quotation, we remove its id so it can be reactivated
+                  if (receipt.get('isQuotation')) {
+                    if (!(receipt.get('oldId') && receipt.get('oldId').length > 0)) {
+                      receipt.set('oldId', receipt.get('id'));
+                    }
+                    receipt.set('isbeingprocessed', 'N');
+                  }
+                  if (OB.MobileApp.model.get('permissions')['OBPOS_print.quotation']) {
+                    receipt.trigger('print');
+                  }
+                  receipt.trigger('scan');
+                  OB.MobileApp.model.orderList.synchronizeCurrentOrder();
                 }
-                receipt.set('isbeingprocessed', 'N');
-              }
-              if (OB.MobileApp.model.get('permissions')['OBPOS_print.quotation']) {
-                receipt.trigger('print');
-              }
-              receipt.trigger('scan');
-              OB.MobileApp.model.orderList.synchronizeCurrentOrder();
-            }
+              });
+            });
+            };
+        if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+          OB.MobileApp.model.setSynchronizedCheckpoint(function () {
+            cbk();
           });
-        });
+        } else {
+          cbk();
+        }
       } else {
         receipt.prepareToSend(function () {
           receipt.trigger('scan');

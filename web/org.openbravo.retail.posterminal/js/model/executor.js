@@ -239,6 +239,11 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         discountList: d
       }, function (args) {
         if (args.cancelation !== true) {
+          // Set real _idx value for new list of promotions to apply and save the original _idx
+          args.discountList.forEach(function (disc, index) {
+            disc.set('orig_idx', disc.get('_idx'));
+            disc.set('_idx', index);
+          });
           line.set('promotionCandidates', []);
           args.discountList.forEach(function (disc) {
             line.get('promotionCandidates').push(disc.id);

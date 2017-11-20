@@ -217,12 +217,16 @@ enyo.kind({
         if (!me.validateReceipt(keyboard, true)) {
           return true;
         }
-        if (keyboard.line) {
-          keyboard.doDeleteLine({
-            line: keyboard.line,
-            selectedModels: keyboard.selectedModels
-          });
+        if (keyboard.model.get('leftColumnViewManager') && !keyboard.model.get('leftColumnViewManager').isMultiOrder()) {
+          if (keyboard.line) {
+            keyboard.doDeleteLine({
+              selectedModels: keyboard.selectedModels
+            });
+          }
+        } else {
+          return true;
         }
+
         };
 
     this.addCommand('line:qty', {
@@ -253,7 +257,6 @@ enyo.kind({
             if (toadd !== 0) {
               if (value === 0) { // If final quantity will be 0 then request approval
                 keyboard.doDeleteLine({
-                  line: keyboard.line,
                   selectedModels: keyboard.selectedModels
                 });
               } else {
@@ -429,13 +432,16 @@ enyo.kind({
           }
         }
         if (me.selectedModels.length > 0) {
-          value = me.selectedModels[0].get('qty') - qty;
+          if (keyboard.receipt.get('orderType') === 1) {
+            value = me.selectedModels[0].get('qty') + qty;
+          } else {
+            value = me.selectedModels[0].get('qty') - qty;
+          }
         } else if (!_.isUndefined(keyboard.line)) {
           value = keyboard.line.get('qty') - qty;
         }
         if (value === 0) { // If final quantity will be 0 then request approval
           keyboard.doDeleteLine({
-            line: keyboard.line,
             selectedModels: keyboard.selectedModels
           });
         } else {

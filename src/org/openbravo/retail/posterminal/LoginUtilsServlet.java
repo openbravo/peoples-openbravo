@@ -10,7 +10,9 @@ package org.openbravo.retail.posterminal;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +33,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.businessUtility.Preferences.QueryFilter;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.MobileServerDefinition;
@@ -180,20 +183,6 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
                   .encodeBase64String((byte[]) qryImageObjectItem[1]);
         }
         item.put("image", imageData);
-
-        // Get the session status for the current user
-        String hqlSession = "select distinct session.username, session.sessionActive "
-            + "from ADSession session "
-            + "where session.username = :theUsername and session.sessionActive = 'Y' and "
-            + "session.loginStatus = 'OBPOS_POS'";
-        Query qrySession = OBDal.getInstance().getSession().createQuery(hqlSession);
-        qrySession.setParameter("theUsername", qryUserObjectItem[1].toString());
-        qrySession.setMaxResults(1);
-        String sessionData = "false";
-        if (qrySession.uniqueResult() != null) {
-          sessionData = "true";
-        }
-        item.put("connected", sessionData);
 
         data.put(item);
       }
@@ -360,8 +349,13 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
 
     String value;
     try {
+
+      Map<QueryFilter, Boolean> queryFilters = new HashMap<>();
+      queryFilters.put(QueryFilter.ACTIVE, true);
+      queryFilters.put(QueryFilter.CLIENT, false);
+      queryFilters.put(QueryFilter.ORGANIZATION, false);
       value = Preferences.getPreferenceValue("OBPOS_TerminalAuthentication", true, null, null,
-          null, null, (String) null);
+          null, null, (String) null, queryFilters);
     } catch (PropertyException e) {
       result.put("terminalAuthentication", "Y");
       result.put("errorReadingTerminalAuthentication",

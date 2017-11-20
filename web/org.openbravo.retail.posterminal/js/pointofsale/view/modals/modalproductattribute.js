@@ -21,7 +21,7 @@ enyo.kind({
       kind: 'enyo.Input',
       type: 'text',
       attributes: {
-        maxlength: 70
+        maxlength: 190
       },
       style: 'text-align: center;width: 400px; height: 40px;',
       name: 'valueAttribute',
@@ -60,6 +60,7 @@ enyo.kind({
   saveAttribute: function (inSender, inEvent) {
     var me = this,
         inpAttributeValue = this.$.bodyContent.$.valueAttribute.getValue();
+    inpAttributeValue = inpAttributeValue.replace(/\s+/, "");
     if ((this.validAttribute(inpAttributeValue) && inpAttributeValue)) {
       this.args.callback(inpAttributeValue);
       this.hide();
