@@ -64,14 +64,14 @@ public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
   public void deactivatedRoleNotShowInUserProfile() throws Exception {
     try {
       String response = doSessionDynamicRequest();
-      JSONArray rolesInfo = getRoles(response);
+      JSONArray rolesInfo = getUserRoles(response);
       assertThat("Active role is available for the user.",
           isIdInUserProfileWidget(rolesInfo, US_EMPLOYEE_ROLE_ID), equalTo(true));
 
       setActiveUserRole(false);
 
       String responseDeactivatedUserRole = doSessionDynamicRequest();
-      rolesInfo = getRoles(responseDeactivatedUserRole);
+      rolesInfo = getUserRoles(responseDeactivatedUserRole);
       assertThat("Deactivated role is not available for the user.",
           isIdInUserProfileWidget(rolesInfo, US_EMPLOYEE_ROLE_ID), equalTo(false));
     } finally {
@@ -83,19 +83,18 @@ public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
   public void deactivatedOrganizationNotShowInUserProfile() throws Exception {
     try {
       String response = doSessionDynamicRequest();
-      JSONArray organizationRole = getOrganizationsRole(getRolesInfo(response), US_EMPLOYEE_ROLE_ID);
-      assertThat("Active organization is available for the user.",
-          isIdInUserProfileWidget(organizationRole, US_EASTCOAST_ORG_ID), equalTo(true));
+      JSONArray orgs = getRoleOrganizations(response, US_EMPLOYEE_ROLE_ID);
+      assertThat("Organization with active access is available for the user.",
+          isIdInUserProfileWidget(orgs, US_EASTCOAST_ORG_ID), equalTo(true));
 
-      setActiveOrganizationRole(false);
+      setActiveOrganizationRoleAccess(false);
 
       String responseDeactivatedOrg = doSessionDynamicRequest();
-      organizationRole = getOrganizationsRole(getRolesInfo(responseDeactivatedOrg),
-          US_EMPLOYEE_ROLE_ID);
-      assertThat("Deactivated organization is not available for the user.",
-          isIdInUserProfileWidget(organizationRole, US_EASTCOAST_ORG_ID), equalTo(false));
+      orgs = getRoleOrganizations(responseDeactivatedOrg, US_EMPLOYEE_ROLE_ID);
+      assertThat("Organization with deactivated access is not available for the user.",
+          isIdInUserProfileWidget(orgs, US_EASTCOAST_ORG_ID), equalTo(false));
     } finally {
-      setActiveOrganizationRole(true);
+      setActiveOrganizationRoleAccess(true);
     }
   }
 
@@ -103,21 +102,19 @@ public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
   public void deactivatedWarehouseNotShowInUserProfile() throws Exception {
     try {
       String response = doSessionDynamicRequest();
-      JSONArray warehousesOrgRole = getWarehousesOrgRole(getRolesInfo(response),
-          US_EMPLOYEE_ROLE_ID);
-      JSONArray warehousesRoles = getWarehousesRole(warehousesOrgRole, US_EASTCOAST_ORG_ID);
+      JSONArray warehouses = getRoleWarehouses(response, US_EMPLOYEE_ROLE_ID);
+      JSONArray organizationWarehouses = getOrganizationWarehouses(warehouses, US_EASTCOAST_ORG_ID);
       assertThat("Active warehouse is available for the user.",
-          isIdInUserProfileWidget(warehousesRoles, US_EASTCOAST_WAREHOUSE_ID), equalTo(true));
+          isIdInUserProfileWidget(organizationWarehouses, US_EASTCOAST_WAREHOUSE_ID), equalTo(true));
 
       setActiveWarehouse(false);
 
       String responseDeactivatedWarehouse = doSessionDynamicRequest();
-      warehousesOrgRole = getWarehousesOrgRole(getRolesInfo(responseDeactivatedWarehouse),
-          US_EMPLOYEE_ROLE_ID);
-      warehousesRoles = getWarehousesRole(warehousesOrgRole, US_EASTCOAST_ORG_ID);
-
+      warehouses = getRoleWarehouses(responseDeactivatedWarehouse, US_EMPLOYEE_ROLE_ID);
+      organizationWarehouses = getOrganizationWarehouses(warehouses, US_EASTCOAST_ORG_ID);
       assertThat("Deactivated warehouse is not available for the user.",
-          isIdInUserProfileWidget(warehousesRoles, US_EASTCOAST_WAREHOUSE_ID), equalTo(false));
+          isIdInUserProfileWidget(organizationWarehouses, US_EASTCOAST_WAREHOUSE_ID),
+          equalTo(false));
     } finally {
       setActiveWarehouse(true);
     }
@@ -129,79 +126,60 @@ public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
         "POST");
   }
 
-  /**
-   * Remove the data of the response that is not necessary for the test. Then retrieve the roles
-   * into a JSONArray.
-   * 
-   * @param resp
-   *          original response
-   * @return JSONArray with the roles
-   */
-  private JSONArray getRoles(String resp) {
-    JSONObject userInfoResp = getUserInfo(resp);
-    JSONArray resultRoles = null;
+  private JSONArray getUserRoles(String response) {
     try {
-      resultRoles = userInfoResp.getJSONObject("role").getJSONArray("valueMap");
+      return getRoles(response).getJSONArray("valueMap");
     } catch (JSONException e) {
-      log.error("Could not transform the response in a JSONArray.", e);
+      log.error("Could not retrieve the user roles", e);
     }
-    return resultRoles;
+    return null;
   }
 
-  private JSONArray getRolesInfo(String resp) {
-    JSONObject userInfoResp = getUserInfo(resp);
-    JSONArray resultOrgRoles = null;
+  private JSONObject getRoles(String response) {
+    JSONObject userInfoResp = getUserInfo(response);
     try {
-      resultOrgRoles = userInfoResp.getJSONObject("role").getJSONArray("roles");
+      return userInfoResp.getJSONObject("role");
     } catch (JSONException e) {
-      log.error("Could not transform the response in a JSONArray.", e);
+      log.error("Could not retrieve the information about the user roles.", e);
     }
-    return resultOrgRoles;
+    return null;
   }
 
-  private JSONArray getOrganizationsRole(JSONArray organizationRoles, String roleId) {
-    JSONArray organizations = null;
+  private JSONArray getRoleOrganizations(String response, String roleId) {
+    return getRoleInformation(response, "organizationValueMap", roleId);
+  }
+
+  private JSONArray getRoleWarehouses(String response, String roleId) {
+    return getRoleInformation(response, "warehouseOrgMap", roleId);
+  }
+
+  private JSONArray getRoleInformation(String response, String property, String roleId) {
     try {
-      for (int i = 0; i < organizationRoles.length(); i++) {
-        JSONObject orgRole = organizationRoles.getJSONObject(i);
+      JSONArray rolesInfo = getRoles(response).getJSONArray("roles");
+      for (int i = 0; i < rolesInfo.length(); i++) {
+        JSONObject orgRole = rolesInfo.getJSONObject(i);
         if (roleId.equals(orgRole.getString("id"))) {
-          organizations = orgRole.getJSONArray("organizationValueMap");
+          return orgRole.getJSONArray(property);
         }
       }
-    } catch (JSONException e) {
-      log.error("Could not retrieve the organizations for role {}.", roleId, e);
+    } catch (JSONException ex) {
+      log.error("Could not retrieve property {}.", property, ex);
     }
-    return organizations;
+    return null;
   }
 
-  private JSONArray getWarehousesOrgRole(JSONArray warehouseRoles, String roleId) {
-    JSONArray warehousesOrg = null;
+  private JSONArray getOrganizationWarehouses(JSONArray warehouses, String orgId) {
     try {
-      for (int i = 0; i < warehouseRoles.length(); i++) {
-        JSONObject warehousesOrgRole = warehouseRoles.getJSONObject(i);
-        if (roleId.equals(warehousesOrgRole.getString("id"))) {
-          warehousesOrg = warehousesOrgRole.getJSONArray("warehouseOrgMap");
-        }
-      }
-    } catch (JSONException e) {
-      log.error("Could not retrieve the warehouses org for role {}.", roleId, e);
-    }
-    return warehousesOrg;
-  }
-
-  private JSONArray getWarehousesRole(JSONArray warehousesOrgRole, String orgId) {
-    JSONArray warehouses = null;
-    try {
-      for (int i = 0; i < warehousesOrgRole.length(); i++) {
-        JSONObject warehousesRole = warehousesOrgRole.getJSONObject(i);
+      for (int i = 0; i < warehouses.length(); i++) {
+        JSONObject warehousesRole = warehouses.getJSONObject(i);
         if (orgId.equals(warehousesRole.getString("orgId"))) {
-          warehouses = warehousesRole.getJSONArray("warehouseMap");
+          return warehousesRole.getJSONArray("warehouseMap");
         }
       }
     } catch (JSONException e) {
       log.error("Could not retrieve the warehouses for organization {}.", orgId, e);
     }
-    return warehouses;
+    return null;
   }
 
   private JSONObject getUserInfo(String resp) {
@@ -216,12 +194,15 @@ public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
     return userInfo;
   }
 
-  private String removeCodeJsInTheResponse(String respon) {
+  private String removeCodeJsInTheResponse(String response) {
     String regexCodeJs = "(\\.sortByProperty\\(\\')(.*?)(\\))";
-    return respon.replaceAll(regexCodeJs, "");
+    return response.replaceAll(regexCodeJs, "");
   }
 
   private boolean isIdInUserProfileWidget(JSONArray userProfileWidgetInfo, String targetId) {
+    if (userProfileWidgetInfo == null) {
+      return false;
+    }
     try {
       for (int i = 0; i < userProfileWidgetInfo.length(); i++) {
         JSONObject info = userProfileWidgetInfo.getJSONObject(i);
@@ -246,7 +227,7 @@ public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
     }
   }
 
-  private void setActiveOrganizationRole(boolean isActive) {
+  private void setActiveOrganizationRoleAccess(boolean isActive) {
     final OBCriteria<RoleOrganization> orgAccessCriteria = OBDal.getInstance().createCriteria(
         RoleOrganization.class);
     orgAccessCriteria.add(Restrictions.eq(RoleOrganization.PROPERTY_ROLE + "." + Role.PROPERTY_ID,
@@ -263,7 +244,7 @@ public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
   private void setActiveWarehouse(boolean isActive) {
     OBCriteria<Warehouse> waCriteria = OBDal.getInstance().createCriteria(Warehouse.class);
     waCriteria.add(Restrictions.eq(Warehouse.PROPERTY_ORGANIZATION,
-        OBDal.getInstance().get(Organization.class, US_EASTCOAST_ORG_ID)));
+        OBDal.getInstance().getProxy(Organization.class, US_EASTCOAST_ORG_ID)));
     waCriteria.setMaxResults(1);
     waCriteria.setFilterOnActive(false);
     Warehouse wa = (Warehouse) waCriteria.uniqueResult();
