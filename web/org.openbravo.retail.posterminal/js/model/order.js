@@ -5799,12 +5799,13 @@
         OB.MobileApp.model.receipt.setIsCalculateGrossLockState(true);
         OB.MobileApp.model.receipt.set('obposIsDeleted', true);
         OB.MobileApp.model.receipt.prepareToSend(function () {
-          OB.MobileApp.model.receipt.save();
-          OB.MobileApp.model.receipt.trigger('closed', {
-            callback: function () {
-              OB.MobileApp.model.receipt.setIsCalculateGrossLockState(false);
-              finishDeleteCurrent();
-            }
+          OB.MobileApp.model.receipt.save(function () {
+            OB.MobileApp.model.receipt.trigger('closed', {
+              callback: function () {
+                OB.MobileApp.model.receipt.setIsCalculateGrossLockState(false);
+                finishDeleteCurrent();
+              }
+            });
           });
         });
       } else {
