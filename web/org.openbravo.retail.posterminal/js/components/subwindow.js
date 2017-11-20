@@ -41,12 +41,12 @@ enyo.kind({
   showingChanged: function () {
     this.inherited(arguments);
     if (this.showing) {
-      this.originalScanMode = OB.MobileApp.view.scanMode;
+      OB.MobileApp.view.setOriginalScanMode(OB.MobileApp.view.scanMode);
       OB.MobileApp.view.scanningFocus(false);
       OB.MobileApp.view.openedSubwindow = this;
       this.setDefaultActionButton();
     } else {
-      OB.MobileApp.view.scanningFocus(this.originalScanMode);
+      OB.MobileApp.view.restoreOriginalScanMode();
       OB.MobileApp.view.openedSubwindow = null;
     }
   },
