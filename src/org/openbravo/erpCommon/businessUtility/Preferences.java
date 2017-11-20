@@ -425,6 +425,12 @@ public class Preferences {
 
       if (org == null) {
         hql.append("     and coalesce(p.visibleAtOrganization, '0')='0'");
+      } else {
+        List<String> parentTree = OBContext.getOBContext().getOrganizationStructureProvider(client)
+            .getParentList(org, true);
+        String parentOrgs = "(" + Utility.arrayListToString((ArrayList<String>) parentTree, true)
+            + ")";
+        hql.append("     and coalesce(p.visibleAtOrganization, '0') in " + parentOrgs);
       }
 
       if (user != null) {
@@ -466,21 +472,7 @@ public class Preferences {
     }
     List<Preference> preferences = qPref.list();
 
-    if (org != null) {
-      // Remove from list organization that are not visible
-      List<String> parentTree = OBContext.getOBContext().getOrganizationStructureProvider(client)
-          .getParentList(org, true);
-      List<Preference> auxPreferences = new ArrayList<Preference>();
-      for (Preference pref : preferences) {
-        if (pref.getVisibleAtOrganization() == null
-            || parentTree.contains(pref.getVisibleAtOrganization().getId())) {
-          auxPreferences.add(pref);
-        }
-      }
-      return auxPreferences;
-    } else {
-      return preferences;
-    }
+    return preferences;
   }
 
   /**
