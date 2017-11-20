@@ -816,7 +816,7 @@ isc.RPCManager.addClassProperties({
       results.response = resp;
     }
 
-    return this._originalperformTransactionReply(transactionNum, results, wd)
+    return this._originalperformTransactionReply(transactionNum, results, wd);
   }
 });
 
