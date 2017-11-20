@@ -1143,7 +1143,7 @@ public class ActivationKey {
         try {
           trxConn = cp.getTransactionConnection();
           ActivationKeyData.deactivateSessions(trxConn, cp,
-              Utility.arrayListToString(sessionsToDeactivate, true));
+              Utility.commaSeparated(sessionsToDeactivate));
           cp.releaseCommitConnection(trxConn);
           success = true;
         } catch (NoConnectionAvailableException | SQLException | ServletException e) {

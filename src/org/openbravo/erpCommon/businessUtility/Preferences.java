@@ -428,8 +428,7 @@ public class Preferences {
       } else {
         List<String> parentTree = OBContext.getOBContext().getOrganizationStructureProvider(client)
             .getParentList(org, true);
-        String parentOrgs = "(" + Utility.arrayListToString((ArrayList<String>) parentTree, true)
-            + ")";
+        String parentOrgs = "(" + Utility.commaSeparated(parentTree) + ")";
         hql.append("     and coalesce(p.visibleAtOrganization, '0') in " + parentOrgs);
       }
 

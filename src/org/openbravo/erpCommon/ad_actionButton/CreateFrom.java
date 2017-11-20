@@ -571,7 +571,7 @@ public class CreateFrom extends HttpSecureAppServlet {
     } else {
       ArrayList<String> organizationList = new ArrayList<String>(OBContext.getOBContext()
           .getOrganizationStructureProvider().getNaturalTree(invoice.getOrganization().getId()));
-      String narturalOrgTreeList = Utility.arrayListToString(organizationList, true);
+      String narturalOrgTreeList = Utility.commaSeparated(organizationList);
       if (isSOTrx.equals("Y")) {
         xmlDocument.setData("reportShipmentReciept", "liststructure", CreateFromInvoiceData
             .selectFromShipmentSOTrxCombo(this, vars.getLanguage(),
@@ -723,9 +723,8 @@ public class CreateFrom extends HttpSecureAppServlet {
       xmlDocument.setData("reportInvoice", "liststructure", new CreateFromShipmentData[0]);
       xmlDocument.setData("reportPurchaseOrder", "liststructure", new CreateFromShipmentData[0]);
     } else {
-      ArrayList<String> organizationList = new ArrayList<String>(OBContext.getOBContext()
+      String narturalOrgTreeList = Utility.commaSeparated(OBContext.getOBContext()
           .getOrganizationStructureProvider().getNaturalTree(shipment.getOrganization().getId()));
-      String narturalOrgTreeList = Utility.arrayListToString(organizationList, true);
       if (isSOTrx.equals("Y")) {
         xmlDocument.setData("reportInvoice", "liststructure", CreateFromShipmentData
             .selectFromInvoiceTrxCombo(this, vars.getLanguage(),

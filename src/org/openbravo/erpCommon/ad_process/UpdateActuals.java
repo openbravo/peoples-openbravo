@@ -18,8 +18,9 @@
  */
 package org.openbravo.erpCommon.ad_process;
 
+import static org.openbravo.erpCommon.utility.Utility.commaSeparated;
+
 import java.math.BigDecimal;
-import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -28,7 +29,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.TreeUtility;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.financialmgmt.accounting.Budget;
 import org.openbravo.model.financialmgmt.accounting.BudgetLine;
 import org.openbravo.scheduling.ProcessBundle;
@@ -92,34 +92,31 @@ public class UpdateActuals extends DalBaseProcess {
 
         // get the natural tree
         TreeUtility treeUtility = new TreeUtility();
-        String activityTree = activity != null ? Utility.arrayListToString((new ArrayList<String>(
-            treeUtility.getChildTree(activity, "AY", true))), true) : activity;
-        String productCategoryTree = productCategory != null ? Utility.arrayListToString(
-            (new ArrayList<String>(treeUtility.getChildTree(productCategory, "PC", true))), true)
-            : productCategory;
-        String assetTree = asset != null ? Utility.arrayListToString((new ArrayList<String>(
-            treeUtility.getChildTree(asset, "AS", true))), true) : asset;
-        String costcenterTree = costcenter != null ? Utility.arrayListToString(
-            (new ArrayList<String>(treeUtility.getChildTree(costcenter, "CC", true))), true)
-            : costcenter;
-        String accountTree = account != null ? Utility.arrayListToString((new ArrayList<String>(
-            treeUtility.getChildTree(account, "EV", true))), true) : account;
-        String projectTree = project != null ? Utility.arrayListToString(new ArrayList<String>(
-            treeUtility.getChildTree(project, "PJ", true)), true) : project;
-        String campaignTree = salesCampaign != null ? Utility.arrayListToString(
-            new ArrayList<String>(treeUtility.getChildTree(salesCampaign, "MC", true)), true)
-            : salesCampaign;
-        String regionTree = salesRegion != null ? Utility.arrayListToString(new ArrayList<String>(
-            treeUtility.getChildTree(salesRegion, "SR", true)), true) : salesRegion;
-        String user1Tree = user1 != null ? Utility.arrayListToString((new ArrayList<String>(
-            treeUtility.getChildTree(user1, "U1", true))), true) : user1;
-        String user2Tree = user2 != null ? Utility.arrayListToString((new ArrayList<String>(
-            treeUtility.getChildTree(user2, "U2", true))), true) : user2;
+        String activityTree = activity != null ? commaSeparated(treeUtility.getChildTree(activity,
+            "AY", true)) : activity;
+        String productCategoryTree = productCategory != null ? commaSeparated(treeUtility
+            .getChildTree(productCategory, "PC", true)) : productCategory;
+        String assetTree = asset != null ? commaSeparated(treeUtility.getChildTree(asset, "AS",
+            true)) : asset;
+        String costcenterTree = costcenter != null ? commaSeparated(treeUtility.getChildTree(
+            costcenter, "CC", true)) : costcenter;
+        String accountTree = account != null ? commaSeparated(treeUtility.getChildTree(account,
+            "EV", true)) : account;
+        String projectTree = project != null ? commaSeparated(treeUtility.getChildTree(project,
+            "PJ", true)) : project;
+        String campaignTree = salesCampaign != null ? commaSeparated(treeUtility.getChildTree(
+            salesCampaign, "MC", true)) : salesCampaign;
+        String regionTree = salesRegion != null ? commaSeparated(treeUtility.getChildTree(
+            salesRegion, "SR", true)) : salesRegion;
+        String user1Tree = user1 != null ? commaSeparated(treeUtility.getChildTree(user1, "U1",
+            true)) : user1;
+        String user2Tree = user2 != null ? commaSeparated(treeUtility.getChildTree(user2, "U2",
+            true)) : user2;
 
         final String orgId = myBudget.getOrganization().getId();
-        ArrayList<String> organizationList = new ArrayList<String>(OBContext.getOBContext()
+
+        String OrgTreeList = commaSeparated(OBContext.getOBContext()
             .getOrganizationStructureProvider().getChildTree(orgId, true));
-        String OrgTreeList = Utility.arrayListToString(organizationList, true);
 
         StringBuilder queryString = new StringBuilder();
         queryString.append("select SUM(e.credit) as credit,");

@@ -18,9 +18,10 @@
  */
 package org.openbravo.client.application;
 
+import static org.openbravo.erpCommon.utility.Utility.commaSeparated;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -151,7 +152,7 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
       final String sql = "SELECT ad_alert_id FROM ad_alert WHERE isactive='Y'"
           + " AND ad_client_id " + OBDal.getInstance().getReadableClientsInClause()
           + " AND ad_org_id " + OBDal.getInstance().getReadableOrganizationsInClause()
-          + " AND ad_alertrule_id IN (" + toStringList(alertRuleList.getValue()) + ")"
+          + " AND ad_alertrule_id IN (" + commaSeparated(alertRuleList.getValue()) + ")"
           + filterClause + " AND coalesce(to_char(status), 'NEW') = :status";
       final SQLQuery sqlQuery = OBDal.getInstance().getSession().createSQLQuery(sql);
       sqlQuery.setParameter("status", alertStatus);
@@ -186,7 +187,7 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
     }
 
     if (alertList.size() <= chunkSize) {
-      return "e.id in (" + toStringList(alertList) + ")";
+      return "e.id in (" + commaSeparated(alertList) + ")";
     }
 
     // There are more than 1000 alerts to include in the where clause, Oracle doesn't
@@ -195,30 +196,17 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
     while (alertList.size() > chunkSize) {
       alertListToRemove = new ArrayList<String>(alertList.subList(0, chunkSize - 1));
       if (StringUtils.isEmpty(whereClause)) {
-        whereClause = "(e.id in (" + toStringList(alertListToRemove) + ")";
+        whereClause = "(e.id in (" + commaSeparated(alertListToRemove) + ")";
       } else {
-        whereClause += " or e.id in (" + toStringList(alertListToRemove) + ")";
+        whereClause += " or e.id in (" + commaSeparated(alertListToRemove) + ")";
       }
       alertList.removeAll(alertListToRemove);
     }
     if (!alertList.isEmpty()) {
-      whereClause += " or e.id in (" + toStringList(alertList) + "))";
+      whereClause += " or e.id in (" + commaSeparated(alertList) + "))";
     } else {
       whereClause += ")";
     }
     return whereClause;
-  }
-
-  private String toStringList(List<String> list) {
-    StringBuilder result = new StringBuilder(list.size() * 35);
-    Iterator<String> iterator = list.iterator();
-    while (iterator.hasNext()) {
-      String item = iterator.next();
-      result.append("'").append(item).append("'");
-      if (iterator.hasNext()) {
-        result.append(",");
-      }
-    }
-    return result.toString();
   }
 }
