@@ -25,7 +25,7 @@ import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 
-public class PaidReceiptsFilter extends ProcessHQLQuery {
+public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
   public static final Logger log = Logger.getLogger(PaidReceiptsHeader.class);
 
   public static final String paidReceiptsFilterPropertyExtension = "PaidReceiptsFilter_Extension";
@@ -46,7 +46,12 @@ public class PaidReceiptsFilter extends ProcessHQLQuery {
   }
 
   @Override
-  protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
+  protected String getFilterEntity() {
+    return "OrderFilter";
+  }
+
+  @Override
+  protected List<String> getQueryValidated(JSONObject jsonsent) throws JSONException {
 
     HQLPropertyList receiptsHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions,
         jsonsent);

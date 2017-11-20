@@ -14,7 +14,8 @@
   OB.Model.OrderFilter = OB.Data.ExtensibleModel.extend({
     source: 'org.openbravo.retail.posterminal.PaidReceiptsFilter',
     dataLimit: OB.Dal.DATALIMIT,
-    remote: 'OBPOS_remote.order'
+    remote: 'OBPOS_remote.order',
+    _modelName: 'OrderFilter'
   });
 
   OB.Model.OrderFilter.addProperties([{
@@ -68,7 +69,7 @@
       name: ''
     }
   }, {
-    name: 'dateFrom',
+    name: 'orderDateFrom',
     column: 'orderDate',
     filter: true,
     type: 'TEXT',
@@ -76,7 +77,7 @@
     isDate: true,
     hqlFilter: 'OrderDateFrom_Filter'
   }, {
-    name: 'dateTo',
+    name: 'orderDateTo',
     column: 'orderDateTo',
     filter: true,
     type: 'TEXT',
@@ -84,7 +85,7 @@
     isDate: true,
     hqlFilter: 'OrderDateTo_Filter'
   }, {
-    name: 'amountFrom',
+    name: 'totalamountFrom',
     column: 'totalamount',
     type: 'TEXT',
     filter: true,
@@ -92,7 +93,7 @@
     isNumeric: true,
     hqlFilter: 'OrderAmountFrom_Filter'
   }, {
-    name: 'amountTo',
+    name: 'totalamountTo',
     column: 'totalamountTo',
     type: 'TEXT',
     filter: true,

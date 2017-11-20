@@ -132,7 +132,9 @@ enyo.kind({
   events: {
     onShowPopup: '',
     onChangePaidReceipt: '',
-    onChangeCurrentOrder: ''
+    onChangeCurrentOrder: '',
+    onHideSelector: '',
+    onShowSelector: ''
   },
   receiptList: null,
   components: [{
@@ -167,10 +169,50 @@ enyo.kind({
   searchAction: function (inSender, inEvent) {
     var me = this;
 
-    function errorCallback() {
+    function errorCallback(tx, error) {
       me.$.renderLoading.hide();
       me.receiptList.reset();
       me.$.openreceiptslistitemprinter.$.tempty.show();
+      me.doHideSelector();
+      var i, message, tokens;
+
+      function getProperty(property) {
+        return OB.Model.OrderFilter.getProperties().find(function (prop) {
+          return prop.name === property;
+        });
+      }
+
+      if (error.message.startsWith('###')) {
+        tokens = error.message.split('###');
+        message = [];
+        for (i = 0; i < tokens.length; i++) {
+          if (tokens[i] !== '') {
+            if (tokens[i] === 'OBMOBC_FilteringNotAllowed' || tokens[i] === 'OBMOBC_SortingNotAllowed') {
+              message.push({
+                content: OB.I18N.getLabel(tokens[i]),
+                style: 'text-align: left; padding-left: 8px;'
+              });
+            } else {
+              var property = getProperty(tokens[i]);
+              if (property) {
+                message.push({
+                  content: OB.I18N.getLabel(property.caption),
+                  style: 'text-align: left; padding-left: 8px;',
+                  tag: 'li'
+                });
+              }
+            }
+          }
+        }
+      } else {
+        message = error.message;
+      }
+
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), message, null, {
+        onHideFunction: function () {
+          me.doShowSelector();
+        }
+      });
     }
 
     function successCallback(data) {
@@ -188,18 +230,21 @@ enyo.kind({
     this.$.openreceiptslistitemprinter.$.tlimit.hide();
     this.$.renderLoading.show();
 
-    var criteria, orderByClause = '';
+    var criteria = {};
 
     if (inEvent.orderby) {
-      orderByClause = inEvent.orderby.serverColumn + ' ' + inEvent.orderby.direction;
+      criteria._orderByProperties = [{
+        property: inEvent.orderby.name,
+        sorting: inEvent.orderby.direction
+      }];
     } else {
-      orderByClause = 'ord.orderDate desc, ord.documentNo desc';
+      criteria._orderByProperties = [{
+        property: 'orderDateFrom',
+        sorting: 'desc'
+      }];
     }
 
-    criteria = {
-      forceRemote: true,
-      _orderByClause: orderByClause
-    };
+    criteria.forceRemote = true;
 
     if (OB.MobileApp.model.hasPermission("OBPOS_orderLimit", true)) {
       criteria._limit = OB.DEC.abs(OB.MobileApp.model.hasPermission("OBPOS_orderLimit", true));
@@ -208,17 +253,20 @@ enyo.kind({
     criteria.remoteFilters = [];
 
     inEvent.filters.forEach(function (flt) {
+      var fullFlt = _.find(OB.Model.OrderFilter.getProperties(), function (col) {
+        return col.column === flt.column;
+      });
       if (flt.hqlFilter) {
         criteria.remoteFilters.push({
           value: flt.hqlFilter,
-          columns: [],
+          columns: [fullFlt.name],
           operator: OB.Dal.FILTER,
           params: [flt.value]
         });
       } else {
         criteria.remoteFilters.push({
           value: flt.value,
-          columns: [flt.column],
+          columns: [fullFlt.name],
           operator: flt.operator || OB.Dal.STARTSWITH,
           isId: flt.column === 'orderType' || flt.isId
         });
@@ -240,9 +288,7 @@ enyo.kind({
       } else {
         errorCallback();
       }
-    }, function () {
-      errorCallback();
-    });
+    }, errorCallback);
 
   },
   init: function (model) {
@@ -326,6 +372,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAdvancedFilters',
   name: 'OB.UI.ModalAdvancedFilterReceipts',
+  model: OB.Model.OrderFilter,
   initComponents: function () {
     this.inherited(arguments);
     this.setFilters(OB.Model.OrderFilter.getProperties());

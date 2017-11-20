@@ -31,10 +31,12 @@ public class PaidReceiptsFilterProperties extends ModelExtension {
         add(new HQLProperty("ord.documentNo", "documentNo"));
         add(new HQLProperty("ord.creationDate", "creationDate"));
         add(new HQLProperty("ord.orderDate", "orderDate"));
+        add(new HQLProperty("ord.orderDate", "orderDateFrom"));
         add(new HQLProperty("ord.orderDate", "orderDateTo"));
         add(new HQLProperty("ord.businessPartner.id", "businessPartner"));
         add(new HQLProperty("ord.businessPartner.name", "businessPartnerName"));
         add(new HQLProperty("ord.grandTotalAmount", "totalamount"));
+        add(new HQLProperty("ord.grandTotalAmount", "totalamountFrom"));
         add(new HQLProperty("ord.grandTotalAmount", "totalamountTo"));
         String orderTypeFilter = PaidReceiptsFilter.getOrderTypeFilter((JSONObject) params);
         switch (orderTypeFilter) {
