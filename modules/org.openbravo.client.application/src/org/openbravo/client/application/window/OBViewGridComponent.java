@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -409,11 +409,12 @@ public class OBViewGridComponent extends BaseTemplateComponent {
   }
 
   /**
-   * Returns true if the grid allows adding summary functions. If the tab is based on an HQL table,
-   * this method is returning false because grid summaries are not allowed for this kind of tables.
+   * Returns true if the grid allows adding summary functions. If the tab is based on an HQL table
+   * or Datasource table, this method is returning false because grid summaries are not allowed for
+   * these kind of tables.
    */
   public boolean getAllowSummaryFunctions() {
-    if (isHqlBasedTable(tab.getTable())) {
+    if (isHqlBasedTable(tab.getTable()) || isDatasourceBasedTable(tab.getTable())) {
       return false;
     }
     return isConfigurationPropertyEnabled(GCTab.PROPERTY_ALLOWSUMMARYFUNCTIONS,
@@ -470,5 +471,9 @@ public class OBViewGridComponent extends BaseTemplateComponent {
 
   private boolean isHqlBasedTable(Table table) {
     return ApplicationConstants.HQLBASEDTABLE.equals(table.getDataOriginType());
+  }
+
+  private boolean isDatasourceBasedTable(Table table) {
+    return !ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOriginType());
   }
 }
