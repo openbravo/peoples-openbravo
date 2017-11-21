@@ -1558,7 +1558,8 @@ public class Utility {
    * @param col
    *          A {@code Collection} to be represented as comma separated {@code String}.
    * @param addQuotes
-   *          Should each value in the {@code Collection} be sourrended by single quotes ({@code'})?
+   *          Should each value in the {@code Collection} be sourrended by single quotes ({@code '}
+   *          )?
    * @return A {@code String} represnetantation of {@code col}.
    */
   public static String commaSeparated(Collection<?> col, boolean addQuotes) {
@@ -1587,7 +1588,7 @@ public class Utility {
 
   /**
    * Returns a {@code String} including all elements in the {@code Collection} received as parameter
-   * separated by a comma and quoted with single quoutes ({@code'}).
+   * separated by a comma and quoted with single quoutes ({@code '}).
    *
    * @param col
    *          A {@code Collection} to be represented as comma separated {@code String}.
