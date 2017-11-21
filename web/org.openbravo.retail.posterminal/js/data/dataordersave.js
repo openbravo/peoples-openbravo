@@ -189,7 +189,7 @@
           frozenReceipt.set('undo', null);
           frozenReceipt.set('multipleUndo', null);
 
-          if (Math.abs(receipt.get('payment')) >= Math.abs(receipt.get('gross')) || receipt.get('paidOnCredit')) {
+          if (Math.abs(receipt.get('payment')) >= Math.abs(receipt.get('gross')) || (receipt.get('paidOnCredit') && !receipt.get('donePressed'))) {
             receipt.get('lines').forEach(function (line) {
               line.set('obposCanbedelivered', true);
               line.set('obposIspaid', true);
