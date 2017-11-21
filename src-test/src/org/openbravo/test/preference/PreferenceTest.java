@@ -18,6 +18,9 @@
  */
 package org.openbravo.test.preference;
 
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -29,6 +32,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -516,6 +520,28 @@ public class PreferenceTest extends OBBaseTest {
         OBContext.getOBContext().getUser(), null, null);
     assertEquals("Not found expected value.", "testPropValue", value);
     OBDal.getInstance().commitAndClose();
+  }
+
+  @Test
+  public void test18GetAllPreferences() throws PropertyException {
+    // setSystemAdministratorContext();
+    setTestUserContext();
+
+    List<Preference> allPrefs = Preferences.getAllPreferences(OBContext.getOBContext()
+        .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
+        OBContext.getOBContext().getUser().getId(), OBContext.getOBContext().getRole().getId());
+    List<String> testPreferenceValues = new ArrayList<>();
+    for (Preference pref : allPrefs) {
+      String key = pref.isPropertyList() ? pref.getProperty() : pref.getAttribute();
+      if (key.startsWith("testProperty")) {
+        testPreferenceValues.add(key + " " + pref.getSearchKey());
+      }
+    }
+    assertThat(
+        testPreferenceValues,
+        allOf(hasItem("testProperty2 testValue"), hasItem("testProperty B2"),
+            hasItem("testProperty alertGeneral"), hasItem("testPropertyList testPropValue")));
+    assertThat(testPreferenceValues, hasSize(4));
   }
 
   @Test
