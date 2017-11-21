@@ -58,7 +58,7 @@
   }, {
     name: 'businessPartner',
     column: 'businessPartner',
-    serverColumn: 'businessPartnerName',
+    sortName: 'businessPartnerName',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblCustomer',

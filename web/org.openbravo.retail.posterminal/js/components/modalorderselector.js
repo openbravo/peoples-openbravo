@@ -178,7 +178,7 @@ enyo.kind({
 
       function getProperty(property) {
         return OB.Model.OrderFilter.getProperties().find(function (prop) {
-          return prop.name === property;
+          return prop.name === property || prop.sortName === property;
         });
       }
 
@@ -234,7 +234,7 @@ enyo.kind({
 
     if (inEvent.orderby) {
       criteria._orderByProperties = [{
-        property: inEvent.orderby.name,
+        property: inEvent.orderby.sortName ? inEvent.orderby.sortName : inEvent.orderby.name,
         sorting: inEvent.orderby.direction
       }];
     } else {
