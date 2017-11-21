@@ -1558,9 +1558,9 @@ public class Utility {
    * @param col
    *          A {@code Collection} to be represented as comma separated {@code String}.
    * @param addQuotes
-   *          Should each value in the {@code Collection} be sourrended by single quotes ({@code '}
+   *          Should each value in the {@code Collection} be surrounded by single quotes ({@code '}
    *          )?
-   * @return A {@code String} represnetantation of {@code col}.
+   * @return A {@code String} representation of {@code col}.
    */
   public static String commaSeparated(Collection<?> col, boolean addQuotes) {
     Iterator<?> it = col.iterator();
