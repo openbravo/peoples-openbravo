@@ -274,9 +274,7 @@ isc.TextItem.addProperties({
         operator: 'and',
         criteria: []
         },
-        crit = result.criteria,
         valueParts = [],
-        allowEx = true,
         ds = isc.DS.get(this.form.expressionDataSource || this.form.dataSource);
 
     if (!value) {
