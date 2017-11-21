@@ -226,6 +226,7 @@ isc.OBTreeItemTree.addProperties({
   init: function () {
     OB.Datasource.get(this.treeItem.dataSourceId, this, null, true);
     this.Super('init', arguments);
+    this.originalEmptyMessage = this.emptyMessage;
   },
 
   dataArrived: function () {
@@ -242,13 +243,25 @@ isc.OBTreeItemTree.addProperties({
         me.scrollRecordIntoView(rowNum, true);
       }, 100);
     }
+    // Restore the empty message of the tree grid
+    // It may have been changed with the showErrorMessageInPicker() function in previous DS requests
+    this.emptyMessage = this.originalEmptyMessage;
   },
 
   show: function (explicitCriteria) {
     this.updatePosition();
+    this.emptyMessage = this.originalEmptyMessage;
     this.fetchData(explicitCriteria);
     this._pageClickID = this.ns.Page.setEvent('mouseDown', this, null, 'clickOutsideTree');
     return this.Super('show', arguments);
+  },
+
+  showErrorMessageInPicker: function (message) {
+    if (!this.isVisible()) {
+      return;
+    }
+    this.emptyMessage = '<span class="' + this.errorMessageStyle + '">' + message + '</span>';
+    this.body.markForRedraw();
   },
 
   clickOutsideTree: function () {
