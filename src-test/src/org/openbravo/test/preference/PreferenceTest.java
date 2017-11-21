@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,6 +56,12 @@ import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.test.base.OBBaseTest;
 
+/**
+ * Test cases covering Preferences visibility and conflict resolution handling.
+ * 
+ * Note these test cases are dependent one on each other, therefore all of them must be executed one
+ * after the other sorted alphabetically.
+ */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PreferenceTest extends OBBaseTest {
 
@@ -87,7 +93,7 @@ public class PreferenceTest extends OBBaseTest {
   private static final String ORG_B2 = "B843C30461EA4501935CB1D125C9C25A";
 
   @Test
-  public void testACreatePreference() {
+  public void test00CreatePreference() {
     setSystemAdministratorContext();
 
     Preferences.setPreferenceValue("testProperty", "testValue", false, null, null, null, null,
@@ -105,7 +111,7 @@ public class PreferenceTest extends OBBaseTest {
   }
 
   @Test
-  public void testBOverwritePreference() {
+  public void test01OverwritePreference() {
     setSystemAdministratorContext();
 
     Preferences.setPreferenceValue("testProperty", "newValue", false, null, null, null, null, null,
@@ -124,7 +130,7 @@ public class PreferenceTest extends OBBaseTest {
   }
 
   @Test
-  public void testCSamePropertyDifferentVisibility() {
+  public void test02SamePropertyDifferentVisibility() {
     setSystemAdministratorContext();
 
     Role role = OBDal.getInstance().get(Role.class, SALES_ROLE_ID); // Sales
@@ -142,7 +148,7 @@ public class PreferenceTest extends OBBaseTest {
   }
 
   @Test
-  public void testDPropertyGet() throws PropertyException {
+  public void test03PropertyGet() throws PropertyException {
     setSystemAdministratorContext();
     String value = Preferences.getPreferenceValue("testProperty", false, OBContext.getOBContext()
         .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
@@ -157,7 +163,7 @@ public class PreferenceTest extends OBBaseTest {
   }
 
   @Test
-  public void testEPLPropertyGet() throws SQLException {
+  public void test04PLPropertyGet() throws SQLException {
     setSystemAdministratorContext();
     String value = getPLPreference("testProperty", false, OBContext.getOBContext()
         .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
@@ -172,7 +178,7 @@ public class PreferenceTest extends OBBaseTest {
   }
 
   @Test
-  public void testFWindowVisibility() throws PropertyException {
+  public void test05WindowVisibility() throws PropertyException {
     setSystemAdministratorContext();
     Window window = OBDal.getInstance().get(Window.class, "276"); // Alert window
     Preferences.setPreferenceValue("testProperty", "alertGeneral", false, null, null, null, null,
@@ -206,7 +212,7 @@ public class PreferenceTest extends OBBaseTest {
   }
 
   @Test
-  public void testGPLWindowVisibility() throws SQLException {
+  public void test06PLWindowVisibility() throws SQLException {
     setSystemAdministratorContext();
     Window window = OBDal.getInstance().get(Window.class, "276"); // Alert window
     Preferences.setPreferenceValue("testProperty", "alertGeneral", false, null, null, null, null,
@@ -236,7 +242,7 @@ public class PreferenceTest extends OBBaseTest {
   }
 
   @Test
-  public void testHOrgVisibility() throws PropertyException {
+  public void test07OrgVisibility() throws PropertyException {
     setSystemAdministratorContext();
     Client client = OBDal.getInstance().get(Client.class, TEST_CLIENT_ID);
     Organization orgB = OBDal.getInstance().get(Organization.class, ORG_B);
@@ -284,7 +290,7 @@ public class PreferenceTest extends OBBaseTest {
   }
 
   @Test
-  public void testH1ClientVisibility() throws PropertyException {
+  public void test08ClientVisibility() throws PropertyException {
     setSystemAdministratorContext();
     Client testClient = OBDal.getInstance().getProxy(Client.class, TEST_CLIENT_ID);
     Client systemClient = OBDal.getInstance().getProxy(Client.class, "0");
@@ -313,7 +319,7 @@ public class PreferenceTest extends OBBaseTest {
   }
 
   @Test
-  public void testIPLOrgVisibility() throws SQLException {
+  public void test09PLOrgVisibility() throws SQLException {
 
     setSystemAdministratorContext();
     Client client = OBDal.getInstance().get(Client.class, TEST_CLIENT_ID);
@@ -351,7 +357,7 @@ public class PreferenceTest extends OBBaseTest {
   }
 
   @Test
-  public void testJExceptionNotFound() {
+  public void test10ExceptionNotFound() {
     PropertyException exception = null;
     try {
       Preferences.getPreferenceValue("testNotExists", false, OBContext.getOBContext()
@@ -367,7 +373,7 @@ public class PreferenceTest extends OBBaseTest {
   }
 
   @Test
-  public void testKPLExceptionNotFound() {
+  public void test11PLExceptionNotFound() {
     SQLException exception = null;
     try {
       getPLPreference("testNotExists", false, OBContext.getOBContext().getCurrentClient(),
@@ -383,7 +389,7 @@ public class PreferenceTest extends OBBaseTest {
   }
 
   @Test
-  public void testLConflict() {
+  public void test12Conflict() {
     setSystemAdministratorContext();
     Preference newPref = OBProvider.getInstance().get(Preference.class);
     newPref.setPropertyList(false);
@@ -407,7 +413,7 @@ public class PreferenceTest extends OBBaseTest {
   }
 
   @Test
-  public void testMPLConflict() {
+  public void test13PLConflict() {
     setSystemAdministratorContext();
     SQLException exception = null;
     try {
@@ -423,7 +429,7 @@ public class PreferenceTest extends OBBaseTest {
   }
 
   @Test
-  public void testNSolvedConflict() throws PropertyException {
+  public void test14SolvedConflict() throws PropertyException {
     setSystemAdministratorContext();
 
     // This piece of code doesn't work because of issue #13153
@@ -452,7 +458,7 @@ public class PreferenceTest extends OBBaseTest {
   }
 
   @Test
-  public void testOPLSolvedConflict() throws SQLException {
+  public void test15PLSolvedConflict() throws SQLException {
     setSystemAdministratorContext();
     String value = getPLPreference("testProperty", false, OBContext.getOBContext()
         .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
@@ -461,7 +467,7 @@ public class PreferenceTest extends OBBaseTest {
   }
 
   @Test
-  public void testPPreferenceClientOrgSetting() {
+  public void test16PreferenceClientOrgSetting() {
     setTestAdminContext();
     Preference p = Preferences.setPreferenceValue("testProperty2", "testValue", false, null, null,
         null, null, null, null);
@@ -471,7 +477,7 @@ public class PreferenceTest extends OBBaseTest {
   }
 
   @Test
-  public void testQPreferenceListSetAndGet() throws PropertyException {
+  public void test17PreferenceListSetAndGet() throws PropertyException {
     setSystemAdministratorContext();
 
     // Property configuration list
@@ -513,7 +519,7 @@ public class PreferenceTest extends OBBaseTest {
   }
 
   @Test
-  public void testRClean() {
+  public void test99Clean() {
     setSystemAdministratorContext();
     OBCriteria<Preference> qPref = OBDal.getInstance().createCriteria(Preference.class);
     qPref.add(Restrictions.or(Restrictions.like(Preference.PROPERTY_ATTRIBUTE, "testProperty%"),
