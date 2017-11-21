@@ -238,13 +238,7 @@ enyo.kind({
         sorting: inEvent.orderby.direction
       }];
     } else {
-      criteria._orderByProperties = [{
-        property: 'orderDateFrom',
-        sorting: 'desc'
-      }, {
-        property: 'documentNo',
-        sorting: 'desc'
-      }];
+      criteria._orderByClause = 'orderDateFrom desc, documentNo desc';
     }
 
     criteria.forceRemote = true;
