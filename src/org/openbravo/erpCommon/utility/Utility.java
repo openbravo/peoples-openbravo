@@ -549,8 +549,8 @@ public class Utility {
    * @return comma delimited Stirng of referenceable organizations.
    */
   public static String getReferenceableOrg(VariablesSecureApp vars, String currentOrg) {
-    final OrgTree tree = (OrgTree) vars.getSessionObject("#CompleteOrgTree");
-    return tree.getReferenceableOrganizations(currentOrg);
+    return commaSeparated(OBContext.getOBContext().getOrganizationStructureProvider()
+        .getNaturalTree(currentOrg));
   }
 
   /**

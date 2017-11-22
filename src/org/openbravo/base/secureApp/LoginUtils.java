@@ -12,6 +12,7 @@
 package org.openbravo.base.secureApp;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -255,10 +256,9 @@ public class LoginUtils {
     try {
       client = OBDal.getInstance().get(Client.class, strCliente);
       isAccountingDimensionConfigCentrally = client.isAcctdimCentrallyMaintained();
-      OrgTree tree = new OrgTree(conn, strCliente);
-      vars.setSessionObject("#CompleteOrgTree", tree);
-      OrgTree accessibleTree = tree.getAccessibleTree(conn, strRol);
-      vars.setSessionValue("#AccessibleOrgTree", accessibleTree.toString());
+
+      vars.setSessionValue("#AccessibleOrgTree", Utility.commaSeparated(Arrays.asList(OBContext
+          .getOBContext().getReadableOrganizations())));
     } catch (Exception e) {
       log4j.warn("Error while setting Organzation tree to session " + e);
       return false;
