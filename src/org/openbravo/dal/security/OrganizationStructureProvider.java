@@ -20,6 +20,7 @@
 package org.openbravo.dal.security;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -52,9 +53,7 @@ import org.openbravo.model.common.enterprise.OrganizationType;
 public class OrganizationStructureProvider implements OBNotSingleton {
 
   private boolean isInitialized = false;
-  private Map<String, Set<String>> naturalTreesByOrgID = new HashMap<String, Set<String>>();
-  private Map<String, String> parentByOrganizationID = new HashMap<String, String>();
-  private Map<String, Set<String>> childByOrganizationID = new HashMap<String, Set<String>>();
+  private Map<String, OrgNode> orgNodes;
   private static final String AD_ORG_TABLE_ID = "155";
   private String clientId;
 
@@ -91,34 +90,20 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       treeNodes.addAll(tns);
     }
 
-    final List<OrgNode> orgNodes = new ArrayList<OrgNode>(treeNodes.size());
+    orgNodes = new HashMap<>(treeNodes.size());
     for (final Object[] tn : treeNodes) {
       final OrgNode on = new OrgNode();
       String nodeId = (String) tn[0];
       String parentId = (String) tn[1];
       on.setTreeNodeData(nodeId, parentId);
-      orgNodes.add(on);
+      orgNodes.put(nodeId, on);
     }
 
-    for (final OrgNode on : orgNodes) {
-      on.resolve(orgNodes);
+    List<OrgNode> nodes = new ArrayList<>(orgNodes.values());
+    for (final OrgNode on : nodes) {
+      on.resolve(nodes);
     }
 
-    for (final OrgNode on : orgNodes) {
-      if (on.getParent() != null) {
-        parentByOrganizationID.put(on.getNodeId(), on.getParent().getNodeId());
-      }
-    }
-
-    for (final OrgNode on : orgNodes) {
-      naturalTreesByOrgID.put(on.getNodeId(), on.getNaturalTree());
-      if (on.getChildren() != null) {
-        Set<String> os = new HashSet<String>();
-        for (OrgNode o : on.getChildren())
-          os.add(o.getNodeId());
-        childByOrganizationID.put(on.getNodeId(), os);
-      }
-    }
     isInitialized = true;
   }
 
@@ -131,14 +116,12 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    */
   public Set<String> getNaturalTree(String orgId) {
     initialize();
-    Set<String> result;
-    if (naturalTreesByOrgID.get(orgId) == null) {
-      result = new HashSet<String>();
-      result.add(orgId);
+    OrgNode node = orgNodes.get(orgId);
+    if (node == null) {
+      return new HashSet<>(Arrays.asList(orgId));
     } else {
-      result = new HashSet<String>(naturalTreesByOrgID.get(orgId));
+      return node.getNaturalTree();
     }
-    return result;
   }
 
   /**
@@ -229,7 +212,9 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    */
   public String getParentOrg(String orgId) {
     initialize();
-    return parentByOrganizationID.get(orgId);
+
+    OrgNode node = orgNodes.get(orgId);
+    return (node == null || node.getParent() == null) ? null : node.getParent().getNodeId();
   }
 
   /**
@@ -240,8 +225,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    * @return the parent organization.
    */
   public Organization getParentOrg(Organization org) {
-    initialize();
-    return OBDal.getInstance().get(Organization.class, parentByOrganizationID.get(org.getId()));
+    String parentOrgId = getParentOrg(org.getId());
+    return parentOrgId == null ? null : OBDal.getInstance().get(Organization.class, parentOrgId);
   }
 
   /**
@@ -255,7 +240,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    */
   public Set<String> getChildTree(String orgId, boolean includeOrg) {
     initialize();
-    Set<String> childOrg = this.getChildOrg(orgId);
+    Set<String> childOrg = getChildOrg(orgId);
     Set<String> result = new HashSet<String>();
 
     if (includeOrg)
@@ -264,7 +249,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     while (!childOrg.isEmpty()) {
       for (String co : childOrg) {
         result.add(co);
-        childOrg = this.getChildTree(co, false);
+        childOrg = getChildTree(co, false);
         result.addAll(childOrg);
       }
 
@@ -281,13 +266,25 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    */
   public Set<String> getChildOrg(String orgId) {
     initialize();
-    if (childByOrganizationID.get(orgId) == null) {
+
+    OrgNode node = orgNodes.get(orgId);
+    if (node == null) {
       reInitialize();
+
+      node = orgNodes.get(orgId);
+      if (node == null) {
+        return new HashSet<String>(0);
+      }
     }
-    if (childByOrganizationID.get(orgId) == null) {
-      return new HashSet<String>();
+
+    if (node.getChildren() != null) {
+      Set<String> os = new HashSet<String>(node.getChildren().size());
+      for (OrgNode o : node.getChildren()) {
+        os.add(o.getNodeId());
+      }
+      return os;
     } else {
-      return new HashSet<String>(childByOrganizationID.get(orgId));
+      return new HashSet<String>(0);
     }
   }
 
