@@ -52,11 +52,10 @@ public class PaidReceiptProperties extends ModelExtension {
         add(new HQLProperty("ord.organization.id", "organization"));
         add(new HQLProperty("ord.client.id", "client"));
         add(new HQLProperty(
-            "(case when ord.documentType.sOSubType = 'OB' then true else false end)",
-            "isQuotation"));
+            "(case when ord.documentType.sOSubType = 'OB' then true else false end)", "isQuotation"));
         add(new HQLProperty("ord.summedLineAmount", "totalNetAmount"));
         add(new HQLProperty(
-            "(case when COALESCE((select sum(abs(deliveredQuantity)) from ord.orderLineList),0)=0 and ord.documentType.sOSubType<>'OB' then true else false end)",
+            "(case when (select sum(abs(deliveredQuantity)) from ord.orderLineList)=0 and ord.documentType.sOSubType<>'OB' then true else false end)",
             "isLayaway")); // TODO: computed column, it should be refactored
         add(new HQLProperty("ord.priceList.priceIncludesTax", "priceIncludesTax"));
         add(new HQLProperty("replacedOrder.documentNo", "replacedorder_documentNo"));
