@@ -14,8 +14,10 @@ package org.openbravo.base.secureApp;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +31,7 @@ import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
@@ -462,8 +465,17 @@ public class LoginUtils {
         if (strWarehouse == null || strWarehouse.isEmpty()) {
           // If no warehouse for the default organization is available, pick using using the
           // accessible tree
-          strWarehouse = DefaultOptionsData.getDefaultWarehouse(cp, strClient, new OrgTree(cp,
-              strClient).getAccessibleTree(cp, strRole).toString());
+
+          OrganizationStructureProvider osp = OBContext.getOBContext()
+              .getOrganizationStructureProvider(strClient);
+          Set<String> allAccessibleOrgs = new HashSet<>();
+
+          for (OrgTreeData org : OrgTreeData.select(cp, strRole)) {
+            allAccessibleOrgs.addAll(osp.getNaturalTree(org.adOrgId));
+          }
+
+          strWarehouse = DefaultOptionsData.getDefaultWarehouse(cp, strClient,
+              Utility.commaSeparated(allAccessibleOrgs));
         }
       } else
         strWarehouse = "";
