@@ -85,7 +85,6 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       vars.setSessionValue("#ORG_CLIENT",
           vars.getSessionValue("#ORG_CLIENT") + ", '" + ios.getOrgId() + "'");
       OrgTree tree = new OrgTree(this, vars.getClient());
-      vars.setSessionObject("#CompleteOrgTree", tree);
       OrgTree accessibleTree = tree.getAccessibleTree(this, vars.getRole());
       vars.setSessionValue("#AccessibleOrgTree", accessibleTree.toString());
       printPageResult(response, vars, ios.getLog(), obeResult);
