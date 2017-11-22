@@ -47,7 +47,11 @@ OB.UTIL.RfidController.startRfidWebsocket = function startRfidWebsocket(websocke
     }
     OB.UTIL.RfidController.set('barcodeActionHandler', new OB.UI.BarcodeActionHandler());
     OB.UTIL.RfidController.removeAllEpcs();
-    OB.UTIL.RfidController.set('connected', true);
+    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.RfidController.get('previousStatus'))) {
+      OB.UTIL.RfidController.set('connected', OB.UTIL.RfidController.get('previousStatus'));
+    } else {
+      OB.UTIL.RfidController.set('connected', true);
+    }
     OB.UTIL.RfidController.set('connectionLost', false);
   };
 
@@ -108,6 +112,7 @@ OB.UTIL.RfidController.startRfidWebsocket = function startRfidWebsocket(websocke
     setTimeout(function () {
       OB.UTIL.RfidController.startRfidWebsocket(websocketServerLocation, reconnectTimeout, currentRetrials, retrialsBeforeWarning);
     }, reconnectTimeout);
+    OB.UTIL.RfidController.set('previousStatus', OB.UTIL.RfidController.get('connected'));
     OB.UTIL.RfidController.set('connected', false);
     OB.UTIL.RfidController.set('connectionLost', true);
   };
