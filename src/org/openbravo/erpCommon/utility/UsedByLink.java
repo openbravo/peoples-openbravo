@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -685,7 +685,7 @@ public class UsedByLink extends HttpSecureAppServlet {
           if (!property.isOneToMany() && property.getColumnName() != null
               && property.getTargetEntity() != null
               && property.getTargetEntity().getTableName().equalsIgnoreCase(tableName)
-              && !property.isComputedColumn()) {
+              && !property.isComputedColumn() && !property.getEntity().isVirtualEntity()) {
             // Datasource tables are skipped
             linkedTableId = property.getEntity().getTableId();
             linkedTableObject = OBDal.getInstance().get(Table.class, linkedTableId);
