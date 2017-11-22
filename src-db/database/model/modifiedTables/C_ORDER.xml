@@ -68,6 +68,5 @@
       </index>
       <check name="EM_OBPOS_ISDELETED_CHECK"><![CDATA[EM_OBPOS_ISDELETED IN ('Y', 'N')]]></check>
       <check name="EM_OBPOS_ISLAYAWAY_CHK"><![CDATA[EM_OBPOS_ISLAYAWAY IN ('Y', 'N')]]></check>
-      <check name="EM_OBPOS_ISLAYAWAY_TERMINAL"><![CDATA[EM_OBPOS_ISLAYAWAY = 'Y' AND EM_OBPOS_APPLICATIONS_ID IS NOT NULL OR EM_OBPOS_ISLAYAWAY = 'N']]></check>
     </table>
   </database>
