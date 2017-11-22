@@ -7145,11 +7145,9 @@ The types flagged in this way, are required to implement a js method that will b
 <!--BE5B3C3C88C04014AEC50D7D9E3C05FA-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--BE5B3C3C88C04014AEC50D7D9E3C05FA-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--BE5B3C3C88C04014AEC50D7D9E3C05FA-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--BE5B3C3C88C04014AEC50D7D9E3C05FA-->  <NAME><![CDATA[Embeded Barcode Scanner]]></NAME>
-<!--BE5B3C3C88C04014AEC50D7D9E3C05FA-->  <DESCRIPTION><![CDATA[Check this property when an external barcode scanner not detected as an external keyboard will be used with this terminal type]]></DESCRIPTION>
-<!--BE5B3C3C88C04014AEC50D7D9E3C05FA-->  <HELP><![CDATA[If this property is checked, the Web POS will take into account that an external input (keyboard or barcode scanner) is connected to the device but it is not being detected as a keyboard. Checking this option and then not using an embeded barcode scanner will cause that the virtual keyboard will not be shown in some (mobile) devices. It will not allow to enter bar codes manually using the virtual keyboard
-
-If this option is not checked, then the system assumes that your barcode scanner is being detected as an external keyboard so the virtual keyboard neither will be shown.]]></HELP>
+<!--BE5B3C3C88C04014AEC50D7D9E3C05FA-->  <NAME><![CDATA[Hide virtual keyboard with barcode scanner]]></NAME>
+<!--BE5B3C3C88C04014AEC50D7D9E3C05FA-->  <DESCRIPTION><![CDATA[Un check this property when the user wants to show the virtual keyboard on mobile devices for scanning purposses]]></DESCRIPTION>
+<!--BE5B3C3C88C04014AEC50D7D9E3C05FA-->  <HELP><![CDATA[If this property is checked, when web POS is marked to use an external input an it is being used from mobile devices the virtual keyboard will not be shown for scanning purposes. If this option is not checked and your mobile device is not detecting any external input, then the screen keyboard will be shown for scanning.]]></HELP>
 <!--BE5B3C3C88C04014AEC50D7D9E3C05FA-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--BE5B3C3C88C04014AEC50D7D9E3C05FA-->  <AD_TAB_ID><![CDATA[D01039797B054BE69CA5770B8CFB933C]]></AD_TAB_ID>
 <!--BE5B3C3C88C04014AEC50D7D9E3C05FA-->  <AD_COLUMN_ID><![CDATA[C72B7653A2E24B068BC36D29C5FCCEAF]]></AD_COLUMN_ID>
