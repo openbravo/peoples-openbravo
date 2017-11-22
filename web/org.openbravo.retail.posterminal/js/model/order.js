@@ -1969,18 +1969,18 @@
         if (options && options.line) {
           productHavingSameAttribute = true;
         } else {
+          if (attrs && !this.checkSerialAttribute(p, attrs.attributeValue)) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ProductDefinedAsSerialNo'));
+            if (callback) {
+              callback(false, null);
+            }
+            return;
+          }
           for (i = 0; i < lines.length; i++) {
             currentline = lines.models[i].attributes;
-            if (attrs && (currentline.attributeValue === attrs.attributeValue) && (p.id === currentline.product.id)) {
+            if (attrs && attrs.attributeValue && (currentline.attributeValue === attrs.attributeValue) && (p.id === currentline.product.id)) {
               productHavingSameAttribute = true;
               line = currentline;
-              if (p.get('isSerialNo') || (p.get('isSerialNo') && isQuotationAndAttributeAllowed)) {
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ProductDefinedAsSerialNo'));
-                if (callback) {
-                  callback(false, null);
-                }
-                return;
-              }
             }
           }
         }
@@ -2031,7 +2031,7 @@
               line = me.get('lines').find(function (l) {
                 if (l.get('product').id === p.id && l.get('isEditable') && ((l.get('qty') > 0 && qty > 0) || (l.get('qty') < 0 && qty < 0))) {
                   if (attributeSearchAllowed && attrs) {
-                    if ((l.get('attributeValue') === attrs.attributeValue)) {
+                    if (attrs.attributeValue && (l.get('attributeValue') === attrs.attributeValue)) {
                       return true;
                     }
                   } else {
@@ -2224,6 +2224,38 @@
       } else {
         addProductToOrder();
       }
+    },
+
+    checkSerialAttribute: function (product, attributeValue) {
+      if (!attributeValue) {
+        return true;
+      }
+      var lines = this.get('lines');
+      var isQuotationAndAttributeAllowed = product.get('isQuotation') && OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenCreatingQuotation', true);
+      var i;
+      for (i = 0; i < lines.length; i++) {
+        var currentline = lines.at(i);
+        if ((currentline.get('attSetInstanceDesc') === attributeValue || currentline.get('attributeValue') === attributeValue) && (product.id === currentline.get('product').id)) {
+          if (product.get('isSerialNo')) {
+            return false;
+          }
+        }
+      }
+      return true;
+    },
+
+    checkAllAttributesHasValue: function () {
+      var lines = this.get('lines');
+      var i;
+      for (i = 0; i < lines.length; i++) {
+        var currentline = lines.at(i);
+        if (currentline.get('product').get('hasAttributes')) {
+          if (!currentline.get('attSetInstanceDesc') && !currentline.get('attributeValue')) {
+            return false;
+          }
+        }
+      }
+      return true;
     },
 
     _loadRelatedServices: function (productType, productId, productCategory, callback, line) {
@@ -2462,10 +2494,14 @@
             popup: 'modalProductAttribute',
             args: {
               callback: function (attributeValue) {
-                if (attributeValue) {
+                if (!OB.UTIL.isNullOrUndefined(attributeValue)) {
                   var i;
                   if (OB.UTIL.isNullOrUndefined(attrs)) {
                     attrs = {};
+                  }
+                  if (_.isEmpty(attributeValue)) {
+                    // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
+                    attributeValue = null;
                   }
                   attrs.attributeValue = attributeValue;
                   me._addProduct(p, qty, options, attrs, function (success, orderline) {

@@ -211,6 +211,10 @@ enyo.kind({
                 showing: false,
                 type: 'error'
               }, {
+                name: 'allAttributesNeedValue',
+                type: 'error',
+                showing: false
+              }, {
                 name: 'paymentMethodSelect',
                 style: 'color: orange',
                 type: 'info',
@@ -700,6 +704,7 @@ enyo.kind({
       this.$.changeexceedlimit.hide();
       this.$.overpaymentnotavailable.hide();
       this.$.overpaymentexceedlimit.hide();
+      this.$.allAttributesNeedValue.hide();
     }
     this.$.noenoughchangelbl.hide();
     this.$.onlycashpaymentmethod.hide();
@@ -756,6 +761,14 @@ enyo.kind({
     if (resultOK) {
       this.$.noenoughchangelbl.hide();
     }
+
+    // check that all attributes has value
+    if (OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true) && paymentstatus.done && !this.receipt.checkAllAttributesHasValue()) {
+      this.$.donebutton.setLocalDisabled(true);
+      this.$.allAttributesNeedValue.show();
+    }
+
+
     this.alignErrorMessages();
   },
   alignErrorMessages: function () {
@@ -813,6 +826,7 @@ enyo.kind({
     errorLabelArray.push(this.$.overpaymentexceedlimit);
     errorLabelArray.push(this.$.onlycashpaymentmethod);
     errorLabelArray.push(this.$.errorMaxlimitamount);
+    errorLabelArray.push(this.$.allAttributesNeedValue);
     errorLabelArray.push(this.$.paymentMethodSelect);
     errorLabelArray.push(this.$.extrainfo);
     return errorLabelArray;
@@ -973,6 +987,7 @@ enyo.kind({
     this.$.overpaymentnotavailable.setContent(OB.I18N.getLabel('OBPOS_OverpaymentNotAvailable'));
     this.$.overpaymentexceedlimit.setContent(OB.I18N.getLabel('OBPOS_OverpaymentExcededLimit'));
     this.$.onlycashpaymentmethod.setContent(OB.I18N.getLabel('OBPOS_OnlyCashPaymentMethod'));
+    this.$.allAttributesNeedValue.setContent(OB.I18N.getLabel('OBPOS_AllAttributesNeedValue'));
   },
   init: function (model) {
     var me = this;

@@ -60,8 +60,7 @@
         localDB: {
           size: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.size,
           name: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.name,
-          displayName: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.displayName,
-          version: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.dbVersion
+          displayName: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.displayName
         },
         logDBTrxThreshold: 300,
         logDBStmtThreshold: 1000,

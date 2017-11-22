@@ -343,6 +343,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             }
           }
         } else if (!newLayaway && (creditpaidLayaway || fullypaidLayaway)) {
+
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
           order.setDelivered(true);
@@ -380,6 +381,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             createLinesForServiceProduct();
           }
         }
+
+        // 37240: done outside of createOrderLines, since needs to be done in all order loaders, not
+        // only in new ones
+        updateLinesWithAttributes(order, orderlines, lineReferences);
 
         if (log.isDebugEnabled()) {
           t112 = System.currentTimeMillis();
@@ -573,6 +578,30 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       return successMessage(jsonorder);
     } finally {
       documentNoHandlers.set(null);
+    }
+  }
+
+  private void updateLinesWithAttributes(Order order, JSONArray orderlines,
+      ArrayList<OrderLine> lineReferences) throws JSONException {
+    for (int i = 0; i < orderlines.length(); i++) {
+      OrderLine orderline = order.getOrderLineList().get(i);
+
+      if (orderline.getProduct().getAttributeSet() == null) {
+        continue;
+      }
+      JSONObject jsonOrderLine = orderlines.getJSONObject(i);
+      String attr = null;
+      if (jsonOrderLine.has("attSetInstanceDesc")) {
+        attr = jsonOrderLine.get("attSetInstanceDesc").toString();
+      } else if (jsonOrderLine.has("attributeValue")) {
+        attr = jsonOrderLine.get("attributeValue").toString();
+      }
+      if (attr.equals("null")) {
+        attr = null;
+      }
+      orderline.setAttributeSetValue(AttributesUtils.fetchAttributeSetValue(attr, jsonOrderLine
+          .getJSONObject("product").get("id").toString()));
+
     }
   }
 
@@ -1493,17 +1522,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           || (doCancelAndReplace && !newLayaway && !notpaidLayaway && !partialpaidLayaway)) {
         // shipment is created or is a C&R and is not a layaway, so all is delivered
         orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
-      }
-      if (OBMOBCUtils.isJsonObjectPropertyStringPresentNotNullAndNotEmptyString(jsonOrderLine,
-          "attSetInstanceDesc")) {
-        orderline.setAttributeSetValue(AttributesUtils.fetchAttributeSetValue(
-            jsonOrderLine.get("attSetInstanceDesc").toString(),
-            jsonOrderLine.getJSONObject("product").get("id").toString()));
-      } else if (OBMOBCUtils.isJsonObjectPropertyStringPresentNotNullAndNotEmptyString(
-          jsonOrderLine, "attributeValue")) {
-        orderline.setAttributeSetValue(AttributesUtils.fetchAttributeSetValue(
-            jsonOrderLine.get("attributeValue").toString(), jsonOrderLine.getJSONObject("product")
-                .get("id").toString()));
       }
 
       lineReferences.add(orderline);

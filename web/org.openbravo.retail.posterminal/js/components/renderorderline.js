@@ -105,11 +105,20 @@ enyo.kind({
       this.$.gross.setContent(this.model.printNet());
     }
     if (OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true) && this.model.get('product').get('hasAttributes')) {
+      var attr_msg = OB.I18N.getLabel('OBPOS_AttributeValue');
+      if (this.model.get('attSetInstanceDesc')) {
+        attr_msg += this.model.get('attSetInstanceDesc');
+      } else if (this.model.get('attributeValue')) {
+        attr_msg += this.model.get('attributeValue');
+      } else {
+        attr_msg += OB.I18N.getLabel('OBPOS_AttributeValueMissing');
+      }
+
       this.createComponent({
         style: 'display: block;',
         components: [{
           name: 'productAttribute',
-          content: OB.I18N.getLabel('OBPOS_AttributeValue') + (this.model.get('attSetInstanceDesc') ? this.model.get('attSetInstanceDesc') : this.model.get('attributeValue')),
+          content: attr_msg,
           attributes: {
             style: 'float: left; width: 100%; clear: left;'
           }
@@ -117,8 +126,9 @@ enyo.kind({
           style: 'clear: both;'
         }]
       });
+
       if (!this.model.get('attributeValue')) {
-        this.$.productAttribute.hide();
+        this.$.productAttribute.addStyles('color: red');
       }
     }
 
