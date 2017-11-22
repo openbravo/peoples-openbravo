@@ -57,8 +57,8 @@ class CopyFromOrdersProcessUpdateQuantitiesAndUOMs implements
       operativeUOM = OBDal.getInstance().get(UOM.class, defaultAum);
       orderUOM = null;
       if (aUMIsDifferentThanUOM(defaultAum)) {
-        orderedQuantity = UOMUtil.getConvertedQty(orderLine.getProduct().getId(),
-            operativeQuantity, defaultAum);
+        operativeQuantity = UOMUtil.getConvertedAumQty(orderLine.getProduct().getId(),
+            orderedQuantity, operativeUOM.getId());
       }
     }
 
