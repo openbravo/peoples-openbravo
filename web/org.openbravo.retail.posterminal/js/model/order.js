@@ -401,6 +401,7 @@
         this.set('reApplyDiscounts', false);
         this.set('calculateReceiptCallbacks', []);
         this.set('loaded', attributes.loaded);
+        this.set('isModified', attributes.isModified);
         _.each(_.keys(attributes), function (key) {
           if (!this.has(key)) {
             this.set(key, attributes[key]);
@@ -796,6 +797,9 @@
     setDocumentNo: function (isReturn, isOrder) {
       var order = this,
           nextDocumentNo;
+      if (order.get('isModified')) {
+        return;
+      }
       if (isOrder && (order.get('documentnoPrefix') !== OB.MobileApp.model.get('terminal').docNoPrefix)) {
         nextDocumentNo = OB.MobileApp.model.getNextDocumentno();
         order.set('returnnoPrefix', -1);
@@ -1014,6 +1018,7 @@
       this.set('totalamount', null);
       this.set('approvals', []);
       this.set('isPartiallyDelivered', false);
+      this.set('isModified', false);
     },
 
     clearWith: function (_order) {
@@ -1041,6 +1046,7 @@
       this.set('paidOnCredit', _order.get('paidOnCredit'));
       this.set('isLayaway', _order.get('isLayaway'));
       this.set('isPartiallyDelivered', _order.get('isPartiallyDelivered'));
+      this.set('isModified', _order.get('isModified'));
       if (!_order.get('isEditable')) {
         // keeping it no editable as much as possible, to prevent
         // modifications to trigger editable events incorrectly
@@ -5205,6 +5211,19 @@
     },
     getScannableDocumentNo: function () {
       return this.get('documentNo').replace(/-/g, '\\-').replace(/\+/g, '\\+');
+    },
+    turnEditable: function () {
+      if (this.get('payment') > 0 || this.get('isPartiallyDelivered') || this.get('isFullyDelivered')) {
+        return;
+      }
+
+      this.set('isModified', true);
+      this.set('isEditable', true);
+      if (this.get('isLayaway')) {
+        this.set('isLayaway', false);
+        this.set('orderType', 2);
+      }
+      this.unset('skipApplyPromotions');
     }
   });
 
@@ -5293,6 +5312,7 @@
       order.set('isbeingprocessed', 'N');
       order.set('hasbeenpaid', 'N');
       order.set('isEditable', false);
+      order.set('isModified', false);
       order.set('checked', model.checked); //TODO: what is this for, where it comes from?
       order.set('orderDate', OB.I18N.normalizeDate(model.orderDate));
       order.set('creationDate', OB.I18N.normalizeDate(model.creationDate));

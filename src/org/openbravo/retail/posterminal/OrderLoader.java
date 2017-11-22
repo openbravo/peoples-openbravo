@@ -137,9 +137,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private Locator binForRetuns = null;
   private boolean isQuotation = false;
   private boolean isDeleted = false;
+  private boolean isModified = false;
   private boolean doCancelAndReplace = false;
   private boolean paidReceipt = false;
-  private boolean doCancelLayaway = false;
 
   @Inject
   @Any
@@ -147,7 +147,15 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   @Inject
   @Any
+  private Instance<OrderLoaderModifiedHook> orderModifiedProcesses;
+
+  @Inject
+  @Any
   private Instance<OrderLoaderPreProcessHook> orderPreProcesses;
+
+  @Inject
+  @Any
+  private Instance<OrderLoaderModifiedPreProcessHook> orderModifiedPreProcesses;
 
   @Inject
   @Any
@@ -194,8 +202,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     newLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2;
     notpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
-        && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
-        && !jsonorder.optBoolean("paidOnCredit") && !jsonorder.has("paidInNegativeStatusAmt");
+        && (jsonorder.getDouble("payment") < jsonorder.getDouble("gross") || jsonorder
+            .getDouble("gross") == 0) && !jsonorder.optBoolean("paidOnCredit")
+        && !jsonorder.has("paidInNegativeStatusAmt");
     creditpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
         && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
         && jsonorder.optBoolean("paidOnCredit");
@@ -206,6 +215,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             .has("paidInNegativeStatusAmt"));
 
     isDeleted = jsonorder.has("obposIsDeleted") && jsonorder.getBoolean("obposIsDeleted");
+    isModified = jsonorder.has("isModified") && jsonorder.getBoolean("isModified");
 
     createShipment = !isQuotation && !notpaidLayaway && !paidReceipt && !isDeleted;
     if (jsonorder.has("generateShipment")) {
@@ -214,8 +224,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     doCancelAndReplace = jsonorder.has("doCancelAndReplace")
         && jsonorder.getBoolean("doCancelAndReplace") ? true : false;
-    doCancelLayaway = jsonorder.has("cancelLayaway") && jsonorder.getBoolean("cancelLayaway") ? true
-        : false;
   }
 
   @Override
@@ -250,7 +258,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         return successMessage(jsonorder);
       }
 
-      if (jsonorder.has("id")) {
+      if (isModified) {
         order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
 
         if (order != null) {
@@ -268,7 +276,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         verifyCashupStatus(jsonorder);
       }
 
-      executeOrderLoaderPreProcessHook(orderPreProcesses, jsonorder);
+      if (!isModified) {
+        executeOrderLoaderPreProcessHook(orderPreProcesses, jsonorder);
+      } else {
+        executeOrderLoaderModifiedPreProcessHook(orderModifiedPreProcesses, jsonorder);
+      }
 
       if (jsonorder.has("deletedLines")) {
         mergeDeletedLines(jsonorder);
@@ -372,7 +384,18 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         } else {
           verifyOrderLineTax(jsonorder);
 
-          order = OBProvider.getInstance().get(Order.class);
+          if (isModified) {
+            order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+            if (order != null) {
+              // If the order exists, delete all service lines relationships to regenerate them
+              // with the information of the modified ticket
+              deleteOrderlineServiceRelations(order);
+            } else {
+              order = OBProvider.getInstance().get(Order.class);
+            }
+          } else {
+            order = OBProvider.getInstance().get(Order.class);
+          }
           createOrder(order, jsonorder);
           OBDal.getInstance().save(order);
           lineReferences = new ArrayList<OrderLine>();
@@ -552,7 +575,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
 
         // Call all OrderProcess injected.
-        executeHooks(orderProcesses, jsonorder, order, shipment, invoice);
+        if (!isModified) {
+          executeHooks(orderProcesses, jsonorder, order, shipment, invoice);
+        } else {
+          executeModifiedHooks(orderModifiedProcesses, jsonorder, order, shipment, invoice);
+        }
       } else {
         // Call all OrderProcess injected when order is a quotation
         executeHooks(quotationProcesses, jsonorder, order, shipment, invoice);
@@ -630,6 +657,17 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
+  private void executeModifiedHooks(Instance<? extends Object> hooks, JSONObject jsonorder,
+      Order order, ShipmentInOut shipment, Invoice invoice) throws Exception {
+
+    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
+      Object proc = procIter.next();
+      if (proc instanceof OrderLoaderModifiedHook) {
+        ((OrderLoaderModifiedHook) proc).exec(jsonorder, order, shipment, invoice);
+      }
+    }
+  }
+
   protected List<Object> sortHooksByPriority(Instance<? extends Object> hooks) throws Exception {
 
     List<Object> hookList = new ArrayList<Object>();
@@ -660,6 +698,17 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     for (Object proc : hookList) {
       if (proc instanceof OrderLoaderPreProcessHook) {
         ((OrderLoaderPreProcessHook) proc).exec(jsonorder);
+      }
+    }
+  }
+
+  protected void executeOrderLoaderModifiedPreProcessHook(Instance<? extends Object> hooks,
+      JSONObject jsonorder) throws Exception {
+
+    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
+      Object proc = procIter.next();
+      if (proc instanceof OrderLoaderModifiedPreProcessHook) {
+        ((OrderLoaderModifiedPreProcessHook) proc).exec(jsonorder);
       }
     }
   }
@@ -1489,13 +1538,20 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
         .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
 
+    order.getOrderLineList().clear();
     for (int i = 0; i < orderlines.length(); i++) {
 
-      OrderLine orderline = OBProvider.getInstance().get(OrderLine.class);
       JSONObject jsonOrderLine = orderlines.getJSONObject(i);
-      if (!jsonOrderLine.has("preserveId") || jsonOrderLine.getBoolean("preserveId")) {
-        orderline.setId(jsonOrderLine.getString("id"));
-        orderline.setNewOBObject(true);
+      OrderLine orderline = null;
+      if (isModified) {
+        orderline = OBDal.getInstance().get(OrderLine.class, jsonOrderLine.getString("id"));
+      }
+      if (orderline == null) {
+        orderline = OBProvider.getInstance().get(OrderLine.class);
+        if (jsonOrderLine.has("id")) {
+          orderline.setId(jsonOrderLine.getString("id"));
+          orderline.setNewOBObject(true);
+        }
       }
       if (jsonOrderLine.has("description")
           && StringUtils.length(jsonOrderLine.getString("description")) > 255) {
@@ -1507,10 +1563,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           orderline, jsonorder, jsonorder.getLong("timezoneOffset"));
       JSONPropertyToEntity.fillBobFromJSON(orderLineEntity, orderline, jsonOrderLine,
           jsonorder.getLong("timezoneOffset"));
-      if (jsonOrderLine.has("id")) {
-        orderline.setId(jsonOrderLine.getString("id"));
-        orderline.setNewOBObject(true);
-      }
+
       orderline.setActive(true);
       orderline.setSalesOrder(order);
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
@@ -1535,6 +1588,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
       }
 
+      if (!orderline.isNewOBObject()) {
+        // updating order - delete old taxes to create again
+        String deleteStr = "delete " + OrderLineTax.ENTITY_NAME //
+            + " where " + OrderLineTax.PROPERTY_SALESORDERLINE + ".id = '" //
+            + orderline.getId() + "'";
+        Query deleteQuery = OBDal.getInstance().getSession().createQuery(deleteStr);
+        deleteQuery.executeUpdate();
+      }
       JSONObject taxes = jsonOrderLine.getJSONObject("taxLines");
       @SuppressWarnings("unchecked")
       Iterator<String> itKeys = taxes.keys();
@@ -1565,6 +1626,16 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       // Discounts & Promotions
       if (jsonOrderLine.has("promotions") && !jsonOrderLine.isNull("promotions")
           && !jsonOrderLine.getString("promotions").equals("null")) {
+
+        if (!orderline.isNewOBObject()) {
+          // updating order - delete old promotions to create again
+          String deleteStr = "delete " + OrderLineOffer.ENTITY_NAME //
+              + " where " + OrderLineOffer.PROPERTY_SALESORDERLINE + ".id = '" //
+              + orderline.getId() + "'";
+          Query deleteQuery = OBDal.getInstance().getSession().createQuery(deleteStr);
+          deleteQuery.executeUpdate();
+        }
+
         JSONArray jsonPromotions = jsonOrderLine.getJSONArray("promotions");
         for (int p = 0; p < jsonPromotions.length(); p++) {
           JSONObject jsonPromotion = jsonPromotions.getJSONObject(p);
@@ -1600,6 +1671,56 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
       }
     }
+  }
+
+  protected void deleteOrderlineServiceRelations(Order order) {
+    String deleteStr = "delete " + OrderlineServiceRelation.ENTITY_NAME //
+        + " where " + OrderlineServiceRelation.PROPERTY_ID + " in (" //
+        + " select rel." + OrderlineServiceRelation.PROPERTY_ID + " from " //
+        + OrderlineServiceRelation.ENTITY_NAME + " as rel join rel." //
+        + OrderlineServiceRelation.PROPERTY_SALESORDERLINE + " as ol join ol." //
+        + OrderLine.PROPERTY_SALESORDER + " as order where order." //
+        + Order.PROPERTY_ID + " = :id)";
+    Query deleteQuery = OBDal.getInstance().getSession().createQuery(deleteStr);
+    deleteQuery.setParameter("id", order.getId());
+    deleteQuery.executeUpdate();
+  }
+
+  private AttributeSetInstance fetchAttributeSetValue(String attributeValue, String productId) {
+    AttributeSetInstance attrSetInst = null;
+    Product product = OBDal.getInstance().get(Product.class, productId);
+    try {
+      if (StringUtils.isNotEmpty(attributeValue) || StringUtils.isNotBlank(attributeValue)) {
+        OBCriteria<AttributeSetInstance> attrSICrit = OBDal.getInstance().createCriteria(
+            AttributeSetInstance.class);
+        attrSICrit.add(Restrictions.eq(AttributeSetInstance.PROPERTY_DESCRIPTION, attributeValue));
+        List<AttributeSetInstance> attrSIList = attrSICrit.list();
+        if (attrSIList.isEmpty() && attrSIList.size() == 0) {
+          attrSetInst = createAttributeSetValue(attributeValue, product.getAttributeSet());
+          return attrSetInst;
+        } else {
+          attrSetInst = attrSIList.get(0);
+          return attrSetInst;
+        }
+      } else {
+        return attrSetInst;
+      }
+    } catch (Exception e) {
+      throw new OBException(e.getMessage(), e);
+    }
+  }
+
+  private AttributeSetInstance createAttributeSetValue(String string, AttributeSet attributeSet) {
+    AttributeSetInstance newAttrSetInst = OBProvider.getInstance().get(AttributeSetInstance.class);
+    try {
+      newAttrSetInst.setAttributeSet(attributeSet);
+      newAttrSetInst.setDescription(string);
+      OBDal.getInstance().save(newAttrSetInst);
+      OBDal.getInstance().flush();
+    } catch (Exception e) {
+      throw new OBException(e.getMessage(), e);
+    }
+    return newAttrSetInst;
   }
 
   protected void createLinesForServiceProduct() throws JSONException {
@@ -1657,10 +1778,15 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
     JSONPropertyToEntity.fillBobFromJSON(orderEntity, order, jsonorder,
         jsonorder.getLong("timezoneOffset"));
-    if (jsonorder.has("id")) {
+
+    if (jsonorder.has("id") && order.getId() == null) {
       order.setId(jsonorder.getString("id"));
       order.setNewOBObject(true);
+
+      Long value = jsonorder.getLong("created");
+      order.set("creationDate", new Date(value));
     }
+
     int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
         .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
     BusinessPartner bp = order.getBusinessPartner();
@@ -1772,8 +1898,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     } else {
       order.setDocumentStatus("CO");
     }
-    Long value = jsonorder.getLong("created");
-    order.set("creationDate", new Date(value));
+
     order.setDocumentAction("--");
     order.setProcessed(true);
     order.setProcessNow(false);
@@ -1866,6 +1991,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       }
     }
 
+    if (!order.isNewOBObject()) {
+      // updating order - delete old taxes to create again
+      String deleteStr = "delete " + OrderTax.ENTITY_NAME //
+          + " where " + OrderTax.PROPERTY_SALESORDER + ".id = '" //
+          + order.getId() + "'";
+      Query deleteQuery = OBDal.getInstance().getSession().createQuery(deleteStr);
+      deleteQuery.executeUpdate();
+    }
     JSONObject taxes = jsonorder.getJSONObject("taxes");
     @SuppressWarnings("unchecked")
     Iterator<String> itKeys = taxes.keys();
@@ -2074,16 +2207,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         .valueOf(jsonorder.getDouble("payment"));
     BigDecimal amountPaidWithCredit = BigDecimal.ZERO;
 
-    FIN_PaymentSchedule paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
+    FIN_PaymentSchedule paymentSchedule;
     int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
         .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
     if (wasPaidOnCredit) {
       amountPaidWithCredit = (gross.subtract(paymentAmt)).setScale(pricePrecision,
           RoundingMode.HALF_UP);
     }
-    if (!doCancelLayaway
-        && ((!newLayaway && (notpaidLayaway || creditpaidLayaway || fullypaidLayaway))
-            || partialpaidLayaway || paidReceipt)) {
+    if (!order.getFINPaymentScheduleList().isEmpty()) {
       paymentSchedule = order.getFINPaymentScheduleList().get(0);
     } else {
       paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
@@ -2091,6 +2222,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       paymentSchedule.setNewOBObject(true);
       paymentSchedule.setCurrency(order.getCurrency());
       paymentSchedule.setOrder(order);
+    }
+    if (order.getFINPaymentScheduleList().isEmpty() || isModified) {
       paymentSchedule.setFinPaymentmethod(order.getPaymentMethod());
       // paymentSchedule.setPaidAmount(new BigDecimal(0));
       paymentSchedule.setAmount(gross.setScale(pricePrecision, RoundingMode.HALF_UP));
@@ -2108,6 +2241,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       paymentSchedule.setFINPaymentPriority(order.getFINPaymentPriority());
       OBDal.getInstance().save(paymentSchedule);
     }
+
     Boolean isInvoicePaymentScheduleNew = false;
     FIN_PaymentSchedule paymentScheduleInvoice = null;
     if (invoice != null && invoice.getGrandTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
