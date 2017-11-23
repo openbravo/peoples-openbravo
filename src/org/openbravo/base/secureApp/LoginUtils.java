@@ -639,7 +639,9 @@ public class LoginUtils {
         Set<String> allAccessibleOrgs = new HashSet<>();
 
         for (OrgTreeData org : OrgTreeData.select(connectionProvider, strRole)) {
-          allAccessibleOrgs.addAll(osp.getNaturalTree(org.adOrgId));
+          if (!allAccessibleOrgs.contains(org.adOrgId)) {
+            allAccessibleOrgs.addAll(osp.getNaturalTree(org.adOrgId));
+          }
         }
 
         strWarehouse = DefaultOptionsData.getDefaultWarehouse(connectionProvider, strClient,
