@@ -286,6 +286,7 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
   }
 
   private JSONObject requestCombo(Map<String, String> params) throws Exception {
+    params.put("inpadOrgId", "0");
     String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
         params, 200, "POST");
     JSONObject jsonResponse = new JSONObject(response);
