@@ -202,9 +202,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     newLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2;
     notpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
-        && (jsonorder.getDouble("payment") < jsonorder.getDouble("gross") || jsonorder
-            .getDouble("gross") == 0) && !jsonorder.optBoolean("paidOnCredit")
-        && !jsonorder.has("paidInNegativeStatusAmt");
+        && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
+        && !jsonorder.optBoolean("paidOnCredit") && !jsonorder.has("paidInNegativeStatusAmt");
     creditpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
         && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
         && jsonorder.optBoolean("paidOnCredit");
@@ -1684,43 +1683,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     Query deleteQuery = OBDal.getInstance().getSession().createQuery(deleteStr);
     deleteQuery.setParameter("id", order.getId());
     deleteQuery.executeUpdate();
-  }
-
-  private AttributeSetInstance fetchAttributeSetValue(String attributeValue, String productId) {
-    AttributeSetInstance attrSetInst = null;
-    Product product = OBDal.getInstance().get(Product.class, productId);
-    try {
-      if (StringUtils.isNotEmpty(attributeValue) || StringUtils.isNotBlank(attributeValue)) {
-        OBCriteria<AttributeSetInstance> attrSICrit = OBDal.getInstance().createCriteria(
-            AttributeSetInstance.class);
-        attrSICrit.add(Restrictions.eq(AttributeSetInstance.PROPERTY_DESCRIPTION, attributeValue));
-        List<AttributeSetInstance> attrSIList = attrSICrit.list();
-        if (attrSIList.isEmpty() && attrSIList.size() == 0) {
-          attrSetInst = createAttributeSetValue(attributeValue, product.getAttributeSet());
-          return attrSetInst;
-        } else {
-          attrSetInst = attrSIList.get(0);
-          return attrSetInst;
-        }
-      } else {
-        return attrSetInst;
-      }
-    } catch (Exception e) {
-      throw new OBException(e.getMessage(), e);
-    }
-  }
-
-  private AttributeSetInstance createAttributeSetValue(String string, AttributeSet attributeSet) {
-    AttributeSetInstance newAttrSetInst = OBProvider.getInstance().get(AttributeSetInstance.class);
-    try {
-      newAttrSetInst.setAttributeSet(attributeSet);
-      newAttrSetInst.setDescription(string);
-      OBDal.getInstance().save(newAttrSetInst);
-      OBDal.getInstance().flush();
-    } catch (Exception e) {
-      throw new OBException(e.getMessage(), e);
-    }
-    return newAttrSetInst;
   }
 
   protected void createLinesForServiceProduct() throws JSONException {
