@@ -182,23 +182,23 @@ public class CopyFromOrdersProcess {
     newOrderLine.setLineNo(nextLineNo());
 
     // Set Order and Order Line related Information into the new Order Line
-    CopyFromOrdersProcessUpdateOrderLineInformation processToUpdateLineInformation = new CopyFromOrdersProcessUpdateOrderLineInformation();
+    UpdateOrderLineInformation processToUpdateLineInformation = new UpdateOrderLineInformation();
     processToUpdateLineInformation.exec(processingOrder, orderLine, newOrderLine);
 
     // Update Product information and Attribute Set Instances
-    CopyFromOrdersProcessUpdateProductAndAttributes processToUpdateProductAndAttributes = new CopyFromOrdersProcessUpdateProductAndAttributes();
+    UpdateProductAndAttributes processToUpdateProductAndAttributes = new UpdateProductAndAttributes();
     processToUpdateProductAndAttributes.exec(processingOrder, orderLine, newOrderLine);
 
     // Calculate the quantities and UOM-AUM Support
-    CopyFromOrdersProcessUpdateQuantitiesAndUOMs processToUpdateQuantitiesAndUOMs = new CopyFromOrdersProcessUpdateQuantitiesAndUOMs();
+    UpdateQuantitiesAndUOMs processToUpdateQuantitiesAndUOMs = new UpdateQuantitiesAndUOMs();
     processToUpdateQuantitiesAndUOMs.exec(processingOrder, orderLine, newOrderLine);
 
     // Compute Prices and amounts
-    CopyFromOrdersProcessUpdatePricesAndAmounts processToUpdatePricesAndAmounts = new CopyFromOrdersProcessUpdatePricesAndAmounts();
+    UpdatePricesAndAmounts processToUpdatePricesAndAmounts = new UpdatePricesAndAmounts();
     processToUpdatePricesAndAmounts.exec(processingOrder, orderLine, newOrderLine);
 
     // Compute Taxes
-    CopyFromOrdersProcessUpdateTax processToUpdateTax = new CopyFromOrdersProcessUpdateTax();
+    UpdateTax processToUpdateTax = new UpdateTax();
     processToUpdateTax.exec(processingOrder, orderLine, newOrderLine);
 
     // Execute Hooks to perform custom operations

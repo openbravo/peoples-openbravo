@@ -33,8 +33,7 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 
-class CopyFromOrdersProcessUpdateOrderLineInformation implements
-    CopyFromOrdersProcessImplementationInterface {
+class UpdateOrderLineInformation implements CopyFromOrdersProcessImplementationInterface {
   private Order processingOrder;
   private OrderLine orderLine;
   private OrderLine newOrderLine;

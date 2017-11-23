@@ -31,7 +31,7 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 
-class CopyFromOrdersProcessUpdatePricesAndAmounts implements
+class UpdatePricesAndAmounts implements
     CopyFromOrdersProcessImplementationInterface {
   private OrderLine newOrderLine;
   private Order processingOrder;

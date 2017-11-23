@@ -30,8 +30,7 @@ import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.AttributeUse;
 
-class CopyFromOrdersProcessUpdateProductAndAttributes implements
-    CopyFromOrdersProcessImplementationInterface {
+class UpdateProductAndAttributes implements CopyFromOrdersProcessImplementationInterface {
 
   /**
    * Update the product and attribute set to the new order line

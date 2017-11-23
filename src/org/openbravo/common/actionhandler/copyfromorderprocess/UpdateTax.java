@@ -42,8 +42,8 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class CopyFromOrdersProcessUpdateTax implements CopyFromOrdersProcessImplementationInterface {
-  private static final Logger log = LoggerFactory.getLogger(CopyFromOrdersProcessUpdateTax.class);
+class UpdateTax implements CopyFromOrdersProcessImplementationInterface {
+  private static final Logger log = LoggerFactory.getLogger(UpdateTax.class);
 
   /**
    * Update order line tax. Throws an exception if no taxes are found.

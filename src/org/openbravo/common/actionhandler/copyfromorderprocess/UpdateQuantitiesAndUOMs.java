@@ -29,8 +29,7 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.ProductUOM;
 import org.openbravo.model.common.uom.UOM;
 
-class CopyFromOrdersProcessUpdateQuantitiesAndUOMs implements
-    CopyFromOrdersProcessImplementationInterface {
+class UpdateQuantitiesAndUOMs implements CopyFromOrdersProcessImplementationInterface {
   // Order Line that is being copied
   private OrderLine orderLine;
 
