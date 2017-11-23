@@ -111,4 +111,19 @@ public class CLFOTestDataSO_02 extends CopyLinesFromOrdersTestData {
 
   }
 
+  @Override
+  public String getTestNumber() {
+    return "02";
+  }
+
+  @Override
+  public String getTestDescription() {
+    return "Check the created line has the following information taken from it header and not from the line it is created: Order date, Schedule Delivery Date, Description.";
+  }
+
+  @Override
+  public boolean isExecuteAsQAAdmin() {
+    return true;
+  }
+
 }

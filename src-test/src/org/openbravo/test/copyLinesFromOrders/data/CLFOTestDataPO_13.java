@@ -104,4 +104,18 @@ public class CLFOTestDataPO_13 extends CopyLinesFromOrdersTestData {
     setExpectedOrderLines(expectedOrderLines);
   }
 
+  @Override
+  public String getTestNumber() {
+    return "13";
+  }
+
+  @Override
+  public String getTestDescription() {
+    return "Check created line has as SO/PO reference the order line from it was created.";
+  }
+
+  @Override
+  public boolean isExecuteAsQAAdmin() {
+    return true;
+  }
 }

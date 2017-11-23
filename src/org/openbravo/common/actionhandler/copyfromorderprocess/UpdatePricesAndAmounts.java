@@ -22,6 +22,9 @@ package org.openbravo.common.actionhandler.copyfromorderprocess;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.enterprise.context.Dependent;
+
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.currency.Currency;
@@ -31,10 +34,16 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 
-class UpdatePricesAndAmounts implements
-    CopyFromOrdersProcessImplementationInterface {
+@Dependent
+@Qualifier(CopyFromOrdersProcessImplementationInterface.COPY_FROM_ORDER_PROCESS_HOOK_QUALIFIER)
+class UpdatePricesAndAmounts implements CopyFromOrdersProcessImplementationInterface {
   private OrderLine newOrderLine;
   private Order processingOrder;
+
+  @Override
+  public int getOrder() {
+    return -20;
+  }
 
   /**
    * Updates prices and amounts. If the product has a product price in the order price list then all

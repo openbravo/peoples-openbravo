@@ -41,4 +41,20 @@ public class CLFOTestDataPerformance extends CopyLinesFromOrdersTestData {
     generateDataForPerformanceTest(this.orderCount, this.linesCountPerOrder);
   }
 
+  @Override
+  public String getTestNumber() {
+    return "09";
+  }
+
+  @Override
+  public String getTestDescription() {
+    return "Create " + orderCount + " Orders with " + linesCountPerOrder
+        + " lines each. Copy From all 10 Orders (50 lines).";
+  }
+
+  @Override
+  public boolean isExecuteAsQAAdmin() {
+    return true;
+  }
+
 }

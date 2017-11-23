@@ -20,6 +20,8 @@
 package org.openbravo.common.actionhandler.copyfromorderprocess;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.enterprise.inject.Any;
@@ -181,27 +183,7 @@ public class CopyFromOrdersProcess {
     // Always increment the lineNo when adding a new order line
     newOrderLine.setLineNo(nextLineNo());
 
-    // Set Order and Order Line related Information into the new Order Line
-    UpdateOrderLineInformation processToUpdateLineInformation = new UpdateOrderLineInformation();
-    processToUpdateLineInformation.exec(processingOrder, orderLine, newOrderLine);
-
-    // Update Product information and Attribute Set Instances
-    UpdateProductAndAttributes processToUpdateProductAndAttributes = new UpdateProductAndAttributes();
-    processToUpdateProductAndAttributes.exec(processingOrder, orderLine, newOrderLine);
-
-    // Calculate the quantities and UOM-AUM Support
-    UpdateQuantitiesAndUOMs processToUpdateQuantitiesAndUOMs = new UpdateQuantitiesAndUOMs();
-    processToUpdateQuantitiesAndUOMs.exec(processingOrder, orderLine, newOrderLine);
-
-    // Compute Prices and amounts
-    UpdatePricesAndAmounts processToUpdatePricesAndAmounts = new UpdatePricesAndAmounts();
-    processToUpdatePricesAndAmounts.exec(processingOrder, orderLine, newOrderLine);
-
-    // Compute Taxes
-    UpdateTax processToUpdateTax = new UpdateTax();
-    processToUpdateTax.exec(processingOrder, orderLine, newOrderLine);
-
-    // Execute Hooks to perform custom operations
+    // Execute Hooks to perform operations
     executeHooks(orderLine, newOrderLine);
 
     long endTime = System.currentTimeMillis();
@@ -219,11 +201,28 @@ public class CopyFromOrdersProcess {
 
   private void executeHooks(final OrderLine orderLine, OrderLine newOrderLine) {
     if (copyFromOrdersProcessHooks != null) {
+      final List<CopyFromOrdersProcessImplementationInterface> hooks = new ArrayList<>();
       for (CopyFromOrdersProcessImplementationInterface hook : copyFromOrdersProcessHooks
           .select(new ComponentProvider.Selector(
               CopyFromOrdersProcessImplementationInterface.COPY_FROM_ORDER_PROCESS_HOOK_QUALIFIER))) {
+        if (hook != null) {
+          hooks.add(hook);
+        }
+      }
+
+      Collections.sort(hooks, new CopyFromOrdersHookComparator());
+      for (CopyFromOrdersProcessImplementationInterface hook : hooks) {
         hook.exec(processingOrder, orderLine, newOrderLine);
       }
+    }
+  }
+
+  private class CopyFromOrdersHookComparator implements
+      Comparator<CopyFromOrdersProcessImplementationInterface> {
+    @Override
+    public int compare(CopyFromOrdersProcessImplementationInterface a,
+        CopyFromOrdersProcessImplementationInterface b) {
+      return a.getOrder() < b.getOrder() ? -1 : a.getOrder() == b.getOrder() ? 0 : 1;
     }
   }
 

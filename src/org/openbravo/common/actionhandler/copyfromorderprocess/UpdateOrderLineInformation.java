@@ -21,8 +21,11 @@ package org.openbravo.common.actionhandler.copyfromorderprocess;
 
 import java.util.Set;
 
+import javax.enterprise.context.Dependent;
+
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
@@ -33,10 +36,17 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 
+@Dependent
+@Qualifier(CopyFromOrdersProcessImplementationInterface.COPY_FROM_ORDER_PROCESS_HOOK_QUALIFIER)
 class UpdateOrderLineInformation implements CopyFromOrdersProcessImplementationInterface {
   private Order processingOrder;
   private OrderLine orderLine;
   private OrderLine newOrderLine;
+
+  @Override
+  public int getOrder() {
+    return -50;
+  }
 
   /**
    * Updates the Information of the new Order Line that is related with the old Order Line and Order

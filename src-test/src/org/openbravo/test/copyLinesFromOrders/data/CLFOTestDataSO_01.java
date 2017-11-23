@@ -109,4 +109,19 @@ public class CLFOTestDataSO_01 extends CopyLinesFromOrdersTestData {
     setUOMPreference(CLFOTestConstants.DISABLE_AUM, true);
   }
 
+  @Override
+  public String getTestNumber() {
+    return "01";
+  }
+
+  @Override
+  public String getTestDescription() {
+    return "Check created line has as SO/PO reference the order line from it was created.";
+  }
+
+  @Override
+  public boolean isExecuteAsQAAdmin() {
+    return true;
+  }
+
 }

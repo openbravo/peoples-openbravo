@@ -111,4 +111,19 @@ public class CLFOTestDataPO_17 extends CopyLinesFromOrdersTestData {
     setExpectedOrderLines(expectedOrderLines);
   }
 
+  @Override
+  public String getTestNumber() {
+    return "17";
+  }
+
+  @Override
+  public String getTestDescription() {
+    return "Check that created line has as organization: If the Organization of the line that is being copied belongs to the child tree of the Organization of the document header of the new line, use the organization of the line being copied, else use the organization of the document header of the new line. - Second Case";
+  }
+
+  @Override
+  public boolean isExecuteAsQAAdmin() {
+    return false;
+  }
+
 }

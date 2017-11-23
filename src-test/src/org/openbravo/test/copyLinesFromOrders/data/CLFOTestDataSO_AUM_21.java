@@ -117,5 +117,20 @@ public class CLFOTestDataSO_AUM_21 extends CopyLinesFromOrdersTestData {
 
   public void applyTestSettingsBeforeExecuteProcess() {
     setUOMPreference(CLFOTestConstants.ENABLE_AUM, false);
-  };
+  }
+
+  @Override
+  public String getTestNumber() {
+    return "21";
+  }
+
+  @Override
+  public String getTestDescription() {
+    return "Check that created line has prices correctly computed when is copied a product to an order with a price list doesn't including taxes from another including taxes.";
+  }
+
+  @Override
+  public boolean isExecuteAsQAAdmin() {
+    return true;
+  }
 }

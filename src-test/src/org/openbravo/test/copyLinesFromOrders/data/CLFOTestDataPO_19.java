@@ -105,4 +105,19 @@ public class CLFOTestDataPO_19 extends CopyLinesFromOrdersTestData {
     setExpectedOrderLines(expectedOrderLines);
   }
 
+  @Override
+  public String getTestNumber() {
+    return "19";
+  }
+
+  @Override
+  public String getTestDescription() {
+    return "Check that created line has prices correctly computed when is copied a product to an order with price list including taxes from another not including taxes.";
+  }
+
+  @Override
+  public boolean isExecuteAsQAAdmin() {
+    return true;
+  }
+
 }

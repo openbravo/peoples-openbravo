@@ -144,4 +144,19 @@ public class CLFOTestDataSO_07 extends CopyLinesFromOrdersTestData {
     priceListVersion.getPricingProductPriceList().add(productPrice);
     OBDal.getInstance().flush();
   }
+
+  @Override
+  public String getTestNumber() {
+    return "07";
+  }
+
+  @Override
+  public String getTestDescription() {
+    return "Check that created line has prices correctly computed when is copied a product to an order with price list including taxes from another not including taxes.";
+  }
+
+  @Override
+  public boolean isExecuteAsQAAdmin() {
+    return true;
+  }
 }

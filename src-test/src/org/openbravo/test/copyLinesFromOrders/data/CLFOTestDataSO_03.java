@@ -106,4 +106,19 @@ public class CLFOTestDataSO_03 extends CopyLinesFromOrdersTestData {
     setExpectedOrderLines(expectedOrderLines);
   }
 
+  @Override
+  public String getTestNumber() {
+    return "03";
+  }
+
+  @Override
+  public String getTestDescription() {
+    return "Check the created line has the header's business partner as BP. And if header has partner address defined then it is used as BP address or the last address created for the header's BP.";
+  }
+
+  @Override
+  public boolean isExecuteAsQAAdmin() {
+    return true;
+  }
+
 }

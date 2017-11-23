@@ -21,6 +21,7 @@ package org.openbravo.common.actionhandler.copyfromorderprocess;
 
 import java.io.IOException;
 
+import javax.enterprise.context.Dependent;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,6 +30,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Tax;
@@ -42,8 +44,15 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Dependent
+@Qualifier(CopyFromOrdersProcessImplementationInterface.COPY_FROM_ORDER_PROCESS_HOOK_QUALIFIER)
 class UpdateTax implements CopyFromOrdersProcessImplementationInterface {
   private static final Logger log = LoggerFactory.getLogger(UpdateTax.class);
+
+  @Override
+  public int getOrder() {
+    return -10;
+  }
 
   /**
    * Update order line tax. Throws an exception if no taxes are found.

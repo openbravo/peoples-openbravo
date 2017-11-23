@@ -353,4 +353,19 @@ public class CLFOTestDataPO_18 extends CopyLinesFromOrdersTestData {
     OBDal.getInstance().flush();
     return attribute;
   }
+
+  @Override
+  public String getTestNumber() {
+    return "18";
+  }
+
+  @Override
+  public String getTestDescription() {
+    return "Check that created line has the same product and attributes than the line from it was created from.";
+  }
+
+  @Override
+  public boolean isExecuteAsQAAdmin() {
+    return true;
+  }
 }

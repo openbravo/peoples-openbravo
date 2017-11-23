@@ -22,31 +22,55 @@ package org.openbravo.common.actionhandler.copyfromorderprocess;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 
+/**
+ * Interface to be implemented by the hooks to be executed on the Copy From Orders process.
+ * 
+ * Example of a hook:
+ * 
+ * <pre>
+ * {@code
+ *  package org.openbravo.advpaymentmngt.utility;
+ *  import javax.enterprise.context.Dependent;
+ *  import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+ *  import org.openbravo.common.actionhandler.copyfromorderprocess.CopyFromOrdersProcessImplementationInterface;
+ *  import org.openbravo.model.common.order.Order;
+ *  import org.openbravo.model.common.order.OrderLine;
+ * 
+ *  @Dependent
+ *  @Qualifier(CopyFromOrdersProcessImplementationInterface.COPY_FROM_ORDER_PROCESS_HOOK_QUALIFIER)
+ *  public class TestHook implements CopyFromOrdersProcessImplementationInterface {
+ * 
+ *  @Override
+ *  public int getOrder() {
+ *    return 10;
+ *  }
+ * 
+ *  @Override
+ *  public void exec(Order processingOrder, OrderLine orderLine, OrderLine newOrderLine) {
+ *    newOrderLine.setDescription("Test");
+ *  }
+ * }
+ * </pre>
+ *
+ */
 public interface CopyFromOrdersProcessImplementationInterface {
   public static final String COPY_FROM_ORDER_PROCESS_HOOK_QUALIFIER = "CopyFromOrderProcessHookQualifier";
 
-  public void exec(final Order processingOrder, final OrderLine orderLine, OrderLine newOrderLine);
+  /**
+   * Returns the order when the concrete hook will be implemented. A positive value will execute the
+   * hook after the core's logic
+   */
+  public int getOrder();
 
-  // Example of a hook:
-
-  // package org.openbravo.advpaymentmngt.utility;
-  //
-  // import javax.enterprise.context.Dependent;
-  //
-  // import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-  // import
-  // org.openbravo.common.actionhandler.copyfromorderprocess.CopyFromOrdersProcessImplementationInterface;
-  // import org.openbravo.model.common.order.Order;
-  // import org.openbravo.model.common.order.OrderLine;
-  //
-  // @Dependent
-  // @Qualifier(CopyFromOrdersProcessImplementationInterface.COPY_FROM_ORDER_PROCESS_HOOK_QUALIFIER)
-  // public class TestHook implements CopyFromOrdersProcessImplementationInterface {
-  //
-  // @Override
-  // public void exec(Order processingOrder, OrderLine orderLine, OrderLine newOrderLine) {
-  // newOrderLine.setDescription("Test");
-  //
-  // }
-
+  /**
+   * Executes the hook logic on the Copy From Orders process
+   * 
+   * @param newOrder
+   *          the new order we are creating
+   * @param oldOrderLine
+   *          the order line from which we are creating the line
+   * @param newOrderLine
+   *          the new line created within the newOrder
+   */
+  public void exec(final Order newOrder, final OrderLine oldOrderLine, OrderLine newOrderLine);
 }

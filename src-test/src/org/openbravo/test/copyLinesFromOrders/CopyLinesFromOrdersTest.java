@@ -27,7 +27,6 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,11 +34,13 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.codehaus.jettison.json.JSONArray;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.base.weld.test.ParameterCdiTest;
+import org.openbravo.base.weld.test.ParameterCdiTestRule;
+import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.common.actionhandler.copyfromorderprocess.CopyFromOrdersProcess;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -59,7 +60,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.PriceList;
-import org.openbravo.test.base.OBBaseTest;
 import org.openbravo.test.copyLinesFromOrders.data.CLFOTestConstants;
 import org.openbravo.test.copyLinesFromOrders.data.CLFOTestDataPO_13;
 import org.openbravo.test.copyLinesFromOrders.data.CLFOTestDataPO_14;
@@ -93,8 +93,7 @@ import org.slf4j.LoggerFactory;
  * @author Mark
  *
  */
-@RunWith(Parameterized.class)
-public class CopyLinesFromOrdersTest extends OBBaseTest {
+public class CopyLinesFromOrdersTest extends WeldBaseTest {
   final static private Logger log = LoggerFactory.getLogger(CopyLinesFromOrdersTest.class);
 
   // User Openbravo
@@ -114,7 +113,7 @@ public class CopyLinesFromOrdersTest extends OBBaseTest {
   private final String FB_ROLE_ID = "42D0EEB1C66F497A90DD526DC597E6F0";
 
   // Test information
-  private CopyLinesFromOrdersTestData data;
+  // private CopyLinesFromOrdersTestData data;
   private String testNumber;
   private String testDescription;
   private boolean executeAsQAAdmin;
@@ -132,12 +131,13 @@ public class CopyLinesFromOrdersTest extends OBBaseTest {
   // Expected order lines data
   private HashMap<String, String[]> expectedOrderLinesData;
 
-  public CopyLinesFromOrdersTest(String testNumber, String testDescription,
-      CopyLinesFromOrdersTestData data, boolean executeAsQAAdmin) {
-    this.testNumber = testNumber;
-    this.testDescription = testDescription;
-    this.data = data;
-    this.executeAsQAAdmin = executeAsQAAdmin;
+  public CopyLinesFromOrdersTest() {
+  }
+
+  private void setData() {
+    this.testNumber = data.getTestNumber();
+    this.testDescription = data.getTestDescription();
+    this.executeAsQAAdmin = data.isExecuteAsQAAdmin();
     this.ordersCopiedFrom = data.getOrdersCopiedFrom();
     this.orderLinesCopiedFrom = data.getOrderLinesCopiedFrom();
     this.processedOrder = data.getOrder();
@@ -145,115 +145,26 @@ public class CopyLinesFromOrdersTest extends OBBaseTest {
     this.expectedOrderLinesData = data.getExpectedOrderLines();
   }
 
-  /** Parameterized possible combinations for Copy Lines From Orders process */
-  @Parameters(name = "idx:{0} name:{1}")
-  public static Collection<Object[]> params() {
-    return Arrays
-        .asList(new Object[][] {
-            { "01",
-                "Check created line has as SO/PO reference the order line from it was created.",
-                new CLFOTestDataSO_01(), true //
-            },
-            {
-                "02",
-                "Check the created line has the following information taken from it header and not from the line it is created: Order date, Schedule Delivery Date, Description.",
-                new CLFOTestDataSO_02(), true //
-            },
-            {
-                "03",
-                "Check the created line has the header's business partner as BP. And if header has partner address defined then it is used as BP address or the last address created for the header's BP.",
-                new CLFOTestDataSO_03(), true //
-            },
-            {
-                "04",
-                "Check that created line has as organization: If the Organization of the line that is being copied belongs to the child tree of the Organization of the document header of the new line, use the organization of the line being copied, else use the organization of the document header of the new line. - First Case",
-                new CLFOTestDataSO_04(), false //
-            },
-            {
-                "05",
-                "Check that created line has as organization: If the Organization of the line that is being copied belongs to the child tree of the Organization of the document header of the new line, use the organization of the line being copied, else use the organization of the document header of the new line. - Second Case",
-                new CLFOTestDataSO_05(), false //
-            },
-            {
-                "06",
-                "Check that created line has the same product and attributes than the line from it was created from.",
-                new CLFOTestDataSO_06(), true //
-            },
-            {
-                "07",
-                "Check that created line has prices correctly computed when is copied a product to an order with price list including taxes from another not including taxes.",
-                new CLFOTestDataSO_07(), true //
-            },
-            {
-                "08",
-                "Check that created line has prices correctly computed when is copied a product to an order with a price list doesn't including taxes from another including taxes.",
-                new CLFOTestDataSO_08(), true //
-            },
-            { "09", "Create 10 Orders with 5 lines each. Copy From all 10 Orders (50 lines).",
-                new CLFOTestDataPerformance(10, 5), true //
-            },
-            // { "10",
-            // "Create 100 Orders with 5 lines each. Copy From all 100 Orders (500 lines).",
-            // new CLFOTestDataPerformance(100, 5), true //
-            // }, //
-            // { "11", "Create 1 Order with 1000 lines.", new CLFOTestDataPerformance(1, 1000),
-            // true
-            // },
-            // { "12",
-            // "Create 100 Orders with 1000 lines each. Copy From all 100 Orders (100000 lines).",
-            // new CLFOTestDataPerformance(100, 1000), true //
-            // }, // Purchase flows
-            { "13",
-                "Check created line has as SO/PO reference the order line from it was created.",
-                new CLFOTestDataPO_13(), true //
-            },
-            {
-                "14",
-                "Check the created line has the following information taken from it header and not from the line it is created: Order date, Schedule Delivery Date, Description..",
-                new CLFOTestDataPO_14(), true //
-            },
-            {
-                "15",
-                "Check the created line has the header's business partner as BP. And if header has partner address defined then it is used as BP address or the last address created for the header's BP.",
-                new CLFOTestDataPO_15(), true //
-            },
-            {
-                "16",
-                "Check that created line has as organization: If the Organization of the line that is being copied belongs to the child tree of the Organization of the document header of the new line, use the organization of the line being copied, else use the organization of the document header of the new line. - First Case",
-                new CLFOTestDataPO_16(), false //
-            },
-            {
-                "17",
-                "Check that created line has as organization: If the Organization of the line that is being copied belongs to the child tree of the Organization of the document header of the new line, use the organization of the line being copied, else use the organization of the document header of the new line. - Second Case",
-                new CLFOTestDataPO_17(), false //
-            },
-            {
-                "18",
-                "Check that created line has the same product and attributes than the line from it was created from.",
-                new CLFOTestDataPO_18(), true //
-            },
-            {
-                "19",
-                "Check that created line has prices correctly computed when is copied a product to an order with price list including taxes from another not including taxes.",
-                new CLFOTestDataPO_19(), true //
-            },
-            {
-                "20",
-                "Check that created line has prices correctly computed when is copied a product to an order with a price list doesn't including taxes from another including taxes.",
-                new CLFOTestDataPO_20(), true //
-            },
-            {
-                "21",
-                "Check that created line has prices correctly computed when is copied a product to an order with a price list doesn't including taxes from another including taxes.",
-                new CLFOTestDataSO_AUM_21(), true //
-            },
-            {
-                "22",
-                "Check created line has in account the AUM preference is enabled or not. Create from an order created with the AUM preference enabled, then Disable the AUM preference and create from the order.",
-                new CLFOTestDataSO_AUM_22(), true //
-            },//
-        });
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
+    setData();
   }
+
+  public static final List<CopyLinesFromOrdersTestData> PARAMS = Arrays.asList(
+      new CLFOTestDataSO_01(), new CLFOTestDataSO_02(), new CLFOTestDataSO_03(),
+      new CLFOTestDataSO_04(), new CLFOTestDataSO_05(), new CLFOTestDataSO_06(),
+      new CLFOTestDataSO_07(), new CLFOTestDataSO_08(), new CLFOTestDataPerformance(10, 5),
+      new CLFOTestDataPO_13(), new CLFOTestDataPO_14(), new CLFOTestDataPO_15(),
+      new CLFOTestDataPO_16(), new CLFOTestDataPO_17(), new CLFOTestDataPO_18(),
+      new CLFOTestDataPO_19(), new CLFOTestDataPO_20(), new CLFOTestDataSO_AUM_21(),
+      new CLFOTestDataSO_AUM_22());
+
+  @Rule
+  public ParameterCdiTestRule<CopyLinesFromOrdersTestData> parameterValuesRule = new ParameterCdiTestRule<CopyLinesFromOrdersTestData>(
+      PARAMS);
+
+  private @ParameterCdiTest CopyLinesFromOrdersTestData data;
 
   /**
    * Execute the test with the current data
@@ -335,7 +246,8 @@ public class CopyLinesFromOrdersTest extends OBBaseTest {
    * @param ordersFrom
    */
   private void executeCopyLinesFromOrdersProcess(Order processingOrder, List<Order> ordersFrom) {
-    CopyFromOrdersProcess copyFromOrdersProcess = new CopyFromOrdersProcess();
+    CopyFromOrdersProcess copyFromOrdersProcess = WeldUtils
+        .getInstanceFromStaticBeanManager(CopyFromOrdersProcess.class);
     JSONArray orders = createJSONFromOrders(ordersFrom);
     long startTime = System.currentTimeMillis();
     copyFromOrdersProcess.copyOrderLines(processingOrder, orders);

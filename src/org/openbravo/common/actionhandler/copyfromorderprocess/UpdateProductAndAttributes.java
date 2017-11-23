@@ -21,7 +21,10 @@ package org.openbravo.common.actionhandler.copyfromorderprocess;
 
 import java.util.List;
 
+import javax.enterprise.context.Dependent;
+
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
@@ -30,7 +33,14 @@ import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.AttributeUse;
 
+@Dependent
+@Qualifier(CopyFromOrdersProcessImplementationInterface.COPY_FROM_ORDER_PROCESS_HOOK_QUALIFIER)
 class UpdateProductAndAttributes implements CopyFromOrdersProcessImplementationInterface {
+
+  @Override
+  public int getOrder() {
+    return -40;
+  }
 
   /**
    * Update the product and attribute set to the new order line

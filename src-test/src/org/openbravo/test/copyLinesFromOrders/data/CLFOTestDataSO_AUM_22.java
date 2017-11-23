@@ -117,5 +117,20 @@ public class CLFOTestDataSO_AUM_22 extends CopyLinesFromOrdersTestData {
 
   public void applyTestSettingsBeforeExecuteProcess() {
     setUOMPreference(CLFOTestConstants.DISABLE_AUM, false);
-  };
+  }
+
+  @Override
+  public String getTestNumber() {
+    return "22";
+  }
+
+  @Override
+  public String getTestDescription() {
+    return "Check created line has in account the AUM preference is enabled or not. Create from an order created with the AUM preference enabled, then Disable the AUM preference and create from the order.";
+  }
+
+  @Override
+  public boolean isExecuteAsQAAdmin() {
+    return true;
+  }
 }

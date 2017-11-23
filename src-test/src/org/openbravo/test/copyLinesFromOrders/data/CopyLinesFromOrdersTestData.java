@@ -38,6 +38,11 @@ import org.openbravo.model.common.plm.ProductAUM;
 import org.openbravo.model.common.uom.UOM;
 
 public abstract class CopyLinesFromOrdersTestData {
+  public abstract String getTestNumber();
+
+  public abstract String getTestDescription();
+
+  public abstract boolean isExecuteAsQAAdmin();
 
   /**
    * This array will contain all the orders to be copied.

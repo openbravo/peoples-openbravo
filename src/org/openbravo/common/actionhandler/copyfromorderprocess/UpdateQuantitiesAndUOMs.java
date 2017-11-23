@@ -21,7 +21,10 @@ package org.openbravo.common.actionhandler.copyfromorderprocess;
 
 import java.math.BigDecimal;
 
+import javax.enterprise.context.Dependent;
+
 import org.apache.commons.lang.StringUtils;
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.order.Order;
@@ -29,9 +32,16 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.ProductUOM;
 import org.openbravo.model.common.uom.UOM;
 
+@Dependent
+@Qualifier(CopyFromOrdersProcessImplementationInterface.COPY_FROM_ORDER_PROCESS_HOOK_QUALIFIER)
 class UpdateQuantitiesAndUOMs implements CopyFromOrdersProcessImplementationInterface {
   // Order Line that is being copied
   private OrderLine orderLine;
+
+  @Override
+  public int getOrder() {
+    return -30;
+  }
 
   /**
    * Calculation of quantities and UOM-AUM Support
