@@ -573,6 +573,11 @@ enyo.kind({
     this.model.get('order').on('change:id', function () {
       this.disabledChanged(false);
     }, this);
+    this.model.get('order').get('lines').on('add', function () {
+      if (this.disabled) {
+        this.disabledChanged(false);
+      }
+    }, this);
     // the button state must be set only once, in the initialization
     this.setDisabled(true);
   }

@@ -114,7 +114,7 @@
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <column name="USEEMBEDEDBARCODESCANNER" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
+        <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_DOCTYPE_QUOT_ID">
