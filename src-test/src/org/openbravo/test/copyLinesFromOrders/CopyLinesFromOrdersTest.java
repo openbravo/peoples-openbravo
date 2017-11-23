@@ -35,7 +35,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.codehaus.jettison.json.JSONArray;
-import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -43,9 +42,8 @@ import org.junit.runners.Parameterized.Parameters;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.common.actionhandler.copyfromorderprocess.CopyFromOrdersProcess;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.domain.Preference;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.currency.Currency;
@@ -415,7 +413,7 @@ public class CopyLinesFromOrdersTest extends OBBaseTest {
         line.getAttributeSetInstanceId()) : null;
     UOM operativeUOM = null;
     BigDecimal operativeQuantity = BigDecimal.ZERO;
-    if (isUOMManagementEnabled()) {
+    if (UOMUtil.isUomManagementEnabled()) {
       if (StringUtils.isEmpty(line.getOperativeUOMId())) {
         operativeUOM = OBDal.getInstance().getProxy(UOM.class, line.getUomId());
         operativeQuantity = line.getOrderedQuantity();
@@ -450,7 +448,7 @@ public class CopyLinesFromOrdersTest extends OBBaseTest {
     testOrderLine.setProduct(product);
     testOrderLine.setUOM(uom);
     testOrderLine.setOrderedQuantity(orderedQuantity);
-    if (isUOMManagementEnabled()) {
+    if (UOMUtil.isUomManagementEnabled()) {
       testOrderLine.setOperativeUOM(operativeUOM);
       testOrderLine.setOperativeQuantity(operativeQuantity);
     }
@@ -609,7 +607,7 @@ public class CopyLinesFromOrdersTest extends OBBaseTest {
         }
 
         // Check AUM
-        if (isUOMManagementEnabled()) {
+        if (UOMUtil.isUomManagementEnabled()) {
           BigDecimal operativeQty = orderLineCopied.getOperativeQuantity();
           assertThat(testNumber + ". Wrong Operative Qty = " + operativeQty + "). Was expected "
               + expectedOperativeQty, operativeQty, comparesEqualTo(new BigDecimal(
@@ -621,12 +619,5 @@ public class CopyLinesFromOrdersTest extends OBBaseTest {
         }
       }
     }
-  }
-
-  private boolean isUOMManagementEnabled() {
-    OBCriteria<Preference> qPref = OBDal.getInstance().createCriteria(Preference.class);
-    qPref.add(Restrictions.eq(Preference.PROPERTY_PROPERTY, "UomManagement"));
-    qPref.add(Restrictions.eq(Preference.PROPERTY_SEARCHKEY, "Y"));
-    return !qPref.list().isEmpty();
   }
 }
