@@ -351,17 +351,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    * Returns the legal entities of the client.
    */
   public List<Organization> getLegalEntitiesList() {
-    StringBuffer where = new StringBuffer();
-    where.append(" as org");
-    where.append(" join org." + Organization.PROPERTY_ORGANIZATIONTYPE + " as orgType");
-    where.append(" where org." + Organization.PROPERTY_CLIENT + ".id = :client");
-    where.append("   and orgType." + OrganizationType.PROPERTY_LEGALENTITY + " = true");
-    OBQuery<Organization> orgQry = OBDal.getInstance().createQuery(Organization.class,
-        where.toString());
-    orgQry.setFilterOnReadableClients(false);
-    orgQry.setFilterOnReadableOrganization(false);
-    orgQry.setNamedParameter("client", clientId);
-    return orgQry.list();
+    return getLegalEntitiesListForSelectedClient(clientId);
   }
 
   /*
