@@ -20,6 +20,7 @@
 package org.openbravo.client.application.navigationbarcomponents;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,10 +117,13 @@ public class RoleInfo {
     Query orgWarehouses = OBDal.getInstance().getSession().createQuery(hql.toString());
     orgWarehouses.setParameterList("orgList", getOrganizations().keySet());
     orgWarehouses.setString("clientId", clientId);
+    Set<String> naturalTree = new HashSet<>(0);
     for (Object entry : orgWarehouses.list()) {
       RoleWarehouseInfo warehouseInfo = new RoleWarehouseInfo((Object[]) entry);
       for (String orgId : organizationWarehouses.keySet()) {
-        Set<String> naturalTree = getOrganizationStructureProvider().getNaturalTree(orgId);
+        if (!naturalTree.contains(orgId)) {
+          naturalTree = getOrganizationStructureProvider().getNaturalTree(orgId);
+        }
         if (naturalTree.contains(warehouseInfo.getWarehouseOrganizationId())) {
           organizationWarehouses.get(orgId).add(warehouseInfo);
         }
