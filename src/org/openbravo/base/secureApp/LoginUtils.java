@@ -60,15 +60,16 @@ public class LoginUtils {
   }
 
   /**
-   * Returns a userId which matches the login and password. If no user is found then null is returned. The combination of login
-   * and password is used to find the user.
+   * Returns a userId which matches the login and password. If no user is found then null is
+   * returned. The combination of login and password is used to find the user.
    * 
    * Blocking users is taking into account
    * 
    * Note that only active users are returned.
    * 
    * @param connectionProvider
-   *          , see the {@link DalConnectionProvider} for an instance of a ConnectionProvider for the DAL.
+   *          , see the {@link DalConnectionProvider} for an instance of a ConnectionProvider for
+   *          the DAL.
    * @param login
    *          the login
    * @param unHashedPassword
@@ -97,7 +98,8 @@ public class LoginUtils {
   }
 
   /**
-   * Similar to {@link LoginUtils#getValidUserId(ConnectionProvider, String, String)} but not blocking user accounts.
+   * Similar to {@link LoginUtils#getValidUserId(ConnectionProvider, String, String)} but not
+   * blocking user accounts.
    * 
    */
   public static String checkUserPassword(ConnectionProvider connectionProvider, String login,
@@ -424,7 +426,8 @@ public class LoginUtils {
   }
 
   /**
-   * Obtains defaults defined for a user and throws DefaultValidationException in case they are not correct.
+   * Obtains defaults defined for a user and throws DefaultValidationException in case they are not
+   * correct.
    */
   public static RoleDefaults getLoginDefaults(String strUserAuth, String role, ConnectionProvider cp)
       throws ServletException, DefaultValidationException {
