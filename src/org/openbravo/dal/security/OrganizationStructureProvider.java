@@ -221,7 +221,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     initialize();
 
     OrgNode node = orgNodes.get(orgId);
-    return (node == null || node.getParent() == null) ? null : node.getParent().getNodeId();
+    return node == null ? null : node.getParentNodeId();
   }
 
   /**
@@ -303,7 +303,6 @@ public class OrganizationStructureProvider implements OBNotSingleton {
   class OrgNode {
     private String nodeId;
     private String parentNodeId;
-    private OrgNode parent;
     private List<String> children = new ArrayList<>();
 
     void addChild(String childId) {
@@ -317,7 +316,6 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       for (final OrgNode on : nodes) {
         if (on.getNodeId().equals(parentNodeId)) {
           on.addChild(nodeId);
-          setParent(on);
           break;
         }
       }
@@ -334,14 +332,6 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     public void setTreeNodeData(String nodeId, String parentNodeId) {
       this.nodeId = nodeId;
       this.parentNodeId = parentNodeId;
-    }
-
-    public OrgNode getParent() {
-      return parent;
-    }
-
-    public void setParent(OrgNode parent) {
-      this.parent = parent;
     }
 
     public List<String> getChildren() {
