@@ -691,7 +691,7 @@ public class UsedByLink extends HttpSecureAppServlet {
         linkedTableId = entity.getTableId();
         linkedTableObject = OBDal.getInstance().get(Table.class, linkedTableId);
         dataOriginType = linkedTableObject.getDataOriginType();
-        if (!"TABLE".equals(dataOriginType.toUpperCase())) {
+        if (!"TABLE".equalsIgnoreCase(dataOriginType)) {
           // Datasource tables are skipped
           continue;
         }
