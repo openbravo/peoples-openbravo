@@ -413,6 +413,8 @@ enyo.kind({
     }, {
       tag: 'li',
       components: [{
+        name: 'injectedFooter'
+      }, {
         style: 'padding: 10px; border-top: 1px solid #cccccc; min-height: 40px;',
         components: [{
           kind: 'btninvoice',
@@ -488,6 +490,17 @@ enyo.kind({
     }
     this.$.listOrderLines.scrollAreaMaxHeight = scrollMax + 'px';
     this.$.lblTotalPayment.setContent(OB.I18N.getLabel('OBPOS_LblPaymentBreakdown'));
+
+    // Inject the footer components
+    var prop;
+    for (prop in OB.POS.ORDERFOOTER) {
+      if (OB.POS.ORDERFOOTER.hasOwnProperty(prop)) {
+        this.$.injectedFooter.createComponent({
+          kind: OB.POS.ORDERFOOTER[prop],
+          name: prop
+        }).render();
+      }
+    }
   },
   checkBoxBehavior: function (inSender, inEvent) {
     if (inEvent.status) {
