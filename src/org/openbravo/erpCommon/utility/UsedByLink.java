@@ -383,40 +383,45 @@ public class UsedByLink extends HttpSecureAppServlet {
         for (int i = 0; i < data.length; i++) {
           if (log4j.isDebugEnabled())
             log4j.debug("***Referenced tab: " + data[i].adTabId);
-          final UsedByLinkData[] dataRef = UsedByLinkData.windowRef(this, data[i].adTabId);
-          if (dataRef == null || dataRef.length == 0)
-            continue;
-          String strWhereClause = getWhereClause(vars, strWindow, dataRef[0].whereclause);
-          if (log4j.isDebugEnabled())
-            log4j.debug("***   Referenced where clause (1): " + strWhereClause);
-          strWhereClause += getAditionalWhereClause(vars, strWindow, data[i].adTabId,
-              data[i].tablename, keyColumn, data[i].columnname,
-              UsedByLinkData.getTabTableName(this, tableId));
-          if (log4j.isDebugEnabled())
-            log4j.debug("***   Referenced where clause (2): " + strWhereClause);
-          if (!nonAccessible) {
-            final String strNonAccessibleWhere = strWhereClause + " AND AD_ORG_ID NOT IN ("
-                + vars.getUserOrg() + ")";
-            if (!UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyId,
-                strNonAccessibleWhere).equals("0")) {
-              nonAccessible = true;
+          try {
+            final UsedByLinkData[] dataRef = UsedByLinkData.windowRef(this, data[i].adTabId);
+            if (dataRef == null || dataRef.length == 0)
+              continue;
+            String strWhereClause = getWhereClause(vars, strWindow, dataRef[0].whereclause);
+            if (log4j.isDebugEnabled())
+              log4j.debug("***   Referenced where clause (1): " + strWhereClause);
+            strWhereClause += getAditionalWhereClause(vars, strWindow, data[i].adTabId,
+                data[i].tablename, keyColumn, data[i].columnname,
+                UsedByLinkData.getTabTableName(this, tableId));
+            if (log4j.isDebugEnabled())
+              log4j.debug("***   Referenced where clause (2): " + strWhereClause);
+            if (!nonAccessible) {
+              final String strNonAccessibleWhere = strWhereClause + " AND AD_ORG_ID NOT IN ("
+                  + vars.getUserOrg() + ")";
+              if (!UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyId,
+                  strNonAccessibleWhere).equals("0")) {
+                nonAccessible = true;
+              }
             }
-          }
-          strWhereClause += " AND AD_ORG_ID IN (" + vars.getUserOrg() + ") AND AD_CLIENT_ID IN ("
-              + vars.getUserClient() + ")";
-          int total = Integer.valueOf(
-              UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyId,
-                  strWhereClause)).intValue();
+            strWhereClause += " AND AD_ORG_ID IN (" + vars.getUserOrg() + ") AND AD_CLIENT_ID IN ("
+                + vars.getUserClient() + ")";
+            int total = Integer.valueOf(
+                UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyId,
+                    strWhereClause)).intValue();
 
-          if (log4j.isDebugEnabled())
-            log4j.debug("***   Count: " + total);
+            if (log4j.isDebugEnabled())
+              log4j.debug("***   Count: " + total);
 
-          data[i].total = Integer.toString(total);
+            data[i].total = Integer.toString(total);
 
-          if (data[i].accessible.equals("N") && total > 0) {
-            nonAccessible = true;
-          } else if (total > 0 && !existsInVector(data[i], vecTotal)) {
-            vecTotal.addElement(data[i]);
+            if (data[i].accessible.equals("N") && total > 0) {
+              nonAccessible = true;
+            } else if (total > 0 && !existsInVector(data[i], vecTotal)) {
+              vecTotal.addElement(data[i]);
+            }
+          } catch (Exception ignore) {
+            log4j.warn("Coulnd't get linked items for " + data[i].tablename + "."
+                + data[i].columnname, ignore);
           }
         }
         data = new UsedByLinkData[vecTotal.size()];
@@ -680,22 +685,26 @@ public class UsedByLink extends HttpSecureAppServlet {
 
       final List<LinkedTable> linkedTables = new ArrayList<LinkedTable>();
       for (Entity entity : ModelProvider.getInstance().getModel()) {
+        if (entity.isVirtualEntity()) {
+          continue;
+        }
+        linkedTableId = entity.getTableId();
+        linkedTableObject = OBDal.getInstance().get(Table.class, linkedTableId);
+        dataOriginType = linkedTableObject.getDataOriginType();
+        if (!"TABLE".equals(dataOriginType.toUpperCase())) {
+          // Datasource tables are skipped
+          continue;
+        }
         for (Property property : entity.getProperties()) {
           // ignore one-to-many (a list of children)
           if (!property.isOneToMany() && property.getColumnName() != null
               && property.getTargetEntity() != null
               && property.getTargetEntity().getTableName().equalsIgnoreCase(tableName)
-              && !property.isComputedColumn() && !property.getEntity().isVirtualEntity()) {
-            // Datasource tables are skipped
-            linkedTableId = property.getEntity().getTableId();
-            linkedTableObject = OBDal.getInstance().get(Table.class, linkedTableId);
-            dataOriginType = linkedTableObject.getDataOriginType();
-            if ("TABLE".equals(dataOriginType.toUpperCase())) {
-              final LinkedTable linkedTable = new LinkedTable();
-              log4j.debug("p:" + property.getColumnName());
-              linkedTable.setColumnId(property.getColumnId());
-              linkedTables.add(linkedTable);
-            }
+              && !property.isComputedColumn()) {
+            final LinkedTable linkedTable = new LinkedTable();
+            log4j.debug("p:" + property.getColumnName());
+            linkedTable.setColumnId(property.getColumnId());
+            linkedTables.add(linkedTable);
           }
         }
       }
