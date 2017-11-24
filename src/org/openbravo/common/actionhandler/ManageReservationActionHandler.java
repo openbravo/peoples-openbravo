@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
@@ -77,6 +78,11 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
         reservation = ReservationUtils.getReservationFromOrder(sol);
         processReservation = reservation.getRESStatus().equals("DR");
       }
+
+      if (StringUtils.equals(reservation.getRESStatus(), "CL")) {
+        throw new OBException(OBMessageUtils.messageBD("ClosedReservation"));
+      }
+
       // Process reservation before managing stock reservations to avoid reserve all available stock
       // Issue 28051: https://issues.openbravo.com/view.php?id=28051
       if (processReservation) {
