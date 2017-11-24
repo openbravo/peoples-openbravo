@@ -28,8 +28,8 @@ import org.openbravo.model.common.order.OrderLine;
  * Example of a hook:
  * 
  * <pre>
+ * 
  * {@code
- *  package org.openbravo.advpaymentmngt.utility;
  *  import javax.enterprise.context.Dependent;
  *  import org.openbravo.client.kernel.ComponentProvider.Qualifier;
  *  import org.openbravo.common.actionhandler.copyfromorderprocess.CopyFromOrdersProcessImplementationInterface;
@@ -40,14 +40,15 @@ import org.openbravo.model.common.order.OrderLine;
  *  @Qualifier(CopyFromOrdersProcessImplementationInterface.COPY_FROM_ORDER_PROCESS_HOOK_QUALIFIER)
  *  public class TestHook implements CopyFromOrdersProcessImplementationInterface {
  * 
- *  @Override
- *  public int getOrder() {
- *    return 10;
- *  }
+ *    @Override
+ *    public int getOrder() {
+ *      return 10;
+ *    }
  * 
- *  @Override
- *  public void exec(Order processingOrder, OrderLine orderLine, OrderLine newOrderLine) {
- *    newOrderLine.setDescription("Test");
+ *    @Override
+ *    public void exec(Order processingOrder, OrderLine orderLine, OrderLine newOrderLine) {
+ *      newOrderLine.setDescription("Test");
+ *    }
  *  }
  * }
  * </pre>
