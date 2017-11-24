@@ -474,6 +474,6 @@ public class OBViewGridComponent extends BaseTemplateComponent {
   }
 
   private boolean isDatasourceBasedTable(Table table) {
-    return !ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOriginType());
+    return ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOriginType());
   }
 }
