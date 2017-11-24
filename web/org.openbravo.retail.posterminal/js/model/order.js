@@ -2185,6 +2185,7 @@
           productToAdd: p,
           orderline: line,
           qtyToAdd: qty,
+          attrs: attrs,
           options: options,
           newLine: newLine
         }, function (args) {
