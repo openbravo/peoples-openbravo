@@ -145,12 +145,6 @@ public class CopyLinesFromOrdersTest extends WeldBaseTest {
     this.expectedOrderLinesData = data.getExpectedOrderLines();
   }
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    setData();
-  }
-
   public static final List<CopyLinesFromOrdersTestData> PARAMS = Arrays.asList(
       new CLFOTestDataSO_01(), new CLFOTestDataSO_02(), new CLFOTestDataSO_03(),
       new CLFOTestDataSO_04(), new CLFOTestDataSO_05(), new CLFOTestDataSO_06(),
@@ -205,6 +199,7 @@ public class CopyLinesFromOrdersTest extends WeldBaseTest {
   }
 
   private void setUpTest() {
+    setData();
     log.info("Test Started {}: {} ", this.testNumber, this.testDescription);
     setOBContext();
     OBContext.setAdminMode();
