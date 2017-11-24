@@ -455,9 +455,10 @@ public abstract class ImportEntryProcessor {
         cachedOBContexts.put(cacheKey, OBContext.getOBContext());
         obContext = OBContext.getOBContext();
 
-        // initialize several things so that they are not initialized
-        // during the processing
-        obContext.getEntityAccessChecker().initialize();
+        // initialize several things so that they are not initialized during the processing. However
+        // the getEntityAccessChecker() return an already initialized object or does the
+        // initialize() calls itself.
+        obContext.getEntityAccessChecker();
         obContext.getOrganizationStructureProvider().reInitialize();
       }
       setVariablesSecureApp(obContext);
