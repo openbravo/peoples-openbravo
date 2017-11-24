@@ -137,6 +137,7 @@ public class CLFOTestDataSO_07 extends CopyLinesFromOrdersTestData {
     ProductPrice productPrice = OBProvider.getInstance().get(ProductPrice.class);
     productPrice.setProduct(finalGoodC);
     productPrice.setListPrice(new BigDecimal("2.50"));
+    productPrice.setPriceLimit(new BigDecimal("2.50"));
     productPrice.setStandardPrice(new BigDecimal("2.50"));
     productPrice.setActive(true);
     productPrice.setPriceListVersion(priceListVersion);

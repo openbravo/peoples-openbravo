@@ -138,6 +138,7 @@ public class CLFOTestDataSO_08 extends CopyLinesFromOrdersTestData {
     productPrice.setProduct(finalGoodC);
     productPrice.setListPrice(new BigDecimal("2.50"));
     productPrice.setStandardPrice(new BigDecimal("2.50"));
+    productPrice.setPriceLimit(new BigDecimal("2.50"));
     productPrice.setActive(true);
     productPrice.setPriceListVersion(priceListVersion);
     OBDal.getInstance().save(productPrice);
