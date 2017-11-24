@@ -18946,8 +18946,8 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800818-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800818-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800818-->  <COLUMNNAME><![CDATA[CopyFromPO]]></COLUMNNAME>
-<!--800818-->  <NAME><![CDATA[Copy lines from Orders]]></NAME>
-<!--800818-->  <PRINTNAME><![CDATA[Copy from PO]]></PRINTNAME>
+<!--800818-->  <NAME><![CDATA[Copy from Orders]]></NAME>
+<!--800818-->  <PRINTNAME><![CDATA[Copy from Orders]]></PRINTNAME>
 <!--800818-->  <DESCRIPTION><![CDATA[Copy lines from orders]]></DESCRIPTION>
 <!--800818-->  <HELP><![CDATA[Copy lines from orders]]></HELP>
 <!--800818-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
