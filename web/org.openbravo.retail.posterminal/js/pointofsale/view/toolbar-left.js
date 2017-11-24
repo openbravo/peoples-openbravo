@@ -613,6 +613,9 @@ enyo.kind({
     //Menu entries is used for modularity. cannot be initialized
     //this.menuEntries = [];
     this.menuEntries.push({
+      kind: 'OB.UI.MenuReceiptSelector'
+    });
+    this.menuEntries.push({
       kind: 'OB.UI.MenuReturn'
     });
     this.menuEntries.push({
@@ -641,12 +644,6 @@ enyo.kind({
     });
     this.menuEntries.push({
       kind: 'OB.UI.MenuCustomers'
-    });
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuPaidReceipts'
-    });
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuQuotations'
     });
     this.menuEntries.push({
       kind: 'OB.UI.MenuOpenDrawer'
@@ -682,11 +679,6 @@ enyo.kind({
     this.menuEntries.push({
       kind: 'OB.UI.MenuQuotation'
     });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuLayaways'
-    });
-
     this.menuEntries.push({
       kind: 'OB.UI.MenuMultiOrders'
     });

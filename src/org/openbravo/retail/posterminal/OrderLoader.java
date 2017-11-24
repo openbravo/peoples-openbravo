@@ -412,6 +412,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           t112 = System.currentTimeMillis();
         }
 
+        order.setObposIslayaway(notpaidLayaway);
+
         // Order lines
         if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
             && (!jsonorder.has("isQuotation") || !jsonorder.getBoolean("isQuotation"))) {
