@@ -126,16 +126,25 @@ isc.OBTreeViewGrid.addProperties({
     };
 
     ds.handleError = function (response, request) {
-      if (response && response.error && response.error.type === 'tooManyNodes') {
-        me.view.messageBar.setMessage('error', null, OB.I18N.getLabel('OBUIAPP_TooManyNodes'));
+      var errorMessage;
+      if (!response || !response.error) {
+        return;
       }
+      if (response.error.type === 'tooManyNodes') {
+        errorMessage = 'OBUIAPP_TooManyNodes';
+      } else if (response.error.type === 'user' && response.error.message) {
+        errorMessage = response.error.message;
+      }
+      me.view.messageBar.setMessage('error', null, OB.I18N.getLabel(errorMessage));
     };
 
     ds.updateData = function (updatedRecord, callback, requestProperties) {
       // the new callback checks if the node movement has to be reverted
       var newCallback = function (dsResponse, data, dsRequest) {
           var i, node, parentNode;
-          if (dsRequest.newParentNode && dsRequest.dragTree && dsRequest.newParentNode.nodeId === dsRequest.dragTree.rootValue) {
+          if (dsResponse.error) {
+            ds.handleError(dsResponse, dsRequest);
+          } else if (dsRequest.newParentNode && dsRequest.dragTree && dsRequest.newParentNode.nodeId === dsRequest.dragTree.rootValue) {
             // if the node is being moved to the root, reload the grid to force
             // displaying properly the node in its new position. see issue https://issues.openbravo.com/view.php?id=26898
             dsRequest.dragTree.invalidateCache();
