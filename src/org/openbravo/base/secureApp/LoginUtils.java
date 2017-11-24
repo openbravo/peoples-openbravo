@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Copyright (C) 2001-2017 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -56,15 +56,16 @@ public class LoginUtils {
   }
 
   /**
-   * Returns a userId which matches the login and password. If no user is found then null is returned. The combination of login
-   * and password is used to find the user.
+   * Returns a userId which matches the login and password. If no user is found then null is
+   * returned. The combination of login and password is used to find the user.
    * 
    * Blocking users is taking into account
    * 
    * Note that only active users are returned.
    * 
    * @param connectionProvider
-   *          , see the {@link DalConnectionProvider} for an instance of a ConnectionProvider for the DAL.
+   *          , see the {@link DalConnectionProvider} for an instance of a ConnectionProvider for
+   *          the DAL.
    * @param login
    *          the login
    * @param unHashedPassword
@@ -93,7 +94,8 @@ public class LoginUtils {
   }
 
   /**
-   * Similar to {@link LoginUtils#getValidUserId(ConnectionProvider, String, String)} but not blocking user accounts.
+   * Similar to {@link LoginUtils#getValidUserId(ConnectionProvider, String, String)} but not
+   * blocking user accounts.
    * 
    */
   public static String checkUserPassword(ConnectionProvider connectionProvider, String login,
@@ -194,8 +196,6 @@ public class LoginUtils {
 
     boolean lightLogin = "Y".equals(vars.getSessionValue("#Light_Login"));
 
-    // variable to save organization currency
-    AttributeData[] orgCurrency;
     Client client = null;
     boolean isAccountingDimensionConfigCentrally = false;
 
@@ -267,9 +267,6 @@ public class LoginUtils {
     }
 
     try {
-      // set organization currency
-      orgCurrency = AttributeData.selectOrgCurrency(conn, strOrg, strCliente);
-
       SeguridadData[] data = SeguridadData.select(conn, strRol, strUserAuth);
       if (data == null || data.length == 0) {
         OBContext.setOBContext(currentContext);
@@ -316,6 +313,7 @@ public class LoginUtils {
 
         if (attr != null && attr.length > 0) {
           vars.setSessionValue("$C_AcctSchema_ID", attr[0].value);
+          AttributeData[] orgCurrency = AttributeData.selectOrgCurrency(conn, strOrg, strCliente);
           if (orgCurrency.length > 0) {
             vars.setSessionValue("$C_Currency_ID", orgCurrency[0].cCurrencyId);
           } else
@@ -421,7 +419,8 @@ public class LoginUtils {
   }
 
   /**
-   * Obtains defaults defined for a user and throws DefaultValidationException in case they are not correct.
+   * Obtains defaults defined for a user and throws DefaultValidationException in case they are not
+   * correct.
    */
   public static RoleDefaults getLoginDefaults(String strUserAuth, String role, ConnectionProvider cp)
       throws ServletException, DefaultValidationException {
