@@ -64,7 +64,7 @@ class UpdateTax implements CopyFromOrdersProcessImplementationInterface {
    */
   @Override
   public void exec(final Order processingOrder, final OrderLine orderLine, OrderLine newOrderLine) {
-    TaxRate tax = OBDal.getInstance().get(TaxRate.class,
+    TaxRate tax = OBDal.getInstance().getProxy(TaxRate.class,
         getCurrentTaxId(newOrderLine.getProduct(), processingOrder));
     newOrderLine.setTax(tax);
   }

@@ -103,7 +103,7 @@ class UpdateOrderLineInformation implements CopyFromOrdersProcessImplementationI
     newOrderLine.setBusinessPartner(processingOrder.getBusinessPartner());
     // If PartnerAddress of the Header is null retrieve it from the Business Partner
     newOrderLine.setPartnerAddress(processingOrder.getPartnerAddress() != null ? processingOrder
-        .getPartnerAddress() : OBDal.getInstance().get(Location.class,
+        .getPartnerAddress() : OBDal.getInstance().getProxy(Location.class,
         getMaxBusinessPartnerLocationId(processingOrder.getBusinessPartner())));
   }
 

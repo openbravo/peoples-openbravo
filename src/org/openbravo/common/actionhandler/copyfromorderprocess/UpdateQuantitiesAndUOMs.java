@@ -63,7 +63,7 @@ class UpdateQuantitiesAndUOMs implements CopyFromOrdersProcessImplementationInte
       String defaultAum = UOMUtil.getDefaultAUMForDocument(orderLine.getProduct().getId(),
           processingOrder.getTransactionDocument().getId());
       operativeQuantity = orderLine.getOrderedQuantity();
-      operativeUOM = OBDal.getInstance().get(UOM.class, defaultAum);
+      operativeUOM = OBDal.getInstance().getProxy(UOM.class, defaultAum);
       orderUOM = null;
       if (aUMIsDifferentThanUOM(defaultAum)) {
         operativeQuantity = UOMUtil.getConvertedAumQty(orderLine.getProduct().getId(),

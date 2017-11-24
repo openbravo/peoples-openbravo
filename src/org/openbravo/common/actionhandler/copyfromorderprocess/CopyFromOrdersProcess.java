@@ -253,7 +253,7 @@ public class CopyFromOrdersProcess {
     long startTime = System.currentTimeMillis();
     for (OrderLine orderLine : explodeBOMOrderLines) {
       OBDal.getInstance().refresh(orderLine);
-      org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
+      org.openbravo.model.ad.ui.Process process = OBDal.getInstance().getProxy(
           org.openbravo.model.ad.ui.Process.class, EXPLODE_BOM_PROCESS);
 
       final ProcessInstance pInstance = CallProcess.getInstance().call(process, orderLine.getId(),
