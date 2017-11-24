@@ -141,7 +141,7 @@ public class CopyFromOrdersProcess {
     try {
       while (orderLines.next()) {
         OrderLine orderLine = (OrderLine) orderLines.get()[0];
-        OrderLine newOrderLine = createLineFromSelectedOrderLine(orderLine);
+        OrderLine newOrderLine = createLineFromSelectedOrderLineAndRunHooks(orderLine);
         processingOrder.getOrderLineList().add(newOrderLine);
         OBDal.getInstance().save(newOrderLine);
         OBDal.getInstance().save(processingOrder);
@@ -165,6 +165,7 @@ public class CopyFromOrdersProcess {
     obc.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, order));
     obc.add(Restrictions.isNull(OrderLine.PROPERTY_BOMPARENT));
     obc.add(Restrictions.isNull(OrderLine.PROPERTY_ORDERDISCOUNT));
+    obc.addOrderBy(OrderLine.PROPERTY_LINENO, true);
     return obc.scroll(ScrollMode.FORWARD_ONLY);
   }
 
@@ -175,7 +176,7 @@ public class CopyFromOrdersProcess {
    *          The order line to be copied
    * @return The created order line
    */
-  private OrderLine createLineFromSelectedOrderLine(final OrderLine orderLine) {
+  private OrderLine createLineFromSelectedOrderLineAndRunHooks(final OrderLine orderLine) {
     long startTime = System.currentTimeMillis();
 
     OrderLine newOrderLine = OBProvider.getInstance().get(OrderLine.class);
