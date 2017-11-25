@@ -21,6 +21,7 @@ package org.openbravo.common.actionhandler.copyfromorderprocess;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.FilterExpression;
 import org.openbravo.dal.core.OBContext;
@@ -34,11 +35,22 @@ public class CopyFromOrdersProcessFilterExpression implements FilterExpression {
     try {
       String context = requestMap.get("context");
       JSONObject contextJSON = new JSONObject(context);
-      String organizationId = contextJSON.getString("inpadOrgId");
-      return getLegalEntityId(organizationId);
-    } catch (Exception e) {
-      return null;
+
+      if (calculateLegalEntityField(requestMap)) {
+        String organizationId = contextJSON.getString("inpadOrgId");
+        return getLegalEntityId(organizationId);
+      } else if (calculateSoTrxField(requestMap)) {
+        return getIsSoTrx(contextJSON.getString("inpissotrx"));
+      }
+    } catch (Exception ignore) {
     }
+
+    return null;
+  }
+
+  private boolean calculateLegalEntityField(Map<String, String> requestMap) {
+    return requestMap.containsKey("currentParam")
+        && StringUtils.equals(requestMap.get("currentParam"), "ad_org_id");
   }
 
   private String getLegalEntityId(String organizationId) {
@@ -47,5 +59,13 @@ public class CopyFromOrdersProcessFilterExpression implements FilterExpression {
     return OBContext.getOBContext()
         .getOrganizationStructureProvider(organization.getClient().getId())
         .getLegalEntity(organization).getId();
+  }
+
+  private boolean calculateSoTrxField(Map<String, String> requestMap) {
+    return StringUtils.equals(requestMap.get("filterExpressionColumnName"), "IsSOTrx");
+  }
+
+  private String getIsSoTrx(final String inpissotrx) {
+    return StringUtils.equals(inpissotrx, "N") ? "false" : "true";
   }
 }

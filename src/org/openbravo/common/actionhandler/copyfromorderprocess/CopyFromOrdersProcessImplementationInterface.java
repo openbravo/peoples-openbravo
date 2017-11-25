@@ -28,28 +28,25 @@ import org.openbravo.model.common.order.OrderLine;
  * Example of a hook:
  * 
  * <pre>
+ * import javax.enterprise.context.Dependent;
+ * import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+ * import org.openbravo.common.actionhandler.copyfromorderprocess.CopyFromOrdersProcessImplementationInterface;
+ * import org.openbravo.model.common.order.Order;
+ * import org.openbravo.model.common.order.OrderLine;
  * 
- * {@code
- *  import javax.enterprise.context.Dependent;
- *  import org.openbravo.client.kernel.ComponentProvider.Qualifier;
- *  import org.openbravo.common.actionhandler.copyfromorderprocess.CopyFromOrdersProcessImplementationInterface;
- *  import org.openbravo.model.common.order.Order;
- *  import org.openbravo.model.common.order.OrderLine;
+ * &#64;Dependent
+ * &#64;Qualifier(CopyFromOrdersProcessImplementationInterface.COPY_FROM_ORDER_PROCESS_HOOK_QUALIFIER)
+ * public class TestHook implements CopyFromOrdersProcessImplementationInterface {
  * 
- *  @Dependent
- *  @Qualifier(CopyFromOrdersProcessImplementationInterface.COPY_FROM_ORDER_PROCESS_HOOK_QUALIFIER)
- *  public class TestHook implements CopyFromOrdersProcessImplementationInterface {
+ *   &#64;Override
+ *   public int getOrder() {
+ *     return 10;
+ *   }
  * 
- *    @Override
- *    public int getOrder() {
- *      return 10;
- *    }
- * 
- *    @Override
- *    public void exec(Order processingOrder, OrderLine orderLine, OrderLine newOrderLine) {
- *      newOrderLine.setDescription("Test");
- *    }
- *  }
+ *   &#64;Override
+ *   public void exec(Order processingOrder, OrderLine orderLine, OrderLine newOrderLine) {
+ *     newOrderLine.setDescription("Test");
+ *   }
  * }
  * </pre>
  *
