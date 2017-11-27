@@ -15,17 +15,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
-import java.rmi.Naming;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -55,8 +50,6 @@ import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.exception.PoolNotFoundException;
 import org.openbravo.xmlEngine.XmlEngine;
 import org.xml.sax.XMLReader;
-
-import rmi.RenderFoI;
 
 /**
  * This class is intended to be extended by the HttpSecureAppServlet and provides methods for basic
@@ -575,42 +568,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    */
 
   protected void renderFO(String strFo, OutputStream out) throws ServletException {
-    // Check validity of the certificate
-    // Create a trust manager that does not validate certificate chains
-    TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-      public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-        return null;
-      }
-
-      public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-      }
-
-      public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-      }
-
-      @SuppressWarnings("unused")
-      // external implementation
-      public boolean isServerTrusted(java.security.cert.X509Certificate[] cert) {
-        return true;
-      }
-
-      @SuppressWarnings("unused")
-      // external implementation
-      public boolean isClientTrusted(java.security.cert.X509Certificate[] cert) {
-        return true;
-      }
-    } };
-    // Install the all-trusting trust manager
     try {
-      SSLContext sc = SSLContext.getInstance("SSL");
-      sc.init(null, trustAllCerts, new java.security.SecureRandom());
-      HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-    } catch (Exception e) {
-    }
-
-    try {
-      if (log4j.isDebugEnabled())
-        log4j.debug("Beginning of renderFO");
       FopFactory fopFactoryInstance = getFopFactory();
       if (globalParameters.haveFopConfig()) {
         // Take FOP Configuration using userconfig.xml file
@@ -620,47 +578,29 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
 
       final String foTemplate = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + strFo;
 
-      if ((globalParameters.strServidorRenderFo == null)
-          || (globalParameters.strServidorRenderFo.equals(""))) {
+      log4j.debug(strFo);
 
-        if (log4j.isDebugEnabled())
-          log4j.debug(strFo);
+      Source sr = new StreamSource(new StringReader(foTemplate));
 
-        Source sr = new StreamSource(new StringReader(foTemplate));
+      // Configure FOP for PDF output. Define a user agent with a listener used to log information
+      // along the rendering the process
+      FOUserAgent foUserAgent = fopFactoryInstance.newFOUserAgent();
+      foUserAgent.getEventBroadcaster().addEventListener(new FopEventListener());
+      Fop fop = fopFactoryInstance.newFop("application/pdf", foUserAgent, out);
 
-        if (log4j.isDebugEnabled())
-          log4j.debug(sr.toString());
+      // Setup JAXP using identity transformer
+      TransformerFactory factory = TransformerFactory.newInstance();
+      Transformer transformer = factory.newTransformer();
 
-        // Configure FOP for PDF output. Define a user agent with a listener used to log information
-        // along the rendering the process
-        FOUserAgent foUserAgent = fopFactoryInstance.newFOUserAgent();
-        foUserAgent.getEventBroadcaster().addEventListener(new FopEventListener());
-        Fop fop = fopFactoryInstance.newFop("application/pdf", foUserAgent, out);
+      // Resulting SAX events (the generated FO) must be piped through to FOP
+      Result res = new SAXResult(fop.getDefaultHandler());
 
-        // Setup JAXP using identity transformer
-        TransformerFactory factory = TransformerFactory.newInstance();
-        Transformer transformer = factory.newTransformer();
+      // Start XSLT transformation and FOP processing
+      transformer.transform(sr, res);
 
-        // Resulting SAX events (the generated FO) must be piped through to FOP
-        Result res = new SAXResult(fop.getDefaultHandler());
-
-        // Start XSLT transformation and FOP processing
-        transformer.transform(sr, res);
-
-        if (log4j.isDebugEnabled()) {
-          FormattingResults foResults = fop.getResults();
-          log4j.debug("Generated " + foResults.getPageCount() + " pages in total.");
-          log4j.debug("End of renderFO");
-        }
-
-      } else {
-
-        RenderFoI render = (RenderFoI) Naming.lookup("rmi://"
-            + globalParameters.strServidorRenderFo + "/RenderFo");
-
-        byte[] content = render.computeRenderFo(strFo);
-        out.write(content);
-        out.flush();
+      if (log4j.isDebugEnabled()) {
+        FormattingResults foResults = fop.getResults();
+        log4j.debug("Generated " + foResults.getPageCount() + " pages in total.");
       }
     } catch (java.lang.IllegalStateException il) {
       return;

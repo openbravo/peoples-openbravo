@@ -49,7 +49,6 @@ public class ConfigParameters {
   private final String strFileFormat;
   public final String strSystemLanguage;
   public final String strDefaultServlet;
-  public final String strServidorRenderFo;
   private final String stcFileProperties;
   public final String strReplaceWhat;
   private final String poolFileName;
@@ -113,7 +112,6 @@ public class ConfigParameters {
 
     strSystemLanguage = getSystemLanguage();
     strLocalReplaceWith = getResolvedParameter(context, "ReplaceWith");
-    strServidorRenderFo = getResolvedParameter(context, "ServidorRenderFo");
     strTextDividedByZero = getResolvedParameter(context, "TextDividedByZero");
 
     poolFileName = getResolvedParameter(context, "PoolFile");
