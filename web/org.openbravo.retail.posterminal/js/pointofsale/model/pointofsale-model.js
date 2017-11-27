@@ -351,6 +351,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     }, this);
 
     receipt.on('paymentDone', function (openDrawer) {
+      receipt.trigger('disableDoneButton');
+
       function callbackPaymentAccepted(allowedOpenDrawer) {
         if (allowedOpenDrawer) {
           me.openDrawer = openDrawer;
@@ -544,6 +546,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     }, this);
 
     this.get('multiOrders').on('paymentDone', function (openDrawer) {
+      this.get('multiOrders').trigger('disableDoneButton');
       var me = this,
           paymentstatus = this.get('multiOrders'),
           overpayment = OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total')),

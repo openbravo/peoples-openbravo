@@ -259,6 +259,9 @@ enyo.kind({
       }
       this.updatePending();
     }, this);
+    this.receipt.on('disableDoneButton', function () {
+      this.$.donebutton.setDisabled(true);
+    }, this);
     this.receipt.on('updatePending', function () {
       this.updatePending();
     }, this);
@@ -1004,6 +1007,9 @@ enyo.kind({
 
     this.model.get('multiOrders').on('change:payment change:total change:change paymentCancel', function () {
       this.updatePendingMultiOrders();
+    }, this);
+    this.model.get('multiOrders').on('disableDoneButton', function () {
+      this.$.donebutton.setDisabled(true);
     }, this);
     this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
       if (changedModel.isOrder()) {
