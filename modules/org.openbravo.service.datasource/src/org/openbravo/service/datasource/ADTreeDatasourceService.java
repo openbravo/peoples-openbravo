@@ -226,6 +226,10 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       joinClause.append(" and (" + hqlWhereClause + ")");
     }
     joinClause.append(" and tn.tree.id = '" + tree.getId() + "' ");
+    if (!AD_ORG_TABLE_ID.equals(tree.getTable().getId())) {
+      joinClause.append(" and e.organization.id "
+          + OBDal.getInstance().getReadableOrganizationsInClause());
+    }
     if (hqlWhereClauseRootNodes == null && tab != null && tab.getTabLevel() > 0) {
       // Add the criteria to filter only the records that belong to the record selected in the
       // parent tab
