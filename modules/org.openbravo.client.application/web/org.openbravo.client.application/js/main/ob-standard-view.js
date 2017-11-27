@@ -1275,7 +1275,7 @@ isc.OBStandardView.addProperties({
     }
 
     if (this.treeGrid && this.isShowingTree) {
-      if (this.treeGrid.data) {
+      if (this.treeGrid.data && !this.treeGrid.willFetchData(this.treeGrid.getCriteria())) {
         // Force to do a datasource call keeping the current criteria
         this.treeGrid.data.invalidateCache();
       }
