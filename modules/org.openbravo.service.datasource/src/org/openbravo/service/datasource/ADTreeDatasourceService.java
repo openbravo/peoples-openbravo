@@ -217,59 +217,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
         DataToJsonConverter.class);
     toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
 
-    // Joins the ADTreeNode with the referenced table
-    StringBuilder joinClause = new StringBuilder();
-    joinClause.append(" as tn ");
-    joinClause.append(" , " + entity.getName() + " as e ");
-    joinClause.append(" where tn.node = e.id ");
-    if (hqlWhereClause != null) {
-      joinClause.append(" and (" + hqlWhereClause + ")");
-    }
-    joinClause.append(" and tn.tree.id = '" + tree.getId() + "' ");
-    if (!AD_ORG_TABLE_ID.equals(tree.getTable().getId())) {
-      joinClause.append(" and e.organization.id "
-          + OBDal.getInstance().getReadableOrganizationsInClause());
-    }
-    if (hqlWhereClauseRootNodes == null && tab != null && tab.getTabLevel() > 0) {
-      // Add the criteria to filter only the records that belong to the record selected in the
-      // parent tab
-      Tab parentTab = KernelUtils.getInstance().getParentTab(tab);
-      String parentPropertyName = ApplicationUtils.getParentProperty(tab, parentTab);
-      if (parentPropertyName != null) {
-        JSONArray criteria = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
-        String parentRecordId = getParentRecordIdFromCriteria(criteria, parentPropertyName);
-        if (parentRecordId != null) {
-          joinClause.append(" and e." + parentPropertyName + ".id = '" + parentRecordId + "' ");
-        }
-      }
-    }
-    if (hqlWhereClauseRootNodes != null) {
-      joinClause.append(" and (" + hqlWhereClauseRootNodes + ") ");
-    } else {
-      if (ROOT_NODE_CLIENT.equals(parentId)) {
-        if (AD_ORG_TABLE_ID.equals(tree.getTable().getId())) {
-          // The ad_org table needs a special treatment, since is the only table tree that has an
-          // actual node ('*' organization) with node_id = ROOT_NODE_DB
-          // In this table the root nodes have the parent_id property set to null
-          joinClause.append(" and tn.reportSet is null");
-        } else {
-          // Other ad_tree nodes can have either ROOT_NODE_DB or null as parent_id
-          joinClause.append(" and (tn.reportSet = '" + ROOT_NODE_DB + "' or tn.reportSet is null)");
-        }
-      } else {
-        joinClause.append(" and tn.reportSet = '" + parentId + "' ");
-      }
-    }
-    joinClause.append(" order by tn.sequenceNumber ");
-
-    // Selects the relevant properties from ADTreeNode and all the properties from the referenced
-    // table
-    String selectClause = " tn.id as treeNodeId, tn.reportSet as parentId, tn.sequenceNumber as seqNo, tn.node as nodeId, e as entity";
-    OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(TreeNode.ENTITY_NAME,
-        joinClause.toString());
-    obq.setFilterOnActive(false);
-    obq.setSelectClause(selectClause);
-    obq.setFilterOnReadableOrganization(false);
+    OBQuery<BaseOBObject> obq = getNodeChildrenQuery(parameters, parentId, hqlWhereClause,
+        hqlWhereClauseRootNodes, tab, tree, entity);
     int nResults = obq.count();
 
     OBContext context = OBContext.getOBContext();
@@ -320,6 +269,65 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       scrollNodes.close();
     }
     return responseData;
+  }
+
+  private OBQuery<BaseOBObject> getNodeChildrenQuery(Map<String, String> parameters,
+      String parentId, String hqlWhereClause, String hqlWhereClauseRootNodes, Tab tab, Tree tree,
+      Entity entity) throws JSONException {
+    // Joins the ADTreeNode with the referenced table
+    StringBuilder joinClause = new StringBuilder();
+    joinClause.append(" as tn ");
+    joinClause.append(" , " + entity.getName() + " as e ");
+    joinClause.append(" where tn.node = e.id ");
+    if (hqlWhereClause != null) {
+      joinClause.append(" and (" + hqlWhereClause + ")");
+    }
+    joinClause.append(" and tn.tree.id = '" + tree.getId() + "' ");
+    if (!AD_ORG_TABLE_ID.equals(tree.getTable().getId())) {
+      joinClause.append(" and e.organization.id "
+          + OBDal.getInstance().getReadableOrganizationsInClause());
+    }
+    if (hqlWhereClauseRootNodes != null) {
+      joinClause.append(" and (" + hqlWhereClauseRootNodes + ") ");
+    } else {
+      if (tab != null && tab.getTabLevel() > 0) {
+        // Add the criteria to filter only the records that belong to the record selected in the
+        // parent tab
+        Tab parentTab = KernelUtils.getInstance().getParentTab(tab);
+        String parentPropertyName = ApplicationUtils.getParentProperty(tab, parentTab);
+        if (parentPropertyName != null) {
+          JSONArray criteria = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
+          String parentRecordId = getParentRecordIdFromCriteria(criteria, parentPropertyName);
+          if (parentRecordId != null) {
+            joinClause.append(" and e." + parentPropertyName + ".id = '" + parentRecordId + "' ");
+          }
+        }
+      }
+      if (ROOT_NODE_CLIENT.equals(parentId)) {
+        if (AD_ORG_TABLE_ID.equals(tree.getTable().getId())) {
+          // The ad_org table needs a special treatment, since is the only table tree that has an
+          // actual node ('*' organization) with node_id = ROOT_NODE_DB
+          // In this table the root nodes have the parent_id property set to null
+          joinClause.append(" and tn.reportSet is null");
+        } else {
+          // Other ad_tree nodes can have either ROOT_NODE_DB or null as parent_id
+          joinClause.append(" and (tn.reportSet = '" + ROOT_NODE_DB + "' or tn.reportSet is null)");
+        }
+      } else {
+        joinClause.append(" and tn.reportSet = '" + parentId + "' ");
+      }
+    }
+    joinClause.append(" order by tn.sequenceNumber ");
+
+    // Selects the relevant properties from ADTreeNode and all the properties from the referenced
+    // table
+    String selectClause = " tn.id as treeNodeId, tn.reportSet as parentId, tn.sequenceNumber as seqNo, tn.node as nodeId, e as entity";
+    OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(TreeNode.ENTITY_NAME,
+        joinClause.toString());
+    obq.setFilterOnActive(false);
+    obq.setSelectClause(selectClause);
+    obq.setFilterOnReadableOrganization(false);
+    return obq;
   }
 
   @Override
