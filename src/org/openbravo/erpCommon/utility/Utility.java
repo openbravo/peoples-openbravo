@@ -59,16 +59,12 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperReport;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
-import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.report.ReportingUtils;
@@ -94,6 +90,9 @@ import org.openbravo.model.common.geography.Location;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.FormatUtilities;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
 
 /**
  * @author Fernando Iriazabal
@@ -476,7 +475,8 @@ public class Utility {
         try {
           window = org.openbravo.dal.service.OBDal.getInstance().get(Window.class, strWindow);
           if (window.getWindowType().equals("T")) {
-            String transactionalOrgs = OrgTree.getTransactionAllowedOrgs(retValue);
+            String transactionalOrgs = OBContext.getOBContext().getOrganizationStructureProvider()
+                .getTransactionAllowedOrgs(retValue);
             if (transactionalOrgs.equals(""))
               // Will show no organizations into the organization's field of the transactional
               // windows

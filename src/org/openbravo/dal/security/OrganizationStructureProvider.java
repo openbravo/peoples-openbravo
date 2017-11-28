@@ -34,6 +34,7 @@ import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationType;
 import org.slf4j.Logger;
@@ -475,5 +476,27 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  public List<String> getTransactionAllowedOrgs(List<String> orgIds) {
+    List<String> trxAllowedOrgs = new ArrayList<>(orgIds.size());
+    for (String orgId : orgIds) {
+      OrgNode node = orgNodes.get(orgId);
+      if (node != null && node.isReady && node.isTransactionsAllowed) {
+        trxAllowedOrgs.add(orgId);
+      }
+    }
+    return trxAllowedOrgs;
+  }
+
+  public String getTransactionAllowedOrgs(String orgIds) {
+    String[] orgs = orgIds.split(",");
+    List<String> orgsToCheck = new ArrayList<>(orgs.length);
+    for (String orgId : orgs) {
+      String fixedOrgId = orgId.startsWith("'") ? orgId.substring(1, orgId.length() - 1) : orgId;
+      orgsToCheck.add(fixedOrgId);
+    }
+
+    return Utility.commaSeparated(getTransactionAllowedOrgs(orgsToCheck));
   }
 }
