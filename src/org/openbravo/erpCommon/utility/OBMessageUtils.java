@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2016 Openbravo SLU
+ * All portions are Copyright (C) 2012-2017 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -183,9 +183,8 @@ public class OBMessageUtils {
    * @return String translated.
    */
   public static String parseTranslation(String text) {
-    final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
     final String language = OBContext.getOBContext().getLanguage().getLanguage();
-    return parseTranslation(new DalConnectionProvider(false), vars, null, language, text);
+    return parseTranslation(new DalConnectionProvider(false), null, null, language, text);
   }
 
   /**
@@ -198,9 +197,8 @@ public class OBMessageUtils {
    * @return String translated.
    */
   public static String parseTranslation(String text, Map<String, String> map) {
-    final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
     final String language = OBContext.getOBContext().getLanguage().getLanguage();
-    return parseTranslation(new DalConnectionProvider(false), vars, map, language, text);
+    return parseTranslation(new DalConnectionProvider(false), null, map, language, text);
   }
 
   /**
@@ -290,7 +288,16 @@ public class OBMessageUtils {
    */
   public static String translate(ConnectionProvider conn, VariablesSecureApp vars, String token,
       String language) {
-    String strTranslate = vars.getSessionValue(token);
+    String strTranslate = "";
+    if (vars == null) {
+      try {
+        strTranslate = RequestContext.get().getVariablesSecureApp().getSessionValue(token);
+      } catch (OBException ignore) {
+        // there is no request: can't retrieve the session info
+      }
+    } else {
+      strTranslate = vars.getSessionValue(token);
+    }
     if (!strTranslate.equals("")) {
       return strTranslate;
     }
