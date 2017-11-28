@@ -918,23 +918,26 @@ public class AdvancedQueryBuilder {
           }
         }
         if (property.isDate()) {
+          hasComeADateTime = false;
           date = simpleDateFormat.parse(value.toString());
         }
         final Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
 
-        // move the date to the beginning of the day
-        if (isGreaterOperator(operator)) {
-          calendar.set(Calendar.HOUR_OF_DAY, 0);
-          calendar.set(Calendar.MINUTE, 0);
-          calendar.set(Calendar.SECOND, 0);
-          calendar.set(Calendar.MILLISECOND, 0);
-        } else if (isLesserOperator(operator)) {
-          // move the data to the end of the day
-          calendar.set(Calendar.HOUR_OF_DAY, 23);
-          calendar.set(Calendar.MINUTE, 59);
-          calendar.set(Calendar.SECOND, 59);
-          calendar.set(Calendar.MILLISECOND, 999);
+        if (!hasComeADateTime) {
+          // move the date to the beginning of the day
+          if (isGreaterOperator(operator)) {
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+          } else if (isLesserOperator(operator)) {
+            // move the data to the end of the day
+            calendar.set(Calendar.HOUR_OF_DAY, 23);
+            calendar.set(Calendar.MINUTE, 59);
+            calendar.set(Calendar.SECOND, 59);
+            calendar.set(Calendar.MILLISECOND, 999);
+          }
         }
 
         if (hasComeADateTime || property.isDatetime() || property.isDate()) {
