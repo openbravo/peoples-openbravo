@@ -251,6 +251,18 @@
     <editableField>false</editableField>
     <inheritedFrom xsi:nil="true"/>
   </ADWindowAccess>
+  <ADWindowAccess id="06869D54C7D7479DB225702CEB0AE0EF" identifier="Copy from Orders P&amp;E - Sales">
+    <id>06869D54C7D7479DB225702CEB0AE0EF</id>
+    <window id="A839712F8D5E4929BB2D057BAA55A2A3" entity-name="ADWindow" identifier="Copy from Orders P&amp;E"/>
+    <role id="FF8081812250326E012250353BDE0006" entity-name="ADRole" identifier="Sales"/>
+    <active>true</active>
+    <creationDate transient="true">2017-11-28T13:36:10.634Z</creationDate>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updated transient="true">2017-11-28T13:36:10.634Z</updated>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <editableField>true</editableField>
+    <inheritedFrom xsi:nil="true"/>
+  </ADWindowAccess>
   <ADWindowAccess id="17334F9036F54D0DAE2D11FD59C60A42" identifier="Requisition - Sales">
     <id>17334F9036F54D0DAE2D11FD59C60A42</id>
     <window id="800092" entity-name="ADWindow" identifier="Requisition"/>
@@ -477,6 +489,18 @@
     <updated transient="true">2017-11-28T13:00:08.386Z</updated>
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <editableField>true</editableField>
+    <inheritedFrom xsi:nil="true"/>
+  </ADWindowAccess>
+  <ADWindowAccess id="D4A4188327384D72A0220A76DA0D8618" identifier="Copy from Orders P&amp;E - Finance">
+    <id>D4A4188327384D72A0220A76DA0D8618</id>
+    <window id="A839712F8D5E4929BB2D057BAA55A2A3" entity-name="ADWindow" identifier="Copy from Orders P&amp;E"/>
+    <role id="FF8081812250326E012250353BDE0005" entity-name="ADRole" identifier="Finance"/>
+    <active>true</active>
+    <creationDate transient="true">2017-11-28T13:36:19.934Z</creationDate>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updated transient="true">2017-11-28T13:36:19.934Z</updated>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <editableField>false</editableField>
     <inheritedFrom xsi:nil="true"/>
   </ADWindowAccess>
   <ADWindowAccess id="E070AF0C85144578B8D09269E521DA08" identifier="Budget - Finance">
