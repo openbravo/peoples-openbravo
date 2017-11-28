@@ -1594,9 +1594,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       if (!orderline.isNewOBObject()) {
         // updating order - delete old taxes to create again
         String deleteStr = "delete " + OrderLineTax.ENTITY_NAME //
-            + " where " + OrderLineTax.PROPERTY_SALESORDERLINE + ".id = '" //
-            + orderline.getId() + "'";
+            + " where " + OrderLineTax.PROPERTY_SALESORDERLINE + ".id = :id";
         Query deleteQuery = OBDal.getInstance().getSession().createQuery(deleteStr);
+        deleteQuery.setParameter("id", orderline.getId());
         deleteQuery.executeUpdate();
       }
       JSONObject taxes = jsonOrderLine.getJSONObject("taxLines");
@@ -1633,9 +1633,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if (!orderline.isNewOBObject()) {
           // updating order - delete old promotions to create again
           String deleteStr = "delete " + OrderLineOffer.ENTITY_NAME //
-              + " where " + OrderLineOffer.PROPERTY_SALESORDERLINE + ".id = '" //
-              + orderline.getId() + "'";
+              + " where " + OrderLineOffer.PROPERTY_SALESORDERLINE + ".id = :id";
           Query deleteQuery = OBDal.getInstance().getSession().createQuery(deleteStr);
+          deleteQuery.setParameter("id", orderline.getId());
           deleteQuery.executeUpdate();
         }
 
@@ -1960,9 +1960,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     if (!order.isNewOBObject()) {
       // updating order - delete old taxes to create again
       String deleteStr = "delete " + OrderTax.ENTITY_NAME //
-          + " where " + OrderTax.PROPERTY_SALESORDER + ".id = '" //
-          + order.getId() + "'";
+          + " where " + OrderTax.PROPERTY_SALESORDER + ".id = :id";
       Query deleteQuery = OBDal.getInstance().getSession().createQuery(deleteStr);
+      deleteQuery.setParameter("id", order.getId());
       deleteQuery.executeUpdate();
     }
     JSONObject taxes = jsonorder.getJSONObject("taxes");
