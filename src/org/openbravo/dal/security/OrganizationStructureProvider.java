@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.hibernate.SQLQuery;
@@ -315,11 +316,11 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     public void setTreeNodeData(Object[] nodeDef) {
       nodeId = (String) nodeDef[0];
       parentNodeId = (String) nodeDef[1];
-      isReady = "Y".equals(nodeDef[2]);
-      isLegalEntity = "Y".equals(nodeDef[3]);
-      isBusinessUnit = "Y".equals(nodeDef[4]);
-      isTransactionsAllowed = "Y".equals(nodeDef[5]);
-      isAcctLegalEntity = "Y".equals(nodeDef[6]);
+      isReady = Objects.equals('Y', nodeDef[2]);// "Y".equals(nodeDef[2]);
+      isLegalEntity = Objects.equals('Y', nodeDef[3]); // "Y".equals(nodeDef[3]);
+      isBusinessUnit = Objects.equals('Y', nodeDef[4]); // "Y".equals(nodeDef[4]);
+      isTransactionsAllowed = Objects.equals('Y', nodeDef[5]); // "Y".equals(nodeDef[5]);
+      isAcctLegalEntity = Objects.equals('Y', nodeDef[6]);// "Y".equals(nodeDef[6]);
     }
 
     public void resolve(List<OrgNode> nodes) {
