@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.ad_forms;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -27,9 +28,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ModuleReferenceDataOrgTree;
@@ -84,9 +85,12 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
           + "'");
       vars.setSessionValue("#ORG_CLIENT",
           vars.getSessionValue("#ORG_CLIENT") + ", '" + ios.getOrgId() + "'");
-      OrgTree tree = new OrgTree(this, vars.getClient());
-      OrgTree accessibleTree = tree.getAccessibleTree(this, vars.getRole());
-      vars.setSessionValue("#AccessibleOrgTree", accessibleTree.toString());
+      OrganizationStructureProvider osp = OBContext.getOBContext()
+          .getOrganizationStructureProvider(vars.getClient());
+      osp.reInitialize();
+
+      vars.setSessionValue("#AccessibleOrgTree", Utility.commaSeparated(Arrays.asList(OBContext
+          .getOBContext().getReadableOrganizations())));
       printPageResult(response, vars, ios.getLog(), obeResult);
     } else if (vars.commandIn("CANCEL")) {
     } else
