@@ -200,17 +200,37 @@ public class PriceDifferenceProcess {
     }
   }
 
+  /**
+   * This process is going to calculate the differences in prices between the Orders and the related
+   * Invoices. If there are any differences a Cost Adjustment Document will be created to adjust the
+   * related Transactions
+   * 
+   * @param legalOrganization
+   *          [Mandatory] Legal Organization for which the Price Difference Process is going to be
+   *          executed
+   * @return the message to be shown to the user properly formatted and translated to the user
+   *         language.
+   */
   public static JSONObject processPriceDifference(Organization legalOrganization) {
     return processPriceDifference(null, null, legalOrganization);
   }
 
   /**
-   * @param selectedOrganization
+   * This process is going to calculate the differences in prices between the Orders and the related
+   * Invoices. If there are any differences a Cost Adjustment Document will be created to adjust the
+   * related Transactions
+   * 
+   * @param date
+   *          [Optional] Date from which the Price Differences Process is going to executed
+   * @param product
+   *          [Optional] Product for which the Price Difference Process is going to be executed
+   * @param legalOrganization
+   *          [Mandatory] Legal Organization for which the Price Difference Process is going to be
+   *          executed
    * @return the message to be shown to the user properly formatted and translated to the user
    *         language.
    * @throws OBException
    *           when there is an error that prevents the cost adjustment to be processed.
-   * @throws OBException
    */
   public static JSONObject processPriceDifference(Date date, Product product,
       Organization legalOrganization) throws OBException {
