@@ -11,27 +11,27 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-15 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.costing;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletException;
 
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.enterprise.Organization;
@@ -58,38 +58,21 @@ public class PriceDifferenceByDateProcess extends BaseProcessActionHandler {
       String orgId = params.getString("ad_org_id");
       productIds.toString();
       Date movementdate = JsonUtils.createDateFormat().parse(mvdate);
-      doChecks(orgId, movementdate);
+      int transactionsProcessed = 0;
 
-      String strUpdate = "UPDATE MaterialMgmtMaterialTransaction trx"
-          + " SET checkpricedifference = 'Y'"
-          + " WHERE exists ("
-          + " SELECT 1"
-          + " FROM  ProcurementReceiptInvoiceMatch mpo"
-          + " WHERE trx.isCostCalculated = 'Y' and mpo.goodsShipmentLine.id = trx.goodsShipmentLine.id  "
-          + " AND trx.movementDate >= :date and trx.organization.id in (:orgIds))";
-
-      if (productIds.length() > 0) {
-        strUpdate = strUpdate.concat(" AND product.id IN :productIds ");
+      List<Organization> legalOrganizations = PriceDifferenceUtil.getLegalOrganizationList(orgId);
+      List<String> selectedProductsId = getProductsIdListFromProductsParameter(productIds);
+      for (Organization legalOrganization : legalOrganizations) {
+        doChecks(legalOrganization.getId(), movementdate);
+        PriceDifferenceUtil.setTransactionsReadyForPriceAdjustment(selectedProductsId,
+            movementdate, legalOrganization);
+        JSONObject msg = new JSONObject();
+        msg = PriceDifferenceProcess.processPriceDifference(legalOrganization);
+        transactionsProcessed += msg.getInt("transactionsProcessed");
       }
-
-      Set<String> products = new HashSet<String>();
-      for (int i = 0; i < productIds.length(); i++) {
-        products.add(productIds.getString(i));
-      }
-      Query update = OBDal.getInstance().getSession().createQuery(strUpdate);
-
-      if (productIds.length() > 0) {
-        update.setParameterList("productIds", products);
-      }
-      update.setParameterList("orgIds",
-          new OrganizationStructureProvider().getChildTree(orgId, true));
-      update.setDate("date", movementdate);
-
-      update.executeUpdate();
-
-      JSONObject msg = new JSONObject();
-      msg = PriceDifferenceProcess.processPriceDifference(null, null);
+      JSONObject msg = getResutlMessage(transactionsProcessed);
       jsonRequest.put("message", msg);
+      jsonRequest.put("retryExecution", true);
     } catch (Exception e) {
       log.error("Error Process Price Correction", e);
 
@@ -111,6 +94,28 @@ public class PriceDifferenceByDateProcess extends BaseProcessActionHandler {
       OBContext.restorePreviousMode();
     }
     return jsonRequest;
+  }
+
+  private JSONObject getResutlMessage(int transactionsProcessed) throws JSONException {
+    String messageText = OBMessageUtils.messageBD("PriceDifferenceChecked");
+    Map<String, String> map = new HashMap<String, String>();
+    map.put("trxsNumber", Integer.toString(transactionsProcessed));
+
+    JSONObject message = new JSONObject();
+    message = new JSONObject();
+    message.put("severity", "success");
+    message.put("title", OBMessageUtils.messageBD("Success"));
+    message.put("text", OBMessageUtils.parseTranslation(messageText, map));
+    return message;
+  }
+
+  private List<String> getProductsIdListFromProductsParameter(JSONArray productIds)
+      throws JSONException {
+    List<String> productsIdList = new ArrayList<>();
+    for (int i = 0; i < productIds.length(); i++) {
+      productsIdList.add(productIds.getString(i));
+    }
+    return productsIdList;
   }
 
   private void doChecks(String orgId, Date movementdate) {

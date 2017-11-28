@@ -11,18 +11,21 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
  */
 package org.openbravo.costing;
 
+import java.util.List;
+
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
 import org.openbravo.service.db.DalBaseProcess;
@@ -47,7 +50,12 @@ public class PriceDifferenceBackground extends DalBaseProcess {
       OBContext.setAdminMode(false);
       result.setType("Success");
       result.setTitle(OBMessageUtils.messageBD("Success"));
-      PriceDifferenceProcess.processPriceDifference(null, null);
+
+      List<Organization> legalOrganizations = PriceDifferenceUtil
+          .getLegalOrganizationList(PriceDifferenceUtil.ALL_ORGANIZATIONS);
+      for (Organization legalOrganization : legalOrganizations) {
+        PriceDifferenceProcess.processPriceDifference(legalOrganization);
+      }
 
       logger.logln(OBMessageUtils.messageBD("Success"));
       bundle.setResult(result);
