@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -45,12 +45,12 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
       boolean useContains = true;
       try {
         OBContext.setAdminMode(false);
-        useContains = "Y".equals(Preferences.getPreferenceValue(
-            "OBPOS_remote.receipt_usesContains", true, OBContext.getOBContext().getCurrentClient(),
-            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-            OBContext.getOBContext().getRole(), null));
+        useContains = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.order_usesContains",
+            true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                .getOBContext().getRole(), null));
       } catch (PropertyException e) {
-        log.error("Error getting preference OBPOS_remote.receipt_usesContains " + e.getMessage(), e);
+        log.error("Error getting preference OBPOS_remote.order_usesContains " + e.getMessage(), e);
       } finally {
         OBContext.restorePreviousMode();
       }
@@ -138,7 +138,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
       // not more filters
     } else if (json.getBoolean("isLayaway")) {
       // (It is Layaway)
-      hqlPaidReceipts += " and ord.obposApplications is not null and not exists (select 1 from ord.orderLineList where deliveredQuantity != 0) and ord.documentStatus = 'CO' ";
+      hqlPaidReceipts += " and ord.obposApplications is not null and ord.obposIslayaway = true and ord.cancelledorder is null and ord.documentStatus = 'CO'";
 
     } else if (json.getBoolean("isReturn")) {
       // (It is a Return)

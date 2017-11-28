@@ -163,6 +163,12 @@ enyo.kind({
       kind: 'OB.UI.ModalPaidReceipts',
       name: 'modalPaidReceipts'
     }, {
+      kind: 'OBPOS.UI.ReceiptSelector',
+      name: 'modalReceiptSelector'
+    }, {
+      kind: 'OB.UI.ModalAdvancedFilterReceipts',
+      name: 'OB_UI_ModalAdvancedFilterReceipts'
+    }, {
       kind: 'OB.UI.ModalMultiOrders',
       name: 'modalMultiOrders'
     }, {
@@ -432,8 +438,12 @@ enyo.kind({
     return true;
   },
   deleteCurrentOrder: function (inSender, inEvent) {
+    var me = this;
+    this.leftToolbarDisabled(inSender, inEvent);
     var receipt = this.model.get('order');
     receipt.deleteOrder(this, function () {
+      inEvent.status = false;
+      me.leftToolbarDisabled(inSender, inEvent);
       OB.MobileApp.model.runSyncProcess();
     });
   },
@@ -924,93 +934,10 @@ enyo.kind({
   },
   deleteLine: function (inSender, inEvent) {
     var me = this,
-        ln = inEvent.line,
         selectedModels = inEvent.selectedModels,
         receipt = this.model.get('order');
 
-    function postDeleteLine() {
-      OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteLine', {
-        order: receipt,
-        selectedLines: selectedModels
-      }, function () {
-        receipt.unset('preventServicesUpdate');
-        receipt.unset('deleting');
-        receipt.get('lines').trigger('updateRelations');
-        receipt.calculateReceipt();
-        enyo.$.scrim.hide();
-      });
-    }
-
-    function preDeleteLine() {
-      OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteLine', {
-        order: receipt,
-        selectedLines: selectedModels
-      }, function (args) {
-        if (args && args.cancelOperation && args.cancelOperation === true) {
-          return;
-        }
-        enyo.$.scrim.show();
-        receipt.get('lines').forEach(function (line, idx) {
-          line.set('undoPosition', idx);
-        });
-        receipt.set('undo', null);
-        receipt.set('preventServicesUpdate', true);
-        receipt.set('deleting', true);
-        receipt.deleteLines(selectedModels, 0, selectedModels.length, postDeleteLine);
-        receipt.trigger('scan');
-      });
-    }
-
-
-    //Editable Validation
-    if (this.model.get('order').get('isEditable') === false) {
-      this.doShowPopup({
-        popup: 'modalNotEditableOrder'
-      });
-      return true;
-    }
-
-    //Services validation
-    var unGroupedServiceLines = _.filter(selectedModels, function (line) {
-      return line.get('product').get('productType') === 'S' && line.get('product').get('quantityRule') === 'PP' && !line.get('groupService') && line.has('relatedLines') && line.get('relatedLines').length > 0 && line.get('isEditable');
-    });
-    if (unGroupedServiceLines && unGroupedServiceLines.length > 0) {
-      var i, j, serviceQty, productQty, uniqueServices, getServiceQty, getProductQty;
-      uniqueServices = _.uniq(unGroupedServiceLines, false, function (line) {
-        return line.get('product').get('id') + line.get('relatedLines')[0].orderlineId;
-      });
-      getServiceQty = function (service) {
-        return _.filter(unGroupedServiceLines, function (line) {
-          return line.get('product').get('id') === service.get('product').get('id') && line.get('relatedLines')[0].orderlineId === service.get('relatedLines')[0].orderlineId;
-        }).length;
-      };
-      getProductQty = function (service) {
-        return _.find(receipt.get('lines').models, function (line) {
-          return _.indexOf(_.pluck(service.get('relatedLines'), 'orderlineId'), line.get('id')) !== -1;
-        }).get('qty');
-      };
-
-      for (i = 0; i < uniqueServices.length; i++) {
-        serviceQty = getServiceQty(uniqueServices[i]);
-        productQty = getProductQty(uniqueServices[i]);
-        if (productQty && productQty !== serviceQty) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LineCanNotBeDeleted'), OB.I18N.getLabel('OBPOS_AllServiceLineMustSelectToDelete'), [{
-            label: OB.I18N.getLabel('OBMOBC_LblOk')
-          }]);
-          return;
-        }
-      }
-    }
-
-    OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
-      if (approved) {
-        ln.set('deleteApproved', true);
-        selectedModels.forEach(function (line, idx) {
-          line.set('deleteApproved', true);
-        });
-        preDeleteLine();
-      }
-    });
+    receipt.deleteLinesFromOrder(selectedModels);
   },
   editLine: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {

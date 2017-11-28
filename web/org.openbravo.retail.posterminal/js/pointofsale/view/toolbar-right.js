@@ -585,12 +585,12 @@ enyo.kind({
           i;
       for (i = 0; i < paneArray.length; i++) {
         paneArray[i].removeClass('active');
-        if (paneArray[i].name === tabName) {
+        if (paneArray[i].name === args.tabName) {
           if (paneArray[i].executeOnShow) {
             paneArray[i].executeOnShow(options);
           }
           paneArray[i].addClass('active');
-          OB.MobileApp.model.set('lastPaneShown', tabName);
+          OB.MobileApp.model.set('lastPaneShown', args.tabName);
         }
       }
     });

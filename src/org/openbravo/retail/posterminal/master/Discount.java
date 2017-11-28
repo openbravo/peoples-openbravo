@@ -101,7 +101,10 @@ public class Discount extends ProcessHQLQuery {
     hql += (addIncrementalUpdateFilter ? "(p.$incrementalUpdateCriteria) or " : "");
     hql += "   exists (select 1 ";
     hql += "      from PricingAdjustmentProduct pap, OBRETCO_Prol_Product ppl ";
-    hql += "      where pap.active = true and pap.priceAdjustment = p ";
+    hql += "      where pap.priceAdjustment = p ";
+    if (lastUpdated == null) {
+      hql += "    and pap.active = true ";
+    }
     hql += "      and pap.product.id = ppl.product.id ";
     hql += "      and ppl.active = true and pap.product.active = true ";
     if (addIncrementalUpdateFilter) {

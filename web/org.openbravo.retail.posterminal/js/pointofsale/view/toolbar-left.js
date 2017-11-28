@@ -202,7 +202,7 @@ enyo.kind({
     }, this);
     this.model.get('leftColumnViewManager').on('order', function () {
       this.removeClass('paidticket');
-      if (this.model.get('order').get('isPaid') || this.model.get('order').get('isLayaway') || (this.model.get('order').get('isQuotation') && this.model.get('order').get('hasbeenpaid') === 'Y')) {
+      if (this.model.get('order').get('isPaid') || this.model.get('order').get('isLayaway') || (this.model.get('order').get('isQuotation') && this.model.get('order').get('hasbeenpaid') === 'Y') || this.model.get('order').get('isModified')) {
         this.addClass('paidticket');
       }
       this.bubble('onChangeTotal', {
@@ -218,8 +218,8 @@ enyo.kind({
     //      }
     //      return true;
     //    }, this);
-    this.model.get('order').on('change:isPaid change:isQuotation change:isLayaway change:hasbeenpaid', function (changedModel) {
-      if (changedModel.get('isPaid') || changedModel.get('isLayaway') || (changedModel.get('isQuotation') && changedModel.get('hasbeenpaid') === 'Y')) {
+    this.model.get('order').on('change:isPaid change:isQuotation change:isLayaway change:hasbeenpaid change:isModified', function (changedModel) {
+      if (changedModel.get('isPaid') || changedModel.get('isLayaway') || (changedModel.get('isQuotation') && changedModel.get('hasbeenpaid') === 'Y') || changedModel.get('isModified')) {
         this.addClass('paidticket');
         return;
       }
@@ -573,6 +573,11 @@ enyo.kind({
     this.model.get('order').on('change:id', function () {
       this.disabledChanged(false);
     }, this);
+    this.model.get('order').get('lines').on('add', function () {
+      if (this.disabled) {
+        this.disabledChanged(false);
+      }
+    }, this);
     // the button state must be set only once, in the initialization
     this.setDisabled(true);
   }
@@ -608,6 +613,9 @@ enyo.kind({
     //Menu entries is used for modularity. cannot be initialized
     //this.menuEntries = [];
     this.menuEntries.push({
+      kind: 'OB.UI.MenuReceiptSelector'
+    });
+    this.menuEntries.push({
       kind: 'OB.UI.MenuReturn'
     });
     this.menuEntries.push({
@@ -636,12 +644,6 @@ enyo.kind({
     });
     this.menuEntries.push({
       kind: 'OB.UI.MenuCustomers'
-    });
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuPaidReceipts'
-    });
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuQuotations'
     });
     this.menuEntries.push({
       kind: 'OB.UI.MenuOpenDrawer'
@@ -677,11 +679,6 @@ enyo.kind({
     this.menuEntries.push({
       kind: 'OB.UI.MenuQuotation'
     });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuLayaways'
-    });
-
     this.menuEntries.push({
       kind: 'OB.UI.MenuMultiOrders'
     });

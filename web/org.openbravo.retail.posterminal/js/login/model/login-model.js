@@ -60,8 +60,7 @@
         localDB: {
           size: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.size,
           name: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.name,
-          displayName: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.displayName,
-          version: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.dbVersion
+          displayName: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.displayName
         },
         logDBTrxThreshold: 300,
         logDBStmtThreshold: 1000,
@@ -184,6 +183,7 @@
 
               OB.UTIL.localStorage.setItem('terminalId', data[0].terminal.id);
               terminalModel.set('useBarcode', terminalModel.get('terminal').terminalType.usebarcodescanner);
+              terminalModel.set('useEmbededBarcode', terminalModel.get('terminal').terminalType.useembededbarcodescanner);
               if (!terminalModel.usermodel) {
                 OB.MobileApp.model.loadingErrorsActions("The terminal.usermodel should be loaded at this point");
               } else if (OB.MobileApp.model.attributes.loadManifeststatus && OB.MobileApp.model.attributes.loadManifeststatus.type === 'error' && !OB.RR.RequestRouter.ignoreManifestLoadError()) {
@@ -670,10 +670,13 @@
                       };
                   OB.MobileApp.model.orderList.loadById(orderId);
                   if (orderId === OB.MobileApp.model.orderList.current.id) {
-                    OB.MobileApp.model.orderList.current.deleteOrder(me, callback);
-                  } else {
-                    callback();
+                    OB.UTIL.rebuildCashupFromServer(function () {
+                      OB.MobileApp.model.orderList.saveCurrent();
+                      OB.Dal.remove(OB.MobileApp.model.orderList.current, null, null);
+                      OB.MobileApp.model.orderList.deleteCurrent();
+                    });
                   }
+                  callback();
                 } else if (data.status === "Initial") {
                   //recursively check process status 
                   setTimeout(function () {
@@ -683,7 +686,7 @@
                   }, 15000);
 
                 } else if (data.status === "Error") {
-                  //Show modal advicing that there was an error
+                  //Show modal advising that there was an error
                   me.checkProcessingMessageLocked = false;
                   OB.UTIL.localStorage.removeItem('synchronizedMessageId');
                   if (OB.MobileApp.model.showSynchronizedDialog) {
@@ -709,31 +712,12 @@
                 }
               }
             }, function (data) {
+              //Continue retrying till we know the status of the message
               counter++;
-              //If the server is down, we show error message
-              if (data && data.exception && data.exception.inSender === 0) {
-                //Show modal advicing that there was an error
-                me.checkProcessingMessageLocked = false;
-                OB.UTIL.localStorage.removeItem('synchronizedMessageId');
-                if (OB.MobileApp.model.showSynchronizedDialog) {
-                  OB.MobileApp.model.hideSynchronizingDialog("CheckProcessingMessage");
-                }
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_TransactionFailedTitle'), OB.I18N.getLabel('OBMOBC_TransactionFailed', [data.exception.message]), [{
-                  isConfirmButton: true,
-                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                  action: function () {
-                    if (OB && OB.POS) {
-                      OB.POS.navigate('retail.pointofsale');
-                      return true;
-                    }
-                  }
-                }]);
-              } else {
-                setTimeout(function () {
-                  OB.UTIL.showConfirmation.setText(OB.I18N.getLabel('OBMOBC_DataIsBeingProcessed') + " " + OB.I18N.getLabel('OBMOBC_NumOfRetries') + " " + counter);
-                  checkProcessingMessage(counter);
-                }, 15000);
-              }
+              setTimeout(function () {
+                OB.UTIL.showConfirmation.setText(OB.I18N.getLabel('OBMOBC_DataIsBeingProcessed') + " " + OB.I18N.getLabel('OBMOBC_NumOfRetries') + " " + counter);
+                checkProcessingMessage(counter);
+              }, 15000);
 
             }, undefined, 15000);
           };

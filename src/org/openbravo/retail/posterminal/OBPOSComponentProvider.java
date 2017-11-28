@@ -91,6 +91,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // "model/user",
         "utils/ob-utilitiesuipos",
         "model/bpartnerfilter",
+        "model/orderfilter",
         "model/bpcategory",
         "model/bplocation", // Model for Customer
                             // Address
@@ -133,6 +134,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "data/datacustomeraddrsave",
         "data/dataorderdiscount",
         "components/modalreceipts",
+        "components/modalorderselector",
         "components/modalmultiorderslayaway",
         "components/modalcategorytree",
         "components/rendercategory",

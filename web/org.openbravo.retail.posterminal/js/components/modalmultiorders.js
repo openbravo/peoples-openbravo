@@ -232,6 +232,7 @@ enyo.kind({
   searchAction: function (inSender, inEvent) {
     var me = this,
         toMatch = 0,
+        orderModels = [],
         re, actualDate, i, processHeader = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader');
     me.filters = inEvent.filters;
     var limit;
@@ -259,6 +260,7 @@ enyo.kind({
         }
         _.each(me.model.get('orderList').models, function (iter) {
           if (iter.get('lines') && iter.get('lines').length > 0) {
+            orderModels.push(iter.get('id'));
             re = new RegExp(me.filters.filterText, 'gi');
             toMatch = iter.get('documentNo').match(re) + iter.get('bp').get('_identifier').match(re);
             if ((me.filters.filterText === '' || toMatch !== 0) && (iter.get('orderType') === 0 || iter.get('orderType') === 2) && !iter.get('isPaid') && !iter.get('isQuotation') && iter.get('gross') >= 0) {
@@ -283,7 +285,9 @@ enyo.kind({
           me.cleanFilter = false;
         }
         _.each(data, function (iter) {
-          me.multiOrdersList.add(iter);
+          if (orderModels.indexOf(iter.id) < 0) {
+            me.multiOrdersList.add(iter);
+          }
         });
 
         me.disableFilters(false);

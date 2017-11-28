@@ -62,14 +62,23 @@ enyo.kind({
   isDefaultAction: true,
   i18nContent: 'OBPOS_LblApplyButton',
   tap: function () {
-    var terminalData = {
-      terminalKeyIdentifier: this.owner.$.terminalKeyIdentifier.getValue(),
-      username: this.owner.$.username.getValue(),
-      user: this.owner.$.username.getValue(),
-      password: this.owner.$.password.getValue(),
-      cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId')
-    };
-    this.doHideThisPopup();
-    this.owner.owner.context.linkTerminal(JSON.stringify(terminalData), this.owner.owner.callback);
+    if (this.validateForm()) {
+      var terminalData = {
+        terminalKeyIdentifier: this.owner.$.terminalKeyIdentifier.getValue(),
+        username: this.owner.$.username.getValue(),
+        user: this.owner.$.username.getValue(),
+        password: this.owner.$.password.getValue(),
+        cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId')
+      };
+      this.doHideThisPopup();
+      this.owner.owner.context.linkTerminal(JSON.stringify(terminalData), this.owner.owner.callback);
+    }
+  },
+  validateForm: function () {
+    if (_.isEmpty(this.owner.$.terminalKeyIdentifier.getValue()) || _.isEmpty(this.owner.$.username.getValue()) || _.isEmpty(this.owner.$.password.getValue())) {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_EmptyTerminalAuthenticationValue'));
+      return false;
+    }
+    return true;
   }
 });

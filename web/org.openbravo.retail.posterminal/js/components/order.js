@@ -709,9 +709,10 @@ enyo.kind({
         this.$.paymentBreakdown.hide();
       }
     }, this);
+
     // Change Document No based on return lines
     this.order.get('lines').on('add change:qty change:relatedLines updateRelations', function () {
-      if (this.order.get('isEditable') && !this.order.get('isLayaway') && !this.order.get('isQuotation') && !this.order.get('doCancelAndReplace')) {
+      if (this.order.get('isEditable') && !this.order.get('isModified') && !this.order.get('isLayaway') && !this.order.get('isQuotation') && !this.order.get('doCancelAndReplace')) {
         var negativeLinesLength = _.filter(this.order.get('lines').models, function (line) {
           return line.get('qty') < 0;
         }).length;
@@ -724,6 +725,7 @@ enyo.kind({
         }
       }
     }, this);
+
     this.order.get('lines').on('add change:qty change:relatedLines updateRelations', function () {
       var approvalNeeded = false,
           linesToRemove = [],
@@ -1270,78 +1272,6 @@ enyo.kind({
           });
         }
       });
-    }, this);
-    this.order.get('lines').on('remove', function (model, list, index) {
-      var lineToDelete = model,
-          removedId = model.get('id'),
-          serviceLinesToCheck = [],
-          text, linesToDelete, relations, deletedQty;
-
-      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && model.get('obposQtyDeleted')) {
-        deletedQty = model.get('obposQtyDeleted');
-      } else {
-        deletedQty = model.get('qty');
-      }
-
-      if (!me.order.get('undo')) {
-        text = OB.I18N.getLabel('OBPOS_DeleteLine') + ': ' + deletedQty + ' x ' + model.get('product').get('_identifier');
-        linesToDelete = [model];
-        relations = [];
-        me.order.setUndo('DeleteLine', {
-          text: text,
-          lines: linesToDelete,
-          relations: relations
-        });
-      } else {
-        linesToDelete = me.order.get('undo').lines;
-        if (!linesToDelete) {
-          linesToDelete = [];
-        }
-        linesToDelete.push(model);
-        text = me.order.get('undo').text;
-        if (text) {
-          text += ', ' + deletedQty + ' x ' + model.get('product').get('_identifier');
-        } else {
-          text = OB.I18N.getLabel('OBPOS_DeleteLine') + ': ' + deletedQty + ' x ' + model.get('product').get('_identifier');
-        }
-        relations = me.order.get('undo').relations;
-        if (!relations) {
-          relations = [];
-        }
-        me.order.get('undo').text = text;
-        me.order.get('undo').lines = linesToDelete;
-        me.order.get('undo').relations = relations;
-      }
-
-      me.order.get('lines').forEach(function (line, idx) {
-        if (line.has('relatedLines') && line.get('relatedLines').length > 0) {
-          var relationIds = _.pluck(line.get('relatedLines'), 'orderlineId');
-          if (_.indexOf(relationIds, removedId) !== -1) {
-            serviceLinesToCheck.push([line, idx]);
-          }
-        }
-      });
-      if (serviceLinesToCheck.length > 0) {
-        serviceLinesToCheck.forEach(function (lineToCheck) {
-          var rl, rls;
-          if (lineToCheck[0].get('relatedLines').length > 1) {
-            rl = _.filter(lineToCheck[0].get('relatedLines'), function (rl) {
-              return rl.orderlineId === lineToDelete.get('id');
-            });
-            relations.push([lineToCheck[0], rl[0]]);
-            //Effectively remove the relation from the service line
-            rls = lineToCheck[0].get('relatedLines').slice();
-            rls.splice(lineToCheck[0].get('relatedLines').indexOf(rl[0]), 1);
-            lineToCheck[0].set('relatedLines', rls);
-            if (lineToCheck[0].get('product').get('quantityRule') === 'PP') {
-              text += ', ' + deletedQty + ' x ' + lineToCheck[0].get('product').get('_identifier');
-              me.order.get('undo').text = text;
-            }
-          } else {
-            me.order.deleteLine(lineToCheck[0], true);
-          }
-        });
-      }
     }, this);
     this.order.on('change:selectedPayment', function (model) {
       OB.UTIL.HookManager.executeHooks('OBPOS_PaymentSelected', {

@@ -137,7 +137,7 @@
           receipt.set('multipleUndo', null);
 
           receipt.set('paymentMethodKind', null);
-          if (receipt.get('payments').length === 1 && receipt.get('orderType') === 0 && !receipt.get('isLayaway') && !receipt.get('isQuotation')) {
+          if (receipt.get('payments').length === 1 && receipt.get('orderType') === 0 && !receipt.get('isLayaway') && !receipt.get('isQuotation') && !receipt.get('paidOnCredit')) {
             var payment = receipt.get('payments').models[0];
             receipt.set('paymentMethodKind', payment.get('kind'));
           }

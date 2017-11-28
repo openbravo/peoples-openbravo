@@ -162,18 +162,27 @@ enyo.kind({
     if (this.model.get('order').get('orderType') === 3) {
       return;
     }
+
+    var errorsConvertingLayawayToReceipt = [];
+
+    if (!this.model.get('order').checkAllAttributesHasValue()) {
+      errorsConvertingLayawayToReceipt.push('OBPOS_AllAttributesNeedValue');
+    }
+
     enyo.forEach(this.model.get('order').get('payments').models, function (curPayment) {
-      receiptAllowed = false;
+      errorsConvertingLayawayToReceipt.push('OBPOS_LayawayHasPayment');
       return;
     }, this);
 
-    if (receiptAllowed) {
+    if (errorsConvertingLayawayToReceipt.length === 0) {
       this.doShowDivText({
         permission: this.permission,
         orderType: 0
       });
     } else {
-      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_LayawayHasPayment'));
+      errorsConvertingLayawayToReceipt.forEach(function (error) {
+        OB.UTIL.showWarning(OB.I18N.getLabel(error));
+      });
     }
   },
   displayLogic: function () {
@@ -869,82 +878,20 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.UI.MenuPaidReceipts',
+  name: 'OB.UI.MenuReceiptSelector',
   kind: 'OB.UI.MenuAction',
-  permission: 'OBPOS_retail.paidReceipts',
+  permission: 'OBPOS_retail.menuReceiptSelector',
   events: {
-    onPaidReceipts: ''
+    onShowPopup: ''
   },
-  i18nLabel: 'OBPOS_LblPaidReceipts',
+  i18nLabel: 'OBPOS_OpenReceipt',
   tap: function () {
     var me = this;
     var connectedCallback = function () {
         if (OB.MobileApp.model.hasPermission(me.permission)) {
-          me.doPaidReceipts({
-            isQuotation: false
+          me.doShowPopup({
+            popup: 'modalReceiptSelector'
           });
-        }
-        };
-    var notConnectedCallback = function () {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
-        return;
-        };
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments); // Manual dropdown menu closure
-    if (!OB.MobileApp.model.get('connectedToERP')) {
-      OB.UTIL.checkOffLineConnectivity(500, connectedCallback, notConnectedCallback);
-    } else {
-      connectedCallback();
-    }
-  }
-});
-
-enyo.kind({
-  name: 'OB.UI.MenuQuotations',
-  kind: 'OB.UI.MenuAction',
-  permission: 'OBPOS_retail.quotations',
-  events: {
-    onQuotations: ''
-  },
-  i18nLabel: 'OBPOS_Quotations',
-  tap: function () {
-    var me = this;
-    var connectedCallback = function () {
-        if (OB.MobileApp.model.hasPermission(me.permission)) {
-          me.doQuotations();
-        }
-        };
-    var notConnectedCallback = function () {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
-        return;
-        };
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments); // Manual dropdown menu closure
-    if (!OB.MobileApp.model.get('connectedToERP')) {
-      OB.UTIL.checkOffLineConnectivity(500, connectedCallback, notConnectedCallback);
-    } else {
-      connectedCallback();
-    }
-  }
-});
-
-enyo.kind({
-  name: 'OB.UI.MenuLayaways',
-  kind: 'OB.UI.MenuAction',
-  permission: 'OBPOS_retail.layaways',
-  events: {
-    onLayaways: ''
-  },
-  i18nLabel: 'OBPOS_LblLayaways',
-  tap: function () {
-    var me = this;
-    var connectedCallback = function () {
-        if (OB.MobileApp.model.hasPermission(me.permission)) {
-          me.doLayaways();
         }
         };
     var notConnectedCallback = function () {

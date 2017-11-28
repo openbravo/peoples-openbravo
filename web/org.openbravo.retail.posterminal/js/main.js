@@ -45,18 +45,13 @@
   /**
    * Global versions for WebPOS
    */
-  // Add the current WebPOS version
-  OB.UTIL.VersionManagement.current.posterminal = {
-    year: 16,
-    major: 2,
-    minor: 0
-  };
   // Add the current WebSQL database version for WebPOS
-  OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase = {
-    name: 'WEBPOS',
-    size: 4 * 1024 * 1024,
-    displayName: 'Openbravo Web POS',
-    dbVersion: OB.UTIL.VersionManagement.current.posterminal.year + "." + OB.UTIL.VersionManagement.current.posterminal.major + OB.UTIL.VersionManagement.current.posterminal.minor
+  OB.UTIL.VersionManagement.current.posterminal = {
+    WebSQLDatabase: {
+      name: 'WEBPOS',
+      size: 4 * 1024 * 1024,
+      displayName: 'Openbravo Web POS'
+    }
   };
 
   /**

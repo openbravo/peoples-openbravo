@@ -211,6 +211,10 @@ enyo.kind({
                 showing: false,
                 type: 'error'
               }, {
+                name: 'allAttributesNeedValue',
+                type: 'error',
+                showing: false
+              }, {
                 name: 'paymentMethodSelect',
                 style: 'color: orange',
                 type: 'info',
@@ -254,6 +258,9 @@ enyo.kind({
         return;
       }
       this.updatePending();
+    }, this);
+    this.receipt.on('disableDoneButton', function () {
+      this.$.donebutton.setDisabled(true);
     }, this);
     this.receipt.on('updatePending', function () {
       this.updatePending();
@@ -700,6 +707,7 @@ enyo.kind({
       this.$.changeexceedlimit.hide();
       this.$.overpaymentnotavailable.hide();
       this.$.overpaymentexceedlimit.hide();
+      this.$.allAttributesNeedValue.hide();
     }
     this.$.noenoughchangelbl.hide();
     this.$.onlycashpaymentmethod.hide();
@@ -756,6 +764,14 @@ enyo.kind({
     if (resultOK) {
       this.$.noenoughchangelbl.hide();
     }
+
+    // check that all attributes has value
+    if (OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true) && paymentstatus.done && !this.receipt.checkAllAttributesHasValue()) {
+      this.$.donebutton.setLocalDisabled(true);
+      this.$.allAttributesNeedValue.show();
+    }
+
+
     this.alignErrorMessages();
   },
   alignErrorMessages: function () {
@@ -813,6 +829,7 @@ enyo.kind({
     errorLabelArray.push(this.$.overpaymentexceedlimit);
     errorLabelArray.push(this.$.onlycashpaymentmethod);
     errorLabelArray.push(this.$.errorMaxlimitamount);
+    errorLabelArray.push(this.$.allAttributesNeedValue);
     errorLabelArray.push(this.$.paymentMethodSelect);
     errorLabelArray.push(this.$.extrainfo);
     return errorLabelArray;
@@ -973,6 +990,7 @@ enyo.kind({
     this.$.overpaymentnotavailable.setContent(OB.I18N.getLabel('OBPOS_OverpaymentNotAvailable'));
     this.$.overpaymentexceedlimit.setContent(OB.I18N.getLabel('OBPOS_OverpaymentExcededLimit'));
     this.$.onlycashpaymentmethod.setContent(OB.I18N.getLabel('OBPOS_OnlyCashPaymentMethod'));
+    this.$.allAttributesNeedValue.setContent(OB.I18N.getLabel('OBPOS_AllAttributesNeedValue'));
   },
   init: function (model) {
     var me = this;
@@ -989,6 +1007,9 @@ enyo.kind({
 
     this.model.get('multiOrders').on('change:payment change:total change:change paymentCancel', function () {
       this.updatePendingMultiOrders();
+    }, this);
+    this.model.get('multiOrders').on('disableDoneButton', function () {
+      this.$.donebutton.setDisabled(true);
     }, this);
     this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
       if (changedModel.isOrder()) {
@@ -1173,7 +1194,7 @@ enyo.kind({
       }
 
       var errorMsgLbl, totalPaid = 0,
-          totalToPaid = isMultiOrder ? this.owner.model.get('multiOrders').getTotal() : this.owner.receipt.getTotal(),
+          totalToPaid = OB.DEC.abs(isMultiOrder ? this.owner.model.get('multiOrders').getTotal() : this.owner.receipt.getTotal()),
           isReturnOrder = isMultiOrder ? false : this.owner.receipt.getPaymentStatus().isNegative;
 
       if (_.filter(payments.models, function (payment) {

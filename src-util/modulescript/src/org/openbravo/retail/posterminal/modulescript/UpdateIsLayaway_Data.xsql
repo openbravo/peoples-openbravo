@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*
+ ************************************************************************************
+ * Copyright (C) 2017 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+-->
+<SqlClass name="UpdateIsLayawayData" package="org.openbravo.retail.posterminal.modulescript">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="dummy" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+          SELECT 1 AS dummy FROM DUAL
+        ]]>
+      </Sql>
+  </SqlMethod>
+  <SqlMethod name="updateIsLayaway" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+          update c_order set em_obpos_islayaway = 'Y' where c_order_id in ( 
+              select o.c_order_id 
+              from c_order as o 
+              where o.em_obpos_isdeleted = 'N' 
+                  and o.em_obpos_applications_id is not null 
+                  and not exists (select 1 
+                                  from c_orderline as ol 
+                                  where ol.c_order_id = o.c_order_id 
+                                      and qtydelivered != 0) 
+                  and o.docstatus = 'CO';
+        ]]>
+      </Sql>
+  </SqlMethod>
+</SqlClass>

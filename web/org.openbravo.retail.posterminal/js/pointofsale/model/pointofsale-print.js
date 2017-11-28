@@ -424,7 +424,7 @@
           }
         } // order property.
       }
-      if (receipt.get('canceledorder')) {
+      if (receipt.get('doCancelAndReplace') && receipt.get('canceledorder')) {
         var negativeDocNo = receipt.get('negativeDocNo');
         receipt.get('canceledorder').set('ordercanceled', true);
         receipt.get('canceledorder').set('negativeDocNo', negativeDocNo);

@@ -202,7 +202,6 @@ enyo.kind({
     permission: 'OBPOS_ActionButtonDelete',
     tap: function () {
       this.owner.owner.doDeleteLine({
-        line: this.owner.owner.line,
         selectedModels: this.owner.owner.selectedModels
       });
     },
@@ -517,6 +516,10 @@ enyo.kind({
     name: 'checkStockButton',
     permission: 'OBPOS_ActionButtonCheckStock',
     showing: false
+  }, {
+    kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenAttributeButton',
+    name: 'openAttributeButton',
+    showing: false
   }],
   published: {
     receipt: null
@@ -624,6 +627,17 @@ enyo.kind({
             this.$.actionButtonsContainer.$.checkStockButton.hide();
           }
         }
+        if (this.$.actionButtonsContainer.$.openAttributeButton) {
+          if (this.line) {
+            if ((this.receipt.get('isEditable') || this.receipt.get('isLayaway')) && this.line.get('product').get('hasAttributes') && OB.MobileApp.model.get('permissions').OBPOS_EnableSupportForProductAttributes) {
+              this.$.actionButtonsContainer.$.openAttributeButton.show();
+            } else {
+              this.$.actionButtonsContainer.$.openAttributeButton.hide();
+            }
+          } else {
+            this.$.actionButtonsContainer.$.openAttributeButton.hide();
+          }
+        }
       } else {
         if (this.$.actionButtonsContainer.$.checkStockButton) {
           this.$.actionButtonsContainer.$.checkStockButton.hide();
@@ -633,6 +647,9 @@ enyo.kind({
         }
         if (this.$.actionButtonsContainer.$.splitlineButton) {
           this.$.actionButtonsContainer.$.splitlineButton.hide();
+        }
+        if (this.$.actionButtonsContainer.$.openAttributeButton) {
+          this.$.actionButtonsContainer.$.openAttributeButton.hide();
         }
       }
       if (this.$.actionButtonsContainer.$.removeDiscountButton) {
@@ -1086,5 +1103,53 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.setContent(OB.I18N.getLabel('OBPOS_checkStock'));
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.SmallButton',
+  name: 'OB.OBPOSPointOfSale.UI.EditLine.OpenAttributeButton',
+  content: '',
+  classes: 'btnlink-orange',
+  permission: 'OBPOS_EnableSupportForProductAttributes',
+  tap: function () {
+    var me = this;
+    var params = {};
+    OB.MobileApp.view.waterfall('onShowPopup', {
+      popup: 'modalProductAttribute',
+      attributeValue: this.owner.owner.line.get('attributeValue'),
+      args: {
+        callback: function (attributeValue, cancelled) {
+          var line = me.owner.owner.line;
+          if (!cancelled) {
+            if (me.owner.owner.receipt.checkSerialAttribute(line.get('product'), attributeValue)) {
+
+              if (_.isEmpty(attributeValue)) {
+                // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
+                attributeValue = null;
+              }
+
+              line.set('attributeValue', attributeValue);
+              // attributeValue is used to save the new attribute
+              // but when loading the order from backend it contains the attribute in json format
+              // and attSetInstanceDesc contains the transformed attribute into string
+              // so when we set again the attributeValue, we have to unset the attSetInstanceDesc,
+              // if not the new value in attributeValue will be ignored
+              me.owner.owner.line.unset('attSetInstanceDesc');
+            } else {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ProductDefinedAsSerialNo'));
+            }
+          }
+        },
+        options: {
+          attSetInstanceDesc: me.owner.owner.line.get('attSetInstanceDesc'),
+          attributeValue: me.owner.owner.line.get('attributeValue')
+        }
+      }
+    });
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.setContent(OB.I18N.getLabel('OBPOS_openAttributes'));
   }
 });
