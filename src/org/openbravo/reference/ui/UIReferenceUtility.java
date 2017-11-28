@@ -81,10 +81,8 @@ public class UIReferenceUtility {
     else if (reference == null || reference.length() == 0)
       return field;
 
-    if (reference.equals("11")) {
-      // INTEGER
-      result = "CAST(" + field + " AS INTEGER)";
-    } else if (reference.equals("12")/* AMOUNT */
+    if (reference.equals("11") /* INTEGER */
+        || reference.equals("12")/* AMOUNT */
         || reference.equals("22") /* NUMBER */
         || reference.equals("23") /* ROWID */
         || reference.equals("29") /* QUANTITY */
