@@ -18,9 +18,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.WindowTreeData;
 
+/**
+ * 
+ * @deprecated Since PR18Q2, all the functionality implemented by {@link OrgTree} is provided also
+ *             by {@link OrganizationStructureProvider} with a better performance.
+ *
+ */
+@Deprecated
 public class OrgTree implements Serializable {
   private static final long serialVersionUID = 1L;
   private List<OrgTreeNode> nodes;

@@ -18,11 +18,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.WindowTreeData;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationType;
 
+/**
+ * 
+ * @deprecated Since PR18Q2, all the functionality implemented by {@link OrgTree} is provided also
+ *             by {@link OrganizationStructureProvider} with a better performance.
+ *
+ */
+@Deprecated
 class OrgTreeNode implements Serializable {
   private static final long serialVersionUID = 1L;
   private String id;
