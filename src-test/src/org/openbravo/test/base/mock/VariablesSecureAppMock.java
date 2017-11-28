@@ -21,10 +21,8 @@ package org.openbravo.test.base.mock;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * A mocked VariablesSecureApp to be used to create test requests.
@@ -50,9 +48,7 @@ public class VariablesSecureAppMock extends VariablesSecureApp {
 
     this.mockedParams = mockedParams;
     OBContext ctx = OBContext.getOBContext();
-    DalConnectionProvider con = new DalConnectionProvider(false);
-    OrgTree tree = new OrgTree(con, ctx.getCurrentClient().getId());
-    setSessionObject("#CompleteOrgTree", tree);
+
     setSessionValue("#User_Client", "'" + ctx.getCurrentClient().getId() + "'");
   }
 
