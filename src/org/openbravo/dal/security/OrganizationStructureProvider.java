@@ -76,7 +76,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       setClientId(OBContext.getOBContext().getCurrentClient().getId());
     }
 
-    String sql = "select n.node_id, n.parent_id, o.isready, ot.islegalentity, ot.isbusinessunit, ot.istransactionsallowed, ot.isacctlegalentity  \n"
+    String sql = "select n.node_id, n.parent_id, o.isready, ot.islegalentity, ot.isbusinessunit, ot.istransactionsallowed, o.isperiodcontrolallowed  \n"
         + "  from ad_tree t, ad_treenode n, ad_org o, ad_orgtype ot\n"
         + " where n.node_id = o.ad_org_id \n"
         + "   and o.ad_orgtype_id = ot.ad_orgtype_id \n"
@@ -306,7 +306,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     private boolean isLegalEntity;
     private boolean isBusinessUnit;
     private boolean isTransactionsAllowed;
-    private boolean isAcctLegalEntity;
+    private boolean isPeriodControlAllowed;
 
     private List<String> children = new ArrayList<>();
 
@@ -321,7 +321,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       isLegalEntity = Objects.equals('Y', nodeDef[3]); // "Y".equals(nodeDef[3]);
       isBusinessUnit = Objects.equals('Y', nodeDef[4]); // "Y".equals(nodeDef[4]);
       isTransactionsAllowed = Objects.equals('Y', nodeDef[5]); // "Y".equals(nodeDef[5]);
-      isAcctLegalEntity = Objects.equals('Y', nodeDef[6]);// "Y".equals(nodeDef[6]);
+      isPeriodControlAllowed = Objects.equals('Y', nodeDef[6]);// "Y".equals(nodeDef[7]);
     }
 
     public void resolve(List<OrgNode> nodes) {
@@ -393,9 +393,9 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     OBContext.setAdminMode(true);
     try {
       for (final String orgId : getParentList(org.getId(), true)) {
-        final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
-        if (parentOrg.getOrganizationType().isLegalEntity()) {
-          return parentOrg;
+        OrgNode node = orgNodes.get(orgId);
+        if (node != null && node.isLegalEntity) {
+          return OBDal.getInstance().get(Organization.class, orgId);
         }
       }
       return null;
@@ -417,9 +417,9 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     List<Organization> childLegalEntitiesList = new ArrayList<Organization>();
     try {
       for (final String orgId : getChildTree(org.getId(), false)) {
-        final Organization childOrg = OBDal.getInstance().get(Organization.class, orgId);
-        if (childOrg.getOrganizationType().isLegalEntity()) {
-          childLegalEntitiesList.add(childOrg);
+        OrgNode node = orgNodes.get(orgId);
+        if (node != null && node.isLegalEntity) {
+          childLegalEntitiesList.add(OBDal.getInstance().get(Organization.class, orgId));
         }
       }
       return childLegalEntitiesList;
@@ -440,10 +440,9 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     OBContext.setAdminMode(true);
     try {
       for (final String orgId : getParentList(org.getId(), true)) {
-        final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
-        if (parentOrg.getOrganizationType().isLegalEntity()
-            || parentOrg.getOrganizationType().isBusinessUnit()) {
-          return parentOrg;
+        OrgNode node = orgNodes.get(orgId);
+        if (node != null && (node.isLegalEntity || node.isBusinessUnit)) {
+          return OBDal.getInstance().get(Organization.class, orgId);
         }
       }
       return null;
@@ -463,13 +462,10 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     // Admin mode needed to get the Organization type.
     OBContext.setAdminMode(true);
     try {
-      if (org.isAllowPeriodControl()) {
-        return org;
-      }
-      for (final String orgId : getParentList(org.getId(), false)) {
-        final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
-        if (parentOrg.isAllowPeriodControl()) {
-          return parentOrg;
+      for (final String orgId : getParentList(org.getId(), true)) {
+        OrgNode node = orgNodes.get(orgId);
+        if (node != null && node.isPeriodControlAllowed) {
+          return OBDal.getInstance().get(Organization.class, orgId);
         }
       }
       return null;
