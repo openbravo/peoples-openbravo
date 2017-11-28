@@ -27,15 +27,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.model.ad.utility.Tree;
-import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationType;
 import org.slf4j.Logger;
@@ -77,28 +74,28 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       setClientId(OBContext.getOBContext().getCurrentClient().getId());
     }
 
+    String sql = "select n.node_id, n.parent_id, o.isready, ot.islegalentity, ot.isbusinessunit, ot.istransactionsallowed, ot.isacctlegalentity  \n"
+        + "  from ad_tree t, ad_treenode n, ad_org o, ad_orgtype ot\n"
+        + " where n.node_id = o.ad_org_id \n"
+        + "   and o.ad_orgtype_id = ot.ad_orgtype_id \n"
+        + "   and n.ad_tree_id = t.ad_tree_id\n"
+        + "   and t.ad_table_id = :tableId\n"
+        + "   and t.ad_client_id = :clientId";
+
     // read all trees of all clients, bypass DAL to prevent security checks
-    final String qryStr = "select t.id from " + Tree.class.getName() + " t where table.id='"
-        + AD_ORG_TABLE_ID + "' and client.id='" + getClientId() + "'";
-    final Query qry = SessionHandler.getInstance().createQuery(qryStr);
+    SQLQuery qry = OBDal.getInstance().getSession().createSQLQuery(sql);
+    qry.setParameter("clientId", getClientId());
+    qry.setParameter("tableId", AD_ORG_TABLE_ID);
+
     @SuppressWarnings("unchecked")
-    final List<String> ts = qry.list();
-    final List<Object[]> treeNodes = new ArrayList<Object[]>();
-    for (final String treeId : ts) {
-      final String nodeQryStr = "select tn.node, tn.reportSet from " + TreeNode.class.getName()
-          + " tn where tn.tree.id='" + treeId + "'";
-      final Query nodeQry = SessionHandler.getInstance().createQuery(nodeQryStr);
-      @SuppressWarnings("unchecked")
-      final List<Object[]> tns = nodeQry.list();
-      treeNodes.addAll(tns);
-    }
+    List<Object[]> treeNodes = qry.list();
 
     orgNodes = new HashMap<>(treeNodes.size());
-    for (final Object[] tn : treeNodes) {
+
+    for (Object[] nodeDef : treeNodes) {
       final OrgNode on = new OrgNode();
-      String nodeId = (String) tn[0];
-      String parentId = (String) tn[1];
-      on.setTreeNodeData(nodeId, parentId);
+      String nodeId = (String) nodeDef[0];
+      on.setTreeNodeData(nodeDef);
       orgNodes.put(nodeId, on);
     }
 
@@ -303,10 +300,26 @@ public class OrganizationStructureProvider implements OBNotSingleton {
   class OrgNode {
     private String nodeId;
     private String parentNodeId;
+    private boolean isReady;
+    private boolean isLegalEntity;
+    private boolean isBusinessUnit;
+    private boolean isTransactionsAllowed;
+    private boolean isAcctLegalEntity;
+
     private List<String> children = new ArrayList<>();
 
     void addChild(String childId) {
       children.add(childId);
+    }
+
+    public void setTreeNodeData(Object[] nodeDef) {
+      nodeId = (String) nodeDef[0];
+      parentNodeId = (String) nodeDef[1];
+      isReady = "Y".equals(nodeDef[2]);
+      isLegalEntity = "Y".equals(nodeDef[3]);
+      isBusinessUnit = "Y".equals(nodeDef[4]);
+      isTransactionsAllowed = "Y".equals(nodeDef[5]);
+      isAcctLegalEntity = "Y".equals(nodeDef[6]);
     }
 
     public void resolve(List<OrgNode> nodes) {
@@ -327,11 +340,6 @@ public class OrganizationStructureProvider implements OBNotSingleton {
 
     public String getParentNodeId() {
       return parentNodeId;
-    }
-
-    public void setTreeNodeData(String nodeId, String parentNodeId) {
-      this.nodeId = nodeId;
-      this.parentNodeId = parentNodeId;
     }
 
     public List<String> getChildren() {
