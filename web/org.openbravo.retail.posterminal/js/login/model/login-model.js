@@ -217,7 +217,7 @@
           }, true, 5000);
         }
       });
-      
+
       this.get('dataSyncModels').push({
         name: 'Customer',
         model: OB.Model.ChangedBusinessPartners,
