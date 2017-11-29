@@ -1220,6 +1220,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       JSONObject jsonOrderLine, OrderLine orderLine, JSONObject jsonorder, long lineNo,
       BigDecimal qty, Locator bin, AttributeSetInstance attributeSetInstance, int i)
       throws JSONException {
+    String orderOrganizationId = jsonorder.getString("organization");
+
     ShipmentInOutLine line = OBProvider.getInstance().get(ShipmentInOutLine.class);
     String shipmentLineId = OBMOBCUtils.getUUIDbyString(orderLine.getId() + lineNo + i);
     JSONPropertyToEntity.fillBobFromJSON(shplineentity, line, jsonOrderLine,
@@ -1241,12 +1243,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         "attSetInstanceDesc")) {
       line.setAttributeSetValue(AttributesUtils.fetchAttributeSetValue(
           jsonOrderLine.get("attSetInstanceDesc").toString(), jsonOrderLine
-              .getJSONObject("product").get("id").toString()));
+              .getJSONObject("product").get("id").toString(), orderOrganizationId));
     } else if (OBMOBCUtils.isJsonObjectPropertyStringPresentNotNullAndNotEmptyString(jsonOrderLine,
         "attributeValue")) {
       line.setAttributeSetValue(AttributesUtils.fetchAttributeSetValue(
           jsonOrderLine.get("attributeValue").toString(), jsonOrderLine.getJSONObject("product")
-              .get("id").toString()));
+              .get("id").toString(), orderOrganizationId));
     } else {
       line.setAttributeSetValue(attributeSetInstance);
     }
@@ -1333,12 +1335,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           "attSetInstanceDesc")) {
         orderline.setAttributeSetValue(AttributesUtils.fetchAttributeSetValue(
             jsonOrderLine.get("attSetInstanceDesc").toString(),
-            jsonOrderLine.getJSONObject("product").get("id").toString()));
+            jsonOrderLine.getJSONObject("product").get("id").toString(), order.getOrganization()
+                .getId()));
       } else if (OBMOBCUtils.isJsonObjectPropertyStringPresentNotNullAndNotEmptyString(
           jsonOrderLine, "attributeValue")) {
         orderline.setAttributeSetValue(AttributesUtils.fetchAttributeSetValue(
             jsonOrderLine.get("attributeValue").toString(), jsonOrderLine.getJSONObject("product")
-                .get("id").toString()));
+                .get("id").toString(), order.getOrganization().getId()));
       }
 
       lineReferences.add(orderline);

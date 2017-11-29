@@ -29,21 +29,25 @@ import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.AttributeUse;
 import org.openbravo.model.common.plm.AttributeValue;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 
 public class AttributesUtils {
 
   private static final Logger log = Logger.getLogger(AttributesUtils.class);
 
-  public static AttributeSetInstance fetchAttributeSetValue(String attributeValue, String productId) {
+  public static AttributeSetInstance fetchAttributeSetValue(String attributeValue,
+      String productId, String posTerminalOrganizationId) {
     AttributeSetInstance attrSetInst = null;
     String validatedAttributeSetInstanceDescription = "";
     Product product = OBDal.getInstance().get(Product.class, productId);
+    // Ensure that product is configured to use attributes
     if (product.getAttributeSet() != null) {
       try {
         if (StringUtils.isNotEmpty(attributeValue) || StringUtils.isNotBlank(attributeValue)) {
+          // Generate a valid description for given values
           validatedAttributeSetInstanceDescription = AttributesUtils
               .generateValidAttSetInstanceDescription(attributeValue, product);
-
+          // Try to find an Att Set Intance Id with given description
           OBCriteria<AttributeSetInstance> attrSICrit = OBDal.getInstance().createCriteria(
               AttributeSetInstance.class);
           attrSICrit.add(Restrictions.eq(AttributeSetInstance.PROPERTY_DESCRIPTION,
@@ -51,20 +55,54 @@ public class AttributesUtils {
           attrSICrit.addOrderBy("id", false);
           List<AttributeSetInstance> attrSIList = attrSICrit.list();
           if (attrSIList.isEmpty() && attrSIList.size() == 0) {
+            // Att Set instance Id not found -> Create New One
             attrSetInst = AttributesUtils.createAttributeSetValue(
                 validatedAttributeSetInstanceDescription, product);
             return attrSetInst;
-          } else {
+          } else if (attrSIList.size() == 1) {
+            // Just one Att Set instance Id found -> Use it
             attrSetInst = attrSIList.get(0);
+            return attrSetInst;
+          } else {
+            // Issue 37308: We have found several Att Set Instances with the same description.
+            // Lets try to find one which have stock
+            // inside the warehouses used by the store
+            StringBuilder stDetailWhereClause = new StringBuilder();
+            stDetailWhereClause.append(" as e WHERE ");
+            stDetailWhereClause.append("e.attributeSetValue.id in ( ");
+            stDetailWhereClause.append("  select id from AttributeSetInstance attseti ");
+            stDetailWhereClause.append("  where attseti.description = :attsetdescription ");
+            stDetailWhereClause.append(") AND ");
+            stDetailWhereClause.append("e.quantityOnHand > 0 AND ");
+            stDetailWhereClause.append("e.storageBin.warehouse.id in ( ");
+            stDetailWhereClause.append("  select warehouse.id from OrganizationWarehouse orgwh ");
+            stDetailWhereClause.append("  where orgwh.organization.id = :orgid ");
+            stDetailWhereClause.append(") ");
+            stDetailWhereClause.append("ORDER BY e.quantityOnHand desc, e.attributeSetValue.id ");
+            OBQuery<StorageDetail> querySdetail = OBDal.getInstance().createQuery(
+                StorageDetail.class, stDetailWhereClause.toString());
+            querySdetail.setNamedParameter("attsetdescription",
+                validatedAttributeSetInstanceDescription);
+            querySdetail.setNamedParameter("orgid", posTerminalOrganizationId);
+            List<StorageDetail> lstSDResults = querySdetail.list();
+            if (lstSDResults.size() > 0) {
+              // Pick the first one (query was ordered by qtyOnHand and Att Set instance id)
+              attrSetInst = lstSDResults.get(0).getAttributeSetValue();
+            } else {
+              // There is no stock. Use the first one found in Att Set instance table
+              attrSetInst = attrSIList.get(0);
+            }
             return attrSetInst;
           }
         } else {
+          // return null because given values are empty
           return attrSetInst;
         }
       } catch (Exception e) {
         throw new OBException(e.getMessage(), e);
       }
     } else {
+      // Product is not configured to use attributes
       log.warn("Warning: Trying to fetch an Attribute Set instance for a product which is not configured to use attributes. ("
           + product.getIdentifier() + ")");
       return null;
