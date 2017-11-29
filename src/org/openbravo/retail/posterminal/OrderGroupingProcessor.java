@@ -114,17 +114,18 @@ public class OrderGroupingProcessor {
       }
     }
 
-    // Validate Order Document Type
-    OrderGroupingProcessorData[] orderDocumentType = OrderGroupingProcessorData
-        .selectOrderDocumentType(conn, cashUp.getId());
-    if (orderDocumentType.length > 0) {
-      int i = 0;
-      final String strBPValidation = OBMessageUtils.messageBD("OBPOS_DocTypeInvValidationOnCashup");
-      String[] docType = new String[orderDocumentType.length];
-      for (OrderGroupingProcessorData documentType : orderDocumentType) {
-        docType[i++] = documentType.doctype;
-      }
-      throw new OBException(String.format(strBPValidation, StringUtils.join(docType, ", ")));
+    TerminalType terminalType = posTerminal.getObposTerminaltype();
+    if (terminalType.getDocumentType().getDocumentTypeForInvoice() == null) {
+      throw new OBException(String.format(OBMessageUtils
+          .messageBD("OBPOS_DocTypeInvValidationOnCashup"), terminalType.getDocumentType()
+          .getName()));
+    }
+
+    if (terminalType.isSeparateinvoiceforreturns()
+        && terminalType.getDocumentTypeForReturns().getDocumentTypeForInvoice() == null) {
+      throw new OBException(String.format(OBMessageUtils
+          .messageBD("OBPOS_DocTypeInvValidationOnCashup"), terminalType
+          .getDocumentTypeForReturns().getName()));
     }
 
     // random string is created as random numeric between 0 and 1000000

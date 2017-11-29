@@ -15,7 +15,7 @@
     <Sql>
     <![CDATA[
         select ol.c_orderline_id, o.c_order_id, '' as c_invoice_id,
-        '' as doctype, '' as bpname, '' as c_paymentterm_id, '' as fin_paymentmethod_id
+        '' as bpname, '' as c_paymentterm_id, '' as fin_paymentmethod_id
         from c_orderline ol
         join c_order o on ol.c_order_id = o.c_order_id
         where (select count(1) from m_inoutline il where il.c_orderline_id = ol.c_orderline_id) > 1
@@ -30,7 +30,8 @@
     <SqlMethodComment>select order business partner by cashup</SqlMethodComment>
     <Sql>
     <![CDATA[
-        select ad_column_identifier('c_bpartner', bp.c_bpartner_id, ?) as bpname,
+        select '' as c_orderline_id, '' as c_order_id, '' as c_invoice_id, 
+        ad_column_identifier('c_bpartner', bp.c_bpartner_id, ?) as bpname,
         bp.c_paymentterm_id, bp.fin_paymentmethod_id
         from c_order o, obpos_applications ap, obpos_terminaltype tt, c_doctype dt, c_bpartner bp
         where o.em_obpos_applications_id = ap.obpos_applications_id
@@ -47,24 +48,6 @@
         group by bp.c_bpartner_id, bp.c_paymentterm_id, bp.fin_paymentmethod_id order by bpname
     ]]></Sql>
     <Parameter name="lang"/>
-    <Parameter name="cashupId"/>
-  </SqlMethod>
-  <SqlMethod name="selectOrderDocumentType" type="preparedStatement" return="multiple">
-    <SqlMethodComment>select order without document type</SqlMethodComment>
-    <Sql>
-    <![CDATA[
-        select dt.name as doctype
-        from c_order o, obpos_applications ap, obpos_terminaltype tt, c_doctype dt
-        where o.em_obpos_applications_id = ap.obpos_applications_id
-        and ap.obpos_terminaltype_id = tt.obpos_terminaltype_id
-        and o.em_obpos_app_cashup_id = ?
-        and o.em_obpos_notinvoiceoncashup = 'N'
-        and o.c_doctype_id in (tt.c_doctype_id, tt.c_doctyperet_id)
-        and dt.c_doctype_id in (tt.c_doctype_id, tt.c_doctyperet_id)
-        and dt.c_doctypeinvoice_id is null
-        and not exists (select 1 from c_orderline ol2 where (ol2.qtyinvoiced <> 0 or ol2.qtyordered = 0 or ol2.qtydelivered <> ol2.qtyordered) and ol2.c_order_id = o.c_order_id)
-        group by dt.name order by dt.name
-    ]]></Sql>
     <Parameter name="cashupId"/>
   </SqlMethod>
   <SqlMethod name="insertHeaderGrouping" type="preparedStatement" return="rowcount">
