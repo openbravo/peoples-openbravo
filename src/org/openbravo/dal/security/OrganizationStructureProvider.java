@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
@@ -102,9 +103,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       orgNodes.put(nodeId, on);
     }
 
-    List<OrgNode> nodes = new ArrayList<>(orgNodes.values());
-    for (final OrgNode on : nodes) {
-      on.resolve(nodes);
+    for (Entry<String, OrgNode> nodeEntry : orgNodes.entrySet()) {
+      nodeEntry.getValue().resolve(nodeEntry.getKey());
     }
 
     isInitialized = true;
@@ -301,7 +301,6 @@ public class OrganizationStructureProvider implements OBNotSingleton {
   }
 
   class OrgNode {
-    private String nodeId;
     private String parentNodeId;
     private boolean isReady;
     private boolean isLegalEntity;
@@ -316,7 +315,6 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     }
 
     public void setTreeNodeData(Object[] nodeDef) {
-      nodeId = (String) nodeDef[0];
       parentNodeId = (String) nodeDef[1];
       isReady = Objects.equals('Y', nodeDef[2]);// "Y".equals(nodeDef[2]);
       isLegalEntity = Objects.equals('Y', nodeDef[3]); // "Y".equals(nodeDef[3]);
@@ -325,20 +323,11 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       isPeriodControlAllowed = Objects.equals('Y', nodeDef[6]);// "Y".equals(nodeDef[7]);
     }
 
-    public void resolve(List<OrgNode> nodes) {
-      if (parentNodeId == null) {
-        return;
+    public void resolve(String nodeId) {
+      OrgNode parentNode = parentNodeId != null ? orgNodes.get(parentNodeId) : null;
+      if (parentNode != null) {
+        parentNode.addChild(nodeId);
       }
-      for (final OrgNode on : nodes) {
-        if (on.getNodeId().equals(parentNodeId)) {
-          on.addChild(nodeId);
-          break;
-        }
-      }
-    }
-
-    public String getNodeId() {
-      return nodeId;
     }
 
     public String getParentNodeId() {
