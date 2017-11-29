@@ -97,9 +97,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     orgNodes = new HashMap<>(treeNodes.size());
 
     for (Object[] nodeDef : treeNodes) {
-      final OrgNode on = new OrgNode();
+      final OrgNode on = new OrgNode(nodeDef);
       String nodeId = (String) nodeDef[0];
-      on.setTreeNodeData(nodeDef);
       orgNodes.put(nodeId, on);
     }
 
@@ -314,7 +313,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       children.add(childId);
     }
 
-    public void setTreeNodeData(Object[] nodeDef) {
+    OrgNode(Object[] nodeDef) {
       parentNodeId = (String) nodeDef[1];
       isReady = Objects.equals('Y', nodeDef[2]);// "Y".equals(nodeDef[2]);
       isLegalEntity = Objects.equals('Y', nodeDef[3]); // "Y".equals(nodeDef[3]);
