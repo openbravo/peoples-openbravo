@@ -185,7 +185,7 @@ Under the BSD 3-Clause license (avaliable at http://opensource.org/licenses/BSD-
 Under MPL/GPL License (available at https://developer.mozilla.org/en/Rhino_License)
 ob-rhino-1.6R7.jar is the same code as js.jar repackaged to be available under org.openbravo
 
-# javassist-3.14.0-GA.jar
+# javassist-3.20.0-GA.jar
 Under MPL License (included as MPL-1.1.txt in this folder)
 
 # slf4j-api-1.6.1.jar

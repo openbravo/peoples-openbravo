@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2016 Openbravo SLU
+ * All portions are Copyright (C) 2013-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -68,6 +68,10 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
   private static final Logger logger = LoggerFactory.getLogger(ADTreeDatasourceService.class);
   private static final String AD_MENU_TABLE_ID = "116";
   private static final String AD_ORG_TABLE_ID = "155";
+  private static final int PARENT_ID = 1;
+  private static final int SEQNO = 2;
+  private static final int NODE_ID = 3;
+  private static final int ENTITY = 4;
 
   @Override
   /**
@@ -86,10 +90,10 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       if (tableTree.isHandleNodesManually()) {
         return;
       }
-      Tree adTree = getTree(table, bobProperties);
+      Tree adTree = getTree(table);
       if (adTree == null) {
         // The adTree does not exists, create it
-        adTree = createTree(table, bobProperties);
+        adTree = createTree(table);
       }
       // Adds the node to the adTree
       TreeNode adTreeNode = OBProvider.getInstance().get(TreeNode.class);
@@ -120,7 +124,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       if (tableTree.isHandleNodesManually()) {
         return;
       }
-      Tree tree = getTree(table, bobProperties);
+      Tree tree = getTree(table);
       OBCriteria<TreeNode> adTreeNodeCriteria = OBDal.getInstance().createCriteria(TreeNode.class);
       adTreeNodeCriteria.setFilterOnActive(false);
       adTreeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_TREE, tree));
@@ -128,7 +132,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       TreeNode treeNode = (TreeNode) adTreeNodeCriteria.uniqueResult();
       int nChildrenMoved = reparentChildrenOfDeletedNode(tree, treeNode.getReportSet(),
           treeNode.getNode());
-      logger.info(nChildrenMoved + " children have been moved to another parent");
+      logger.info("{} children have been moved to another parent", nChildrenMoved);
       OBDal.getInstance().remove(treeNode);
     } catch (Exception e) {
       logger.error("Error while deleting tree node: ", e);
@@ -213,55 +217,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
         DataToJsonConverter.class);
     toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
 
-    // Joins the ADTreeNode with the referenced table
-    StringBuilder joinClause = new StringBuilder();
-    joinClause.append(" as tn ");
-    joinClause.append(" , " + entity.getName() + " as e ");
-    joinClause.append(" where tn.node = e.id ");
-    if (hqlWhereClause != null) {
-      joinClause.append(" and (" + hqlWhereClause + ")");
-    }
-    joinClause.append(" and tn.tree.id = '" + tree.getId() + "' ");
-    if (hqlWhereClauseRootNodes == null && tab != null && tab.getTabLevel() > 0) {
-      // Add the criteria to filter only the records that belong to the record selected in the
-      // parent tab
-      Tab parentTab = KernelUtils.getInstance().getParentTab(tab);
-      String parentPropertyName = ApplicationUtils.getParentProperty(tab, parentTab);
-      if (parentPropertyName != null) {
-        JSONArray criteria = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
-        String parentRecordId = getParentRecordIdFromCriteria(criteria, parentPropertyName);
-        if (parentRecordId != null) {
-          joinClause.append(" and e." + parentPropertyName + ".id = '" + parentRecordId + "' ");
-        }
-      }
-    }
-    if (hqlWhereClauseRootNodes != null) {
-      joinClause.append(" and (" + hqlWhereClauseRootNodes + ") ");
-    } else {
-      if (ROOT_NODE_CLIENT.equals(parentId)) {
-        if (AD_ORG_TABLE_ID.equals(tree.getTable().getId())) {
-          // The ad_org table needs a special treatment, since is the only table tree that has an
-          // actual node ('*' organization) with node_id = ROOT_NODE_DB
-          // In this table the root nodes have the parent_id property set to null
-          joinClause.append(" and tn.reportSet is null");
-        } else {
-          // Other ad_tree nodes can have either ROOT_NODE_DB or null as parent_id
-          joinClause.append(" and (tn.reportSet = '" + ROOT_NODE_DB + "' or tn.reportSet is null)");
-        }
-      } else {
-        joinClause.append(" and tn.reportSet = '" + parentId + "' ");
-      }
-    }
-    joinClause.append(" order by tn.sequenceNumber ");
-
-    // Selects the relevant properties from ADTreeNode and all the properties from the referenced
-    // table
-    String selectClause = " tn.id as treeNodeId, tn.reportSet as parentId, tn.sequenceNumber as seqNo, tn.node as nodeId, e as entity";
-    OBQuery<BaseOBObject> obq = OBDal.getInstance()
-        .createQuery("ADTreeNode", joinClause.toString());
-    obq.setFilterOnActive(false);
-    obq.setSelectClause(selectClause);
-    obq.setFilterOnReadableOrganization(false);
+    OBQuery<BaseOBObject> obq = getNodeChildrenQuery(parameters, parentId, hqlWhereClause,
+        hqlWhereClauseRootNodes, tab, tree, entity);
     int nResults = obq.count();
 
     OBContext context = OBContext.getOBContext();
@@ -278,11 +235,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     }
 
     boolean fetchRoot = ROOT_NODE_CLIENT.equals(parentId);
-
-    int PARENT_ID = 1;
-    int SEQNO = 2;
-    int NODE_ID = 3;
-    int ENTITY = 4;
     int cont = 0;
     ScrollableResults scrollNodes = obq.createQuery().scroll(ScrollMode.FORWARD_ONLY);
     try {
@@ -319,6 +271,65 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     return responseData;
   }
 
+  private OBQuery<BaseOBObject> getNodeChildrenQuery(Map<String, String> parameters,
+      String parentId, String hqlWhereClause, String hqlWhereClauseRootNodes, Tab tab, Tree tree,
+      Entity entity) throws JSONException {
+    // Joins the ADTreeNode with the referenced table
+    StringBuilder joinClause = new StringBuilder();
+    joinClause.append(" as tn ");
+    joinClause.append(" , " + entity.getName() + " as e ");
+    joinClause.append(" where tn.node = e.id ");
+    if (hqlWhereClause != null) {
+      joinClause.append(" and (" + hqlWhereClause + ")");
+    }
+    joinClause.append(" and tn.tree.id = '" + tree.getId() + "' ");
+    if (!AD_ORG_TABLE_ID.equals(tree.getTable().getId())) {
+      joinClause.append(" and e.organization.id "
+          + OBDal.getInstance().getReadableOrganizationsInClause());
+    }
+    if (hqlWhereClauseRootNodes != null) {
+      joinClause.append(" and (" + hqlWhereClauseRootNodes + ") ");
+    } else {
+      if (tab != null && tab.getTabLevel() > 0) {
+        // Add the criteria to filter only the records that belong to the record selected in the
+        // parent tab
+        Tab parentTab = KernelUtils.getInstance().getParentTab(tab);
+        String parentPropertyName = ApplicationUtils.getParentProperty(tab, parentTab);
+        if (parentPropertyName != null) {
+          JSONArray criteria = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
+          String parentRecordId = getParentRecordIdFromCriteria(criteria, parentPropertyName);
+          if (parentRecordId != null) {
+            joinClause.append(" and e." + parentPropertyName + ".id = '" + parentRecordId + "' ");
+          }
+        }
+      }
+      if (ROOT_NODE_CLIENT.equals(parentId)) {
+        if (AD_ORG_TABLE_ID.equals(tree.getTable().getId())) {
+          // The ad_org table needs a special treatment, since is the only table tree that has an
+          // actual node ('*' organization) with node_id = ROOT_NODE_DB
+          // In this table the root nodes have the parent_id property set to null
+          joinClause.append(" and tn.reportSet is null");
+        } else {
+          // Other ad_tree nodes can have either ROOT_NODE_DB or null as parent_id
+          joinClause.append(" and (tn.reportSet = '" + ROOT_NODE_DB + "' or tn.reportSet is null)");
+        }
+      } else {
+        joinClause.append(" and tn.reportSet = '" + parentId + "' ");
+      }
+    }
+    joinClause.append(" order by tn.sequenceNumber ");
+
+    // Selects the relevant properties from ADTreeNode and all the properties from the referenced
+    // table
+    String selectClause = " tn.id as treeNodeId, tn.reportSet as parentId, tn.sequenceNumber as seqNo, tn.node as nodeId, e as entity";
+    OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(TreeNode.ENTITY_NAME,
+        joinClause.toString());
+    obq.setFilterOnActive(false);
+    obq.setSelectClause(selectClause);
+    obq.setFilterOnReadableOrganization(false);
+    return obq;
+  }
+
   @Override
   /**
    * Check if a node has children
@@ -344,7 +355,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
         .createQuery("ADTreeNode", joinClause.toString());
     obq.setFilterOnActive(false);
     obq.setFilterOnReadableOrganization(entity.getMappingClass() != Organization.class);
-    final List<Object> parameters = new ArrayList<Object>();
+    final List<Object> parameters = new ArrayList<>();
     parameters.add(nodeId);
     obq.setParameters(parameters);
     return obq.count() > 0;
@@ -435,7 +446,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
         st.setLong(nParam++, seqNoOfFirstModNotInDev);
       }
       int nUpdated = st.executeUpdate();
-      logger.debug("Recomputing sequence numbers: " + nUpdated + " nodes updated");
+      logger.debug("Recomputing sequence numbers: {} nodes updated", nUpdated);
     } catch (Exception e) {
       logger.error("Exception while recomputing sequence numbers: ", e);
     } finally {
@@ -515,11 +526,10 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
   }
 
   /**
-   * Returns a Tree given the referencedTableId and a jsonobject that contains the node properties
-   * This is called from the EventHandler, because the parentRecordId is not avaiable in the
-   * parameters
+   * Returns a Tree given the referenced table. This is called from the EventHandler, because the
+   * parentRecordId is not available in the parameters.
    */
-  private Tree getTree(Table table, JSONObject bobProperties) {
+  private Tree getTree(Table table) {
     Tree tree = null;
     OBCriteria<Tree> adTreeCriteria = OBDal.getInstance().createCriteria(Tree.class);
     adTreeCriteria.setFilterOnActive(false);
@@ -532,7 +542,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
    * Creates a new tree (record in ADTree)
    * 
    */
-  private Tree createTree(Table table, JSONObject bobProperties) {
+  private Tree createTree(Table table) {
     Client client = OBContext.getOBContext().getCurrentClient();
     Organization org = OBContext.getOBContext().getCurrentOrganization();
 

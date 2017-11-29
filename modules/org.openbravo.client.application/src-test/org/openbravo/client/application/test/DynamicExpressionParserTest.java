@@ -11,14 +11,15 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application.test;
 
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.openbravo.base.weld.test.WeldBaseTest;
@@ -26,24 +27,67 @@ import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Tab;
 
+/** Tests parsing of dynamic expression */
 public class DynamicExpressionParserTest extends WeldBaseTest {
+  private static final String SALES_INVOICE_LINE_TAB = "270";
 
   @Test
-  public void testRegularExpression() {
-    setSystemAdministratorContext();
-    String displayLogic = "((@Financial_Invoice_Line@='N'))";
-    String expectedResult = "((OB.Utilities.getValue(currentValues,'financialInvoiceLine') === false))";
-    Tab tab = OBDal.getInstance().get(Tab.class, "270");
-
-    DynamicExpressionParser parser = new DynamicExpressionParser(displayLogic, tab);
-    assertTrue(expectedResult.equals(parser.getJSExpression()));
-
-    displayLogic = "@Financial_Invoice_Line@='Y'";
-    expectedResult = "OB.Utilities.getValue(currentValues,'financialInvoiceLine') === true";
-
-    parser = new DynamicExpressionParser(displayLogic, tab);
-    assertTrue(expectedResult.equals(parser.getJSExpression()));
-
+  public void eqFalseExpression() {
+    assertExpression("((@Financial_Invoice_Line@='N'))",
+        "((OB.Utilities.getValue(currentValues,'financialInvoiceLine') === false))");
   }
 
+  @Test
+  public void eqTrueExpression() {
+    assertExpression("@Financial_Invoice_Line@='Y'",
+        "OB.Utilities.getValue(currentValues,'financialInvoiceLine') === true");
+  }
+
+  @Test
+  public void ltExpression() {
+    assertExpression("@lineNetAmt@ < -5",
+        "OB.Utilities.getValue(currentValues,'lineNetAmount')  <  -5");
+  }
+
+  @Test
+  public void leExpression() {
+    assertExpression("@lineNetAmt@ <= 5",
+        "OB.Utilities.getValue(currentValues,'lineNetAmount')  <=  5");
+  }
+
+  @Test
+  public void gtExpression() {
+    assertExpression("@lineNetAmt@ > 100",
+        "OB.Utilities.getValue(currentValues,'lineNetAmount')  >  100");
+  }
+
+  @Test
+  public void geExpression() {
+    assertExpression("@lineNetAmt@ >= 100",
+        "OB.Utilities.getValue(currentValues,'lineNetAmount')  >=  100");
+  }
+
+  @Test
+  public void orExpression() {
+    assertExpression(
+        "@Financial_Invoice_Line@='N' | @lineNetAmt@ > 100",
+        "OB.Utilities.getValue(currentValues,'financialInvoiceLine') === false || OB.Utilities.getValue(currentValues,'lineNetAmount')  >  100");
+  }
+
+  @Test
+  public void andExpression() {
+    assertExpression(
+        "@Financial_Invoice_Line@='N' & @lineNetAmt@ > 100",
+        "OB.Utilities.getValue(currentValues,'financialInvoiceLine') === false && OB.Utilities.getValue(currentValues,'lineNetAmount')  >  100");
+  }
+
+  private void assertExpression(String originalExpression, String expectedExpression) {
+    setSystemAdministratorContext();
+    Tab tab = OBDal.getInstance().get(Tab.class, SALES_INVOICE_LINE_TAB);
+    DynamicExpressionParser parser = new DynamicExpressionParser(originalExpression, tab);
+
+    String parsedExpression = parser.getJSExpression();
+    assertThat("Parsed dynamic expresion [" + originalExpression + "]", parsedExpression,
+        equalTo(expectedExpression));
+  }
 }

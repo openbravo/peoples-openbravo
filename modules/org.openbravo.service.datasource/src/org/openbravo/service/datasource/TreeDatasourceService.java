@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2016 Openbravo SLU
+ * All portions are Copyright (C) 2013-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -863,6 +863,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       }
     } catch (Exception e) {
       log.error("Error while moving tree node", e);
+      return JsonUtils.convertExceptionToJson(e);
     } finally {
       OBContext.restorePreviousMode();
     }

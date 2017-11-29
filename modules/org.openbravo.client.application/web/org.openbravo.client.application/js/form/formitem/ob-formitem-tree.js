@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2016 Openbravo SLU
+ * All portions are Copyright (C) 2013-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -112,8 +112,7 @@ isc.OBTreeItem.addProperties({
   },
 
   openTreeWindow: function () {
-    var selectedValue = this.getValue(),
-        criteria, innerCriteria;
+    var selectedValue = this.getValue();
     if (this.treeWindow.treeGrid) {
       //If there is a record selected in the item, use it to filter the tree
       // check if the value is present in the value map to ensure it is the id of the selected item
@@ -166,8 +165,7 @@ isc.OBTreeItem.addProperties({
 
   setValueFromRecord: function (record) {
     var currentValue = this.getValue(),
-        identifierFieldName = this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
-        i;
+        identifierFieldName = this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
     if (!record) {
       this.storeValue(null);
       this.form.setValue(this.name + OB.Constants.FIELDSEPARATOR + this.displayField, null);
@@ -228,6 +226,7 @@ isc.OBTreeItemTree.addProperties({
   init: function () {
     OB.Datasource.get(this.treeItem.dataSourceId, this, null, true);
     this.Super('init', arguments);
+    this.originalEmptyMessage = this.emptyMessage;
   },
 
   dataArrived: function () {
@@ -244,17 +243,29 @@ isc.OBTreeItemTree.addProperties({
         me.scrollRecordIntoView(rowNum, true);
       }, 100);
     }
+    // Restore the empty message of the tree grid
+    // It may have been changed with the showErrorMessageInPicker() function in previous DS requests
+    this.emptyMessage = this.originalEmptyMessage;
   },
 
   show: function (explicitCriteria) {
     this.updatePosition();
+    this.emptyMessage = this.originalEmptyMessage;
     this.fetchData(explicitCriteria);
     this._pageClickID = this.ns.Page.setEvent('mouseDown', this, null, 'clickOutsideTree');
     return this.Super('show', arguments);
   },
 
+  showErrorMessageInPicker: function (message) {
+    if (!this.isVisible()) {
+      return;
+    }
+    this.emptyMessage = '<span class="' + this.errorMessageStyle + '">' + message + '</span>';
+    this.body.markForRedraw();
+  },
+
   clickOutsideTree: function () {
-    var target, event, eventInfo;
+    var target, eventInfo;
     if (!this.isVisible()) {
       return;
     }
@@ -271,8 +282,7 @@ isc.OBTreeItemTree.addProperties({
   },
 
   updatePosition: function () {
-    var me = this,
-        interval, treeItemWidth;
+    var treeItemWidth;
     if (this.treeItem) {
       treeItemWidth = this.treeItem.getVisibleWidth();
       if (treeItemWidth && treeItemWidth > this.getWidth()) {
@@ -337,8 +347,6 @@ isc.OBTreeItemTree.addProperties({
 
   //Select the record
   rowDoubleClick: function (record, recordNum, fieldNum) {
-    var id = record[OB.Constants.ID],
-        identifier = record[OB.Constants.IDENTIFIER];
     if (!this.treeItem.parentSelectionAllowed && this.data.hasChildren(record)) {
       return;
     }
@@ -478,8 +486,7 @@ isc.OBTreeItemPopupWindow.addProperties({
       },
 
       dataArrived: function () {
-        var record, rowNum, i, selectedRecords = [],
-            ds, ids, me = this;
+        var record, rowNum, me = this;
         this.Super('dataArrived', arguments);
         if (this.treeItem.targetRecordId) {
           record = this.data.find(OB.Constants.ID, this.treeItem.targetRecordId);

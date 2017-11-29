@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ isc.OBTreeGrid.addProperties({
   headerTitleStyle: 'OBGridHeaderCellTitle',
   emptyMessageStyle: 'OBGridNotificationText',
   emptyMessageLinkStyle: 'OBGridNotificationTextLink',
+  errorMessageStyle: 'OBGridNotificationTextError',
   cellPadding: 0,
   /* Set in the CSS */
   cellAlign: 'center',

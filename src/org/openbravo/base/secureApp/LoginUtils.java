@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Copyright (C) 2001-2017 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -200,8 +200,6 @@ public class LoginUtils {
 
     boolean lightLogin = "Y".equals(vars.getSessionValue("#Light_Login"));
 
-    // variable to save organization currency
-    AttributeData[] orgCurrency;
     Client client = null;
     boolean isAccountingDimensionConfigCentrally = false;
 
@@ -272,9 +270,6 @@ public class LoginUtils {
     }
 
     try {
-      // set organization currency
-      orgCurrency = AttributeData.selectOrgCurrency(conn, strOrg, strCliente);
-
       SeguridadData[] data = SeguridadData.select(conn, strRol, strUserAuth);
       if (data == null || data.length == 0) {
         OBContext.setOBContext(currentContext);
@@ -321,6 +316,7 @@ public class LoginUtils {
 
         if (attr != null && attr.length > 0) {
           vars.setSessionValue("$C_AcctSchema_ID", attr[0].value);
+          AttributeData[] orgCurrency = AttributeData.selectOrgCurrency(conn, strOrg, strCliente);
           if (orgCurrency.length > 0) {
             vars.setSessionValue("$C_Currency_ID", orgCurrency[0].cCurrencyId);
           } else

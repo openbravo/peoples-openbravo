@@ -18946,8 +18946,8 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800818-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800818-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800818-->  <COLUMNNAME><![CDATA[CopyFromPO]]></COLUMNNAME>
-<!--800818-->  <NAME><![CDATA[Copy from PO]]></NAME>
-<!--800818-->  <PRINTNAME><![CDATA[Copy from PO]]></PRINTNAME>
+<!--800818-->  <NAME><![CDATA[Copy from Orders]]></NAME>
+<!--800818-->  <PRINTNAME><![CDATA[Copy from Orders]]></PRINTNAME>
 <!--800818-->  <DESCRIPTION><![CDATA[Copy lines from orders]]></DESCRIPTION>
 <!--800818-->  <HELP><![CDATA[Copy lines from orders]]></HELP>
 <!--800818-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -23526,6 +23526,8 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--4DC50C2EA7734E1FAE621BB4C7A68F03-->  <COLUMNNAME><![CDATA[Clause_Left_Part]]></COLUMNNAME>
 <!--4DC50C2EA7734E1FAE621BB4C7A68F03-->  <NAME><![CDATA[Clause Left Part]]></NAME>
 <!--4DC50C2EA7734E1FAE621BB4C7A68F03-->  <PRINTNAME><![CDATA[Clause Left Part]]></PRINTNAME>
+<!--4DC50C2EA7734E1FAE621BB4C7A68F03-->  <DESCRIPTION><![CDATA[The left part definition of a column in an HQL query.]]></DESCRIPTION>
+<!--4DC50C2EA7734E1FAE621BB4C7A68F03-->  <HELP><![CDATA[The left part definition of a column in an HQL query.]]></HELP>
 <!--4DC50C2EA7734E1FAE621BB4C7A68F03-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--4DC50C2EA7734E1FAE621BB4C7A68F03-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--4DC50C2EA7734E1FAE621BB4C7A68F03--></AD_ELEMENT>

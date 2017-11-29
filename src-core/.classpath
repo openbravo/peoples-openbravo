@@ -5,7 +5,6 @@
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/commons-dbcp-1.4.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/commons-pool-1.5.6.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/fop-1.1.jar"/>
-	<classpathentry kind="lib" path="/openbravo/lib/runtime/renderFoRmi.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/avalon-framework-4.1.5.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/commons-fileupload-1.2.2.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/xercesImpl.jar"/>

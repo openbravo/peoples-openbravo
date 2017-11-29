@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.base.weld.test.testinfrastructure.ApplicationScopedBean;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.ProcessRun;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
@@ -54,6 +55,7 @@ public class ProcessSchedulingTest extends WeldBaseTest {
   private static final String CLIENT_ID = "0";
   private static final String ORG_ID = "0";
   private static final String SOME_VALUE = "CDI is working";
+  private static final String TRANSLATION = "Created Payment:";
 
   @Inject
   private ApplicationScopedBean theBean;
@@ -78,8 +80,39 @@ public class ProcessSchedulingTest extends WeldBaseTest {
     assertThat("Value should be set in injected bean", theBean.getValue(), equalTo(SOME_VALUE));
   }
 
-  private <P extends DalBaseProcess> ProcessRun executeBackgroundProcess(Class<P> processClass)
+  @Test
+  public void parseTranslationInBackgroundDalBaseProcess() throws Exception {
+    String translation = (String) executeBackgroundProcessWithResult(ParseTranslationDalBaseProcess.class);
+    assertThat("Process status", translation, equalTo(TRANSLATION));
+  }
+
+  @Test
+  public void parseTranslationInBackgroundProcess() throws Exception {
+    String translation = (String) executeBackgroundProcessWithResult(ParseTranslationProcess.class);
+    assertThat("Process status", translation, equalTo(TRANSLATION));
+  }
+
+  private <P extends Process> ProcessRun executeBackgroundProcess(Class<P> processClass)
       throws ServletException {
+    ProcessBundle bundle = getProcessBundle(processClass);
+
+    // invoke the process through ProcessRunner
+    String executionId = new ProcessRunner(bundle).execute(new DalConnectionProvider());
+
+    return OBDal.getInstance().get(ProcessRun.class, executionId);
+  }
+
+  private <P extends Process> Object executeBackgroundProcessWithResult(Class<P> processClass)
+      throws ServletException {
+    ProcessBundle bundle = getProcessBundle(processClass);
+
+    // invoke the process through ProcessRunner
+    new ProcessRunner(bundle).execute(new DalConnectionProvider());
+
+    return bundle.getResult();
+  }
+
+  private <P extends Process> ProcessBundle getProcessBundle(Class<P> processClass) {
     DalConnectionProvider conn = new DalConnectionProvider();
     VariablesSecureApp vsa = new VariablesSecureApp(USER_ID, CLIENT_ID, ORG_ID, ROLE_ID);
     ProcessBundle bundle = new ProcessBundle(anyProcessID, vsa);
@@ -91,11 +124,7 @@ public class ProcessSchedulingTest extends WeldBaseTest {
 
     // do not close the connection after executing the process
     bundle.setCloseConnection(false);
-
-    // invoke the process through ProcessRunner
-    String executionId = new ProcessRunner(bundle).execute(new DalConnectionProvider());
-
-    return OBDal.getInstance().get(ProcessRun.class, executionId);
+    return bundle;
   }
 
   /** Fake process */
@@ -114,6 +143,24 @@ public class ProcessSchedulingTest extends WeldBaseTest {
     @Override
     protected void doExecute(ProcessBundle bundle) throws Exception {
       appScopedBean.setValue(SOME_VALUE);
+    }
+  }
+
+  /** Fake DAL base process to get a translation with OBMessageUtils */
+  public static class ParseTranslationDalBaseProcess extends DalBaseProcess {
+    @Override
+    protected void doExecute(ProcessBundle bundle) throws Exception {
+      String message = OBMessageUtils.parseTranslation("@PaymentCreated@");
+      bundle.setResult(message);
+    }
+  }
+
+  /** Fake process to get a translation with OBMessageUtils */
+  public static class ParseTranslationProcess implements Process {
+    @Override
+    public void execute(ProcessBundle bundle) throws Exception {
+      String message = OBMessageUtils.parseTranslation("@PaymentCreated@");
+      bundle.setResult(message);
     }
   }
 }

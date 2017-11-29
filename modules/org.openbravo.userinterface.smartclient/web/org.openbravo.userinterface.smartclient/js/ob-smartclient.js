@@ -103,6 +103,9 @@ isc.ResultTree.addProperties({
       if (target && target.view) {
         target.view.messageBar.setMessage('error', null, OB.I18N.getLabel('OBUIAPP_TooManyNodes'));
       }
+      if (target && target.treeItem && target.treeItem.tree) {
+        target.treeItem.tree.showErrorMessageInPicker(OB.I18N.getLabel('OBUIAPP_TooManyResults'));
+      }
       return;
     }
 
@@ -274,9 +277,7 @@ isc.TextItem.addProperties({
         operator: 'and',
         criteria: []
         },
-        crit = result.criteria,
         valueParts = [],
-        allowEx = true,
         ds = isc.DS.get(this.form.expressionDataSource || this.form.dataSource);
 
     if (!value) {
