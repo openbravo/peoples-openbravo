@@ -125,7 +125,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     } else {
       Set<String> result = new HashSet<>(getParentTree(orgId, true));
       result.addAll(getChildTree(orgId, false));
-      log.info("getNaturalTree {} - {} ms", orgId, System.currentTimeMillis() - t);
+      log.debug("getNaturalTree {} - {} ms", orgId, System.currentTimeMillis() - t);
       return result;
     }
   }
