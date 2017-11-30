@@ -487,6 +487,16 @@ public abstract class CostingAlgorithm {
    * BOM Production and are still not calculated. Then it calculates the cost of each of them.
    */
   private void calculateWIPBOMCost() {
+    for (MaterialTransaction wipBOMtrx : getPendingWIPBOMTransactions()) {
+      log4j
+          .debug("BOM Part produced in previous Production Plan detected. Calculating its cost. TrxId: "
+              + wipBOMtrx.getId());
+      CostingServer transactionCost = new CostingServer(wipBOMtrx);
+      transactionCost.process();
+    }
+  }
+
+  private List<MaterialTransaction> getPendingWIPBOMTransactions() {
     StringBuilder where = new StringBuilder();
     where.append(" as trx ");
     where.append("  join trx." + MaterialTransaction.PROPERTY_PRODUCTIONLINE + " as pl ");
@@ -505,13 +515,7 @@ public abstract class CostingAlgorithm {
     pendingWIPBOMs.setNamedParameter("production", productionPlan.getProduction());
     pendingWIPBOMs.setNamedParameter("product", transaction.getProduct());
 
-    for (MaterialTransaction wipBOMtrx : pendingWIPBOMs.list()) {
-      log4j
-          .debug("BOM Part produced in previous Production Plan detected. Calculating its cost. TrxId: "
-              + wipBOMtrx.getId());
-      CostingServer transactionCost = new CostingServer(wipBOMtrx);
-      transactionCost.process();
-    }
+    return pendingWIPBOMs.list();
   }
 
   /**
