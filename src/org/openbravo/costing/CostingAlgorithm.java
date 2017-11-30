@@ -31,6 +31,7 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -41,6 +42,7 @@ import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionLine;
+import org.openbravo.model.materialmgmt.transaction.ProductionPlan;
 import org.openbravo.model.materialmgmt.transaction.ProductionTransaction;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
@@ -59,9 +61,9 @@ public abstract class CostingAlgorithm {
    * Initializes the instance of the CostingAlgorith with the MaterialTransaction that is being to
    * be calculated and the cost dimensions values in case they have to be used.
    * 
-   * It initializes several values: <list><li>Organization, it's used the Legal Entity dimension. If
-   * this is null Asterisk organization is used. <li>Currency, it takes the currency defined for the
-   * Organization. If this is null it uses the currency defined for the Client. <li>Transaction
+   * It initializes several values: <list> <li>Organization, it's used the Legal Entity dimension.
+   * If this is null Asterisk organization is used. <li>Currency, it takes the currency defined for
+   * the Organization. If this is null it uses the currency defined for the Client. <li>Transaction
    * Type, it calculates its type. </list>
    * 
    * @param costingServer
@@ -474,7 +476,42 @@ public abstract class CostingAlgorithm {
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getBOMPartCost() {
+    // Check if the BOM Part is produced in a previous production plan of the same Production. If
+    // that is the case ensure that its cost is already calculated.
+    calculateWIPBOMCost();
     return getOutgoingTransactionCost();
+  }
+
+  /**
+   * It searches transactions of current consumed BOM Product Part where it is produced in the same
+   * BOM Production and are still not calculated. Then it calculates the cost of each of them.
+   */
+  private void calculateWIPBOMCost() {
+    StringBuilder where = new StringBuilder();
+    where.append(" as trx ");
+    where.append("  join trx." + MaterialTransaction.PROPERTY_PRODUCTIONLINE + " as pl ");
+    where.append("  join pl." + ProductionLine.PROPERTY_PRODUCTIONPLAN + " as pp");
+    where.append(" where pp." + ProductionPlan.PROPERTY_LINENO + " < :line");
+    where.append("   and pp." + ProductionPlan.PROPERTY_PRODUCTION + " = :production");
+    where.append("   and pl." + ProductionLine.PROPERTY_PRODUCT + " = :product");
+    where.append("   and pl." + ProductionLine.PROPERTY_MOVEMENTQUANTITY + " > 0");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
+
+    OBQuery<MaterialTransaction> pendingWIPBOMs = OBDal.getInstance().createQuery(
+        MaterialTransaction.class, where.toString());
+
+    ProductionPlan productionPlan = transaction.getProductionLine().getProductionPlan();
+    pendingWIPBOMs.setNamedParameter("line", productionPlan.getLineNo());
+    pendingWIPBOMs.setNamedParameter("production", productionPlan.getProduction());
+    pendingWIPBOMs.setNamedParameter("product", transaction.getProduct());
+
+    for (MaterialTransaction wipBOMtrx : pendingWIPBOMs.list()) {
+      log4j
+          .debug("BOM Part produced in previous Production Plan detected. Calculating its cost. TrxId: "
+              + wipBOMtrx.getId());
+      CostingServer transactionCost = new CostingServer(wipBOMtrx);
+      transactionCost.process();
+    }
   }
 
   /**
