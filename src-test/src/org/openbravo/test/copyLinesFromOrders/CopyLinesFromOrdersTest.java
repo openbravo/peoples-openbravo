@@ -34,6 +34,8 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.codehaus.jettison.json.JSONArray;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
@@ -84,6 +86,7 @@ import org.openbravo.test.copyLinesFromOrders.data.CopyLinesFromOrdersTestData;
 import org.openbravo.test.copyLinesFromOrders.data.JSONUtils;
 import org.openbravo.test.copyLinesFromOrders.data.OrderData;
 import org.openbravo.test.copyLinesFromOrders.data.OrderLineData;
+import org.openbravo.test.copyLinesFromOrders.data.UOMManagementUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,6 +135,7 @@ public class CopyLinesFromOrdersTest extends WeldBaseTest {
   private HashMap<String, String[]> expectedOrderLinesData;
 
   public CopyLinesFromOrdersTest() {
+
   }
 
   private void setData() {
@@ -159,6 +163,33 @@ public class CopyLinesFromOrdersTest extends WeldBaseTest {
       PARAMS);
 
   private @ParameterCdiTest CopyLinesFromOrdersTestData data;
+
+  private static UOMManagementUtil uomUtil = new UOMManagementUtil();
+
+  @BeforeClass
+  public static void executeBeforeTests() {
+    OBContext.setAdminMode();
+    try {
+      // Save the UomManagement preference before execute the tests
+      uomUtil.saveUOMPreferenceStatusBeforeExecuteProcess();
+      // Set the UomManagement preference disable by default, as expected in almost all tests, it
+      // will be changed in case the Test needed
+      uomUtil.setUOMPreference(CLFOTestConstants.DISABLE_AUM, true);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  @AfterClass
+  public static void executeAfterTests() {
+    OBContext.setAdminMode();
+    try {
+      // Restore the UomManagement preference at the status it had starting the tests
+      uomUtil.restoreUOMPreferenceStatus();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
 
   /**
    * Execute the test with the current data

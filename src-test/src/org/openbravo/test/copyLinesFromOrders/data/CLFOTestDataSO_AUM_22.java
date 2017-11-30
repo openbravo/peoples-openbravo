@@ -33,6 +33,7 @@ public class CLFOTestDataSO_AUM_22 extends CopyLinesFromOrdersTestData {
 
   private static String TEST_ORDERFROM1_DOCUMENTNO = "CLFOTestData22_OrderFrom1";
   private static String TEST_ORDERTO1_DOCUMENTNO = "CLFOTestData22_OrderTo1";
+  private UOMManagementUtil uomUtil = new UOMManagementUtil();
 
   @Override
   public void initialize() {
@@ -109,14 +110,14 @@ public class CLFOTestDataSO_AUM_22 extends CopyLinesFromOrdersTestData {
   }
 
   public void applyTestSettings() {
-    setUOMPreference(CLFOTestConstants.ENABLE_AUM, true);
+    uomUtil.setUOMPreference(CLFOTestConstants.ENABLE_AUM, true);
     createAUMForProduct(CLFOTestConstants.FINAL_GOOD_A_PRODUCT_ID, CLFOTestConstants.UNIT_UOM_ID,
         "10", CLFOTestConstants.PRIMARY_AUM, CLFOTestConstants.PRIMARY_AUM,
         CLFOTestConstants.PRIMARY_AUM);
   }
 
   public void applyTestSettingsBeforeExecuteProcess() {
-    setUOMPreference(CLFOTestConstants.DISABLE_AUM, false);
+    uomUtil.setUOMPreference(CLFOTestConstants.DISABLE_AUM, false);
   }
 
   @Override

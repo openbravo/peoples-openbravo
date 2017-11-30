@@ -32,6 +32,7 @@ public class CLFOTestDataSO_01 extends CopyLinesFromOrdersTestData {
 
   private static String TEST_ORDERFROM1_DOCUMENTNO = "CLFOTestData1_OrderFrom1";
   private static String TEST_ORDERTO1_DOCUMENTNO = "CLFOTestData1_OrderTo1";
+  private UOMManagementUtil uomUtil = new UOMManagementUtil();
 
   @Override
   public void initialize() {
@@ -106,7 +107,6 @@ public class CLFOTestDataSO_01 extends CopyLinesFromOrdersTestData {
   }
 
   public void applyTestSettings() {
-    setUOMPreference(CLFOTestConstants.DISABLE_AUM, true);
   }
 
   @Override
