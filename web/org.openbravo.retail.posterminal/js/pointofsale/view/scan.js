@@ -123,7 +123,8 @@ enyo.kind({
               this.setDisabled(true);
               OB.UTIL.HookManager.executeHooks('OBPOS_PreUndo_' + undoaction, {
                 undoBtn: me,
-                order: OB.MobileApp.model.receipt
+                order: OB.MobileApp.model.receipt,
+                selectedLines: OB.MobileApp.model.receipt.get('undo').lines
               }, function (args) {
                 if (!args.cancellation && me.undoclick) {
                   me.undoclick();
@@ -132,7 +133,8 @@ enyo.kind({
                 }
                 OB.UTIL.HookManager.executeHooks('OBPOS_PostUndo_' + undoaction, {
                   undoBtn: me,
-                  order: OB.MobileApp.model.receipt
+                  order: OB.MobileApp.model.receipt,
+                  selectedLines: args.selectedLines
                 });
               });
             },
