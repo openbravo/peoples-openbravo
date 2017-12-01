@@ -74,6 +74,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       return;
     }
 
+    long t = System.currentTimeMillis();
+
     if (getClientId() == null) {
       setClientId(OBContext.getOBContext().getCurrentClient().getId());
     }
@@ -106,6 +108,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       nodeEntry.getValue().resolve(nodeEntry.getKey());
     }
 
+    log.debug("Client {} initialized in {} ms", getClientId(), System.currentTimeMillis() - t);
     isInitialized = true;
   }
 
@@ -125,7 +128,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     } else {
       Set<String> result = new HashSet<>(getParentTree(orgId, true));
       result.addAll(getChildTree(orgId, false));
-      log.debug("getNaturalTree {} - {} ms", orgId, System.currentTimeMillis() - t);
+      log.trace("getNaturalTree {} - {} ms", orgId, System.currentTimeMillis() - t);
       return result;
     }
   }
@@ -195,7 +198,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    */
   public List<String> getParentList(String orgId, boolean includeOrg) {
     initialize();
-    String parentOrg = this.getParentOrg(orgId);
+    long t = System.currentTimeMillis();
+    String parentOrg = getParentOrg(orgId);
     List<String> result = new ArrayList<String>();
 
     if (includeOrg) {
@@ -204,8 +208,9 @@ public class OrganizationStructureProvider implements OBNotSingleton {
 
     while (parentOrg != null) {
       result.add(parentOrg);
-      parentOrg = this.getParentOrg(parentOrg);
+      parentOrg = getParentOrg(parentOrg);
     }
+    log.debug("getParentList {} - {} ms", orgId, System.currentTimeMillis() - t);
     return result;
   }
 
@@ -463,7 +468,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     }
   }
 
-  public List<String> getTransactionAllowedOrgs(List<String> orgIds) {
+  private List<String> getTransactionAllowedOrgs(List<String> orgIds) {
     List<String> trxAllowedOrgs = new ArrayList<>(orgIds.size());
     for (String orgId : orgIds) {
       OrgNode node = orgNodes.get(orgId);
@@ -475,14 +480,19 @@ public class OrganizationStructureProvider implements OBNotSingleton {
   }
 
   public String getTransactionAllowedOrgs(String orgIds) {
-    String[] orgs = orgIds.split(",");
-    List<String> orgsToCheck = new ArrayList<>(orgs.length);
-    for (String orgId : orgs) {
-      String fixedOrgId = orgId.startsWith("'") ? orgId.substring(1, orgId.length() - 1) : orgId;
-      orgsToCheck.add(fixedOrgId);
-    }
+    long t = System.currentTimeMillis();
+    try {
+      String[] orgs = orgIds.split(",");
+      List<String> orgsToCheck = new ArrayList<>(orgs.length);
+      for (String orgId : orgs) {
+        String fixedOrgId = orgId.startsWith("'") ? orgId.substring(1, orgId.length() - 1) : orgId;
+        orgsToCheck.add(fixedOrgId);
+      }
 
-    return commaSeparated(getTransactionAllowedOrgs(orgsToCheck), true);
+      return commaSeparated(getTransactionAllowedOrgs(orgsToCheck), true);
+    } finally {
+      log.debug("getTransactionAllowedOrgs - {} ms", System.currentTimeMillis() - t);
+    }
   }
 
   // TODO: copied from Utility because this is used in generate.entities it cannot depend on it,

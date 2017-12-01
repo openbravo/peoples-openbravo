@@ -620,7 +620,7 @@ public class LoginUtils {
    */
   public static String getDefaultWarehouse(ConnectionProvider connectionProvider, String strClient,
       String strOrg, String strRole) throws ServletException {
-
+    long t = System.currentTimeMillis();
     String strWarehouse;
     if (!strRole.equals("0")) {
       // Pick the warehouse using the given organization
@@ -639,14 +639,13 @@ public class LoginUtils {
             allAccessibleOrgs.addAll(osp.getNaturalTree(org.adOrgId));
           }
         }
-
         strWarehouse = DefaultOptionsData.getDefaultWarehouse(connectionProvider, strClient,
             Utility.commaSeparated(allAccessibleOrgs));
-
       }
     } else {
       strWarehouse = "";
     }
+    log4j.debug("getDefaultWarehouse " + (System.currentTimeMillis() - t));
     return strWarehouse;
   }
 }
