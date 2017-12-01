@@ -24,8 +24,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -77,7 +79,7 @@ public class DataToJsonConverter {
   private List<String> additionalProperties = new ArrayList<String>();
 
   // limit the json serialization to these properties
-  private List<String> selectedProperties = new ArrayList<String>();
+  private Set<String> selectedProperties = new HashSet<>();
 
   // display property used for table reference fields
   private String displayProperty = null;
