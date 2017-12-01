@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -43,6 +45,7 @@ import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 import org.openbravo.model.ad.access.FormAccess;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
+import org.openbravo.model.common.enterprise.Organization;
 
 public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
   public static final Logger log = Logger.getLogger(LoginUtilsServlet.class);
@@ -399,6 +402,39 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     }
 
     return respArray;
+  }
+
+  @Override
+  public String getDefaultDecimalSymbol() {
+    String decimalSymbol = (String) POSUtils.getPropertyInOrgTree(OBContext.getOBContext()
+        .getCurrentOrganization(), Organization.PROPERTY_OBPOSFORMATDECIMAL);
+    if (StringUtils.isEmpty(decimalSymbol)) {
+      return super.getDefaultDecimalSymbol();
+    } else {
+      return StringEscapeUtils.escapeJavaScript(decimalSymbol);
+    }
+  }
+
+  @Override
+  public String getDefaultGroupingSymbol() {
+    String groupSymbol = (String) POSUtils.getPropertyInOrgTree(OBContext.getOBContext()
+        .getCurrentOrganization(), Organization.PROPERTY_OBPOSFORMATGROUP);
+    if (StringUtils.isEmpty(groupSymbol)) {
+      return super.getDefaultGroupingSymbol();
+    } else {
+      return StringEscapeUtils.escapeJavaScript(groupSymbol);
+    }
+  }
+
+  @Override
+  public String getDateFormat() {
+    String dateFormat = (String) POSUtils.getPropertyInOrgTree(OBContext.getOBContext()
+        .getCurrentOrganization(), Organization.PROPERTY_OBPOSDATEFORMAT);
+    if (StringUtils.isEmpty(dateFormat)) {
+      return super.getDateFormat();
+    } else {
+      return dateFormat;
+    }
   }
 
   @Override

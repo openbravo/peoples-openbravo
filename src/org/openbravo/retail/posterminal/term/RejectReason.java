@@ -13,9 +13,8 @@ import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class RejectReason extends ProcessHQLQuery {
+public class RejectReason extends QueryTerminalProperty {
 
   @Override
   protected boolean isAdminMode() {
@@ -31,5 +30,15 @@ public class RejectReason extends ProcessHQLQuery {
   @Override
   protected boolean bypassPreferenceCheck() {
     return true;
+  }
+
+  @Override
+  public String getProperty() {
+    return "rejectReasons";
+  }
+
+  @Override
+  public boolean returnList() {
+    return false;
   }
 }
