@@ -262,6 +262,10 @@ public class DataSourceServlet extends BaseKernelServlet {
                 request, parameters));
             // when exporting a OB grid, the isActive filter should not be set
             parameters.put(JsonConstants.NO_ACTIVE_FILTER, "true");
+
+            // set selected properties those that will finally be exported
+            parameters.put(JsonConstants.SELECTEDPROPERTIES_PARAMETER,
+                Utility.commaSeparated(writer.fieldProperties, false));
             ((DefaultDataSourceService) getDataSource(request)).fetch(parameters, writer);
           } else {
             String result = getDataSource(request).fetch(parameters);
