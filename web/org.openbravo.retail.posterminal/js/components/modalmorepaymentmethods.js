@@ -25,6 +25,7 @@ enyo.kind({
         style: 'border-bottom: 1px solid #cccccc;',
         classes: 'row-fluid',
         components: [{
+          style: 'overflow: auto; max-height: 402px',
           name: 'buttonslist',
           classes: 'span12'
         }]
