@@ -168,11 +168,11 @@ create.database: creates the database from scratch.
       <transaction>
         --CREATING USER
         CREATE ROLE ${bbdd.user} LOGIN PASSWORD '${bbdd.password}'
-               SUPERUSER CREATEDB CREATEROLE
+               CREATEDB CREATEROLE
                VALID UNTIL 'infinity';
       </transaction>
     </sql>
-    <sql driver="${bbdd.driver}" url="${bbdd.url}/postgres" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" autocommit="true">
+    <sql driver="${bbdd.driver}" url="${bbdd.url}/postgres" userid="${bbdd.user}" password="${bbdd.password}" autocommit="true">
       <classpath>
         <fileset dir="${base.lib}">
           <include name="**/*.jar">
@@ -182,14 +182,13 @@ create.database: creates the database from scratch.
       <transaction>
         CREATE DATABASE ${bbdd.sid}
                   WITH ENCODING='UTF8'
-                  OWNER=${bbdd.user}
                   TEMPLATE=template0;
       </transaction>
     </sql>
   </target>
 
   <target name="create.database.all">
-    <createdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" model="model" object="${bbdd.object}" dropfirst="false" failonerror="false" verbosity="${bbdd.verbosity}" basedir="${base.db}/../.." modulesDir="${base.modules}/" dirFilter="*/src-db/database/model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="src-db/database/sourcedata,modules/*/src-db/database/sourcedata">
+    <createdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" model="model" object="${bbdd.object}" dropfirst="false" failonerror="false" verbosity="${bbdd.verbosity}" basedir="${base.db}/../.." modulesDir="${base.modules}/" dirFilter="*/src-db/database/model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="src-db/database/sourcedata,modules/*/src-db/database/sourcedata" systemUser="${bbdd.systemUser}" systemPassword="${bbdd.systemPassword}">
     </createdatabase>
     <antcall target="database.poststructure.${bbdd.rdbms}" />
   </target>

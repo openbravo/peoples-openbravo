@@ -95,4 +95,5 @@
     <excludedFunction name="WORD_SIMILARITY_COMMUTATOR_OP"/>
 
     <excludedFunction name="OBEQUALS"/>
+    <excludedFunction name="UUID\_%"/> <!-- PostgreSQL uuid functions -->
   </vector>

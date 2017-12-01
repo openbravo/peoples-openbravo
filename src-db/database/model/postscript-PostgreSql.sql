@@ -272,12 +272,6 @@ END;   $BODY$
   LANGUAGE 'plpgsql' VOLATILE
 /-- END
 
-CREATE OR REPLACE FUNCTION uuid_generate_v4()
-RETURNS uuid
-AS '$libdir/uuid-ossp', 'uuid_generate_v4'
-VOLATILE STRICT LANGUAGE C;
-/-- END
-
 -- Inserts an alert recipient for available updates
 -- See issue:  https://issues.openbravo.com/view.php?id=11743
 CREATE OR REPLACE FUNCTION pg_temp.insert_recipient()
