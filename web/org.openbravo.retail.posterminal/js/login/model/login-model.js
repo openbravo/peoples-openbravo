@@ -385,22 +385,24 @@
         // Set Hardware..
         OB.POS.hwserver = new OB.DS.HWServer(this.get('hardwareURL'), terminal.hardwareurl, terminal.scaleurl);
 
-        // If the hardware URL is set and the terminal uses RFID
-        if (OB.UTIL.RfidController.isRfidConfigured()) {
-          var protocol = OB.POS.hwserver.url.split('/')[0];
-          var websocketServerLocation;
-          if (protocol === 'http:') {
-            websocketServerLocation = 'ws:' + OB.POS.hwserver.url.substring(protocol.length, OB.POS.hwserver.url.length).split('/printer')[0] + '/rfid';
-            OB.UTIL.RfidController.set('isRFIDEnabled', true);
-            OB.UTIL.RfidController.startRfidWebsocket(websocketServerLocation, 2000, 0, 5);
-          } else if (protocol === 'https:') {
-            websocketServerLocation = 'wss:' + OB.POS.hwserver.url.substring(protocol.length, OB.POS.hwserver.url.length).split('/printer')[0] + '/rfid';
-            OB.UTIL.RfidController.set('isRFIDEnabled', true);
-            OB.UTIL.RfidController.startRfidWebsocket(websocketServerLocation, 2000, 0, 5);
-          } else {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_WrongHardwareManagerProtocol'));
+        OB.MobileApp.model.on('change:currentWindowState', function (model) {
+          // If the hardware URL is set and the terminal uses RFID
+          if (model.get('currentWindowState') === 'renderUI' && OB.UTIL.isNullOrUndefined(OB.UTIL.RfidController.get('rfidWebsocket')) && OB.UTIL.RfidController.isRfidConfigured()) {
+            var protocol = OB.POS.hwserver.url.split('/')[0];
+            var websocketServerLocation;
+            if (protocol === 'http:') {
+              websocketServerLocation = 'ws:' + OB.POS.hwserver.url.substring(protocol.length, OB.POS.hwserver.url.length).split('/printer')[0] + '/rfid';
+              OB.UTIL.RfidController.set('isRFIDEnabled', true);
+              OB.UTIL.RfidController.startRfidWebsocket(websocketServerLocation, 2000, 0, 5);
+            } else if (protocol === 'https:') {
+              websocketServerLocation = 'wss:' + OB.POS.hwserver.url.substring(protocol.length, OB.POS.hwserver.url.length).split('/printer')[0] + '/rfid';
+              OB.UTIL.RfidController.set('isRFIDEnabled', true);
+              OB.UTIL.RfidController.startRfidWebsocket(websocketServerLocation, 2000, 0, 5);
+            } else {
+              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_WrongHardwareManagerProtocol'));
+            }
           }
-        }
+        });
 
         OB.MobileApp.view.scanningFocus(false);
 
@@ -767,13 +769,18 @@
             OB.MobileApp.model.set('secondsToRefreshMasterdata', OB.MobileApp.model.get('secondsToRefreshMasterdata') - 1);
             if (OB.MobileApp.model.get('secondsToRefreshMasterdata') === 0) {
               clearInterval(counterIntervalId);
-
+              if (OB.UTIL.RfidController.isRfidConfigured()) {
+                OB.UTIL.RfidController.disconnectRFIDDevice();
+              }
               OB.UTIL.startLoadingSteps();
               OB.MobileApp.model.set('isLoggingIn', true);
               OB.UTIL.showLoading(true);
               OB.MobileApp.model.on('incrementalModelsLoaded', function () {
                 OB.MobileApp.model.off('incrementalModelsLoaded');
                 OB.UTIL.showLoading(false);
+                if (OB.UTIL.RfidController.isRfidConfigured()) {
+                  OB.UTIL.RfidController.connectRFIDDevice();
+                }
                 OB.MobileApp.model.set('isLoggingIn', false);
               });
 
