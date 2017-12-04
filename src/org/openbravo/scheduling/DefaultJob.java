@@ -63,7 +63,9 @@ public class DefaultJob implements Job {
       processInstance.execute(bundle);
 
     } catch (final Exception e) {
-      log.error("Error executing process " + bundle.toString(), e);
+      String processName = bundle != null && bundle.getProcessClass() != null ? bundle
+          .getProcessClass().getName() : "";
+      log.error("Error executing process " + processName, e);
       throw new JobExecutionException(e);
     }
   }
