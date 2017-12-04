@@ -21,6 +21,7 @@ package org.openbravo.test.copyLinesFromOrders.data;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.provider.OBProvider;
@@ -252,6 +253,8 @@ public class CLFOTestDataSO_06 extends CopyLinesFromOrdersTestData {
     Product productFGA = OBDal.getInstance().get(Product.class,
         CLFOTestConstants.FINAL_GOOD_B_PRODUCT_ID);
     product = (Product) DalUtil.copy(productFGA, false);
+    // Avoid duplication in UPC breaking retail CI
+    product.setUPCEAN(StringUtils.left(UUID.randomUUID().toString(), 30));
     return product;
   }
 

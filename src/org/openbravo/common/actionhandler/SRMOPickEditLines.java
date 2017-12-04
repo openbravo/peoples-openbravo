@@ -244,8 +244,8 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       newOrderLine.setTax(tax);
 
       // Price
-      BigDecimal unitPrice, netPrice, grossPrice, stdPrice, limitPrice, grossAmt, netListPrice, grossListPrice;
-      stdPrice = BigDecimal.ZERO;
+      BigDecimal unitPrice, netPrice, grossPrice, stdPrice, limitPrice, grossAmt, netListPrice, grossListPrice, baseGrossUnitPrice;
+      stdPrice = baseGrossUnitPrice = BigDecimal.ZERO;
       final int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
 
       if (selectedLine.get("unitPrice").equals(null) || "".equals(selectedLine.get("unitPrice"))) {
@@ -257,6 +257,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
           netListPrice = pp.getListPrice();
           grossListPrice = pp.getListPrice();
           stdPrice = pp.getStandardPrice();
+          baseGrossUnitPrice = pp.getStandardPrice();
         } catch (OBException e) {
           // Product not found in price list. Prices default to ZERO
           unitPrice = limitPrice = netListPrice = grossListPrice = stdPrice = BigDecimal.ZERO;
@@ -268,6 +269,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
           netListPrice = shipmentLine.getSalesOrderLine().getListPrice();
           grossListPrice = shipmentLine.getSalesOrderLine().getGrossListPrice();
           stdPrice = shipmentLine.getSalesOrderLine().getStandardPrice();
+          baseGrossUnitPrice = shipmentLine.getSalesOrderLine().getBaseGrossUnitPrice();
         } else {
           limitPrice = netListPrice = grossListPrice = stdPrice = unitPrice;
         }
@@ -292,6 +294,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       newOrderLine.setLineNetAmount(netPrice.multiply(qtyReturned).setScale(stdPrecision,
           BigDecimal.ROUND_HALF_UP));
       newOrderLine.setLineGrossAmount(grossAmt);
+      newOrderLine.setBaseGrossUnitPrice(baseGrossUnitPrice);
 
       if (!selectedLine.get("returnReason").equals(null)) {
         newOrderLine.setReturnReason(OBDal.getInstance().get(ReturnReason.class,

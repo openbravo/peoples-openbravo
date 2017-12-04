@@ -70,5 +70,8 @@
       <foreign-key foreignTable="AD_ORG" name="C_IMPORT_EA_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="C_IMPORT_ENTRY_ARCHIVE_IDX" unique="false">
+        <index-column name="CREATED"/>
+      </index>
     </table>
   </database>

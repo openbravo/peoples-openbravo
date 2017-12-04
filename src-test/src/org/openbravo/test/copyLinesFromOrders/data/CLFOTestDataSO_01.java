@@ -106,7 +106,6 @@ public class CLFOTestDataSO_01 extends CopyLinesFromOrdersTestData {
   }
 
   public void applyTestSettings() {
-    setUOMPreference(CLFOTestConstants.DISABLE_AUM, true);
   }
 
   @Override

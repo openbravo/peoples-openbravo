@@ -131,10 +131,10 @@ public class SessionLogin {
 
       session.setCreationDate(new Date());
       session.setUpdated(new Date());
-      session.setClient(OBDal.getInstance().get(Client.class, getClient()));
-      session.setOrganization(OBDal.getInstance().get(Organization.class, getOrg()));
+      session.setClient(OBDal.getInstance().getProxy(Client.class, getClient()));
+      session.setOrganization(OBDal.getInstance().getProxy(Organization.class, getOrg()));
       session.setActive(getIsActive());
-      User user1 = OBDal.getInstance().get(User.class, getUser());
+      User user1 = OBDal.getInstance().getProxy(User.class, getUser());
       session.setCreatedBy(user1);
       session.setUpdatedBy(user1);
       session.setWebSession(getWebSession());

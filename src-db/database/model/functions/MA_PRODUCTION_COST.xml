@@ -360,7 +360,12 @@ BEGIN
         v_ProductionCost := v_ProductionCost + COALESCE(v_ProductionCost_Tmp,0);
         v_ProductionCost_Tmp := 0;
 
-        FOR Cur_ProductionLine IN (SELECT pl.*, p.VALUE
+        FOR Cur_ProductionLine IN (SELECT pl.*, p.VALUE,
+                                     (SELECT count(1)
+                                      FROM m_productionline pl2 JOIN m_productionplan pp on pl2.m_productionplan_id = pp.m_productionplan_id
+                                      WHERE productiontype = '-'
+                                        AND pl2.m_product_id = pl.m_product_id
+                                        AND pp.m_production_id = p_production_id) AS isWip
                                    FROM M_PRODUCTIONLINE pl, M_PRODUCT p
                                    WHERE M_ProductionPlan_ID = Cur_ProductionPlan.M_ProductionPlan_ID
                                      AND pl.M_Product_ID = p.M_Product_ID
@@ -438,23 +443,27 @@ BEGIN
               AND ISPRODUCTION='Y';
 
             --Insert cost per unit.
-            IF (v_iscostmigrated = 'Y') THEN
-              --Do nothing
+            IF (v_iscostmigrated = 'Y' AND Cur_ProductionLine.isWip = 0) THEN
+              -- The product is not consumed in the same work effort so m_costing will be updated/created by the costing server
+              -- If it is WIP then we need to update the cost of the product so the production run that consumes it it is
+              -- Taking into account the new production cost.
               v_ResultStr := 'new engine in use';
             ELSIF (v_count2 = 0) THEN
               v_ResultStr := 'new cost';
-              Ad_Sequence_Next('M_Costing', Cur_ProductionLine.AD_ORG_ID, v_NextNo);
+              v_nextNo := get_Uuid();
               --First time
               INSERT INTO M_COSTING (M_COSTING_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_CLIENT_ID,
                             AD_ORG_ID, M_PRODUCT_ID, DATETO, DATEFROM, ISMANUAL,
                             M_PRODUCTIONLINE_ID, QTY,
                             PRICE,
-                            COST, ISPERMANENT, ISPRODUCTION, COSTTYPE)
+                            COST, ISPERMANENT, ISPRODUCTION,
+                            COSTTYPE)
                      VALUES (v_NextNo,now(), p_User_ID, now(), p_User_ID, Cur_ProductionLine.AD_CLIENT_ID,
                             Cur_ProductionLine.AD_ORG_ID, Cur_ProductionLine.M_PRODUCT_ID, TO_DATE('31-12-9999','DD-MM-YYYY'), v_CostingDate, 'N',
                             Cur_ProductionLine.M_PRODUCTIONLINE_ID, Cur_ProductionLine.MOVEMENTQTY,
                             ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4),
-                            (CASE (Cur_ProductionLine.MOVEMENTQTY) WHEN 0 THEN 0 ELSE ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4) END), 'N', 'Y', 'AV');
+                            (CASE (Cur_ProductionLine.MOVEMENTQTY) WHEN 0 THEN 0 ELSE ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4) END), 'N', 'Y',
+                            CASE v_iscostmigrated WHEN 'Y' THEN 'AVA' ELSE 'AV' END);
             ELSE
               v_ResultStr := 'update cost';
               --Check if costing is correct, there must be only one cost
@@ -507,13 +516,15 @@ BEGIN
                             M_PRODUCTIONLINE_ID, QTY,
                             PRICE,
                             COST,
-                            ISPERMANENT, ISPRODUCTION, COSTTYPE)
+                            ISPERMANENT, ISPRODUCTION,
+                            COSTTYPE)
                        VALUES (v_NextNo,now(), p_User_ID, now(), p_User_ID, Cur_ProductionLine.AD_CLIENT_ID,
                             Cur_ProductionLine.AD_ORG_ID, Cur_ProductionLine.M_PRODUCT_ID, v_DateTo, v_CostingDate, 'N',
                             Cur_ProductionLine.M_PRODUCTIONLINE_ID, Cur_ProductionLine.MOVEMENTQTY,
                             ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4),
                             (CASE (v_Qty+Cur_ProductionLine.MOVEMENTQTY) WHEN 0 THEN 0 ELSE ROUND(((v_Qty*v_CostOld)+(v_Cost))/(v_Qty+Cur_ProductionLine.MOVEMENTQTY),4)END),
-                                'N', 'Y', 'AV');
+                                'N', 'Y',
+                            CASE v_iscostmigrated WHEN 'Y' THEN 'AVA' ELSE 'AV' END);
               ELSIF (v_count2 = 0) THEN
                 SELECT COALESCE(MIN(DATEFROM), TO_DATE('31-12-9999','DD-MM-YYYY')) INTO v_DateTo
                 FROM M_COSTING
@@ -537,13 +548,15 @@ BEGIN
                             M_PRODUCTIONLINE_ID, QTY,
                             PRICE,
                             COST,
-                            ISPERMANENT, ISPRODUCTION, COSTTYPE)
+                            ISPERMANENT, ISPRODUCTION,
+                            COSTTYPE)
                        VALUES (v_NextNo,now(), p_User_ID, now(), p_User_ID, Cur_ProductionLine.AD_CLIENT_ID,
                             Cur_ProductionLine.AD_ORG_ID, Cur_ProductionLine.M_PRODUCT_ID, v_DateTo, v_CostingDate, 'N',
                             Cur_ProductionLine.M_PRODUCTIONLINE_ID, Cur_ProductionLine.MOVEMENTQTY,
                             ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4),
                             (CASE (v_Qty+Cur_ProductionLine.MOVEMENTQTY) WHEN 0 THEN 0 ELSE ROUND(((v_Qty*v_CostOld)+(v_Cost))/(v_Qty+Cur_ProductionLine.MOVEMENTQTY),4)END),
-                              'N', 'Y', 'AV');
+                              'N', 'Y',
+                            CASE v_iscostmigrated WHEN 'Y' THEN 'AVA' ELSE 'AV' END);
 
               ELSE
                 --If for productiondate there are more than one calculated costs

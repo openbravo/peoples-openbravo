@@ -21,8 +21,6 @@ package org.openbravo.costing;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
@@ -32,6 +30,7 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.costing.CostingServer.TrxType;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -49,7 +48,7 @@ import org.openbravo.model.procurement.ReceiptInvoiceMatch;
 public class PriceDifferenceProcess {
   private static CostAdjustment costAdjHeader = null;
 
-  private static boolean calculateTransactionPriceDifferenceLogic(
+  private static boolean calculateTransactionPriceDifferenceLogic(Organization legalOrganization,
       MaterialTransaction materialTransaction) throws OBException {
     boolean costAdjCreated = false;
 
@@ -138,7 +137,7 @@ public class PriceDifferenceProcess {
       if (costAdjDateAcct == null) {
         costAdjDateAcct = trxDate;
       }
-      createCostAdjustmenHeader(trxOrg);
+      createCostAdjustmenHeader(legalOrganization);
 
       BigDecimal trxCostDifference = (expectedUnitCost.multiply(receiptQty))
           .subtract(currentTrxCost);
@@ -153,10 +152,11 @@ public class PriceDifferenceProcess {
     return costAdjCreated;
   }
 
-  private static boolean calculateTransactionPriceDifference(MaterialTransaction materialTransaction)
-      throws OBException {
+  private static boolean calculateTransactionPriceDifference(Organization legalOrganization,
+      MaterialTransaction materialTransaction) throws OBException {
 
-    boolean costAdjCreated = calculateTransactionPriceDifferenceLogic(materialTransaction);
+    boolean costAdjCreated = calculateTransactionPriceDifferenceLogic(legalOrganization,
+        materialTransaction);
 
     materialTransaction.setCheckpricedifference(Boolean.FALSE);
     OBDal.getInstance().save(materialTransaction);
@@ -170,7 +170,9 @@ public class PriceDifferenceProcess {
       throws OBException {
     costAdjHeader = null;
 
-    calculateTransactionPriceDifference(materialTransaction);
+    Organization organizationForCostAdjustmentHeader = new OrganizationStructureProvider()
+        .getLegalEntity(materialTransaction.getOrganization());
+    calculateTransactionPriceDifference(organizationForCostAdjustmentHeader, materialTransaction);
 
     if (costAdjHeader != null) {
       OBDal.getInstance().flush();
@@ -199,13 +201,39 @@ public class PriceDifferenceProcess {
   }
 
   /**
+   * This process is going to calculate the differences in prices between the Orders and the related
+   * Invoices. If there are any differences a Cost Adjustment Document will be created to adjust the
+   * related Transactions
+   * 
+   * @param legalOrganization
+   *          [Mandatory] Legal Organization for which the Price Difference Process is going to be
+   *          executed
+   * @return the message to be shown to the user properly formatted and translated to the user
+   *         language.
+   */
+  public static JSONObject processPriceDifference(Organization legalOrganization) {
+    return processPriceDifference(null, null, legalOrganization);
+  }
+
+  /**
+   * This process is going to calculate the differences in prices between the Orders and the related
+   * Invoices. If there are any differences a Cost Adjustment Document will be created to adjust the
+   * related Transactions
+   * 
+   * @param date
+   *          [Optional] Date from which the Price Differences Process is going to executed
+   * @param product
+   *          [Optional] Product for which the Price Difference Process is going to be executed
+   * @param legalOrganization
+   *          [Mandatory] Legal Organization for which the Price Difference Process is going to be
+   *          executed
    * @return the message to be shown to the user properly formatted and translated to the user
    *         language.
    * @throws OBException
    *           when there is an error that prevents the cost adjustment to be processed.
-   * @throws OBException
    */
-  public static JSONObject processPriceDifference(Date date, Product product) throws OBException {
+  public static JSONObject processPriceDifference(Date date, Product product,
+      Organization legalOrganization) throws OBException {
 
     JSONObject message = null;
     costAdjHeader = null;
@@ -221,6 +249,9 @@ public class PriceDifferenceProcess {
     }
     mTrxs.add(Restrictions.eq(MaterialTransaction.PROPERTY_CHECKPRICEDIFFERENCE, true));
     mTrxs.add(Restrictions.eq(MaterialTransaction.PROPERTY_ISCOSTCALCULATED, true));
+    mTrxs.add(Restrictions.in(MaterialTransaction.PROPERTY_ORGANIZATION + "."
+        + Organization.PROPERTY_ID,
+        new OrganizationStructureProvider().getChildTree(legalOrganization.getId(), true)));
     mTrxs.addOrderBy(MaterialTransaction.PROPERTY_MOVEMENTDATE, true);
     mTrxs.addOrderBy(MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE, true);
     ScrollableResults lines = mTrxs.scroll(ScrollMode.FORWARD_ONLY);
@@ -229,7 +260,7 @@ public class PriceDifferenceProcess {
     try {
       while (lines.next()) {
         MaterialTransaction line = (MaterialTransaction) lines.get(0);
-        costAdjCreated = calculateTransactionPriceDifference(line);
+        costAdjCreated = calculateTransactionPriceDifference(legalOrganization, line);
         if (costAdjCreated) {
           count++;
         }
@@ -245,20 +276,15 @@ public class PriceDifferenceProcess {
       lines.close();
     }
 
-    Map<String, String> map = new HashMap<String, String>();
-    map.put("trxsNumber", Integer.toString(count));
-    String messageText = OBMessageUtils.messageBD("PriceDifferenceChecked");
-
     if (costAdjHeader != null) {
       OBDal.getInstance().flush();
       message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjHeader);
       try {
-        if (message.get("severity") != "success") {
+        if (!StringUtils.equalsIgnoreCase("success", (String) message.get("severity"))) {
           throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
               + costAdjHeader.getDocumentNo() + " - " + message.getString("text"));
         } else {
-          message.put("title", OBMessageUtils.messageBD("Success"));
-          message.put("text", OBMessageUtils.parseTranslation(messageText, map));
+          message.put("transactionsProcessed", count);
         }
       } catch (JSONException e) {
         throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
@@ -267,9 +293,7 @@ public class PriceDifferenceProcess {
     } else {
       try {
         message = new JSONObject();
-        message.put("severity", "success");
-        message.put("title", OBMessageUtils.messageBD("Success"));
-        message.put("text", OBMessageUtils.parseTranslation(messageText, map));
+        message.put("transactionsProcessed", count);
       } catch (JSONException ignore) {
       }
       return message;

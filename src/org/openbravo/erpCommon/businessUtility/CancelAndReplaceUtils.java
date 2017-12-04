@@ -976,10 +976,24 @@ public class CancelAndReplaceUtils {
                   && linesRelations.containsKey(serviceRelation.getOrderlineRelated().getId())
                   && serviceRelation.getOrderlineRelated().getSalesOrder().getId()
                       .equals(oldOrder.getId())) {
-                // A product with a related delivered service (in the same ticket) is being
-                // canceled. The relation between the original product and the service must be
-                // removed.
-                relationsToRemove.add(serviceRelation);
+                if (serviceRelation.getSalesOrderLine().getSalesOrder().getId()
+                    .equals(oldOrder.getId())) {
+                  // A product with a related delivered service (in the same ticket) is being
+                  // canceled. The relation between the original product and the service must be
+                  // removed.
+                  relationsToRemove.add(serviceRelation);
+                } else {
+                  if (serviceRelation.getSalesOrderLine().getSalesOrder().isCancelled()
+                      && serviceRelation.getSalesOrderLine().getSalesOrder().getCancelledorder() != null) {
+                    // A product is being canceled that contains a deferred service that has been
+                    // already canceled. The relation created from the canceled service to the
+                    // original product must be moved to the canceled product.
+                    final OrderLine inverseProductLine = OBDal.getInstance().get(OrderLine.class,
+                        linesRelations.get(serviceRelation.getOrderlineRelated().getId()));
+                    serviceRelation.setOrderlineRelated(inverseProductLine);
+                    OBDal.getInstance().save(serviceRelation);
+                  }
+                }
               } else {
                 // The CL has a service that is being canceled, which is related to a product in
                 // other ticket (the product is deferred) or to a product that have been delivered

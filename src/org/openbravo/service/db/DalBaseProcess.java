@@ -84,9 +84,7 @@ public abstract class DalBaseProcess implements Process {
 
     } catch (Exception e) {
       errorOccured = true;
-      log.error("The process " + bundle.getProcessClass().getName() + " has thrown an exception. ",
-          e);
-      throw new Exception(e.getMessage());
+      throw e;
     } finally {
       if (errorOccured) {
         if (bundle.getCloseConnection()) {
