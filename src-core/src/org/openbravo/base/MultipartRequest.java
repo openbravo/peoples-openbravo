@@ -174,8 +174,8 @@ public class MultipartRequest implements FieldProvider {
         }
         isFirstRow = false;
       } else {
-        byte aux = new Integer(result).byteValue();
-        vectorInt.addElement(new Byte(aux));
+        byte aux = Integer.valueOf(result).byteValue();
+        vectorInt.addElement(Byte.valueOf(aux));
       }
     }
     if (vectorInt.size() > 0 && (!isFirstRow || !firstRowHeads)) {

@@ -77,7 +77,7 @@ public class JRFieldProviderDataSource implements JRDataSource {
             objValue = null;
         } else if (clazz.equals(java.lang.Byte.class)) {
           if (value != null && !value.equals("")) {
-            objValue = new Byte(value);
+            objValue = Byte.valueOf(value);
           } else
             objValue = null;
         } else if (clazz.equals(java.util.Date.class)) {
@@ -102,19 +102,19 @@ public class JRFieldProviderDataSource implements JRDataSource {
          */
         else if (clazz.equals(java.lang.Double.class)) {
           if (value != null && !value.equals("")) {
-            objValue = new Double(value);
+            objValue = Double.valueOf(value);
           } else {
             objValue = null;
           }
         } else if (clazz.equals(java.lang.Float.class)) {
           if (value != null && !value.equals("")) {
-            objValue = new Float(value);
+            objValue = Float.valueOf(value);
           } else {
             objValue = null;
           }
         } else if (clazz.equals(java.lang.Integer.class)) {
           if (value != null && !value.equals("")) {
-            objValue = new Integer(value);
+            objValue = Integer.valueOf(value);
           } else {
             objValue = null;
           }

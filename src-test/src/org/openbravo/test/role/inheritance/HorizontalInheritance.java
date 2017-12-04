@@ -137,9 +137,9 @@ public class HorizontalInheritance extends WeldBaseTest {
       inheritedRole = OBDal.getInstance().get(Role.class, inheritedRoleId);
 
       // Save Inheritances
-      RoleInheritanceTestUtils.addInheritance(inheritedRole, template1, new Long(10));
-      RoleInheritanceTestUtils.addInheritance(inheritedRole, template2, new Long(20));
-      RoleInheritanceTestUtils.addInheritance(inheritedRole, template3, new Long(30));
+      RoleInheritanceTestUtils.addInheritance(inheritedRole, template1, 10L);
+      RoleInheritanceTestUtils.addInheritance(inheritedRole, template2, 20L);
+      RoleInheritanceTestUtils.addInheritance(inheritedRole, template3, 30L);
       OBDal.getInstance().commitAndClose();
 
       template1 = OBDal.getInstance().get(Role.class, template1Id);

@@ -446,7 +446,7 @@ public class ActivationKey {
       if (!checkInOnDemandPlatform()) {
         outOfPlatform = true;
         String limitusers = getProperty("limitusers");
-        maxUsers = StringUtils.isEmpty(limitusers) ? 0L : new Long(limitusers);
+        maxUsers = StringUtils.isEmpty(limitusers) ? 0L : Long.valueOf(limitusers);
         if (maxUsers == 0L) {
           maxUsers = OUT_OF_PLATFORM_DEMAND_MAX_USERS;
         }
@@ -458,7 +458,7 @@ public class ActivationKey {
 
     if (licenseType == LicenseType.CONCURRENT_USERS) {
       String limitusers = getProperty("limitusers");
-      maxUsers = StringUtils.isEmpty(limitusers) ? 0L : new Long(limitusers);
+      maxUsers = StringUtils.isEmpty(limitusers) ? 0L : Long.valueOf(limitusers);
     }
 
     // Check for dates to know if the instance is active
@@ -521,7 +521,7 @@ public class ActivationKey {
     if (instanceProperties.containsKey("posTerminals")
         && !StringUtils.isBlank(getProperty("posTerminals"))) {
       try {
-        posTerminals = new Long(getProperty("posTerminals"));
+        posTerminals = Long.valueOf(getProperty("posTerminals"));
       } catch (Exception e) {
         log.error("Couldn't read number of terminals " + getProperty("posTerminals"), e);
         posTerminals = 0L;
@@ -535,7 +535,7 @@ public class ActivationKey {
     if (instanceProperties.containsKey("posTerminalsWarn")
         && !StringUtils.isBlank(getProperty("posTerminalsWarn"))) {
       try {
-        posTerminalsWarn = new Long(getProperty("posTerminalsWarn"));
+        posTerminalsWarn = Long.valueOf(getProperty("posTerminalsWarn"));
       } catch (Exception e) {
         log.error("Couldn't read number of terminals warn " + getProperty("posTerminalsWarn"), e);
       }
@@ -959,7 +959,7 @@ public class ActivationKey {
 
     Long softUsers = null;
     if (getProperty("limituserswarn") != null) {
-      softUsers = new Long(getProperty("limituserswarn"));
+      softUsers = Long.valueOf(getProperty("limituserswarn"));
     }
 
     // maxUsers==0 is unlimited concurrent users

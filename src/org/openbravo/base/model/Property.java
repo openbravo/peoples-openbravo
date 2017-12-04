@@ -529,7 +529,7 @@ public class Property {
         return new BigDecimal(defaultValue);
       }
       if (getPrimitiveType() == Float.class || getPrimitiveType() == float.class) {
-        return new Float(defaultValue);
+        return Float.valueOf(defaultValue);
       }
       if (getPrimitiveType() == String.class) {
         return defaultValue;

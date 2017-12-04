@@ -354,7 +354,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       }
     } else if (domainType instanceof BooleanDomainType) {
       whereClause = field.getClauseLeftPart() + " = "
-          + getTypedParameterAlias(typedParameters, new Boolean(value));
+          + getTypedParameterAlias(typedParameters, Boolean.valueOf(value));
     } else if (domainType instanceof UniqueIdDomainType) {
       whereClause = field.getClauseLeftPart() + " = "
           + getTypedParameterAlias(typedParameters, value);

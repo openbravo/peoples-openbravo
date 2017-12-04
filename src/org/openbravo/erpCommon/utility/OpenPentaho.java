@@ -65,7 +65,7 @@ public class OpenPentaho extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramURL", pentahoServer + localSource);
 
     try {
-      WindowTabs tabs = new WindowTabs(this, vars, new Integer(adProcessId).intValue());
+      WindowTabs tabs = new WindowTabs(this, vars, Integer.parseInt(adProcessId));
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());

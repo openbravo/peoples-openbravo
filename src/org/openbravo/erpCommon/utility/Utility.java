@@ -1450,13 +1450,13 @@ public class Utility {
         }
         if ((i == name.length()) && (data[j].value.equals(localCurrentValue))) {
           i = 1;
-          while (i <= 10 && reservedButtonShortCuts.containsKey(new Integer(i).toString()))
+          while (i <= 10 && reservedButtonShortCuts.containsKey(Integer.valueOf(i).toString()))
             i++;
           if (i < 10) {
             if (data[j].value.equals(localCurrentValue)) {
               retVal += "<span>(<u>" + i + "</u>)</span>";
-              reservedButtonShortCuts.put(new Integer(i).toString(), "");
-              usedButtonShortCuts.put(new Integer(i).toString(), "executeWindowButton('" + buttonId
+              reservedButtonShortCuts.put(Integer.valueOf(i).toString(), "");
+              usedButtonShortCuts.put(Integer.valueOf(i).toString(), "executeWindowButton('" + buttonId
                   + "');");
             }
           }
@@ -1498,12 +1498,12 @@ public class Utility {
 
       if (i == name.length()) {
         i = 1;
-        while (i <= 10 && reservedButtonShortCuts.containsKey(new Integer(i).toString()))
+        while (i <= 10 && reservedButtonShortCuts.containsKey(Integer.valueOf(i).toString()))
           i++;
         if (i < 10) {
           retVal += "<span>(<u>" + i + "</u>)</span>";
-          reservedButtonShortCuts.put(new Integer(i).toString(), "");
-          usedButtonShortCuts.put(new Integer(i).toString(), "executeWindowButton('" + buttonId
+          reservedButtonShortCuts.put(Integer.valueOf(i).toString(), "");
+          usedButtonShortCuts.put(Integer.valueOf(i).toString(), "executeWindowButton('" + buttonId
               + "');");
         }
       } else {
@@ -2265,8 +2265,8 @@ public class Utility {
     ByteArrayInputStream bis = new ByteArrayInputStream(bytea);
     BufferedImage rImage = ImageIO.read(bis);
     Long[] size = new Long[2];
-    size[0] = new Long(rImage.getWidth());
-    size[1] = new Long(rImage.getHeight());
+    size[0] = Long.valueOf(rImage.getWidth());
+    size[1] = Long.valueOf(rImage.getHeight());
     return size;
   }
 

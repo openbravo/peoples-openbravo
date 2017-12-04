@@ -376,11 +376,11 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
       for (int j = 0; j < NO_OF_PT_LINE; j++) {
         final PaymentTermLine ptl = OBProvider.getInstance().get(PaymentTermLine.class);
         ptl.setExcludeTax(true);
-        ptl.setLastDayCutoff(new Long(10));
-        ptl.setMaturityDate1(new Long(5));
-        ptl.setMaturityDate2(new Long(1));
-        ptl.setMaturityDate3(new Long(1));
-        ptl.setOffsetMonthDue(new Long(j));
+        ptl.setLastDayCutoff(10L);
+        ptl.setMaturityDate1(5L);
+        ptl.setMaturityDate2(1L);
+        ptl.setMaturityDate3(1L);
+        ptl.setOffsetMonthDue(Long.valueOf(j));
         ptl.setLineNo((long) j);
         ptl.setOverduePaymentDayRule("1");
         ptl.setOverduePaymentDaysRule((long) 10);

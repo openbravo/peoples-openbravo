@@ -103,7 +103,7 @@ public class OBInterceptor extends EmptyInterceptor {
     if (entity instanceof BaseOBObject) {
       final BaseOBObject bob = (BaseOBObject) entity;
       if (bob.getId() != null && bob.isNewOBObject()) {
-        return new Boolean(true);
+        return Boolean.TRUE;
       }
     }
     // let hibernate do the rest

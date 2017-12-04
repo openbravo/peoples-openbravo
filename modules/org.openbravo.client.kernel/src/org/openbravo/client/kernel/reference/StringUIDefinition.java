@@ -77,7 +77,7 @@ public class StringUIDefinition extends UIDefinition {
 
     // custom override in case the length of a document number column is 0
     if (field.getColumn().getDBColumnName().compareToIgnoreCase("documentno") == 0 && length == 0) {
-      length = new Long(20);
+      length = 20L;
     }
     return (length != null ? ", length:" + length : "") + ", displaylength:" + displaylength
         + super.getGridFieldProperties(field);

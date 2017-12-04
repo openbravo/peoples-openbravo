@@ -65,7 +65,7 @@ public class RecalculatePermissions extends WeldBaseTest {
       role = OBDal.getInstance().get(Role.class, roleId);
 
       // Add inheritance
-      RoleInheritanceTestUtils.addInheritance(role, template, new Long(10));
+      RoleInheritanceTestUtils.addInheritance(role, template, 10L);
       OBDal.getInstance().commitAndClose();
       template = OBDal.getInstance().get(Role.class, templateId);
 
@@ -134,8 +134,8 @@ public class RecalculatePermissions extends WeldBaseTest {
       role2 = OBDal.getInstance().get(Role.class, role2Id);
 
       // Add inheritance
-      RoleInheritanceTestUtils.addInheritance(role1, template, new Long(10));
-      RoleInheritanceTestUtils.addInheritance(role2, template, new Long(20));
+      RoleInheritanceTestUtils.addInheritance(role1, template, 10L);
+      RoleInheritanceTestUtils.addInheritance(role2, template, 20L);
       OBDal.getInstance().commitAndClose();
 
       template = OBDal.getInstance().get(Role.class, templateId);

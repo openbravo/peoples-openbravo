@@ -93,7 +93,7 @@ public class ModuleTree extends GenericTree {
       String language = (lang.equals("") ? "en_US" : lang);
       data = ModuleTreeData.selectSubTree(conn, language, nodeId);
       addLinks();
-      setLevel(new Integer(level).intValue());
+      setLevel(Integer.parseInt(level));
       setIcons();
       setDisabled(language);
     } catch (ServletException ex) {
@@ -278,7 +278,7 @@ public class ModuleTree extends GenericTree {
         return "0";
       for (int i = 0; i < tree.length; i++) {
         if (tree[i].nodeId.equals(nodeID)) {
-          return new Integer(i + 1).toString();
+          return Integer.valueOf(i + 1).toString();
         }
       }
       return "0";

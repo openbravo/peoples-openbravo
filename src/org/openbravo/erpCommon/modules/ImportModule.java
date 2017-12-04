@@ -632,7 +632,7 @@ public class ImportModule {
           i++;
           if (i % loopsToLog == 0) {
             // Do not print for each loop: do it each 30 times (just for big enough modules)
-            Double percentage = new Double(size) / new Double(remoteModule.getSize()) * 100;
+            Double percentage = Double.valueOf(size) / Double.valueOf(remoteModule.getSize()) * 100;
             String per = formatter.format(percentage);
             log4j.info("  ...downloaded " + size + " " + per + "%");
           }
@@ -1307,7 +1307,7 @@ public class ImportModule {
 
     final Connection conn = ds.getConnection();
 
-    Integer seqNo = new Integer(ImportModuleData.selectSeqNo(pool));
+    Integer seqNo = Integer.valueOf(ImportModuleData.selectSeqNo(pool));
 
     for (final DynaBean module : dModulesToInstall) {
       seqNo += 10;
@@ -1996,7 +1996,7 @@ public class ImportModule {
         remoteModule.setObx(conn.getInputStream());
         String size = conn.getHeaderField("Content-Length");
         if (size != null) {
-          remoteModule.setSize(new Integer(size));
+          remoteModule.setSize(Integer.valueOf(size));
         }
         return remoteModule;
       }

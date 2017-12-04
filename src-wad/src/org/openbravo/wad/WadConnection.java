@@ -70,9 +70,9 @@ class WadConnection implements ConnectionProvider {
       this.bbdd = properties.getProperty("bbdd.url");
       dbLogin = properties.getProperty("bbdd.user");
       dbPassword = properties.getProperty("bbdd.password");
-      minConns = new Integer(properties.getProperty("bbdd.minConns", "1"));
-      maxConns = new Integer(properties.getProperty("bbdd.maxConns", "10"));
-      maxConnTime = new Double(properties.getProperty("maxConnTime", "0.5"));
+      minConns = Integer.parseInt(properties.getProperty("bbdd.minConns", "1"));
+      maxConns = Integer.parseInt(properties.getProperty("bbdd.maxConns", "10"));
+      maxConnTime = Double.parseDouble(properties.getProperty("maxConnTime", "0.5"));
       dbSessionConfig = properties.getProperty("bbdd.sessionConfig");
       this.rdbms = properties.getProperty("bbdd.rdbms");
       if (this.rdbms.equalsIgnoreCase("POSTGRE"))

@@ -85,7 +85,7 @@ public class GenericTreeServlet extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     String htmlTree = "";
     try {
-      String newLevel = new Integer(new Integer(level).intValue() + 1).toString();
+      String newLevel = Integer.valueOf(Integer.valueOf(level).intValue() + 1).toString();
       GenericTree tree = (GenericTree) Class.forName(treeClass).newInstance();
       tree.setParameters(this);
       tree.setLanguage(vars.getLanguage());
