@@ -86,6 +86,7 @@ import org.openbravo.erpCommon.security.SessionListener;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.erpCommon.utility.SystemInfo;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.exception.NoConnectionAvailableException;
@@ -1143,7 +1144,7 @@ public class ActivationKey {
         try {
           trxConn = cp.getTransactionConnection();
           ActivationKeyData.deactivateSessions(trxConn, cp,
-              Utility.commaSeparated(sessionsToDeactivate));
+              StringCollectionUtils.commaSeparated(sessionsToDeactivate));
           cp.releaseCommitConnection(trxConn);
           success = true;
         } catch (NoConnectionAvailableException | SQLException | ServletException e) {

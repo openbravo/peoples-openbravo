@@ -18,7 +18,7 @@
  */
 package org.openbravo.client.application;
 
-import static org.openbravo.erpCommon.utility.Utility.commaSeparated;
+import static org.openbravo.erpCommon.utility.StringCollectionUtils.commaSeparated;
 
 import java.util.ArrayList;
 import java.util.HashMap;
