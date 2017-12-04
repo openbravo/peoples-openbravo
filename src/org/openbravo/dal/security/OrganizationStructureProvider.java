@@ -21,10 +21,8 @@ package org.openbravo.dal.security;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,6 +35,7 @@ import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationType;
 import org.slf4j.Logger;
@@ -489,35 +488,9 @@ public class OrganizationStructureProvider implements OBNotSingleton {
         orgsToCheck.add(fixedOrgId);
       }
 
-      return commaSeparated(getTransactionAllowedOrgs(orgsToCheck), true);
+      return StringCollectionUtils.commaSeparated(getTransactionAllowedOrgs(orgsToCheck));
     } finally {
       log.debug("getTransactionAllowedOrgs - {} ms", System.currentTimeMillis() - t);
-    }
-  }
-
-  // TODO: copied from Utility because this is used in generate.entities it cannot depend on it,
-  // find a better common place
-  private String commaSeparated(Collection<?> col, boolean addQuotes) {
-    Iterator<?> it = col.iterator();
-    if (!it.hasNext()) {
-      return "";
-    }
-
-    // typically used for lists of UUIDs, assuming it to calculate a proper initial capacity
-    int initialCapacity = col.size() * (32 + (addQuotes ? 3 : 1));
-    StringBuilder sb = new StringBuilder(initialCapacity);
-
-    for (;;) {
-      Object e = it.next();
-      if (addQuotes) {
-        sb.append('\'').append(e).append('\'');
-      } else {
-        sb.append(e);
-      }
-      if (!it.hasNext()) {
-        return sb.toString();
-      }
-      sb.append(',');
     }
   }
 }
