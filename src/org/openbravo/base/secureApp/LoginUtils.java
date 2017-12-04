@@ -12,7 +12,6 @@
 package org.openbravo.base.secureApp;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +39,7 @@ import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.utility.DimensionDisplayUtility;
 import org.openbravo.erpCommon.utility.OBLedgerUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.domain.Preference;
@@ -260,8 +260,8 @@ public class LoginUtils {
       client = OBDal.getInstance().get(Client.class, strCliente);
       isAccountingDimensionConfigCentrally = client.isAcctdimCentrallyMaintained();
 
-      vars.setSessionValue("#AccessibleOrgTree", Utility.commaSeparated(Arrays.asList(OBContext
-          .getOBContext().getReadableOrganizations())));
+      vars.setSessionValue("#AccessibleOrgTree",
+          StringCollectionUtils.commaSeparated(OBContext.getOBContext().getReadableOrganizations()));
     } catch (Exception e) {
       log4j.warn("Error while setting Organzation tree to session " + e);
       return false;
@@ -640,7 +640,7 @@ public class LoginUtils {
           }
         }
         strWarehouse = DefaultOptionsData.getDefaultWarehouse(connectionProvider, strClient,
-            Utility.commaSeparated(allAccessibleOrgs));
+            StringCollectionUtils.commaSeparated(allAccessibleOrgs));
       }
     } else {
       strWarehouse = "";

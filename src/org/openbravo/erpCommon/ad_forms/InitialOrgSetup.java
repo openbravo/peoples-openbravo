@@ -20,7 +20,6 @@ package org.openbravo.erpCommon.ad_forms;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +36,7 @@ import org.openbravo.erpCommon.modules.ModuleReferenceDataOrgTree;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -89,8 +89,8 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
           .getOrganizationStructureProvider(vars.getClient());
       osp.reInitialize();
 
-      vars.setSessionValue("#AccessibleOrgTree", Utility.commaSeparated(Arrays.asList(OBContext
-          .getOBContext().getReadableOrganizations())));
+      vars.setSessionValue("#AccessibleOrgTree",
+          StringCollectionUtils.commaSeparated(OBContext.getOBContext().getReadableOrganizations()));
       printPageResult(response, vars, ios.getLog(), obeResult);
     } else if (vars.commandIn("CANCEL")) {
     } else

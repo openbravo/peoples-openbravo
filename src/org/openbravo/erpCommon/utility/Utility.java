@@ -548,8 +548,8 @@ public class Utility {
    * @return comma delimited Stirng of referenceable organizations.
    */
   public static String getReferenceableOrg(VariablesSecureApp vars, String currentOrg) {
-    return commaSeparated(OBContext.getOBContext().getOrganizationStructureProvider()
-        .getNaturalTree(currentOrg));
+    return StringCollectionUtils.commaSeparated(OBContext.getOBContext()
+        .getOrganizationStructureProvider().getNaturalTree(currentOrg));
   }
 
   /**
@@ -1556,7 +1556,8 @@ public class Utility {
    * @param list
    * @return a comma separated String containing the contents of the array.
    *
-   * @deprecated Use instead the more generic {@link StringCollectionUtils#commaSeparated(Collection, boolean)}
+   * @deprecated Use instead the more generic
+   *             {@link StringCollectionUtils#commaSeparated(Collection, boolean)}
    */
   @Deprecated
   public static String arrayListToString(ArrayList<String> list, boolean addQuotes) {
