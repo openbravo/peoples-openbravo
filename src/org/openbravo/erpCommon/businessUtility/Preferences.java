@@ -33,6 +33,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.PropertyConflictException;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
+import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
@@ -428,7 +429,7 @@ public class Preferences {
       } else {
         List<String> parentTree = OBContext.getOBContext().getOrganizationStructureProvider(client)
             .getParentList(org, true);
-        String parentOrgs = "(" + Utility.commaSeparated(parentTree) + ")";
+        String parentOrgs = "(" + StringCollectionUtils.commaSeparated(parentTree) + ")";
         hql.append("     and coalesce(p.visibleAtOrganization, '0') in " + parentOrgs);
       }
 

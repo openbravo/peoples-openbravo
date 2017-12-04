@@ -18,7 +18,7 @@
  */
 package org.openbravo.erpCommon.ad_process;
 
-import static org.openbravo.erpCommon.utility.Utility.commaSeparated;
+import static org.openbravo.erpCommon.utility.StringCollectionUtils.commaSeparated;
 
 import java.math.BigDecimal;
 

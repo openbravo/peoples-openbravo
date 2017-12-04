@@ -81,6 +81,7 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
+import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.domain.Reference;
@@ -265,7 +266,7 @@ public class DataSourceServlet extends BaseKernelServlet {
 
             // set selected properties those that will finally be exported
             parameters.put(JsonConstants.SELECTEDPROPERTIES_PARAMETER,
-                Utility.commaSeparated(writer.fieldProperties, false));
+                StringCollectionUtils.commaSeparated(writer.fieldProperties, false));
             ((DefaultDataSourceService) getDataSource(request)).fetch(parameters, writer);
           } else {
             String result = getDataSource(request).fetch(parameters);

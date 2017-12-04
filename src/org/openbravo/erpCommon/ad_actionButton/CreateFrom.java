@@ -45,6 +45,7 @@ import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.utility.AccDefUtility;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.UOMUtil;
@@ -571,7 +572,7 @@ public class CreateFrom extends HttpSecureAppServlet {
     } else {
       ArrayList<String> organizationList = new ArrayList<String>(OBContext.getOBContext()
           .getOrganizationStructureProvider().getNaturalTree(invoice.getOrganization().getId()));
-      String narturalOrgTreeList = Utility.commaSeparated(organizationList);
+      String narturalOrgTreeList = StringCollectionUtils.commaSeparated(organizationList);
       if (isSOTrx.equals("Y")) {
         xmlDocument.setData("reportShipmentReciept", "liststructure", CreateFromInvoiceData
             .selectFromShipmentSOTrxCombo(this, vars.getLanguage(),
@@ -723,7 +724,7 @@ public class CreateFrom extends HttpSecureAppServlet {
       xmlDocument.setData("reportInvoice", "liststructure", new CreateFromShipmentData[0]);
       xmlDocument.setData("reportPurchaseOrder", "liststructure", new CreateFromShipmentData[0]);
     } else {
-      String narturalOrgTreeList = Utility.commaSeparated(OBContext.getOBContext()
+      String narturalOrgTreeList = StringCollectionUtils.commaSeparated(OBContext.getOBContext()
           .getOrganizationStructureProvider().getNaturalTree(shipment.getOrganization().getId()));
       if (isSOTrx.equals("Y")) {
         xmlDocument.setData("reportInvoice", "liststructure", CreateFromShipmentData
