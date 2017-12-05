@@ -73,7 +73,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       return;
     }
 
-    long t = System.currentTimeMillis();
+    long t = System.nanoTime();
 
     if (getClientId() == null) {
       setClientId(OBContext.getOBContext().getCurrentClient().getId());
@@ -107,7 +107,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       nodeEntry.getValue().resolve(nodeEntry.getKey());
     }
 
-    log.debug("Client {} initialized in {} ms", getClientId(), System.currentTimeMillis() - t);
+    log.debug("Client {} initialized in {} ms", getClientId(),
+        String.format("%.3f", (System.nanoTime() - t) / 1_000_000d));
     isInitialized = true;
   }
 
@@ -120,14 +121,17 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    */
   public Set<String> getNaturalTree(String orgId) {
     initialize();
-    long t = System.currentTimeMillis();
+    long t = System.nanoTime();
     OrgNode node = orgNodes.get(orgId);
     if (node == null) {
       return new HashSet<>(Arrays.asList(orgId));
     } else {
       Set<String> result = new HashSet<>(getParentTree(orgId, true));
       result.addAll(getChildTree(orgId, false));
-      log.trace("getNaturalTree {} - {} ms", orgId, System.currentTimeMillis() - t);
+      if (log.isTraceEnabled()) {
+        log.trace("getNaturalTree {} - {} ms", orgId,
+            String.format("%.3f", (System.nanoTime() - t) / 1_000_000d));
+      }
       return result;
     }
   }
@@ -197,7 +201,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    */
   public List<String> getParentList(String orgId, boolean includeOrg) {
     initialize();
-    long t = System.currentTimeMillis();
+    long t = System.nanoTime();
     String parentOrg = getParentOrg(orgId);
     List<String> result = new ArrayList<String>();
 
@@ -209,7 +213,10 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       result.add(parentOrg);
       parentOrg = getParentOrg(parentOrg);
     }
-    log.debug("getParentList {} - {} ms", orgId, System.currentTimeMillis() - t);
+    if (log.isDebugEnabled()) {
+      log.debug("getParentList {} - {} ms", orgId,
+          String.format("%.3f", (System.nanoTime() - t) / 1_000_000d));
+    }
     return result;
   }
 
@@ -479,7 +486,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
   }
 
   public String getTransactionAllowedOrgs(String orgIds) {
-    long t = System.currentTimeMillis();
+    long t = System.nanoTime();
     try {
       String[] orgs = orgIds.split(",");
       List<String> orgsToCheck = new ArrayList<>(orgs.length);
@@ -490,7 +497,10 @@ public class OrganizationStructureProvider implements OBNotSingleton {
 
       return StringCollectionUtils.commaSeparated(getTransactionAllowedOrgs(orgsToCheck));
     } finally {
-      log.debug("getTransactionAllowedOrgs - {} ms", System.currentTimeMillis() - t);
+      if (log.isDebugEnabled()) {
+        log.debug("getTransactionAllowedOrgs - {} ms",
+            String.format("%.3f", (System.nanoTime() - t) / 1_000_000d));
+      }
     }
   }
 }
