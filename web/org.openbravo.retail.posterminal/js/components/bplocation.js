@@ -819,7 +819,9 @@ enyo.kind({
             }
           });
         } else {
-          me.doChangeBusinessPartner(me.owner.owner.args);
+          var bpArgs = JSON.parse(JSON.stringify(me.owner.owner.args));
+          bpArgs.businessPartner = dataBps;
+          me.doChangeBusinessPartner(bpArgs);
         }
       }
       if (!model.get('ignoreSetBPLoc')) {
