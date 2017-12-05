@@ -764,13 +764,16 @@
       if (minIncRefresh) {
         loadModelsIncFunc = function () {
           OB.MobileApp.model.set('secondsToRefreshMasterdata', 3);
-          var counterIntervalId = null;
+          var rfidStatus, counterIntervalId = null;
           counterIntervalId = setInterval(function () {
             OB.MobileApp.model.set('secondsToRefreshMasterdata', OB.MobileApp.model.get('secondsToRefreshMasterdata') - 1);
             if (OB.MobileApp.model.get('secondsToRefreshMasterdata') === 0) {
               clearInterval(counterIntervalId);
-              if (OB.UTIL.RfidController.isRfidConfigured()) {
+              if (OB.UTIL.RfidController.isRfidConfigured() && OB.UTIL.RfidController.get('isRFIDEnabled') && OB.UTIL.RfidController.get('connected')) {
                 OB.UTIL.RfidController.disconnectRFIDDevice();
+                rfidStatus = true;
+              } else {
+                rfidStatus = false;
               }
               OB.UTIL.startLoadingSteps();
               OB.MobileApp.model.set('isLoggingIn', true);
@@ -778,7 +781,7 @@
               OB.MobileApp.model.on('incrementalModelsLoaded', function () {
                 OB.MobileApp.model.off('incrementalModelsLoaded');
                 OB.UTIL.showLoading(false);
-                if (OB.UTIL.RfidController.isRfidConfigured()) {
+                if (OB.UTIL.RfidController.isRfidConfigured() && rfidStatus === true) {
                   OB.UTIL.RfidController.connectRFIDDevice();
                 }
                 OB.MobileApp.model.set('isLoggingIn', false);
