@@ -819,10 +819,7 @@ enyo.kind({
             }
           });
         } else {
-          me.doChangeBusinessPartner({
-            businessPartner: dataBps,
-            target: 'order'
-          });
+          me.doChangeBusinessPartner(me.owner.owner.args);
         }
       }
       if (!model.get('ignoreSetBPLoc')) {
