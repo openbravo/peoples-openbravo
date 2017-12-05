@@ -821,6 +821,9 @@ enyo.kind({
         } else {
           var bpArgs = JSON.parse(JSON.stringify(me.owner.owner.args));
           bpArgs.businessPartner = dataBps;
+          if (!bpArgs.target) {
+            bpArgs.target = 'order';
+          }
           me.doChangeBusinessPartner(bpArgs);
         }
       }
