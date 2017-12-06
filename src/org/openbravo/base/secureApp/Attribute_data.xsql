@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
  ************************************************************************************
- * Copyright (C) 2001-2016 Openbravo S.L.U.
+ * Copyright (C) 2001-2017 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -44,14 +44,7 @@
       <Parameter name="acctId"/>
       <Parameter name="clientlist" optional="true" type="replace" after="AND a.AD_CLIENT_ID IN (" text="'1'"/>
    </SqlMethod>
-   <SqlMethod name="selectIsSOTrx" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        <![CDATA[
-        SELECT ad_window_id, isSOTrx as value FROM AD_WINDOW 
-        ]]>
-      </Sql>
-   </SqlMethod>
+
    <SqlMethod name="selectStdPrecision" type="preparedStatement" return="String" default="">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
