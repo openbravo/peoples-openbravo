@@ -215,6 +215,7 @@ OB.POS.registerWindow({
   menuI18NLabel: 'OBPOS_LblCashManagement',
   permission: 'OBPOS_retail.cashmanagement',
   approvalType: 'OBPOS_approval.cashmgmt',
+  rfidState: false,
   navigateTo: function (args, successCallback, errorCallback) {
     if (!OB.MobileApp.model.get('hasPaymentsForCashup')) {
       // Cannot navigate to the cash management window in case of being a seller terminal

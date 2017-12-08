@@ -25,11 +25,12 @@ OB.UTIL.RfidController.startRfidWebsocket = function startRfidWebsocket(websocke
   OB.UTIL.RfidController.set('retrialsBeforeThreadCancellation', 100);
   OB.UTIL.RfidController.set('rfidWebsocket', new WebSocket(websocketServerLocation));
   OB.UTIL.RfidController.set('rfidAckArray', []);
-  OB.UTIL.RfidController.set('isRFIDEnabled', true);
+  OB.UTIL.RfidController.set('isRFIDEnabled', false);
   OB.UTIL.RfidController.set('reconnectOnScanningFocus', true);
 
   // Called when socket connection is established
   OB.UTIL.RfidController.get('rfidWebsocket').onopen = function () {
+    var window, connectRfid = true;
     if (currentRetrials >= retrialsBeforeWarning) {
       currentRetrials = 0;
       OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_ConnectedWithRFID'));
@@ -46,13 +47,27 @@ OB.UTIL.RfidController.startRfidWebsocket = function startRfidWebsocket(websocke
       }, OB.POS.modelterminal.get('terminal').terminalType.rfidTimeout * 1000 * 60));
     }
     OB.UTIL.RfidController.set('barcodeActionHandler', new OB.UI.BarcodeActionHandler());
-    OB.UTIL.RfidController.removeAllEpcs();
-    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.RfidController.get('previousStatus'))) {
-      OB.UTIL.RfidController.set('connected', OB.UTIL.RfidController.get('previousStatus'));
-    } else {
-      OB.UTIL.RfidController.set('connected', true);
-    }
     OB.UTIL.RfidController.set('connectionLost', false);
+    OB.UTIL.RfidController.removeAllEpcs();
+
+    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.RfidController.get('previousStatus'))) {
+      connectRfid = OB.UTIL.RfidController.get('previousStatus');
+    }
+
+    if (connectRfid) {
+      window = _.find(OB.MobileApp.model.windows.models, function (window) {
+        return window.get('route') === OB.MobileApp.view.currentWindow;
+      });
+      if (window && window.get('rfidState') === false) {
+        connectRfid = false;
+      }
+    }
+
+    if (connectRfid) {
+      OB.UTIL.RfidController.connectRFIDDevice();
+    } else {
+      OB.UTIL.RfidController.disconnectRFIDDevice();
+    }
   };
 
   // Called when a message is received from server
@@ -297,18 +312,9 @@ OB.UTIL.RfidController.processRemainingCodes = function (order, callback, errorC
 };
 
 OB.UTIL.RfidController.connectRFIDDevice = function (callback, errorCallback) {
-  OB.UTIL.RfidController.set('isRFIDEnabled', true);
-  OB.UTIL.RfidController.set('connected', true);
-  OB.UTIL.RfidController.waitForAck(function (uuid) {
-    OB.UTIL.RfidController.get('rfidWebsocket').send('connect:' + uuid);
-    OB.debug('connectRFIDDevice sent, UUID: ' + uuid);
-  }, function () {
-    OB.debug('connectRFIDDevice ended succesfully');
-    if (callback) {
-      callback();
-    }
-  }, function () {
-    OB.UTIL.RfidController.set('connectionLost', true);
+  if (OB.UTIL.RfidController.get('rfidWebsocket')) {
+    OB.UTIL.RfidController.set('isRFIDEnabled', true);
+    OB.UTIL.RfidController.set('connected', true);
     OB.UTIL.RfidController.waitForAck(function (uuid) {
       OB.UTIL.RfidController.get('rfidWebsocket').send('connect:' + uuid);
       OB.debug('connectRFIDDevice sent, UUID: ' + uuid);
@@ -319,31 +325,33 @@ OB.UTIL.RfidController.connectRFIDDevice = function (callback, errorCallback) {
       }
     }, function () {
       OB.UTIL.RfidController.set('connectionLost', true);
+      OB.UTIL.RfidController.waitForAck(function (uuid) {
+        OB.UTIL.RfidController.get('rfidWebsocket').send('connect:' + uuid);
+        OB.debug('connectRFIDDevice sent, UUID: ' + uuid);
+      }, function () {
+        OB.debug('connectRFIDDevice ended succesfully');
+        if (callback) {
+          callback();
+        }
+      }, function () {
+        OB.UTIL.RfidController.set('connectionLost', true);
+        OB.debug('error while connectRFIDDevice');
+        if (errorCallback) {
+          errorCallback();
+        }
+      }, 2000, OB.UTIL.get_UUID());
       OB.debug('error while connectRFIDDevice');
       if (errorCallback) {
         errorCallback();
       }
-    }, 2000, OB.UTIL.get_UUID());
-    OB.debug('error while connectRFIDDevice');
-    if (errorCallback) {
-      errorCallback();
-    }
-  }, 2000, OB.UTIL.get_UUID(), 3);
+    }, 2000, OB.UTIL.get_UUID(), 3);
+  }
 };
 
 OB.UTIL.RfidController.disconnectRFIDDevice = function (callback, errorCallback) {
-  OB.UTIL.RfidController.set('isRFIDEnabled', false);
-  OB.UTIL.RfidController.set('connected', false);
-  OB.UTIL.RfidController.waitForAck(function (uuid) {
-    OB.UTIL.RfidController.get('rfidWebsocket').send('disconnect:' + uuid);
-    OB.debug('disconnectRFIDDevice sent, UUID: ' + uuid);
-  }, function () {
-    OB.debug('disconnectRFIDDevice ended succesfully');
-    if (callback) {
-      callback();
-    }
-  }, function () {
-    OB.UTIL.RfidController.set('connectionLost', true);
+  if (OB.UTIL.RfidController.get('rfidWebsocket')) {
+    OB.UTIL.RfidController.set('isRFIDEnabled', false);
+    OB.UTIL.RfidController.set('connected', false);
     OB.UTIL.RfidController.waitForAck(function (uuid) {
       OB.UTIL.RfidController.get('rfidWebsocket').send('disconnect:' + uuid);
       OB.debug('disconnectRFIDDevice sent, UUID: ' + uuid);
@@ -354,16 +362,27 @@ OB.UTIL.RfidController.disconnectRFIDDevice = function (callback, errorCallback)
       }
     }, function () {
       OB.UTIL.RfidController.set('connectionLost', true);
+      OB.UTIL.RfidController.waitForAck(function (uuid) {
+        OB.UTIL.RfidController.get('rfidWebsocket').send('disconnect:' + uuid);
+        OB.debug('disconnectRFIDDevice sent, UUID: ' + uuid);
+      }, function () {
+        OB.debug('disconnectRFIDDevice ended succesfully');
+        if (callback) {
+          callback();
+        }
+      }, function () {
+        OB.UTIL.RfidController.set('connectionLost', true);
+        OB.debug('error while disconnectRFIDDevice');
+        if (errorCallback) {
+          errorCallback();
+        }
+      }, 2000, OB.UTIL.get_UUID());
       OB.debug('error while disconnectRFIDDevice');
       if (errorCallback) {
         errorCallback();
       }
-    }, 2000, OB.UTIL.get_UUID());
-    OB.debug('error while disconnectRFIDDevice');
-    if (errorCallback) {
-      errorCallback();
-    }
-  }, 2000, OB.UTIL.get_UUID(), 3);
+    }, 2000, OB.UTIL.get_UUID(), 3);
+  }
 };
 
 // If trials is undefined the function will try to reach the Hardware Manager forever, this only happens during connect & disconnect

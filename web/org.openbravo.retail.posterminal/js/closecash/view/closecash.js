@@ -595,6 +595,7 @@ OB.POS.registerWindow({
   menuI18NLabel: 'OBPOS_LblCloseCash',
   permission: 'OBPOS_retail.cashup',
   approvalType: 'OBPOS_approval.cashup',
+  rfidState: false,
   navigateTo: function (args, successCallback, errorCallback) {
     var me = this;
     // Cannot navigate to the cashup window in case of being a seller terminal
@@ -647,6 +648,7 @@ OB.POS.registerWindow({
   menuI18NLabel: 'OBPOS_LblCloseCashPartial',
   permission: 'OBPOS_retail.cashuppartial',
   approvalType: 'OBPOS_approval.cashuppartial',
+  rfidState: false,
   navigateTo: function (args, successCallback, errorCallback) {
     if (!OB.MobileApp.model.get('hasPaymentsForCashup')) {
       // Cannot navigate to the cashup partial window in case of being a seller terminal
