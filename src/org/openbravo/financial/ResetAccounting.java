@@ -92,7 +92,7 @@ public class ResetAccounting {
     List<String> tables = getTables(adTableId);
     try {
       Organization org = OBDal.getInstance().get(Organization.class, adOrgId);
-      Set<String> orgIds = StringUtils.equals(org.getOrganizationType().getName(), "Organization") ? getLegalOrBusinessOrgsChilds(
+      Set<String> orgIds = StringUtils.equals(org.getOrganizationType().getId(), "0") ? getLegalOrBusinessOrgsChilds(
           client, adOrgId) : new OrganizationStructureProvider().getChildTree(adOrgId, true);
       // Delete only if exists some organization to be affected.
       if (CollectionUtils.isNotEmpty(orgIds)) {
