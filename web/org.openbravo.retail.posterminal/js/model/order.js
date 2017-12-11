@@ -3204,7 +3204,7 @@
           return true;
         }
       }
-      if (this.isLayaway() && qty < 0) {
+      if (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true) && this.isLayaway() && qty < 0) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
         return true;
       }
