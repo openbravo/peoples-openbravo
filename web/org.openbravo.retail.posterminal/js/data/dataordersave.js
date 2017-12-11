@@ -405,43 +405,45 @@
 
         restoreMultiOrder = function () {
           // recalculate after an error also
-          if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-
-            model.get('multiOrders').get('payments').forEach(function (p) {
-              var itemP = _.find(model.get('multiOrders').get('frozenPayments').models, function (fp) {
-                return p.get('id') === fp.get('id');
+          model.get('multiOrders').get('payments').forEach(function (p) {
+            var itemP = _.find(model.get('multiOrders').get('frozenPayments').models, function (fp) {
+              return p.get('id') === fp.get('id');
+            }, this);
+            p.set('origAmount', itemP.get('origAmount'));
+          });
+          model.get('multiOrders').trigger('paymentCancel');
+          model.get('multiOrders').get('multiOrdersList').reset(model.get('multiOrders').get('frozenMultiOrdersList').models);
+          var promises = [];
+          _.each(model.get('multiOrders').get('multiOrdersList').models, function (rcpt) {
+            promises.push(new Promise(function (resolve, reject) {
+              rcpt.set('isbeingprocessed', 'N');
+              rcpt.set('hasbeenpaid', 'N');
+              _.each(model.get('orderList').models, function (mdl) {
+                if (mdl.get('id') === rcpt.get('id')) {
+                  mdl.set('isbeingprocessed', 'N');
+                  mdl.set('hasbeenpaid', 'N');
+                  return true;
+                }
               }, this);
-              p.set('origAmount', itemP.get('origAmount'));
-            });
-            model.get('multiOrders').trigger('paymentCancel');
-            model.get('multiOrders').get('multiOrdersList').reset(model.get('multiOrders').get('frozenMultiOrdersList').models);
-            var promises = [];
-            _.each(model.get('multiOrders').get('multiOrdersList').models, function (rcpt) {
-              promises.push(new Promise(function (resolve, reject) {
-                rcpt.set('isbeingprocessed', 'N');
-                rcpt.set('hasbeenpaid', 'N');
-                _.each(model.get('orderList').models, function (mdl) {
-                  if (mdl.get('id') === rcpt.get('id')) {
-                    mdl.set('isbeingprocessed', 'N');
-                    mdl.set('hasbeenpaid', 'N');
-                    return true;
-                  }
-                }, this);
-                OB.Dal.save(rcpt, function () {
-                  resolve();
-                }, function () {
-                  reject();
-                }, false);
-              }));
-            });
+              OB.Dal.save(rcpt, function () {
+                resolve();
+              }, function () {
+                reject();
+              }, false);
+            }));
+          });
 
-            Promise.all(promises).then(function () {
-              OB.UTIL.calculateCurrentCash();
-              if (callback instanceof Function) {
-                callback(false);
-              }
-            });
+          Promise.all(promises).then(function () {
+            OB.UTIL.calculateCurrentCash();
+            if (callback instanceof Function) {
+              callback(false);
+            }
+          });
+
+          if (OB.MobileApp.model.showSynchronizedDialog) {
+            OB.MobileApp.model.hideSynchronizingDialog();
           }
+          OB.UTIL.showLoading(false);
         };
 
         OB.UTIL.HookManager.executeHooks('OBPOS_PreOrderSave', {
