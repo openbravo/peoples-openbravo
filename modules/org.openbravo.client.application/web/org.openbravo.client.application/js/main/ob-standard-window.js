@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -276,8 +276,7 @@ isc.OBStandardWindow.addProperties({
     var parts = this.getPrototype().Class.split('_'),
         len = parts.length,
         className = '_',
-        tabSet = OB.MainView.TabSet,
-        vStack, manualJS, originalClassName, processClass, processOwnerView, runningProcess;
+        originalClassName, processClass, processOwnerView, runningProcess;
 
     if (params.paramWindow) {
       className = className + params.processId;
@@ -315,7 +314,7 @@ isc.OBStandardWindow.addProperties({
   },
 
   openProcess: function (params) {
-    var processOwnerView, selectedState, processToBeOpened;
+    var processOwnerView, processToBeOpened;
     if (params.uiPattern === 'M') { // Manual UI Pattern
       try {
         if (isc.isA.Function(params.actionHandler)) {
@@ -399,7 +398,7 @@ isc.OBStandardWindow.addProperties({
 
   // set window specific user settings, purposely set on class level
   setWindowSettings: function (data) {
-    var i, j, defaultView, persDefaultValue, views, length, t, tab, view, field, button, buttonParent, //
+    var i, j, length, t, tab, view, field, button, buttonParent, //
     st, stView, stBtns, stBtn, disabledFields, personalization, notAccessibleProcesses, extraCallback, //
     callbackFunc, alwaysReadOnly = function (view, record, context) {
         return true;
@@ -554,7 +553,7 @@ isc.OBStandardWindow.addProperties({
 
   setPersonalization: function (personalization) {
     var i, defaultView, persDefaultValue, views, currentView = this.activeView || this.view,
-        length, me = this;
+        length;
 
     // only personalize if there is a professional license
     if (!OB.Utilities.checkProfessionalLicense(null, true)) {
@@ -672,7 +671,7 @@ isc.OBStandardWindow.addProperties({
   },
 
   clearLastViewPersonalization: function () {
-    var p, length, personalization = this.getClass().personalization;
+    var p, personalization = this.getClass().personalization;
     delete this.lastViewApplied;
     if (personalization.forms) {
       for (p in personalization.forms) {
@@ -1178,13 +1177,11 @@ isc.OBStandardWindow.addProperties({
   },
 
   draw: function () {
-    var standardWindow = this,
-        targetEntity, ret = this.Super('draw', arguments),
+    var ret = this.Super('draw', arguments),
         i, length = this.views.length;
     if (this.targetTabId) {
       for (i = 0; i < length; i++) {
         if (this.views[i].tabId === this.targetTabId) {
-          targetEntity = this.views[i].entity;
           this.views[i].viewGrid.targetRecordId = this.targetRecordId;
           this.targetTabGrid = this.views[i].viewGrid;
           this.views[i].openDirectTabView(true);
@@ -1308,7 +1305,7 @@ isc.OBStandardWindow.addProperties({
   },
 
   getProcessOwnerView: function (processId) {
-    var ownerView, i, j, nActionButtons, nViews = this.views.length;
+    var i, j, nActionButtons, nViews = this.views.length;
     for (i = 0; i < nViews; i++) {
       nActionButtons = this.views[i].actionToolbarButtons.length;
       for (j = 0; j < nActionButtons; j++) {
