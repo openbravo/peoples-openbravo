@@ -20,7 +20,6 @@
 <REPORT>
   <template file="ModuleManagementSettings.html"/>
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
-  <PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
   <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
