@@ -327,7 +327,7 @@ isc.OBStandardWindow.addProperties({
     } else {
       processToBeOpened = this.buildProcess(params);
       if (processToBeOpened) {
-        processOwnerView = this.getProcessOwnerView(params.processId);
+        processOwnerView = params.processOwnerView || this.getProcessOwnerView(params.processId);
         this.runningProcess = processToBeOpened;
         this.selectedState = processOwnerView.viewGrid && processOwnerView.viewGrid.getSelectedState();
         this.openPopupInTab(this.runningProcess, params.windowTitle, (this.runningProcess.popupWidth ? this.runningProcess.popupWidth : '90%'), (this.runningProcess.popupHeight ? this.runningProcess.popupHeight : '90%'), (this.runningProcess.showMinimizeButton ? this.runningProcess.showMinimizeButton : false), (this.runningProcess.showMaximizeButton ? this.runningProcess.showMaximizeButton : false), true, true);

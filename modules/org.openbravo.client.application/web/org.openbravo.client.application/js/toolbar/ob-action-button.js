@@ -98,7 +98,8 @@ isc.OBToolbarActionButton.addProperties({
         windowTitle: me.windowTitle || me.realTitle,
         actionHandler: me.command,
         button: me,
-        uiPattern: me.uiPattern
+        uiPattern: me.uiPattern,
+        processOwnerView: theView
       };
       if (me.uiPattern === 'M') {
         parameters.buttons = me.labelValue;
