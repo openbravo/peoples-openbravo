@@ -600,7 +600,7 @@ enyo.kind({
       this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', true);
       this.$.totalpending.applyStyle('font-size', '24px');
     }
-    if (pendingPrepayment > 0 && pendingPrepayment !== paymentstatus.get('total') - paymentstatus.get('payment')) {
+    if (pendingPrepayment > 0 && pendingPrepayment !== OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment'))) {
       this.setPrepaymentTotalPending(pendingPrepayment, rate, symbol, symbolAtRight);
       this.$.prepaymenttotalpending.show();
       this.$.prepaymenttotalpendinglbl.show();
