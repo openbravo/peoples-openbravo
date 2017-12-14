@@ -68,6 +68,45 @@
       }
     });
 
+    var restoreReceiptOnError = function (eventParams, receipt) {
+        var frozenReceipt = new OB.Model.Order();
+        OB.UTIL.clone(receipt, frozenReceipt);
+        if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+          // rollback other changes
+          OB.Dal.get(OB.Model.Order, receipt.get('id'), function (loadedReceipt) {
+            receipt.clearWith(loadedReceipt);
+            //We need to restore the payment tab, as that's what the user should see if synchronization fails
+            OB.MobileApp.view.waterfall('onTabChange', {
+              tabPanel: 'payment',
+              keyboard: 'toolbarpayment',
+              edit: false
+            });
+            receipt.set('hasbeenpaid', 'N');
+            frozenReceipt.set('hasbeenpaid', 'N');
+            OB.Dal.save(receipt, function () {
+              OB.UTIL.calculateCurrentCash();
+
+              if (eventParams && eventParams.callback) {
+                eventParams.callback({
+                  frozenReceipt: frozenReceipt,
+                  isCancelled: true
+                });
+                receipt.setIsCalculateReceiptLockState(false);
+                receipt.setIsCalculateGrossLockState(false);
+                receipt.trigger('paymentCancel');
+              }
+            }, null, false);
+          });
+        } else if (eventParams && eventParams.callback) {
+          eventParams.callback({
+            frozenReceipt: frozenReceipt,
+            isCancelled: false
+          });
+        }
+
+
+        };
+
     // finished receipt verifications
     var mainReceiptCloseFunction = function (eventParams, context) {
         context.receipt = model.get('order');
@@ -228,38 +267,7 @@
             }
 
             var synErrorCallback = function () {
-                if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-                  // rollback other changes
-                  OB.Dal.get(OB.Model.Order, receipt.get('id'), function (loadedReceipt) {
-                    receipt.clearWith(loadedReceipt);
-                    //We need to restore the payment tab, as that's what the user should see if synchronization fails
-                    OB.MobileApp.view.waterfall('onTabChange', {
-                      tabPanel: 'payment',
-                      keyboard: 'toolbarpayment',
-                      edit: false
-                    });
-                    receipt.set('hasbeenpaid', 'N');
-                    frozenReceipt.set('hasbeenpaid', 'N');
-                    OB.Dal.save(receipt, function () {
-                      OB.UTIL.calculateCurrentCash();
-
-                      if (eventParams && eventParams.callback) {
-                        eventParams.callback({
-                          frozenReceipt: frozenReceipt,
-                          isCancelled: true
-                        });
-                        receipt.setIsCalculateReceiptLockState(false);
-                        receipt.setIsCalculateGrossLockState(false);
-                        receipt.trigger('paymentCancel');
-                      }
-                    }, null, false);
-                  });
-                } else if (eventParams && eventParams.callback) {
-                  eventParams.callback({
-                    frozenReceipt: frozenReceipt,
-                    isCancelled: false
-                  });
-                }
+                restoreReceiptOnError(eventParams, receipt);
                 };
 
             // create a clone of the receipt to be used when executing the final callback
@@ -354,6 +362,10 @@
         OB.UTIL.rebuildCashupFromServer(function () {
           OB.UTIL.showLoading(false);
           mainReceiptCloseFunction(eventParams, context);
+        }, function () {
+          OB.MobileApp.model.resetCheckpointData();
+          restoreReceiptOnError(eventParams, model.get('order'));
+          OB.UTIL.SynchronizationHelper.finished(OB.MobileApp.model.synchProcessingTransaction, 'ProcessingTransaction');
         });
       } else {
         mainReceiptCloseFunction(eventParams, context);
