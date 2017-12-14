@@ -42,7 +42,6 @@
   v_NewColumnName     VARCHAR2(60) ;
   v_NewReference      VARCHAR2(32);
   v_NewReferenceValue VARCHAR2(32);
-  v_KeyReference      VARCHAR2(32);
   v_firstColumn       BOOLEAN:=TRUE;
   END_PROCESS         BOOLEAN:=FALSE;
 BEGIN
@@ -54,14 +53,12 @@ BEGIN
   ELSIF p_Reference_ID='18' THEN -- TABLE
     SELECT ad_table.tablename,
       c1.columnname as keyName,
-      c1.ad_reference_id,
       c2.columnname as displayName,
       isvaluedisplayed,
       c2.AD_REFERENCE_ID,
       c2.AD_REFERENCE_VALUE_ID
     INTO v_TableDir,
       v_FieldValue,
-      v_KeyReference,
       v_FieldDisplay,
       v_DisplayValue,
       v_NewReference,

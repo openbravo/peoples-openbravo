@@ -21,7 +21,6 @@
 ************************************************************************/
   devTemplate NUMBER;
   devModule   CHAR(1);
-  cuerrentID  VARCHAR2(32);
   cuerrentModuleID  VARCHAR2(32);
     
 BEGIN
@@ -37,10 +36,8 @@ BEGIN
      AND Type = 'T';
      
   IF (UPDATING OR INSERTING) THEN
-    cuerrentID := :new.AD_Reference_ID;
     cuerrentModuleID := :NEW.AD_Reference_ID;
   ELSE
-    cuerrentID := :old.AD_Reference_ID;
     cuerrentModuleID := :old.AD_Reference_ID;
   END IF;
   

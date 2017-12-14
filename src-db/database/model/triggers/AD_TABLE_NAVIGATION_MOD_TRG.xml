@@ -21,7 +21,6 @@
 ************************************************************************/
   devTemplate NUMBER;
   devModule   CHAR(1);
-  currentID  VARCHAR2(32);
   currentModuleID  VARCHAR2(32);
   vAux NUMBER;
     
@@ -52,10 +51,8 @@ BEGIN
   END IF;
      
   IF (UPDATING OR INSERTING) THEN
-    currentID := :new.AD_Table_Navigation_ID;
     currentModuleID := :new.AD_Module_ID;
   ELSE
-    currentID := :old.AD_Table_Navigation_ID;
     currentModuleID := :old.AD_Module_ID;
   END IF;
   

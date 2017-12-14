@@ -21,7 +21,6 @@
 ************************************************************************/
   devTemplate NUMBER;
   devModule   CHAR(1);
-  cuerrentID  VARCHAR2(32);
   cuerrentModuleID  VARCHAR2(32);
   vAux NUMBER;
     
@@ -51,10 +50,8 @@ BEGIN
      AND Type = 'T';
      
   IF (UPDATING OR INSERTING) THEN
-    cuerrentID := :new.AD_Field_ID;
     cuerrentModuleID := :new.AD_Module_ID;
   ELSE
-    cuerrentID := :old.AD_Field_ID;
     cuerrentModuleID := :old.AD_Module_ID;
   END IF;
   

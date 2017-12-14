@@ -22,7 +22,6 @@
   v_isregistered char(1);
   v_old_name varchar(60);
   v_type varchar2(60);
-  startsWithLetter boolean;
     
 BEGIN
     
@@ -49,7 +48,6 @@ BEGIN
    END IF;
    --Check DB_Prefix
    IF INSERTING OR UPDATING THEN
-     startsWithLetter := false;
      FOR I IN 1..LENGTH(:new.name) LOOP
        v_char := substr(:new.name,i,1);
        IF NOT ((ascii(v_char) between ascii('A') and ascii('Z')) 
