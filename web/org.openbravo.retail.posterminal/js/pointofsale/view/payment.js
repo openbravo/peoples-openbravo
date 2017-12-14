@@ -567,7 +567,7 @@ enyo.kind({
         isCashType = true,
         selectedPayment, paymentStatus = multiOrders.getPaymentStatus(),
         prepaymentAmount = paymentstatus.get('prepaymentAmt'),
-        receiptHasPrepaymentAmount = prepaymentAmount !== 0 && prepaymentAmount !== OB.DEC.add(paymentstatus.get('total'), paymentstatus.get('existingPayment')),
+        receiptHasPrepaymentAmount = prepaymentAmount !== 0 && prepaymentAmount !== OB.DEC.add(paymentstatus.get('total'), paymentstatus.get('existingPayment')) && paymentstatus.get('amountToLayaway') === 0,
         pendingPrepayment = OB.DEC.sub(OB.DEC.sub(prepaymentAmount, (paymentstatus.get('existingPayment') ? paymentstatus.get('existingPayment') : 0)), paymentstatus.get('payment'));
 
     this.updateExtraInfo('');
@@ -600,7 +600,7 @@ enyo.kind({
       this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', true);
       this.$.totalpending.applyStyle('font-size', '24px');
     }
-    if (pendingPrepayment > 0 && pendingPrepayment !== OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment'))) {
+    if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && paymentstatus.get('amountToLayaway') === 0 && pendingPrepayment > 0 && pendingPrepayment !== OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment'))) {
       this.setPrepaymentTotalPending(pendingPrepayment, rate, symbol, symbolAtRight);
       this.$.prepaymenttotalpending.show();
       this.$.prepaymenttotalpendinglbl.show();
@@ -652,7 +652,7 @@ enyo.kind({
       this.setTotalPending(OB.DEC.sub(multiOrders.get('total'), multiOrders.get('payment')), rate, symbol, symbolAtRight);
       this.$.totalpending.show();
       this.$.totalpendinglbl.show();
-      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && paymentstatus.get('prepaymentLimitAmt') < paymentstatus.get('total') + paymentstatus.get('existingPayment')) {
+      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && !paymentstatus.isNegative && paymentstatus.get('amountToLayaway') === 0) {
         this.$.donebutton.show();
       } else {
         this.$.donebutton.hide();

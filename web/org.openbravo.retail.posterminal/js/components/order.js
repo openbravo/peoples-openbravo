@@ -1391,12 +1391,14 @@ enyo.kind({
       var total = OB.DEC.Zero,
           prepayment = OB.DEC.Zero,
           prepaymentLimit = OB.DEC.Zero,
-          existingPayment = OB.DEC.Zero;
+          existingPayment = OB.DEC.Zero,
+          amountToLayaway = OB.DEC.Zero;
       _.each(this.orderList.models, function (order) {
         if (OB.UTIL.isNullOrUndefined(order.get('amountToLayaway'))) {
           total = OB.DEC.add(total, order.getPending());
         } else {
           total = OB.DEC.add(total, order.get('amountToLayaway'));
+          amountToLayaway = OB.DEC.add(amountToLayaway, order.get('amountToLayaway'));
         }
         prepayment = OB.DEC.add(prepayment, order.get('obposPrepaymentamt'));
         prepaymentLimit = OB.DEC.add(prepaymentLimit, order.get('obposPrepaymentlimitamt'));
@@ -1405,10 +1407,12 @@ enyo.kind({
       this.total = total;
       this.prepayment = prepayment;
       this.prepaymentLimit = prepaymentLimit;
+      this.amountToLayaway = amountToLayaway;
       this.existingPayment = existingPayment;
       this.multiOrders.set('total', this.total);
       this.multiOrders.set('obposPrepaymentamt', this.prepayment);
       this.multiOrders.set('obposPrepaymentlimitamt', this.prepaymentLimit);
+      this.multiOrders.set('amountToLayaway', this.amountToLayaway);
       this.multiOrders.set('existingPayment', this.existingPayment);
       this.$.totalMultiReceiptLine.renderTotal(this.total);
       this.listMultiOrders.reset(this.orderList.models);
