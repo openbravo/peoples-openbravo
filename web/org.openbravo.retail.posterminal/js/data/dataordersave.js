@@ -372,6 +372,48 @@
       }
     }, this);
 
+    var restoreMultiOrder = function (callback) {
+        // recalculate after an error also
+        model.get('multiOrders').get('payments').forEach(function (p) {
+          var itemP = _.find(model.get('multiOrders').get('frozenPayments').models, function (fp) {
+            return p.get('id') === fp.get('id');
+          }, this);
+          p.set('origAmount', itemP.get('origAmount'));
+        });
+        model.get('multiOrders').trigger('paymentCancel');
+        model.get('multiOrders').get('multiOrdersList').reset(model.get('multiOrders').get('frozenMultiOrdersList').models);
+        var promises = [];
+        _.each(model.get('multiOrders').get('multiOrdersList').models, function (rcpt) {
+          promises.push(new Promise(function (resolve, reject) {
+            rcpt.set('isbeingprocessed', 'N');
+            rcpt.set('hasbeenpaid', 'N');
+            _.each(model.get('orderList').models, function (mdl) {
+              if (mdl.get('id') === rcpt.get('id')) {
+                mdl.set('isbeingprocessed', 'N');
+                mdl.set('hasbeenpaid', 'N');
+                return true;
+              }
+            }, this);
+            OB.Dal.save(rcpt, function () {
+              resolve();
+            }, function () {
+              reject();
+            }, false);
+          }));
+        });
+        Promise.all(promises).then(function () {
+          OB.UTIL.calculateCurrentCash();
+          if (callback instanceof Function) {
+            callback(false);
+          }
+        });
+
+        if (OB.MobileApp.model.showSynchronizedDialog) {
+          OB.MobileApp.model.hideSynchronizingDialog();
+        }
+        OB.UTIL.showLoading(false);
+        };
+
     var multiOrdersFunction = function (receipt, me, callback) {
         var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("multiOrdersClosed");
 
@@ -380,7 +422,7 @@
         if (!_.isUndefined(receipt)) {
           me.receipt = receipt;
         }
-        var creationDate, restoreMultiOrder, receiptId = me.receipt.get('id'),
+        var creationDate, receiptId = me.receipt.get('id'),
             currentReceipt = me.receipt,
             normalizedCreationDate = OB.I18N.normalizeDate(currentReceipt.get('creationDate'));
         if (normalizedCreationDate === null) {
@@ -415,49 +457,6 @@
 
         OB.trace('Executing pre order save hook.');
 
-        restoreMultiOrder = function () {
-          // recalculate after an error also
-          model.get('multiOrders').get('payments').forEach(function (p) {
-            var itemP = _.find(model.get('multiOrders').get('frozenPayments').models, function (fp) {
-              return p.get('id') === fp.get('id');
-            }, this);
-            p.set('origAmount', itemP.get('origAmount'));
-          });
-          model.get('multiOrders').trigger('paymentCancel');
-          model.get('multiOrders').get('multiOrdersList').reset(model.get('multiOrders').get('frozenMultiOrdersList').models);
-          var promises = [];
-          _.each(model.get('multiOrders').get('multiOrdersList').models, function (rcpt) {
-            promises.push(new Promise(function (resolve, reject) {
-              rcpt.set('isbeingprocessed', 'N');
-              rcpt.set('hasbeenpaid', 'N');
-              _.each(model.get('orderList').models, function (mdl) {
-                if (mdl.get('id') === rcpt.get('id')) {
-                  mdl.set('isbeingprocessed', 'N');
-                  mdl.set('hasbeenpaid', 'N');
-                  return true;
-                }
-              }, this);
-              OB.Dal.save(rcpt, function () {
-                resolve();
-              }, function () {
-                reject();
-              }, false);
-            }));
-          });
-
-          Promise.all(promises).then(function () {
-            OB.UTIL.calculateCurrentCash();
-            if (callback instanceof Function) {
-              callback(false);
-            }
-          });
-
-          if (OB.MobileApp.model.showSynchronizedDialog) {
-            OB.MobileApp.model.hideSynchronizingDialog();
-          }
-          OB.UTIL.showLoading(false);
-        };
-
         OB.UTIL.HookManager.executeHooks('OBPOS_PreOrderSave', {
           context: me,
           model: model,
@@ -467,7 +466,7 @@
           OB.trace('Execution of pre order save hook OK.');
           if (args && args.cancellation && args.cancellation === true) {
             OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
-            restoreMultiOrder();
+            restoreMultiOrder(callback);
             return true;
           }
 
@@ -518,7 +517,7 @@
                 var errorCallback = function () {
                     OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
                     OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
-                    restoreMultiOrder();
+                    restoreMultiOrder(callback);
                     };
 
                 if (!_.isUndefined(receipt.get('amountToLayaway')) && !_.isNull(receipt.get('amountToLayaway')) && receipt.get('generateInvoice')) {
@@ -591,6 +590,8 @@
           OB.UTIL.rebuildCashupFromServer(function () {
             OB.UTIL.showLoading(false);
             recursiveFunction(0, me, callback);
+          }, function () {
+            restoreMultiOrder();
           });
         } else {
           recursiveFunction(0, me, callback);
