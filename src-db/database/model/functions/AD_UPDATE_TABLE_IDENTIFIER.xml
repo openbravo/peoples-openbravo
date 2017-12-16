@@ -29,7 +29,6 @@
   v_count NUMBER:=0;
   -- Parameter
   TYPE RECORD IS REF CURSOR;
-    Cur_Parameter RECORD;
     v_sql VARCHAR2(4000):='';
     Cur_Tables RECORD;
   BEGIN
