@@ -57,10 +57,6 @@ public class OBVersion {
     return versionModule.getVersionLabel() == null ? "" : versionModule.getVersionLabel();
   }
 
-  public String getVersionId() {
-    return core.getVersionID();
-  }
-
   public String getVersionNumber() {
     return versionModule.getVersion();
   }
