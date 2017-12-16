@@ -108,7 +108,6 @@ public class XMLBaseTest extends OBBaseTest {
     exc.setOptionIncludeReferenced(true);
     // exc.setOptionEmbedChildren(true);
     // exc.setOptionIncludeChildren(true);
-    exc.setAddSystemAttributes(false);
     return exc.toXML(new ArrayList<BaseOBObject>(objs));
   }
 
@@ -122,7 +121,6 @@ public class XMLBaseTest extends OBBaseTest {
     exc.setOptionIncludeReferenced(true);
     // exc.setOptionEmbedChildren(true);
     // exc.setOptionIncludeChildren(true);
-    exc.setAddSystemAttributes(false);
     if (!(o == null))
       obc.add(Restrictions.eq("organization", o));
     return exc.toXML(new ArrayList<BaseOBObject>(obc.list()));

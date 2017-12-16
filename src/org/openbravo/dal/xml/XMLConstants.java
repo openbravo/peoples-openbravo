@@ -72,22 +72,6 @@ public class XMLConstants {
   public static final String ENTITYNAME_ATTRIBUTE = "entity-name";
 
   /**
-   * A system attribute which is added to the Openbravo opening tag (depends on an option set in the
-   * export: {@link EntityXMLConverter#setAddSystemAttributes(boolean)})
-   */
-  public static final String OB_VERSION_ATTRIBUTE = "ob-version";
-
-  /**
-   * @see #OB_VERSION_ATTRIBUTE
-   */
-  public static final String OB_REVISION_ATTRIBUTE = "ob-revision";
-
-  /**
-   * Is added to the root tag to administer the export time
-   */
-  public static final String DATE_TIME_ATTRIBUTE = "created";
-
-  /**
    * Openbravo namespace
    */
   public static final String OPENBRAVO_NAMESPACE = "http://www.openbravo.com";

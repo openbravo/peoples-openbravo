@@ -426,7 +426,6 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     exc.setOptionIncludeReferenced(true);
     exc.setOptionEmbedChildren(true);
     exc.setOptionIncludeChildren(true);
-    exc.setAddSystemAttributes(false);
     return exc.toXML((List<BaseOBObject>) pts);
   }
 

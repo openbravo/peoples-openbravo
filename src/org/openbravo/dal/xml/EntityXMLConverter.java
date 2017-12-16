@@ -24,7 +24,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -50,12 +49,10 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.base.structure.Traceable;
-import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.Client;
-import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.ad.utility.DataSetTable;
 import org.openbravo.model.ad.utility.TreeNode;
@@ -123,11 +120,6 @@ public class EntityXMLConverter implements OBNotSingleton {
   // child properties are exported if they are defined for a client whose ID is included in
   // readableClients (if it has been set)
   private String[] readableClients;
-
-  // if the system attributes (version, timestamp, etc.) are added to
-  // to the root element, for testcases it makes sense to not have this
-  // to compare previous output results with new output results
-  private boolean addSystemAttributes = true;
 
   // keeps track of which objects are to be exported
   // and which ones have been considered already
@@ -703,41 +695,6 @@ public class EntityXMLConverter implements OBNotSingleton {
 
   private Set<BaseOBObject> getAllToProcessObjects() {
     return allToProcessObjects;
-  }
-
-  protected void addSystemAttributes(AttributesImpl systemAttrs) {
-    if (!isAddSystemAttributes()) {
-      return;
-    }
-    try {
-      OBContext.setAdminMode();
-      final List<SystemInformation> sis = OBDal.getInstance()
-          .createCriteria(SystemInformation.class).list();
-      Check.isTrue(sis.size() > 0, "There should be at least one SystemInfo record but there are "
-          + sis.size());
-      systemAttrs.addAttribute("", "", XMLConstants.DATE_TIME_ATTRIBUTE, "CDATA", "" + new Date());
-      systemAttrs.addAttribute("", "", XMLConstants.OB_VERSION_ATTRIBUTE, "CDATA", sis.get(0)
-          .getOpenbravoVersion() + "");
-      systemAttrs.addAttribute("", "", XMLConstants.OB_REVISION_ATTRIBUTE, "CDATA", sis.get(0)
-          .getCodeRevision() + "");
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  private boolean isAddSystemAttributes() {
-    return addSystemAttributes;
-  }
-
-  /**
-   * If set to true then the system version and revision are exported as attributes of the root tag.
-   * 
-   * @param addSystemAttributes
-   *          if true (the default) then the Openbravo version and revision are exported in the root
-   *          tag.
-   */
-  public void setAddSystemAttributes(boolean addSystemAttributes) {
-    this.addSystemAttributes = addSystemAttributes;
   }
 
   /**

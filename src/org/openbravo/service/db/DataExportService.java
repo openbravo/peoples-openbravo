@@ -139,7 +139,6 @@ public class DataExportService implements OBSingleton {
       exc.setOptionIncludeReferenced(true);
       exc.setOptionExportTransientInfo(false);
       exc.setOptionExportAuditInfo(exportAuditInfo);
-      exc.setAddSystemAttributes(false);
       exc.setOutput(out);
       exc.setClient(client);
 
@@ -181,7 +180,6 @@ public class DataExportService implements OBSingleton {
     exc.setOptionIncludeReferenced(false);
     exc.setOptionExportTransientInfo(true);
     exc.setOptionExportAuditInfo(true);
-    exc.setAddSystemAttributes(true);
     exc.setDataSet(dataSet);
     exc.setDefaultValuesData(dataSet.isDefaultValuesDataSet());
 

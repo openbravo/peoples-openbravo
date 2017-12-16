@@ -118,13 +118,6 @@ public class ModelXMLConverter implements OBSingleton {
     choiceElement.addAttribute("minOccurs", "0");
     choiceElement.addAttribute("maxOccurs", "unbounded");
 
-    complexType.addElement("xs:attribute").addAttribute("name", XMLConstants.DATE_TIME_ATTRIBUTE)
-        .addAttribute("type", "xs:string").addAttribute("use", "optional");
-    complexType.addElement("xs:attribute").addAttribute("name", XMLConstants.OB_VERSION_ATTRIBUTE)
-        .addAttribute("type", "xs:string").addAttribute("use", "optional");
-    complexType.addElement("xs:attribute").addAttribute("name", XMLConstants.OB_REVISION_ATTRIBUTE)
-        .addAttribute("type", "xs:string").addAttribute("use", "optional");
-
     for (final String entityName : entityNames) {
       final Element entityElement = choiceElement.addElement("xs:element");
       entityElement.addAttribute("name", entityName);
