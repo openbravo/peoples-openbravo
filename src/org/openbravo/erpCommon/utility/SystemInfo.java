@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -215,10 +215,10 @@ public class SystemInfo {
         systemInfo.put(i, getOBPSIntanceNumber());
         break;
       case FIRST_LOGIN:
-        systemInfo.put(i, sd.format(firstLogin));
+        systemInfo.put(i, formatDate(firstLogin));
         break;
       case LAST_LOGIN:
-        systemInfo.put(i, sd.format(lastLogin));
+        systemInfo.put(i, formatDate(lastLogin));
         break;
       case TOTAL_LOGINS:
         systemInfo.put(i, numberOfLogins.toString());
@@ -877,6 +877,10 @@ public class SystemInfo {
    */
   public static Date parseDate(String date) throws ParseException {
     return sd.parse(date);
+  }
+
+  private static String formatDate(Date date) {
+    return (date != null) ? sd.format(date) : "";
   }
 
 }
