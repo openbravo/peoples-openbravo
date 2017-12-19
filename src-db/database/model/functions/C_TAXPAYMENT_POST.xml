@@ -88,7 +88,6 @@ v_TRTcountY  NUMBER;
 v_TRTcountN  NUMBER;
 v_dummy VARCHAR2(2000);
 v_count NUMBER:=0;
-v_FIN_PAYMENT_ID VARCHAR2(32);
 
 BEGIN
   --  Update AD_PInstance
@@ -167,8 +166,8 @@ BEGIN
      if v_processed='Y' then
       begin
 
-      select tp.gl_journal_id ,  gljb.gl_journalbatch_id, tp.c_settlement_id, tp.fin_payment_id
-      into v_gl_journalid, v_gl_journalbatchid, v_settlementid, v_FIN_PAYMENT_ID
+      select tp.gl_journal_id ,  gljb.gl_journalbatch_id, tp.c_settlement_id
+      into v_gl_journalid, v_gl_journalbatchid, v_settlementid
       from c_taxpayment tp
       inner join gl_journal glj on tp.gl_journal_id=glj.gl_journal_id
       inner join gl_journalbatch gljb on gljb.gl_journalbatch_id=glj.gl_journalbatch_id

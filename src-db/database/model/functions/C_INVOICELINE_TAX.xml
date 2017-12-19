@@ -20,9 +20,7 @@
 * All Rights Reserved.
 * Contributor(s):  _______________________________________.
 ************************************************************************/
-v_INVOICELINE_ID VARCHAR2(32) ;
   v_Tax_ID VARCHAR2(32) ;
-  v_IsTaxIncluded VARCHAR(1);
   v_LineNet NUMBER;
   v_Rate NUMBER;
   xTaxAmt NUMBER:=0;
@@ -36,17 +34,14 @@ v_INVOICELINE_ID VARCHAR2(32) ;
   Cur_MultiTax RECORD;
 BEGIN
 --Calculates for each line, its tax info
-SELECT l.C_INVOICELINE_ID, 
+SELECT
   l.C_Tax_ID,
-  i.IsTaxIncluded,
   COALESCE(l.LineNetAmt, 0) + COALESCE(l.ChargeAmt, 0) AS LineNet,
   t.Rate,
   t.IsSummary,
   c.StdPrecision
 INTO
-  v_INVOICELINE_ID,
   v_Tax_ID,
-  v_IsTaxIncluded,
   v_LineNet,
   v_Rate,
   v_IsSummary,

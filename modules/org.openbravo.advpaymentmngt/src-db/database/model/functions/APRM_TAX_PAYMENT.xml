@@ -26,8 +26,6 @@ p_user VARCHAR2(32);
 p_GLItem VARCHAR2(32);
 p_Amount NUMBER;
 p_IsReceipt CHAR(1);
-p_message VARCHAR(2000);
-p_result NUMBER;
 
 v_TaxPaymentName VARCHAR2(60);
 v_FinancialAccountName VARCHAR2(60);
@@ -77,10 +75,6 @@ BEGIN
       p_amount := cur_params.p_number;
     ELSIF (cur_params.parametername LIKE 'IsReceipt') THEN
       p_isReceipt := cur_params.p_string;
-    ELSIF (cur_params.parametername LIKE 'Message') THEN
-      p_message := cur_params.p_text;
-    ELSIF (cur_params.parametername LIKE 'Result') THEN
-      p_result := cur_params.p_number;
     END IF;
   END LOOP;
 

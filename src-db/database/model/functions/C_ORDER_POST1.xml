@@ -86,7 +86,6 @@
   v_ISO_Code VARCHAR(10) ;
   v_DocumentNo VARCHAR2(200) ;
   v_GrandTotal NUMBER;
-  v_Multiplier NUMBER:=1;
   v_Date DATE;
   v_WarehouseName VARCHAR2(60) ;
   v_count NUMBER;
@@ -1739,19 +1738,6 @@
            /**************************************************************************
             * Credit Multiplier
             *************************************************************************/
-            DECLARE
-              v_DocBaseType C_DOCTYPE.DocBaseType%TYPE;
-            BEGIN
-              -- Is it a Credit Memo?
-              SELECT DocBaseType
-                INTO v_DocBaseType
-              FROM C_DOCTYPE
-              WHERE C_DocType_ID=v_DocType_ID;
-              IF (v_DocBaseType IN('ARC', 'API')) THEN
-                v_Multiplier:=-1;
-              END IF;
-            END;
-
             IF (v_Cash_ID IS NULL) THEN
               v_ResultStr:='Create C_Cash';
               Ad_Sequence_Next('C_Cash', v_Org_ID, v_Cash_ID) ;

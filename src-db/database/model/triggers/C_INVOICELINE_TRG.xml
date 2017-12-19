@@ -22,7 +22,6 @@
 
 
 
- v_ID    varchar2(32);
   v_UOM_ID   varchar2(32);
  v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
  v_count NUMBER;
@@ -69,9 +68,6 @@ IF (UPDATING) THEN
     END IF;
        END IF;
      END IF;
-  v_ID := :NEW.C_Invoice_ID;
- ELSE
-  v_ID := :OLD.C_Invoice_ID;
  END IF;
  IF (INSERTING OR UPDATING) THEN
   --Does not allow to change the attribute set value

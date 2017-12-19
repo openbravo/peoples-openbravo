@@ -37,8 +37,6 @@
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
   v_Record_ID VARCHAR2(32);
-  v_AD_User_ID VARCHAR2(32);
-  v_DateColumn VARCHAR2(2000):='';
   v_AD_Org_ID VARCHAR2(32);
   v_TableName VARCHAR2(48):='';
   v_AD_Org_CalOwner VARCHAR(32);
@@ -86,7 +84,6 @@
       )
     LOOP
       v_Record_ID:=Cur_Parameter.Record_ID;
-      v_AD_User_ID:=Cur_Parameter.AD_User_ID;
       IF(Cur_Parameter.ParameterName='AD_Client_ID') THEN
         v_AD_Client_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  AD_Client_ID=' || v_AD_Client_ID) ;
@@ -270,15 +267,6 @@
                 AND AD_Client_ID = Cur_Clients.AD_Client_ID
               ) LOOP
            IF (v_DeleteFact='Y') THEN
-              IF(Cur_Tables.AD_Table_ID IN('472', '473')) THEN
-                v_DateColumn:='DATETRX';
-              ELSIF(Cur_Tables.AD_Table_ID IN('392')) THEN
-                v_DateColumn:='STATEMENTDATE';
-              ELSIF(Cur_Tables.AD_Table_ID IN('321', '323', '325')) THEN
-                v_DateColumn:='MOVEMENTDATE';
-              ELSE
-                v_DateColumn:='DATEACCT';
-              END IF;
               v_Cmd:='UPDATE ' || Cur_Tables.TableName  || ' SET Posted=''N'', Processing=''N'' WHERE AD_Client_ID='''  || Cur_Clients.AD_Client_ID
         || ''' AND (Posted<>''N'' OR Posted IS NULL OR Processing<>''N'' OR Processing IS NULL) AND '   ||
         Cur_Tables.TableName||'_ID = '''||Cur_Fact_Acct.Record_ID||'''';

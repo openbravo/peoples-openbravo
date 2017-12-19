@@ -27,7 +27,6 @@
   v_DocStatus VARCHAR(60) ;
   v_M_INOUT_ID VARCHAR2(32) ;
   v_Posted VARCHAR(60) ;
-  v_productname m_product.name%TYPE;
   v_isgeneric   CHAR(1);
     
 BEGIN
@@ -74,7 +73,7 @@ BEGIN
   END IF;
   IF (INSERTING OR UPDATING) THEN
     IF (:NEW.m_product_id IS NOT NULL) THEN
-      SELECT isgeneric, name INTO v_isgeneric, v_productname
+      SELECT isgeneric INTO v_isgeneric
       FROM m_product
       WHERE m_product_id = :NEW.m_product_id;
       IF (v_isgeneric = 'Y') THEN

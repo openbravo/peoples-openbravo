@@ -38,7 +38,6 @@
   v_ResultStr             VARCHAR2(2000) := '';
 
   v_CostCenterUse         NUMBER;
-  v_Multiplier            NUMBER;
   v_Outsourced            CHAR(1);
   v_OutsourcingCost       NUMBER;
   v_CostCenter_Version    varchar2(32);
@@ -72,7 +71,7 @@ BEGIN --BODY
   DELETE FROM MA_SEQUENCE_EMPLOYEE WHERE MA_SEQUENCE_ID = p_Sequence_ID;
   DELETE FROM MA_SEQUENCE_MACHINE WHERE MA_SEQUENCE_ID = p_Sequence_ID;
 
-  SELECT s.CostCenterUse, s.Multiplier, s.outsourced, s.outsourcingcost, ccv.MA_CostCenter_Version_ID, s.MA_ProcessPlan_Version_ID,
+  SELECT s.CostCenterUse, s.outsourced, s.outsourcingcost, ccv.MA_CostCenter_Version_ID, s.MA_ProcessPlan_Version_ID,
       SUM(CASE sp.productiontype WHEN '+' THEN (pd.weight*sp.quantity*COALESCE(sp.decrease,1)*COALESCE(sp.rejected,1))
           ELSE 0 END),
       SUM(CASE sp.productiontype WHEN '+' THEN (sp.quantity*COALESCE(sp.decrease,1)*COALESCE(sp.rejected,1))
@@ -80,7 +79,7 @@ BEGIN --BODY
       SUM(CASE sp.productiontype
           WHEN '+' THEN (CASE WHEN sp.quantity <> 0 THEN COALESCE(sp.ComponentCost,1) ELSE 0 END )
           ELSE 0 END)
-    INTO v_CostCenterUse, v_Multiplier, v_Outsourced, v_OutsourcingCost, v_CostCenter_Version, v_ProcessPlan_Version,
+    INTO v_CostCenterUse, v_Outsourced, v_OutsourcingCost, v_CostCenter_Version, v_ProcessPlan_Version,
       v_ProducedKG, v_ProducedUd, v_CompCostSum
   FROM MA_Sequence s, MA_SequenceProduct sp, M_Product pd,
     MA_Process p LEFT JOIN (SELECT MA_CostCenter_ID, MA_CostCenter_version_ID

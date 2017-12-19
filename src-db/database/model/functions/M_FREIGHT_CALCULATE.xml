@@ -31,8 +31,6 @@
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     --  Record Info
-    v_Client_ID VARCHAR2(32);
-    v_Org_ID VARCHAR2(32);
     v_User_ID VARCHAR2(32);
     v_Shipper_ID VARCHAR2(32);
     v_FreightCategory_ID VARCHAR2(32);
@@ -73,8 +71,6 @@
     LOOP
       v_Record_ID:=Cur_Parameter.Record_ID;
       v_User_ID:=Cur_Parameter.AD_User_ID;
-      v_Org_ID:=Cur_Parameter.AD_Org_ID;
-      v_Client_ID:=Cur_Parameter.AD_Client_ID;
       IF(Cur_Parameter.ParameterName='cheaper') THEN
         v_Cheaper:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  Cheaper=' || v_Cheaper) ;

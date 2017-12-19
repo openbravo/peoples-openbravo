@@ -43,7 +43,6 @@
     v_Processed CHAR;
     v_LaunchDate DATE;
     v_Startdate DATE;
-    v_Enddate DATE;
     -- WRPhases to process
     Cur_WRPhase RECORD;
     --  Sequence Products to process
@@ -92,16 +91,14 @@
       ExplodePhases,
       LaunchDate,
       AD_Org_ID,
-      Startdate,
-      Enddate
+      Startdate
     INTO v_ProcessPlan_ID,
       v_Quantity,
       v_Processed,
       v_ExplodePhases,
       v_LaunchDate,
       v_Org_ID,
-      v_Startdate,
-      v_Enddate
+      v_Startdate
     FROM MA_WorkRequirement
     WHERE MA_WorkRequirement_ID=v_Record_ID;
     --Check if it hasn't already been processed

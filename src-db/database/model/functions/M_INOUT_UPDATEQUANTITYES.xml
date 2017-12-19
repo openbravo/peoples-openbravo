@@ -23,10 +23,6 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Record_ID VARCHAR2(32);
-  v_Result NUMBER:=0; -- failure
-  v_AD_User_ID VARCHAR2(32);
-  v_AD_Org_ID VARCHAR2(32);
-  v_AD_Client_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -59,9 +55,6 @@
       )
     LOOP
       v_Record_ID:=Cur_Parameter.Record_ID;
-      v_AD_User_ID:=Cur_Parameter.AD_User_ID;
-      v_AD_Org_ID:=Cur_Parameter.AD_Org_ID;
-      v_AD_Client_ID:=Cur_Parameter.AD_Client_ID;
       IF(Cur_Parameter.ParameterName='M_InOut_ID') THEN
         v_M_InOut_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  M_InOut_ID=' || v_M_InOut_ID) ;
@@ -106,7 +99,6 @@
       A;
     IF(v_Total>0) THEN
       v_Message:='LinesNotMatch';
-      v_Result:=0;
       FINISH_PROCESS:=true;
     END IF;
     IF(NOT FINISH_PROCESS) THEN

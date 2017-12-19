@@ -14,7 +14,6 @@
   v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
   v_PRODUCTION_ID VARCHAR2(32);
   v_LINE NUMBER;
-  v_productname m_product.name%TYPE;
   v_isgeneric   CHAR(1);
   /*************************************************************************
   * The contents of this file are subject to the Compiere Public
@@ -142,7 +141,7 @@ BEGIN
   END IF;
   IF (INSERTING OR UPDATING) THEN
     IF (:NEW.m_product_id IS NOT NULL) THEN
-      SELECT isgeneric, name INTO v_isgeneric, v_productname
+      SELECT isgeneric INTO v_isgeneric
       FROM m_product
       WHERE m_product_id = :NEW.m_product_id;
       IF (v_isgeneric = 'Y') THEN

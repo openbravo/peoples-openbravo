@@ -20,7 +20,6 @@
 ************************************************************************/
 
   TYPE RECORD IS REF CURSOR;
-  v_Acct_ID VARCHAR2(32);
   Cur_Defaults RECORD;
   v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
   v_xTree_ID AD_ClientInfo.AD_Tree_Asset_ID%TYPE;
@@ -48,7 +47,6 @@ BEGIN
             AND d1.AD_CLIENT_ID = :new.AD_Client_ID
 			) LOOP
 
-      Ad_Sequence_Next('A_Asset_Acct', Cur_Defaults.AD_Client_ID, v_Acct_ID) ;
       INSERT
       INTO A_ASSET_ACCT
         (

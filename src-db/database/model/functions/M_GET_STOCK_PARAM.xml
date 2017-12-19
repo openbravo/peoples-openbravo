@@ -422,7 +422,6 @@ BEGIN
     v_availableqty NUMBER;
     v_AuxResult NUMBER;
     v_AuxMessage VARCHAR2(2000):='';
-    v_productname M_PRODUCT.NAME%TYPE;
     v_parameters VARCHAR2(2000);
   BEGIN
     SELECT SUM(quantity) INTO v_availableqty
@@ -600,9 +599,6 @@ DBMS_OUTPUT.PUT_LINE( 'v_warehouse_rule_id: ' || coalesce(v_warehouse_rule_id,''
     WHERE ad_pinstance_id = p_uuid;
     IF (v_totalqty < v_quantity AND v_availableqty >= v_quantity) THEN
       IF (v_message IS NULL OR v_message = '') THEN
-        SELECT name INTO v_productname
-        FROM m_product
-        WHERE m_product_id = v_productid;
         v_message := '@NotEnoughStockedDueWHRule@';
       END IF;
       DBMS_OUTPUT.PUT_LINE( v_message); --OBTG:-20000--
