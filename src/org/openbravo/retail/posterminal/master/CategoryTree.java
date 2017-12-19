@@ -97,18 +97,31 @@ public class CategoryTree extends ProcessHQLQuery {
     } finally {
       OBContext.restorePreviousMode();
     }
+
+    Long lastUpdated;
+
+    if (jsonsent != null) {
+      lastUpdated = jsonsent.has("lastUpdated") && !jsonsent.get("lastUpdated").equals("undefined")
+          && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
+    } else {
+      lastUpdated = null;
+    }
+
+    String fullRefreshCondition = lastUpdated == null ? "and pc.active = true " : "";
+    String addIncrementalUpdateFilter = lastUpdated == null ? "(tn.$incrementalUpdateCriteria and pc.$incrementalUpdateCriteria) " : "(tn.$incrementalUpdateCriteria or pc.$incrementalUpdateCriteria) ";
+
     if (isRemote) {
       hqlQueries
           .add("select distinct "
               + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
               + "from ADTreeNode tn, OBRETCO_Productcategory pc "
-              + "where tn.$incrementalUpdateCriteria and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
+              + "where tn.$incrementalUpdateCriteria and pc.active = true and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
               + " and tn.node = pc.productCategory.id and tn.tree.table.id = :productCategoryTableId  ");
       hqlQueries
           .add("select"
               + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
               + "from ADTreeNode tn, ProductCategory pc "
-              + "where tn.$incrementalUpdateCriteria and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
+              + "where tn.$incrementalUpdateCriteria and pc.active = true and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
               + " and tn.node = pc.id and tn.tree.table.id = :productCategoryTableId "
               + " and pc.summaryLevel = 'Y'"
               + " and not exists (select obpc.id from OBRETCO_Productcategory obpc where tn.node = obpc.productCategory.id)");
@@ -117,7 +130,10 @@ public class CategoryTree extends ProcessHQLQuery {
           .add("select"
               + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
               + "from ADTreeNode tn, ProductCategory pc "
-              + "where tn.$incrementalUpdateCriteria and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
+              + "where " + addIncrementalUpdateFilter
+              + " and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
+              + fullRefreshCondition
+              + " and pc.$naturalOrgCriteria and pc.$readableSimpleClientCriteria "
               + " and tn.node = pc.id and tn.tree.table.id = :productCategoryTableId ");
     }
 
