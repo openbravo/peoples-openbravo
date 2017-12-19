@@ -26,17 +26,29 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
   public String getHQLFilter(String params) {
     String[] array_params = getParams(params);
     String sql = null;
+    boolean close_exists = false;
     if (array_params[1].equals("__all__")) {
-      sql = getAllQuery(array_params[0]);
+      // get all characteristics when no filter is applied
+      if ((array_params[0].equals("%") || array_params[0].equals("%%"))
+          && array_params[2].equals("")) {
+        sql = " 1=1 ";
+      } else {
+        sql = getAllQuery(array_params[0]);
+        close_exists = true;
+      }
     } else if (array_params[1].equals("OBPOS_bestsellercategory")) {
       sql = getBestsellers(array_params[0]);
+      close_exists = true;
     } else {
       sql = getProdCategoryQuery(array_params[0]);
+      close_exists = true;
     }
     if (array_params.length > 2 && !array_params[2].equals("")) {
       sql = sql + getCharacteristics(array_params[2]);
     }
-    sql = sql + ") ";
+    if (close_exists) {
+      sql = sql + ") ";
+    }
     return sql;
   }
 

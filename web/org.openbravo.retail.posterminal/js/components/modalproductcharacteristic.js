@@ -114,7 +114,8 @@ enyo.kind({
         params = [],
         products = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.products,
         productCharacteristic = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent,
-        forceRemote = false;
+        forceRemote = false,
+        theEvent = inEvent;
     var productFilterText, productCategory, productCharacteristicModel, resetValueList, characteristic = [];
 
     productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productFilterText.getValue();
@@ -162,6 +163,9 @@ enyo.kind({
         me.valuesList.reset(modelsList);
       } else {
         me.valuesList.reset();
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) || forceRemote) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoCharacteriticValue', [me.parent.parent.characteristic.get('_identifier')]));
+        }
       }
     };
 
