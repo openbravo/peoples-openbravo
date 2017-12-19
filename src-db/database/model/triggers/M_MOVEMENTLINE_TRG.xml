@@ -10,6 +10,7 @@
   v_RO      NUMBER;
   V_STOCKED NUMBER;
   v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
+  v_productname m_product.name%TYPE;
   v_isgeneric   CHAR(1);
   /******************************************************************************
   * The contents of this file are subject to the   Compiere License  Version 1.1
@@ -23,7 +24,7 @@
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
   * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2015 Openbravo S.L.U.
+  * Contributions are Copyright (C) 2001-2017 Openbravo S.L.U.
   ******************************************************************************/
     
 BEGIN
@@ -119,11 +120,11 @@ BEGIN
   END IF;
   IF (INSERTING OR UPDATING) THEN
     IF (:NEW.m_product_id IS NOT NULL) THEN
-      SELECT isgeneric INTO v_isgeneric
+      SELECT isgeneric, name INTO v_isgeneric, v_productname
       FROM m_product
       WHERE m_product_id = :NEW.m_product_id;
       IF (v_isgeneric = 'Y') THEN
-        RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@');
+        RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_productname);
       END IF;
     END IF;
   END IF;

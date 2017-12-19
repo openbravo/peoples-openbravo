@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2016 Openbravo SLU
+* All portions are Copyright (C) 2012-2017 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -25,6 +25,7 @@
   v_preservedcount      NUMBER;
   v_count               NUMBER;
   v_dummy               VARCHAR2(2000);
+  v_productname         m_product.name%TYPE;
   v_isgeneric           CHAR(1);
   v_updateOrderAndLines           CHAR(1) := 'N';
   -- Parameter
@@ -158,11 +159,11 @@ BEGIN
   END IF;
   IF (INSERTING OR UPDATING) THEN
     IF (:NEW.m_product_id IS NOT NULL) THEN
-      SELECT isgeneric INTO v_isgeneric
+      SELECT isgeneric, name INTO v_isgeneric, v_productname
       FROM m_product
       WHERE m_product_id = :NEW.m_product_id;
       IF (v_isgeneric = 'Y') THEN
-        RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@');
+        RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_productname);
       END IF;
     END IF;
   END IF;
