@@ -1735,9 +1735,7 @@
               WHEN NO_DATA_FOUND THEN
                 NULL;
             END;
-           /**************************************************************************
-            * Credit Multiplier
-            *************************************************************************/
+
             IF (v_Cash_ID IS NULL) THEN
               v_ResultStr:='Create C_Cash';
               Ad_Sequence_Next('C_Cash', v_Org_ID, v_Cash_ID) ;
