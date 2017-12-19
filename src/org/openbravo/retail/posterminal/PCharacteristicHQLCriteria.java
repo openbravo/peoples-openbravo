@@ -27,8 +27,7 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
     String[] array_params = getParams(params);
     String sql = null;
     if (array_params[1].equals("__all__")) {
-      // Contains and startswith filter
-      if (array_params[0].equals("%") || array_params[0].equals("%%")) {
+      if (array_params[0].equals("%")) {
         sql = getAllCharacteristics();
       } else {
         sql = getAllQuery();
