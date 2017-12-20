@@ -227,6 +227,7 @@ public class ClusterServiceManager {
           // try to register the current node as the one in charge of handling the service
           replaceNodeOfService(service);
         } else {
+          // do nothing, other node is already handling the service
           log.debug("Node {} still in charge of service {}", service.getNode(),
               service.getService());
         }
