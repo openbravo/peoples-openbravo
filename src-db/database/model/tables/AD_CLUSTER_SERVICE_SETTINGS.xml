@@ -41,10 +41,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="THRESHOLD" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLUSTER_SRV_SET_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>

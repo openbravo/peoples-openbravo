@@ -120,18 +120,18 @@ public class ClusterServiceManager {
 
   private static class ClusterServiceThread implements Runnable {
     private static final Long DEFAULT_TIMEOUT = 10_000L;
-    private static final Long DEFAULT_THRESHOLD = 1000L;
+    // The threshold is an extra amount of time added to the timeout that helps to avoid constantly
+    // switching the node that should handle a service on every ping round.
+    private static final Long THRESHOLD = 1000L;
 
     private final ClusterServiceManager manager;
     private Map<String, Long> serviceNextPings;
     private Map<String, Long> serviceTimeouts;
-    private Map<String, Long> serviceThresholds;
 
     public ClusterServiceThread(ClusterServiceManager manager) {
       this.manager = manager;
       this.serviceNextPings = new HashMap<>();
       this.serviceTimeouts = new HashMap<>();
-      this.serviceThresholds = new HashMap<>();
     }
 
     @Override
@@ -179,11 +179,9 @@ public class ClusterServiceManager {
       for (ADClusterServiceSettings settings : serviceSettings) {
         String service = settings.getService();
         Long timeout = getTimeout(settings);
-        Long threshold = getThreshold(settings);
-        registerOrUpdateService(service, timeout, threshold);
+        registerOrUpdateService(service, timeout);
         serviceNextPings.put(settings.getService(), current + timeout);
         serviceTimeouts.put(service, timeout);
-        serviceThresholds.put(service, threshold);
       }
     }
 
@@ -194,13 +192,6 @@ public class ClusterServiceManager {
       return settings.getTimeout();
     }
 
-    private Long getThreshold(ADClusterServiceSettings settings) {
-      if (settings.getThreshold() == null) {
-        return DEFAULT_THRESHOLD;
-      }
-      return settings.getThreshold();
-    }
-
     private Long doPingRound() {
       long nextSleep = 0L;
       long current = System.currentTimeMillis();
@@ -209,8 +200,7 @@ public class ClusterServiceManager {
         String service = entry.getKey();
         Long serviceNextPing = entry.getValue();
         if (serviceNextPing <= current) {
-          registerOrUpdateService(service, serviceTimeouts.get(service),
-              serviceThresholds.get(service));
+          registerOrUpdateService(service, serviceTimeouts.get(service));
           entry.setValue(serviceNextPing + serviceTimeouts.get(service));
           sleep = serviceTimeouts.get(service);
         } else {
@@ -224,7 +214,7 @@ public class ClusterServiceManager {
       return nextSleep;
     }
 
-    private void registerOrUpdateService(String serviceName, Long interval, Long threshold) {
+    private void registerOrUpdateService(String serviceName, Long interval) {
       try {
         ADClusterService service = manager.getService(serviceName);
         if (service == null) {
@@ -233,7 +223,7 @@ public class ClusterServiceManager {
         } else if (manager.nodeName.equals(service.getNode())) {
           // current node is charge of handling the service, just update the last ping
           updateLastPing(service);
-        } else if (shouldReplaceNodeOfService(service, interval + threshold)) {
+        } else if (shouldReplaceNodeOfService(service, interval + THRESHOLD)) {
           // try to register the current node as the one in charge of handling the service
           replaceNodeOfService(service);
         } else {
