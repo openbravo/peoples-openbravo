@@ -926,6 +926,7 @@
       var callback = function () {
           OB.MobileApp.model.triggerLogout();
           };
+      OB.UTIL.localStorage.removeItem('leftColumnCurrentView');
       if (OB.POS.hwserver !== undefined) {
         OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {}, function () {
           callback();
