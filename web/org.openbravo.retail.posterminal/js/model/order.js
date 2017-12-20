@@ -5454,7 +5454,7 @@
                         uOM: iter.uOM,
                         qty: OB.DEC.number(iter.quantity),
                         price: price,
-                        priceList: (order.get('isQuotation') && prod.get('listPrice') !== price) ? iter.grossUnitPrice : prod.get('listPrice'),
+                        priceList: prod.get('listPrice') !== price ? iter.grossUnitPrice : prod.get('listPrice'),
                         promotions: iter.promotions,
                         description: iter.description,
                         priceIncludesTax: order.get('priceIncludesTax'),
