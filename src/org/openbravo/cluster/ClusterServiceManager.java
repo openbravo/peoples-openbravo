@@ -189,7 +189,8 @@ public class ClusterServiceManager {
       if (settings.getTimeout() == null) {
         return DEFAULT_TIMEOUT;
       }
-      return settings.getTimeout();
+      // the timeout is defined in the AD in seconds, convert to milliseconds
+      return settings.getTimeout() * 1000;
     }
 
     private Long doPingRound() {
