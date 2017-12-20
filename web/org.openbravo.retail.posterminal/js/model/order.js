@@ -1619,8 +1619,8 @@
               }
               var splitline = !(options && options.line) && !OB.UTIL.isNullOrUndefined(args.line) && !OB.UTIL.isNullOrUndefined(args.line.get('splitline')) && args.line.get('splitline');
               var serviceProduct = args.line && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')));
-              var groupedByAttributeValues = (productHasAttribute && productHavingSameAttribute) || (!productHasAttribute && !productHavingSameAttribute);
-              if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (serviceProduct) && groupedByAttributeValues) {
+              var groupedByAttributeValues = ((productHasAttribute && productHavingSameAttribute) || (!productHasAttribute && !productHavingSameAttribute)) && attributeSearchAllowed;
+              if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (serviceProduct) && (groupedByAttributeValues || !groupedByAttributeValues)) {
                 args.receipt.addUnit(args.line, args.qty);
                 if (!_.isUndefined(args.attrs)) {
                   _.each(_.keys(args.attrs), function (key) {
