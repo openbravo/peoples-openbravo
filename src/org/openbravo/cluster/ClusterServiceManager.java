@@ -21,7 +21,6 @@ package org.openbravo.cluster;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +31,6 @@ import java.util.concurrent.Executors;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.axis.utils.StringUtils;
-import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -65,6 +63,7 @@ public class ClusterServiceManager {
     if (!isCluster()) {
       return;
     }
+    nodeName = getNodeName();
     isShutDown = false;
     log.info("Starting Cluster Service Manager");
     executorService = Executors.newSingleThreadExecutor(new DaemonThreadFactory());
@@ -94,22 +93,22 @@ public class ClusterServiceManager {
       return false;
     }
     ADClusterService service = getService(serviceType);
-    return getNodeName().equals(service.getNode());
+    if (service == null) {
+      return false;
+    }
+    return nodeName.equals(service.getNode());
   }
 
   private String getNodeName() {
-    if (nodeName != null) {
-      return nodeName;
-    }
-    nodeName = System.getProperty("machine.name");
-    if (StringUtils.isEmpty(nodeName)) {
+    String name = System.getProperty("machine.name");
+    if (StringUtils.isEmpty(name)) {
       try {
-        nodeName = InetAddress.getLocalHost().getHostName();
+        name = InetAddress.getLocalHost().getHostName();
       } catch (UnknownHostException e) {
-        nodeName = SequenceIdData.getUUID();
+        name = SequenceIdData.getUUID();
       }
     }
-    return nodeName;
+    return name;
   }
 
   private ADClusterService getService(String service) {
@@ -120,7 +119,7 @@ public class ClusterServiceManager {
   }
 
   private static class ClusterServiceThread implements Runnable {
-    private static final Long DEFAULT_TIMEOUT = 10000L;
+    private static final Long DEFAULT_TIMEOUT = 10_000L;
     private static final Long DEFAULT_THRESHOLD = 1000L;
 
     private final ClusterServiceManager manager;
@@ -181,7 +180,7 @@ public class ClusterServiceManager {
         String service = settings.getService();
         Long timeout = getTimeout(settings);
         Long threshold = getThreshold(settings);
-        register(service, timeout, threshold);
+        registerOrUpdateService(service, timeout, threshold);
         serviceNextPings.put(settings.getService(), current + timeout);
         serviceTimeouts.put(service, timeout);
         serviceThresholds.put(service, threshold);
@@ -210,7 +209,8 @@ public class ClusterServiceManager {
         String service = entry.getKey();
         Long serviceNextPing = entry.getValue();
         if (serviceNextPing <= current) {
-          register(service, serviceTimeouts.get(service), serviceThresholds.get(service));
+          registerOrUpdateService(service, serviceTimeouts.get(service),
+              serviceThresholds.get(service));
           entry.setValue(serviceNextPing + serviceTimeouts.get(service));
           sleep = serviceTimeouts.get(service);
         } else {
@@ -224,45 +224,59 @@ public class ClusterServiceManager {
       return nextSleep;
     }
 
-    private void register(String serviceType, Long interval, Long threshold) {
+    private void registerOrUpdateService(String serviceName, Long interval, Long threshold) {
       try {
-        ADClusterService service = manager.getService(serviceType);
+        ADClusterService service = manager.getService(serviceName);
         if (service == null) {
           // register the service for the first time
-          service = createService(serviceType);
-        } else if (manager.getNodeName().equals(service.getNode())) {
-          // update the last ping
-          service.setUpdated(new Date());
-        } else if (service.getUpdated().before(
-            substractMilliseconds(new Date(), interval + threshold))) {
-          // register the current node as the one in charge of handling the service
-          // the last ping (updated) will be updated automatically by the OBInterceptor
-          service.setNode(manager.getNodeName());
+          registerService(serviceName);
+        } else if (manager.nodeName.equals(service.getNode())) {
+          // current node is charge of handling the service, just update the last ping
+          updateLastPing(service);
+        } else if (shouldReplaceNodeOfService(service, interval + threshold)) {
+          // try to register the current node as the one in charge of handling the service
+          replaceNodeOfService(service);
+        } else {
+          log.debug("Node {} still in charge of service {}", service.getNode(),
+              service.getService());
         }
-        if (service.isNewOBObject()) {
-          OBDal.getInstance().save(service);
-        }
-        OBDal.getInstance().commitAndClose();
-      } catch (HibernateException e) {
-        log.warn("Could not register service for node {}. It may be already registered.",
-            manager.getNodeName());
+      } catch (Exception ex) {
+        log.warn("Node {} could not complete register/update task for service {}", serviceName,
+            manager.nodeName);
       }
     }
 
-    private Date substractMilliseconds(Date date, Long interval) {
-      Calendar calendar = Calendar.getInstance();
-      calendar.setTime(date);
-      calendar.add(Calendar.MILLISECOND, interval.intValue() * -1);
-      return calendar.getTime();
+    private boolean shouldReplaceNodeOfService(ADClusterService service, Long intervalAmount) {
+      long leaderLostTime = service.getUpdated().getTime() + intervalAmount;
+      long now = new Date().getTime();
+      return leaderLostTime < now;
     }
 
-    private ADClusterService createService(String service) {
-      ADClusterService clusterService = OBProvider.getInstance().get(ADClusterService.class);
-      clusterService.setOrganization(OBDal.getInstance().getProxy(Organization.class, "0"));
-      clusterService.setClient(OBDal.getInstance().getProxy(Client.class, "0"));
-      clusterService.setService(service);
-      clusterService.setNode(manager.getNodeName());
-      return clusterService;
+    private void registerService(String serviceName) {
+      ADClusterService service = OBProvider.getInstance().get(ADClusterService.class);
+      service.setOrganization(OBDal.getInstance().getProxy(Organization.class, "0"));
+      service.setClient(OBDal.getInstance().getProxy(Client.class, "0"));
+      service.setService(serviceName);
+      service.setNode(manager.nodeName);
+      OBDal.getInstance().save(service);
+      OBDal.getInstance().commitAndClose();
+      log.info("Node {} registered in charge of service {}", manager.nodeName, serviceName);
+    }
+
+    private void updateLastPing(ADClusterService service) {
+      service.setUpdated(new Date());
+      OBDal.getInstance().commitAndClose();
+      log.debug("Current node {} still in charge of service {}", manager.nodeName,
+          service.getService());
+    }
+
+    private void replaceNodeOfService(ADClusterService service) {
+      String formerLeader = service.getNode();
+      log.info("Replacing node {} in charge of service {} ", formerLeader, service.getService());
+      service.setNode(manager.nodeName);
+      // the last ping (updated) will be updated automatically by the OBInterceptor
+      OBDal.getInstance().commitAndClose();
+      log.info("Node {} is now in charge of service {} ", manager.nodeName, service.getService());
     }
   }
 }
