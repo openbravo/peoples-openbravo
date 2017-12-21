@@ -220,28 +220,26 @@ public class ClusterServiceManager {
         ADClusterService service = manager.getService(serviceName);
         if (service == null) {
           // register the service for the first time
+          log.info("Registering node {} in charge of service {}", manager.nodeName, serviceName);
           registerService(serviceName);
         } else if (manager.nodeName.equals(service.getNode())) {
           // current node is charge of handling the service, just update the last ping
-          updateLastPing(service);
+          log.debug("Current node {} still in charge of service {}", manager.nodeName, serviceName);
+          service.setUpdated(new Date());
         } else if (shouldReplaceNodeOfService(service, interval + THRESHOLD)) {
           // try to register the current node as the one in charge of handling the service
-          replaceNodeOfService(service);
+          // the last ping (updated) will be updated automatically by the OBInterceptor
+          log.info("Changing node in charge of service {}", serviceName);
+          log.info("Replacing node {} with node {}", service.getNode(), manager.nodeName);
+          service.setNode(manager.nodeName);
         } else {
-          // do nothing, other node is already handling the service
-          log.debug("Node {} still in charge of service {}", service.getNode(),
-              service.getService());
+          log.debug("Node {} still in charge of service {}", manager.nodeName, serviceName);
         }
+        OBDal.getInstance().commitAndClose();
       } catch (Exception ex) {
-        log.warn("Node {} could not complete register/update task for service {}", serviceName,
-            manager.nodeName);
+        log.warn("Node {} could not complete register/update task of service {}", manager.nodeName,
+            serviceName);
       }
-    }
-
-    private boolean shouldReplaceNodeOfService(ADClusterService service, Long intervalAmount) {
-      long leaderLostTime = service.getUpdated().getTime() + intervalAmount;
-      long now = new Date().getTime();
-      return leaderLostTime < now;
     }
 
     private void registerService(String serviceName) {
@@ -251,24 +249,12 @@ public class ClusterServiceManager {
       service.setService(serviceName);
       service.setNode(manager.nodeName);
       OBDal.getInstance().save(service);
-      OBDal.getInstance().commitAndClose();
-      log.info("Node {} registered in charge of service {}", manager.nodeName, serviceName);
     }
 
-    private void updateLastPing(ADClusterService service) {
-      service.setUpdated(new Date());
-      OBDal.getInstance().commitAndClose();
-      log.debug("Current node {} still in charge of service {}", manager.nodeName,
-          service.getService());
-    }
-
-    private void replaceNodeOfService(ADClusterService service) {
-      String formerLeader = service.getNode();
-      log.info("Replacing node {} in charge of service {} ", formerLeader, service.getService());
-      service.setNode(manager.nodeName);
-      // the last ping (updated) will be updated automatically by the OBInterceptor
-      OBDal.getInstance().commitAndClose();
-      log.info("Node {} is now in charge of service {} ", manager.nodeName, service.getService());
+    private boolean shouldReplaceNodeOfService(ADClusterService service, Long intervalAmount) {
+      long leaderLostTime = service.getUpdated().getTime() + intervalAmount;
+      long now = new Date().getTime();
+      return leaderLostTime < now;
     }
   }
 }
