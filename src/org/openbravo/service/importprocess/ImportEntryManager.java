@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2016 Openbravo SLU
+ * All portions are Copyright (C) 2015-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,6 +48,7 @@ import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.cluster.ClusterServiceManager;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
@@ -136,6 +137,10 @@ public class ImportEntryManager {
   @Inject
   @Any
   private ImportEntryArchiveManager importEntryArchiveManager;
+
+  @Inject
+  @Any
+  private ClusterServiceManager clusterServiceManager;
 
   private ImportEntryManagerThread managerThread;
   private ThreadPoolExecutor executorService;
@@ -560,9 +565,7 @@ public class ImportEntryManager {
               return;
             }
 
-            // too busy, don't process, but wait
-            if (manager.executorService.getQueue() != null
-                && manager.executorService.getQueue().size() > (manager.maxTaskQueueSize - 1)) {
+            if (shouldWait()) {
               doWait();
               // woken, re-start from beginning of loop
               continue;
@@ -670,6 +673,18 @@ public class ImportEntryManager {
       } finally {
         isRunning = false;
       }
+    }
+
+    private boolean shouldWait() {
+      if (manager.executorService.getQueue() != null
+          && manager.executorService.getQueue().size() > (manager.maxTaskQueueSize - 1)) {
+        // too busy, don't process, but wait
+        return true;
+      }
+      // - in cluster: process if we are in the node in charge of handling the import entries,
+      // otherwise just wait
+      // - not in cluster: do not wait
+      return !manager.clusterServiceManager.isHandlingService("IMPORT_ENTRY");
     }
 
     public boolean isRunning() {

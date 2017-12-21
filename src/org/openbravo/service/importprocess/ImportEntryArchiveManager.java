@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2016 Openbravo SLU
+ * All portions are Copyright (C) 2015-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.cluster.ClusterServiceManager;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -68,6 +69,10 @@ public class ImportEntryArchiveManager {
   @Inject
   @Any
   private Instance<ImportEntryArchivePreProcessor> archiveEntryPreProcessors;
+
+  @Inject
+  @Any
+  private ClusterServiceManager clusterServiceManager;
 
   private ImportEntryArchiveThread archiveThread;
   private ExecutorService executorService;
@@ -109,10 +114,7 @@ public class ImportEntryArchiveManager {
       // don't start right away at startup, give the system time to
       // really start
       log.debug("Started, first sleep " + ARCHIVE_INTERVAL);
-      try {
-        Thread.sleep(ARCHIVE_INTERVAL);
-      } catch (Exception ignored) {
-      }
+      doWait();
       log.debug("Run loop started");
 
       if (manager.isShutDown) {
@@ -128,6 +130,12 @@ public class ImportEntryArchiveManager {
 
           if (manager.isShutDown) {
             return;
+          }
+
+          if (shouldWait()) {
+            doWait();
+            // woken, re-start from beginning of loop
+            continue;
           }
 
           boolean dataProcessed = false;
@@ -182,16 +190,27 @@ public class ImportEntryArchiveManager {
 
           // nothing to do in last cycle wait one hour
           if (!dataProcessed) {
-            log.debug("waiting");
             lastCreated = null;
-            try {
-              Thread.sleep(ARCHIVE_INTERVAL);
-            } catch (Exception ignored) {
-            }
+            doWait();
           }
         } catch (Throwable t) {
           log.error(t.getMessage(), t);
         }
+      }
+    }
+
+    private boolean shouldWait() {
+      // - in cluster: process if we are in the node in charge of handling the import entries,
+      // otherwise just wait
+      // - not in cluster: do not wait
+      return !manager.clusterServiceManager.isHandlingService("IMPORT_ENTRY");
+    }
+
+    private void doWait() {
+      log.debug("waiting");
+      try {
+        Thread.sleep(ARCHIVE_INTERVAL);
+      } catch (Exception ignored) {
       }
     }
 
