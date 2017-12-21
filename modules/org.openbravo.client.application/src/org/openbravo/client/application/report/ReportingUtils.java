@@ -112,8 +112,8 @@ public class ReportingUtils {
    */
   public static final String PDF_JAVASCRIPT = "PDF Javascript";
 
-  private static final double TEXT_CHAR_HEIGHT = 10;
-  private static final double TEXT_CHAR_WIDTH = 10;
+  private static final float TEXT_CHAR_HEIGHT = 10;
+  private static final float TEXT_CHAR_WIDTH = 10;
   private static final Logger log = LoggerFactory.getLogger(ReportingUtils.class);
 
   /**
@@ -752,8 +752,8 @@ public class ReportingUtils {
     textExporter.setConfiguration(textExporterConfiguration);
     // Default item text configuration that can be overridden in the .jrxml template itself
     SimpleTextReportConfiguration textReportConfiguration = new SimpleTextReportConfiguration();
-    textReportConfiguration.setCharHeight(new Float(TEXT_CHAR_HEIGHT));
-    textReportConfiguration.setCharWidth(new Float(TEXT_CHAR_WIDTH));
+    textReportConfiguration.setCharHeight(TEXT_CHAR_HEIGHT);
+    textReportConfiguration.setCharWidth(TEXT_CHAR_WIDTH);
     textReportConfiguration.setOverrideHints(false);
     textExporter.setConfiguration(textReportConfiguration);
 
@@ -785,8 +785,8 @@ public class ReportingUtils {
     textExporter.setConfiguration(textExporterConfiguration);
     // Default item text configuration that can be overridden in the .jrxml template itself
     SimpleTextReportConfiguration textReportConfiguration = new SimpleTextReportConfiguration();
-    textReportConfiguration.setCharHeight(new Float(TEXT_CHAR_HEIGHT));
-    textReportConfiguration.setCharWidth(new Float(TEXT_CHAR_WIDTH));
+    textReportConfiguration.setCharHeight(TEXT_CHAR_HEIGHT);
+    textReportConfiguration.setCharWidth(TEXT_CHAR_WIDTH);
     textReportConfiguration.setOverrideHints(false);
     textExporter.setConfiguration(textReportConfiguration);
 

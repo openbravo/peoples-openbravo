@@ -235,7 +235,7 @@ public abstract class GenericTree {
 
       // Level tree: sets the spotted left lines
       FieldProviderFactory.setField(data[i], "leveltree", "");
-      FieldProviderFactory.setField(data[i], "levelno", (new Integer(l).toString()));
+      FieldProviderFactory.setField(data[i], "levelno", (Integer.valueOf(l).toString()));
       String parentID = data[i].getField("nodeId"); // set the current
       // node to look for
       // its parents

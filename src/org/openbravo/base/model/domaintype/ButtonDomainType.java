@@ -45,7 +45,7 @@ public class ButtonDomainType extends BasePrimitiveDomainType {
     if (strValue.equalsIgnoreCase("N")) {
       return Boolean.FALSE;
     }
-    return new Boolean(strValue);
+    return Boolean.valueOf(strValue);
   }
 
   @Override

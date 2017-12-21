@@ -72,7 +72,7 @@ public class ValidationTest extends OBBaseTest {
     // now set difference values and get exceptions on each
     setValue(c, Currency.PROPERTY_UPDATEDBY, "test", "only allows reference instances of type");
     setValue(c, Currency.PROPERTY_CLIENT, "test", "only allows reference instances of type");
-    setValue(c, Currency.PROPERTY_PRICEPRECISION, new Double(400.0), "only allows instances of");
+    setValue(c, Currency.PROPERTY_PRICEPRECISION, Double.valueOf(400.0), "only allows instances of");
     setValue(c, Currency.PROPERTY_CREATIONDATE, new BigDecimal(100.0), "only allows instances of");
     try {
       setValue(c, "asdads", null, "does not exist for entity");
@@ -90,7 +90,7 @@ public class ValidationTest extends OBBaseTest {
     final DynamicOBObject bpGroup = new DynamicOBObject();
     bpGroup.setEntityName(Category.ENTITY_NAME);
     setValue(bpGroup, Category.PROPERTY_CLIENT, "test", "only allows reference instances of type");
-    setValue(bpGroup, Category.PROPERTY_DESCRIPTION, new Double(400.0), "only allows instances of");
+    setValue(bpGroup, Category.PROPERTY_DESCRIPTION, Double.valueOf(400.0), "only allows instances of");
     setValue(bpGroup, Category.PROPERTY_DEFAULT, new BigDecimal(100.0), "only allows instances of");
   }
 

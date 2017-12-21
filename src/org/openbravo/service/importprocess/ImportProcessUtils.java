@@ -63,10 +63,10 @@ public class ImportProcessUtils {
         Long l1 = o1.getSequenceNumber();
         Long l2 = o2.getSequenceNumber();
         if (l1 == null) {
-          l1 = new Long(50);
+          l1 = 50L;
         }
         if (l2 == null) {
-          l2 = new Long(50);
+          l2 = 50L;
         }
         return l1.compareTo(l2);
       }

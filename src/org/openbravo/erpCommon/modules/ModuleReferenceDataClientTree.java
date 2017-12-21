@@ -85,7 +85,7 @@ public class ModuleReferenceDataClientTree extends ModuleTree {
       data = ModuleReferenceDataClientTreeData.selectSubTree(conn, (lang.equals("") ? "en_US"
           : lang), nodeId);
       // addLinks();
-      setLevel(new Integer(level).intValue());
+      setLevel(Integer.valueOf(level).intValue());
       setIcons();
     } catch (ServletException ex) {
       ex.printStackTrace();

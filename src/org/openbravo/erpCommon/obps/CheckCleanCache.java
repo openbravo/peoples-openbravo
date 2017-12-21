@@ -49,7 +49,7 @@ public class CheckCleanCache extends HttpBaseServlet {
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String cache = vars.getRequiredStringParameter("cache");
-    boolean cached = new Boolean(cache);
+    boolean cached = Boolean.valueOf(cache);
 
     // either set explicit cache forever, or don't cache behavior
     if (cached) {

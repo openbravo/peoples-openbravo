@@ -321,7 +321,7 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
       data = ModuleReferenceDataOrgTreeData.selectSubTree(conn, (lang.equals("") ? "en_US" : lang),
           nodeId);
       // addLinks();
-      setLevel(new Integer(level).intValue());
+      setLevel(Integer.valueOf(level).intValue());
       setIcons();
     } catch (ServletException ex) {
       ex.printStackTrace();

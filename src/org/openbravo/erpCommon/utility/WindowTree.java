@@ -482,15 +482,15 @@ public class WindowTree extends HttpSecureAppServlet {
                 add = 10; // it is at the end it can be expanded
               // without problem
               else
-                add = new Float(
-                    ((new Integer(data[j].seqno) - new Integer(data[i].seqno)) / (j - i + 1)))
+                add = Float.valueOf(
+                    ((Integer.valueOf(data[j].seqno) - Integer.valueOf(data[i].seqno)) / (j - i + 1)))
                     .intValue();
 
               // Set the current node in its posisiton
               if (i == 0)
                 seqNo = 10;
               else
-                seqNo = new Integer(data[i].seqno).intValue() + add;
+                seqNo = Integer.parseInt(data[i].seqno) + add;
               WindowTreeUtility.setNode(this, vars, TreeType, TreeID, strParent, strLink,
                   Integer.toString(seqNo));
               updated = true;

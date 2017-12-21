@@ -64,7 +64,8 @@ import org.openbravo.service.json.JsonConstants;
  */
 public abstract class UIDefinition {
   private static final String TYPE_NAME_PREFIX = "_id_";
-  private static final String LIST_REF_ID = "17";
+  private static final String LIST_REFERENCE_ID = "17";
+  private static final String DATETIME_REFERENCE_ID = "16";
 
   private Reference reference;
   private DomainType domainType;
@@ -333,25 +334,22 @@ public abstract class UIDefinition {
   }
 
   private String setNOWDefault() {
-    JSONObject jsnobject = new JSONObject();
+    JSONObject jsonObject = new JSONObject();
     try {
       UIDefinition uiDef = this;
       if (!(this instanceof DateUIDefinition)) {
-        for (UIDefinition def : UIDefinitionController.getInstance().getAllUIDefinitions()) {
-          if (def instanceof DateUIDefinition) {
-            uiDef = def;
-            break;
-          }
-        }
+        Reference datetimeReference = OBDal.getInstance().getProxy(Reference.class,
+            DATETIME_REFERENCE_ID);
+        uiDef = UIDefinitionController.getInstance().getUIDefinition(datetimeReference);
       }
       String columnValue = uiDef.convertToClassicString(new Date());
-      jsnobject.put("value", uiDef.createFromClassicString(columnValue));
-      jsnobject.put("classicValue", columnValue);
-      jsnobject.put("hasDateDefault", true);
+      jsonObject.put("value", uiDef.createFromClassicString(columnValue));
+      jsonObject.put("classicValue", columnValue);
+      jsonObject.put("hasDateDefault", true);
     } catch (JSONException e) {
       log.error("Couldn't get field property value");
     }
-    return jsnobject.toString();
+    return jsonObject.toString();
   }
 
   /**
@@ -600,7 +598,7 @@ public abstract class UIDefinition {
       String columnValue, boolean onlyFirstRecord) {
     try {
       String ref = field.getColumn().getReference().getId();
-      boolean isListReference = LIST_REF_ID.equals(ref);
+      boolean isListReference = LIST_REFERENCE_ID.equals(ref);
       if (!isListReference && !field.getColumn().isMandatory() && StringUtils.isEmpty(columnValue)) {
         // non mandatory without value nor default, should only return empty value, prevent
         // everything else

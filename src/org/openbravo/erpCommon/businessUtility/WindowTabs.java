@@ -129,7 +129,7 @@ public class WindowTabs {
     this.conn = _conn;
     this.vars = _vars;
     this.className = "";
-    getProcessInfo(new Integer(adProcessId).toString());
+    getProcessInfo(Integer.valueOf(adProcessId).toString());
     getTabs();
   }
 
