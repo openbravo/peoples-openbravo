@@ -359,12 +359,11 @@ enyo.kind({
       }
       me.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterButtons(false);
     }, function (error) {
-      if (error) {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
-        me.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterButtons(false);
-        me.$.renderLoading.hide();
-        me.prsList.reset();
-      }
+      me.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterButtons(false);
+      me.$.renderLoading.hide();
+      me.prsList.reset();
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), error.exception.message ? error.exception.message : OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+      return;
     }, true, 30000);
     return true;
   },

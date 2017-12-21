@@ -285,6 +285,11 @@ enyo.kind({
         me.disableFilters(false);
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
       }
+    }, function (error) {
+      me.disableFilters(false);
+      me.multiOrdersList.reset();
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), error.exception.message ? error.exception.message : OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+      return;
     });
     return true;
   },
