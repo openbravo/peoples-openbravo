@@ -88,9 +88,9 @@ public class ClusterServiceManager {
     return isCluster;
   }
 
-  public boolean nodeHandlesService(String serviceType) {
+  public boolean isHandlingService(String serviceType) {
     if (!isCluster()) {
-      return false;
+      return true;
     }
     ADClusterService service = getService(serviceType);
     if (service == null) {
