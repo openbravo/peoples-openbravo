@@ -88,11 +88,11 @@ public class ClusterServiceManager {
     return isCluster;
   }
 
-  public boolean isHandlingService(String serviceType) {
+  public boolean isHandlingService(String serviceName) {
     if (!isCluster()) {
       return true;
     }
-    ADClusterService service = getService(serviceType);
+    ADClusterService service = getService(serviceName);
     if (service == null) {
       return false;
     }
@@ -111,10 +111,10 @@ public class ClusterServiceManager {
     return name;
   }
 
-  private ADClusterService getService(String service) {
+  private ADClusterService getService(String serviceName) {
     OBCriteria<ADClusterService> criteria = OBDal.getInstance().createCriteria(
         ADClusterService.class);
-    criteria.add(Restrictions.eq(ADClusterService.PROPERTY_SERVICE, service));
+    criteria.add(Restrictions.eq(ADClusterService.PROPERTY_SERVICE, serviceName));
     return (ADClusterService) criteria.uniqueResult();
   }
 
