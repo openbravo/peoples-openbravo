@@ -236,16 +236,10 @@
             }, tx);
           }, function () {
             // the transaction failed
-            OB.error("[receipt.closed] The transaction failed to be commited. ReceiptId: " + receipt.get('id'));
+            OB.UTIL.showError("[receipt.closed] The transaction failed to be commited. ReceiptId: " + receipt.get('id'));
             // rollback other changes
             receipt.set('hasbeenpaid', 'N');
             frozenReceipt.set('hasbeenpaid', 'N');
-            if (eventParams && eventParams.callback) {
-              eventParams.callback({
-                frozenReceipt: frozenReceipt,
-                isCancelled: false
-              });
-            }
           }, function () {
             // success transaction...
             OB.info("[receipt.closed] Transaction success. ReceiptId: " + receipt.get('id'));
