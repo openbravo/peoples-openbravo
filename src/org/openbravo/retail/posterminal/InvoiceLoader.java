@@ -449,8 +449,10 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
           createInvoiceLine(invoice, order, jsoninvoice, invoicelines, lineReferences, i,
               pricePrecision, iol, lineNo, iolList.size(), numIter, movementQtyTotal);
         }
-        if (movementQtyTotal.compareTo(BigDecimal.valueOf(invoicelines.getJSONObject(i).getDouble(
-            "qty"))) == -1) {
+        final BigDecimal qtyToInvoice = BigDecimal.valueOf(invoicelines.getJSONObject(i).getDouble(
+            "qty"));
+        final BigDecimal orderedQty = lineReferences.get(i).getOrderedQuantity();
+        if (qtyToInvoice.compareTo(orderedQty) == 0 && movementQtyTotal.compareTo(orderedQty) == -1) {
           lineNo = lineNo + 10;
           createInvoiceLine(invoice, order, jsoninvoice, invoicelines, lineReferences, i,
               pricePrecision, null, lineNo, iolList.size(), iolList.size() + 1, movementQtyTotal);
