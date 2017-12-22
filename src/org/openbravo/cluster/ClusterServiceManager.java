@@ -175,18 +175,17 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
 
   private static class ClusterServiceThread implements Runnable {
     private static final Long DEFAULT_TIMEOUT = 10_000L;
-    // The threshold is an extra amount of time added to the timeout that helps to avoid constantly
-    // switching the node that should handle a service on every ping round.
-    private static final Long THRESHOLD = 1000L;
 
     private final ClusterServiceManager manager;
     private Map<String, Long> serviceNextPings;
     private Map<String, Long> serviceTimeouts;
+    private Map<String, Long> serviceThresholds;
 
     public ClusterServiceThread(ClusterServiceManager manager) {
       this.manager = manager;
       this.serviceNextPings = new HashMap<>();
       this.serviceTimeouts = new HashMap<>();
+      this.serviceThresholds = new HashMap<>();
     }
 
     @Override
@@ -234,9 +233,13 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       for (ADClusterServiceSettings settings : serviceSettings) {
         String service = settings.getService();
         Long timeout = getTimeout(settings);
-        registerOrUpdateService(service, timeout);
+        // The threshold is an extra amount of time added to the timeout that helps to avoid
+        // unnecessarily switching the node that should handle a service on every ping round.
+        Long threshold = timeout * 2 + 1000;
+        registerOrUpdateService(service, timeout + threshold);
         serviceNextPings.put(settings.getService(), current + timeout);
         serviceTimeouts.put(service, timeout);
+        serviceThresholds.put(service, threshold);
       }
     }
 
@@ -256,7 +259,8 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
         String service = entry.getKey();
         Long serviceNextPing = entry.getValue();
         if (serviceNextPing <= current) {
-          registerOrUpdateService(service, serviceTimeouts.get(service));
+          registerOrUpdateService(service,
+              serviceTimeouts.get(service) + serviceThresholds.get(service));
           entry.setValue(serviceNextPing + serviceTimeouts.get(service));
           sleep = serviceTimeouts.get(service);
         } else {
@@ -281,7 +285,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
           // current node is charge of handling the service, just update the last ping
           log.debug("Current node {} still in charge of service {}", manager.nodeName, serviceName);
           service.setUpdated(new Date());
-        } else if (shouldReplaceNodeOfService(service, interval + THRESHOLD)) {
+        } else if (shouldReplaceNodeOfService(service, interval)) {
           // try to register the current node as the one in charge of handling the service
           // the last ping (updated) will be updated automatically by the OBInterceptor
           log.info("Changing node in charge of service {}", serviceName);
