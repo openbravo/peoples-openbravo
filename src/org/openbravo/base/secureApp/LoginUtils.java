@@ -358,6 +358,13 @@ public class LoginUtils {
           Preferences.savePreferenceInSession(vars, preference);
         }
 
+        attr = AttributeData.selectIsSOTrx(conn);
+        if (attr != null && attr.length > 0) {
+          for (int i = 0; i < attr.length; i++)
+            vars.setSessionValue(attr[i].adWindowId + "|isSOTrx", attr[i].value);
+        }
+        attr = null;
+
         DefaultSessionValuesData[] ds = DefaultSessionValuesData.select(conn);
         if (ds != null && ds.length > 0) {
           for (int i = 0; i < ds.length; i++) {

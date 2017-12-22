@@ -68,9 +68,7 @@ import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.report.ReportingUtils;
-import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -381,21 +379,6 @@ public class Utility {
       }
       if (retValue.equals("")) {
         retValue = vars.getSessionValue("$" + context);
-      }
-      if (retValue.equals("") && "IsSOTrx".equalsIgnoreCase(context)
-          && StringUtils.isNotBlank(window)) {
-        OBContext.setAdminMode(true);
-        try {
-          ApplicationDictionaryCachedStructures adcs = WeldUtils
-              .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
-          Window w = adcs.getWindow(window);
-          retValue = w.isSalesTransaction() ? "Y" : "N";
-        } catch (Exception ignore) {
-          // not a valid window id, continue
-          retValue = "";
-        } finally {
-          OBContext.restorePreviousMode();
-        }
       }
     } else {
       try {
