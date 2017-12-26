@@ -70,7 +70,7 @@
         '100',
         'Y',
         cashup.obpos_paymentmethodcashup_id,
-        trans.description,
+        substr(trans.description, 0, 60),
         cashup.rate,
         cashup.isocode,
         abs(coalesce(trans.depositamt - trans.paymentamt,0)),
