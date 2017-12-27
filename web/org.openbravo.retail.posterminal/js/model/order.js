@@ -1228,8 +1228,9 @@
         } else if (OB.DEC.isNumber(args.price)) {
           var oldprice = args.line.get('price');
           if (OB.DEC.compare(args.price) >= 0) {
-            // sets the new price
+            // sets the new price and listPrice
             args.line.set('price', args.price);
+            args.line.set('priceList', args.line.get('product').get('listPrice'));
             // sets the undo action
             if (options.setUndo) {
               if (me.get('multipleUndo')) {
