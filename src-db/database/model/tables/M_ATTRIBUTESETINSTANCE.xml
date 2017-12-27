@@ -65,6 +65,17 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="M_REFINVENTORY_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="PARENT_ATTRIBUTESETINSTANCE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="M_REFINVENTORY" name="M_ATTRIBUTESETI_TANCE_M_REFINV">
+        <reference local="M_REFINVENTORY_ID" foreign="M_REFINVENTORY_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="M_ATTRIBUTESETINSTANCE_AD_CLIE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -77,6 +88,14 @@
       <foreign-key foreignTable="M_LOT" name="M_ATTRIBUTESETINSTANCE_M_LOT">
         <reference local="M_LOT_ID" foreign="M_LOT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="M_ATTRIBUTESETINSTANCE_PARENT">
+        <reference local="PARENT_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
+      </foreign-key>
+      <index name="M_ATTRIBUTESETINST_REFINV_IX" unique="false">
+        <index-column name="M_REFINVENTORY_ID"/>
+        <whereClause><![CDATA[M_REFINVENTORY_ID IS NOT NULL]]></whereClause>
+      </index>
+      <check name="M_ATTRIBUTESETINST_REFINV_CH"><![CDATA[M_REFINVENTORY_ID IS NULL OR M_REFINVENTORY_ID IS NOT NULL AND PARENT_ATTRIBUTESETINSTANCE_ID IS NOT NULL]]></check>
       <check name="M_ATTRIBUTESETINSTANCE_ISA_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_ATTRIBUTESETINSTANCE_ISL_CHK"><![CDATA[ISLOCKED IN ('Y', 'N')]]></check>
     </table>
