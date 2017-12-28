@@ -3768,23 +3768,21 @@
           productHasAttribute = productAttributes;
         }
       });
-      if (productHasAttribute === false && needAttributeWhenCreatingQuotation === false) {
-        if (updatePrices) {
-          this.updatePrices(function (order) {
-            order.calculateReceipt(function () {
-              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
-              // This event is used in stock validation module.
-              order.trigger('orderCreatedFromQuotation');
-            });
-          });
-        } else {
-          this.set('skipApplyPromotions', true);
-          this.calculateReceipt(function () {
-            me.unset('skipApplyPromotions');
+      if (updatePrices) {
+        this.updatePrices(function (order) {
+          order.calculateReceipt(function () {
             OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
-            me.trigger('orderCreatedFromQuotation');
+            // This event is used in stock validation module.
+            order.trigger('orderCreatedFromQuotation');
           });
-        }
+        });
+      } else {
+        this.set('skipApplyPromotions', true);
+        this.calculateReceipt(function () {
+          me.unset('skipApplyPromotions');
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+          me.trigger('orderCreatedFromQuotation');
+        });
       }
       this.calculateReceipt(function () {
         //call quotation attributes popup
