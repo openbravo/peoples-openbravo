@@ -103,7 +103,7 @@
 
   var regenerateTaxesInfo = function (receipt) {
       return Promise.all(_.map(receipt.get('lines').models, function (line) {
-        var lineObj = {};
+        var discAmt, lineObj = {};
         var linerate = BigDecimal.prototype.ONE;
         _.forEach(line.get('taxes'), function (tax) {
           lineObj[tax.taxId] = {
@@ -115,25 +115,46 @@
           line.set({
             'taxLines': lineObj,
             'tax': tax.taxId,
-            'taxAmount': tax.taxAmount,
-            'net': tax.taxableAmount,
-            'pricenet': tax.taxableAmount,
-            'discountedNet': tax.taxableAmount,
+            'taxAmount': OB.DEC.add(line.get('taxAmount') || 0, tax.taxAmount),
+            'net': (receipt.get('priceIncludesTax') ? OB.DEC.sub(line.get('gross') || 0, tax.taxAmount) : line.get('net')),
             'linerate': OB.DEC.toNumber(linerate.add(getTaxRateNumber(tax.taxRate)))
           }, {
             silent: true
           });
         });
+        discAmt = line.get('promotions').reduce(function (memo, disc) {
+          return OB.DEC.add(memo, (disc.actualAmt || disc.amt || 0));
+        }, 0);
+        if (receipt.get('priceIncludesTax')) {
+          line.set({
+            'net': OB.DEC.sub(line.get('net'), discAmt),
+            'discountedNet': OB.DEC.sub(line.get('net'), discAmt),
+            'discountedLinePrice': OB.DEC.add(line.get('net'), line.get('taxAmount'))
+          }, {
+            silent: true
+          });
+        } else {
+          line.set({
+            'gross': OB.DEC.add(line.get('net'), line.get('taxAmount')),
+            'discountedNet': OB.DEC.sub(line.get('net'), discAmt),
+            'discountedNetPrice': OB.DEC.sub(line.get('net'), discAmt),
+            'discountedGross': OB.DEC.add(OB.DEC.sub(line.get('net'), discAmt), line.get('taxAmount'))
+          }, {
+            silent: true
+          });
+        }
       })).then(function (value) {
         if (value.length !== receipt.get('lines').length) {
           OB.debug('The number of original lines of the receipt has change!');
           return;
         }
-
-        var taxesColl = {};
         receipt.set('net', receipt.get('lines').reduce(function (memo, line) {
           return memo + line.get('discountedNet');
-        }, 0));
+        }, 0), {
+          silent: true
+        });
+
+        var taxesColl = {};
         _.forEach(receipt.get('receiptTaxes'), function (receiptTax) {
           var taxObj = {
             'amount': receiptTax.amount,
