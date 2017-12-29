@@ -34,7 +34,8 @@ import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
  *
  */
 public class ReferencedInventoryUtil {
-  public static final String REFERENCEDINVENTORYPREFIX = "RI";
+  public static final String REFERENCEDINVENTORYPREFIX = "[";
+  public static final String REFERENCEDINVENTORYSUFFIX = "]";
 
   /**
    * Create and return a new AttributeSetInstance from the given originalAttributeSetInstance and
@@ -53,7 +54,7 @@ public class ReferencedInventoryUtil {
         (StringUtils.isBlank(newAttributeSetInstance.getDescription()) ? ""
             : newAttributeSetInstance.getDescription())
             + REFERENCEDINVENTORYPREFIX
-            + referencedInventory.getSearchKey(), 255));
+            + referencedInventory.getSearchKey() + REFERENCEDINVENTORYSUFFIX, 255));
     OBDal.getInstance().save(newAttributeSetInstance);
     return newAttributeSetInstance;
   }
