@@ -29,7 +29,7 @@ import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
-import org.openbravo.erpCommon.utility.ReferencedInventoryUtil;
+import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
 
@@ -68,7 +68,7 @@ public class ReferenceInventoryEventHandler extends EntityPersistenceEventObserv
 
     if (isValueAutomaticallySet(value)) {
       final Property refInvTypeProperty = ENTITIES[0]
-          .getProperty(ReferencedInventory.PROPERTY_REFERENCEDINVENTORYTYPEID);
+          .getProperty(ReferencedInventory.PROPERTY_REFERENCEDINVENTORYTYPE);
       final ReferencedInventoryType refInvType = (ReferencedInventoryType) event
           .getCurrentState(refInvTypeProperty);
 

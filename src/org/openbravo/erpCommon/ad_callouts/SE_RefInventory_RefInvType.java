@@ -25,7 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.erpCommon.utility.ReferencedInventoryUtil;
+import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 
 /**
  * Sets the proposed value from the sequence associated to the referenced inventory type. The
