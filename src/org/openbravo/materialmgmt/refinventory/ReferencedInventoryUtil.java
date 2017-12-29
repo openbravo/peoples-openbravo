@@ -19,6 +19,7 @@
 
 package org.openbravo.materialmgmt.refinventory;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
@@ -33,6 +34,7 @@ import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
  *
  */
 public class ReferencedInventoryUtil {
+  public static final String REFERENCEDINVENTORYPREFIX = "RI";
 
   /**
    * Create and return a new AttributeSetInstance from the given originalAttributeSetInstance and
@@ -47,6 +49,11 @@ public class ReferencedInventoryUtil {
     newAttributeSetInstance.setOrganization(originalAttributeSetInstance.getOrganization());
     newAttributeSetInstance.setParentAttributeSetInstance(originalAttributeSetInstance);
     newAttributeSetInstance.setReferencedInventory(referencedInventory);
+    newAttributeSetInstance.setDescription(StringUtils.left(
+        (StringUtils.isBlank(newAttributeSetInstance.getDescription()) ? ""
+            : newAttributeSetInstance.getDescription())
+            + REFERENCEDINVENTORYPREFIX
+            + referencedInventory.getSearchKey(), 255));
     OBDal.getInstance().save(newAttributeSetInstance);
     return newAttributeSetInstance;
   }
