@@ -119,7 +119,7 @@
           return;
         }
 
-        OB.info('Ticket closed: ', OB.UTIL.argumentsToStringifyed(context.receipt.getOrderDescription()), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
+        OB.info('Ticket closed: ', context.receipt.get('json'), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
 
         var orderDate = new Date();
         var normalizedCreationDate = OB.I18N.normalizeDate(context.receipt.get('creationDate'));
@@ -411,7 +411,7 @@
     var multiOrdersFunction = function (receipt, me, callback) {
         var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("multiOrdersClosed");
 
-        OB.info('Multiorders ticket closed', receipt, "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
+        OB.info('Multiorders ticket closed', receipt.get('json'), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
 
         if (!_.isUndefined(receipt)) {
           me.receipt = receipt;
