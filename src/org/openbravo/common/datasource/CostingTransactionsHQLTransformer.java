@@ -46,13 +46,14 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
   private static final String propADListReference = org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE;
   private static final String propADListValue = org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY;
   private static final String MovementTypeRefID = "189";
-  private Set<String> orgs = null;
-  private Map<CostDimension, BaseOBObject> costDimensions = null;
 
   @Override
   public String transformHqlQuery(String hqlQuery, Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters) {
     // Sets the named parameters
+
+    Set<String> orgs = null;
+    Map<CostDimension, BaseOBObject> costDimensions = null;
 
     final String costingId = requestParameters.get("@MaterialMgmtCosting.id@");
     String transformedHqlQuery = null;
@@ -85,7 +86,7 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
           }
         }
 
-        Costing prevCosting = getPreviousCosting(transaction);
+        Costing prevCosting = getPreviousCosting(transaction, orgs, costDimensions);
 
         if (prevCosting == null || (prevCosting != null && "AVA".equals(prevCosting.getCostType()))) {
 
@@ -93,11 +94,12 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
           String previousCostingCost = addCostOnQuery(prevCosting);
           transformedHqlQuery = hqlQuery.replace("@previousCostingCost@", previousCostingCost);
 
-          StringBuffer whereClause = getWhereClause(costing, prevCosting, queryNamedParameters);
+          StringBuffer whereClause = getWhereClause(costing, prevCosting, queryNamedParameters,
+              orgs, costDimensions);
           transformedHqlQuery = transformedHqlQuery
               .replace("@whereClause@", whereClause.toString());
 
-          StringBuffer cumQty = addCumQty(costing, queryNamedParameters);
+          StringBuffer cumQty = addCumQty(costing, queryNamedParameters, orgs, costDimensions);
           transformedHqlQuery = transformedHqlQuery.replace("@cumQty@", cumQty.toString());
 
           StringBuffer cumCost = addCumCost(cumQty, costing, prevCosting);
@@ -121,7 +123,8 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
    * parent tab will appear in the last position.
    */
 
-  private Costing getPreviousCosting(MaterialTransaction transaction) {
+  private Costing getPreviousCosting(MaterialTransaction transaction, Set<String> orgs,
+      Map<CostDimension, BaseOBObject> costDimensions) {
     StringBuffer query = new StringBuffer();
 
     query.append(" select c." + Costing.PROPERTY_ID);
@@ -204,7 +207,8 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
    */
 
   private StringBuffer getWhereClause(Costing costing, Costing prevCosting,
-      Map<String, Object> queryNamedParameters) {
+      Map<String, Object> queryNamedParameters, Set<String> orgs,
+      Map<CostDimension, BaseOBObject> costDimensions) {
 
     StringBuffer whereClause = new StringBuffer();
     MaterialTransaction transaction = costing.getInventoryTransaction();
@@ -324,15 +328,8 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
    * only takes into account transactions that have its cost calculated.
    */
 
-  private StringBuffer addCumQty(Costing costing, Map<String, Object> queryNamedParameters) {
-
-    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
-        costing.getInventoryTransaction().getClient().getId());
-    orgs = osp.getChildTree(costing.getOrganization().getId(), true);
-    if (costing.getProduct().isProduction()) {
-      orgs = osp.getChildTree("0", false);
-      costDimensions = CostingUtils.getEmptyDimensions();
-    }
+  private StringBuffer addCumQty(Costing costing, Map<String, Object> queryNamedParameters,
+      Set<String> orgs, Map<CostDimension, BaseOBObject> costDimensions) {
 
     StringBuffer select = new StringBuffer();
     select.append(" (select sum(trxCost." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ")");
