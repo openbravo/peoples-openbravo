@@ -62,12 +62,6 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
   private static final String MANAGE_VARIANTS_TABLE_ID = "147D4D709FAC4AF0B611ABFED328FA12";
   private static final String ID_REFERENCE_ID = "13";
 
-  private List<String> selectedIds = new ArrayList<String>();
-  private HashMap<String, List<CharacteristicValue>> selectedChValues = new HashMap<String, List<CharacteristicValue>>();
-  private String nameFilter;
-  private String searchKeyFilter;
-  private Boolean variantCreated;
-
   @Override
   public void checkFetchDatasourceAccess(Map<String, String> parameter) {
     final OBContext obContext = OBContext.getOBContext();
@@ -91,7 +85,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
     OBContext.setAdminMode(true);
     final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
     try {
-      readCriteria(parameters);
+      ProductChSelectedFilters selectedFilters = readCriteria(parameters);
       final String strProductId = parameters.get("@Product.id@");
       final Product product = OBDal.getInstance().get(Product.class, strProductId);
 
@@ -137,8 +131,8 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         if (useCode) {
           totalMaxLength += maxLength;
         }
-        List<CharacteristicValue> filteredValues = selectedChValues.get(prCh.getCharacteristic()
-            .getId());
+        List<CharacteristicValue> filteredValues = selectedFilters.getSelectedChValues().get(
+            prCh.getCharacteristic().getId());
         ProductCharacteristicAux prChAux = new ProductCharacteristicAux(useCode, prChConfs,
             filteredValues);
         currentValues[i] = prChAux.getNextValue();
@@ -197,7 +191,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         searchKey += productNo;
         variantMap.put("searchKey", searchKey);
 
-        StringBuffer where = new StringBuffer();
+        StringBuilder where = new StringBuilder();
         where.append(" as p ");
         where.append(" where p." + Product.PROPERTY_GENERICPRODUCT + " = :product");
 
@@ -241,20 +235,23 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
           variantMap.put("variantId", existingProduct.getId());
           variantMap.put("id", existingProduct.getId());
         }
-        if (StringUtils.isNotEmpty(searchKeyFilter)) {
+        if (StringUtils.isNotEmpty(selectedFilters.getSearchKey())) {
           includeInResult = includeInResult
               && StringUtils.containsIgnoreCase((String) variantMap.get("searchKey"),
-                  searchKeyFilter);
+                  selectedFilters.getSearchKey());
         }
-        if (StringUtils.isNotEmpty(nameFilter)) {
+        if (StringUtils.isNotEmpty(selectedFilters.getName())) {
           includeInResult = includeInResult
-              && StringUtils.containsIgnoreCase((String) variantMap.get("name"), nameFilter);
+              && StringUtils.containsIgnoreCase((String) variantMap.get("name"),
+                  selectedFilters.getName());
         }
-        if (variantCreated != null) {
-          includeInResult = includeInResult && variantCreated == (existingProduct != null);
+        if (selectedFilters.isVariantCreated() != null) {
+          includeInResult = includeInResult
+              && selectedFilters.isVariantCreated() == (existingProduct != null);
         }
-        if (!selectedIds.isEmpty()) {
-          includeInResult = includeInResult || selectedIds.contains(variantMap.get("id"));
+        if (!selectedFilters.getSelectedIds().isEmpty()) {
+          includeInResult = includeInResult
+              || selectedFilters.getSelectedIds().contains(variantMap.get("id"));
         }
 
         if (includeInResult) {
@@ -292,13 +289,10 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
     return result;
   }
 
-  private void readCriteria(Map<String, String> parameters) throws JSONException {
+  private ProductChSelectedFilters readCriteria(Map<String, String> parameters)
+      throws JSONException {
+    ProductChSelectedFilters selectedFilters = new ProductChSelectedFilters();
     JSONArray criteriaArray = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
-    selectedIds = new ArrayList<String>();
-    selectedChValues = new HashMap<String, List<CharacteristicValue>>();
-    nameFilter = null;
-    searchKeyFilter = null;
-    variantCreated = null;
 
     for (int i = 0; i < criteriaArray.length(); i++) {
       String value = "";
@@ -316,19 +310,19 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         value = criteria.getString("value");
       }
       if (fieldName.equals("id") && operatorName.equals("notNull")) {
-        // In the case of having the criteria "fieldName":"id","operator":"notNull" don't do
-        // nothing.
-        // this case is the one which should return every record.
+        // In the case of having the criteria
+        // "fieldName":"id","operator":"notNull" don't do anything.
+        // This case is the one which should return every record.
         continue;
       }
       if (fieldName.equals("name")) {
-        nameFilter = value;
+        selectedFilters.setName(value);
       } else if (fieldName.equals("searchKey")) {
-        searchKeyFilter = value;
+        selectedFilters.setSearchKey(value);
       } else if (fieldName.equals("id")) {
-        selectedIds.add(value);
+        selectedFilters.addSelectedID(value);
       } else if (fieldName.equals("variantCreated")) {
-        variantCreated = criteria.getBoolean("value");
+        selectedFilters.setIsVariantCreated(criteria.getBoolean("value"));
       } else if (fieldName.equals("characteristicDescription")) {
         JSONArray values = new JSONArray(value);
         // All values belong to the same characteristicId, get the first one.
@@ -342,10 +336,11 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
             strCharacteristicId = chValue.getCharacteristic().getId();
           }
         }
-        selectedChValues.put(strCharacteristicId, chValueIds);
+        selectedFilters.addSelectedChValues(strCharacteristicId, chValueIds);
       }
 
     }
+    return selectedFilters;
   }
 
   private String buildExistsClause(int i) {
@@ -447,6 +442,66 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
       prChConf = iterator.next();
       return prChConf;
     }
+  }
+
+  /**
+   * Private class that groups all the values of the filters introduced by the user
+   */
+  private class ProductChSelectedFilters {
+    private List<String> selectedIds;
+    private HashMap<String, List<CharacteristicValue>> selectedChValues;
+    private String name;
+    private String searchKey;
+    private Boolean isVariantCreated;
+
+    ProductChSelectedFilters() {
+      selectedIds = new ArrayList<String>();
+      selectedChValues = new HashMap<String, List<CharacteristicValue>>();
+      name = null;
+      searchKey = null;
+      isVariantCreated = null;
+    }
+
+    public void addSelectedID(String id) {
+      selectedIds.add(id);
+    }
+
+    public void addSelectedChValues(String characteristicId, List<CharacteristicValue> values) {
+      selectedChValues.put(characteristicId, values);
+    }
+
+    public void setName(String nameFilterParam) {
+      name = nameFilterParam;
+    }
+
+    public void setSearchKey(String searchKeyFilterParam) {
+      searchKey = searchKeyFilterParam;
+    }
+
+    public void setIsVariantCreated(boolean variantCreatedParam) {
+      isVariantCreated = variantCreatedParam;
+    }
+
+    public List<String> getSelectedIds() {
+      return selectedIds;
+    }
+
+    public Map<String, List<CharacteristicValue>> getSelectedChValues() {
+      return selectedChValues;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public String getSearchKey() {
+      return searchKey;
+    }
+
+    public Boolean isVariantCreated() {
+      return isVariantCreated;
+    }
+
   }
 
   @Override
