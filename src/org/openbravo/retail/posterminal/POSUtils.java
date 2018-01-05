@@ -381,6 +381,7 @@ public class POSUtils {
     OBCriteria<OBPOSErrors> errorCrit = OBDal.getInstance().createCriteria(OBPOSErrors.class);
     errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, terminal));
     errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "Order"));
+    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
     List<OBPOSErrors> errors = errorCrit.list();
     for (OBPOSErrors error : errors) {
       try {
@@ -475,6 +476,7 @@ public class POSUtils {
     OBCriteria<OBPOSErrors> errorCrit = OBDal.getInstance().createCriteria(OBPOSErrors.class);
     errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, terminal));
     errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "Order"));
+    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
     List<OBPOSErrors> errors = errorCrit.list();
     for (OBPOSErrors error : errors) {
       try {
@@ -567,6 +569,7 @@ public class POSUtils {
     OBCriteria<OBPOSErrors> errorCrit = OBDal.getInstance().createCriteria(OBPOSErrors.class);
     errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, terminal));
     errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "Order"));
+    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
     List<OBPOSErrors> errors = errorCrit.list();
     for (OBPOSErrors error : errors) {
       try {
