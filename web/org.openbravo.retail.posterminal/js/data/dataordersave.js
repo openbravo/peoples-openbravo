@@ -389,6 +389,8 @@
               if (mdl.get('id') === rcpt.get('id')) {
                 mdl.set('isbeingprocessed', 'N');
                 mdl.set('hasbeenpaid', 'N');
+                mdl.set('payment', rcpt.get('payment'));
+                mdl.set('payments', rcpt.get('payments'));
                 return true;
               }
             }, this);
