@@ -65,203 +65,12 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     boolean recalculatePrices = "N".equals(vars.getStringParameter("inprecalculateprices", false,
         "N"));
+    String orderId = (String) bundle.getParams().get("C_Order_ID");
 
     try {
-      // Create Sales Order
-      String orderId = (String) bundle.getParams().get("C_Order_ID");
-      Order objOrder = OBDal.getInstance().get(Order.class, orderId);
-      Order objCloneOrder = (Order) DalUtil.copy(objOrder, false);
-
-      if (FIN_Utility.isBlockedBusinessPartner(objOrder.getBusinessPartner().getId(), true, 1)) {
-        // If the Business Partner is blocked, the Order should not be completed.
-        OBError msg = new OBError();
-        msg.setType("Error");
-        msg.setMessage(OBMessageUtils.messageBD("ThebusinessPartner") + " "
-            + objOrder.getBusinessPartner().getIdentifier() + " "
-            + OBMessageUtils.messageBD("BusinessPartnerBlocked"));
-        bundle.setResult(msg);
-        OBDal.getInstance().rollbackAndClose();
-        return;
-      }
-
-      // Set status of the new Order to Draft and Processed = N
-      objCloneOrder.setDocumentAction("CO");
-      objCloneOrder.setDocumentStatus("DR");
-      objCloneOrder.setProcessed(false);
-      objCloneOrder.setPosted("N");
-
-      // Set the Sales Order Document Type
-      DocumentType docType = objCloneOrder.getDocumentType().getDocumentTypeForOrder();
-      if (docType == null) {
-        OBDal.getInstance().rollbackAndClose();
-        OBError result = OBErrorBuilder.buildMessage(null, "error", "@NoOrderDocType@");
-        bundle.setResult(result);
-        return;
-      }
-
-      // Set values of the Sales Order Header
-      objCloneOrder.setDocumentType(docType);
-      objCloneOrder.setTransactionDocument(docType);
-      objCloneOrder.setProcessed(false);
-      objCloneOrder.setSalesTransaction(true);
-      objCloneOrder.setDocumentNo(null);
-      objCloneOrder.setOrderDate(DateUtils.truncate(new Date(), Calendar.DATE));
-      objCloneOrder.setRejectReason(null);
-      objCloneOrder.setValidUntil(null);
-      objCloneOrder.setSummedLineAmount(BigDecimal.ZERO);
-      objCloneOrder.setGrandTotalAmount(BigDecimal.ZERO);
-      objCloneOrder.setQuotation(objOrder);
-      OBDal.getInstance().save(objCloneOrder);
-      OBDal.getInstance().flush();
-      OBDal.getInstance().refresh(objCloneOrder);
-
-      Map<String, BigDecimal> taxForDiscounts = new HashMap<String, BigDecimal>();
-      int lineNo = 10;
-      StringBuilder strMessage = new StringBuilder();
-
-      // Copy the Lines of the Quotation in the new Sales Order.
-      for (OrderLine ordLine : objOrder.getOrderLineList()) {
-        if (ordLine.getOrderDiscount() != null) {
-          // If the line is a discount line do not copy it
-          continue;
-        }
-
-        // Copy line to the new Sales Order
-        OrderLine objCloneOrdLine = (OrderLine) DalUtil.copy(ordLine, false);
-
-        String strCTaxID = objCloneOrdLine.getTax().getId();
-        TaxRate lineTax = OBDal.getInstance().get(TaxRate.class, strCTaxID);
-
-        if (lineTax == null) {
-          if (strMessage.length() > 0) {
-            strMessage = strMessage.append(", ");
-          }
-          strMessage = strMessage.append(lineNo);
-        }
-
-        // Update the HashMap of the Taxes. HashMap<TaxId, TotalAmount>
-        BigDecimal price = BigDecimal.ZERO;
-        try {
-          OBContext.setAdminMode(true);
-          if (objCloneOrder.getPriceList().isPriceIncludesTax()) {
-            price = objCloneOrdLine.getLineGrossAmount();
-          } else {
-            price = objCloneOrdLine.getLineNetAmount();
-          }
-        } finally {
-          OBContext.restorePreviousMode();
-        }
-        if (taxForDiscounts.containsKey(strCTaxID)) {
-          taxForDiscounts.put(strCTaxID, taxForDiscounts.get(strCTaxID).add(price));
-        } else {
-          taxForDiscounts.put(strCTaxID, price);
-        }
-
-        if (recalculatePrices) {
-          try {
-            OBContext.setAdminMode(true);
-            recalculatePrices(objOrder, ordLine, objCloneOrder, objCloneOrdLine, lineTax);
-          } finally {
-            OBContext.restorePreviousMode();
-          }
-        } else {
-          for (OrderLineOffer offer : ordLine.getOrderLineOfferList()) {
-            // Copy Promotions and Discounts.
-            OrderLineOffer objCloneOffer = (OrderLineOffer) DalUtil.copy(offer, false);
-            objCloneOffer.setSalesOrderLine(objCloneOrdLine);
-            objCloneOrdLine.getOrderLineOfferList().add(objCloneOffer);
-          }
-        }
-        // Set last values of new Sales Order line
-        objCloneOrdLine.setSalesOrder(objCloneOrder);
-        objCloneOrdLine.setReservedQuantity(BigDecimal.ZERO);
-        objCloneOrdLine.setDeliveredQuantity(BigDecimal.ZERO);
-        objCloneOrdLine.setInvoicedQuantity(BigDecimal.ZERO);
-        objCloneOrdLine.setQuotationLine(ordLine);
-        objCloneOrder.getOrderLineList().add(objCloneOrdLine);
-        lineNo = lineNo + 10;
-      }
-
-      if (strMessage.length() > 0) {
-        OBDal.getInstance().rollbackAndClose();
-        String message = "@TaxCategoryWithoutTaxRate@".concat(strMessage.toString());
-        OBError result = OBErrorBuilder.buildMessage(null, "error", message);
-        bundle.setResult(result);
-        return;
-      }
-      OBDal.getInstance().flush();
-      OBDal.getInstance().refresh(objCloneOrder);
-
-      // Delete created discounts for Order
-      for (OrderDiscount disCloneLine : objCloneOrder.getOrderDiscountList()) {
-        OBDal.getInstance().remove(disCloneLine);
-      }
-      objCloneOrder.getOrderDiscountList().clear();
-
-      OBDal.getInstance().flush();
-      OBDal.getInstance().refresh(objCloneOrder);
-
-      BigDecimal cumulativeDiscount = new BigDecimal(100);
-
-      // Create the discounts to be able to add the appropriate discount_id in c_orderline
-      for (OrderDiscount disLine : objOrder.getOrderDiscountList()) {
-        // Copy discounts
-        OrderDiscount objCloneDiscount = (OrderDiscount) DalUtil.copy(disLine, false);
-        objCloneDiscount.setSalesOrder(objCloneOrder);
-        objCloneOrder.getOrderDiscountList().add(objCloneDiscount);
-        if (!recalculatePrices) {
-          // Copy the Invoice Lines that are created from the Discounts
-          Iterator<Entry<String, BigDecimal>> it = taxForDiscounts.entrySet().iterator();
-          OBDal.getInstance().flush();
-          try {
-            OBContext.setAdminMode(true);
-            while (it.hasNext()) {
-              Map.Entry<String, BigDecimal> e = it.next();
-              BigDecimal discountAmount = BigDecimal.ZERO;
-
-              if (objCloneDiscount.isCascade()) {
-                discountAmount = objCloneDiscount.getDiscount().getDiscount();
-                discountAmount = cumulativeDiscount.multiply(discountAmount).divide(
-                    new BigDecimal(100));
-
-              } else {
-                discountAmount = objCloneDiscount.getDiscount().getDiscount();
-              }
-              cumulativeDiscount = cumulativeDiscount.subtract(discountAmount);
-
-              OrderLine olDiscount = generateOrderLineDiscount(e, objCloneDiscount, objOrder,
-                  objCloneOrder, lineNo, cumulativeDiscount, discountAmount);
-              lineNo = lineNo + 10;
-              objCloneOrder.getOrderLineList().add(olDiscount);
-            }
-          } finally {
-            OBContext.restorePreviousMode();
-          }
-        }
-      }
-
-      OBDal.getInstance().flush();
-      OBDal.getInstance().refresh(objCloneOrder);
-
-      // If prices are going to be recalculated, call C_Order_Post
-      callCOrderPost(objCloneOrder, recalculatePrices);
-      OBDal.getInstance().flush();
-      OBDal.getInstance().refresh(objCloneOrder);
-
-      // Set the Status of the Quotation to Closed - Converted
-      objOrder.setDocumentStatus("CA");
-
-      OBDal.getInstance().save(objOrder);
-      OBDal.getInstance().save(objCloneOrder);
-
-      OBDal.getInstance().flush();
-      OBDal.getInstance().refresh(objCloneOrder);
-      OBDal.getInstance().refresh(objOrder);
-
-      OBDal.getInstance().commitAndClose();
-      OBError result = OBErrorBuilder.buildMessage(null, "success", "@SalesOrderDocumentno@ "
-          + objCloneOrder.getDocumentNo() + " @beenCreated@");
-      bundle.setResult(result);
+      OBError msg = convertQuotationIntoSalesOrder(recalculatePrices, orderId);
+      bundle.setResult(msg);
+      return;
     } catch (Exception e) {
       Throwable t = DbUtility.getUnderlyingSQLException(e);
       final OBError error = OBMessageUtils.translateError(bundle.getConnection(), vars,
@@ -271,10 +80,222 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
   }
 
   /**
+   * Converts a Quotation Into a Sales Order based on the given ID
+   * <ul>
+   * <li>1. Creates a Sales Order in Draft Status based on a clone of the Quotation</li>
+   * <li>2. Sets the proper Document Type to the new Sales Order</li>
+   * <li>3. Sets the proper values to the Sales Order header</li>
+   * <li>4. For each line that is not a discount it creates a clone into the Sales Order Document</li>
+   * <li>5. If the parameter recalculatePrices is true, it recalculates the prices</li>
+   * <li>6. Recalculates the discounts for each line</li>
+   * <li>7. Calls C_Order_Post and updates the status of the Quotation to Already Converted to Order
+   * </li>
+   * </ul>
+   * 
+   * @param recalculatePrices
+   *          If true, the prices of the new Sales Order line will be recalculated. If false, it
+   *          will be the same prices as the Quotation
+   * @param orderId
+   *          The Id of the Quotation
+   * @return An OBError message with the result message
+   */
+  public OBError convertQuotationIntoSalesOrder(final boolean recalculatePrices,
+      final String orderId) {
+    // Create Sales Order
+    Order objOrder = OBDal.getInstance().get(Order.class, orderId);
+    Order objCloneOrder = (Order) DalUtil.copy(objOrder, false);
+
+    if (FIN_Utility.isBlockedBusinessPartner(objOrder.getBusinessPartner().getId(), true, 1)) {
+      // If the Business Partner is blocked, the Order should not be completed.
+      OBError msg = new OBError();
+      msg.setType("Error");
+      msg.setMessage(OBMessageUtils.messageBD("ThebusinessPartner") + " "
+          + objOrder.getBusinessPartner().getIdentifier() + " "
+          + OBMessageUtils.messageBD("BusinessPartnerBlocked"));
+      OBDal.getInstance().rollbackAndClose();
+      return msg;
+    }
+
+    // Set status of the new Order to Draft and Processed = N
+    objCloneOrder.setDocumentAction("CO");
+    objCloneOrder.setDocumentStatus("DR");
+    objCloneOrder.setProcessed(false);
+    objCloneOrder.setPosted("N");
+
+    // Set the Sales Order Document Type
+    DocumentType docType = objCloneOrder.getDocumentType().getDocumentTypeForOrder();
+    if (docType == null) {
+      OBDal.getInstance().rollbackAndClose();
+      return OBErrorBuilder.buildMessage(null, "error", "@NoOrderDocType@");
+    }
+
+    // Set values of the Sales Order Header
+    objCloneOrder.setDocumentType(docType);
+    objCloneOrder.setTransactionDocument(docType);
+    objCloneOrder.setProcessed(false);
+    objCloneOrder.setSalesTransaction(true);
+    objCloneOrder.setDocumentNo(null);
+    objCloneOrder.setOrderDate(DateUtils.truncate(new Date(), Calendar.DATE));
+    objCloneOrder.setRejectReason(null);
+    objCloneOrder.setValidUntil(null);
+    objCloneOrder.setSummedLineAmount(BigDecimal.ZERO);
+    objCloneOrder.setGrandTotalAmount(BigDecimal.ZERO);
+    objCloneOrder.setQuotation(objOrder);
+    OBDal.getInstance().save(objCloneOrder);
+    OBDal.getInstance().flush();
+    OBDal.getInstance().refresh(objCloneOrder);
+
+    Map<String, BigDecimal> taxForDiscounts = new HashMap<String, BigDecimal>();
+    int lineNo = 10;
+    StringBuilder strMessage = new StringBuilder();
+
+    // Copy the Lines of the Quotation in the new Sales Order.
+    for (OrderLine ordLine : objOrder.getOrderLineList()) {
+      if (ordLine.getOrderDiscount() != null) {
+        // If the line is a discount line do not copy it
+        continue;
+      }
+
+      // Copy line to the new Sales Order
+      OrderLine objCloneOrdLine = (OrderLine) DalUtil.copy(ordLine, false);
+
+      String strCTaxID = objCloneOrdLine.getTax().getId();
+      TaxRate lineTax = OBDal.getInstance().get(TaxRate.class, strCTaxID);
+
+      if (lineTax == null) {
+        if (strMessage.length() > 0) {
+          strMessage = strMessage.append(", ");
+        }
+        strMessage = strMessage.append(lineNo);
+      }
+
+      // Update the HashMap of the Taxes. HashMap<TaxId, TotalAmount>
+      BigDecimal price = BigDecimal.ZERO;
+      try {
+        OBContext.setAdminMode(true);
+        if (objCloneOrder.getPriceList().isPriceIncludesTax()) {
+          price = objCloneOrdLine.getLineGrossAmount();
+        } else {
+          price = objCloneOrdLine.getLineNetAmount();
+        }
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+      if (taxForDiscounts.containsKey(strCTaxID)) {
+        taxForDiscounts.put(strCTaxID, taxForDiscounts.get(strCTaxID).add(price));
+      } else {
+        taxForDiscounts.put(strCTaxID, price);
+      }
+
+      if (recalculatePrices) {
+        try {
+          OBContext.setAdminMode(true);
+          recalculatePrices(objOrder, ordLine, objCloneOrder, objCloneOrdLine);
+        } finally {
+          OBContext.restorePreviousMode();
+        }
+      } else {
+        for (OrderLineOffer offer : ordLine.getOrderLineOfferList()) {
+          // Copy Promotions and Discounts.
+          OrderLineOffer objCloneOffer = (OrderLineOffer) DalUtil.copy(offer, false);
+          objCloneOffer.setSalesOrderLine(objCloneOrdLine);
+          objCloneOrdLine.getOrderLineOfferList().add(objCloneOffer);
+        }
+      }
+      // Set last values of new Sales Order line
+      objCloneOrdLine.setSalesOrder(objCloneOrder);
+      objCloneOrdLine.setReservedQuantity(BigDecimal.ZERO);
+      objCloneOrdLine.setDeliveredQuantity(BigDecimal.ZERO);
+      objCloneOrdLine.setInvoicedQuantity(BigDecimal.ZERO);
+      objCloneOrdLine.setQuotationLine(ordLine);
+      objCloneOrder.getOrderLineList().add(objCloneOrdLine);
+      lineNo = lineNo + 10;
+    }
+
+    if (strMessage.length() > 0) {
+      OBDal.getInstance().rollbackAndClose();
+      String message = "@TaxCategoryWithoutTaxRate@".concat(strMessage.toString());
+      return OBErrorBuilder.buildMessage(null, "error", message);
+    }
+    OBDal.getInstance().flush();
+    OBDal.getInstance().refresh(objCloneOrder);
+
+    // Delete created discounts for Order
+    for (OrderDiscount disCloneLine : objCloneOrder.getOrderDiscountList()) {
+      OBDal.getInstance().remove(disCloneLine);
+    }
+    objCloneOrder.getOrderDiscountList().clear();
+
+    OBDal.getInstance().flush();
+    OBDal.getInstance().refresh(objCloneOrder);
+
+    BigDecimal cumulativeDiscount = new BigDecimal(100);
+
+    // Create the discounts to be able to add the appropriate discount_id in c_orderline
+    for (OrderDiscount disLine : objOrder.getOrderDiscountList()) {
+      // Copy discounts
+      OrderDiscount objCloneDiscount = (OrderDiscount) DalUtil.copy(disLine, false);
+      objCloneDiscount.setSalesOrder(objCloneOrder);
+      objCloneOrder.getOrderDiscountList().add(objCloneDiscount);
+      if (!recalculatePrices) {
+        // Copy the Invoice Lines that are created from the Discounts
+        Iterator<Entry<String, BigDecimal>> it = taxForDiscounts.entrySet().iterator();
+        OBDal.getInstance().flush();
+        try {
+          OBContext.setAdminMode(true);
+          while (it.hasNext()) {
+            Map.Entry<String, BigDecimal> e = it.next();
+            BigDecimal discountAmount;
+
+            if (objCloneDiscount.isCascade()) {
+              discountAmount = objCloneDiscount.getDiscount().getDiscount();
+              discountAmount = cumulativeDiscount.multiply(discountAmount).divide(
+                  new BigDecimal(100));
+
+            } else {
+              discountAmount = objCloneDiscount.getDiscount().getDiscount();
+            }
+            cumulativeDiscount = cumulativeDiscount.subtract(discountAmount);
+
+            OrderLine olDiscount = generateOrderLineDiscount(e, objCloneDiscount, objOrder,
+                objCloneOrder, lineNo, discountAmount);
+            lineNo = lineNo + 10;
+            objCloneOrder.getOrderLineList().add(olDiscount);
+          }
+        } finally {
+          OBContext.restorePreviousMode();
+        }
+      }
+    }
+
+    OBDal.getInstance().flush();
+    OBDal.getInstance().refresh(objCloneOrder);
+
+    // If prices are going to be recalculated, call C_Order_Post
+    callCOrderPost(objCloneOrder, recalculatePrices);
+    OBDal.getInstance().flush();
+    OBDal.getInstance().refresh(objCloneOrder);
+
+    // Set the Status of the Quotation to Closed - Converted
+    objOrder.setDocumentStatus("CA");
+
+    OBDal.getInstance().save(objOrder);
+    OBDal.getInstance().save(objCloneOrder);
+
+    OBDal.getInstance().flush();
+    OBDal.getInstance().refresh(objCloneOrder);
+    OBDal.getInstance().refresh(objOrder);
+
+    OBDal.getInstance().commitAndClose();
+    return OBErrorBuilder.buildMessage(null, "success",
+        "@SalesOrderDocumentno@ " + objCloneOrder.getDocumentNo() + " @beenCreated@");
+  }
+
+  /**
    * Given an Order Line and a Clone Order Line, it recalculates the prices of the second one
    */
   private void recalculatePrices(Order objOrder, OrderLine ordLine, Order objCloneOrder,
-      OrderLine objCloneOrdLine, TaxRate lineTax) {
+      OrderLine objCloneOrdLine) {
 
     String strPriceVersionId = getPriceListVersion(objOrder.getPriceList().getId(), objOrder
         .getClient().getId(), objCloneOrder.getOrderDate());
@@ -415,7 +436,7 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
    */
   private OrderLine generateOrderLineDiscount(Entry<String, BigDecimal> e,
       OrderDiscount objCloneDiscount, Order objOrder, Order objCloneOrder, int lineNo,
-      BigDecimal cumulativeDiscount, BigDecimal discountAmount) {
+      BigDecimal discountAmount) {
 
     BigDecimal amount = e.getValue();
     BigDecimal discountedAmount = amount.multiply(discountAmount).divide(new BigDecimal(100));
