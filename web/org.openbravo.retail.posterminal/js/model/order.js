@@ -4086,8 +4086,8 @@
               order.save();
               order.trigger('saveCurrent');
             }
-            if (callback instanceof Function) {
-              callback(order);
+            if (args.callback instanceof Function) {
+              args.callback(order);
             }
             };
 
@@ -6334,8 +6334,8 @@
         callback: callback
       }, function (args) {
         var executeFinalCallback = function () {
-            if (callback instanceof Function) {
-              callback(order);
+            if (args.callback instanceof Function) {
+              args.callback(order);
             }
             };
 
