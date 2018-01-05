@@ -388,25 +388,18 @@ public class POSUtils {
         JSONObject jsonError = new JSONObject(error.getJsoninfo());
         if (jsonError.has("documentNo") && jsonError.has("isQuotation")
             && !jsonError.getBoolean("isQuotation")) {
-          String documentNo = jsonError.getString("documentNo");
+          String number = "0", documentNo = jsonError.getString("documentNo");
           if (documentNo.indexOf("/") > -1) {
-            String number = documentNo.substring(documentNo.indexOf("/") + 1);
-            if (number.indexOf("-") > -1) {
-              number = number.substring(0, number.indexOf("-"));
-            }
-            int errorNumber = new Long(number).intValue();
-            if (errorNumber > maxDocNo) {
-              maxDocNo = errorNumber;
-            }
+            number = documentNo.substring(documentNo.lastIndexOf("/") + 1);
           } else if (jsonError.has("documentnoPrefix")) {
-            String number = documentNo.replace(jsonError.getString("documentnoPrefix"), "");
-            if (number.indexOf("-") > -1) {
-              number = number.substring(0, number.indexOf("-"));
-            }
-            int errorNumber = new Long(number).intValue();
-            if (errorNumber > maxDocNo) {
-              maxDocNo = errorNumber;
-            }
+            number = documentNo.replace(jsonError.getString("documentnoPrefix"), "");
+          }
+          if (number.indexOf("-") > -1) {
+            number = number.substring(0, number.indexOf("-"));
+          }
+          int errorNumber = new Long(number).intValue();
+          if (errorNumber > maxDocNo) {
+            maxDocNo = errorNumber;
           }
         }
       } catch (Exception e) {
@@ -483,25 +476,18 @@ public class POSUtils {
         JSONObject jsonError = new JSONObject(error.getJsoninfo());
         if (jsonError.has("documentNo") && jsonError.has("isQuotation")
             && jsonError.getBoolean("isQuotation")) {
-          String documentNo = jsonError.getString("documentNo");
+          String number = "0", documentNo = jsonError.getString("documentNo");
           if (documentNo.indexOf("/") > -1) {
-            String number = documentNo.substring(documentNo.indexOf("/") + 1);
-            if (number.indexOf("-") > -1) {
-              number = number.substring(0, number.indexOf("-"));
-            }
-            int errorNumber = new Long(number).intValue();
-            if (errorNumber > maxDocNo) {
-              maxDocNo = errorNumber;
-            }
+            number = documentNo.substring(documentNo.lastIndexOf("/") + 1);
           } else if (jsonError.has("quotationnoPrefix")) {
-            String number = documentNo.replace(jsonError.getString("quotationnoPrefix"), "");
-            if (number.indexOf("-") > -1) {
-              number = number.substring(0, number.indexOf("-"));
-            }
-            int errorNumber = new Long(number).intValue();
-            if (errorNumber > maxDocNo) {
-              maxDocNo = errorNumber;
-            }
+            number = documentNo.replace(jsonError.getString("quotationnoPrefix"), "");
+          }
+          if (number.indexOf("-") > -1) {
+            number = number.substring(0, number.indexOf("-"));
+          }
+          int errorNumber = new Long(number).intValue();
+          if (errorNumber > maxDocNo) {
+            maxDocNo = errorNumber;
           }
         }
       } catch (Exception e) {
@@ -575,25 +561,18 @@ public class POSUtils {
       try {
         JSONObject jsonError = new JSONObject(error.getJsoninfo());
         if (jsonError.has("documentNo") && (jsonError.optLong("returnnoSuffix", -1L) > -1L)) {
-          String documentNo = jsonError.getString("documentNo");
+          String number = "0", documentNo = jsonError.getString("documentNo");
           if (documentNo.indexOf("/") > -1) {
-            String number = documentNo.substring(documentNo.indexOf("/") + 1);
-            if (number.indexOf("-") > -1) {
-              number = number.substring(0, number.indexOf("-"));
-            }
-            int errorNumber = new Long(number).intValue();
-            if (errorNumber > maxDocNo) {
-              maxDocNo = errorNumber;
-            }
+            number = documentNo.substring(documentNo.lastIndexOf("/") + 1);
           } else if (jsonError.has("returnnoPrefix")) {
-            String number = documentNo.replace(jsonError.getString("returnnoPrefix"), "");
-            if (number.indexOf("-") > -1) {
-              number = number.substring(0, number.indexOf("-"));
-            }
-            int errorNumber = new Long(number).intValue();
-            if (errorNumber > maxDocNo) {
-              maxDocNo = errorNumber;
-            }
+            number = documentNo.replace(jsonError.getString("returnnoPrefix"), "");
+          }
+          if (number.indexOf("-") > -1) {
+            number = number.substring(0, number.indexOf("-"));
+          }
+          int errorNumber = new Long(number).intValue();
+          if (errorNumber > maxDocNo) {
+            maxDocNo = errorNumber;
           }
         }
       } catch (Exception e) {
