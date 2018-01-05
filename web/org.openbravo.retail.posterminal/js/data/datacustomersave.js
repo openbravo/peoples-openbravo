@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -89,6 +89,10 @@
         } else {
           customer.set('loaded', OB.I18N.normalizeDate(new Date(customer.get('loaded'))));
         }
+        // Set locId only, So it will not create new location 
+        bpLocation = customer.get('locationModel');
+        customer.set('locId', bpLocation.get('id'));
+
         bpToSave.set('json', JSON.stringify(customer.serializeEditedToJSON()));
         bpToSave.set('c_bpartner_id', customer.get('id'));
       } else {
@@ -107,24 +111,6 @@
           customer.id = uuid;
           bpToSave.set('json', JSON.stringify(customer.serializeToJSON()));
           bpToSave.set('id', customer.get('id'));
-        }
-
-        // the location is sent to the server as part of the BP save, but when the BP is 
-        // added directly to the ticket it also needs the location object in the BP, in the
-        // locationModel
-        // This can be done by creating the object as below or requesting it again from the server
-        // but this takes another request, that's why it is created here as an object
-        if (!bpToSave.get('locationModel')) {
-          bpLocation = new OB.Model.BPLocation();
-          bpLocation.set('id', customer.get('locId'));
-          bpLocation.set('bpartner', customer.get('id'));
-          bpLocation.set('name', customer.get('locName'));
-          bpLocation.set('postalCode', customer.get('postalCode'));
-          bpLocation.set('cityName', customer.get('cityName'));
-          bpLocation.set('_identifier', customer.get('locName'));
-          bpLocation.set('countryName', customer.get('countryName'));
-          bpLocation.set('countryId', customer.get('countryId'));
-          bpToSave.set('locationModel', bpLocation);
         }
 
         bpToSave.set('isbeingprocessed', 'Y');
@@ -158,25 +144,7 @@
         OB.Dal.save(customer, function () {
           //OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSavedSuccessfullyLocally',[customer.get('_identifier')]));
           // Saving Customer Address locally
-          if (!isNew) {
-            //load the BPlocation and then update it
-            OB.Dal.get(OB.Model.BPLocation, customer.get('locId'), function (bpLocToUpdate) {
-              if (bpLocToUpdate) {
-                // Set all properties to bplocation
-                setBPLocationProperty(bpLocToUpdate, customer, function () {
-                  OB.Dal.save(bpLocToUpdate, function () {
-                    //customer location created successfully. Nothing to do here.
-                  }, function () {
-                    OB.error(arguments);
-                  }, isNew);
-                });
-              } else {
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_errorSavingBPLoc_header'), OB.I18N.getLabel('OBPOS_errorSavingBPLoc_body'));
-              }
-            }, function () {
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_errorSavingBPLoc_header'), OB.I18N.getLabel('OBPOS_errorSavingBPLoc_body'));
-            });
-          } else {
+          if (isNew) {
             //create bploc from scratch and set all properties
             bpLocToSave.set('id', customer.get('locId'));
             setBPLocationProperty(bpLocToSave, customer, function () {
