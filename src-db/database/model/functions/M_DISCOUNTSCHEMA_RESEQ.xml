@@ -34,7 +34,6 @@
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
   v_Record_ID VARCHAR2(32);
-  v_AD_User_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -65,7 +64,6 @@
       )
     LOOP
       v_Record_ID:=Cur_Parameter.Record_ID;
-      v_AD_User_ID:=Cur_Parameter.AD_User_ID;
     END LOOP; -- Get Parameter
     DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
     -- Line

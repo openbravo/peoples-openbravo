@@ -108,7 +108,6 @@
       v_line_gross_amount NUMBER:=0;
       v_grosspricestd NUMBER:=0;
       v_grosspricelist NUMBER:=0;
-      v_priceprecision NUMBER;
       v_stdprecision NUMBER;
       --
       v_taxBaseAmt NUMBER;
@@ -209,8 +208,8 @@
             WHERE c_bpartner_id = CUR_Shipment.C_BPartner_ID;
           END IF;
           
-          SELECT PricePrecision, stdprecision
-            INTO v_priceprecision, v_stdprecision
+          SELECT stdprecision
+            INTO v_stdprecision
           FROM C_CURRENCY
           WHERE C_CURRENCY_ID = v_C_Currency_ID;
           

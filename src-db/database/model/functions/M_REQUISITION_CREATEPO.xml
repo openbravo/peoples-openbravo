@@ -52,7 +52,6 @@
   v_line_gross_amount NUMBER;
   v_lineNetAmt NUMBER;
   v_stdPre NUMBER;
-  v_priPre NUMBER;
   v_Gross NUMBER;
   v_Description C_OrderLine.Description%TYPE;
 
@@ -257,7 +256,7 @@ BEGIN
       END IF;
       
       
-      SELECT STDPRECISION, PRICEPRECISION INTO v_stdPre, v_priPre FROM C_CURRENCY WHERE C_CURRENCY_ID = v_Currency_ID;
+      SELECT STDPRECISION INTO v_stdPre FROM C_CURRENCY WHERE C_CURRENCY_ID = v_Currency_ID;
     
       v_ResultStr:='Insert order line';
       IF (Cur_Lines.istaxincluded = 'Y') THEN

@@ -603,7 +603,7 @@ DBMS_OUTPUT.PUT_LINE( 'v_warehouse_rule_id: ' || coalesce(v_warehouse_rule_id,''
         SELECT name INTO v_productname
         FROM m_product
         WHERE m_product_id = v_productid;
-        v_message := '@NotEnoughStockedDueWHRule@';
+        v_message := '@NotEnoughStockedDueWHRule@' || v_productname;
       END IF;
       DBMS_OUTPUT.PUT_LINE( v_message); --OBTG:-20000--
       p_result := 2;

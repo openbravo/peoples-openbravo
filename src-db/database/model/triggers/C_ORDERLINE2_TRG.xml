@@ -27,7 +27,6 @@
   v_QtyOrderReserved   NUMBER;
   V_STOCKED            NUMBER;
   v_DocStatus          VARCHAR(60);
-  v_DocAction          VARCHAR(60);
   v_isSOTrx            CHAR(1);
   v_QtyReservedPO      NUMBER;
   v_QtyOrderReservedPO NUMBER;
@@ -101,8 +100,8 @@ BEGIN
 
   IF(UPDATING OR DELETING) THEN
     v_ID:=:old.C_Order_ID;
-    SELECT DocStatus, DocAction, isSOTrx
-    INTO v_DocStatus, v_DocAction, v_isSOTrx
+    SELECT DocStatus, isSOTrx
+    INTO v_DocStatus, v_isSOTrx
     FROM c_Order
     WHERE c_order_id = v_ID;
     IF(v_DocStatus = 'IP') THEN
@@ -131,8 +130,8 @@ BEGIN
 
   IF(INSERTING OR UPDATING) THEN
     v_ID:=:new.C_Order_ID;
-    SELECT DocStatus, DocAction, isSOTrx
-    INTO v_DocStatus, v_DocAction, v_isSOTrx
+    SELECT DocStatus, isSOTrx
+    INTO v_DocStatus, v_isSOTrx
     FROM c_Order
     WHERE c_order_id = v_ID;
     IF(v_DocStatus = 'IP') THEN

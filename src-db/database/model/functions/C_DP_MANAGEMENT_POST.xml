@@ -29,7 +29,6 @@
   v_Result NUMBER:=1; -- 0=failure
   v_Record_ID VARCHAR2(32) ;
   v_AD_User_ID VARCHAR2(32) ;
-  v_AD_Client_ID VARCHAR2(32) ;
   v_AD_Org_ID VARCHAR2(32) ;
   v_PAD_User_ID VARCHAR2(32) ;
   v_Processed VARCHAR2(60) ;
@@ -97,11 +96,9 @@
     END IF;
   BEGIN --BODY
     SELECT UpdatedBy,
-      AD_Client_ID,
       Processed,
       Posted, AD_Org_ID, DateAcct, C_DocType_ID
     INTO v_AD_User_ID,
-      v_AD_Client_ID,
       v_processed,
       v_posted, v_AD_Org_ID, v_Date, v_DocType_ID
     FROM c_DP_Management

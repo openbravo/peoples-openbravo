@@ -76,7 +76,6 @@
   v_isreturndoctype CHAR(1);
   v_PaymentRule C_INVOICE.PaymentRule%TYPE;
   v_PaymentTerm C_INVOICE.C_PaymentTerm_ID%TYPE;
-  v_Order_ID VARCHAR2(32);
   v_DateAcct DATE;
   v_DateInvoiced DATE;
   v_DocumentNo C_INVOICE.DocumentNo%TYPE;
@@ -121,7 +120,6 @@
   v_REInOutStatus M_INOUT.DocStatus%TYPE;
   v_REDateInvoiced DATE;
   v_REtotalQtyInvoiced NUMBER:=0;
-  v_REdeliveredQty NUMBER:=0;
   --
   v_CumDiscount NUMBER;
   v_OldCumDiscount NUMBER;
@@ -259,14 +257,14 @@ BEGIN --BODY
       i.C_DocType_ID, i.C_DocTypeTarget_ID,
       i.PaymentRule, i.C_PaymentTerm_ID, i.DateAcct, i.DateInvoiced,
       i.AD_Client_ID, i.AD_Org_ID, i.UpdatedBy, i.DocumentNo,
-      i.C_Order_ID, i.IsSOTrx, i.C_BPartner_ID, i.AD_User_ID,
+      i.IsSOTrx, i.C_BPartner_ID, i.AD_User_ID,
       i.C_Currency_ID, i.POReference, i.Posted,
       i.c_Project_Id, i.C_WithHolding_ID, i.IsCashVat, i.prepaymentamt
   INTO v_Processing, v_Processed, v_DocAction, v_DocStatus,
       v_DocType_ID, v_DocTypeTarget_ID,
       v_PaymentRule, v_PaymentTerm, v_DateAcct, v_DateInvoiced,
       v_Client_ID, v_Org_ID, v_UpdatedBy, v_DocumentNo,
-      v_Order_ID, v_IsSOTrx, v_BPartner_ID, v_BPartner_User_ID,
+      v_IsSOTrx, v_BPartner_ID, v_BPartner_User_ID,
       v_Currency_ID, v_POReference, v_Posted,
       v_C_Project_Id, cWithHoldID, v_iscashvat, v_prepaymentamt
   FROM C_INVOICE i
@@ -1004,9 +1002,6 @@ IF (NOT FINISH_PROCESS) THEN
                 AND C_INVOICE.Processed='Y'
                 AND C_INVOICELINE.M_InOutLine_ID=Cur_ReactivateInvoiceLine.M_InOutLine_ID;
               v_REtotalQtyInvoiced:=v_REtotalQtyInvoiced - Cur_ReactivateInvoiceLine.QtyInvoiced;
-              SELECT MovementQty INTO v_REdeliveredQty
-              FROM M_INOUTLINE
-              WHERE M_InOutLine_ID=Cur_ReactivateInvoiceLine.M_InOutLine_ID;
               UPDATE M_INOUTLINE
               SET IsInvoiced=(
                      CASE v_REtotalQtyInvoiced
@@ -1462,7 +1457,6 @@ IF (NOT FINISH_PROCESS) THEN
         v_totalQtyInvoiced NUMBER;
         v_ODocumentNo C_ORDER.DocumentNo%TYPE;
         v_NewPendingToInvoice NUMBER;
-        v_deliveredQty NUMBER;
         v_inOutStatus varchar2(60) ;
       BEGIN
         SELECT DateInvoiced
@@ -1506,9 +1500,6 @@ IF (NOT FINISH_PROCESS) THEN
                 AND C_INVOICE.Processed='Y'
                 AND C_INVOICELINE.M_InOutLine_ID=CurLines.M_InOutLine_ID;
               v_totalQtyInvoiced:=v_totalQtyInvoiced + CurLines.QtyInvoiced;
-              SELECT MovementQty INTO v_deliveredQty
-              FROM M_INOUTLINE
-              WHERE M_InOutLine_ID=CurLines.M_InOutLine_ID;
               UPDATE M_INOUTLINE
               SET IsInvoiced=(
                     CASE v_totalQtyInvoiced

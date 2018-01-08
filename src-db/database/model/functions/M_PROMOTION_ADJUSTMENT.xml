@@ -44,7 +44,6 @@
   v_qty_From NUMBER;
   v_qty_To NUMBER;
   v_apply_next VARCHAR(1);
-  v_tax VARCHAR(32);
   v_qty NUMBER;
   v_unitPrice NUMBER;
   v_newUnitPrice NUMBER;
@@ -68,16 +67,16 @@ BEGIN
    where m_offer_id = p_rule_id;
 
   if (p_type ='O') then
-		select gross_unit_price, c_tax_id, qtyordered, priceactual,
+		select gross_unit_price, qtyordered, priceactual,
 		       line_gross_amount, linenetamt
-			into v_unitprice, v_tax, v_qty, v_priceactual,
+			into v_unitprice, v_qty, v_priceactual,
 			     v_origGrossAmt, v_origLineNetAmt
 			from c_orderline
 		 where c_orderline_id = p_line_id;
   else 
-	 select gross_unit_price, c_tax_id, qtyinvoiced, priceactual,
+	 select gross_unit_price, qtyinvoiced, priceactual,
 	        line_gross_amount, linenetamt
-		 into v_unitprice, v_tax, v_qty, v_priceactual,
+		 into v_unitprice, v_qty, v_priceactual,
 		      v_origGrossAmt, v_origLineNetAmt
 		 from c_invoiceline
 		where c_invoiceline_id = p_line_id;

@@ -123,7 +123,7 @@ BEGIN
       FROM m_product
       WHERE m_product_id = :NEW.m_product_id;
       IF (v_isgeneric = 'Y') THEN
-        RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@');
+        RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_productname);
       END IF;
     END IF;
   END IF;

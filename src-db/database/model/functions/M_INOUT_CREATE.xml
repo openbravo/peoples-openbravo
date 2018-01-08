@@ -432,7 +432,6 @@ BEGIN --BODY
           v_UOM_old varchar2(32);
           v_Attribute_old varchar2(32);
           v_Product_UOM_old varchar2(32);
-          v_orderline_old varchar2(32);
           v_QtyStorage NUMBER:=0;
           v_LocatorQty NUMBER;
           v_IsStocked NUMBER:=0;
@@ -484,7 +483,6 @@ BEGIN --BODY
                 v_UOM_old := ol.C_UOM_ID;
                 v_Attribute_old := ol.M_AttributeSetInstance_ID;
                 v_Product_UOM_old := ol.M_Product_UOM_ID;
-                v_orderline_old := ol.c_orderline_id;
                 IF (Cur_Storage_ISOPEN) THEN
                   CLOSE Cur_Storage;
                   Cur_Storage_ISOPEN:=false;

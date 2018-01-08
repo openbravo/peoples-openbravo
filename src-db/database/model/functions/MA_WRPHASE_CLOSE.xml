@@ -33,7 +33,6 @@
     v_Record_ID VARCHAR2(32):=NULL;
     v_WorkRequirement_ID VARCHAR2(32);
     v_Count NUMBER;
-    v_Client_ID VARCHAR2(32);
   BEGIN
     --  Process Parameters
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -60,7 +59,6 @@
         )
       LOOP
         v_Record_ID:=Cur_Parameter.Record_ID;
-        v_Client_ID:=Cur_Parameter.AD_Client_ID;
       END LOOP; --  Get Parameter
     ELSE
       DBMS_OUTPUT.PUT_LINE('--<<MA_WorkRequirement_Close>>') ;

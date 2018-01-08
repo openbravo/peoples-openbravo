@@ -34,20 +34,7 @@
     v_Org_ID VARCHAR2(32);
     v_Client_ID VARCHAR2(32);
     v_count NUMBER;
---    v_count2 NUMBER;
---    v_Production_ID VARCHAR2(32);
     v_ProductionDate DATE;
---    v_Name NVARCHAR2(60) ;
-    -- p_ppline            NUMBER;
-    -- p_plline          NUMBER;
---    v_ProductionPlan_ID VARCHAR2(32);
---    v_ProductionLine_ID VARCHAR2(32);
---    v_Quantity NUMBER;
---    v_UOM_ID VARCHAR2(32);
---    v_PInstance NUMBER;
---    v_doneQty NUMBER;
---    v_needQty NUMBER;
-    v_QtyOnHand NUMBER;
     p_Processed CHAR;
     v_ProductQty NUMBER;
     v_NextNo VARCHAR2(32);
@@ -358,24 +345,7 @@
         -- M_ProductionLine_ID, AD_Client_ID, AD_Org_ID, MovementDate, M_Product_ID, MovementQty, M_Locator_ID
         -- DBMS_OUTPUT.PUT_LINE('ProductionLine=' || CUR_PL_Post.M_ProductionLine_ID);
         -- DBMS_OUTPUT.PUT_LINE('  Qty=' || CUR_PL_Post.MovementQty || ', OnHand=' || M_BOM_Qty_OnHand(CUR_PL_Post.M_Product_ID, NULL, CUR_PL_Post.M_Locator_ID));
-        -- Check Stock levels for reductions
-        -- Check, if product exists and if it is stocked
-        -- Unlimited capacity if no item
-        IF(CUR_PL_Post.ProductType<>'I' OR CUR_PL_Post.IsStocked='N') THEN
-          v_QtyOnHand:=Quantity;
-          -- Stocked item
-        ELSIF(CUR_PL_Post.IsStocked='Y') THEN
-          -- Get ProductQty
-          SELECT COALESCE(SUM(QtyOnHand), 0)
-          INTO v_ProductQty
-          FROM M_STORAGE_DETAIL s
-          WHERE M_Product_ID=CUR_PL_Post.M_Product_ID
-            AND EXISTS
-            (SELECT * FROM M_LOCATOR l WHERE s.M_Locator_ID=l.M_Locator_ID)
-            ;
-          --DBMS_OUTPUT.PUT_LINE('Qty=' || ProductQty);
-          v_QtyOnHand:=v_ProductQty;
-        END IF;
+        
         -- Only insert in M_TRANSACTION if MovementQty <> 0
         IF CUR_PL_Post.MovementQty <> 0 THEN
           -- Create Transaction Entry        
@@ -400,6 +370,9 @@
             )
             ;
           END IF;
+          
+        -- Check Stock levels for reductions
+        -- Check, if product exists and if it is stocked
         IF(CUR_PL_Post.IsStocked<>'N') THEN
           M_Check_Stock(CUR_PL_Post.M_Product_ID, v_Client_ID, v_AD_Org_ID, v_Result, v_Message, CUR_PL_Post.M_Locator_ID) ;
           IF (v_Result=0) THEN

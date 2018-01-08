@@ -21,11 +21,9 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 
-p_message VARCHAR(2000);
 p_record_id VARCHAR(60);
 p_docAction VARCHAR(60);
 p_user VARCHAR(60);
-p_result NUMBER;
 
 v_ResultStr VARCHAR2(2000):='';
 v_GrandTotal NUMBER:=0;
@@ -57,10 +55,6 @@ BEGIN
       p_record_id := cur_params.p_string;
     ELSIF (cur_params.parametername LIKE 'User') THEN
       p_user := cur_params.p_string;
-    ELSIF (cur_params.parametername LIKE 'Message') THEN
-      p_message := cur_params.p_text;
-    ELSIF (cur_params.parametername LIKE 'Result') THEN
-      p_result := cur_params.p_number;
     END IF;
   END LOOP;
 

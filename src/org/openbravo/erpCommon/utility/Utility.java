@@ -58,8 +58,10 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
+
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.base.HttpBaseServlet;
@@ -68,9 +70,7 @@ import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.report.ReportingUtils;
-import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -93,9 +93,6 @@ import org.openbravo.model.common.geography.Location;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.FormatUtilities;
-
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperReport;
 
 /**
  * @author Fernando Iriazabal
@@ -351,7 +348,7 @@ public class Utility {
 
   /**
    * Gets a value from the context. For client 0 is always added (used for references), to check if
-   * it must be added or not use the getContext with accesslevel method.
+   * it must by added or not use the getContext with accesslevel method.
    * 
    * @param conn
    *          Handler for the database connection.
@@ -365,38 +362,18 @@ public class Utility {
    */
   public static String getContext(ConnectionProvider conn, VariablesSecureApp vars, String context,
       String window) {
-    if (StringUtils.isBlank(context)) {
+    if (context == null || context.equals(""))
       throw new IllegalArgumentException("getContext - require context");
-    }
-
-    String retValue;
+    String retValue = "";
 
     if (!context.startsWith("#") && !context.startsWith("$")) {
       retValue = getPreference(vars, context, window);
-      if (!window.equals("") && retValue.equals("")) {
+      if (!window.equals("") && retValue.equals(""))
         retValue = vars.getSessionValue(window + "|" + context);
-      }
-      if (retValue.equals("")) {
+      if (retValue.equals(""))
         retValue = vars.getSessionValue("#" + context);
-      }
-      if (retValue.equals("")) {
+      if (retValue.equals(""))
         retValue = vars.getSessionValue("$" + context);
-      }
-      if (retValue.equals("") && "IsSOTrx".equalsIgnoreCase(context)
-          && StringUtils.isNotBlank(window)) {
-        OBContext.setAdminMode(true);
-        try {
-          ApplicationDictionaryCachedStructures adcs = WeldUtils
-              .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
-          Window w = adcs.getWindow(window);
-          retValue = w.isSalesTransaction() ? "Y" : "N";
-        } catch (Exception ignore) {
-          // not a valid window id, continue
-          retValue = "";
-        } finally {
-          OBContext.restorePreviousMode();
-        }
-      }
     } else {
       try {
         if (context.equalsIgnoreCase("#Date"))
@@ -461,14 +438,25 @@ public class Utility {
    */
   public static String getContext(ConnectionProvider conn, VariablesSecureApp vars, String context,
       String strWindow, int accessLevel) {
-    if (StringUtils.isBlank(context)) {
+    if (context == null || context.equals(""))
       throw new IllegalArgumentException("getContext - require context");
-    }
-    String retValue;
+    String retValue = "";
 
-    if ((!context.startsWith("#") && !context.startsWith("$")) || context.equalsIgnoreCase("#Date")) {
-      retValue = getContext(conn, vars, context, strWindow);
+    if (!context.startsWith("#") && !context.startsWith("$")) {
+      retValue = getPreference(vars, context, strWindow);
+      if (!strWindow.equals("") && retValue.equals(""))
+        retValue = vars.getSessionValue(strWindow + "|" + context);
+      if (retValue.equals(""))
+        retValue = vars.getSessionValue("#" + context);
+      if (retValue.equals(""))
+        retValue = vars.getSessionValue("$" + context);
     } else {
+      try {
+        if (context.equalsIgnoreCase("#Date"))
+          return DateTimeData.today(conn);
+      } catch (final ServletException e) {
+      }
+
       retValue = vars.getSessionValue(context);
 
       final String userLevel = vars.getSessionValue("#User_Level");
@@ -495,8 +483,13 @@ public class Utility {
             else
               return transactionalOrgs;
           } else {
-            if ((accessLevel == 1) || (userLevel.equals("  O"))) {
-              // No *: remove 0 from current list
+            if ((accessLevel == 1) || (userLevel.equals("  O"))) { // No
+              // *:
+              // remove
+              // 0
+              // from
+              // current
+              // list
               if (retValue.equals("'0'"))
                 retValue = "";
               else if (retValue.startsWith("'0',"))
@@ -505,8 +498,10 @@ public class Utility {
                 retValue = retValue.replace(",'0'", "");
             } else {// Any: add 0 to current list
               if (!retValue.equals("'0'") && !retValue.startsWith("'0',")
-                  && retValue.indexOf(",'0'") == -1) {
-                // Any: current list and *
+                  && retValue.indexOf(",'0'") == -1) {// Any:
+                // current
+                // list
+                // and *
                 retValue = "'0'" + (retValue.equals("") ? "" : ",") + retValue;
               }
             }
@@ -1561,8 +1556,7 @@ public class Utility {
    * @param list
    * @return a comma separated String containing the contents of the array.
    *
-   * @deprecated Use instead the more generic
-   *             {@link StringCollectionUtils#commaSeparated(Collection, boolean)}
+   * @deprecated Use instead the more generic {@link StringCollectionUtils#commaSeparated(Collection, boolean)}
    */
   @Deprecated
   public static String arrayListToString(ArrayList<String> list, boolean addQuotes) {
