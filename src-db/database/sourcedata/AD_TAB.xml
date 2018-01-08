@@ -14017,7 +14017,7 @@ WARNING: This window is not supported anymore and it is only kept for backward c
 <!--28D602B576DF417AB289B4EC94BE2C17-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--28D602B576DF417AB289B4EC94BE2C17-->  <NAME><![CDATA[Reversed Invoices]]></NAME>
 <!--28D602B576DF417AB289B4EC94BE2C17-->  <DESCRIPTION><![CDATA[In this tab the user can define the reversed invoices (if any) associated with the invoice]]></DESCRIPTION>
-<!--28D602B576DF417AB289B4EC94BE2C17-->  <HELP><![CDATA[This tabs allows the user to select the invoices (if any) being reversed by the invoice being created. When the user voids an existing invoice the reverse invoice is automatically created by Openbravo and linked to the original invoice being reversed. In case of creating a Credit Memo or Reverse Sales Invoice which partially voids an existing invoice/s, the user must manually select the invoice/s being reversed in this tab.]]></HELP>
+<!--28D602B576DF417AB289B4EC94BE2C17-->  <HELP><![CDATA[This tabs allows the user to select the invoices (if any) being reversed by the invoice being created. When the user voids an existing invoice the reverse invoice is automatically created by Openbravo and linked to the original invoice being reversed. In case of creating a Reverse Sales Invoice which partially voids an existing invoice/s, the user must manually select the invoice/s being reversed in this tab.]]></HELP>
 <!--28D602B576DF417AB289B4EC94BE2C17-->  <AD_TABLE_ID><![CDATA[43393FBD706A441D837C5CBA07D10ABE]]></AD_TABLE_ID>
 <!--28D602B576DF417AB289B4EC94BE2C17-->  <AD_WINDOW_ID><![CDATA[167]]></AD_WINDOW_ID>
 <!--28D602B576DF417AB289B4EC94BE2C17-->  <SEQNO><![CDATA[80]]></SEQNO>
@@ -14839,7 +14839,7 @@ The corresponding tables have then the following setting:
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <NAME><![CDATA[Reversed Invoices]]></NAME>
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <DESCRIPTION><![CDATA[In this tab the user can define the reversed invoices (if any) associated with the invoice]]></DESCRIPTION>
-<!--3ED38B380CD849B38F0AC1B52F992C34-->  <HELP><![CDATA[This tabs allows the user to select the invoices (if any) being reversed by the invoice being created. When the user voids an existing invoice the reverse invoice is automatically created by Openbravo and linked to the original invoice being reversed. In case of creating a Credit Memo or Reverse Purchase Invoice which partially voids an existing invoice/s, the user must manually select the invoice/s being reversed in this tab.]]></HELP>
+<!--3ED38B380CD849B38F0AC1B52F992C34-->  <HELP><![CDATA[This tabs allows the user to select the invoices (if any) being reversed by the invoice being created. When the user voids an existing invoice the reverse invoice is automatically created by Openbravo and linked to the original invoice being reversed. In case of creating a Reverse Purchase Invoice which partially voids an existing invoice/s, the user must manually select the invoice/s being reversed in this tab.]]></HELP>
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <AD_TABLE_ID><![CDATA[43393FBD706A441D837C5CBA07D10ABE]]></AD_TABLE_ID>
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <SEQNO><![CDATA[80]]></SEQNO>
