@@ -103,7 +103,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     return nodeName.equals(service.getNode());
   }
 
-  private String getName() {
+  protected String getName() {
     String name = System.getProperty("machine.name");
     if (StringUtils.isEmpty(name)) {
       try {
