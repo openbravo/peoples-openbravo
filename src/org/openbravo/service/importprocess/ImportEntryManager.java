@@ -139,7 +139,6 @@ public class ImportEntryManager {
   private ImportEntryArchiveManager importEntryArchiveManager;
 
   @Inject
-  @Any
   private ClusterServiceManager clusterServiceManager;
 
   private ImportEntryManagerThread managerThread;

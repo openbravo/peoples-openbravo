@@ -71,7 +71,6 @@ public class ImportEntryArchiveManager {
   private Instance<ImportEntryArchivePreProcessor> archiveEntryPreProcessors;
 
   @Inject
-  @Any
   private ClusterServiceManager clusterServiceManager;
 
   private ImportEntryArchiveThread archiveThread;
