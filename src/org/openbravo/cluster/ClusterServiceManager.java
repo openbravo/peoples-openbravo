@@ -241,6 +241,9 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
         serviceTimeouts.put(service, timeout);
         serviceThresholds.put(service, threshold);
       }
+      // Force to close the database connection to avoid leaks: if there are not available cluster
+      // services, the thread will end without doing any additional actions.
+      OBDal.getInstance().commitAndClose();
     }
 
     private Long getTimeout(ADClusterServiceSettings settings) {
