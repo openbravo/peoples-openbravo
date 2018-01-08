@@ -36,9 +36,7 @@
     v_count NUMBER;
     v_ProductionDate DATE;
     p_Processed CHAR;
-    v_ProductQty NUMBER;
     v_NextNo VARCHAR2(32);
-    Quantity NUMBER:=99999; -- unlimited
     v_Result NUMBER:=1;
 
     CUR_PL_Post RECORD;
