@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2014 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -25,7 +25,7 @@ public class BPLocationProperties extends ModelExtension {
       private static final long serialVersionUID = 1L;
       {
         add(new HQLProperty("bploc.id", "id"));
-        add(new HQLProperty("bploc.businessPartner.id", "bpartner"));
+        add(new HQLProperty("bp.id", "bpartner"));
         add(new HQLProperty(
             "COALESCE(bploc.locationAddress.addressLine1, bploc.locationAddress.addressLine2, bploc.locationAddress.postalCode, bploc.locationAddress.cityName, bploc.name)",
             "name"));
@@ -45,7 +45,7 @@ public class BPLocationProperties extends ModelExtension {
             "COALESCE(bploc.locationAddress.addressLine1, bploc.locationAddress.addressLine2, bploc.locationAddress.postalCode, bploc.locationAddress.cityName)",
             "_identifier"));
         add(new HQLProperty(
-            "(case when bploc.active = 'Y' and bploc.businessPartner.active = 'Y' then true else false end)",
+            "(case when bploc.active = 'Y' and bp.active = 'Y' then true else false end)",
             "active"));
         String curDbms = OBPropertiesProvider.getInstance().getOpenbravoProperties()
             .getProperty("bbdd.rdbms");
