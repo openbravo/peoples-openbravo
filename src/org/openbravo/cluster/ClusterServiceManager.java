@@ -59,6 +59,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
   private Boolean isCluster;
   private boolean isShutDown;
   private String nodeName;
+  private Date lastPing;
   private ExecutorService executorService;
 
   /**
@@ -169,6 +170,11 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
   @Override
   public String getNodeName() {
     return nodeName;
+  }
+
+  @Override
+  public Date getLastPing() {
+    return lastPing;
   }
 
   @Override
@@ -315,6 +321,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     private void registerOrUpdateService(String serviceName, Long interval) {
       try {
         ADClusterService service = manager.getService(serviceName);
+        Date now = new Date();
         if (service == null) {
           // register the service for the first time
           log.info("Registering node {} in charge of service {}", manager.nodeName, serviceName);
@@ -322,7 +329,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
         } else if (manager.nodeName.equals(service.getNode())) {
           // current node is charge of handling the service, just update the last ping
           log.debug("Current node {} still in charge of service {}", manager.nodeName, serviceName);
-          service.setUpdated(new Date());
+          service.setUpdated(now);
         } else if (shouldReplaceNodeOfService(service, interval)) {
           // try to register the current node as the one in charge of handling the service
           // the last ping (updated) will be updated automatically by the OBInterceptor
@@ -332,6 +339,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
         } else {
           log.debug("Node {} still in charge of service {}", manager.nodeName, serviceName);
         }
+        manager.lastPing = now;
         OBDal.getInstance().commitAndClose();
       } catch (Exception ex) {
         log.warn("Node {} could not complete register/update task of service {}", manager.nodeName,

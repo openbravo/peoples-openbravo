@@ -18,6 +18,7 @@
  */
 package org.openbravo.cluster;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -30,6 +31,11 @@ public interface ClusterServiceManagerMBean {
    * @return the name of the current cluster node.
    */
   public String getNodeName();
+
+  /**
+   * @return the Date of the last ping done (for any service) by the current node.
+   */
+  public Date getLastPing();
 
   /**
    * @return a Map with information (node and last ping) per cluster service.
