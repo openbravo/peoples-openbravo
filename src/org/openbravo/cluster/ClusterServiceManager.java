@@ -92,15 +92,21 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     return isCluster;
   }
 
-  public boolean isHandlingService(String serviceName) {
+  public boolean isHandlingService(String serviceName, boolean doCommit) {
     if (!isCluster()) {
       return true;
     }
-    ADClusterService service = getService(serviceName);
-    if (service == null) {
-      return false;
+    try {
+      ADClusterService service = getService(serviceName);
+      if (service == null) {
+        return false;
+      }
+      return nodeName.equals(service.getNode());
+    } finally {
+      if (doCommit) {
+        OBDal.getInstance().commitAndClose();
+      }
     }
-    return nodeName.equals(service.getNode());
   }
 
   protected String getName() {

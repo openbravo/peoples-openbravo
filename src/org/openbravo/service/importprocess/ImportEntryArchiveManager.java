@@ -202,7 +202,7 @@ public class ImportEntryArchiveManager {
       // - in cluster: process if we are in the node in charge of handling the import entries,
       // otherwise just wait
       // - not in cluster: do not wait
-      return !manager.clusterServiceManager.isHandlingService("IMPORT_ENTRY");
+      return !manager.clusterServiceManager.isHandlingService("IMPORT_ENTRY", true);
     }
 
     private void doWait() {
