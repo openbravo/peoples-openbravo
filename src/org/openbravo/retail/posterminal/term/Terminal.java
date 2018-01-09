@@ -103,8 +103,8 @@ public class Terminal extends JSONProcessSimple {
       final org.openbravo.model.pricing.pricelist.PriceList priceList = POSUtils
           .getPriceListByTerminal(pOSTerminal.getSearchKey());
 
-      HQLPropertyList regularTerminalHQLProperties = ModelExtensionUtils
-          .getPropertyExtensions(extensions);
+      HQLPropertyList regularTerminalHQLProperties = ModelExtensionUtils.getPropertyExtensions(
+          extensions, jsonsent);
 
       final OrganizationInformation myOrgInfo = pOSTerminal.getOrganization()
           .getOrganizationInformationList().get(0);

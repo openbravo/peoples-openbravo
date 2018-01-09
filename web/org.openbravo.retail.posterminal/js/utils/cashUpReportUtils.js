@@ -458,7 +458,7 @@
   // 1. call server for cashup info
   // 2. when returns delete current cashup info 
   // 3. recreate
-  OB.UTIL.rebuildCashupFromServer = function (callback) {
+  OB.UTIL.rebuildCashupFromServer = function (callback, errorCallback) {
     var service = 'org.openbravo.retail.posterminal.master.Cashup';
     if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
       service = 'org.openbravo.retail.posterminal.master.CashupSynchronized';
@@ -468,6 +468,23 @@
       isprocessed: 'N',
       isprocessedbo: 'N'
     }, function (data) {
+      if (data && data.exception) {
+        var msg = data.exception.message ? data.exception.message : 'Unexpected error. ';
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_TransactionFailedTitle'), OB.I18N.getLabel('OBMOBC_TransactionFailed', [msg]), [{
+          isConfirmButton: true,
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          action: function () {
+            if (OB && OB.POS) {
+              OB.POS.navigate('retail.pointofsale');
+              return true;
+            }
+          }
+        }]);
+        if (errorCallback instanceof Function) {
+          errorCallback();
+        }
+        return;
+      }
       var afterDeleteCallback = function (cashupPaymentMethods) {
           // Found non processed cashups
           if (data[0]) {

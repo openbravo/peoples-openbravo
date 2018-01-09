@@ -91,7 +91,7 @@ enyo.kind({
       }
       var attrs = (this.leftSubWindow.inEvent && this.leftSubWindow.inEvent.attrs) ? this.leftSubWindow.inEvent.attrs : {};
       attrs.warehouse = {
-        id: this.leftSubWindow.warehouse.warehouseid,
+        id: this.leftSubWindow.warehouse.warehouseid ? this.leftSubWindow.warehouse.warehouseid : this.leftSubWindow.warehouse.id,
         warehousename: this.leftSubWindow.warehouse.warehousename,
         warehouseqty: this.leftSubWindow.warehouse.warehouseqty
       };

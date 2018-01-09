@@ -27,11 +27,11 @@ public class ProductCharacteristicHQLCriteria extends HQLCriteriaProcess {
     String[] array_params = getParams(params);
     String sql = null;
     if (array_params[1].equals("__all__")) {
-      sql = getAllQuery();
+      sql = getAllQuery(array_params[0]);
     } else if (array_params[1].equals("OBPOS_bestsellercategory")) {
-      sql = getBestsellers();
+      sql = getBestsellers(array_params[0]);
     } else {
-      sql = getProdCategoryQuery();
+      sql = getProdCategoryQuery(array_params[0]);
     }
     if (array_params.length >= 3 && !array_params[3].equals("")) {
       sql += " and pli.product.brand.id in ('" + getIds(array_params, 3) + "') ";
@@ -56,35 +56,61 @@ public class ProductCharacteristicHQLCriteria extends HQLCriteriaProcess {
     }
   }
 
-  public String getAllQuery() {
+  public String getAllQuery(String param) {
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
-    return "   exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli"
+    String sql = "   exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli"
         + " where pchv.product.id=pli.product.id and cv.characteristic = pchv.characteristic and cv.id = pchv.characteristicValue.id "
-        + " and pli.obretcoProductlist.id='"
-        + productList.getId()
-        + "' and (upper(pchv.product.name) like upper('$1') or upper(pchv.product.uPCEAN) like upper('$1')) ";
+        + " and pli.obretcoProductlist.id='" + productList.getId() + "'";
+    if (!(param.equals("%") || param.equals("%%"))) {
+      sql = sql
+          + " and (upper(pchv.product.name) like upper('$1') or upper(pchv.product.uPCEAN) like upper('$1'))  ";
+    }
+    return sql;
+  }
+
+  public String getAllQuery() {
+    String param = "";
+    return getAllQuery(param);
+  }
+
+  public String getProdCategoryQuery(String param) {
+    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+    String sql = "   exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli"
+        + " where pchv.product.id=pli.product.id and cv.characteristic = pchv.characteristic and  cv.id = pchv.characteristicValue.id"
+        + " and pli.obretcoProductlist.id='" + productList.getId() + "' ";
+    if (!(param.equals("%") || param.equals("%%"))) {
+      sql = sql
+          + " and (upper(pchv.product.name) like upper('$1') or upper(pchv.product.uPCEAN) like upper('$1'))  ";
+    }
+    sql = sql + " and pchv.product.productCategory.id in ('$2') ";
+    return sql;
   }
 
   public String getProdCategoryQuery() {
+    String param = "";
+    return getProdCategoryQuery(param);
+  }
+
+  public String getBestsellers(String param) {
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
-    return "   exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli"
-        + " where pchv.product.id=pli.product.id and cv.characteristic = pchv.characteristic and  cv.id = pchv.characteristicValue.id"
-        + " and pli.obretcoProductlist.id='"
-        + productList.getId()
-        + "' and (upper(pchv.product.name) like upper('$1') or upper(pchv.product.uPCEAN) like upper('$1')) and pchv.product.productCategory.id in ('$2') ";
+    String sql = "  exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli "
+        + " where pchv.product.id=pli.product.id "
+        + " and cv.characteristic = pchv.characteristic and cv.id = pchv.characteristicValue.id and pli.bestseller = true and pli.obretcoProductlist.id = '"
+        + productList.getId() + "' ";
+    if (!(param.equals("%") || param.equals("%%"))) {
+      sql = sql
+          + " and (upper(pchv.product.name) like upper('$1') or upper(pchv.product.uPCEAN) like upper('$1'))  ";
+    }
+    return sql;
+
   }
 
   public String getBestsellers() {
-    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
-    return "  exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli "
-        + " where pchv.product.id=pli.product.id "
-        + " and cv.characteristic = pchv.characteristic and cv.id = pchv.characteristicValue.id and pli.bestseller = true and pli.obretcoProductlist.id = '"
-        + productList.getId()
-        + "' "
-        + " and (upper(pchv.product.name) like upper('$1') or upper(pchv.product.uPCEAN) like upper('$1')) ";
+    String param = "";
+    return getBestsellers(param);
   }
 
   public String getCharacteristics(String params) {

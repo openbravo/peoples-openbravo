@@ -162,6 +162,9 @@ enyo.kind({
         me.valuesList.reset(modelsList);
       } else {
         me.valuesList.reset();
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) || forceRemote) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoCharacteriticValue', [me.parent.parent.characteristic.get('_identifier')]));
+        }
       }
     };
 

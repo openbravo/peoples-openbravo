@@ -1183,13 +1183,23 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
 
     // Update customer credit
-    BigDecimal total = invoice.getGrandTotalAmount().setScale(pricePrecision, RoundingMode.HALF_UP);
-
-    if (!invoice.getCurrency().equals(invoice.getBusinessPartner().getPriceList().getCurrency())) {
-      total = convertCurrencyInvoice(invoice);
-    }
     OBContext.setAdminMode(false);
     try {
+      BigDecimal total = invoice.getGrandTotalAmount().setScale(pricePrecision,
+          RoundingMode.HALF_UP);
+
+      JSONArray payments = jsonorder.getJSONArray("payments");
+      for (i = 0; i < payments.length(); i++) {
+        JSONObject payment = payments.getJSONObject(i);
+        if (payment.has("isPrePayment") && payment.getBoolean("isPrePayment")) {
+          total = total.subtract(new BigDecimal(payment.getDouble("origAmount")));
+        }
+      }
+
+      if (!invoice.getCurrency().equals(invoice.getBusinessPartner().getPriceList().getCurrency())) {
+        total = convertCurrencyInvoice(invoice);
+      }
+
       // Same currency, no conversion required
       invoice.getBusinessPartner().setCreditUsed(
           invoice.getBusinessPartner().getCreditUsed().add(total));

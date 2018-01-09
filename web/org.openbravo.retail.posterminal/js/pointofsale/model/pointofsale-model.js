@@ -332,6 +332,25 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       }
     };
 
+    var isSlowDevice = OB.UTIL.localStorage.getItem('benchmarkScore') && parseInt(OB.UTIL.localStorage.getItem('benchmarkScore'), 10) < 1000;
+
+    // If the device is too slow and the preference allows it, or the terminal type is configured, a block screen is shown if the calculation of the receipt is taking more than 1 sec
+    if ((OB.MobileApp.model.get('terminal') && OB.MobileApp.model.get('terminal').terminalType && OB.MobileApp.model.get('terminal').terminalType.processingblockscreen) || (isSlowDevice && OB.MobileApp.model.hasPermission('OBPOS_processingBlockScreenOnSlowDevices', true))) {
+      receipt.on('calculatingReceipt', function () {
+        enyo.$.scrim2.show();
+        setTimeout(function () {
+          if (receipt.calculatingReceipt === true) {
+            OB.UTIL.showProcessing(true, OB.I18N.getLabel('OBPOS_receiptProcessing'));
+          }
+        }, 1000);
+      });
+
+      receipt.on('calculatedReceipt', function () {
+        enyo.$.scrim2.hide();
+        OB.UTIL.showProcessing(false);
+      });
+    }
+
     receipt.on('checkOpenDrawer', function () {
       me.checkOpenDrawer();
     });

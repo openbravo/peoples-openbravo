@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
@@ -27,14 +28,16 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.mobile.core.login.MobileCoreLoginHandler;
 import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.access.User;
+import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 
 public class POSLoginHandler extends MobileCoreLoginHandler {
-
+  private static final Logger log = Logger.getLogger(OrderLoader.class);
   private static final long serialVersionUID = 1L;
   public static final String WEB_POS_SESSION = "OBPOS_POS";
 
@@ -50,6 +53,35 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
     query.setMaxResults(1);
     final Organization org = (Organization) query.uniqueResult();
     session.setObposStoreOrg(org);
+    String newRoleId = roleId;
+    Boolean newRoleIdFound = false;
+
+    User currentUser = OBDal.getInstance().get(User.class, userId);
+    List<UserRoles> lstCurrentUserRoles = currentUser.getADUserRolesList();
+    if (currentUser.getOBPOSDefaultPOSRole() == null && lstCurrentUserRoles.size() > 1) {
+      for (UserRoles r : lstCurrentUserRoles) {
+        Role roleToAnalyze = r.getRole();
+        if (hasMobileAccess(roleToAnalyze, POSConstants.APP_NAME)) {
+          List<RoleOrganization> lstRoleOrganizationAccess = roleToAnalyze
+              .getADRoleOrganizationList();
+          for (RoleOrganization rorg : lstRoleOrganizationAccess) {
+            Organization orgToAnalyze = rorg.getOrganization();
+            if (orgToAnalyze.getId().equals(org.getId())) {
+              if (!roleId.equals(roleToAnalyze.getId())) {
+                log.info("Original selected role -" + roleId
+                    + "- has been changed for a new role -" + roleToAnalyze.getIdentifier() + "-");
+              }
+              newRoleId = roleToAnalyze.getId();
+              newRoleIdFound = true;
+              break;
+            }
+          }
+        }
+        if (newRoleIdFound) {
+          break;
+        }
+      }
+    }
 
     final VariablesSecureApp vars = new VariablesSecureApp(req);
     final String terminalSearchKey = vars.getStringParameter("terminalName");
@@ -137,7 +169,7 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
     }
 
     RoleDefaults defaults = new RoleDefaults();
-    defaults.role = roleId;
+    defaults.role = newRoleId;
 
     // terminal defines client, org and warehouse
     OBPOSApplications terminal = apps.get(0);

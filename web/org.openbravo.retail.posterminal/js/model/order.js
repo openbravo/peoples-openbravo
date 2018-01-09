@@ -1228,8 +1228,9 @@
         } else if (OB.DEC.isNumber(args.price)) {
           var oldprice = args.line.get('price');
           if (OB.DEC.compare(args.price) >= 0) {
-            // sets the new price
+            // sets the new price and listPrice
             args.line.set('price', args.price);
+            args.line.set('priceList', args.line.get('product').get('listPrice'));
             // sets the undo action
             if (options.setUndo) {
               if (me.get('multipleUndo')) {
@@ -1283,7 +1284,7 @@
       this.get('lines').at(index).set(property, value);
     },
 
-    setUndo: function (action, data) {
+    setUndo: function (action, data, callback) {
       var me = this;
       if (data) {
         data.action = action;
@@ -1292,6 +1293,9 @@
         data: data
       }, function (args) {
         me.set('undo', args.data);
+        if (callback) {
+          callback();
+        }
       });
     },
 
@@ -1460,7 +1464,13 @@
           me.set('undo', null);
           me.set('preventServicesUpdate', true);
           me.set('deleting', true);
-          me._deleteLines(selectedModels, 0, selectedModels.length, postDeleteLine);
+          me.setUndo('DeleteLine', {
+            text: '',
+            lines: [],
+            relations: []
+          }, function () {
+            me._deleteLines(selectedModels, 0, selectedModels.length, postDeleteLine);
+          });
           me.trigger('scan');
         });
       }
@@ -1557,7 +1567,7 @@
       var me = this,
           pack = line.isAffectedByPack(),
           productId = line.get('product').id,
-          text, linesToDelete, relations, deletedQty;
+          deletedQty;
 
       //Defensive code: Do not remove non existing line
       if (!this.get('lines').get(line)) {
@@ -1634,44 +1644,52 @@
         deletedQty = line.get('qty');
       }
 
-      if (!this.get('undo')) {
-        text = OB.I18N.getLabel('OBPOS_DeleteLine') + ': ' + deletedQty + ' x ' + line.get('product').get('_identifier');
-        linesToDelete = [line];
-        relations = [];
-        this.setUndo('DeleteLine', {
-          text: text,
-          lines: linesToDelete,
-          relations: relations
-        });
+      if (!this.get('undo').lines.length) {
+        this.get('undo').text = OB.I18N.getLabel('OBPOS_DeleteLine') + ': ' + deletedQty + ' x ' + line.get('product').get('_identifier');
+        this.get('undo').lines.push(line);
       } else {
-        linesToDelete = this.get('undo').lines;
+        var linesToDelete = this.get('undo').lines,
+            text = this.get('undo').text;
         if (!linesToDelete) {
           linesToDelete = [];
         }
         linesToDelete.push(line);
-        text = this.get('undo').text;
         if (text) {
           text += ', ' + deletedQty + ' x ' + line.get('product').get('_identifier');
         } else {
           text = OB.I18N.getLabel('OBPOS_DeleteLine') + ': ' + deletedQty + ' x ' + line.get('product').get('_identifier');
         }
-        relations = this.get('undo').relations;
-        if (!relations) {
-          relations = [];
-        }
         this.get('undo').text = text;
         this.get('undo').lines = linesToDelete;
-        this.get('undo').relations = relations;
       }
 
       this.removeRelatedServices(line, function () {
+        // This hook is used for any external module that need also to remove any related line.
+        // The related line must be introduced in the 'linesToRemove' array and will also be removed.
         OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteRelatedServices', {
           receipt: me,
-          removedLine: line
+          removedLine: line,
+          linesToRemove: []
         }, function (args) {
-          if (callback) {
-            callback();
+          if (args && args.cancellation) {
+            if (callback) {
+              callback();
+            }
+            return;
           }
+          var removeRelatedLine;
+          removeRelatedLine = function (idx) {
+            if (idx === args.linesToRemove.length) {
+              if (callback) {
+                callback();
+              }
+            } else {
+              me._deleteLine(args.linesToRemove[idx], function () {
+                removeRelatedLine(idx + 1);
+              });
+            }
+          };
+          removeRelatedLine(0);
         });
       });
     },
@@ -1689,13 +1707,11 @@
       }
 
       _.filter(this.get('lines').models, function (line) {
-        return !line.get('obposIsDeleted');
+        return !line.get('obposIsDeleted') && line.has('relatedLines') && line.get('relatedLines').length > 0;
       }).forEach(function (line, idx) {
-        if (line.has('relatedLines') && line.get('relatedLines').length > 0) {
-          var relationIds = _.pluck(line.get('relatedLines'), 'orderlineId');
-          if (_.indexOf(relationIds, removedId) !== -1) {
-            serviceLinesToCheck.push([line, idx]);
-          }
+        var relationIds = _.pluck(line.get('relatedLines'), 'orderlineId');
+        if (_.indexOf(relationIds, removedId) !== -1) {
+          serviceLinesToCheck.push(line);
         }
       });
       if (serviceLinesToCheck.length > 0) {
@@ -1708,21 +1724,21 @@
           } else {
             var lineToCheck = serviceLinesToCheck[idx],
                 rl, rls;
-            if (lineToCheck[0].get('relatedLines').length > 1) {
-              rl = _.filter(lineToCheck[0].get('relatedLines'), function (rl) {
+            if (lineToCheck.get('relatedLines').length > 1) {
+              rl = _.filter(lineToCheck.get('relatedLines'), function (rl) {
                 return rl.orderlineId === lineToDelete.get('id');
               });
-              me.get('undo').relations.push([lineToCheck[0], rl[0]]);
+              me.get('undo').relations.push([lineToCheck, rl[0]]);
               //Effectively remove the relation from the service line
-              rls = lineToCheck[0].get('relatedLines').slice();
-              rls.splice(lineToCheck[0].get('relatedLines').indexOf(rl[0]), 1);
-              lineToCheck[0].set('relatedLines', rls);
-              if (lineToCheck[0].get('product').get('quantityRule') === 'PP') {
-                me.get('undo').text += ', ' + deletedQty + ' x ' + lineToCheck[0].get('product').get('_identifier');
+              rls = lineToCheck.get('relatedLines').slice();
+              rls.splice(lineToCheck.get('relatedLines').indexOf(rl[0]), 1);
+              lineToCheck.set('relatedLines', rls);
+              if (lineToCheck.get('product').get('quantityRule') === 'PP') {
+                me.get('undo').text += ', ' + deletedQty + ' x ' + lineToCheck.get('product').get('_identifier');
               }
               removeNextRelatedService(idx + 1);
             } else {
-              me._deleteLine(lineToCheck[0], function () {
+              me._deleteLine(lineToCheck, function () {
                 removeNextRelatedService(idx + 1);
               });
             }
@@ -1766,7 +1782,11 @@
           }
           };
 
-      OB.warn('DEPRECATED deleteLines FUNCTION!!! Use the deleteLinesFromOrder function. The related services will not be removed');
+      OB.UTIL.VersionManagement.registerDeprecation(35741, {
+        year: 18,
+        major: 1,
+        minor: 0
+      }, 'DEPRECATED deleteLines FUNCTION!!! Use the deleteLinesFromOrder function.  The related services will be removed but will not maintain a trace.');
       if (idx === 0) {
         for (i = 0; i < lines.length; i++) {
           if (me.get('replacedorder') && lines[i].get('remainingQuantity')) {
@@ -1802,7 +1822,11 @@
           pack = line.isAffectedByPack(),
           productId = line.get('product').id;
 
-      OB.warn('DEPRECATED deleteLine FUNCTION!!! Use the deleteLinesFromOrder function. The related services will not be removed');
+      OB.UTIL.VersionManagement.registerDeprecation(35741, {
+        year: 18,
+        major: 1,
+        minor: 0
+      }, 'DEPRECATED deleteLine FUNCTION!!! Use the deleteLinesFromOrder function. The related services will be removed but will not maintain a trace.');
       //Defensive code: Do not remove non existing line
       if (!this.get('lines').get(line)) {
         if (callback) {
@@ -3744,23 +3768,21 @@
           productHasAttribute = productAttributes;
         }
       });
-      if (productHasAttribute === false && needAttributeWhenCreatingQuotation === false) {
-        if (updatePrices) {
-          this.updatePrices(function (order) {
-            order.calculateReceipt(function () {
-              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
-              // This event is used in stock validation module.
-              order.trigger('orderCreatedFromQuotation');
-            });
-          });
-        } else {
-          this.set('skipApplyPromotions', true);
-          this.calculateReceipt(function () {
-            me.unset('skipApplyPromotions');
+      if (updatePrices) {
+        this.updatePrices(function (order) {
+          order.calculateReceipt(function () {
             OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
-            me.trigger('orderCreatedFromQuotation');
+            // This event is used in stock validation module.
+            order.trigger('orderCreatedFromQuotation');
           });
-        }
+        });
+      } else {
+        this.set('skipApplyPromotions', true);
+        this.calculateReceipt(function () {
+          me.unset('skipApplyPromotions');
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+          me.trigger('orderCreatedFromQuotation');
+        });
       }
       this.calculateReceipt(function () {
         //call quotation attributes popup
@@ -4064,8 +4086,8 @@
               order.save();
               order.trigger('saveCurrent');
             }
-            if (callback instanceof Function) {
-              callback(order);
+            if (args.callback instanceof Function) {
+              args.callback(order);
             }
             };
 
@@ -5431,7 +5453,7 @@
                         uOM: iter.uOM,
                         qty: OB.DEC.number(iter.quantity),
                         price: price,
-                        priceList: prod.get('listPrice'),
+                        priceList: prod.get('listPrice') !== price ? price : prod.get('listPrice'),
                         promotions: iter.promotions,
                         description: iter.description,
                         priceIncludesTax: order.get('priceIncludesTax'),
@@ -6312,8 +6334,8 @@
         callback: callback
       }, function (args) {
         var executeFinalCallback = function () {
-            if (callback instanceof Function) {
-              callback(order);
+            if (args.callback instanceof Function) {
+              args.callback(order);
             }
             };
 

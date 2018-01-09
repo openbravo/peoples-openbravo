@@ -381,31 +381,25 @@ public class POSUtils {
     OBCriteria<OBPOSErrors> errorCrit = OBDal.getInstance().createCriteria(OBPOSErrors.class);
     errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, terminal));
     errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "Order"));
+    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
     List<OBPOSErrors> errors = errorCrit.list();
     for (OBPOSErrors error : errors) {
       try {
         JSONObject jsonError = new JSONObject(error.getJsoninfo());
         if (jsonError.has("documentNo") && jsonError.has("isQuotation")
             && !jsonError.getBoolean("isQuotation")) {
-          String documentNo = jsonError.getString("documentNo");
+          String number = "0", documentNo = jsonError.getString("documentNo");
           if (documentNo.indexOf("/") > -1) {
-            String number = documentNo.substring(documentNo.indexOf("/") + 1);
-            if (number.indexOf("-") > -1) {
-              number = number.substring(0, number.indexOf("-"));
-            }
-            int errorNumber = new Long(number).intValue();
-            if (errorNumber > maxDocNo) {
-              maxDocNo = errorNumber;
-            }
+            number = documentNo.substring(documentNo.lastIndexOf("/") + 1);
           } else if (jsonError.has("documentnoPrefix")) {
-            String number = documentNo.replace(jsonError.getString("documentnoPrefix"), "");
-            if (number.indexOf("-") > -1) {
-              number = number.substring(0, number.indexOf("-"));
-            }
-            int errorNumber = new Long(number).intValue();
-            if (errorNumber > maxDocNo) {
-              maxDocNo = errorNumber;
-            }
+            number = documentNo.replace(jsonError.getString("documentnoPrefix"), "");
+          }
+          if (number.indexOf("-") > -1) {
+            number = number.substring(0, number.indexOf("-"));
+          }
+          int errorNumber = new Long(number).intValue();
+          if (errorNumber > maxDocNo) {
+            maxDocNo = errorNumber;
           }
         }
       } catch (Exception e) {
@@ -475,31 +469,25 @@ public class POSUtils {
     OBCriteria<OBPOSErrors> errorCrit = OBDal.getInstance().createCriteria(OBPOSErrors.class);
     errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, terminal));
     errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "Order"));
+    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
     List<OBPOSErrors> errors = errorCrit.list();
     for (OBPOSErrors error : errors) {
       try {
         JSONObject jsonError = new JSONObject(error.getJsoninfo());
         if (jsonError.has("documentNo") && jsonError.has("isQuotation")
             && jsonError.getBoolean("isQuotation")) {
-          String documentNo = jsonError.getString("documentNo");
+          String number = "0", documentNo = jsonError.getString("documentNo");
           if (documentNo.indexOf("/") > -1) {
-            String number = documentNo.substring(documentNo.indexOf("/") + 1);
-            if (number.indexOf("-") > -1) {
-              number = number.substring(0, number.indexOf("-"));
-            }
-            int errorNumber = new Long(number).intValue();
-            if (errorNumber > maxDocNo) {
-              maxDocNo = errorNumber;
-            }
+            number = documentNo.substring(documentNo.lastIndexOf("/") + 1);
           } else if (jsonError.has("quotationnoPrefix")) {
-            String number = documentNo.replace(jsonError.getString("quotationnoPrefix"), "");
-            if (number.indexOf("-") > -1) {
-              number = number.substring(0, number.indexOf("-"));
-            }
-            int errorNumber = new Long(number).intValue();
-            if (errorNumber > maxDocNo) {
-              maxDocNo = errorNumber;
-            }
+            number = documentNo.replace(jsonError.getString("quotationnoPrefix"), "");
+          }
+          if (number.indexOf("-") > -1) {
+            number = number.substring(0, number.indexOf("-"));
+          }
+          int errorNumber = new Long(number).intValue();
+          if (errorNumber > maxDocNo) {
+            maxDocNo = errorNumber;
           }
         }
       } catch (Exception e) {
@@ -567,30 +555,24 @@ public class POSUtils {
     OBCriteria<OBPOSErrors> errorCrit = OBDal.getInstance().createCriteria(OBPOSErrors.class);
     errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, terminal));
     errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "Order"));
+    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
     List<OBPOSErrors> errors = errorCrit.list();
     for (OBPOSErrors error : errors) {
       try {
         JSONObject jsonError = new JSONObject(error.getJsoninfo());
         if (jsonError.has("documentNo") && (jsonError.optLong("returnnoSuffix", -1L) > -1L)) {
-          String documentNo = jsonError.getString("documentNo");
+          String number = "0", documentNo = jsonError.getString("documentNo");
           if (documentNo.indexOf("/") > -1) {
-            String number = documentNo.substring(documentNo.indexOf("/") + 1);
-            if (number.indexOf("-") > -1) {
-              number = number.substring(0, number.indexOf("-"));
-            }
-            int errorNumber = new Long(number).intValue();
-            if (errorNumber > maxDocNo) {
-              maxDocNo = errorNumber;
-            }
+            number = documentNo.substring(documentNo.lastIndexOf("/") + 1);
           } else if (jsonError.has("returnnoPrefix")) {
-            String number = documentNo.replace(jsonError.getString("returnnoPrefix"), "");
-            if (number.indexOf("-") > -1) {
-              number = number.substring(0, number.indexOf("-"));
-            }
-            int errorNumber = new Long(number).intValue();
-            if (errorNumber > maxDocNo) {
-              maxDocNo = errorNumber;
-            }
+            number = documentNo.replace(jsonError.getString("returnnoPrefix"), "");
+          }
+          if (number.indexOf("-") > -1) {
+            number = number.substring(0, number.indexOf("-"));
+          }
+          int errorNumber = new Long(number).intValue();
+          if (errorNumber > maxDocNo) {
+            maxDocNo = errorNumber;
           }
         }
       } catch (Exception e) {
