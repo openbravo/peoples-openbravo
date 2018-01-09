@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -44,47 +43,16 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
   @Override
   protected RoleDefaults getDefaults(HttpServletRequest req, HttpServletResponse res,
       String userId, String roleId, Session session) {
-
-    final String terminalName = req.getParameter("terminalName");
-    final String hql = "SELECT a.organization FROM OBPOS_Applications AS a WHERE a.searchKey = :terminalName";
-    final org.hibernate.Session hibernateSession = OBDal.getInstance().getSession();
-    final Query query = hibernateSession.createQuery(hql);
-    query.setParameter("terminalName", terminalName);
-    query.setMaxResults(1);
-    final Organization org = (Organization) query.uniqueResult();
-    session.setObposStoreOrg(org);
-    String newRoleId = roleId;
-    Boolean newRoleIdFound = false;
-
-    User currentUser = OBDal.getInstance().get(User.class, userId);
-    List<UserRoles> lstCurrentUserRoles = currentUser.getADUserRolesList();
-    if (currentUser.getOBPOSDefaultPOSRole() == null && lstCurrentUserRoles.size() > 1) {
-      for (UserRoles r : lstCurrentUserRoles) {
-        Role roleToAnalyze = r.getRole();
-        if (hasMobileAccess(roleToAnalyze, POSConstants.APP_NAME)) {
-          List<RoleOrganization> lstRoleOrganizationAccess = roleToAnalyze
-              .getADRoleOrganizationList();
-          for (RoleOrganization rorg : lstRoleOrganizationAccess) {
-            Organization orgToAnalyze = rorg.getOrganization();
-            if (orgToAnalyze.getId().equals(org.getId())) {
-              if (!roleId.equals(roleToAnalyze.getId())) {
-                log.info("Original selected role -" + roleId
-                    + "- has been changed for a new role -" + roleToAnalyze.getIdentifier() + "-");
-              }
-              newRoleId = roleToAnalyze.getId();
-              newRoleIdFound = true;
-              break;
-            }
-          }
-        }
-        if (newRoleIdFound) {
-          break;
-        }
-      }
-    }
-
     final VariablesSecureApp vars = new VariablesSecureApp(req);
     final String terminalSearchKey = vars.getStringParameter("terminalName");
+
+    Role roleSelectedByDefault = null;
+    OBPOSApplications posTerminal = null;
+    if (roleId != null) {
+      roleSelectedByDefault = OBDal.getInstance().get(Role.class, roleId);
+    }
+
+    /* Get Current POS Terminal */
     OBCriteria<OBPOSApplications> qApp = OBDal.getInstance()
         .createCriteria(OBPOSApplications.class);
     qApp.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, terminalSearchKey));
@@ -106,6 +74,56 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
         return null;
       }
       return null;
+    } else if (apps.size() == 1) {
+      posTerminal = apps.get(0);
+      session.setObposStoreOrg(posTerminal.getOrganization());
+    } else {
+      // Should never happen
+      log4j.error("Terminal " + terminalSearchKey + " is duplicated");
+      try {
+        errorLogin(res, vars, session, "OBPOS_NO_POS_TERMINAL_TITLE", "OBPOS_NO_POS_TERMINAL_MSG",
+            new ArrayList<String>() {
+              private static final long serialVersionUID = 1L;
+              {
+                add(terminalSearchKey);
+              }
+            });
+      } catch (Exception e) {
+        log4j.error("Error in login", e);
+        return null;
+      }
+      return null;
+    }
+    /* End get current pos Terminal */
+
+    String newRoleId = roleSelectedByDefault.getId();
+    Boolean newRoleIdFound = false;
+
+    User currentUser = OBDal.getInstance().get(User.class, userId);
+    if (!isValidRoleForCurrentWebPOSTerminal(roleSelectedByDefault, posTerminal)) {
+      // If the default role selected by mobile core infrastructure is not valid for the terminal
+      // where the user is trying to login then:
+      // -> Execute a logic to find a role which match with the user
+      // -> This logic will iterate roles allowed by user trying to find one which has access to Web
+      // POS form and access to the organization of the current terminal
+      List<UserRoles> lstCurrentUserRoles = currentUser.getADUserRolesList();
+      if (lstCurrentUserRoles.size() > 1) {
+        for (UserRoles r : lstCurrentUserRoles) {
+          Role roleToAnalyze = r.getRole();
+          if (isValidRoleForCurrentWebPOSTerminal(roleToAnalyze, posTerminal)) {
+            if (!roleSelectedByDefault.getId().equals(roleToAnalyze.getId())) {
+              log.info("Original selected role -" + roleSelectedByDefault.getIdentifier()
+                  + "- has been changed for a new role -" + roleToAnalyze.getIdentifier() + "-");
+            }
+            newRoleId = roleToAnalyze.getId();
+            newRoleIdFound = true;
+            break;
+          }
+          if (newRoleIdFound) {
+            break;
+          }
+        }
+      }
     }
 
     OBContext.setAdminMode(false);
@@ -179,6 +197,28 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
     defaults.warehouse = warehouse != null ? warehouse.getId() : null;
     RequestContext.get().setSessionAttribute("POSTerminal", terminal.getId());
     return defaults;
+  }
+
+  // This function will return TRUE (role is valid to be used by Web POS) when
+  // 1. Has access to web POS form
+  // 2. Has access to the organization of the terminal
+  private boolean isValidRoleForCurrentWebPOSTerminal(Role currentRole, OBPOSApplications terminal) {
+    boolean validRoleFound = false;
+    if (currentRole != null) {
+      if (hasMobileAccess(currentRole, POSConstants.APP_NAME)) {
+        List<RoleOrganization> lstRoleOrganizationAccess = currentRole.getADRoleOrganizationList();
+        for (RoleOrganization rorg : lstRoleOrganizationAccess) {
+          if (rorg.isActive()) {
+            Organization orgToAnalyze = rorg.getOrganization();
+            if (orgToAnalyze.getId().equals(terminal.getOrganization().getId())) {
+              validRoleFound = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+    return validRoleFound;
   }
 
   @Override
