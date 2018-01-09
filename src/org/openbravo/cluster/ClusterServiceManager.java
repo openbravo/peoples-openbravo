@@ -34,6 +34,7 @@ import org.apache.axis.utils.StringUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.dal.core.DalThreadHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -60,6 +61,11 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
   private String nodeName;
   private ExecutorService executorService;
 
+  /**
+   * Initializes the ClusterServiceManager and starts the thread in charge of registering the node
+   * in charge of a particular service. This method has no effect if the application is not running
+   * in a clustered environment.
+   */
   public void start() {
     if (!isCluster()) {
       return;
@@ -75,6 +81,10 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     executorService.execute(thread);
   }
 
+  /**
+   * Stops the thread in charge of registering the node in charge of a particular service. This
+   * method has no effect if the application is not running in a clustered environment.
+   */
   public void shutdown() {
     if (!isCluster() || executorService == null) {
       return;
@@ -85,6 +95,10 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     executorService = null;
   }
 
+  /**
+   * @return {@code true} if the application is running in clustered environment, {@code false}
+   *         otherwise.
+   */
   public boolean isCluster() {
     if (isCluster == null) {
       isCluster = OBPropertiesProvider.getInstance().getBooleanProperty("cluster");
@@ -92,6 +106,17 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     return isCluster;
   }
 
+  /**
+   * @param serviceName
+   *          The name that identifies a service
+   * @param doCommit
+   *          A flag to indicate if the connection should be commited and closed. Should be used by
+   *          those requests which are running outside of the scope of the {@link DalThreadHandler}
+   *          in order to ensure that the DAL connection used to retrieve the information is closed.
+   * 
+   * @return {@code true} if the current cluster node should handle the service passed as parameter,
+   *         {@code false} otherwise.
+   */
   public boolean isHandlingService(String serviceName, boolean doCommit) {
     if (!isCluster()) {
       return true;
@@ -109,6 +134,9 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     }
   }
 
+  /**
+   * @return a {@code String} with the name that identifies the current cluster node.
+   */
   protected String getName() {
     String name = System.getProperty("machine.name");
     if (StringUtils.isEmpty(name)) {
