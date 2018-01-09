@@ -183,7 +183,7 @@ enyo.kind({
         for (j = 0; j < selectedLines.length; j++) {
           linePromotions = selectedLines[j].get('promotions');
           for (k = 0; k < linePromotions.length; k++) {
-            if (linePromotions[k].ruleId === this.promotionsList[i].promotionObj.ruleId) {
+            if (linePromotions[k].ruleId === this.promotionsList[i].promotionObj.ruleId && linePromotions[k].discountinstance === this.promotionsList[i].promotionObj.discountinstance) {
               linePromotions.splice(k, 1);
               break;
             }
@@ -226,7 +226,7 @@ enyo.kind({
               i;
           if (me.promotionsList.length > 0) {
             for (i = 0; i < me.promotionsList.length; i++) {
-              if (me.promotionsList[i].promotionObj.ruleId === linePromotions.ruleId) {
+              if (me.promotionsList[i].promotionObj.ruleId === linePromotions.ruleId && me.promotionsList[i].promotionObj.discountinstance === linePromotions.discountinstance) {
                 //rule already exists, then take existing promotion and add amount
                 me.promotionsList[i].discAmt += linePromotions.amt;
                 me.promotionsList[i].appliedLine.push({
