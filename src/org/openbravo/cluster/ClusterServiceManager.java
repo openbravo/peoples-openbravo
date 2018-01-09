@@ -166,8 +166,9 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       }
       service.setNode(nodeName);
       OBDal.getInstance().commitAndClose();
-      log.info("Forced node {} in charge of service {}", nodeName, serviceName);
-    } catch (Exception ignore) {
+      log.info("Forced node {} to be in charge of service {}", nodeName, serviceName);
+    } catch (Exception ex) {
+      log.error("Could not force node {} to be in charge of service {}", nodeName, serviceName);
     } finally {
       OBContext.restorePreviousMode();
     }
