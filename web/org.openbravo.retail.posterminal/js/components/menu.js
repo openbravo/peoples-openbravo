@@ -239,6 +239,14 @@ enyo.kind({
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_FullyDeliveredHeader'), OB.I18N.getLabel('OBPOS_FullyDelivered'));
       return;
     }
+    var negativeLines = _.find(this.model.get('order').get('lines').models, function (line) {
+      return line.get('qty') < 0;
+    });
+    if (negativeLines) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_cannotCancelLayawayHeader'), OB.I18N.getLabel('OBPOS_cancelLayawayWithNegativeLines'));
+      return;
+    }
+
     this.model.get('order').cancelLayaway(this);
   },
   displayLogic: function () {
