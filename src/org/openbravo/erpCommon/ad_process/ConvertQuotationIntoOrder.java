@@ -68,9 +68,15 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
     String quotationId = (String) bundle.getParams().get("C_Order_ID");
 
     try {
-      OBError msg = convertQuotationIntoSalesOrder(recalculatePrices, quotationId);
+      Order salesOrder = convertQuotationIntoSalesOrder(recalculatePrices, quotationId);
+      OBError msg = OBErrorBuilder.buildMessage(null, "success", "@SalesOrderDocumentno@ "
+          + salesOrder.getDocumentNo() + " @beenCreated@");
       bundle.setResult(msg);
+      bundle.getParams().put("SalesOrderId", salesOrder.getId());
       return;
+    } catch (OBException e) {
+      final OBError error = OBErrorBuilder.buildMessage(null, "error", e.getMessage());
+      bundle.setResult(error);
     } catch (Exception e) {
       Throwable t = DbUtility.getUnderlyingSQLException(e);
       final OBError error = OBMessageUtils.translateError(bundle.getConnection(), vars,
@@ -99,7 +105,7 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
    *          The Id of the Quotation
    * @return An OBError message with the result message
    */
-  public OBError convertQuotationIntoSalesOrder(final boolean recalculatePrices,
+  public Order convertQuotationIntoSalesOrder(final boolean recalculatePrices,
       final String quotationId) {
     // Create Sales Order
     Order quotation = OBDal.getInstance().get(Order.class, quotationId);
@@ -107,13 +113,11 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
 
     if (FIN_Utility.isBlockedBusinessPartner(quotation.getBusinessPartner().getId(), true, 1)) {
       // If the Business Partner is blocked, the Order should not be completed.
-      OBError msg = new OBError();
-      msg.setType("Error");
-      msg.setMessage(OBMessageUtils.messageBD("ThebusinessPartner") + " "
+      String message = OBMessageUtils.messageBD("ThebusinessPartner") + " "
           + quotation.getBusinessPartner().getIdentifier() + " "
-          + OBMessageUtils.messageBD("BusinessPartnerBlocked"));
+          + OBMessageUtils.messageBD("BusinessPartnerBlocked");
       OBDal.getInstance().rollbackAndClose();
-      return msg;
+      throw new OBException(message);
     }
 
     // Set status of the new Order to Draft and Processed = N
@@ -126,7 +130,8 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
     DocumentType docType = newSalesOrder.getDocumentType().getDocumentTypeForOrder();
     if (docType == null) {
       OBDal.getInstance().rollbackAndClose();
-      return OBErrorBuilder.buildMessage(null, "error", "@NoOrderDocType@");
+      String message = OBMessageUtils.messageBD("@NoOrderDocType@");
+      throw new OBException(message);
     }
 
     // Set values of the Sales Order Header
@@ -197,7 +202,8 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       } else {
         for (OrderLineOffer quotationLineOffer : quotationLine.getOrderLineOfferList()) {
           // Copy Promotions and Discounts.
-          OrderLineOffer newSalesOrderLineOffer = (OrderLineOffer) DalUtil.copy(quotationLineOffer, false);
+          OrderLineOffer newSalesOrderLineOffer = (OrderLineOffer) DalUtil.copy(quotationLineOffer,
+              false);
           newSalesOrderLineOffer.setSalesOrderLine(newSalesOrderLine);
           newSalesOrderLine.getOrderLineOfferList().add(newSalesOrderLineOffer);
         }
@@ -215,7 +221,7 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
     if (strMessage.length() > 0) {
       OBDal.getInstance().rollbackAndClose();
       String message = "@TaxCategoryWithoutTaxRate@".concat(strMessage.toString());
-      return OBErrorBuilder.buildMessage(null, "error", message);
+      throw new OBException(message);
     }
     OBDal.getInstance().flush();
     OBDal.getInstance().refresh(newSalesOrder);
@@ -257,8 +263,8 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
             }
             cumulativeDiscount = cumulativeDiscount.subtract(discountAmount);
 
-            OrderLine olDiscount = generateOrderLineDiscount(taxesWithPrices, newSalesOrderDiscount, quotation,
-                newSalesOrder, lineNo, discountAmount);
+            OrderLine olDiscount = generateOrderLineDiscount(taxesWithPrices,
+                newSalesOrderDiscount, quotation, newSalesOrder, lineNo, discountAmount);
             lineNo = lineNo + 10;
             newSalesOrder.getOrderLineList().add(olDiscount);
           }
@@ -286,9 +292,7 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
     OBDal.getInstance().refresh(newSalesOrder);
     OBDal.getInstance().refresh(quotation);
 
-    OBDal.getInstance().commitAndClose();
-    return OBErrorBuilder.buildMessage(null, "success",
-        "@SalesOrderDocumentno@ " + newSalesOrder.getDocumentNo() + " @beenCreated@");
+    return newSalesOrder;
   }
 
   /**
