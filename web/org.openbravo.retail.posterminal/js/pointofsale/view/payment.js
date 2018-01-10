@@ -1974,56 +1974,77 @@ enyo.kind({
     var receipt = this.owner.receipt,
         negativeLines, me = this,
         myModel = this.owner.model,
-        payments;
-    if (!_.isNull(this.model.get('order').get('bp')) && _.isNull(myModel.get('order').get('bp').get('locId'))) {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_EmptyAddrBillToText'), [{
-        label: OB.I18N.getLabel('OBPOS_LblOk')
-      }]);
-      return;
-    }
+        payments, paymentStatus, prepaymentLimitAmount, receiptHasPrepaymentAmount, pendingPrepayment, hasPayments, allowApproval;
+    var continueExecuting = function (receipt, negativeLines, me, myModel, payments) {
+        if (!_.isNull(me.model.get('order').get('bp')) && _.isNull(myModel.get('order').get('bp').get('locId'))) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_EmptyAddrBillToText'), [{
+            label: OB.I18N.getLabel('OBPOS_LblOk')
+          }]);
+          return;
+        }
 
-    this.allowOpenDrawer = false;
+        me.allowOpenDrawer = false;
 
-    if (receipt.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner && !OB.MobileApp.model.get('terminal').layaway_anonymouscustomer) {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_layawaysOrdersWithAnonimousCust'));
-      return;
-    }
+        if (receipt.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner && !OB.MobileApp.model.get('terminal').layaway_anonymouscustomer) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_layawaysOrdersWithAnonimousCust'));
+          return;
+        }
 
-    if (!this.showing || this.disabled) {
-      return true;
-    }
-
-    if (myModel.get('leftColumnViewManager').isOrder()) {
-      payments = this.owner.receipt.get('payments');
-    } else {
-      payments = this.owner.model.get('multiOrders').get('payments');
-    }
-
-    payments.each(function (payment) {
-      if (payment.get('allowOpenDrawer') || payment.get('isCash')) {
-        me.allowOpenDrawer = true;
-      }
-    });
-    if (receipt) {
-      negativeLines = _.find(receipt.get('lines').models, function (line) {
-        return line.get('qty') < 0;
-      });
-      if (negativeLines) {
-        if (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true)) {
-          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
-          return true;
-        } else if (receipt.get('payment') > 0) {
-          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_partiallyLayawaysWithNegLinesNotAllowed'));
+        if (!me.showing || me.disabled) {
           return true;
         }
-      }
-      if (receipt.get('generateInvoice')) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
-        receipt.set('generateInvoice', false);
-      }
+
+        if (myModel.get('leftColumnViewManager').isOrder()) {
+          payments = receipt.get('payments');
+        } else {
+          payments = myModel.get('multiOrders').get('payments');
+        }
+
+        payments.each(function (payment) {
+          if (payment.get('allowOpenDrawer') || payment.get('isCash')) {
+            me.allowOpenDrawer = true;
+          }
+        });
+        if (receipt) {
+          negativeLines = _.find(receipt.get('lines').models, function (line) {
+            return line.get('qty') < 0;
+          });
+          if (negativeLines) {
+            if (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true)) {
+              OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
+              return true;
+            } else if (receipt.get('payment') > 0) {
+              OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_partiallyLayawaysWithNegLinesNotAllowed'));
+              return true;
+            }
+          }
+          if (receipt.get('generateInvoice')) {
+            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
+            receipt.set('generateInvoice', false);
+          }
+        }
+        me.setDisabled(true);
+        enyo.$.scrim.show();
+        receipt.trigger('paymentDone', me.allowOpenDrawer);
+        };
+
+    paymentStatus = receipt.getPaymentStatus();
+    prepaymentLimitAmount = receipt.get('prepaymentLimitAmt');
+    receiptHasPrepaymentAmount = prepaymentLimitAmount !== receipt.get('gross') && prepaymentLimitAmount !== 0;
+    hasPayments = paymentStatus.payments.length > 0;
+    allowApproval = OB.MobileApp.model.hasPermission('OBPOS_AllowPrepaymentUnderLimitLayaway', true);
+    pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentLimitAmount, paymentStatus.pendingAmt), paymentStatus.totalAmt);
+    if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && receiptHasPrepaymentAmount && pendingPrepayment > 0 && hasPayments && allowApproval) {
+      OB.UTIL.Approval.requestApproval(this.model, [{
+        approval: 'OBPOS_approval.prepaymentUnderLimitLayaway',
+        message: 'OBPOS_approval.prepaymentUnderLimit'
+      }], function (approved, supervisor, approvalType) {
+        if (approved) {
+          continueExecuting(receipt, negativeLines, me, myModel, payments);
+        }
+      });
+    } else {
+      continueExecuting(receipt, negativeLines, me, myModel, payments);
     }
-    this.setDisabled(true);
-    enyo.$.scrim.show();
-    receipt.trigger('paymentDone', me.allowOpenDrawer);
   }
 });
