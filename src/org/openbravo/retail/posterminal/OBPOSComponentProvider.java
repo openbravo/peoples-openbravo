@@ -111,6 +111,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/offlineprinter",
         "model/productbom",
         "model/taxcategorybom",
+        "model/product-servicelinked",
         "components/modalcancel",
         "components/subwindow",
         "components/leftsubwindow",
