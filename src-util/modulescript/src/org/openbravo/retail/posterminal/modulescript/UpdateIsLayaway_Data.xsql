@@ -32,7 +32,7 @@
                                   from c_orderline as ol 
                                   where ol.c_order_id = o.c_order_id 
                                       and qtydelivered != 0) 
-                  and o.docstatus = 'CO');
+                  and o.docstatus = 'CO';
         ]]>
       </Sql>
   </SqlMethod>
