@@ -507,7 +507,7 @@ enyo.kind({
       }
       this.$.totalpendinglbl.show();
 
-      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && !this.receipt.getPaymentStatus().isNegative) {
+      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && !this.receipt.getPaymentStatus().isNegative && !this.receipt.get('cancelLayaway')) {
         this.$.donebutton.show();
       } else {
         this.$.donebutton.hide();
