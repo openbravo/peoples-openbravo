@@ -89,6 +89,7 @@ abstract class ReferencedInventoryProcessor {
     this.selectedStorageDetails = selectedStorageDetails;
     checkThereAreStorageDetailsToProcessOrThrowException();
     checkValidQuantitiesOrThrowException();
+    checkStorageDetailsNotAlreadyInReferencedInventory();
   }
 
   private void checkThereAreStorageDetailsToProcessOrThrowException() {
@@ -122,6 +123,20 @@ abstract class ReferencedInventoryProcessor {
           OBMessageUtils.messageBD("RefInv_QtyGreaterThanOnHandQty"),
           FIN_Utility.formatNumber(qtySelected, "qty", "Relation"),
           FIN_Utility.formatNumber(qtyOnHand, "qty", "Relation"), storageDetail.getIdentifier()));
+    }
+  }
+
+  private void checkStorageDetailsNotAlreadyInReferencedInventory() throws JSONException {
+    for (int i = 0; i < selectedStorageDetails.length(); i++) {
+      final JSONObject storageDetailJS = selectedStorageDetails.getJSONObject(i);
+      final StorageDetail storageDetail = getStorageDetail(storageDetailJS);
+      final ReferencedInventory previousReferencedInventory = storageDetail
+          .getReferencedInventory();
+      if (previousReferencedInventory != null) {
+        throw new OBException(String.format(
+            OBMessageUtils.messageBD("StorageDetailAlreadyLinkedToPreviousReferencedInventory"),
+            storageDetail.getIdentifier(), previousReferencedInventory.getIdentifier()));
+      }
     }
   }
 

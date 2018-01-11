@@ -124,6 +124,9 @@
       <index name="M_STORAGEDET_QTYORDERONHAND" unique="false">
         <index-column name="QTYORDERONHAND"/>
       </index>
+      <index name="M_STORAGEDET_REFINVENTORY" unique="false">
+        <index-column name="M_REFINVENTORY_ID"/>
+      </index>
       <unique name="M_STORAGE_DETAIL_UN">
         <unique-column name="M_PRODUCT_ID"/>
         <unique-column name="M_LOCATOR_ID"/>
