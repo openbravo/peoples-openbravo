@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,13 +24,19 @@ import java.util.Date;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
+import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 
 /**
  * Process of boxing storage details into a concrete referenced inventory
@@ -77,5 +83,43 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
   @Override
   protected String getNewStorageBinId(JSONObject storageDetailJS) {
     return newStorageBinId;
+  }
+
+  /**
+   * It calls {@link ReferencedInventoryProcessor#createAndProcessGoodsMovement()}. It then verifies
+   * that the referenced inventory is stored in a unique bin.
+   * 
+   * @throws Exception
+   *           In case of exception, the transaction is rollback and the exception is thrown.
+   * 
+   */
+  @Override
+  public InternalMovement createAndProcessGoodsMovement() throws Exception {
+    try {
+      final InternalMovement goodsMovementHeader = super.createAndProcessGoodsMovement();
+      checkReferencedInventoryIsInOneBin();
+      return goodsMovementHeader;
+    } catch (Exception e) {
+      OBDal.getInstance().rollbackAndClose();
+      throw e;
+    }
+  }
+
+  private void checkReferencedInventoryIsInOneBin() {
+    final String hql = "select distinct(sd.storageBin) " + //
+        "                from  MaterialMgmtStorageDetail sd " + //
+        "                where sd.referencedInventory.id = :referencedInventoryId" + //
+        "                and sd.storageBin.id <> :newStorageBinId";
+    final Session session = OBDal.getInstance().getSession();
+    final Query query = session.createQuery(hql.toString());
+    query.setParameter("referencedInventoryId", referencedInventory.getId());
+    query.setParameter("newStorageBinId", newStorageBinId);
+    query.setMaxResults(1);
+    final Locator otherLocator = (Locator) query.uniqueResult();
+    if (otherLocator != null) {
+      throw new OBException(String.format(
+          OBMessageUtils.messageBD("ReferencedInventoryInOtherBin"),
+          referencedInventory.getIdentifier(), otherLocator.getIdentifier()));
+    }
   }
 }
