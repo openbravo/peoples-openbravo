@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1016,6 +1016,11 @@ public class ToolBar {
     removeElement("ORDERBY_FILTERED");
     removeElement("FIRST");
     removeElement("LAST");
+    removeElement("FIRST_RELATION");
+    removeElement("LAST_RELATION");
+    removeElement("PREVIOUS");
+    removeElement("NEXT");
+
     if (!hasPrevious)
       removeElement("PREVIOUS_RELATION");
     else
@@ -1032,6 +1037,7 @@ public class ToolBar {
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
     removeElement("AUDIT_SHOW_RELATION_ENABLED");
     removeElement("AUDIT_TRAIL");
+    removeElement("RELATED_INFO");
   }
 
   private void removeAllTests() {
@@ -1145,7 +1151,8 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("ATTACHMENT"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("EXCEL"), lastType, false));
       // if some module still runs this code path -> Log error with StackTrace
-      if (buttons.containsKey("GRIDEXCEL") || buttons.containsKey("GRIDCSV") || buttons.containsKey("GRIDPDF")) {
+      if (buttons.containsKey("GRIDEXCEL") || buttons.containsKey("GRIDCSV")
+          || buttons.containsKey("GRIDPDF")) {
         log.error("Old 2.50 ExportGrid functionality does no longer exist.", new Throwable());
       }
       toolbar.append(transformElementsToString(buttons.get("PRINT"), lastType, false));
