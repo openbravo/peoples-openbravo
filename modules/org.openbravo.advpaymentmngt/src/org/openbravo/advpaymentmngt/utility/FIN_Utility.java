@@ -1050,8 +1050,23 @@ public class FIN_Utility {
    * @return Formatted string.
    */
   public static String formatNumber(BigDecimal number) {
+    return formatNumber(number, "euro", "Edition");
+  }
+
+  /**
+   * Formats a number using the provided formatId and qualifier (see Format.xml) format.
+   * 
+   * @param number
+   *          Number to be formatted.
+   * @param formatId
+   *          euro, price, qty, etc.
+   * @param qualifier
+   *          Edition, Relation, etc,
+   * @return Formatted string.
+   */
+  public static String formatNumber(BigDecimal number, String formatId, String qualifier) {
     final UIDefinitionController.FormatDefinition formatDef = UIDefinitionController.getInstance()
-        .getFormatDefinition("euro", "Edition");
+        .getFormatDefinition(formatId, qualifier);
 
     String formatWithDot = formatDef.getFormat();
     DecimalFormatSymbols dfs = new DecimalFormatSymbols();

@@ -81,6 +81,10 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
+      <column name="M_REFINVENTORY_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_STORAGE_DETAIL_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -101,6 +105,9 @@
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_UOM" name="M_STORAGE_DETAIL_M_PRODUCT_UOM">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_REFINVENTORY" name="M_STORAGE_DETAIL_M_REFINV">
+        <reference local="M_REFINVENTORY_ID" foreign="M_REFINVENTORY_ID"/>
       </foreign-key>
       <index name="M_STORAGE_DETAIL_LOCATOR" unique="false">
         <index-column name="M_LOCATOR_ID"/>

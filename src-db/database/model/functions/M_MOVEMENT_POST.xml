@@ -300,7 +300,7 @@
             (
               get_uuid(), Cur_MoveLine.AD_Client_ID, Cur_MoveLine.AD_Org_ID, 'Y',
               now(), v_p_User, now(), v_p_User,
-              'M+', Cur_MoveLine.M_LocatorTo_ID, Cur_MoveLine.M_Product_ID, COALESCE(Cur_MoveLine.M_AttributeSetInstance_ID, '0'),
+              'M+', Cur_MoveLine.M_LocatorTo_ID, Cur_MoveLine.M_Product_ID, COALESCE(Cur_MoveLine.M_AttributeSetInstanceTo_ID, Cur_MoveLine.M_AttributeSetInstance_ID, '0'),
               v_MoveDate, Cur_MoveLine.MovementQty, Cur_MoveLine.M_MovementLine_ID, Cur_MoveLine.M_Product_UOM_ID,
               Cur_MoveLine.QuantityOrder, Cur_MoveLine.C_UOM_ID
             )
