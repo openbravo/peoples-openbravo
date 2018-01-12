@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -13,8 +13,51 @@
 
   function getTaxCategory(params) {
     // { receipt, line }
-    params.taxCategory = params.line.get('product').get('taxCategory');
-    return Promise.resolve(params);
+
+    var i, j, k;
+    return new Promise(function (resolve, reject) {
+      for (i = 0; i < params.receipt.get('lines').length; i++) {
+        var l = params.receipt.get('lines').at(i);
+        if (l.get('relatedLines')) {
+          for (j = 0; j < l.get('relatedLines').length; j++) {
+            var rell = l.get('relatedLines')[j];
+            if (rell.orderlineId === params.line.get('id')) {
+              if (l.get('product').get('modifyTax')) {
+                // product has a service with *modifyTax* flag activated
+                // Lets look for the service lnked product category configuration
+                // This is the async part of this function.
+                OB.Dal.findUsingCache('ProductServiceLinked', OB.Model.ProductServiceLinked, {
+                  'product': l.get('product').get('id')
+                }, function (data) {
+                  for (k = 0; k < data.length; k++) {
+                    var linked = data.at(k);
+                    if (params.line.get('product').get('productCategory') === linked.get('productCategory')) {
+                      // Found a linked configuration that matches productCategory of the product line
+                      // resolving the linked configuration tax category
+                      // this is the use case for the *Services can change product tax* functionality.
+                      params.taxCategory = linked.get('taxCategory');
+                      resolve(params);
+                      return;
+                    }
+                  }
+                  // Not found a linked configuration that matches productCategory of the product line
+                  // resolving product tax category
+                  params.taxCategory = params.line.get('product').get('taxCategory');
+                  resolve(params);
+                }, reject, {
+                  modelsAffectedByCache: ['ProductServiceLinked']
+                });
+                return;
+              }
+            }
+          }
+        }
+      }
+      // Not found a service linked with *modifyTax* flag activated.
+      // resolving product tax Category
+      params.taxCategory = params.line.get('product').get('taxCategory');
+      resolve(params);
+    });
   }
 
   function navigateTaxesTree(taxrates, taxid, iteratee) {
