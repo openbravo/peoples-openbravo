@@ -162,7 +162,8 @@
                 definition: {
                   userAmt: promo.userAmt,
                   applyNext: promo.applyNext,
-                  lastApplied: promo.lastApplied
+                  lastApplied: promo.lastApplied,
+                  discountinstance: promo.discountinstance
                 },
                 alreadyCalculated: true // to prevent loops
               };

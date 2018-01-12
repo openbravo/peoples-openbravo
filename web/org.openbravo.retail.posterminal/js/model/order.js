@@ -2841,7 +2841,7 @@
             replaced = true;
             break;
           } else if (discount.forceReplace) {
-            if (promotions[i].ruleId === rule.id) {
+            if (promotions[i].ruleId === rule.id && discount.discountinstance === promotions[i].discountinstance) {
               if (promotions[i].hidden !== true) {
                 promotions[i] = disc;
                 replaced = true;
@@ -2863,6 +2863,7 @@
     removePromotion: function (line, rule) {
       var promotions = line.get('promotions'),
           ruleId = rule.id,
+          discountinstance = rule.discountinstance,
           removed = false,
           res = [],
           i;
@@ -2871,7 +2872,7 @@
       }
 
       for (i = 0; i < promotions.length; i++) {
-        if (promotions[i].ruleId === rule.id) {
+        if (promotions[i].ruleId === rule.id && promotions[i].discountinstance === discountinstance) {
           removed = true;
         } else {
           res.push(promotions[i]);
@@ -4669,14 +4670,39 @@
       });
       _.each(me.get('lines').models, function (line) {
         var orderPromotions = false;
+        var masterKey = 0;
         var position;
+        var groupProm = {};
         var prom = line.get('promotions');
         var validProm = _.filter(prom, function (p) {
           return !p.hidden;
         });
-        var groupProm = _.groupBy(validProm, function (p) {
+        // Group multipromotions with the same instanceid
+        var multiProm = _.filter(validProm, function (p) {
+          return p.discountinstance;
+        });
+        var groupInstanceProm = _.groupBy(multiProm, function (p) {
+          return p.discountinstance;
+        });
+        var groupMultiProm = {};
+        _.each(groupInstanceProm, function (p, key) {
+          groupMultiProm[masterKey] = p;
+          masterKey++;
+        });
+        // Group singlepromotions with the same ruleid
+        var singleProm = _.filter(validProm, function (p) {
+          return !p.discountinstance;
+        });
+        var groupRuleIdProm = _.groupBy(singleProm, function (p) {
           return p.ruleId;
         });
+        var groupSingleProm = {};
+        _.each(groupRuleIdProm, function (p, key) {
+          groupSingleProm[masterKey] = p;
+          masterKey++;
+        });
+        // Merge multipromotion and singlepromotion arrays
+        _.extend(groupProm, groupMultiProm, groupSingleProm);
         for (position = 0; position < _.keys(groupProm).length; position++) {
           var i;
           var key = _.keys(groupProm)[position];
@@ -4697,9 +4723,9 @@
                 copiedPromo.chunks = promList.length;
               }
             }
-
             me.removePromotion(line, {
-              id: key
+              id: promList[0].ruleId,
+              discountinstance: promList[0].discountinstance
             });
             line.get('promotions').push(copiedPromo);
           }
