@@ -13,9 +13,28 @@
 
   function getTaxCategory(params) {
     // { receipt, line }
-
-    var i, j, k;
     return new Promise(function (resolve, reject) {
+
+      var i, j, k;
+
+      function findSuccess(data) {
+        for (k = 0; k < data.length; k++) {
+          var linked = data.at(k);
+          if (params.line.get('product').get('productCategory') === linked.get('productCategory')) {
+            // Found a linked configuration that matches productCategory of the product line
+            // resolving the linked configuration tax category
+            // this is the use case for the *Services can change product tax* functionality.
+            params.taxCategory = linked.get('taxCategory');
+            resolve(params);
+            return;
+          }
+        }
+        // Not found a linked configuration that matches productCategory of the product line
+        // resolving product tax category
+        params.taxCategory = params.line.get('product').get('taxCategory');
+        resolve(params);
+      }
+
       for (i = 0; i < params.receipt.get('lines').length; i++) {
         var l = params.receipt.get('lines').at(i);
         if (l.get('relatedLines')) {
@@ -28,23 +47,7 @@
                 // This is the async part of this function.
                 OB.Dal.findUsingCache('ProductServiceLinked', OB.Model.ProductServiceLinked, {
                   'product': l.get('product').get('id')
-                }, function (data) {
-                  for (k = 0; k < data.length; k++) {
-                    var linked = data.at(k);
-                    if (params.line.get('product').get('productCategory') === linked.get('productCategory')) {
-                      // Found a linked configuration that matches productCategory of the product line
-                      // resolving the linked configuration tax category
-                      // this is the use case for the *Services can change product tax* functionality.
-                      params.taxCategory = linked.get('taxCategory');
-                      resolve(params);
-                      return;
-                    }
-                  }
-                  // Not found a linked configuration that matches productCategory of the product line
-                  // resolving product tax category
-                  params.taxCategory = params.line.get('product').get('taxCategory');
-                  resolve(params);
-                }, reject, {
+                }, findSuccess, reject, {
                   modelsAffectedByCache: ['ProductServiceLinked']
                 });
                 return;
