@@ -122,11 +122,10 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ModalInfo',
+  kind: 'OB.UI.ModalAction',
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit',
   style: 'background-color: #EBA001;',
   i18nHeader: 'OBPOS_notEnoughCreditHeader',
-  isDefaultAction: true,
   executeOnShow: function () {
     if (this.args) {
       this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_notEnoughCreditBody', [this.args.bpName, OB.I18N.formatCurrency(this.args.actualCredit)]));
@@ -135,5 +134,19 @@ enyo.kind({
   bodyContent: {
     name: 'popupmessage',
     content: ''
+  },
+  bodyButtons: {
+    components: [{
+      kind: 'OB.UI.ModalDialogButton',
+      name: 'OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit.Components.ok_button',
+      i18nContent: 'OBMOBC_LblOk',
+      isDefaultAction: true,
+      init: function (model) {
+        this.model = model;
+      },
+      tap: function () {
+        this.doHideThisPopup();
+      }
+    }]
   }
 });
