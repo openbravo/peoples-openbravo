@@ -6,6 +6,7 @@
 	<property name="ireport.x" value="932"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
 	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false"/>
 	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18" isBold="false"/>
 	<style name="Column header" forecolor="#FFFFFF" backcolor="#808080" fontName="Times New Roman" fontSize="14" isBold="true"/>
@@ -211,7 +212,7 @@ COST]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{product_name}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true" pattern="#,##0.00;-#,##0.00">
 				<reportElement style="Detail" positionType="Float" x="860" y="0" width="75" height="13" uuid="5102a987-6f28-4caa-9403-a3151706c081">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -242,7 +243,7 @@ COST]]></text>
 				<textFieldExpression><![CDATA[$F{average_cost}]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{COSTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="1060" y="0" width="100" height="13" uuid="c3427f37-c24c-47ce-8e29-80dac24dd1c6">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -265,7 +266,7 @@ COST]]></text>
 				<textFieldExpression><![CDATA[$F{cost_type}]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{COSTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="1225" y="0" width="100" height="13" uuid="4a91a321-76eb-4406-93dd-cae7930ce468">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
