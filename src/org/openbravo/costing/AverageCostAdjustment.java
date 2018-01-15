@@ -308,8 +308,37 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         if (AverageAlgorithm.modifiesAverage(currentTrxType)) {
           // Recalculate average, if current stock is zero the average is not modified
           if (currentStock.signum() != 0) {
+            if (modifiesAverageCostAndUsesActualAverageCost(trx) && !trx.isCostPermanent()) {
+              if (cost == null) {
+                cost = currentValueAmt.add(adjustmentBalance).divide(currentStock,
+                    costCurPrecission, RoundingMode.HALF_UP);
+              }
+              // Check current trx unit cost matches new expected cost
+              BigDecimal expectedCost = cost.multiply(trx.getMovementQuantity().abs()).setScale(
+                  stdCurPrecission, RoundingMode.HALF_UP);
+              BigDecimal unitCost = trxUnitCost;
+              unitCost = unitCost.add(trxUnitCostAdjAmt);
+              log.debug("Is adjustment needed? Expected {} vs Current {}",
+                  expectedCost.toPlainString(), unitCost.toPlainString());
+              BigDecimal unitCostDifference = expectedCost.subtract(unitCost);
+              if (unitCostDifference.signum() != 0) {
+
+                trxAdjAmt = trxAdjAmt.add(unitCostDifference.multiply(trxSignMultiplier));
+                trxUnitCostAdjAmt = trxUnitCostAdjAmt.add(unitCostDifference);
+                adjustmentBalance = adjustmentBalance.add(unitCostDifference
+                    .multiply(trxSignMultiplier));
+                // If there is a difference insert a cost adjustment line.
+                CostAdjustmentLine newCAL = insertCostAdjustmentLine(trx, unitCostDifference, null);
+                newCAL.setRelatedTransactionAdjusted(Boolean.TRUE);
+                OBDal.getInstance().save(newCAL);
+                log.debug("Adjustment added. Amount {}.", unitCostDifference.toPlainString());
+              }
+
+            }
+
             cost = currentValueAmt.add(adjustmentBalance).divide(currentStock, costCurPrecission,
                 RoundingMode.HALF_UP);
+
           }
           if (cost == null) {
             continue;
@@ -492,6 +521,32 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         OBDal.getInstance().save(currentCosting);
       }
     }
+  }
+
+  private boolean modifiesAverageCostAndUsesActualAverageCost(MaterialTransaction trx) {
+    TrxType currentTrxType = TrxType.getTrxType(trx);
+    switch (currentTrxType) {
+    case InventoryIncrease:
+    case InventoryOpening:
+      return trx.getPhysicalInventoryLine().getCost() == null;
+    case Receipt:
+      return trx.getGoodsShipmentLine().getSalesOrderLine() == null && getProductCost(trx) != null;
+    case ShipmentNegative:
+    case InternalConsNegative:
+      return getProductCost(trx) != null;
+    case ShipmentReturn:
+      return true;
+    default:
+      return false;
+    }
+  }
+
+  private Costing getProductCost(MaterialTransaction trx) {
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider();
+    Organization legalEntity = osp.getLegalEntity(trx.getOrganization());
+
+    return AverageAlgorithm.getProductCost(trx.getTransactionProcessDate(), trx.getProduct(),
+        getCostDimensions(), legalEntity);
   }
 
   @Override
