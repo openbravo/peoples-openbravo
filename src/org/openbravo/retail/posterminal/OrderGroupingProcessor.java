@@ -320,7 +320,7 @@ public class OrderGroupingProcessor {
     for (OrderGroupingProcessorData orderAndInvoiceId : arrayOrderAndInvoiceId) {
       Order order = OBDal.getInstance().get(Order.class, orderAndInvoiceId.cOrderId);
       Invoice invoice = OBDal.getInstance().get(Invoice.class, orderAndInvoiceId.cInvoiceId);
-      if (order.isObposIslayaway() && order.isCancelled()) {
+      if (order.isObposIslayaway() && order.isCancelled() && !order.isCreateInvoice()) {
         orderDocumentNo = order.getDocumentNo();
         OBCriteria<Order> obc = OBDal.getInstance().createCriteria(Order.class);
         obc.add(Restrictions.eq(Order.PROPERTY_DOCUMENTNO,
