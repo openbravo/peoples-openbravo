@@ -2030,7 +2030,7 @@ enyo.kind({
 
     paymentStatus = receipt.getPaymentStatus();
     prepaymentLimitAmount = receipt.get('prepaymentLimitAmt');
-    receiptHasPrepaymentAmount = prepaymentLimitAmount !== receipt.get('gross') && prepaymentLimitAmount !== 0;
+    receiptHasPrepaymentAmount = prepaymentLimitAmount !== 0;
     hasPayments = paymentStatus.payments.length > 0;
     allowApproval = OB.MobileApp.model.hasPermission('OBPOS_AllowPrepaymentUnderLimitLayaway', true);
     pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentLimitAmount, paymentStatus.pendingAmt), paymentStatus.totalAmt);
