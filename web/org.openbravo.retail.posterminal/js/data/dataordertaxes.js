@@ -1057,7 +1057,7 @@
                     linepricenet: productbom.bomlinepricenet,
                     linenet: productbom.bomnet,
                     discountedprice: line.get('qty') === 0 ? new BigDecimal('0') : new BigDecimal(String(productbom.bomdiscountednet)).divide(new BigDecimal(String(line.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP),
-                    discountednet: productbom.bomdiscountednet
+                    discountedNet: productbom.bomdiscountednet
                   }) //
                   .then(calcProductTaxesExcPrice);
                 }));
@@ -1071,7 +1071,7 @@
               linepricenet: linepricenet,
               linenet: linenet,
               discountedprice: discountedprice,
-              discountednet: discountedNet
+              discountedNet: discountedNet
             }) //
             .then(getTaxCategory) //
             .then(calcProductTaxesExcPrice);
