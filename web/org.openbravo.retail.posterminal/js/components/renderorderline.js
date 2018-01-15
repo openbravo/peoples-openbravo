@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2017 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -331,18 +331,17 @@ enyo.kind({
         orderlineList: null
       }));
       var me = this;
-      setTimeout(function () {
-        me.bubble('onTabChange', {
-          tabPanel: 'searchCharacteristic'
-        });
-        me.bubble('onSelectFilter', {
-          params: {
-            skipProductCharacteristic: true
-          }
-        });
-        me.owner.model.set("obposServiceProposed", true);
-        OB.MobileApp.model.receipt.save();
-      }, 1);
+      me.bubble('onTabChange', {
+        tabPanel: 'searchCharacteristic'
+      });
+      me.bubble('onSelectFilter', {
+        params: {
+          skipProductCharacteristic: true
+        }
+      });
+      me.owner.model.set("obposServiceProposed", true);
+      OB.MobileApp.model.receipt.save();
+      return true;
     }
   },
   toggleVisibility: function (inSender, inEvent) {
