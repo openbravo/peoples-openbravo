@@ -1192,7 +1192,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       for (i = 0; i < payments.length(); i++) {
         JSONObject payment = payments.getJSONObject(i);
         if (payment.has("isPrePayment") && payment.getBoolean("isPrePayment")) {
-          total = total.subtract(new BigDecimal(payment.getDouble("origAmount")));
+          total = total.subtract(BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
+              pricePrecision, RoundingMode.HALF_UP));
         }
       }
 
