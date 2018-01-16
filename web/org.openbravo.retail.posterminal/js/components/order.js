@@ -1395,13 +1395,11 @@ enyo.kind({
       _.each(this.orderList.models, function (order) {
         if (OB.UTIL.isNullOrUndefined(order.get('amountToLayaway'))) {
           total = OB.DEC.add(total, order.getPending());
-          prepayment = OB.DEC.add(prepayment, order.get('prepaymentAmt'));
-          prepaymentLimit = OB.DEC.add(prepaymentLimit, order.get('prepaymentLimitAmt'));
         } else {
           total = OB.DEC.add(total, order.get('amountToLayaway'));
-          prepayment = OB.DEC.add(prepayment, order.get('amountToLayaway'));
-          prepaymentLimit = OB.DEC.add(prepaymentLimit, order.get('amountToLayaway'));
         }
+        prepayment = OB.DEC.add(prepayment, order.get('prepaymentAmt'));
+        prepaymentLimit = OB.DEC.add(prepaymentLimit, order.get('prepaymentLimitAmt'));
         existingPayment = OB.DEC.add(existingPayment, order.get('payment'));
       });
       this.total = total;
