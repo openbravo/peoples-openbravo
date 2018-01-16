@@ -210,6 +210,7 @@ BEGIN
         FROM M_OFFER, M_Offer_Type t
         WHERE v_date BETWEEN DATEFROM AND COALESCE(DATETO, TO_DATE('31-12-9999', 'DD-MM-YYYY'))
           AND M_OFFER.AD_Client_ID = Cur_Order.AD_Client_ID
+          AND AD_ISORGINCLUDED(Cur_Order.AD_Org_ID, M_OFFER.AD_ORG_ID, M_OFFER.AD_CLIENT_ID) <> -1
           AND M_OFFER.IsActive = 'Y'
           AND t.M_Offer_Type_ID = M_Offer.M_Offer_Type_ID
           AND ((PRICELIST_SELECTION='Y' AND NOT EXISTS (SELECT 1 FROM M_OFFER_PRICELIST
