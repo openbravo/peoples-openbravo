@@ -498,6 +498,7 @@ enyo.kind({
     this.$.body.$.listMultiOrders.cleanFilter = true;
     this.$.header.$.modalMultiOrdersTopHeader.disableDoneButton(true);
     if (OB.MobileApp.model.hasPermission('OBPOS_SelectCurrentTicketsOnPaidOpen', true)) {
+      me.model.get('orderList').saveCurrent();
       _.each(me.model.get('orderList').models, function (iter) {
         if (iter.get('lines') && iter.get('lines').length > 0) {
           var payment = iter.get('payments').models.reduce(function (total, model) {
