@@ -38,7 +38,6 @@ import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSetInstance;
-import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
@@ -62,11 +61,6 @@ abstract class ReferencedInventoryProcessor {
    * The created goods movement header will belong to the returned organization
    */
   protected abstract Organization getGoodsMovementHeaderOrganization();
-
-  /**
-   * The returned ReferencedInventory will be associated to the given storage detail
-   */
-  protected abstract ReferencedInventory getReferencedInventory(final StorageDetail storageDetail);
 
   /**
    * The returned ReferencedInventory will be associated to the given storage detail

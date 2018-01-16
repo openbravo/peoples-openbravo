@@ -31,7 +31,6 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSetInstance;
-import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 
 /**
@@ -69,11 +68,6 @@ public class UnboxProcessor extends ReferencedInventoryProcessor {
   protected Organization getGoodsMovementHeaderOrganization() {
     // FIXME which organization
     return OBContext.getOBContext().getCurrentOrganization();
-  }
-
-  @Override
-  protected ReferencedInventory getReferencedInventory(StorageDetail storageDetail) {
-    return ReferencedInventoryUtil.getParentReferenceInventory(storageDetail);
   }
 
   @Override

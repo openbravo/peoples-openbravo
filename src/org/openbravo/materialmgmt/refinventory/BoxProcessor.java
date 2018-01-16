@@ -87,7 +87,9 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
     return referencedInventory.getOrganization();
   }
 
-  @Override
+  /**
+   * The returned ReferencedInventory will be associated to the given storage detail
+   */
   protected ReferencedInventory getReferencedInventory(StorageDetail storageDetail) {
     return referencedInventory;
   }
