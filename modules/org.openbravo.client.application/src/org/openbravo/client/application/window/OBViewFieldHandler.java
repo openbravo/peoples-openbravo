@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2017 Openbravo SLU
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,14 +28,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.expression.OBScriptEngine;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -1575,14 +1574,12 @@ public class OBViewFieldHandler {
       String translatedDisplayLogic = DynamicExpressionParser
           .replaceSystemPreferencesInDisplayLogic(displayLogicEvaluatedInTheServer);
 
-      final ScriptEngineManager manager = new ScriptEngineManager();
-      final ScriptEngine engine = manager.getEngineByName("js");
       boolean result;
 
       DynamicExpressionParser parser = new DynamicExpressionParser(translatedDisplayLogic, tab);
 
       try {
-        result = (Boolean) engine.eval(parser.getJSExpression());
+        result = (Boolean) OBScriptEngine.getInstance().eval(parser.getJSExpression());
       } catch (ScriptException e) {
         log.error(
             "Error while evaluating the Display Logic at Server Level. Error in field with id: "

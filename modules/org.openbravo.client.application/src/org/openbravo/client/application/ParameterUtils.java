@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,8 +24,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -34,6 +32,7 @@ import org.apache.axis.utils.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.expression.OBScriptEngine;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BasePrimitiveDomainType;
@@ -59,6 +58,7 @@ import org.openbravo.model.ad.domain.Reference;
  * @author iperdomo
  */
 public class ParameterUtils {
+
   private static Logger log = Logger.getLogger(ParameterUtils.class);
 
   public static void setParameterValue(ParameterValue parameterValue, JSONObject requestValue) {
@@ -269,16 +269,15 @@ public class ParameterUtils {
   @SuppressWarnings("rawtypes")
   public static Object getJSExpressionResult(Map<String, String> parameters, HttpSession session,
       String expression) throws ScriptException {
-    final ScriptEngineManager manager = new ScriptEngineManager();
-    final ScriptEngine engine = manager.getEngineByName("js");
 
+    Map<String, Object> bindings = new HashMap<>();
     if (session != null) {
-      engine.put("OB", new OBBindings(OBContext.getOBContext(), parameters, session));
+      bindings.put("OB", new OBBindings(OBContext.getOBContext(), parameters, session));
     } else {
-      engine.put("OB", new OBBindings(OBContext.getOBContext(), parameters));
+      bindings.put("OB", new OBBindings(OBContext.getOBContext(), parameters));
     }
 
-    Object result = engine.eval(expression);
+    Object result = OBScriptEngine.getInstance().eval(expression, bindings);
     if (result instanceof Map) {
       // complex js object, convert it into a JSON
       result = new JSONObject((Map) result);
