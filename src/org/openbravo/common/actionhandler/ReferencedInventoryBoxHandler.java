@@ -92,7 +92,9 @@ public class ReferencedInventoryBoxHandler extends BaseProcessActionHandler {
   private String getNewStorageBin(final JSONObject request) {
     try {
       final JSONObject params = request.getJSONObject("_params");
-      return params.getString(PARAM_NEWSTORAGEBIN);
+      final String newStorageBinId = params.getString(PARAM_NEWSTORAGEBIN);
+      return StringUtils.isBlank(newStorageBinId) || StringUtils.equals(newStorageBinId, "null") ? null
+          : newStorageBinId;
     } catch (JSONException noParameterFound) {
       return null;
     }

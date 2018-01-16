@@ -21,6 +21,7 @@ package org.openbravo.materialmgmt.refinventory;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -43,18 +44,42 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
  */
 public class BoxProcessor extends ReferencedInventoryProcessor {
   private ReferencedInventory referencedInventory;
-  private final String newStorageBinId;
+  private String newStorageBinId;
 
   public BoxProcessor(final ReferencedInventory referencedInventory,
       final JSONArray selectedStorageDetails, final String newStorageBinId) throws JSONException {
     setAndValidateReferencedInventory(referencedInventory);
-    setSelectedStorageDetailsAndValidateThem(selectedStorageDetails);
-    this.newStorageBinId = newStorageBinId;
+    super.setSelectedStorageDetailsAndValidateThem(selectedStorageDetails);
+    checkStorageDetailsNotAlreadyInReferencedInventory(selectedStorageDetails);
+    setAndValidateNewStorageBinId(newStorageBinId);
   }
 
   private void setAndValidateReferencedInventory(final ReferencedInventory referencedInventory) {
     Check.isNotNull(referencedInventory, "Referenced Inventory parameter can't be null");
     this.referencedInventory = referencedInventory;
+  }
+
+  private void checkStorageDetailsNotAlreadyInReferencedInventory(
+      final JSONArray selectedStorageDetails) throws JSONException {
+    for (int i = 0; i < selectedStorageDetails.length(); i++) {
+      final JSONObject storageDetailJS = selectedStorageDetails.getJSONObject(i);
+      final StorageDetail storageDetail = getStorageDetail(storageDetailJS);
+      final ReferencedInventory previousReferencedInventory = storageDetail
+          .getReferencedInventory();
+      if (previousReferencedInventory != null) {
+        throw new OBException(String.format(
+            OBMessageUtils.messageBD("StorageDetailAlreadyLinkedToPreviousReferencedInventory"),
+            storageDetail.getIdentifier(), previousReferencedInventory.getIdentifier()));
+      }
+    }
+  }
+
+  private void setAndValidateNewStorageBinId(final String newStorageBinId) throws JSONException {
+    if (StringUtils.isBlank(newStorageBinId)) {
+      throw new OBException(OBMessageUtils.messageBD("NewStorageBinParameterMandatory"));
+    } else {
+      this.newStorageBinId = newStorageBinId;
+    }
   }
 
   @Override
