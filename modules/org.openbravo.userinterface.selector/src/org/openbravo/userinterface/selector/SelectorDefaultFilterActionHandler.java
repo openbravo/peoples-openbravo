@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -32,6 +30,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.expression.OBScriptEngine;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -93,9 +92,9 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
         return result;
       }
 
-      final ScriptEngineManager manager = new ScriptEngineManager();
-      final ScriptEngine engine = manager.getEngineByName(SelectorConstants.JS);
-      engine.put(
+      Map<String, Object> bindings = new HashMap<>();
+
+      bindings.put(
           "OB",
           new OBBindings(OBContext.getOBContext(), params, (HttpSession) parameters
               .get(KernelConstants.HTTP_SESSION)));
@@ -107,7 +106,7 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
       JSONArray idFilters = new JSONArray();
       for (SelectorField f : selFields) {
         try {
-          exprResult = engine.eval(f.getDefaultExpression());
+          exprResult = OBScriptEngine.getInstance().eval(f.getDefaultExpression(), bindings);
           Object bobId = null;
 
           if (exprResult != null && !exprResult.equals("") && !exprResult.equals("''")) {
@@ -146,12 +145,12 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
       if (idFilters.length() > 0) {
         result.put(SelectorConstants.PARAM_ID_FILTERS, idFilters);
       }
-
       // Obtaining the filter Expression from Selector. Refer issue
       // https://issues.openbravo.com/view.php?id=21541
       Object dynamicFilterExpression = null;
       if (sel.getFilterExpression() != null) {
-        dynamicFilterExpression = engine.eval(sel.getFilterExpression());
+        dynamicFilterExpression = OBScriptEngine.getInstance().eval(sel.getFilterExpression(),
+            bindings);
         result.put(SelectorConstants.PARAM_FILTER_EXPRESSION, dynamicFilterExpression.toString());
       }
 

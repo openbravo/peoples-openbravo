@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,7 @@
 
 package org.openbravo.base.session;
 
+import java.util.Enumeration;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -157,6 +158,16 @@ public abstract class SessionFactoryController {
       configuration.getProperties().setProperty(Environment.DEFAULT_BATCH_FETCH_SIZE, "50");
       configuration.getProperties().setProperty(Environment.STATEMENT_BATCH_SIZE, "10");
       configuration.getProperties().setProperty(Environment.STATEMENT_FETCH_SIZE, "50");
+      if (properties.containsKey(Environment.QUERY_PLAN_CACHE_MAX_STRONG_REFERENCES)) {
+        configuration.getProperties().setProperty(
+            Environment.QUERY_PLAN_CACHE_MAX_STRONG_REFERENCES,
+            properties.getProperty(Environment.QUERY_PLAN_CACHE_MAX_STRONG_REFERENCES));
+      }
+      if (properties.containsKey(Environment.QUERY_PLAN_CACHE_MAX_SOFT_REFERENCES)) {
+        configuration.getProperties().setProperty(Environment.QUERY_PLAN_CACHE_MAX_SOFT_REFERENCES,
+            properties.getProperty(Environment.QUERY_PLAN_CACHE_MAX_SOFT_REFERENCES));
+      }
+
       configuration.getProperties().setProperty("javax.persistence.validation.mode", "NONE");
       // TODO: consider setting isolation level explicitly
       // configuration.getProperties().setProperty(Environment.ISOLATION,
@@ -188,22 +199,35 @@ public abstract class SessionFactoryController {
   protected abstract void mapModel(Configuration theConfiguration);
 
   protected Properties getOpenbravoProperties() {
-    final Properties props = new Properties();
     final Properties obProps = OBPropertiesProvider.getInstance().getOpenbravoProperties();
     if (obProps == null) {
       return new Properties();
     }
 
+    Properties props = new Properties();
     if (obProps.getProperty("bbdd.rdbms") != null) {
       if (obProps.getProperty("bbdd.rdbms").equals("POSTGRE")) {
-        return getPostgresHbProps(obProps);
+        props = getPostgresHbProps(obProps);
       } else if (obProps.getProperty("bbdd.rdbms").equals("DB2")) {
-        return getDB2HbProps(obProps);
+        props = getDB2HbProps(obProps);
+      } else {
+        props = getOracleHbProps(obProps);
       }
-
-      return getOracleHbProps(obProps);
     }
+    addCommonHibernateProperties(props, obProps);
+
     return props;
+  }
+
+  @SuppressWarnings("unchecked")
+  private void addCommonHibernateProperties(Properties properties, Properties allProperties) {
+    Enumeration<String> allPropertyNames = (Enumeration<String>) allProperties.propertyNames();
+    while (allPropertyNames.hasMoreElements()) {
+      String propertyName = allPropertyNames.nextElement();
+      if (propertyName.startsWith("hibernate.")) {
+        properties.put(propertyName, allProperties.getProperty(propertyName));
+      }
+    }
   }
 
   private Properties getPostgresHbProps(Properties obProps) {

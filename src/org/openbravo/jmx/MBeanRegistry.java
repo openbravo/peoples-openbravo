@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017 Openbravo SLU
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,7 +24,6 @@ import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.openbravo.apachejdbcconnectionpool.JdbcExternalConnectionPool;
 import org.openbravo.dal.core.DalContextListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * This class is intended to register the jmx beans defined in the application.
  */
 public class MBeanRegistry {
-  final static private Logger log = LoggerFactory.getLogger(JdbcExternalConnectionPool.class);
+  private static final Logger log = LoggerFactory.getLogger(MBeanRegistry.class);
 
   /**
    * Registers a pre-existing object as an MBean with the platform MBean server. The MBean will be

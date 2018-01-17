@@ -8,14 +8,15 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2008-2010 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2008-2018 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 
 package org.openbravo.base.expression;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.script.ScriptException;
 
 import org.apache.log4j.Logger;
@@ -66,22 +67,22 @@ public class Evaluator implements OBSingleton {
 
     log.debug("Evaluating script for " + contextBob + " script: " + script);
 
+    OBScriptEngine engine = OBScriptEngine.getInstance();
+
     try {
-      // note that the name of a engine can differ: Mozilla Rhino
-      // but js seems to work fine
-      final ScriptEngineManager manager = new ScriptEngineManager();
-      final ScriptEngine engine = manager.getEngineByName("js");
       Check
           .isNotNull(
               engine,
               "Scripting engine not found using name js, check for other scripting language names such as Mozilla Rhino");
 
       final Entity e = contextBob.getEntity();
+
+      Map<String, Object> bindings = new HashMap<>();
       for (final Property p : e.getProperties()) {
-        engine.put(p.getName(), contextBob.get(p.getName()));
+        bindings.put(p.getName(), contextBob.get(p.getName()));
       }
 
-      final Object result = engine.eval(script);
+      final Object result = engine.eval(script, bindings);
       Check.isInstanceOf(result, Boolean.class);
       return (Boolean) result;
     } catch (final ScriptException e) {
