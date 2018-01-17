@@ -254,8 +254,10 @@ enyo.kind({
     });
     //add all promotion lines      
     for (i = 0; i < this.promotionsList.length; i++) {
+      var lineNumber = i + 1;
       this.$.bodyContent.$.attributes.createComponent({
         kind: 'OB.UI.DeleteDiscountLine',
+        name: 'deleteDiscountLine' + lineNumber,
         newAttribute: this.promotionsList[i],
         args: this.args
       });
