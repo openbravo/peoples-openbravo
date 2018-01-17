@@ -19,8 +19,10 @@
 
 package org.openbravo.test.costing;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
@@ -30,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +51,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.costing.CancelCostAdjustment;
 import org.openbravo.costing.CostingBackground;
@@ -62,12 +66,14 @@ import org.openbravo.costing.PriceDifferenceBackground;
 import org.openbravo.costing.ReactivateLandedCost;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.ad_process.VerifyBOM;
+import org.openbravo.materialmgmt.InventoryCountProcess;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.process.ProcessInstance;
@@ -112,11 +118,13 @@ import org.openbravo.model.materialmgmt.cost.LCReceiptLineAmt;
 import org.openbravo.model.materialmgmt.cost.LandedCost;
 import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
+import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.InternalConsumption;
 import org.openbravo.model.materialmgmt.transaction.InternalConsumptionLine;
 import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
+import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionLine;
 import org.openbravo.model.materialmgmt.transaction.ProductionPlan;
@@ -139,6 +147,9 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestCosting extends WeldBaseTest {
+
+  private static final String INVENTORY_OPENING = "O";
+  private static final String INVENTORY_NORMAL = "N";
 
   // User System
   private static String USERADMIN_ID = "0";
@@ -230,6 +241,8 @@ public class TestCosting extends WeldBaseTest {
   private static String MOVEMENTIN_ID = "0450583047434254835B2B36B2E5B018";
   // Goods Shipment with documentNo: 500014
   private static String MOVEMENTOUT_ID = "2BCCC64DA82A48C3976B4D007315C2C9";
+  // RTV Shipment doctype id
+  private static String RTV_SHIPMENT_DOCTYPE_ID = "4CBEA8CB77BB4208BCAD66235DC39AF2";
 
   private static boolean runBefore = true;
 
@@ -8906,6 +8919,306 @@ public class TestCosting extends WeldBaseTest {
     }
   }
 
+  /**
+   * Test Price Difference Adjustment with a Goods Receipt not related to a Purchase Order
+   * 
+   * <ul>
+   * <li>Create a new product with purchase price list of 3.00</li>
+   * <li>Create and book a Purchase Order for 1 unit of product</li>
+   * <li>Create and complete a Goods Receipt based on previous Purchase Order</li>
+   * <li>Run Costing Background Process</li>
+   * <li>Create and complete a new Goods Receipt for 10 units of product</li>
+   * <li>Run Costing Background Process</li>
+   * <li>Assert the product has 2 transactions</li>
+   * <li>Assert one transaction has transaction cost of 3.00 and the other has transaction cost of
+   * 30.00</li>
+   * <li>Create a Purchase Invoice based on the first Goods Receipt created</li>
+   * <li>Change the price to 20.00</li>
+   * <li>Complete the Invoice</li>
+   * <li>Run Price Difference Adjustment process</li>
+   * <li>Assert for one transaction total cost is 20.00</li>
+   * <li>Assert the other transaction has total cost 200.00</li>
+   * </ul>
+   */
+  @Test
+  public void testIssue37279_PriceDifferenceAdjustment_GoodsReceiptWithNoRelatedPurchaseOrder()
+      throws Exception {
+    try {
+      OBContext.setOBContext(USER_ID, ROLE_ID, CLIENT_ID, ORGANIZATION_ID);
+      OBContext.setAdminMode(true);
+      OrderToReceiptResult results = executeOrderToReceiptFlow("product37279-A", new BigDecimal(
+          "3.00"), new BigDecimal("1"));
+      runCostingBackground();
+      ShipmentInOut goodsReceipt = cloneMovement(results.getProduct().getId(), false,
+          new BigDecimal("10"), LOCATOR1_ID, 0);
+      completeDocument(goodsReceipt);
+      runCostingBackground();
+      assertTransactionsCount(results.getProduct());
+      assertTransactionsCosts(results.getProduct());
+      Invoice purchaseInvoice = createInvoiceFromMovement(results.getGoodsReceipt().getId(), false,
+          new BigDecimal("20"), new BigDecimal("1"), 0);
+      completeDocument(purchaseInvoice);
+      runPriceBackground();
+      assertTransactionCostsAdjustment(results.getProduct());
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+      throw new OBException(e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Test Price Difference Adjustment with a Goods Shipment with negative values not related to a
+   * Purchase Order
+   * 
+   * <ul>
+   * <li>Create a new product with purchase price list of 3.00</li>
+   * <li>Create and book a Purchase Order for 1 unit of product</li>
+   * <li>Create and complete a Goods Receipt based on previous Purchase Order</li>
+   * <li>Run Costing Background Process</li>
+   * <li>Create and complete a Goods Shipment for -10 units of product</li>
+   * <li>Run Costing Background Process</li>
+   * <li>Assert the product has 2 transactions</li>
+   * <li>Assert one transaction has transaction cost of 3.00 and the other has transaction cost of
+   * 30.00</li>
+   * <li>Create a Purchase Invoice based on the first Goods Receipt created</li>
+   * <li>Change the price to 20.00</li>
+   * <li>Complete the Invoice</li>
+   * <li>Run Price Difference Adjustment process</li>
+   * <li>Assert for one transaction total cost is 20.00</li>
+   * <li>Assert the other transaction has total cost 200.00</li>
+   * </ul>
+   */
+  @Test
+  public void testIssue37279_PriceDifferenceAdjustment_ShippingNegativeWithNoRelatedPurchaseOrder()
+      throws Exception {
+    try {
+      OBContext.setOBContext(USER_ID, ROLE_ID, CLIENT_ID, ORGANIZATION_ID);
+      OBContext.setAdminMode(true);
+      OrderToReceiptResult results = executeOrderToReceiptFlow("product37279-B", new BigDecimal(
+          "3.00"), new BigDecimal("1"));
+      runCostingBackground();
+      ShipmentInOut goodsReceipt = cloneMovement(results.getProduct().getId(), true,
+          new BigDecimal("-10"), LOCATOR1_ID, 0);
+      completeDocument(goodsReceipt);
+      runCostingBackground();
+      assertTransactionsCount(results.getProduct());
+      assertTransactionsCosts(results.getProduct());
+      Invoice purchaseInvoice = createInvoiceFromMovement(results.getGoodsReceipt().getId(), false,
+          new BigDecimal("20"), new BigDecimal("1"), 0);
+      completeDocument(purchaseInvoice);
+      runPriceBackground();
+      assertTransactionCostsAdjustment(results.getProduct());
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+      throw new OBException(e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Test Price Difference Adjustment with a Return to Vendor Shipment not related to a Purchase
+   * Order
+   * 
+   * <ul>
+   * <li>Create a new product with purchase price list of 3.00</li>
+   * <li>Create and book a Purchase Order for 1 unit of product</li>
+   * <li>Create and complete a Goods Receipt based on previous Purchase Order</li>
+   * <li>Run Costing Background Process</li>
+   * <li>Create and complete a Return to Vendor Shipment for 10 units of product</li>
+   * <li>Run Costing Background Process</li>
+   * <li>Assert the product has 2 transactions</li>
+   * <li>Assert one transaction has transaction cost of 3.00 and the other has transaction cost of
+   * 30.00</li>
+   * <li>Create a Purchase Invoice based on the first Goods Receipt created</li>
+   * <li>Change the price to 20.00</li>
+   * <li>Complete the Invoice</li>
+   * <li>Run Price Difference Adjustment process</li>
+   * <li>Assert for one transaction total cost is 20.00</li>
+   * <li>Assert the other transaction has total cost 200.00</li>
+   * </ul>
+   */
+  @Test
+  public void testIssue37279_PriceDifferenceAdjustment_ShipmentReturnWithNoRelatedPurchaseOrder()
+      throws Exception {
+    try {
+      OBContext.setOBContext(USER_ID, ROLE_ID, CLIENT_ID, ORGANIZATION_ID);
+      OBContext.setAdminMode(true);
+      OrderToReceiptResult results = executeOrderToReceiptFlow("product37279-C", new BigDecimal(
+          "3.00"), new BigDecimal("1"));
+      runCostingBackground();
+      ShipmentInOut returnToVendorShipment = cloneMovement(results.getProduct().getId(), false,
+          new BigDecimal("10"), LOCATOR1_ID, 0);
+      DocumentType rtvShipment = OBDal.getInstance().get(DocumentType.class,
+          RTV_SHIPMENT_DOCTYPE_ID);
+      returnToVendorShipment.setDocumentType(rtvShipment);
+      completeDocument(returnToVendorShipment);
+      runCostingBackground();
+      assertTransactionsCount(results.getProduct());
+      assertTransactionsCosts(results.getProduct());
+      Invoice purchaseInvoice = createInvoiceFromMovement(results.getGoodsReceipt().getId(), false,
+          new BigDecimal("20"), new BigDecimal("1"), 0);
+      completeDocument(purchaseInvoice);
+      runPriceBackground();
+      assertTransactionCostsAdjustment(results.getProduct());
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+      throw new OBException(e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Test Price Difference Adjustment with an Internal Consumption
+   * 
+   * <ul>
+   * <li>Create a new product with purchase price list of 3.00</li>
+   * <li>Create and book a Purchase Order for 1 unit of product</li>
+   * <li>Create and complete a Goods Receipt based on previous Purchase Order</li>
+   * <li>Run Costing Background Process</li>
+   * <li>Create and complete an Internal Consumption for 10 units of product</li>
+   * <li>Run Costing Background Process</li>
+   * <li>Assert the product has 2 transactions</li>
+   * <li>Assert one transaction has transaction cost of 3.00 and the other has transaction cost of
+   * 30.00</li>
+   * <li>Create a Purchase Invoice based on the first Goods Receipt created</li>
+   * <li>Change the price to 20.00</li>
+   * <li>Complete the Invoice</li>
+   * <li>Run Price Difference Adjustment process</li>
+   * <li>Assert for one transaction total cost is 20.00</li>
+   * <li>Assert the other transaction has total cost 200.00</li>
+   * </ul>
+   */
+  @Test
+  public void testIssue37279_PriceDifferenceAdjustment_InternalConsumptionWithNoRelatedPurchaseOrder()
+      throws Exception {
+    try {
+      OBContext.setOBContext(USER_ID, ROLE_ID, CLIENT_ID, ORGANIZATION_ID);
+      OBContext.setAdminMode(true);
+      OrderToReceiptResult results = executeOrderToReceiptFlow("product37279-D", new BigDecimal(
+          "3.00"), new BigDecimal("1"));
+      runCostingBackground();
+      InternalConsumption internalConsumption = createInternalConsumption(results.getProduct()
+          .getId(), new BigDecimal("-10"), LOCATOR1_ID, 0);
+      completeDocument(internalConsumption, PROCESSCONSUMPTION_PROCESS_ID);
+      runCostingBackground();
+      assertTransactionsCount(results.getProduct());
+      assertTransactionsCosts(results.getProduct());
+      Invoice purchaseInvoice = createInvoiceFromMovement(results.getGoodsReceipt().getId(), false,
+          new BigDecimal("20"), new BigDecimal("1"), 0);
+      completeDocument(purchaseInvoice);
+      runPriceBackground();
+      assertTransactionCostsAdjustment(results.getProduct());
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+      throw new OBException(e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Test Price Difference Adjustment with a NORMAL Physical Inventory
+   * 
+   * <ul>
+   * <li>Create a new product with purchase price list of 3.00</li>
+   * <li>Create and book a Purchase Order for 1 unit of product</li>
+   * <li>Create and complete a Goods Receipt based on previous Purchase Order</li>
+   * <li>Run Costing Background Process</li>
+   * <li>Create and complete a NORMAL Physical Inventory to increase stock in 10 units of product</li>
+   * <li>Run Costing Background Process</li>
+   * <li>Assert the product has 2 transactions</li>
+   * <li>Assert one transaction has transaction cost of 3.00 and the other has transaction cost of
+   * 30.00</li>
+   * <li>Create a Purchase Invoice based on the first Goods Receipt created</li>
+   * <li>Change the price to 20.00</li>
+   * <li>Complete the Invoice</li>
+   * <li>Run Price Difference Adjustment process</li>
+   * <li>Assert for one transaction total cost is 20.00</li>
+   * <li>Assert the other transaction has total cost 200.00</li>
+   * </ul>
+   */
+  @Test
+  public void testIssue37279_PriceDifferenceAdjustment_InventoryIncreaseWithNoRelatedPurchaseOrder()
+      throws Exception {
+    try {
+      OBContext.setOBContext(USER_ID, ROLE_ID, CLIENT_ID, ORGANIZATION_ID);
+      OBContext.setAdminMode(true);
+      OrderToReceiptResult results = executeOrderToReceiptFlow("product37279-E", new BigDecimal(
+          "3.00"), new BigDecimal("1"));
+      runCostingBackground();
+      InventoryCount physicalInventory = createPhysicalInventory("physicalInv37279-E",
+          results.getProduct(), new BigDecimal("11"), INVENTORY_NORMAL, 0);
+      proessInventoryCount(physicalInventory);
+      runCostingBackground();
+      assertTransactionsCount(results.getProduct());
+      assertTransactionsCosts(results.getProduct());
+      Invoice purchaseInvoice = createInvoiceFromMovement(results.getGoodsReceipt().getId(), false,
+          new BigDecimal("20"), new BigDecimal("1"), 0);
+      completeDocument(purchaseInvoice);
+      runPriceBackground();
+      assertTransactionCostsAdjustment(results.getProduct());
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+      throw new OBException(e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Test Price Difference Adjustment with an OPENING Physical Inventory
+   * 
+   * <ul>
+   * <li>Create a new product with purchase price list of 3.00</li>
+   * <li>Create and book a Purchase Order for 1 unit of product</li>
+   * <li>Create and complete a Goods Receipt based on previous Purchase Order</li>
+   * <li>Run Costing Background Process</li>
+   * <li>Create and complete an OPENING Physical Inventory to increase stock in 10 units of product</li>
+   * <li>Run Costing Background Process</li>
+   * <li>Assert the product has 2 transactions</li>
+   * <li>Assert one transaction has transaction cost of 3.00 and the other has transaction cost of
+   * 30.00</li>
+   * <li>Create a Purchase Invoice based on the first Goods Receipt created</li>
+   * <li>Change the price to 20.00</li>
+   * <li>Complete the Invoice</li>
+   * <li>Run Price Difference Adjustment process</li>
+   * <li>Assert for one transaction total cost is 20.00</li>
+   * <li>Assert the other transaction has total cost 200.00</li>
+   * </ul>
+   */
+
+  @Test
+  public void testIssue37279_PriceDifferenceAdjustment_InventoryOpeningWithNoRelatedPurchaseOrder()
+      throws Exception {
+    try {
+      OBContext.setOBContext(USER_ID, ROLE_ID, CLIENT_ID, ORGANIZATION_ID);
+      OBContext.setAdminMode(true);
+      OrderToReceiptResult results = executeOrderToReceiptFlow("product37279-F", new BigDecimal(
+          "3.00"), new BigDecimal("1"));
+      runCostingBackground();
+      InventoryCount physicalInventory = createPhysicalInventory("physicalInv37279-F",
+          results.getProduct(), new BigDecimal("11"), INVENTORY_OPENING, 0);
+      proessInventoryCount(physicalInventory);
+      runCostingBackground();
+      assertTransactionsCount(results.getProduct());
+      assertTransactionsCosts(results.getProduct());
+      Invoice purchaseInvoice = createInvoiceFromMovement(results.getGoodsReceipt().getId(), false,
+          new BigDecimal("20"), new BigDecimal("1"), 0);
+      completeDocument(purchaseInvoice);
+      runPriceBackground();
+      assertTransactionCostsAdjustment(results.getProduct());
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+      throw new OBException(e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
   /********************************************** General methods for tests **********************************************/
 
   // Create a Product cloning a created one
@@ -14425,6 +14738,141 @@ public class TestCosting extends WeldBaseTest {
       return quantity;
     }
 
+  }
+
+  class OrderToReceiptResult {
+    private Product product;
+    private ShipmentInOut goodsReceipt;
+
+    public OrderToReceiptResult(Product product, ShipmentInOut goodsReceipt) {
+      super();
+      this.product = product;
+      this.goodsReceipt = goodsReceipt;
+    }
+
+    public Product getProduct() {
+      return product;
+    }
+
+    public ShipmentInOut getGoodsReceipt() {
+      return goodsReceipt;
+    }
+  }
+
+  private OrderToReceiptResult executeOrderToReceiptFlow(String productName,
+      BigDecimal purchasePrice, BigDecimal quantity) {
+    Product product = createProduct(productName, purchasePrice);
+    Order purchaseOrder = createPurchaseOrder(product, purchasePrice, quantity, 0);
+    ShipmentInOut goodsReceipt = createMovementFromOrder(purchaseOrder.getId(), false, quantity,
+        LOCATOR1_ID, 0);
+    completeDocument(goodsReceipt);
+    return new OrderToReceiptResult(product, goodsReceipt);
+  }
+
+  private void sortTransactionsByMovementQuantity(List<MaterialTransaction> transactionList) {
+    Collections.sort(transactionList, new Comparator<MaterialTransaction>() {
+      @Override
+      public int compare(MaterialTransaction firstTransaction, MaterialTransaction secondTransaction) {
+        return firstTransaction.getMovementQuantity().compareTo(
+            secondTransaction.getMovementQuantity());
+      }
+    });
+  }
+
+  private void assertTransactionsCount(Product product) {
+    Product freshProduct = OBDal.getInstance().get(Product.class, product.getId());
+    OBDal.getInstance().refresh(freshProduct);
+    assertThat("The product should have 2 transactions", freshProduct
+        .getMaterialMgmtMaterialTransactionList().size(), equalTo(2));
+  }
+
+  private void assertTransactionsCosts(Product product) {
+    Product freshProduct = OBDal.getInstance().get(Product.class, product.getId());
+    OBDal.getInstance().refresh(freshProduct);
+    sortTransactionsByMovementQuantity(freshProduct.getMaterialMgmtMaterialTransactionList());
+    assertThat("The transaction cost should be 3", freshProduct
+        .getMaterialMgmtMaterialTransactionList().get(0).getTransactionCost().intValue(),
+        equalTo(3));
+    assertThat("The transaction cost should be 30", freshProduct
+        .getMaterialMgmtMaterialTransactionList().get(1).getTransactionCost().intValue(),
+        equalTo(30));
+  }
+
+  private void assertTransactionCostsAdjustment(Product product) {
+    Product freshProduct = OBDal.getInstance().get(Product.class, product.getId());
+    OBDal.getInstance().refresh(freshProduct);
+    sortTransactionsByMovementQuantity(freshProduct.getMaterialMgmtMaterialTransactionList());
+    assertThat("There should be 2 cost adjustment lines for the first transaction", freshProduct
+        .getMaterialMgmtMaterialTransactionList().get(0).getTransactionCostList().size(),
+        equalTo(2));
+    assertThat("There should be 2 cost adjustment lines for the second transaction", freshProduct
+        .getMaterialMgmtMaterialTransactionList().get(1).getTransactionCostList().size(),
+        equalTo(2));
+
+    assertThat("The total cost for the first transaction should be 20", freshProduct
+        .getMaterialMgmtMaterialTransactionList().get(0).getTotalCost().intValue(), equalTo(20));
+
+    assertThat("The total cost for the first transaction should be 200", freshProduct
+        .getMaterialMgmtMaterialTransactionList().get(1).getTotalCost().intValue(), equalTo(200));
+  }
+
+  private void proessInventoryCount(InventoryCount physicalInventory) {
+    InventoryCountProcess inventoryCountProcess = WeldUtils
+        .getInstanceFromStaticBeanManager(InventoryCountProcess.class);
+    physicalInventory.setProcessNow(true);
+    OBDal.getInstance().save(physicalInventory);
+    if (SessionHandler.isSessionHandlerPresent()) {
+      SessionHandler.getInstance().commitAndStart();
+    }
+    inventoryCountProcess.processInventory(physicalInventory);
+    physicalInventory.setProcessNow(false);
+
+    OBDal.getInstance().save(physicalInventory);
+    OBDal.getInstance().flush();
+  }
+
+  private InventoryCount createPhysicalInventory(String name, Product product,
+      BigDecimal quantityCount, String inventoryType, int day) {
+    InventoryCount physicalInventory = OBProvider.getInstance().get(InventoryCount.class);
+    setGeneralData(physicalInventory);
+    physicalInventory.setInventoryType(inventoryType);
+    physicalInventory.setMovementDate(DateUtils.addDays(new Date(), day));
+    physicalInventory.setName(name);
+    Warehouse warehouse = OBDal.getInstance().get(Warehouse.class, WAREHOUSE1_ID);
+    physicalInventory.setWarehouse(warehouse);
+    OBDal.getInstance().save(physicalInventory);
+
+    InventoryCountLine physicalInventoryLine = OBProvider.getInstance().get(
+        InventoryCountLine.class);
+    setGeneralData(physicalInventoryLine);
+    physicalInventoryLine.setPhysInventory(physicalInventory);
+    physicalInventoryLine.setProduct(product);
+    physicalInventoryLine.setQuantityCount(quantityCount);
+    Locator storageBin = OBDal.getInstance().get(Locator.class, LOCATOR1_ID);
+    physicalInventoryLine.setStorageBin(storageBin);
+    physicalInventoryLine.setUOM(OBDal.getInstance().get(UOM.class, UOM_ID));
+    physicalInventoryLine.setBookQuantity(getQuantityOnHandOfProductInLocator(product, storageBin));
+    physicalInventoryLine.setLineNo(10L);
+
+    physicalInventory.getMaterialMgmtInventoryCountLineList().add(physicalInventoryLine);
+
+    OBDal.getInstance().save(physicalInventory);
+    OBDal.getInstance().flush();
+    OBDal.getInstance().refresh(physicalInventory);
+    return physicalInventory;
+  }
+
+  private BigDecimal getQuantityOnHandOfProductInLocator(Product product, Locator storageBin) {
+    OBCriteria<StorageDetail> storageDetailCriteria = OBDal.getInstance().createCriteria(
+        StorageDetail.class);
+    storageDetailCriteria.add(Restrictions.eq(StorageDetail.PROPERTY_PRODUCT, product));
+    storageDetailCriteria.add(Restrictions.eq(StorageDetail.PROPERTY_STORAGEBIN, storageBin));
+    storageDetailCriteria.setMaxResults(1);
+    StorageDetail storageDetail = (StorageDetail) storageDetailCriteria.uniqueResult();
+    if (storageDetail != null) {
+      return (BigDecimal) storageDetail.getQuantityOnHand();
+    }
+    return null;
   }
 
 }
