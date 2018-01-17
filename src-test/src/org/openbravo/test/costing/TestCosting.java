@@ -4743,21 +4743,19 @@ public class TestCosting extends WeldBaseTest {
     final BigDecimal price2 = new BigDecimal("110.00");
     final BigDecimal price3 = new BigDecimal("1500.00");
     final BigDecimal price4 = new BigDecimal("210.00");
-    final BigDecimal price5 = new BigDecimal("130.00");
-    final BigDecimal price6 = new BigDecimal("126.0936");
-    final BigDecimal price7 = new BigDecimal("115.0600");
-    final BigDecimal price8 = new BigDecimal("126.0933");
-    final BigDecimal price9 = new BigDecimal("138.7029");
-    final BigDecimal price10 = new BigDecimal("146.5664");
-    final BigDecimal price11 = new BigDecimal("138.7030");
-    final BigDecimal price12 = new BigDecimal("119.7281");
-    final BigDecimal price13 = new BigDecimal("121.7382");
-    final BigDecimal price14 = new BigDecimal("144.8463");
-    final BigDecimal price15 = new BigDecimal("142.2134");
+    final BigDecimal price5 = new BigDecimal("156.9044");
+    final BigDecimal price6 = new BigDecimal("124.4582");
+    final BigDecimal price7 = new BigDecimal("139.5180");
+    final BigDecimal price8 = new BigDecimal("159.8375");
+    final BigDecimal price9 = new BigDecimal("136.9043");
+    final BigDecimal price10 = new BigDecimal("173.4708");
+    final BigDecimal price11 = new BigDecimal("195.1500");
+    final BigDecimal price12 = new BigDecimal("133.1465");
+    final BigDecimal price13 = new BigDecimal("133.1467");
+    final BigDecimal price14 = new BigDecimal("165.4719");
+    final BigDecimal price15 = new BigDecimal("178.1911");
     final BigDecimal price16 = new BigDecimal("84.9400");
     final BigDecimal price17 = new BigDecimal("93.4338");
-    final BigDecimal price18 = new BigDecimal("88.9665");
-    final BigDecimal price19 = new BigDecimal("97.8632");
     final BigDecimal quantity1 = new BigDecimal("11");
     final BigDecimal quantity2 = new BigDecimal("7");
     final BigDecimal quantity3 = new BigDecimal("15");
@@ -4767,6 +4765,24 @@ public class TestCosting extends WeldBaseTest {
     final BigDecimal quantity7 = BigDecimal.ONE;
     final BigDecimal quantity8 = new BigDecimal("3");
     final BigDecimal amount1 = new BigDecimal("500");
+    final BigDecimal unitPrice = new BigDecimal("124.4580");
+    final BigDecimal unitPrice2 = new BigDecimal("133.1466");
+    final BigDecimal unitPrice3 = new BigDecimal("156.9044");
+    final BigDecimal unitPrice4 = new BigDecimal("165.4721");
+    final BigDecimal costingAssertFinalCost = new BigDecimal("141.5753");
+    final BigDecimal costAdjustmentAssertLineAmount = new BigDecimal("225.90");
+    final BigDecimal costAdjustmentAssertLineAmount2 = new BigDecimal("284.98");
+    final BigDecimal costAdjustmentAssertLineAmount3 = new BigDecimal("414.14");
+    final BigDecimal costAdjustmentAssertLineAmount4 = new BigDecimal("708.19");
+    final BigDecimal costAdjustmentAssertLineAmount5 = new BigDecimal("140.97");
+    final BigDecimal costAdjustmentAssertLineAmount6 = new BigDecimal("112.78");
+    final BigDecimal costAdjustmentAssertLineAmount7 = new BigDecimal("258.47");
+    final BigDecimal costAdjustmentAssertLineAmount8 = new BigDecimal("248.14");
+    final BigDecimal costAdjustmentAssertLineAmount9 = new BigDecimal("375.00");
+    final BigDecimal costAdjustmentAssertLinePrice = new BigDecimal("90.6018");
+    final BigDecimal costAdjustmentAssertLinePrice2 = new BigDecimal("99.6614");
+    final BigDecimal costAdjustmentAssertLinePrice3 = new BigDecimal("88.3692");
+    final BigDecimal costAdjustmentAssertLinePrice4 = new BigDecimal("96.8883");
     final String costType = "AVA";
 
     try {
@@ -4845,10 +4861,10 @@ public class TestCosting extends WeldBaseTest {
           .get(0), price1, price6, price1));
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
           .get(ShipmentInOut.class, goodsReceipt12.getId()).getMaterialMgmtShipmentInOutLineList()
-          .get(0), price1, price7, price1));
+          .get(0), price1, price7, unitPrice));
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
           .get(ShipmentInOut.class, goodsReceipt13.getId()).getMaterialMgmtShipmentInOutLineList()
-          .get(0), price1, price8, price1));
+          .get(0), price1, price8, unitPrice2));
       assertProductTransaction(product1.getId(), productTransactionAssertList1);
 
       // Assert product transactions 2
@@ -4858,10 +4874,10 @@ public class TestCosting extends WeldBaseTest {
           .get(0), price2, price9, price2));
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
           .get(ShipmentInOut.class, goodsReceipt22.getId()).getMaterialMgmtShipmentInOutLineList()
-          .get(0), price2, price10, price5));
+          .get(0), price2, price10, unitPrice3));
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
           .get(ShipmentInOut.class, goodsReceipt23.getId()).getMaterialMgmtShipmentInOutLineList()
-          .get(0), price2, price11, price2));
+          .get(0), price2, price11, unitPrice4));
       assertProductTransaction(product2.getId(), productTransactionAssertList2);
 
       // Assert product costing 1
@@ -4870,11 +4886,11 @@ public class TestCosting extends WeldBaseTest {
       productCostingAssertList1.add(new ProductCostingAssert(null, null, null, price1, null,
           costType));
       productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
-          price1, price6, quantity1));
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(1), price1,
+          price1, price6, quantity5));
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(1), unitPrice,
           price1, price12, quantity1.add(quantity3)));
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(2), price1,
-          price1, price13, quantity1.add(quantity3).add(quantity5)));
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(2), price13,
+          price1, costingAssertFinalCost, quantity1.add(quantity3).add(quantity5)));
       assertProductCosting(product1.getId(), productCostingAssertList1);
 
       // Assert product costing 2
@@ -4886,7 +4902,7 @@ public class TestCosting extends WeldBaseTest {
           price2, price9, quantity2));
       productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price5,
           price2, price14, quantity2.add(quantity4)));
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(2), price2,
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(2), unitPrice4,
           price2, price15, quantity2.add(quantity4).add(quantity6)));
       assertProductCosting(product2.getId(), productCostingAssertList2);
 
@@ -4906,16 +4922,36 @@ public class TestCosting extends WeldBaseTest {
           quantity5.multiply(price1).add(quantity5.multiply(price16).negate()), day0, true, false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(2), "LC",
           quantity6.multiply(price2).add(quantity6.multiply(price17).negate()), day0, true, false));
+      costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(1), "LC",
+          costAdjustmentAssertLineAmount, day2, false, true, true));
+      costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(2), "LC",
+          costAdjustmentAssertLineAmount2, day3, false, true, true));
+      costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(1), "LC",
+          costAdjustmentAssertLineAmount3, day2, false, true, true));
+      costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(2), "LC",
+          costAdjustmentAssertLineAmount4, day3, false, true, true));
       costAdjustmentAssertList1.add(costAdjustmentAssertLineList11);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList12 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
-          quantity1.multiply(price1).add(quantity1.multiply(price18).negate()), day5, true, false));
+          quantity1.multiply(price1)
+              .add(quantity1.multiply(costAdjustmentAssertLinePrice).negate()), day5, true, false));
       costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList2.get(0), "LC",
-          quantity2.multiply(price2).add(quantity2.multiply(price19).negate()), day5, true, false));
+          quantity2.multiply(price2).add(
+              quantity2.multiply(costAdjustmentAssertLinePrice2).negate()), day5, true, false));
       costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList1.get(2), "LC",
-          quantity5.multiply(price1).add(quantity5.multiply(price18).negate()), day5, true, false));
+          quantity5.multiply(price1).add(
+              quantity5.multiply(costAdjustmentAssertLinePrice3).negate()), day5, true, false));
       costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList2.get(2), "LC",
-          quantity6.multiply(price2).add(quantity6.multiply(price19).negate()), day5, true, false));
+          quantity6.multiply(price2).add(
+              quantity6.multiply(costAdjustmentAssertLinePrice4).negate()), day5, true, false));
+      costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList1.get(1), "LC",
+          costAdjustmentAssertLineAmount5, day5, false, true, true));
+      costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList1.get(2), "LC",
+          costAdjustmentAssertLineAmount6, day5, false, true, true));
+      costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList2.get(1), "LC",
+          costAdjustmentAssertLineAmount7, day5, false, true, true));
+      costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList2.get(2), "LC",
+          costAdjustmentAssertLineAmount8, day5, false, true, true));
       costAdjustmentAssertList1.add(costAdjustmentAssertLineList12);
       assertCostAdjustment(costAdjustmentList1, costAdjustmentAssertList1);
 
@@ -4935,20 +4971,42 @@ public class TestCosting extends WeldBaseTest {
           quantity5.multiply(price1).add(quantity5.multiply(price16).negate()), day0, true, false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(2), "LC",
           quantity6.multiply(price2).add(quantity6.multiply(price17).negate()), day0, true, false));
+      costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(1), "LC",
+          costAdjustmentAssertLineAmount, day2, false, true, true));
+      costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(2), "LC",
+          costAdjustmentAssertLineAmount2, day3, false, true, true));
+      costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(1), "LC",
+          costAdjustmentAssertLineAmount3, day2, false, true, true));
+      costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(2), "LC",
+          costAdjustmentAssertLineAmount4, day3, false, true, true));
       costAdjustmentAssertList2.add(costAdjustmentAssertLineList21);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList22 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList22.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
-          quantity1.multiply(price1).add(quantity1.multiply(price18).negate()), day5, true, false));
+          quantity1.multiply(price1)
+              .add(quantity1.multiply(costAdjustmentAssertLinePrice).negate()), day5, true, false));
       costAdjustmentAssertLineList22.add(new CostAdjustmentAssert(transactionList2.get(0), "LC",
-          quantity2.multiply(price2).add(quantity2.multiply(price19).negate()), day5, true, false));
+          quantity2.multiply(price2).add(
+              quantity2.multiply(costAdjustmentAssertLinePrice2).negate()), day5, true, false));
       costAdjustmentAssertLineList22.add(new CostAdjustmentAssert(transactionList1.get(2), "LC",
-          quantity5.multiply(price1).add(quantity5.multiply(price18).negate()), day5, true, false));
+          quantity5.multiply(price1).add(
+              quantity5.multiply(costAdjustmentAssertLinePrice3).negate()), day5, true, false));
       costAdjustmentAssertLineList22.add(new CostAdjustmentAssert(transactionList2.get(2), "LC",
-          quantity6.multiply(price2).add(quantity6.multiply(price19).negate()), day5, true, false));
+          quantity6.multiply(price2).add(
+              quantity6.multiply(costAdjustmentAssertLinePrice4).negate()), day5, true, false));
+      costAdjustmentAssertLineList22.add(new CostAdjustmentAssert(transactionList1.get(1), "LC",
+          costAdjustmentAssertLineAmount5, day5, false, true, true));
+      costAdjustmentAssertLineList22.add(new CostAdjustmentAssert(transactionList1.get(2), "LC",
+          costAdjustmentAssertLineAmount6, day5, false, true, true));
+      costAdjustmentAssertLineList22.add(new CostAdjustmentAssert(transactionList2.get(1), "LC",
+          costAdjustmentAssertLineAmount7, day5, false, true, true));
+      costAdjustmentAssertLineList22.add(new CostAdjustmentAssert(transactionList2.get(2), "LC",
+          costAdjustmentAssertLineAmount8, day5, false, true, true));
       costAdjustmentAssertList2.add(costAdjustmentAssertLineList22);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList23 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList23.add(new CostAdjustmentAssert(transactionList2.get(1), "MCC",
           amount1, day6, true));
+      costAdjustmentAssertLineList23.add(new CostAdjustmentAssert(transactionList2.get(2), "MCC",
+          costAdjustmentAssertLineAmount9, day6, false));
       costAdjustmentAssertList2.add(costAdjustmentAssertLineList23);
       assertCostAdjustment(costAdjustmentList2, costAdjustmentAssertList2);
 
@@ -4957,6 +5015,10 @@ public class TestCosting extends WeldBaseTest {
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList1.add(new DocumentPostAssert("61000", BigDecimal.ZERO, amount1, null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", amount1, BigDecimal.ZERO, null));
+      documentPostAssertList1.add(new DocumentPostAssert("61000", BigDecimal.ZERO,
+          costAdjustmentAssertLineAmount9, null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", costAdjustmentAssertLineAmount9,
+          BigDecimal.ZERO, null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList2.get(2).getId());
       assertDocumentPost(costAdjustment1, product2.getId(), documentPostAssertList1);
@@ -9804,6 +9866,9 @@ public class TestCosting extends WeldBaseTest {
       LandedCost landedCost = createLandedCost(landedCostTypeId, amountList, null, receiptIdList,
           receiptLineIdList, day);
       processLandedCost(landedCost.getId());
+      // Reload the landedCost object after the session has been closed
+      landedCost = OBDal.getInstance().get(LandedCost.class, landedCost.getId());
+      OBDal.getInstance().refresh(landedCost);
       return postLandedCostHeader(landedCost);
     } catch (Exception e) {
       throw new OBException(e);
@@ -9829,7 +9894,9 @@ public class TestCosting extends WeldBaseTest {
       LandedCost landedCost = createLandedCost(null, null, invoiceIdList, receiptIdList,
           receiptLineIdList, day);
       processLandedCost(landedCost.getId());
-
+      // Reload the landedCost object after the session has been closed
+      landedCost = OBDal.getInstance().get(LandedCost.class, landedCost.getId());
+      OBDal.getInstance().refresh(landedCost);
       return postLandedCost(landedCost);
     } catch (Exception e) {
       throw new OBException(e);
@@ -9891,11 +9958,11 @@ public class TestCosting extends WeldBaseTest {
         if (!landedCostReceipt.getGoodsShipment().getMaterialMgmtShipmentInOutLineList().get(0)
             .getProduct().getProductType().equals("S"))
           if (landedCostReceipt.getGoodsShipmentLine() == null)
-            receiptTotalAmount = receiptTotalAmount.add(getTransactionAmount(landedCostReceipt
-                .getGoodsShipment()));
+            receiptTotalAmount = receiptTotalAmount.add(getTransactionAmount(
+                landedCostReceipt.getGoodsShipment(), landedCost));
           else
-            receiptTotalAmount = receiptTotalAmount.add(getTransactionLineAmount(landedCostReceipt
-                .getGoodsShipmentLine()));
+            receiptTotalAmount = receiptTotalAmount.add(getTransactionLineAmount(
+                landedCostReceipt.getGoodsShipmentLine(), landedCost));
 
       List<List<LandedCostReceiptLineAmountAssert>> landedCostReceiptLineAmountAssertListList = new ArrayList<List<LandedCostReceiptLineAmountAssert>>();
 
@@ -9912,9 +9979,11 @@ public class TestCosting extends WeldBaseTest {
 
               if (landedCostReceipt.getGoodsShipmentLine() != null) {
 
-                BigDecimal amount = landedCostCost.getAmount()
-                    .multiply(getTransactionLineAmount(landedCostReceipt.getGoodsShipmentLine()))
-                    .divide(receiptTotalAmount, 4, BigDecimal.ROUND_HALF_UP);
+                BigDecimal amount = landedCostCost
+                    .getAmount()
+                    .multiply(
+                        getTransactionLineAmount(landedCostReceipt.getGoodsShipmentLine(),
+                            landedCost)).divide(receiptTotalAmount, 4, BigDecimal.ROUND_HALF_UP);
 
                 landedCostReceiptLineAmountAssertList.add(new LandedCostReceiptLineAmountAssert(
                     OBDal.getInstance().get(LandedCostCost.class, landedCostCost.getId()), OBDal
@@ -9926,7 +9995,7 @@ public class TestCosting extends WeldBaseTest {
                     .getMaterialMgmtShipmentInOutLineList()) {
 
                   BigDecimal amount = landedCostCost.getAmount()
-                      .multiply(getTransactionLineAmount(receiptLine))
+                      .multiply(getTransactionLineAmount(receiptLine, landedCost))
                       .divide(receiptTotalAmount, 4, BigDecimal.ROUND_HALF_UP);
 
                   landedCostReceiptLineAmountAssertList
@@ -9948,9 +10017,11 @@ public class TestCosting extends WeldBaseTest {
 
                 if (landedCostReceipt.getGoodsShipmentLine() != null) {
 
-                  BigDecimal amount = landedCostMatched.getAmount()
-                      .multiply(getTransactionLineAmount(landedCostReceipt.getGoodsShipmentLine()))
-                      .divide(receiptTotalAmount, 4, BigDecimal.ROUND_HALF_UP);
+                  BigDecimal amount = landedCostMatched
+                      .getAmount()
+                      .multiply(
+                          getTransactionLineAmount(landedCostReceipt.getGoodsShipmentLine(),
+                              landedCost)).divide(receiptTotalAmount, 4, BigDecimal.ROUND_HALF_UP);
 
                   landedCostReceiptLineAmountAssertList.add(new LandedCostReceiptLineAmountAssert(
                       OBDal.getInstance().get(LandedCostCost.class, landedCostCost.getId()), OBDal
@@ -9962,7 +10033,7 @@ public class TestCosting extends WeldBaseTest {
                       .getMaterialMgmtShipmentInOutLineList()) {
 
                     BigDecimal amount = landedCostMatched.getAmount()
-                        .multiply(getTransactionLineAmount(receiptLine))
+                        .multiply(getTransactionLineAmount(receiptLine, landedCost))
                         .divide(receiptTotalAmount, 4, BigDecimal.ROUND_HALF_UP);
 
                     landedCostReceiptLineAmountAssertList
@@ -10077,8 +10148,10 @@ public class TestCosting extends WeldBaseTest {
 
             if (landedCostReceipt.getGoodsShipmentLine() != null) {
 
-              BigDecimal amount = landedCostCost.getAmount()
-                  .multiply(getTransactionLineAmount(landedCostReceipt.getGoodsShipmentLine()))
+              BigDecimal amount = landedCostCost
+                  .getAmount()
+                  .multiply(
+                      getTransactionLineAmount(landedCostReceipt.getGoodsShipmentLine(), landedCost))
                   .divide(receiptTotalAmount, 4, BigDecimal.ROUND_HALF_UP);
 
               documentPostAssertList.add(new DocumentPostAssert(landedCostReceipt
@@ -10098,7 +10171,7 @@ public class TestCosting extends WeldBaseTest {
               for (ShipmentInOutLine receiptLine : criteria3.list()) {
 
                 BigDecimal amount = landedCostCost.getAmount()
-                    .multiply(getTransactionLineAmount(receiptLine))
+                    .multiply(getTransactionLineAmount(receiptLine, landedCost))
                     .divide(receiptTotalAmount, 4, BigDecimal.ROUND_HALF_UP);
 
                 documentPostAssertList.add(new DocumentPostAssert(receiptLine.getProduct().getId(),
@@ -10166,8 +10239,10 @@ public class TestCosting extends WeldBaseTest {
           documentPostAssertList.add(new DocumentPostAssert(account, lcCost.getAmount(),
               BigDecimal.ZERO, null));
 
-          if (OBDal.getInstance().get(LandedCost.class, landedCostCost.getLandedCost().getId())
-              .getLandedCostReceiptList().size() > 1
+          LandedCost landedCost = OBDal.getInstance().get(LandedCost.class,
+              landedCostCost.getLandedCost().getId());
+
+          if (landedCost.getLandedCostReceiptList().size() > 1
               && !OBDal
                   .getInstance()
                   .get(LandedCost.class, landedCostCost.getLandedCost().getId())
@@ -10198,18 +10273,14 @@ public class TestCosting extends WeldBaseTest {
                         .getMatchingAmount()
                         .add(lcCost.getAmount().negate())
                         .multiply(
-                            getTransactionAmount(OBDal.getInstance()
-                                .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                                .getLandedCostReceiptList().get(0).getGoodsShipment()))
+                            getTransactionAmount(landedCost.getLandedCostReceiptList().get(0)
+                                .getGoodsShipment(), landedCost))
                         .divide(
                             getTransactionAmount(
-                                OBDal.getInstance()
-                                    .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                                    .getLandedCostReceiptList().get(0).getGoodsShipment()).add(
-                                getTransactionAmount(OBDal.getInstance()
-                                    .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                                    .getLandedCostReceiptList().get(1).getGoodsShipment())), 2,
-                            BigDecimal.ROUND_HALF_UP))) {
+                                landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(),
+                                landedCost).add(
+                                getTransactionAmount(landedCost.getLandedCostReceiptList().get(1)
+                                    .getGoodsShipment(), landedCost)), 2, BigDecimal.ROUND_HALF_UP))) {
 
               documentPostAssertList.add(new DocumentPostAssert(OBDal.getInstance()
                   .get(LandedCost.class, landedCostCost.getLandedCost().getId())
@@ -10219,18 +10290,15 @@ public class TestCosting extends WeldBaseTest {
                       .getMatchingAmount()
                       .add(lcCost.getAmount().negate())
                       .multiply(
-                          getTransactionAmount(OBDal.getInstance()
-                              .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                              .getLandedCostReceiptList().get(0).getGoodsShipment()))
+                          getTransactionAmount(landedCost.getLandedCostReceiptList().get(0)
+                              .getGoodsShipment(), landedCost))
                       .divide(
                           getTransactionAmount(
-                              OBDal.getInstance()
-                                  .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                                  .getLandedCostReceiptList().get(0).getGoodsShipment()).add(
-                              getTransactionAmount(OBDal.getInstance()
-                                  .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                                  .getLandedCostReceiptList().get(1).getGoodsShipment())), 2,
-                          BigDecimal.ROUND_HALF_UP), BigDecimal.ZERO, null));
+                              landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(),
+                              landedCost).add(
+                              getTransactionAmount(landedCost.getLandedCostReceiptList().get(1)
+                                  .getGoodsShipment(), landedCost)), 2, BigDecimal.ROUND_HALF_UP),
+                  BigDecimal.ZERO, null));
 
               documentPostAssertList.add(new DocumentPostAssert(OBDal.getInstance()
                   .get(LandedCost.class, landedCostCost.getLandedCost().getId())
@@ -10240,18 +10308,15 @@ public class TestCosting extends WeldBaseTest {
                       .getMatchingAmount()
                       .add(lcCost.getAmount().negate())
                       .multiply(
-                          getTransactionAmount(OBDal.getInstance()
-                              .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                              .getLandedCostReceiptList().get(1).getGoodsShipment()))
+                          getTransactionAmount(landedCost.getLandedCostReceiptList().get(1)
+                              .getGoodsShipment(), landedCost))
                       .divide(
                           getTransactionAmount(
-                              OBDal.getInstance()
-                                  .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                                  .getLandedCostReceiptList().get(0).getGoodsShipment()).add(
-                              getTransactionAmount(OBDal.getInstance()
-                                  .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                                  .getLandedCostReceiptList().get(1).getGoodsShipment())), 2,
-                          BigDecimal.ROUND_HALF_UP), BigDecimal.ZERO, null));
+                              landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(),
+                              landedCost).add(
+                              getTransactionAmount(landedCost.getLandedCostReceiptList().get(1)
+                                  .getGoodsShipment(), landedCost)), 2, BigDecimal.ROUND_HALF_UP),
+                  BigDecimal.ZERO, null));
             }
 
             else {
@@ -10263,18 +10328,15 @@ public class TestCosting extends WeldBaseTest {
                       .getMatchingAmount()
                       .add(lcCost.getAmount().negate())
                       .multiply(
-                          getTransactionAmount(OBDal.getInstance()
-                              .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                              .getLandedCostReceiptList().get(1).getGoodsShipment()))
+                          getTransactionAmount(landedCost.getLandedCostReceiptList().get(1)
+                              .getGoodsShipment(), landedCost))
                       .divide(
                           getTransactionAmount(
-                              OBDal.getInstance()
-                                  .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                                  .getLandedCostReceiptList().get(0).getGoodsShipment()).add(
-                              getTransactionAmount(OBDal.getInstance()
-                                  .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                                  .getLandedCostReceiptList().get(1).getGoodsShipment())), 2,
-                          BigDecimal.ROUND_HALF_UP), BigDecimal.ZERO, null));
+                              landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(),
+                              landedCost).add(
+                              getTransactionAmount(landedCost.getLandedCostReceiptList().get(1)
+                                  .getGoodsShipment(), landedCost)), 2, BigDecimal.ROUND_HALF_UP),
+                  BigDecimal.ZERO, null));
 
               documentPostAssertList.add(new DocumentPostAssert(OBDal.getInstance()
                   .get(LandedCost.class, landedCostCost.getLandedCost().getId())
@@ -10284,18 +10346,15 @@ public class TestCosting extends WeldBaseTest {
                       .getMatchingAmount()
                       .add(lcCost.getAmount().negate())
                       .multiply(
-                          getTransactionAmount(OBDal.getInstance()
-                              .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                              .getLandedCostReceiptList().get(0).getGoodsShipment()))
+                          getTransactionAmount(landedCost.getLandedCostReceiptList().get(0)
+                              .getGoodsShipment(), landedCost))
                       .divide(
                           getTransactionAmount(
-                              OBDal.getInstance()
-                                  .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                                  .getLandedCostReceiptList().get(0).getGoodsShipment()).add(
-                              getTransactionAmount(OBDal.getInstance()
-                                  .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                                  .getLandedCostReceiptList().get(1).getGoodsShipment())), 2,
-                          BigDecimal.ROUND_HALF_UP), BigDecimal.ZERO, null));
+                              landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(),
+                              landedCost).add(
+                              getTransactionAmount(landedCost.getLandedCostReceiptList().get(1)
+                                  .getGoodsShipment(), landedCost)), 2, BigDecimal.ROUND_HALF_UP),
+                  BigDecimal.ZERO, null));
             }
 
           } else {
@@ -12321,11 +12380,11 @@ public class TestCosting extends WeldBaseTest {
   }
 
   // Get transaction amount
-  private BigDecimal getTransactionAmount(ShipmentInOut transaction) {
+  private BigDecimal getTransactionAmount(ShipmentInOut transaction, LandedCost actualLandedCost) {
     try {
       BigDecimal amount = BigDecimal.ZERO;
       for (ShipmentInOutLine transactionLine : transaction.getMaterialMgmtShipmentInOutLineList())
-        amount = amount.add(getTransactionLineAmount(transactionLine));
+        amount = amount.add(getTransactionLineAmount(transactionLine, actualLandedCost));
       return amount;
     } catch (Exception e) {
       throw new OBException(e);
@@ -12333,17 +12392,43 @@ public class TestCosting extends WeldBaseTest {
   }
 
   // Get transaction line amount
-  private BigDecimal getTransactionLineAmount(ShipmentInOutLine transactionLine) {
+  private BigDecimal getTransactionLineAmount(ShipmentInOutLine inoutline,
+      LandedCost actualLandedCost) {
     try {
-      OBCriteria<AccountingFact> criteria = OBDal.getInstance()
-          .createCriteria(AccountingFact.class);
-      criteria.add(Restrictions.eq(AccountingFact.PROPERTY_LINEID, transactionLine.getId()));
-      criteria.addOrderBy(AccountingFact.PROPERTY_SEQUENCENUMBER, true);
-      return criteria.list().get(transactionLine.getShipmentReceipt().isSalesTransaction() ? 1 : 0)
-          .getDebit();
+      MaterialTransaction transaction = inoutline.getMaterialMgmtMaterialTransactionList().get(0);
+      BigDecimal originalTransactionCost = transaction.getTransactionCost();
+      BigDecimal previousUnitCostAdjustments = getCostFromPreviousUnitCostAdjustments(transaction,
+          actualLandedCost);
+      BigDecimal totalTransactionCost = originalTransactionCost;
+      if (previousUnitCostAdjustments != null) {
+        totalTransactionCost = originalTransactionCost.add(previousUnitCostAdjustments);
+      }
+      return totalTransactionCost;
     } catch (Exception e) {
       throw new OBException(e);
     }
+  }
+
+  private BigDecimal getCostFromPreviousUnitCostAdjustments(MaterialTransaction transaction,
+      LandedCost landedCost) {
+    StringBuilder hql = new StringBuilder("");
+    hql.append(" select sum(tc.cost)");
+    hql.append(" from TransactionCost tc");
+    hql.append(" where tc.inventoryTransaction.id = :transactionID");
+    hql.append(" and tc.unitCost = true");
+    hql.append(" and tc.costAdjustmentLine is not null");
+    if (landedCost != null && landedCost.getCostAdjustment() != null) {
+      hql.append(" and tc.costAdjustmentLine.costAdjustment.id <> :costAdjusmentID");
+
+    }
+
+    Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    query.setParameter("transactionID", transaction.getId());
+    if (landedCost != null && landedCost.getCostAdjustment() != null) {
+      query.setParameter("costAdjusmentID", landedCost.getCostAdjustment().getId());
+    }
+
+    return (BigDecimal) query.uniqueResult();
   }
 
   // Assert common fields in all tables
@@ -12660,8 +12745,9 @@ public class TestCosting extends WeldBaseTest {
                   .getDocumentType().getName().equals("RFC Receipt")) {
             assertEquals(
                 materialTransaction.getTransactionCost().setScale(2, BigDecimal.ROUND_HALF_UP),
-                productTransactionAssert.getOriginalPrice().multiply(
-                    materialTransaction.getMovementQuantity()));
+                productTransactionAssert.getOriginalPrice()
+                    .multiply(materialTransaction.getMovementQuantity())
+                    .setScale(2, BigDecimal.ROUND_HALF_UP));
             assertEquals(
                 materialTransaction.getTotalCost().setScale(2, BigDecimal.ROUND_HALF_UP),
                 productTransactionAssert.getTotalPrice()
@@ -12669,8 +12755,9 @@ public class TestCosting extends WeldBaseTest {
                     .setScale(2, BigDecimal.ROUND_HALF_UP));
             assertEquals(
                 materialTransaction.getUnitCost().setScale(2, BigDecimal.ROUND_HALF_UP),
-                productTransactionAssert.getUnitPrice().multiply(
-                    materialTransaction.getMovementQuantity()));
+                productTransactionAssert.getUnitPrice()
+                    .multiply(materialTransaction.getMovementQuantity())
+                    .setScale(2, BigDecimal.ROUND_HALF_UP));
           }
 
           else {
@@ -13207,7 +13294,7 @@ public class TestCosting extends WeldBaseTest {
 
           if (costAdjustmentAssertLine.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP)
               .equals(BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP))
-              || costAdjustmentAssertLine.getType().equals("LC"))
+              || (costAdjustmentAssertLine.getType().equals("LC") && !costAdjustmentAssertLine.isNeedPosting))
             assertFalse(costAdjustmentLine.isNeedsPosting());
           else
             assertTrue(costAdjustmentLine.isNeedsPosting());
@@ -14202,6 +14289,7 @@ public class TestCosting extends WeldBaseTest {
     final private boolean source;
     final private boolean unit;
     final private String status;
+    final private boolean isNeedPosting;
 
     public CostAdjustmentAssert(MaterialTransaction materialTransaction, String type,
         BigDecimal amount, int day, boolean source) {
@@ -14218,9 +14306,19 @@ public class TestCosting extends WeldBaseTest {
       this(materialTransaction, EURO_ID, type, amount, day, source, unit);
     }
 
+    public CostAdjustmentAssert(MaterialTransaction materialTransaction, String type,
+        BigDecimal amount, int day, boolean source, boolean unit, boolean isNeedPosting) {
+      this(materialTransaction, EURO_ID, type, amount, day, source, unit, isNeedPosting);
+    }
+
     public CostAdjustmentAssert(MaterialTransaction materialTransaction, String currencyId,
         String type, BigDecimal amount, int day, boolean source, boolean unit) {
-      this(materialTransaction, currencyId, type, amount, day, source, unit, "CO");
+      this(materialTransaction, currencyId, type, amount, day, source, unit, "CO", false);
+    }
+
+    public CostAdjustmentAssert(MaterialTransaction materialTransaction, String currencyId,
+        String type, BigDecimal amount, int day, boolean source, boolean unit, boolean isNeedPosting) {
+      this(materialTransaction, currencyId, type, amount, day, source, unit, "CO", isNeedPosting);
     }
 
     public CostAdjustmentAssert(MaterialTransaction materialTransaction, String type,
@@ -14230,11 +14328,12 @@ public class TestCosting extends WeldBaseTest {
 
     public CostAdjustmentAssert(MaterialTransaction materialTransaction, String type,
         BigDecimal amount, int day, boolean source, boolean unit, String status) {
-      this(materialTransaction, EURO_ID, type, amount, day, source, unit, status);
+      this(materialTransaction, EURO_ID, type, amount, day, source, unit, status, false);
     }
 
     public CostAdjustmentAssert(MaterialTransaction materialTransaction, String currencyId,
-        String type, BigDecimal amount, int day, boolean source, boolean unit, String status) {
+        String type, BigDecimal amount, int day, boolean source, boolean unit, String status,
+        boolean isNeedPosting) {
       this.materialTransaction = materialTransaction;
       this.currency = OBDal.getInstance().get(Currency.class, currencyId);
       this.type = type;
@@ -14243,6 +14342,7 @@ public class TestCosting extends WeldBaseTest {
       this.source = source;
       this.unit = unit;
       this.status = status;
+      this.isNeedPosting = isNeedPosting;
     }
 
     public MaterialTransaction getMaterialTransaction() {
@@ -14275,6 +14375,10 @@ public class TestCosting extends WeldBaseTest {
 
     public String getStatus() {
       return status;
+    }
+
+    public boolean isNeedPosting() {
+      return isNeedPosting;
     }
 
   }
