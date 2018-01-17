@@ -35,6 +35,7 @@
       </column>
       <index name="EM_OBPOS_CANBEDELIVERED" unique="false">
         <index-column name="EM_OBPOS_CANBEDELIVERED"/>
+        <index-column name="AD_ORG_ID"/>
       </index>
       <index name="EM_OBPOS_DELIVEREDQTY" unique="false">
         <index-column name="C_ORDER_ID"/>
