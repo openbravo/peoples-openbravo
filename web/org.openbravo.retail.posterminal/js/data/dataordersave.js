@@ -265,7 +265,8 @@
                 };
 
             OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
-              receipt: receipt
+              receipt: receipt,
+              model: model
             }, function (args) {
               // create a clone of the receipt to be used when executing the final callback
               if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt')) {
@@ -463,41 +464,46 @@
               });
             });
           } else {
-            OB.MobileApp.model.runSyncProcess(function () {
-              OB.UTIL.calculateCurrentCash();
-              _.each(model.get('multiOrders').get('multiOrdersList').models, function (theReceipt) {
-                me.context.get('multiOrders').trigger('print', theReceipt, {
-                  offline: true
+            OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
+              multiOrders: closedReceipts,
+              model: model
+            }, function (args) {
+              OB.MobileApp.model.runSyncProcess(function () {
+                OB.UTIL.calculateCurrentCash();
+                _.each(model.get('multiOrders').get('multiOrdersList').models, function (theReceipt) {
+                  me.context.get('multiOrders').trigger('print', theReceipt, {
+                    offline: true
+                  });
+                  me.context.get('multiOrders').trigger('integrityOk', theReceipt);
+                  OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(theReceipt.get('documentnoSuffix'), theReceipt.get('quotationnoSuffix'), theReceipt.get('returnnoSuffix'));
+                  me.context.get('orderList').current = theReceipt;
+                  me.context.get('orderList').deleteCurrent();
                 });
-                me.context.get('multiOrders').trigger('integrityOk', theReceipt);
-                OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(theReceipt.get('documentnoSuffix'), theReceipt.get('quotationnoSuffix'), theReceipt.get('returnnoSuffix'));
-                me.context.get('orderList').current = theReceipt;
-                me.context.get('orderList').deleteCurrent();
+
+                //this logic executed when all orders are ready to be sent
+                me.context.get('leftColumnViewManager').setOrderMode();
+                if (syncCallback instanceof Function) {
+                  syncCallback();
+                }
+
+                model.get('multiOrders').resetValues();
+                OB.UTIL.showLoading(false);
+                enyo.$.scrim.hide();
+
+                if (me.hasInvLayaways) {
+                  OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
+                  me.hasInvLayaways = false;
+                }
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
+                OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
+                model.get('multiOrders').trigger('checkOpenDrawer');
+              }, function () {
+                if (syncCallback instanceof Function) {
+                  syncCallback();
+                }
+                OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
+                OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
               });
-
-              //this logic executed when all orders are ready to be sent
-              me.context.get('leftColumnViewManager').setOrderMode();
-              if (syncCallback instanceof Function) {
-                syncCallback();
-              }
-
-              model.get('multiOrders').resetValues();
-              OB.UTIL.showLoading(false);
-              enyo.$.scrim.hide();
-
-              if (me.hasInvLayaways) {
-                OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
-                me.hasInvLayaways = false;
-              }
-              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
-              OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
-              model.get('multiOrders').trigger('checkOpenDrawer');
-            }, function () {
-              if (syncCallback instanceof Function) {
-                syncCallback();
-              }
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
-              OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
             });
           }
         };
