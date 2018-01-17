@@ -731,10 +731,10 @@ enyo.kind({
         }).length;
         if (negativeLinesLength > 0 && negativeLinesLength === this.order.get('lines').models.length) {
           //isReturn
-          OB.MobileApp.model.receipt.setDocumentNo(true, false);
+          this.order.setDocumentNo(true, false);
         } else {
           //isOrder
-          OB.MobileApp.model.receipt.setDocumentNo(false, true);
+          this.order.setDocumentNo(false, true);
         }
       }
     }, this);
@@ -745,7 +745,7 @@ enyo.kind({
           servicesToApprove = '',
           line, k, oldUndo = this.order.get('undo');
 
-      if (this.updating || this.order.get('preventServicesUpdate')) {
+      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate')) {
         return;
       }
       this.updating = true;
@@ -800,7 +800,7 @@ enyo.kind({
         return qty;
       }
 
-      if (!OB.MobileApp.model.receipt.get('notApprove')) {
+      if (!this.order.get('notApprove')) {
         // First check if there is any service modified to negative quantity amount in order to know if approval will be required
         var prod, i, j, l, newqtyplus, newqtyminus, serviceLines, positiveLines, negativeLines, newRelatedLines;
         for (k = 0; k < this.order.get('lines').length; k++) {
@@ -848,7 +848,7 @@ enyo.kind({
                 if (!approvalNeeded) {
                   approvalNeeded = true;
                 }
-                servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
+                servicesToApprove += '<br>' + OB.I18N.getLabel('OBMOBC_Character')[1] + ' ' + line.get('product').get('_identifier');
               }
             }
           }
@@ -1081,7 +1081,7 @@ enyo.kind({
         });
       };
 
-      if (this.updating || this.order.get('preventServicesUpdate')) {
+      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate')) {
         return;
       }
 
@@ -1335,45 +1335,54 @@ enyo.kind({
   }],
   listMultiOrders: null,
   init: function (model) {
-    this.model = model;
-    var me = this;
+    this.multiOrders = model.get('multiOrders');
+    this.orderList = this.multiOrders.get('multiOrdersList');
+    this.orderListPayment = this.multiOrders.get('payments');
+
     this.total = 0;
     this.listMultiOrders = new Backbone.Collection();
     this.$.listMultiOrderLines.setCollection(this.listMultiOrders);
-    this.model.get('multiOrders').on('change:additionalInfo', function (changedModel) {
-      if (changedModel.get('additionalInfo') === 'I') {
-        this.$.multiOrder_btninvoice.show();
-        return;
-      }
-      this.$.multiOrder_btninvoice.hide();
+
+    this.multiOrders.on('change:additionalInfo', function (changedModel) {
+      this.$.multiOrder_btninvoice.setShowing(changedModel.get('additionalInfo') === 'I');
     }, this);
-    var orderList = this.model.get('multiOrders').get('multiOrdersList');
-    orderList.on('reset add remove amountToLayaway', function () {
-      me.total = _.reduce(me.model.get('multiOrders').get('multiOrdersList').models, function (memo, order) {
+    this.multiOrders.on('change:total', function (model) {
+      this.doChangeTotal({
+        newTotal: model.get('total')
+      });
+    }, this);
+    this.orderList.on('reset add remove amountToLayaway', function () {
+      this.total = _.reduce(this.orderList.models, function (memo, order) {
         return memo + ((!_.isUndefined(order.get('amountToLayaway')) && !_.isNull(order.get('amountToLayaway'))) ? order.get('amountToLayaway') : order.getPending());
       }, 0);
-      this.model.get('multiOrders').set('total', this.total);
-      this.model.get('multiOrders').on('change:total', function (model) {
-        this.doChangeTotal({
-          newTotal: model.get('total')
-        });
-      }, this);
+      this.multiOrders.set('total', this.total);
       this.$.totalMultiReceiptLine.renderTotal(this.total);
-      me.listMultiOrders.reset(me.model.get('multiOrders').get('multiOrdersList').models);
-
-      if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+      this.listMultiOrders.reset(this.orderList.models);
+      if (model.get('leftColumnViewManager').isMultiOrder()) {
         this.doChangeTotal({
           newTotal: this.total
         });
       }
-      this.$.totalMultiReceiptLine.renderQty(me.model.get('multiOrders').get('multiOrdersList').length);
+      this.$.totalMultiReceiptLine.renderQty(this.orderList.length);
     }, this);
-    var orderListPayment = me.model.get('multiOrders').get('payments');
-    orderListPayment.on('add remove', function () {
-      OB.UTIL.localStorage.setItem('multiOrdersPayment', JSON.stringify(me.model.get('multiOrders').get('payments').toJSON()));
+    this.orderListPayment.on('add remove', function () {
+      OB.UTIL.localStorage.setItem('multiOrdersPayment', JSON.stringify(this.multiOrders.get('payments').toJSON()));
     }, this);
   },
   initComponents: function () {
     this.inherited(arguments);
+  },
+  destroyComponents: function () {
+    this.inherited(arguments);
+    if (this.multiOrders) {
+      this.multiOrders.off('change:additionalInfo', null, this);
+      this.multiOrders.off('change:total', null, this);
+    }
+    if (this.orderList) {
+      this.orderList.off('reset add remove amountToLayaway', null, this);
+    }
+    if (this.orderListPayment) {
+      this.orderListPayment.off('add remove', null, this);
+    }
   }
 });

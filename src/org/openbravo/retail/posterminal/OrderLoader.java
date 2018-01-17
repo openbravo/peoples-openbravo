@@ -229,9 +229,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   public JSONObject saveRecord(JSONObject jsonorder) throws Exception {
     long t0 = 0, t1 = 0, t11 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t111 = 0, t112 = 0, t113 = 0, t115 = 0, t116 = 0;
 
+    JSONObject jsoncashup = null;
     if (jsonorder.has("cashUpReportInformation")) {
       // Update CashUp Report
-      JSONObject jsoncashup = jsonorder.getJSONObject("cashUpReportInformation");
+      jsoncashup = jsonorder.getJSONObject("cashUpReportInformation");
       Date cashUpDate = new Date();
 
       UpdateCashup.getAndUpdateCashUp(jsoncashup.getString("id"), jsoncashup, cashUpDate);
@@ -458,6 +459,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               .getCreateNettingGoodsShipmentPreferenceValue(canceledOrder)
               && CancelAndReplaceUtils
                   .getAssociateGoodsShipmentToNewSalesOrderPreferenceValue(canceledOrder);
+          canceledOrder.setObposAppCashup(jsoncashup.getString("id"));
+          OBDal.getInstance().save(canceledOrder);
         }
         if (createInvoice) {
           // Invoice header
@@ -1192,7 +1195,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       for (i = 0; i < payments.length(); i++) {
         JSONObject payment = payments.getJSONObject(i);
         if (payment.has("isPrePayment") && payment.getBoolean("isPrePayment")) {
-          total = total.subtract(new BigDecimal(payment.getDouble("origAmount")));
+          total = total.subtract(BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
+              pricePrecision, RoundingMode.HALF_UP));
         }
       }
 
@@ -2187,9 +2191,15 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
         .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
     if (wasPaidOnCredit) {
-      amountPaidWithCredit = (gross.subtract(paymentAmt)).setScale(pricePrecision,
-          RoundingMode.HALF_UP);
+      if (gross.signum() >= 0) {
+        amountPaidWithCredit = (gross.subtract(paymentAmt)).setScale(pricePrecision,
+            RoundingMode.HALF_UP);
+      } else {
+        amountPaidWithCredit = (gross.add(paymentAmt)).setScale(pricePrecision,
+            RoundingMode.HALF_UP);
+      }
     }
+
     if (!order.getFINPaymentScheduleList().isEmpty()) {
       paymentSchedule = order.getFINPaymentScheduleList().get(0);
     } else {
@@ -2243,19 +2253,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         paymentScheduleInvoice.setAmount(gross.setScale(pricePrecision, RoundingMode.HALF_UP));
         paymentScheduleInvoice.setOutstandingAmount(gross.setScale(pricePrecision,
             RoundingMode.HALF_UP));
-        if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
-            .hasProperty("origDueDate")) {
-          // This property is checked and set this way to force compatibility with both MP13, MP14
-          // and later releases of Openbravo. This property is mandatory and must be set. Check
-          // issue
-          paymentScheduleInvoice.set("origDueDate", paymentScheduleInvoice.getDueDate());
-        }
-        if (isInvoicePaymentScheduleNew) {
-          invoice.getFINPaymentScheduleList().add(paymentScheduleInvoice);
-        }
 
-        // TODO: If the payment terms is configured to work with fractionated payments, we should
-        // generate several payment schedules
         if (wasPaidOnCredit) {
           OBCriteria<PaymentTermLine> lineCriteria = OBDal.getInstance().createCriteria(
               PaymentTermLine.class);
@@ -2268,7 +2266,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             BigDecimal pendingGrossAmount = gross;
             int i = 0;
             for (PaymentTermLine paymentTermLine : termLineList) {
-              if (pendingGrossAmount.compareTo(BigDecimal.ZERO) <= 0) {
+              if (pendingGrossAmount.compareTo(BigDecimal.ZERO) == 0) {
                 break;
               }
               BigDecimal amount = BigDecimal.ZERO;
@@ -2297,52 +2295,19 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
                 paymentScheduleInvoice.setOutstandingAmount(amount);
                 paymentScheduleInvoice.setDueDate(dueDate);
                 paymentScheduleInvoice.setExpectedDate(dueDate);
-                OBDal.getInstance().save(paymentScheduleInvoice);
                 i++;
               } else {
-                FIN_PaymentSchedule pymtSchedule = OBProvider.getInstance().get(
-                    FIN_PaymentSchedule.class);
-                pymtSchedule.setNewOBObject(true);
-                pymtSchedule.setCurrency(order.getCurrency());
-                pymtSchedule.setInvoice(invoice);
-                pymtSchedule.setFinPaymentmethod(order.getPaymentMethod());
-                pymtSchedule.setFINPaymentPriority(order.getFINPaymentPriority());
-                pymtSchedule.setAmount(amount);
-                pymtSchedule.setOutstandingAmount(amount);
-                pymtSchedule.setDueDate(dueDate);
-                pymtSchedule.setExpectedDate(dueDate);
-                if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
-                    .hasProperty("origDueDate")) {
-                  pymtSchedule.set("origDueDate", dueDate);
-                }
-                invoice.getFINPaymentScheduleList().add(pymtSchedule);
-                OBDal.getInstance().save(pymtSchedule);
+                addPaymentSchedule(order, invoice, amount, amount, dueDate);
                 i++;
+              }
+              if (termLineList.size() == i) {
+                if (pendingGrossAmount.compareTo(BigDecimal.ZERO) != 0) {
+                  dueDate = getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(),
+                      order.getPaymentTerms(), null);
 
-                if (termLineList.size() == i) {
-                  if (pendingGrossAmount.compareTo(BigDecimal.ZERO) > 0
-                      && !paymentTermLine.isRest()) {
-                    dueDate = getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(),
-                        order.getPaymentTerms(), null);
-
-                    pymtSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
-                    pymtSchedule.setNewOBObject(true);
-                    pymtSchedule.setCurrency(order.getCurrency());
-                    pymtSchedule.setInvoice(invoice);
-                    pymtSchedule.setFinPaymentmethod(order.getPaymentMethod());
-                    pymtSchedule.setFINPaymentPriority(order.getFINPaymentPriority());
-                    pymtSchedule.setAmount(pendingGrossAmount);
-                    pymtSchedule.setOutstandingAmount(pendingGrossAmount);
-                    pymtSchedule.setDueDate(dueDate);
-                    pymtSchedule.setExpectedDate(dueDate);
-                    if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
-                        .hasProperty("origDueDate")) {
-                      pymtSchedule.set("origDueDate", dueDate);
-                    }
-                    invoice.getFINPaymentScheduleList().add(pymtSchedule);
-                    OBDal.getInstance().save(pymtSchedule);
-                    i++;
-                  }
+                  addPaymentSchedule(order, invoice, pendingGrossAmount, pendingGrossAmount,
+                      dueDate);
+                  i++;
                 }
               }
             }
@@ -2356,14 +2321,31 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           paymentScheduleInvoice.setDueDate(order.getOrderDate());
           paymentScheduleInvoice.setExpectedDate(order.getOrderDate());
         }
+        if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
+            .hasProperty("origDueDate")) {
+          // This property is checked and set this way to force compatibility with both MP13, MP14
+          // and later releases of Openbravo. This property is mandatory and must be set. Check
+          // issue
+          paymentScheduleInvoice.set("origDueDate", paymentScheduleInvoice.getDueDate());
+        }
+        if (isInvoicePaymentScheduleNew) {
+          invoice.getFINPaymentScheduleList().add(paymentScheduleInvoice);
+        }
         OBDal.getInstance().save(paymentScheduleInvoice);
-      } else if (wasPaidOnCredit) {
+      } else if (wasPaidOnCredit && !isInvoicePaymentScheduleNew) {
         // If the invoice already exists and is paid in credit (by reverse payments), the received
         // and outstanding amount must be updated with the quantity paid on credit
-        paymentScheduleInvoice.setPaidAmount(paymentScheduleInvoice.getAmount()
-            .subtract(amountPaidWithCredit).setScale(pricePrecision, RoundingMode.HALF_UP));
-        paymentScheduleInvoice.setOutstandingAmount(amountPaidWithCredit.setScale(pricePrecision,
-            RoundingMode.HALF_UP));
+        if (gross.signum() >= 0) {
+          paymentScheduleInvoice.setPaidAmount(paymentScheduleInvoice.getAmount()
+              .subtract(amountPaidWithCredit).setScale(pricePrecision, RoundingMode.HALF_UP));
+          paymentScheduleInvoice.setOutstandingAmount(amountPaidWithCredit.setScale(pricePrecision,
+              RoundingMode.HALF_UP));
+        } else {
+          paymentScheduleInvoice.setPaidAmount(paymentScheduleInvoice.getAmount()
+              .add(amountPaidWithCredit).setScale(pricePrecision, RoundingMode.HALF_UP));
+          paymentScheduleInvoice.setOutstandingAmount(amountPaidWithCredit.setScale(pricePrecision,
+              RoundingMode.HALF_UP));
+        }
       }
     }
 
@@ -2425,6 +2407,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         .getBoolean("paidOnCredit"));
     if (invoice != null
         && (creditpaidLayaway || fullypaidLayaway || checkPaidOnCreditChecked || paidReceipt)) {
+      BigDecimal dueAmount = BigDecimal.ZERO;
+      if (paymentScheduleInvoice != null) {
+        Date dueDate = paymentScheduleInvoice.getDueDate();
+        if (dueDate.compareTo(new Date()) <= 0) {
+          dueAmount = paymentScheduleInvoice.getOutstandingAmount();
+        }
+      }
+
       for (int j = 0; j < paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList()
           .size(); j++) {
         if (paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().get(j)
@@ -2434,21 +2424,32 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
       }
 
-      invoice.setTotalPaid(invoice.getGrandTotalAmount().subtract(amountPaidWithCredit));
+      invoice.setTotalPaid(gross.signum() >= 0 ? paymentAmt : paymentAmt.negate());
       invoice.setOutstandingAmount(amountPaidWithCredit);
-      invoice.setDueAmount(amountPaidWithCredit);
+      invoice.setDueAmount(dueAmount);
       invoice.setPaymentComplete(amountPaidWithCredit.compareTo(BigDecimal.ZERO) == 0);
       invoice.setDaysTillDue(FIN_Utility.getDaysToDue(paymentScheduleInvoice == null ? invoice
           .getInvoiceDate() : paymentScheduleInvoice.getDueDate()));
       if (paymentScheduleInvoice != null
           && paymentScheduleInvoice.getOutstandingAmount().compareTo(BigDecimal.ZERO) != 0) {
-        if (paymentScheduleInvoice.getAmount().compareTo(paymentAmt) >= 0) {
-          paymentScheduleInvoice.setOutstandingAmount(paymentScheduleInvoice.getAmount().subtract(
-              paymentAmt));
-          paymentScheduleInvoice.setPaidAmount(paymentAmt);
+        if (paymentScheduleInvoice.getAmount().signum() >= 0) {
+          if (paymentScheduleInvoice.getAmount().compareTo(paymentAmt) >= 0) {
+            paymentScheduleInvoice.setOutstandingAmount(paymentScheduleInvoice.getAmount()
+                .subtract(paymentAmt));
+            paymentScheduleInvoice.setPaidAmount(paymentAmt);
+          } else {
+            paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
+            paymentScheduleInvoice.setPaidAmount(paymentScheduleInvoice.getAmount());
+          }
         } else {
-          paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
-          paymentScheduleInvoice.setPaidAmount(paymentScheduleInvoice.getAmount());
+          if (paymentScheduleInvoice.getAmount().compareTo(paymentAmt) <= 0) {
+            paymentScheduleInvoice.setOutstandingAmount(paymentScheduleInvoice.getAmount().add(
+                paymentAmt));
+            paymentScheduleInvoice.setPaidAmount(paymentAmt.negate());
+          } else {
+            paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
+            paymentScheduleInvoice.setPaidAmount(paymentScheduleInvoice.getAmount());
+          }
         }
         OBDal.getInstance().save(paymentScheduleInvoice);
       }
@@ -2476,7 +2477,24 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     jsonResponse.put("paymentScheduleInvoice", paymentScheduleInvoice);
 
     return jsonResponse;
+  }
 
+  private void addPaymentSchedule(Order order, Invoice invoice, BigDecimal amount,
+      BigDecimal outstandingAmount, Date dueDate) {
+    FIN_PaymentSchedule pymtSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
+    pymtSchedule.setCurrency(order.getCurrency());
+    pymtSchedule.setInvoice(invoice);
+    pymtSchedule.setFinPaymentmethod(order.getPaymentMethod());
+    pymtSchedule.setFINPaymentPriority(order.getFINPaymentPriority());
+    pymtSchedule.setAmount(amount);
+    pymtSchedule.setOutstandingAmount(outstandingAmount);
+    pymtSchedule.setDueDate(dueDate);
+    pymtSchedule.setExpectedDate(dueDate);
+    if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class).hasProperty("origDueDate")) {
+      pymtSchedule.set("origDueDate", dueDate);
+    }
+    invoice.getFINPaymentScheduleList().add(pymtSchedule);
+    OBDal.getInstance().save(pymtSchedule);
   }
 
   private void setRemainingPayment(Order order, Invoice invoice,
@@ -2533,8 +2551,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               outstandingPaidAmount = BigDecimal.ZERO;
             }
           } else {
-            psdAmount = outstandingPaidAmount;
-            outstandingPaidAmount = BigDecimal.ZERO;
+            if (outstandingPaidAmount.compareTo(paymentScheduleInv.getOutstandingAmount()) <= 0) {
+              psdAmount = paymentScheduleInv.getOutstandingAmount();
+              outstandingPaidAmount = outstandingPaidAmount.subtract(paymentScheduleInv
+                  .getOutstandingAmount());
+            } else {
+              psdAmount = outstandingPaidAmount;
+              outstandingPaidAmount = BigDecimal.ZERO;
+            }
           }
 
           FIN_PaymentScheduleDetail paymentScheduleDetail = null;
@@ -2692,8 +2716,19 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               outstandingPaidAmount = BigDecimal.ZERO;
             }
           } else {
-            psdAmount = outstandingPaidAmount;
-            outstandingPaidAmount = BigDecimal.ZERO;
+            if (paymentScheduleInv.getOutstandingAmount().signum() >= 0) {
+              psdAmount = outstandingPaidAmount;
+              outstandingPaidAmount = BigDecimal.ZERO;
+            } else {
+              if (outstandingPaidAmount.compareTo(paymentScheduleInv.getOutstandingAmount()) <= 0) {
+                psdAmount = paymentScheduleInv.getOutstandingAmount();
+                outstandingPaidAmount = outstandingPaidAmount.subtract(paymentScheduleInv
+                    .getOutstandingAmount());
+              } else {
+                psdAmount = outstandingPaidAmount;
+                outstandingPaidAmount = BigDecimal.ZERO;
+              }
+            }
           }
 
           paymentScheduleDetail.setAmount(psdAmount);

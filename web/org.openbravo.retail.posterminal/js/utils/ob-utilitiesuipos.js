@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -12,6 +12,24 @@
 OB.UTIL = window.OB.UTIL || {};
 
 
+OB.UTIL.sendLastTerminalStatusValues = function (callback) {
+  var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.LastTerminalStatusTimestamps');
+  process.exec({
+    posterminalId: OB.MobileApp.model.get('terminal').id,
+    lastFullRefresh: OB.UTIL.localStorage.getItem('POSLastTotalRefresh'),
+    lastIncRefresh: OB.UTIL.localStorage.getItem('POSLastIncRefresh'),
+    lastCacheGeneration: OB.UTIL.localStorage.getItem("LastCacheGeneration"),
+    lastJSGeneration: OB.UTIL.localStorage.getItem("LastJSGeneration_" + OB.MobileApp.model.get('appName'))
+  }, function (data, message) {
+    if (callback instanceof Function) {
+      callback();
+    }
+  }, function (error) {
+    if (callback instanceof Function) {
+      callback();
+    }
+  });
+};
 
 OB.UTIL.getImageURL = function (id) {
   var imageUrl = 'productImages/';

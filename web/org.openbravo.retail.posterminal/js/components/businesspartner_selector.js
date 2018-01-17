@@ -513,6 +513,13 @@ enyo.kind({
         });
       }
 
+      // Generate a generic message if error is not defined
+      if (OB.UTIL.isNullOrUndefined(error) || OB.UTIL.isNullOrUndefined(error.message)) {
+        error = {
+          message: OB.I18N.getLabel('OBMOBC_MsgApplicationServerNotAvailable')
+        };
+      }
+
       if (error.message.startsWith('###')) {
         tokens = error.message.split('###');
         message = [];

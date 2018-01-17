@@ -9,6 +9,7 @@
 
 package org.openbravo.retail.posterminal;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,12 +29,10 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.mobile.core.login.MobileCoreLoginHandler;
 import org.openbravo.model.ad.access.Role;
-import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.system.Language;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 
 public class POSLoginHandler extends MobileCoreLoginHandler {
@@ -44,47 +43,16 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
   @Override
   protected RoleDefaults getDefaults(HttpServletRequest req, HttpServletResponse res,
       String userId, String roleId, Session session) {
-
-    final String terminalName = req.getParameter("terminalName");
-    final String hql = "SELECT a.organization FROM OBPOS_Applications AS a WHERE a.searchKey = :terminalName";
-    final org.hibernate.Session hibernateSession = OBDal.getInstance().getSession();
-    final Query query = hibernateSession.createQuery(hql);
-    query.setParameter("terminalName", terminalName);
-    query.setMaxResults(1);
-    final Organization org = (Organization) query.uniqueResult();
-    session.setObposStoreOrg(org);
-    String newRoleId = roleId;
-    Boolean newRoleIdFound = false;
-
-    User currentUser = OBDal.getInstance().get(User.class, userId);
-    List<UserRoles> lstCurrentUserRoles = currentUser.getADUserRolesList();
-    if (currentUser.getOBPOSDefaultPOSRole() == null && lstCurrentUserRoles.size() > 1) {
-      for (UserRoles r : lstCurrentUserRoles) {
-        Role roleToAnalyze = r.getRole();
-        if (hasMobileAccess(roleToAnalyze, POSConstants.APP_NAME)) {
-          List<RoleOrganization> lstRoleOrganizationAccess = roleToAnalyze
-              .getADRoleOrganizationList();
-          for (RoleOrganization rorg : lstRoleOrganizationAccess) {
-            Organization orgToAnalyze = rorg.getOrganization();
-            if (orgToAnalyze.getId().equals(org.getId())) {
-              if (!roleId.equals(roleToAnalyze.getId())) {
-                log.info("Original selected role -" + roleId
-                    + "- has been changed for a new role -" + roleToAnalyze.getIdentifier() + "-");
-              }
-              newRoleId = roleToAnalyze.getId();
-              newRoleIdFound = true;
-              break;
-            }
-          }
-        }
-        if (newRoleIdFound) {
-          break;
-        }
-      }
-    }
-
     final VariablesSecureApp vars = new VariablesSecureApp(req);
     final String terminalSearchKey = vars.getStringParameter("terminalName");
+
+    Role roleSelectedByDefault = null;
+    OBPOSApplications posTerminal = null;
+    if (roleId != null) {
+      roleSelectedByDefault = OBDal.getInstance().get(Role.class, roleId);
+    }
+
+    /* Get Current POS Terminal */
     OBCriteria<OBPOSApplications> qApp = OBDal.getInstance()
         .createCriteria(OBPOSApplications.class);
     qApp.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, terminalSearchKey));
@@ -106,6 +74,52 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
         return null;
       }
       return null;
+    } else if (apps.size() == 1) {
+      posTerminal = apps.get(0);
+      session.setObposStoreOrg(posTerminal.getOrganization());
+    } else {
+      // Should never happen
+      log4j.error("Terminal " + terminalSearchKey + " is duplicated");
+      try {
+        errorLogin(res, vars, session, "OBPOS_NO_POS_TERMINAL_TITLE", "OBPOS_NO_POS_TERMINAL_MSG",
+            new ArrayList<String>() {
+              private static final long serialVersionUID = 1L;
+              {
+                add(terminalSearchKey);
+              }
+            });
+      } catch (Exception e) {
+        log4j.error("Error in login", e);
+        return null;
+      }
+      return null;
+    }
+    /* End get current pos Terminal */
+
+    String newRoleId = roleSelectedByDefault.getId();
+    User currentUser = OBDal.getInstance().get(User.class, userId);
+    Role defaultRole = currentUser.getDefaultRole();
+    Role defaultPosRole = currentUser.getOBPOSDefaultPOSRole();
+
+    // When defaults role are not defined, then system will try to find the best role to login in
+    // the desired store.
+    // Apart from that, if defaults are not valid (-1) system will try to find a better role.
+    if ((defaultRole == null && defaultPosRole == null)
+        || getDistanceToStoreOrganizationForCertainRole(roleSelectedByDefault, posTerminal) < 1) {
+      List<UserRoles> lstCurrentUserRoles = currentUser.getADUserRolesList();
+      // skip complex query if there aren't more options
+      if (lstCurrentUserRoles.size() > 1) {
+        // Look for a better role
+        Role newRoleFound = getNearestRoleValidToLoginInWebPosTerminalForCertainUser(currentUser,
+            posTerminal);
+        // Better role found! is it different to the initial one? -> apply change
+        if (newRoleFound != null && !newRoleFound.getId().equals(roleSelectedByDefault.getId())) {
+          newRoleId = newRoleFound.getId();
+          log.info("A more appropiate role has been found: -" + newRoleFound.getIdentifier()
+              + "-. This role will be used instead of  -" + roleSelectedByDefault.getIdentifier()
+              + "-.");
+        }
+      }
     }
 
     OBContext.setAdminMode(false);
@@ -179,6 +193,104 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
     defaults.warehouse = warehouse != null ? warehouse.getId() : null;
     RequestContext.get().setSessionAttribute("POSTerminal", terminal.getId());
     return defaults;
+  }
+
+  // Executes a logic to find the best role to be used by a specific user to login in a specific
+  // terminal. This logic will try to find a role which covers the following conditions:
+  // 1. It is in the list of roles available for the user
+  // 2. User-Role relation is active
+  // 3. Role is active
+  // 4. Role is not marked as portal role
+  // 5. Role have access to Web POS form
+  // 6. Role-FormAcces relation is active
+  // 7. Role-OrgAccess relation is active
+  // 8. Distance between store orgnization and organizations allowed for that role is the smallest
+  // one
+  private Role getNearestRoleValidToLoginInWebPosTerminalForCertainUser(User currentUser,
+      OBPOSApplications terminal) {
+    StringBuilder hqlQueryStr = new StringBuilder();
+    hqlQueryStr
+        .append("SELECT rolOrg.role.id, to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) as distance ");
+    hqlQueryStr.append("FROM ADRoleOrganization rolOrg ");
+    hqlQueryStr.append("WHERE rolOrg.active = true and ");
+    hqlQueryStr.append("      rolOrg.role.active = true and ");
+    hqlQueryStr.append("      rolOrg.role.forPortalUsers = false and ");
+    hqlQueryStr.append("      rolOrg.role.id in (");
+    hqlQueryStr.append("        SELECT usrol.role.id FROM ADUserRoles usrol ");
+    hqlQueryStr.append("        WHERE usrol.userContact.id = :userId and ");
+    hqlQueryStr.append("              usrol.active = true ");
+    hqlQueryStr.append("      ) and exists (");
+    hqlQueryStr.append("        SELECT 1 FROM ADFormAccess frmacc ");
+    hqlQueryStr.append("        WHERE rolOrg.role.id = frmacc.role.id and ");
+    hqlQueryStr.append("              frmacc.active = true and ");
+    hqlQueryStr.append("              frmacc.specialForm.id = :formId");
+    hqlQueryStr.append("      ) and ");
+    hqlQueryStr
+        .append("      to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) > 0 ");
+    hqlQueryStr
+        .append("ORDER BY to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) ASC, rolOrg.role.name ASC");
+    final org.hibernate.Session hibernateSession = OBDal.getInstance().getSession();
+    final Query query = hibernateSession.createQuery(hqlQueryStr.toString());
+    query.setParameter("stOrgId", terminal.getOrganization().getId());
+    query.setParameter("clientId", terminal.getClient().getId());
+    query.setParameter("userId", currentUser.getId());
+    query.setParameter("formId", POSUtils.WEB_POS_FORM_ID);
+    query.setMaxResults(1);
+
+    @SuppressWarnings("unchecked")
+    List<Object> listResults = query.list();
+    if (!listResults.isEmpty()) {
+      Object[] result = (Object[]) listResults.get(0);
+      String selectedRoleId = (String) result[0];
+      Role foundRole = OBDal.getInstance().get(Role.class, selectedRoleId);
+      log.debug("A more appropiate role has been found: " + foundRole.getIdentifier()
+          + " The distance is " + ((BigDecimal) result[1]).toString());
+      return foundRole;
+    } else {
+      return null;
+    }
+  }
+
+  private int getDistanceToStoreOrganizationForCertainRole(Role currentRole,
+      OBPOSApplications terminal) {
+    if (hasMobileAccess(currentRole, POSConstants.APP_NAME)) {
+      StringBuilder hqlQueryStr = new StringBuilder();
+      hqlQueryStr
+          .append("SELECT to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) as distance ");
+      hqlQueryStr.append("FROM ADRoleOrganization rolOrg ");
+      hqlQueryStr.append("WHERE rolOrg.role.id = :roleId and ");
+      hqlQueryStr
+          .append("      to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) > 0 ");
+      hqlQueryStr
+          .append("ORDER BY to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) ASC, rolOrg.role.name ASC");
+      final org.hibernate.Session hibernateSession = OBDal.getInstance().getSession();
+      final Query query = hibernateSession.createQuery(hqlQueryStr.toString());
+      query.setParameter("stOrgId", terminal.getOrganization().getId());
+      query.setParameter("clientId", terminal.getClient().getId());
+      query.setParameter("roleId", currentRole.getId());
+      query.setMaxResults(1);
+      BigDecimal distance = BigDecimal.ONE;
+      distance.negate();
+      try {
+        distance = (BigDecimal) query.uniqueResult();
+      } catch (Exception ex) {
+        distance = BigDecimal.ONE;
+        distance.negate();
+      }
+      if (distance.compareTo(BigDecimal.ZERO) > 0) {
+        log.debug("Default role: " + currentRole.getIdentifier()
+            + " has been checked. It is valid for terminal " + terminal.getIdentifier() + ".");
+      } else {
+        log.info("Default role: " + currentRole.getIdentifier()
+            + " has been checked. It is not valid for terminal " + terminal.getIdentifier()
+            + ". System will try to find a better role");
+      }
+      return distance.intValue();
+    } else {
+      log.error("Default role: " + currentRole.getIdentifier()
+          + " does not have access to web POS mobile App ");
+      return -1;
+    }
   }
 
   @Override
