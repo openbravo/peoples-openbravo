@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -83,6 +83,8 @@ import org.openbravo.test.modularity.MergePropertiesTest;
 import org.openbravo.test.modularity.TableNameTest;
 import org.openbravo.test.preference.PreferenceTest;
 import org.openbravo.test.pricelist.PriceListTest;
+import org.openbravo.test.referencedinventory.ReferencedInventoryBoxTest;
+import org.openbravo.test.referencedinventory.ReferencedInventoryUnboxTest;
 import org.openbravo.test.reporting.AllJrxmlCompilation;
 import org.openbravo.test.reporting.JasperReportsCompilation;
 import org.openbravo.test.role.inheritance.RoleInheritanceTestSuite;
@@ -130,7 +132,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-    // dal
+// dal
     DalComplexQueryRequisitionTest.class, //
     DalComplexQueryTestOrderLine.class, //
     DalPerformanceInventoryLineTest.class, //
@@ -280,7 +282,11 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ADOrgTreeTest.class, //
 
     // CopyFromOrders refactor
-    CopyLinesFromOrdersTest.class
+    CopyLinesFromOrdersTest.class,
+
+    // Referenced Inventory
+    ReferencedInventoryBoxTest.class, //
+    ReferencedInventoryUnboxTest.class
 
 })
 public class AllAntTaskTests {
