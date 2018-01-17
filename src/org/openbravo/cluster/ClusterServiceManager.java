@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ import java.util.concurrent.Executors;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.axis.utils.StringUtils;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -341,10 +342,9 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
           service.setUpdated(now);
         } else if (shouldReplaceNodeOfService(service, interval)) {
           // try to register the current node as the one in charge of handling the service
-          // the last ping (updated) will be updated automatically by the OBInterceptor
-          log.info("Changing node in charge of service {}", serviceName);
-          log.info("Replacing node {} with node {}", service.getNode(), manager.nodeName);
-          service.setNode(manager.nodeName);
+          log.info("Node {} in charge of service {} should be replaced", service.getNode(),
+              serviceName);
+          updateNodeOfService(service.getNode(), serviceName, now);
         } else {
           log.debug("Node {} still in charge of service {}", manager.nodeName, serviceName);
         }
@@ -361,5 +361,22 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       long now = new Date().getTime();
       return leaderLostTime < now;
     }
+
+    private void updateNodeOfService(String formerNode, String serviceName, Date now) {
+      StringBuilder hql = new StringBuilder();
+      hql.append("UPDATE ADClusterService SET node = :newNode, updated = :updated ");
+      hql.append("WHERE service = :service AND node = :formerNode");
+      Query updateQuery = OBDal.getInstance().getSession().createQuery(hql.toString());
+      updateQuery.setParameter("newNode", manager.nodeName);
+      updateQuery.setParameter("updated", now);
+      updateQuery.setParameter("service", serviceName);
+      updateQuery.setParameter("formerNode", formerNode);
+      int rowCount = updateQuery.executeUpdate();
+      if (rowCount == 1) {
+        log.info("Changed node in charge of service {}", serviceName);
+        log.info("Replaced node {} with node {}", formerNode, manager.nodeName);
+      }
+    }
+
   }
 }
