@@ -89,9 +89,6 @@
         } else {
           customer.set('loaded', OB.I18N.normalizeDate(new Date(customer.get('loaded'))));
         }
-        // Set locId only, So it will not create new location 
-        bpLocation = customer.get('locationModel');
-        customer.set('locId', bpLocation.get('id'));
 
         bpToSave.set('json', JSON.stringify(customer.serializeEditedToJSON()));
         bpToSave.set('c_bpartner_id', customer.get('id'));
