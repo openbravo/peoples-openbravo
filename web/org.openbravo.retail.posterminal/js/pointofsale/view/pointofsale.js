@@ -448,7 +448,8 @@ enyo.kind({
     });
   },
   addProductToOrder: function (inSender, inEvent) {
-    var targetOrder, me = this;
+    var targetOrder, me = this,
+        attrs;
     if (inEvent.product.get('ignoreAddProduct')) {
       inEvent.product.unset('ignoreAddProduct');
       return;
@@ -549,13 +550,15 @@ enyo.kind({
       }
     }
 
+    attrs = inEvent.attrs || {};
+    attrs.kindOriginator = inEvent.originator && inEvent.originator.kind;
     OB.UTIL.HookManager.executeHooks('OBPOS_PreAddProductToOrder', {
       context: this,
       receipt: targetOrder,
       productToAdd: inEvent.product,
       qtyToAdd: inEvent.qty ? inEvent.qty : 1,
       options: inEvent.options,
-      attrs: inEvent.attrs
+      attrs: attrs
     }, function (args) {
       if (args.cancelOperation && args.cancelOperation === true) {
         if (inEvent.callback) {
