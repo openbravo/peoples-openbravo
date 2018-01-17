@@ -297,15 +297,16 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
 
     private Long doPingRound() {
       long nextSleep = 0L;
-      long current = System.currentTimeMillis();
+      long startTime = System.currentTimeMillis();
       for (Map.Entry<String, Long> entry : serviceNextPings.entrySet()) {
+        long current = System.currentTimeMillis();
         long sleep;
         String service = entry.getKey();
         Long serviceNextPing = entry.getValue();
         if (serviceNextPing <= current) {
           registerOrUpdateService(service,
               serviceTimeouts.get(service) + serviceThresholds.get(service));
-          entry.setValue(serviceNextPing + serviceTimeouts.get(service));
+          entry.setValue(current + serviceTimeouts.get(service));
           sleep = serviceTimeouts.get(service);
         } else {
           sleep = serviceNextPing - current;
@@ -314,7 +315,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
           nextSleep = sleep;
         }
       }
-      log.debug("Ping round completed in {} milliseconds", (System.currentTimeMillis() - current));
+      log.debug("Ping round completed in {} milliseconds", (System.currentTimeMillis() - startTime));
       return nextSleep;
     }
 
