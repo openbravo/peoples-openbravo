@@ -73,19 +73,6 @@ public class ReferencedInventoryUtil {
   }
 
   /**
-   * Returns the parent reference inventory for the given storage detail. If not found it returns
-   * null
-   */
-  public static final ReferencedInventory getParentReferenceInventory(
-      final StorageDetail storageDetail) {
-    try {
-      return getParentAttributeSetInstance(storageDetail).getReferencedInventory();
-    } catch (NullPointerException noParentFound) {
-      return null;
-    }
-  }
-
-  /**
    * If the given referenced inventory type id is associated to a sequence, it then return the next
    * value in that sequence. Otherwise returns null.
    * 
