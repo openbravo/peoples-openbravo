@@ -28,12 +28,10 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.util.Check;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.enterprise.Locator;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
@@ -43,20 +41,14 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
  * Process of boxing storage details into a concrete referenced inventory
  */
 public class BoxProcessor extends ReferencedInventoryProcessor {
-  private ReferencedInventory referencedInventory;
   private String newStorageBinId;
 
   public BoxProcessor(final ReferencedInventory referencedInventory,
       final JSONArray selectedStorageDetails, final String newStorageBinId) throws JSONException {
-    setAndValidateReferencedInventory(referencedInventory);
+    super(referencedInventory);
     super.setSelectedStorageDetailsAndValidateThem(selectedStorageDetails);
     checkStorageDetailsNotAlreadyInReferencedInventory(selectedStorageDetails);
     setAndValidateNewStorageBinId(newStorageBinId);
-  }
-
-  private void setAndValidateReferencedInventory(final ReferencedInventory referencedInventory) {
-    Check.isNotNull(referencedInventory, "Referenced Inventory parameter can't be null");
-    this.referencedInventory = referencedInventory;
   }
 
   private void checkStorageDetailsNotAlreadyInReferencedInventory(
@@ -83,23 +75,11 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
   }
 
   @Override
-  protected Organization getGoodsMovementHeaderOrganization() {
-    return referencedInventory.getOrganization();
-  }
-
-  /**
-   * The returned ReferencedInventory will be associated to the given storage detail
-   */
-  protected ReferencedInventory getReferencedInventory(StorageDetail storageDetail) {
-    return referencedInventory;
-  }
-
-  @Override
   protected AttributeSetInstance getAttributeSetInstanceTo(StorageDetail storageDetail) {
     // FIXME if no attribute?
     // FIXME can we reuse the clone?
     return ReferencedInventoryUtil.cloneAttributeSetInstance(storageDetail.getAttributeSetValue(),
-        getReferencedInventory(storageDetail));
+        getReferencedInventory());
   }
 
   @Override
@@ -139,14 +119,14 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
         "                and sd.storageBin.id <> :newStorageBinId";
     final Session session = OBDal.getInstance().getSession();
     final Query query = session.createQuery(hql.toString());
-    query.setParameter("referencedInventoryId", referencedInventory.getId());
+    query.setParameter("referencedInventoryId", getReferencedInventory().getId());
     query.setParameter("newStorageBinId", newStorageBinId);
     query.setMaxResults(1);
     final Locator otherLocator = (Locator) query.uniqueResult();
     if (otherLocator != null) {
       throw new OBException(String.format(
-          OBMessageUtils.messageBD("ReferencedInventoryInOtherBin"),
-          referencedInventory.getIdentifier(), otherLocator.getIdentifier()));
+          OBMessageUtils.messageBD("ReferencedInventoryInOtherBin"), getReferencedInventory()
+              .getIdentifier(), otherLocator.getIdentifier()));
     }
   }
 }

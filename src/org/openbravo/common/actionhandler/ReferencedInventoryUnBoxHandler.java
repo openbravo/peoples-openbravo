@@ -34,6 +34,6 @@ public class ReferencedInventoryUnBoxHandler extends ReferencedInventoryBoxHandl
   protected void createAndProcessGoodsMovement(final ReferencedInventory referencedInventory,
       final JSONArray selectedStorageDetails, final String newStorageBinId) throws Exception,
       JSONException {
-    new UnboxProcessor(selectedStorageDetails).createAndProcessGoodsMovement();
+    new UnboxProcessor(referencedInventory, selectedStorageDetails).createAndProcessGoodsMovement();
   }
 }

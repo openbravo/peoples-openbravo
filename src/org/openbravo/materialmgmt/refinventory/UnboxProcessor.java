@@ -26,11 +26,10 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSetInstance;
+import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 
 /**
@@ -38,7 +37,9 @@ import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
  */
 public class UnboxProcessor extends ReferencedInventoryProcessor {
 
-  public UnboxProcessor(final JSONArray selectedStorageDetails) throws JSONException {
+  public UnboxProcessor(final ReferencedInventory referencedInventory,
+      final JSONArray selectedStorageDetails) throws JSONException {
+    super(referencedInventory);
     setSelectedStorageDetailsAndValidateThem(selectedStorageDetails);
   }
 
@@ -62,12 +63,6 @@ public class UnboxProcessor extends ReferencedInventoryProcessor {
                       "Not possible to unbox because the Storage Detail %s is not linked to any referenced inventory",
                       storageDetail.getIdentifier()));
     }
-  }
-
-  @Override
-  protected Organization getGoodsMovementHeaderOrganization() {
-    // FIXME which organization
-    return OBContext.getOBContext().getCurrentOrganization();
   }
 
   @Override

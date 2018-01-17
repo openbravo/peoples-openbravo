@@ -29,6 +29,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
@@ -38,6 +39,7 @@ import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSetInstance;
+import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
@@ -50,17 +52,16 @@ import org.openbravo.service.db.CallProcess;
 
 // TODO hooks
 
+/**
+ * Abstract class that should be extended by box/unbox referenced inventory concrete implementations
+ */
 abstract class ReferencedInventoryProcessor {
   private static final String M_MOVEMENT_POST_ID = "122";
   private static final String JS_STORAGEDETAIL_ID = "id";
   private static final String QUANTITY = "quantityOnHand";
 
+  private ReferencedInventory referencedInventory;
   private JSONArray selectedStorageDetails;
-
-  /**
-   * The created goods movement header will belong to the returned organization
-   */
-  protected abstract Organization getGoodsMovementHeaderOrganization();
 
   /**
    * The returned ReferencedInventory will be associated to the given storage detail
@@ -77,6 +78,29 @@ abstract class ReferencedInventoryProcessor {
    * Returns the expected goods movement line bin to
    */
   protected abstract String getNewStorageBinId(final JSONObject storageDetailJS);
+
+  protected ReferencedInventoryProcessor(final ReferencedInventory referencedInventory) {
+    setAndValidateReferencedInventory(referencedInventory);
+  }
+
+  /**
+   * Returns the Referenced Inventory linked to this box/unbox process
+   */
+  protected ReferencedInventory getReferencedInventory() {
+    return referencedInventory;
+  }
+
+  /**
+   * Returns the Organization associated to the referenced inventory
+   */
+  protected Organization getReferencedInventoryOrganization() {
+    return referencedInventory.getOrganization();
+  }
+
+  private void setAndValidateReferencedInventory(final ReferencedInventory referencedInventory) {
+    Check.isNotNull(referencedInventory, "Referenced Inventory parameter can't be null");
+    this.referencedInventory = referencedInventory;
+  }
 
   protected void setSelectedStorageDetailsAndValidateThem(final JSONArray selectedStorageDetails)
       throws JSONException {
@@ -145,7 +169,7 @@ abstract class ReferencedInventoryProcessor {
   private InternalMovement createAndSaveGoodsMovementHeader() {
     final InternalMovement header = OBProvider.getInstance().get(InternalMovement.class);
     header.setClient(OBContext.getOBContext().getCurrentClient());
-    header.setOrganization(getGoodsMovementHeaderOrganization());
+    header.setOrganization(getReferencedInventoryOrganization());
     header.setName(_generateInternalMovementName());
     header.setMovementDate(new Date());
     OBDal.getInstance().save(header);
