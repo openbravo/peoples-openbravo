@@ -8953,13 +8953,13 @@ public class TestCosting extends WeldBaseTest {
           new BigDecimal("10"), LOCATOR1_ID, 0);
       completeDocument(goodsReceipt);
       runCostingBackground();
-      assertTransactionsCount(results.getProduct());
-      assertTransactionsCosts(results.getProduct());
+      assertTransactionsCountIsTwo(results.getProduct().getId());
+      assertTransactionsCostsAre3And30(results.getProduct().getId());
       Invoice purchaseInvoice = createInvoiceFromMovement(results.getGoodsReceipt().getId(), false,
           new BigDecimal("20"), new BigDecimal("1"), 0);
       completeDocument(purchaseInvoice);
       runPriceBackground();
-      assertTransactionCostsAdjustment(results.getProduct());
+      assertTransactionCostsAdjustmentsForTestIssue37279(results.getProduct().getId());
     } catch (Exception e) {
       System.out.println(e.getMessage());
       throw new OBException(e);
@@ -9003,13 +9003,13 @@ public class TestCosting extends WeldBaseTest {
           new BigDecimal("-10"), LOCATOR1_ID, 0);
       completeDocument(goodsReceipt);
       runCostingBackground();
-      assertTransactionsCount(results.getProduct());
-      assertTransactionsCosts(results.getProduct());
+      assertTransactionsCountIsTwo(results.getProduct().getId());
+      assertTransactionsCostsAre3And30(results.getProduct().getId());
       Invoice purchaseInvoice = createInvoiceFromMovement(results.getGoodsReceipt().getId(), false,
           new BigDecimal("20"), new BigDecimal("1"), 0);
       completeDocument(purchaseInvoice);
       runPriceBackground();
-      assertTransactionCostsAdjustment(results.getProduct());
+      assertTransactionCostsAdjustmentsForTestIssue37279(results.getProduct().getId());
     } catch (Exception e) {
       System.out.println(e.getMessage());
       throw new OBException(e);
@@ -9056,13 +9056,13 @@ public class TestCosting extends WeldBaseTest {
       returnToVendorShipment.setDocumentType(rtvShipment);
       completeDocument(returnToVendorShipment);
       runCostingBackground();
-      assertTransactionsCount(results.getProduct());
-      assertTransactionsCosts(results.getProduct());
+      assertTransactionsCountIsTwo(results.getProduct().getId());
+      assertTransactionsCostsAre3And30(results.getProduct().getId());
       Invoice purchaseInvoice = createInvoiceFromMovement(results.getGoodsReceipt().getId(), false,
           new BigDecimal("20"), new BigDecimal("1"), 0);
       completeDocument(purchaseInvoice);
       runPriceBackground();
-      assertTransactionCostsAdjustment(results.getProduct());
+      assertTransactionCostsAdjustmentsForTestIssue37279(results.getProduct().getId());
     } catch (Exception e) {
       System.out.println(e.getMessage());
       throw new OBException(e);
@@ -9105,13 +9105,13 @@ public class TestCosting extends WeldBaseTest {
           .getId(), new BigDecimal("-10"), LOCATOR1_ID, 0);
       completeDocument(internalConsumption, PROCESSCONSUMPTION_PROCESS_ID);
       runCostingBackground();
-      assertTransactionsCount(results.getProduct());
-      assertTransactionsCosts(results.getProduct());
+      assertTransactionsCountIsTwo(results.getProduct().getId());
+      assertTransactionsCostsAre3And30(results.getProduct().getId());
       Invoice purchaseInvoice = createInvoiceFromMovement(results.getGoodsReceipt().getId(), false,
           new BigDecimal("20"), new BigDecimal("1"), 0);
       completeDocument(purchaseInvoice);
       runPriceBackground();
-      assertTransactionCostsAdjustment(results.getProduct());
+      assertTransactionCostsAdjustmentsForTestIssue37279(results.getProduct().getId());
     } catch (Exception e) {
       System.out.println(e.getMessage());
       throw new OBException(e);
@@ -9154,13 +9154,13 @@ public class TestCosting extends WeldBaseTest {
           results.getProduct(), new BigDecimal("11"), INVENTORY_NORMAL, 0);
       proessInventoryCount(physicalInventory);
       runCostingBackground();
-      assertTransactionsCount(results.getProduct());
-      assertTransactionsCosts(results.getProduct());
+      assertTransactionsCountIsTwo(results.getProduct().getId());
+      assertTransactionsCostsAre3And30(results.getProduct().getId());
       Invoice purchaseInvoice = createInvoiceFromMovement(results.getGoodsReceipt().getId(), false,
           new BigDecimal("20"), new BigDecimal("1"), 0);
       completeDocument(purchaseInvoice);
       runPriceBackground();
-      assertTransactionCostsAdjustment(results.getProduct());
+      assertTransactionCostsAdjustmentsForTestIssue37279(results.getProduct().getId());
     } catch (Exception e) {
       System.out.println(e.getMessage());
       throw new OBException(e);
@@ -9204,13 +9204,13 @@ public class TestCosting extends WeldBaseTest {
           results.getProduct(), new BigDecimal("11"), INVENTORY_OPENING, 0);
       proessInventoryCount(physicalInventory);
       runCostingBackground();
-      assertTransactionsCount(results.getProduct());
-      assertTransactionsCosts(results.getProduct());
+      assertTransactionsCountIsTwo(results.getProduct().getId());
+      assertTransactionsCostsAre3And30(results.getProduct().getId());
       Invoice purchaseInvoice = createInvoiceFromMovement(results.getGoodsReceipt().getId(), false,
           new BigDecimal("20"), new BigDecimal("1"), 0);
       completeDocument(purchaseInvoice);
       runPriceBackground();
-      assertTransactionCostsAdjustment(results.getProduct());
+      assertTransactionCostsAdjustmentsForTestIssue37279(results.getProduct().getId());
     } catch (Exception e) {
       System.out.println(e.getMessage());
       throw new OBException(e);
@@ -14744,7 +14744,7 @@ public class TestCosting extends WeldBaseTest {
     private Product product;
     private ShipmentInOut goodsReceipt;
 
-    public OrderToReceiptResult(Product product, ShipmentInOut goodsReceipt) {
+    public OrderToReceiptResult(final Product product, final ShipmentInOut goodsReceipt) {
       super();
       this.product = product;
       this.goodsReceipt = goodsReceipt;
@@ -14759,8 +14759,8 @@ public class TestCosting extends WeldBaseTest {
     }
   }
 
-  private OrderToReceiptResult executeOrderToReceiptFlow(String productName,
-      BigDecimal purchasePrice, BigDecimal quantity) {
+  private OrderToReceiptResult executeOrderToReceiptFlow(final String productName,
+      final BigDecimal purchasePrice, final BigDecimal quantity) {
     Product product = createProduct(productName, purchasePrice);
     Order purchaseOrder = createPurchaseOrder(product, purchasePrice, quantity, 0);
     ShipmentInOut goodsReceipt = createMovementFromOrder(purchaseOrder.getId(), false, quantity,
@@ -14769,7 +14769,7 @@ public class TestCosting extends WeldBaseTest {
     return new OrderToReceiptResult(product, goodsReceipt);
   }
 
-  private void sortTransactionsByMovementQuantity(List<MaterialTransaction> transactionList) {
+  private void sortTransactionsByMovementQuantity(final List<MaterialTransaction> transactionList) {
     Collections.sort(transactionList, new Comparator<MaterialTransaction>() {
       @Override
       public int compare(MaterialTransaction firstTransaction, MaterialTransaction secondTransaction) {
@@ -14779,44 +14779,40 @@ public class TestCosting extends WeldBaseTest {
     });
   }
 
-  private void assertTransactionsCount(Product product) {
-    Product freshProduct = OBDal.getInstance().get(Product.class, product.getId());
-    OBDal.getInstance().refresh(freshProduct);
-    assertThat("The product should have 2 transactions", freshProduct
+  private void assertTransactionsCountIsTwo(final String productId) {
+    Product product = OBDal.getInstance().get(Product.class, productId);
+    assertThat("The product should have 2 transactions", product
         .getMaterialMgmtMaterialTransactionList().size(), equalTo(2));
   }
 
-  private void assertTransactionsCosts(Product product) {
-    Product freshProduct = OBDal.getInstance().get(Product.class, product.getId());
-    OBDal.getInstance().refresh(freshProduct);
-    sortTransactionsByMovementQuantity(freshProduct.getMaterialMgmtMaterialTransactionList());
-    assertThat("The transaction cost should be 3", freshProduct
-        .getMaterialMgmtMaterialTransactionList().get(0).getTransactionCost().intValue(),
-        equalTo(3));
-    assertThat("The transaction cost should be 30", freshProduct
+  private void assertTransactionsCostsAre3And30(final String productId) {
+    Product product = OBDal.getInstance().get(Product.class, productId);
+    sortTransactionsByMovementQuantity(product.getMaterialMgmtMaterialTransactionList());
+    assertThat("The transaction cost should be 3", product.getMaterialMgmtMaterialTransactionList()
+        .get(0).getTransactionCost().intValue(), equalTo(3));
+    assertThat("The transaction cost should be 30", product
         .getMaterialMgmtMaterialTransactionList().get(1).getTransactionCost().intValue(),
         equalTo(30));
   }
 
-  private void assertTransactionCostsAdjustment(Product product) {
-    Product freshProduct = OBDal.getInstance().get(Product.class, product.getId());
-    OBDal.getInstance().refresh(freshProduct);
-    sortTransactionsByMovementQuantity(freshProduct.getMaterialMgmtMaterialTransactionList());
-    assertThat("There should be 2 cost adjustment lines for the first transaction", freshProduct
+  private void assertTransactionCostsAdjustmentsForTestIssue37279(final String productId) {
+    Product product = OBDal.getInstance().get(Product.class, productId);
+    sortTransactionsByMovementQuantity(product.getMaterialMgmtMaterialTransactionList());
+    assertThat("There should be 2 cost adjustment lines for the first transaction", product
         .getMaterialMgmtMaterialTransactionList().get(0).getTransactionCostList().size(),
         equalTo(2));
-    assertThat("There should be 2 cost adjustment lines for the second transaction", freshProduct
+    assertThat("There should be 2 cost adjustment lines for the second transaction", product
         .getMaterialMgmtMaterialTransactionList().get(1).getTransactionCostList().size(),
         equalTo(2));
 
-    assertThat("The total cost for the first transaction should be 20", freshProduct
+    assertThat("The total cost for the first transaction should be 20", product
         .getMaterialMgmtMaterialTransactionList().get(0).getTotalCost().intValue(), equalTo(20));
 
-    assertThat("The total cost for the first transaction should be 200", freshProduct
+    assertThat("The total cost for the first transaction should be 200", product
         .getMaterialMgmtMaterialTransactionList().get(1).getTotalCost().intValue(), equalTo(200));
   }
 
-  private void proessInventoryCount(InventoryCount physicalInventory) {
+  private void proessInventoryCount(final InventoryCount physicalInventory) {
     InventoryCountProcess inventoryCountProcess = WeldUtils
         .getInstanceFromStaticBeanManager(InventoryCountProcess.class);
     physicalInventory.setProcessNow(true);
@@ -14831,8 +14827,8 @@ public class TestCosting extends WeldBaseTest {
     OBDal.getInstance().flush();
   }
 
-  private InventoryCount createPhysicalInventory(String name, Product product,
-      BigDecimal quantityCount, String inventoryType, int day) {
+  private InventoryCount createPhysicalInventory(final String name, final Product product,
+      final BigDecimal quantityCount, final String inventoryType, final int day) {
     InventoryCount physicalInventory = OBProvider.getInstance().get(InventoryCount.class);
     setGeneralData(physicalInventory);
     physicalInventory.setInventoryType(inventoryType);
@@ -14862,7 +14858,8 @@ public class TestCosting extends WeldBaseTest {
     return physicalInventory;
   }
 
-  private BigDecimal getQuantityOnHandOfProductInLocator(Product product, Locator storageBin) {
+  private BigDecimal getQuantityOnHandOfProductInLocator(final Product product,
+      final Locator storageBin) {
     OBCriteria<StorageDetail> storageDetailCriteria = OBDal.getInstance().createCriteria(
         StorageDetail.class);
     storageDetailCriteria.add(Restrictions.eq(StorageDetail.PROPERTY_PRODUCT, product));
