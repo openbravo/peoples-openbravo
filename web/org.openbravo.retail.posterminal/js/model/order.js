@@ -3917,7 +3917,7 @@
               popup: 'modalQuotationProductAttributes',
               args: {
                 lines: productWithAttributeValue,
-                quotationProductAttribute: args.order
+                quotationProductAttribute: order
               }
             });
           }
