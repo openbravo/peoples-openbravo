@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2017 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -414,150 +414,102 @@
         OB.UTIL.showLoading(false);
         };
 
-    var multiOrdersFunction = function (receipt, me, callback) {
-        var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("multiOrdersClosed");
+    var saveAndSyncMultiOrder = function (me, closedReceipts, syncCallback) {
+        var recursiveSaveFn, currentReceipt, synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("multiOrdersClosed");
+        recursiveSaveFn = function (receiptIndex) {
+          if (receiptIndex < closedReceipts.length) {
+            currentReceipt = closedReceipts[receiptIndex];
+            OB.info('Multiorders ticket closed', currentReceipt.get('json'), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
+            if (!_.isUndefined(currentReceipt)) {
+              me.receipt = currentReceipt;
+            }
+            var creationDate, receiptId = me.receipt.get('id'),
+                normalizedCreationDate = OB.I18N.normalizeDate(currentReceipt.get('creationDate'));
+            if (normalizedCreationDate === null) {
+              creationDate = new Date();
+              normalizedCreationDate = OB.I18N.normalizeDate(creationDate);
+            } else {
+              creationDate = new Date(normalizedCreationDate);
+            }
+            currentReceipt.set('creationDate', normalizedCreationDate);
+            currentReceipt.set('movementDate', OB.I18N.normalizeDate(new Date()));
+            currentReceipt.set('accountingDate', OB.I18N.normalizeDate(new Date()));
+            currentReceipt.set('hasbeenpaid', 'Y');
 
-        OB.info('Multiorders ticket closed', receipt.get('json'), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
+            delete currentReceipt.attributes.json;
+            currentReceipt.set('timezoneOffset', creationDate.getTimezoneOffset());
+            currentReceipt.set('created', creationDate.getTime());
+            currentReceipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
+            currentReceipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
+            // multiterminal support
+            // be sure that the active terminal is the one set as the order proprietary
+            currentReceipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+            currentReceipt.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
+            me.context.get('multiOrders').trigger('integrityOk', currentReceipt);
 
-        if (!_.isUndefined(receipt)) {
-          me.receipt = receipt;
-        }
-        var creationDate, receiptId = me.receipt.get('id'),
-            currentReceipt = me.receipt,
-            normalizedCreationDate = OB.I18N.normalizeDate(currentReceipt.get('creationDate'));
-        if (normalizedCreationDate === null) {
-          creationDate = new Date();
-          normalizedCreationDate = OB.I18N.normalizeDate(creationDate);
-        } else {
-          creationDate = new Date(normalizedCreationDate);
-        }
-
-        currentReceipt.set('creationDate', normalizedCreationDate);
-        currentReceipt.set('movementDate', OB.I18N.normalizeDate(new Date()));
-        currentReceipt.set('accountingDate', OB.I18N.normalizeDate(new Date()));
-        currentReceipt.set('hasbeenpaid', 'Y');
-        me.context.get('multiOrders').trigger('integrityOk', currentReceipt);
-
-        if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-          OB.UTIL.calculateCurrentCash();
-          me.context.get('multiOrders').trigger('integrityOk', currentReceipt);
-          OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(currentReceipt.get('documentnoSuffix'), currentReceipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'));
-        }
-
-        delete currentReceipt.attributes.json;
-        currentReceipt.set('timezoneOffset', creationDate.getTimezoneOffset());
-        currentReceipt.set('created', creationDate.getTime());
-        currentReceipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
-        // multiterminal support
-        // be sure that the active terminal is the one set as the order proprietary
-        receipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
-        receipt.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
-
-        currentReceipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
-
-        OB.trace('Executing pre order save hook.');
-
-        OB.UTIL.HookManager.executeHooks('OBPOS_PreOrderSave', {
-          context: me,
-          model: model,
-          receipt: currentReceipt
-        }, function (args) {
-
-          OB.trace('Execution of pre order save hook OK.');
-          if (args && args.cancellation && args.cancellation === true) {
-            OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
-            restoreMultiOrder(callback);
-            return true;
-          }
-
-          currentReceipt.set('json', JSON.stringify(currentReceipt.serializeToJSON()));
-
-          OB.trace('Saving receipt.');
-          OB.UTIL.cashUpReport(currentReceipt, function (cashUp) {
-            currentReceipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
-            currentReceipt.set('json', JSON.stringify(currentReceipt.serializeToJSON()));
-            OB.Dal.save(currentReceipt, function () {
-              OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
-
-                var successCallback = function () {
-                    OB.trace('Sync process success.');
-
-
-                    OB.UTIL.calculateCurrentCash();
-                    _.each(model.get('multiOrders').get('multiOrdersList').models, function (theReceipt) {
-                      me.context.get('multiOrders').trigger('print', theReceipt, {
-                        offline: true
-                      });
-                      me.context.get('multiOrders').trigger('integrityOk', theReceipt);
-                      OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(theReceipt.get('documentnoSuffix'), theReceipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'));
-
-                      me.context.get('orderList').current = theReceipt;
-                      me.context.get('orderList').deleteCurrent();
-                    });
-
-                    //this logic executed when all orders are ready to be sent
-                    me.context.get('leftColumnViewManager').setOrderMode();
-                    if (callback instanceof Function) {
-                      callback();
-                    }
-
-                    model.get('multiOrders').resetValues();
-
-                    OB.UTIL.showLoading(false);
-                    enyo.$.scrim.hide();
-                    if (me.hasInvLayaways) {
-                      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
-                      me.hasInvLayaways = false;
-                    }
-                    OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
-                    OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
-                    model.get('multiOrders').trigger('checkOpenDrawer');
-                    };
-
-                var errorCallback = function () {
-                    OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
-                    OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
-                    restoreMultiOrder(callback);
-                    };
-
-                if (!_.isUndefined(receipt.get('amountToLayaway')) && !_.isNull(receipt.get('amountToLayaway')) && receipt.get('generateInvoice')) {
-                  me.hasInvLayaways = true;
-                }
-                if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-                  model.get('orderList').current = receipt;
-                  model.get('orderList').deleteCurrent();
-                }
-                me.ordersToSend += 1;
-                if (model.get('multiOrders').get('multiOrdersList').length === me.ordersToSend) {
-                  OB.trace('Execution Sync process.');
-
-                  OB.MobileApp.model.runSyncProcess(successCallback, errorCallback);
-                  me.ordersToSend = OB.DEC.Zero;
-                } else {
-                  OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
-                  if (callback instanceof Function) {
-                    callback();
+            OB.UTIL.calculateCurrentCash();
+            OB.UTIL.cashUpReport(currentReceipt, function (cashUp) {
+              currentReceipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
+              currentReceipt.set('json', JSON.stringify(currentReceipt.serializeToJSON()));
+              OB.Dal.save(currentReceipt, function () {
+                OB.Dal.get(OB.Model.Order, receiptId, function (savedReceipt) {
+                  if (!_.isUndefined(savedReceipt.get('amountToLayaway')) && !_.isNull(savedReceipt.get('amountToLayaway')) && savedReceipt.get('generateInvoice')) {
+                    me.hasInvLayaways = true;
                   }
-                }
+                  recursiveSaveFn(receiptIndex + 1);
+                }, null);
+              }, function () {
+                recursiveSaveFn(receiptIndex + 1);
+              });
+            });
+          } else {
+            OB.MobileApp.model.runSyncProcess(function () {
+              OB.UTIL.calculateCurrentCash();
+              _.each(model.get('multiOrders').get('multiOrdersList').models, function (theReceipt) {
+                me.context.get('multiOrders').trigger('print', theReceipt, {
+                  offline: true
+                });
+                me.context.get('multiOrders').trigger('integrityOk', theReceipt);
+                OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(theReceipt.get('documentnoSuffix'), theReceipt.get('quotationnoSuffix'), theReceipt.get('returnnoSuffix'));
+                me.context.get('orderList').current = theReceipt;
+                me.context.get('orderList').deleteCurrent();
+              });
 
+              //this logic executed when all orders are ready to be sent
+              me.context.get('leftColumnViewManager').setOrderMode();
+              if (syncCallback instanceof Function) {
+                syncCallback();
+              }
 
-              }, null);
+              model.get('multiOrders').resetValues();
+              OB.UTIL.showLoading(false);
+              enyo.$.scrim.hide();
+
+              if (me.hasInvLayaways) {
+                OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
+                me.hasInvLayaways = false;
+              }
+              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
+              OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
+              model.get('multiOrders').trigger('checkOpenDrawer');
             }, function () {
-              // We do nothing:
-              //      we don't need to alert the user, as the order is still present in the database, so it will be resent as soon as the user logs in again
+              if (syncCallback instanceof Function) {
+                syncCallback();
+              }
+              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
               OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
             });
-          });
-
-        });
-
+          }
+        };
+        recursiveSaveFn(0);
         };
 
-    this.context.get('multiOrders').on('closed', function (receipt, callback) {
+    this.context.get('multiOrders').on('closed', function (receipt, closedCallback) {
       var me = this;
       OB.Dal.find(OB.Model.Order, {}, function (orderList) {
-        var multiOrderList = me.context.get('multiOrders').get('multiOrdersList').models;
-        var closedReceipts = [];
+        var multiOrderList = me.context.get('multiOrders').get('multiOrdersList').models,
+            closedReceipts = [],
+            validateMultiOrder, completeMultiOrder;
 
         _.forEach(orderList.models, function (sortedOrder) {
           _.forEach(multiOrderList, function (multiOrder) {
@@ -567,34 +519,43 @@
           });
         });
 
-        var recursiveFunction;
-        recursiveFunction = function (index, me, callback) {
-          if (index < closedReceipts.length) {
-            multiOrdersFunction(closedReceipts[index], me, function (result) {
-              if (OB.UTIL.isNullOrUndefined(result)) {
-                recursiveFunction(index + 1, me, callback);
-              } else if (result === false) {
-                if (callback instanceof Function) {
-                  callback(false);
-                }
-              }
-            });
-          } else {
-            if (callback instanceof Function) {
-              callback();
+        completeMultiOrder = _.after(closedReceipts.length, function () {
+          saveAndSyncMultiOrder(me, closedReceipts, function () {
+            if (closedCallback instanceof Function) {
+              closedCallback();
             }
-          }
+          });
+        });
+        validateMultiOrder = function () {
+          _.each(closedReceipts, function (receipt) {
+            OB.UTIL.HookManager.executeHooks('OBPOS_PreOrderSave', {
+              context: me,
+              model: model,
+              receipt: receipt
+            }, function (args) {
+              OB.trace('Execution of pre order save hook OK.');
+              if (args && args.cancellation && args.cancellation === true) {
+                restoreMultiOrder(function () {
+                  if (closedCallback instanceof Function) {
+                    closedCallback(false);
+                  }
+                });
+                return true;
+              }
+              completeMultiOrder();
+            });
+          });
         };
-        me.ordersToSend = OB.DEC.Zero;
-        if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true) && me.ordersToSend === 0) {
+
+        if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
           OB.UTIL.rebuildCashupFromServer(function () {
             OB.UTIL.showLoading(false);
-            recursiveFunction(0, me, callback);
+            validateMultiOrder();
           }, function () {
             restoreMultiOrder();
           });
         } else {
-          recursiveFunction(0, me, callback);
+          validateMultiOrder();
         }
       });
     }, this);
