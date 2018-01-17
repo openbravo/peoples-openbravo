@@ -931,7 +931,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       OB.UTIL.HookManager.executeHooks('OBPOS_PrePaymentApproval', {
         context: me,
         caller: caller
-      }, function () {
+      }, function (args) {
+        if (args && args.cancellation) {
+          return;
+        }
         me.on('approvalChecked', function (event) {
           me.off('approvalChecked');
           if (event.approved) {
