@@ -21,6 +21,8 @@ package org.openbravo.cluster;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +36,6 @@ import org.apache.axis.utils.StringUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.dal.core.DalThreadHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -44,6 +45,7 @@ import org.openbravo.model.ad.system.ADClusterService;
 import org.openbravo.model.ad.system.ADClusterServiceSettings;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.importprocess.ImportEntryManager.DaemonThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,27 +112,33 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
   /**
    * @param serviceName
    *          The name that identifies a service
-   * @param doCommit
-   *          A flag to indicate if the connection should be commited and closed. Should be used by
-   *          those requests which are running outside of the scope of the {@link DalThreadHandler}
-   *          in order to ensure that the DAL connection used to retrieve the information is closed.
-   * 
    * @return {@code true} if the current cluster node should handle the service passed as parameter,
    *         {@code false} otherwise.
    */
-  public boolean isHandlingService(String serviceName, boolean doCommit) {
+  public boolean isHandlingService(String serviceName) {
     if (!isCluster()) {
       return true;
     }
+    DalConnectionProvider dcp = new DalConnectionProvider(false);
+    Connection connection = null;
     try {
-      ADClusterService service = getService(serviceName);
-      if (service == null) {
+      connection = dcp.getTransactionConnection();
+      String nodeInCharge = ClusterServiceManagerData.getNodeHandlingService(connection, dcp,
+          serviceName);
+      if (nodeInCharge == null) {
         return false;
       }
-      return nodeName.equals(service.getNode());
+      return nodeName.equals(nodeInCharge);
+    } catch (Exception ex) {
+      log.error("Could not retrieve node in charge of service {}", serviceName, ex);
+      return false;
     } finally {
-      if (doCommit) {
-        OBDal.getInstance().commitAndClose();
+      try {
+        if (connection != null) {
+          dcp.releaseCommitConnection(connection);
+        }
+      } catch (SQLException ex) {
+        log.error("Error closing connection", ex);
       }
     }
   }
