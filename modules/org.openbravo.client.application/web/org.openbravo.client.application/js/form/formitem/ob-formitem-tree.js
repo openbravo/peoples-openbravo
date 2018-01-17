@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2017 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -299,7 +299,7 @@ isc.OBTreeItemTree.addProperties({
       var target = window[dsRequest.componentId];
       dsRequest.params = dsRequest.params || {};
       dsRequest.params._startRow = 0;
-      dsRequest.params._endRow = OB.Properties.TreeDatasourceFetchLimit;
+      dsRequest.params._endRow = OB.Properties.TreeDatasourceFetchLimit || OB.Constants.TREE_DS_DEFAULT_FETCH_LIMIT;
       dsRequest.params.treeReferenceId = target.treeItem.treeReferenceId;
       var contextInfo = target.treeItem.form.view.getContextInfo(false, true);
       isc.addProperties(dsRequest.params, contextInfo);
@@ -544,7 +544,7 @@ isc.OBTreeItemPopupWindow.addProperties({
               contextInfo;
           dsRequest.params = dsRequest.params || {};
           dsRequest.params._startRow = 0;
-          dsRequest.params._endRow = OB.Properties.TreeDatasourceFetchLimit;
+          dsRequest.params._endRow = OB.Properties.TreeDatasourceFetchLimit || OB.Constants.TREE_DS_DEFAULT_FETCH_LIMIT;
           dsRequest.params.treeReferenceId = target.treeItem.treeReferenceId;
           contextInfo = target.treeItem.form.view.getContextInfo(false, true);
           isc.addProperties(dsRequest.params, contextInfo);
