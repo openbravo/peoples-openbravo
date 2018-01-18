@@ -47,7 +47,7 @@ public class BPartnerFilter extends ProcessHQLQueryValidated {
     // Get Product Properties
     List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
     HQLPropertyList bpHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions,
-        getParams(jsonsent));
+        jsonsent);
     propertiesList.add(bpHQLProperties);
 
     return propertiesList;
@@ -64,7 +64,8 @@ public class BPartnerFilter extends ProcessHQLQueryValidated {
 
     Map<String, Object> params = getParams(jsonsent);
     Boolean location = (Boolean) params.get("location");
-    HQLPropertyList bpHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions, params);
+    HQLPropertyList bpHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions,
+        jsonsent);
 
     String hql = "SELECT " + bpHQLProperties.getHqlSelect();
     if (location) {
@@ -85,7 +86,7 @@ public class BPartnerFilter extends ProcessHQLQueryValidated {
     return hqlQueries;
   }
 
-  private Map<String, Object> getParams(JSONObject jsonsent) {
+  public static Map<String, Object> getParams(JSONObject jsonsent) {
     Boolean location = false;
     String pref = "N";
     try {
