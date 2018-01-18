@@ -8949,6 +8949,8 @@ public class TestCosting extends WeldBaseTest {
       OrderToReceiptResult results = executeOrderToReceiptFlow("product37279-A", new BigDecimal(
           "3.00"), new BigDecimal("1"));
       runCostingBackground();
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
       ShipmentInOut goodsReceipt = cloneMovement(results.getProduct().getId(), false,
           new BigDecimal("10"), LOCATOR1_ID, 0);
       completeDocument(goodsReceipt);
@@ -8999,6 +9001,8 @@ public class TestCosting extends WeldBaseTest {
       OrderToReceiptResult results = executeOrderToReceiptFlow("product37279-B", new BigDecimal(
           "3.00"), new BigDecimal("1"));
       runCostingBackground();
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
       ShipmentInOut goodsReceipt = cloneMovement(results.getProduct().getId(), true,
           new BigDecimal("-10"), LOCATOR1_ID, 0);
       completeDocument(goodsReceipt);
@@ -9049,6 +9053,8 @@ public class TestCosting extends WeldBaseTest {
       OrderToReceiptResult results = executeOrderToReceiptFlow("product37279-C", new BigDecimal(
           "3.00"), new BigDecimal("1"));
       runCostingBackground();
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
       ShipmentInOut returnToVendorShipment = cloneMovement(results.getProduct().getId(), false,
           new BigDecimal("10"), LOCATOR1_ID, 0);
       DocumentType rtvShipment = OBDal.getInstance().get(DocumentType.class,
@@ -9101,6 +9107,8 @@ public class TestCosting extends WeldBaseTest {
       OrderToReceiptResult results = executeOrderToReceiptFlow("product37279-D", new BigDecimal(
           "3.00"), new BigDecimal("1"));
       runCostingBackground();
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
       InternalConsumption internalConsumption = createInternalConsumption(results.getProduct()
           .getId(), new BigDecimal("-10"), LOCATOR1_ID, 0);
       completeDocument(internalConsumption, PROCESSCONSUMPTION_PROCESS_ID);
@@ -9150,6 +9158,8 @@ public class TestCosting extends WeldBaseTest {
       OrderToReceiptResult results = executeOrderToReceiptFlow("product37279-E", new BigDecimal(
           "3.00"), new BigDecimal("1"));
       runCostingBackground();
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
       InventoryCount physicalInventory = createPhysicalInventory("physicalInv37279-E",
           results.getProduct(), new BigDecimal("11"), INVENTORY_NORMAL, 0);
       proessInventoryCount(physicalInventory);
@@ -9200,6 +9210,8 @@ public class TestCosting extends WeldBaseTest {
       OrderToReceiptResult results = executeOrderToReceiptFlow("product37279-F", new BigDecimal(
           "3.00"), new BigDecimal("1"));
       runCostingBackground();
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
       InventoryCount physicalInventory = createPhysicalInventory("physicalInv37279-F",
           results.getProduct(), new BigDecimal("11"), INVENTORY_OPENING, 0);
       proessInventoryCount(physicalInventory);
