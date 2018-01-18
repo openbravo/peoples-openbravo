@@ -281,6 +281,12 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       OBCriteria<ADClusterServiceSettings> criteria = OBDal.getInstance().createCriteria(
           ADClusterServiceSettings.class);
       List<ADClusterServiceSettings> serviceSettings = criteria.list();
+      if (serviceSettings.isEmpty()) {
+        // Force to close the database connection to avoid leaks: if there are not available cluster
+        // services, the thread will end without doing any additional actions.
+        OBDal.getInstance().commitAndClose();
+        return;
+      }
       long current = System.currentTimeMillis();
       for (ADClusterServiceSettings settings : serviceSettings) {
         String service = settings.getService();
@@ -291,9 +297,6 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
         serviceTimeouts.put(service, timeout);
         serviceThresholds.put(service, threshold);
       }
-      // Force to close the database connection to avoid leaks: if there are not available cluster
-      // services, the thread will end without doing any additional actions.
-      OBDal.getInstance().commitAndClose();
     }
 
     private Long getTimeout(ADClusterServiceSettings settings) {
