@@ -225,6 +225,8 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
 
   private static class ClusterServiceThread implements Runnable {
     private static final Long DEFAULT_TIMEOUT = 10_000L;
+    private static final Long MIN_THRESHOLD = 1000L;
+    private static final Long MAX_THRESHOLD = 5000L;
 
     private final ClusterServiceManager manager;
     private Map<String, Long> serviceNextPings;
@@ -283,9 +285,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       for (ADClusterServiceSettings settings : serviceSettings) {
         String service = settings.getService();
         Long timeout = getTimeout(settings);
-        // The threshold is an extra amount of time added to the timeout that helps to avoid
-        // unnecessarily switching the node that should handle a service on every ping round.
-        Long threshold = timeout * 2 + 1000;
+        Long threshold = getThreshold(timeout);
         registerOrUpdateService(service, timeout + threshold);
         serviceNextPings.put(settings.getService(), current + timeout);
         serviceTimeouts.put(service, timeout);
@@ -302,6 +302,19 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       }
       // the timeout is defined in the AD in seconds, convert to milliseconds
       return settings.getTimeout() * 1000;
+    }
+
+    private Long getThreshold(Long timeout) {
+      // The threshold is an extra amount of time added to the timeout that helps to avoid
+      // unnecessarily switching the node that should handle a service on every ping round.
+      long threshold = timeout * 10 / 100;
+      if (threshold < MIN_THRESHOLD) {
+        return MIN_THRESHOLD;
+      } else if (threshold > MAX_THRESHOLD) {
+        return MAX_THRESHOLD;
+      } else {
+        return threshold;
+      }
     }
 
     private Long doPingRound() {
