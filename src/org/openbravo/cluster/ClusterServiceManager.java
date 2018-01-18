@@ -339,7 +339,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
         } else if (manager.nodeName.equals(service.getNode())) {
           // current node is charge of handling the service, just update the last ping
           log.debug("Current node {} still in charge of service {}", manager.nodeName, serviceName);
-          service.setUpdated(now);
+          updateLastPing(serviceName, now);
         } else if (shouldReplaceNodeOfService(service, interval)) {
           // try to register the current node as the one in charge of handling the service
           log.info("Node {} in charge of service {} should be replaced", service.getNode(),
@@ -376,6 +376,17 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
         log.info("Changed node in charge of service {}", serviceName);
         log.info("Replaced node {} with node {}", formerNode, manager.nodeName);
       }
+    }
+
+    private void updateLastPing(String serviceName, Date now) {
+      StringBuilder hql = new StringBuilder();
+      hql.append("UPDATE ADClusterService SET updated = :updated ");
+      hql.append("WHERE service = :service AND node = :currentNode");
+      Query updateQuery = OBDal.getInstance().getSession().createQuery(hql.toString());
+      updateQuery.setParameter("updated", now);
+      updateQuery.setParameter("service", serviceName);
+      updateQuery.setParameter("currentNode", manager.nodeName);
+      updateQuery.executeUpdate();
     }
 
   }
