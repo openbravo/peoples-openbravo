@@ -346,7 +346,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
               serviceName);
           updateNodeOfService(service.getNode(), serviceName, now);
         } else {
-          log.debug("Node {} still in charge of service {}", manager.nodeName, serviceName);
+          log.debug("Node {} still in charge of service {}", service.getNode(), serviceName);
         }
         manager.lastPing = now;
         OBDal.getInstance().commitAndClose();
