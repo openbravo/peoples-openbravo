@@ -382,11 +382,7 @@ enyo.kind({
       return true;
     }
 
-    OB.UTIL.showLoading(true);
-    me.owner.owner.model.deleteMultiOrderList();
-    me.doHideThisPopup();
-
-    addOrdersToOrderList = function () {
+    addOrdersToOrderList = _.after(checkedMultiOrders.length, function () {
       OB.UTIL.HookManager.executeHooks('OBPOS_PreMultiOrderHook', {
         selectedMultiOrders: selectedMultiOrders
       }, function (args) {
@@ -398,19 +394,16 @@ enyo.kind({
         });
         me.showPaymentView();
       });
-    };
+    });
 
-    addNextOrder = function (idx) {
-      var iter = checkedMultiOrders[idx];
+    OB.UTIL.showLoading(true);
+    me.owner.owner.model.deleteMultiOrderList();
+    _.each(checkedMultiOrders, function (iter) {
       if (_.indexOf(me.owner.owner.model.get('orderList').models, iter) !== -1) {
         iter.set('checked', true);
         iter.save();
         selectedMultiOrders.push(iter);
-        if (idx === checkedMultiOrders.length - 1) {
-          addOrdersToOrderList();
-        } else {
-          addNextOrder(idx + 1);
-        }
+        addOrdersToOrderList();
       } else {
         process.exec({
           orderid: iter.id
@@ -423,11 +416,7 @@ enyo.kind({
               order.set('belongsToMultiOrder', true);
               order.calculateReceipt(function () {
                 selectedMultiOrders.push(order);
-                if (idx === checkedMultiOrders.length - 1) {
-                  addOrdersToOrderList();
-                } else {
-                  addNextOrder(idx + 1);
-                }
+                addOrdersToOrderList();
               });
             });
           } else {
@@ -436,8 +425,8 @@ enyo.kind({
           }
         });
       }
-    };
-    addNextOrder(0);
+    });
+    me.doHideThisPopup();
   },
   cancelAction: function () {
     this.doHideThisPopup();
