@@ -159,23 +159,6 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     return name;
   }
 
-  private ADClusterService getService(String serviceName) {
-    OBCriteria<ADClusterService> criteria = OBDal.getInstance().createCriteria(
-        ADClusterService.class);
-    criteria.add(Restrictions.eq(ADClusterService.PROPERTY_SERVICE, serviceName));
-    return (ADClusterService) criteria.uniqueResult();
-  }
-
-  private ADClusterService registerService(String serviceName) {
-    ADClusterService service = OBProvider.getInstance().get(ADClusterService.class);
-    service.setOrganization(OBDal.getInstance().getProxy(Organization.class, "0"));
-    service.setClient(OBDal.getInstance().getProxy(Client.class, "0"));
-    service.setService(serviceName);
-    service.setNode(nodeName);
-    OBDal.getInstance().save(service);
-    return service;
-  }
-
   @Override
   public String getNodeName() {
     return nodeName;
@@ -221,6 +204,23 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private ADClusterService getService(String serviceName) {
+    OBCriteria<ADClusterService> criteria = OBDal.getInstance().createCriteria(
+        ADClusterService.class);
+    criteria.add(Restrictions.eq(ADClusterService.PROPERTY_SERVICE, serviceName));
+    return (ADClusterService) criteria.uniqueResult();
+  }
+
+  private ADClusterService registerService(String serviceName) {
+    ADClusterService service = OBProvider.getInstance().get(ADClusterService.class);
+    service.setOrganization(OBDal.getInstance().getProxy(Organization.class, "0"));
+    service.setClient(OBDal.getInstance().getProxy(Client.class, "0"));
+    service.setService(serviceName);
+    service.setNode(nodeName);
+    OBDal.getInstance().save(service);
+    return service;
   }
 
   private static class ClusterServiceThread implements Runnable {
