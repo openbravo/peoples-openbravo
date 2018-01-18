@@ -376,33 +376,41 @@ enyo.kind({
           return e;
         }
       })),
-        addOrdersToOrderList;
+        addOrdersToOrderList, addNextOrder;
+
     if (checkedMultiOrders.length === 0) {
       return true;
     }
-    addOrdersToOrderList = function () {
-      if (selectedMultiOrders.length === checkedMultiOrders.length) {
-        OB.UTIL.HookManager.executeHooks('OBPOS_PreMultiOrderHook', {
-          selectedMultiOrders: selectedMultiOrders
-        }, function (args) {
-          if (args && args.cancellation) {
-            return;
-          }
-          me.doSelectMultiOrders({
-            value: selectedMultiOrders
-          });
-          me.showPaymentView();
-        });
-      }
-    };
+
     OB.UTIL.showLoading(true);
     me.owner.owner.model.deleteMultiOrderList();
-    _.each(checkedMultiOrders, function (iter) {
+    me.doHideThisPopup();
+
+    addOrdersToOrderList = function () {
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreMultiOrderHook', {
+        selectedMultiOrders: selectedMultiOrders
+      }, function (args) {
+        if (args && args.cancellation) {
+          return;
+        }
+        me.doSelectMultiOrders({
+          value: selectedMultiOrders
+        });
+        me.showPaymentView();
+      });
+    };
+
+    addNextOrder = function (idx) {
+      var iter = checkedMultiOrders[idx];
       if (_.indexOf(me.owner.owner.model.get('orderList').models, iter) !== -1) {
         iter.set('checked', true);
         iter.save();
         selectedMultiOrders.push(iter);
-        addOrdersToOrderList();
+        if (idx === checkedMultiOrders.length - 1) {
+          addOrdersToOrderList();
+        } else {
+          addNextOrder(idx + 1);
+        }
       } else {
         process.exec({
           orderid: iter.id
@@ -415,7 +423,11 @@ enyo.kind({
               order.set('belongsToMultiOrder', true);
               order.calculateReceipt(function () {
                 selectedMultiOrders.push(order);
-                addOrdersToOrderList();
+                if (idx === checkedMultiOrders.length - 1) {
+                  addOrdersToOrderList();
+                } else {
+                  addNextOrder(idx + 1);
+                }
               });
             });
           } else {
@@ -424,8 +436,8 @@ enyo.kind({
           }
         });
       }
-    });
-    me.doHideThisPopup();
+    };
+    addNextOrder(0);
   },
   cancelAction: function () {
     this.doHideThisPopup();
