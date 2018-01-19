@@ -36,12 +36,9 @@ public class OBScriptEngine {
 
   private final ScriptEngine engine;
 
-  private static OBScriptEngine instance;
+  private static OBScriptEngine instance = new OBScriptEngine();
 
-  public static synchronized OBScriptEngine getInstance() {
-    if (instance == null) {
-      instance = new OBScriptEngine();
-    }
+  public static OBScriptEngine getInstance() {
     return instance;
   }
 
