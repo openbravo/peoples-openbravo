@@ -2713,10 +2713,10 @@
       if (!this.get('orderManualPromotions')) {
         this.set('orderManualPromotions', new Backbone.Collection());
       }
-      if (!rule.hasMultiDiscount || this.get('orderManualPromotions').length <= 0) {
+      if (!rule.obdiscAllowmultipleinstan || this.get('orderManualPromotions').length <= 0) {
         // Check there is no other manual promotion with the same ruleId and hasMultiDiscount set as false or undefined
         singlePromotionsList = _.filter(this.get('orderManualPromotions').models, function (promotion) {
-          return promotion.get('rule').hasMultiDiscount === rule.hasMultiDiscount && promotion.get('rule').id === rule.id;
+          return promotion.get('rule').obdiscAllowmultipleinstan === rule.obdiscAllowmultipleinstan && promotion.get('rule').id === rule.id;
         });
 
         if (singlePromotionsList.length > 0) {
@@ -2729,7 +2729,7 @@
 
         }
       }
-      if (rule.hasMultiDiscount && OB.UTIL.isNullOrUndefined(rule.discountinstance)) {
+      if (rule.obdiscAllowmultipleinstan && OB.UTIL.isNullOrUndefined(rule.discountinstance)) {
         rule.discountinstance = OB.UTIL.get_UUID();
       }
       this.get('orderManualPromotions').push(promotionToApply);
