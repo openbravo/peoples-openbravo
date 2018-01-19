@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1024,6 +1024,13 @@ OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic = function (form, view, aff
   thisform = form;
   thisview = view;
   params.context = form.paramWindow.getContextInfo();
+  // Before sending the context, the grids with the information about orders and invoices, 
+  // gl items and credit used are removed from it. 
+  // This data is not used for calculating the display or read only logic of the rest of the parameters 
+  // and sending the grid can have an impact in the performance of this process.
+  delete params.context.order_invoice;
+  delete params.context.credit_to_use;
+  delete params.context.glitem;
   if (form.paramWindow.parentWindow && form.paramWindow.parentWindow.windowId) {
     params.context.inpwindowId = form.paramWindow.parentWindow.windowId;
   }
