@@ -40,7 +40,6 @@ public class SL_TableAudit extends SimpleCallout {
       String strIsFullyAudited = info.getStringParameter("inpisfullyaudited");
       boolean currentRecordFullyAudited = StringUtils.equals(strIsFullyAudited, "Y");
       if (currentRecordFullyAudited) {
-        SessionInfo.setAuditActive(true);
         OBCriteria<Table> qTables = OBDal.getInstance().createCriteria(Table.class);
         qTables.add(Restrictions.eq(Table.PROPERTY_ISFULLYAUDITED, true));
         qTables.add(Restrictions.eq(Table.PROPERTY_ISAUDITINSERTS, true));
@@ -54,18 +53,23 @@ public class SL_TableAudit extends SimpleCallout {
       } else {
         OBCriteria<Table> obc = OBDal.getInstance().createCriteria(Table.class);
         obc.add(Restrictions.eq(Table.PROPERTY_ISFULLYAUDITED, true));
-        SessionInfo.setAuditActive(!obc.list().isEmpty());
+        boolean anyTableIsAudited = !obc.list().isEmpty();
+        if (!anyTableIsAudited) {
+          SessionInfo.setAuditActive(false);
+        }
       }
     } else if (StringUtils.equalsIgnoreCase(strChanged, "inpisexcludeaudit")) {
       String strIsExcludedAudit = info.getStringParameter("inpisexcludeaudit");
       boolean currentRecordExcludeAudit = StringUtils.equals(strIsExcludedAudit, "Y");
       if (currentRecordExcludeAudit) {
-        SessionInfo.setAuditActive(true);
         info.showMessage(Utility.messageBD(this, "RegenerateAudit", info.vars.getLanguage()));
       } else {
         OBCriteria<Table> obc = OBDal.getInstance().createCriteria(Table.class);
         obc.add(Restrictions.eq(Table.PROPERTY_ISFULLYAUDITED, true));
-        SessionInfo.setAuditActive(!obc.list().isEmpty());
+        boolean anyTableIsAudited = !obc.list().isEmpty();
+        if (!anyTableIsAudited) {
+          SessionInfo.setAuditActive(false);
+        }
       }
     }
   }

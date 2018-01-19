@@ -42,6 +42,7 @@ public class SessionInfo {
    */
   private static boolean isAuditActive = false;
   private static boolean usageAuditActive = false;
+  private static boolean initialized = false;
 
   /*
    * The following variables track per thread the information about the current 'user' of the thread
@@ -137,7 +138,7 @@ public class SessionInfo {
   }
 
   private static boolean adContextInfoShouldBeCreated(Connection conn, String rdbms) {
-    if (!isPosgreSQL(rdbms) || isReadOnly(conn)) {
+    if (!isAuditActive || !isPosgreSQL(rdbms) || isReadOnly(conn)) {
       return false;
     }
     if (usingJdbcConnectionPool()) {
@@ -417,6 +418,11 @@ public class SessionInfo {
 
   public static void setAuditActive(boolean isAuditActive) {
     SessionInfo.isAuditActive = isAuditActive;
+    SessionInfo.initialized = true;
+  }
+
+  public static boolean isInitialized() {
+    return initialized;
   }
 
   static void setSessionConnection(Connection conn) {
