@@ -94,6 +94,40 @@
         bpToSave.set('c_bpartner_id', customer.get('id'));
       } else {
         isNew = true;
+        var shipping, billing, locations = [];
+        billing = new OB.Model.BPLocation();
+        billing.set('id', customer.get('locId'));
+        billing.set('bpartner', customer.get('id'));
+        billing.set('name', customer.get('locName'));
+        billing.set('postalCode', customer.get('postalCode'));
+        billing.set('cityName', customer.get('cityName'));
+        billing.set('_identifier', customer.get('locName'));
+        billing.set('countryName', customer.get('countryName'));
+        billing.set('countryId', customer.get('countryId'));
+        if (customer.get('useSameAddrForShipAndInv')) {
+          billing.set('isBillTo', true);
+          billing.set('isShipTo', true);
+          shipping = billing;
+          locations.push(billing);
+        } else {
+          billing.set('isBillTo', true);
+          billing.set('isShipTo', false);
+          shipping = new OB.Model.BPLocation();
+          shipping.set('id', customer.get('shipLocId'));
+          shipping.set('bpartner', customer.get('id'));
+          shipping.set('name', customer.get('shipLocName'));
+          shipping.set('postalCode', customer.get('shipPostalCode'));
+          shipping.set('cityName', customer.get('shipCityName'));
+          shipping.set('_identifier', customer.get('shipLocName'));
+          shipping.set('countryName', customer.get('shipCountryName'));
+          shipping.set('countryId', customer.get('shipCountryId'));
+          shipping.set('isBillTo', false);
+          shipping.set('isShipTo', true);
+          locations.push(billing);
+          locations.push(shipping);
+        }
+        customer.set('locations', locations);
+        customer.setBPLocations(shipping, billing, shipping);
       }
       // if the bp is already used in one of the orders then update locally also
       updateLocally = !OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true) || (!isNew && OB.MobileApp.model.orderList && _.filter(OB.MobileApp.model.orderList.models, function (order) {
