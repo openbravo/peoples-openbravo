@@ -5305,6 +5305,8 @@
             removePayments(receipt, function (success) {
               if (success) {
                 finishRemoveOrder();
+              } else {
+                OB.MobileApp.view.scanningFocus(true);
               }
             });
           } else {
@@ -5322,6 +5324,7 @@
         }
       }
 
+      OB.MobileApp.view.scanningFocus(false);
       if (this.get('isEditable') === true) {
         OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteCurrentOrder', {
           context: context,
@@ -5329,6 +5332,7 @@
         }, function (args) {
           if (args && args.cancelOperation && args.cancelOperation === true) {
             if (callback instanceof Function) {
+              OB.MobileApp.view.scanningFocus(true);
               callback();
             }
             return;
