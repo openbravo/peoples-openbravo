@@ -31,6 +31,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
 import org.apache.axis.utils.StringUtils;
 import org.hibernate.Query;
@@ -64,6 +67,10 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
   private String nodeName;
   private Date lastPing;
   private ExecutorService executorService;
+
+  @Inject
+  @Any
+  private Instance<ClusterService> clusterServices;
 
   /**
    * Initializes the ClusterServiceManager and starts the thread in charge of registering the node
@@ -327,6 +334,11 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
         long current = System.currentTimeMillis();
         long sleep;
         String service = entry.getKey();
+        if (!isServiceAlive(service)) {
+          // Do not update the last ping: the service is not working
+          log.debug("Service {} is not working in node {}", service, manager.nodeName);
+          continue;
+        }
         Long serviceNextPing = entry.getValue();
         if (serviceNextPing <= current) {
           registerOrUpdateService(service,
@@ -341,7 +353,20 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
         }
       }
       log.debug("Ping round completed in {} milliseconds", (System.currentTimeMillis() - startTime));
+      if (nextSleep == 0L) {
+        // No service available to update its last ping, wait 30 seconds for the next round
+        nextSleep = 30_000L;
+      }
       return nextSleep;
+    }
+
+    private boolean isServiceAlive(String serviceName) {
+      for (ClusterService service : manager.clusterServices) {
+        if (service.getServiceName().equals(serviceName)) {
+          return service.isServiceAlive();
+        }
+      }
+      return false;
     }
 
     private void registerOrUpdateService(String serviceName, Long interval) {

@@ -48,6 +48,7 @@ import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.cluster.ClusterService;
 import org.openbravo.cluster.ClusterServiceManager;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
@@ -63,7 +64,7 @@ import org.openbravo.service.json.JsonUtils;
  * @author mtaal
  */
 @ApplicationScoped
-public class ImportEntryManager {
+public class ImportEntryManager implements ClusterService {
 
   /*
    * For an overview of the technical layer, first view this presentation:
@@ -149,6 +150,7 @@ public class ImportEntryManager {
   private Map<String, ImportStatistics> stats = new HashMap<String, ImportEntryManager.ImportStatistics>();
 
   private boolean threadsStarted = false;
+  private boolean hasBeenStarted = false;
 
   private long initialWaitTime = 10000;
   private long managerWaitTime = 600_000L;
@@ -196,6 +198,7 @@ public class ImportEntryManager {
       return;
     }
     threadsStarted = true;
+    hasBeenStarted = true;
 
     log.debug("Starting Import Entry Framework");
 
@@ -493,6 +496,19 @@ public class ImportEntryManager {
     }
   }
 
+  @Override
+  public String getServiceName() {
+    return "IMPORT_ENTRY";
+  }
+
+  @Override
+  public boolean isServiceAlive() {
+    if (hasBeenStarted) {
+      return isExecutorRunning();
+    }
+    return true;
+  }
+
   private static class ImportEntryManagerThread implements Runnable {
 
     private final ImportEntryManager manager;
@@ -687,7 +703,7 @@ public class ImportEntryManager {
     }
 
     private boolean isHandlingImportEntries() {
-      return manager.clusterServiceManager.isHandlingService("IMPORT_ENTRY");
+      return manager.clusterServiceManager.isHandlingService(manager.getServiceName());
     }
 
     public boolean isRunning() {
