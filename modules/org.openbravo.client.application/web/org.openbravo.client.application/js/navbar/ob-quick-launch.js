@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2017 Openbravo SLU
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -236,9 +236,9 @@ isc.OBQuickLaunch.addProperties({
         autoSizePickList: false,
 
         getPickListFilterCriteria: function () {
-          // only filter on identifier
+          // only filter on identifier, ignoring accents
           var criteria = {};
-          criteria[OB.Constants.IDENTIFIER] = this.getDisplayValue();
+          criteria[OB.Constants.IDENTIFIER] = OB.Utilities.removeAccents(this.getDisplayValue());
           return criteria;
         },
 
@@ -396,7 +396,7 @@ isc.OBQuickLaunch.addProperties({
         this.getQuickMenuItems(menuItem.submenu, quickMenu);
       } else if (this.isValidMenuItem(menuItem)) {
         validMenuItem = isc.clone(menuItem);
-        validMenuItem._identifier = validMenuItem.title;
+        validMenuItem._identifier = OB.Utilities.removeAccents(validMenuItem.title);
         validMenuItem.icon = this.getMenuItemIcon(validMenuItem);
         quickMenu.add(validMenuItem);
       }

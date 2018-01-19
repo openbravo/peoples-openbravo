@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2017 Openbravo SLU
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1284,4 +1284,22 @@ OB.Utilities.createResultSetManually = function (grid) {
 // Returns a temporary id that starts with _
 OB.Utilities.getTemporaryId = function () {
   return '_' + new Date().getTime();
+};
+
+//** {{{ OB.Utilities.removeAccents }}} **
+//
+// Returns the string without accents
+// Parameters:
+//  * {{{value}}} The string value to be cleaned of accents
+OB.Utilities.removeAccents = function (value) {
+  if (value && typeof value === 'string') {
+    value = value.replace(/á|à|ä|â/g, 'a').replace(/Á|À|Ä|Â/g, 'A');
+    value = value.replace(/é|è|ë|ê/g, 'e').replace(/É|È|Ë|Ê/g, 'E');
+    value = value.replace(/í|ì|ï|î/g, 'i').replace(/Í|Ì|Ï|Î/g, 'I');
+    value = value.replace(/ó|ò|ö|ô/g, 'o').replace(/Ó|Ò|Ö|Ô/g, 'O');
+    value = value.replace(/ú|ù|ü|û/g, 'u').replace(/Ú|Ù|Ü|Û/g, 'U');
+    value = value.replace(/ç/g, 'c').replace(/Ç/g, 'C');
+    value = value.replace(/ñ/g, 'n').replace(/Ñ/g, 'N');
+  }
+  return value;
 };
