@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2017 Openbravo SLU
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -601,7 +601,7 @@ public class ImportEntryManager {
 
                 final ScrollableResults entries = entriesQry.scroll(ScrollMode.FORWARD_ONLY);
                 try {
-                  while (entries.next()) {
+                  while (entries.next() && isHandlingImportEntries()) {
                     entryCount++;
                     final ImportEntry entry = (ImportEntry) entries.get(0);
 
@@ -683,7 +683,11 @@ public class ImportEntryManager {
       // - in cluster: process if we are in the node in charge of handling the import entries,
       // otherwise just wait
       // - not in cluster: do not wait
-      return !manager.clusterServiceManager.isHandlingService("IMPORT_ENTRY");
+      return !isHandlingImportEntries();
+    }
+
+    private boolean isHandlingImportEntries() {
+      return manager.clusterServiceManager.isHandlingService("IMPORT_ENTRY");
     }
 
     public boolean isRunning() {
