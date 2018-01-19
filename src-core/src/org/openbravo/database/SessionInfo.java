@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,6 +31,8 @@ import org.apache.log4j.Logger;
  * 
  */
 public class SessionInfo {
+  private static final String JDBC_CONNECTION_POOL_CLASS_NAME = "org.openbravo.apachejdbcconnectionpool.JdbcExternalConnectionPool";
+
   private static final Logger log4j = Logger.getLogger(SessionInfo.class);
 
   public static final String IMPORT_ENTRY_PROCESS = "IE";
@@ -110,38 +112,80 @@ public class SessionInfo {
    *          Database, only action is take for POSTGRESQL
    */
   public static void initDB(Connection conn, String rdbms) {
-
-    if (rdbms != null && rdbms.equals("POSTGRE")) {
-      // Create temporary table
-      PreparedStatement psQuery = null;
-      PreparedStatement psCreate = null;
-      try {
-        if (conn.isReadOnly()) {
-          return;
-        }
-
-        psQuery = getPreparedStatement(
-            conn,
-            "select count(*) from information_schema.tables where table_name='ad_context_info' and table_type = 'LOCAL TEMPORARY'");
-        ResultSet rs = psQuery.executeQuery();
-
-        if (rs.next() && rs.getString(1).equals("0")) {
-          StringBuffer sql = new StringBuffer();
-          sql.append("CREATE TEMPORARY TABLE AD_CONTEXT_INFO");
-          sql.append("(AD_USER_ID VARCHAR(32), ");
-          sql.append("  AD_SESSION_ID VARCHAR(32),");
-          sql.append("  PROCESSTYPE VARCHAR(60), ");
-          sql.append("  PROCESSID VARCHAR(32)) on commit preserve rows");
-          psCreate = getPreparedStatement(conn, sql.toString());
-          psCreate.execute();
-        }
-      } catch (Exception e) {
-        log4j.error("Error initializating audit infrastructure", e);
-      } finally {
-        releasePreparedStatement(psQuery);
-        releasePreparedStatement(psCreate);
-      }
+    if (adContextInfoShouldBeCreated(conn, rdbms)) {
+      createAdContextInfoTable(conn);
     }
+  }
+
+  private static void createAdContextInfoTable(Connection conn) {
+    // Create temporary table
+    PreparedStatement psCreate = null;
+    try {
+      StringBuffer sql = new StringBuffer();
+      sql.append("CREATE TEMPORARY TABLE AD_CONTEXT_INFO");
+      sql.append("(AD_USER_ID VARCHAR(32), ");
+      sql.append("  AD_SESSION_ID VARCHAR(32),");
+      sql.append("  PROCESSTYPE VARCHAR(60), ");
+      sql.append("  PROCESSID VARCHAR(32)) on commit preserve rows");
+      psCreate = getPreparedStatement(conn, sql.toString());
+      psCreate.execute();
+    } catch (Exception e) {
+      log4j.error("Error initializating audit infrastructure", e);
+    } finally {
+      releasePreparedStatement(psCreate);
+    }
+  }
+
+  private static boolean adContextInfoShouldBeCreated(Connection conn, String rdbms) {
+    if (!isPosgreSQL(rdbms) || isReadOnly(conn)) {
+      return false;
+    }
+    if (usingJdbcConnectionPool()) {
+      // if this pool is used , the initDB method will only be called when creating a new
+      // connection, there is need to check if the ad_context_info has already been created
+      return true;
+    } else {
+      return !adContextInfoExists(conn);
+    }
+  }
+
+  private static boolean isReadOnly(Connection conn) {
+    boolean readOnly = false;
+    try {
+      readOnly = conn.isReadOnly();
+    } catch (SQLException e) {
+      log4j.error("Error checking if the connection is read only", e);
+    }
+    return readOnly;
+  }
+
+  private static boolean isPosgreSQL(String rdbms) {
+    return rdbms != null && rdbms.equals("POSTGRE");
+  }
+
+  private static boolean usingJdbcConnectionPool() {
+    if (ExternalConnectionPool.getInstance() == null) {
+      return false;
+    }
+    return JDBC_CONNECTION_POOL_CLASS_NAME.equals(ExternalConnectionPool.getInstance().getClass()
+        .getName());
+  }
+
+  private static boolean adContextInfoExists(Connection conn) {
+    PreparedStatement psQuery = null;
+    boolean alreadyExists = false;
+    try {
+      psQuery = getPreparedStatement(
+          conn,
+          "select count(*) from information_schema.tables where table_name='ad_context_info' and table_type = 'LOCAL TEMPORARY'");
+      ResultSet rs = psQuery.executeQuery();
+      alreadyExists = rs.next() && !rs.getString(1).equals("0");
+    } catch (SQLException e) {
+      log4j.error("Error checking if the ad_context_info table exists", e);
+    } finally {
+      releasePreparedStatement(psQuery);
+    }
+    return alreadyExists;
   }
 
   /**
@@ -197,7 +241,7 @@ public class SessionInfo {
       // autocommit true.
       boolean infoModified = Boolean.TRUE.equals(changedInfo.get())
           || sessionConnection.get() == null || !conn.equals(sessionConnection.get());
-      if (!infoModified || Boolean.FALSE.equals(auditThisThread.get()) || conn.isReadOnly()) {
+      if (!infoModified || Boolean.FALSE.equals(auditThisThread.get()) || isReadOnly(conn)) {
         return;
       }
 
