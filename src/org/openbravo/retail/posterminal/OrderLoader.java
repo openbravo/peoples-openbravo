@@ -229,9 +229,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   public JSONObject saveRecord(JSONObject jsonorder) throws Exception {
     long t0 = 0, t1 = 0, t11 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t111 = 0, t112 = 0, t113 = 0, t115 = 0, t116 = 0;
 
+    JSONObject jsoncashup = null;
     if (jsonorder.has("cashUpReportInformation")) {
       // Update CashUp Report
-      JSONObject jsoncashup = jsonorder.getJSONObject("cashUpReportInformation");
+      jsoncashup = jsonorder.getJSONObject("cashUpReportInformation");
       Date cashUpDate = new Date();
 
       UpdateCashup.getAndUpdateCashUp(jsoncashup.getString("id"), jsoncashup, cashUpDate);
@@ -458,6 +459,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               .getCreateNettingGoodsShipmentPreferenceValue(canceledOrder)
               && CancelAndReplaceUtils
                   .getAssociateGoodsShipmentToNewSalesOrderPreferenceValue(canceledOrder);
+          canceledOrder.setObposAppCashup(jsoncashup.getString("id"));
+          OBDal.getInstance().save(canceledOrder);
         }
         if (createInvoice) {
           // Invoice header
@@ -1192,7 +1195,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       for (i = 0; i < payments.length(); i++) {
         JSONObject payment = payments.getJSONObject(i);
         if (payment.has("isPrePayment") && payment.getBoolean("isPrePayment")) {
-          total = total.subtract(new BigDecimal(payment.getDouble("origAmount")));
+          total = total.subtract(BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
+              pricePrecision, RoundingMode.HALF_UP));
         }
       }
 

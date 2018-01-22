@@ -47,15 +47,12 @@ import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.invoice.Invoice;
-import org.openbravo.model.common.invoice.InvoiceDiscount;
 import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.invoice.InvoiceLineOffer;
 import org.openbravo.model.common.invoice.InvoiceTax;
 import org.openbravo.model.common.order.Order;
-import org.openbravo.model.common.order.OrderDiscount;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
-import org.openbravo.model.common.order.OrderTax;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
@@ -274,8 +271,6 @@ public class OrderGroupingProcessor {
     OrderGroupingProcessorData[] arrayInvoicesId = OrderGroupingProcessorData.selectInvoiceId(conn,
         strExecutionId);
 
-    createInvoiceFromCanceledLayaway(strExecutionId, conn);
-
     Invoice invoice = null;
     for (OrderGroupingProcessorData invoiceId : arrayInvoicesId) {
       invoice = OBDal.getInstance().get(Invoice.class, invoiceId.cInvoiceId);
@@ -308,108 +303,6 @@ public class OrderGroupingProcessor {
     JSONObject jsonResponse = new JSONObject();
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     return jsonResponse;
-  }
-
-  private void createInvoiceFromCanceledLayaway(String strExecutionId, ConnectionProvider conn)
-      throws SQLException, ServletException {
-    OrderGroupingProcessorData[] arrayOrderAndInvoiceId;
-    arrayOrderAndInvoiceId = OrderGroupingProcessorData.selectOrderAndInvoiceId(conn,
-        strExecutionId);
-    String orderDocumentNo;
-    Invoice invoiceNew = null;
-    for (OrderGroupingProcessorData orderAndInvoiceId : arrayOrderAndInvoiceId) {
-      Order order = OBDal.getInstance().get(Order.class, orderAndInvoiceId.cOrderId);
-      Invoice invoice = OBDal.getInstance().get(Invoice.class, orderAndInvoiceId.cInvoiceId);
-      if (order.isObposIslayaway() && order.isCancelled()) {
-        orderDocumentNo = order.getDocumentNo();
-        OBCriteria<Order> obc = OBDal.getInstance().createCriteria(Order.class);
-        obc.add(Restrictions.eq(Order.PROPERTY_DOCUMENTNO,
-            order.getDocumentNo().substring(0, orderDocumentNo.length() - 3)));
-        Order orderOrg = (Order) obc.uniqueResult();
-        if (orderOrg != null) {
-          // Create invoice header
-          invoiceNew = OBProvider.getInstance().get(Invoice.class);
-          copyObject(invoice, invoiceNew);
-          invoiceNew.setDocumentNo(getInvoiceDocumentNo(invoice.getTransactionDocument(),
-              invoice.getDocumentType()));
-          invoiceNew.setGrandTotalAmount(orderOrg.getGrandTotalAmount());
-          invoiceNew.setTotalPaid(orderOrg.getGrandTotalAmount());
-          invoiceNew.setPercentageOverdue(invoice.getPercentageOverdue());
-          invoiceNew.setFinalSettlementDate(invoice.getFinalSettlementDate());
-          invoiceNew.setDaysSalesOutstanding(invoice.getDaysSalesOutstanding());
-          // Create invoice lines
-          List<OrderLine> oll = orderOrg.getOrderLineList();
-          List<InvoiceLine> ill = new ArrayList<>();
-          for (OrderLine ol : oll) {
-            InvoiceLine invoiceLine = OBProvider.getInstance().get(InvoiceLine.class);
-            copyObject(ol, invoiceLine);
-            invoiceLine.setInvoicedQuantity(ol.getOrderedQuantity());
-            invoiceLine.setInvoice(invoiceNew);
-            // Create invoice line taxes
-            List<OrderLineTax> oltl = ol.getOrderLineTaxList();
-            List<InvoiceLineTax> iltl = new ArrayList<>();
-            for (OrderLineTax olt : oltl) {
-              InvoiceLineTax invoiceLineTax = OBProvider.getInstance().get(InvoiceLineTax.class);
-              copyObject(olt, invoiceLineTax);
-              invoiceLineTax.setInvoiceLine(invoiceLine);
-              invoiceLineTax.setInvoice(invoiceNew);
-              iltl.add(invoiceLineTax);
-            }
-            invoiceLine.setInvoiceLineTaxList(iltl);
-            // Create invoice line offers
-            List<OrderLineOffer> olol = ol.getOrderLineOfferList();
-            List<InvoiceLineOffer> ilol = new ArrayList<>();
-            for (OrderLineOffer olo : olol) {
-              InvoiceLineOffer invoiceLineOffer = OBProvider.getInstance().get(
-                  InvoiceLineOffer.class);
-              copyObject(olo, invoiceLineOffer);
-              invoiceLineOffer.setInvoiceLine(invoiceLine);
-              ilol.add(invoiceLineOffer);
-            }
-            invoiceLine.setInvoiceLineOfferList(ilol);
-            ill.add(invoiceLine);
-          }
-          invoiceNew.setInvoiceLineList(ill);
-
-          // Create invoice tax
-          List<OrderTax> otl = orderOrg.getOrderTaxList();
-          List<InvoiceTax> itl = new ArrayList<>();
-          for (OrderTax ot : otl) {
-            InvoiceTax invoiceTax = OBProvider.getInstance().get(InvoiceTax.class);
-            copyObject(ot, invoiceTax);
-            invoiceTax.setInvoice(invoiceNew);
-            itl.add(invoiceTax);
-          }
-          invoiceNew.setInvoiceTaxList(itl);
-
-          // Create invoice payment
-          List<FIN_PaymentSchedule> ofpl = orderOrg.getFINPaymentScheduleList();
-          List<FIN_PaymentSchedule> ifpl = new ArrayList<>();
-          for (FIN_PaymentSchedule ofp : ofpl) {
-            FIN_PaymentSchedule invoiceFINPaymentSchedule = OBProvider.getInstance().get(
-                FIN_PaymentSchedule.class);
-            copyObject(ofp, invoiceFINPaymentSchedule);
-            invoiceFINPaymentSchedule.setInvoice(invoiceNew);
-            ifpl.add(invoiceFINPaymentSchedule);
-          }
-          invoiceNew.setFINPaymentScheduleList(ifpl);
-
-          // Create invoice discount
-          List<OrderDiscount> odl = orderOrg.getOrderDiscountList();
-          List<InvoiceDiscount> idl = new ArrayList<>();
-          for (OrderDiscount ofp : odl) {
-            InvoiceDiscount invoiceDiscount = OBProvider.getInstance().get(InvoiceDiscount.class);
-            copyObject(ofp, invoiceDiscount);
-            invoiceDiscount.setInvoice(invoiceNew);
-            idl.add(invoiceDiscount);
-          }
-          invoiceNew.setInvoiceDiscountList(idl);
-
-          OBDal.getInstance().save(invoiceNew);
-        }
-      }
-    }
-
   }
 
   private void executeHooks(Invoice invoice, String cashUpId) {
