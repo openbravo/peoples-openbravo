@@ -197,7 +197,7 @@ isc.OBQuickLaunch.addProperties({
         // fixes issue https://issues.openbravo.com/view.php?id=15105
         pickListCellHeight: OB.Styles.OBFormField.DefaultComboBox.quickRunPickListCellHeight,
         recentPropertyName: this.recentPropertyName,
-        displayField: OB.Constants.IDENTIFIER,
+        displayField: OB.Constants.TITLE,
         entries: [],
 
         getControlTableCSS: function () {
@@ -254,7 +254,7 @@ isc.OBQuickLaunch.addProperties({
           }
         }, {
           name: OB.Constants.IDENTIFIER,
-          displayField: OB.Constants.IDENTIFIER,
+          displayField: OB.Constants.TITLE,
           valueField: OB.Constants.ID
         }],
         autoFetchData: true,
@@ -281,7 +281,7 @@ isc.OBQuickLaunch.addProperties({
             isc.OBQuickRun.currentQuickRun.doHide();
             var openObject = isc.addProperties({}, record);
             if (record.optionType && record.optionType === 'tab') {
-              openObject = OB.Utilities.openView(record.windowId, viewValue, record[OB.Constants.IDENTIFIER], null, this.command, record.icon, record.readOnly, record.singleRecord, null, record.editOrDeleteOnly);
+              openObject = OB.Utilities.openView(record.windowId, viewValue, record[OB.Constants.TITLE], null, this.command, record.icon, record.readOnly, record.singleRecord, null, record.editOrDeleteOnly);
               if (openObject) {
                 OB.RecentUtilities.addRecent(this.recentPropertyName, openObject);
               }
@@ -291,7 +291,7 @@ isc.OBQuickLaunch.addProperties({
                 viewId: 'OBExternalPage',
                 id: viewValue,
                 contentsURL: viewValue,
-                tabTitle: record[OB.Constants.IDENTIFIER]
+                tabTitle: record[OB.Constants.TITLE]
               };
             } else if (record.optionType && record.optionType === 'process') {
               var viewName = record.modal ? 'OBClassicPopupModal' : 'OBPopupClassicWindow';
@@ -302,7 +302,7 @@ isc.OBQuickLaunch.addProperties({
                 obManualURL: viewValue,
                 popup: true,
                 command: 'BUTTON' + record.processId,
-                tabTitle: record[OB.Constants.IDENTIFIER]
+                tabTitle: record[OB.Constants.TITLE]
               };
             } else if (record.optionType && record.optionType === 'processManual') {
               openObject = {
@@ -311,12 +311,12 @@ isc.OBQuickLaunch.addProperties({
                 id: record.processId,
                 obManualURL: viewValue,
                 command: 'DEFAULT',
-                tabTitle: record[OB.Constants.IDENTIFIER]
+                tabTitle: record[OB.Constants.TITLE]
               };
             } else if (record.optionType && record.optionType === 'processDefinition') {
               openObject = {
                 viewId: 'processDefinition_' + record.processId,
-                tabTitle: record[OB.Constants.IDENTIFIER]
+                tabTitle: record[OB.Constants.TITLE]
               };
             } else if (record.viewId) {
               openObject = record;
@@ -327,7 +327,7 @@ isc.OBQuickLaunch.addProperties({
                 id: viewValue,
                 obManualURL: viewValue,
                 command: this.command,
-                tabTitle: record[OB.Constants.IDENTIFIER]
+                tabTitle: record[OB.Constants.TITLE]
               };
             } else {
               openObject = {
@@ -335,7 +335,7 @@ isc.OBQuickLaunch.addProperties({
                 id: viewValue,
                 obManualURL: viewValue,
                 command: this.command,
-                tabTitle: record[OB.Constants.IDENTIFIER]
+                tabTitle: record[OB.Constants.TITLE]
               };
             }
             openObject.singleRecord = record.singleRecord;
@@ -450,7 +450,7 @@ isc.OBQuickLaunch.addProperties({
 
     for (i = 0; i < menuEntries.length; i++) {
       menuEntry = menuEntries[i];
-      valueMap[menuEntry.id] = menuEntry._identifier;
+      valueMap[menuEntry.id] = menuEntry.title;
     }
     quickMenuCombo.preventPickListRequest = true; // preventing 1st request triggered by setValueMap
     quickMenuCombo.setValueMap(valueMap);

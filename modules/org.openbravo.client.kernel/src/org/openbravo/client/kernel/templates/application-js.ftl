@@ -54,6 +54,7 @@ var OB = (window.LayoutMDI_windowObj && window.LayoutMDI_windowObj.OB) ? window.
         WINTITLE : 'Openbravo',
         IDENTIFIER : '_identifier',
         ID : 'id',
+        TITLE : 'title',
         FIELDSEPARATOR : '$',
         WHERE_PARAMETER : '_where',
         SQL_WHERE_PARAMETER : '_sqlWhere',
