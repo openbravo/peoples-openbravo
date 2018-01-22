@@ -17,24 +17,36 @@
  ************************************************************************
  */
 
-package org.openbravo.test.costing;
+package org.openbravo.test.costing.assertclass;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import java.math.BigDecimal;
 
-/**
- * Test cases to verify Cost Adjustment Project
- * 
- * @author aferraz
- */
+import org.openbravo.model.materialmgmt.cost.LandedCostCost;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ TestCostingSourceAdjustments.class, //
-    TestCostingNoSourceAdjustments.class, //
-    TestCostingLandedCost.class, //
-    TestIssue37033.class, //
-    TestIssue37279.class //
-})
-public class TestCosting {
-  // No content is required, this is just the definition of a test suite.
+public class LandedCostReceiptLineAmountAssert {
+
+  final private LandedCostCost landedCostCost;
+  final private ShipmentInOutLine receiptLine;
+  final private BigDecimal amount;
+
+  public LandedCostReceiptLineAmountAssert(LandedCostCost landedCostCost,
+      ShipmentInOutLine receiptLine, BigDecimal amount) {
+    this.landedCostCost = landedCostCost;
+    this.receiptLine = receiptLine;
+    this.amount = amount;
+  }
+
+  public LandedCostCost getLandedCostCost() {
+    return landedCostCost;
+  }
+
+  public ShipmentInOutLine getReceiptLine() {
+    return receiptLine;
+  }
+
+  public BigDecimal getAmount() {
+    return amount;
+  }
+
 }

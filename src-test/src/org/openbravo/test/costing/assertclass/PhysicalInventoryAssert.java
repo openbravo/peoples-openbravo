@@ -17,24 +17,41 @@
  ************************************************************************
  */
 
-package org.openbravo.test.costing;
+package org.openbravo.test.costing.assertclass;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import java.math.BigDecimal;
 
-/**
- * Test cases to verify Cost Adjustment Project
- * 
- * @author aferraz
- */
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.plm.Product;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ TestCostingSourceAdjustments.class, //
-    TestCostingNoSourceAdjustments.class, //
-    TestCostingLandedCost.class, //
-    TestIssue37033.class, //
-    TestIssue37279.class //
-})
-public class TestCosting {
-  // No content is required, this is just the definition of a test suite.
+public class PhysicalInventoryAssert {
+
+  final private Product product;
+  final private BigDecimal price;
+  final private BigDecimal quantity;
+  final private int day;
+
+  public PhysicalInventoryAssert(Product product, BigDecimal price, BigDecimal quantity, int day) {
+    this.product = OBDal.getInstance().get(Product.class, product.getId());
+    this.price = price;
+    this.quantity = quantity;
+    this.day = day;
+  }
+
+  public Product getProduct() {
+    return product;
+  }
+
+  public BigDecimal getPrice() {
+    return price;
+  }
+
+  public BigDecimal getQuantity() {
+    return quantity;
+  }
+
+  public int getDay() {
+    return day;
+  }
+
 }

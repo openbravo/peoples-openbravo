@@ -17,24 +17,19 @@
  ************************************************************************
  */
 
-package org.openbravo.test.costing;
+package org.openbravo.test.costing.assertclass;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.openbravo.model.common.invoice.InvoiceLine;
 
-/**
- * Test cases to verify Cost Adjustment Project
- * 
- * @author aferraz
- */
+public class LandedCostCostMatchedAssert {
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ TestCostingSourceAdjustments.class, //
-    TestCostingNoSourceAdjustments.class, //
-    TestCostingLandedCost.class, //
-    TestIssue37033.class, //
-    TestIssue37279.class //
-})
-public class TestCosting {
-  // No content is required, this is just the definition of a test suite.
+  final private InvoiceLine invoiceLine;
+
+  public LandedCostCostMatchedAssert(InvoiceLine invoiceLine) {
+    this.invoiceLine = invoiceLine;
+  }
+
+  public InvoiceLine getInvoiceLine() {
+    return invoiceLine;
+  }
 }

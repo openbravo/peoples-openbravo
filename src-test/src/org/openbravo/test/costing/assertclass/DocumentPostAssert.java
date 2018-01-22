@@ -17,24 +17,49 @@
  ************************************************************************
  */
 
-package org.openbravo.test.costing;
+package org.openbravo.test.costing.assertclass;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import java.math.BigDecimal;
 
-/**
- * Test cases to verify Cost Adjustment Project
- * 
- * @author aferraz
- */
+public class DocumentPostAssert {
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ TestCostingSourceAdjustments.class, //
-    TestCostingNoSourceAdjustments.class, //
-    TestCostingLandedCost.class, //
-    TestIssue37033.class, //
-    TestIssue37279.class //
-})
-public class TestCosting {
-  // No content is required, this is just the definition of a test suite.
+  final private String productId;
+  final private String account;
+  final private BigDecimal debit;
+  final private BigDecimal credit;
+  final private BigDecimal quantity;
+
+  public DocumentPostAssert(String account, BigDecimal debit, BigDecimal credit, BigDecimal quantity) {
+    this(null, account, debit, credit, quantity);
+  }
+
+  public DocumentPostAssert(String productId, String account, BigDecimal debit, BigDecimal credit,
+      BigDecimal quantity) {
+    this.productId = productId;
+    this.account = account;
+    this.debit = debit;
+    this.credit = credit;
+    this.quantity = quantity;
+  }
+
+  public String getProductId() {
+    return productId;
+  }
+
+  public String getAccount() {
+    return account;
+  }
+
+  public BigDecimal getDebit() {
+    return debit;
+  }
+
+  public BigDecimal getCredit() {
+    return credit;
+  }
+
+  public BigDecimal getQuantity() {
+    return quantity;
+  }
+
 }
