@@ -12,11 +12,11 @@
 enyo.kind({
   name: 'OB.UI.OrderMultiSelect',
   kind: 'Image',
-  src: '../org.openbravo.retail.posterminal/img/iconPinSelected.png',
+  src: '../org.openbravo.retail.posterminal/img/iconPinSelected.svg',
   sizing: "cover",
   width: 28,
   height: 28,
-  style: 'float: right; cursor: pointer; margin-top: 8px;',
+  style: 'float: right; cursor: pointer; margin-top: 8px; width: 27px; height: 27px;',
   showing: false,
   events: {
     onToggleSelection: ''
@@ -34,11 +34,11 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.OrderSingleSelect',
   kind: 'Image',
-  src: '../org.openbravo.retail.posterminal/img/iconPinUnselected.png',
+  src: '../org.openbravo.retail.posterminal/img/iconPinUnselected.svg',
   sizing: "cover",
   width: 28,
   height: 28,
-  style: 'float: right; cursor: pointer; margin-top: 8px;',
+  style: 'float: right; cursor: pointer; margin-top: 8px; width: 27px; height: 27px;',
   events: {
     onToggleSelection: ''
   },
