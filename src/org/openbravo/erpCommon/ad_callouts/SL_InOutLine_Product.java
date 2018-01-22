@@ -76,9 +76,8 @@ public class SL_InOutLine_Product extends SimpleCallout {
     String strAttrSetValueType = "";
 
     OBContext.setAdminMode();
-    Product product = null;
     try {
-      product = OBDal.getInstance().get(Product.class, strMProductID);
+      final Product product = OBDal.getInstance().get(Product.class, strMProductID);
       if (product != null) {
         AttributeSet attributeset = product.getAttributeSet();
         if (attributeset != null) {
@@ -127,9 +126,7 @@ public class SL_InOutLine_Product extends SimpleCallout {
             .getId());
         if (isValidUom(finalAUM)) {
           info.addResult("inpcAum", finalAUM);
-        }
-        if (productHasNotDefaultAum(product, finalAUM) && productHasQuantityOnHand(qty)) {
-          info.addResult("inpaumqty", qty);
+          info.addResult("inpaumqty", UOMUtil.getConvertedAumQty(strMProductID, qty, finalAUM));
         }
       } finally {
         OBContext.restorePreviousMode();
@@ -175,19 +172,11 @@ public class SL_InOutLine_Product extends SimpleCallout {
     info.addResult("inpcUomId", info.vars.getStringParameter("inpmProductId_UOM"));
   }
 
-  private boolean productHasQuantityOnHand(BigDecimal qty) {
-    return qty != null && qty.compareTo(BigDecimal.ZERO) > 0;
-  }
-
-  private boolean productHasNotDefaultAum(Product product, String finalAUM) {
-    return StringUtils.equals(finalAUM, product.getUOM().getId());
-  }
-
-  private boolean isValidUom(String finalAUM) {
+  private boolean isValidUom(final String finalAUM) {
     return finalAUM != null;
   }
 
-  private boolean productIsNotUsingSecondaryUom(String strUOMProduct) {
+  private boolean productIsNotUsingSecondaryUom(final String strUOMProduct) {
     return "".equals(strUOMProduct);
   }
 }
