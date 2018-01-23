@@ -1226,8 +1226,9 @@
         } else if (OB.DEC.isNumber(args.price)) {
           var oldprice = args.line.get('price');
           if (OB.DEC.compare(args.price) >= 0) {
-            // sets the new price
+            // sets the new price and listPrice
             args.line.set('price', args.price);
+            args.line.set('priceList', args.line.get('product').get('listPrice'));
             // sets the undo action
             if (options.setUndo) {
               if (me.get('multipleUndo')) {
@@ -4946,7 +4947,7 @@
                         uOM: iter.uOM,
                         qty: OB.DEC.number(iter.quantity),
                         price: price,
-                        priceList: prod.get('listPrice'),
+                        priceList: prod.get('listPrice') !== price ? price : prod.get('listPrice'),
                         promotions: iter.promotions,
                         description: iter.description,
                         priceIncludesTax: order.get('priceIncludesTax'),
