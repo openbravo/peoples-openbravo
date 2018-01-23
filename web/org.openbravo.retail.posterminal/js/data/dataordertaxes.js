@@ -35,6 +35,13 @@
         resolve(params);
       }
 
+      if (params.line.get('originalTaxCategory')) {
+        // The taxes calculation is locked so use the originalTaxCategory
+        params.taxCategory = params.line.get('originalTaxCategory');
+        resolve(params);
+        return;
+      }
+
       for (i = 0; i < params.receipt.get('lines').length; i++) {
         var l = params.receipt.get('lines').at(i);
         if (l.get('relatedLines')) {
@@ -258,7 +265,12 @@
             sql = sql + " and c_tax.c_bp_taxcategory_id is null";
           }
         }
-        sql = sql + " and c_tax.validFrom <= date()";
+        if (line.get('originalOrderDate')) {
+          // The taxes calculation is locked so use the originalOrderDate
+          sql = sql + " and c_tax.validFrom <= '" + line.get('originalOrderDate') + "'";
+        } else {
+          sql = sql + " and c_tax.validFrom <= date()";
+        }
         if (!bplCountryId) {
           sql = sql + " and (c_tax.to_country_id = bpl.countryId   or tz.to_country_id = bpl.countryId   or (c_tax.to_country_id is null       and (not exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_country_id = bpl.countryId)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_country_id is null))))";
           sql = sql + " and (c_tax.to_region_id = bpl.regionId   or tz.to_region_id = bpl.regionId  or (c_tax.to_region_id is null       and (not exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id = bpl.regionId)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id is null))))";
