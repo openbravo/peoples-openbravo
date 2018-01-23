@@ -1688,7 +1688,13 @@
             }
           }
         }
-        me.save();
+        if (me.isCalculateReceiptLocked === true || !line) {
+          OB.error('Save ignored before execute OBPOS_PostAddProductToOrder hook, system has detected that a line is being added when calculate receipt is closed. Ignore line creation');
+          if (attrs && attrs.obposEpccode) {
+            OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
+          }
+          return null;
+        }
         OB.UTIL.HookManager.executeHooks('OBPOS_PostAddProductToOrder', {
           receipt: me,
           productToAdd: p,
@@ -1720,7 +1726,6 @@
                 } else {
                   args.orderline.set('hasRelatedServices', false);
                 }
-                args.receipt.save();
                 if (data.hasmandatoryservices) {
                   var splitline = !OB.UTIL.isNullOrUndefined(args.orderline) && !OB.UTIL.isNullOrUndefined(args.orderline.get('splitline')) && args.orderline.get('splitline');
                   if (!splitline) {
