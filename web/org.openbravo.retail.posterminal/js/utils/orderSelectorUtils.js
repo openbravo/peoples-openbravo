@@ -125,8 +125,8 @@
           }, function (args) {
             if (!args.cancelOperation) {
               var searchSynchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearchNewReceipt');
-              if (order.askForRelatedReceipts) {
-                order.askForRelatedReceipts = undefined;
+              if (order.get('askForRelatedReceipts')) {
+                order.unset('askForRelatedReceipts');
                 data[0].askForRelatedReceipts = true;
               }
               orderList.newPaidReceipt(data[0], function (newOrder) {
@@ -149,7 +149,7 @@
       return;
     }
     me.loadingReceipt = true;
-    model.askForRelatedReceipts = true;
+    model.attributes.askForRelatedReceipts = true;
     orderList.checkForDuplicateReceipts(model, loadOrder, checkListCallback);
   };
 
