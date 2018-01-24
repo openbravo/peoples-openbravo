@@ -128,7 +128,7 @@ public class SL_Movement_Product extends SimpleCallout {
       }
       info.endSelect();
     } else {
-      info.addResult("inpmProductUomId", null);
+      info.addResult("inpmProductUomId", "");
     }
 
     // AUM

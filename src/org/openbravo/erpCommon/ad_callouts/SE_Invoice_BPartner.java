@@ -76,7 +76,7 @@ public class SE_Invoice_BPartner extends SimpleCallout {
 
       BpartnerMiscData[] data = BpartnerMiscData.select(this, strBPartner);
       if (data == null || data.length == 0) {
-        info.addResult("inpcBpartnerLocationId", null);
+        info.addResult("inpcBpartnerLocationId", "");
       }
 
       else {
