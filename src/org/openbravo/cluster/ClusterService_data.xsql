@@ -18,7 +18,7 @@
  ************************************************************************
 -->
 
-<SqlClass name="ClusterServiceManagerData" package="org.openbravo.cluster">
+<SqlClass name="ClusterServiceData" package="org.openbravo.cluster">
    <SqlClassComment></SqlClassComment>
 
    <SqlMethod name="getNodeHandlingService" type="preparedStatement" connection="true" return="String">
@@ -31,6 +31,18 @@
         ]]>
       </Sql>
       <Parameter name="service"/>
+   </SqlMethod>
+   
+   <SqlMethod name="getServiceTimeout" type="preparedStatement" connection="true" return="String">
+     <SqlMethodComment></SqlMethodComment>
+     <Sql>
+       <![CDATA[
+            SELECT TIMEOUT AS TIMEOUT
+            FROM AD_CLUSTER_SERVICE_SETTINGS
+            WHERE SERVICE = ?
+        ]]>
+     </Sql>
+     <Parameter name="service"/>
    </SqlMethod>
 
 </SqlClass>

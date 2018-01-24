@@ -16,16 +16,12 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-
 package org.openbravo.cluster;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -46,10 +42,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.jmx.MBeanRegistry;
 import org.openbravo.model.ad.system.ADClusterService;
-import org.openbravo.model.ad.system.ADClusterServiceSettings;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.importprocess.ImportEntryManager.DaemonThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,11 +104,26 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
    * @return {@code true} if the application is running in clustered environment, {@code false}
    *         otherwise.
    */
-  public boolean isCluster() {
+  private boolean isCluster() {
     if (isCluster == null) {
       isCluster = OBPropertiesProvider.getInstance().getBooleanProperty("cluster");
     }
     return isCluster;
+  }
+
+  /**
+   * @return a {@code String} with the name that identifies the current cluster node.
+   */
+  private String getName() {
+    String name = System.getProperty("machine.name");
+    if (StringUtils.isEmpty(name)) {
+      try {
+        name = InetAddress.getLocalHost().getHostName();
+      } catch (UnknownHostException e) {
+        name = SequenceIdData.getUUID();
+      }
+    }
+    return name;
   }
 
   /**
@@ -127,43 +136,12 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     if (!isCluster()) {
       return true;
     }
-    DalConnectionProvider dcp = new DalConnectionProvider(false);
-    Connection connection = null;
-    try {
-      connection = dcp.getTransactionConnection();
-      String nodeInCharge = ClusterServiceManagerData.getNodeHandlingService(connection, dcp,
-          serviceName);
-      if (nodeInCharge == null) {
-        return false;
-      }
-      return nodeName.equals(nodeInCharge);
-    } catch (Exception ex) {
-      log.error("Could not retrieve node in charge of service {}", serviceName, ex);
-      return false;
-    } finally {
-      try {
-        if (connection != null) {
-          dcp.releaseCommitConnection(connection);
-        }
-      } catch (SQLException ex) {
-        log.error("Error closing connection", ex);
+    for (ClusterService service : clusterServices) {
+      if (serviceName.equals(service.getName())) {
+        return service.isHandledInCurrentNode();
       }
     }
-  }
-
-  /**
-   * @return a {@code String} with the name that identifies the current cluster node.
-   */
-  protected String getName() {
-    String name = System.getProperty("machine.name");
-    if (StringUtils.isEmpty(name)) {
-      try {
-        name = InetAddress.getLocalHost().getHostName();
-      } catch (UnknownHostException e) {
-        name = SequenceIdData.getUUID();
-      }
-    }
-    return name;
+    return false;
   }
 
   @Override
@@ -231,20 +209,10 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
   }
 
   private static class ClusterServiceThread implements Runnable {
-    private static final Long DEFAULT_TIMEOUT = 10_000L;
-    private static final Long MIN_THRESHOLD = 1000L;
-    private static final Long MAX_THRESHOLD = 5000L;
-
     private final ClusterServiceManager manager;
-    private Map<String, Long> serviceNextPings;
-    private Map<String, Long> serviceTimeouts;
-    private Map<String, Long> serviceThresholds;
 
     public ClusterServiceThread(ClusterServiceManager manager) {
       this.manager = manager;
-      this.serviceNextPings = new HashMap<>();
-      this.serviceTimeouts = new HashMap<>();
-      this.serviceThresholds = new HashMap<>();
     }
 
     @Override
@@ -259,9 +227,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       // make ourselves an admin
       OBContext.setOBContext("0", "0", "0", "0");
 
-      registerAvailableClusterServices();
-
-      if (serviceNextPings.isEmpty()) {
+      if (!registerAvailableClusterServices()) {
         log.warn("Could not find any available cluster service");
         return;
       }
@@ -284,67 +250,39 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       }
     }
 
-    private void registerAvailableClusterServices() {
-      OBCriteria<ADClusterServiceSettings> criteria = OBDal.getInstance().createCriteria(
-          ADClusterServiceSettings.class);
-      List<ADClusterServiceSettings> serviceSettings = criteria.list();
-      if (serviceSettings.isEmpty()) {
-        // Force to close the database connection to avoid leaks: if there are not available cluster
-        // services, the thread will end without doing any additional actions.
-        OBDal.getInstance().commitAndClose();
-        return;
+    private boolean registerAvailableClusterServices() {
+      if (manager.clusterServices == null) {
+        return false;
       }
       long current = System.currentTimeMillis();
-      for (ADClusterServiceSettings settings : serviceSettings) {
-        String service = settings.getService();
-        Long timeout = getTimeout(settings);
-        Long threshold = getThreshold(timeout);
-        registerOrUpdateService(service, timeout + threshold);
-        serviceNextPings.put(settings.getService(), current + timeout);
-        serviceTimeouts.put(service, timeout);
-        serviceThresholds.put(service, threshold);
+      boolean anyServiceRegistered = false;
+      for (ClusterService service : manager.clusterServices) {
+        if (service.init(manager.nodeName)) {
+          // service initialized properly, register it
+          registerOrUpdateService(service);
+          service.setNextPing(current + service.getTimeout());
+          anyServiceRegistered = true;
+        }
       }
-    }
-
-    private Long getTimeout(ADClusterServiceSettings settings) {
-      if (settings.getTimeout() == null) {
-        return DEFAULT_TIMEOUT;
-      }
-      // the timeout is defined in the AD in seconds, convert to milliseconds
-      return settings.getTimeout() * 1000;
-    }
-
-    private Long getThreshold(Long timeout) {
-      // The threshold is an extra amount of time added to the timeout that helps to avoid
-      // unnecessarily switching the node that should handle a service on every ping round.
-      long threshold = timeout * 10 / 100;
-      if (threshold < MIN_THRESHOLD) {
-        return MIN_THRESHOLD;
-      } else if (threshold > MAX_THRESHOLD) {
-        return MAX_THRESHOLD;
-      } else {
-        return threshold;
-      }
+      return anyServiceRegistered;
     }
 
     private Long doPingRound() {
       long nextSleep = 0L;
       long startTime = System.currentTimeMillis();
-      for (Map.Entry<String, Long> entry : serviceNextPings.entrySet()) {
-        long current = System.currentTimeMillis();
-        long sleep;
-        String service = entry.getKey();
-        if (!isServiceAlive(service)) {
+      for (ClusterService service : manager.clusterServices) {
+        if (!service.isAlive() || !service.isInitialized()) {
           // Do not update the last ping: the service is not working
           log.debug("Service {} is not working in node {}", service, manager.nodeName);
           continue;
         }
-        Long serviceNextPing = entry.getValue();
+        long current = System.currentTimeMillis();
+        long sleep;
+        Long serviceNextPing = service.getNextPing();
         if (serviceNextPing <= current) {
-          registerOrUpdateService(service,
-              serviceTimeouts.get(service) + serviceThresholds.get(service));
-          entry.setValue(current + serviceTimeouts.get(service));
-          sleep = serviceTimeouts.get(service);
+          registerOrUpdateService(service);
+          service.setNextPing(current + service.getTimeout());
+          sleep = service.getTimeout();
         } else {
           sleep = serviceNextPing - current;
         }
@@ -360,18 +298,11 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       return nextSleep;
     }
 
-    private boolean isServiceAlive(String serviceName) {
-      for (ClusterService service : manager.clusterServices) {
-        if (service.getServiceName().equals(serviceName)) {
-          return service.isServiceAlive();
-        }
-      }
-      return false;
-    }
-
-    private void registerOrUpdateService(String serviceName, Long interval) {
+    private void registerOrUpdateService(ClusterService clusterService) {
+      String serviceName = clusterService.getName();
       try {
         ADClusterService service = manager.getService(serviceName);
+        Long interval = clusterService.getTimeout() + clusterService.getThreshold();
         Date now = new Date();
         if (service == null) {
           // register the service for the first time
@@ -391,6 +322,8 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
         }
         manager.lastPing = now;
         OBDal.getInstance().commitAndClose();
+        // force the service to go to the database to see the changes (if any)
+        clusterService.setUseCache(false);
       } catch (Exception ex) {
         log.warn("Node {} could not complete register/update task of service {}", manager.nodeName,
             serviceName);
@@ -429,6 +362,5 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       updateQuery.setParameter("currentNode", manager.nodeName);
       updateQuery.executeUpdate();
     }
-
   }
 }
