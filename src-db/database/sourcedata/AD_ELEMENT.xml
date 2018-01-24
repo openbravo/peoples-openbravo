@@ -21302,6 +21302,8 @@ If one of the trees of a table uses the ADTree tree structure, that must be the 
 <!--0D65B6036F0B4A2186B001CE897DA9D5-->  <COLUMNNAME><![CDATA[Node]]></COLUMNNAME>
 <!--0D65B6036F0B4A2186B001CE897DA9D5-->  <NAME><![CDATA[Node]]></NAME>
 <!--0D65B6036F0B4A2186B001CE897DA9D5-->  <PRINTNAME><![CDATA[Node]]></PRINTNAME>
+<!--0D65B6036F0B4A2186B001CE897DA9D5-->  <DESCRIPTION><![CDATA[The name that uniquely identifies a node of a clustered environment.]]></DESCRIPTION>
+<!--0D65B6036F0B4A2186B001CE897DA9D5-->  <HELP><![CDATA[The name that uniquely identifies a node of a clustered environment.]]></HELP>
 <!--0D65B6036F0B4A2186B001CE897DA9D5-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--0D65B6036F0B4A2186B001CE897DA9D5-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--0D65B6036F0B4A2186B001CE897DA9D5--></AD_ELEMENT>
@@ -32849,6 +32851,8 @@ If this flag is checked the creation and deletion of tree nodes will be handled 
 <!--C83310F7100442F2AF2D8B0BF25F61AF-->  <COLUMNNAME><![CDATA[AD_Cluster_Service_Settings_ID]]></COLUMNNAME>
 <!--C83310F7100442F2AF2D8B0BF25F61AF-->  <NAME><![CDATA[AD_Cluster_Service_Settings_ID]]></NAME>
 <!--C83310F7100442F2AF2D8B0BF25F61AF-->  <PRINTNAME><![CDATA[AD_Cluster_Service_Settings_ID]]></PRINTNAME>
+<!--C83310F7100442F2AF2D8B0BF25F61AF-->  <DESCRIPTION><![CDATA[A table used for configuring settings of a particular cluster service.]]></DESCRIPTION>
+<!--C83310F7100442F2AF2D8B0BF25F61AF-->  <HELP><![CDATA[A table used for configuring settings of a particular cluster service.]]></HELP>
 <!--C83310F7100442F2AF2D8B0BF25F61AF-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C83310F7100442F2AF2D8B0BF25F61AF-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--C83310F7100442F2AF2D8B0BF25F61AF--></AD_ELEMENT>
@@ -32889,6 +32893,8 @@ If this flag is checked the creation and deletion of tree nodes will be handled 
 <!--C8711193BC124202BF68C1A501D1C39B-->  <COLUMNNAME><![CDATA[Timeout]]></COLUMNNAME>
 <!--C8711193BC124202BF68C1A501D1C39B-->  <NAME><![CDATA[Timeout]]></NAME>
 <!--C8711193BC124202BF68C1A501D1C39B-->  <PRINTNAME><![CDATA[Timeout]]></PRINTNAME>
+<!--C8711193BC124202BF68C1A501D1C39B-->  <DESCRIPTION><![CDATA[The timeout is the frequency which the ping for a cluster service is done.]]></DESCRIPTION>
+<!--C8711193BC124202BF68C1A501D1C39B-->  <HELP><![CDATA[The timeout is the frequency which the ping for a cluster service is done, i.e., it represents the amount of time that should pass for the cluster node in charge of a cluster service to reaffirm itself as the leader. It is also used as a reference for the rest of the nodes in the cluster to determine if the leader is no longer alive and therefore if a new node should be promoted as the leader of the cluster service.]]></HELP>
 <!--C8711193BC124202BF68C1A501D1C39B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C8711193BC124202BF68C1A501D1C39B-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--C8711193BC124202BF68C1A501D1C39B--></AD_ELEMENT>
@@ -33211,7 +33217,7 @@ If this flag is checked the creation and deletion of tree nodes will be handled 
 <!--CCD8CCC00C1B4FE2A14B0EB1775A2966-->  <NAME><![CDATA[Cluster Service]]></NAME>
 <!--CCD8CCC00C1B4FE2A14B0EB1775A2966-->  <PRINTNAME><![CDATA[Cluster Service]]></PRINTNAME>
 <!--CCD8CCC00C1B4FE2A14B0EB1775A2966-->  <DESCRIPTION><![CDATA[A service that is able to work in a clustered environment]]></DESCRIPTION>
-<!--CCD8CCC00C1B4FE2A14B0EB1775A2966-->  <HELP><![CDATA[A service that is able to work in a clustered environment]]></HELP>
+<!--CCD8CCC00C1B4FE2A14B0EB1775A2966-->  <HELP><![CDATA[A service that supports working in a clustered environment.]]></HELP>
 <!--CCD8CCC00C1B4FE2A14B0EB1775A2966-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--CCD8CCC00C1B4FE2A14B0EB1775A2966-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--CCD8CCC00C1B4FE2A14B0EB1775A2966--></AD_ELEMENT>
@@ -34971,6 +34977,10 @@ This P&E is only visible for Service Type Products]]></HELP>
 <!--EEDA722DA9E0425596F650043CA05D1B-->  <COLUMNNAME><![CDATA[AD_Cluster_Service_ID]]></COLUMNNAME>
 <!--EEDA722DA9E0425596F650043CA05D1B-->  <NAME><![CDATA[AD_Cluster_Service_ID]]></NAME>
 <!--EEDA722DA9E0425596F650043CA05D1B-->  <PRINTNAME><![CDATA[AD_Cluster_Service_ID]]></PRINTNAME>
+<!--EEDA722DA9E0425596F650043CA05D1B-->  <DESCRIPTION><![CDATA[A table used to identify the cluster node responsible of handling a service in particular.]]></DESCRIPTION>
+<!--EEDA722DA9E0425596F650043CA05D1B-->  <HELP><![CDATA[A table used to identify the cluster node responsible of handling a service in particular, i.e., it stores the leader of every cluster service. It also keeps the date of the last ping done by the leader of each service. This information is used:
+  - By the leader, to ensure that it is the one that executes the cluster service.
+  - By the rest of the nodes in the cluster in order to identify if the leader must be replaced (because they discover that it is no longer alive). ]]></HELP>
 <!--EEDA722DA9E0425596F650043CA05D1B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--EEDA722DA9E0425596F650043CA05D1B-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--EEDA722DA9E0425596F650043CA05D1B--></AD_ELEMENT>
