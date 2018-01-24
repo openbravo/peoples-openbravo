@@ -60,7 +60,7 @@
 <!--121CCCD7F670457A9FF815163F11A61F-->  <NAME><![CDATA[Invoice Line Selector]]></NAME>
 <!--121CCCD7F670457A9FF815163F11A61F-->  <AD_REFERENCE_ID><![CDATA[E755FEC72FF74F7891EBC27B3094267B]]></AD_REFERENCE_ID>
 <!--121CCCD7F670457A9FF815163F11A61F-->  <AD_TABLE_ID><![CDATA[333]]></AD_TABLE_ID>
-<!--121CCCD7F670457A9FF815163F11A61F-->  <WHERECLAUSE><![CDATA[exists (select 1 from LandedCostType lct where lct.id = @inpmLcTypeId@ and (e.product = lct.product or e.account = lct.account)) AND e.lineNetAmount <>  (SELECT coalesce(SUM(lcc.amount),0) FROM LandedCostCost lcc WHERE lcc.invoiceLine = e)]]></WHERECLAUSE>
+<!--121CCCD7F670457A9FF815163F11A61F-->  <WHERECLAUSE><![CDATA[(e.product.id = @LCC_Product_ID@ or e.account.id = @LCC_Account_ID@) and e.lineNetAmount <> (SELECT coalesce(sum(lcm.amount), 0) from LandedCostMatched lcm where lcm.invoiceLine.id = e.id) and e.invoice.salesTransaction = 'N']]></WHERECLAUSE>
 <!--121CCCD7F670457A9FF815163F11A61F-->  <OBCLKER_TEMPLATE_ID><![CDATA[9314DE8599AD44E7BFC4CC50699042AB]]></OBCLKER_TEMPLATE_ID>
 <!--121CCCD7F670457A9FF815163F11A61F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--121CCCD7F670457A9FF815163F11A61F-->  <SUGGESTIONTEXTMATCHSTYLE><![CDATA[startsWith]]></SUGGESTIONTEXTMATCHSTYLE>
