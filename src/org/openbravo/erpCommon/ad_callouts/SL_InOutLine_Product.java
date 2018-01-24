@@ -126,6 +126,7 @@ public class SL_InOutLine_Product extends SimpleCallout {
             .getId());
         if (isValidUom(finalAUM)) {
           info.addResult("inpcAum", finalAUM);
+          qty = StringUtils.isNotEmpty(strQty) ? new BigDecimal(strQty) : null;
           info.addResult("inpaumqty", UOMUtil.getConvertedAumQty(strMProductID, qty, finalAUM));
         }
       } finally {
