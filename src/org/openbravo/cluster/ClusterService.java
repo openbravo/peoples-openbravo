@@ -120,7 +120,7 @@ public abstract class ClusterService {
     if (!ClusterServiceManager.isCluster()) {
       return true;
     }
-    if (!isInitialized() || nextPing == null) {
+    if (!initialized || nextPing == null) {
       return false;
     }
     long lastPingTime = nextPing + timeout;
