@@ -81,7 +81,7 @@ public class SL_Internal_Consumption_Conversion extends SimpleCallout {
     // Set Product UOM blank when Quantity Order is blank
     if (StringUtils.equals(strChanged, "inpquantityorder") && StringUtils.isEmpty(strQuantityOrder)
         && StringUtils.isNotEmpty(strMProductUOMID)) {
-      info.addResult("inpmProductUomId", null);
+      info.addResult("inpmProductUomId", "");
     }
 
   }

@@ -34,10 +34,10 @@ public class SL_RefreshSequenceAndLength extends SimpleCallout {
 
     try {
       if (strIsBpNewAccount.equals("N")) {
-        info.addResult("inpadSequenceBpId", null);
+        info.addResult("inpadSequenceBpId", "");
       }
       if (strIsPrNewAccount.equals("N")) {
-        info.addResult("inpadSequencePrId", null);
+        info.addResult("inpadSequencePrId", "");
       }
       if ((strIsBpNewAccount.equals("N")) && (strIsPrNewAccount.equals("N"))) {
 

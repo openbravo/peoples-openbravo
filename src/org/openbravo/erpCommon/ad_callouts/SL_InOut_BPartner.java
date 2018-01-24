@@ -89,7 +89,7 @@ public class SL_InOut_BPartner extends SimpleCallout {
       }
       info.endSelect();
     } else {
-      info.addResult("inpcBpartnerLocationId", null);
+      info.addResult("inpcBpartnerLocationId", "");
     }
 
     // Sales Representative
@@ -113,11 +113,11 @@ public class SL_InOut_BPartner extends SimpleCallout {
       }
       info.endSelect();
     } else {
-      info.addResult("inpsalesrepId", null);
+      info.addResult("inpsalesrepId", "");
     }
 
     // Project
-    info.addResult("inpcProjectId", null);
+    info.addResult("inpcProjectId", "");
 
     // Business Partner Contact
     try {
@@ -143,7 +143,7 @@ public class SL_InOut_BPartner extends SimpleCallout {
       }
       info.endSelect();
     } else {
-      info.addResult("inpadUserId", null);
+      info.addResult("inpadUserId", "");
     }
 
     // Delivery Rule

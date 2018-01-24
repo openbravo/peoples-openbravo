@@ -172,7 +172,7 @@ public class SL_Order_DocType extends SimpleCallout {
           }
           info.endSelect();
         } else {
-          info.addResult("inpinvoicerule", null);
+          info.addResult("inpinvoicerule", "");
         }
 
       } else {

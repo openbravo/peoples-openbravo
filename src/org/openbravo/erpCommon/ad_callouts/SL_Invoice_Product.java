@@ -239,7 +239,7 @@ public class SL_Invoice_Product extends SimpleCallout {
         }
         info.endSelect();
       } else {
-        info.addResult("inpmProductUomId", null);
+        info.addResult("inpmProductUomId", "");
       }
     }
   }

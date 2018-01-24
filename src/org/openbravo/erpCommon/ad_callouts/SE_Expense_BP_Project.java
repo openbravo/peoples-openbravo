@@ -40,8 +40,8 @@ public class SE_Expense_BP_Project extends SimpleCallout {
     // If project changed
     if (StringUtils.equals(strChanged, "inpcProjectId")) {
       // Reset Project Phase and Project Task fields
-      info.addResult("inpcProjectphaseId", null);
-      info.addResult("inpcProjecttaskId", null);
+      info.addResult("inpcProjectphaseId", "");
+      info.addResult("inpcProjecttaskId", "");
 
       // If project changed, select project's business partner (if any).
       if (StringUtils.isNotEmpty(strProjectId)) {
@@ -73,8 +73,8 @@ public class SE_Expense_BP_Project extends SimpleCallout {
         else {
           strProjectId = SEExpenseBPProjectData.selectProjectId(this, strBPartnerId);
           info.addResult("inpcProjectId", strProjectId);
-          info.addResult("inpcProjectphaseId", null);
-          info.addResult("inpcProjecttaskId", null);
+          info.addResult("inpcProjectphaseId", "");
+          info.addResult("inpcProjecttaskId", "");
         }
       }
     }

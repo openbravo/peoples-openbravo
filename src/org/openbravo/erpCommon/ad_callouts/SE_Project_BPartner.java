@@ -85,7 +85,7 @@ public class SE_Project_BPartner extends SimpleCallout {
       }
       info.endSelect();
     } else {
-      info.addResult("inpcBpartnerLocationId", null);
+      info.addResult("inpcBpartnerLocationId", "");
     }
 
     // Sales Representative
@@ -108,7 +108,7 @@ public class SE_Project_BPartner extends SimpleCallout {
       }
       info.endSelect();
     } else {
-      info.addResult("inpsalesrepId", null);
+      info.addResult("inpsalesrepId", "");
     }
 
     // Business Partner - User/Contacts
@@ -135,7 +135,7 @@ public class SE_Project_BPartner extends SimpleCallout {
       }
       info.endSelect();
     } else {
-      info.addResult("inpadUserId", null);
+      info.addResult("inpadUserId", "");
     }
 
     // Business Partner - Bill To Address
@@ -164,7 +164,7 @@ public class SE_Project_BPartner extends SimpleCallout {
       }
       info.endSelect();
     } else {
-      info.addResult("inpbilltoId", null);
+      info.addResult("inpbilltoId", "");
     }
 
     // Payment Rule, Payment Term, Price List, Payment Method

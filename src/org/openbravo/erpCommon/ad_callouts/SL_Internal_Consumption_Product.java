@@ -99,7 +99,7 @@ public class SL_Internal_Consumption_Product extends SimpleCallout {
       }
       info.endSelect();
     } else {
-      info.addResult("inpmProductUomId", null);
+      info.addResult("inpmProductUomId", "");
     }
 
   }
