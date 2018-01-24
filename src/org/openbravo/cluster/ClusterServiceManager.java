@@ -130,7 +130,8 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
    * @param serviceName
    *          The name that identifies a service
    * @return {@code true} if the current cluster node should handle the service passed as parameter,
-   *         {@code false} otherwise.
+   *         {@code false} otherwise. Note that if we are not in a clustered environment, this
+   *         method is always returning true.
    */
   public boolean isHandlingService(String serviceName) {
     if (!isCluster()) {

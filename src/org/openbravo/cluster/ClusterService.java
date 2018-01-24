@@ -24,6 +24,7 @@ import java.util.Date;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,11 +47,13 @@ public abstract class ClusterService {
   private boolean handledInCurrentNode;
   private boolean initialized = false;
   private boolean useCache = false;
+  private boolean isCluster = false;
 
   protected boolean init(String currentNodeName) {
     if (!isEnabled()) {
       return false;
     }
+    this.isCluster = OBPropertiesProvider.getInstance().getBooleanProperty("cluster");
     this.nodeName = currentNodeName;
     // the timeout is defined in the AD in seconds, convert to milliseconds
     this.timeout = getClusterServiceTimeout() * 1000;
@@ -117,6 +120,9 @@ public abstract class ClusterService {
   }
 
   protected boolean isHandledInCurrentNode() {
+    if (!isCluster) {
+      return true;
+    }
     if (!isInitialized() || nextPing == null) {
       return false;
     }
