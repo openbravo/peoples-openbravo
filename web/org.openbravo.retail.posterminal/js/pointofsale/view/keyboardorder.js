@@ -136,27 +136,26 @@ enyo.kind({
     var me = this;
 
     var actionAddProduct = function (keyboard, value) {
-        if (!keyboard.line.get('notReturnThisLine')) {
-          if (!me.validateReceipt(keyboard, true)) {
+        if (keyboard.line.get('relatedLines')) {
+          return;
+        }
+        if (!me.validateReceipt(keyboard, true)) {
+          return true;
+        }
+        if (keyboard.line) {
+          if (_.isNaN(value)) {
             return true;
+          } else {
+            me.doAddProduct({
+              product: keyboard.line.get('product'),
+              qty: value,
+              options: {
+                line: keyboard.line,
+                blockAddProduct: true
+              }
+            });
+            keyboard.receipt.trigger('scan');
           }
-          if (keyboard.line) {
-            if (_.isNaN(value)) {
-              return true;
-            } else {
-              me.doAddProduct({
-                product: keyboard.line.get('product'),
-                qty: value,
-                options: {
-                  line: keyboard.line,
-                  blockAddProduct: true
-                }
-              });
-              keyboard.receipt.trigger('scan');
-            }
-          }
-        } else {
-          keyboard.line.unset('notReturnThisLine');
         }
         };
 
@@ -407,22 +406,12 @@ enyo.kind({
       stateless: true,
       action: function (keyboard, txt) {
         var qty = 1,
-            value, i, j, k, h, line, relatedLine, lineFromSelected;
+            value;
         if (!me.selectedModels || !keyboard.line) {
           return;
         }
         if (!me.validateReceipt(keyboard, true)) {
           return true;
-        }
-
-        function actionAddProducts() {
-          keyboard.receipt.set('undo', null);
-          if (me.selectedModels.length > 1) {
-            actionAddMultiProduct(keyboard, -qty);
-          } else {
-            keyboard.receipt.set('multipleUndo', null);
-            actionAddProduct(keyboard, -qty);
-          }
         }
 
         if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
@@ -445,111 +434,26 @@ enyo.kind({
             selectedModels: keyboard.selectedModels
           });
         } else {
-          var approvalNeeded = false,
-              servicesToApprove = '',
-              servicesList = [];
-          if (keyboard.receipt.validateAllowSalesWithReturn(value, false, me.selectedModels)) {
-            return;
-          }
-          if (value < 0) {
-            for (i = 0; i < me.selectedModels.length; i++) {
-              line = me.selectedModels[i];
-              if (!line.isReturnable()) {
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [line.get('product').get('_identifier')]));
-                return;
-              } else if (!approvalNeeded) {
-                // A service with its related product selected doesn't need to be returned, because later it will be modified to returned status depending in the product status
-                // In any other case it would require two approvals
-                if (line.get('product').get('productType') === 'S') {
-                  if (line.get('relatedLines')) {
-                    for (j = 0; j < line.get('relatedLines').length; j++) {
-                      relatedLine = line.get('relatedLines')[j];
-                      for (k = 0; k < me.selectedModels.length; k++) {
-                        lineFromSelected = me.selectedModels[k];
-                        if (lineFromSelected.id === relatedLine.orderlineId) {
-                          line.set('notReturnThisLine', true);
-                          servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
-                          servicesList.push(line.get('product'));
-                          break;
-                        }
-                      }
-                      if (k === me.selectedModels.length) {
-                        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotProductSelectedToReturn', [line.get('product').get('_identifier')]));
-                        return;
-                      }
-                    }
-                  } else {
-                    servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
-                    servicesList.push(line.get('product'));
-                  }
-                  if (!approvalNeeded) {
-                    approvalNeeded = true;
-                  }
-                }
-              }
+          var actionAddProducts;
+          actionAddProducts = function (doNotReturnServices) {
+            if (keyboard.receipt.validateAllowSalesWithReturn(value, false, me.selectedModels)) {
+              return;
             }
-            for (i = 0; i < me.getReceipt().get('lines').length; i++) { // Check if there is any not returnable related product to a selected line
-              line = OB.MobileApp.model.receipt.get('lines').models[i];
-              if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
-                if (line.get('relatedLines')) {
-                  for (j = 0; j < line.get('relatedLines').length; j++) {
-                    relatedLine = line.get('relatedLines')[j];
-                    for (k = 0; k < me.selectedModels.length; k++) {
-                      lineFromSelected = me.selectedModels[k];
-                      if (lineFromSelected.id === relatedLine.orderlineId) {
-                        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableRelatedService'), OB.I18N.getLabel('OBPOS_UnreturnableRelatedServiceMessage', [line.get('product').get('_identifier'), relatedLine.productName]));
-                        return;
-                      }
-                    }
-                  }
-                }
-              } else if (line.get('product').get('productType') === 'S' && line.isReturnable()) { // Ask for approval for non selected services, related to selected products
-                if (line.get('relatedLines')) {
-                  for (j = 0; j < line.get('relatedLines').length; j++) {
-                    relatedLine = line.get('relatedLines')[j];
-                    for (k = 0; k < me.selectedModels.length; k++) {
-                      lineFromSelected = me.selectedModels[k];
-                      if (lineFromSelected.id === relatedLine.orderlineId) {
-                        for (h = 0; h < servicesList.length; h++) {
-                          if (servicesList[h].id === line.get('product').id) {
-                            break;
-                          }
-                        }
-                        if (h === servicesList.length) {
-                          servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
-                          servicesList.push(line.get('product'));
-                          if (!approvalNeeded) {
-                            approvalNeeded = true;
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
+            keyboard.receipt.set('undo', null);
+            if (me.selectedModels.length > 1) {
+              actionAddMultiProduct(keyboard, -qty);
+            } else {
+              keyboard.receipt.set('multipleUndo', null);
+              actionAddProduct(keyboard, -qty);
             }
-          }
-          if (approvalNeeded) {
-            OB.UTIL.Approval.requestApproval(
-            me.model, [{
-              approval: 'OBPOS_approval.returnService',
-              message: 'OBPOS_approval.returnService',
-              params: [servicesToApprove]
-            }], function (approved, supervisor, approvalType) {
-              if (approved) {
-                me.getReceipt().set('notApprove', true);
-                actionAddProducts();
-                me.getReceipt().unset('notApprove');
-              } else {
-                _.each(me.selectedModels, function (line) {
-                  if (line.get('notReturnThisLine')) {
-                    line.unset('notReturnThisLine');
-                  }
-                });
-              }
-            });
-          } else {
+          };
+
+          if (value > 0) {
             actionAddProducts();
+          } else {
+            me.getReceipt().checkReturnableProducts(me.selectedModels, me.model, function () {
+              actionAddProducts();
+            });
           }
         }
       }

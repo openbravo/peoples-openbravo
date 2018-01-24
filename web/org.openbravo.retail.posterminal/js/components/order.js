@@ -731,10 +731,10 @@ enyo.kind({
         }).length;
         if (negativeLinesLength > 0 && negativeLinesLength === this.order.get('lines').models.length) {
           //isReturn
-          OB.MobileApp.model.receipt.setDocumentNo(true, false);
+          this.order.setDocumentNo(true, false);
         } else {
           //isOrder
-          OB.MobileApp.model.receipt.setDocumentNo(false, true);
+          this.order.setDocumentNo(false, true);
         }
       }
     }, this);
@@ -745,7 +745,7 @@ enyo.kind({
           servicesToApprove = '',
           line, k, oldUndo = this.order.get('undo');
 
-      if (this.updating || this.order.get('preventServicesUpdate')) {
+      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate')) {
         return;
       }
       this.updating = true;
@@ -800,7 +800,7 @@ enyo.kind({
         return qty;
       }
 
-      if (!OB.MobileApp.model.receipt.get('notApprove')) {
+      if (!this.order.get('notApprove')) {
         // First check if there is any service modified to negative quantity amount in order to know if approval will be required
         var prod, i, j, l, newqtyplus, newqtyminus, serviceLines, positiveLines, negativeLines, newRelatedLines;
         for (k = 0; k < this.order.get('lines').length; k++) {
@@ -848,7 +848,7 @@ enyo.kind({
                 if (!approvalNeeded) {
                   approvalNeeded = true;
                 }
-                servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
+                servicesToApprove += '<br>' + OB.I18N.getLabel('OBMOBC_Character')[1] + ' ' + line.get('product').get('_identifier');
               }
             }
           }
@@ -1081,7 +1081,7 @@ enyo.kind({
         });
       };
 
-      if (this.updating || this.order.get('preventServicesUpdate')) {
+      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate')) {
         return;
       }
 
