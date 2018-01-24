@@ -55,8 +55,9 @@ import org.slf4j.LoggerFactory;
 @ApplicationScoped
 public class ClusterServiceManager implements ClusterServiceManagerMBean {
   private static final Logger log = LoggerFactory.getLogger(ClusterServiceManager.class);
+  private static boolean isCluster = OBPropertiesProvider.getInstance().getBooleanProperty(
+      "cluster");
 
-  private Boolean isCluster;
   private boolean isShutDown;
   private String nodeName;
   private Date lastPing;
@@ -104,10 +105,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
    * @return {@code true} if the application is running in clustered environment, {@code false}
    *         otherwise.
    */
-  private boolean isCluster() {
-    if (isCluster == null) {
-      isCluster = OBPropertiesProvider.getInstance().getBooleanProperty("cluster");
-    }
+  protected static boolean isCluster() {
     return isCluster;
   }
 
@@ -133,7 +131,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
    *         {@code false} otherwise. Note that if we are not in a clustered environment, this
    *         method is always returning true.
    */
-  public boolean isHandlingService(String serviceName) {
+  public boolean isServiceHandledInCurrentNode(String serviceName) {
     if (!isCluster()) {
       return true;
     }
@@ -220,7 +218,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     public void run() {
       Thread.currentThread().setName("Cluster Service Leader Registrator");
 
-      if (!manager.isCluster()) {
+      if (!isCluster()) {
         // don't even start, we are not in cluster
         return;
       }
