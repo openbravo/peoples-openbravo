@@ -131,7 +131,7 @@ public class SL_Order_Product extends SimpleCallout {
           && StringUtils.equals(dataPAttr[0].attrsetvaluetype, "D")) {
         PAttributeSetData[] data2 = PAttributeSetData.select(this, dataPAttr[0].mAttributesetId);
         if (PAttributeSet.isInstanceAttributeSet(data2)) {
-          info.addResult("inpmAttributesetinstanceId", null);
+          info.addResult("inpmAttributesetinstanceId", "");
         } else {
           info.addResult("inpmAttributesetinstanceId", dataPAttr[0].mAttributesetinstanceId);
         }
@@ -139,9 +139,9 @@ public class SL_Order_Product extends SimpleCallout {
         info.addResult("inpattrsetvaluetype",
             FormatUtilities.replaceJS(dataPAttr[0].attrsetvaluetype));
       } else {
-        info.addResult("inpmAttributesetinstanceId", null);
-        info.addResult("inpattributeset", null);
-        info.addResult("inpattrsetvaluetype", null);
+        info.addResult("inpmAttributesetinstanceId", "");
+        info.addResult("inpattributeset", "");
+        info.addResult("inpattrsetvaluetype", "");
       }
     }
 
@@ -205,7 +205,7 @@ public class SL_Order_Product extends SimpleCallout {
         }
         info.endSelect();
       } else {
-        info.addResult("inpmProductUomId", null);
+        info.addResult("inpmProductUomId", "");
       }
     }
 

@@ -31,7 +31,7 @@ public class SL_Journal_MultiAcctSchema extends SimpleCallout {
       final String lastFieldChanged = info.getLastFieldChanged();
 
       if (StringUtils.equals(lastFieldChanged, "inpmultiGl")) {
-        info.addResult("inpcAcctschemaId", null);
+        info.addResult("inpcAcctschemaId", "");
       }
 
       else if (StringUtils.equals(lastFieldChanged, "inpaccountId")) {

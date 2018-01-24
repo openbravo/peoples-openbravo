@@ -30,17 +30,17 @@ public class SE_Trxtype_Transaction extends SimpleCallout {
       final String strTrxType = info.getStringParameter("inptrxtype", null);
       String strWindowId = info.getStringParameter("inpwindowId", null);
       if ("BF".equals(strTrxType)) {
-        info.addResult("inpfinPaymentId", null);
-        info.addResult("inpcGlitemId", null);
+        info.addResult("inpfinPaymentId", "");
+        info.addResult("inpcGlitemId", "");
         info.addResult("inpissotrx", "Y");
         info.vars.setSessionValue(strWindowId + "|IsSOTrx", "Y");
       } else if ("BPW".equals(strTrxType)) {
-        info.addResult("inpfinPaymentId", null);
+        info.addResult("inpfinPaymentId", "");
         info.addResult("inpdepositamt", BigDecimal.ZERO);
         info.addResult("inpissotrx", "N");
         info.vars.setSessionValue(strWindowId + "|IsSOTrx", "N");
       } else if ("BPD".equals(strTrxType)) {
-        info.addResult("inpfinPaymentId", null);
+        info.addResult("inpfinPaymentId", "");
         info.addResult("inppaymentamt", BigDecimal.ZERO);
         info.addResult("inpissotrx", "Y");
         info.vars.setSessionValue(strWindowId + "|IsSOTrx", "Y");
