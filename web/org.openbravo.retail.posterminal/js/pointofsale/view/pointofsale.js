@@ -706,7 +706,8 @@ enyo.kind({
       bp: inEvent.businessPartner,
       isBPChange: isBPChange,
       isShippingChange: isShippingChange,
-      isInvoicingChange: isInvoicingChange
+      isInvoicingChange: isInvoicingChange,
+      target: inEvent.target
     }, function () {
       if (inEvent.target === 'order' || inEvent.target === undefined) {
         if (component.model.get('order').get('isEditable') === false && (isBPChange || isInvoicingChange || isShippingChange)) {
