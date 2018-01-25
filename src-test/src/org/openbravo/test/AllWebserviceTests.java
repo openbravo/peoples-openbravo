@@ -29,6 +29,7 @@ import org.openbravo.test.datasource.FICTest;
 import org.openbravo.test.datasource.FKDropDownDatasource;
 import org.openbravo.test.datasource.FetchDSNoActiveEntityObjects;
 import org.openbravo.test.datasource.HQLDataSourceTest;
+import org.openbravo.test.datasource.LinkToParentTreeDataSourceTest;
 import org.openbravo.test.datasource.OrganizationSelectorDataSourceTest;
 import org.openbravo.test.datasource.ProductSelectorDataSourceTest;
 import org.openbravo.test.datasource.SelectorFieldPropertySelectorDSTest;
@@ -84,6 +85,8 @@ DataSourceWhereParameter.class, //
     EmptyStringWhereAndFilterClauseParameter.class, //
     JSONWebServicesWhereParameter.class, //
     WSReadableClientsTest.class, //
-    UserInfoSessionDataTest.class })
+    UserInfoSessionDataTest.class, //
+    LinkToParentTreeDataSourceTest.class //
+})
 public class AllWebserviceTests {
 }

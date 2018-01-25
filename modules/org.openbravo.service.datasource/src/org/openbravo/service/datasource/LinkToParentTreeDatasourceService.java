@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2017 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -261,6 +261,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
         whereClause.toString());
 
+    query.setFilterOnActive(false);
     query.setParameters(queryParameters);
 
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
