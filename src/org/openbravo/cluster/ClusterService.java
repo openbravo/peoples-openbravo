@@ -68,7 +68,7 @@ public abstract class ClusterService {
       if (serviceTimeout == null) {
         return DEFAULT_TIMEOUT;
       }
-      return new Long(serviceTimeout);
+      return Long.parseLong(serviceTimeout);
     } catch (Exception ex) {
       log.error("Could not retrieve the settings for service {}", getName(), ex);
       return DEFAULT_TIMEOUT;
