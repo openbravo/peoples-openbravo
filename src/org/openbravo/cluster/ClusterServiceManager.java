@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
@@ -44,7 +45,6 @@ import org.openbravo.jmx.MBeanRegistry;
 import org.openbravo.model.ad.system.ADClusterService;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.service.importprocess.ImportEntryManager.DaemonThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -216,7 +216,6 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
 
     @Override
     public void run() {
-      Thread.currentThread().setName("Cluster Service Leader Registrator");
 
       if (!isCluster()) {
         // don't even start, we are not in cluster
@@ -360,6 +359,28 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       updateQuery.setParameter("service", serviceName);
       updateQuery.setParameter("currentNode", manager.nodeName);
       updateQuery.executeUpdate();
+    }
+  }
+
+  /**
+   * Creates threads which have daemon set to true.
+   */
+  private static class DaemonThreadFactory implements ThreadFactory {
+    private final ThreadGroup group;
+
+    public DaemonThreadFactory() {
+      SecurityManager s = System.getSecurityManager();
+      group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+    }
+
+    @Override
+    public Thread newThread(Runnable runnable) {
+      final Thread thread = new Thread(group, runnable, "Cluster Service Leader Registrator");
+      if (thread.getPriority() != Thread.NORM_PRIORITY) {
+        thread.setPriority(Thread.NORM_PRIORITY);
+      }
+      thread.setDaemon(true);
+      return thread;
     }
   }
 }
