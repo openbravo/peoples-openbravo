@@ -42,7 +42,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.jmx.MBeanRegistry;
 import org.openbravo.model.ad.system.ADClusterService;
-import org.openbravo.model.ad.system.ADClusterServiceSettings;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.slf4j.Logger;
@@ -191,20 +190,9 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
   @Override
   public Map<String, String> getClusterServiceSettings() {
     Map<String, String> leaders = new HashMap<>();
-    try {
-      OBContext.setAdminMode(true);
-      OBCriteria<ADClusterServiceSettings> criteria = OBDal.getInstance().createCriteria(
-          ADClusterServiceSettings.class);
-      for (ADClusterServiceSettings settings : criteria.list()) {
-        Long serviceTimeout = settings.getTimeout() != null ? settings.getTimeout() * 1000
-            : ClusterService.DEFAULT_TIMEOUT;
-        String serviceInfo = "timeout: " + serviceTimeout + " milliseconds";
-        leaders.put(settings.getService(), serviceInfo);
-      }
-      OBDal.getInstance().commitAndClose();
-    } catch (Exception ignore) {
-    } finally {
-      OBContext.restorePreviousMode();
+    for (ClusterService service : clusterServices) {
+      String serviceSettings = "timeout: " + service.getTimeout() + " milliseconds";
+      leaders.put(service.getName(), serviceSettings);
     }
     return leaders;
   }
