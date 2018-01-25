@@ -146,7 +146,6 @@ public class ImportEntryManager extends ClusterService {
   private Map<String, ImportStatistics> stats = new HashMap<String, ImportEntryManager.ImportStatistics>();
 
   private boolean threadsStarted = false;
-  private boolean hasBeenStarted = false;
 
   private long initialWaitTime = 10000;
   private long managerWaitTime = 600_000L;
@@ -194,7 +193,6 @@ public class ImportEntryManager extends ClusterService {
       return;
     }
     threadsStarted = true;
-    hasBeenStarted = true;
 
     log.debug("Starting Import Entry Framework");
 
@@ -499,10 +497,7 @@ public class ImportEntryManager extends ClusterService {
 
   @Override
   public boolean isAlive() {
-    if (hasBeenStarted) {
-      return isExecutorRunning();
-    }
-    return true;
+    return isExecutorRunning();
   }
 
   @Override

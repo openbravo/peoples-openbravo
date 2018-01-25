@@ -39,6 +39,7 @@ public class ImportProcessContextListener implements ServletContextListener {
 
   public void contextInitialized(ServletContextEvent event) {
     importEntryManager = WeldUtils.getInstanceFromStaticBeanManager(ImportEntryManager.class);
+    importEntryManager.start();
     clusterServiceManager = WeldUtils.getInstanceFromStaticBeanManager(ClusterServiceManager.class);
     clusterServiceManager.start();
   }
