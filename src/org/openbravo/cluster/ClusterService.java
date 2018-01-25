@@ -74,9 +74,7 @@ public abstract class ClusterService {
       return DEFAULT_TIMEOUT;
     } finally {
       try {
-        if (connection != null) {
-          dcp.releaseCommitConnection(connection);
-        }
+        dcp.releaseCommitConnection(connection);
       } catch (SQLException ex) {
         log.error("Error closing connection", ex);
       }
@@ -148,9 +146,7 @@ public abstract class ClusterService {
       return false;
     } finally {
       try {
-        if (connection != null) {
-          dcp.releaseCommitConnection(connection);
-        }
+        dcp.releaseCommitConnection(connection);
       } catch (SQLException ex) {
         log.error("Error closing connection", ex);
       }
