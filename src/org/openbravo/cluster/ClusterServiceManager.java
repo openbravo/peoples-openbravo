@@ -18,8 +18,6 @@
  */
 package org.openbravo.cluster;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +33,7 @@ import javax.inject.Inject;
 import org.apache.axis.utils.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
@@ -113,13 +112,9 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
    * @return a {@code String} with the name that identifies the current cluster node.
    */
   private String getName() {
-    String name = System.getProperty("machine.name");
+    String name = ConfigParameters.getMachineName();
     if (StringUtils.isEmpty(name)) {
-      try {
-        name = InetAddress.getLocalHost().getHostName();
-      } catch (UnknownHostException e) {
-        name = SequenceIdData.getUUID();
-      }
+      name = SequenceIdData.getUUID();
     }
     return name;
   }

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2017 Openbravo S.L.U.
+ * Copyright (C) 2001-2018 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -347,15 +347,7 @@ public class ConfigParameters {
       log4j.info("Looking for override properties file in " + absPath + ". Found: "
           + propertiesFile.exists());
     } else {
-      String fileName = System.getProperty("machine.name");
-      if (fileName == null || fileName.isEmpty()) {
-        try {
-          fileName = InetAddress.getLocalHost().getHostName();
-          log4j.info("Checking override properties for " + fileName);
-        } catch (UnknownHostException e) {
-          log4j.error("Error when getting host name", e);
-        }
-      }
+      String fileName = getMachineName();
 
       if (fileName == null || fileName.isEmpty()) {
         log4j.debug("Override fileName env variable is not defined.");
@@ -400,6 +392,19 @@ public class ConfigParameters {
         }
       }
     }
+  }
+
+  public static String getMachineName() {
+    String name = System.getProperty("machine.name");
+    if (name == null || name.isEmpty()) {
+      try {
+        name = InetAddress.getLocalHost().getHostName();
+        log4j.info("Checking override properties for " + name);
+      } catch (UnknownHostException e) {
+        log4j.error("Error when getting host name", e);
+      }
+    }
+    return name;
   }
 
   public String getJavaDateTimeFormat() {
