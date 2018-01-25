@@ -52,8 +52,7 @@ public abstract class ClusterService {
       return false;
     }
     this.nodeName = currentNodeName;
-    // the timeout is defined in the AD in seconds, convert to milliseconds
-    this.timeout = getClusterServiceTimeout() * 1000;
+    this.timeout = getClusterServiceTimeout();
     this.threshold = calculateThreshold(timeout);
     this.initialized = true;
     return true;
@@ -68,7 +67,8 @@ public abstract class ClusterService {
       if (serviceTimeout == null) {
         return DEFAULT_TIMEOUT;
       }
-      return Long.parseLong(serviceTimeout);
+      // the timeout is defined in the AD in seconds, convert to milliseconds
+      return Long.parseLong(serviceTimeout) * 1000;
     } catch (Exception ex) {
       log.error("Could not retrieve the settings for service {}", getName(), ex);
       return DEFAULT_TIMEOUT;
