@@ -2872,6 +2872,8 @@ You can also select if transactions are allowed or not for this organization typ
 <!--3F38D98AF2FA4F888E2DAEAC7BCF8724-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3F38D98AF2FA4F888E2DAEAC7BCF8724-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3F38D98AF2FA4F888E2DAEAC7BCF8724-->  <NAME><![CDATA[Cluster Service Settings]]></NAME>
+<!--3F38D98AF2FA4F888E2DAEAC7BCF8724-->  <DESCRIPTION><![CDATA[Define the configuration of the available cluster services.]]></DESCRIPTION>
+<!--3F38D98AF2FA4F888E2DAEAC7BCF8724-->  <HELP><![CDATA[Define the configuration of the available cluster services.]]></HELP>
 <!--3F38D98AF2FA4F888E2DAEAC7BCF8724-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--3F38D98AF2FA4F888E2DAEAC7BCF8724-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--3F38D98AF2FA4F888E2DAEAC7BCF8724-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -3411,6 +3413,8 @@ You can also select if transactions are allowed or not for this organization typ
 <!--C09BDAD99A6F4276B022BF2ABBB386AC-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C09BDAD99A6F4276B022BF2ABBB386AC-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C09BDAD99A6F4276B022BF2ABBB386AC-->  <NAME><![CDATA[Cluster Services]]></NAME>
+<!--C09BDAD99A6F4276B022BF2ABBB386AC-->  <DESCRIPTION><![CDATA[Display information about the cluster nodes responsible of handling the available cluster services.]]></DESCRIPTION>
+<!--C09BDAD99A6F4276B022BF2ABBB386AC-->  <HELP><![CDATA[Display information about the cluster nodes responsible of handling the available cluster services.]]></HELP>
 <!--C09BDAD99A6F4276B022BF2ABBB386AC-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--C09BDAD99A6F4276B022BF2ABBB386AC-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--C09BDAD99A6F4276B022BF2ABBB386AC-->  <PROCESSING><![CDATA[N]]></PROCESSING>
