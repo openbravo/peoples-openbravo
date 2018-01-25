@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2017 Openbravo SLU
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,6 +59,7 @@ import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBLedgerUtils;
+import org.openbravo.erpCommon.utility.ReferencedLink;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.User;
@@ -66,10 +67,13 @@ import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaTable;
+import org.openbravo.model.financialmgmt.gl.GLJournal;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
+  private static final String GL_JOURNAL_TABLE_ID = "224";
+
   private static final long serialVersionUID = 1L;
 
   /**
@@ -515,6 +519,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     String oraLimit1 = null;
     String oraLimit2 = null;
     String pgLimit = null;
+    Map<String, String> tablesToTabsMap = new HashMap<String, String>();
     try {
       if (vars.commandIn("FIND")
           || vars.commandIn("DEFAULT")
@@ -539,7 +544,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
                 null, null, null);
             Vector<ReportGeneralLedgerJournalData> res = new Vector<ReportGeneralLedgerJournalData>();
             while (scrollCountLines.next()) {
-              res.add(scrollCountLines.get());
+              addDataToResponse(scrollCountLines.get(), res, tablesToTabsMap);
               totalAcctEntries += Integer.parseInt(scrollCountLines.get().groupedlines);
             }
             dataCountLines = new ReportGeneralLedgerJournalData[res.size()];
@@ -616,7 +621,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
               vars.getLanguage(), pgLimit, oraLimit1, oraLimit2);
           Vector<ReportGeneralLedgerJournalData> res = new Vector<ReportGeneralLedgerJournalData>();
           while (scrollData.next()) {
-            res.add(scrollData.get());
+            addDataToResponse(scrollData.get(), res, tablesToTabsMap);
           }
           data = new ReportGeneralLedgerJournalData[res.size()];
           res.copyInto(data);
@@ -649,7 +654,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
               oraLimit2);
           Vector<ReportGeneralLedgerJournalData> res = new Vector<ReportGeneralLedgerJournalData>();
           while (scrollData.next()) {
-            res.add(scrollData.get());
+            addDataToResponse(scrollData.get(), res, tablesToTabsMap);
           }
           data = new ReportGeneralLedgerJournalData[res.size()];
           res.copyInto(data);
@@ -668,7 +673,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
             strTable, strRecord, strcAcctSchemaId, vars.getLanguage(), null, null, null);
         Vector<ReportGeneralLedgerJournalData> res = new Vector<ReportGeneralLedgerJournalData>();
         while (scrollData.next()) {
-          res.add(scrollData.get());
+          addDataToResponse(scrollData.get(), res, tablesToTabsMap);
         }
         data = new ReportGeneralLedgerJournalData[res.size()];
         res.copyInto(data);
@@ -685,7 +690,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
             strFactAcctGroupId, vars.getLanguage());
         Vector<ReportGeneralLedgerJournalData> res = new Vector<ReportGeneralLedgerJournalData>();
         while (scrollData.next()) {
-          res.add(scrollData.get());
+          addDataToResponse(scrollData.get(), res, tablesToTabsMap);
         }
         data = new ReportGeneralLedgerJournalData[res.size()];
         res.copyInto(data);
@@ -828,6 +833,33 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private void addDataToResponse(ReportGeneralLedgerJournalData data,
+      Vector<ReportGeneralLedgerJournalData> res, Map<String, String> tablesToTabsMap) {
+    // If it is a GLJournal without a Batch header change the TabId that is going to navigate to
+    // based on the defined Navigation Rules
+    if (StringUtils.equals(data.adTableId, GL_JOURNAL_TABLE_ID)
+        && StringUtils.isEmpty(data.journalbatchId)) {
+      if (tablesToTabsMap.containsKey(data.adTableId)) {
+        data.tabId = tablesToTabsMap.get(data.adTableId);
+      } else {
+        String tabId = getTabIdFromTable(data.adTableId, data.id);
+        tablesToTabsMap.put(data.adTableId, tabId);
+        data.tabId = tabId;
+      }
+    }
+    res.add(data);
+  }
+
+  private String getTabIdFromTable(final String adTableId, final String recordId) {
+    try {
+      OBContext.setAdminMode(true);
+      return ReferencedLink.applyRules(null, adTableId,
+          OBDal.getInstance().get(GLJournal.class, recordId).getEntity(), recordId, false, true);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   private ReportGeneralLedgerJournalData[] notshow(ReportGeneralLedgerJournalData[] data,
