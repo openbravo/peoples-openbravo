@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -56,7 +56,7 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@ApplicationScoped
+@Dependent
 public abstract class CostingAlgorithmAdjustmentImp {
   private static final Logger log4j = LoggerFactory.getLogger(CostingAlgorithmAdjustmentImp.class);
   protected String strCostAdjLineId;
