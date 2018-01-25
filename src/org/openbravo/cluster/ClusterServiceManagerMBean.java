@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,17 +30,22 @@ public interface ClusterServiceManagerMBean {
   /**
    * @return the name of the current cluster node.
    */
-  public String getNodeName();
+  public String getCurrentNodeName();
 
   /**
    * @return the Date of the last ping done (for any service) by the current node.
    */
-  public Date getLastPing();
+  public Date getLastPingOfCurrentNode();
 
   /**
-   * @return a Map with information (node and last ping) per cluster service.
+   * @return a Map with information (leader and last ping) per cluster service.
    */
-  public Map<String, String> getClusterServiceInfo();
+  public Map<String, String> getClusterServiceLeaders();
+
+  /**
+   * @return a Map with information of the settings for each cluster service.
+   */
+  public Map<String, String> getClusterServiceSettings();
 
   /**
    * Forces the current node to be the node in charge of handling the service whose name is passed

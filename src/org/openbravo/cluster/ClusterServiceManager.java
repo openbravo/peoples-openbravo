@@ -42,6 +42,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.jmx.MBeanRegistry;
 import org.openbravo.model.ad.system.ADClusterService;
+import org.openbravo.model.ad.system.ADClusterServiceSettings;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.slf4j.Logger;
@@ -158,25 +159,47 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
   }
 
   @Override
-  public String getNodeName() {
+  public String getCurrentNodeName() {
     return nodeName;
   }
 
   @Override
-  public Date getLastPing() {
+  public Date getLastPingOfCurrentNode() {
     return lastPing;
   }
 
   @Override
-  public Map<String, String> getClusterServiceInfo() {
+  public Map<String, String> getClusterServiceLeaders() {
     Map<String, String> leaders = new HashMap<>();
     try {
       OBContext.setAdminMode(true);
       OBCriteria<ADClusterService> criteria = OBDal.getInstance().createCriteria(
           ADClusterService.class);
       for (ADClusterService service : criteria.list()) {
-        String serviceInfo = "node: " + service.getNode() + ", last ping: " + service.getUpdated();
+        String serviceInfo = "leader: " + service.getNode() + ", last ping: "
+            + service.getUpdated();
         leaders.put(service.getService(), serviceInfo);
+      }
+      OBDal.getInstance().commitAndClose();
+    } catch (Exception ignore) {
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return leaders;
+  }
+
+  @Override
+  public Map<String, String> getClusterServiceSettings() {
+    Map<String, String> leaders = new HashMap<>();
+    try {
+      OBContext.setAdminMode(true);
+      OBCriteria<ADClusterServiceSettings> criteria = OBDal.getInstance().createCriteria(
+          ADClusterServiceSettings.class);
+      for (ADClusterServiceSettings settings : criteria.list()) {
+        Long serviceTimeout = settings.getTimeout() != null ? settings.getTimeout() * 1000
+            : ClusterService.DEFAULT_TIMEOUT;
+        String serviceInfo = "timeout: " + serviceTimeout + " milliseconds";
+        leaders.put(settings.getService(), serviceInfo);
       }
       OBDal.getInstance().commitAndClose();
     } catch (Exception ignore) {
