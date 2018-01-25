@@ -101,6 +101,24 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     executorService = null;
   }
 
+  private void deRegisterServicesForCurrentNode() {
+    try {
+      OBContext.setAdminMode(false); // allow to delete, the current context does not matter
+      OBCriteria<ADClusterService> criteria = OBDal.getInstance().createCriteria(
+          ADClusterService.class);
+      criteria.add(Restrictions.eq(ADClusterService.PROPERTY_NODE, nodeName));
+      for (ADClusterService service : criteria.list()) {
+        log.info("Degeristering node {} in charge of service {}", nodeName, service.getService());
+        OBDal.getInstance().remove(service);
+      }
+      OBDal.getInstance().commitAndClose();
+    } catch (Exception ex) {
+      log.error("Could not deregister node {}", nodeName);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
   /**
    * @return {@code true} if the application is running in clustered environment, {@code false}
    *         otherwise.
@@ -201,22 +219,6 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     service.setNode(nodeName);
     OBDal.getInstance().save(service);
     return service;
-  }
-
-  private void deRegisterServicesForCurrentNode() {
-    try {
-      OBContext.setAdminMode(false); // allow to delete, the current context does not matter
-      OBCriteria<ADClusterService> criteria = OBDal.getInstance().createCriteria(
-          ADClusterService.class);
-      criteria.add(Restrictions.eq(ADClusterService.PROPERTY_NODE, nodeName));
-      for (ADClusterService service : criteria.list()) {
-        log.info("Degeristering node {} in charge of service {}", nodeName, service.getService());
-        OBDal.getInstance().remove(service);
-      }
-      OBDal.getInstance().commitAndClose();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
   }
 
   private static class ClusterServiceThread implements Runnable {
