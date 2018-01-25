@@ -51,5 +51,6 @@
         <unique-column name="SERVICE"/>
       </unique>
       <check name="AD_CLUSTER_SRV_SET_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_CLUSTER_SRV_SET_TIME_CHK"><![CDATA[TIMEOUT > 0]]></check>
     </table>
   </database>
