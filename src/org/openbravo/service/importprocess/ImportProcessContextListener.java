@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,22 +23,28 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.cluster.ClusterServiceManager;
 
 /**
  * Initializes the import process layer by calling {@link ImportEntryManager#start()} and
- * {@link ImportEntryManager#shutdown()} when the application stops.
+ * {@link ImportEntryManager#shutdown()} when the application stops. It also does the same for the
+ * {@link ClusterServiceManager}.
  * 
  * @author mtaal
  */
 public class ImportProcessContextListener implements ServletContextListener {
 
   private ImportEntryManager importEntryManager;
+  private ClusterServiceManager clusterServiceManager;
 
   public void contextInitialized(ServletContextEvent event) {
     importEntryManager = WeldUtils.getInstanceFromStaticBeanManager(ImportEntryManager.class);
+    clusterServiceManager = WeldUtils.getInstanceFromStaticBeanManager(ClusterServiceManager.class);
+    clusterServiceManager.start();
   }
 
   public void contextDestroyed(ServletContextEvent event) {
     importEntryManager.shutdown();
+    clusterServiceManager.shutdown();
   }
 }
