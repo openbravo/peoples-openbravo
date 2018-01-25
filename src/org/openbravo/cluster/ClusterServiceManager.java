@@ -171,7 +171,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
   @Override
   public void registerCurrentNodeForService(String serviceName) {
     try {
-      OBContext.setAdminMode(true);
+      OBContext.setAdminMode(false); // allow to register the leader from any context
       ADClusterService service = getService(serviceName);
       if (service == null) {
         service = registerService(serviceName);
