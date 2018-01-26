@@ -300,7 +300,7 @@ enyo.kind({
       OB.MobileApp.view.$.containerWindow.getRoot().bubble('onShowPopup', {
         popup: 'modalcustomeraddress',
         args: {
-          target: 'modal_selector_business_partners',
+          target: 'order',
           businessPartner: bp,
           manageAddress: true,
           clean: true,

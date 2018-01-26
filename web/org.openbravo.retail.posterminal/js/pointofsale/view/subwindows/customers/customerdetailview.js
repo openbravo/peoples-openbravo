@@ -132,7 +132,7 @@ enyo.kind({
       me.doShowPopup({
         popup: 'modalcustomeraddress',
         args: {
-          target: 'modal_selector_bp_view',
+          target: 'order',
           businessPartner: bp,
           navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(me.navigationPath, 'customerView'),
           manageAddress: true
