@@ -574,37 +574,26 @@ enyo.kind({
               this.$.actionButtonsContainer.$.returnLine.show();
             }
           }
-          if (this.$.actionButtonsContainer.$.deleteLine) {
-            if (!line.get('isDeletable')) {
-              this.$.actionButtonsContainer.$.deleteLine.hide();
-            } else {
-              this.$.actionButtonsContainer.$.deleteLine.show();
-            }
+        }
+        if (this.$.actionButtonsContainer.$.deleteLine) {
+          if (!line.get('isDeletable')) {
+            this.$.actionButtonsContainer.$.deleteLine.hide();
+          } else {
+            this.$.actionButtonsContainer.$.deleteLine.show();
           }
-          if (this.$.actionButtonsContainer.$.showRelatedServices) {
-            if (this.selectedModels && this.selectedModels.length > 0) {
-              var proposedServices, existRelatedServices;
-              existRelatedServices = this.selectedModels.filter(function (line) {
-                return line.get('hasRelatedServices');
-              }).length === this.selectedModels.length;
-              proposedServices = this.selectedModels.filter(function (line) {
-                return !line.get('hasRelatedServices') || line.get('obposServiceProposed');
-              }).length === this.selectedModels.length;
-              if (existRelatedServices) {
-                this.$.actionButtonsContainer.$.showRelatedServices.show();
-                if (proposedServices) {
-                  this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', false);
-                  this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', true);
-                } else {
-                  this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', true);
-                  this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', false);
-                }
-              } else {
-                this.$.actionButtonsContainer.$.showRelatedServices.hide();
-              }
-            } else if (this.line && this.line.get('hasRelatedServices')) {
+        }
+        if (this.$.actionButtonsContainer.$.showRelatedServices) {
+          if (this.selectedModels && this.selectedModels.length > 0) {
+            var proposedServices, existRelatedServices;
+            existRelatedServices = this.selectedModels.filter(function (line) {
+              return line.get('hasRelatedServices');
+            }).length === this.selectedModels.length;
+            proposedServices = this.selectedModels.filter(function (line) {
+              return !line.get('hasRelatedServices') || line.get('obposServiceProposed');
+            }).length === this.selectedModels.length;
+            if (existRelatedServices) {
               this.$.actionButtonsContainer.$.showRelatedServices.show();
-              if (this.line.get('obposServiceProposed')) {
+              if (proposedServices) {
                 this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', false);
                 this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', true);
               } else {
@@ -614,9 +603,20 @@ enyo.kind({
             } else {
               this.$.actionButtonsContainer.$.showRelatedServices.hide();
             }
+          } else if (this.line && this.line.get('hasRelatedServices')) {
+            this.$.actionButtonsContainer.$.showRelatedServices.show();
+            if (this.line.get('obposServiceProposed')) {
+              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', false);
+              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', true);
+            } else {
+              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', true);
+              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', false);
+            }
+          } else {
+            this.$.actionButtonsContainer.$.showRelatedServices.hide();
           }
-          this.render();
         }
+        this.render();
       }
     }
   },
