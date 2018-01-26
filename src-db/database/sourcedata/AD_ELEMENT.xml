@@ -32891,10 +32891,10 @@ If this flag is checked the creation and deletion of tree nodes will be handled 
 <!--C8711193BC124202BF68C1A501D1C39B-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C8711193BC124202BF68C1A501D1C39B-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C8711193BC124202BF68C1A501D1C39B-->  <COLUMNNAME><![CDATA[Timeout]]></COLUMNNAME>
-<!--C8711193BC124202BF68C1A501D1C39B-->  <NAME><![CDATA[Timeout]]></NAME>
-<!--C8711193BC124202BF68C1A501D1C39B-->  <PRINTNAME><![CDATA[Timeout]]></PRINTNAME>
-<!--C8711193BC124202BF68C1A501D1C39B-->  <DESCRIPTION><![CDATA[The timeout is the frequency which the ping for a cluster service is done.]]></DESCRIPTION>
-<!--C8711193BC124202BF68C1A501D1C39B-->  <HELP><![CDATA[The timeout is the frequency which the ping for a cluster service is done, i.e., it represents the amount of time that should pass for the cluster node in charge of a cluster service to reaffirm itself as the leader. It is also used as a reference for the rest of the nodes in the cluster to determine if the leader is no longer alive and therefore if a new node should be promoted as the leader of the cluster service.]]></HELP>
+<!--C8711193BC124202BF68C1A501D1C39B-->  <NAME><![CDATA[Timeout (seconds)]]></NAME>
+<!--C8711193BC124202BF68C1A501D1C39B-->  <PRINTNAME><![CDATA[Timeout (seconds)]]></PRINTNAME>
+<!--C8711193BC124202BF68C1A501D1C39B-->  <DESCRIPTION><![CDATA[The timeout is the frequency (in seconds) which the ping for a cluster service is done.]]></DESCRIPTION>
+<!--C8711193BC124202BF68C1A501D1C39B-->  <HELP><![CDATA[The timeout is the frequency (in seconds) which the ping for a cluster service is done, i.e., it represents the amount of time that should pass for the cluster node in charge of a cluster service to reaffirm itself as the leader. It is also used as a reference for the rest of the nodes in the cluster to determine if the leader is no longer alive and therefore if a new node should be promoted as the leader of the cluster service. Please note that it will be required to restart all the nodes in the cluster if this value is changed in order to make the new value visible for the entire cluster.]]></HELP>
 <!--C8711193BC124202BF68C1A501D1C39B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C8711193BC124202BF68C1A501D1C39B-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--C8711193BC124202BF68C1A501D1C39B--></AD_ELEMENT>
