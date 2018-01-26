@@ -125,7 +125,7 @@ public abstract class ClusterService {
     long lastPingTime = nextPing + timeout;
     long now = new Date().getTime();
     if (!useCache || now > lastPingTime) {
-      // retrieve form the database the node currently handling the service
+      // retrieve from the database the node currently handling the service
       nodeHandlingService = getNodeHandlingServiceFromDB();
       setUseCache(true);
     }
