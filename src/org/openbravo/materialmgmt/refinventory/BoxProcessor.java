@@ -25,13 +25,10 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
@@ -42,6 +39,7 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
  */
 public class BoxProcessor extends ReferencedInventoryProcessor {
   private String newStorageBinId;
+  private String newAttributeSetInstanceId;
 
   public BoxProcessor(final ReferencedInventory referencedInventory,
       final JSONArray selectedStorageDetails, final String newStorageBinId) throws JSONException {
@@ -76,10 +74,14 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
 
   @Override
   protected AttributeSetInstance getAttributeSetInstanceTo(StorageDetail storageDetail) {
-    // FIXME if no attribute?
-    // FIXME can we reuse the clone?
-    return ReferencedInventoryUtil.cloneAttributeSetInstance(storageDetail.getAttributeSetValue(),
-        getReferencedInventory());
+    if (newAttributeSetInstanceId == null) {
+      final AttributeSetInstance attributeSetInstance = ReferencedInventoryUtil
+          .cloneAttributeSetInstance(storageDetail.getAttributeSetValue(), getReferencedInventory());
+      newAttributeSetInstanceId = attributeSetInstance.getId();
+      return attributeSetInstance;
+    } else {
+      return OBDal.getInstance().getProxy(AttributeSetInstance.class, newAttributeSetInstanceId);
+    }
   }
 
   @Override
@@ -93,8 +95,7 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
   }
 
   /**
-   * It calls {@link ReferencedInventoryProcessor#createAndProcessGoodsMovement()}. It then verifies
-   * that the referenced inventory is stored in a unique bin.
+   * It calls {@link ReferencedInventoryProcessor#createAndProcessGoodsMovement()}.
    * 
    * @throws Exception
    *           In case of exception, the transaction is rollback and the exception is thrown.
@@ -104,7 +105,6 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
   public InternalMovement createAndProcessGoodsMovement() throws Exception {
     try {
       final InternalMovement goodsMovementHeader = super.createAndProcessGoodsMovement();
-      checkReferencedInventoryIsInOneBin();
       return goodsMovementHeader;
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
@@ -112,21 +112,4 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
     }
   }
 
-  private void checkReferencedInventoryIsInOneBin() {
-    final String hql = "select distinct(sd.storageBin) " + //
-        "                from  MaterialMgmtStorageDetail sd " + //
-        "                where sd.referencedInventory.id = :referencedInventoryId" + //
-        "                and sd.storageBin.id <> :newStorageBinId";
-    final Session session = OBDal.getInstance().getSession();
-    final Query query = session.createQuery(hql.toString());
-    query.setParameter("referencedInventoryId", getReferencedInventory().getId());
-    query.setParameter("newStorageBinId", newStorageBinId);
-    query.setMaxResults(1);
-    final Locator otherLocator = (Locator) query.uniqueResult();
-    if (otherLocator != null) {
-      throw new OBException(String.format(
-          OBMessageUtils.messageBD("ReferencedInventoryInOtherBin"), getReferencedInventory()
-              .getIdentifier(), otherLocator.getIdentifier()));
-    }
-  }
 }

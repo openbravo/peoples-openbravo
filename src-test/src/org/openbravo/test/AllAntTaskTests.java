@@ -83,8 +83,7 @@ import org.openbravo.test.modularity.MergePropertiesTest;
 import org.openbravo.test.modularity.TableNameTest;
 import org.openbravo.test.preference.PreferenceTest;
 import org.openbravo.test.pricelist.PriceListTest;
-import org.openbravo.test.referencedinventory.ReferencedInventoryBoxTest;
-import org.openbravo.test.referencedinventory.ReferencedInventoryUnboxTest;
+import org.openbravo.test.referencedinventory.ReferencedInventoryTestSuite;
 import org.openbravo.test.reporting.AllJrxmlCompilation;
 import org.openbravo.test.reporting.JasperReportsCompilation;
 import org.openbravo.test.role.inheritance.RoleInheritanceTestSuite;
@@ -285,8 +284,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     CopyLinesFromOrdersTest.class,
 
     // Referenced Inventory
-    ReferencedInventoryBoxTest.class, //
-    ReferencedInventoryUnboxTest.class
+    ReferencedInventoryTestSuite.class
 
 })
 public class AllAntTaskTests {

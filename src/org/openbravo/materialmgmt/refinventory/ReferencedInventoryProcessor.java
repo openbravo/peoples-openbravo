@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,6 +63,8 @@ abstract class ReferencedInventoryProcessor {
   private ReferencedInventory referencedInventory;
   private JSONArray selectedStorageDetails;
 
+  private final ReservationManager reservationManager = new ReservationManager();
+
   /**
    * The returned ReferencedInventory will be associated to the given storage detail
    */
@@ -78,6 +80,10 @@ abstract class ReferencedInventoryProcessor {
    * Returns the expected goods movement line bin to
    */
   protected abstract String getNewStorageBinId(final JSONObject storageDetailJS);
+
+  private Locator getNewStorageBin(final JSONObject storageDetailJS) {
+    return OBDal.getInstance().getProxy(Locator.class, getNewStorageBinId(storageDetailJS));
+  }
 
   protected ReferencedInventoryProcessor(final ReferencedInventory referencedInventory) {
     setAndValidateReferencedInventory(referencedInventory);
@@ -154,9 +160,9 @@ abstract class ReferencedInventoryProcessor {
     try {
       OBContext.setAdminMode(true);
       final InternalMovement goodsMovementHeader = createAndSaveGoodsMovementHeader();
-      createAndSaveGoodsMovementLines(goodsMovementHeader);
+      releaseReservationsIfNecessaryAndCreateAndSaveGoodsMovementLines(goodsMovementHeader);
       processGoodsMovement(goodsMovementHeader.getId());
-      OBDal.getInstance().flush(); // Flush in admin mode
+      createRefInventoryReservationsIfNecessary();
       return goodsMovementHeader;
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
@@ -180,11 +186,15 @@ abstract class ReferencedInventoryProcessor {
     return StringUtils.left(generateInternalMovementName(), 60);
   }
 
-  private void createAndSaveGoodsMovementLines(final InternalMovement goodsMovementHeader)
-      throws JSONException {
+  private void releaseReservationsIfNecessaryAndCreateAndSaveGoodsMovementLines(
+      final InternalMovement goodsMovementHeader) throws JSONException {
     long lineNo = 10l;
     for (int i = 0; i < selectedStorageDetails.length(); i++) {
       final JSONObject storageDetailJS = selectedStorageDetails.getJSONObject(i);
+      reservationManager.releaseReservationsIfNecessary(getStorageDetail(storageDetailJS),
+          getSelectedQty(storageDetailJS),
+          getAttributeSetInstanceTo(getStorageDetail(storageDetailJS)),
+          getNewStorageBin(storageDetailJS));
       createAndSaveGoodsMovementLine(goodsMovementHeader, storageDetailJS, lineNo);
       lineNo = lineNo + 10l;
     }
@@ -205,22 +215,12 @@ abstract class ReferencedInventoryProcessor {
     line.setUOM(storageDetail.getProduct().getUOM());
     line.setAttributeSetValue(storageDetail.getAttributeSetValue());
     line.setStorageBin(storageDetail.getStorageBin());
-    line.setNewStorageBin(getProposedNewBinOrStorageDetailCurrentBin(storageDetailJS, storageDetail));
+    line.setNewStorageBin(getNewStorageBin(storageDetailJS));
     line.setMovement(internalMovement);
     line.setAttributeSetInstanceTo(getAttributeSetInstanceTo(storageDetail));
     internalMovement.getMaterialMgmtInternalMovementLineList().add(line);
     OBDal.getInstance().save(line);
     return line;
-  }
-
-  private Locator getProposedNewBinOrStorageDetailCurrentBin(final JSONObject storageDetailJS,
-      final StorageDetail storageDetail) {
-    final String locatorId = getNewStorageBinId(storageDetailJS);
-    if (StringUtils.isBlank(locatorId) || StringUtils.equals("null", locatorId)) {
-      return storageDetail.getStorageBin();
-    }
-
-    return OBDal.getInstance().getProxy(Locator.class, locatorId);
   }
 
   protected StorageDetail getStorageDetail(final JSONObject storageDetailJS) throws JSONException {
@@ -238,11 +238,6 @@ abstract class ReferencedInventoryProcessor {
     return selectedQty;
   }
 
-  /**
-   * Process a Goods Movement (Internal Movement).
-   * 
-   * Throws OBException if not possible to process
-   */
   private void processGoodsMovement(final String goodsMovementId) {
     final Process process = OBDal.getInstance().get(Process.class, M_MOVEMENT_POST_ID);
     final ProcessInstance pinstance = CallProcess.getInstance()
@@ -251,6 +246,12 @@ abstract class ReferencedInventoryProcessor {
     if (StringUtils.equals("Error", result.getType())) {
       throw new OBException(OBMessageUtils.messageBD("ErrorProcessingGoodMovement") + ": "
           + result.getMessage());
+    } else {
+      OBDal.getInstance().flush(); // Flush in admin mode
     }
+  }
+
+  private void createRefInventoryReservationsIfNecessary() {
+    reservationManager.createRefInventoryReservationsIfNecessary();
   }
 }

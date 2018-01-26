@@ -48,12 +48,16 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.exception.NoConnectionAvailableException;
+import org.openbravo.materialmgmt.ReservationUtils;
 import org.openbravo.materialmgmt.StockUtils;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
+import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
+import org.openbravo.model.materialmgmt.onhandquantity.ReservationStock;
 import org.openbravo.model.materialmgmt.onhandquantity.StockProposed;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
@@ -78,6 +82,7 @@ class ReferencedInventoryTestUtils {
   static final String PRODUCT_TSHIRT_ID = "0CF7C882B8BD4D249F3BCC8727A736D1";
   static final String PRODUCT_BALL_COLORATTRIBUTE = "EBCD272DC37B4ABBB12B96139E5837BF";
   static final String ATTRIBUTE_COLOR_YELLOW = "BC4F469EE90445AA8D6F41DE8523FA63";
+  static final String BIN_SPAIN_L01 = "193476BDD14E4A11B651B4E3E8D767C8";
   static final String BIN_SPAIN_L02 = "1A11102F318D4720957B52C8719A34F2";
   static final String BIN_SPAIN_L03 = "FB4D5926A1B443E68CC2DB2BBAE3315D";
   static final String PRODUCT_LAPTOP_SERIALATTRIBUTE = "901CAFF074954746970719E6A2910638";
@@ -244,5 +249,68 @@ class ReferencedInventoryTestUtils {
         StorageDetail.class);
     storageDetailCriteria.setMaxResults(1);
     return ((StorageDetail) storageDetailCriteria.uniqueResult()).getId();
+  }
+
+  static Reservation createProcessAndAssertReservation(final StorageDetail storageDetail,
+      final BigDecimal reservationQty, final String orderLineId, final boolean isAllocated) {
+    if (reservationQty != null && reservationQty.compareTo(BigDecimal.ZERO) > 0) {
+      Reservation reservation = OBProvider.getInstance().get(Reservation.class);
+      reservation.setOrganization(storageDetail.getOrganization());
+      reservation.setQuantity(reservationQty);
+      reservation.setProduct(storageDetail.getProduct());
+      reservation.setUOM(storageDetail.getUOM());
+      if (orderLineId != null) {
+        reservation.setSalesOrderLine(OBDal.getInstance().getProxy(OrderLine.class, orderLineId));
+      }
+      reservation.setWarehouse(storageDetail.getStorageBin().getWarehouse());
+      reservation.setStorageBin(storageDetail.getStorageBin());
+      reservation.setAttributeSetValue(storageDetail.getAttributeSetValue());
+      OBDal.getInstance().save(reservation);
+      ReservationUtils.processReserve(reservation, "PR");
+      OBDal.getInstance().refresh(reservation);
+
+      assertsNewCreatedReservation(reservationQty, reservation);
+
+      OBDal.getInstance().refresh(storageDetail);
+      assertThat("Storage Detail qty reserved is updated", reservationQty,
+          equalTo(storageDetail.getReservedQty()));
+
+      if (isAllocated) {
+        transformToAllocated(reservation);
+        OBDal.getInstance().refresh(reservation);
+        OBDal.getInstance().flush();
+        OBDal.getInstance().refresh(storageDetail);
+        assertThat("Storage Detail qty reserved is updated", reservationQty,
+            equalTo(storageDetail.getReservedQty()));
+      }
+
+      return reservation;
+    }
+    return null;
+  }
+
+  private static void assertsNewCreatedReservation(final BigDecimal reservationQty,
+      Reservation reservation) {
+    assertThat("Reservation must be processed", reservation.getRESStatus(), equalTo("CO"));
+    final List<ReservationStock> reservationStockLines = reservation
+        .getMaterialMgmtReservationStockList();
+    assertThat("Reservation has one line", reservationStockLines.size(), equalTo(1));
+    final ReservationStock reservationStock = reservationStockLines.get(0);
+    assertThat("Reservation qty is properly set in lines", reservationStock.getQuantity(),
+        equalTo(reservationQty));
+    assertThat("Reservation qty is properly set in header", reservation.getQuantity(),
+        equalTo(reservationQty));
+    assertThat("No released qty in lines", reservationStock.getReleased(), equalTo(BigDecimal.ZERO));
+    assertThat("No released qty  in header", reservation.getReleased(), equalTo(BigDecimal.ZERO));
+  }
+
+  private static void transformToAllocated(final Reservation reservation) {
+    for (final ReservationStock reservationStock : reservation
+        .getMaterialMgmtReservationStockList()) {
+      reservationStock.setAllocated(true);
+      OBDal.getInstance().save(reservationStock);
+    }
+
+    OBDal.getInstance().flush(); // Necessary to flush
   }
 }

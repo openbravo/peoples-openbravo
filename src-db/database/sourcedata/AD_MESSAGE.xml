@@ -20955,7 +20955,8 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--670C5D71F1E24F618E2EDFDA5CC44B3C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--670C5D71F1E24F618E2EDFDA5CC44B3C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--670C5D71F1E24F618E2EDFDA5CC44B3C-->  <VALUE><![CDATA[ReferencedInventoryInOtherBin]]></VALUE>
-<!--670C5D71F1E24F618E2EDFDA5CC44B3C-->  <MSGTEXT><![CDATA[The same referenced inventory %s is also located in bin %s]]></MSGTEXT>
+<!--670C5D71F1E24F618E2EDFDA5CC44B3C-->  <MSGTEXT><![CDATA[ referenced inventory is also located in bin: ]]></MSGTEXT>
+<!--670C5D71F1E24F618E2EDFDA5CC44B3C-->  <MSGTIP><![CDATA[At the beginning of the sentence the referenced inventory search key is passed as parameter]]></MSGTIP>
 <!--670C5D71F1E24F618E2EDFDA5CC44B3C-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--670C5D71F1E24F618E2EDFDA5CC44B3C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--670C5D71F1E24F618E2EDFDA5CC44B3C-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>

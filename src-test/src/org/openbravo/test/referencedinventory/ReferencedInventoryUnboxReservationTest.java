@@ -19,17 +19,11 @@
 
 package org.openbravo.test.referencedinventory;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import java.math.BigDecimal;
 import java.util.List;
 
-import javax.servlet.ServletException;
-
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.materialmgmt.refinventory.UnboxProcessor;
 import org.openbravo.model.common.plm.Product;
@@ -37,12 +31,17 @@ import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 
-public abstract class ReferencedInventoryUnboxTest extends ReferencedInventoryBoxTest {
+/**
+ * Abstract class to test unboxing related to reservations
+ */
+public abstract class ReferencedInventoryUnboxReservationTest extends ReferencedInventoryUnboxTest {
 
-  protected TestUnboxOutputParams testUnbox(final String _toBinId, final String productId,
-      final String attributeSetInstanceId, final BigDecimal qtyToUnbox) throws Exception {
+  protected TestUnboxOutputParams testUnboxReservation(final String _toBinId,
+      final String productId, final String attributeSetInstanceId, final BigDecimal qtyToBox,
+      final BigDecimal qtyToUnbox, final BigDecimal reservationQty, final boolean isAllocated)
+      throws Exception {
     ReferencedInventory refInv = testBox(null, productId, attributeSetInstanceId,
-        new BigDecimal("10"), null, false);
+        qtyToBox, reservationQty, isAllocated);
     final List<StorageDetail> storageDetails = refInv.getMaterialMgmtStorageDetailList();
     final Product originalProduct = storageDetails.get(0).getProduct();
     final String originalAttributeSet = ReferencedInventoryUtil.getParentAttributeSetInstance(
@@ -66,39 +65,13 @@ public abstract class ReferencedInventoryUnboxTest extends ReferencedInventoryBo
     return new TestUnboxOutputParams(refInv, originalProduct, originalAttributeSet, toBinId);
   }
 
-  protected class TestUnboxOutputParams {
-    protected ReferencedInventory refInv;
-    protected Product originalProduct;
-    protected String originalAttributeSetId;
-    protected String toBinId;
-
-    TestUnboxOutputParams(ReferencedInventory refInv, Product originalProduct,
-        String originalAttributeSetId, String toBinId) {
-      this.refInv = refInv;
-      this.originalProduct = originalProduct;
-      this.originalAttributeSetId = originalAttributeSetId;
-      this.toBinId = toBinId;
-    }
-  }
-
-  protected void assertsUnboxedStorageDetailIsInRightBin(final StorageDetail unboxedStorageDetail,
-      final String toBinId) throws ServletException, NoConnectionAvailableException {
-    assertThat("Unboxed storage detail is in the expected bin", unboxedStorageDetail
-        .getStorageBin().getId(), equalTo(toBinId));
-  }
-
-  protected class ParamsUnboxTest extends ParamsBoxTest {
+  protected class ParamsUnboxReservationTest extends ParamsBoxReservationTest {
     BigDecimal qtyToUnbox;
 
-    ParamsUnboxTest(String testDesc, String qtyToBox, String qtyToUnbox) {
-      super(testDesc, qtyToBox);
+    ParamsUnboxReservationTest(String testDesc, String qtyToBox, String qtyToUnbox,
+        String reservationQty) {
+      super(testDesc, qtyToBox, reservationQty);
       this.qtyToUnbox = new BigDecimal(qtyToUnbox);
-    }
-
-    @Override
-    public String toString() {
-      return "ParamsUnboxTest [testDesc=" + testDesc + ", qtyToBox=" + qtyToBox + ", qtyToUnbox="
-          + qtyToUnbox + "]";
     }
   }
 
