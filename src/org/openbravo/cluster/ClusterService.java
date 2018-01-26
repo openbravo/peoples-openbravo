@@ -63,14 +63,15 @@ public abstract class ClusterService {
     Connection connection = null;
     try {
       connection = dcp.getTransactionConnection();
-      String serviceTimeout = ClusterServiceData.getServiceTimeout(connection, dcp, getName());
+      String serviceTimeout = ClusterServiceData.getServiceTimeout(connection, dcp,
+          getServiceName());
       if (serviceTimeout == null) {
         return DEFAULT_TIMEOUT;
       }
       // the timeout is defined in the AD in seconds, convert to milliseconds
       return Long.parseLong(serviceTimeout) * 1000;
     } catch (Exception ex) {
-      log.error("Could not retrieve the settings for service {}", getName(), ex);
+      log.error("Could not retrieve the settings for service {}", getServiceName(), ex);
       return DEFAULT_TIMEOUT;
     } finally {
       try {
@@ -136,13 +137,14 @@ public abstract class ClusterService {
     Connection connection = null;
     try {
       connection = dcp.getTransactionConnection();
-      String nodeInCharge = ClusterServiceData.getNodeHandlingService(connection, dcp, getName());
+      String nodeInCharge = ClusterServiceData.getNodeHandlingService(connection, dcp,
+          getServiceName());
       if (nodeInCharge == null) {
         return false;
       }
       return nodeName.equals(nodeInCharge);
     } catch (Exception ex) {
-      log.error("Could not retrieve node in charge of service {}", getName(), ex);
+      log.error("Could not retrieve node in charge of service {}", getServiceName(), ex);
       return false;
     } finally {
       try {
@@ -160,7 +162,7 @@ public abstract class ClusterService {
   /**
    * @return a {@code String} that uniquely identifies the service.
    */
-  public abstract String getName();
+  public abstract String getServiceName();
 
   /**
    * @return {@code true} if the service currently is running in the present cluster node,

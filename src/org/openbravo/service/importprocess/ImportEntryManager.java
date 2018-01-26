@@ -491,7 +491,7 @@ public class ImportEntryManager extends ClusterService {
   }
 
   @Override
-  public String getName() {
+  public String getServiceName() {
     return "IMPORT_ENTRY";
   }
 

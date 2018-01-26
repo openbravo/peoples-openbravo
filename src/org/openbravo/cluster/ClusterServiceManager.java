@@ -75,7 +75,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     if (!isCluster()) {
       return;
     }
-    nodeName = getName();
+    nodeName = getNodeName();
     isShutDown = false;
     log.info("Starting Cluster Service Manager");
     // register as JMX Bean
@@ -130,7 +130,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
   /**
    * @return a {@code String} with the name that identifies the current cluster node.
    */
-  private String getName() {
+  private String getNodeName() {
     String name = ConfigParameters.getMachineName();
     if (StringUtils.isEmpty(name)) {
       name = SequenceIdData.getUUID();
@@ -150,7 +150,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       return true;
     }
     for (ClusterService service : clusterServices) {
-      if (serviceName.equals(service.getName())) {
+      if (serviceName.equals(service.getServiceName())) {
         return service.isHandledInCurrentNode();
       }
     }
@@ -192,7 +192,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     Map<String, String> leaders = new HashMap<>();
     for (ClusterService service : clusterServices) {
       String serviceSettings = "timeout: " + service.getTimeout() + " milliseconds";
-      leaders.put(service.getName(), serviceSettings);
+      leaders.put(service.getServiceName(), serviceSettings);
     }
     return leaders;
   }
@@ -322,7 +322,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     }
 
     private void registerOrUpdateService(ClusterService clusterService) {
-      String serviceName = clusterService.getName();
+      String serviceName = clusterService.getServiceName();
       try {
         ADClusterService service = manager.getService(serviceName);
         Long interval = clusterService.getTimeout() + clusterService.getThreshold();
