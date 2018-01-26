@@ -48,7 +48,6 @@ import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.cluster.ClusterService;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
@@ -63,7 +62,7 @@ import org.openbravo.service.json.JsonUtils;
  * @author mtaal
  */
 @ApplicationScoped
-public class ImportEntryManager extends ClusterService {
+public class ImportEntryManager {
 
   /*
    * For an overview of the technical layer, first view this presentation:
@@ -137,6 +136,9 @@ public class ImportEntryManager extends ClusterService {
   @Inject
   @Any
   private ImportEntryArchiveManager importEntryArchiveManager;
+
+  @Inject
+  private ImportEntryClusterService clusterService;
 
   private ImportEntryManagerThread managerThread;
   private ThreadPoolExecutor executorService;
@@ -490,21 +492,6 @@ public class ImportEntryManager extends ClusterService {
     }
   }
 
-  @Override
-  public String getServiceName() {
-    return "IMPORT_ENTRY";
-  }
-
-  @Override
-  public boolean isAlive() {
-    return isExecutorRunning();
-  }
-
-  @Override
-  public boolean isEnabled() {
-    return !ImportProcessUtils.isImportProcessDisabled();
-  }
-
   private static class ImportEntryManagerThread implements Runnable {
 
     private final ImportEntryManager manager;
@@ -699,7 +686,7 @@ public class ImportEntryManager extends ClusterService {
     }
 
     private boolean isHandlingImportEntries() {
-      return manager.isHandledInCurrentNode();
+      return manager.clusterService.isHandledInCurrentNode();
     }
 
     public boolean isRunning() {

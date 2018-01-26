@@ -116,7 +116,12 @@ public abstract class ClusterService {
     return initialized;
   }
 
-  protected boolean isHandledInCurrentNode() {
+  /**
+   * @return {@code true} if the current cluster node should handle this service, {@code false}
+   *         otherwise. Note that if we are not in a clustered environment, this method is always
+   *         returning true.
+   */
+  public boolean isHandledInCurrentNode() {
     if (!ClusterServiceManager.isCluster()) {
       return true;
     }
