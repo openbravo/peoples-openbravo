@@ -81,9 +81,29 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     // register as JMX Bean
     MBeanRegistry.registerMBean(this.getClass().getSimpleName(), this);
     // start the ping thread
-    executorService = Executors.newSingleThreadExecutor(new DaemonThreadFactory());
+    executorService = createExecutorService();
     ClusterServiceThread thread = new ClusterServiceThread(this);
     executorService.execute(thread);
+  }
+
+  /**
+   * @return a single-threaded ExecutorService that creates threads which have daemon set to true.
+   */
+  private ExecutorService createExecutorService() {
+    return Executors.newSingleThreadExecutor(new ThreadFactory() {
+      @Override
+      public Thread newThread(Runnable runnable) {
+        SecurityManager s = System.getSecurityManager();
+        ThreadGroup group = (s != null) ? s.getThreadGroup() : Thread.currentThread()
+            .getThreadGroup();
+        final Thread thread = new Thread(group, runnable, "Cluster Service Leader Registrator");
+        if (thread.getPriority() != Thread.NORM_PRIORITY) {
+          thread.setPriority(Thread.NORM_PRIORITY);
+        }
+        thread.setDaemon(true);
+        return thread;
+      }
+    });
   }
 
   /**
@@ -384,28 +404,6 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       updateQuery.setParameter("service", serviceName);
       updateQuery.setParameter("currentNode", manager.nodeName);
       updateQuery.executeUpdate();
-    }
-  }
-
-  /**
-   * Creates threads which have daemon set to true.
-   */
-  private static class DaemonThreadFactory implements ThreadFactory {
-    private final ThreadGroup group;
-
-    public DaemonThreadFactory() {
-      SecurityManager s = System.getSecurityManager();
-      group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-    }
-
-    @Override
-    public Thread newThread(Runnable runnable) {
-      final Thread thread = new Thread(group, runnable, "Cluster Service Leader Registrator");
-      if (thread.getPriority() != Thread.NORM_PRIORITY) {
-        thread.setPriority(Thread.NORM_PRIORITY);
-      }
-      thread.setDaemon(true);
-      return thread;
     }
   }
 }
