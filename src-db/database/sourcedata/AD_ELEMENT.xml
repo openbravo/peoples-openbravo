@@ -21300,10 +21300,10 @@ If one of the trees of a table uses the ADTree tree structure, that must be the 
 <!--0D65B6036F0B4A2186B001CE897DA9D5-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--0D65B6036F0B4A2186B001CE897DA9D5-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--0D65B6036F0B4A2186B001CE897DA9D5-->  <COLUMNNAME><![CDATA[Node]]></COLUMNNAME>
-<!--0D65B6036F0B4A2186B001CE897DA9D5-->  <NAME><![CDATA[Node]]></NAME>
-<!--0D65B6036F0B4A2186B001CE897DA9D5-->  <PRINTNAME><![CDATA[Node]]></PRINTNAME>
-<!--0D65B6036F0B4A2186B001CE897DA9D5-->  <DESCRIPTION><![CDATA[The name that uniquely identifies a node of a clustered environment.]]></DESCRIPTION>
-<!--0D65B6036F0B4A2186B001CE897DA9D5-->  <HELP><![CDATA[The name that uniquely identifies a node of a clustered environment.]]></HELP>
+<!--0D65B6036F0B4A2186B001CE897DA9D5-->  <NAME><![CDATA[Master Node]]></NAME>
+<!--0D65B6036F0B4A2186B001CE897DA9D5-->  <PRINTNAME><![CDATA[Master Node]]></PRINTNAME>
+<!--0D65B6036F0B4A2186B001CE897DA9D5-->  <DESCRIPTION><![CDATA[The name that uniquely identifies the node of a clustered environment which is currently in charge of handling a particular service.]]></DESCRIPTION>
+<!--0D65B6036F0B4A2186B001CE897DA9D5-->  <HELP><![CDATA[The name that uniquely identifies the node of a clustered environment which is currently in charge of handling a particular service.]]></HELP>
 <!--0D65B6036F0B4A2186B001CE897DA9D5-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--0D65B6036F0B4A2186B001CE897DA9D5-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--0D65B6036F0B4A2186B001CE897DA9D5--></AD_ELEMENT>
