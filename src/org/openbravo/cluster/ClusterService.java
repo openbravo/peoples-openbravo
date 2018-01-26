@@ -43,7 +43,7 @@ public abstract class ClusterService {
   private Long threshold;
   private Long nextPing;
   private String nodeName;
-  private boolean handledInCurrentNode;
+  private String nodeHandlingService;
   private boolean initialized = false;
   private boolean useCache = false;
 
@@ -126,26 +126,25 @@ public abstract class ClusterService {
     long now = new Date().getTime();
     if (!useCache || now > lastPingTime) {
       // check in the database if this service is being handled in the current node
-      handledInCurrentNode = isHandlingService();
+      nodeHandlingService = getNodeHandlingServiceFromDB();
       setUseCache(true);
     }
-    return handledInCurrentNode;
+    return nodeName.equals(nodeHandlingService);
   }
 
-  private boolean isHandlingService() {
+  protected String getNodeHandlingService() {
+    return nodeHandlingService;
+  }
+
+  private String getNodeHandlingServiceFromDB() {
     DalConnectionProvider dcp = new DalConnectionProvider(false);
     Connection connection = null;
     try {
       connection = dcp.getTransactionConnection();
-      String nodeInCharge = ClusterServiceData.getNodeHandlingService(connection, dcp,
-          getServiceName());
-      if (nodeInCharge == null) {
-        return false;
-      }
-      return nodeName.equals(nodeInCharge);
+      return ClusterServiceData.getNodeHandlingService(connection, dcp, getServiceName());
     } catch (Exception ex) {
       log.error("Could not retrieve node in charge of service {}", getServiceName(), ex);
-      return false;
+      return null;
     } finally {
       try {
         dcp.releaseCommitConnection(connection);

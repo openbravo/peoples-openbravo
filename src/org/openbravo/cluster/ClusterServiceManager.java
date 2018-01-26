@@ -305,6 +305,13 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
           registerOrUpdateService(service);
           service.setNextPing(current + service.getTimeout());
           anyServiceRegistered = true;
+          if (service.isHandledInCurrentNode()) {
+            log.info("Service {} handled by current node {}", service.getServiceName(),
+                manager.nodeName);
+          } else {
+            log.info("Service {} handled by other node ({})", service.getServiceName(),
+                service.getNodeHandlingService());
+          }
         }
       }
       return anyServiceRegistered;
