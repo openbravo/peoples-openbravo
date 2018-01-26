@@ -85,9 +85,14 @@ public class LoginHandler extends HttpBaseServlet {
 
     log4j.debug("start doPost");
 
-    // Cookie id will be reset every time a user logs in, to prevent a malicious user from stealing
-    // a cookie which later on will correspond with a valid session
-    resetCookieId(req);
+    boolean isPasswordResetFlow = Boolean.parseBoolean(req.getParameter("resetPassword"));
+    if (!isPasswordResetFlow) {
+      // Cookie id will be reset every time a user logs in, to prevent a malicious user from
+      // stealing a cookie which later on will correspond with a valid session
+      // If we are in password reset flow, there is no need to reset the cookie as it was reset in
+      // the previous attempt to login
+      resetCookieId(req);
+    }
 
     doOptions(req, res);
     final VariablesSecureApp vars = new VariablesSecureApp(req);
@@ -100,7 +105,6 @@ public class LoginHandler extends HttpBaseServlet {
     final String user;
     final String password;
 
-    boolean isPasswordResetFlow = Boolean.parseBoolean(vars.getStringParameter("resetPassword"));
     if (isPasswordResetFlow) {
       user = vars.getSessionValue("#AD_User_ID");
     } else {
