@@ -46,6 +46,7 @@ public abstract class ClusterService {
   private String nodeHandlingService;
   private boolean initialized = false;
   private boolean useCache = false;
+  private boolean isDisabled = false;
 
   protected boolean init(String currentNodeName) {
     if (!isEnabled()) {
@@ -156,6 +157,14 @@ public abstract class ClusterService {
 
   protected void setUseCache(boolean useCache) {
     this.useCache = useCache;
+  }
+
+  protected boolean isDisabled() {
+    return isDisabled;
+  }
+
+  protected void setDisabled(boolean isDisabled) {
+    this.isDisabled = isDisabled;
   }
 
   /**

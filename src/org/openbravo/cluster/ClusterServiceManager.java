@@ -169,12 +169,20 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     if (!isCluster()) {
       return true;
     }
+    ClusterService service = getClusterService(serviceName);
+    if (service == null) {
+      return false;
+    }
+    return service.isHandledInCurrentNode();
+  }
+
+  private ClusterService getClusterService(String serviceName) {
     for (ClusterService service : clusterServices) {
       if (serviceName.equals(service.getServiceName())) {
-        return service.isHandledInCurrentNode();
+        return service;
       }
     }
-    return false;
+    return null;
   }
 
   @Override
@@ -218,38 +226,45 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
   }
 
   @Override
-  public void registerCurrentNodeForService(String serviceName) {
+  public void enablePingForService(String serviceName) {
+    ClusterService clusterService = getClusterService(serviceName);
+    if (clusterService != null) {
+      // Enable the ping for the service
+      clusterService.setDisabled(false);
+    }
+    log.info("Enabled ping for service {} in node {}", serviceName, nodeName);
+  }
+
+  @Override
+  public void disablePingForService(String serviceName) {
     try {
-      OBContext.setAdminMode(false); // allow to register the leader from any context
-      ADClusterService service = getService(serviceName);
-      if (service == null) {
-        service = registerService(serviceName);
+      OBContext.setAdminMode(false); // allow to delete, the current context does not matter
+
+      // If the current node is the leader of the service, unregister it
+      OBCriteria<ADClusterService> criteria = OBDal.getInstance().createCriteria(
+          ADClusterService.class);
+      criteria.add(Restrictions.eq(ADClusterService.PROPERTY_NODE, nodeName));
+      criteria.add(Restrictions.eq(ADClusterService.PROPERTY_SERVICE, serviceName));
+      ADClusterService service = (ADClusterService) criteria.uniqueResult();
+      if (service != null) {
+        log.info("Degeristering node {} in charge of service {}", nodeName, serviceName);
+        OBDal.getInstance().remove(service);
       }
-      service.setNode(nodeName);
       OBDal.getInstance().commitAndClose();
-      log.info("Forced node {} to be in charge of service {}", nodeName, serviceName);
+
+      ClusterService clusterService = getClusterService(serviceName);
+      if (clusterService != null) {
+        // Disable the ping for the service
+        clusterService.setDisabled(true);
+        // force the service to go to the database to see the changes (if any)
+        clusterService.setUseCache(false);
+      }
+      log.info("Disabled ping for service {} in node {}", serviceName, nodeName);
     } catch (Exception ex) {
       log.error("Could not force node {} to be in charge of service {}", nodeName, serviceName);
     } finally {
       OBContext.restorePreviousMode();
     }
-  }
-
-  private ADClusterService getService(String serviceName) {
-    OBCriteria<ADClusterService> criteria = OBDal.getInstance().createCriteria(
-        ADClusterService.class);
-    criteria.add(Restrictions.eq(ADClusterService.PROPERTY_SERVICE, serviceName));
-    return (ADClusterService) criteria.uniqueResult();
-  }
-
-  private ADClusterService registerService(String serviceName) {
-    ADClusterService service = OBProvider.getInstance().get(ADClusterService.class);
-    service.setOrganization(OBDal.getInstance().getProxy(Organization.class, "0"));
-    service.setClient(OBDal.getInstance().getProxy(Client.class, "0"));
-    service.setService(serviceName);
-    service.setNode(nodeName);
-    OBDal.getInstance().save(service);
-    return service;
   }
 
   private static class ClusterServiceThread implements Runnable {
@@ -321,7 +336,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       long nextSleep = 0L;
       long startTime = System.currentTimeMillis();
       for (ClusterService service : manager.clusterServices) {
-        if (!service.isAlive() || !service.isInitialized()) {
+        if (!service.isAlive() || !service.isInitialized() || service.isDisabled()) {
           // Do not update the last ping: the service is not working
           log.debug("Service {} is not working in node {}", service, manager.nodeName);
           continue;
@@ -351,13 +366,13 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     private void registerOrUpdateService(ClusterService clusterService) {
       String serviceName = clusterService.getServiceName();
       try {
-        ADClusterService service = manager.getService(serviceName);
+        ADClusterService service = getService(serviceName);
         Long interval = clusterService.getTimeout() + clusterService.getThreshold();
         Date now = new Date();
         if (service == null) {
           // register the service for the first time
           log.info("Registering node {} in charge of service {}", manager.nodeName, serviceName);
-          manager.registerService(serviceName);
+          registerService(serviceName);
         } else if (manager.nodeName.equals(service.getNode())) {
           // current node is charge of handling the service, just update the last ping
           log.debug("Current node {} still in charge of service {}", manager.nodeName, serviceName);
@@ -378,6 +393,23 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
         log.warn("Node {} could not complete register/update task of service {}", manager.nodeName,
             serviceName);
       }
+    }
+
+    private ADClusterService getService(String serviceName) {
+      OBCriteria<ADClusterService> criteria = OBDal.getInstance().createCriteria(
+          ADClusterService.class);
+      criteria.add(Restrictions.eq(ADClusterService.PROPERTY_SERVICE, serviceName));
+      return (ADClusterService) criteria.uniqueResult();
+    }
+
+    private ADClusterService registerService(String serviceName) {
+      ADClusterService service = OBProvider.getInstance().get(ADClusterService.class);
+      service.setOrganization(OBDal.getInstance().getProxy(Organization.class, "0"));
+      service.setClient(OBDal.getInstance().getProxy(Client.class, "0"));
+      service.setService(serviceName);
+      service.setNode(manager.nodeName);
+      OBDal.getInstance().save(service);
+      return service;
     }
 
     private boolean shouldReplaceNodeOfService(ADClusterService service, Long intervalAmount) {

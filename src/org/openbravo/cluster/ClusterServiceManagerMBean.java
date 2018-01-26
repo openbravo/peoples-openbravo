@@ -48,11 +48,20 @@ public interface ClusterServiceManagerMBean {
   public Map<String, String> getClusterServiceSettings();
 
   /**
-   * Forces the current node to be the node in charge of handling the service whose name is passed
-   * as parameter.
+   * Enables the ping service for a particular cluster service.
    * 
    * @param serviceName
-   *          the name of the service to be handled by the current node.
+   *          the name of the service for which the ping is enabled.
    */
-  public void registerCurrentNodeForService(String serviceName);
+  public void enablePingForService(String serviceName);
+
+  /**
+   * Forces the current node to stop doing pings for a particular cluster service. In case the
+   * current node is the node in charge of handling the service it will be unregistered as the
+   * leader of the service.
+   * 
+   * @param serviceName
+   *          the name of the service for which the ping is disabled.
+   */
+  public void disablePingForService(String serviceName);
 }
