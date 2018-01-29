@@ -236,15 +236,30 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
   @Override
   public void enablePingForService(String serviceName) {
     ClusterService clusterService = getClusterService(serviceName);
-    if (clusterService != null) {
-      // Enable the ping for the service
-      clusterService.setDisabled(false);
+    if (clusterService == null) {
+      log.info("Can't enable ping for non-existent service {} in node {}", serviceName, nodeId);
+      return;
     }
+    if (!clusterService.isDisabled()) {
+      log.info("Ping for service {} in node {} is already enabled", serviceName, nodeId);
+      return;
+    }
+    // Enable the ping for the service
+    clusterService.setDisabled(false);
     log.info("Enabled ping for service {} in node {}", serviceName, nodeId);
   }
 
   @Override
   public void disablePingForService(String serviceName) {
+    ClusterService clusterService = getClusterService(serviceName);
+    if (clusterService == null) {
+      log.info("Can't disable ping for non-existent service {} in node {}", serviceName, nodeId);
+      return;
+    }
+    if (clusterService.isDisabled()) {
+      log.info("Ping for service {} in node {} is already disabled", serviceName, nodeId);
+      return;
+    }
     try {
       OBContext.setAdminMode(false); // allow to delete, the current context does not matter
 
@@ -260,13 +275,11 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       }
       OBDal.getInstance().commitAndClose();
 
-      ClusterService clusterService = getClusterService(serviceName);
-      if (clusterService != null) {
-        // Disable the ping for the service
-        clusterService.setDisabled(true);
-        // force the service to go to the database to see the changes (if any)
-        clusterService.setUseCache(false);
-      }
+      // Disable the ping for the service
+      clusterService.setDisabled(true);
+      // force the service to go to the database to see the changes (if any)
+      clusterService.setUseCache(false);
+
       log.info("Disabled ping for service {} in node {}", serviceName, nodeId);
     } catch (Exception ex) {
       log.error("Could not force node {} to be in charge of service {}", nodeId, serviceName);
