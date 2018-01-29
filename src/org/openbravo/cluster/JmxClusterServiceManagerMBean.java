@@ -22,10 +22,10 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * This interface allows to define the {@link ClusterServiceManager} class as an standard MBean that
- * allows to manage some of the cluster services settings through JMX.
+ * This interface allows to define the {@link JmxClusterServiceManager} class as an standard MBean
+ * that allows to display and manage some of the cluster services settings through JMX.
  */
-public interface ClusterServiceManagerMBean {
+public interface JmxClusterServiceManagerMBean {
 
   /**
    * @return the unique identifier of the current cluster node.
@@ -43,12 +43,12 @@ public interface ClusterServiceManagerMBean {
   public Date getLastPingOfCurrentNode();
 
   /**
-   * @return a Map with information (leader and last ping) per cluster service.
+   * @return a Map with information (leader and last ping) per available cluster service.
    */
   public Map<String, String> getClusterServiceLeaders();
 
   /**
-   * @return a Map with information of the settings for each cluster service.
+   * @return a Map with information of the settings for each available cluster service.
    */
   public Map<String, String> getClusterServiceSettings();
 

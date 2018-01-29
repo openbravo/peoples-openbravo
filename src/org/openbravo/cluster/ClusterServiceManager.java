@@ -36,6 +36,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -52,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * clustered environment.
  */
 @ApplicationScoped
-public class ClusterServiceManager implements ClusterServiceManagerMBean {
+public class ClusterServiceManager {
   private static final Logger log = LoggerFactory.getLogger(ClusterServiceManager.class);
   private static final String UNKNOWN = "Unknown";
   private static boolean isCluster = OBPropertiesProvider.getInstance().getBooleanProperty(
@@ -81,8 +82,9 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     nodeName = getNodeName();
     isShutDown = false;
     log.info("Starting Cluster Service Manager - Node ID: {}, Node Name: {}", nodeId, nodeName);
-    // register as JMX Bean
-    MBeanRegistry.registerMBean(this.getClass().getSimpleName(), this);
+    // register the JMX MBean
+    MBeanRegistry.registerMBean("ClusterServices",
+        WeldUtils.getInstanceFromStaticBeanManager(JmxClusterServiceManager.class));
     // start the ping thread
     executorService = createExecutorService();
     ClusterServiceThread thread = new ClusterServiceThread(this);
@@ -90,7 +92,19 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
   }
 
   /**
-   * @return a single-threaded ExecutorService that creates threads which have daemon set to true.
+   * @return a {@code String} with the name that identifies the current cluster node.
+   */
+  private String getNodeName() {
+    String name = ConfigParameters.getMachineName();
+    if (StringUtils.isEmpty(name)) {
+      name = UNKNOWN;
+    }
+    return name;
+  }
+
+  /**
+   * @return a single-threaded {@code ExecutorService} that creates threads which have daemon set to
+   *         true.
    */
   private ExecutorService createExecutorService() {
     return Executors.newSingleThreadExecutor(new ThreadFactory() {
@@ -151,17 +165,14 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
   }
 
   /**
-   * @return a {@code String} with the name that identifies the current cluster node.
+   * Retrieves a {@link ClusterService} by its name.
+   * 
+   * @param serviceName
+   *          The name of the cluster service
+   * 
+   * @return the {@link ClusterService} identified by the name passed as parameter.
    */
-  private String getNodeName() {
-    String name = ConfigParameters.getMachineName();
-    if (StringUtils.isEmpty(name)) {
-      name = UNKNOWN;
-    }
-    return name;
-  }
-
-  private ClusterService getClusterService(String serviceName) {
+  protected ClusterService getClusterService(String serviceName) {
     for (ClusterService service : clusterServices) {
       if (serviceName.equals(service.getServiceName())) {
         return service;
@@ -170,45 +181,10 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     return null;
   }
 
-  @Override
-  public String getCurrentNodeId() {
-    return nodeId;
-  }
-
-  @Override
-  public String getCurrentNodeName() {
-    return nodeName;
-  }
-
-  @Override
-  public Date getLastPingOfCurrentNode() {
-    return lastPing;
-  }
-
-  @Override
-  public Map<String, String> getClusterServiceLeaders() {
-    Map<String, String> leaders = new HashMap<>();
-    try {
-      OBContext.setAdminMode(true);
-      OBCriteria<ADClusterService> criteria = OBDal.getInstance().createCriteria(
-          ADClusterService.class);
-      for (ADClusterService service : criteria.list()) {
-        StringBuilder serviceInfo = new StringBuilder();
-        serviceInfo.append("leader ID: " + service.getNodeID());
-        serviceInfo.append(", leader name: " + service.getNodeName());
-        serviceInfo.append(", last ping: " + service.getUpdated());
-        leaders.put(service.getService(), serviceInfo.toString());
-      }
-      OBDal.getInstance().commitAndClose();
-    } catch (Exception ignore) {
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-    return leaders;
-  }
-
-  @Override
-  public Map<String, String> getClusterServiceSettings() {
+  /**
+   * @return a {@code Map} with the settings configured per each available {@link ClusterService}.
+   */
+  protected Map<String, String> getClusterServiceSettings() {
     Map<String, String> leaders = new HashMap<>();
     for (ClusterService service : clusterServices) {
       String serviceSettings = "timeout: " + service.getTimeout() + " milliseconds";
@@ -217,59 +193,25 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     return leaders;
   }
 
-  @Override
-  public void enablePingForService(String serviceName) {
-    ClusterService clusterService = getClusterService(serviceName);
-    if (clusterService == null) {
-      log.info("Can't enable ping for non-existent service {} in node {}", serviceName, nodeId);
-      return;
-    }
-    if (!clusterService.isDisabled()) {
-      log.info("Ping for service {} in node {} is already enabled", serviceName, nodeId);
-      return;
-    }
-    // Enable the ping for the service
-    clusterService.setDisabled(false);
-    log.info("Enabled ping for service {} in node {}", serviceName, nodeId);
+  /**
+   * @return the unique identifier of the current cluster node.
+   */
+  protected String getCurrentNodeId() {
+    return nodeId;
   }
 
-  @Override
-  public void disablePingForService(String serviceName) {
-    ClusterService clusterService = getClusterService(serviceName);
-    if (clusterService == null) {
-      log.info("Can't disable ping for non-existent service {} in node {}", serviceName, nodeId);
-      return;
-    }
-    if (clusterService.isDisabled()) {
-      log.info("Ping for service {} in node {} is already disabled", serviceName, nodeId);
-      return;
-    }
-    try {
-      OBContext.setAdminMode(false); // allow to delete, the current context does not matter
+  /**
+   * @return the name of the current cluster node.
+   */
+  protected String getCurrentNodeName() {
+    return nodeName;
+  }
 
-      // If the current node is the leader of the service, unregister it
-      OBCriteria<ADClusterService> criteria = OBDal.getInstance().createCriteria(
-          ADClusterService.class);
-      criteria.add(Restrictions.eq(ADClusterService.PROPERTY_NODEID, nodeId));
-      criteria.add(Restrictions.eq(ADClusterService.PROPERTY_SERVICE, serviceName));
-      ADClusterService service = (ADClusterService) criteria.uniqueResult();
-      if (service != null) {
-        log.info("Degeristering node {} in charge of service {}", nodeId, serviceName);
-        OBDal.getInstance().remove(service);
-      }
-      OBDal.getInstance().commitAndClose();
-
-      // Disable the ping for the service
-      clusterService.setDisabled(true);
-      // force the service to go to the database to see the changes (if any)
-      clusterService.setUseCache(false);
-
-      log.info("Disabled ping for service {} in node {}", serviceName, nodeId);
-    } catch (Exception ex) {
-      log.error("Could not force node {} to be in charge of service {}", nodeId, serviceName);
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+  /**
+   * @return the Date of the last ping done (for any service) by the current node.
+   */
+  protected Date getLastPing() {
+    return lastPing;
   }
 
   private static class ClusterServiceThread implements Runnable {
