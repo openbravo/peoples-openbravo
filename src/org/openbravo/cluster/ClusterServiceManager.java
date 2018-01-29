@@ -211,9 +211,11 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       OBCriteria<ADClusterService> criteria = OBDal.getInstance().createCriteria(
           ADClusterService.class);
       for (ADClusterService service : criteria.list()) {
-        String serviceInfo = "leader: " + service.getNodeID() + ", last ping: "
-            + service.getUpdated();
-        leaders.put(service.getService(), serviceInfo);
+        StringBuilder serviceInfo = new StringBuilder();
+        serviceInfo.append("leader ID: " + service.getNodeID());
+        serviceInfo.append(", leader name: " + service.getNodeName());
+        serviceInfo.append(", last ping: " + service.getUpdated());
+        leaders.put(service.getService(), serviceInfo.toString());
       }
       OBDal.getInstance().commitAndClose();
     } catch (Exception ignore) {
@@ -392,7 +394,8 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
         Date now = new Date();
         if (service == null) {
           // register the service for the first time
-          log.info("Registering node {} in charge of service {}", manager.nodeId, serviceName);
+          log.info("Registering current node {} in charge of service {}", manager.nodeId,
+              serviceName);
           registerService(serviceName);
         } else if (manager.nodeId.equals(service.getNodeID())) {
           // current node is charge of handling the service, just update the last ping
