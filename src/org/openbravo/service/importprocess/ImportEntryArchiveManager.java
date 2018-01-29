@@ -120,8 +120,6 @@ public class ImportEntryArchiveManager {
         return;
       }
 
-      // make ourselves an admin
-      OBContext.setOBContext("0", "0", "0", "0");
       Date lastCreated = null;
       while (true) {
         try {
@@ -134,6 +132,13 @@ public class ImportEntryArchiveManager {
             doWait();
             // woken, re-start from beginning of loop
             continue;
+          }
+
+          // obcontext cleared or wrong obcontext, repair
+          if (OBContext.getOBContext() == null
+              || !"0".equals(OBContext.getOBContext().getUser().getId())) {
+            // make ourselves an admin
+            OBContext.setOBContext("0", "0", "0", "0");
           }
 
           boolean dataProcessed = false;

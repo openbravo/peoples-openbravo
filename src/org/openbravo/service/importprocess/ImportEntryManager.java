@@ -550,12 +550,6 @@ public class ImportEntryManager {
       try {
         List<String> typesOfData = null;
         while (true) {
-          // obcontext cleared or wrong obcontext, repair
-          if (OBContext.getOBContext() == null
-              || !"0".equals(OBContext.getOBContext().getUser().getId())) {
-            // make ourselves an admin
-            OBContext.setOBContext("0", "0", "0", "0");
-          }
           try {
 
             // system is shutting down, bail out
@@ -567,6 +561,13 @@ public class ImportEntryManager {
               doWait();
               // woken, re-start from beginning of loop
               continue;
+            }
+
+            // obcontext cleared or wrong obcontext, repair
+            if (OBContext.getOBContext() == null
+                || !"0".equals(OBContext.getOBContext().getUser().getId())) {
+              // make ourselves an admin
+              OBContext.setOBContext("0", "0", "0", "0");
             }
 
             if (typesOfData == null) {
