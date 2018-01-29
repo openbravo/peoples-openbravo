@@ -161,24 +161,6 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     return name;
   }
 
-  /**
-   * @param serviceName
-   *          The name that identifies a service
-   * @return {@code true} if the current cluster node should handle the service passed as parameter,
-   *         {@code false} otherwise. Note that if we are not in a clustered environment, this
-   *         method is always returning true.
-   */
-  public boolean isServiceHandledInCurrentNode(String serviceName) {
-    if (!isCluster()) {
-      return true;
-    }
-    ClusterService service = getClusterService(serviceName);
-    if (service == null) {
-      return false;
-    }
-    return service.isHandledInCurrentNode();
-  }
-
   private ClusterService getClusterService(String serviceName) {
     for (ClusterService service : clusterServices) {
       if (serviceName.equals(service.getServiceName())) {

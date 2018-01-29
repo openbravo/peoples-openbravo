@@ -33,7 +33,6 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.cluster.ClusterServiceManager;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -71,7 +70,7 @@ public class ImportEntryArchiveManager {
   private Instance<ImportEntryArchivePreProcessor> archiveEntryPreProcessors;
 
   @Inject
-  private ClusterServiceManager clusterServiceManager;
+  private ImportEntryClusterService clusterService;
 
   private ImportEntryArchiveThread archiveThread;
   private ExecutorService executorService;
@@ -163,6 +162,11 @@ public class ImportEntryArchiveManager {
             final List<ImportEntry> entries = entriesQry.list();
             log.debug("Found " + entries.size() + " import entries");
             for (ImportEntry importEntry : entries) {
+              if (!isHandlingImportEntryArchiving()) {
+                // detected that we are not anymore in the node in charge of handling the import
+                // entries, stop archiving them
+                break;
+              }
               dataProcessed = true;
               lastCreated = importEntry.getCreationDate();
 
@@ -202,7 +206,11 @@ public class ImportEntryArchiveManager {
       // - in cluster: process if we are in the node in charge of handling the import entries,
       // otherwise just wait
       // - not in cluster: do not wait
-      return !manager.clusterServiceManager.isServiceHandledInCurrentNode("IMPORT_ENTRY");
+      return !isHandlingImportEntryArchiving();
+    }
+
+    private boolean isHandlingImportEntryArchiving() {
+      return manager.clusterService.isHandledInCurrentNode();
     }
 
     private void doWait() {
