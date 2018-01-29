@@ -74,7 +74,8 @@ public class JmxClusterServiceManager implements JmxClusterServiceManagerMBean {
         leaders.put(service.getService(), serviceInfo.toString());
       }
       OBDal.getInstance().commitAndClose();
-    } catch (Exception ignore) {
+    } catch (Exception ex) {
+      log.error("Could not retrieve the cluster services information", ex);
     } finally {
       OBContext.restorePreviousMode();
     }
