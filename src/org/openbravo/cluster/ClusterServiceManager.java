@@ -229,9 +229,6 @@ public class ClusterServiceManager {
         return;
       }
 
-      // make ourselves an admin
-      OBContext.setOBContext("0", "0", "0", "0");
-
       if (!registerAvailableClusterServices()) {
         log.warn("Could not find any available cluster service");
         return;
@@ -242,6 +239,14 @@ public class ClusterServiceManager {
           if (manager.isShutDown) {
             return;
           }
+
+          // obcontext cleared or wrong obcontext, repair
+          if (OBContext.getOBContext() == null
+              || !"0".equals(OBContext.getOBContext().getUser().getId())) {
+            // make ourselves an admin
+            OBContext.setOBContext("0", "0", "0", "0");
+          }
+
           Long nextSleep = doPingRound();
           // wait for the next ping round
           try {
@@ -259,24 +264,29 @@ public class ClusterServiceManager {
       if (manager.clusterServices == null) {
         return false;
       }
-      long current = System.currentTimeMillis();
-      boolean anyServiceRegistered = false;
-      for (ClusterService service : manager.clusterServices) {
-        if (service.init(manager.nodeId)) {
-          // service initialized properly, register it
-          registerOrUpdateService(service);
-          service.setNextPing(current + service.getTimeout());
-          anyServiceRegistered = true;
-          if (service.isHandledInCurrentNode()) {
-            log.info("Service {} handled by current node {}", service.getServiceName(),
-                manager.nodeId);
-          } else {
-            log.info("Service {} handled by other node ({})", service.getServiceName(),
-                service.getNodeHandlingService());
+      try {
+        OBContext.setAdminMode(false);
+        long current = System.currentTimeMillis();
+        boolean anyServiceRegistered = false;
+        for (ClusterService service : manager.clusterServices) {
+          if (service.init(manager.nodeId)) {
+            // service initialized properly, register it
+            registerOrUpdateService(service);
+            service.setNextPing(current + service.getTimeout());
+            anyServiceRegistered = true;
+            if (service.isHandledInCurrentNode()) {
+              log.info("Service {} handled by current node {}", service.getServiceName(),
+                  manager.nodeId);
+            } else {
+              log.info("Service {} handled by other node ({})", service.getServiceName(),
+                  service.getNodeHandlingService());
+            }
           }
         }
+        return anyServiceRegistered;
+      } finally {
+        OBContext.restorePreviousMode();
       }
-      return anyServiceRegistered;
     }
 
     private Long doPingRound() {
