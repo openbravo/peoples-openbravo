@@ -544,7 +544,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
                 null, null, null);
             Vector<ReportGeneralLedgerJournalData> res = new Vector<ReportGeneralLedgerJournalData>();
             while (scrollCountLines.next()) {
-              addDataToResponse(scrollCountLines.get(), res, tablesToTabsMap);
+              res.add(scrollCountLines.get());
               totalAcctEntries += Integer.parseInt(scrollCountLines.get().groupedlines);
             }
             dataCountLines = new ReportGeneralLedgerJournalData[res.size()];
