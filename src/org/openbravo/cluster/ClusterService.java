@@ -42,17 +42,17 @@ public abstract class ClusterService {
   private Long timeout;
   private Long threshold;
   private Long nextPing;
-  private String nodeName;
+  private String nodeId;
   private String nodeHandlingService;
   private boolean initialized = false;
   private boolean useCache = false;
   private boolean isDisabled = false;
 
-  protected boolean init(String currentNodeName) {
+  protected boolean init(String currentNodeId) {
     if (!isEnabled()) {
       return false;
     }
-    this.nodeName = currentNodeName;
+    this.nodeId = currentNodeId;
     this.timeout = getClusterServiceTimeout();
     this.threshold = calculateThreshold(timeout);
     this.initialized = true;
@@ -135,7 +135,7 @@ public abstract class ClusterService {
       nodeHandlingService = getNodeHandlingServiceFromDB();
       setUseCache(true);
     }
-    return nodeName.equals(nodeHandlingService);
+    return nodeId.equals(nodeHandlingService);
   }
 
   protected String getNodeHandlingService() {

@@ -25,7 +25,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         <![CDATA[
-            SELECT NODE AS NODE_IN_CHARGE
+            SELECT NODE_ID AS NODE_IN_CHARGE
             FROM AD_CLUSTER_SERVICE
             WHERE SERVICE = ?
         ]]>

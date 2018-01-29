@@ -28,6 +28,11 @@ import java.util.Map;
 public interface ClusterServiceManagerMBean {
 
   /**
+   * @return the unique identifier of the current cluster node.
+   */
+  public String getCurrentNodeId();
+
+  /**
    * @return the name of the current cluster node.
    */
   public String getCurrentNodeName();

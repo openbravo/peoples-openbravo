@@ -54,10 +54,12 @@ import org.slf4j.LoggerFactory;
 @ApplicationScoped
 public class ClusterServiceManager implements ClusterServiceManagerMBean {
   private static final Logger log = LoggerFactory.getLogger(ClusterServiceManager.class);
+  private static final String UNKNOWN = "Unknown";
   private static boolean isCluster = OBPropertiesProvider.getInstance().getBooleanProperty(
       "cluster");
 
   private boolean isShutDown;
+  private String nodeId;
   private String nodeName;
   private Date lastPing;
   private ExecutorService executorService;
@@ -75,9 +77,10 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
     if (!isCluster()) {
       return;
     }
+    nodeId = SequenceIdData.getUUID();
     nodeName = getNodeName();
     isShutDown = false;
-    log.info("Starting Cluster Service Manager");
+    log.info("Starting Cluster Service Manager - Node ID: {}, Node Name: {}", nodeId, nodeName);
     // register as JMX Bean
     MBeanRegistry.registerMBean(this.getClass().getSimpleName(), this);
     // start the ping thread
@@ -126,14 +129,14 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       OBContext.setAdminMode(false); // allow to delete, the current context does not matter
       OBCriteria<ADClusterService> criteria = OBDal.getInstance().createCriteria(
           ADClusterService.class);
-      criteria.add(Restrictions.eq(ADClusterService.PROPERTY_NODE, nodeName));
+      criteria.add(Restrictions.eq(ADClusterService.PROPERTY_NODEID, nodeId));
       for (ADClusterService service : criteria.list()) {
-        log.info("Degeristering node {} in charge of service {}", nodeName, service.getService());
+        log.info("Degeristering node {} in charge of service {}", nodeId, service.getService());
         OBDal.getInstance().remove(service);
       }
       OBDal.getInstance().commitAndClose();
     } catch (Exception ex) {
-      log.error("Could not deregister node {}", nodeName);
+      log.error("Could not deregister node {}", nodeId);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -153,7 +156,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
   private String getNodeName() {
     String name = ConfigParameters.getMachineName();
     if (StringUtils.isEmpty(name)) {
-      name = SequenceIdData.getUUID();
+      name = UNKNOWN;
     }
     return name;
   }
@@ -186,6 +189,11 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
   }
 
   @Override
+  public String getCurrentNodeId() {
+    return nodeId;
+  }
+
+  @Override
   public String getCurrentNodeName() {
     return nodeName;
   }
@@ -203,7 +211,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       OBCriteria<ADClusterService> criteria = OBDal.getInstance().createCriteria(
           ADClusterService.class);
       for (ADClusterService service : criteria.list()) {
-        String serviceInfo = "leader: " + service.getNode() + ", last ping: "
+        String serviceInfo = "leader: " + service.getNodeID() + ", last ping: "
             + service.getUpdated();
         leaders.put(service.getService(), serviceInfo);
       }
@@ -232,7 +240,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       // Enable the ping for the service
       clusterService.setDisabled(false);
     }
-    log.info("Enabled ping for service {} in node {}", serviceName, nodeName);
+    log.info("Enabled ping for service {} in node {}", serviceName, nodeId);
   }
 
   @Override
@@ -243,11 +251,11 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       // If the current node is the leader of the service, unregister it
       OBCriteria<ADClusterService> criteria = OBDal.getInstance().createCriteria(
           ADClusterService.class);
-      criteria.add(Restrictions.eq(ADClusterService.PROPERTY_NODE, nodeName));
+      criteria.add(Restrictions.eq(ADClusterService.PROPERTY_NODEID, nodeId));
       criteria.add(Restrictions.eq(ADClusterService.PROPERTY_SERVICE, serviceName));
       ADClusterService service = (ADClusterService) criteria.uniqueResult();
       if (service != null) {
-        log.info("Degeristering node {} in charge of service {}", nodeName, serviceName);
+        log.info("Degeristering node {} in charge of service {}", nodeId, serviceName);
         OBDal.getInstance().remove(service);
       }
       OBDal.getInstance().commitAndClose();
@@ -259,9 +267,9 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
         // force the service to go to the database to see the changes (if any)
         clusterService.setUseCache(false);
       }
-      log.info("Disabled ping for service {} in node {}", serviceName, nodeName);
+      log.info("Disabled ping for service {} in node {}", serviceName, nodeId);
     } catch (Exception ex) {
-      log.error("Could not force node {} to be in charge of service {}", nodeName, serviceName);
+      log.error("Could not force node {} to be in charge of service {}", nodeId, serviceName);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -315,14 +323,14 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       long current = System.currentTimeMillis();
       boolean anyServiceRegistered = false;
       for (ClusterService service : manager.clusterServices) {
-        if (service.init(manager.nodeName)) {
+        if (service.init(manager.nodeId)) {
           // service initialized properly, register it
           registerOrUpdateService(service);
           service.setNextPing(current + service.getTimeout());
           anyServiceRegistered = true;
           if (service.isHandledInCurrentNode()) {
             log.info("Service {} handled by current node {}", service.getServiceName(),
-                manager.nodeName);
+                manager.nodeId);
           } else {
             log.info("Service {} handled by other node ({})", service.getServiceName(),
                 service.getNodeHandlingService());
@@ -338,7 +346,7 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       for (ClusterService service : manager.clusterServices) {
         if (!service.isAlive() || !service.isInitialized() || service.isDisabled()) {
           // Do not update the last ping: the service is not working
-          log.debug("Service {} is not working in node {}", service, manager.nodeName);
+          log.debug("Service {} is not working in node {}", service, manager.nodeId);
           continue;
         }
         long current = System.currentTimeMillis();
@@ -371,26 +379,26 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
         Date now = new Date();
         if (service == null) {
           // register the service for the first time
-          log.info("Registering node {} in charge of service {}", manager.nodeName, serviceName);
+          log.info("Registering node {} in charge of service {}", manager.nodeId, serviceName);
           registerService(serviceName);
-        } else if (manager.nodeName.equals(service.getNode())) {
+        } else if (manager.nodeId.equals(service.getNodeID())) {
           // current node is charge of handling the service, just update the last ping
-          log.debug("Current node {} still in charge of service {}", manager.nodeName, serviceName);
+          log.debug("Current node {} still in charge of service {}", manager.nodeId, serviceName);
           updateLastPing(serviceName, now);
         } else if (shouldReplaceNodeOfService(service, interval)) {
           // try to register the current node as the one in charge of handling the service
-          log.info("Node {} in charge of service {} should be replaced", service.getNode(),
+          log.info("Node {} in charge of service {} should be replaced", service.getNodeID(),
               serviceName);
-          updateNodeOfService(service.getNode(), serviceName, now);
+          updateNodeOfService(service.getNodeID(), serviceName, now);
         } else {
-          log.debug("Node {} still in charge of service {}", service.getNode(), serviceName);
+          log.debug("Node {} still in charge of service {}", service.getNodeID(), serviceName);
         }
         manager.lastPing = now;
         OBDal.getInstance().commitAndClose();
         // force the service to go to the database to see the changes (if any)
         clusterService.setUseCache(false);
       } catch (Exception ex) {
-        log.warn("Node {} could not complete register/update task of service {}", manager.nodeName,
+        log.warn("Node {} could not complete register/update task of service {}", manager.nodeId,
             serviceName);
       }
     }
@@ -407,7 +415,8 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       service.setOrganization(OBDal.getInstance().getProxy(Organization.class, "0"));
       service.setClient(OBDal.getInstance().getProxy(Client.class, "0"));
       service.setService(serviceName);
-      service.setNode(manager.nodeName);
+      service.setNodeID(manager.nodeId);
+      service.setNodeName(manager.nodeName);
       OBDal.getInstance().save(service);
       return service;
     }
@@ -418,30 +427,32 @@ public class ClusterServiceManager implements ClusterServiceManagerMBean {
       return leaderLostTime < now;
     }
 
-    private void updateNodeOfService(String formerNode, String serviceName, Date now) {
+    private void updateNodeOfService(String formerNodeId, String serviceName, Date now) {
       StringBuilder hql = new StringBuilder();
-      hql.append("UPDATE ADClusterService SET node = :newNode, updated = :updated ");
-      hql.append("WHERE service = :service AND node = :formerNode");
+      hql.append("UPDATE ADClusterService ");
+      hql.append("SET nodeID = :newNodeId, nodeName = :newNodeName, updated = :updated ");
+      hql.append("WHERE service = :service AND nodeID = :formerNodeId");
       Query updateQuery = OBDal.getInstance().getSession().createQuery(hql.toString());
-      updateQuery.setParameter("newNode", manager.nodeName);
+      updateQuery.setParameter("newNodeId", manager.nodeId);
+      updateQuery.setParameter("newNodeName", manager.nodeName);
       updateQuery.setParameter("updated", now);
       updateQuery.setParameter("service", serviceName);
-      updateQuery.setParameter("formerNode", formerNode);
+      updateQuery.setParameter("formerNodeId", formerNodeId);
       int rowCount = updateQuery.executeUpdate();
       if (rowCount == 1) {
         log.info("Changed node in charge of service {}", serviceName);
-        log.info("Replaced node {} with node {}", formerNode, manager.nodeName);
+        log.info("Replaced node {} with node {}", formerNodeId, manager.nodeId);
       }
     }
 
     private void updateLastPing(String serviceName, Date now) {
       StringBuilder hql = new StringBuilder();
       hql.append("UPDATE ADClusterService SET updated = :updated ");
-      hql.append("WHERE service = :service AND node = :currentNode");
+      hql.append("WHERE service = :service AND nodeID = :currentNodeId");
       Query updateQuery = OBDal.getInstance().getSession().createQuery(hql.toString());
       updateQuery.setParameter("updated", now);
       updateQuery.setParameter("service", serviceName);
-      updateQuery.setParameter("currentNode", manager.nodeName);
+      updateQuery.setParameter("currentNodeId", manager.nodeId);
       updateQuery.executeUpdate();
     }
   }
