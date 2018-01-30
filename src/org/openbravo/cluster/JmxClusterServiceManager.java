@@ -84,12 +84,17 @@ public class JmxClusterServiceManager implements JmxClusterServiceManagerMBean {
 
   @Override
   public Map<String, String> getClusterServiceSettings() {
-    return clusterServiceManager.getClusterServiceSettings();
+    Map<String, String> leaders = new HashMap<>();
+    for (ClusterService service : clusterServiceManager.getClusterServices()) {
+      String serviceSettings = "timeout: " + service.getTimeout() + " milliseconds";
+      leaders.put(service.getServiceName(), serviceSettings);
+    }
+    return leaders;
   }
 
   @Override
   public void enablePingForService(String serviceName) {
-    ClusterService clusterService = clusterServiceManager.getClusterService(serviceName);
+    ClusterService clusterService = getClusterService(serviceName);
     if (clusterService == null) {
       log.info("Can't enable ping for non-existent service {} in node {}", serviceName,
           getCurrentNodeId());
@@ -106,7 +111,7 @@ public class JmxClusterServiceManager implements JmxClusterServiceManagerMBean {
 
   @Override
   public void disablePingForService(String serviceName) {
-    ClusterService clusterService = clusterServiceManager.getClusterService(serviceName);
+    ClusterService clusterService = getClusterService(serviceName);
     if (clusterService == null) {
       log.info("Can't disable ping for non-existent service {} in node {}", serviceName,
           getCurrentNodeId());
@@ -144,5 +149,14 @@ public class JmxClusterServiceManager implements JmxClusterServiceManagerMBean {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private ClusterService getClusterService(String serviceName) {
+    for (ClusterService service : clusterServiceManager.getClusterServices()) {
+      if (serviceName.equals(service.getServiceName())) {
+        return service;
+      }
+    }
+    return null;
   }
 }

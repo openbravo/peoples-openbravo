@@ -19,8 +19,6 @@
 package org.openbravo.cluster;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -165,32 +163,10 @@ public class ClusterServiceManager {
   }
 
   /**
-   * Retrieves a {@link ClusterService} by its name.
-   * 
-   * @param serviceName
-   *          The name of the cluster service
-   * 
-   * @return the {@link ClusterService} identified by the name passed as parameter.
+   * @return the available cluster services.
    */
-  protected ClusterService getClusterService(String serviceName) {
-    for (ClusterService service : clusterServices) {
-      if (serviceName.equals(service.getServiceName())) {
-        return service;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * @return a {@code Map} with the settings configured per each available {@link ClusterService}.
-   */
-  protected Map<String, String> getClusterServiceSettings() {
-    Map<String, String> leaders = new HashMap<>();
-    for (ClusterService service : clusterServices) {
-      String serviceSettings = "timeout: " + service.getTimeout() + " milliseconds";
-      leaders.put(service.getServiceName(), serviceSettings);
-    }
-    return leaders;
+  protected Iterable<ClusterService> getClusterServices() {
+    return clusterServices;
   }
 
   /**
