@@ -48,7 +48,7 @@ public abstract class ClusterService {
   private boolean useCache = false;
   private boolean isDisabled = false;
 
-  boolean init(String currentNodeId) {
+  protected boolean init(String currentNodeId) {
     if (!isEnabled()) {
       return false;
     }
@@ -94,25 +94,25 @@ public abstract class ClusterService {
     }
   }
 
-  Long getTimeout() {
+  protected Long getTimeout() {
     return timeout;
   }
 
-  Long getThreshold() {
+  protected Long getThreshold() {
     // The threshold is an extra amount of time added to the timeout that helps to avoid
     // unnecessarily switching the node that should handle a service on every ping round.
     return threshold;
   }
 
-  Long getNextPing() {
+  protected Long getNextPing() {
     return nextPing;
   }
 
-  void setNextPing(Long nextPing) {
+  protected void setNextPing(Long nextPing) {
     this.nextPing = nextPing;
   }
 
-  boolean isInitialized() {
+  protected boolean isInitialized() {
     return initialized;
   }
 
@@ -138,7 +138,7 @@ public abstract class ClusterService {
     return nodeId.equals(nodeHandlingService);
   }
 
-  String getNodeHandlingService() {
+  protected String getNodeHandlingService() {
     return nodeHandlingService;
   }
 
@@ -160,15 +160,15 @@ public abstract class ClusterService {
     }
   }
 
-  void setUseCache(boolean useCache) {
+  protected void setUseCache(boolean useCache) {
     this.useCache = useCache;
   }
 
-  boolean isDisabled() {
+  protected boolean isDisabled() {
     return isDisabled;
   }
 
-  void setDisabled(boolean isDisabled) {
+  protected void setDisabled(boolean isDisabled) {
     this.isDisabled = isDisabled;
   }
 
