@@ -26,8 +26,6 @@ import static org.junit.Assert.assertThat;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -209,8 +207,8 @@ class ReferencedInventoryTestUtils {
     return storageDetailsJS;
   }
 
-  static List<StorageDetail> getAvailableStorageDetailsOrderByQtyOnHand(final Product product) throws ServletException,
-      NoConnectionAvailableException {
+  static List<StorageDetail> getAvailableStorageDetailsOrderByQtyOnHand(final Product product)
+      throws ServletException, NoConnectionAvailableException {
     final OBCriteria<StorageDetail> crit = OBDao.getFilteredCriteria(StorageDetail.class,
         Restrictions.eq(StorageDetail.PROPERTY_PRODUCT, product),
         Restrictions.gt(StorageDetail.PROPERTY_QUANTITYONHAND, BigDecimal.ZERO));
@@ -226,15 +224,6 @@ class ReferencedInventoryTestUtils {
           + " storage details were found but just 1 was expected");
     }
     return storageDetails.get(0);
-  }
-
-  static void sortStorageDetailsByQtyOnHand(List<StorageDetail> storageDetails) {
-    Collections.sort(storageDetails, new Comparator<StorageDetail>() {
-      @Override
-      public int compare(StorageDetail o1, StorageDetail o2) {
-        return o1.getQuantityOnHand().compareTo(o2.getQuantityOnHand());
-      }
-    });
   }
 
   static String getAnyStorageDetail() {

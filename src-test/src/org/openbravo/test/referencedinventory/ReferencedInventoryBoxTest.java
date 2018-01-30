@@ -204,15 +204,13 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
   private void assertsNewReservation(final BigDecimal reservationQty, final boolean isAllocated,
       ReferencedInventory refInv) {
     final List<StorageDetail> newStorageDetails = refInv.getMaterialMgmtStorageDetailList();
-    ReferencedInventoryTestUtils.sortStorageDetailsByQtyOnHand(newStorageDetails);
-    for (StorageDetail sd : newStorageDetails) {
-      if (sd.getQuantityOnHand().compareTo(BigDecimal.ZERO) > 0) {
-        assertThat("New storage detail qty reserved is expected one", sd.getReservedQty(),
-            equalTo(reservationQty));
-        for (ReservationStock rs : ReservationUtils.getReservationStockFromStorageDetail(sd)) {
-          assertThat("Allocated flag is properly set", isAllocated, equalTo(rs.isAllocated()));
-        }
-      }
+    assertThat("Just one storage detail must be found in referenced inventory",
+        newStorageDetails.size(), equalTo(1));
+    final StorageDetail sd = newStorageDetails.get(0);
+    assertThat("New storage detail qty reserved is expected one", sd.getReservedQty(),
+        equalTo(reservationQty));
+    for (ReservationStock rs : ReservationUtils.getReservationStockFromStorageDetail(sd)) {
+      assertThat("Allocated flag is properly set", isAllocated, equalTo(rs.isAllocated()));
     }
   }
 
