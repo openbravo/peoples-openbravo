@@ -33,8 +33,13 @@ public class ReferencedInventoryBoxOverReservationTest extends ReferencedInvento
 
   @Rule
   public ParameterCdiTestRule<ParamsBoxReservationTest> parameterValuesRule = new ParameterCdiTestRule<ParamsBoxReservationTest>(
-      Arrays.asList(new ParamsBoxReservationTest[] { new ParamsBoxReservationTest(
-          "Box storage details that are over reserved", "3", "5") }));
+      Arrays.asList(new ParamsBoxReservationTest[] {
+          new ParamsBoxReservationTest("Box 3 units where 5 where reserved (over reservation)",
+              "3", "5"),
+          new ParamsBoxReservationTest("Box 4 units where 9 where reserved (over reservation)",
+              "4", "9"),
+          new ParamsBoxReservationTest("Box 4 units where 10 where reserved (over reservation)",
+              "4", "10") }));
 
   private @ParameterCdiTest ParamsBoxReservationTest params;
 
@@ -43,8 +48,8 @@ public class ReferencedInventoryBoxOverReservationTest extends ReferencedInvento
     for (boolean isAllocated : ISALLOCATED) {
       for (String[] product : PRODUCTS) {
         for (String toBinId : BINS) {
-          testBox(toBinId, product[0], product[1], params.qtyToBox,
-              params.reservationQty, isAllocated);
+          testBox(toBinId, product[0], product[1], params.qtyToBox, params.reservationQty,
+              isAllocated);
         }
       }
     }

@@ -109,12 +109,12 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
           originalStorageBinId);
     }
 
-    if (originalReservation != null) {
+    if (reservationQty != null) {
       assertsOriginalReservationIfAvailable(originalReservation);
-    }
-
-    if (hasBoxedSomethingPreviouslyReserved(qtyInBox, reservationQty, storageDetail)) {
-      assertsNewReservation(reservationQty, isAllocated, refInv);
+      if (hasBoxedSomethingPreviouslyReserved(qtyInBox, reservationQty, storageDetail)) {
+        assertsNewReservationInRefInventoryAllocatedFlag(reservationQty, isAllocated, refInv);
+      }
+      assertsReservationQtyInStorageDetails(qtyInBox, reservationQty, product);
     }
 
     return refInv;
@@ -195,22 +195,48 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
 
   private boolean hasBoxedSomethingPreviouslyReserved(final BigDecimal qtyInBox,
       final BigDecimal reservationQty, final StorageDetail storageDetail) {
-    return reservationQty != null
     // I must box something already reserved, so I need to create a new reservation after boxing
-        && (RECEIVEDQTY_10.subtract(reservationQty)).compareTo(qtyInBox == null ? storageDetail
-            .getQuantityOnHand() : qtyInBox) < 0;
+    return (RECEIVEDQTY_10.subtract(reservationQty)).compareTo(qtyInBox == null ? storageDetail
+        .getQuantityOnHand() : qtyInBox) < 0;
   }
 
-  private void assertsNewReservation(final BigDecimal reservationQty, final boolean isAllocated,
-      ReferencedInventory refInv) {
-    final List<StorageDetail> newStorageDetails = refInv.getMaterialMgmtStorageDetailList();
-    assertThat("Just one storage detail must be found in referenced inventory",
-        newStorageDetails.size(), equalTo(1));
-    final StorageDetail sd = newStorageDetails.get(0);
-    assertThat("New storage detail qty reserved is expected one", sd.getReservedQty(),
-        equalTo(reservationQty));
-    for (ReservationStock rs : ReservationUtils.getReservationStockFromStorageDetail(sd)) {
+  private void assertsNewReservationInRefInventoryAllocatedFlag(final BigDecimal reservationQty,
+      final boolean isAllocated, ReferencedInventory refInv) {
+    // Just 1 detail expected
+    for (ReservationStock rs : ReservationUtils.getReservationStockFromStorageDetail(refInv
+        .getMaterialMgmtStorageDetailList().get(0))) {
       assertThat("Allocated flag is properly set", isAllocated, equalTo(rs.isAllocated()));
+    }
+  }
+
+  private void assertsReservationQtyInStorageDetails(final BigDecimal qtyInBox,
+      final BigDecimal reservationQty, final Product product) throws ServletException,
+      NoConnectionAvailableException {
+    final BigDecimal qtyNotReserved = RECEIVEDQTY_10.subtract(reservationQty);
+    final List<StorageDetail> newStorageDetails = ReferencedInventoryTestUtils
+        .getAvailableStorageDetailsOrderByQtyOnHand(product);
+    for (StorageDetail sd : newStorageDetails) {
+      if (sd.getReferencedInventory() != null) {
+        // Boxed storage detail.
+        if (qtyNotReserved.compareTo(qtyInBox) >= 0) {
+          assertThat("No reservation linked to boxed storage detail", sd.getReservedQty(),
+              equalTo(BigDecimal.ZERO));
+        } else {
+          assertThat("Expected reservation qty linked to boxed storage detail",
+              sd.getReservedQty(),
+              equalTo(reservationQty.subtract(RECEIVEDQTY_10.subtract(qtyInBox))));
+        }
+      } else {
+        // Not boxed storage detail
+        if (qtyNotReserved.compareTo(qtyInBox) >= 0) {
+          assertThat("Fully original reservation qty must be linked to not boxed storage detail",
+              sd.getReservedQty(), equalTo(reservationQty));
+        } else {
+          assertThat("Expected reservation qty linked to not boxed storage detail",
+              sd.getReservedQty(), equalTo(reservationQty.subtract(reservationQty
+                  .subtract(RECEIVEDQTY_10.subtract(qtyInBox)))));
+        }
+      }
     }
   }
 
