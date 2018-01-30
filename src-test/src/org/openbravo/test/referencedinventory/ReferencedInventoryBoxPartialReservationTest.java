@@ -33,12 +33,9 @@ public class ReferencedInventoryBoxPartialReservationTest extends ReferencedInve
 
   @Rule
   public ParameterCdiTestRule<ParamsBoxReservationTest> parameterValuesRule = new ParameterCdiTestRule<ParamsBoxReservationTest>(
-      Arrays
-          .asList(new ParamsBoxReservationTest[] {
-              new ParamsBoxReservationTest("Box 10 units where 4 were previously reserved", "10",
-                  "4"),
-              new ParamsBoxReservationTest("Box 10 units where 4 were previously reserved", "4",
-                  "3") }));
+      Arrays.asList(new ParamsBoxReservationTest[] {
+          new ParamsBoxReservationTest("Box 10 units where 4 were previously reserved", "10", "4"),
+          new ParamsBoxReservationTest("Box 4 units where 3 were previously reserved", "4", "3") }));
 
   private @ParameterCdiTest ParamsBoxReservationTest params;
 
@@ -47,8 +44,8 @@ public class ReferencedInventoryBoxPartialReservationTest extends ReferencedInve
     for (boolean isAllocated : ISALLOCATED) {
       for (String[] product : PRODUCTS) {
         for (String toBinId : BINS) {
-          testBox(toBinId, product[0], product[1], params.qtyToBox,
-              params.reservationQty, isAllocated);
+          testBox(toBinId, product[0], product[1], params.qtyToBox, params.reservationQty,
+              isAllocated);
         }
       }
     }

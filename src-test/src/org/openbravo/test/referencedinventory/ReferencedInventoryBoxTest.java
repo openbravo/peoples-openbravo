@@ -102,7 +102,6 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
     assertsGoodsMovementNumberOfLines(boxMovement, 1);
     assertsReferencedInventoryIsNotEmptyAndHasRightQtyAndProduct(toBinId, qtyInBox, refInv,
         product, storageDetail);
-    assertsStorageDetailIsLinkedToRefInv(refInv);
     assertsAttributeSetIsValid(refInv, originalAttributeId);
 
     if (isPartialBoxing(qtyInBox)) {
@@ -114,7 +113,7 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
       assertsOriginalReservationIfAvailable(originalReservation);
     }
 
-    if (hasCreatedNewReservationInBoxTransaction(qtyInBox, reservationQty, storageDetail)) {
+    if (hasBoxedSomethingPreviouslyReserved(qtyInBox, reservationQty, storageDetail)) {
       assertsNewReservation(reservationQty, isAllocated, refInv);
     }
 
@@ -136,12 +135,6 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
         .getMaterialMgmtStorageDetailList().get(0).getStorageBin().getId(),
         equalTo(StringUtils.isBlank(toBinId) ? originalStorageDetail.getStorageBin().getId()
             : toBinId));
-  }
-
-  void assertsStorageDetailIsLinkedToRefInv(final ReferencedInventory refInv) {
-    assertThat("Storage Detail is linked to Referenced Inventory", refInv
-        .getMaterialMgmtStorageDetailList().get(0).getReferencedInventory().getId(),
-        equalTo(refInv.getId()));
   }
 
   void assertsAttributeSetIsValid(final ReferencedInventory refInv, final String originalAttributeId) {
@@ -201,7 +194,7 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
     }
   }
 
-  private boolean hasCreatedNewReservationInBoxTransaction(final BigDecimal qtyInBox,
+  private boolean hasBoxedSomethingPreviouslyReserved(final BigDecimal qtyInBox,
       final BigDecimal reservationQty, final StorageDetail storageDetail) {
     return reservationQty != null
     // I must box something already reserved, so I need to create a new reservation after boxing
@@ -211,16 +204,14 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
 
   private void assertsNewReservation(final BigDecimal reservationQty, final boolean isAllocated,
       ReferencedInventory refInv) {
-    if (reservationQty != null && reservationQty.compareTo(BigDecimal.ZERO) > 0) {
-      final List<StorageDetail> newStorageDetails = refInv.getMaterialMgmtStorageDetailList();
-      ReferencedInventoryTestUtils.sortStorageDetailsByQtyOnHand(newStorageDetails);
-      for (StorageDetail sd : newStorageDetails) {
-        if (sd.getQuantityOnHand().compareTo(BigDecimal.ZERO) > 0) {
-          assertThat("New storage detail qty reserved is expected one", sd.getReservedQty(),
-              equalTo(reservationQty));
-          for (ReservationStock rs : ReservationUtils.getReservationStockFromStorageDetail(sd)) {
-            assertThat("Allocated flag is properly set", isAllocated, equalTo(rs.isAllocated()));
-          }
+    final List<StorageDetail> newStorageDetails = refInv.getMaterialMgmtStorageDetailList();
+    ReferencedInventoryTestUtils.sortStorageDetailsByQtyOnHand(newStorageDetails);
+    for (StorageDetail sd : newStorageDetails) {
+      if (sd.getQuantityOnHand().compareTo(BigDecimal.ZERO) > 0) {
+        assertThat("New storage detail qty reserved is expected one", sd.getReservedQty(),
+            equalTo(reservationQty));
+        for (ReservationStock rs : ReservationUtils.getReservationStockFromStorageDetail(sd)) {
+          assertThat("Allocated flag is properly set", isAllocated, equalTo(rs.isAllocated()));
         }
       }
     }
