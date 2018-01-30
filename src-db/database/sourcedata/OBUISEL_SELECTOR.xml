@@ -58,6 +58,8 @@
 <!--121CCCD7F670457A9FF815163F11A61F-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--121CCCD7F670457A9FF815163F11A61F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--121CCCD7F670457A9FF815163F11A61F-->  <NAME><![CDATA[Invoice Line Selector]]></NAME>
+<!--121CCCD7F670457A9FF815163F11A61F-->  <DESCRIPTION><![CDATA[Invoice Lines that can be added to a Landed Cost]]></DESCRIPTION>
+<!--121CCCD7F670457A9FF815163F11A61F-->  <HELP><![CDATA[A selector that proposes Invoice Lines that can be linked to a Landed Cost.]]></HELP>
 <!--121CCCD7F670457A9FF815163F11A61F-->  <AD_REFERENCE_ID><![CDATA[E755FEC72FF74F7891EBC27B3094267B]]></AD_REFERENCE_ID>
 <!--121CCCD7F670457A9FF815163F11A61F-->  <AD_TABLE_ID><![CDATA[333]]></AD_TABLE_ID>
 <!--121CCCD7F670457A9FF815163F11A61F-->  <WHERECLAUSE><![CDATA[(e.product.id = @LCC_Product_ID@ or e.account.id = @LCC_Account_ID@) and e.lineNetAmount <> (SELECT coalesce(sum(lcm.amount), 0) from LandedCostMatched lcm where lcm.invoiceLine.id = e.id) and e.invoice.salesTransaction = 'N']]></WHERECLAUSE>
