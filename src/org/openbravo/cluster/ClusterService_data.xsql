@@ -21,11 +21,11 @@
 <SqlClass name="ClusterServiceData" package="org.openbravo.cluster">
    <SqlClassComment></SqlClassComment>
 
-   <SqlMethod name="getNodeHandlingService" type="preparedStatement" connection="true" return="String">
+   <SqlMethod name="getNodeHandlingService" type="preparedStatement" connection="true" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         <![CDATA[
-            SELECT NODE_ID AS NODE_IN_CHARGE
+            SELECT NODE_ID AS NODE_ID, NODE_NAME AS NODE_NAME
             FROM AD_CLUSTER_SERVICE
             WHERE SERVICE = ?
         ]]>

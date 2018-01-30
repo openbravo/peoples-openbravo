@@ -43,7 +43,8 @@ public abstract class ClusterService {
   private Long threshold;
   private Long nextPing;
   private String nodeId;
-  private String nodeHandlingService;
+  private String nodeHandlingServiceId;
+  private String nodeHandlingServiceName;
   private boolean initialized = false;
   private boolean useCache = false;
   private boolean isDisabled = false;
@@ -132,17 +133,22 @@ public abstract class ClusterService {
     long now = new Date().getTime();
     if (!useCache || now > lastPingTime) {
       // retrieve from the database the node currently handling the service
-      nodeHandlingService = getNodeHandlingServiceFromDB();
+      ClusterServiceData[] nodeInfo = getNodeHandlingServiceFromDB();
+      if (nodeInfo == null || nodeInfo.length == 0) {
+        return false;
+      }
+      nodeHandlingServiceId = nodeInfo[0].nodeId;
+      nodeHandlingServiceName = nodeInfo[0].nodeName;
       setUseCache(true);
     }
-    return nodeId.equals(nodeHandlingService);
+    return nodeId.equals(nodeHandlingServiceId);
   }
 
-  protected String getNodeHandlingService() {
-    return nodeHandlingService;
+  protected String getIdentifierOfNodeHandlingService() {
+    return nodeHandlingServiceName + " - " + nodeHandlingServiceId;
   }
 
-  private String getNodeHandlingServiceFromDB() {
+  private ClusterServiceData[] getNodeHandlingServiceFromDB() {
     DalConnectionProvider dcp = new DalConnectionProvider(false);
     Connection connection = null;
     try {

@@ -255,7 +255,7 @@ public class ClusterServiceManager {
                   getNodeIdentifier());
             } else {
               log.info("Service {} handled by other node ({})", service.getServiceName(),
-                  service.getNodeHandlingService());
+                  service.getIdentifierOfNodeHandlingService());
             }
           }
         }
