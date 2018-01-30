@@ -23,6 +23,9 @@ import javax.inject.Inject;
 
 import org.openbravo.cluster.ClusterService;
 
+/**
+ * This class defines the behavior of the import entry service being in a clustered environment.
+ */
 @ApplicationScoped
 public class ImportEntryClusterService extends ClusterService {
 
