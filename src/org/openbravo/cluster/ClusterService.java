@@ -35,9 +35,9 @@ import org.slf4j.LoggerFactory;
 @ApplicationScoped
 public abstract class ClusterService {
   private static final Logger log = LoggerFactory.getLogger(ClusterService.class);
-  protected static final Long DEFAULT_TIMEOUT = 10_000L;
-  private static final Long MIN_THRESHOLD = 1000L;
-  private static final Long MAX_THRESHOLD = 5000L;
+  private static final Long DEFAULT_TIMEOUT = 10_000L;
+  private static final Long MIN_THRESHOLD = 1_000L;
+  private static final Long MAX_THRESHOLD = 5_000L;
 
   private Long timeout;
   private Long threshold;
