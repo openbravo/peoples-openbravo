@@ -131,21 +131,21 @@ public class ClusterServiceManager {
     if (!isCluster() || executorService == null) {
       return;
     }
-    deRegisterServicesForCurrentNode();
+    deregisterServicesForCurrentNode();
     isShutDown = true;
     log.info("Shutting down Cluster Service Manager");
     executorService.shutdownNow();
     executorService = null;
   }
 
-  private void deRegisterServicesForCurrentNode() {
+  private void deregisterServicesForCurrentNode() {
     try {
       OBContext.setAdminMode(false); // allow to delete, the current context does not matter
       OBCriteria<ADClusterService> criteria = OBDal.getInstance().createCriteria(
           ADClusterService.class);
       criteria.add(Restrictions.eq(ADClusterService.PROPERTY_NODEID, nodeId));
       for (ADClusterService service : criteria.list()) {
-        log.info("Degeristering node {} in charge of service {}", nodeId, service.getService());
+        log.info("Deregistering node {} in charge of service {}", nodeId, service.getService());
         OBDal.getInstance().remove(service);
       }
       OBDal.getInstance().commitAndClose();
