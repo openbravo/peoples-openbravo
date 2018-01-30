@@ -252,7 +252,7 @@ public class ClusterServiceManager {
             anyServiceRegistered = true;
             if (service.isHandledInCurrentNode()) {
               log.info("Service {} handled by current node {}", service.getServiceName(),
-                  manager.nodeId);
+                  getNodeIdentifier());
             } else {
               log.info("Service {} handled by other node ({})", service.getServiceName(),
                   service.getNodeHandlingService());
@@ -271,7 +271,7 @@ public class ClusterServiceManager {
       for (ClusterService service : manager.clusterServices) {
         if (!service.isAlive() || !service.isInitialized() || service.isDisabled()) {
           // Do not update the last ping: the service is not working
-          log.debug("Service {} is not working in node {}", service, manager.nodeId);
+          log.debug("Service {} is not working in node {}", service, getNodeIdentifier());
           continue;
         }
         long current = System.currentTimeMillis();
@@ -304,20 +304,24 @@ public class ClusterServiceManager {
         Date now = new Date();
         if (service == null) {
           // register the service for the first time
-          log.info("Registering current node {} in charge of service {}", manager.nodeId,
+          log.info("Registering current node {} in charge of service {}", getNodeIdentifier(),
               serviceName);
           registerService(serviceName);
         } else if (manager.nodeId.equals(service.getNodeID())) {
           // current node is charge of handling the service, just update the last ping
-          log.debug("Current node {} still in charge of service {}", manager.nodeId, serviceName);
+          if (log.isDebugEnabled()) {
+            log.debug("Current node {} still in charge of service {}", getNodeIdentifier(),
+                serviceName);
+          }
           updateLastPing(serviceName, now);
         } else if (shouldReplaceNodeOfService(service, interval)) {
           // try to register the current node as the one in charge of handling the service
-          log.info("Node {} in charge of service {} should be replaced", service.getNodeID(),
-              serviceName);
+          log.info("Node {} in charge of service {} should be replaced",
+              getNodeIdentifier(service), serviceName);
           updateNodeOfService(service.getNodeID(), serviceName, now);
-        } else {
-          log.debug("Node {} still in charge of service {}", service.getNodeID(), serviceName);
+        } else if (log.isDebugEnabled()) {
+          log.debug("Node {} still in charge of service {}", getNodeIdentifier(service),
+              serviceName);
         }
         manager.lastPing = now;
         OBDal.getInstance().commitAndClose();
@@ -366,8 +370,8 @@ public class ClusterServiceManager {
       updateQuery.setParameter("formerNodeId", formerNodeId);
       int rowCount = updateQuery.executeUpdate();
       if (rowCount == 1) {
-        log.info("Changed node in charge of service {}", serviceName);
-        log.info("Replaced node {} with node {}", formerNodeId, manager.nodeId);
+        String replaceMsg = "Replaced node {} with node {} in charge of service " + serviceName;
+        log.info(replaceMsg, formerNodeId, getNodeIdentifier());
       }
     }
 
@@ -380,6 +384,14 @@ public class ClusterServiceManager {
       updateQuery.setParameter("service", serviceName);
       updateQuery.setParameter("currentNodeId", manager.nodeId);
       updateQuery.executeUpdate();
+    }
+
+    private String getNodeIdentifier() {
+      return manager.nodeName + " - " + manager.nodeId;
+    }
+
+    private String getNodeIdentifier(ADClusterService service) {
+      return service.getNodeName() + " - " + service.getNodeID();
     }
   }
 }
