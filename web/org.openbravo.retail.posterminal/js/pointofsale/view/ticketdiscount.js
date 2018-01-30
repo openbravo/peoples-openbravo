@@ -237,54 +237,18 @@ enyo.kind({
     }
   },
   discountChanged: function (inSender, inEvent) {
-    // Build discount container info
-    var discountsContainer = this.$.discountsContainer;
-    discountsContainer.model = inEvent.model;
-    discountsContainer.requiresQty = inEvent.requiresQty;
-    discountsContainer.amt = inEvent.amt;
-    discountsContainer.units = inEvent.units;
-
-    // Disable keyboard if rule is fixed, otherwise, enable keyboard
-    if (OB.Model.Discounts.discountRules[inEvent.model.get('discountType')].isFixed) {
+    var comp = this._searchSelectedComponent(this.$.discountsList.getValue()),
+        discountsContainer = this.$.discountsContainer;
+    discountsContainer.model = comp.model;
+    discountsContainer.requiresQty = comp.requiresQty;
+    discountsContainer.amt = comp.amt;
+    discountsContainer.units = comp.units;
+    if (comp.model.get('discountType') === "8338556C0FBF45249512DB343FEFD280" || comp.model.get('discountType') === "7B49D8CC4E084A75B7CB4D85A6A3A578") {
       this.disableKeyboard();
     } else {
+      //enable keyboard
       this.enableKeyboard();
     }
-
-    OB.UTIL.HookManager.executeHooks('OBPOS_preDiscountChangeHook', {
-      context: this,
-      discountsContainer: discountsContainer,
-      inEvent: inEvent,
-      hideLineSelectionOptions: false
-    }, function (args) {
-      if (args && args.cancelOperation) {
-        return;
-      }
-      if (OB.UTIL.isNullOrUndefined(args.discountsContainer) || OB.UTIL.isNullOrUndefined(args.discountsContainer.model)) {
-        // Mandatory infornation
-        OB.UTIL.showError('Critical discount information is missing: ' + (args.discountsContainer ? 'Discount model' : 'Discount Container'));
-      } else if (OB.UTIL.isNullOrUndefined(args.discountsContainer.amt) || OB.UTIL.isNullOrUndefined(args.discountsContainer.units)) {
-        // Without this information, the discounts could not be applied
-        OB.UTIL.showWarning('Some discount information is missing, the promotion could not be applied: ' + (args.discountsContainer.amt ? 'Discount units' : 'Discount amount'));
-      }
-      if (args.hideLineSelectionOptions) {
-        args.context.$.applyCheckSelectAll.hide();
-        args.context.order.get('lines').trigger('hideAllCheckBtn');
-        args.context.$.btnApply.setDisabled(false);
-        args.context.$.btnApply.addStyles('color: orange;');
-      } else {
-        args.context.$.applyCheckSelectAll.show();
-        args.context.order.get('lines').trigger('showAllCheckBtn');
-
-        if (args.context.checkedLines.length > 0 && args.context.discounts.length !== 0) {
-          args.context.$.btnApply.setDisabled(false);
-          args.context.$.btnApply.addStyles('color: orange;');
-        } else {
-          args.context.$.btnApply.setDisabled(true);
-          args.context.$.btnApply.addStyles('color: #4C4949;');
-        }
-      }
-    });
   },
   closingDiscounts: function (inSender, inEvent) {
     OB.MobileApp.view.scanningFocus(true);
