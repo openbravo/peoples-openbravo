@@ -127,7 +127,7 @@ public class JmxClusterServiceManager implements JmxClusterServiceManagerMBean {
       criteria.add(Restrictions.eq(ADClusterService.PROPERTY_SERVICE, serviceName));
       ADClusterService service = (ADClusterService) criteria.uniqueResult();
       if (service != null) {
-        log.info("Degeristering node {} in charge of service {}", getCurrentNodeId(), serviceName);
+        log.info("Deregistering node {} in charge of service {}", getCurrentNodeId(), serviceName);
         OBDal.getInstance().remove(service);
       }
       OBDal.getInstance().commitAndClose();
