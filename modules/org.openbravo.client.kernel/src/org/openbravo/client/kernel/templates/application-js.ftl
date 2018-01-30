@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2017 Openbravo SLU
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -54,6 +54,7 @@ var OB = (window.LayoutMDI_windowObj && window.LayoutMDI_windowObj.OB) ? window.
         WINTITLE : 'Openbravo',
         IDENTIFIER : '_identifier',
         ID : 'id',
+        TITLE : 'title',
         FIELDSEPARATOR : '$',
         WHERE_PARAMETER : '_where',
         SQL_WHERE_PARAMETER : '_sqlWhere',
@@ -71,7 +72,8 @@ var OB = (window.LayoutMDI_windowObj && window.LayoutMDI_windowObj.OB) ? window.
         ERROR : 'error',
         IS_PICK_AND_EDIT : '_isPickAndEdit',
         SELECTED_PROPERTIES : '_selectedProperties',
-        EXTRA_PROPERTIES : '_extraProperties'
+        EXTRA_PROPERTIES : '_extraProperties',
+        TREE_DS_DEFAULT_FETCH_LIMIT : 200
     },
 
     Styles : {

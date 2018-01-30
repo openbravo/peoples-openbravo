@@ -31,7 +31,6 @@
     --  Phases to close
     Cur_Phase RECORD;
     --
-    v_Client_ID VARCHAR2(32);
   BEGIN
     --  Process Parameters
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -57,7 +56,6 @@
         ORDER BY p.SeqNo
         )
       LOOP
-        v_Client_ID:=Cur_Parameter.AD_Client_ID;
         v_Record_ID:=Cur_Parameter.Record_ID;
       END LOOP; --  Get Parameter
     ELSE

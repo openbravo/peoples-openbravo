@@ -654,7 +654,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[($F{SALDO_FINAL}!=null) ? $P{NUMBERFORMAT}.format($F{SALDO_FINAL}).toString() : new String(" ")]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="false">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 					<reportElement key="textField-28" style="Report_Footer" x="1" y="0" width="67" height="12" uuid="19ebdee3-379d-4a23-b0d5-c9e3d5825d47"/>
 					<box topPadding="1" leftPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

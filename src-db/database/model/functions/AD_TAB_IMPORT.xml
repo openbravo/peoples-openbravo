@@ -38,7 +38,6 @@
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
   v_Record_ID VARCHAR2(32);
-  v_AD_User_ID VARCHAR2(32):='0';
   v_module_id varchar2(32);
   v_fieldModule varchar2(32);
   v_Aux NUMBER;
@@ -63,7 +62,6 @@
     v_sortNo NUMBER(10) ;
     v_LastColumnName VARCHAR2(40) ;
     v_DisplayLength NUMBER(10) ;
-    v_Client_ID VARCHAR2(32);
     v_IgnoreInWad CHAR(1):='N';
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -83,8 +81,6 @@
         )
       LOOP
         v_Record_ID:=Cur_Parameter.Record_ID;
-        v_AD_User_ID:=Cur_Parameter.AD_User_ID;
-        v_Client_ID:=Cur_Parameter.AD_CLIENT_ID;
       END LOOP; -- Get Parameter
     ELSE
       v_Record_ID:=p_AD_Tab_ID;

@@ -43,8 +43,6 @@
 	v_New_SubAccount_No 		      VARCHAR(32) :=null;
 	v_Default_Account_No 		      VARCHAR(32) :=null;
 	v_Seq_No_For_Subaccount_No	  VARCHAR(32) :=null;
-	v_Default_Account_Name 		    VARCHAR(60) :=null;
-	v_Default_Account_Desc 		    CHARACTER VARYING(255);
 	v_Default_Account_Client_ID 	VARCHAR(32);
 	v_Org_ID			                VARCHAR(32);
 	v_C_AcctSchema_ID		          VARCHAR(32) :=null;
@@ -64,16 +62,12 @@ BEGIN
 	*/
 	SELECT 
 		C_ElementValue.Value, 
-		C_ElementValue.Name, 
-		C_ElementValue.Description, 
 		C_ElementValue.AD_Client_ID,
 		C_ElementValue.C_ElementValue_ID, 
 		C_ValidCombination.C_AcctSchema_ID, 
 		C_ElementValue.AD_Org_ID
 		INTO 
 		v_Default_Account_No,
-		v_Default_Account_Name,
-		v_Default_Account_Desc, 
 		v_Default_Account_Client_ID,
 		v_Node_ID, 
 		v_C_AcctSchema_ID, 

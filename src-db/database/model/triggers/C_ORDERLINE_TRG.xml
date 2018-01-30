@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2017 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2018 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -224,7 +224,11 @@ IF (UPDATING) THEN
         v_CalcLine := C_GET_NET_AMOUNT_FROM_GROSS(Cur_BOM.TAX, v_Line, v_Line, v_Prec);
         v_NetActual := v_NetActual + v_CalcLine; -- Acum the net
       END LOOP;    
-      v_PriceActual := ROUND(v_NetActual / :new.qtyordered, v_price_prec);     
+      IF (:new.qtyordered <> 0) THEN
+        v_PriceActual := ROUND(v_NetActual / :new.qtyordered, v_price_prec);
+      ELSE
+        v_PriceActual := 0;
+      END IF;     
     ELSE
       -- Regular taxes
       v_NetActual := C_GET_NET_AMOUNT_FROM_GROSS(:new.c_tax_id, :new.line_gross_amount, :new.taxbaseamt, v_Prec);

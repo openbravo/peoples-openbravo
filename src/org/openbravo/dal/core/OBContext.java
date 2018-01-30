@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -372,25 +372,28 @@ public class OBContext implements OBNotSingleton {
    * 
    * @param request
    */
-  public static synchronized void setOBContext(HttpServletRequest request) {
-
+  public static void setOBContext(HttpServletRequest request) {
     final HttpSession session = request.getSession(false);
-    OBContext context = null;
-    if (session != null) {
-      context = (OBContext) session.getAttribute(CONTEXT_PARAM);
+
+    if (session == null) {
+      return;
     }
 
-    if (context == null) {
-      context = new OBContext();
-      if (context.setFromRequest(request)) {
-        setOBContextInSession(request, context);
+    synchronized (session) {
+      OBContext context = (OBContext) session.getAttribute(CONTEXT_PARAM);
+
+      if (context == null) {
+        context = new OBContext();
+        if (context.setFromRequest(request)) {
+          setOBContextInSession(request, context);
+          setOBContext(context);
+        }
+      } else {
+        if (!context.isInSync(request)) {
+          context.setFromRequest(request);
+        }
         setOBContext(context);
       }
-    } else {
-      if (!context.isInSync(request)) {
-        context.setFromRequest(request);
-      }
-      setOBContext(context);
     }
   }
 

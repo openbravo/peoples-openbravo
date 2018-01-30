@@ -25,7 +25,6 @@
   v_Result NUMBER:=1;
   v_Message VARCHAR2(2000):='';
   v_MessageCount NUMBER:=0;
-  v_Record_ID VARCHAR2(32);
   v_Date DATE;
   v_Qty NUMBER;
   v_Cost NUMBER;
@@ -93,7 +92,6 @@
       ORDER BY p.SeqNo
       )
     LOOP
-      v_Record_ID:=Cur_Parameter.Record_ID;
       v_User:=Cur_Parameter.AD_User_ID;
       v_Client:=Cur_Parameter.AD_Client_ID;
       IF (Cur_Parameter.ParameterName = 'IsIncremental') THEN

@@ -204,11 +204,10 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
     OBError myMessage = new OBError();
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     try {
-      data = ReportOrderNotInvoiceData.select(readOnlyCP, strCurrencyId, vars.getLanguage(),
-          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportOrderNotInvoiceJR"),
+      data = ReportOrderNotInvoiceData.select(readOnlyCP, strCurrencyId, Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportOrderNotInvoiceJR"),
           Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportOrderNotInvoiceJR"),
           strcBpartnetId, strCOrgId, strInvoiceRule, strdateFrom,
-          DateTimeData.nDaysAfter(readOnlyCP, strdateTo, "1"));
+          DateTimeData.nDaysAfter(readOnlyCP, strdateTo, "1"), vars.getLanguage());
     } catch (ServletException ex) {
       myMessage = Utility.translateError(readOnlyCP, vars, vars.getLanguage(), ex.getMessage());
     }

@@ -44,7 +44,6 @@
   v_E_Prepayment_Acct         varchar2(32);
   v_seq_name		              varchar2(32);
   v_Sequence_No		            varchar2(32);
-  v_C_AcctSchema_ID	          VARCHAR2(32);
   v_count 					  NUMBER;
   v_currency_pl							VARCHAR2(32);
   v_currency_credit					VARCHAR2(32);
@@ -57,7 +56,6 @@ BEGIN
 
     --  Default Accounts for all AcctSchema
 	IF (INSERTING) THEN
-        v_C_AcctSchema_ID:=null;
 	FOR Cur_Defaults IN
 	(
 		SELECT AD_IsOrgIncluded(:new.AD_Org_ID, a.AD_Org_ID, :new.AD_Client_ID), AD_IsOrgIncluded(a.AD_Org_ID, :new.AD_Org_ID, :new.AD_Client_ID),
@@ -188,7 +186,6 @@ BEGIN
   END IF;
   END LOOP;
 -- Employee
-  v_C_AcctSchema_ID:=null;
   v_count:=0;
               FOR Cur_Defaults2 IN (
               SELECT AD_IsOrgIncluded(:new.AD_Org_ID, oa.AD_Org_ID, :new.AD_Client_ID), AD_IsOrgIncluded(oa.AD_Org_ID, :new.AD_Org_ID, :new.AD_Client_ID),
@@ -254,7 +251,6 @@ BEGIN
                 Cur_Defaults2.E_Expense_Acct, Cur_Defaults2.E_Prepayment_Acct);
             
             END IF;
-             v_C_AcctSchema_ID:=Cur_Defaults2.C_AcctSchema_ID;
       END IF;
     
      END LOOP;

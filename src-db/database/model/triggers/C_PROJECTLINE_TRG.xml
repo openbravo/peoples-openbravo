@@ -29,7 +29,6 @@
     *      Set Line PlannedAmt, PlannedMarginAmt
     ************************************************************************/
     v_PriceLimit NUMBER:=NULL;
-  v_PriceStd NUMBER:=NULL;
   v_PlannedMargin NUMBER:=NULL;
     
 BEGIN
@@ -44,10 +43,8 @@ BEGIN
   END IF;
   -- Get Margin from Product
   IF(:new.M_Product_ID IS NOT NULL AND :new.PlannedPrice <> 0) THEN
-    SELECT COALESCE(MAX(PriceLimit), 0),
-      COALESCE(MAX(PriceStd), 0)
-    INTO v_PriceLimit,
-      v_PriceStd
+    SELECT COALESCE(MAX(PriceLimit), 0)
+    INTO v_PriceLimit
     FROM M_ProductPrice
     WHERE M_Product_ID=:new.M_Product_ID
       AND M_PriceList_Version_ID=

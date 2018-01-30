@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+/*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -12,29 +11,33 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
--->
-<REPORT>
-	<template file="ReportCashFlowPopUp.html"/>
+ */
 
-	<PARAMETER id="paramDirectory" name="directory" default=""/>
-	<PARAMETER id="paramLanguage" name="language" default=""/>
-	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
-    <PARAMETER id="paramTitle" name="title" default=""/>
+package org.openbravo.test.costing.assertclass;
 
-  <structure name="structure">
+import org.openbravo.model.common.invoice.InvoiceLine;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
-    <FIELD id="fieldName">name</FIELD>
-    <FIELD id="fieldName" attribute="class">classAccount</FIELD>
-    <FIELD id="fieldName" attribute="style">classStyle</FIELD>
-    <FIELD id="fieldAmount" format="euroInform">total</FIELD>
-    <FIELD id="fieldAmount" attribute="class">classAccount</FIELD>
+public class MatchedInvoicesAssert {
 
-    <SECTION id="sectionDetail"/>
-  </structure>
+  final private InvoiceLine invoiceLine;
+  final private ShipmentInOutLine movementLine;
 
-	<DISCARD id="discard"/>
-</REPORT>
+  public MatchedInvoicesAssert(InvoiceLine invoiceLine, ShipmentInOutLine movementLine) {
+    this.invoiceLine = invoiceLine;
+    this.movementLine = movementLine;
+  }
+
+  public InvoiceLine getInvoiceLine() {
+    return invoiceLine;
+  }
+
+  public ShipmentInOutLine getMovementLine() {
+    return movementLine;
+  }
+
+}

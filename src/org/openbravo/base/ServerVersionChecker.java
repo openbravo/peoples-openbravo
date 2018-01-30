@@ -73,7 +73,7 @@ public class ServerVersionChecker implements ServletContextListener {
     try {
       Matcher versionMatcher = Pattern.compile("[^\\d]*([\\d]*)").matcher(serverInfo);
       if (versionMatcher.find()) {
-        return new Integer(versionMatcher.group(1));
+        return Integer.valueOf(versionMatcher.group(1));
       }
     } catch (Exception ignore) {
     }

@@ -151,7 +151,7 @@ public class SE_Order_BPartner extends SimpleCallout {
       }
       info.endSelect();
     } else {
-      info.addResult("inpmWarehouseId", null);
+      info.addResult("inpmWarehouseId", "");
     }
     // Sales Representative
 
@@ -178,7 +178,7 @@ public class SE_Order_BPartner extends SimpleCallout {
       info.endSelect();
 
     } else {
-      info.addResult("inpsalesrepId", null);
+      info.addResult("inpsalesrepId", "");
     }
 
     // Invoice Rule
@@ -213,7 +213,7 @@ public class SE_Order_BPartner extends SimpleCallout {
       info.endSelect();
 
     } else {
-      info.addResult("inpinvoicerule", null);
+      info.addResult("inpinvoicerule", "");
     }
     // Project
 
@@ -282,7 +282,7 @@ public class SE_Order_BPartner extends SimpleCallout {
 
         info.endSelect();
       } else {
-        info.addResult("inpdeliveryrule", null);
+        info.addResult("inpdeliveryrule", "");
       }
     }
 
@@ -319,7 +319,7 @@ public class SE_Order_BPartner extends SimpleCallout {
       info.endSelect();
 
     } else {
-      info.addResult("inpadUserId", null);
+      info.addResult("inpadUserId", "");
     }
 
     // Message

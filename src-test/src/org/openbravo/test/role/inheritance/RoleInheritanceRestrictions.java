@@ -52,12 +52,12 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
       String templateId = template.getId();
 
       // Add inheritances
-      RoleInheritanceTestUtils.addInheritance(inherited, template, new Long(10));
+      RoleInheritanceTestUtils.addInheritance(inherited, template, 10L);
       OBDal.getInstance().commitAndClose();
       inherited = OBDal.getInstance().get(Role.class, inheritedId);
       template = OBDal.getInstance().get(Role.class, templateId);
       try {
-        RoleInheritanceTestUtils.addInheritance(inherited, template, new Long(20));
+        RoleInheritanceTestUtils.addInheritance(inherited, template, 20L);
         OBDal.getInstance().commitAndClose();
       } catch (Exception ex) {
         OBDal.getInstance().rollbackAndClose();
@@ -97,12 +97,12 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
       String template2Id = template2.getId();
 
       // Add inheritances
-      RoleInheritanceTestUtils.addInheritance(template2, template1, new Long(10));
+      RoleInheritanceTestUtils.addInheritance(template2, template1, 10L);
       OBDal.getInstance().commitAndClose();
       template1 = OBDal.getInstance().get(Role.class, template1Id);
       template2 = OBDal.getInstance().get(Role.class, template2Id);
       try {
-        RoleInheritanceTestUtils.addInheritance(template1, template2, new Long(10));
+        RoleInheritanceTestUtils.addInheritance(template1, template2, 10L);
         OBDal.getInstance().commitAndClose();
       } catch (Exception ex) {
         OBDal.getInstance().rollbackAndClose();
@@ -151,11 +151,11 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
 
       // Add inheritances
       // roleB inherits from roleA
-      RoleInheritanceTestUtils.addInheritance(roleB, roleA, new Long(10));
+      RoleInheritanceTestUtils.addInheritance(roleB, roleA, 10L);
       // roleD inherits from roleA
-      RoleInheritanceTestUtils.addInheritance(roleD, roleA, new Long(10));
+      RoleInheritanceTestUtils.addInheritance(roleD, roleA, 10L);
       // roleC inherits from roleB
-      RoleInheritanceTestUtils.addInheritance(roleC, roleB, new Long(10));
+      RoleInheritanceTestUtils.addInheritance(roleC, roleB, 10L);
       OBDal.getInstance().commitAndClose();
       roleA = OBDal.getInstance().get(Role.class, roleAId);
       roleB = OBDal.getInstance().get(Role.class, roleBId);
@@ -171,7 +171,7 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
         // We try to add an inheritance for roleC with roleD. This should not be possible as roleD
         // is already inheriting from role A. Thus, role A is an "ancestor" for roleC because it is
         // already inheriting from it thanks to the inheritance with roleB
-        RoleInheritanceTestUtils.addInheritance(roleC, roleD, new Long(20));
+        RoleInheritanceTestUtils.addInheritance(roleC, roleD, 20L);
         OBDal.getInstance().commitAndClose();
       } catch (Exception ex) {
         OBDal.getInstance().rollbackAndClose();
@@ -223,11 +223,11 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
 
       // Add inheritances
       // roleB inherits from roleA
-      RoleInheritanceTestUtils.addInheritance(roleB, roleA, new Long(10));
+      RoleInheritanceTestUtils.addInheritance(roleB, roleA, 10L);
       // roleC inherits from roleB
-      RoleInheritanceTestUtils.addInheritance(roleC, roleB, new Long(10));
+      RoleInheritanceTestUtils.addInheritance(roleC, roleB, 10L);
       // roleC inherits from roleD
-      RoleInheritanceTestUtils.addInheritance(roleC, roleD, new Long(20));
+      RoleInheritanceTestUtils.addInheritance(roleC, roleD, 20L);
       OBDal.getInstance().commitAndClose();
       roleA = OBDal.getInstance().get(Role.class, roleAId);
       roleB = OBDal.getInstance().get(Role.class, roleBId);
@@ -242,7 +242,7 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
       try {
         // We try to add an inheritance for roleD with roleA. This should not be possible as roleA
         // is already an ancestor of roleC, which is a child of roleD.
-        RoleInheritanceTestUtils.addInheritance(roleD, roleA, new Long(10));
+        RoleInheritanceTestUtils.addInheritance(roleD, roleA, 10L);
         OBDal.getInstance().commitAndClose();
       } catch (Exception ex) {
         OBDal.getInstance().rollbackAndClose();
@@ -294,11 +294,11 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
 
       // Add inheritances
       // roleB inherits from roleA
-      RoleInheritanceTestUtils.addInheritance(roleB, roleA, new Long(10));
+      RoleInheritanceTestUtils.addInheritance(roleB, roleA, 10L);
       // roleC inherits from roleB
-      RoleInheritanceTestUtils.addInheritance(roleC, roleB, new Long(10));
+      RoleInheritanceTestUtils.addInheritance(roleC, roleB, 10L);
       // roleC inherits from roleD
-      RoleInheritanceTestUtils.addInheritance(roleC, roleD, new Long(20));
+      RoleInheritanceTestUtils.addInheritance(roleC, roleD, 20L);
       OBDal.getInstance().commitAndClose();
       roleA = OBDal.getInstance().get(Role.class, roleAId);
       roleB = OBDal.getInstance().get(Role.class, roleBId);
@@ -313,7 +313,7 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
       try {
         // We try to add an inheritance for roleA with roleD. This should not be possible as roleD
         // is already an ancestor of roleC, which is a child of roleA.
-        RoleInheritanceTestUtils.addInheritance(roleA, roleD, new Long(10));
+        RoleInheritanceTestUtils.addInheritance(roleA, roleD, 10L);
         OBDal.getInstance().commitAndClose();
       } catch (Exception ex) {
         OBDal.getInstance().rollbackAndClose();
@@ -356,7 +356,7 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
       String roleId = role.getId();
 
       // Add inheritance
-      RoleInheritanceTestUtils.addInheritance(role, template, new Long(10));
+      RoleInheritanceTestUtils.addInheritance(role, template, 10L);
       OBDal.getInstance().commitAndClose();
 
       template = OBDal.getInstance().get(Role.class, templateId);

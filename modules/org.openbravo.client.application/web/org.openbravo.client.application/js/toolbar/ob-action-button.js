@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -98,7 +98,8 @@ isc.OBToolbarActionButton.addProperties({
         windowTitle: me.windowTitle || me.realTitle,
         actionHandler: me.command,
         button: me,
-        uiPattern: me.uiPattern
+        uiPattern: me.uiPattern,
+        processOwnerView: theView
       };
       if (me.uiPattern === 'M') {
         parameters.buttons = me.labelValue;
@@ -159,8 +160,6 @@ isc.OBToolbarActionButton.addProperties({
         afterRefresh, isAfterRefreshAlreadyExecuted, parsePathPart, parts;
 
     afterRefresh = function () {
-      var autosaveDone = false,
-          currentRecordId, recordsAfterRefresh;
 
       if (isAfterRefreshAlreadyExecuted) {
         // To avoid multiple calls to this function when

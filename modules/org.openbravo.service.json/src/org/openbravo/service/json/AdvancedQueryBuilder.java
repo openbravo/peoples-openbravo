@@ -889,7 +889,7 @@ public class AdvancedQueryBuilder {
     }
 
     if (Boolean.class == property.getPrimitiveObjectType()) {
-      return new Boolean(value.toString());
+      return Boolean.valueOf(value.toString());
     } else if (property.isNumericType()) {
       try {
         final BigDecimal bdValue = new BigDecimal(value.toString());

@@ -646,7 +646,7 @@ public class DataSourceServlet extends BaseKernelServlet {
                 keyValue = keyValue
                     .toString()
                     .replace(
-                        new Character(format.getDecimalFormatSymbols().getDecimalSeparator())
+                        Character.valueOf(format.getDecimalFormatSymbols().getDecimalSeparator())
                             .toString(),
                         prefDecimalSeparator);
               }

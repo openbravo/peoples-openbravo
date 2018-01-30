@@ -59,7 +59,7 @@ public class LongDomainType extends BasePrimitiveDomainType {
     if (strValue == null || strValue.trim().length() == 0) {
       return null;
     }
-    return new Long(new BigDecimal(strValue).longValueExact());
+    return Long.valueOf(new BigDecimal(strValue).longValueExact());
   }
 
   @Override

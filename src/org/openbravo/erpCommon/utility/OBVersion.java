@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,8 +29,8 @@ import org.openbravo.model.ad.module.Module;
  * 
  */
 public class OBVersion {
-  private static String TEMPLATE_3_0 = "0138E7A89B5E4DC3932462252801FFBC";
-  private static String CORE = "0";
+  private static final String TEMPLATE_3_0 = "0138E7A89B5E4DC3932462252801FFBC";
+  private static final String CORE = "0";
   private Module versionModule;
   private Module core;
 

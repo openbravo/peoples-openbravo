@@ -574,7 +574,7 @@ public class TranslationManager {
 
       final DOMSource source = new DOMSource(document);
       final TransformerFactory tFactory = TransformerFactory.newInstance();
-      tFactory.setAttribute("indent-number", new Integer(2));
+      tFactory.setAttribute("indent-number", 2);
       final Transformer transformer = tFactory.newTransformer();
       transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");

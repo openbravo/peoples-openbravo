@@ -80,8 +80,8 @@ public class DalStoredProcedureTest extends OBBaseTest {
     copyToTab.setName("CopyToTab");
     copyToTab.setTable(tabtest.getTable());
     copyToTab.setWindow(tabtest.getWindow());
-    copyToTab.setSequenceNumber(new Long("10"));
-    copyToTab.setTabLevel(new Long("0"));
+    copyToTab.setSequenceNumber(10L);
+    copyToTab.setTabLevel(0L);
     copyToTab.setModule(tabtest.getModule());
     OBDal.getInstance().save(copyToTab);
     OBDal.getInstance().flush();

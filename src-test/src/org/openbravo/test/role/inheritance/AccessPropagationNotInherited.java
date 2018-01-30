@@ -90,7 +90,7 @@ public class AccessPropagationNotInherited extends WeldBaseTest {
       String templateId = template.getId();
 
       // Add inheritance
-      RoleInheritanceTestUtils.addInheritance(role, template, new Long(10));
+      RoleInheritanceTestUtils.addInheritance(role, template, 10L);
 
       OBDal.getInstance().commitAndClose();
       role = OBDal.getInstance().get(Role.class, roleId);

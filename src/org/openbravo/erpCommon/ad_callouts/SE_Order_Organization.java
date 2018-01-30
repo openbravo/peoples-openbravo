@@ -71,7 +71,7 @@ public class SE_Order_Organization extends SimpleCallout {
         info.addResult("inpmWarehouseId", td[0].getField("id"));
       }
     } else {
-      info.addResult("inpmWarehouseId", null);
+      info.addResult("inpmWarehouseId", "");
     }
 
   }

@@ -194,11 +194,11 @@ public class JsonToDataConverter {
       } else if (value instanceof Double) {
         return BigDecimal.valueOf((Double) value);
       } else if (value instanceof Integer && property.getPrimitiveObjectType() == Long.class) {
-        return new Long((Integer) value);
+        return Long.valueOf((Integer) value);
       } else if (value instanceof Integer && property.getPrimitiveObjectType() == Float.class) {
-        return new Float((Integer) value);
+        return Float.valueOf((Integer) value);
       } else if (value instanceof Long && property.getPrimitiveObjectType() == Float.class) {
-        return new Float((Long) value);
+        return Float.valueOf((Long) value);
       } else if (value instanceof BigDecimal
           && property.getPrimitiveObjectType() == BigDecimal.class) {
         return value;

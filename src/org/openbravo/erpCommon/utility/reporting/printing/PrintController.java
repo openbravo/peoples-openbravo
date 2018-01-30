@@ -925,7 +925,7 @@ public class PrintController extends HttpSecureAppServlet {
     boolean isTheFirstEntry = false;
     if (vector == null) {
       vector = new Vector<java.lang.Object>(0);
-      isTheFirstEntry = new Boolean(true);
+      isTheFirstEntry = true;
     }
 
     if (vars.getMultiFile("inpFile") != null && !vars.getMultiFile("inpFile").getName().equals("")) {
@@ -1293,8 +1293,8 @@ public class PrintController extends HttpSecureAppServlet {
     }
     boolean moreThanOneCustomer = (customerMap.size() > 1);
     boolean moreThanOnesalesRep = (salesRepMap.size() > 1);
-    checks.put("moreThanOneCustomer", new Boolean(moreThanOneCustomer));
-    checks.put("moreThanOnesalesRep", new Boolean(moreThanOnesalesRep));
+    checks.put("moreThanOneCustomer", Boolean.valueOf(moreThanOneCustomer));
+    checks.put("moreThanOnesalesRep", Boolean.valueOf(moreThanOnesalesRep));
   }
 
   /**
@@ -1319,8 +1319,8 @@ public class PrintController extends HttpSecureAppServlet {
     }
     boolean moreThanOneCustomer = (customerMap.size() > 1);
     boolean moreThanOnesalesRep = (salesRepMap.size() > 1);
-    checks.put("moreThanOneCustomer", new Boolean(moreThanOneCustomer));
-    checks.put("moreThanOnesalesRep", new Boolean(moreThanOnesalesRep));
+    checks.put("moreThanOneCustomer", Boolean.valueOf(moreThanOneCustomer));
+    checks.put("moreThanOnesalesRep", Boolean.valueOf(moreThanOnesalesRep));
 
     // check the number of customer and the number of
     // sales Rep. to choose one of the 3 possibilities

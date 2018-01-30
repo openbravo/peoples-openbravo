@@ -44,7 +44,6 @@
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
-    v_Record_ID VARCHAR2(32):=NULL;
     v_AD_Org_ID VARCHAR2(32):=NULL;
     v_C_Order_ID VARCHAR2(32):=NULL;
     v_BPartner_ID VARCHAR2(32):=NULL;
@@ -68,7 +67,6 @@
     v_Qty NUMBER;
     --MODIFIED BY F.IRIAZABAL
     v_QtyOrder NUMBER;
-    v_DocSubTypeSO VARCHAR2(60) ;
     --
     v_LineNo NUMBER:=0;
     v_count NUMBER:=0;
@@ -199,7 +197,6 @@
             ORDER BY p.SeqNo
             )
           LOOP
-            v_Record_ID:=Cur_Parameter.Record_ID;
             v_ADUserId:=Cur_Parameter.AD_User_ID;
             IF(Cur_Parameter.ParameterName='DateInvoiced') THEN
               v_DateInvoiced_aux:=Cur_Parameter.P_Date;
@@ -401,10 +398,8 @@
               -- Get Order DocType Info - approved from Invoice DocType
               BEGIN
               v_DocType_ID:=NULL;
-              v_ResultStr:='GetDocTypeInfo - ' || Cur_Order.C_DocType_ID;  SELECT od.C_DocTypeInvoice_ID,
-                od.DocSubTypeSO
-              INTO v_DocType_ID,
-                v_DocSubTypeSO
+              v_ResultStr:='GetDocTypeInfo - ' || Cur_Order.C_DocType_ID;  SELECT od.C_DocTypeInvoice_ID
+              INTO v_DocType_ID
               FROM C_DOCTYPE od,
                 C_DOCTYPE ID
               WHERE od.C_DocType_ID=Cur_Order.C_DocType_ID

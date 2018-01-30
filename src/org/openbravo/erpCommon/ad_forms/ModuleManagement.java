@@ -1781,21 +1781,21 @@ public class ModuleManagement extends HttpSecureAppServlet {
     if (selected != null && selected.length > 0 && selected[0] != null) {
       final FieldProvider[] fp = FieldProviderFactory.getFieldProviderArray(selected);
       for (int i = 0; i < fp.length; i++)
-        FieldProviderFactory.setField(fp[i], "position", new Integer(position++).toString());
+        FieldProviderFactory.setField(fp[i], "position", Integer.valueOf(position++).toString());
       xmlDocument.setData("selected", fp);
     }
 
     if (inst != null && inst.length > 0) {
       final FieldProvider[] fp = FieldProviderFactory.getFieldProviderArray(inst);
       for (int i = 0; i < fp.length; i++)
-        FieldProviderFactory.setField(fp[i], "position", new Integer(position++).toString());
+        FieldProviderFactory.setField(fp[i], "position", Integer.valueOf(position++).toString());
       xmlDocument.setData("installs", fp);
     }
 
     if (upd != null && upd.length > 0) {
       final FieldProvider[] fp = FieldProviderFactory.getFieldProviderArray(upd);
       for (int i = 0; i < fp.length; i++)
-        FieldProviderFactory.setField(fp[i], "position", new Integer(position++).toString());
+        FieldProviderFactory.setField(fp[i], "position", Integer.valueOf(position++).toString());
       xmlDocument.setData("updates", fp);
     }
 

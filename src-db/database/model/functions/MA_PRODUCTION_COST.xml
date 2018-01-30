@@ -32,8 +32,6 @@
   -- Parameter
   TYPE RECORD IS REF CURSOR;
 
-  v_Org_ID                              varchar2(32);
-  v_Client_ID                           varchar2(32);
   v_count                               NUMBER;
   v_countAux                            NUMBER;
   v_count2                              NUMBER;
@@ -102,8 +100,8 @@ BEGIN
 
     IF (v_count > 0) THEN
       -- Costing engine migrated
-      SELECT MAX(pr.ad_client_id), MAX(pr.ad_org_id), MAX(pr.movementdate), MAX(trxprocessdate), COUNT (*), MAX(pr.DOCUMENTNO)
-      INTO v_Client_ID, v_Org_ID, v_ProductionDate, v_CostingDate, v_count, v_ProductionNo
+      SELECT MAX(pr.movementdate), MAX(trxprocessdate), COUNT (*), MAX(pr.DOCUMENTNO)
+      INTO v_ProductionDate, v_CostingDate, v_count, v_ProductionNo
       FROM M_PRODUCTION pr, M_PRODUCTIONLINE pl
         LEFT JOIN M_TRANSACTION t ON t.m_productionline_id = pl.m_productionline_id
         , M_PRODUCTIONPLAN pp
@@ -113,8 +111,8 @@ BEGIN
       v_costingdate := COALESCE(v_costingdate, v_productiondate);
     ELSE
       -- Costing engine not migrated
-      SELECT MAX(pr.ad_client_id), MAX(pr.ad_org_id), MAX(movementdate), MAX(movementdate), COUNT (*), MAX(pr.DOCUMENTNO)
-      INTO v_Client_ID, v_Org_ID, v_ProductionDate, v_CostingDate, v_count, v_ProductionNo
+      SELECT MAX(movementdate), MAX(movementdate), COUNT (*), MAX(pr.DOCUMENTNO)
+      INTO v_ProductionDate, v_CostingDate, v_count, v_ProductionNo
       FROM M_PRODUCTION pr, M_PRODUCTIONLINE pl, M_PRODUCTIONPLAN pp
       WHERE pr.m_production_id = p_Production_ID
         AND pr.m_production_id = pp.m_production_id

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -294,7 +294,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
    * @return destination tab id or null if no rule is met
    */
 
-  private String applyRules(String fieldId, String strTableReferenceId, Entity obEntity,
+  public static String applyRules(String fieldId, String strTableReferenceId, Entity obEntity,
       String strKeyReferenceId, boolean fieldRules, boolean hasKeyReferenceId) {
     OBCriteria<TableNavigation> tableNavigationCriteria = OBDal.getInstance().createCriteria(
         TableNavigation.class);

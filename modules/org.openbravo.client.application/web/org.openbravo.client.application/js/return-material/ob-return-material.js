@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -242,8 +242,6 @@ OB.RM.RMShipmentQtyValuesChange = function (item, view, form, grid) {
     record = grid.getSelectedRecord();
   }
   if (item.pickList.getSelection()[0].id !== item.getValue()) {
-    grid.setEditValue(item.grid.getEditRow(), 'movementQuantity', record.pendingQtyInAUM);
-    record.movementQuantity = record.pendingQtyInAUM;
     var pending = record.pending;
     grid.setEditValue(item.grid.getEditRow(), 'pending', record.pendingQtyInAUM);
     record.pending = record.pendingQtyInAUM;
@@ -252,7 +250,7 @@ OB.RM.RMShipmentQtyValuesChange = function (item, view, form, grid) {
     grid.setEditValue(item.grid.getEditRow(), 'availableQty', record.availableQtyInAUM);
     record.availableQty = record.availableQtyInAUM;
     record.availableQtyInAUM = availableQty;
-    grid.setEditValue(item.grid.getEditRow(), 'returnedUOM', record.pendingQtyInAUM);
+    grid.setEditValue(item.grid.getEditRow(), 'returnedUOM', item.pickList.getSelection()[0].id);
     record.returnedUOM = item.pickList.getSelection()[0].id;
   }
 };
@@ -262,13 +260,15 @@ OB.RM.RMShipmentQtyValuesChange = function (item, view, form, grid) {
  */
 OB.RM.RMReceiptQtyValuesChange = function (item, view, form, grid) {
   var record = grid.getSelectionObject().lastSelectionItem;
+  if (typeof record === 'undefined') {
+    record = grid.getSelectedRecord();
+  }
   if (item.pickList.getSelection()[0].id !== item.getValue()) {
-    grid.setEditValue(item.grid.getEditRow(), 'receiving', record.pendingQtyInAUM);
-    record.receiving = record.pendingQtyInAUM;
     var pending = record.pending;
     grid.setEditValue(item.grid.getEditRow(), 'pending', record.pendingQtyInAUM);
     record.pending = record.pendingQtyInAUM;
     record.pendingQtyInAUM = pending;
+    grid.setEditValue(item.grid.getEditRow(), 'returnedUOM', item.pickList.getSelection()[0].id);
     record.returnedUOM = item.pickList.getSelection()[0].id;
   }
 };

@@ -29,7 +29,6 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID VARCHAR2(32);
   v_User VARCHAR2(32);
   v_Deleted NUMBER;
   -- Parameter
@@ -59,7 +58,6 @@
       ORDER BY p.SeqNo
       )
     LOOP
-      v_Record_ID:=Cur_Parameter.Record_ID;
       v_User:=Cur_Parameter.AD_User_ID;
     END LOOP; --  Get Parameter
     DELETE

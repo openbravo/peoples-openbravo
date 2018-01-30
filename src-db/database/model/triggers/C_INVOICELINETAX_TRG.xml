@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2010-2017 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2010-2018 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -83,7 +83,11 @@ BEGIN
     AND Recalculate = 'Y';
     IF(v_Count>0) THEN
       IF (v_DocTaxAmount = 'D' AND (v_Cascade = 'Y' OR v_BaseAmount IN ('TAX', 'LNATAX', 'TBATAX'))) THEN
-        SELECT COALESCE(CASE WHEN MAX(it.TaxBaseAmt) > 0 THEN MAX(ROUND(it.TaxBaseAmt, v_Prec)) + MAX(it.TaxAmt) ELSE MIN(ROUND(it.TaxBaseAmt, v_Prec)) + MIN(it.TaxAmt) END, 0)
+        SELECT COALESCE(CASE WHEN MAX(it.TaxBaseAmt) > 0 THEN 
+                          MAX(it.TaxAmt) + CASE WHEN v_BaseAmount = 'TAX' THEN 0 ELSE MAX(ROUND(it.TaxBaseAmt, v_Prec)) END
+                        ELSE 
+                          MIN(it.TaxAmt) + CASE WHEN v_BaseAmount = 'TAX' THEN 0 ELSE MIN(ROUND(it.TaxBaseAmt, v_Prec)) END
+                        END, 0)
         INTO v_Increment_Base
         FROM C_InvoiceTax it
         JOIN C_Tax t
@@ -127,7 +131,11 @@ BEGIN
     RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
   ELSE
     IF (v_DocTaxAmount = 'D' AND (v_Cascade = 'Y' OR v_BaseAmount IN ('TAX', 'LNATAX', 'TBATAX'))) THEN
-      SELECT COALESCE(CASE WHEN MAX(it.TaxBaseAmt) > 0 THEN MAX(ROUND(it.TaxBaseAmt, v_Prec)) + MAX(it.TaxAmt) ELSE MIN(ROUND(it.TaxBaseAmt, v_Prec)) + MIN(it.TaxAmt) END, 0)
+              SELECT COALESCE(CASE WHEN MAX(it.TaxBaseAmt) > 0 THEN 
+                          MAX(it.TaxAmt) + CASE WHEN v_BaseAmount = 'TAX' THEN 0 ELSE MAX(ROUND(it.TaxBaseAmt, v_Prec)) END
+                        ELSE 
+                          MIN(it.TaxAmt) + CASE WHEN v_BaseAmount = 'TAX' THEN 0 ELSE MIN(ROUND(it.TaxBaseAmt, v_Prec)) END
+                        END, 0)
       INTO v_Increment_Base
       FROM C_InvoiceTax it
       JOIN C_Tax t

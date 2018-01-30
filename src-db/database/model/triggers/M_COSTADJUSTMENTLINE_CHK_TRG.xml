@@ -24,7 +24,6 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   v_Processed VARCHAR(60) ;
-  v_DocStatus VARCHAR(60) ;
   v_m_costadjustment_ID VARCHAR2(32) ;
   v_Posted VARCHAR(60) ;
   v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
@@ -40,7 +39,7 @@ BEGIN
   ELSE
     v_M_costadjustment_ID:=:old.M_costadjustment_ID;
   END IF;
-  SELECT PROCESSED, DOCSTATUS, POSTED INTO v_Processed, v_DocStatus, v_Posted FROM M_costadjustment WHERE M_costadjustment_ID=v_M_costadjustment_ID;
+  SELECT PROCESSED, POSTED INTO v_Processed, v_Posted FROM M_costadjustment WHERE M_costadjustment_ID=v_M_costadjustment_ID;
   IF UPDATING THEN
     IF(v_Processed='Y' AND ((COALESCE(:old.LINE, 0) <> COALESCE(:new.LINE, 0))
    OR (COALESCE(:old.m_costadjustment_id, '0') <> COALESCE(:new.m_costadjustment_id, '0'))

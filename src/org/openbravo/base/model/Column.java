@@ -397,7 +397,7 @@ public class Column extends ModelObject {
 
   public void setTransient(Boolean isTransient) {
     if (isTransient == null) {
-      this.isTransient = new Boolean(false);
+      this.isTransient = Boolean.FALSE;
     } else {
       this.isTransient = isTransient;
     }

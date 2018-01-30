@@ -105,17 +105,18 @@ public class SL_InOutLine_Product extends SimpleCallout {
     // However, if the delivery-note doesn't come from an order, it modifies
     // the quantity field with the quantity in the warehouse.
 
-    boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
+    BigDecimal qty = BigDecimal.ZERO;
     String fromOrder = SLInOutLineProductData.fromOrder(this, strmInoutlineId);
     if (fromOrder.equals("0")) {
       BigDecimal qtyOrder = StringUtils.isNotEmpty(strQtyOrder) ? new BigDecimal(strQtyOrder)
           : null;
-      BigDecimal qty = StringUtils.isNotEmpty(strQty) ? new BigDecimal(strQty) : null;
+      qty = StringUtils.isNotEmpty(strQty) ? new BigDecimal(strQty) : null;
       info.addResult("inpquantityorder", qtyOrder);
       info.addResult("inpmovementqty", qty);
     }
 
-    if (isUomManagementEnabled && "".equals(strUOMProduct)) {
+    boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
+    if (isUomManagementEnabled && productIsNotUsingSecondaryUom(strUOMProduct)) {
       // Set AUM based on default
       try {
         OBContext.setAdminMode();
@@ -123,8 +124,10 @@ public class SL_InOutLine_Product extends SimpleCallout {
             info.vars.getStringParameter("inpmInoutId"));
         String finalAUM = UOMUtil.getDefaultAUMForDocument(strMProductID, mInOut.getDocumentType()
             .getId());
-        if (finalAUM != null) {
+        if (isValidUom(finalAUM)) {
           info.addResult("inpcAum", finalAUM);
+          qty = StringUtils.isNotEmpty(strQty) ? new BigDecimal(strQty) : null;
+          info.addResult("inpaumqty", UOMUtil.getConvertedAumQty(strMProductID, qty, finalAUM));
         }
       } finally {
         OBContext.restorePreviousMode();
@@ -161,12 +164,20 @@ public class SL_InOutLine_Product extends SimpleCallout {
         }
         info.endSelect();
       } else {
-        info.addResult("inpmProductUomId", null);
+        info.addResult("inpmProductUomId", "");
       }
     }
 
     // UOM
 
     info.addResult("inpcUomId", info.vars.getStringParameter("inpmProductId_UOM"));
+  }
+
+  private boolean isValidUom(final String finalAUM) {
+    return finalAUM != null;
+  }
+
+  private boolean productIsNotUsingSecondaryUom(final String strUOMProduct) {
+    return "".equals(strUOMProduct);
   }
 }

@@ -127,7 +127,7 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
         }
         resp.setErrors(errors.toArray(new String[0]));
         vars.setSessionValue("ApplyModules|Last_Line_Number_Log",
-            new Integer(newlinenumber).toString());
+            Integer.valueOf(newlinenumber).toString());
       }
       ps3 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG ORDER BY CREATED DESC");
       ps3.executeQuery();

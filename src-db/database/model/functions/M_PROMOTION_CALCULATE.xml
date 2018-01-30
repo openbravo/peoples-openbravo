@@ -22,7 +22,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2016 Openbravo SLU
+* All portions are Copyright (C) 2012-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -210,20 +210,24 @@ BEGIN
         FROM M_OFFER, M_Offer_Type t
         WHERE v_date BETWEEN DATEFROM AND COALESCE(DATETO, TO_DATE('31-12-9999', 'DD-MM-YYYY'))
           AND M_OFFER.AD_Client_ID = Cur_Order.AD_Client_ID
+          AND AD_ISORGINCLUDED(Cur_Order.AD_Org_ID, M_OFFER.AD_ORG_ID, M_OFFER.AD_CLIENT_ID) <> -1
           AND M_OFFER.IsActive = 'Y'
           AND t.M_Offer_Type_ID = M_Offer.M_Offer_Type_ID
           AND ((PRICELIST_SELECTION='Y' AND NOT EXISTS (SELECT 1 FROM M_OFFER_PRICELIST
              WHERE M_OFFER_ID=M_OFFER.M_OFFER_ID
-             AND M_PRICELIST_ID = v_priceList))
+             AND M_PRICELIST_ID = v_priceList
+             AND ISACTIVE = 'Y'))
            OR (PRICELIST_SELECTION='N' AND EXISTS(SELECT 1 FROM M_OFFER_PRICELIST
               WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
-              AND M_PRICELIST_ID = v_priceList)))
+              AND M_PRICELIST_ID = v_priceList
+              AND ISACTIVE = 'Y')))
           AND((BPARTNER_SELECTION = 'Y'
           AND NOT EXISTS
           (SELECT 1
           FROM M_OFFER_BPARTNER
           WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
             AND C_BPARTNER_ID = v_partner
+            AND ISACTIVE = 'Y'
           ))
           OR(BPARTNER_SELECTION = 'N'
           AND EXISTS
@@ -231,6 +235,7 @@ BEGIN
           FROM M_OFFER_BPARTNER
           WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
             AND C_BPARTNER_ID = v_partner
+            AND ISACTIVE = 'Y'
           )))
           AND((BP_GROUP_SELECTION = 'Y'
           AND NOT EXISTS
@@ -240,6 +245,7 @@ BEGIN
           WHERE OB.M_OFFER_ID = M_OFFER.M_OFFER_ID
             AND B.C_BPARTNER_ID = v_partner
             AND OB.C_BP_GROUP_ID = B.C_BP_GROUP_ID
+            AND OB.ISACTIVE = 'Y'
           ))
           OR(BP_GROUP_SELECTION = 'N'
           AND EXISTS
@@ -249,6 +255,7 @@ BEGIN
           WHERE OB.M_OFFER_ID = M_OFFER.M_OFFER_ID
             AND B.C_BPARTNER_ID = v_partner
             AND OB.C_BP_GROUP_ID = B.C_BP_GROUP_ID
+            AND OB.ISACTIVE = 'Y'
           )))
           AND((PRODUCT_SELECTION = 'Y'
           AND NOT EXISTS
@@ -256,6 +263,7 @@ BEGIN
           FROM M_OFFER_PRODUCT
           WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
             AND M_PRODUCT_ID = Cur_Order.M_Product_ID
+            AND ISACTIVE = 'Y'
           ))
           OR(PRODUCT_SELECTION = 'N'
           AND EXISTS
@@ -263,6 +271,7 @@ BEGIN
           FROM M_OFFER_PRODUCT
           WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
             AND M_PRODUCT_ID = Cur_Order.M_Product_ID
+            AND ISACTIVE = 'Y'
           )))
           AND((PROD_CAT_SELECTION = 'Y'
           AND NOT EXISTS
@@ -272,6 +281,7 @@ BEGIN
           WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID
             AND P.M_PRODUCT_ID = Cur_Order.M_Product_ID
             AND OP.M_PRODUCT_CATEGORY_ID = P.M_PRODUCT_CATEGORY_ID
+            AND OP.ISACTIVE = 'Y'
           ))
           OR(PROD_CAT_SELECTION = 'N'
           AND EXISTS
@@ -281,6 +291,7 @@ BEGIN
           WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID
             AND P.M_PRODUCT_ID = Cur_Order.M_Product_ID
             AND OP.M_PRODUCT_CATEGORY_ID = P.M_PRODUCT_CATEGORY_ID
+            AND OP.ISACTIVE = 'Y'
           )))
           AND ((ORG_SELECTION = 'Y'
           AND NOT EXISTS
@@ -288,6 +299,7 @@ BEGIN
           FROM M_OFFER_ORGANIZATION O
           WHERE O.M_OFFER_ID = M_OFFER.M_OFFER_ID
             AND O.AD_ORG_ID = Cur_Order.AD_Org_ID
+            AND O.ISACTIVE = 'Y'
           ))
           OR(ORG_SELECTION = 'N'
           AND EXISTS
@@ -295,6 +307,7 @@ BEGIN
           FROM M_OFFER_ORGANIZATION O
           WHERE O.M_OFFER_ID = M_OFFER.M_OFFER_ID
             AND O.AD_ORG_ID = Cur_Order.AD_Org_ID
+            AND O.ISACTIVE = 'Y'
           )))
           AND ((CHARACTERISTICS_SELECTION = 'Y'
           AND NOT EXISTS
@@ -303,6 +316,7 @@ BEGIN
           WHERE C.M_OFFER_ID = M_OFFER.M_OFFER_ID
             AND V.M_PRODUCT_ID = Cur_Order.M_Product_ID
             AND m_isparent_ch_value(V.M_CH_VALUE_ID, C.M_CH_VALUE_ID, C.M_CHARACTERISTIC_ID) <> -1
+            AND C.ISACTIVE = 'Y'
           ))
           OR(CHARACTERISTICS_SELECTION = 'N'
           AND EXISTS
@@ -311,6 +325,7 @@ BEGIN
           WHERE C.M_OFFER_ID = M_OFFER.M_OFFER_ID
             AND V.M_PRODUCT_ID = Cur_Order.M_Product_ID
             AND m_isparent_ch_value(V.M_CH_VALUE_ID, C.M_CH_VALUE_ID, C.M_CHARACTERISTIC_ID) <> -1
+            AND C.ISACTIVE = 'Y'
           ))
           )
         ORDER BY PRIORITY,

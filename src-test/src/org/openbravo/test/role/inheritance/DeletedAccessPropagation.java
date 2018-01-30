@@ -111,9 +111,9 @@ public class DeletedAccessPropagation extends WeldBaseTest {
       RoleInheritanceTestUtils.addAccess(parameter, template3, accesses.get(0));
 
       // Add inheritances
-      RoleInheritanceTestUtils.addInheritance(role, template1, new Long(10));
-      RoleInheritanceTestUtils.addInheritance(role, template2, new Long(20));
-      RoleInheritanceTestUtils.addInheritance(role, template3, new Long(30));
+      RoleInheritanceTestUtils.addInheritance(role, template1, 10L);
+      RoleInheritanceTestUtils.addInheritance(role, template2, 20L);
+      RoleInheritanceTestUtils.addInheritance(role, template3, 30L);
       OBDal.getInstance().commitAndClose();
 
       String[] expected = { accesses.get(0), template3Id, accesses.get(1), template1Id };

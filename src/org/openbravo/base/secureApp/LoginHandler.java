@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
@@ -83,6 +84,16 @@ public class LoginHandler extends HttpBaseServlet {
       ServletException {
 
     log4j.debug("start doPost");
+
+    boolean isPasswordResetFlow = Boolean.parseBoolean(req.getParameter("resetPassword"));
+    if (!isPasswordResetFlow) {
+      // Cookie id will be reset every time a user logs in, to prevent a malicious user from
+      // stealing a cookie which later on will correspond with a valid session
+      // If we are in password reset flow, there is no need to reset the cookie as it was reset in
+      // the previous attempt to login
+      resetCookieId(req);
+    }
+
     doOptions(req, res);
     final VariablesSecureApp vars = new VariablesSecureApp(req);
 
@@ -94,7 +105,6 @@ public class LoginHandler extends HttpBaseServlet {
     final String user;
     final String password;
 
-    boolean isPasswordResetFlow = Boolean.parseBoolean(vars.getStringParameter("resetPassword"));
     if (isPasswordResetFlow) {
       user = vars.getSessionValue("#AD_User_ID");
     } else {
@@ -155,6 +165,22 @@ public class LoginHandler extends HttpBaseServlet {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  /**
+   * This method invalidates the current session and generates a new one on the fly, thus generating
+   * a new JSSESSIONID cookie. It is called every time the user logs in to prevent some malicious
+   * user from stealing a cookie which later on will correspond with a valid session
+   * 
+   * @param req
+   */
+  private void resetCookieId(HttpServletRequest req) {
+    HttpSession httpSession = req.getSession(false);
+    if (httpSession != null && !httpSession.isNew()) {
+      httpSession.invalidate();
+    }
+    httpSession = req.getSession(true);
+
   }
 
   @Override

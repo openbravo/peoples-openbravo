@@ -252,7 +252,6 @@ public class SQLExecutor extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     }
-    xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

@@ -66,7 +66,7 @@ public class SL_Invoice_DocType extends SimpleCallout {
         info.addResult("inppaymentrule", "P");
       } else {
         // Payment Rule - No Form of Payment for non Credit Memos Document type.
-        info.addResult("inppaymentrule", null);
+        info.addResult("inppaymentrule", "");
       }
     }
   }

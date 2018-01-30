@@ -25,7 +25,6 @@
     ************************************************************************/
 
   v_istaxincluded CHAR(1) ;
-  v_Processed C_ORDER.PROCESSED%TYPE;
   v_ID C_ORDERLINE.C_ORDER_ID%TYPE;
   v_oldLine NUMBER;
   v_newLineNetAmt NUMBER;
@@ -35,7 +34,6 @@
   v_taxBaseAmt C_ORDERTAX.TAXBASEAMT%TYPE;
   v_taxAmt C_ORDERTAX.TAXAMT%TYPE;
   v_Prec C_CURRENCY.STDPRECISION%TYPE;
-  v_PricePrec C_CURRENCY.PRICEPRECISION%TYPE;
   v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
   v_DocTaxAmount C_TAX.DocTaxAmount%TYPE;
 
@@ -90,8 +88,8 @@ IF (UPDATING) THEN
   /**************************************************************************
    * Calculate Tax, etc.
    */
- SELECT processed, stdPrecision, priceprecision, m_pricelist.istaxincluded, M_WAREHOUSE_ID, C_BPARTNER_LOCATION_ID, C_PROJECT_ID, ISSOTRX
-   INTO v_processed, v_prec, v_PricePrec, v_istaxincluded, v_Warehouse_ID, v_Bpartner_Location_ID, v_Project_ID, v_IsSOTRX
+ SELECT stdPrecision, m_pricelist.istaxincluded, M_WAREHOUSE_ID, C_BPARTNER_LOCATION_ID, C_PROJECT_ID, ISSOTRX
+   INTO v_prec, v_istaxincluded, v_Warehouse_ID, v_Bpartner_Location_ID, v_Project_ID, v_IsSOTRX
  FROM c_order
         JOIN c_currency ON c_order.c_currency_id = c_currency.c_currency_id
         JOIN m_pricelist ON c_order.m_pricelist_id = m_pricelist.m_pricelist_id

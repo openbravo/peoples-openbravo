@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -42,17 +42,18 @@ import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 @ComponentProvider.Qualifier("DFF0A9F7C26C457FA8735A09ACFD5971")
 public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
 
-  private static final String propADListPriority = org.openbravo.model.ad.domain.List.PROPERTY_SEQUENCENUMBER;
-  private static final String propADListReference = org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE;
-  private static final String propADListValue = org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY;
-  private static final String MovementTypeRefID = "189";
-  private Set<String> orgs = null;
-  private Map<CostDimension, BaseOBObject> costDimensions = null;
+  private static final String PROP_ADLIST_PRIORITY = org.openbravo.model.ad.domain.List.PROPERTY_SEQUENCENUMBER;
+  private static final String PROP_ADLIST_REFERENCE = org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE;
+  private static final String PROP_ADLIST_VALUE = org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY;
+  private static final String MOVEMENTTYPE_REF_ID = "189";
 
   @Override
   public String transformHqlQuery(String hqlQuery, Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters) {
     // Sets the named parameters
+
+    Set<String> orgs = null;
+    Map<CostDimension, BaseOBObject> costDimensions = null;
 
     final String costingId = requestParameters.get("@MaterialMgmtCosting.id@");
     String transformedHqlQuery = null;
@@ -85,22 +86,23 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
           }
         }
 
-        Costing prevCosting = getPreviousCosting(transaction);
+        Costing prevCosting = getPreviousCosting(transaction, orgs, costDimensions);
 
-        if (prevCosting == null || (prevCosting != null && "AVA".equals(prevCosting.getCostType()))) {
+        if (prevCosting == null || "AVA".equals(prevCosting.getCostType())) {
 
           // Transform the query
           String previousCostingCost = addCostOnQuery(prevCosting);
           transformedHqlQuery = hqlQuery.replace("@previousCostingCost@", previousCostingCost);
 
-          StringBuffer whereClause = getWhereClause(costing, prevCosting, queryNamedParameters);
+          StringBuilder whereClause = getWhereClause(costing, prevCosting, queryNamedParameters,
+              orgs, costDimensions);
           transformedHqlQuery = transformedHqlQuery
               .replace("@whereClause@", whereClause.toString());
 
-          StringBuffer cumQty = addCumQty(costing, queryNamedParameters);
+          StringBuilder cumQty = addCumQty(costing, queryNamedParameters, orgs, costDimensions);
           transformedHqlQuery = transformedHqlQuery.replace("@cumQty@", cumQty.toString());
 
-          StringBuffer cumCost = addCumCost(cumQty, costing, prevCosting);
+          StringBuilder cumCost = addCumCost(cumQty, costing, prevCosting);
           transformedHqlQuery = transformedHqlQuery.replace("@cumCost@", cumCost);
 
           return transformedHqlQuery;
@@ -121,8 +123,9 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
    * parent tab will appear in the last position.
    */
 
-  private Costing getPreviousCosting(MaterialTransaction transaction) {
-    StringBuffer query = new StringBuffer();
+  private Costing getPreviousCosting(MaterialTransaction transaction, Set<String> orgs,
+      Map<CostDimension, BaseOBObject> costDimensions) {
+    StringBuilder query = new StringBuilder();
 
     query.append(" select c." + Costing.PROPERTY_ID);
     query.append(" from " + Costing.ENTITY_NAME + " c ");
@@ -130,8 +133,8 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
     query.append(" join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator, ");
     query.append(" " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype ");
     query.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :productId ");
-    query.append(" and trxtype." + propADListReference + ".id = :refid");
-    query.append(" and trxtype." + propADListValue + " = trx."
+    query.append(" and trxtype." + PROP_ADLIST_REFERENCE + ".id = :refid");
+    query.append(" and trxtype." + PROP_ADLIST_VALUE + " = trx."
         + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
     query.append(" and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
     query.append(" and ( ");
@@ -147,9 +150,9 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
     query.append("       trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
         + " = :trxProcessDate");
     query.append("       and ( ");
-    query.append("         trxtype." + propADListPriority + " < :trxtypeprio");
+    query.append("         trxtype." + PROP_ADLIST_PRIORITY + " < :trxtypeprio");
     query.append("         or (");
-    query.append("           trxtype." + propADListPriority + " = :trxtypeprio");
+    query.append("           trxtype." + PROP_ADLIST_PRIORITY + " = :trxtypeprio");
     query.append("           and ( ");
     query
         .append("             trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " > :trxqty");
@@ -170,7 +173,7 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
 
     Query prevCostingQuery = OBDal.getInstance().getSession().createQuery(query.toString());
     prevCostingQuery.setParameter("productId", transaction.getProduct().getId());
-    prevCostingQuery.setParameter("refid", MovementTypeRefID);
+    prevCostingQuery.setParameter("refid", MOVEMENTTYPE_REF_ID);
     prevCostingQuery.setParameter("movementDate", transaction.getMovementDate());
     prevCostingQuery.setParameter("trxProcessDate", transaction.getTransactionProcessDate());
     prevCostingQuery.setParameter("trxtypeprio",
@@ -189,7 +192,7 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
     final List<String> preCostingIdList = prevCostingQuery.list();
 
     Costing prevCosting = null;
-    if (preCostingIdList.size() > 0) {
+    if (!preCostingIdList.isEmpty()) {
       prevCosting = OBDal.getInstance().get(Costing.class, preCostingIdList.get(0));
       return prevCosting;
     }
@@ -203,16 +206,17 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
    * its cost calculated.
    */
 
-  private StringBuffer getWhereClause(Costing costing, Costing prevCosting,
-      Map<String, Object> queryNamedParameters) {
+  private StringBuilder getWhereClause(Costing costing, Costing prevCosting,
+      Map<String, Object> queryNamedParameters, Set<String> orgs,
+      Map<CostDimension, BaseOBObject> costDimensions) {
 
-    StringBuffer whereClause = new StringBuffer();
+    StringBuilder whereClause = new StringBuilder();
     MaterialTransaction transaction = costing.getInventoryTransaction();
 
     whereClause.append(" trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = c."
         + MaterialTransaction.PROPERTY_PRODUCT + ".id ");
-    whereClause.append(" and trxtype." + propADListReference + ".id = :refid");
-    whereClause.append(" and trxtype." + propADListValue + " = trx."
+    whereClause.append(" and trxtype." + PROP_ADLIST_REFERENCE + ".id = :refid");
+    whereClause.append(" and trxtype." + PROP_ADLIST_VALUE + " = trx."
         + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
     whereClause.append(" and c.id = :costingId ");
     whereClause.append(" and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
@@ -233,9 +237,9 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
       whereClause.append("         trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
           + " = trxcosting." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
       whereClause.append("         and ( ");
-      whereClause.append("         trxtype." + propADListPriority + " < :trxtypeprio");
+      whereClause.append("         trxtype." + PROP_ADLIST_PRIORITY + " < :trxtypeprio");
       whereClause.append("           or (");
-      whereClause.append("             trxtype." + propADListPriority + " = :trxtypeprio");
+      whereClause.append("             trxtype." + PROP_ADLIST_PRIORITY + " = :trxtypeprio");
       whereClause.append("             and ( ");
       whereClause.append("               trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
           + " > :trxqty");
@@ -261,9 +265,9 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
       whereClause.append("         trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
           + " = :prevCostTrxProcessDate");
       whereClause.append("         and ( ");
-      whereClause.append("           trxtype." + propADListPriority + " > :prevtrxtypeprio");
+      whereClause.append("           trxtype." + PROP_ADLIST_PRIORITY + " > :prevtrxtypeprio");
       whereClause.append("           or (");
-      whereClause.append("             trxtype." + propADListPriority + " = :prevtrxtypeprio");
+      whereClause.append("             trxtype." + PROP_ADLIST_PRIORITY + " = :prevtrxtypeprio");
       whereClause.append("             and ( ");
       whereClause.append("               trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
           + " < :prevtrxqty");
@@ -283,7 +287,7 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
       whereClause.append(" and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse ");
     }
 
-    queryNamedParameters.put("refid", MovementTypeRefID);
+    queryNamedParameters.put("refid", MOVEMENTTYPE_REF_ID);
     queryNamedParameters.put("costingId", costing.getId());
     queryNamedParameters.put("orgs", orgs);
     queryNamedParameters.put("clientId", costing.getClient().getId());
@@ -324,23 +328,16 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
    * only takes into account transactions that have its cost calculated.
    */
 
-  private StringBuffer addCumQty(Costing costing, Map<String, Object> queryNamedParameters) {
+  private StringBuilder addCumQty(Costing costing, Map<String, Object> queryNamedParameters,
+      Set<String> orgs, Map<CostDimension, BaseOBObject> costDimensions) {
 
-    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
-        costing.getInventoryTransaction().getClient().getId());
-    orgs = osp.getChildTree(costing.getOrganization().getId(), true);
-    if (costing.getProduct().isProduction()) {
-      orgs = osp.getChildTree("0", false);
-      costDimensions = CostingUtils.getEmptyDimensions();
-    }
-
-    StringBuffer select = new StringBuffer();
+    StringBuilder select = new StringBuilder();
     select.append(" (select sum(trxCost." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ")");
     select.append("\n from " + MaterialTransaction.ENTITY_NAME + " as trxCost");
     select.append("\n join trxCost." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
     select.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtypeCost");
-    select.append("\n where trxtypeCost." + propADListReference + ".id = :refid");
-    select.append("  and trxtypeCost." + propADListValue + " = trxCost."
+    select.append("\n where trxtypeCost." + PROP_ADLIST_REFERENCE + ".id = :refid");
+    select.append("  and trxtypeCost." + PROP_ADLIST_VALUE + " = trxCost."
         + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
     select.append("   and trxCost." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :productId");
     select.append("   and trxCost." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
@@ -359,10 +356,11 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
     select.append("      trxCost." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
         + " = trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     select.append("      and (");
-    select.append("       trxtypeCost." + propADListPriority + " < trxtype." + propADListPriority);
+    select.append("       trxtypeCost." + PROP_ADLIST_PRIORITY + " < trxtype."
+        + PROP_ADLIST_PRIORITY);
     select.append("       or (");
-    select.append("          trxtypeCost." + propADListPriority + " = trxtype."
-        + propADListPriority);
+    select.append("          trxtypeCost." + PROP_ADLIST_PRIORITY + " = trxtype."
+        + PROP_ADLIST_PRIORITY);
     select.append("        and ( trxCost." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
         + " > trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY);
     select.append("        or (");
@@ -377,7 +375,7 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
     select.append(" and trxCost." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
     select.append(" and trxCost." + MaterialTransaction.PROPERTY_CLIENT + ".id = :clientId )");
 
-    queryNamedParameters.put("refid", MovementTypeRefID);
+    queryNamedParameters.put("refid", MOVEMENTTYPE_REF_ID);
     queryNamedParameters.put("productId", costing.getProduct().getId());
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       queryNamedParameters.put("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
@@ -392,8 +390,8 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
    * Returns the cumulative cost of inventory for the product on a certain date. It is calculated
    * based on the previously calculated quantity and the product cost value at that point.
    */
-  private StringBuffer addCumCost(StringBuffer cumQty, Costing costing, Costing prevCosting) {
-    StringBuffer cumCost = new StringBuffer();
+  private StringBuilder addCumCost(StringBuilder cumQty, Costing costing, Costing prevCosting) {
+    StringBuilder cumCost = new StringBuilder();
     cumCost.append(" case when trxcosting.id = trx.id ");
     cumCost.append("   then (");
     cumCost.append(cumQty);

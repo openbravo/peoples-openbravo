@@ -43,7 +43,6 @@
   v_AD_Org_ID VARCHAR2(32);
   v_C_Period_ID VARCHAR2(32);
   v_DateAcct DATE;
-  v_DocType_ID VARCHAR2(32);
   v_BatchOrg_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
@@ -106,12 +105,12 @@
     SELECT DocStatus,
       DocAction,
       Processing,
-      Posted, AD_Org_ID, DateAcct, C_DocType_ID,
+      Posted, AD_Org_ID, DateAcct,
       C_Period_ID
     INTO v_DocStatus,
       v_DocAction,
       v_Processing,
-      v_Posted, v_AD_Org_ID, v_DateAcct, v_DocType_ID,
+      v_Posted, v_AD_Org_ID, v_DateAcct,
       v_C_Period_ID
     FROM GL_Journal
     WHERE GL_Journal_ID=v_Record_ID  FOR UPDATE;

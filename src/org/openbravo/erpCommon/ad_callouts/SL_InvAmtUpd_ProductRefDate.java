@@ -65,7 +65,7 @@ public class SL_InvAmtUpd_ProductRefDate extends SimpleCallout {
 
       if (StringUtils.equals(isWarehouseDimension, "N")) {
         warehouseId = null;
-        info.addResult("inpmWarehouseId", null);
+        info.addResult("inpmWarehouseId", "");
       }
 
       if (product == null) {

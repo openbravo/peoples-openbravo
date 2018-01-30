@@ -108,8 +108,8 @@ public class VerticalInheritance extends WeldBaseTest {
       roleC = OBDal.getInstance().get(Role.class, roleCId);
 
       // Add inheritances
-      RoleInheritanceTestUtils.addInheritance(roleB, roleA, new Long(10));
-      RoleInheritanceTestUtils.addInheritance(roleC, roleB, new Long(20));
+      RoleInheritanceTestUtils.addInheritance(roleB, roleA, 10L);
+      RoleInheritanceTestUtils.addInheritance(roleC, roleB, 20L);
 
       OBDal.getInstance().commitAndClose();
 

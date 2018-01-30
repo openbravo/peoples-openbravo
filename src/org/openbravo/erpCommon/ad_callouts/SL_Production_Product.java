@@ -98,7 +98,7 @@ public class SL_Production_Product extends SimpleCallout {
       }
       info.endSelect();
     } else {
-      info.addResult("inpmProductUomId", null);
+      info.addResult("inpmProductUomId", "");
     }
 
   }

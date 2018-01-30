@@ -56,7 +56,7 @@ public class EnumUIDefinition extends UIDefinition {
 
     // custom override
     if (field.getColumn().getDBColumnName().compareToIgnoreCase("documentno") == 0) {
-      length = new Long(20);
+      length = 20L;
     }
     return ", length:" + length + ", displaylength:" + displaylength
         + super.getGridFieldProperties(field);

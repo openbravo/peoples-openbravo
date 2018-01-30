@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+/*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -12,17 +11,47 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
--->
-<REPORT>
-	<template file="ReportCashFlowReload.html"/>
-	<PARAMETER id="paramLanguage" name="language"/>
-	<PARAMETER id="paramBol" name="bol" attribute="onload" replace="xx"/>
-	<PARAMETER id="paramOrg" name="org" attribute="value"/>
-	<PARAMETER id="paramPeriod" name="period" attribute="value"/>
-	<PARAMETER id="paramReport" name="report" attribute="value"/>
-	<PARAMETER id="paramAcctSchema" name="acctschema" attribute="value"/>
-</REPORT>
+ */
+
+package org.openbravo.test.costing.assertclass;
+
+import java.math.BigDecimal;
+
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.plm.Product;
+
+public class PhysicalInventoryAssert {
+
+  final private Product product;
+  final private BigDecimal price;
+  final private BigDecimal quantity;
+  final private int day;
+
+  public PhysicalInventoryAssert(Product product, BigDecimal price, BigDecimal quantity, int day) {
+    this.product = OBDal.getInstance().get(Product.class, product.getId());
+    this.price = price;
+    this.quantity = quantity;
+    this.day = day;
+  }
+
+  public Product getProduct() {
+    return product;
+  }
+
+  public BigDecimal getPrice() {
+    return price;
+  }
+
+  public BigDecimal getQuantity() {
+    return quantity;
+  }
+
+  public int getDay() {
+    return day;
+  }
+
+}

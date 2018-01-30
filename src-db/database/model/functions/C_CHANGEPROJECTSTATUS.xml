@@ -24,7 +24,6 @@
   v_message           VARCHAR2 (2000) := '';
   v_result NUMBER:= 1;                      -- 0=failure
   v_record_id         varchar2(32);
-  v_ad_user_id        varchar2(32);
 
   TYPE RECORD IS REF CURSOR;
 
@@ -45,7 +44,6 @@ BEGIN
                         ORDER BY p.seqno)
   LOOP
     v_record_id := cur_parameter.record_id;
-    v_ad_user_id := cur_parameter.ad_user_id;
 
     IF (cur_parameter.parametername = 'ChangeProjectStatus')
     THEN

@@ -265,8 +265,9 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
       vars.setSessionValue("#AD_Session_ID", sessionID);
       request.getSession(true).setAttribute("#Authenticated_user", sessionUser);
 
+      OBDal.getInstance().flush();
       boolean result = LoginUtils
-          .fillSessionArguments(new DalConnectionProvider(), vars, userId,
+          .fillSessionArguments(new DalConnectionProvider(false), vars, userId,
               toSaveStr(language.getLanguage()), (language.isRTLLanguage() ? "Y" : "N"),
               toSaveStr(roleId), toSaveStr(clientId), toSaveStr(organizationId),
               toSaveStr(warehouseId));
