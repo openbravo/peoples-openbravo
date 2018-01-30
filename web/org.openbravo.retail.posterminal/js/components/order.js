@@ -1098,7 +1098,7 @@ enyo.kind({
             rangeAmountBeforeDiscounts = 0,
             rangeAmountAfterDiscounts = 0,
             relatedQuantity = 0;
-        if (prod.get('productType') === 'S' && prod.get('isPriceRuleBased') && !line.get('originalOrderLineId')) {
+        if (prod.get('productType') === 'S' && prod.get('isPriceRuleBased') && !line.get('originalOrderLineId') && !line.get('obposIsDeleted')) {
           var criteria = {};
           line.get('relatedLines').forEach(function (rl) {
             var l = me.order.get('lines').get(rl.orderlineId);
@@ -1114,8 +1114,8 @@ enyo.kind({
                   return memo + promo.amt;
                 }, 0));
                 if (prod.get('quantityRule') === 'PP') {
-                  rangeAmountBeforeDiscounts += Math.abs((l.get('qty') === 0) ? 0 : OB.DEC.div(l.get('gross'), l.get('qty')));
-                  rangeAmountAfterDiscounts += Math.abs((l.get('qty') === 0) ? 0 : OB.DEC.div(l.get('gross') - _.reduce(l.get('promotions'), function (memo, promo) {
+                  rangeAmountBeforeDiscounts += Math.abs(OB.DEC.div(l.get('gross'), l.get('qty')));
+                  rangeAmountAfterDiscounts += Math.abs(OB.DEC.div(l.get('gross') - _.reduce(l.get('promotions'), function (memo, promo) {
                     return memo + promo.amt;
                   }, 0), l.get('qty')));
                 }
@@ -1138,8 +1138,8 @@ enyo.kind({
                   return memo + promo.amt;
                 }, 0));
                 if (prod.get('quantityRule') === 'PP') {
-                  rangeAmountBeforeDiscounts += Math.abs((l.get('qty') === 0) ? 0 : OB.DEC.div(l.get('net'), l.get('qty')));
-                  rangeAmountAfterDiscounts += Math.abs((l.get('qty') === 0) ? 0 : OB.DEC.div(l.get('net') - _.reduce(l.get('promotions'), function (memo, promo) {
+                  rangeAmountBeforeDiscounts += Math.abs(OB.DEC.div(l.get('net'), l.get('qty')));
+                  rangeAmountAfterDiscounts += Math.abs(OB.DEC.div(l.get('net') - _.reduce(l.get('promotions'), function (memo, promo) {
                     return memo + promo.amt;
                   }, 0), l.get('qty')));
                 }
