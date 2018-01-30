@@ -165,28 +165,28 @@ public class ClusterServiceManager {
   /**
    * @return the available cluster services.
    */
-  protected Iterable<ClusterService> getClusterServices() {
+  Iterable<ClusterService> getClusterServices() {
     return clusterServices;
   }
 
   /**
    * @return the unique identifier of the current cluster node.
    */
-  protected String getCurrentNodeId() {
+  String getCurrentNodeId() {
     return nodeId;
   }
 
   /**
    * @return the name of the current cluster node.
    */
-  protected String getCurrentNodeName() {
+  String getCurrentNodeName() {
     return nodeName;
   }
 
   /**
    * @return the Date of the last ping done (for any service) by the current node.
    */
-  protected Date getLastPing() {
+  Date getLastPing() {
     return lastPing;
   }
 
