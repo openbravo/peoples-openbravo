@@ -164,8 +164,7 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
       final String originalStorageBinId) throws ServletException, NoConnectionAvailableException {
     OBDal.getInstance().refresh(storageDetail);
     final List<StorageDetail> storageDetails = ReferencedInventoryTestUtils
-        .getStorageDetails(product);
-    ReferencedInventoryTestUtils.sortStorageDetailsByQtyOnHand(storageDetails);
+        .getAvailableStorageDetailsOrderByQtyOnHand(product);
     assertThat("Two storage details were found", storageDetails.size(), equalTo(2));
     assertThat("First storage detail qty is the boxed qty", qtyInBox, equalTo(storageDetails.get(0)
         .getQuantityOnHand()));

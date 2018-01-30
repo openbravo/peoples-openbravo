@@ -49,7 +49,6 @@ import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.materialmgmt.ReservationUtils;
-import org.openbravo.materialmgmt.StockUtils;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.AttributeSetInstance;
@@ -58,7 +57,6 @@ import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
 import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
 import org.openbravo.model.materialmgmt.onhandquantity.ReservationStock;
-import org.openbravo.model.materialmgmt.onhandquantity.StockProposed;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
@@ -211,23 +209,18 @@ class ReferencedInventoryTestUtils {
     return storageDetailsJS;
   }
 
-  static List<StorageDetail> getStorageDetails(final Product product) throws ServletException,
+  static List<StorageDetail> getAvailableStorageDetailsOrderByQtyOnHand(final Product product) throws ServletException,
       NoConnectionAvailableException {
-    final String stockProposedId = SequenceIdData.getUUID();
-    StockUtils.getStock(stockProposedId, null, BigDecimal.ONE, product.getId(), null, null,
-        QA_SPAIN_WAREHOUSE_ID, QA_SPAIN_ORG_ID, null, OBContext.getOBContext().getUser().getId(),
-        QA_CLIENT_ID, null, product.getUOM().getId(), null, null, null, null, null, null, "N");
-    final List<StorageDetail> storageDetails = new ArrayList<>(2);
-    for (final StockProposed stockProposed : OBDao.getFilteredCriteria(StockProposed.class,
-        Restrictions.eq(StockProposed.PROPERTY_PROCESSINSTANCE, stockProposedId)).list()) {
-      storageDetails.add(stockProposed.getStorageDetail());
-    }
-    return storageDetails;
+    final OBCriteria<StorageDetail> crit = OBDao.getFilteredCriteria(StorageDetail.class,
+        Restrictions.eq(StorageDetail.PROPERTY_PRODUCT, product),
+        Restrictions.gt(StorageDetail.PROPERTY_QUANTITYONHAND, BigDecimal.ZERO));
+    crit.addOrderBy(StorageDetail.PROPERTY_QUANTITYONHAND, true);
+    return crit.list();
   }
 
   static StorageDetail getUniqueStorageDetail(final Product product) throws ServletException,
       NoConnectionAvailableException {
-    final List<StorageDetail> storageDetails = getStorageDetails(product);
+    final List<StorageDetail> storageDetails = getAvailableStorageDetailsOrderByQtyOnHand(product);
     if (storageDetails.size() > 1) {
       throw new OBException(storageDetails.size()
           + " storage details were found but just 1 was expected");

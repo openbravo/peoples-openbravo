@@ -66,8 +66,7 @@ public class ReferencedInventoryPartialUnboxTest extends ReferencedInventoryUnbo
     assertsAttributeSetIsValid(outParams.refInv, outParams.originalAttributeSetId);
 
     final List<StorageDetail> afterUnboxStorageDetails = ReferencedInventoryTestUtils
-        .getStorageDetails(outParams.originalProduct);
-    ReferencedInventoryTestUtils.sortStorageDetailsByQtyOnHand(afterUnboxStorageDetails);
+        .getAvailableStorageDetailsOrderByQtyOnHand(outParams.originalProduct);
     final StorageDetail outStorageDetail = afterUnboxStorageDetails.get(0);
     assertsUnboxedStorageDetailIsInRightBin(outStorageDetail, outParams.toBinId);
   }

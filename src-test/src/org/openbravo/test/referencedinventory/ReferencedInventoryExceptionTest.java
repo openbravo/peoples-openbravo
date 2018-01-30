@@ -125,8 +125,7 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
     final ReferencedInventory refInv = testBox(ReferencedInventoryTestUtils.BIN_SPAIN_L02,
         ReferencedInventoryTestUtils.PRODUCT_TSHIRT_ID, null, BigDecimal.ONE);
     final List<StorageDetail> storageDetails = ReferencedInventoryTestUtils
-        .getStorageDetails(refInv.getMaterialMgmtStorageDetailList().get(0).getProduct());
-    ReferencedInventoryTestUtils.sortStorageDetailsByQtyOnHand(storageDetails);
+        .getAvailableStorageDetailsOrderByQtyOnHand(refInv.getMaterialMgmtStorageDetailList().get(0).getProduct());
     final JSONArray storageDetailsJS = ReferencedInventoryTestUtils.getStorageDetailsToBoxJSArray(
         storageDetails.get(1), new BigDecimal("3"));
 

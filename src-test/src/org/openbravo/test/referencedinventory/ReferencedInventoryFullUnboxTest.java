@@ -66,7 +66,7 @@ public class ReferencedInventoryFullUnboxTest extends ReferencedInventoryUnboxTe
     assertsAttributeSetIsProperlyRestored(outParams.refInv, outParams.originalAttributeSetId,
         outParams.originalProduct);
 
-    final StorageDetail outStorageDetail = ReferencedInventoryTestUtils.getStorageDetails(
+    final StorageDetail outStorageDetail = ReferencedInventoryTestUtils.getAvailableStorageDetailsOrderByQtyOnHand(
         outParams.originalProduct).get(0);
     assertsUnboxedStorageDetailIsInRightBin(outStorageDetail, outParams.toBinId);
   }
@@ -81,7 +81,7 @@ public class ReferencedInventoryFullUnboxTest extends ReferencedInventoryUnboxTe
   private void assertsAttributeSetIsProperlyRestored(ReferencedInventory refInv,
       String originalAttributeSet, Product product) throws Exception {
     for (final StorageDetail storageDetail : ReferencedInventoryTestUtils
-        .getStorageDetails(product)) {
+        .getAvailableStorageDetailsOrderByQtyOnHand(product)) {
       if (storageDetail.getQuantityOnHand().compareTo(BigDecimal.ZERO) > 0) {
         assertThat("Current storage detail has restored its original attribute set", storageDetail
             .getAttributeSetValue().getId(), equalTo(originalAttributeSet));
