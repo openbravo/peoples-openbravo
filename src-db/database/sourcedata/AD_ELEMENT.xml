@@ -21300,8 +21300,8 @@ If one of the trees of a table uses the ADTree tree structure, that must be the 
 <!--0D65B6036F0B4A2186B001CE897DA9D5-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--0D65B6036F0B4A2186B001CE897DA9D5-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--0D65B6036F0B4A2186B001CE897DA9D5-->  <COLUMNNAME><![CDATA[Node_Name]]></COLUMNNAME>
-<!--0D65B6036F0B4A2186B001CE897DA9D5-->  <NAME><![CDATA[Master Node]]></NAME>
-<!--0D65B6036F0B4A2186B001CE897DA9D5-->  <PRINTNAME><![CDATA[Master Node]]></PRINTNAME>
+<!--0D65B6036F0B4A2186B001CE897DA9D5-->  <NAME><![CDATA[Master Node Name]]></NAME>
+<!--0D65B6036F0B4A2186B001CE897DA9D5-->  <PRINTNAME><![CDATA[Master Node Name]]></PRINTNAME>
 <!--0D65B6036F0B4A2186B001CE897DA9D5-->  <DESCRIPTION><![CDATA[The name of the node in a clustered environment which is currently in charge of handling a particular service.]]></DESCRIPTION>
 <!--0D65B6036F0B4A2186B001CE897DA9D5-->  <HELP><![CDATA[The name of the node in a clustered environment which is currently in charge of handling a particular service.]]></HELP>
 <!--0D65B6036F0B4A2186B001CE897DA9D5-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -21606,8 +21606,8 @@ Advanced features are only granted to the automatic roles defined as advanced.]]
 <!--16912D109DF5456892AC8D606148A405-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--16912D109DF5456892AC8D606148A405-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--16912D109DF5456892AC8D606148A405-->  <COLUMNNAME><![CDATA[Node_ID]]></COLUMNNAME>
-<!--16912D109DF5456892AC8D606148A405-->  <NAME><![CDATA[Node ID]]></NAME>
-<!--16912D109DF5456892AC8D606148A405-->  <PRINTNAME><![CDATA[Node ID]]></PRINTNAME>
+<!--16912D109DF5456892AC8D606148A405-->  <NAME><![CDATA[Master Node ID]]></NAME>
+<!--16912D109DF5456892AC8D606148A405-->  <PRINTNAME><![CDATA[Master Node ID]]></PRINTNAME>
 <!--16912D109DF5456892AC8D606148A405-->  <DESCRIPTION><![CDATA[Identifies uniquely the node of a clustered environment which is currently in charge of handling a particular service.]]></DESCRIPTION>
 <!--16912D109DF5456892AC8D606148A405-->  <HELP><![CDATA[Identifies uniquely the node of a clustered environment which is currently in charge of handling a particular service.]]></HELP>
 <!--16912D109DF5456892AC8D606148A405-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>

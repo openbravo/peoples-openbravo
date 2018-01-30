@@ -37,8 +37,8 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TIMEOUT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
+      <column name="TIMEOUT" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default><![CDATA[1]]></default>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLUSTER_SRV_SET_AD_CLIENT">
