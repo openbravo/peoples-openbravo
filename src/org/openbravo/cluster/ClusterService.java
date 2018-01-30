@@ -48,7 +48,7 @@ public abstract class ClusterService {
   private boolean useCache = false;
   private boolean isDisabled = false;
 
-  protected boolean init(String currentNodeId) {
+  boolean init(String currentNodeId) {
     if (!isEnabled()) {
       return false;
     }
@@ -94,25 +94,25 @@ public abstract class ClusterService {
     }
   }
 
-  protected Long getTimeout() {
+  Long getTimeout() {
     return timeout;
   }
 
-  protected Long getThreshold() {
+  Long getThreshold() {
     // The threshold is an extra amount of time added to the timeout that helps to avoid
     // unnecessarily switching the node that should handle a service on every ping round.
     return threshold;
   }
 
-  protected Long getNextPing() {
+  Long getNextPing() {
     return nextPing;
   }
 
-  protected void setNextPing(Long nextPing) {
+  void setNextPing(Long nextPing) {
     this.nextPing = nextPing;
   }
 
-  protected boolean isInitialized() {
+  boolean isInitialized() {
     return initialized;
   }
 
@@ -138,7 +138,7 @@ public abstract class ClusterService {
     return nodeId.equals(nodeHandlingService);
   }
 
-  protected String getNodeHandlingService() {
+  String getNodeHandlingService() {
     return nodeHandlingService;
   }
 
@@ -160,33 +160,33 @@ public abstract class ClusterService {
     }
   }
 
-  protected void setUseCache(boolean useCache) {
+  void setUseCache(boolean useCache) {
     this.useCache = useCache;
   }
 
-  protected boolean isDisabled() {
+  boolean isDisabled() {
     return isDisabled;
   }
 
-  protected void setDisabled(boolean isDisabled) {
+  void setDisabled(boolean isDisabled) {
     this.isDisabled = isDisabled;
   }
 
   /**
    * @return a {@code String} that uniquely identifies the service.
    */
-  public abstract String getServiceName();
+  protected abstract String getServiceName();
 
   /**
    * @return {@code true} if the service currently is running in the present cluster node,
    *         {@code false} otherwise.
    */
-  public abstract boolean isAlive();
+  protected abstract boolean isAlive();
 
   /**
    * @return {@code true} if it is allowed to execute this service in the present cluster node,
    *         {@code false} otherwise.
    */
-  public abstract boolean isEnabled();
+  protected abstract boolean isEnabled();
 
 }
