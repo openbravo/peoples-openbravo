@@ -309,17 +309,15 @@ public class ClusterServiceManager {
           registerService(serviceName);
         } else if (manager.nodeId.equals(service.getNodeID())) {
           // current node is charge of handling the service, just update the last ping
-          if (log.isDebugEnabled()) {
-            log.debug("Current node {} still in charge of service {}", getNodeIdentifier(),
-                serviceName);
-          }
+          log.debug("Current node {} still in charge of service {}", getNodeIdentifier(),
+              serviceName);
           updateLastPing(serviceName, now);
         } else if (shouldReplaceNodeOfService(service, interval)) {
           // try to register the current node as the one in charge of handling the service
           log.info("Node {} in charge of service {} should be replaced",
               getNodeIdentifier(service), serviceName);
           updateNodeOfService(service.getNodeID(), serviceName, now);
-        } else if (log.isDebugEnabled()) {
+        } else {
           log.debug("Node {} still in charge of service {}", getNodeIdentifier(service),
               serviceName);
         }
