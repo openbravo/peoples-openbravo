@@ -5206,6 +5206,7 @@
         model.set('created', creationDate.getTime());
         model.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
         model.set('obposIsDeleted', true);
+        OB.info('markOrderAsDeleted has set order with documentNo ' + model.get('documentNo') + ' and id ' + model.get('id') + ' as obposIsDeleted to true');
         model.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
         for (i = 0; i < model.get('lines').length; i++) {
           model.get('lines').at(i).set('obposIsDeleted', true);
@@ -6010,6 +6011,7 @@
       if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && !this.current.get('isQuotation') && OB.MobileApp.model.receipt.id === this.current.id && this.current.get('lines').length === 0 && !this.current.has('deletedLines') && (this.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0)) {
         OB.MobileApp.model.receipt.setIsCalculateGrossLockState(true);
         OB.MobileApp.model.receipt.set('obposIsDeleted', true);
+        OB.info('deleteCurrent has set order with documentNo ' + OB.MobileApp.model.receipt.get('documentNo') + ' and id ' + OB.MobileApp.model.receipt.get('id') + ' as obposIsDeleted to true');
         OB.MobileApp.model.receipt.prepareToSend(function () {
           OB.MobileApp.model.receipt.save(function () {
             OB.MobileApp.model.receipt.trigger('closed', {
