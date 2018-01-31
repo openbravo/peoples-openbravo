@@ -57,7 +57,7 @@ public class ReferencedInventoryFullUnboxTest extends ReferencedInventoryUnboxTe
   private void testFullUnbox(final String _toBinId, final String productId,
       final String attributeSetInstanceId) throws Exception {
     final TestUnboxOutputParams outParams = testUnbox(_toBinId, productId, attributeSetInstanceId,
-        new BigDecimal("10"));
+        new BigDecimal("10"), null, false);
     assertsReferenceInventoryIsEmpty(outParams.refInv);
   }
 

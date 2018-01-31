@@ -20,15 +20,6 @@
 package org.openbravo.test.referencedinventory;
 
 import java.math.BigDecimal;
-import java.util.List;
-
-import org.openbravo.dal.service.OBDal;
-import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
-import org.openbravo.materialmgmt.refinventory.UnboxProcessor;
-import org.openbravo.model.common.plm.Product;
-import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
-import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
-import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 
 /**
  * Abstract class to test unboxing related to reservations
@@ -39,26 +30,10 @@ public abstract class ReferencedInventoryUnboxReservationTest extends Referenced
       final String productId, final String attributeSetInstanceId, final BigDecimal qtyToBox,
       final BigDecimal qtyToUnbox, final BigDecimal reservationQty, final boolean isAllocated)
       throws Exception {
-    ReferencedInventory refInv = testBox(null, productId, attributeSetInstanceId, qtyToBox,
-        reservationQty, isAllocated);
-    final List<StorageDetail> storageDetails = refInv.getMaterialMgmtStorageDetailList();
-    final Product originalProduct = storageDetails.get(0).getProduct();
-    final String originalAttributeSet = ReferencedInventoryUtil.getParentAttributeSetInstance(
-        storageDetails.get(0)).getId();
+    final TestUnboxOutputParams outParams = super.testUnbox(toBinId, productId,
+        attributeSetInstanceId, qtyToUnbox, reservationQty, isAllocated);
 
-    final InternalMovement unBoxMovement = new UnboxProcessor(refInv,
-        ReferencedInventoryTestUtils.getUnboxStorageDetailsJSArray(storageDetails.get(0),
-            qtyToUnbox, toBinId)).createAndProcessGoodsMovement();
-
-    OBDal.getInstance().refresh(unBoxMovement);
-    OBDal.getInstance().getSession().evict(refInv); // Hack to avoid problems in Hibernate when the
-                                                    // unbox process is executed
-    refInv = OBDal.getInstance().get(ReferencedInventory.class, refInv.getId());
-
-    assertsGoodsMovementIsProcessed(unBoxMovement);
-    assertsGoodsMovementNumberOfLines(unBoxMovement, 1);
-
-    return new TestUnboxOutputParams(refInv, originalProduct, originalAttributeSet, toBinId);
+    return outParams;
   }
 
   protected class ParamsUnboxReservationTest extends ParamsBoxReservationTest {

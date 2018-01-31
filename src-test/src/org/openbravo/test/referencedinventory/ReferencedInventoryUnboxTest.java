@@ -39,10 +39,11 @@ public abstract class ReferencedInventoryUnboxTest extends ReferencedInventoryBo
   private static final BigDecimal QTYINBOX_10 = new BigDecimal("10");
 
   protected TestUnboxOutputParams testUnbox(final String toBinId, final String productId,
-      final String attributeSetInstanceId, final BigDecimal qtyToUnbox) throws Exception {
+      final String attributeSetInstanceId, final BigDecimal qtyToUnbox,
+      final BigDecimal reservationQty, final boolean isAllocated) throws Exception {
 
     ReferencedInventory refInv = testBox(null, productId, attributeSetInstanceId, QTYINBOX_10,
-        null, false);
+        reservationQty, isAllocated);
     final StorageDetail storageDetail = refInv.getMaterialMgmtStorageDetailList().get(0);
     final Product originalProduct = storageDetail.getProduct();
     final String originalAttributeSet = ReferencedInventoryUtil.getParentAttributeSetInstance(

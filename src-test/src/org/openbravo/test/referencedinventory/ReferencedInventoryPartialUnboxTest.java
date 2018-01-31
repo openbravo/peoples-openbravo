@@ -61,7 +61,7 @@ public class ReferencedInventoryPartialUnboxTest extends ReferencedInventoryUnbo
   private void testPartialUnbox(final String _toBinId, final String productId,
       final String attributeSetInstanceId) throws Exception {
     final TestUnboxOutputParams outParams = testUnbox(_toBinId, productId, attributeSetInstanceId,
-        BigDecimal.ONE);
+        BigDecimal.ONE, null, false);
     assertsReferenceInventoryIsNotEmpty(outParams.refInv, new BigDecimal("9"));
   }
 

@@ -30,6 +30,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 
 /**
@@ -61,14 +63,22 @@ public class ReferencedInventoryPartialUnboxFullReservation extends
 
   private void assertsStorageDetailsInBox(final BigDecimal qtyToBox, final BigDecimal qtyToUnbox,
       final TestUnboxOutputParams outParams) {
-    final List<StorageDetail> storageDetailsInBox = outParams.refInv
-        .getMaterialMgmtStorageDetailList();
+    final ReferencedInventory refInv = outParams.refInv;
+    final List<StorageDetail> storageDetailsInBox = refInv.getMaterialMgmtStorageDetailList();
     assertThat("One Storage Detail must be in the referenced inventory",
         storageDetailsInBox.size(), equalTo(1));
-    final StorageDetail storageDetailInBox = storageDetailsInBox.get(0);
-    assertThat("Qty in box is the expected one", qtyToBox.subtract(qtyToUnbox),
-        equalTo(storageDetailInBox.getQuantityOnHand()));
-    assertThat("Qty in box reserved is equal to qty in box on hand",
-        storageDetailInBox.getQuantityOnHand(), equalTo(storageDetailInBox.getReservedQty()));
+
+    for (StorageDetail sd : ReferencedInventoryTestUtils
+        .getAvailableStorageDetailsOrderByQtyOnHand(outParams.originalProduct)) {
+      OBDal.getInstance().refresh(sd);
+      if (sd.getReferencedInventory() != null) {
+        // In box
+        assertThat("Qty in box is the expected one", qtyToBox.subtract(qtyToUnbox),
+            equalTo(sd.getQuantityOnHand()));
+        assertThat("Qty in box reserved is equal to qty in box on hand", sd.getQuantityOnHand(),
+            equalTo(sd.getReservedQty()));
+      }
+    }
+
   }
 }
