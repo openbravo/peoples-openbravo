@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2016 Openbravo SLU
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -69,6 +69,9 @@ public class ImportEntryArchiveManager {
   @Any
   private Instance<ImportEntryArchivePreProcessor> archiveEntryPreProcessors;
 
+  @Inject
+  private ImportEntryClusterService clusterService;
+
   private ImportEntryArchiveThread archiveThread;
   private ExecutorService executorService;
 
@@ -109,10 +112,7 @@ public class ImportEntryArchiveManager {
       // don't start right away at startup, give the system time to
       // really start
       log.debug("Started, first sleep " + ARCHIVE_INTERVAL);
-      try {
-        Thread.sleep(ARCHIVE_INTERVAL);
-      } catch (Exception ignored) {
-      }
+      doWait();
       log.debug("Run loop started");
 
       if (manager.isShutDown) {
@@ -120,14 +120,25 @@ public class ImportEntryArchiveManager {
         return;
       }
 
-      // make ourselves an admin
-      OBContext.setOBContext("0", "0", "0", "0");
       Date lastCreated = null;
       while (true) {
         try {
 
           if (manager.isShutDown) {
             return;
+          }
+
+          if (shouldWait()) {
+            doWait();
+            // woken, re-start from beginning of loop
+            continue;
+          }
+
+          // obcontext cleared or wrong obcontext, repair
+          if (OBContext.getOBContext() == null
+              || !"0".equals(OBContext.getOBContext().getUser().getId())) {
+            // make ourselves an admin
+            OBContext.setOBContext("0", "0", "0", "0");
           }
 
           boolean dataProcessed = false;
@@ -156,6 +167,11 @@ public class ImportEntryArchiveManager {
             final List<ImportEntry> entries = entriesQry.list();
             log.debug("Found " + entries.size() + " import entries");
             for (ImportEntry importEntry : entries) {
+              if (!isHandlingImportEntryArchiving()) {
+                // detected that we are not anymore in the node in charge of handling the import
+                // entries, stop archiving them
+                break;
+              }
               dataProcessed = true;
               lastCreated = importEntry.getCreationDate();
 
@@ -182,16 +198,31 @@ public class ImportEntryArchiveManager {
 
           // nothing to do in last cycle wait one hour
           if (!dataProcessed) {
-            log.debug("waiting");
             lastCreated = null;
-            try {
-              Thread.sleep(ARCHIVE_INTERVAL);
-            } catch (Exception ignored) {
-            }
+            doWait();
           }
         } catch (Throwable t) {
           log.error(t.getMessage(), t);
         }
+      }
+    }
+
+    private boolean shouldWait() {
+      // - in cluster: process if we are in the node in charge of handling the import entries,
+      // otherwise just wait
+      // - not in cluster: do not wait
+      return !isHandlingImportEntryArchiving();
+    }
+
+    private boolean isHandlingImportEntryArchiving() {
+      return manager.clusterService.isHandledInCurrentNode();
+    }
+
+    private void doWait() {
+      log.debug("waiting");
+      try {
+        Thread.sleep(ARCHIVE_INTERVAL);
+      } catch (Exception ignored) {
       }
     }
 
