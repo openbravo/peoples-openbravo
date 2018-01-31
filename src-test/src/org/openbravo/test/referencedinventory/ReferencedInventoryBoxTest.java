@@ -113,7 +113,7 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
     if (reservationQty != null) {
       assertsOriginalReservationIfAvailable(originalReservation);
       if (hasBoxedSomethingPreviouslyReserved(qtyInBox, reservationQty, storageDetail)) {
-        assertsNewReservationInRefInventoryAllocatedFlag(reservationQty, isAllocated, refInv);
+        assertsNewReservationAllocatedFlag(reservationQty, isAllocated, refInv);
       }
       assertsReservationQtyInStorageDetails(qtyInBox, reservationQty, product);
     }
@@ -203,12 +203,14 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
     return (RECEIVEDQTY_10.subtract(reservationQty)).compareTo(qtyInBox) < 0;
   }
 
-  private void assertsNewReservationInRefInventoryAllocatedFlag(final BigDecimal reservationQty,
+  private void assertsNewReservationAllocatedFlag(final BigDecimal reservationQty,
       final boolean isAllocated, ReferencedInventory refInv) {
-    // Just 1 detail expected
-    for (ReservationStock rs : ReservationUtils.getReservationStockFromStorageDetail(refInv
-        .getMaterialMgmtStorageDetailList().get(0))) {
-      assertThat("Allocated flag is properly set", isAllocated, equalTo(rs.isAllocated()));
+    for (StorageDetail sd : ReferencedInventoryTestUtils
+        .getAvailableStorageDetailsOrderByQtyOnHand(refInv.getMaterialMgmtStorageDetailList()
+            .get(0).getProduct())) {
+      for (ReservationStock rs : ReservationUtils.getReservationStockFromStorageDetail(sd)) {
+        assertThat("Allocated flag is properly set", isAllocated, equalTo(rs.isAllocated()));
+      }
     }
   }
 
