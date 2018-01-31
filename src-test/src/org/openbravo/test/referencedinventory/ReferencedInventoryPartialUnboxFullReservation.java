@@ -24,18 +24,16 @@ import static org.junit.Assert.assertThat;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 
 /**
- * Parial unbox a storage detail that was 100% reserved and boxed
+ * Partial unbox a storage detail that was 100% reserved and boxed
  *
  */
 public class ReferencedInventoryPartialUnboxFullReservation extends
@@ -55,19 +53,16 @@ public class ReferencedInventoryPartialUnboxFullReservation extends
         for (String toBinId : BINS) {
           final TestUnboxOutputParams outParams = testUnboxReservation(toBinId, product[0],
               product[1], params.qtyToBox, params.qtyToUnbox, params.reservationQty, isAllocated);
-          assertsStorageDetailsInBox(params.qtyToBox, params.qtyToUnbox, outParams);
+          assertsReferenceInventoryIsNotEmpty(outParams.refInv,
+              params.qtyToBox.subtract(params.qtyToUnbox));
+          assertsStorageDetails(params.qtyToBox, params.qtyToUnbox, outParams);
         }
       }
     }
   }
 
-  private void assertsStorageDetailsInBox(final BigDecimal qtyToBox, final BigDecimal qtyToUnbox,
+  private void assertsStorageDetails(final BigDecimal qtyToBox, final BigDecimal qtyToUnbox,
       final TestUnboxOutputParams outParams) {
-    final ReferencedInventory refInv = outParams.refInv;
-    final List<StorageDetail> storageDetailsInBox = refInv.getMaterialMgmtStorageDetailList();
-    assertThat("One Storage Detail must be in the referenced inventory",
-        storageDetailsInBox.size(), equalTo(1));
-
     for (StorageDetail sd : ReferencedInventoryTestUtils
         .getAvailableStorageDetailsOrderByQtyOnHand(outParams.originalProduct)) {
       OBDal.getInstance().refresh(sd);
@@ -76,6 +71,11 @@ public class ReferencedInventoryPartialUnboxFullReservation extends
         assertThat("Qty in box is the expected one", qtyToBox.subtract(qtyToUnbox),
             equalTo(sd.getQuantityOnHand()));
         assertThat("Qty in box reserved is equal to qty in box on hand", sd.getQuantityOnHand(),
+            equalTo(sd.getReservedQty()));
+      } else {
+        // Out box
+        assertThat("Qty out box is the expected one", qtyToUnbox, equalTo(sd.getQuantityOnHand()));
+        assertThat("Qty out box reserved is equal to qty in box on hand", sd.getQuantityOnHand(),
             equalTo(sd.getReservedQty()));
       }
     }

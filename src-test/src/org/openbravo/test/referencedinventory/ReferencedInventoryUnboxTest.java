@@ -116,6 +116,27 @@ public abstract class ReferencedInventoryUnboxTest extends ReferencedInventoryBo
     }
   }
 
+  protected void assertsReferenceInventoryIsNotEmpty(final ReferencedInventory refInv,
+      final BigDecimal expectedQtyInRefInv) throws Exception {
+    final List<StorageDetail> storageDetails = refInv.getMaterialMgmtStorageDetailList();
+    assertThat("Referenced inventory must still be linked to a storage detail",
+        storageDetails.size(), equalTo(1));
+    assertThat("Storage detail must have expected qty on hand", storageDetails.get(0)
+        .getQuantityOnHand(), equalTo(expectedQtyInRefInv));
+    assertThat("Attribute Set description does contain info about referenced inventory",
+        storageDetails.get(0).getAttributeSetValue().getDescription(),
+        endsWith(ReferencedInventoryUtil.REFERENCEDINVENTORYPREFIX + refInv.getSearchKey()
+            + ReferencedInventoryUtil.REFERENCEDINVENTORYSUFFIX));
+  }
+
+  protected void assertsReferenceInventoryIsEmpty(final ReferencedInventory refInv)
+      throws Exception {
+    for (final StorageDetail storageDetail : refInv.getMaterialMgmtStorageDetailList()) {
+      assertThat("Storage detail found in referenced inventory must not have qty on hand",
+          storageDetail.getQuantityOnHand(), equalTo(BigDecimal.ZERO));
+    }
+  }
+
   protected class ParamsUnboxTest extends ParamsBoxTest {
     BigDecimal qtyToUnbox;
 

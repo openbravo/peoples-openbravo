@@ -19,9 +19,6 @@
 
 package org.openbravo.test.referencedinventory;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
 
@@ -29,8 +26,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
-import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
-import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 
 /**
  * Full unbox (10 units of 10 units) of a storage detail without reservations
@@ -61,10 +56,4 @@ public class ReferencedInventoryFullUnboxTest extends ReferencedInventoryUnboxTe
     assertsReferenceInventoryIsEmpty(outParams.refInv);
   }
 
-  private void assertsReferenceInventoryIsEmpty(final ReferencedInventory refInv) throws Exception {
-    for (final StorageDetail storageDetail : refInv.getMaterialMgmtStorageDetailList()) {
-      assertThat("Storage detail found in referenced inventory must not have qty on hand",
-          storageDetail.getQuantityOnHand(), equalTo(BigDecimal.ZERO));
-    }
-  }
 }

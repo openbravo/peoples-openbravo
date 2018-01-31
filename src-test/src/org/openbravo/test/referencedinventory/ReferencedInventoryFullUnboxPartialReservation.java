@@ -26,6 +26,7 @@ public class ReferencedInventoryFullUnboxPartialReservation extends
         for (String toBinId : BINS) {
           final TestUnboxOutputParams outParams = testUnboxReservation(toBinId, product[0],
               product[1], params.qtyToBox, params.qtyToUnbox, params.reservationQty, isAllocated);
+          assertsReferenceInventoryIsEmpty(outParams.refInv);
           // TODO
         }
       }

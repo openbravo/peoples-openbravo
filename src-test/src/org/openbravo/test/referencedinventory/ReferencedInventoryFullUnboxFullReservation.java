@@ -46,8 +46,9 @@ public class ReferencedInventoryFullUnboxFullReservation extends
     for (boolean isAllocated : ISALLOCATED) {
       for (String[] product : PRODUCTS) {
         for (String toBinId : BINS) {
-          testUnboxReservation(toBinId, product[0], product[1], params.qtyToBox, params.qtyToUnbox,
-              params.reservationQty, isAllocated);
+          final TestUnboxOutputParams outParams = testUnboxReservation(toBinId, product[0],
+              product[1], params.qtyToBox, params.qtyToUnbox, params.reservationQty, isAllocated);
+          assertsReferenceInventoryIsEmpty(outParams.refInv);
 
           // TODO verify storage detail is still reserved
         }

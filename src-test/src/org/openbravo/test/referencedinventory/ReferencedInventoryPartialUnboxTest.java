@@ -19,21 +19,13 @@
 
 package org.openbravo.test.referencedinventory;
 
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
-import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
-import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
-import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 
 /**
  * Partial unbox (1 unit of 10 units) of a storage detail without reservations
@@ -63,19 +55,6 @@ public class ReferencedInventoryPartialUnboxTest extends ReferencedInventoryUnbo
     final TestUnboxOutputParams outParams = testUnbox(_toBinId, productId, attributeSetInstanceId,
         BigDecimal.ONE, null, false);
     assertsReferenceInventoryIsNotEmpty(outParams.refInv, new BigDecimal("9"));
-  }
-
-  private void assertsReferenceInventoryIsNotEmpty(final ReferencedInventory refInv,
-      final BigDecimal expectedQtyInRefInv) throws Exception {
-    final List<StorageDetail> storageDetails = refInv.getMaterialMgmtStorageDetailList();
-    assertThat("Referenced inventory must still be linked to a storage detail",
-        storageDetails.size(), equalTo(1));
-    assertThat("Storage detail must have expected qty on hand", storageDetails.get(0)
-        .getQuantityOnHand(), equalTo(expectedQtyInRefInv));
-    assertThat("Attribute Set description does contain info about referenced inventory",
-        storageDetails.get(0).getAttributeSetValue().getDescription(),
-        endsWith(ReferencedInventoryUtil.REFERENCEDINVENTORYPREFIX + refInv.getSearchKey()
-            + ReferencedInventoryUtil.REFERENCEDINVENTORYSUFFIX));
   }
 
 }
