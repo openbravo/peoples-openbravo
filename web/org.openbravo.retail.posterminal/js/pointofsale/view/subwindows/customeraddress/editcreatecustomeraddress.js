@@ -42,6 +42,7 @@ enyo.kind({
       this.$.body.$.edit_createcustomers_impl.setCustomerAddr(this.args.businessPartner, this.args.bPLocation);
       this.customerAddr = null;
       if (this.args.bPLocation) {
+        this.args.bPLocation.set("loaded", new Date().toISOString());
         this.$.header.setContent(OB.I18N.getLabel('OBPOS_TitleEditCustomerAddress'));
       } else {
         this.$.header.setContent(OB.I18N.getLabel('OBPOS_TitleNewCustomerAddress'));
