@@ -44,9 +44,10 @@ public class CancelLayawayLoader extends POSDataSynchronizationProcess implement
     }
 
     try {
+      JSONObject jsoncashup = null;
       if (json.has("cashUpReportInformation")) {
         // Update CashUp Report
-        JSONObject jsoncashup = json.getJSONObject("cashUpReportInformation");
+        jsoncashup = json.getJSONObject("cashUpReportInformation");
         Date cashUpDate = new Date();
 
         UpdateCashup.getAndUpdateCashUp(jsoncashup.getString("id"), jsoncashup, cashUpDate);
@@ -56,6 +57,8 @@ public class CancelLayawayLoader extends POSDataSynchronizationProcess implement
       POSUtils.setDefaultPaymentType(json, order);
       CancelAndReplaceUtils.cancelOrder(json.getString("orderid"), json,
           useOrderDocumentNoForRelatedDocs);
+      order.setObposAppCashup(jsoncashup.getString("id"));
+      OBDal.getInstance().save(order);
     } catch (Exception ex) {
       OBDal.getInstance().rollbackAndClose();
       throw new OBException("CancelLayawayLoader.cancelOrder: ", ex);

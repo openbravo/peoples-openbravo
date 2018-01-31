@@ -12,11 +12,11 @@
 enyo.kind({
   name: 'OB.UI.OrderMultiSelect',
   kind: 'Image',
-  src: '../org.openbravo.retail.posterminal/img/iconPinSelected.png',
+  src: '../org.openbravo.retail.posterminal/img/iconPinSelected.svg',
   sizing: "cover",
   width: 28,
   height: 28,
-  style: 'float: right; cursor: pointer; margin-top: 8px;',
+  style: 'float: right; cursor: pointer; margin-top: 8px; width: 27px; height: 27px;',
   showing: false,
   events: {
     onToggleSelection: ''
@@ -34,11 +34,11 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.OrderSingleSelect',
   kind: 'Image',
-  src: '../org.openbravo.retail.posterminal/img/iconPinUnselected.png',
+  src: '../org.openbravo.retail.posterminal/img/iconPinUnselected.svg',
   sizing: "cover",
   width: 28,
   height: 28,
-  style: 'float: right; cursor: pointer; margin-top: 8px;',
+  style: 'float: right; cursor: pointer; margin-top: 8px; width: 27px; height: 27px;',
   events: {
     onToggleSelection: ''
   },
@@ -723,6 +723,12 @@ enyo.kind({
       }
     }, this);
 
+    this.order.on('change:documentNo', function (model) {
+      if (this.get('obposIsDeleted') && this.get('id')) {
+        this.deleteOrder(this, null);
+      }
+    });
+
     // Change Document No based on return lines
     this.order.get('lines').on('add change:qty change:relatedLines updateRelations', function () {
       if (this.order.get('isEditable') && !this.order.get('isModified') && !this.order.get('isLayaway') && !this.order.get('isQuotation') && !this.order.get('doCancelAndReplace')) {
@@ -731,10 +737,10 @@ enyo.kind({
         }).length;
         if (negativeLinesLength > 0 && negativeLinesLength === this.order.get('lines').models.length) {
           //isReturn
-          OB.MobileApp.model.receipt.setDocumentNo(true, false);
+          this.order.setDocumentNo(true, false);
         } else {
           //isOrder
-          OB.MobileApp.model.receipt.setDocumentNo(false, true);
+          this.order.setDocumentNo(false, true);
         }
       }
     }, this);
@@ -745,7 +751,7 @@ enyo.kind({
           servicesToApprove = '',
           line, k, oldUndo = this.order.get('undo');
 
-      if (this.updating || this.order.get('preventServicesUpdate')) {
+      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate')) {
         return;
       }
       this.updating = true;
@@ -800,7 +806,7 @@ enyo.kind({
         return qty;
       }
 
-      if (!OB.MobileApp.model.receipt.get('notApprove')) {
+      if (!this.order.get('notApprove')) {
         // First check if there is any service modified to negative quantity amount in order to know if approval will be required
         var prod, i, j, l, newqtyplus, newqtyminus, serviceLines, positiveLines, negativeLines, newRelatedLines;
         for (k = 0; k < this.order.get('lines').length; k++) {
@@ -848,7 +854,7 @@ enyo.kind({
                 if (!approvalNeeded) {
                   approvalNeeded = true;
                 }
-                servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
+                servicesToApprove += '<br>' + OB.I18N.getLabel('OBMOBC_Character')[1] + ' ' + line.get('product').get('_identifier');
               }
             }
           }
@@ -1081,7 +1087,7 @@ enyo.kind({
         });
       };
 
-      if (this.updating || this.order.get('preventServicesUpdate')) {
+      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate')) {
         return;
       }
 
@@ -1108,8 +1114,8 @@ enyo.kind({
                   return memo + promo.amt;
                 }, 0));
                 if (prod.get('quantityRule') === 'PP') {
-                  rangeAmountBeforeDiscounts += Math.abs(OB.DEC.div(l.get('gross'), l.get('qty')));
-                  rangeAmountAfterDiscounts += Math.abs(OB.DEC.div(l.get('gross') - _.reduce(l.get('promotions'), function (memo, promo) {
+                  rangeAmountBeforeDiscounts += Math.abs((l.get('qty') === 0) ? 0 : OB.DEC.div(l.get('gross'), l.get('qty')));
+                  rangeAmountAfterDiscounts += Math.abs((l.get('qty') === 0) ? 0 : OB.DEC.div(l.get('gross') - _.reduce(l.get('promotions'), function (memo, promo) {
                     return memo + promo.amt;
                   }, 0), l.get('qty')));
                 }
@@ -1132,8 +1138,8 @@ enyo.kind({
                   return memo + promo.amt;
                 }, 0));
                 if (prod.get('quantityRule') === 'PP') {
-                  rangeAmountBeforeDiscounts += Math.abs(OB.DEC.div(l.get('net'), l.get('qty')));
-                  rangeAmountAfterDiscounts += Math.abs(OB.DEC.div(l.get('net') - _.reduce(l.get('promotions'), function (memo, promo) {
+                  rangeAmountBeforeDiscounts += Math.abs((l.get('qty') === 0) ? 0 : OB.DEC.div(l.get('net'), l.get('qty')));
+                  rangeAmountAfterDiscounts += Math.abs((l.get('qty') === 0) ? 0 : OB.DEC.div(l.get('net') - _.reduce(l.get('promotions'), function (memo, promo) {
                     return memo + promo.amt;
                   }, 0), l.get('qty')));
                 }
@@ -1335,45 +1341,54 @@ enyo.kind({
   }],
   listMultiOrders: null,
   init: function (model) {
-    this.model = model;
-    var me = this;
+    this.multiOrders = model.get('multiOrders');
+    this.orderList = this.multiOrders.get('multiOrdersList');
+    this.orderListPayment = this.multiOrders.get('payments');
+
     this.total = 0;
     this.listMultiOrders = new Backbone.Collection();
     this.$.listMultiOrderLines.setCollection(this.listMultiOrders);
-    this.model.get('multiOrders').on('change:additionalInfo', function (changedModel) {
-      if (changedModel.get('additionalInfo') === 'I') {
-        this.$.multiOrder_btninvoice.show();
-        return;
-      }
-      this.$.multiOrder_btninvoice.hide();
+
+    this.multiOrders.on('change:additionalInfo', function (changedModel) {
+      this.$.multiOrder_btninvoice.setShowing(changedModel.get('additionalInfo') === 'I');
     }, this);
-    var orderList = this.model.get('multiOrders').get('multiOrdersList');
-    orderList.on('reset add remove amountToLayaway', function () {
-      me.total = _.reduce(me.model.get('multiOrders').get('multiOrdersList').models, function (memo, order) {
+    this.multiOrders.on('change:total', function (model) {
+      this.doChangeTotal({
+        newTotal: model.get('total')
+      });
+    }, this);
+    this.orderList.on('reset add remove amountToLayaway', function () {
+      this.total = _.reduce(this.orderList.models, function (memo, order) {
         return memo + ((!_.isUndefined(order.get('amountToLayaway')) && !_.isNull(order.get('amountToLayaway'))) ? order.get('amountToLayaway') : order.getPending());
       }, 0);
-      this.model.get('multiOrders').set('total', this.total);
-      this.model.get('multiOrders').on('change:total', function (model) {
-        this.doChangeTotal({
-          newTotal: model.get('total')
-        });
-      }, this);
+      this.multiOrders.set('total', this.total);
       this.$.totalMultiReceiptLine.renderTotal(this.total);
-      me.listMultiOrders.reset(me.model.get('multiOrders').get('multiOrdersList').models);
-
-      if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+      this.listMultiOrders.reset(this.orderList.models);
+      if (model.get('leftColumnViewManager').isMultiOrder()) {
         this.doChangeTotal({
           newTotal: this.total
         });
       }
-      this.$.totalMultiReceiptLine.renderQty(me.model.get('multiOrders').get('multiOrdersList').length);
+      this.$.totalMultiReceiptLine.renderQty(this.orderList.length);
     }, this);
-    var orderListPayment = me.model.get('multiOrders').get('payments');
-    orderListPayment.on('add remove', function () {
-      OB.UTIL.localStorage.setItem('multiOrdersPayment', JSON.stringify(me.model.get('multiOrders').get('payments').toJSON()));
+    this.orderListPayment.on('add remove', function () {
+      OB.UTIL.localStorage.setItem('multiOrdersPayment', JSON.stringify(this.multiOrders.get('payments').toJSON()));
     }, this);
   },
   initComponents: function () {
     this.inherited(arguments);
+  },
+  destroyComponents: function () {
+    this.inherited(arguments);
+    if (this.multiOrders) {
+      this.multiOrders.off('change:additionalInfo', null, this);
+      this.multiOrders.off('change:total', null, this);
+    }
+    if (this.orderList) {
+      this.orderList.off('reset add remove amountToLayaway', null, this);
+    }
+    if (this.orderListPayment) {
+      this.orderListPayment.off('add remove', null, this);
+    }
   }
 });

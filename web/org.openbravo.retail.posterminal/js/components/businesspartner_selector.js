@@ -54,7 +54,7 @@ enyo.kind({
         return;
       }
     });
-    if (qty !== 0) {
+    if (qty !== 0 && !OB.MobileApp.model.hasPermission('OBPOS_AllowChangeCustomerVerifiedReturns', true)) {
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_Cannot_Change_BPartner'));
       return;
     }
@@ -511,6 +511,13 @@ enyo.kind({
         return OB.Model.BPartnerFilter.getProperties().find(function (prop) {
           return prop.name === property;
         });
+      }
+
+      // Generate a generic message if error is not defined
+      if (OB.UTIL.isNullOrUndefined(error) || OB.UTIL.isNullOrUndefined(error.message)) {
+        error = {
+          message: OB.I18N.getLabel('OBMOBC_MsgApplicationServerNotAvailable')
+        };
       }
 
       if (error.message.startsWith('###')) {

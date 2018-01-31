@@ -298,39 +298,39 @@ button.btnbp:disabled {
 }
 
 .addressbillbutton {
-  background-image: url('./../../org.openbravo.retail.posterminal/img/iconInvoicingAddress.png');
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconInvoicingAddress.svg');
   background-repeat: no-repeat;
-  background-size: 22px 22px;
-  background-position: 0px -1px;
+  background-size: 16px 18px;
+  background-position: 5px 1px;
   width: 26px;
   height: 22px;
 }
 
 .addressshipbutton {
-  background-image: url('./../../org.openbravo.retail.posterminal/img/iconShippingAddress.png');
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconShippingAddress.svg');
   background-repeat: no-repeat;
-  background-size: 22px 22px;
-  background-position: 0px -1px;
+  background-size: 21px 21px;
+  background-position: 0px 0px;
   width: 26px;
   height: 22px;
 }
 
 .addresshipitems {
   display: table-cell;
-  background-image: url('./../../org.openbravo.retail.posterminal/img/iconShippingAddress.png');
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconShippingAddress.svg');
   background-repeat: no-repeat;
-  background-size: 22px 22px;
-  background-position: 12px 3px;
+  background-size: 21px 21px;
+  background-position: 12px 5px;
   width: 35px;
   height: 24px;
 }
 
 .addressbillitems {
   display: table-cell;
-  background-image: url('./../../org.openbravo.retail.posterminal/img/iconInvoicingAddress.png');
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconInvoicingAddress.svg');
   background-repeat: no-repeat;
-  background-size: 22px 22px;
-  background-position: center 0px;
+  background-size: 16px 18px;
+  background-position: 8px 1px;
   width: 28px;
   height: 24px;
 }
@@ -352,7 +352,8 @@ button.btnbp:disabled {
 .iconRemove {
   width: 30px;
   height: 30px;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorRemove.png');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorRemove.svg');
+  background-size: 24px 24px;
   background-repeat: no-repeat;
   background-position: 3px 3px;
 }
@@ -360,21 +361,24 @@ button.btnbp:disabled {
 .iconSortNone {
   width: 58px;
   height: 30px;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortDisabled.png');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortDisabled.svg');
+  background-size: 52px 28px;
   background-repeat: no-repeat;
 }
 
 .iconSortAsc {
   width: 58px;
   height: 30px;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortAscending.png');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortAscending.svg');
+  background-size: 52px 28px;
   background-repeat: no-repeat;
 }
 
 .iconSortDesc {
   width: 58px;
   height: 30px;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortDescending.png');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortDescending.svg');
+  background-size: 52px 28px;
   background-repeat: no-repeat;
 }
 

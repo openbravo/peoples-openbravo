@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -606,6 +606,9 @@
       }, this);
 
       OB.MobileApp.model.on('window:ready', function () {
+        // Send the last update of full and masterdata refresh
+        OB.UTIL.sendLastTerminalStatusValues();
+        // Check terminal authentication
         if (OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y') {
           var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckTerminalAuth');
           process.exec({
@@ -1292,6 +1295,7 @@
         OB.UTIL.localStorage.setItem('terminalAuthentication', inResponse.terminalAuthentication);
         if (!(OB.UTIL.localStorage.getItem('cacheSessionId') && OB.UTIL.localStorage.getItem('cacheSessionId').length === 32)) {
           OB.UTIL.localStorage.setItem('cacheSessionId', inResponse.cacheSessionId);
+          OB.UTIL.localStorage.setItem('LastCacheGeneration', new Date().getTime());
         }
         //Save available servers and services and initialize Request Router layer
         if (inResponse.servers) {

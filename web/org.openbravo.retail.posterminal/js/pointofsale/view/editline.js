@@ -255,145 +255,37 @@ enyo.kind({
     showing: false,
     tap: function () {
       var me = this,
-          approvalNeeded = false,
-          i, j, k, h, line, relatedLine, lineFromSelected, servicesToApprove = '',
-          servicesList = [],
-          order = this.owner.owner.receipt;
-      for (i = 0; i < this.owner.owner.selectedModels.length; i++) {
-        line = this.owner.owner.selectedModels[i];
-        if (!line.isReturnable()) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [line.get('product').get('_identifier')]));
-          return;
-        } else {
-          // A service with its related product selected doesn't need to be returned, because later it will be modified to returned status depending in the product status
-          // In any other case it would require two approvals
-          if (line.get('product').get('productType') === 'S') {
-            if (line.get('relatedLines')) {
-              for (j = 0; j < line.get('relatedLines').length; j++) {
-                relatedLine = line.get('relatedLines')[j];
-                for (k = 0; k < this.owner.owner.selectedModels.length; k++) {
-                  lineFromSelected = this.owner.owner.selectedModels[k];
-                  if (lineFromSelected.id === relatedLine.orderlineId) {
-                    line.set('notReturnThisLine', true);
-                    servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
-                    servicesList.push(line.get('product'));
-                    break;
-                  }
-                }
-                if (k === this.owner.owner.selectedModels.length) {
-                  OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotProductSelectedToReturn', [line.get('product').get('_identifier')]));
-                  return;
-                }
-              }
-            } else {
-              servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
-              servicesList.push(line.get('product'));
-            }
-            if (!approvalNeeded && line.get('net') > 0) {
-              approvalNeeded = true;
-            }
-          }
-        }
-      }
-      for (i = 0; i < order.get('lines').length; i++) { // Check if there is any not returnable related product to a selected line
-        line = OB.MobileApp.model.receipt.get('lines').models[i];
-        if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
-          if (line.get('relatedLines')) {
-            for (j = 0; j < line.get('relatedLines').length; j++) {
-              relatedLine = line.get('relatedLines')[j];
-              for (k = 0; k < this.owner.owner.selectedModels.length; k++) {
-                lineFromSelected = this.owner.owner.selectedModels[k];
-                if (lineFromSelected.id === relatedLine.orderlineId) {
-                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableRelatedService'), OB.I18N.getLabel('OBPOS_UnreturnableRelatedServiceMessage', [line.get('product').get('_identifier'), relatedLine.productName]));
-                  return;
-                }
-              }
-            }
-          }
-        } else if (line.get('product').get('productType') === 'S' && line.isReturnable()) { // Ask for approval for non selected services, related to selected products
-          if (line.get('relatedLines')) {
-            for (j = 0; j < line.get('relatedLines').length; j++) {
-              relatedLine = line.get('relatedLines')[j];
-              for (k = 0; k < this.owner.owner.selectedModels.length; k++) {
-                lineFromSelected = this.owner.owner.selectedModels[k];
-                if (lineFromSelected.id === relatedLine.orderlineId) {
-                  for (h = 0; h < servicesList.length; h++) {
-                    if (servicesList[h].id === line.get('product').id) {
-                      break;
-                    }
-                  }
-                  if (h === servicesList.length) {
-                    servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
-                    servicesList.push(line.get('product'));
-                    if (!approvalNeeded && line.get('net') > 0) {
-                      approvalNeeded = true;
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+          order = this.owner.owner.receipt,
+          selectedModels = this.owner.owner.selectedModels,
+          returnLines;
+
+      if (order.get('replacedorder') && _.find(selectedModels, function (l) {
+        l.get('remainingQuantity');
+      })) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnLines'));
+        return;
       }
 
-      function returnLines() {
-        var cancelReturn = false;
-
-        if (order.get('replacedorder')) {
-          _.each(me.owner.owner.selectedModels, function (l) {
-            if (l.get('remainingQuantity')) {
-              cancelReturn = true;
-            }
-          });
-        }
-        if (cancelReturn) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnLines'));
-          return;
-        }
-
-        order.set('undo', null);
-        order.set('multipleUndo', true);
-        order.set('preventServicesUpdate', true);
+      order.checkReturnableProducts(selectedModels, this.model, function () {
         //The value of qty need to be negate because we want to change it
-        if (order.validateAllowSalesWithReturn(-1, false, me.owner.owner.selectedModels)) {
+        if (order.validateAllowSalesWithReturn(-1, false, selectedModels)) {
           me.owner.owner.rearrangeEditButtonBar();
           return;
         }
-        _.each(me.owner.owner.selectedModels, function (line) {
-          if (!line.get('notReturnThisLine')) {
+        order.set('undo', null);
+        order.set('multipleUndo', true);
+        order.set('preventServicesUpdate', true);
+        _.each(selectedModels, function (line) {
+          if (!line.get('relatedLines')) {
             me.owner.owner.doReturnLine({
               line: line
             });
-          } else {
-            line.unset('notReturnThisLine');
           }
         });
         order.unset('preventServicesUpdate');
         order.get('lines').trigger('updateRelations');
         order.set('multipleUndo', null);
-      }
-      if (approvalNeeded) {
-        OB.UTIL.Approval.requestApproval(
-        me.model, [{
-          approval: 'OBPOS_approval.returnService',
-          message: 'OBPOS_approval.returnService',
-          params: [servicesToApprove]
-        }], function (approved, supervisor, approvalType) {
-          if (approved) {
-            order.set('notApprove', true);
-            returnLines();
-            order.unset('notApprove');
-          } else {
-            _.each(me.owner.owner.selectedModels, function (line) {
-              if (line.get('notReturnThisLine')) {
-                line.unset('notReturnThisLine');
-              }
-            });
-          }
-        });
-      } else {
-        returnLines();
-      }
+      });
     },
     init: function (model) {
       this.model = model;
@@ -572,7 +464,7 @@ enyo.kind({
       if (OB.MobileApp.model.get('permissions')[this.$.actionButtonsContainer.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
         this.$.actionButtonsContainer.$.returnLine.show();
       }
-      if (this.model.get('order').get('orderType') === 1 || this.model.get('order').get('orderType') === 2) {
+      if (this.model.get('order').get('orderType') === 1 || (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true) && this.model.get('order').get('orderType') === 2)) {
         this.$.actionButtonsContainer.$.returnLine.hide();
       }
     }
@@ -593,11 +485,12 @@ enyo.kind({
           if (this.$.actionButtonsContainer.$.descriptionButton) {
             this.$.actionButtonsContainer.$.descriptionButton.show();
           }
-          var showSplitBtn = line && line.get('qty') > 1 && line.get('product').get('productType') !== 'S' && (!line.get('remainingQuantity') || line.get('remainingQuantity') < line.get('qty')) && !_.find(this.model.get('order').get('lines').models, function (l) {
+          var showSplitBtn = line && line.get('qty') > 1 && (!line.get('remainingQuantity') || line.get('remainingQuantity') < line.get('qty')) && //
+          (!this.model.get('order').get('hasServices') || (line.get('product').get('productType') !== 'S' && !_.find(this.model.get('order').get('lines').models, function (l) {
             return l.get('relatedLines') && _.find(l.get('relatedLines'), function (rl) {
               return rl.orderlineId === line.id;
             }) !== undefined;
-          });
+          })));
           if (this.$.actionButtonsContainer.$.splitlineButton) {
             if (showSplitBtn) {
               var me = this;
@@ -673,33 +566,46 @@ enyo.kind({
         } else {
           this.$.actionButtonsContainer.$.removeDiscountButton.hide();
         }
-      }
-      if (this.$.actionButtonsContainer.$.returnLine) {
-        if ((!_.isUndefined(line) && !line.get('isEditable')) || this.model.get('order').get('orderType') === 1 || this.model.get('order').get('orderType') === 2) {
-          this.$.actionButtonsContainer.$.returnLine.hide();
-        } else if (OB.MobileApp.model.get('permissions')[this.$.actionButtonsContainer.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
-          this.$.actionButtonsContainer.$.returnLine.show();
+        if ((!_.isUndefined(line) && !_.isUndefined(line.get('originalOrderLineId'))) || this.model.get('order').get('orderType') === 1 || (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true) && this.model.get('order').get('orderType') === 2)) {
+          if (this.$.actionButtonsContainer.$.returnLine) {
+            if ((!_.isUndefined(line) && !line.get('isEditable')) || this.model.get('order').get('orderType') === 1 || this.model.get('order').get('orderType') === 2) {
+              this.$.actionButtonsContainer.$.returnLine.hide();
+            } else if (OB.MobileApp.model.get('permissions')[this.$.actionButtonsContainer.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
+              this.$.actionButtonsContainer.$.returnLine.show();
+            }
+          }
         }
-      }
-      if (this.$.actionButtonsContainer.$.deleteLine) {
-        if (!line.get('isDeletable')) {
-          this.$.actionButtonsContainer.$.deleteLine.hide();
-        } else {
-          this.$.actionButtonsContainer.$.deleteLine.show();
+        if (this.$.actionButtonsContainer.$.deleteLine) {
+          if (!line.get('isDeletable')) {
+            this.$.actionButtonsContainer.$.deleteLine.hide();
+          } else {
+            this.$.actionButtonsContainer.$.deleteLine.show();
+          }
         }
-      }
-      if (this.$.actionButtonsContainer.$.showRelatedServices) {
-        if (this.selectedModels && this.selectedModels.length > 0) {
-          var proposedServices, existRelatedServices;
-          existRelatedServices = this.selectedModels.filter(function (line) {
-            return line.get('hasRelatedServices');
-          }).length === this.selectedModels.length;
-          proposedServices = this.selectedModels.filter(function (line) {
-            return !line.get('hasRelatedServices') || line.get('obposServiceProposed');
-          }).length === this.selectedModels.length;
-          if (existRelatedServices) {
+        if (this.$.actionButtonsContainer.$.showRelatedServices) {
+          if (this.selectedModels && this.selectedModels.length > 0) {
+            var proposedServices, existRelatedServices;
+            existRelatedServices = this.selectedModels.filter(function (line) {
+              return line.get('hasRelatedServices');
+            }).length === this.selectedModels.length;
+            proposedServices = this.selectedModels.filter(function (line) {
+              return !line.get('hasRelatedServices') || line.get('obposServiceProposed');
+            }).length === this.selectedModels.length;
+            if (existRelatedServices) {
+              this.$.actionButtonsContainer.$.showRelatedServices.show();
+              if (proposedServices) {
+                this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', false);
+                this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', true);
+              } else {
+                this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', true);
+                this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', false);
+              }
+            } else {
+              this.$.actionButtonsContainer.$.showRelatedServices.hide();
+            }
+          } else if (this.line && this.line.get('hasRelatedServices')) {
             this.$.actionButtonsContainer.$.showRelatedServices.show();
-            if (proposedServices) {
+            if (this.line.get('obposServiceProposed')) {
               this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', false);
               this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', true);
             } else {
@@ -709,20 +615,9 @@ enyo.kind({
           } else {
             this.$.actionButtonsContainer.$.showRelatedServices.hide();
           }
-        } else if (this.line && this.line.get('hasRelatedServices')) {
-          this.$.actionButtonsContainer.$.showRelatedServices.show();
-          if (this.line.get('obposServiceProposed')) {
-            this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', false);
-            this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', true);
-          } else {
-            this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', true);
-            this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', false);
-          }
-        } else {
-          this.$.actionButtonsContainer.$.showRelatedServices.hide();
         }
+        this.render();
       }
-      this.render();
     }
   },
   toggleLineSelection: function (inSender, inEvent) {

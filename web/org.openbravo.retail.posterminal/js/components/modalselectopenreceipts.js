@@ -206,7 +206,7 @@ enyo.kind({
               tag: "img",
               style: 'float: left; width: 19px; height: 19px; color: black; margin-left: 10px;',
               attributes: {
-                src: '../org.openbravo.mobile.core/assets/img/iconCreateNew-alt.png'
+                src: '../org.openbravo.mobile.core/assets/img/iconCreateNew-alt.svg'
               }
             }]
           }, {
