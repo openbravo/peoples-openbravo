@@ -19,9 +19,7 @@
 
 package org.openbravo.test.referencedinventory;
 
-import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
 import java.math.BigDecimal;
@@ -31,8 +29,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
-import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
-import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 
@@ -63,12 +59,6 @@ public class ReferencedInventoryFullUnboxTest extends ReferencedInventoryUnboxTe
     final TestUnboxOutputParams outParams = testUnbox(_toBinId, productId, attributeSetInstanceId,
         new BigDecimal("10"));
     assertsReferenceInventoryIsEmpty(outParams.refInv);
-    assertsAttributeSetIsProperlyRestored(outParams.refInv, outParams.originalAttributeSetId,
-        outParams.originalProduct);
-
-    final StorageDetail outStorageDetail = ReferencedInventoryTestUtils.getAvailableStorageDetailsOrderByQtyOnHand(
-        outParams.originalProduct).get(0);
-    assertsUnboxedStorageDetailIsInRightBin(outStorageDetail, outParams.toBinId);
   }
 
   private void assertsReferenceInventoryIsEmpty(final ReferencedInventory refInv) throws Exception {
@@ -77,20 +67,4 @@ public class ReferencedInventoryFullUnboxTest extends ReferencedInventoryUnboxTe
           storageDetail.getQuantityOnHand(), equalTo(BigDecimal.ZERO));
     }
   }
-
-  private void assertsAttributeSetIsProperlyRestored(ReferencedInventory refInv,
-      String originalAttributeSet, Product product) throws Exception {
-    for (final StorageDetail storageDetail : ReferencedInventoryTestUtils
-        .getAvailableStorageDetailsOrderByQtyOnHand(product)) {
-      if (storageDetail.getQuantityOnHand().compareTo(BigDecimal.ZERO) > 0) {
-        assertThat("Current storage detail has restored its original attribute set", storageDetail
-            .getAttributeSetValue().getId(), equalTo(originalAttributeSet));
-        assertThat("Attribute Set description doesn't contain info about referenced inventory",
-            storageDetail.getAttributeSetValue().getDescription(),
-            not(endsWith(ReferencedInventoryUtil.REFERENCEDINVENTORYPREFIX + refInv.getSearchKey()
-                + ReferencedInventoryUtil.REFERENCEDINVENTORYSUFFIX)));
-      }
-    }
-  }
-
 }

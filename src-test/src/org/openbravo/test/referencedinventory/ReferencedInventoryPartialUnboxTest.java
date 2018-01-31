@@ -63,12 +63,6 @@ public class ReferencedInventoryPartialUnboxTest extends ReferencedInventoryUnbo
     final TestUnboxOutputParams outParams = testUnbox(_toBinId, productId, attributeSetInstanceId,
         BigDecimal.ONE);
     assertsReferenceInventoryIsNotEmpty(outParams.refInv, new BigDecimal("9"));
-    assertsAttributeSetIsValid(outParams.refInv, outParams.originalAttributeSetId);
-
-    final List<StorageDetail> afterUnboxStorageDetails = ReferencedInventoryTestUtils
-        .getAvailableStorageDetailsOrderByQtyOnHand(outParams.originalProduct);
-    final StorageDetail outStorageDetail = afterUnboxStorageDetails.get(0);
-    assertsUnboxedStorageDetailIsInRightBin(outStorageDetail, outParams.toBinId);
   }
 
   private void assertsReferenceInventoryIsNotEmpty(final ReferencedInventory refInv,

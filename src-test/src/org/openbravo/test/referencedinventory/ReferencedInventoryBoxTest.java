@@ -102,7 +102,8 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
     assertsGoodsMovementNumberOfLines(boxMovement, 1);
     assertsReferencedInventoryIsNotEmptyAndHasRightQtyAndProduct(toBinId, qtyInBox, refInv,
         product, storageDetail);
-    assertsAttributeSetIsValid(refInv, originalAttributeId);
+    assertsAttributeSetIsValid(refInv, originalAttributeId, refInv
+        .getMaterialMgmtStorageDetailList().get(0));
 
     if (isPartialBoxing(qtyInBox)) {
       assertsMultipleStorageDetailsInPartialBoxing(toBinId, qtyInBox, product, storageDetail,
@@ -137,9 +138,9 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
             : toBinId));
   }
 
-  void assertsAttributeSetIsValid(final ReferencedInventory refInv, final String originalAttributeId) {
-    final AttributeSetInstance attributeSetValue = refInv.getMaterialMgmtStorageDetailList().get(0)
-        .getAttributeSetValue();
+  void assertsAttributeSetIsValid(final ReferencedInventory refInv,
+      final String originalAttributeId, final StorageDetail boxedStorageDetail) {
+    final AttributeSetInstance attributeSetValue = boxedStorageDetail.getAttributeSetValue();
     assertThat("Storage Detail attribute set is not null", attributeSetValue, notNullValue());
     assertThat("Storage Detail attribute set is not zero", attributeSetValue.getId(),
         not(equalTo("0")));
@@ -147,8 +148,7 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
     assertThat("New attribute set is related to the referenced inventory", attributeSetValue
         .getReferencedInventory().getId(), equalTo(refInv.getId()));
     assertThat("New attribute set is related to cloned one", ReferencedInventoryUtil
-        .getParentAttributeSetInstance(refInv.getMaterialMgmtStorageDetailList().get(0)).getId(),
-        equalTo(originalAttributeId));
+        .getParentAttributeSetInstance(boxedStorageDetail).getId(), equalTo(originalAttributeId));
     assertThat("New attribute set description contains referenced inventory string",
         attributeSetValue.getDescription(),
         endsWith(ReferencedInventoryUtil.REFERENCEDINVENTORYPREFIX + refInv.getSearchKey()

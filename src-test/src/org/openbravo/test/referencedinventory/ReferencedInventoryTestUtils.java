@@ -30,8 +30,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import javax.servlet.ServletException;
-
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -45,7 +43,6 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.SequenceIdData;
-import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.materialmgmt.ReservationUtils;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.OrderLine;
@@ -207,8 +204,7 @@ class ReferencedInventoryTestUtils {
     return storageDetailsJS;
   }
 
-  static List<StorageDetail> getAvailableStorageDetailsOrderByQtyOnHand(final Product product)
-      throws ServletException, NoConnectionAvailableException {
+  static List<StorageDetail> getAvailableStorageDetailsOrderByQtyOnHand(final Product product) {
     final OBCriteria<StorageDetail> crit = OBDao.getFilteredCriteria(StorageDetail.class,
         Restrictions.eq(StorageDetail.PROPERTY_PRODUCT, product),
         Restrictions.gt(StorageDetail.PROPERTY_QUANTITYONHAND, BigDecimal.ZERO));
@@ -216,8 +212,7 @@ class ReferencedInventoryTestUtils {
     return crit.list();
   }
 
-  static StorageDetail getUniqueStorageDetail(final Product product) throws ServletException,
-      NoConnectionAvailableException {
+  static StorageDetail getUniqueStorageDetail(final Product product) {
     final List<StorageDetail> storageDetails = getAvailableStorageDetailsOrderByQtyOnHand(product);
     if (storageDetails.size() > 1) {
       throw new OBException(storageDetails.size()
