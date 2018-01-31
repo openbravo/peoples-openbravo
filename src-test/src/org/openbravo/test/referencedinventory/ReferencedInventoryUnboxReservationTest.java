@@ -19,7 +19,13 @@
 
 package org.openbravo.test.referencedinventory;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.math.BigDecimal;
+
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 
 /**
  * Abstract class to test unboxing related to reservations
@@ -32,8 +38,49 @@ public abstract class ReferencedInventoryUnboxReservationTest extends Referenced
       throws Exception {
     final TestUnboxOutputParams outParams = super.testUnbox(toBinId, productId,
         attributeSetInstanceId, qtyToUnbox, reservationQty, isAllocated);
-
+    assertsStorageDetailsQtyAndReservationQty(qtyToBox, qtyToUnbox, outParams, reservationQty);
     return outParams;
+  }
+
+  protected void assertsStorageDetailsQtyAndReservationQty(final BigDecimal qtyToBox,
+      final BigDecimal qtyToUnbox, final TestUnboxOutputParams outParams,
+      final BigDecimal reservationQty) {
+    for (StorageDetail sd : ReferencedInventoryTestUtils
+        .getAvailableStorageDetailsOrderByQtyOnHand(outParams.originalProduct)) {
+      OBDal.getInstance().refresh(sd);
+      if (sd.getReferencedInventory() != null) {
+        // In box Storage details
+        assertThat("Qty in box is the expected one", qtyToBox.subtract(qtyToUnbox),
+            equalTo(sd.getQuantityOnHand()));
+        if (hasUnboxedReservedQty(qtyToUnbox, reservationQty)) {
+          assertThat("Storage Detail reserved qty is expected one", sd.getReservedQty(),
+              equalTo(reservationQty.subtract(reservationQty.subtract(RECEIVEDQTY_10
+                  .subtract(qtyToUnbox)))));
+        } else {
+          assertThat(
+              "Qty in box reserved is expected one",
+              sd.getReservedQty(),
+              equalTo((qtyToBox.subtract(qtyToUnbox)).compareTo(reservationQty) < 0 ? reservationQty
+                  .subtract(qtyToBox.subtract(qtyToUnbox)) : reservationQty));
+        }
+      } else {
+        // Out box
+        assertThat("Qty out box is the expected one", qtyToUnbox, equalTo(sd.getQuantityOnHand()));
+        if (hasUnboxedReservedQty(qtyToUnbox, reservationQty)) {
+          assertThat("Storage Detail reserved qty is expected one", sd.getReservedQty(),
+              equalTo(reservationQty.subtract(RECEIVEDQTY_10.subtract(qtyToUnbox))));
+        } else {
+          assertThat("Qty out box reserved is Zero", sd.getReservedQty(), equalTo(BigDecimal.ZERO));
+        }
+      }
+    }
+  }
+
+  protected boolean hasUnboxedReservedQty(final BigDecimal qtyToUnbox,
+      final BigDecimal reservationQty) {
+    return reservationQty != null
+    // If available qty not reserved is lower than qty to unbox then I need to unbox reserved qty
+        && (RECEIVEDQTY_10.subtract(reservationQty)).compareTo(qtyToUnbox) < 0;
   }
 
   protected class ParamsUnboxReservationTest extends ParamsBoxReservationTest {

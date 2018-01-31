@@ -49,8 +49,6 @@ public class ReferencedInventoryFullUnboxFullReservation extends
           final TestUnboxOutputParams outParams = testUnboxReservation(toBinId, product[0],
               product[1], params.qtyToBox, params.qtyToUnbox, params.reservationQty, isAllocated);
           assertsReferenceInventoryIsEmpty(outParams.refInv);
-
-          // TODO verify storage detail is still reserved
         }
       }
     }
