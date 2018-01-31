@@ -197,7 +197,7 @@ class ReferencedInventoryTestUtils {
       final BigDecimal qty, final String unBoxStorageBinId) throws JSONException {
     final JSONObject storageDetailJS = new JSONObject();
     storageDetailJS.put("id", storageDetail.getId());
-    storageDetailJS.put("quantityOnHand", qty == null ? storageDetail.getQuantityOnHand() : qty);
+    storageDetailJS.put("quantityOnHand", qty);
     storageDetailJS.put("storageBin", unBoxStorageBinId);
     final JSONArray storageDetailsJS = new JSONArray();
     storageDetailsJS.put(storageDetailJS);

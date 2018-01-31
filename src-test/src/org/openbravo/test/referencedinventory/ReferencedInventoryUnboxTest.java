@@ -27,7 +27,6 @@ import static org.junit.Assert.assertThat;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.materialmgmt.refinventory.UnboxProcessor;
@@ -39,7 +38,7 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 public abstract class ReferencedInventoryUnboxTest extends ReferencedInventoryBoxTest {
   private static final BigDecimal QTYINBOX_10 = new BigDecimal("10");
 
-  protected TestUnboxOutputParams testUnbox(final String _toBinId, final String productId,
+  protected TestUnboxOutputParams testUnbox(final String toBinId, final String productId,
       final String attributeSetInstanceId, final BigDecimal qtyToUnbox) throws Exception {
 
     ReferencedInventory refInv = testBox(null, productId, attributeSetInstanceId, QTYINBOX_10,
@@ -49,12 +48,9 @@ public abstract class ReferencedInventoryUnboxTest extends ReferencedInventoryBo
     final String originalAttributeSet = ReferencedInventoryUtil.getParentAttributeSetInstance(
         storageDetail).getId();
 
-    final String toBinId = StringUtils.isBlank(_toBinId) ? storageDetail.getStorageBin().getId()
-        : _toBinId;
     final InternalMovement unBoxMovement = new UnboxProcessor(refInv,
-        ReferencedInventoryTestUtils.getUnboxStorageDetailsJSArray(storageDetail,
-            qtyToUnbox == null ? storageDetail.getQuantityOnHand() : qtyToUnbox, toBinId))
-        .createAndProcessGoodsMovement();
+        ReferencedInventoryTestUtils.getUnboxStorageDetailsJSArray(storageDetail, qtyToUnbox,
+            toBinId)).createAndProcessGoodsMovement();
 
     OBDal.getInstance().refresh(unBoxMovement);
     OBDal.getInstance().getSession().evict(refInv); // Hack to avoid problems in Hibernate when the

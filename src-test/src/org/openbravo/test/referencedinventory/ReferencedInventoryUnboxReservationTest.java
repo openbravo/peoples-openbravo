@@ -22,7 +22,6 @@ package org.openbravo.test.referencedinventory;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.materialmgmt.refinventory.UnboxProcessor;
@@ -36,23 +35,20 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
  */
 public abstract class ReferencedInventoryUnboxReservationTest extends ReferencedInventoryUnboxTest {
 
-  protected TestUnboxOutputParams testUnboxReservation(final String _toBinId,
+  protected TestUnboxOutputParams testUnboxReservation(final String toBinId,
       final String productId, final String attributeSetInstanceId, final BigDecimal qtyToBox,
       final BigDecimal qtyToUnbox, final BigDecimal reservationQty, final boolean isAllocated)
       throws Exception {
-    ReferencedInventory refInv = testBox(null, productId, attributeSetInstanceId,
-        qtyToBox, reservationQty, isAllocated);
+    ReferencedInventory refInv = testBox(null, productId, attributeSetInstanceId, qtyToBox,
+        reservationQty, isAllocated);
     final List<StorageDetail> storageDetails = refInv.getMaterialMgmtStorageDetailList();
     final Product originalProduct = storageDetails.get(0).getProduct();
     final String originalAttributeSet = ReferencedInventoryUtil.getParentAttributeSetInstance(
         storageDetails.get(0)).getId();
 
-    final String toBinId = StringUtils.isBlank(_toBinId) ? storageDetails.get(0).getStorageBin()
-        .getId() : _toBinId;
     final InternalMovement unBoxMovement = new UnboxProcessor(refInv,
         ReferencedInventoryTestUtils.getUnboxStorageDetailsJSArray(storageDetails.get(0),
-            qtyToUnbox == null ? storageDetails.get(0).getQuantityOnHand() : qtyToUnbox, toBinId))
-        .createAndProcessGoodsMovement();
+            qtyToUnbox, toBinId)).createAndProcessGoodsMovement();
 
     OBDal.getInstance().refresh(unBoxMovement);
     OBDal.getInstance().getSession().evict(refInv); // Hack to avoid problems in Hibernate when the

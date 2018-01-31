@@ -136,9 +136,7 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
     assertThat("Referenced Inventory has right quantity", refInv.getMaterialMgmtStorageDetailList()
         .get(0).getQuantityOnHand(), equalTo(qtyInBox));
     assertThat("Referenced Inventory is in the right bin", refInv
-        .getMaterialMgmtStorageDetailList().get(0).getStorageBin().getId(),
-        equalTo(StringUtils.isBlank(toBinId) ? originalStorageDetail.getStorageBin().getId()
-            : toBinId));
+        .getMaterialMgmtStorageDetailList().get(0).getStorageBin().getId(), equalTo(toBinId));
   }
 
   void assertsAttributeSetIsValid(final ReferencedInventory refInv,
@@ -172,9 +170,7 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
         assertThat("Storage detail is linked to referenced inventory", sd.getReferencedInventory(),
             notNullValue());
         assertThat("Storage detail qty is the boxed qty", qtyInBox, equalTo(sd.getQuantityOnHand()));
-        assertThat("Storage detail is in new bin",
-            StringUtils.isBlank(toBinId) ? originalStorageBinId : toBinId, equalTo(sd
-                .getStorageBin().getId()));
+        assertThat("Storage detail is in new bin", toBinId, equalTo(sd.getStorageBin().getId()));
         assertsAttributeSetIsValid(sd.getReferencedInventory(), originalAttributeId, sd);
       } else {
         // Not in box
