@@ -22,7 +22,7 @@
     }
   };
 
-  OB.UTIL.OrderSelectorUtils.checkOrderAndLoad = function (model, orderList, context, originServer) {
+  OB.UTIL.OrderSelectorUtils.checkOrderAndLoad = function (model, orderList, context, originServer, fromSelector) {
     var me = this,
         continueAfterPaidReceipt, checkListCallback, loadOrder;
 
@@ -151,7 +151,7 @@
     }
     me.loadingReceipt = true;
     model.attributes.askForRelatedReceipts = true;
-    orderList.checkForDuplicateReceipts(model, loadOrder, checkListCallback);
+    orderList.checkForDuplicateReceipts(model, loadOrder, checkListCallback, fromSelector);
   };
 
 }());

@@ -6091,7 +6091,7 @@
       // The new functionality of loading document no, makes this function obsolete.
       // The function is not removed to avoid api changes
     },
-    checkForDuplicateReceipts: function (model, callback, errorCallback) {
+    checkForDuplicateReceipts: function (model, callback, errorCallback, fromSelector) {
 
       function openReceiptPermissionError(orderType) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType]));
@@ -6120,9 +6120,27 @@
       }
 
       var orderTypeMsg, i, showErrorMessage = function (errorMsg) {
-          OB.UTIL.showError(errorMsg);
-          if (errorCallback) {
-            errorCallback();
+          if (fromSelector) {
+            OB.UTIL.showConfirmation.display(errorMsg, null, [{
+              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              action: function () {
+                if (errorCallback) {
+                  errorCallback();
+                }
+              }
+            }], {
+              onHideFunction: function (dialog) {
+                if (errorCallback) {
+                  errorCallback();
+                }
+                return true;
+              }
+            });
+          } else {
+            OB.UTIL.showError(errorMsg);
+            if (errorCallback) {
+              errorCallback();
+            }
           }
           };
 
