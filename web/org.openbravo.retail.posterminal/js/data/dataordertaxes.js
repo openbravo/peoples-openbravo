@@ -52,9 +52,19 @@
                 // product has a service with *modifyTax* flag activated
                 // Lets look for the service lnked product category configuration
                 // This is the async part of this function.
-                OB.Dal.findUsingCache('ProductServiceLinked', OB.Model.ProductServiceLinked, {
-                  'product': l.get('product').get('id')
-                }, findSuccess, reject, {
+                var product = l.get('product').get('id');
+                var criteria = {
+                  'product': product
+                };
+                if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+                  var remoteCriteria = [{
+                    columns: ['product'],
+                    operator: 'equals',
+                    value: product
+                  }];
+                  criteria.remoteFilters = remoteCriteria;
+                }
+                OB.Dal.findUsingCache('ProductServiceLinked', OB.Model.ProductServiceLinked, criteria, findSuccess, reject, {
                   modelsAffectedByCache: ['ProductServiceLinked']
                 });
                 return;

@@ -42,6 +42,6 @@ public class ProductServiceLinked extends ProcessHQLQuery {
         "select" //
             + ModelExtensionUtils.getPropertyExtensions(extensions).getHqlSelect() //
             + "from M_PRODUCT_SERVICELINKED psl " //
-            + "where psl.$filtersCriteria and psl.$naturalOrgCriteria and psl.$incrementalUpdateCriteria and psl.active = true");
+            + "where psl.$filtersCriteria and psl.$naturalOrgCriteria and psl.$incrementalUpdateCriteria");
   }
 }
