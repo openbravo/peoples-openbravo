@@ -31,11 +31,8 @@ import static org.junit.Assert.assertThat;
 import java.math.BigDecimal;
 import java.util.List;
 
-import javax.servlet.ServletException;
-
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.materialmgmt.ReservationUtils;
 import org.openbravo.materialmgmt.refinventory.BoxProcessor;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
@@ -216,8 +213,7 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
   }
 
   private void assertsReservationQtyInStorageDetails(final BigDecimal qtyInBox,
-      final BigDecimal reservationQty, final Product product) throws ServletException,
-      NoConnectionAvailableException {
+      final BigDecimal reservationQty, final Product product) {
     final BigDecimal qtyNotReserved = RECEIVEDQTY_10.subtract(reservationQty);
     final List<StorageDetail> newStorageDetails = ReferencedInventoryTestUtils
         .getAvailableStorageDetailsOrderByQtyOnHand(product);
