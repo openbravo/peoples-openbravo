@@ -31,6 +31,7 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
+import org.openbravo.mobile.core.process.OutDatedDataChangeException;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -74,8 +75,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
 
         if (!(loaded.compareTo(customer.getUpdated()) >= 0)
             || !(user != null && (loaded.compareTo(user.getUpdated()) >= 0))) {
-          log.warn(Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedbp",
-              OBContext.getOBContext().getLanguage().getLanguage()));
+          throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
+              "OBPOS_outdatedbp", OBContext.getOBContext().getLanguage().getLanguage()));
         }
 
         customer = editBPartner(customer, jsoncustomer);
