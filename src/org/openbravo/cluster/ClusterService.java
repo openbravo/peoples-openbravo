@@ -197,9 +197,13 @@ public abstract class ClusterService {
       return;
     }
     processing--;
-    if (processing == 0 && disableAfterProcess) {
+    if (processing <= 0 && disableAfterProcess) {
       deregister();
     }
+  }
+
+  private synchronized boolean isProcessing() {
+    return processing > 0;
   }
 
   protected synchronized void deregister() {
@@ -220,10 +224,6 @@ public abstract class ClusterService {
     setUseCache(false);
     disableAfterProcess = false;
     log.info("Disabled ping for service {} in node {}", getServiceName(), getNodeIdentifier());
-  }
-
-  private boolean isProcessing() {
-    return processing > 0;
   }
 
   private void deregisterService() {
