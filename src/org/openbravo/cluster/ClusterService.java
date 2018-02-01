@@ -231,7 +231,7 @@ public abstract class ClusterService {
     Connection connection = null;
     try {
       connection = dcp.getTransactionConnection();
-      int deletedRows = ClusterServiceData.deRegisterService(connection, dcp, getServiceName(),
+      int deletedRows = ClusterServiceData.deregisterService(connection, dcp, getServiceName(),
           nodeId);
       if (deletedRows == 1) {
         log.info("Deregistered node {} in charge of service {}", getNodeIdentifier(),

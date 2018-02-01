@@ -45,7 +45,7 @@
      <Parameter name="service"/>
    </SqlMethod>
 
-   <SqlMethod name="deRegisterService" type="preparedStatement" connection="true" return="rowCount">
+   <SqlMethod name="deregisterService" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
