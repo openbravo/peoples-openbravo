@@ -223,7 +223,7 @@
 		<variableExpression><![CDATA[$F{PROFIT}]]></variableExpression>
 	</variable>
 	<variable name="totalMargin" class="java.math.BigDecimal">
-		<variableExpression><![CDATA[$V{totalProfit}.divide($V{totalAmt}.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ONE : $V{totalAmt}, 10, BigDecimal.ROUND_HALF_UP).multiply( new BigDecimal("100") ).multiply(new BigDecimal($V{totalProfit}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{totalAmt}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{totalProfit}.divide($V{totalAmt}, 10, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{totalProfit}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="totalWeight" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{WEIGHT}]]></variableExpression>
