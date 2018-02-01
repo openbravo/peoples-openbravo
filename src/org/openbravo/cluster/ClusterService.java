@@ -208,6 +208,9 @@ public abstract class ClusterService {
     }
     if (isProcessing()) {
       disableAfterProcess = true;
+      log.info(
+          "Service {} is currently processing in node {}. Ping for that service will be disabled afterwards.",
+          getServiceName(), getNodeIdentifier());
       return;
     }
     deRegisterService();
