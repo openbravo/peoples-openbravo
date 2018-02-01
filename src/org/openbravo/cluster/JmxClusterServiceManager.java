@@ -123,7 +123,7 @@ public class JmxClusterServiceManager implements JmxClusterServiceManagerMBean {
     }
     // Disable the ping. In case the cluster service is currently processing its tasks then the ping
     // will be disabled afterwards.
-    clusterService.deRegister();
+    clusterService.deregister();
   }
 
   private ClusterService getClusterService(String serviceName) {

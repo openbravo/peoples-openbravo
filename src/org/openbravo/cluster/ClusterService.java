@@ -198,11 +198,11 @@ public abstract class ClusterService {
     }
     processing--;
     if (processing == 0 && disableAfterProcess) {
-      deRegister();
+      deregister();
     }
   }
 
-  protected synchronized void deRegister() {
+  protected synchronized void deregister() {
     if (!ClusterServiceManager.isCluster()) {
       return;
     }
@@ -213,7 +213,7 @@ public abstract class ClusterService {
           getServiceName(), getNodeIdentifier());
       return;
     }
-    deRegisterService();
+    deregisterService();
     // Disable the ping for the service
     setDisabled(true);
     // Force the service to go to the database to see the changes (if any)
@@ -226,7 +226,7 @@ public abstract class ClusterService {
     return processing > 0;
   }
 
-  private void deRegisterService() {
+  private void deregisterService() {
     DalConnectionProvider dcp = new DalConnectionProvider(false);
     Connection connection = null;
     try {
