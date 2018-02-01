@@ -250,6 +250,11 @@ public abstract class ClusterService {
     return nodeName + " - " + nodeId;
   }
 
+  protected void prepareForNewNodeInCharge() {
+    processing = 0;
+    disableAfterProcess = false;
+  }
+
   /**
    * @return a {@code String} that uniquely identifies the service.
    */

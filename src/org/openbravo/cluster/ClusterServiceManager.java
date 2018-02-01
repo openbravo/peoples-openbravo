@@ -316,6 +316,7 @@ public class ClusterServiceManager {
           // try to register the current node as the one in charge of handling the service
           log.info("Node {} in charge of service {} should be replaced",
               getNodeIdentifier(service), serviceName);
+          clusterService.prepareForNewNodeInCharge();
           updateNodeOfService(service.getNodeID(), serviceName, now);
         } else {
           log.debug("Node {} still in charge of service {}", getNodeIdentifier(service),
