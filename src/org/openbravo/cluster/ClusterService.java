@@ -52,6 +52,16 @@ public abstract class ClusterService {
   private boolean disableAfterProcess = false;
   private int processing = 0;
 
+  /**
+   * Initializes the cluster service, including all its settings.
+   * 
+   * @param currentNodeId
+   *          The identifier of the current cluster node
+   * @param currentNodeName
+   *          The name of the current cluster node
+   * 
+   * @return {@code true} if the service is initialized properly, {@code false} otherwise.
+   */
   protected boolean init(String currentNodeId, String currentNodeName) {
     if (!isEnabled()) {
       return false;
@@ -99,24 +109,42 @@ public abstract class ClusterService {
     }
   }
 
+  /**
+   * @return the frequency (timeout) which the ping will be done for this service.
+   */
   protected Long getTimeout() {
     return timeout;
   }
 
+  /**
+   * @return the threshold used for this service. This is an extra amount of time added to the
+   *         timeout that helps to avoid unnecessarily switching the node that should handle a
+   *         service on every ping round.
+   */
   protected Long getThreshold() {
-    // The threshold is an extra amount of time added to the timeout that helps to avoid
-    // unnecessarily switching the node that should handle a service on every ping round.
     return threshold;
   }
 
+  /**
+   * @return the timestamp representing the time of the next ping scheduled for this service.
+   */
   protected Long getNextPing() {
     return nextPing;
   }
 
+  /**
+   * Sets the next time which the ping should be done for this service.
+   * 
+   * @param nextPing
+   *          The timestamp of the next ping for this service
+   */
   protected void setNextPing(Long nextPing) {
     this.nextPing = nextPing;
   }
 
+  /**
+   * @return {@code true} if the service has been initialized, {@code false} otherwise.
+   */
   protected boolean isInitialized() {
     return initialized;
   }
@@ -170,14 +198,33 @@ public abstract class ClusterService {
     }
   }
 
+  /**
+   * Used to define if the service should check into the database whether the current node is
+   * handling the service.
+   * 
+   * @param useCache
+   *          If {@code true}, then the service will check into the database if the current node is
+   *          handling the service. If {@code false}, then it will use the last read value.
+   */
   protected void setUseCache(boolean useCache) {
     this.useCache = useCache;
   }
 
+  /**
+   * @return {@code true} if the service is disabled, {@code false} otherwise.
+   */
   protected boolean isDisabled() {
     return isDisabled;
   }
 
+  /**
+   * Disables the current service. This means that the ping will not be performed for this service
+   * in the current node.
+   * 
+   * @param isDisabled
+   *          If {@code true}, then the service will be disabled. If {@code false}, then it will be
+   *          enabled.
+   */
   protected void setDisabled(boolean isDisabled) {
     this.isDisabled = isDisabled;
     if (!this.isDisabled && disableAfterProcess) {
@@ -185,6 +232,10 @@ public abstract class ClusterService {
     }
   }
 
+  /**
+   * This method is used to set the current cluster service into an state that indicates that it is
+   * currently processing its tasks.
+   */
   public synchronized void startProcessing() {
     if (!ClusterServiceManager.isCluster()) {
       return;
@@ -192,6 +243,10 @@ public abstract class ClusterService {
     processing++;
   }
 
+  /**
+   * This method is used to restore the cluster service into an state which indicates that it is
+   * currently not processing any task.
+   */
   public synchronized void endProcessing() {
     if (!ClusterServiceManager.isCluster()) {
       return;
@@ -206,6 +261,12 @@ public abstract class ClusterService {
     return processing > 0;
   }
 
+  /**
+   * Disables the service and in case it is being handled in the current node, then the node is
+   * deregistered to force the election of a new node to handle the service. If the service is
+   * currently processing its tasks, then all the actions will be postponed until the processing
+   * finishes.
+   */
   protected synchronized void deregister() {
     if (!ClusterServiceManager.isCluster()) {
       return;
@@ -253,6 +314,10 @@ public abstract class ClusterService {
     return nodeName + " - " + nodeId;
   }
 
+  /**
+   * Executes the actions that should be done right before the cluster node is prepared to be
+   * selected as the node in charge of handling the service.
+   */
   protected void prepareForNewNodeInCharge() {
     processing = 0;
     disableAfterProcess = false;
