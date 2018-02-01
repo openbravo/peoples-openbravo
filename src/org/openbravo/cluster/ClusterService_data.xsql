@@ -45,4 +45,17 @@
      <Parameter name="service"/>
    </SqlMethod>
 
+   <SqlMethod name="deRegisterService" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+           DELETE FROM AD_CLUSTER_SERVICE
+           WHERE SERVICE = ?
+           AND NODE_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="service"/>
+    <Parameter name="nodeId"/>
+  </SqlMethod>
+
 </SqlClass>

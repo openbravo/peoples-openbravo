@@ -245,7 +245,7 @@ public class ClusterServiceManager {
         long current = System.currentTimeMillis();
         boolean anyServiceRegistered = false;
         for (ClusterService service : manager.clusterServices) {
-          if (service.init(manager.nodeId)) {
+          if (service.init(manager.nodeId, manager.nodeName)) {
             // service initialized properly, register it
             registerOrUpdateService(service);
             service.setNextPing(current + service.getTimeout());

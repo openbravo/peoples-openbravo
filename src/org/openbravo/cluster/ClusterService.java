@@ -43,17 +43,21 @@ public abstract class ClusterService {
   private Long threshold;
   private Long nextPing;
   private String nodeId;
+  private String nodeName;
   private String nodeHandlingServiceId;
   private String nodeHandlingServiceName;
   private boolean initialized = false;
   private boolean useCache = false;
   private boolean isDisabled = false;
+  private boolean disableAfterProcess = false;
+  private int processing = 0;
 
-  protected boolean init(String currentNodeId) {
+  protected boolean init(String currentNodeId, String currentNodeName) {
     if (!isEnabled()) {
       return false;
     }
     this.nodeId = currentNodeId;
+    this.nodeName = currentNodeName;
     this.timeout = getClusterServiceTimeout();
     this.threshold = calculateThreshold(timeout);
     this.initialized = true;
@@ -155,7 +159,7 @@ public abstract class ClusterService {
       connection = dcp.getTransactionConnection();
       return ClusterServiceData.getNodeHandlingService(connection, dcp, getServiceName());
     } catch (Exception ex) {
-      log.error("Could not retrieve node in charge of service {}", getServiceName(), ex);
+      log.error("Could not retrieve the node in charge of service {}", getServiceName(), ex);
       return null;
     } finally {
       try {
@@ -176,6 +180,74 @@ public abstract class ClusterService {
 
   protected void setDisabled(boolean isDisabled) {
     this.isDisabled = isDisabled;
+    if (!this.isDisabled && disableAfterProcess) {
+      disableAfterProcess = false;
+    }
+  }
+
+  public synchronized void startProcessing() {
+    if (!ClusterServiceManager.isCluster()) {
+      return;
+    }
+    processing++;
+  }
+
+  public synchronized void endProcessing() {
+    if (!ClusterServiceManager.isCluster()) {
+      return;
+    }
+    processing--;
+    if (processing == 0 && disableAfterProcess) {
+      deRegister();
+    }
+  }
+
+  protected synchronized void deRegister() {
+    if (!ClusterServiceManager.isCluster()) {
+      return;
+    }
+    if (isProcessing()) {
+      disableAfterProcess = true;
+      return;
+    }
+    deRegisterService();
+    // Disable the ping for the service
+    setDisabled(true);
+    // Force the service to go to the database to see the changes (if any)
+    setUseCache(false);
+    disableAfterProcess = false;
+    log.info("Disabled ping for service {} in node {}", getServiceName(), getNodeIdentifier());
+  }
+
+  private boolean isProcessing() {
+    return processing > 0;
+  }
+
+  private void deRegisterService() {
+    DalConnectionProvider dcp = new DalConnectionProvider(false);
+    Connection connection = null;
+    try {
+      connection = dcp.getTransactionConnection();
+      int deletedRows = ClusterServiceData.deRegisterService(connection, dcp, getServiceName(),
+          nodeId);
+      if (deletedRows == 1) {
+        log.info("Deregistered node {} in charge of service {}", getNodeIdentifier(),
+            getServiceName());
+      }
+    } catch (Exception ex) {
+      String errorMsg = "Error deregistering node {} in charge of service " + getServiceName();
+      log.error(errorMsg, getNodeIdentifier(), ex);
+    } finally {
+      try {
+        dcp.releaseCommitConnection(connection);
+      } catch (SQLException ex) {
+        log.error("Error closing connection", ex);
+      }
+    }
+  }
+
+  private String getNodeIdentifier() {
+    return nodeName + " - " + nodeId;
   }
 
   /**

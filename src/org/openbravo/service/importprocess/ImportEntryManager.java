@@ -601,6 +601,7 @@ public class ImportEntryManager {
 
                 final ScrollableResults entries = entriesQry.scroll(ScrollMode.FORWARD_ONLY);
                 try {
+                  manager.clusterService.startProcessing();
                   while (entries.next() && isHandlingImportEntries()) {
                     entryCount++;
                     final ImportEntry entry = (ImportEntry) entries.get(0);
@@ -623,6 +624,7 @@ public class ImportEntryManager {
                     }
                   }
                 } finally {
+                  manager.clusterService.endProcessing();
                   entries.close();
                 }
               }

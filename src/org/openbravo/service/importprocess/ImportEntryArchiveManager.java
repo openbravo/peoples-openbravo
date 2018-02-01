@@ -166,6 +166,7 @@ public class ImportEntryArchiveManager {
             // do a try catch block here
             final List<ImportEntry> entries = entriesQry.list();
             log.debug("Found " + entries.size() + " import entries");
+            manager.clusterService.startProcessing();
             for (ImportEntry importEntry : entries) {
               if (!isHandlingImportEntryArchiving()) {
                 // detected that we are not anymore in the node in charge of handling the import
@@ -194,6 +195,8 @@ public class ImportEntryArchiveManager {
             OBDal.getInstance().commitAndClose();
           } catch (Throwable t) {
             ImportProcessUtils.logError(log, t);
+          } finally {
+            manager.clusterService.endProcessing();
           }
 
           // nothing to do in last cycle wait one hour
