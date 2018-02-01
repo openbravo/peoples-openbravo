@@ -27,8 +27,10 @@ import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.ReservationUtils;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
@@ -70,10 +72,11 @@ class ReservationManager {
     if (hasQtyReserved(qtyReserved)
         && !hasEnoughQtyOnHandNotReservedToFulfillQtyMovement(qtyOnHandNotReserved, qtyMovement)) {
       BigDecimal remainingQtyToReleaseInReservations = qtyMovement.subtract(qtyOnHandNotReserved);
-      final ScrollableResults reservationStockScroll = getAvailableStockReservations(storageDetail);
+      final ScrollableResults reservationStockScroll = getAvailableStockReservations(storageDetail,
+          newStorageBin);
       try {
-        while (hasPendingReservationsToModify(reservationStockScroll,
-            remainingQtyToReleaseInReservations)) {
+        while (reservationStockScroll.next()
+            && hasPendingReservationsToModify(remainingQtyToReleaseInReservations)) {
           final ReservationStock reservationStock = (ReservationStock) reservationStockScroll.get()[0];
           final BigDecimal currentReservedQty = (BigDecimal) reservationStockScroll.get()[1];
           final BigDecimal qtyToModifyInThisReservation = remainingQtyToReleaseInReservations
@@ -83,11 +86,18 @@ class ReservationManager {
               qtyToModifyInThisReservation, reservationStock);
           refInvReservations.add(new ReferencedInventoryReservation(qtyToModifyInThisReservation,
               reservation, newStorageBin, newAttributeSetInstance.getId(), reservationStock
-                  .isAllocated()));
+                  .isAllocated(), reservation.getStorageBin() != null, reservation
+                  .getAttributeSetValue() != null));
 
           remainingQtyToReleaseInReservations = remainingQtyToReleaseInReservations
               .subtract(qtyToModifyInThisReservation);
-          // OBDal.getInstance().getSession().evict(reservationStock);
+          // OBDal.getInstance().getSession().evict(reservationStock); // Problems in JUnit
+        }
+
+        if (hasPendingReservationsToModify(remainingQtyToReleaseInReservations)) {
+          throw new OBException(String.format(
+              OBMessageUtils.messageBD("RefInventoryCannotReallocateAllQuantity"),
+              remainingQtyToReleaseInReservations));
         }
       } finally {
         if (reservationStockScroll != null) {
@@ -120,27 +130,31 @@ class ReservationManager {
     return qtyOnHandNotReserved.compareTo(qtyMovement) >= 0;
   }
 
-  private boolean hasPendingReservationsToModify(ScrollableResults reservationStockScroll,
-      BigDecimal reservationQtyToModify) {
-    return reservationStockScroll.next() && reservationQtyToModify.compareTo(BigDecimal.ZERO) > 0;
+  private boolean hasPendingReservationsToModify(final BigDecimal reservationQtyToModify) {
+    return reservationQtyToModify.compareTo(BigDecimal.ZERO) > 0;
   }
 
-  private ScrollableResults getAvailableStockReservations(final StorageDetail storageDetail) {
+  private ScrollableResults getAvailableStockReservations(final StorageDetail storageDetail,
+      final Locator newStorageBin) {
     final String olHql = "select sr, sr.quantity - sr.released " + //
         "from MaterialMgmtReservationStock sr " + //
         "join sr.reservation res " + //
-        "where coalesce(sr.storageBin.id, res.storageBin.id) = :storageBinId " + //
-        "and coalesce(sr.attributeSetValue.id, res.attributeSetValue.id) = :attributeSetId " + //
+        "where coalesce(sr.storageBin.id, res.storageBin.id) = :sdBinId " + //
+        // Skip reservations forced to a bin different from the destination bin
+        "and (res.storageBin.id is null or res.storageBin.id = :toBindId) " + //
+        "and coalesce(sr.attributeSetValue.id, res.attributeSetValue.id) = :sdAttributeSetId " + //
         "and sr.quantity - sr.released > 0 " + //
         "and res.product.id = :productId " + //
         "and res.uOM.id = :uomId " + //
         "and res.rESStatus = 'CO' " + //
-        "order by case when sr.allocated = 'Y' then 1 else '0' end, " + //
+        "order by case when sr.allocated = 'Y' then 1 else 0 end, " + //
+        "      case when res.attributeSetValue.id is not null then 1 else 0 end, " + //
         "      sr.quantity - sr.released asc  ";
     final Session session = OBDal.getInstance().getSession();
     final Query sdQuery = session.createQuery(olHql.toString());
-    sdQuery.setParameter("storageBinId", storageDetail.getStorageBin().getId());
-    sdQuery.setParameter("attributeSetId", storageDetail.getAttributeSetValue().getId());
+    sdQuery.setParameter("sdBinId", storageDetail.getStorageBin().getId());
+    sdQuery.setParameter("toBindId", newStorageBin.getId());
+    sdQuery.setParameter("sdAttributeSetId", storageDetail.getAttributeSetValue().getId());
     sdQuery.setParameter("productId", storageDetail.getProduct().getId());
     sdQuery.setParameter("uomId", storageDetail.getUOM().getId());
     sdQuery.setFetchSize(1000);
@@ -157,9 +171,12 @@ class ReservationManager {
     final String storageBinId;
     final String attributeSetId;
     final boolean isAllocated;
+    final boolean isForceBin;
+    final boolean isForceAttributeSet;
 
     ReferencedInventoryReservation(BigDecimal reservationQty, Reservation reservation,
-        Locator newStorageBin, String attributeSetId, boolean isAllocated) {
+        Locator newStorageBin, String attributeSetId, boolean isAllocated, boolean isForceBin,
+        boolean isForceAttributeSet) {
       this.reservationQty = reservationQty;
       this.orgId = reservation.getOrganization().getId();
       this.productId = reservation.getProduct().getId();
@@ -170,6 +187,8 @@ class ReservationManager {
       this.storageBinId = newStorageBin.getId();
       this.attributeSetId = attributeSetId;
       this.isAllocated = isAllocated;
+      this.isForceBin = isForceBin;
+      this.isForceAttributeSet = isForceAttributeSet;
     }
 
   }
@@ -200,18 +219,35 @@ class ReservationManager {
         refInvReservation.attributeSetId));
     OBDal.getInstance().save(reservation);
     ReservationUtils.processReserve(reservation, "PR");
+    OBDal.getInstance().refresh(reservation); // Refresh to update status
 
     if (refInvReservation.isAllocated) {
       transformToAllocated(reservation);
     }
+
+    cleanHeaderBinAndAttributeSetIfNecessary(reservation, refInvReservation.isForceBin,
+        refInvReservation.isForceAttributeSet);
   }
 
   private void transformToAllocated(final Reservation reservation) {
-    OBDal.getInstance().refresh(reservation);
     for (final ReservationStock reservationStock : reservation
         .getMaterialMgmtReservationStockList()) {
       reservationStock.setAllocated(true);
       OBDal.getInstance().save(reservationStock);
+    }
+  }
+
+  private void cleanHeaderBinAndAttributeSetIfNecessary(final Reservation reservation,
+      boolean isForceBin, boolean isForceAttributeSet) {
+    if (!isForceBin) {
+      reservation.setStorageBin(null);
+    }
+    if (!isForceAttributeSet) {
+      reservation.setAttributeSetValue(null);
+    }
+    if (!isForceBin || !isForceAttributeSet) {
+      OBDal.getInstance().save(reservation);
+      OBDal.getInstance().flush(); // Necessary to flush here
     }
   }
 }

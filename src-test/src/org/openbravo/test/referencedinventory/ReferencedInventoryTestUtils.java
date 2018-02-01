@@ -22,6 +22,7 @@ package org.openbravo.test.referencedinventory;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.math.BigDecimal;
@@ -45,7 +46,6 @@ import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.materialmgmt.ReservationUtils;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
@@ -229,22 +229,31 @@ class ReferencedInventoryTestUtils {
   }
 
   static Reservation createProcessAndAssertReservation(final StorageDetail storageDetail,
-      final BigDecimal reservationQty, final String orderLineId, final boolean isAllocated) {
+      final BigDecimal reservationQty, final boolean isAllocated, final boolean isForceBin,
+      final boolean isForceAttributeSet) {
     if (reservationQty != null && reservationQty.compareTo(BigDecimal.ZERO) > 0) {
       Reservation reservation = OBProvider.getInstance().get(Reservation.class);
       reservation.setOrganization(storageDetail.getOrganization());
       reservation.setQuantity(reservationQty);
       reservation.setProduct(storageDetail.getProduct());
       reservation.setUOM(storageDetail.getUOM());
-      if (orderLineId != null) {
-        reservation.setSalesOrderLine(OBDal.getInstance().getProxy(OrderLine.class, orderLineId));
-      }
       reservation.setWarehouse(storageDetail.getStorageBin().getWarehouse());
       reservation.setStorageBin(storageDetail.getStorageBin());
       reservation.setAttributeSetValue(storageDetail.getAttributeSetValue());
       OBDal.getInstance().save(reservation);
       ReservationUtils.processReserve(reservation, "PR");
       OBDal.getInstance().refresh(reservation);
+
+      if (!isForceBin) {
+        reservation.setStorageBin(null);
+      }
+      if (!isForceAttributeSet) {
+        reservation.setAttributeSetValue(null);
+      }
+      if (!isForceBin || !isForceAttributeSet) {
+        OBDal.getInstance().save(reservation);
+        OBDal.getInstance().flush();
+      }
 
       assertsNewCreatedReservation(reservationQty, reservation);
 
@@ -260,6 +269,8 @@ class ReferencedInventoryTestUtils {
         assertThat("Storage Detail qty reserved is updated", reservationQty,
             equalTo(storageDetail.getReservedQty()));
       }
+
+      assertsReservationHeader(isForceBin, isForceAttributeSet, reservation);
 
       return reservation;
     }
@@ -289,5 +300,13 @@ class ReferencedInventoryTestUtils {
     }
 
     OBDal.getInstance().flush(); // Necessary to flush
+  }
+
+  public static void assertsReservationHeader(final boolean isForceBin,
+      final boolean isForceAttributeSet, Reservation reservation) {
+    assertThat("Reservation has the expected bin at header", reservation.getStorageBin(),
+        isForceBin ? notNullValue() : nullValue());
+    assertThat("Reservation has the expected attribute at header",
+        reservation.getAttributeSetValue(), isForceAttributeSet ? notNullValue() : nullValue());
   }
 }

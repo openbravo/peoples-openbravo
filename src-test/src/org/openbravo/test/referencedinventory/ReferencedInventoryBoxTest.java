@@ -73,6 +73,14 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
   protected ReferencedInventory testBox(final String _toBinId, final String productId,
       final String attributeSetInstanceId, final BigDecimal _qtyInBox,
       final BigDecimal reservationQty, final boolean isAllocated) throws Exception {
+    return testBox(_toBinId, productId, attributeSetInstanceId, _qtyInBox, reservationQty,
+        isAllocated, false, false);
+  }
+
+  protected ReferencedInventory testBox(final String _toBinId, final String productId,
+      final String attributeSetInstanceId, final BigDecimal _qtyInBox,
+      final BigDecimal reservationQty, final boolean isAllocated, final boolean isForceBin,
+      final boolean isForceAttribute) throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType();
     final ReferencedInventory refInv = ReferencedInventoryTestUtils.createReferencedInventory(
@@ -86,7 +94,8 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
     final String originalAttributeId = storageDetail.getAttributeSetValue().getId();
 
     final Reservation originalReservation = ReferencedInventoryTestUtils
-        .createProcessAndAssertReservation(storageDetail, reservationQty, null, isAllocated);
+        .createProcessAndAssertReservation(storageDetail, reservationQty, isAllocated, isForceBin,
+            isForceAttribute);
 
     final String toBinId = StringUtils.isBlank(_toBinId) ? storageDetail.getStorageBin().getId()
         : _toBinId;
