@@ -21,7 +21,9 @@ package org.openbravo.materialmgmt.refinventory;
 
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.plm.AttributeSetInstance;
@@ -50,13 +52,22 @@ public class ReferencedInventoryUtil {
     newAttributeSetInstance.setOrganization(originalAttributeSetInstance.getOrganization());
     newAttributeSetInstance.setParentAttributeSetInstance(originalAttributeSetInstance);
     newAttributeSetInstance.setReferencedInventory(referencedInventory);
-    newAttributeSetInstance.setDescription(StringUtils.left(
-        (StringUtils.isBlank(newAttributeSetInstance.getDescription()) ? ""
-            : newAttributeSetInstance.getDescription())
-            + REFERENCEDINVENTORYPREFIX
-            + referencedInventory.getSearchKey() + REFERENCEDINVENTORYSUFFIX, 255));
+    newAttributeSetInstance
+        .setDescription(getAttributeSetInstanceDescriptionForReferencedInventory(
+            newAttributeSetInstance.getDescription(), referencedInventory));
     OBDal.getInstance().save(newAttributeSetInstance);
     return newAttributeSetInstance;
+  }
+
+  /**
+   * Generates a description with the originalDesc + {@value #REFERENCEDINVENTORYPREFIX} +
+   * referenced Inventory search key + {@value #REFERENCEDINVENTORYSUFFIX}
+   */
+  public static final String getAttributeSetInstanceDescriptionForReferencedInventory(
+      final String originalDesc, final ReferencedInventory referencedInventory) {
+    return StringUtils.left((StringUtils.isBlank(originalDesc) ? "" : originalDesc)
+        + REFERENCEDINVENTORYPREFIX + referencedInventory.getSearchKey()
+        + REFERENCEDINVENTORYSUFFIX, 255);
   }
 
   /**
@@ -94,4 +105,21 @@ public class ReferencedInventoryUtil {
         .getSequence();
   }
 
+  /**
+   * Throw an exception if the given attribute set instance is linked to a referenced inventory
+   */
+  public static void avoidUpdatingIfLinkedToReferencedInventory(final String attributeSetInstanceId) {
+    try {
+      OBContext.setAdminMode(true);
+      final AttributeSetInstance attributeSetInstance = OBDal.getInstance().getProxy(
+          AttributeSetInstance.class, attributeSetInstanceId);
+      if (attributeSetInstance.getParentAttributeSetInstance() != null
+          || !attributeSetInstance.getAttributeSetInstanceParentAttributeSetInstanceIDList()
+              .isEmpty()) {
+        throw new OBException("@RefInventoryAvoidUpdatingAttribute@");
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
 }
