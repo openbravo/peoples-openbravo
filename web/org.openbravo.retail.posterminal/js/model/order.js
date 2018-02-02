@@ -2177,7 +2177,7 @@
             }
           }
         }
-        if (me.isCalculateReceiptLocked === true || !line) {
+        if ((me.isCalculateReceiptLocked === true || !line) && !options.isVerifiedReturn) {
           OB.error('Save ignored before execute OBPOS_PostAddProductToOrder hook, system has detected that a line is being added when calculate receipt is closed. Ignore line creation');
           if (attrs && attrs.obposEpccode) {
             OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
