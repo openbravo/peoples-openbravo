@@ -51,7 +51,7 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
    * Runs a box process and verifies it. If reservationQty is not null, it first create a
    * reservation for reservationQty and then boxes the qtyInBox units
    * 
-   * @param _toBinId
+   * @param toBinId
    *          new bin where the referenced inventory is left. If null it is the same as the current
    *          storage detail
    * @param productId
@@ -70,10 +70,10 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
    *          null
    * @return the created referenced inventory
    */
-  protected ReferencedInventory testBox(final String _toBinId, final String productId,
-      final String attributeSetInstanceId, final BigDecimal _qtyInBox,
+  protected ReferencedInventory testBox(final String toBinId, final String productId,
+      final String attributeSetInstanceId, final BigDecimal qtyInBox,
       final BigDecimal reservationQty, final boolean isAllocated) throws Exception {
-    return testBox(_toBinId, productId, attributeSetInstanceId, _qtyInBox, reservationQty,
+    return testBox(toBinId, productId, attributeSetInstanceId, qtyInBox, reservationQty,
         isAllocated, false, false);
   }
 
