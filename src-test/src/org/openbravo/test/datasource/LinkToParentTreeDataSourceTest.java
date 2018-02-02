@@ -19,7 +19,8 @@
 
 package org.openbravo.test.datasource;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +28,6 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
@@ -47,26 +47,33 @@ import org.slf4j.LoggerFactory;
 public class LinkToParentTreeDataSourceTest extends BaseDataSourceTestDal {
 
   private static final Logger log = LoggerFactory.getLogger(LinkToParentTreeDataSourceTest.class);
-
   private static final int STATUS_OK = 0;
   private static final int NUMBER_OF_COST_ADJUSTMENT_LINES = 2;
+
   private CostAdjustmentTestDataHelper dataHelper = new CostAdjustmentTestDataHelper();
-
   private String costAdjustmentId;
-
-  @Before
-  public void setUpCostAdjustmentData() {
-    CostAdjustment costAdjustment = this.dataHelper
-        .createCostAdjustmentWithActiveAndNonActiveLines();
-    this.costAdjustmentId = costAdjustment.getId();
-  }
 
   /**
    * Ensure that fetching cost adjustment lines both active and non-active lines are retrieved
    */
   @Test
-  public void fetchIncludeNonActiveFields() {
-    assertEquals(NUMBER_OF_COST_ADJUSTMENT_LINES, this.getNumberOfCostAdjustmentLines());
+  public void fetchIncludeNonActiveRecords() {
+    this.costAdjustmentId = this.dataHelper.createCostAdjustmentWithActiveAndNonActiveLines();
+
+    assertThat("Fetched the expected number of records", this.getNumberOfCostAdjustmentLines(),
+        equalTo(NUMBER_OF_COST_ADJUSTMENT_LINES));
+  }
+
+  /**
+   * Test the case where the parent node has a children which is inactive. The parent should return
+   * it has children in its status
+   */
+  @Test
+  public void fetchIncludeHasChildrenHavingNonActiveChildren() {
+    this.costAdjustmentId = this.dataHelper.createCostAdjustmentWithANonActiveChildLine();
+
+    assertThat("First node has children", this.doesFirstCostAdjustmentLineHasChildren(),
+        equalTo(true));
   }
 
   @After
@@ -81,12 +88,27 @@ public class LinkToParentTreeDataSourceTest extends BaseDataSourceTestDal {
       if (this.isResponseOk(response)) {
         return this.getNumberOfDataItems(response);
       } else {
-        log.error("DataSource response has no items");
+        log.error("DataSource response has a non-OK status");
         return 0;
       }
     } catch (Exception exception) {
       log.error("Cost Adjustment request from DataSource failed", exception);
       return 0;
+    }
+  }
+
+  private boolean doesFirstCostAdjustmentLineHasChildren() {
+    try {
+      JSONObject response = this.requestCostAdjustmentLines();
+      if (this.isResponseOk(response)) {
+        return this.lineHasChildren(this.getFirstItem(response));
+      } else {
+        log.error("DataSource response has a non-OK status");
+        return false;
+      }
+    } catch (Exception exception) {
+      log.error("Cost Adjustment request from DataSource failed", exception);
+      return false;
     }
   }
 
@@ -96,6 +118,14 @@ public class LinkToParentTreeDataSourceTest extends BaseDataSourceTestDal {
 
   private int getNumberOfDataItems(JSONObject response) throws JSONException {
     return response.getJSONArray("data").length();
+  }
+
+  private JSONObject getFirstItem(JSONObject response) throws JSONException {
+    return response.getJSONArray("data").getJSONObject(0);
+  }
+
+  private boolean lineHasChildren(JSONObject item) throws JSONException {
+    return item.getBoolean("_hasChildren");
   }
 
   private JSONObject requestCostAdjustmentLines() throws Exception {
@@ -129,8 +159,38 @@ public class LinkToParentTreeDataSourceTest extends BaseDataSourceTestDal {
     private static final String SOURCE_PROCESS = "MCC";
     private static final String DOCUMENT_NO = "::DOCUMENT-NO::";
 
-    public CostAdjustment createCostAdjustmentWithActiveAndNonActiveLines() {
+    public String createCostAdjustmentWithActiveAndNonActiveLines() {
       OBContext.setOBContext(TEST_USER_ID);
+
+      CostAdjustment costAdjustment = this.createCostAdjustment();
+      this.createActiveCostAdjustmentLine(costAdjustment);
+      this.createNonActiveCostAdjustmentLine(costAdjustment);
+
+      OBDal.getInstance().commitAndClose();
+
+      return costAdjustment.getId();
+    }
+
+    public String createCostAdjustmentWithANonActiveChildLine() {
+      OBContext.setOBContext(TEST_USER_ID);
+
+      CostAdjustment costAdjustment = this.createCostAdjustment();
+      CostAdjustmentLine parentAdjustmentLine = this.createActiveCostAdjustmentLine(costAdjustment);
+      this.createNonActiveChildAdjustmentLine(costAdjustment, parentAdjustmentLine);
+      OBDal.getInstance().commitAndClose();
+
+      return costAdjustment.getId();
+    }
+
+    public void removeCostAdjustment(String id) {
+      OBContext.setOBContext(TEST_USER_ID);
+
+      OBDal obdal = OBDal.getInstance();
+      obdal.remove(obdal.getProxy(CostAdjustment.class, id));
+      obdal.commitAndClose();
+    }
+
+    private CostAdjustment createCostAdjustment() {
       OBDal obdal = OBDal.getInstance();
 
       CostAdjustment costAdjustment = OBProvider.getInstance().get(CostAdjustment.class);
@@ -138,32 +198,26 @@ public class LinkToParentTreeDataSourceTest extends BaseDataSourceTestDal {
       costAdjustment.setDocumentNo(DOCUMENT_NO);
       costAdjustment.setSourceProcess(SOURCE_PROCESS);
 
-      obdal.save(costAdjustment);
-
-      this.createActiveCostAdjustmentLine(costAdjustment);
-      this.createNonActiveCostAdjustmentLine(costAdjustment);
-
-      OBDal.getInstance().commitAndClose();
+      OBDal.getInstance().save(costAdjustment);
 
       return costAdjustment;
     }
 
-    public void removeCostAdjustment(String id) {
-      OBDal obdal = OBDal.getInstance();
-      obdal.remove(obdal.getProxy(CostAdjustment.class, id));
-      obdal.commitAndClose();
-    }
-
     private CostAdjustmentLine createActiveCostAdjustmentLine(CostAdjustment costAdjustment) {
-      return this.createCostAdjustmentLine(costAdjustment, 100L, true);
+      return this.createCostAdjustmentLine(costAdjustment, null, 100L, true);
     }
 
     private CostAdjustmentLine createNonActiveCostAdjustmentLine(CostAdjustment costAdjustment) {
-      return this.createCostAdjustmentLine(costAdjustment, 200L, false);
+      return this.createCostAdjustmentLine(costAdjustment, null, 200L, false);
     }
 
-    private CostAdjustmentLine createCostAdjustmentLine(CostAdjustment costAdjustment, Long lineNo,
-        boolean isActive) {
+    private CostAdjustmentLine createNonActiveChildAdjustmentLine(CostAdjustment costAdjustment,
+        CostAdjustmentLine parent) {
+      return this.createCostAdjustmentLine(costAdjustment, parent, 200L, false);
+    }
+
+    private CostAdjustmentLine createCostAdjustmentLine(CostAdjustment costAdjustment,
+        CostAdjustmentLine parent, Long lineNo, boolean isActive) {
       OBDal obdal = OBDal.getInstance();
 
       CostAdjustmentLine line = OBProvider.getInstance().get(CostAdjustmentLine.class);
@@ -171,6 +225,7 @@ public class LinkToParentTreeDataSourceTest extends BaseDataSourceTestDal {
       line.setCostAdjustment(costAdjustment);
       line.setCurrency(obdal.getProxy(Currency.class, EURO_ID));
       line.setActive(isActive);
+      line.setParentCostAdjustmentLine(parent);
 
       obdal.save(line);
 
