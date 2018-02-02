@@ -271,7 +271,8 @@ public class ClusterServiceManager {
       for (ClusterService service : manager.clusterServices) {
         if (!service.isAlive() || !service.isInitialized() || service.isDisabled()) {
           // Do not update the last ping: the service is not working
-          log.debug("Service {} is not working in node {}", service, getNodeIdentifier());
+          log.debug("Service {} is not working in node {}", service.getServiceName(),
+              getNodeIdentifier());
           continue;
         }
         long current = System.currentTimeMillis();
