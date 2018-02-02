@@ -213,7 +213,7 @@ enyo.kind({
       return true;
     }
     this.doHideSelector({
-      selectorHide: false
+      selectorHide: true
     });
     var me = this;
 
@@ -224,7 +224,12 @@ enyo.kind({
 
     function successCallbackBPs(dataBps) {
       var modalDlg = me.owner.owner.owner.owner.owner.owner,
-          navigationPath = (modalDlg.args.navigationPath && modalDlg.args.navigationPath.length > 0) ? modalDlg.args.navigationPath : OB.UTIL.BusinessPartnerSelector.cloneAndPush(null, 'modalcustomeraddress');
+          navigationPath;
+      if (modalDlg.kind === 'OB.UI.ModalBPLocation') {
+        navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(modalDlg.args.navigationPath, 'modalcustomeraddress');
+      } else {
+        navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(modalDlg.args.navigationPath, 'modalcustomershipaddress');
+      }
       me.doShowPopup({
         popup: 'customerAddrCreateAndEdit',
         args: {
@@ -819,9 +824,10 @@ enyo.kind({
             }
           });
         } else {
-          var bpArgs = JSON.parse(JSON.stringify(me.owner.owner.args));
-          bpArgs.businessPartner = dataBps;
-          me.doChangeBusinessPartner(bpArgs);
+          me.doChangeBusinessPartner({
+            businessPartner: dataBps,
+            target: me.owner.owner.args.target
+          });
         }
       }
       if (!model.get('ignoreSetBPLoc')) {
