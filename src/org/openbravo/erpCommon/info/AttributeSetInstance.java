@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,6 +35,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.AttributeSetInstanceValue;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.AttributeUse;
@@ -178,6 +179,11 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       } else {
         myMessage = attSetValue.setAttributeInstance(this, vars, strAttributeSet, strInstance,
             strWindowId, strIsSOTrx, strProduct, attValues);
+
+        if (myMessage != null & StringUtils.equals("Error", myMessage.getType())) {
+          bdErrorGeneralPopUp(request, response, OBMessageUtils.messageBD("Error"),
+              myMessage.getMessage());
+        }
       }
 
       vars.setSessionValue("AttributeSetInstance.instance", attSetValue.getAttSetInstanceId());
