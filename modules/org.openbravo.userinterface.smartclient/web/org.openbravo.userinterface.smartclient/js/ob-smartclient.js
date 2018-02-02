@@ -774,18 +774,42 @@ isc.RPCManager.addClassProperties({
       delete target.view.isRefreshing;
       target.view.toolBar.updateButtonState();
     }
+
+    // in case of response timeout, show the error in the view if possible
+    if (this.isServerTimeoutResponse(response) && this.canShowErrorMessage(target)) {
+      target.view.setErrorMessageFromResponse(response, response.data, request);
+    }
+
     if (!request.willHandleError) {
       this._originalhandleError(response, request);
     }
   },
 
+  isServerTimeoutResponse: function (response) {
+    return response.status === isc.RPCResponse.STATUS_SERVER_TIMEOUT;
+  },
+
+  canShowErrorMessage: function (target) {
+    return target && target.view && isc.isA.Function(target.view.setErrorMessageFromResponse);
+  },
+
   _originalEvalResult: isc.RPCManager.evalResult,
   evalResult: function (request, response, results) {
-    // if the response contains an error status, call the errorCallback
-    if (response.status !== isc.RPCResponse.STATUS_SUCCESS && isc.isA.Function(request.errorCallback)) {
-      request.errorCallback(request, response);
+    if (response.status !== isc.RPCResponse.STATUS_SUCCESS) {
+      if (isc.isA.Function(request.errorCallback)) {
+        // if the response contains an error status, call the errorCallback
+        request.errorCallback(request, response);
+      } else {
+        // try to handle the error in the standard way
+        this.handleError(response, request);
+      }
     }
-    return this._originalEvalResult(request, response, results);
+
+    return this._originalEvalResult(request, response, this.sanitizeResults(results));
+  },
+
+  sanitizeResults: function (results) {
+    return isc.isA.Object(results) ? JSON.stringify(results) : results;
   },
 
   // Escape characters that are not properly handled in JavaScript's eval. See issue #36788.
