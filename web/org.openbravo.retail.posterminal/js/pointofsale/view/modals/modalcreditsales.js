@@ -37,7 +37,7 @@ enyo.kind({
         currSymbol = paymentList[i].symbol;
       }
     }
-    this.setHeader(OB.I18N.getLabel('OBPOS_enoughCreditHeader'));
+    this.setHeader(OB.I18N.getLabel('OBPOS_SellingOnCreditHeader'));
     if (this.args.message) {
       this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel(this.args.message));
     } else if (this.args.order.get('orderType') === 1) {
@@ -51,7 +51,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.apply_button',
-  i18nContent: 'OBPOS_LblUseCredit',
+  i18nContent: 'OBPOS_ConfirmSellOnCredit',
   isDefaultAction: true,
   init: function (model) {
     this.model = model;
