@@ -58,6 +58,7 @@ public class LinkToParentTreeDataSourceTest extends BaseDataSourceTestDal {
    */
   @Test
   public void fetchIncludeNonActiveRecords() {
+    OBContext.setOBContext(TEST_USER_ID);
     this.costAdjustmentId = this.dataHelper.createCostAdjustmentWithActiveAndNonActiveLines();
 
     assertThat("Fetched the expected number of records", this.getNumberOfCostAdjustmentLines(),
@@ -70,6 +71,7 @@ public class LinkToParentTreeDataSourceTest extends BaseDataSourceTestDal {
    */
   @Test
   public void fetchIncludeHasChildrenHavingNonActiveChildren() {
+    OBContext.setOBContext(TEST_USER_ID);
     this.costAdjustmentId = this.dataHelper.createCostAdjustmentWithANonActiveChildLine();
 
     assertThat("First node has children", this.doesFirstCostAdjustmentLineHasChildren(),
@@ -160,45 +162,57 @@ public class LinkToParentTreeDataSourceTest extends BaseDataSourceTestDal {
     private static final String DOCUMENT_NO = "::DOCUMENT-NO::";
 
     public String createCostAdjustmentWithActiveAndNonActiveLines() {
-      OBContext.setOBContext(TEST_USER_ID);
+      try {
+        OBContext.setAdminMode(false);
 
-      CostAdjustment costAdjustment = this.createCostAdjustment();
-      this.createActiveCostAdjustmentLine(costAdjustment);
-      this.createNonActiveCostAdjustmentLine(costAdjustment);
+        CostAdjustment costAdjustment = this.createCostAdjustment();
+        this.createActiveCostAdjustmentLine(costAdjustment);
+        this.createNonActiveCostAdjustmentLine(costAdjustment);
 
-      OBDal.getInstance().commitAndClose();
+        OBDal.getInstance().commitAndClose();
 
-      return costAdjustment.getId();
+        return costAdjustment.getId();
+      } finally {
+        OBContext.restorePreviousMode();
+      }
     }
 
     public String createCostAdjustmentWithANonActiveChildLine() {
-      OBContext.setOBContext(TEST_USER_ID);
+      try {
+        OBContext.setAdminMode(false);
 
-      CostAdjustment costAdjustment = this.createCostAdjustment();
-      CostAdjustmentLine parentAdjustmentLine = this.createActiveCostAdjustmentLine(costAdjustment);
-      this.createNonActiveChildAdjustmentLine(costAdjustment, parentAdjustmentLine);
-      OBDal.getInstance().commitAndClose();
+        CostAdjustment costAdjustment = this.createCostAdjustment();
+        CostAdjustmentLine parentAdjustmentLine = this
+            .createActiveCostAdjustmentLine(costAdjustment);
+        this.createNonActiveChildAdjustmentLine(costAdjustment, parentAdjustmentLine);
+        OBDal.getInstance().commitAndClose();
 
-      return costAdjustment.getId();
+        return costAdjustment.getId();
+      } finally {
+        OBContext.restorePreviousMode();
+      }
     }
 
     public void removeCostAdjustment(String id) {
-      OBContext.setOBContext(TEST_USER_ID);
-
-      OBDal obdal = OBDal.getInstance();
-      obdal.remove(obdal.getProxy(CostAdjustment.class, id));
-      obdal.commitAndClose();
+      try {
+        OBContext.setAdminMode(false);
+        OBDal obdal = OBDal.getInstance();
+        obdal.remove(obdal.getProxy(CostAdjustment.class, id));
+        obdal.commitAndClose();
+      } finally {
+        OBContext.restorePreviousMode();
+      }
     }
 
     private CostAdjustment createCostAdjustment() {
       OBDal obdal = OBDal.getInstance();
 
       CostAdjustment costAdjustment = OBProvider.getInstance().get(CostAdjustment.class);
-      costAdjustment.setDocumentType(obdal.get(DocumentType.class, DOCUMENT_TYPE_ID));
+      costAdjustment.setDocumentType(obdal.getProxy(DocumentType.class, DOCUMENT_TYPE_ID));
       costAdjustment.setDocumentNo(DOCUMENT_NO);
       costAdjustment.setSourceProcess(SOURCE_PROCESS);
 
-      OBDal.getInstance().save(costAdjustment);
+      obdal.save(costAdjustment);
 
       return costAdjustment;
     }
