@@ -2056,7 +2056,7 @@
             } else if (data.result === 0) {
               OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_WeightZero'));
             } else {
-              line = me.createLine(p, data.result, options, attrs);
+              line = me.createLine(p, options.isVerifiedReturn ? -data.result : data.result, options, attrs);
             }
           });
         } else {
