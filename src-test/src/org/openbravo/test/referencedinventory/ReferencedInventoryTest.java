@@ -64,6 +64,7 @@ public abstract class ReferencedInventoryTest extends WeldBaseTest {
         OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
             .getCurrentOrganization().getId());
     RequestContext.get().setVariableSecureApp(vsa);
+    ReferencedInventoryTestUtils.initializeReservationsPreferenceIfDoesnotExist();
   }
 
   void assertsGoodsMovementIsProcessed(final InternalMovement boxMovement) {

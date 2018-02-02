@@ -45,6 +45,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.materialmgmt.ReservationUtils;
+import org.openbravo.model.ad.domain.Preference;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
@@ -69,8 +71,12 @@ class ReferencedInventoryTestUtils {
   private static final String MINOUT_TEMPLATE_ID = "0450583047434254835B2B36B2E5B018";
   private static final String M_INOUT_POST = "m_inout_post";
 
+  // Reservations preference
+  private static final String RESERVATIONS_PREFERENCE = "StockReservations";
+
   static final String QA_SPAIN_ORG_ID = "357947E87C284935AD1D783CF6F099A1";
   static final String QA_SPAIN_WAREHOUSE_ID = "4028E6C72959682B01295ECFEF4502A0";
+  static final String ORG_STAR_ID = "0";
   static final String QA_CLIENT_ID = "4028E6C72959682B01295A070852010D";
   static final String PRODUCT_TSHIRT_ID = "0CF7C882B8BD4D249F3BCC8727A736D1";
   static final String PRODUCT_BALL_COLORATTRIBUTE = "EBCD272DC37B4ABBB12B96139E5837BF";
@@ -82,6 +88,44 @@ class ReferencedInventoryTestUtils {
   static final String ATTRIBUTE_LAPTOP_SERIALNO = "2AC97E906A744C6E96EDE2E27A124818";
   static final String PRODUCT_RAWMATERIAL_LOTATTRIBUTE = "4028E6C72959682B01295ADC1AD40222";
   static final String ATTRIBUTE_RAWMATERIAL_LOT = "4028E6C72959682B01295ECFE4C60272";
+
+  static void initializeReservationsPreferenceIfDoesnotExist() {
+    if (!existsReservationsPreference()) {
+      createReservationsPreference();
+    }
+  }
+
+  private static boolean existsReservationsPreference() {
+    Client client = OBDal.getInstance().get(Client.class, QA_CLIENT_ID);
+    Organization organization = OBDal.getInstance().get(Organization.class, ORG_STAR_ID);
+    // Value property is defined as CLOB in Oracle, this is why it is needed this expression to
+    // convert it to a char first
+    String valueISYes = " to_char(value) = 'Y' ";
+
+    OBCriteria<Preference> criteria = OBDal.getInstance().createCriteria(Preference.class);
+    criteria.add(Restrictions.eq(Preference.PROPERTY_PROPERTY, RESERVATIONS_PREFERENCE));
+    criteria.add(Restrictions.sqlRestriction(valueISYes));
+    criteria.add(Restrictions.eq(Preference.PROPERTY_CLIENT, client));
+    criteria.add(Restrictions.eq(Preference.PROPERTY_ORGANIZATION, organization));
+    return !criteria.list().isEmpty();
+  }
+
+  private static void createReservationsPreference() {
+    Client client = OBDal.getInstance().get(Client.class, QA_CLIENT_ID);
+    Organization organization = OBDal.getInstance().get(Organization.class, ORG_STAR_ID);
+    Preference reservationsPreference = OBProvider.getInstance().get(Preference.class);
+    reservationsPreference.setClient(client);
+    reservationsPreference.setOrganization(organization);
+    reservationsPreference.setPropertyList(true);
+    reservationsPreference.setProperty(RESERVATIONS_PREFERENCE);
+    reservationsPreference.setSearchKey("Y");
+    reservationsPreference.setVisibleAtClient(null);
+    reservationsPreference.setVisibleAtOrganization(null);
+    reservationsPreference.setVisibleAtRole(null);
+    reservationsPreference.setUserContact(null);
+    reservationsPreference.setWindow(null);
+    OBDal.getInstance().save(reservationsPreference);
+  }
 
   static ReferencedInventoryType createReferencedInventoryType() {
     final ReferencedInventoryType refInvType = OBProvider.getInstance().get(
