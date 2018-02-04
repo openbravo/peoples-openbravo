@@ -56,7 +56,7 @@ import org.openbravo.model.common.enterprise.Organization;
  */
 public class RoleInheritanceTestUtils {
   /**
-   * F&B International Group client id
+   * F&amp;B International Group client id
    */
   public final static String CLIENT_ID = "23C59575B9CF467C9620760EB255B389";
   /**

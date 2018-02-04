@@ -94,7 +94,7 @@ public class Check {
    * used for creating the Exception.
    * 
    * @param value
-   *          should be unequal to null and have length > zero otherwise an Exception is thrown
+   *          should be unequal to null and have length &gt; zero otherwise an Exception is thrown
    * @param message
    *          the message used for the Exception
    * @throws CheckException
@@ -110,7 +110,7 @@ public class Check {
    * used for creating the Exception.
    * 
    * @param array
-   *          should be unequal to null and have length > zero otherwise an Exception is thrown
+   *          should be unequal to null and have length &gt; zero otherwise an Exception is thrown
    * @param message
    *          the message used for the Exception
    * @throws CheckException

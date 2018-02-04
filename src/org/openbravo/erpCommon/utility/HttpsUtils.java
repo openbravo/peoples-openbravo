@@ -130,7 +130,7 @@ public class HttpsUtils {
    * @deprecated
    * 
    *             This method tries to URLEncode a queryString. It splits the query in chunks
-   *             separated by & assuming & symbol is not part of the values. But in case a value
+   *             separated by &amp; assuming &amp; symbol is not part of the values. But in case a value
    *             contains this symbol it does not work (issue #18405).
    * 
    *             Do not use this method, instead encode each of the values in the query.

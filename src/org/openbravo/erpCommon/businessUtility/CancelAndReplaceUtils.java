@@ -1425,7 +1425,7 @@ public class CancelAndReplaceUtils {
   }
 
   /**
-   * Method to check if a netting shipment must be generated during the C&R and CL process.
+   * Method to check if a netting shipment must be generated during the C&amp;R and CL process.
    * 
    * @param order
    *          The order that is being canceled.
@@ -1444,7 +1444,7 @@ public class CancelAndReplaceUtils {
   }
 
   /**
-   * Method to check if during the C&R process the shipment lines must be moved from the old order
+   * Method to check if during the C&amp;R process the shipment lines must be moved from the old order
    * to the new order.
    * 
    * @param order

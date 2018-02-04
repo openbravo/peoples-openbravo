@@ -59,8 +59,6 @@ class UpdateTax implements CopyFromOrdersProcessImplementationInterface {
    * 
    * @param newOrderLine
    *          The order line where tax will be updated.
-   * @throws IOException
-   * @throws ServletException
    */
   @Override
   public void exec(final Order processingOrder, final OrderLine orderLine, OrderLine newOrderLine) {

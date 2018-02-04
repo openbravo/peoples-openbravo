@@ -144,7 +144,7 @@ public class FIN_Utility {
    * 
    * @param _strSelectedIds
    *          Identifiers string list with the following structure: ('ID', 'ID', 'ID')
-   * @return Map<K,V> using the ID as key and value <ID,ID> for each identifier.
+   * @return Map&lt;K,V&gt; using the ID as key and value &lt;ID,ID&gt; for each identifier.
    */
   public static Map<String, String> getMapFromStringList(String _strSelectedIds) {
     String strSelectedIds = _strSelectedIds;

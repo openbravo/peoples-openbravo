@@ -293,7 +293,7 @@ public class InitialSetupUtility {
    *             trees defined in the DA_TreeType type list reference Returns the relation of trees
    *             defined in the reference list of the application dictionary called AD_TreeType Type
    * 
-   * @return java.util.List<org.openbravo.model.ad.domain.List>: the relation of AD list elements
+   * @return java.util.List&lt;org.openbravo.model.ad.domain.List&gt;: the relation of AD list elements
    * @throws Exception
    */
   @Deprecated
@@ -958,16 +958,16 @@ public class InitialSetupUtility {
    * @param treeNodes
    *          relation of nodes in ADTreeNode belonging to the accounting tree to sort out
    * @param mapSequence
-   *          HashMap<String,Long> where the String belongs to the value of a c_elementvalue, and
+   *          HashMap&lt;String,Long&gt; where the String belongs to the value of a c_elementvalue, and
    *          Long to the sequence that must be assigned to the node that represents that element
    *          value in ADTreeNode
    * @param mapElementValueValue
    *          each tree node in treeNodes has one entry in mapElementValueId to link it's value with
    *          the c_elementvalue_id of that element in c_elementvalue table
    * @param mapElementValueId
-   *          stores the link value <-> c_elementvalue_id
+   *          stores the link value &lt;-&gt; c_elementvalue_id
    * @param mapParent
-   *          stores the link value <-> value of the parent
+   *          stores the link value &lt;-&gt; value of the parent
    * @param doFlush
    *          if true, each new update performs a flush in DAL
    * @throws Exception
@@ -1832,7 +1832,7 @@ public class InitialSetupUtility {
    * 
    * @param module
    * @param accessLevel
-   *          3-> client/org; 1-> organization only
+   *          3-&gt; client/org; 1-&gt; organization only
    * @return List<DataSet> with the relation of DataSet objects
    * @throws Exception
    */
@@ -1848,7 +1848,7 @@ public class InitialSetupUtility {
    * 
    * @param module
    * @param accessLevel
-   *          3-> client/org; 6-> System/client
+   *          3-&gt; client/org; 6-&gt; System/client
    * @return List<DataSet> with the relation of DataSet objects
    * @throws Exception
    */
@@ -1874,7 +1874,7 @@ public class InitialSetupUtility {
    * Returns the relation of ad_ref_list elements for the reference with AD_Reference_id='181'
    * (Acct.schema elements)
    * 
-   * @return List<org.openbravo.model.ad.domain.List> with the relation of ad_ref_list elements
+   * @return List&lt;org.openbravo.model.ad.domain.List&gt; with the relation of ad_ref_list elements
    * @throws Exception
    */
   public static List<org.openbravo.model.ad.domain.List> getAcctSchemaElements() throws Exception {

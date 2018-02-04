@@ -1675,7 +1675,7 @@ public class Utility {
    * @param tabId
    *          Id for the tab to obtain the url for
    * @param type
-   *          "R" -> Relation, "E" -> Edition, "X" -> Excel
+   *          "R" -&gt; Relation, "E" -&gt; Edition, "X" -&gt; Excel
    * @param completeURL
    *          if true returns the complete ULR including server name and context, if not, it return
    *          URL relative to base context

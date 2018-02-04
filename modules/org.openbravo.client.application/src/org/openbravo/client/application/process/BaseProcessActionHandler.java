@@ -215,7 +215,7 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
   }
 
   /**
-   * The request map is <String, Object> because includes the HTTP request and HTTP session, is not
+   * The request map is &lt;String, Object&gt; because includes the HTTP request and HTTP session, is not
    * required to handle process parameters
    * 
    * @deprecated use {@link BaseProcessActionHandler#fixRequestMap(Map, JSONObject)}

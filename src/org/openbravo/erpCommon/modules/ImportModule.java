@@ -1772,7 +1772,7 @@ public class ImportModule {
    * @deprecated use {@link ImportModule#getInstalledModulesAndDeps} instead
    * @param conn
    *          ConnectionProvider needed as it is a static method
-   * @return HashMap<String,String> -> <ModuleId, VersionNo>
+   * @return HashMap&lt;String,String&gt; -&gt; &lt;ModuleId, VersionNo&gt;
    */
   public static HashMap<String, String> getInstalledModules(ConnectionProvider conn) {
     final HashMap<String, String> rt = new HashMap<String, String>();
@@ -1794,17 +1794,17 @@ public class ImportModule {
    * Returns the current installed modules with its version (with the exception of those which are
    * marked for deinstallation)
    * 
-   * @return HashMap<String, String[][]> --> <ModuleId, VersionInfo[]>
+   * @return HashMap&lt;String, String[][]&gt; --&gt; &lt;ModuleId, VersionInfo[]&gt;
    *         <ul>
-   *         <li>VersionInfo [x][0] -> Type "M" Module, "D" Dependency</li>
-   *         <li>VersionInfo [x][1] -> If type=="M", version number. If type =="D" dep module Id</li>
-   *         <li>VersionInfo [x][2] -> If type=="M", module visibility level. If type=="D", from
+   *         <li>VersionInfo [x][0] -&gt; Type "M" Module, "D" Dependency</li>
+   *         <li>VersionInfo [x][1] -&gt; If type=="M", version number. If type =="D" dep module Id</li>
+   *         <li>VersionInfo [x][2] -&gt; If type=="M", module visibility level. If type=="D", from
    *         version</li>
-   *         <li>VersionInfo [x][3] -> If type=="D", to version</li>
-   *         <li>VersionInfo [x][4] -> If type=="D", "Y"/"N" is included</li>
-   *         <li>VersionInfo [x][5] -> If type=="D", Dependent module name</li>
-   *         <li>VersionInfo [x][6] -> If type=="D", Dependency enforcement</li>
-   *         <li>VersionInfo [x][7] -> If type=="D", Instance dependency enforcement</li>
+   *         <li>VersionInfo [x][3] -&gt; If type=="D", to version</li>
+   *         <li>VersionInfo [x][4] -&gt; If type=="D", "Y"/"N" is included</li>
+   *         <li>VersionInfo [x][5] -&gt; If type=="D", Dependent module name</li>
+   *         <li>VersionInfo [x][6] -&gt; If type=="D", Dependency enforcement</li>
+   *         <li>VersionInfo [x][7] -&gt; If type=="D", Instance dependency enforcement</li>
    *         </ul>
    */
   public static HashMap<String, String[][]> getInstalledModulesAndDeps() {

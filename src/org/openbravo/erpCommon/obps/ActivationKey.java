@@ -1406,7 +1406,7 @@ public class ActivationKey {
   /**
    * Obtains a list for modules ID the instance is subscribed to and their statuses
    * 
-   * @return HashMap<String, CommercialModuleStatus> containing the subscribed modules
+   * @return HashMap&lt;String, CommercialModuleStatus&gt; containing the subscribed modules
    */
   public HashMap<String, CommercialModuleStatus> getSubscribedModules() {
     return getSubscribedModules(true);
