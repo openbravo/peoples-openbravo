@@ -245,7 +245,7 @@ public class ClusterServiceManager {
         long current = System.currentTimeMillis();
         boolean anyServiceRegistered = false;
         for (ClusterService service : manager.clusterServices) {
-          if (service.init(manager.nodeId)) {
+          if (service.init(manager.nodeId, manager.nodeName)) {
             // service initialized properly, register it
             registerOrUpdateService(service);
             service.setNextPing(current + service.getTimeout());
@@ -271,7 +271,8 @@ public class ClusterServiceManager {
       for (ClusterService service : manager.clusterServices) {
         if (!service.isAlive() || !service.isInitialized() || service.isDisabled()) {
           // Do not update the last ping: the service is not working
-          log.debug("Service {} is not working in node {}", service, getNodeIdentifier());
+          log.debug("Service {} is not working in node {}", service.getServiceName(),
+              getNodeIdentifier());
           continue;
         }
         long current = System.currentTimeMillis();
@@ -316,6 +317,7 @@ public class ClusterServiceManager {
           // try to register the current node as the one in charge of handling the service
           log.info("Node {} in charge of service {} should be replaced",
               getNodeIdentifier(service), serviceName);
+          clusterService.prepareForNewNodeInCharge();
           updateNodeOfService(service.getNodeID(), serviceName, now);
         } else {
           log.debug("Node {} still in charge of service {}", getNodeIdentifier(service),

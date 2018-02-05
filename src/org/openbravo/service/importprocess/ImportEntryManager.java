@@ -241,6 +241,24 @@ public class ImportEntryManager {
   }
 
   /**
+   * This method is used to set the cluster service into an state that indicates that it is
+   * currently processing import entries. Note that if we are not in a clustered environment, this
+   * method has no effect.
+   */
+  public void notifyStartProcessingInCluster() {
+    clusterService.startProcessing();
+  }
+
+  /**
+   * This method is used to set the cluster service into an state that indicates that it is
+   * currently not processing import entries. Note that if we are not in a clustered environment,
+   * this method has no effect.
+   */
+  public void notifyEndProcessingInCluster() {
+    clusterService.endProcessing();
+  }
+
+  /**
    * Shutdown all the threads being used by the import framework
    */
   public void shutdown() {

@@ -25,7 +25,6 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -122,33 +121,9 @@ public class JmxClusterServiceManager implements JmxClusterServiceManagerMBean {
           getCurrentNodeId());
       return;
     }
-    try {
-      OBContext.setAdminMode(false); // allow to delete, the current context does not matter
-
-      // If the current node is the leader of the service, unregister it
-      OBCriteria<ADClusterService> criteria = OBDal.getInstance().createCriteria(
-          ADClusterService.class);
-      criteria.add(Restrictions.eq(ADClusterService.PROPERTY_NODEID, getCurrentNodeId()));
-      criteria.add(Restrictions.eq(ADClusterService.PROPERTY_SERVICE, serviceName));
-      ADClusterService service = (ADClusterService) criteria.uniqueResult();
-      if (service != null) {
-        log.info("Deregistering node {} in charge of service {}", getCurrentNodeId(), serviceName);
-        OBDal.getInstance().remove(service);
-      }
-      OBDal.getInstance().commitAndClose();
-
-      // Disable the ping for the service
-      clusterService.setDisabled(true);
-      // force the service to go to the database to see the changes (if any)
-      clusterService.setUseCache(false);
-
-      log.info("Disabled ping for service {} in node {}", serviceName, getCurrentNodeId());
-    } catch (Exception ex) {
-      log.error("Could not force node {} to be in charge of service {}", getCurrentNodeId(),
-          serviceName);
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+    // Disable the ping. In case the cluster service is currently processing its tasks then the ping
+    // will be disabled afterwards.
+    clusterService.deregister();
   }
 
   private ClusterService getClusterService(String serviceName) {
