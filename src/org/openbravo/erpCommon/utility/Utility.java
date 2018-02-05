@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -68,7 +68,9 @@ import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.report.ReportingUtils;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -379,6 +381,21 @@ public class Utility {
       }
       if (retValue.equals("")) {
         retValue = vars.getSessionValue("$" + context);
+      }
+      if (retValue.equals("") && "IsSOTrx".equalsIgnoreCase(context)
+          && StringUtils.isNotBlank(window)) {
+        OBContext.setAdminMode(true);
+        try {
+          ApplicationDictionaryCachedStructures adcs = WeldUtils
+              .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
+          Window w = adcs.getWindow(window);
+          retValue = w.isSalesTransaction() ? "Y" : "N";
+        } catch (Exception ignore) {
+          // not a valid window id, continue
+          retValue = "";
+        } finally {
+          OBContext.restorePreviousMode();
+        }
       }
     } else {
       try {
@@ -1439,8 +1456,8 @@ public class Utility {
             if (data[j].value.equals(localCurrentValue)) {
               retVal += "<span>(<u>" + i + "</u>)</span>";
               reservedButtonShortCuts.put(Integer.valueOf(i).toString(), "");
-              usedButtonShortCuts.put(Integer.valueOf(i).toString(), "executeWindowButton('" + buttonId
-                  + "');");
+              usedButtonShortCuts.put(Integer.valueOf(i).toString(), "executeWindowButton('"
+                  + buttonId + "');");
             }
           }
         } else {

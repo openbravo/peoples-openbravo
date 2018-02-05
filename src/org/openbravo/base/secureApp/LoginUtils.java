@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2017 Openbravo S.L.U.
+ * Copyright (C) 2001-2018 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -357,13 +357,6 @@ public class LoginUtils {
         for (Preference preference : preferences) {
           Preferences.savePreferenceInSession(vars, preference);
         }
-
-        attr = AttributeData.selectIsSOTrx(conn);
-        if (attr != null && attr.length > 0) {
-          for (int i = 0; i < attr.length; i++)
-            vars.setSessionValue(attr[i].adWindowId + "|isSOTrx", attr[i].value);
-        }
-        attr = null;
 
         DefaultSessionValuesData[] ds = DefaultSessionValuesData.select(conn);
         if (ds != null && ds.length > 0) {
