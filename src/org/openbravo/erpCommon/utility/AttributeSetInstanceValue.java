@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,10 +23,12 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSet;
@@ -248,6 +250,11 @@ public class AttributeSetInstanceValue {
         }
         if (!description_first.equals(""))
           description += (description.equals("") ? "" : "_") + description_first;
+
+        if (StringUtils.isNotBlank(strInstance)) {
+          ReferencedInventoryUtil.avoidUpdatingIfLinkedToReferencedInventory(strInstance);
+        }
+
         AttributeSetInstanceValueData.updateHeaderDescription(conn, conProv, vars.getUser(),
             description, (strNewInstance.equals("") ? strInstance : strNewInstance));
       }

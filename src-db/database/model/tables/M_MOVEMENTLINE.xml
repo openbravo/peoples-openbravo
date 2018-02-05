@@ -89,11 +89,18 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="M_ATTRIBUTESETINSTANCETO_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_MOVEMENTLINE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="M_MOVEMENTLINE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="M_MOVEMENTLINE_ATTRIBUTESETTO">
+        <reference local="M_ATTRIBUTESETINSTANCETO_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_UOM" name="M_MOVEMENTLINE_C_AUM">
         <reference local="C_AUM" foreign="C_UOM_ID"/>
