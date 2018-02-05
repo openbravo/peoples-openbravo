@@ -46,13 +46,6 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 import org.openbravo.service.db.CallProcess;
 
 /**
- * Generates a goods movement to change the referenced inventory of the selected storage details.
- *
- */
-
-// TODO hooks
-
-/**
  * Abstract class that should be extended by box/unbox referenced inventory concrete implementations
  */
 abstract class ReferencedInventoryProcessor {
