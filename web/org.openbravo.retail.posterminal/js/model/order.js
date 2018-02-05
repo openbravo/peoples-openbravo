@@ -2833,9 +2833,9 @@
       }
       if (!disc.manual) {
         for (i = 0; i < promotions.length; i++) {
-          if (promotions[i].ruleId === rule.id && discount.discountinstance === promotions[i].discountinstance) {
+          if (unitsConsumed > line.get('qty')) {
             if (discount.forceReplace) {
-              if (promotions[i].ruleId === rule.id) {
+              if (promotions[i].ruleId === rule.id && discount.discountinstance === promotions[i].discountinstance) {
                 if (promotions[i].hidden !== true) {
                   promotions[i] = disc;
                 }
