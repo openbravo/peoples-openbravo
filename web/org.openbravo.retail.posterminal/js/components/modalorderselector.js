@@ -289,7 +289,7 @@ enyo.kind({
     this.receiptList = new Backbone.Collection();
     this.$.openreceiptslistitemprinter.setCollection(this.receiptList);
     this.receiptList.on('click', function (model) {
-      OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(model, me.model.get('orderList'), me, true);
+      OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(model, me.model.get('orderList'), me, undefined, true);
     }, this);
   }
 });
