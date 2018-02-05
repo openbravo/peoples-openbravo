@@ -5216,16 +5216,21 @@
           model.get('lines').at(i).set('lineGrossAmount', 0);
         }
         model.set('hasbeenpaid', 'Y');
-        OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
-          model.save(function () {
-            if (orderList) {
-              orderList.deleteCurrent();
-              orderList.synchronizeCurrentOrder();
-            }
-            model.setIsCalculateGrossLockState(false);
-            if (callback && callback instanceof Function) {
-              callback();
-            }
+        OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
+          receipt: model,
+          model: model
+        }, function (args) {
+          OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
+            model.save(function () {
+              if (orderList) {
+                orderList.deleteCurrent();
+                orderList.synchronizeCurrentOrder();
+              }
+              model.setIsCalculateGrossLockState(false);
+              if (callback && callback instanceof Function) {
+                callback();
+              }
+            });
           });
         });
       }
