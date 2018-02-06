@@ -376,7 +376,7 @@ enyo.kind({
           return e;
         }
       })),
-        addOrdersToOrderList, addNextOrder;
+        addOrdersToOrderList;
 
     if (checkedMultiOrders.length === 0) {
       return true;
