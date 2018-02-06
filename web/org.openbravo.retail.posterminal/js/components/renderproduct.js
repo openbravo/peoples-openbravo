@@ -85,7 +85,7 @@ enyo.kind({
             name: 'bestseller',
             style: 'height: 16px; width: 16px; padding: 0px 2px; float: left;',
             kind: 'OB.UI.Thumbnail.Bestseller',
-            'default': 'img/iconBestsellerSmall.png',
+            'default': 'img/iconBestsellerSmall.svg',
             showing: false
           }]
         }, {

@@ -2927,7 +2927,7 @@
 
 
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-        OB.Dal.saveIfNew(p, function () {}, function () {
+        OB.Dal.saveOrUpdate(p, function () {}, function () {
           OB.error(arguments);
         });
 
@@ -2945,7 +2945,7 @@
             if (i === characteristics.length) {
               me.calculateReceipt();
             } else {
-              OB.Dal.saveIfNew(characteristics[i], function () {
+              OB.Dal.saveOrUpdate(characteristics[i], function () {
                 saveCharacteristics(characteristics, i + 1);
               }, function () {
                 OB.error(arguments);
@@ -3213,7 +3213,7 @@
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         if (oldbp.id !== businessPartner.id) { //Business Partner have changed
-          OB.Dal.saveIfNew(businessPartner, function () {}, function () {
+          OB.Dal.saveOrUpdate(businessPartner, function () {}, function () {
             OB.error(arguments);
           });
           if (OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)) {
@@ -3228,7 +3228,7 @@
             criteriaFilter.remoteFilters = remoteCriteria;
             OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteriaFilter, function (discountsBP) {
               _.each(discountsBP.models, function (dsc) {
-                OB.Dal.saveIfNew(dsc, function () {}, function () {
+                OB.Dal.saveOrUpdate(dsc, function () {}, function () {
                   OB.error(arguments);
                 });
               });
@@ -3259,14 +3259,14 @@
 
                 me.set('bp', businessPartner);
                 me.save();
-                // copy the modelOrder again, as saveIfNew is possibly async
+                // copy the modelOrder again, as saveOrUpdate is possibly async
                 OB.MobileApp.model.orderList.saveCurrent();
                 finishSaveData(callback);
               }, businessPartner.get('id'));
             } else {
               me.set('bp', businessPartner);
               me.save();
-              // copy the modelOrder again, as saveIfNew is possibly async
+              // copy the modelOrder again, as saveOrUpdate is possibly async
               OB.MobileApp.model.orderList.saveCurrent();
               finishSaveData(callback);
             }
@@ -3274,7 +3274,7 @@
 
         var saveLocModel = function (locModel, lid, callback) {
             if (businessPartner.get(locModel)) {
-              OB.Dal.saveIfNew(businessPartner.get(locModel), function () {}, function (tx, error) {
+              OB.Dal.saveOrUpdate(businessPartner.get(locModel), function () {}, function (tx, error) {
                 OB.UTIL.showError("OBDAL error: " + error);
               });
               if (callback) {
@@ -3282,7 +3282,7 @@
               }
             } else {
               OB.Dal.get(OB.Model.BPLocation, businessPartner.get(lid), function (location) {
-                OB.Dal.saveIfNew(location, function () {}, function (tx, error) {
+                OB.Dal.saveOrUpdate(location, function () {}, function (tx, error) {
                   OB.UTIL.showError("OBDAL error: " + error);
                 });
                 businessPartner.set(locModel, location);
@@ -3354,7 +3354,7 @@
           return true;
         }
       }
-      if (this.isLayaway() && qty < 0) {
+      if (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true) && this.isLayaway() && qty < 0) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
         return true;
       }
@@ -5222,6 +5222,7 @@
         model.set('created', creationDate.getTime());
         model.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
         model.set('obposIsDeleted', true);
+        OB.info('markOrderAsDeleted has set order with documentNo ' + model.get('documentNo') + ' and id ' + model.get('id') + ' as obposIsDeleted to true');
         model.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
         for (i = 0; i < model.get('lines').length; i++) {
           model.get('lines').at(i).set('obposIsDeleted', true);
@@ -5231,16 +5232,21 @@
           model.get('lines').at(i).set('lineGrossAmount', 0);
         }
         model.set('hasbeenpaid', 'Y');
-        OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
-          model.save(function () {
-            if (orderList) {
-              orderList.deleteCurrent();
-              orderList.synchronizeCurrentOrder();
-            }
-            model.setIsCalculateGrossLockState(false);
-            if (callback && callback instanceof Function) {
-              callback();
-            }
+        OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
+          receipt: model,
+          model: model
+        }, function (args) {
+          OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
+            model.save(function () {
+              if (orderList) {
+                orderList.deleteCurrent();
+                orderList.synchronizeCurrentOrder();
+              }
+              model.setIsCalculateGrossLockState(false);
+              if (callback && callback instanceof Function) {
+                callback();
+              }
+            });
           });
         });
       }
@@ -5539,7 +5545,7 @@
                 iter.linepos = linepos;
                 var addLineForProduct = function (prod) {
                     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-                      OB.Dal.saveIfNew(prod, function () {
+                      OB.Dal.saveOrUpdate(prod, function () {
                         var productcriteria = {
                           columns: ['product'],
                           operator: 'equals',
@@ -5551,7 +5557,7 @@
                         criteriaFilter.remoteFilters = remoteCriteria;
                         OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
                           _.each(productcharacteristic.models, function (pchv) {
-                            OB.Dal.saveIfNew(pchv, function () {}, function () {
+                            OB.Dal.saveOrUpdate(pchv, function () {}, function () {
                               OB.error(arguments);
                             });
                           });
@@ -5942,10 +5948,10 @@
     },
 
     doRemoteBPSettings: function (businessPartner) {
-      OB.Dal.saveIfNew(businessPartner, function () {}, function () {
+      OB.Dal.saveOrUpdate(businessPartner, function () {}, function () {
         OB.error(arguments);
       });
-      OB.Dal.saveIfNew(businessPartner.get('locationModel'), function () {}, function () {
+      OB.Dal.saveOrUpdate(businessPartner.get('locationModel'), function () {}, function () {
         OB.error(arguments);
       });
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)) {
@@ -5961,7 +5967,7 @@
 
         findDiscountFilterBusinessPartner(criteria, function (discountsBP) {
           _.each(discountsBP.models, function (dsc) {
-            OB.Dal.saveIfNew(dsc, function () {}, function () {
+            OB.Dal.saveOrUpdate(dsc, function () {}, function () {
               OB.error(arguments);
             });
           });
@@ -6026,6 +6032,7 @@
       if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && !this.current.get('isQuotation') && OB.MobileApp.model.receipt.id === this.current.id && this.current.get('lines').length === 0 && !this.current.has('deletedLines') && (this.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0)) {
         OB.MobileApp.model.receipt.setIsCalculateGrossLockState(true);
         OB.MobileApp.model.receipt.set('obposIsDeleted', true);
+        OB.info('deleteCurrent has set order with documentNo ' + OB.MobileApp.model.receipt.get('documentNo') + ' and id ' + OB.MobileApp.model.receipt.get('id') + ' as obposIsDeleted to true');
         OB.MobileApp.model.receipt.prepareToSend(function () {
           OB.MobileApp.model.receipt.save(function () {
             OB.MobileApp.model.receipt.trigger('closed', {

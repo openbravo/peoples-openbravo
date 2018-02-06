@@ -202,7 +202,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     newLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2;
     notpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
-        && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
+        && jsonorder.getDouble("payment") < Math.abs(jsonorder.getDouble("gross"))
         && !jsonorder.optBoolean("paidOnCredit") && !jsonorder.has("paidInNegativeStatusAmt");
     creditpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
         && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
@@ -264,7 +264,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if (order != null) {
           final Date loaded = POSUtils.dateFormatUTC.parse(jsonorder.getString("loaded")), updated = OBMOBCUtils
               .convertToUTC(order.getUpdated());
-          if (!(loaded.compareTo(updated) >= 0)) {
+          if (loaded.compareTo(updated) != 0) {
             throw new OutDatedDataChangeException(Utility.messageBD(
                 new DalConnectionProvider(false), "OBPOS_outdatedLayaway", OBContext.getOBContext()
                     .getLanguage().getLanguage()));
