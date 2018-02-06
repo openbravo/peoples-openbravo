@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2017 Openbravo SLU
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -66,6 +66,7 @@ isc.OBFKFilterTextItem.addProperties({
     // the value for the filter and the display are the same: the identifier
     this.displayField = this.criteriaDisplayField || OB.Constants.IDENTIFIER;
     this.valueField = this.criteriaDisplayField || OB.Constants.IDENTIFIER;
+    this.keyProperty = this.keyProperty || OB.Constants.ID;
     // if this field was being filtered by its id before being recreated, reset its filter type an its filterAuxCache
     if (this.grid && this.grid.sourceWidget && this.grid.sourceWidget.filterByIdFields && this.grid.sourceWidget.filterByIdFields.contains(this.name)) {
       this.filterType = 'id';
@@ -733,17 +734,17 @@ isc.OBFKFilterTextItem.addProperties({
     }
 
     for (i = 0; i < records.length; i++) {
-      recordIds.add(records[i][OB.Constants.ID]);
+      recordIds.add(records[i][this.keyProperty]);
     }
     return recordIds;
   },
 
-  getRecordIdentifierFromId: function (id) {
-    var recordIdentifier;
-    if (this.pickList && this.pickList.data.find(OB.Constants.ID, id)) {
-      recordIdentifier = this.pickList.data.find(OB.Constants.ID, id)[OB.Constants.IDENTIFIER];
-    } else if (this.filterAuxCache && this.filterAuxCache.find(OB.Constants.ID, id)) {
-      recordIdentifier = this.filterAuxCache.find(OB.Constants.ID, id)[OB.Constants.IDENTIFIER];
+  getRecordIdentifierFromId: function (keyValue) {
+    var recordIdentifier, keyProperty = this.keyProperty || OB.Constants.ID;
+    if (this.pickList && this.pickList.data.find(keyProperty, keyValue)) {
+      recordIdentifier = this.pickList.data.find(keyProperty, keyValue)[OB.Constants.IDENTIFIER];
+    } else if (this.filterAuxCache && this.filterAuxCache.find(keyProperty, keyValue)) {
+      recordIdentifier = this.filterAuxCache.find(keyProperty, keyValue)[OB.Constants.IDENTIFIER];
     }
     return recordIdentifier;
   },

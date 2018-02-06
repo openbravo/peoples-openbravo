@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -83,8 +83,19 @@ public class ForeignKeyUIDefinition extends UIDefinition {
         append = append + ", showFkDropdownUnfiltered: " + showFkDropdownUnfiltered.toString();
       }
     }
+    if (field != null) {
+      Property keyProperty = getKeyProperty(field);
+      if (keyProperty != null) {
+        append = append + ", keyProperty: '" + keyProperty.getName() + "'";
+      }
+    }
 
     return super.getFilterEditorPropertiesProperty(field) + append;
+  }
+
+  private Property getKeyProperty(Field field) {
+    return KernelUtils.getInstance().getPropertyFromColumn(field.getColumn())
+        .getReferencedProperty();
   }
 
   @Override

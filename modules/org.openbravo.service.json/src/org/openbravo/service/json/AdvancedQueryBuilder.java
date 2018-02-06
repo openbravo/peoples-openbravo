@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -766,7 +766,7 @@ public class AdvancedQueryBuilder {
         }
       }
     } else if (!useProperty.isPrimitive()) {
-      clause = clause + ".id";
+      clause = clause + "." + getReferencedPropertyName(useProperty);
     } else if (tableReference && useProperty.isTranslatable()
         && OBContext.hasTranslationInstalled()) {
       // filtering by table reference translatable field: use translation table
@@ -783,6 +783,10 @@ public class AdvancedQueryBuilder {
       clause = clause.substring(0, clause.lastIndexOf(DalUtil.DOT));
     }
     return clause;
+  }
+
+  private String getReferencedPropertyName(Property property) {
+    return property.getReferencedProperty().getName();
   }
 
   private String buildValueClause(Property property, String operator, Object value)

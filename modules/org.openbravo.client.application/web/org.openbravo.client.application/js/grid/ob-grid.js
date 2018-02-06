@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1023,7 +1023,7 @@ isc.OBGrid.addProperties({
     var filterField, criterion, filterLength = criteria.criteria.length,
         fkFilterAuxCache = [],
         innerCache = [],
-        filterEditForm, cacheElement, i, j;
+        filterEditForm, cacheElement, i, j, keyProperty;
     if (!this.filterEditor || !this.filterEditor.getEditForm()) {
       return fkFilterAuxCache;
     }
@@ -1033,18 +1033,19 @@ isc.OBGrid.addProperties({
       filterField = filterEditForm.getField(criterion.fieldName);
       innerCache = [];
       if (filterField && filterField.filterType === 'id') {
+        keyProperty = this.getKeyProperty(criterion.fieldName);
         if (criterion.criteria) {
           for (j = 0; j < criterion.criteria.length; j++) {
             cacheElement = {};
             cacheElement.fieldName = criterion.criteria[j].fieldName;
-            cacheElement[OB.Constants.ID] = criterion.criteria[j].value;
+            cacheElement[keyProperty] = criterion.criteria[j].value;
             cacheElement[OB.Constants.IDENTIFIER] = filterField.getRecordIdentifierFromId(criterion.criteria[j].value);
             innerCache.add(cacheElement);
           }
         } else {
           cacheElement = {};
           cacheElement.fieldName = criterion.fieldName;
-          cacheElement[OB.Constants.ID] = criterion.value;
+          cacheElement[keyProperty] = criterion.value;
           cacheElement[OB.Constants.IDENTIFIER] = filterField.getRecordIdentifierFromId(criterion.value);
           innerCache.add(cacheElement);
         }
@@ -1055,6 +1056,15 @@ isc.OBGrid.addProperties({
       }
     }
     return fkFilterAuxCache;
+  },
+
+  getKeyProperty: function (fieldName) {
+    var keyProperty = OB.Constants.ID,
+        field = this.getFieldByName(fieldName);
+    if (field && field.filterEditorProperties && field.filterEditorProperties.keyProperty) {
+      keyProperty = field.filterEditorProperties.keyProperty;
+    }
+    return keyProperty;
   },
 
   setNewRecordFilterMessage: function () {
