@@ -25,6 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
+import org.openbravo.dal.service.OBDal;
 
 /**
  * Box storage details that are over reserved (allocated and non-allocated reservartion)
@@ -50,6 +51,7 @@ public class ReferencedInventoryBoxOverReservationTest extends ReferencedInvento
         for (String toBinId : BINS) {
           testBox(toBinId, product[0], product[1], params.qtyToBox, params.reservationQty,
               isAllocated);
+          OBDal.getInstance().getSession().clear();
         }
       }
     }

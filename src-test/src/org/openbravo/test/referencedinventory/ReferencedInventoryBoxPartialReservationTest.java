@@ -25,6 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
+import org.openbravo.dal.service.OBDal;
 
 /**
  * Box a storage detail which had some units (not 100%) previously reserved
@@ -46,6 +47,7 @@ public class ReferencedInventoryBoxPartialReservationTest extends ReferencedInve
         for (String toBinId : BINS) {
           testBox(toBinId, product[0], product[1], params.qtyToBox, params.reservationQty,
               isAllocated);
+          OBDal.getInstance().getSession().clear();
         }
       }
     }

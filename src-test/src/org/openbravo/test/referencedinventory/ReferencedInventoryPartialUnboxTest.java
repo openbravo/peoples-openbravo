@@ -26,6 +26,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
+import org.openbravo.dal.service.OBDal;
 
 /**
  * Partial unbox (1 unit of 10 units) of a storage detail without reservations
@@ -46,6 +47,7 @@ public class ReferencedInventoryPartialUnboxTest extends ReferencedInventoryUnbo
     for (String[] product : PRODUCTS) {
       for (String toBinId : BINS) {
         testPartialUnbox(toBinId, product[0], product[1]);
+        OBDal.getInstance().getSession().clear();
       }
     }
   }

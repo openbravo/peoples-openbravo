@@ -26,6 +26,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
+import org.openbravo.dal.service.OBDal;
 
 /**
  * Full unbox (10 units of 10 units) of a storage detail without reservations
@@ -45,6 +46,7 @@ public class ReferencedInventoryFullUnboxTest extends ReferencedInventoryUnboxTe
     for (String[] product : PRODUCTS) {
       for (String toBinId : BINS) {
         testFullUnbox(toBinId, product[0], product[1]);
+        OBDal.getInstance().getSession().clear();
       }
     }
   }

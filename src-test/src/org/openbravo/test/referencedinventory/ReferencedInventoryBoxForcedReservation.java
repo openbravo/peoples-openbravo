@@ -32,6 +32,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
 import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
@@ -71,6 +72,7 @@ public class ReferencedInventoryBoxForcedReservation extends ReferencedInventory
             final ReferencedInventory refInv = testBox(BINS[0], product[0], product[1],
                 params.qtyToBox, params.reservationQty, isAllocated, isForceBin, isForceAttribute);
             assertsReservations(refInv, isForceBin, isForceAttribute);
+            OBDal.getInstance().getSession().clear();
           }
         }
       }

@@ -25,6 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
+import org.openbravo.dal.service.OBDal;
 
 /**
  * Fully unbox a storage detail that was 100% reserved and boxed
@@ -49,6 +50,7 @@ public class ReferencedInventoryFullUnboxFullReservation extends
           final TestUnboxOutputParams outParams = testUnboxReservation(toBinId, product[0],
               product[1], params.qtyToBox, params.qtyToUnbox, params.reservationQty, isAllocated);
           assertsReferenceInventoryIsEmpty(outParams.refInv);
+          OBDal.getInstance().getSession().clear();
         }
       }
     }

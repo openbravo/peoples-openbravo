@@ -25,6 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
+import org.openbravo.dal.service.OBDal;
 
 /**
  * Full Box (10 units of 10 units) of a storage details with a previous reservation of these 10
@@ -46,8 +47,9 @@ public class ReferencedInventoryBoxFullReservationTest extends ReferencedInvento
     for (boolean isAllocated : ISALLOCATED) {
       for (String[] product : PRODUCTS) {
         for (String toBinId : BINS) {
-          testBox(toBinId, product[0], product[1], params.qtyToBox,
-              params.reservationQty, isAllocated);
+          testBox(toBinId, product[0], product[1], params.qtyToBox, params.reservationQty,
+              isAllocated);
+          OBDal.getInstance().getSession().clear();
         }
       }
     }

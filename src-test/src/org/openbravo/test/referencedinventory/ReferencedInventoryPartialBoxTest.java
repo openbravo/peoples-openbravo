@@ -25,6 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
+import org.openbravo.dal.service.OBDal;
 
 /**
  * Box of 1 unit of the 10 units available in the storage detail without reservations
@@ -47,6 +48,7 @@ public class ReferencedInventoryPartialBoxTest extends ReferencedInventoryBoxTes
     for (String[] product : PRODUCTS) {
       for (String toBinId : BINS) {
         testBox(toBinId, product[0], product[1], params.qtyToBox, null, false);
+        OBDal.getInstance().getSession().clear();
       }
     }
   }

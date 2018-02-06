@@ -25,6 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
+import org.openbravo.dal.service.OBDal;
 
 public class ReferencedInventoryPartialUnboxPartialReservation extends
     ReferencedInventoryUnboxReservationTest {
@@ -57,6 +58,7 @@ public class ReferencedInventoryPartialUnboxPartialReservation extends
               product[1], params.qtyToBox, params.qtyToUnbox, params.reservationQty, isAllocated);
           assertsReferenceInventoryIsNotEmpty(outParams.refInv,
               params.qtyToBox.subtract(params.qtyToUnbox));
+          OBDal.getInstance().getSession().clear();
         }
       }
     }

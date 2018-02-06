@@ -42,8 +42,7 @@ public class ReferencedInventoryBoxSeveralStorageDetailsTest extends ReferencedI
 
   protected ReferencedInventory testBox(final String _toBinId, final String productId,
       final String attributeSetInstanceId) throws Exception {
-    return testBox(_toBinId, productId, attributeSetInstanceId, new BigDecimal("10"),
-        null, false);
+    return testBox(_toBinId, productId, attributeSetInstanceId, new BigDecimal("10"), null, false);
   }
 
   @Test
@@ -51,6 +50,7 @@ public class ReferencedInventoryBoxSeveralStorageDetailsTest extends ReferencedI
     for (String[] product : PRODUCTS) {
       for (String toBinId : BINS) {
         testBoxSeveralStorageDetailsInSameMovement(product[0], product[1], toBinId);
+        OBDal.getInstance().getSession().clear();
       }
     }
   }
@@ -63,6 +63,7 @@ public class ReferencedInventoryBoxSeveralStorageDetailsTest extends ReferencedI
           if (!product1[0].equals(product2[0])) {
             testBoxSeveralStorageDetailsInTwoMovements(product1[0], product1[1], product2[0],
                 product2[1], toBinId);
+            OBDal.getInstance().getSession().clear();
           }
         }
       }
