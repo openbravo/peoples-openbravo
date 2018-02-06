@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016-2017 Openbravo SLU
+ * All portions are Copyright (C) 2016-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -497,10 +497,12 @@ public class CancelAndReplaceUtils {
       oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
       inverseOrder = OBDal.getInstance().get(Order.class, inverseOrderId);
 
-      // Payment Creation
+      // Payment Creation only to orders with grand total different than ZERO
       // Get the payment schedule detail of the oldOrder
-      createPayments(oldOrder, newOrder, inverseOrder, jsonorder, useOrderDocumentNoForRelatedDocs,
-          replaceOrder, triggersDisabled);
+      if (oldOrder.getGrandTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
+        createPayments(oldOrder, newOrder, inverseOrder, jsonorder,
+            useOrderDocumentNoForRelatedDocs, replaceOrder, triggersDisabled);
+      }
 
       // Calling Cancelandreplaceorderhook
       WeldUtils.getInstanceFromStaticBeanManager(CancelAndReplaceOrderHookCaller.class)
