@@ -24,6 +24,7 @@ import static org.junit.Assert.assertThat;
 
 import java.math.BigDecimal;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
@@ -31,6 +32,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +77,11 @@ public abstract class ReferencedInventoryTest extends WeldBaseTest {
       final int expectedNumberOfLines) {
     assertThat("Box Movement has one line", boxMovement.getMaterialMgmtInternalMovementLineList()
         .size(), equalTo(expectedNumberOfLines));
+  }
+
+  @After
+  public void clearSession() {
+    OBDal.getInstance().getSession().clear();
   }
 
 }
