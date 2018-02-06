@@ -494,6 +494,10 @@
       <index name="C_ORDER_POSTED" unique="false">
         <index-column name="POSTED"/>
       </index>
+      <index name="C_ORDER_QUOTATION_IDX" unique="false">
+        <index-column name="QUOTATION_ID"/>
+        <whereClause><![CDATA[QUOTATION_ID IS NOT NULL]]></whereClause>
+      </index>
       <index name="C_ORDER_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>

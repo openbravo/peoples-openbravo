@@ -307,6 +307,10 @@
       <index name="C_INVOICELINE_ACCOUNT" unique="false">
         <index-column name="ACCOUNT_ID"/>
       </index>
+      <index name="C_INVOICELINE_BOMPARENT_IDX" unique="false">
+        <index-column name="BOM_PARENT_ID"/>
+        <whereClause><![CDATA[BOM_PARENT_ID IS NOT NULL]]></whereClause>
+      </index>
       <index name="C_INVOICELINE_INOUTLINE" unique="false">
         <index-column name="M_INOUTLINE_ID"/>
         <whereClause><![CDATA[M_INOUTLINE_ID IS NOT NULL]]></whereClause>
