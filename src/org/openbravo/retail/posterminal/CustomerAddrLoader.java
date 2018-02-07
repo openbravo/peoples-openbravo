@@ -28,7 +28,6 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
-import org.openbravo.mobile.core.process.OutDatedDataChangeException;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
@@ -67,8 +66,8 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
             Long.parseLong(jsonCustomerAddr.getString("timezoneOffset")));
 
         if (!(loaded.compareTo(location.getUpdated()) >= 0)) {
-          throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
-              "OBPOS_outdatedbpl", OBContext.getOBContext().getLanguage().getLanguage()));
+          log.warn(Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedbpl",
+              OBContext.getOBContext().getLanguage().getLanguage()));
         }
         location = editBPartnerAddr(customer, location, jsonCustomerAddr);
       }

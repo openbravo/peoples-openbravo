@@ -43,8 +43,6 @@ enyo.kind({
     editCustomerHeader.$.editbp.setCustomer(this.args.businessPartner);
     editCustomerHeader.$.editbp.navigationPath = this.args.navigationPath;
     editCustomerHeader.$.editbp.target = this.args.target;
-    
-    this.args.businessPartner.set("loaded", new Date().toISOString());
 
     // Hide components depending on its displayLogic function
     _.each(this.$.body.$.editcustomers_impl.$.customerAttributes.$, function (attribute) {
