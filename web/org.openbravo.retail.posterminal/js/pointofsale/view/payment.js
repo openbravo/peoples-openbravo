@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2017 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -1161,7 +1161,7 @@ enyo.kind({
           return false;
         }
         if (!payment.get('isReversePayment') && !payment.get('isReversed') && !payment.get('isPrePayment')) {
-          totalPaid = OB.DEC.add(totalPaid, payment.get('amount'));
+          totalPaid = OB.DEC.add(totalPaid, payment.get('origAmount'));
           if (totalPaid >= totalToPaid) {
             me.alreadyPaid = true;
           }
