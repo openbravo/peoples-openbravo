@@ -1290,9 +1290,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       }
 
       boolean useSingleBin = foundSingleBin != null && orderLine.getAttributeSetValue() == null
-          && orderLine.getProduct().getAttributeSet() == null
           && orderLine.getWarehouseRule() == null
-          && (order.getWarehouse().getId().equals(warehouse.getId()));
+          && (order.getWarehouse().getId().equals(warehouse.getId()))
+          && orderLine.getProduct().getAttributeSet() == null;
 
       if (negativeLine && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
         OrderLoaderPreAddShipmentLineHook_Response returnBinHookResponse;
