@@ -6121,19 +6121,10 @@
 
       var orderTypeMsg, i, showErrorMessage = function (errorMsg) {
           if (fromSelector) {
-            OB.UTIL.showConfirmation.display(errorMsg, null, [{
-              label: OB.I18N.getLabel('OBMOBC_LblOk'),
-              action: function () {
-                if (errorCallback) {
-                  errorCallback();
-                }
-              }
-            }], {
-              onHideFunction: function (dialog) {
-                if (errorCallback) {
-                  errorCallback();
-                }
-                return true;
+            OB.POS.terminal.$.containerWindow.getRoot().doShowPopup({
+              popup: 'OB_UI_MessageDialog',
+              args: {
+                message: errorMsg
               }
             });
           } else {
