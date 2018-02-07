@@ -205,8 +205,9 @@
           avoidTrigger: avoidTrigger
         }), true);
       } else {
-        lines = receipt.get('lines').models;
-
+        lines = _.sortBy(receipt.get('lines').models, function (lo) {
+          return -lo.getQty();
+        });
         if (lines.length === 0) {
           receipt.trigger('discountsApplied');
         }

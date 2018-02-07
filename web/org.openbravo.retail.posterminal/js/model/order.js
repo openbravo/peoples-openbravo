@@ -2725,9 +2725,7 @@
         if (singlePromotionsList.length > 0) {
           //  There should be only one rule in the list with previous conditions in manual promotions list
           _.forEach(singlePromotionsList, function (singlePromotion) {
-            me.get('orderManualPromotions').remove(singlePromotion, {
-              silent: true
-            });
+            me.get('orderManualPromotions').remove(singlePromotion);
           });
 
         }
@@ -4542,9 +4540,7 @@
 
       if (linesToRemove && linesToRemove.length > 0) {
         _.forEach(linesToRemove, function (lineToRemove) {
-          me.get('lines').remove(lineToRemove, {
-            silent: true
-          });
+          me.get('lines').remove(lineToRemove);
         });
       }
     },
@@ -4593,7 +4589,7 @@
       groupedOrder.get('lines').forEach(function (l) {
         _.each(l.get('promotions'), function (promo) {
           promo.pendingQtyOffer = promo.qtyOffer;
-          if (!l.get('product').get('groupProduct') || (l.get('product').get('groupProduct') && promo.hasMultiDiscount)) {
+          if (!l.get('product').get('groupProduct') || promo.rule.get('obdiscAllowmultipleinstan')) {
             promo.doNotMerge = true;
           }
           if (l.get('product').get('groupProduct') && l.get('product').get('obposScale')) {
