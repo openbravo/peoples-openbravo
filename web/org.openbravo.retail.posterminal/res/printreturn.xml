@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -86,7 +86,7 @@
             %>
           <line>
             <text align="left" length="2">--</text>
-            <text align="left" length="32"><%= p.name %></text>
+            <text align="left" length="32"><%= OB.UTIL.encodeXMLComponent(p.name) %></text>
             <text align="right" length="8"><%= OB.I18N.formatCurrency(-p.amt) %></text>
           </line>
           <%
@@ -120,14 +120,14 @@
         <line>
           <text align="left" length="15"><%= paymentName %></text>
           <text align="right" length="12"><%= '('+OB.I18N.formatCurrency(OB.DEC.abs(payments.at(i).get('amount')))+' '+payments.at(i).get('isocode')+')' %></text>
-          <text align="right" length="13"><%= OB.I18N.formatCurrency(OB.DEC.abs(payments.at(i).get('origAmount'))) %></text>
+          <text align="right" length="13"><%= '-' + OB.I18N.formatCurrency(OB.DEC.abs(payments.at(i).get('origAmount'))) %></text>
         </line>
      <%
          }else {
      %>
         <line>
           <text align="left" length="20"><%= paymentName %></text>
-          <text align="right" length="20"><%= OB.I18N.formatCurrency(OB.DEC.abs(payments.at(i).get('amount'))) %></text>
+          <text align="right" length="20"><%= '-' + OB.I18N.formatCurrency(OB.DEC.abs(payments.at(i).get('amount'))) %></text>
         </line>
       <%
         }

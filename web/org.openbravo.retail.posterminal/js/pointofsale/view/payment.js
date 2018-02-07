@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2017 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -1215,7 +1215,7 @@ enyo.kind({
           return false;
         }
         if (!payment.get('isReversePayment') && !payment.get('isReversed') && !payment.get('isPrePayment')) {
-          totalPaid = OB.DEC.add(totalPaid, payment.get('amount'));
+          totalPaid = OB.DEC.add(totalPaid, payment.get('origAmount'));
           if (totalPaid >= totalToPaid) {
             me.alreadyPaid = true;
           }
@@ -1564,14 +1564,13 @@ enyo.kind({
                 actualCredit: actualCredit
               }
             });
-            me.putDisabled(false);
             //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
             //OB.UI.UTILS.domIdEnyoReference['modalNotEnoughCredit'].$.bodyContent.children[0].setContent();
           }
         } else {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorCreditSales'));
-          me.putDisabled(false);
         }
+        me.putDisabled(false);
       }, function () {
         OB.UTIL.SynchronizationHelper.finished(synchId, "creditButtonTap");
         me.doShowPopup({
@@ -1661,8 +1660,13 @@ enyo.kind({
         return line.get('qty') < 0;
       });
       if (negativeLines) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
-        return true;
+        if (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true)) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
+          return true;
+        } else if (receipt.get('payment') > 0) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_partiallyLayawaysWithNegLinesNotAllowed'));
+          return true;
+        }
       }
       if (receipt.get('generateInvoice')) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));

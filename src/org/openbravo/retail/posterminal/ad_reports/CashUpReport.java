@@ -122,7 +122,7 @@ public class CashUpReport extends HttpSecureAppServlet {
 
     OBContext.setAdminMode(false);
     try {
-      cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
+      cashup = OBDal.getReadOnlyInstance().get(OBPOSAppCashup.class, cashupId);
       final boolean isMaster = cashup.getPOSTerminal().isMaster();
       final boolean isSlave = cashup.getPOSTerminal().getMasterterminal() != null;
       // Check for slave
@@ -156,8 +156,9 @@ public class CashUpReport extends HttpSecureAppServlet {
       Collections.sort(paymentMethodCashupList, new PaymentMethodComparator());
       for (int i = 0; i < paymentMethodCashupList.size(); i++) {
         OBPOSPaymentMethodCashup paymentMethodCashup = paymentMethodCashupList.get(i);
-        if ((isMaster || (!isMaster && !isSlave)
-            || !paymentMethodCashup.getPaymentType().getPaymentMethod().isShared()) && paymentMethodCashup.getPaymentType().getPaymentMethod().isCountpaymentincashup()) {
+        if ((isMaster || (!isMaster && !isSlave) || !paymentMethodCashup.getPaymentType()
+            .getPaymentMethod().isShared())
+            && paymentMethodCashup.getPaymentType().getPaymentMethod().isCountpaymentincashup()) {
           conversionRate = paymentMethodCashup.getRate() == null ? BigDecimal.ONE
               : paymentMethodCashup.getRate();
           isoCode = paymentMethodCashup.getIsocode();
@@ -290,7 +291,7 @@ public class CashUpReport extends HttpSecureAppServlet {
       final String hqlCashup = "SELECT netsales, grosssales, netreturns, grossreturns, totalretailtransactions " //
           + " FROM OBPOS_App_Cashup " //
           + " WHERE id = '" + cashupId + "' "; //
-      final Query cashupQuery = OBDal.getInstance().getSession().createQuery(hqlCashup);
+      final Query cashupQuery = OBDal.getReadOnlyInstance().getSession().createQuery(hqlCashup);
       final Object[] arrayOfCashupResults = (Object[]) cashupQuery.list().get(0);
       final BigDecimal totalNetSalesAmount = (BigDecimal) arrayOfCashupResults[0];
       final BigDecimal totalGrossSalesAmount = (BigDecimal) arrayOfCashupResults[1];
@@ -303,7 +304,7 @@ public class CashUpReport extends HttpSecureAppServlet {
           + " FROM OBPOS_Taxcashup " //
           + " WHERE obpos_app_cashup_id='%s' AND ordertype='0' " //
           + " ORDER BY name ", cashupId);
-      final Query salesTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes);
+      final Query salesTaxesQuery = OBDal.getReadOnlyInstance().getSession().createQuery(hqlTaxes);
       final JRDataSource salesTaxesDataSource = new ListOfArrayDataSource(salesTaxesQuery.list(),
           new String[] { "LABEL", "VALUE" });
 
@@ -312,7 +313,8 @@ public class CashUpReport extends HttpSecureAppServlet {
           + " FROM OBPOS_Taxcashup " //
           + " WHERE obpos_app_cashup_id='%s' AND ordertype='1'  " //
           + " ORDER BY name ", cashupId);
-      final Query returnsTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlReturnTaxes);
+      final Query returnsTaxesQuery = OBDal.getReadOnlyInstance().getSession()
+          .createQuery(hqlReturnTaxes);
       final JRDataSource returnTaxesDatasource = new ListOfArrayDataSource(
           returnsTaxesQuery.list(), new String[] { "LABEL", "VALUE" });
 

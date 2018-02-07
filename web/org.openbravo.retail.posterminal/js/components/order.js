@@ -12,11 +12,11 @@
 enyo.kind({
   name: 'OB.UI.OrderMultiSelect',
   kind: 'Image',
-  src: '../org.openbravo.retail.posterminal/img/iconPinSelected.png',
+  src: '../org.openbravo.retail.posterminal/img/iconPinSelected.svg',
   sizing: "cover",
   width: 28,
   height: 28,
-  style: 'float: right; cursor: pointer; margin-top: 8px;',
+  style: 'float: right; cursor: pointer; margin-top: 8px; width: 27px; height: 27px;',
   showing: false,
   events: {
     onToggleSelection: ''
@@ -34,11 +34,11 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.OrderSingleSelect',
   kind: 'Image',
-  src: '../org.openbravo.retail.posterminal/img/iconPinUnselected.png',
+  src: '../org.openbravo.retail.posterminal/img/iconPinUnselected.svg',
   sizing: "cover",
   width: 28,
   height: 28,
-  style: 'float: right; cursor: pointer; margin-top: 8px;',
+  style: 'float: right; cursor: pointer; margin-top: 8px; width: 27px; height: 27px;',
   events: {
     onToggleSelection: ''
   },
@@ -723,6 +723,12 @@ enyo.kind({
       }
     }, this);
 
+    this.order.on('change:documentNo', function (model) {
+      if (this.get('obposIsDeleted') && this.get('id')) {
+        this.deleteOrder(this, null);
+      }
+    });
+
     // Change Document No based on return lines
     this.order.get('lines').on('add change:qty change:relatedLines updateRelations', function () {
       if (this.order.get('isEditable') && !this.order.get('isModified') && !this.order.get('isLayaway') && !this.order.get('isQuotation') && !this.order.get('doCancelAndReplace')) {
@@ -1092,7 +1098,7 @@ enyo.kind({
             rangeAmountBeforeDiscounts = 0,
             rangeAmountAfterDiscounts = 0,
             relatedQuantity = 0;
-        if (prod.get('productType') === 'S' && prod.get('isPriceRuleBased') && !line.get('originalOrderLineId')) {
+        if (prod.get('productType') === 'S' && prod.get('isPriceRuleBased') && !line.get('originalOrderLineId') && !line.get('obposIsDeleted')) {
           var criteria = {};
           line.get('relatedLines').forEach(function (rl) {
             var l = me.order.get('lines').get(rl.orderlineId);

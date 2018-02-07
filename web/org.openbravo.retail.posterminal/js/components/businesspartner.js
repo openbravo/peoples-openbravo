@@ -43,7 +43,7 @@ enyo.kind({
         return;
       }
     });
-    if (qty !== 0) {
+    if (qty !== 0 && !OB.MobileApp.model.hasPermission('OBPOS_AllowChangeCustomerVerifiedReturns', true)) {
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_Cannot_Change_BPartner'));
       return;
     }
