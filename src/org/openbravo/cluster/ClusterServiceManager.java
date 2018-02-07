@@ -237,14 +237,14 @@ public class ClusterServiceManager {
     }
 
     private boolean registerAvailableClusterServices() {
-      if (manager.clusterServices == null) {
+      if (manager.getClusterServices() == null) {
         return false;
       }
       try {
         OBContext.setAdminMode(false);
         long current = System.currentTimeMillis();
         boolean anyServiceRegistered = false;
-        for (ClusterService service : manager.clusterServices) {
+        for (ClusterService service : manager.getClusterServices()) {
           if (service.init(manager.nodeId, manager.nodeName)) {
             // service initialized properly, register it
             registerOrUpdateService(service);
@@ -268,7 +268,7 @@ public class ClusterServiceManager {
     private Long doPingRound() {
       long nextSleep = 0L;
       long startTime = System.currentTimeMillis();
-      for (ClusterService service : manager.clusterServices) {
+      for (ClusterService service : manager.getClusterServices()) {
         if (!service.isAlive() || !service.isInitialized() || service.isDisabled()) {
           // Do not update the last ping: the service is not working
           log.debug("Service {} is not working in node {}", service.getServiceName(),
