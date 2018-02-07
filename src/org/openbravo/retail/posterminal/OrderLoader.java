@@ -530,7 +530,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         // flush and enable triggers, the rest of this method needs enabled
         // triggers
         try {
-          OBDal.getInstance().flush();
+          // enable triggers contains a flush in getConnection method
           TriggerHandler.getInstance().enable();
         } catch (Throwable ignored) {
         }
