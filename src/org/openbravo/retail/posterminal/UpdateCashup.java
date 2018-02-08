@@ -103,7 +103,7 @@ public class UpdateCashup {
         // time.
         if (!POSUtils.isSynchronizedModeEnabled()) {
           OBDal.getInstance().flush();
-          OBDal.getInstance().getConnection().commit();
+          OBDal.getInstance().getConnection(false).commit();
         }
 
       } catch (JSONException e) {
