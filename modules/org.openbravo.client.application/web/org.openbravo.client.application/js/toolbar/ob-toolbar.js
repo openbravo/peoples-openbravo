@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):   Sreedhar Sirigiri (TDS), Mallikarjun M (TDS)
  ************************************************************************
@@ -1342,13 +1342,13 @@ isc.OBToolbar.addProperties({
             ROW_ID: currentValues.id
           };
           multipleSelectedRowIds = [];
+          allProperties = currentContext.getContextInfo(false, true, false, true);
           if (selectedRecords.size() > 1) {
             for (i = 0; i < selectedRecords.size(); i++) {
               multipleSelectedRowIds[i] = selectedRecords[i].id;
             }
-            requestParams.MULTIPLE_ROW_IDS = multipleSelectedRowIds;
+            allProperties.MULTIPLE_ROW_IDS = multipleSelectedRowIds;
           }
-          allProperties = currentContext.getContextInfo(false, true, false, true);
           if (currentContext.viewGrid && currentContext.viewGrid.fields) {
             len = currentContext.viewGrid.fields.length;
             for (i = 0; i < len; i++) {
@@ -1374,6 +1374,7 @@ isc.OBToolbar.addProperties({
         TAB_ID: this.view.tabId
       };
       multipleSelectedRowIds = [];
+      allProperties = this.view.getContextInfo(false, true, false, true);
       if (selectedRecords.size() >= 1) {
         for (i = 0; i < selectedRecords.size(); i++) {
           if (i === 0) {
@@ -1382,10 +1383,9 @@ isc.OBToolbar.addProperties({
           multipleSelectedRowIds[i] = selectedRecords[i].id;
         }
         if (selectedRecords.size() > 1) {
-          requestParams.MULTIPLE_ROW_IDS = multipleSelectedRowIds;
+          allProperties.MULTIPLE_ROW_IDS = multipleSelectedRowIds;
         }
       }
-      allProperties = this.view.getContextInfo(false, true, false, true);
       OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function (response, data, request) {
         var attachmentExists = data.attachmentExists,
             auxInputs = data.auxiliaryInputValues,

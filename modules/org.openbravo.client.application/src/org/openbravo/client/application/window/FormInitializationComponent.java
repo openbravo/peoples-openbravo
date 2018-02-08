@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -134,7 +135,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       // The ID of the record. Only relevant on EDIT, CHANGE and SETSESSION modes
       rowId = readParameter(parameters, "ROW_ID");
       // The IDs of the selected records in case more than one
-      String multipleRowIds[] = (String[]) parameters.get("MULTIPLE_ROW_IDS");
+      List<String> multipleRowIds = null;
       // The column changed by the user. Only relevant on CHANGE mode
       String changedColumn = readParameter(parameters, "CHANGED_COLUMN");
       Tab tab = getTab(tabId);
@@ -183,6 +184,9 @@ public class FormInitializationComponent extends BaseActionHandler {
       List<String> gridVisibleProperties = new ArrayList<String>();
       if (jsContent.has("_gridVisibleProperties")) {
         gridVisibleProperties = convertJSONArray(jsContent.getJSONArray("_gridVisibleProperties"));
+      }
+      if (jsContent.has("MULTIPLE_ROW_IDS")) {
+        multipleRowIds = convertJSONArray(jsContent.getJSONArray("MULTIPLE_ROW_IDS"));
       }
 
       List<String> overwrittenAuxiliaryInputs = new ArrayList<String>();
@@ -298,7 +302,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (multipleRowIds != null) {
         attachmentCount = computeAttachmentCount(tab, multipleRowIds, true);
       } else {
-        attachmentCount = computeAttachmentCount(tab, new String[] { rowId }, false);
+        attachmentCount = computeAttachmentCount(tab, Arrays.asList(rowId), false);
       }
 
       // Notes information
@@ -397,7 +401,7 @@ public class FormInitializationComponent extends BaseActionHandler {
    *          flag to not return the actual count just 1 or 0
    * @return count of attachment found for the given records.
    */
-  private int computeAttachmentCount(Tab tab, String[] recordIds, boolean doExists) {
+  private int computeAttachmentCount(Tab tab, List<String> recordIds, boolean doExists) {
     String tableId = tab.getTable().getId();
     OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
         Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds));
