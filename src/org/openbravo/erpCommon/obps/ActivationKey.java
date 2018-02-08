@@ -9,7 +9,7 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
- * The Original Code is Openbravo ERP. 
+ * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
  * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
@@ -51,6 +51,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.zip.CRC32;
 
 import javax.crypto.Cipher;
 import javax.enterprise.inject.spi.Bean;
@@ -743,6 +744,13 @@ public class ActivationKey {
 
   public LicenseClass getLicenseClass() {
     return licenseClass == null ? LicenseClass.COMMUNITY : licenseClass;
+  }
+
+  /** Returns a CRC hash of the public key */
+  public String getOpsLogId() {
+    CRC32 crc = new CRC32();
+    crc.update(getPublicKey().getBytes());
+    return Long.toHexString(crc.getValue());
   }
 
   private PublicKey getPublicKey(String strPublickey) {
