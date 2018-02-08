@@ -2056,7 +2056,9 @@
             } else if (data.result === 0) {
               OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_WeightZero'));
             } else {
-              line = me.createLine(p, data.result, options, attrs);
+              line = me.createLine(p, options.isVerifiedReturn ? -data.result : data.result, options, attrs);
+              me.calculateGross();
+              me.trigger('calculategross');
             }
           });
         } else {
@@ -2177,7 +2179,7 @@
             }
           }
         }
-        if (me.isCalculateReceiptLocked === true || !line) {
+        if ((me.isCalculateReceiptLocked === true || !line) && !options.isVerifiedReturn) {
           OB.error('Save ignored before execute OBPOS_PostAddProductToOrder hook, system has detected that a line is being added when calculate receipt is closed. Ignore line creation');
           if (attrs && attrs.obposEpccode) {
             OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
