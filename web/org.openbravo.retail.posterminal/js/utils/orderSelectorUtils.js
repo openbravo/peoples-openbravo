@@ -49,7 +49,7 @@
             label: OB.I18N.getLabel('OBPOS_LblOk'),
             isConfirmButton: true,
             action: function () {
-              var processRelatedReceipts = new OB.DS.Process('org.openbravo.retail.scanreceipt.OpenRelatedReceipts');
+              var processRelatedReceipts = new OB.DS.Process('org.openbravo.retail.posterminal.process.OpenRelatedReceipts');
               processRelatedReceipts.exec({
                 bp: order.get('bp').get('id'),
                 currentOrder: order.get('id')
