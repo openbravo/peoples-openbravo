@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.secureApp.AllowedCrossDomainsHandler;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
@@ -64,6 +65,14 @@ public class BaseWebServiceServlet extends HttpServlet {
 
     final boolean sessionExists = request.getSession(false) != null;
 
+    AllowedCrossDomainsHandler.getInstance().setCORSHeaders(request, response);
+
+    // don't process any further requests otherwise sessions are created for OPTIONS
+    // requests, the cors headers have already been set so can return
+    if (request.getMethod().equals("OPTIONS")) {
+      return;
+    }
+
     // do the login action
     AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
 
@@ -89,8 +98,8 @@ public class BaseWebServiceServlet extends HttpServlet {
     } catch (AuthenticationException e) {
       final boolean sessionCreated = !sessionExists && null != request.getSession(false);
       if (sessionCreated && AuthenticationManager.isStatelessRequest(request)) {
-        log.warn("Stateless request, still a session was created " + request.getRequestURL()
-            + " " + request.getQueryString());
+        log.warn("Stateless request, still a session was created " + request.getRequestURL() + " "
+            + request.getQueryString());
       }
 
       response.setStatus(HttpServletResponse.SC_FORBIDDEN);

@@ -57,6 +57,9 @@
     v_productname m_product.name%TYPE;
     v_overIssueFrom m_inventorystatus.overissue%TYPE;
     v_overIssueTo m_inventorystatus.overissue%TYPE;
+    v_refInventoryId M_AttributeSetInstance.M_REFINVENTORY_ID%TYPE;
+    v_refInvValue M_REFINVENTORY.VALUE%TYPE;
+    v_locatorValue M_LOCATOR.VALUE%TYPE;
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || PInstance_ID) ;
@@ -300,7 +303,7 @@
             (
               get_uuid(), Cur_MoveLine.AD_Client_ID, Cur_MoveLine.AD_Org_ID, 'Y',
               now(), v_p_User, now(), v_p_User,
-              'M+', Cur_MoveLine.M_LocatorTo_ID, Cur_MoveLine.M_Product_ID, COALESCE(Cur_MoveLine.M_AttributeSetInstance_ID, '0'),
+              'M+', Cur_MoveLine.M_LocatorTo_ID, Cur_MoveLine.M_Product_ID, COALESCE(Cur_MoveLine.M_AttributeSetInstanceTo_ID, Cur_MoveLine.M_AttributeSetInstance_ID, '0'),
               v_MoveDate, Cur_MoveLine.MovementQty, Cur_MoveLine.M_MovementLine_ID, Cur_MoveLine.M_Product_UOM_ID,
               Cur_MoveLine.QuantityOrder, Cur_MoveLine.C_UOM_ID
             )
@@ -308,6 +311,29 @@
           --No need to check the Stock for the Locator to which the Stock is gointg to be moved
           --It has been validated before that the quantity to be moved is positive or that the locator to allows negative stock
           --If the Locator to has already negative stock before this transaction, the goods movement should not be stopped
+
+          -- Linked Referenced Inventory must be in just one locator
+          SELECT M_REFINVENTORY_ID INTO v_refInventoryId
+          FROM M_AttributeSetInstance
+          WHERE M_AttributeSetInstance_ID = COALESCE(Cur_MoveLine.M_AttributeSetInstanceTo_ID, Cur_MoveLine.M_AttributeSetInstance_ID, '0');
+          IF (v_refInventoryId IS NOT NULL) THEN
+            BEGIN
+              SELECT M_REFINVENTORY.VALUE, M_LOCATOR.VALUE
+              INTO v_refInvValue, v_locatorValue
+              FROM M_STORAGE_DETAIL
+              JOIN M_LOCATOR on (M_STORAGE_DETAIL.M_LOCATOR_ID = M_LOCATOR.M_LOCATOR_ID)
+              JOIN M_REFINVENTORY on (M_STORAGE_DETAIL.M_REFINVENTORY_ID = M_REFINVENTORY.M_REFINVENTORY_ID)
+              WHERE M_STORAGE_DETAIL.M_REFINVENTORY_ID = v_refInventoryId
+              AND M_STORAGE_DETAIL.QTYONHAND > 0
+              AND M_STORAGE_DETAIL.M_LOCATOR_ID <> Cur_MoveLine.M_LocatorTo_ID;
+              IF (v_locatorValue IS NOT NULL) THEN
+                RAISE_APPLICATION_ERROR(-20000, v_refInvValue || '@ReferencedInventoryInOtherBin@' || v_locatorValue) ;
+              END IF;
+            EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+              v_locatorValue:=null; -- Hack for Oracle to control exception
+            END;
+          END IF;
         END LOOP;
       END; -- FOR COMMIT
     END IF;--END_PROCESS

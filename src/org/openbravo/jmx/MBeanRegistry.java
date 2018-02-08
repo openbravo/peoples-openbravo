@@ -37,7 +37,7 @@ public class MBeanRegistry {
   /**
    * Registers a pre-existing object as an MBean with the platform MBean server. The MBean will be
    * registered with the provided name inside a group called "Openbravo" with the current context
-   * name as context: Openbravo-> contextName -> mBeanName
+   * name as context: Openbravo-&gt; contextName -&gt; mBeanName
    * 
    * @param mBeanName
    *          the name of the MBean

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,10 @@ import org.openbravo.test.datasource.FICTest;
 import org.openbravo.test.datasource.FKDropDownDatasource;
 import org.openbravo.test.datasource.FetchDSNoActiveEntityObjects;
 import org.openbravo.test.datasource.HQLDataSourceTest;
+import org.openbravo.test.datasource.LinkToParentTreeDataSourceTest;
+import org.openbravo.test.datasource.NonIdForeignKeyFilters;
 import org.openbravo.test.datasource.OrganizationSelectorDataSourceTest;
+import org.openbravo.test.datasource.OtherDatasourceRequests;
 import org.openbravo.test.datasource.ProductSelectorDataSourceTest;
 import org.openbravo.test.datasource.SelectorFieldPropertySelectorDSTest;
 import org.openbravo.test.datasource.SelectorPickListFieldsDataSourceTest;
@@ -84,6 +87,10 @@ DataSourceWhereParameter.class, //
     EmptyStringWhereAndFilterClauseParameter.class, //
     JSONWebServicesWhereParameter.class, //
     WSReadableClientsTest.class, //
-    UserInfoSessionDataTest.class })
+    UserInfoSessionDataTest.class, //
+    LinkToParentTreeDataSourceTest.class, //
+    OtherDatasourceRequests.class, //
+    NonIdForeignKeyFilters.class //
+})
 public class AllWebserviceTests {
 }

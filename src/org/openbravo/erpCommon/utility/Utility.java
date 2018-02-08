@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,6 +59,7 @@ import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.base.HttpBaseServlet;
@@ -66,7 +67,9 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.report.ReportingUtils;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -347,7 +350,7 @@ public class Utility {
 
   /**
    * Gets a value from the context. For client 0 is always added (used for references), to check if
-   * it must by added or not use the getContext with accesslevel method.
+   * it must be added or not use the getContext with accesslevel method.
    * 
    * @param conn
    *          Handler for the database connection.
@@ -361,18 +364,38 @@ public class Utility {
    */
   public static String getContext(ConnectionProvider conn, VariablesSecureApp vars, String context,
       String window) {
-    if (context == null || context.equals(""))
+    if (StringUtils.isBlank(context)) {
       throw new IllegalArgumentException("getContext - require context");
-    String retValue = "";
+    }
+
+    String retValue;
 
     if (!context.startsWith("#") && !context.startsWith("$")) {
       retValue = getPreference(vars, context, window);
-      if (!window.equals("") && retValue.equals(""))
+      if (!window.equals("") && retValue.equals("")) {
         retValue = vars.getSessionValue(window + "|" + context);
-      if (retValue.equals(""))
+      }
+      if (retValue.equals("")) {
         retValue = vars.getSessionValue("#" + context);
-      if (retValue.equals(""))
+      }
+      if (retValue.equals("")) {
         retValue = vars.getSessionValue("$" + context);
+      }
+      if (retValue.equals("") && "IsSOTrx".equalsIgnoreCase(context)
+          && StringUtils.isNotBlank(window)) {
+        OBContext.setAdminMode(true);
+        try {
+          ApplicationDictionaryCachedStructures adcs = WeldUtils
+              .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
+          Window w = adcs.getWindow(window);
+          retValue = w.isSalesTransaction() ? "Y" : "N";
+        } catch (Exception ignore) {
+          // not a valid window id, continue
+          retValue = "";
+        } finally {
+          OBContext.restorePreviousMode();
+        }
+      }
     } else {
       try {
         if (context.equalsIgnoreCase("#Date"))
@@ -437,25 +460,14 @@ public class Utility {
    */
   public static String getContext(ConnectionProvider conn, VariablesSecureApp vars, String context,
       String strWindow, int accessLevel) {
-    if (context == null || context.equals(""))
+    if (StringUtils.isBlank(context)) {
       throw new IllegalArgumentException("getContext - require context");
-    String retValue = "";
+    }
+    String retValue;
 
-    if (!context.startsWith("#") && !context.startsWith("$")) {
-      retValue = getPreference(vars, context, strWindow);
-      if (!strWindow.equals("") && retValue.equals(""))
-        retValue = vars.getSessionValue(strWindow + "|" + context);
-      if (retValue.equals(""))
-        retValue = vars.getSessionValue("#" + context);
-      if (retValue.equals(""))
-        retValue = vars.getSessionValue("$" + context);
+    if ((!context.startsWith("#") && !context.startsWith("$")) || context.equalsIgnoreCase("#Date")) {
+      retValue = getContext(conn, vars, context, strWindow);
     } else {
-      try {
-        if (context.equalsIgnoreCase("#Date"))
-          return DateTimeData.today(conn);
-      } catch (final ServletException e) {
-      }
-
       retValue = vars.getSessionValue(context);
 
       final String userLevel = vars.getSessionValue("#User_Level");
@@ -483,13 +495,8 @@ public class Utility {
             else
               return transactionalOrgs;
           } else {
-            if ((accessLevel == 1) || (userLevel.equals("  O"))) { // No
-              // *:
-              // remove
-              // 0
-              // from
-              // current
-              // list
+            if ((accessLevel == 1) || (userLevel.equals("  O"))) {
+              // No *: remove 0 from current list
               if (retValue.equals("'0'"))
                 retValue = "";
               else if (retValue.startsWith("'0',"))
@@ -498,10 +505,8 @@ public class Utility {
                 retValue = retValue.replace(",'0'", "");
             } else {// Any: add 0 to current list
               if (!retValue.equals("'0'") && !retValue.startsWith("'0',")
-                  && retValue.indexOf(",'0'") == -1) {// Any:
-                // current
-                // list
-                // and *
+                  && retValue.indexOf(",'0'") == -1) {
+                // Any: current list and *
                 retValue = "'0'" + (retValue.equals("") ? "" : ",") + retValue;
               }
             }
@@ -1451,8 +1456,8 @@ public class Utility {
             if (data[j].value.equals(localCurrentValue)) {
               retVal += "<span>(<u>" + i + "</u>)</span>";
               reservedButtonShortCuts.put(Integer.valueOf(i).toString(), "");
-              usedButtonShortCuts.put(Integer.valueOf(i).toString(), "executeWindowButton('" + buttonId
-                  + "');");
+              usedButtonShortCuts.put(Integer.valueOf(i).toString(), "executeWindowButton('"
+                  + buttonId + "');");
             }
           }
         } else {
@@ -1676,7 +1681,7 @@ public class Utility {
    * @param tabId
    *          Id for the tab to obtain the url for
    * @param type
-   *          "R" -> Relation, "E" -> Edition, "X" -> Excel
+   *          "R" -&gt; Relation, "E" -&gt; Edition, "X" -&gt; Excel
    * @param completeURL
    *          if true returns the complete ULR including server name and context, if not, it return
    *          URL relative to base context

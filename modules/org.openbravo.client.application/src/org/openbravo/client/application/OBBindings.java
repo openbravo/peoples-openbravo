@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,8 +30,10 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,6 +135,13 @@ public class OBBindings {
     value = (String) httpSession.getAttribute(getWindowId() + "|ISSOTRX");
     if (value != null) {
       return "Y".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value);
+    }
+
+    ApplicationDictionaryCachedStructures adcs = WeldUtils
+        .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
+    Window w = adcs.getWindow(getWindowId());
+    if (w != null) {
+      return w.isSalesTransaction();
     }
     return null;
   }

@@ -159,12 +159,12 @@ public class OBMessageUtils {
 
   /**
    * 
-   * Formats a message String into a String for html presentation. Escapes the &, <, >, " and ®, and
+   * Formats a message String into a String for html presentation. Escapes the &amp;, &lt;, &gt;, " and ®, and
    * replace the \n by <br/>
    * and \r for space.
    * 
    * IMPORTANT! : this method is designed to transform the output of Utility.messageBD method, and
-   * this method replaces \n by \\n and \" by &quote. Because of that, the first replacements revert
+   * this method replaces \n by \\n and \" by &amp;quote. Because of that, the first replacements revert
    * this previous replacements.
    * 
    * @param message

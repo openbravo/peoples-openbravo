@@ -51,7 +51,7 @@ import org.openbravo.model.common.enterprise.Organization;
 
 /**
  * Converts a XML string to an objectgraph with objects using a Stax approach. It can handle very
- * large XML Documents (> 500mb). It can not handle OneToMany properties, for this the
+ * large XML Documents (&gt; 500mb). It can not handle OneToMany properties, for this the
  * {@link XMLEntityConverter} should be used. The StaxXMLEntityConverter is mainly used for client
  * import and export which has larger datasets. During the XML parse phase this converter will match
  * XML tags with new or existing (in the database) business objects. The matching logic is

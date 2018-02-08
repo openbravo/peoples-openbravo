@@ -303,7 +303,7 @@ public class ParameterUtils {
   }
 
   /**
-   * Returns a Map<String, String> with all parameters in the servlet request.
+   * Returns a Map&lt;String, String&gt; with all parameters in the servlet request.
    * 
    * @param request
    *          request taken in the servlet.

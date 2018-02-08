@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2016 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -99,7 +99,7 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
       SessionHandler.getInstance().beginNewTransaction();
     }
     importEntryManager.createImportEntry(SequenceIdData.getUUID(), "VariantChDescUpdate",
-        entryJson.toString(), false);
+        entryJson.toString(), true);
   }
 
   private void addProductToList(ProductCharacteristicValue pchv) {

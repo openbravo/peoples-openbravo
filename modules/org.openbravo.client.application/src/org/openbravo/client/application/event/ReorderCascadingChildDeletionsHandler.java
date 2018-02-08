@@ -39,13 +39,13 @@ import org.openbravo.model.common.order.OrderTax;
  * child tables to not run into problems with the hibernate cascading delete order and the various
  * triggers attached to those tables.
  * 
- * So far this class has special handling for deletions of c_order & c_invoice. As explained in
+ * So far this class has special handling for deletions of c_order &amp; c_invoice. As explained in
  * issue 17199 there are triggers attached to c_orderlinetax which in some cases delete c_ordertax
  * entries attached to same order. As hibernate already scheduled deletion for those also, the
  * following deletion fails as the record is not longer present. This class works around that by
  * explicitely deleting c_ordertax entries on delete of c_order. (Same for c_invoicetax)
  * 
- * {@link "https://issues.openbravo.com/view.php?id=17199"}
+ * @see <a href="https://issues.openbravo.com/view.php?id=17199">Issue 17199</a>
  * 
  * @author shuehner
  */

@@ -1,7 +1,7 @@
 /*
  ************************************************************************************
 
- * Copyright (C) 2001-2017 Openbravo S.L.U.
+ * Copyright (C) 2001-2018 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -171,8 +171,6 @@ public class LoginHandler extends HttpBaseServlet {
    * This method invalidates the current session and generates a new one on the fly, thus generating
    * a new JSSESSIONID cookie. It is called every time the user logs in to prevent some malicious
    * user from stealing a cookie which later on will correspond with a valid session
-   * 
-   * @param req
    */
   private void resetCookieId(HttpServletRequest req) {
     HttpSession httpSession = req.getSession(false);

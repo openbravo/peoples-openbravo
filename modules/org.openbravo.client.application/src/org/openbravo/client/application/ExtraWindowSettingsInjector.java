@@ -46,7 +46,7 @@ public interface ExtraWindowSettingsInjector {
    *          the parameters Map of the current WindowSettingsActionHandler execution.
    * @param json
    *          the JSONObject instance of the response of the WindowSettingsActionHandler.
-   * @return A Map<String, Object> with all the extra settings desired to be included in the
+   * @return A Map&lt;String, Object&gt; with all the extra settings desired to be included in the
    *         WindowSettingsActionHandler response.
    * @throws OBException
    */

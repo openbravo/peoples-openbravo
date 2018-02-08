@@ -38,7 +38,7 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
 
 /**
- * This class is in charge of calculating prices for Discounts & Promotions of Price Adjustment
+ * This class is in charge of calculating prices for Discounts &amp; Promotions of Price Adjustment
  * type. It is intended to be used from callouts so final price can be seen in advance when
  * editing/creating the line, opposite to the rest of promotions that are not calculated until the
  * document is posted. This is done in this way to keep backwards compatibility.

@@ -283,7 +283,7 @@ public class VersionUtility {
   /**
    * Transform a String array into a comma separated String
    * 
-   * Example ["aaa", "bbb", "ccc"] -> "aaa, bbb, cccc"
+   * Example ["aaa", "bbb", "ccc"] -&gt; "aaa, bbb, cccc"
    * 
    * @param arr
    *          A String Array

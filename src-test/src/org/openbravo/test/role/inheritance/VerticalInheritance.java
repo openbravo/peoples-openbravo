@@ -36,7 +36,7 @@ import org.openbravo.model.ad.access.Role;
 /**
  * Test case for vertical inheritance
  * 
- * Role B inherits from Role A and Role C from Role B : A -> B -> C
+ * Role B inherits from Role A and Role C from Role B : A -&gt; B -&gt; C
  * 
  * A Access {A1} , B Access {A2}
  * 

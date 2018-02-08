@@ -11,51 +11,29 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
-package org.openbravo.erpCommon.utility;
+package org.openbravo.common.actionhandler;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.openbravo.materialmgmt.refinventory.UnboxProcessor;
+import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 
 /**
- * Calculates the version number for core.
- * 
- * It is used when extracting obx for core
- * 
- * 
+ * Action handler for unboxing storage details from a Referenced Inventory
+ *
  */
-@Deprecated
-public class CalculateCoreRevision extends Task {
-  private String revision;
-  private String hgRevNo;
+public class ReferencedInventoryUnBoxHandler extends ReferencedInventoryBoxHandler {
 
   @Override
-  public void execute() throws BuildException {
-    // remove + in case there are uncommited changes
-    hgRevNo = hgRevNo.replace("+", "");
-
-    getProject().setProperty(revision, "3.0." + hgRevNo);
+  protected void createAndProcessGoodsMovement(final ReferencedInventory referencedInventory,
+      final JSONArray selectedStorageDetails, final String newStorageBinId) throws Exception,
+      JSONException {
+    new UnboxProcessor(referencedInventory, selectedStorageDetails).createAndProcessGoodsMovement();
   }
-
-  public String getRevision() {
-    return revision;
-  }
-
-  public void setRevision(String revision) {
-    this.revision = revision;
-  }
-
-  public String getHgRevNo() {
-    return hgRevNo;
-  }
-
-  public void setHgRevNo(String hgRevNo) {
-    this.hgRevNo = hgRevNo;
-  }
-
 }

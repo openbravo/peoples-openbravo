@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1008,19 +1008,13 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         dataAccounts.add(data[i].id);
       }
       int j = 0;
-      int extra = 0;
       for (int i = 0; i < dataAccountCombinations.length; i++) {
         String accountId = dataAccountCombinations[i].id;
         if (dataAccounts.contains(accountId)) {
           int lastAccountMatch = dataAccounts.lastIndexOf(accountId);
-          int extraCount = 0;
           for (int k = j; k <= lastAccountMatch; k++) {
             vec.addElement(data[k]);
             j++;
-            if (extraCount > 0) {
-              extra++;
-            }
-            extraCount++;
           }
         } else {
           ReportTrialBalanceData[] dataProcess = ReportTrialBalanceData.set();
@@ -1034,7 +1028,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           vec.addElement(dataProcess[0]);
         }
       }
-      dataZeroFigures = new ReportTrialBalanceData[dataAccountCombinations.length + extra];
+      dataZeroFigures = new ReportTrialBalanceData[vec.size()];
       vec.copyInto(dataZeroFigures);
     }
     return dataZeroFigures;

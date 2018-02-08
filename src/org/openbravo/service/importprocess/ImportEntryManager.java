@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2016 Openbravo SLU
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -137,6 +137,9 @@ public class ImportEntryManager {
   @Any
   private ImportEntryArchiveManager importEntryArchiveManager;
 
+  @Inject
+  private ImportEntryClusterService clusterService;
+
   private ImportEntryManagerThread managerThread;
   private ThreadPoolExecutor executorService;
 
@@ -235,6 +238,24 @@ public class ImportEntryManager {
       log.warn("Exception while trying to add runnable " + runnable
           + " to the list of tasks to run", e);
     }
+  }
+
+  /**
+   * This method is used to set the cluster service into an state that indicates that it is
+   * currently processing import entries. Note that if we are not in a clustered environment, this
+   * method has no effect.
+   */
+  public void notifyStartProcessingInCluster() {
+    clusterService.startProcessing();
+  }
+
+  /**
+   * This method is used to set the cluster service into an state that indicates that it is
+   * currently not processing import entries. Note that if we are not in a clustered environment,
+   * this method has no effect.
+   */
+  public void notifyEndProcessingInCluster() {
+    clusterService.endProcessing();
   }
 
   /**
@@ -547,12 +568,6 @@ public class ImportEntryManager {
       try {
         List<String> typesOfData = null;
         while (true) {
-          // obcontext cleared or wrong obcontext, repair
-          if (OBContext.getOBContext() == null
-              || !"0".equals(OBContext.getOBContext().getUser().getId())) {
-            // make ourselves an admin
-            OBContext.setOBContext("0", "0", "0", "0");
-          }
           try {
 
             // system is shutting down, bail out
@@ -560,12 +575,17 @@ public class ImportEntryManager {
               return;
             }
 
-            // too busy, don't process, but wait
-            if (manager.executorService.getQueue() != null
-                && manager.executorService.getQueue().size() > (manager.maxTaskQueueSize - 1)) {
+            if (shouldWait()) {
               doWait();
               // woken, re-start from beginning of loop
               continue;
+            }
+
+            // obcontext cleared or wrong obcontext, repair
+            if (OBContext.getOBContext() == null
+                || !"0".equals(OBContext.getOBContext().getUser().getId())) {
+              // make ourselves an admin
+              OBContext.setOBContext("0", "0", "0", "0");
             }
 
             if (typesOfData == null) {
@@ -599,7 +619,7 @@ public class ImportEntryManager {
 
                 final ScrollableResults entries = entriesQry.scroll(ScrollMode.FORWARD_ONLY);
                 try {
-                  while (entries.next()) {
+                  while (entries.next() && isHandlingImportEntries()) {
                     entryCount++;
                     final ImportEntry entry = (ImportEntry) entries.get(0);
 
@@ -670,6 +690,22 @@ public class ImportEntryManager {
       } finally {
         isRunning = false;
       }
+    }
+
+    private boolean shouldWait() {
+      if (manager.executorService.getQueue() != null
+          && manager.executorService.getQueue().size() > (manager.maxTaskQueueSize - 1)) {
+        // too busy, don't process, but wait
+        return true;
+      }
+      // - in cluster: process if we are in the node in charge of handling the import entries,
+      // otherwise just wait
+      // - not in cluster: do not wait
+      return !isHandlingImportEntries();
+    }
+
+    private boolean isHandlingImportEntries() {
+      return manager.clusterService.isHandledInCurrentNode();
     }
 
     public boolean isRunning() {

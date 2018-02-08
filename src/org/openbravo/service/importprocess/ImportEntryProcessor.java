@@ -280,6 +280,7 @@ public abstract class ImportEntryProcessor {
     public void run() {
       try {
         while (true) {
+          importEntryManager.notifyStartProcessingInCluster();
           try {
             if (importEntryManager.isShutDown()) {
               return;
@@ -320,6 +321,7 @@ public abstract class ImportEntryProcessor {
         // always deregister at this point to be sure that we are not re-used
         logger.debug("Loop finished removing runnable " + getKey());
         importEntryProcessor.doDeregisterProcessThread(this);
+        importEntryManager.notifyEndProcessingInCluster();
       }
     }
 

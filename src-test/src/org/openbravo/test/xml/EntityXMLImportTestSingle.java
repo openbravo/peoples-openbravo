@@ -88,7 +88,6 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
     final EntityXMLConverter exc = EntityXMLConverter.newInstance();
     exc.setOptionIncludeChildren(true);
     exc.setOptionIncludeReferenced(true);
-    exc.setAddSystemAttributes(false);
 
     @SuppressWarnings("unchecked")
     final List<BaseOBObject> list = (List<BaseOBObject>) obc.list();

@@ -1750,7 +1750,7 @@ isc.OBStandardView.addProperties({
         // session attributes of the form
         contextInfo = this.getContextInfo(false, true, true);
         this.addPreferenceValues(contextInfo, tabViewPane);
-        if (tabViewPane.showTabIf && !(tabViewPane.showTabIf(contextInfo))) {
+        if (!this.isOpenedByDirectLink() && tabViewPane.showTabIf && !(tabViewPane.showTabIf(contextInfo))) {
           this.childTabSet.tabBar.members[i].hide();
           tabViewPane.hidden = true;
         } else {
@@ -1790,6 +1790,10 @@ isc.OBStandardView.addProperties({
         }
       }
     }
+  },
+
+  isOpenedByDirectLink: function () {
+    return this.standardWindow.targetRecordId;
   },
 
   //This function returns true if it is a new record and it is being edited

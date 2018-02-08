@@ -117,7 +117,7 @@ public abstract class PriceListTestData {
 
   /**
    * Returns Map should be used to verify Product Prices values after test is executed. Map has the
-   * following structure: <Product name, [Unit Price Expected, List Price Expected]>
+   * following structure: &lt;Product name, [Unit Price Expected, List Price Expected]&gt;
    */
   public HashMap<String, String[]> getExpectedProductPrices() {
     return expectedProductPrices;

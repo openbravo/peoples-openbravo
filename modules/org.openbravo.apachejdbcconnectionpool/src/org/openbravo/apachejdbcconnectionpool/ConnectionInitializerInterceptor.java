@@ -38,7 +38,8 @@ import org.openbravo.database.SessionInfo;
 public class ConnectionInitializerInterceptor extends JdbcInterceptor implements
     PoolInterceptorProvider {
 
-  private static final String INITIALIZED = "OB_INITIALIZED";
+  private static final String SESSION_CONFIG_APPLIED = "OB_INITIALIZED";
+  private static final String SESSION_INFO_APPLIED = "SESSION_INFO_INITIALIZED";
 
   String rbdms = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties()
       .get("bbdd.rdbms");
@@ -51,11 +52,8 @@ public class ConnectionInitializerInterceptor extends JdbcInterceptor implements
   public void reset(ConnectionPool parent, PooledConnection con) {
     if (con != null) {
       HashMap<Object, Object> attributes = con.getAttributes();
-      Boolean connectionInitialized = (Boolean) attributes.get(INITIALIZED);
-      if (connectionInitialized == null || connectionInitialized == false) {
-        if (!isReadOnlyPool(parent)) {
-          SessionInfo.initDB(con.getConnection(), rbdms);
-        }
+      Boolean sessionInfoApplied = (Boolean) attributes.get(SESSION_CONFIG_APPLIED);
+      if (sessionInfoApplied == null || !sessionInfoApplied) {
         PreparedStatement pstmt = null;
         try {
           final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
@@ -73,7 +71,21 @@ public class ConnectionInitializerInterceptor extends JdbcInterceptor implements
             throw new OBException(e);
           }
         }
-        attributes.put(INITIALIZED, true);
+        attributes.put(SESSION_CONFIG_APPLIED, true);
+      }
+
+      Boolean sessionInfoInitialized = (Boolean) attributes.get(SESSION_INFO_APPLIED);
+      if (sessionInfoInitialized == null || !sessionInfoInitialized) {
+        boolean initialized = false;
+        if (isReadOnlyPool(parent)) {
+          initialized = true;
+        } else {
+          if (SessionInfo.isInitialized()) {
+            SessionInfo.initDB(con.getConnection(), rbdms);
+            initialized = true;
+          }
+        }
+        attributes.put(SESSION_INFO_APPLIED, initialized);
       }
     }
   }

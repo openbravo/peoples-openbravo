@@ -43,6 +43,7 @@ import org.openbravo.database.SessionInfo;
  * 
  * The DalRequestFilter is enabled by setting it in the web.xml file:
  * 
+ * {@literal
  * <filter> <filter-name>dalFilter</filter-name>
  * <filter-class>org.openbravo.dal.core.DalRequestFilter</filter-class> </filter>
  * 
@@ -51,6 +52,7 @@ import org.openbravo.database.SessionInfo;
  * <filter-name>dalFilter</filter-name> <url-pattern>/*</url-pattern>
  * 
  * </filter-mapping>
+ * }
  * 
  * Note the url-pattern can be defined more strictly if it is possible to identify the pages which
  * require a session/transaction.

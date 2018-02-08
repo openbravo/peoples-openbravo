@@ -161,17 +161,17 @@ public class OBBaseTest {
   private boolean errorOccured = false;
 
   /**
-   * Record ID of Client "F&B International Group"
+   * Record ID of Client "F&amp;B International Group"
    */
   protected static final String TEST_CLIENT_ID = "23C59575B9CF467C9620760EB255B389";
 
   /**
-   * Record ID of Organization "F&B España - Región Norte"
+   * Record ID of Organization "F&amp;B España - Región Norte"
    */
   protected static final String TEST_ORG_ID = "E443A31992CB4635AFCAEABE7183CE85";
 
   /**
-   * Record ID of Organization "F&B US West Coast"
+   * Record ID of Organization "F&amp;B US West Coast"
    */
   protected static final String TEST_US_ORG_ID = "BAE22373FEBE4CCCA24517E23F0C8A48";
 
@@ -181,12 +181,12 @@ public class OBBaseTest {
   protected static final String TEST_WAREHOUSE_ID = "B2D40D8A5D644DD89E329DC297309055";
 
   /**
-   * Record ID of User "F&BAdmin"
+   * Record ID of User "F&amp;BAdmin"
    */
   protected static final String TEST_USER_ID = "A530AAE22C864702B7E1C22D58E7B17B";
 
   /**
-   * Record ID of User "F&BESRNUser" - Any user with less privileges than {@link #TEST_USER_ID}
+   * Record ID of User "F&amp;BESRNUser" - Any user with less privileges than {@link #TEST_USER_ID}
    */
   protected static final String TEST2_USER_ID = "75449AFBAE7F46029F26C85C4CCF714B";
 
@@ -197,7 +197,7 @@ public class OBBaseTest {
   protected static List<User> userIds = null;
 
   /**
-   * Record ID of Role "F&B International Group Admin"
+   * Record ID of Role "F&amp;B International Group Admin"
    */
   protected static final String TEST_ROLE_ID = "42D0EEB1C66F497A90DD526DC597E6F0";
 

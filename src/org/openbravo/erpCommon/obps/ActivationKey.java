@@ -9,9 +9,9 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
- * The Original Code is Openbravo ERP. 
+ * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,7 +42,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -62,9 +61,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
@@ -114,8 +111,6 @@ public class ActivationKey {
   private Properties instanceProperties;
   private static final Logger log = Logger.getLogger(ActivationKey.class);
   private String strPublicKey;
-  private static boolean opsLog = false;
-  private static String opsLogId;
   private Long pendingTime;
   private boolean hasExpired = false;
   private boolean subscriptionConvertedProperty = false;
@@ -360,7 +355,6 @@ public class ActivationKey {
     if (strPublicKey == null || activationKey == null || strPublicKey.equals("")
         || activationKey.equals("")) {
       hasActivationKey = false;
-      setLogger();
       return;
     }
 
@@ -368,7 +362,6 @@ public class ActivationKey {
     if (pk == null) {
       hasActivationKey = true;
       errorMessage = "@NotAValidKey@";
-      setLogger();
       return;
     }
     hasActivationKey = true;
@@ -394,7 +387,6 @@ public class ActivationKey {
       } else {
         isActive = false;
         errorMessage = "@NotSigned@";
-        setLogger();
         return;
       }
 
@@ -409,14 +401,12 @@ public class ActivationKey {
         isActive = false;
         inconsistentInstance = true;
         errorMessage = "@IncorrectLicenseInstance@";
-        setLogger();
         return;
       }
     } catch (Exception e) {
       isActive = false;
       errorMessage = "@NotAValidKey@";
       log.error("Could not load activation key " + strPublicKey, e);
-      setLogger();
       return;
     }
 
@@ -514,7 +504,6 @@ public class ActivationKey {
       errorMessage = "@ErrorReadingDates@";
       isActive = false;
       log.error(e.getMessage(), e);
-      setLogger();
       return;
     }
 
@@ -625,7 +614,6 @@ public class ActivationKey {
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
       errorMessage = "@OPSNotActiveTill@ " + outputFormat.format(startDate);
       messageType = "Warning";
-      setLogger();
       return;
     }
     if (endDate != null) {
@@ -641,14 +629,11 @@ public class ActivationKey {
               .getProperty("dateFormat.java");
           SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
           errorMessage = "@OPSActivationExpired@ " + outputFormat.format(endDate);
-          setLogger();
           return;
         }
       }
     }
     isActive = true;
-
-    setLogger();
   }
 
   private boolean decrypt(byte[] bytes, PublicKey pk, ByteArrayOutputStream bos,
@@ -686,7 +671,6 @@ public class ActivationKey {
     if (!signed) {
       isActive = false;
       errorMessage = "@NotSigned@";
-      setLogger();
       return false;
     }
     return true;
@@ -762,46 +746,7 @@ public class ActivationKey {
     return licenseClass == null ? LicenseClass.COMMUNITY : licenseClass;
   }
 
-  @SuppressWarnings({ "static-access", "unchecked" })
-  private void setLogger() {
-    if (isActive() && !opsLog) {
-      // add instance id to logger
-      Enumeration<Appender> appenders = log.getRootLogger().getAllAppenders();
-      while (appenders.hasMoreElements()) {
-        Appender appender = appenders.nextElement();
-        if (appender.getLayout() instanceof PatternLayout) {
-          PatternLayout l = (PatternLayout) appender.getLayout();
-          opsLogId = getOpsLogId() + " ";
-          String conversionPattern = l.getConversionPattern();
-
-          // do not set checksum in case it is already set
-          if (conversionPattern == null || !conversionPattern.startsWith(opsLogId)) {
-            l.setConversionPattern(opsLogId + conversionPattern);
-          }
-        }
-      }
-      opsLog = true;
-    }
-
-    if (!isActive() && opsLog) {
-
-      // remove instance id from logger
-      Enumeration<Appender> appenders = log.getRootLogger().getAllAppenders();
-      while (appenders.hasMoreElements()) {
-        Appender appender = appenders.nextElement();
-        if (appender.getLayout() instanceof PatternLayout) {
-          PatternLayout l = (PatternLayout) appender.getLayout();
-          String pattern = l.getConversionPattern();
-          if (pattern.startsWith(opsLogId)) {
-            l.setConversionPattern(l.getConversionPattern().substring(opsLogId.length()));
-          }
-        }
-      }
-      opsLog = false;
-    }
-
-  }
-
+  /** Returns a CRC hash of the public key */
   public String getOpsLogId() {
     CRC32 crc = new CRC32();
     crc.update(getPublicKey().getBytes());
@@ -840,7 +785,7 @@ public class ActivationKey {
    * class is instantiated.
    */
   public static boolean isActiveInstance() {
-    return opsLog;
+    return getInstance().isActive();
   }
 
   /**
@@ -1406,7 +1351,7 @@ public class ActivationKey {
   /**
    * Obtains a list for modules ID the instance is subscribed to and their statuses
    * 
-   * @return HashMap<String, CommercialModuleStatus> containing the subscribed modules
+   * @return HashMap&lt;String, CommercialModuleStatus&gt; containing the subscribed modules
    */
   public HashMap<String, CommercialModuleStatus> getSubscribedModules() {
     return getSubscribedModules(true);

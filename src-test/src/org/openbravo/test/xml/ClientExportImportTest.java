@@ -101,7 +101,7 @@ public class ClientExportImportTest extends XMLBaseTest {
   // }
 
   /**
-   * Exports the "F&B International Group" client and then imports as a new client. Has as side
+   * Exports the "F&amp;B International Group" client and then imports as a new client. Has as side
    * effect that a completely new client is added in the database.
    * 
    * Also tests mantis 8509: https://issues.openbravo.com/view.php?id=8509

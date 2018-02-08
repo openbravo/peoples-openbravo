@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -130,8 +130,9 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
         parameters.add(order.getOrderDate());
         parameters.add(order.getOrganization().getId());
         parameters.add(order.getWarehouse().getId());
-        parameters.add(order.getPartnerAddress().getId());
         parameters.add(order.getInvoiceAddress().getId());
+        parameters.add(order.getPartnerAddress().getId());
+
         if (order.getProject() != null) {
           parameters.add(order.getProject().getId());
         } else {
