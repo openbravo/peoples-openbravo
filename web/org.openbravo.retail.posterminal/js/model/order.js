@@ -6063,6 +6063,16 @@
       }
     },
     loadCurrent: function (isNew) {
+      // Check if the current order to be loaded should be deleted
+      if (this.current.get('obposIsDeleted') && this.current.get('id')) {
+        var deletedOrderDocNo = this.current.get('documentNo');
+        this.current.set('ignoreCheckIfIsActiveOrder', true); // Ignore this receipt is not loaded in the UI
+        this.current.deleteOrder(this.current, function () {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OrderMarkedToBeDeleted', [deletedOrderDocNo]));
+        });
+        return;
+      }
+
       if (this.current) {
         if (isNew) {
           //set values of new attrs in current,
