@@ -130,7 +130,27 @@
     <welcome-file>index.jsp</welcome-file>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
-  
+
+  <FIELDS_TMP id="errorExceptionPage">
+  <error-page>
+    <exception-type><FIELD_TMP id="exceptionType">exception</FIELD_TMP></exception-type>
+    <location><FIELD_TMP id="errorPageLocation">location</FIELD_TMP></location>
+  </error-page>
+  </FIELDS_TMP>  
+
+  <FIELDS_TMP id="errorCodePage">
+  <error-page>
+    <error-code><FIELD_TMP id="errorCode">code</FIELD_TMP></error-code>
+    <location><FIELD_TMP id="errorPageLocation">location</FIELD_TMP></location>
+  </error-page>
+  </FIELDS_TMP>  
+
+  <FIELDS_TMP id="genericErrorPage">
+  <error-page>
+    <location><FIELD_TMP id="errorPageLocation">location</FIELD_TMP></location>
+  </error-page>
+  </FIELDS_TMP>
+
   <session-config>
     <session-timeout id="fieldSessionTimeOut">60</session-timeout>
   </session-config>

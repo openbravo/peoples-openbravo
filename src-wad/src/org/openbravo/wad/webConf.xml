@@ -91,4 +91,21 @@
     <FIELD id="fieldClassName2">classname</FIELD>
     <SECTION id="sectionDetail2" />
   </structure>
+
+  <structure name="structureErrorExceptionPage">
+    <FIELD id="errorPageLocation">classname</FIELD>
+    <FIELD id="exceptionType">code</FIELD>
+    <SECTION id="errorExceptionPage"/>
+  </structure>
+
+  <structure name="structureErrorCodePage">
+    <FIELD id="errorPageLocation">classname</FIELD>
+    <FIELD id="errorCode">code</FIELD>
+    <SECTION id="errorCodePage"/>
+  </structure>
+
+  <structure name="structureGenericErrorPage">
+    <FIELD id="errorPageLocation">classname</FIELD>
+    <SECTION id="genericErrorPage"/>
+  </structure>
 </REPORT>
