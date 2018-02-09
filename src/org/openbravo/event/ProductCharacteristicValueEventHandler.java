@@ -18,6 +18,7 @@
  */
 package org.openbravo.event;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,6 +43,7 @@ import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.service.importprocess.ImportEntryManager;
 
 public class ProductCharacteristicValueEventHandler extends EntityPersistenceEventObserver {
+  private static final int IMPORT_ENTRY_SIZE = 3;
   protected Logger logger = Logger.getLogger(this.getClass());
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       ProductCharacteristicValue.ENTITY_NAME) };
@@ -89,17 +91,24 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
     if (productList == null || productList.isEmpty() || event.getTransaction().wasRolledBack()) {
       return;
     }
-    JSONObject entryJson = new JSONObject();
-    try {
-      JSONArray productIds = new JSONArray(productList);
-      entryJson.put("productIds", productIds);
-    } catch (JSONException ignore) {
+    ArrayList<String> products = new ArrayList<String>(productList);
+    int productCount = productList.size();
+    for (int i = 0; i < productCount; i += IMPORT_ENTRY_SIZE) {
+      int currentLimit = (i + IMPORT_ENTRY_SIZE) < productCount ? (i + IMPORT_ENTRY_SIZE)
+          : productCount;
+      Set<String> productSubList = new HashSet<String>(products.subList(i, currentLimit));
+      JSONObject entryJson = new JSONObject();
+      try {
+        JSONArray productIds = new JSONArray(productSubList);
+        entryJson.put("productIds", productIds);
+      } catch (JSONException ignore) {
+      }
+      if (!SessionHandler.getInstance().isCurrentTransactionActive()) {
+        SessionHandler.getInstance().beginNewTransaction();
+      }
+      importEntryManager.createImportEntry(SequenceIdData.getUUID(), "VariantChDescUpdate",
+          entryJson.toString(), true);
     }
-    if (!SessionHandler.getInstance().isCurrentTransactionActive()) {
-      SessionHandler.getInstance().beginNewTransaction();
-    }
-    importEntryManager.createImportEntry(SequenceIdData.getUUID(), "VariantChDescUpdate",
-        entryJson.toString(), true);
   }
 
   private void addProductToList(ProductCharacteristicValue pchv) {

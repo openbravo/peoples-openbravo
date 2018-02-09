@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -66,6 +66,8 @@ public class VariantChDescUpdateProcessor extends ImportEntryProcessor {
               .getInstanceFromStaticBeanManager(VariantChDescUpdateProcess.class);
           try {
             process.update(productIds.getString(i), null);
+            OBDal.getInstance().flush();
+            OBDal.getInstance().getSession().clear();
           } catch (Exception e) {
             log.error("Error updating product ch description", e);
           }

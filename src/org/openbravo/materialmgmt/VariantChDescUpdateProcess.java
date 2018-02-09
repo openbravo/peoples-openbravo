@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -156,8 +156,6 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
     pchQuery.setFilterOnReadableOrganization(false);
     pchQuery.setNamedParameter("product", product);
     for (ProductCharacteristic pch : pchQuery.list()) {
-      // Reload pch to avoid errors after session clear.
-      OBDal.getInstance().refresh(pch);
       if (StringUtils.isNotBlank(strChDesc)) {
         strChDesc += ", ";
       }
@@ -174,12 +172,9 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
       pchvQuery.setNamedParameter("ch", pch.getCharacteristic().getId());
       pchvQuery.setNamedParameter("product", product.getId());
       for (ProductCharacteristicValue pchv : pchvQuery.list()) {
-        // Reload pchv to avoid errors after session clear.
-        OBDal.getInstance().refresh(pchv);
         strChDesc += " " + pchv.getCharacteristicValue().getName();
       }
     }
     product.setCharacteristicDescription(strChDesc);
-    OBDal.getInstance().save(product);
   }
 }
