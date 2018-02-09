@@ -52,6 +52,7 @@ import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
+import org.openbravo.service.json.JsonUtils;
 
 /**
  * 
@@ -213,7 +214,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
         tax = shipmentLine.getSalesOrderLine().getTax();
       } else {
         String taxId = "";
-        if (selectedLine.get("tax").equals(null) || selectedLine.get("tax").equals("")) {
+        if (JsonUtils.isValueEmpty(selectedLine.get("tax").toString())) {
           List<Object> parameters = new ArrayList<Object>();
 
           parameters.add(product.getId());
@@ -228,7 +229,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
           } else {
             parameters.add(null);
           }
-          parameters.add("Y");
+          parameters.add(order.isSalesTransaction() ? "Y" : "N");
 
           taxId = (String) CallStoredProcedure.getInstance().call("C_Gettax", parameters, null);
           if (taxId == null || "".equals(taxId)) {
