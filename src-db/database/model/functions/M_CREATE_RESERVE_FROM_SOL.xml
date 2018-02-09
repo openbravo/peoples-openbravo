@@ -42,6 +42,7 @@
   v_reservation_id    VARCHAR2(32) := get_uuid();
   v_attributesetinstance_id VARCHAR2(32);
   v_res_stock_id      VARCHAR2(32);
+  v_storage_detail_dummy_id VARCHAR2(32) := NULL;
   
   TYPE RECORD IS REF CURSOR;
   cur_shipments       RECORD;
@@ -74,15 +75,15 @@ BEGIN
     v_reservation_id, v_client_id, v_org_id, 'Y',
     now(), p_user_id, now(), p_user_id,
     p_orderline_id,
-    v_product_id, v_uom_id, v_qtyordered, 0, v_qtydelivered,
+    v_product_id, v_uom_id, v_qtyordered, 0, 0,
     'DR', 'CO', v_attributesetinstance_id
   );
   
   FOR cur_shipments IN (
-      SELECT sd.m_storage_detail_id, iol.movementqty
+      SELECT sd.m_storage_detail_id, iol.movementqty,iol.m_locator_id
       FROM m_inoutline iol
         JOIN m_inout io ON iol.m_inout_id = io.m_inout_id
-        JOIN m_storage_detail sd ON sd.m_product_id = iol.m_product_id
+        LEFT JOIN m_storage_detail sd ON sd.m_product_id = iol.m_product_id
                                     AND sd.c_uom_id = iol.c_uom_id
                                     AND sd.m_product_uom_id IS NULL
                                     AND sd.m_locator_id = iol.m_locator_id
@@ -90,7 +91,31 @@ BEGIN
       WHERE iol.c_orderline_id = p_orderline_id
         AND io.docstatus = 'CO'
   ) LOOP
-    M_RESERVE_STOCK_MANUAL(v_reservation_id, 'SD', cur_shipments.m_storage_detail_id, cur_shipments.movementqty, p_user_id, 'N', v_res_stock_id);
+    IF cur_shipments.m_storage_detail_id IS NULL THEN
+    -- If there is no Storage Detail, because the shipment has removed all the stock from the system, 
+    -- create a Storage Detail with 0 Stock before calling M_Reserve_Stock_Manual, then delete it
+      v_storage_detail_dummy_id := get_uuid();
+      INSERT INTO M_Storage_Detail
+        (
+          M_STORAGE_DETAIL_ID, M_PRODUCT_ID, M_LOCATOR_ID, M_ATTRIBUTESETINSTANCE_ID,
+          C_UOM_ID, M_PRODUCT_UOM_ID, AD_CLIENT_ID, AD_ORG_ID,
+          ISACTIVE, CREATED, CREATEDBY, UPDATED,
+          UPDATEDBY, QTYONHAND, QTYORDERONHAND, PREQTYONHAND,
+          PREQTYORDERONHAND, DATELASTINVENTORY
+        )
+        VALUES
+        (
+          v_storage_detail_dummy_id, v_product_id, cur_shipments.M_Locator_ID, COALESCE(v_attributesetinstance_id, '0'),
+          v_uom_id, NULL, v_client_id, v_org_id,
+          'Y', now(), p_user_id, now(),
+           p_user_id, 0, NULL, 0,
+           NULL, NULL
+        );
+      M_RESERVE_STOCK_MANUAL(v_reservation_id, 'SD', v_storage_detail_dummy_id, cur_shipments.movementqty, p_user_id, 'N', v_res_stock_id);
+      DELETE FROM m_storage_detail WHERE m_storage_detail_id = v_storage_detail_dummy_id;
+    ELSE 
+      M_RESERVE_STOCK_MANUAL(v_reservation_id, 'SD', cur_shipments.m_storage_detail_id, cur_shipments.movementqty, p_user_id, 'N', v_res_stock_id);
+    END IF;
     UPDATE m_reservation_stock
     SET releasedqty = COALESCE(releasedqty, 0) + cur_shipments.movementqty
     WHERE m_reservation_stock_id = v_res_stock_id;
