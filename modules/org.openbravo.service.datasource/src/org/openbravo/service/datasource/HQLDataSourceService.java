@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -240,15 +240,20 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
    * @return the table whose data is being fetched
    */
   private Table getTableFromParameters(Map<String, String> parameters) {
-    String tableId = parameters.get("tableId");
-    String tabId = parameters.get("tabId");
     Table table = null;
-    if (tableId != null) {
-      table = OBDal.getInstance().get(Table.class, tableId);
-    } else if (tabId != null) {
-      Tab tab = null;
-      tab = OBDal.getInstance().get(Tab.class, tabId);
-      table = tab.getTable();
+    try {
+      // OBContext.setAdminMode(true);
+      String tableId = parameters.get("tableId");
+      String tabId = parameters.get("tabId");
+      if (tableId != null) {
+        table = OBDal.getInstance().get(Table.class, tableId);
+      } else if (tabId != null) {
+        Tab tab = null;
+        tab = OBDal.getInstance().get(Tab.class, tabId);
+        table = tab.getTable();
+      }
+    } finally {
+      // OBContext.restorePreviousMode();
     }
     return table;
   }
