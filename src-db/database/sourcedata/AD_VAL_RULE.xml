@@ -311,18 +311,17 @@ AND EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Ord
 <!--135-->  <NAME><![CDATA[C_BPartner w SO to invoice]]></NAME>
 <!--135-->  <DESCRIPTION><![CDATA[BPartners with invoices to be invoiced]]></DESCRIPTION>
 <!--135-->  <TYPE><![CDATA[S]]></TYPE>
-<!--135-->  <CODE><![CDATA[C_BPartner_ID IN (
-SELECT DISTINCT C_BPartner_ID
-FROM c_order
-WHERE IsSOTrx='Y'
-AND DocStatus NOT IN ('DR','IP') 
-AND ((InvoiceRule = 'O'
-AND NOT EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Order_ID AND QtyOrdered <> QtyDelivered)
-AND EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Order_ID AND QtyOrdered <> QtyInvoiced))
-OR (InvoiceRule IN ('D', 'S')
-AND EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Order_ID AND QtyOrdered <> QtyInvoiced AND QtyDelivered <> QtyInvoiced))
-OR (InvoiceRule = 'I'
-AND EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Order_ID AND QtyOrdered <> QtyInvoiced))))]]></CODE>
+<!--135-->  <CODE><![CDATA[EXISTS (
+SELECT 1 
+FROM c_order o
+JOIN c_orderline ol ON (o.c_order_id = ol.c_order_id)
+WHERE  o.issotrx = 'Y' 
+AND o.c_bpartner_id = td0.c_bpartner_id
+AND o.docstatus NOT IN ( 'DR', 'IP', 'CL' ) 
+AND obequals(ol.qtyordered, ol.qtyinvoiced) = 'N'
+AND ( ( o.invoicerule = 'O' AND obequals(ol.qtyordered, ol.qtydelivered) = 'Y') 
+OR ( o.invoicerule IN ( 'D', 'S' ) AND obequals(ol.qtydelivered, ol.qtyinvoiced) = 'N' ) 
+OR ( o.invoicerule = 'I') ))]]></CODE>
 <!--135-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--135--></AD_VAL_RULE>
 
