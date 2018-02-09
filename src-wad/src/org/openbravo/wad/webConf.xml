@@ -12,7 +12,7 @@
     * under the License. 
     * The Original Code is Openbravo ERP. 
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+    * All portions are Copyright (C) 2001-2018 Openbravo SLU 
     * All Rights Reserved. 
     * Contributor(s):    ______________________________________.
     ************************************************************************
@@ -93,19 +93,19 @@
   </structure>
 
   <structure name="structureErrorExceptionPage">
-    <FIELD id="errorPageLocation">classname</FIELD>
-    <FIELD id="exceptionType">code</FIELD>
+    <FIELD id="exceptionPageLocation">location</FIELD>
+    <FIELD id="exceptionType">exceptiontype</FIELD>
     <SECTION id="errorExceptionPage"/>
   </structure>
 
   <structure name="structureErrorCodePage">
-    <FIELD id="errorPageLocation">classname</FIELD>
-    <FIELD id="errorCode">code</FIELD>
+    <FIELD id="errorCodePageLocation">location</FIELD>
+    <FIELD id="errorCode">errorcode</FIELD>
     <SECTION id="errorCodePage"/>
   </structure>
 
   <structure name="structureGenericErrorPage">
-    <FIELD id="errorPageLocation">classname</FIELD>
+    <FIELD id="genericPageLocation">location</FIELD>
     <SECTION id="genericErrorPage"/>
   </structure>
 </REPORT>
