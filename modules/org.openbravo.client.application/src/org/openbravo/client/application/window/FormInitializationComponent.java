@@ -134,8 +134,6 @@ public class FormInitializationComponent extends BaseActionHandler {
       tabId = readParameter(parameters, "TAB_ID");
       // The ID of the record. Only relevant on EDIT, CHANGE and SETSESSION modes
       rowId = readParameter(parameters, "ROW_ID");
-      // The IDs of the selected records in case more than one
-      List<String> multipleRowIds = null;
       // The column changed by the user. Only relevant on CHANGE mode
       String changedColumn = readParameter(parameters, "CHANGED_COLUMN");
       Tab tab = getTab(tabId);
@@ -184,9 +182,6 @@ public class FormInitializationComponent extends BaseActionHandler {
       List<String> gridVisibleProperties = new ArrayList<String>();
       if (jsContent.has("_gridVisibleProperties")) {
         gridVisibleProperties = convertJSONArray(jsContent.getJSONArray("_gridVisibleProperties"));
-      }
-      if (jsContent.has("MULTIPLE_ROW_IDS")) {
-        multipleRowIds = convertJSONArray(jsContent.getJSONArray("MULTIPLE_ROW_IDS"));
       }
 
       List<String> overwrittenAuxiliaryInputs = new ArrayList<String>();
@@ -299,8 +294,9 @@ public class FormInitializationComponent extends BaseActionHandler {
       long t7 = System.currentTimeMillis();
       List<JSONObject> attachments = new ArrayList<JSONObject>();
       int attachmentCount = 0;
-      if (multipleRowIds != null) {
-        attachmentCount = computeAttachmentCount(tab, multipleRowIds, true);
+      if (jsContent.has("MULTIPLE_ROW_IDS")) {
+        attachmentCount = computeAttachmentCount(tab,
+            convertJSONArray(jsContent.getJSONArray("MULTIPLE_ROW_IDS")), true);
       } else {
         attachmentCount = computeAttachmentCount(tab, Arrays.asList(rowId), false);
       }
@@ -428,15 +424,15 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   private List<String> convertJSONArray(JSONArray jsonArray) {
-    List<String> visibleProperties = new ArrayList<String>();
+    List<String> elements = new ArrayList<String>(jsonArray.length());
     for (int i = 0; i < jsonArray.length(); i++) {
       try {
-        visibleProperties.add(jsonArray.getString(i));
+        elements.add(jsonArray.getString(i));
       } catch (JSONException e) {
         throw new OBException("Error while reading the visible properties JSON array");
       }
     }
-    return visibleProperties;
+    return elements;
   }
 
   private JSONObject buildJSONObject(String mode, Tab tab, Map<String, JSONObject> columnValues,
