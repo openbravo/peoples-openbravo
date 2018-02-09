@@ -242,7 +242,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   private Table getTableFromParameters(Map<String, String> parameters) {
     Table table = null;
     try {
-      // OBContext.setAdminMode(true);
+      OBContext.setAdminMode(true);
       String tableId = parameters.get("tableId");
       String tabId = parameters.get("tabId");
       if (tableId != null) {
@@ -253,7 +253,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         table = tab.getTable();
       }
     } finally {
-      // OBContext.restorePreviousMode();
+      OBContext.restorePreviousMode();
     }
     return table;
   }
