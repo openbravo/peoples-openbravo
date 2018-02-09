@@ -18,17 +18,28 @@
  ************************************************************************
 -->
 
-
-
 <SqlClass name="WadData" package="org.openbravo.wad">
+  <SqlMethod name="dummy" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Dummy method used to set up all WadData fields</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      select 
+        '' as id, '' as name, '' as classname, '' as displayname,
+        '' as loadonstartup, '' as value, '' as line, '' as auth,
+        '' as buildxml, '' as tabId, '' as windowName, '' as tabName,
+        '' as windowPackage, '' as windowmodule, '' as tabPackage,
+        '' as tabmodule, '' as key, '' as tablevel, '' as location,
+        '' as exceptiontype, '' as errorcode
+      from dual
+      ]]>      
+    </Sql>
+  </SqlMethod>
+
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT AD_MODEL_OBJECT_ID as ID, (COALESCE(ACTION, '') || AD_MODEL_OBJECT_ID) AS NAME, o.CLASSNAME, o.CLASSNAME AS DISPLAYNAME, 
-      LOADONSTARTUP, '' AS VALUE, '' AS LINE, '' AS AUTH, '' as buildxml, 
-         '' as tabId, '' as windowName, '' as tabName, '' as windowPackage, '' as windowmodule, '' as tabPackage, '' as tabmodule,
-         '' as key, '' as tablevel, '' as location, '' as exceptiontype, '' as errorcode
+      SELECT AD_MODEL_OBJECT_ID as ID, (COALESCE(ACTION, '') || AD_MODEL_OBJECT_ID) AS NAME, o.CLASSNAME, o.CLASSNAME AS DISPLAYNAME, LOADONSTARTUP
       FROM AD_MODEL_OBJECT o LEFT JOIN ad_process p ON o.ad_process_id = p.ad_process_id AND p.isReport='N'
       WHERE o.ISACTIVE = 'Y'
       AND OBJECT_TYPE = 'S'
@@ -246,7 +257,8 @@
 
   <SqlMethod name="selectGenericErrorPages" type="preparedStatement" return="multiple">
     <SqlMethodComment>Select the active generic Error pages (with no code or exception parameters)</SqlMethodComment>
-    <Sql><![CDATA[
+    <Sql>
+      <![CDATA[
       select p.value as location
       from  ad_model_object_para p, 
             ad_model_object o
@@ -260,12 +272,14 @@
          and op.name IN ('exception-type', 'error-code')
          and op.ad_model_object_id = o.ad_model_object_id
       )
-    ]]></Sql>
+    ]]>
+    </Sql>
   </SqlMethod>
 
   <SqlMethod name="selectExceptionErrorPages" type="preparedStatement" return="multiple">
     <SqlMethodComment>Select the active exception Error pages</SqlMethodComment>
-    <Sql><![CDATA[
+    <Sql>
+      <![CDATA[
       select p.value as exceptiontype, 
         (select value
          from ad_model_object_para lp 
@@ -279,12 +293,14 @@
       and p.isactive = 'Y'
       and p.ad_model_object_id = o.ad_model_object_id
       and p.name IN ('exception-type')
-    ]]></Sql>
+      ]]> 
+    </Sql>
   </SqlMethod>
 
   <SqlMethod name="selectErrorCodePages" type="preparedStatement" return="multiple">
     <SqlMethodComment>Select the active Error code pages</SqlMethodComment>
-    <Sql><![CDATA[
+    <Sql>
+      <![CDATA[
       select p.value as errorcode, 
         (select value
          from ad_model_object_para lp 
@@ -298,6 +314,7 @@
       and p.isactive = 'Y'
       and p.ad_model_object_id = o.ad_model_object_id
       and p.name IN ('error-code')
-    ]]></Sql>
+      ]]>
+    </Sql>
   </SqlMethod>
 </SqlClass>
