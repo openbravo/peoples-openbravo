@@ -1215,7 +1215,7 @@ enyo.kind({
           return false;
         }
         if (!payment.get('isReversePayment') && !payment.get('isReversed') && !payment.get('isPrePayment')) {
-          totalPaid = OB.DEC.add(totalPaid, payment.get('amount'));
+          totalPaid = OB.DEC.add(totalPaid, payment.get('origAmount'));
           if (totalPaid >= totalToPaid) {
             me.alreadyPaid = true;
           }
