@@ -7393,7 +7393,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800025-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--800025-->  <HASTREE><![CDATA[N]]></HASTREE>
 <!--800025-->  <WHERECLAUSE><![CDATA[C_Settlement.settlementtype<>'I']]></WHERECLAUSE>
-<!--800025-->  <AD_PROCESS_ID><![CDATA[800070]]></AD_PROCESS_ID>
 <!--800025-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800025-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800025-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
