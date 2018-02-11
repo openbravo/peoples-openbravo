@@ -7459,7 +7459,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800027-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--800027-->  <HASTREE><![CDATA[N]]></HASTREE>
 <!--800027-->  <WHERECLAUSE><![CDATA[C_Debt_Payment_Generate.ismanual='N']]></WHERECLAUSE>
-<!--800027-->  <AD_PROCESS_ID><![CDATA[800101]]></AD_PROCESS_ID>
 <!--800027-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800027-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800027-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
@@ -7492,7 +7491,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800028-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--800028-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--800028-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--800028-->  <AD_PROCESS_ID><![CDATA[800101]]></AD_PROCESS_ID>
 <!--800028-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800028-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800028-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
@@ -7712,7 +7710,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800036-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--800036-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--800036-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--800036-->  <AD_PROCESS_ID><![CDATA[800101]]></AD_PROCESS_ID>
 <!--800036-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800036-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800036-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
