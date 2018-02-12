@@ -173,7 +173,7 @@ public class ReferencedInventoryUtil {
     return qty.compareTo(BigDecimal.ZERO) > 0;
   }
 
-  static ScrollableResults getAvailableStockReservations(final StorageDetail storageDetail,
+  public static ScrollableResults getAvailableStockReservations(final StorageDetail storageDetail,
       final Locator newStorageBin) {
     final String olHql = "select sr, sr.quantity - sr.released " + //
         "from MaterialMgmtReservationStock sr " + //
