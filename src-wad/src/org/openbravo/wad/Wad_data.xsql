@@ -281,7 +281,7 @@
     <Sql>
       <![CDATA[
       select p.value as exceptiontype, 
-        (select value
+        (select max(value)
          from ad_model_object_para lp 
          where lp.ad_model_object_id = o.ad_model_object_id
          and lp.isactive = 'Y'
@@ -302,7 +302,7 @@
     <Sql>
       <![CDATA[
       select p.value as errorcode, 
-        (select value
+        (select max(value)
          from ad_model_object_para lp 
          where lp.ad_model_object_id = o.ad_model_object_id
          and lp.isactive = 'Y'
