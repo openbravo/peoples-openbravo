@@ -65,6 +65,9 @@ enyo.kind({
           symbolAtRight: true
         });
       }
+      if (inEvent.value.status === '' && !inEvent.value.keyboard.hasActivePayment) {
+        this.$.exactbutton.hide();
+      }
       isMultiOrders = this.model.isValidMultiOrderState();
       change = this.model.getChange();
       pending = this.model.getPending();
