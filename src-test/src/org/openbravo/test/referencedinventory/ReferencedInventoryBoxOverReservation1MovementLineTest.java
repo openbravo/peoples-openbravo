@@ -27,37 +27,30 @@ import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
 import org.openbravo.dal.service.OBDal;
 
-public class ReferencedInventoryPartialUnboxPartialReservation extends
-    ReferencedInventoryUnboxReservationTest {
+/**
+ * Box storage details that are over reserved (allocated and non-allocated reservation). The box
+ * movement will only have 1 line.
+ */
+public class ReferencedInventoryBoxOverReservation1MovementLineTest extends
+    ReferencedInventoryBoxTest {
 
   @Rule
-  public ParameterCdiTestRule<ParamsUnboxReservationTest> parameterValuesRule = new ParameterCdiTestRule<ParamsUnboxReservationTest>(
-      Arrays
-          .asList(new ParamsUnboxReservationTest[] {
-              new ParamsUnboxReservationTest(
-                  "Unbox more quantity than reserved one. Part of the reservation is still in box",
-                  "10", "7", "4"),
-              new ParamsUnboxReservationTest(
-                  "Unbox less quantity than reserved one. Part of the reservation is still in box",
-                  "10", "3", "8"),
-              new ParamsUnboxReservationTest(
-                  "Unbox less quantity than reserved one. Reservation is fully in box", "10", "3",
-                  "1"),
-              new ParamsUnboxReservationTest(
-                  "Unbox less quantity than reserved one. Reservation is fully in box", "10", "1",
-                  "9"), }));
+  public ParameterCdiTestRule<ParamsBoxReservationTest> parameterValuesRule = new ParameterCdiTestRule<ParamsBoxReservationTest>(
+      Arrays.asList(new ParamsBoxReservationTest[] {
+          new ParamsBoxReservationTest("Box 3 units where 5 where reserved (over reservation)",
+              "3", "5"),
+          new ParamsBoxReservationTest("Box 4 units where 10 where reserved (over reservation)",
+              "4", "10") }));
 
-  protected @ParameterCdiTest ParamsUnboxReservationTest params;
+  private @ParameterCdiTest ParamsBoxReservationTest params;
 
   @Test
   public void allTests() throws Exception {
     for (boolean isAllocated : ISALLOCATED) {
       for (String[] product : PRODUCTS) {
         for (String toBinId : BINS) {
-          final TestUnboxOutputParams outParams = testUnboxReservation(toBinId, product[0],
-              product[1], params.qtyToBox, params.qtyToUnbox, params.reservationQty, isAllocated);
-          assertsReferenceInventoryIsNotEmpty(outParams.refInv,
-              params.qtyToBox.subtract(params.qtyToUnbox));
+          testBox(toBinId, product[0], product[1], params.qtyToBox, params.reservationQty,
+              isAllocated);
           OBDal.getInstance().getSession().clear();
         }
       }

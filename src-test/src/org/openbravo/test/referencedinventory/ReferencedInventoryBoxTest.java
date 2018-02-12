@@ -22,7 +22,6 @@ package org.openbravo.test.referencedinventory;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
@@ -40,7 +39,6 @@ import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
-import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
 import org.openbravo.model.materialmgmt.onhandquantity.ReservationStock;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.InternalMovement;
@@ -93,9 +91,8 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
     final String originalStorageBinId = storageDetail.getStorageBin().getId();
     final String originalAttributeId = storageDetail.getAttributeSetValue().getId();
 
-    final Reservation originalReservation = ReferencedInventoryTestUtils
-        .createProcessAndAssertReservation(storageDetail, reservationQty, isAllocated, isForceBin,
-            isForceAttribute);
+    ReferencedInventoryTestUtils.createProcessAndAssertReservation(storageDetail, reservationQty,
+        isAllocated, isForceBin, isForceAttribute);
 
     final String toBinId = StringUtils.isBlank(_toBinId) ? storageDetail.getStorageBin().getId()
         : _toBinId;
@@ -120,7 +117,6 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
     assertsStorageDetails(toBinId, qtyInBox, product, originalStorageBinId, originalAttributeId);
 
     if (reservationQty != null) {
-      assertsOriginalReservationIfAvailable(originalReservation);
       if (hasBoxedSomethingPreviouslyReserved(qtyInBox, reservationQty, storageDetail)) {
         assertsNewReservationAllocatedFlag(reservationQty, isAllocated, refInv);
       }
@@ -187,22 +183,6 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
         assertThat("Second storage detail is in old bin", originalStorageBinId, equalTo(sd
             .getStorageBin().getId()));
       }
-    }
-  }
-
-  void assertsOriginalReservationIfAvailable(final Reservation originalReservation) {
-    OBDal.getInstance().refresh(originalReservation);
-    assertThat("Released qty can't be greater than reservation qty",
-        originalReservation.getReleased(), lessThanOrEqualTo(originalReservation.getQuantity()));
-    assertThat("Released qty can't be greater than reserved qty",
-        originalReservation.getReleased(), lessThanOrEqualTo(originalReservation.getReservedQty()));
-
-    if (originalReservation.getQuantity().compareTo(originalReservation.getReleased()) == 0) {
-      assertThat("Original reservation should be closed", originalReservation.getRESStatus(),
-          equalTo("CL"));
-    } else {
-      assertThat("Original reservation should be completed", originalReservation.getRESStatus(),
-          equalTo("CO"));
     }
   }
 

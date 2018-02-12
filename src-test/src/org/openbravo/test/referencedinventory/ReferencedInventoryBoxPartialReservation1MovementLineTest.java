@@ -19,9 +19,6 @@
 
 package org.openbravo.test.referencedinventory;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import java.util.Arrays;
 
 import org.junit.Rule;
@@ -29,41 +26,31 @@ import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 
 /**
- * Full unbox of a partial reservation. Storage detail should be reserved and out of the box. Box
- * and Unbox movements will have 2 lines
+ * Box a storage detail which had some units (not 100%) previously reserved. The box movement will
+ * only have 1 line.
  */
-public class ReferencedInventoryFullUnboxPartialReservation extends
-    ReferencedInventoryUnboxReservationTest {
-  @Rule
-  public ParameterCdiTestRule<ParamsUnboxReservationTest> parameterValuesRule2 = new ParameterCdiTestRule<ParamsUnboxReservationTest>(
-      Arrays
-          .asList(new ParamsUnboxReservationTest[] { new ParamsUnboxReservationTest(
-              "Full unbox of a partial reservation. Storage detail should be reserved and out of the box",
-              "10", "10", "4") }));
+public class ReferencedInventoryBoxPartialReservation1MovementLineTest extends
+    ReferencedInventoryBoxTest {
 
-  protected @ParameterCdiTest ParamsUnboxReservationTest params;
+  @Rule
+  public ParameterCdiTestRule<ParamsBoxReservationTest> parameterValuesRule = new ParameterCdiTestRule<ParamsBoxReservationTest>(
+      Arrays.asList(new ParamsBoxReservationTest[] { new ParamsBoxReservationTest(
+          "Box 4 units where 3 were previously reserved", "4", "3") }));
+
+  private @ParameterCdiTest ParamsBoxReservationTest params;
 
   @Test
   public void allTests() throws Exception {
     for (boolean isAllocated : ISALLOCATED) {
       for (String[] product : PRODUCTS) {
         for (String toBinId : BINS) {
-          final TestUnboxOutputParams outParams = testUnboxReservation(toBinId, product[0],
-              product[1], params.qtyToBox, params.qtyToUnbox, params.reservationQty, isAllocated);
-          assertsReferenceInventoryIsEmpty(outParams.refInv);
+          testBox(toBinId, product[0], product[1], params.qtyToBox, params.reservationQty,
+              isAllocated);
           OBDal.getInstance().getSession().clear();
         }
       }
     }
-  }
-
-  @Override
-  void assertsGoodsMovementNumberOfLines(final InternalMovement boxMovement,
-      final int expectedNumberOfLines) {
-    assertThat("Box and Unbox Movement has two lines", boxMovement
-        .getMaterialMgmtInternalMovementLineList().size(), equalTo(2));
   }
 }

@@ -32,17 +32,20 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 
 /**
- * Full unbox of a partial reservation. Storage detail should be reserved and out of the box. Box
- * and Unbox movements will have 2 lines
+ * Unbox more quantity than reserved one. Part of the reservation is still in box. Box and Unbox
+ * movements will have 2 lines
  */
-public class ReferencedInventoryFullUnboxPartialReservation extends
+public class ReferencedInventoryPartialUnboxPartialReservation2MovementLinesUnboxTest extends
     ReferencedInventoryUnboxReservationTest {
   @Rule
-  public ParameterCdiTestRule<ParamsUnboxReservationTest> parameterValuesRule2 = new ParameterCdiTestRule<ParamsUnboxReservationTest>(
-      Arrays
-          .asList(new ParamsUnboxReservationTest[] { new ParamsUnboxReservationTest(
-              "Full unbox of a partial reservation. Storage detail should be reserved and out of the box",
-              "10", "10", "4") }));
+  public ParameterCdiTestRule<ParamsUnboxReservationTest> parameterValuesRule = new ParameterCdiTestRule<ParamsUnboxReservationTest>(
+      Arrays.asList(new ParamsUnboxReservationTest[] {
+          new ParamsUnboxReservationTest(
+              "Unbox more quantity than reserved one. Part of the reservation is still in box",
+              "10", "7", "4"),
+          new ParamsUnboxReservationTest(
+              "Unbox less quantity than reserved one. Part of the reservation is still in box",
+              "10", "3", "8") }));
 
   protected @ParameterCdiTest ParamsUnboxReservationTest params;
 
@@ -53,7 +56,8 @@ public class ReferencedInventoryFullUnboxPartialReservation extends
         for (String toBinId : BINS) {
           final TestUnboxOutputParams outParams = testUnboxReservation(toBinId, product[0],
               product[1], params.qtyToBox, params.qtyToUnbox, params.reservationQty, isAllocated);
-          assertsReferenceInventoryIsEmpty(outParams.refInv);
+          assertsReferenceInventoryIsNotEmpty(outParams.refInv,
+              params.qtyToBox.subtract(params.qtyToUnbox));
           OBDal.getInstance().getSession().clear();
         }
       }
@@ -63,7 +67,7 @@ public class ReferencedInventoryFullUnboxPartialReservation extends
   @Override
   void assertsGoodsMovementNumberOfLines(final InternalMovement boxMovement,
       final int expectedNumberOfLines) {
-    assertThat("Box and Unbox Movement has two lines", boxMovement
+    assertThat("Box and Unbox Movement has two line", boxMovement
         .getMaterialMgmtInternalMovementLineList().size(), equalTo(2));
   }
 }

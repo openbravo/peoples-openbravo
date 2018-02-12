@@ -19,6 +19,9 @@
 
 package org.openbravo.test.referencedinventory;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Arrays;
 
 import org.junit.Rule;
@@ -26,17 +29,19 @@ import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 
 /**
- * Box a storage detail which had some units (not 100%) previously reserved
+ * Box a storage detail which had some units (not 100%) previously reserved. The box movement will
+ * only have 2 lines.
  */
-public class ReferencedInventoryBoxPartialReservationTest extends ReferencedInventoryBoxTest {
+public class ReferencedInventoryBoxPartialReservation2MovementLinesTest extends
+    ReferencedInventoryBoxTest {
 
   @Rule
   public ParameterCdiTestRule<ParamsBoxReservationTest> parameterValuesRule = new ParameterCdiTestRule<ParamsBoxReservationTest>(
-      Arrays.asList(new ParamsBoxReservationTest[] {
-          new ParamsBoxReservationTest("Box 10 units where 4 were previously reserved", "10", "4"),
-          new ParamsBoxReservationTest("Box 4 units where 3 were previously reserved", "4", "3") }));
+      Arrays.asList(new ParamsBoxReservationTest[] { new ParamsBoxReservationTest(
+          "Box 10 units where 4 were previously reserved", "10", "4") }));
 
   private @ParameterCdiTest ParamsBoxReservationTest params;
 
@@ -51,5 +56,12 @@ public class ReferencedInventoryBoxPartialReservationTest extends ReferencedInve
         }
       }
     }
+  }
+
+  @Override
+  void assertsGoodsMovementNumberOfLines(final InternalMovement boxMovement,
+      final int expectedNumberOfLines) {
+    assertThat("Box Movement has two line", boxMovement.getMaterialMgmtInternalMovementLineList()
+        .size(), equalTo(2));
   }
 }

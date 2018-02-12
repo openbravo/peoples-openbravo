@@ -34,7 +34,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2016 Openbravo SLU
+* All portions are Copyright (C) 2012-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -72,7 +72,7 @@ BEGIN
       JOIN m_reservation res ON res.m_reservation_id = p_reservation_id
     WHERE sd.m_storage_detail_id = p_stock_id
       AND sd.m_product_id = res.m_product_id
-      AND sd.m_attributesetinstance_id = COALESCE(res.m_attributesetinstance_id, sd.m_attributesetinstance_id)
+      AND sd.m_attributesetinstance_id = CASE WHEN sd.M_REFINVENTORY_ID IS NULL THEN COALESCE(res.m_attributesetinstance_id, sd.m_attributesetinstance_id) ELSE COALESCE(sd.m_attributesetinstance_id, res.m_attributesetinstance_id) END
       AND sd.m_locator_id = COALESCE(res.m_locator_id, sd.m_locator_id)
       AND loc.m_warehouse_id = COALESCE(res.m_warehouse_id, loc.m_warehouse_id);
     IF (v_count = 0) THEN

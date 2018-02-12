@@ -19,17 +19,30 @@
 
 package org.openbravo.materialmgmt.refinventory;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.Sequence;
+import org.openbravo.model.common.enterprise.Locator;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
+import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
+import org.openbravo.model.materialmgmt.transaction.InternalMovement;
+import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 
 /**
  * Utility class for Referenced Inventory feature
@@ -121,5 +134,69 @@ public class ReferencedInventoryUtil {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  static InternalMovement createAndSaveGoodsMovementHeader(final Organization organization,
+      final String name) {
+    final InternalMovement header = OBProvider.getInstance().get(InternalMovement.class);
+    header.setClient(OBContext.getOBContext().getCurrentClient());
+    header.setOrganization(organization);
+    header.setName(name);
+    header.setMovementDate(new Date());
+    OBDal.getInstance().save(header);
+    return header;
+  }
+
+  static InternalMovementLine createAndSaveMovementLine(final InternalMovement internalMovement,
+      final BigDecimal movementQty, final Locator newStorageBin,
+      final AttributeSetInstance newAttributeSetInstance, final long lineNo,
+      final StorageDetail storageDetail, final Reservation reservation) {
+    final InternalMovementLine line = OBProvider.getInstance().get(InternalMovementLine.class);
+    line.setClient(internalMovement.getClient());
+    line.setOrganization(storageDetail.getOrganization());
+    line.setLineNo(lineNo);
+    line.setProduct(storageDetail.getProduct());
+    line.setMovementQuantity(movementQty);
+    line.setUOM(storageDetail.getProduct().getUOM());
+    line.setAttributeSetValue(storageDetail.getAttributeSetValue());
+    line.setStorageBin(storageDetail.getStorageBin());
+    line.setNewStorageBin(newStorageBin);
+    line.setMovement(internalMovement);
+    line.setAttributeSetInstanceTo(newAttributeSetInstance);
+    line.setStockReservation(reservation);
+    internalMovement.getMaterialMgmtInternalMovementLineList().add(line);
+    OBDal.getInstance().save(line);
+    return line;
+  }
+
+  static boolean isGreaterThanZero(final BigDecimal qty) {
+    return qty.compareTo(BigDecimal.ZERO) > 0;
+  }
+
+  static ScrollableResults getAvailableStockReservations(final StorageDetail storageDetail,
+      final Locator newStorageBin) {
+    final String olHql = "select sr, sr.quantity - sr.released " + //
+        "from MaterialMgmtReservationStock sr " + //
+        "join sr.reservation res " + //
+        "where coalesce(sr.storageBin.id, res.storageBin.id) = :sdBinId " + //
+        // Skip reservations forced to a bin different from the destination bin
+        "and (res.storageBin.id is null or res.storageBin.id = :toBindId) " + //
+        "and coalesce(sr.attributeSetValue.id, res.attributeSetValue.id) = :sdAttributeSetId " + //
+        "and sr.quantity - sr.released > 0 " + //
+        "and res.product.id = :productId " + //
+        "and res.uOM.id = :uomId " + //
+        "and res.rESStatus = 'CO' " + //
+        "order by case when sr.allocated = 'Y' then 1 else 0 end, " + //
+        "      case when res.attributeSetValue.id is not null then 1 else 0 end, " + //
+        "      sr.quantity - sr.released asc  ";
+    final Session session = OBDal.getInstance().getSession();
+    final Query sdQuery = session.createQuery(olHql.toString());
+    sdQuery.setParameter("sdBinId", storageDetail.getStorageBin().getId());
+    sdQuery.setParameter("toBindId", newStorageBin.getId());
+    sdQuery.setParameter("sdAttributeSetId", storageDetail.getAttributeSetValue().getId());
+    sdQuery.setParameter("productId", storageDetail.getProduct().getId());
+    sdQuery.setParameter("uomId", storageDetail.getUOM().getId());
+    sdQuery.setFetchSize(1000);
+    return sdQuery.scroll(ScrollMode.FORWARD_ONLY);
   }
 }
