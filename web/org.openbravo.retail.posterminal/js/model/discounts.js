@@ -41,6 +41,11 @@
       }
     },
     finishPromotions: function (receipt, line) {
+      _.forEach(receipt.get('lines').models, function (l) {
+        l.set('orderManualPromotionsAlreadyApplied', false, {
+          silent: true
+        });
+      });
       receipt.set('isBeingDiscounted', false, {
         silent: true
       });
@@ -465,7 +470,6 @@
           amt: discountAmt,
           chunks: chunks
         });
-        l.set('discountedLinePrice', discountedLinePrice);
       });
     }
   });

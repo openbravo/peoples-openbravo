@@ -2858,6 +2858,16 @@
       }
 
       line.set('promotions', promotions);
+      // Calculate discountedLinePrice for the next promotion
+      var allDiscountedAmt = 0;
+      for (i = 0; i < line.get('promotions').length; i++) {
+        if (!line.get('promotions')[i].hidden) {
+          allDiscountedAmt += line.get('promotions')[i].amt;
+        }
+      }
+
+      line.set('discountedLinePrice', OB.DEC.toNumber(new BigDecimal(String(line.get('price'))).subtract(new BigDecimal(String(allDiscountedAmt)).divide(new BigDecimal(String(line.get('qty'))), 20, OB.DEC.getRoundingMode()))));
+
       line.trigger('change');
     },
 
