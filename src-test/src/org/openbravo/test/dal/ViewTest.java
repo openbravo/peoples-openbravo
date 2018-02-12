@@ -46,7 +46,8 @@ import org.openbravo.test.base.OBBaseTest;
 public class ViewTest extends OBBaseTest {
 
   /**
-   * Iterates over all views
+   * Tests that it is possible to build a query using an entity based on a view. Iterates over all
+   * views until one record from a view is retrieved.
    */
   @Test
   public void viewsCanBeQueried() {
