@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2017 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -285,6 +285,17 @@
           linesToRemove.push(line);
         }
       });
+      receipt.get('payments').forEach(function (payment) {
+        if (!OB.UTIL.isNullOrUndefined(payment.get('date'))) {
+          if (payment.get('isPaid') && payment.get('isReturnOrder') && !payment.get('isPrePayment') && !payment.get('isReversePayment')) {
+            payment.set('amount', -Math.abs(payment.get('amount')));
+            payment.set('origAmount', -Math.abs(payment.get('origAmount')));
+          }
+        } else if (receipt.getPaymentStatus().isNegative && payment.get('isPrePayment') && !payment.get('isReversePayment')) {
+          payment.set('amount', -Math.abs(payment.get('amount')));
+          payment.set('origAmount', -Math.abs(payment.get('origAmount')));
+        }
+      });
 
       receipt.get('lines').remove(linesToRemove);
 
@@ -314,7 +325,7 @@
         } else {
           if (receipt.get('orderType') === 2 || receipt.get('isLayaway') || receipt.get('orderType') === 3) {
             args.template = me.templatelayaway;
-          } else if (receipt.get('orderType') === 1 || hasNegativeLines) {
+          } else if ((receipt.get('orderType') === 1 || hasNegativeLines) && receipt.get('lines').length > 0) {
             args.template = me.templatereturn;
           } else if (receipt.get('isQuotation')) {
             args.template = me.templatequotation;

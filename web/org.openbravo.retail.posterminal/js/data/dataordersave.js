@@ -210,17 +210,17 @@
             }
           }
 
-          OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
-            receipt: receipt,
-            model: model
-          }, function (args) {
-            OB.info("[receipt.closed] Starting transaction. ReceiptId: " + receipt.get('id'));
-            OB.Dal.transaction(function (tx) {
-              OB.trace('Calculationg cashup information.');
-              OB.UTIL.cashUpReport(receipt, function (cashUp) {
-                receipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
-                receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
-                receipt.set('hasbeenpaid', 'Y');
+          OB.info("[receipt.closed] Starting transaction. ReceiptId: " + receipt.get('id'));
+          OB.Dal.transaction(function (tx) {
+            OB.trace('Calculationg cashup information.');
+            OB.UTIL.cashUpReport(receipt, function (cashUp) {
+              receipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
+              receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
+              receipt.set('hasbeenpaid', 'Y');
+              OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
+                receipt: receipt,
+                model: model
+              }, function (args) {
                 // Important: at this point, the receipt is considered final. Nothing must alter it
                 OB.UTIL.clone(receipt, frozenReceipt);
                 // when all the properties of the receipt have been set, keep a copy
@@ -236,54 +236,106 @@
                     });
                   }, tx);
                 }
-              }, tx);
-            }, function () {
-              // the transaction failed
-              OB.UTIL.showError("[receipt.closed] The transaction failed to be commited. ReceiptId: " + receipt.get('id'));
-              // rollback other changes
-              receipt.set('hasbeenpaid', 'N');
-              frozenReceipt.set('hasbeenpaid', 'N');
-            }, function () {
-              // success transaction...
-              OB.info("[receipt.closed] Transaction success. ReceiptId: " + receipt.get('id'));
+              });
+            }, tx);
+          }, function () {
+            // the transaction failed
+            OB.UTIL.showError("[receipt.closed] The transaction failed to be commited. ReceiptId: " + receipt.get('id'));
+            // rollback other changes
+            receipt.set('hasbeenpaid', 'N');
+            frozenReceipt.set('hasbeenpaid', 'N');
+          }, function () {
+            // success transaction...
+            OB.info("[receipt.closed] Transaction success. ReceiptId: " + receipt.get('id'));
 
-              function serverMessageForQuotation(receipt) {
-                var isLayaway = (receipt.get('orderType') === 2 || receipt.get('isLayaway'));
-                var currentDocNo = receipt.get('documentNo');
-                if (receipt && receipt.get('isQuotation')) {
-                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationSaved', [currentDocNo]));
+            function serverMessageForQuotation(receipt) {
+              var isLayaway = (receipt.get('orderType') === 2 || receipt.get('isLayaway'));
+              var currentDocNo = receipt.get('documentNo');
+              if (receipt && receipt.get('isQuotation')) {
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationSaved', [currentDocNo]));
+              } else {
+                if (isLayaway) {
+                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgLayawaySaved', [currentDocNo]));
                 } else {
-                  if (isLayaway) {
-                    OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgLayawaySaved', [currentDocNo]));
-                  } else {
-                    OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [currentDocNo]));
-                  }
+                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [currentDocNo]));
                 }
-
-                OB.trace('Order successfully removed.');
               }
 
-              var synErrorCallback = function () {
-                  restoreReceiptOnError(eventParams, receipt);
-                  };
+              OB.trace('Order successfully removed.');
+            }
+
+            var synErrorCallback = function () {
+                restoreReceiptOnError(eventParams, receipt);
+                };
 
 
-              // create a clone of the receipt to be used when executing the final callback
-              if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt')) {
-                // create a clone of the receipt to be used within the hook
-                var receiptForPostSyncReceipt = new OB.Model.Order();
-                OB.UTIL.clone(receipt, receiptForPostSyncReceipt);
-                //If there are elements in the hook, we are forced to execute the callback only after the synchronization process
-                //has been executed, to prevent race conditions with the callback processes (printing and deleting the receipt)
-                OB.trace('Execution Sync process.');
+            // create a clone of the receipt to be used when executing the final callback
+            if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt')) {
+              // create a clone of the receipt to be used within the hook
+              var receiptForPostSyncReceipt = new OB.Model.Order();
+              OB.UTIL.clone(receipt, receiptForPostSyncReceipt);
+              //If there are elements in the hook, we are forced to execute the callback only after the synchronization process
+              //has been executed, to prevent race conditions with the callback processes (printing and deleting the receipt)
+              OB.trace('Execution Sync process.');
 
-                OB.MobileApp.model.runSyncProcess(function () {
-                  var successStep = function () {
-                      OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
-                        receipt: receiptForPostSyncReceipt,
-                        syncSuccess: true
-                      }, function () {
-                        serverMessageForQuotation(receipt);
+              OB.MobileApp.model.runSyncProcess(function () {
+                var successStep = function () {
+                    OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
+                      receipt: receiptForPostSyncReceipt,
+                      syncSuccess: true
+                    }, function () {
+                      serverMessageForQuotation(receipt);
+                      if (eventParams && eventParams.callback) {
+                        eventParams.callback({
+                          frozenReceipt: frozenReceipt,
+                          isCancelled: false
+                        });
+                      }
+                    });
+                    };
+
+                // in synchronized mode do the doc sequence update in the success
+                if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+                  OB.UTIL.calculateCurrentCash();
+                  OB.Dal.transaction(function (tx) {
+                    OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'), function () {
+                      OB.trace('Saving receipt.');
+                      OB.Dal.saveInTransaction(tx, receipt, function () {
+                        // the trigger is fired on the receipt object, as there is only 1 that is being updated
+                        receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
+                        successStep();
+                      });
+                    }, tx);
+                  });
+                } else {
+                  successStep();
+                }
+              }, function () {
+                OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
+                  receipt: receiptForPostSyncReceipt,
+                  syncSuccess: false
+                }, synErrorCallback);
+              });
+            } else {
+              OB.trace('Execution Sync process.');
+              //If there are no elements in the hook, we can execute the callback asynchronusly with the synchronization process
+              // for non-sync do it here, for sync do it in the success callback of runsyncprocess
+              if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true) && eventParams && eventParams.callback) {
+                eventParams.callback({
+                  frozenReceipt: frozenReceipt,
+                  isCancelled: false
+                });
+              }
+              OB.MobileApp.model.runSyncProcess(function () {
+                // in synchronized mode do the doc sequence update in the success and navigate back
+                if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+                  OB.UTIL.calculateCurrentCash();
+                  OB.Dal.transaction(function (tx) {
+                    OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'), function () {
+                      OB.trace('Saving receipt.');
+                      OB.Dal.saveInTransaction(tx, receipt, function () {
+                        // the trigger is fired on the receipt object, as there is only 1 that is being updated
+                        receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
                         if (eventParams && eventParams.callback) {
                           eventParams.callback({
                             frozenReceipt: frozenReceipt,
@@ -291,66 +343,14 @@
                           });
                         }
                       });
-                      };
-
-                  // in synchronized mode do the doc sequence update in the success
-                  if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-                    OB.UTIL.calculateCurrentCash();
-                    OB.Dal.transaction(function (tx) {
-                      OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'), function () {
-                        OB.trace('Saving receipt.');
-                        OB.Dal.saveInTransaction(tx, receipt, function () {
-                          // the trigger is fired on the receipt object, as there is only 1 that is being updated
-                          receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
-                          successStep();
-                        });
-                      }, tx);
-                    });
-                  } else {
-                    successStep();
-                  }
-                }, function () {
-                  OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
-                    receipt: receiptForPostSyncReceipt,
-                    syncSuccess: false
-                  }, synErrorCallback);
-                });
-              } else {
-                OB.trace('Execution Sync process.');
-                //If there are no elements in the hook, we can execute the callback asynchronusly with the synchronization process
-                // for non-sync do it here, for sync do it in the success callback of runsyncprocess
-                if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true) && eventParams && eventParams.callback) {
-                  eventParams.callback({
-                    frozenReceipt: frozenReceipt,
-                    isCancelled: false
+                    }, tx);
                   });
                 }
-                OB.MobileApp.model.runSyncProcess(function () {
-                  // in synchronized mode do the doc sequence update in the success and navigate back
-                  if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-                    OB.UTIL.calculateCurrentCash();
-                    OB.Dal.transaction(function (tx) {
-                      OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'), function () {
-                        OB.trace('Saving receipt.');
-                        OB.Dal.saveInTransaction(tx, receipt, function () {
-                          // the trigger is fired on the receipt object, as there is only 1 that is being updated
-                          receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
-                          if (eventParams && eventParams.callback) {
-                            eventParams.callback({
-                              frozenReceipt: frozenReceipt,
-                              isCancelled: false
-                            });
-                          }
-                        });
-                      }, tx);
-                    });
-                  }
 
-                  serverMessageForQuotation(frozenReceipt);
-                  OB.debug("Ticket closed: runSyncProcess executed");
-                }, synErrorCallback);
-              }
-            });
+                serverMessageForQuotation(frozenReceipt);
+                OB.debug("Ticket closed: runSyncProcess executed");
+              }, synErrorCallback);
+            }
           });
         });
         };
@@ -464,42 +464,46 @@
               });
             });
           } else {
-
-            OB.MobileApp.model.runSyncProcess(function () {
-              OB.UTIL.calculateCurrentCash();
-              _.each(model.get('multiOrders').get('multiOrdersList').models, function (theReceipt) {
-                me.context.get('multiOrders').trigger('print', theReceipt, {
-                  offline: true
+            OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
+              multiOrders: closedReceipts,
+              model: model
+            }, function (args) {
+              OB.MobileApp.model.runSyncProcess(function () {
+                OB.UTIL.calculateCurrentCash();
+                _.each(model.get('multiOrders').get('multiOrdersList').models, function (theReceipt) {
+                  me.context.get('multiOrders').trigger('print', theReceipt, {
+                    offline: true
+                  });
+                  me.context.get('multiOrders').trigger('integrityOk', theReceipt);
+                  OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(theReceipt.get('documentnoSuffix'), theReceipt.get('quotationnoSuffix'), theReceipt.get('returnnoSuffix'));
+                  me.context.get('orderList').current = theReceipt;
+                  me.context.get('orderList').deleteCurrent();
                 });
-                me.context.get('multiOrders').trigger('integrityOk', theReceipt);
-                OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(theReceipt.get('documentnoSuffix'), theReceipt.get('quotationnoSuffix'), theReceipt.get('returnnoSuffix'));
-                me.context.get('orderList').current = theReceipt;
-                me.context.get('orderList').deleteCurrent();
+
+                //this logic executed when all orders are ready to be sent
+                me.context.get('leftColumnViewManager').setOrderMode();
+                if (syncCallback instanceof Function) {
+                  syncCallback();
+                }
+
+                model.get('multiOrders').resetValues();
+                OB.UTIL.showLoading(false);
+                enyo.$.scrim.hide();
+
+                if (me.hasInvLayaways) {
+                  OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
+                  me.hasInvLayaways = false;
+                }
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
+                OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
+                model.get('multiOrders').trigger('checkOpenDrawer');
+              }, function () {
+                if (syncCallback instanceof Function) {
+                  syncCallback();
+                }
+                OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
+                OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
               });
-
-              //this logic executed when all orders are ready to be sent
-              me.context.get('leftColumnViewManager').setOrderMode();
-              if (syncCallback instanceof Function) {
-                syncCallback();
-              }
-
-              model.get('multiOrders').resetValues();
-              OB.UTIL.showLoading(false);
-              enyo.$.scrim.hide();
-
-              if (me.hasInvLayaways) {
-                OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
-                me.hasInvLayaways = false;
-              }
-              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
-              OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
-              model.get('multiOrders').trigger('checkOpenDrawer');
-            }, function () {
-              if (syncCallback instanceof Function) {
-                syncCallback();
-              }
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
-              OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
             });
           }
         };
@@ -522,15 +526,10 @@
         });
 
         completeMultiOrder = _.after(closedReceipts.length, function () {
-          OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
-            multiOrders: closedReceipts,
-            model: model
-          }, function (args) {
-            saveAndSyncMultiOrder(me, closedReceipts, function () {
-              if (closedCallback instanceof Function) {
-                closedCallback();
-              }
-            });
+          saveAndSyncMultiOrder(me, closedReceipts, function () {
+            if (closedCallback instanceof Function) {
+              closedCallback();
+            }
           });
         });
         validateMultiOrder = function () {

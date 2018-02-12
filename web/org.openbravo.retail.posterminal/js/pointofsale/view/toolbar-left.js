@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2017 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -470,7 +470,7 @@ enyo.kind({
         var hasNoRefundablePayment = _.filter(paymentModels, function (payment) {
           return !payment.paymentMethod.refundable;
         }).length === paymentModels.length;
-        if (hasNoRefundablePayment) {
+        if (hasNoRefundablePayment && (!OB.MobileApp.model.get('terminal').allowpayoncredit || this.model.get('order').get('bp').get('creditLimit') <= 0)) {
           OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_LblNoRefundablePayments'), [{
             label: OB.I18N.getLabel('OBMOBC_LblOk')
           }]);

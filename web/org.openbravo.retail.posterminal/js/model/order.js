@@ -2052,6 +2052,62 @@
           }
           return false;
         }
+
+        function execPostAddProductToOrderHook() {
+          OB.UTIL.HookManager.executeHooks('OBPOS_PostAddProductToOrder', {
+            receipt: me,
+            productToAdd: p,
+            orderline: line,
+            qtyToAdd: qty,
+            options: options,
+            newLine: newLine
+          }, function (args) {
+            var callbackAddProduct = function () {
+                if (callback) {
+                  callback(true, args.orderline);
+                }
+                };
+            if (args.orderline) {
+              args.orderline.set('hasMandatoryServices', false);
+            }
+            if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
+              var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
+              // Display related services after calculate gross, if it is new line
+              // and if the line has not been deleted.
+              // The line might has been deleted during calculate gross for
+              // examples if there was an error in taxes.
+              var productId = (args.productToAdd.get('isNew') && OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) ? null : (args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id);
+              args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
+                if (data) {
+                  if (data.hasservices) {
+                    args.orderline.set('hasRelatedServices', true);
+                    args.orderline.trigger('showServicesButton');
+                  } else {
+                    args.orderline.set('hasRelatedServices', false);
+                  }
+                  if (data.hasmandatoryservices) {
+                    var splitline = !OB.UTIL.isNullOrUndefined(args.orderline) && !OB.UTIL.isNullOrUndefined(args.orderline.get('splitline')) && args.orderline.get('splitline');
+                    if (!splitline) {
+                      args.receipt.trigger('showProductList', args.orderline, 'mandatory');
+                      args.orderline.set('hasMandatoryServices', true);
+                      callbackAddProduct();
+                    } else {
+                      callbackAddProduct();
+                    }
+                  } else {
+                    callbackAddProduct();
+                  }
+                } else {
+                  callbackAddProduct();
+                }
+                OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
+              }, args.orderline);
+            } else {
+              callbackAddProduct();
+            }
+          });
+        }
+
         if (p.get('obposScale')) {
           OB.POS.hwserver.getWeight(function (data) {
             if (data.exception) {
@@ -2059,7 +2115,8 @@
             } else if (data.result === 0) {
               OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_WeightZero'));
             } else {
-              line = me.createLine(p, data.result, options, attrs);
+              line = me.createLine(p, options.isVerifiedReturn ? -data.result : data.result, options, attrs);
+              execPostAddProductToOrderHook();
             }
           });
         } else {
@@ -2187,58 +2244,7 @@
           }
           return null;
         }
-        OB.UTIL.HookManager.executeHooks('OBPOS_PostAddProductToOrder', {
-          receipt: me,
-          productToAdd: p,
-          orderline: line,
-          qtyToAdd: qty,
-          options: options,
-          newLine: newLine
-        }, function (args) {
-          var callbackAddProduct = function () {
-              if (callback) {
-                callback(true, args.orderline);
-              }
-              };
-          if (args.orderline) {
-            args.orderline.set('hasMandatoryServices', false);
-          }
-          if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
-            var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
-            // Display related services after calculate gross, if it is new line
-            // and if the line has not been deleted.
-            // The line might has been deleted during calculate gross for
-            // examples if there was an error in taxes.
-            var productId = (args.productToAdd.get('isNew') && OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) ? null : (args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id);
-            args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
-              if (data) {
-                if (data.hasservices) {
-                  args.orderline.set('hasRelatedServices', true);
-                  args.orderline.trigger('showServicesButton');
-                } else {
-                  args.orderline.set('hasRelatedServices', false);
-                }
-                if (data.hasmandatoryservices) {
-                  var splitline = !OB.UTIL.isNullOrUndefined(args.orderline) && !OB.UTIL.isNullOrUndefined(args.orderline.get('splitline')) && args.orderline.get('splitline');
-                  if (!splitline) {
-                    args.receipt.trigger('showProductList', args.orderline, 'mandatory');
-                    args.orderline.set('hasMandatoryServices', true);
-                    callbackAddProduct();
-                  } else {
-                    callbackAddProduct();
-                  }
-                } else {
-                  callbackAddProduct();
-                }
-              } else {
-                callbackAddProduct();
-              }
-              OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
-            }, args.orderline);
-          } else {
-            callbackAddProduct();
-          }
-        });
+        execPostAddProductToOrderHook();
       } // End addProductToOrder
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('ignoreReturnApproval')) {
         if (options && options.isVerifiedReturn) {
@@ -2980,7 +2986,7 @@
 
 
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-        OB.Dal.saveIfNew(p, function () {}, function () {
+        OB.Dal.saveOrUpdate(p, function () {}, function () {
           OB.error(arguments);
         });
 
@@ -2998,7 +3004,7 @@
             if (i === characteristics.length) {
               me.calculateReceipt();
             } else {
-              OB.Dal.saveIfNew(characteristics[i], function () {
+              OB.Dal.saveOrUpdate(characteristics[i], function () {
                 saveCharacteristics(characteristics, i + 1);
               }, function () {
                 OB.error(arguments);
@@ -3266,7 +3272,7 @@
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         if (oldbp.id !== businessPartner.id) { //Business Partner have changed
-          OB.Dal.saveIfNew(businessPartner, function () {}, function () {
+          OB.Dal.saveOrUpdate(businessPartner, function () {}, function () {
             OB.error(arguments);
           });
           if (OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)) {
@@ -3281,7 +3287,7 @@
             criteriaFilter.remoteFilters = remoteCriteria;
             OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteriaFilter, function (discountsBP) {
               _.each(discountsBP.models, function (dsc) {
-                OB.Dal.saveIfNew(dsc, function () {}, function () {
+                OB.Dal.saveOrUpdate(dsc, function () {}, function () {
                   OB.error(arguments);
                 });
               });
@@ -3312,14 +3318,14 @@
 
                 me.set('bp', businessPartner);
                 me.save();
-                // copy the modelOrder again, as saveIfNew is possibly async
+                // copy the modelOrder again, as saveOrUpdate is possibly async
                 OB.MobileApp.model.orderList.saveCurrent();
                 finishSaveData(callback);
               }, businessPartner.get('id'));
             } else {
               me.set('bp', businessPartner);
               me.save();
-              // copy the modelOrder again, as saveIfNew is possibly async
+              // copy the modelOrder again, as saveOrUpdate is possibly async
               OB.MobileApp.model.orderList.saveCurrent();
               finishSaveData(callback);
             }
@@ -3327,7 +3333,7 @@
 
         var saveLocModel = function (locModel, lid, callback) {
             if (businessPartner.get(locModel)) {
-              OB.Dal.saveIfNew(businessPartner.get(locModel), function () {}, function (tx, error) {
+              OB.Dal.saveOrUpdate(businessPartner.get(locModel), function () {}, function (tx, error) {
                 OB.UTIL.showError("OBDAL error: " + error);
               });
               if (callback) {
@@ -3335,7 +3341,7 @@
               }
             } else {
               OB.Dal.get(OB.Model.BPLocation, businessPartner.get(lid), function (location) {
-                OB.Dal.saveIfNew(location, function () {}, function (tx, error) {
+                OB.Dal.saveOrUpdate(location, function () {}, function (tx, error) {
                   OB.UTIL.showError("OBDAL error: " + error);
                 });
                 businessPartner.set(locModel, location);
@@ -5312,16 +5318,21 @@
           model.get('lines').at(i).set('lineGrossAmount', 0);
         }
         model.set('hasbeenpaid', 'Y');
-        OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
-          model.save(function () {
-            if (orderList) {
-              orderList.deleteCurrent();
-              orderList.synchronizeCurrentOrder();
-            }
-            model.setIsCalculateGrossLockState(false);
-            if (callback && callback instanceof Function) {
-              callback();
-            }
+        OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
+          receipt: model,
+          model: model
+        }, function (args) {
+          OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
+            model.save(function () {
+              if (orderList) {
+                orderList.deleteCurrent();
+                orderList.synchronizeCurrentOrder();
+              }
+              model.setIsCalculateGrossLockState(false);
+              if (callback && callback instanceof Function) {
+                callback();
+              }
+            });
           });
         });
       }
@@ -5620,7 +5631,7 @@
                 iter.linepos = linepos;
                 var addLineForProduct = function (prod) {
                     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-                      OB.Dal.saveIfNew(prod, function () {
+                      OB.Dal.saveOrUpdate(prod, function () {
                         var productcriteria = {
                           columns: ['product'],
                           operator: 'equals',
@@ -5632,7 +5643,7 @@
                         criteriaFilter.remoteFilters = remoteCriteria;
                         OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
                           _.each(productcharacteristic.models, function (pchv) {
-                            OB.Dal.saveIfNew(pchv, function () {}, function () {
+                            OB.Dal.saveOrUpdate(pchv, function () {}, function () {
                               OB.error(arguments);
                             });
                           });
@@ -6023,10 +6034,10 @@
     },
 
     doRemoteBPSettings: function (businessPartner) {
-      OB.Dal.saveIfNew(businessPartner, function () {}, function () {
+      OB.Dal.saveOrUpdate(businessPartner, function () {}, function () {
         OB.error(arguments);
       });
-      OB.Dal.saveIfNew(businessPartner.get('locationModel'), function () {}, function () {
+      OB.Dal.saveOrUpdate(businessPartner.get('locationModel'), function () {}, function () {
         OB.error(arguments);
       });
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)) {
@@ -6042,7 +6053,7 @@
 
         findDiscountFilterBusinessPartner(criteria, function (discountsBP) {
           _.each(discountsBP.models, function (dsc) {
-            OB.Dal.saveIfNew(dsc, function () {}, function () {
+            OB.Dal.saveOrUpdate(dsc, function () {}, function () {
               OB.error(arguments);
             });
           });
@@ -6148,6 +6159,16 @@
       }
     },
     loadCurrent: function (isNew) {
+      // Check if the current order to be loaded should be deleted
+      if (this.current.get('obposIsDeleted') && this.current.get('id')) {
+        var deletedOrderDocNo = this.current.get('documentNo');
+        this.current.set('ignoreCheckIfIsActiveOrder', true); // Ignore this receipt is not loaded in the UI
+        this.current.deleteOrder(this.current, function () {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OrderMarkedToBeDeleted', [deletedOrderDocNo]));
+        });
+        return;
+      }
+
       if (this.current) {
         if (isNew) {
           //set values of new attrs in current,

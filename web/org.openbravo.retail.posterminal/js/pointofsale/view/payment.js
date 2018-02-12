@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2017 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -64,6 +64,9 @@ enyo.kind({
           currency: '',
           symbolAtRight: true
         });
+      }
+      if (inEvent.value.status === '' && !inEvent.value.keyboard.hasActivePayment) {
+        this.$.exactbutton.hide();
       }
       isMultiOrders = this.model.isValidMultiOrderState();
       change = this.model.getChange();
@@ -1215,7 +1218,7 @@ enyo.kind({
           return false;
         }
         if (!payment.get('isReversePayment') && !payment.get('isReversed') && !payment.get('isPrePayment')) {
-          totalPaid = OB.DEC.add(totalPaid, payment.get('amount'));
+          totalPaid = OB.DEC.add(totalPaid, payment.get('origAmount'));
           if (totalPaid >= totalToPaid) {
             me.alreadyPaid = true;
           }
@@ -1498,7 +1501,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.CreditButton',
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
-  i18nLabel: 'OBPOS_LblCreditSales',
+  i18nLabel: 'OBPOS_LblSellOnCredit',
   classes: 'btn-icon-small btnlink-green',
   permission: 'OBPOS_receipt.creditsales',
   events: {
@@ -1564,14 +1567,13 @@ enyo.kind({
                 actualCredit: actualCredit
               }
             });
-            me.putDisabled(false);
             //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
             //OB.UI.UTILS.domIdEnyoReference['modalNotEnoughCredit'].$.bodyContent.children[0].setContent();
           }
         } else {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorCreditSales'));
-          me.putDisabled(false);
         }
+        me.putDisabled(false);
       }, function () {
         OB.UTIL.SynchronizationHelper.finished(synchId, "creditButtonTap");
         me.doShowPopup({
