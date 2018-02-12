@@ -723,12 +723,6 @@ enyo.kind({
       }
     }, this);
 
-    this.order.on('change:documentNo', function (model) {
-      if (this.get('obposIsDeleted') && this.get('id')) {
-        this.deleteOrder(this, null);
-      }
-    });
-
     // Change Document No based on return lines
     this.order.get('lines').on('add change:qty change:relatedLines updateRelations', function () {
       if (this.order.get('isEditable') && !this.order.get('isModified') && !this.order.get('isLayaway') && !this.order.get('isQuotation') && !this.order.get('doCancelAndReplace')) {
