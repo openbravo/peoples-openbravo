@@ -770,11 +770,11 @@ public class Wad extends DefaultHandler {
       xmlDocument.setData("structure2", WadData.selectMapping(pool));
 
       xmlDocument.setData("structureErrorExceptionPage",
-          this.appendErrorPageRoutePrefix(WadData.selectExceptionErrorPages(pool)));
+          this.appendErrorPageRoutePrefix(WadData.selectExceptionErrorPages(pool), contextParams));
       xmlDocument.setData("structureErrorCodePage",
-          this.appendErrorPageRoutePrefix(WadData.selectErrorCodePages(pool)));
+          this.appendErrorPageRoutePrefix(WadData.selectErrorCodePages(pool), contextParams));
       xmlDocument.setData("structureGenericErrorPage",
-          this.appendErrorPageRoutePrefix(WadData.selectGenericErrorPages(pool)));
+          this.appendErrorPageRoutePrefix(WadData.selectGenericErrorPages(pool), contextParams));
 
       String webXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocument.print();
       webXml = webXml.replace("${attachPath}", attachPath);
@@ -786,16 +786,29 @@ public class Wad extends DefaultHandler {
     }
   }
 
-  private WadData[] appendErrorPageRoutePrefix(WadData[] originalData) {
+  private WadData[] appendErrorPageRoutePrefix(WadData[] originalData, WadData[] contextParams) {
+    String baseDesignPath = this.findParameterByName("BaseDesignPath", contextParams);
+    String defaultDesignPath = this.findParameterByName("DefaultDesignPath", contextParams);
+
     List<WadData> appendedData = new ArrayList<WadData>();
     for (WadData data : originalData) {
       if (data.location != null && !data.location.isEmpty()) {
-        data.location = String.format("%s/%s", "/src-loc/design", data.location);
+        data.location = String
+            .format("/%s/%s/%s", baseDesignPath, defaultDesignPath, data.location);
         appendedData.add(data);
       }
     }
 
     return appendedData.toArray(new WadData[appendedData.size()]);
+  }
+
+  private String findParameterByName(String name, WadData[] contextParams) {
+    for (WadData param : contextParams) {
+      if (param.name.equals(name)) {
+        return param.value;
+      }
+    }
+    return "";
   }
 
   private WadData[] getTabServlets(WadData[] allTabs, Map<String, Boolean> generateTabMap) {
