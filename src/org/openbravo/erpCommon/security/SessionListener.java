@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -175,9 +175,11 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
    */
   public static HttpSession getActiveSession(String sessionId) {
     try {
-      for (HttpSession session : activeHttpSessions) {
-        if (sessionId.equals(session.getAttribute("#AD_SESSION_ID"))) {
-          return session;
+      synchronized (activeHttpSessions) {
+        for (HttpSession session : activeHttpSessions) {
+          if (sessionId.equals(session.getAttribute("#AD_SESSION_ID"))) {
+            return session;
+          }
         }
       }
     } catch (Exception e) {
