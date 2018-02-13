@@ -1136,8 +1136,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     final Date orderDate = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("orderDate"),
         Long.parseLong(jsonorder.getString("timezoneOffset")));
     invoice.set("creationDate", orderDate);
-    invoice.setAccountingDate(orderDate);
-    invoice.setInvoiceDate(orderDate);
+    final Date invoiceDate = OBMOBCUtils.stripTime(orderDate);
+    invoice.setAccountingDate(invoiceDate);
+    invoice.setInvoiceDate(invoiceDate);
     invoice.setSalesTransaction(true);
     invoice.setDocumentStatus("CO");
     invoice.setDocumentAction("RE");
