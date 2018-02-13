@@ -958,6 +958,7 @@ enyo.kind({
       return;
     }
     if (OB.MobileApp.model.hasPermission(this.permission)) {
+      this.model.get('orderList').saveCurrent();
       this.doMultiOrders();
     }
   },

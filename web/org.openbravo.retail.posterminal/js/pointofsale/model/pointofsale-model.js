@@ -541,6 +541,20 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }
           var paymentLine = new OB.Model.PaymentLine();
           OB.UTIL.clone(payment, paymentLine);
+          var addPaymentLine = function (amount, orderListIndex, paymentListIndex) {
+              OB.UTIL.HookManager.executeHooks('OBPOS_MultiOrderAddPaymentLine', {
+                paymentLine: paymentLine,
+                origPayment: payment
+              }, function (args) {
+                iter.addPayment(args.paymentLine, function (iter) {
+                  if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
+                    iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), amount));
+                  }
+                  amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
+                  setPaymentsToReceipts(orderList, paymentList, orderListIndex, paymentListIndex, considerPrepaymentAmount, callback);
+                });
+              });
+              };
           if (payment.get('origAmount') <= amountToPay) {
             var bigDecAmount = new BigDecimal(String(OB.DEC.mul(payment.get('origAmount'), paymentMethod.mulrate)));
             paymentLine.set('amount', OB.DEC.toNumber(bigDecAmount));
@@ -549,24 +563,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             paymentLine.set('isocode', paymentMethod.isocode);
             paymentLine.set('allowOpenDrawer', payment.get('allowopendrawer'));
             paymentLine.set('isCash', payment.get('iscash'));
-            OB.UTIL.HookManager.executeHooks('OBPOS_MultiOrderAddPaymentLine', {
-              paymentLine: paymentLine,
-              origPayment: payment
-            }, function (args) {
-              iter.addPayment(args.paymentLine, function (iter) {
-                if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
-                  iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), args.origPayment.get('origAmount')));
-                }
-                amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
-                setPaymentsToReceipts(orderList, paymentList, orderListIndex, paymentListIndex + 1, considerPrepaymentAmount, callback);
-              });
-            });
+            addPaymentLine(payment.get('origAmount'), orderListIndex, paymentListIndex + 1);
           } else {
             var bigDecAmountAux, amtAux;
             if (orderListIndex === orderList.length - 1 && !paymentMethod.paymentMethod.iscash) {
               bigDecAmountAux = new BigDecimal(String(payment.get('origAmount')));
               amtAux = OB.DEC.toNumber(bigDecAmountAux);
-              paymentList.at(paymentListIndex).set('origAmount', OB.DEC.sub(paymentList.at(paymentListIndex).get('origAmount'), payment.get('origAmount')));
+              paymentList.at(paymentListIndex).set('origAmount', OB.DEC.sub(paymentList.at(paymentListIndex).get('origAmount'), considerPrepaymentAmount ? amountToPay : payment.get('origAmount')));
             } else {
               bigDecAmountAux = new BigDecimal(String(OB.DEC.mul(amountToPay, paymentMethod.mulrate)));
               amtAux = OB.DEC.toNumber(bigDecAmountAux);
@@ -578,18 +581,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             paymentLine.set('isocode', paymentMethod.isocode);
             paymentLine.set('allowOpenDrawer', payment.get('allowopendrawer'));
             paymentLine.set('isCash', payment.get('iscash'));
-            OB.UTIL.HookManager.executeHooks('OBPOS_MultiOrderAddPaymentLine', {
-              paymentLine: paymentLine,
-              origPayment: payment
-            }, function (args) {
-              iter.addPayment(args.paymentLine, function (iter) {
-                if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
-                  iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), amtAux));
-                }
-                amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
-                setPaymentsToReceipts(orderList, paymentList, orderListIndex + 1, paymentListIndex, considerPrepaymentAmount, callback);
-              });
-            });
+            addPaymentLine(amtAux, orderListIndex + 1, paymentListIndex);
           }
         } else {
           setPaymentsToReceipts(orderList, paymentList, orderListIndex + 1, paymentListIndex, considerPrepaymentAmount, callback);
