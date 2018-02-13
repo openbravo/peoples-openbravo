@@ -470,7 +470,7 @@ enyo.kind({
         var hasNoRefundablePayment = _.filter(paymentModels, function (payment) {
           return !payment.paymentMethod.refundable;
         }).length === paymentModels.length;
-        if (hasNoRefundablePayment && (!OB.MobileApp.model.get('terminal').allowpayoncredit || this.model.get('order').get('bp').get('creditLimit') <= 0)) {
+        if (hasNoRefundablePayment && !OB.MobileApp.model.get('terminal').allowpayoncredit) {
           OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_LblNoRefundablePayments'), [{
             label: OB.I18N.getLabel('OBMOBC_LblOk')
           }]);
