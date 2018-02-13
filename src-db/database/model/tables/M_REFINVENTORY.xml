@@ -60,7 +60,6 @@
       </foreign-key>
       <unique name="M_REFINVENTORY_VALUE_UN">
         <unique-column name="VALUE"/>
-        <unique-column name="M_REFINVENTORY_TYPE_ID"/>
         <unique-column name="AD_CLIENT_ID"/>
       </unique>
       <check name="M_REFINV_ISACTIVE_CH"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
