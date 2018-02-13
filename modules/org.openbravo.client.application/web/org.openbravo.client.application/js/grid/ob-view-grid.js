@@ -2677,7 +2677,7 @@ isc.OBViewGrid.addProperties({
         }
       }
     }
-    if (this.filterEditor) {
+    if (this.filterEditor && this.filterEditor.getEditForm()) {
       this.filterEditor.getEditForm().setValue(this.getCheckboxField().name, newValue);
       this.filterEditor.getEditForm().getField(this.getCheckboxField().name).defaultValue = newValue;
     }
