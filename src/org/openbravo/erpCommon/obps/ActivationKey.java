@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,6 +40,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -256,6 +257,12 @@ public class ActivationKey {
       add("OBPOS_POS"); // WebPOS
     }
   };
+
+  private static final List<String> BACKOFFICE_SUCESS_SESSION_TYPES = Arrays.asList(//
+      "S", // Standard success session
+      "SUR" // Concurrent users soft limit reached
+  );
+
   public static final Long NO_LIMIT = -1L;
 
   private static ActivationKey instance = new ActivationKey();
@@ -1170,6 +1177,11 @@ public class ActivationKey {
    * mobile apps) if activity from them has been recently detected.
    */
   private boolean shouldDeactivateSession(Session expiredSession, Date lastValidPingTime) {
+    if (BACKOFFICE_SUCESS_SESSION_TYPES.contains(expiredSession.getLoginStatus())) {
+      // backoffice sessions use ping, they can be deactivated even if created in a different node
+      return true;
+    }
+
     String sessionId = expiredSession.getId();
     HttpSession session = SessionListener.getActiveSession(sessionId);
     if (session == null) {
