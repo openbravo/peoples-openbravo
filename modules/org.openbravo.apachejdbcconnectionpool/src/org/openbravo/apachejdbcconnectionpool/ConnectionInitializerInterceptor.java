@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2017 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -80,6 +80,9 @@ public class ConnectionInitializerInterceptor extends JdbcInterceptor implements
         if (isReadOnlyPool(parent)) {
           initialized = true;
         } else {
+          // SessionInfo will be initialized when the SessionListener ServletContextListener is
+          // invoked. That listener will check if there are audited tables and notify SessionInfo,
+          // from them on SessionInfo will know whether the ad_context_info table should be created
           if (SessionInfo.isInitialized()) {
             SessionInfo.initDB(con.getConnection(), rbdms);
             initialized = true;

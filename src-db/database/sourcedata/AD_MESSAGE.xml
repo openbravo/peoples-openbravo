@@ -23186,7 +23186,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--926CA161FD5F49E5A993BED838A423D6-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--926CA161FD5F49E5A993BED838A423D6-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--926CA161FD5F49E5A993BED838A423D6-->  <VALUE><![CDATA[RegenerateAudit_ExcludeColumn]]></VALUE>
-<!--926CA161FD5F49E5A993BED838A423D6-->  <MSGTEXT><![CDATA[In order to activate this change it is necessary to build Openbravo and to restart Tomcat..Use "Exclude Audit" in column to exclude some columns from Audit.]]></MSGTEXT>
+<!--926CA161FD5F49E5A993BED838A423D6-->  <MSGTEXT><![CDATA[In order to activate this change it is necessary to build Openbravo and to restart Tomcat. Use "Exclude Audit" in column to exclude some columns from Audit.]]></MSGTEXT>
 <!--926CA161FD5F49E5A993BED838A423D6-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--926CA161FD5F49E5A993BED838A423D6-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--926CA161FD5F49E5A993BED838A423D6-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
