@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -58,7 +58,7 @@ create.database: creates the database from scratch.
 
 
   <target name="clean.database.ORACLE">
-    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue">
+    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue" delimiter="/">
       <classpath>
         <fileset dir="${base.lib}">
           <include name="**/*.jar">
@@ -66,7 +66,16 @@ create.database: creates the database from scratch.
         </fileset>
       </classpath>
       <transaction>
-        DROP USER ${bbdd.user} CASCADE;
+        -- DROP USER IF EXISTS
+        DECLARE
+          v_count NUMBER;
+        BEGIN
+          SELECT COUNT(*) INTO v_count FROM dba_users WHERE UPPER(username) = UPPER('${bbdd.user}');
+          IF (v_count > 0) THEN
+            EXECUTE IMMEDIATE 'DROP USER ${bbdd.user} CASCADE';
+          END IF;
+        END;
+        /
       </transaction>
     </sql>
   </target>
@@ -91,7 +100,7 @@ create.database: creates the database from scratch.
         </fileset>
       </classpath>
       <transaction>
-        DROP ROLE ${bbdd.user};
+        DROP ROLE IF EXISTS ${bbdd.user};
       </transaction>
     </sql>
   </target>
