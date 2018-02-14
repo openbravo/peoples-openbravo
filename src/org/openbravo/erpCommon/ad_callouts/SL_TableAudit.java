@@ -49,13 +49,11 @@ public class SL_TableAudit extends SimpleCallout {
         }
         info.showMessage(Utility.messageBD(this, "RegenerateAudit_ExcludeColumn",
             info.vars.getLanguage()));
-      }
-    } else if (StringUtils.equalsIgnoreCase(strChanged, "inpisexcludeaudit")) {
-      String strIsExcludedAudit = info.getStringParameter("inpisexcludeaudit");
-      boolean currentRecordExcludeAudit = StringUtils.equals(strIsExcludedAudit, "Y");
-      if (currentRecordExcludeAudit) {
+      } else {
         info.showMessage(Utility.messageBD(this, "RegenerateAudit", info.vars.getLanguage()));
       }
+    } else if (StringUtils.equalsIgnoreCase(strChanged, "inpisexcludeaudit")) {
+      info.showMessage(Utility.messageBD(this, "RegenerateAudit", info.vars.getLanguage()));
     }
   }
 }
