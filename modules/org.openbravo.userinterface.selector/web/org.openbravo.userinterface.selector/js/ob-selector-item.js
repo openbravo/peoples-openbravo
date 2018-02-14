@@ -656,7 +656,7 @@ isc.OBSelectorItem.addProperties({
     // only do the identifier actions when clearing
     // in all other cases pickValue is called
     if (!newValue) {
-      if (this.getElementValue() === '' && this.pickList && this.pickList.getSelectedRecord() && this.pickList.getSelectedRecord().id) {
+      if (this.required && this.getElementValue() === '' && this.pickList && this.pickList.getSelectedRecord() && this.pickList.getSelectedRecord().id) {
         // handle special case: after selecting a value, a redraw is fired in the form.
         // due to asynchrony problems, the redraw flow was able to access to _value before setting it with the current value.
         // if we are in this case, then we do not need to continue setting the value because 'null' is not the value to be assigned.
