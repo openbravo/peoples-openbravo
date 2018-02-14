@@ -175,8 +175,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
 
-    paidReceipt = (jsonorder.getLong("orderType") == 0 || jsonorder.getLong("orderType") == 1)
-        && jsonorder.has("isPaid") && jsonorder.getBoolean("isPaid");
+    paidReceipt = ((jsonorder.getLong("orderType") == 0 || jsonorder.getLong("orderType") == 1) && ((jsonorder
+        .has("isPaid") && jsonorder.getBoolean("isPaid") || jsonorder.has("isLayaway")
+        && jsonorder.getBoolean("isLayaway")) && jsonorder.optBoolean("donePressed", false)));
 
     hasPrepayment = jsonorder.optBoolean("hasPrepayment", false);
 
@@ -197,7 +198,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     isDeleted = jsonorder.has("obposIsDeleted") && jsonorder.getBoolean("obposIsDeleted");
     isModified = jsonorder.has("isModified") && jsonorder.getBoolean("isModified");
 
-    createShipment = !isQuotation && !paidReceipt && !isDeleted;
+    createShipment = !isQuotation
+        && !isDeleted
+        && !((jsonorder.getLong("orderType") == 0 || jsonorder.getLong("orderType") == 1)
+            && jsonorder.has("isPaid") && jsonorder.getBoolean("isPaid"));
     if (jsonorder.has("generateShipment")) {
       createShipment &= jsonorder.getBoolean("generateShipment");
     }
@@ -331,10 +335,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if (paidReceipt) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
-          if (createInvoice) {
-            for (OrderLine line : order.getOrderLineList()) {
-              lineReferences.add(line);
-            }
+          for (OrderLine line : order.getOrderLineList()) {
+            lineReferences.add(line);
           }
           if (orderlines.length() > 0) {
             List<OrderLine> lstResultOL = getOrderLineList(order);
@@ -445,7 +447,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           for (int i = 0; i < order.getOrderLineList().size(); i++) {
             OrderLine ol = order.getOrderLineList().get(i);
             if (!ol.isObposIsDeleted()) {
-              BigDecimal pendingLineQty = ol.getDeliveredQuantity();
+              JSONObject jsonOrderLine = orderlines.getJSONObject(i);
+              BigDecimal pendingLineQty = jsonOrderLine.has("obposQtytodeliver") ? new BigDecimal(
+                  jsonOrderLine.getDouble("obposQtytodeliver")) : ol.getOrderedQuantity();
+              ol.setDeliveredQuantity(pendingLineQty);
+              OBDal.getInstance().save(ol);
               if (pendingLineQty != null) {
                 pendingLineQty = pendingLineQty.abs();
                 if (orderlines.getJSONObject(i).has("deliveredQuantity")

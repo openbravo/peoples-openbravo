@@ -5874,7 +5874,7 @@
       var receiptShouldBeInvoiced = false,
           linesToInvoice, linesPendingToDeliver, line, me = this,
           invoice, isQuotation = this.get('isQuotation'),
-          notpaidLayaway = (this.get('isLayaway') || this.get('orderType') === 2) && Math.abs(this.get('payment')) < Math.abs(this.get('gross')) && !this.get('paidOnCredit'),
+          notpaidLayaway = (this.get('isLayaway') || this.get('orderType') === 2) && Math.abs(this.get('payment')) < Math.abs(this.get('gross')) && !this.get('paidOnCredit') && !this.get('donePressed'),
           isDeleted = this.get('obposIsDeleted'),
           paidReceipt = (this.get('orderType') === 0 || this.get('orderType') === 1) && this.get('isPaid'),
           receiptShouldBeShipped = false;
@@ -5890,7 +5890,7 @@
             receiptShouldBeInvoiced = true;
           }
         } else if (this.get('bp').get('invoiceTerms') === 'D') {
-          receiptShouldBeShipped = !isQuotation && !isDeleted && !paidReceipt;
+          receiptShouldBeShipped = !isQuotation && !notpaidLayaway && !isDeleted && !paidReceipt;
           if (receiptShouldBeShipped) {
             linesToInvoice = _.find(this.get('lines').models, function (line) {
               return (!OB.UTIL.isNullOrUndefined(line.get('obposQtytodeliver')) ? line.get('obposQtytodeliver') : line.get('qty')) !== 0;
