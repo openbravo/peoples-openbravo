@@ -566,10 +566,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             addPaymentLine(payment.get('origAmount'), orderListIndex, paymentListIndex + 1);
           } else {
             var bigDecAmountAux, amtAux;
-            if (orderListIndex === orderList.length - 1 && !paymentMethod.paymentMethod.iscash) {
+            if (orderListIndex === orderList.length - 1 && !considerPrepaymentAmount && !paymentMethod.paymentMethod.iscash) {
               bigDecAmountAux = new BigDecimal(String(payment.get('origAmount')));
               amtAux = OB.DEC.toNumber(bigDecAmountAux);
-              paymentList.at(paymentListIndex).set('origAmount', OB.DEC.sub(paymentList.at(paymentListIndex).get('origAmount'), considerPrepaymentAmount ? amountToPay : payment.get('origAmount')));
+              paymentList.at(paymentListIndex).set('origAmount', OB.DEC.sub(paymentList.at(paymentListIndex).get('origAmount'), payment.get('origAmount')));
             } else {
               bigDecAmountAux = new BigDecimal(String(OB.DEC.mul(amountToPay, paymentMethod.mulrate)));
               amtAux = OB.DEC.toNumber(bigDecAmountAux);
