@@ -259,7 +259,7 @@
     <SqlMethodComment>Select the active generic Error pages (with no code or exception parameters)</SqlMethodComment>
     <Sql>
       <![CDATA[
-      select max(p.value) as location
+      select p.value as location
       from  ad_model_object_para p, 
             ad_model_object o
       where o.object_type = 'E'
