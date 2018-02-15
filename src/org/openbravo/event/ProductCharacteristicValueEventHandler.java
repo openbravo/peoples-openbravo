@@ -25,10 +25,10 @@ import java.util.Set;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.jfree.util.Log;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
@@ -41,10 +41,12 @@ import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.service.importprocess.ImportEntryManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ProductCharacteristicValueEventHandler extends EntityPersistenceEventObserver {
-  private static final int IMPORT_ENTRY_SIZE = 3;
-  protected Logger logger = Logger.getLogger(this.getClass());
+  private static final int IMPORT_ENTRY_SIZE = 100;
+  protected Logger logger = LoggerFactory.getLogger(this.getClass());
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       ProductCharacteristicValue.ENTITY_NAME) };
   private static ThreadLocal<Set<String>> prodchvalueUpdated = new ThreadLocal<Set<String>>();
@@ -85,29 +87,29 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
   }
 
   public void onTransactionCompleted(@Observes TransactionCompletedEvent event) {
-    Set<String> productList = prodchvalueUpdated.get();
-    prodchvalueUpdated.set(null);
-    prodchvalueUpdated.remove();
-    if (productList == null || productList.isEmpty() || event.getTransaction().wasRolledBack()) {
-      return;
-    }
-    ArrayList<String> products = new ArrayList<String>(productList);
-    int productCount = productList.size();
-    for (int i = 0; i < productCount; i += IMPORT_ENTRY_SIZE) {
-      int currentLimit = (i + IMPORT_ENTRY_SIZE) < productCount ? (i + IMPORT_ENTRY_SIZE)
-          : productCount;
-      Set<String> productSubList = new HashSet<String>(products.subList(i, currentLimit));
-      JSONObject entryJson = new JSONObject();
-      try {
-        JSONArray productIds = new JSONArray(productSubList);
-        entryJson.put("productIds", productIds);
-      } catch (JSONException ignore) {
+    try {
+      Set<String> productList = prodchvalueUpdated.get();
+      prodchvalueUpdated.set(null);
+      prodchvalueUpdated.remove();
+      if (productList == null || productList.isEmpty() || event.getTransaction().wasRolledBack()) {
+        return;
       }
-      if (!SessionHandler.getInstance().isCurrentTransactionActive()) {
-        SessionHandler.getInstance().beginNewTransaction();
+      ArrayList<String> products = new ArrayList<String>(productList);
+      int productCount = productList.size();
+      for (int i = 0; i < productCount; i += IMPORT_ENTRY_SIZE) {
+        int currentLimit = (i + IMPORT_ENTRY_SIZE) < productCount ? (i + IMPORT_ENTRY_SIZE)
+            : productCount;
+        JSONArray productSubListIds = new JSONArray(products.subList(i, currentLimit));
+        JSONObject entryJson = new JSONObject();
+        entryJson.put("productIds", productSubListIds);
+        if (!SessionHandler.getInstance().isCurrentTransactionActive()) {
+          SessionHandler.getInstance().beginNewTransaction();
+        }
+        importEntryManager.createImportEntry(SequenceIdData.getUUID(), "VariantChDescUpdate",
+            entryJson.toString(), true);
       }
-      importEntryManager.createImportEntry(SequenceIdData.getUUID(), "VariantChDescUpdate",
-          entryJson.toString(), true);
+    } catch (JSONException ignore) {
+      Log.error("Error in ProductCharacteristicValueEventHandler.onTransactionCompleted", e);
     }
   }
 
