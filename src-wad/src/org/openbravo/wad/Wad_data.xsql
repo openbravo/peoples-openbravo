@@ -12,23 +12,34 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
 
-
-
 <SqlClass name="WadData" package="org.openbravo.wad">
+  <SqlMethod name="dummy" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Dummy method used to set up all WadData fields</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      select 
+        '' as id, '' as name, '' as classname, '' as displayname,
+        '' as loadonstartup, '' as value, '' as line, '' as auth,
+        '' as buildxml, '' as tabId, '' as windowName, '' as tabName,
+        '' as windowPackage, '' as windowmodule, '' as tabPackage,
+        '' as tabmodule, '' as key, '' as tablevel, '' as location,
+        '' as exceptiontype, '' as errorcode
+      from dual
+      ]]>      
+    </Sql>
+  </SqlMethod>
+
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT AD_MODEL_OBJECT_ID as ID, (COALESCE(ACTION, '') || AD_MODEL_OBJECT_ID) AS NAME, o.CLASSNAME, o.CLASSNAME AS DISPLAYNAME, 
-      LOADONSTARTUP, '' AS VALUE, '' AS LINE, '' AS AUTH, '' as buildxml, 
-         '' as tabId, '' as windowName, '' as tabName, '' as windowPackage, '' as windowmodule, '' as tabPackage, '' as tabmodule,
-         '' as key, '' as tablevel
+      SELECT AD_MODEL_OBJECT_ID as ID, (COALESCE(ACTION, '') || AD_MODEL_OBJECT_ID) AS NAME, o.CLASSNAME, o.CLASSNAME AS DISPLAYNAME, LOADONSTARTUP
       FROM AD_MODEL_OBJECT o LEFT JOIN ad_process p ON o.ad_process_id = p.ad_process_id AND p.isReport='N'
       WHERE o.ISACTIVE = 'Y'
       AND OBJECT_TYPE = 'S'
@@ -138,6 +149,7 @@
       ]]>
     </Sql>
   </SqlMethod>
+
   <SqlMethod name="selectContextParams" type="preparedStatement" return="multiple">
     <SqlMethodComment>Selects all model object parameters of object type C</SqlMethodComment>
     <Sql>
@@ -173,6 +185,7 @@
     <Parameter name="classname"/>
     <Parameter name="id"/>
   </SqlMethod>
+
   <SqlMethod name="selectListener" type="preparedStatement" return="multiple">
     <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
     <Sql>
@@ -211,18 +224,97 @@
       ]]>
     </Sql>
   </SqlMethod>
+
   <SqlMethod name="updateIdentifiers" type="callableStatement" return="object" object="WadData">
       <SqlMethodComment>procedure AD_Update_Table_Identifier</SqlMethodComment>
       <Sql><![CDATA[
         CALL AD_Update_Table_Identifier(NULL, ?)
       ]]></Sql>
       <Parameter name="quick"/>
-   </SqlMethod>
+  </SqlMethod>
    
-     <SqlMethod name="updateAuditTrail" type="callableStatement" return="object" object="WadData">
-      <SqlMethodComment>procedure AD_Update_Table_Identifier</SqlMethodComment>
-      <Sql><![CDATA[
-        CALL AD_Create_Audit_Triggers(null)
-      ]]></Sql>
-   </SqlMethod>
+  <SqlMethod name="updateAuditTrail" type="callableStatement" return="object" object="WadData">
+    <SqlMethodComment>procedure AD_Update_Table_Identifier</SqlMethodComment>
+    <Sql><![CDATA[
+      CALL AD_Create_Audit_Triggers(null)
+    ]]></Sql>
+  </SqlMethod>
+   
+  <SqlMethod name="selectContextParams2" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Selects all model object parameters of object type C</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT P.NAME, P.VALUE
+      FROM AD_MODEL_OBJECT MO, AD_MODEL_OBJECT_PARA P
+      WHERE MO.ISACTIVE = 'Y'
+      AND MO.OBJECT_TYPE = 'C' 
+      AND MO.AD_MODEL_OBJECT_ID = P.AD_MODEL_OBJECT_ID 
+      AND P.ISACTIVE = 'Y'
+      ORDER BY MO.SEQNO, P.LINE, P.NAME
+      ]]>
+    </Sql>
+  </SqlMethod>
+
+  <SqlMethod name="selectGenericErrorPages" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Select the active generic Error pages (with no code or exception parameters)</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      select p.value as location
+      from  ad_model_object_para p, 
+            ad_model_object o
+      where o.object_type = 'E'
+      and o.isactive = 'Y'
+      and p.isactive='Y'
+      and p.ad_model_object_id = o.ad_model_object_id
+      and p.name IN ('location') and not exists (
+         select 1 from ad_model_object_para op where
+         op.isactive = 'Y'
+         and op.name IN ('exception-type', 'error-code')
+         and op.ad_model_object_id = o.ad_model_object_id
+      )
+    ]]>
+    </Sql>
+  </SqlMethod>
+
+  <SqlMethod name="selectExceptionErrorPages" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Select the active exception Error pages</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      select p.value as exceptiontype, 
+        (select max(value)
+         from ad_model_object_para lp 
+         where lp.ad_model_object_id = o.ad_model_object_id
+         and lp.isactive = 'Y'
+         and lp.name = 'location'
+        ) as location
+      from  ad_model_object_para p, ad_model_object o
+      where o.object_type = 'E'
+      and o.isactive = 'Y'
+      and p.isactive = 'Y'
+      and p.ad_model_object_id = o.ad_model_object_id
+      and p.name IN ('exception-type')
+      ]]> 
+    </Sql>
+  </SqlMethod>
+
+  <SqlMethod name="selectErrorCodePages" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Select the active Error code pages</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      select p.value as errorcode, 
+        (select max(value)
+         from ad_model_object_para lp 
+         where lp.ad_model_object_id = o.ad_model_object_id
+         and lp.isactive = 'Y'
+         and lp.name = 'location'
+        ) as location
+      from  ad_model_object_para p, ad_model_object o
+      where o.object_type = 'E'
+      and o.isactive = 'Y'
+      and p.isactive = 'Y'
+      and p.ad_model_object_id = o.ad_model_object_id
+      and p.name IN ('error-code')
+      ]]>
+    </Sql>
+  </SqlMethod>
 </SqlClass>
