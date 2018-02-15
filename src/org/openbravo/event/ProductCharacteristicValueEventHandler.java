@@ -108,7 +108,7 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
         importEntryManager.createImportEntry(SequenceIdData.getUUID(), "VariantChDescUpdate",
             entryJson.toString(), true);
       }
-    } catch (JSONException ignore) {
+    } catch (JSONException e) {
       Log.error("Error in ProductCharacteristicValueEventHandler.onTransactionCompleted", e);
     }
   }
