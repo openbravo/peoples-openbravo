@@ -2742,6 +2742,18 @@
       this.get('orderManualPromotions').push(promotionToApply);
     },
 
+    calculateDiscountedLinePrice: function (line) {
+      var i;
+      var allDiscountedAmt = 0;
+      for (i = 0; i < line.get('promotions').length; i++) {
+        if (!line.get('promotions')[i].hidden) {
+          allDiscountedAmt += line.get('promotions')[i].amt;
+        }
+      }
+
+      line.set('discountedLinePrice', OB.DEC.toNumber(new BigDecimal(String(line.get('price'))).subtract(new BigDecimal(String(allDiscountedAmt)).divide(new BigDecimal(String(line.get('qty'))), 20, OB.DEC.getRoundingMode()))));
+    },
+
     addPromotion: function (line, rule, discount) {
       var promotions = line.get('promotions') || [],
           disc = {},
@@ -2865,15 +2877,7 @@
 
       line.set('promotions', promotions);
       // Calculate discountedLinePrice for the next promotion
-      var allDiscountedAmt = 0;
-      for (i = 0; i < line.get('promotions').length; i++) {
-        if (!line.get('promotions')[i].hidden) {
-          allDiscountedAmt += line.get('promotions')[i].amt;
-        }
-      }
-
-      line.set('discountedLinePrice', OB.DEC.toNumber(new BigDecimal(String(line.get('price'))).subtract(new BigDecimal(String(allDiscountedAmt)).divide(new BigDecimal(String(line.get('qty'))), 20, OB.DEC.getRoundingMode()))));
-
+      this.calculateDiscountedLinePrice(line);
       line.trigger('change');
     },
 
@@ -2898,9 +2902,10 @@
 
       if (removed) {
         line.set('promotions', res);
+        // Calculate discountedLinePrice for the next promotion
+        this.calculateDiscountedLinePrice(line);
         line.trigger('change');
         this.save();
-
       }
     },
 
