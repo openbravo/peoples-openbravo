@@ -19,7 +19,7 @@
 
 package org.openbravo.test.system;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
@@ -37,21 +37,27 @@ import org.jboss.arquillian.container.weld.ee.embedded_1_1.mock.MockHttpSession;
 import org.junit.Test;
 import org.openbravo.erpCommon.security.SessionListener;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Test cases covering Session management */
 public class Sessions {
+  private static final Logger log = LoggerFactory.getLogger(Sessions.class);
   private static int NUMBER_OF_THREADS = 4;
   private static int NUMBER_OF_SESSIONS_PER_THREAD = 1_000;
 
   /** Covers bug #37893 */
   @Test
   public void canCreateAndCheckSessionsInParallel() throws InterruptedException, ExecutionException {
+    log.info("Starting {} threads to create {} sessions each", NUMBER_OF_THREADS,
+        NUMBER_OF_SESSIONS_PER_THREAD);
     SessionListener sl = new SessionListener();
     List<SessionCreatorAndChecker> tasks = new ArrayList<>();
     for (int i = 0; i < NUMBER_OF_THREADS; i++) {
       tasks.add(new SessionCreatorAndChecker(sl));
     }
 
+    long t = System.currentTimeMillis();
     ExecutorService es = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
     List<Future<Void>> executions = es.invokeAll(tasks);
 
@@ -59,6 +65,7 @@ public class Sessions {
       // if assertion failed, this will throw exception
       e.get();
     }
+    log.info("All finished in {} ms", System.currentTimeMillis() - t);
   }
 
   private class SessionCreatorAndChecker implements Callable<Void> {
@@ -70,6 +77,7 @@ public class Sessions {
 
     @Override
     public Void call() {
+      long t = System.currentTimeMillis();
       for (int i = 0; i < NUMBER_OF_SESSIONS_PER_THREAD; i++) {
         String sessionId = SequenceIdData.getUUID();
 
@@ -84,6 +92,7 @@ public class Sessions {
         assertThat(sessionFromContext, is(s));
       }
 
+      log.info("Thread finished in {} ms", System.currentTimeMillis() - t);
       return null;
     }
   }
