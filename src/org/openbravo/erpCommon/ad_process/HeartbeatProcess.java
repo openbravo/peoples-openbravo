@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,6 +49,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -700,7 +701,8 @@ public class HeartbeatProcess implements Process {
   public static HeartBeatOrRegistration isLoginPopupRequired(String roleId, String javaDateFormat,
       ConnectionProvider connectionProvider) throws ServletException {
     if (roleId != null && "0".equals(roleId)) {
-      if (ActivationKey.getInstance().checkOPSLimitations(null) == LicenseRestriction.ON_DEMAND_OFF_PLATFORM) {
+      String sessionId = (String) RequestContext.get().getSession().getAttribute("#AD_SESSION_ID");
+      if (ActivationKey.getInstance().checkOPSLimitations(sessionId) == LicenseRestriction.ON_DEMAND_OFF_PLATFORM) {
         return HeartBeatOrRegistration.OutOfDemandPlatform;
       }
       // Check if the instance purpose is set.

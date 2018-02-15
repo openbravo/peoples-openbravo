@@ -260,7 +260,8 @@ public class ActivationKey {
 
   private static final List<String> BACKOFFICE_SUCESS_SESSION_TYPES = Arrays.asList(//
       "S", // Standard success session
-      "SUR" // Concurrent users soft limit reached
+      "SUR", // Concurrent users soft limit reached
+      "CUR" // Concurrent users hard limit reached
   );
 
   public static final Long NO_LIMIT = -1L;
