@@ -4277,9 +4277,16 @@
               order.save();
               order.trigger('saveCurrent');
             }
-            if (args.callback instanceof Function) {
-              args.callback(order);
-            }
+            OB.UTIL.HookManager.executeHooks('OBPOS_postAddPayment', {
+              paymentAdded: payment,
+              payments: payments,
+              receipt: order,
+              callback: callback
+            }, function (args) {
+              if (args.callback instanceof Function) {
+                args.callback(order);
+              }
+            });
             };
 
         if (args && args.cancellation) {
@@ -6593,9 +6600,16 @@
         callback: callback
       }, function (args) {
         var executeFinalCallback = function () {
-            if (args.callback instanceof Function) {
-              args.callback(order);
-            }
+            OB.UTIL.HookManager.executeHooks('OBPOS_postAddPayment', {
+              paymentAdded: payment,
+              payments: payments,
+              receipt: order,
+              callback: callback
+            }, function (args) {
+              if (args.callback instanceof Function) {
+                args.callback(order);
+              }
+            });
             };
 
         if (args && args.cancellation) {
