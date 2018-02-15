@@ -6138,9 +6138,9 @@
             });
           } else {
             OB.UTIL.showError(errorMsg);
-            if (errorCallback) {
-              errorCallback();
-            }
+          }
+          if (errorCallback) {
+            errorCallback();
           }
           };
 
