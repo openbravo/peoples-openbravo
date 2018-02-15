@@ -231,6 +231,10 @@
         return;
       }
 
+      if (promotion.rule.get('obdiscAllowmultipleinstan')) {
+        promotion.definition.discountinstance = OB.UTIL.get_UUID();
+      }
+
       lines.forEach(function (line) {
         if (line.get('promotions')) {
           line.get('promotions').forEach(function (promotion) {
@@ -252,7 +256,10 @@
         text: OB.I18N.getLabel('OBPOS_AddedDiscount', [promotion.rule.get('name')]),
         undo: function () {
           receipt.get('lines').forEach(function (line) {
-            receipt.removePromotion(line, promotion.rule);
+            receipt.removePromotion(line, {
+              id: promotion.rule.get('id'),
+              discountinstance: promotion.definition.discountinstance
+            });
           });
           receipt.calculateReceipt();
           receipt.set('undo', null);
