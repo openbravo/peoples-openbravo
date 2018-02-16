@@ -239,21 +239,6 @@
       CALL AD_Create_Audit_Triggers(null)
     ]]></Sql>
   </SqlMethod>
-   
-  <SqlMethod name="selectContextParams2" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Selects all model object parameters of object type C</SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT P.NAME, P.VALUE
-      FROM AD_MODEL_OBJECT MO, AD_MODEL_OBJECT_PARA P
-      WHERE MO.ISACTIVE = 'Y'
-      AND MO.OBJECT_TYPE = 'C' 
-      AND MO.AD_MODEL_OBJECT_ID = P.AD_MODEL_OBJECT_ID 
-      AND P.ISACTIVE = 'Y'
-      ORDER BY MO.SEQNO, P.LINE, P.NAME
-      ]]>
-    </Sql>
-  </SqlMethod>
 
   <SqlMethod name="selectGenericErrorPages" type="preparedStatement" return="multiple">
     <SqlMethodComment>Select the active generic Error pages (with no code or exception parameters)</SqlMethodComment>

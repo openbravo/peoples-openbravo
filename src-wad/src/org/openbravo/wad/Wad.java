@@ -770,11 +770,11 @@ public class Wad extends DefaultHandler {
       xmlDocument.setData("structure2", WadData.selectMapping(pool));
 
       xmlDocument.setData("structureErrorExceptionPage",
-          this.appendErrorPageRoutePrefix(WadData.selectExceptionErrorPages(pool), contextParams));
+          appendErrorPageRoutePrefix(WadData.selectExceptionErrorPages(pool), contextParams));
       xmlDocument.setData("structureErrorCodePage",
-          this.appendErrorPageRoutePrefix(WadData.selectErrorCodePages(pool), contextParams));
+          appendErrorPageRoutePrefix(WadData.selectErrorCodePages(pool), contextParams));
       xmlDocument.setData("structureGenericErrorPage",
-          this.appendErrorPageRoutePrefix(WadData.selectGenericErrorPages(pool), contextParams));
+          appendErrorPageRoutePrefix(WadData.selectGenericErrorPages(pool), contextParams));
 
       String webXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocument.print();
       webXml = webXml.replace("${attachPath}", attachPath);
@@ -787,8 +787,8 @@ public class Wad extends DefaultHandler {
   }
 
   private WadData[] appendErrorPageRoutePrefix(WadData[] originalData, WadData[] contextParams) {
-    String baseDesignPath = this.findParameterByName("BaseDesignPath", contextParams);
-    String defaultDesignPath = this.findParameterByName("DefaultDesignPath", contextParams);
+    String baseDesignPath = findParameterByName("BaseDesignPath", contextParams);
+    String defaultDesignPath = findParameterByName("DefaultDesignPath", contextParams);
 
     List<WadData> appendedData = new ArrayList<WadData>();
     for (WadData data : originalData) {
