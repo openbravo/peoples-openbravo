@@ -199,6 +199,7 @@ public class SessionInfo {
    *             explicit in the code this need
    * @see #saveContextInfoIntoDB(Connection)
    */
+  @Deprecated
   static void setDBSessionInfo(Connection conn, boolean onlyIfChanged) {
     if (!isAuditActive || (onlyIfChanged && (changedInfo.get() == null || !changedInfo.get()))) {
       if (log4j.isDebugEnabled()) {
@@ -214,6 +215,7 @@ public class SessionInfo {
    * @deprecated In most of the cases this method is no longer required to be invoked
    * @see #saveContextInfoIntoDB(Connection)
    */
+  @Deprecated
   public static void setDBSessionInfo(Connection conn) {
     saveContextInfoIntoDB(conn);
   }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -61,6 +61,7 @@ import org.openbravo.model.ad.access.User;
  * @author iperdomo
  */
 
+@Deprecated
 public class BaseTest extends TestCase {
 
   private static final Logger log = Logger.getLogger(BaseTest.class);
@@ -207,6 +208,7 @@ public class BaseTest extends TestCase {
    * @deprecated Behavior has been implemented in the {@link OBPropertiesProvider}. Is now done
    *             automatically when initializing the DAL layer.
    */
+  @Deprecated
   protected void setConfigPropertyFiles() {
   }
 
@@ -390,6 +392,7 @@ public class BaseTest extends TestCase {
    * @param errorOccured
    * @deprecated
    */
+  @Deprecated
   public void setErrorOccured(boolean errorOccured) {
     this.errorOccured = errorOccured;
   }

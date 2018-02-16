@@ -1670,6 +1670,7 @@ public class Utility {
    *             {@link org.openbravo.client.application.report.ReportingUtils#getTranslatedJasperReport(ConnectionProvider, String, String, String)}
    *             instead.
    */
+  @Deprecated
   public static JasperReport getTranslatedJasperReport(ConnectionProvider conn, String reportName,
       String language, String baseDesignPath) throws JRException {
     return ReportingUtils.getTranslatedJasperReport(conn, reportName, language, baseDesignPath);
@@ -1728,6 +1729,7 @@ public class Utility {
   /**
    * @deprecated use {@link Utility#getTabURL(String, String, boolean)}
    */
+  @Deprecated
   public static String getTabURL(ConnectionProvider conn, String tabId, String type) {
     return getTabURL(tabId, type, true);
   }
