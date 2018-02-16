@@ -119,6 +119,10 @@
       <index name="M_INVENTORYLINE_INVENTORY" unique="false">
         <index-column name="M_INVENTORY_ID"/>
       </index>
+      <index name="M_INVENTORYLINE_INVENTORYLINE" unique="false">
+        <index-column name="RELATEDINVENTORYLINEID"/>
+        <whereClause><![CDATA[RELATEDINVENTORYLINEID IS NOT NULL]]></whereClause>
+      </index>
       <index name="M_INVENTORYLINE_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>
