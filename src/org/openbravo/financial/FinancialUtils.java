@@ -340,6 +340,7 @@ public class FinancialUtils {
    * 
    * @deprecated Use {@link #calculateNetAmtFromGross} instead
    */
+  @Deprecated
   public static BigDecimal calculateNetFromGross(String strTaxId, BigDecimal grossAmount,
       int pricePrecision, BigDecimal alternateAmount, BigDecimal quantity) {
     if (grossAmount.compareTo(BigDecimal.ZERO) == 0) {

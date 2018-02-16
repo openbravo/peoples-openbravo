@@ -472,6 +472,7 @@ public class CashVATUtil {
    *             {@link #createFactCashVAT(AcctSchema, ConnectionProvider, Fact, String, DocLineCashVATReady_PaymentTransactionReconciliation, Invoice, String, String)}
    *             instead
    */
+  @Deprecated
   public static String createFactCashVAT(AcctSchema as, ConnectionProvider conn, Fact fact,
       String Fact_Acct_Group_ID, DocLineCashVATReady_PaymentTransactionReconciliation line,
       Invoice invoice, final String documentType, final String cCurrencyID, final String SeqNo) {

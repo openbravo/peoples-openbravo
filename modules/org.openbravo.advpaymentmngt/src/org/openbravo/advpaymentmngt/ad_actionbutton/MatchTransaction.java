@@ -86,6 +86,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 /**
  * @deprecated
  */
+@Deprecated
 public class MatchTransaction extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   VariablesSecureApp vars = null;

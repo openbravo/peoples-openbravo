@@ -73,6 +73,7 @@ public class DocLine_FINFinAccTransaction extends
    *             so we can control from outside when to flush and/or clear the session to avoid Out
    *             Of Memory errors
    */
+  @Deprecated
   public void setInvoice(Invoice invoice) {
     this.invoice = invoice;
   }
