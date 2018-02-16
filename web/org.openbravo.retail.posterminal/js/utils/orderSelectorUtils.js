@@ -192,7 +192,13 @@
                     checkForDuplicateReceipt, newOrder, newModel;
                 checkForDuplicateReceipt = function (idx) {
                   if (idx === data.length) {
-                    loadOrders(models);
+                    if (models.length === 1) {
+                      // If there's only one model, it means that the related orders are already loaded (in this or in other session)
+                      // Only the required order is loaded and is not asked to open the related receipts
+                      loadOrder(models[0]);
+                    } else {
+                      loadOrders(models);
+                    }
                   } else {
                     newOrder = data[idx];
                     newModel = new Backbone.Model(newOrder);
