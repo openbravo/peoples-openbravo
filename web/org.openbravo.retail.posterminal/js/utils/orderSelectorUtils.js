@@ -54,6 +54,8 @@
           OB.UTIL.showError(msg);
         }
       }
+      recursiveCallback = undefined;
+      recursiveIdx = undefined;
       checkListCallback();
     };
 
