@@ -1603,6 +1603,18 @@
           UPDATE C_ORDER  SET DocStatus='VO'  WHERE C_Order_ID=v_Record_ID;
         END IF;
       END IF;
+      
+      -- If there is at least one line with different Quantity Ordered than Quantity Delivered, set the IsDelivered flag as N
+      -- By default this flag is already N for new Orders, this can happen when the Order has been cloned from another one
+      -- that has been already delivered, and then the lines information has changed
+      IF (ToDeliver <> 0) THEN
+        UPDATE C_ORDER
+        SET IsDelivered='N',
+            Updated=now(),
+            UpdatedBy=v_User
+        WHERE C_Order_ID=v_Record_ID;
+      END IF;
+
       -- We are done with standard sales orders
       IF (v_DocSubTypeSO = 'RM' OR v_isreturndoctype = 'Y') THEN
 
