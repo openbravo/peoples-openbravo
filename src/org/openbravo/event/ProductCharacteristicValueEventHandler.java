@@ -28,7 +28,6 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.jfree.util.Log;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
@@ -109,7 +108,7 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
             entryJson.toString(), true);
       }
     } catch (JSONException e) {
-      Log.error("Error in ProductCharacteristicValueEventHandler.onTransactionCompleted", e);
+      logger.error("Error in ProductCharacteristicValueEventHandler.onTransactionCompleted", e);
     }
   }
 
