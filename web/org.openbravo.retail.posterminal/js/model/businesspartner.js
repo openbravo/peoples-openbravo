@@ -201,7 +201,8 @@
       return JSON.parse(JSON.stringify(this.toJSON()));
     },
     loadBPLocations: function (shipping, billing, callback, bpId) {
-      var criteria = {
+      var getLocation, errorCallback, criteria, checkInLocalDB = false;
+      criteria = {
         bpartner: {
           operator: OB.Dal.EQ,
           value: bpId || this.get('id')
@@ -217,23 +218,52 @@
         };
         criteria.remoteFilters = [filterBpartnerId];
       }
-      OB.Dal.find(OB.Model.BPLocation, criteria, function (collection) {
-        if (!billing) {
-          billing = _.find(collection.models, function (loc) {
-            return loc.get('isBillTo');
-          });
-        }
-        if (!shipping) {
-          shipping = _.find(collection.models, function (loc) {
-            return loc.get('isShipTo');
-          });
-        }
-        if (!shipping && !billing) {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerNoShippingAddress', [bpId]));
-          return;
-        }
-        callback(shipping, billing, collection.models);
-      });
+      errorCallback = function () {
+        OB.error(OB.I18N.getLabel('OBPOS_BPInfoErrorTitle') + '. Message: ' + OB.I18N.getLabel('OBPOS_BPInfoErrorMessage'));
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_BPInfoErrorTitle'), OB.I18N.getLabel('OBPOS_BPInfoErrorMessage'), [{
+          label: OB.I18N.getLabel('OBPOS_Reload')
+        }], {
+          onShowFunction: function (popup) {
+            popup.$.headerCloseButton.hide();
+            OB.UTIL.localStorage.removeItem('POSLastTotalRefresh');
+            OB.UTIL.localStorage.removeItem('POSLastIncRefresh');
+          },
+          onHideFunction: function () {
+            OB.UTIL.localStorage.removeItem('POSLastTotalRefresh');
+            OB.UTIL.localStorage.removeItem('POSLastIncRefresh');
+            window.location.reload();
+          },
+          autoDismiss: false
+        });
+      };
+      getLocation = function (checkLocal) {
+        OB.Dal.find(OB.Model.BPLocation, criteria, function (collection) {
+          if (!billing) {
+            billing = _.find(collection.models, function (loc) {
+              return loc.get('isBillTo');
+            });
+          }
+          if (!shipping) {
+            shipping = _.find(collection.models, function (loc) {
+              return loc.get('isShipTo');
+            });
+          }
+          if (!shipping && !billing) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerNoShippingAddress', [bpId]));
+            return;
+          }
+          callback(shipping, billing, collection.models);
+        }, function () {
+          if (checkInLocalDB) {
+            errorCallback();
+            return;
+          }
+          checkInLocalDB = true;
+          delete criteria.remoteFilters;
+          getLocation(true);
+        }, null, null, checkLocal);
+      };
+      getLocation(false);
     },
     setBPLocations: function (shipping, billing, locationModel) {
       if (shipping) {
