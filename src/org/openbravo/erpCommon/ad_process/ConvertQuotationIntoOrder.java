@@ -20,6 +20,7 @@
 package org.openbravo.erpCommon.ad_process;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -343,7 +344,7 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
           .subtract(bdPriceStd)
           .multiply(new BigDecimal("100"))
           .divide(bdPriceList, newSalesOrder.getCurrency().getStandardPrecision().intValue(),
-              BigDecimal.ROUND_HALF_EVEN);
+              RoundingMode.HALF_EVEN);
     }
     newSalesOrderLine.setDiscount(discount);
     // Line Price

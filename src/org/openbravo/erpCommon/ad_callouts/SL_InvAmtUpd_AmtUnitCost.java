@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_callouts;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.servlet.ServletException;
 
@@ -41,7 +42,7 @@ public class SL_InvAmtUpd_AmtUnitCost extends SimpleCallout {
       info.addResult(
           "inpunitcost",
           onHandQty.intValue() == 0 ? BigDecimal.ZERO : invAmount.divide(onHandQty, currency
-              .getPricePrecision().intValue(), BigDecimal.ROUND_HALF_UP));
+              .getPricePrecision().intValue(), RoundingMode.HALF_UP));
     } else if (info.getLastFieldChanged().equalsIgnoreCase("inpunitcost")) {
       BigDecimal unitCost = info.getBigDecimalParameter("inpunitcost");
       info.addResult("inpinventoryAmount", unitCost.multiply(onHandQty));

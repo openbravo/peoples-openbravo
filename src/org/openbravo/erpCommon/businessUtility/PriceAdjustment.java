@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.businessUtility;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -79,7 +80,7 @@ public class PriceAdjustment {
                 .subtract(promo.getDiscountAmount())
                 .multiply(
                     BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100))))
-                .setScale(precision, BigDecimal.ROUND_HALF_UP);
+                .setScale(precision, RoundingMode.HALF_UP);
           }
         }
         if (!promo.isApplyNext()) {
@@ -120,7 +121,7 @@ public class PriceAdjustment {
               .compareTo(BigDecimal.ZERO) != 0) {
             priceStd = priceStd.add(promo.getDiscountAmount()).divide(
                 BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100))),
-                precision, BigDecimal.ROUND_HALF_UP);
+                precision, RoundingMode.HALF_UP);
           } else {
             // 100 % Discount in price adjustment results in priceStd = Zero
             priceStd = BigDecimal.ZERO;

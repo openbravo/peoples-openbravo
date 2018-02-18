@@ -550,7 +550,7 @@ public class FIN_AddPayment {
       if (vars != null) {
         DecimalFormat generalQtyRelationFmt = Utility.getFormat(vars, "generalQtyEdition");
         finTxnConvertRate = finTxnConvertRate.setScale(
-            generalQtyRelationFmt.getMaximumFractionDigits(), BigDecimal.ROUND_HALF_UP);
+            generalQtyRelationFmt.getMaximumFractionDigits(), RoundingMode.HALF_UP);
       }
     }
 
@@ -1391,7 +1391,7 @@ public class FIN_AddPayment {
 
     BigDecimal overdueAmount = calculateOverdueAmount(invoicePaymentSchedule);
     invoice.setPercentageOverdue(overdueAmount.multiply(new BigDecimal("100"))
-        .divide(invoice.getGrandTotalAmount(), 2, BigDecimal.ROUND_HALF_UP).longValue());
+        .divide(invoice.getGrandTotalAmount(), 2, RoundingMode.HALF_UP).longValue());
 
     if (firstDueDate != null)
       invoice.setDaysTillDue(FIN_Utility.getDaysToDue(firstDueDate));

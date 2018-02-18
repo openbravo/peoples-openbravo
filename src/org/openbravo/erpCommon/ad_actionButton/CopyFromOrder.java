@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_actionButton;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.util.StringTokenizer;
 
@@ -180,7 +181,7 @@ public class CopyFromOrder extends HttpSecureAppServlet {
         if (order.getPriceList().isPriceIncludesTax()) {
           BigDecimal qty = new BigDecimal(strQty);
           priceGross = (strLastpriceso.equals("") ? ZERO : new BigDecimal(strLastpriceso));
-          amtGross = priceGross.multiply(qty).setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+          amtGross = priceGross.multiply(qty).setScale(stdPrecision, RoundingMode.HALF_UP);
           priceActual = BigDecimal.ZERO;
           priceLimit = BigDecimal.ZERO;
           netPriceList = BigDecimal.ZERO;
@@ -206,11 +207,11 @@ public class CopyFromOrder extends HttpSecureAppServlet {
           }
           // (PL-UP)/PL * 100
           discount = ((priceList.subtract(unitPrice)).multiply(new BigDecimal("100")).divide(
-              priceList, stdPrecision, BigDecimal.ROUND_HALF_UP));
+              priceList, stdPrecision, RoundingMode.HALF_UP));
         }
         log4j.debug("Discount: " + discount.toString());
         if (priceStd.scale() > pricePrecision) {
-          priceStd = priceStd.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
+          priceStd = priceStd.setScale(pricePrecision, RoundingMode.HALF_UP);
         }
 
         try {
@@ -324,9 +325,9 @@ public class CopyFromOrder extends HttpSecureAppServlet {
     total = (strTotal.equals("") ? ZERO : new BigDecimal(strTotal));
     String strTotalAverage = "";
     if (total == ZERO) {
-      totalAverage = (invoicing.divide(total, 12, BigDecimal.ROUND_HALF_EVEN))
+      totalAverage = (invoicing.divide(total, 12, RoundingMode.HALF_EVEN))
           .multiply(new BigDecimal("100"));
-      totalAverage = totalAverage.setScale(2, BigDecimal.ROUND_HALF_UP);
+      totalAverage = totalAverage.setScale(2, RoundingMode.HALF_UP);
       strTotalAverage = totalAverage.toPlainString();
       // int intscale = totalAverage.scale();
     }

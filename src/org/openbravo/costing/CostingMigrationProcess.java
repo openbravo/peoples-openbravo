@@ -19,6 +19,7 @@
 package org.openbravo.costing;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -617,7 +618,7 @@ public class CostingMigrationProcess implements Process {
         BigDecimal trxCost = BigDecimal.ZERO;
         if (totalStock.compareTo(BigDecimal.ZERO) != 0) {
           trxCost = totalCost.multiply(trx.getMovementQuantity().abs()).divide(totalStock,
-              stdPrecision, BigDecimal.ROUND_HALF_UP);
+              stdPrecision, RoundingMode.HALF_UP);
         }
         if (trx.getMovementQuantity().negate().compareTo(totalStock) == 0) {
           // Last transaction adjusts remaining cost amount.
@@ -644,7 +645,7 @@ public class CostingMigrationProcess implements Process {
         BigDecimal cost = BigDecimal.ZERO;
         if (BigDecimal.ZERO.compareTo(trx.getMovementQuantity()) != 0) {
           cost = trxCost.divide(trx.getMovementQuantity().abs(), costPrecision,
-              BigDecimal.ROUND_HALF_UP);
+              RoundingMode.HALF_UP);
         }
         if (!legalEntityCur.equals(cur)) {
           cost = FinancialUtils.getConvertedAmount(cost, cur, legalEntityCur, new Date(),
@@ -855,11 +856,11 @@ public class CostingMigrationProcess implements Process {
               .getGoodsShipmentLine().getShipmentReceipt().getAccountingDate()), null, "AV",
               new DalConnectionProvider(false), OBDal.getInstance().getConnection()));
           BigDecimal trxCost = unitCost.multiply(trx.getMovementQuantity().abs()).setScale(
-              standardPrecision, BigDecimal.ROUND_HALF_UP);
+              standardPrecision, RoundingMode.HALF_UP);
           trx.setTransactionCost(trxCost);
         } else {
           trx.setTransactionCost(cost.getCost().multiply(trx.getMovementQuantity().abs())
-              .setScale(standardPrecision, BigDecimal.ROUND_HALF_UP));
+              .setScale(standardPrecision, RoundingMode.HALF_UP));
         }
         trx.setCurrency(cost.getCurrency());
         trx.setCostCalculated(true);

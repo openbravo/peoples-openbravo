@@ -20,6 +20,7 @@
 package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -133,7 +134,7 @@ public class DoubtFulDebtPickEditLines extends BaseProcessActionHandler {
           }
           int stdPrecision = 2;
           stdPrecision = currency.getStandardPrecision().intValue();
-          amount = amount.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+          amount = amount.setScale(stdPrecision, RoundingMode.HALF_UP);
           newDoubtfulDebt.setClient(doubtfulDebtRun.getClient());
           newDoubtfulDebt.setOrganization(doubtfulDebtRun.getOrganization());
           newDoubtfulDebt.setAccountingDate(doubtfulDebtRun.getAccountingDate());

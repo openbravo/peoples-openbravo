@@ -20,6 +20,7 @@
 package org.openbravo.financial.paymentreport.erpCommon.ad_reports;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -969,14 +970,14 @@ public class PaymentReportDao {
                   data,
                   "BASE_AMOUNT",
                   transAmount.multiply(convRate.getMultipleRateBy())
-                      .setScale(stdPrecission, BigDecimal.ROUND_HALF_UP).toString());
+                      .setScale(stdPrecission, RoundingMode.HALF_UP).toString());
             } else {
               FieldProviderFactory.setField(data, "TRANS_AMOUNT", transAmount.negate().toString());
               FieldProviderFactory.setField(
                   data,
                   "BASE_AMOUNT",
                   transAmount.multiply(convRate.getMultipleRateBy())
-                      .setScale(stdPrecission, BigDecimal.ROUND_HALF_UP).negate().toString());
+                      .setScale(stdPrecission, RoundingMode.HALF_UP).negate().toString());
             }
           } else {
             String message = transCurrency.getISOCode() + " -> " + baseCurrency.getISOCode() + " "
@@ -1020,7 +1021,7 @@ public class PaymentReportDao {
         if (convRate != null) {
           final int stdPrecission = convRate.getToCurrency().getStandardPrecision().intValue();
           balance = balance.multiply(convRate.getMultipleRateBy()).setScale(stdPrecission,
-              BigDecimal.ROUND_HALF_UP);
+              RoundingMode.HALF_UP);
         }
         FieldProviderFactory.setField(data, "BALANCE", balance.toString());
 
@@ -1077,13 +1078,13 @@ public class PaymentReportDao {
                     previousRow,
                     "BASE_AMOUNT",
                     amountSum.multiply(previousConvRate.getMultipleRateBy())
-                        .setScale(stdPrecission, BigDecimal.ROUND_HALF_UP).toString());
+                        .setScale(stdPrecission, RoundingMode.HALF_UP).toString());
               } else {
                 FieldProviderFactory.setField(
                     previousRow,
                     "BASE_AMOUNT",
                     amountSum.multiply(previousConvRate.getMultipleRateBy())
-                        .setScale(stdPrecission, BigDecimal.ROUND_HALF_UP).negate().toString());
+                        .setScale(stdPrecission, RoundingMode.HALF_UP).negate().toString());
               }
             }
 
@@ -1178,13 +1179,13 @@ public class PaymentReportDao {
                 previousRow,
                 "BASE_AMOUNT",
                 amountSum.multiply(previousConvRate.getMultipleRateBy())
-                    .setScale(stdPrecission, BigDecimal.ROUND_HALF_UP).toString());
+                    .setScale(stdPrecission, RoundingMode.HALF_UP).toString());
           } else {
             FieldProviderFactory.setField(
                 previousRow,
                 "BASE_AMOUNT",
                 amountSum.multiply(previousConvRate.getMultipleRateBy())
-                    .setScale(stdPrecission, BigDecimal.ROUND_HALF_UP).negate().toString());
+                    .setScale(stdPrecission, RoundingMode.HALF_UP).negate().toString());
           }
         }
 
@@ -1372,7 +1373,7 @@ public class PaymentReportDao {
             transactionData,
             "BASE_AMOUNT",
             transAmount.multiply(convRate.getMultipleRateBy())
-                .setScale(stdPrecission, BigDecimal.ROUND_HALF_UP).toString());
+                .setScale(stdPrecission, RoundingMode.HALF_UP).toString());
       } else {
         String message = transaction.getCurrency().getISOCode() + " -> "
             + baseCurrency.getISOCode() + " " + strConversionDate;

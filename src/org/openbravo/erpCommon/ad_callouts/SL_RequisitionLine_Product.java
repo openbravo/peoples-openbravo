@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_callouts;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.servlet.ServletException;
 
@@ -98,8 +99,8 @@ public class SL_RequisitionLine_Product extends SimpleCallout {
             BigDecimal discount = BigDecimal.ZERO;
             if (priceList.compareTo(BigDecimal.ZERO) != 0) {
               discount = (((priceList.subtract(priceActual)).divide(priceList, 12,
-                  BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100"))).setScale(2,
-                  BigDecimal.ROUND_HALF_UP);
+                  RoundingMode.HALF_EVEN)).multiply(new BigDecimal("100"))).setScale(2,
+                  RoundingMode.HALF_UP);
             }
             info.addResult("inpdiscount", discount);
             info.addResult("inppricelist", priceList);

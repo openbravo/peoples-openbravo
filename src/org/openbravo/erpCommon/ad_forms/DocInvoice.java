@@ -510,7 +510,7 @@ public class DocInvoice extends AcctServer {
               Record_ID, C_Currency_ID, as.m_C_Currency_ID);
           if (conversionRateCurrentDoc != null) {
             amountConverted = applyRate(new BigDecimal(p_lines[i].getAmount()),
-                conversionRateCurrentDoc, true).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+                conversionRateCurrentDoc, true).setScale(2, RoundingMode.HALF_UP).toString();
           } else {
             amountConverted = getConvertedAmt(p_lines[i].getAmount(), C_Currency_ID,
                 as.m_C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn);
@@ -653,7 +653,7 @@ public class DocInvoice extends AcctServer {
             Record_ID, C_Currency_ID, as.m_C_Currency_ID);
         if (conversionRateCurrentDoc != null) {
           amountCoverted = applyRate(new BigDecimal(p_lines[i].getAmount()),
-              conversionRateCurrentDoc, true).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+              conversionRateCurrentDoc, true).setScale(2, RoundingMode.HALF_UP).toString();
         } else {
           amountCoverted = getConvertedAmt(p_lines[i].getAmount(), C_Currency_ID,
               as.m_C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn);
@@ -936,7 +936,7 @@ public class DocInvoice extends AcctServer {
             Record_ID, C_Currency_ID, as.m_C_Currency_ID);
         if (conversionRateCurrentDoc != null) {
           amountConverted = applyRate(new BigDecimal(p_lines[i].getAmount()),
-              conversionRateCurrentDoc, true).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+              conversionRateCurrentDoc, true).setScale(2, RoundingMode.HALF_UP).toString();
         } else {
           amountConverted = getConvertedAmt(p_lines[i].getAmount(), C_Currency_ID,
               as.m_C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn);
@@ -1099,7 +1099,7 @@ public class DocInvoice extends AcctServer {
             Record_ID, C_Currency_ID, as.m_C_Currency_ID);
         if (conversionRateCurrentDoc != null) {
           amountConverted = applyRate(new BigDecimal(p_lines[i].getAmount()),
-              conversionRateCurrentDoc, true).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+              conversionRateCurrentDoc, true).setScale(2, RoundingMode.HALF_UP).toString();
         } else {
           amountConverted = getConvertedAmt(p_lines[i].getAmount(), C_Currency_ID,
               as.m_C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn);
@@ -1191,7 +1191,7 @@ public class DocInvoice extends AcctServer {
       OBContext.restorePreviousMode();
     }
     BigDecimal periodAmount = amount.divide(new BigDecimal(periodNumber),
-        new MathContext(32, RoundingMode.HALF_UP)).setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+        new MathContext(32, RoundingMode.HALF_UP)).setScale(stdPrecision, RoundingMode.HALF_UP);
 
     while (i <= periodNumber) {
       if (!OBDateUtils.formatDate(date).equals(DateAcct)) {

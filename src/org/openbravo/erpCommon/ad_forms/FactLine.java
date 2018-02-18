@@ -331,9 +331,9 @@ public class FactLine {
     BigDecimal sourceCr = new BigDecimal(m_AmtSourceCr);
 
     BigDecimal acctDr = sourceDr.multiply(conversionRate).setScale(
-        acctCurrency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_EVEN);
+        acctCurrency.getStandardPrecision().intValue(), RoundingMode.HALF_EVEN);
     BigDecimal acctCr = sourceCr.multiply(conversionRate).setScale(
-        acctCurrency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_EVEN);
+        acctCurrency.getStandardPrecision().intValue(), RoundingMode.HALF_EVEN);
 
     m_AmtAcctDr = toStringWithPrecision(acctDr, acctCurrency.getStandardPrecision());
     m_AmtAcctCr = toStringWithPrecision(acctCr, acctCurrency.getStandardPrecision());
@@ -855,14 +855,14 @@ public class FactLine {
       org.openbravo.model.financialmgmt.accounting.coa.AcctSchema schema = OBDal.getInstance().get(
           org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class, m_C_AcctSchema_ID);
       m_AmtSourceCr = new BigDecimal(m_AmtSourceCr).setScale(
-          currency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_EVEN).toString();
+          currency.getStandardPrecision().intValue(), RoundingMode.HALF_EVEN).toString();
       m_AmtSourceDr = new BigDecimal(m_AmtSourceDr).setScale(
-          currency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_EVEN).toString();
+          currency.getStandardPrecision().intValue(), RoundingMode.HALF_EVEN).toString();
       m_AmtAcctCr = new BigDecimal(m_AmtAcctCr).setScale(
-          schema.getCurrency().getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_EVEN)
+          schema.getCurrency().getStandardPrecision().intValue(), RoundingMode.HALF_EVEN)
           .toString();
       m_AmtAcctDr = new BigDecimal(m_AmtAcctDr).setScale(
-          schema.getCurrency().getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_EVEN)
+          schema.getCurrency().getStandardPrecision().intValue(), RoundingMode.HALF_EVEN)
           .toString();
     } finally {
       OBContext.restorePreviousMode();

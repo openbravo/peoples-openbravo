@@ -25,6 +25,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1095,7 +1096,7 @@ public class TaxesTest extends OBBaseTest {
 
   private BigDecimal round(BigDecimal value, boolean round, int precision) {
     if (round) {
-      return value.setScale(precision, BigDecimal.ROUND_HALF_UP);
+      return value.setScale(precision, RoundingMode.HALF_UP);
     } else {
       return value;
     }

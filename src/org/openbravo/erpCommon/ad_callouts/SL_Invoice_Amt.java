@@ -88,9 +88,9 @@ public class SL_Invoice_Amt extends SimpleCallout {
       log4j.debug("TaxRate: " + taxRate);
     }
 
-    priceActual = priceActual.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
-    priceLimit = priceLimit.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
-    taxBaseAmt = taxBaseAmt.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
+    priceActual = priceActual.setScale(pricePrecision, RoundingMode.HALF_UP);
+    priceLimit = priceLimit.setScale(pricePrecision, RoundingMode.HALF_UP);
+    taxBaseAmt = taxBaseAmt.setScale(pricePrecision, RoundingMode.HALF_UP);
 
     // Show warning if Invoiced Qty is higher than Delivered Qty
     SLInvoiceAmtData[] qtydata = SLInvoiceAmtData.selectDeliverQty(this, strInvoicelineId);
@@ -106,7 +106,7 @@ public class SL_Invoice_Amt extends SimpleCallout {
       if (qtyInvoice.compareTo(BigDecimal.ZERO) == 0) {
         priceActual = BigDecimal.ZERO;
       } else {
-        priceActual = lineNetAmt.divide(qtyInvoice, pricePrecision, BigDecimal.ROUND_HALF_UP);
+        priceActual = lineNetAmt.divide(qtyInvoice, pricePrecision, RoundingMode.HALF_UP);
       }
     }
     if (priceActual.compareTo(BigDecimal.ZERO) == 0) {
@@ -201,9 +201,9 @@ public class SL_Invoice_Amt extends SimpleCallout {
       int euroEditionScale = Utility.getFormat(info.vars, "euroEdition").getMaximumFractionDigits();
 
       BigDecimal calculatedLineNetAmt = qtyInvoice.multiply(
-          priceActual.setScale(priceEditionScale, BigDecimal.ROUND_HALF_UP)).setScale(
-          euroEditionScale, BigDecimal.ROUND_HALF_UP);
-      if (!lineNetAmt.setScale(priceEditionScale, BigDecimal.ROUND_HALF_UP).equals(
+          priceActual.setScale(priceEditionScale, RoundingMode.HALF_UP)).setScale(
+          euroEditionScale, RoundingMode.HALF_UP);
+      if (!lineNetAmt.setScale(priceEditionScale, RoundingMode.HALF_UP).equals(
           calculatedLineNetAmt)) {
         StringBuffer strMessage = new StringBuffer(Utility.messageBD(this,
             "NotCorrectAmountProvided", info.vars.getLanguage()));
@@ -218,7 +218,7 @@ public class SL_Invoice_Amt extends SimpleCallout {
 
     // Apply Price Precision to Line Net Amount
     if (lineNetAmt.scale() > stdPrecision) {
-      lineNetAmt = lineNetAmt.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+      lineNetAmt = lineNetAmt.setScale(stdPrecision, RoundingMode.HALF_UP);
     }
 
     // Check price limit
@@ -230,7 +230,7 @@ public class SL_Invoice_Amt extends SimpleCallout {
 
     // Calculate Tax Amount
     BigDecimal taxAmt = ((lineNetAmt.multiply(taxRate)).divide(new BigDecimal("100"), 12,
-        BigDecimal.ROUND_HALF_EVEN)).setScale(taxScale, BigDecimal.ROUND_HALF_UP);
+        RoundingMode.HALF_EVEN)).setScale(taxScale, RoundingMode.HALF_UP);
 
     // Set Line Net Amount
     if (!StringUtils.equals(strChanged, "inplinenetamt")

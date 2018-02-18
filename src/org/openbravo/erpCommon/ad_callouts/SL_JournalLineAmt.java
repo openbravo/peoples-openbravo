@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_callouts;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.servlet.ServletException;
 
@@ -59,11 +60,11 @@ public class SL_JournalLineAmt extends SimpleCallout {
     }
 
     GLJournal gLJournal = OBDal.getInstance().get(GLJournal.class, strGLJournal);
-    BigDecimal currencyRate = gLJournal.getRate().setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+    BigDecimal currencyRate = gLJournal.getRate().setScale(stdPrecision, RoundingMode.HALF_UP);
     BigDecimal amtAcctDr = amtSourceDr.multiply(currencyRate).setScale(stdPrecision,
-        BigDecimal.ROUND_HALF_UP);
+        RoundingMode.HALF_UP);
     BigDecimal amtAcctCr = amtSourceCr.multiply(currencyRate).setScale(stdPrecision,
-        BigDecimal.ROUND_HALF_UP);
+        RoundingMode.HALF_UP);
 
     info.addResult("inpamtacctdr", amtAcctDr);
     info.addResult("inpamtacctcr", amtAcctCr);

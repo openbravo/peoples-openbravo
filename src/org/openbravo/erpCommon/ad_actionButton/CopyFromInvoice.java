@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_actionButton;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Set;
@@ -174,14 +175,14 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                 priceLimit = new BigDecimal(invoicelineprice[j].pricelimit);
                 priceStd = (invoicelineprice[j].pricestd.equals("") ? BigDecimal.ZERO
                     : (new BigDecimal(invoicelineprice[j].pricestd))).setScale(pricePrecision,
-                    BigDecimal.ROUND_HALF_UP);
+                    RoundingMode.HALF_UP);
                 priceListGross = BigDecimal.ZERO;
                 priceStdGross = BigDecimal.ZERO;
 
                 if (invoice.getPriceList().isPriceIncludesTax()) {
                   priceGross = priceStd;
                   lineGrossAmt = priceGross.multiply(invLine.getInvoicedQuantity()).setScale(
-                      stdPrecision, BigDecimal.ROUND_HALF_UP);
+                      stdPrecision, RoundingMode.HALF_UP);
                   priceActual = BigDecimal.ZERO;
                   ProductPrice prices = FinancialUtils.getProductPrice(
                       OBDal.getInstance().get(Product.class, strmProductId),
@@ -197,13 +198,13 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                       strBPartnerId, priceStd.toString(), strmProductId, strDateInvoiced, invLine
                           .getInvoicedQuantity().toString(), strInvPriceList, strKey));
                   if (priceActual.scale() > pricePrecision) {
-                    priceActual = priceActual.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
+                    priceActual = priceActual.setScale(pricePrecision, RoundingMode.HALF_UP);
                   }
                 }
                 // Calculate line net amount
                 lineNetAmt = invLine.getInvoicedQuantity().multiply(priceActual);
                 if (lineNetAmt.scale() > pricePrecision) {
-                  lineNetAmt = lineNetAmt.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
+                  lineNetAmt = lineNetAmt.setScale(pricePrecision, RoundingMode.HALF_UP);
                 }
                 break;
               }

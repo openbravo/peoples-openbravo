@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_callouts;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.servlet.ServletException;
 
@@ -42,7 +43,7 @@ public class SL_WorkRequirement_Conversion extends SimpleCallout {
     if (StringUtils.isNotEmpty(strSecQty) && StringUtils.isNotEmpty(strConvRate)) {
       BigDecimal secQty = new BigDecimal(strSecQty);
       BigDecimal convRate = new BigDecimal(strConvRate);
-      BigDecimal quantity = secQty.divide(convRate, 0, BigDecimal.ROUND_CEILING);
+      BigDecimal quantity = secQty.divide(convRate, 0, RoundingMode.CEILING);
       info.addResult("inpquantity", quantity);
     }
   }

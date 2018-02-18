@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_callouts;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -104,7 +105,7 @@ public class SL_CreateFromMultiple_Conversion extends HttpSecureAppServlet {
         quantityOrder = new BigDecimal(strQuantityOrder);
         movementQty = quantityOrder.multiply(multiplyRate);
         if (movementQty.scale() > stdPrecision)
-          movementQty = movementQty.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+          movementQty = movementQty.setScale(stdPrecision, RoundingMode.HALF_UP);
         resultado.append("new Array(\"inpmovementqty\", " + movementQty.toString() + ")");
       }
       if (check) {

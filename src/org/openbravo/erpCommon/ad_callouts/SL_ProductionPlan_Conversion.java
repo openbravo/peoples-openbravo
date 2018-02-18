@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_callouts;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.servlet.ServletException;
 
@@ -44,7 +45,7 @@ public class SL_ProductionPlan_Conversion extends SimpleCallout {
       BigDecimal convRate = new BigDecimal(SLProductionPlanWRPhaseData.getMultiplier(this,
           strMaWrphaseId));
       BigDecimal secondaryQty = new BigDecimal(strSecQty);
-      BigDecimal quantity = secondaryQty.divide(convRate, 0, BigDecimal.ROUND_HALF_UP);
+      BigDecimal quantity = secondaryQty.divide(convRate, 0, RoundingMode.HALF_UP);
       info.addResult("inpproductionqty", quantity);
     }
   }

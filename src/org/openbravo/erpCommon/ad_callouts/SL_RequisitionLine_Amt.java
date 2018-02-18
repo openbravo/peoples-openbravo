@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_callouts;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.servlet.ServletException;
 
@@ -84,7 +85,7 @@ public class SL_RequisitionLine_Amt extends SimpleCallout {
           log4j.debug("priceActual: " + priceActual.toString());
         }
         discount = ((priceList.subtract(priceActual)).divide(priceList, 12,
-            BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100"));
+            RoundingMode.HALF_EVEN)).multiply(new BigDecimal("100"));
       }
       if (log4j.isDebugEnabled()) {
         log4j.debug("Discount: " + discount.toString());
@@ -104,14 +105,14 @@ public class SL_RequisitionLine_Amt extends SimpleCallout {
       BigDecimal discount1 = BigDecimal.ZERO;
       if (priceList.compareTo(BigDecimal.ZERO) != 0) {
         discount1 = internalRound(((priceList.subtract(priceActual)).divide(priceList, 12,
-            BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100")), stdPrecision);
+            RoundingMode.HALF_EVEN)).multiply(new BigDecimal("100")), stdPrecision);
       }
       BigDecimal discount2 = internalRound(discount, stdPrecision);
 
       // checks if rounded discount has changed
       if (discount1.compareTo(discount2) != 0) {
         priceActual = priceList.subtract(priceList.multiply(discount).divide(new BigDecimal("100"),
-            12, BigDecimal.ROUND_HALF_EVEN));
+            12, RoundingMode.HALF_EVEN));
         priceActual = internalRound(priceActual, pricePrecision);
         info.addResult("inppriceactual", priceActual);
       }
@@ -136,6 +137,6 @@ public class SL_RequisitionLine_Amt extends SimpleCallout {
 
   private BigDecimal internalRound(BigDecimal value, Integer precision) {
     return (precision == null || value.scale() <= precision) ? value : value.setScale(precision,
-        BigDecimal.ROUND_HALF_UP);
+        RoundingMode.HALF_UP);
   }
 }

@@ -78,16 +78,16 @@ public class SL_Order_Amt extends SimpleCallout {
     boolean isTaxIncludedPriceList = currentPriceList.isPriceIncludesTax();
 
     // Apply Price Precision and Standard Precision
-    priceActual = priceActual.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
-    priceLimit = priceLimit.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
-    netPriceList = netPriceList.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
-    priceStd = priceStd.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
-    lineNetAmt = lineNetAmt.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
-    taxBaseAmt = taxBaseAmt.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
-    grossUnitPrice = grossUnitPrice.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
-    grossPriceList = grossPriceList.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
-    grossBaseUnitPrice = grossBaseUnitPrice.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
-    newDiscount = newDiscount.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+    priceActual = priceActual.setScale(pricePrecision, RoundingMode.HALF_UP);
+    priceLimit = priceLimit.setScale(pricePrecision, RoundingMode.HALF_UP);
+    netPriceList = netPriceList.setScale(pricePrecision, RoundingMode.HALF_UP);
+    priceStd = priceStd.setScale(pricePrecision, RoundingMode.HALF_UP);
+    lineNetAmt = lineNetAmt.setScale(pricePrecision, RoundingMode.HALF_UP);
+    taxBaseAmt = taxBaseAmt.setScale(pricePrecision, RoundingMode.HALF_UP);
+    grossUnitPrice = grossUnitPrice.setScale(pricePrecision, RoundingMode.HALF_UP);
+    grossPriceList = grossPriceList.setScale(pricePrecision, RoundingMode.HALF_UP);
+    grossBaseUnitPrice = grossBaseUnitPrice.setScale(pricePrecision, RoundingMode.HALF_UP);
+    newDiscount = newDiscount.setScale(stdPrecision, RoundingMode.HALF_UP);
 
     // A hook has been created. This hook will be raised when the quantity is changed having
     // selected a product
@@ -131,7 +131,7 @@ public class SL_Order_Amt extends SimpleCallout {
 
     // Edit Line Net Amount
     if (StringUtils.equals(strChanged, "inplinenetamt")) {
-      priceActual = lineNetAmt.divide(qtyOrdered, pricePrecision, BigDecimal.ROUND_HALF_UP);
+      priceActual = lineNetAmt.divide(qtyOrdered, pricePrecision, RoundingMode.HALF_UP);
       if (priceActual.compareTo(BigDecimal.ZERO) == 0) {
         lineNetAmt = BigDecimal.ZERO;
       }
@@ -231,7 +231,7 @@ public class SL_Order_Amt extends SimpleCallout {
       BigDecimal unitPrice = isTaxIncludedPriceList ? grossBaseUnitPrice : priceStd;
       BigDecimal discount = priceList.compareTo(BigDecimal.ZERO) == 0 || !calcDiscount ? BigDecimal.ZERO
           : priceList.subtract(unitPrice).multiply(new BigDecimal("100"))
-              .divide(priceList, stdPrecision, BigDecimal.ROUND_HALF_EVEN);
+              .divide(priceList, stdPrecision, RoundingMode.HALF_EVEN);
       log4j.debug("Discount rounded: " + discount.toString());
       info.addResult("inpdiscount", discount);
 
@@ -243,13 +243,13 @@ public class SL_Order_Amt extends SimpleCallout {
       if (priceList.compareTo(BigDecimal.ZERO) != 0) {
         BigDecimal baseUnitPrice = isTaxIncludedPriceList ? grossBaseUnitPrice : priceStd;
         origDiscount = priceList.subtract(baseUnitPrice).multiply(new BigDecimal("100"))
-            .divide(priceList, stdPrecision, BigDecimal.ROUND_HALF_UP);
+            .divide(priceList, stdPrecision, RoundingMode.HALF_UP);
       }
 
       if (origDiscount.compareTo(newDiscount) != 0) {
         BigDecimal baseUnitPrice = priceList.subtract(
             priceList.multiply(newDiscount).divide(new BigDecimal("100"))).setScale(pricePrecision,
-            BigDecimal.ROUND_HALF_UP);
+            RoundingMode.HALF_UP);
         if (isTaxIncludedPriceList) {
           grossUnitPrice = PriceAdjustment.calculatePriceActual(order, product, qtyOrdered,
               baseUnitPrice);
@@ -333,7 +333,7 @@ public class SL_Order_Amt extends SimpleCallout {
           lineNetAmt = qtyOrdered.multiply(priceActual);
         }
         if (lineNetAmt.scale() > stdPrecision) {
-          lineNetAmt = lineNetAmt.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+          lineNetAmt = lineNetAmt.setScale(stdPrecision, RoundingMode.HALF_UP);
         }
       }
     }
@@ -352,7 +352,7 @@ public class SL_Order_Amt extends SimpleCallout {
     // Line Gross Amount
     if (!StringUtils.equals(strChanged, "inplineGrossAmount")) {
       BigDecimal grossLineAmt = grossUnitPrice.multiply(qtyOrdered).setScale(stdPrecision,
-          BigDecimal.ROUND_HALF_UP);
+          RoundingMode.HALF_UP);
       info.addResult("inplineGrossAmount", grossLineAmt);
     }
 

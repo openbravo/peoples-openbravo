@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -153,7 +154,7 @@ public class FundsTransferTest extends WeldBaseTest {
         TRANSACTION_AMT, CONVERSION_RATE, null, null);
 
     BigDecimal convertedAmount = TRANSACTION_AMT.multiply(CONVERSION_RATE).setScale(2,
-        BigDecimal.ROUND_HALF_UP);
+        RoundingMode.HALF_UP);
 
     testTransactions(caja_clone, banco_gbp, TRANSACTION_AMT, null, convertedAmount, null);
   }
@@ -167,7 +168,7 @@ public class FundsTransferTest extends WeldBaseTest {
         TRANSACTION_AMT, null, null, null);
 
     BigDecimal convertedAmount = TRANSACTION_AMT.multiply(CONVERSION_RATE).setScale(2,
-        BigDecimal.ROUND_HALF_UP);
+        RoundingMode.HALF_UP);
 
     testTransactions(caja_clone, banco_gbp, TRANSACTION_AMT, null, convertedAmount, null);
   }
@@ -179,7 +180,7 @@ public class FundsTransferTest extends WeldBaseTest {
         TRANSACTION_AMT, CONVERSION_RATE, null, FEE_AMT_TO);
 
     BigDecimal convertedAmount = TRANSACTION_AMT.multiply(CONVERSION_RATE).setScale(2,
-        BigDecimal.ROUND_HALF_UP);
+        RoundingMode.HALF_UP);
 
     testTransactions(caja_clone, banco_gbp, TRANSACTION_AMT, null, convertedAmount, FEE_AMT_TO);
   }

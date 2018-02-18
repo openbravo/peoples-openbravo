@@ -19,6 +19,7 @@
 package org.openbravo.common.actionhandler;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -172,7 +173,7 @@ public class OrderCreatePOLines extends BaseProcessActionHandler {
 
       if (order.getPriceList().isPriceIncludesTax()) {
         grossPrice = unitPrice;
-        grossAmt = grossPrice.multiply(qtyOrdered).setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+        grossAmt = grossPrice.multiply(qtyOrdered).setScale(stdPrecision, RoundingMode.HALF_UP);
         netPrice = limitPrice = netListPrice = BigDecimal.ZERO;
         // selected line standard price is Gross Std Price in this case
         grossStdPrice = unitPrice;
@@ -190,7 +191,7 @@ public class OrderCreatePOLines extends BaseProcessActionHandler {
       // Set Base Gross Unit Price thats is Gross Standard Price
       newOrderLine.setBaseGrossUnitPrice(grossStdPrice);
       newOrderLine.setLineNetAmount(netPrice.multiply(qtyOrdered).setScale(stdPrecision,
-          BigDecimal.ROUND_HALF_UP));
+          RoundingMode.HALF_UP));
       newOrderLine.setLineGrossAmount(grossAmt);
 
       List<OrderLine> orderLines = order.getOrderLineList();

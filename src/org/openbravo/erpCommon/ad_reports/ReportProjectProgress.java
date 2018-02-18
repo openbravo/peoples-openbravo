@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_reports;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.HashMap;
@@ -377,8 +378,8 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
             BigDecimal daysElapsed = new BigDecimal(strDaysElapsed);
             BigDecimal contractDuration = new BigDecimal(strProjectContractDuration);
             BigDecimal timeBurned = ((daysElapsed.multiply(new BigDecimal("100"))).divide(
-                contractDuration, 12, BigDecimal.ROUND_HALF_EVEN)).setScale(decimalPlace,
-                BigDecimal.ROUND_UP);
+                contractDuration, 12, RoundingMode.HALF_EVEN)).setScale(decimalPlace,
+                RoundingMode.UP);
             data[i].timeburned = timeBurned.toPlainString();
           } else {
             data[i].timeburned = "";
@@ -606,15 +607,15 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
               // TotalContractDuration
               completionPerc = (new BigDecimal(completedContractDuration).multiply(new BigDecimal(
                   "100"))).divide(new BigDecimal(totalContractDuration), 12,
-                  BigDecimal.ROUND_HALF_EVEN);
+                  RoundingMode.HALF_EVEN);
             } else {
               // Calculate the Completion Percentage as the
               // quotient between CompletedItems and TotalItems
               completionPerc = (new BigDecimal(completedItems).multiply(new BigDecimal("100")))
-                  .divide(new BigDecimal(totalItems), 12, BigDecimal.ROUND_HALF_EVEN);
+                  .divide(new BigDecimal(totalItems), 12, RoundingMode.HALF_EVEN);
             }
             int decimalPlace = 2;
-            strCompletionPerc = (completionPerc.setScale(decimalPlace, BigDecimal.ROUND_UP))
+            strCompletionPerc = (completionPerc.setScale(decimalPlace, RoundingMode.UP))
                 .toPlainString();
           }
 

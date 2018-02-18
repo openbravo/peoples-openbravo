@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_callouts;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.servlet.ServletException;
 
@@ -59,7 +60,7 @@ public class SL_Project_Planned extends SimpleCallout {
         || StringUtils.equals(strChanged, "inpplannedprice")) {
       plannedAmt = plannedQty.multiply(plannedPrice);
       if (plannedAmt.scale() > stdPrecision) {
-        plannedAmt = plannedAmt.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+        plannedAmt = plannedAmt.setScale(stdPrecision, RoundingMode.HALF_UP);
       }
       info.addResult("inpplannedamt", plannedAmt);
     }
@@ -69,8 +70,8 @@ public class SL_Project_Planned extends SimpleCallout {
         || StringUtils.equals(strChanged, "inpplannedpoprice")) {
       if (plannedPrice.compareTo(BigDecimal.ZERO) != 0) {
         plannedMargin = (((plannedPrice.subtract(plannedPurchasePrice)).multiply(new BigDecimal(
-            "100"))).divide(plannedPrice, 12, BigDecimal.ROUND_HALF_EVEN)).setScale(2,
-            BigDecimal.ROUND_HALF_UP);
+            "100"))).divide(plannedPrice, 12, RoundingMode.HALF_EVEN)).setScale(2,
+            RoundingMode.HALF_UP);
       } else {
         plannedMargin = BigDecimal.ZERO;
       }
@@ -80,10 +81,10 @@ public class SL_Project_Planned extends SimpleCallout {
     // Planned PO Price - PPP = PP*(1-PM/100)
     if (strChanged.equals("inpplannedmarginamt")) {
       plannedPurchasePrice = plannedPrice.multiply((BigDecimal.ONE).subtract(plannedMargin.divide(
-          new BigDecimal("100"), 12, BigDecimal.ROUND_HALF_EVEN)));
+          new BigDecimal("100"), 12, RoundingMode.HALF_EVEN)));
       if (plannedPurchasePrice.scale() > stdPrecision) {
         plannedPurchasePrice = plannedPurchasePrice
-            .setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+            .setScale(stdPrecision, RoundingMode.HALF_UP);
       }
       info.addResult("inpplannedpoprice", plannedPurchasePrice);
     }

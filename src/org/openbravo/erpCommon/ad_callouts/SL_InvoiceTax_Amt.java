@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_callouts;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.servlet.ServletException;
 
@@ -47,12 +48,12 @@ public class SL_InvoiceTax_Amt extends SimpleCallout {
 
     if (StringUtils.equals(fieldChanged, "inptaxamt")) {
       if (taxRate.compareTo(BigDecimal.ZERO) != 0) {
-        taxBaseAmt = ((taxAmt.divide(taxRate, 12, BigDecimal.ROUND_HALF_EVEN))
-            .multiply(new BigDecimal("100"))).setScale(taxScale, BigDecimal.ROUND_HALF_UP);
+        taxBaseAmt = ((taxAmt.divide(taxRate, 12, RoundingMode.HALF_EVEN))
+            .multiply(new BigDecimal("100"))).setScale(taxScale, RoundingMode.HALF_UP);
       }
     } else {
       taxAmt = ((taxBaseAmt.multiply(taxRate)).divide(new BigDecimal("100"), 12,
-          BigDecimal.ROUND_HALF_EVEN)).setScale(taxScale, BigDecimal.ROUND_HALF_UP);
+          RoundingMode.HALF_EVEN)).setScale(taxScale, RoundingMode.HALF_UP);
     }
 
     info.addResult("inptaxamt", taxAmt);

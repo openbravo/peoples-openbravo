@@ -27,6 +27,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1451,7 +1452,7 @@ public class TestCostingUtils {
                     .getAmount()
                     .multiply(
                         getTransactionLineAmount(landedCostReceipt.getGoodsShipmentLine(),
-                            landedCost)).divide(receiptTotalAmount, 4, BigDecimal.ROUND_HALF_UP);
+                            landedCost)).divide(receiptTotalAmount, 4, RoundingMode.HALF_UP);
 
                 landedCostReceiptLineAmountAssertList.add(new LandedCostReceiptLineAmountAssert(
                     OBDal.getInstance().get(LandedCostCost.class, landedCostCost.getId()), OBDal
@@ -1464,7 +1465,7 @@ public class TestCostingUtils {
 
                   BigDecimal amount = landedCostCost.getAmount()
                       .multiply(getTransactionLineAmount(receiptLine, landedCost))
-                      .divide(receiptTotalAmount, 4, BigDecimal.ROUND_HALF_UP);
+                      .divide(receiptTotalAmount, 4, RoundingMode.HALF_UP);
 
                   landedCostReceiptLineAmountAssertList
                       .add(new LandedCostReceiptLineAmountAssert(OBDal.getInstance().get(
@@ -1489,7 +1490,7 @@ public class TestCostingUtils {
                       .getAmount()
                       .multiply(
                           getTransactionLineAmount(landedCostReceipt.getGoodsShipmentLine(),
-                              landedCost)).divide(receiptTotalAmount, 4, BigDecimal.ROUND_HALF_UP);
+                              landedCost)).divide(receiptTotalAmount, 4, RoundingMode.HALF_UP);
 
                   landedCostReceiptLineAmountAssertList.add(new LandedCostReceiptLineAmountAssert(
                       OBDal.getInstance().get(LandedCostCost.class, landedCostCost.getId()), OBDal
@@ -1502,7 +1503,7 @@ public class TestCostingUtils {
 
                     BigDecimal amount = landedCostMatched.getAmount()
                         .multiply(getTransactionLineAmount(receiptLine, landedCost))
-                        .divide(receiptTotalAmount, 4, BigDecimal.ROUND_HALF_UP);
+                        .divide(receiptTotalAmount, 4, RoundingMode.HALF_UP);
 
                     landedCostReceiptLineAmountAssertList
                         .add(new LandedCostReceiptLineAmountAssert(OBDal.getInstance().get(
@@ -1550,8 +1551,8 @@ public class TestCostingUtils {
           i++;
         }
 
-        if (!totalAmount.setScale(4, BigDecimal.ROUND_HALF_UP).equals(
-            landedCostCostAmount.setScale(4, BigDecimal.ROUND_HALF_UP))) {
+        if (!totalAmount.setScale(4, RoundingMode.HALF_UP).equals(
+            landedCostCostAmount.setScale(4, RoundingMode.HALF_UP))) {
           landedCostReceiptLineAmountAssertListList.get(maxI).set(
               maxJ,
               new LandedCostReceiptLineAmountAssert(landedCostReceiptLineAmountAssertListList
@@ -1620,7 +1621,7 @@ public class TestCostingUtils {
                   .getAmount()
                   .multiply(
                       getTransactionLineAmount(landedCostReceipt.getGoodsShipmentLine(), landedCost))
-                  .divide(receiptTotalAmount, 4, BigDecimal.ROUND_HALF_UP);
+                  .divide(receiptTotalAmount, 4, RoundingMode.HALF_UP);
 
               documentPostAssertList.add(new DocumentPostAssert(landedCostReceipt
                   .getGoodsShipmentLine().getProduct().getId(), "35000", amount, BigDecimal.ZERO,
@@ -1640,7 +1641,7 @@ public class TestCostingUtils {
 
                 BigDecimal amount = landedCostCost.getAmount()
                     .multiply(getTransactionLineAmount(receiptLine, landedCost))
-                    .divide(receiptTotalAmount, 4, BigDecimal.ROUND_HALF_UP);
+                    .divide(receiptTotalAmount, 4, RoundingMode.HALF_UP);
 
                 documentPostAssertList.add(new DocumentPostAssert(receiptLine.getProduct().getId(),
                     "35000", amount, BigDecimal.ZERO, null));
@@ -1699,8 +1700,8 @@ public class TestCostingUtils {
         documentPostAssertList.add(new DocumentPostAssert(productId, account, BigDecimal.ZERO,
             lcCost.getMatchingAmount(), null));
 
-        if (!lcCost.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP)
-            .equals(lcCost.getMatchingAmount().setScale(2, BigDecimal.ROUND_HALF_UP))
+        if (!lcCost.getAmount().setScale(2, RoundingMode.HALF_UP)
+            .equals(lcCost.getMatchingAmount().setScale(2, RoundingMode.HALF_UP))
             && lcCost.isMatchingAdjusted()) {
 
           documentPostAssertList.add(new DocumentPostAssert(account, lcCost.getAmount(),
@@ -1734,7 +1735,7 @@ public class TestCostingUtils {
                 .list()
                 .get(2)
                 .getForeignCurrencyDebit()
-                .setScale(2, BigDecimal.ROUND_HALF_UP)
+                .setScale(2, RoundingMode.HALF_UP)
                 .equals(
                     lcCost
                         .getMatchingAmount()
@@ -1747,7 +1748,7 @@ public class TestCostingUtils {
                                 landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(),
                                 landedCost).add(
                                 getTransactionAmount(landedCost.getLandedCostReceiptList().get(1)
-                                    .getGoodsShipment(), landedCost)), 2, BigDecimal.ROUND_HALF_UP))) {
+                                    .getGoodsShipment(), landedCost)), 2, RoundingMode.HALF_UP))) {
 
               documentPostAssertList.add(new DocumentPostAssert(OBDal.getInstance()
                   .get(LandedCost.class, landedCostCost.getLandedCost().getId())
@@ -1764,7 +1765,7 @@ public class TestCostingUtils {
                               landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(),
                               landedCost).add(
                               getTransactionAmount(landedCost.getLandedCostReceiptList().get(1)
-                                  .getGoodsShipment(), landedCost)), 2, BigDecimal.ROUND_HALF_UP),
+                                  .getGoodsShipment(), landedCost)), 2, RoundingMode.HALF_UP),
                   BigDecimal.ZERO, null));
 
               documentPostAssertList.add(new DocumentPostAssert(OBDal.getInstance()
@@ -1782,7 +1783,7 @@ public class TestCostingUtils {
                               landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(),
                               landedCost).add(
                               getTransactionAmount(landedCost.getLandedCostReceiptList().get(1)
-                                  .getGoodsShipment(), landedCost)), 2, BigDecimal.ROUND_HALF_UP),
+                                  .getGoodsShipment(), landedCost)), 2, RoundingMode.HALF_UP),
                   BigDecimal.ZERO, null));
             }
 
@@ -1802,7 +1803,7 @@ public class TestCostingUtils {
                               landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(),
                               landedCost).add(
                               getTransactionAmount(landedCost.getLandedCostReceiptList().get(1)
-                                  .getGoodsShipment(), landedCost)), 2, BigDecimal.ROUND_HALF_UP),
+                                  .getGoodsShipment(), landedCost)), 2, RoundingMode.HALF_UP),
                   BigDecimal.ZERO, null));
 
               documentPostAssertList.add(new DocumentPostAssert(OBDal.getInstance()
@@ -1820,7 +1821,7 @@ public class TestCostingUtils {
                               landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(),
                               landedCost).add(
                               getTransactionAmount(landedCost.getLandedCostReceiptList().get(1)
-                                  .getGoodsShipment(), landedCost)), 2, BigDecimal.ROUND_HALF_UP),
+                                  .getGoodsShipment(), landedCost)), 2, RoundingMode.HALF_UP),
                   BigDecimal.ZERO, null));
             }
 
@@ -1863,17 +1864,17 @@ public class TestCostingUtils {
             .list()
             .get(0)
             .getForeignCurrencyDebit()
-            .setScale(2, BigDecimal.ROUND_HALF_UP)
+            .setScale(2, RoundingMode.HALF_UP)
             .equals(
-                landedCostCostMatchedList.get(0).getAmount().setScale(2, BigDecimal.ROUND_HALF_UP))
+                landedCostCostMatchedList.get(0).getAmount().setScale(2, RoundingMode.HALF_UP))
             && !criteria2
                 .list()
                 .get(0)
                 .getForeignCurrencyCredit()
-                .setScale(2, BigDecimal.ROUND_HALF_UP)
+                .setScale(2, RoundingMode.HALF_UP)
                 .equals(
                     landedCostCostMatchedList.get(0).getAmount()
-                        .setScale(2, BigDecimal.ROUND_HALF_UP)))
+                        .setScale(2, RoundingMode.HALF_UP)))
           Collections.reverse(landedCostCostMatchedList);
 
         for (LCMatched landedCostCostMatched : landedCostCostMatchedList) {
@@ -1889,17 +1890,17 @@ public class TestCostingUtils {
             .list()
             .get(2)
             .getForeignCurrencyDebit()
-            .setScale(2, BigDecimal.ROUND_HALF_UP)
+            .setScale(2, RoundingMode.HALF_UP)
             .equals(
-                landedCostCostMatchedList.get(0).getAmount().setScale(2, BigDecimal.ROUND_HALF_UP))
+                landedCostCostMatchedList.get(0).getAmount().setScale(2, RoundingMode.HALF_UP))
             && !criteria2
                 .list()
                 .get(2)
                 .getForeignCurrencyCredit()
-                .setScale(2, BigDecimal.ROUND_HALF_UP)
+                .setScale(2, RoundingMode.HALF_UP)
                 .equals(
                     landedCostCostMatchedList.get(0).getAmount()
-                        .setScale(2, BigDecimal.ROUND_HALF_UP)))
+                        .setScale(2, RoundingMode.HALF_UP)))
           Collections.reverse(landedCostCostMatchedList);
 
         int i = 0;
@@ -3572,7 +3573,7 @@ public class TestCostingUtils {
       BigDecimal priceTotal = BigDecimal.ZERO;
       for (int i = 0; i < quantityList.size(); i++)
         priceTotal = priceTotal.add(quantityList.get(i).multiply(priceList.get(i)));
-      return priceTotal.divide(getTotalQuantity(quantityList), 5, BigDecimal.ROUND_HALF_UP);
+      return priceTotal.divide(getTotalQuantity(quantityList), 5, RoundingMode.HALF_UP);
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -3820,7 +3821,7 @@ public class TestCostingUtils {
           assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
               .getQuantityCount(), physicalInventoryAssert.getQuantity());
           assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getCost()
-              .setScale(2, BigDecimal.ROUND_HALF_UP), physicalInventoryAssert.getPrice());
+              .setScale(2, RoundingMode.HALF_UP), physicalInventoryAssert.getPrice());
           assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
               .getRelatedInventory(), null);
         }
@@ -3888,10 +3889,10 @@ public class TestCostingUtils {
       if (!landedCostCostMatchedList
           .get(0)
           .getAmount()
-          .setScale(2, BigDecimal.ROUND_HALF_UP)
+          .setScale(2, RoundingMode.HALF_UP)
           .equals(
               landedCostCostMatchedAssertList.get(0).getInvoiceLine().getLineNetAmount()
-                  .setScale(2, BigDecimal.ROUND_HALF_UP)))
+                  .setScale(2, RoundingMode.HALF_UP)))
         Collections.reverse(landedCostCostMatchedList);
 
       int i = 0;
@@ -3903,15 +3904,15 @@ public class TestCostingUtils {
 
         if (i == 0) {
           assertEquals(
-              landedCostCostMatched.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP),
+              landedCostCostMatched.getAmount().setScale(2, RoundingMode.HALF_UP),
               landedCostCostMatchedAssertList.get(i).getInvoiceLine().getLineNetAmount()
-                  .setScale(2, BigDecimal.ROUND_HALF_UP));
+                  .setScale(2, RoundingMode.HALF_UP));
           assertEquals(
               landedCostCostMatched.getAmountInInvoiceCurrency() == null ? landedCostCostMatched.getAmountInInvoiceCurrency()
                   : landedCostCostMatched.getAmountInInvoiceCurrency().setScale(2,
-                      BigDecimal.ROUND_HALF_UP), landedCostCost.getInvoiceLine() != null ? null
+                      RoundingMode.HALF_UP), landedCostCost.getInvoiceLine() != null ? null
                   : landedCostCostMatchedAssertList.get(i).getInvoiceLine().getLineNetAmount()
-                      .setScale(2, BigDecimal.ROUND_HALF_UP));
+                      .setScale(2, RoundingMode.HALF_UP));
           assertFalse(landedCostCostMatched.isConversionmatching());
         }
 
@@ -3931,7 +3932,7 @@ public class TestCostingUtils {
           BigDecimal rate = ((ConversionRate) criteria2.uniqueResult()).getMultipleRateBy();
 
           assertEquals(
-              landedCostCostMatched.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP),
+              landedCostCostMatched.getAmount().setScale(2, RoundingMode.HALF_UP),
               landedCostCostMatchedAssertList
                   .get(i)
                   .getInvoiceLine()
@@ -3941,7 +3942,7 @@ public class TestCostingUtils {
                           .getCurrencyConversionRateDocList().get(0).getRate())
                   .add(
                       landedCostCostMatchedAssertList.get(i).getInvoiceLine().getLineNetAmount()
-                          .multiply(rate).negate()).divide(rate, 2, BigDecimal.ROUND_HALF_UP));
+                          .multiply(rate).negate()).divide(rate, 2, RoundingMode.HALF_UP));
           assertEquals(landedCostCostMatched.getAmountInInvoiceCurrency(), null);
           assertTrue(landedCostCostMatched.isConversionmatching());
         }
@@ -3978,10 +3979,10 @@ public class TestCostingUtils {
           && !landedCostReceiptLineAmountList
               .get(0)
               .getAmount()
-              .setScale(4, BigDecimal.ROUND_HALF_UP)
+              .setScale(4, RoundingMode.HALF_UP)
               .equals(
                   landedCostReceiptLineAmountAssertList.get(0).getAmount()
-                      .setScale(4, BigDecimal.ROUND_HALF_UP)))
+                      .setScale(4, RoundingMode.HALF_UP)))
         Collections.reverse(landedCostReceiptLineAmountList);
 
       int i = 0;
@@ -3990,8 +3991,8 @@ public class TestCostingUtils {
             .get(i);
         assertGeneralData(landedCostReceiptLineAmount);
 
-        assertEquals(landedCostReceiptLineAmount.getAmount().setScale(4, BigDecimal.ROUND_HALF_UP),
-            landedCostReceiptLineAmountAssert.getAmount().setScale(4, BigDecimal.ROUND_HALF_UP));
+        assertEquals(landedCostReceiptLineAmount.getAmount().setScale(4, RoundingMode.HALF_UP),
+            landedCostReceiptLineAmountAssert.getAmount().setScale(4, RoundingMode.HALF_UP));
         assertEquals(landedCostReceiptLineAmount.getLandedCostReceipt(), landedCostReceipt);
         assertEquals(landedCostReceiptLineAmount.getLandedCostCost(),
             landedCostReceiptLineAmountAssert.getLandedCostCost());
@@ -4066,38 +4067,38 @@ public class TestCostingUtils {
               || productTransactionAssert.getShipmentReceiptLine().getShipmentReceipt()
                   .getDocumentType().getName().equals("RFC Receipt")) {
             assertEquals(
-                materialTransaction.getTransactionCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getOriginalPrice()
                     .multiply(materialTransaction.getMovementQuantity())
-                    .setScale(2, BigDecimal.ROUND_HALF_UP));
+                    .setScale(2, RoundingMode.HALF_UP));
             assertEquals(
-                materialTransaction.getTotalCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getTotalPrice()
                     .multiply(materialTransaction.getMovementQuantity())
-                    .setScale(2, BigDecimal.ROUND_HALF_UP));
+                    .setScale(2, RoundingMode.HALF_UP));
             assertEquals(
-                materialTransaction.getUnitCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getUnitPrice()
                     .multiply(materialTransaction.getMovementQuantity())
-                    .setScale(2, BigDecimal.ROUND_HALF_UP));
+                    .setScale(2, RoundingMode.HALF_UP));
           }
 
           else {
             assertEquals(
-                materialTransaction.getTransactionCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getOriginalPrice()
                     .multiply(materialTransaction.getMovementQuantity().negate())
-                    .setScale(2, BigDecimal.ROUND_HALF_UP));
+                    .setScale(2, RoundingMode.HALF_UP));
             assertEquals(
-                materialTransaction.getTotalCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getTotalPrice()
                     .multiply(materialTransaction.getMovementQuantity().negate())
-                    .setScale(2, BigDecimal.ROUND_HALF_UP));
+                    .setScale(2, RoundingMode.HALF_UP));
             assertEquals(
-                materialTransaction.getUnitCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getUnitPrice()
                     .multiply(materialTransaction.getMovementQuantity().negate())
-                    .setScale(2, BigDecimal.ROUND_HALF_UP));
+                    .setScale(2, RoundingMode.HALF_UP));
           }
 
           assertEquals(materialTransaction.getGoodsShipmentLine(),
@@ -4133,20 +4134,20 @@ public class TestCostingUtils {
             assertEquals(materialTransaction.getMovementQuantity(), productTransactionAssert
                 .getInventoryLine().getOnHandQty().negate());
             assertEquals(
-                materialTransaction.getTransactionCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getOriginalPrice()
                     .multiply(materialTransaction.getMovementQuantity().negate())
-                    .setScale(2, BigDecimal.ROUND_HALF_UP));
+                    .setScale(2, RoundingMode.HALF_UP));
             assertEquals(
-                materialTransaction.getTotalCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getTotalPrice()
                     .multiply(materialTransaction.getMovementQuantity().negate())
-                    .setScale(2, BigDecimal.ROUND_HALF_UP));
+                    .setScale(2, RoundingMode.HALF_UP));
             assertEquals(
-                materialTransaction.getUnitCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getUnitPrice()
                     .multiply(materialTransaction.getMovementQuantity().negate())
-                    .setScale(2, BigDecimal.ROUND_HALF_UP));
+                    .setScale(2, RoundingMode.HALF_UP));
             assertFalse(materialTransaction.isCheckReservedQuantity());
           }
 
@@ -4157,15 +4158,15 @@ public class TestCostingUtils {
             assertEquals(materialTransaction.getMovementQuantity(), productTransactionAssert
                 .getInventoryLine().getOnHandQty());
             assertEquals(
-                materialTransaction.getTransactionCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getOriginalPrice().multiply(
                     materialTransaction.getMovementQuantity()));
             assertEquals(
-                materialTransaction.getTotalCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getTotalPrice().multiply(
                     materialTransaction.getMovementQuantity()));
             assertEquals(
-                materialTransaction.getUnitCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getUnitPrice().multiply(
                     materialTransaction.getMovementQuantity()));
             assertFalse(materialTransaction.isCheckReservedQuantity());
@@ -4201,15 +4202,15 @@ public class TestCostingUtils {
             assertEquals(materialTransaction.getMovementQuantity(), productTransactionAssert
                 .getMovementLine().getMovementQuantity().negate());
             assertEquals(
-                materialTransaction.getTransactionCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getOriginalPrice().multiply(
                     materialTransaction.getMovementQuantity().negate()));
             assertEquals(
-                materialTransaction.getTotalCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getTotalPrice().multiply(
                     materialTransaction.getMovementQuantity().negate()));
             assertEquals(
-                materialTransaction.getUnitCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getUnitPrice().multiply(
                     materialTransaction.getMovementQuantity().negate()));
             assertEquals(materialTransaction.getMovementType(), "M-");
@@ -4221,15 +4222,15 @@ public class TestCostingUtils {
             assertEquals(materialTransaction.getMovementQuantity(), productTransactionAssert
                 .getMovementLine().getMovementQuantity());
             assertEquals(
-                materialTransaction.getTransactionCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getOriginalPrice().multiply(
                     materialTransaction.getMovementQuantity()));
             assertEquals(
-                materialTransaction.getTotalCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getTotalPrice().multiply(
                     materialTransaction.getMovementQuantity()));
             assertEquals(
-                materialTransaction.getUnitCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getUnitPrice().multiply(
                     materialTransaction.getMovementQuantity()));
             assertEquals(materialTransaction.getMovementType(), "M+");
@@ -4262,15 +4263,15 @@ public class TestCostingUtils {
         else if (productTransactionAssert.getProductionLine() != null) {
 
           assertEquals(
-              materialTransaction.getTransactionCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+              materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
               productTransactionAssert.getOriginalPrice().multiply(
                   materialTransaction.getMovementQuantity().abs()));
           assertEquals(
-              materialTransaction.getTotalCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+              materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
               productTransactionAssert.getTotalPrice().multiply(
                   materialTransaction.getMovementQuantity().abs()));
           assertEquals(
-              materialTransaction.getUnitCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+              materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
               productTransactionAssert.getUnitPrice().multiply(
                   materialTransaction.getMovementQuantity().abs()));
 
@@ -4306,15 +4307,15 @@ public class TestCostingUtils {
             assertEquals(materialTransaction.getMovementQuantity(), productTransactionAssert
                 .getConsumptionLine().getMovementQuantity().negate());
             assertEquals(
-                materialTransaction.getTransactionCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getOriginalPrice().multiply(
                     productTransactionAssert.getConsumptionLine().getMovementQuantity()));
             assertEquals(
-                materialTransaction.getTotalCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getTotalPrice().multiply(
                     productTransactionAssert.getConsumptionLine().getMovementQuantity()));
             assertEquals(
-                materialTransaction.getUnitCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getUnitPrice().multiply(
                     productTransactionAssert.getConsumptionLine().getMovementQuantity()));
             assertTrue(materialTransaction.isCheckReservedQuantity());
@@ -4324,15 +4325,15 @@ public class TestCostingUtils {
             assertEquals(materialTransaction.getMovementQuantity(), productTransactionAssert
                 .getConsumptionLine().getMovementQuantity().negate());
             assertEquals(
-                materialTransaction.getTransactionCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getOriginalPrice().multiply(
                     productTransactionAssert.getConsumptionLine().getMovementQuantity().negate()));
             assertEquals(
-                materialTransaction.getTotalCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getTotalPrice().multiply(
                     productTransactionAssert.getConsumptionLine().getMovementQuantity().negate()));
             assertEquals(
-                materialTransaction.getUnitCost().setScale(2, BigDecimal.ROUND_HALF_UP),
+                materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getUnitPrice().multiply(
                     productTransactionAssert.getConsumptionLine().getMovementQuantity().negate()));
             assertTrue(materialTransaction.isCheckReservedQuantity());
@@ -4419,9 +4420,9 @@ public class TestCostingUtils {
                 && costAdjustmentLineList.get(k - 1).getCurrency().getId()
                     .equals(TestCostingConstants.DOLLAR_ID))
               assertEquals(
-                  materialTransactionCost.getCost().setScale(4, BigDecimal.ROUND_HALF_UP),
+                  materialTransactionCost.getCost().setScale(4, RoundingMode.HALF_UP),
                   costAdjustmentLineList.get(k - 1).getAdjustmentAmount().multiply(rate)
-                      .setScale(4, BigDecimal.ROUND_HALF_UP));
+                      .setScale(4, RoundingMode.HALF_UP));
 
             else
               assertEquals(materialTransactionCost.getCost(), costAdjustmentLineList.get(k - 1)
@@ -4480,18 +4481,18 @@ public class TestCostingUtils {
         ProductCostingAssert productCostingAssert = productCostingAssertList.get(i);
         assertGeneralData(productCosting);
 
-        assertEquals(productCosting.getCost().setScale(4, BigDecimal.ROUND_HALF_UP),
-            productCostingAssert.getFinalCost().setScale(4, BigDecimal.ROUND_HALF_UP));
+        assertEquals(productCosting.getCost().setScale(4, RoundingMode.HALF_UP),
+            productCostingAssert.getFinalCost().setScale(4, RoundingMode.HALF_UP));
 
         assertEquals(
             productCosting.getPrice() == null ? null : productCosting.getPrice().setScale(4,
-                BigDecimal.ROUND_HALF_UP), productCostingAssert.getPrice() == null ? null
-                : productCostingAssert.getPrice().setScale(4, BigDecimal.ROUND_HALF_UP));
+                RoundingMode.HALF_UP), productCostingAssert.getPrice() == null ? null
+                : productCostingAssert.getPrice().setScale(4, RoundingMode.HALF_UP));
 
         assertEquals(productCosting.getOriginalCost() == null ? null : productCosting
-            .getOriginalCost().setScale(4, BigDecimal.ROUND_HALF_UP),
+            .getOriginalCost().setScale(4, RoundingMode.HALF_UP),
             productCostingAssert.getOriginalCost() == null ? null : productCostingAssert
-                .getOriginalCost().setScale(4, BigDecimal.ROUND_HALF_UP));
+                .getOriginalCost().setScale(4, RoundingMode.HALF_UP));
 
         if (productCostingAssert.getQuantity() == null) {
           assertEquals(productCosting.getQuantity(), null);
@@ -4597,8 +4598,8 @@ public class TestCostingUtils {
           assertEquals(costAdjustmentLine.getLineNo(), new Long((j + 1) * 10));
 
           assertEquals(
-              costAdjustmentLine.getAdjustmentAmount().setScale(2, BigDecimal.ROUND_HALF_UP),
-              costAdjustmentAssertLine.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
+              costAdjustmentLine.getAdjustmentAmount().setScale(2, RoundingMode.HALF_UP),
+              costAdjustmentAssertLine.getAmount().setScale(2, RoundingMode.HALF_UP));
           assertEquals(costAdjustmentLine.isSource(), costAdjustmentAssertLine.isSource());
           assertEquals(costAdjustmentLine.isUnitCost(), costAdjustmentAssertLine.isUnit());
           assertEquals(formatDate(costAdjustmentLine.getAccountingDate()),
@@ -4617,8 +4618,8 @@ public class TestCostingUtils {
             assertFalse(costAdjustmentLine.isNegativeStockCorrection());
           }
 
-          if (costAdjustmentAssertLine.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP)
-              .equals(BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP))
+          if (costAdjustmentAssertLine.getAmount().setScale(2, RoundingMode.HALF_UP)
+              .equals(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP))
               || (costAdjustmentAssertLine.getType().equals("LC") && !costAdjustmentAssertLine
                   .isNeedPosting()))
             assertFalse(costAdjustmentLine.isNeedsPosting());
@@ -4809,10 +4810,10 @@ public class TestCostingUtils {
             line = ((LandedCostCost) document).getLandedCostMatchedList().get(0);
           } else if (!((LandedCostCost) document)
               .getAmount()
-              .setScale(2, BigDecimal.ROUND_HALF_UP)
+              .setScale(2, RoundingMode.HALF_UP)
               .equals(
                   ((LandedCostCost) document).getMatchingAmount().setScale(2,
-                      BigDecimal.ROUND_HALF_UP))
+                      RoundingMode.HALF_UP))
               && ((LandedCostCost) document).isMatchingAdjusted()) {
             if (i == 0) {
               line = ((LandedCostCost) document).getLandedCostMatchedList().get(0);
@@ -4894,23 +4895,23 @@ public class TestCostingUtils {
         }
 
         assertEquals(
-            accountingFact.getDebit().setScale(2, BigDecimal.ROUND_HALF_UP),
+            accountingFact.getDebit().setScale(2, RoundingMode.HALF_UP),
             documentPostAssert
                 .getDebit()
                 .multiply(rate)
                 .setScale(
                     2,
-                    document.getEntityName().equals(LandedCost.ENTITY_NAME) ? BigDecimal.ROUND_HALF_EVEN
-                        : BigDecimal.ROUND_HALF_UP));
+                    document.getEntityName().equals(LandedCost.ENTITY_NAME) ? RoundingMode.HALF_EVEN
+                        : RoundingMode.HALF_UP));
         assertEquals(
-            accountingFact.getCredit().setScale(2, BigDecimal.ROUND_HALF_UP),
+            accountingFact.getCredit().setScale(2, RoundingMode.HALF_UP),
             documentPostAssert
                 .getCredit()
                 .multiply(rate)
                 .setScale(
                     2,
-                    document.getEntityName().equals(LandedCost.ENTITY_NAME) ? BigDecimal.ROUND_HALF_EVEN
-                        : BigDecimal.ROUND_HALF_UP));
+                    document.getEntityName().equals(LandedCost.ENTITY_NAME) ? RoundingMode.HALF_EVEN
+                        : RoundingMode.HALF_UP));
 
         if ((productId != null && productId.equals(TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID))
             || (document.getEntityName().equals(Invoice.ENTITY_NAME) && ((Invoice) document)
@@ -4965,23 +4966,23 @@ public class TestCostingUtils {
         }
 
         assertEquals(
-            accountingFact.getForeignCurrencyDebit().setScale(2, BigDecimal.ROUND_HALF_UP),
+            accountingFact.getForeignCurrencyDebit().setScale(2, RoundingMode.HALF_UP),
             documentPostAssert
                 .getDebit()
                 .multiply(rate)
                 .setScale(
                     2,
-                    document.getEntityName().equals(LandedCost.ENTITY_NAME) ? BigDecimal.ROUND_HALF_EVEN
-                        : BigDecimal.ROUND_HALF_UP));
+                    document.getEntityName().equals(LandedCost.ENTITY_NAME) ? RoundingMode.HALF_EVEN
+                        : RoundingMode.HALF_UP));
         assertEquals(
-            accountingFact.getForeignCurrencyCredit().setScale(2, BigDecimal.ROUND_HALF_UP),
+            accountingFact.getForeignCurrencyCredit().setScale(2, RoundingMode.HALF_UP),
             documentPostAssert
                 .getCredit()
                 .multiply(rate)
                 .setScale(
                     2,
-                    document.getEntityName().equals(LandedCost.ENTITY_NAME) ? BigDecimal.ROUND_HALF_EVEN
-                        : BigDecimal.ROUND_HALF_UP));
+                    document.getEntityName().equals(LandedCost.ENTITY_NAME) ? RoundingMode.HALF_EVEN
+                        : RoundingMode.HALF_UP));
 
         Calendar calendar1 = Calendar.getInstance();
         calendar1.setTime(accountingFact.getAccountingDate());

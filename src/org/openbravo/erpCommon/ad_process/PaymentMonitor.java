@@ -1,6 +1,7 @@
 package org.openbravo.erpCommon.ad_process;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -63,7 +64,7 @@ public class PaymentMonitor {
         }
       }
       if (paidAmount.setScale(invoice.getCurrency().getStandardPrecision().intValue(),
-          BigDecimal.ROUND_HALF_UP).compareTo(invoice.getGrandTotalAmount()) == 0) {
+          RoundingMode.HALF_UP).compareTo(invoice.getGrandTotalAmount()) == 0) {
         invoice.setDaysTillDue(0L);
         invoice.setDueAmount(BigDecimal.ZERO);
         invoice.setPaymentComplete(true);
@@ -72,9 +73,9 @@ public class PaymentMonitor {
         invoice.setPaymentComplete(false);
       }
       invoice.setTotalPaid(paidAmount.setScale(invoice.getCurrency().getStandardPrecision()
-          .intValue(), BigDecimal.ROUND_HALF_UP));
+          .intValue(), RoundingMode.HALF_UP));
       invoice.setDueAmount(overDueAmount.setScale(invoice.getCurrency().getStandardPrecision()
-          .intValue(), BigDecimal.ROUND_HALF_UP));
+          .intValue(), RoundingMode.HALF_UP));
       invoice.setOutstandingAmount(invoice.getGrandTotalAmount().subtract(invoice.getTotalPaid()));
       invoice.setLastCalculatedOnDate(new Date());
       OBDal.getInstance().save(invoice);
@@ -213,7 +214,7 @@ public class PaymentMonitor {
         BigDecimal generatedPaymentPaidAmount = BigDecimal.ZERO;
         generatedPaymentPaidAmount = calculatePaidAmount(generatedPayment, strCurrencyTo,
             generatedPayment.getSettlementGenerate().getAccountingDate(), payment.getAmount()
-                .divide(cancelledNotPaidAmount, 1000, BigDecimal.ROUND_HALF_UP));
+                .divide(cancelledNotPaidAmount, 1000, RoundingMode.HALF_UP));
         paidAmount = paidAmount
             .add(payment.isReceipt() == generatedPayment.isReceipt() ? generatedPaymentPaidAmount
                 : generatedPaymentPaidAmount.negate());
@@ -276,7 +277,7 @@ public class PaymentMonitor {
         if (!generatedPayment.isPaymentComplete())
           generatedPaymentOverdueAmount = calculateOverdueAmount(generatedPayment, strCurrencyTo,
               generatedPayment.getSettlementGenerate().getAccountingDate(), payment.getAmount()
-                  .divide(cancelledNotPaidAmount, 1000, BigDecimal.ROUND_HALF_UP));
+                  .divide(cancelledNotPaidAmount, 1000, RoundingMode.HALF_UP));
         overdueAmount = overdueAmount
             .add(payment.isReceipt() == generatedPayment.isReceipt() ? generatedPaymentOverdueAmount
                 : generatedPaymentOverdueAmount.negate());

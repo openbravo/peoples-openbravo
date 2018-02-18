@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_reports;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -262,8 +263,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     BigDecimal total, totalPedido;
     total = new BigDecimal(strTotal);
     totalPedido = (StringUtils.isNotEmpty(strTotalPedido) ? new BigDecimal(strTotalPedido) : ZERO);
-    total = total.setScale(2, BigDecimal.ROUND_HALF_UP);
-    totalPedido = totalPedido.setScale(2, BigDecimal.ROUND_HALF_UP);
+    total = total.setScale(2, RoundingMode.HALF_UP);
+    totalPedido = totalPedido.setScale(2, RoundingMode.HALF_UP);
     StringBuffer resultado = new StringBuffer();
     resultado.append("<td class=\"DataGrid_Body_Cell_Amount\">\n");
     resultado.append(total.toString()).append(" ").append(strUnit);

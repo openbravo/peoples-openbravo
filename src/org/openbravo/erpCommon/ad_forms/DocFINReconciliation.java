@@ -20,6 +20,7 @@
 package org.openbravo.erpCommon.ad_forms;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -935,7 +936,7 @@ public class DocFINReconciliation extends AcctServer {
         Currency currency = OBDal.getInstance().get(Currency.class, C_Currency_ID);
         for (int j = 0; j < data.length; j++) {
           BigDecimal lineAmount = doubtFulDebtAmount.multiply(new BigDecimal(data[j].percentage))
-              .setScale(currency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_UP);
+              .setScale(currency.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
           if (j == data.length - 1) {
             lineAmount = doubtFulDebtAmount.subtract(assignedAmount);
           }

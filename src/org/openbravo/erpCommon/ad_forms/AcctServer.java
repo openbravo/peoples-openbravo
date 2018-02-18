@@ -2531,7 +2531,7 @@ public abstract class AcctServer {
         }
         if (amtTo.compareTo(BigDecimal.ZERO) != 0)
           amtFromSourcecurrency = amtFrom.multiply(_amount).divide(amtTo, conversionRatePrecision,
-              BigDecimal.ROUND_HALF_EVEN);
+              RoundingMode.HALF_EVEN);
         else
           amtFromSourcecurrency = amtFrom;
       }
@@ -2544,7 +2544,7 @@ public abstract class AcctServer {
         line, conn));
     Currency currencyTo = OBDal.getInstance().get(Currency.class, currencyIDTo);
     amtDiff = amtDiff.setScale(currencyTo.getStandardPrecision().intValue(),
-        BigDecimal.ROUND_HALF_EVEN);
+        RoundingMode.HALF_EVEN);
     if (bookDifferences) {
       if ((!isReceipt && amtDiff.compareTo(BigDecimal.ZERO) == 1)
           || (isReceipt && amtDiff.compareTo(BigDecimal.ZERO) == -1)) {
@@ -2672,7 +2672,7 @@ public abstract class AcctServer {
         if (!conversionRates.isEmpty() && !useSystemConversionRate) {
           BigDecimal Amount = new BigDecimal(amt);
           BigDecimal AmountConverted = Amount.multiply(conversionRates.get(0).getRate()).setScale(
-              2, BigDecimal.ROUND_HALF_UP);
+              2, RoundingMode.HALF_UP);
           return AmountConverted.toString();
         }
       }
@@ -2803,7 +2803,7 @@ public abstract class AcctServer {
     return _amount.multiply(
         trxRate.multiply(accountingRateCurrencyDocCurrencyTo).subtract(
             accountingRateCurrencyFromCurrencyTo)).setScale(
-        currencyFrom.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_EVEN);
+        currencyFrom.getStandardPrecision().intValue(), RoundingMode.HALF_EVEN);
   }
 
   /*
@@ -2815,7 +2815,7 @@ public abstract class AcctServer {
     if (multiply) {
       return amount.multiply(conversionRateDoc.getRate());
     } else {
-      return amount.divide(conversionRateDoc.getRate(), 6, BigDecimal.ROUND_HALF_EVEN);
+      return amount.divide(conversionRateDoc.getRate(), 6, RoundingMode.HALF_EVEN);
     }
   }
 

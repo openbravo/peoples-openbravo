@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_actionButton;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1713,11 +1714,11 @@ public class CreateFrom extends HttpSecureAppServlet {
                 StringUtils.equals(strType, "SHIPMENT") ? dataAux[0].curstdprecision
                     : data[i].curstdprecision).intValue();
             BigDecimal lineNetAmt = new BigDecimal(priceActual).multiply(qty).setScale(
-                stdPrecision, BigDecimal.ROUND_HALF_UP);
+                stdPrecision, RoundingMode.HALF_UP);
             BigDecimal grossAmt = BigDecimal.ZERO;
             if (StringUtils.equals(strIsTaxIncluded, "Y")) {
               grossAmt = new BigDecimal(priceGross).multiply(qty);
-              grossAmt = grossAmt.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+              grossAmt = grossAmt.setScale(stdPrecision, RoundingMode.HALF_UP);
             }
             if (StringUtils.isNotEmpty(strPO)) {
               String strInvoiceprepaymentamt = CreateFromInvoiceData.selectInvoicePrepaymentAmt(
@@ -1736,7 +1737,7 @@ public class CreateFrom extends HttpSecureAppServlet {
             BigDecimal taxRate = (StringUtils.isEmpty(strTaxRate) ? BigDecimal.ONE
                 : new BigDecimal(strTaxRate));
             BigDecimal taxAmt = ((lineNetAmt.multiply(taxRate)).divide(new BigDecimal("100"), 12,
-                BigDecimal.ROUND_HALF_EVEN)).setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+                RoundingMode.HALF_EVEN)).setScale(stdPrecision, RoundingMode.HALF_UP);
             try {
               // Calculate Acc and Def Plan from Product
               String isDeferred = "N";
@@ -1764,7 +1765,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                     taxBaseAmt = ol.getTaxableAmount();
                     if (qtyOrdered.compareTo(ZERO) != 0) {
                       taxBaseAmt = (taxBaseAmt.multiply(qty)).divide(qtyOrdered, stdPrecision,
-                          BigDecimal.ROUND_HALF_UP);
+                          RoundingMode.HALF_UP);
                     }
                   }
                 } finally {
@@ -1976,7 +1977,7 @@ public class CreateFrom extends HttpSecureAppServlet {
               }
               quantity = qty.multiply(multiplyRate);
               if (quantity.scale() > stdPrecision)
-                quantity = quantity.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+                quantity = quantity.setScale(stdPrecision, RoundingMode.HALF_UP);
               while (qty.compareTo(ZERO) > 0) {
                 String total = "1";
                 BigDecimal conversion;
@@ -2189,7 +2190,7 @@ public class CreateFrom extends HttpSecureAppServlet {
               }
               quantity = qty.multiply(multiplyRate);
               if (quantity.scale() > stdPrecision)
-                quantity = quantity.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+                quantity = quantity.setScale(stdPrecision, RoundingMode.HALF_UP);
               while (qty.compareTo(ZERO) > 0) {
                 String total = "1";
                 BigDecimal conversion;

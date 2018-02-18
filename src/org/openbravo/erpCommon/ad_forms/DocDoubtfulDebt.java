@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_forms;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.util.List;
 
@@ -175,7 +176,7 @@ public class DocDoubtfulDebt extends AcctServer {
       Currency currency = OBDal.getInstance().get(Currency.class, C_Currency_ID);
       for (int i = 0; i < data.length; i++) {
         BigDecimal lineAmount = bpAmountConverted.multiply(new BigDecimal(data[i].percentage))
-            .setScale(currency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_UP);
+            .setScale(currency.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
         if (i == data.length - 1) {
           lineAmount = bpAmountConverted.subtract(assignedAmount);
         }

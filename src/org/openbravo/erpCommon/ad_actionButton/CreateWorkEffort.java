@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_actionButton;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -141,7 +142,7 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
             if (wrOp.getEstimatedTime() != null && wrOp.getQuantity() != null
                 && wrOp.getQuantity().compareTo(BigDecimal.ZERO) != 0) {
               estimatedTime = wrOp.getEstimatedTime().multiply(requeriedQty)
-                  .divide(wrOp.getQuantity(), BigDecimal.ROUND_HALF_UP);
+                  .divide(wrOp.getQuantity(), RoundingMode.HALF_UP);
             }
             productionPlan.setEstimatedTime(new BigDecimal(estimatedTime.longValue()));
           } else {

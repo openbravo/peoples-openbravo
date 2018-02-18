@@ -20,6 +20,7 @@
 package org.openbravo.common.actionhandler.copyfromorderprocess;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 import javax.enterprise.context.Dependent;
@@ -77,24 +78,24 @@ class UpdatePricesAndAmounts implements CopyFromOrdersProcessImplementationInter
 
     // Price List, Price Standard and discount
     BigDecimal priceActual = productPrice.getStandardPrice().setScale(pricePrecision,
-        BigDecimal.ROUND_HALF_UP);
+        RoundingMode.HALF_UP);
     BigDecimal priceList = productPrice.getListPrice().setScale(pricePrecision,
-        BigDecimal.ROUND_HALF_UP);
+        RoundingMode.HALF_UP);
     BigDecimal priceLimit = productPrice.getPriceLimit().setScale(pricePrecision,
-        BigDecimal.ROUND_HALF_UP);
+        RoundingMode.HALF_UP);
 
     BigDecimal discount = BigDecimal.ZERO;
     if (productPrice.getListPrice().compareTo(BigDecimal.ZERO) != 0) {
       // Discount = ((PL-PA)/PL)*100
       discount = priceList.subtract(priceActual).multiply(new BigDecimal("100"))
-          .divide(priceList, stdPrecision, BigDecimal.ROUND_HALF_UP);
+          .divide(priceList, stdPrecision, RoundingMode.HALF_UP);
     }
 
     // Processing for Prices Including Taxes
     if (processingOrder.getPriceList().isPriceIncludesTax()) {
       BigDecimal grossUnitPrice = priceActual;
       BigDecimal grossAmount = qtyOrdered.multiply(grossUnitPrice).setScale(stdPrecision,
-          BigDecimal.ROUND_HALF_UP);
+          RoundingMode.HALF_UP);
 
       // Set gross price information
       priceInformation.setGrossUnitPrice(grossUnitPrice);

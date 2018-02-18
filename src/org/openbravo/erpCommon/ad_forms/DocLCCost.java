@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_forms;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.util.ArrayList;
 
@@ -196,7 +197,7 @@ public class DocLCCost extends AcctServer {
       line = (DocLine_LCCost) p_lines[i];
 
       BigDecimal amount = new BigDecimal(line.getAmount()).setScale(stdPrecision,
-          BigDecimal.ROUND_HALF_UP);
+          RoundingMode.HALF_UP);
       acctLC = getLandedCostAccount(line.getLandedCostTypeId(), amount, as, conn);
 
       log4jDocLCCost.debug("previous to creteline, line.getAmount(): " + line.getAmount());
@@ -244,7 +245,7 @@ public class DocLCCost extends AcctServer {
           DocLineLCCostData lineRcpt = dataRcptLineAmt[j];
 
           BigDecimal rcptAmount = new BigDecimal(lineRcpt.amount).setScale(stdPrecision,
-              BigDecimal.ROUND_HALF_UP);
+              RoundingMode.HALF_UP);
           amtDebit = "";
           amtCredit = rcptAmount.toString();
 

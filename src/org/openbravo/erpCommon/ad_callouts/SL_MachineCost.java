@@ -20,6 +20,7 @@
 package org.openbravo.erpCommon.ad_callouts;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.servlet.ServletException;
 
@@ -51,16 +52,16 @@ public class SL_MachineCost extends SimpleCallout {
         || StringUtils.equals(strChanged, "inpyearvalue")) {
       // Calculate Amortization, Cost
       fAmortization = fYearValue.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : (fPurchaseAmt
-          .add(fToolsetAmt)).divide(fYearValue, 12, BigDecimal.ROUND_HALF_EVEN);
+          .add(fToolsetAmt)).divide(fYearValue, 12, RoundingMode.HALF_EVEN);
       fCost = fCostUomYear.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : fYearValue.divide(
-          fCostUomYear, 12, BigDecimal.ROUND_HALF_EVEN);
+          fCostUomYear, 12, RoundingMode.HALF_EVEN);
 
     } else if (StringUtils.equals(strChanged, "inpamortization")) {
       // Calculate Value per Year, Cost
       fYearValue = fAmortization.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : (fPurchaseAmt
-          .add(fToolsetAmt)).divide(fAmortization, 12, BigDecimal.ROUND_HALF_EVEN);
+          .add(fToolsetAmt)).divide(fAmortization, 12, RoundingMode.HALF_EVEN);
       fCost = fCostUomYear.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : fYearValue.divide(
-          fCostUomYear, 12, BigDecimal.ROUND_HALF_EVEN);
+          fCostUomYear, 12, RoundingMode.HALF_EVEN);
 
     } else if (StringUtils.equals(strChanged, "inpdaysyear")
         || StringUtils.equals(strChanged, "inpdayhours")
@@ -68,7 +69,7 @@ public class SL_MachineCost extends SimpleCallout {
       // Calculate UOM Annual Cost, Cost
       fCostUomYear = (fDaysYear.multiply(fDayHours)).subtract(fImproductiveHoursYear);
       fCost = fCostUomYear.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : fYearValue.divide(
-          fCostUomYear, 12, BigDecimal.ROUND_HALF_EVEN);
+          fCostUomYear, 12, RoundingMode.HALF_EVEN);
 
     } else if (StringUtils.equals(strChanged, "inpcostuomyear")) {
       // Calculate Productive Hours per Year, Cost
@@ -76,13 +77,13 @@ public class SL_MachineCost extends SimpleCallout {
         fImproductiveHoursYear = (fDaysYear.multiply(fDayHours)).subtract(fCostUomYear);
       }
       fCost = fCostUomYear.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : fYearValue.divide(
-          fCostUomYear, 12, BigDecimal.ROUND_HALF_EVEN);
+          fCostUomYear, 12, RoundingMode.HALF_EVEN);
 
     } else if (StringUtils.equals(strChanged, "inpcost")) {
       // Calculate Value per Year, Amortization
       fYearValue = fCost.multiply(fCostUomYear);
       fAmortization = fYearValue.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : (fPurchaseAmt
-          .add(fToolsetAmt)).divide(fYearValue, 12, BigDecimal.ROUND_HALF_EVEN);
+          .add(fToolsetAmt)).divide(fYearValue, 12, RoundingMode.HALF_EVEN);
     }
 
     // Set Purchase Amount, ToolSetAmount, Value per Year, Amortization, Hours per Day,

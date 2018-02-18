@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_actionButton;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -458,11 +459,11 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
           int StdPrecision = Integer.valueOf(strPrecision).intValue();
           int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
           priceActual = (priceactual.equals("") ? ZERO : (new BigDecimal(priceactual)));
-          priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+          priceActual = priceActual.setScale(PricePrecision, RoundingMode.HALF_UP);
           priceList = (pricelist.equals("") ? ZERO : (new BigDecimal(pricelist)));
-          priceList = priceList.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+          priceList = priceList.setScale(PricePrecision, RoundingMode.HALF_UP);
           priceLimit = (pricelimit.equals("") ? ZERO : (new BigDecimal(pricelimit)));
-          priceLimit = priceLimit.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+          priceLimit = priceLimit.setScale(PricePrecision, RoundingMode.HALF_UP);
 
           grossPrice = BigDecimal.ZERO;
           grossPriceList = BigDecimal.ZERO;
@@ -485,16 +486,16 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
             }
             if (isPriceIncludingTaxes) {
               discount = ((priceList.subtract(grossPrice)).divide(priceList, 12,
-                  BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100"));
+                  RoundingMode.HALF_EVEN)).multiply(new BigDecimal("100"));
             } else {
               discount = ((priceList.subtract(priceActual)).divide(priceList, 12,
-                  BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100"));
+                  RoundingMode.HALF_EVEN)).multiply(new BigDecimal("100"));
             }
           }
           if (log4j.isDebugEnabled())
             log4j.debug("Discount: " + discount.toString());
           if (discount.scale() > StdPrecision) {
-            discount = discount.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
+            discount = discount.setScale(StdPrecision, RoundingMode.HALF_UP);
           }
           if (log4j.isDebugEnabled())
             log4j.debug("Discount rounded: " + discount.toString());

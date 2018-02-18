@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_callouts;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.servlet.ServletException;
 
@@ -120,7 +121,7 @@ public class SL_Order_Product extends SimpleCallout {
     BigDecimal priceToSubtract = isTaxIncludedPriceList ? grossBaseUnitPrice : priceStd;
     if (price.compareTo(BigDecimal.ZERO) != 0) {
       discount = price.subtract(priceToSubtract).multiply(new BigDecimal("100"))
-          .divide(price, 2, BigDecimal.ROUND_HALF_UP);
+          .divide(price, 2, RoundingMode.HALF_UP);
     }
     info.addResult("inpdiscount", discount);
 

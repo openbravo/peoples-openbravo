@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_callouts;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.servlet.ServletException;
 
@@ -69,7 +70,7 @@ public class SE_Expense_Amount extends SimpleCallout {
       stdPrecision = Integer.valueOf(SEExpenseAmountData.selectPrecision(this, strcCurrencyId));
     }
     if (amount.scale() > stdPrecision) {
-      amount = amount.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+      amount = amount.setScale(stdPrecision, RoundingMode.HALF_UP);
     }
 
     // Checks if there is a conversion rate for each of the transactions of
@@ -95,7 +96,7 @@ public class SE_Expense_Amount extends SimpleCallout {
             c_Currency_To_ID));
       }
       if (convAmount.scale() > stdPrecisionConv) {
-        convAmount = convAmount.setScale(stdPrecisionConv, BigDecimal.ROUND_HALF_UP);
+        convAmount = convAmount.setScale(stdPrecisionConv, RoundingMode.HALF_UP);
       }
     }
 

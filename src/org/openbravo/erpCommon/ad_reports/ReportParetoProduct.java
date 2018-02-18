@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_reports;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -209,12 +210,12 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
           for (int i = 0; i < data.length; i++) {
             if (StringUtils.equals(data[i].orgid, currentOrganization)) {
               total = total.add(new BigDecimal(data[i].percentage)).setScale(2,
-                  BigDecimal.ROUND_HALF_UP);
+                  RoundingMode.HALF_UP);
             } else {
               difference = new BigDecimal("100.00").subtract(total);
-              total = new BigDecimal(data[i].percentage).setScale(2, BigDecimal.ROUND_HALF_UP);
+              total = new BigDecimal(data[i].percentage).setScale(2, RoundingMode.HALF_UP);
               data[toAdjustPosition].percentage = new BigDecimal(data[toAdjustPosition].percentage)
-                  .add(difference).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+                  .add(difference).setScale(2, RoundingMode.HALF_UP).toString();
               toAdjustPosition = i;
               currentOrganization = data[i].orgid;
             }
@@ -222,7 +223,7 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
           // Update last group
           difference = new BigDecimal("100.00").subtract(total);
           data[toAdjustPosition].percentage = new BigDecimal(data[toAdjustPosition].percentage)
-              .add(difference).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+              .add(difference).setScale(2, RoundingMode.HALF_UP).toString();
 
           xmlDocument.setData("structure1", data);
         }

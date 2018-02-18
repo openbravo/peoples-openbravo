@@ -19,6 +19,7 @@
 package org.openbravo.common.actionhandler;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -280,7 +281,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       if (order.getPriceList().isPriceIncludesTax()) {
         grossPrice = unitPrice;
         grossAmt = grossPrice.multiply(qtyReturned)
-            .setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+            .setScale(stdPrecision, RoundingMode.HALF_UP);
         netPrice = limitPrice = stdPrice = netListPrice = BigDecimal.ZERO;
       } else {
         netPrice = unitPrice;
@@ -294,7 +295,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       newOrderLine.setPriceLimit(limitPrice);
       newOrderLine.setStandardPrice(stdPrice);
       newOrderLine.setLineNetAmount(netPrice.multiply(qtyReturned).setScale(stdPrecision,
-          BigDecimal.ROUND_HALF_UP));
+          RoundingMode.HALF_UP));
       newOrderLine.setLineGrossAmount(grossAmt);
       newOrderLine.setBaseGrossUnitPrice(baseGrossUnitPrice);
 

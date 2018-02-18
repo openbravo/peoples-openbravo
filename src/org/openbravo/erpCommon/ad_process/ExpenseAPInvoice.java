@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_process;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 
 import javax.servlet.ServletConfig;
@@ -278,11 +279,11 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
         }
         int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
         priceActual = (strPricestd.equals("") ? ZERO : (new BigDecimal(strPricestd)));
-        priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+        priceActual = priceActual.setScale(PricePrecision, RoundingMode.HALF_UP);
         priceList = (strPricelist.equals("") ? ZERO : (new BigDecimal(strPricelist)));
-        priceList = priceList.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+        priceList = priceList.setScale(PricePrecision, RoundingMode.HALF_UP);
         priceLimit = (strPricelimit.equals("") ? ZERO : (new BigDecimal(strPricelimit)));
-        priceLimit = priceLimit.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+        priceLimit = priceLimit.setScale(PricePrecision, RoundingMode.HALF_UP);
 
         strPricestd = priceActual.toString();
         strPricelist = priceList.toString();
@@ -336,7 +337,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
                 data[i].adClientId, data[i].adOrgId, strcInvoiceId, "", strLine, "",
                 data[i].mProductId, "", data[i].description, "", strmProductUomId, String
                     .valueOf(qty), data[i].cUomId, strPricestd, strPricelist, strcTaxID,
-                ((new BigDecimal(strPricestd).setScale(stdPrecision, BigDecimal.ROUND_HALF_UP))
+                ((new BigDecimal(strPricestd).setScale(stdPrecision, RoundingMode.HALF_UP))
                     .multiply(qty)).toPlainString(), "", strPricestd, strPricelimit, "", "", "",
                 "Y", "0", "", "", strcInvoiceLineId, "N", vars.getUser(), vars.getUser(),
                 isDeferred, planType, periodNumber, startingPeriodId, data[i].cProjectId,
@@ -376,7 +377,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
             // Catch database error message
             try {
               BigDecimal roundPriceStd = qty.multiply(new BigDecimal(strPricestd));
-              roundPriceStd = roundPriceStd.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
+              roundPriceStd = roundPriceStd.setScale(StdPrecision, RoundingMode.HALF_UP);
               ExpenseAPInvoiceData.insertInvoicelineAcctdimension(OBDal.getInstance()
                   .getConnection(), this, strcInvoicelineAcctdimension, data[i].adClientId,
                   data[i].adOrgId, "Y", vars.getUser(), vars.getUser(), strcInvoiceLineId,
@@ -392,7 +393,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
             // requirements, adds the new amount to the old
             amount = new BigDecimal(dataAcctdimension[0].amt).add(new BigDecimal(data[i].qty)
                 .multiply(new BigDecimal(strPricestd)));
-            amount = amount.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
+            amount = amount.setScale(StdPrecision, RoundingMode.HALF_UP);
             // Catch database error message
             try {
               ExpenseAPInvoiceData.updateAcctdimension(OBDal.getInstance().getConnection(), this,

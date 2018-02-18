@@ -22,6 +22,7 @@ package org.openbravo.erpCommon.ad_forms;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -459,10 +460,10 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
               for (UOMConversion conv : conversionList) {
                 if (!useDivideRateBy) {
                   qtyorder = new BigDecimal(strQtyordered).multiply(conv.getMultipleRateBy())
-                      .setScale(stdPrecision, BigDecimal.ROUND_HALF_UP).toString();
+                      .setScale(stdPrecision, RoundingMode.HALF_UP).toString();
                 } else {
                   qtyorder = new BigDecimal(strQtyordered).multiply(conv.getDivideRateBy())
-                      .setScale(stdPrecision, BigDecimal.ROUND_HALF_UP).toString();
+                      .setScale(stdPrecision, RoundingMode.HALF_UP).toString();
                 }
               }
             }

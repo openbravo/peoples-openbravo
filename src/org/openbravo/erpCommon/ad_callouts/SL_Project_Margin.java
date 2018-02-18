@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_callouts;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.servlet.ServletException;
 
@@ -58,8 +59,8 @@ public class SL_Project_Margin extends SimpleCallout {
         || StringUtils.equals(strChanged, "inpservcost")) {
       if (serviceRevenue.compareTo(BigDecimal.ZERO) != 0) {
         serviceMargin = (((serviceRevenue.subtract(serviceCost)).divide(serviceRevenue, 12,
-            BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100"))).setScale(2,
-            BigDecimal.ROUND_HALF_UP);
+            RoundingMode.HALF_EVEN)).multiply(new BigDecimal("100"))).setScale(2,
+            RoundingMode.HALF_UP);
       } else {
         serviceMargin = BigDecimal.ZERO;
       }
@@ -71,7 +72,7 @@ public class SL_Project_Margin extends SimpleCallout {
       serviceCost = serviceRevenue.multiply((BigDecimal.ONE).subtract(serviceMargin
           .divide(new BigDecimal("100"))));
       if (serviceCost.scale() > stdPrecision) {
-        serviceCost = serviceCost.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+        serviceCost = serviceCost.setScale(stdPrecision, RoundingMode.HALF_UP);
       }
       info.addResult("inpservcost", serviceCost);
     }
@@ -81,8 +82,8 @@ public class SL_Project_Margin extends SimpleCallout {
         || StringUtils.equals(strChanged, "inpexpreinvoicing")) {
       if (reinvoicedExpenses.compareTo(BigDecimal.ZERO) != 0) {
         expensesMargin = (((reinvoicedExpenses.subtract(plannedExpenses)).multiply(new BigDecimal(
-            "100"))).divide(reinvoicedExpenses, 12, BigDecimal.ROUND_HALF_EVEN)).setScale(2,
-            BigDecimal.ROUND_HALF_UP);
+            "100"))).divide(reinvoicedExpenses, 12, RoundingMode.HALF_EVEN)).setScale(2,
+            RoundingMode.HALF_UP);
       } else {
         expensesMargin = BigDecimal.ZERO;
       }
@@ -94,17 +95,17 @@ public class SL_Project_Margin extends SimpleCallout {
       if (expensesMargin.compareTo(new BigDecimal("100")) == 0) {
         plannedExpenses = BigDecimal.ZERO;
         if (plannedExpenses.scale() > stdPrecision) {
-          plannedExpenses = plannedExpenses.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+          plannedExpenses = plannedExpenses.setScale(stdPrecision, RoundingMode.HALF_UP);
         }
         info.addResult("inpexpexpenses", plannedExpenses);
       }
       // Re-Invoiced Expenses - RE = PE/(1-EM/100)
       else {
         reinvoicedExpenses = plannedExpenses.divide((BigDecimal.ONE).subtract(expensesMargin
-            .divide(new BigDecimal("100"), 12, BigDecimal.ROUND_HALF_EVEN)), 12,
-            BigDecimal.ROUND_HALF_EVEN);
+            .divide(new BigDecimal("100"), 12, RoundingMode.HALF_EVEN)), 12,
+            RoundingMode.HALF_EVEN);
         if (reinvoicedExpenses.scale() > stdPrecision) {
-          reinvoicedExpenses = reinvoicedExpenses.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+          reinvoicedExpenses = reinvoicedExpenses.setScale(stdPrecision, RoundingMode.HALF_UP);
         }
         info.addResult("inpexpreinvoicing", reinvoicedExpenses);
       }

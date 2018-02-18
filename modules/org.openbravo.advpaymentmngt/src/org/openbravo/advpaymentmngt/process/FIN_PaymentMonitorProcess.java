@@ -179,7 +179,7 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
         grandTotalAmount = BigDecimal.ONE;
       }
       invoice.setPercentageOverdue(amounts.get("overdue").multiply(new BigDecimal(100))
-          .divide(grandTotalAmount, BigDecimal.ROUND_HALF_UP).longValue());
+          .divide(grandTotalAmount, RoundingMode.HALF_UP).longValue());
       invoice.setLastCalculatedOnDate(new Date());
 
       OBDal.getInstance().save(invoice);
@@ -426,10 +426,10 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
       // payment amount * (generatedPaymentPaidAmount / generatedPaymentTotalAmount)
       BigDecimal paidAmountTmp = payment.getAmount().subtract(payment.getWriteoffAmount())
           .multiply(generatedPaymentPaidAmount)
-          .divide(generatedPaymentTotalAmount, BigDecimal.ROUND_HALF_UP);
+          .divide(generatedPaymentTotalAmount, RoundingMode.HALF_UP);
       // set scale of the currency using standard precision
       paidAmount = paidAmount.add(paidAmountTmp.setScale(payment.getCurrency()
-          .getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_UP));
+          .getStandardPrecision().intValue(), RoundingMode.HALF_UP));
       // Add payment's write off amount to the paid amount
       paidAmount = paidAmount.add(getConvertedAmt(payment.getWriteoffAmount(), payment
           .getCurrency().getId(), strCurrencyTo, conversionDate, payment.getClient().getId(),
@@ -506,7 +506,7 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
       }
       // payment amount * (generatedPaymentOverdueAmount / generatedPaymentTotalAmount)
       BigDecimal overdueAmountTmp = payment.getAmount().multiply(generatedPaymentOverdueAmount)
-          .divide(generatedPaymentTotalAmount, BigDecimal.ROUND_HALF_UP);
+          .divide(generatedPaymentTotalAmount, RoundingMode.HALF_UP);
       // set scale of the currency using standard precision
       overdueAmount = overdueAmount.add(overdueAmountTmp.setScale(payment.getCurrency()
           .getStandardPrecision().intValue(), RoundingMode.HALF_UP));

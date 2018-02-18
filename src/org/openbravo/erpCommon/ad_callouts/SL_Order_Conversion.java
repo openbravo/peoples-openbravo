@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_callouts;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.servlet.ServletException;
 
@@ -69,7 +70,7 @@ public class SL_Order_Conversion extends SimpleCallout {
       int stdPrecision = StringUtils.isEmpty(strStdPrecision) ? 0 : Integer
           .valueOf(strStdPrecision).intValue();
       if (qtyOrdered.scale() > stdPrecision) {
-        qtyOrdered = qtyOrdered.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+        qtyOrdered = qtyOrdered.setScale(stdPrecision, RoundingMode.HALF_UP);
       }
       info.addResult("inpqtyordered", qtyOrdered);
     }

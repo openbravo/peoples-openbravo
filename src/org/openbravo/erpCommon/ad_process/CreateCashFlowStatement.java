@@ -22,6 +22,7 @@ package org.openbravo.erpCommon.ad_process;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 
 import javax.servlet.ServletConfig;
@@ -332,7 +333,7 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
           + " - amt - " + amt.doubleValue());
     String strRatio = "";
     try {
-      amt = amt.divide(total, 200, BigDecimal.ROUND_HALF_UP);
+      amt = amt.divide(total, 200, RoundingMode.HALF_UP);
       strRatio = amt.toString();
     } catch (Exception e) {
       e.printStackTrace();

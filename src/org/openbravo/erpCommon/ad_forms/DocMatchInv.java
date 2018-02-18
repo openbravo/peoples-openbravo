@@ -343,7 +343,7 @@ public class DocMatchInv extends AcctServer {
       DocLine_Material line = (DocLine_Material) p_inOutlines[i];
       BigDecimal lineAmount = bdCost.multiply(new BigDecimal(line.m_qty)).divide(
           new BigDecimal(data[0].getField("MOVEMENTQTY")),
-          costCurrency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_UP);
+          costCurrency.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
       if (i == p_inOutlines.length - 1) {
         lineAmount = bdCost.subtract(totalInOutLines);
       }
@@ -367,7 +367,7 @@ public class DocMatchInv extends AcctServer {
       BigDecimal linenetamt = new BigDecimal(invoiceData[0].linenetamt);
       if (!(linenetamt.compareTo(BigDecimal.ZERO) == 0)) {
         lineAmount = bdExpenses.multiply(new BigDecimal(line.getAmount())).divide(linenetamt,
-            invoiceCurrencyPrecission, BigDecimal.ROUND_HALF_UP);
+            invoiceCurrencyPrecission, RoundingMode.HALF_UP);
         if (i == p_lines.length - 1) {
           lineAmount = bdExpenses.subtract(totalLines);
         }
@@ -410,7 +410,7 @@ public class DocMatchInv extends AcctServer {
         BigDecimal lineAmount = bdDifference.multiply(new BigDecimal(line.m_qty)).divide(
             new BigDecimal(data[0].getField("MOVEMENTQTY")),
             OBDal.getInstance().get(Currency.class, as.m_C_Currency_ID).getStandardPrecision()
-                .intValue(), BigDecimal.ROUND_HALF_UP);
+                .intValue(), RoundingMode.HALF_UP);
         if (i == p_inOutlines.length - 1) {
           lineAmount = bdDifference.subtract(totalDiffLines);
         }
