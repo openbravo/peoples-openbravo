@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -91,7 +92,7 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
         paymentcashupEvent.setAmount(amount);
         paymentcashupEvent.setType(type);
         paymentcashupEvent.setCurrency(jsonsent.getString("isocode"));
-        paymentcashupEvent.setRate(origAmount.divide(amount, 2, BigDecimal.ROUND_HALF_UP));
+        paymentcashupEvent.setRate(origAmount.divide(amount, 2, RoundingMode.HALF_UP));
         OBDal.getInstance().save(paymentcashupEvent);
       }
     }

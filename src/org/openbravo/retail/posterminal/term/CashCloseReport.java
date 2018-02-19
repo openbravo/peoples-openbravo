@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal.term;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.servlet.ServletException;
 
@@ -159,7 +160,7 @@ public class CashCloseReport extends JSONProcessSimple {
         startingCash = ((BigDecimal) objpayments[1]).subtract(((BigDecimal) objstartingCash[0])
             .subtract((BigDecimal) objstartingCash[1]));
         totalStartings = totalStartings.add((startingCash.multiply(new BigDecimal(
-            (String) objpayments[3]))).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+            (String) objpayments[3]))).setScale(2, RoundingMode.HALF_EVEN));
         jsonStarting.put("amount", startingCash);
         jsonStarting.put("description",
             OBMessageUtils.getI18NMessage("OBPOS_LblStarting", new String[] {}) + " "
@@ -194,12 +195,12 @@ public class CashCloseReport extends JSONProcessSimple {
         dropDeposit.put("amount", drop);
         drops.put(dropDeposit);
         totalDrops = totalDrops.add((drop.multiply(new BigDecimal((String) objdropdeposit[3])))
-            .setScale(2, BigDecimal.ROUND_HALF_EVEN));
+            .setScale(2, RoundingMode.HALF_EVEN));
       } else {
         dropDeposit.put("amount", deposit);
         deposits.put(dropDeposit);
         totalDeposits = totalDeposits.add((deposit.multiply(new BigDecimal(
-            (String) objdropdeposit[3]))).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+            (String) objdropdeposit[3]))).setScale(2, RoundingMode.HALF_EVEN));
       }
       dropDeposit.put("rate", objdropdeposit[3]);
       dropDeposit.put("isocode", objdropdeposit[4]);
@@ -226,7 +227,7 @@ public class CashCloseReport extends JSONProcessSimple {
       salesDep.put("isocode", obja[3]);
       deposits.put(salesDep);
       totalDeposits = totalDeposits.add((((BigDecimal) obja[1]).multiply(new BigDecimal(
-          (String) obja[2]))).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+          (String) obja[2]))).setScale(2, RoundingMode.HALF_EVEN));
     }
 
     String hqlReturnsDrop = "select obpay.commercialName, sum(trans.paymentAmount), c_currency_rate(obpay.financialAccount.currency, obpay.obposApplications.organization.currency, null, null, obpay.obposApplications.client.id, obpay.obposApplications.organization.id) as rate, obpay.financialAccount.currency.iSOCode as isocode"
@@ -250,7 +251,7 @@ public class CashCloseReport extends JSONProcessSimple {
       returnDrop.put("isocode", obja[3]);
       drops.put(returnDrop);
       totalDrops = totalDrops.add((((BigDecimal) obja[1])
-          .multiply(new BigDecimal((String) obja[2]))).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+          .multiply(new BigDecimal((String) obja[2]))).setScale(2, RoundingMode.HALF_EVEN));
     }
 
     result.put("drops", drops);

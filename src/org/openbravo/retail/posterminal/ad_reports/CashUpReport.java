@@ -21,6 +21,7 @@ package org.openbravo.retail.posterminal.ad_reports;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -170,25 +171,25 @@ public class CashUpReport extends HttpSecureAppServlet {
           /******************************* STARTING CASH ***************************************************************/
           final BigDecimal startingbalance = paymentMethodCashup.getStartingcash();
           expected = expected.add(startingbalance.multiply(conversionRate).setScale(2,
-              BigDecimal.ROUND_HALF_UP));
+              RoundingMode.HALF_UP));
 
           psData = fillReportRow("STARTING", paymentMethodCashup.getPaymentType().getSearchKey(),
               "OBPOS_LblStarting", label,
-              startingbalance.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_UP)
+              startingbalance.multiply(conversionRate).setScale(2, RoundingMode.HALF_UP)
                   .toString(), startingbalance.toString(), "OBPOS_LblTotalStarting",
               conversionRate, isoCode);
           hashMapStartingsList.add(psData);
 
           /******************************* DROPS DEPOSIT ***************************************************************/
           final BigDecimal drop = paymentMethodCashup.getTotalreturns().multiply(conversionRate)
-              .setScale(2, BigDecimal.ROUND_HALF_UP);
+              .setScale(2, RoundingMode.HALF_UP);
           final BigDecimal deposit = paymentMethodCashup.getTotalsales().multiply(conversionRate)
-              .setScale(2, BigDecimal.ROUND_HALF_UP);
+              .setScale(2, RoundingMode.HALF_UP);
 
           // Withdrawals
           expected = expected.subtract(drop);
           totalDrops = totalDrops.add(drop.multiply(conversionRate).setScale(2,
-              BigDecimal.ROUND_HALF_UP));
+              RoundingMode.HALF_UP));
           psData = fillReportRow("WITHDRAWAL", paymentMethodCashup.getPaymentType().getSearchKey(),
               null, label, drop.toString(), paymentMethodCashup.getTotalreturns().toString(),
               "OBPOS_LblTotalWithdrawals", conversionRate, isoCode);
@@ -206,7 +207,7 @@ public class CashUpReport extends HttpSecureAppServlet {
               .getOBPOSPaymentcashupEventsList();
           for (OBPOSPaymentcashupEvents paymentcashupEvent : paymentcashupEventsList) {
             BigDecimal amount = paymentcashupEvent.getAmount()
-                .multiply(paymentcashupEvent.getRate()).setScale(2, BigDecimal.ROUND_HALF_UP);
+                .multiply(paymentcashupEvent.getRate()).setScale(2, RoundingMode.HALF_UP);
             if (paymentcashupEvent.getType().equals("drop")) {
               expected = expected.subtract(amount);
               totalDrops = totalDrops.add(amount);
@@ -233,8 +234,8 @@ public class CashUpReport extends HttpSecureAppServlet {
               "OBPOS_LblExpected",
               label,
               expected.toString(),
-              expected.divide(conversionRate, 5, BigDecimal.ROUND_HALF_UP)
-                  .setScale(2, BigDecimal.ROUND_HALF_UP).toString(), "OBPOS_LblTotalExpected",
+              expected.divide(conversionRate, 5, RoundingMode.HALF_UP)
+                  .setScale(2, RoundingMode.HALF_UP).toString(), "OBPOS_LblTotalExpected",
               conversionRate, isoCode);
           hashMapExpectedList.add(psData);
 
@@ -245,7 +246,7 @@ public class CashUpReport extends HttpSecureAppServlet {
               "OBPOS_LblCounted",
               label,
               paymentMethodCashup.getTotalCounted().multiply(conversionRate)
-                  .setScale(2, BigDecimal.ROUND_HALF_UP).toString(), paymentMethodCashup
+                  .setScale(2, RoundingMode.HALF_UP).toString(), paymentMethodCashup
                   .getTotalCounted().toString(), "OBPOS_LblTotalCounted", conversionRate, isoCode);
           hashMapCountedList.add(psData);
 
@@ -256,9 +257,9 @@ public class CashUpReport extends HttpSecureAppServlet {
               "OBPOS_LblDifference",
               label,
               paymentMethodCashup.getTotalCounted().multiply(conversionRate)
-                  .setScale(2, BigDecimal.ROUND_HALF_UP).subtract(expected).toString(),
+                  .setScale(2, RoundingMode.HALF_UP).subtract(expected).toString(),
               paymentMethodCashup.getTotalCounted()
-                  .subtract(expected.divide(conversionRate, 5, BigDecimal.ROUND_HALF_UP))
+                  .subtract(expected.divide(conversionRate, 5, RoundingMode.HALF_UP))
                   .toString(), "OBPOS_LblTotalDifference", conversionRate, isoCode);
           hashMapDifferenceList.add(psData);
 
@@ -268,7 +269,7 @@ public class CashUpReport extends HttpSecureAppServlet {
               paymentMethodCashup.getAmountToKeep());
           psData = fillReportRow("TODEPOSIT", paymentMethodCashup.getPaymentType().getSearchKey(),
               null, label,
-              cashToDeposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_UP)
+              cashToDeposit.multiply(conversionRate).setScale(2, RoundingMode.HALF_UP)
                   .toString(), cashToDeposit.toString(), "OBPOS_LblTotalQtyToDepo", conversionRate,
               isoCode);
           hashMapCashToDepositList.add(psData);
@@ -280,7 +281,7 @@ public class CashUpReport extends HttpSecureAppServlet {
               null,
               label,
               paymentMethodCashup.getAmountToKeep().multiply(conversionRate)
-                  .setScale(2, BigDecimal.ROUND_HALF_UP).toString(), paymentMethodCashup
+                  .setScale(2, RoundingMode.HALF_UP).toString(), paymentMethodCashup
                   .getAmountToKeep().toString(), "OBPOS_LblTotalQtyToKeep", conversionRate, isoCode);
           hashMapCashToKeepList.add(psData);
 

@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -392,11 +393,11 @@ public class CashCloseProcessor {
     transaction.setGLItem(glItem);
     if (reconciliationTotal.compareTo(BigDecimal.ZERO) < 0) {
       transaction.setPaymentAmount(reconciliationTotal.multiply(conversionRate).abs()
-          .setScale(2, BigDecimal.ROUND_HALF_EVEN));
+          .setScale(2, RoundingMode.HALF_EVEN));
       transaction.setTransactionType("BPW");
     } else {
       transaction.setDepositAmount(reconciliationTotal.multiply(conversionRate).setScale(2,
-          BigDecimal.ROUND_HALF_EVEN));
+          RoundingMode.HALF_EVEN));
       transaction.setTransactionType("BPD");
     }
     transaction.setProcessed(true);
