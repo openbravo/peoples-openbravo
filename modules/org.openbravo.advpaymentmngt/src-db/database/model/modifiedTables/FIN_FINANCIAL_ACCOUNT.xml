@@ -37,5 +37,9 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_APRM_ISFUNDSTRANS_ENABLED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
     </table>
   </database>
