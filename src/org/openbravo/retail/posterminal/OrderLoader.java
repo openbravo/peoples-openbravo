@@ -308,8 +308,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         wasPaidOnCredit = !isQuotation
             && !isDeleted
             && !notpaidLayaway
-            && Math.abs(jsonorder.getDouble("payment")) < Math.abs(new Double(jsonorder
-                .getDouble("gross")));
+            && Math.abs(jsonorder.getDouble("payment")) < Math.abs(jsonorder
+                .getDouble("gross"));
         if (jsonorder.has("oBPOSNotInvoiceOnCashUp")
             && jsonorder.getBoolean("oBPOSNotInvoiceOnCashUp")) {
           createInvoice = false;

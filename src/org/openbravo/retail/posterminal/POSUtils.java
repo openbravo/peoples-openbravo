@@ -397,7 +397,7 @@ public class POSUtils {
           if (number.indexOf("-") > -1) {
             number = number.substring(0, number.indexOf("-"));
           }
-          int errorNumber = new Long(number).intValue();
+          int errorNumber = Integer.parseInt(number);
           if (errorNumber > maxDocNo) {
             maxDocNo = errorNumber;
           }
@@ -485,7 +485,7 @@ public class POSUtils {
           if (number.indexOf("-") > -1) {
             number = number.substring(0, number.indexOf("-"));
           }
-          int errorNumber = new Long(number).intValue();
+          int errorNumber = Integer.parseInt(number);
           if (errorNumber > maxDocNo) {
             maxDocNo = errorNumber;
           }
@@ -570,7 +570,7 @@ public class POSUtils {
           if (number.indexOf("-") > -1) {
             number = number.substring(0, number.indexOf("-"));
           }
-          int errorNumber = new Long(number).intValue();
+          int errorNumber = Integer.parseInt(number);
           if (errorNumber > maxDocNo) {
             maxDocNo = errorNumber;
           }
