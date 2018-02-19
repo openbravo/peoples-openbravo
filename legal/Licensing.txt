@@ -146,9 +146,9 @@ http://opensource.org/licenses/afl-2.1.php)
 # itext-pdfa-5.5.0.jar
 Both files under AGPL V3 license with LGPL Exception (included as iTextpdf_license.txt in this folder)
 
-# jackson-core-2.5.1.jar
-# jackson-databind-2.5.1.jar
-# jackson-annotations-2.5.1.jar
+# jackson-core-2.9.4.jar
+# jackson-databind-2.9.4.jar
+# jackson-annotations-2.9.4.jar
 All files under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder)
 
 # jasperreports-6.0.0.jar
