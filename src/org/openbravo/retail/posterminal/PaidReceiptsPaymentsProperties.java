@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -33,6 +33,8 @@ public class PaidReceiptsPaymentsProperties extends ModelExtension {
         add(new HQLProperty("to_char(finPayment.obposPaymentdata)", "paymentData"));
         add(new HQLProperty("reversedPayment.id", "reversedPaymentId"));
         add(new HQLProperty("finPayment.documentNo", "documentNo"));
+        add(new HQLProperty("obposAppCashup.id", "cashup"));
+        add(new HQLProperty("oBPOSPOSTerminal.id", "posTerminal"));
       }
     };
 
