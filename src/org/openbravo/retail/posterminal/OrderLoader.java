@@ -175,9 +175,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
 
-    paidReceipt = ((jsonorder.getLong("orderType") == 0 || jsonorder.getLong("orderType") == 1) && ((jsonorder
-        .has("isPaid") && jsonorder.getBoolean("isPaid") || jsonorder.has("isLayaway")
-        && jsonorder.getBoolean("isLayaway")) && jsonorder.optBoolean("donePressed", false)));
+    paidReceipt = (jsonorder.getLong("orderType") == 0 || jsonorder.getLong("orderType") == 1)
+        && jsonorder.has("isPaid") && jsonorder.getBoolean("isPaid");
 
     hasPrepayment = jsonorder.optBoolean("hasPrepayment", false);
 
@@ -198,10 +197,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     isDeleted = jsonorder.has("obposIsDeleted") && jsonorder.getBoolean("obposIsDeleted");
     isModified = jsonorder.has("isModified") && jsonorder.getBoolean("isModified");
 
-    createShipment = !isQuotation
-        && !isDeleted
-        && !((jsonorder.getLong("orderType") == 0 || jsonorder.getLong("orderType") == 1)
-            && jsonorder.has("isPaid") && jsonorder.getBoolean("isPaid"));
+    createShipment = !isQuotation && !isDeleted && !paidReceipt;
     if (jsonorder.has("generateShipment")) {
       createShipment &= jsonorder.getBoolean("generateShipment");
     }
