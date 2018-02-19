@@ -29,7 +29,7 @@
         '' as buildxml, '' as tabId, '' as windowName, '' as tabName,
         '' as windowPackage, '' as windowmodule, '' as tabPackage,
         '' as tabmodule, '' as key, '' as tablevel, '' as location,
-        '' as exceptiontype, '' as errorcode
+        '' as errortype
       from dual
       ]]>      
     </Sql>
@@ -251,7 +251,7 @@
       and o.isactive = 'Y'
       and p.isactive='Y'
       and p.ad_model_object_id = o.ad_model_object_id
-      and p.name IN ('location') and not exists (
+      and p.name = 'location' and not exists (
          select 1 from ad_model_object_para op where
          op.isactive = 'Y'
          and op.name IN ('exception-type', 'error-code')
@@ -261,11 +261,11 @@
     </Sql>
   </SqlMethod>
 
-  <SqlMethod name="selectExceptionErrorPages" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Select the active exception Error pages</SqlMethodComment>
+  <SqlMethod name="selectErrorPages" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Select the active error pages of the type given (it can be either exception-type or error code)</SqlMethodComment>
     <Sql>
       <![CDATA[
-      select p.value as exceptiontype, 
+      select p.value as errortype, 
         (select max(value)
          from ad_model_object_para lp 
          where lp.ad_model_object_id = o.ad_model_object_id
@@ -277,29 +277,10 @@
       and o.isactive = 'Y'
       and p.isactive = 'Y'
       and p.ad_model_object_id = o.ad_model_object_id
-      and p.name IN ('exception-type')
+      and p.name = ?
       ]]> 
     </Sql>
+    <Parameter name="errorType"/>
   </SqlMethod>
 
-  <SqlMethod name="selectErrorCodePages" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Select the active Error code pages</SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      select p.value as errorcode, 
-        (select max(value)
-         from ad_model_object_para lp 
-         where lp.ad_model_object_id = o.ad_model_object_id
-         and lp.isactive = 'Y'
-         and lp.name = 'location'
-        ) as location
-      from  ad_model_object_para p, ad_model_object o
-      where o.object_type = 'E'
-      and o.isactive = 'Y'
-      and p.isactive = 'Y'
-      and p.ad_model_object_id = o.ad_model_object_id
-      and p.name IN ('error-code')
-      ]]>
-    </Sql>
-  </SqlMethod>
 </SqlClass>

@@ -55,6 +55,8 @@ public class Wad extends DefaultHandler {
   private static final int MAX_SIZE_EDITION_1_COLUMNS = 90;
   private static final int MAX_TEXTBOX_LENGTH = 110;
   private static final String WELD_LISTENER_ID = "3F88D97C7E9E4DD9847A5488771F4AB3";
+  private static final String ERROR_CODE_PAGES = "error-code";
+  private static final String EXCEPTION_TYPE_PAGES = "exception-type";
   private static final String NONE = "none";
   private XmlEngine xmlEngine;
   private WadConnection pool;
@@ -770,9 +772,9 @@ public class Wad extends DefaultHandler {
       xmlDocument.setData("structure2", WadData.selectMapping(pool));
 
       xmlDocument.setData("structureErrorExceptionPage",
-          appendErrorPageRoutePrefix(WadData.selectExceptionErrorPages(pool), contextParams));
+          appendErrorPageRoutePrefix(WadData.selectErrorPages(pool, EXCEPTION_TYPE_PAGES), contextParams));
       xmlDocument.setData("structureErrorCodePage",
-          appendErrorPageRoutePrefix(WadData.selectErrorCodePages(pool), contextParams));
+          appendErrorPageRoutePrefix(WadData.selectErrorPages(pool, ERROR_CODE_PAGES), contextParams));
       xmlDocument.setData("structureGenericErrorPage",
           appendErrorPageRoutePrefix(WadData.selectGenericErrorPages(pool), contextParams));
 
