@@ -10107,7 +10107,7 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--B502077EB5A64A43A07CD42323BBAC57-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--B502077EB5A64A43A07CD42323BBAC57-->  <NAME><![CDATA[EM_Aprm_Isfundstrans_Enabled]]></NAME>
 <!--B502077EB5A64A43A07CD42323BBAC57-->  <DESCRIPTION><![CDATA[Funds Transfer Enabled flag is used to show/hide funds transfer button process.]]></DESCRIPTION>
-<!--B502077EB5A64A43A07CD42323BBAC57-->  <HELP><![CDATA[Funds Transfer Enabled flag is used to show/hide funds transfer button process.]]></HELP>
+<!--B502077EB5A64A43A07CD42323BBAC57-->  <HELP><![CDATA[Funds Transfer Enabled flag is used to show/hide funds transfer button process and to show/hide Financial Accounts in Funds Transfer Process]]></HELP>
 <!--B502077EB5A64A43A07CD42323BBAC57-->  <COLUMNNAME><![CDATA[EM_Aprm_Isfundstrans_Enabled]]></COLUMNNAME>
 <!--B502077EB5A64A43A07CD42323BBAC57-->  <AD_TABLE_ID><![CDATA[B129E53BC0E747879F7BA17F0AECEC32]]></AD_TABLE_ID>
 <!--B502077EB5A64A43A07CD42323BBAC57-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
@@ -10186,8 +10186,8 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--B5066970A1944B9EBDA0A2BE48F026F6-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--B5066970A1944B9EBDA0A2BE48F026F6-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--B5066970A1944B9EBDA0A2BE48F026F6-->  <NAME><![CDATA[EM_APRM_Glitem_ID]]></NAME>
-<!--B5066970A1944B9EBDA0A2BE48F026F6-->  <DESCRIPTION><![CDATA[Default G/L Item for Funds Transfer.]]></DESCRIPTION>
-<!--B5066970A1944B9EBDA0A2BE48F026F6-->  <HELP><![CDATA[Default G/L Item for Funds Transfer.]]></HELP>
+<!--B5066970A1944B9EBDA0A2BE48F026F6-->  <DESCRIPTION><![CDATA[Default G/L Item used for Funds Transfer Process]]></DESCRIPTION>
+<!--B5066970A1944B9EBDA0A2BE48F026F6-->  <HELP><![CDATA[Default G/L Item used for Funds Transfer Process in Financial Account Window]]></HELP>
 <!--B5066970A1944B9EBDA0A2BE48F026F6-->  <COLUMNNAME><![CDATA[EM_APRM_Glitem_ID]]></COLUMNNAME>
 <!--B5066970A1944B9EBDA0A2BE48F026F6-->  <AD_TABLE_ID><![CDATA[155]]></AD_TABLE_ID>
 <!--B5066970A1944B9EBDA0A2BE48F026F6-->  <AD_REFERENCE_ID><![CDATA[95E2A8B50A254B2AAE6774B8C2F28120]]></AD_REFERENCE_ID>
