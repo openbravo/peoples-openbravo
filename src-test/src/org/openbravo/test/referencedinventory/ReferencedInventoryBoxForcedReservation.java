@@ -71,7 +71,7 @@ public class ReferencedInventoryBoxForcedReservation extends ReferencedInventory
             }
             final ReferencedInventory refInv = testBox(BINS[0], product[0], product[1],
                 params.qtyToBox, params.reservationQty, isAllocated, isForceBin, isForceAttribute);
-            assertsReservations(refInv, isForceBin, isForceAttribute);
+            assertsReservation(refInv, isForceBin, isForceAttribute);
             OBDal.getInstance().getSession().clear();
           }
         }
@@ -103,7 +103,7 @@ public class ReferencedInventoryBoxForcedReservation extends ReferencedInventory
         true, true);
   }
 
-  private void assertsReservations(final ReferencedInventory refInv, boolean isForceBin,
+  private void assertsReservation(final ReferencedInventory refInv, boolean isForceBin,
       boolean isForceAttribute) {
     final OBCriteria<Reservation> crit = OBDao.getFilteredCriteria(
         Reservation.class,
@@ -117,19 +117,13 @@ public class ReferencedInventoryBoxForcedReservation extends ReferencedInventory
     }
     crit.addOrderBy(Reservation.PROPERTY_RESSTATUS, true);
     final List<Reservation> reservations = crit.list();
-    assertThat("Two reservations must be found", reservations.size(), equalTo(2));
+    assertThat("One reservation must be found", reservations.size(), equalTo(1));
 
-    int i = 0;
-    for (Reservation reservation : reservations) {
-      if (i == 0) {
-        assertThat("First reservation must be closed", reservation.getRESStatus(), equalTo("CL"));
-      } else {
-        assertThat("Second reservation must be completed", reservation.getRESStatus(),
-            equalTo("CO"));
-      }
-      ReferencedInventoryTestUtils.assertsReservationHeader(isForceBin, isForceAttribute,
-          reservation);
-      i++;
-    }
+    final Reservation reservation = reservations.get(0);
+    assertThat("Reservation must be completed", reservation.getRESStatus(), equalTo("CO"));
+    ReferencedInventoryTestUtils
+        .assertsReservationHeader(isForceBin, isForceAttribute, reservation);
+    assertThat("Reservation must have 1 line", reservation.getMaterialMgmtReservationStockList()
+        .size(), equalTo(1));
   }
 }

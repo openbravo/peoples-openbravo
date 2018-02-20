@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -436,6 +436,7 @@ public class DalUtil {
    * @deprecated It is not needed to used this method for lazy loading of id in a proxy. Kept only
    *             for backwards compatibility.
    */
+  @Deprecated
   public static Serializable getId(Object o) {
     if (o instanceof HibernateProxy) {
       return ((HibernateProxy) o).getHibernateLazyInitializer().getIdentifier();

@@ -106,14 +106,14 @@ Copyright (c) 2007, Yahoo! Inc. All rights reserved. Code licensed under the BSD
 # catalina-ant.jar
 # commons-beanutils-1.8.3.jar
 # commons-betwixt-0.8.jar
-# commons-codec-1.5.jar
+# commons-codec-1.11.jar
 # commons-collections-3.2.1.jar
 # commons-dbcp-1.4.jar
 # commons-digester-1.8.1.jar
 # commons-fileupload-1.2.2.jar
 # commons-io-2.4.jar
 # commons-lang-2.6.jar
-# commons-logging-1.1.1.jar
+# commons-logging-1.2.jar
 # commons-pool-1.5.6.jar
 # fop-1.1.jar
 # jakarta-oro-2.0.8.jar
@@ -146,9 +146,9 @@ http://opensource.org/licenses/afl-2.1.php)
 # itext-pdfa-5.5.0.jar
 Both files under AGPL V3 license with LGPL Exception (included as iTextpdf_license.txt in this folder)
 
-# jackson-core-2.5.1.jar
-# jackson-databind-2.5.1.jar
-# jackson-annotations-2.5.1.jar
+# jackson-core-2.9.4.jar
+# jackson-databind-2.9.4.jar
+# jackson-annotations-2.9.4.jar
 All files under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder)
 
 # jasperreports-6.0.0.jar
@@ -257,9 +257,9 @@ Under the MIT license (available at http://www.slf4j.org/license.html)
 # shrinkwrap-spi-1.2.2.jar
 # validation-api-1.0.0.GA.jar
 # jsmin.0.2.4.jar
-# httpcore-4.0.1.jar
-# httpclient-4.0.jar
-# httpmime-4.1.jar
+# httpcore-4.4.9.jar
+# httpclient-4.5.5.jar
+# httpmime-4.5.5.jar
 # guice-2.0.jar
 # tomcat-juli.jar
 # tomcat-jdbc.jar

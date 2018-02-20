@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -156,8 +156,6 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
       final String executionId = (String) jec.get(EXECUTION_ID);
       Job jobInstance = jec.getJobInstance();
 
-      final String executionLog = bundle.getLog().length() >= 4000 ? bundle.getLog().substring(0,
-          3999) : bundle.getLog();
       String executionStatus;
 
       if (jee != null) {
@@ -169,7 +167,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
       }
 
       ProcessRunData.update(getConnection(), ctx.getUser(), executionStatus,
-          getDuration(jec.getJobRunTime()), executionLog, executionId);
+          getDuration(jec.getJobRunTime()), bundle.getLog(), executionId);
 
       if (bundle.getGroupInfo() != null) {
         // Manage Process Group

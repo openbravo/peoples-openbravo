@@ -9,7 +9,7 @@
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/commons-fileupload-1.2.2.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/nekohtml.jar"/>
-	<classpathentry kind="lib" path="/openbravo/lib/runtime/commons-codec-1.5.jar"/>
+	<classpathentry kind="lib" path="/openbravo/lib/runtime/commons-codec-1.11.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/commons-io-2.4.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/build/servlet-api.jar"/>

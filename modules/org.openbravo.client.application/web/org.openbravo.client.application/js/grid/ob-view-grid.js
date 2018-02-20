@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1215,7 +1215,7 @@ isc.OBViewGrid.addProperties({
   // loads the foreign key filter auxiliary cache of all the filter fields that were using the 'id' filter type when the view was saved
   loadFilterAuxiliaryCache: function (filterAuxCache) {
     var i, cacheElement, filterField;
-    if (!filterAuxCache || !isc.isA.Array(filterAuxCache) || filterAuxCache.length === 0) {
+    if (!this.canLoadFilterAuxiliaryCache(filterAuxCache)) {
       return;
     }
     for (i = 0; i < filterAuxCache.length; i++) {
@@ -1226,6 +1226,10 @@ isc.OBViewGrid.addProperties({
         filterField.filterAuxCache = cacheElement.cache;
       }
     }
+  },
+
+  canLoadFilterAuxiliaryCache: function (filterAuxCache) {
+    return filterAuxCache && isc.isA.Array(filterAuxCache) && filterAuxCache.length > 0 && this.filterEditor && this.filterEditor.getEditForm();
   },
 
   // overridden to also store the group mode
@@ -2673,7 +2677,7 @@ isc.OBViewGrid.addProperties({
         }
       }
     }
-    if (this.filterEditor) {
+    if (this.filterEditor && this.filterEditor.getEditForm()) {
       this.filterEditor.getEditForm().setValue(this.getCheckboxField().name, newValue);
       this.filterEditor.getEditForm().getField(this.getCheckboxField().name).defaultValue = newValue;
     }

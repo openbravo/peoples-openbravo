@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -55,13 +55,9 @@ public class UnboxProcessor extends ReferencedInventoryProcessor {
     for (int i = 0; i < selectedStorageDetails.length(); i++) {
       final JSONObject storageDetailJS = selectedStorageDetails.getJSONObject(i);
       final StorageDetail storageDetail = getStorageDetail(storageDetailJS);
-      Check
-          .isNotNull(
-              storageDetail.getReferencedInventory(),
-              String
-                  .format(
-                      "Not possible to unbox because the Storage Detail %s is not linked to any referenced inventory",
-                      storageDetail.getIdentifier()));
+      Check.isNotNull(storageDetail.getReferencedInventory(), String.format(
+          OBMessageUtils.messageBD("StorageDetailNotLinkedToReferencedInventory"),
+          storageDetail.getIdentifier()));
     }
   }
 

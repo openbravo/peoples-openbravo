@@ -374,6 +374,7 @@ public class ServicePriceUtils {
    * @deprecated Use
    *             {@link ProductPriceUtils#productReturnAllowedRFC(ShipmentInOutLine, Product, Date)}
    */
+  @Deprecated
   public static JSONObject serviceReturnAllowedRFC(ShipmentInOutLine shipmentLine,
       Product serviceProduct, Date rfcOrderDate) {
     return ProductPriceUtils.productReturnAllowedRFC(shipmentLine, serviceProduct, rfcOrderDate);

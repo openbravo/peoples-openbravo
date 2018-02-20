@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014 Openbravo S.L.U.
+ * Copyright (C) 2014-2018 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -42,25 +42,21 @@ public class HttpSessionWrapper implements HttpSession {
 
   @Override
   public long getCreationTime() {
-    // TODO Auto-generated method stub
     return 0;
   }
 
   @Override
   public String getId() {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public long getLastAccessedTime() {
-    // TODO Auto-generated method stub
     return 0;
   }
 
   @Override
   public int getMaxInactiveInterval() {
-    // TODO Auto-generated method stub
     return 0;
   }
 
@@ -72,15 +68,16 @@ public class HttpSessionWrapper implements HttpSession {
   /**
    * @deprecated
    */
+  @Deprecated
   @Override
   public javax.servlet.http.HttpSessionContext getSessionContext() {
-    // TODO Auto-generated method stub
     return null;
   }
 
   /**
    * @deprecated
    */
+  @Deprecated
   @Override
   public Object getValue(String arg0) {
     return null;
@@ -89,6 +86,7 @@ public class HttpSessionWrapper implements HttpSession {
   /**
    * @deprecated
    */
+  @Deprecated
   @Override
   public String[] getValueNames() {
     return null;
@@ -96,13 +94,10 @@ public class HttpSessionWrapper implements HttpSession {
 
   @Override
   public void invalidate() {
-    // TODO Auto-generated method stub
-
   }
 
   @Override
   public boolean isNew() {
-    // TODO Auto-generated method stub
     return false;
   }
 
@@ -112,8 +107,6 @@ public class HttpSessionWrapper implements HttpSession {
   @Deprecated
   @Override
   public void putValue(String arg0, Object arg1) {
-    // TODO Auto-generated method stub
-
   }
 
   @Override
@@ -124,9 +117,9 @@ public class HttpSessionWrapper implements HttpSession {
   /**
    * @deprecated
    */
+  @Deprecated
   @Override
   public void removeValue(String arg0) {
-    // TODO Auto-generated method stub
   }
 
   @Override
@@ -136,6 +129,5 @@ public class HttpSessionWrapper implements HttpSession {
 
   @Override
   public void setMaxInactiveInterval(int arg0) {
-    // TODO Auto-generated method stub
   }
 }

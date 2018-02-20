@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -220,6 +220,7 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
    * 
    * @deprecated use {@link BaseProcessActionHandler#fixRequestMap(Map, JSONObject)}
    */
+  @Deprecated
   protected Map<String, String> fixRequestMap(Map<String, Object> parameters) {
     return fixRequestMap(parameters, null);
   }

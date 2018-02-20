@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Business Momentum b.v.
- * All portions are Copyright (C) 2007-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2007-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  Business Momentum b.v. (http://www.businessmomentum.eu).
  *************************************************************************
@@ -57,8 +57,8 @@ public class ReportManager {
 
   public ReportManager(String ftpDirectory, String replaceWithFull, String baseDesignPath,
       String defaultDesignPath, String prefix, boolean multiReport) {
-    this(DalConnectionProvider.getReadOnlyConnectionProvider(), ftpDirectory, replaceWithFull,
-        baseDesignPath, defaultDesignPath, prefix, multiReport);
+    this(new DalConnectionProvider(false), ftpDirectory, replaceWithFull, baseDesignPath,
+        defaultDesignPath, prefix, multiReport);
   }
 
   public ReportManager(ConnectionProvider connectionProvider, String ftpDirectory,

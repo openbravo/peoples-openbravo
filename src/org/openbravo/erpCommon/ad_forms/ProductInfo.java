@@ -245,6 +245,7 @@ public class ProductInfo {
    * @return amount
    * @deprecated should not be used
    */
+  @Deprecated
   public static String getConvertedQty(String qty, String C_UOM_From_ID, String C_UOM_To_ID,
       String StdPrecision, ConnectionProvider conn) {
     // Nothing to do

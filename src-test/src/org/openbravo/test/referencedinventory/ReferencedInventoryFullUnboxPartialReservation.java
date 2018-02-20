@@ -19,6 +19,9 @@
 
 package org.openbravo.test.referencedinventory;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Arrays;
 
 import org.junit.Rule;
@@ -26,10 +29,14 @@ import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 
+/**
+ * Full unbox of a partial reservation. Storage detail should be reserved and out of the box. Box
+ * and Unbox movements will have 2 lines
+ */
 public class ReferencedInventoryFullUnboxPartialReservation extends
     ReferencedInventoryUnboxReservationTest {
-
   @Rule
   public ParameterCdiTestRule<ParamsUnboxReservationTest> parameterValuesRule2 = new ParameterCdiTestRule<ParamsUnboxReservationTest>(
       Arrays
@@ -51,5 +58,12 @@ public class ReferencedInventoryFullUnboxPartialReservation extends
         }
       }
     }
+  }
+
+  @Override
+  void assertsGoodsMovementNumberOfLines(final InternalMovement boxMovement,
+      final int expectedNumberOfLines) {
+    assertThat("Box and Unbox Movement has two lines", boxMovement
+        .getMaterialMgmtInternalMovementLineList().size(), equalTo(2));
   }
 }

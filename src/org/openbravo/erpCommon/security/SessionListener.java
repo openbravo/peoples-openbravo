@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,8 +21,9 @@ package org.openbravo.erpCommon.security;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -48,8 +49,10 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
 
   private static final Logger log = Logger.getLogger(SessionListener.class);
 
-  private static Set<String> sessionsInContext = new HashSet<String>();
-  private static Set<HttpSession> activeHttpSessions = new HashSet<HttpSession>();
+  private static Set<String> sessionsInContext = Collections
+      .newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+  private static Set<HttpSession> activeHttpSessions = Collections
+      .newSetFromMap(new ConcurrentHashMap<HttpSession, Boolean>());
   private static ServletContext context = null;
 
   /**
@@ -64,10 +67,7 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
     if (sessionId != null) {
       deactivateSession(sessionId);
     }
-    synchronized (activeHttpSessions) {
-      activeHttpSessions.remove(session);
-    }
-
+    activeHttpSessions.remove(session);
     log.debug("Session destroyed. Active sessions count: " + activeHttpSessions.size());
   }
 
@@ -102,7 +102,7 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
    * @param sessionId
    *          db id for the session to keep track
    */
-  public static synchronized void addSession(String sessionId) {
+  public static void addSession(String sessionId) {
     sessionsInContext.add(sessionId);
   }
 
@@ -155,9 +155,7 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
 
   @Override
   public void sessionCreated(HttpSessionEvent event) {
-    synchronized (activeHttpSessions) {
-      activeHttpSessions.add(event.getSession());
-    }
+    activeHttpSessions.add(event.getSession());
 
     if (RequestContext.get().getRequest() != null
         && AuthenticationManager.isStatelessRequest(RequestContext.get().getRequest())) {
@@ -189,9 +187,7 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
 
   private void deactivateSession(String sessionId) {
     try {
-      synchronized (sessionsInContext) {
-        sessionsInContext.remove(sessionId);
-      }
+      sessionsInContext.remove(sessionId);
 
       // Do not use DAL here
       SessionLoginData.deactivate((ConnectionProvider) context.getAttribute("openbravoPool"),

@@ -61,6 +61,7 @@ public class DocLineCashVATReady_PaymentTransactionReconciliation extends DocLin
    * 
    * @deprecated Use {@link #getInvoiceTaxCashVAT_V_IDs()}
    */
+  @Deprecated
   public List<InvoiceTaxCashVAT_V> getInvoiceTaxCashVAT_V() {
     List<InvoiceTaxCashVAT_V> itcvList = new ArrayList<InvoiceTaxCashVAT_V>();
     for (String itcv : invoiceTaxCashVAT_V) {
@@ -79,6 +80,7 @@ public class DocLineCashVATReady_PaymentTransactionReconciliation extends DocLin
    * 
    * @deprecated Use {@link #setInvoiceTaxCashVAT_V_IDs(List)}
    */
+  @Deprecated
   public void setInvoiceTaxCashVAT_V(List<InvoiceTaxCashVAT_V> invoiceTaxCashVAT_V) {
     for (InvoiceTaxCashVAT_V itcv : invoiceTaxCashVAT_V) {
       this.invoiceTaxCashVAT_V.add(itcv.getId());

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,7 +25,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
 
@@ -51,26 +50,10 @@ public class SL_TableAudit extends SimpleCallout {
         info.showMessage(Utility.messageBD(this, "RegenerateAudit_ExcludeColumn",
             info.vars.getLanguage()));
       } else {
-        OBCriteria<Table> obc = OBDal.getInstance().createCriteria(Table.class);
-        obc.add(Restrictions.eq(Table.PROPERTY_ISFULLYAUDITED, true));
-        boolean anyTableIsAudited = !obc.list().isEmpty();
-        if (!anyTableIsAudited) {
-          SessionInfo.setAuditActive(false);
-        }
+        info.showMessage(Utility.messageBD(this, "RegenerateAudit", info.vars.getLanguage()));
       }
     } else if (StringUtils.equalsIgnoreCase(strChanged, "inpisexcludeaudit")) {
-      String strIsExcludedAudit = info.getStringParameter("inpisexcludeaudit");
-      boolean currentRecordExcludeAudit = StringUtils.equals(strIsExcludedAudit, "Y");
-      if (currentRecordExcludeAudit) {
-        info.showMessage(Utility.messageBD(this, "RegenerateAudit", info.vars.getLanguage()));
-      } else {
-        OBCriteria<Table> obc = OBDal.getInstance().createCriteria(Table.class);
-        obc.add(Restrictions.eq(Table.PROPERTY_ISFULLYAUDITED, true));
-        boolean anyTableIsAudited = !obc.list().isEmpty();
-        if (!anyTableIsAudited) {
-          SessionInfo.setAuditActive(false);
-        }
-      }
+      info.showMessage(Utility.messageBD(this, "RegenerateAudit", info.vars.getLanguage()));
     }
   }
 }
