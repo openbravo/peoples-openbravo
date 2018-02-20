@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017 Openbravo S.L.U.
+ * Copyright (C) 2017-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -22,6 +22,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.plm.Attribute;
 import org.openbravo.model.common.plm.AttributeInstance;
 import org.openbravo.model.common.plm.AttributeSet;
@@ -140,9 +141,9 @@ public class AttributesUtils {
     List<Attribute> lstAttributes = getInstanciableAndMandatoryAttributesUsedByAttributeSetSortedBySeqNoAsc(attSet);
     for (Attribute att : lstAttributes) {
       if (currentPart >= numberOfParts) {
-        throw new OBException("Product -" + product.getIdentifier() + "- Uses an AttributeSet  -"
-            + attSet.getIdentifier() + "- which requires at least " + (currentPart + 1)
-            + " values, but just " + numberOfParts + " was detected", true);
+        throw new OBException(String.format(
+            OBMessageUtils.messageBD("OBPOS_ProductAttrValuesNotFound"), product.getIdentifier(),
+            attSet.getIdentifier(), (currentPart + 1), numberOfParts), true);
       }
       if (att.isList()) {
         log.debug("Value for attribute (with restricted list of vaules) -" + att.getIdentifier()
@@ -153,9 +154,9 @@ public class AttributesUtils {
         if (isValidValueForAttribute(att, valueToValidate)) {
           result += receivedAttSetInstanceDescription_parts[currentPart] + "_";
         } else {
-          throw new OBException("Product -" + product.getIdentifier()
-              + "- Uses an Attribute marked as List. Value received (" + valueToValidate
-              + ") is not valid. ", true);
+          throw new OBException(String.format(
+              OBMessageUtils.messageBD("OBPOS_ProductAttrDefinedAsList"), product.getIdentifier(),
+              valueToValidate), true);
         }
       } else {
         log.debug("Value for attribute (without valid list of vaules) -" + att.getIdentifier()
@@ -171,9 +172,9 @@ public class AttributesUtils {
 
     if (attSet.isLot()) {
       if (currentPart >= numberOfParts) {
-        throw new OBException("Product -" + product.getIdentifier() + "- Uses an AttributeSet  -"
-            + attSet.getIdentifier() + "- which requires at least " + (currentPart + 1)
-            + " values, but just " + numberOfParts + " was detected", true);
+        throw new OBException(String.format(
+            OBMessageUtils.messageBD("OBPOS_ProductAttrValuesNotFound"), product.getIdentifier(),
+            attSet.getIdentifier(), (currentPart + 1), numberOfParts), true);
       }
       log.debug("Att Set (" + attSet.getIdentifier() + ") uses lot. lot value is -"
           + receivedAttSetInstanceDescription_parts[currentPart] + "-");
@@ -183,9 +184,9 @@ public class AttributesUtils {
 
     if (attSet.isSerialNo()) {
       if (currentPart >= numberOfParts) {
-        throw new OBException("Product -" + product.getIdentifier() + "- Uses an AttributeSet  -"
-            + attSet.getIdentifier() + "- which requires at least " + (currentPart + 1)
-            + " values, but just " + numberOfParts + " was detected", true);
+        throw new OBException(String.format(
+            OBMessageUtils.messageBD("OBPOS_ProductAttrValuesNotFound"), product.getIdentifier(),
+            attSet.getIdentifier(), (currentPart + 1), numberOfParts), true);
       }
       log.debug("Att Set (" + attSet.getIdentifier()
           + ") uses serialNo. It must be the first part ("
@@ -196,9 +197,9 @@ public class AttributesUtils {
 
     if (attSet.isExpirationDate()) {
       if (currentPart >= numberOfParts) {
-        throw new OBException("Product -" + product.getIdentifier() + "- Uses an AttributeSet  -"
-            + attSet.getIdentifier() + "- which requires at least " + (currentPart + 1)
-            + " values, but just " + numberOfParts + " was detected", true);
+        throw new OBException(String.format(
+            OBMessageUtils.messageBD("OBPOS_ProductAttrValuesNotFound"), product.getIdentifier(),
+            attSet.getIdentifier(), (currentPart + 1), numberOfParts), true);
       }
       String receivedExpirationDateStrValue = receivedAttSetInstanceDescription_parts[currentPart];
       Date receivedExpirationDate;
@@ -213,12 +214,10 @@ public class AttributesUtils {
         receivedExpirationDate = new SimpleDateFormat(dateFormatForDescription)
             .parse(receivedExpirationDateStrValue);
       } catch (Exception e) {
-        throw new OBException(
-            "Product -"
-                + product.getIdentifier()
-                + "- Uses expirationdate Attribute. Value received is not valid. Format doesn't match. Expected format ("
-                + dateFormatForDescription + ") doesn't match with value ("
-                + receivedExpirationDateStrValue + ")", true);
+        throw new OBException(String.format(
+            OBMessageUtils.messageBD("OBPOS_ProductAttrExpirationDateFormat"),
+            product.getIdentifier(), dateFormatForDescription, receivedExpirationDateStrValue),
+            true);
       }
       final String validatedExpirationDateStrValue = new SimpleDateFormat(dateFormatForDescription)
           .format(receivedExpirationDate);
@@ -228,7 +227,13 @@ public class AttributesUtils {
       currentPart += 1;
     }
 
-    result = result.substring(0, result.length() - 1);
+    if (StringUtils.isEmpty(result)) {
+      throw new OBException(String.format(
+          OBMessageUtils.messageBD("OBPOS_ProductAttributeNotDefined"), product.getIdentifier()),
+          true);
+    } else {
+      result = result.substring(0, result.length() - 1);
+    }
     return result;
   }
 
@@ -306,12 +311,10 @@ public class AttributesUtils {
             receivedExpirationDate = new SimpleDateFormat(dateFormatForDescription)
                 .parse(receivedExpirationDateStrValue);
           } catch (Exception e) {
-            throw new OBException(
-                "Product -"
-                    + product.getIdentifier()
-                    + "- Uses expirationdate Attribute. Value received is not valid. Format doesn't match. Expected format ("
-                    + dateFormatForDescription + ") doesn't match with value ("
-                    + receivedExpirationDateStrValue + ")", true);
+            throw new OBException(String.format(
+                OBMessageUtils.messageBD("OBPOS_ProductAttrExpirationDateFormat"),
+                product.getIdentifier(), dateFormatForDescription, receivedExpirationDateStrValue),
+                true);
           }
 
           OBDal.getInstance().flush();

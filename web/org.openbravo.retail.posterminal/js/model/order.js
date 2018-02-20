@@ -1342,7 +1342,9 @@
           me.unset('deleting');
           me.get('lines').trigger('updateRelations');
           me.save(function () {
-            enyo.$.scrim.hide();
+            if (OB.MobileApp.view.openedPopup === null) {
+              enyo.$.scrim.hide();
+            }
             OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteLine', {
               order: me,
               selectedLines: selectedModels
@@ -1418,7 +1420,9 @@
               me.unset('skipCalculateReceipt');
               me.unset('deleting');
               me.get('lines').trigger('updateRelations');
-              enyo.$.scrim.hide();
+              if (OB.MobileApp.view.openedPopup === null) {
+                enyo.$.scrim.hide();
+              }
               me.calculateReceipt();
             }
           });
@@ -1944,7 +1948,9 @@
               me.unset('deleting');
               me.get('lines').trigger('updateRelations');
               me.calculateReceipt();
-              enyo.$.scrim.hide();
+              if (OB.MobileApp.view.openedPopup === null) {
+                enyo.$.scrim.hide();
+              }
             }
           });
         }
@@ -5744,7 +5750,9 @@
                         order.set('qty', orderQty);
                         order.set('json', JSON.stringify(order.toJSON()));
                         callback(order);
-                        enyo.$.scrim.hide();
+                        if (OB.MobileApp.view.openedPopup === null) {
+                          enyo.$.scrim.hide();
+                        }
                         OB.UTIL.SynchronizationHelper.finished(synchId, 'newPaidReceipt');
                       }
                     });
