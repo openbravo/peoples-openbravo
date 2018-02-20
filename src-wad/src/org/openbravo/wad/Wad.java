@@ -771,12 +771,13 @@ public class Wad extends DefaultHandler {
       xmlDocument.setData("structureFilterMapping", WadData.selectFilterMapping(pool));
       xmlDocument.setData("structure2", WadData.selectMapping(pool));
 
+      String baseDesignPrefix = getBaseDesignPrefix(contextParams);
       xmlDocument.setData("structureErrorExceptionPage",
-          appendErrorPageRoutePrefix(WadData.selectErrorPages(pool, EXCEPTION_TYPE_PAGES), contextParams));
+          appendErrorPageRoutePrefix(WadData.selectErrorPages(pool, EXCEPTION_TYPE_PAGES), baseDesignPrefix));
       xmlDocument.setData("structureErrorCodePage",
-          appendErrorPageRoutePrefix(WadData.selectErrorPages(pool, ERROR_CODE_PAGES), contextParams));
+          appendErrorPageRoutePrefix(WadData.selectErrorPages(pool, ERROR_CODE_PAGES), baseDesignPrefix));
       xmlDocument.setData("structureGenericErrorPage",
-          appendErrorPageRoutePrefix(WadData.selectGenericErrorPages(pool), contextParams));
+          appendErrorPageRoutePrefix(WadData.selectGenericErrorPages(pool), baseDesignPrefix));
 
       String webXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocument.print();
       webXml = webXml.replace("${attachPath}", attachPath);
@@ -788,16 +789,25 @@ public class Wad extends DefaultHandler {
     }
   }
 
-  private WadData[] appendErrorPageRoutePrefix(WadData[] originalData, WadData[] contextParams) {
+  private String getBaseDesignPrefix(WadData[] contextParams) {
     String baseDesignPath = findParameterByName("BaseDesignPath", contextParams);
     String defaultDesignPath = findParameterByName("DefaultDesignPath", contextParams);
-
+    
+    return String.format("/%s/%s", baseDesignPath, defaultDesignPath);
+  }
+  
+  private WadData[] appendErrorPageRoutePrefix(WadData[] originalData, String baseDesignPrefix) {
     List<WadData> appendedData = new ArrayList<WadData>();
     for (WadData data : originalData) {
       if (data.location != null && !data.location.isEmpty()) {
         data.location = String
-            .format("/%s/%s/%s", baseDesignPath, defaultDesignPath, data.location);
+            .format("%s/%s", baseDesignPrefix, data.location);
         appendedData.add(data);
+        
+        log4j.debug(String.format("Processed error page %s", data.name));
+      }
+      else {
+        log4j.error(String.format("Error page %s has no location", data.name));
       }
     }
 
