@@ -301,7 +301,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     return os;
   }
 
-  class OrgNode {
+  private class OrgNode {
     private String parentNodeId;
     private boolean isReady;
     private boolean isLegalEntity;
@@ -311,11 +311,11 @@ public class OrganizationStructureProvider implements OBNotSingleton {
 
     private List<String> children = new ArrayList<>();
 
-    void addChild(String childId) {
+    private void addChild(String childId) {
       children.add(childId);
     }
 
-    public OrgNode(OrganizationStructureProviderData nodeDef) {
+    private OrgNode(OrganizationStructureProviderData nodeDef) {
       parentNodeId = "".equals(nodeDef.parentId) ? null : nodeDef.parentId;
       isReady = "Y".equals(nodeDef.isready);
       isLegalEntity = "Y".equals(nodeDef.islegalentity);
@@ -324,18 +324,18 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       isPeriodControlAllowed = "Y".equals(nodeDef.isperiodcontrolallowed);
     }
 
-    public void resolve(String nodeId) {
+    private void resolve(String nodeId) {
       OrgNode parentNode = parentNodeId != null ? orgNodes.get(parentNodeId) : null;
       if (parentNode != null) {
         parentNode.addChild(nodeId);
       }
     }
 
-    public String getParentNodeId() {
+    private String getParentNodeId() {
       return parentNodeId;
     }
 
-    public List<String> getChildren() {
+    private List<String> getChildren() {
       return children;
     }
   }
