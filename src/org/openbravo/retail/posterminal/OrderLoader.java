@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -308,8 +308,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         wasPaidOnCredit = !isQuotation
             && !isDeleted
             && !notpaidLayaway
-            && Math.abs(jsonorder.getDouble("payment")) < Math.abs(new Double(jsonorder
-                .getDouble("gross")));
+            && Math.abs(jsonorder.getDouble("payment")) < Math.abs(jsonorder
+                .getDouble("gross"));
         if (jsonorder.has("oBPOSNotInvoiceOnCashUp")
             && jsonorder.getBoolean("oBPOSNotInvoiceOnCashUp")) {
           createInvoice = false;
@@ -1683,6 +1683,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             }
             promotion.setObdiscIdentifier(identifier);
           }
+          if (jsonPromotion.has("discountinstance") && !jsonPromotion.isNull("discountinstance")) {
+            String discountinstance = jsonPromotion.getString("discountinstance");
+            promotion.setObposDiscountinstance(discountinstance);
+          }
           promotion.setId(OBMOBCUtils.getUUIDbyString(orderline.getId() + p));
           promotion.setNewOBObject(true);
           orderline.getOrderLineOfferList().add(promotion);
@@ -2858,6 +2862,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         reversedPayment.setReversedPayment(finPayment);
         OBDal.getInstance().save(reversedPayment);
       }
+      finPayment.setObposAppCashup(payment.has("obposAppCashup") ? OBDal.getInstance().get(
+          OBPOSAppCashup.class, payment.getString("obposAppCashup")) : null);
+      finPayment.setOBPOSPOSTerminal(payment.has("oBPOSPOSTerminal") ? OBDal.getInstance().get(
+          OBPOSApplications.class, payment.getString("oBPOSPOSTerminal")) : null);
 
       OBDal.getInstance().save(finPayment);
 

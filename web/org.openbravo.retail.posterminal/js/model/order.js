@@ -380,6 +380,7 @@
         bpModel.set('locationModel', new OB.Model.BPLocation(attributes.bp.locationModel));
         this.set('bp', bpModel);
         this.set('lines', new OrderLineList().reset(attributes.lines));
+        this.set('orderManualPromotions', new Backbone.Collection().reset(attributes.orderManualPromotions));
         this.set('payments', new PaymentLineList().reset(attributes.payments));
         this.set('payment', attributes.payment);
         this.set('change', attributes.change);
@@ -407,6 +408,7 @@
             this.set(key, attributes[key]);
           }
         }, this);
+
 
       } else {
         this.clearOrderAttributes();
@@ -996,6 +998,7 @@
       this.set('undo', null);
       this.set('bp', null);
       this.set('lines', this.get('lines') ? this.get('lines').reset() : new OrderLineList());
+      this.set('orderManualPromotions', this.get('orderManualPromotions') ? this.get('orderManualPromotions').reset() : new Backbone.Collection());
       this.set('payments', this.get('payments') ? this.get('payments').reset() : new PaymentLineList());
       this.set('payment', OB.DEC.Zero);
       this.set('change', OB.DEC.Zero);
@@ -2713,6 +2716,45 @@
       return applyingToLines;
     },
 
+    addManualPromotionToList: function (promotionToApply) {
+      var me = this;
+      var singlePromotionsList = [];
+      var rule = promotionToApply.rule;
+      if (!this.get('orderManualPromotions')) {
+        this.set('orderManualPromotions', new Backbone.Collection());
+      }
+      if (!rule.obdiscAllowmultipleinstan || this.get('orderManualPromotions').length <= 0) {
+        // Check there is no other manual promotion with the same ruleId and hasMultiDiscount set as false or undefined
+        singlePromotionsList = _.filter(this.get('orderManualPromotions').models, function (promotion) {
+          return promotion.get('rule').obdiscAllowmultipleinstan === rule.obdiscAllowmultipleinstan && promotion.get('rule').id === rule.id;
+        });
+
+        if (singlePromotionsList.length > 0) {
+          //  There should be only one rule in the list with previous conditions in manual promotions list
+          _.forEach(singlePromotionsList, function (singlePromotion) {
+            me.get('orderManualPromotions').remove(singlePromotion);
+          });
+
+        }
+      }
+      if (rule.obdiscAllowmultipleinstan && OB.UTIL.isNullOrUndefined(rule.discountinstance)) {
+        rule.discountinstance = OB.UTIL.get_UUID();
+      }
+      this.get('orderManualPromotions').push(promotionToApply);
+    },
+
+    calculateDiscountedLinePrice: function (line) {
+      var i;
+      var allDiscountedAmt = 0;
+      for (i = 0; i < line.get('promotions').length; i++) {
+        if (!line.get('promotions')[i].hidden) {
+          allDiscountedAmt += line.get('promotions')[i].amt;
+        }
+      }
+
+      line.set('discountedLinePrice', OB.DEC.toNumber(new BigDecimal(String(line.get('price'))).subtract(new BigDecimal(String(allDiscountedAmt)).divide(new BigDecimal(String(line.get('qty'))), 20, OB.DEC.getRoundingMode()))));
+    },
+
     addPromotion: function (line, rule, discount) {
       var promotions = line.get('promotions') || [],
           disc = {},
@@ -2723,6 +2765,8 @@
       }
       disc.name = discount.name || rule.get('printName') || rule.get('name');
       disc.ruleId = rule.id || rule.get('ruleId');
+      disc.discountinstance = discount.discountinstance;
+      disc.rule = rule;
       disc.amt = discount.amt;
       disc.fullAmt = discount.amt ? discount.amt : 0;
       disc.actualAmt = discount.actualAmt;
@@ -2775,6 +2819,17 @@
       } else {
         disc.qtyOfferReserved = 0;
       }
+      if (!OB.UTIL.isNullOrUndefined(discount.extraProperties)) {
+        disc.extraProperties = {};
+        var key;
+        for (key in discount.extraProperties) {
+          if (discount.extraProperties.hasOwnProperty(key)) {
+            disc[key] = discount.extraProperties[key];
+            disc.extraProperties[key] = discount.extraProperties[key];
+          }
+        }
+      }
+
       disc._idx = discount._idx || rule.get('_idx');
 
       var unitsConsumed = 0;
@@ -2797,7 +2852,7 @@
         for (i = 0; i < promotions.length; i++) {
           if (unitsConsumed > line.get('qty')) {
             if (discount.forceReplace) {
-              if (promotions[i].ruleId === rule.id) {
+              if (promotions[i].ruleId === rule.id && discount.discountinstance === promotions[i].discountinstance) {
                 if (promotions[i].hidden !== true) {
                   promotions[i] = disc;
                 }
@@ -2806,7 +2861,7 @@
             replaced = true;
             break;
           } else if (discount.forceReplace) {
-            if (promotions[i].ruleId === rule.id) {
+            if (promotions[i].ruleId === rule.id && discount.discountinstance === promotions[i].discountinstance) {
               if (promotions[i].hidden !== true) {
                 promotions[i] = disc;
                 replaced = true;
@@ -2822,12 +2877,15 @@
       }
 
       line.set('promotions', promotions);
+      // Calculate discountedLinePrice for the next promotion
+      this.calculateDiscountedLinePrice(line);
       line.trigger('change');
     },
 
     removePromotion: function (line, rule) {
       var promotions = line.get('promotions'),
           ruleId = rule.id,
+          discountinstance = rule.discountinstance,
           removed = false,
           res = [],
           i;
@@ -2836,7 +2894,7 @@
       }
 
       for (i = 0; i < promotions.length; i++) {
-        if (promotions[i].ruleId === rule.id) {
+        if (promotions[i].ruleId === rule.id && promotions[i].discountinstance === discountinstance) {
           removed = true;
         } else {
           res.push(promotions[i]);
@@ -2845,9 +2903,10 @@
 
       if (removed) {
         line.set('promotions', res);
+        // Calculate discountedLinePrice for the next promotion
+        this.calculateDiscountedLinePrice(line);
         line.trigger('change');
         this.save();
-
       }
     },
 
@@ -4291,6 +4350,8 @@
         }
         payment.set('date', new Date());
         payment.set('id', OB.UTIL.get_UUID());
+        payment.set('obposAppCashup', OB.POS.modelterminal.get('terminal').cashUpId);
+        payment.set('oBPOSPOSTerminal', OB.MobileApp.model.get('terminal').id);
         payment.set('orderGross', order.getGross());
         payment.set('isPaid', order.get('isPaid'));
         payment.set('isReturnOrder', order.getPaymentStatus().isNegative);
@@ -4388,6 +4449,8 @@
           reversalPayment.set('reverseCallback', reverseCallback);
           reversalPayment.set('isReversePayment', true);
           reversalPayment.set('paymentData', payment.get('paymentData') ? payment.get('paymentData') : null);
+          reversalPayment.set('obposAppCashup', payment.get('obposAppCashup') ? payment.get('obposAppCashup') : null);
+          reversalPayment.set('oBPOSPOSTerminal', payment.get('oBPOSPOSTerminal') ? payment.get('oBPOSPOSTerminal') : null);
 
           provider = me.getTotal() > 0 ? OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod.paymentProvider : OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod.refundProvider;
           OB.UTIL.HookManager.executeHooks('OBPOS_PreAddReversalPayment', {
@@ -4513,6 +4576,23 @@
       this.save();
     },
 
+    removeNoDiscountAllowLines: function () {
+      var linesToRemove = [];
+      var me = this;
+
+      this.get('lines').each(function (line) {
+        if (line.get('noDiscountAllow')) {
+          linesToRemove.push(line);
+        }
+      });
+
+      if (linesToRemove && linesToRemove.length > 0) {
+        _.forEach(linesToRemove, function (lineToRemove) {
+          me.get('lines').remove(lineToRemove);
+        });
+      }
+    },
+
     groupLinesByProduct: function () {
       var lineToMerge, lines = this.get('lines'),
           auxLines = lines.models.slice(0),
@@ -4557,7 +4637,7 @@
       groupedOrder.get('lines').forEach(function (l) {
         _.each(l.get('promotions'), function (promo) {
           promo.pendingQtyOffer = promo.qtyOffer;
-          if (!l.get('product').get('groupProduct')) {
+          if (!l.get('product').get('groupProduct') || promo.rule.get('obdiscAllowmultipleinstan')) {
             promo.doNotMerge = true;
           }
           if (l.get('product').get('groupProduct') && l.get('product').get('obposScale')) {
@@ -4760,14 +4840,39 @@
       });
       _.each(me.get('lines').models, function (line) {
         var orderPromotions = false;
+        var masterKey = 0;
         var position;
+        var groupProm = {};
         var prom = line.get('promotions');
         var validProm = _.filter(prom, function (p) {
           return !p.hidden;
         });
-        var groupProm = _.groupBy(validProm, function (p) {
+        // Group multipromotions with the same instanceid
+        var multiProm = _.filter(validProm, function (p) {
+          return p.discountinstance;
+        });
+        var groupInstanceProm = _.groupBy(multiProm, function (p) {
+          return p.discountinstance;
+        });
+        var groupMultiProm = {};
+        _.each(groupInstanceProm, function (p, key) {
+          groupMultiProm[masterKey] = p;
+          masterKey++;
+        });
+        // Group singlepromotions with the same ruleid
+        var singleProm = _.filter(validProm, function (p) {
+          return !p.discountinstance;
+        });
+        var groupRuleIdProm = _.groupBy(singleProm, function (p) {
           return p.ruleId;
         });
+        var groupSingleProm = {};
+        _.each(groupRuleIdProm, function (p, key) {
+          groupSingleProm[masterKey] = p;
+          masterKey++;
+        });
+        // Merge multipromotion and singlepromotion arrays
+        _.extend(groupProm, groupMultiProm, groupSingleProm);
         for (position = 0; position < _.keys(groupProm).length; position++) {
           var i;
           var key = _.keys(groupProm)[position];
@@ -4788,9 +4893,9 @@
                 copiedPromo.chunks = promList.length;
               }
             }
-
             me.removePromotion(line, {
-              id: key
+              id: promList[0].ruleId,
+              discountinstance: promList[0].discountinstance
             });
             line.get('promotions').push(copiedPromo);
           }
@@ -5076,7 +5181,7 @@
         if (!OB.UTIL.isNullOrUndefined(l.get('promotions')) && l.get('promotions').length > 0 && !OB.UTIL.isNullOrUndefined(l.get('promotionsCascadeApplied')) && l.get('promotionsCascadeApplied').length > 0) {
           l.get('promotions').forEach(function (p, ind) {
             l.get('promotionsCascadeApplied').forEach(function (pc) {
-              if (p.ruleId === pc.ruleId) {
+              if (p.ruleId === pc.ruleId && p.discountinstance === pc.discountinstance) {
                 l.get('promotions')[ind] = pc;
               }
             });
@@ -6313,6 +6418,7 @@
       order.set('print', true);
       order.set('sendEmail', false);
       order.set('openDrawer', false);
+      order.set('orderManualPromotions', new Backbone.Collection());
       OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
         newOrder: order
       });

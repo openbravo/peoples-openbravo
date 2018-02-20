@@ -443,9 +443,9 @@ public class OrderGroupingProcessor {
     invoice.setGrandTotalAmount(grossamount);
     invoice.setPaymentComplete(grossamount.compareTo(totalPaid) == 0);
     invoice.setTotalPaid(totalPaid);
-    invoice.setPercentageOverdue(new Long(0));
+    invoice.setPercentageOverdue(0L);
     invoice.setFinalSettlementDate(grossamount.compareTo(totalPaid) == 0 ? currentDate : null);
-    invoice.setDaysSalesOutstanding(new Long(0));
+    invoice.setDaysSalesOutstanding(0L);
     invoice.setOutstandingAmount(grossamount.subtract(totalPaid));
 
     ps.setAmount(grossamount);

@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -246,7 +247,7 @@ public class UpdateCashup {
                         .getString("foreignDifference") : paymentMethod.getString("difference"));
               }
               payment.put("totalCounted",
-                  expected.add(difference).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+                  expected.add(difference).setScale(2, RoundingMode.HALF_UP).toString());
             }
           }
         }

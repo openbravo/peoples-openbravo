@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -287,13 +287,14 @@ public class PaidReceipts extends JSONProcessSimple {
 
         HQLPropertyList hqlPropertiesPayments = ModelExtensionUtils
             .getPropertyExtensions(extensionsPayments);
-        String hqlPaymentsIn = "select "
-            + hqlPropertiesPayments.getHqlSelect()
+        String hqlPaymentsIn = "select " + hqlPropertiesPayments.getHqlSelect()
             + "from FIN_Payment_ScheduleDetail as scheduleDetail "
             + "join scheduleDetail.paymentDetails as paymentDetail "
             + "join paymentDetail.finPayment as finPayment "
             + "join scheduleDetail.orderPaymentSchedule.order as order "
-            + "left join finPayment.reversedPayment as reversedPayment "//
+            + "left join finPayment.reversedPayment as reversedPayment "
+            + "left join finPayment.obposAppCashup as obposAppCashup "
+            + "left join finPayment.oBPOSPOSTerminal as oBPOSPOSTerminal "
             + "where order.id=? " //
             + "group by " + hqlPropertiesPayments.getHqlGroupBy()
             + " order by finPayment.documentNo";
@@ -372,12 +373,17 @@ public class PaidReceipts extends JSONProcessSimple {
               paidReceiptPayment.put("openDrawer", objectType.get("openDrawer"));
               paidReceiptPayment.put("isPrePayment", true);
               paidReceiptPayment.put("paymentId", objectIn.get("paymentId"));
+
               if (objectIn.has("reversedPaymentId")) {
                 paidReceiptPayment.put("isReversed", true);
               }
               if (objectIn.has("reversedPaymentId")) {
                 paidReceiptPayment.put("reversedPaymentId", objectIn.get("reversedPaymentId"));
               }
+              paidReceiptPayment.put("obposAppCashup",
+                  objectIn.has("cashup") ? objectIn.get("cashup") : null);
+              paidReceiptPayment.put("oBPOSPOSTerminal",
+                  objectIn.has("posTerminal") ? objectIn.get("posTerminal") : null);
               // Call all payments in processes injected.
               executeHooks(paymentsInProcesses, paidReceiptPayment, null,
                   (String) objectIn.get("paymentId"));
@@ -448,6 +454,10 @@ public class PaidReceipts extends JSONProcessSimple {
               if (objectIn.has("reversedPaymentId")) {
                 paidReceiptPayment.put("reversedPaymentId", objectIn.get("reversedPaymentId"));
               }
+              paidReceiptPayment.put("obposAppCashup",
+                  objectIn.has("cashup") ? objectIn.get("cashup") : null);
+              paidReceiptPayment.put("oBPOSPOSTerminal",
+                  objectIn.has("posTerminal") ? objectIn.get("posTerminal") : null);
               added = true;
               listpaidReceiptsPayments.put(paidReceiptPayment);
             }

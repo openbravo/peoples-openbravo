@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+  <database name="MODIFIED TABLE C_ORDERLINE_OFFER">
+    <table name="C_ORDERLINE_OFFER" primaryKey="C_ORDERLINE_OFFER_KEY">
+      <column name="EM_OBPOS_DISCOUNTINSTANCE" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+    </table>
+  </database>
