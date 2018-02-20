@@ -106,7 +106,7 @@ public class AllowedOrganizationsTest extends OBBaseTest {
 
   private OrganizationStructureProvider osp;
 
-  @Parameters(name = "Natural tree of {0}")
+  @Parameters(name = "Tree for organization {0}")
   public static Collection<Object[]> parameters() throws IOException {
     final Collection<Object[]> allTrees = new ArrayList<>();
 
