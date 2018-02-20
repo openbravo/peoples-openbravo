@@ -426,17 +426,15 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     }
   }
 
-  private List<String> getTransactionAllowedOrgs(List<String> orgIds) {
-    List<String> trxAllowedOrgs = new ArrayList<>(orgIds.size());
-    for (String orgId : orgIds) {
-      OrgNode node = orgNodes.get(orgId);
-      if (node != null && node.isReady && node.isTransactionsAllowed) {
-        trxAllowedOrgs.add(orgId);
-      }
-    }
-    return trxAllowedOrgs;
-  }
-
+  /**
+   * Checks a list of organizations filtering out those ones that do not allow transactions.
+   * 
+   * @param orgIds
+   *          List of organizations to check represented as a comma separated String, elements can
+   *          be quoted.
+   * @return The list of organization from {@code orgIds} that allow transactions represented a
+   *         String of comma separated quoted elements.
+   */
   public String getTransactionAllowedOrgs(String orgIds) {
     long t = System.nanoTime();
     try {
@@ -454,6 +452,17 @@ public class OrganizationStructureProvider implements OBNotSingleton {
             String.format("%.3f", (System.nanoTime() - t) / 1_000_000d));
       }
     }
+  }
+
+  private List<String> getTransactionAllowedOrgs(List<String> orgIds) {
+    List<String> trxAllowedOrgs = new ArrayList<>(orgIds.size());
+    for (String orgId : orgIds) {
+      OrgNode node = orgNodes.get(orgId);
+      if (node != null && node.isReady && node.isTransactionsAllowed) {
+        trxAllowedOrgs.add(orgId);
+      }
+    }
+    return trxAllowedOrgs;
   }
 
   private class OrgNode {
