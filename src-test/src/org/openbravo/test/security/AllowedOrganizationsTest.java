@@ -138,6 +138,12 @@ public class AllowedOrganizationsTest extends OBBaseTest {
         hasItems(TestOrg.getIDs(expectedNaturalTree)));
     assertThat("Natural tree for " + ORG_NAMES.get(testingOrgId), naturalTree,
         hasSize(expectedNaturalTree.size()));
+
+    for (TestOrg org : expectedNaturalTree) {
+      assertThat(ORG_NAMES.get(org.id) + " is in natural tree of " + testingOrgId,
+          osp.isInNaturalTree(OBDal.getInstance().getProxy(Organization.class, org.id), OBDal
+              .getInstance().getProxy(Organization.class, testingOrgId)), is(true));
+    }
   }
 
   @Test
