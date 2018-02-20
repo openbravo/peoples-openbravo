@@ -771,7 +771,7 @@ public class Wad extends DefaultHandler {
       xmlDocument.setData("structureFilterMapping", WadData.selectFilterMapping(pool));
       xmlDocument.setData("structure2", WadData.selectMapping(pool));
 
-      String baseDesignFolder = getBaseDesignPrefix(contextParams);
+      String baseDesignFolder = getBaseDesignFolder(contextParams);
       xmlDocument.setData("structureErrorExceptionPage",
           appendErrorPageRoutePrefix(WadData.selectErrorPages(pool, EXCEPTION_TYPE_PAGES), baseDesignFolder));
       xmlDocument.setData("structureErrorCodePage",
@@ -789,7 +789,7 @@ public class Wad extends DefaultHandler {
     }
   }
 
-  private String getBaseDesignPrefix(WadData[] contextParams) {
+  private String getBaseDesignFolder(WadData[] contextParams) {
     String baseDesignPath = findParameterByName("BaseDesignPath", contextParams);
     String defaultDesignPath = findParameterByName("DefaultDesignPath", contextParams);
     
