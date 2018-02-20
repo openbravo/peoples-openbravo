@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2017 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -380,6 +380,7 @@
         bpModel.set('locationModel', new OB.Model.BPLocation(attributes.bp.locationModel));
         this.set('bp', bpModel);
         this.set('lines', new OrderLineList().reset(attributes.lines));
+        this.set('orderManualPromotions', new Backbone.Collection().reset(attributes.orderManualPromotions));
         this.set('payments', new PaymentLineList().reset(attributes.payments));
         this.set('payment', attributes.payment);
         this.set('change', attributes.change);
@@ -407,6 +408,7 @@
             this.set(key, attributes[key]);
           }
         }, this);
+
 
       } else {
         this.clearOrderAttributes();
@@ -1002,6 +1004,7 @@
       this.set('undo', null);
       this.set('bp', null);
       this.set('lines', this.get('lines') ? this.get('lines').reset() : new OrderLineList());
+      this.set('orderManualPromotions', this.get('orderManualPromotions') ? this.get('orderManualPromotions').reset() : new Backbone.Collection());
       this.set('payments', this.get('payments') ? this.get('payments').reset() : new PaymentLineList());
       this.set('payment', OB.DEC.Zero);
       this.set('change', OB.DEC.Zero);
@@ -1345,7 +1348,9 @@
           me.unset('deleting');
           me.get('lines').trigger('updateRelations');
           me.save(function () {
-            enyo.$.scrim.hide();
+            if (OB.MobileApp.view.openedPopup === null) {
+              enyo.$.scrim.hide();
+            }
             OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteLine', {
               order: me,
               selectedLines: selectedModels
@@ -1421,7 +1426,9 @@
               me.unset('skipCalculateReceipt');
               me.unset('deleting');
               me.get('lines').trigger('updateRelations');
-              enyo.$.scrim.hide();
+              if (OB.MobileApp.view.openedPopup === null) {
+                enyo.$.scrim.hide();
+              }
               me.calculateReceipt();
             }
           });
@@ -1947,7 +1954,9 @@
               me.unset('deleting');
               me.get('lines').trigger('updateRelations');
               me.calculateReceipt();
-              enyo.$.scrim.hide();
+              if (OB.MobileApp.view.openedPopup === null) {
+                enyo.$.scrim.hide();
+              }
             }
           });
         }
@@ -2055,6 +2064,62 @@
           }
           return false;
         }
+
+        function execPostAddProductToOrderHook() {
+          OB.UTIL.HookManager.executeHooks('OBPOS_PostAddProductToOrder', {
+            receipt: me,
+            productToAdd: p,
+            orderline: line,
+            qtyToAdd: qty,
+            options: options,
+            newLine: newLine
+          }, function (args) {
+            var callbackAddProduct = function () {
+                if (callback) {
+                  callback(true, args.orderline);
+                }
+                };
+            if (args.orderline) {
+              args.orderline.set('hasMandatoryServices', false);
+            }
+            if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
+              var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
+              // Display related services after calculate gross, if it is new line
+              // and if the line has not been deleted.
+              // The line might has been deleted during calculate gross for
+              // examples if there was an error in taxes.
+              var productId = (args.productToAdd.get('isNew') && OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) ? null : (args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id);
+              args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
+                if (data) {
+                  if (data.hasservices) {
+                    args.orderline.set('hasRelatedServices', true);
+                    args.orderline.trigger('showServicesButton');
+                  } else {
+                    args.orderline.set('hasRelatedServices', false);
+                  }
+                  if (data.hasmandatoryservices) {
+                    var splitline = !OB.UTIL.isNullOrUndefined(args.orderline) && !OB.UTIL.isNullOrUndefined(args.orderline.get('splitline')) && args.orderline.get('splitline');
+                    if (!splitline) {
+                      args.receipt.trigger('showProductList', args.orderline, 'mandatory');
+                      args.orderline.set('hasMandatoryServices', true);
+                      callbackAddProduct();
+                    } else {
+                      callbackAddProduct();
+                    }
+                  } else {
+                    callbackAddProduct();
+                  }
+                } else {
+                  callbackAddProduct();
+                }
+                OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
+              }, args.orderline);
+            } else {
+              callbackAddProduct();
+            }
+          });
+        }
+
         if (p.get('obposScale')) {
           OB.POS.hwserver.getWeight(function (data) {
             if (data.exception) {
@@ -2063,8 +2128,7 @@
               OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_WeightZero'));
             } else {
               line = me.createLine(p, options.isVerifiedReturn ? -data.result : data.result, options, attrs);
-              me.calculateGross();
-              me.trigger('calculategross');
+              execPostAddProductToOrderHook();
             }
           });
         } else {
@@ -2185,65 +2249,14 @@
             }
           }
         }
-        if ((me.isCalculateReceiptLocked === true || !line) && !options.isVerifiedReturn) {
+        if (me.isCalculateReceiptLocked === true || !line) {
           OB.error('Save ignored before execute OBPOS_PostAddProductToOrder hook, system has detected that a line is being added when calculate receipt is closed. Ignore line creation');
           if (attrs && attrs.obposEpccode) {
             OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
           }
           return null;
         }
-        OB.UTIL.HookManager.executeHooks('OBPOS_PostAddProductToOrder', {
-          receipt: me,
-          productToAdd: p,
-          orderline: line,
-          qtyToAdd: qty,
-          options: options,
-          newLine: newLine
-        }, function (args) {
-          var callbackAddProduct = function () {
-              if (callback) {
-                callback(true, args.orderline);
-              }
-              };
-          if (args.orderline) {
-            args.orderline.set('hasMandatoryServices', false);
-          }
-          if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
-            var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
-            // Display related services after calculate gross, if it is new line
-            // and if the line has not been deleted.
-            // The line might has been deleted during calculate gross for
-            // examples if there was an error in taxes.
-            var productId = (args.productToAdd.get('isNew') && OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) ? null : (args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id);
-            args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
-              if (data) {
-                if (data.hasservices) {
-                  args.orderline.set('hasRelatedServices', true);
-                  args.orderline.trigger('showServicesButton');
-                } else {
-                  args.orderline.set('hasRelatedServices', false);
-                }
-                if (data.hasmandatoryservices) {
-                  var splitline = !OB.UTIL.isNullOrUndefined(args.orderline) && !OB.UTIL.isNullOrUndefined(args.orderline.get('splitline')) && args.orderline.get('splitline');
-                  if (!splitline) {
-                    args.receipt.trigger('showProductList', args.orderline, 'mandatory');
-                    args.orderline.set('hasMandatoryServices', true);
-                    callbackAddProduct();
-                  } else {
-                    callbackAddProduct();
-                  }
-                } else {
-                  callbackAddProduct();
-                }
-              } else {
-                callbackAddProduct();
-              }
-              OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
-            }, args.orderline);
-          } else {
-            callbackAddProduct();
-          }
-        });
+        execPostAddProductToOrderHook();
       } // End addProductToOrder
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('ignoreReturnApproval')) {
         if (options && options.isVerifiedReturn) {
@@ -2714,6 +2727,45 @@
       return applyingToLines;
     },
 
+    addManualPromotionToList: function (promotionToApply) {
+      var me = this;
+      var singlePromotionsList = [];
+      var rule = promotionToApply.rule;
+      if (!this.get('orderManualPromotions')) {
+        this.set('orderManualPromotions', new Backbone.Collection());
+      }
+      if (!rule.obdiscAllowmultipleinstan || this.get('orderManualPromotions').length <= 0) {
+        // Check there is no other manual promotion with the same ruleId and hasMultiDiscount set as false or undefined
+        singlePromotionsList = _.filter(this.get('orderManualPromotions').models, function (promotion) {
+          return promotion.get('rule').obdiscAllowmultipleinstan === rule.obdiscAllowmultipleinstan && promotion.get('rule').id === rule.id;
+        });
+
+        if (singlePromotionsList.length > 0) {
+          //  There should be only one rule in the list with previous conditions in manual promotions list
+          _.forEach(singlePromotionsList, function (singlePromotion) {
+            me.get('orderManualPromotions').remove(singlePromotion);
+          });
+
+        }
+      }
+      if (rule.obdiscAllowmultipleinstan && OB.UTIL.isNullOrUndefined(rule.discountinstance)) {
+        rule.discountinstance = OB.UTIL.get_UUID();
+      }
+      this.get('orderManualPromotions').push(promotionToApply);
+    },
+
+    calculateDiscountedLinePrice: function (line) {
+      var i;
+      var allDiscountedAmt = 0;
+      for (i = 0; i < line.get('promotions').length; i++) {
+        if (!line.get('promotions')[i].hidden) {
+          allDiscountedAmt += line.get('promotions')[i].amt;
+        }
+      }
+
+      line.set('discountedLinePrice', OB.DEC.toNumber(new BigDecimal(String(line.get('price'))).subtract(new BigDecimal(String(allDiscountedAmt)).divide(new BigDecimal(String(line.get('qty'))), 20, OB.DEC.getRoundingMode()))));
+    },
+
     addPromotion: function (line, rule, discount) {
       var promotions = line.get('promotions') || [],
           disc = {},
@@ -2724,6 +2776,8 @@
       }
       disc.name = discount.name || rule.get('printName') || rule.get('name');
       disc.ruleId = rule.id || rule.get('ruleId');
+      disc.discountinstance = discount.discountinstance;
+      disc.rule = rule;
       disc.amt = discount.amt;
       disc.fullAmt = discount.amt ? discount.amt : 0;
       disc.actualAmt = discount.actualAmt;
@@ -2776,6 +2830,17 @@
       } else {
         disc.qtyOfferReserved = 0;
       }
+      if (!OB.UTIL.isNullOrUndefined(discount.extraProperties)) {
+        disc.extraProperties = {};
+        var key;
+        for (key in discount.extraProperties) {
+          if (discount.extraProperties.hasOwnProperty(key)) {
+            disc[key] = discount.extraProperties[key];
+            disc.extraProperties[key] = discount.extraProperties[key];
+          }
+        }
+      }
+
       disc._idx = discount._idx || rule.get('_idx');
 
       var unitsConsumed = 0;
@@ -2798,7 +2863,7 @@
         for (i = 0; i < promotions.length; i++) {
           if (unitsConsumed > line.get('qty')) {
             if (discount.forceReplace) {
-              if (promotions[i].ruleId === rule.id) {
+              if (promotions[i].ruleId === rule.id && discount.discountinstance === promotions[i].discountinstance) {
                 if (promotions[i].hidden !== true) {
                   promotions[i] = disc;
                 }
@@ -2807,7 +2872,7 @@
             replaced = true;
             break;
           } else if (discount.forceReplace) {
-            if (promotions[i].ruleId === rule.id) {
+            if (promotions[i].ruleId === rule.id && discount.discountinstance === promotions[i].discountinstance) {
               if (promotions[i].hidden !== true) {
                 promotions[i] = disc;
                 replaced = true;
@@ -2823,12 +2888,15 @@
       }
 
       line.set('promotions', promotions);
+      // Calculate discountedLinePrice for the next promotion
+      this.calculateDiscountedLinePrice(line);
       line.trigger('change');
     },
 
     removePromotion: function (line, rule) {
       var promotions = line.get('promotions'),
           ruleId = rule.id,
+          discountinstance = rule.discountinstance,
           removed = false,
           res = [],
           i;
@@ -2837,7 +2905,7 @@
       }
 
       for (i = 0; i < promotions.length; i++) {
-        if (promotions[i].ruleId === rule.id) {
+        if (promotions[i].ruleId === rule.id && promotions[i].discountinstance === discountinstance) {
           removed = true;
         } else {
           res.push(promotions[i]);
@@ -2846,9 +2914,10 @@
 
       if (removed) {
         line.set('promotions', res);
+        // Calculate discountedLinePrice for the next promotion
+        this.calculateDiscountedLinePrice(line);
         line.trigger('change');
         this.save();
-
       }
     },
 
@@ -4220,9 +4289,16 @@
               order.save();
               order.trigger('saveCurrent');
             }
-            if (args.callback instanceof Function) {
-              args.callback(order);
-            }
+            OB.UTIL.HookManager.executeHooks('OBPOS_postAddPayment', {
+              paymentAdded: payment,
+              payments: payments,
+              receipt: order,
+              callback: callback
+            }, function (args) {
+              if (args.callback instanceof Function) {
+                args.callback(order);
+              }
+            });
             };
 
         if (args && args.cancellation) {
@@ -4270,6 +4346,8 @@
         }
         payment.set('date', new Date());
         payment.set('id', OB.UTIL.get_UUID());
+        payment.set('obposAppCashup', OB.POS.modelterminal.get('terminal').cashUpId);
+        payment.set('oBPOSPOSTerminal', OB.MobileApp.model.get('terminal').id);
         payment.set('orderGross', order.getGross());
         payment.set('isPaid', order.get('isPaid'));
         payment.set('isReturnOrder', order.getPaymentStatus().isNegative);
@@ -4367,6 +4445,8 @@
           reversalPayment.set('reverseCallback', reverseCallback);
           reversalPayment.set('isReversePayment', true);
           reversalPayment.set('paymentData', payment.get('paymentData') ? payment.get('paymentData') : null);
+          reversalPayment.set('obposAppCashup', payment.get('obposAppCashup') ? payment.get('obposAppCashup') : null);
+          reversalPayment.set('oBPOSPOSTerminal', payment.get('oBPOSPOSTerminal') ? payment.get('oBPOSPOSTerminal') : null);
 
           provider = me.getTotal() > 0 ? OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod.paymentProvider : OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod.refundProvider;
           OB.UTIL.HookManager.executeHooks('OBPOS_PreAddReversalPayment', {
@@ -4492,6 +4572,23 @@
       this.save();
     },
 
+    removeNoDiscountAllowLines: function () {
+      var linesToRemove = [];
+      var me = this;
+
+      this.get('lines').each(function (line) {
+        if (line.get('noDiscountAllow')) {
+          linesToRemove.push(line);
+        }
+      });
+
+      if (linesToRemove && linesToRemove.length > 0) {
+        _.forEach(linesToRemove, function (lineToRemove) {
+          me.get('lines').remove(lineToRemove);
+        });
+      }
+    },
+
     groupLinesByProduct: function () {
       var lineToMerge, lines = this.get('lines'),
           auxLines = lines.models.slice(0),
@@ -4536,7 +4633,7 @@
       groupedOrder.get('lines').forEach(function (l) {
         _.each(l.get('promotions'), function (promo) {
           promo.pendingQtyOffer = promo.qtyOffer;
-          if (!l.get('product').get('groupProduct')) {
+          if (!l.get('product').get('groupProduct') || promo.rule.get('obdiscAllowmultipleinstan')) {
             promo.doNotMerge = true;
           }
           if (l.get('product').get('groupProduct') && l.get('product').get('obposScale')) {
@@ -4739,14 +4836,39 @@
       });
       _.each(me.get('lines').models, function (line) {
         var orderPromotions = false;
+        var masterKey = 0;
         var position;
+        var groupProm = {};
         var prom = line.get('promotions');
         var validProm = _.filter(prom, function (p) {
           return !p.hidden;
         });
-        var groupProm = _.groupBy(validProm, function (p) {
+        // Group multipromotions with the same instanceid
+        var multiProm = _.filter(validProm, function (p) {
+          return p.discountinstance;
+        });
+        var groupInstanceProm = _.groupBy(multiProm, function (p) {
+          return p.discountinstance;
+        });
+        var groupMultiProm = {};
+        _.each(groupInstanceProm, function (p, key) {
+          groupMultiProm[masterKey] = p;
+          masterKey++;
+        });
+        // Group singlepromotions with the same ruleid
+        var singleProm = _.filter(validProm, function (p) {
+          return !p.discountinstance;
+        });
+        var groupRuleIdProm = _.groupBy(singleProm, function (p) {
           return p.ruleId;
         });
+        var groupSingleProm = {};
+        _.each(groupRuleIdProm, function (p, key) {
+          groupSingleProm[masterKey] = p;
+          masterKey++;
+        });
+        // Merge multipromotion and singlepromotion arrays
+        _.extend(groupProm, groupMultiProm, groupSingleProm);
         for (position = 0; position < _.keys(groupProm).length; position++) {
           var i;
           var key = _.keys(groupProm)[position];
@@ -4767,9 +4889,9 @@
                 copiedPromo.chunks = promList.length;
               }
             }
-
             me.removePromotion(line, {
-              id: key
+              id: promList[0].ruleId,
+              discountinstance: promList[0].discountinstance
             });
             line.get('promotions').push(copiedPromo);
           }
@@ -5055,7 +5177,7 @@
         if (!OB.UTIL.isNullOrUndefined(l.get('promotions')) && l.get('promotions').length > 0 && !OB.UTIL.isNullOrUndefined(l.get('promotionsCascadeApplied')) && l.get('promotionsCascadeApplied').length > 0) {
           l.get('promotions').forEach(function (p, ind) {
             l.get('promotionsCascadeApplied').forEach(function (pc) {
-              if (p.ruleId === pc.ruleId) {
+              if (p.ruleId === pc.ruleId && p.discountinstance === pc.discountinstance) {
                 l.get('promotions')[ind] = pc;
               }
             });
@@ -5634,7 +5756,9 @@
                         order.set('qty', orderQty);
                         order.set('json', JSON.stringify(order.toJSON()));
                         callback(order);
-                        enyo.$.scrim.hide();
+                        if (OB.MobileApp.view.openedPopup === null) {
+                          enyo.$.scrim.hide();
+                        }
                         OB.UTIL.SynchronizationHelper.finished(synchId, 'newPaidReceipt');
                       }
                     });
@@ -6070,6 +6194,16 @@
       }
     },
     loadCurrent: function (isNew) {
+      // Check if the current order to be loaded should be deleted
+      if (this.current.get('obposIsDeleted') && this.current.get('id')) {
+        var deletedOrderDocNo = this.current.get('documentNo');
+        this.current.set('ignoreCheckIfIsActiveOrder', true); // Ignore this receipt is not loaded in the UI
+        this.current.deleteOrder(this.current, function () {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OrderMarkedToBeDeleted', [deletedOrderDocNo]));
+        });
+        return;
+      }
+
       if (this.current) {
         if (isNew) {
           //set values of new attrs in current,
@@ -6305,6 +6439,7 @@
       order.set('print', true);
       order.set('sendEmail', false);
       order.set('openDrawer', false);
+      order.set('orderManualPromotions', new Backbone.Collection());
       OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
         newOrder: order
       });
@@ -6506,9 +6641,16 @@
         callback: callback
       }, function (args) {
         var executeFinalCallback = function () {
-            if (args.callback instanceof Function) {
-              args.callback(order);
-            }
+            OB.UTIL.HookManager.executeHooks('OBPOS_postAddPayment', {
+              paymentAdded: payment,
+              payments: payments,
+              receipt: order,
+              callback: callback
+            }, function (args) {
+              if (args.callback instanceof Function) {
+                args.callback(order);
+              }
+            });
             };
 
         if (args && args.cancellation) {

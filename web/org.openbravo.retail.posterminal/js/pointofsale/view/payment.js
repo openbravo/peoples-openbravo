@@ -65,6 +65,9 @@ enyo.kind({
           symbolAtRight: true
         });
       }
+      if (inEvent.value.status === '' && !inEvent.value.keyboard.hasActivePayment) {
+        this.$.exactbutton.hide();
+      }
       isMultiOrders = this.model.isValidMultiOrderState();
       change = this.model.getChange();
       pending = this.model.getPending();
@@ -1498,7 +1501,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.CreditButton',
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
-  i18nLabel: 'OBPOS_LblCreditSales',
+  i18nLabel: 'OBPOS_LblSellOnCredit',
   classes: 'btn-icon-small btnlink-green',
   permission: 'OBPOS_receipt.creditsales',
   events: {

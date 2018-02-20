@@ -361,13 +361,11 @@ enyo.kind({
   getAdjustedPromotion: function (promo, qty) {
     var clonedPromotion = JSON.parse(JSON.stringify(promo));
     if (clonedPromotion.discountType === 'D1D193305A6443B09B299259493B272A' || promo.discountType === '7B49D8CC4E084A75B7CB4D85A6A3A578') {
-      var amount = clonedPromotion.amt / clonedPromotion.qtyOffer * qty;
+      var amount = clonedPromotion.amt / clonedPromotion.originalQty * qty;
       clonedPromotion.amt = amount;
       clonedPromotion.displayedTotalAmount = amount;
       clonedPromotion.fullAmt = amount;
       clonedPromotion.userAmt = amount;
-      clonedPromotion.qtyOffer = qty;
-      clonedPromotion.obdiscQtyoffer = qty;
       clonedPromotion.pendingQtyOffer = qty;
     }
     return clonedPromotion;
@@ -400,6 +398,10 @@ enyo.kind({
     }
     if (this.indexToAdd < this.qtysToAdd.length) {
       if (success) {
+        var originalQty = 0;
+        _.each(this.qtysToAdd, function (qtyToAdd) {
+          originalQty += qtyToAdd;
+        });
         this.doAddProduct({
           product: this.orderline.get('product'),
           qty: this.qtysToAdd[this.indexToAdd++],
@@ -419,6 +421,7 @@ enyo.kind({
               return promo.manual;
             });
             _.forEach(promotionManual, function (promo) {
+              promo.originalQty = originalQty;
               this.addManualPromotionSplit(addline, promo);
             }, this);
             this.addProductSplit(success, addline);

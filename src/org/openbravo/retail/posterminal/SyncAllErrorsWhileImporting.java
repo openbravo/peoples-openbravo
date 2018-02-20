@@ -59,7 +59,7 @@ public class SyncAllErrorsWhileImporting extends DalBaseProcess {
       OBCriteria<OBPOSErrors> queryListErrors = OBDal.getInstance().createCriteria(
           OBPOSErrors.class);
       queryListErrors.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
-      queryListErrors.add(Restrictions.le(OBPOSErrors.PROPERTY_ATTEMPTS, new Long("3")));
+      queryListErrors.add(Restrictions.le(OBPOSErrors.PROPERTY_ATTEMPTS, 3L));
       queryListErrors.addOrderBy(OBPOSErrors.PROPERTY_CREATIONDATE, true);
 
       List<OBPOSErrors> listErrors = queryListErrors.list();

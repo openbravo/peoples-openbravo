@@ -82,7 +82,7 @@ public class OrderGroupingProcessor {
 
     long t0 = System.currentTimeMillis();
     long t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
-    final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+    final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
     final String strUserId = OBContext.getOBContext().getUser().getId();
     final String strCurrentDate = dateFormatter.format(currentDate);
     final String strLang = RequestContext.get().getVariablesSecureApp().getLanguage();
@@ -443,9 +443,9 @@ public class OrderGroupingProcessor {
     invoice.setGrandTotalAmount(grossamount);
     invoice.setPaymentComplete(grossamount.compareTo(totalPaid) == 0);
     invoice.setTotalPaid(totalPaid);
-    invoice.setPercentageOverdue(new Long(0));
+    invoice.setPercentageOverdue(0L);
     invoice.setFinalSettlementDate(grossamount.compareTo(totalPaid) == 0 ? currentDate : null);
-    invoice.setDaysSalesOutstanding(new Long(0));
+    invoice.setDaysSalesOutstanding(0L);
     invoice.setOutstandingAmount(grossamount.subtract(totalPaid));
 
     ps.setAmount(grossamount);

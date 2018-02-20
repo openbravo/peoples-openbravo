@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -239,13 +239,20 @@ enyo.kind({
     this.$.discountsList.setCollection(this.discounts);
   },
   ticketLineChecked: function (inSender, inEvent) {
+    var activateButton = false;
     if (inEvent.allChecked) {
       this.$.checkSelectAll.check();
     } else {
       this.$.checkSelectAll.unCheck();
     }
     this.checkedLines = inEvent.checkedLines;
-    if (this.checkedLines.length > 0 && this.discounts.length !== 0) {
+
+    _.forEach(this.checkedLines, function (checkedLine) {
+      if (!checkedLine.get('noDiscountAllow')) {
+        activateButton = true;
+      }
+    });
+    if (this.checkedLines.length > 0 && this.discounts.length !== 0 && activateButton) {
       this.$.btnApply.setDisabled(false);
       this.$.btnApply.addStyles('color: orange;');
     } else {
