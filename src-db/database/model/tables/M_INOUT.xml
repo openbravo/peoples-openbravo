@@ -261,6 +261,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="ISCOMPLETELYINVOICED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="M_FREIGHTCATEGORY" name="M_FREIGHTCATEGORY_M_INOUT">
         <reference local="M_FREIGHTCATEGORY_ID" foreign="M_FREIGHTCATEGORY_ID"/>
       </foreign-key>
@@ -344,6 +348,9 @@
         <index-column name="C_INVOICE_ID"/>
         <whereClause><![CDATA[C_INVOICE_ID IS NOT NULL]]></whereClause>
       </index>
+      <index name="M_INOUT_ISCOMPLETELYINVOICED" unique="false">
+        <index-column name="ISCOMPLETELYINVOICED"/>
+      </index>
       <index name="M_INOUT_MOVEMENTDATE_ID" unique="false">
         <index-column name="MOVEMENTDATE"/>
         <index-column name="M_INOUT_ID"/>
@@ -363,6 +370,7 @@
       <check name="M_INOUT_GENERATELINES_CHECK"><![CDATA[GENERATELINES IN ('N', 'Y')]]></check>
       <check name="M_INOUT_GENERATETO_CHECK"><![CDATA[GENERATETO IN ('Y', 'N')]]></check>
       <check name="M_INOUT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_INOUT_ISCOMPLETELYINV_CHECK"><![CDATA[ISCOMPLETELYINVOICED IN ('Y', 'N')]]></check>
       <check name="M_INOUT_ISLOGISTIC_CHK"><![CDATA[ISLOGISTIC IN ('N', 'Y')]]></check>
       <check name="M_INOUT_ISNETTINGSHIPMENT_CHK"><![CDATA[ISNETTINGSHIPMENT IN ('Y', 'N')]]></check>
       <check name="M_INOUT_ISPRINTED_CHECK"><![CDATA[ISPRINTED IN ('Y', 'N')]]></check>
