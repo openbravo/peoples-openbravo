@@ -26,10 +26,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
 
-import org.hibernate.SQLQuery;
+import javax.servlet.ServletException;
+
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
@@ -38,6 +39,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationType;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +59,6 @@ public class OrganizationStructureProvider implements OBNotSingleton {
 
   private boolean isInitialized = false;
   private Map<String, OrgNode> orgNodes;
-  private static final String AD_ORG_TABLE_ID = "155";
   private String clientId;
 
   /**
@@ -79,28 +80,21 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       setClientId(OBContext.getOBContext().getCurrentClient().getId());
     }
 
-    String sql = "select n.node_id, n.parent_id, o.isready, ot.islegalentity, ot.isbusinessunit, ot.istransactionsallowed, o.isperiodcontrolallowed  \n"
-        + "  from ad_tree t, ad_treenode n, ad_org o, ad_orgtype ot\n"
-        + " where n.node_id = o.ad_org_id \n"
-        + "   and o.ad_orgtype_id = ot.ad_orgtype_id \n"
-        + "   and n.ad_tree_id = t.ad_tree_id\n"
-        + "   and t.ad_table_id = :tableId\n"
-        + "   and t.ad_client_id = :clientId";
+    // read all org tree of any client: bypass DAL to prevent security checks and Hibernate to make
+    // it in a single query
+    OrganizationStructureProviderData[] treeNodes;
+    try {
+      treeNodes = OrganizationStructureProviderData.select(new DalConnectionProvider(false),
+          getClientId());
+    } catch (ServletException e) {
+      log.error("Could not get org structure for client {}", getClientId(), e);
+      throw new OBException(e);
+    }
 
-    // read all trees of all clients, bypass DAL to prevent security checks
-    SQLQuery qry = OBDal.getInstance().getSession().createSQLQuery(sql);
-    qry.setParameter("clientId", getClientId());
-    qry.setParameter("tableId", AD_ORG_TABLE_ID);
-
-    @SuppressWarnings("unchecked")
-    List<Object[]> treeNodes = qry.list();
-
-    orgNodes = new HashMap<>(treeNodes.size());
-
-    for (Object[] nodeDef : treeNodes) {
+    orgNodes = new HashMap<>(treeNodes.length);
+    for (OrganizationStructureProviderData nodeDef : treeNodes) {
       final OrgNode on = new OrgNode(nodeDef);
-      String nodeId = (String) nodeDef[0];
-      orgNodes.put(nodeId, on);
+      orgNodes.put(nodeDef.nodeId, on);
     }
 
     for (Entry<String, OrgNode> nodeEntry : orgNodes.entrySet()) {
@@ -321,13 +315,13 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       children.add(childId);
     }
 
-    OrgNode(Object[] nodeDef) {
-      parentNodeId = (String) nodeDef[1];
-      isReady = Objects.equals('Y', nodeDef[2]);// "Y".equals(nodeDef[2]);
-      isLegalEntity = Objects.equals('Y', nodeDef[3]); // "Y".equals(nodeDef[3]);
-      isBusinessUnit = Objects.equals('Y', nodeDef[4]); // "Y".equals(nodeDef[4]);
-      isTransactionsAllowed = Objects.equals('Y', nodeDef[5]); // "Y".equals(nodeDef[5]);
-      isPeriodControlAllowed = Objects.equals('Y', nodeDef[6]);// "Y".equals(nodeDef[7]);
+    public OrgNode(OrganizationStructureProviderData nodeDef) {
+      parentNodeId = "".equals(nodeDef.parentId) ? null : nodeDef.parentId;
+      isReady = "Y".equals(nodeDef.isready);
+      isLegalEntity = "Y".equals(nodeDef.islegalentity);
+      isBusinessUnit = "Y".equals(nodeDef.isbusinessunit);
+      isTransactionsAllowed = "Y".equals(nodeDef.istransactionsallowed);
+      isPeriodControlAllowed = "Y".equals(nodeDef.isperiodcontrolallowed);
     }
 
     public void resolve(String nodeId) {

@@ -125,7 +125,7 @@ public class AllowedOrganizationsTest extends OBBaseTest {
   public void setOSP() {
     setTestAdminContext();
     osp = new OrganizationStructureProvider();
-    osp.setClientId(TEST_CLIENT_ID);
+    // osp.setClientId(TEST_CLIENT_ID);
   }
 
   /**
