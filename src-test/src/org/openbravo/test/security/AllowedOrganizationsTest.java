@@ -19,9 +19,9 @@
 
 package org.openbravo.test.security;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
@@ -82,16 +82,16 @@ public class AllowedOrganizationsTest extends OBBaseTest {
       .put("Dummy", "Dummy").build();
 
   // note first parent must be first element in list
-  private static final Map<String, List<String>> ORG_TREES = ImmutableMap
-      .<String, List<String>> builder()
-      .put(FB_GROUP, asList(MAIN, FB_GROUP, US, US_EST, US_WEST, ESP, ESP_SUR, ESP_NORTE))
-      .put(US, asList(FB_GROUP, US, US_EST, US_WEST, MAIN))
-      .put(US_WEST, asList(US, US_WEST, MAIN, FB_GROUP))
-      .put(US_EST, asList(US, US_EST, MAIN, FB_GROUP))
-      .put(ESP, asList(FB_GROUP, MAIN, ESP, ESP_SUR, ESP_NORTE))
-      .put(ESP_SUR, asList(ESP, ESP_SUR, MAIN, FB_GROUP))
-      .put(ESP_NORTE, asList(ESP, ESP_NORTE, MAIN, FB_GROUP)) //
-      .put("Dummy", asList("Dummy")) // special case: non-existent org returns itself
+  private static final Map<String, List<TestOrg>> ORG_TREES = ImmutableMap
+      .<String, List<TestOrg>> builder()
+      .put(FB_GROUP, orgs(MAIN, FB_GROUP, US, US_EST, US_WEST, ESP, ESP_SUR, ESP_NORTE))
+      .put(US, orgs(FB_GROUP, US, US_EST, US_WEST, MAIN))
+      .put(US_WEST, orgs(US, US_WEST, MAIN, FB_GROUP))
+      .put(US_EST, orgs(US, US_EST, MAIN, FB_GROUP))
+      .put(ESP, orgs(FB_GROUP, MAIN, ESP, ESP_SUR, ESP_NORTE))
+      .put(ESP_SUR, orgs(ESP, ESP_SUR, MAIN, FB_GROUP))
+      .put(ESP_NORTE, orgs(ESP, ESP_NORTE, MAIN, FB_GROUP)) //
+      .put("Dummy", orgs("Dummy")) // special case: non-existent org returns itself
       .build();
 
   @Parameter(0)
@@ -101,7 +101,7 @@ public class AllowedOrganizationsTest extends OBBaseTest {
   public String testingOrgId;
 
   @Parameter(2)
-  public List<String> expectedNaturalTree;
+  public List<TestOrg> expectedNaturalTree;
 
   private OrganizationStructureProvider osp;
 
@@ -109,7 +109,7 @@ public class AllowedOrganizationsTest extends OBBaseTest {
   public static Collection<Object[]> parameters() throws IOException {
     final Collection<Object[]> allTrees = new ArrayList<>();
 
-    for (Entry<String, List<String>> tree : ORG_TREES.entrySet()) {
+    for (Entry<String, List<TestOrg>> tree : ORG_TREES.entrySet()) {
       allTrees.add(new Object[] { //
           ORG_NAMES.get(tree.getKey()), //
               tree.getKey(), //
@@ -134,7 +134,7 @@ public class AllowedOrganizationsTest extends OBBaseTest {
   public void testOrganizationTree() {
     Set<String> naturalTree = osp.getNaturalTree(testingOrgId);
     assertThat("Natural tree for " + ORG_NAMES.get(testingOrgId), naturalTree,
-        hasItems(expectedNaturalTree.toArray(new String[] {})));
+        hasItems(TestOrg.getIDs(expectedNaturalTree)));
     assertThat("Natural tree for " + ORG_NAMES.get(testingOrgId), naturalTree,
         hasSize(expectedNaturalTree.size()));
   }
@@ -143,10 +143,58 @@ public class AllowedOrganizationsTest extends OBBaseTest {
   public void parentOrganization() {
     assumeThat(testingOrgId, not("Dummy"));
 
-    String parentOrgId = osp.getParentOrg(
-        OBDal.getInstance().getProxy(Organization.class, testingOrgId)).getId();
+    String org = osp.getParentOrg(OBDal.getInstance().getProxy(Organization.class, testingOrgId))
+        .getId();
 
-    assertThat(ORG_NAMES.get(testingOrgId) + "'s parent", parentOrgId,
-        is(expectedNaturalTree.get(0)));
+    assertThat(ORG_NAMES.get(testingOrgId) + "'s parent", org, is(expectedNaturalTree.get(0).id));
   }
+
+  @Test
+  public void legalOrganization() {
+    assumeThat(testingOrgId, not("Dummy"));
+    Organization org = OBDal.getInstance().getProxy(Organization.class, testingOrgId);
+
+    if (!FB_GROUP.equals(testingOrgId)) {
+      assertThat(ORG_NAMES.get(testingOrgId) + "'s legal entity", osp.getLegalEntity(org).getId(),
+          is(TestOrg.getFirstLegal(expectedNaturalTree)));
+    } else {
+      assertThat(ORG_NAMES.get(testingOrgId) + " has no legal entity ", osp.getLegalEntity(org),
+          is(nullValue()));
+    }
+  }
+
+  private static List<TestOrg> orgs(String... ids) {
+    List<TestOrg> orgs = new ArrayList<>(ids.length);
+    for (String id : ids) {
+      orgs.add(new TestOrg(id));
+    }
+    return orgs;
+  }
+
+  private static class TestOrg {
+    String id;
+
+    public TestOrg(String id) {
+      this.id = id;
+    }
+
+    public static String[] getIDs(List<TestOrg> orgs) {
+      List<String> ids = new ArrayList<>();
+      for (TestOrg org : orgs) {
+        ids.add(org.id);
+      }
+      return ids.toArray(new String[] {});
+    }
+
+    public static String getFirstLegal(List<TestOrg> orgs) {
+      for (TestOrg org : orgs) {
+        if (OBDal.getInstance().get(Organization.class, org.id).getOrganizationType()
+            .isLegalEntity()) {
+          return org.id;
+        }
+      }
+      return null;
+    }
+  }
+
 }
