@@ -301,45 +301,6 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     return os;
   }
 
-  private class OrgNode {
-    private String parentNodeId;
-    private boolean isReady;
-    private boolean isLegalEntity;
-    private boolean isBusinessUnit;
-    private boolean isTransactionsAllowed;
-    private boolean isPeriodControlAllowed;
-
-    private List<String> children = new ArrayList<>();
-
-    private void addChild(String childId) {
-      children.add(childId);
-    }
-
-    private OrgNode(OrganizationStructureProviderData nodeDef) {
-      parentNodeId = "".equals(nodeDef.parentId) ? null : nodeDef.parentId;
-      isReady = "Y".equals(nodeDef.isready);
-      isLegalEntity = "Y".equals(nodeDef.islegalentity);
-      isBusinessUnit = "Y".equals(nodeDef.isbusinessunit);
-      isTransactionsAllowed = "Y".equals(nodeDef.istransactionsallowed);
-      isPeriodControlAllowed = "Y".equals(nodeDef.isperiodcontrolallowed);
-    }
-
-    private void resolve(String nodeId) {
-      OrgNode parentNode = parentNodeId != null ? orgNodes.get(parentNodeId) : null;
-      if (parentNode != null) {
-        parentNode.addChild(nodeId);
-      }
-    }
-
-    private String getParentNodeId() {
-      return parentNodeId;
-    }
-
-    private List<String> getChildren() {
-      return children;
-    }
-  }
-
   public String getClientId() {
     return clientId;
   }
@@ -492,6 +453,45 @@ public class OrganizationStructureProvider implements OBNotSingleton {
         log.debug("getTransactionAllowedOrgs - {} ms",
             String.format("%.3f", (System.nanoTime() - t) / 1_000_000d));
       }
+    }
+  }
+
+  private class OrgNode {
+    private String parentNodeId;
+    private boolean isReady;
+    private boolean isLegalEntity;
+    private boolean isBusinessUnit;
+    private boolean isTransactionsAllowed;
+    private boolean isPeriodControlAllowed;
+
+    private List<String> children = new ArrayList<>();
+
+    private void addChild(String childId) {
+      children.add(childId);
+    }
+
+    private OrgNode(OrganizationStructureProviderData nodeDef) {
+      parentNodeId = "".equals(nodeDef.parentId) ? null : nodeDef.parentId;
+      isReady = "Y".equals(nodeDef.isready);
+      isLegalEntity = "Y".equals(nodeDef.islegalentity);
+      isBusinessUnit = "Y".equals(nodeDef.isbusinessunit);
+      isTransactionsAllowed = "Y".equals(nodeDef.istransactionsallowed);
+      isPeriodControlAllowed = "Y".equals(nodeDef.isperiodcontrolallowed);
+    }
+
+    private void resolve(String nodeId) {
+      OrgNode parentNode = parentNodeId != null ? orgNodes.get(parentNodeId) : null;
+      if (parentNode != null) {
+        parentNode.addChild(nodeId);
+      }
+    }
+
+    private String getParentNodeId() {
+      return parentNodeId;
+    }
+
+    private List<String> getChildren() {
+      return children;
     }
   }
 }
