@@ -19,17 +19,23 @@
 
 package org.openbravo.test.security;
 
-import static com.google.common.collect.Sets.newHashSet;
-import static org.hamcrest.Matchers.is;
+import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeThat;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -37,6 +43,8 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.test.base.OBBaseTest;
 
 import com.google.common.collect.ImmutableMap;
@@ -70,18 +78,20 @@ public class AllowedOrganizationsTest extends OBBaseTest {
       .put(US_WEST, "F&B US West Coast") //
       .put(ESP, "F&B España, S.A") //
       .put(ESP_SUR, "F&B España - Región Sur") //
-      .put(ESP_NORTE, "F&B España - Región Norte").build();
+      .put(ESP_NORTE, "F&B España - Región Norte") //
+      .put("Dummy", "Dummy").build();
 
-  private static final Map<String, Set<String>> ORG_TREES = ImmutableMap
-      .<String, Set<String>> builder()
-      .put(FB_GROUP, newHashSet(MAIN, FB_GROUP, US, US_EST, US_WEST, ESP, ESP_SUR, ESP_NORTE))
-      .put(US, newHashSet(MAIN, FB_GROUP, US, US_EST, US_WEST))
-      .put(US_WEST, newHashSet(MAIN, FB_GROUP, US, US_WEST))
-      .put(US_EST, newHashSet(MAIN, FB_GROUP, US, US_EST))
-      .put(ESP, newHashSet(MAIN, FB_GROUP, ESP, ESP_SUR, ESP_NORTE))
-      .put(ESP_SUR, newHashSet(MAIN, FB_GROUP, ESP, ESP_SUR))
-      .put(ESP_NORTE, newHashSet(MAIN, FB_GROUP, ESP, ESP_NORTE)) //
-      .put("Dummy", newHashSet("Dummy")) // special case: non-existent org returns itself
+  // note first parent must be first element in list
+  private static final Map<String, List<String>> ORG_TREES = ImmutableMap
+      .<String, List<String>> builder()
+      .put(FB_GROUP, asList(MAIN, FB_GROUP, US, US_EST, US_WEST, ESP, ESP_SUR, ESP_NORTE))
+      .put(US, asList(FB_GROUP, US, US_EST, US_WEST, MAIN))
+      .put(US_WEST, asList(US, US_WEST, MAIN, FB_GROUP))
+      .put(US_EST, asList(US, US_EST, MAIN, FB_GROUP))
+      .put(ESP, asList(FB_GROUP, MAIN, ESP, ESP_SUR, ESP_NORTE))
+      .put(ESP_SUR, asList(ESP, ESP_SUR, MAIN, FB_GROUP))
+      .put(ESP_NORTE, asList(ESP, ESP_NORTE, MAIN, FB_GROUP)) //
+      .put("Dummy", asList("Dummy")) // special case: non-existent org returns itself
       .build();
 
   @Parameter(0)
@@ -91,13 +101,15 @@ public class AllowedOrganizationsTest extends OBBaseTest {
   public String testingOrgId;
 
   @Parameter(2)
-  public Set<String> expectedNaturalTree;
+  public List<String> expectedNaturalTree;
+
+  private OrganizationStructureProvider osp;
 
   @Parameters(name = "Natural tree of {0}")
   public static Collection<Object[]> parameters() throws IOException {
     final Collection<Object[]> allTrees = new ArrayList<>();
 
-    for (Entry<String, Set<String>> tree : ORG_TREES.entrySet()) {
+    for (Entry<String, List<String>> tree : ORG_TREES.entrySet()) {
       allTrees.add(new Object[] { //
           ORG_NAMES.get(tree.getKey()), //
               tree.getKey(), //
@@ -108,17 +120,33 @@ public class AllowedOrganizationsTest extends OBBaseTest {
     return allTrees;
   }
 
+  @Before
+  public void setOSP() {
+    setTestAdminContext();
+    osp = new OrganizationStructureProvider();
+    osp.setClientId(TEST_CLIENT_ID);
+  }
+
   /**
    * Tests valid organizations trees for different organizations.
    */
   @Test
   public void testOrganizationTree() {
-    setTestAdminContext();
+    Set<String> naturalTree = osp.getNaturalTree(testingOrgId);
+    assertThat("Natural tree for " + ORG_NAMES.get(testingOrgId), naturalTree,
+        hasItems(expectedNaturalTree.toArray(new String[] {})));
+    assertThat("Natural tree for " + ORG_NAMES.get(testingOrgId), naturalTree,
+        hasSize(expectedNaturalTree.size()));
+  }
 
-    final OrganizationStructureProvider osp = new OrganizationStructureProvider();
-    osp.setClientId(TEST_CLIENT_ID);
+  @Test
+  public void parentOrganization() {
+    assumeThat(testingOrgId, not("Dummy"));
 
-    assertThat("Natural tree for " + ORG_NAMES.get(testingOrgId), osp.getNaturalTree(testingOrgId),
-        is(expectedNaturalTree));
+    String parentOrgId = osp.getParentOrg(
+        OBDal.getInstance().getProxy(Organization.class, testingOrgId)).getId();
+
+    assertThat(ORG_NAMES.get(testingOrgId) + "'s parent", parentOrgId,
+        is(expectedNaturalTree.get(0)));
   }
 }
