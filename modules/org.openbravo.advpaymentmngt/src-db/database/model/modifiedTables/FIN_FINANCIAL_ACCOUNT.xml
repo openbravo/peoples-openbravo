@@ -41,5 +41,6 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
+      <check name="EM_APRM_FIN_FINACC_ISFUNDS_CHK"><![CDATA[EM_APRM_ISFUNDSTRANS_ENABLED IN ('Y', 'N')]]></check>
     </table>
   </database>
