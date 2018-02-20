@@ -151,10 +151,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     final String id2 = org2.getId();
 
     // org 0 is in everyones natural tree, and the other way around
-    if (id2 != null && id2.equals("0")) {
-      return true;
-    }
-    if (id1 != null && id1.equals("0")) {
+    if ("0".equals(id1) || "0".equals(id2)) {
       return true;
     }
 
