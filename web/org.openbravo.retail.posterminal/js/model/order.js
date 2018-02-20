@@ -575,7 +575,7 @@
       this.isCalculateReceiptLocked = state;
     },
 
-    calculateGross: function () {
+    calculateGross: function (callback) {
       // check if it's all ok and calculateGross is being called from where it's supposed to
       var stack = OB.UTIL.getStackTrace('Backbone.Model.extend.calculateGross', false);
       if (stack.indexOf('Backbone.Model.extend.calculateGross') > -1 && stack.indexOf('Backbone.Model.extend.calculateReceipt') > -1) {
@@ -602,10 +602,10 @@
         OB.error("calculateGross should only be called by the UI receipt");
       }
 
-      this.calculateGrossAndSave(true);
+      this.calculateGrossAndSave(true, callback);
     },
 
-    calculateGrossAndSave: function (save) {
+    calculateGrossAndSave: function (save, callback) {
       this.calculatingGross = true;
       var me = this;
       // reset some vital receipt values because, at this point, they are obsolete. do not fire the change event
@@ -653,15 +653,21 @@
               me.calculatingReceipt = false;
               if (me.pendingCalculateGross) {
                 me.pendingCalculateGross = false;
-                me.calculateGross();
+                me.calculateGross(callback);
                 return;
               }
               me.trigger('calculategross');
               me.trigger('saveCurrent');
+              if (callback) {
+                callback();
+              }
             });
           } else {
             me.calculatingGross = false;
             me.calculatingReceipt = false;
+            if (callback) {
+              callback();
+            }
           }
           };
 
@@ -1342,7 +1348,9 @@
           me.unset('deleting');
           me.get('lines').trigger('updateRelations');
           me.save(function () {
-            enyo.$.scrim.hide();
+            if (OB.MobileApp.view.openedPopup === null) {
+              enyo.$.scrim.hide();
+            }
             OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteLine', {
               order: me,
               selectedLines: selectedModels
@@ -1418,7 +1426,9 @@
               me.unset('skipCalculateReceipt');
               me.unset('deleting');
               me.get('lines').trigger('updateRelations');
-              enyo.$.scrim.hide();
+              if (OB.MobileApp.view.openedPopup === null) {
+                enyo.$.scrim.hide();
+              }
               me.calculateReceipt();
             }
           });
@@ -1944,7 +1954,9 @@
               me.unset('deleting');
               me.get('lines').trigger('updateRelations');
               me.calculateReceipt();
-              enyo.$.scrim.hide();
+              if (OB.MobileApp.view.openedPopup === null) {
+                enyo.$.scrim.hide();
+              }
             }
           });
         }
@@ -5760,7 +5772,9 @@
                         order.set('qty', orderQty);
                         order.set('json', JSON.stringify(order.toJSON()));
                         callback(order);
-                        enyo.$.scrim.hide();
+                        if (OB.MobileApp.view.openedPopup === null) {
+                          enyo.$.scrim.hide();
+                        }
                         OB.UTIL.SynchronizationHelper.finished(synchId, 'newPaidReceipt');
                       }
                     });
@@ -6026,7 +6040,8 @@
     },
 
     addPaidReceipt: function (model, callback) {
-      var synchId = null;
+      var me = this,
+          synchId = null;
       enyo.$.scrim.show();
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         this.doRemoteBPSettings(model.get('bp'));
@@ -6046,16 +6061,20 @@
           enyo.$.scrim.hide();
           OB.UTIL.SynchronizationHelper.finished(synchId, 'addPaidReceipt');
           if (callback instanceof Function) {
-            callback();
+            callback(me.modelorder);
           }
         }, function () {
           enyo.$.scrim.hide();
           OB.UTIL.SynchronizationHelper.finished(synchId, 'addPaidReceipt');
           OB.error(arguments);
           if (callback instanceof Function) {
-            callback();
+            callback(me.modelorder);
           }
         }, true);
+      } else {
+        if (callback instanceof Function) {
+          callback(this.modelorder);
+        }
       }
     },
 
@@ -6231,7 +6250,7 @@
       // The new functionality of loading document no, makes this function obsolete.
       // The function is not removed to avoid api changes
     },
-    checkForDuplicateReceipts: function (model, loadOrder) {
+    checkForDuplicateReceipts: function (model, callback, errorCallback, fromSelector) {
 
       function openReceiptPermissionError(orderType) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType]));
@@ -6259,32 +6278,45 @@
         break;
       }
 
+      var orderTypeMsg, i, showErrorMessage = function (errorMsg) {
+          if (fromSelector) {
+            OB.POS.terminal.$.containerWindow.getRoot().doShowPopup({
+              popup: 'OB_UI_MessageDialog',
+              args: {
+                message: errorMsg
+              }
+            });
+          } else {
+            OB.UTIL.showError(errorMsg);
+          }
+          if (errorCallback) {
+            errorCallback();
+          }
+          };
+
       // Check in Current Session
-      var orderTypeMsg, i;
-      for (i = 0; i < OB.MobileApp.model.orderList.length; i++) {
-        if (OB.MobileApp.model.orderList.models[i].get('id') === model.get('id') || ((!(_.isNull(OB.MobileApp.model.orderList.models[i].get('oldId')))) && OB.MobileApp.model.orderList.models[i].get('oldId') === model.get('id'))) {
+      for (i = 0; i < this.length; i++) {
+        if (this.at(i).get('id') === model.get('id') || ((!(_.isNull(this.at(i).get('oldId')))) && this.at(i).get('oldId') === model.get('id'))) {
           var errorMsg;
           orderTypeMsg = OB.I18N.getLabel('OBPOS_ticket');
-          errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, OB.MobileApp.model.orderList.models[i].get('documentNo')));
-          if (OB.MobileApp.model.orderList.models[i].get('isLayaway')) {
+          errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, this.at(i).get('documentNo')));
+          if (this.at(i).get('isLayaway')) {
             orderTypeMsg = OB.I18N.getLabel('OBPOS_LblLayaway');
-            errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, OB.MobileApp.model.orderList.models[i].get('documentNo')));
+            errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, this.at(i).get('documentNo')));
           } else if (OB.MobileApp.model.orderList.models[i].get('isQuotation')) {
             orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
-            errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, OB.MobileApp.model.orderList.models[i].get('documentNo')));
-          } else if ((!(_.isNull(OB.MobileApp.model.orderList.models[i].get('oldId')))) && OB.MobileApp.model.orderList.models[i].get('oldId') === model.get('id')) {
-            var SoFromQtDocNo = OB.MobileApp.model.orderList.models[i].get('documentNo');
+            errorMsg = (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, this.at(i).get('documentNo')));
+          } else if ((!(_.isNull(this.at(i).get('oldId')))) && this.at(i).get('oldId') === model.get('id')) {
+            var SoFromQtDocNo = this.at(i).get('documentNo');
             var QtDocumentNo = model.get('documentNo');
             errorMsg = OB.I18N.getLabel('OBPOS_OrderAssociatedToQuotationInProgress', [QtDocumentNo, SoFromQtDocNo, QtDocumentNo, SoFromQtDocNo]);
           }
-          OB.POS.terminal.$.containerWindow.getRoot().doShowPopup({
-            popup: 'OB_UI_MessageDialog',
-            args: {
-              message: errorMsg
-            }
-          });
+          showErrorMessage(errorMsg);
           if (OB.MobileApp.model.receipt.get('documentNo') !== model.get('documentNo')) {
-            OB.MobileApp.model.orderList.load(OB.MobileApp.model.orderList.models[i]);
+            this.load(this.at(i));
+          }
+          if (model.get('searchSynchId')) {
+            model.unset('searchSynchId');
           }
           return true;
         }
@@ -6318,11 +6350,16 @@
                       label: OB.I18N.getLabel('OBMOBC_LblOk'),
                       action: function () {
                         OB.Dal.remove(existingOrder, function () {
-                          loadOrder(model);
+                          callback(model);
                         }, OB.UTIL.showError);
                       }
                     }, {
-                      label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                      label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+                      action: function () {
+                        if (errorCallback) {
+                          errorCallback();
+                        }
+                      }
                     }], {
                       onHideFunction: function (dialog) {
                         return true;
@@ -6333,10 +6370,10 @@
               }
             });
           } else {
-            return loadOrder(model);
+            return callback(model);
           }
         } else {
-          return loadOrder(model);
+          return callback(model);
         }
       });
     }
