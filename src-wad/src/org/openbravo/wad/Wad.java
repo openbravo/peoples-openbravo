@@ -771,13 +771,13 @@ public class Wad extends DefaultHandler {
       xmlDocument.setData("structureFilterMapping", WadData.selectFilterMapping(pool));
       xmlDocument.setData("structure2", WadData.selectMapping(pool));
 
-      String baseDesignPrefix = getBaseDesignPrefix(contextParams);
+      String baseDesignFolder = getBaseDesignPrefix(contextParams);
       xmlDocument.setData("structureErrorExceptionPage",
-          appendErrorPageRoutePrefix(WadData.selectErrorPages(pool, EXCEPTION_TYPE_PAGES), baseDesignPrefix));
+          appendErrorPageRoutePrefix(WadData.selectErrorPages(pool, EXCEPTION_TYPE_PAGES), baseDesignFolder));
       xmlDocument.setData("structureErrorCodePage",
-          appendErrorPageRoutePrefix(WadData.selectErrorPages(pool, ERROR_CODE_PAGES), baseDesignPrefix));
+          appendErrorPageRoutePrefix(WadData.selectErrorPages(pool, ERROR_CODE_PAGES), baseDesignFolder));
       xmlDocument.setData("structureGenericErrorPage",
-          appendErrorPageRoutePrefix(WadData.selectGenericErrorPages(pool), baseDesignPrefix));
+          appendErrorPageRoutePrefix(WadData.selectGenericErrorPages(pool), baseDesignFolder));
 
       String webXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocument.print();
       webXml = webXml.replace("${attachPath}", attachPath);
@@ -796,18 +796,18 @@ public class Wad extends DefaultHandler {
     return String.format("/%s/%s", baseDesignPath, defaultDesignPath);
   }
   
-  private WadData[] appendErrorPageRoutePrefix(WadData[] originalData, String baseDesignPrefix) {
+  private WadData[] appendErrorPageRoutePrefix(WadData[] originalData, String baseDesignFolder) {
     List<WadData> appendedData = new ArrayList<WadData>();
     for (WadData data : originalData) {
       if (data.location != null && !data.location.isEmpty()) {
         data.location = String
-            .format("%s/%s", baseDesignPrefix, data.location);
+            .format("%s/%s", baseDesignFolder, data.location);
         appendedData.add(data);
         
-        log4j.debug(String.format("Processed error page %s", data.name));
+        log4j.debug("Processed error page " + data.name);
       }
       else {
-        log4j.error(String.format("Error page %s has no location", data.name));
+        log4j.warn("Error page " + data.name +" has no location");
       }
     }
 
