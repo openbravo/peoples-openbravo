@@ -45,6 +45,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.OrganizationType;
 import org.openbravo.test.base.OBBaseTest;
 
 import com.google.common.collect.ImmutableMap;
@@ -163,6 +164,36 @@ public class AllowedOrganizationsTest extends OBBaseTest {
     }
   }
 
+  @Test
+  public void legalOrBUOrganization() {
+    assumeThat(testingOrgId, not("Dummy"));
+    Organization org = OBDal.getInstance().getProxy(Organization.class, testingOrgId);
+
+    if (!FB_GROUP.equals(testingOrgId)) {
+      assertThat(ORG_NAMES.get(testingOrgId) + "'s legal entity",
+          osp.getLegalEntityOrBusinessUnit(org).getId(),
+          is(TestOrg.getFirstLegalOrBU(expectedNaturalTree)));
+    } else {
+      assertThat(ORG_NAMES.get(testingOrgId) + " has no legal entity ",
+          osp.getLegalEntityOrBusinessUnit(org), is(nullValue()));
+    }
+  }
+
+  @Test
+  public void periodControlOrganization() {
+    assumeThat(testingOrgId, not("Dummy"));
+    Organization org = OBDal.getInstance().getProxy(Organization.class, testingOrgId);
+
+    if (!FB_GROUP.equals(testingOrgId)) {
+      assertThat(ORG_NAMES.get(testingOrgId) + "'s legal entity", osp
+          .getPeriodControlAllowedOrganization(org).getId(),
+          is(TestOrg.getFirstPeriodControl(expectedNaturalTree)));
+    } else {
+      assertThat(ORG_NAMES.get(testingOrgId) + " has no legal entity ",
+          osp.getPeriodControlAllowedOrganization(org), is(nullValue()));
+    }
+  }
+
   private static List<TestOrg> orgs(String... ids) {
     List<TestOrg> orgs = new ArrayList<>(ids.length);
     for (String id : ids) {
@@ -190,6 +221,26 @@ public class AllowedOrganizationsTest extends OBBaseTest {
       for (TestOrg org : orgs) {
         if (OBDal.getInstance().get(Organization.class, org.id).getOrganizationType()
             .isLegalEntity()) {
+          return org.id;
+        }
+      }
+      return null;
+    }
+
+    public static Object getFirstLegalOrBU(List<TestOrg> orgs) {
+      for (TestOrg org : orgs) {
+        OrganizationType ot = OBDal.getInstance().get(Organization.class, org.id)
+            .getOrganizationType();
+        if (ot.isLegalEntity() || ot.isBusinessUnit()) {
+          return org.id;
+        }
+      }
+      return null;
+    }
+
+    public static String getFirstPeriodControl(List<TestOrg> orgs) {
+      for (TestOrg org : orgs) {
+        if (OBDal.getInstance().get(Organization.class, org.id).isAllowPeriodControl()) {
           return org.id;
         }
       }
