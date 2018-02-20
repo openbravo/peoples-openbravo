@@ -2240,7 +2240,7 @@ public class Utility {
     } else if ("yourcompanymenu".equals(logo)) {
       defaultImagePath = "web/images/CompanyLogo_small.png";
     } else if ("yourcompanybig".equals(logo)) {
-      defaultImagePath = "web/skins/ltr/Default/Login/initialOpenbravoLogo.png";
+      defaultImagePath = "web/images/openbravoLogo.svg";
     } else if ("yourcompanydoc".equals(logo)) {
       defaultImagePath = "web/images/CompanyLogo_big.png";
     } else if ("banner-production".equals(logo)) {

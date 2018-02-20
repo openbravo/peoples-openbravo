@@ -210,7 +210,7 @@ function manageVisualPreferences() {
 function maskLoginWindow(errorMsg) {
   var client = document.getElementById('client');
   var blocker = document.getElementById('blocker');
-  blocker.innerHTML = '<div class="Login_Home_Logo_Icon" style="position: relative; padding: 50px 0px 0px 0px; margin: 0 auto;"></div><div class="LabelText" style="position: relative; text-align: center; color: red; font-size: 11pt; padding: 10px 0px 0px 0px; width: 608px; margin: 0 auto;">' + errorMsg + '</div>';
+  blocker.innerHTML = '<div class="Login_Home_Logo_Icon"></div><div class="error-text">' + errorMsg + '</div>';
   blocker.style.display = '';
   client.style.display = 'none';
 }
