@@ -32,6 +32,11 @@ import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class returns the default value for the GL Item Parameter of the Funds Transfer Process in
+ * Financial Account Window
+ */
+
 public class FundsTransferGLItemDefaultValueExpression implements FilterExpression {
   private static final String INPAD_ORG_ID_PARAM = "inpadOrgId";
   private static final String AD_ORG_ID_PARAM = "ad_org_id";
@@ -76,7 +81,7 @@ public class FundsTransferGLItemDefaultValueExpression implements FilterExpressi
     }
   }
 
-  private String getDefaultGLItemFromOrganizationTree(Organization organization) {
+  private String getDefaultGLItemFromOrganizationTree(final Organization organization) {
     StringBuilder hql = new StringBuilder("");
     hql.append(" select p.aPRMGlitem ");
     hql.append(" from OrganizationTree t ");
@@ -89,7 +94,7 @@ public class FundsTransferGLItemDefaultValueExpression implements FilterExpressi
     Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
     query.setParameter("organizationId", organization.getId());
     query.setMaxResults(1);
-    GLItem glItem = (GLItem) query.uniqueResult();
+    final GLItem glItem = (GLItem) query.uniqueResult();
     return glItem != null ? glItem.getId() : null;
   }
 
