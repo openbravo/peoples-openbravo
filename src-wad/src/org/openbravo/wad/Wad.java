@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -54,6 +55,8 @@ public class Wad extends DefaultHandler {
   private static final int MAX_SIZE_EDITION_1_COLUMNS = 90;
   private static final int MAX_TEXTBOX_LENGTH = 110;
   private static final String WELD_LISTENER_ID = "3F88D97C7E9E4DD9847A5488771F4AB3";
+  private static final String ERROR_CODE_PAGES = "error-code";
+  private static final String EXCEPTION_TYPE_PAGES = "exception-type";
   private static final String NONE = "none";
   private XmlEngine xmlEngine;
   private WadConnection pool;
@@ -768,6 +771,16 @@ public class Wad extends DefaultHandler {
       xmlDocument.setData("structureFilterMapping", WadData.selectFilterMapping(pool));
       xmlDocument.setData("structure2", WadData.selectMapping(pool));
 
+      String baseDesignFolder = getBaseDesignFolder(contextParams);
+      xmlDocument.setData(
+          "structureErrorExceptionPage",
+          prepareErrorPageData(WadData.selectErrorPages(pool, EXCEPTION_TYPE_PAGES),
+              baseDesignFolder));
+      xmlDocument.setData("structureErrorCodePage",
+          prepareErrorPageData(WadData.selectErrorPages(pool, ERROR_CODE_PAGES), baseDesignFolder));
+      xmlDocument.setData("structureGenericErrorPage",
+          prepareErrorPageData(WadData.selectGenericErrorPages(pool), baseDesignFolder));
+
       String webXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocument.print();
       webXml = webXml.replace("${attachPath}", attachPath);
       webXml = webXml.replace("${webPath}", webPath);
@@ -776,6 +789,53 @@ public class Wad extends DefaultHandler {
     } catch (final IOException e) {
       log4j.error("Problem of IOException in process of Web.xml", e);
     }
+  }
+
+  private String getBaseDesignFolder(WadData[] contextParams) {
+    String baseDesignPath = findParameterByName("BaseDesignPath", contextParams);
+    String defaultDesignPath = findParameterByName("DefaultDesignPath", contextParams);
+
+    return String.format("/%s/%s", baseDesignPath, defaultDesignPath);
+  }
+
+  private WadData[] prepareErrorPageData(WadData[] originalData, String baseDesignFolder) {
+    List<WadData> appendedData = new ArrayList<>();
+    for (WadData data : originalData) {
+      if (!validateErrorCode(data.errortype, data.value)) {
+        log4j.warn("Error page " + data.name + " has invalid error code: " + data.value);
+        continue;
+      }
+      if (data.location != null && !data.location.isEmpty()) {
+        data.location = String.format("%s/%s", baseDesignFolder, data.location);
+        appendedData.add(data);
+        log4j.debug("Processed error page " + data.name);
+      } else {
+        log4j.warn("Error page " + data.name + " has no location");
+      }
+    }
+
+    return appendedData.toArray(new WadData[appendedData.size()]);
+  }
+
+  private boolean validateErrorCode(String errorType, String errorCode) {
+    if (ERROR_CODE_PAGES.equals(errorType)) {
+      try {
+        Integer.parseInt(errorCode);
+      } catch (NumberFormatException nfe) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private String findParameterByName(String name, WadData[] contextParams) {
+    for (WadData param : contextParams) {
+      if (param.name.equals(name)) {
+        return param.value;
+      }
+    }
+    return "";
   }
 
   private WadData[] getTabServlets(WadData[] allTabs, Map<String, Boolean> generateTabMap) {
