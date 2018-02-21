@@ -102,7 +102,7 @@ enyo.kind({
     }
     this.doChangeBusinessPartner({
       businessPartner: OB.UTIL.clone(this.customer),
-      target: 'order'
+      target: this.target
     });
     this.doPressedButton();
   },

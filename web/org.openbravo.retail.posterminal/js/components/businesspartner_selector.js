@@ -138,14 +138,15 @@ enyo.kind({
     }
     this.doHideThisPopup();
     var modalDlg = this.owner.owner.owner.owner.owner.owner,
-        navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(modalDlg.args.navigationPath, 'modalcustomer');
+        navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(modalDlg.args.navigationPath, 'modalcustomer'),
+        cancelNavigationPath = modalDlg.args.cancelNavigationPath ? modalDlg.args.cancelNavigationPath : navigationPath;
     this.doShowPopup({
       popup: 'customerCreateAndEdit',
       args: {
         businessPartner: null,
         target: modalDlg.target,
         navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(navigationPath, 'customerView'),
-        cancelNavigationPath: navigationPath
+        cancelNavigationPath: cancelNavigationPath
       }
     });
   },
@@ -754,6 +755,9 @@ enyo.kind({
   name: 'OB.UI.ModalSelectorBusinessPartners',
   topPosition: '75px',
   i18nHeader: 'OBPOS_LblAssignCustomer',
+  events: {
+    onShowPopup: ''
+  },
   body: {
     kind: 'OB.UI.ListBpsSelector'
   },
@@ -817,6 +821,21 @@ enyo.kind({
     });
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.$.entityFilterText.skipAutoFilterPref = true;
+    }
+  },
+  executeOnHide: function () {
+    var selectorHide = this.selectorHide;
+    this.inherited(arguments);
+    if (!selectorHide && this.args.navigationPath && this.args.navigationPath.length > 0) {
+      this.doShowPopup({
+        popup: this.args.navigationPath[this.args.navigationPath.length - 1],
+        args: {
+          businessPartner: this.args.businessPartner,
+          target: this.args.target,
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(this.args.navigationPath),
+          makeSearch: this.args.makeSearch
+        }
+      });
     }
   }
 });
