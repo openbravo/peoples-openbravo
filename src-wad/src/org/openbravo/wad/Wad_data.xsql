@@ -258,6 +258,7 @@
          and op.name IN ('exception-type', 'error-code')
          and op.ad_model_object_id = o.ad_model_object_id
       )
+      order by o.seqno
     ]]>
     </Sql>
   </SqlMethod>
@@ -280,6 +281,7 @@
       and p.ad_model_object_id = o.ad_model_object_id
       and p.name = ?
       and p.value is not null
+      order by o.seqno
       ]]> 
     </Sql>
     <Parameter name="errorType"/>
