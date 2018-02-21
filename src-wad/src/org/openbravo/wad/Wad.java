@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -772,12 +772,14 @@ public class Wad extends DefaultHandler {
       xmlDocument.setData("structure2", WadData.selectMapping(pool));
 
       String baseDesignFolder = getBaseDesignFolder(contextParams);
-      xmlDocument.setData("structureErrorExceptionPage",
-          appendErrorPageRoutePrefix(WadData.selectErrorPages(pool, EXCEPTION_TYPE_PAGES), baseDesignFolder));
+      xmlDocument.setData(
+          "structureErrorExceptionPage",
+          prepareErrorPageData(WadData.selectErrorPages(pool, EXCEPTION_TYPE_PAGES),
+              baseDesignFolder));
       xmlDocument.setData("structureErrorCodePage",
-          appendErrorPageRoutePrefix(WadData.selectErrorPages(pool, ERROR_CODE_PAGES), baseDesignFolder));
+          prepareErrorPageData(WadData.selectErrorPages(pool, ERROR_CODE_PAGES), baseDesignFolder));
       xmlDocument.setData("structureGenericErrorPage",
-          appendErrorPageRoutePrefix(WadData.selectGenericErrorPages(pool), baseDesignFolder));
+          prepareErrorPageData(WadData.selectGenericErrorPages(pool), baseDesignFolder));
 
       String webXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocument.print();
       webXml = webXml.replace("${attachPath}", attachPath);
@@ -792,26 +794,39 @@ public class Wad extends DefaultHandler {
   private String getBaseDesignFolder(WadData[] contextParams) {
     String baseDesignPath = findParameterByName("BaseDesignPath", contextParams);
     String defaultDesignPath = findParameterByName("DefaultDesignPath", contextParams);
-    
+
     return String.format("/%s/%s", baseDesignPath, defaultDesignPath);
   }
-  
-  private WadData[] appendErrorPageRoutePrefix(WadData[] originalData, String baseDesignFolder) {
-    List<WadData> appendedData = new ArrayList<WadData>();
+
+  private WadData[] prepareErrorPageData(WadData[] originalData, String baseDesignFolder) {
+    List<WadData> appendedData = new ArrayList<>();
     for (WadData data : originalData) {
-      if (data.location != null && !data.location.isEmpty()) {
-        data.location = String
-            .format("%s/%s", baseDesignFolder, data.location);
-        appendedData.add(data);
-        
-        log4j.debug("Processed error page " + data.name);
+      if (!validateErrorCode(data.errortype, data.value)) {
+        log4j.warn("Error page " + data.name + " has invalid error code: " + data.value);
+        continue;
       }
-      else {
-        log4j.warn("Error page " + data.name +" has no location");
+      if (data.location != null && !data.location.isEmpty()) {
+        data.location = String.format("%s/%s", baseDesignFolder, data.location);
+        appendedData.add(data);
+        log4j.debug("Processed error page " + data.name);
+      } else {
+        log4j.warn("Error page " + data.name + " has no location");
       }
     }
 
     return appendedData.toArray(new WadData[appendedData.size()]);
+  }
+
+  private boolean validateErrorCode(String errorType, String errorCode) {
+    if (ERROR_CODE_PAGES.equals(errorType)) {
+      try {
+        Integer.parseInt(errorCode);
+      } catch (NumberFormatException nfe) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   private String findParameterByName(String name, WadData[] contextParams) {

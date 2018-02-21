@@ -244,7 +244,7 @@
     <SqlMethodComment>Select the active generic Error pages (with no code or exception parameters)</SqlMethodComment>
     <Sql>
       <![CDATA[
-      select coalesce(o.name, o.ad_model_object_id) as name, p.value as location
+      select coalesce(o.name, o.ad_model_object_id) as name, p.value as location, 'generic' as errortype
       from  ad_model_object_para p, 
             ad_model_object o
       where o.object_type = 'E'
@@ -266,7 +266,7 @@
     <SqlMethodComment>Select the active error pages of the type given (it can be either exception-type or error code)</SqlMethodComment>
     <Sql>
       <![CDATA[
-      select coalesce(o.name, o.ad_model_object_id) as name, p.value as errortype, 
+      select coalesce(o.name, o.ad_model_object_id) as name, p.value as value, p.name as errortype,
         (select max(value)
          from ad_model_object_para lp 
          where lp.ad_model_object_id = o.ad_model_object_id
@@ -279,6 +279,7 @@
       and p.isactive = 'Y'
       and p.ad_model_object_id = o.ad_model_object_id
       and p.name = ?
+      and p.value is not null
       ]]> 
     </Sql>
     <Parameter name="errorType"/>
