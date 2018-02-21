@@ -285,19 +285,14 @@
           linesToRemove.push(line);
         }
       });
+      receipt.get('lines').remove(linesToRemove);
+
       receipt.get('payments').forEach(function (payment) {
-        if (!OB.UTIL.isNullOrUndefined(payment.get('date'))) {
-          if (payment.get('isPaid') && payment.get('isReturnOrder') && !payment.get('isPrePayment') && !payment.get('isReversePayment')) {
-            payment.set('amount', -Math.abs(payment.get('amount')));
-            payment.set('origAmount', -Math.abs(payment.get('origAmount')));
-          }
-        } else if (receipt.getPaymentStatus().isNegative && payment.get('isPrePayment') && !payment.get('isReversePayment')) {
+        if (receipt.getPaymentStatus().isNegative && !payment.get('isPrePayment') && !payment.get('isReversePayment')) {
           payment.set('amount', -Math.abs(payment.get('amount')));
           payment.set('origAmount', -Math.abs(payment.get('origAmount')));
         }
       });
-
-      receipt.get('lines').remove(linesToRemove);
 
       if (args.forcedtemplate) {
         args.template = args.forcedtemplate;
