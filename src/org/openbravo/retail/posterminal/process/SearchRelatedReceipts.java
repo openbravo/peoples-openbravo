@@ -25,18 +25,19 @@ public class SearchRelatedReceipts extends ProcessHQLQuery {
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
 
     // Getting orderId for the documentNo
-    StringBuffer hqlRelatedReceipts = new StringBuffer();
-    hqlRelatedReceipts.append("SELECT ");
-    hqlRelatedReceipts.append("o.id AS id, o.documentNo AS documentNo ");
-    hqlRelatedReceipts.append("FROM Order AS o ");
-    hqlRelatedReceipts.append("JOIN o.fINPaymentScheduleList pp ");
-    hqlRelatedReceipts.append("JOIN pp.fINPaymentScheduleDetailOrderPaymentScheduleList pd ");
-    hqlRelatedReceipts.append("WHERE pd.canceled = false ");
-    hqlRelatedReceipts.append("AND pd.paymentDetails IS NULL ");
+    final StringBuffer hqlRelatedReceipts = new StringBuffer();
+    hqlRelatedReceipts.append("SELECT o.id AS id, o.documentNo AS documentNo, ");
+    hqlRelatedReceipts.append("o.orderDate AS orderDate, o.grandTotalAmount AS amount ");
+    hqlRelatedReceipts.append("FROM FIN_Payment_ScheduleDetail AS psd ");
+    hqlRelatedReceipts.append("JOIN psd.orderPaymentSchedule AS ps ");
+    hqlRelatedReceipts.append("JOIN ps.order AS o ");
+    hqlRelatedReceipts.append("WHERE o.documentStatus <> 'CL' ");
+    hqlRelatedReceipts.append("AND psd.paymentDetails IS NULL ");
     hqlRelatedReceipts.append("AND o.businessPartner.id = :bp ");
     hqlRelatedReceipts.append("AND o.id <> :currentOrder ");
     hqlRelatedReceipts.append("AND o.$readableSimpleCriteria AND o.$naturalOrgCriteria ");
-    hqlRelatedReceipts.append("GROUP BY o.id, o.documentNo ");
+    hqlRelatedReceipts.append("GROUP BY o.id, o.documentNo, o.orderDate, o.grandTotalAmount ");
+    hqlRelatedReceipts.append("ORDER BY o.orderDate");
 
     return Arrays.asList(new String[] { hqlRelatedReceipts.toString() });
   }
@@ -46,7 +47,7 @@ public class SearchRelatedReceipts extends ProcessHQLQuery {
     try {
       OBContext.setAdminMode(true);
 
-      Map<String, Object> paramValues = new HashMap<String, Object>();
+      final Map<String, Object> paramValues = new HashMap<String, Object>();
 
       paramValues.put("bp", jsonsent.getString("bp"));
       paramValues.put("currentOrder", jsonsent.getString("orderId"));

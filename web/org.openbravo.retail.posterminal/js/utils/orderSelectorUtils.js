@@ -122,7 +122,15 @@
     };
 
     loadOrders = function (models) {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OpenRelatedReceiptsTitle'), OB.I18N.getLabel('OBPOS_OpenRelatedReceiptsBody'), [{
+      var popupBody = [OB.I18N.getLabel('OBPOS_OpenRelatedReceiptsBody')],
+          symbol = OB.MobileApp.model.get('terminal').symbol,
+          symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight,
+          i, model;
+      for (i = 1; i < models.length; i++) {
+        model = models[i];
+        popupBody.push(OB.I18N.getLabel('OBMOBC_Character')[1] + ' ' + model.get('documentNo') + '  -  ' + OB.I18N.formatDate(new Date(model.get('orderDate'))) + '  -  ' + OB.I18N.formatCurrencyWithSymbol(model.get('amount'), symbol, symbolAtRight));
+      }
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OpenRelatedReceiptsTitle'), popupBody, [{
         label: OB.I18N.getLabel('OBPOS_LblOk'),
         isConfirmButton: true,
         action: function () {
