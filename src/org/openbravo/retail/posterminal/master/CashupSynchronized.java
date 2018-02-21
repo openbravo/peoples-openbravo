@@ -38,20 +38,13 @@ public class CashupSynchronized extends Cashup {
     if (MobileServerController.getInstance().isThisACentralServer()) {
       return executeLocal(json);
     } else if (MobileServerController.getInstance().isCentralServerOnline()) {
-      log.debug("Central server is online, first see if there are errors in the queue");
-      if (isDataInQueue(json)) {
-        // errors in local, so call central
-        log.debug("errors in queue, try central");
-        try {
-          return MobileServerRequestExecutor.getInstance().executeCentralRequest(
-              MobileServerUtils.OBWSPATH + this.getClass().getName(), json);
-        } catch (Throwable t) {
-          // something goes wrong on central, try local
-          // should fail as there are errors in the import queue
-          return executeLocal(json);
-        }
-      } else {
-        // no local errors, take from local
+      log.debug("Central server is online, calling it to get latest cashup information");
+      try {
+        return MobileServerRequestExecutor.getInstance().executeCentralRequest(
+            MobileServerUtils.OBWSPATH + this.getClass().getName(), json);
+      } catch (Throwable t) {
+        // something goes wrong on central, try local
+        // should fail as there are errors in the import queue
         return executeLocal(json);
       }
     } else {
