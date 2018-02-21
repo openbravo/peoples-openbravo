@@ -5366,6 +5366,7 @@
           receipt: model,
           model: model
         }, function (args) {
+          model.set('json', JSON.stringify(model.serializeToJSON()));
           OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
             model.save(function () {
               if (orderList) {
