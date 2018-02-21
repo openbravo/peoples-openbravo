@@ -34,5 +34,11 @@ OB.APRM.FundsTranfer = {
     OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.FundsTransferOnChangeDepositToActionHandler', {
       accountID: item.getValue()
     }, {}, callback);
+  },
+  onLoad: function (view) {
+    var form = view.theForm,
+        description = form.getItem('description');
+
+    description.setValue(OB.I18N.getLabel('FundsTransfer'));
   }
 };
