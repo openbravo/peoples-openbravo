@@ -27,7 +27,8 @@ public class SearchRelatedReceipts extends ProcessHQLQuery {
     // Getting orderId for the documentNo
     final StringBuffer hqlRelatedReceipts = new StringBuffer();
     hqlRelatedReceipts.append("SELECT o.id AS id, o.documentNo AS documentNo, ");
-    hqlRelatedReceipts.append("o.orderDate AS orderDate, o.grandTotalAmount AS amount ");
+    hqlRelatedReceipts.append("o.orderDate AS orderDate, o.grandTotalAmount AS amount, ");
+    hqlRelatedReceipts.append("sum(psd.amount) AS pending ");
     hqlRelatedReceipts.append("FROM FIN_Payment_ScheduleDetail AS psd ");
     hqlRelatedReceipts.append("JOIN psd.orderPaymentSchedule AS ps ");
     hqlRelatedReceipts.append("JOIN ps.order AS o ");
