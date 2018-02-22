@@ -168,7 +168,7 @@ enyo.kind({
       style: 'text-align: center; color: white;',
       components: [{
         content: OB.I18N.getLabel('OBPOS_OpenRelatedReceiptsTitle'),
-        name: 'documentNo',
+        name: 'headerLbl',
         classes: 'span12',
         style: 'line-height: 50px; font-size: 24px;'
       }, {
