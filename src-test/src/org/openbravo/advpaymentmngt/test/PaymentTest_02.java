@@ -23,6 +23,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
@@ -56,7 +57,7 @@ import org.openbravo.test.base.OBBaseTest;
  */
 public class PaymentTest_02 extends OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(PaymentTest_01.class);
+  private static final Logger log = Logger.getLogger(PaymentTest_02.class);
 
   private static final String MANUAL_EXECUTION = "M";
   private static final String CLEARED_ACCOUNT = "CLE";
@@ -94,7 +95,8 @@ public class PaymentTest_02 extends OBBaseTest {
       // PAY PARTIALLY THE INVOICE
       invoice = OBDal.getInstance().get(Invoice.class, invoice.getId());
       BigDecimal divisor = new BigDecimal("2.0");
-      BigDecimal paymentAmount = invoice.getGrandTotalAmount().divide(divisor, 2);
+      BigDecimal paymentAmount = invoice.getGrandTotalAmount().divide(divisor, 2,
+          RoundingMode.HALF_UP);
       payment = TestUtility.addPaymentFromInvoice(invoice,
           OBDal.getInstance().get(FIN_FinancialAccount.class, financialAccountId), paymentAmount,
           false);

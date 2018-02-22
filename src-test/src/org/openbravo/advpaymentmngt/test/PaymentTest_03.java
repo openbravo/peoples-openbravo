@@ -55,7 +55,7 @@ import org.openbravo.test.base.OBBaseTest;
  */
 public class PaymentTest_03 extends OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(PaymentTest_01.class);
+  private static final Logger log = Logger.getLogger(PaymentTest_03.class);
 
   private static final String MANUAL_EXECUTION = "M";
   private static final String CLEARED_ACCOUNT = "CLE";
