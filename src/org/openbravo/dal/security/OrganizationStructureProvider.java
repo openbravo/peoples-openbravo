@@ -290,11 +290,11 @@ public class OrganizationStructureProvider implements OBNotSingleton {
 
       node = orgNodes.get(orgId);
       if (node == null) {
-        return new HashSet<String>(0);
+        return new HashSet<>(0);
       }
     }
 
-    Set<String> os = new HashSet<String>(node.getChildren().size());
+    Set<String> os = new HashSet<>(node.getChildren().size());
     for (String child : node.getChildren()) {
       os.add(child);
     }
