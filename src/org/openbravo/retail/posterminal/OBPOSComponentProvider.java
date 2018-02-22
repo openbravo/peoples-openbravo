@@ -158,6 +158,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/servicesfilter",
         "components/modalselectopenreceipts",
         "components/modalsplitlines",
+        "components/openRelatedReceiptsModal",
 
         // Old Tickets
         "components/modalpaidreceipts",

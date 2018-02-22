@@ -122,60 +122,49 @@
     };
 
     loadOrders = function (models) {
-      var popupBody = [OB.I18N.getLabel('OBPOS_OpenRelatedReceiptsBody')],
-          symbol = OB.MobileApp.model.get('terminal').symbol,
-          symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight,
-          i, model;
-      for (i = 1; i < models.length; i++) {
-        model = models[i];
-        popupBody.push(OB.I18N.getLabel('OBMOBC_Character')[1] + ' ' + model.get('documentNo') + '  -  ' + OB.I18N.formatDate(new Date(model.get('orderDate'))) + '  -  ' + OB.I18N.formatCurrencyWithSymbol(model.get('amount'), symbol, symbolAtRight) + ' (' + OB.I18N.formatCurrencyWithSymbol(model.get('pending'), symbol, symbolAtRight) + ' ' + OB.I18N.getLabel('OBPOS_Pending') + ')');
-      }
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OpenRelatedReceiptsTitle'), popupBody, [{
-        label: OB.I18N.getLabel('OBPOS_LblOk'),
-        isConfirmButton: true,
-        action: function () {
-          var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.OpenRelatedReceipts');
-          OB.UTIL.showLoading(true);
-          process.exec({
-            orders: models,
-            originServer: currentOriginServer
-          }, function (data) {
-            if (data && data.exception) {
-              errorCallback(true, data.exception.message, true);
-            } else if (data && data.length > 0) {
-              var loadOrder;
-              loadOrder = function (idx) {
-                if (idx === data.length) {
-                  recursiveCallback = undefined;
-                  recursiveIdx = undefined;
-                  OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearch');
-                  checkListCallback();
-                } else {
-                  var order = data[idx];
-                  recursiveIdx = idx;
-                  orderLoaded([order]);
-                }
-              };
-              recursiveCallback = loadOrder;
-              loadOrder(0);
+      OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearch');
+      context.doShowPopup({
+        popup: 'modalOpenRelatedReceipts',
+        args: {
+          models: models,
+          callback: function (selectedModels) {
+            synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearch');
+            if (selectedModels.length === 1) {
+              loadOrder(models[0]);
             } else {
-              errorCallback(true, OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
+              var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.OpenRelatedReceipts');
+              OB.UTIL.showLoading(true);
+              process.exec({
+                orders: selectedModels,
+                originServer: currentOriginServer
+              }, function (data) {
+                if (data && data.exception) {
+                  errorCallback(true, data.exception.message, true);
+                } else if (data && data.length > 0) {
+                  var loadOrder;
+                  loadOrder = function (idx) {
+                    if (idx === data.length) {
+                      recursiveCallback = undefined;
+                      recursiveIdx = undefined;
+                      OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearch');
+                      checkListCallback();
+                    } else {
+                      var order = data[idx];
+                      recursiveIdx = idx;
+                      orderLoaded([order]);
+                    }
+                  };
+                  recursiveCallback = loadOrder;
+                  loadOrder(0);
+                } else {
+                  errorCallback(true, OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
+                }
+              }, function (error) {
+                errorCallback(true);
+              }, true, 5000);
             }
-          }, function (error) {
-            errorCallback(true);
-          }, true, 5000);
+          }
         }
-      }, {
-        label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-        isConfirmButton: false,
-        action: function () {
-          loadOrder(models[0]);
-        }
-      }], {
-        onHideFunction: function (popup) {
-          loadOrder(models[0]);
-        },
-        autoDismiss: true
       });
     };
 

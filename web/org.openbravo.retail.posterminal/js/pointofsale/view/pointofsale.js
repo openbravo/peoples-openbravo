@@ -267,6 +267,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalQuotationProductAttributes',
       name: 'modalQuotationProductAttributes'
+    }, {
+      kind: 'OB.UI.ModalOpenRelatedReceipts',
+      name: 'modalOpenRelatedReceipts'
     }]
   }, {
     name: 'mainSubWindow',
