@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_callouts;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.servlet.ServletException;
 
@@ -42,7 +43,7 @@ public class SL_Conversion_Rate extends SimpleCallout {
     if (StringUtils.equals(strChanged, "inpmultiplyrate")) {
       BigDecimal rate = BigDecimal.ZERO;
       if (multiplyRate.compareTo(BigDecimal.ZERO) != 0) {
-        rate = BigDecimal.ONE.divide(multiplyRate, 12, 4);
+        rate = BigDecimal.ONE.divide(multiplyRate, 12, RoundingMode.HALF_UP);
       }
       info.addResult("inpdividerate", rate);
     }
@@ -51,7 +52,7 @@ public class SL_Conversion_Rate extends SimpleCallout {
     else if (StringUtils.equals(strChanged, "inpdividerate")) {
       BigDecimal rate = BigDecimal.ZERO;
       if (divideRate.compareTo(BigDecimal.ZERO) != 0) {
-        rate = BigDecimal.ONE.divide(divideRate, 12, 4);
+        rate = BigDecimal.ONE.divide(divideRate, 12, RoundingMode.HALF_UP);
       }
       info.addResult("inpmultiplyrate", rate);
     }

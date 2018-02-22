@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_callouts;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.servlet.ServletException;
 
@@ -68,7 +69,7 @@ public class SE_CalculateExchangeRate extends SimpleCallout {
         foreignAmt = originalAmt.multiply(rate);
         info.addResult("inpforeignAmount", foreignAmt);
       } else if (strLastFieldChanged.equals("inpforeignAmount")) {
-        rate = foreignAmt.divide(originalAmt, 12, 4);
+        rate = foreignAmt.divide(originalAmt, 12, RoundingMode.HALF_UP);
         info.addResult("inprate", rate);
       }
 

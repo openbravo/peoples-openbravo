@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_callouts;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -142,13 +143,13 @@ public class SL_Payment_Amounts extends HttpSecureAppServlet {
             resultado.append("\n)");
           } else {
             convert = new BigDecimal(strconvert);
-            payamt = payamt.multiply(convert).setScale(2, 4);
+            payamt = payamt.multiply(convert).setScale(2, RoundingMode.HALF_UP);
             resultado.append("new Array(\"inppayamt\", " + payamt.toString() + "),");
-            discountamt = discountamt.multiply(convert).setScale(2, 4);
+            discountamt = discountamt.multiply(convert).setScale(2, RoundingMode.HALF_UP);
             resultado.append("new Array(\"inpdiscountamt\", " + discountamt.toString() + "),");
-            writeoffamt = writeoffamt.multiply(convert).setScale(2, 4);
+            writeoffamt = writeoffamt.multiply(convert).setScale(2, RoundingMode.HALF_UP);
             resultado.append("new Array(\"inpwriteoffamt\", " + writeoffamt.toString() + "),");
-            overunderamt = overunderamt.multiply(convert).setScale(2, 4);
+            overunderamt = overunderamt.multiply(convert).setScale(2, RoundingMode.HALF_UP);
             resultado.append("new Array(\"inpoverunderamt\", " + overunderamt.toString() + ")");
             vars.setSessionValue("Last.Currency", strcCurrencyId);
           }
@@ -167,7 +168,7 @@ public class SL_Payment_Amounts extends HttpSecureAppServlet {
         String strconvert = SLPaymentAmountsData.selectConversion(this, data[0].currencyid,
             strcCurrencyId, DateTimeData.today(this), null, vars.getClient(), vars.getOrg());
         convert = new BigDecimal(strconvert);
-        invtotamt = invtotamt.multiply(convert).setScale(2, 4);
+        invtotamt = invtotamt.multiply(convert).setScale(2, RoundingMode.HALF_UP);
       }
       writeoffamt = (invtotamt).subtract(payamt).subtract(discountamt).subtract(overunderamt);
       resultado.append("new Array(\"inpwriteoffamt\", " + writeoffamt.toString() + ")");
@@ -179,7 +180,7 @@ public class SL_Payment_Amounts extends HttpSecureAppServlet {
         String strconvert = SLPaymentAmountsData.selectConversion(this, data[0].currencyid,
             strcCurrencyId, DateTimeData.today(this), null, vars.getClient(), vars.getOrg());
         convert = new BigDecimal(strconvert);
-        invtotamt = invtotamt.multiply(convert).setScale(2, 4);
+        invtotamt = invtotamt.multiply(convert).setScale(2, RoundingMode.HALF_UP);
       }
       invtotamt = invtotamt.subtract(discountamt).subtract(writeoffamt).subtract(overunderamt);
       resultado.append("new Array(\"inppayamt\", " + invtotamt.toString() + ")");
@@ -191,7 +192,7 @@ public class SL_Payment_Amounts extends HttpSecureAppServlet {
         String strconvert = SLPaymentAmountsData.selectConversion(this, data[0].currencyid,
             strcCurrencyId, DateTimeData.today(this), null, vars.getClient(), vars.getOrg());
         convert = new BigDecimal(strconvert);
-        invtotamt = invtotamt.multiply(convert).setScale(2, 4);
+        invtotamt = invtotamt.multiply(convert).setScale(2, RoundingMode.HALF_UP);
       }
       invtotamt = invtotamt.subtract(writeoffamt).subtract(discountamt).subtract(overunderamt);
       resultado.append("new Array(\"inppayamt\", " + invtotamt.toString() + ")");
