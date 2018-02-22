@@ -112,8 +112,7 @@ public class IsCompletelyInvoicedShipmentMultiLineTest extends OBBaseTest {
       shipment2 = ICIUtility.reloadAndRefreshShipment(shipment2);
       assertEquals(true, shipment2.isCompletelyInvoiced());
     } catch (Exception e) {
-      e.printStackTrace();
-      log.error(ICIUtility.getExceptionMessage(e));
+      log.error("Error in testIsCompletelyInvoicedMultiLine_01", e);
     }
   }
 
@@ -183,8 +182,7 @@ public class IsCompletelyInvoicedShipmentMultiLineTest extends OBBaseTest {
       shipment2 = ICIUtility.reloadAndRefreshShipment(shipment2);
       assertEquals(false, shipment2.isCompletelyInvoiced());
     } catch (Exception e) {
-      e.printStackTrace();
-      log.error(ICIUtility.getExceptionMessage(e));
+      log.error("Error in testIsCompletelyInvoicedMultiLine_02", e);
     }
   }
 
@@ -197,14 +195,14 @@ public class IsCompletelyInvoicedShipmentMultiLineTest extends OBBaseTest {
     orderLine2Parameters.setNetListPrice(new BigDecimal("20"));
     orderLine2Parameters.setPriceLimit(new BigDecimal("20"));
     orderLine2Parameters.setLineNetAmount(new BigDecimal("200"));
-    orderLine2Parameters.setLineNo(new Long("20"));
+    orderLine2Parameters.setLineNo(20L);
     OrderLine orderLine2 = ICIUtility.createNewOrderLine(orderLine2Parameters);
     return orderLine2;
   }
 
   private InvoiceLine createSecondInvoiceLine(Product secondProduct, Invoice invoice) {
     ICIInvoiceLineParameters invoiceLine2Parameters = new ICIInvoiceLineParameters(invoice);
-    invoiceLine2Parameters.setLineNo(new Long("20"));
+    invoiceLine2Parameters.setLineNo(20L);
     invoiceLine2Parameters.setProduct(secondProduct);
     invoiceLine2Parameters.setUom(secondProduct.getUOM());
     invoiceLine2Parameters.setInvoicedQuantity(new BigDecimal("20"));

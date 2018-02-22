@@ -83,8 +83,7 @@ public class IsCompletelyInvoicedShipmentOneLineTest extends OBBaseTest {
       shipment = ICIUtility.reloadAndRefreshShipment(shipment);
       assertEquals(true, shipment.isCompletelyInvoiced());
     } catch (Exception e) {
-      e.printStackTrace();
-      log.error(ICIUtility.getExceptionMessage(e));
+      log.error("Error in testIsCompletelyInvoicedOneLine_01", e);
     }
   }
 
@@ -133,8 +132,7 @@ public class IsCompletelyInvoicedShipmentOneLineTest extends OBBaseTest {
       shipment = ICIUtility.reloadAndRefreshShipment(shipment);
       assertEquals(false, shipment.isCompletelyInvoiced());
     } catch (Exception e) {
-      e.printStackTrace();
-      log.error(ICIUtility.getExceptionMessage(e));
+      log.error("Error in testIsCompletelyInvoicedOneLine_02", e);
     }
   }
 
@@ -182,8 +180,7 @@ public class IsCompletelyInvoicedShipmentOneLineTest extends OBBaseTest {
       shipment = ICIUtility.reloadAndRefreshShipment(shipment);
       assertEquals(false, shipment.isCompletelyInvoiced());
     } catch (Exception e) {
-      e.printStackTrace();
-      log.error(ICIUtility.getExceptionMessage(e));
+      log.error("Error in testIsCompletelyInvoicedOneLine_03", e);
     }
   }
 }

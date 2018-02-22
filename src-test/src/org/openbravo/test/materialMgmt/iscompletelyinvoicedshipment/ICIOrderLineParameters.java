@@ -65,7 +65,7 @@ public class ICIOrderLineParameters {
     this.netListPrice = new BigDecimal("10");
     this.lineNetAmount = new BigDecimal("100");
     this.taxRate = OBDal.getInstance().get(TaxRate.class, ICIConstants.TAX_ID);
-    this.lineNo = new Long("10");
+    this.lineNo = 10L;
   }
 
   public Order getOrder() {

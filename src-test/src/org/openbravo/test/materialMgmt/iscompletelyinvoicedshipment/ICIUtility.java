@@ -296,7 +296,7 @@ public class ICIUtility {
    */
   public static ShipmentInOutLine createShipmentLine(ICIShipmentLineParameters parameters) {
     ShipmentInOutLine shipmentLine = OBProvider.getInstance().get(ShipmentInOutLine.class);
-    shipmentLine.setLineNo(new Long("10"));
+    shipmentLine.setLineNo(10L);
     shipmentLine.setClient(parameters.getShipment().getClient());
     shipmentLine.setOrganization(parameters.getShipment().getOrganization());
     shipmentLine.setProduct(parameters.getProduct());
@@ -320,13 +320,12 @@ public class ICIUtility {
   }
 
   private static boolean processDocument(BaseOBObject document, String processId) {
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(true);
     try {
       Process process = null;
       process = OBDal.getInstance().get(Process.class, processId);
       final ProcessInstance pinstance = CallProcess.getInstance().call(process,
           document.getId().toString(), null);
-      OBDal.getInstance().flush();
       return (pinstance.getResult() == 0L);
     } finally {
       OBContext.restorePreviousMode();
