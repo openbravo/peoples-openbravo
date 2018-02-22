@@ -8,6 +8,7 @@
  */
 
 /*global OB, enyo, Backbone, moment, _ */
+
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.OpenRelatedReceipts_btnApply',
