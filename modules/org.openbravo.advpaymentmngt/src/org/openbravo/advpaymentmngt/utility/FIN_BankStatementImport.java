@@ -252,7 +252,7 @@ public abstract class FIN_BankStatementImport {
         }
         bankStatementLine.setBusinessPartner(businessPartner);
         bankStatementLine.setGLItem(glItem);
-        bankStatementLine.setLineNo(new Long((counter + 1) * 10));
+        bankStatementLine.setLineNo((counter + 1) * 10L);
         OBDal.getInstance().save(bankStatementLine);
         counter++;
       } else {

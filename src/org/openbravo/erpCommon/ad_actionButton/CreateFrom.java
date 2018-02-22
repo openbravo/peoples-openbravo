@@ -2404,7 +2404,7 @@ public class CreateFrom extends HttpSecureAppServlet {
           ids[k] = ids[k].substring(1, ids[k].length() - 1);
         if (!ids[k].equals("")) {
           ids[k] = Replace.replace(ids[k], "'", "");
-          Integer line = new Integer(CreateFromDPManagementData.getLine(this, strKey));
+          Integer line = Integer.valueOf(CreateFromDPManagementData.getLine(this, strKey));
           final StringTokenizer st = new StringTokenizer(ids[k], ",", false);
           while (st.hasMoreTokens()) {
             final String strDebtPaymentId = st.nextToken().trim();

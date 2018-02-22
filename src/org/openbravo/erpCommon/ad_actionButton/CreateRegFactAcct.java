@@ -137,7 +137,7 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
             log4j.debug("Output: Before buttonReg");
           String regCount = CreateRegFactAcctData.getRegCount(this, vars.getClient(),
               dataOrgs[i].org, acctSchema[j].id, strPediodId);
-          if (new Integer(regCount).intValue() > 0) {
+          if (Integer.parseInt(regCount) > 0) {
             releaseRollbackConnection(conn);
             myError.setType("Error");
             myError.setTitle("");
@@ -385,7 +385,7 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
 
     String strError = "";
     String numSchemasFor0Org = CreateRegFactAcctData.numSchemasFor0Org(this, vars.getClient());
-    if (new Integer(numSchemasFor0Org).intValue() > 0) {
+    if (Integer.parseInt(numSchemasFor0Org) > 0) {
       strError = Utility.messageBD(this, "0OrgShouldNotHaveAcctSchema", vars.getLanguage());
     }
     if ("".equals(strError))

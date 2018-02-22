@@ -115,7 +115,7 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
     if (nodes.size() > 0) {
       TreeNode node = nodes.get(0);
       node.setReportSet(!isNumber ? rootNode : parent_ID);
-      node.setSequenceNumber(new Long(seqNo));
+      node.setSequenceNumber(Long.valueOf(seqNo));
       OBDal.getInstance().save(node);
     } else {
       TreeNode treeElement = OBProvider.getInstance().get(TreeNode.class);
@@ -123,7 +123,7 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
       treeElement.setNode(account.getId());
       treeElement.setTree(account.getAccountingElement().getTree());
       treeElement.setReportSet(!isNumber ? rootNode : parent_ID);
-      treeElement.setSequenceNumber(new Long(seqNo));
+      treeElement.setSequenceNumber(Long.valueOf(seqNo));
       OBDal.getInstance().save(treeElement);
     }
 
@@ -176,7 +176,7 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
     OBCriteria<TreeNode> obc = OBDal.getInstance().createCriteria(TreeNode.class);
     obc.add(Restrictions.eq(TreeNode.PROPERTY_TREE, tree));
     obc.add(Restrictions.eq(TreeNode.PROPERTY_REPORTSET, parentID));
-    obc.add(Restrictions.ge(TreeNode.PROPERTY_SEQUENCENUMBER, new Long(seqNo)));
+    obc.add(Restrictions.ge(TreeNode.PROPERTY_SEQUENCENUMBER, Long.valueOf(seqNo)));
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnReadableOrganization(false);
     for (TreeNode node : obc.list()) {

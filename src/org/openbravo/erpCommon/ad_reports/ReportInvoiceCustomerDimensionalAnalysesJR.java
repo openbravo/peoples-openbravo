@@ -1107,9 +1107,9 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
             parameters.put("LEVEL8_LABEL", strLevelLabel[7]);
             parameters.put("LEVEL9_LABEL", strLevelLabel[8]);
             parameters.put("LEVEL10_LABEL", strLevelLabel[9]);
-            parameters.put("DIMENSIONS", new Integer(intOrder));
+            parameters.put("DIMENSIONS", intOrder);
             parameters.put("REPORT_SUBTITLE", strSubTitle);
-            parameters.put("PRODUCT_LEVEL", new Integer(intProductLevel));
+            parameters.put("PRODUCT_LEVEL", intProductLevel);
             renderJR(vars, response, strReportPath, strOutput, parameters, data, null);
           }
         }

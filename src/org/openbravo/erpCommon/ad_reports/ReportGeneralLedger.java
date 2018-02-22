@@ -636,7 +636,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
       String strLanguage = vars.getLanguage();
 
-      parameters.put("ShowGrouping", new Boolean(StringUtils.isNotEmpty(strGroupBy)));
+      parameters.put("ShowGrouping", StringUtils.isNotEmpty(strGroupBy));
       StringBuilder strSubTitle = new StringBuilder();
       strSubTitle.append(Utility.messageBD(readOnlyCP, "DateFrom", strLanguage) + ": "
           + strDateFrom + " - " + Utility.messageBD(readOnlyCP, "DateTo", strLanguage) + ": "

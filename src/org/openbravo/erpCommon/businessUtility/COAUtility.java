@@ -860,7 +860,7 @@ public class COAUtility {
             log4j.debug("updateOperands() - Procesing operand " + strOperand[j][0]
                 + ", of the account " + data[i].accountValue);
             ElementValueOperand operandElement = InitialSetupUtility.insertOperand(operand,
-                elementValue, new Long((strOperand[j][1].equals("+") ? "1" : "-1")), new Long(
+                elementValue, Long.valueOf((strOperand[j][1].equals("+") ? "1" : "-1")), Long.valueOf(
                     strSeqNo));
             strSeqNo = nextSeqNo(strSeqNo);
             if (operandElement == null)

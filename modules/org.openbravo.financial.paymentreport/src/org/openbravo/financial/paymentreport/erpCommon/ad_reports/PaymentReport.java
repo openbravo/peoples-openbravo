@@ -1007,8 +1007,8 @@ public class PaymentReport extends HttpSecureAppServlet {
           Utility.messageBD(readOnlyCP, "No", vars.getLanguage()));
     }
 
-    parameters.put("ONE_ASTERISK_SHOW", new Boolean(showAsterisk(data, "*")));
-    parameters.put("TWO_ASTERISK_SHOW", new Boolean(showAsterisk(data, "**")));
+    parameters.put("ONE_ASTERISK_SHOW", showAsterisk(data, "*"));
+    parameters.put("TWO_ASTERISK_SHOW", showAsterisk(data, "**"));
 
     if (data != null) {
       renderJR(vars, response, strReportName, strOutput, parameters, data, null);

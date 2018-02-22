@@ -159,10 +159,10 @@ public class CreateFile extends HttpSecureAppServlet {
     CreateFileData[] Principio = CreateFileData.select(this, strKey);
     CreateFileData[] Lineas = CreateFileData.selectLineas(this, strKey);
     CreateFileData[] Total = CreateFileData.selectTotal(this, strKey);
-    int comprobacion1 = new Integer(CreateFileData.selectComprobacion1(this, strKey)).intValue();
-    int comprobacion2 = new Integer(CreateFileData.selectComprobacion2(this, strKey)).intValue();
-    int comprobacion3 = new Integer(CreateFileData.selectComprobacion3(this, strKey)).intValue();
-    int comprobacion4 = new Integer(CreateFileData.selectComprobacion4(this, strKey)).intValue();
+    int comprobacion1 = Integer.parseInt(CreateFileData.selectComprobacion1(this, strKey));
+    int comprobacion2 = Integer.parseInt(CreateFileData.selectComprobacion2(this, strKey));
+    int comprobacion3 = Integer.parseInt(CreateFileData.selectComprobacion3(this, strKey));
+    int comprobacion4 = Integer.parseInt(CreateFileData.selectComprobacion4(this, strKey));
     CreateFileData[] comprobacion5 = CreateFileData.selectComprobacion5(this, strKey);
     if (log4j.isDebugEnabled())
       log4j.debug(" c1:" + comprobacion1 + " c2:" + comprobacion2 + " c3:" + comprobacion3 + " c4:"
@@ -293,10 +293,10 @@ public class CreateFile extends HttpSecureAppServlet {
     CreateFileData[] Lineas = CreateFileData.selectLineas(this, strKey);
     CreateFileData[] Total = CreateFileData.selectTotal(this, strKey);
 
-    int comprobacion1 = new Integer(CreateFileData.selectComprobacion1(this, strKey)).intValue();
-    int comprobacion2 = new Integer(CreateFileData.selectComprobacion2(this, strKey)).intValue();
-    int comprobacion3 = new Integer(CreateFileData.selectComprobacion3(this, strKey)).intValue();
-    int comprobacion4 = new Integer(CreateFileData.selectComprobacion4(this, strKey)).intValue();
+    int comprobacion1 = Integer.parseInt(CreateFileData.selectComprobacion1(this, strKey));
+    int comprobacion2 = Integer.parseInt(CreateFileData.selectComprobacion2(this, strKey));
+    int comprobacion3 = Integer.parseInt(CreateFileData.selectComprobacion3(this, strKey));
+    int comprobacion4 = Integer.parseInt(CreateFileData.selectComprobacion4(this, strKey));
     CreateFileData[] comprobacion5 = CreateFileData.selectComprobacion5(this, strKey);
     if (log4j.isDebugEnabled())
       log4j.debug(" c1:" + comprobacion1 + " c2:" + comprobacion2 + " c3:" + comprobacion3 + " c4:"
@@ -503,10 +503,10 @@ public class CreateFile extends HttpSecureAppServlet {
     CreateFile34Data[] Principio = CreateFile34Data.select(this, strKey);
     CreateFile34Data[] Lineas = CreateFile34Data.selectLineas(this, strKey);
     CreateFile34Data[] Total = CreateFile34Data.selectTotal(this, strKey);
-    int comprobacion1 = new Integer(CreateFileData.selectComprobacion1(this, strKey)).intValue();
-    int comprobacion2 = new Integer(CreateFileData.selectComprobacion2(this, strKey)).intValue();
-    int comprobacion3 = new Integer(CreateFileData.selectComprobacion3(this, strKey)).intValue();
-    int comprobacion4 = new Integer(CreateFileData.selectComprobacion4(this, strKey)).intValue();
+    int comprobacion1 = Integer.parseInt(CreateFileData.selectComprobacion1(this, strKey));
+    int comprobacion2 = Integer.parseInt(CreateFileData.selectComprobacion2(this, strKey));
+    int comprobacion3 = Integer.parseInt(CreateFileData.selectComprobacion3(this, strKey));
+    int comprobacion4 = Integer.parseInt(CreateFileData.selectComprobacion4(this, strKey));
     CreateFileData[] comprobacion5 = CreateFileData.selectComprobacion5(this, strKey);
     if (log4j.isDebugEnabled())
       log4j.debug(" c1:" + comprobacion1 + " c2:" + comprobacion2 + " c3:" + comprobacion3 + " c4:"

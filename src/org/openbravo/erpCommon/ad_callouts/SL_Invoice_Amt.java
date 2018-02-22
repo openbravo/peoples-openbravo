@@ -78,7 +78,7 @@ public class SL_Invoice_Amt extends SimpleCallout {
     if (dataTax != null && dataTax.length > 0) {
       taxRate = StringUtils.isEmpty(dataTax[0].rate) ? BigDecimal.ONE : new BigDecimal(
           dataTax[0].rate);
-      taxScale = new Integer(dataTax[0].priceprecision);
+      taxScale = Integer.parseInt(dataTax[0].priceprecision);
     }
 
     if (log4j.isDebugEnabled()) {

@@ -157,7 +157,7 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
     String strOutput = vars.commandIn("EDIT_HTML") ? "html" : "pdf";
     String strReportName = "@basedesign@/org/openbravo/erpReports/ReportRegisterLineJR.jrxml";
     String StartPageNo = TaxRegisterData.selectPageNoPrior(this, TaxRegId);
-    Integer IntStartPageNo = new Integer(StartPageNo);
+    Integer IntStartPageNo = Integer.valueOf(StartPageNo);
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("REPORT_SUBTITLE", "From " + strDateFrom + " to " + strDateTo);
     parameters.put("invoicedateDA", strDateFrom);
@@ -180,7 +180,7 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
     }
     ;
 
-    Integer pag1 = new Integer(jr1.getPages().size() + IntStartPageNo.intValue());
+    Integer pag1 = jr1.getPages().size() + IntStartPageNo.intValue();
     TaxRegisterData[] taxregister = TaxRegisterData.select(this, TaxRegId);
     if ((taxregister[0].pageno.equals(new String("0"))) || (taxregister[0].pageno == null)) {
       TaxRegisterData.updatePageNo(this, pag1.toString(), TaxRegId);

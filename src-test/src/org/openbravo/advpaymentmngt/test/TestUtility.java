@@ -305,7 +305,7 @@ public class TestUtility extends OBBaseTest {
     orderLine.setOrderDate(orderDate);
     orderLine.setWarehouse(warehouse);
     orderLine.setCurrency(currency);
-    orderLine.setLineNo(new Long("10"));
+    orderLine.setLineNo(10L);
     orderLine.setProduct(product);
     orderLine.setUOM(uom);
     orderLine.setInvoicedQuantity(BigDecimal.ZERO);
@@ -374,7 +374,7 @@ public class TestUtility extends OBBaseTest {
     invoiceLine.setOrganization(org);
     invoiceLine.setClient(client);
     invoiceLine.setInvoice(invoice);
-    invoiceLine.setLineNo(new Long("10"));
+    invoiceLine.setLineNo(10L);
     invoiceLine.setProduct(product);
     invoiceLine.setUOM(uom);
     invoiceLine.setInvoicedQuantity(invoicedQuantity);

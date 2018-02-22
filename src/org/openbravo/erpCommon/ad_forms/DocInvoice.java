@@ -142,7 +142,7 @@ public class DocInvoice extends AcctServer {
       // Accruals & Deferrals for revenue products
       docLine.setIsDeferred("Y".equals(data[i].isdeferred));
       docLine.setDefPlanType(data[i].defplantype);
-      docLine.setPeriodNumber(!"".equals(data[i].periodnumber) ? new Integer(data[i].periodnumber)
+      docLine.setPeriodNumber(!"".equals(data[i].periodnumber) ? Integer.parseInt(data[i].periodnumber)
           : 0);
       docLine.setStartingPeriodId(data[i].cPeriodId);
 

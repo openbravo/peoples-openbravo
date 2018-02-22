@@ -325,8 +325,8 @@ public class ProjectMultiple extends HttpSecureAppServlet {
   private void printGridDataSelectedRows(HttpServletResponse response, VariablesSecureApp vars,
       String strKey, String strName, String strOrg, String strOrderCols, String strOrderDirs)
       throws IOException, ServletException {
-    int minOffset = new Integer(vars.getStringParameter("minOffset")).intValue();
-    int maxOffset = new Integer(vars.getStringParameter("maxOffset")).intValue();
+    int minOffset = Integer.parseInt(vars.getStringParameter("minOffset"));
+    int maxOffset = Integer.parseInt(vars.getStringParameter("maxOffset"));
     log4j.debug("Output: print page ids, minOffset: " + minOffset + ", maxOffset: " + maxOffset);
     String type = "Hidden";
     String title = "";

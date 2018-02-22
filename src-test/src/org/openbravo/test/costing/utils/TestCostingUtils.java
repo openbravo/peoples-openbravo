@@ -346,7 +346,7 @@ public class TestCostingUtils {
         for (String productBOMId : productIdList) {
           ProductBOM productBOMClone = OBProvider.getInstance().get(ProductBOM.class);
           setGeneralData(productBOMClone);
-          productBOMClone.setLineNo(new Long((i + 1) * 10));
+          productBOMClone.setLineNo((i + 1) * 10L);
           productBOMClone.setProduct(productClone);
           productBOMClone.setBOMProduct(OBDal.getInstance().get(Product.class, productBOMId));
           productBOMClone.setBOMQuantity(quantityList.get(i));
@@ -2219,7 +2219,7 @@ public class TestCostingUtils {
         }
 
         invoiceLine.setSalesOrderLine(orderLine);
-        invoiceLine.setLineNo(new Long((i + 1) * 10));
+        invoiceLine.setLineNo((i + 1) * 10L);
         invoiceLine.setInvoicedQuantity(orderLine.getOrderedQuantity());
 
         if (order.getOrderLineList().size() == 1) {
@@ -2299,7 +2299,7 @@ public class TestCostingUtils {
         }
 
         invoiceLine.setGoodsShipmentLine(movementLine);
-        invoiceLine.setLineNo(new Long((i + 1) * 10));
+        invoiceLine.setLineNo((i + 1) * 10L);
         invoiceLine.setInvoicedQuantity(movementLine.getMovementQuantity());
 
         if (movement.getMaterialMgmtShipmentInOutLineList().size() == 1) {
@@ -2385,7 +2385,7 @@ public class TestCostingUtils {
         }
 
         invoiceLine.setSalesOrderLine(orderLine);
-        invoiceLine.setLineNo(new Long((i + 1) * 10));
+        invoiceLine.setLineNo((i + 1) * 10L);
         invoiceLine.setInvoicedQuantity(quantityList.get(i));
         invoiceLine.setUnitPrice(priceList.get(i));
         invoiceLine.setListPrice(priceList.get(i));
@@ -2455,7 +2455,7 @@ public class TestCostingUtils {
         invoice.getMaterialMgmtShipmentInOutList().add(movement);
         invoiceLine.setProduct(movementLine.getProduct());
         invoiceLine.setGoodsShipmentLine(movementLine);
-        invoiceLine.setLineNo(new Long((i + 1) * 10));
+        invoiceLine.setLineNo((i + 1) * 10L);
         invoiceLine.setInvoicedQuantity(movementLine.getMovementQuantity());
         invoiceLine.setUnitPrice(priceList.get(i));
         invoiceLine.setListPrice(priceList.get(i));
@@ -2770,7 +2770,7 @@ public class TestCostingUtils {
             .setSalesOrderLine(order.getOrderLineList().get(0));
         movement.getMaterialMgmtShipmentInOutLineList().get(i).getOrderLineList()
             .add(order.getOrderLineList().get(0));
-        movement.getMaterialMgmtShipmentInOutLineList().get(i).setLineNo(new Long((i + 1) * 10));
+        movement.getMaterialMgmtShipmentInOutLineList().get(i).setLineNo((i + 1) * 10L);
         movement.getMaterialMgmtShipmentInOutLineList().get(i)
             .setMovementQuantity(order.getOrderLineList().get(0).getOrderedQuantity());
 
@@ -3047,7 +3047,7 @@ public class TestCostingUtils {
         landedCostCost.setLandedCostDistributionAlgorithm(OBDal.getInstance().get(
             LCDistributionAlgorithm.class, TestCostingConstants.LANDEDCOSTCOST_ALGORITHM_ID));
         landedCostCost.setAccountingDate(DateUtils.addDays(new Date(), day));
-        landedCostCost.setLineNo(new Long((i + 1) * 10));
+        landedCostCost.setLineNo((i + 1) * 10L);
         landedCostCost.setDocumentType(OBDal.getInstance().get(DocumentType.class,
             TestCostingConstants.LANDEDCOSTCOST_DOCUMENTTYPE_ID));
 
@@ -3110,7 +3110,7 @@ public class TestCostingUtils {
             LCDistributionAlgorithm.class, TestCostingConstants.LANDEDCOSTCOST_ALGORITHM_ID));
         landedCostCost.setCurrency(invoiceLine.getInvoice().getCurrency());
         landedCostCost.setAccountingDate(new Date());
-        landedCostCost.setLineNo(new Long((i + 1) * 10));
+        landedCostCost.setLineNo((i + 1) * 10L);
 
         landedCostCostList.add(landedCostCost);
         OBDal.getInstance().save(landedCostCost);
@@ -3851,7 +3851,7 @@ public class TestCostingUtils {
         assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getProduct(),
             physicalInventoryAssert.getProduct());
         assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getLineNo(),
-            new Long(10));
+            Long.valueOf(10L));
         assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
             .getDescription(), null);
         assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
@@ -4595,7 +4595,7 @@ public class TestCostingUtils {
           assertEquals(costAdjustmentLine.getCostAdjustment(), costAdjustment);
           assertEquals(costAdjustmentLine.getInventoryTransaction(),
               costAdjustmentAssertLine.getMaterialTransaction());
-          assertEquals(costAdjustmentLine.getLineNo(), new Long((j + 1) * 10));
+          assertEquals(costAdjustmentLine.getLineNo(), Long.valueOf((j + 1) * 10L));
 
           assertEquals(
               costAdjustmentLine.getAdjustmentAmount().setScale(2, RoundingMode.HALF_UP),

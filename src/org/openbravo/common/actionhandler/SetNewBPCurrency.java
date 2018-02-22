@@ -71,7 +71,7 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
       final String glItemId = params.getString("c_glitem_id");
       BigDecimal creditUsed = BigDecimal.ZERO;
       BigDecimal rate = BigDecimal.ZERO;
-      Double amount = new Double(0);
+      Double amount = 0d;
       if (strSetAmount && !"null".equals(strAmount)) {
         amount = Double.parseDouble(strAmount);
       }

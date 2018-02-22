@@ -392,8 +392,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
             && StringUtils.isEmpty(strShowReg) && StringUtils.isEmpty(strShowOpening)
             && StringUtils.isEmpty(strRecord)) {
 
-          int currentHistoryIndex = new Integer(
-              new VariablesHistory(request).getCurrentHistoryIndex()).intValue();
+          int currentHistoryIndex = Integer
+              .parseInt(new VariablesHistory(request).getCurrentHistoryIndex());
           String currentCommand = vars.getSessionValue("reqHistory.command" + currentHistoryIndex);
           if (StringUtils.equals(currentCommand, "DIRECT2")) {
             strFactAcctGroupId = vars.getGlobalVariable("inpFactAcctGroupId",

@@ -381,8 +381,8 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
       String strKey, String strName, String strContact, String strZIP, String strProvincia,
       String strBpartners, String strCity, String strOrderCols, String strOrderDirs)
       throws IOException, ServletException {
-    int minOffset = new Integer(vars.getStringParameter("minOffset")).intValue();
-    int maxOffset = new Integer(vars.getStringParameter("maxOffset")).intValue();
+    int minOffset = Integer.parseInt(vars.getStringParameter("minOffset"));
+    int maxOffset = Integer.parseInt(vars.getStringParameter("maxOffset"));
     log4j.debug("Output: print page ids, minOffset: " + minOffset + ", maxOffset: " + maxOffset);
     String type = "Hidden";
     String title = "";

@@ -735,9 +735,9 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
           parameters.put("LEVEL9_LABEL", strLevelLabel[8]);
           parameters.put("LEVEL10_LABEL", strLevelLabel[9]);
           parameters.put("LEVEL11_LABEL", strLevelLabel[10]);
-          parameters.put("DIMENSIONS", new Integer(intDiscard));
+          parameters.put("DIMENSIONS", intDiscard);
           parameters.put("REPORT_SUBTITLE", strTitle);
-          parameters.put("PRODUCT_LEVEL", new Integer(intProductLevel));
+          parameters.put("PRODUCT_LEVEL", intProductLevel);
           renderJR(vars, response, strReportPath, strOutput, parameters, data, null);
         }
       }

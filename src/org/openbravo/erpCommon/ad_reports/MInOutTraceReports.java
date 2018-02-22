@@ -56,7 +56,7 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     // Counter maintained as Vector to ensure thread safety
     Vector<Integer> count = new Vector<Integer>();
 
-    count.add(new Integer(0));
+    count.add(0);
     String strmProductIdGlobal = "";
     String strmAttributesetinstanceIdGlobal = "";
     Hashtable<String, Integer> calculated = new Hashtable<String, Integer>();
@@ -291,8 +291,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     int c = count.get(0).intValue();
     c += 1;
     count.removeAllElements();
-    count.add(new Integer(c));
-    calculated.put(strCalculated, new Integer(c));
+    count.add(c);
+    calculated.put(strCalculated, c);
 
     if (log4j.isDebugEnabled()) {
       log4j.debug("****** Hashtable.add: " + strCalculated);

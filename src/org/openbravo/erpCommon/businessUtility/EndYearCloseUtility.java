@@ -116,7 +116,7 @@ public class EndYearCloseUtility {
             log4j.debug("Output: Before buttonReg");
           String regCount = EndYearCloseUtilityData.getRegCount(conn, vars.getClient(),
               dataOrgs[i].org, acctSchema[j].id, strPediodId);
-          if (new Integer(regCount).intValue() > 0) {
+          if (Integer.parseInt(regCount) > 0) {
             throw new OBException(Utility.messageBD(conn, "RegularizationDoneAlready",
                 vars.getLanguage()));
           }
