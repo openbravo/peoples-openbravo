@@ -256,12 +256,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     }
 
     if (node == null) {
-      reInitialize();
-
-      node = orgNodes.get(orgId);
-      if (node == null) {
-        return result;
-      }
+      return result;
     }
 
     Set<String> childOrg = getChildOrg(orgId);
@@ -285,13 +280,9 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     initialize();
 
     OrgNode node = orgNodes.get(orgId);
-    if (node == null) {
-      reInitialize();
 
-      node = orgNodes.get(orgId);
-      if (node == null) {
-        return new HashSet<>(0);
-      }
+    if (node == null) {
+      return new HashSet<>(0);
     }
 
     Set<String> os = new HashSet<>(node.getChildren().size());
