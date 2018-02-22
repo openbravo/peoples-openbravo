@@ -259,12 +259,10 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       return result;
     }
 
-    Set<String> childOrg = getChildOrg(orgId);
+    Set<String> childOrgs = getChildOrg(orgId);
 
-    for (String co : childOrg) {
-      result.add(co);
-      childOrg = getChildTree(co, false);
-      result.addAll(childOrg);
+    for (String co : childOrgs) {
+      result.addAll(getChildTree(co, true));
     }
     return result;
   }
