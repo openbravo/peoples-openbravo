@@ -2926,7 +2926,7 @@
       var newline, me = this;
 
       function createLineAux(p, units, options, attrs, me) {
-        if (me.validateAllowSalesWithReturn(units, false)) {
+        if (me.validateAllowSalesWithReturn(units, ((options && options.allowLayawayWithReturn) || false))) {
           return;
         }
         // Get prices from BP pricelist 
@@ -3430,7 +3430,7 @@
           return true;
         }
       }
-      if (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true) && this.isLayaway() && qty < 0) {
+      if (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true) && this.isLayaway() && qty < 0 && !skipValidaton) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
         return true;
       }
