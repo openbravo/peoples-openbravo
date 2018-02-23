@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2017 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2018 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -1009,6 +1009,13 @@ IF (NOT FINISH_PROCESS) THEN
                         ELSE 'Y'
                      END)
               WHERE M_InOutLine_ID=Cur_ReactivateInvoiceLine.M_InOutLine_ID;
+              -- Update M_Inout isCompletelyInvoiced flag as No when reactivate the invoice.
+              UPDATE M_InOut
+              SET iscompletelyinvoiced = 'N'
+              WHERE iscompletelyinvoiced = 'Y'
+              AND M_INOUT_ID = (SELECT M_INOUT_ID 
+                                FROM M_INOUTLINE
+                                WHERE M_INOUTLINE_ID = Cur_ReactivateInvoiceLine.M_InOutLine_ID);
             END IF;
           END IF;
         END LOOP;
@@ -1810,6 +1817,24 @@ IF (NOT FINISH_PROCESS) THEN
         Updated=now(),
         UpdatedBy=v_UpdatedBy
     WHERE C_Invoice_ID=v_Record_ID;
+    -- Update M_Inout isCompletelyInvoiced flag as Yes when m_inoutline
+    -- associated with invoice line is completely invoiced. This flag is
+    -- used only in sales flow and shown in Goods Shipment Header.
+    IF(v_IsSOTrx='Y') THEN
+      UPDATE M_InOut
+      SET iscompletelyinvoiced = 'Y'
+      WHERE iscompletelyinvoiced = 'N'
+      AND NOT EXISTS (SELECT 1 FROM M_INOUTLINE l
+                      LEFT JOIN c_invoiceline il ON l.m_inoutline_id = il.m_inoutline_id
+                      LEFT JOIN c_invoice i ON il.c_invoice_id = i.c_invoice_id
+                      WHERE l.M_INOUT_ID = M_InOut.M_INOUT_ID
+                      GROUP BY l.m_inoutline_id, l.movementqty
+                      HAVING ( l.movementqty >= 0 AND l.movementqty > Sum(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0)) )
+                           OR ( l.movementqty < 0 AND l.movementqty < Sum(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0)) ) )
+      AND M_InOut.M_INOUT_ID IN (SELECT DISTINCT M_INOUT_ID
+                                 FROM M_INOUTLINE ML JOIN C_INVOICELINE IL ON IL.M_INOUTLINE_ID = ML.M_INOUTLINE_ID
+                                 WHERE IL.C_INVOICE_ID = v_Record_ID);
+    END IF;
   END IF;--FINISH_PROCESS
   IF (NOT FINISH_PROCESS) THEN
     -- End Processing --------------------------------------------------------

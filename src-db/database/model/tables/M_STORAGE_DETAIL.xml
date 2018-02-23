@@ -126,6 +126,7 @@
       </index>
       <index name="M_STORAGEDET_REFINVENTORY" unique="false">
         <index-column name="M_REFINVENTORY_ID"/>
+        <whereClause><![CDATA[M_REFINVENTORY_ID IS NOT NULL]]></whereClause>
       </index>
       <unique name="M_STORAGE_DETAIL_UN">
         <unique-column name="M_PRODUCT_ID"/>

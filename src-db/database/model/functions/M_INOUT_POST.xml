@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2017 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2018 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -1040,6 +1040,22 @@
           WHERE M_INOUT.M_INOUT_ID=Cur_InOut.M_INOUT_ID;
           --
           
+          -- Update M_Inout isCompletelyInvoiced flag as Yes when m_inoutline
+          -- associated with invoice line is completely invoiced. This flag is
+          -- used only in sales flow and shown in Goods Shipment Header.
+          IF(Cur_InOut.IsSOTrx='Y') THEN
+            UPDATE M_InOut
+            SET iscompletelyinvoiced = 'Y'
+            WHERE iscompletelyinvoiced = 'N'
+            AND NOT EXISTS (SELECT 1 FROM M_INOUTLINE l
+                            LEFT JOIN c_invoiceline il ON l.m_inoutline_id = il.m_inoutline_id
+                            LEFT JOIN c_invoice i ON il.c_invoice_id = i.c_invoice_id
+                      WHERE l.M_INOUT_ID = M_InOut.M_INOUT_ID
+                      GROUP BY l.m_inoutline_id, l.movementqty
+                      HAVING ( l.movementqty >= 0 AND l.movementqty > Sum(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0)) )
+                           OR ( l.movementqty < 0 AND l.movementqty < Sum(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0)) ) )
+            AND M_INOUT_ID = Cur_InOut.M_INOUT_ID;
+          END IF;
          
           -- Not Processed + Complete --
           /**

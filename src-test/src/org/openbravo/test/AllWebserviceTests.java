@@ -34,6 +34,7 @@ import org.openbravo.test.datasource.NonIdForeignKeyFilters;
 import org.openbravo.test.datasource.OrganizationSelectorDataSourceTest;
 import org.openbravo.test.datasource.OtherDatasourceRequests;
 import org.openbravo.test.datasource.ProductSelectorDataSourceTest;
+import org.openbravo.test.datasource.ResetCookieOnLogin;
 import org.openbravo.test.datasource.SelectorFieldPropertySelectorDSTest;
 import org.openbravo.test.datasource.SelectorPickListFieldsDataSourceTest;
 import org.openbravo.test.datasource.TestAllowUnpagedDatasourcePreference;
@@ -90,7 +91,8 @@ DataSourceWhereParameter.class, //
     UserInfoSessionDataTest.class, //
     LinkToParentTreeDataSourceTest.class, //
     OtherDatasourceRequests.class, //
-    NonIdForeignKeyFilters.class //
+    NonIdForeignKeyFilters.class, //
+    ResetCookieOnLogin.class //
 })
 public class AllWebserviceTests {
 }

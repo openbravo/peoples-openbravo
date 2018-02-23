@@ -94,13 +94,13 @@
 
   <structure name="structureErrorExceptionPage">
     <FIELD id="exceptionPageLocation">location</FIELD>
-    <FIELD id="exceptionType">exceptiontype</FIELD>
+    <FIELD id="exceptionType">value</FIELD>
     <SECTION id="errorExceptionPage"/>
   </structure>
 
   <structure name="structureErrorCodePage">
     <FIELD id="errorCodePageLocation">location</FIELD>
-    <FIELD id="errorCode">errorcode</FIELD>
+    <FIELD id="errorCode">value</FIELD>
     <SECTION id="errorCodePage"/>
   </structure>
 

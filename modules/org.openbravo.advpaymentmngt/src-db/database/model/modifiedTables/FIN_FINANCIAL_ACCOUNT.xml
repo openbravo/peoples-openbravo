@@ -37,5 +37,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_APRM_ISFUNDSTRANS_ENABLED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <check name="EM_APRM_FIN_FINACC_ISFUNDS_CHK"><![CDATA[EM_APRM_ISFUNDSTRANS_ENABLED IN ('Y', 'N')]]></check>
     </table>
   </database>

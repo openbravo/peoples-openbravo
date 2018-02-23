@@ -117,20 +117,6 @@
     </servlet-mapping>
   </FIELDS_TMP>
 
-  <mime-mapping>
-    <extension>wsdl</extension>
-    <mime-type>text/xml</mime-type>
-  </mime-mapping>
-  <mime-mapping>
-    <extension>xsd</extension>
-    <mime-type>text/xml</mime-type>
-  </mime-mapping>
-
-  <welcome-file-list id="WelcomeFileList">
-    <welcome-file>index.jsp</welcome-file>
-    <welcome-file>index.html</welcome-file>
-  </welcome-file-list>
-
   <FIELDS_TMP id="errorExceptionPage">
   <error-page>
     <exception-type><FIELD_TMP id="exceptionType">exception</FIELD_TMP></exception-type>
@@ -148,6 +134,20 @@
     <location><FIELD_TMP id="genericPageLocation">location</FIELD_TMP></location>
   </error-page>
   </FIELDS_TMP>
+  
+  <mime-mapping>
+    <extension>wsdl</extension>
+    <mime-type>text/xml</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>xsd</extension>
+    <mime-type>text/xml</mime-type>
+  </mime-mapping>
+
+  <welcome-file-list id="WelcomeFileList">
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
 
   <session-config>
     <session-timeout id="fieldSessionTimeOut">60</session-timeout>

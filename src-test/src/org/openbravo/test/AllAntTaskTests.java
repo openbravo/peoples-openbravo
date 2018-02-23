@@ -70,6 +70,7 @@ import org.openbravo.test.db.model.functions.SqlCallableStatement;
 import org.openbravo.test.expression.EvaluationTest;
 import org.openbravo.test.expression.OBBindingsTest;
 import org.openbravo.test.inventoryStatus.InventoryStatusTest;
+import org.openbravo.test.materialMgmt.iscompletelyinvoicedshipment.IsCompletelyInvoicedShipment;
 import org.openbravo.test.model.ClassLoaderTest;
 import org.openbravo.test.model.IndexesTest;
 import org.openbravo.test.model.OneToManyTest;
@@ -227,6 +228,9 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // Inventory Status
     InventoryStatusTest.class, //
+
+    // Material Management
+    IsCompletelyInvoicedShipment.class, //
 
     // scheduling
     ProcessSchedulingTest.class, //

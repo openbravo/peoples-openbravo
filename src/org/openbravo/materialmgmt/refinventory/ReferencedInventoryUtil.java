@@ -57,8 +57,11 @@ public class ReferencedInventoryUtil {
    * link it to the given referencedInventory
    */
   public static final AttributeSetInstance cloneAttributeSetInstance(
-      final AttributeSetInstance originalAttributeSetInstance,
+      final AttributeSetInstance _originalAttributeSetInstance,
       final ReferencedInventory referencedInventory) {
+    final AttributeSetInstance originalAttributeSetInstance = _originalAttributeSetInstance == null ? OBDal
+        .getInstance().get(AttributeSetInstance.class, "0") : _originalAttributeSetInstance;
+
     final AttributeSetInstance newAttributeSetInstance = (AttributeSetInstance) DalUtil.copy(
         originalAttributeSetInstance, false);
     newAttributeSetInstance.setClient(referencedInventory.getClient());

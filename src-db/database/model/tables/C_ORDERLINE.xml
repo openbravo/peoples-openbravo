@@ -396,6 +396,13 @@
         <index-column name="C_ORDER_ID"/>
         <index-column name="functionBasedColumn" functionExpression="OBEQUALS(QTYORDERED,QTYINVOICED)"/>
       </index>
+      <index name="C_ORDERLINE_ORDER2" unique="false">
+        <index-column name="C_ORDER_ID"/>
+        <index-column name="functionBasedColumn" functionExpression="OBEQUALS(QTYDELIVERED,QTYINVOICED)"/>
+      </index>
+      <index name="C_ORDERLINE_ORDERED_INVOICED" unique="false">
+        <index-column name="functionBasedColumn" functionExpression="OBEQUALS(QTYORDERED,QTYINVOICED)"/>
+      </index>
       <index name="C_ORDERLINE_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>

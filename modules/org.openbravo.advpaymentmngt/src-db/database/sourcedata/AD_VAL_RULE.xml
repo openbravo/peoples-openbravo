@@ -93,9 +93,10 @@
 <!--8CEAB789915E4575BDEB66F1930067BA-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--8CEAB789915E4575BDEB66F1930067BA-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--8CEAB789915E4575BDEB66F1930067BA-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--8CEAB789915E4575BDEB66F1930067BA-->  <NAME><![CDATA[Not selected FIN_Financial_Account]]></NAME>
+<!--8CEAB789915E4575BDEB66F1930067BA-->  <NAME><![CDATA[Not selected Financial Account with enabled Funds Transfer]]></NAME>
+<!--8CEAB789915E4575BDEB66F1930067BA-->  <DESCRIPTION><![CDATA[Validates that the financial account is not the same as the selected one and that it has the flag Funds Transfer enabled]]></DESCRIPTION>
 <!--8CEAB789915E4575BDEB66F1930067BA-->  <TYPE><![CDATA[HQL_JS]]></TYPE>
-<!--8CEAB789915E4575BDEB66F1930067BA-->  <CODE><![CDATA["e.id != '" + OB.getParameters().get('inpfinFinancialAccountId') + "'"]]></CODE>
+<!--8CEAB789915E4575BDEB66F1930067BA-->  <CODE><![CDATA["e.aprmIsfundstransEnabled = true and e.id != '" + OB.getParameters().get('inpfinFinancialAccountId') + "'"]]></CODE>
 <!--8CEAB789915E4575BDEB66F1930067BA-->  <AD_MODULE_ID><![CDATA[A918E3331C404B889D69AA9BFAFB23AC]]></AD_MODULE_ID>
 <!--8CEAB789915E4575BDEB66F1930067BA--></AD_VAL_RULE>
 

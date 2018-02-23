@@ -45,7 +45,8 @@ import org.slf4j.LoggerFactory;
 
 public class ProductCharacteristicValueEventHandler extends EntityPersistenceEventObserver {
   private static final int IMPORT_ENTRY_SIZE = 100;
-  protected Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static Logger logger = LoggerFactory
+      .getLogger(ProductCharacteristicValueEventHandler.class);
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       ProductCharacteristicValue.ENTITY_NAME) };
   private static ThreadLocal<Set<String>> prodchvalueUpdated = new ThreadLocal<Set<String>>();

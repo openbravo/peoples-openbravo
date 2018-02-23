@@ -26,8 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.process.FIN_TransactionProcess;
@@ -35,13 +34,13 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
+import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
-import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,6 +87,8 @@ public class FundsTransferActionHandler extends BaseProcessActionHandler {
       // Amount
       BigDecimal amount = new BigDecimal(jsonParams.getString("deposit_amount"));
 
+      String description = jsonParams.getString("description");
+
       // Conversion Rate
       BigDecimal manualConversionRate = null;
       if (accountFrom.getCurrency().getId().equalsIgnoreCase(accountTo.getCurrency().getId())) {
@@ -109,22 +110,22 @@ public class FundsTransferActionHandler extends BaseProcessActionHandler {
       }
 
       createTransfer(trxDate, accountFrom, accountTo, glitem, amount, manualConversionRate,
-          bankFeeFrom, bankFeeTo);
+          bankFeeFrom, bankFeeTo, description);
 
     } catch (OBException e) {
       log.error(ERROR_IN_PROCESS, e);
 
-      return createPopUpError(e.getMessage(), true);
+      return getResponseBuilder()
+          .showMsgInProcessView(MessageType.ERROR, OBMessageUtils.messageBD("error"),
+              e.getMessage(), true).retryExecution().build();
     } catch (Exception e) {
       log.error(ERROR_IN_PROCESS, e);
-
-      return createResponse(JsonConstants.RESPONSE_ERROR,
-          OBMessageUtils.messageBD("OBUIAPP_Error"), OBMessageUtils.messageBD("APRM_UnknownError"),
-          false);
+      return getResponseBuilder().showMsgInProcessView(MessageType.ERROR,
+          OBMessageUtils.messageBD("error"), OBMessageUtils.messageBD("APRM_UnknownError")).build();
     }
-
-    return createResponse("success", OBMessageUtils.messageBD("OBUIAPP_Success"),
-        OBMessageUtils.messageBD("APRM_TransferFundsSuccess"), true);
+    return getResponseBuilder()
+        .showMsgInProcessView(MessageType.SUCCESS, OBMessageUtils.messageBD("success"),
+            OBMessageUtils.messageBD("APRM_TransferFundsSuccess")).refreshGrid().build();
   }
 
   /**
@@ -150,9 +151,40 @@ public class FundsTransferActionHandler extends BaseProcessActionHandler {
   public static void createTransfer(Date date, FIN_FinancialAccount accountFrom,
       FIN_FinancialAccount accountTo, GLItem glitem, BigDecimal amount,
       BigDecimal manualConversionRate, BigDecimal bankFeeFrom, BigDecimal bankFeeTo) {
+    createTransfer(date, accountFrom, accountTo, glitem, amount, manualConversionRate, bankFeeFrom,
+        bankFeeTo);
+  }
+
+  /**
+   * Create all the transactions for a funds transfer between two accounts
+   * 
+   * @param date
+   *          used for the transactions, current date is used if this is null.
+   * @param accountFrom
+   *          source account.
+   * @param accountTo
+   *          target account.
+   * @param glitem
+   *          gl item used in transactions.
+   * @param amount
+   *          the transfer amount.
+   * @param manualConversionRate
+   *          conversion rate to override the system one.
+   * @param bankFeeFrom
+   *          fee on the source bank.
+   * @param bankFeeTo
+   *          fee on the target bank.
+   * @param description
+   *          description set by the user in the Funds Transfer Process.
+   */
+  public static void createTransfer(Date date, FIN_FinancialAccount accountFrom,
+      FIN_FinancialAccount accountTo, GLItem glitem, BigDecimal amount,
+      BigDecimal manualConversionRate, BigDecimal bankFeeFrom, BigDecimal bankFeeTo,
+      String description) {
     List<FIN_FinaccTransaction> transactions = new ArrayList<FIN_FinaccTransaction>();
     FIN_FinaccTransaction newTrx;
     Date trxDate = date;
+
     if (trxDate == null) {
       trxDate = new Date();
     }
@@ -164,21 +196,22 @@ public class FundsTransferActionHandler extends BaseProcessActionHandler {
 
       // Source Account
       FIN_FinaccTransaction sourceTrx = createTransaction(accountFrom, BP_WITHDRAWAL, trxDate,
-          glitem, amount, lineNoUtil);
+          glitem, amount, lineNoUtil, description);
       transactions.add(sourceTrx);
       if (bankFeeFrom != null && BigDecimal.ZERO.compareTo(bankFeeFrom) != 0) {
-        newTrx = createTransaction(accountFrom, BANK_FEE, trxDate, glitem, bankFeeFrom, lineNoUtil);
+        newTrx = createTransaction(accountFrom, BANK_FEE, trxDate, glitem, bankFeeFrom, lineNoUtil,
+            description);
         transactions.add(newTrx);
       }
 
       // Target Account
       newTrx = createTransaction(accountTo, BP_DEPOSIT, trxDate, glitem, targetAmount, lineNoUtil,
-          sourceTrx);
+          sourceTrx, description);
       transactions.add(newTrx);
 
       if (bankFeeTo != null && BigDecimal.ZERO.compareTo(bankFeeTo) != 0) {
         newTrx = createTransaction(accountTo, BANK_FEE, trxDate, glitem, bankFeeTo, lineNoUtil,
-            sourceTrx);
+            sourceTrx, description);
         transactions.add(newTrx);
       }
 
@@ -206,13 +239,15 @@ public class FundsTransferActionHandler extends BaseProcessActionHandler {
   }
 
   private static FIN_FinaccTransaction createTransaction(FIN_FinancialAccount account,
-      String trxType, Date trxDate, GLItem glitem, BigDecimal amount, LineNumberUtil lineNoUtil) {
-    return createTransaction(account, trxType, trxDate, glitem, amount, lineNoUtil, null);
+      String trxType, Date trxDate, GLItem glitem, BigDecimal amount, LineNumberUtil lineNoUtil,
+      String description) {
+    return createTransaction(account, trxType, trxDate, glitem, amount, lineNoUtil, null,
+        description);
   }
 
   private static FIN_FinaccTransaction createTransaction(FIN_FinancialAccount account,
       String trxType, Date trxDate, GLItem glitem, BigDecimal amount, LineNumberUtil lineNoUtil,
-      FIN_FinaccTransaction sourceTrx) {
+      FIN_FinaccTransaction sourceTrx, String description) {
     FIN_FinaccTransaction trx = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
 
     trx.setAccount(account);
@@ -232,7 +267,11 @@ public class FundsTransferActionHandler extends BaseProcessActionHandler {
     trx.setLineNo(line);
 
     trx.setAprmFinaccTransOrigin(sourceTrx);
-    trx.setDescription(OBMessageUtils.messageBD("FundsTransfer"));
+    if (StringUtils.isNotEmpty(description)) {
+      trx.setDescription(description);
+    } else {
+      trx.setDescription(OBMessageUtils.messageBD("FundsTransfer"));
+    }
 
     OBDal.getInstance().save(trx);
 
@@ -243,48 +282,6 @@ public class FundsTransferActionHandler extends BaseProcessActionHandler {
     for (FIN_FinaccTransaction trx : transactions) {
       FIN_TransactionProcess.doTransactionProcess(PROCESS_ACTION, trx);
     }
-  }
-
-  private JSONObject createPopUpError(String message, boolean retry) {
-    JSONObject result = new JSONObject();
-
-    try {
-      result.put("retryExecution", retry);
-      JSONObject msg = new JSONObject();
-      msg.put("severity", JsonConstants.RESPONSE_ERROR);
-      msg.put("text", message);
-      result.put("message", msg);
-    } catch (JSONException ignore) {
-      log.error(ERROR_IN_PROCESS, ignore);
-    }
-
-    return result;
-  }
-
-  private JSONObject createResponse(String type, String title, String message, boolean refresh) {
-    JSONObject result = new JSONObject();
-    JSONArray responseActions = new JSONArray();
-
-    try {
-      JSONObject showMessage = new JSONObject();
-      JSONObject msg = new JSONObject();
-      msg.put("msgType", type);
-      msg.put("msgTitle", title);
-      msg.put("msgText", message);
-      showMessage.put("showMsgInProcessView", msg);
-      responseActions.put(showMessage);
-
-      if (refresh) {
-        JSONObject refreshGrid = new JSONObject();
-        refreshGrid.put("refreshGrid", new JSONObject());
-        responseActions.put(refreshGrid);
-      }
-
-      result.put("responseActions", responseActions);
-    } catch (JSONException ignore) {
-      log.error(ERROR_IN_PROCESS, ignore);
-    }
-    return result;
   }
 
   /**

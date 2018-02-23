@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  Cheli Pineda__________________________.
  ************************************************************************
@@ -497,6 +497,7 @@
         AND s.AD_Client_ID IN ('1') 
         AND s.AD_Org_ID IN ('1')
         AND s.C_BPartner_ID = ?  
+        AND s.IsCompletelyInvoiced = 'N'
         AND EXISTS (SELECT 1 FROM M_INOUTLINE l 
                            left join c_orderline ol on l.c_orderline_id = ol.c_orderline_id
                            left join c_order o on ol.c_order_id = o.c_order_id
@@ -509,13 +510,10 @@
                     HAVING ( l.movementqty >= 0 AND l.movementqty > Sum(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0)) )
                       OR ( l.movementqty < 0 AND l.movementqty < Sum(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0)) )
                     )
-        AND NOT EXISTS (SELECT 1 FROM C_ORDER o WHERE o.C_ORDER_ID = s.C_ORDER_ID AND o.invoicerule = 'N')
         AND NOT EXISTS (SELECT 1
-        FROM C_ORDER o , C_ORDERLINE ol
+        FROM C_ORDER o
         WHERE o.C_ORDER_ID = s.C_ORDER_ID
-        AND o.C_ORDER_ID = ol.C_ORDER_ID
-        GROUP BY o.INVOICERULE
-        HAVING (o.INVOICERULE = 'O' AND SUM(ol.qtyordered) <> SUM(ol.qtydelivered)))
+        AND ((o.INVOICERULE = 'O' AND o.isdelivered = 'N') OR o.invoicerule = 'N'))
         ORDER BY NAME
       ]]>
     </Sql>
