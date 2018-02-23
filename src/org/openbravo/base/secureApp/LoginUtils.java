@@ -13,8 +13,10 @@ package org.openbravo.base.secureApp;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +30,7 @@ import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
@@ -36,6 +39,7 @@ import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.utility.DimensionDisplayUtility;
 import org.openbravo.erpCommon.utility.OBLedgerUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.domain.Preference;
@@ -255,10 +259,9 @@ public class LoginUtils {
     try {
       client = OBDal.getInstance().get(Client.class, strCliente);
       isAccountingDimensionConfigCentrally = client.isAcctdimCentrallyMaintained();
-      OrgTree tree = new OrgTree(conn, strCliente);
-      vars.setSessionObject("#CompleteOrgTree", tree);
-      OrgTree accessibleTree = tree.getAccessibleTree(conn, strRol);
-      vars.setSessionValue("#AccessibleOrgTree", accessibleTree.toString());
+
+      vars.setSessionValue("#AccessibleOrgTree",
+          StringCollectionUtils.commaSeparated(OBContext.getOBContext().getReadableOrganizations()));
     } catch (Exception e) {
       log4j.warn("Error while setting Organzation tree to session " + e);
       return false;
@@ -446,19 +449,7 @@ public class LoginUtils {
 
     String strWarehouse = DefaultOptionsData.defaultWarehouse(cp, strUserAuth);
     if (strWarehouse == null) {
-      if (!strRole.equals("0")) {
-        if (strOrg != null && !strOrg.isEmpty()) {
-          // Pick the warehouse using the default organization
-          strWarehouse = DefaultOptionsData.getDefaultWarehouse(cp, strClient, "'" + strOrg + "'");
-        }
-        if (strWarehouse == null || strWarehouse.isEmpty()) {
-          // If no warehouse for the default organization is available, pick using using the
-          // accessible tree
-          strWarehouse = DefaultOptionsData.getDefaultWarehouse(cp, strClient, new OrgTree(cp,
-              strClient).getAccessibleTree(cp, strRole).toString());
-        }
-      } else
-        strWarehouse = "";
+      strWarehouse = getDefaultWarehouse(cp, strClient, strOrg, strRole);
     }
     RoleDefaults defaults = new RoleDefaults();
     defaults.role = strRole;
@@ -622,7 +613,7 @@ public class LoginUtils {
    */
   public static String getDefaultWarehouse(ConnectionProvider connectionProvider, String strClient,
       String strOrg, String strRole) throws ServletException {
-
+    long t = System.currentTimeMillis();
     String strWarehouse;
     if (!strRole.equals("0")) {
       // Pick the warehouse using the given organization
@@ -631,15 +622,23 @@ public class LoginUtils {
       if (strWarehouse == null || strWarehouse.isEmpty()) {
         // If no warehouse for the default organization is available, pick using using the
         // accessible tree
-        strWarehouse = DefaultOptionsData.getDefaultWarehouse(
-            connectionProvider,
-            strClient,
-            new OrgTree(connectionProvider, strClient).getAccessibleTree(connectionProvider,
-                strRole).toString());
+
+        OrganizationStructureProvider osp = OBContext.getOBContext()
+            .getOrganizationStructureProvider(strClient);
+        Set<String> allAccessibleOrgs = new HashSet<>();
+
+        for (OrgTreeData org : OrgTreeData.select(connectionProvider, strRole)) {
+          if (!allAccessibleOrgs.contains(org.adOrgId)) {
+            allAccessibleOrgs.addAll(osp.getNaturalTree(org.adOrgId));
+          }
+        }
+        strWarehouse = DefaultOptionsData.getDefaultWarehouse(connectionProvider, strClient,
+            StringCollectionUtils.commaSeparated(allAccessibleOrgs));
       }
     } else {
       strWarehouse = "";
     }
+    log4j.debug("getDefaultWarehouse " + (System.currentTimeMillis() - t));
     return strWarehouse;
   }
 }

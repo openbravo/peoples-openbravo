@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,7 @@
 
 package org.openbravo.erpCommon.utility;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -37,6 +38,11 @@ public class StringCollectionUtils {
    */
   public static String commaSeparated(Collection<?> col) {
     return commaSeparated(col, true);
+  }
+
+  /** Equivalent to {@link #commaSeparated(Collection)} using an Array as parameter. */
+  public static String commaSeparated(Object[] col) {
+    return commaSeparated(Arrays.asList(col), true);
   }
 
   /**

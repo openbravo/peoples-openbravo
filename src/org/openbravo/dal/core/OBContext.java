@@ -686,14 +686,16 @@ public class OBContext implements OBNotSingleton {
   }
 
   private void setReadableOrganizations(Role role) {
-    final List<String> os = getActiveOrganizationList(role);
+    long t = System.currentTimeMillis();
+    final Set<String> os = new HashSet<>(getActiveOrganizationList(role));
     final Set<String> readableOrgs = new HashSet<String>();
-    for (final String o : os) {
-      readableOrgs.addAll(getOrganizationStructureProvider().getNaturalTree(o));
+    if (os.contains("0")) {
       // if zero is an organization then add them all!
-      if (o.equals("0")) {
-        for (final String org : getOrganizations(getCurrentClient())) {
-          readableOrgs.add(org);
+      readableOrgs.addAll(getOrganizations(getCurrentClient()));
+    } else {
+      for (final String o : os) {
+        if (!readableOrgs.contains(o)) {
+          readableOrgs.addAll(getOrganizationStructureProvider().getNaturalTree(o));
         }
       }
     }
@@ -703,6 +705,7 @@ public class OBContext implements OBNotSingleton {
     for (final String s : readableOrgs) {
       readableOrganizations[i++] = s;
     }
+    log.debug("setReadableOrganizations " + (System.currentTimeMillis() - t));
   }
 
   public Client getCurrentClient() {

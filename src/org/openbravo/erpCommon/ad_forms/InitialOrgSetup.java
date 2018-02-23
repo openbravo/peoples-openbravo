@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2010 Openbravo SLU
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,15 +27,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ModuleReferenceDataOrgTree;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -84,10 +85,12 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
           + "'");
       vars.setSessionValue("#ORG_CLIENT",
           vars.getSessionValue("#ORG_CLIENT") + ", '" + ios.getOrgId() + "'");
-      OrgTree tree = new OrgTree(this, vars.getClient());
-      vars.setSessionObject("#CompleteOrgTree", tree);
-      OrgTree accessibleTree = tree.getAccessibleTree(this, vars.getRole());
-      vars.setSessionValue("#AccessibleOrgTree", accessibleTree.toString());
+      OrganizationStructureProvider osp = OBContext.getOBContext()
+          .getOrganizationStructureProvider(vars.getClient());
+      osp.reInitialize();
+
+      vars.setSessionValue("#AccessibleOrgTree",
+          StringCollectionUtils.commaSeparated(OBContext.getOBContext().getReadableOrganizations()));
       printPageResult(response, vars, ios.getLog(), obeResult);
     } else if (vars.commandIn("CANCEL")) {
     } else

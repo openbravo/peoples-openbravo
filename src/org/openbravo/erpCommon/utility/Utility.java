@@ -65,7 +65,6 @@ import org.hibernate.Query;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
-import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.weld.WeldUtils;
@@ -487,7 +486,8 @@ public class Utility {
         try {
           window = org.openbravo.dal.service.OBDal.getInstance().get(Window.class, strWindow);
           if (window.getWindowType().equals("T")) {
-            String transactionalOrgs = OrgTree.getTransactionAllowedOrgs(retValue);
+            String transactionalOrgs = OBContext.getOBContext().getOrganizationStructureProvider()
+                .getTransactionAllowedOrgs(retValue);
             if (transactionalOrgs.equals(""))
               // Will show no organizations into the organization's field of the transactional
               // windows
@@ -553,8 +553,8 @@ public class Utility {
    * @return comma delimited Stirng of referenceable organizations.
    */
   public static String getReferenceableOrg(VariablesSecureApp vars, String currentOrg) {
-    final OrgTree tree = (OrgTree) vars.getSessionObject("#CompleteOrgTree");
-    return tree.getReferenceableOrganizations(currentOrg);
+    return StringCollectionUtils.commaSeparated(OBContext.getOBContext()
+        .getOrganizationStructureProvider().getNaturalTree(currentOrg));
   }
 
   /**
