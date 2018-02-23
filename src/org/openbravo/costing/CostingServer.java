@@ -121,9 +121,15 @@ public class CostingServer {
         transaction.setCurrency(currency);
         transaction.setCostCalculated(true);
         transaction.setCostingStatus("CC");
+        // Flush the changes in the Transaction to fire the Triggers in the database before creating
+        // the TransactionCost. If not done here, the Trigger for the TransactionCost will be
+        // launched before the one in the Transaction generating wrong data in some tables
+        OBDal.getInstance().flush();
         // insert on m_transaction_cost
         createTransactionCost();
         updateLastTransaction();
+        // Flush the changes in the TransactionCost and in the Transaction to fire the Triggers in
+        // the database before doing Cost Adjustments
         OBDal.getInstance().flush();
 
         setNotPostedTransaction();
