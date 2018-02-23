@@ -6272,7 +6272,7 @@
               }
             });
           } else {
-            OB.UTIL.showError(errorMsg);
+            OB.UTIL.showWarning(errorMsg);
           }
           if (errorCallback) {
             errorCallback();
