@@ -116,7 +116,7 @@ enyo.kind({
   name: 'OB.UI.NewCustomerButton',
   events: {
     onShowPopup: '',
-    onHideThisPopup: ''
+    onHideSelector: ''
   },
   disabled: false,
   style: 'width: 170px; margin: 0px 9px 8px 0px;',
@@ -136,17 +136,18 @@ enyo.kind({
     if (this.disabled) {
       return true;
     }
-    this.doHideThisPopup();
+    this.doHideSelector({
+      selectorHide: true
+    });
     var modalDlg = this.owner.owner.owner.owner.owner.owner,
-        navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(modalDlg.args.navigationPath, 'modalcustomer'),
-        cancelNavigationPath = modalDlg.args.cancelNavigationPath ? modalDlg.args.cancelNavigationPath : navigationPath;
+        navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(modalDlg.args.navigationPath, 'modalcustomer');
     this.doShowPopup({
       popup: 'customerCreateAndEdit',
       args: {
         businessPartner: null,
         target: modalDlg.target,
         navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(navigationPath, 'customerView'),
-        cancelNavigationPath: cancelNavigationPath
+        cancelNavigationPath: navigationPath
       }
     });
   },
