@@ -1175,6 +1175,7 @@ enyo.kind({
     if (this.disabled) {
       return true;
     }
+    enyo.$.scrim.show();
 
     if (isMultiOrder) {
       var receipts = this.owner.model.get('multiOrders').get('multiOrdersList').models;
@@ -1225,6 +1226,7 @@ enyo.kind({
         }
       });
       if (this.avoidCompleteReceipt) {
+        enyo.$.scrim.hide();
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel(errorMsgLbl));
         OB.UTIL.SynchronizationHelper.finished(synchId, "doneButton");
         return;

@@ -804,6 +804,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 });
               });
             });
+            enyo.$.scrim.hide();
             receipt.set('negativeDocNo', documentNo + '*R*');
             receipt.trigger('print');
           };
