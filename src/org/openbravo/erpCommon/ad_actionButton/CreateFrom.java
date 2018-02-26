@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2017 Openbravo SLU
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  Cheli Pineda__________________________.
  ************************************************************************
@@ -46,8 +46,8 @@ import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.utility.AccDefUtility;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.invoice.Invoice;
@@ -1891,15 +1891,15 @@ public class CreateFrom extends HttpSecureAppServlet {
             String strAumQty = "";
             if (UOMUtil.isUomManagementEnabled() && data[i].mProductUomId.isEmpty()) {
               try {
+                if (data[i].cAum.isEmpty()) {
+                  data[i].cAum = getDefaultAUMForData(data[i]);
+                }
+                if (data[i].aumqty.isEmpty()) {
+                  data[i].aumqty = getConvertedAUMQtyForData(data[i]);
+                }
                 BigDecimal qtyAum = new BigDecimal(data[i].aumqty);
                 strAumQty = qtyAum.toString();
                 strMovementqty = qtyAum.toString();
-                if (data[i].cAum.isEmpty()) {
-                  FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId,
-                      data[i].cDoctypeId);
-                  data[i].cAum = (defaultAumData.length > 0) ? defaultAumData[0]
-                      .getField(UOMUtil.FIELD_PROVIDER_ID) : data[i].cUomId;
-                }
                 if (!data[i].cUomId.equals(data[i].cAum)) {
                   strMovementqty = UOMUtil
                       .getConvertedQty(data[i].mProductId, qtyAum, data[i].cAum).toString();
@@ -2116,6 +2116,17 @@ public class CreateFrom extends HttpSecureAppServlet {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
     }
     return myMessage;
+  }
+
+  private String getConvertedAUMQtyForData(CreateFromShipmentData data) {
+    return UOMUtil.getConvertedAumQty(data.mProductId, new BigDecimal(data.id), data.cAum)
+        .toString();
+  }
+
+  private String getDefaultAUMForData(CreateFromShipmentData data) {
+    FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data.mProductId, data.cDoctypeId);
+    return (defaultAumData.length > 0) ? defaultAumData[0].getField(UOMUtil.FIELD_PROVIDER_ID)
+        : data.cUomId;
   }
 
   protected OBError saveShipmentSO(VariablesSecureApp vars, String strKey, String strTableId,
