@@ -178,7 +178,11 @@ public class AttributesUtils {
       }
       log.debug("Att Set (" + attSet.getIdentifier() + ") uses lot. lot value is -"
           + receivedAttSetInstanceDescription_parts[currentPart] + "-");
-      result += "L" + receivedAttSetInstanceDescription_parts[currentPart] + "_";
+      if (attSet.getLotControl() != null) {
+        result += receivedAttSetInstanceDescription_parts[currentPart] + "_";
+      } else {
+        result += "L" + receivedAttSetInstanceDescription_parts[currentPart] + "_";
+      }
       currentPart += 1;
     }
 
@@ -191,7 +195,11 @@ public class AttributesUtils {
       log.debug("Att Set (" + attSet.getIdentifier()
           + ") uses serialNo. It must be the first part ("
           + receivedAttSetInstanceDescription_parts[currentPart] + ")");
-      result += "#" + receivedAttSetInstanceDescription_parts[currentPart] + "_";
+      if (attSet.getSerialNoControl() != null) {
+        result += receivedAttSetInstanceDescription_parts[currentPart] + "_";
+      } else {
+        result += "#" + receivedAttSetInstanceDescription_parts[currentPart] + "_";
+      }
       currentPart += 1;
     }
 
