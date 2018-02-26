@@ -60,7 +60,6 @@
     v_refInventoryId M_AttributeSetInstance.M_REFINVENTORY_ID%TYPE;
     v_refInvValue M_REFINVENTORY.VALUE%TYPE;
     v_locatorValue M_LOCATOR.VALUE%TYPE;
-    v_isRefInventoryMovement CHAR(1);
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || PInstance_ID) ;
@@ -313,31 +312,27 @@
           --It has been validated before that the quantity to be moved is positive or that the locator to allows negative stock
           --If the Locator to has already negative stock before this transaction, the goods movement should not be stopped
 
-          v_isRefInventoryMovement:=CASE WHEN Cur_MoveLine.M_AttributeSetInstanceTo_ID IS NOT NULL AND COALESCE(cur_moveline.m_attributesetinstance_id, '0') <> Cur_MoveLine.M_AttributeSetInstanceTo_ID THEN 'Y' ELSE 'N' END;
-          IF (v_isRefInventoryMovement='Y') THEN -- Referenced Inventory
-            -- Linked Referenced Inventory must be in just one locator
-            SELECT M_REFINVENTORY_ID INTO v_refInventoryId
+          SELECT M_REFINVENTORY_ID INTO v_refInventoryId
             FROM M_AttributeSetInstance
             WHERE M_AttributeSetInstance_ID = COALESCE(Cur_MoveLine.M_AttributeSetInstanceTo_ID, Cur_MoveLine.M_AttributeSetInstance_ID, '0');
-            IF (v_refInventoryId IS NOT NULL) THEN
-              BEGIN
-                SELECT M_REFINVENTORY.VALUE, M_LOCATOR.VALUE
-                INTO v_refInvValue, v_locatorValue
-                FROM M_STORAGE_DETAIL
-                JOIN M_LOCATOR on (M_STORAGE_DETAIL.M_LOCATOR_ID = M_LOCATOR.M_LOCATOR_ID)
-                JOIN M_REFINVENTORY on (M_STORAGE_DETAIL.M_REFINVENTORY_ID = M_REFINVENTORY.M_REFINVENTORY_ID)
-                WHERE M_STORAGE_DETAIL.M_REFINVENTORY_ID = v_refInventoryId
-                AND M_STORAGE_DETAIL.QTYONHAND > 0
-                AND M_STORAGE_DETAIL.M_LOCATOR_ID <> Cur_MoveLine.M_LocatorTo_ID;
-                IF (v_locatorValue IS NOT NULL) THEN
-                  RAISE_APPLICATION_ERROR(-20000, v_refInvValue || '@ReferencedInventoryInOtherBin@' || v_locatorValue) ;
-                END IF;
-              EXCEPTION
-              WHEN NO_DATA_FOUND THEN
-                v_locatorValue:=null; -- Hack for Oracle to control exception
-              END;
-            END IF;
-          END IF; -- Referenced Inventory
+          IF (v_refInventoryId IS NOT NULL) THEN -- Referenced Inventory involved: box action or movement of a box. For unbox there is no need to check this.
+            BEGIN
+              SELECT M_REFINVENTORY.VALUE, M_LOCATOR.VALUE
+              INTO v_refInvValue, v_locatorValue
+              FROM M_STORAGE_DETAIL
+              JOIN M_LOCATOR on (M_STORAGE_DETAIL.M_LOCATOR_ID = M_LOCATOR.M_LOCATOR_ID)
+              JOIN M_REFINVENTORY on (M_STORAGE_DETAIL.M_REFINVENTORY_ID = M_REFINVENTORY.M_REFINVENTORY_ID)
+              WHERE M_STORAGE_DETAIL.M_REFINVENTORY_ID = v_refInventoryId
+              AND M_STORAGE_DETAIL.QTYONHAND > 0
+              AND M_STORAGE_DETAIL.M_LOCATOR_ID <> Cur_MoveLine.M_LocatorTo_ID;
+              IF (v_locatorValue IS NOT NULL) THEN
+                RAISE_APPLICATION_ERROR(-20000, v_refInvValue || '@ReferencedInventoryInOtherBin@' || v_locatorValue) ;
+              END IF;
+            EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+              v_locatorValue:=null; -- Hack for Oracle to control exception
+            END;
+          END IF; -- Referenced Inventory involved: box action or movement of a box.
         END LOOP;
       END; -- FOR COMMIT
     END IF;--END_PROCESS
