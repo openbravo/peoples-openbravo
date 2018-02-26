@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2017 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,14 +19,11 @@
 package org.openbravo.client.application.report;
 
 import java.io.File;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -51,21 +48,16 @@ import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.utility.FileType;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.uiTranslation.TranslationHandler;
-import org.openbravo.utils.Replace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
-import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JRDesignParameter;
-import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.HtmlExporter;
 import net.sf.jasperreports.engine.export.JRCsvExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
@@ -75,7 +67,6 @@ import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRSwapFile;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.export.SimpleCsvReportConfiguration;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleHtmlExporterOutput;
@@ -115,6 +106,7 @@ public class ReportingUtils {
   private static final float TEXT_CHAR_HEIGHT = 10;
   private static final float TEXT_CHAR_WIDTH = 10;
   private static final Logger log = LoggerFactory.getLogger(ReportingUtils.class);
+  private static JasperReportCache reportCache = JasperReportCache.getInstance();
 
   /**
    * @see ReportingUtils#exportJR(String, ExportType, Map, File, boolean, ConnectionProvider,
@@ -980,14 +972,23 @@ public class ReportingUtils {
       }
 
       if (jasperFilePath.endsWith("jrxml")) {
-        String strBaseDesign = getBaseDesignPath();
-        JasperReport jReport = getTranslatedJasperReport(
-            DalConnectionProvider.getReadOnlyConnectionProvider(), jasperFilePath, language,
-            strBaseDesign);
+        JasperReport jReport = reportCache.getReport(jasperFilePath, language);
+        if (jReport == null) {
+          JasperReportCompiler reportCompiler = new JasperReportCompiler(
+              DalConnectionProvider.getReadOnlyConnectionProvider(), jasperFilePath, language);
+          jReport = reportCompiler.compileReport();
+          if (compileSubreports && connectionProvider != null) {
+            reportCache.put(jasperFilePath, language, jReport,
+                reportCompiler.compileSubReports(connectionProvider));
+          } else {
+            reportCache.put(jasperFilePath, language, jReport);
+          }
+        }
         if (connectionProvider != null) {
           if (compileSubreports) {
-            processSubReports(jasperFilePath, parameters, strBaseDesign, connectionProvider,
+            Map<String, JasperReport> subReports = reportCache.getSubReports(jasperFilePath,
                 language);
+            parameters.putAll(subReports);
           }
           Connection con = null;
           try {
@@ -1028,85 +1029,6 @@ public class ReportingUtils {
   }
 
   /**
-   * Generates sub-reports and adds them into the parameter map.
-   * 
-   * @param templateFile
-   *          The path to the JR template of the report.
-   * @param parameters
-   *          The parameters to be sent to Jasper Report.
-   * @param baseDesignPath
-   *          Base design path.
-   * @param connectionProvider
-   *          A connection provider in case the report needs it.
-   * @param language
-   *          Language to be used when generating the sub-report.
-   * @throws OBException
-   *           In case there is any error generating the sub-reports an exception is thrown with the
-   *           error message.
-   */
-  private static void processSubReports(String templateFile, Map<String, Object> parameters,
-      String baseDesignPath, ConnectionProvider connectionProvider, String language)
-      throws OBException {
-    try {
-      JasperDesign jasperDesign = JRXmlLoader.load(templateFile);
-
-      Object[] parameterList = jasperDesign.getParametersList().toArray();
-      String parameterName = "";
-      String subReportName = "";
-      Collection<String> subreportList = new ArrayList<String>();
-      File template = new File(templateFile);
-      String templateLocation = template.getParent() + "/";
-
-      /*
-       * TODO: At present this process assumes the subreport is a .jrxml file. Need to handle the
-       * possibility that this subreport file could be a .jasper file.
-       */
-      for (int i = 0; i < parameterList.length; i++) {
-        final JRDesignParameter parameter = (JRDesignParameter) parameterList[i];
-        if (parameter.getName().startsWith("SUBREP_")) {
-          parameterName = parameter.getName();
-          subreportList.add(parameterName);
-          subReportName = Replace.replace(parameterName, "SUBREP_", "") + ".jrxml";
-          JasperReport jasperReportLines = createSubReport(templateLocation, subReportName,
-              baseDesignPath, connectionProvider, language);
-          parameters.put(parameterName, jasperReportLines);
-        }
-      }
-
-    } catch (final JRException e) {
-      log.error("Error processing subreports for template: " + templateFile, e);
-      throw new OBException(e.getMessage(), e);
-    }
-  }
-
-  /**
-   * Create a translated and compiled sub-report into a JasperReport object.
-   * 
-   * @param templateLocation
-   *          The location of the JR template of the sub-report.
-   * @param subReportFileName
-   *          The name of the sub-report jrxml file.
-   * @param baseDesignPath
-   *          Base design path.
-   * @param connectionProvider
-   *          A connection provider in case the report needs it.
-   * @param language
-   *          Language to be used when generating the sub-report.
-   * @return A JasperReport object with the compiled and translated sub-report.
-   */
-  private static JasperReport createSubReport(String templateLocation, String subReportFileName,
-      String baseDesignPath, ConnectionProvider connectionProvider, String language) {
-    JasperReport jasperReportLines = null;
-    try {
-      jasperReportLines = getTranslatedJasperReport(connectionProvider, templateLocation
-          + subReportFileName, language, baseDesignPath);
-    } catch (final JRException e) {
-      log.error("Error generating subreport: " + subReportFileName, e);
-    }
-    return jasperReportLines;
-  }
-
-  /**
    * Generates a compiled and translated report to the language passed as parameter.
    * 
    * @param conn
@@ -1124,28 +1046,13 @@ public class ReportingUtils {
    */
   public static JasperReport getTranslatedJasperReport(ConnectionProvider conn, String reportName,
       String language, String baseDesignPath) throws JRException {
-
-    log.debug("translate report: " + reportName + " for language: " + language);
-
-    File reportFile = new File(reportName);
-
-    InputStream reportInputStream = null;
-    if (reportFile.exists()) {
-      TranslationHandler handler = new TranslationHandler(conn);
-      handler.prepareFile(reportName, language, reportFile, baseDesignPath);
-      reportInputStream = handler.getInputStream();
+    JasperReport jasperReport = reportCache.getReport(reportName, language);
+    if (jasperReport != null) {
+      return jasperReport;
     }
-    JasperDesign jasperDesign;
-    if (reportInputStream != null) {
-      log.debug("Jasper report being created with inputStream.");
-      jasperDesign = JRXmlLoader.load(reportInputStream);
-    } else {
-      log.debug("Jasper report being created with strReportName.");
-      jasperDesign = JRXmlLoader.load(reportName);
-    }
-
-    JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
-
+    JasperReportCompiler reportCompiler = new JasperReportCompiler(conn, reportName, language);
+    jasperReport = reportCompiler.compileReport();
+    reportCache.put(reportName, language, jasperReport);
     return jasperReport;
   }
 
@@ -1160,8 +1067,13 @@ public class ReportingUtils {
    *           message.
    */
   public static JasperReport compileReport(String jasperFilePath) throws JRException {
-    JasperDesign jasperDesign = JRXmlLoader.load(jasperFilePath);
-    JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+    JasperReport jasperReport = reportCache.getReport(jasperFilePath);
+    if (jasperReport != null) {
+      return jasperReport;
+    }
+    JasperReportCompiler reportCompiler = new JasperReportCompiler(jasperFilePath);
+    jasperReport = reportCompiler.compileReport();
+    reportCache.put(jasperFilePath, jasperReport);
     return jasperReport;
   }
 
@@ -1586,10 +1498,5 @@ public class ReportingUtils {
       base = "/" + base;
     }
     return base + "/" + design;
-  }
-
-  private static String getBaseDesignPath() {
-    ServletContext servletContext = DalContextListener.getServletContext();
-    return servletContext.getRealPath(getBaseDesign());
   }
 }
