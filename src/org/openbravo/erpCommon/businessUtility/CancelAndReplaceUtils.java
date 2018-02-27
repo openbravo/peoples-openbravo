@@ -455,6 +455,9 @@ public class CancelAndReplaceUtils {
       if (nettingGoodsShipment != null) {
         processShipmentHeader(nettingGoodsShipment);
       }
+      if (!triggersDisabled) {
+        callCOrderTaxAdjustment(inverseOrder);
+      }
 
       // Close inverse order
       inverseOrder.setDocumentStatus("CL");
@@ -526,6 +529,15 @@ public class CancelAndReplaceUtils {
     parameters.add(null);
     parameters.add(order.getId());
     final String procedureName = "c_order_post1";
+    CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
+  }
+
+  private static void callCOrderTaxAdjustment(Order order) throws OBException {
+    final List<Object> parameters = new ArrayList<Object>();
+    parameters.add(order.getId());
+    parameters.add(2);
+    parameters.add("CO");
+    final String procedureName = "C_ORDERTAX_ADJUSTMENT";
     CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
   }
 
@@ -1446,8 +1458,8 @@ public class CancelAndReplaceUtils {
   }
 
   /**
-   * Method to check if during the C&amp;R process the shipment lines must be moved from the old order
-   * to the new order.
+   * Method to check if during the C&amp;R process the shipment lines must be moved from the old
+   * order to the new order.
    * 
    * @param order
    *          The order that is being canceled.
