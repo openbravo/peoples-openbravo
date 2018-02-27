@@ -357,7 +357,7 @@
         l.M_PRODUCT_UOM_ID,l.M_ATTRIBUTESETINSTANCE_ID,  coalesce(l.a_asset_id,i.a_asset_id), coalesce(l.c_project_id,i.c_project_id), 
         l.AUMQTY, l.C_AUM, 
         coalesce(l.c_costcenter_id,i.c_costcenter_id) , 
-        coalesce(l.user1_id,i.user1_id) , coalesce(l.user2_id, i.user2_id), l.c_bpartner_id, l.explode, l.bom_parent_id
+        coalesce(l.user1_id,i.user1_id) , coalesce(l.user2_id, i.user2_id), l.c_bpartner_id, l.explode, l.bom_parent_id, i.C_DOCTYPE_ID
         HAVING ((l.explode='Y')  OR (l.QtyInvoiced-SUM(COALESCE(mi.Qty,0))<>0))   
         ORDER BY NAME, l.Line
       ]]>
