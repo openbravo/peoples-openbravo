@@ -47,4 +47,9 @@ public class CheckProcessingMessage extends JSONProcessSimple {
     return result;
   }
 
+  @Override
+  protected String getProperty() {
+    return "OBMOBC_SynchronizedMode";
+  }
+
 }

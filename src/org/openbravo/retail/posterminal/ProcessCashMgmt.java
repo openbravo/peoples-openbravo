@@ -220,7 +220,7 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
 
   @Override
   protected String getProperty() {
-    return "";
+    return "OBPOS_retail.cashmanagement";
   }
 
   protected void executeHooks(Instance<? extends Object> hooks, JSONObject jsonsent, String type,

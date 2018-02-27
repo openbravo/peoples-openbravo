@@ -137,4 +137,9 @@ public class Payments extends JSONTerminalProperty {
     return "payments";
   }
 
+  @Override
+  protected boolean bypassPreferenceCheck() {
+    return true;
+  }
+
 }
