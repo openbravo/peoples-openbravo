@@ -2120,7 +2120,7 @@
           });
         }
 
-        if (p.get('obposScale')) {
+        if (p.get('obposScale') && !options.isVerifiedReturn) {
           OB.POS.hwserver.getWeight(function (data) {
             if (data.exception) {
               OB.UTIL.showConfirmation.display('', data.exception.message);
