@@ -20,8 +20,6 @@ package org.openbravo.client.application.report;
 
 import java.io.File;
 import java.io.OutputStream;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
@@ -56,7 +54,6 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.export.HtmlExporter;
@@ -955,78 +952,57 @@ public class ReportingUtils {
   public static JasperPrint generateJasperPrint(String jasperFilePath,
       Map<String, Object> parameters, boolean compileSubreports,
       ConnectionProvider connectionProvider, JRDataSource data) throws OBException {
-
-    JasperPrint jasperPrint = null;
-    String language = OBContext.getOBContext().getLanguage().getLanguage();
     try {
       setReportFormatFactory(parameters);
-      if (log.isDebugEnabled()) {
-        log.debug("list of parameters available in the jasper report");
-        for (Iterator<String> keys = parameters.keySet().iterator(); keys.hasNext();) {
-          String key = keys.next();
-          String value = "null";
-          if (parameters.get(key) != null) {
-            value = parameters.get(key).toString();
-          }
-          log.debug("parameter name: " + key + " value: " + value);
-        }
-      }
+      logJasperReportParameters(parameters);
 
-      if (jasperFilePath.endsWith("jrxml")) {
-        JasperReport jReport = reportCache.getReport(jasperFilePath, language);
-        Map<String, JasperReport> subReports = null;
-        if (jReport == null) {
-          JasperReportCompiler reportCompiler = new JasperReportCompiler(
-              DalConnectionProvider.getReadOnlyConnectionProvider(), jasperFilePath, language);
-          jReport = reportCompiler.compileReport();
-          if (compileSubreports && connectionProvider != null) {
-            subReports = reportCompiler.compileSubReports(connectionProvider);
-            reportCache.put(jasperFilePath, language, jReport, subReports);
-          } else {
-            reportCache.put(jasperFilePath, language, jReport);
-          }
+      String language = OBContext.getOBContext().getLanguage().getLanguage();
+      JasperReport jReport = reportCache.getReport(jasperFilePath, language);
+      Map<String, JasperReport> subReports = null;
+      if (jReport == null) {
+        JasperReportCompiler reportCompiler = new JasperReportCompiler(
+            DalConnectionProvider.getReadOnlyConnectionProvider(), jasperFilePath, language);
+        jReport = reportCompiler.compileReport();
+        if (compileSubreports && connectionProvider != null) {
+          subReports = reportCompiler.compileSubReports(connectionProvider);
+          reportCache.put(jasperFilePath, language, jReport, subReports);
         } else {
-          subReports = reportCache.getSubReports(jasperFilePath, language);
-        }
-        if (connectionProvider != null) {
-          if (subReports != null) {
-            parameters.putAll(subReports);
-          }
-          Connection con = null;
-          try {
-            con = connectionProvider.getTransactionConnection();
-            if (data != null) {
-              parameters.put("REPORT_CONNECTION", con);
-              jasperPrint = JasperFillManager.fillReport(jReport, parameters, data);
-            } else {
-              jasperPrint = JasperFillManager.fillReport(jReport, parameters, con);
-            }
-          } catch (final Exception e) {
-            Throwable t = (e.getCause() != null) ? e.getCause().getCause() : null;
-            if (t != null) {
-              throw new OBException((t instanceof SQLException && t.getMessage().contains(
-                  "@NoConversionRate@")) ? t.getMessage() : e.getMessage(), e);
-            } else {
-              throw new OBException(e.getCause() instanceof SQLException ? e.getCause()
-                  .getMessage() : e.getMessage(), e);
-            }
-          } finally {
-            try {
-              connectionProvider.releaseRollbackConnection(con);
-            } catch (SQLException e) {
-            }
-          }
-        } else {
-          jasperPrint = JasperFillManager.fillReport(jReport, parameters, OBDal
-              .getReadOnlyInstance().getConnection());
+          reportCache.put(jasperFilePath, language, jReport);
         }
       } else {
-        jasperPrint = JasperFillManager.fillReport(jasperFilePath, parameters);
+        subReports = reportCache.getSubReports(jasperFilePath, language);
       }
-      return jasperPrint;
+
+      if (subReports != null) {
+        parameters.putAll(subReports);
+      }
+
+      JasperReportFiller reportFiller = new JasperReportFiller(jasperFilePath, jReport, parameters);
+      if (connectionProvider != null) {
+        reportFiller.setConnectionProvider(connectionProvider);
+      }
+      if (data != null) {
+        reportFiller.setJRDataSource(data);
+      }
+      return reportFiller.fillReport();
     } catch (JRException e) {
       log.error("Error generating Jasper Report {}", jasperFilePath, e);
       throw new OBException(e.getMessage(), e);
+    }
+  }
+
+  private static void logJasperReportParameters(Map<String, Object> parameters) {
+    if (!log.isDebugEnabled()) {
+      return;
+    }
+    log.debug("list of parameters available in the jasper report");
+    for (Iterator<String> keys = parameters.keySet().iterator(); keys.hasNext();) {
+      String key = keys.next();
+      String value = "null";
+      if (parameters.get(key) != null) {
+        value = parameters.get(key).toString();
+      }
+      log.debug("parameter name: {}, value: {}", key, value);
     }
   }
 
