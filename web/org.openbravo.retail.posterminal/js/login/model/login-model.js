@@ -504,6 +504,7 @@
             }
           } else if (data && (data.isLinked === false || data.terminalAuthentication)) {
             if (data.isLinked === false) {
+              OB.info('POS Terminal configuration is not linked to a device anymore. Remove terminalKeyIdentifier from localStorage');
               OB.UTIL.localStorage.removeItem('terminalName');
               OB.UTIL.localStorage.removeItem('terminalKeyIdentifier');
             }
@@ -655,6 +656,7 @@
               OB.error("renderMain", OB.I18N.getLabel('OBPOS_TerminalAuthError'));
             } else if (data && (data.isLinked === false || data.terminalAuthentication)) {
               if (data.isLinked === false) {
+                OB.info('POS Terminal configuration is not linked to a device anymore. Remove terminalKeyIdentifier from localStorage');
                 OB.UTIL.localStorage.removeItem('terminalName');
                 OB.UTIL.localStorage.removeItem('terminalKeyIdentifier');
               }
@@ -1323,11 +1325,13 @@
         }
         if (OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' && inResponse.terminalAuthentication === 'N') {
           if (OB.UTIL.localStorage.getItem('terminalKeyIdentifier')) {
+            OB.info('Terminal Authentication has been disabled. Remove terminalKeyIdentifier from localStorage');
             OB.UTIL.localStorage.removeItem('terminalKeyIdentifier');
           }
         }
         OB.UTIL.localStorage.setItem('terminalAuthentication', inResponse.terminalAuthentication);
         if (!(OB.UTIL.localStorage.getItem('cacheSessionId') && OB.UTIL.localStorage.getItem('cacheSessionId').length === 32)) {
+          OB.info('cacheSessionId is not defined and we will set the id generated in the backend: ' + inResponse.cacheSessionId);
           OB.UTIL.localStorage.setItem('cacheSessionId', inResponse.cacheSessionId);
           OB.UTIL.localStorage.setItem('LastCacheGeneration', new Date().getTime());
         }
