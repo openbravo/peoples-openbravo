@@ -132,21 +132,38 @@ class JasperReportCompiler {
     if (!reportFile.exists()) {
       throw new JRException(reportPath + " (No such jasper template file)");
     }
-    if (language == null || provider == null) {
-      return JRXmlLoader.load(reportPath);
+    if (language != null && provider != null) {
+      log.debug("Translating report {} for language {}", reportPath, language);
+      TranslationHandler handler = new TranslationHandler(provider);
+      handler.prepareFile(reportPath, language, reportFile, baseDesignPath);
+      InputStream reportInputStream = handler.getInputStream();
+      if (reportInputStream != null) {
+        return parseJRXml(reportInputStream);
+      }
     }
-    log.debug("translate report {} for language {}", reportPath, language);
-    TranslationHandler handler = new TranslationHandler(provider);
-    handler.prepareFile(reportPath, language, reportFile, baseDesignPath);
-    InputStream reportInputStream = handler.getInputStream();
-    if (reportInputStream != null) {
-      log.debug("Jasper report being created with inputStream.");
-      return JRXmlLoader.load(reportInputStream);
-    }
-    return JRXmlLoader.load(reportPath);
+    return parseJRXml(reportPath);
+  }
+
+  private JasperDesign parseJRXml(InputStream reportInputStream) throws JRException {
+    long t = System.currentTimeMillis();
+    JasperDesign design = JRXmlLoader.load(reportInputStream);
+    log.debug("Report {} parsed using an InputStream in {} ms", design.getName(),
+        (System.currentTimeMillis() - t));
+    return design;
+  }
+
+  private JasperDesign parseJRXml(String reportPath) throws JRException {
+    long t = System.currentTimeMillis();
+    JasperDesign design = JRXmlLoader.load(reportPath);
+    log.debug("Report {} parsed in {} ms", design.getName(), (System.currentTimeMillis() - t));
+    return design;
   }
 
   private JasperReport compileJasperReport(JasperDesign jasperDesign) throws JRException {
-    return JasperCompileManager.compileReport(jasperDesign);
+    long t = System.currentTimeMillis();
+    JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+    log.debug("Report {} compiled in {} ms", jasperDesign.getName(),
+        (System.currentTimeMillis() - t));
+    return jasperReport;
   }
 }
