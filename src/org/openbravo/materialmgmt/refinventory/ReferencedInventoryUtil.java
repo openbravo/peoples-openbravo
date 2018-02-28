@@ -27,12 +27,15 @@ import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
 import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
@@ -73,6 +76,33 @@ public class ReferencedInventoryUtil {
             newAttributeSetInstance.getDescription(), referencedInventory));
     OBDal.getInstance().save(newAttributeSetInstance);
     return newAttributeSetInstance;
+  }
+
+  /**
+   * Returns an AttributeSetInstance previously created from the given _originalAttributeSetInstance
+   * and referenced inventory. If not found returns null.
+   */
+  public static final AttributeSetInstance getAlreadyClonedAttributeSetInstance(
+      final AttributeSetInstance _originalAttributeSetInstance,
+      final ReferencedInventory referencedInventory) {
+    try {
+      OBContext.setAdminMode(true);
+      final AttributeSetInstance originalAttributeSetInstance = _originalAttributeSetInstance == null ? OBDal
+          .getInstance().getProxy(AttributeSetInstance.class, "0") : _originalAttributeSetInstance;
+
+      final OBCriteria<AttributeSetInstance> criteria = OBDao.getFilteredCriteria(
+          AttributeSetInstance.class, Restrictions.eq(
+              AttributeSetInstance.PROPERTY_PARENTATTRIBUTESETINSTANCE + ".id",
+              originalAttributeSetInstance.getId()), Restrictions.eq(
+              AttributeSetInstance.PROPERTY_REFERENCEDINVENTORY + ".id",
+              referencedInventory.getId()));
+      criteria.setMaxResults(1);
+      return criteria.list().get(0);
+    } catch (final Exception notFound) {
+      return null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**

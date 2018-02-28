@@ -20,6 +20,8 @@
 package org.openbravo.materialmgmt.refinventory;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
@@ -39,7 +41,8 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
  */
 public class BoxProcessor extends ReferencedInventoryProcessor {
   private String newStorageBinId;
-  private String newAttributeSetInstanceId;
+  // StorageDetailId:NewAttributeSetInstanceId created by this object
+  private final Map<String, String> storageDetailNewAttributeIdMap;
 
   public BoxProcessor(final ReferencedInventory referencedInventory,
       final JSONArray selectedStorageDetails, final String newStorageBinId) throws JSONException {
@@ -47,6 +50,7 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
     super.setSelectedStorageDetailsAndValidateThem(selectedStorageDetails);
     checkStorageDetailsNotAlreadyInReferencedInventory(selectedStorageDetails);
     setAndValidateNewStorageBinId(newStorageBinId);
+    storageDetailNewAttributeIdMap = new HashMap<>(selectedStorageDetails.length());
   }
 
   private void checkStorageDetailsNotAlreadyInReferencedInventory(
@@ -73,14 +77,24 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
   }
 
   @Override
-  protected AttributeSetInstance getAttributeSetInstanceTo(StorageDetail storageDetail) {
-    if (newAttributeSetInstanceId == null) {
-      final AttributeSetInstance attributeSetInstance = ReferencedInventoryUtil
+  protected AttributeSetInstance getAttributeSetInstanceTo(final StorageDetail storageDetail) {
+    // Attribute previously created in this box execution
+    if (storageDetailNewAttributeIdMap.containsKey(storageDetail.getId())) {
+      return OBDal.getInstance().getProxy(AttributeSetInstance.class,
+          storageDetailNewAttributeIdMap.get(storageDetail.getId()));
+    }
+
+    // Attribute previously created in other box executions for this refInventory
+    final AttributeSetInstance previouslyClonedAttributeSetInstance = ReferencedInventoryUtil
+        .getAlreadyClonedAttributeSetInstance(storageDetail.getAttributeSetValue(),
+            getReferencedInventory());
+    if (previouslyClonedAttributeSetInstance == null) {
+      final AttributeSetInstance newAttributeSetInstance = ReferencedInventoryUtil
           .cloneAttributeSetInstance(storageDetail.getAttributeSetValue(), getReferencedInventory());
-      newAttributeSetInstanceId = attributeSetInstance.getId();
-      return attributeSetInstance;
+      storageDetailNewAttributeIdMap.put(storageDetail.getId(), newAttributeSetInstance.getId());
+      return newAttributeSetInstance;
     } else {
-      return OBDal.getInstance().getProxy(AttributeSetInstance.class, newAttributeSetInstanceId);
+      return previouslyClonedAttributeSetInstance;
     }
   }
 
