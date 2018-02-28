@@ -46,6 +46,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.model.ad.utility.FileType;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.slf4j.Logger;
@@ -201,7 +202,7 @@ public class ReportingUtils {
       Map<Object, Object> additionalExportParameters, boolean compileSubreports) throws OBException {
 
     JRSwapFileVirtualizer virtualizer = null;
-    Map<Object, Object> exportParameters = new HashMap<Object, Object>();
+    Map<Object, Object> exportParameters = new HashMap<>();
     parameters.putAll(expType.getExportParameters());
     if (additionalExportParameters != null && additionalExportParameters.size() > 0) {
       exportParameters.putAll(additionalExportParameters);
@@ -229,7 +230,7 @@ public class ReportingUtils {
     try {
       saveReport(jasperPrint, expType, exportParameters, target);
     } catch (JRException e) {
-      log.error("Error generating Jasper Report: " + jasperFilePath, e);
+      log.error("Error generating Jasper Report {}", jasperFilePath, e);
       throw new OBException(e.getMessage(), e);
     } finally {
       // remove virtualizer tmp files if we created them
@@ -274,7 +275,7 @@ public class ReportingUtils {
       throws OBException {
 
     JRSwapFileVirtualizer virtualizer = null;
-    Map<Object, Object> exportParameters = new HashMap<Object, Object>();
+    Map<Object, Object> exportParameters = new HashMap<>();
     parameters.putAll(expType.getExportParameters());
     if (additionalExportParameters != null && additionalExportParameters.size() > 0) {
       exportParameters.putAll(additionalExportParameters);
@@ -868,7 +869,7 @@ public class ReportingUtils {
       } else if (parameter.equals("Ignore page margins")) {
         configuration.setIgnorePageMargins((Boolean) pair.getValue());
       } else {
-        log.warn("Unknown XLS export configuration parameter: " + parameter);
+        log.warn("Unknown XLS export configuration parameter {}", parameter);
       }
     }
     return configuration;
@@ -926,7 +927,7 @@ public class ReportingUtils {
       } else if (parameter.equals("Zoom Ratio")) {
         configuration.setZoomRatio((Float) pair.getValue());
       } else {
-        log.warn("Unknown HTML export configuration parameter: " + parameter);
+        log.warn("Unknown HTML export configuration parameter {}", parameter);
       }
     }
   }
@@ -1024,7 +1025,7 @@ public class ReportingUtils {
       }
       return jasperPrint;
     } catch (JRException e) {
-      log.error("Error generating Jasper Report: " + jasperFilePath, e);
+      log.error("Error generating Jasper Report {}", jasperFilePath, e);
       throw new OBException(e.getMessage(), e);
     }
   }
@@ -1173,46 +1174,31 @@ public class ReportingUtils {
     parameters.put(JASPER_PARAM_HBSESSION, OBDal.getReadOnlyInstance().getSession());
     parameters.put(JASPER_PARAM_OBCONTEXT, OBContext.getOBContext());
 
-    {
-      final FormatDefinition reportFormat = UIDefinitionController.getInstance()
-          .getFormatDefinition("amount", UIDefinitionController.NORMALFORMAT_QUALIFIER);
+    FormatDefinition amountFormat = UIDefinitionController.getInstance().getFormatDefinition(
+        "amount", UIDefinitionController.NORMALFORMAT_QUALIFIER);
+    addFormatParameter(parameters, amountFormat, "AMOUNTFORMAT");
 
-      final DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-      dfs.setDecimalSeparator(reportFormat.getDecimalSymbol().charAt(0));
-      dfs.setGroupingSeparator(reportFormat.getGroupingSymbol().charAt(0));
-
-      final DecimalFormat numberFormat = new DecimalFormat(correctMaskForGrouping(
-          reportFormat.getFormat(), reportFormat.getDecimalSymbol(),
-          reportFormat.getGroupingSymbol()), dfs);
-      parameters.put("AMOUNTFORMAT", numberFormat);
-    }
-
-    {
-      final FormatDefinition reportFormat = UIDefinitionController.getInstance()
-          .getFormatDefinition("generalQty", UIDefinitionController.SHORTFORMAT_QUALIFIER);
-
-      final DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-      dfs.setDecimalSeparator(reportFormat.getDecimalSymbol().charAt(0));
-      dfs.setGroupingSeparator(reportFormat.getGroupingSymbol().charAt(0));
-
-      final DecimalFormat numberFormat = new DecimalFormat(correctMaskForGrouping(
-          reportFormat.getFormat(), reportFormat.getDecimalSymbol(),
-          reportFormat.getGroupingSymbol()), dfs);
-      parameters.put("QUANTITYFORMAT", numberFormat);
-    }
+    FormatDefinition generalQtyFormat = UIDefinitionController.getInstance().getFormatDefinition(
+        "generalQty", UIDefinitionController.SHORTFORMAT_QUALIFIER);
+    addFormatParameter(parameters, generalQtyFormat, "QUANTITYFORMAT");
 
     String strClientId = OBContext.getOBContext().getCurrentClient().getId();
     parameters.put("Current_Client_ID", strClientId);
-    String strOrgs = "";
-    boolean isNotFirst = false;
-    for (String strOrgId : OBContext.getOBContext().getReadableOrganizations()) {
-      if (isNotFirst) {
-        strOrgs += ",";
-      }
-      strOrgs += "'" + strOrgId + "'";
-      isNotFirst = true;
-    }
+    String strOrgs = StringCollectionUtils.commaSeparated(OBContext.getOBContext()
+        .getReadableOrganizations());
     parameters.put("Readable_Organizations", strOrgs);
+  }
+
+  private static void addFormatParameter(Map<String, Object> parameters,
+      FormatDefinition reportFormat, String parameterName) {
+    final DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+    dfs.setDecimalSeparator(reportFormat.getDecimalSymbol().charAt(0));
+    dfs.setGroupingSeparator(reportFormat.getGroupingSymbol().charAt(0));
+
+    final DecimalFormat numberFormat = new DecimalFormat(
+        correctMaskForGrouping(reportFormat.getFormat(), reportFormat.getDecimalSymbol(),
+            reportFormat.getGroupingSymbol()), dfs);
+    parameters.put(parameterName, numberFormat);
   }
 
   /**
@@ -1399,7 +1385,7 @@ public class ReportingUtils {
       // An instance of the Map is done for making sure
       // that if this method is called, it is only accessing
       // to the parameters of the current Map instance.
-      return new HashMap<String, Object>(params);
+      return new HashMap<>(params);
     }
 
     /**
@@ -1447,7 +1433,7 @@ public class ReportingUtils {
       if (StringUtils.isEmpty(fileExtension)) {
         return false;
       }
-      return extension.equals(fileExtension.toLowerCase());
+      return extension.equalsIgnoreCase(fileExtension);
     }
 
     /**
@@ -1477,9 +1463,7 @@ public class ReportingUtils {
    * @return a String with the temporary directory location.
    */
   public static String getTempFolder() {
-    final String tmpFolder = System.getProperty("java.io.tmpdir");
-
-    return tmpFolder;
+    return System.getProperty("java.io.tmpdir");
   }
 
   /**
