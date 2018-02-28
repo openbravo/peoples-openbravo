@@ -4186,32 +4186,47 @@
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CannotCancelLayWithDeferred'));
             return;
           } else {
-            OB.UTIL.HookManager.executeHooks('OBPOS_PreCancelLayaway', {
-              context: context
-            }, function (args) {
-              if (args && args.cancelOperation) {
-                return;
-              }
-              //Cloning order to be canceled
-              var clonedreceipt = new OB.Model.Order();
-              OB.UTIL.clone(me, clonedreceipt);
-              if (me.get('paidOnCredit')) {
-                me.set('paidOnCredit', false);
-                me.set('paidPartiallyOnCredit', false);
-                me.set('creditAmount', 0);
-              }
-              me.set('cancelLayaway', true);
-              me.set('canceledorder', clonedreceipt);
-              context.doShowDivText({
-                permission: context.permission,
-                orderType: 3
-              });
-              context.doTabChange({
-                tabPanel: 'payment',
-                keyboard: 'toolbarpayment',
-                edit: false
-              });
-            });
+            var cancelLayawayOrder = function () {
+                OB.UTIL.HookManager.executeHooks('OBPOS_PreCancelLayaway', {
+                  context: context
+                }, function (args) {
+                  if (args && args.cancelOperation) {
+                    return;
+                  }
+                  //Cloning order to be canceled
+                  var clonedreceipt = new OB.Model.Order();
+                  OB.UTIL.clone(me, clonedreceipt);
+                  if (me.get('paidOnCredit')) {
+                    me.set('paidOnCredit', false);
+                    me.set('paidPartiallyOnCredit', false);
+                    me.set('creditAmount', 0);
+                  }
+                  me.set('cancelLayaway', true);
+                  me.set('canceledorder', clonedreceipt);
+                  context.doShowDivText({
+                    permission: context.permission,
+                    orderType: 3
+                  });
+                  context.doTabChange({
+                    tabPanel: 'payment',
+                    keyboard: 'toolbarpayment',
+                    edit: false
+                  });
+                });
+                };
+
+            if (me.getPayment() < me.getDeliveredQuantityAmount()) {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_Attention'), OB.I18N.getLabel('OBPOS_DeliveredMoreThanPaid'), [{
+                label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                action: function () {
+                  cancelLayawayOrder();
+                }
+              }, {
+                label: OB.I18N.getLabel('OBMOBC_LblCancel')
+              }]);
+            } else {
+              cancelLayawayOrder();
+            }
           }
         }, function () {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));

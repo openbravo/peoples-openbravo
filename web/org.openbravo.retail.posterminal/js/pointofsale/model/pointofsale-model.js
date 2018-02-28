@@ -816,8 +816,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                           payment.paid = OB.DEC.mul(payment.paid, -1);
                         });
                       } else if (receipt.get('isDeliveredGreaterThanGross')) {
-                        cancelLayawayObj.gross = OB.DEC.mul(OB.DEC.sub(receipt.get('layawayGross'), receipt.get('deliveredQuantityAmount')), -1);
-                        cancelLayawayObj.payment = cancelLayawayObj.gross;
+                        cancelLayawayObj.gross = OB.DEC.mul(OB.DEC.sub(receipt.get('layawayGross'), receipt.getDeliveredQuantityAmount()), -1);
+                        cancelLayawayObj.payment = OB.DEC.sub(OB.DEC.sub(receipt.get('canceledorder').getGross(), receipt.get('canceledorder').getPayment()), cancelLayawayObj.payment);
                       }
                       cancelLayawayObj.obposAppCashup = OB.MobileApp.model.get('terminal').cashUpId;
                       if (cancelLayawayObj.deliveredQuantityAmount) {
