@@ -30,7 +30,7 @@ public class CloseCashPayments extends ProcessHQLQuery {
   }
 
   @Override
-  protected boolean bypassPreferenceCheck() {
-    return true;
+  protected String getProperty() {
+    return "OBPOS_retail.cashup";
   }
 }

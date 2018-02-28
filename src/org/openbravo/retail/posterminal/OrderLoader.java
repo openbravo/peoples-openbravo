@@ -530,7 +530,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         // flush and enable triggers, the rest of this method needs enabled
         // triggers
         try {
-          OBDal.getInstance().flush();
+          // enable triggers contains a flush in getConnection method
           TriggerHandler.getInstance().enable();
         } catch (Throwable ignored) {
         }
@@ -1290,9 +1290,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       }
 
       boolean useSingleBin = foundSingleBin != null && orderLine.getAttributeSetValue() == null
-          && orderLine.getProduct().getAttributeSet() == null
           && orderLine.getWarehouseRule() == null
-          && (order.getWarehouse().getId().equals(warehouse.getId()));
+          && (order.getWarehouse().getId().equals(warehouse.getId()))
+          && orderLine.getProduct().getAttributeSet() == null;
 
       if (negativeLine && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
         OrderLoaderPreAddShipmentLineHook_Response returnBinHookResponse;
@@ -1961,19 +1961,17 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       }
     }
 
-    if (!bp.getADUserList().isEmpty()) {
-      String userHqlWhereClause = " usr where usr.businessPartner = :bp and usr.organization.id in (:orgs) order by username";
-      OBQuery<User> queryUser = OBDal.getInstance().createQuery(User.class, userHqlWhereClause);
-      queryUser.setNamedParameter("bp", order.getBusinessPartner());
-      queryUser.setNamedParameter("orgs", OBContext.getOBContext()
-          .getOrganizationStructureProvider().getNaturalTree(order.getOrganization().getId()));
-      // already filtered
-      queryUser.setFilterOnReadableOrganization(false);
-      queryUser.setMaxResult(1);
-      List<User> lstResultUsers = queryUser.list();
-      if (lstResultUsers != null && lstResultUsers.size() > 0) {
-        order.setUserContact(lstResultUsers.get(0));
-      }
+    String userHqlWhereClause = " usr where usr.businessPartner = :bp and usr.organization.id in (:orgs) order by username";
+    OBQuery<User> queryUser = OBDal.getInstance().createQuery(User.class, userHqlWhereClause);
+    queryUser.setNamedParameter("bp", bp);
+    queryUser.setNamedParameter("orgs", OBContext.getOBContext().getOrganizationStructureProvider()
+        .getNaturalTree(order.getOrganization().getId()));
+    // already filtered
+    queryUser.setFilterOnReadableOrganization(false);
+    queryUser.setMaxResult(1);
+    List<User> lstResultUsers = queryUser.list();
+    if (lstResultUsers != null && lstResultUsers.size() > 0) {
+      order.setUserContact(lstResultUsers.get(0));
     }
 
     if (!order.isNewOBObject()) {

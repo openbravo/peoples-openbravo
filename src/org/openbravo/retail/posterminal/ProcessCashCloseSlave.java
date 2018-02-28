@@ -42,4 +42,9 @@ public class ProcessCashCloseSlave extends JSONProcessSimple {
     }
   }
 
+  @Override
+  protected String getProperty() {
+    return "OBPOS_retail.cashup";
+  }
+
 }

@@ -73,4 +73,9 @@ public class CancelLayawayLoader extends POSDataSynchronizationProcess implement
   protected String getImportQualifier() {
     return "OBPOS_CancelLayaway";
   }
+
+  @Override
+  protected String getProperty() {
+    return "OBPOS_receipt.cancelLayaway";
+  }
 }

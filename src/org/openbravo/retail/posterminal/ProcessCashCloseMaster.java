@@ -166,4 +166,9 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
     }
   }
 
+  @Override
+  protected String getProperty() {
+    return "OBPOS_retail.cashup";
+  }
+
 }

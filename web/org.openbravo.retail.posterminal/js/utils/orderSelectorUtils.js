@@ -122,52 +122,49 @@
     };
 
     loadOrders = function (models) {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OpenRelatedReceiptsTitle'), OB.I18N.getLabel('OBPOS_OpenRelatedReceiptsBody'), [{
-        label: OB.I18N.getLabel('OBPOS_LblOk'),
-        isConfirmButton: true,
-        action: function () {
-          var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.OpenRelatedReceipts');
-          OB.UTIL.showLoading(true);
-          process.exec({
-            orders: models,
-            originServer: currentOriginServer
-          }, function (data) {
-            if (data && data.exception) {
-              errorCallback(true, data.exception.message, true);
-            } else if (data && data.length > 0) {
-              var loadOrder;
-              loadOrder = function (idx) {
-                if (idx === data.length) {
-                  recursiveCallback = undefined;
-                  recursiveIdx = undefined;
-                  OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearch');
-                  checkListCallback();
-                } else {
-                  var order = data[idx];
-                  recursiveIdx = idx;
-                  orderLoaded([order]);
-                }
-              };
-              recursiveCallback = loadOrder;
-              loadOrder(0);
+      OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearch');
+      context.doShowPopup({
+        popup: 'modalOpenRelatedReceipts',
+        args: {
+          models: models,
+          callback: function (selectedModels) {
+            synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearch');
+            if (selectedModels.length === 1) {
+              loadOrder(models[0]);
             } else {
-              errorCallback(true, OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
+              var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.OpenRelatedReceipts');
+              OB.UTIL.showLoading(true);
+              process.exec({
+                orders: selectedModels,
+                originServer: currentOriginServer
+              }, function (data) {
+                if (data && data.exception) {
+                  errorCallback(true, data.exception.message, true);
+                } else if (data && data.length > 0) {
+                  var loadOrder;
+                  loadOrder = function (idx) {
+                    if (idx === data.length) {
+                      recursiveCallback = undefined;
+                      recursiveIdx = undefined;
+                      OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearch');
+                      checkListCallback();
+                    } else {
+                      var order = data[idx];
+                      recursiveIdx = idx;
+                      orderLoaded([order]);
+                    }
+                  };
+                  recursiveCallback = loadOrder;
+                  loadOrder(0);
+                } else {
+                  errorCallback(true, OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
+                }
+              }, function (error) {
+                errorCallback(true);
+              }, true, 5000);
             }
-          }, function (error) {
-            errorCallback(true);
-          }, true, 5000);
+          }
         }
-      }, {
-        label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-        isConfirmButton: false,
-        action: function () {
-          loadOrder(models[0]);
-        }
-      }], {
-        onHideFunction: function (popup) {
-          loadOrder(models[0]);
-        },
-        autoDismiss: true
       });
     };
 

@@ -54,8 +54,8 @@ public class CheckTerminalAuth extends JSONProcessSimple {
           respArray.put("isLinked", false);
         }
         try {
-          Preferences.getPreferenceValue("OBPOS_TerminalAuthentication", true, null, null,
-              null, null, (String) null);
+          Preferences.getPreferenceValue("OBPOS_TerminalAuthentication", true, null, null, null,
+              null, (String) null);
         } catch (final PropertyException e) {
           respArray.put("terminalAuthentication", "Y");
           respArray.put("errorReadingTerminalAuthentication",
@@ -71,6 +71,11 @@ public class CheckTerminalAuth extends JSONProcessSimple {
     }
     result.put(JsonConstants.RESPONSE_DATA, respArray);
     return result;
+  }
+
+  @Override
+  protected String getProperty() {
+    return "OBPOS_TerminalAuthentication";
   }
 
 }

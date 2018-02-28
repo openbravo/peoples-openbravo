@@ -34,10 +34,12 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.Preferences.QueryFilter;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.MobileServerDefinition;
 import org.openbravo.mobile.core.MobileServerOrganization;
 import org.openbravo.mobile.core.login.MobileCoreLoginUtilsServlet;
@@ -45,7 +47,9 @@ import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 import org.openbravo.model.ad.access.FormAccess;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
   public static final Logger log = Logger.getLogger(LoginUtilsServlet.class);
@@ -250,6 +254,11 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         HttpServletResponse response = RequestContext.get().getResponse();
         userId = authManager.authenticate(request, response);
         terminal = OBDal.getInstance().get(OBPOSApplications.class, terminal.getId());
+      } catch (AuthenticationException ae) {
+        ConnectionProvider cp = new DalConnectionProvider(false);
+        Client systemClient = OBDal.getInstance().get(Client.class, "0");
+        throw new AuthenticationException(Utility.messageBD(cp, ae.getMessage(), systemClient
+            .getLanguage().getLanguage()));
       } catch (Exception e) {
         throw new AuthenticationException(e.getMessage());
       }

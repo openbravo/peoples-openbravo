@@ -312,4 +312,9 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
     } catch (Exception e) {
     }
   }
+
+  @Override
+  protected String getProperty() {
+    return "OBPOS_retail.cashup";
+  }
 }

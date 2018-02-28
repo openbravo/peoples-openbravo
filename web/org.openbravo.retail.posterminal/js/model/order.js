@@ -2121,7 +2121,7 @@
           });
         }
 
-        if (p.get('obposScale')) {
+        if (p.get('obposScale') && !options.isVerifiedReturn) {
           OB.POS.hwserver.getWeight(function (data) {
             if (data.exception) {
               OB.UTIL.showConfirmation.display('', data.exception.message);
@@ -2927,7 +2927,7 @@
       var newline, me = this;
 
       function createLineAux(p, units, options, attrs, me) {
-        if (me.validateAllowSalesWithReturn(units, false)) {
+        if (me.validateAllowSalesWithReturn(units, ((options && options.allowLayawayWithReturn) || false))) {
           return;
         }
         // Get prices from BP pricelist 
@@ -3431,7 +3431,7 @@
           return true;
         }
       }
-      if (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true) && this.isLayaway() && qty < 0) {
+      if (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true) && this.isLayaway() && qty < 0 && !skipValidaton) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
         return true;
       }
@@ -6288,7 +6288,7 @@
               }
             });
           } else {
-            OB.UTIL.showError(errorMsg);
+            OB.UTIL.showWarning(errorMsg);
           }
           if (errorCallback) {
             errorCallback();

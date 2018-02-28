@@ -1225,8 +1225,9 @@
       new OB.OBPOSLogin.UI.LoginRequest({
         url: OB.MobileApp.model.get('loginUtilsUrl')
       }).response(this, function (inSender, inResponse) {
-        if (inResponse.exception) {
-          OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel(inResponse.exception), [{
+        if (inResponse.exception || (inResponse.response && inResponse.response.error)) {
+          var msg = inResponse.exception ? OB.I18N.getLabel(inResponse.exception) : inResponse.response.error.message;
+          OB.UTIL.showConfirmation.display('Error', msg, [{
             label: OB.I18N.getLabel('OBMOBC_LblOk'),
             isConfirmButton: true,
             action: function () {
