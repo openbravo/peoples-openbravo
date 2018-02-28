@@ -21,6 +21,9 @@ package org.openbravo.client.application.report;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.hibernate.Query;
+import org.openbravo.dal.service.OBDal;
+
 import net.sf.jasperreports.engine.JasperReport;
 
 /**
@@ -30,9 +33,19 @@ import net.sf.jasperreports.engine.JasperReport;
 class JasperReportCache {
   private static JasperReportCache instance = new JasperReportCache();
 
-  private ConcurrentHashMap<String, CompiledJasperReport> jasperReports = new ConcurrentHashMap<>();
+  private ConcurrentHashMap<String, CompiledJasperReport> jasperReports;
+  private boolean isDisabled;
 
   private JasperReportCache() {
+    jasperReports = new ConcurrentHashMap<>();
+    isDisabled = isInDevelopment();
+  }
+
+  private boolean isInDevelopment() {
+    final String query = "select 1 from ADModule m where m.inDevelopment=true";
+    final Query indevelMods = OBDal.getInstance().getSession().createQuery(query);
+    indevelMods.setMaxResults(1);
+    return !indevelMods.list().isEmpty();
   }
 
   static JasperReportCache getInstance() {
@@ -91,6 +104,9 @@ class JasperReportCache {
   }
 
   private void put(String key, CompiledJasperReport compiledReport) {
+    if (isDisabled) {
+      return;
+    }
     jasperReports.putIfAbsent(key, compiledReport);
   }
 

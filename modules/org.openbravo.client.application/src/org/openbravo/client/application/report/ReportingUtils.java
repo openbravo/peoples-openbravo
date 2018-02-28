@@ -973,21 +973,22 @@ public class ReportingUtils {
 
       if (jasperFilePath.endsWith("jrxml")) {
         JasperReport jReport = reportCache.getReport(jasperFilePath, language);
+        Map<String, JasperReport> subReports = null;
         if (jReport == null) {
           JasperReportCompiler reportCompiler = new JasperReportCompiler(
               DalConnectionProvider.getReadOnlyConnectionProvider(), jasperFilePath, language);
           jReport = reportCompiler.compileReport();
           if (compileSubreports && connectionProvider != null) {
-            reportCache.put(jasperFilePath, language, jReport,
-                reportCompiler.compileSubReports(connectionProvider));
+            subReports = reportCompiler.compileSubReports(connectionProvider);
+            reportCache.put(jasperFilePath, language, jReport, subReports);
           } else {
             reportCache.put(jasperFilePath, language, jReport);
           }
+        } else {
+          subReports = reportCache.getSubReports(jasperFilePath, language);
         }
         if (connectionProvider != null) {
-          if (compileSubreports) {
-            Map<String, JasperReport> subReports = reportCache.getSubReports(jasperFilePath,
-                language);
+          if (subReports != null) {
             parameters.putAll(subReports);
           }
           Connection con = null;
