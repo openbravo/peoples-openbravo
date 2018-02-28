@@ -154,9 +154,91 @@ public class CancelAndReplaceUtils {
     } finally {
       if (orderLines != null) {
         orderLines.close();
+        OBDal.getInstance().flush();
       }
     }
+    updateRelationsBetweenOrderLinesProductsAndServices(newOrder);
     return newOrder;
+  }
+
+  /**
+   * Update the relationships between the services and products in the new order lines. After all
+   * the lines are created, it is needed to update relations taking into account if those relations
+   * were present in the lines they are replacing
+   * 
+   * @param order
+   *          The new created order where the lines will be updated
+   */
+  private static void updateRelationsBetweenOrderLinesProductsAndServices(Order order) {
+    ScrollableResults newOrderLines = null;
+    try {
+      int i = 0;
+      newOrderLines = getOrderLineList(order);
+      while (newOrderLines.next()) {
+        updateOrderLineRelatedServices((OrderLine) newOrderLines.get(0));
+
+        if ((++i % 100) == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+        }
+      }
+    } finally {
+      if (newOrderLines != null) {
+        newOrderLines.close();
+      }
+    }
+  }
+
+  private static void updateOrderLineRelatedServices(OrderLine orderLine) {
+    Order order = orderLine.getSalesOrder();
+    OrderLine replacedOrderLine = orderLine.getReplacedorderline();
+    List<OrderlineServiceRelation> replacedRelatedServices = replacedOrderLine
+        .getOrderlineServiceRelationList();
+    for (OrderlineServiceRelation replacedRelatedService : replacedRelatedServices) {
+      OrderLine replacedRelatedOrderLine = replacedRelatedService.getOrderlineRelated();
+      OrderLine newOrderLineReplacingRelatedOrderLine = getNewOrderLineReplacingRelatedOrderLine(
+          order, replacedRelatedOrderLine);
+      addNewOrderLineServiceRelation(orderLine, newOrderLineReplacingRelatedOrderLine);
+    }
+  }
+
+  private static void addNewOrderLineServiceRelation(OrderLine orderLine, OrderLine orderLineRelated) {
+    OrderlineServiceRelation newOrderLineServiceRelation = getNewOrderLineServiceRelation(
+        orderLine, orderLineRelated);
+    orderLine.getOrderlineServiceRelationList().add(newOrderLineServiceRelation);
+  }
+
+  private static OrderlineServiceRelation getNewOrderLineServiceRelation(OrderLine orderLine,
+      OrderLine orderLineRelated) {
+    OrderlineServiceRelation newOrderLineServiceRelation = OBProvider.getInstance().get(
+        OrderlineServiceRelation.class);
+    newOrderLineServiceRelation.setAmount(orderLine.getLineGrossAmount());
+    newOrderLineServiceRelation.setOrderlineRelated(orderLineRelated);
+    newOrderLineServiceRelation.setQuantity(orderLine.getOrderedQuantity());
+    newOrderLineServiceRelation.setSalesOrderLine(orderLine);
+    OBDal.getInstance().save(newOrderLineServiceRelation);
+    return newOrderLineServiceRelation;
+  }
+
+  /**
+   * Method returns the order line of an order that is replacing an specific order line
+   * 
+   * @param order
+   *          The order where the order line will be searched
+   * @param replacedOrderLine
+   *          The replaced order line that is searching for
+   * @return The order line that is replacing the one passed as parameter
+   */
+  private static OrderLine getNewOrderLineReplacingRelatedOrderLine(Order order,
+      OrderLine replacedOrderLine) {
+    OBCriteria<OrderLine> orderLinesCriteria = OBDal.getInstance().createCriteria(OrderLine.class);
+    orderLinesCriteria.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, order));
+    orderLinesCriteria
+        .add(Restrictions.eq(OrderLine.PROPERTY_REPLACEDORDERLINE, replacedOrderLine));
+    orderLinesCriteria.setMaxResults(1);
+
+    OrderLine orderLine = (OrderLine) orderLinesCriteria.uniqueResult();
+    return orderLine;
   }
 
   /**
