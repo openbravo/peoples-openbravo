@@ -395,7 +395,7 @@
         } // order property.
         //Print again when it is a return and the preference is 'Y' or when one of the payments method has the print twice checked
         if (receipt.get('print')) { //Print option of order property
-          if (((receipt.get('orderType') === 1 || hasNegativeLines) && !OB.MobileApp.model.hasPermission('OBPOS_print.once', true)) || _.filter(receipt.get('payments').models, function (iter) {
+          if ((((receipt.get('orderType') === 1 || hasNegativeLines) && receipt.get('lines').length > 0) && !OB.MobileApp.model.hasPermission('OBPOS_print.once', true)) || _.filter(receipt.get('payments').models, function (iter) {
             if (iter.get('printtwice')) {
               return iter;
             }
