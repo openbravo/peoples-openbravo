@@ -58,14 +58,15 @@ public class BPLocation extends ProcessHQLQuery {
         .getPropertyExtensions(extensions);
     String hql = "select" + regularBPLocationHQLProperties.getHqlSelect()
         + "from BusinessPartnerLocation AS bploc " + "join bploc.businessPartner AS bp "
-        + "where $filtersCriteria AND " + "bp.customer = true AND "
-        + "bp.priceList IS NOT NULL AND " + "(bploc.$incrementalUpdateCriteria" + operator
-        + "bp.$incrementalUpdateCriteria) ";
+        + "left join bploc.locationAddress AS bplocAddress "
+        + "left join bplocAddress.region AS bplocRegion " + "where $filtersCriteria AND "
+        + "bp.customer = true AND " + "bp.priceList IS NOT NULL AND "
+        + "(bploc.$incrementalUpdateCriteria" + operator + "bp.$incrementalUpdateCriteria) ";
     if (lastUpdated != null) {
-      hql += " OR (bploc.locationAddress.$incrementalUpdateCriteria) ";
+      hql += " OR (bplocAddress.$incrementalUpdateCriteria) ";
     }
     hql += " and bploc.$readableSimpleClientCriteria AND " + "bploc.$naturalOrgCriteria "
-        + "ORDER BY bploc.locationAddress.addressLine1, bploc.id";
+        + "ORDER BY bploc.id";
     hqlQueries.add(hql);
     return hqlQueries;
   }
