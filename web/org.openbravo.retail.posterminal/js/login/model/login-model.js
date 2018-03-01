@@ -418,8 +418,41 @@
 
     },
 
+    addToListOfCallbacks: function (successCallback, errorCallback) {
+      if (OB.UTIL.isNullOrUndefined(this.get('syncProcessCallbacks'))) {
+        this.set('syncProcessCallbacks', []);
+      }
+      if (!OB.UTIL.isNullOrUndefined(successCallback)) {
+        var list = this.get('syncProcessCallbacks');
+        list.push({
+          success: successCallback,
+          error: errorCallback
+        });
+      }
+    },
+
     runSyncProcess: function (successCallback, errorCallback) {
-      var me = this;
+      var executeCallbacks, me = this;
+      if (this.pendingSyncProcess) {
+        this.addToListOfCallbacks(successCallback, errorCallback);
+        return;
+      }
+      this.pendingSyncProcess = true;
+      this.addToListOfCallbacks(successCallback, errorCallback);
+      executeCallbacks = function (success, listOfCallbacks, callback) {
+        if (listOfCallbacks.length === 0) {
+          callback();
+          listOfCallbacks = null;
+          return;
+        }
+        var callbackToExe = listOfCallbacks.shift();
+        if (success && callbackToExe.success) {
+          callbackToExe.success();
+        } else if (!success && callbackToExe.error) {
+          callbackToExe.error();
+        }
+        executeCallbacks(success, listOfCallbacks, callback);
+      };
 
       function run() {
         OB.debug('runSyncProcess: executing pre synchronization hook');
@@ -427,14 +460,14 @@
           OB.debug('runSyncProcess: synchronize all models');
           OB.MobileApp.model.syncAllModels(function () {
             OB.info('runSyncProcess: synchronization successfully done');
-            if (successCallback) {
-              successCallback();
-            }
+            executeCallbacks(true, me.get('syncProcessCallbacks'), function () {
+              me.pendingSyncProcess = false;
+            });
           }, function () {
             OB.warn("runSyncProcess failed: the WebPOS is most likely to be offline, but a real error could be present.");
-            if (errorCallback) {
-              errorCallback();
-            }
+            executeCallbacks(false, me.get('syncProcessCallbacks'), function () {
+              me.pendingSyncProcess = false;
+            });
           });
         });
       }
