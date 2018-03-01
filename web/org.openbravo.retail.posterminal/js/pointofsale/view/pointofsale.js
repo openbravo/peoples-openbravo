@@ -303,9 +303,6 @@ enyo.kind({
             this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
               this.setShowing(changedModel.isOrder());
             }, this);
-            //            this.model.get('multiOrders').on('change:isMultiOrders', function () {
-            //              this.setShowing(!this.model.get('multiOrders').get('isMultiOrders'));
-            //            }, this);
           }
         }, {
           classes: 'span12',
@@ -317,9 +314,6 @@ enyo.kind({
             this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
               this.setShowing(changedModel.isMultiOrder());
             }, this);
-            //            this.model.get('multiOrders').on('change:isMultiOrders', function () {
-            //              this.setShowing(this.model.get('multiOrders').get('isMultiOrders'));
-            //            }, this);
           }
         }, {
           name: 'leftSubWindowsContainer',
@@ -879,8 +873,9 @@ enyo.kind({
   },
   tabChange: function (inSender, inEvent) {
     this.leftToolbarDisabled(inSender, {
-      status: false,
-      disableButtonNew: (this.model.get('leftColumnViewManager').isMultiOrder() ? true : false)
+      status: inEvent.status || false,
+      disableMenu: (inEvent.keyboard === 'toolbardiscounts' || this.model.get('leftColumnViewManager').isMultiOrder() ? true : false),
+      disableButtonNew: (inEvent.keyboard === 'toolbardiscounts' || this.model.get('leftColumnViewManager').isMultiOrder() ? true : false)
     });
     this.waterfall('onTabButtonTap', {
       tabPanel: inEvent.tabPanel,
@@ -1227,8 +1222,6 @@ enyo.kind({
       me.model.get('multiOrders').get('multiOrdersList').add(iter);
     });
     this.model.get('leftColumnViewManager').setMultiOrderMode();
-    OB.MobileApp.model.set('isMultiOrderState', true);
-    //this.model.get('multiOrders').set('isMultiOrders', true);
     return true;
   },
   removeOrderAndExitMultiOrder: function (model) {

@@ -283,6 +283,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         this.on('change:currentView', function (changedModel) {
           OB.UTIL.localStorage.setItem('leftColumnCurrentView', JSON.stringify(changedModel.get('currentView')));
           this.trigger(changedModel.get('currentView').name);
+          OB.MobileApp.model.set('isMultiOrderState', changedModel.get('currentView').name === 'order' ? false : true);
         }, this);
       },
       setOrderMode: function (parameters) {
