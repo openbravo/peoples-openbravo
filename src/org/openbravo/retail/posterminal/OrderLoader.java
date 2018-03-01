@@ -305,11 +305,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         // - Or, the order is a normal order or a fully paid layaway, and has the
         // "generateInvoice"
         // flag
-        wasPaidOnCredit = !isQuotation
-            && !isDeleted
-            && !notpaidLayaway
-            && Math.abs(jsonorder.getDouble("payment")) < Math.abs(jsonorder
-                .getDouble("gross"));
+        wasPaidOnCredit = !isQuotation && !isDeleted && !notpaidLayaway
+            && Math.abs(jsonorder.getDouble("payment")) < Math.abs(jsonorder.getDouble("gross"));
         if (jsonorder.has("oBPOSNotInvoiceOnCashUp")
             && jsonorder.getBoolean("oBPOSNotInvoiceOnCashUp")) {
           createInvoice = false;
@@ -2353,6 +2350,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
 
     BigDecimal writeoffAmt = paymentAmt.subtract(gross.abs());
+    boolean hasReversalPayment = false;
 
     for (int i = 0; i < payments.length(); i++) {
       JSONObject payment = payments.getJSONObject(i);
@@ -2367,6 +2365,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       // Because of that, the next condition must be ignored to reversal payments
       BigDecimal paid = BigDecimal.valueOf(payment.getDouble("paid"));
       boolean isReversalPayment = payment.has("reversedPaymentId");
+      if (isReversalPayment) {
+        hasReversalPayment = true;
+      }
       if (paid.compareTo(BigDecimal.ZERO) == 0 && !isReversalPayment) {
         continue;
       }
@@ -2418,12 +2419,16 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
       }
 
+      FIN_PaymentScheduleDetail paymentScheduleDetail = null;
       for (int j = 0; j < paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList()
           .size(); j++) {
         if (paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().get(j)
             .getInvoicePaymentSchedule() == null) {
-          paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().get(j)
-              .setInvoicePaymentSchedule(paymentScheduleInvoice);
+          paymentScheduleDetail = paymentSchedule
+              .getFINPaymentScheduleDetailOrderPaymentScheduleList().get(j);
+          paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
+          paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
+              paymentScheduleDetail);
         }
       }
 
@@ -2433,30 +2438,22 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       invoice.setPaymentComplete(amountPaidWithCredit.compareTo(BigDecimal.ZERO) == 0);
       invoice.setDaysTillDue(FIN_Utility.getDaysToDue(paymentScheduleInvoice == null ? invoice
           .getInvoiceDate() : paymentScheduleInvoice.getDueDate()));
-      if (paymentScheduleInvoice != null
-          && paymentScheduleInvoice.getOutstandingAmount().compareTo(BigDecimal.ZERO) != 0) {
-        if (paymentScheduleInvoice.getAmount().signum() >= 0) {
-          if (paymentScheduleInvoice.getAmount().compareTo(paymentAmt) >= 0) {
-            paymentScheduleInvoice.setOutstandingAmount(paymentScheduleInvoice.getAmount()
-                .subtract(paymentAmt));
-            paymentScheduleInvoice.setPaidAmount(paymentAmt);
-          } else {
-            paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
-            paymentScheduleInvoice.setPaidAmount(paymentScheduleInvoice.getAmount());
-          }
-        } else {
-          if (paymentScheduleInvoice.getAmount().compareTo(paymentAmt) <= 0) {
-            paymentScheduleInvoice.setOutstandingAmount(paymentScheduleInvoice.getAmount().add(
-                paymentAmt));
-            paymentScheduleInvoice.setPaidAmount(paymentAmt.negate());
-          } else {
-            paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
-            paymentScheduleInvoice.setPaidAmount(paymentScheduleInvoice.getAmount());
-          }
-        }
-        OBDal.getInstance().save(paymentScheduleInvoice);
-      }
       OBDal.getInstance().save(invoice);
+
+      if (hasReversalPayment && invoice != null) {
+        for (FIN_PaymentSchedule paymentSch : invoice.getFINPaymentScheduleList()) {
+          BigDecimal paidAmount = BigDecimal.ZERO, outstandingAmount = null;
+          for (FIN_PaymentScheduleDetail pScheDetail : paymentSch
+              .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
+            paidAmount = paidAmount.add(pScheDetail.getAmount());
+          }
+          outstandingAmount = paidAmount.compareTo(paymentSch.getAmount()) >= 0 ? BigDecimal.ZERO
+              : paymentSch.getAmount().subtract(paidAmount);
+          paymentSch.setPaidAmount(paidAmount);
+          paymentSch.setOutstandingAmount(outstandingAmount);
+          OBDal.getInstance().save(paymentSch);
+        }
+      }
     }
 
     BigDecimal diffPaid = BigDecimal.ZERO;
@@ -2735,13 +2732,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           }
 
           paymentScheduleDetail.setAmount(psdAmount);
+          paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInv);
           paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(
               paymentScheduleDetail);
-          OBDal.getInstance().save(paymentScheduleDetail);
-
           paymentScheduleInv.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
               paymentScheduleDetail);
-          paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInv);
+          OBDal.getInstance().save(paymentScheduleDetail);
 
           resetPSD = true;
           hasPaymentScheduleInvoice = true;
