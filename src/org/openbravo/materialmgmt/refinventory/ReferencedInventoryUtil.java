@@ -67,6 +67,7 @@ public class ReferencedInventoryUtil {
 
     final AttributeSetInstance newAttributeSetInstance = (AttributeSetInstance) DalUtil.copy(
         originalAttributeSetInstance, false);
+    newAttributeSetInstance.setActive(true);
     newAttributeSetInstance.setClient(referencedInventory.getClient());
     newAttributeSetInstance.setOrganization(originalAttributeSetInstance.getOrganization());
     newAttributeSetInstance.setParentAttributeSetInstance(originalAttributeSetInstance);
