@@ -19,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2013-2017 Openbravo SLU
+* All portions are Copyright (C) 2013-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -193,7 +193,7 @@
             QuantityOrder, M_Product_Uom_ID, PriceStd,
             c_project_id, a_asset_id, c_costcenter_id,
             user1_id, user2_id, bom_parent_id,
-            gross_unit_price, grosspricelist, line_gross_amount,
+            gross_unit_price, grosspricelist, line_gross_amount, grosspricestd,
             c_aum, aumqty
           )
         VALUES
@@ -212,7 +212,8 @@
             CUR_BOM_Line.QuantityOrder, CUR_BOM_Line.M_Product_UOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
             CUR_BOM_Line.c_project_id, CUR_BOM_Line.a_asset_id, CUR_BOM_Line.c_costcenter_id,
             CUR_BOM_Line.user1_id, CUR_BOM_Line.user2_id, v_Record_ID,
-            v_gross_unit_price, v_gross_price_list, v_line_gross_amount, v_aum, v_aumqty*CUR_BOM.BOMQty
+            v_gross_unit_price, v_gross_price_list, v_line_gross_amount, v_gross_unit_price,
+            v_aum, v_aumqty*CUR_BOM.BOMQty
           );
           SELECT BASEAMOUNT
           INTO v_BaseAmount
