@@ -11,25 +11,32 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.test.security;
 
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
@@ -53,10 +60,14 @@ public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
 
   // Role: F&B US, Inc. - Employee
   private static final String US_EMPLOYEE_ROLE_ID = "19AE26382A674FE8946D2B8070D10122";
+  // Role: F&B US, Inc. - Employee
+  private static final String QA_TESTING_ADMIN_ROLE_ID = "4028E6C72959682B01295A071429011E";
   // User Role for Openbravo User - F&B US, Inc. - Employee Role
   private static final String US_EMPLOYEE_USER_ROLE_ID = "3B960D8A87CA4F77907DF2B7F9A77366";
   // Organization for Role: F&B US East Coast
   private static final String US_EASTCOAST_ORG_ID = "7BABA5FF80494CAFA54DEBD22EC46F01";
+  // * Organization
+  private static final String ZERO_ORG = "0";
   // Warehouse for Role: F&B US East Coast
   private static final String US_EASTCOAST_WAREHOUSE_ID = "9CF98A18BC754B99998E421F91C5FE12";
 
@@ -120,6 +131,19 @@ public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
     }
   }
 
+  @Test
+  public void expectedWarehousesForOrganization() throws Exception {
+    String response = doSessionDynamicRequest();
+    JSONArray warehouses = getRoleWarehouses(response, QA_TESTING_ADMIN_ROLE_ID);
+    List<String> organizationWarehousesIds = getOrganizationWarehousesIds(warehouses, ZERO_ORG);
+    List<String> accessibleWarehousesIds = getAccessibleWarehousesIds(QA_TEST_CLIENT_ID, ZERO_ORG);
+    assertThat(
+        "Retrieved the expected warehouses",
+        organizationWarehousesIds,
+        allOf(hasSize(accessibleWarehousesIds.size()),
+            containsInAnyOrder(accessibleWarehousesIds.toArray())));
+  }
+
   private String doSessionDynamicRequest() throws Exception {
     Map<String, String> params = new HashMap<String, String>();
     return doRequest("/org.openbravo.client.kernel/OBCLKER_Kernel/SessionDynamic", params, 200,
@@ -180,6 +204,31 @@ public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
       log.error("Could not retrieve the warehouses for organization {}.", orgId, e);
     }
     return null;
+  }
+
+  private List<String> getOrganizationWarehousesIds(JSONArray warehouses, String orgId)
+      throws JSONException {
+    JSONArray organizationWarehouses = getOrganizationWarehouses(warehouses, orgId);
+    List<String> ids = new ArrayList<>();
+    for (int i = 0; i < organizationWarehouses.length(); i++) {
+      JSONObject warehouse = (JSONObject) organizationWarehouses.get(i);
+      ids.add(warehouse.getString("id"));
+    }
+    return ids;
+  }
+
+  @SuppressWarnings("unchecked")
+  private List<String> getAccessibleWarehousesIds(String clientId, String orgId)
+      throws JSONException {
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
+        clientId);
+    final StringBuilder hql = new StringBuilder();
+    hql.append("select w.id from Warehouse w ");
+    hql.append("where w.active=true and w.organization.id in (:orgList) and w.client.id=:clientId and w.organization.active=true");
+    Query orgWarehouses = OBDal.getInstance().getSession().createQuery(hql.toString());
+    orgWarehouses.setParameterList("orgList", osp.getNaturalTree(orgId));
+    orgWarehouses.setString("clientId", clientId);
+    return (List<String>) orgWarehouses.list();
   }
 
   private JSONObject getUserInfo(String resp) {
