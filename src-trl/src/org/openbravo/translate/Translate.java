@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -64,6 +64,7 @@ public class Translate extends DefaultHandler {
   private static final Pattern LETTER_PATTERN = Pattern.compile("[a-zA-Z]");
   private static final List<String> translatableExtensions = Arrays.asList("html", "fo", "srpt",
       "jrxml");
+  private static final List<String> EXCLUDED_TAGS = Arrays.asList("script", "style");
   private static final Logger log = Logger.getLogger(Translate.class);
 
   private XMLReader parser;
@@ -314,10 +315,11 @@ public class Translate extends DefaultHandler {
    * @return True if the element is parseable, false if not.
    */
   private boolean isParseable(String tagname) {
-    if (tagname.equalsIgnoreCase("script"))
+    String tag = tagname.toLowerCase();
+    if (EXCLUDED_TAGS.contains(tag)) {
       return false;
-    else if (extension.equalsIgnoreCase("jrxml") && !tagname.equalsIgnoreCase("text")
-        && !tagname.equalsIgnoreCase("textFieldExpression")) {
+    } else if (extension.equalsIgnoreCase("jrxml") && !tag.equals("text")
+        && !tag.equals("textfieldexpression")) {
       return false;
     }
     return true;
