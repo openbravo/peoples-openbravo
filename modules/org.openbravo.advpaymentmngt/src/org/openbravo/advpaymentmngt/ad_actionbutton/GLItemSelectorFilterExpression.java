@@ -47,7 +47,7 @@ public class GLItemSelectorFilterExpression implements FilterExpression {
         whereClause.append("e.organization.id in (" + orgList + ")");
         return whereClause.toString();
       } else {
-        return null;
+        return "";
       }
     } catch (Exception e) {
       log.error("Error trying to get organization where clause for GL Item: ", e);
