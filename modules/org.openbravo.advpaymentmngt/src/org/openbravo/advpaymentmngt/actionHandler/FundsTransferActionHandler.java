@@ -35,6 +35,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.financial.FinancialUtils;
@@ -261,7 +262,12 @@ public class FundsTransferActionHandler extends BaseProcessActionHandler {
     } else {
       trx.setPaymentAmount(amount);
     }
-    trx.setOrganization(account.getOrganization());
+    if (OBContext.getOBContext().getWritableOrganizations()
+        .contains(account.getOrganization().getId())) {
+      trx.setOrganization(account.getOrganization());
+    } else {
+      trx.setOrganization(OBContext.getOBContext().getCurrentOrganization());
+    }
 
     Long line = lineNoUtil.getNextLineNumber(account);
     trx.setLineNo(line);
