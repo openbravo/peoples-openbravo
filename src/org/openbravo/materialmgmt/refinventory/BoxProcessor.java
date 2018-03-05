@@ -34,7 +34,6 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
-import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 
 /**
  * Process of boxing storage details into a concrete referenced inventory
@@ -68,7 +67,7 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
     }
   }
 
-  private void setAndValidateNewStorageBinId(final String newStorageBinId) throws JSONException {
+  private void setAndValidateNewStorageBinId(final String newStorageBinId) {
     if (StringUtils.isBlank(newStorageBinId)) {
       throw new OBException(OBMessageUtils.messageBD("NewStorageBinParameterMandatory"));
     } else {
@@ -94,6 +93,8 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
       storageDetailNewAttributeIdMap.put(storageDetail.getId(), newAttributeSetInstance.getId());
       return newAttributeSetInstance;
     } else {
+      storageDetailNewAttributeIdMap.put(storageDetail.getId(),
+          previouslyClonedAttributeSetInstance.getId());
       return previouslyClonedAttributeSetInstance;
     }
   }
@@ -106,24 +107,6 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
   @Override
   protected String getNewStorageBinId(JSONObject storageDetailJS) {
     return newStorageBinId;
-  }
-
-  /**
-   * It calls {@link ReferencedInventoryProcessor#createAndProcessGoodsMovement()}.
-   * 
-   * @throws Exception
-   *           In case of exception, the transaction is rollback and the exception is thrown.
-   * 
-   */
-  @Override
-  public InternalMovement createAndProcessGoodsMovement() throws Exception {
-    try {
-      final InternalMovement goodsMovementHeader = super.createAndProcessGoodsMovement();
-      return goodsMovementHeader;
-    } catch (Exception e) {
-      OBDal.getInstance().rollbackAndClose();
-      throw e;
-    }
   }
 
 }

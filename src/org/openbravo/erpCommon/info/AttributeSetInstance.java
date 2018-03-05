@@ -180,7 +180,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
         myMessage = attSetValue.setAttributeInstance(this, vars, strAttributeSet, strInstance,
             strWindowId, strIsSOTrx, strProduct, attValues);
 
-        if (myMessage != null & StringUtils.equals("Error", myMessage.getType())) {
+        if (myMessage != null && StringUtils.equals("Error", myMessage.getType())) {
           bdErrorGeneralPopUp(request, response, OBMessageUtils.messageBD("Error"),
               myMessage.getMessage());
         }

@@ -31,6 +31,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -207,8 +208,15 @@ public class ReferencedInventoryUtil {
     return qty.compareTo(BigDecimal.ZERO) > 0;
   }
 
+  /**
+   * Returns a ScrollableResults with the available stock reservations for the given storage detail
+   * that can be boxed to the given newStorageBin. They are ordered by first non-allocated, without
+   * a defined attribute set instance at reservation header first and with the lower reserved
+   * quantity
+   */
   public static ScrollableResults getAvailableStockReservations(final StorageDetail storageDetail,
       final Locator newStorageBin) {
+    Check.isNotNull(storageDetail, "storageDetail parameter can't be null");
     final String olHql = "select sr, sr.quantity - sr.released " + //
         "from MaterialMgmtReservationStock sr " + //
         "join sr.reservation res " + //
@@ -224,9 +232,9 @@ public class ReferencedInventoryUtil {
         "      case when res.attributeSetValue.id is not null then 1 else 0 end, " + //
         "      sr.quantity - sr.released asc  ";
     final Session session = OBDal.getInstance().getSession();
-    final Query sdQuery = session.createQuery(olHql.toString());
+    final Query sdQuery = session.createQuery(olHql);
     sdQuery.setParameter("sdBinId", storageDetail.getStorageBin().getId());
-    sdQuery.setParameter("toBindId", newStorageBin.getId());
+    sdQuery.setParameter("toBindId", newStorageBin == null ? "x" : newStorageBin.getId());
     sdQuery.setParameter("sdAttributeSetId", storageDetail.getAttributeSetValue().getId());
     sdQuery.setParameter("productId", storageDetail.getProduct().getId());
     sdQuery.setParameter("uomId", storageDetail.getUOM().getId());

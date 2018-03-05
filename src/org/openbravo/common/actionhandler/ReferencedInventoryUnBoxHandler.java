@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,7 +20,6 @@
 package org.openbravo.common.actionhandler;
 
 import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
 import org.openbravo.materialmgmt.refinventory.UnboxProcessor;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 
@@ -32,8 +31,7 @@ public class ReferencedInventoryUnBoxHandler extends ReferencedInventoryBoxHandl
 
   @Override
   protected void createAndProcessGoodsMovement(final ReferencedInventory referencedInventory,
-      final JSONArray selectedStorageDetails, final String newStorageBinId) throws Exception,
-      JSONException {
+      final JSONArray selectedStorageDetails, final String newStorageBinId) throws Exception {
     new UnboxProcessor(referencedInventory, selectedStorageDetails).createAndProcessGoodsMovement();
   }
 }

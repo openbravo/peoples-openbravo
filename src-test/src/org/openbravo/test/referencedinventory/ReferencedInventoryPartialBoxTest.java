@@ -32,7 +32,7 @@ import org.openbravo.dal.service.OBDal;
  */
 public class ReferencedInventoryPartialBoxTest extends ReferencedInventoryBoxTest {
 
-  private final String QTYTOBOX = "1";
+  private static final String QTYTOBOX = "1";
 
   @Rule
   public ParameterCdiTestRule<ParamsBoxTest> parameterValuesRule = new ParameterCdiTestRule<ParamsBoxTest>(

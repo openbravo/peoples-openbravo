@@ -74,7 +74,7 @@ abstract class ReferencedInventoryProcessor {
   private JSONArray selectedStorageDetails;
 
   /**
-   * The returned ReferencedInventory will be associated to the given storage detail
+   * Returns the right ReferencedInventory which will be associated to the given storage detail
    */
   protected abstract AttributeSetInstance getAttributeSetInstanceTo(
       final StorageDetail storageDetail);
@@ -231,8 +231,7 @@ abstract class ReferencedInventoryProcessor {
 
   private void createAndSaveGoodsMovementLineWithReservation(
       final InternalMovement internalMovement, final StorageDetail storageDetail,
-      final BigDecimal remainingQty, final Locator newStorageBin, final long lineNo)
-      throws JSONException {
+      final BigDecimal remainingQty, final Locator newStorageBin, final long lineNo) {
     if (ReferencedInventoryUtil.isGreaterThanZero(remainingQty)
         && ReferencedInventoryUtil.isGreaterThanZero(storageDetail.getReservedQty())) {
       BigDecimal remainingQtyToReleaseInReservations = remainingQty;
@@ -260,17 +259,13 @@ abstract class ReferencedInventoryProcessor {
               remainingQtyToReleaseInReservations));
         }
       } finally {
-        if (reservationStockScroll != null) {
-          reservationStockScroll.close();
-        }
+        reservationStockScroll.close();
       }
     }
   }
 
   protected StorageDetail getStorageDetail(final JSONObject storageDetailJS) throws JSONException {
-    final StorageDetail storageDetail = OBDal.getInstance().get(StorageDetail.class,
-        getStorageDetailId(storageDetailJS));
-    return storageDetail;
+    return OBDal.getInstance().get(StorageDetail.class, getStorageDetailId(storageDetailJS));
   }
 
   private String getStorageDetailId(JSONObject jsStorageDetail) throws JSONException {
@@ -278,8 +273,7 @@ abstract class ReferencedInventoryProcessor {
   }
 
   private BigDecimal getSelectedQty(final JSONObject storageDetailJS) throws JSONException {
-    final BigDecimal selectedQty = new BigDecimal(storageDetailJS.getString(QUANTITY));
-    return selectedQty;
+    return new BigDecimal(storageDetailJS.getString(QUANTITY));
   }
 
   private void processGoodsMovement(final String goodsMovementId) {

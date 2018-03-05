@@ -22,10 +22,11 @@ package org.openbravo.erpCommon.ad_callouts;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Sets the proposed value from the sequence associated to the referenced inventory type. The
@@ -33,7 +34,7 @@ import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
  *
  */
 public class SE_RefInventory_RefInvType extends SimpleCallout {
-  private static final Logger log = Logger.getLogger(SE_RefInventory_RefInvType.class);
+  private static final Logger log = LoggerFactory.getLogger(SE_RefInventory_RefInvType.class);
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {

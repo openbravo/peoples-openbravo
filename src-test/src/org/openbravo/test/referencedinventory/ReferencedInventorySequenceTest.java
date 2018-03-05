@@ -35,11 +35,12 @@ import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
  * Test referenced inventory type sequence is properly used
  */
 public class ReferencedInventorySequenceTest extends ReferencedInventoryTest {
+  private static final String ANY_EXISTING_SEQUENCE_ID = "FF8080812C2ABFC6012C2B3BE4970094";
 
   @Test
   public void testReferencedInventorySequenceIsUsed() {
     final Sequence sequence = (Sequence) DalUtil.copy(OBDal.getInstance().getProxy(Sequence.class,
-        "FF8080812C2ABFC6012C2B3BE4970094"));
+        ANY_EXISTING_SEQUENCE_ID));
     sequence.setName(UUID.randomUUID().toString());
     OBDal.getInstance().save(sequence);
     OBDal.getInstance().flush(); // Required to lock sequence at db level later on

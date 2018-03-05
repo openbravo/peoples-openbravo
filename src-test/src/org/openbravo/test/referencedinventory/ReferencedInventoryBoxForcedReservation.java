@@ -66,8 +66,9 @@ public class ReferencedInventoryBoxForcedReservation extends ReferencedInventory
       for (String[] product : PRODUCTS) {
         for (boolean isForceBin : ISFORCEBIN) {
           for (boolean isForceAttribute : ISFORCEATTRIBUTE) {
-            if ((isForceAttribute && product[1] == null) || (!isForceBin && !isForceAttribute)) {
-              continue; // Not execute test if product doesn't have attribute
+            if (productDoesNotHaveAttributeAndIsForceAttribute(product[1], isForceAttribute)
+                || isNeitherForceBinNorForceAttribute(isForceBin, isForceAttribute)) {
+              continue;
             }
             final ReferencedInventory refInv = testBox(BINS[0], product[0], product[1],
                 params.qtyToBox, params.reservationQty, isAllocated, isForceBin, isForceAttribute);
@@ -77,6 +78,14 @@ public class ReferencedInventoryBoxForcedReservation extends ReferencedInventory
         }
       }
     }
+  }
+
+  private boolean productDoesNotHaveAttributeAndIsForceAttribute(String attribute, boolean isForceAttribute) {
+    return isForceAttribute && attribute == null;
+  }
+
+  private boolean isNeitherForceBinNorForceAttribute(boolean isForceBin, boolean isForceAttribute) {
+    return !isForceBin && !isForceAttribute;
   }
 
   @Test
