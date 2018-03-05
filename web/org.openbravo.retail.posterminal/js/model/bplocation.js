@@ -21,6 +21,7 @@
     dataLimit: OB.Dal.DATALIMIT,
     local: false,
     remote: 'OBPOS_remote.customer',
+    paginationById: true,
     saveCustomerAddr: function (callback, callbackError) {
       var nameLength, newSk;
       if (!this.get('isBillTo') && !this.get('isShipTo')) {
