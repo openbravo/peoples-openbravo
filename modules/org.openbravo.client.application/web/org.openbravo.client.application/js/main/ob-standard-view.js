@@ -1793,7 +1793,7 @@ isc.OBStandardView.addProperties({
   },
 
   isOpenedByDirectLink: function () {
-    return this.standardWindow.targetRecordId;
+    return this.standardWindow.directTabInfo;
   },
 
   //This function returns true if it is a new record and it is being edited
