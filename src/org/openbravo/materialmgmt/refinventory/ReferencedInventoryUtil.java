@@ -142,7 +142,11 @@ public class ReferencedInventoryUtil {
    */
   public static String getProposedValueFromSequenceOrNull(final String referencedInventoryTypeId,
       final boolean updateNext) {
-    return FIN_Utility.getDocumentNo(updateNext, getSequence(referencedInventoryTypeId));
+    if (StringUtils.isBlank(referencedInventoryTypeId)) {
+      return null;
+    } else {
+      return FIN_Utility.getDocumentNo(updateNext, getSequence(referencedInventoryTypeId));
+    }
   }
 
   /**

@@ -59,7 +59,7 @@ import org.openbravo.service.db.CallProcess;
  * 
  * When a reservation is involved, the process tries to select first any valid reservation,
  * excluding reservations forced to a different (destination) bin, ordering by non-allocated first,
- * not forced to a attribute set first (because these are bit complex to manage due to referenced
+ * not forced to an attribute set first (because these are bit complex to manage due to referenced
  * inventory behavior) and by available qty asc. The movement line is created with a movement
  * quantity which is the minimum quantity between the available reservation quantity and the
  * quantity pending to box/unbox. This is the key to be able to successfully process the reservation
