@@ -279,6 +279,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     globalResources.add(createComponentResource(ComponentResourceType.Static, prefix
         + "/utils/checkChToFilterInWebPos.js", ComponentResource.APP_OB3));
 
+    // Buttons to Open Hardware Manager
+    globalResources.add(createComponentResource(ComponentResourceType.Static, prefix
+        + "utils/openhardwareurl.js", ComponentResource.APP_OB3));
+
     final String[] cssDependency = { "pos-login", "obpos-main" };
 
     for (final String resource : resourceDependency) {
