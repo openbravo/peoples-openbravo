@@ -58,6 +58,10 @@
       <foreign-key foreignTable="AD_SEQUENCE" name="M_REFINVTYPE_SEQUENCE">
         <reference local="AD_SEQUENCE_ID" foreign="AD_SEQUENCE_ID"/>
       </foreign-key>
+      <unique name="M_REFINVTYPE_NAME_UN">
+        <unique-column name="NAME"/>
+        <unique-column name="AD_CLIENT_ID"/>
+      </unique>
       <check name="M_REFINVTYPE_ISACTIVE_CH"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_REFINVTYPE_ISSHARED_CH"><![CDATA[ISSHARED IN ('Y', 'N')]]></check>
     </table>
