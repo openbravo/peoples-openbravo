@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+  <database name="MODIFIED TABLE M_OFFER">
+    <table name="M_OFFER" primaryKey="M_OFFER_KEY">
+      <index name="EM_OBPOS_M_OFFER_ACTIVE" unique="false">
+        <index-column name="ISACTIVE"/>
+      </index>
+      <index name="EM_OBPOS_M_OFFER_OFFERTYPE" unique="false">
+        <index-column name="M_OFFER_TYPE_ID"/>
+      </index>
+    </table>
+  </database>
