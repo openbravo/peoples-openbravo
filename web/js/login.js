@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -69,7 +69,7 @@ function setLoginMessage(type, title, text) {
   }
 }
 
-function doLogin() {
+function doLogin(command) {
   if (document.getElementById('resetPassword').value === 'true' && document.getElementById('user').value !== document.getElementById('password').value) {
     setLoginMessage('Error', errorSamePassword, errorDifferentPasswordInFields);
     return true;
@@ -90,11 +90,8 @@ function doLogin() {
       return true;
     }
     disableButton('buttonOK');
-    if (document.getElementById('resetPassword').value === 'true') {
-      submitXmlHttpRequest(loginResult, document.frmIdentificacion, 'FORCE_RESET_PASSWORD', '../secureApp/LoginHandler.html', false, null, null);
-    } else {
-      submitXmlHttpRequest(loginResult, document.frmIdentificacion, 'DEFAULT', '../secureApp/LoginHandler.html', false, null, null);
-    }
+    command = command || (document.getElementById('resetPassword').value === 'true' ? 'FORCE_RESET_PASSWORD' : 'DEFAULT');
+    submitXmlHttpRequest(loginResult, document.frmIdentificacion, command, '../secureApp/LoginHandler.html', false, null, null);
   }
 
   return false;
@@ -131,7 +128,11 @@ function processResult(result) {
     document.getElementById('confirmpasswordlabel').style.display = '';
   }
   if (shouldContinue) {
-    window.location = result.target;
+    if (result.showMessage && result.messageType === 'Confirmation') {
+      doLogin(result.command)
+    } else {
+      window.location = result.target;
+    }
   } else if (result.resetPassword) {
     enableButton('buttonOK');
     document.getElementById('user').value = '';

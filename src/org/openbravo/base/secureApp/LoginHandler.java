@@ -400,12 +400,7 @@ public class LoginHandler extends HttpBaseServlet {
       String target = getUserStartPage(strUserAuth, userLoginDefaults,
           vars.getSessionValue("target"), vars.getSessionValue("targetQueryString"));
       vars.removeSessionValue("target");
-      if (forceNamedUserLogin) {
-        // do redirect as login response has already been handled in the client
-        res.sendRedirect(target);
-        return;
-      }
-      // All checks passed successfully, continue logging in
+
       goToTarget(res, target);
     } finally {
       OBContext.restorePreviousMode();
