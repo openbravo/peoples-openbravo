@@ -5862,7 +5862,7 @@
                   if (iter.hasOwnProperty(paymentProp)) {
                     if (paymentProp === "paymentDate") {
                       if (!OB.UTIL.isNullOrUndefined(iter[paymentProp]) && moment(iter[paymentProp]).isValid()) {
-                        curPayment.set(paymentProp, new Date(iter[paymentProp]));
+                        curPayment.set(paymentProp, OB.I18N.normalizeDate(new Date(iter[paymentProp])));
                       } else {
                         curPayment.set(paymentProp, null);
                       }
