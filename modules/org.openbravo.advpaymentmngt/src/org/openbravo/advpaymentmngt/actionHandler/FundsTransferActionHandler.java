@@ -262,6 +262,8 @@ public class FundsTransferActionHandler extends BaseProcessActionHandler {
     } else {
       trx.setPaymentAmount(amount);
     }
+    // If the user has access to the Organization of the Financial Account, the Transaction is
+    // created for it. If not, the Organization of the context is used instead
     if (OBContext.getOBContext().getWritableOrganizations()
         .contains(account.getOrganization().getId())) {
       trx.setOrganization(account.getOrganization());
