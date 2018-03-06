@@ -238,7 +238,8 @@ public class ReferencedInventoryUtil {
     final Session session = OBDal.getInstance().getSession();
     final Query sdQuery = session.createQuery(olHql);
     sdQuery.setParameter("sdBinId", storageDetail.getStorageBin().getId());
-    sdQuery.setParameter("toBindId", newStorageBin == null ? "x" : newStorageBin.getId());
+    sdQuery.setParameter("toBindId", newStorageBin != null ? newStorageBin.getId()
+        : "noStorageBinToIDShouldMatch");
     sdQuery.setParameter("sdAttributeSetId", storageDetail.getAttributeSetValue().getId());
     sdQuery.setParameter("productId", storageDetail.getProduct().getId());
     sdQuery.setParameter("uomId", storageDetail.getUOM().getId());
