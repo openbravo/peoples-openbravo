@@ -177,6 +177,8 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       expType = ExportType.XLS;
     } else if (strFileName.endsWith("." + ExportType.XLSX.getExtension())) {
       expType = ExportType.XLSX;
+    } else if (strFileName.endsWith("." + ExportType.CSV.getExtension())) {
+      expType = ExportType.CSV;
     } else {
       throw new IllegalArgumentException(
           "Trying to download report file with unsupported type " + strFileName);
