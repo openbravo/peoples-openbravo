@@ -66,7 +66,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.UI.AssociatedOrderLine',
+  name: 'OB.UI.RelatedReceipt',
   style: 'border-bottom: 1px solid #cccccc; text-align: center; color: black; padding-top: 9px;',
   handlers: {
     onLineSelected: 'lineSelected'
@@ -207,7 +207,7 @@ enyo.kind({
     for (i = 1; i < this.args.models.length; i++) {
       model = this.args.models[i];
       var lineEnyoObject = this.$.bodyContent.$.attributes.createComponent({
-        kind: 'OB.UI.AssociatedOrderLine',
+        kind: 'OB.UI.RelatedReceipt',
         name: 'line' + lineNum,
         order: model
       });
