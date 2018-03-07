@@ -563,7 +563,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       result: false,
       message: ''
     };
-    if (qty !== undefined && qty !== null && $.isNumeric(qty)) {
+    if (qty !== undefined && qty !== null && (typeof qty === 'number')) {
       if (this.get('paymentList').at(this.get('substep')).get('foreignCounted') >= qty) {
         result.result = true;
         result.message = '';
