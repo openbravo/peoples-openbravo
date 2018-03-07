@@ -137,9 +137,15 @@ public class OBBindings {
       return "Y".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value);
     }
 
+    String windowId = getWindowId();
+    if (windowId == null) {
+      return null;
+    }
+
     ApplicationDictionaryCachedStructures adcs = WeldUtils
         .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
-    Window w = adcs.getWindow(getWindowId());
+
+    Window w = adcs.getWindow(windowId);
     if (w != null) {
       return w.isSalesTransaction();
     }
