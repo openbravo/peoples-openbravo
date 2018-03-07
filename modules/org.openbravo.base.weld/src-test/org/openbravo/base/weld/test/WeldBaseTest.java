@@ -24,6 +24,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
+import org.eu.ingwar.tools.arquillian.extension.suite.annotations.ArquillianSuiteDeployment;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -48,6 +49,7 @@ import org.slf4j.LoggerFactory;
  * @author mtaal
  */
 @RunWith(Arquillian.class)
+@ArquillianSuiteDeployment
 public class WeldBaseTest extends OBBaseTest {
   private static final Logger log = LoggerFactory.getLogger(WeldBaseTest.class);
 
