@@ -18,7 +18,6 @@
  */
 package org.openbravo.client.application;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -294,30 +293,27 @@ public class ViewComponent extends BaseComponent {
   }
 
   private synchronized String getViewVersionHash() {
-    String viewVersionHash = "";
-    String viewVersions = "";
     final String viewId = getParameter("viewId");
     OBContext.setAdminMode();
     try {
       Window window = OBDal.getInstance().get(Window.class, correctViewId(viewId));
       if (window == null) {
-        return viewVersionHash;
+        return "";
       }
+
+      StringBuilder viewVersions = new StringBuilder();
       for (Tab t : window.getADTabList()) {
-        viewVersions += t.getTable().isFullyAudited() + "|";
+        viewVersions.append(t.getTable().isFullyAudited()).append("|");
       }
-      viewVersions += getLastGridConfigurationChange(window) + "|";
-      viewVersions += getLastSystemPrefrenceChage(window) + "|";
-      viewVersionHash = DigestUtils.md5Hex(viewVersions);
+      viewVersions.append(getLastGridConfigurationChange(window)).append("|");
+      viewVersions.append(getLastSystemPrefrenceChange(window)).append("|");
+      return DigestUtils.md5Hex(viewVersions.toString());
     } finally {
       OBContext.restorePreviousMode();
     }
-    return viewVersionHash;
   }
 
-  private String getLastSystemPrefrenceChage(Window window) {
-    Date lastModification = new Date(0);
-
+  private String getLastSystemPrefrenceChange(Window window) {
     Set<String> preferences = new HashSet<String>();
 
     Pattern p = Pattern.compile(DynamicExpressionParser.REPLACE_DISPLAY_LOGIC_SERVER_PATTERN);
@@ -328,17 +324,8 @@ public class ViewComponent extends BaseComponent {
       }
     }
 
-    Calendar cal = Calendar.getInstance();
-    cal.set(9999, 9, 9);
-    Date updated = new Date(cal.getTimeInMillis());
-    if (!preferences.isEmpty()) {
-      updated = getLastUpdated(preferences, updated);
-    }
-    if (lastModification.compareTo(updated) < 0) {
-      lastModification = updated;
-    }
-
-    return lastModification.toString();
+    Date updated = !preferences.isEmpty() ? getLastUpdated(preferences) : null;
+    return updated == null ? "" : updated.toString();
   }
 
   @SuppressWarnings("unchecked")
@@ -355,11 +342,10 @@ public class ViewComponent extends BaseComponent {
     Query query = session.createQuery(where.toString());
     query.setParameter("windowId", windowID);
 
-    return (List<String>) query.list();
+    return query.list();
   }
 
-  private Date getLastUpdated(Set<String> preferenceSet, Date lastUpdatedParam) {
-
+  private Date getLastUpdated(Set<String> preferenceSet) {
     StringBuilder where = new StringBuilder();
     where.append(" select max(p.updated)");
     where.append(" from ADPreference p");
@@ -374,10 +360,7 @@ public class ViewComponent extends BaseComponent {
     Query query = session.createQuery(where.toString());
     query.setParameterList("properties", preferenceSet);
     Date lastUpdated = (Date) query.uniqueResult();
-    if (lastUpdated == null) {
-      lastUpdated = lastUpdatedParam;
-    }
-    return lastUpdated;
 
+    return lastUpdated;
   }
 }
