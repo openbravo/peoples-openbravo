@@ -40,6 +40,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.hibernate.Query;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -52,11 +53,8 @@ import org.openbravo.retail.posterminal.OBPOSPaymentcashupEvents;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.ListOfArrayDataSource;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 public class CashUpReport extends HttpSecureAppServlet {
   @Inject
@@ -173,11 +171,13 @@ public class CashUpReport extends HttpSecureAppServlet {
           expected = expected.add(startingbalance.multiply(conversionRate).setScale(2,
               RoundingMode.HALF_UP));
 
-          psData = fillReportRow("STARTING", paymentMethodCashup.getPaymentType().getSearchKey(),
-              "OBPOS_LblStarting", label,
-              startingbalance.multiply(conversionRate).setScale(2, RoundingMode.HALF_UP)
-                  .toString(), startingbalance.toString(), "OBPOS_LblTotalStarting",
-              conversionRate, isoCode);
+          psData = fillReportRow(
+              "STARTING",
+              paymentMethodCashup.getPaymentType().getSearchKey(),
+              "OBPOS_LblStarting",
+              label,
+              startingbalance.multiply(conversionRate).setScale(2, RoundingMode.HALF_UP).toString(),
+              startingbalance.toString(), "OBPOS_LblTotalStarting", conversionRate, isoCode);
           hashMapStartingsList.add(psData);
 
           /******************************* DROPS DEPOSIT ***************************************************************/
@@ -259,8 +259,8 @@ public class CashUpReport extends HttpSecureAppServlet {
               paymentMethodCashup.getTotalCounted().multiply(conversionRate)
                   .setScale(2, RoundingMode.HALF_UP).subtract(expected).toString(),
               paymentMethodCashup.getTotalCounted()
-                  .subtract(expected.divide(conversionRate, 5, RoundingMode.HALF_UP))
-                  .toString(), "OBPOS_LblTotalDifference", conversionRate, isoCode);
+                  .subtract(expected.divide(conversionRate, 5, RoundingMode.HALF_UP)).toString(),
+              "OBPOS_LblTotalDifference", conversionRate, isoCode);
           hashMapDifferenceList.add(psData);
 
           /******************************* CASH TO KEEP,CASH TO DEPOSIT ***************************************************************/
@@ -268,8 +268,7 @@ public class CashUpReport extends HttpSecureAppServlet {
           cashToDeposit = paymentMethodCashup.getTotalCounted().subtract(
               paymentMethodCashup.getAmountToKeep());
           psData = fillReportRow("TODEPOSIT", paymentMethodCashup.getPaymentType().getSearchKey(),
-              null, label,
-              cashToDeposit.multiply(conversionRate).setScale(2, RoundingMode.HALF_UP)
+              null, label, cashToDeposit.multiply(conversionRate).setScale(2, RoundingMode.HALF_UP)
                   .toString(), cashToDeposit.toString(), "OBPOS_LblTotalQtyToDepo", conversionRate,
               isoCode);
           hashMapCashToDepositList.add(psData);
@@ -322,12 +321,10 @@ public class CashUpReport extends HttpSecureAppServlet {
       /******************************* BUILD REPORT ***************************************************************/
 
       try {
-        JasperReport subReportSalesTaxes;
-        final String strLanguage = vars.getLanguage();
-        final String strBaseDesign = getBaseDesignPath(strLanguage);
-        final JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign
-            + "/org/openbravo/retail/posterminal/ad_reports/CashUpSubreport.jrxml");
-        subReportSalesTaxes = JasperCompileManager.compileReport(jasperDesignLines);
+        final String strLanguage = vars.getLanguage(), strBaseDesign = getBaseDesignPath(strLanguage);
+        final JasperReport subReportSalesTaxes = ReportingUtils.getTranslatedJasperReport(this,
+            strBaseDesign + "/org/openbravo/retail/posterminal/ad_reports/CashUpSubreport.jrxml",
+            strLanguage, strBaseDesign);
         parameters.put("SUBREP_CASHUP", subReportSalesTaxes);
 
       } catch (final JRException e) {
