@@ -482,6 +482,7 @@ enyo.kind({
           enableButtonsCallback(false);
           return true;
         }
+        args.customer.set("loaded", new Date().toISOString());
         customerEdited = args.customer;
         args.customer.saveCustomer(function (result) {
           me.waterfall('onDisableButton', {

@@ -50,7 +50,6 @@ enyo.kind({
 
       //hide address fields while editing customers
       if (this.args.businessPartner) {
-        this.args.businessPartner.set("loaded", new Date().toISOString());
         this.$.body.$.edit_createcustomers_impl.setCustomer(this.args.businessPartner);
         this.$.body.$.edit_createcustomers_impl.$.invoicingAddrFields.hide();
         this.$.body.$.edit_createcustomers_impl.$.shippingAddrFields.hide();
