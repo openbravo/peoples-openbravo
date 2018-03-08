@@ -93,11 +93,13 @@
           context: currentContext,
           params: {}
         }, function (args) {
-          if (!args.cancelOperation) {
-            currentOrderList.newPaidReceipt(data[0], function (newOrder) {
-              currentOrderList.addPaidReceipt(newOrder, continueAfterPaidReceipt);
-            });
+          if (args.cancelOperation) {
+            errorCallback(false);
+            return;
           }
+          currentOrderList.newPaidReceipt(data[0], function (newOrder) {
+            currentOrderList.addPaidReceipt(newOrder, continueAfterPaidReceipt);
+          });
         });
       } else {
         errorCallback(true, OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
