@@ -39,7 +39,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2017 Openbravo SLU
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,9 +48,10 @@
 Logger log = Logger.getLogger(org.openbravo.authentication.AuthenticationManager.class); 
 
 HttpSession currentSession = request.getSession(false);
+boolean adSessionPresent = currentSession != null && currentSession.getAttribute("#AD_SESSION_ID") != null;
 
 AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
-if (currentSession == null) {
+if (!adSessionPresent) {
   response.sendRedirect(authManager.getLoginURL(request));
   return;
 }
