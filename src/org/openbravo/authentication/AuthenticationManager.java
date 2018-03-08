@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2017 Openbravo S.L.U.
+ * Copyright (C) 2001-2018 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -531,6 +531,12 @@ public abstract class AuthenticationManager {
   protected final String createDBSession(HttpServletRequest req, String strUser,
       String strUserAuth, String successSessionType) {
     try {
+      if (strUserAuth == null && StringUtils.isEmpty(strUser)) {
+        // do not create ad_session row for empty user name, this can happen if trying to
+        // authenticate an invalidated session, no need to reflect it in DB
+        return null;
+      }
+
       String usr = strUserAuth == null ? "0" : strUserAuth;
 
       final SessionLogin sl = new SessionLogin(req, "0", "0", usr);
