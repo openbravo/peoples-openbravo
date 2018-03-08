@@ -43,6 +43,7 @@ import org.openbravo.test.datasource.TestComboDatasource;
 import org.openbravo.test.datasource.TestNoteDatasource;
 import org.openbravo.test.security.ExplicitCrossOrganizationReference;
 import org.openbravo.test.security.UserInfoSessionDataTest;
+import org.openbravo.test.views.ETagGeneration;
 import org.openbravo.test.webservice.JSONWebServices;
 import org.openbravo.test.webservice.JSONWebServicesWhereParameter;
 import org.openbravo.test.webservice.PerformanceTest;
@@ -92,7 +93,8 @@ DataSourceWhereParameter.class, //
     LinkToParentTreeDataSourceTest.class, //
     OtherDatasourceRequests.class, //
     NonIdForeignKeyFilters.class, //
-    ResetCookieOnLogin.class //
+    ResetCookieOnLogin.class, //
+    ETagGeneration.class //
 })
 public class AllWebserviceTests {
 }

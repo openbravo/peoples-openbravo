@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,8 +26,6 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
@@ -36,18 +34,21 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import junit.framework.TestCase;
+
 /**
  * Utility methods to deal with datasource calls.
  * 
  * @author alostale
  * 
  */
-class DatasourceTestUtil {
+public class DatasourceTestUtil {
   private static final Logger log = LoggerFactory.getLogger(DatasourceTestUtil.class);
   private static final String CONTEXT_PROPERTY = "context.url";
 
-  static HttpURLConnection createConnection(String url, String wsPart, String method, String cookie)
-      throws Exception {
+  /** Creates a connection to a given URL without processing it. */
+  public static HttpURLConnection createConnection(String url, String wsPart, String method,
+      String cookie) throws Exception {
 
     String completeUrl = url + wsPart;
     log.debug("Create conntection URL: {}, method {}", completeUrl, method);

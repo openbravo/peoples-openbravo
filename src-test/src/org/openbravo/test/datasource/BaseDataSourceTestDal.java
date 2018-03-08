@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -68,15 +68,29 @@ public class BaseDataSourceTestDal extends OBBaseTest {
    * Performs a request to Openbravo returning its response and asserting the response code matches
    * expectedResponse.
    */
+  /**
+   * Performs a request to Openbravo returning its response and asserting the response code matches
+   * expectedResponse.
+   */
   protected String doRequest(String wsPart, String content, int expectedResponse, String method,
       String contentType) throws Exception {
+    authenticate();
+
+    return DatasourceTestUtil.request(getOpenbravoURL(), wsPart, method, content, cookie, 200,
+        contentType);
+  }
+
+  /**
+   * Performs a request to authenticate with current settings if already not authenticated.
+   * 
+   * @return Sting with cookie with authenticated session id
+   * */
+  protected String authenticate() throws Exception {
     if (!authenticated) {
       cookie = DatasourceTestUtil.authenticate(getOpenbravoURL(), getLogin(), getPassword());
       authenticated = true;
     }
-
-    return DatasourceTestUtil.request(getOpenbravoURL(), wsPart, method, content, cookie, 200,
-        contentType);
+    return cookie;
   }
 
   /**
