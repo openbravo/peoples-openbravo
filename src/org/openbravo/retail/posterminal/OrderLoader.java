@@ -2690,13 +2690,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       if (!hasPaymentScheduleInvoice) {
         paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
         paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
-        paymentScheduleDetail.setAmount(amount);
+        paymentScheduleDetail.setAmount(paymentAmt);
         paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(
             paymentScheduleDetail);
         OBDal.getInstance().save(paymentScheduleDetail);
 
         // Add to Payment List
-        paymentAmount.put(paymentScheduleDetail.getId(), amount);
+        paymentAmount.put(paymentScheduleDetail.getId(), paymentAmt);
         detail.add(paymentScheduleDetail);
       }
 
