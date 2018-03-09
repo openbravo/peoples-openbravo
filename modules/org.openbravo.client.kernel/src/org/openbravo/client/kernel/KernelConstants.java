@@ -50,6 +50,7 @@ public class KernelConstants {
   /**
    * @deprecated use {@link #SKIN_PARAMETER}
    */
+  @Deprecated
   public static final String SKIN_VERSION_PARAMETER = "_skinVersion";
 
   public static final String SKIN_PARAMETER = "_skinVersion";
