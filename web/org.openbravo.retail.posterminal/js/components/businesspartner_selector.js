@@ -116,7 +116,7 @@ enyo.kind({
   name: 'OB.UI.NewCustomerButton',
   events: {
     onShowPopup: '',
-    onHideThisPopup: ''
+    onHideSelector: ''
   },
   disabled: false,
   style: 'width: 170px; margin: 0px 9px 8px 0px;',
@@ -136,7 +136,9 @@ enyo.kind({
     if (this.disabled) {
       return true;
     }
-    this.doHideThisPopup();
+    this.doHideSelector({
+      selectorHide: true
+    });
     var modalDlg = this.owner.owner.owner.owner.owner.owner,
         navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(modalDlg.args.navigationPath, 'modalcustomer');
     this.doShowPopup({
@@ -300,7 +302,7 @@ enyo.kind({
       OB.MobileApp.view.$.containerWindow.getRoot().bubble('onShowPopup', {
         popup: 'modalcustomeraddress',
         args: {
-          target: 'modal_selector_business_partners',
+          target: 'order',
           businessPartner: bp,
           manageAddress: true,
           clean: true,
@@ -754,6 +756,9 @@ enyo.kind({
   name: 'OB.UI.ModalSelectorBusinessPartners',
   topPosition: '75px',
   i18nHeader: 'OBPOS_LblAssignCustomer',
+  events: {
+    onShowPopup: ''
+  },
   body: {
     kind: 'OB.UI.ListBpsSelector'
   },
@@ -817,6 +822,21 @@ enyo.kind({
     });
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.$.entityFilterText.skipAutoFilterPref = true;
+    }
+  },
+  executeOnHide: function () {
+    var selectorHide = this.selectorHide;
+    this.inherited(arguments);
+    if (!selectorHide && this.args.navigationPath && this.args.navigationPath.length > 0) {
+      this.doShowPopup({
+        popup: this.args.navigationPath[this.args.navigationPath.length - 1],
+        args: {
+          businessPartner: this.args.businessPartner,
+          target: this.args.target,
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(this.args.navigationPath),
+          makeSearch: this.args.makeSearch
+        }
+      });
     }
   }
 });

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -31,6 +32,7 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
+import org.openbravo.mobile.core.process.OutDatedDataChangeException;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -74,8 +76,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
 
         if (!(loaded.compareTo(customer.getUpdated()) >= 0)
             || !(user != null && (loaded.compareTo(user.getUpdated()) >= 0))) {
-          log.warn(Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedbp",
-              OBContext.getOBContext().getLanguage().getLanguage()));
+          throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
+              "OBPOS_outdatedbp", OBContext.getOBContext().getLanguage().getLanguage()));
         }
 
         customer = editBPartner(customer, jsoncustomer);
@@ -189,6 +191,22 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
     customer.setCustomer(true);
     // security
     customer.setCreditLimit(previousCL);
+
+    // Fixed birth date issue(-1 day) when converted to UTC from client time zone
+    if (jsonCustomer.has("birthDay") && jsonCustomer.get("birthDay") != null
+        && !jsonCustomer.getString("birthDay").isEmpty()) {
+      final long timezoneOffset;
+      if (jsonCustomer.has("timezoneOffset")) {
+        timezoneOffset = (long) Double.parseDouble(jsonCustomer.getString("timezoneOffset"));
+      } else {
+        // Using the current timezoneOffset
+        timezoneOffset = -((Calendar.getInstance().get(Calendar.ZONE_OFFSET) + Calendar
+            .getInstance().get(Calendar.DST_OFFSET)) / (60 * 1000));
+      }
+
+      customer.setBirthDay(OBMOBCUtils.calculateServerDate((String) jsonCustomer.get("birthDay"),
+          timezoneOffset));
+    }
 
     OBDal.getInstance().save(customer);
     return customer;

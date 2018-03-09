@@ -495,11 +495,8 @@ enyo.kind({
   },
   shown: function () {
     var me = this,
-        refundablePayment, sideButton, keyboard = this.owner.owner,
+        refundablePayment, keypad, sideButton, keyboard = this.owner.owner,
         isReturnReceipt = (me.receipt && me.receipt.getPaymentStatus().isNegative) ? true : false;
-
-    keyboard.showKeypad('Coins-' + OB.MobileApp.model.get('currency').id); // shows the Coins/Notes panel for the terminal currency
-    keyboard.showSidepad('sidedisabled');
 
     keyboard.disableCommandKey(this, {
       commands: ['%'],
@@ -510,6 +507,9 @@ enyo.kind({
       // Enable/Disable Payment method based on refundable flag
       _.each(OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons, function (sideButton) {
         sideButton.active = true;
+      });
+      _.each(keyboard.activekeypads, function (keypad) {
+        keypad.active = true;
       });
       _.each(OB.MobileApp.model.paymentnames, function (payment) {
         keyboard.disableCommandKey(me, {
@@ -524,8 +524,18 @@ enyo.kind({
           if (sideButton) {
             sideButton.active = payment.paymentMethod.refundable;
           }
+          keypad = _.find(keyboard.activekeypads, function (keypad) {
+            return keypad.payment === payment.payment.searchKey;
+          });
+          if (keypad) {
+            keypad.active = payment.paymentMethod.refundable;
+          }
         }
       });
+
+      keyboard.showKeypad('Coins-' + OB.MobileApp.model.get('currency').id); // shows the Coins/Notes panel for the terminal currency
+      keyboard.showSidepad('sidedisabled');
+      keyboard.hasActivePayment = true;
 
       if (!isReturnReceipt || (isReturnReceipt && me.defaultPayment.paymentMethod.refundable)) {
         keyboard.defaultcommand = me.defaultPayment.payment.searchKey;
@@ -534,8 +544,15 @@ enyo.kind({
         refundablePayment = _.find(OB.MobileApp.model.get('payments'), function (payment) {
           return payment.paymentMethod.refundable;
         });
-        keyboard.defaultcommand = refundablePayment.payment.searchKey;
-        keyboard.setStatus(refundablePayment.payment.searchKey);
+        if (refundablePayment) {
+          keyboard.defaultcommand = refundablePayment.payment.searchKey;
+          keyboard.setStatus(refundablePayment.payment.searchKey);
+        } else {
+          keyboard.hasActivePayment = false;
+          keyboard.lastStatus = '';
+          keyboard.defaultcommand = '';
+          keyboard.setStatus('');
+        }
       }
     }
   }
@@ -599,6 +616,10 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonSwitch',
   style: 'display:table; width:100%;',
+  classButtonDisabled: 'btnkeyboard-inactive',
+  handlers: {
+    onButtonStatusChanged: 'buttonStatusChanged'
+  },
   components: [{
     style: 'margin: 5px;',
     components: [{
@@ -611,7 +632,18 @@ enyo.kind({
     this.$.btn.setContent(lbl);
   },
   tap: function () {
-    this.keyboard.showNextKeypad();
+    if (!this.$.btn.hasClass(this.classButtonDisabled)) {
+      this.keyboard.showNextKeypad();
+    }
+  },
+  buttonStatusChanged: function (inSender, inEvent) {
+    if (inEvent.value.status === '' && this.keyboard.getActiveKeypads().length === 1) {
+      this.$.btn.addClass(this.classButtonDisabled);
+      this.$.btn.setDisabled(true);
+    } else {
+      this.$.btn.removeClass(this.classButtonDisabled);
+      this.$.btn.setDisabled(false);
+    }
   },
   create: function () {
     this.inherited(arguments);

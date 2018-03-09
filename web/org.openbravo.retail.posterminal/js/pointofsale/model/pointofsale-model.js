@@ -283,6 +283,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         this.on('change:currentView', function (changedModel) {
           OB.UTIL.localStorage.setItem('leftColumnCurrentView', JSON.stringify(changedModel.get('currentView')));
           this.trigger(changedModel.get('currentView').name);
+          OB.MobileApp.model.set('isMultiOrderState', changedModel.get('currentView').name === 'order' ? false : true);
         }, this);
       },
       setOrderMode: function (parameters) {
@@ -654,25 +655,25 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     receipt.on('voidLayaway', function () {
       var me = this;
       var finishVoidLayaway = function () {
-          OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
-            receipt: receipt,
-            model: me
-          }, function (args) {
-            var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('finishVoidLayaway');
-            var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway');
-            var auxReceipt = new OB.Model.Order();
-            OB.UTIL.clone(receipt, auxReceipt);
-            auxReceipt.prepareToSend(function () {
-              OB.UTIL.cashUpReport(auxReceipt, function (cashUp) {
-                receipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
-                OB.UTIL.calculateCurrentCash(function () {
-                  receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
-                  receipt.set('timezoneOffset', new Date().getTimezoneOffset());
-                  receipt.set('gross', OB.DEC.mul(receipt.get('gross'), -1));
-                  receipt.get('payments').forEach(function (payment) {
-                    payment.set('origAmount', OB.DEC.mul(payment.get('origAmount'), -1));
-                    payment.set('paid', OB.DEC.mul(payment.get('paid'), -1));
-                  });
+          var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('finishVoidLayaway');
+          var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway');
+          var auxReceipt = new OB.Model.Order();
+          OB.UTIL.clone(receipt, auxReceipt);
+          auxReceipt.prepareToSend(function () {
+            OB.UTIL.cashUpReport(auxReceipt, function (cashUp) {
+              receipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
+              OB.UTIL.calculateCurrentCash(function () {
+                receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
+                receipt.set('timezoneOffset', new Date().getTimezoneOffset());
+                receipt.set('gross', OB.DEC.mul(receipt.get('gross'), -1));
+                receipt.get('payments').forEach(function (payment) {
+                  payment.set('origAmount', OB.DEC.mul(payment.get('origAmount'), -1));
+                  payment.set('paid', OB.DEC.mul(payment.get('paid'), -1));
+                });
+                OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
+                  receipt: receipt,
+                  model: me
+                }, function (args) {
                   receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
                   process.exec({
                     messageId: OB.UTIL.get_UUID(),
@@ -734,26 +735,26 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     receipt.on('cancelLayaway', function () {
       var me = this;
       var finishCancelLayaway = function () {
-          OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
-            receipt: receipt,
-            model: me
-          }, function (args) {
-            var processCancelLayaway, cancelLayawayObj = {},
-                cancelLayawayModel = new OB.Model.CancelLayaway(),
-                documentNo = receipt.get('documentNo'),
-                process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled');
+          var processCancelLayaway, cancelLayawayObj = {},
+              cancelLayawayModel = new OB.Model.CancelLayaway(),
+              documentNo = receipt.get('documentNo'),
+              process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled');
 
-            processCancelLayaway = function () {
-              receipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
-              receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
-              receipt.set('timezoneOffset', new Date().getTimezoneOffset());
+          processCancelLayaway = function () {
+            receipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+            receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
+            receipt.set('timezoneOffset', new Date().getTimezoneOffset());
+            var auxReceipt = new OB.Model.Order();
+            OB.UTIL.clone(receipt, auxReceipt);
+            auxReceipt.prepareToSend(function () {
+              OB.UTIL.cashUpReport(auxReceipt, function (cashUp) {
+                receipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
+                OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
+                  receipt: receipt,
+                  model: me
+                }, function (args) {
+                  receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
 
-              receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
-              var auxReceipt = new OB.Model.Order();
-              OB.UTIL.clone(receipt, auxReceipt);
-              auxReceipt.prepareToSend(function () {
-                OB.UTIL.cashUpReport(auxReceipt, function (cashUp) {
-                  receipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
                   var cancelLayawayObj = receipt.serializeToJSON(),
                       paymentStatus = receipt.getPaymentStatus();
 
@@ -803,37 +804,38 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   });
                 });
               });
-              receipt.set('negativeDocNo', documentNo + '*R*');
-              receipt.trigger('print');
-            };
-
-            process.exec({
-              orderId: receipt.get('id'),
-              documentNo: receipt.get('documentNo')
-            }, function (data) {
-              if (data && data.exception) {
-                if (data.exception.message) {
-                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message);
-                  return;
-                }
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
-                return;
-              } else if (data && data.orderCancelled) {
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_LayawayCancelledError'));
-                return;
-              } else {
-                if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-                  OB.UTIL.rebuildCashupFromServer(function () {
-                    processCancelLayaway();
-                  });
-                } else {
-                  processCancelLayaway();
-                }
-              }
-            }, function () {
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
-              OB.error(arguments);
             });
+            enyo.$.scrim.hide();
+            receipt.set('negativeDocNo', documentNo + '*R*');
+            receipt.trigger('print');
+          };
+
+          process.exec({
+            orderId: receipt.get('id'),
+            documentNo: receipt.get('documentNo')
+          }, function (data) {
+            if (data && data.exception) {
+              if (data.exception.message) {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message);
+                return;
+              }
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+              return;
+            } else if (data && data.orderCancelled) {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_LayawayCancelledError'));
+              return;
+            } else {
+              if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+                OB.UTIL.rebuildCashupFromServer(function () {
+                  processCancelLayaway();
+                });
+              } else {
+                processCancelLayaway();
+              }
+            }
+          }, function () {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+            OB.error(arguments);
           });
           };
       if (receipt.overpaymentExists()) {
@@ -919,7 +921,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           });
         }
       }
-      OB.Dal.get(OB.Model.BusinessPartner, OB.MobileApp.model.get('businesspartner'), successCallbackBPs, errorCallback, errorCallback);
+      var checkBPInLocal = function () {
+          OB.Dal.get(OB.Model.BusinessPartner, OB.MobileApp.model.get('businesspartner'), successCallbackBPs, errorCallback, errorCallback, null, true);
+          };
+      OB.Dal.get(OB.Model.BusinessPartner, OB.MobileApp.model.get('businesspartner'), successCallbackBPs, checkBPInLocal, errorCallback);
     }
 
     //Because in terminal we've the BP id and we want to have the BP model.
@@ -939,7 +944,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.UTIL.HookManager.executeHooks('OBPOS_PrePaymentHook', {
       context: this,
       caller: caller
-    }, function () {
+    }, function (args) {
+      if (args && args.cancellation) {
+        return;
+      }
       OB.UTIL.HookManager.executeHooks('OBPOS_PrePaymentApproval', {
         context: me,
         caller: caller

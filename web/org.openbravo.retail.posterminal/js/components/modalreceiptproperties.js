@@ -33,6 +33,7 @@ enyo.kind({
     kind: 'OB.UI.renderComboProperty',
     name: 'salesRepresentativeBox',
     modelProperty: 'salesRepresentative',
+    modelPropertyText: 'salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
     i18nLabel: 'OBPOS_SalesRepresentative',
     permission: 'OBPOS_salesRepresentative.receipt',
     permissionOption: 'OBPOS_SR.comboOrModal',

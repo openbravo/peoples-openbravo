@@ -74,4 +74,9 @@ public class ProcessCashMgmtMaster extends JSONProcessSimple {
     return obCriteria.list();
   }
 
+  @Override
+  protected String getProperty() {
+    return "OBPOS_approval.cashmgmt";
+  }
+
 }

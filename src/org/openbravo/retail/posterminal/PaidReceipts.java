@@ -39,6 +39,9 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.mobile.core.servercontroller.MobileServerController;
+import org.openbravo.mobile.core.servercontroller.MobileServerRequestExecutor;
+import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.service.json.JsonConstants;
@@ -82,6 +85,15 @@ public class PaidReceipts extends JSONProcessSimple {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
+    if (MobileServerController.getInstance().getCentralServer() != null) {
+      final String ORIGIN_CENTRAL = MobileServerController.getInstance().getCentralServer()
+          .getName();
+      if (MobileServerController.getInstance().isThisAStoreServer()
+          && ORIGIN_CENTRAL.equals(jsonsent.optString("originServer"))) {
+        return MobileServerRequestExecutor.getInstance().executeCentralRequest(
+            MobileServerUtils.OBWSPATH + PaidReceipts.class.getName(), jsonsent);
+      }
+    }
     JSONObject result = new JSONObject();
     OBContext.setAdminMode(true);
     try {
@@ -115,7 +127,6 @@ public class PaidReceipts extends JSONProcessSimple {
         }
 
         paidReceipt.put("orderid", orderid);
-        paidReceipt.put("loaded", parseDateFormat.format(new Date()));
 
         // get the Invoice for the Order
         String hqlPaidReceiptsInvoice = "select inv.id from Invoice as inv where inv.salesOrder.id = :orderId";
@@ -288,13 +299,14 @@ public class PaidReceipts extends JSONProcessSimple {
 
         HQLPropertyList hqlPropertiesPayments = ModelExtensionUtils
             .getPropertyExtensions(extensionsPayments);
-        String hqlPaymentsIn = "select "
-            + hqlPropertiesPayments.getHqlSelect()
+        String hqlPaymentsIn = "select " + hqlPropertiesPayments.getHqlSelect()
             + "from FIN_Payment_ScheduleDetail as scheduleDetail "
             + "join scheduleDetail.paymentDetails as paymentDetail "
             + "join paymentDetail.finPayment as finPayment "
             + "join scheduleDetail.orderPaymentSchedule.order as order "
-            + "left join finPayment.reversedPayment as reversedPayment "//
+            + "left join finPayment.reversedPayment as reversedPayment "
+            + "left join finPayment.obposAppCashup as obposAppCashup "
+            + "left join finPayment.oBPOSPOSTerminal as oBPOSPOSTerminal "
             + "where order.id=? " //
             + "group by " + hqlPropertiesPayments.getHqlGroupBy()
             + " order by finPayment.documentNo";
@@ -373,12 +385,17 @@ public class PaidReceipts extends JSONProcessSimple {
               paidReceiptPayment.put("openDrawer", objectType.get("openDrawer"));
               paidReceiptPayment.put("isPrePayment", true);
               paidReceiptPayment.put("paymentId", objectIn.get("paymentId"));
+
               if (objectIn.has("reversedPaymentId")) {
                 paidReceiptPayment.put("isReversed", true);
               }
               if (objectIn.has("reversedPaymentId")) {
                 paidReceiptPayment.put("reversedPaymentId", objectIn.get("reversedPaymentId"));
               }
+              paidReceiptPayment.put("obposAppCashup",
+                  objectIn.has("cashup") ? objectIn.get("cashup") : null);
+              paidReceiptPayment.put("oBPOSPOSTerminal",
+                  objectIn.has("posTerminal") ? objectIn.get("posTerminal") : null);
               // Call all payments in processes injected.
               executeHooks(paymentsInProcesses, paidReceiptPayment, null,
                   (String) objectIn.get("paymentId"));
@@ -449,6 +466,10 @@ public class PaidReceipts extends JSONProcessSimple {
               if (objectIn.has("reversedPaymentId")) {
                 paidReceiptPayment.put("reversedPaymentId", objectIn.get("reversedPaymentId"));
               }
+              paidReceiptPayment.put("obposAppCashup",
+                  objectIn.has("cashup") ? objectIn.get("cashup") : null);
+              paidReceiptPayment.put("oBPOSPOSTerminal",
+                  objectIn.has("posTerminal") ? objectIn.get("posTerminal") : null);
               added = true;
               listpaidReceiptsPayments.put(paidReceiptPayment);
             }

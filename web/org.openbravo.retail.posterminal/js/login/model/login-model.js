@@ -418,8 +418,41 @@
 
     },
 
+    addToListOfCallbacks: function (successCallback, errorCallback) {
+      if (OB.UTIL.isNullOrUndefined(this.get('syncProcessCallbacks'))) {
+        this.set('syncProcessCallbacks', []);
+      }
+      if (!OB.UTIL.isNullOrUndefined(successCallback)) {
+        var list = this.get('syncProcessCallbacks');
+        list.push({
+          success: successCallback,
+          error: errorCallback
+        });
+      }
+    },
+
     runSyncProcess: function (successCallback, errorCallback) {
-      var me = this;
+      var executeCallbacks, me = this;
+      if (this.pendingSyncProcess) {
+        this.addToListOfCallbacks(successCallback, errorCallback);
+        return;
+      }
+      this.pendingSyncProcess = true;
+      this.addToListOfCallbacks(successCallback, errorCallback);
+      executeCallbacks = function (success, listOfCallbacks, callback) {
+        if (listOfCallbacks.length === 0) {
+          callback();
+          listOfCallbacks = null;
+          return;
+        }
+        var callbackToExe = listOfCallbacks.shift();
+        if (success && callbackToExe.success) {
+          callbackToExe.success();
+        } else if (!success && callbackToExe.error) {
+          callbackToExe.error();
+        }
+        executeCallbacks(success, listOfCallbacks, callback);
+      };
 
       function run() {
         OB.debug('runSyncProcess: executing pre synchronization hook');
@@ -427,14 +460,14 @@
           OB.debug('runSyncProcess: synchronize all models');
           OB.MobileApp.model.syncAllModels(function () {
             OB.info('runSyncProcess: synchronization successfully done');
-            if (successCallback) {
-              successCallback();
-            }
+            executeCallbacks(true, me.get('syncProcessCallbacks'), function () {
+              me.pendingSyncProcess = false;
+            });
           }, function () {
             OB.warn("runSyncProcess failed: the WebPOS is most likely to be offline, but a real error could be present.");
-            if (errorCallback) {
-              errorCallback();
-            }
+            executeCallbacks(false, me.get('syncProcessCallbacks'), function () {
+              me.pendingSyncProcess = false;
+            });
           });
         });
       }
@@ -471,6 +504,7 @@
             }
           } else if (data && (data.isLinked === false || data.terminalAuthentication)) {
             if (data.isLinked === false) {
+              OB.info('POS Terminal configuration is not linked to a device anymore. Remove terminalKeyIdentifier from localStorage');
               OB.UTIL.localStorage.removeItem('terminalName');
               OB.UTIL.localStorage.removeItem('terminalKeyIdentifier');
             }
@@ -622,6 +656,7 @@
               OB.error("renderMain", OB.I18N.getLabel('OBPOS_TerminalAuthError'));
             } else if (data && (data.isLinked === false || data.terminalAuthentication)) {
               if (data.isLinked === false) {
+                OB.info('POS Terminal configuration is not linked to a device anymore. Remove terminalKeyIdentifier from localStorage');
                 OB.UTIL.localStorage.removeItem('terminalName');
                 OB.UTIL.localStorage.removeItem('terminalKeyIdentifier');
               }
@@ -1225,8 +1260,9 @@
       new OB.OBPOSLogin.UI.LoginRequest({
         url: OB.MobileApp.model.get('loginUtilsUrl')
       }).response(this, function (inSender, inResponse) {
-        if (inResponse.exception) {
-          OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel(inResponse.exception), [{
+        if (inResponse.exception || (inResponse.response && inResponse.response.error)) {
+          var msg = inResponse.exception ? OB.I18N.getLabel(inResponse.exception) : inResponse.response.error.message;
+          OB.UTIL.showConfirmation.display('Error', msg, [{
             label: OB.I18N.getLabel('OBMOBC_LblOk'),
             isConfirmButton: true,
             action: function () {
@@ -1289,11 +1325,13 @@
         }
         if (OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' && inResponse.terminalAuthentication === 'N') {
           if (OB.UTIL.localStorage.getItem('terminalKeyIdentifier')) {
+            OB.info('Terminal Authentication has been disabled. Remove terminalKeyIdentifier from localStorage');
             OB.UTIL.localStorage.removeItem('terminalKeyIdentifier');
           }
         }
         OB.UTIL.localStorage.setItem('terminalAuthentication', inResponse.terminalAuthentication);
         if (!(OB.UTIL.localStorage.getItem('cacheSessionId') && OB.UTIL.localStorage.getItem('cacheSessionId').length === 32)) {
+          OB.info('cacheSessionId is not defined and we will set the id generated in the backend: ' + inResponse.cacheSessionId);
           OB.UTIL.localStorage.setItem('cacheSessionId', inResponse.cacheSessionId);
           OB.UTIL.localStorage.setItem('LastCacheGeneration', new Date().getTime());
         }

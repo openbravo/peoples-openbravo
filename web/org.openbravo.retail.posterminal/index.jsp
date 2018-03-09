@@ -28,11 +28,7 @@
   </script>
   <script src="../../org.openbravo.mobile.core/OBMOBC_Main/Lib?_id=Enyo"></script>
   <script src="../../org.openbravo.mobile.core/OBMOBC_Main/Lib?_id=Deps"></script>
-  <script src="../org.openbravo.client.kernel/js/LAB.min.js"></script>
   <script src="../../org.openbravo.mobile.core/OBMOBC_Main/StaticResources?_appName=WebPOS"></script>
-  <script src="js/libs/jquery-1.7.2.js"></script>
-  <script src="js/libs/core-min.js"></script>
-  <script src="js/libs/sha1-min.js"></script>
   <script>
     (function () {
       // manage manifest

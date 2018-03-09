@@ -27,26 +27,21 @@ public class BPLocationProperties extends ModelExtension {
         add(new HQLProperty("bploc.id", "id"));
         add(new HQLProperty("bp.id", "bpartner"));
         add(new HQLProperty(
-            "COALESCE(bploc.locationAddress.addressLine1, bploc.locationAddress.addressLine2, bploc.locationAddress.postalCode, bploc.locationAddress.cityName, bploc.name)",
+            "COALESCE(bplocAddress.addressLine1, bplocAddress.addressLine2, bplocAddress.postalCode, bplocAddress.cityName, bploc.name)",
             "name"));
-        add(new HQLProperty("bploc.locationAddress.postalCode", "postalCode"));
-        add(new HQLProperty("bploc.locationAddress.cityName", "cityName"));
-        add(new HQLProperty("bploc.locationAddress.country.name", "countryName"));
-        add(new HQLProperty("bploc.locationAddress.country.id", "countryId"));
+        add(new HQLProperty("bplocAddress.postalCode", "postalCode"));
+        add(new HQLProperty("bplocAddress.cityName", "cityName"));
+        add(new HQLProperty("bplocAddress.country.name", "countryName"));
+        add(new HQLProperty("bplocAddress.country.id", "countryId"));
         add(new HQLProperty("bploc.invoiceToAddress", "isBillTo"));
         add(new HQLProperty("bploc.shipToAddress", "isShipTo"));
+        add(new HQLProperty("COALESCE(bplocRegion.name,'')", "regionName"));
+        add(new HQLProperty("COALESCE(bplocRegion.id,'')", "regionId"));
         add(new HQLProperty(
-            "(select bploc.locationAddress.region.name from BusinessPartnerLocation bploc2 where bploc2 = bploc)",
-            "regionName"));
-        add(new HQLProperty(
-            "(select bploc.locationAddress.region.id from BusinessPartnerLocation bploc2 where bploc2 = bploc)",
-            "regionId"));
-        add(new HQLProperty(
-            "COALESCE(bploc.locationAddress.addressLine1, bploc.locationAddress.addressLine2, bploc.locationAddress.postalCode, bploc.locationAddress.cityName)",
+            "COALESCE(bplocAddress.addressLine1, bplocAddress.addressLine2, bplocAddress.postalCode, bplocAddress.cityName)",
             "_identifier"));
         add(new HQLProperty(
-            "(case when bploc.active = 'Y' and bp.active = 'Y' then true else false end)",
-            "active"));
+            "(case when bploc.active = 'Y' and bp.active = 'Y' then true else false end)", "active"));
         String curDbms = OBPropertiesProvider.getInstance().getOpenbravoProperties()
             .getProperty("bbdd.rdbms");
         if (curDbms.equals("POSTGRE")) {

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2017 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -158,6 +158,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/servicesfilter",
         "components/modalselectopenreceipts",
         "components/modalsplitlines",
+        "components/openRelatedReceiptsModal",
 
         // Old Tickets
         "components/modalpaidreceipts",
@@ -270,13 +271,17 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Websockets
         "utils/rfidWebsocket",
 
-        "utils/preScanningFocusHook" };
+        "utils/preScanningFocusHook", "utils/orderSelectorUtils" };
 
     // Unlink onLoad in the ERP
     globalResources.add(createComponentResource(ComponentResourceType.Static, prefix
         + "utils/unlinkDeviceOnLoad.js", ComponentResource.APP_OB3));
     globalResources.add(createComponentResource(ComponentResourceType.Static, prefix
         + "/utils/checkChToFilterInWebPos.js", ComponentResource.APP_OB3));
+
+    // Buttons to Open Hardware Manager
+    globalResources.add(createComponentResource(ComponentResourceType.Static, prefix
+        + "utils/openhardwareurl.js", ComponentResource.APP_OB3));
 
     final String[] cssDependency = { "pos-login", "obpos-main" };
 

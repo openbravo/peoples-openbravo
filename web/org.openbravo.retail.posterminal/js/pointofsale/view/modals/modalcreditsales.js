@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -23,7 +23,11 @@ enyo.kind({
       kind: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.cancel_button'
     }]
   },
+  init: function (model) {
+    this.model = model;
+  },
   executeOnShow: function () {
+    this.actionCancel = true;
     var pendingQty = this.args.order.getPending();
     var bpName = this.args.order.get('bp').get('_identifier');
     var selectedPaymentMethod = this.args.order.get('selectedPayment');
@@ -37,7 +41,7 @@ enyo.kind({
         currSymbol = paymentList[i].symbol;
       }
     }
-    this.setHeader(OB.I18N.getLabel('OBPOS_enoughCreditHeader'));
+    this.setHeader(OB.I18N.getLabel('OBPOS_SellingOnCreditHeader'));
     if (this.args.message) {
       this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel(this.args.message));
     } else if (this.args.order.get('orderType') === 1) {
@@ -45,13 +49,18 @@ enyo.kind({
     } else {
       this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_enoughCreditBody', [OB.I18N.formatCurrency(pendingQty * rate) + " " + currSymbol, bpName]));
     }
+  },
+  executeOnHide: function () {
+    if (this.actionCancel) {
+      this.model.get('order').trigger('paymentCancel');
+    }
   }
 });
 
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.apply_button',
-  i18nContent: 'OBPOS_LblUseCredit',
+  i18nContent: 'OBPOS_ConfirmSellOnCredit',
   isDefaultAction: true,
   init: function (model) {
     this.model = model;
@@ -64,6 +73,7 @@ enyo.kind({
       OB.UTIL.SynchronizationHelper.finished(synchId, "modalDialogButtonTap");
     }
 
+    this.owner.owner.actionCancel = false;
     this.doHideThisPopup();
     this.model.get('order').set('paidOnCredit', true);
     this.allowOpenDrawer = false;
@@ -116,7 +126,6 @@ enyo.kind({
     this.model = model;
   },
   tap: function () {
-    this.model.get('order').trigger('paymentCancel');
     this.doHideThisPopup();
   }
 });

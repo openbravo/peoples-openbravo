@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -220,17 +220,15 @@ enyo.kind({
     }
     this.drawPriceBasedOnSize(searchTab);
 
-    if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
-      if (this.model.get('imgId')) {
-        this.$.icon.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(this.model.get('id')) + '_min), url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');
-      } else {
-        this.$.icon.applyStyle('background-image', 'url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');
-      }
-      this.$.thumbnail.hide();
+    var image;
+    if (OB.MobileApp.model.get('permissions')['OBPOS_retail.productImages']) {
+      image = OB.UTIL.getImageURL(this.model.get('id'));
+      this.$.thumbnail.setImgUrl(image);
     } else {
-      this.$.thumbnail.setImg(this.model.get('img'));
-      this.$.icon.parent.hide();
+      image = this.model.get('img');
+      this.$.thumbnail.setImg(image);
     }
+    this.$.icon.parent.hide();
 
     if (this.owner.owner.owner.owner.owner.name === 'browseProducts') {
       if (enyo.Panels.isScreenNarrow()) {

@@ -44,6 +44,8 @@ enyo.kind({
     editCustomerHeader.$.editbp.navigationPath = this.args.navigationPath;
     editCustomerHeader.$.editbp.target = this.args.target;
 
+    this.args.businessPartner.set("loaded", new Date().toISOString());
+
     // Hide components depending on its displayLogic function
     _.each(this.$.body.$.editcustomers_impl.$.customerAttributes.$, function (attribute) {
       if (attribute.name !== 'strategy') {
@@ -100,7 +102,7 @@ enyo.kind({
     }
     this.doChangeBusinessPartner({
       businessPartner: OB.UTIL.clone(this.customer),
-      target: 'order'
+      target: this.target
     });
     this.doPressedButton();
   },
@@ -132,7 +134,7 @@ enyo.kind({
       me.doShowPopup({
         popup: 'modalcustomeraddress',
         args: {
-          target: 'modal_selector_bp_view',
+          target: 'order',
           businessPartner: bp,
           navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(me.navigationPath, 'customerView'),
           manageAddress: true

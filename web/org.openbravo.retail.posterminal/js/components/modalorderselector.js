@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017 Openbravo S.L.U.
+ * Copyright (C) 2017-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -14,9 +14,6 @@ enyo.kind({
   kind: 'OB.UI.ModalSelector',
   topPosition: '70px',
   i18nHeader: 'OBPOS_OpenReceipt',
-  handlers: {
-    onChangePaidReceipt: 'changePaidReceipt'
-  },
   body: {
     kind: 'OB.UI.ReceiptsList'
   },
@@ -28,15 +25,6 @@ enyo.kind({
   },
   getAdvancedFilterDialog: function () {
     return 'OB_UI_ModalAdvancedFilterReceipts';
-  },
-  changePaidReceipt: function (inSender, inEvent) {
-    this.model.get('orderList').addPaidReceipt(inEvent.newPaidReceipt);
-    if (inEvent.newPaidReceipt.get('isLayaway')) {
-      this.model.attributes.order.calculateReceipt();
-    } else {
-      this.model.attributes.order.calculateGrossAndSave(false);
-    }
-    return true;
   },
   executeOnShow: function () {
     if (!this.initialized) {
@@ -118,7 +106,12 @@ enyo.kind({
       break;
     }
     this.applyStyle('padding', '5px');
-    this.render();
+
+    OB.UTIL.HookManager.executeHooks('OBPOS_RenderSelectorLine', {
+      selectorLine: this
+    }, function (args) {
+      me.render();
+    });
   }
 });
 
@@ -296,50 +289,12 @@ enyo.kind({
 
   },
   init: function (model) {
-    var me = this,
-        process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts');
+    var me = this;
     this.model = model;
     this.receiptList = new Backbone.Collection();
     this.$.openreceiptslistitemprinter.setCollection(this.receiptList);
     this.receiptList.on('click', function (model) {
-      function loadOrder(model) {
-        var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearch');
-        OB.UTIL.showLoading(true);
-        process.exec({
-          orderid: model.get('id')
-        }, function (data) {
-          if (data) {
-            if (me.model.get('leftColumnViewManager').isMultiOrder()) {
-              if (me.model.get('multiorders')) {
-                me.model.get('multiorders').resetValues();
-              }
-              me.model.get('leftColumnViewManager').setOrderMode();
-            }
-            OB.UTIL.HookManager.executeHooks('OBRETUR_ReturnFromOrig', {
-              order: data[0],
-              context: me,
-              params: {}
-            }, function (args) {
-              if (!args.cancelOperation) {
-                var searchSynchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearchNewReceipt');
-                me.model.get('orderList').newPaidReceipt(data[0], function (order) {
-                  me.doChangePaidReceipt({
-                    newPaidReceipt: order
-                  });
-                  OB.UTIL.SynchronizationHelper.finished(searchSynchId, 'clickSearchNewReceipt');
-
-                });
-              }
-            });
-          } else {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
-          }
-          OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearch');
-        });
-        return true;
-      }
-      OB.MobileApp.model.orderList.checkForDuplicateReceipts(model, loadOrder);
-      return true;
+      OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(model, me.model.get('orderList'), me, undefined, true);
     }, this);
   }
 });

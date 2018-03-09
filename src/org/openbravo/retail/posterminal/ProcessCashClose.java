@@ -273,7 +273,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
       jsonData.put("next", result.opt("next"));
       jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     } finally {
-      OBDal.getInstance().flush();
+      // enable triggers contains a flush in getConnection method
       TriggerHandler.getInstance().enable();
     }
   }
@@ -311,5 +311,10 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
       }
     } catch (Exception e) {
     }
+  }
+
+  @Override
+  protected String getProperty() {
+    return "OBPOS_retail.cashup";
   }
 }

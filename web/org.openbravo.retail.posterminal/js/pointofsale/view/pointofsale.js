@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2017 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -267,6 +267,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalQuotationProductAttributes',
       name: 'modalQuotationProductAttributes'
+    }, {
+      kind: 'OB.UI.ModalOpenRelatedReceipts',
+      name: 'modalOpenRelatedReceipts'
     }]
   }, {
     name: 'mainSubWindow',
@@ -300,9 +303,6 @@ enyo.kind({
             this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
               this.setShowing(changedModel.isOrder());
             }, this);
-            //            this.model.get('multiOrders').on('change:isMultiOrders', function () {
-            //              this.setShowing(!this.model.get('multiOrders').get('isMultiOrders'));
-            //            }, this);
           }
         }, {
           classes: 'span12',
@@ -314,9 +314,6 @@ enyo.kind({
             this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
               this.setShowing(changedModel.isMultiOrder());
             }, this);
-            //            this.model.get('multiOrders').on('change:isMultiOrders', function () {
-            //              this.setShowing(this.model.get('multiOrders').get('isMultiOrders'));
-            //            }, this);
           }
         }, {
           name: 'leftSubWindowsContainer',
@@ -448,7 +445,8 @@ enyo.kind({
     });
   },
   addProductToOrder: function (inSender, inEvent) {
-    var targetOrder, me = this;
+    var targetOrder, me = this,
+        attrs;
     if (inEvent.product.get('ignoreAddProduct')) {
       inEvent.product.unset('ignoreAddProduct');
       return;
@@ -549,13 +547,15 @@ enyo.kind({
       }
     }
 
+    attrs = inEvent.attrs || {};
+    attrs.kindOriginator = inEvent.originator && inEvent.originator.kind;
     OB.UTIL.HookManager.executeHooks('OBPOS_PreAddProductToOrder', {
       context: this,
       receipt: targetOrder,
       productToAdd: inEvent.product,
       qtyToAdd: inEvent.qty ? inEvent.qty : 1,
       options: inEvent.options,
-      attrs: inEvent.attrs
+      attrs: attrs
     }, function (args) {
       if (args.cancelOperation && args.cancelOperation === true) {
         if (inEvent.callback) {
@@ -694,8 +694,12 @@ enyo.kind({
   },
 
   createOrderFromQuotation: function () {
-    this.model.get('order').createOrderFromQuotation();
-    this.model.get('orderList').saveCurrent();
+    var me = this;
+    this.model.get('order').createOrderFromQuotation(false, function (success) {
+      if (success) {
+        me.model.get('orderList').saveCurrent();
+      }
+    });
     return true;
   },
 
@@ -869,8 +873,9 @@ enyo.kind({
   },
   tabChange: function (inSender, inEvent) {
     this.leftToolbarDisabled(inSender, {
-      status: false,
-      disableButtonNew: (this.model.get('leftColumnViewManager').isMultiOrder() ? true : false)
+      status: inEvent.status || false,
+      disableMenu: (inEvent.keyboard === 'toolbardiscounts' || this.model.get('leftColumnViewManager').isMultiOrder() ? true : false),
+      disableButtonNew: (inEvent.keyboard === 'toolbardiscounts' || this.model.get('leftColumnViewManager').isMultiOrder() ? true : false)
     });
     this.waterfall('onTabButtonTap', {
       tabPanel: inEvent.tabPanel,
@@ -1217,8 +1222,6 @@ enyo.kind({
       me.model.get('multiOrders').get('multiOrdersList').add(iter);
     });
     this.model.get('leftColumnViewManager').setMultiOrderMode();
-    OB.MobileApp.model.set('isMultiOrderState', true);
-    //this.model.get('multiOrders').set('isMultiOrders', true);
     return true;
   },
   removeOrderAndExitMultiOrder: function (model) {

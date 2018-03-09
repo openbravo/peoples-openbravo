@@ -36,6 +36,11 @@ enyo.kind({
         // If the receipt counter button is shown, the receipt top labels should have a right padding to avoid overlapping
         receiptLabels.applyStyle('padding-right', '55px');
       }
+      if (nrItems > 100) {
+        this.$.receiptsCounterButton.$.counter.applyStyle('font-size', '12px');
+      } else {
+        this.$.receiptsCounterButton.$.counter.applyStyle('font-size', '18px');
+      }
       this.show();
     } else {
       this.$.receiptsCounterButton.$.counter.setContent('');
@@ -88,6 +93,6 @@ enyo.kind({
     style: 'position: absolute; top: -35px; right:-35px; background: #404040; height:70px; width: 70px; -webkit-transform: rotate(45deg); -moz-transform: rotate(45deg); -ms-transform: rotate(45deg); -transform: rotate(45deg);'
   }, {
     name: 'counter',
-    style: 'position: absolute; top: 0px; right:0px; padding-top: 5px; padding-right: 10px; font-weight: bold; color: white;'
+    style: 'position: absolute; top: 0px; right:0px; padding-top: 5px; padding-right: 10px; font-weight: bold; color: white; max-width: 21px; max-height: 18px;'
   }]
 });

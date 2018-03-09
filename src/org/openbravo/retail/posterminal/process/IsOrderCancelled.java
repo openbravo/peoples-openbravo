@@ -108,4 +108,10 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
   protected boolean executeInOneServer(JSONObject json) throws JSONException {
     return true;
   }
+
+  @Override
+  protected String getProperty() {
+    return "OBPOS_receipt.cancelreplace";
+  }
+
 }
