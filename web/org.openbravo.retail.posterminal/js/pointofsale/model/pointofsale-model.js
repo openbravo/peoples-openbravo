@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -467,7 +467,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               'allowOpenDrawer': payment.paymentMethod.allowopendrawer,
               'isCash': payment.paymentMethod.iscash,
               'openDrawer': payment.paymentMethod.openDrawer,
-              'printtwice': payment.paymentMethod.printtwice
+              'printtwice': payment.paymentMethod.printtwice,
+              'isChange': true
             }), function (receipt) {
               receipt.set('change', oldChange);
               for (i = 0; i < receipt.get('payments').length; i++) {
