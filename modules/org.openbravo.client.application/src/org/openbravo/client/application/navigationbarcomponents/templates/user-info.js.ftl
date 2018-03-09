@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017 Openbravo SLU
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,7 @@ OB.User.userInfo = {
       <#list data.languages as language>
         {
           id: '${language.id}',
-          _identifier: '${language.identifier}'
+          _identifier: '${language.identifier?js_string}'
         } <#if language_has_next>,</#if>
       </#list>
     ]
@@ -34,7 +34,7 @@ OB.User.userInfo = {
   initialValues: {
     language: '${data.contextLanguageId}',
     role: '${data.contextRoleId}',
-    client: '${data.contextClientId}',
+    client: '${data.contextClientId?js_string}',
     organization: '${data.contextOrganizationId}'<#if data.contextWarehouseId != "">,
     warehouse: '${data.contextWarehouseId}'
     </#if>
@@ -45,7 +45,7 @@ OB.User.userInfo = {
       <#list data.userRolesInfo as roleInfo>
         {
           id: '${roleInfo.roleId}',
-          _identifier: '${roleInfo.roleName} - ${roleInfo.clientName}'
+          _identifier: '${roleInfo.roleName?js_string} - ${roleInfo.clientName?js_string}'
         } <#if roleInfo_has_next>,</#if>
       </#list>
     ],
@@ -53,12 +53,12 @@ OB.User.userInfo = {
       <#list data.userRolesInfo as roleInfo>
       {
         id: '${roleInfo.roleId}',
-        client: '${roleInfo.clientName}',
+        client: '${roleInfo.clientName?js_string}',
         organizationValueMap: [
         <#list roleInfo.organizations?keys as organizationId>
           {
             id: '${organizationId}',
-            _identifier: '${roleInfo.organizations[organizationId]}'
+            _identifier: '${roleInfo.organizations[organizationId]?js_string}'
           } <#if organizationId_has_next>,</#if>
           </#list>
         ].sortByProperty('_identifier', true),
@@ -70,7 +70,7 @@ OB.User.userInfo = {
             <#list roleInfo.organizationWarehouses[key] as warehouse>
               {
                 id: '${warehouse.warehouseId}',
-                _identifier: '${warehouse.warehouseName}'
+                _identifier: '${warehouse.warehouseName?js_string}'
               } <#if warehouse_has_next>,</#if>
               </#list>
             ].sortByProperty('_identifier', true)
