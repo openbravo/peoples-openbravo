@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,12 +56,6 @@ public class RefList extends ModelObject {
 
   public void setValue(String value) {
     this.value = value;
-  }
-
-  /**
-   * @deprecated functionality is now implemented in {@link #setReference(Reference)}
-   */
-  public void setAllowedValue() {
   }
 
 }

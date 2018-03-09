@@ -321,15 +321,7 @@ public class ActivationKey {
     return instance;
   }
 
-  /**
-   * ActivationKey constructor, this should not be used. ActivationKey should be treated as
-   * Singleton, so the {@link ActivationKey#getInstance()} method should be used instead.
-   * <p/>
-   * This constructor is public to maintain backwards compatibility.
-   * 
-   * @deprecated
-   */
-  public ActivationKey() {
+  private ActivationKey() {
     loadFromDB();
   }
 

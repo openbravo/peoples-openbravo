@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -186,20 +186,6 @@ public class ModelXMLConverter implements OBSingleton {
         element.addAttribute("type", "ob:ReferenceType");
       }
     }
-  }
-
-  /**
-   * @deprecated do not use this method anymore, the reference attributes are defined in the new
-   *             addReferenceType method
-   */
-  protected void addReferenceAttributes(Element elem) {
-    final Element complexElem = elem.addElement("xs:complexType");
-    complexElem.addElement("xs:attribute").addAttribute("name", "id")
-        .addAttribute("type", "xs:string").addAttribute("use", "optional");
-    complexElem.addElement("xs:attribute").addAttribute("name", "entityName")
-        .addAttribute("type", "xs:string").addAttribute("use", "optional");
-    complexElem.addElement("xs:attribute").addAttribute("name", "identifier")
-        .addAttribute("type", "xs:string").addAttribute("use", "optional");
   }
 
   private void addReferenceType(Element schemaElement) {

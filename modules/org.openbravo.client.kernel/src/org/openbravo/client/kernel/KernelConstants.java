@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,14 +51,6 @@ public class KernelConstants {
    * @deprecated use {@link #SKIN_PARAMETER}
    */
   public static final String SKIN_VERSION_PARAMETER = "_skinVersion";
-  /**
-   * @deprecated use {@link #SKIN_DEFAULT}
-   */
-  public static final String SKIN_VERSION_300 = "3.00";
-  /**
-   * @deprecated use {@link #SKIN_CLASSIC}
-   */
-  public static final String SKIN_VERSION_CLASSIC = "2.50_emulation";
 
   public static final String SKIN_PARAMETER = "_skinVersion";
   public static final String SKIN_DEFAULT = "Default";

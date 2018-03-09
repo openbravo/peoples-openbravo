@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -672,19 +672,6 @@ public class VersionUtility {
   }
 
   /**
-   * @deprecated use
-   *             {@link VersionUtility#checkRemote(VariablesSecureApp, String[], String[], OBError, HashMap)}
-   *             instead
-   */
-  static public ModuleInstallDetail checkRemote(VariablesSecureApp vars, String[] moduleVersionId,
-      String[] moduleVersionToUpdateId, OBError obErrors) throws Exception {
-    HashMap<String, String> maturityLevels = new HashMap<String, String>();
-    maturityLevels.put("update.level", "500");
-    maturityLevels.put("install.level", "500");
-    return checkRemote(vars, moduleVersionId, moduleVersionToUpdateId, obErrors, maturityLevels);
-  }
-
-  /**
    * 
    * check the dependencies to install new modules locally, without connecting to central repository
    * 
@@ -709,24 +696,6 @@ public class VersionUtility {
     String[] errors = vecErrors.toArray(new String[0]);
     getOBError(obErrors, pool, vars, errors);
     return checked;
-  }
-
-  /**
-   * @deprecated use
-   *             {@link VersionUtility#checkLocal(VariablesSecureApp, Module[], Module[], Module[], OBError)}
-   */
-  static public boolean checkLocal(VariablesSecureApp vars, Module[] modulesToInstall,
-      Module[] modulesToUpdate, OBError obErrors) throws Exception {
-    return checkLocal(vars, modulesToInstall, null, null, obErrors);
-  }
-
-  /**
-   * @deprecated use
-   *             {@link VersionUtility#checkLocal(VariablesSecureApp, Module[], Module[], Module[], OBError)}
-   */
-  static public boolean checkLocal(VariablesSecureApp vars, Module[] modulesToInstall,
-      OBError obErrors) throws Exception {
-    return checkLocal(vars, modulesToInstall, null, null, obErrors);
   }
 
   static public void setPool(ConnectionProvider cp) {

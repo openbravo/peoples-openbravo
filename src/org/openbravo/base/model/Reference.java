@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,17 +23,12 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.model.domaintype.BaseEnumerateDomainType;
-import org.openbravo.base.model.domaintype.DateDomainType;
-import org.openbravo.base.model.domaintype.DatetimeDomainType;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.model.domaintype.StringDomainType;
-import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
 import org.openbravo.base.util.OBClassLoader;
 
 /**
@@ -54,20 +49,6 @@ public class Reference extends ModelObject {
   public static final String RESOURCE_ASSIGNMENT = "33";
   public static final String PRODUCT_ATTRIBUTE = "35";
   public static final String NO_REFERENCE = "-1";
-
-  // Validation Types
-  /**
-   * @deprecated validation type is not used anymore
-   */
-  public static final char TABLE_VALIDATION = 'T';
-  /**
-   * @deprecated validation type is not used anymore
-   */
-  public static final char SEARCH_VALIDATION = 'S';
-  /**
-   * @deprecated validation type is not used anymore
-   */
-  public static final char LIST_VALIDATION = 'L';
 
   private static HashMap<String, Class<?>> primitiveTypes;
 
@@ -95,16 +76,6 @@ public class Reference extends ModelObject {
     primitiveTypes.put("800008", BigDecimal.class);
     primitiveTypes.put("800019", BigDecimal.class);
     primitiveTypes.put("800101", String.class);
-  }
-
-  /**
-   * @deprecated use {@link PrimitiveDomainType#getPrimitiveType()}.
-   */
-  @SuppressWarnings({ "rawtypes" })
-  public static Class getPrimitiveType(String id) {
-    if (primitiveTypes.containsKey(id))
-      return primitiveTypes.get(id);
-    return Object.class;
   }
 
   private String modelImpl;
@@ -173,50 +144,6 @@ public class Reference extends ModelObject {
 
   public void setParentReference(Reference parentReference) {
     this.parentReference = parentReference;
-  }
-
-  /**
-   * @deprecated validation type not used anymore, returns a space always
-   */
-  public char getValidationType() {
-    log.warn("The validation type concept is not used anymore. The Reference.getValidationType() method is deprecated");
-    return ' ';
-  }
-
-  /**
-   * @deprecated validation type not used anymore
-   */
-  public void setValidationType(char validationType) {
-  }
-
-  /**
-   * @deprecated check instance of {@link #getDomainType()}.
-   */
-  public boolean isDatetime() {
-    return getDomainType() instanceof DatetimeDomainType;
-  }
-
-  /**
-   * @deprecated check instance of {@link #getDomainType()}.
-   */
-  public boolean isDate() {
-    return getDomainType() instanceof DateDomainType;
-  }
-
-  /**
-   * @deprecated use {@link BaseEnumerateDomainType#addEnumerateValue(Object)}.
-   * @see #getDomainType()
-   */
-  public void addAllowedValue(String value) {
-    ((StringEnumerateDomainType) getDomainType()).addEnumerateValue(value);
-  }
-
-  /**
-   * @deprecated use {@link StringEnumerateDomainType#getEnumerateValues()}.
-   * @see #getDomainType()
-   */
-  public Set<String> getAllowedValues() {
-    return ((StringEnumerateDomainType) getDomainType()).getEnumerateValues();
   }
 
 }
