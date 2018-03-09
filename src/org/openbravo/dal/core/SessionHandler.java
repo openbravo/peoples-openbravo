@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,7 +46,6 @@ import org.openbravo.base.structure.Identifiable;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ExternalConnectionPool;
-import org.openbravo.database.SessionInfo;
 import org.openbravo.service.db.DbUtility;
 
 /**
@@ -62,7 +61,6 @@ public class SessionHandler implements OBNotSingleton {
   private static final Logger log = Logger.getLogger(SessionHandler.class);
 
   private static ExternalConnectionPool externalConnectionPool;
-  private static String rbdms;
 
   {
     String poolClassName = OBPropertiesProvider.getInstance().getOpenbravoProperties()
@@ -79,7 +77,6 @@ public class SessionHandler implements OBNotSingleton {
         }
       }
     }
-    rbdms = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties().get("bbdd.rdbms");
   }
 
   // The threadlocal which handles the session
@@ -307,9 +304,10 @@ public class SessionHandler implements OBNotSingleton {
       }
     } else {
       // getting connection from Hibernate pool
-      newConnection = ((DalSessionFactory) SessionFactoryController.getInstance()
-          .getSessionFactory()).getConnectionProvider().getConnection();
-      SessionInfo.initDB(newConnection, rbdms);
+      DalSessionFactory sf = (DalSessionFactory) SessionFactoryController.getInstance()
+          .getSessionFactory();
+      newConnection = sf.getConnectionProvider().getConnection();
+      sf.initConnection(newConnection);
     }
     return newConnection;
   }
