@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
@@ -34,6 +35,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
@@ -55,7 +58,7 @@ import org.slf4j.LoggerFactory;
 public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
   private static Logger log = LoggerFactory.getLogger(UserInfoSessionDataTest.class);
 
-  private static final String USER_INFO_START = "OB.User.userInfo=";
+  private static final String USER_INFO_START = "OB.User.userInfo = ";
   private static final String USER_INFO_FINISH = "};";
 
   // Role: F&B US, Inc. - Employee
@@ -70,6 +73,33 @@ public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
   private static final String ZERO_ORG = "0";
   // Warehouse for Role: F&B US East Coast
   private static final String US_EASTCOAST_WAREHOUSE_ID = "9CF98A18BC754B99998E421F91C5FE12";
+
+  private static String warehouseName;
+
+  @BeforeClass
+  public static void createDataWithQuotes() {
+    try {
+      OBContext.setAdminMode(false);
+      Warehouse warehouse = OBDal.getInstance().get(Warehouse.class, TEST_WAREHOUSE_ID);
+      warehouseName = warehouse.getName();
+      warehouse.setName(warehouseName + "'");
+      OBDal.getInstance().commitAndClose();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  @AfterClass
+  public static void restoreData() {
+    try {
+      OBContext.setAdminMode(false);
+      Warehouse warehouse = OBDal.getInstance().get(Warehouse.class, TEST_WAREHOUSE_ID);
+      warehouse.setName(warehouseName);
+      OBDal.getInstance().commitAndClose();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
 
   @Test
   public void deactivatedRoleNotShowInUserProfile() throws Exception {
@@ -232,14 +262,20 @@ public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
   }
 
   private JSONObject getUserInfo(String resp) {
-    String strResponse = resp.substring(resp.indexOf(USER_INFO_START) + USER_INFO_START.length());
+    String userInfoStart = USER_INFO_START;
+    if (resp.indexOf(userInfoStart) == -1) {
+      // not in "in development"
+      userInfoStart = userInfoStart.replaceAll("\\s+", "");
+    }
+    String strResponse = resp.substring(resp.indexOf(userInfoStart) + userInfoStart.length());
     strResponse = strResponse.substring(0, strResponse.indexOf(USER_INFO_FINISH) + 1);
     JSONObject userInfo = null;
     try {
       userInfo = new JSONObject(removeCodeJsInTheResponse(strResponse));
     } catch (JSONException e) {
-      log.error("Could not retrieve the userInfo from the response.", e);
+      log.error("Could not retrieve the userInfo from the SessionDynamic request");
     }
+    assertNotNull("OB.User.userInfo could not be retrieved", userInfo);
     return userInfo;
   }
 
