@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU 
  * All Rights Reserved. 
  ************************************************************************
  */
@@ -39,16 +39,13 @@ public abstract class ExternalConnectionPool {
    * @param externalConnectionPoolClassName
    *          The full class name of the external connection pool
    * @return An instance of the external connection pool
-   * @throws InstantiationException
-   * @throws IllegalAccessException
-   * @throws ClassNotFoundException
+   * @throws ReflectiveOperationException
    */
-  public final synchronized static ExternalConnectionPool getInstance(
-      String externalConnectionPoolClassName) throws InstantiationException,
-      IllegalAccessException, ClassNotFoundException {
+  public static final synchronized ExternalConnectionPool getInstance(
+      String externalConnectionPoolClassName) throws ReflectiveOperationException {
     if (instance == null) {
       instance = (ExternalConnectionPool) Class.forName(externalConnectionPoolClassName)
-          .newInstance();
+          .getDeclaredConstructor().newInstance();
     }
     return instance;
   }

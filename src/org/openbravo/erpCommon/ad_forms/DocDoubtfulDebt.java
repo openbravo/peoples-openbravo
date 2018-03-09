@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -147,8 +147,8 @@ public class DocDoubtfulDebt extends AcctServer {
       }
       if (!strClassname.equals("")) {
         try {
-          DocDoubtfulDebtTemplate newTemplate = (DocDoubtfulDebtTemplate) Class.forName(
-              strClassname).newInstance();
+          DocDoubtfulDebtTemplate newTemplate = (DocDoubtfulDebtTemplate) Class
+              .forName(strClassname).getDeclaredConstructor().newInstance();
           return newTemplate.createFact(this, as, conn, con, vars);
         } catch (Exception e) {
           log4j.error("Error while creating new instance for DocUnbilledRevenueTemplate - ", e);

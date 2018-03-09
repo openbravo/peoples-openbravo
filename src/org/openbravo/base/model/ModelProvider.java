@@ -368,7 +368,8 @@ public class ModelProvider implements OBSingleton {
           String classname = rs.getString(1);
           Class<?> myClass = Class.forName(classname);
           if (org.openbravo.base.model.domaintype.BaseDomainType.class.isAssignableFrom(myClass)) {
-            BaseDomainType classInstance = (BaseDomainType) myClass.newInstance();
+            BaseDomainType classInstance = (BaseDomainType) myClass.getDeclaredConstructor()
+                .newInstance();
             for (Class<?> aClass : classInstance.getClasses()) {
               sessionFactoryController.addAdditionalClasses(aClass);
             }

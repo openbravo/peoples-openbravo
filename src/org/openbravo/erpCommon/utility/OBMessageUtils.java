@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2017 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -159,13 +159,13 @@ public class OBMessageUtils {
 
   /**
    * 
-   * Formats a message String into a String for html presentation. Escapes the &amp;, &lt;, &gt;, " and ®, and
-   * replace the \n by <br/>
+   * Formats a message String into a String for html presentation. Escapes the &amp;, &lt;, &gt;, "
+   * and ®, and replace the \n by <br/>
    * and \r for space.
    * 
    * IMPORTANT! : this method is designed to transform the output of Utility.messageBD method, and
-   * this method replaces \n by \\n and \" by &amp;quote. Because of that, the first replacements revert
-   * this previous replacements.
+   * this method replaces \n by \\n and \" by &amp;quote. Because of that, the first replacements
+   * revert this previous replacements.
    * 
    * @param message
    *          message with java formating
@@ -429,7 +429,7 @@ public class OBMessageUtils {
       try {
         final Class<?> c = Class.forName("org.openbravo.erpCommon.utility.ErrorTextParser"
             + rdbms.toUpperCase());
-        myParser = (ErrorTextParser) c.newInstance();
+        myParser = (ErrorTextParser) c.getDeclaredConstructor().newInstance();
       } catch (final ClassNotFoundException ex) {
         log4j.warn("Couldn´t find class: org.openbravo.erpCommon.utility.ErrorTextParser"
             + rdbms.toUpperCase());

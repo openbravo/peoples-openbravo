@@ -286,7 +286,8 @@ public class OBBindings {
             .forName(className));
       } catch (IllegalArgumentException e) {
         // try with OBClassLoader in case package is excluded by Weld
-        expr = (FilterExpression) OBClassLoader.getInstance().loadClass(className).newInstance();
+        expr = (FilterExpression) OBClassLoader.getInstance().loadClass(className)
+            .getDeclaredConstructor().newInstance();
       }
       return expr.getExpression(requestMap);
     } catch (Exception e) {

@@ -112,7 +112,7 @@ public abstract class AuthenticationManager {
     }
     try {
       authManager = (AuthenticationManager) OBClassLoader.getInstance().loadClass(authClass)
-          .newInstance();
+          .getDeclaredConstructor().newInstance();
       authManager.init(s);
     } catch (Exception e) {
       log4j

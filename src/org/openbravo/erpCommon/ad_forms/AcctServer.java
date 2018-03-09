@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2017 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2018 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -611,7 +611,8 @@ public abstract class AcctServer {
       if (acctinfo != null && acctinfo.length != 0) {
         if (!acctinfo[0].acctclassname.equals("") && !acctinfo[0].acctdatecolumn.equals("")) {
           try {
-            acct = (AcctServer) Class.forName(acctinfo[0].acctclassname).newInstance();
+            acct = (AcctServer) Class.forName(acctinfo[0].acctclassname).getDeclaredConstructor()
+                .newInstance();
             acct.set(AD_Table_ID, AD_Client_ID, AD_Org_ID, connectionProvider,
                 acctinfo[0].tablename, acctinfo[0].acctdatecolumn);
             acct.reloadAcctSchemaArray();
@@ -1172,7 +1173,7 @@ public abstract class AcctServer {
       if (!strClassname.equals("")) {
         try {
           AcctProcessTemplate newTemplate = (AcctProcessTemplate) Class.forName(strClassname)
-              .newInstance();
+              .getDeclaredConstructor().newInstance();
           if (!newTemplate.execute(this, as, conn, con, vars)) {
             OBDal.getInstance().rollbackAndClose();
             return getStatus();
@@ -2543,8 +2544,8 @@ public abstract class AcctServer {
     amtDiff = amtDiff.add(calculateMultipleRatesDifferences(_amount, currencyIDFrom, currencyIDTo,
         line, conn));
     Currency currencyTo = OBDal.getInstance().get(Currency.class, currencyIDTo);
-    amtDiff = amtDiff.setScale(currencyTo.getStandardPrecision().intValue(),
-        RoundingMode.HALF_EVEN);
+    amtDiff = amtDiff
+        .setScale(currencyTo.getStandardPrecision().intValue(), RoundingMode.HALF_EVEN);
     if (bookDifferences) {
       if ((!isReceipt && amtDiff.compareTo(BigDecimal.ZERO) == 1)
           || (isReceipt && amtDiff.compareTo(BigDecimal.ZERO) == -1)) {

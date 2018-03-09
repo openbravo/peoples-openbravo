@@ -106,7 +106,7 @@ public class Reference extends ModelObject {
     }
     try {
       final Class<?> clz = OBClassLoader.getInstance().loadClass(modelImplementationClass);
-      domainType = (DomainType) clz.newInstance();
+      domainType = (DomainType) clz.getDeclaredConstructor().newInstance();
       domainType.setReference(this);
     } catch (Exception e) {
       throw new OBException("Not able to create domain type " + getModelImpl() + " for reference "

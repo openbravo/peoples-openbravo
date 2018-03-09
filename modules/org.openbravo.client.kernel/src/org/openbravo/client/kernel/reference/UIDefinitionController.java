@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -184,7 +184,7 @@ public class UIDefinitionController extends BaseTemplateComponent {
         if (uiDefinition.isActive()) {
           final Class<?> clz = OBClassLoader.getInstance().loadClass(
               uiDefinition.getImplementationClassname());
-          return (UIDefinition) clz.newInstance();
+          return (UIDefinition) clz.getDeclaredConstructor().newInstance();
         }
       }
     }
@@ -194,7 +194,7 @@ public class UIDefinitionController extends BaseTemplateComponent {
     }
     // the default
     log.warn("No user interface definition found for reference " + reference);
-    return StringUIDefinition.class.newInstance();
+    return StringUIDefinition.class.getDeclaredConstructor().newInstance();
   }
 
   private synchronized Map<String, FormatDefinition> setInitializeComputeFormatDefinitions() {

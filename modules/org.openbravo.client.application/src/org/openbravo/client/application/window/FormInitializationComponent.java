@@ -1484,7 +1484,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           calloutObject = calloutInstances.get(calloutClassName);
           isCalloutInitialized = true;
         } else {
-          calloutObject = calloutClass.newInstance();
+          calloutObject = calloutClass.getDeclaredConstructor().newInstance();
           calloutInstances.put(calloutClassName, calloutObject);
         }
 
