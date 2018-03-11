@@ -34,7 +34,7 @@ import org.openbravo.model.common.enterprise.Organization;
  * EntityResolver only needs to search for existing objects on System level. This class overrides
  * some methods from the {@link EntityResolver} to accomplish this. New objects are assumed to have
  * the client/organization set through the xml.
- * <p/>
+ * <p>
  * This resolver does not query the AD_REF_DATA_LOADED table.
  * 
  * @author mtaal

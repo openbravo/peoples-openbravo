@@ -108,8 +108,10 @@ public class ReferencedInventoryUtil {
   }
 
   /**
-   * Generates a description with the originalDesc + {@value #REFERENCEDINVENTORYPREFIX} +
-   * referenced Inventory search key + {@value #REFERENCEDINVENTORYSUFFIX}
+   * Generates a description with the originalDesc +
+   * {@value org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil#REFERENCEDINVENTORYPREFIX}
+   * + referenced Inventory search key +
+   * {@value org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil#REFERENCEDINVENTORYSUFFIX}
    */
   public static final String getAttributeSetInstanceDescriptionForReferencedInventory(
       final String originalDesc, final ReferencedInventory referencedInventory) {

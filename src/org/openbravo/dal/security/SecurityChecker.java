@@ -42,7 +42,7 @@ import org.openbravo.model.common.enterprise.Organization;
  * write access to the entity.</li>
  * <li>Write: is done in case of create and update actions. The following checks are performed: is
  * the organization writable, is the client of the object the same as is the entity writable (@see
- * EntityAccessChecker#isWritable(Entity))
+ * EntityAccessChecker#isWritable(Entity))</ul>
  * 
  * @author mtaal
  */
@@ -77,7 +77,7 @@ public class SecurityChecker implements OBSingleton {
    * OBContext#getCurrentClient())</li>
    * <li>is the Entity writable for this user (@see EntityAccessChecker#isWritable(Entity))
    * <li>are the client and organization correct from an access level perspective (@see
-   * AccessLevelChecker).</lo>
+   * AccessLevelChecker).</ul>
    * 
    * @param obj
    *          the object to check

@@ -72,20 +72,20 @@ import org.openbravo.utils.FormatUtilities;
  * found then the database is search. if not found there then a new BaseOBObject is created.If the
  * object has an id then it is put in the key-to-object map so that it can be found if later objects
  * refer to it.
- * <p/>
+ * <p>
  * Then the next step is to convert/set the values. the logic walks through the properties of the
  * object (the properties are defined by the entity of the object (see
  * {@link BaseOBObject#getEntity()} and {@link Entity#getProperties()}. For primitive values, the
  * property name ({@link Property#getName()}) is used to search a value in the JSONObject. The value
  * is retrieved converted and then set in the business object.
- * <p/>
+ * <p>
  * Reference/foreign key properties are handled differently. In this case the property name is
  * appended with the ".id" postfix and this name is used to search for a value in the JSONObject. If
  * there is no such value present then the property name is used. The id value is used to search in
  * the key-to-object map and in the database (in this order). If not found then a new object is
  * created as it may be present later in the overall json string. The system later tracks that there
  * are no such maverick objects present (call {@link #getErrors()} to check this).
- * <p/>
+ * <p>
  * This class also handles a special type of property/keys. It can handle setting values in related
  * objects also. For example say that the json object represents a sales order and has these keys
  * (and their values):

@@ -35,7 +35,7 @@ public interface ExtraWindowSettingsInjector {
    * method.
    * 
    * Using the WindowSettingsActionHandler.EXTRA_CALLBACK key it is possible to return a
-   * List<String> with JavaScript functions that are executed on the callback of the
+   * List&lt;String&gt; with JavaScript functions that are executed on the callback of the
    * WindowSettingsActionHandler execution. These functions only receive the "data" object as
    * argument.
    * 

@@ -56,7 +56,7 @@ import org.xml.sax.InputSource;
  * 
  * {attachmentsDir} {laguageFolder} {moduleFolder}
  * 
- * Example: /opt/attachments/ en_US/ <trl tables from core> module1/ <trl tables from module1>
+ * Example: /opt/attachments/ en_US/ &lt;trl tables from core&gt; module1/ &lt;trl tables from module1&gt;
  * 
  */
 public class TranslationManager {

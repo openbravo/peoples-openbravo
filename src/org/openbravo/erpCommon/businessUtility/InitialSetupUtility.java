@@ -319,7 +319,7 @@ public class InitialSetupUtility {
   /**
    * Returns the relation of trees that use the ADTree tree structure, AD_TABLE_TREE table
    * 
-   * @return java.util.List<TableTree>: the relation of all the trees that use the ADTree tree
+   * @return java.util.List&lt;TableTree&gt;: the relation of all the trees that use the ADTree tree
    *         structure
    * @throws Exception
    */
@@ -909,7 +909,7 @@ public class InitialSetupUtility {
    * @param accountTree
    * @param client
    * @param orgProvided
-   * @return List<TreeNode> with relation of tree node elements of the provided tree
+   * @return List&lt;TreeNode&gt; with relation of tree node elements of the provided tree
    * @throws Exception
    */
   public static List<TreeNode> getTreeNode(Tree accountTree, Client client, Organization orgProvided)
@@ -945,7 +945,7 @@ public class InitialSetupUtility {
    * 
    * @param accountTree
    * @param client
-   * @return List<TreeNode> with relation of tree node elements of the provided tree
+   * @return List&lt;TreeNode&gt; with relation of tree node elements of the provided tree
    * @throws Exception
    */
   public static List<TreeNode> getTreeNode(Tree accountTree, Client client) throws Exception {
@@ -1797,7 +1797,7 @@ public class InitialSetupUtility {
    * @param strModules
    *          relation of ids (in a format so that can be included in a "in" statement of a "where"
    *          clause
-   * @return List<Module> with the relation of modules
+   * @return List&lt;Module&gt; with the relation of modules
    * @throws Exception
    */
   public static List<Module> getCOAModules(String strModules) throws Exception {
@@ -1833,7 +1833,7 @@ public class InitialSetupUtility {
    * @param module
    * @param accessLevel
    *          3-&gt; client/org; 1-&gt; organization only
-   * @return List<DataSet> with the relation of DataSet objects
+   * @return List&lt;DataSet&gt; with the relation of DataSet objects
    * @throws Exception
    */
   @Deprecated
@@ -1849,7 +1849,7 @@ public class InitialSetupUtility {
    * @param module
    * @param accessLevel
    *          3-&gt; client/org; 6-&gt; System/client
-   * @return List<DataSet> with the relation of DataSet objects
+   * @return List&lt;DataSet&gt; with the relation of DataSet objects
    * @throws Exception
    */
   public static List<DataSet> getDataSets(Module module, List<String> accessLevel) throws Exception {

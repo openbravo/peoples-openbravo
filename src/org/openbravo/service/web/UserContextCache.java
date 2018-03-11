@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * The main purpose of the user context cache is to support session-less http requests without a
  * large performance hit. With a session-less http request every request needs to log in. This can
  * be comparatively heavy as for each request a new {@link OBContext} is created.
- * <p/>
+ * <p>
  * The user context cache takes care of storing a cache of user contexts (on user id) which are
  * re-used when a web-service call is done. Note that the OBContext which is cached can be re-used
  * by multiple threads at the same time.

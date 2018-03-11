@@ -184,21 +184,29 @@ public class CLFOTestDataPO_18 extends CopyLinesFromOrdersTestData {
   }
 
   /**
-   * Add extra settings to the test <br/>
+   * Add extra settings to the test
    * <ul>
+   * <li>
    * Create a new Attribute
+   * <ul>
    * <li>Organization = Spain</li>
    * <li>Name = Size</li>
    * <li>Instance Attribute = Yes</li>
-   * <li>List = Yes</li><br/>
-   * Add an Attribute Value to it
-   * <li>Search key = Name = XL</li><br/>
+   * <li>List = Yes</li>
+   * </ul></li>
+   * <li>Add an Attribute Value to it
+   * <ul>
+   * <li>Search key = Name = XL</li>
+   * </ul></li>
+   * <li>
    * Create a new Attribute Set
+   * <ul>
    * <li>Organization = Spain</li>
-   * <li>Name = Size</li><br/>
-   * Add as assigned attribute the previously created Size attribute. <br/>
-   * Create a new Product and assign the created Size Attribute Set to it <br/>
-   * Create a new Product and assign the existing Colour Attribute Set to it
+   * <li>Name = Size</li>
+   * </ul></li>
+   * <li>Add as assigned attribute the previously created Size attribute.</li>
+   * <li>Create a new Product and assign the created Size Attribute Set to it</li>
+   * <li>Create a new Product and assign the existing Colour Attribute Set to it</li>
    * </ul>
    */
   public void applyTestSettings() {

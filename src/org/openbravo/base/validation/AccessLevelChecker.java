@@ -26,17 +26,17 @@ import org.openbravo.base.model.Table;
  * Provides checking logic that enforces that certain tables (== Entities) in the system only
  * contain records (== Objects) with the correct client and organization. The
  * {@link Table#getAccessLevel() accessLevel} of the table is used for this.
- * <p/>
+ * <p>
  * System tables may only contain objects with Client id '0' and organization id '0' (=*
  * organization)
- * <p/>
+ * <p>
  * System/Client tables may contain objects from any client but only organizations with id '0'
- * <p/>
+ * <p>
  * Organization may not contain objects with client '0' or organization '0' (client != '0' and org
  * != '0')
- * <p/>
+ * <p>
  * Client/Organization may not contain objects with client '0', any organization is allowed
- * <p/>
+ * <p>
  * All this allows all client/organizations.
  * 
  * @author mtaal

@@ -56,10 +56,10 @@ import org.openbravo.model.common.enterprise.Organization;
  * import and export which has larger datasets. During the XML parse phase this converter will match
  * XML tags with new or existing (in the database) business objects. The matching logic is
  * implemented in the {@link EntityResolver}.
- * <p/>
+ * <p>
  * The XMLEntityConverter keeps track of which objects are new, which exist but do not need to be
  * updated or which objects exist but need to be updated.
- * <p/>
+ * <p>
  * This converter does not update the database directly. However, it changes the properties of
  * existing objects. This means that a commit after calling the process method on the converter can
  * result in database updates by Hibernate.
@@ -109,7 +109,7 @@ public class StaxXMLEntityConverter extends BaseXMLEntityConverter implements OB
    * The main entry point. This method walks through the elements in the root and parses them. The
    * children of a business object (in the xml) are also parsed. Referenced objects are resolved
    * through the {@link EntityResolver}.
-   * <p/>
+   * <p>
    * After a call to this method the to-be-inserted objects can be retrieved through the
    * {@link #getToInsert()} method and the to-be-updated objects through the {@link #getToUpdate()}
    * method.

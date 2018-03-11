@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
  * The OBProvider provides the runtime instances of model entities as well as service instances.
  * Classes are registered by their class type and it is identified if the class should be considered
  * to be a singleton or not.
- * <p/>
+ * <p>
  * The OBProvider is an implementation of the servicelocator pattern discussed in Martin Fowler's
  * article here: http://martinfowler.com/articles/injection.html
  * 

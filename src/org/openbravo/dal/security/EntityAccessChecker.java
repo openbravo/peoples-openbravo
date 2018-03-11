@@ -46,14 +46,14 @@ import org.openbravo.model.ad.ui.Tab;
  * and Entity. It uses the window-role access information and the window-table relation to determine
  * which tables are readable and writable for a user. If the user has readWrite access to a Window
  * then also the related Table/Entity is writable.
- * <p/>
+ * <p>
  * In addition this class implements the concept of derived readable. Any entity refered to from a
  * readable/writable entity is a derived readable. A user may read (but not write) the following
  * properties from a deriver readable entity: id and identifier properties. Access to any other
  * property or changing a property on a derived readable entity results in a OBSecurityException.
  * Derived readable checks are done when a value is retrieved of an object (@see
  * BaseOBObject#get(String)).
- * <p/>
+ * <p>
  * This class is used from the {@link SecurityChecker} which combines all entity security checks.
  * 
  * @see Entity

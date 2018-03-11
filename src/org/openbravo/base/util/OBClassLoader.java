@@ -26,7 +26,7 @@ import org.openbravo.base.provider.OBSingleton;
  * The OBClassLoader is used to support different classloading scenarios. As a default two
  * classloaders are present: the context (the default, used in Tomcat) and the class classloader.
  * The class classloader is used in Ant tasks.
- * <p/>
+ * <p>
  * Use the {@link OBProvider OBProvider} to define which classloader in a specific environment.
  * 
  * @author mtaal

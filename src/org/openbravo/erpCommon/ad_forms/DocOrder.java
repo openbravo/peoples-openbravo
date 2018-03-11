@@ -180,9 +180,6 @@ public class DocOrder extends AcctServer {
   /**
    * Create Facts (the accounting logic) for SOO, POO, POR.
    * 
-   * <pre>
-   * </pre>
-   * 
    * @param as
    *          accounting schema
    * @return Fact

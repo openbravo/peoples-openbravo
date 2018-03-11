@@ -184,10 +184,10 @@ public class CashVATUtil {
    * 
    * It first checks whether the organization's and business partner's location country is
    * different. In this case it returns "N", because Cash VAT transactions are only valid within the
-   * same country. <br/>
+   * same country. <br>
    * 
    * For sales flow, it checks whether the organization is declared as Cash VAT. In this case it
-   * returns "Y". <br/>
+   * returns "Y". <br>
    * 
    * For purchase flow, it first checks if the organization is declared as Cash VAT and Double cash
    * criteria. In this case it returns "Y"; otherwise it returns the business partner Cash VAT

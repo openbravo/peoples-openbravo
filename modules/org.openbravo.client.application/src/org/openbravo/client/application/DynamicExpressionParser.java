@@ -41,7 +41,8 @@ import org.openbravo.model.ad.ui.Tab;
 
 /**
  * Parses a dynamic expressions and extracts information, e.g. The expression is using a field or an
- * auxiliary input, etc. <br/>
+ * auxiliary input, etc.
+ * <p>
  * The transformation of @Expression@ is the following:
  * <ul>
  * <li>@ColumnName@ are transformed into property name, e.g. @DocStatus@ into <b>documentStatus</b></li>
@@ -250,7 +251,8 @@ public class DynamicExpressionParser {
 
   /**
    * Gets a JavaScript expression based on the dynamic expression, e.g @SomeColumn@!'Y' results in
-   * currentValues.someColumn !== true.<br/>
+   * currentValues.someColumn !== true.
+   * <p>
    * Note: Field comparison with <b>'Y'</b> or <b>'N'</b> are transformed in <b>true</b> or
    * <b>false</b>
    * 

@@ -2999,7 +2999,7 @@ public abstract class AcctServer {
    * Returns the writeoff and the amount of a Payment Detail. In case the related Payment Schedule
    * Detail was generated for compensate the difference between an Order and a related Invoice, it
    * merges it's amount with the next Payment Schedule Detail. Issue 19567:
-   * https://issues.openbravo.com/view.php?id=19567 <br />
+   * https://issues.openbravo.com/view.php?id=19567 <br>
    * It does exactly the same as the
    * {@link #getPaymentDetailWriteOffAndAmount(List, FIN_PaymentSchedule, FIN_PaymentSchedule, FIN_PaymentSchedule, int)}
    * method, but it also stores a new field "MergedPaymentDetailId" inside the fieldProvider with
@@ -3039,7 +3039,7 @@ public abstract class AcctServer {
    * Returns the writeoff and the amount of a Payment Detail. In case the related Payment Schedule
    * Detail was generated for compensate the difference between an Order and a related Invoice, it
    * merges it's amount with the next Payment Schedule Detail. Issue 19567:
-   * https://issues.openbravo.com/view.php?id=19567 <br />
+   * https://issues.openbravo.com/view.php?id=19567 <br>
    * It does exactly the same as the
    * {@link #getPaymentDetailWriteOffAndAmount(List, FIN_PaymentSchedule, FIN_PaymentSchedule, FIN_PaymentSchedule, int)}
    * method, but it also stores a new field "MergedPaymentDetailId" inside the fieldProvider with

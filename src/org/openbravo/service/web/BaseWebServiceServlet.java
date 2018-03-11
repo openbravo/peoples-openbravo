@@ -41,7 +41,7 @@ import org.openbravo.dal.core.SessionHandler;
 /**
  * This servlet has two main responsibilities: 1) authenticate, 2) set the correct {@link OBContext}
  * , and 3) translate Exceptions into the correct Http response code.
- * <p/>
+ * <p>
  * In regard to authentication: there is support for basic-authentication as well as url parameter
  * based authentication.
  * 
