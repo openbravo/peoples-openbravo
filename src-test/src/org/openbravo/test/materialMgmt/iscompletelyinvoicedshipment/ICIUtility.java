@@ -49,9 +49,9 @@ public class ICIUtility {
    * 
    * <ul>
    * <li>User: Openbravo</li>
-   * <li>Role: F&B International Group Administrator</li>
-   * <li>Client: F&B International Group</li>
-   * <li>Organization: F&B España</li>
+   * <li>Role: F&amp;B International Group Administrator</li>
+   * <li>Client: F&amp;B International Group</li>
+   * <li>Organization: F&amp;B España</li>
    * </ul>
    */
   public static void setTestContextSpain() {
