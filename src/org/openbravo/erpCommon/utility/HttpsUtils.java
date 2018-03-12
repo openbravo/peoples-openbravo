@@ -107,32 +107,13 @@ public class HttpsUtils {
    * @return true in case Internet (https://butler.openbravo.com) is reachable.
    */
   public static boolean isInternetAvailable() {
-    return isInternetAvailable(null, 0);
-  }
-
-  /**
-   * Checks the Internet availability and sets the proxy in case it is needed.
-   * 
-   * @param proxyHost
-   * @param proxyPort
-   */
-  private static boolean isInternetAvailable(String proxyHost, int proxyPort) {
     OBContext.setAdminMode();
     try {
       final SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
-      if (sys.isProxyRequired() || (proxyHost != null && !proxyHost.isEmpty())) {
+      if (sys.isProxyRequired()) {
         // Proxy is required for connection.
-        String host;
-        int port;
-        if (proxyHost == null || proxyHost.isEmpty()) {
-          // to maintain backwards compatibility, set host in case it is provided as parameter (it
-          // shouldn't be)
-          host = sys.getProxyServer();
-          port = sys.getProxyPort().intValue();
-        } else {
-          host = proxyHost;
-          port = proxyPort;
-        }
+        String host = sys.getProxyServer();
+        int port = sys.getProxyPort().intValue();
         System.getProperties().put("proxySet", "true");
         System.getProperties().put("http.proxyHost", host);
         System.getProperties().put("https.proxyHost", host);
