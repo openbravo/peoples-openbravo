@@ -23,14 +23,9 @@
       
 BEGIN
     
-    IF AD_isTriggerEnabled()='N' THEN RETURN;
-    END IF;
+  IF AD_isTriggerEnabled()='N' THEN RETURN;
+  END IF;
 
-   --check that currency is different from currency_to
-   if :NEW.c_currency_id = :NEW.c_currency_id_to then
-     RAISE_APPLICATION_ERROR(-20000, '@SameCurrency@');
-   end if;
-   
   IF (INSERTING OR UPDATING) THEN
 	  --RAISE_APPLICATION_ERROR (-20000, '@20506@');
 	  IF(:new.ValidTo IS NULL) THEN
