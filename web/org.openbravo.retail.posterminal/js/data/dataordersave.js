@@ -330,6 +330,7 @@
                 model: model
               }, function (args) {
                 receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
+                OB.UTIL.setScanningFocus(true);
                 receipt.set('hasbeenpaid', 'Y');
                 // Important: at this point, the receipt is considered final. Nothing must alter it
                 OB.UTIL.clone(receipt, frozenReceipt);
@@ -462,6 +463,7 @@
                 isMultiOrder: true
               }, function (args) {
                 currentReceipt.set('json', JSON.stringify(currentReceipt.serializeToJSON()));
+                OB.UTIL.setScanningFocus(true);
                 currentReceipt.set('hasbeenpaid', 'Y');
                 OB.Dal.save(currentReceipt, function () {
                   OB.Dal.get(OB.Model.Order, receiptId, function (savedReceipt) {

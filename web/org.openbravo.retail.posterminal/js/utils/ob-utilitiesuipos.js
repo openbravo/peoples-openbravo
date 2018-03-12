@@ -467,3 +467,7 @@ OB.UTIL.checkApproval = function (approvalType, username, password, callback, wi
   }));
 
 };
+
+OB.UTIL.setScanningFocus = function (focus) {
+  OB.MobileApp.view.scanningFocus(focus);
+};
