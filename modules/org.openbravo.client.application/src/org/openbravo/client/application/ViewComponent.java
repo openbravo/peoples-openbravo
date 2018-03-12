@@ -248,7 +248,6 @@ public class ViewComponent extends BaseComponent {
   @Override
   public String getETag() {
     String etag = super.getETag();
-
     return etag + "_" + getViewVersionHash();
   }
 
@@ -306,14 +305,14 @@ public class ViewComponent extends BaseComponent {
         viewVersions.append(t.getTable().isFullyAudited()).append("|");
       }
       viewVersions.append(getLastGridConfigurationChange(window)).append("|");
-      viewVersions.append(getLastSystemPrefrenceChange(window)).append("|");
+      viewVersions.append(getLastSystemPreferenceChange(window)).append("|");
       return DigestUtils.md5Hex(viewVersions.toString());
     } finally {
       OBContext.restorePreviousMode();
     }
   }
 
-  private String getLastSystemPrefrenceChange(Window window) {
+  private String getLastSystemPreferenceChange(Window window) {
     Set<String> preferences = new HashSet<String>();
 
     Pattern p = Pattern.compile(DynamicExpressionParser.REPLACE_DISPLAY_LOGIC_SERVER_PATTERN);
