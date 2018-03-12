@@ -109,8 +109,8 @@ public class OBBindings {
   /**
    * Checks if is a Sales Order transaction, based on the parameters of the HTTP request
    * 
-   * @return null if there is no request parameters, or the inpissotrx request parameter is not
-   *         available
+   * @return null if there is no request parameters, or if both the inpissotrx and inpwindowId
+   *         request parameters are not available
    */
   public Boolean isSalesTransaction() {
     if (requestMap == null) {
