@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009-2017 Openbravo SL 
+ * All portions are Copyright (C) 2009-2018 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2143,13 +2143,19 @@ public class PaymentReportDao {
     final StringBuilder sql = new StringBuilder();
     final java.util.List<Invoice> result = new ArrayList<Invoice>();
 
-    sql.append(" select distinct(pdv.invoicePaymentPlan.invoice.id) ");
-    sql.append(" from FIN_Payment_Credit pc, FIN_Payment p0, ");
-    sql.append("      FIN_Payment p1, FIN_Payment_Detail_V pdv  ");
-    sql.append(" where p0.id=pc.creditPaymentUsed ");
-    sql.append(" and pc.payment=p1.id ");
-    sql.append(" and pdv.payment=p1.id ");
-    sql.append(" and p0.id = '" + payment.getId() + "' ");
+    sql.append(" select distinct(psiv.invoice.id) ");
+    sql.append(" from FIN_Payment_Sched_Inv_V psiv ");
+    sql.append(" where exists ( ");
+    sql.append("   select 1 ");
+    sql.append("   from FIN_Payment_Credit pc, FIN_Payment_Detail pd, ");
+    sql.append("     FIN_Payment_ScheduleDetail psd, FIN_Payment_Schedule psi ");
+    sql.append("   where  ");
+    sql.append("     pc.creditPaymentUsed.id = '" + payment.getId() + "' ");
+    sql.append("     and pd.finPayment=pc.payment ");
+    sql.append("     and pd.id = psd.paymentDetails.id ");
+    sql.append("     and psd.invoicePaymentSchedule.id = psi.id ");
+    sql.append("     and psi.id = psiv.id ");
+    sql.append(" )");
 
     try {
       OBContext.setAdminMode(true);
