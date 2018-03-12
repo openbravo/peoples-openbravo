@@ -132,14 +132,14 @@ public class OBBindings {
       return "Y".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value);
     }
 
-    value = (String) httpSession.getAttribute(getWindowId() + "|ISSOTRX");
-    if (value != null) {
-      return "Y".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value);
-    }
-
     String windowId = getWindowId();
     if (windowId == null) {
       return null;
+    }
+
+    value = (String) httpSession.getAttribute(windowId + "|ISSOTRX");
+    if (value != null) {
+      return "Y".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value);
     }
 
     ApplicationDictionaryCachedStructures adcs = WeldUtils
