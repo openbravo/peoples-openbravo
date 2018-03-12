@@ -107,8 +107,8 @@ public class ProductPrice extends ProcessHQLQuery {
           + " where pli.product.id = ppp.product.id " //
           + " and pli.obretcoProductlist.id = :productListId " //
           + " and plv.active = true " //
-          + " and ppp.priceListVersion.id in ("//
-          + "   select distinct plv.id " //
+          + " and exists ("//
+          + "   select 1 " //
           + "   from PricingPriceListVersion plv, BusinessPartner bp" //
           + "   where plv.priceList.id = bp.priceList.id" //
           + "   and plv.active = true" //
@@ -120,6 +120,7 @@ public class ProductPrice extends ProcessHQLQuery {
           + "     group by plv2.priceList.id" //
           + "   )" //
           + "   and plv.priceList.id <> (:priceList)" //
+          + "   and plv.id = ppp.priceListVersion.id" //
           + "   and bp.customer='Y'"//
           + " )"//
           + " and $filtersCriteria " //
