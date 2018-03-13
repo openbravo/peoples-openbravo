@@ -73,6 +73,9 @@
       <foreign-key foreignTable="C_CURRENCY" name="OBPOS_CURRENCYCONVRATETO">
         <reference local="C_CURRENCY_ID_TO" foreign="C_CURRENCY_ID"/>
       </foreign-key>
+      <index name="OBPOS_CONVERSION_RATE_ORG_IDX" unique="false">
+        <index-column name="AD_ORG_ID"/>
+      </index>
       <unique name="OBPOS_CONVERSIONRATE_ONCE">
         <unique-column name="C_CURRENCY_ID"/>
         <unique-column name="C_CURRENCY_ID_TO"/>
