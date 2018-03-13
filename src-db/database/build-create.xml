@@ -118,7 +118,7 @@ create.database: creates the database from scratch.
         DECLARE
           v_count NUMBER;
         BEGIN
-          SELECT COUNT(*) INTO v_count FROM DBA_USERS WHERE USERNAME = '${bbdd.user}';
+          SELECT COUNT(*) INTO v_count FROM DBA_USERS WHERE UPPER(USERNAME) = UPPER('${bbdd.user}');
           IF (v_count > 0) THEN
             RAISE_APPLICATION_ERROR(-20100, '${bbdd.user} ALREADY EXISTS. SELECT ANOTHER USER OR DROP IT FIRST');
           END IF;
