@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,6 +30,8 @@ import org.openbravo.client.kernel.ComponentGenerator;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.userinterface.smartclient.SmartClientComponentProvider;
 import org.openbravo.userinterface.smartclient.TypesComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Test the {@link TypesComponent} and its template.
@@ -37,6 +39,7 @@ import org.openbravo.userinterface.smartclient.TypesComponent;
  * @author mtaal
  */
 public class GenerateTypesJSTest extends WeldBaseTest {
+  private static final Logger log = LoggerFactory.getLogger(GenerateTypesJSTest.class);
 
   @Inject
   @ComponentProvider.Qualifier(SmartClientComponentProvider.QUALIFIER)
@@ -53,7 +56,7 @@ public class GenerateTypesJSTest extends WeldBaseTest {
         TypesComponent.SC_TYPES_COMPONENT_ID, new HashMap<String, Object>());
 
     final String output = ComponentGenerator.getInstance().generate(component);
-    System.err.println(output);
+    log.debug(output);
   }
 
 }
