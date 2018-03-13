@@ -350,9 +350,6 @@
           Promise.all(promises).then(callback);
         } else {
           var service = 'org.openbravo.retail.posterminal.master.Cashup';
-          if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-            service = 'org.openbravo.retail.posterminal.master.CashupSynchronized';
-          }
           //2. Search in server
           new OB.DS.Process(service).exec({
             isprocessed: 'Y'
@@ -462,7 +459,6 @@
   OB.UTIL.rebuildCashupFromServer = function (callback, errorCallback) {
     var service = 'org.openbravo.retail.posterminal.master.Cashup';
     if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-      service = 'org.openbravo.retail.posterminal.master.CashupSynchronized';
       OB.UTIL.showLoading(true);
     }
     new OB.DS.Process(service).exec({
@@ -539,9 +535,6 @@
           if (cashUpProcessed.length === 0) {
             if (!skipSearchBackend) {
               var service = 'org.openbravo.retail.posterminal.master.Cashup';
-              if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-                service = 'org.openbravo.retail.posterminal.master.CashupSynchronized';
-              }
               // Search in the backoffice
               new OB.DS.Process(service).exec({
                 isprocessed: 'N',
