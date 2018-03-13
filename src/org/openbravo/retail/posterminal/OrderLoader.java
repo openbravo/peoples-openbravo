@@ -2383,7 +2383,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         @SuppressWarnings("unchecked")
         Class<PaymentProcessor> paymentclazz = (Class<PaymentProcessor>) Class
             .forName(paymentTypeName);
-        PaymentProcessor paymentinst = paymentclazz.newInstance();
+        PaymentProcessor paymentinst = paymentclazz.getDeclaredConstructor().newInstance();
         paymentinst.process(payment, order, invoice, writeoffAmt);
       } else {
         FIN_FinancialAccount account = null;
