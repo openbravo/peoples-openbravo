@@ -13,7 +13,7 @@
  * and  limitations under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s): Openbravo S.L.U.
  ************************************************************************
@@ -73,17 +73,15 @@
   </target>
 
   <target name="run.tests" depends="compile.test, copy.xml">
-    <junit printsummary="yes" haltonfailure="yes">
+    <junit printsummary="no" haltonfailure="yes" showoutput="yes" outputtoformatters="false">
       <classpath refid="test.class.path" />
-      <formatter type="plain" usefile="no"/>
       <test name="org.openbravo.test.AntTaskTests" haltonfailure="no"/>
     </junit>
   </target>
 
   <target name="run.all.tests" depends="compile.test, copy.xml">
-    <junit printsummary="yes" haltonfailure="yes">
+    <junit printsummary="no" haltonfailure="yes" showoutput="yes" outputtoformatters="false">
       <classpath refid="test.class.path" />
-      <formatter type="plain" usefile="no"/>
       <test name="org.openbravo.test.AllAntTaskTests" haltonfailure="no" outfile="../src/result">
       <formatter type="xml" />
     </test>
@@ -91,17 +89,15 @@
   </target>
 
   <target name="run.quick.tests" depends="compile.test, copy.xml">
-    <junit printsummary="yes" haltonfailure="yes">
+    <junit printsummary="no" haltonfailure="yes" showoutput="yes" outputtoformatters="false">
       <classpath refid="test.class.path" />
-      <formatter type="plain" usefile="no"/>
       <test name="org.openbravo.test.AllQuickAntTaskTests" haltonfailure="no"/>
     </junit>
   </target>
 
   <target name="run.test" depends="compile.test, copy.xml">
-    <junit printsummary="yes" haltonfailure="yes">
+    <junit printsummary="no" haltonfailure="yes" showoutput="yes" outputtoformatters="false">
       <classpath refid="test.class.path" />
-      <formatter type="plain" usefile="no"/>
       <test name="${test}" haltonfailure="no" outfile="../src/result-${test}">
         <formatter type="xml"/>
       </test>
@@ -109,9 +105,8 @@
   </target>
 
   <target name="run.webservice.tests" depends="compile.test, copy.xml">
-    <junit printsummary="yes" haltonfailure="yes">
+    <junit printsummary="no" haltonfailure="yes" showoutput="yes" outputtoformatters="false">
       <classpath refid="test.class.path" />
-      <formatter type="plain" usefile="no"/>
       <test name="org.openbravo.test.AllWebserviceTests" haltonfailure="no" outfile="../src/resultws">
         <formatter type="xml" />
       </test>
