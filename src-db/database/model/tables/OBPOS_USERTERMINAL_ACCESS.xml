@@ -56,6 +56,11 @@
       <index name="OBPOS_USERTERM_ACCESS_USER_IDX" unique="false">
         <index-column name="AD_USER_ID"/>
       </index>
+      <unique name="OBPOS_USERTERM_ACC_USRTERM">
+        <unique-column name="AD_ORG_ID"/>
+        <unique-column name="AD_USER_ID"/>
+        <unique-column name="OBPOS_APPLICATIONS_ID"/>
+      </unique>
       <check name="OBPOS_USRTERM_ACC_ISACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

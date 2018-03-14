@@ -2373,17 +2373,19 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         continue;
       }
       String paymentTypeName = payment.getString("kind");
-      for (OBPOSAppPayment type : posTerminal.getOBPOSAppPaymentList()) {
-        if (type.getSearchKey().equals(paymentTypeName)) {
-          paymentType = type;
-          break;
-        }
+      OBCriteria<OBPOSAppPayment> type = OBDal.getInstance().createCriteria(OBPOSAppPayment.class);
+      type.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_SEARCHKEY, paymentTypeName));
+      type.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_OBPOSAPPLICATIONS + ".id", posTerminalId));
+      type.setMaxResults(1);
+
+      if (!type.list().isEmpty()) {
+        paymentType = (OBPOSAppPayment) type.uniqueResult();
       }
       if (paymentType == null) {
         @SuppressWarnings("unchecked")
         Class<PaymentProcessor> paymentclazz = (Class<PaymentProcessor>) Class
             .forName(paymentTypeName);
-        PaymentProcessor paymentinst = paymentclazz.newInstance();
+        PaymentProcessor paymentinst = paymentclazz.getDeclaredConstructor().newInstance();
         paymentinst.process(payment, order, invoice, writeoffAmt);
       } else {
         FIN_FinancialAccount account = null;

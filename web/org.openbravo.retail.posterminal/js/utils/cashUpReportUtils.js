@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -45,7 +45,7 @@
   }
 
   function updateCashUpInfo(cashUp, receipt, j, callback, tx) {
-    var cashuptaxes, order, orderType, gross, i, taxOrderType, taxAmount, auxPay;
+    var cashuptaxes, order, orderType, gross, i, taxOrderType, taxAmount, auxPay, replacedOrder;
     var netSales = OB.DEC.Zero;
     var grossSales = OB.DEC.Zero;
     var netReturns = OB.DEC.Zero;
@@ -69,14 +69,15 @@
           }
           //Sales order: Positive line
           if (!(order.has('isQuotation') && order.get('isQuotation'))) {
-            if (line.get('qty') > 0 && orderType !== 3 && !order.get('isLayaway')) {
-              netSales = OB.DEC.add(netSales, line.get('net'));
-              grossSales = OB.DEC.add(grossSales, gross);
-              //Return from customer or Sales with return: Negative line
-            } else if (line.get('qty') < 0 && orderType !== 3 && !order.get('isLayaway')) {
-              netReturns = OB.DEC.add(netReturns, -line.get('net'));
-              grossReturns = OB.DEC.add(grossReturns, -gross);
-              //Void Layaway
+            replacedOrder = (order.get('replacedorder') && line.get('remainingQuantity'));
+            if (orderType !== 3 && !order.get('isLayaway') && !replacedOrder) {
+              if (line.get('qty') > 0) {
+                netSales = OB.DEC.add(netSales, line.get('net'));
+                grossSales = OB.DEC.add(grossSales, gross);
+              } else if (line.get('qty') < 0) {
+                netReturns = OB.DEC.add(netReturns, -line.get('net'));
+                grossReturns = OB.DEC.add(grossReturns, -gross);
+              }
             } else if (orderType === 3) {
               if (line.get('qty') > 0) {
                 netSales = OB.DEC.add(netSales, -line.get('net'));
@@ -349,9 +350,6 @@
           Promise.all(promises).then(callback);
         } else {
           var service = 'org.openbravo.retail.posterminal.master.Cashup';
-          if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-            service = 'org.openbravo.retail.posterminal.master.CashupSynchronized';
-          }
           //2. Search in server
           new OB.DS.Process(service).exec({
             isprocessed: 'Y'
@@ -461,7 +459,6 @@
   OB.UTIL.rebuildCashupFromServer = function (callback, errorCallback) {
     var service = 'org.openbravo.retail.posterminal.master.Cashup';
     if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-      service = 'org.openbravo.retail.posterminal.master.CashupSynchronized';
       OB.UTIL.showLoading(true);
     }
     new OB.DS.Process(service).exec({
@@ -538,9 +535,6 @@
           if (cashUpProcessed.length === 0) {
             if (!skipSearchBackend) {
               var service = 'org.openbravo.retail.posterminal.master.Cashup';
-              if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-                service = 'org.openbravo.retail.posterminal.master.CashupSynchronized';
-              }
               // Search in the backoffice
               new OB.DS.Process(service).exec({
                 isprocessed: 'N',
