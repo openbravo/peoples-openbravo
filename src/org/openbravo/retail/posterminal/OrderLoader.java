@@ -171,6 +171,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private Instance<OrderLoaderPreAddShipmentLineHook> preAddShipmentLine;
 
   private boolean useOrderDocumentNoForRelatedDocs = false;
+  private int paymentCount = 0;
 
   protected String getImportQualifier() {
     return "Order";
@@ -531,11 +532,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         } catch (Throwable ignored) {
         }
       }
-
+      if (useOrderDocumentNoForRelatedDocs) {
+        paymentCount = countPayments(order);
+      }
       if (log.isDebugEnabled()) {
         t5 = System.currentTimeMillis();
       }
-
       if (!isQuotation && !isDeleted) {
         // Payment
         JSONObject paymentResponse = handlePayments(jsonorder, order, invoice, wasPaidOnCredit,
@@ -2356,7 +2358,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     BigDecimal writeoffAmt = paymentAmt.subtract(gross.abs());
     boolean hasReversalPayment = false;
-
     for (int i = 0; i < payments.length(); i++) {
       JSONObject payment = payments.getJSONObject(i);
       OBPOSAppPayment paymentType = null;
@@ -2407,6 +2408,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           // In case writeoff is higher than amount, we put 1 as payment and rest as overpayment
           // because the payment cannot be 0 (It wouldn't be created)
           tempWriteoffAmt = amount.abs().subtract(BigDecimal.ONE);
+        }
+        if (useOrderDocumentNoForRelatedDocs) {
+          paymentCount++;
         }
         processPayments(paymentSchedule, paymentScheduleInvoice, order, invoice, paymentType,
             payment, tempWriteoffAmt, jsonorder, account);
@@ -2830,7 +2834,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       String paymentDocNo;
       if (useOrderDocumentNoForRelatedDocs) {
-        final int paymentCount = countPayments(order);
         paymentDocNo = order.getDocumentNo();
         if (paymentCount > 0) {
           paymentDocNo = paymentDocNo + "-" + paymentCount;
@@ -2966,7 +2969,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private int countPayments(Order order) {
     final String countHql = "select count(*) from FIN_Payment_ScheduleDetail where "
         + FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE + "."
-        + FIN_PaymentSchedule.PROPERTY_ORDER + "=:order";
+        + FIN_PaymentSchedule.PROPERTY_ORDER + "=:order" + " and "
+        + FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS + " is not null ";
     final Query qry = OBDal.getInstance().getSession().createQuery(countHql);
     qry.setEntity("order", order);
     return ((Number) qry.uniqueResult()).intValue();
