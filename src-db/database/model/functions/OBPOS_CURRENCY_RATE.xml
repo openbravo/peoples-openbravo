@@ -86,7 +86,7 @@ BEGIN
   END;
   -- Not found
   IF(v_Rate IS NULL) THEN
-     v_rate = c_currency_rate(p_curfrom_id, p_curto_id, p_convdate, p_ratetype, p_client_id, p_org_id); 
+     v_rate := c_currency_rate(p_curfrom_id, p_curto_id, p_convdate, p_ratetype, p_client_id, p_org_id); 
   END IF;
   -- Currency From was EMU
   RETURN v_Rate;
