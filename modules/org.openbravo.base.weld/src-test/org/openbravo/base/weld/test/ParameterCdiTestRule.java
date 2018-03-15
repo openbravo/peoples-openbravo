@@ -60,13 +60,14 @@ public class ParameterCdiTestRule<T> implements MethodRule {
     };
   }
 
-  // replace isAccesible() with canAccess() when JDK9 becomes the minimum supported version
-  @SuppressWarnings("all")
   private void evaluateParamsToTarget(Statement base, Object target, FrameworkMethod method)
       throws Throwable {
     Field targetField = getTargetField(target);
 
-    if (!targetField.isAccessible()) {
+    // replace isAccesible() with canAccess() when JDK9 becomes the minimum supported version
+    @SuppressWarnings("all")
+    boolean isAccesible = targetField.isAccessible();
+    if (!isAccesible) {
       targetField.setAccessible(true);
     }
 
