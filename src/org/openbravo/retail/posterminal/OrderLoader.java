@@ -2382,10 +2382,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       type.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_SEARCHKEY, paymentTypeName));
       type.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_OBPOSAPPLICATIONS + ".id", posTerminalId));
       type.setMaxResults(1);
+      paymentType = (OBPOSAppPayment) type.uniqueResult();
 
-      if (!type.list().isEmpty()) {
-        paymentType = (OBPOSAppPayment) type.uniqueResult();
-      }
       if (paymentType == null) {
         @SuppressWarnings("unchecked")
         Class<PaymentProcessor> paymentclazz = (Class<PaymentProcessor>) Class
