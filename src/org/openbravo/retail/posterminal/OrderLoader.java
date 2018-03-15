@@ -171,6 +171,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private Instance<OrderLoaderPreAddShipmentLineHook> preAddShipmentLine;
 
   private boolean useOrderDocumentNoForRelatedDocs = false;
+  private int paymentCount = 0;
 
   protected String getImportQualifier() {
     return "Order";
@@ -398,9 +399,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           OBDal.getInstance().save(order);
           lineReferences = new ArrayList<OrderLine>();
           createOrderLines(order, jsonorder, orderlines, lineReferences);
-          if (orderLineServiceList.size() > 0) {
-            createLinesForServiceProduct();
-          }
+
         }
 
         // 37240: done outside of createOrderLines, since needs to be done in all order loaders, not
@@ -533,11 +532,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         } catch (Throwable ignored) {
         }
       }
-
+      if (useOrderDocumentNoForRelatedDocs) {
+        paymentCount = countPayments(order);
+      }
       if (log.isDebugEnabled()) {
         t5 = System.currentTimeMillis();
       }
-
       if (!isQuotation && !isDeleted) {
         // Payment
         JSONObject paymentResponse = handlePayments(jsonorder, order, invoice, wasPaidOnCredit,
@@ -1691,6 +1691,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
       }
     }
+    if (orderLineServiceList.size() > 0) {
+      createLinesForServiceProduct(lineReferences);
+    }
   }
 
   protected void deleteOrderlineServiceRelations(Order order) {
@@ -1706,47 +1709,51 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     deleteQuery.executeUpdate();
   }
 
-  protected void createLinesForServiceProduct() throws JSONException {
+  protected void createLinesForServiceProduct(ArrayList<OrderLine> lineReferences)
+      throws JSONException {
     Iterator<Entry<String, JSONArray>> orderLineIterator = orderLineServiceList.entrySet()
         .iterator();
+
     while (orderLineIterator.hasNext()) {
       Entry<String, JSONArray> olservice = orderLineIterator.next();
-      OrderLine orderLine = OBDal.getInstance().get(OrderLine.class, olservice.getKey());
-      JSONArray relatedLines = olservice.getValue();
-      for (int i = 0; i < relatedLines.length(); i++) {
-        OrderlineServiceRelation olServiceRelation = OBProvider.getInstance().get(
-            OrderlineServiceRelation.class);
-        JSONObject relatedJsonOrderLine = relatedLines.getJSONObject(i);
-        OrderLine rol = OBDal.getInstance().get(OrderLine.class,
-            relatedJsonOrderLine.get("orderlineId"));
-        if (rol != null) {
-          olServiceRelation.setActive(true);
-          olServiceRelation.setOrganization(orderLine.getOrganization());
-          olServiceRelation.setCreatedBy(orderLine.getCreatedBy());
-          olServiceRelation.setCreationDate(orderLine.getCreationDate());
-          if ("UQ".equals(orderLine.getProduct().getQuantityRule())) {
-            if (orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) > 0) {
-              olServiceRelation.setQuantity(BigDecimal.ONE);
-            } else {
-              olServiceRelation.setQuantity(new BigDecimal(-1));
+      for (OrderLine orderLine : lineReferences) {
+        if (orderLine.getId().equals(olservice.getKey())) {
+          JSONArray relatedLines = olservice.getValue();
+          for (int i = 0; i < relatedLines.length(); i++) {
+            OrderlineServiceRelation olServiceRelation = OBProvider.getInstance().get(
+                OrderlineServiceRelation.class);
+            JSONObject relatedJsonOrderLine = relatedLines.getJSONObject(i);
+            OrderLine rol = OBDal.getInstance().get(OrderLine.class,
+                relatedJsonOrderLine.get("orderlineId"));
+            if (rol != null) {
+              olServiceRelation.setActive(true);
+              olServiceRelation.setOrganization(orderLine.getOrganization());
+              olServiceRelation.setCreatedBy(orderLine.getCreatedBy());
+              olServiceRelation.setCreationDate(orderLine.getCreationDate());
+              if ("UQ".equals(orderLine.getProduct().getQuantityRule())) {
+                if (orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) > 0) {
+                  olServiceRelation.setQuantity(BigDecimal.ONE);
+                } else {
+                  olServiceRelation.setQuantity(new BigDecimal(-1));
+                }
+              } else {
+                if (rol.getOrderedQuantity().signum() != orderLine.getOrderedQuantity().signum()) {
+                  olServiceRelation.setQuantity(rol.getOrderedQuantity().negate());
+                } else {
+                  olServiceRelation.setQuantity(rol.getOrderedQuantity());
+                }
+              }
+              olServiceRelation.setAmount(rol.getBaseGrossUnitPrice().multiply(
+                  olServiceRelation.getQuantity()));
+              olServiceRelation.setUpdated(orderLine.getUpdated());
+              olServiceRelation.setUpdatedBy(orderLine.getUpdatedBy());
+              olServiceRelation.setSalesOrderLine(orderLine);
+              olServiceRelation.setOrderlineRelated(rol);
+              olServiceRelation.setId(OBMOBCUtils.getUUIDbyString(orderLine.getId() + i));
+              olServiceRelation.setNewOBObject(true);
+              OBDal.getInstance().save(olServiceRelation);
             }
-          } else {
-            if (rol.getOrderedQuantity().signum() != orderLine.getOrderedQuantity().signum()) {
-              olServiceRelation.setQuantity(rol.getOrderedQuantity().negate());
-            } else {
-              olServiceRelation.setQuantity(rol.getOrderedQuantity());
-            }
-
           }
-          olServiceRelation.setAmount(rol.getBaseGrossUnitPrice().multiply(
-              olServiceRelation.getQuantity()));
-          olServiceRelation.setUpdated(orderLine.getUpdated());
-          olServiceRelation.setUpdatedBy(orderLine.getUpdatedBy());
-          olServiceRelation.setSalesOrderLine(orderLine);
-          olServiceRelation.setOrderlineRelated(rol);
-          olServiceRelation.setId(OBMOBCUtils.getUUIDbyString(orderLine.getId() + i));
-          olServiceRelation.setNewOBObject(true);
-          OBDal.getInstance().save(olServiceRelation);
         }
       }
     }
@@ -1826,7 +1833,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
       }
     }
-
     if (!jsonorder.getJSONObject("bp").isNull("paymentTerms")
         && !jsonorder.getJSONObject("bp").getString("paymentTerms").equals("null")) {
       order.setPaymentTerms((PaymentTerm) OBDal.getInstance().getProxy("FinancialMgmtPaymentTerm",
@@ -2352,7 +2358,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     BigDecimal writeoffAmt = paymentAmt.subtract(gross.abs());
     boolean hasReversalPayment = false;
-
     for (int i = 0; i < payments.length(); i++) {
       JSONObject payment = payments.getJSONObject(i);
       OBPOSAppPayment paymentType = null;
@@ -2377,10 +2382,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       type.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_SEARCHKEY, paymentTypeName));
       type.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_OBPOSAPPLICATIONS + ".id", posTerminalId));
       type.setMaxResults(1);
+      paymentType = (OBPOSAppPayment) type.uniqueResult();
 
-      if (!type.list().isEmpty()) {
-        paymentType = (OBPOSAppPayment) type.uniqueResult();
-      }
       if (paymentType == null) {
         @SuppressWarnings("unchecked")
         Class<PaymentProcessor> paymentclazz = (Class<PaymentProcessor>) Class
@@ -2403,6 +2406,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           // In case writeoff is higher than amount, we put 1 as payment and rest as overpayment
           // because the payment cannot be 0 (It wouldn't be created)
           tempWriteoffAmt = amount.abs().subtract(BigDecimal.ONE);
+        }
+        if (useOrderDocumentNoForRelatedDocs) {
+          paymentCount++;
         }
         processPayments(paymentSchedule, paymentScheduleInvoice, order, invoice, paymentType,
             payment, tempWriteoffAmt, jsonorder, account);
@@ -2826,7 +2832,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       String paymentDocNo;
       if (useOrderDocumentNoForRelatedDocs) {
-        final int paymentCount = countPayments(order);
         paymentDocNo = order.getDocumentNo();
         if (paymentCount > 0) {
           paymentDocNo = paymentDocNo + "-" + paymentCount;
@@ -2962,7 +2967,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private int countPayments(Order order) {
     final String countHql = "select count(*) from FIN_Payment_ScheduleDetail where "
         + FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE + "."
-        + FIN_PaymentSchedule.PROPERTY_ORDER + "=:order";
+        + FIN_PaymentSchedule.PROPERTY_ORDER + "=:order" + " and "
+        + FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS + " is not null ";
     final Query qry = OBDal.getInstance().getSession().createQuery(countHql);
     qry.setEntity("order", order);
     return ((Number) qry.uniqueResult()).intValue();

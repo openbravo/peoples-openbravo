@@ -40,6 +40,7 @@
                 }
               }, this);
               receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
+              OB.UTIL.setScanningFocus(true);
               OB.Dal.save(receipt, function () {
                 OB.UTIL.Debug.execute(function () {
                   if (!args.frozenReceipt) {

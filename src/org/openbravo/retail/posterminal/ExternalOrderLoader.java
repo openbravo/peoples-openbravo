@@ -280,7 +280,7 @@ public class ExternalOrderLoader extends OrderLoader {
   }
 
   /**
-   * Deprecated: method is not being used anymore
+   * @deprecated method is not being used anymore
    */
   @Deprecated
   protected boolean messageAlreadyReceived(String id) {

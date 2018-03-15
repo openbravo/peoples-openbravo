@@ -1251,6 +1251,7 @@ enyo.kind({
               this.setDisabled(true);
               enyo.$.scrim.show();
               me.owner.model.get('order').trigger('paymentDone', false);
+              OB.UTIL.setScanningFocus(false);
             }
             this.drawerOpened = false;
             this.setDisabled(true);
@@ -1274,6 +1275,7 @@ enyo.kind({
             this.setDisabled(true);
             enyo.$.scrim.show();
             me.owner.receipt.trigger('paymentDone', this.allowOpenDrawer);
+            OB.UTIL.setScanningFocus(false);
           }
         }
       } else {
@@ -1281,6 +1283,7 @@ enyo.kind({
           if (this.drawerOpened) {
             enyo.$.scrim.show();
             this.owner.model.get('multiOrders').trigger('paymentDone', false);
+            OB.UTIL.setScanningFocus(false);
             this.owner.model.get('multiOrders').set('openDrawer', false);
             this.drawerOpened = false;
             this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
@@ -1295,6 +1298,7 @@ enyo.kind({
         } else {
           enyo.$.scrim.show();
           this.owner.model.get('multiOrders').trigger('paymentDone', this.allowOpenDrawer);
+          OB.UTIL.setScanningFocus(false);
           this.owner.model.get('multiOrders').set('openDrawer', false);
         }
       }
