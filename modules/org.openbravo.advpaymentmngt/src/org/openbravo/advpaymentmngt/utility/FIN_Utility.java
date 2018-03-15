@@ -292,18 +292,21 @@ public class FIN_Utility {
     OBContext.setAdminMode(false);
     try {
       StringBuilder whereOrderByClause = new StringBuilder();
-      whereOrderByClause.append(" as dt where dt.organization.id in (");
-      whereOrderByClause.append(Utility.getInStrSet(new OrganizationStructureProvider()
-          .getParentTree(org.getId(), true)));
-      whereOrderByClause.append(") and dt.client.id = '" + client.getId()
-          + "' and dt.documentCategory = '" + docCategory + "' order by ad_isorgincluded('"
-          + org.getId() + "', dt.organization.id, '" + client.getId()
-          + "') , dt.default desc, dt.id desc");
+      whereOrderByClause.append(" as dt where dt.organization.id in ( :orgIdList ) ");
+      whereOrderByClause
+          .append(" and dt.client.id = :clientId and dt.documentCategory = :docCategory  order by ad_isorgincluded( :orgId, dt.organization.id, :clientId) , dt.default desc, dt.id desc");
       OBQuery<DocumentType> dt = OBDal.getInstance().createQuery(DocumentType.class,
           whereOrderByClause.toString());
       dt.setFilterOnReadableClients(false);
       dt.setFilterOnReadableOrganization(false);
       dt.setMaxResult(1);
+
+      List<Object> orgIdList = new ArrayList<Object>(
+          new OrganizationStructureProvider().getParentTree(org.getId(), true));
+      dt.setNamedParameter("orgIdList", orgIdList);
+      dt.setNamedParameter("clientId", client.getId());
+      dt.setNamedParameter("docCategory", docCategory);
+      dt.setNamedParameter("orgId", org.getId());
 
       List<DocumentType> dtList = dt.list();
       if (dtList != null && !dtList.isEmpty()) {
