@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * @author mtaal
  */
 public class MenuTemplateTest extends WeldBaseTest {
-  private static final Logger log = LoggerFactory.getLogger(MenuTest.class);
+  private static final Logger log = LoggerFactory.getLogger(MenuTemplateTest.class);
 
   @Inject
   private MainLayoutComponent mainLayoutComponent;
