@@ -18,7 +18,10 @@
  */
 package org.openbravo.client.application.report;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.hibernate.Query;
@@ -76,6 +79,18 @@ class JasperReportCache {
       return null;
     }
     return compiledReport.subReports;
+  }
+
+  Set<String> getCachedReports() {
+    Set<String> cachedReports = new HashSet<>();
+    for (Entry<String, CompiledJasperReport> entry : jasperReports.entrySet()) {
+      cachedReports.add(entry.getKey());
+    }
+    return cachedReports;
+  }
+
+  void clear() {
+    jasperReports.clear();
   }
 
   private CompiledJasperReport getCompiledReport(String key) {
