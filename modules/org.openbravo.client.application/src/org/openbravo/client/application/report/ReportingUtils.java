@@ -956,6 +956,11 @@ public class ReportingUtils {
       setReportFormatFactory(parameters);
       logJasperReportParameters(parameters);
 
+      if (!jasperFilePath.endsWith("jrxml")) {
+        JasperReportFiller reportFiller = new JasperReportFiller(jasperFilePath, parameters);
+        return reportFiller.fillReport();
+      }
+
       String language = OBContext.getOBContext().getLanguage().getLanguage();
       JasperReport jReport = reportCache.getReport(jasperFilePath, language);
       Map<String, JasperReport> subReports = null;
@@ -977,7 +982,7 @@ public class ReportingUtils {
         parameters.putAll(subReports);
       }
 
-      JasperReportFiller reportFiller = new JasperReportFiller(jasperFilePath, jReport, parameters);
+      JasperReportFiller reportFiller = new JasperReportFiller(jReport, parameters);
       if (connectionProvider != null) {
         reportFiller.setConnectionProvider(connectionProvider);
       }

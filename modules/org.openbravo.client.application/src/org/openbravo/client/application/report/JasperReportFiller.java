@@ -51,9 +51,13 @@ class JasperReportFiller {
   // an optional data source in case the report uses it
   private JRDataSource dataSource;
 
-  JasperReportFiller(String templatePath, JasperReport jasperReport, Map<String, Object> parameters) {
-    this.templatePath = templatePath;
+  JasperReportFiller(JasperReport jasperReport, Map<String, Object> parameters) {
     this.jasperReport = jasperReport;
+    this.parameters = parameters;
+  }
+
+  JasperReportFiller(String templatePath, Map<String, Object> parameters) {
+    this.templatePath = templatePath;
     this.parameters = parameters;
   }
 
@@ -83,23 +87,20 @@ class JasperReportFiller {
   JasperPrint fillReport() throws JRException {
     JasperPrint jasperPrint;
     long t1 = System.currentTimeMillis();
-    if (!templatePath.endsWith("jrxml")) {
-      jasperPrint = JasperFillManager.fillReport(templatePath, parameters);
-    } else if (connectionProvider == null) {
-      jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, OBDal
-          .getReadOnlyInstance().getConnection());
+    if (connectionProvider == null) {
+      jasperPrint = fill(OBDal.getReadOnlyInstance().getConnection());
     } else {
-      jasperPrint = fillReportFromDatabase();
+      jasperPrint = fill();
     }
     log.info("Report {} filled in {} ms", jasperReport.getName(), (System.currentTimeMillis() - t1));
     return jasperPrint;
   }
 
-  private JasperPrint fillReportFromDatabase() throws JRException {
+  private JasperPrint fill() {
     Connection connection = null;
     try {
       connection = connectionProvider.getTransactionConnection();
-      return fillReportFromDatabase(connection);
+      return fill(connection);
     } catch (final Exception e) {
       Throwable t = (e.getCause() != null) ? e.getCause().getCause() : null;
       if (t != null) {
@@ -117,9 +118,11 @@ class JasperReportFiller {
     }
   }
 
-  private JasperPrint fillReportFromDatabase(Connection connection) throws JRException {
+  private JasperPrint fill(Connection connection) throws JRException {
     JasperPrint jasperPrint;
-    if (dataSource != null) {
+    if (jasperReport == null) {
+      jasperPrint = JasperFillManager.fillReport(templatePath, parameters);
+    } else if (dataSource != null) {
       parameters.put("REPORT_CONNECTION", connection);
       jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
     } else {
