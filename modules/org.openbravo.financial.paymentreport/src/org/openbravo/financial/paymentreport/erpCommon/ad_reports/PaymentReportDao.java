@@ -2141,26 +2141,26 @@ public class PaymentReportDao {
 
   public java.util.List<Invoice> getInvoicesUsingCredit(final FIN_Payment payment) {
     final StringBuilder sql = new StringBuilder();
-    final java.util.List<Invoice> result = new ArrayList<Invoice>();
+    final java.util.List<Invoice> result = new ArrayList<>();
 
     sql.append(" select distinct(psiv.invoice.id) ");
     sql.append(" from FIN_Payment_Sched_Inv_V psiv ");
-    sql.append(" where exists ( ");
+    sql.append(" where exists (");
     sql.append("   select 1 ");
-    sql.append("   from FIN_Payment_Credit pc, FIN_Payment_Detail pd, ");
-    sql.append("     FIN_Payment_ScheduleDetail psd, FIN_Payment_Schedule psi ");
-    sql.append("   where  ");
-    sql.append("     pc.creditPaymentUsed.id = '" + payment.getId() + "' ");
-    sql.append("     and pd.finPayment=pc.payment ");
-    sql.append("     and pd.id = psd.paymentDetails.id ");
-    sql.append("     and psd.invoicePaymentSchedule.id = psi.id ");
-    sql.append("     and psi.id = psiv.id ");
+    sql.append("   from FIN_Payment_Credit pc");
+    sql.append("   , FIN_Payment_Detail pd");
+    sql.append("   , FIN_Payment_ScheduleDetail psd");
+    sql.append("   where pc.payment.id = pd.finPayment.id");
+    sql.append("   and pd.id = psd.paymentDetails.id");
+    sql.append("   and pc.creditPaymentUsed.id = :paymentId");
+    sql.append("   and psd.invoicePaymentSchedule.id = psiv.id");
     sql.append(" )");
 
     try {
       OBContext.setAdminMode(true);
       final Session session = OBDal.getReadOnlyInstance().getSession();
       final Query query = session.createQuery(sql.toString());
+      query.setParameter("paymentId", payment.getId());
       for (final Object o : query.list()) {
         result.add(OBDal.getReadOnlyInstance().get(Invoice.class, o));
       }
