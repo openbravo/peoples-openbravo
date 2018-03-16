@@ -32,7 +32,7 @@ public class CancelLayawayPaymentsHookExtension implements CancelLayawayPayments
     inverseOrder.setObposApplications(posTerminal);
     OrderLoader orderLoader = WeldUtils.getInstanceFromStaticBeanManager(OrderLoader.class);
     orderLoader.initializeVariables(jsonorder);
-    orderLoader.handlePayments(jsonorder, inverseOrder, null, false, false);
+    orderLoader.handlePayments(jsonorder, inverseOrder);
   }
 
 }
