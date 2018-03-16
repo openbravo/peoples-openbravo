@@ -681,9 +681,9 @@ public class OBContext implements OBNotSingleton {
   private List<String> getOrganizations(Client client) {
     final Query qry = SessionHandler.getInstance().createQuery(
         "select o.id from " + Organization.class.getName() + " o where " + "o."
-            + Organization.PROPERTY_CLIENT + "=:clientId and o." + Organization.PROPERTY_ACTIVE
+            + Organization.PROPERTY_CLIENT + "=:client and o." + Organization.PROPERTY_ACTIVE
             + "='Y'");
-    qry.setParameter("clientId", client);
+    qry.setParameter("client", client);
     organizationList = qry.list();
     return organizationList;
   }
@@ -889,7 +889,7 @@ public class OBContext implements OBNotSingleton {
       // to be
       // selected.
       if (roleId != null) {
-        Map<String, String> params = new HashMap<>();
+        Map<String, String> params = new HashMap<>(1);
         params.put("roleId", roleId);
         final Role r = getOne(Role.class, "select r from " + Role.class.getName() + " r where "
             + " r." + Role.PROPERTY_ID + "=:roleId", params, true);
@@ -897,8 +897,7 @@ public class OBContext implements OBNotSingleton {
       } else if (getUser().getDefaultRole() != null && getUser().getDefaultRole().isActive()) {
         setRole(getUser().getDefaultRole());
       } else {
-
-        Map<String, String> params = new HashMap<>();
+        Map<String, String> params = new HashMap<>(1);
         params.put("userId", u.getId());
         final UserRoles ur = getOne(UserRoles.class, "select ur from " + UserRoles.class.getName()
             + " ur where " + " ur." + UserRoles.PROPERTY_USERCONTACT + "." + User.PROPERTY_ID
@@ -916,7 +915,7 @@ public class OBContext implements OBNotSingleton {
       Check.isNotNull(getRole(), "Role may not be null");
 
       if (orgId != null) {
-        Map<String, String> params = new HashMap<>();
+        Map<String, String> params = new HashMap<>(1);
         params.put("orgId", orgId);
         final Organization o = getOne(Organization.class,
             "select r from " + Organization.class.getName() + " r where " + " r."
@@ -926,7 +925,7 @@ public class OBContext implements OBNotSingleton {
           && getUser().getDefaultOrganization().isActive()) {
         setCurrentOrganization(getUser().getDefaultOrganization());
       } else {
-        Map<String, String> params = new HashMap<>();
+        Map<String, String> params = new HashMap<>(1);
         params.put("roleId", getRole().getId());
         final RoleOrganization roa = getOne(RoleOrganization.class, "select roa from "
             + RoleOrganization.class.getName() + " roa where roa." + RoleOrganization.PROPERTY_ROLE
@@ -961,7 +960,7 @@ public class OBContext implements OBNotSingleton {
       }
 
       if (localClientId != null) {
-        Map<String, String> params = new HashMap<>();
+        Map<String, String> params = new HashMap<>(1);
         params.put("clientId", localClientId);
         final Client c = getOne(Client.class, "select r from " + Client.class.getName()
             + " r where " + " r." + Client.PROPERTY_ID + "=:clientId", params, true);
