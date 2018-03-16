@@ -92,7 +92,8 @@ class JasperReportFiller {
     } else {
       jasperPrint = fill();
     }
-    log.info("Report {} filled in {} ms", jasperReport.getName(), (System.currentTimeMillis() - t1));
+    log.debug("Report {} filled in {} ms", jasperReport.getName(),
+        (System.currentTimeMillis() - t1));
     return jasperPrint;
   }
 
