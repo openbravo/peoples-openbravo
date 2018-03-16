@@ -659,8 +659,8 @@ public class OBContext implements OBNotSingleton {
         "select o.id from " + Organization.class.getName() + " o, "
             + RoleOrganization.class.getName() + " roa where o." + Organization.PROPERTY_ID
             + "=roa." + RoleOrganization.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID
-            + " and roa." + RoleOrganization.PROPERTY_ROLE + "." + Organization.PROPERTY_ID + "= :targetRoleId"
-            + " and roa." + RoleOrganization.PROPERTY_ACTIVE + "='Y' and o."
+            + " and roa." + RoleOrganization.PROPERTY_ROLE + "." + Organization.PROPERTY_ID
+            + "= :targetRoleId" + " and roa." + RoleOrganization.PROPERTY_ACTIVE + "='Y' and o."
             + Organization.PROPERTY_ACTIVE + "= :active");
     qry.setString("targetRoleId", targetRole.getId());
     qry.setString("active", propertyActive);
@@ -681,7 +681,8 @@ public class OBContext implements OBNotSingleton {
   private List<String> getOrganizations(Client client) {
     final Query qry = SessionHandler.getInstance().createQuery(
         "select o.id from " + Organization.class.getName() + " o where " + "o."
-            + Organization.PROPERTY_CLIENT + "=:clientId and o." + Organization.PROPERTY_ACTIVE + "='Y'");
+            + Organization.PROPERTY_CLIENT + "=:clientId and o." + Organization.PROPERTY_ACTIVE
+            + "='Y'");
     qry.setParameter("clientId", client);
     organizationList = qry.list();
     return organizationList;
@@ -917,9 +918,9 @@ public class OBContext implements OBNotSingleton {
       if (orgId != null) {
         Map<String, String> params = new HashMap<>();
         params.put("orgId", orgId);
-        final Organization o = getOne(Organization.class, "select r from "
-            + Organization.class.getName() + " r where " + " r." + Organization.PROPERTY_ID + "=:orgId",
-            params, true);
+        final Organization o = getOne(Organization.class,
+            "select r from " + Organization.class.getName() + " r where " + " r."
+                + Organization.PROPERTY_ID + "=:orgId", params, true);
         setCurrentOrganization(o);
       } else if (getUser().getDefaultOrganization() != null
           && getUser().getDefaultOrganization().isActive()) {
@@ -927,14 +928,13 @@ public class OBContext implements OBNotSingleton {
       } else {
         Map<String, String> params = new HashMap<>();
         params.put("roleId", getRole().getId());
-        final RoleOrganization roa = getOne(RoleOrganization.class,
-            "select roa from " + RoleOrganization.class.getName() + " roa where roa."
-                + RoleOrganization.PROPERTY_ROLE + "." + Organization.PROPERTY_ID + "=:roleId and roa."
-                + RoleOrganization.PROPERTY_ACTIVE + "='Y' and roa."
-                + RoleOrganization.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ACTIVE
-                + "='Y' order by roa." + RoleOrganization.PROPERTY_ORGANIZATION + "."
-                + Organization.PROPERTY_ID + " desc",
-            params, false);
+        final RoleOrganization roa = getOne(RoleOrganization.class, "select roa from "
+            + RoleOrganization.class.getName() + " roa where roa." + RoleOrganization.PROPERTY_ROLE
+            + "." + Organization.PROPERTY_ID + "=:roleId and roa."
+            + RoleOrganization.PROPERTY_ACTIVE + "='Y' and roa."
+            + RoleOrganization.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ACTIVE
+            + "='Y' order by roa." + RoleOrganization.PROPERTY_ORGANIZATION + "."
+            + Organization.PROPERTY_ID + " desc", params, false);
         Hibernate.initialize(roa.getOrganization());
         setCurrentOrganization(roa.getOrganization());
 
