@@ -434,6 +434,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
           locators.add(Restrictions.eq(Locator.PROPERTY_ACTIVE, true));
           locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, order.getWarehouse()));
+          locators.addOrderBy(Locator.PROPERTY_RELATIVEPRIORITY, true);
           locators.setMaxResults(2);
           List<Locator> locatorList = locators.list();
 
@@ -1272,8 +1273,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       foundSingleBin = locatorList.get(0);
     }
     for (int i = 0; i < orderlines.length(); i++) {
-      String hqlWhereClause;
-
       OrderLine orderLine = lineReferences.get(i);
       BigDecimal pendingQty = orderLine.getOrderedQuantity().abs();
       if (orderlines.getJSONObject(i).has("deliveredQuantity")
@@ -1425,12 +1424,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           if (jsonorderline.has("overissueStoreBin")) {
             loc = OBDal.getInstance().get(Locator.class, jsonorderline.get("overissueStoreBin"));
           } else {
-            hqlWhereClause = " l where l.warehouse = :warehouse order by l.relativePriority, l.id";
-            OBQuery<Locator> queryLoc = OBDal.getInstance().createQuery(Locator.class,
-                hqlWhereClause);
-            queryLoc.setNamedParameter("warehouse", warehouse);
-            queryLoc.setMaxResult(1);
-            loc = queryLoc.uniqueResult();
+            loc = locatorList.get(0);
           }
 
           try {

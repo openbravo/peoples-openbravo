@@ -9,7 +9,9 @@
 package org.openbravo.retail.posterminal.term;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -23,12 +25,23 @@ public class Warehouses extends QueryTerminalProperty {
   }
 
   @Override
+  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
+    try {
+      OBContext.setAdminMode(true);
+      Map<String, Object> paramValues = new HashMap<String, Object>();
+      paramValues.put("orgId", OBContext.getOBContext().getCurrentOrganization().getId());
+
+      return paramValues;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     return Arrays
         .asList(new String[] { "select ow.warehouse.id as warehouseid, ow.warehouse.name as warehousename, ow.priority as priority "
-            + "from OrganizationWarehouse as ow where ow.warehouse.active = true and ow.$readableSimpleCriteria and ow.$activeCriteria and ow.organization.id = '"
-            + orgId + "'" + "order by priority asc" });
+            + "from OrganizationWarehouse as ow where ow.warehouse.active = true and ow.$readableSimpleCriteria and ow.$activeCriteria and ow.organization.id = :orgId order by priority asc" });
   }
 
   @Override

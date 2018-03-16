@@ -140,28 +140,28 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           + "formAccess.specialForm.id = :webPOSFormId and "
           + "((user.organization.id in (:orgList)) or (terminal.organization.id in (:orgList)))";
 
+      Map<String, String> iterParameter = new HashMap<>();
       if (approvalType.length() != 0) {
         // checking supervisor users for sent approval type
         for (int i = 0; i < approvalType.length(); i++) {
-          String iter = approvalType.getString(i);
-          hqlUser += "and exists (from ADPreference as p where property = '" + iter
-              + "'   and active = true and to_char(searchKey) = 'Y'"
+          hqlUser += "and exists (from ADPreference as p where property =  :iter" + i
+              + " and active = true and to_char(searchKey) = 'Y'"
               + "   and (userContact = user or exists (from ADUserRoles r"
               + "                  where r.role = p.visibleAtRole"
               + "                    and r.userContact = user)) "
               + "   and (p.visibleAtOrganization = terminal.organization "
               + "   or p.visibleAtOrganization.id in (:orgList) "
               + "   or p.visibleAtOrganization is null)) ";
+          iterParameter.put("iter" + i, approvalType.getString(i));
         }
-
       }
 
       hqlUser += "order by user.name";
-
       Query qryUser = OBDal.getInstance().getSession().createQuery(hqlUser);
       qryUser.setParameter("theTerminalSearchKey", terminalName);
       qryUser.setParameter("webPOSFormId", "B7B7675269CD4D44B628A2C6CF01244F");
       qryUser.setParameterList("orgList", naturalTreeOrgList);
+      qryUser.setProperties(iterParameter);
 
       List<Object> queryUserList = qryUser.list();
       for (Object qryUserObject : queryUserList) {

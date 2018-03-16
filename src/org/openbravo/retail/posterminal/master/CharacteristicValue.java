@@ -85,13 +85,13 @@ public class CharacteristicValue extends ProcessHQLQuery {
           + "and $filtersCriteria and $hqlCriteria and cv.$naturalOrgCriteria "
           + "and cv.$readableSimpleClientCriteria "
           + "and (cv.$incrementalUpdateCriteria or node.$incrementalUpdateCriteria) "
-          + "order by cv.name, cv.id");
+          + "and cv.active = 'Y' " + "order by cv.name, cv.id");
     } else {
       hqlQueries.add("select" + regularProductsChValueHQLProperties.getHqlSelect()
           + "from CharacteristicValue cv where cv.characteristic.obposUseonwebpos = true "
           + "and $filtersCriteria and $hqlCriteria and cv.$naturalOrgCriteria "
           + "and cv.$readableSimpleClientCriteria and (cv.$incrementalUpdateCriteria) "
-          + "order by cv.name, cv.id");
+          + "and cv.active = 'Y' " + "order by cv.name, cv.id");
     }
 
     return hqlQueries;
