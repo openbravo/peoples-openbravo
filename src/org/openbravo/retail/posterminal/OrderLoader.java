@@ -1258,6 +1258,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
+  @Deprecated
+  public JSONObject handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
+      boolean wasPaidOnCredit, boolean createInvoice) throws Exception {
+    return handlePayments(jsonorder, order, null, false, false);
+  }
+
   public JSONObject handlePayments(JSONObject jsonorder, Order order) throws Exception {
     final JSONObject jsonResponse = new JSONObject();
     String posTerminalId = jsonorder.getString("posTerminal");
@@ -1394,7 +1400,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     jsonResponse.put("paymentSchedule", paymentSchedule);
-    // jsonResponse.put("paymentScheduleInvoice", paymentScheduleInvoice);
 
     return jsonResponse;
   }
