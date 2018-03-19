@@ -51,7 +51,9 @@ enyo.kind({
       this.hide();
       return;
     }
-    if (this.model.get('order').get('replacedorder')) {
+    if (!_.find(OB.MobileApp.model.get('payments'), function (payment) {
+      return !payment.paymentMethod.refundable;
+    })) {
       this.hide();
       return;
     }
