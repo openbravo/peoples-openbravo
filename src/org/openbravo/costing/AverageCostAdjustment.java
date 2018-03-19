@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2017 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -48,6 +48,7 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
+import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
@@ -530,7 +531,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     case InventoryOpening:
       return trx.getPhysicalInventoryLine().getCost() == null;
     case Receipt:
-      return trx.getGoodsShipmentLine().getSalesOrderLine() == null && getProductCost(trx) != null;
+      return trx.getGoodsShipmentLine().getSalesOrderLine() == null && getProductCost(trx) != null
+          && !isReceiptAdjustedByPriceDifferenceCorrection();
     case ShipmentNegative:
     case InternalConsNegative:
       return getProductCost(trx) != null;
@@ -539,6 +541,21 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     default:
       return false;
     }
+  }
+
+  private boolean isReceiptAdjustedByPriceDifferenceCorrection() {
+    StringBuilder where = new StringBuilder();
+    where.append("as ca");
+    where.append(" join ca." + CostAdjustment.PROPERTY_COSTADJUSTMENTLINELIST + " as cal");
+    where.append(" where ca." + CostAdjustment.PROPERTY_SOURCEPROCESS + " = 'PDC'");
+    where.append(" and cal." + CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION + " = :trx");
+
+    OBQuery<CostAdjustment> trxQry = OBDal.getInstance().createQuery(CostAdjustment.class,
+        where.toString());
+
+    trxQry.setNamedParameter("trx", getTransaction());
+    trxQry.setMaxResult(1);
+    return trxQry.uniqueResult() != null;
   }
 
   private Costing getProductCost(MaterialTransaction trx) {
