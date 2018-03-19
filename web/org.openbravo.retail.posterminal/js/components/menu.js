@@ -52,7 +52,7 @@ enyo.kind({
       return;
     }
     if (!_.find(OB.MobileApp.model.get('payments'), function (payment) {
-      return !payment.paymentMethod.refundable;
+      return payment.paymentMethod.refundable;
     })) {
       this.hide();
       return;
