@@ -1261,7 +1261,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   @Deprecated
   public JSONObject handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
       boolean wasPaidOnCredit, boolean createInvoice) throws Exception {
-    return handlePayments(jsonorder, order, null, false, false);
+    return handlePayments(jsonorder, order);
   }
 
   public JSONObject handlePayments(JSONObject jsonorder, Order order) throws Exception {
