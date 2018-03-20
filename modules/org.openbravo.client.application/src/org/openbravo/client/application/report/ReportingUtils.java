@@ -1011,6 +1011,15 @@ public class ReportingUtils {
   }
 
   /**
+   * @deprecated Use {@link #getTranslatedJasperReport(ConnectionProvider, String, String)} instead.
+   */
+  @Deprecated
+  public static JasperReport getTranslatedJasperReport(ConnectionProvider conn, String reportName,
+      String language, String baseDesignPath) throws JRException {
+    return getTranslatedJasperReport(conn, reportName, language);
+  }
+
+  /**
    * Generates a compiled and translated report to the language passed as parameter.
    * 
    * @param conn
@@ -1019,15 +1028,13 @@ public class ReportingUtils {
    *          The path to the JR template of the report.
    * @param language
    *          Language to be used when generating the report.
-   * @param baseDesignPath
-   *          Base design path.
    * @return A JasperReport object with the compiled and translated report.
    * @throws JRException
    *           In case there is any error generating the translated report an exception is thrown
    *           with the error message.
    */
   public static JasperReport getTranslatedJasperReport(ConnectionProvider conn, String reportName,
-      String language, String baseDesignPath) throws JRException {
+      String language) throws JRException {
     JasperReport jasperReport = reportCache.getReport(reportName, language);
     if (jasperReport != null) {
       return jasperReport;

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2015 Openbravo SLU
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,13 +26,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperReport;
-
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.erpCommon.utility.Utility;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
 
 public class RptC_Remittance extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -77,8 +77,7 @@ public class RptC_Remittance extends HttpSecureAppServlet {
     JasperReport jasperReportLines;
     try {
       jasperReportLines = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
-          + "/org/openbravo/erpReports/RptC_Remittance_Lines.jrxml", vars.getLanguage(),
-          strBaseDesign);
+          + "/org/openbravo/erpReports/RptC_Remittance_Lines.jrxml", vars.getLanguage());
     } catch (JRException e) {
       e.printStackTrace();
       throw new ServletException(e.getMessage());
