@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017 Openbravo S.L.U.
+ * Copyright (C) 2017-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -78,7 +78,11 @@
                     OB.error("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
                   }
 
-                  orderList.deleteCurrent();
+                  if (OB.MobileApp.model.hasPermission('OBPOS_alwaysCreateNewReceiptAfterPayReceipt', true)) {
+                    orderList.deleteCurrent(true);
+                  } else {
+                    orderList.deleteCurrent();
+                  }
                   receipt.setIsCalculateReceiptLockState(false);
                   receipt.setIsCalculateGrossLockState(false);
 
