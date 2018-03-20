@@ -337,7 +337,7 @@ public class OBBaseTest {
     return false;
   }
 
-  private static void setMockServletContext() {
+  private void setMockServletContext() {
     String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("source.path");
     String attachPath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
@@ -349,7 +349,7 @@ public class OBBaseTest {
     DalContextListener.setServletContext(mockServletContext);
   }
 
-  private static void cleanMockServletContext() {
+  private void cleanMockServletContext() {
     DalContextListener.setServletContext(null);
   }
 
