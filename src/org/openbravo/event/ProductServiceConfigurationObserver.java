@@ -57,14 +57,19 @@ public class ProductServiceConfigurationObserver extends EntityPersistenceEventO
     final Property linkedToProductProperty = productEntity
         .getProperty(Product.PROPERTY_LINKEDTOPRODUCT);
     final Property qtyRuleProperty = productEntity.getProperty(Product.PROPERTY_QUANTITYRULE);
-    // final Property idProperty = productEntity.getProperty(Product.PROPERTY_ID);
     final Boolean linkedToProduct = (Boolean) event.getCurrentState(linkedToProductProperty);
-    final String qtyRule = (String) event.getCurrentState(qtyRuleProperty);
-    final Boolean linkedToProduct_Previous = (Boolean) event
+    String qtyRule = (String) event.getCurrentState(qtyRuleProperty);
+    final Boolean linkedToProductPrevious = (Boolean) event
         .getPreviousState(linkedToProductProperty);
-    final String qtyRule_Previous = (String) event.getPreviousState(qtyRuleProperty);
+    String qtyRulePrevious = (String) event.getPreviousState(qtyRuleProperty);
+    if (qtyRulePrevious == null) {
+      qtyRulePrevious = "";
+    }
+    if (qtyRule == null) {
+      qtyRule = "";
+    }
     final Product product = OBDal.getInstance().get(Product.class, (String) event.getId());
-    if (linkedToProduct_Previous != linkedToProduct || !qtyRule_Previous.equals(qtyRule)) {
+    if (linkedToProductPrevious != linkedToProduct || !qtyRulePrevious.equals(qtyRule)) {
       checkNotDeliveredOrders(product);
     }
   }
@@ -85,7 +90,7 @@ public class ProductServiceConfigurationObserver extends EntityPersistenceEventO
     notDeliveredOrderLineQuery.setMaxResult(1);
     OrderLine notDeliveredOrderLine = notDeliveredOrderLineQuery.uniqueResult();
     if (notDeliveredOrderLine != null) {
-    	String [] params = {notDeliveredOrderLine.getSalesOrder().getDocumentNo()};
+      String[] params = { notDeliveredOrderLine.getSalesOrder().getDocumentNo() };
       throw new OBException(OBMessageUtils.getI18NMessage("ServiceCannotBeModified", params));
     }
   }
