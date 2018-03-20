@@ -784,8 +784,9 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
           break;
         }
 
-        if ((finalSettlementDate == null)
-            || (psd.getPaymentDetails().getFinPayment().getPaymentDate() != null && psd
+        if (finalSettlementDate == null
+            || (psd.getPaymentDetails() != null
+                && psd.getPaymentDetails().getFinPayment().getPaymentDate() != null && psd
                 .getPaymentDetails().getFinPayment().getPaymentDate()
                 .compareTo(finalSettlementDate) > 0)) {
           finalSettlementDate = psd.getPaymentDetails().getFinPayment().getPaymentDate();

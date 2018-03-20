@@ -314,8 +314,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               lineReferences.add(ol);
             }
           }
-        } else if (!newLayaway && (creditpaidLayaway || fullypaidLayaway)) {
-
+        } else if (!newLayaway
+            && (creditpaidLayaway || fullypaidLayaway || jsonorder.optBoolean("donePressed", false))) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
           order.setDelivered(deliver);
