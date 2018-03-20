@@ -16,7 +16,6 @@
     tableName: 'ad_sales_representative',
     entityName: 'SalesRepresentative',
     source: 'org.openbravo.retail.posterminal.master.SalesRepresentative',
-    remote: 'OBPOS_remote.customer',
     dataLimit: OB.Dal.DATALIMIT
   });
 
