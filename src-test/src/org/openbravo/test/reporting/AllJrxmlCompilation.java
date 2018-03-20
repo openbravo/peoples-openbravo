@@ -36,11 +36,10 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.application.report.ReportingUtils;
+import org.openbravo.test.base.OBBaseTest;
 
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 /**
  * Compiles all jrxml templates present in the sources directory ensuring they can be compiled with
@@ -50,17 +49,25 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
  *
  */
 @RunWith(Parameterized.class)
-public class AllJrxmlCompilation {
+public class AllJrxmlCompilation extends OBBaseTest {
 
   @Parameter(0)
   public Path report;
   @Parameter(1)
   public Path fileName;
 
+  @Override
+  protected boolean shouldMockServletContext() {
+    return true;
+  }
+
   @Test
   public void jrxmlShouldCompile() throws JRException {
-    JasperDesign jasperDesign = JRXmlLoader.load(report.toFile());
-    JasperCompileManager.compileReport(jasperDesign);
+    String reportPath = report.toString();
+    // compile the report for the first time
+    ReportingUtils.compileReport(reportPath);
+    // launch the compilation again: result will be retrieved from cache
+    ReportingUtils.compileReport(reportPath);
   }
 
   @Parameters(name = "{1}")
@@ -75,9 +82,8 @@ public class AllJrxmlCompilation {
     final Collection<Object[]> allJasperFiles = new ArrayList<>();
 
     final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("regex:.*\\.jrxml");
-    Path basePath = Paths.get(
-        OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("source.path"),
-        dir);
+    Path basePath = Paths.get(OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("source.path"), dir);
     Files.walkFileTree(basePath, new SimpleFileVisitor<Path>() {
       @Override
       public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,6 +38,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.criterion.Restrictions;
+import org.jboss.arquillian.container.weld.ee.embedded_1_1.mock.MockServletContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -48,7 +49,9 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBConfigFileProvider;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.dal.core.DalLayerInitializer;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
@@ -279,7 +282,7 @@ public class OBBaseTest {
   /**
    * Initializes DAL, it also creates a log appender that can be used to assert on logs. This log
    * appender is disabled by default, to activate it set the level with
-   * {@link OBBaseTest#setTestLogAppenderLevel(Level)}
+   * {@link OBBaseTest#setTestLogAppenderLevel(Level)}.
    * 
    * @see TestLogAppender
    */
@@ -297,23 +300,57 @@ public class OBBaseTest {
   }
 
   /**
-   * Sets the current user to the {@link #TEST_USER_ID} user.
+   * Sets the current user to the {@link #TEST_USER_ID} user. This method also mocks the servlet
+   * context through the {@link DalContextListener} if the test case is configured to do so.
    */
   @Before
   public void setUp() throws Exception {
     // clear the session otherwise it keeps the old model
     setTestUserContext();
     errorOccured = false;
+    if (shouldMockServletContext()) {
+      setMockServletContext();
+    }
     assumeThat("Disabled test case by configuration ", disabledTestCase, is(false));
   }
 
-  /** Test log appender is reset and switched off */
+  /**
+   * Test log appender is reset and switched off. This method also cleans the mock servlet context
+   * when it applies.
+   */
   @After
   public void testDone() {
     if (testLogAppender != null) {
       testLogAppender.reset();
       setTestLogAppenderLevel(Level.OFF);
     }
+    if (shouldMockServletContext()) {
+      cleanMockServletContext();
+    }
+  }
+
+  /**
+   * @return {@code true} if the test case should mock the servlet context. Otherwise, return
+   *         {@false}.
+   */
+  protected boolean shouldMockServletContext() {
+    return false;
+  }
+
+  private static void setMockServletContext() {
+    String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("source.path");
+    String attachPath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("attach.path");
+    MockServletContext mockServletContext = new MockServletContext(sourcePath + "/WebContent");
+    mockServletContext.addInitParameter("BaseConfigPath", "WEB-INF");
+    mockServletContext.addInitParameter("BaseDesignPath", "src-loc");
+    mockServletContext.addInitParameter("AttachmentDirectory", attachPath);
+    DalContextListener.setServletContext(mockServletContext);
+  }
+
+  private static void cleanMockServletContext() {
+    DalContextListener.setServletContext(null);
   }
 
   /**
