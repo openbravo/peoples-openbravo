@@ -229,7 +229,7 @@ public class AntExecutor {
    * Executes a set of ant tasks
    * 
    * @param tasks
-   *          - A Vector<String> with the names of the tasks to be executed
+   *          - A Vector&lt;String&gt; with the names of the tasks to be executed
    * @throws Exception
    *           - In case the project is not loaded
    */

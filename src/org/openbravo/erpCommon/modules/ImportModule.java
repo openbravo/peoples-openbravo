@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -172,19 +172,6 @@ public class ImportModule {
             Utility.messageBD(pool, "SourceFileNotFound", vars.getLanguage()), file.getPath()));
       }
     }
-  }
-
-  /**
-   * Check the dependencies for a file name. See
-   * {@link #checkDependenciesId(String[], String[], HashMap)}.
-   * 
-   * @deprecated not used
-   */
-  public boolean checkDependenciesFileName(String fileName) throws Exception {
-    final File file = new File(fileName);
-    if (!file.exists())
-      throw new Exception("File " + fileName + " do not exist!");
-    return checkDependenciesFile(new FileInputStream(file));
   }
 
   /**
@@ -391,17 +378,6 @@ public class ImportModule {
       // This shouldn't happen, the merging module should be found
       return "??";
     }
-  }
-
-  /**
-   * @deprecated Use {@link ImportModule#checkDependenciesId(String[], String[], HashMap)} instead
-   */
-  public boolean checkDependenciesId(String[] installableModules, String[] updateableModules)
-      throws Exception {
-    HashMap<String, String> maturityLevels = new HashMap<String, String>();
-    maturityLevels.put("update.level", "500");
-    maturityLevels.put("install.level", "500");
-    return checkDependenciesId(installableModules, updateableModules, maturityLevels);
   }
 
   /**
@@ -1764,30 +1740,6 @@ public class ImportModule {
     if (updates.get(parentId) == null && iniUpdates.get(parentId) == null)
       updates.put(parentId, "P");
     addParentNode(parentId, updates, iniUpdates, conn);
-  }
-
-  /**
-   * Returns the current installed modules with its version
-   * 
-   * @deprecated use {@link ImportModule#getInstalledModulesAndDeps} instead
-   * @param conn
-   *          ConnectionProvider needed as it is a static method
-   * @return HashMap&lt;String,String&gt; -&gt; &lt;ModuleId, VersionNo&gt;
-   */
-  public static HashMap<String, String> getInstalledModules(ConnectionProvider conn) {
-    final HashMap<String, String> rt = new HashMap<String, String>();
-    ImportModuleData data[] = null;
-    try {
-      data = ImportModuleData.selectInstalled(conn);
-    } catch (final Exception e) {
-      log4j.error("Error getting installed modules", e);
-    }
-    if (data != null) {
-      for (int i = 0; i < data.length; i++) {
-        rt.put(data[i].adModuleId, data[i].version);
-      }
-    }
-    return rt;
   }
 
   /**

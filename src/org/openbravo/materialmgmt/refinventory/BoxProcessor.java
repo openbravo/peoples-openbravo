@@ -20,6 +20,8 @@
 package org.openbravo.materialmgmt.refinventory;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
@@ -32,14 +34,14 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
-import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 
 /**
  * Process of boxing storage details into a concrete referenced inventory
  */
 public class BoxProcessor extends ReferencedInventoryProcessor {
   private String newStorageBinId;
-  private String newAttributeSetInstanceId;
+  // StorageDetailId:NewAttributeSetInstanceId created by this object
+  private final Map<String, String> storageDetailNewAttributeIdMap;
 
   public BoxProcessor(final ReferencedInventory referencedInventory,
       final JSONArray selectedStorageDetails, final String newStorageBinId) throws JSONException {
@@ -47,6 +49,7 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
     super.setSelectedStorageDetailsAndValidateThem(selectedStorageDetails);
     checkStorageDetailsNotAlreadyInReferencedInventory(selectedStorageDetails);
     setAndValidateNewStorageBinId(newStorageBinId);
+    storageDetailNewAttributeIdMap = new HashMap<>(selectedStorageDetails.length());
   }
 
   private void checkStorageDetailsNotAlreadyInReferencedInventory(
@@ -64,7 +67,7 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
     }
   }
 
-  private void setAndValidateNewStorageBinId(final String newStorageBinId) throws JSONException {
+  private void setAndValidateNewStorageBinId(final String newStorageBinId) {
     if (StringUtils.isBlank(newStorageBinId)) {
       throw new OBException(OBMessageUtils.messageBD("NewStorageBinParameterMandatory"));
     } else {
@@ -73,14 +76,26 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
   }
 
   @Override
-  protected AttributeSetInstance getAttributeSetInstanceTo(StorageDetail storageDetail) {
-    if (newAttributeSetInstanceId == null) {
-      final AttributeSetInstance attributeSetInstance = ReferencedInventoryUtil
+  protected AttributeSetInstance getAttributeSetInstanceTo(final StorageDetail storageDetail) {
+    // Attribute previously created in this box execution
+    if (storageDetailNewAttributeIdMap.containsKey(storageDetail.getId())) {
+      return OBDal.getInstance().getProxy(AttributeSetInstance.class,
+          storageDetailNewAttributeIdMap.get(storageDetail.getId()));
+    }
+
+    // Attribute previously created in other box executions for this refInventory
+    final AttributeSetInstance previouslyClonedAttributeSetInstance = ReferencedInventoryUtil
+        .getAlreadyClonedAttributeSetInstance(storageDetail.getAttributeSetValue(),
+            getReferencedInventory());
+    if (previouslyClonedAttributeSetInstance == null) {
+      final AttributeSetInstance newAttributeSetInstance = ReferencedInventoryUtil
           .cloneAttributeSetInstance(storageDetail.getAttributeSetValue(), getReferencedInventory());
-      newAttributeSetInstanceId = attributeSetInstance.getId();
-      return attributeSetInstance;
+      storageDetailNewAttributeIdMap.put(storageDetail.getId(), newAttributeSetInstance.getId());
+      return newAttributeSetInstance;
     } else {
-      return OBDal.getInstance().getProxy(AttributeSetInstance.class, newAttributeSetInstanceId);
+      storageDetailNewAttributeIdMap.put(storageDetail.getId(),
+          previouslyClonedAttributeSetInstance.getId());
+      return previouslyClonedAttributeSetInstance;
     }
   }
 
@@ -92,24 +107,6 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
   @Override
   protected String getNewStorageBinId(JSONObject storageDetailJS) {
     return newStorageBinId;
-  }
-
-  /**
-   * It calls {@link ReferencedInventoryProcessor#createAndProcessGoodsMovement()}.
-   * 
-   * @throws Exception
-   *           In case of exception, the transaction is rollback and the exception is thrown.
-   * 
-   */
-  @Override
-  public InternalMovement createAndProcessGoodsMovement() throws Exception {
-    try {
-      final InternalMovement goodsMovementHeader = super.createAndProcessGoodsMovement();
-      return goodsMovementHeader;
-    } catch (Exception e) {
-      OBDal.getInstance().rollbackAndClose();
-      throw e;
-    }
   }
 
 }

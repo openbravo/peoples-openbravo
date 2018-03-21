@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -86,7 +86,8 @@ public class GenericTreeServlet extends HttpSecureAppServlet {
     String htmlTree = "";
     try {
       String newLevel = Integer.valueOf(Integer.valueOf(level).intValue() + 1).toString();
-      GenericTree tree = (GenericTree) Class.forName(treeClass).newInstance();
+      GenericTree tree = (GenericTree) Class.forName(treeClass).getDeclaredConstructor()
+          .newInstance();
       tree.setParameters(this);
       tree.setLanguage(vars.getLanguage());
       tree.setSubTree(strNodeId, newLevel);
@@ -120,7 +121,8 @@ public class GenericTreeServlet extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
 
     try {
-      GenericTree tree = (GenericTree) Class.forName(treeClass).newInstance();
+      GenericTree tree = (GenericTree) Class.forName(treeClass).getDeclaredConstructor()
+          .newInstance();
       tree.setParameters(this);
       tree.setLanguage(vars.getLanguage());
       description = tree.getHTMLDescription(strNodeId);

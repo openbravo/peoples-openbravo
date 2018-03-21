@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -267,7 +267,7 @@
       coalesce(l.a_asset_id,o.a_asset_id) as a_asset_id, coalesce(l.c_project_id, o.c_project_id) as c_project_id , 
    	  coalesce(l.c_costcenter_id,o.c_costcenter_id) as c_costcenter_id,
       coalesce(l.user1_id,o.user1_id) as user1_id,coalesce( l.user2_id,o.user2_id) as user2_id , 
-      coalesce (l.c_bpartner_id,o.c_bpartner_id) as c_bpartner_id, l.explode, 'Y' as isorder
+      coalesce (l.c_bpartner_id,o.c_bpartner_id) as c_bpartner_id, l.explode, 'Y' as isorder, o.C_DOCTYPE_ID AS C_DOCTYPE_ID
       FROM C_ORDERLINE l left join M_MATCHPO m on l.C_OrderLine_ID=m.C_OrderLine_ID
                                               and  m.M_InOutLine_ID IS NOT NULL 
                          left join M_Product_UOM mu on l.M_Product_UOM_ID = mu.M_Product_UOM_ID
@@ -279,7 +279,7 @@
       GROUP BY l.QtyOrdered,l.qtydelivered,l.C_UOM_ID,l.AUMQTY,l.C_AUM,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, 
       uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION,
       coalesce(l.a_asset_id,o.a_asset_id), coalesce(l.c_project_id, o.c_project_id), coalesce(l.c_costcenter_id,o.c_costcenter_id) ,
-      coalesce(l.user1_id,o.user1_id) ,coalesce( l.user2_id,o.user2_id) , coalesce (l.c_bpartner_id,o.c_bpartner_id), l.explode 
+      coalesce(l.user1_id,o.user1_id) ,coalesce( l.user2_id,o.user2_id) , coalesce (l.c_bpartner_id,o.c_bpartner_id), l.explode, o.C_DOCTYPE_ID
       ORDER BY l.Line
       ]]>
     </Sql>
@@ -300,7 +300,7 @@
       coalesce(l.a_asset_id,o.a_asset_id) as a_asset_id, coalesce(l.c_project_id, o.c_project_id) as c_project_id , 
    	  coalesce(l.c_costcenter_id,o.c_costcenter_id) as c_costcenter_id,
       coalesce(l.user1_id,o.user1_id) as user1_id,coalesce( l.user2_id,o.user2_id) as user2_id , 
-      l.c_bpartner_id, l.explode, 'Y' as isorder
+      l.c_bpartner_id, l.explode, 'Y' as isorder, o.C_DOCTYPE_ID AS C_DOCTYPE_ID
       FROM C_ORDERLINE l left join M_Product_UOM mu on l.M_Product_UOM_ID = mu.M_Product_UOM_ID
                          left join C_UOM uom1 on mu.C_UOM_ID = uom1.C_UOM_ID ,
       C_UOM uom,  M_PRODUCT p, C_ORDER o
@@ -310,7 +310,7 @@
       GROUP BY l.QtyOrdered,l.qtydelivered,l.C_UOM_ID,l.AUMQTY,l.C_AUM,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, 
       uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION,
       coalesce(l.a_asset_id,o.a_asset_id), coalesce(l.c_project_id, o.c_project_id), coalesce(l.c_costcenter_id,o.c_costcenter_id),
-   	  coalesce(l.user1_id,o.user1_id),coalesce( l.user2_id,o.user2_id), l.c_bpartner_id, l.explode
+   	  coalesce(l.user1_id,o.user1_id),coalesce( l.user2_id,o.user2_id), l.c_bpartner_id, l.explode, o.C_DOCTYPE_ID
       HAVING ((l.explode='Y')  OR (l.QtyOrdered - COALESCE(l.QTYDELIVERED,0)<>0)) 
       ORDER BY l.Line
       ]]>
@@ -341,7 +341,7 @@
         (SELECT M_ATTRIBUTESETINSTANCE.DESCRIPTION FROM M_ATTRIBUTESETINSTANCE WHERE l.M_ATTRIBUTESETINSTANCE_ID = M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESETINSTANCE_ID) as ATTRIBUTESETINSTANCENAME, l.explode, l.Bom_parent_id, 
         CASE WHEN l.Bom_parent_id is null then 'Y' else 'N' END as isparent,
         l.AUMQTY - SUM(COALESCE(M_GET_CONVERTED_AUMQTY(l.m_product_id, mi.Qty, l.c_aum), 0)) AS AUMQTY, l.C_AUM AS C_AUM, 
-        (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = l.C_AUM) AS AUMNAME, '' AS UOMPREFERENCE
+        (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = l.C_AUM) AS AUMNAME, '' AS UOMPREFERENCE, i.C_DOCTYPE_ID AS C_DOCTYPE_ID
         FROM C_INVOICELINE l left join  M_MATCHINV mi  on l.C_InvoiceLine_ID=mi.C_InvoiceLine_ID,
         C_INVOICE i, C_UOM uom,  M_PRODUCT p
         WHERE i.C_INVOICE_ID = l.C_INVOICE_ID 
@@ -357,7 +357,7 @@
         l.M_PRODUCT_UOM_ID,l.M_ATTRIBUTESETINSTANCE_ID,  coalesce(l.a_asset_id,i.a_asset_id), coalesce(l.c_project_id,i.c_project_id), 
         l.AUMQTY, l.C_AUM, 
         coalesce(l.c_costcenter_id,i.c_costcenter_id) , 
-        coalesce(l.user1_id,i.user1_id) , coalesce(l.user2_id, i.user2_id), l.c_bpartner_id, l.explode, l.bom_parent_id
+        coalesce(l.user1_id,i.user1_id) , coalesce(l.user2_id, i.user2_id), l.c_bpartner_id, l.explode, l.bom_parent_id, i.C_DOCTYPE_ID
         HAVING ((l.explode='Y')  OR (l.QtyInvoiced-SUM(COALESCE(mi.Qty,0))<>0))   
         ORDER BY NAME, l.Line
       ]]>
@@ -530,7 +530,7 @@
       coalesce(l.a_asset_id,i.a_asset_id) as a_asset_id, coalesce(l.c_project_id, i.c_project_id) as c_project_id, 
       coalesce(l.c_costcenter_id,i.c_costcenter_id) as c_costcenter_id , 
       coalesce(l.user1_id,i.user1_id ) as user1_id , coalesce(l.user2_id , i.user2_id) as user2_id, l.c_bpartner_id, l.explode, 
-      'N' as isorder,
+      'N' as isorder, i.C_DOCTYPE_ID AS C_DOCTYPE_ID,
       l.AUMQTY - SUM(COALESCE(M_GET_CONVERTED_AUMQTY(l.m_product_id, mi.Qty, l.c_aum), 0)) AS AUMQTY, l.C_AUM AS C_AUM, 
       (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = l.C_AUM) AS AUMNAME, '' AS UOMPREFERENCE
       FROM C_INVOICELINE l left join  M_Product_UOM mu on l.M_Product_UOM_ID = mu.M_Product_UOM_ID 
@@ -544,7 +544,7 @@
       l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID, 
       l.AUMQTY, l.C_AUM,uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION, l.C_INVOICE_ID,
       coalesce(l.a_asset_id,i.a_asset_id), coalesce(l.c_project_id, i.c_project_id), coalesce(l.c_costcenter_id,i.c_costcenter_id), 
-      coalesce(l.user1_id,i.user1_id ), coalesce(l.user2_id , i.user2_id),l.c_bpartner_id, l.explode
+      coalesce(l.user1_id,i.user1_id ), coalesce(l.user2_id , i.user2_id),l.c_bpartner_id, l.explode, i.c_doctype_id
       HAVING ((l.explode='Y')  OR (l.QtyInvoiced-SUM(COALESCE(mi.Qty,0))<>0))   
       ORDER BY l.Line
       ]]>

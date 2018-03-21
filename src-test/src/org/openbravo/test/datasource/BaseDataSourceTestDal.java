@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,8 +46,7 @@ public class BaseDataSourceTestDal extends OBBaseTest {
   protected static final String POST_METHOD = "POST";
 
   /**
-   * Performs a request to Openbravo returning its response and asserting the response code matches
-   * expectedResponse.
+   * @see BaseDataSourceTestDal#doRequest(String, String, int, String, String)
    */
   protected String doRequest(String wsPart, String content, int expectedResponse, String method)
       throws Exception {
@@ -55,8 +54,7 @@ public class BaseDataSourceTestDal extends OBBaseTest {
   }
 
   /**
-   * Performs a request to Openbravo returning its response and asserting the response code matches
-   * expectedResponse.
+   * @see BaseDataSourceTestDal#doRequest(String, String, int, String, String)
    */
   protected String doRequest(String wsPart, Map<String, String> params, int expectedResponse,
       String method) throws Exception {
@@ -66,22 +64,37 @@ public class BaseDataSourceTestDal extends OBBaseTest {
 
   /**
    * Performs a request to Openbravo returning its response and asserting the response code matches
-   * expectedResponse.
+   * expectedResponse. Before performing the requests, this method tries to authenticate with
+   * current settings if already not authenticated.
+   * 
+   * @return a {@code String} containing the response for the request
    */
   protected String doRequest(String wsPart, String content, int expectedResponse, String method,
       String contentType) throws Exception {
-    if (!authenticated) {
-      cookie = DatasourceTestUtil.authenticate(getOpenbravoURL(), getLogin(), getPassword());
-      authenticated = true;
-    }
+    authenticate();
 
     return DatasourceTestUtil.request(getOpenbravoURL(), wsPart, method, content, cookie, 200,
         contentType);
   }
 
   /**
+   * Performs a request to authenticate with current settings if already not authenticated.
+   * 
+   * @return a {@code String} representing the cookie with authenticated session id
+   * */
+  protected String authenticate() throws Exception {
+    if (!authenticated) {
+      cookie = DatasourceTestUtil.authenticate(getOpenbravoURL(), getLogin(), getPassword());
+      authenticated = true;
+    }
+    return cookie;
+  }
+
+  /**
    * Obtains URL of Openbravo instance, by default taken from Openbravo.poperties context.url
    * property
+   * 
+   * @return a {@code String} with the URL of Openbravo instance
    */
   protected String getOpenbravoURL() {
     if (OB_URL != null) {

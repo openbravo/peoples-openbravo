@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -204,7 +204,7 @@ public class DataSourceProperty {
   private static DomainType getDomainType(Reference reference) {
     try {
       final Class<?> clz = OBClassLoader.getInstance().loadClass(reference.getModelImpl());
-      final DomainType domainType = (DomainType) clz.newInstance();
+      final DomainType domainType = (DomainType) clz.getDeclaredConstructor().newInstance();
       // can't be set
       // note for our purpose this not need to be set
       // domainType.setReference(reference);

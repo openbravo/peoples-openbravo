@@ -55,7 +55,8 @@
   v_CalcLine NUMBER;
           
   TYPE RECORD IS REF CURSOR;
-  Cur_BOM RECORD;          
+  Cur_BOM RECORD;
+  Cur_TAXLINES RECORD;
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
@@ -113,7 +114,15 @@ END IF;
      IF (:new.AD_Org_ID <> :old.AD_Org_ID OR :new.C_Tax_ID <> :old.C_Tax_ID OR
          v_newLineNetAmt <> v_oldLine OR v_newLineAlternate <> v_oldLineAlternate OR
          :new.line_gross_amount <> :old.line_gross_amount) THEN
-       DELETE FROM C_INVOICELINETAX WHERE C_INVOICELINE_ID = :new.C_InvoiceLine_ID;
+         -- Delete the TaxLines using a Cursor to be able to delete them in the proper order.
+         -- If not, the calculations done in the triggers can be incorrect
+         FOR Cur_TAXLINES IN (SELECT C_INVOICELINETAX_ID
+                              FROM C_INVOICELINETAX
+                              WHERE C_INVOICELINE_ID = :new.C_InvoiceLine_ID
+                              ORDER BY line ASC)
+         LOOP
+           DELETE FROM C_INVOICELINETAX WHERE C_INVOICELINETAX_ID = cur_taxlines.C_INVOICELINETAX_ID;
+         END LOOP;
        v_create := 'Y';
      ELSE
        v_create := 'N';

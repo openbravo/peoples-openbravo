@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,19 +63,21 @@ public class ParameterCdiTestRule<T> implements MethodRule {
   private void evaluateParamsToTarget(Statement base, Object target, FrameworkMethod method)
       throws Throwable {
     Field targetField = getTargetField(target);
-    if (!targetField.isAccessible()) {
+
+    // replace isAccesible() with canAccess() when JDK9 becomes the minimum supported version
+    @SuppressWarnings("all")
+    boolean isAccesible = targetField.isAccessible();
+    if (!isAccesible) {
       targetField.setAccessible(true);
     }
 
     for (Object param : params) {
       targetField.set(target, param);
 
-      log.info(
-          "============================================================================================================");
+      log.info("============================================================================================================");
       log.info("   Paremeterized test {}.{} ", target.getClass().getName(), method.getName());
       log.info("       {}: {}", targetField.getName(), param);
-      log.info(
-          "============================================================================================================");
+      log.info("============================================================================================================");
 
       base.evaluate();
     }

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2010-2016 Openbravo S.L.U.
+ * Copyright (C) 2010-2018 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -86,7 +86,8 @@ public class BuildValidationHandler {
       try {
         Class<?> myClass = Class.forName(s);
         if (BuildValidation.class.isAssignableFrom(myClass)) {
-          BuildValidation instance = (BuildValidation) myClass.newInstance();
+          BuildValidation instance = (BuildValidation) myClass.getDeclaredConstructor()
+              .newInstance();
           instance.preExecute(modulesVersionMap);
           errors = instance.getErrors();
         }

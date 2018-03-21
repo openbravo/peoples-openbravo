@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -442,7 +443,7 @@ class WadUtility {
     } else {
       try {
         Class<?> c = Class.forName(classname);
-        control = (WADControl) c.newInstance();
+        control = (WADControl) c.getDeclaredConstructor().newInstance();
         control.setReference(parentRef);
         control.setSubreference(subRef);
       } catch (ClassNotFoundException ex) {
@@ -454,6 +455,12 @@ class WadUtility {
         control = new WADControl();
       } catch (IllegalAccessException e) {
         log4j.warn("Illegal access class: " + classname);
+        control = new WADControl();
+      } catch (InvocationTargetException e) {
+        log4j.warn("Exception thrown by default constructor of class: " + classname);
+        control = new WADControl();
+      } catch (NoSuchMethodException e) {
+        log4j.warn("Could not find a default constructor for class: " + classname);
         control = new WADControl();
       }
     }

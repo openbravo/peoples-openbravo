@@ -27,12 +27,16 @@ import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
 import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
@@ -64,6 +68,7 @@ public class ReferencedInventoryUtil {
 
     final AttributeSetInstance newAttributeSetInstance = (AttributeSetInstance) DalUtil.copy(
         originalAttributeSetInstance, false);
+    newAttributeSetInstance.setActive(true);
     newAttributeSetInstance.setClient(referencedInventory.getClient());
     newAttributeSetInstance.setOrganization(originalAttributeSetInstance.getOrganization());
     newAttributeSetInstance.setParentAttributeSetInstance(originalAttributeSetInstance);
@@ -76,8 +81,37 @@ public class ReferencedInventoryUtil {
   }
 
   /**
-   * Generates a description with the originalDesc + {@value #REFERENCEDINVENTORYPREFIX} +
-   * referenced Inventory search key + {@value #REFERENCEDINVENTORYSUFFIX}
+   * Returns an AttributeSetInstance previously created from the given _originalAttributeSetInstance
+   * and referenced inventory. If not found returns null.
+   */
+  public static final AttributeSetInstance getAlreadyClonedAttributeSetInstance(
+      final AttributeSetInstance _originalAttributeSetInstance,
+      final ReferencedInventory referencedInventory) {
+    try {
+      OBContext.setAdminMode(true);
+      final AttributeSetInstance originalAttributeSetInstance = _originalAttributeSetInstance == null ? OBDal
+          .getInstance().getProxy(AttributeSetInstance.class, "0") : _originalAttributeSetInstance;
+
+      final OBCriteria<AttributeSetInstance> criteria = OBDao.getFilteredCriteria(
+          AttributeSetInstance.class, Restrictions.eq(
+              AttributeSetInstance.PROPERTY_PARENTATTRIBUTESETINSTANCE + ".id",
+              originalAttributeSetInstance.getId()), Restrictions.eq(
+              AttributeSetInstance.PROPERTY_REFERENCEDINVENTORY + ".id",
+              referencedInventory.getId()));
+      criteria.setMaxResults(1);
+      return criteria.list().get(0);
+    } catch (final Exception notFound) {
+      return null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Generates a description with the originalDesc +
+   * {@value org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil#REFERENCEDINVENTORYPREFIX}
+   * + referenced Inventory search key +
+   * {@value org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil#REFERENCEDINVENTORYSUFFIX}
    */
   public static final String getAttributeSetInstanceDescriptionForReferencedInventory(
       final String originalDesc, final ReferencedInventory referencedInventory) {
@@ -110,7 +144,11 @@ public class ReferencedInventoryUtil {
    */
   public static String getProposedValueFromSequenceOrNull(final String referencedInventoryTypeId,
       final boolean updateNext) {
-    return FIN_Utility.getDocumentNo(updateNext, getSequence(referencedInventoryTypeId));
+    if (StringUtils.isBlank(referencedInventoryTypeId)) {
+      return null;
+    } else {
+      return FIN_Utility.getDocumentNo(updateNext, getSequence(referencedInventoryTypeId));
+    }
   }
 
   /**
@@ -176,8 +214,15 @@ public class ReferencedInventoryUtil {
     return qty.compareTo(BigDecimal.ZERO) > 0;
   }
 
+  /**
+   * Returns a ScrollableResults with the available stock reservations for the given storage detail
+   * that can be boxed to the given newStorageBin. They are ordered by first non-allocated, without
+   * a defined attribute set instance at reservation header first and with the lower reserved
+   * quantity
+   */
   public static ScrollableResults getAvailableStockReservations(final StorageDetail storageDetail,
       final Locator newStorageBin) {
+    Check.isNotNull(storageDetail, "storageDetail parameter can't be null");
     final String olHql = "select sr, sr.quantity - sr.released " + //
         "from MaterialMgmtReservationStock sr " + //
         "join sr.reservation res " + //
@@ -193,9 +238,10 @@ public class ReferencedInventoryUtil {
         "      case when res.attributeSetValue.id is not null then 1 else 0 end, " + //
         "      sr.quantity - sr.released asc  ";
     final Session session = OBDal.getInstance().getSession();
-    final Query sdQuery = session.createQuery(olHql.toString());
+    final Query sdQuery = session.createQuery(olHql);
     sdQuery.setParameter("sdBinId", storageDetail.getStorageBin().getId());
-    sdQuery.setParameter("toBindId", newStorageBin.getId());
+    sdQuery.setParameter("toBindId", newStorageBin != null ? newStorageBin.getId()
+        : "noStorageBinToIDShouldMatch");
     sdQuery.setParameter("sdAttributeSetId", storageDetail.getAttributeSetValue().getId());
     sdQuery.setParameter("productId", storageDetail.getProduct().getId());
     sdQuery.setParameter("uomId", storageDetail.getUOM().getId());

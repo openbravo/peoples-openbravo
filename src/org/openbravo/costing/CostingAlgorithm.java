@@ -61,10 +61,10 @@ public abstract class CostingAlgorithm {
    * Initializes the instance of the CostingAlgorith with the MaterialTransaction that is being to
    * be calculated and the cost dimensions values in case they have to be used.
    * 
-   * It initializes several values: <list> <li>Organization, it's used the Legal Entity dimension.
+   * It initializes several values: <ul> <li>Organization, it's used the Legal Entity dimension.
    * If this is null Asterisk organization is used. <li>Currency, it takes the currency defined for
    * the Organization. If this is null it uses the currency defined for the Client. <li>Transaction
-   * Type, it calculates its type. </list>
+   * Type, it calculates its type. </ul>
    * 
    * @param costingServer
    *          CostingServer instance calculating the cost of the transaction.

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,10 +19,7 @@
 
 package org.openbravo.erpCommon.utility;
 
-import java.sql.Connection;
 import java.util.UUID;
-
-import org.openbravo.database.ConnectionProvider;
 
 public class SequenceIdData {
 
@@ -35,24 +32,4 @@ public class SequenceIdData {
     return UUID.randomUUID().toString().replace("-", "").toUpperCase();
   }
 
-  /**
-   * Get the sequence for the specified table this shouldn't be used anymore, use instead getUUID()
-   * It is deprecated and will be removed before the 2.60 release
-   * 
-   * @deprecated
-   */
-  public static String getSequence(ConnectionProvider conn, String table, String client) {
-    return getUUID();
-  }
-
-  /**
-   * Get the sequence for the specified table. It is deprecated and will be removed before the 2.60
-   * release
-   * 
-   * @deprecated
-   */
-  public static String getSequenceConnection(Connection conn, ConnectionProvider con, String table,
-      String client) {
-    return getUUID();
-  }
 }

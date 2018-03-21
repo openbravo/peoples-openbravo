@@ -126,7 +126,7 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
     return refInv;
   }
 
-  void assertsReferencedInventoryIsNotEmptyAndHasRightQtyAndProduct(final String toBinId,
+  private void assertsReferencedInventoryIsNotEmptyAndHasRightQtyAndProduct(final String toBinId,
       final BigDecimal qtyInBox, final ReferencedInventory refInv, final Product product,
       final StorageDetail originalStorageDetail) {
     assertThat("Referenced Inventory is not empty", refInv.getMaterialMgmtStorageDetailList(),
@@ -162,7 +162,7 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
     return qtyInBox.compareTo(RECEIVEDQTY_10) < 0;
   }
 
-  void assertsStorageDetails(final String toBinId, final BigDecimal qtyInBox,
+  private void assertsStorageDetails(final String toBinId, final BigDecimal qtyInBox,
       final Product product, final String originalStorageBinId, final String originalAttributeId) {
     for (StorageDetail sd : ReferencedInventoryTestUtils
         .getAvailableStorageDetailsOrderByQtyOnHand(product)) {
@@ -171,7 +171,6 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
         // In box
         assertThat("Storage detail is linked to referenced inventory", sd.getReferencedInventory(),
             notNullValue());
-        assertThat("Storage detail qty is the boxed qty", qtyInBox, equalTo(sd.getQuantityOnHand()));
         assertThat("Storage detail is in new bin", toBinId, equalTo(sd.getStorageBin().getId()));
         assertsAttributeSetIsValid(sd.getReferencedInventory(), originalAttributeId, sd);
       } else {

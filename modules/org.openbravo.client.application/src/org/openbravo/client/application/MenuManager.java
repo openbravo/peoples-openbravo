@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -481,13 +481,6 @@ public class MenuManager {
 
     public Menu getMenu() {
       return menu;
-    }
-
-    /**
-     * @deprecated Use instead setMenu(Menu menu, String userLanguageId)
-     */
-    public void setMenu(Menu menu) {
-      setMenu(menu, OBContext.getOBContext().getLanguage().getId());
     }
 
     public void setMenu(Menu menu, String userLanguageId) {

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2006-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2006-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,12 +23,10 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 
@@ -103,95 +101,19 @@ public class HttpsUtils {
   }
 
   /**
-   * @deprecated use {@link #sendSecure(URL, String)}
-   */
-  public static String sendSecure(URL url, String data, String alias, String passphrase)
-      throws GeneralSecurityException, IOException {
-    return sendSecure(url, data);
-  }
-
-  /**
-   * @deprecated use {@link #sendHttpsRequest(URL, String)}
-   */
-  public static HttpURLConnection sendHttpsRequest(URL url, String data, String alias,
-      String passphrase) throws GeneralSecurityException, IOException {
-    return sendHttpsRequest(url, data);
-  }
-
-  /**
-   * @deprecated use {@link #getHttpsConn(URL)}
-   */
-  public static HttpsURLConnection getHttpsConn(URL url, String alias, String passphrase)
-      throws KeyStoreException, GeneralSecurityException, IOException {
-    return getHttpsConn(url);
-  }
-
-  /**
-   * @deprecated
-   * 
-   *             This method tries to URLEncode a queryString. It splits the query in chunks
-   *             separated by &amp; assuming &amp; symbol is not part of the values. But in case a value
-   *             contains this symbol it does not work (issue #18405).
-   * 
-   *             Do not use this method, instead encode each of the values in the query.
-   */
-  public static String encode(String queryStr, String encoding) {
-    StringBuilder sb = new StringBuilder();
-    String[] ss = queryStr.split("&");
-    for (String s : ss) {
-      String key = s.split("=")[0];
-      String value = "";
-      try {
-        value = s.split("=")[1];
-      } catch (IndexOutOfBoundsException e) {
-        // Do nothing - value is an empty string
-      }
-      try {
-        value = URLEncoder.encode(value, encoding);
-      } catch (UnsupportedEncodingException e) {
-        log4j.error(e.getMessage(), e);
-        // Shouldn't happen. Openbravo only using UTF-8
-      }
-      sb.append(key + "=" + value + "&");
-    }
-    return sb.toString();
-  }
-
-  /**
    * Checks Internet availability. In case system information is defined to use proxy, proxy is set.
    * Therefore this method should be invoked before each Internet connection.
    * 
    * @return true in case Internet (https://butler.openbravo.com) is reachable.
    */
   public static boolean isInternetAvailable() {
-    return isInternetAvailable(null, 0);
-  }
-
-  /**
-   * Checks the Internet availability and sets the proxy in case it is needed.
-   * 
-   * @deprecated Proxy settings should not be passed as parameter, but obtained from system
-   *             information. Use instead {@link HttpsUtils#isInternetAvailable()}
-   * @param proxyHost
-   * @param proxyPort
-   */
-  public static boolean isInternetAvailable(String proxyHost, int proxyPort) {
     OBContext.setAdminMode();
     try {
       final SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
-      if (sys.isProxyRequired() || (proxyHost != null && !proxyHost.isEmpty())) {
+      if (sys.isProxyRequired()) {
         // Proxy is required for connection.
-        String host;
-        int port;
-        if (proxyHost == null || proxyHost.isEmpty()) {
-          // to maintain backwards compatibility, set host in case it is provided as parameter (it
-          // shouldn't be)
-          host = sys.getProxyServer();
-          port = sys.getProxyPort().intValue();
-        } else {
-          host = proxyHost;
-          port = proxyPort;
-        }
+        String host = sys.getProxyServer();
+        int port = sys.getProxyPort().intValue();
         System.getProperties().put("proxySet", "true");
         System.getProperties().put("http.proxyHost", host);
         System.getProperties().put("https.proxyHost", host);

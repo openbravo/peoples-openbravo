@@ -659,9 +659,11 @@ public class OBContext implements OBNotSingleton {
         "select o.id from " + Organization.class.getName() + " o, "
             + RoleOrganization.class.getName() + " roa where o." + Organization.PROPERTY_ID
             + "=roa." + RoleOrganization.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID
-            + " and roa." + RoleOrganization.PROPERTY_ROLE + "." + Organization.PROPERTY_ID + "='"
-            + targetRole.getId() + "' and roa." + RoleOrganization.PROPERTY_ACTIVE + "='Y' and o."
-            + Organization.PROPERTY_ACTIVE + "='" + propertyActive + "'");
+            + " and roa." + RoleOrganization.PROPERTY_ROLE + "." + Organization.PROPERTY_ID
+            + "= :targetRoleId" + " and roa." + RoleOrganization.PROPERTY_ACTIVE + "='Y' and o."
+            + Organization.PROPERTY_ACTIVE + "= :active");
+    qry.setString("targetRoleId", targetRole.getId());
+    qry.setString("active", propertyActive);
     @SuppressWarnings("unchecked")
     List<String> currentOrgList = qry.list();
 
@@ -679,8 +681,9 @@ public class OBContext implements OBNotSingleton {
   private List<String> getOrganizations(Client client) {
     final Query qry = SessionHandler.getInstance().createQuery(
         "select o.id from " + Organization.class.getName() + " o where " + "o."
-            + Organization.PROPERTY_CLIENT + "=? and o." + Organization.PROPERTY_ACTIVE + "='Y'");
-    qry.setParameter(0, client);
+            + Organization.PROPERTY_CLIENT + "=:client and o." + Organization.PROPERTY_ACTIVE
+            + "='Y'");
+    qry.setParameter("client", client);
     organizationList = qry.list();
     return organizationList;
   }
@@ -886,18 +889,21 @@ public class OBContext implements OBNotSingleton {
       // to be
       // selected.
       if (roleId != null) {
+        Map<String, String> params = new HashMap<>(1);
+        params.put("roleId", roleId);
         final Role r = getOne(Role.class, "select r from " + Role.class.getName() + " r where "
-            + " r." + Role.PROPERTY_ID + "='" + roleId + "'");
+            + " r." + Role.PROPERTY_ID + "=:roleId", params, true);
         setRole(r);
       } else if (getUser().getDefaultRole() != null && getUser().getDefaultRole().isActive()) {
         setRole(getUser().getDefaultRole());
       } else {
-
+        Map<String, String> params = new HashMap<>(1);
+        params.put("userId", u.getId());
         final UserRoles ur = getOne(UserRoles.class, "select ur from " + UserRoles.class.getName()
             + " ur where " + " ur." + UserRoles.PROPERTY_USERCONTACT + "." + User.PROPERTY_ID
-            + "='" + u.getId() + "' and ur." + UserRoles.PROPERTY_ACTIVE + "='Y' and ur."
+            + "=:userId and ur." + UserRoles.PROPERTY_ACTIVE + "='Y' and ur."
             + UserRoles.PROPERTY_ROLE + "." + Role.PROPERTY_ACTIVE + "='Y' order by ur."
-            + UserRoles.PROPERTY_ROLE + "." + Role.PROPERTY_ID + " asc", false);
+            + UserRoles.PROPERTY_ROLE + "." + Role.PROPERTY_ID + " asc", params, false);
         if (ur == null) {
           throw new OBSecurityException(
               "Your user is not assigned to a Role and it is required to login into Openbravo. Ask the Security Administrator");
@@ -909,21 +915,25 @@ public class OBContext implements OBNotSingleton {
       Check.isNotNull(getRole(), "Role may not be null");
 
       if (orgId != null) {
+        Map<String, String> params = new HashMap<>(1);
+        params.put("orgId", orgId);
         final Organization o = getOne(Organization.class,
             "select r from " + Organization.class.getName() + " r where " + " r."
-                + Organization.PROPERTY_ID + "='" + orgId + "'");
+                + Organization.PROPERTY_ID + "=:orgId", params, true);
         setCurrentOrganization(o);
       } else if (getUser().getDefaultOrganization() != null
           && getUser().getDefaultOrganization().isActive()) {
         setCurrentOrganization(getUser().getDefaultOrganization());
       } else {
+        Map<String, String> params = new HashMap<>(1);
+        params.put("roleId", getRole().getId());
         final RoleOrganization roa = getOne(RoleOrganization.class, "select roa from "
             + RoleOrganization.class.getName() + " roa where roa." + RoleOrganization.PROPERTY_ROLE
-            + "." + Organization.PROPERTY_ID + "='" + getRole().getId() + "' and roa."
+            + "." + Organization.PROPERTY_ID + "=:roleId and roa."
             + RoleOrganization.PROPERTY_ACTIVE + "='Y' and roa."
             + RoleOrganization.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ACTIVE
             + "='Y' order by roa." + RoleOrganization.PROPERTY_ORGANIZATION + "."
-            + Organization.PROPERTY_ID + " desc", false);
+            + Organization.PROPERTY_ID + " desc", params, false);
         Hibernate.initialize(roa.getOrganization());
         setCurrentOrganization(roa.getOrganization());
 
@@ -950,8 +960,10 @@ public class OBContext implements OBNotSingleton {
       }
 
       if (localClientId != null) {
+        Map<String, String> params = new HashMap<>(1);
+        params.put("clientId", localClientId);
         final Client c = getOne(Client.class, "select r from " + Client.class.getName()
-            + " r where " + " r." + Client.PROPERTY_ID + "='" + localClientId + "'");
+            + " r where " + " r." + Client.PROPERTY_ID + "=:clientId", params, true);
         setCurrentClient(c);
       } else if (getUser().getDefaultClient() != null && getUser().getDefaultClient().isActive()) {
         setCurrentClient(getUser().getDefaultClient());
@@ -1038,13 +1050,11 @@ public class OBContext implements OBNotSingleton {
     return true;
   }
 
-  private <T extends Object> T getOne(Class<T> clz, String qryStr) {
-    return getOne(clz, qryStr, true);
-  }
-
-  @SuppressWarnings("unchecked")
-  private <T extends Object> T getOne(Class<T> clz, String qryStr, boolean doCheck) {
+  @SuppressWarnings({ "unchecked" })
+  private <T extends Object> T getOne(Class<T> clz, String qryStr, Map<String, String> parameters,
+      boolean doCheck) {
     final Query qry = SessionHandler.getInstance().createQuery(qryStr);
+    qry.setProperties(parameters);
     qry.setMaxResults(1);
     final List<?> result = qry.list();
     if (doCheck && result.size() != 1) {

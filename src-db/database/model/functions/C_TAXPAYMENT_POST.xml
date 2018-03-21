@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2016 Openbravo SLU
+* All portions are Copyright (C) 2001-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -299,6 +299,7 @@ BEGIN
       from c_taxregister_type tt
       inner join c_glitem_acct gia on gia.c_glitem_id=tt.c_glitem_id
       where tt.isactive='Y' and gia.isactive='Y' and tt.issotrx= case when v_totalcredit - v_totaldebit > 0 then 'N' else 'Y' end
+      and gia.c_acctschema_id = v_acctschema_id
       group by tt.issotrx;
 
       if (v_glitem_acct is null) then

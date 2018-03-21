@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -67,7 +67,8 @@ public class ImportBankFile extends HttpSecureAppServlet {
       BankFileFormat bff = OBDal.getInstance().get(BankFileFormat.class, strBankFileFormat);
       FIN_BankStatementImport bsi = null;
       try {
-        bsi = (FIN_BankStatementImport) Class.forName(bff.getJavaClassName()).newInstance();
+        bsi = (FIN_BankStatementImport) Class.forName(bff.getJavaClassName())
+            .getDeclaredConstructor().newInstance();
       } catch (Exception e) {
         log4j.error("Error while creating new instance for FIN_BankStatementImport - " + e, e);
       }

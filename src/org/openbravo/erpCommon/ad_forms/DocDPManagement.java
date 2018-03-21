@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -171,7 +171,7 @@ public class DocDPManagement extends AcctServer {
     if (!strClassname.equals("")) {
       try {
         DocDPManagementTemplate newTemplate = (DocDPManagementTemplate) Class.forName(strClassname)
-            .newInstance();
+            .getDeclaredConstructor().newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
         docDPManagementLog4j

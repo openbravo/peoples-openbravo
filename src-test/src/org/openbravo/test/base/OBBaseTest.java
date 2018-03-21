@@ -58,10 +58,9 @@ import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.database.ConnectionProviderImpl;
 import org.openbravo.database.ExternalConnectionPool;
-import org.openbravo.exception.PoolNotFoundException;
 import org.openbravo.model.ad.access.User;
+import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * OBBaseTest class which can/should be extended by most other test classes which want to make use
@@ -410,13 +409,7 @@ public class OBBaseTest {
   }
 
   protected ConnectionProvider getConnectionProvider() {
-    try {
-      final String propFile = OBConfigFileProvider.getInstance().getFileLocation();
-      final ConnectionProvider conn = new ConnectionProviderImpl(propFile + "/Openbravo.properties");
-      return conn;
-    } catch (PoolNotFoundException e) {
-      throw new IllegalStateException(e);
-    }
+    return new DalConnectionProvider(false);
   }
 
   /**

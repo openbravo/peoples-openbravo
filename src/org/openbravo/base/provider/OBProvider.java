@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
  * The OBProvider provides the runtime instances of model entities as well as service instances.
  * Classes are registered by their class type and it is identified if the class should be considered
  * to be a singleton or not.
- * <p/>
+ * <p>
  * The OBProvider is an implementation of the servicelocator pattern discussed in Martin Fowler's
  * article here: http://martinfowler.com/articles/injection.html
  * 
@@ -241,7 +241,7 @@ public class OBProvider {
 
       // instantiate the class
       try {
-        final Object value = instanceClass.newInstance();
+        final Object value = instanceClass.getDeclaredConstructor().newInstance();
         if (singleton) {
           theInstance = value;
         }

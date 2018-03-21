@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,6 @@ package org.openbravo.common.actionhandler;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -34,13 +33,15 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.refinventory.BoxProcessor;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.service.db.DbUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Action handler for boxing storage details into a Referenced Inventory
  *
  */
 public class ReferencedInventoryBoxHandler extends BaseProcessActionHandler {
-  private static final Logger logger = Logger.getLogger(ReferencedInventoryBoxHandler.class);
+  private static final Logger logger = LoggerFactory.getLogger(ReferencedInventoryBoxHandler.class);
 
   private static final String PARAM_GRID = "stock";
   private static final String PARAM_GRID_SELECTION = "_selection";
@@ -79,9 +80,7 @@ public class ReferencedInventoryBoxHandler extends BaseProcessActionHandler {
 
   private ReferencedInventory getReferencedInventory(final JSONObject request) throws JSONException {
     final String refInventoryId = request.getString("inpmRefinventoryId");
-    final ReferencedInventory referencedInventory = OBDal.getInstance().getProxy(
-        ReferencedInventory.class, refInventoryId);
-    return referencedInventory;
+    return OBDal.getInstance().getProxy(ReferencedInventory.class, refInventoryId);
   }
 
   private JSONArray getSelectedStorageDetails(final JSONObject request) throws JSONException {
@@ -101,8 +100,7 @@ public class ReferencedInventoryBoxHandler extends BaseProcessActionHandler {
   }
 
   protected void createAndProcessGoodsMovement(final ReferencedInventory referencedInventory,
-      final JSONArray selectedStorageDetails, final String newStorageBinId) throws Exception,
-      JSONException {
+      final JSONArray selectedStorageDetails, final String newStorageBinId) throws Exception {
     new BoxProcessor(referencedInventory, selectedStorageDetails, newStorageBinId)
         .createAndProcessGoodsMovement();
   }

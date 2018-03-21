@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -141,6 +141,7 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     hql.append("SELECT widgetClassAccess.widgetClass.id ");
     hql.append("FROM OBKMO_WidgetClassAccess widgetClassAccess ");
     hql.append("WHERE widgetClassAccess.role.id=:roleId ");
+    hql.append("AND widgetClassAccess.active=true ");
     if (!StringUtils.isEmpty(additionalWhereClause)) {
       hql.append(additionalWhereClause);
     }

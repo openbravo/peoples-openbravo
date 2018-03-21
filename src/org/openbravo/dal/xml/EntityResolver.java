@@ -70,7 +70,7 @@ public class EntityResolver implements OBNotSingleton {
   /**
    * The resolving mode determines how the EntityResolver should response if no existing object can
    * be found for a certain entity name and id.
-   * <p/>
+   * <p>
    * ALLOW_NOT_EXIST (the default) will allow a not-yet existing object and will create a new one.
    * MUST_EXIST will result in an EntityNotFoundException if the object can not be found in the
    * database.

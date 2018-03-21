@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,7 +40,6 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.domaintype.BaseDomainType;
-import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.base.model.domaintype.OneToManyDomainType;
 import org.openbravo.base.model.domaintype.StringDomainType;
 import org.openbravo.base.provider.OBProvider;
@@ -217,11 +216,6 @@ public class ModelProvider implements OBSingleton {
       for (final Table t : dataSourceTablesByName.values()) {
         t.setReferenceTypes(ModelProvider.instance);
       }
-      //
-      // log.debug("Setting List Values for columns");
-      // for (final RefList rl : refList) {
-      // rl.setAllowedValue();
-      // }
 
       model = new ArrayList<Entity>();
       entitiesByName = new HashMap<String, Entity>();
@@ -374,7 +368,8 @@ public class ModelProvider implements OBSingleton {
           String classname = rs.getString(1);
           Class<?> myClass = Class.forName(classname);
           if (org.openbravo.base.model.domaintype.BaseDomainType.class.isAssignableFrom(myClass)) {
-            BaseDomainType classInstance = (BaseDomainType) myClass.newInstance();
+            BaseDomainType classInstance = (BaseDomainType) myClass.getDeclaredConstructor()
+                .newInstance();
             for (Class<?> aClass : classInstance.getClasses()) {
               sessionFactoryController.addAdditionalClasses(aClass);
             }
@@ -1012,85 +1007,6 @@ public class ModelProvider implements OBSingleton {
     if (entity == null)
       Check.fail("Class name: " + clz.getName() + " not found in runtime model");
     return entity;
-  }
-
-  /**
-   * @deprecated use {@link ForeignKeyDomainType#getForeignKeyColumn(String)}
-   */
-  protected Column getColumnByReference(String reference, String referenceValue,
-      char validationType, String columnName) throws CheckException {
-    Column c = null;
-
-    if (tablesByTableName == null)
-      getModel();
-
-    if (reference.equals(Reference.TABLEDIR)
-        || (reference.equals(Reference.SEARCH) && referenceValue.equals(Reference.NO_REFERENCE))
-        || reference.equals(Reference.IMAGE) || reference.equals(Reference.PRODUCT_ATTRIBUTE)
-        || reference.equals(Reference.RESOURCE_ASSIGNMENT)) {
-
-      // Removing _ID from tableName based on Openbravo's naming
-      // convention
-      String sTable = columnName.substring(0, columnName.length() - 3);
-
-      // TODO: solve references in the application dictionary
-      // Special Cases
-      if (sTable.equals("Ref_OrderLine"))
-        sTable = "C_OrderLine";
-
-      if (columnName.equals("C_Settlement_Cancel_ID")
-          || columnName.equals("C_Settlement_Generate_ID"))
-        sTable = "C_Settlement";
-
-      if (columnName.equals("Fact_Acct_Ref_ID"))
-        sTable = "Fact_Acct";
-
-      if (columnName.equals("Account_ID"))
-        sTable = "C_ElementValue";
-
-      if (columnName.equalsIgnoreCase("CreatedBy") || columnName.equalsIgnoreCase("UpdatedBy"))
-        sTable = "AD_User";
-
-      if (reference.equals(Reference.PRODUCT_ATTRIBUTE))
-        sTable = "M_AttributeSetInstance";
-
-      try {
-        c = getTable(sTable).getPrimaryKeyColumns().get(0);
-      } catch (final Exception e) {
-        e.printStackTrace();
-        Check.fail("Reference column for " + columnName + " not found in runtime model [ref: "
-            + reference + ", refval: " + referenceValue + "], encountered exception "
-            + e.getMessage());
-      }
-
-    } else if (reference.equals(Reference.TABLE)) {
-      if (validationType == Reference.TABLE_VALIDATION) {
-        final RefTable rt = refTableMap.get(referenceValue);
-        if (rt != null) {
-          c = rt.getColumn();
-        }
-      }
-    } else if (reference.equals(Reference.SEARCH) && !referenceValue.equals(Reference.NO_REFERENCE)) {
-      if (validationType == Reference.SEARCH_VALIDATION) {
-        final RefSearch rs = refSearchMap.get(referenceValue);
-        if (rs != null) {
-          c = rs.getColumn();
-        }
-      }
-    } else if (reference.equals(Reference.IMAGE_BLOB)) {
-      List<Column> columns = tablesByTableName.get("ad_image").getColumns();
-      for (Column acolumn : columns) {
-        if (acolumn.getColumnName().equalsIgnoreCase("AD_Image_Id")) {
-          c = acolumn;
-          break;
-        }
-      }
-    }
-    if (c == null) {
-      Check.fail("Reference column for " + columnName + " not found in runtime model [ref: "
-          + reference + ", refval: " + referenceValue + "]");
-    }
-    return c;
   }
 
   /**

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,32 +22,56 @@ package org.openbravo.advpaymentmngt.ad_actionbutton;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.FilterExpression;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
-
 import org.openbravo.erpCommon.utility.Utility;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GLItemSelectorFilterExpression implements FilterExpression {
-  final static String FINANCIAL_ACCOUNT_WINDOW = "94EAA455D2644E04AB25D93BE5157B6D";
+  private static final String INPAD_ORG_ID_PARAM = "inpadOrgId";
+  private static final String AD_ORG_ID_PARAM = "ad_org_id";
+  private static final Logger log = LoggerFactory.getLogger(GLItemSelectorFilterExpression.class);
 
   @Override
   public String getExpression(Map<String, String> requestMap) {
-    if (!FINANCIAL_ACCOUNT_WINDOW.equals(requestMap.get("inpwindowId"))) {
-      return "";
+    try {
+      final JSONObject context = new JSONObject(requestMap);
+      final String orgId = getOrganizationIdFromContext(context);
+      String orgList = Utility.getInStrSet(OBContext.getOBContext()
+          .getOrganizationStructureProvider().getNaturalTree(orgId));
+      if (!orgList.isEmpty()) {
+        StringBuilder whereClause = new StringBuilder();
+        whereClause.append("e.organization.id in (" + orgList + ")");
+        return whereClause.toString();
+      } else {
+        return "";
+      }
+    } catch (Exception e) {
+      log.error("Error trying to get organization where clause for GL Item: ", e);
+      return null;
     }
-    StringBuilder whereClause = new StringBuilder();
-    String orgId = (String) RequestContext.get().getSession()
-        .getAttribute(FINANCIAL_ACCOUNT_WINDOW + "|AD_ORG_ID");
-    if(StringUtils.isEmpty(orgId)) {
-    	orgId = requestMap.get("inpadOrgId");
+  }
+
+  private String getOrganizationIdFromContext(final JSONObject context) throws JSONException {
+    if (contextHasADOrgIDParam(context)) {
+      return context.getString(AD_ORG_ID_PARAM);
+    } else if (contextHasInpADOrgIDParam(context)) {
+      return context.getString(INPAD_ORG_ID_PARAM);
+    } else {
+      return null;
     }
-    String orgList = Utility.getInStrSet(OBContext.getOBContext()
-        .getOrganizationStructureProvider().getNaturalTree(orgId));
-    if (!orgList.isEmpty()) {
-      whereClause.append("e.organization.id in (" + orgList + ")");
-    }
-    return whereClause.toString();
+  }
+
+  private boolean contextHasInpADOrgIDParam(final JSONObject context) throws JSONException {
+    return context.has(INPAD_ORG_ID_PARAM) && context.get(INPAD_ORG_ID_PARAM) != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString(INPAD_ORG_ID_PARAM));
+  }
+
+  private boolean contextHasADOrgIDParam(final JSONObject context) throws JSONException {
+    return context.has(AD_ORG_ID_PARAM) && context.get(AD_ORG_ID_PARAM) != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString(AD_ORG_ID_PARAM));
   }
 }

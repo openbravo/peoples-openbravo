@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009-2017 Openbravo SL 
+ * All portions are Copyright (C) 2009-2018 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2141,20 +2141,26 @@ public class PaymentReportDao {
 
   public java.util.List<Invoice> getInvoicesUsingCredit(final FIN_Payment payment) {
     final StringBuilder sql = new StringBuilder();
-    final java.util.List<Invoice> result = new ArrayList<Invoice>();
+    final java.util.List<Invoice> result = new ArrayList<>();
 
-    sql.append(" select distinct(pdv.invoicePaymentPlan.invoice.id) ");
-    sql.append(" from FIN_Payment_Credit pc, FIN_Payment p0, ");
-    sql.append("      FIN_Payment p1, FIN_Payment_Detail_V pdv  ");
-    sql.append(" where p0.id=pc.creditPaymentUsed ");
-    sql.append(" and pc.payment=p1.id ");
-    sql.append(" and pdv.payment=p1.id ");
-    sql.append(" and p0.id = '" + payment.getId() + "' ");
+    sql.append(" select distinct(psiv.invoice.id) ");
+    sql.append(" from FIN_Payment_Sched_Inv_V psiv ");
+    sql.append(" where exists (");
+    sql.append("   select 1 ");
+    sql.append("   from FIN_Payment_Credit pc");
+    sql.append("   , FIN_Payment_Detail pd");
+    sql.append("   , FIN_Payment_ScheduleDetail psd");
+    sql.append("   where pc.payment.id = pd.finPayment.id");
+    sql.append("   and pd.id = psd.paymentDetails.id");
+    sql.append("   and pc.creditPaymentUsed.id = :paymentId");
+    sql.append("   and psd.invoicePaymentSchedule.id = psiv.id");
+    sql.append(" )");
 
     try {
       OBContext.setAdminMode(true);
       final Session session = OBDal.getReadOnlyInstance().getSession();
       final Query query = session.createQuery(sql.toString());
+      query.setParameter("paymentId", payment.getId());
       for (final Object o : query.list()) {
         result.add(OBDal.getReadOnlyInstance().get(Invoice.class, o));
       }

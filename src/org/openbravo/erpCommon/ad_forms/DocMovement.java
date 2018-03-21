@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2017 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2018 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -152,7 +152,7 @@ public class DocMovement extends AcctServer {
     if (!strClassname.equals("")) {
       try {
         DocMovementTemplate newTemplate = (DocMovementTemplate) Class.forName(strClassname)
-            .newInstance();
+            .getDeclaredConstructor().newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
         log4j.error("Error while creating new instance for DocInvoiceTemplate - " + e);

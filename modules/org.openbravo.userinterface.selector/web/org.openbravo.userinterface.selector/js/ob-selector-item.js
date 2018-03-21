@@ -393,12 +393,15 @@ isc.OBSelectorPopupWindow.addProperties({
       isc.addProperties(data, this.view.getUnderLyingRecordContext(false, true));
     } else if (this.view && this.view.sourceView && this.view.sourceView.getContextInfo) {
       isc.addProperties(data, this.view.sourceView.getContextInfo(false, true));
+    } else if (this.selector && this.selector.view && this.selector.view.getUnderLyingRecordContext) {
+      // selector in a param window
+      isc.addProperties(data, this.selector.view.getUnderLyingRecordContext(false, true, null, this.selector.isComboReference));
     }
 
     callback = function (resp, data, req) {
       selectorWindow.fetchDefaultsCallback(resp, data, req);
     };
-    OB.RemoteCallManager.call('org.openbravo.userinterface.selector.SelectorDefaultFilterActionHandler', data, data, callback);
+    OB.RemoteCallManager.call('org.openbravo.userinterface.selector.SelectorDefaultFilterActionHandler', data, null, callback);
   },
 
   fetchDefaultsCallback: function (rpcResponse, data, rpcRequest) {

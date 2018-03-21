@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -544,12 +544,11 @@ public class ProcessInvoice extends HttpSecureAppServlet {
 
         OBContext.setAdminMode();
         try {
-          // on error close popup
+          // on error close popup and rollback
           if (pinstance.getResult() == 0L) {
-            OBDal.getInstance().commitAndClose();
-            final PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this,
-                pinstance.getId());
-            myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
+            OBDal.getInstance().rollbackAndClose();
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), pinstance
+                .getErrorMsg().replaceFirst("@ERROR=", ""));
             log4j.debug(myMessage.getMessage());
             vars.setMessage(strTabId, myMessage);
 
@@ -557,6 +556,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
             if (strWindowPath.equals(""))
               strWindowPath = strDefaultServlet;
             printPageClosePopUp(response, vars, strWindowPath);
+
             return;
           }
         } finally {

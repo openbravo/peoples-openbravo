@@ -324,7 +324,6 @@ public class ConfigParameters {
    * <li>Other case, {@code prefix} is defined by {@code InetAddress.getLocalHost().getHostName()}.
    * The actual name for <code>hostName</code> can be determined by {@code ant host.name}.
    * </ul>
-   * </p>
    */
   public static void overrideProperties(Properties obProperties, String path) {
     if (obProperties == null) {

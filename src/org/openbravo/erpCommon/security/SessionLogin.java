@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -163,13 +163,6 @@ public class SessionLogin {
     } finally {
       OBContext.restorePreviousMode();
     }
-  }
-
-  /**
-   * @deprecated use save() instead
-   */
-  public int save(ConnectionProvider conn) throws ServletException {
-    return save();
   }
 
   public void update(ConnectionProvider conn) throws ServletException {

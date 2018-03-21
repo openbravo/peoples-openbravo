@@ -31,7 +31,9 @@ import org.openbravo.xmlEngine.XmlEngine;
  * calls are managed by GenericTreeServlet.
  * 
  * <br>
- * Usage</br> This class cannot be directly used, instead a subclass implementing the abstract
+ * Usage<br>
+
+ * This class cannot be directly used, instead a subclass implementing the abstract
  * method must be used.
  * 
  * The purpose is to set the toHml directly in the HTML where the tree is going to be displayed,
@@ -39,7 +41,7 @@ import org.openbravo.xmlEngine.XmlEngine;
  * and manage the ajax requests.
  * 
  * <br>
- * To take into account</br>
+ * To take into account<br>
  * 
  * -data is a FieldProvider that must have the following fields: -nodeID : It is the unique
  * identifier for the node -name : It is the short name for the node (it will be displayed in the

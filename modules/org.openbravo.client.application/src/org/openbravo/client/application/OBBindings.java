@@ -109,8 +109,8 @@ public class OBBindings {
   /**
    * Checks if is a Sales Order transaction, based on the parameters of the HTTP request
    * 
-   * @return null if there is no request parameters, or the inpissotrx request parameter is not
-   *         available
+   * @return null if there is no request parameters, or if both the inpissotrx and inpwindowId
+   *         request parameters are not available
    */
   public Boolean isSalesTransaction() {
     if (requestMap == null) {
@@ -132,14 +132,20 @@ public class OBBindings {
       return "Y".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value);
     }
 
-    value = (String) httpSession.getAttribute(getWindowId() + "|ISSOTRX");
+    String windowId = getWindowId();
+    if (windowId == null) {
+      return null;
+    }
+
+    value = (String) httpSession.getAttribute(windowId + "|ISSOTRX");
     if (value != null) {
       return "Y".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value);
     }
 
     ApplicationDictionaryCachedStructures adcs = WeldUtils
         .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
-    Window w = adcs.getWindow(getWindowId());
+
+    Window w = adcs.getWindow(windowId);
     if (w != null) {
       return w.isSalesTransaction();
     }
@@ -280,7 +286,8 @@ public class OBBindings {
             .forName(className));
       } catch (IllegalArgumentException e) {
         // try with OBClassLoader in case package is excluded by Weld
-        expr = (FilterExpression) OBClassLoader.getInstance().loadClass(className).newInstance();
+        expr = (FilterExpression) OBClassLoader.getInstance().loadClass(className)
+            .getDeclaredConstructor().newInstance();
       }
       return expr.getExpression(requestMap);
     } catch (Exception e) {

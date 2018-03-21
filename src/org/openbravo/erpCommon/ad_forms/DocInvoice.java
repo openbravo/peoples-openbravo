@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2017 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2018 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -142,8 +142,8 @@ public class DocInvoice extends AcctServer {
       // Accruals & Deferrals for revenue products
       docLine.setIsDeferred("Y".equals(data[i].isdeferred));
       docLine.setDefPlanType(data[i].defplantype);
-      docLine.setPeriodNumber(!"".equals(data[i].periodnumber) ? Integer.parseInt(data[i].periodnumber)
-          : 0);
+      docLine.setPeriodNumber(!"".equals(data[i].periodnumber) ? Integer
+          .parseInt(data[i].periodnumber) : 0);
       docLine.setStartingPeriodId(data[i].cPeriodId);
 
       list.add(docLine);
@@ -302,7 +302,7 @@ public class DocInvoice extends AcctServer {
     if (!strClassname.equals("")) {
       try {
         DocInvoiceTemplate newTemplate = (DocInvoiceTemplate) Class.forName(strClassname)
-            .newInstance();
+            .getDeclaredConstructor().newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
         log4j.error("Error while creating new instance for DocInvoiceTemplate - " + e);

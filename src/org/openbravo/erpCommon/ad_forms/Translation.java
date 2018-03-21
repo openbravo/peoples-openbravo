@@ -32,16 +32,6 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.xmlEngine.XmlDocument;
 
-/**
- * Class for import/export languages.
- * 
- * The tree of languages is:
- * 
- * {attachmentsDir} {laguageFolder} {moduleFolder}
- * 
- * Example: /opt/attachments/ en_US/ <trl tables from core> module1/ <trl tables from module1>
- * 
- */
 public class Translation extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -54,8 +54,8 @@ public class DocCostAdjustment extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn, @SuppressWarnings("hiding")
-  String AD_Client_ID, String Id) throws ServletException {
+  public void loadObjectFieldProvider(ConnectionProvider conn,
+      @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocCostAdjustmentData.selectRegistro(conn, AD_Client_ID, Id));
   }
 
@@ -151,8 +151,8 @@ public class DocCostAdjustment extends AcctServer {
       strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
     } else {
       try {
-        DocCostAdjustmentTemplate newTemplate = (DocCostAdjustmentTemplate) Class.forName(
-            strClassname).newInstance();
+        DocCostAdjustmentTemplate newTemplate = (DocCostAdjustmentTemplate) Class
+            .forName(strClassname).getDeclaredConstructor().newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
         log4j.error("Error while creating new instance for DocCostAdjustmentTemplate - ", e);

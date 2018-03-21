@@ -93,6 +93,7 @@
       </foreign-key>
       <index name="M_ATTRIBUTESETINST_REFINV_IX" unique="false">
         <index-column name="M_REFINVENTORY_ID"/>
+        <index-column name="PARENT_ATTRIBUTESETINSTANCE_ID"/>
         <whereClause><![CDATA[M_REFINVENTORY_ID IS NOT NULL]]></whereClause>
       </index>
       <check name="M_ATTRIBUTESETINST_REFINV_CH"><![CDATA[M_REFINVENTORY_ID IS NULL OR M_REFINVENTORY_ID IS NOT NULL AND PARENT_ATTRIBUTESETINSTANCE_ID IS NOT NULL]]></check>

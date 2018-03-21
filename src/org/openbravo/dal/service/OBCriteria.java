@@ -47,7 +47,7 @@ import org.openbravo.service.db.QueryTimeOutUtil;
  * and organization filtering to the Hibernate Criteria. Internally the OBCriteria keeps a Hibernate
  * Criteria object as a delegate. Most calls are delegated to the Hibernate Criteria object after
  * first setting the additional filters.
- * <p/>
+ * <p>
  * This class also offers a convenience method to set orderby, the entities refered to from the
  * order by are automatically joined in the query.
  * 

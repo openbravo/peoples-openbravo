@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,6 @@ package org.openbravo.dal.core;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -45,7 +44,6 @@ import org.hibernate.jdbc.BorrowedConnectionProxy;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.metadata.CollectionMetadata;
 import org.hibernate.stat.Statistics;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.database.SessionInfo;
@@ -170,30 +168,23 @@ public class DalSessionFactory implements SessionFactory {
     final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
       Connection conn = ((SessionImplementor) session).connection();
-      // When a connection is obtained using the DAL pool it is necessary to call the initDB method.
-      SessionInfo.initDB(conn, props.getProperty("bbdd.rdbms"));
-      PreparedStatement pstmt = null;
-      try {
-        final String dbSessionConfig = props.getProperty("bbdd.sessionConfig");
-        pstmt = conn.prepareStatement(dbSessionConfig);
-        pstmt.executeQuery();
-      } catch (Exception e) {
-        throw new IllegalStateException(e);
-      } finally {
-        try {
-          if (pstmt != null && !pstmt.isClosed()) {
-            pstmt.close();
-          }
-        } catch (SQLException e) {
-          throw new OBException(e);
-        }
-      }
+      initConnection(conn);
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);
     }
     return session;
+  }
+
+  void initConnection(Connection conn) {
+    final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
+    SessionInfo.initDB(conn, props.getProperty("bbdd.rdbms"));
+    final String dbSessionConfig = props.getProperty("bbdd.sessionConfig");
+    try (PreparedStatement pstmt = conn.prepareStatement(dbSessionConfig)) {
+      pstmt.executeQuery();
+    } catch (Exception e) {
+      throw new IllegalStateException(e);
+    }
   }
 
   /**

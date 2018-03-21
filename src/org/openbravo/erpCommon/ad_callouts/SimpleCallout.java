@@ -45,7 +45,6 @@ import org.openbravo.service.json.JsonConstants;
  * <p>
  * To develop a new servlet callout based on this class you only have to create a new java class
  * that extends the method:
- * <p>
  * <blockquote>
  * 
  * <pre>
@@ -55,7 +54,7 @@ import org.openbravo.service.json.JsonConstants;
  * </blockquote>
  * <p>
  * In this method you can develop the logic of the callout and use the info object of class
- * <code>CalloutInfo<code/> to access window fields,
+ * {@link CalloutInfo} to access window fields,
  * database and other methods
  * 
  * @author aro

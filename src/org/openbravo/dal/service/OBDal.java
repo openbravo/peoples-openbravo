@@ -566,7 +566,7 @@ public class OBDal implements OBNotSingleton {
    * Retrieves a list of baseOBObjects using the unique-constraints defined for the entity. The
    * passed BaseOBObject and the unique-constraints are used to construct a query searching for
    * matching objects in the database.
-   * <p/>
+   * <p>
    * Note that multiple unique constraints are used, so therefore the result can be more than one
    * object.
    * 

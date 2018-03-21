@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -33,7 +33,8 @@ public class FIN_MatchingTransaction {
   public FIN_MatchingTransaction(String _algorithm) throws NoAlgorithmFoundException {
     try {
       if (_algorithm != null && !_algorithm.equals(""))
-        this.algorithm = (FIN_MatchingAlgorithm) Class.forName(_algorithm).newInstance();
+        this.algorithm = (FIN_MatchingAlgorithm) Class.forName(_algorithm).getDeclaredConstructor()
+            .newInstance();
       else
         throw new NoAlgorithmFoundException(
             "No algorithm has been defined to match bank statement lines");
@@ -42,6 +43,8 @@ public class FIN_MatchingTransaction {
     } catch (IllegalAccessException e) {
       throw new NoAlgorithmFoundException(e);
     } catch (ClassNotFoundException e) {
+      throw new NoAlgorithmFoundException(e);
+    } catch (ReflectiveOperationException e) {
       throw new NoAlgorithmFoundException(e);
     }
   }

@@ -44,9 +44,9 @@ public class ModuleUtiltiy {
   public final static String APRM_MODULE = "A918E3331C404B889D69AA9BFAFB23AC";
 
   /**
-   * It receives an ArrayList<String> with modules IDs and returns the same list ordered taking into
+   * It receives an ArrayList&lt;String&gt; with modules IDs and returns the same list ordered taking into
    * account the module dependency tree.
-   * <p/>
+   * <p>
    * Note that the module list must be a complete list of modules, no dependencies will be checked
    * for more than one level of deep, this means that passing an incomplete list might not be
    * ordered correctly.
@@ -80,7 +80,6 @@ public class ModuleUtiltiy {
   /**
    * Modifies the passed modules {@link FieldProvider} parameter ordering it taking into account
    * dependencies.
-   * <p/>
    * 
    * @param modules
    *          {@link FieldProvider} that will be sorted. It must contain at least a field named

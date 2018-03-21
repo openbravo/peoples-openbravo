@@ -580,11 +580,13 @@ public class Utility {
   }
 
   /**
-   * Returns the organization list for selectors, two cases are possible: <br>
+   * Returns the organization list for selectors, two cases are possible:
+   * <ul>
    * <li>Organization is empty (null or ""): accessible list of organizations will be returned. This
-   * case is used in calls from filters to selectors. <li>Organization is not empty: referenceable
-   * from current organization list of organizations will be returned. This is the way it is called
-   * from wad windows.
+   * case is used in calls from filters to selectors.</li>
+   * <li>Organization is not empty: referenceable from current organization list of organizations
+   * will be returned. This is the way it is called from wad windows.</li>
+   * </ul>
    * 
    * @param conn
    *          Handler for the database connection
@@ -669,7 +671,7 @@ public class Utility {
   }
 
   /**
-   * Returns a Vector<String> composed by the comma separated elements in String s
+   * Returns a Vector&lt;String&gt; composed by the comma separated elements in String s
    * 
    * @param s
    * @return the list of String obtained by converting the comma delimited String
@@ -686,7 +688,7 @@ public class Utility {
   }
 
   /**
-   * Returns a Vector<String> with the elements that appear in both v1 and v2 Vectors
+   * Returns a Vector&lt;String&gt; with the elements that appear in both v1 and v2 Vectors
    * 
    * @param v1
    * @param v2
@@ -2240,7 +2242,7 @@ public class Utility {
     } else if ("yourcompanymenu".equals(logo)) {
       defaultImagePath = "web/images/CompanyLogo_small.png";
     } else if ("yourcompanybig".equals(logo)) {
-      defaultImagePath = "web/skins/ltr/Default/Login/initialOpenbravoLogo.png";
+      defaultImagePath = "web/images/openbravoLogo.svg";
     } else if ("yourcompanydoc".equals(logo)) {
       defaultImagePath = "web/images/CompanyLogo_big.png";
     } else if ("banner-production".equals(logo)) {

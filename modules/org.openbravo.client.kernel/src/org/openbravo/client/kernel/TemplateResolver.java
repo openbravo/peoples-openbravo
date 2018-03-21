@@ -31,7 +31,7 @@ import org.openbravo.dal.service.OBDal;
  * the dependencies etc.) and also takes care of using overriding templates. So each template is
  * replaced by its overriding template in the result list. Templates are returned in dependency
  * order. This means the following.
- * <p/>
+ * <p>
  * Say there is dependency tree: A depends on B and C, B depends on D and E, C depends on F and G
  * 
  * Then the returned result is computed depth-first: D, E, B, F, G, C, A

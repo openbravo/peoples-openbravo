@@ -676,15 +676,6 @@ public class HeartbeatProcess implements Process {
   }
 
   /**
-   * @deprecated use {@link #isLoginPopupRequired(VariablesSecureApp, ConnectionProvider)}
-   */
-  public static HeartBeatOrRegistration showHeartBeatOrRegistration(VariablesSecureApp vars,
-      ConnectionProvider connectionProvider) throws ServletException {
-
-    return isLoginPopupRequired(vars, connectionProvider);
-  }
-
-  /**
    * @see HeartbeatProcess#isLoginPopupRequired(String, String, ConnectionProvider)
    */
   public static HeartBeatOrRegistration isLoginPopupRequired(VariablesSecureApp vars,

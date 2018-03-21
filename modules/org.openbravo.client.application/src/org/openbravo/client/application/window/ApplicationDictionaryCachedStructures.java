@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,6 @@ import javax.enterprise.context.ApplicationScoped;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -45,7 +44,6 @@ import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
-import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.userinterface.selector.Selector;
 import org.openbravo.userinterface.selector.SelectorField;
 import org.slf4j.Logger;
@@ -365,28 +363,6 @@ public class ApplicationDictionaryCachedStructures {
     synchronized (obj) {
       Hibernate.initialize(obj);
     }
-  }
-
-  /**
-   * @deprecated use {@link #getComboTableData(Field)}
-   */
-  public ComboTableData getComboTableData(VariablesSecureApp vars, String ref, String colName,
-      String objectReference, String validation, String orgList, String clientList) {
-    String comboId = ref + colName + objectReference + validation + orgList + clientList;
-    if (useCache() && comboTableDataMap.get(comboId) != null) {
-      return comboTableDataMap.get(comboId);
-    }
-    ComboTableData comboTableData;
-    try {
-      comboTableData = new ComboTableData(vars, new DalConnectionProvider(false), ref, colName,
-          objectReference, validation, orgList, clientList, 0);
-    } catch (Exception e) {
-      throw new OBException("Error while computing combo table data for column " + colName, e);
-    }
-    if (useCache() && comboTableData.canBeCached()) {
-      comboTableDataMap.put(comboId, comboTableData);
-    }
-    return comboTableData;
   }
 
   /**

@@ -98,7 +98,7 @@ public class BasicUtility {
   /**
    * 
    * Formats a message String into a String for html presentation. Escapes the &amp;, &lt;, &gt;, " and ®, and
-   * replace the \n by <br/>
+   * replace the \n by &lt;br/&gt;
    * and \r for space.
    * 
    * IMPORTANT! : this method is designed to transform the output of Utility.messageBD method, and

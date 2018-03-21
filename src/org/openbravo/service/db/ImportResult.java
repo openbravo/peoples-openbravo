@@ -52,7 +52,7 @@ public class ImportResult {
    * The list of objects which have been updated. Note that for these objects the
    * {@link OBDal#save(Object)} method has been called, but the commit is the responsibility of the
    * caller of the import service.
-   * <p/>
+   * <p>
    * This list is empty if an error has occurred during the import (@see {@link #hasErrorOccured()}.
    * 
    * @return the list of objects which have been updated.
@@ -65,7 +65,7 @@ public class ImportResult {
    * The list of objects which have been inserted. Note that for these objects the
    * {@link OBDal#save(Object)} method has been called, but the commit is the responsibility of the
    * caller of the import service.
-   * <p/>
+   * <p>
    * This list is empty if an error has occurred during the import (@see {@link #hasErrorOccured()}.
    * 
    * @return the list of objects which have been inserted.

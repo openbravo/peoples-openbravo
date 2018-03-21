@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * Builds a tree of organizations to compute the accessible organizations for the current
  * organizations of a user. Is used to check if references from one object to another are correct
  * from an organization structure perspective.
- * <p/>
+ * <p>
  * For example a city refers to a country then: an organization of the country (the refered object)
  * must be in the natural tree of the organization of the city (the referee).
  * 

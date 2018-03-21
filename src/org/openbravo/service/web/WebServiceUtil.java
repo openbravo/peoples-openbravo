@@ -66,7 +66,7 @@ public class WebServiceUtil implements OBSingleton {
    * 
    * @param t
    *          the Throwable used to set the error message
-   * @return the xml error String, e.g. <error><message>An error occurred</message></error>
+   * @return the xml error String, e.g. {@literal <error><message>An error occurred</message></error>}
    */
   public String createErrorXML(Throwable t) {
     Throwable x = t;
@@ -92,7 +92,7 @@ public class WebServiceUtil implements OBSingleton {
   }
 
   /**
-   * Creates a standard result xml: <result>My Result</result>
+   * Creates a standard result xml: {@literal <result>My Result</result>}
    * 
    * @param content
    *          the content of the result message
@@ -104,8 +104,8 @@ public class WebServiceUtil implements OBSingleton {
   }
 
   /**
-   * Creates a standard result xml with log and warning: <result><msg>My Result</msg><log>My
-   * Log</log><warning>My Warning</warning></result>
+   * Creates a standard result xml with log and warning:
+   * {@literal <result><msg>My Result</msg><log>My Log</log><warning>My Warning</warning></result>}
    * 
    * @param msg
    *          the content of the result

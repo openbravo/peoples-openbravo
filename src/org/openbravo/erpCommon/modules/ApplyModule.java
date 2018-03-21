@@ -73,11 +73,11 @@ public class ApplyModule {
   }
 
   /**
-   * Process the Installed but not applied modules, the treatement for these modules is: <br/>
-   * 1.- Reference data modules for client system Loads the reference data in client system. <br/>
-   * 2.- Translation modules In case the module contains translations the process will: <br/>
+   * Process the Installed but not applied modules, the treatement for these modules is: <br>
+   * 1.- Reference data modules for client system Loads the reference data in client system. <br>
+   * 2.- Translation modules In case the module contains translations the process will: <br>
    * 2.1.- Sets the module language as system -Populates the trl tables calling the verify language
-   * process (this is done just once for all the modules with translations. <br/>
+   * process (this is done just once for all the modules with translations. <br>
    * 2.2.- Imports the xml files with translations into trl tables.
    * 
    * All modules Sets them as installed

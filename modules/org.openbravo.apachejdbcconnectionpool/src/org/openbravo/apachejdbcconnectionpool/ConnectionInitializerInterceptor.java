@@ -82,7 +82,7 @@ public class ConnectionInitializerInterceptor extends JdbcInterceptor implements
         } else {
           // SessionInfo will be initialized when the SessionListener ServletContextListener is
           // invoked. That listener will check if there are audited tables and notify SessionInfo,
-          // from them on SessionInfo will know whether the ad_context_info table should be created
+          // from then on SessionInfo will know whether the ad_context_info table should be created
           if (SessionInfo.isInitialized()) {
             SessionInfo.initDB(con.getConnection(), rbdms);
             initialized = true;

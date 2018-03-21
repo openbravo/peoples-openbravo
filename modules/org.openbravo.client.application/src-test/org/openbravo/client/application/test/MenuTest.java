@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,8 @@ import org.junit.Test;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.MenuManager;
 import org.openbravo.client.application.MenuManager.MenuOption;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests the reading of the menu in memory
@@ -33,6 +35,7 @@ import org.openbravo.client.application.MenuManager.MenuOption;
  * @author iperdomo
  */
 public class MenuTest extends WeldBaseTest {
+  private static final Logger log = LoggerFactory.getLogger(MenuTest.class);
 
   @Inject
   private MenuManager menuManager;
@@ -43,9 +46,7 @@ public class MenuTest extends WeldBaseTest {
   @Test
   public void testSystemAdministratorMenu() throws Exception {
     setSystemAdministratorContext();
-    final long time = System.currentTimeMillis();
     final MenuManager.MenuOption rootMenuOption = menuManager.getMenu();
-    System.err.println((System.currentTimeMillis() - time));
     dumpMenuOption(rootMenuOption, 0);
     assertFalse(menuManager.getSelectableMenuOptions().isEmpty());
   }
@@ -62,13 +63,16 @@ public class MenuTest extends WeldBaseTest {
   }
 
   private void dumpMenuOption(MenuOption menuOption, int level) {
+    if (!log.isDebugEnabled()) {
+      return;
+    }
     final StringBuilder sb = new StringBuilder();
     for (int i = 0; i < level; i++) {
       sb.append(">");
     }
     sb.append(menuOption.getLabel());
     sb.append(" (" + menuOption.getType() + "): " + menuOption.getId());
-    System.err.println(sb.toString());
+    log.debug(sb.toString());
     for (MenuOption childOption : menuOption.getChildren()) {
       dumpMenuOption(childOption, level + 1);
     }

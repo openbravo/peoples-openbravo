@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -277,9 +277,7 @@ public class FIN_Utility {
    * @return the Document Type
    */
   public static DocumentType getDocumentType(Organization org, String docCategory) {
-    DocumentType outDocType = null;
     Client client = null;
-
     if ("0".equals(org.getId())) {
       client = OBContext.getOBContext().getCurrentClient();
       if ("0".equals(client.getId())) {
@@ -291,28 +289,30 @@ public class FIN_Utility {
 
     OBContext.setAdminMode(false);
     try {
-      StringBuilder whereOrderByClause = new StringBuilder();
-      whereOrderByClause.append(" as dt where dt.organization.id in (");
-      whereOrderByClause.append(Utility.getInStrSet(new OrganizationStructureProvider()
-          .getParentTree(org.getId(), true)));
-      whereOrderByClause.append(") and dt.client.id = '" + client.getId()
-          + "' and dt.documentCategory = '" + docCategory + "' order by ad_isorgincluded('"
-          + org.getId() + "', dt.organization.id, '" + client.getId()
-          + "') , dt.default desc, dt.id desc");
+      StringBuilder where = new StringBuilder();
+      where.append(" as dt");
+      where.append(" where dt.organization.id in (:orgIdList)");
+      where.append(" and dt.client.id = :clientId");
+      where.append(" and dt.documentCategory = :docCategory");
+      where.append(" order by ad_isorgincluded(:orgId, dt.organization.id, :clientId)");
+      where.append(" , dt.default desc");
+      where.append(" , dt.id desc");
+
       OBQuery<DocumentType> dt = OBDal.getInstance().createQuery(DocumentType.class,
-          whereOrderByClause.toString());
+          where.toString());
       dt.setFilterOnReadableClients(false);
       dt.setFilterOnReadableOrganization(false);
       dt.setMaxResult(1);
+      dt.setNamedParameter("orgIdList",
+          new OrganizationStructureProvider().getParentTree(org.getId(), true));
+      dt.setNamedParameter("clientId", client.getId());
+      dt.setNamedParameter("docCategory", docCategory);
+      dt.setNamedParameter("orgId", org.getId());
 
-      List<DocumentType> dtList = dt.list();
-      if (dtList != null && !dtList.isEmpty()) {
-        outDocType = dtList.get(0);
-      }
+      return dt.uniqueResult();
     } finally {
       OBContext.restorePreviousMode();
     }
-    return outDocType;
   }
 
   /**

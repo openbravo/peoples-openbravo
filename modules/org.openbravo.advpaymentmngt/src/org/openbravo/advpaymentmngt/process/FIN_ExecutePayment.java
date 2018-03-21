@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -88,13 +88,15 @@ public class FIN_ExecutePayment {
       else if ("CONSTANT".equals(parameter.getParameterType()))
         dao.getNewPaymentRunParameter(paymentRun, parameter, parameter.getDefaultTextValue());
     try {
-      this.paymentExecutionProcess = (FIN_PaymentExecutionProcess) Class.forName(
-          executionProcess.getJavaClassName()).newInstance();
+      this.paymentExecutionProcess = (FIN_PaymentExecutionProcess) Class
+          .forName(executionProcess.getJavaClassName()).getDeclaredConstructor().newInstance();
     } catch (InstantiationException e) {
       throw new NoExecutionProcessFoundException(e);
     } catch (IllegalAccessException e) {
       throw new NoExecutionProcessFoundException(e);
     } catch (ClassNotFoundException e) {
+      throw new NoExecutionProcessFoundException(e);
+    } catch (ReflectiveOperationException e) {
       throw new NoExecutionProcessFoundException(e);
     }
 
