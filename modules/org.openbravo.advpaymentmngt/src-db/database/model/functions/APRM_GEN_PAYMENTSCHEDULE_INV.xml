@@ -95,7 +95,7 @@ cur_update_scheddetails RECORD;
 v_paymentamt NUMBER:=0;
 v_depositamt NUMBER:=0;
 v_transactiontype VARCHAR2(32);
-v_finalsettlement C_Invoice.FinalSettlement%TYPE;
+v_finalsettlementdate C_Invoice.FinalSettlement%TYPE;
 
 BEGIN
 
@@ -615,15 +615,12 @@ BEGIN
         AND OUTSTANDINGAMT != 0;
 
       IF(v_OutstandingAmount = 0) THEN
-        SELECT max(p.paymentdate) INTO v_finalsettlement
-        FROM fin_payment p, fin_payment_detail pd, fin_payment_scheduledetail psd, fin_payment_schedule ps 
-        WHERE p.fin_payment_id = pd.fin_payment_id 
-          AND pd.fin_payment_detail_id = psd.fin_payment_detail_id 
-          AND psd.fin_payment_schedule_invoice = ps.fin_payment_schedule_id 
-          AND ps.c_invoice_id = P_RECORD_ID
-          AND ps.fin_payment_schedule_id = fin_payment_schedule_id;
+        SELECT MAX(lastpayment)
+        INTO v_finalsettlementdate
+        FROM fin_payment_sched_inv_v
+        WHERE c_invoice_id = P_RECORD_ID;
       ELSE
-        v_finalsettlement := NULL;
+        v_finalsettlementdate := NULL;
       END IF;
 
       --Updating Payment Monitor values into C_INVOICE
@@ -634,7 +631,7 @@ BEGIN
           DAYSTILLDUE = V_DayStillDue,
           LASTCALCULATEDONDATE = now(),
           ISPAID = CASE v_OutstandingAmount WHEN 0 THEN 'Y' ELSE 'N' END,
-          FINALSETTLEMENT = v_finalsettlement
+          FINALSETTLEMENT = v_finalsettlementdate
       WHERE C_INVOICE_ID = P_RECORD_ID;
 
       -- Updating SO_CREDITUSED when Invoices are being processed
