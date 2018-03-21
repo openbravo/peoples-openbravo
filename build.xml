@@ -12,7 +12,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2017 Openbravo SLU
+* All portions are Copyright (C) 2001-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -98,17 +98,13 @@ export.database: exports database structure and data to xml files.
  
   <available file=".hg" property="is.hg" />
 
-  <condition property="jdk9">
+  <condition property="jdk>8">
     <not>
       <or>
         <equals arg1="${ant.java.version}" arg2="1.7"/>
         <equals arg1="${ant.java.version}" arg2="1.8"/>
       </or>
     </not>
-  </condition>
-
-  <condition property="j9.module.args" value="--add-modules=java.se.ee" else="">
-    <isset property="jdk9"/>
   </condition>
 
   <condition property="calculate.core.rev">
@@ -539,7 +535,7 @@ export.database: exports database structure and data to xml files.
     <antcall target="generate.java.doc.jdk9"/>
   </target>
 
-  <target name="generate.java.doc.jdk7" unless="jdk9">
+  <target name="generate.java.doc.jdk7" unless="jdk>8">
     <javadoc Windowtitle="${title}" access="protected" Header="${header}" Footer="${footer}" destdir="${build.docs}" maxmemory="1024M" failonerror="yes">
       <sourcepath>
         <pathelement path="${base.src}" />
@@ -566,7 +562,7 @@ export.database: exports database structure and data to xml files.
     </javadoc>
   </target>
 
-  <target name="generate.java.doc.jdk9" if="jdk9">
+  <target name="generate.java.doc.jdk9" if="jdk>8">
     <javadoc Windowtitle="${title}" access="protected" Header="${header}" Footer="${footer}" destdir="${build.docs}" maxmemory="1024M" failonerror="yes">
       <sourcepath>
         <pathelement path="${base.src}" />
@@ -590,7 +586,7 @@ export.database: exports database structure and data to xml files.
         </fileset>
       </classpath>
       <link href="http://docs.oracle.com/javase/9/docs/api/"/>
-      <arg value="${j9.module.args}"/>
+      <arg value="-Xdoclint:-missing"/>
     </javadoc>
   </target>
 
