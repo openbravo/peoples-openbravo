@@ -330,7 +330,7 @@ public class OBBaseTest {
 
   /**
    * @return {@code true} if the test case should mock the servlet context. Otherwise, return
-   *         {@false}.
+   *         {@code false}.
    */
   protected boolean shouldMockServletContext() {
     return false;
