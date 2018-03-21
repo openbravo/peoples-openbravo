@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2017 Openbravo SLU
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -256,7 +256,7 @@ public class AttachImplementationManager {
       File file = handler.downloadFile(attachment);
       FileUtility fileUt = null;
       if (file.exists()) {
-        fileUt = new FileUtility(file.getParent(), attachment.getName(), false, true);
+        fileUt = new FileUtility(file.getParent(), file.getName(), false, true);
       } else {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoAttachmentFound"));
       }
