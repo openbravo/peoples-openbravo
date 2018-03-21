@@ -1524,7 +1524,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
                 newRemainingPSD);
             OBDal.getInstance().save(newRemainingPSD);
           } else {
-            remainingPSD.setAmount(remainingPSD.getAmount().add(reversedPSD.getAmount().negate()));
+            remainingPSD.setAmount(remainingPSD.getAmount().add(reversedPSD.getAmount()));
             OBDal.getInstance().save(remainingPSD);
           }
         }
@@ -1537,7 +1537,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         remainingPSDIdHQl.append("JOIN ps.order o ");
         remainingPSDIdHQl.append("WHERE o.id = :orderId ");
         remainingPSDIdHQl.append("AND psd.paymentDetails IS NULL ");
-        remainingPSDIdHQl.append("ORDER BY psd.invoicePaymentSchedule DESC");
+        remainingPSDIdHQl.append("ORDER BY psd.invoicePaymentSchedule");
         final Query<String> remainingPSDIdQuery = OBDal.getInstance().getSession()
             .createQuery(remainingPSDIdHQl.toString(), String.class);
         remainingPSDIdQuery.setParameter("orderId", order.getId());
