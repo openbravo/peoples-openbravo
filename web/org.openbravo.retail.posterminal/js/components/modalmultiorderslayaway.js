@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2017 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -38,7 +38,8 @@ enyo.kind({
   isDefaultAction: true,
   i18nContent: 'OBPOS_LblApplyButton',
   tap: function () {
-    var amount = OB.DEC.Zero,
+    var me = this,
+        amount = OB.DEC.Zero,
         total = OB.DEC.Zero,
         tmp, currentOrder;
     currentOrder = this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id);
@@ -96,10 +97,21 @@ enyo.kind({
       this.doHideThisPopup();
       return;
     }
-    currentOrder.set('amountToLayaway', amount);
-    currentOrder.setOrderType(null, 2);
-    currentOrder.trigger('amountToLayaway');
-    this.doHideThisPopup();
+    OB.UTIL.HookManager.executeHooks('OBPOS_PreMultiOrderLayaway', {
+      amount: amount,
+      order: currentOrder,
+      context: this
+    }, function (args) {
+      if (args.cancellation) {
+        me.doHideThisPopup();
+        return;
+      }
+      currentOrder.set('amountToLayaway', args.amount);
+      currentOrder.setOrderType(null, 2);
+      currentOrder.trigger('amountToLayaway');
+      me.doHideThisPopup();
+    });
+
   },
   init: function (model) {
     this.model = model;
