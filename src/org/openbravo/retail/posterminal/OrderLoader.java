@@ -186,7 +186,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         && !hasPrepayment;
     creditpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
         && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
-        && jsonorder.optBoolean("paidOnCredit");
+        && (jsonorder.optBoolean("paidOnCredit") || jsonorder.optBoolean("donePressed", false));
     partialpaidLayaway = jsonorder.getBoolean("isLayaway")
         && jsonorder.getDouble("payment") < jsonorder.getDouble("gross");
     fullypaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
@@ -314,8 +314,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               lineReferences.add(ol);
             }
           }
-        } else if (!newLayaway
-            && (creditpaidLayaway || fullypaidLayaway || jsonorder.optBoolean("donePressed", false))) {
+        } else if (!newLayaway && (creditpaidLayaway || fullypaidLayaway)) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
           order.setDelivered(deliver);
