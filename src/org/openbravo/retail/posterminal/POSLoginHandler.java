@@ -126,9 +126,10 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
     try {
       // Terminal access will be checked to ensure that the user has access to the terminal
       OBQuery<TerminalAccess> accessCrit = OBDal.getInstance().createQuery(TerminalAccess.class,
-          "where userContact.id='" + userId + "'");
+          "where userContact.id= :userId ");
       accessCrit.setFilterOnReadableClients(false);
       accessCrit.setFilterOnReadableOrganization(false);
+      accessCrit.setNamedParameter("userId", userId);
       List<TerminalAccess> accessList = accessCrit.list();
       boolean hasAccess = false;
       if (accessList.size() != 0) {
