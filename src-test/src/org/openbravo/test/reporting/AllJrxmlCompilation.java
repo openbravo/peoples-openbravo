@@ -18,6 +18,10 @@
  */
 package org.openbravo.test.reporting;
 
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assume.assumeThat;
+
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -30,6 +34,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.hibernate.Query;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -37,9 +42,11 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.application.report.ReportingUtils;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.test.base.OBBaseTest;
 
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
 
 /**
  * Compiles all jrxml templates present in the sources directory ensuring they can be compiled with
@@ -66,8 +73,17 @@ public class AllJrxmlCompilation extends OBBaseTest {
     String reportPath = report.toString();
     // compile the report for the first time
     ReportingUtils.compileReport(reportPath);
+    assumeThat("Has modules in development", hasModulesInDevelopment(), not(true));
     // launch the compilation again: result will be retrieved from cache
-    ReportingUtils.compileReport(reportPath);
+    JasperReport jasperReport = ReportingUtils.compileReport(reportPath);
+    assertNotNull(jasperReport);
+  }
+
+  private Boolean hasModulesInDevelopment() {
+    final Query indevelMods = OBDal.getInstance().getSession()
+        .createQuery("select 1 from ADModule m where m.inDevelopment=true");
+    indevelMods.setMaxResults(1);
+    return indevelMods.list().size() > 0;
   }
 
   @Parameters(name = "{1}")
