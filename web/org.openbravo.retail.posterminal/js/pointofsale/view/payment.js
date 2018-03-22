@@ -275,12 +275,14 @@ enyo.kind({
       if (OB.MobileApp.view.openedPopup === null) {
         enyo.$.scrim.hide();
       }
+      this.receipt.unset('paymentDone');
       OB.UTIL.showLoading(false);
     }, this);
     this.model.get('multiOrders').on('paymentCancel', function () {
       if (OB.MobileApp.view.openedPopup === null) {
         enyo.$.scrim.hide();
       }
+      this.model.get('multiOrders').unset('paymentDone');
       OB.UTIL.showLoading(false);
     }, this);
     this.model.get('leftColumnViewManager').on('change:currentView', function () {
@@ -1262,6 +1264,7 @@ enyo.kind({
             }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
             this.drawerOpened = true;
             this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
+            enyo.$.scrim.hide();
           }
         } else {
           if (this.owner.receipt.get('orderType') === 3 && !this.owner.receipt.get('cancelLayaway')) {
@@ -1294,6 +1297,7 @@ enyo.kind({
             }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
             this.drawerOpened = true;
             this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
+            enyo.$.scrim.hide();
           }
         } else {
           enyo.$.scrim.show();

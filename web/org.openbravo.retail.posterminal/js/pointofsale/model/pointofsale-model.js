@@ -372,6 +372,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     receipt.on('paymentDone', function (openDrawer) {
       receipt.trigger('disableDoneButton');
+      if (receipt.get('paymentDone')) {
+        return true;
+      }
+      receipt.set('paymentDone', true);
 
       function callbackPaymentAccepted(allowedOpenDrawer) {
         if (allowedOpenDrawer) {
@@ -394,6 +398,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel'),
           action: function () {
+            receipt.trigger('paymentCancel');
             callback(false);
           }
         }]);
@@ -409,6 +414,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel'),
           action: function () {
+            receipt.trigger('paymentCancel');
             callback(false);
           }
         }]);
@@ -416,14 +422,17 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
       function callbackErrorCancelAndReplace(errorMessage) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), errorMessage);
+        receipt.trigger('paymentCancel');
       }
 
       function callbackErrorCancelAndReplaceOffline() {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+        receipt.trigger('paymentCancel');
       }
 
       function callbackErrorOrderCancelled() {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderReplacedError'));
+        receipt.trigger('paymentCancel');
       }
 
       OB.UTIL.TicketCloseUtils.paymentDone(receipt, callbackPaymentAccepted, callbackOverpaymentExist, callbackPaymentAmountDistinctThanReceipt, callbackErrorCancelAndReplace, callbackErrorCancelAndReplaceOffline, callbackErrorOrderCancelled);
@@ -573,6 +582,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           orders = paymentstatus.get('multiOrdersList'),
           triggerPaymentAccepted, triggerPaymentAcceptedImpl;
 
+      if (paymentstatus.get('paymentDone')) {
+        return true;
+      }
+      paymentstatus.set('paymentDone', true);
+
       triggerPaymentAccepted = function (orders, index) {
         if (index === orders.length) {
           if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
@@ -608,7 +622,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             triggerPaymentAccepted(orders, 0);
           }
         }, {
-          label: OB.I18N.getLabel('OBMOBC_LblCancel')
+          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+          action: function () {
+            paymentstatus.trigger('paymentCancel');
+          }
         }]);
       } else {
         me.openDrawer = openDrawer;
