@@ -1251,7 +1251,6 @@ enyo.kind({
               this.owner.receipt.trigger('cancelLayaway');
             } else {
               this.setDisabled(true);
-              enyo.$.scrim.show();
               me.owner.model.get('order').trigger('paymentDone', false);
               OB.UTIL.setScanningFocus(false);
             }
@@ -1269,14 +1268,12 @@ enyo.kind({
         } else {
           if (this.owner.receipt.get('orderType') === 3 && !this.owner.receipt.get('cancelLayaway')) {
             //Void Layaway
-            enyo.$.scrim.show();
             this.owner.receipt.trigger('voidLayaway');
           } else if (this.owner.receipt.get('orderType') === 3) {
             //Cancel Layaway
             this.owner.receipt.trigger('cancelLayaway');
           } else {
             this.setDisabled(true);
-            enyo.$.scrim.show();
             me.owner.receipt.trigger('paymentDone', this.allowOpenDrawer);
             OB.UTIL.setScanningFocus(false);
           }
@@ -1284,7 +1281,6 @@ enyo.kind({
       } else {
         if (this.drawerpreference && this.allowOpenDrawer) {
           if (this.drawerOpened) {
-            enyo.$.scrim.show();
             this.owner.model.get('multiOrders').trigger('paymentDone', false);
             OB.UTIL.setScanningFocus(false);
             this.owner.model.get('multiOrders').set('openDrawer', false);
@@ -1300,7 +1296,6 @@ enyo.kind({
             enyo.$.scrim.hide();
           }
         } else {
-          enyo.$.scrim.show();
           this.owner.model.get('multiOrders').trigger('paymentDone', this.allowOpenDrawer);
           OB.UTIL.setScanningFocus(false);
           this.owner.model.get('multiOrders').set('openDrawer', false);
