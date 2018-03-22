@@ -601,7 +601,7 @@ enyo.kind({
   checkValidOverpayment: function (paymentstatus) {
     var requiredOverpayment = paymentstatus.overpayment,
         overPaymentUsed = _.last(paymentstatus.payments.models),
-        overPaymentMethod = overPaymentUsed ? OB.MobileApp.model.paymentnames[overPaymentUsed.get('kind')].paymentMethod : undefined;
+        overPaymentMethod = overPaymentUsed && OB.MobileApp.model.paymentnames[overPaymentUsed.get('kind')] ? OB.MobileApp.model.paymentnames[overPaymentUsed.get('kind')].paymentMethod : undefined;
 
     // Execute logic only if all the following requirements are met:
     //  * There is at least one payment added to the receipt
