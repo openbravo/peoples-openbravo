@@ -95,6 +95,7 @@
         AND o.AD_Org_ID IN ('1')
         AND o.C_BPartner_ID = ?
         AND pl.istaxincluded = ?
+        AND pl.c_currency_id = ?
         AND o.InvoiceRule <> 'N'
         AND EXISTS (SELECT 1 
                      FROM C_ORDERLINE l left join M_MATCHPO m on  l.C_OrderLine_ID=m.C_OrderLine_ID
@@ -110,6 +111,7 @@
     <Parameter name="adOrgClient" type="replace" optional="true" after="o.AD_Org_ID IN (" text="'1'"/>
     <Parameter name="cBpartnerId"/>
     <Parameter name="isTaxIncluded"/>
+    <Parameter name="currencyId"/>
   </SqlMethod>
   <SqlMethod name="selectFromPOSOTrx" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -160,6 +162,7 @@
         AND ic.AD_Org_ID IN ('1') 
         AND ic.C_BPartner_ID = ?
         AND pl.istaxincluded = ? 
+        AND pl.c_currency_id = ?
         AND o.C_Order_Id = ic.C_Order_Id
         AND ((ic.term IN ('D', 'S') AND ic.qtydelivered <> 0) OR (ic.term = 'I' AND exists (SELECT 1 FROM C_ORDERLINE ol WHERE ol.C_ORDER_ID = o.C_ORDER_ID group by ol.c_orderline_id having SUM(ol.QTYORDERED) - SUM(ol.QTYINVOICED) <> 0)) OR (ic.term = 'O' AND (ic.qtyordered = ic.qtydelivered)))
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal 
@@ -171,6 +174,7 @@
     <Parameter name="adOrgClient" type="replace" optional="true" after="ic.AD_Org_ID IN (" text="'1'"/>
     <Parameter name="cBpartnerId"/>
     <Parameter name="isTaxIncluded"/>
+    <Parameter name="currencyId"/>
   </SqlMethod>
   <SqlMethod name="selectFromPOTrl" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -421,6 +425,7 @@
                            left join m_pricelist pl on pl.m_pricelist_id = o.m_pricelist_id
                       WHERE l.M_INOUT_ID = s.M_INOUT_ID 
                         AND (l.c_orderline_id is null OR pl.istaxincluded = ?)
+                        AND (l.c_orderline_id is null OR pl.c_currency_id = ?)
                       GROUP BY l.MovementQty, l.M_InOutLine_ID 
                       HAVING  (l.MovementQty-SUM(COALESCE(mi.Qty,0))) <> 0)
         ORDER BY NAME
@@ -432,6 +437,7 @@
     <Parameter name="adOrgClient" type="replace" optional="true" after="s.AD_Org_ID IN (" text="'1'"/>
     <Parameter name="cBpartnerId"/>
     <Parameter name="isTaxIncluded"/>
+    <Parameter name="currencyId"/>
   </SqlMethod>
   <SqlMethod name="selectFromShipmentSOTrx" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -506,6 +512,7 @@
                            left join c_invoice i on il.c_invoice_id = i.c_invoice_id
                     WHERE l.M_INOUT_ID = s.M_INOUT_ID
                     AND (l.c_orderline_id is null OR pl.istaxincluded = ?)
+                    AND (l.c_orderline_id is null OR pl.c_currency_id = ?)
                     GROUP BY l.m_inoutline_id, l.movementqty
                     HAVING ( l.movementqty >= 0 AND l.movementqty > Sum(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0)) )
                       OR ( l.movementqty < 0 AND l.movementqty < Sum(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0)) )
@@ -522,6 +529,7 @@
     <Parameter name="adOrgClient" type="replace" optional="true" after="s.AD_Org_ID IN (" text="'1'"/>
     <Parameter name="cBpartnerId"/>
     <Parameter name="isTaxIncluded"/>
+    <Parameter name="currencyId"/>
   </SqlMethod>
   <SqlMethod name="selectFromShipmentTrl" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
