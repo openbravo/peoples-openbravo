@@ -257,7 +257,7 @@ public class OrderGroupingProcessor {
       List<FIN_PaymentSchedule> finPaymentScheduleList = order.getFINPaymentScheduleList();
       if (!finPaymentScheduleList.isEmpty()
           && finPaymentScheduleList.get(0).getFINPaymentScheduleDetailOrderPaymentScheduleList()
-              .size() > 0) {
+              .size() > 0 && invoice.getGrandTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
         boolean success = processPaymentsFromOrder(order, invoice);
         if (!success) {
           continue;
