@@ -246,6 +246,11 @@
       <foreign-key foreignTable="OBPOS_TERMINALTYPE" name="OBPOS_APPPAYTYPE_TERM">
         <reference local="OBPOS_TERMINALTYPE_ID" foreign="OBPOS_TERMINALTYPE_ID"/>
       </foreign-key>
+      <index name="OBPOS_APP_PAYMENT_TYPE_TYPE" unique="true">
+        <index-column name="OBPOS_TERMINALTYPE_ID"/>
+        <index-column name="OBPOS_PAYMENTGROUP_ID"/>
+        <index-column name="OBPOS_PAYMENTMETHOD_TYPE_ID"/>
+      </index>
       <index name="OBPOS_APPPAYTYPE_CURR" unique="false">
         <index-column name="C_CURRENCY_ID"/>
       </index>

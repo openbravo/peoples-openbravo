@@ -193,6 +193,9 @@ enyo.kind({
       kind: 'OB.UI.ModalPaymentVoid',
       name: "modalpaymentvoid"
     }, {
+      kind: 'OB.UI.ModalProviderGroup',
+      name: 'modalprovidergroup'
+    }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalConfigurationRequiredForCrossStore',
       name: 'modalConfigurationRequiredForCrossStore'
     }, {

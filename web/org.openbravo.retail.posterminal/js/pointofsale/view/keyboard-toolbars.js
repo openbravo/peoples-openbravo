@@ -72,15 +72,85 @@ enyo.kind({
     this.bubble('onClearPaymentSelect');
     this.pay(inEvent.amount, inEvent.key, inEvent.name, inEvent.paymentMethod, inEvent.rate, inEvent.mulrate, inEvent.isocode, inEvent.options);
   },
-  pay: function (amount, key, name, paymentMethod, rate, mulrate, isocode, options, callback) {
+  getReceiptToPay: function () {
+    if (this.model.get('leftColumnViewManager').isOrder()) {
+      return this.receipt;
+    }
+    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+      return this.model.get('multiOrders');
+    }
+    throw new Error('No receipt to pay.');
+  },
+  checkNoPaymentsAllowed: function () {
+    // Checks to be done BEFORE payment provider is invoked.
     if (this.receipt.stopAddingPayments) {
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
+      return true;
+    }
+    if (this.receipt.get('isPaid') && !this.receipt.get('doCancelAndReplace') && this.receipt.getPrePaymentQty() === OB.DEC.sub(this.receipt.getTotal(), this.receipt.getCredit()) && !this.receipt.isNewReversed()) {
+      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
+      return true;
+    }
+    return false;
+  },
+  payWithProviderGroup: function (keyboard, txt, providerGroup) {
+    var amount;
+    var input;
+
+    if (!txt) {
+      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidCurrencyAmount', [txt]));
+      return;
+    }
+    input = OB.DEC.number(OB.I18N.parseNumber(txt));
+    if (_.isNaN(input)) {
+      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
+      return;
+    }
+    var decimalInput = OB.DEC.toBigDecimal(input);
+    if (decimalInput.scale() > OB.DEC.getScale()) {
+      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidCurrencyAmount', [txt]));
       return;
     }
 
-    // Checks to be done BEFORE payment provider is invoked.
-    if (this.receipt.get('isPaid') && !this.receipt.get('doCancelAndReplace') && this.receipt.getPrePaymentQty() === OB.DEC.sub(this.receipt.getTotal(), this.receipt.getCredit()) && !this.receipt.isNewReversed()) {
-      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
+    if (_.last(txt) === '%') {
+      amount = OB.DEC.div(OB.DEC.mul(this.model.getPending(), input), 100);
+    } else {
+      amount = input;
+    }
+
+    this.payAmountWithProviderGroup(amount, providerGroup);
+  },
+  payAmountWithProviderGroup: function (amount, providerGroup) {
+
+    if (this.checkNoPaymentsAllowed()) {
+      return;
+    }
+
+    var changedAmount;
+    var firstpayment = providerGroup._payments[0];
+    if (firstpayment.mulrate && firstpayment.mulrate !== '1.000000000000') {
+      changedAmount = OB.DEC.mul(amount, firstpayment.mulrate);
+    } else {
+      changedAmount = amount;
+    }
+
+    if (OB.DEC.compare(changedAmount) > 0) {
+      // receiptToPay.getPaymentStatus().isNegative -> payment or refund
+      this.doShowPopup({
+        popup: 'modalprovidergroup',
+        args: {
+          'receipt': this.getReceiptToPay(),
+          'amount': amount,
+          'currency': firstpayment.isocode,
+          'providerGroup': providerGroup
+        }
+      });
+    }
+  },
+
+  pay: function (amount, key, name, paymentMethod, rate, mulrate, isocode, options, callback) {
+
+    if (this.checkNoPaymentsAllowed()) {
       return;
     }
 
@@ -93,14 +163,8 @@ enyo.kind({
     }
 
     if (OB.DEC.compare(amount) > 0) {
-      var provider, receiptToPay, me = this;
-      if (this.model.get('leftColumnViewManager').isOrder()) {
-        receiptToPay = this.receipt;
-      }
-      //multiorders doesn't allow to return
-      if (this.model.get('leftColumnViewManager').isMultiOrder()) {
-        receiptToPay = this.model.get('multiOrders');
-      }
+      var provider, receiptToPay = this.getReceiptToPay(),
+          me = this;
 
       if (!receiptToPay.getPaymentStatus().isNegative) {
         provider = paymentMethod.paymentProvider;
@@ -218,6 +282,7 @@ enyo.kind({
     var i, max, payments, paymentsdialog, paymentsbuttons, countbuttons, btncomponent, Btn, inst, cont, exactdefault, cashdefault, allpayments = {},
         me = this,
         paymentCategories = [],
+        providerGroups = {},
         dialogbuttons = {};
 
     this.inherited(arguments);
@@ -228,10 +293,18 @@ enyo.kind({
       this.sideButtons = [];
     }
 
-    // Count payment buttons checking payment method category  
+    // Count payment buttons checking provider group and payment method category  
     countbuttons = 0;
     enyo.forEach(payments, function (payment) {
-      if (payment.paymentMethod.paymentMethodCategory) {
+      if (payment.providerGroup) {
+        if (!providerGroups[payment.providerGroup.id]) {
+          providerGroups[payment.providerGroup.id] = payment.providerGroup;
+          providerGroups[payment.providerGroup.id]._button = null;
+          providerGroups[payment.providerGroup.id]._payments = [];
+          countbuttons++;
+        }
+        providerGroups[payment.providerGroup.id]._payments.push(payment);
+      } else if (payment.paymentMethod.paymentMethodCategory) {
         var paymentCategory = null;
         paymentCategories.every(function (category) {
           if (category.id === payment.paymentMethod.paymentMethodCategory) {
@@ -276,8 +349,31 @@ enyo.kind({
         if (args && args.cancelOperation) {
           return;
         }
-        // Check for payment method category
-        if (payment.paymentMethod.paymentMethodCategory) {
+
+        if (payment.providerGroup) {
+          if (providerGroups[payment.providerGroup.id]._button) {
+            btncomponent = null; // already added.
+          } else {
+            btncomponent = {
+              kind: 'OB.UI.BtnSide',
+              btn: {
+                command: payment.providerGroup.id,
+                label: payment.providerGroup._identifier,
+                permission: payment.payment.searchKey,
+                // Use the permissions of the FIRST payment in the provider group
+                definition: {
+                  holdActive: true,
+                  permission: payment.payment.searchKey,
+                  stateless: false,
+                  action: function (keyboard, txt) {
+                    me.payWithProviderGroup(keyboard, txt, providerGroups[payment.providerGroup.id]);
+                  }
+                }
+              }
+            };
+            providerGroups[payment.providerGroup.id]._button = btncomponent;
+          }
+        } else if (payment.paymentMethod.paymentMethodCategory) { // Check for payment method category
           btncomponent = null;
           if (paymentCategories.indexOf(payment.paymentMethod.paymentMethodCategory) === -1) {
             btncomponent = me.getButtonComponent({
@@ -402,15 +498,16 @@ enyo.kind({
     this.owner.owner.addCommand('cashexact', {
       action: function (keyboard, txt) {
         var status = keyboard.status.indexOf('paymentMethodCategory.showitems.') === 0 && me.currentPayment ? me.currentPayment.payment.searchKey : keyboard.status;
-        if (status && !allpayments[status]) {
-          // Is not a payment, so continue with the default path...
-          keyboard.execCommand(status, null);
-        } else {
+        if (status && providerGroups[status]) {
+          me.bubble('onClearPaymentSelect');
+          // It is a provider group
+          me.payAmountWithProviderGroup(me.model.getPending(), providerGroups[status]);
+        } else if (status && allpayments[status]) {
           me.bubble('onClearPaymentSelect');
           // It is a payment...
           var exactpayment = allpayments[status] || exactdefault,
               amount = me.model.getPending(),
-              altexactamount = me.receipt.get('exactpayment');
+              altexactamount = me.receipt.get('exactpayment'); // NOT FOUND
           // check if alternate exact amount must be applied based on the payment method selected.
           if (altexactamount && altexactamount[exactpayment.payment.searchKey]) {
             amount = altexactamount[exactpayment.payment.searchKey];
@@ -422,6 +519,9 @@ enyo.kind({
           if (amount > 0 && exactpayment && OB.MobileApp.model.hasPermission(exactpayment.payment.searchKey)) {
             me.pay(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
           }
+        } else {
+          // Is not a payment, so continue with the default path...
+          keyboard.execCommand(status, null);
         }
       }
     });
