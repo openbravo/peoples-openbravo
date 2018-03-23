@@ -521,6 +521,18 @@ isc.OBUserProfile.addProperties({
         }
         pwdForm.focusInItem(item.name);
       },
+
+      itemHoverHTML: function (item) {
+        if (!item.isVisible()) {
+          return null;
+        }
+        var errs = item.getErrors();
+        if (!errs) {
+          return this.Super('itemHoverHTML', arguments);
+        }
+        return OB.Utilities.getPromptString(errs);
+      },
+
       fields: [currentPasswordField, newPasswordField, confirmPasswordField]
     });
 
