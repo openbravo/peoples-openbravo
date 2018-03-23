@@ -58,6 +58,11 @@
       <foreign-key foreignTable="AD_ORG" name="OBPOS_PAYMENTMETHOD_TYPE_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="OBPOS_PAYMENTMETHOD_TYPE_UN" unique="true">
+        <index-column name="PROVIDER"/>
+        <index-column name="AD_MODULE_ID"/>
+        <index-column name="VALUE"/>
+      </index>
       <index name="OBPOS_PAYMENTMETHOD_TYPE_VAL" unique="false">
         <index-column name="PROVIDER"/>
         <index-column name="VALUE"/>
