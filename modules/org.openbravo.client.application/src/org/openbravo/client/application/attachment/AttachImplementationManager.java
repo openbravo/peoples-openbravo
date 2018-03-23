@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,7 +68,6 @@ import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.json.JsonUtils;
-import org.openbravo.utils.FileUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -254,17 +254,15 @@ public class AttachImplementationManager {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
       }
       File file = handler.downloadFile(attachment);
-      FileUtility fileUt = null;
       if (file.exists()) {
-        fileUt = new FileUtility(file.getParent(), file.getName(), false, true);
+        Files.copy(file.toPath(), os);
       } else {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoAttachmentFound"));
       }
 
-      fileUt.dumpFile(os);
       boolean isTempFile = handler.isTempFile();
       if (isTempFile) {
-        fileUt.deleteFile();
+        file.delete();
       }
 
     } catch (IOException e) {
