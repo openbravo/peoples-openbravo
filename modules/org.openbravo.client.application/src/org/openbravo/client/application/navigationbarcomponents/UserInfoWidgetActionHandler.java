@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,6 +31,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.LoginUtils;
+import org.openbravo.base.secureApp.PasswordStrengthChecker;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -95,40 +96,32 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
     final String confirmPwd = json.getString("confirmPwd");
 
     if (!user.getPassword().equals(FormatUtilities.sha1Base64(currentPwd))) {
-      final JSONObject result = new JSONObject();
-      result.put("result", "error");
-      final JSONArray fields = new JSONArray();
-      final JSONObject field = new JSONObject();
-      field.put("field", "currentPwd");
-      field.put("messageCode", "UINAVBA_CurrentPwdIncorrect");
-      fields.put(field);
-      result.put("fields", fields);
-      return result;
+      return createErrorResponse("currentPwd", "UINAVBA_CurrentPwdIncorrect");
     }
     if (newPwd == null || newPwd.trim().length() == 0) {
-      final JSONObject result = new JSONObject();
-      result.put("result", "error");
-      final JSONArray fields = new JSONArray();
-      final JSONObject field = new JSONObject();
-      field.put("field", "currentPwd");
-      field.put("messageCode", "UINAVBA_IncorrectPwd");
-      fields.put(field);
-      result.put("fields", fields);
-      return result;
+      return createErrorResponse("currentPwd", "UINAVBA_IncorrectPwd");
     }
     if (!newPwd.equals(confirmPwd)) {
-      final JSONObject result = new JSONObject();
-      final JSONArray fields = new JSONArray();
-      final JSONObject field = new JSONObject();
-      field.put("field", "currentPwd");
-      field.put("messageCode", "UINAVBA_UnequalPwd");
-      fields.put(field);
-      result.put("fields", fields);
-      return result;
+      return createErrorResponse("currentPwd", "UINAVBA_UnequalPwd");
+    }
+    if (!new PasswordStrengthChecker().check(newPwd)) {
+      return createErrorResponse("newPwd", "CPPasswordNotStrongEnough");
     }
     user.setPassword(FormatUtilities.sha1Base64(newPwd));
     OBDal.getInstance().flush();
     return ApplicationConstants.ACTION_RESULT_SUCCESS;
+  }
+
+  private JSONObject createErrorResponse(String fieldName, String messageKey) throws JSONException {
+    final JSONObject response = new JSONObject();
+    response.put("result", "error");
+    final JSONArray fields = new JSONArray();
+    final JSONObject field = new JSONObject();
+    field.put("field", fieldName);
+    field.put("messageCode", messageKey);
+    fields.put(field);
+    response.put("fields", fields);
+    return response;
   }
 
   protected JSONObject executeSaveCommand(Map<String, Object> parameters, String content)

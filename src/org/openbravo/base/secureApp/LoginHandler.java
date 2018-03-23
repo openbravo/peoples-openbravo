@@ -623,11 +623,9 @@ public class LoginHandler extends HttpBaseServlet {
       String oldPassword = userOB.getPassword();
       String newPassword = FormatUtilities.sha1Base64(unHashedPassword);
       if (oldPassword.equals(newPassword)) {
-        OBError errorMsg = new OBError();
-        errorMsg.setType("Error");
-        errorMsg.setTitle(Utility.messageBD(myPool, "CPDifferentPassword", language));
-        errorMsg.setMessage(Utility.messageBD(myPool, "CPSamePasswordThanOld", language));
-        throw new AuthenticationExpirationPasswordException(errorMsg.getMessage(), errorMsg, false);
+        throwChangePasswordException("CPDifferentPassword", "CPSamePasswordThanOld",language);
+      } else if (new PasswordStrengthChecker().check(newPassword)) {
+        throwChangePasswordException("CPWeakPasswordTitle", "CPPasswordNotStrongEnough", language);
       } else {
         userOB.setPassword(newPassword);
         OBDal.getInstance().save(userOB);
@@ -637,5 +635,14 @@ public class LoginHandler extends HttpBaseServlet {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private void throwChangePasswordException(String titleKey, String messageKey, String language)
+      throws AuthenticationExpirationPasswordException {
+    OBError errorMsg = new OBError();
+    errorMsg.setType("Error");
+    errorMsg.setTitle(Utility.messageBD(myPool, titleKey, language));
+    errorMsg.setMessage(Utility.messageBD(myPool, messageKey, language));
+    throw new AuthenticationExpirationPasswordException(errorMsg.getMessage(), errorMsg, false);
   }
 }
