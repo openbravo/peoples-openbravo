@@ -300,7 +300,7 @@ enyo.kind({
     var me = this;
     this.$.payments.setCollection(this.receipt.get('payments'));
     this.$.multiPayments.setCollection(this.model.get('multiOrders').get('payments'));
-    this.receipt.on('change:payment change:change calculategross change:bp change:gross change:prepaymentLimitAmt', function () {
+    this.receipt.on('change:payment change:change calculategross change:bp change:gross change:obposPrepaymentlimitamt', function () {
       if (this.receipt.isCalculateReceiptLocked || this.receipt.isCalculateGrossLocked) {
         //We are processing the receipt, we cannot update pending yet
         return;
@@ -418,7 +418,7 @@ enyo.kind({
       return true;
     }
     var paymentstatus = this.receipt.getPaymentStatus(),
-        prepaymentAmount = this.receipt.get('prepaymentAmt'),
+        prepaymentAmount = this.receipt.get('obposPrepaymentamt'),
         symbol = '',
         rate = OB.DEC.One,
         symbolAtRight = true,
@@ -451,7 +451,7 @@ enyo.kind({
       this.$.totalpending.applyStyle('font-size', '24px');
     }
 
-    if ((OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && this.receipt.get('prepaymentLimitAmt') < this.receipt.get('gross') && pendingPrepayment > 0 && receiptHasPrepaymentAmount)) {
+    if ((OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && this.receipt.get('obposPrepaymentlimitamt') < this.receipt.get('gross') && pendingPrepayment > 0 && receiptHasPrepaymentAmount)) {
       this.setPrepaymentTotalPending(pendingPrepayment, rate, symbol, symbolAtRight);
       this.$.prepaymenttotalpending.show();
       this.$.prepaymenttotalpendinglbl.show();
@@ -1542,12 +1542,12 @@ enyo.kind({
     if (myModel.get('leftColumnViewManager').isOrder()) {
       this.owner.receipt.getPrepaymentAmount();
       paymentStatus = this.owner.receipt.getPaymentStatus();
-      prepaymentLimitAmount = this.owner.receipt.get('prepaymentLimitAmt');
+      prepaymentLimitAmount = this.owner.receipt.get('obposPrepaymentlimitamt');
       receiptHasPrepaymentAmount = this.owner.receipt.get('orderType') !== 1 && this.owner.receipt.get('orderType') !== 3;
       pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentLimitAmount, paymentStatus.pendingAmt), paymentStatus.totalAmt);
     } else {
       paymentStatus = this.owner.model.get('multiOrders').getPaymentStatus();
-      prepaymentLimitAmount = this.owner.model.get('multiOrders').get('prepaymentLimitAmt');
+      prepaymentLimitAmount = this.owner.model.get('multiOrders').get('obposPrepaymentlimitamt');
       pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentLimitAmount, paymentStatus.pendingAmt), OB.DEC.add(paymentStatus.totalAmt, this.owner.model.get('multiOrders').get('existingPayment')));
     }
     receiptHasPrepaymentAmount = receiptHasPrepaymentAmount && prepaymentLimitAmount !== 0;
@@ -2029,7 +2029,7 @@ enyo.kind({
         };
 
     paymentStatus = receipt.getPaymentStatus();
-    prepaymentLimitAmount = receipt.get('prepaymentLimitAmt');
+    prepaymentLimitAmount = receipt.get('obposPrepaymentlimitamt');
     receiptHasPrepaymentAmount = prepaymentLimitAmount !== 0;
     hasPayments = paymentStatus.payments.length > 0;
     allowApproval = OB.MobileApp.model.hasPermission('OBPOS_AllowPrepaymentUnderLimitLayaway', true);

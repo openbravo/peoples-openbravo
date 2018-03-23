@@ -202,9 +202,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   },
   getPrepaymentAmount: function () {
     if (this.get('leftColumnViewManager').isOrder()) {
-      return this.get('order').get('prepaymentAmt');
+      return this.get('order').get('obposPrepaymentamt');
     } else {
-      return this.get('multiOrders').get('prepaymentAmt');
+      return this.get('multiOrders').get('obposPrepaymentamt');
     }
   },
   getPayment: function () {
@@ -529,7 +529,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           return;
         }
         var iter = orderList.at(orderListIndex),
-            auxAmountToPay = (iter.get('prepaymentAmt') && iter.get('prepaymentAmt') !== 0 && iter.get('prepaymentAmt') !== iter.get('gross') && considerPrepaymentAmount ? iter.get('prepaymentAmt') : iter.get('gross')),
+            auxAmountToPay = (iter.get('obposPrepaymentamt') && iter.get('obposPrepaymentamt') !== 0 && iter.get('obposPrepaymentamt') !== iter.get('gross') && considerPrepaymentAmount ? iter.get('obposPrepaymentamt') : iter.get('gross')),
             amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(auxAmountToPay, iter.get('payment'));
         if (((_.isUndefined(iter.get('amountToLayaway')) || iter.get('amountToLayaway') > 0) && iter.get('gross') > iter.get('payment')) || (iter.get('amountToLayaway') > 0)) { //TODO this while LOOP
           var payment = paymentList.at(paymentListIndex),

@@ -408,8 +408,8 @@
         this.set('calculateReceiptCallbacks', []);
         this.set('loaded', attributes.loaded);
         this.set('isModified', attributes.isModified);
-        this.set('prepaymentAmt', attributes.prepaymentAmt || attributes.gross);
-        this.set('prepaymentLimitAmt', attributes.prepaymentLimitAmt || attributes.gross);
+        this.set('obposPrepaymentamt', attributes.obposPrepaymentamt || attributes.gross);
+        this.set('obposPrepaymentlimitamt', attributes.obposPrepaymentlimitamt || attributes.gross);
         _.each(_.keys(attributes), function (key) {
           if (!this.has(key)) {
             this.set(key, attributes[key]);
@@ -907,8 +907,8 @@
           total = OB.DEC.abs(this.getTotal());
 
       function executeCallback(prepaymentAmount, prepaymentLimitAmount) {
-        me.set('prepaymentAmt', prepaymentAmount);
-        me.set('prepaymentLimitAmt', prepaymentLimitAmount);
+        me.set('obposPrepaymentamt', prepaymentAmount);
+        me.set('obposPrepaymentlimitamt', prepaymentLimitAmount);
         me.trigger('saveCurrent');
         if (callback instanceof Function) {
           callback(prepaymentAmount, prepaymentLimitAmount);
@@ -1086,8 +1086,8 @@
       this.set('approvals', []);
       this.set('isPartiallyDelivered', false);
       this.set('isModified', false);
-      this.set('prepaymentAmt', 0);
-      this.set('prepaymentLimitAmt', 0);
+      this.set('obposPrepaymentamt', OB.DEC.Zero);
+      this.set('obposPrepaymentlimitamt', OB.DEC.Zero);
     },
 
     clearWith: function (_order) {
@@ -7032,7 +7032,7 @@
       change: OB.DEC.Zero,
       openDrawer: false,
       additionalInfo: null,
-      prepaymentAmt: OB.DEC.Zero
+      obposPrepaymentamt: OB.DEC.Zero
     },
     initialize: function () {
       this.set('multiOrdersList', new Backbone.Collection());
