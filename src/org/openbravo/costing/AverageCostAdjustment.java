@@ -59,6 +59,7 @@ import org.slf4j.LoggerFactory;
 
 @ComponentProvider.Qualifier("org.openbravo.costing.AverageAlgorithm")
 public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
+  private static final String PRICE_DIFFERENCE_CORRECTION_SEARCHKEY = "PDC";
   private static final Logger log = LoggerFactory.getLogger(CostAdjustmentProcess.class);
   private String bdCostingId;
 
@@ -546,13 +547,14 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
   private boolean isReceiptAdjustedByPriceDifferenceCorrection() {
     StringBuilder where = new StringBuilder();
     where.append("as ca");
-    where.append(" join ca." + CostAdjustment.PROPERTY_COSTADJUSTMENTLINELIST + " as cal");
-    where.append(" where ca." + CostAdjustment.PROPERTY_SOURCEPROCESS + " = 'PDC'");
-    where.append(" and cal." + CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION + " = :trx");
+    where.append(" join ca.costAdjustmentLineList as cal");
+    where.append(" where ca.sourceProcess = :priceDifferenceCorrection");
+    where.append(" and cal.inventoryTransaction = :trx");
 
     OBQuery<CostAdjustment> trxQry = OBDal.getInstance().createQuery(CostAdjustment.class,
         where.toString());
 
+    trxQry.setNamedParameter("priceDifferenceCorrection", PRICE_DIFFERENCE_CORRECTION_SEARCHKEY);
     trxQry.setNamedParameter("trx", getTransaction());
     trxQry.setMaxResult(1);
     return trxQry.uniqueResult() != null;
