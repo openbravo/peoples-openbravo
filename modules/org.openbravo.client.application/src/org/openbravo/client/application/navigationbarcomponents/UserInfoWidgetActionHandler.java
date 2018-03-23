@@ -98,6 +98,9 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
     if (!user.getPassword().equals(FormatUtilities.sha1Base64(currentPwd))) {
       return createErrorResponse("currentPwd", "UINAVBA_CurrentPwdIncorrect");
     }
+    if (currentPwd.equals(newPwd)) {
+      return createErrorResponse("newPwd", "CPDifferentPassword");
+    }
     if (newPwd == null || newPwd.trim().length() == 0) {
       return createErrorResponse("currentPwd", "UINAVBA_IncorrectPwd");
     }
