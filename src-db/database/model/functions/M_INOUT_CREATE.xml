@@ -619,8 +619,8 @@ BEGIN --BODY
                 --<<NEXT_PRODUCT>>
                 NEXT_PRODUCT:=false;
                 
-                IF (v_NegStockLocator IS NULL) THEN
-                -- Get Locator with negative Stock that belongs to the same Warehosue      
+                IF (v_NegStockLocator IS NULL AND ((Cur_Order.IsSOTrx = 'Y' AND v_Qty>0) OR (Cur_Order.IsSOTrx = 'N' AND v_Qty<0))) THEN
+                -- Get Locator with negative Stock that belongs to the same Warehosue for Transactions that decrease the stock
                   SELECT MIN(l.m_locator_id)
                   INTO v_NegStockLocator
                   FROM m_locator l
@@ -634,9 +634,22 @@ BEGIN --BODY
                                     WHERE l.m_warehouse_id = ol.M_Warehouse_ID
                                     AND invs.overissue = 'Y'
                                     AND l.isactive='Y');
+                ELSIF (v_NegStockLocator IS NULL AND ((Cur_Order.IsSOTrx = 'Y' AND v_Qty<0) OR (Cur_Order.IsSOTrx = 'N' AND v_Qty>0))) THEN
+                -- For Transactions that increase the Stock, pick the Bin with the lowest priority for the Warehouse
+                     SELECT MIN(M_LOCATOR_ID)
+                     INTO v_NegStockLocator
+                     FROM M_LOCATOR
+                     WHERE M_WAREHOUSE_ID=ol.M_Warehouse_ID
+                     AND M_LOCATOR.ISACTIVE = 'Y'
+                     AND priorityno = (SELECT min(priorityno) 
+					                             FROM M_LOCATOR  
+					                             WHERE M_WAREHOUSE_ID=ol.M_Warehouse_ID
+					                             AND M_LOCATOR.ISACTIVE = 'Y');
                 END IF;
 
-                IF (v_Qty<>0 AND (v_ForceDelivery='Y' OR v_NegStockLocator IS NOT NULL)) THEN
+                IF (v_Qty<>0 AND v_ForceDelivery='Y' AND v_NegStockLocator IS NULL) THEN
+                  RAISE_APPLICATION_ERROR(-20000, ' @NotEnoughStocked@ @ForProduct@ ' || ol.name);
+                ELSIF (v_Qty<>0 AND (v_ForceDelivery='Y' OR v_NegStockLocator IS NOT NULL)) THEN
                   -- Create InOut Line
                   Ad_Sequence_Next('M_InOutLine', Cur_Order.C_Order_ID, v_NextNo) ;
                   IF (v_ProductUOM IS NOT NULL) THEN
