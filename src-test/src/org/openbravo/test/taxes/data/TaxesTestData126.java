@@ -73,10 +73,10 @@ public class TaxesTestData126 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes2 = new HashMap<String, String[]>();
-    lineTaxes2.put(TaxDataConstants.TAX_IEPS_53_16, new String[] { "-73188.23", "-11710.12",
-        "-73188.23", "-11710.12", "-146376.47", "-23420.23", "-146376.47", "-23420.23" });
-    lineTaxes2.put(TaxDataConstants.TAX_IEPS_53_53, new String[] { "-47835.45", "-25352.78",
-        "-47835.45", "-25352.78", "-95670.89", "-50705.58", "-95670.89", "-50705.58" });
+    lineTaxes2.put(TaxDataConstants.TAX_IEPS_53_16, new String[] { "-73188.24", "-11710.11",
+        "-73188.24", "-11710.11", "-146376.46", "-23420.24", "-146376.46", "-23420.24" });
+    lineTaxes2.put(TaxDataConstants.TAX_IEPS_53_53, new String[] { "-47835.45", "-25352.79",
+        "-47835.45", "-25352.79", "-95670.89", "-50705.57", "-95670.89", "-50705.57" });
     line2.setLinetaxes(lineTaxes2);
 
     // Amounts for line level are provided
@@ -101,10 +101,10 @@ public class TaxesTestData126 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes3 = new HashMap<String, String[]>();
-    lineTaxes3.put(TaxDataConstants.TAX_IEPS_53_16, new String[] { "-85936.97", "-13749.91",
-        "-85936.97", "-13749.91", "-171873.93", "-27499.83", "-171873.93", "-27499.83" });
-    lineTaxes3.put(TaxDataConstants.TAX_IEPS_53_53, new String[] { "-56167.95", "-29769.02",
-        "-56167.95", "-29769.02", "-112335.90", "-59538.03", "-112335.90", "-59538.03" });
+    lineTaxes3.put(TaxDataConstants.TAX_IEPS_53_16, new String[] { "-85936.96", "-13749.92",
+        "-85936.96", "-13749.92", "-171873.93", "-27499.83", "-171873.93", "-27499.83" });
+    lineTaxes3.put(TaxDataConstants.TAX_IEPS_53_53, new String[] { "-56167.95", "-29769.01",
+        "-56167.95", "-29769.01", "-112335.90", "-59538.03", "-112335.90", "-59538.03" });
     line3.setLinetaxes(lineTaxes3);
 
     // Amounts for line level are provided
