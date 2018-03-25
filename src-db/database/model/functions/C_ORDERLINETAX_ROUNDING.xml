@@ -10,8 +10,8 @@
       <parameter name="p_netamount" type="NUMERIC" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_linefrom" type="NUMERIC" mode="in">
-        <default><![CDATA[0]]></default>
+      <parameter name="p_stdprecision" type="NUMERIC" mode="in">
+        <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
@@ -25,7 +25,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2016 Openbravo SLU
+* All portions are Copyright (C) 2012-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -40,18 +40,21 @@ BEGIN --BODY
   v_expected_tax_amt := p_grossamount - p_netamount;
   SELECT SUM(taxamt) INTO v_current_tax_amt
   FROM c_orderlinetax
-  WHERE c_orderline_id = p_orderline_id and line > p_linefrom;
+  WHERE c_orderline_id = p_orderline_id;
   IF (v_expected_tax_amt <> v_current_tax_amt) THEN
+    -- Adjust the tax line that stays closest to the original amount (the one with the lowest rounded tax amount - not rounded tax amount + adjustment amount)
     FOR cur_orderlinetax IN (
-      SELECT c_orderlinetax_id, c_tax_id
-      FROM c_orderlinetax
-      WHERE c_orderline_id = p_orderline_id and line > p_linefrom
-      ORDER BY ABS(taxamt) desc
+      SELECT olt.c_orderlinetax_id, olt.c_tax_id
+      FROM c_orderlinetax olt
+      JOIN c_tax t
+      ON olt.c_tax_id = t.c_tax_id
+      WHERE olt.c_orderline_id = p_orderline_id
+      ORDER BY ABS(olt.taxamt - (round(olt.taxbaseamt, p_stdprecision) * (t.rate/100)) - (v_current_tax_amt - v_expected_tax_amt)) ASC, ABS(olt.taxamt) DESC, t.line DESC
     ) LOOP
       UPDATE c_orderlinetax
       SET taxamt = taxamt - (v_current_tax_amt - v_expected_tax_amt)
       WHERE c_orderlinetax_id  = cur_orderlinetax.c_orderlinetax_id ;
-      C_ORDERLINETAX_ROUNDING_AMT(p_orderline_id, cur_orderlinetax.c_tax_id, v_expected_tax_amt - v_current_tax_amt, p_linefrom);
+      C_ORDERLINETAX_ROUNDING_AMT(p_orderline_id, cur_orderlinetax.c_tax_id, v_expected_tax_amt - v_current_tax_amt);
       EXIT;
     END LOOP;
   END IF;

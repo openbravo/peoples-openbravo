@@ -10,9 +10,6 @@
       <parameter name="p_diff_amount" type="NUMERIC" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_linefrom" type="NUMERIC" mode="in">
-        <default/>
-      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -25,7 +22,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2015 Openbravo SLU
+* All portions are Copyright (C) 2015-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -38,13 +35,13 @@ BEGIN --BODY
   FOR cur_invoicelinetax IN (
     SELECT c_invoicelinetax_id, c_tax_id
     FROM c_invoicelinetax
-    WHERE  c_invoiceline_id = p_invoiceline_id and line > p_linefrom
+    WHERE  c_invoiceline_id = p_invoiceline_id
     AND c_tax_id = (SELECT tb.c_tax_id FROM c_tax tb WHERE tb.c_taxbase_id = p_tax_id)
   ) LOOP
       UPDATE c_invoicelinetax
       SET taxbaseamt = taxbaseamt + p_diff_amount
       WHERE c_invoicelinetax_id  = cur_invoicelinetax.c_invoicelinetax_id;
-      C_INVOICELINETAX_ROUNDING_AMT(p_invoiceline_id, cur_invoicelinetax.c_tax_id, p_diff_amount, p_linefrom);
+      C_INVOICELINETAX_ROUNDING_AMT(p_invoiceline_id, cur_invoicelinetax.c_tax_id, p_diff_amount);
   END LOOP;
 EXCEPTION
   WHEN OTHERS THEN
