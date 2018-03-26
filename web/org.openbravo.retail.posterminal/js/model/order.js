@@ -1211,10 +1211,6 @@
     },
 
     setPrice: function (line, price, options) {
-      if (this.get('isQuotation') && this.get('hasbeenpaid') === 'Y') {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
-        return;
-      }
       OB.UTIL.HookManager.executeHooks('OBPOS_PreSetPrice', {
         context: this,
         line: line,

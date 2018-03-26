@@ -1081,7 +1081,7 @@ enyo.kind({
         });
       };
 
-      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate')) {
+      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate') || (this.order.get('isQuotation') && this.order.get('hasbeenpaid') === 'Y')) {
         return;
       }
 
