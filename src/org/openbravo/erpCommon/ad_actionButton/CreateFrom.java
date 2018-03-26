@@ -472,7 +472,7 @@ public class CreateFrom extends HttpSecureAppServlet {
     String strShipment = vars.getStringParameter("inpShipmentReciept");
     Invoice invoice = OBDal.getInstance().get(Invoice.class, strKey);
     String strIsTaxIncluded = invoice.getPriceList().isPriceIncludesTax() ? "Y" : "N";
-    String currencyId = invoice.getPriceList().getCurrency().getId();
+    String invoiceCurrencyId = invoice.getCurrency().getId();
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
     if (vars.commandIn("FIND_PO"))
       strShipment = "";
@@ -579,20 +579,20 @@ public class CreateFrom extends HttpSecureAppServlet {
         xmlDocument.setData("reportShipmentReciept", "liststructure", CreateFromInvoiceData
             .selectFromShipmentSOTrxCombo(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId), narturalOrgTreeList,
-                strBPartner, strIsTaxIncluded, currencyId));
+                strBPartner, strIsTaxIncluded, invoiceCurrencyId));
         xmlDocument.setData("reportPurchaseOrder", "liststructure", CreateFromInvoiceData
             .selectFromPOSOTrxCombo(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId), narturalOrgTreeList,
-                strBPartner, strIsTaxIncluded, currencyId));
+                strBPartner, strIsTaxIncluded, invoiceCurrencyId));
       } else {
         xmlDocument.setData("reportShipmentReciept", "liststructure", CreateFromInvoiceData
             .selectFromShipmentCombo(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId), narturalOrgTreeList,
-                strBPartner, strIsTaxIncluded, currencyId));
+                strBPartner, strIsTaxIncluded, invoiceCurrencyId));
         xmlDocument.setData("reportPurchaseOrder", "liststructure", CreateFromInvoiceData
             .selectFromPOCombo(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId), narturalOrgTreeList,
-                strBPartner, strIsTaxIncluded, currencyId));
+                strBPartner, strIsTaxIncluded, invoiceCurrencyId));
       }
     }
     {
@@ -927,30 +927,30 @@ public class CreateFrom extends HttpSecureAppServlet {
       } else { // Loading the Combos in the Invoice's CreateFrom
         Invoice invoice = OBDal.getInstance().get(Invoice.class, strKey);
         String strIsTaxIncluded = invoice.getPriceList().isPriceIncludesTax() ? "Y" : "N";
-        String currencyId = invoice.getPriceList().getCurrency().getId();
+        String invoiceCurrencyId = invoice.getCurrency().getId();
 
         if (isSOTrx.equals("Y")) {
           strArray = Utility.arrayEntradaSimple("arrDatos", CreateFromInvoiceData
               .selectFromShipmentSOTrxCombo(this, vars.getLanguage(),
                   Utility.getContext(this, vars, "#User_Client", strWindowId),
                   Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner,
-                  strIsTaxIncluded, currencyId));
+                  strIsTaxIncluded, invoiceCurrencyId));
           strArray2 = Utility.arrayEntradaSimple("arrDatos2", CreateFromInvoiceData
               .selectFromPOSOTrxCombo(this, vars.getLanguage(),
                   Utility.getContext(this, vars, "#User_Client", strWindowId),
                   Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner,
-                  strIsTaxIncluded, currencyId));
+                  strIsTaxIncluded, invoiceCurrencyId));
         } else {
           strArray = Utility.arrayEntradaSimple("arrDatos", CreateFromInvoiceData
               .selectFromShipmentCombo(this, vars.getLanguage(),
                   Utility.getContext(this, vars, "#User_Client", strWindowId),
                   Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner,
-                  strIsTaxIncluded, currencyId));
+                  strIsTaxIncluded, invoiceCurrencyId));
           strArray2 = Utility.arrayEntradaSimple("arrDatos2", CreateFromInvoiceData
               .selectFromPOCombo(this, vars.getLanguage(),
                   Utility.getContext(this, vars, "#User_Client", strWindowId),
                   Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner,
-                  strIsTaxIncluded, currencyId));
+                  strIsTaxIncluded, invoiceCurrencyId));
         }
       }
     }
