@@ -149,12 +149,24 @@ BEGIN
 						update c_invoiceline set
 							gross_unit_price = grosspricestd,
 							line_gross_amount = round(grosspricestd * qtyinvoiced, v_stdPrecision)
-						where c_invoiceline_id = Cur_Order.id;
+						where c_invoiceline_id = Cur_Order.id
+						  and c_invoiceline.c_invoice_discount_id is null
+						  and not exists(
+                                                    select 1
+                                                    from c_discount
+                                                    where c_discount.m_product_id = c_invoiceline.m_product_id
+                                                  );
 					else
 						update c_invoiceline
 							 set priceactual = pricestd,
 									 linenetamt = round(pricestd * qtyinvoiced, v_stdPrecision)
-						 where c_invoiceline_id = Cur_Order.id;
+						where c_invoiceline_id = Cur_Order.id
+						  and c_invoiceline.c_invoice_discount_id is null
+						  and not exists(
+                                                    select 1
+                                                    from c_discount
+                                                    where c_discount.m_product_id = c_invoiceline.m_product_id
+                                                  );
 					end if;
 				end if;
 

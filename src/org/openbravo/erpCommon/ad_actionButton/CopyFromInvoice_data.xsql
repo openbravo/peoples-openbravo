@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,6 +51,7 @@
         AND C_INVOICELINE.AD_ORG_ID IN ('1')
         AND C_INVOICELINE.ISACTIVE = 'Y'
         AND (APPLYINORDER IS NULL OR APPLYINORDER <> 'N')
+        AND C_INVOICELINE.C_INVOICE_DISCOUNT_ID IS NULL
         ORDER BY C_INVOICELINE.LINE
       ]]>
     </Sql>

@@ -62,7 +62,7 @@ public class TestIssue37279 extends TestCostingBase {
    * <li>Complete the Invoice</li>
    * <li>Run Price Difference Adjustment process</li>
    * <li>Assert for one transaction total cost is 20.00</li>
-   * <li>Assert the other transaction has total cost 200.00</li>
+   * <li>Assert the other transaction has total cost 30.00</li>
    * </ul>
    */
   @Test
@@ -87,8 +87,9 @@ public class TestIssue37279 extends TestCostingBase {
           .getGoodsReceipt().getId(), false, new BigDecimal("20"), new BigDecimal("1"), 0);
       TestCostingUtils.completeDocument(purchaseInvoice);
       TestCostingUtils.runPriceBackground();
-      TestCostingUtils.assertTransactionCostsAdjustmentsForTestIssue37279(results.getProduct()
-          .getId());
+      TestCostingUtils
+          .assertTransactionCostsAdjustmentsForTestIssue37279GoodsReceiptWithNoRelatedPurchaseOrder(results
+              .getProduct().getId());
     } catch (Exception e) {
       System.out.println(e.getMessage());
       throw new OBException(e);

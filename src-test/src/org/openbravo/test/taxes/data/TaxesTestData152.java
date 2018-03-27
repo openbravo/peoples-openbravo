@@ -231,10 +231,10 @@ public class TaxesTestData152 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes8 = new HashMap<String, String[]>();
-    lineTaxes8.put(TaxDataConstants.TAX_IEPS_26_16, new String[] { "-192.41", "-30.79", "-192.41",
-        "-30.79", "-384.83", "-61.57", "-384.83", "-61.57" });
-    lineTaxes8.put(TaxDataConstants.TAX_IEPS_26_26, new String[] { "-152.11", "-40.30", "-152.11",
-        "-40.30", "-304.21", "-80.62", "-304.21", "-80.62" });
+    lineTaxes8.put(TaxDataConstants.TAX_IEPS_26_16, new String[] { "-192.42", "-30.78", "-192.42",
+        "-30.78", "-384.83", "-61.57", "-384.83", "-61.57" });
+    lineTaxes8.put(TaxDataConstants.TAX_IEPS_26_26, new String[] { "-152.11", "-40.31", "-152.11",
+        "-40.31", "-304.21", "-80.62", "-304.21", "-80.62" });
     line8.setLinetaxes(lineTaxes8);
 
     // Amounts for line level are provided
@@ -260,9 +260,9 @@ public class TaxesTestData152 extends TaxesTestData {
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes9 = new HashMap<String, String[]>();
     lineTaxes9.put(TaxDataConstants.TAX_IEPS_26_16, new String[] { "-240.52", "-38.48", "-240.52",
-        "-38.48", "-481.04", "-76.96", "-481.04", "-76.96" });
+        "-38.48", "-481.03", "-76.97", "-481.03", "-76.97" });
     lineTaxes9.put(TaxDataConstants.TAX_IEPS_26_26, new String[] { "-190.13", "-50.39", "-190.13",
-        "-50.39", "-380.26", "-100.78", "-380.26", "-100.78" });
+        "-50.39", "-380.26", "-100.77", "-380.26", "-100.77" });
     line9.setLinetaxes(lineTaxes9);
 
     // Amounts for line level are provided
@@ -404,10 +404,10 @@ public class TaxesTestData152 extends TaxesTestData {
         "-27.84", "-6.96", "-27.84", "-6.96" });
     taxes.put(TaxDataConstants.TAX_SUPER_50, new String[] { "-9.28", "-4.64", "-9.28", "-4.64",
         "-18.56", "-9.28", "-18.56", "-9.28" });
-    taxes.put(TaxDataConstants.TAX_IEPS_26_16, new String[] { "-721.55", "-115.45", "-721.55",
-        "-115.45", "-1443.11", "-230.89", "-1443.11", "-230.89" });
-    taxes.put(TaxDataConstants.TAX_IEPS_26_26, new String[] { "-570.40", "-151.15", "-570.40",
-        "-151.15", "-1140.79", "-302.32", "-1140.79", "-302.32" });
+    taxes.put(TaxDataConstants.TAX_IEPS_26_16, new String[] { "-721.56", "-115.44", "-721.56",
+        "-115.44", "-1443.10", "-230.90", "-1443.10", "-230.90" });
+    taxes.put(TaxDataConstants.TAX_IEPS_26_26, new String[] { "-570.40", "-151.16", "-570.40",
+        "-151.16", "-1140.79", "-302.31", "-1140.79", "-302.31" });
     taxes.put(TaxDataConstants.TAX_IEPS_53_16, new String[] { "-2928.63", "-468.57", "-2928.63",
         "-468.57", "-5857.24", "-937.16", "-5857.24", "-937.16" });
     taxes.put(TaxDataConstants.TAX_IEPS_53_53, new String[] { "-1914.13", "-1014.50", "-1914.13",

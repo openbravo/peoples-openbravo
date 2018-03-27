@@ -204,9 +204,9 @@ public class TaxesTestData142 extends TaxesTestData {
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes7 = new HashMap<String, String[]>();
     lineTaxes7.put(TaxDataConstants.TAX_SUPER_25, new String[] { "-4.77", "-1.19", "-4.77",
-        "-1.19", "-9.53", "-2.39", "-9.53", "-2.39" });
+        "-1.19", "-9.54", "-2.38", "-9.54", "-2.38" });
     lineTaxes7.put(TaxDataConstants.TAX_SUPER_50, new String[] { "-3.18", "-1.59", "-3.18",
-        "-1.59", "-6.36", "-3.17", "-6.36", "-3.17" });
+        "-1.59", "-6.36", "-3.18", "-6.36", "-3.18" });
     line7.setLinetaxes(lineTaxes7);
 
     // Amounts for line level are provided
@@ -259,10 +259,10 @@ public class TaxesTestData142 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes9 = new HashMap<String, String[]>();
-    lineTaxes9.put(TaxDataConstants.TAX_IEPS_26_16, new String[] { "-192.41", "-30.79", "-192.41",
-        "-30.79", "-384.83", "-61.57", "-384.83", "-61.57" });
-    lineTaxes9.put(TaxDataConstants.TAX_IEPS_26_26, new String[] { "-152.11", "-40.30", "-152.11",
-        "-40.30", "-304.21", "-80.62", "-304.21", "-80.62" });
+    lineTaxes9.put(TaxDataConstants.TAX_IEPS_26_16, new String[] { "-192.42", "-30.78", "-192.42",
+        "-30.78", "-384.83", "-61.57", "-384.83", "-61.57" });
+    lineTaxes9.put(TaxDataConstants.TAX_IEPS_26_26, new String[] { "-152.11", "-40.31", "-152.11",
+        "-40.31", "-304.21", "-80.62", "-304.21", "-80.62" });
     line9.setLinetaxes(lineTaxes9);
 
     // Amounts for line level are provided
@@ -288,9 +288,9 @@ public class TaxesTestData142 extends TaxesTestData {
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes10 = new HashMap<String, String[]>();
     lineTaxes10.put(TaxDataConstants.TAX_IEPS_26_16, new String[] { "-240.52", "-38.48", "-240.52",
-        "-38.48", "-481.04", "-76.96", "-481.04", "-76.96" });
+        "-38.48", "-481.03", "-76.97", "-481.03", "-76.97" });
     lineTaxes10.put(TaxDataConstants.TAX_IEPS_26_26, new String[] { "-190.13", "-50.39", "-190.13",
-        "-50.39", "-380.26", "-100.78", "-380.26", "-100.78" });
+        "-50.39", "-380.26", "-100.77", "-380.26", "-100.77" });
     line10.setLinetaxes(lineTaxes10);
 
     // Amounts for line level are provided
@@ -315,10 +315,10 @@ public class TaxesTestData142 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes11 = new HashMap<String, String[]>();
-    lineTaxes11.put(TaxDataConstants.TAX_IEPS_53_16, new String[] { "-762.91", "-122.06",
-        "-762.91", "-122.06", "-1525.81", "-244.13", "-1525.81", "-244.13" });
-    lineTaxes11.put(TaxDataConstants.TAX_IEPS_53_53, new String[] { "-498.63", "-264.28",
-        "-498.63", "-264.28", "-997.26", "-528.55", "-997.26", "-528.55" });
+    lineTaxes11.put(TaxDataConstants.TAX_IEPS_53_16, new String[] { "-762.90", "-122.07",
+        "-762.90", "-122.07", "-1525.81", "-244.13", "-1525.81", "-244.13" });
+    lineTaxes11.put(TaxDataConstants.TAX_IEPS_53_53, new String[] { "-498.63", "-264.27",
+        "-498.63", "-264.27", "-997.26", "-528.55", "-997.26", "-528.55" });
     line11.setLinetaxes(lineTaxes11);
 
     // Amounts for line level are provided
@@ -372,9 +372,9 @@ public class TaxesTestData142 extends TaxesTestData {
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes13 = new HashMap<String, String[]>();
     lineTaxes13.put(TaxDataConstants.TAX_IEPS_53_16, new String[] { "-774.21", "-123.87",
-        "-774.21", "-123.87", "-1548.41", "-247.75", "-1548.41", "-247.75" });
+        "-774.21", "-123.87", "-1548.42", "-247.74", "-1548.42", "-247.74" });
     lineTaxes13.put(TaxDataConstants.TAX_IEPS_53_53, new String[] { "-506.02", "-268.19",
-        "-506.02", "-268.19", "-1012.04", "-536.37", "-1012.04", "-536.37" });
+        "-506.02", "-268.19", "-1012.04", "-536.38", "-1012.04", "-536.38" });
     line13.setLinetaxes(lineTaxes13);
 
     // Amounts for line level are provided
@@ -400,18 +400,18 @@ public class TaxesTestData142 extends TaxesTestData {
         "-577.69", "-121.31", "-577.69", "-121.31" });
     taxes.put(TaxDataConstants.TAX_VAT_10, new String[] { "-309.00", "-30.90", "-309.00", "-30.90",
         "-618.00", "-61.80", "-618.00", "-61.80" });
-    taxes.put(TaxDataConstants.TAX_SUPER_25, new String[] { "-11.13", "-2.78", "-11.14", "-2.78",
+    taxes.put(TaxDataConstants.TAX_SUPER_25, new String[] { "-11.13", "-2.78", "-11.13", "-2.79",
         "-22.28", "-5.57", "-22.27", "-5.57" });
-    taxes.put(TaxDataConstants.TAX_SUPER_50, new String[] { "-7.42", "-3.71", "-7.42", "-3.72",
+    taxes.put(TaxDataConstants.TAX_SUPER_50, new String[] { "-7.42", "-3.71", "-7.42", "-3.71",
         "-14.85", "-7.43", "-14.85", "-7.42" });
     taxes.put(TaxDataConstants.TAX_IEPS_26_16, new String[] { "-577.24", "-92.36", "-577.24",
         "-92.36", "-1154.48", "-184.72", "-1154.48", "-184.72" });
     taxes.put(TaxDataConstants.TAX_IEPS_26_26, new String[] { "-456.32", "-120.92", "-456.32",
         "-120.92", "-912.63", "-241.85", "-912.63", "-241.85" });
-    taxes.put(TaxDataConstants.TAX_IEPS_53_16, new String[] { "-2196.47", "-351.44", "-2196.46",
-        "-351.44", "-4392.94", "-702.87", "-4392.93", "-702.87" });
+    taxes.put(TaxDataConstants.TAX_IEPS_53_16, new String[] { "-2196.47", "-351.44", "-2196.47",
+        "-351.43", "-4392.94", "-702.87", "-4392.93", "-702.87" });
     taxes.put(TaxDataConstants.TAX_IEPS_53_53, new String[] { "-1435.60", "-760.87", "-1435.60",
-        "-760.86", "-2871.20", "-1521.74", "-2871.20", "-1521.73" });
+        "-760.87", "-2871.20", "-1521.74", "-2871.20", "-1521.73" });
     setDoctaxes(taxes);
 
     // Amounts for document level are provided

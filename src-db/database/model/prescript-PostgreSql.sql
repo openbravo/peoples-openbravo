@@ -229,7 +229,9 @@ CREATE OR REPLACE FUNCTION to_date
 (
 text
 )
-RETURNS timestamp AS '
+RETURNS timestamp 
+SET SEARCH_PATH FROM CURRENT
+AS '
 BEGIN
 RETURN to_timestamp($1, dateFormat());
 END;
@@ -240,7 +242,9 @@ CREATE OR REPLACE FUNCTION to_date
 (
  timestamptz
 )
-  RETURNS timestamp AS '
+  RETURNS timestamp
+  SET SEARCH_PATH FROM CURRENT
+  AS '
 BEGIN
   RETURN to_timestamp(to_char($1, dateFormat()||'' HH24:MI:SS''), dateFormat()||'' HH24:MI:SS'');
 END;
@@ -251,7 +255,9 @@ CREATE OR REPLACE FUNCTION to_date
 (
  timestamp, varchar
 )
-  RETURNS timestamp AS '
+  RETURNS timestamp
+  SET SEARCH_PATH FROM CURRENT
+  AS '
 BEGIN
   RETURN to_timestamp(to_char($1), $2);
 END;
@@ -262,7 +268,9 @@ CREATE OR REPLACE FUNCTION to_timestamp
 (
  timestamptz
 )
-  RETURNS timestamp AS '
+  RETURNS timestamp
+  SET SEARCH_PATH FROM CURRENT
+  AS '
 BEGIN
 RETURN to_timestamp(to_char($1, dateFormat()), dateFormat());
 END;
@@ -273,7 +281,9 @@ CREATE OR REPLACE FUNCTION to_char
 (
 integer
 )
-RETURNS  VARCHAR AS '
+RETURNS  VARCHAR
+SET SEARCH_PATH FROM CURRENT
+AS '
 BEGIN
 RETURN to_char($1, ''999999999999D'');
 END;
@@ -296,7 +306,9 @@ CREATE OR REPLACE FUNCTION to_char
 (
 timestamp
 )
-RETURNS  VARCHAR AS '
+RETURNS  VARCHAR
+SET SEARCH_PATH FROM CURRENT
+AS '
 BEGIN
 RETURN to_char($1, dateFormat());
 END;
@@ -307,7 +319,9 @@ CREATE OR REPLACE FUNCTION to_char
 (
 date
 )
-RETURNS  VARCHAR AS '
+RETURNS  VARCHAR
+SET SEARCH_PATH FROM CURRENT
+AS '
 BEGIN
 RETURN to_char(to_date($1), dateFormat());
 END;
@@ -365,7 +379,9 @@ varchar,
 numeric,
 varchar
 )
-RETURNS VARCHAR AS '
+RETURNS VARCHAR
+SET SEARCH_PATH FROM CURRENT
+AS '
 BEGIN
 return to_char(rpad($1::text,CAST($2 AS INTEGER), $3::text));
 END;
@@ -407,7 +423,9 @@ create or replace function add_months (
        timestamptz, 
        integer
 )
-returns timestamptz as '
+returns timestamptz
+SET SEARCH_PATH FROM CURRENT
+as '
 begin
     return $1 + to_interval($2,to_char(''months''));
 
@@ -424,7 +442,9 @@ CREATE OR REPLACE FUNCTION add_months
 date,
 numeric
 )
-RETURNS timestamptz AS '
+RETURNS timestamptz
+SET SEARCH_PATH FROM CURRENT
+AS '
 BEGIN
     return $1 + to_interval($2::INTEGER,to_char(''months''));
 END;
@@ -436,7 +456,9 @@ CREATE OR REPLACE FUNCTION add_months
 timestamp,
 integer
 )
-RETURNS timestamptz AS '
+RETURNS timestamptz 
+SET SEARCH_PATH FROM CURRENT
+AS '
 BEGIN
     return $1 + to_interval($2,to_char(''months''));
 END;
@@ -448,7 +470,9 @@ CREATE OR REPLACE FUNCTION add_months
 timestamp,
 numeric
 )
-RETURNS timestamptz AS '
+RETURNS timestamptz 
+SET SEARCH_PATH FROM CURRENT
+AS '
 BEGIN
     return $1 + to_interval($2::INTEGER,to_char(''months''));
 END;
@@ -647,7 +671,9 @@ CREATE OPERATOR =(
 --/-- END
 
 CREATE OR REPLACE FUNCTION lowerequalnumeric(numeric, varchar)
-  RETURNS boolean AS '
+  RETURNS boolean 
+  SET SEARCH_PATH FROM CURRENT
+  AS '
 BEGIN
 RETURN $1 <= TO_NUMBER($2);
 END;
@@ -665,7 +691,9 @@ CREATE OPERATOR <=(
 /-- END
 
 CREATE OR REPLACE FUNCTION lowerequaltimestamp(timestamp, varchar)
-  RETURNS boolean AS '
+  RETURNS boolean 
+  SET SEARCH_PATH FROM CURRENT
+  AS '
 BEGIN
 RETURN $1 <= TO_DATE($2);
 END;
@@ -683,7 +711,9 @@ CREATE OPERATOR <=(
 /-- END
 
 CREATE OR REPLACE FUNCTION greaterequal(timestamp, varchar)
-  RETURNS boolean AS '
+  RETURNS boolean 
+  SET SEARCH_PATH FROM CURRENT
+  AS '
 BEGIN
 RETURN $1 >= TO_DATE($2);
 END;
@@ -789,7 +819,9 @@ END;
 /-- END
 
 CREATE OR REPLACE FUNCTION instr(varchar, varchar)
-  RETURNS int4 AS 
+  RETURNS int4 
+  SET SEARCH_PATH FROM CURRENT
+  AS 
 'DECLARE
     pos integer;
 BEGIN
@@ -800,7 +832,9 @@ END;
 /-- END
 
 CREATE OR REPLACE FUNCTION instr(string varchar, string_to_search varchar, beg_index int4)
-  RETURNS int4 AS 
+  RETURNS int4 
+  SET SEARCH_PATH FROM CURRENT
+  AS 
 'DECLARE
     pos integer NOT NULL DEFAULT 0;
     temp_str varchar;
@@ -836,7 +870,9 @@ END;
 /-- END
 
 CREATE OR REPLACE FUNCTION instr(string varchar, string_to_search varchar, beg_index int4, occur_index int4)
-  RETURNS int4 AS 
+  RETURNS int4 
+  SET SEARCH_PATH FROM CURRENT
+  AS 
 'DECLARE
 pos integer NOT NULL DEFAULT 0;
 occur_number integer NOT NULL DEFAULT 0;
@@ -884,12 +920,16 @@ END;
 ' LANGUAGE 'plpgsql'IMMUTABLE
 /-- END
 
-create or replace function last_day(date) returns date as 'select
+create or replace function last_day(date) returns date 
+SET SEARCH_PATH FROM CURRENT
+as 'select
 cast(date_trunc(''month'', $1) + ''1 month''::interval as date) - 1'
 language sql
 /-- END
 
-create or replace function last_day(timestamptz) returns date as 'select
+create or replace function last_day(timestamptz) returns date 
+SET SEARCH_PATH FROM CURRENT
+as 'select
 cast(date_trunc(''month'', cast($1 AS date)) + ''1 month''::interval as date) - 1'
 language sql
 /-- END

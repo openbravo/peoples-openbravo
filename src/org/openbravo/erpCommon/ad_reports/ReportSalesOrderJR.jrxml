@@ -216,7 +216,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center"/>
-					<textFieldExpression><![CDATA[$F{CONVSYM}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($F{CONVSYM}!=null)?$F{CONVSYM}:new String(" ")]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -389,7 +389,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="8" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{CONVISOSYM}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($F{CONVISOSYM}!=null)?$F{CONVISOSYM}:new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-32" style="Detail_Header" x="732" y="26" width="48" height="16" uuid="f34d50b8-27e1-444a-9682-9ee711646d31">
@@ -408,7 +408,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="8" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{CONVISOSYM}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($F{CONVISOSYM}!=null)?$F{CONVISOSYM}:new String(" ")]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement key="element-2" style="Detail_Header" x="289" y="26" width="90" height="16" uuid="4d79471d-c388-4a36-8628-60d0cba0d6c8">
@@ -591,7 +591,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center"/>
-					<textFieldExpression><![CDATA[$F{CONVSYM}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($F{CONVSYM}!=null)?$F{CONVSYM}:new String(" ")]]></textFieldExpression>
 				</textField>
 				<line>
 					<reportElement key="line-19" style="Report_Footer" x="780" y="25" width="1" height="7" forecolor="#555555" uuid="5582a270-8d0c-4973-a7be-cb6f1bf98e59">
@@ -762,7 +762,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times-Roman" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{PRICEACTUALSYM}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{PRICEACTUALSYM}!=null)?$F{PRICEACTUALSYM}:new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField-34" style="Detail_Line" x="672" y="0" width="24" height="16" uuid="702fb1ef-a843-4245-8faf-6512ebd038b6"/>
@@ -775,7 +775,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times-Roman" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{PRICELISTSYM}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{PRICELISTSYM}!=null)?$F{PRICELISTSYM}:new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField-35" style="Detail_Line" x="586" y="0" width="24" height="16" uuid="1ae9a0d7-726f-4ef8-b68e-78f88487b3dd"/>
@@ -788,7 +788,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times-Roman" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{CONVSYM}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{CONVSYM}!=null)?$F{CONVSYM}:new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField-36" style="Detail_Line" x="757" y="0" width="23" height="16" uuid="4bdf5ac6-618c-4b6f-b5e5-b376f2dc005c">
@@ -804,7 +804,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times-Roman" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{CONVSYM}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{CONVSYM}!=null)?$F{CONVSYM}:new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField-18" style="Detail_Line" x="379" y="0" width="51" height="16" uuid="5c94bebe-2c1e-401b-9fd5-6b83a511471b">

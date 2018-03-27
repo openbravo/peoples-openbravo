@@ -10,6 +10,9 @@
       <parameter name="p_totallines" type="NUMERIC" mode="in">
         <default/>
       </parameter>
+      <parameter name="p_stdprecision" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -22,7 +25,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2015 Openbravo SLU
+* All portions are Copyright (C) 2012-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -50,11 +53,14 @@ BEGIN --BODY
   END IF;
 
   IF (p_grandtotal <> v_current_gross_amt) THEN
+    -- Adjust the tax that stays closest to the original amount (the one with the lowest rounded tax amount - not rounded tax amount + adjustment amount)
     FOR cur_ordertax IN (
-      SELECT c_ordertax_id
-      FROM c_ordertax
-      WHERE c_order_id = p_order_id
-      ORDER BY ABS(taxamt) desc
+      SELECT ot.c_ordertax_id
+      FROM c_ordertax ot
+      JOIN c_tax t
+      ON ot.c_tax_id = t.c_tax_id
+      WHERE ot.c_order_id = p_order_id
+      ORDER BY ABS(ot.taxamt - (round(ot.taxbaseamt, p_stdprecision) * (t.rate/100)) - (v_current_gross_amt - COALESCE(p_grandtotal, 0))) ASC, ABS(ot.taxamt) DESC, t.line DESC
     ) LOOP
       UPDATE c_ordertax
       SET taxamt = taxamt - (v_current_gross_amt - COALESCE(p_grandtotal, 0))

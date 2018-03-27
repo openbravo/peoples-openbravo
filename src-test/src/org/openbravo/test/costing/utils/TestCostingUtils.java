@@ -5327,6 +5327,24 @@ public class TestCostingUtils {
         .getMaterialMgmtMaterialTransactionList().get(1).getTotalCost().intValue(), equalTo(200));
   }
 
+  public static void assertTransactionCostsAdjustmentsForTestIssue37279GoodsReceiptWithNoRelatedPurchaseOrder(
+      final String productId) {
+    Product product = OBDal.getInstance().get(Product.class, productId);
+    sortTransactionsByMovementQuantity(product.getMaterialMgmtMaterialTransactionList());
+    assertThat("There should be 2 cost adjustment lines for the first transaction", product
+        .getMaterialMgmtMaterialTransactionList().get(0).getTransactionCostList().size(),
+        equalTo(2));
+    assertThat("There should be 1 cost adjustment line for the second transaction", product
+        .getMaterialMgmtMaterialTransactionList().get(1).getTransactionCostList().size(),
+        equalTo(1));
+
+    assertThat("The total cost for the first transaction should be 20", product
+        .getMaterialMgmtMaterialTransactionList().get(0).getTotalCost().intValue(), equalTo(20));
+
+    assertThat("The total cost for the second transaction should be 30", product
+        .getMaterialMgmtMaterialTransactionList().get(1).getTotalCost().intValue(), equalTo(30));
+  }
+
   public static void proessInventoryCount(final InventoryCount physicalInventory) {
     InventoryCountProcess inventoryCountProcess = WeldUtils
         .getInstanceFromStaticBeanManager(InventoryCountProcess.class);
