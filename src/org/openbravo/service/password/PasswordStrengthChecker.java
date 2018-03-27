@@ -24,26 +24,39 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
+/**
+ * Utility class used to check that passwords meets a minimum strength policy.
+ *
+ * Strong passwords should be at least 8 characters long and contain at least 3 out of the
+ * following: Uppercase letters, lowercase letters, digits or special characters.
+ * 
+ * @author jarmendariz
+ */
 @ApplicationScoped
 public class PasswordStrengthChecker {
-  private final int MINIMUM_LENGTH = 8;
-  private final int MIN_REQUIRED_CRITERIA = 3;
+  private static final int MINIMUM_LENGTH = 8;
+  private static final int MIN_REQUIRED_CRITERIA = 3;
 
-  private PasswordStrengthCriterion minimumLength;
   private List<PasswordStrengthCriterion> strengthCriteria;
 
   @PostConstruct
   private void init() {
-    minimumLength = getMinimumLengthCriterion();
-    strengthCriteria = new ArrayList<>();
+    strengthCriteria = new ArrayList<>(4);
     strengthCriteria.add(getUppercaseCriterion());
     strengthCriteria.add(getLowercaseCriterion());
     strengthCriteria.add(getDigitsCriterion());
     strengthCriteria.add(getSpecialCharactersCriterion());
   }
 
+  /**
+   * Verifies that the given password meets the minimum strength criteria
+   *
+   * @param password
+   *          The password to evaluate
+   * @return true if the password is strong enough, false otherwise
+   */
   public boolean isStrongPassword(String password) {
-    return minimumLength.match(password) && (getCriteriaScore(password) >= MIN_REQUIRED_CRITERIA);
+    return hasMinimumLength(password) && (getCriteriaScore(password) >= MIN_REQUIRED_CRITERIA);
   }
 
   private int getCriteriaScore(String password) {
@@ -58,13 +71,8 @@ public class PasswordStrengthChecker {
     return score;
   }
 
-  private PasswordStrengthCriterion getMinimumLengthCriterion() {
-    return new PasswordStrengthCriterion() {
-      @Override
-      public boolean match(String password) {
-        return password.length() >= MINIMUM_LENGTH;
-      }
-    };
+  private boolean hasMinimumLength(String password) {
+     return password.length() >= MINIMUM_LENGTH;
   }
 
   private PasswordStrengthCriterion getUppercaseCriterion() {

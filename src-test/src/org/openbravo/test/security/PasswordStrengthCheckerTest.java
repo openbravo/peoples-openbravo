@@ -27,6 +27,11 @@ import org.junit.Test;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.service.password.PasswordStrengthChecker;
 
+/**
+ * Test PasswordStrengthChecker password policy with various sample passwords
+ *
+ * @author jarmendariz
+ */
 public class PasswordStrengthCheckerTest extends WeldBaseTest {
 
   @Inject
