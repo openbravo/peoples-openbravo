@@ -18,21 +18,19 @@
  */
 package org.openbravo.test.security;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.openbravo.base.secureApp.PasswordStrengthChecker;
-
-import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
-public class PasswordStrengthCheckerTest {
+import javax.inject.Inject;
 
+import org.junit.Test;
+import org.openbravo.base.weld.test.WeldBaseTest;
+import org.openbravo.service.password.PasswordStrengthChecker;
+
+public class PasswordStrengthCheckerTest extends WeldBaseTest {
+
+  @Inject
   private PasswordStrengthChecker checker;
-
-  @Before
-  public void initializeChecker() {
-    checker = new PasswordStrengthChecker();
-  }
 
   @Test
   public void shortPasswordsShouldBeRejected() {
@@ -65,11 +63,11 @@ public class PasswordStrengthCheckerTest {
   }
 
   private void shouldReject(String password) {
-    assertThat(checker.check(password), is(false));
+    assertThat(checker.isStrongPassword(password), is(false));
   }
 
   private void shouldAccept(String password) {
-    assertThat(checker.check(password), is(true));
+    assertThat(checker.isStrongPassword(password), is(true));
   }
 
 }

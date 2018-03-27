@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -31,7 +32,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.LoginUtils;
-import org.openbravo.base.secureApp.PasswordStrengthChecker;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -49,6 +49,7 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.portal.PortalAccessible;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.password.PasswordStrengthChecker;
 import org.openbravo.utils.FormatUtilities;
 
 /**
@@ -59,6 +60,9 @@ import org.openbravo.utils.FormatUtilities;
  */
 @ApplicationScoped
 public class UserInfoWidgetActionHandler extends BaseActionHandler implements PortalAccessible {
+
+  @Inject
+  private PasswordStrengthChecker passwordStrengthChecker;
 
   /*
    * (non-Javadoc)
@@ -107,7 +111,7 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
     if (!newPwd.equals(confirmPwd)) {
       return createErrorResponse("currentPwd", "UINAVBA_UnequalPwd");
     }
-    if (!new PasswordStrengthChecker().check(newPwd)) {
+    if (!passwordStrengthChecker.isStrongPassword(newPwd)) {
       return createErrorResponse("newPwd", "CPPasswordNotStrongEnough");
     }
     user.setPassword(FormatUtilities.sha1Base64(newPwd));

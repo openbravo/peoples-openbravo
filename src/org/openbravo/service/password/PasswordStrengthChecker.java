@@ -16,11 +16,15 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.base.secureApp;
+package org.openbravo.service.password;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
 public class PasswordStrengthChecker {
   private final int MINIMUM_LENGTH = 8;
   private final int MIN_REQUIRED_CRITERIA = 3;
@@ -28,7 +32,8 @@ public class PasswordStrengthChecker {
   private PasswordStrengthCriterion minimumLength;
   private List<PasswordStrengthCriterion> strengthCriteria;
 
-  public PasswordStrengthChecker() {
+  @PostConstruct
+  private void init() {
     minimumLength = getMinimumLengthCriterion();
     strengthCriteria = new ArrayList<>();
     strengthCriteria.add(getUppercaseCriterion());
@@ -37,15 +42,15 @@ public class PasswordStrengthChecker {
     strengthCriteria.add(getSpecialCharactersCriterion());
   }
 
-  public boolean check(String password) {
+  public boolean isStrongPassword(String password) {
     return minimumLength.match(password) && (getCriteriaScore(password) >= MIN_REQUIRED_CRITERIA);
   }
 
   private int getCriteriaScore(String password) {
     int score = 0;
 
-    for(PasswordStrengthCriterion criterion : strengthCriteria) {
-      if(criterion.match(password)) {
+    for (PasswordStrengthCriterion criterion : strengthCriteria) {
+      if (criterion.match(password)) {
         score += 1;
       }
     }

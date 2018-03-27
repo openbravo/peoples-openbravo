@@ -54,6 +54,7 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.server.ServerControllerHandler;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.password.PasswordStrengthChecker;
 import org.openbravo.utils.FormatUtilities;
 
 /**
@@ -78,6 +79,9 @@ public class LoginHandler extends HttpBaseServlet {
 
   @Inject
   private CachedPreference cachedPreference;
+
+  @Inject
+  private PasswordStrengthChecker passwordStrengthChecker;
 
   @Override
   public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException,
@@ -597,9 +601,8 @@ public class LoginHandler extends HttpBaseServlet {
 
   /**
    * Update user password for userId with unHashedPassword provided, throws
-   * AuthenticationExpirationPasswordException in case the new password is the same that the old
-   * one.
-   * 
+   * AuthenticationExpirationPasswordException when the provided password is the same as the old one
+   * or when the password is not strong enough.
    * 
    * @param userId
    *          the userId
@@ -623,8 +626,8 @@ public class LoginHandler extends HttpBaseServlet {
       String oldPassword = userOB.getPassword();
       String newPassword = FormatUtilities.sha1Base64(unHashedPassword);
       if (oldPassword.equals(newPassword)) {
-        throwChangePasswordException("CPDifferentPassword", "CPSamePasswordThanOld",language);
-      } else if (new PasswordStrengthChecker().check(newPassword)) {
+        throwChangePasswordException("CPDifferentPassword", "CPSamePasswordThanOld", language);
+      } else if (!passwordStrengthChecker.isStrongPassword(unHashedPassword)) {
         throwChangePasswordException("CPWeakPasswordTitle", "CPPasswordNotStrongEnough", language);
       } else {
         userOB.setPassword(newPassword);
