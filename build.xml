@@ -98,13 +98,8 @@ export.database: exports database structure and data to xml files.
  
   <available file=".hg" property="is.hg" />
 
-  <condition property="jdk>8">
-    <not>
-      <or>
-        <equals arg1="${ant.java.version}" arg2="1.7"/>
-        <equals arg1="${ant.java.version}" arg2="1.8"/>
-      </or>
-    </not>
+  <condition property="xdoclint.missing" value="" else="-Xdoclint:-missing">
+    <equals arg1="${ant.java.version}" arg2="1.7"/>
   </condition>
 
   <condition property="calculate.core.rev">
@@ -531,12 +526,7 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="generate.java.doc">
-    <antcall target="generate.java.doc.jdk7"/>
-    <antcall target="generate.java.doc.jdk9"/>
-  </target>
-
-  <target name="generate.java.doc.jdk7" unless="jdk>8">
-    <javadoc Windowtitle="${title}" access="protected" Header="${header}" Footer="${footer}" destdir="${build.docs}" maxmemory="1024M" failonerror="yes">
+    <javadoc Windowtitle="${title}" access="protected" Header="${header}" Footer="${footer}" destdir="${build.docs}" maxmemory="1024M" failonerror="yes" additionalparam="${xdoclint.missing}">
       <sourcepath>
         <pathelement path="${base.src}" />
         <pathelement path="${base.src.test}/src" />
@@ -559,34 +549,6 @@ export.database: exports database structure and data to xml files.
         </fileset>
       </classpath>
       <link href="http://docs.oracle.com/javase/7/docs/api/"/>
-    </javadoc>
-  </target>
-
-  <target name="generate.java.doc.jdk9" if="jdk>8">
-    <javadoc Windowtitle="${title}" access="protected" Header="${header}" Footer="${footer}" destdir="${build.docs}" maxmemory="1024M" failonerror="yes">
-      <sourcepath>
-        <pathelement path="${base.src}" />
-        <pathelement path="${base.src.test}/src" />
-        <pathelement path="${build.AD}" />
-        <pathelement path="${base.src.core}/src" />
-        <pathelement path="${base.src.gen}" />
-        <pathelement path="build/javasqlc/src" />
-        <pathelement path="build/javasqlc/srcAD" />
-        <dirset dir="${base.modules}">
-          <include name="*/src" />
-          <include name="*/src-test" />
-        </dirset>
-      </sourcepath>
-      <excludepackage name="org.openbravo.erpWindows.*"/>
-      <classpath>
-        <path refid="project.class.path"/>
-        <pathelement path="lib/build/js.jar" />
-        <fileset dir="${base.modules}">
-          <include name="*/lib/test/*.jar" />
-        </fileset>
-      </classpath>
-      <link href="http://docs.oracle.com/javase/9/docs/api/"/>
-      <arg value="-Xdoclint:-missing"/>
     </javadoc>
   </target>
 
