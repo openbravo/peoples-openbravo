@@ -20,7 +20,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 1999-2016 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 1999-2018 Openbravo, S.L.U.
   *************************************************************************
   * $Id: C_Cash_Post.sql,v 1.10 2003/03/17 20:32:25 jjanke Exp $
   ***
@@ -32,7 +32,6 @@
   ************************************************************************/
   --  Logistice
   v_ResultStr VARCHAR2(2000):='';
-  v_Result NUMBER;
   v_Message VARCHAR2(2000):='';
   v_Record_ID VARCHAR2(32) ;
   v_User VARCHAR2(32);
@@ -73,7 +72,6 @@
     v_CB_Date DATE;
     v_AD_Org_ID VARCHAR2(32);
     v_AD_Client_ID VARCHAR2(32);
-    v_C_CashBook_ID VARCHAR2(32) ;
     FINISH_PROCESS BOOLEAN:=false;
   BEGIN
     --  Update AD_PInstance
@@ -104,12 +102,12 @@
       POSTED,
       AD_Org_ID,
       AD_Client_ID,
-      C_CASHBOOK_ID, DateAcct
+      DateAcct
     INTO v_Processed,
       v_Posted,
       v_AD_Org_ID,
       v_AD_Client_ID,
-      v_C_CashBook_ID, v_dateCash
+      v_dateCash
     FROM C_CASH
     WHERE C_Cash_ID=v_Record_ID;
     /* Not needed: payments are updated to pending status
@@ -342,7 +340,6 @@
         ;
       IF v_count>0 THEN
         v_Message:='@CashOrderInvoiced@. Line:'||v_line;
-        v_Result:=0;
         FINISH_PROCESS:=true;
       END IF;
     END IF;--FINISH_PROCESS
@@ -577,7 +574,6 @@
       */
       DECLARE
         v_Total NUMBER:=0;
-        v_Currency_ID VARCHAR2(32):=NULL;
         -- Lines
         Cur_Lines RECORD;
       BEGIN
@@ -592,11 +588,7 @@
               SET C_CashLine_ID=Cur_Lines.C_CashLine_ID,
               Updated=now(),
               UpdatedBy=v_User
-            WHERE C_Debt_Payment_ID=Cur_Lines.C_Debt_Payment_ID;
-            SELECT C_Currency_ID
-            INTO v_Currency_ID
-            FROM C_DEBT_PAYMENT
-            WHERE C_Debt_Payment_ID=Cur_Lines.C_Debt_Payment_ID;
+            WHERE C_Debt_Payment_ID=Cur_Lines.C_Debt_Payment_ID;            
           END IF;
           -- Assume CashBook Currency for Charge
           /* Lines are in cashbook currency

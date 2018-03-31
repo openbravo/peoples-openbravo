@@ -103,7 +103,6 @@
   v_GrandTotal NUMBER:=0;
   v_TotalLines NUMBER:=0;
   v_Currency_ID VARCHAR2(32);
-  v_Multiplier NUMBER:=1;
   v_paymentcheck NUMBER;
   --
   v_RInvoice_ID VARCHAR2(32);
@@ -874,10 +873,7 @@ IF (NOT FINISH_PROCESS) THEN
       -- Is it a Credit Memo?
       SELECT DocBaseType, IsReversal, issotrx INTO v_DocBaseType, v_isReversal, v_DocTypeIsSOtrx
       FROM C_DOCTYPE
-      WHERE C_DocType_ID=v_DocType_ID;
-      IF (v_DocBaseType IN('ARC', 'API') or (v_isReversal='Y' and v_DocTypeIsSOtrx='Y') or (v_isReversal='N' and v_DocTypeIsSOtrx='N')) THEN
-        v_Multiplier:=-1;
-      END IF;
+      WHERE C_DocType_ID=v_DocType_ID;      
     END;
   END IF;--FINISH_PROCESS
   IF (NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
@@ -1532,7 +1528,6 @@ IF (NOT FINISH_PROCESS) THEN
       v_cash VARCHAR2(32) ;
       v_IsoCode C_CURRENCY.ISO_CODE%TYPE;
       v_CashLine VARCHAR2(32) ;
-      v_line NUMBER ;
       v_BPartnerName C_BPARTNER.NAME%TYPE;
       v_GenDP_Org VARCHAR2(32);
       v_dummy VARCHAR2(2000);

@@ -114,7 +114,7 @@ $BODY$ DECLARE
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008-2009 Openbravo SLU
+* All portions are Copyright (C) 2008-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -124,8 +124,7 @@ $BODY$ DECLARE
    v_is_included NUMERIC:=0;
    v_dyn_cur VARCHAR(2000);
  
-   TYPE_Ref REFCURSOR;
-   cur_doc_lines TYPE_REF%TYPE;
+   cur_doc_lines REFCURSOR%TYPE;
  
    v_line_org VARCHAR(32);
    v_org_line_id VARCHAR(32);
@@ -199,7 +198,7 @@ CREATE OR REPLACE FUNCTION AD_ORG_CHK_DOC_PAYMENTS(p_header_table IN character v
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008-2009 Openbravo SLU
+* All portions are Copyright (C) 2008-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -209,8 +208,7 @@ CREATE OR REPLACE FUNCTION AD_ORG_CHK_DOC_PAYMENTS(p_header_table IN character v
    v_is_included NUMERIC:=0;
    v_dyn_cur VARCHAR(2000);
  
-   TYPE_Ref REFCURSOR;
-   cur_doc_lines_payment TYPE_REF%TYPE;
+   cur_doc_lines_payment REFCURSOR%TYPE;
  
    v_line_org_payment VARCHAR(32);
    v_org_payment_line_id VARCHAR(32);

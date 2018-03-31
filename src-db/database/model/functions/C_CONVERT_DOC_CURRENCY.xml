@@ -40,23 +40,16 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2011 Openbravo SLU
+* All portions are Copyright (C) 2011-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   v_Rate NUMBER;
-  v_ConvDate DATE;
 BEGIN
 
   IF(p_Amount=0 OR p_CurFrom_ID=p_CurTo_ID) THEN
     RETURN p_Amount;
-  END IF;
-
-  if (p_convdate > now()) then
-    v_ConvDate:=now();
-  else
-    v_ConvDate:=p_convdate;
-  end if;
+  END IF;  
 
   if (p_fin_finacc_transaction_id is not null) then
     select foreign_convert_rate into v_rate from fin_finacc_transaction fat where fin_finacc_transaction_id=p_fin_finacc_transaction_id;
