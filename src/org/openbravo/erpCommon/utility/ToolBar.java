@@ -157,9 +157,6 @@ public class ToolBar {
     this.debug = _debug;
     this.isFrame = _isFrame;
     this.isEditable = _isEditable;
-    final int i = this.keyfield.lastIndexOf(".");
-    if (i != -1)
-      this.form = this.keyfield.substring(0, i);
     this.isSrcWindow = _isSrcWindow;
     this.hasAttachments = _hasAttachments;
     this.hasNewButton = _hasNewButton;
