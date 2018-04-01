@@ -179,8 +179,6 @@ public class ToolBar {
       return "submitCommandForm('SAVE_" + (isNew ? "NEW" : "EDIT") + name.substring(4)
           + "', true, null, '" + servlet_action + (isSrcWindow ? "" : "_Relation")
           + ".html', '_self', true, false);";
-    } else if (name.equals("TREE")) {
-      return "openServletNewWindow('DEFAULT', false, '../utility/WindowTree.html', 'TREE', null, null,625, 750, true, false, false);";
     } else if (name.equals("ATTACHMENT")) {
       return ((grid_id == null || grid_id.equals("")) ? ""
           : "if (dijit.byId('"
@@ -294,9 +292,6 @@ public class ToolBar {
               .messageBD(conn, "Refresh", language), getButtonScript("REFRESH")));
     }
 
-    buttons.put("TREE",
-        new ToolBar_Button(base_direction, "Tree", Utility.messageBD(conn, "Tree", language),
-            getButtonScript("TREE")));
     buttons.put(
         "ATTACHMENT",
         new ToolBar_Button(base_direction, "Attachment", Utility.messageBD(conn, "Attachment",
@@ -327,15 +322,6 @@ public class ToolBar {
           new ToolBar_Button(base_direction, "Email", Utility.messageBD(conn, "Email", language),
               getButtonScript("EMAIL")));
     }
-    buttons.put("AUDIT_SHOW_EDITION_ENABLED",
-        new ToolBar_Button(base_direction, "Audit", Utility.messageBD(conn, "HideAudit", language),
-            getButtonScript("AUDIT_EDITION"), true));
-    buttons.put("AUDIT_SHOW_EDITION_DISABLED",
-        new ToolBar_Button(base_direction, "Audit", Utility.messageBD(conn, "ShowAudit", language),
-            getButtonScript("AUDIT_EDITION"), false));
-    buttons.put("AUDIT_SHOW_RELATION_ENABLED",
-        new ToolBar_Button(base_direction, "Audit", Utility.messageBD(conn, "HideAudit", language),
-            getButtonScript("AUDIT_RELATION"), true));
     buttons.put("AUDIT_SHOW_RELATION_DISABLED",
         new ToolBar_Button(base_direction, "Audit", Utility.messageBD(conn, "ShowAudit", language),
             getButtonScript("AUDIT_RELATION"), false));
@@ -422,9 +408,6 @@ public class ToolBar {
     removeElement("FIND");
     removeElement("EXCEL");
 
-    removeElement("AUDIT_SHOW_EDITION_DISABLED");
-    removeElement("AUDIT_SHOW_EDITION_ENABLED");
-    removeElement("AUDIT_SHOW_RELATION_ENABLED");
     removeElement("PREVIOUS_RELATION");
     removeElement("PREVIOUS_RELATION_DISABLED");
     removeElement("NEXT_RELATION");
@@ -433,8 +416,6 @@ public class ToolBar {
     if (!deleteable) {
       removeElement("DELETE_RELATION");
     }
-
-    removeElement("TREE");
 
     if (pdf != null && !pdf.contains("orders") && !pdf.contains("invoices")
         && !pdf.contains("payments")) {
@@ -449,7 +430,6 @@ public class ToolBar {
     removeElement("FIND");
     removeElement("SEPARATOR2");
     removeElement("DELETE_RELATION");
-    removeElement("TREE");
     removeElement("ATTACHMENT");
     removeElement("EXCEL");
     removeElement("GRIDEXCEL");
@@ -478,10 +458,7 @@ public class ToolBar {
     }
     removeElement("RELATED_INFO");
 
-    removeElement("AUDIT_SHOW_EDITION_DISABLED");
-    removeElement("AUDIT_SHOW_EDITION_ENABLED");
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
-    removeElement("AUDIT_SHOW_RELATION_ENABLED");
     removeElement("AUDIT_TRAIL");
   }
 
@@ -494,7 +471,6 @@ public class ToolBar {
     removeElement("FIND");
     removeElement("SEPARATOR2");
     removeElement("DELETE_RELATION");
-    removeElement("TREE");
     removeElement("ATTACHMENT");
     removeElement("EXCEL");
     removeElement("GRIDEXCEL");
@@ -528,10 +504,7 @@ public class ToolBar {
           new ToolBar_Button(base_direction, "Excel", Utility.messageBD(conn, "ExportExcel",
               language), excelScript));
 
-    removeElement("AUDIT_SHOW_EDITION_DISABLED");
-    removeElement("AUDIT_SHOW_EDITION_ENABLED");
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
-    removeElement("AUDIT_SHOW_RELATION_ENABLED");
     removeElement("AUDIT_TRAIL");
   }
 
@@ -540,7 +513,6 @@ public class ToolBar {
     removeElement("FIND");
     removeElement("SEPARATOR2");
     removeElement("DELETE_RELATION");
-    removeElement("TREE");
     removeElement("ATTACHMENT");
     removeElement("GRIDEXCEL");
     removeElement("GRIDCSV");
@@ -560,10 +532,7 @@ public class ToolBar {
           new ToolBar_Button(base_direction, "Excel", Utility.messageBD(conn, "ExportExcel",
               language), excelScript));
 
-    removeElement("AUDIT_SHOW_EDITION_DISABLED");
-    removeElement("AUDIT_SHOW_EDITION_ENABLED");
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
-    removeElement("AUDIT_SHOW_RELATION_ENABLED");
     removeElement("AUDIT_TRAIL");
 
   }
@@ -571,7 +540,6 @@ public class ToolBar {
   public void prepareQueryTemplate(boolean hasPrevious, boolean hasNext, boolean isTest) {
     removeElement("NEW");
     removeElement("DELETE_RELATION");
-    removeElement("TREE");
     removeElement("GRIDEXCEL");
     removeElement("GRIDCSV");
     removeElement("GRIDPDF");
@@ -590,10 +558,7 @@ public class ToolBar {
     else
       removeElement("NEXT_RELATION_DISABLED");
 
-    removeElement("AUDIT_SHOW_EDITION_DISABLED");
-    removeElement("AUDIT_SHOW_EDITION_ENABLED");
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
-    removeElement("AUDIT_SHOW_RELATION_ENABLED");
     removeElement("AUDIT_TRAIL");
     removeElement("RELATED_INFO");
   }
@@ -674,7 +639,6 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("DELETE_RELATION"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR4"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("REFRESH"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("TREE"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("ATTACHMENT"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("EXCEL"), lastType, false));
       // if some module still runs this code path -> Log error with StackTrace
@@ -684,12 +648,6 @@ public class ToolBar {
       }
       toolbar.append(transformElementsToString(buttons.get("PRINT"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("EMAIL"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("AUDIT_SHOW_EDITION_ENABLED"), lastType,
-          false));
-      toolbar.append(transformElementsToString(buttons.get("AUDIT_SHOW_RELATION_ENABLED"),
-          lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("AUDIT_SHOW_EDITION_DISABLED"),
-          lastType, false));
       toolbar.append(transformElementsToString(buttons.get("AUDIT_SHOW_RELATION_DISABLED"),
           lastType, false));
       toolbar.append(transformElementsToString(buttons.get("AUDIT_TRAIL"), lastType, false));
