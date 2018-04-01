@@ -22,11 +22,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.obps.ActivationKey;
-import org.openbravo.model.ad.ui.Tab;
 
 public class ToolBar {
   private static final Logger log = Logger.getLogger(ToolBar.class);
@@ -46,23 +42,10 @@ public class ToolBar {
   private boolean isEditable = false;
   private boolean hasAttachments = false;
   private boolean email = false;
-  private String tabId;
   private boolean hasNewButton = true;
 
   public void setEmail(boolean email) {
     this.email = email;
-  }
-
-  /**
-   * If the ToolBar is created for a generated window, this functions sets the tabId of that Tab.
-   * 
-   * Used inside the class to enable/disable functionality based on the concrete tab
-   * 
-   * @param tabId
-   *          tabId of the creator tab, if the ToolBar is for a generated window
-   */
-  public void setTabId(String tabId) {
-    this.tabId = tabId;
   }
 
   Hashtable<String, HTMLElement> buttons = new Hashtable<String, HTMLElement>();
@@ -222,16 +205,6 @@ public class ToolBar {
       return "changeAuditStatus();";
     } else if (name.equals("AUDIT_RELATION")) {
       return "changeAuditStatusRelation();";
-    } else if (name.equals("AUDIT_TRAIL")) {
-      // open audit trail popup if exactly one record is selected, otherwise show error message
-      return ((grid_id == null || grid_id.equals("")) ? ""
-          : "if (dijit.byId('"
-              + grid_id
-              + "').getSelectedRows().length > 1) {showJSMessage(28);resizeArea(true);calculateMsgBoxWidth();return false;} ")
-          + " openServletNewWindow('POPUP_HISTORY', false, '../businessUtility/AuditTrail.html?inpRecordId=' + "
-          + ((grid_id == null || grid_id.equals("")) ? keyfield + ".value" : "dijit.byId('"
-              + grid_id + "').getSelectedRows()")
-          + ", 'AuditTrail', null, true, 600, 900, true, null, null, null, true);";
     } else if (grid_id != null && !grid_id.equals("") && name.equals("PREVIOUS")) {
       return "dijit.byId('grid').goToPreviousRow();";
     } else if (grid_id != null && !grid_id.equals("") && name.equals("NEXT")) {
@@ -313,10 +286,6 @@ public class ToolBar {
     buttons.put("AUDIT_SHOW_RELATION_DISABLED",
         new ToolBar_Button(base_direction, "Audit", Utility.messageBD(conn, "ShowAudit", language),
             getButtonScript("AUDIT_RELATION"), false));
-    buttons.put(
-        "AUDIT_TRAIL",
-        new ToolBar_Button(base_direction, "AuditTrail", Utility.messageBD(conn, "AuditTrail",
-            language), getButtonScript("AUDIT_TRAIL"), false));
     buttons.put("SEPARATOR5", new ToolBar_Space(base_direction));
     buttons.put("FIRST_RELATION",
         new ToolBar_Button(base_direction, "First", Utility.messageBD(conn, "GotoFirst", language),
@@ -360,37 +329,6 @@ public class ToolBar {
             language), getButtonScript("RELATED_INFO")));
   }
 
-  /**
-   * Utility function to change the visibility of the 'Audit Trail' icon.
-   * 
-   * community instances: always shown
-   * 
-   * activated instances: shown if isFullyAudited for the table
-   */
-  private void changeAuditTrailVisibility() {
-    // always hide button in the audit trail window
-    if ("3690EB6BA1614375A6F058BBA61B19BC".equals(tabId)) {
-      removeElement("AUDIT_TRAIL");
-      return;
-    }
-    if (tabId != null) {
-      OBContext.setAdminMode();
-      try {
-        // ActivationKey already initialized in i.e. HSAS, so just take static info
-        if (ActivationKey.isActiveInstance()) {
-          // is an obps instance
-          Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-          if (!tab.getTable().isFullyAudited()) {
-            // remove icon
-            removeElement("AUDIT_TRAIL");
-          }
-        }
-      } finally {
-        OBContext.restorePreviousMode();
-      }
-    }
-  }
-
   public void prepareRelationTemplateNoSearch() {
     isRelation = true;
     removeElement("FIND");
@@ -405,8 +343,6 @@ public class ToolBar {
         && !pdf.contains("payments")) {
       removeElement("EMAIL");
     }
-
-    changeAuditTrailVisibility();
   }
 
   public void prepareSimpleToolBarTemplate() {
@@ -442,7 +378,6 @@ public class ToolBar {
     removeElement("RELATED_INFO");
 
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
-    removeElement("AUDIT_TRAIL");
   }
 
   public void prepareRelationBarTemplate(boolean hasPrevious, boolean hasNext) {
@@ -487,7 +422,6 @@ public class ToolBar {
               language), excelScript));
 
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
-    removeElement("AUDIT_TRAIL");
   }
 
   public void prepareSimpleExcelToolBarTemplate(String excelScript) {
@@ -514,7 +448,6 @@ public class ToolBar {
               language), excelScript));
 
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
-    removeElement("AUDIT_TRAIL");
 
   }
 
@@ -539,7 +472,6 @@ public class ToolBar {
       removeElement("NEXT_RELATION_DISABLED");
 
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
-    removeElement("AUDIT_TRAIL");
     removeElement("RELATED_INFO");
   }
 
@@ -629,7 +561,6 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("EMAIL"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("AUDIT_SHOW_RELATION_DISABLED"),
           lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("AUDIT_TRAIL"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR5"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("FIRST_RELATION"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("PREVIOUS"), lastType, false));
