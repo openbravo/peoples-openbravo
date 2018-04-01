@@ -177,10 +177,6 @@ public class ToolBar {
       return "changeAuditStatus();";
     } else if (name.equals("AUDIT_RELATION")) {
       return "changeAuditStatusRelation();";
-    } else if (name.equals("FIRST_RELATION")) {
-      return "dijit.byId('grid').goToFirstRow();";
-    } else if (name.equals("LAST_RELATION")) {
-      return "dijit.byId('grid').goToLastRow();";
     } else if (name.equals("GRID_VIEW")) {
       return !isRelation ? "submitCommandForm('RELATION', isUserChanges, null, '" + servlet_action
           + (isSrcWindow ? "" : "_Relation") + ".html', '_self', null, true);" : "";
@@ -229,12 +225,6 @@ public class ToolBar {
         new ToolBar_Button(base_direction, "Audit", Utility.messageBD(conn, "ShowAudit", language),
             getButtonScript("AUDIT_RELATION"), false));
     buttons.put("SEPARATOR5", new ToolBar_Space(base_direction));
-    buttons.put("FIRST_RELATION",
-        new ToolBar_Button(base_direction, "First", Utility.messageBD(conn, "GotoFirst", language),
-            getButtonScript("FIRST_RELATION")));
-    buttons.put("LAST_RELATION",
-        new ToolBar_Button(base_direction, "Last", Utility.messageBD(conn, "GotoLast", language),
-            getButtonScript("LAST_RELATION")));
 
     buttons.put("SEPARATOR6", new ToolBar_Space(base_direction));
     // buttons.put("PREVIOUS_RELATION", new ToolBar_Button(base_direction,
@@ -284,8 +274,6 @@ public class ToolBar {
     removeElement("FIND");
     removeElement("SEPARATOR2");
     removeElement("EXCEL");
-    removeElement("FIRST_RELATION");
-    removeElement("LAST_RELATION");
     removeElement("PREVIOUS_RELATION");
     removeElement("PREVIOUS_RELATION_DISABLED");
     removeElement("NEXT_RELATION");
@@ -316,8 +304,6 @@ public class ToolBar {
     removeElement("FIND");
     removeElement("SEPARATOR2");
     removeElement("EXCEL");
-    removeElement("FIRST_RELATION");
-    removeElement("LAST_RELATION");
     removeElement("EMAIL");
     removeElement("PRINT");
 
@@ -348,8 +334,6 @@ public class ToolBar {
   public void prepareSimpleExcelToolBarTemplate(String excelScript) {
     removeElement("FIND");
     removeElement("SEPARATOR2");
-    removeElement("FIRST_RELATION");
-    removeElement("LAST_RELATION");
     removeElement("PREVIOUS_RELATION");
     removeElement("PREVIOUS_RELATION_DISABLED");
     removeElement("NEXT_RELATION");
@@ -366,8 +350,6 @@ public class ToolBar {
   }
 
   public void prepareQueryTemplate(boolean hasPrevious, boolean hasNext, boolean isTest) {
-    removeElement("FIRST_RELATION");
-    removeElement("LAST_RELATION");
 
     if (!hasPrevious)
       removeElement("PREVIOUS_RELATION");
@@ -462,10 +444,8 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("AUDIT_SHOW_RELATION_DISABLED"),
           lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR5"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("FIRST_RELATION"), lastType, false));
       // toolbar.append("<td class=\"TB_Bookmark\" width=\"5px\"><nobr id=\"bookmark\"></nobr></td>\n"
       // );
-      toolbar.append(transformElementsToString(buttons.get("LAST_RELATION"), lastType, false));
       if (isRelation) {
         toolbar.append("<td width=\"1\"><img src=\"").append(base_direction)
             .append("/images/blank.gif\" style=\"width: 7px;\" border=\"0\">");
