@@ -157,17 +157,6 @@ public class ToolBar {
       return "submitCommandForm('SAVE_" + (isNew ? "NEW" : "EDIT") + name.substring(4)
           + "', true, null, '" + servlet_action + (isSrcWindow ? "" : "_Relation")
           + ".html', '_self', true, false);";
-    } else if (name.equals("ATTACHMENT")) {
-      return ((grid_id == null || grid_id.equals("")) ? ""
-          : "if (dijit.byId('"
-              + grid_id
-              + "').getSelectedRows()=='') {showJSMessage(23);resizeArea(true);calculateMsgBoxWidth();return false;} ")
-          + " openServletNewWindow('DEFAULT', false, '../businessUtility/TabAttachments_FS.html?inpKey=' + "
-          + ((grid_id == null || grid_id.equals("")) ? keyfield + ".value" : "dijit.byId('"
-              + grid_id + "').getSelectedRows()")
-          + "+'&inpEditable="
-          + (isEditable ? "Y" : "N")
-          + "', 'ATTACHMENT', null, true, 600, 700, true);";
     } else if (name.equals("EXCEL")) {
       return "openExcel('" + servlet_action + "_Excel.xls?Command=RELATION_XLS', '_blank');";
     } else if (name.equals("GRIDEXCEL")) {
@@ -249,11 +238,6 @@ public class ToolBar {
               .messageBD(conn, "Refresh", language), getButtonScript("REFRESH")));
     }
 
-    buttons.put(
-        "ATTACHMENT",
-        new ToolBar_Button(base_direction, "Attachment", Utility.messageBD(conn, "Attachment",
-            language), getButtonScript("ATTACHMENT"), null, hasAttachments ? "AttachedDocuments"
-            : "Attachment"));
     buttons.put(
         "EXCEL",
         new ToolBar_Button(base_direction, "Excel", Utility
@@ -338,7 +322,6 @@ public class ToolBar {
     removeElement("NEW");
     removeElement("FIND");
     removeElement("SEPARATOR2");
-    removeElement("ATTACHMENT");
     removeElement("EXCEL");
     removeElement("GRIDEXCEL");
     removeElement("GRIDCSV");
@@ -375,7 +358,6 @@ public class ToolBar {
     removeElement("NEW");
     removeElement("FIND");
     removeElement("SEPARATOR2");
-    removeElement("ATTACHMENT");
     removeElement("EXCEL");
     removeElement("GRIDEXCEL");
     removeElement("GRIDCSV");
@@ -413,7 +395,6 @@ public class ToolBar {
     removeElement("NEW");
     removeElement("FIND");
     removeElement("SEPARATOR2");
-    removeElement("ATTACHMENT");
     removeElement("GRIDEXCEL");
     removeElement("GRIDCSV");
     removeElement("GRIDPDF");
@@ -439,7 +420,6 @@ public class ToolBar {
     removeElement("GRIDEXCEL");
     removeElement("GRIDCSV");
     removeElement("GRIDPDF");
-    removeElement("ATTACHMENT");
     removeElement("FIRST_RELATION");
     removeElement("LAST_RELATION");
 
@@ -531,7 +511,6 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR3"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR4"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("REFRESH"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("ATTACHMENT"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("EXCEL"), lastType, false));
       // if some module still runs this code path -> Log error with StackTrace
       if (buttons.containsKey("GRIDEXCEL") || buttons.containsKey("GRIDCSV")
