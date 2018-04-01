@@ -47,7 +47,6 @@ public class ToolBar {
   private boolean hasAttachments = false;
   private boolean email = false;
   private String tabId;
-  private boolean deleteable = true;
   private boolean hasNewButton = true;
 
   public void setEmail(boolean email) {
@@ -64,10 +63,6 @@ public class ToolBar {
    */
   public void setTabId(String tabId) {
     this.tabId = tabId;
-  }
-
-  public void setDeleteable(boolean deleteable) {
-    this.deleteable = deleteable;
   }
 
   Hashtable<String, HTMLElement> buttons = new Hashtable<String, HTMLElement>();
@@ -241,8 +236,6 @@ public class ToolBar {
       return "dijit.byId('grid').goToPreviousRow();";
     } else if (grid_id != null && !grid_id.equals("") && name.equals("NEXT")) {
       return "dijit.byId('grid').goToNextRow();";
-    } else if (name.equals("DELETE_RELATION")) {
-      return "dijit.byId('grid').deleteRow();";
     } else if (name.equals("FIRST_RELATION")) {
       return "dijit.byId('grid').goToFirstRow();";
     } else if (name.equals("LAST_RELATION")) {
@@ -278,11 +271,6 @@ public class ToolBar {
             getButtonScript("FIND")));
     buttons.put("SEPARATOR2", new ToolBar_Space(base_direction));
     buttons.put("SEPARATOR3", new ToolBar_Space(base_direction));
-    if (isEditable) {
-      buttons.put("DELETE_RELATION",
-          new ToolBar_Button(base_direction, "Delete", Utility.messageBD(conn, "Delete", language),
-              getButtonScript("DELETE_RELATION")));
-    }
     buttons.put("SEPARATOR4", new ToolBar_Space(base_direction));
 
     if (Utility.isNewUI()) {
@@ -413,10 +401,6 @@ public class ToolBar {
     removeElement("NEXT_RELATION");
     removeElement("NEXT_RELATION_DISABLED");
 
-    if (!deleteable) {
-      removeElement("DELETE_RELATION");
-    }
-
     if (pdf != null && !pdf.contains("orders") && !pdf.contains("invoices")
         && !pdf.contains("payments")) {
       removeElement("EMAIL");
@@ -429,7 +413,6 @@ public class ToolBar {
     removeElement("NEW");
     removeElement("FIND");
     removeElement("SEPARATOR2");
-    removeElement("DELETE_RELATION");
     removeElement("ATTACHMENT");
     removeElement("EXCEL");
     removeElement("GRIDEXCEL");
@@ -470,7 +453,6 @@ public class ToolBar {
     removeElement("NEW");
     removeElement("FIND");
     removeElement("SEPARATOR2");
-    removeElement("DELETE_RELATION");
     removeElement("ATTACHMENT");
     removeElement("EXCEL");
     removeElement("GRIDEXCEL");
@@ -512,7 +494,6 @@ public class ToolBar {
     removeElement("NEW");
     removeElement("FIND");
     removeElement("SEPARATOR2");
-    removeElement("DELETE_RELATION");
     removeElement("ATTACHMENT");
     removeElement("GRIDEXCEL");
     removeElement("GRIDCSV");
@@ -539,7 +520,6 @@ public class ToolBar {
 
   public void prepareQueryTemplate(boolean hasPrevious, boolean hasNext, boolean isTest) {
     removeElement("NEW");
-    removeElement("DELETE_RELATION");
     removeElement("GRIDEXCEL");
     removeElement("GRIDCSV");
     removeElement("GRIDPDF");
@@ -636,7 +616,6 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("FIND"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR2"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR3"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("DELETE_RELATION"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR4"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("REFRESH"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("ATTACHMENT"), lastType, false));
