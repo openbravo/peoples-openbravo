@@ -142,11 +142,7 @@ public class ToolBar {
   }
 
   private String getButtonScript(String name) {
-    if (name.startsWith("SAVE")) {
-      return "submitCommandForm('SAVE_" + (isNew ? "NEW" : "EDIT") + name.substring(4)
-          + "', true, null, '" + servlet_action + (isSrcWindow ? "" : "_Relation")
-          + ".html', '_self', true, false);";
-    } else if (name.equals("EXCEL")) {
+    if (name.equals("EXCEL")) {
       return "openExcel('" + servlet_action + "_Excel.xls?Command=RELATION_XLS', '_blank');";
     } else if (name.equals("PRINT")) {
       return "openPDFSession('"
@@ -170,10 +166,6 @@ public class ToolBar {
           + ((grid_id == null || grid_id.equals("")) ? "null" : "dijit.byId('" + grid_id
               + "').getSelectedRows()") + ", "
           + ((grid_id == null || grid_id.equals("")) ? "true" : "null") + ");";
-    } else if (name.equals("AUDIT_EDITION")) {
-      return "changeAuditStatus();";
-    } else if (name.equals("AUDIT_RELATION")) {
-      return "changeAuditStatusRelation();";
     } else if (name.equals("GRID_VIEW")) {
       return !isRelation ? "submitCommandForm('RELATION', isUserChanges, null, '" + servlet_action
           + (isSrcWindow ? "" : "_Relation") + ".html', '_self', null, true);" : "";
@@ -218,9 +210,6 @@ public class ToolBar {
           new ToolBar_Button(base_direction, "Email", Utility.messageBD(conn, "Email", language),
               getButtonScript("EMAIL")));
     }
-    buttons.put("AUDIT_SHOW_RELATION_DISABLED",
-        new ToolBar_Button(base_direction, "Audit", Utility.messageBD(conn, "ShowAudit", language),
-            getButtonScript("AUDIT_RELATION"), false));
     buttons.put("SEPARATOR5", new ToolBar_Space(base_direction));
 
     buttons.put("SEPARATOR6", new ToolBar_Space(base_direction));
@@ -272,7 +261,6 @@ public class ToolBar {
           new ToolBar_Button(base_direction, "Email", Utility.messageBD(conn, "Email", language),
               pdf));
     }
-    removeElement("AUDIT_SHOW_RELATION_DISABLED");
   }
 
   public void prepareRelationBarTemplate(boolean hasPrevious, boolean hasNext) {
@@ -306,7 +294,6 @@ public class ToolBar {
           new ToolBar_Button(base_direction, "Excel", Utility.messageBD(conn, "ExportExcel",
               language), excelScript));
 
-    removeElement("AUDIT_SHOW_RELATION_DISABLED");
   }
 
   public void prepareSimpleExcelToolBarTemplate(String excelScript) {
@@ -323,8 +310,6 @@ public class ToolBar {
           new ToolBar_Button(base_direction, "Excel", Utility.messageBD(conn, "ExportExcel",
               language), excelScript));
 
-    removeElement("AUDIT_SHOW_RELATION_DISABLED");
-
   }
 
   public void prepareQueryTemplate(boolean hasPrevious, boolean hasNext, boolean isTest) {
@@ -338,7 +323,6 @@ public class ToolBar {
     else
       removeElement("NEXT_RELATION_DISABLED");
 
-    removeElement("AUDIT_SHOW_RELATION_DISABLED");
   }
 
   private String transformElementsToString(HTMLElement element, Vector<String> vecLastType) {
@@ -402,8 +386,6 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("EXCEL"), lastType));
       toolbar.append(transformElementsToString(buttons.get("PRINT"), lastType));
       toolbar.append(transformElementsToString(buttons.get("EMAIL"), lastType));
-      toolbar.append(transformElementsToString(buttons.get("AUDIT_SHOW_RELATION_DISABLED"),
-          lastType));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR5"), lastType));
       // toolbar.append("<td class=\"TB_Bookmark\" width=\"5px\"><nobr id=\"bookmark\"></nobr></td>\n"
       // );
