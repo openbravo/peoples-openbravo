@@ -35,7 +35,6 @@ public class ToolBar {
   private String servlet_action = "";
   private boolean isNew = false;
   private String keyfield = "";
-  private String form = "document.forms[0]";
   private String grid_id = "";
   private String pdf = "";
   private boolean isDirectPrint = false;
@@ -421,23 +420,14 @@ public class ToolBar {
     }
   }
 
-  public void prepareRelationTemplateNoSearch(boolean hasTree, boolean isFiltered, boolean isTest,
-      boolean isReadOnly, boolean isAuditEnabled) {
-    prepareRelationTemplate(hasTree, isFiltered, isTest, isReadOnly, isAuditEnabled);
-  }
-
-  private void prepareRelationTemplate(boolean hasTree, boolean isFiltered, boolean isTest,
-      boolean isReadOnly, boolean isAuditEnabled) {
+  public void prepareRelationTemplateNoSearch() {
     isRelation = true;
     removeElement("FIND");
     removeElement("EXCEL");
 
     removeElement("AUDIT_SHOW_EDITION_DISABLED");
     removeElement("AUDIT_SHOW_EDITION_ENABLED");
-    if (isAuditEnabled)
-      removeElement("AUDIT_SHOW_RELATION_DISABLED");
-    else
-      removeElement("AUDIT_SHOW_RELATION_ENABLED");
+    removeElement("AUDIT_SHOW_RELATION_ENABLED");
     removeElement("PREVIOUS_RELATION");
     removeElement("PREVIOUS_RELATION_DISABLED");
     removeElement("NEXT_RELATION");
@@ -447,12 +437,7 @@ public class ToolBar {
       removeElement("DELETE_RELATION");
     }
 
-    if (!hasTree)
-      removeElement("TREE");
-    if (!isTest)
-      removeAllTests();
-    if (isReadOnly)
-      removeReadOnly();
+    removeElement("TREE");
 
     if (pdf != null && !pdf.contains("orders") && !pdf.contains("invoices")
         && !pdf.contains("payments")) {
@@ -607,8 +592,6 @@ public class ToolBar {
       removeElement("NEXT_RELATION");
     else
       removeElement("NEXT_RELATION_DISABLED");
-    if (!isTest)
-      removeAllTests();
 
     removeElement("AUDIT_SHOW_EDITION_DISABLED");
     removeElement("AUDIT_SHOW_EDITION_ENABLED");
@@ -616,19 +599,6 @@ public class ToolBar {
     removeElement("AUDIT_SHOW_RELATION_ENABLED");
     removeElement("AUDIT_TRAIL");
     removeElement("RELATED_INFO");
-  }
-
-  private void removeAllTests() {
-
-  }
-
-  private void removeReadOnly() {
-    removeSingleRecord();
-  }
-
-  private void removeSingleRecord() {
-    removeElement("NEW");
-    removeElement("DELETE_RELATION");
   }
 
   private String transformElementsToString(HTMLElement element, Vector<String> vecLastType,

@@ -280,7 +280,7 @@ public class Transactions extends HttpSecureAppServlet {
         "document.frmMain.inpfinFinancialAccountId", "", "", "".equals("Y"), "FinancialAccount",
         strReplaceWith, true);
 
-    toolbar.prepareRelationTemplateNoSearch(false, false, false, false, false);
+    toolbar.prepareRelationTemplateNoSearch();
     toolbar.prepareSimpleToolBarTemplate();
 
     xmlDocument.setParameter("toolbar", toolbar.toString());
