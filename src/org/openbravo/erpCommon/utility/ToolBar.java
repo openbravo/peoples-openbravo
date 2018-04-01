@@ -205,10 +205,6 @@ public class ToolBar {
       return "changeAuditStatus();";
     } else if (name.equals("AUDIT_RELATION")) {
       return "changeAuditStatusRelation();";
-    } else if (grid_id != null && !grid_id.equals("") && name.equals("PREVIOUS")) {
-      return "dijit.byId('grid').goToPreviousRow();";
-    } else if (grid_id != null && !grid_id.equals("") && name.equals("NEXT")) {
-      return "dijit.byId('grid').goToNextRow();";
     } else if (name.equals("FIRST_RELATION")) {
       return "dijit.byId('grid').goToFirstRow();";
     } else if (name.equals("LAST_RELATION")) {
@@ -290,13 +286,6 @@ public class ToolBar {
     buttons.put("FIRST_RELATION",
         new ToolBar_Button(base_direction, "First", Utility.messageBD(conn, "GotoFirst", language),
             getButtonScript("FIRST_RELATION")));
-    buttons.put(
-        "PREVIOUS",
-        new ToolBar_Button(base_direction, "Previous", Utility.messageBD(conn, "GotoPrevious",
-            language), getButtonScript("PREVIOUS")));
-    buttons.put("NEXT",
-        new ToolBar_Button(base_direction, "Next", Utility.messageBD(conn, "GotoNext", language),
-            getButtonScript("NEXT")));
     buttons.put("LAST_RELATION",
         new ToolBar_Button(base_direction, "Last", Utility.messageBD(conn, "GotoLast", language),
             getButtonScript("LAST_RELATION")));
@@ -355,8 +344,6 @@ public class ToolBar {
     removeElement("GRIDCSV");
     removeElement("GRIDPDF");
     removeElement("FIRST_RELATION");
-    removeElement("PREVIOUS");
-    removeElement("NEXT");
     removeElement("LAST_RELATION");
     removeElement("PREVIOUS_RELATION");
     removeElement("PREVIOUS_RELATION_DISABLED");
@@ -394,8 +381,6 @@ public class ToolBar {
     removeElement("GRIDCSV");
     removeElement("GRIDPDF");
     removeElement("FIRST_RELATION");
-    removeElement("PREVIOUS");
-    removeElement("NEXT");
     removeElement("LAST_RELATION");
     removeElement("EMAIL");
     removeElement("PRINT");
@@ -433,8 +418,6 @@ public class ToolBar {
     removeElement("GRIDCSV");
     removeElement("GRIDPDF");
     removeElement("FIRST_RELATION");
-    removeElement("PREVIOUS");
-    removeElement("NEXT");
     removeElement("LAST_RELATION");
     removeElement("PREVIOUS_RELATION");
     removeElement("PREVIOUS_RELATION_DISABLED");
@@ -459,8 +442,6 @@ public class ToolBar {
     removeElement("ATTACHMENT");
     removeElement("FIRST_RELATION");
     removeElement("LAST_RELATION");
-    removeElement("PREVIOUS");
-    removeElement("NEXT");
 
     if (!hasPrevious)
       removeElement("PREVIOUS_RELATION");
@@ -563,10 +544,8 @@ public class ToolBar {
           lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR5"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("FIRST_RELATION"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("PREVIOUS"), lastType, false));
       // toolbar.append("<td class=\"TB_Bookmark\" width=\"5px\"><nobr id=\"bookmark\"></nobr></td>\n"
       // );
-      toolbar.append(transformElementsToString(buttons.get("NEXT"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("LAST_RELATION"), lastType, false));
       if (isRelation) {
         toolbar.append("<td width=\"1\"><img src=\"").append(base_direction)
