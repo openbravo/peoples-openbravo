@@ -470,165 +470,6 @@ public class ToolBar {
     }
   }
 
-  public void prepareInfoTemplate(boolean hasPrevious, boolean hasNext, boolean isTest) {
-    removeElement("NEW");
-    removeElement("EDIT");
-    removeElement("RELATION");
-    removeElement("FIND");
-    removeElement("SEPARATOR2");
-    removeElement("SAVE_RELATION");
-    removeElement("SAVE_NEW");
-    removeElement("SAVE_EDIT");
-    removeElement("SAVE_NEXT");
-    removeElement("SEPARATOR3");
-    removeElement("DELETE");
-    removeElement("DELETE_RELATION");
-    removeElement("SEPARATOR4");
-    // removeElement("REFRESH");
-    removeElement("UNDO");
-    removeElement("TREE");
-    removeElement("ATTACHMENT");
-    removeElement("EXCEL");
-    removeElement("GRIDEXCEL");
-    removeElement("GRIDCSV");
-    removeElement("GRIDPDF");
-    removeElement("PRINT");
-    removeElement("EMAIL");
-    removeElement("SEARCH");
-    removeElement("SEARCH_FILTERED");
-    removeElement("SEPARATOR5");
-    removeElement("FIRST");
-    removeElement("FIRST_RELATION");
-    removeElement("PREVIOUS");
-    removeElement("NEXT");
-    removeElement("LAST");
-    removeElement("LAST_RELATION");
-    removeElement("SEPARATOR6");
-
-    removeElement("AUDIT_SHOW_EDITION_DISABLED");
-    removeElement("AUDIT_SHOW_EDITION_ENABLED");
-    removeElement("AUDIT_SHOW_RELATION_DISABLED");
-    removeElement("AUDIT_SHOW_RELATION_ENABLED");
-    removeElement("AUDIT_TRAIL");
-
-    if (!hasPrevious)
-      removeElement("PREVIOUS_RELATION");
-    else
-      removeElement("PREVIOUS_RELATION_DISABLED");
-    if (!hasNext)
-      removeElement("NEXT_RELATION");
-    else
-      removeElement("NEXT_RELATION_DISABLED");
-    if (!isTest)
-      removeAllTests();
-  }
-
-  public void prepareEditionTemplate(boolean hasTree, boolean isFiltered, boolean isTest,
-      String uiPattern, boolean isAuditEnabled) {
-    removeElement("EDIT");
-    removeElement("RELATION");
-    removeElement("DELETE_RELATION");
-    removeElement("EXCEL");
-    removeElement("GRIDEXCEL");
-    removeElement("GRIDCSV");
-    removeElement("GRIDPDF");
-    removeElement("FIRST_RELATION");
-    removeElement("LAST_RELATION");
-    removeElement("FIND");
-
-    removeElement("AUDIT_SHOW_RELATION_ENABLED");
-    removeElement("AUDIT_SHOW_RELATION_DISABLED");
-
-    if (isNew) {
-      removeElement("AUDIT_SHOW_EDITION_DISABLED");
-      removeElement("AUDIT_SHOW_EDITION_ENABLED");
-      removeElement("AUDIT_TRAIL");
-    } else {
-      if (isAuditEnabled)
-        removeElement("AUDIT_SHOW_EDITION_DISABLED");
-      else
-        removeElement("AUDIT_SHOW_EDITION_ENABLED");
-    }
-    removeElement("PREVIOUS_RELATION");
-    removeElement("PREVIOUS_RELATION_DISABLED");
-    removeElement("NEXT_RELATION");
-    removeElement("NEXT_RELATION_DISABLED");
-
-    if (!deleteable) {
-      removeElement("DELETE");
-    }
-
-    // This piece of code used to control the email icon in the manual window. At this point we only
-    // use the email functionality
-    // only to send order (purchase or sales) and invoices (purchase or sales)
-    if (pdf != null && !pdf.contains("orders") && !pdf.contains("invoices")
-        && !pdf.contains("payments")) {
-      removeElement("EMAIL");
-    }
-    if (!hasTree)
-      removeElement("TREE");
-    if (isNew) {
-      removeElement("SAVE_NEXT");
-      removeElement("DELETE");
-      removeElement("ATTACHMENT");
-    }
-    if (isFiltered)
-      removeElement("SEARCH");
-    else
-      removeElement("SEARCH_FILTERED");
-    if (!isTest)
-      removeAllTests();
-    if (uiPattern.equals("RO")) // read-only
-      removeReadOnly();
-    if (uiPattern.equals("SR")) // single record
-      removeSingleRecord();
-    if (uiPattern.equals("ED")) // edit or delete only record
-      removeEditOrDeleteOnlyRecord();
-
-    changeAuditTrailVisibility();
-  }
-
-  public void prepareEditionTemplateNoSearch(boolean hasTree, boolean isFiltered, boolean isTest,
-      String uiPattern, boolean isAuditEnabled) {
-    removeElement("SEARCH");
-    removeElement("SEARCH_FILTERED");
-    prepareEditionTemplate(hasTree, isFiltered, isTest, uiPattern, isAuditEnabled);
-  }
-
-  /**
-   * Deprecated 2.50 use instead
-   * {@link ToolBar#prepareEditionTemplateNoSearch(boolean, boolean, boolean, String, boolean)}
-   * 
-   * @param hasTree
-   * @param isFiltered
-   * @param isTest
-   * @param isReadOnly
-   * @param isAuditEnabled
-   */
-  @Deprecated
-  public void prepareEditionTemplateNoSearch(boolean hasTree, boolean isFiltered, boolean isTest,
-      boolean isReadOnly, boolean isAuditEnabled) {
-    removeElement("SEARCH");
-    removeElement("SEARCH_FILTERED");
-    prepareEditionTemplate(hasTree, isFiltered, isTest, isReadOnly, isAuditEnabled);
-  }
-
-  /**
-   * Deprecated 2.50 used instead
-   * {@link ToolBar#prepareEditionTemplate(boolean hasTree, boolean isFiltered, boolean isTest, String uiPattern, boolean isAuditEnabled)}
-   * 
-   * @param hasTree
-   * @param isFiltered
-   * @param isTest
-   * @param isReadOnly
-   * @param isAuditEnabled
-   */
-  @Deprecated
-  public void prepareEditionTemplate(boolean hasTree, boolean isFiltered, boolean isTest,
-      boolean isReadOnly, boolean isAuditEnabled) {
-    prepareEditionTemplate(hasTree, isFiltered, isTest, (isReadOnly ? "RO" : "STD"), isAuditEnabled);
-  }
-
   public void prepareRelationTemplateNoSearch(boolean hasTree, boolean isFiltered, boolean isTest,
       boolean isReadOnly, boolean isAuditEnabled) {
     removeElement("SEARCH");
@@ -636,7 +477,7 @@ public class ToolBar {
     prepareRelationTemplate(hasTree, isFiltered, isTest, isReadOnly, isAuditEnabled);
   }
 
-  public void prepareRelationTemplate(boolean hasTree, boolean isFiltered, boolean isTest,
+  private void prepareRelationTemplate(boolean hasTree, boolean isFiltered, boolean isTest,
       boolean isReadOnly, boolean isAuditEnabled) {
     isRelation = true;
     removeElement("EDIT");
@@ -684,11 +525,6 @@ public class ToolBar {
     }
 
     changeAuditTrailVisibility();
-  }
-
-  // AL New toolbars
-  public void prepareSimpleToolBarTemplateFrame() {
-
   }
 
   public void prepareSimpleToolBarTemplate() {
@@ -740,56 +576,6 @@ public class ToolBar {
     }
     removeElement("RELATED_INFO");
 
-    removeElement("AUDIT_SHOW_EDITION_DISABLED");
-    removeElement("AUDIT_SHOW_EDITION_ENABLED");
-    removeElement("AUDIT_SHOW_RELATION_DISABLED");
-    removeElement("AUDIT_SHOW_RELATION_ENABLED");
-    removeElement("AUDIT_TRAIL");
-  }
-
-  // Simple toolbar with save button
-  public void prepareSimpleSaveToolBarTemplate() {
-    removeElement("RELATED_INFO");
-    removeElement("SEPARATOR1");
-    removeElement("NEW");
-    removeElement("EDIT");
-    removeElement("RELATION");
-    removeElement("FIND");
-    removeElement("SEPARATOR2");
-    removeElement("SAVE_RELATION");
-    removeElement("SAVE_NEW");
-    removeElement("SAVE_NEXT");
-    removeElement("DELETE");
-    removeElement("DELETE_RELATION");
-    removeElement("UNDO");
-    removeElement("TREE");
-    removeElement("ATTACHMENT");
-    removeElement("EXCEL");
-    removeElement("GRIDEXCEL");
-    removeElement("GRIDCSV");
-    removeElement("GRIDPDF");
-    removeElement("SEARCH");
-    removeElement("SEARCH_FILTERED");
-    removeElement("ORDERBY");
-    removeElement("ORDERBY_FILTERED");
-    removeElement("FIRST");
-    removeElement("FIRST_RELATION");
-    removeElement("PREVIOUS");
-    removeElement("NEXT");
-    removeElement("LAST");
-    removeElement("LAST_RELATION");
-    removeElement("PREVIOUS_RELATION");
-    removeElement("PREVIOUS_RELATION_DISABLED");
-    removeElement("NEXT_RELATION");
-    removeElement("NEXT_RELATION_DISABLED");
-    if (pdf != null && !pdf.equals("") && !pdf.equals("..")) {
-      buttons.put("PRINT",
-          new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn, "Print", language),
-              pdf));
-      buttons.put("EMAIL",
-          new ToolBar_Button(base_direction, "Email", Utility.messageBD(conn, "Email", language),
-              pdf));
-    }
     removeElement("AUDIT_SHOW_EDITION_DISABLED");
     removeElement("AUDIT_SHOW_EDITION_ENABLED");
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
@@ -910,90 +696,6 @@ public class ToolBar {
 
   }
 
-  // GD Toolbar with Menu, Refresh and Excel buttons
-  public void prepareExcelToolBarTemplate() {
-    removeElement("NEW");
-    removeElement("EDIT");
-    removeElement("RELATION");
-    removeElement("FIND");
-    removeElement("SEPARATOR2");
-    removeElement("SAVE_RELATION");
-    removeElement("SAVE_NEW");
-    removeElement("SAVE_EDIT");
-    removeElement("SAVE_NEXT");
-    removeElement("DELETE");
-    removeElement("DELETE_RELATION");
-    removeElement("UNDO");
-    removeElement("TREE");
-    removeElement("GRIDEXCEL");
-    removeElement("GRIDCSV");
-    removeElement("GRIDPDF");
-    removeElement("ATTACHMENT");
-    removeElement("SEARCH");
-    removeElement("SEARCH_FILTERED");
-    removeElement("ORDERBY");
-    removeElement("ORDERBY_FILTERED");
-    removeElement("FIRST");
-    removeElement("FIRST_RELATION");
-    removeElement("PREVIOUS");
-    removeElement("NEXT");
-    removeElement("LAST");
-    removeElement("LAST_RELATION");
-    removeElement("PREVIOUS_RELATION");
-    removeElement("PREVIOUS_RELATION_DISABLED");
-    removeElement("NEXT_RELATION");
-    removeElement("NEXT_RELATION_DISABLED");
-
-    removeElement("AUDIT_SHOW_EDITION_DISABLED");
-    removeElement("AUDIT_SHOW_EDITION_ENABLED");
-    removeElement("AUDIT_SHOW_RELATION_DISABLED");
-    removeElement("AUDIT_SHOW_RELATION_ENABLED");
-    removeElement("AUDIT_TRAIL");
-  }
-
-  // AL
-  public void prepareSortableTemplate(boolean isTest) {
-    removeElement("NEW");
-    removeElement("EDIT");
-    removeElement("RELATION");
-    removeElement("SAVE_RELATION");
-    removeElement("SAVE_NEW");
-    removeElement("SAVE_NEXT");
-    removeElement("DELETE");
-    removeElement("DELETE_RELATION");
-    removeElement("UNDO");
-    removeElement("TREE");
-    removeElement("ATTACHMENT");
-    removeElement("EXCEL");
-    removeElement("GRIDEXCEL");
-    removeElement("GRIDCSV");
-    removeElement("GRIDPDF");
-    removeElement("SEARCH");
-    removeElement("SEARCH_FILTERED");
-    removeElement("ORDERBY");
-    removeElement("ORDERBY_FILTERED");
-    removeElement("FIRST");
-    removeElement("FIRST_RELATION");
-    removeElement("PREVIOUS");
-    removeElement("NEXT");
-    removeElement("LAST");
-    removeElement("LAST_RELATION");
-    removeElement("PREVIOUS_RELATION");
-    removeElement("PREVIOUS_RELATION_DISABLED");
-    removeElement("NEXT_RELATION");
-    removeElement("NEXT_RELATION_DISABLED");
-    removeElement("FIND");
-    removeElement("RELATED_INFO");
-    if (!isTest)
-      removeAllTests();
-
-    removeElement("AUDIT_SHOW_EDITION_DISABLED");
-    removeElement("AUDIT_SHOW_EDITION_ENABLED");
-    removeElement("AUDIT_SHOW_RELATION_DISABLED");
-    removeElement("AUDIT_SHOW_RELATION_ENABLED");
-    removeElement("AUDIT_TRAIL");
-  }
-
   public void prepareQueryTemplate(boolean hasPrevious, boolean hasNext, boolean isTest) {
     removeElement("NEW");
     removeElement("EDIT");
@@ -1056,11 +758,6 @@ public class ToolBar {
     removeElement("SAVE_NEXT");
     removeElement("DELETE");
     removeElement("DELETE_RELATION");
-  }
-
-  private void removeEditOrDeleteOnlyRecord() {
-    removeElement("NEW");
-    removeElement("SAVE_NEW");
   }
 
   private String transformElementsToString(HTMLElement element, Vector<String> vecLastType,
