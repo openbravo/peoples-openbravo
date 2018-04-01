@@ -353,8 +353,7 @@ public class ToolBar {
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
   }
 
-  private String transformElementsToString(HTMLElement element, Vector<String> vecLastType,
-      boolean isReference) {
+  private String transformElementsToString(HTMLElement element, Vector<String> vecLastType) {
     Vector<String> localVecLastType = vecLastType;
     if (element == null)
       return "";
@@ -366,22 +365,7 @@ public class ToolBar {
       lastType = localVecLastType.elementAt(0);
     if (lastType.equals("SPACE") && element.elementType().equals("SPACE"))
       return "";
-    if (isReference) {
-      sbElement.append("<td width=\"1\">");
-      sbElement.append("<img src=\"").append(base_direction)
-          .append("/images/blank.gif\" class=\"Main_ToolBar_textlabel_bg_left\" border=\"0\">");
-      sbElement.append("</td>\n");
-      sbElement.append("<td class=\"Main_ToolBar_textlabel_bg_body\">");
-      sbElement
-          .append(
-              "<a class=\"Main_ToolBar_text_relatedinfo\" href=\"#\" onclick=\""
-                  + (this.isNew ? "logClick(null);" : "")
-                  + "openServletNewWindow('DEFAULT', true, '../utility/UsedByLink.html', 'LINKS', null, true, 500, 600, true);\">")
-          .append(Utility.messageBD(conn, "Linked Items", language)).append("</a></td>\n");
-    }
     sbElement.append("<td ");
-    if (isReference)
-      sbElement.append("class=\"Main_ToolBar_textlabel_bg_right\" ");
     if (element.elementType().equals("SPACE"))
       sbElement.append("class=\"Main_ToolBar_Separator_cell\" ");
     else if (!element.elementType().equals("HR"))
@@ -417,22 +401,22 @@ public class ToolBar {
             new ToolBar_Button(base_direction, "Relation", Utility.messageBD(conn, "Grid View",
                 language), getButtonScript("GRID_VIEW"), isRelation));
         buttons.put("SEPARATOR_NEWUI", new ToolBar_Space(base_direction));
-        toolbar.append(transformElementsToString(buttons.get("FORM_VIEW"), lastType, false));
-        toolbar.append(transformElementsToString(buttons.get("GRID_VIEW"), lastType, false));
-        toolbar.append(transformElementsToString(buttons.get("SEPARATOR_NEWUI"), lastType, false));
+        toolbar.append(transformElementsToString(buttons.get("FORM_VIEW"), lastType));
+        toolbar.append(transformElementsToString(buttons.get("GRID_VIEW"), lastType));
+        toolbar.append(transformElementsToString(buttons.get("SEPARATOR_NEWUI"), lastType));
       }
 
-      toolbar.append(transformElementsToString(buttons.get("FIND"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("SEPARATOR2"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("SEPARATOR3"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("SEPARATOR4"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("REFRESH"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("EXCEL"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("PRINT"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("EMAIL"), lastType, false));
+      toolbar.append(transformElementsToString(buttons.get("FIND"), lastType));
+      toolbar.append(transformElementsToString(buttons.get("SEPARATOR2"), lastType));
+      toolbar.append(transformElementsToString(buttons.get("SEPARATOR3"), lastType));
+      toolbar.append(transformElementsToString(buttons.get("SEPARATOR4"), lastType));
+      toolbar.append(transformElementsToString(buttons.get("REFRESH"), lastType));
+      toolbar.append(transformElementsToString(buttons.get("EXCEL"), lastType));
+      toolbar.append(transformElementsToString(buttons.get("PRINT"), lastType));
+      toolbar.append(transformElementsToString(buttons.get("EMAIL"), lastType));
       toolbar.append(transformElementsToString(buttons.get("AUDIT_SHOW_RELATION_DISABLED"),
-          lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("SEPARATOR5"), lastType, false));
+          lastType));
+      toolbar.append(transformElementsToString(buttons.get("SEPARATOR5"), lastType));
       // toolbar.append("<td class=\"TB_Bookmark\" width=\"5px\"><nobr id=\"bookmark\"></nobr></td>\n"
       // );
       if (isRelation) {
@@ -449,15 +433,13 @@ public class ToolBar {
         toolbar.append("<div style=\"padding: 0; margin: 0; border: 0; width: 9px;\" />");
         toolbar.append("</td>\n");
       }
-      toolbar.append(transformElementsToString(buttons.get("SEPARATOR6"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("PREVIOUS_RELATION"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("PREVIOUS_RELATION_DISABLED"), lastType,
-          false));
-      toolbar.append(transformElementsToString(buttons.get("NEXT_RELATION"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("NEXT_RELATION_DISABLED"), lastType,
-          false));
-      toolbar.append(transformElementsToString(buttons.get("SEPARATOR7"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("HR1"), lastType, false));
+      toolbar.append(transformElementsToString(buttons.get("SEPARATOR6"), lastType));
+      toolbar.append(transformElementsToString(buttons.get("PREVIOUS_RELATION"), lastType));
+      toolbar.append(transformElementsToString(buttons.get("PREVIOUS_RELATION_DISABLED"), lastType));
+      toolbar.append(transformElementsToString(buttons.get("NEXT_RELATION"), lastType));
+      toolbar.append(transformElementsToString(buttons.get("NEXT_RELATION_DISABLED"), lastType));
+      toolbar.append(transformElementsToString(buttons.get("SEPARATOR7"), lastType));
+      toolbar.append(transformElementsToString(buttons.get("HR1"), lastType));
     }
     toolbar.append("</tr>\n");
     toolbar.append("</table>\n");
