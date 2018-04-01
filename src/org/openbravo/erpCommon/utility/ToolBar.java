@@ -235,9 +235,6 @@ public class ToolBar {
           + ((grid_id == null || grid_id.equals("")) ? "true" : "null") + ");";
     } else if (name.equals("UNDO")) {
       return "windowUndo(" + form + ");";
-    } else if (name.equals("SEARCH")) {
-      // implementation does not longer exist
-      return "";
     } else if (name.equals("AUDIT_EDITION")) {
       return "changeAuditStatus();";
     } else if (name.equals("AUDIT_RELATION")) {
@@ -367,13 +364,6 @@ public class ToolBar {
           new ToolBar_Button(base_direction, "Email", Utility.messageBD(conn, "Email", language),
               getButtonScript("EMAIL")));
     }
-    buttons.put("SEARCH",
-        new ToolBar_Button(base_direction, "Search", Utility.messageBD(conn, "Search", language),
-            getButtonScript("SEARCH")));
-    buttons.put(
-        "SEARCH_FILTERED",
-        new ToolBar_Button(base_direction, "SearchFiltered", Utility.messageBD(conn, "Search",
-            language), getButtonScript("SEARCH")));
     buttons.put("AUDIT_SHOW_EDITION_ENABLED",
         new ToolBar_Button(base_direction, "Audit", Utility.messageBD(conn, "HideAudit", language),
             getButtonScript("AUDIT_EDITION"), true));
@@ -472,8 +462,6 @@ public class ToolBar {
 
   public void prepareRelationTemplateNoSearch(boolean hasTree, boolean isFiltered, boolean isTest,
       boolean isReadOnly, boolean isAuditEnabled) {
-    removeElement("SEARCH");
-    removeElement("SEARCH_FILTERED");
     prepareRelationTemplate(hasTree, isFiltered, isTest, isReadOnly, isAuditEnabled);
   }
 
@@ -510,10 +498,6 @@ public class ToolBar {
 
     if (!hasTree)
       removeElement("TREE");
-    if (isFiltered)
-      removeElement("SEARCH");
-    else
-      removeElement("SEARCH_FILTERED");
     if (!isTest)
       removeAllTests();
     if (isReadOnly)
@@ -546,8 +530,6 @@ public class ToolBar {
     removeElement("GRIDEXCEL");
     removeElement("GRIDCSV");
     removeElement("GRIDPDF");
-    removeElement("SEARCH");
-    removeElement("SEARCH_FILTERED");
     removeElement("FIRST");
     removeElement("FIRST_RELATION");
     removeElement("PREVIOUS");
@@ -603,8 +585,6 @@ public class ToolBar {
     removeElement("GRIDEXCEL");
     removeElement("GRIDCSV");
     removeElement("GRIDPDF");
-    removeElement("SEARCH");
-    removeElement("SEARCH_FILTERED");
     removeElement("FIRST");
     removeElement("FIRST_RELATION");
     removeElement("PREVIOUS");
@@ -660,8 +640,6 @@ public class ToolBar {
     removeElement("GRIDEXCEL");
     removeElement("GRIDCSV");
     removeElement("GRIDPDF");
-    removeElement("SEARCH");
-    removeElement("SEARCH_FILTERED");
     removeElement("FIRST");
     removeElement("FIRST_RELATION");
     removeElement("PREVIOUS");
@@ -703,8 +681,6 @@ public class ToolBar {
     removeElement("GRIDCSV");
     removeElement("GRIDPDF");
     removeElement("ATTACHMENT");
-    removeElement("SEARCH");
-    removeElement("SEARCH_FILTERED");
     removeElement("FIRST");
     removeElement("LAST");
     removeElement("FIRST_RELATION");
@@ -843,10 +819,6 @@ public class ToolBar {
       }
       toolbar.append(transformElementsToString(buttons.get("PRINT"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("EMAIL"), lastType, false));
-      // if some module still runs this code path -> Log error with StackTrace
-      if (buttons.containsKey("SEARCH") || buttons.containsKey("SEARCH_FILTERED")) {
-        log.error("Old 2.50 Buscador/Search functionality does no longer exist.", new Throwable());
-      }
       toolbar.append(transformElementsToString(buttons.get("AUDIT_SHOW_EDITION_ENABLED"), lastType,
           false));
       toolbar.append(transformElementsToString(buttons.get("AUDIT_SHOW_RELATION_ENABLED"),
