@@ -142,10 +142,7 @@ public class ToolBar {
   }
 
   private String getButtonScript(String name) {
-    if (name.equals("RELATED_INFO")) {
-      return (this.isNew ? "logClick(null);" : "")
-          + "openServletNewWindow('DEFAULT', true, '../utility/UsedByLink.html', 'LINKS', null, true, 500, 600, true);";
-    } else if (name.startsWith("SAVE")) {
+    if (name.startsWith("SAVE")) {
       return "submitCommandForm('SAVE_" + (isNew ? "NEW" : "EDIT") + name.substring(4)
           + "', true, null, '" + servlet_action + (isSrcWindow ? "" : "_Relation")
           + ".html', '_self', true, false);";
@@ -248,10 +245,6 @@ public class ToolBar {
 
     buttons.put("SEPARATOR7", new ToolBar_Space(base_direction));
     buttons.put("HR1", new ToolBar_HR());
-    buttons.put(
-        "RELATED_INFO",
-        new ToolBar_Button(base_direction, "RelatedInfo", Utility.messageBD(conn, "Linked Items",
-            language), getButtonScript("RELATED_INFO")));
   }
 
   public void prepareRelationTemplateNoSearch() {
@@ -291,8 +284,6 @@ public class ToolBar {
           new ToolBar_Button(base_direction, "Email", Utility.messageBD(conn, "Email", language),
               pdf));
     }
-    removeElement("RELATED_INFO");
-
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
   }
 
@@ -310,7 +301,6 @@ public class ToolBar {
     removeElement(hasPrevious ? "PREVIOUS_RELATION_DISABLED" : "PREVIOUS_RELATION");
     removeElement(hasNext ? "NEXT_RELATION_DISABLED" : "NEXT_RELATION");
 
-    removeElement("RELATED_INFO"); // Modified
     if (pdf != null && !pdf.equals("") && !pdf.equals("..")) {
       buttons.put("PRINT",
           new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn, "Print", language),
@@ -361,7 +351,6 @@ public class ToolBar {
       removeElement("NEXT_RELATION_DISABLED");
 
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
-    removeElement("RELATED_INFO");
   }
 
   private String transformElementsToString(HTMLElement element, Vector<String> vecLastType,
@@ -469,7 +458,6 @@ public class ToolBar {
           false));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR7"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("HR1"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("RELATED_INFO"), lastType, true));
     }
     toolbar.append("</tr>\n");
     toolbar.append("</table>\n");
