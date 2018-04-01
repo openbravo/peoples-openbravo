@@ -179,10 +179,6 @@ public class ToolBar {
     if (name.equals("RELATED_INFO")) {
       return (this.isNew ? "logClick(null);" : "")
           + "openServletNewWindow('DEFAULT', true, '../utility/UsedByLink.html', 'LINKS', null, true, 500, 600, true);";
-    } else if (name.equals("EDIT")) {
-      return "submitCommandForm('" + name + "', true, null, '" + servlet_action
-          + (isSrcWindow ? "" : "_Relation") + ".html', '_self', null, "
-          + (debug ? "true" : "false") + ");";
     } else if (name.startsWith("SAVE")) {
       return "submitCommandForm('SAVE_" + (isNew ? "NEW" : "EDIT") + name.substring(4)
           + "', true, null, '" + servlet_action + (isSrcWindow ? "" : "_Relation")
@@ -233,8 +229,6 @@ public class ToolBar {
           + ((grid_id == null || grid_id.equals("")) ? "null" : "dijit.byId('" + grid_id
               + "').getSelectedRows()") + ", "
           + ((grid_id == null || grid_id.equals("")) ? "true" : "null") + ");";
-    } else if (name.equals("UNDO")) {
-      return "windowUndo(" + form + ");";
     } else if (name.equals("AUDIT_EDITION")) {
       return "changeAuditStatus();";
     } else if (name.equals("AUDIT_RELATION")) {
@@ -285,44 +279,17 @@ public class ToolBar {
               getButtonScript("NEW")));
     }
 
-    buttons.put("EDIT",
-        new ToolBar_Button(base_direction, "Edit", Utility.messageBD(conn, "Edit", language),
-            getButtonScript("EDIT")));
-    buttons.put(
-        "RELATION",
-        new ToolBar_Button(base_direction, "Relation", Utility
-            .messageBD(conn, "Relation", language), getButtonScript("RELATION")));
     buttons.put("FIND",
         new ToolBar_Button(base_direction, "Find", Utility.messageBD(conn, "Find", language),
             getButtonScript("FIND")));
     buttons.put("SEPARATOR2", new ToolBar_Space(base_direction));
-    buttons.put(
-        "SAVE_RELATION",
-        new ToolBar_Button(base_direction, "Save_Relation", Utility.messageBD(conn, "SaveRelation",
-            language), getButtonScript("SAVE_RELATION")));
-    buttons.put("SAVE_NEW",
-        new ToolBar_Button(base_direction, "Save_New",
-            Utility.messageBD(conn, "SaveNew", language), getButtonScript("SAVE_NEW")));
-    buttons.put("SAVE_EDIT",
-        new ToolBar_Button(base_direction, "Save", Utility.messageBD(conn, "SaveEdit", language),
-            getButtonScript("SAVE_EDIT")));
-    buttons.put(
-        "SAVE_NEXT",
-        new ToolBar_Button(base_direction, "Save_Next", Utility.messageBD(conn, "SaveNext",
-            language), getButtonScript("SAVE_NEXT")));
     buttons.put("SEPARATOR3", new ToolBar_Space(base_direction));
     if (isEditable) {
-      buttons.put("DELETE",
-          new ToolBar_Button(base_direction, "Delete", Utility.messageBD(conn, "Delete", language),
-              getButtonScript("DELETE")));
       buttons.put("DELETE_RELATION",
           new ToolBar_Button(base_direction, "Delete", Utility.messageBD(conn, "Delete", language),
               getButtonScript("DELETE_RELATION")));
     }
     buttons.put("SEPARATOR4", new ToolBar_Space(base_direction));
-    buttons.put("UNDO",
-        new ToolBar_Button(base_direction, "Undo", Utility.messageBD(conn, "Undo", language),
-            getButtonScript("UNDO")));
 
     if (Utility.isNewUI()) {
       buttons.put(
@@ -381,9 +348,6 @@ public class ToolBar {
         new ToolBar_Button(base_direction, "AuditTrail", Utility.messageBD(conn, "AuditTrail",
             language), getButtonScript("AUDIT_TRAIL"), false));
     buttons.put("SEPARATOR5", new ToolBar_Space(base_direction));
-    buttons.put("FIRST",
-        new ToolBar_Button(base_direction, "First", Utility.messageBD(conn, "GotoFirst", language),
-            getButtonScript("FIRST")));
     buttons.put("FIRST_RELATION",
         new ToolBar_Button(base_direction, "First", Utility.messageBD(conn, "GotoFirst", language),
             getButtonScript("FIRST_RELATION")));
@@ -394,9 +358,6 @@ public class ToolBar {
     buttons.put("NEXT",
         new ToolBar_Button(base_direction, "Next", Utility.messageBD(conn, "GotoNext", language),
             getButtonScript("NEXT")));
-    buttons.put("LAST",
-        new ToolBar_Button(base_direction, "Last", Utility.messageBD(conn, "GotoLast", language),
-            getButtonScript("LAST")));
     buttons.put("LAST_RELATION",
         new ToolBar_Button(base_direction, "Last", Utility.messageBD(conn, "GotoLast", language),
             getButtonScript("LAST_RELATION")));
@@ -468,16 +429,6 @@ public class ToolBar {
   private void prepareRelationTemplate(boolean hasTree, boolean isFiltered, boolean isTest,
       boolean isReadOnly, boolean isAuditEnabled) {
     isRelation = true;
-    removeElement("EDIT");
-    removeElement("RELATION");
-    removeElement("DELETE");
-    removeElement("SAVE_RELATION");
-    removeElement("SAVE_NEW");
-    removeElement("SAVE_EDIT");
-    removeElement("SAVE_NEXT");
-    removeElement("UNDO");
-    removeElement("FIRST");
-    removeElement("LAST");
     removeElement("FIND");
     removeElement("EXCEL");
 
@@ -513,28 +464,18 @@ public class ToolBar {
 
   public void prepareSimpleToolBarTemplate() {
     removeElement("NEW");
-    removeElement("EDIT");
-    removeElement("RELATION");
     removeElement("FIND");
     removeElement("SEPARATOR2");
-    removeElement("SAVE_RELATION");
-    removeElement("SAVE_NEW");
-    removeElement("SAVE_EDIT");
-    removeElement("SAVE_NEXT");
-    removeElement("DELETE");
     removeElement("DELETE_RELATION");
-    removeElement("UNDO");
     removeElement("TREE");
     removeElement("ATTACHMENT");
     removeElement("EXCEL");
     removeElement("GRIDEXCEL");
     removeElement("GRIDCSV");
     removeElement("GRIDPDF");
-    removeElement("FIRST");
     removeElement("FIRST_RELATION");
     removeElement("PREVIOUS");
     removeElement("NEXT");
-    removeElement("LAST");
     removeElement("LAST_RELATION");
     removeElement("PREVIOUS_RELATION");
     removeElement("PREVIOUS_RELATION_DISABLED");
@@ -568,28 +509,18 @@ public class ToolBar {
 
   public void prepareRelationBarTemplate(boolean hasPrevious, boolean hasNext, String excelScript) {
     removeElement("NEW");
-    removeElement("EDIT");
-    removeElement("RELATION");
     removeElement("FIND");
     removeElement("SEPARATOR2");
-    removeElement("SAVE_RELATION");
-    removeElement("SAVE_NEW");
-    removeElement("SAVE_EDIT");
-    removeElement("SAVE_NEXT");
-    removeElement("DELETE");
     removeElement("DELETE_RELATION");
-    removeElement("UNDO");
     removeElement("TREE");
     removeElement("ATTACHMENT");
     removeElement("EXCEL");
     removeElement("GRIDEXCEL");
     removeElement("GRIDCSV");
     removeElement("GRIDPDF");
-    removeElement("FIRST");
     removeElement("FIRST_RELATION");
     removeElement("PREVIOUS");
     removeElement("NEXT");
-    removeElement("LAST");
     removeElement("LAST_RELATION");
     removeElement("EMAIL");
     removeElement("PRINT");
@@ -624,27 +555,17 @@ public class ToolBar {
 
   public void prepareSimpleExcelToolBarTemplate(String excelScript) {
     removeElement("NEW");
-    removeElement("EDIT");
-    removeElement("RELATION");
     removeElement("FIND");
     removeElement("SEPARATOR2");
-    removeElement("SAVE_RELATION");
-    removeElement("SAVE_NEW");
-    removeElement("SAVE_EDIT");
-    removeElement("SAVE_NEXT");
-    removeElement("DELETE");
     removeElement("DELETE_RELATION");
-    removeElement("UNDO");
     removeElement("TREE");
     removeElement("ATTACHMENT");
     removeElement("GRIDEXCEL");
     removeElement("GRIDCSV");
     removeElement("GRIDPDF");
-    removeElement("FIRST");
     removeElement("FIRST_RELATION");
     removeElement("PREVIOUS");
     removeElement("NEXT");
-    removeElement("LAST");
     removeElement("LAST_RELATION");
     removeElement("PREVIOUS_RELATION");
     removeElement("PREVIOUS_RELATION_DISABLED");
@@ -667,22 +588,12 @@ public class ToolBar {
 
   public void prepareQueryTemplate(boolean hasPrevious, boolean hasNext, boolean isTest) {
     removeElement("NEW");
-    removeElement("EDIT");
-    removeElement("RELATION");
-    removeElement("SAVE_RELATION");
-    removeElement("SAVE_NEW");
-    removeElement("SAVE_EDIT");
-    removeElement("SAVE_NEXT");
-    removeElement("DELETE");
     removeElement("DELETE_RELATION");
-    removeElement("UNDO");
     removeElement("TREE");
     removeElement("GRIDEXCEL");
     removeElement("GRIDCSV");
     removeElement("GRIDPDF");
     removeElement("ATTACHMENT");
-    removeElement("FIRST");
-    removeElement("LAST");
     removeElement("FIRST_RELATION");
     removeElement("LAST_RELATION");
     removeElement("PREVIOUS");
@@ -713,15 +624,10 @@ public class ToolBar {
 
   private void removeReadOnly() {
     removeSingleRecord();
-    removeElement("SAVE_EDIT");
   }
 
   private void removeSingleRecord() {
     removeElement("NEW");
-    removeElement("SAVE_NEW");
-    removeElement("SAVE_RELATION");
-    removeElement("SAVE_NEXT");
-    removeElement("DELETE");
     removeElement("DELETE_RELATION");
   }
 
@@ -795,19 +701,11 @@ public class ToolBar {
       }
 
       toolbar.append(transformElementsToString(buttons.get("NEW"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("EDIT"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("RELATION"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("FIND"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR2"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("SAVE_RELATION"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("SAVE_NEW"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("SAVE_EDIT"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("SAVE_NEXT"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR3"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("DELETE"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("DELETE_RELATION"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR4"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("UNDO"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("REFRESH"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("TREE"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("ATTACHMENT"), lastType, false));
@@ -829,13 +727,11 @@ public class ToolBar {
           lastType, false));
       toolbar.append(transformElementsToString(buttons.get("AUDIT_TRAIL"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR5"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("FIRST"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("FIRST_RELATION"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("PREVIOUS"), lastType, false));
       // toolbar.append("<td class=\"TB_Bookmark\" width=\"5px\"><nobr id=\"bookmark\"></nobr></td>\n"
       // );
       toolbar.append(transformElementsToString(buttons.get("NEXT"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("LAST"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("LAST_RELATION"), lastType, false));
       if (isRelation) {
         toolbar.append("<td width=\"1\"><img src=\"").append(base_direction)
