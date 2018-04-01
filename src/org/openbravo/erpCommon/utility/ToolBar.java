@@ -39,10 +39,7 @@ public class ToolBar {
   private boolean isSrcWindow = false;
   private boolean isFrame = false;
   private boolean isRelation = false;
-  private boolean isEditable = false;
-  private boolean hasAttachments = false;
   private boolean email = false;
-  private boolean hasNewButton = true;
 
   public void setEmail(boolean email) {
     this.email = email;
@@ -134,10 +131,7 @@ public class ToolBar {
     this.base_direction = _baseDirection;
     this.debug = _debug;
     this.isFrame = _isFrame;
-    this.isEditable = _isEditable;
     this.isSrcWindow = _isSrcWindow;
-    this.hasAttachments = _hasAttachments;
-    this.hasNewButton = _hasNewButton;
     createAllButtons();
   }
 
@@ -207,9 +201,6 @@ public class ToolBar {
     } else {
       String action = "";
 
-      if ("NEW".equals(name)) {
-        action = "disableToolBarButton('linkButtonNew'); ";
-      }
       return action + "submitCommandForm('" + (name.equals("REFRESH") ? "DEFAULT" : name) + "', "
           + (name.equals("NEW") && (this.grid_id.equals("")) ? "true" : "false") + ", null, '"
           + servlet_action + (isSrcWindow ? "" : "_Relation") + ".html', '"
@@ -218,12 +209,6 @@ public class ToolBar {
   }
 
   private void createAllButtons() {
-    if (hasNewButton) {
-      buttons.put("NEW",
-          new ToolBar_Button(base_direction, "New", Utility.messageBD(conn, "New", language),
-              getButtonScript("NEW")));
-    }
-
     buttons.put("FIND",
         new ToolBar_Button(base_direction, "Find", Utility.messageBD(conn, "Find", language),
             getButtonScript("FIND")));
@@ -319,7 +304,6 @@ public class ToolBar {
   }
 
   public void prepareSimpleToolBarTemplate() {
-    removeElement("NEW");
     removeElement("FIND");
     removeElement("SEPARATOR2");
     removeElement("EXCEL");
@@ -355,7 +339,6 @@ public class ToolBar {
   }
 
   public void prepareRelationBarTemplate(boolean hasPrevious, boolean hasNext, String excelScript) {
-    removeElement("NEW");
     removeElement("FIND");
     removeElement("SEPARATOR2");
     removeElement("EXCEL");
@@ -392,7 +375,6 @@ public class ToolBar {
   }
 
   public void prepareSimpleExcelToolBarTemplate(String excelScript) {
-    removeElement("NEW");
     removeElement("FIND");
     removeElement("SEPARATOR2");
     removeElement("GRIDEXCEL");
@@ -416,7 +398,6 @@ public class ToolBar {
   }
 
   public void prepareQueryTemplate(boolean hasPrevious, boolean hasNext, boolean isTest) {
-    removeElement("NEW");
     removeElement("GRIDEXCEL");
     removeElement("GRIDCSV");
     removeElement("GRIDPDF");
@@ -505,7 +486,6 @@ public class ToolBar {
         toolbar.append(transformElementsToString(buttons.get("SEPARATOR_NEWUI"), lastType, false));
       }
 
-      toolbar.append(transformElementsToString(buttons.get("NEW"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("FIND"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR2"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR3"), lastType, false));
