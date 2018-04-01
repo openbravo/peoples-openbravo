@@ -249,18 +249,6 @@ public class ToolBar {
 
   public void prepareRelationTemplateNoSearch() {
     isRelation = true;
-    removeElement("FIND");
-    removeElement("EXCEL");
-
-    removeElement("PREVIOUS_RELATION");
-    removeElement("PREVIOUS_RELATION_DISABLED");
-    removeElement("NEXT_RELATION");
-    removeElement("NEXT_RELATION_DISABLED");
-
-    if (pdf != null && !pdf.contains("orders") && !pdf.contains("invoices")
-        && !pdf.contains("payments")) {
-      removeElement("EMAIL");
-    }
   }
 
   public void prepareSimpleToolBarTemplate() {
