@@ -528,7 +528,6 @@ public class ToolBar {
   }
 
   public void prepareSimpleToolBarTemplate() {
-    removeElement("SEPARATOR1");
     removeElement("NEW");
     removeElement("EDIT");
     removeElement("RELATION");
@@ -549,8 +548,6 @@ public class ToolBar {
     removeElement("GRIDPDF");
     removeElement("SEARCH");
     removeElement("SEARCH_FILTERED");
-    removeElement("ORDERBY");
-    removeElement("ORDERBY_FILTERED");
     removeElement("FIRST");
     removeElement("FIRST_RELATION");
     removeElement("PREVIOUS");
@@ -588,7 +585,6 @@ public class ToolBar {
   }
 
   public void prepareRelationBarTemplate(boolean hasPrevious, boolean hasNext, String excelScript) {
-    removeElement("SEPARATOR1");
     removeElement("NEW");
     removeElement("EDIT");
     removeElement("RELATION");
@@ -609,8 +605,6 @@ public class ToolBar {
     removeElement("GRIDPDF");
     removeElement("SEARCH");
     removeElement("SEARCH_FILTERED");
-    removeElement("ORDERBY");
-    removeElement("ORDERBY_FILTERED");
     removeElement("FIRST");
     removeElement("FIRST_RELATION");
     removeElement("PREVIOUS");
@@ -649,7 +643,6 @@ public class ToolBar {
   }
 
   public void prepareSimpleExcelToolBarTemplate(String excelScript) {
-    removeElement("SEPARATOR1");
     removeElement("NEW");
     removeElement("EDIT");
     removeElement("RELATION");
@@ -669,8 +662,6 @@ public class ToolBar {
     removeElement("GRIDPDF");
     removeElement("SEARCH");
     removeElement("SEARCH_FILTERED");
-    removeElement("ORDERBY");
-    removeElement("ORDERBY_FILTERED");
     removeElement("FIRST");
     removeElement("FIRST_RELATION");
     removeElement("PREVIOUS");
@@ -714,8 +705,6 @@ public class ToolBar {
     removeElement("ATTACHMENT");
     removeElement("SEARCH");
     removeElement("SEARCH_FILTERED");
-    removeElement("ORDERBY");
-    removeElement("ORDERBY_FILTERED");
     removeElement("FIRST");
     removeElement("LAST");
     removeElement("FIRST_RELATION");
@@ -867,8 +856,6 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("AUDIT_SHOW_RELATION_DISABLED"),
           lastType, false));
       toolbar.append(transformElementsToString(buttons.get("AUDIT_TRAIL"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("ORDERBY"), lastType, false));
-      toolbar.append(transformElementsToString(buttons.get("ORDERBY_FILTERED"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR5"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("FIRST"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("FIRST_RELATION"), lastType, false));
