@@ -21,11 +21,9 @@ package org.openbravo.erpCommon.utility;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class ToolBar {
-  private static final Logger log = Logger.getLogger(ToolBar.class);
   private ConnectionProvider conn;
   private String language = "en_US";
   private String servlet_action = "";
@@ -153,15 +151,6 @@ public class ToolBar {
           + ".html', '_self', true, false);";
     } else if (name.equals("EXCEL")) {
       return "openExcel('" + servlet_action + "_Excel.xls?Command=RELATION_XLS', '_blank');";
-    } else if (name.equals("GRIDEXCEL")) {
-      // implementation does not longer exist
-      return "";
-    } else if (name.equals("GRIDCSV")) {
-      // implementation does not longer exist
-      return "";
-    } else if (name.equals("GRIDPDF")) {
-      // implementation does not longer exist
-      return "";
     } else if (name.equals("PRINT")) {
       return "openPDFSession('"
           + pdf
@@ -227,18 +216,6 @@ public class ToolBar {
         "EXCEL",
         new ToolBar_Button(base_direction, "Excel", Utility
             .messageBD(conn, "ExportExcel", language), getButtonScript("EXCEL")));
-    buttons.put(
-        "GRIDEXCEL",
-        new ToolBar_Button(base_direction, "ExportExcel", Utility.messageBD(conn, "ExportExcel",
-            language), getButtonScript("GRIDEXCEL")));
-    buttons.put(
-        "GRIDCSV",
-        new ToolBar_Button(base_direction, "ExportCsv", Utility.messageBD(conn, "ExportCsv",
-            language), getButtonScript("GRIDCSV")));
-    buttons.put(
-        "GRIDPDF",
-        new ToolBar_Button(base_direction, "ExportPDF", Utility.messageBD(conn, "ExportPDF",
-            language), getButtonScript("GRIDPDF")));
 
     if (pdf != null && !pdf.equals("") && !pdf.equals("..")) {
       buttons.put("PRINT",
@@ -307,9 +284,6 @@ public class ToolBar {
     removeElement("FIND");
     removeElement("SEPARATOR2");
     removeElement("EXCEL");
-    removeElement("GRIDEXCEL");
-    removeElement("GRIDCSV");
-    removeElement("GRIDPDF");
     removeElement("FIRST_RELATION");
     removeElement("LAST_RELATION");
     removeElement("PREVIOUS_RELATION");
@@ -342,9 +316,6 @@ public class ToolBar {
     removeElement("FIND");
     removeElement("SEPARATOR2");
     removeElement("EXCEL");
-    removeElement("GRIDEXCEL");
-    removeElement("GRIDCSV");
-    removeElement("GRIDPDF");
     removeElement("FIRST_RELATION");
     removeElement("LAST_RELATION");
     removeElement("EMAIL");
@@ -377,9 +348,6 @@ public class ToolBar {
   public void prepareSimpleExcelToolBarTemplate(String excelScript) {
     removeElement("FIND");
     removeElement("SEPARATOR2");
-    removeElement("GRIDEXCEL");
-    removeElement("GRIDCSV");
-    removeElement("GRIDPDF");
     removeElement("FIRST_RELATION");
     removeElement("LAST_RELATION");
     removeElement("PREVIOUS_RELATION");
@@ -398,9 +366,6 @@ public class ToolBar {
   }
 
   public void prepareQueryTemplate(boolean hasPrevious, boolean hasNext, boolean isTest) {
-    removeElement("GRIDEXCEL");
-    removeElement("GRIDCSV");
-    removeElement("GRIDPDF");
     removeElement("FIRST_RELATION");
     removeElement("LAST_RELATION");
 
@@ -492,11 +457,6 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR4"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("REFRESH"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("EXCEL"), lastType, false));
-      // if some module still runs this code path -> Log error with StackTrace
-      if (buttons.containsKey("GRIDEXCEL") || buttons.containsKey("GRIDCSV")
-          || buttons.containsKey("GRIDPDF")) {
-        log.error("Old 2.50 ExportGrid functionality does no longer exist.", new Throwable());
-      }
       toolbar.append(transformElementsToString(buttons.get("PRINT"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("EMAIL"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("AUDIT_SHOW_RELATION_DISABLED"),
