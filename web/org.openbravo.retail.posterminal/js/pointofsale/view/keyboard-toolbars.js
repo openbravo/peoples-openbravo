@@ -142,7 +142,8 @@ enyo.kind({
           'receipt': this.getReceiptToPay(),
           'amount': amount,
           'currency': firstpayment.isocode,
-          'providerGroup': providerGroup
+          'providerGroup': providerGroup,
+          'providerinstance': enyo.createFromKind(providerGroup.provider.provider)
         }
       });
     }
@@ -298,9 +299,11 @@ enyo.kind({
     enyo.forEach(payments, function (payment) {
       if (payment.providerGroup) {
         if (!providerGroups[payment.providerGroup.id]) {
-          providerGroups[payment.providerGroup.id] = payment.providerGroup;
-          providerGroups[payment.providerGroup.id]._button = null;
-          providerGroups[payment.providerGroup.id]._payments = [];
+          providerGroups[payment.providerGroup.id] = {
+            provider: payment.providerGroup,
+            _button: null,
+            _payments: []
+          };
           countbuttons++;
         }
         providerGroups[payment.providerGroup.id]._payments.push(payment);
