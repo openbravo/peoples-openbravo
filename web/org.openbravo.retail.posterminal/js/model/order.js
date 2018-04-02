@@ -5961,6 +5961,7 @@
               criteria._whereClause = "where c_bpartner_location_id in (?, ?)";
               criteria.params = [bpLocId, bpBillLocId];
             }
+            OB.UTIL.bpLoc = bpLoc;
             OB.Dal.find(OB.Model.BPLocation, criteria, function (locations) {
               var loc, billLoc;
               _.each(locations.models, function (l) {
@@ -5970,6 +5971,9 @@
                   billLoc = l;
                 }
               });
+              if (OB.UTIL.isNullOrUndefined(loc)) {
+                billLoc = loc = OB.UTIL.bpLoc;
+              }
               locationForBpartner(loc, billLoc);
             }, function (tx, error) {
               OB.UTIL.showError("OBDAL error: " + error);
