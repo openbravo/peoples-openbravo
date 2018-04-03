@@ -439,7 +439,7 @@ enyo.kind({
     this.checkValidPayments(paymentstatus, OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')]);
 
     //Update styles based on the prepayment amount
-    if (receiptHasPrepaymentAmount && !paymentstatus.done) {
+    if (receiptHasPrepaymentAmount && paymentstatus.pendingAmt != 0) {
       this.$.prepaymentLine.show();
       this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', true);
       this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', false);
