@@ -74,7 +74,7 @@ enyo.kind({
       }
     };
 
-    request = (data.receipt.getPaymentStatus().isNegative) ? this.populateRefundRequest(request) : this.populatePaymentRequest(request);
+    request = (data.receipt.getPaymentStatus().isNegative) ? this.populateRefundRequest(request, data) : this.populatePaymentRequest(request, data);
 
     return OBPOS_StandardProvider.remoteRequest(request);
   },

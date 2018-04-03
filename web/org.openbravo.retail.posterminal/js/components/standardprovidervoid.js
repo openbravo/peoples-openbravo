@@ -34,7 +34,7 @@ enyo.kind({
       'properties': data.payment.get('gatewayData').voidproperties
     };
 
-    request = this.populateVoidRequest(request);
+    request = this.populateVoidRequest(request, data);
 
     return OBPOS_StandardProvider.remoteRequest(request);
   },
